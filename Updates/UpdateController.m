@@ -109,7 +109,7 @@
 	
 	if( doCheck == nil ) // No setting in prefs yet? First launch?
 	{
-		doCheck = [NSNumber numberWithBool:NO];
+		doCheck = [NSNumber numberWithBool:YES];
 		
 		// Save user's preference to prefs file:
 		[[NSUserDefaults standardUserDefaults] setObject: doCheck forKey: @"Cog:CheckForUpdateAtStartup"];
