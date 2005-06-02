@@ -1,0 +1,10 @@
+A queue system, in which a user can option+click a song, and it will be placed
+  in a queue, whcih will pick the next song.
+Stream support for shoutcast/oggcast, or just opening via URL.
+Audioscrobbler.
+Improved tag reading.
+mpeg4 support (FAAD)
+look into realplayer (cook in mplayer) and wma
+find better ape decoder
+visualizer? (libvisualizer perhaps?)
+hotkeys for next/prev/stop/shuffle/repeat & info window

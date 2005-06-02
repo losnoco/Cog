@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>aif</string>
+				<string>aiff</string>
+				<string>aifc</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>AIFF Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>wav</string>
+				<string>wave</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Wave Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mp3</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>MP3 Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>flac</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Flac Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ape</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Monkey's Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mpc</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Musepack Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ogg</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Ogg Vorbis File</string>
+		</dict>
+	</array>
+	<key>CFBundleExecutable</key>
+	<string>Cog</string>
+	<key>CFBundleIconFile</key>
+	<string>wheel</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.badahol.cog</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.01</string>
+	<key>NSAppleScriptEnabled</key>
+	<string>YES</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>

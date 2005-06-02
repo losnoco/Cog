@@ -1,0 +1,3 @@
+- Test on other operating systems
+
+- clean the code up a little more

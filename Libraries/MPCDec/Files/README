@@ -1,0 +1,6 @@
+Musepack Decoder Library 1.2:
+
+run "./configure; make"
+
+To create a sample app using the musepack decoder library in src/
+Check src/sample.cpp for more details.
