@@ -308,7 +308,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>AACFile.m</string>
+								<string>FlacFile.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -316,11 +316,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>AACFile.m</string>
+										<string>FlacFile.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8ED1CBB7084F633100771E1E</string>
+										<string>8E2BC80E084F8A13004518D1</string>
 										<key>history</key>
 										<array>
 											<string>8EF6FACD082DAA2B006F7BE6</string>
@@ -365,7 +365,6 @@
 											<string>8E14E4A5084D089100246BCC</string>
 											<string>8E14E4A6084D089100246BCC</string>
 											<string>8E14E4A7084D089100246BCC</string>
-											<string>8E14E4AC084D089100246BCC</string>
 											<string>8E14E4AD084D089100246BCC</string>
 											<string>8E14E4B0084D089100246BCC</string>
 											<string>8E74C915084D451C00DF47F3</string>
@@ -381,7 +380,8 @@
 											<string>8EC18EB8084E57D500AE0BA9</string>
 											<string>8EC7DA89084E672F00A079A7</string>
 											<string>8EC7DA8A084E672F00A079A7</string>
-											<string>8E45D7D3084E831E00867D39</string>
+											<string>8ED1CC31084F887100771E1E</string>
+											<string>8ED1CC33084F887100771E1E</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -501,9 +501,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8ED1CBB8084F633100771E1E</string>
+				<string>8E2BC80F084F8A13004518D1</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8ED1CBB9084F633100771E1E</string>
+				<string>8E2BC810084F8A13004518D1</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -637,6 +637,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C0AD2B3069F1EA900FABCE6</string>
+		<string>8EF6FAA6082DA951006F7BE6</string>
 		<string>/Users/xugg/Projects/Cog/Cog.xcode</string>
 	</array>
 	<key>WindowString</key>
@@ -663,7 +665,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>AACFile.m</string>
+								<string>MusepackFile.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -683,7 +685,7 @@
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
-								<string>{{0, 92}, {1024, 144}}</string>
+								<string>{{0, 82}, {1024, 154}}</string>
 								<key>PBXProjectModuleGUID</key>
 								<string>XCMainBuildResultsModuleGUID</string>
 								<key>PBXProjectModuleLabel</key>
@@ -721,7 +723,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8EF6FAA6082DA951006F7BE6</string>
-				<string>8E45D7CC084E82FF00867D39</string>
+				<string>8E2BC808084F8A05004518D1</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -1083,9 +1085,9 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C0AD2B3069F1EA900FABCE6</string>
-				<string>8E45D7C5084E82F800867D39</string>
+				<string>8E2BC80C084F8A12004518D1</string>
 				<string>1CD0528B0623707200166675</string>
-				<string>8E45D7C6084E82F800867D39</string>
+				<string>8E2BC80D084F8A12004518D1</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.run</string>

@@ -81,8 +81,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 139429193;
-			PBXWorkspaceStateSaveDate = 139429193;
+			PBXPerProjectTemplateStateSaveDate = 139430278;
+			PBXWorkspaceStateSaveDate = 139430278;
 		};
 		perUserProjectItems = {
 			8E0EBF58084BAA56003A6E64 = 8E0EBF58084BAA56003A6E64;
@@ -118,6 +118,10 @@
 			8E267E1A083801D8004ACBC5 = 8E267E1A083801D8004ACBC5;
 			8E287164083695080013CE39 = 8E287164083695080013CE39;
 			8E297910083D892800F2C55A = 8E297910083D892800F2C55A;
+			8E2BC806084F8A05004518D1 = 8E2BC806084F8A05004518D1;
+			8E2BC807084F8A05004518D1 = 8E2BC807084F8A05004518D1;
+			8E2BC80B084F8A12004518D1 = 8E2BC80B084F8A12004518D1;
+			8E2BC80E084F8A13004518D1 = 8E2BC80E084F8A13004518D1;
 			8E4521C408327F4C00F8BA7C = 8E4521C408327F4C00F8BA7C;
 			8E4522A608329C9B00F8BA7C = 8E4522A608329C9B00F8BA7C;
 			8E4522AF08329C9B00F8BA7C = 8E4522AF08329C9B00F8BA7C;
@@ -180,6 +184,13 @@
 			8ED1CBB7084F633100771E1E = 8ED1CBB7084F633100771E1E;
 			8ED1CBC3084F856700771E1E = 8ED1CBC3084F856700771E1E;
 			8ED1CBC4084F856700771E1E = 8ED1CBC4084F856700771E1E;
+			8ED1CC2D084F887100771E1E = 8ED1CC2D084F887100771E1E;
+			8ED1CC2E084F887100771E1E = 8ED1CC2E084F887100771E1E;
+			8ED1CC2F084F887100771E1E = 8ED1CC2F084F887100771E1E;
+			8ED1CC30084F887100771E1E = 8ED1CC30084F887100771E1E;
+			8ED1CC31084F887100771E1E = 8ED1CC31084F887100771E1E;
+			8ED1CC32084F887100771E1E = 8ED1CC32084F887100771E1E;
+			8ED1CC33084F887100771E1E = 8ED1CC33084F887100771E1E;
 			8ED3C9B1084915CE00BB7797 = 8ED3C9B1084915CE00BB7797;
 			8ED833CD08457E6B0033CDBD = 8ED833CD08457E6B0033CDBD;
 			8EDC88A90842F8DE007D1532 = 8EDC88A90842F8DE007D1532;
@@ -714,6 +725,44 @@
 		rLoc = 0;
 		rType = 0;
 		vrLen = 65;
+		vrLoc = 0;
+	};
+	8E2BC806084F8A05004518D1 = {
+		comments = "warning: passing argument 2 of 'mpc_decoder_setup' from incompatible pointer type";
+		fRef = 8EF6FA6C082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		rLen = 1;
+		rLoc = 59;
+		rType = 1;
+	};
+	8E2BC807084F8A05004518D1 = {
+		fRef = 8EF6FA6C082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		name = "mpc_decoder_setup(&decoder, &reader);";
+		rLen = 42;
+		rLoc = 1113;
+		rType = 0;
+		vrLen = 429;
+		vrLoc = 915;
+	};
+	8E2BC80B084F8A12004518D1 = {
+		fRef = 8EF6FA6C082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		name = "mpc_decoder_setup(&decoder, &reader);";
+		rLen = 42;
+		rLoc = 1113;
+		rType = 0;
+		vrLen = 429;
+		vrLoc = 915;
+	};
+	8E2BC80E084F8A13004518D1 = {
+		fRef = 8EF6FA65082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		name = "#import \"flac/all.h\"";
+		rLen = 21;
+		rLoc = 163;
+		rType = 0;
+		vrLen = 617;
 		vrLoc = 0;
 	};
 	8E3851EC084CEC0200D715B8 = {
@@ -2164,6 +2213,74 @@
 		vrLen = 540;
 		vrLoc = 0;
 	};
+	8ED1CC2D084F887100771E1E = {
+		fRef = 8EF6FA65082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		name = "#import \"flac/all.h\"";
+		rLen = 21;
+		rLoc = 163;
+		rType = 0;
+		vrLen = 540;
+		vrLoc = 0;
+	};
+	8ED1CC2E084F887100771E1E = {
+		comments = "error: MAC/All.h: No such file or directory";
+		fRef = 8EF6FA67082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		rLen = 1;
+		rLoc = 9;
+		rType = 1;
+	};
+	8ED1CC2F084F887100771E1E = {
+		fRef = 8EF6FA65082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		name = "#import \"flac/all.h\"";
+		rLen = 21;
+		rLoc = 163;
+		rType = 0;
+		vrLen = 540;
+		vrLoc = 0;
+	};
+	8ED1CC30084F887100771E1E = {
+		fRef = 8EF6FA67082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		name = "#import <MAC/All.h>";
+		rLen = 20;
+		rLoc = 166;
+		rType = 0;
+		vrLen = 308;
+		vrLoc = 0;
+	};
+	8ED1CC31084F887100771E1E = {
+		fRef = 8E14E47A084CF1A200246BCC;
+		isa = PBXTextBookmark;
+		name = "AACFile.m: 13";
+		rLen = 0;
+		rLoc = 182;
+		rType = 0;
+		vrLen = 637;
+		vrLoc = 17;
+	};
+	8ED1CC32084F887100771E1E = {
+		fRef = 8E14E47A084CF1A200246BCC;
+		isa = PBXTextBookmark;
+		name = "AACFile.m: 13";
+		rLen = 0;
+		rLoc = 182;
+		rType = 0;
+		vrLen = 637;
+		vrLoc = 17;
+	};
+	8ED1CC33084F887100771E1E = {
+		fRef = 8EF6FA65082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		name = "#import \"flac/all.h\"";
+		rLen = 21;
+		rLoc = 163;
+		rType = 0;
+		vrLen = 617;
+		vrLoc = 0;
+	};
 	8ED3C9B1084915CE00BB7797 = {
 		fRef = 8E267D0C0837F7A6004ACBC5;
 		isa = PBXTextBookmark;
@@ -2321,9 +2438,9 @@
 	};
 	8EF6FA65082DA526006F7BE6 = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {983, 406}}";
+			sepNavIntBoundsRect = "{{0, 0}, {775, 406}}";
 			sepNavSelRange = "{163, 21}";
-			sepNavVisRect = "{{0, 0}, {983, 310}}";
+			sepNavVisRect = "{{0, 0}, {775, 372}}";
 		};
 	};
 	8EF6FA66082DA526006F7BE6 = {
@@ -2335,9 +2452,9 @@
 	};
 	8EF6FA67082DA526006F7BE6 = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {775, 372}}";
-			sepNavSelRange = "{267, 0}";
-			sepNavVisRect = "{{0, 0}, {775, 372}}";
+			sepNavIntBoundsRect = "{{0, 0}, {983, 310}}";
+			sepNavSelRange = "{166, 20}";
+			sepNavVisRect = "{{0, 0}, {983, 310}}";
 		};
 	};
 	8EF6FA68082DA526006F7BE6 = {
@@ -2370,9 +2487,9 @@
 	};
 	8EF6FA6C082DA526006F7BE6 = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {775, 2912}}";
-			sepNavSelRange = "{2177, 0}";
-			sepNavVisRect = "{{0, 1632}, {775, 372}}";
+			sepNavIntBoundsRect = "{{0, 0}, {983, 2954}}";
+			sepNavSelRange = "{1113, 42}";
+			sepNavVisRect = "{{0, 678}, {983, 310}}";
 		};
 	};
 	8EF6FA6D082DA526006F7BE6 = {

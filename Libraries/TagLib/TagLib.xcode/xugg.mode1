@@ -218,6 +218,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -267,14 +269,13 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>33</integer>
-									<integer>17</integer>
+									<integer>3</integer>
 									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 235}, {257, 567}}</string>
+							<string>{{0, 0}, {257, 567}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -304,8 +305,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -323,26 +322,21 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8E50FC61084E14420048349E</string>
+										<string>8ED1CC28084F884100771E1E</string>
 										<key>history</key>
 										<array>
 											<string>8E5A907C084CB91900AE6D62</string>
 											<string>8E5A907D084CB91900AE6D62</string>
 											<string>8E5A907E084CB91900AE6D62</string>
-											<string>8E5A907F084CB91900AE6D62</string>
-											<string>8E50FC5A084E14420048349E</string>
 											<string>8E50FC5B084E14420048349E</string>
 											<string>8E50FC5C084E14420048349E</string>
-											<string>8E50FC5D084E14420048349E</string>
+											<string>8E50FC61084E14420048349E</string>
 										</array>
 										<key>prevStack</key>
 										<array>
 											<string>8E5A9081084CB91900AE6D62</string>
-											<string>8E5A9082084CB91900AE6D62</string>
-											<string>8E5A9083084CB91900AE6D62</string>
 											<string>8E5A9085084CB91900AE6D62</string>
 											<string>8E5A9086084CB91900AE6D62</string>
-											<string>8E50FC5E084E14420048349E</string>
 											<string>8E50FC5F084E14420048349E</string>
 											<string>8E50FC60084E14420048349E</string>
 										</array>
@@ -402,9 +396,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8E50FC62084E14420048349E</string>
+				<string>8ED1CC29084F884100771E1E</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8E50FC63084E14420048349E</string>
+				<string>8ED1CC2A084F884100771E1E</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -538,6 +532,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>8E5A8FE9084CB31B00AE6D62</string>
 		<string>/Users/xugg/Projects/Cog/Libraries/TagLib/TagLib.xcode</string>
 	</array>
 	<key>WindowString</key>
@@ -562,7 +557,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>id3v2framefactory.cpp</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -620,7 +615,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8E5A8FE9084CB31B00AE6D62</string>
-				<string>8E5A8FEA084CB31B00AE6D62</string>
+				<string>8ED1CC0E084F86A700771E1E</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
