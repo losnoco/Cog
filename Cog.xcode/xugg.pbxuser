@@ -81,8 +81,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 139420459;
-			PBXWorkspaceStateSaveDate = 139420459;
+			PBXPerProjectTemplateStateSaveDate = 139429193;
+			PBXWorkspaceStateSaveDate = 139429193;
 		};
 		perUserProjectItems = {
 			8E0EBF58084BAA56003A6E64 = 8E0EBF58084BAA56003A6E64;
@@ -178,6 +178,8 @@
 			8EC7DA8A084E672F00A079A7 = 8EC7DA8A084E672F00A079A7;
 			8EC8FBD20842932A00DF2C98 = 8EC8FBD20842932A00DF2C98;
 			8ED1CBB7084F633100771E1E = 8ED1CBB7084F633100771E1E;
+			8ED1CBC3084F856700771E1E = 8ED1CBC3084F856700771E1E;
+			8ED1CBC4084F856700771E1E = 8ED1CBC4084F856700771E1E;
 			8ED3C9B1084915CE00BB7797 = 8ED3C9B1084915CE00BB7797;
 			8ED833CD08457E6B0033CDBD = 8ED833CD08457E6B0033CDBD;
 			8EDC88A90842F8DE007D1532 = 8EDC88A90842F8DE007D1532;
@@ -2144,6 +2146,24 @@
 		vrLen = 637;
 		vrLoc = 17;
 	};
+	8ED1CBC3084F856700771E1E = {
+		comments = "error: flac/all.h: No such file or directory";
+		fRef = 8EF6FA65082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		rLen = 1;
+		rLoc = 9;
+		rType = 1;
+	};
+	8ED1CBC4084F856700771E1E = {
+		fRef = 8EF6FA65082DA526006F7BE6;
+		isa = PBXTextBookmark;
+		name = "#import \"flac/all.h\"";
+		rLen = 21;
+		rLoc = 163;
+		rType = 0;
+		vrLen = 540;
+		vrLoc = 0;
+	};
 	8ED3C9B1084915CE00BB7797 = {
 		fRef = 8E267D0C0837F7A6004ACBC5;
 		isa = PBXTextBookmark;
@@ -2301,9 +2321,9 @@
 	};
 	8EF6FA65082DA526006F7BE6 = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {775, 406}}";
-			sepNavSelRange = "{183, 0}";
-			sepNavVisRect = "{{0, 14}, {775, 372}}";
+			sepNavIntBoundsRect = "{{0, 0}, {983, 406}}";
+			sepNavSelRange = "{163, 21}";
+			sepNavVisRect = "{{0, 0}, {983, 310}}";
 		};
 	};
 	8EF6FA66082DA526006F7BE6 = {

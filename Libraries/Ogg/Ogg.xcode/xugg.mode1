@@ -306,7 +306,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>os_types.h</string>
+								<string>bitwise.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -314,20 +314,22 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>os_types.h</string>
+										<string>bitwise.c</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8E5A9074084CB90D00AE6D62</string>
+										<string>8ED1CBF0084F859C00771E1E</string>
 										<key>history</key>
 										<array>
 											<string>8E94DA19084BECEE007F0AEB</string>
-											<string>8E94DA1C084BECEE007F0AEB</string>
+											<string>8ED1CBEE084F859C00771E1E</string>
+											<string>8ED1CBEB084F859C00771E1E</string>
 										</array>
 										<key>prevStack</key>
 										<array>
 											<string>8E94DA1A084BECEE007F0AEB</string>
 											<string>8E94DA1B084BECEE007F0AEB</string>
+											<string>8ED1CBEF084F859C00771E1E</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -385,9 +387,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8E5A9075084CB90D00AE6D62</string>
+				<string>8ED1CBF1084F859C00771E1E</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8E5A9076084CB90D00AE6D62</string>
+				<string>8ED1CBF2084F859C00771E1E</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -521,6 +523,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>8E975896082DF8E600D18832</string>
 		<string>/Users/xugg/Projects/Cog/Libraries/Ogg/Ogg.xcode</string>
 	</array>
 	<key>WindowString</key>
@@ -603,7 +606,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>8E975896082DF8E600D18832</string>
-				<string>8EE4A640082E6CD900415456</string>
+				<string>8ED1CBED084F859C00771E1E</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

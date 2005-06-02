@@ -66,15 +66,17 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 139245817;
-			PBXWorkspaceStateSaveDate = 139245817;
+			PBXPerProjectTemplateStateSaveDate = 139429257;
+			PBXWorkspaceStateSaveDate = 139429257;
 		};
 		perUserProjectItems = {
-			8E5A9074084CB90D00AE6D62 = 8E5A9074084CB90D00AE6D62;
 			8E94DA19084BECEE007F0AEB = 8E94DA19084BECEE007F0AEB;
 			8E94DA1A084BECEE007F0AEB = 8E94DA1A084BECEE007F0AEB;
 			8E94DA1B084BECEE007F0AEB = 8E94DA1B084BECEE007F0AEB;
-			8E94DA1C084BECEE007F0AEB = 8E94DA1C084BECEE007F0AEB;
+			8ED1CBEB084F859C00771E1E = 8ED1CBEB084F859C00771E1E;
+			8ED1CBEE084F859C00771E1E = 8ED1CBEE084F859C00771E1E;
+			8ED1CBEF084F859C00771E1E = 8ED1CBEF084F859C00771E1E;
+			8ED1CBF0084F859C00771E1E = 8ED1CBF0084F859C00771E1E;
 		};
 		sourceControlManager = 8E975886082DF89C00D18832;
 		userBuildSettings = {
@@ -82,16 +84,6 @@
 	};
 	8D07F2BC0486CC7A007CD1D0 = {
 		activeExec = 0;
-	};
-	8E5A9074084CB90D00AE6D62 = {
-		fRef = 8E975889082DF8AF00D18832;
-		isa = PBXTextBookmark;
-		name = config_types;
-		rLen = 12;
-		rLoc = 4070;
-		rType = 0;
-		vrLen = 310;
-		vrLoc = 3811;
 	};
 	8E94DA19084BECEE007F0AEB = {
 		fRef = 8E975888082DF8AF00D18832;
@@ -123,16 +115,6 @@
 		vrLen = 937;
 		vrLoc = 0;
 	};
-	8E94DA1C084BECEE007F0AEB = {
-		fRef = 8E975889082DF8AF00D18832;
-		isa = PBXTextBookmark;
-		name = config_types;
-		rLen = 12;
-		rLoc = 4070;
-		rType = 0;
-		vrLen = 309;
-		vrLoc = 3812;
-	};
 	8E975886082DF89C00D18832 = {
 		fallbackIsa = XCSourceControlManager;
 		isSCMEnabled = 0;
@@ -156,14 +138,52 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {668, 1792}}";
 			sepNavSelRange = "{4070, 12}";
-			sepNavVisRect = "{{0, 1566}, {441, 214}}";
+			sepNavVisRect = "{{0, 1564}, {441, 214}}";
 		};
 	};
 	8E97588C082DF8BF00D18832 = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {494, 10990}}";
-			sepNavSelRange = "{1115, 21}";
-			sepNavVisRect = "{{0, 223}, {459, 186}}";
+			sepNavSelRange = "{1122, 21}";
+			sepNavVisRect = "{{0, 201}, {441, 214}}";
 		};
+	};
+	8ED1CBEB084F859C00771E1E = {
+		comments = "warning: mismatched case in filenames, wanted \"ogg/ogg.h\" but found \"Ogg/ogg.h\"";
+		fRef = 8E97588C082DF8BF00D18832;
+		isa = PBXTextBookmark;
+		rLen = 1;
+		rLoc = 22;
+		rType = 1;
+	};
+	8ED1CBEE084F859C00771E1E = {
+		fRef = 8E975889082DF8AF00D18832;
+		isa = PBXTextBookmark;
+		name = "ude <ogg/con";
+		rLen = 12;
+		rLoc = 4070;
+		rType = 0;
+		vrLen = 310;
+		vrLoc = 3820;
+	};
+	8ED1CBEF084F859C00771E1E = {
+		fRef = 8E975889082DF8AF00D18832;
+		isa = PBXTextBookmark;
+		name = "ude <ogg/con";
+		rLen = 12;
+		rLoc = 4070;
+		rType = 0;
+		vrLen = 310;
+		vrLoc = 3820;
+	};
+	8ED1CBF0084F859C00771E1E = {
+		fRef = 8E97588C082DF8BF00D18832;
+		isa = PBXTextBookmark;
+		name = "#include <ogg/ogg.h>";
+		rLen = 21;
+		rLoc = 1122;
+		rType = 0;
+		vrLen = 476;
+		vrLoc = 904;
 	};
 }

@@ -260,8 +260,6 @@
 								<string>08FB77ACFE841707C02AAC07</string>
 								<string>034768DDFF38A45A11DB9C8B</string>
 								<string>1C37FBAC04509CD000000102</string>
-								<string>8ED1CBA1084F619E00771E1E</string>
-								<string>8ED1CBA2084F619E00771E1E</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
@@ -272,7 +270,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 34}, {231, 566}}</string>
+							<string>{{0, 0}, {231, 566}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -291,7 +289,7 @@
 							<real>231</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>4 120 1024 625 0 0 1024 746 </string>
+						<string>-2 121 1024 625 0 0 1024 746 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -319,7 +317,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8ED1CBAE084F619E00771E1E</string>
+										<string>8ED1CC08084F869C00771E1E</string>
 										<key>history</key>
 										<array>
 											<string>8EEBC7F2084F5C3C009FE5BE</string>
@@ -340,7 +338,7 @@
 											<string>8ED1CBA5084F619E00771E1E</string>
 											<string>8ED1CBA6084F619E00771E1E</string>
 											<string>8ED1CBA7084F619E00771E1E</string>
-											<string>8ED1CBA8084F619E00771E1E</string>
+											<string>8ED1CBAE084F619E00771E1E</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -360,11 +358,8 @@
 											<string>8E65787E084F5EDB00F28C07</string>
 											<string>8E65787F084F5EDB00F28C07</string>
 											<string>8E657888084F5EDB00F28C07</string>
-											<string>8ED1CBA9084F619E00771E1E</string>
 											<string>8ED1CBAA084F619E00771E1E</string>
-											<string>8ED1CBAB084F619E00771E1E</string>
 											<string>8ED1CBAC084F619E00771E1E</string>
-											<string>8ED1CBAD084F619E00771E1E</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -378,7 +373,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {771, 480}}</string>
 								<key>RubberWindowFrame</key>
-								<string>4 120 1024 625 0 0 1024 746 </string>
+								<string>-2 121 1024 625 0 0 1024 746 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -398,7 +393,7 @@
 								<key>Frame</key>
 								<string>{{0, 485}, {771, 99}}</string>
 								<key>RubberWindowFrame</key>
-								<string>4 120 1024 625 0 0 1024 746 </string>
+								<string>-2 121 1024 625 0 0 1024 746 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -422,9 +417,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>8ED1CBAF084F619E00771E1E</string>
+				<string>8ED1CC09084F869C00771E1E</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>8ED1CBB0084F619E00771E1E</string>
+				<string>8ED1CC0A084F869C00771E1E</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -558,12 +553,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>8E4DD299082DCA59004B6830</string>
 		<string>/Users/xugg/Projects/Cog/Libraries/MAC/MAC.xcode</string>
 	</array>
 	<key>WindowString</key>
-	<string>4 120 1024 625 0 0 1024 746 </string>
+	<string>-2 121 1024 625 0 0 1024 746 </string>
 	<key>WindowTools</key>
 	<array>
 		<dict>
