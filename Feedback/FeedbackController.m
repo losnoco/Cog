@@ -23,7 +23,11 @@
 
 - (void)alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	[feedbackWindow close];
+	NSLog(@"CONTEXT: %i", contextInfo);
+	if (contextInfo == YES)
+	{
+		[feedbackWindow close];
+	}
 }
 
 - (void)FeedbackErrorOccurred:(NSNotification *)aNotification
@@ -36,7 +40,7 @@
 	[alert setMessageText:@"Failed"];
 	[alert setInformativeText:@"Feedback failed to send."];
 	
-	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:NULL];
+	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:NO];
 }
 
 - (void)FeedbackSent:(NSNotification *)aNotification
@@ -49,7 +53,7 @@
 	[alert setMessageText:@"Success"];
 	[alert setInformativeText:@"Feedback successfully sent!"];
 
-	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:NULL];
+	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:YES];
 }
 
 

@@ -76,11 +76,13 @@
 	decompress = NULL;
 }
 
-- (void)seekToTime:(double)milliseconds
+- (double)seekToTime:(double)milliseconds
 {
 	int r;
 //	DBLog(@"HELLO: %i", int(frequency*((double)milliseconds/1000.0)));
 	r = decompress->Seek(int(frequency*((double)milliseconds/1000.0)));
+	
+	return milliseconds;
 }
 
 @end

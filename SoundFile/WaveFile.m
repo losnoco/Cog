@@ -113,9 +113,11 @@
 	sndFile = NULL;
 }
 
-- (void)seekToTime:(double)milliseconds
+- (double)seekToTime:(double)milliseconds
 {
 	sf_seek(sndFile, frequency*((double)milliseconds/1000.0), SEEK_SET);
+	
+	return milliseconds;
 }
 
 @end

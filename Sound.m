@@ -306,15 +306,30 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		NSArray* components = [portMessage components];
 		NSData *data = [components objectAtIndex:0];
 		double time;
+		double newTime;
 		unsigned long pos;
+		
 		time = (*(double *)[data bytes]);
 		pos = [self calculatePos:time];
 		
-		[soundFile seekToTime:time];
-		[self resetBuffer];
-		[readLock lock];
-		currentPosition = pos;
-		[readLock unlock];
+		newTime = [soundFile seekToTime:time];
+		if (newTime >= 0)
+		{
+			[self resetBuffer];
+			
+			pos = [self calculatePos:newTime];
+
+			[readLock lock];
+			currentPosition = pos;
+			[readLock unlock];
+		}
+		else
+		{
+			newTime = [self calculateTime:currentPosition];
+		}
+		//send a message with newTime
+		DBLog(@"RESETING TIME TO: %f", newTime);
+		[self sendPortMessage:kCogPositionUpdateMessage withData:&newTime ofSize:(sizeof(double))];
 	}
 	else if (msgid == kCogEndOfPlaylistMessage)
 	{

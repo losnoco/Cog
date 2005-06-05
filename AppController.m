@@ -55,6 +55,17 @@
 - (void)awakeFromNib
 {
 //	DBLog(@"AWAKe");
+	
+	[playButton setToolTip:@"Play"];
+	[stopButton setToolTip:@"Stop"];
+	[prevButton setToolTip:@"Previous"];
+	[nextButton setToolTip:@"Next"];
+	[addButton setToolTip:@"Add files"];
+	[remButton setToolTip:@"Remove selected files"];
+	[infoButton setToolTip:@"Information on the selected file."];
+	[shuffleButton setToolTip:@"Shuffle mode"];
+	[repeatButton setToolTip:@"Repeat mode"];
+	
 	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
 	[playlistController loadPlaylist:[filename stringByExpandingTildeInPath]];
 }

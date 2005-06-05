@@ -44,8 +44,8 @@
 
 - (UInt32)fillBuffer:(void *)buf ofSize:(UInt32)size;
 
-- (void)seek:(unsigned long)position;
-- (void)seekToTime:(double)milliseconds;
+//- (BOOL)seek:(unsigned long)position;
+- (double)seekToTime:(double)milliseconds;
 - (void)close;
 - (void)reset; //START AGAIN
 

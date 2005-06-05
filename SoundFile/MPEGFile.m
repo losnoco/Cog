@@ -99,9 +99,11 @@
 	decoder = NULL;
 }
 
-- (void)seekToTime:(double)milliseconds
+- (double)seekToTime:(double)milliseconds
 {
 	DecMPA_SeekToTime(decoder, (unsigned long)milliseconds);
+	
+	return milliseconds;
 }
 
 @end

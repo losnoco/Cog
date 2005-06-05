@@ -42,6 +42,7 @@
 		};
 		0867D691FE84028FC02AAC07 = {
 			children = (
+				8E64758F08536C4B007B91CB,
 				8E3852DB084CEC6A00D715B8,
 				08FB77ACFE841707C02AAC07,
 				089C1665FE841158C02AAC07,
@@ -243,7 +244,7 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = Files/libfaad/;
+				HEADER_SEARCH_PATHS = "Files/libfaad/ Files/common/faad";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
@@ -327,6 +328,7 @@
 				8E3852DF084CEC7B00D715B8,
 				8E3852E0084CEC7B00D715B8,
 				8E3852ED084CED5500D715B8,
+				8EFC6C1E08536C9D00C67D06,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,6 +388,7 @@
 				8E3852D3084CEC6200D715B8,
 				8E3852D6084CEC6200D715B8,
 				8E3852D8084CEC6200D715B8,
+				8EFC6C1D08536C9D00C67D06,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1984,6 +1987,238 @@
 			fileRef = 8E3852EC084CED5500D715B8;
 			isa = PBXBuildFile;
 			settings = {
+			};
+		};
+		8E64758F08536C4B007B91CB = {
+			children = (
+				8EFC6BFF08536C9D00C67D06,
+				8EFC6C0808536C9D00C67D06,
+			);
+			isa = PBXGroup;
+			name = Common;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6BFF08536C9D00C67D06 = {
+			children = (
+				8EFC6C0008536C9D00C67D06,
+				8EFC6C0108536C9D00C67D06,
+				8EFC6C0208536C9D00C67D06,
+				8EFC6C0308536C9D00C67D06,
+				8EFC6C0408536C9D00C67D06,
+				8EFC6C0508536C9D00C67D06,
+				8EFC6C0608536C9D00C67D06,
+				8EFC6C0708536C9D00C67D06,
+			);
+			isa = PBXGroup;
+			name = faad;
+			path = Files/common/faad;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0008536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = aacinfo.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0108536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = aacinfo.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0208536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = filestream.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0308536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = filestream.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0408536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getopt.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0508536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = getopt.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0608536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = id3v2tag.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0708536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = id3v2tag.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0808536C9D00C67D06 = {
+			children = (
+				8EFC6C0908536C9D00C67D06,
+				8EFC6C1108536C9D00C67D06,
+				8EFC6C1208536C9D00C67D06,
+				8EFC6C1308536C9D00C67D06,
+				8EFC6C1408536C9D00C67D06,
+				8EFC6C1508536C9D00C67D06,
+				8EFC6C1608536C9D00C67D06,
+				8EFC6C1708536C9D00C67D06,
+				8EFC6C1808536C9D00C67D06,
+				8EFC6C1908536C9D00C67D06,
+				8EFC6C1A08536C9D00C67D06,
+				8EFC6C1B08536C9D00C67D06,
+				8EFC6C1C08536C9D00C67D06,
+			);
+			isa = PBXGroup;
+			name = mp4ff;
+			path = Files/common/mp4ff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C0908536C9D00C67D06 = {
+			children = (
+			);
+			isa = PBXGroup;
+			path = .deps;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1108536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = drms.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1208536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = drms.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1308536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = drmstables.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1408536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mp4atom.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1508536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mp4ff.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1608536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mp4ff.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1708536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mp4ff_int_types.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1808536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mp4ffint.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1908536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mp4meta.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1A08536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mp4sample.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1B08536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mp4tagupdate.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1C08536C9D00C67D06 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mp4util.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8EFC6C1D08536C9D00C67D06 = {
+			fileRef = 8EFC6C0008536C9D00C67D06;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8EFC6C1E08536C9D00C67D06 = {
+			fileRef = 8EFC6C0108536C9D00C67D06;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 	};

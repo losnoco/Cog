@@ -11,7 +11,7 @@
 
 @implementation SoundFile
 
-- (void)seek:(unsigned long)position
+/*- (void)seek:(unsigned long)position
 {
 	unsigned long time;
 	unsigned long frame;
@@ -21,9 +21,10 @@
 
 	currentPosition = position;
 	
-	[self seekToTime:time];
+	time = [self seekToTime:time];
+	position = time * (frequency/1000.0)*chanels*(bitsPerSample/8)
 }
-
+*/
 - (double)length
 {
 	return (totalSize/channels/(bitsPerSample/8)/(frequency/1000.0));
@@ -119,7 +120,7 @@
 
 - (void)reset
 {
-	[self seek:0];
+	[self seekToTime:0.0];
 }
 
 - (void)getFormat:(AudioStreamBasicDescription *)sourceStreamFormat

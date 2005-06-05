@@ -20,6 +20,9 @@
 	NeAACDecHandle hAac;
 	NeAACDecFrameInfo hInfo;
 
+	unsigned long *seekTable;
+	int seekTableLength;
+	
 	char buffer[SAMPLE_BUFFER_SIZE];
 	int bufferAmount;
 	

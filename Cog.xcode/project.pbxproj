@@ -559,12 +559,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		8E14E47B084CF1A200246BCC = {
-			fileRef = 8E14E479084CF1A200246BCC;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		8E14E47C084CF1A200246BCC = {
 			fileRef = 8E14E47A084CF1A200246BCC;
 			isa = PBXBuildFile;
@@ -1657,7 +1651,6 @@
 				8EFFB6D4083302A500C53833,
 				8EFFB6D5083302A500C53833,
 				8EFFB6D6083302A500C53833,
-				8E14E47B084CF1A200246BCC,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;

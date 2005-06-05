@@ -159,9 +159,11 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 	
 }
 
-- (void)seekToTime:(double)milliseconds
+- (double)seekToTime:(double)milliseconds
 {
 	FLAC__file_decoder_seek_absolute(decoder, frequency * ((double)milliseconds/1000.0));
+	
+	return milliseconds;
 }
 
 //bs methods

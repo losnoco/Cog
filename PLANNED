@@ -1,10 +1,14 @@
+0.0.2
+mpeg4 support (FAAD)
+shorten support
+hotkeys for next/prev/stop/shuffle/repeat & info window
+
+0.0.3
+Stream support for shoutcast/oggcast, or just opening files via URL.
+
+0.0.4+
 A queue system, in which a user can option+click a song, and it will be placed
   in a queue, whcih will pick the next song.
-Stream support for shoutcast/oggcast, or just opening via URL.
 Audioscrobbler.
-Improved tag reading.
-mpeg4 support (FAAD)
 look into realplayer (cook in mplayer) and wma
-find better ape decoder
 visualizer? (libvisualizer perhaps?)
-hotkeys for next/prev/stop/shuffle/repeat & info window

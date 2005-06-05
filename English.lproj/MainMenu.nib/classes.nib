@@ -12,9 +12,18 @@
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                addButton = NSButton; 
+                infoButton = NSButton; 
                 infoPanel = NSPanel; 
                 mainWindow = NSWindow; 
+                nextButton = NSButton; 
+                playButton = NSButton; 
                 playlistController = PlaylistController; 
+                prevButton = NSButton; 
+                remButton = NSButton; 
+                repeatButton = NSButton; 
+                shuffleButton = NSButton; 
+                stopButton = NSButton; 
             }; 
             SUPERCLASS = NSObject; 
         }, 

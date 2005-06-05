@@ -7,14 +7,19 @@
 //
 
 #import "AACFile.h"
-
+#import <FAAD2/aacinfo.h>
 
 @implementation AACFile
 
 - (BOOL)open:(const char *)filename
 {
-	unsigned long cap = NeAACDecGetCapabilities();
+	faadAACInfo info;
+	//	unsigned long cap = NeAACDecGetCapabilities();
 	//Check if decoder has the needed capabilities
+	
+	inFd = fopen(filename, "r");
+	if (!inFd)
+		return NO;
 	
 	//Open the library
 	hAac = NeAACDecOpen();
@@ -22,23 +27,21 @@
 	//Get the current config
 	NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration(hAac);
 	
-//	conf->useOldADTSFormat = 1;
-	DBLog(@"CONFIG: %i", conf->useOldADTSFormat);
-	//if needed, change some of the values in conf
 	conf->outputFormat = FAAD_FMT_32BIT;
-//	conf->downMatrix = 1;
-//	channels = 1;
 	bitsPerSample = 32;
-
+	
 	//set the new configuration
 	NeAACDecSetConfiguration(hAac, conf);
 	
-	inFd = fopen(filename, "r");
-	if (!inFd)
-		return NO;
+	get_AAC_format(inFd, &info, &seekTable, &seekTableLength, 1);
+	DBLog(@"INFO TIME");
+	DBLog(@"---------");
+	DBLog(@"%i %i %i %i %i", info.bitrate, info.channels, info.length, info.sampling_rate, info.version);
+	DBLog(@"");
+	fseek(inFd, 0, SEEK_SET);
 	
 	inputAmount = fread(inputBuffer, 1, INPUT_BUFFER_SIZE, inFd);
-
+	
 	unsigned long samplerate;
 	unsigned char c;
 	//Initialize the library using one of the initalization functions
@@ -49,16 +52,23 @@
 		DBLog(@"AAC ERRROR");
 		return NO;
 	}
-	
 	inputAmount -= err;
 	memmove(inputBuffer, &inputBuffer[err], inputAmount);
-
+	
 	frequency = (int)samplerate;
 	channels = c;
-
+	
+	bitRate = (int)((float)info.bitrate/1000.0);
+	totalSize = (long int)(info.length*(double)frequency/1000.0*channels*bitsPerSample/8);
+	
 	isBigEndian = YES;
 	
 	return YES;
+}
+
+- (BOOL)readInfo:(const char *)filename
+{
+	return [self open:filename]; //they both would do the same damn thing
 }
 
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size
@@ -132,8 +142,34 @@
 	return count + numread;
 }
 
+- (double)seekToTime:(double)milliseconds
+{
+	int second;
+	int i;
+	unsigned long pos;
+	unsigned long length;
+	
+	if (seekTableLength <= 1)
+		return -1;
+	
+	length = (unsigned long)(totalSize /(frequency * channels*(bitsPerSample/8)));
+
+	second = (int)(milliseconds/1000.0);
+	i = (int)(((float)second/length)*seekTableLength);
+	DBLog(@"SEEKING TO: %i %i", seekTable, seekTableLength);
+	pos = seekTable[i];
+	
+	fseek(inFd, pos, SEEK_SET);
+	inputAmount = 0;
+	NeAACDecPostSeekReset(hAac, -1);
+
+	return second*1000.0;
+}
+
 - (void)close
 {
+	NeAACDecClose(hAac);
+	fclose(inFd);
 }
 
 @end

@@ -184,7 +184,7 @@ BOOL CanSeekProc(void *data)
 	fclose(inFd);
 }
 
-- (void)seekToTime:(double)milliseconds
+- (double)seekToTime:(double)milliseconds
 {
 	BOOL r;
 //	double n = milliseconds;
@@ -193,6 +193,8 @@ BOOL CanSeekProc(void *data)
 	
 	r = mpc_decoder_seek_sample(&decoder, frequency*((double)milliseconds/1000.0));
 //	DBLog(@"SEEK RESULT: %i", r);
+	
+	return milliseconds;
 }
 
 //accessors
