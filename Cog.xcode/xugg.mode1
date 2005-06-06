@@ -255,11 +255,15 @@
 							<array>
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>080E96DDFE201D6D7F000001</string>
+								<string>8EF6FA64082DA525006F7BE6</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>23</integer>
+									<integer>5</integer>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -301,7 +305,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>PlaylistController.m</string>
+								<string>ShnFile.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -309,11 +313,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>PlaylistController.m</string>
+										<string>ShnFile.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>8EB30E240854C36A009EA87F</string>
+										<string>8EB30E5F0854C90E009EA87F</string>
 										<key>history</key>
 										<array>
 											<string>8EF6FACD082DAA2B006F7BE6</string>
@@ -377,10 +381,10 @@
 											<string>8EB30DDE0854C261009EA87F</string>
 											<string>8EB30DDF0854C261009EA87F</string>
 											<string>8EB30DE00854C261009EA87F</string>
-											<string>8EB30E1E0854C36A009EA87F</string>
 											<string>8EB30E1F0854C36A009EA87F</string>
 											<string>8EB30E200854C36A009EA87F</string>
-											<string>8E8BAF7B0854976A00E9F14D</string>
+											<string>8EB30E410854C6D6009EA87F</string>
+											<string>8EB30E1E0854C36A009EA87F</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -487,6 +491,7 @@
 											<string>8EB30E210854C36A009EA87F</string>
 											<string>8EB30E220854C36A009EA87F</string>
 											<string>8EB30E230854C36A009EA87F</string>
+											<string>8EB30E420854C6D6009EA87F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -680,9 +685,9 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C0AD2B3069F1EA900FABCE6</string>
 		<string>8EF6FAA6082DA951006F7BE6</string>
 		<string>/Users/xugg/Projects/Cog/Cog.xcode</string>
+		<string>1C0AD2B3069F1EA900FABCE6</string>
 	</array>
 	<key>WindowString</key>
 	<string>2 122 1024 624 0 0 1024 746 </string>
@@ -708,7 +713,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ShnFile.m</string>
+								<string>shn.h</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -1137,7 +1142,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C0AD2B3069F1EA900FABCE6</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
