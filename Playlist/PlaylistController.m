@@ -200,7 +200,19 @@
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	NSArray *a = [[self arrangedObjects] objectsAtIndexes:indexes];
+	unsigned int *indexBuffer;
+	NSMutableArray *a = [[NSMutableArray alloc] init];
+	int i;
+	
+	//10.3 fix
+	indexBuffer = malloc([indexes count]*sizeof(unsigned int));
+	[indexes getIndexes:indexBuffer maxCount:[indexes count] inIndexRange:nil];
+	for (i = 0; i < [indexes count]; i++)
+	{
+		[a addObject:[[self arrangedObjects] objectAtIndex:(indexBuffer[i])]];
+	}
+	
+//	a = [[self arrangedObjects] objectsAtIndexes:indexes]; //10.4 only
 	
 	if ([a containsObject:currentEntry])
 	{
@@ -214,6 +226,8 @@
 		[self generateShuffleList];
 	
 	[history removeObjectsInArray:a];
+	
+	[a release];
 }
 
 - (IBAction)takeShuffleFromObject:(id)sender
