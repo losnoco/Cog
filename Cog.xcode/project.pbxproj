@@ -56,6 +56,8 @@
 //104
 		1058C7A0FEA54F0111CA2CBB = {
 			children = (
+				8E8BAE9C08548C6300E9F14D,
+				8E8BAE9808548C5500E9F14D,
 				8E14E468084CF15C00246BCC,
 				8E5A9031084CB48500AE6D62,
 				8E81BC31083673ED0025A375,
@@ -326,7 +328,7 @@
 			buildRules = (
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "/Users/xugg/Projects/Cog/Libraries/DecMPA/build /Users/xugg/Projects/Cog/Libraries/FLAC/build /Users/xugg/Projects/Cog/Libraries/MAC/build /Users/xugg/Projects/Cog/Libraries/MPCDec/build /Users/xugg/Projects/Cog/Libraries/Ogg/build /Users/xugg/Projects/Cog/Libraries/SndFile/build /Users/xugg/Projects/Cog/Libraries/Vorbis/build /Users/xugg/Projects/Cog/Libraries/MetaTag/build /Users/xugg/Projects/Cog/Libraries/TagLib/build /Users/xugg/Projects/Cog/Libraries/FAAD2/build";
+				FRAMEWORK_SEARCH_PATHS = "/Users/xugg/Projects/Cog/Libraries/DecMPA/build /Users/xugg/Projects/Cog/Libraries/FLAC/build /Users/xugg/Projects/Cog/Libraries/MAC/build /Users/xugg/Projects/Cog/Libraries/MPCDec/build /Users/xugg/Projects/Cog/Libraries/Ogg/build /Users/xugg/Projects/Cog/Libraries/SndFile/build /Users/xugg/Projects/Cog/Libraries/Vorbis/build /Users/xugg/Projects/Cog/Libraries/MetaTag/build /Users/xugg/Projects/Cog/Libraries/TagLib/build /Users/xugg/Projects/Cog/Libraries/FAAD2/build /Users/xugg/Projects/Cog/Libraries/Shorten/build /Users/xugg/Projects/Cog/Libraries/WavPack/build";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -336,7 +338,7 @@
 				HEADER_SEARCH_PATHS = MAC;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_CFLAGS = "-D__MACOSX__";
+				OTHER_CFLAGS = "-D__MACOSX__ -DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "-Wl,-read_only_relocs,warning";
 				PRODUCT_NAME = Cog;
 				WRAPPER_EXTENSION = app;
@@ -424,6 +426,8 @@
 				8E652A02083D93EB00A7AF1B,
 				8E0EBF0F084BA776003A6E64,
 				8E14E47C084CF1A200246BCC,
+				8E8BAE5408548BD500E9F14D,
+				8E8BAE5808548BE800E9F14D,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -451,6 +455,8 @@
 				8E81BC34083673ED0025A375,
 				8E5A9032084CB48500AE6D62,
 				8E14E469084CF15C00246BCC,
+				8E8BAE9908548C5500E9F14D,
+				8E8BAE9D08548C6300E9F14D,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1009,6 +1015,90 @@
 			settings = {
 			};
 		};
+		8E8BAE5108548BD500E9F14D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WavPackFile.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E8BAE5208548BD500E9F14D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WavPackFile.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E8BAE5408548BD500E9F14D = {
+			fileRef = 8E8BAE5208548BD500E9F14D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8E8BAE5508548BE800E9F14D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ShnFile.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E8BAE5608548BE800E9F14D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = ShnFile.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E8BAE5808548BE800E9F14D = {
+			fileRef = 8E8BAE5608548BE800E9F14D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8E8BAE9808548C5500E9F14D = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Shorten.framework;
+			path = Libraries/Shorten/build/Shorten.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E8BAE9908548C5500E9F14D = {
+			fileRef = 8E8BAE9808548C5500E9F14D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8E8BAE9C08548C6300E9F14D = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = WavPack.framework;
+			path = Libraries/WavPack/build/WavPack.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E8BAE9D08548C6300E9F14D = {
+			fileRef = 8E8BAE9C08548C6300E9F14D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8E8BAEA508548C8200E9F14D = {
+			fileRef = 8E8BAE9C08548C6300E9F14D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8E8BAEA608548C8200E9F14D = {
+			fileRef = 8E8BAE9808548C5500E9F14D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		8EAB85FC0846889B000A9CEC = {
 			isa = PBXFileReference;
 			lastKnownFileType = image.png;
@@ -1475,6 +1565,10 @@
 				8EF6FA70082DA526006F7BE6,
 				8EF6FA71082DA526006F7BE6,
 				8EF6FA72082DA526006F7BE6,
+				8E8BAE5108548BD500E9F14D,
+				8E8BAE5208548BD500E9F14D,
+				8E8BAE5508548BE800E9F14D,
+				8E8BAE5608548BE800E9F14D,
 				8EF6FA6D082DA526006F7BE6,
 				8EF6FA6E082DA526006F7BE6,
 			);
@@ -1556,9 +1650,9 @@
 			sourceTree = "<group>";
 		};
 		8EF6FA6E082DA526006F7BE6 = {
+			explicitFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
 			path = SoundFile.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1642,6 +1736,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				8E8BAEA508548C8200E9F14D,
+				8E8BAEA608548C8200E9F14D,
 				8E14E472084CF16400246BCC,
 				8E5A908D084CB92D00AE6D62,
 				8EFFB6D0083302A500C53833,

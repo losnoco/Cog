@@ -36,7 +36,7 @@
 }
 
 //this should be done by the soundfile....not seek...
-- (void)seekToTime:(double)milliseconds
+- (double)seekToTime:(double)milliseconds
 {
 }
 
@@ -49,6 +49,8 @@
 @class VorbisFile;
 @class WaveFile;
 @class AACFile;
+@class WavPackFile;
+@class ShnFile;
 
 + (SoundFile *)soundFileFromFilename:(NSString *)filename
 {
@@ -81,6 +83,14 @@
 	else if ([[filename pathExtension] isEqualToString:@"aac"])
 	{
 		soundFile = [[AACFile alloc] init];
+	}
+	else if ([[filename pathExtension] isEqualToString:@"wv"])
+	{
+		soundFile = [[WavPackFile alloc] init];
+	}
+	else if ([[filename pathExtension] isEqualToString:@"shn"])
+	{
+		soundFile = [[ShnFile alloc] init];
 	}
 	else
 	{
@@ -143,6 +153,8 @@
 	if (isBigEndian == YES)
 	{
 		sourceStreamFormat->mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
+		sourceStreamFormat->mFormatFlags |= kLinearPCMFormatFlagIsAlignedHigh;
+//		sourceStreamFormat->mFormatFlags |= kLinearPCMFormatFlagIsNonMixable;
 //		NSLog(@"FUCKER IS BIG ENDIAN");
 	}
 	if (isUnsigned == NO)

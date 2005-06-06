@@ -68,7 +68,7 @@
 	ov_clear(&vorbisRef);
 }
 
-- (void)seekToTime:(double)milliseconds
+- (double)seekToTime:(double)milliseconds
 {
 	ov_time_seek(&vorbisRef, (double)milliseconds/1000.0);
 	

@@ -313,8 +313,9 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		pos = [self calculatePos:time];
 		
 		newTime = [soundFile seekToTime:time];
-		if (newTime >= 0)
+		if (newTime >= 0.0)
 		{
+			DBLog(@"RESETTING");
 			[self resetBuffer];
 			
 			pos = [self calculatePos:newTime];
@@ -325,6 +326,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		}
 		else
 		{
+			DBLog(@"Not resetting: %f", newTime);
 			newTime = [self calculateTime:currentPosition];
 		}
 		//send a message with newTime

@@ -102,7 +102,7 @@
 - (double)seekToTime:(double)milliseconds
 {
 	DecMPA_SeekToTime(decoder, (unsigned long)milliseconds);
-	
+
 	return milliseconds;
 }
 

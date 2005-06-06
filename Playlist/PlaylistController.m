@@ -19,7 +19,7 @@
 	
 	if (self)
 	{
-		acceptableFileTypes = [[NSArray alloc] initWithObjects:@"ogg",@"wav",@"mpc",@"flac",@"ape",@"mp3",@"aiff",@"aif",@"aac",nil];
+		acceptableFileTypes = [[NSArray alloc] initWithObjects:@"shn",@"wv",@"ogg",@"wav",@"mpc",@"flac",@"ape",@"mp3",@"aiff",@"aif",@"aac",nil];
 		acceptablePlaylistTypes = [[NSArray alloc] initWithObjects:@"playlist",nil];
 		history = [[NSMutableArray alloc] init];
 		shuffleList = [[NSMutableArray alloc] init];
