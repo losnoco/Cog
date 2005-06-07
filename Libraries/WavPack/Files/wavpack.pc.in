@@ -1,0 +1,11 @@
+prefix=@prefix@
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: wavpack
+Description: wavpack library
+Version: @PACKAGE_VERSION@
+Requires:
+Conflicts:
+Libs: -L${libdir} -lwavpack @ICONV@
+Cflags: -I${includedir} -DPACK -DUNPACK -DUSE_FSTREAMS -DTAGS -DSEEKING -DVER3

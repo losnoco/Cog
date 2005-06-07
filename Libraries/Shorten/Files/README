@@ -1,0 +1,45 @@
+LAMIP-0.0.3 SHORTEN decoder
+---------------------------
+
+This is a shorten decoder for lamip. SHORTEN has been a widely used lossless
+codec. Since version 3 shorten has seeking support through seek tables (.skt).
+They can also be merged into the shorten file (.shn). The code for this plugin
+derives from the xmms shorten plugin version 2.4.0 written by Jason Jordan. 
+Look at that homepage:
+
+http://etree.org/shnutils/shorten/
+
+I have redesigned the xmms-shn plugin for a libshorten decoding library. You
+should be able to install libshorten as a standalone-lib and decode shorten
+files through that library
+
+Config options
+--------------
+- error_output_method: can be STDERR and DEVNULL... I think the names are 
+self explanatory
+
+- swap_bytes: If you have a big-endian machine, switch it on!
+
+- verbose: It is for some verbose debugging messages in the integrated logging
+facility of libshorten
+
+- seek_tables_path: An absolute path to a directory which contains shorten seek-
+tables
+
+- relative_seek_tables_path: A relative path to directories which contain
+shorten seek-tables
+
+
+INSTALL
+-------
+run :
+- autoreconf -vifs
+- ./configure --enable-debug
+- make
+
+and as root :
+- make install or make install-strip
+
+----------
+marc.icq@gmx.de
+
