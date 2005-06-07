@@ -26,7 +26,7 @@
 //	DBLog(@"MOUSE DOWN");
 	if ([e type] == NSLeftMouseDown && [e clickCount] == 2)
 	{
-		[soundController playEntryAtIndex:[self selectedRow]];
+		[soundController play:self];
 	}
 	else
 	{
@@ -56,7 +56,7 @@
 	}
 	else if (c == NSEnterCharacter || c == NSCarriageReturnCharacter)
 	{
-		[soundController playEntryAtIndex:[self selectedRow]];
+		[soundController play:self];
 	}
 	else
 	{

@@ -202,6 +202,7 @@
 				29B97318FDCFA39411CA2CEA,
 				8E10DBEF084BBCF00013815C,
 				8E5A90B0084CBC2F00AE6D62,
+				8E8F3F9B0855499500BCF803,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -383,6 +384,7 @@
 				8E6F2A1908480D010011F126,
 				8E10DBF0084BBCF00013815C,
 				8E5A90B1084CBC2F00AE6D62,
+				8E8F3F9C0855499500BCF803,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1095,6 +1097,20 @@
 		};
 		8E8BAEA608548C8200E9F14D = {
 			fileRef = 8E8BAE9808548C5500E9F14D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8E8F3F9B0855499500BCF803 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E8F3F9C0855499500BCF803 = {
+			fileRef = 8E8F3F9B0855499500BCF803;
 			isa = PBXBuildFile;
 			settings = {
 			};

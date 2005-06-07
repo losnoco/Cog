@@ -6,9 +6,13 @@
 #import "PlaylistController.h"
 #import "TrackingSlider.h"
 
+@class PlaylistView;
+
 @interface SoundController : NSObject
 {
     IBOutlet PlaylistController *playlistController;
+	IBOutlet PlaylistView *playlistView;
+	
 	IBOutlet TrackingSlider *positionSlider;
 	IBOutlet NSTextField *timeField;
 	IBOutlet NSTextField *lengthField;
@@ -16,13 +20,17 @@
 	BOOL waitingForPlay; //No sneaky changing on us
 	Sound *sound;
 	
+	int playbackStatus;
+	
 	//For communication with the sound
 	NSPort *sendPort; 
 	NSPort *distantPort; 
 }
 
+- (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;
 
+- (IBAction)play:(id)sender;
 - (IBAction)pause:(id)sender;
 - (IBAction)resume:(id)sender;
 - (IBAction)stop:(id)sender;

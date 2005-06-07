@@ -1,5 +1,6 @@
 #import "SoundController.h"
 #import "Sound.h"
+#import "PlaylistView.h"
 
 #import "DBLog.h"
 
@@ -13,6 +14,7 @@
 	if (self)
 	{
 		sound = [[Sound alloc] init];
+		playbackStatus = kCogStatusStopped;
 	}
 	
 	return self;
@@ -40,6 +42,14 @@
 	}
 }
 
+
+- (IBAction)playPauseResume:(id)sender
+{
+	if (playbackStatus == kCogStatusStopped)
+		[self play:self];
+	else
+		[self pauseResume:self];
+}
 
 - (IBAction)pauseResume:(id)sender
 {
@@ -79,6 +89,10 @@
 	[self playEntry:pe];
 }
 
+- (IBAction)play:(id)sender
+{
+	[self playEntryAtIndex:[playlistView selectedRow]];
+}
 
 - (void)playEntry:(PlaylistEntry *)pe;
 {
@@ -176,11 +190,12 @@
 {
 	
     unsigned int message = [portMessage msgid];
-//	DBLog(@"SOUNDCONTROLLER RECEIVED MESSAGE");
+	DBLog(@"GOT SOME KINDA WONDERFUL: %i %i", message, kCogStatusUpdateMessage);
+
     if (message == kCogCheckinMessage)
     {
         // Get the worker thread’s communications port.
-//		DBLog(@"CHECKIN RECEIVED");
+		DBLog(@"CHECKIN RECEIVED");
         distantPort = [portMessage sendPort];
 
         // Retain and save the worker port for later use.
@@ -237,7 +252,7 @@
 //		DBLog(@"Length changed: %f", max);
 //		[lengthField setDoubleValue:max/1000.0];
 	}
-	else if (message = kCogPositionUpdateMessage)
+	else if (message == kCogPositionUpdateMessage)
 	{
 		NSArray* components = [portMessage components];
 		NSData *data = [components objectAtIndex:0];
@@ -255,6 +270,18 @@
 		NSString *text;
 		text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
 		[timeField setStringValue:text];
+	}
+	else if (message == kCogStatusUpdateMessage)
+	{
+		DBLog(@"MESSAGE?");
+		NSArray* components = [portMessage components];
+		NSData *data = [components objectAtIndex:0];
+		
+		int s;
+		s = (*(int *)[data bytes]);
+		
+		playbackStatus = s;
+		DBLog(@"STATUS UPDATE: %i", s);
 	}
 }
 

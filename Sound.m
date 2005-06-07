@@ -96,7 +96,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 //		DBLog(@"FILE CHANGED!!!!!");
 		[sound sendPortMessage:kCogFileChangedMessage];
 		sound->readRingBuffer = [sound oppositeBuffer:sound->readRingBuffer];
-		sound->playbackStatus = kCogStatusPlaying;
+
+		[sound setPlaybackStatus:kCogStatusPlaying];
 		
 		sound->currentPosition = 0;
 		
@@ -108,7 +109,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	if (sound->playbackStatus == kCogStatusEndOfPlaylist && amountAvailable == 0)
 	{
 		//Stop playback
-		sound->playbackStatus = kCogStatusPlaybackEnded;
+		[sound setPlaybackStatus:kCogStatusStopped];
+//		return err;
 	}
 
 	if (amountAvailable < ([sound->readRingBuffer bufferLength] - BUFFER_WRITE_CHUNK))
@@ -181,7 +183,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	[self setThreadPolicy];
 
 	[[NSRunLoop currentRunLoop] run];
-	
+	DBLog(@"THREAD EXIT!!!!!!!!!!!");
 	[pool release];
 }
 
@@ -204,7 +206,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
     error = thread_policy_set(mach_thread_self(), THREAD_EXTENDED_POLICY,  (thread_policy_t)&extendedPolicy, THREAD_EXTENDED_POLICY_COUNT);
 
     if (error != KERN_SUCCESS) {
-        DBLog(@"Couldn't set feeder thread's extended policy");
+        DBLog(@"Couldnt set feeder thread's extended policy");
     }
 	
     precedencePolicy.importance = FEEDER_THREAD_IMPORTANCE;
@@ -221,9 +223,12 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	if (portMessage)
 	{
-		NSDate *date = [[NSDate alloc] init];
+		NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:20.0];//[[NSDate alloc] init];
 		
 		[portMessage setMsgid:msgid];
+		
+		DBLog(@"Sending message (nodata): %i", msgid);
+
 		[portMessage sendBeforeDate:date];
 		
 		[date release];
@@ -243,13 +248,26 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	if (portMessage)
 	{
-		NSDate *date = [[NSDate alloc] init];
-		
+		NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:20.0];//give shit a little time to send, just in case...may come back to bite me
+		if ([date laterDate:[NSDate date]] != date)
+		{
+			DBLog(@"WTF");
+		}
 		[portMessage setMsgid:msgid];
-		[portMessage sendBeforeDate:date];
+		DBLog(@"Sending message: %i", msgid);
 		
+		NS_DURING
+			[portMessage sendBeforeDate:date];
+		NS_HANDLER
+				NSRunAlertPanel(@"Error Panel", @"%@", @"OK", nil, nil, 
+						localException);
+		NS_ENDHANDLER
+
 		[date release];
 		[portMessage release];
+	}
+	else {
+		DBLog(@"DIDNT SEND! ERROR");
 	}
 	
 }
@@ -335,8 +353,19 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	}
 	else if (msgid == kCogEndOfPlaylistMessage)
 	{
-		playbackStatus = kCogStatusEndOfPlaylist;
+		[self setPlaybackStatus:kCogStatusEndOfPlaylist];
 	}
+}
+
+- (void)startPositionTimer
+{
+	positionTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(sendPositionUpdate:) userInfo:nil repeats:YES];
+}
+
+- (void)stopPositionTimer
+{
+	[positionTimer invalidate];
+	positionTimer = nil;
 }
 
 - (void)scheduleFillTimer
@@ -360,8 +389,12 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	int convertedSize;
 	void *writePointer;
 	
-	if (playbackStatus == kCogStatusPlaybackEnded)
+	if (playbackStatus == kCogStatusStopped)
+	{
+		DBLog(@"STOPPING");
 		[self stop];
+		return;
+	}
 	
 	[writeLock lock];
 	
@@ -384,7 +417,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 //			DBLog(@"NEXT!!!!");
 			[self sendPortMessage:kCogRequestNextFileMessage];
 			writeRingBuffer = [self oppositeBuffer:writeRingBuffer];
-			playbackStatus = kCogStatusEndOfFile;
+			
+			[self setPlaybackStatus:kCogStatusEndOfFile];
 		}
 			
 //		writePointer = (char *)writePointer + convertedSize;
@@ -588,48 +622,65 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	[soundFile close];
 }
 
+- (void)setPlaybackStatus:(int)s
+{
+	playbackStatus = s;
+	DBLog(@"SENDING MESSAGE");
+	[self sendPortMessage:kCogStatusUpdateMessage withData:&s ofSize:(sizeof(int))];
+	DBLog(@"MESSAGE SENT");
+}
+
 - (void)pause
 {
 	[self stopAudioOutput];
-	playbackStatus = kCogStatusPaused;
 
-	[positionTimer invalidate];
-	positionTimer = nil;
+	oldPlaybackStatus = playbackStatus;
+	[self setPlaybackStatus:kCogStatusPaused];
+
+	[self stopPositionTimer];
 }
 
 - (void)resume
 {
+	[self setPlaybackStatus:oldPlaybackStatus];
+	
 	[self startAudioOutput];
-	playbackStatus = kCogStatusPlaying;
 
-	positionTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(sendPositionUpdate:) userInfo:nil repeats:YES];
+	[self startPositionTimer];
 }
 
 - (void)stop
 {
-//	DBLog(@"STOPPING");
+	DBLog(@"STOPPING 2");
 	[self stopAudioOutput];
+	DBLog(@"Audio output stopped");
 	[self resetBuffer];
-	playbackStatus = kCogStatusStopped;
+	DBLog(@"BUFFERS RESET");
+	
+	[self setPlaybackStatus:kCogStatusStopped];
 
 //	DBLog(@"HERE? PORT CONFLICT...FUCK");
 	unsigned long pos = 0;
+	DBLog(@"STOPPED 0");
 	[self sendPortMessage:kCogPositionUpdateMessage withData:&pos ofSize:(sizeof(unsigned long))];
 //	DBLog(@"THIS IS UBER SHITE: %@", positionTimer);
 
-	[positionTimer invalidate];
-	positionTimer = nil;
-//	DBLog(@"INVALIDATED");
+	DBLog(@"STOPPED 1");
+	
+	[self stopPositionTimer];
+	
+	//	DBLog(@"INVALIDATED");
+	DBLog(@"STOPPED 2");
 }
 
 - (void)playFile:(NSString *)filename
 {
 	[self stop];
 
-//	DBLog(@"PLAYING FILE");
+	DBLog(@"PLAYING FILE");
 	[self setSoundFile:filename];
 
-//	DBLog(@"DONT LIKE THIS, HUH?");
+	DBLog(@"DONT LIKE THIS, HUH?");
 
 	[readLock lock];
 	unsigned long length = totalLength;
@@ -641,13 +692,18 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	[self sendPortMessage:kCogLengthUpdateMessage withData:&time ofSize:(sizeof(double))];
 	[self sendPortMessage:kCogBitrateUpdateMessage withData:&bitrate ofSize:(sizeof(int))];
 	
-	[self resume];
+	[self setPlaybackStatus:kCogStatusPlaying];
+
 	[self fillBuffer:self];
+	[self startAudioOutput];
+
+	[self startPositionTimer];	
 }
 
 - (void)changeFile:(NSString *)filename
 {
 	[self setSoundFile:filename];
+	[self fireFillTimer];
 }
 
 - (void)resetBuffer
@@ -677,7 +733,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 //	DBLog(@"File opened: %s", [filename UTF8String]);
 	[self prepareSoundFile];
-	[self fireFillTimer];
 }
 
 

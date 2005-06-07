@@ -65,6 +65,8 @@
                 next = id; 
                 pause = id; 
                 pauseResume = id; 
+                play = id; 
+                playPauseResume = id; 
                 prev = id; 
                 resume = id; 
                 seek = id; 
@@ -76,6 +78,7 @@
                 bitrateField = NSTextField; 
                 lengthField = NSTextField; 
                 playlistController = PlaylistController; 
+                playlistView = PlaylistView; 
                 positionSlider = TrackingSlider; 
                 timeField = NSTextField; 
             }; 

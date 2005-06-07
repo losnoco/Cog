@@ -34,12 +34,13 @@ enum
 	kCogBitrateUpdateMessage,
 	kCogLengthUpdateMessage,
 	kCogPositionUpdateMessage,
-	kCogFileChangedMessage
+	kCogFileChangedMessage,
+	kCogStatusUpdateMessage
 };
 
 enum
 {
-	kCogStatusPaused,
+	kCogStatusPaused = 0,
 	kCogStatusStopped,
 	kCogStatusPlaying,
 	kCogStatusEndOfFile,
@@ -66,6 +67,7 @@ enum
 	void *conversionBuffer;
 	
 	int playbackStatus;
+	int oldPlaybackStatus; //For resuming
 	
 	NSTimer *fillTimer; //used to wake up the filler thread
 	//semaphore_t semaphore; //used to wake up the filler thread	
@@ -109,6 +111,8 @@ enum
 - (void)cleanUpSoundFile;
 
 - (void)setThreadPolicy;
+
+- (void)setPlaybackStatus:(int)s;
 
 - (void)pause;
 - (void)resume;

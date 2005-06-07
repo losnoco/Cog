@@ -1,3 +1,9 @@
 Awesomized id3v2 and tagging support courtesy of TagLib.
 Dramatically improved performance of monkeys audio codec.
-minor bug fixes.
+SHN and Wavpack support.
+AAC support.
+Fixed 10.3 bug where files would not be removed from the playlist.
+Added tooltips and control menu.
+Fixed play button so it now plays the currently selected song if no song is playing. Otherwise, it does pause/resume.
+
+TODO: have button images change, play to pause...shuffle and repeat

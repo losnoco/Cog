@@ -51,11 +51,9 @@
 	unsigned int length;
 	length = shn_get_song_length(handle);
 	totalSize = (((double)(length)*frequency)/1000.0) * channels * (bitsPerSample/8);
-	DBLog(@"TOTAL SIZE: %i", totalSize);
-	DBLog(@"LENGTH: %i %lf %i %i", length, ((double)length)*frequency, (int)((length*frequency)/1000.0), channels);
 	
 	bitRate = (int)((double)totalSize/((double)length/1000.0));
-
+	DBLog(@"Bitrate; %i", bitRate);
 	return YES;
 }
 
