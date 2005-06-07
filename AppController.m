@@ -36,11 +36,6 @@
 	[playlistController remove:self];
 }
 
-- (IBAction)showInfo:(id)sender
-{
-	[infoPanel makeKeyAndOrderFront:self];
-}
-
 - (PlaylistEntry *)currentEntry
 {
 	return [playlistController currentEntry];

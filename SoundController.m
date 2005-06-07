@@ -186,6 +186,27 @@
 	}
 }
 
+- (void)changePlayButtonImage:(NSString *)name
+{
+	NSImage *img = [NSImage imageNamed:[name stringByAppendingString:@"_gray"]];
+	NSImage *alt = [NSImage imageNamed:[name stringByAppendingString:@"_blue"]];
+	[img retain];
+	[alt retain];
+	if (img == nil)
+	{
+		DBLog(@"NIL IMAGE!!!");
+	}
+	if (alt == nil)
+	{
+		DBLog(@"NIL ALT");
+	}
+	
+	DBLog(@"Setting button: %@", name);
+	
+	[playButton setImage:img];
+	[playButton setAlternateImage:alt];
+}
+
 - (void)handlePortMessage:(NSPortMessage *)portMessage
 {
 	
@@ -282,6 +303,19 @@
 		
 		playbackStatus = s;
 		DBLog(@"STATUS UPDATE: %i", s);
+		
+		if (s == kCogStatusStopped || s == kCogStatusPaused)
+		{
+			//Show play image
+			[self changePlayButtonImage:@"play"];
+			DBLog(@"PLAY PIC");
+		}
+		else if (s == kCogStatusPlaying)
+		{
+			//Show pause
+			[self changePlayButtonImage:@"pause"];
+			DBLog(@"PAUSE PIC");
+		}
 	}
 }
 

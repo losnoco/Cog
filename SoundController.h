@@ -17,6 +17,9 @@
 	IBOutlet NSTextField *timeField;
 	IBOutlet NSTextField *lengthField;
 	IBOutlet NSTextField *bitrateField;
+	
+	IBOutlet NSButton *playButton;
+	
 	BOOL waitingForPlay; //No sneaky changing on us
 	Sound *sound;
 	

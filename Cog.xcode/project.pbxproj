@@ -12,6 +12,8 @@
 				8E47215C08318D12001F89FA,
 				8EF6FA64082DA525006F7BE6,
 				8E6529F8083D93AF00A7AF1B,
+				8E287E480855F2EC00562C66,
+				8E287E490855F2EC00562C66,
 				8E2871080836934A0013CE39,
 				8E2871090836934A0013CE39,
 				8E4721D108319294001F89FA,
@@ -430,6 +432,7 @@
 				8E14E47C084CF1A200246BCC,
 				8E8BAE5408548BD500E9F14D,
 				8E8BAE5808548BE800E9F14D,
+				8E287E4B0855F2EC00562C66,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -703,6 +706,34 @@
 		};
 		8E28710B0836934A0013CE39 = {
 			fileRef = 8E2871090836934A0013CE39;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8E287E480855F2EC00562C66 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = InfoView.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E287E490855F2EC00562C66 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = InfoView.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8E287E4A0855F2EC00562C66 = {
+			fileRef = 8E287E480855F2EC00562C66;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8E287E4B0855F2EC00562C66 = {
+			fileRef = 8E287E490855F2EC00562C66;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1763,6 +1794,7 @@
 				8EFFB6D4083302A500C53833,
 				8EFFB6D5083302A500C53833,
 				8EFFB6D6083302A500C53833,
+				8E287E4A0855F2EC00562C66,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;

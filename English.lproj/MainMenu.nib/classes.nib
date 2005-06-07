@@ -14,7 +14,6 @@
             OUTLETS = {
                 addButton = NSButton; 
                 infoButton = NSButton; 
-                infoPanel = NSPanel; 
                 mainWindow = NSWindow; 
                 nextButton = NSButton; 
                 playButton = NSButton; 
@@ -47,6 +46,8 @@
             SUPERCLASS = NSObject; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = InfoController; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = InfoView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {
             ACTIONS = {takeRepeatFromObject = id; takeShuffleFromObject = id; }; 
             CLASS = PlaylistController; 
@@ -77,6 +78,7 @@
             OUTLETS = {
                 bitrateField = NSTextField; 
                 lengthField = NSTextField; 
+                playButton = NSButton; 
                 playlistController = PlaylistController; 
                 playlistView = PlaylistView; 
                 positionSlider = TrackingSlider; 

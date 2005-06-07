@@ -675,7 +675,9 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)playFile:(NSString *)filename
 {
-	[self stop];
+	[self resetBuffer];
+	[self stopPositionTimer];
+//	[self stop];
 
 	DBLog(@"PLAYING FILE");
 	[self setSoundFile:filename];

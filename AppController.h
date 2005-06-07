@@ -7,7 +7,6 @@
 @interface AppController : NSObject
 {
     IBOutlet PlaylistController *playlistController;
-	IBOutlet NSPanel *infoPanel;
 	IBOutlet NSWindow *mainWindow;
 	
 	IBOutlet NSButton *playButton;
@@ -19,8 +18,8 @@
 	IBOutlet NSButton *infoButton;
 	IBOutlet NSButton *shuffleButton;
 	IBOutlet NSButton *repeatButton;
-
 }
+
 - (IBAction)addFiles:(id)sender;
 - (IBAction)delEntries:(id)sender;
 - (IBAction)showInfo:(id)sender;
