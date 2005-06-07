@@ -56,7 +56,7 @@
 {
 	SoundFile *soundFile;
 	
-	if ([[filename pathExtension] isEqualToString:@"wav"] || [[filename pathExtension] isEqualToString:@"aiff"])
+	if ([[filename pathExtension] isEqualToString:@"wav"] || [[filename pathExtension] isEqualToString:@"aiff"] || [[filename pathExtension] isEqualToString:@"aif"])
 	{
 		soundFile = [[WaveFile alloc] init];
 	}

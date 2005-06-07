@@ -222,7 +222,7 @@
 		
 		if (tag)
 		{
-			NSLog(@"TAG: %i", tag);
+			DBLog(@"TAG: %i", tag);
 			
 			char *pArtist, *pTitle, *pAlbum, *pGenre, *pComment;
 			

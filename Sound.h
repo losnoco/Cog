@@ -121,7 +121,7 @@ enum
 - (void)playFile:(NSString *)filename;
 - (void)changeFile:(NSString *)filename;
 
-- (void)setSoundFile:(NSString *)filename;
+- (BOOL)setSoundFile:(NSString *)filename;
 
 //helper function
 - (double)calculateTime:(unsigned long) pos;

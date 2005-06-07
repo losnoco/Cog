@@ -93,7 +93,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	amountAvailable = [sound->readRingBuffer lengthAvailableToReadReturningPointer:&readPointer];
 	if (sound->playbackStatus == kCogStatusEndOfFile && amountAvailable == 0)
 	{
-//		DBLog(@"FILE CHANGED!!!!!");
+		DBLog(@"FILE CHANGED!!!!!");
 		[sound sendPortMessage:kCogFileChangedMessage];
 		sound->readRingBuffer = [sound oppositeBuffer:sound->readRingBuffer];
 
@@ -249,10 +249,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	if (portMessage)
 	{
 		NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:20.0];//give shit a little time to send, just in case...may come back to bite me
-		if ([date laterDate:[NSDate date]] != date)
-		{
-			DBLog(@"WTF");
-		}
+
 		[portMessage setMsgid:msgid];
 		DBLog(@"Sending message: %i", msgid);
 		
@@ -311,7 +308,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		{
 			[self playFile:s];
 		}
-		else if (kCogChangeFileMessage) //change the file, usually in response to a nexttrack request
+		else if (msgid == kCogChangeFileMessage) //change the file, usually in response to a nexttrack request
 		{
 			[self changeFile:s];
 		}
@@ -414,7 +411,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 //	convertedSize = [self convert:writePointer packets:(amountAvailable/deviceFormat.mBytesPerPacket)];
 		if (playbackStatus == kCogStatusPlaying && convertedSize == 0)
 		{
-//			DBLog(@"NEXT!!!!");
+			DBLog(@"NEXT!!!!");
 			[self sendPortMessage:kCogRequestNextFileMessage];
 			writeRingBuffer = [self oppositeBuffer:writeRingBuffer];
 			
@@ -680,8 +677,14 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 //	[self stop];
 
 	DBLog(@"PLAYING FILE");
-	[self setSoundFile:filename];
+	if (![self setSoundFile:filename])
+	{
+		DBLog(@"NOT PLAYING FILE");
+		[self stop];
 
+		return;
+	}
+	
 	DBLog(@"DONT LIKE THIS, HUH?");
 
 	[readLock lock];
@@ -704,8 +707,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)changeFile:(NSString *)filename
 {
-	[self setSoundFile:filename];
-	[self fireFillTimer];
+	if ([self setSoundFile:filename])
+		[self fireFillTimer];
 }
 
 - (void)resetBuffer
@@ -725,16 +728,26 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	[writeLock unlock];
 }
 
-- (void)setSoundFile:(NSString *)filename
+- (BOOL)setSoundFile:(NSString *)filename
 {
 	[self cleanUpSoundFile];
 	[soundFile release];
 	
 	//GO THROUGH HELLA SHIT TO DETERMINE FILE...NEED TO MAKE SOME KIND OF REGISTERING MECHANISM
 	soundFile = [SoundFile open:filename];
+	if (!soundFile)
+	{
+		DBLog(@"NEW SONG SETSOUNDFILE");
+		[self sendPortMessage:kCogFileChangedMessage];
+		[self setPlaybackStatus:kCogStatusEndOfPlaylist];
+//		[self sendPortMessage:kCogRequestNextFileMessage];
+		return NO;
+	}
 
 //	DBLog(@"File opened: %s", [filename UTF8String]);
 	[self prepareSoundFile];
+	
+	return YES;
 }
 
 

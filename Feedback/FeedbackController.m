@@ -23,7 +23,7 @@
 
 - (void)alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	NSLog(@"CONTEXT: %i", contextInfo);
+	DBLog(@"CONTEXT: %i", contextInfo);
 	if (contextInfo == YES)
 	{
 		[feedbackWindow close];
