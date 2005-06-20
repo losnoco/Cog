@@ -28,7 +28,7 @@
 
 //#define RING_BUFFER_SIZE 1048576
 //#define BUFFER_WRITE_CHUNK 32768
-#define FEEDER_THREAD_IMPORTANCE 4
+#define FEEDER_THREAD_IMPORTANCE 10
 
 //timeout should be smaller than the time itd take for the buffer to run dry...looks like were ironclad
 #define TIMEOUT 1

@@ -36,7 +36,7 @@
 
 - (int)insertFile:(NSString *)filename atIndex:(int)index
 {
-	if ([acceptableFileTypes containsObject:[filename pathExtension]])
+	if ([acceptableFileTypes containsObject:[filename pathExtension]] && [[NSFileManager defaultManager] fileExistsAtPath:filename])
 	{
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 

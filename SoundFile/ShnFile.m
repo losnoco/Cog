@@ -108,6 +108,9 @@
 
 - (void)close
 {
+	if (buffer)
+		free(buffer);
+	
 	if (shn_cleanup_decoder(handle))
 		shn_unload(handle);
 }

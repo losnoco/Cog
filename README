@@ -1,4 +1,4 @@
-------------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 	NOTE ABOUT BUTTONS:
 	If you are under impression that the buttons are acting strange,
 they actually may be acting as intended. The back button goes through
@@ -8,8 +8,8 @@ had shuffle mode on, and then turned it off, you could go back through the
 songs played during shuffle mode. The forward button acts as expected, where
 if shuffle is on, it will pick a random song, and if not it goes to the next
 song in the playlist.
-	Please comment on, whether you like this behaviour or not!
-------------------------------------------------------------------------------------
+	Please comment, whether you like this behaviour or not!
+---------------------------------------------------------------------------
 
     Cog is released under the GPL. See COPYING for details.
 
@@ -18,14 +18,14 @@ libraries, which i have created Xcode projects for, and possibly modified
 to make compile on OS X. The various libraries are under each of their own
 licenses.
 
-    Please note that vulgar language may be contained in the source code. It is rated
-M for mature by the ESRB, the MPAA, and whatever else deems it unsuitable for virgin
-ears.
-	
-	All Cog code is copywrited by me, and is licensed under the GPL.
+    Please note that vulgar language may be contained in the source code.
+It is rated M for mature by the ESRB, the MPAA, and whatever else deems it
+unsuitable for virgin ears.
 
+    All Cog code is copywrited by me, and is licensed under the GPL.
+    
     If you would like the photoshop sources for the various icons and
 graphics, please send me an email, and I will be happy to get them to you.
 
-Share and enjoy.
+  Share and enjoy.
 --Vincent Spader (vspader@users.sf.net)
