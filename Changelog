@@ -1,3 +1,11 @@
+0.0.3
+-----
+Fixed bug where Default.playlist referred to non-existent files, resulting in a crash.
+Clicking on the time display will now alternate between current time, and time to go.
+Now makes ham.
+
+0.0.2
+-----
 Awesomized id3v2 and tagging support courtesy of TagLib.
 Dramatically improved performance of monkeys audio codec.
 SHN and Wavpack support.
@@ -7,3 +15,7 @@ Added tooltips and control menu.
 Fixed play button so it now plays the currently selected song if no song is playing. Otherwise, it does pause/resume.
 Changed info panel to a drawer.
 Misc UI fixes.
+
+0.0.1
+-----
+Initial release.

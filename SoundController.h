@@ -25,10 +25,14 @@
 	
 	int playbackStatus;
 	
+	BOOL showTimeRemaining;
+	
 	//For communication with the sound
 	NSPort *sendPort; 
 	NSPort *distantPort; 
 }
+
+- (IBAction)toggleShowTimeRemaining:(id)sender;
 
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;

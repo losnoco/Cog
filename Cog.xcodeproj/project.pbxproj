@@ -36,6 +36,8 @@
 		8E5A90B1084CBC2F00AE6D62 /* Changelog in Resources */ = {isa = PBXBuildFile; fileRef = 8E5A90B0084CBC2F00AE6D62 /* Changelog */; };
 		8E652A02083D93EB00A7AF1B /* TrackingSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E652A00083D93EB00A7AF1B /* TrackingSlider.m */; };
 		8E6F2A1908480D010011F126 /* wheel.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8E6F2A1808480D010011F126 /* wheel.icns */; };
+		8E7DAB4F0867423900615930 /* ClickField.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E7DAB4D0867423900615930 /* ClickField.h */; };
+		8E7DAB500867423900615930 /* ClickField.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7DAB4E0867423900615930 /* ClickField.m */; };
 		8E81BC33083673ED0025A375 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E81BC31083673ED0025A375 /* AudioToolbox.framework */; };
 		8E81BC34083673ED0025A375 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E81BC32083673ED0025A375 /* AudioUnit.framework */; };
 		8E8BAE5408548BD500E9F14D /* WavPackFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8BAE5208548BD500E9F14D /* WavPackFile.m */; };
@@ -143,6 +145,7 @@
 				8EFFB6D5083302A500C53833 /* FLAC.framework in CopyFiles */,
 				8EFFB6D6083302A500C53833 /* DecMPA.framework in CopyFiles */,
 				8E287E4A0855F2EC00562C66 /* InfoView.h in CopyFiles */,
+				8E7DAB4F0867423900615930 /* ClickField.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +201,8 @@
 		8E6529FF083D93EB00A7AF1B /* TrackingSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TrackingSlider.h; sourceTree = "<group>"; };
 		8E652A00083D93EB00A7AF1B /* TrackingSlider.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TrackingSlider.m; sourceTree = "<group>"; };
 		8E6F2A1808480D010011F126 /* wheel.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = wheel.icns; path = Icons/wheel.icns; sourceTree = "<group>"; };
+		8E7DAB4D0867423900615930 /* ClickField.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ClickField.h; sourceTree = "<group>"; };
+		8E7DAB4E0867423900615930 /* ClickField.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ClickField.m; sourceTree = "<group>"; };
 		8E81BC31083673ED0025A375 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		8E81BC32083673ED0025A375 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		8E8BAE5108548BD500E9F14D /* WavPackFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WavPackFile.h; sourceTree = "<group>"; };
@@ -285,7 +290,7 @@
 				8E267D080837F7A6004ACBC5 /* Updates */,
 				8E47215C08318D12001F89FA /* Playlist */,
 				8EF6FA64082DA525006F7BE6 /* SoundFile */,
-				8E6529F8083D93AF00A7AF1B /* Slider */,
+				8E6529F8083D93AF00A7AF1B /* Custom */,
 				8E287E480855F2EC00562C66 /* InfoView.h */,
 				8E287E490855F2EC00562C66 /* InfoView.m */,
 				8E2871080836934A0013CE39 /* VirtualRingBuffer.h */,
@@ -424,15 +429,17 @@
 			name = Playlist;
 			sourceTree = "<group>";
 		};
-		8E6529F8083D93AF00A7AF1B /* Slider */ = {
+		8E6529F8083D93AF00A7AF1B /* Custom */ = {
 			isa = PBXGroup;
 			children = (
 				8E297908083D891500F2C55A /* TrackingCell.m */,
 				8E297909083D891500F2C55A /* TrackingCell.h */,
 				8E6529FF083D93EB00A7AF1B /* TrackingSlider.h */,
 				8E652A00083D93EB00A7AF1B /* TrackingSlider.m */,
+				8E7DAB4D0867423900615930 /* ClickField.h */,
+				8E7DAB4E0867423900615930 /* ClickField.m */,
 			);
-			name = Slider;
+			name = Custom;
 			sourceTree = "<group>";
 		};
 		8EAFD26D08465E4500107BA5 /* Icons */ = {
@@ -637,6 +644,7 @@
 				8E8BAE5408548BD500E9F14D /* WavPackFile.m in Sources */,
 				8E8BAE5808548BE800E9F14D /* ShnFile.m in Sources */,
 				8E287E4B0855F2EC00562C66 /* InfoView.m in Sources */,
+				8E7DAB500867423900615930 /* ClickField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,6 +15,8 @@
 	{
 		sound = [[Sound alloc] init];
 		playbackStatus = kCogStatusStopped;
+		
+		showTimeRemaining = NO;
 	}
 	
 	return self;
@@ -207,6 +209,25 @@
 	[playButton setAlternateImage:alt];
 }
 
+- (IBAction)toggleShowTimeRemaining:(id)sender
+{
+	NSString *text;
+	
+	showTimeRemaining = !showTimeRemaining;
+	if (showTimeRemaining == NO)
+	{
+		int sec = (int)([positionSlider doubleValue]/1000.0);
+		text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
+	}
+	else
+	{
+		int sec = (int)(([positionSlider maxValue] - [positionSlider doubleValue])/1000.0);
+		text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
+	}
+	
+	[timeField setStringValue:text];
+}
+
 - (void)handlePortMessage:(NSPortMessage *)portMessage
 {
 	
@@ -287,9 +308,17 @@
 			[positionSlider setDoubleValue:pos];
 		}
 
-		int sec = (int)(pos/1000.0);
 		NSString *text;
-		text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
+		if (showTimeRemaining == NO)
+		{
+			int sec = (int)(pos/1000.0);
+			text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
+		}
+		else
+		{
+			int sec = (int)(([positionSlider maxValue] - pos)/1000.0);
+			text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
+		}
 		[timeField setStringValue:text];
 	}
 	else if (message == kCogStatusUpdateMessage)

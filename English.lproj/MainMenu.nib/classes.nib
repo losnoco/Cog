@@ -27,6 +27,12 @@
             SUPERCLASS = NSObject; 
         }, 
         {
+            CLASS = ClickField; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {soundController = SoundController; }; 
+            SUPERCLASS = NSTextField; 
+        }, 
+        {
             CLASS = DNDArrayController; 
             LANGUAGE = ObjC; 
             OUTLETS = {tableView = NSTableView; }; 
@@ -72,6 +78,7 @@
                 resume = id; 
                 seek = id; 
                 stop = id; 
+                toggleShowTimeRemaining = id; 
             }; 
             CLASS = SoundController; 
             LANGUAGE = ObjC; 
