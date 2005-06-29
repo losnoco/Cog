@@ -36,7 +36,7 @@
 
 - (int)insertFile:(NSString *)filename atIndex:(int)index
 {
-	if ([acceptableFileTypes containsObject:[filename pathExtension]] && [[NSFileManager defaultManager] fileExistsAtPath:filename])
+	if ([acceptableFileTypes containsObject:[[filename pathExtension] lowercaseString]] && [[NSFileManager defaultManager] fileExistsAtPath:filename])
 	{
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 
@@ -101,9 +101,14 @@
 	count = 0;
 	
 	if (sort == YES)
+	{
 		sortedFiles = [paths sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+		[paths release];
+	}
 	else
+	{
 		sortedFiles = paths;
+	}
 	
 	for(i=0; i < [sortedFiles count]; i++)
 	{
@@ -391,7 +396,7 @@
 	[currentEntry setCurrent:NO];
 	
 	[pe setCurrent:YES];
-	[tableView scrollRowToVisible:[pe index]];
+	[tableView scrollRowToVisible:[(PlaylistEntry *)pe index]];
 	
 	[pe retain];
 	[currentEntry release];

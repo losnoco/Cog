@@ -34,19 +34,7 @@
 
 - (BOOL)readInfo:(const char *)filename
 {
-	int err;
-	CAPEInfo apeInfo(&err, filename, NULL);
-	
-	frequency = apeInfo.GetInfo(APE_INFO_SAMPLE_RATE);
-	bitsPerSample = apeInfo.GetInfo(APE_INFO_BITS_PER_SAMPLE);
-	channels = apeInfo.GetInfo(APE_INFO_CHANNELS);
-	
-	totalSize = apeInfo.GetInfo(APE_INFO_TOTAL_BLOCKS)*bitsPerSample/8*channels;	
-	bitRate = apeInfo.GetInfo(APE_INFO_AVERAGE_BITRATE);
-	
-	DBLog(@"INFO READ: %i %i %i %i", frequency, bitsPerSample, channels, totalSize);
-
-	return YES;
+	return [self open:filename];
 }
 
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size

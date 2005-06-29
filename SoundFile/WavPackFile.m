@@ -11,12 +11,6 @@
 
 @implementation WavPackFile
 
-- (UInt32)frequency
-{
-	//HACK ALERT
-	return frequency/2;
-}
-
 - (BOOL)open:(const char *)filename
 {
 	int open_flags = 0;
@@ -27,8 +21,10 @@
 		return NO;
 	
 	channels = WavpackGetNumChannels(wpc);
-	bitsPerSample = WavpackGetBitsPerSample(wpc);
-	frequency = WavpackGetSampleRate(wpc)*2;
+//	bitsPerSample = WavpackGetBitsPerSample(wpc);
+	bitsPerSample = 32;
+	
+	frequency = WavpackGetSampleRate(wpc);
 
 	int samples;
 	samples = WavpackGetNumSamples(wpc);
@@ -36,14 +32,16 @@
 	
 	bitRate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
 
-	isBigEndian = YES;
+	//isBigEndian = YES;
 
 	return YES;
 }
 
 - (BOOL)readInfo:(const char *)filename
 {
-	return [self open:filename]; //does the same damn thing
+	[self open:filename]; //does the same damn thing
+
+	return YES;
 }
 
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size
@@ -56,8 +54,14 @@
 	n = WavpackUnpackSamples(wpc, buf, numsamples);
 	
 	n *= 4*channels;
-//	DBLog(@"Read: %i", n);
 
+	int i;
+	for (i = 0; i < n/2; i++)
+	{
+//		((UInt32 *)buf)[i] = CFSwapInt32LittleToHost(((UInt32 *)buf)[i]);
+		((UInt16 *)buf)[i] = CFSwapInt16LittleToHost(((UInt16 *)buf)[i]);
+	}
+	
 	return n;
 }
 

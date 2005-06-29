@@ -165,7 +165,9 @@
 
 - (void)readInfo
 {
+	SoundFile *sp;
 	SoundFile *sf = [SoundFile readInfo:filename];
+	sp= sf;
 	
 	length = [sf length];
 	bitRate = [sf bitRate];
@@ -176,7 +178,8 @@
 	[self setLengthString:length];
 //	DBLog(@"Length: %f bitRate: %i channels: %i bps: %i samplerate: %f", length, bitRate, channels, bitsPerSample, sampleRate);
 	
-	[sf close];
+	//[(SoundFile *)sf close];
+//	[sp close];
 }
 
 - (NSString *)lengthString

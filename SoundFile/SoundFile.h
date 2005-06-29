@@ -42,7 +42,7 @@
 
 - (BOOL)readInfo:(const char *)filename; //for getting information
 
-- (UInt32)fillBuffer:(void *)buf ofSize:(UInt32)size;
+- (int)fillBuffer:(void *)buf ofSize:(UInt32)size;
 
 //- (BOOL)seek:(unsigned long)position;
 - (double)seekToTime:(double)milliseconds;

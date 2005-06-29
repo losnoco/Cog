@@ -55,12 +55,29 @@ const ID3v1::StringHandler *ID3v1::Tag::TagPrivate::stringHandler = new StringHa
 
 String ID3v1::StringHandler::parse(const ByteVector &data) const
 {
-  return String(data, String::Latin1);
+  return clean(String(data, String::Latin1));
 }
 
 ByteVector ID3v1::StringHandler::render(const String &s) const
 {
   return s.data(String::Latin1);
+}
+
+String ID3v1::StringHandler::clean(const String &s) const
+{
+	String newString;
+	int i;
+	
+	newString = s;	
+	
+	i = newString.size() - 1;
+	while (s[i] == ' ' && i >= 0)
+	{
+		newString[i] = '\0';
+		i--;
+	}
+	
+	return newString;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

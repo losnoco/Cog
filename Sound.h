@@ -27,6 +27,7 @@ enum
 	kCogStopMessage,
 	kCogSeekMessage,
 	kCogEndOfPlaylistMessage,
+	kCogSetVolumeMessage,
 	
 	//sound to controller
 	kCogCheckinMessage,
@@ -127,6 +128,7 @@ enum
 - (double)calculateTime:(unsigned long) pos;
 - (unsigned long)calculatePos:(double) time;
 
+- (void)setVolume:(float)v;
 
 @end
  

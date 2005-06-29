@@ -1,3 +1,12 @@
+0.04
+----
+Fixed id3v1 tag issue when taggers use spaces to fill empty bytes.
+Fixed minor UI (Hide NewApplication) bug.
+Fixed version number, so autoupdate should work.
+Compiled with GCC3.3, which should hopefully fix issues with 10.3.
+Now ignores case when dealing with file extensions.
+Added volume slider.
+
 0.0.3
 -----
 Fixed bug where Default.playlist referred to non-existent files, resulting in a crash.

@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "flac/all.h"
+#import "FLAC/all.h"
 #import "SoundFile.h"
 
 #define SAMPLES_PER_WRITE 512

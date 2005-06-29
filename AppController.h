@@ -22,7 +22,6 @@
 
 - (IBAction)addFiles:(id)sender;
 - (IBAction)delEntries:(id)sender;
-- (IBAction)showInfo:(id)sender;
 - (IBAction)savePlaylist:(id)sender;
 - (IBAction)savePlaylistAs:(id)sender;
 - (IBAction)loadPlaylist:(id)sender;

@@ -59,6 +59,9 @@ static OSStatus Sound_ACInputProc(AudioConverterRef inAudioConverter, UInt32* io
 	Sound *sound = (Sound *)inUserData;
 	OSStatus err = noErr;
 	
+	DBLog(@"Convert input proc");
+	DBLog(@"Numpackets: %i %i", *ioNumberDataPackets, ioData->mNumberBuffers);
+	
 	int amountToWrite;
 	int amountWritten;
 	void *sourceBuf;
@@ -67,6 +70,7 @@ static OSStatus Sound_ACInputProc(AudioConverterRef inAudioConverter, UInt32* io
 	sourceBuf = malloc(amountToWrite);
 	sound->conversionBuffer = sourceBuf;
 	
+	DBLog(@"Requesting: %i", amountToWrite);
 	amountWritten = [sound->soundFile fillBuffer:sourceBuf ofSize:amountToWrite];
 	
 //	DBLog(@"PACKET NUMBER RECEIVED: %i", *ioNumberDataPackets);
@@ -74,7 +78,9 @@ static OSStatus Sound_ACInputProc(AudioConverterRef inAudioConverter, UInt32* io
 	ioData->mBuffers[0].mDataByteSize = amountWritten;
 	ioData->mBuffers[0].mNumberChannels = sound->sourceStreamFormat.mChannelsPerFrame;
 	ioData->mNumberBuffers = 1;
-		
+
+	DBLog(@"Input complete");
+	
 	return err;
 }
 
@@ -145,8 +151,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		readLock = [[NSLock alloc] init];
 		writeLock = [[NSLock alloc] init];
 		
-		ringBuffer = [[VirtualRingBuffer alloc] initWithLength:RING_BUFFER_SIZE];
-		auxRingBuffer = [[VirtualRingBuffer alloc] initWithLength:RING_BUFFER_SIZE];
+		ringBuffer = [(VirtualRingBuffer *)[VirtualRingBuffer alloc] initWithLength:RING_BUFFER_SIZE];
+		auxRingBuffer = [(VirtualRingBuffer *)[VirtualRingBuffer alloc] initWithLength:RING_BUFFER_SIZE];
 		
 		readRingBuffer = ringBuffer;
 		writeRingBuffer = ringBuffer;
@@ -256,8 +262,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		NS_DURING
 			[portMessage sendBeforeDate:date];
 		NS_HANDLER
-				NSRunAlertPanel(@"Error Panel", @"%@", @"OK", nil, nil, 
-						localException);
+			NSRunAlertPanel(@"Error Panel", @"%@", @"OK", nil, nil, localException);
 		NS_ENDHANDLER
 
 		[date release];
@@ -352,6 +357,16 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	{
 		[self setPlaybackStatus:kCogStatusEndOfPlaylist];
 	}
+	else if (msgid == kCogSetVolumeMessage)
+	{
+		NSArray* components = [portMessage components];
+		NSData *data = [components objectAtIndex:0];
+		float vol;
+		
+		vol = (*(float *)[data bytes]);
+		
+		[self setVolume:vol];
+	}		
 }
 
 - (void)startPositionTimer
@@ -748,6 +763,20 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	[self prepareSoundFile];
 	
 	return YES;
+}
+
+- (void)setVolume:(float)v
+{
+	DBLog(@"Setting volume to: %f", v);
+	//Get the current stream format of the output
+	OSStatus err = AudioUnitSetParameter (outputUnit,
+								kHALOutputParam_Volume,
+								kAudioUnitScope_Global,
+								0,
+								v * 0.01f,
+								0);
+	
+	DBLog(@"Error: %lu", err);
 }
 
 

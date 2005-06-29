@@ -69,6 +69,7 @@
         }, 
         {
             ACTIONS = {
+                changeVolume = id; 
                 next = id; 
                 pause = id; 
                 pauseResume = id; 

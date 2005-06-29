@@ -54,7 +54,8 @@ BOOL CanSeekProc(void *data)
 //real ish
 - (BOOL)open:(const char *)filename
 {
-	[self readInfo:filename];
+	if ([self readInfo:filename] == NO)
+		return NO;
 	
     /* instantiate a decoder with our file reader */
     mpc_decoder_setup(&decoder, &reader);
@@ -91,7 +92,7 @@ BOOL CanSeekProc(void *data)
 	channels = 2;
 	
 	totalSize = mpc_streaminfo_get_length_samples(&info)*channels*bitsPerSample/8;	
-	
+
 	return YES;
 }
 

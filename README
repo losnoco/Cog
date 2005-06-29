@@ -1,14 +1,11 @@
 ---------------------------------------------------------------------------
-	NOTE ABOUT BUTTONS:
-	If you are under impression that the buttons are acting strange,
-they actually may be acting as intended. The back button goes through
-the history of the songs played, that is,it goes to the "previously played"
-song, not just the one before it in the playlist. So, for example, if you
-had shuffle mode on, and then turned it off, you could go back through the
-songs played during shuffle mode. The forward button acts as expected, where
-if shuffle is on, it will pick a random song, and if not it goes to the next
-song in the playlist.
-	Please comment, whether you like this behaviour or not!
+10.3 USERS!!!
+
+If you are using 10.3.8 or below, I'd like to hear from you. I'm trying to
+support all 10.3 systems, as I heard some people have had troubles with
+10.3.9, and won't upgrade to it.
+I can only fix this if people who actually run those systems wish to help
+me debug Cog. Thanks!
 ---------------------------------------------------------------------------
 
     Cog is released under the GPL. See COPYING for details.
@@ -24,7 +21,7 @@ unsuitable for virgin ears.
 
     All Cog code is copywrited by me, and is licensed under the GPL.
     
-    If you would like the photoshop sources for the various icons and
+	If you would like the photoshop sources for the various icons and
 graphics, please send me an email, and I will be happy to get them to you.
 
   Share and enjoy.

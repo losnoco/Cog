@@ -209,6 +209,12 @@
 	[playButton setAlternateImage:alt];
 }
 
+- (IBAction)changeVolume:(id)sender
+{
+	float v = (float)[sender floatValue];
+	[self sendPortMessage:kCogSetVolumeMessage withData:&v ofSize:sizeof(float)];
+}
+
 - (IBAction)toggleShowTimeRemaining:(id)sender
 {
 	NSString *text;

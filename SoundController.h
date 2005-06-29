@@ -33,6 +33,7 @@
 }
 
 - (IBAction)toggleShowTimeRemaining:(id)sender;
+- (IBAction)changeVolume:(id)sender;
 
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;

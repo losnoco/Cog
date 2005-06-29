@@ -12,7 +12,7 @@ CNNFilter::CNNFilter(int nOrder, int nShift, int nVersion)
     
 	//m_bMMXAvailable = GetMMXAvailable();
 	m_AltiVecAvailable = IsAltiVecAvailable();
-    
+
     m_rbInput.Create(NN_WINDOW_ELEMENTS, m_nOrder);
     m_rbDeltaM.Create(NN_WINDOW_ELEMENTS, m_nOrder);
     m_paryM = new short [m_nOrder];

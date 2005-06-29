@@ -13,10 +13,7 @@
 
 - (BOOL)open:(const char *)filename
 {
-	BOOL r;
-	
-	r = [self readInfo:filename];
-	if (!r)
+	if ([self readInfo:filename] == NO)
 		return NO;
 	
 	bufferSize = shn_get_buffer_block_size(handle, 512);
@@ -54,6 +51,7 @@
 	
 	bitRate = (int)((double)totalSize/((double)length/1000.0));
 	DBLog(@"Bitrate; %i", bitRate);
+	
 	return YES;
 }
 

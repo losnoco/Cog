@@ -8,6 +8,15 @@
 
 #import "SoundFile.h"
 
+#import "FlacFile.h"
+#import "AACFile.h"
+#import "MonkeysFile.h"
+#import "MPEGFile.h"
+#import "MusepackFile.h"
+#import "VorbisFile.h"
+#import "WaveFile.h"
+#import "WavPackFile.h"
+#import "ShnFile.h"
 
 @implementation SoundFile
 
@@ -38,10 +47,11 @@
 //this should be done by the soundfile....not seek...
 - (double)seekToTime:(double)milliseconds
 {
+	return -1.0;
 }
 
 
-
+/*
 @class FlacFile;
 @class MonkeysFile;
 @class MPEGFile;
@@ -51,44 +61,46 @@
 @class AACFile;
 @class WavPackFile;
 @class ShnFile;
-
+*/
 + (SoundFile *)soundFileFromFilename:(NSString *)filename
 {
 	SoundFile *soundFile;
 	
-	if ([[filename pathExtension] isEqualToString:@"wav"] || [[filename pathExtension] isEqualToString:@"aiff"] || [[filename pathExtension] isEqualToString:@"aif"])
+	DBLog(@"FILENAME: %@", [filename pathExtension]);
+	
+	if (([[filename pathExtension] caseInsensitiveCompare:@"wav"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aiff"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aif"] == NSOrderedSame))
 	{
 		soundFile = [[WaveFile alloc] init];
 	}
-	else if ([[filename pathExtension] isEqualToString:@"ogg"])
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"ogg"] == NSOrderedSame)
 	{
 		soundFile = [[VorbisFile alloc] init];
 	}
-	else if ([[filename pathExtension] isEqualToString:@"mpc"])
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"mpc"] == NSOrderedSame)
 	{
 		soundFile = [[MusepackFile alloc] init];
 	}
-	else if ([[filename pathExtension] isEqualToString:@"flac"])
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"flac"] == NSOrderedSame)
 	{
 		soundFile = [[FlacFile alloc] init];
 	}
-	else if ([[filename pathExtension] isEqualToString:@"ape"])
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"ape"] == NSOrderedSame)
 	{
 		soundFile = [[MonkeysFile alloc] init];
 	}
-	else if ([[filename pathExtension] isEqualToString:@"mp3"])
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"mp3"] == NSOrderedSame)
 	{
 		soundFile = [[MPEGFile alloc] init];
 	}
-	else if ([[filename pathExtension] isEqualToString:@"aac"])
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"aac"] == NSOrderedSame)
 	{
 		soundFile = [[AACFile alloc] init];
 	}
-	else if ([[filename pathExtension] isEqualToString:@"wv"])
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"wv"] == NSOrderedSame)
 	{
 		soundFile = [[WavPackFile alloc] init];
 	}
-	else if ([[filename pathExtension] isEqualToString:@"shn"])
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"shn"] == NSOrderedSame)
 	{
 		soundFile = [[ShnFile alloc] init];
 	}
@@ -122,6 +134,9 @@
 	soundFile = [SoundFile soundFileFromFilename:filename];
 
 	b = [soundFile readInfo:[filename UTF8String]];
+	
+	[soundFile close];
+	
 	if (b == YES)
 		return soundFile;
 		
@@ -165,7 +180,7 @@
 {
 }
 
-- (UInt32)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
 {
 	return 0;
 }

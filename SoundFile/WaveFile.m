@@ -83,7 +83,9 @@
 
 - (BOOL)readInfo:(const char *)filename
 {
-	return [self open:filename];
+	[self open:filename];
+	
+	return YES;
 }
 
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size
