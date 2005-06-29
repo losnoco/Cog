@@ -1,5 +1,0 @@
-//
-// Prefix header for all source files of the 'FAAD2' target in the 'FAAD2' project.
-//
-
-#include <Carbon/Carbon.h>
