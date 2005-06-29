@@ -1,3 +1,7 @@
+0.04.c
+----
+Fixed autopositioning of the volume slider.
+
 0.04.b
 ----
 Fixed crash when dragging/dropping files to the playlist.
