@@ -103,7 +103,6 @@
 	if (sort == YES)
 	{
 		sortedFiles = [paths sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-		[paths release];
 	}
 	else
 	{
@@ -182,10 +181,14 @@
 	NSArray *files = [[info draggingPasteboard] propertyListForType:NSFilenamesPboardType];
 	[self insertPaths:files atIndex:row sort:YES];
 
-	[self updateIndexesFromRow:row];
+	DBLog(@"FILES ADDED");
 	
+	[self updateIndexesFromRow:row];
+	DBLog(@"UPDATED THINGS");
 	if (shuffle == YES)
 		[self generateShuffleList];
+	
+	DBLog(@"ALL DONE");
 	
 	return YES;
 }

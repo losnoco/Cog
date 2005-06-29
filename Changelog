@@ -1,3 +1,7 @@
+0.04.b
+----
+Fixed crash when dragging/dropping files to the playlist.
+
 0.04
 ----
 Fixed id3v1 tag issue when taggers use spaces to fill empty bytes.
