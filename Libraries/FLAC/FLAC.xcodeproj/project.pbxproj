@@ -581,7 +581,7 @@
 				8E6A0D0E086CCC0A00B90CF9 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Deployment;
 		};
 		8E6A0D0F086CCC0A00B90CF9 /* Build configuration list for PBXProject "FLAC" */ = {
 			isa = XCConfigurationList;
@@ -591,7 +591,7 @@
 				8E6A0D12086CCC0A00B90CF9 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Deployment;
 		};
 /* End XCConfigurationList section */
 	};
