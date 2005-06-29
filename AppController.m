@@ -61,7 +61,6 @@
 	[shuffleButton setToolTip:@"Shuffle mode"];
 	[repeatButton setToolTip:@"Repeat mode"];
 
-	
 	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
 	[playlistController loadPlaylist:[filename stringByExpandingTildeInPath]];
 }
