@@ -3,7 +3,7 @@
 Fixed id3v1 tag issue when taggers use spaces to fill empty bytes.
 Fixed minor UI (Hide NewApplication) bug.
 Fixed version number, so autoupdate should work.
-Compiled with GCC3.3, which should hopefully fix issues with 10.3.
+Compiled with GCC3.3, which should hopefully fix issues with 10.3. (If it doesn't, contact me please)
 Now ignores case when dealing with file extensions.
 Added volume slider.
 

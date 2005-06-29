@@ -700,6 +700,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Libraries/DecMPA/build/Deployment",
+					"$(SRCROOT)/Libraries/FAAD2/build/Deployment",
 					"$(SRCROOT)/Libraries/FLAC/build/Deployment",
 					"$(SRCROOT)/Libraries/MAC/build/Deployment",
 					"$(SRCROOT)/Libraries/MPCDec/build/Deployment",
