@@ -480,7 +480,6 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
 				OTHER_CFLAGS = (
-					"-DVERSION=1.1.2",
 					"-DHAVE_INTTYPES_H",
 					"-DFLAC__ALIGN_MALLOC_DATA",
 					"-DFLAC__CPU_PPC",
