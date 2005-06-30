@@ -21,6 +21,11 @@
 	return YES;
 }
 
+- (BOOL)acceptsFirstMouse:(NSEvent *)mouseDownEvent
+{
+	return NO;
+}
+
 - (void)mouseDown:(NSEvent *)e
 {
 //	DBLog(@"MOUSE DOWN");

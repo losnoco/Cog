@@ -130,6 +130,9 @@
 	if (shuffle == YES)
 		[self generateShuffleList];
 	
+	
+	[self setSelectionIndex:index];
+	
 	return count;
 }
 

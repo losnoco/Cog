@@ -47,6 +47,9 @@
 - (IBAction)prev:(id)sender;
 - (IBAction)seek:(id)sender;
 
+
+- (void)updateTimeField:(double)pos;
+
 - (void)playEntryAtIndex:(int)i;
 - (void)playEntry:(PlaylistEntry *)pe;
 

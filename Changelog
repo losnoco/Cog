@@ -1,6 +1,12 @@
 0.05
 ----
 Dragging to the dock icon now works in 10.3.
+Selection now selects the first song added when adding new files.
+Now seeds the random number for shuffle mode.
+Redesigned UI thanks to Julian Mayer <julianmayer (at) mac.com>.
+If nothing is selected when the user presses play, the first song is played.
+Double-clicking when out of focus now behaves as expected.
+Now has a simple dock menu courtesy of Nathanael Weldon <nathanael (at) mailblocks.com>.
 
 0.04
 ----
@@ -13,13 +19,13 @@ Added volume slider.
 Fixed autopositioning of the volume slider.
 Fixed crash when dragging/dropping files to the playlist.
 
-0.0.3
+0.03
 -----
 Fixed bug where Default.playlist referred to non-existent files, resulting in a crash.
 Clicking on the time display will now alternate between current time, and time to go.
 Now makes ham.
 
-0.0.2
+0.02
 -----
 Awesomized id3v2 and tagging support courtesy of TagLib.
 Dramatically improved performance of monkeys audio codec.
@@ -31,6 +37,6 @@ Fixed play button so it now plays the currently selected song if no song is play
 Changed info panel to a drawer.
 Misc UI fixes.
 
-0.0.1
+0.01
 -----
 Initial release.

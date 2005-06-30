@@ -24,8 +24,6 @@
 
 - (void)awakeFromNib
 {
-	[timeField setFont:[NSFont systemFontOfSize:18]];
-
 	sendPort = [NSPort port];
 	if (sendPort)
 	{
@@ -93,6 +91,9 @@
 
 - (IBAction)play:(id)sender
 {
+	if ([playlistView selectedRow] == -1)
+		[playlistView selectRow:0 byExtendingSelection:NO];
+	
 	[self playEntryAtIndex:[playlistView selectedRow]];
 }
 
@@ -132,10 +133,7 @@
 	time = [positionSlider doubleValue];
 	[self sendPortMessage:kCogSeekMessage withData:&time ofSize:(sizeof(double))];
 	
-	int sec = (int)(time/1000.0);
-	NSString *text;
-	text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
-	[timeField setStringValue:text];	
+	[self updateTimeField:time];
 }
 
 - (void)sendPortMessage:(int)msgid
@@ -213,23 +211,28 @@
 	[self sendPortMessage:kCogSetVolumeMessage withData:&v ofSize:sizeof(float)];
 }
 
-- (IBAction)toggleShowTimeRemaining:(id)sender
+
+- (void)updateTimeField:(double)pos
 {
 	NSString *text;
-	
-	showTimeRemaining = !showTimeRemaining;
 	if (showTimeRemaining == NO)
 	{
-		int sec = (int)([positionSlider doubleValue]/1000.0);
-		text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
+		int sec = (int)(pos/1000.0);
+		text = [NSString stringWithFormat:@"Time Elapsed: %i:%02i", sec/60, sec%60];
 	}
 	else
 	{
-		int sec = (int)(([positionSlider maxValue] - [positionSlider doubleValue])/1000.0);
-		text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
+		int sec = (int)(([positionSlider maxValue] - pos)/1000.0);
+		text = [NSString stringWithFormat:@"Time Remaining: %i:%02i", sec/60, sec%60];
 	}
-	
 	[timeField setStringValue:text];
+}	
+
+- (IBAction)toggleShowTimeRemaining:(id)sender
+{
+	showTimeRemaining = !showTimeRemaining;
+
+	[self updateTimeField:[positionSlider doubleValue]];
 }
 
 - (void)handlePortMessage:(NSPortMessage *)portMessage
@@ -271,7 +274,7 @@
 		{
 			waitingForPlay = NO;
 			[playlistController next];
-			[timeField setStringValue:@"0:00"];
+			[self updateTimeField:0.0f];
 		}
 	}
 	else if (message == kCogBitrateUpdateMessage)
@@ -311,18 +314,7 @@
 			[positionSlider setDoubleValue:pos];
 		}
 
-		NSString *text;
-		if (showTimeRemaining == NO)
-		{
-			int sec = (int)(pos/1000.0);
-			text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
-		}
-		else
-		{
-			int sec = (int)(([positionSlider maxValue] - pos)/1000.0);
-			text = [NSString stringWithFormat:@"%i:%02i", sec/60, sec%60];
-		}
-		[timeField setStringValue:text];
+		[self updateTimeField:pos];
 	}
 	else if (message == kCogStatusUpdateMessage)
 	{
