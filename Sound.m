@@ -59,8 +59,8 @@ static OSStatus Sound_ACInputProc(AudioConverterRef inAudioConverter, UInt32* io
 	Sound *sound = (Sound *)inUserData;
 	OSStatus err = noErr;
 	
-	DBLog(@"Convert input proc");
-	DBLog(@"Numpackets: %i %i", *ioNumberDataPackets, ioData->mNumberBuffers);
+//	DBLog(@"Convert input proc");
+//	DBLog(@"Numpackets: %i %i", *ioNumberDataPackets, ioData->mNumberBuffers);
 	
 	int amountToWrite;
 	int amountWritten;
@@ -70,7 +70,7 @@ static OSStatus Sound_ACInputProc(AudioConverterRef inAudioConverter, UInt32* io
 	sourceBuf = malloc(amountToWrite);
 	sound->conversionBuffer = sourceBuf;
 	
-	DBLog(@"Requesting: %i", amountToWrite);
+//	DBLog(@"Requesting: %i", amountToWrite);
 	amountWritten = [sound->soundFile fillBuffer:sourceBuf ofSize:amountToWrite];
 	
 //	DBLog(@"PACKET NUMBER RECEIVED: %i", *ioNumberDataPackets);
@@ -79,7 +79,7 @@ static OSStatus Sound_ACInputProc(AudioConverterRef inAudioConverter, UInt32* io
 	ioData->mBuffers[0].mNumberChannels = sound->sourceStreamFormat.mChannelsPerFrame;
 	ioData->mNumberBuffers = 1;
 
-	DBLog(@"Input complete");
+//	DBLog(@"Input complete");
 	
 	return err;
 }
@@ -144,7 +144,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (id)init
 {
-	DBLog(@"HEllo");
 	self = [super init];
 	if (self)
 	{
@@ -233,8 +232,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		
 		[portMessage setMsgid:msgid];
 		
-		DBLog(@"Sending message (nodata): %i", msgid);
-
 		[portMessage sendBeforeDate:date];
 		
 		[date release];
@@ -257,7 +254,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:20.0];//give shit a little time to send, just in case...may come back to bite me
 
 		[portMessage setMsgid:msgid];
-		DBLog(@"Sending message: %i", msgid);
 		
 		NS_DURING
 			[portMessage sendBeforeDate:date];
@@ -335,7 +331,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		newTime = [soundFile seekToTime:time];
 		if (newTime >= 0.0)
 		{
-			DBLog(@"RESETTING");
 			[self resetBuffer];
 			
 			pos = [self calculatePos:newTime];
@@ -637,9 +632,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 - (void)setPlaybackStatus:(int)s
 {
 	playbackStatus = s;
-	DBLog(@"SENDING MESSAGE");
+
 	[self sendPortMessage:kCogStatusUpdateMessage withData:&s ofSize:(sizeof(int))];
-	DBLog(@"MESSAGE SENT");
 }
 
 - (void)pause
@@ -663,7 +657,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)stop
 {
-	DBLog(@"STOPPING 2");
 	[self stopAudioOutput];
 	DBLog(@"Audio output stopped");
 	[self resetBuffer];
@@ -673,16 +666,12 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 //	DBLog(@"HERE? PORT CONFLICT...FUCK");
 	unsigned long pos = 0;
-	DBLog(@"STOPPED 0");
 	[self sendPortMessage:kCogPositionUpdateMessage withData:&pos ofSize:(sizeof(unsigned long))];
 //	DBLog(@"THIS IS UBER SHITE: %@", positionTimer);
-
-	DBLog(@"STOPPED 1");
 	
 	[self stopPositionTimer];
 	
 	//	DBLog(@"INVALIDATED");
-	DBLog(@"STOPPED 2");
 }
 
 - (void)playFile:(NSString *)filename
@@ -767,7 +756,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)setVolume:(float)v
 {
-	DBLog(@"Setting volume to: %f", v);
+//	DBLog(@"Setting volume to: %f", v);
 	//Get the current stream format of the output
 	OSStatus err = AudioUnitSetParameter (outputUnit,
 								kHALOutputParam_Volume,
@@ -775,8 +764,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 								0,
 								v * 0.01f,
 								0);
-	
-	DBLog(@"Error: %lu", err);
 }
 
 

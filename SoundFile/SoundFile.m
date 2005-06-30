@@ -66,8 +66,6 @@
 {
 	SoundFile *soundFile;
 	
-	DBLog(@"FILENAME: %@", [filename pathExtension]);
-	
 	if (([[filename pathExtension] caseInsensitiveCompare:@"wav"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aiff"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aif"] == NSOrderedSame))
 	{
 		soundFile = [[WaveFile alloc] init];

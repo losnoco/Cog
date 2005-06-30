@@ -34,10 +34,7 @@
 	NeAACDecSetConfiguration(hAac, conf);
 	
 	get_AAC_format(inFd, &info, &seekTable, &seekTableLength, 1);
-	DBLog(@"INFO TIME");
-	DBLog(@"---------");
-	DBLog(@"%i %i %i %i %i", info.bitrate, info.channels, info.length, info.sampling_rate, info.version);
-	DBLog(@"");
+
 	fseek(inFd, 0, SEEK_SET);
 	
 	inputAmount = fread(inputBuffer, 1, INPUT_BUFFER_SIZE, inFd);
@@ -158,7 +155,7 @@
 
 	second = (int)(milliseconds/1000.0);
 	i = (int)(((float)second/length)*seekTableLength);
-	DBLog(@"SEEKING TO: %i %i", seekTable, seekTableLength);
+
 	pos = seekTable[i];
 	
 	fseek(inFd, pos, SEEK_SET);

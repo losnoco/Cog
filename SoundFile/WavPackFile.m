@@ -69,7 +69,7 @@
 {
 	int sample;
 	sample = (frequency/2)*(milliseconds/1000.0);
-	DBLog(@"%lf %i", milliseconds, sample);
+
 	WavpackSeekSample(wpc, sample);
 	
 	return milliseconds;

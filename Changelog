@@ -1,10 +1,6 @@
-0.04.c
+0.05
 ----
-Fixed autopositioning of the volume slider.
-
-0.04.b
-----
-Fixed crash when dragging/dropping files to the playlist.
+Dragging to the dock icon now works in 10.3.
 
 0.04
 ----
@@ -14,6 +10,8 @@ Fixed version number, so autoupdate should work.
 Compiled with GCC3.3, which should hopefully fix issues with 10.3. (If it doesn't, contact me please)
 Now ignores case when dealing with file extensions.
 Added volume slider.
+Fixed autopositioning of the volume slider.
+Fixed crash when dragging/dropping files to the playlist.
 
 0.0.3
 -----

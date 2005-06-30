@@ -225,8 +225,6 @@
 		
 		if (tag)
 		{
-			DBLog(@"TAG: %i", tag);
-			
 			char *pArtist, *pTitle, *pAlbum, *pGenre, *pComment;
 			
 			pArtist = taglib_tag_artist(tag);

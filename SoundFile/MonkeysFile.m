@@ -28,7 +28,7 @@
 	channels = decompress->GetInfo(APE_INFO_CHANNELS);
 
 	totalSize = decompress->GetInfo(APE_INFO_TOTAL_BLOCKS)*bitsPerSample/8*channels;
-	DBLog(@"APE OPENED: %i %i %i %i", frequency, bitsPerSample, channels, totalSize);
+
 	return YES;
 }
 

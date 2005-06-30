@@ -11,14 +11,14 @@
 			<array>
 				<string>*</string>
 			</array>
-			<key>CFBundleTypeName</key>
-			<string>Folder</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>****</string>
+				<string>fold</string>
+				<string>disk</string>
+			</array>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>LSTypeIsPackage</key>
-			<true/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<string>None</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -29,6 +29,8 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>AIFF Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -93,7 +95,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.04.1</string>
+	<string>0.05</string>
 	<key>NSAppleScriptEnabled</key>
 	<string>YES</string>
 	<key>NSMainNibFile</key>

@@ -203,8 +203,6 @@
 		DBLog(@"NIL ALT");
 	}
 	
-	DBLog(@"Setting button: %@", name);
-	
 	[playButton setImage:img];
 	[playButton setAlternateImage:alt];
 }
@@ -238,7 +236,6 @@
 {
 	
     unsigned int message = [portMessage msgid];
-	DBLog(@"GOT SOME KINDA WONDERFUL: %i %i", message, kCogStatusUpdateMessage);
 
     if (message == kCogCheckinMessage)
     {
@@ -329,7 +326,6 @@
 	}
 	else if (message == kCogStatusUpdateMessage)
 	{
-		DBLog(@"MESSAGE?");
 		NSArray* components = [portMessage components];
 		NSData *data = [components objectAtIndex:0];
 		
@@ -343,13 +339,11 @@
 		{
 			//Show play image
 			[self changePlayButtonImage:@"play"];
-			DBLog(@"PLAY PIC");
 		}
 		else if (s == kCogStatusPlaying)
 		{
 			//Show pause
 			[self changePlayButtonImage:@"pause"];
-			DBLog(@"PAUSE PIC");
 		}
 	}
 }

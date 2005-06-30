@@ -60,14 +60,17 @@
 	
 	manager = [NSFileManager defaultManager];
 	
+	DBLog(@"Checking if path is a directory: %@", path);
 	if ([manager fileExistsAtPath:path isDirectory:&isDir] && isDir == YES)
 	{
+		DBLog(@"path is directory");
 		int count;
 		int j;
 		NSArray *subpaths;
 		count = 0;
 		subpaths = [manager subpathsAtPath:path];
 		
+		DBLog(@"Subpaths: %@", subpaths);
 		for (j = 0; j < [subpaths count]; j++)
 		{
 			NSString *filepath;
@@ -82,6 +85,7 @@
 	else
 	{
 //		DBLog(@"Adding fiiiiile: %@", path);
+		DBLog(@"path is a file");
 		return [self insertFile:path atIndex:index];
 	}
 }
@@ -100,6 +104,7 @@
 	
 	count = 0;
 	
+	DBLog(@"Sorting paths");
 	if (sort == YES)
 	{
 		sortedFiles = [paths sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
@@ -109,13 +114,14 @@
 		sortedFiles = paths;
 	}
 	
+	DBLog(@"Paths sorted: %@", sortedFiles);
 	for(i=0; i < [sortedFiles count]; i++)
 	{
 		int j;
 		NSString *f;
 		f = [sortedFiles objectAtIndex:i];
 		
-//		DBLog(@"Adding file to index: %i", index+count);
+		DBLog(@"Inserting path");
 		j = [self insertPath:f atIndex:(index+count)];
 //		DBLog(@"Number added: %i", j);
 		count+=j;
@@ -181,14 +187,10 @@
 	NSArray *files = [[info draggingPasteboard] propertyListForType:NSFilenamesPboardType];
 	[self insertPaths:files atIndex:row sort:YES];
 
-	DBLog(@"FILES ADDED");
-	
 	[self updateIndexesFromRow:row];
-	DBLog(@"UPDATED THINGS");
+
 	if (shuffle == YES)
 		[self generateShuffleList];
-	
-	DBLog(@"ALL DONE");
 	
 	return YES;
 }

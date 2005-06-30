@@ -50,7 +50,6 @@
 	totalSize = (((double)(length)*frequency)/1000.0) * channels * (bitsPerSample/8);
 	
 	bitRate = (int)((double)totalSize/((double)length/1000.0));
-	DBLog(@"Bitrate; %i", bitRate);
 	
 	return YES;
 }
