@@ -2,8 +2,8 @@
 //  Sound.m
 //  Cog
 //
-//  Created by Zaphod Beeblebrox on 5/11/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Created by Vincent Spader on 5/11/05.
+//  Copyright 2005 Vincent Spader All rights reserved.
 //
 
 #include <mach/mach_init.h>

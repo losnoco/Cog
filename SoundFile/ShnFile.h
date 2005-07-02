@@ -2,8 +2,8 @@
 //  ShnFile.h
 //  Cog
 //
-//  Created by Zaphod Beeblebrox on 6/6/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Created by Vincent Spader on 6/6/05.
+//  Copyright 2005 Vincent Spader All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>

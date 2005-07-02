@@ -3,7 +3,7 @@
 //  Cog
 //
 //  Created by Vincent Spader on 3/18/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Vincent Spader All rights reserved.
 //
 
 #import "PlaylistController.h"
@@ -41,7 +41,7 @@
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 
 		[pe	setFilename:filename]; //Setfilename takes car of opening the soundfile..cheap hack, but works for now
-		[pe setIndex:index];
+		[pe setIndex:(index+1)];
 		[pe readTags];
 		[pe readInfo];
 		
@@ -207,7 +207,7 @@
 		PlaylistEntry *p;
 		p = [[self content] objectAtIndex:j];
 		
-		[p setIndex:j];
+		[p setIndex:(j+1)];
 	}
 }
 
@@ -372,7 +372,7 @@
 	}
 	else
 	{
-		int i = [currentEntry index] + 1;
+		int i = ([currentEntry index] - 1) + 1;
 
 		if (i >= [[self arrangedObjects] count]) //out of tuuuunes
 		{
@@ -404,7 +404,7 @@
 	[currentEntry setCurrent:NO];
 	
 	[pe setCurrent:YES];
-	[tableView scrollRowToVisible:[(PlaylistEntry *)pe index]];
+	[tableView scrollRowToVisible:([(PlaylistEntry *)pe index]-1)];
 	
 	[pe retain];
 	[currentEntry release];
