@@ -131,7 +131,9 @@
 //	DBLog(@"SEEKING?");
 	double time;
 	time = [positionSlider doubleValue];
-	[self sendPortMessage:kCogSeekMessage withData:&time ofSize:(sizeof(double))];
+	
+	if ([sender tracking] == NO) // check if user stopped sliding  before playing audio
+        [self sendPortMessage:kCogSeekMessage withData:&time ofSize: (sizeof(double))];
 	
 	[self updateTimeField:time];
 }
@@ -312,9 +314,8 @@
 		{
 			//		DBLog(@"Received pos update: %f", pos);
 			[positionSlider setDoubleValue:pos];
+			[self updateTimeField:pos];
 		}
-
-		[self updateTimeField:pos];
 	}
 	else if (message == kCogStatusUpdateMessage)
 	{

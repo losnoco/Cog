@@ -8,6 +8,7 @@ If nothing is selected when the user presses play, the first song is selected an
 Double-clicking when out of focus now behaves as expected.
 Now has a simple dock menu courtesy of Nathanael Weldon <nathanael (at) mailblocks.com>.
 The playlist index now starts at 1.
+Seekbar now updates the time field as you drag it, Simon Savary <savary (at) oricom.ca>
 
 0.04
 ----
