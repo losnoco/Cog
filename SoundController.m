@@ -102,7 +102,7 @@
 	waitingForPlay = NO;
 
 //	DBLog(@"PlayEntry: %@ Sent!", [pe filename]);
-	
+
 	[self sendPortMessage:kCogPlayFileMessage withString:[pe filename]];
 }
 
@@ -220,12 +220,12 @@
 	if (showTimeRemaining == NO)
 	{
 		int sec = (int)(pos/1000.0);
-		text = [NSString stringWithFormat:@"Time Elapsed: %i:%02i", sec/60, sec%60];
+		text = [NSString stringWithFormat:NSLocalizedString(@"TimeElapsed", @""), sec/60, sec%60];
 	}
 	else
 	{
 		int sec = (int)(([positionSlider maxValue] - pos)/1000.0);
-		text = [NSString stringWithFormat:@"Time Remaining: %i:%02i", sec/60, sec%60];
+		text = [NSString stringWithFormat:NSLocalizedString(@"TimeRemaining", @""), sec/60, sec%60];
 	}
 	[timeField setStringValue:text];
 }	
@@ -301,6 +301,7 @@
 		[positionSlider setDoubleValue:0];
 //		DBLog(@"Length changed: %f", max);
 //		[lengthField setDoubleValue:max/1000.0];
+		[self updateTimeField:0.0f];
 	}
 	else if (message == kCogPositionUpdateMessage)
 	{

@@ -265,7 +265,6 @@
 		8EDCBDCA0840617B00F5C7E3 /* Cog.scriptTerminology */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.scriptTerminology; path = Cog.scriptTerminology; sourceTree = "<group>"; };
 		8EDCBDCC0840618900F5C7E3 /* Cog.scriptSuite */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.scriptSuite; path = Cog.scriptSuite; sourceTree = "<group>"; };
 		8EE90D3808830662002238C8 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
-		8EE90D5608830B0B002238C8 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8EF6FA65082DA526006F7BE6 /* FlacFile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FlacFile.h; sourceTree = "<group>"; };
 		8EF6FA66082DA526006F7BE6 /* FlacFile.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FlacFile.m; sourceTree = "<group>"; };
 		8EF6FA67082DA526006F7BE6 /* MonkeysFile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MonkeysFile.h; sourceTree = "<group>"; };
@@ -709,7 +708,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				8EE90D3808830662002238C8 /* English */,
-				8EE90D5608830B0B002238C8 /* French */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

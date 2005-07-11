@@ -51,15 +51,15 @@
 {
 //	DBLog(@"AWAKe");
 	
-	[playButton setToolTip:@"Play"];
-	[stopButton setToolTip:@"Stop"];
-	[prevButton setToolTip:@"Previous"];
-	[nextButton setToolTip:@"Next"];
-	[addButton setToolTip:@"Add files"];
-	[remButton setToolTip:@"Remove selected files"];
-	[infoButton setToolTip:@"Information on the selected file."];
-	[shuffleButton setToolTip:@"Shuffle mode"];
-	[repeatButton setToolTip:@"Repeat mode"];
+	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
+	[stopButton setToolTip:NSLocalizedString(@"StopButtonTooltip", @"")];
+	[prevButton setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"")];
+	[nextButton setToolTip:NSLocalizedString(@"NextButtonTooltip", @"")];
+	[addButton setToolTip:NSLocalizedString(@"AddButtonTooltip", @"")];
+	[remButton setToolTip:NSLocalizedString(@"RemoveButtonTooltip", @"")];
+	[infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
+	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
+	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
 
 	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
 	[playlistController loadPlaylist:[filename stringByExpandingTildeInPath]];
