@@ -36,8 +36,8 @@
 	[sendingIndicator stopAnimation:self];
 
 	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-	[alert setMessageText:@"Failed"];
-	[alert setInformativeText:@"Feedback failed to send."];
+	[alert setMessageText:NSLocalizedString(@"FeedbackFailedMessageText", @"")];
+	[alert setInformativeText:NSLocalizedString(@"FeedbackFailedInformativeText", @"")];
 	
 	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:NO];
 }
@@ -49,8 +49,8 @@
 	[sendingIndicator stopAnimation:self];
 
 	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-	[alert setMessageText:@"Success"];
-	[alert setInformativeText:@"Feedback successfully sent!"];
+	[alert setMessageText:NSLocalizedString(@"FeedbackSuccessMessageText", @"")];
+	[alert setInformativeText:NSLocalizedString(@"FeedbackSuccessInformativeText", @"")];
 
 	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:YES];
 }

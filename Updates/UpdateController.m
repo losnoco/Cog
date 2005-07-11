@@ -15,7 +15,7 @@
 	[okayButton setEnabled:NO];
 	[checkingIndicator startAnimation:self];
 
-	[statusView setStringValue:@"Checking for update..."];
+	[statusView setStringValue:NSLocalizedString(@"CheckingForUpdate", @"")];
 	
 	macPAD = [[MacPADSocket alloc] init];
 	[macPAD setDelegate:self];
@@ -29,17 +29,17 @@
 	result = [[info objectForKey:MacPADErrorCode] intValue];
 	if (result == kMacPADResultNewVersion) //New version available
 	{
-		[statusView setStringValue:@"Update available!"];
+		[statusView setStringValue:NSLocalizedString(@"UpdateAvailable", @"")];
 		updateAvailable = YES;
 	}
 	else if (result == kMacPADResultNoNewVersion) //No new version available
 	{
-		[statusView setStringValue:@"No updates available."];
+		[statusView setStringValue:NSLocalizedString(@"UpdateNotFound", @"")];
 		updateAvailable = NO;
 	}
 	else //Error connecting to update server
 	{
-		[statusView setStringValue:@"Error connecting to update server."];
+		[statusView setStringValue:NSLocalizedString(@"UpdateError", @"")];
 		updateAvailable = NO;
 	}
 	

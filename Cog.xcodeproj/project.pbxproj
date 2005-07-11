@@ -84,6 +84,7 @@
 		8EC4BD3B0872EF6A00ACF986 /* WavPack.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EC4BCC10872EEB800ACF986 /* WavPack.framework */; };
 		8EDCBDCB0840617B00F5C7E3 /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 8EDCBDCA0840617B00F5C7E3 /* Cog.scriptTerminology */; };
 		8EDCBDCD0840618900F5C7E3 /* Cog.scriptSuite in Resources */ = {isa = PBXBuildFile; fileRef = 8EDCBDCC0840618900F5C7E3 /* Cog.scriptSuite */; };
+		8EE90D3908830662002238C8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8EE90D3708830662002238C8 /* Localizable.strings */; };
 		8EF6FA73082DA526006F7BE6 /* FlacFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF6FA66082DA526006F7BE6 /* FlacFile.m */; };
 		8EF6FA74082DA526006F7BE6 /* MonkeysFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF6FA68082DA526006F7BE6 /* MonkeysFile.m */; };
 		8EF6FA75082DA526006F7BE6 /* MPEGFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EF6FA6A082DA526006F7BE6 /* MPEGFile.m */; };
@@ -263,6 +264,8 @@
 		8EC4BCF20872EF6300ACF986 /* DecMPA.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DecMPA.framework; path = Libraries/DecMPA/build/Deployment/DecMPA.framework; sourceTree = "<group>"; };
 		8EDCBDCA0840617B00F5C7E3 /* Cog.scriptTerminology */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.scriptTerminology; path = Cog.scriptTerminology; sourceTree = "<group>"; };
 		8EDCBDCC0840618900F5C7E3 /* Cog.scriptSuite */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.scriptSuite; path = Cog.scriptSuite; sourceTree = "<group>"; };
+		8EE90D3808830662002238C8 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8EE90D5608830B0B002238C8 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8EF6FA65082DA526006F7BE6 /* FlacFile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FlacFile.h; sourceTree = "<group>"; };
 		8EF6FA66082DA526006F7BE6 /* FlacFile.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FlacFile.m; sourceTree = "<group>"; };
 		8EF6FA67082DA526006F7BE6 /* MonkeysFile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MonkeysFile.h; sourceTree = "<group>"; };
@@ -395,6 +398,7 @@
 				8EDCBDCA0840617B00F5C7E3 /* Cog.scriptTerminology */,
 				8EDCBDCC0840618900F5C7E3 /* Cog.scriptSuite */,
 				8D1107310486CEB800E47090 /* Info.plist */,
+				8EE90D3708830662002238C8 /* Localizable.strings */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				8E10DBEF084BBCF00013815C /* Credits.html */,
@@ -640,6 +644,7 @@
 				8E7FA05A08731B6F005E8B5F /* COMPILE in Resources */,
 				8EF7BCF10874708F0012C2F4 /* volume_high.png in Resources */,
 				8EF7BCF20874708F0012C2F4 /* volume_low.png in Resources */,
+				8EE90D3908830662002238C8 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,6 +703,15 @@
 				29B97319FDCFA39411CA2CEA /* English */,
 			);
 			name = MainMenu.nib;
+			sourceTree = "<group>";
+		};
+		8EE90D3708830662002238C8 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8EE90D3808830662002238C8 /* English */,
+				8EE90D5608830B0B002238C8 /* French */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
