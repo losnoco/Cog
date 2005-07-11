@@ -1,0 +1,23 @@
+"FeedbackFailedMessageText" = "Failed";
+"FeedbackFailedInformativeText" = "Feedback failed to send.";
+"FeedbackSuccessMessageText" = "Success";
+"FeedbackSuccessInformativeText" = "Feedback successfully sent!";
+
+"CheckingForUpdate" = "Checking for update...";
+"UpdateAvailable" = "Update available!";
+"UpdateNotFound" = "No updates available.";
+"UpdateError" = "Error connecting to update server.";
+
+"PlayButtonTooltip" = "Play";
+"StopButtonTooltip" = "Stop";
+"PrevButtonTooltip" = "Previous";
+"NextButtonTooltip" = "Next";
+
+"TimeElapsed" = "Time Elapsed: %i:%02i";
+"TimeRemaining" = "Time Remaining: %i:%02i";
+
+"AddButtonTooltip" = "Add files";
+"RemoveButtonTooltip" = "Remove selected files";
+"InformationButtonTooltip" = "Information on the selected file.";
+"ShuffleButtonTooltip" = "Shuffle mode";
+"RepeatButtonTooltip" = "Repeat mode";
