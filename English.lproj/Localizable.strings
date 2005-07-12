@@ -3,7 +3,7 @@
 "FeedbackSuccessMessageText" = "Success";
 "FeedbackSuccessInformativeText" = "Feedback successfully sent!";
 
-"CheckingForUpdate" = "Checking for update...";
+"CheckingForUpdate" = "Checking for update…";
 "UpdateAvailable" = "Update available!";
 "UpdateNotFound" = "No updates available.";
 "UpdateError" = "Error connecting to update server.";
@@ -18,6 +18,6 @@
 
 "AddButtonTooltip" = "Add files";
 "RemoveButtonTooltip" = "Remove selected files";
-"InformationButtonTooltip" = "Information on the selected file.";
+"InfoButtonTooltip" = "Information on the selected file";
 "ShuffleButtonTooltip" = "Shuffle mode";
 "RepeatButtonTooltip" = "Repeat mode";

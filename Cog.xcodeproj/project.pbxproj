@@ -211,6 +211,8 @@
 		8E4721D208319294001F89FA /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		8E4721D4083192C2001F89FA /* SoundController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SoundController.h; sourceTree = "<group>"; };
 		8E4721D5083192C2001F89FA /* SoundController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SoundController.m; sourceTree = "<group>"; };
+		8E546D6808843E7B00E356EE /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		8E546D6908843E8500E356EE /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E5A90B0084CBC2F00AE6D62 /* Changelog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Changelog; sourceTree = "<group>"; };
 		8E6F2A1808480D010011F126 /* wheel.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = wheel.icns; path = Icons/wheel.icns; sourceTree = "<group>"; };
 		8E7FA05508731B49005E8B5F /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
@@ -700,6 +702,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				29B97319FDCFA39411CA2CEA /* English */,
+				8E546D6808843E7B00E356EE /* French */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -708,6 +711,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8EE90D3808830662002238C8 /* English */,
+				8E546D6908843E8500E356EE /* French */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
