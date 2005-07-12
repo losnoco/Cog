@@ -1,0 +1,113 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                addFiles = id; 
+                delEntries = id; 
+                loadPlaylist = id; 
+                savePlaylist = id; 
+                savePlaylistAs = id; 
+                showInfo = id; 
+            }; 
+            CLASS = AppController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                addButton = NSButton; 
+                infoButton = NSButton; 
+                mainWindow = NSWindow; 
+                nextButton = NSButton; 
+                playButton = NSButton; 
+                playlistController = PlaylistController; 
+                prevButton = NSButton; 
+                remButton = NSButton; 
+                repeatButton = NSButton; 
+                shuffleButton = NSButton; 
+                stopButton = NSButton; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = ClickField; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {soundController = SoundController; }; 
+            SUPERCLASS = NSTextField; 
+        }, 
+        {
+            CLASS = DNDArrayController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {tableView = NSTableView; }; 
+            SUPERCLASS = NSArrayController; 
+        }, 
+        {
+            ACTIONS = {cancel = id; openFeedbackWindow = id; sendFeedback = id; }; 
+            CLASS = FeedbackController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                feedbackWindow = NSWindow; 
+                fromView = NSTextField; 
+                messageView = NSTextView; 
+                sendingIndicator = NSProgressIndicator; 
+                subjectView = NSTextField; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = InfoController; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = InfoView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {
+            ACTIONS = {takeRepeatFromObject = id; takeShuffleFromObject = id; }; 
+            CLASS = PlaylistController; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = DNDArrayController; 
+        }, 
+        {CLASS = PlaylistEntry; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = PlaylistView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {playlistController = PlaylistController; soundController = SoundController; }; 
+            SUPERCLASS = NSTableView; 
+        }, 
+        {
+            ACTIONS = {
+                changeVolume = id; 
+                next = id; 
+                pause = id; 
+                pauseResume = id; 
+                play = id; 
+                playPauseResume = id; 
+                prev = id; 
+                resume = id; 
+                seek = id; 
+                stop = id; 
+                toggleShowTimeRemaining = id; 
+            }; 
+            CLASS = SoundController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                bitrateField = NSTextField; 
+                lengthField = NSTextField; 
+                playButton = NSButton; 
+                playlistController = PlaylistController; 
+                playlistView = PlaylistView; 
+                positionSlider = TrackingSlider; 
+                timeField = NSTextField; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = TrackingSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
+        {
+            ACTIONS = {okay = id; openUpdateWindow = id; takeBoolFromObject = id; }; 
+            CLASS = UpdateController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                autoCheckButton = NSButton; 
+                checkingIndicator = NSProgressIndicator; 
+                okayButton = NSButton; 
+                statusView = NSTextField; 
+                updateWindow = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
