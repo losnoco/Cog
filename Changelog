@@ -9,6 +9,7 @@ Double-clicking when out of focus now behaves as expected.
 Now has a simple dock menu courtesy of Nathanael Weldon <nathanael (at) mailblocks.com>.
 The playlist index now starts at 1.
 Seekbar now updates the time field as you drag it, Simon Savary <savary (at) oricom.ca>
+French translation courtesy of Simon Savary <savary (at) oricom.ca>
 
 0.04
 ----
