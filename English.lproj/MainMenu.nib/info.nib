@@ -9,7 +9,7 @@
 		<key>29</key>
 		<string>243 676 346 44 0 0 1024 746 </string>
 		<key>463</key>
-		<string>356 394 312 249 0 0 1024 746 </string>
+		<string>354 382 352 268 0 0 1024 746 </string>
 		<key>513</key>
 		<string>475 157 109 106 0 0 1024 746 </string>
 	</dict>
@@ -18,13 +18,20 @@
 	<key>IBLockedObjects</key>
 	<array>
 		<integer>484</integer>
+		<integer>606</integer>
 	</array>
+	<key>IBLockedTabItems</key>
+	<array>
+		<integer>564</integer>
+	</array>
+	<key>IBOldestOS</key>
+	<integer>3</integer>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>463</integer>
 		<integer>21</integer>
+		<integer>463</integer>
 	</array>
 	<key>IBSystem Version</key>
-	<string>8B15</string>
+	<string>8C46</string>
 </dict>
 </plist>
