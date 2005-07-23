@@ -262,7 +262,6 @@
 			else
 				[self setDisplay:[NSString stringWithFormat:@"%@ - %@", artist, title]];
 			
-			
 			taglib_tag_free_strings();
 		}
 		

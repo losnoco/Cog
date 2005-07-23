@@ -10,6 +10,7 @@ Now has a simple dock menu courtesy of Nathanael Weldon <nathanael (at) mailbloc
 The playlist index now starts at 1.
 Seekbar now updates the time field as you drag it, Simon Savary <savary (at) oricom.ca>
 French translation courtesy of Simon Savary <savary (at) oricom.ca>
+Window is now brought to the front when opening a playlist.
 
 0.04
 ----

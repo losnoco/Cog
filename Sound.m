@@ -59,8 +59,8 @@ static OSStatus Sound_ACInputProc(AudioConverterRef inAudioConverter, UInt32* io
 	Sound *sound = (Sound *)inUserData;
 	OSStatus err = noErr;
 	
-//	DBLog(@"Convert input proc");
-//	DBLog(@"Numpackets: %i %i", *ioNumberDataPackets, ioData->mNumberBuffers);
+	DBLog(@"Convert input proc");
+	DBLog(@"Numpackets: %i %i", *ioNumberDataPackets, ioData->mNumberBuffers);
 	
 	int amountToWrite;
 	int amountWritten;
@@ -70,16 +70,16 @@ static OSStatus Sound_ACInputProc(AudioConverterRef inAudioConverter, UInt32* io
 	sourceBuf = malloc(amountToWrite);
 	sound->conversionBuffer = sourceBuf;
 	
-//	DBLog(@"Requesting: %i", amountToWrite);
+	DBLog(@"Requesting: %i", amountToWrite);
 	amountWritten = [sound->soundFile fillBuffer:sourceBuf ofSize:amountToWrite];
 	
-//	DBLog(@"PACKET NUMBER RECEIVED: %i", *ioNumberDataPackets);
+	DBLog(@"PACKET NUMBER RECEIVED: %i", *ioNumberDataPackets);
 	ioData->mBuffers[0].mData = sourceBuf;
 	ioData->mBuffers[0].mDataByteSize = amountWritten;
 	ioData->mBuffers[0].mNumberChannels = sound->sourceStreamFormat.mChannelsPerFrame;
 	ioData->mNumberBuffers = 1;
 
-//	DBLog(@"Input complete");
+	DBLog(@"Input complete");
 	
 	return err;
 }
@@ -485,7 +485,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	ioData.mNumberBuffers = 1;
 
 //	DBLog(@"THIS IS RETARDED: %i", ioData.mBuffers[0].mData);
-//	DBLog(@"NUMBER OF PACKETS REQUESTED: %i", ioNumberFrames);
+	DBLog(@"NUMBER OF PACKETS REQUESTED: %i", ioNumberFrames);
 	err = AudioConverterFillComplexBuffer(converter, Sound_ACInputProc, self, &ioNumberFrames, &ioData, NULL);
 	if (err != noErr)
 		DBLog(@"Converter error: %i", err);
@@ -493,7 +493,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	free(conversionBuffer);
 
 	
-//	DBLog(@"HERE: %i/%i", destSize,  ioData.mBuffers[0].mDataByteSize);
+	DBLog(@"HERE: %i/%i", destSize,  ioData.mBuffers[0].mDataByteSize);
 
 //	DBLog(@"%i/%i",old, inNumberFrames);
 	return ioData.mBuffers[0].mDataByteSize;
@@ -544,19 +544,19 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	if (err != noErr)
 		return NO;
 	
-/*	// change output format...
-	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-	deviceFormat.mBytesPerFrame = 4;
-	deviceFormat.mBitsPerChannel = 16;
-	deviceFormat.mBytesPerPacket = 4;
-	DBLog(@"stuff: %i %i %i %i", deviceFormat.mBitsPerChannel, deviceFormat.mBytesPerFrame, deviceFormat.mBytesPerPacket, deviceFormat.mFramesPerPacket);
+// change output format...
+	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
+	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
+	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
+	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
+//	DBLog(@"stuff: %i %i %i %i", deviceFormat.mBitsPerChannel, deviceFormat.mBytesPerFrame, deviceFormat.mBytesPerPacket, deviceFormat.mFramesPerPacket);
 	err = AudioUnitSetProperty (outputUnit,
 								kAudioUnitProperty_StreamFormat,
 								kAudioUnitScope_Output,
 								0,
 								&deviceFormat,
 								size);
-*/
+
 	//Set the stream format of the output to match the input
 	err = AudioUnitSetProperty (outputUnit,
 								kAudioUnitProperty_StreamFormat,

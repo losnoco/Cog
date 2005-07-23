@@ -121,6 +121,8 @@
 		
 		[playlistController loadPlaylist:[p filename]];
 	}
+	
+	[mainWindow makeKeyAndOrderFront:self];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
