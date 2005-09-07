@@ -197,6 +197,8 @@
 		8E267D0C0837F7A6004ACBC5 /* UpdateController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = UpdateController.m; sourceTree = "<group>"; };
 		8E2871080836934A0013CE39 /* VirtualRingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VirtualRingBuffer.h; sourceTree = "<group>"; };
 		8E2871090836934A0013CE39 /* VirtualRingBuffer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VirtualRingBuffer.m; sourceTree = "<group>"; };
+		8E2C5C2D08A67867008DA854 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
+		8E2C5C2E08A67867008DA854 /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Controller.m; sourceTree = "<group>"; };
 		8E45227A0832898A00F8BA7C /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
 		8E45227B0832898A00F8BA7C /* Sound.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Sound.m; sourceTree = "<group>"; };
 		8E47218508318D7A001F89FA /* DNDArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DNDArrayController.h; path = Playlist/DNDArrayController.h; sourceTree = "<group>"; };
@@ -215,6 +217,16 @@
 		8E546D6908843E8500E356EE /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E5A90B0084CBC2F00AE6D62 /* Changelog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Changelog; sourceTree = "<group>"; };
 		8E6F2A1808480D010011F126 /* wheel.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = wheel.icns; path = Icons/wheel.icns; sourceTree = "<group>"; };
+		8E7D4F0B08A0709C00EBB15A /* OutputCoreAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputCoreAudio.h; sourceTree = "<group>"; };
+		8E7D4F0C08A0709C00EBB15A /* OutputCoreAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OutputCoreAudio.m; sourceTree = "<group>"; };
+		8E7D4F0F08A070AC00EBB15A /* OutputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputController.h; sourceTree = "<group>"; };
+		8E7D4F1008A070AC00EBB15A /* OutputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OutputController.m; sourceTree = "<group>"; };
+		8E7D4F1308A070BB00EBB15A /* InputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputController.h; sourceTree = "<group>"; };
+		8E7D4F1408A070BB00EBB15A /* InputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputController.m; sourceTree = "<group>"; };
+		8E7D4F1808A070D600EBB15A /* Converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Converter.h; sourceTree = "<group>"; };
+		8E7D4F1908A070D600EBB15A /* Converter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Converter.m; sourceTree = "<group>"; };
+		8E7D4F5A08A0734300EBB15A /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
+		8E7D4F5B08A0734300EBB15A /* Semaphore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Semaphore.m; sourceTree = "<group>"; };
 		8E7FA05508731B49005E8B5F /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		8E7FA05908731B6F005E8B5F /* COMPILE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COMPILE; sourceTree = "<group>"; };
 		8E81BC31083673ED0025A375 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -313,6 +325,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8E7D4F0A08A0708600EBB15A /* New */,
 				8E267D030837F7A6004ACBC5 /* Feedback */,
 				8E267D080837F7A6004ACBC5 /* Updates */,
 				8E47215C08318D12001F89FA /* Playlist */,
@@ -470,6 +483,25 @@
 				8EC4BB7C0872E2FB00ACF986 /* TrackingSlider.m */,
 			);
 			name = Custom;
+			sourceTree = "<group>";
+		};
+		8E7D4F0A08A0708600EBB15A /* New */ = {
+			isa = PBXGroup;
+			children = (
+				8E7D4F1808A070D600EBB15A /* Converter.h */,
+				8E7D4F1908A070D600EBB15A /* Converter.m */,
+				8E7D4F0B08A0709C00EBB15A /* OutputCoreAudio.h */,
+				8E7D4F0C08A0709C00EBB15A /* OutputCoreAudio.m */,
+				8E7D4F0F08A070AC00EBB15A /* OutputController.h */,
+				8E7D4F1008A070AC00EBB15A /* OutputController.m */,
+				8E7D4F1308A070BB00EBB15A /* InputController.h */,
+				8E7D4F1408A070BB00EBB15A /* InputController.m */,
+				8E7D4F5A08A0734300EBB15A /* Semaphore.h */,
+				8E7D4F5B08A0734300EBB15A /* Semaphore.m */,
+				8E2C5C2D08A67867008DA854 /* Controller.h */,
+				8E2C5C2E08A67867008DA854 /* Controller.m */,
+			);
+			name = New;
 			sourceTree = "<group>";
 		};
 		8EAFD26D08465E4500107BA5 /* Icons */ = {

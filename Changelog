@@ -11,6 +11,7 @@ The playlist index now starts at 1.
 Seekbar now updates the time field as you drag it, Simon Savary <savary (at) oricom.ca>
 French translation courtesy of Simon Savary <savary (at) oricom.ca>
 Window is now brought to the front when opening a playlist.
+Should work with 3rd party audio devices.
 
 0.04
 ----

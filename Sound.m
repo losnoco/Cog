@@ -137,6 +137,9 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	sound->currentPosition += amountToRead;
 	
+	if (sound->currentPosition > 1764000)
+		[sound stop];
+	
 	[sound->readLock unlock];
 	
 	return err;
@@ -689,8 +692,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		return;
 	}
 	
-	DBLog(@"DONT LIKE THIS, HUH?");
-
 	[readLock lock];
 	unsigned long length = totalLength;
 	int bitrate = [soundFile bitRate];
@@ -718,7 +719,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 - (void)resetBuffer
 {
 	[writeLock lock];
-	[readLock lock];
+//	[readLock lock];
 	
 	[ringBuffer empty];
 	[auxRingBuffer empty];
@@ -728,7 +729,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	currentPosition = 0;
 	
-	[readLock unlock];
+//	[readLock unlock];
 	[writeLock unlock];
 }
 

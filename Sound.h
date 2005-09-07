@@ -102,7 +102,7 @@ enum
 - (void)resetBuffer;
 - (VirtualRingBuffer *)oppositeBuffer:(VirtualRingBuffer *)buf;
 
-//private methodss
+//private methods
 - (BOOL)setupAudioOutput;
 - (BOOL)startAudioOutput;
 - (void)stopAudioOutput;
