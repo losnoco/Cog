@@ -136,10 +136,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	[sound->readRingBuffer didReadLength:amountToRead];
 
 	sound->currentPosition += amountToRead;
-	
-	if (sound->currentPosition > 1764000)
-		[sound stop];
-	
+
 	[sound->readLock unlock];
 	
 	return err;
