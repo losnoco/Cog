@@ -21,7 +21,7 @@
 	Semaphore *ioSemaphore;
 	
 	NSMutableArray *amountConverted;
-	unsigned int amountPlayed; //when amountPlayed > amountConverted[0], amountPlayed -= amountConverted[0], pop(amountConverted[0])
+	unsigned int amountPlayed; //when amountPlayed > amountConverted[0], amountPlayed -= amountConverted[0], pop(amountConverted[0]), song changed
 }
 
 - (void)convertedAmount:(int)amount; //called by converter...same thread?

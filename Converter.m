@@ -81,11 +81,16 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	ioData.mBuffers[0].mNumberChannels = [[soundController output] format].mChannelsPerFrame;
 	ioData.mNumberBuffers = 1;
 	
+	[[soundController inputLock] lock];
+	
 	err = AudioConverterFillComplexBuffer(converter, ACInputProc, &[[soundController input] format], &ioNumberFrames, &ioData, NULL);
 	if (err != noErr)
 		DBLog(@"Converter error: %i", err);
 	
-	[[soundController inputBuffer] didReadLength:(ioNumberFrames * [[[soundController input] format].mBytesPerFrame]);
+	[[soundController input] buffer] didReadLength:(ioNumberFrames * [[[soundController input] format].mBytesPerFrame]);
+	
+	[[soundController inputLock] unlock];
+	
 	[[soundController ioSemaphore] signal];
 	
 	return ioData.mBuffers[0].mDataByteSize;

@@ -13,7 +13,7 @@
 
 - (void)play
 {
-	[SoundFile open:filename];
+	[soundFile open:filename];
 }
 
 @end
