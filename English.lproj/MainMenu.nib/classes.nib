@@ -14,7 +14,7 @@
             OUTLETS = {
                 addButton = NSButton; 
                 infoButton = NSButton; 
-                mainWindow = NSWindow; 
+                mainWindow = NSPanel; 
                 nextButton = NSButton; 
                 playButton = NSButton; 
                 playlistController = PlaylistController; 

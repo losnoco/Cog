@@ -7,7 +7,7 @@
 @interface AppController : NSObject
 {
     IBOutlet PlaylistController *playlistController;
-	IBOutlet NSWindow *mainWindow;
+	IBOutlet NSPanel *mainWindow;
 	
 	IBOutlet NSButton *playButton;
 	IBOutlet NSButton *stopButton;
