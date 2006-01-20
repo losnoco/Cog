@@ -123,7 +123,6 @@
 		8EE90D3908830662002238C8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8EE90D3708830662002238C8 /* Localizable.strings */; };
 		8EEBB7130977DF6800D5D854 /* PlaybackController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EEBB7110977DF6800D5D854 /* PlaybackController.h */; };
 		8EEBB7140977DF6800D5D854 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EEBB7120977DF6800D5D854 /* PlaybackController.m */; };
-		8EECB4510979945E005080E6 /* Status.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EECB4500979945E005080E6 /* Status.h */; };
 		8EF7BCF10874708F0012C2F4 /* volume_high.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF7BCEF0874708F0012C2F4 /* volume_high.png */; };
 		8EF7BCF20874708F0012C2F4 /* volume_low.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EF7BCF00874708F0012C2F4 /* volume_low.png */; };
 /* End PBXBuildFile section */
@@ -220,7 +219,6 @@
 				8EB090C70976955800DB1521 /* WavPackFile.h in CopyFiles */,
 				8EEBB7130977DF6800D5D854 /* PlaybackController.h in CopyFiles */,
 				8E888D5809795247007E984F /* Shuffle.h in CopyFiles */,
-				8EECB4510979945E005080E6 /* Status.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,7 +351,6 @@
 		8EE90D3808830662002238C8 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8EEBB7110977DF6800D5D854 /* PlaybackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaybackController.h; sourceTree = "<group>"; };
 		8EEBB7120977DF6800D5D854 /* PlaybackController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaybackController.m; sourceTree = "<group>"; };
-		8EECB4500979945E005080E6 /* Status.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Status.h; sourceTree = "<group>"; };
 		8EF7BCEF0874708F0012C2F4 /* volume_high.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = volume_high.png; path = Icons/volume_high.png; sourceTree = "<group>"; };
 		8EF7BCF00874708F0012C2F4 /* volume_low.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = volume_low.png; path = Icons/volume_low.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -602,7 +599,6 @@
 				8EB090750976953C00DB1521 /* Semaphore.m */,
 				8EB090760976953C00DB1521 /* VirtualRingBuffer.h */,
 				8EB090770976953C00DB1521 /* VirtualRingBuffer.m */,
-				8EECB4500979945E005080E6 /* Status.h */,
 			);
 			name = Utils;
 			sourceTree = "<group>";

@@ -576,6 +576,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				OTHER_CFLAGS = "-D__MACOSX__";
 				PRODUCT_NAME = Vorbis;
 				WRAPPER_EXTENSION = framework;
@@ -603,6 +604,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				OTHER_CFLAGS = "-D__MACOSX__";
 				PRODUCT_NAME = Vorbis;
 				WRAPPER_EXTENSION = framework;
@@ -628,6 +630,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				OTHER_CFLAGS = "-D__MACOSX__";
 				PRODUCT_NAME = Vorbis;
 				WRAPPER_EXTENSION = framework;

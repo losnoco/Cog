@@ -479,6 +479,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				OTHER_CFLAGS = (
 					"-DHAVE_INTTYPES_H",
 					"-DFLAC__ALIGN_MALLOC_DATA",
@@ -510,6 +511,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				OTHER_CFLAGS = (
 					"-DHAVE_INTTYPES_H",
 					"-DFLAC__ALIGN_MALLOC_DATA",
@@ -539,6 +541,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				OTHER_CFLAGS = (
 					"-DVERSION=1.1.2",
 					"-DHAVE_INTTYPES_H",

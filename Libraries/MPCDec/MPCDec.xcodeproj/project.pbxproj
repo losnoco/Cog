@@ -326,6 +326,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				PRODUCT_NAME = MPCDec;
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -348,6 +349,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				PRODUCT_NAME = MPCDec;
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = NO;
@@ -368,6 +370,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				PRODUCT_NAME = MPCDec;
 				WRAPPER_EXTENSION = framework;
 			};
