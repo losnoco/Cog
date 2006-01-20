@@ -65,6 +65,7 @@
 + (SoundFile *)soundFileFromFilename:(NSString *)filename
 {
 	SoundFile *soundFile;
+	DBLog(@"Filename: %@", filename);
 	
 	if (([[filename pathExtension] caseInsensitiveCompare:@"wav"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aiff"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aif"] == NSOrderedSame))
 	{

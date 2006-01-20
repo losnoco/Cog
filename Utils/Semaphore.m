@@ -24,7 +24,7 @@
 
 -(void)signal
 {
-	semaphore_signal(semaphore);
+	semaphore_signal_all(semaphore);
 }
 
 -(void)timedWait:(int)seconds
@@ -36,7 +36,8 @@
 
 -(void)wait
 {
-	semaphore_wait(semaphore);
+	mach_timespec_t t = {2.0, 0.0}; //2 second timeout
+	semaphore_timedwait(semaphore, t);
 }
 
 @end

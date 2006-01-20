@@ -11,65 +11,43 @@
 
 @implementation OutputCoreAudio
 
+- (id)initWithController:(id)c
+{
+	self = [super init];
+	if (self)
+	{
+		outputController = c;
+	}
+	
+	return self;
+}
+
 static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp  *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList  *ioData)
 {
-	Sound *sound = (Sound *)inRefCon;
+	OutputCoreAudio *output = (OutputCoreAudio *)inRefCon;
 	OSStatus err = noErr;
+	void *readPointer = ioData->mBuffers[0].mData;
 	
-	int amountAvailable;
-	int amountToRead;
-	void *readPointer;
-	
-	[sound->readLock lock];
-	
-	amountAvailable = [sound->readRingBuffer lengthAvailableToReadReturningPointer:&readPointer];
-	if (sound->playbackStatus == kCogStatusEndOfFile && amountAvailable == 0)
+	int amountToRead, amountRead;
+
+	if ([output->outputController shouldContinue] == NO)
 	{
-		DBLog(@"FILE CHANGED!!!!!");
-		[sound sendPortMessage:kCogFileChangedMessage];
-		sound->readRingBuffer = [sound oppositeBuffer:sound->readRingBuffer];
-		
-		[sound setPlaybackStatus:kCogStatusPlaying];
-		
-		sound->currentPosition = 0;
-		
-		double time = [sound calculateTime:sound->totalLength];
-		int bitrate = [sound->soundFile bitRate];
-		[sound sendPortMessage:kCogLengthUpdateMessage withData:&time ofSize:(sizeof(double))];
-		[sound sendPortMessage:kCogBitrateUpdateMessage withData:&bitrate ofSize:(sizeof(int))];
-	}
-	if (sound->playbackStatus == kCogStatusEndOfPlaylist && amountAvailable == 0)
-	{
-		//Stop playback
-		[sound setPlaybackStatus:kCogStatusStopped];
-		//		return err;
+        AudioOutputUnitStop(output->outputUnit);
+
+		return err;
 	}
 	
-	if (amountAvailable < ([sound->readRingBuffer bufferLength] - BUFFER_WRITE_CHUNK))
-	{
-		//		DBLog(@"AVAILABLE: %i", amountAvailable);
-		[sound fireFillTimer];
-	}
+	amountToRead = inNumberFrames*(output->deviceFormat.mBytesPerPacket);
+	amountRead = [output->outputController readData:(readPointer) amount:amountToRead];
 	
-	if (amountAvailable > inNumberFrames*sound->deviceFormat.mBytesPerPacket)
-		amountToRead = inNumberFrames*sound->deviceFormat.mBytesPerPacket;
-	else
-		amountToRead = amountAvailable;
-	
-	memcpy(ioData->mBuffers[0].mData, readPointer, amountToRead);
-	ioData->mBuffers[0].mDataByteSize = amountToRead;
-	
-	[sound->readRingBuffer didReadLength:amountToRead];
-	
-	sound->currentPosition += amountToRead;
-		
-	[sound->readLock unlock];
-	
+	ioData->mBuffers[0].mDataByteSize = amountRead;
+
 	return err;
 }	
 
-- (void)setup
+- (BOOL)setup
 {
+	NSLog(@"SETUP");
 	ComponentDescription desc;  
 	OSStatus err;
 	
@@ -116,6 +94,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	// change output format...
 	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
 	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
+//	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
+//	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
 	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
 	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
 	//	DBLog(@"stuff: %i %i %i %i", deviceFormat.mBitsPerChannel, deviceFormat.mBytesPerFrame, deviceFormat.mBytesPerPacket, deviceFormat.mFramesPerPacket);
@@ -139,20 +119,39 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	renderCallback.inputProcRefCon = self;
 	
 	AudioUnitSetProperty(outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &renderCallback, sizeof(AURenderCallbackStruct));	
+
+	[outputController setFormat:&deviceFormat];
 	
-	//	DBLog(@"Audio output successfully initialized");
+	DBLog(@"Audio output successfully initialized");
+
 	return (err == noErr);	
 }
 
+- (void)setVolume:(double)v
+{
+	AudioUnitSetParameter (outputUnit,
+							kHALOutputParam_Volume,
+							kAudioUnitScope_Global,
+							0,
+							v * 0.01f,
+							0);
+}	
+
 - (void)start
 {
+	NSLog(@"START OUTPUT\n");
 	AudioOutputUnitStart(outputUnit);
 }
 
 - (void)stop
 {
+	NSLog(@"STOP!");
 	if (outputUnit)
+	{
         AudioOutputUnitStop(outputUnit);
+		AudioUnitUninitialize (outputUnit);
+		CloseComponent(outputUnit);
+	}
 }
 
 @end
