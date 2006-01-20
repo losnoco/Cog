@@ -8,12 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "SoundController.h"
+#import "PlaybackController.h"
 #import "PlaylistController.h"
 
 @interface PlaylistView : NSTableView {
 	
-	IBOutlet SoundController *soundController;
+	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
 	
 }

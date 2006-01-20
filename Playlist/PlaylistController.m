@@ -8,10 +8,11 @@
 
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
+#import "Shuffle.h"
 
 @implementation PlaylistController
 
-#define HISTORY_SIZE 100
+#define SHUFFLE_HISTORY_SIZE 100
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -21,8 +22,8 @@
 	{
 		acceptableFileTypes = [[NSArray alloc] initWithObjects:@"shn",@"wv",@"ogg",@"wav",@"mpc",@"flac",@"ape",@"mp3",@"aiff",@"aif",@"aac",nil];
 		acceptablePlaylistTypes = [[NSArray alloc] initWithObjects:@"playlist",nil];
-		history = [[NSMutableArray alloc] init];
 		shuffleList = [[NSMutableArray alloc] init];
+		shuffleIndex = 0;
 //		DBLog(@"DAH BUTTER CHORNAR: %@", history);
 	}
 	
@@ -46,7 +47,8 @@
 		[pe readInfo];
 		
 		[self insertObject:pe atArrangedObjectIndex:index];	
-
+		[pe release];
+		
 		return 1;
 	}
 	
@@ -128,7 +130,7 @@
 	}
 	
 	if (shuffle == YES)
-		[self generateShuffleList];
+		[self resetShuffleList];
 	
 	
 	[self setSelectionIndex:index];
@@ -193,7 +195,7 @@
 	[self updateIndexesFromRow:row];
 
 	if (shuffle == YES)
-		[self generateShuffleList];
+		[self resetShuffleList];
 	
 	return YES;
 }
@@ -236,9 +238,7 @@
 	[self updateIndexesFromRow:[indexes firstIndex]];
 	
 	if (shuffle == YES)
-		[self generateShuffleList];
-	
-	[history removeObjectsInArray:a];
+		[self resetShuffleList];
 	
 	[a release];
 }
@@ -258,139 +258,116 @@
 		[self setRepeat: [sender state]];
 }
 
+- (PlaylistEntry *)entryAtOffset:(int)offset
+{
+	NSLog(@"SHUFFLE: %i", offset);
+	if (shuffle == YES)
+	{
+		int i = shuffleIndex;
+		
+		i += offset;
+		
+		while (i < 0)
+		{
+			if (repeat == YES)
+			{
+				[self addShuffledListToFront];
+				//change i appropriately
+				i += [[self arrangedObjects] count];
+			}
+			else
+			{
+				return nil;
+			}
+		}
+		while (i >= [shuffleList count])
+		{
+			if (repeat == YES)
+			{
+				[self addShuffledListToBack];
+			}
+			else
+			{
+				return nil;
+			}
+		}
+		
+		return [shuffleList objectAtIndex:i];
+	}
+	else
+	{
+		int i;
+		i = [currentEntry index];
+		i += (offset-1);
+
+		if (i < 0)
+		{
+			if (repeat == YES)
+				i += [[self arrangedObjects] count];
+			else
+				return nil;
+		}
+		else if (i >= [[self arrangedObjects] count])
+		{
+			if (repeat == YES)
+				i -= [[self arrangedObjects] count];
+			else
+				return nil;
+		}
+
+		return [[self arrangedObjects] objectAtIndex:i];
+	}		
+}
+
 - (void)next
 {
 	PlaylistEntry *pe;
 	
-	pe = [self nextEntry];
+	pe = [self entryAtOffset:1];
 	if (pe == nil)
 		return;
 	
-	if (shuffle == YES)
-	{
-		[shuffleList removeObject:pe];
-	}
-	[self setCurrentEntry:pe addToHistory:YES];
-	[self setNextEntry:nil];
+	[self setCurrentEntry:pe];
 }
 
 - (void)prev
 {
 	PlaylistEntry *pe;
 	
-	pe = [self prevEntry];
+	pe = [self entryAtOffset:-1];
 	if (pe == nil)
 		return;
-	
-	if (pe != [history objectAtIndex:1])
-		DBLog(@"History inconcistency");
-	[history removeObjectAtIndex:0];
 
-	[self setCurrentEntry:pe addToHistory:NO];
-	[self setPrevEntry:nil];
-	
-	//If one goes back, and goes forward, one shall receive unto thee a new song
 	if (shuffle == YES)
-		[self generateShuffleList];
-}
-
-- (PlaylistEntry *)prevEntry
-{
-	if (prevEntry == nil)
-		[self getPrevEntry];
+		shuffleIndex--;	
 	
-	return prevEntry;
+	[self setCurrentEntry:pe];
 }
 
-- (PlaylistEntry *)nextEntry
+- (void)addShuffledListToBack
 {
-	if (nextEntry == nil)
-		[self getNextEntry];
+	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [newList count])];
 	
-	return nextEntry;
+	[self insertObjects:newList atArrangedObjectIndexes:indexSet];
+
+	[newList release];
 }
 
-- (void)reset
+- (void)addShuffledListToFront
 {
-	nextEntry = nil;
-	prevEntry = nil;
-	[self generateShuffleList];
+	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([[self arrangedObjects] count], [newList count])];
+	
+	[self insertObjects:newList atArrangedObjectIndexes:indexSet];
+	
+	[newList release];
 }
 
-- (void)generateShuffleList
+- (void)resetShuffleList
 {
-//	[shuffleHistory removeAllObjects];
-//	DBLog(@"Generated Shuffle List");
 	[shuffleList removeAllObjects];
-	[shuffleList addObjectsFromArray:[self arrangedObjects]];
-	if (currentEntry != nil)
-		[shuffleList removeObject:currentEntry];
-}
-
-- (void)setCurrentEntry:(PlaylistEntry *)pe addToHistory:(BOOL)h
-{
-	[self setCurrentEntry:pe];	
-	
-	if (h == YES)
-	{
-		[history insertObject:pe atIndex:0];
-		if ([history count] > HISTORY_SIZE)
-			[history removeObjectAtIndex:([history count] - 1)];
-		
-	}
-}
-
-- (void)getNextEntry
-{
-	PlaylistEntry *pe;
-
-	if (nextEntry != nil)
-		return;
-	
-	if (shuffle == YES)
-	{
-//		DBLog(@"SHUFFLE IS TEH ON: %i", [shuffleList count]);
-		if ([shuffleList count] == 0) //out of tuuuunes
-		{
-			if (repeat == YES)
-			{
-				[self generateShuffleList];
-			}
-			else
-			{
-				[self setNextEntry:nil];
-				return;
-			}
-		}
-		int r;
-		
-		r = random() % [shuffleList count];
-//		DBLog(@"PICKING SONG %i FROM SHUFFLE LIST", r);
-		pe = [shuffleList objectAtIndex:r];
-		
-		[self setNextEntry:pe];
-	}
-	else
-	{
-		int i = ([currentEntry index] - 1) + 1;
-
-		if (i >= [[self arrangedObjects] count]) //out of tuuuunes
-		{
-			if (repeat == YES)
-			{
-				i = 0;
-			}
-			else
-			{
-				[self setNextEntry:nil];
-				return;
-			}
-		}
-		
-		pe = [[self arrangedObjects] objectAtIndex:i];
-		
-		[self setNextEntry:pe];
-	}
+	shuffleIndex = 0;
 }
 
 - (id)currentEntry
@@ -412,51 +389,11 @@
 	currentEntry = pe;
 }	
 
-- (void)getPrevEntry
-{
-	PlaylistEntry *pe;
-	
-//	DBLog(@"GETTING PREVIOUS ENTRY");
-	
-	if (prevEntry != nil)
-		return;
-	//NOTE: 1 contains the current entry
-	if ([history count] == 1) //Cant go back any further
-	{
-//		DBLog(@"HISTORY IS TEH EMPTY");
-		[self setPrevEntry:nil];
-		return;
-	}
-	else
-	{
-//		DBLog(@"IN TEH HISTORY");
-
-		pe = [history objectAtIndex:1];
-		[self setPrevEntry:pe];
-			
-		return;
-	}
-}
-
-- (void)setPrevEntry:(PlaylistEntry *)pe
-{
-	[pe retain];
-	[prevEntry release];
-	prevEntry = pe;
-}
-
-- (void)setNextEntry:(PlaylistEntry *)pe
-{
-	[pe retain];
-	[nextEntry release];
-	nextEntry = pe;
-}
-
 - (void)setShuffle:(BOOL)s
 {
 	shuffle = s;
 	if (shuffle == YES)
-		[self generateShuffleList];
+		[self resetShuffleList];
 }
 - (BOOL)shuffle
 {

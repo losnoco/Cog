@@ -7,7 +7,7 @@
 //
 
 #import "PlaylistView.h"
-#import "SoundController.h"
+#import "PlaybackController.h"
 #import "PlaylistController.h"
 
 @implementation PlaylistView
@@ -31,7 +31,7 @@
 //	DBLog(@"MOUSE DOWN");
 	if ([e type] == NSLeftMouseDown && [e clickCount] == 2)
 	{
-		[soundController play:self];
+		[playbackController play:self];
 	}
 	else
 	{
@@ -57,11 +57,11 @@
 	}
 	else if (c == ' ')
 	{
-		[soundController pauseResume:self];
+		[playbackController playPauseResume:self];
 	}
 	else if (c == NSEnterCharacter || c == NSCarriageReturnCharacter)
 	{
-		[soundController play:self];
+		[playbackController play:self];
 	}
 	else
 	{
