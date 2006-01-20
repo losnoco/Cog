@@ -31,8 +31,9 @@
 		8E7FA05A08731B6F005E8B5F /* COMPILE in Resources */ = {isa = PBXBuildFile; fileRef = 8E7FA05908731B6F005E8B5F /* COMPILE */; };
 		8E81BC33083673ED0025A375 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E81BC31083673ED0025A375 /* AudioToolbox.framework */; };
 		8E81BC34083673ED0025A375 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E81BC32083673ED0025A375 /* AudioUnit.framework */; };
-		8E888D5809795247007E984F /* Shuffle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E888D5609795247007E984F /* Shuffle.h */; };
-		8E888D5909795247007E984F /* Shuffle.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E888D5709795247007E984F /* Shuffle.m */; };
+		8E8C2D8D09813C3F001C75DC /* Status.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E8C2D8C09813C3F001C75DC /* Status.h */; };
+		8E8C2D9009813C71001C75DC /* Shuffle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E8C2D8E09813C71001C75DC /* Shuffle.h */; };
+		8E8C2D9109813C71001C75DC /* Shuffle.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C2D8F09813C71001C75DC /* Shuffle.m */; };
 		8E8F3F9C0855499500BCF803 /* README in Resources */ = {isa = PBXBuildFile; fileRef = 8E8F3F9B0855499500BCF803 /* README */; };
 		8EAB752D0856205B0021C2BF /* repeat_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EAB75290856205B0021C2BF /* repeat_on.png */; };
 		8EAB752E0856205B0021C2BF /* repeat_off.png in Resources */ = {isa = PBXBuildFile; fileRef = 8EAB752A0856205B0021C2BF /* repeat_off.png */; };
@@ -218,7 +219,8 @@
 				8EB090C50976955800DB1521 /* WaveFile.h in CopyFiles */,
 				8EB090C70976955800DB1521 /* WavPackFile.h in CopyFiles */,
 				8EEBB7130977DF6800D5D854 /* PlaybackController.h in CopyFiles */,
-				8E888D5809795247007E984F /* Shuffle.h in CopyFiles */,
+				8E8C2D8D09813C3F001C75DC /* Status.h in CopyFiles */,
+				8E8C2D9009813C71001C75DC /* Shuffle.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,8 +266,9 @@
 		8E7FA05908731B6F005E8B5F /* COMPILE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COMPILE; sourceTree = "<group>"; };
 		8E81BC31083673ED0025A375 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		8E81BC32083673ED0025A375 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
-		8E888D5609795247007E984F /* Shuffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shuffle.h; sourceTree = "<group>"; };
-		8E888D5709795247007E984F /* Shuffle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shuffle.m; sourceTree = "<group>"; };
+		8E8C2D8C09813C3F001C75DC /* Status.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Status.h; path = Sound/Status.h; sourceTree = "<group>"; };
+		8E8C2D8E09813C71001C75DC /* Shuffle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Shuffle.h; path = Playlist/Shuffle.h; sourceTree = "<group>"; };
+		8E8C2D8F09813C71001C75DC /* Shuffle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Shuffle.m; path = Playlist/Shuffle.m; sourceTree = "<group>"; };
 		8E8F3F9B0855499500BCF803 /* README */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		8EAB75290856205B0021C2BF /* repeat_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_on.png; path = Icons/repeat_on.png; sourceTree = "<group>"; };
 		8EAB752A0856205B0021C2BF /* repeat_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_off.png; path = Icons/repeat_off.png; sourceTree = "<group>"; };
@@ -518,8 +521,8 @@
 				8E47218A08318D7A001F89FA /* PlaylistEntry.m */,
 				8E47218B08318D7A001F89FA /* PlaylistView.h */,
 				8E47218C08318D7A001F89FA /* PlaylistView.m */,
-				8E888D5609795247007E984F /* Shuffle.h */,
-				8E888D5709795247007E984F /* Shuffle.m */,
+				8E8C2D8E09813C71001C75DC /* Shuffle.h */,
+				8E8C2D8F09813C71001C75DC /* Shuffle.m */,
 			);
 			name = Playlist;
 			sourceTree = "<group>";
@@ -575,6 +578,7 @@
 			children = (
 				8EB090CE0976957700DB1521 /* Chain */,
 				8EB0908C0976955800DB1521 /* SoundFile */,
+				8E8C2D8C09813C3F001C75DC /* Status.h */,
 				8EB090800976955800DB1521 /* ConverterNode.h */,
 				8EB090810976955800DB1521 /* ConverterNode.m */,
 				8EB090820976955800DB1521 /* InputNode.h */,
@@ -804,7 +808,7 @@
 				8EB090C60976955800DB1521 /* WaveFile.m in Sources */,
 				8EB090C80976955800DB1521 /* WavPackFile.m in Sources */,
 				8EEBB7140977DF6800D5D854 /* PlaybackController.m in Sources */,
-				8E888D5909795247007E984F /* Shuffle.m in Sources */,
+				8E8C2D9109813C71001C75DC /* Shuffle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
