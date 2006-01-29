@@ -154,4 +154,14 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	}
 }
 
+- (void)pause
+{
+	AudioOutputUnitStop(outputUnit);
+}
+
+- (void)resume
+{
+	AudioOutputUnitStart(outputUnit);
+}
+
 @end

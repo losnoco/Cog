@@ -23,6 +23,16 @@
 	[output start];
 }
 
+- (void)pause
+{
+	[output pause];
+}
+
+- (void)resume
+{
+	[output resume];
+}
+
 - (int)readData:(void *)ptr amount:(int)amount
 {
 	int n;

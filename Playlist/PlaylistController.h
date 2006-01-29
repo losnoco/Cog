@@ -52,8 +52,8 @@
 - (id)currentEntry;
 - (void)setCurrentEntry:(PlaylistEntry *)pe;
 
-- (void)next;
-- (void)prev;
+- (BOOL)next;
+- (BOOL)prev;
 
 - (PlaylistEntry *)entryAtOffset:(int)offset;
 - (void)addShuffledListToBack;

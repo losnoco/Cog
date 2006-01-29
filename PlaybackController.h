@@ -51,7 +51,7 @@
 
 
 //Methods since this is SoundController's delegate
-- (void)delegateNotifyStatusUpdate:(int)status;
+- (void)delegateNotifyStatusUpdate:(NSNumber *)status;
 - (void)delegateNotifyPositionUpdate:(double)pos;
 - (void)delegateNotifyBitrateUpdate:(float)bitrate;
 - (void)delegateNotifySongChanged:(double)length;

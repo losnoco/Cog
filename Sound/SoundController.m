@@ -7,7 +7,7 @@
 //
 
 #import "SoundController.h"
-
+#import "Status.h"
 
 @implementation SoundController
 
@@ -41,22 +41,29 @@
 	
 	[output launchThread];
 	[bufferChain launchThreads];
+	
+	[self setPlaybackStatus:kCogStatusPlaying];
 }
 
 - (void)stop
 {
 	//Set shouldoContinue to NO on allll things
 	[self setShouldContinue:NO];
+	[self setPlaybackStatus:kCogStatusStopped];
 }
 
 - (void)pause
 {
 	[output pause];
+
+	[self setPlaybackStatus:kCogStatusPaused];	
 }
 
 - (void)resume
 {
 	[output resume];
+
+	[self setPlaybackStatus:kCogStatusPlaying];	
 }
 
 - (void)seekToTime:(double)time
@@ -108,8 +115,12 @@
 - (void)endOfInputPlayed
 {
 	if ([chainQueue count] <= 0)
+	{
+		//End of playlist
+		[self setPlaybackStatus:kCogStatusStopped];
+		
 		return;
-
+	}
 //	NSLog(@"SWAPPING BUFFERS");
 	[bufferChain release];
 	
@@ -123,6 +134,11 @@
 	[delegate delegateNotifySongChanged:0.0];
 
 	//	NSLog(@"SWAPPED");
+}
+
+- (void)setPlaybackStatus:(int)s
+{
+	[delegate performSelectorOnMainThread:@selector(delegateNotifyStatusUpdate:) withObject:[NSNumber numberWithInt:s] waitUntilDone:NO];
 }
 
 - (BufferChain *)bufferChain

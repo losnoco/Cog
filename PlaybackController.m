@@ -84,24 +84,36 @@
 - (void)playEntry:(PlaylistEntry *)pe;
 {
 //	DBLog(@"PlayEntry: %@ Sent!", [pe filename]);
-
+	if (playbackStatus != kCogStatusStopped)
+		[self stop:self];
 	[soundController play:[pe filename]];
 }
 
 - (IBAction)next:(id)sender
 {
-	if ([playlistController next] == nil)
+	NSLog(@"CALLING: %i %i", playbackStatus, kCogStatusStopped);
+	if ([playlistController next] == NO)
 		return;
-	
-	[self playEntry:[playlistController currentEntry]];
+
+	if (playbackStatus != kCogStatusStopped)
+	{
+		NSLog(@"STOPPING");
+		[self stop:self];
+		[self playEntry:[playlistController currentEntry]];
+	}
 }
 
 - (IBAction)prev:(id)sender
 {
+	NSLog(@"CALLING");
 	if ([playlistController prev] == nil)
 		return;
 
-	[self playEntry:[playlistController currentEntry]];
+	if (playbackStatus != kCogStatusStopped)
+	{
+		[self stop:self];
+		[self playEntry:[playlistController currentEntry]];
+	}
 }
 
 - (IBAction)seek:(id)sender
@@ -204,8 +216,9 @@
 	
 }
 
-- (void)delegateNotifyStatusUpdate:(int)status
+- (void)delegateNotifyStatusUpdate:(NSNumber *)s
 {
+	int status = [s intValue];
 	if (status == kCogStatusStopped || status == kCogStatusPaused)
 	{
 		//Show play image

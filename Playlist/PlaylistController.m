@@ -319,29 +319,33 @@
 	}		
 }
 
-- (void)next
+- (BOOL)next
 {
 	PlaylistEntry *pe;
 	
 	pe = [self entryAtOffset:1];
 	if (pe == nil)
-		return;
+		return NO;
 	
 	[self setCurrentEntry:pe];
+	
+	return YES;
 }
 
-- (void)prev
+- (BOOL)prev
 {
 	PlaylistEntry *pe;
 	
 	pe = [self entryAtOffset:-1];
 	if (pe == nil)
-		return;
+		return NO;
 
 	if (shuffle == YES)
 		shuffleIndex--;	
 	
 	[self setCurrentEntry:pe];
+	
+	return YES;
 }
 
 - (void)addShuffledListToBack

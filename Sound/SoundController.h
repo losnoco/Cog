@@ -38,6 +38,7 @@
 - (void)setVolume:(double)v;
 
 - (void)setNextSong:(NSString *)s;
+- (void)setPlaybackStatus:(int)s;
 
 
 @end
