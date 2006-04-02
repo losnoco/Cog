@@ -86,6 +86,13 @@
 //	DBLog(@"PlayEntry: %@ Sent!", [pe filename]);
 	if (playbackStatus != kCogStatusStopped)
 		[self stop:self];
+	
+	NSLog(@"LENGTH: %lf", [pe length]);
+	[positionSlider setMaxValue:[pe length]];
+	[positionSlider setDoubleValue:0.0f];
+	
+	[self updateTimeField:0.0f];
+	
 	[soundController play:[pe filename]];
 }
 
@@ -180,23 +187,26 @@
 - (void)delegateRequestNextSong:(int)queueSize
 {
 	PlaylistEntry *pe;
-	
 	pe = [playlistController entryAtOffset:(queueSize+1)];
 	
 	if (pe == nil)
 		[soundController setNextSong:nil];
 	else
+	{
+		NSLog(@"NEXT SONG: %@", [pe filename]);
 		[soundController setNextSong:[pe filename]];
+	}
 }
 
-- (void)delegateNotifySongChanged:(double)length
+- (void)delegateNotifySongChanged
 {
 	[playlistController next];
+	PlaylistEntry *pe = [playlistController currentEntry];;
 	
-//	[positionSlider setMaxValue:length];
-//	[positionSlider setDoubleValue:0];
+	[positionSlider setMaxValue:[pe length]];
+	[positionSlider setDoubleValue:0.0f];
 
-//	[self updateTimeField:0.0f];
+	[self updateTimeField:0.0f];
 	
 }
 
@@ -205,8 +215,10 @@
 	//		[bitrateField setIntValue:bitrate];
 }
 
-- (void)delegateNotifyPositionUpdate:(double)pos
+- (void)updatePosition:(id)sender
 {
+	double pos = [soundController amountPlayed];
+
 	if ([positionSlider tracking] == NO)
 	{
 		//		DBLog(@"Received pos update: %f", pos);
@@ -221,11 +233,27 @@
 	int status = [s intValue];
 	if (status == kCogStatusStopped || status == kCogStatusPaused)
 	{
+		NSLog(@"INVALIDATING");
+		if (positionTimer)
+		{
+			[positionTimer invalidate];
+			positionTimer = NULL;
+		}
+		if (status == kCogStatusStopped)
+		{
+			[positionSlider setDoubleValue:0.0f];
+			
+			[self updateTimeField:0.0f];			
+		}
+		
 		//Show play image
 		[self changePlayButtonImage:@"play"];
 	}
 	else if (status == kCogStatusPlaying)
 	{
+		if (!positionTimer)
+			positionTimer = [NSTimer scheduledTimerWithTimeInterval:1.00 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
+
 		//Show pause
 		[self changePlayButtonImage:@"pause"];
 	}

@@ -1,5 +1,5 @@
 //
-//  InputController.h
+//  InputNode.h
 //  Cog
 //
 //  Created by Zaphod Beeblebrox on 8/2/05.

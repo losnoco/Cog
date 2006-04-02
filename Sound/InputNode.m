@@ -1,5 +1,5 @@
 //
-//  InputController.m
+//  InputNode.m
 //  Cog
 //
 //  Created by Zaphod Beeblebrox on 8/2/05.
@@ -17,7 +17,7 @@
 	
 	[soundFile getFormat:&format];
 	
-	endOfInput = NO;
+	shouldContinue = YES;
 }
 
 - (void)process
@@ -28,21 +28,20 @@
 	
 	DBLog(@"Playing file.\n");
 	
-	while ([self shouldContinue] == YES)
+	while ([self shouldContinue] == YES && [self endOfStream] == NO)
 	{
 		amountRead = [soundFile fillBuffer:buf ofSize: chunk_size];
 		if (amountRead <= 0)
 		{
-			endOfInput = YES;
+			endOfStream = YES;
 			NSLog(@"END OF INPUT WAS REACHED");
 			[controller endOfInputReached];
-			shouldContinue = NO;
 			[soundFile close];
 			return; //eof
 		}
 		[self writeData:buf amount:amountRead];
 	}
-
+	
 	[soundFile close];
 }
 

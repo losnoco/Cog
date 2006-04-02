@@ -17,6 +17,7 @@
 	if (self)
 	{
 		outputController = c;
+		outputUnit = NULL;
 	}
 	
 	return self;
@@ -32,14 +33,24 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	if ([output->outputController shouldContinue] == NO)
 	{
+		NSLog(@"STOPPING");
         AudioOutputUnitStop(output->outputUnit);
-
+//		[output stop];
+		
 		return err;
 	}
 	
 	amountToRead = inNumberFrames*(output->deviceFormat.mBytesPerPacket);
 	amountRead = [output->outputController readData:(readPointer) amount:amountToRead];
+//	NSLog(@"Amount read: %i %i", amountRead, [output->outputController endOfStream]);
+	if ((amountRead < amountToRead) && [output->outputController endOfStream] == NO) //Try one more time! for track changes!
+	{
+		int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
+		amountRead2 = [output->outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
+		amountRead += amountRead2;
+	}
 	
+//	NSLog(@"Amount read: %i", amountRead);
 	ioData->mBuffers[0].mDataByteSize = amountRead;
 
 	return err;
@@ -48,6 +59,9 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 - (BOOL)setup
 {
 	NSLog(@"SETUP");
+	if (outputUnit)
+		[self stop];
+	
 	ComponentDescription desc;  
 	OSStatus err;
 	
@@ -152,6 +166,11 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		AudioUnitUninitialize (outputUnit);
 		CloseComponent(outputUnit);
 	}
+}
+
+- (void)dealloc
+{
+	[self stop];
 }
 
 - (void)pause

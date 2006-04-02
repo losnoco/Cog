@@ -1,5 +1,5 @@
 //
-//  InputChain.h
+//  BufferChain.h
 //  CogNew
 //
 //  Created by Zaphod Beeblebrox on 1/4/06.

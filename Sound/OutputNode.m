@@ -1,5 +1,5 @@
 //
-//  OutputController.m
+//  OutputNode.m
 //  Cog
 //
 //  Created by Zaphod Beeblebrox on 8/2/05.
@@ -13,6 +13,8 @@
 
 - (void)setup
 {
+	amountPlayed = 0;
+
 	output = [[OutputCoreAudio alloc] initWithController:self];
 	
 	[output setup];
@@ -35,37 +37,35 @@
 
 - (int)readData:(void *)ptr amount:(int)amount
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
 	int n;
-	
 	previousNode = [[controller bufferChain] finalNode];
 	
 	n = [super readData:ptr amount:amount];
-	if ((n == 0) && (endOfInput == YES))
+//	NSLog(@"N: %i %i", n, endOfStream);
+	if (endOfStream == YES)
 	{
-		endOfInput = NO;
-		shouldContinue = YES;
-		NSLog(@"DONE IN");
-		return 0;
+		NSLog(@"End of stream reached: %i", endOfStream);
+
+		amountPlayed = 0;
+		[controller endOfInputPlayed]; //Updates shouldContinue appropriately?
+		NSLog(@"End of stream reached: %i", endOfStream);
+//		return (n + [self readData:ptr amount:(amount-n)]);
 	}
 	
-	void *tempPtr;
-	
-	if (([[[[controller bufferChain] finalNode] buffer] lengthAvailableToReadReturningPointer:&tempPtr] == 0) && ([[[controller bufferChain] finalNode] endOfInput] == YES))
-	{
-		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];		
-		
-		NSLog(@"END OF OUTPUT INPUT?!");
-		[controller endOfInputPlayed];
-		endOfInput = YES;
+	amountPlayed += n;
 
-		[pool release];
-
-		return n + [self readData:&ptr[n] amount:(amount-n)];
-		
-
-	}
+	[pool release];
 	
 	return n;
+}
+
+
+- (double)amountPlayed
+{
+
+	return (amountPlayed/format.mBytesPerFrame)/(format.mSampleRate/1000.0);
 }
 
 - (AudioStreamBasicDescription) format
@@ -78,6 +78,16 @@
 	format = *f;
 }
 
+- (void)close
+{
+	[output stop];
+}
+
+- (void)dealloc
+{
+	[output release];
+}
+
 - (void)setVolume:(double) v
 {
 	[output setVolume:v];
@@ -87,7 +97,7 @@
 {
 	[super setShouldContinue:s];
 	
-	if (s == NO)
-		[output stop];
+//	if (s == NO)
+//		[output stop];
 }
 @end

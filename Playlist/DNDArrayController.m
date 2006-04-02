@@ -121,6 +121,7 @@ NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
 
 - (NSIndexSet *)indexSetFromRows:(NSArray *)rows
 {
+	NSLog(@"HELLO");
     NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
     NSEnumerator *rowEnumerator = [rows objectEnumerator];
     NSNumber *idx;

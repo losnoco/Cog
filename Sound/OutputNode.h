@@ -1,5 +1,5 @@
 //
-//  OutputController.h
+//  OutputNode.h
 //  Cog
 //
 //  Created by Zaphod Beeblebrox on 8/2/05.
@@ -18,13 +18,17 @@
 @interface OutputNode : Node {
 	AudioStreamBasicDescription format;
 	
+	int amountPlayed;
 	OutputCoreAudio *output;
 }
 
 - (id)initWithController:(id)c previousLink:p;
 
+- (double)amountPlayed;
+
 - (void)setup;
 - (void)process;
+- (void)close;
 
 - (int)readData:(void *)ptr amount:(int)amount;
 

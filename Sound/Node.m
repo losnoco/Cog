@@ -1,5 +1,5 @@
 //
-//  InputChainLink.m
+//  Node.m
 //  CogNew
 //
 //  Created by Zaphod Beeblebrox on 1/4/06.
@@ -20,7 +20,8 @@
 		
 		controller = c;
 		previousNode = p;
-		endOfInput = NO;
+		endOfStream = NO;
+		shouldContinue = YES;
 	}
 	
 	return self;
@@ -31,33 +32,30 @@
 	void *writePtr;
 	int amountToCopy, availOutput;
 	int amountLeft = amount;
-
-	do
+	
+	while (shouldContinue == YES && amountLeft > 0)
 	{
 		availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
-		while (availOutput < CHUNK_SIZE)
+		
+		if (availOutput == 0)
 		{
 			[semaphore wait];
+		}
+		else
+		{
+			amountToCopy = availOutput;
+			if (amountToCopy > amountLeft)
+				amountToCopy = amountLeft;
 			
-			if (shouldContinue == NO)
+			memcpy(writePtr, &((char *)ptr)[amount - amountLeft], amountToCopy);
+			if (amountToCopy > 0)
 			{
-				return (amount - amountLeft);
+				[buffer didWriteLength:amountToCopy];
 			}
 			
-			availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
+			amountLeft -= amountToCopy;
 		}
-		amountToCopy = availOutput;
-		if (amountToCopy > amountLeft)
-			amountToCopy = amountLeft;
-		
-		memcpy(writePtr, &((char *)ptr)[amount - amountLeft], amountToCopy);
-		if (amountToCopy > 0)
-		{
-			[buffer didWriteLength:amountToCopy];
-		}
-		
-		amountLeft -= amountToCopy;
-	} while (amountLeft > 0);
+	}
 	
 	return (amount - amountLeft);
 }
@@ -72,8 +70,12 @@
 {
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	DBLog(@"In thread entry");
+	[self retain];
+
 	[self process];
-	
+
+	[self release];
+
 	[pool release];
 }
 
@@ -85,8 +87,17 @@
 	
 	availInput = [[previousNode buffer] lengthAvailableToReadReturningPointer:&readPtr];
 	
+	if (availInput <= amount && [previousNode endOfStream] == YES)
+	{
+//		NSLog(@"RELEASING: %i %i %i", availInput, [previousNode endOfStream], shouldContinue);
+//		[previousNode release]; 
+		//If it is the outputNode, [soundController newInputChain];
+		//else
+		endOfStream = YES;
+	}	
+
 	amountToCopy = availInput;
-	if (availInput > amount)
+	if (amountToCopy > amount)
 	{
 		amountToCopy = amount;
 	}
@@ -96,13 +107,8 @@
 	if (amountToCopy > 0)
 	{
 		[[previousNode buffer] didReadLength:amountToCopy];
+		
 		[[previousNode semaphore] signal];
-	}
-	//Do endOfInput fun now...
-	if ((amountToCopy <= 0) && ([previousNode endOfInput] == YES))
-	{
-		endOfInput = YES;
-		shouldContinue = NO;
 	}
 	
 	return amountToCopy;
@@ -139,14 +145,14 @@
 	return semaphore;
 }
 
-- (BOOL)endOfInput
+- (BOOL)endOfStream
 {
-	return endOfInput;
+	return endOfStream;
 }
 
-- (void)setEndOfInput:(BOOL)e
+- (void)setEndOfStream:(BOOL)e
 {
-	endOfInput = e;
+	endOfStream = e;
 }
 
 @end

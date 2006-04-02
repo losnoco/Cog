@@ -1,5 +1,5 @@
 //
-//  Controller.m
+//  SoundController.m
 //  Cog
 //
 //  Created by Zaphod Beeblebrox on 8/7/05.
@@ -19,8 +19,8 @@
 	if (self)
 	{
 		//things
-		output = [[OutputNode alloc] initWithController:self previous:nil];
-		bufferChain = [[BufferChain alloc] initWithController:self];
+		output = NULL;
+		bufferChain = NULL;
 		
 		chainQueue = [[NSMutableArray alloc] init];
 		
@@ -33,7 +33,28 @@
 - (void)play:(NSString *)filename
 {
 	DBLog(@"OPENING FILE: %s\n", filename);
+
+	if (output)
+	{
+		[output release];
+	}
+	output = [[OutputNode alloc] initWithController:self previous:nil];
 	[output setup];
+	
+	NSEnumerator *enumerator = [chainQueue objectEnumerator];
+	id anObject;
+	while (anObject = [enumerator nextObject])
+	{
+		[anObject setShouldContinue:NO];
+	}
+	[chainQueue removeAllObjects];
+	
+	if (bufferChain)
+	{
+		[bufferChain setShouldContinue:NO];
+		[bufferChain release];
+	}
+	bufferChain = [[BufferChain alloc] initWithController:self];
 	[bufferChain open:filename];
 		
 	[self setShouldContinue:YES];
@@ -91,6 +112,11 @@
 	[output setShouldContinue:s];
 }
 
+- (double)amountPlayed
+{
+	return [output amountPlayed];
+}
+
 - (void)endOfInputReached
 {
 	[delegate delegateRequestNextSong:[chainQueue count]];
@@ -117,7 +143,8 @@
 	if ([chainQueue count] <= 0)
 	{
 		//End of playlist
-		[self setPlaybackStatus:kCogStatusStopped];
+		NSLog(@"STOPPED");
+		[self stop];
 		
 		return;
 	}
@@ -130,14 +157,12 @@
 	
 	[chainQueue removeObjectAtIndex:0];
 
-	NSLog(@"SONG CHANGED");
-	[delegate delegateNotifySongChanged:0.0];
-
-	//	NSLog(@"SWAPPED");
+	[delegate delegateNotifySongChanged];
+	[output setEndOfStream:NO];
 }
 
 - (void)setPlaybackStatus:(int)s
-{
+{	
 	[delegate performSelectorOnMainThread:@selector(delegateNotifyStatusUpdate:) withObject:[NSNumber numberWithInt:s] waitUntilDone:NO];
 }
 

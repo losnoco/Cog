@@ -37,6 +37,9 @@
 - (void)seekToTime:(double)time;
 - (void)setVolume:(double)v;
 
+- (double)amountPlayed;
+
+
 - (void)setNextSong:(NSString *)s;
 - (void)setPlaybackStatus:(int)s;
 

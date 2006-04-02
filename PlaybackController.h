@@ -20,6 +20,8 @@
 	
 	IBOutlet NSButton *playButton;
 	
+	NSTimer *positionTimer;
+		
 	BOOL waitingForPlay; //No sneaky changing on us
 	SoundController *soundController;
 	
@@ -52,9 +54,8 @@
 
 //Methods since this is SoundController's delegate
 - (void)delegateNotifyStatusUpdate:(NSNumber *)status;
-- (void)delegateNotifyPositionUpdate:(double)pos;
 - (void)delegateNotifyBitrateUpdate:(float)bitrate;
-- (void)delegateNotifySongChanged:(double)length;
+- (void)delegateNotifySongChanged;
 - (void)delegateRequestNextSong:(int)queueSize;
 
 @end

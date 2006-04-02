@@ -1,5 +1,5 @@
 //
-//  InputChain.m
+//  BufferChain.m
 //  CogNew
 //
 //  Created by Zaphod Beeblebrox on 1/4/06.
@@ -24,6 +24,9 @@
 
 - (void)buildChain
 {
+	[inputNode release];
+	[converterNode release];
+	
 	inputNode = [[InputNode alloc] initWithController:soundController previous:nil];
 	converterNode = [[ConverterNode alloc] initWithController:soundController previous:inputNode];
 
@@ -46,6 +49,14 @@
 	[inputNode launchThread];
 	DBLog(@"LAUNCHING THREAD FOR CONVERTER");
 	[converterNode launchThread];
+}
+
+- (void)dealloc
+{
+	[inputNode release];
+	[converterNode release];
+	
+	[super dealloc];
 }
 
 

@@ -1,5 +1,5 @@
 //
-//  InputChainLink.h
+//  Node.h
 //  CogNew
 //
 //  Created by Zaphod Beeblebrox on 1/4/06.
@@ -21,7 +21,7 @@
 	id controller;
 	
 	BOOL shouldContinue;	
-	BOOL endOfInput; //All data is now in buffer
+	BOOL endOfStream; //All data is now in buffer
 }
 - (id)initWithPrevious:(id)p;
 
@@ -42,7 +42,7 @@
 
 - (Semaphore *)semaphore;
 
-- (BOOL)endOfInput;
-- (void)setEndOfInput:(BOOL)e;
+- (BOOL)endOfStream;
+- (void)setEndOfStream:(BOOL)e;
 
 @end
