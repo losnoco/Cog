@@ -90,6 +90,12 @@
 - (void)seekToTime:(double)time
 {
 	//Need to reset everything's buffers, and then seek?
+	/*HACK TO TEST HOW WELL THIS WOULD WORK*/
+	[bufferChain seek:time];
+	[output seek:time];
+	
+	
+	/*END HACK*/
 }
 
 - (void)setVolume:(double)v

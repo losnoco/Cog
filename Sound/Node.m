@@ -17,6 +17,8 @@
 	{
 		buffer = [[VirtualRingBuffer alloc] initWithLength:BUFFER_SIZE];
 		semaphore = [[Semaphore alloc] init];
+		readLock = [[NSLock alloc] init];
+		writeLock = [[NSLock alloc] init];
 		
 		controller = c;
 		previousNode = p;
@@ -33,6 +35,7 @@
 	int amountToCopy, availOutput;
 	int amountLeft = amount;
 	
+	[writeLock lock];
 	while (shouldContinue == YES && amountLeft > 0)
 	{
 		availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
@@ -56,6 +59,7 @@
 			amountLeft -= amountToCopy;
 		}
 	}
+	[writeLock unlock];
 	
 	return (amount - amountLeft);
 }
@@ -68,15 +72,17 @@
 
 - (void)threadEntry:(id)arg
 {
+	[self retain];
+
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	DBLog(@"In thread entry");
-	[self retain];
 
 	[self process];
 
-	[self release];
 
 	[pool release];
+
+	[self release];
 }
 
 - (int)readData:(void *)ptr amount:(int)amount
@@ -85,6 +91,7 @@
 	int amountToCopy;
 	int availInput;
 	
+	[readLock lock];
 	availInput = [[previousNode buffer] lengthAvailableToReadReturningPointer:&readPtr];
 	
 	if (availInput <= amount && [previousNode endOfStream] == YES)
@@ -110,6 +117,7 @@
 		
 		[[previousNode semaphore] signal];
 	}
+	[readLock unlock];
 	
 	return amountToCopy;
 }
@@ -138,6 +146,27 @@
 - (VirtualRingBuffer *)buffer
 {
 	return buffer;
+}
+
+- (void)resetBuffer
+{
+	[readLock lock];
+	[writeLock lock];
+
+	[buffer empty];
+	
+	[writeLock unlock];
+	[readLock unlock];
+}
+
+- (NSLock *)readLock
+{
+	return readLock;
+}
+
+- (NSLock *)writeLock
+{
+	return writeLock;
 }
 
 - (Semaphore *)semaphore

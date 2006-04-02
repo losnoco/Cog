@@ -18,31 +18,45 @@
 	[soundFile getFormat:&format];
 	
 	shouldContinue = YES;
+	shouldSeek = NO;
 }
 
 - (void)process
 {
 	const int chunk_size = CHUNK_SIZE;
-	char buf[chunk_size];
+	char *buf;
 	int amountRead;
 	
 	DBLog(@"Playing file.\n");
+	buf = malloc(chunk_size);
 	
 	while ([self shouldContinue] == YES && [self endOfStream] == NO)
 	{
+		if (shouldSeek == YES)
+		{
+			[soundFile seekToTime:seekTime];
+			shouldSeek = NO;
+		}
+		
 		amountRead = [soundFile fillBuffer:buf ofSize: chunk_size];
 		if (amountRead <= 0)
 		{
 			endOfStream = YES;
 			NSLog(@"END OF INPUT WAS REACHED");
 			[controller endOfInputReached];
-			[soundFile close];
-			return; //eof
+			break; //eof
 		}
 		[self writeData:buf amount:amountRead];
 	}
 	
+	free(buf);
 	[soundFile close];
+}
+
+- (void)seek:(double)time
+{
+	seekTime = time;
+	shouldSeek = YES;
 }
 
 - (AudioStreamBasicDescription) format

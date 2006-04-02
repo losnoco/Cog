@@ -26,6 +26,7 @@
 - (id)initWithController:(id)c;
 - (void)buildChain;
 - (BOOL)open:(const char *)filename;
+- (void)seek:(double)time;
 
 - (void)launchThreads;
 

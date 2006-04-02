@@ -29,6 +29,7 @@
 - (void)setup;
 - (void)process;
 - (void)close;
+- (void)seek:(double)time;
 
 - (int)readData:(void *)ptr amount:(int)amount;
 

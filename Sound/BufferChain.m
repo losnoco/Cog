@@ -59,6 +59,13 @@
 	[super dealloc];
 }
 
+- (void)seek:(double)time
+{
+	[inputNode seek:time];
+	[inputNode resetBuffer];
+	[converterNode resetBuffer];
+}
+
 
 - (id)finalNode
 {

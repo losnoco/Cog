@@ -16,6 +16,8 @@
 @interface Node : NSObject {
 	VirtualRingBuffer *buffer;
 	Semaphore *semaphore;
+	NSLock *readLock;
+	NSLock *writeLock;
 	
 	id previousNode;
 	id controller;
@@ -33,12 +35,16 @@
 
 - (void)launchThread;
 
+- (NSLock *)readLock;
+- (NSLock *)writeLock;
+
 - (id)previousNode;
 
 - (BOOL)shouldContinue;
 - (void)setShouldContinue:(BOOL)s;
 
 - (VirtualRingBuffer *)buffer;
+- (void)resetBuffer; //WARNING! DANGER WILL ROBINSON!
 
 - (Semaphore *)semaphore;
 

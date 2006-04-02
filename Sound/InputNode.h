@@ -19,9 +19,14 @@
 	AudioStreamBasicDescription format;
 	
 	SoundFile *soundFile;
+	
+	BOOL shouldSeek;
+	double seekTime;
 }
 
 - (void)process;
 - (AudioStreamBasicDescription) format;
+- (void)seek:(double)time;
+
 
 @end

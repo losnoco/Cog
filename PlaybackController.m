@@ -129,7 +129,7 @@
 	double time;
 	time = [positionSlider doubleValue];
 	
-	if ([sender tracking] == NO) // check if user stopped sliding  before playing audio
+//	if ([sender tracking] == NO) // check if user stopped sliding  before playing audio
         [soundController seekToTime:time];
 	
 	[self updateTimeField:time];

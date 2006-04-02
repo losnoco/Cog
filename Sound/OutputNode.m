@@ -20,6 +20,12 @@
 	[output setup];
 }
 
+- (void)seek:(double)time
+{
+	amountPlayed = time*format.mBytesPerFrame*(format.mSampleRate/1000.0);
+
+}
+
 - (void)process
 {
 	[output start];

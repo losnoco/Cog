@@ -185,8 +185,8 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	{
 		return [self convert:dest amount:amount];
 	}
-	if (err != noErr)
-		NSLog(@"Converter error: %i", err);
+//	if (err != noErr)
+//		NSLog(@"Converter error: %i", err);
 
 	return ioData.mBuffers[0].mDataByteSize;
 /*
