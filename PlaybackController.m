@@ -22,13 +22,13 @@
 
 - (void)awakeFromNib
 {
-
+	currentVolume = 100.0;
 }
 
 
 - (IBAction)playPauseResume:(id)sender
 {
-	NSLog(@"PLAYING");
+	DBLog(@"PLAYING");
 	if (playbackStatus == kCogStatusStopped)
 		[self play:self];
 	else
@@ -87,24 +87,25 @@
 	if (playbackStatus != kCogStatusStopped)
 		[self stop:self];
 	
-	NSLog(@"LENGTH: %lf", [pe length]);
+	DBLog(@"LENGTH: %lf", [pe length]);
 	[positionSlider setMaxValue:[pe length]];
 	[positionSlider setDoubleValue:0.0f];
 	
 	[self updateTimeField:0.0f];
 	
 	[soundController play:[pe filename]];
+	[soundController setVolume:currentVolume];
 }
 
 - (IBAction)next:(id)sender
 {
-	NSLog(@"CALLING: %i %i", playbackStatus, kCogStatusStopped);
+	DBLog(@"CALLING: %i %i", playbackStatus, kCogStatusStopped);
 	if ([playlistController next] == NO)
 		return;
 
 	if (playbackStatus != kCogStatusStopped)
 	{
-		NSLog(@"STOPPING");
+		DBLog(@"STOPPING");
 		[self stop:self];
 		[self playEntry:[playlistController currentEntry]];
 	}
@@ -112,7 +113,7 @@
 
 - (IBAction)prev:(id)sender
 {
-	NSLog(@"CALLING");
+	DBLog(@"CALLING");
 	if ([playlistController prev] == nil)
 		return;
 
@@ -129,7 +130,7 @@
 	double time;
 	time = [positionSlider doubleValue];
 	
-//	if ([sender tracking] == NO) // check if user stopped sliding  before playing audio
+	if ([sender tracking] == NO) // check if user stopped sliding  before playing audio
         [soundController seekToTime:time];
 	
 	[self updateTimeField:time];
@@ -156,8 +157,9 @@
 
 - (IBAction)changeVolume:(id)sender
 {
-	float v = (float)[sender doubleValue];
-	[soundController  setVolume:v];
+	currentVolume = (float)[sender doubleValue];
+
+	[soundController  setVolume:currentVolume];
 }
 
 
@@ -193,7 +195,7 @@
 		[soundController setNextSong:nil];
 	else
 	{
-		NSLog(@"NEXT SONG: %@", [pe filename]);
+		DBLog(@"NEXT SONG: %@", [pe filename]);
 		[soundController setNextSong:[pe filename]];
 	}
 }
@@ -233,7 +235,7 @@
 	int status = [s intValue];
 	if (status == kCogStatusStopped || status == kCogStatusPaused)
 	{
-		NSLog(@"INVALIDATING");
+		DBLog(@"INVALIDATING");
 		if (positionTimer)
 		{
 			[positionTimer invalidate];

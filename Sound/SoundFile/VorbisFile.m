@@ -65,10 +65,6 @@
     return total;
 }
 
-- (void)dealloc
-{
-	NSLog(@"DEALLOCATING VORBIS");
-}
 - (void)close
 {
 	ov_clear(&vorbisRef);

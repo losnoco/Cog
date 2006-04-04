@@ -27,6 +27,8 @@
 	
 	int playbackStatus;
 	
+	float currentVolume;
+	
 	BOOL showTimeRemaining;
  }
 

@@ -150,4 +150,26 @@
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 
+- (IBAction)toggleInfoDrawer:(id)sender
+{
+	[mainWindow makeKeyAndOrderFront:self];
+
+	[infoDrawer toggle:self];
+}
+
+- (void)drawerDidOpen:(NSNotification *)notification
+{
+	[infoButton setState:NSOnState];
+}
+
+- (void)drawerDidClose:(NSNotification *)notification
+{
+	[infoButton setState:NSOffState];
+}
+
+- (IBAction)donate:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://sourceforge.net/project/project_donations.php?group_id=140003"]];
+}
+
 @end

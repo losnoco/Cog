@@ -52,11 +52,11 @@
 //	NSLog(@"N: %i %i", n, endOfStream);
 	if (endOfStream == YES)
 	{
-		NSLog(@"End of stream reached: %i", endOfStream);
+		DBLog(@"End of stream reached: %i", endOfStream);
 
 		amountPlayed = 0;
 		[controller endOfInputPlayed]; //Updates shouldContinue appropriately?
-		NSLog(@"End of stream reached: %i", endOfStream);
+		DBLog(@"End of stream reached: %i", endOfStream);
 //		return (n + [self readData:ptr amount:(amount-n)]);
 	}
 	

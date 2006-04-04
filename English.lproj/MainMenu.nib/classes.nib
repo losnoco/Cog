@@ -4,16 +4,18 @@
             ACTIONS = {
                 addFiles = id; 
                 delEntries = id; 
+                donate = id; 
                 loadPlaylist = id; 
                 savePlaylist = id; 
                 savePlaylistAs = id; 
-                showInfo = id; 
+                toggleInfoDrawer = id; 
             }; 
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
                 addButton = NSButton; 
                 infoButton = NSButton; 
+                infoDrawer = NSDrawer; 
                 mainWindow = NSPanel; 
                 nextButton = NSButton; 
                 playButton = NSButton; 

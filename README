@@ -1,28 +1,10 @@
----------------------------------------------------------------------------
-10.3 USERS!!!
+Cog is released under the GPL. See COPYING for details.
 
-If you are using 10.3.8 or below, I'd like to hear from you. I'm trying to
-support all 10.3 systems, as I heard some people have had troubles with
-10.3.9, and won't upgrade to it.
-I can only fix this if people who actually run those systems wish to help
-me debug Cog. Thanks!
----------------------------------------------------------------------------
+The libraries folder contains various decoding and tagging libraries, which i have created Xcode projects for, and possibly modified to make compile on OS X. The various libraries are under each of their own licenses.
 
-    Cog is released under the GPL. See COPYING for details.
-
-    The libraries folder contains various decoding and tagging
-libraries, which i have created Xcode projects for, and possibly modified
-to make compile on OS X. The various libraries are under each of their own
-licenses.
-
-    Please note that vulgar language may be contained in the source code.
-It is rated M for mature by the ESRB, the MPAA, and whatever else deems it
-unsuitable for virgin ears.
-
-    All Cog code is copyrighted by me, and is licensed under the GPL.
+All Cog code is copyrighted by me, and is licensed under the GPL.
     
-	If you would like the photoshop sources for the various icons and
-graphics, please send me an email, and I will be happy to get them to you.
+If you would like the photoshop sources for the various icons and graphics, please send me an email, and I will be happy to get them to you.
 
-  Share and enjoy.
+Share and enjoy.
 --Vincent Spader (vspader@users.sf.net)

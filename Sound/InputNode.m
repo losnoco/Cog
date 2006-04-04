@@ -42,7 +42,7 @@
 		if (amountRead <= 0)
 		{
 			endOfStream = YES;
-			NSLog(@"END OF INPUT WAS REACHED");
+			DBLog(@"END OF INPUT WAS REACHED");
 			[controller endOfInputReached];
 			break; //eof
 		}

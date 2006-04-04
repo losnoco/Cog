@@ -127,7 +127,7 @@
 {
 	[delegate delegateRequestNextSong:[chainQueue count]];
 
-	NSLog(@"END OF INPUT REACHED");
+	DBLog(@"END OF INPUT REACHED");
 
 	if (nextSong == nil)
 		return;
@@ -149,7 +149,7 @@
 	if ([chainQueue count] <= 0)
 	{
 		//End of playlist
-		NSLog(@"STOPPED");
+		DBLog(@"STOPPED");
 		[self stop];
 		
 		return;
@@ -157,7 +157,7 @@
 //	NSLog(@"SWAPPING BUFFERS");
 	[bufferChain release];
 	
-	NSLog(@"END OF INPUT PLAYED");
+	DBLog(@"END OF INPUT PLAYED");
 	bufferChain = [chainQueue objectAtIndex:0];
 	[bufferChain retain];
 	

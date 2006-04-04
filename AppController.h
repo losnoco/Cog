@@ -18,6 +18,8 @@
 	IBOutlet NSButton *infoButton;
 	IBOutlet NSButton *shuffleButton;
 	IBOutlet NSButton *repeatButton;
+	
+	IBOutlet NSDrawer *infoDrawer;
 }
 
 - (IBAction)addFiles:(id)sender;
@@ -27,6 +29,12 @@
 - (IBAction)loadPlaylist:(id)sender;
 
 - (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+
+- (IBAction)donate:(id)sender;
+
+- (IBAction)toggleInfoDrawer:(id)sender;
+- (void)drawerDidOpen:(NSNotification *)notification;
+- (void)drawerDidClose:(NSNotification *)notification;
 
 //Fun stuff
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag;

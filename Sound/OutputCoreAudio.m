@@ -33,7 +33,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	if ([output->outputController shouldContinue] == NO)
 	{
-		NSLog(@"STOPPING");
+		DBLog(@"STOPPING");
         AudioOutputUnitStop(output->outputUnit);
 //		[output stop];
 		
@@ -58,7 +58,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (BOOL)setup
 {
-	NSLog(@"SETUP");
+	DBLog(@"SETUP");
 	if (outputUnit)
 		[self stop];
 	
@@ -153,13 +153,13 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)start
 {
-	NSLog(@"START OUTPUT\n");
+	DBLog(@"START OUTPUT\n");
 	AudioOutputUnitStart(outputUnit);
 }
 
 - (void)stop
 {
-	NSLog(@"STOP!");
+	DBLog(@"STOP!");
 	if (outputUnit)
 	{
         AudioOutputUnitStop(outputUnit);

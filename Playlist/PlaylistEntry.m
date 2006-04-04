@@ -219,11 +219,11 @@
 -(void)readTags
 {
 	TagLib_File *tagFile = taglib_file_new((const char *)[filename UTF8String]);
-	NSLog(@"Does it have a file? %i %s", tagFile, (const char *)[filename UTF8String]);
+	DBLog(@"Does it have a file? %i %s", tagFile, (const char *)[filename UTF8String]);
 	if (tagFile)
 	{
 		TagLib_Tag *tag = taglib_file_tag(tagFile);
-		NSLog(@"Does it have a tag? %i", tag);
+		DBLog(@"Does it have a tag? %i", tag);
 
 		if (tag)
 		{

@@ -87,7 +87,7 @@
 	<key>CFBundleIconFile</key>
 	<string>wheel</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.badahol.cog</string>
+	<string>com.vspader.cog</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -95,7 +95,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.05</string>
+	<string>0.05 alpha 1</string>
 	<key>NSAppleScriptEnabled</key>
 	<string>YES</string>
 	<key>NSMainNibFile</key>

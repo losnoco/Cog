@@ -260,7 +260,6 @@
 
 - (PlaylistEntry *)entryAtOffset:(int)offset
 {
-	NSLog(@"SHUFFLE: %i", offset);
 	if (shuffle == YES)
 	{
 		int i = shuffleIndex;

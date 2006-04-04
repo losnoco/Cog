@@ -1,5 +1,15 @@
-0.05
-----
+0.05 alpha 2
+------------
+Fixed dock menu connections, and menu connections for play/stop/next/prev.
+Fixed bindings for tag/info drawer.
+Volume settings are now consistent across songs.
+Window remembers its location.
+Info button now turns off when manually dragging the info drawer closed.
+Fixed weirdness when displaying the info drawer after closing the window (via menu or keyboard shortcut). Performing Get info now makes the window visible.
+Added a donation menu item. ($)
+
+0.05 alpha 1
+------------
 Dragging to the dock icon now works in 10.3.
 Selection now selects the first song added when adding new files.
 Now seeds the random number generator for shuffle mode.
@@ -12,6 +22,9 @@ Seekbar now updates the time field as you drag it, Simon Savary <savary (at) ori
 French translation courtesy of Simon Savary <savary (at) oricom.ca>
 Window is now brought to the front when opening a playlist.
 Should work with 3rd party audio devices.
+Gapless playback.
+New core which should feature better performance.
+New bugs and crashes!
 
 0.04
 ----
