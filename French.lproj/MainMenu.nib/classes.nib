@@ -4,17 +4,19 @@
             ACTIONS = {
                 addFiles = id; 
                 delEntries = id; 
+                donate = id; 
                 loadPlaylist = id; 
                 savePlaylist = id; 
                 savePlaylistAs = id; 
-                showInfo = id; 
+                toggleInfoDrawer = id; 
             }; 
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
                 addButton = NSButton; 
                 infoButton = NSButton; 
-                mainWindow = NSWindow; 
+                infoDrawer = NSDrawer; 
+                mainWindow = NSPanel; 
                 nextButton = NSButton; 
                 playButton = NSButton; 
                 playlistController = PlaylistController; 
@@ -55,6 +57,33 @@
         {CLASS = InfoController; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {
+            ACTIONS = {
+                changeVolume = id; 
+                next = id; 
+                pause = id; 
+                pauseResume = id; 
+                play = id; 
+                playPauseResume = id; 
+                prev = id; 
+                resume = id; 
+                seek = id; 
+                stop = id; 
+                toggleShowTimeRemaining = id; 
+            }; 
+            CLASS = PlaybackController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                bitrateField = NSTextField; 
+                lengthField = NSTextField; 
+                playButton = NSButton; 
+                playlistController = PlaylistController; 
+                playlistView = PlaylistView; 
+                positionSlider = TrackingSlider; 
+                timeField = NSTextField; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
             ACTIONS = {takeRepeatFromObject = id; takeShuffleFromObject = id; }; 
             CLASS = PlaylistController; 
             LANGUAGE = ObjC; 
@@ -64,7 +93,10 @@
         {
             CLASS = PlaylistView; 
             LANGUAGE = ObjC; 
-            OUTLETS = {playlistController = PlaylistController; soundController = SoundController; }; 
+            OUTLETS = {
+                playbackController = PlaybackController; 
+                playlistController = PlaylistController; 
+            }; 
             SUPERCLASS = NSTableView; 
         }, 
         {

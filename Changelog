@@ -1,12 +1,13 @@
 0.05 alpha 2
 ------------
-Fixed dock menu connections, and menu connections for play/stop/next/prev.
+Fixed dock menu connections, and menu connections for play, stop, next, and previous.
 Fixed bindings for tag/info drawer.
 Volume settings are now consistent across songs.
 Window remembers its location.
 Info button now turns off when manually dragging the info drawer closed.
 Fixed weirdness when displaying the info drawer after closing the window (via menu or keyboard shortcut). Performing Get info now makes the window visible.
 Added a donation menu item. ($)
+Clicking the text field now toggles Time Elapsed with Time Remaining.
 
 0.05 alpha 1
 ------------

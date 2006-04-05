@@ -263,9 +263,8 @@
 	if (shuffle == YES)
 	{
 		int i = shuffleIndex;
-		
 		i += offset;
-		
+//		NSLog(@"SHUFFLE: %i %i %i %i", i, shuffleIndex, offset, [shuffleList count]);
 		while (i < 0)
 		{
 			if (repeat == YES)
@@ -283,6 +282,7 @@
 		{
 			if (repeat == YES)
 			{
+				NSLog(@"Adding shuffled list to back!");
 				[self addShuffledListToBack];
 			}
 			else
@@ -326,6 +326,9 @@
 	if (pe == nil)
 		return NO;
 	
+	if (shuffle == YES)
+		shuffleIndex++;
+	
 	[self setCurrentEntry:pe];
 	
 	return YES;
@@ -352,24 +355,22 @@
 	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
 	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [newList count])];
 	
-	[self insertObjects:newList atArrangedObjectIndexes:indexSet];
-
-	[newList release];
+	[shuffleList insertObjects:newList atIndexes:indexSet];
 }
 
 - (void)addShuffledListToFront
 {
 	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
-	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([[self arrangedObjects] count], [newList count])];
-	
-	[self insertObjects:newList atArrangedObjectIndexes:indexSet];
-	
-	[newList release];
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([shuffleList count], [newList count])];
+	NSLog(@"%@", newList);
+	[shuffleList insertObjects:newList atIndexes:indexSet];
 }
 
 - (void)resetShuffleList
 {
 	[shuffleList removeAllObjects];
+	[self addShuffledListToFront];
+	
 	shuffleIndex = 0;
 }
 

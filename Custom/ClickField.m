@@ -10,7 +10,7 @@
 {
 	if([theEvent type] == NSLeftMouseDown)
 	{
-		[soundController toggleShowTimeRemaining:self];
+		[self sendAction:[self action] to:[self target]];
 	}
 }
 
