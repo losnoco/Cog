@@ -42,7 +42,9 @@
 		
 		if (availOutput == 0)
 		{
+			[writeLock unlock];
 			[semaphore wait];
+			[writeLock lock];
 		}
 		else
 		{
