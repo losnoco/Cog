@@ -15,6 +15,7 @@
 	NSArray *acceptablePlaylistTypes;
 	
 	NSString *playlistFilename;
+	NSString *totalTimeDisplay;
 	
 	NSMutableArray *shuffleList;
 
@@ -33,6 +34,8 @@
 - (int)insertFile:(NSString *)filename atIndex:(int)index;
 - (int)addFile:(NSString *)filename;
 - (void)updateIndexesFromRow:(int) row;
+- (void)updateTotalTime;
+
 
 //PUBLIC METHODS
 - (int)addPaths:(NSArray *)paths sort:(BOOL)sort;
@@ -47,6 +50,9 @@
 
 - (IBAction)takeShuffleFromObject:(id)sender;
 - (IBAction)takeRepeatFromObject:(id)sender;
+
+- (void)setTotalTimeDisplay:(NSString *)ttd;
+- (NSString *)totalTimeDisplay;
 
 //FUN PLAYLIST MANAGEMENT STUFF!
 - (id)currentEntry;

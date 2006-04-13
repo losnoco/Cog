@@ -14,7 +14,6 @@
 
 @interface PlaylistView : NSTableView {
 	
-	IBOutlet AppController *appController; //needed to update the total time in the main window title
 	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
 	

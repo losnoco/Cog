@@ -17,7 +17,6 @@
 	if ([p runModalForTypes:[playlistController acceptableFileTypes]] == NSOKButton)
 	{
 		[playlistController addPaths:[p filenames] sort:NO];
-		[self updateTotalTime];
 	}
 	
 }
@@ -35,7 +34,6 @@
 - (IBAction)delEntries:(id)sender
 {
 	[playlistController remove:self];
-	[self updateTotalTime];
 }
 
 - (PlaylistEntry *)currentEntry
@@ -65,8 +63,6 @@
 	
 	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
 	[playlistController loadPlaylist:[filename stringByExpandingTildeInPath]];
-	
-	[self updateTotalTime];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -124,8 +120,6 @@
 		[playlistController setPlaylistFilename:[p filename]];
 		
 		[playlistController loadPlaylist:[p filename]];
-		
-		[self updateTotalTime];
 	}
 	
 	[mainWindow makeKeyAndOrderFront:self];
@@ -176,23 +170,6 @@
 - (IBAction)donate:(id)sender
 {
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://sourceforge.net/project/project_donations.php?group_id=140003"]];
-}
-
-- (void)updateTotalTime
-{
-	double tt=0;
-	NSArray* entries = [playlistController arrangedObjects];
-	
-	NSEnumerator *enumerator = [entries objectEnumerator];
-	PlaylistEntry* pe;
-	
-	while (pe = [enumerator nextObject]) {
-		tt += [pe length];
-	}
-	
-	int sec = (int)(tt/1000.0);
-	NSString* ttstring = [NSString stringWithFormat:@"Cog - %i:%02i",sec/60, sec%60];
-	[mainWindow setTitle:ttstring];
 }
 
 @end

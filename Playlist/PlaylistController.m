@@ -134,6 +134,7 @@
 	
 	
 	[self setSelectionIndex:index];
+	[self updateTotalTime];
 	
 	return count;
 }
@@ -193,11 +194,40 @@
 	[self insertPaths:files atIndex:row sort:YES];
 
 	[self updateIndexesFromRow:row];
-
+	[self updateTotalTime];
+	
 	if (shuffle == YES)
 		[self resetShuffleList];
 	
 	return YES;
+}
+
+- (void)updateTotalTime
+{
+	double tt=0;
+	
+	NSEnumerator *enumerator = [[self arrangedObjects] objectEnumerator];
+	PlaylistEntry* pe;
+	
+	while (pe = [enumerator nextObject]) {
+		tt += [pe length];
+	}
+	
+	int sec = (int)(tt/1000.0);
+	[self setTotalTimeDisplay:[NSString stringWithFormat:@"%i:%02i",sec/60, sec%60]];
+}
+
+- (void)setTotalTimeDisplay:(NSString *)ttd
+{
+	[ttd retain];
+	[totalTimeDisplay release];
+	totalTimeDisplay = ttd;
+	NSLog(@"Displaying: %@", ttd);
+}
+
+- (NSString *)totalTimeDisplay;
+{
+	return totalTimeDisplay;
 }
 
 - (void)updateIndexesFromRow:(int) row
@@ -236,7 +266,8 @@
 	
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 	[self updateIndexesFromRow:[indexes firstIndex]];
-	
+	[self updateTotalTime];
+
 	if (shuffle == YES)
 		[self resetShuffleList];
 	

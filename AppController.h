@@ -32,8 +32,6 @@
 
 - (IBAction)donate:(id)sender;
 
-- (void)updateTotalTime;
-
 - (IBAction)toggleInfoDrawer:(id)sender;
 - (void)drawerDidOpen:(NSNotification *)notification;
 - (void)drawerDidClose:(NSNotification *)notification;
