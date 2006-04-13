@@ -57,7 +57,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	if (converter->callbackBuffer != NULL)
 		free(converter->callbackBuffer);
 	converter->callbackBuffer = malloc(amountToWrite);
-	
+
 	amountRead = [converter readData:converter->callbackBuffer amount:amountToWrite];
 /*	if ([converter endOfStream] == YES)
 	{

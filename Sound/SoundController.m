@@ -30,10 +30,8 @@
 	return self;
 }
 
-- (void)play:(NSString *)filename
+- (void)play:(PlaylistEntry *)pe
 {
-	DBLog(@"OPENING FILE: %s\n", filename);
-
 	if (output)
 	{
 		[output release];
@@ -48,15 +46,30 @@
 		[anObject setShouldContinue:NO];
 	}
 	[chainQueue removeAllObjects];
-	
+				
 	if (bufferChain)
 	{
 		[bufferChain setShouldContinue:NO];
 		[bufferChain release];
 	}
 	bufferChain = [[BufferChain alloc] initWithController:self];
-	[bufferChain open:filename];
+
+	while (![bufferChain open:pe])
+	{
+		[bufferChain release];
+
+		[self requestNextEntry:pe];
+
+		pe = nextEntry;
+		if (pe == nil)
+		{
+			return;
+		}
 		
+		[self notifySongChanged:pe];
+		bufferChain = [[BufferChain alloc] initWithController:self];
+	}
+
 	[self setShouldContinue:YES];
 	DBLog(@"DETACHING THREADS");
 	
@@ -103,12 +116,11 @@
 	[output setVolume:v];
 }
 
-- (void)setNextSong:(NSString *)s
+- (void)setNextEntry:(PlaylistEntry *)pe
 {
-	//Need to lock things, and set it...this may be calling from any threads...also, if its nil then that signals end of playlist
-	[s retain];
-	[nextSong release];
-	nextSong = s;
+	[pe retain];
+	[nextEntry release];
+	nextEntry = pe;
 }
 
 
@@ -123,19 +135,35 @@
 	return [output amountPlayed];
 }
 
-- (void)endOfInputReached
+
+- (void)requestNextEntry:(PlaylistEntry *)pe
 {
-	[delegate delegateRequestNextSong:[chainQueue count]];
+	[delegate performSelectorOnMainThread:@selector(delegateRequestNextEntry:) withObject:pe waitUntilDone:YES];
+}
 
-	DBLog(@"END OF INPUT REACHED");
+- (void)notifySongChanged:(PlaylistEntry *)pe
+{
+	[delegate performSelectorOnMainThread:@selector(delegateNotifySongChanged:) withObject:pe waitUntilDone:NO];
+}
 
-	if (nextSong == nil)
-		return;
+- (void)endOfInputReached:(id)sender
+{
+	BufferChain *newChain = nil;
+
+	nextEntry = [sender playlistEntry];
 	
-	BufferChain *newChain = [[BufferChain alloc] initWithController:self];
+	do {
+		[newChain release];
+		[self requestNextEntry:nextEntry];
 
-	[newChain open:nextSong];
-
+		if (nextEntry == nil)
+		{
+			return;
+		}
+		
+		newChain = [[BufferChain alloc] initWithController:self];
+	} while (![newChain open:nextEntry]);
+	
 	[newChain setShouldContinue:YES];
 	[newChain launchThreads];
 	
@@ -163,7 +191,7 @@
 	
 	[chainQueue removeObjectAtIndex:0];
 
-	[delegate delegateNotifySongChanged];
+	[self notifySongChanged:[bufferChain playlistEntry]];
 	[output setEndOfStream:NO];
 }
 

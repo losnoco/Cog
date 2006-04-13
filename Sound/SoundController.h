@@ -10,6 +10,7 @@
 
 #import "BufferChain.h"
 #import "OutputNode.h"
+#import "PlaylistEntry.h"
 
 @class BufferChain;
 @class OutputNode;
@@ -20,7 +21,7 @@
 
 	NSMutableArray *chainQueue;
 	
-	NSString *nextSong; //Updated whenever the playlist changes?
+	PlaylistEntry *nextEntry; //Updated whenever the playlist changes?
 	
 	id delegate;
 }
@@ -40,7 +41,7 @@
 - (double)amountPlayed;
 
 
-- (void)setNextSong:(NSString *)s;
+- (void)setNextEntry:(PlaylistEntry *)pe;
 - (void)setPlaybackStatus:(int)s;
 
 

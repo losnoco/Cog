@@ -11,11 +11,13 @@
 #import "InputNode.h"
 #import "ConverterNode.h"
 #import "SoundController.h"
+#import "PlaylistEntry.h"
 
 @interface BufferChain : NSObject {
 	InputNode *inputNode;
 	ConverterNode *converterNode;
-
+	PlaylistEntry *playlistEntry;
+	
 	NSArray *effects; //Not needed as of now, but for EFFECTS PLUGINS OF THE FUTURE!
 	
 	id finalNode; //Final buffer in the chain.
@@ -25,7 +27,7 @@
 
 - (id)initWithController:(id)c;
 - (void)buildChain;
-- (BOOL)open:(const char *)filename;
+- (BOOL)open:(PlaylistEntry *)pe;
 - (void)seek:(double)time;
 
 - (void)launchThreads;

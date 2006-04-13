@@ -258,6 +258,29 @@
 		[self setRepeat: [sender state]];
 }
 
+- (PlaylistEntry *)entryAtIndex:(int)i
+{
+	//Need to fix for SHUFFLE MODE! holy fix.
+	i--;
+	if (i < 0)
+	{
+		if (repeat == YES)
+			i += [[self arrangedObjects] count];
+		else
+			return nil;
+	}
+	else if (i >= [[self arrangedObjects] count])
+	{
+		if (repeat == YES)
+			i -= [[self arrangedObjects] count];
+		else
+			return nil;
+	}
+	
+	return [[self arrangedObjects] objectAtIndex:i];
+	
+}
+
 - (PlaylistEntry *)entryAtOffset:(int)offset
 {
 	if (shuffle == YES)

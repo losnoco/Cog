@@ -93,7 +93,7 @@
 	
 	[self updateTimeField:0.0f];
 	
-	[soundController play:[pe filename]];
+	[soundController play:pe];
 	[soundController setVolume:currentVolume];
 }
 
@@ -186,24 +186,23 @@
 	[self updateTimeField:[positionSlider doubleValue]];
 }
 
-- (void)delegateRequestNextSong:(int)queueSize
+- (void)delegateRequestNextEntry:(PlaylistEntry *)curEntry
 {
 	PlaylistEntry *pe;
-	pe = [playlistController entryAtOffset:(queueSize+1)];
+	pe = [playlistController entryAtIndex:[curEntry index]+1];
 	
 	if (pe == nil)
-		[soundController setNextSong:nil];
+		[soundController setNextEntry:nil];
 	else
 	{
 		DBLog(@"NEXT SONG: %@", [pe filename]);
-		[soundController setNextSong:[pe filename]];
+		[soundController setNextEntry:pe];
 	}
 }
 
-- (void)delegateNotifySongChanged
+- (void)delegateNotifySongChanged:(PlaylistEntry *)pe
 {
-	[playlistController next];
-	PlaylistEntry *pe = [playlistController currentEntry];;
+	[playlistController setCurrentEntry:pe];
 	
 	[positionSlider setMaxValue:[pe length]];
 	[positionSlider setDoubleValue:0.0f];

@@ -58,6 +58,6 @@
 - (void)delegateNotifyStatusUpdate:(NSNumber *)status;
 - (void)delegateNotifyBitrateUpdate:(float)bitrate;
 - (void)delegateNotifySongChanged;
-- (void)delegateRequestNextSong:(int)queueSize;
+- (void)delegateRequestNextSong:(PlaylistEntry *)pe;
 
 @end

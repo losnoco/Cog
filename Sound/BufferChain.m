@@ -17,6 +17,9 @@
 	if (self)
 	{
 		soundController = c;
+		playlistEntry = nil;
+		inputNode = nil;
+		converterNode = nil;
 	}
 	
 	return self;
@@ -27,17 +30,24 @@
 	[inputNode release];
 	[converterNode release];
 	
-	inputNode = [[InputNode alloc] initWithController:soundController previous:nil];
-	converterNode = [[ConverterNode alloc] initWithController:soundController previous:inputNode];
+	inputNode = [[InputNode alloc] initWithController:self previous:nil];
+	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
 
 	finalNode = converterNode;
 }
 
-- (BOOL)open:(NSString *)filename
+- (BOOL)open:(PlaylistEntry *)pe
 {
+	[pe retain];
+	[playlistEntry release];
+	NSLog(@"THEY ARE THE SAME?!");
+	playlistEntry = pe;
+	
 	[self buildChain];
-
-	[inputNode open:filename];
+	NSLog(@"Filename in bufferchain: %@, %i %i", [pe filename], playlistEntry, pe);
+	if (![inputNode open:[playlistEntry filename]])
+		return NO;
+	
 	[converterNode setupWithInputFormat:(AudioStreamBasicDescription)[inputNode format] outputFormat:[[soundController output] format] ];
 	
 	return YES;
@@ -53,6 +63,8 @@
 
 - (void)dealloc
 {
+	[playlistEntry release];
+	
 	[inputNode release];
 	[converterNode release];
 	
@@ -66,10 +78,20 @@
 	[converterNode resetBuffer];
 }
 
+- (void)endOfInputReached
+{
+	[soundController endOfInputReached:self];
+}
+
 
 - (id)finalNode
 {
 	return finalNode;
+}
+
+- (PlaylistEntry *)playlistEntry
+{
+	return playlistEntry;
 }
 
 - (void)setShouldContinue:(BOOL)s

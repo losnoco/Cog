@@ -96,6 +96,7 @@
 	
 	if (availInput <= amount && [previousNode endOfStream] == YES)
 	{
+		NSLog(@"END OF NODE");
 //		NSLog(@"RELEASING: %i %i %i", availInput, [previousNode endOfStream], shouldContinue);
 //		[previousNode release]; 
 		//If it is the outputNode, [soundController newInputChain];

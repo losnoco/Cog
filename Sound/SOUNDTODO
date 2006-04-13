@@ -1,18 +1,4 @@
-Need to have soundcontroller or outputnode keep a count of how much was played.
-Need to integrate with UI (AppController).
 Limit the number of queued elements (2 would probably be good, maybe 3).
-
-Need to finish implementation of seekToTime, pause, play, resume, stop, etc.
-
-
-
-
-
-
-
-
-
-
 
 
 

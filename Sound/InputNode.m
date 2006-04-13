@@ -11,14 +11,27 @@
 
 @implementation InputNode
 
-- (void)open:(NSString *)filename
+- (BOOL)open:(NSString *)filename
 {
+	NSLog(@"Opening: %@", filename);
 	soundFile = [SoundFile open:filename];
-	
+	if (soundFile == nil)
+		return NO;
+/*	while (soundFile == nil)
+	{
+		NSString *nextSong = [controller invalidSoundFile];
+		if (nextSong == nil)
+			return NO;
+
+		soundFile = [SoundFile open:nextSong];
+	}
+*/	
 	[soundFile getFormat:&format];
 	
 	shouldContinue = YES;
 	shouldSeek = NO;
+	
+	return YES;
 }
 
 - (void)process
