@@ -8,7 +8,9 @@ Info button now turns off when manually dragging the info drawer closed.
 Fixed weirdness when displaying the info drawer after closing the window (via menu or keyboard shortcut). Performing Get info now makes the window visible.
 Added a donation menu item. ($)
 Clicking the text field now toggles Time Elapsed with Time Remaining.
-Trying to play an invalid sound file now goes to the next file. Still need to do that when normally changing tracks.
+Invalid files are now skipped.
+Total playlist time displayed in title (simon savary)
+
 
 0.05 alpha 1
 ------------
