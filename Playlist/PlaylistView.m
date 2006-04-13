@@ -54,6 +54,7 @@
 	if (c == NSDeleteCharacter)
 	{
 		[playlistController remove:self];
+		[appController updateTotalTime];
 	}
 	else if (c == ' ')
 	{

@@ -32,11 +32,13 @@
 
 - (IBAction)donate:(id)sender;
 
+- (void)updateTotalTime;
+
 - (IBAction)toggleInfoDrawer:(id)sender;
 - (void)drawerDidOpen:(NSNotification *)notification;
 - (void)drawerDidClose:(NSNotification *)notification;
 
-//Fun stuff
+	//Fun stuff
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag;
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 - (void)application:(NSApplication *)theApplication openFiles:(NSArray *)filenames;

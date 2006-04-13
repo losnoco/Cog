@@ -12,13 +12,14 @@
 	[p setAllowsMultipleSelection:YES];
 	
 	//	[p beginSheetForDirectory:nil file:nil types:[`listController acceptableFileTypes] modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
-//	[p beginForDirectory:nil file:nil types:[playlistController acceptableFileTypes] modelessDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
+	//	[p beginForDirectory:nil file:nil types:[playlistController acceptableFileTypes] modelessDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
 	
 	if ([p runModalForTypes:[playlistController acceptableFileTypes]] == NSOKButton)
 	{
 		[playlistController addPaths:[p filenames] sort:NO];
+		[self updateTotalTime];
 	}
-
+	
 }
 
 - (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
@@ -34,6 +35,7 @@
 - (IBAction)delEntries:(id)sender
 {
 	[playlistController remove:self];
+	[self updateTotalTime];
 }
 
 - (PlaylistEntry *)currentEntry
@@ -43,13 +45,13 @@
 
 - (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key
 {
-//	DBLog(@"W00t");
+	//	DBLog(@"W00t");
 	return [key isEqualToString:@"currentEntry"];
 }
 
 - (void)awakeFromNib
 {
-//	DBLog(@"AWAKe");
+	//	DBLog(@"AWAKe");
 	
 	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
 	[stopButton setToolTip:NSLocalizedString(@"StopButtonTooltip", @"")];
@@ -60,14 +62,16 @@
 	[infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
 	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
 	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
-
+	
 	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
 	[playlistController loadPlaylist:[filename stringByExpandingTildeInPath]];
+	
+	[self updateTotalTime];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-//	DBLog(@"QUITTING");
+	//	DBLog(@"QUITTING");
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *folder = @"~/Library/Application Support/Cog/";
 	
@@ -79,9 +83,9 @@
 	}
 	
 	NSString *fileName = @"Default.playlist";
-
+	
 	[playlistController savePlaylist:[folder stringByAppendingPathComponent: fileName]];
-
+	
 }
 
 - (IBAction)savePlaylist:(id)sender
@@ -102,7 +106,7 @@
 	if ([p runModalForDirectory:nil file:[[playlistController playlistFilename] lastPathComponent]] == NSOKButton)
 	{
 		[playlistController setPlaylistFilename:[p filename]];
-
+		
 		[playlistController savePlaylist:[p filename]];
 	}
 }
@@ -120,6 +124,8 @@
 		[playlistController setPlaylistFilename:[p filename]];
 		
 		[playlistController loadPlaylist:[p filename]];
+		
+		[self updateTotalTime];
 	}
 	
 	[mainWindow makeKeyAndOrderFront:self];
@@ -145,7 +151,7 @@
 - (void)application:(NSApplication *)theApplication openFiles:(NSArray *)filenames
 {
 	DBLog(@"Adding paths: %@", filenames);
-
+	
 	[playlistController addPaths:filenames sort:YES];
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
@@ -153,7 +159,7 @@
 - (IBAction)toggleInfoDrawer:(id)sender
 {
 	[mainWindow makeKeyAndOrderFront:self];
-
+	
 	[infoDrawer toggle:self];
 }
 
@@ -170,6 +176,23 @@
 - (IBAction)donate:(id)sender
 {
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://sourceforge.net/project/project_donations.php?group_id=140003"]];
+}
+
+- (void)updateTotalTime
+{
+	double tt=0;
+	NSArray* entries = [playlistController arrangedObjects];
+	
+	NSEnumerator *enumerator = [entries objectEnumerator];
+	PlaylistEntry* pe;
+	
+	while (pe = [enumerator nextObject]) {
+		tt += [pe length];
+	}
+	
+	int sec = (int)(tt/1000.0);
+	NSString* ttstring = [NSString stringWithFormat:@"Cog - %i:%02i",sec/60, sec%60];
+	[mainWindow setTitle:ttstring];
 }
 
 @end

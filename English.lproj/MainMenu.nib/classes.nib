@@ -94,6 +94,7 @@
             CLASS = PlaylistView; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                appController = AppController; 
                 playbackController = PlaybackController; 
                 playlistController = PlaylistController; 
             }; 
