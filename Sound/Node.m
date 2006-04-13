@@ -43,7 +43,9 @@
 		if (availOutput == 0)
 		{
 			[writeLock unlock];
+			NSLog(@"WAITING %i", shouldContinue);
 			[semaphore wait];
+			NSLog(@"NOT WAITING: %i", shouldContinue);
 			[writeLock lock];
 		}
 		else
@@ -153,6 +155,7 @@
 
 - (void)resetBuffer
 {
+	[semaphore signal];
 	[readLock lock];
 	[writeLock lock];
 

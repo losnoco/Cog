@@ -73,7 +73,9 @@
 
 - (void)seek:(double)time
 {
+	NSLog(@"SEEKING IN BUFFERCHIAN");
 	[inputNode seek:time];
+
 	[inputNode resetBuffer];
 	[converterNode resetBuffer];
 }

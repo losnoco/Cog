@@ -47,6 +47,7 @@
 	{
 		if (shouldSeek == YES)
 		{
+			NSLog(@"Actually seeking");
 			[soundFile seekToTime:seekTime];
 			shouldSeek = NO;
 		}
@@ -68,6 +69,7 @@
 
 - (void)seek:(double)time
 {
+	NSLog(@"SEEKING WEEE");
 	seekTime = time;
 	shouldSeek = YES;
 }
