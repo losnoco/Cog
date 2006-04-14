@@ -111,8 +111,10 @@ NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
 			insertIndex -= 1;
 		}
 		object = [objects objectAtIndex:removeIndex];
+		[object retain];
 		[self removeObjectAtArrangedObjectIndex:removeIndex];
 		[self insertObject:object atArrangedObjectIndex:insertIndex];
+		[object release];
 		
 		index = [indexSet indexLessThanIndex:index];
     }

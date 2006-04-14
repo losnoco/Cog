@@ -170,7 +170,9 @@
 	if ([info draggingSource] == tableView)
 	{
 		//DNDArrayController handles moving...still need to update the uhm...indices
+		NSLog(@"Archive stuff");
 		NSArray *rows = [NSKeyedUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType: MovedRowsType]];
+		NSLog(@"Whatever");
 		NSIndexSet  *indexSet = [self indexSetFromRows:rows];
 		int firstIndex = [indexSet firstIndex];
 		if (firstIndex > row)
