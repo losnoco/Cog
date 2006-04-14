@@ -26,6 +26,8 @@
 
 - (void)dealloc
 {
+	NSLog(@"DEALLOCATING A PLAYLIST ENTRY: %@", display);
+	
 	[filename release];
 	[display release];
 	

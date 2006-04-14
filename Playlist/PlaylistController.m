@@ -206,11 +206,14 @@
 {
 	double tt=0;
 	
-	NSEnumerator *enumerator = [[self arrangedObjects] objectEnumerator];
+	NSEnumerator *enumerator = [[self content] objectEnumerator];
 	PlaylistEntry* pe;
 	
 	while (pe = [enumerator nextObject]) {
+		NSLog(@"Updating :%i", pe);
+		NSLog(@"Updating :%@", pe);
 		tt += [pe length];
+		NSLog(@"UpdateD");
 	}
 	
 	int sec = (int)(tt/1000.0);
@@ -254,6 +257,7 @@
 	[indexes getIndexes:indexBuffer maxCount:[indexes count] inIndexRange:nil];
 	for (i = 0; i < [indexes count]; i++)
 	{
+		NSLog(@"REMOVING FROM INDEX: %i", indexBuffer[i]);
 		[a addObject:[[self arrangedObjects] objectAtIndex:(indexBuffer[i])]];
 	}
 	

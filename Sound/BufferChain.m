@@ -63,7 +63,9 @@
 
 - (void)dealloc
 {
+	NSLog(@"Releasing playlistEntry: %i", [playlistEntry retainCount]);
 	[playlistEntry release];
+	NSLog(@"Released playlistEntry: %i", [playlistEntry retainCount]);
 	
 	[inputNode release];
 	[converterNode release];

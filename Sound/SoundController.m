@@ -119,6 +119,7 @@
 - (void)setNextEntry:(PlaylistEntry *)pe
 {
 	[pe retain];
+	NSLog(@"Releasing: %@", [pe display]);
 	[nextEntry release];
 	nextEntry = pe;
 }
@@ -151,7 +152,8 @@
 	BufferChain *newChain = nil;
 
 	nextEntry = [sender playlistEntry];
-	
+	[nextEntry retain];
+
 	do {
 		[newChain release];
 		[self requestNextEntry:nextEntry];
