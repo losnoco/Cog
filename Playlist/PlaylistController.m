@@ -23,7 +23,6 @@
 		acceptableFileTypes = [[NSArray alloc] initWithObjects:@"shn",@"wv",@"ogg",@"wav",@"mpc",@"flac",@"ape",@"mp3",@"aiff",@"aif",@"aac",nil];
 		acceptablePlaylistTypes = [[NSArray alloc] initWithObjects:@"playlist",nil];
 		shuffleList = [[NSMutableArray alloc] init];
-		shuffleIndex = 0;
 //		DBLog(@"DAH BUTTER CHORNAR: %@", history);
 	}
 	
@@ -298,27 +297,60 @@
 - (PlaylistEntry *)entryAtIndex:(int)i
 {
 	//Need to fix for SHUFFLE MODE! holy fix.
-	i--;
-	if (i < 0)
+	if (shuffle == NO)
 	{
-		if (repeat == YES)
-			i += [[self arrangedObjects] count];
-		else
-			return nil;
+		i--;
+		if (i < 0)
+		{
+			if (repeat == YES)
+				i += [[self arrangedObjects] count];
+			else
+				return nil;
+		}
+		else if (i >= [[self arrangedObjects] count])
+		{
+			if (repeat == YES)
+				i -= [[self arrangedObjects] count];
+			else
+				return nil;
+		}
+		
+		return [[self arrangedObjects] objectAtIndex:i];
 	}
-	else if (i >= [[self arrangedObjects] count])
+/*	else
 	{
-		if (repeat == YES)
-			i -= [[self arrangedObjects] count];
-		else
-			return nil;
-	}
-	
-	return [[self arrangedObjects] objectAtIndex:i];
-	
+		//		NSLog(@"SHUFFLE: %i %i %i %i", i, shuffleIndex, offset, [shuffleList count]);
+		while (i < 0)
+		{
+			if (repeat == YES)
+			{
+				[self addShuffledListToFront];
+				//change i appropriately
+				i += [[self arrangedObjects] count];
+			}
+			else
+			{
+				return nil;
+			}
+		}
+		while (i >= [shuffleList count])
+		{
+			if (repeat == YES)
+			{
+				NSLog(@"Adding shuffled list to back!");
+				[self addShuffledListToBack];
+			}
+			else
+			{
+				return nil;
+			}
+		}
+		
+		return [shuffleList objectAtIndex:i];
+	}*/
 }
 
-- (PlaylistEntry *)entryAtOffset:(int)offset
+/*- (PlaylistEntry *)entryAtOffset:(int)offset
 {
 	if (shuffle == YES)
 	{
@@ -377,7 +409,8 @@
 		return [[self arrangedObjects] objectAtIndex:i];
 	}		
 }
-
+*/
+/*
 - (BOOL)next
 {
 	PlaylistEntry *pe;
@@ -409,7 +442,7 @@
 	
 	return YES;
 }
-
+*/
 - (void)addShuffledListToBack
 {
 	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
@@ -431,7 +464,7 @@
 	[shuffleList removeAllObjects];
 	[self addShuffledListToFront];
 	
-	shuffleIndex = 0;
+//	shuffleIndex = 0;
 }
 
 - (id)currentEntry

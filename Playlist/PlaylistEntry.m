@@ -34,6 +34,15 @@
 	[super dealloc];
 }
 
+-(void)setShuffleIndex:(int)si
+{
+	shuffleIdx = si;
+}
+
+-(int)shuffleIndex
+{
+	return shuffleIdx;
+}
 
 -(void)setIndex:(int)i
 {

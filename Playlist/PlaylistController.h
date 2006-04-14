@@ -21,8 +21,6 @@
 
 	PlaylistEntry *currentEntry;
 	
-	int shuffleIndex;
-	
 	BOOL shuffle;
 	BOOL repeat;
 }
@@ -61,7 +59,8 @@
 - (BOOL)next;
 - (BOOL)prev;
 
-- (PlaylistEntry *)entryAtOffset:(int)offset;
+- (PlaylistEntry *)entryAtIndex:(int)i;
+
 - (void)addShuffledListToBack;
 - (void)addShuffledListToFront;
 - (void)resetShuffleList;
