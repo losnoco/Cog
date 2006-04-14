@@ -56,6 +56,7 @@
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoController; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
         {
             ACTIONS = {
                 changeVolume = id; 

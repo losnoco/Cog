@@ -60,7 +60,8 @@ File::File(const char *file)
   d = new FilePrivate(::strdup(file));
 
   d->readOnly = !isWritable(file);
-  d->file = fopen(file, d->readOnly ? "r" : "r+");
+//  d->file = fopen(file, d->readOnly ? "r" : "r+");
+  d->file = fopen(file, "r");
 
   if(!d->file)
     debug("Could not open file " + String(file));
