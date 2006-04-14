@@ -410,17 +410,13 @@
 	}		
 }
 */
-/*
 - (BOOL)next
 {
 	PlaylistEntry *pe;
 	
-	pe = [self entryAtOffset:1];
+	pe = [self entryAtIndex:[currentEntry index] + 1];
 	if (pe == nil)
 		return NO;
-	
-	if (shuffle == YES)
-		shuffleIndex++;
 	
 	[self setCurrentEntry:pe];
 	
@@ -431,18 +427,15 @@
 {
 	PlaylistEntry *pe;
 	
-	pe = [self entryAtOffset:-1];
+	pe = [self entryAtIndex:[currentEntry index] - 1];
 	if (pe == nil)
 		return NO;
-
-	if (shuffle == YES)
-		shuffleIndex--;	
 	
 	[self setCurrentEntry:pe];
 	
 	return YES;
 }
-*/
+
 - (void)addShuffledListToBack
 {
 	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
