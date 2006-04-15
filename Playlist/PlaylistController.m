@@ -41,7 +41,7 @@
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 
 		[pe	setFilename:filename]; //Setfilename takes car of opening the soundfile..cheap hack, but works for now
-		[pe setIndex:(index+1)];
+		[pe setIndex:index];
 		[pe readTags];
 		[pe readInfo];
 		
@@ -243,7 +243,7 @@
 		PlaylistEntry *p;
 		p = [[self content] objectAtIndex:j];
 		
-		[p setIndex:(j+1)];
+		[p setIndex:j];
 	}
 }
 
@@ -296,7 +296,6 @@
 
 - (PlaylistEntry *)entryAtIndex:(int)i
 {
-	i--;
 	if (i < 0)
 	{
 		if (repeat == YES)
@@ -427,7 +426,15 @@
 	}
 	else
 	{
-		return [self entryAtIndex:[pe index] - 1];
+		//Fix for removing a track, then pressing prev with repeat turned on
+		if ([pe index] == -1)
+		{
+			return [self entryAtIndex:[pe index]];
+		}
+		else
+		{
+			return [self entryAtIndex:[pe index] - 1];
+		}
 	}
 }
 
@@ -494,26 +501,25 @@
 
 	[self addShuffledListToFront];
 
-	[shuffleList insertObject:currentEntry atIndex:0];
-	[currentEntry setShuffleIndex:0];
-
-	//Need to rejigger so the current entry is at the start now...
-	int i;
-	BOOL found = NO;
-	for (i = 1; i < [shuffleList count]; i++)
+	if (currentEntry && [currentEntry index] != -1)
 	{
-		if (found == NO && [[shuffleList objectAtIndex:i] filename] == [currentEntry filename])
+		[shuffleList insertObject:currentEntry atIndex:0];
+		[currentEntry setShuffleIndex:0];
+		
+		//Need to rejigger so the current entry is at the start now...
+		int i;
+		BOOL found = NO;
+		for (i = 1; i < [shuffleList count]; i++)
 		{
-			found = YES;
-			[shuffleList removeObjectAtIndex:i];
-		}
-//		if (found = YES)
-//		{
+			if (found == NO && [[shuffleList objectAtIndex:i] filename] == [currentEntry filename])
+			{
+				found = YES;
+				[shuffleList removeObjectAtIndex:i];
+			}
+
 			[[shuffleList objectAtIndex:i] setShuffleIndex:i];
-//			NSLog(@"Shuffle Index: %i", i);
-//		}
+		}
 	}
-//	shuffleIndex = 0;
 }
 
 - (id)currentEntry

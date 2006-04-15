@@ -47,10 +47,22 @@
 -(void)setIndex:(int)i
 {
 	idx = i;
+	[self setDisplayIndex:i+1];
 }
+
 -(int)index
 {
 	return idx;
+}
+
+-(void)setDisplayIndex:(int)i
+{
+	displayIdx=i;
+}
+
+-(int)displayIndex
+{
+	return displayIdx;
 }
 
 -(void)setFilename:(NSString *)f

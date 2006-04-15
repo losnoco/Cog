@@ -33,6 +33,7 @@
 	
 	int idx; //Can't use index due to some weird bug...might be fixed...should test in the future...think it was a conflict with flac, which is now an external lib
 	int shuffleIdx;
+	int displayIdx;
 }
 
 -(void)setIndex:(int)i;
