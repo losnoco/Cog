@@ -296,58 +296,54 @@
 
 - (PlaylistEntry *)entryAtIndex:(int)i
 {
-	//Need to fix for SHUFFLE MODE! holy fix.
-	if (shuffle == NO)
+	i--;
+	if (i < 0)
 	{
-		i--;
-		if (i < 0)
-		{
-			if (repeat == YES)
-				i += [[self arrangedObjects] count];
-			else
-				return nil;
-		}
-		else if (i >= [[self arrangedObjects] count])
-		{
-			if (repeat == YES)
-				i -= [[self arrangedObjects] count];
-			else
-				return nil;
-		}
-		
-		return [[self arrangedObjects] objectAtIndex:i];
+		if (repeat == YES)
+			i += [[self arrangedObjects] count];
+		else
+			return nil;
 	}
-/*	else
+	else if (i >= [[self arrangedObjects] count])
 	{
-		//		NSLog(@"SHUFFLE: %i %i %i %i", i, shuffleIndex, offset, [shuffleList count]);
-		while (i < 0)
+		if (repeat == YES)
+			i -= [[self arrangedObjects] count];
+		else
+			return nil;
+	}
+	
+	return [[self arrangedObjects] objectAtIndex:i];
+}
+- (PlaylistEntry *)shuffledEntryAtIndex:(int)i
+{
+	//		NSLog(@"SHUFFLE: %i %i %i %i", i, shuffleIndex, offset, [shuffleList count]);
+	while (i < 0)
+	{
+		if (repeat == YES)
 		{
-			if (repeat == YES)
-			{
-				[self addShuffledListToFront];
-				//change i appropriately
-				i += [[self arrangedObjects] count];
-			}
-			else
-			{
-				return nil;
-			}
+			[self addShuffledListToFront];
+			//change i appropriately
+			i += [[self arrangedObjects] count];
 		}
-		while (i >= [shuffleList count])
+		else
 		{
-			if (repeat == YES)
-			{
-				NSLog(@"Adding shuffled list to back!");
-				[self addShuffledListToBack];
-			}
-			else
-			{
-				return nil;
-			}
+			return nil;
 		}
-		
-		return [shuffleList objectAtIndex:i];
-	}*/
+	}
+	while (i >= [shuffleList count])
+	{
+		if (repeat == YES)
+		{
+			NSLog(@"Adding shuffled list to back!");
+			[self addShuffledListToBack];
+		}
+		else
+		{
+			return nil;
+		}
+	}
+	
+	return [shuffleList objectAtIndex:i];
 }
 
 /*- (PlaylistEntry *)entryAtOffset:(int)offset
@@ -410,11 +406,36 @@
 	}		
 }
 */
+
+- (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe
+{
+	if (shuffle == YES)
+	{
+		return [self shuffledEntryAtIndex:[pe shuffleIndex] + 1];
+	}
+	else
+	{
+		return [self entryAtIndex:[pe index] + 1];
+	}
+}
+
+- (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe
+{
+	if (shuffle == YES)
+	{
+		return [self shuffledEntryAtIndex:[pe shuffleIndex] - 1];
+	}
+	else
+	{
+		return [self entryAtIndex:[pe index] - 1];
+	}
+}
+
 - (BOOL)next
 {
 	PlaylistEntry *pe;
 	
-	pe = [self entryAtIndex:[currentEntry index] + 1];
+	pe = [self getNextEntry:[self currentEntry]];
 	if (pe == nil)
 		return NO;
 	
@@ -427,7 +448,7 @@
 {
 	PlaylistEntry *pe;
 	
-	pe = [self entryAtIndex:[currentEntry index] - 1];
+	pe = [self getPrevEntry:[self currentEntry]];
 	if (pe == nil)
 		return NO;
 	
@@ -436,33 +457,67 @@
 	return YES;
 }
 
-- (void)addShuffledListToBack
+//Need to do...when first generated, need to have current entry at the beginning of the list.
+
+- (void)addShuffledListToFront
 {
 	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
 	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [newList count])];
 	
 	[shuffleList insertObjects:newList atIndexes:indexSet];
+	
+	int i;
+	for (i = 0; i < [shuffleList count]; i++)
+	{
+		[[shuffleList objectAtIndex:i] setShuffleIndex:i];
+	}
 }
 
-- (void)addShuffledListToFront
+- (void)addShuffledListToBack
 {
 	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
 	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([shuffleList count], [newList count])];
-	NSLog(@"%@", newList);
+
 	[shuffleList insertObjects:newList atIndexes:indexSet];
+
+	int i;
+	for (i = ([shuffleList count] - [newList count]); i < [shuffleList count]; i++)
+	{
+		[[shuffleList objectAtIndex:i] setShuffleIndex:i];
+	}
+	
 }
 
 - (void)resetShuffleList
 {
 	[shuffleList removeAllObjects];
+
 	[self addShuffledListToFront];
-	
+
+	[shuffleList insertObject:currentEntry atIndex:0];
+	[currentEntry setShuffleIndex:0];
+
+	//Need to rejigger so the current entry is at the start now...
+	int i;
+	BOOL found = NO;
+	for (i = 1; i < [shuffleList count]; i++)
+	{
+		if (found == NO && [[shuffleList objectAtIndex:i] filename] == [currentEntry filename])
+		{
+			found = YES;
+			[shuffleList removeObjectAtIndex:i];
+		}
+//		if (found = YES)
+//		{
+			[[shuffleList objectAtIndex:i] setShuffleIndex:i];
+//			NSLog(@"Shuffle Index: %i", i);
+//		}
+	}
 //	shuffleIndex = 0;
 }
 
 - (id)currentEntry
 {
-//	DBLog(@"WOAH EGE ");
 	return currentEntry;
 }
 

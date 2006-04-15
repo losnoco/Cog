@@ -37,6 +37,10 @@
 
 -(void)setIndex:(int)i;
 -(int)index;
+
+-(void)setShuffleIndex:(int)si;
+-(int)shuffleIndex;
+
 -(void)setFilename:(NSString *)f;
 -(NSString *)filename;
 -(void)setDisplay:(NSString *)d;
