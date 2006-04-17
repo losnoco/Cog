@@ -614,7 +614,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				PREBINDING = NO;
 				PRODUCT_NAME = OggFLAC;
-				USER_HEADER_SEARCH_PATHS = "flac-src/src/libOggFLAC/include";
+				USER_HEADER_SEARCH_PATHS = "flac-1.1.2/src/libOggFLAC/include";
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -643,7 +643,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				PREBINDING = NO;
 				PRODUCT_NAME = OggFLAC;
-				USER_HEADER_SEARCH_PATHS = "flac-src/src/libOggFLAC/include";
+				USER_HEADER_SEARCH_PATHS = "flac-1.1.2/src/libOggFLAC/include";
 				ZERO_LINK = NO;
 			};
 			name = Release;
