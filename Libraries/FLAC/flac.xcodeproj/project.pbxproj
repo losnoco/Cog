@@ -544,7 +544,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				PRODUCT_NAME = FLAC;
-				USER_HEADER_SEARCH_PATHS = "flac-src flac-src/include flac-src/src/libFLAC/include";
+				USER_HEADER_SEARCH_PATHS = "flac-1.1.2 flac-1.1.2/include flac-1.1.2/src/libFLAC/include";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
 			};
@@ -567,7 +567,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				PRODUCT_NAME = FLAC;
-				USER_HEADER_SEARCH_PATHS = "flac-src flac-src/include flac-src/src/libFLAC/include";
+				USER_HEADER_SEARCH_PATHS = "flac-1.1.2 flac-1.1.2/include flac-1.1.2/src/libFLAC/include";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
