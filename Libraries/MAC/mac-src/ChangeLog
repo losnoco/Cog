@@ -1,0 +1,53 @@
+MAC: short for Monkey's Audio Codec, a lossless audio codec (almost with the .ape extension).
+
+Version 3.99 update 4 build 4 (2005/08/31)
+	* added big endian support (really big, and no backward compatibility any more)
+	* added library checking for nanosleep.
+	* added wcscasecmp checking and copied the corresonding sources from glibc
+		for platforms without GNU Extension support.
+	* removed -lstdc++ in MACLib/Makefile.am.
+	* fixed the bug of conversion from WCS to MBS for non-ascii characters 
+		in UTF-8 locale.
+	
+Version 3.99 update 4 build 3 (2005/04/14)
+	* fixed bug of opening files error when no permission to write.
+	* changed mac console to be linked dynamiclly.
+	* changed LINK definition in Makefile.am of Assembly.
+	
+Version 3.99 update 4 build 2 (2005/04/06)
+	* changed AM_PROG_LIBTOOL to AC_PROG_LIBTOOL.
+	* updated nasm checking information.
+	* fixed redundant semicolon in Assembly.h when compiled by GCC 3.4.
+	* fixed bug of opening file as Read Only in StdLibFileIO.cpp,
+		should be Reading and Writing.
+	* changed _FPOSOFF macro to ftell() for better compatibilities.
+	* changed definition of BUILD_CROSSPLATFORM macro in the original source.
+	* added LINK definition in Makefile.am of Assembly when working with
+	        automake 1.9, to avoid broken building process.
+	* added some additional files which are not necessary for non-win32 port,
+		but exist in the original release.
+	* fixed some typos.
+
+Version 3.99 update 4 (2004/05/12)
+	* added support for the original 3.99 update 4
+	* added -Wno-long-long directive in config.in
+	* changed the location of parameter BUILD_CROSSPLATFORM, added into configure.in
+	* removed -D__GNUC_IA32__ directive
+	
+Version 3.99  (2004/05/02)
+	* added support for original 3.99
+	* fixed console compressing finishing error.
+	
+Version 3.98a (2004/02/20)
+	* added BACK_COMPATIBILITY
+	* added a shell script "strip_fPIC.sh", for compiling and linking the 
+	        ASM sources. Thanks the FLAC guys.
+	* fixed some conversions between and multi bytes and wide char.
+	* fixed that APL files are not right played.
+	* updated the Analyze sample to work correctly.
+	* changed some codes to avoid warning, but some of those still couldn't be avoided.
+	* changed the link style of Console and Sample to static
+	* changed some autoconf automake codes.
+	
+Version 3.96 (2003/07/27)
+	* built 1st. including the frontend, the shared lib and some examples.

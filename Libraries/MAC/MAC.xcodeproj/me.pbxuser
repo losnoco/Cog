@@ -1,0 +1,378 @@
+// !$*UTF8*$!
+{
+	0867D690FE84028FC02AAC07 /* Project object */ = {
+		activeBuildConfigurationName = Release;
+		activeBuildStyle = 014CEA440018CDF011CA2923 /* Debug */;
+		activeTarget = 8DC2EF4F0486A6940098B216 /* MAC */;
+		addToTargets = (
+			8DC2EF4F0486A6940098B216 /* MAC */,
+		);
+		codeSenseManager = 8CA0B35609CAD71C00B4B731 /* Code sense */;
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXErrorsWarningsDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXErrorsWarningsDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					300,
+					133,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXErrorsWarningsDataSource_TypeID,
+					PBXErrorsWarningsDataSource_MessageID,
+					PBXErrorsWarningsDataSource_LocationID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					243,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					200,
+					63,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 166896647;
+			PBXWorkspaceStateSaveDate = 166896647;
+		};
+		sourceControlManager = 8CA0B35509CAD71C00B4B731 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	8CA0B35509CAD71C00B4B731 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+		scmType = "";
+	};
+	8CA0B35609CAD71C00B4B731 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	8CA0B42C09CAD98100B4B731 /* APECompress.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1070, 3458}}";
+			sepNavSelRange = "{417, 0}";
+			sepNavVisRect = "{{0, 275}, {941, 644}}";
+			sepNavWindowFrame = "{{63, 12}, {986, 717}}";
+		};
+	};
+	8CA0B42D09CAD98100B4B731 /* APECompressCore.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 1778}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{130, 5}, {986, 717}}";
+		};
+	};
+	8CA0B42E09CAD98100B4B731 /* APECompressCreate.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1142, 3430}}";
+			sepNavSelRange = "{3910, 0}";
+			sepNavVisRect = "{{0, 1578}, {945, 387}}";
+			sepNavWindowFrame = "{{107, 26}, {986, 717}}";
+		};
+	};
+	8CA0B42F09CAD98100B4B731 /* APEDecompress.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 6720}}";
+			sepNavSelRange = "{317, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{130, 5}, {986, 717}}";
+		};
+	};
+	8CA0B43109CAD98100B4B731 /* APEInfo.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 5096}}";
+			sepNavSelRange = "{738, 0}";
+			sepNavVisRect = "{{0, 4452}, {941, 644}}";
+			sepNavWindowFrame = "{{84, 47}, {986, 717}}";
+		};
+	};
+	8CA0B43309CAD98100B4B731 /* APESimple.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1268, 5978}}";
+			sepNavSelRange = "{3339, 0}";
+			sepNavVisRect = "{{0, 766}, {941, 644}}";
+			sepNavWindowFrame = "{{38, 89}, {986, 717}}";
+		};
+	};
+	8CA0B43409CAD98100B4B731 /* APETag.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 10416}}";
+			sepNavSelRange = "{16121, 0}";
+			sepNavVisRect = "{{0, 7381}, {941, 644}}";
+			sepNavWindowFrame = "{{107, 26}, {986, 717}}";
+		};
+	};
+	8CA0B43509CAD98100B4B731 /* BitArray.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {3284, 6300}}";
+			sepNavSelRange = "{1245, 239}";
+			sepNavVisRect = "{{0, 278}, {453, 186}}";
+		};
+	};
+	8CA0B43609CAD98100B4B731 /* MACLib.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {945, 2646}}";
+			sepNavSelRange = "{3713, 0}";
+			sepNavVisRect = "{{0, 1491}, {945, 387}}";
+			sepNavWindowFrame = "{{15, 110}, {986, 717}}";
+		};
+	};
+	8CA0B43709CAD98100B4B731 /* MACProgressHelper.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 1162}}";
+			sepNavSelRange = "{1701, 0}";
+			sepNavVisRect = "{{0, 518}, {941, 644}}";
+			sepNavWindowFrame = "{{84, 47}, {986, 717}}";
+		};
+	};
+	8CA0B43E09CAD98100B4B731 /* WAVInputSource.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1082, 4144}}";
+			sepNavSelRange = "{1084, 0}";
+			sepNavVisRect = "{{0, 3500}, {941, 644}}";
+			sepNavWindowFrame = "{{61, 68}, {986, 717}}";
+		};
+	};
+	8CA0B45709CAD99F00B4B731 /* APEDecompressCore.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1364, 2520}}";
+			sepNavSelRange = "{1276, 0}";
+			sepNavVisRect = "{{0, 0}, {734, 180}}";
+		};
+	};
+	8CA0B45A09CAD99F00B4B731 /* UnMAC.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1202, 3668}}";
+			sepNavSelRange = "{3655, 0}";
+			sepNavVisRect = "{{0, 2610}, {941, 644}}";
+			sepNavWindowFrame = "{{107, 26}, {986, 717}}";
+		};
+	};
+	8CA0B46409CAD9BC00B4B731 /* APEInfoDialog.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1148, 4312}}";
+			sepNavSelRange = "{3919, 0}";
+			sepNavVisRect = "{{0, 386}, {941, 644}}";
+			sepNavWindowFrame = "{{15, 110}, {986, 717}}";
+		};
+	};
+	8CA0B46509CAD9BC00B4B731 /* CharacterHelper.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 2086}}";
+			sepNavSelRange = "{1710, 0}";
+			sepNavVisRect = "{{0, 450}, {941, 644}}";
+			sepNavWindowFrame = "{{38, 89}, {986, 717}}";
+		};
+	};
+	8CA0B46709CAD9BC00B4B731 /* GlobalFunctions.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {734, 1428}}";
+			sepNavSelRange = "{142, 6}";
+			sepNavVisRect = "{{0, 0}, {734, 180}}";
+			sepNavWindowFrame = "{{15, 110}, {986, 717}}";
+		};
+	};
+	8CA0B46909CAD9BC00B4B731 /* StdLibFileIO.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {888, 3584}}";
+			sepNavSelRange = "{383, 0}";
+			sepNavVisRect = "{{0, 1623}, {888, 640}}";
+			sepNavWindowFrame = "{{130, 9}, {933, 713}}";
+		};
+	};
+	8CA0B47609CAD9E300B4B731 /* APECompress.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1442, 798}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{107, 26}, {986, 717}}";
+		};
+	};
+	8CA0B47909CAD9E300B4B731 /* APEDecompress.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 1022}}";
+			sepNavSelRange = "{200, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{107, 26}, {986, 717}}";
+		};
+	};
+	8CA0B47B09CAD9E300B4B731 /* APEInfo.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {945, 1414}}";
+			sepNavSelRange = "{434, 0}";
+			sepNavVisRect = "{{0, 1027}, {945, 387}}";
+			sepNavWindowFrame = "{{61, 68}, {986, 717}}";
+		};
+	};
+	8CA0B47D09CAD9E300B4B731 /* APETag.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 4116}}";
+			sepNavSelRange = "{1015, 0}";
+			sepNavVisRect = "{{0, 1420}, {941, 644}}";
+			sepNavWindowFrame = "{{15, 110}, {986, 717}}";
+		};
+	};
+	8CA0B47F09CAD9E300B4B731 /* MACLib.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1574, 6482}}";
+			sepNavSelRange = "{23013, 0}";
+			sepNavVisRect = "{{0, 5477}, {941, 644}}";
+			sepNavWindowFrame = "{{84, 47}, {986, 717}}";
+		};
+	};
+	8CA0B48009CAD9E300B4B731 /* MACProgressHelper.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 644}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{61, 68}, {986, 717}}";
+		};
+	};
+	8CA0B48A09CAD9E300B4B731 /* UnBitArrayBase.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 840}}";
+			sepNavSelRange = "{274, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{38, 89}, {986, 717}}";
+		};
+	};
+	8CA0B48B09CAD9E300B4B731 /* WAVInputSource.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1094, 910}}";
+			sepNavSelRange = "{431, 0}";
+			sepNavVisRect = "{{0, 65}, {941, 644}}";
+			sepNavWindowFrame = "{{84, 47}, {986, 717}}";
+		};
+	};
+	8CA0B4A309CAD9F800B4B731 /* APEDecompressCore.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {956, 644}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{61, 68}, {986, 717}}";
+		};
+	};
+	8CA0B4A409CAD9F800B4B731 /* APEDecompressOld.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 644}}";
+			sepNavSelRange = "{79, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{84, 47}, {986, 717}}";
+		};
+	};
+	8CA0B4AC09CADA1300B4B731 /* All.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {8486, 3976}}";
+			sepNavSelRange = "{4331, 2}";
+			sepNavVisRect = "{{0, 1144}, {941, 644}}";
+			sepNavWindowFrame = "{{61, 68}, {986, 717}}";
+		};
+	};
+	8CA0B4AE09CADA1300B4B731 /* CharacterHelper.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 644}}";
+			sepNavSelRange = "{440, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{38, 89}, {986, 717}}";
+		};
+	};
+	8CA0B4AF09CADA1300B4B731 /* CircleBuffer.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 840}}";
+			sepNavSelRange = "{209, 0}";
+			sepNavVisRect = "{{0, 196}, {941, 644}}";
+			sepNavWindowFrame = "{{61, 68}, {986, 717}}";
+		};
+	};
+	8CA0B4B209CADA1300B4B731 /* IO.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 700}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{84, 47}, {986, 717}}";
+		};
+	};
+	8CA0B4B309CADA1300B4B731 /* MACUtils.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 644}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{15, 110}, {986, 717}}";
+		};
+	};
+	8CA0B4B409CADA1300B4B731 /* NoWindows.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 1386}}";
+			sepNavSelRange = "{237, 0}";
+			sepNavVisRect = "{{0, 51}, {941, 644}}";
+			sepNavWindowFrame = "{{107, 26}, {986, 717}}";
+		};
+	};
+	8CA0B4B609CADA1300B4B731 /* SmartPtr.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {608, 1260}}";
+			sepNavSelRange = "{643, 20}";
+			sepNavVisRect = "{{0, 152}, {453, 186}}";
+			sepNavWindowFrame = "{{84, 47}, {986, 717}}";
+		};
+	};
+	8CA0B4CA09CADA2200B4B731 /* config.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 1400}}";
+			sepNavSelRange = "{2521, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{107, 26}, {986, 717}}";
+		};
+	};
+	8DC2EF4F0486A6940098B216 /* MAC */ = {
+		activeExec = 0;
+	};
+	8DC2EF5A0486A6940098B216 /* Info.plist */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 644}}";
+			sepNavSelRange = "{418, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{38, 89}, {986, 717}}";
+		};
+	};
+}

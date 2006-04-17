@@ -1,0 +1,8 @@
+* ASM in other platforms, PowerPC, Sparc, etc.
+
+[*] Better compatibilily of cross platform.
+
+* avoid the warning of "this decimal constant is unsigned only in ISO C90"
+  in Prepare.cpp, UnBitArray.cpp, UnBitArrayBase.cpp. 
+* avoid the warning of "use of C99 long long integer constant"
+  in Console.cpp.

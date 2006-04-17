@@ -1,0 +1,8 @@
+MAC: short for Monkey's Audio Codec, a lossless audio codec (almost with the .ape extension).
+
+This is the MAC Linux port. I have added the autoconf and automake stuff and 
+made some slight changes for the codes.
+
+Since 3.99 update 4 build 4, mac-port has support for big endian platforms,
+and has been tested in MAC OSX 10.4, Linux PowerPC and SunOS Sparc, 
+but need more tests in more OSes and more Platforms.

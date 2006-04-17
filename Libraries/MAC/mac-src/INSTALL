@@ -1,0 +1,31 @@
+
+-------------------
+Requirement
+-------------------
+
+NASM - Netwide Assembler, for compiling the asm source.
+
+
+-------------------
+Compile
+-------------------
+$ ./configure
+$ make
+
+There is an option named --enable-backward for backward compatibility.
+
+-------------------
+Install
+-------------------
+$ make install 
+(need to be root)
+
+
+then the lib will be installed to the default usr lib of your system (/usr/lib) 
+named libmac.so*, the console frontend (now it is statically linked) to /usr/bin named 
+mac, and some header files to /usr/include/mac.
+
+There is also a sample analyzing program, located in src/Examples/Analyzer/Sample1,
+which displays some information of the specified file. It is not installed.
+
+Enjoy It!
