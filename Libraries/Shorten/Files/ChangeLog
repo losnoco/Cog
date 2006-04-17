@@ -1,0 +1,6 @@
+lamip-inputSHORTEN_20050405:
+	- fixed a few minor things. Some variables have to be declared static!
+	
+lamip-inputSHORTEN_20050324:
+	- well.... it is the initial release!
+

@@ -1,0 +1,39 @@
+Thanks goes to the XMMS development team, as version 0.x through 1.x of this
+plugin were originally based on the Input/wav/wav.[ch] files from the XMMS
+distribution.
+
+Thanks also goes to Caleb Epstein for testing and reporting bugs, and for
+providing .deb and .rpm packages.
+
+Wayne Stielau provided specs and code that became the basis of the 2.x version
+of this plugin.  Without his help, this version would have taken much longer to
+write.
+
+Thanks goes to scottv for reporting a crash-inducing bug, as well as providing
+me a way to download the file that caused it for analysis.
+
+Thanks goes to Daniel Robbins for reporting the truncated-scope bug.
+
+Thanks goes to Paul Mather for reporting the m:ss.ff rounding bug in shntool
+(which also affected xmms-shn), as well as providing a detailed analysis of the
+problem which expedited its fix.
+
+Thanks goes to Ari Pollak for reporting a crash that led to the discovery of a
+race condition in the .shn unloading code.
+
+Thanks to Alex Prestin for sending a byte-swap patch that fixed a problem where
+all files would play back as static on his Ultra 10 and Ultra 30, as well as
+providing a patch to load text files in the file information box, which became
+the basis of the current implementation.
+
+Thanks to Rhett Monteg Hollander for reporting a bug that prevented xmms-shn
+from playing files encoded with alternate options, e.g. "-b1280 -p16 -m4".
+
+Thanks to Peter Kunath for sending a one-line patch to fix a bug in shorten that
+caused incorrect seek tables to be generated under certain conditions, as well
+as for providing a way for xmms-shn to automatically detect this bug so that it
+can disable seeking in affected files.
+
+Finally, thanks goes to SoftSound for creating a great waveform encoder,
+shorten, and especially for providing the source code to it.  Without the
+source, there would be no seek-enabled versions of shorten, and no xmms-shn 2.x.

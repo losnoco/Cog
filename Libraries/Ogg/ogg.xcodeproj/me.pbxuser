@@ -1,0 +1,102 @@
+// !$*UTF8*$!
+{
+	0867D690FE84028FC02AAC07 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeBuildStyle = 014CEA440018CDF011CA2923 /* Debug */;
+		activeTarget = 8DC2EF4F0486A6940098B216 /* Ogg Framework */;
+		addToTargets = (
+			8DC2EF4F0486A6940098B216 /* Ogg Framework */,
+		);
+		codeSenseManager = 8C8BF595098FE76100CEE186 /* Code sense */;
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					243,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					200,
+					63,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 166896623;
+			PBXWorkspaceStateSaveDate = 166896623;
+		};
+		sourceControlManager = 8C8BF594098FE76100CEE186 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	8C8BF594098FE76100CEE186 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 1;
+		scmConfiguration = {
+			SubversionToolPath = /opt/local/bin/svn;
+		};
+		scmType = scm.subversion;
+	};
+	8C8BF595098FE76100CEE186 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	8C8BF5AC098FE7E400CEE186 /* bitwise.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {494, 10990}}";
+			sepNavSelRange = "{1115, 21}";
+			sepNavVisRect = "{{0, 222}, {453, 186}}";
+		};
+	};
+	8C8BF5B0098FE7FA00CEE186 /* ogg.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 2842}}";
+			sepNavSelRange = "{1007, 0}";
+			sepNavVisRect = "{{0, 0}, {941, 644}}";
+			sepNavWindowFrame = "{{38, 89}, {986, 717}}";
+		};
+	};
+	8C8BF5B1098FE7FA00CEE186 /* os_types.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {941, 1792}}";
+			sepNavSelRange = "{3621, 0}";
+			sepNavVisRect = "{{0, 1148}, {941, 644}}";
+			sepNavWindowFrame = "{{15, 110}, {986, 717}}";
+		};
+	};
+	8DC2EF4F0486A6940098B216 /* Ogg Framework */ = {
+		activeExec = 0;
+	};
+}
