@@ -1,7 +1,0 @@
-for the future:
----------------
-
-- implement id3v2 tag reading, perhaps... :)
-- link against a released libshorten (static development version used in this plugin by now)
-- documentation for libshorten
-

@@ -8,14 +8,21 @@
 
 #import "MonkeysFile.h"
 #import "MAC/ApeInfo.h"
+#import "MAC/CharacterHelper.h"
 
 @implementation MonkeysFile
 
 - (BOOL)open:(const char *)filename
 {
 	int n;
+	str_utf16 *chars = NULL;
+
+	chars = GetUTF16FromUTF8((const unsigned char *)filename);
+	if(chars == NULL)
+		return NO;
 	
-	decompress = CreateIAPEDecompress(filename, &n);
+	decompress = CreateIAPEDecompress(chars, &n);
+	free(chars);
 
 	if (decompress == NULL)
 	{

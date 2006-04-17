@@ -9,8 +9,8 @@ Fixed weirdness when displaying the info drawer after closing the window (via me
 Added a donation menu item. ($)
 Clicking the text field now toggles Time Elapsed with Time Remaining.
 Invalid files are now skipped.
-Total playlist time displayed in title (simon savary)
-
+Shiny new status bar! (simon savary)
+current song is displayed in the dock! (simon savary)
 
 0.05 alpha 1
 ------------
