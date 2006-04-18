@@ -28,6 +28,7 @@
 //	DBLog(@"Woot: %i", n);
 	DecMPA_OutputFormat outputFormat;
 	err = DecMPA_GetOutputFormat(decoder, &outputFormat);
+
 	if (err != DECMPA_OK)
 		return NO;
 	
@@ -35,7 +36,11 @@
 	channels = outputFormat.nChannels;
 	bitsPerSample = 16;
 	
+#ifdef __BIG_ENDIAN__
 	isBigEndian = YES;
+#else
+	isBigEndian = NO;
+#endif
 	
 	long duration;
 	DecMPA_GetDuration(decoder, &duration);
@@ -83,13 +88,13 @@
 		
 		DecMPA_Decode(decoder, &((char *)buf)[total], size - total, &numread);
     }
-		
-/*	int n;
+	/*	
+	int n;
 	for (n = 0; n < total/2; n++)
 	{
-		((UInt16 *)buf)[n] = CFSwapInt16LittleToHost(((UInt16 *)buf)[n]);
+		((UInt16 *)buf)[n] = CFSwapInt16BigToHost(((UInt16 *)buf)[n]);
 	}
-*/	
+	*/
 	currentPosition += total;
     return total;
 }

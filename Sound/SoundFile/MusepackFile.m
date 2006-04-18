@@ -66,7 +66,11 @@ BOOL CanSeekProc(void *data)
     }
 //	DBLog(@"Ok to go...");
 
+#ifdef __BIG_ENDIAN__
 	isBigEndian = YES;
+#else
+	isBigEndian = NO;
+#endif
 	
 	return YES;
 }

@@ -129,7 +129,7 @@
 //	DBLog(@"SEEKING?");
 	double time;
 	time = [positionSlider doubleValue];
-	
+
 	if ([sender tracking] == NO) // check if user stopped sliding  before playing audio
         [soundController seekToTime:time];
 	
@@ -158,7 +158,15 @@
 - (IBAction)changeVolume:(id)sender
 {
 	currentVolume = (float)[sender doubleValue];
-
+	
+	//gravitates at the halfway mark
+	float v = ([sender frame].size.width/[sender maxValue])*(currentVolume-([sender maxValue]/2.0));
+	if (fabs(v) < 10.0)
+	{
+		currentVolume = [sender maxValue]/2.0;
+		[sender setDoubleValue:currentVolume];
+	}
+	
 	[soundController  setVolume:currentVolume];
 }
 
