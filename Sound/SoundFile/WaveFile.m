@@ -37,11 +37,7 @@
 
 			break;
 		case SF_ENDIAN_CPU:
-#ifdef __BIG_ENDIAN__
-			isBigEndian = YES;
-#else
-			isBigEndian = NO;
-#endif
+			isBigEndian = hostIsBigEndian();
 			//DBLog(@"&CPU ENDIAN");
 			break;
 		case SF_ENDIAN_LITTLE:

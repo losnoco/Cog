@@ -33,7 +33,7 @@ int32_t dump_alloc (void);
 #endif
 
 static void unpack_init3 (WavpackStream3 *wps);
-static int bs_open_read3 (Bitstream3 *bs, stream_reader *reader, void *id);
+static int bs_open_read3 (Bitstream3 *bs, WavpackStreamReader *reader, void *id);
 static void bs_close_read3 (Bitstream3 *bs);
 #ifdef SEEKING
 static void bs_restore3 (Bitstream3 *bs);
@@ -301,7 +301,7 @@ static void bs_read3 (Bitstream3 *bs)
 // data is located.  A return value of TRUE indicates an error in
 // allocating buffer space.
 
-static int bs_open_read3 (Bitstream3 *bs, stream_reader *reader, void *id)
+static int bs_open_read3 (Bitstream3 *bs, WavpackStreamReader *reader, void *id)
 {
     bs->fpos = (bs->reader = reader)->get_pos (bs->id = id);
     
@@ -401,9 +401,9 @@ static uchar *bs_unused_data (Bitstream3 *bs)
 // "simple_terms" table is no longer used for writing, but is kept for older
 // file decoding.
 
-static const char extreme_terms [] = { 1,1,1,2,4,-1,1,2,3,6,-2,8,5,7,4,1,2,3 };
-static const char default_terms [] = { 1,1,1,-1,2,1,-2 };
-static const char simple_terms []  = { 1,1,1,1 };
+static const signed char extreme_terms [] = { 1,1,1,2,4,-1,1,2,3,6,-2,8,5,7,4,1,2,3 };
+static const signed char default_terms [] = { 1,1,1,-1,2,1,-2 };
+static const signed char simple_terms []  = { 1,1,1,1 };
 
 // This function initializes everything required to unpack WavPack
 // bitstreams and must be called before any unpacking is performed. Note

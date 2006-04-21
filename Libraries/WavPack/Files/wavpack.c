@@ -16,6 +16,8 @@
 #else
 #include <sys/param.h>
 #include <sys/stat.h>
+#include <locale.h>
+#include <iconv.h>
 #endif
 
 #include <string.h>
@@ -26,16 +28,12 @@
 #include "wavpack.h"
 #include "md5.h"
 
-#ifdef __BORLANDC__
-#include <dir.h>
-#else
 #if defined (__GNUC__) && !defined(WIN32)
 #include <unistd.h>
 #include <glob.h>
 #include <sys/time.h>
 #else
 #include <sys/timeb.h>
-#endif
 #endif
 
 #ifdef DEBUG_ALLOC
@@ -53,11 +51,15 @@ static char *strdup (const char *s)
 ///////////////////////////// local variable storage //////////////////////////
 
 static const char *sign_on = "\n"
-" WAVPACK  Hybrid Lossless Wavefile Compressor  %s Version %s %s\n"
+" WAVPACK  Hybrid Lossless Audio Compressor  %s Version %s  %s\n"
 " Copyright (c) 1998 - 2005 Conifer Software.  All Rights Reserved.\n\n";
 
 static const char *usage =
+#if defined (WIN32)
 " Usage:   WAVPACK [-options] [@]infile[.wav]|- [[@]outfile[.wv]|outpath|-]\n"
+#else
+" Usage:   WAVPACK [-options] [@]infile[.wav]|- [...] [-o [@]outfile[.wv]|outpath|-]\n"
+#endif
 "             (default is lossless; infile may contain wildcards: ?,*)\n\n"
 " Options: -a  = Adobe Audition (CoolEdit) mode for 32-bit floats\n"
 "          -bn = enable hybrid compression, n = 2.0 to 23.9 bits/sample, or\n"
@@ -72,18 +74,29 @@ static const char *usage =
 "          -h  = high quality (best compression in all modes, but slower)\n"
 "          -i  = ignore length in wav header (no pipe output allowed)\n"
 "          -jn = joint-stereo override (0 = left/right, 1 = mid/side)\n"
+#if defined (WIN32)
+"          -l  = run at low priority (for smoother multitasking)\n"
+#endif
 "          -m  = compute & store MD5 signature of raw audio data\n"
 "          -n  = calculate average and peak quantization noise (hybrid only)\n"
+#if !defined (WIN32)
+"          -o FILENAME | PATH = specify output filename or path\n"
+#endif
 "          -p  = practical float storage (also 32-bit ints, not lossless)\n"
+"          -r  = generate new RIFF wav header (removing extra chunk info)\n"
 "          -q  = quiet (keep console output to a minimum)\n"
 "          -sn = noise shaping override (hybrid only, n = -1.0 to 1.0, 0 = off)\n"
-#if defined (WIN32)
 "          -t  = copy input file's time stamp to output file(s)\n"
-#endif
 "          -w \"Field=Value\" = write specified metadata to APEv2 tag\n"
 "          -x[n] = extra encode processing (optional n = 1-6 for less/more)\n"
 "          -y  = yes to all warnings (use with caution!)\n\n"
 " Web:     Visit www.wavpack.com for latest version and info\n";
+
+
+// this global is used to indicate the special "debug" mode where extra debug messages
+// are displayed and all messages are logged to the file \wavpack.log
+
+int debug_logging_mode;
 
 static int overwrite_all, num_files, file_index;
 
@@ -94,6 +107,7 @@ static uint32_t wvselfx_size;
 
 /////////////////////////// local function declarations ///////////////////////
 
+static FILE *wild_fopen (char *filename, const char *mode);
 static int pack_file (char *infilename, char *outfilename, char *out2filename, const WavpackConfig *config);
 static int pack_audio (WavpackContext *wpc, FILE *infile);
 static void display_progress (double file_progress);
@@ -108,33 +122,42 @@ static void display_progress (double file_progress);
 
 int main (argc, argv) int argc; char **argv;
 {
-    int delete_source = 0, usage_error = 0, filelist = 0, tag_next_arg = 0;
-    char *infilename = NULL, *outfilename = NULL, *out2filename = NULL;
+    int delete_source = 0, error_count = 0, tag_next_arg = 0, output_spec = 0;
+    char *outfilename = NULL, *out2filename = NULL;
     char **matches = NULL;
     WavpackConfig config;
     int result, i;
 
-#if defined (WIN32)
-    char *selfname = malloc (strlen (*argv) + PATH_MAX);
+#if defined(WIN32)
     struct _finddata_t _finddata_t;
+    char selfname [MAX_PATH];
+
+    if (GetModuleFileName (NULL, selfname, sizeof (selfname)) && filespec_name (selfname) &&
+	strupr (filespec_name (selfname)) && strstr (filespec_name (selfname), "DEBUG")) {
+	    char **argv_t = argv;
+	    int argc_t = argc;
+
+	    debug_logging_mode = TRUE;
+
+	    while (--argc_t)
+		error_line ("arg %d: %s", argc - argc_t, *++argv_t);
+    }
 
     strcpy (selfname, *argv);
 #else
-    glob_t globs;
-    struct stat fstats;
+    if (filespec_name (*argv))
+	if (strstr (filespec_name (*argv), "ebug") || strstr (filespec_name (*argv), "DEBUG")) {
+	    char **argv_t = argv;
+	    int argc_t = argc;
+
+	    debug_logging_mode = TRUE;
+
+	    while (--argc_t)
+		error_line ("arg %d: %s", argc - argc_t, *++argv_t);
+    }
 #endif
 
     CLEAR (config);
-
-#if 0
-    {
-	char **argv_t = argv;
-	int argc_t = argc;
-
-	while (--argc_t)
-	    error_line ("%d: %s", argc - argc_t, *++argv_t);
-    }
-#endif
 
     // loop through command-line arguments
 
@@ -168,7 +191,7 @@ int main (argc, argv) int argc; char **argv;
 
 			if (config.xmode < 0 || config.xmode > 6) {
 			    error_line ("extra mode only goes from 1 to 6!");
-			    usage_error = 1;
+			    ++error_count;
 			}
 			else
 			    config.flags |= CONFIG_EXTRA_MODE;
@@ -204,10 +227,18 @@ int main (argc, argv) int argc; char **argv;
 			config.flags |= CONFIG_CREATE_EXE;
 			break;
 
+		    case 'L': case 'l':
+			SetPriorityClass (GetCurrentProcess(), IDLE_PRIORITY_CLASS);
+			break;
+#else
+		    case 'O': case 'o':
+			output_spec = 1;
+			break;
+#endif
 		    case 'T': case 't':
 			config.flags |= CONFIG_COPY_TIME;
 			break;
-#endif
+
 		    case 'P': case 'p':
 			config.flags |= CONFIG_SKIP_WVX;
 			break;
@@ -224,6 +255,10 @@ int main (argc, argv) int argc; char **argv;
 			config.flags |= CONFIG_IGNORE_LENGTH;
 			break;
 
+		    case 'R': case 'r':
+			config.flags |= CONFIG_NEW_RIFF_HEADER;
+			break;
+
 		    case 'K': case 'k':
 			config.block_samples = strtol (++*argv, argv, 10);
 			--*argv;
@@ -236,7 +271,7 @@ int main (argc, argv) int argc; char **argv;
 
 			if (config.bitrate < 2.0 || config.bitrate > 9600.0) {
 			    error_line ("hybrid spec must be 2.0 to 9600!");
-			    usage_error = 1;
+			    ++error_count;
 			}
 
 			if (config.bitrate >= 24.0)
@@ -258,7 +293,7 @@ int main (argc, argv) int argc; char **argv;
 
 			    default:
 				error_line ("-j0 or -j1 only!");
-				usage_error = 1;
+				++error_count;
 			}
 			
 			--*argv;
@@ -275,7 +310,7 @@ int main (argc, argv) int argc; char **argv;
 			    config.flags |= (CONFIG_HYBRID_SHAPE | CONFIG_SHAPE_OVERRIDE);
 			else {
 			    error_line ("-s-1.00 to -s1.00 only!");
-			    usage_error = 1;
+			    ++error_count;
 			}
 			
 			--*argv;
@@ -287,69 +322,55 @@ int main (argc, argv) int argc; char **argv;
 
 		    default:
 			error_line ("illegal option: %c !", **argv);
-			usage_error = 1;
+			++error_count;
 		}
-	else {
-	    if (tag_next_arg) {
-		char *cp = strchr (*argv, '='), *string = NULL;
-
-		tag_next_arg = 0;
-
-		if (cp && cp > *argv) {
-		    int item_len = cp - *argv;
-
-		    if (cp [1] == '@') {
-			FILE *file = fopen (cp+2, "rb");
-
-			if (file) {
-			    uint32_t bcount, file_len;
-
-			    file_len = DoGetFileSize (file);
-
-			    if (file_len < 1048576 && (string = malloc (item_len + file_len + 2)) != NULL) {
-				memcpy (string, *argv, item_len + 1);
-
-				if (!DoReadFile (file, string + item_len + 1, file_len, &bcount) || bcount != file_len) {
-				    free (string);
-				    string = NULL;
-				}
-				else
-				    string [item_len + file_len + 1] = 0;
-			    }
-
-			    DoCloseHandle (file);
-			}
-		    }
-		    else
-			string = *argv;
-		}
-
-		if (!string) {
-		    error_line ("error in tag spec: %s !", *argv);
-		    usage_error = 1;
-		}
-		else if (cp [1]) {
-		    config.tag_strings = realloc (config.tag_strings, ++config.num_tag_strings * sizeof (*config.tag_strings));
-		    config.tag_strings [config.num_tag_strings - 1] = string;
-		}
-	    }
-	    else if (!infilename) {
-		infilename = malloc (strlen (*argv) + PATH_MAX);
-		strcpy (infilename, *argv);
-	    }
-	    else if (!outfilename) {
-		outfilename = malloc (strlen (*argv) + PATH_MAX);
-		strcpy (outfilename, *argv);
-	    }
-	    else if (!out2filename) {
-		out2filename = malloc (strlen (*argv) + PATH_MAX);
-		strcpy (out2filename, *argv);
-	    }
-	    else {
-		error_line ("extra unknown argument: %s !", *argv);
-		usage_error = 1;
-	    }
+	else if (tag_next_arg) {
+	    tag_next_arg = 0;
+	    config.tag_strings = realloc (config.tag_strings, ++config.num_tag_strings * sizeof (*config.tag_strings));
+	    config.tag_strings [config.num_tag_strings - 1] = *argv;
 	}
+#if defined (WIN32)
+	else if (!num_files) {
+            matches = realloc (matches, (num_files + 1) * sizeof (*matches));
+            matches [num_files] = malloc (strlen (*argv) + 10);
+            strcpy (matches [num_files], *argv);
+
+            if (*(matches [num_files]) != '-' && *(matches [num_files]) != '@' &&
+                !filespec_ext (matches [num_files]))
+                    strcat (matches [num_files], ".wav");
+
+            num_files++;
+	}
+	else if (!outfilename) {
+	    outfilename = malloc (strlen (*argv) + PATH_MAX);
+	    strcpy (outfilename, *argv);
+	}
+	else if (!out2filename) {
+	    out2filename = malloc (strlen (*argv) + PATH_MAX);
+	    strcpy (out2filename, *argv);
+	}
+	else {
+	    error_line ("extra unknown argument: %s !", *argv);
+	    ++error_count;
+	}
+#else
+        else if (output_spec) {
+            outfilename = malloc (strlen (*argv) + PATH_MAX);
+            strcpy (outfilename, *argv);
+            output_spec = 0;
+        }
+        else {
+            matches = realloc (matches, (num_files + 1) * sizeof (*matches));
+            matches [num_files] = malloc (strlen (*argv) + 10);
+            strcpy (matches [num_files], *argv);
+
+            if (*(matches [num_files]) != '-' && *(matches [num_files]) != '@' &&
+                !filespec_ext (matches [num_files]))
+                    strcat (matches [num_files], ".wav");
+
+            num_files++;
+        }
+#endif
 
     setup_break ();	// set up console and detect ^C and ^Break
 
@@ -357,39 +378,98 @@ int main (argc, argv) int argc; char **argv;
 
     if (!(~config.flags & (CONFIG_HIGH_FLAG | CONFIG_FAST_FLAG))) {
 	error_line ("high and fast modes are mutually exclusive!");
-	usage_error = 1;
+	++error_count;
     }
 
     if ((config.flags & CONFIG_IGNORE_LENGTH) && outfilename && *outfilename == '-') {
 	error_line ("can't ignore length in header when using stdout!");
-	usage_error = 1;
+	++error_count;
      }
 
     if (config.flags & CONFIG_HYBRID_FLAG) {
 	if ((config.flags & CONFIG_CREATE_WVC) && outfilename && *outfilename == '-') {
 	    error_line ("can't create correction file when using stdout!");
-	    usage_error = 1;
+	    ++error_count;
 	}
     }
     else {
 	if (config.flags & (CONFIG_CALC_NOISE | CONFIG_SHAPE_OVERRIDE | CONFIG_CREATE_WVC)) {
 	    error_line ("-s, -n and -c options are for hybrid mode (-b) only!");
-	    usage_error = 1;
+	    ++error_count;
 	}
     }
 
-    if (!(config.flags & CONFIG_QUIET_MODE) && !usage_error)
+    if (!(config.flags & CONFIG_QUIET_MODE) && !error_count)
 	fprintf (stderr, sign_on, VERSION_OS, VERSION_STR, DATE_STR);
 
-    if (!infilename) {
+    if (!num_files) {
 	printf ("%s", usage);
-	return 0;
+	return 1;
     }
 
-    if (usage_error) {
-	free(infilename);
-	return 0;
+    // loop through any tag specification strings and check for file access
+
+    for (i = 0; i < config.num_tag_strings; ++i) {
+	char *cp = strchr (config.tag_strings [i], '='), *string = NULL;
+
+	if (cp && cp > config.tag_strings [i]) {
+	    int item_len = cp - config.tag_strings [i];
+
+	    if (cp [1] == '@') {
+		FILE *file = wild_fopen (cp+2, "rb");
+
+		if (!file && filespec_name (matches [0]) && *matches [0] != '-') {
+		    char *temp = malloc (strlen (matches [0]) + PATH_MAX);
+
+		    strcpy (temp, matches [0]);
+		    strcpy (filespec_name (temp), cp+2);
+		    file = wild_fopen (temp, "rb");
+		    free (temp);
+		}
+
+		if (!file && filespec_name (outfilename) && *outfilename != '-') {
+		    char *temp = malloc (strlen (outfilename) + PATH_MAX);
+
+		    strcpy (temp, outfilename);
+		    strcpy (filespec_name (temp), cp+2);
+		    file = wild_fopen (temp, "rb");
+		    free (temp);
+		}
+
+		if (file) {
+		    uint32_t bcount, file_len;
+
+		    file_len = DoGetFileSize (file);
+		    if (file_len < 1048576 && (string = malloc (item_len + file_len + 2)) != NULL) {
+			memcpy (string, config.tag_strings [i], item_len + 1);
+
+			if (!DoReadFile (file, string + item_len + 1, file_len, &bcount) || bcount != file_len) {
+			    free (string);
+			    string = NULL;
+			}
+			else
+			    string [item_len + file_len + 1] = 0;
+		    }
+
+		    DoCloseHandle (file);
+		}
+	    }
+	    else
+		string = config.tag_strings [i];
+	}
+
+	if (!string) {
+	    error_line ("error in tag spec: %s !", config.tag_strings [i]);
+	    ++error_count;
+	}
+	else {
+	    config.tag_strings [i] = string;
+//	    error_line ("final tag data: %s", string);
+	}
     }
+
+    if (error_count)
+	return 1;
 
     // If we are trying to create self-extracting .exe files, this is where
     // we read the wvselfx.exe file into memory in preparation for pre-pending
@@ -432,91 +512,89 @@ int main (argc, argv) int argc; char **argv;
     }
 #endif
 
-    // If the infile specification begins with a '@', then it actually points
-    // to a file that contains the names of the files to be converted. This
-    // was included for use by Wim Speekenbrink's frontends, but could be used
-    // for other purposes.
+    for (file_index = 0; file_index < num_files; ++file_index) {
+	char *infilename = matches [file_index];
 
-    if (infilename [0] == '@') {
-	FILE *list = fopen (infilename+1, "rt");
-	int c;
+	// If the single infile specification begins with a '@', then it
+	// actually points to a file that contains the names of the files
+	// to be converted. This was included for use by Wim Speekenbrink's
+	// frontends, but could be used for other purposes.
 
-	if (list == NULL) {
-	    error_line ("file %s not found!", infilename+1);
-	    free (infilename);
-	    return 1;
-	}
+	if (*infilename == '@') {
+	    FILE *list = fopen (infilename+1, "rt");
+	    int di, c;
 
-	while ((c = getc (list)) != EOF) {
+	    for (di = file_index; di < num_files - 1; di++)
+		matches [di] = matches [di + 1];
 
-	    while (c == '\n')
-		c = getc (list);
+	    file_index--;
+	    num_files--;
 
-	    if (c != EOF) {
-		char *fname = malloc (PATH_MAX);
-		int ci = 0;
-
-		do
-		    fname [ci++] = c;
-		while ((c = getc (list)) != '\n' && c != EOF && ci < PATH_MAX);
-
-		fname [ci++] = '\0';
-		matches = realloc (matches, ++num_files * sizeof (*matches));
-		matches [num_files - 1] = realloc (fname, ci);
+	    if (list == NULL) {
+		error_line ("file %s not found!", infilename+1);
+		free (infilename);
+		return 1;
 	    }
-	}
 
-	fclose (list);
-	free (infilename);
-	infilename = NULL;
-	filelist = 1;
-    }
-    else if (*infilename != '-') {	// skip this if infile is stdin (-)
-	if (!(config.flags & CONFIG_RAW_FLAG) && !filespec_ext (infilename))
-	    strcat (infilename, ".wav");
+	    while ((c = getc (list)) != EOF) {
 
-#ifdef NO_WILDCARDS
-	matches = malloc (sizeof (*matches));
-	matches [num_files++] = infilename;
-	filelist = 1;
-#else
-	// search for and store any filenames that match the user supplied spec
+		while (c == '\n')
+		    c = getc (list);
 
-#ifdef __BORLANDC__
-	if (findfirst (infilename, &ffblk, 0) == 0) {
-	    do {
-		matches = realloc (matches, ++num_files * sizeof (*matches));
-		matches [num_files - 1] = strdup (ffblk.ff_name);
-	    } while (findnext (&ffblk) == 0);
-	}
-#elif defined (WIN32)
-	if ((i = _findfirst (infilename, &_finddata_t)) != -1L) {
-	    do {
-		if (!(_finddata_t.attrib & _A_SUBDIR)) {
+		if (c != EOF) {
+		    char *fname = malloc (PATH_MAX);
+		    int ci = 0;
+
+		    do
+			fname [ci++] = c;
+		    while ((c = getc (list)) != '\n' && c != EOF && ci < PATH_MAX);
+
+		    fname [ci++] = '\0';
+		    fname = realloc (fname, ci);
 		    matches = realloc (matches, ++num_files * sizeof (*matches));
-		    matches [num_files - 1] = strdup (_finddata_t.name);
+
+		    for (di = num_files - 1; di > file_index + 1; di--)
+			matches [di] = matches [di - 1];
+
+		    matches [++file_index] = fname;
 		}
-	    } while (_findnext (i, &_finddata_t) == 0);
+	    }
 
-	    _findclose (i);
+	    fclose (list);
+	    free (infilename);
 	}
-#else
-        i = 0;
-        if (glob(infilename, 0, NULL, &globs) == 0 && globs.gl_pathc > 0) {
-            do {
-                if (stat(globs.gl_pathv[i], &fstats) == 0 && !(fstats.st_mode & S_IFDIR)) {
-		    matches = realloc (matches, ++num_files * sizeof (*matches));
-		    matches [num_files - 1] = strdup (globs.gl_pathv[i]);
-                }
-            } while (i++ < globs.gl_pathc);
-        }
-        globfree(&globs);
+#if defined (WIN32)
+	else if (filespec_wild (infilename)) {
+	    FILE *list = fopen (infilename+1, "rt");
+	    int di;
+
+	    for (di = file_index; di < num_files - 1; di++)
+		matches [di] = matches [di + 1];
+
+	    file_index--;
+	    num_files--;
+
+	    if ((i = _findfirst (infilename, &_finddata_t)) != -1L) {
+		do {
+		    if (!(_finddata_t.attrib & _A_SUBDIR)) {
+			matches = realloc (matches, ++num_files * sizeof (*matches));
+
+			for (di = num_files - 1; di > file_index + 1; di--)
+			    matches [di] = matches [di - 1];
+
+			matches [++file_index] = malloc (strlen (infilename) + strlen (_finddata_t.name) + 10);
+			strcpy (matches [file_index], infilename);
+			*filespec_name (matches [file_index]) = '\0';
+			strcat (matches [file_index], _finddata_t.name);
+		    }
+		} while (_findnext (i, &_finddata_t) == 0);
+
+		_findclose (i);
+	    }
+
+	    free (infilename);
+	}
 #endif
-#endif
-    }
-    else {	// handle case of stdin (-)
-	matches = malloc (sizeof (*matches));
-	matches [num_files++] = infilename;
     }
 
     // If the outfile specification begins with a '@', then it actually points
@@ -564,7 +642,6 @@ int main (argc, argv) int argc; char **argv;
 
     if (num_files) {
 	char outpath, addext;
-	int soft_errors = 0;
 
 	if (outfilename && *outfilename != '-') {
 	    outpath = (filespec_path (outfilename) != NULL);
@@ -586,15 +663,6 @@ int main (argc, argv) int argc; char **argv;
 	    if (check_break ())
 		break;
 
-	    // get input filename from list
-
-	    if (filelist)
-		infilename = matches [file_index];
-	    else if (*infilename != '-') {
-		*filespec_name (infilename) = '\0';
-		strcat (infilename, matches [file_index]);
-	    }
-
 	    // generate output filename
 
 	    if (outpath) {
@@ -604,8 +672,8 @@ int main (argc, argv) int argc; char **argv;
 		    *filespec_ext (outfilename) = '\0';
 	    }
 	    else if (!outfilename) {
-		outfilename = malloc (strlen (infilename) + 10);
-		strcpy (outfilename, infilename);
+		outfilename = malloc (strlen (matches [file_index]) + 10);
+		strcpy (outfilename, matches [file_index]);
 
 		if (filespec_ext (outfilename))
 		    *filespec_ext (outfilename) = '\0';
@@ -639,20 +707,21 @@ int main (argc, argv) int argc; char **argv;
 		out2filename = NULL;
 
 	    if (num_files > 1)
-		fprintf (stderr, "\n%s:\n", infilename);
+		fprintf (stderr, "\n%s:\n", matches [file_index]);
 
-	    result = pack_file (infilename, outfilename, out2filename, &config);
+	    result = pack_file (matches [file_index], outfilename, out2filename, &config);
+
+	    if (result != NO_ERROR)
+		++error_count;
 
 	    if (result == HARD_ERROR)
 		break;
-	    else if (result == SOFT_ERROR)
-		++soft_errors;
 
 	    // delete source file if that option is enabled
 
 	    if (result == NO_ERROR && delete_source)
-		error_line ("%s source file %s", DoDeleteFile (infilename) ?
-		    "deleted" : "can't delete", infilename);
+		error_line ("%s source file %s", DoDeleteFile (matches [file_index]) ?
+		    "deleted" : "can't delete", matches [file_index]);
 
 	    // clean up in preparation for potentially another file
 
@@ -672,26 +741,27 @@ int main (argc, argv) int argc; char **argv;
 	}
 
 	if (num_files > 1) {
-	    if (soft_errors)
-		fprintf (stderr, "\n **** warning: errors occurred in %d of %d files! ****\n", soft_errors, num_files);
+	    if (error_count)
+		fprintf (stderr, "\n **** warning: errors occurred in %d of %d files! ****\n", error_count, num_files);
 	    else if (!(config.flags & CONFIG_QUIET_MODE))
 		fprintf (stderr, "\n **** %d files successfully processed ****\n", num_files);
 	}
 
 	free (matches);
     }
-    else
-	error_line (filespec_wild (infilename) ? "nothing to do!" :
-	    "file %s not found!", infilename);
+    else {
+	error_line ("nothing to do!");
+	++error_count;
+    }
 
     if (outfilename)
-	free(outfilename);
+	free (outfilename);
 
 #ifdef DEBUG_ALLOC
     error_line ("malloc_count = %d", dump_alloc ());
 #endif
 
-    return 0;
+    return error_count ? 1 : 0;
 }
 
 // This structure and function are used to write completed WavPack blocks in
@@ -730,14 +800,69 @@ static int write_block (void *id, void *data, int32_t length)
     return TRUE;
 }
 
+// Special version of fopen() that allows a wildcard specification for the
+// filename. If a wildcard is specified, then it must match 1 and only 1
+// file to be acceptable (i.e. it won't match just the "first" file).
+
+#if defined (WIN32)
+
+static FILE *wild_fopen (char *filename, const char *mode)
+{
+    struct _finddata_t _finddata_t;
+    char *matchname = NULL;
+    FILE *res = NULL;
+    int i;
+
+    if (!filespec_wild (filename) || !filespec_name (filename))
+	return fopen (filename, mode);
+
+    if ((i = _findfirst (filename, &_finddata_t)) != -1L) {
+	do {
+	    if (!(_finddata_t.attrib & _A_SUBDIR)) {
+		if (matchname) {
+		    free (matchname);
+		    matchname = NULL;
+		    break;
+		}
+		else {
+		    matchname = malloc (strlen (filename) + strlen (_finddata_t.name));
+		    strcpy (matchname, filename);
+		    strcpy (filespec_name (matchname), _finddata_t.name);  
+		}
+	    }
+	} while (_findnext (i, &_finddata_t) == 0);
+
+	_findclose (i);
+    }
+
+    if (matchname) {
+	res = fopen (matchname, mode);	
+	free (matchname);
+    }
+
+    return res;
+}
+
+#else
+
+static FILE *wild_fopen (char *filename, const char *mode)
+{
+    return fopen (filename, mode);
+}
+
+#endif
+
+
 // This function packs a single file "infilename" and stores the result at
 // "outfilename". If "out2filename" is specified, then the "correction"
 // file would go there. The files are opened and closed in this function
 // and the "config" structure specifies the mode of compression.
 
+static void AnsiToUTF8 (char *string, int len);
+
 static int pack_file (char *infilename, char *outfilename, char *out2filename, const WavpackConfig *config)
 {
-    uint32_t total_samples = 0, wrapper_size = 0, bcount;
+    uint32_t total_samples = 0, bcount;
     WavpackConfig loc_config = *config;
     RiffChunkHeader riff_chunk_header;
     write_id wv_file, wvc_file;
@@ -748,9 +873,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
     FILE *infile;
     int result;
 
-#ifdef __BORLANDC__
-    struct time time1, time2;
-#elif defined(WIN32)
+#if defined(WIN32)
     struct _timeb time1, time2;
 #else
     struct timeval time1, time2;
@@ -810,9 +933,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 	}
     }
 
-#ifdef __BORLANDC__
-    gettime (&time1);
-#elif defined(WIN32)
+#if defined(WIN32)
     _ftime (&time1);
 #else
     gettimeofday(&time1,&timez);
@@ -867,16 +988,15 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 		WavpackCloseFile (wpc);
 		return SOFT_ERROR;
 	}
-	else if (!WavpackAddWrapper (wpc, &riff_chunk_header, sizeof (RiffChunkHeader))) {
-	    error_line ("%s", wpc->error_message);
-	    DoCloseHandle (infile);
-	    DoCloseHandle (wv_file.file);
-	    DoDeleteFile (outfilename);
-	    WavpackCloseFile (wpc);
-	    return SOFT_ERROR;
+	else if (!(loc_config.flags & CONFIG_NEW_RIFF_HEADER) &&
+	    !WavpackAddWrapper (wpc, &riff_chunk_header, sizeof (RiffChunkHeader))) {
+		error_line ("%s", wpc->error_message);
+		DoCloseHandle (infile);
+		DoCloseHandle (wv_file.file);
+		DoDeleteFile (outfilename);
+		WavpackCloseFile (wpc);
+		return SOFT_ERROR;
 	}
-
-	wrapper_size += sizeof (RiffChunkHeader);
     }
 
     // if not in "raw" mode, loop through all elements of the RIFF wav header
@@ -893,16 +1013,16 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 		WavpackCloseFile (wpc);
 		return SOFT_ERROR;
 	}
-	else if (!WavpackAddWrapper (wpc, &chunk_header, sizeof (ChunkHeader))) {
-	    error_line ("%s", wpc->error_message);
-	    DoCloseHandle (infile);
-	    DoCloseHandle (wv_file.file);
-	    DoDeleteFile (outfilename);
-	    WavpackCloseFile (wpc);
-	    return SOFT_ERROR;
+	else if (!(loc_config.flags & CONFIG_NEW_RIFF_HEADER) &&
+	    !WavpackAddWrapper (wpc, &chunk_header, sizeof (ChunkHeader))) {
+		error_line ("%s", wpc->error_message);
+		DoCloseHandle (infile);
+		DoCloseHandle (wv_file.file);
+		DoDeleteFile (outfilename);
+		WavpackCloseFile (wpc);
+		return SOFT_ERROR;
 	}
 
-	wrapper_size += sizeof (ChunkHeader);
 	little_endian_to_native (&chunk_header, ChunkHeaderFormat);
 
 	// if it's the format chunk, we want to get some info out of there and
@@ -921,33 +1041,33 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 		    WavpackCloseFile (wpc);
 		    return SOFT_ERROR;
 	    }
-	    else if (!WavpackAddWrapper (wpc, &WaveHeader, chunk_header.ckSize)) {
-		error_line ("%s", wpc->error_message);
-		DoCloseHandle (infile);
-		DoCloseHandle (wv_file.file);
-		DoDeleteFile (outfilename);
-		WavpackCloseFile (wpc);
-		return SOFT_ERROR;
+	    else if (!(loc_config.flags & CONFIG_NEW_RIFF_HEADER) &&
+		!WavpackAddWrapper (wpc, &WaveHeader, chunk_header.ckSize)) {
+		    error_line ("%s", wpc->error_message);
+		    DoCloseHandle (infile);
+		    DoCloseHandle (wv_file.file);
+		    DoDeleteFile (outfilename);
+		    WavpackCloseFile (wpc);
+		    return SOFT_ERROR;
 	    }
 
-	    wrapper_size += chunk_header.ckSize;
 	    little_endian_to_native (&WaveHeader, WaveHeaderFormat);
 
-#if 0
-	    error_line ("format tag size = %d", chunk_header.ckSize);
-	    error_line ("FormatTag = %x, NumChannels = %d, BitsPerSample = %d",
-		WaveHeader.FormatTag, WaveHeader.NumChannels, WaveHeader.BitsPerSample);
-	    error_line ("BlockAlign = %d, SampleRate = %d, BytesPerSecond = %d",
-		WaveHeader.BlockAlign, WaveHeader.SampleRate, WaveHeader.BytesPerSecond);
+	    if (debug_logging_mode) {
+		error_line ("format tag size = %d", chunk_header.ckSize);
+		error_line ("FormatTag = %x, NumChannels = %d, BitsPerSample = %d",
+		    WaveHeader.FormatTag, WaveHeader.NumChannels, WaveHeader.BitsPerSample);
+		error_line ("BlockAlign = %d, SampleRate = %d, BytesPerSecond = %d",
+		    WaveHeader.BlockAlign, WaveHeader.SampleRate, WaveHeader.BytesPerSecond);
 
-	    if (chunk_header.ckSize > 16)
-		error_line ("cbSize = %d, ValidBitsPerSample = %d", WaveHeader.cbSize,
-		    WaveHeader.ValidBitsPerSample);
+		if (chunk_header.ckSize > 16)
+		    error_line ("cbSize = %d, ValidBitsPerSample = %d", WaveHeader.cbSize,
+			WaveHeader.ValidBitsPerSample);
 
-	    if (chunk_header.ckSize > 20)
-		error_line ("ChannelMask = %x, SubFormat = %d",
-		    WaveHeader.ChannelMask, WaveHeader.SubFormat);
-#endif
+		if (chunk_header.ckSize > 20)
+		    error_line ("ChannelMask = %x, SubFormat = %d",
+			WaveHeader.ChannelMask, WaveHeader.SubFormat);
+	    }
 
 	    if (chunk_header.ckSize > 16 && WaveHeader.cbSize == 2)
 		loc_config.flags |= CONFIG_ADOBE_MODE;
@@ -995,6 +1115,17 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 		    else if (WaveHeader.BitsPerSample == 32)
 			loc_config.float_norm_exp = 127 + 15;
 	    }
+
+	    if (debug_logging_mode) {
+		if (loc_config.float_norm_exp == 127)
+		    error_line ("data format: normalized 32-bit floating point");
+		else if (loc_config.float_norm_exp)
+		    error_line ("data format: 32-bit floating point (Audition %d:%d float type 1)",
+			loc_config.float_norm_exp - 126, 150 - loc_config.float_norm_exp);
+		else
+		    error_line ("data format: %d-bit integers stored in %d byte(s)",
+			loc_config.bits_per_sample, WaveHeader.BlockAlign / WaveHeader.NumChannels);
+	    }
 	}
 	else if (!strncmp (chunk_header.ckID, "data", 4)) {
 
@@ -1007,13 +1138,16 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 
 	    int bytes_to_copy = (chunk_header.ckSize + 1) & ~1L;
 	    char *buff = malloc (bytes_to_copy);
-#if 0
-	    error_line ("extra unknown chunk \"%c%c%c%c\" of %d bytes",
-		chunk_header.ckID [0], chunk_header.ckID [1], chunk_header.ckID [2],
-		chunk_header.ckID [3], chunk_header.ckSize);
-#endif
+
+	    if (debug_logging_mode)
+		error_line ("extra unknown chunk \"%c%c%c%c\" of %d bytes",
+		    chunk_header.ckID [0], chunk_header.ckID [1], chunk_header.ckID [2],
+		    chunk_header.ckID [3], chunk_header.ckSize);
+
 	    if (!DoReadFile (infile, buff, bytes_to_copy, &bcount) ||
-		bcount != bytes_to_copy || !WavpackAddWrapper (wpc, buff, bytes_to_copy)) {
+		bcount != bytes_to_copy ||
+		(!(loc_config.flags & CONFIG_NEW_RIFF_HEADER) &&
+		!WavpackAddWrapper (wpc, buff, bytes_to_copy))) {
 		    error_line ("%s", wpc->error_message);
 		    DoCloseHandle (infile);
 		    DoCloseHandle (wv_file.file);
@@ -1023,7 +1157,6 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 		    return SOFT_ERROR;
 	    }
 
-	    wrapper_size += bytes_to_copy;
 	    free (buff);
 	}
     }
@@ -1059,10 +1192,11 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 	uchar buff [16];
 
 	while (DoReadFile (infile, buff, sizeof (buff), &bcount) && bcount)
-	    if (!WavpackAddWrapper (wpc, buff, bcount)) {
-		error_line ("%s", wpc->error_message);
-		result = HARD_ERROR;
-		break;
+	    if (!(loc_config.flags & CONFIG_NEW_RIFF_HEADER) &&
+		!WavpackAddWrapper (wpc, buff, bcount)) {
+		    error_line ("%s", wpc->error_message);
+		    result = HARD_ERROR;
+		    break;
 	    }
     }
 
@@ -1093,7 +1227,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 		item [item_len] = 0;
 		strcpy (value, config->tag_strings [i] + item_len + 1);
 		AnsiToUTF8 (value, value_len * 2 + 1);
-		WavpackAppendTagItem (wpc, item, value);
+		WavpackAppendTagItem (wpc, item, value, strlen (value));
 		free (value);
 		free (item);
 	    }
@@ -1112,6 +1246,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
     if (result == NO_ERROR && WavpackGetNumSamples (wpc) != WavpackGetSampleIndex (wpc)) {
 	if (loc_config.flags & CONFIG_IGNORE_LENGTH) {
 	    char *block_buff = malloc (wv_file.first_block_size);
+	    uint32_t wrapper_size;
 
 	    if (block_buff && !DoSetFilePositionAbsolute (wv_file.file, 0) &&
 		DoReadFile (wv_file.file, block_buff, wv_file.first_block_size, &bcount) &&
@@ -1119,14 +1254,14 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 
 		    WavpackUpdateNumSamples (wpc, block_buff);
 
-		    if (WavpackGetWrapperLocation (block_buff)) {
-			RiffChunkHeader *riffhdr = WavpackGetWrapperLocation (block_buff);
+		    if (WavpackGetWrapperLocation (block_buff, &wrapper_size)) {
+			RiffChunkHeader *riffhdr = WavpackGetWrapperLocation (block_buff, NULL);
 			ChunkHeader *datahdr = (ChunkHeader *)((char *) riffhdr + wrapper_size - sizeof (ChunkHeader));
 			uint32_t data_size = WavpackGetSampleIndex (wpc) * WavpackGetNumChannels (wpc) * WavpackGetBytesPerSample (wpc);
 
 			if (!strncmp (riffhdr->ckID, "RIFF", 4)) {
 			    little_endian_to_native (riffhdr, ChunkHeaderFormat);
-			    riffhdr->ckSize = wrapper_size + data_size;
+			    riffhdr->ckSize = wrapper_size + data_size - 8;
 			    native_to_little_endian (riffhdr, ChunkHeaderFormat);
 			}
 
@@ -1216,24 +1351,15 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 	return result;
     }
 
-#if defined (WIN32)
     if (result == NO_ERROR && (loc_config.flags & CONFIG_COPY_TIME))
 	if (!copy_timestamp (infilename, outfilename) ||
 	    (out2filename && !copy_timestamp (infilename, out2filename)))
 		error_line ("failure copying time stamp!");
-#endif
 
     // compute and display the time consumed along with some other details of
     // the packing operation, and then return NO_ERROR
 
-#ifdef __BORLANDC__
-    gettime (&time2);
-    dtime = time2.ti_sec * 100.0 + time2.ti_hund + time2.ti_min * 6000.0 + time2.ti_hour * 360000.00;
-    dtime -= time1.ti_sec * 100.0 + time1.ti_hund + time1.ti_min * 6000.0 + time1.ti_hour * 360000.00;
-
-    if ((dtime /= 100.0) < 0.0)
-	dtime += 86400.0;
-#elif defined(WIN32)
+#if defined(WIN32)
     _ftime (&time2);
     dtime = time2.time + time2.millitm / 1000.0;
     dtime -= time1.time + time1.millitm / 1000.0;
@@ -1352,7 +1478,7 @@ static int pack_audio (WavpackContext *wpc, FILE *infile)
 
 		case 2:
 		    while (cnt--) {
-			*dptr++ = sptr [0] | ((int32_t)(char) sptr [1] << 8);
+			*dptr++ = sptr [0] | ((int32_t)(signed char) sptr [1] << 8);
 			sptr += 2;
 		    }
 
@@ -1360,7 +1486,7 @@ static int pack_audio (WavpackContext *wpc, FILE *infile)
 
 		case 3:
 		    while (cnt--) {
-			*dptr++ = sptr [0] | ((int32_t) sptr [1] << 8) | ((int32_t)(char) sptr [2] << 16);
+			*dptr++ = sptr [0] | ((int32_t) sptr [1] << 8) | ((int32_t)(signed char) sptr [2] << 16);
 			sptr += 3;
 		    }
 
@@ -1368,7 +1494,7 @@ static int pack_audio (WavpackContext *wpc, FILE *infile)
 
 		case 4:
 		    while (cnt--) {
-			*dptr++ = sptr [0] | ((int32_t) sptr [1] << 8) | ((int32_t) sptr [2] << 16) | ((int32_t)(char) sptr [3] << 24);
+			*dptr++ = sptr [0] | ((int32_t) sptr [1] << 8) | ((int32_t) sptr [2] << 16) | ((int32_t)(signed char) sptr [3] << 24);
 			sptr += 4;
 		    }
 
@@ -1429,6 +1555,78 @@ static int pack_audio (WavpackContext *wpc, FILE *infile)
     }
 
     return NO_ERROR;
+}
+
+// Convert the Unicode wide-format string into a UTF-8 string using no more
+// than the specified buffer length. The wide-format string must be NULL
+// terminated and the resulting string will be NULL terminated. The actual
+// number of characters converted (not counting terminator) is returned, which
+// may be less than the number of characters in the wide string if the buffer
+// length is exceeded.
+
+static int WideCharToUTF8 (const ushort *Wide, uchar *pUTF8, int len)
+{
+    const ushort *pWide = Wide;
+    int outndx = 0;
+
+    while (*pWide) {
+	if (*pWide < 0x80 && outndx + 1 < len)
+	    pUTF8 [outndx++] = (uchar) *pWide++;
+	else if (*pWide < 0x800 && outndx + 2 < len) {
+	    pUTF8 [outndx++] = (uchar) (0xc0 | ((*pWide >> 6) & 0x1f));
+	    pUTF8 [outndx++] = (uchar) (0x80 | (*pWide++ & 0x3f));
+	}
+	else if (outndx + 3 < len) {
+	    pUTF8 [outndx++] = (uchar) (0xe0 | ((*pWide >> 12) & 0xf));
+	    pUTF8 [outndx++] = (uchar) (0x80 | ((*pWide >> 6) & 0x3f));
+	    pUTF8 [outndx++] = (uchar) (0x80 | (*pWide++ & 0x3f));
+	}
+	else
+	    break;
+    }
+
+    pUTF8 [outndx] = 0;
+    return pWide - Wide;
+}
+
+// Convert a Ansi string into its Unicode UTF-8 format equivalent. The
+// conversion is done in-place so the maximum length of the string buffer must
+// be specified because the string may become longer or shorter. If the
+// resulting string will not fit in the specified buffer size then it is
+// truncated.
+
+static void AnsiToUTF8 (char *string, int len)
+{
+    int max_chars = strlen (string);
+#if defined(WIN32)
+    ushort *temp = (ushort *) malloc ((max_chars + 1) * 2);
+
+    MultiByteToWideChar (CP_ACP, 0, string, -1, temp, max_chars + 1);
+    WideCharToUTF8 (temp, (uchar *) string, len);
+#else
+    char *temp = malloc (len);
+    char *outp = temp;
+    char *inp = string;
+    size_t insize = max_chars;
+    size_t outsize = len - 1;
+    int err = 0;
+    char *old_locale;
+
+    memset(temp, 0, len);
+    old_locale = setlocale (LC_CTYPE, "");
+    iconv_t converter = iconv_open ("UTF-8", "");
+    err = iconv (converter, &inp, &insize, &outp, &outsize);
+    iconv_close (converter);
+    setlocale (LC_CTYPE, old_locale);
+
+    if (err == -1) {
+	free(temp);
+	return;
+    }
+
+    memmove (string, temp, len);
+#endif
+    free (temp);
 }
 
 //////////////////////////////////////////////////////////////////////////////

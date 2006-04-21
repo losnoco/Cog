@@ -15,13 +15,9 @@
 #include <windows.h>
 #include <io.h>
 #include <conio.h>
+#include <shlobj.h>
 #elif defined(__GNUC__)
 #include <glob.h>
-#endif
-
-#ifndef WIN32
-#include <locale.h>
-#include <iconv.h>
 #endif
 
 #include <sys/stat.h>
@@ -61,6 +57,34 @@ int copy_timestamp (const char *src_filename, const char *dst_filename)
 	CloseHandle (dst);
 
     return res;
+}
+
+#else
+
+#include <sys/time.h>
+#include <sys/types.h>
+
+int copy_timestamp(const char *src_filename, const char *dst_filename)
+{
+    struct stat fileinfo;
+    struct timeval times[2];
+
+    if (strcmp(src_filename, "-") == 0 || strcmp(dst_filename, "-") == 0)
+        return TRUE;
+
+    if (stat(src_filename, &fileinfo))
+        return FALSE; /* stat failed */
+
+    times[0].tv_sec  = fileinfo.st_atime;
+    times[0].tv_usec = 0;
+
+    times[1].tv_sec  = fileinfo.st_mtime;
+    times[1].tv_usec = 0;
+
+    if (utimes(dst_filename, times))
+        return FALSE; /* utimes failed */
+
+    return TRUE;
 }
 
 #endif
@@ -107,7 +131,7 @@ char *filespec_ext (char *filespec)
 
     while (--cp >= filespec) {
 
-	if (*cp == '\\' || *cp == ':')
+	if (*cp == '/' || *cp == ':')
 	    return NULL;
 
 	if (*cp == '.') {
@@ -143,20 +167,21 @@ char *filespec_path (char *filespec)
     if (cp == filespec || filespec_wild (filespec))
 	return NULL;
 
-    if (*--cp == '\\' || *cp == ':')
+    if (*--cp == '/' || *cp == ':')
 	return filespec;
 
     if (*cp == '.' && cp == filespec)
-	return strcat (filespec, "\\");
+	return strcat (filespec, "/");
 
     if (glob (filespec, GLOB_MARK|GLOB_NOSORT, NULL, &globs) == 0 &&
 	globs.gl_pathc > 0)
     {
 	/* test if the file is a directory */
 	if (stat(globs.gl_pathv[0], &fstats) == 0 && (fstats.st_mode & S_IFDIR)) {
-		globfree(&globs);
 		filespec[0] = '\0';
-		return strcat (filespec, globs.gl_pathv[0]);
+		strcat (filespec, globs.gl_pathv[0]);
+		globfree(&globs);
+		return filespec;
 	}
     }
     globfree(&globs);
@@ -243,7 +268,7 @@ char *filespec_name (char *filespec)
     char *cp = filespec + strlen (filespec);
 
     while (--cp >= filespec)
-	if (*cp == '\\' || *cp == ':')
+	if (*cp == '/' || *cp == ':')
 	    break;
 
     if (strlen (cp + 1))
@@ -336,6 +361,62 @@ char yna (void)
 // with printf strings and args.                                            //
 //////////////////////////////////////////////////////////////////////////////
 
+int debug_logging_mode = FALSE;
+
+#ifdef WIN32
+
+int get_app_path (char *app_path)
+{
+    static char file_path [MAX_PATH], tried, result;
+
+    HINSTANCE hinstLib;
+    FARPROC ProcAdd;
+
+    if (tried) {
+	if (result)
+	    strcpy (app_path, file_path);
+
+	return result;
+    }
+
+    tried = TRUE;
+    hinstLib = LoadLibrary ("shell32.dll");
+
+    if (hinstLib) {
+	ProcAdd = GetProcAddress (hinstLib, "SHGetFolderPathA");
+
+	if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, CSIDL_APPDATA | 0x8000, NULL, 0, file_path)))
+	    result = TRUE;
+
+	if (!result) {
+	    ProcAdd = GetProcAddress (hinstLib, "SHGetSpecialFolderPathA");
+
+	    if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, file_path, CSIDL_APPDATA, TRUE)))
+		result = TRUE;
+	}
+
+	FreeLibrary (hinstLib);
+    }
+
+    if (!result) {
+	hinstLib = LoadLibrary ("shfolder.dll");
+
+	if (hinstLib) {
+	    ProcAdd = GetProcAddress (hinstLib, "SHGetFolderPathA");
+
+	    if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, CSIDL_APPDATA | 0x8000, NULL, 0, file_path)))
+		result = TRUE;
+
+	    FreeLibrary (hinstLib);
+	}
+    }
+
+    if (result)
+	strcpy (app_path, file_path);
+
+    return result;
+}
+
 void error_line (char *error, ...)
 {
     char error_msg [512];
@@ -347,8 +428,70 @@ void error_line (char *error, ...)
     va_end (argptr);
     fputs (error_msg, stderr);
     finish_line ();
-#if 0
-    {
+
+    if (debug_logging_mode) {
+	char file_path [MAX_PATH];
+	FILE *error_log = NULL;
+
+	if (get_app_path (file_path)) {
+	    strcat (file_path, "\\WavPack\\wavpack.log");
+	    error_log = fopen (file_path, "a+");
+
+	    if (!error_log) {
+		get_app_path (file_path);
+		strcat (file_path, "\\WavPack");
+
+		if (CreateDirectory (file_path, NULL)) {
+		    strcat (file_path, "\\wavpack.log");
+		    error_log = fopen (file_path, "a+");
+		}
+	    }
+	}
+
+	if (!error_log)
+	    error_log = fopen ("c:\\wavpack.log", "a+");
+
+	if (error_log) {
+	    fputs (error_msg + 1, error_log);
+	    fputc ('\n', error_log);
+	    fclose (error_log);
+	}
+    }
+}
+
+#else
+
+void error_line (char *error, ...)
+{
+    char error_msg [512];
+    va_list argptr;
+
+    error_msg [0] = '\r';
+    va_start (argptr, error);
+    vsprintf (error_msg + 1, error, argptr);
+    va_end (argptr);
+    fputs (error_msg, stderr);
+    finish_line ();
+}
+
+#endif
+
+void debug_line (char *error, ...)
+{
+    char error_msg [512];
+    va_list argptr;
+
+    if (!debug_logging_mode)
+	return;
+
+    error_msg [0] = '\r';
+    va_start (argptr, error);
+    vsprintf (error_msg + 1, error, argptr);
+    va_end (argptr);
+    fputs (error_msg, stderr);
+    finish_line ();
+
+    if (debug_logging_mode) {
 	FILE *error_log = fopen ("c:\\wavpack.log", "a+");
 
 	if (error_log) {
@@ -357,7 +500,6 @@ void error_line (char *error, ...)
 	    fclose (error_log);
 	}
     }
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -376,9 +518,6 @@ BOOL WINAPI ctrl_handler (DWORD ctrl)
     if (ctrl == CTRL_BREAK_EVENT) {
 
 	if (waiting_input) {
-#ifdef __BORLANDC__
-	    fprintf (stderr, "^C\n");
-#endif
 	    return FALSE;
 	}
 	else {
@@ -424,7 +563,7 @@ void finish_line (void)
     CONSOLE_SCREEN_BUFFER_INFO coninfo;
 
     if (hConIn && GetConsoleScreenBufferInfo (hConIn, &coninfo)) {
-	char spaces = coninfo.dwSize.X - coninfo.dwCursorPosition.X;
+	unsigned char spaces = coninfo.dwSize.X - coninfo.dwCursorPosition.X;
 
 	while (spaces--)
 	    fputc (' ', stderr);
@@ -440,12 +579,7 @@ void finish_line (void)
 
 void finish_line (void)
 {
-/*    char spaces = 1;
-
-    while (spaces--)
-	putc (' ', stderr);
-    else*/
-	fputc ('\n', stderr);
+    fprintf (stderr, "        \n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -566,75 +700,3 @@ int DoDeleteFile (char *filename)
     return !remove (filename);
 }
 
-// Convert the Unicode wide-format string into a UTF-8 string using no more
-// than the specified buffer length. The wide-format string must be NULL
-// terminated and the resulting string will be NULL terminated. The actual
-// number of characters converted (not counting terminator) is returned, which
-// may be less than the number of characters in the wide string if the buffer
-// length is exceeded.
-
-static int WideCharToUTF8 (const ushort *Wide, uchar *pUTF8, int len)
-{
-    const ushort *pWide = Wide;
-    int outndx = 0;
-
-    while (*pWide) {
-	if (*pWide < 0x80 && outndx + 1 < len)
-	    pUTF8 [outndx++] = (uchar) *pWide++;
-	else if (*pWide < 0x800 && outndx + 2 < len) {
-	    pUTF8 [outndx++] = (uchar) (0xc0 | ((*pWide >> 6) & 0x1f));
-	    pUTF8 [outndx++] = (uchar) (0x80 | (*pWide++ & 0x3f));
-	}
-	else if (outndx + 3 < len) {
-	    pUTF8 [outndx++] = (uchar) (0xe0 | ((*pWide >> 12) & 0xf));
-	    pUTF8 [outndx++] = (uchar) (0x80 | ((*pWide >> 6) & 0x3f));
-	    pUTF8 [outndx++] = (uchar) (0x80 | (*pWide++ & 0x3f));
-	}
-	else
-	    break;
-    }
-
-    pUTF8 [outndx] = 0;
-    return pWide - Wide;
-}
-
-// Convert a Ansi string into its Unicode UTF-8 format equivalent. The
-// conversion is done in-place so the maximum length of the string buffer must
-// be specified because the string may become longer or shorter. If the
-// resulting string will not fit in the specified buffer size then it is
-// truncated.
-
-void AnsiToUTF8 (char *string, int len)
-{
-    int max_chars = strlen (string);
-#if defined(WIN32)
-    ushort *temp = (ushort *) malloc ((max_chars + 1) * 2);
-
-    MultiByteToWideChar (CP_ACP, 0, string, -1, temp, max_chars + 1);
-    WideCharToUTF8 (temp, (uchar *) string, len);
-#else
-    char *temp = malloc (len);
-//  memset(temp, 0, len);
-    char *outp = temp;
-    const char *inp = string;
-    size_t insize = max_chars;
-    size_t outsize = len - 1;
-    int err = 0;
-    char *old_locale;
-
-    memset(temp, 0, len);
-    old_locale = setlocale (LC_CTYPE, "");
-    iconv_t converter = iconv_open ("UTF-8", "");
-    err = iconv (converter, &inp, &insize, &outp, &outsize);
-    iconv_close (converter);
-    setlocale (LC_CTYPE, old_locale);
-
-    if (err == -1) {
-	free(temp);
-	return;
-    }
-
-    memmove (string, temp, len);
-#endif
-    free (temp);
-}

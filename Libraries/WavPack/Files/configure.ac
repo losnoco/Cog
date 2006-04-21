@@ -1,7 +1,7 @@
-# wavpack 4.2 configure.ac
+# wavpack 4.32 configure.ac
 
-AC_INIT(wavpack, 4.2, bryant@wavpack.com)
-AM_INIT_AUTOMAKE(wavpack, 4.2, bryant@wavpack.com)
+AC_INIT(wavpack, 4.32, bryant@wavpack.com)
+AM_INIT_AUTOMAKE(wavpack, 4.32, bryant@wavpack.com)
 AC_CONFIG_SRCDIR([pack.c])
 
 # Check for os version

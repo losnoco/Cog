@@ -1,6 +1,7 @@
 0.05 alpha 4
 ------------
 Volume slider now gravitates to 100%, in the middle.
+Fixes endian issues for intel?
 
 0.05 alpha 3
 ------------

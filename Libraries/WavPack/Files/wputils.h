@@ -62,11 +62,13 @@ typedef struct {
 #define CONFIG_BITRATE_KBPS	0x2000	// bitrate is kbps, not bits / sample
 #define CONFIG_SHAPE_OVERRIDE	0x8000	// shaping mode specified
 #define CONFIG_JOINT_OVERRIDE	0x10000	// joint-stereo mode specified
+#define CONFIG_CREATE_EXE	0x40000	// create executable
 #define CONFIG_CREATE_WVC	0x80000	// create correction file
 #define CONFIG_OPTIMIZE_WVC	0x100000 // maximize bybrid compression
 #define CONFIG_CALC_NOISE	0x800000 // calc noise in hybrid mode
 #define CONFIG_EXTRA_MODE	0x2000000 // extra processing mode
 #define CONFIG_SKIP_WVX		0x4000000 // no wvx stream w/ floats & big ints
+#define CONFIG_MD5_CHECKSUM	0x8000000 // store MD5 signature
 
 ////////////// Callbacks used for reading & writing WavPack streams //////////
 
@@ -78,9 +80,12 @@ typedef struct {
     int (*push_back_byte)(void *id, int c);
     uint32_t (*get_length)(void *id);
     int (*can_seek)(void *id);
-} stream_reader;
 
-typedef int (*blockout)(void *id, void *data, int32_t bcount);
+    // this callback is for writing edited tags only
+    int32_t (*write_bytes)(void *id, void *data, int32_t bcount);
+} WavpackStreamReader;
+
+typedef int (*WavpackBlockOutput)(void *id, void *data, int32_t bcount);
 
 //////////////////////// function prototypes and macros //////////////////////
 
@@ -90,7 +95,7 @@ typedef void WavpackContext;
 extern "C" {
 #endif
 
-WavpackContext *WavpackOpenFileInputEx (stream_reader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset);
+WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset);
 WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int flags, int norm_offset);
 
 #define OPEN_WVC	0x1	// open/read "correction" file
@@ -100,6 +105,7 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 #define OPEN_NORMALIZE	0x10	// normalize floating point data to +/- 1.0
 #define OPEN_STREAMING	0x20	// "streaming" mode blindly unpacks blocks
 				// w/o regard to header file position info
+#define OPEN_EDIT_TAGS	0x40	// allow editing of tags
 
 int WavpackGetMode (WavpackContext *wpc);
 
@@ -137,12 +143,15 @@ uint32_t WavpackGetFileSize (WavpackContext *wpc);
 double WavpackGetRatio (WavpackContext *wpc);
 double WavpackGetAverageBitrate (WavpackContext *wpc, int count_wvc);
 double WavpackGetInstantBitrate (WavpackContext *wpc);
+int WavpackGetNumTagItems (WavpackContext *wpc);
 int WavpackGetTagItem (WavpackContext *wpc, const char *item, char *value, int size);
-int WavpackAppendTagItem (WavpackContext *wpc, const char *item, const char *value);
+int WavpackGetTagItemIndexed (WavpackContext *wpc, int index, char *item, int size);
+int WavpackAppendTagItem (WavpackContext *wpc, const char *item, const char *value, int vsize);
+int WavpackDeleteTagItem (WavpackContext *wpc, const char *item);
 int WavpackWriteTag (WavpackContext *wpc);
 
 
-WavpackContext *WavpackOpenFileOutput (blockout blockout, void *wv_id, void *wvc_id);
+WavpackContext *WavpackOpenFileOutput (WavpackBlockOutput blockout, void *wv_id, void *wvc_id);
 int WavpackSetConfiguration (WavpackContext *wpc, WavpackConfig *config, uint32_t total_samples);
 int WavpackAddWrapper (WavpackContext *wpc, void *data, uint32_t bcount);
 int WavpackStoreMD5Sum (WavpackContext *wpc, uchar data [16]);
@@ -150,7 +159,7 @@ int WavpackPackInit (WavpackContext *wpc);
 int WavpackPackSamples (WavpackContext *wpc, int32_t *sample_buffer, uint32_t sample_count);
 int WavpackFlushSamples (WavpackContext *wpc);
 void WavpackUpdateNumSamples (WavpackContext *wpc, void *first_block);
-void *WavpackGetWrapperLocation (void *first_block);
+void *WavpackGetWrapperLocation (void *first_block, uint32_t *size);
 
 // this function is not actually in wputils.c, but is generally useful
 

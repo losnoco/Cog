@@ -106,6 +106,9 @@ int process_metadata (WavpackContext *wpc, WavpackMetadata *wpmd)
 	case ID_CONFIG_BLOCK:
 	    return read_config_info (wpc, wpmd);
 
+	case ID_SAMPLE_RATE:
+	    return read_sample_rate (wpc, wpmd);
+
 	case ID_WV_BITSTREAM:
 	    return init_wv_bitstream (wps, wpmd);
 
@@ -268,7 +271,7 @@ int write_metadata_block (WavpackContext *wpc)
 	CLEAR (*wphdr);
 	memcpy (wphdr->ckID, "wvpk", 4);
 	wphdr->total_samples = wpc->total_samples;
-	wphdr->version = 0x403;
+	wphdr->version = wpc->stream_version;
 	wphdr->ckSize = block_size - 8;
 	wphdr->block_samples = 0;
 

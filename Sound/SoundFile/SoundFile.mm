@@ -18,6 +18,17 @@
 #import "WavPackFile.h"
 #import "ShnFile.h"
 
+extern "C" {
+BOOL hostIsBigEndian()
+{
+#ifdef __BIG_ENDIAN__
+	return YES;
+#else
+	return NO;
+#endif
+}
+};
+
 @implementation SoundFile
 
 /*- (void)seek:(unsigned long)position

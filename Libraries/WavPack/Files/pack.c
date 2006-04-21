@@ -42,9 +42,9 @@ int32_t dump_alloc (void);
 // 17 & 18 are special functions using the previous 2 samples, and negative
 // values indicate cross channel decorrelation (in stereo only).
 
-const char default_terms [] = { 18,18,2,3,-2,0 };
-const char high_terms [] = { 18,18,2,3,-2,18,2,4,7,5,3,6,8,-1,18,2,0 };
-const char fast_terms [] = { 17,17,0 };
+const signed char default_terms [] = { 18,18,2,3,-2,0 };
+const signed char high_terms [] = { 18,18,2,3,-2,18,2,4,7,5,3,6,8,-1,18,2,0 };
+const signed char fast_terms [] = { 17,17,0 };
 
 ///////////////////////////// executable code ////////////////////////////////
 
@@ -55,9 +55,6 @@ void pack_init (WavpackContext *wpc)
 {
     WavpackStream *wps = wpc->streams [wpc->current_stream];
     uint32_t flags = wps->wphdr.flags;
-    struct decorr_pass *dpp;
-    const char *term_string;
-    int ti;
 
     wps->sample_index = 0;
     wps->delta_decay = 2.0;
@@ -76,24 +73,6 @@ void pack_init (WavpackContext *wpc)
 	wps->dc.shaping_acc [0] = wps->dc.shaping_acc [1] = weight << 16;
     }
 
-    if (wpc->config.flags & CONFIG_HIGH_FLAG)
-	term_string = high_terms;
-    else if (wpc->config.flags & CONFIG_FAST_FLAG)
-	term_string = fast_terms;
-    else
-	term_string = default_terms;
-
-    for (dpp = wps->decorr_passes, ti = 0; ti < strlen (term_string); ti++)
-	if (term_string [ti] >= 0 || (flags & CROSS_DECORR)) {
-	    dpp->term = term_string [ti];
-	    dpp++->delta = 2;
-	}
-	else if (!(flags & MONO_FLAG)) {
-	    dpp->term = -3;
-	    dpp++->delta = 2;
-	}
-
-    wps->num_terms = dpp - wps->decorr_passes;
     init_words (wps);
 }
 
@@ -123,18 +102,29 @@ void write_decorr_terms (WavpackStream *wps, WavpackMetadata *wpmd)
 
 void write_decorr_weights (WavpackStream *wps, WavpackMetadata *wpmd)
 {
-    int tcount = wps->num_terms;
-    struct decorr_pass *dpp;
+    struct decorr_pass *dpp = wps->decorr_passes;
+    int tcount = wps->num_terms, i;
     char *byteptr;
 
     byteptr = wpmd->data = malloc ((tcount * 2) + 1);
     wpmd->id = ID_DECORR_WEIGHTS;
 
-    for (dpp = wps->decorr_passes; tcount--; ++dpp) {
-	dpp->weight_A = restore_weight (*byteptr++ = store_weight (dpp->weight_A));
+    for (i = wps->num_terms - 1; i >= 0; --i)
+	if (store_weight (dpp [i].weight_A) ||
+	    (!(wps->wphdr.flags & MONO_DATA) && store_weight (dpp [i].weight_B)))
+		break;
 
-	if (!(wps->wphdr.flags & MONO_FLAG))
-	    dpp->weight_B = restore_weight (*byteptr++ = store_weight (dpp->weight_B));
+    tcount = i + 1;
+
+    for (i = 0; i < wps->num_terms; ++i) {
+	if (i < tcount) {
+	    dpp [i].weight_A = restore_weight (*byteptr++ = store_weight (dpp [i].weight_A));
+
+	    if (!(wps->wphdr.flags & MONO_DATA))
+		dpp [i].weight_B = restore_weight (*byteptr++ = store_weight (dpp [i].weight_B));
+	}
+	else
+	    dpp [i].weight_A = dpp [i].weight_B = 0;
     }
 
     wpmd->byte_length = byteptr - (char *) wpmd->data;
@@ -170,7 +160,7 @@ void write_decorr_samples (WavpackStream *wps, WavpackMetadata *wpmd)
 		*byteptr++ = temp;
 		*byteptr++ = temp >> 8;
 
-		if (!(wps->wphdr.flags & MONO_FLAG)) {
+		if (!(wps->wphdr.flags & MONO_DATA)) {
 		    dpp->samples_B [0] = exp2s (temp = log2s (dpp->samples_B [0]));
 		    *byteptr++ = temp;
 		    *byteptr++ = temp >> 8;
@@ -195,7 +185,7 @@ void write_decorr_samples (WavpackStream *wps, WavpackMetadata *wpmd)
 		    *byteptr++ = temp;
 		    *byteptr++ = temp >> 8;
 
-		    if (!(wps->wphdr.flags & MONO_FLAG)) {
+		    if (!(wps->wphdr.flags & MONO_DATA)) {
 			dpp->samples_B [m] = exp2s (temp = log2s (dpp->samples_B [m]));
 			*byteptr++ = temp;
 			*byteptr++ = temp >> 8;
@@ -226,13 +216,6 @@ void write_shaping_info (WavpackStream *wps, WavpackMetadata *wpmd)
     char *byteptr;
     int temp;
 
-#if 0
-    if (wps->wphdr.block_samples) {
-	wps->dc.shaping_delta [0] = (-wps->dc.shaping_acc [0] - wps->dc.shaping_acc [0]) / (int32_t) wps->wphdr.block_samples;
-	wps->dc.shaping_delta [1] = (-wps->dc.shaping_acc [1] - wps->dc.shaping_acc [1]) / (int32_t) wps->wphdr.block_samples;
-    }
-#endif
-
     byteptr = wpmd->data = malloc (12);
     wpmd->id = ID_SHAPING_WEIGHTS;
 
@@ -243,7 +226,7 @@ void write_shaping_info (WavpackStream *wps, WavpackMetadata *wpmd)
     *byteptr++ = temp;
     *byteptr++ = temp >> 8;
 
-    if (!(wps->wphdr.flags & MONO_FLAG)) {
+    if (!(wps->wphdr.flags & MONO_DATA)) {
 	wps->dc.error [1] = exp2s (temp = log2s (wps->dc.error [1]));
 	*byteptr++ = temp;
 	*byteptr++ = temp >> 8;
@@ -257,7 +240,7 @@ void write_shaping_info (WavpackStream *wps, WavpackMetadata *wpmd)
 	*byteptr++ = temp;
 	*byteptr++ = temp >> 8;
 
-	if (!(wps->wphdr.flags & MONO_FLAG)) {
+	if (!(wps->wphdr.flags & MONO_DATA)) {
 	    wps->dc.shaping_delta [1] = exp2s (temp = log2s (wps->dc.shaping_delta [1]));
 	    *byteptr++ = temp;
 	    *byteptr++ = temp >> 8;
@@ -325,6 +308,24 @@ void write_config_info (WavpackContext *wpc, WavpackMetadata *wpmd)
     wpmd->byte_length = byteptr - (char *) wpmd->data;
 }
 
+// Allocate room for and copy the non-standard sampling rateinto the specified
+// metadata structure. We just store the lower 3 bytes of the sampling rate.
+// Note that this would only be used when the sampling rate was not included
+// in the table of 15 "standard" values.
+
+void write_sample_rate (WavpackContext *wpc, WavpackMetadata *wpmd)
+
+{
+    char *byteptr;
+
+    byteptr = wpmd->data = malloc (4);
+    wpmd->id = ID_SAMPLE_RATE;
+    *byteptr++ = (char) (wpc->config.sample_rate);
+    *byteptr++ = (char) (wpc->config.sample_rate >> 8);
+    *byteptr++ = (char) (wpc->config.sample_rate >> 16);
+    wpmd->byte_length = byteptr - (char *) wpmd->data;
+}
+
 // Pack an entire block of samples (either mono or stereo) into a completed
 // WavPack block. This function is actually a shell for pack_samples() and
 // performs tasks like handling any shift required by the format, preprocessing
@@ -335,6 +336,7 @@ void write_config_info (WavpackContext *wpc, WavpackMetadata *wpmd)
 // FALSE indicates an error.
 
 static int scan_int32_data (WavpackStream *wps, int32_t *values, int32_t num_values);
+static void scan_int32_quick (WavpackStream *wps, int32_t *values, int32_t num_values);
 static void send_int32_data (WavpackStream *wps, int32_t *values, int32_t num_values);
 static int pack_samples (WavpackContext *wpc, int32_t *buffer);
 
@@ -351,7 +353,7 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
 	uint32_t cnt = sample_count;
 	int32_t *ptr = buffer;
 
-	if (flags & MONO_FLAG)
+	if (flags & MONO_DATA)
 	    while (cnt--)
 		*ptr++ >>= shift;
 	else
@@ -370,19 +372,19 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
 
     if ((flags & FLOAT_DATA) || (flags & MAG_MASK) >> MAG_LSB >= 24) {
 	if ((!(flags & HYBRID_FLAG) || wpc->wvc_flag) && !(wpc->config.flags & CONFIG_SKIP_WVX)) {
-	    orig_data = malloc (sizeof (f32) * ((flags & MONO_FLAG) ? sample_count : sample_count * 2));
-	    memcpy (orig_data, buffer, sizeof (f32) * ((flags & MONO_FLAG) ? sample_count : sample_count * 2));
+	    orig_data = malloc (sizeof (f32) * ((flags & MONO_DATA) ? sample_count : sample_count * 2));
+	    memcpy (orig_data, buffer, sizeof (f32) * ((flags & MONO_DATA) ? sample_count : sample_count * 2));
 
 	    if (flags & FLOAT_DATA) {
 		wps->float_norm_exp = wpc->config.float_norm_exp;
 
-		if (!scan_float_data (wps, (f32 *) buffer, (flags & MONO_FLAG) ? sample_count : sample_count * 2)) {
+		if (!scan_float_data (wps, (f32 *) buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2)) {
 		    free (orig_data);
 		    orig_data = NULL;
 		}
 	    }
 	    else {
-		if (!scan_int32_data (wps, buffer, (flags & MONO_FLAG) ? sample_count : sample_count * 2)) {
+		if (!scan_int32_data (wps, buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2)) {
 		    free (orig_data);
 		    orig_data = NULL;
 		}
@@ -392,20 +394,28 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
 	    if (flags & FLOAT_DATA) {
 		wps->float_norm_exp = wpc->config.float_norm_exp;
 
-		if (scan_float_data (wps, (f32 *) buffer, (flags & MONO_FLAG) ? sample_count : sample_count * 2))
+		if (scan_float_data (wps, (f32 *) buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2))
 		    wpc->lossy_blocks = TRUE;
 	    }
-	    else if (scan_int32_data (wps, buffer, (flags & MONO_FLAG) ? sample_count : sample_count * 2))
+	    else if (scan_int32_data (wps, buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2))
 		wpc->lossy_blocks = TRUE;
 	}
 
 	wpc->config.extra_flags |= EXTRA_SCAN_ONLY;
     }
     else if (wpc->config.extra_flags)
-	scan_int32_data (wps, buffer, (flags & MONO_FLAG) ? sample_count : sample_count * 2);
+	scan_int32_data (wps, buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2);
+    else {
+	scan_int32_quick (wps, buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2);
+
+	if (wps->shift != wps->int32_zeros + wps->int32_ones + wps->int32_dups) {
+	    wps->shift = wps->int32_zeros + wps->int32_ones + wps->int32_dups;
+	    wps->num_terms = 0;
+	}
+    }
 
     if (wpc->config.extra_flags) {
-	if (flags & MONO_FLAG)
+	if (flags & MONO_DATA)
 	    analyze_mono (wpc, buffer);
 	else
 	    analyze_stereo (wpc, buffer);
@@ -413,7 +423,7 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
     else if (!wps->sample_index || !wps->num_terms) {
 	wpc->config.extra_flags = EXTRA_SCAN_ONLY;
 
-	if (flags & MONO_FLAG)
+	if (flags & MONO_DATA)
 	    analyze_mono (wpc, buffer);
 	else
 	    analyze_stereo (wpc, buffer);
@@ -444,9 +454,9 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
 	bs_open_write (&wps->wvxbits, cptr + 8, wpc->wvc_flag ? wps->block2end : wps->blockend);
 
 	if (flags & FLOAT_DATA)
-	    send_float_data (wps, (f32*) orig_data, (flags & MONO_FLAG) ? sample_count : sample_count * 2);
+	    send_float_data (wps, (f32*) orig_data, (flags & MONO_DATA) ? sample_count : sample_count * 2);
 	else
-	    send_int32_data (wps, orig_data, (flags & MONO_FLAG) ? sample_count : sample_count * 2);
+	    send_int32_data (wps, orig_data, (flags & MONO_DATA) ? sample_count : sample_count * 2);
 
 	data_count = bs_close_write (&wps->wvxbits);
 	free (orig_data);
@@ -473,6 +483,70 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
     }
 
     return TRUE;
+}
+
+// Quickly scan a buffer of long integer data and determine whether any
+// redundancy in the LSBs can be used to reduce the data's magnitude. If yes,
+// then the INT32_DATA flag is set and the int32 parameters are set. This
+// version is designed to terminate as soon as it figures out that no
+// redundancy is available so that it can be used for all files.
+
+static void scan_int32_quick (WavpackStream *wps, int32_t *values, int32_t num_values)
+{
+    uint32_t magdata = 0, ordata = 0, xordata = 0, anddata = ~0;
+    int total_shift = 0;
+    int32_t *dp, count;
+
+    wps->int32_sent_bits = wps->int32_zeros = wps->int32_ones = wps->int32_dups = 0;
+
+    for (dp = values, count = num_values; count--; dp++) {
+	magdata |= (*dp < 0) ? ~*dp : *dp;
+	xordata |= *dp ^ -(*dp & 1);
+	anddata &= *dp;
+	ordata |= *dp;
+
+	if ((ordata & 1) && !(anddata & 1) && (xordata & 2))
+	    return;
+    }
+
+    wps->wphdr.flags &= ~MAG_MASK;
+
+    while (magdata) {
+	wps->wphdr.flags += 1 << MAG_LSB;
+	magdata >>= 1;
+    }
+
+    if (!(wps->wphdr.flags & MAG_MASK))
+	return;
+
+    if (!(ordata & 1))
+	while (!(ordata & 1)) {
+	    wps->wphdr.flags -= 1 << MAG_LSB;
+	    wps->int32_zeros++;
+	    total_shift++;
+	    ordata >>= 1;
+	}
+    else if (anddata & 1)
+	while (anddata & 1) {
+	    wps->wphdr.flags -= 1 << MAG_LSB;
+	    wps->int32_ones++;
+	    total_shift++;
+	    anddata >>= 1;
+	}
+    else if (!(xordata & 2))
+	while (!(xordata & 2)) {
+	    wps->wphdr.flags -= 1 << MAG_LSB;
+	    wps->int32_dups++;
+	    total_shift++;
+	    xordata >>= 1;
+	}
+
+    if (total_shift) {
+	wps->wphdr.flags |= INT32_DATA;
+
+	for (dp = values, count = num_values; count--; dp++)
+	    *dp >>= total_shift;
+    }
 }
 
 // Scan a buffer of long integer data and determine whether any redundancy in
@@ -547,12 +621,6 @@ static int scan_int32_data (WavpackStream *wps, int32_t *values, int32_t num_val
 	for (dp = values, count = num_values; count--; dp++)
 	    *dp >>= total_shift;
     }
-
-#if 0
-    if (wps->int32_sent_bits + wps->int32_zeros + wps->int32_ones + wps->int32_dups)
-	error_line ("sent bits = %d, zeros/ones/dups = %d/%d/%d", wps->int32_sent_bits,
-	    wps->int32_zeros, wps->int32_ones, wps->int32_dups);
-#endif
 
     return wps->int32_sent_bits;
 }
@@ -641,6 +709,12 @@ static int pack_samples (WavpackContext *wpc, int32_t *buffer)
     copy_metadata (&wpmd, wps->blockbuff, wps->blockend);
     free_metadata (&wpmd);
 
+    if ((flags & SRATE_MASK) == SRATE_MASK && wpc->config.sample_rate != 44100) {
+	write_sample_rate (wpc, &wpmd);
+	copy_metadata (&wpmd, wps->blockbuff, wps->blockend);
+	free_metadata (&wpmd);
+    }
+
     if (flags & HYBRID_FLAG) {
 	write_hybrid_profile (wps, &wpmd);
 	copy_metadata (&wpmd, wps->blockbuff, wps->blockend);
@@ -690,7 +764,7 @@ static int pack_samples (WavpackContext *wpc, int32_t *buffer)
 
     /////////////////////// handle lossless mono mode /////////////////////////
 
-    if (!(flags & HYBRID_FLAG) && (flags & MONO_FLAG))
+    if (!(flags & HYBRID_FLAG) && (flags & MONO_DATA))
 	for (bptr = buffer, i = 0; i < sample_count; ++i) {
 	    int32_t code;
 
@@ -724,8 +798,8 @@ static int pack_samples (WavpackContext *wpc, int32_t *buffer)
     //////////////////// handle the lossless stereo mode //////////////////////
 
 #ifdef FAST_ENCODE
-    else if (!(flags & HYBRID_FLAG) && !(flags & MONO_FLAG)) {
-	int32_t *eptr = buffer + (sample_count * 2), sam_A, sam_B;
+    else if (!(flags & HYBRID_FLAG) && !(flags & MONO_DATA)) {
+	int32_t *eptr = buffer + (sample_count * 2);
 
 	if (flags & JOINT_STEREO)
 	    for (bptr = buffer; bptr < eptr; bptr += 2) {
@@ -752,7 +826,7 @@ static int pack_samples (WavpackContext *wpc, int32_t *buffer)
 	m = sample_count & (MAX_TERM - 1);
     }
 #else
-    else if (!(flags & HYBRID_FLAG) && !(flags & MONO_FLAG))
+    else if (!(flags & HYBRID_FLAG) && !(flags & MONO_DATA))
 	for (bptr = buffer, i = 0; i < sample_count; ++i, bptr += 2) {
 	    int32_t left, right, sam_A, sam_B;
 
@@ -813,7 +887,7 @@ static int pack_samples (WavpackContext *wpc, int32_t *buffer)
 
     /////////////////// handle the lossy/hybrid mono mode /////////////////////
 
-    else if ((flags & HYBRID_FLAG) && (flags & MONO_FLAG))
+    else if ((flags & HYBRID_FLAG) && (flags & MONO_DATA))
 	for (bptr = buffer, i = 0; i < sample_count; ++i) {
 	    int32_t code, temp;
 
@@ -881,7 +955,7 @@ static int pack_samples (WavpackContext *wpc, int32_t *buffer)
 
     /////////////////// handle the lossy/hybrid stereo mode ///////////////////
 
-    else if ((flags & HYBRID_FLAG) && !(flags & MONO_FLAG))
+    else if ((flags & HYBRID_FLAG) && !(flags & MONO_DATA))
 	for (bptr = buffer, i = 0; i < sample_count; ++i) {
 	    int32_t left, right, temp;
 	    int shaping_weight;
@@ -947,10 +1021,7 @@ static int pack_samples (WavpackContext *wpc, int32_t *buffer)
 		    left -= (dpp->aweight_A = apply_weight (dpp->weight_A, dpp->samples_A [0]));
 		    right -= (dpp->aweight_B = apply_weight (dpp->weight_B, dpp->samples_B [0]));
 		}
-#if 0
-if (labs (left) > 60000000 || labs (right) > 60000000)
-    error_line ("sending %d, %d; samples = %d, %d", left, right, bptr [-2], bptr [-1]);
-#endif
+
 	    left = send_word (wps, left, 0);
 	    right = send_word (wps, right, 1);
 

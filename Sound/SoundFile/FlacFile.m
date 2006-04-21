@@ -86,11 +86,7 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 
 	FLAC__file_decoder_process_until_end_of_metadata(decoder);
 
-#ifdef __BIG_ENDIAN__
-	isBigEndian = YES;
-#else
-	isBigEndian = NO;
-#endif
+	isBigEndian = hostIsBigEndian();
 	
 	return YES;
 }

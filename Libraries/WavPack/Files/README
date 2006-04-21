@@ -13,10 +13,9 @@ of the plugin sources in the Windows source release.
 
 To build everything, type:
 
-1. ./autogen.sh
-2. ./configure
-3. make
-4. make install (optionally, to install into /usr/local/bin)
+1. ./configure
+2. make
+3. make install (optionally, to install into /usr/local/bin)
 
 Notes:
 
@@ -31,10 +30,10 @@ Notes:
 
    a "short" must be 16-bits
    an "int" must be at least 16-bits, but may be larger
-   a "char" must default to signed (Watcom users take note!)
 
    For version 4.2 references to "long" variables were eliminated to allow
-   compilation on 64-bit machines.
+   compilation on 64-bit machines. For version 4.3 "char" types may default
+   to signed or unsigned.
 
 2. For WavPack file decoding, a library interface in "wputils.c" provides all
    the functionality required for both the winamp plugin and the "wvunpack"

@@ -63,7 +63,7 @@ typedef struct bs3 {
     void (*wrap)(struct bs3 *bs);
     uchar *buf, *end, *ptr;
     uint32_t bufsiz, fpos, sr;
-    stream_reader *reader;
+    WavpackStreamReader *reader;
     int error, bc;
     void *id;
 } Bitstream3;

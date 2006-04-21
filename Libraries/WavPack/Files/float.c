@@ -346,6 +346,8 @@ static void float_values_nowvx (WavpackStream *wps, int32_t *values, int32_t num
     }
 }
 
+#endif
+
 void float_normalize (int32_t *values, int32_t num_values, int delta_exp)
 {
     f32 *fvalues = (f32 *) values, fzero = { 0, 0, 0 };
@@ -367,5 +369,3 @@ void float_normalize (int32_t *values, int32_t num_values, int delta_exp)
 	fvalues++;
     }
 }
-
-#endif

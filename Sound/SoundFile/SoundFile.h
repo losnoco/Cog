@@ -14,6 +14,14 @@
 
 #import "DBLog.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+BOOL hostIsBigEndian();
+#ifdef __cplusplus
+}
+#endif
+
 @interface SoundFile : NSObject {
 	UInt16 bitsPerSample;
 	UInt16 channels;

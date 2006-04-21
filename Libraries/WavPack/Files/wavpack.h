@@ -74,8 +74,8 @@ typedef struct {
 #undef VERSION_OS
 #define VERSION_OS "Win32"
 #endif
-#define VERSION_STR "4.2 "
-#define DATE_STR "2005-04-02"
+#define VERSION_STR "4.32"
+#define DATE_STR "2006-04-05"
 
 // ID3v1 and APEv2 TAG formats (may occur at the end of WavPack files)
 
@@ -93,6 +93,7 @@ typedef struct {
 #define APE_Tag_Hdr_Format "8LLLL"
 
 typedef struct {
+    int32_t tag_file_pos;
     ID3_Tag id3_tag;
     APE_Tag_Hdr ape_tag_hdr;
     char *ape_tag_data;
@@ -168,10 +169,19 @@ typedef struct {
 #define SRATE_LSB	23
 #define SRATE_MASK	(0xfL << SRATE_LSB)
 
+#define FALSE_STEREO	0x40000000	// block is stereo, but data is mono
+
 #define IGNORED_FLAGS	0x18000000	// reserved, but ignore if encountered
 #define NEW_SHAPING	0x20000000	// use IIR filter for negative shaping
-#define UNKNOWN_FLAGS	0xC0000000	// also reserved, but refuse decode if
+#define UNKNOWN_FLAGS	0x80000000	// also reserved, but refuse decode if
 					//  encountered
+
+#define MONO_DATA (MONO_FLAG | FALSE_STEREO)
+
+#define MIN_STREAM_VERS	    0x402	// lowest stream version we'll decode
+#define MAX_STREAM_VERS	    0x410	// highest stream version we'll decode
+#define CUR_STREAM_VERS	    0x404	// stream version we are writing now
+
 
 //////////////////////////// WavPack Metadata /////////////////////////////////
 
@@ -183,6 +193,7 @@ typedef struct {
     uchar id;
 } WavpackMetadata;
 
+#define ID_UNIQUE		0x3f
 #define ID_OPTIONAL_DATA	0x20
 #define ID_ODD_SIZE		0x40
 #define ID_LARGE		0x80
@@ -208,6 +219,7 @@ typedef struct {
 #define ID_CUESHEET		(ID_OPTIONAL_DATA | 0x4)
 #define ID_CONFIG_BLOCK		(ID_OPTIONAL_DATA | 0x5)
 #define ID_MD5_CHECKSUM		(ID_OPTIONAL_DATA | 0x6)
+#define ID_SAMPLE_RATE		(ID_OPTIONAL_DATA | 0x7)
 
 ///////////////////////// WavPack Configuration ///////////////////////////////
 
@@ -255,10 +267,10 @@ typedef struct {
 #define CONFIG_MD5_CHECKSUM	0x8000000 // compute & store MD5 signature
 #define CONFIG_QUIET_MODE	0x10000000 // don't report progress %
 #define CONFIG_IGNORE_LENGTH	0x20000000 // ignore length in wav header
+#define CONFIG_NEW_RIFF_HEADER	0x40000000 // generate new RIFF wav header
 
 #define EXTRA_SCAN_ONLY		1
 #define EXTRA_STEREO_MODES	2
-//#define EXTRA_CHECK_TERMS	4
 #define EXTRA_TRY_DELTAS	8
 #define EXTRA_ADJUST_DELTAS	16
 #define EXTRA_SORT_FIRST	32
@@ -291,9 +303,7 @@ struct decorr_pass {
     int term, delta, weight_A, weight_B;
     int32_t samples_A [MAX_TERM], samples_B [MAX_TERM];
     int32_t aweight_A, aweight_B;
-#ifdef PACK
-    int32_t sum_A, sum_B, min, max;
-#endif
+    int32_t sum_A, sum_B;
 };
 
 typedef struct {
@@ -303,9 +313,9 @@ typedef struct {
     uchar *block2buff, *block2end;
     int32_t *sample_buffer;
 
+    int bits, num_terms, mute_error, false_stereo, shift;
     uint32_t sample_index, crc, crc_x, crc_wvx;
     Bitstream wvbits, wvcbits, wvxbits;
-    int bits, num_terms, mute_error;
     float delta_decay;
 
     uchar int32_sent_bits, int32_zeros, int32_ones, int32_dups;
@@ -349,9 +359,12 @@ typedef struct {
     int (*push_back_byte)(void *id, int c);
     uint32_t (*get_length)(void *id);
     int (*can_seek)(void *id);
-} stream_reader;
 
-typedef int (*blockout)(void *id, void *data, int32_t bcount);
+    // this callback is for writing edited tags only
+    int32_t (*write_bytes)(void *id, void *data, int32_t bcount);
+} WavpackStreamReader;
+
+typedef int (*WavpackBlockOutput)(void *id, void *data, int32_t bcount);
 
 typedef struct {
     WavpackConfig config;
@@ -363,18 +376,18 @@ typedef struct {
     uchar *wrapper_data;
     uint32_t wrapper_bytes;
 
-    blockout blockout;
+    WavpackBlockOutput blockout;
     void *wv_out, *wvc_out;
 
-    stream_reader *reader;
+    WavpackStreamReader *reader;
     void *wv_in, *wvc_in;
 
     uint32_t filelen, file2len, filepos, file2pos, total_samples, crc_errors, first_flags;
     int wvc_flag, open_flags, norm_offset, reduced_channels, lossy_blocks, close_files;
-    int block_samples, max_samples, acc_samples;
+    int block_samples, max_samples, acc_samples, riff_header_added, riff_header_created;
     M_Tag m_tag;
 
-    int current_stream, num_streams;
+    int current_stream, num_streams, stream_version;
     WavpackStream *streams [8];
     void *stream3;
 
@@ -459,8 +472,14 @@ int DoCloseHandle (FILE *hFile), DoTruncateFile (FILE *hFile);
 	(bs)->bc += 8; \
     } \
     *(value) = (bs)->sr; \
-    (bs)->sr >>= (nbits); \
-    (bs)->bc -= (nbits); \
+    if ((bs)->bc > 32) { \
+        (bs)->bc -= (nbits); \
+        (bs)->sr = *((bs)->ptr) >> (8 - (bs)->bc); \
+    } \
+    else { \
+        (bs)->bc -= (nbits); \
+        (bs)->sr >>= (nbits); \
+    } \
 }
 
 #define putbit(bit, bs) { if (bit) (bs)->sr |= (1 << (bs)->bc); \
@@ -490,8 +509,9 @@ int DoCloseHandle (FILE *hFile), DoTruncateFile (FILE *hFile);
 	do { \
 	    *((bs)->ptr) = (bs)->sr; \
 	    (bs)->sr >>= 8; \
+	    if (((bs)->bc -= 8) > 24) (bs)->sr |= ((value) >> ((nbits) - (bs)->bc)); \
 	    if (++((bs)->ptr) == (bs)->end) (bs)->wrap (bs); \
-	} while (((bs)->bc -= 8) >= 8); \
+	} while ((bs)->bc >= 8); \
 }
 
 void little_endian_to_native (void *data, char *format);
@@ -517,6 +537,7 @@ int read_float_info (WavpackStream *wps, WavpackMetadata *wpmd);
 int read_int32_info (WavpackStream *wps, WavpackMetadata *wpmd);
 int read_channel_info (WavpackContext *wpc, WavpackMetadata *wpmd);
 int read_config_info (WavpackContext *wpc, WavpackMetadata *wpmd);
+int read_sample_rate (WavpackContext *wpc, WavpackMetadata *wpmd);
 int read_wrapper_data (WavpackContext *wpc, WavpackMetadata *wpmd);
 int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_count);
 int check_crc_error (WavpackContext *wpc);
@@ -535,11 +556,10 @@ int get_version3 (WavpackContext *wpc);
 int copy_timestamp (const char *src_filename, const char *dst_filename);
 char *filespec_ext (char *filespec), *filespec_path (char *filespec);
 char *filespec_name (char *filespec), *filespec_wild (char *filespec);
-void error_line (char *error, ...), finish_line (void);
-void setup_break (void);
+void error_line (char *error, ...);
+void setup_break (void), finish_line (void);
 int check_break (void);
 char yna (void);
-void AnsiToUTF8 (char *string, int len);
 
 #define FN_FIT(fn) ((strlen (fn) > 30) ? filespec_name (fn) : fn)
 
@@ -570,10 +590,10 @@ void scan_word (WavpackStream *wps, int32_t *samples, uint32_t num_samples, int 
 
 int log2s (int32_t value);
 int32_t exp2s (int log);
-uint32_t log2buffer (int32_t *samples, uint32_t num_samples);
+uint32_t log2buffer (int32_t *samples, uint32_t num_samples, int limit);
 
-char store_weight (int weight);
-int restore_weight (char weight);
+signed char store_weight (int weight);
+int restore_weight (signed char weight);
 
 #define WORD_EOF (1L << 31)
 
@@ -593,7 +613,7 @@ void analyze_mono (WavpackContext *wpc, int32_t *samples);
 
 // wputils.c
 
-WavpackContext *WavpackOpenFileInputEx (stream_reader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset);
+WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset);
 WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int flags, int norm_offset);
 
 #define OPEN_WVC	0x1	// open/read "correction" file
@@ -603,6 +623,7 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 #define OPEN_NORMALIZE	0x10	// normalize floating point data to +/- 1.0
 #define OPEN_STREAMING	0x20	// "streaming" mode blindly unpacks blocks
 				// w/o regard to header file position info
+#define OPEN_EDIT_TAGS	0x40	// allow editing of tags
 
 int WavpackGetMode (WavpackContext *wpc);
 
@@ -639,11 +660,14 @@ uint32_t WavpackGetFileSize (WavpackContext *wpc);
 double WavpackGetRatio (WavpackContext *wpc);
 double WavpackGetAverageBitrate (WavpackContext *wpc, int count_wvc);
 double WavpackGetInstantBitrate (WavpackContext *wpc);
+int WavpackGetNumTagItems (WavpackContext *wpc);
 int WavpackGetTagItem (WavpackContext *wpc, const char *item, char *value, int size);
-int WavpackAppendTagItem (WavpackContext *wpc, const char *item, const char *value);
+int WavpackGetTagItemIndexed (WavpackContext *wpc, int index, char *item, int size);
+int WavpackAppendTagItem (WavpackContext *wpc, const char *item, const char *value, int vsize);
+int WavpackDeleteTagItem (WavpackContext *wpc, const char *item);
 int WavpackWriteTag (WavpackContext *wpc);
 
-WavpackContext *WavpackOpenFileOutput (blockout blockout, void *wv_id, void *wvc_id);
+WavpackContext *WavpackOpenFileOutput (WavpackBlockOutput blockout, void *wv_id, void *wvc_id);
 int WavpackSetConfiguration (WavpackContext *wpc, WavpackConfig *config, uint32_t total_samples);
 int WavpackAddWrapper (WavpackContext *wpc, void *data, uint32_t bcount);
 int WavpackStoreMD5Sum (WavpackContext *wpc, uchar data [16]);
@@ -651,6 +675,6 @@ int WavpackPackInit (WavpackContext *wpc);
 int WavpackPackSamples (WavpackContext *wpc, int32_t *sample_buffer, uint32_t sample_count);
 int WavpackFlushSamples (WavpackContext *wpc);
 void WavpackUpdateNumSamples (WavpackContext *wpc, void *first_block);
-void *WavpackGetWrapperLocation (void *first_block);
+void *WavpackGetWrapperLocation (void *first_block, uint32_t *size);
 
 #endif

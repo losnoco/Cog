@@ -1,3 +1,107 @@
+                        ----------------------
+                        Update - April 5, 2006
+                        ----------------------
+
+ WavPack Library Source Code - 4.32
+ -----------------------------------------
+  fixed: generating RIFF headers on big-endian machines caused crash
+
+
+                        --------------------------
+                        Update - December 10, 2005
+                        --------------------------
+
+ wavpack.exe (command-line encoder) - 4.31
+ wvunpack.exe (command-line decoder) - 4.31
+ ------------------------------------------
+  fixed: detect debug mode in all cases (win32 only)
+  improved: use latest service pack and SDK for building (win32 only)
+  improved: better directory choice for logging file (win32 only)
+  improved: allow shell to expand wildcards (*nix only)
+  added: option (-o) to specify output directory or path (*nix only)
+  added: option (-t) to copy timestamp (*nix only)
+
+ wvgain.exe (command-line ReplayGain scanner) - 4.31
+ ---------------------------------------------------
+  new
+
+ WavPack Library Source Code - 4.31
+ ----------------------------------
+  fixed: failing seek with some files that had been played to the end
+  fixed: small memory leak when opening hybrid lossless files
+  improved: signed characters no longer must be default
+  improved: APEv2 tags are read even if followed by ID3v1 tag
+  improved: limited APEv2 tag editing capability
+
+
+                      ------------------------------
+                      Release 4.3 - November 1, 2005
+                      ------------------------------
+
+ wavpack.exe (command-line encoder) - 4.3
+ ----------------------------------------
+  fixed: bug causing termination error with very wide screen widths
+  added: command-line option (-l) to use low priority for batch operation
+  added: command-line option (-r) to generate a fresh RIFF header
+  added: debug mode (rename to wavpack_debug.exe)
+  added: automatically detect lower resolution data even without -x1
+  added: src and dst dirs are searched also for tag source files (handy for EAC)
+  added: wildcard accepted for tag source files (handy for EAC)
+  added: handle non-standard sampling rates
+  improved: returns error status for any error
+  improved: use longer blocks in multichannel files (better "high" compression)
+
+ wvunpack.exe (command-line decoder) - 4.3
+ -----------------------------------------
+  fixed: very rare decoding bug causing overflow with hi-res files
+  fixed: bug causing termination error with very wide screen widths
+  fixed: formatting error in duration display
+  added: command-line option (-ss) to include tags in summary dump
+  added: command-line option (-l) to use low priority for batch operation
+  added: debug mode (rename to wvunpack_debug.exe)
+  improved: returns error status for any error
+  improved: more robust decoding of damaged (or invalid) files
+
+ in_wv.dll (winamp plugin) - 2.3
+ nxWavPack.dll (Nero plugin) - 1.2
+ WavPack_Apollo.dll (Apollo plugin) - 1.3
+ cool_wv4.flt (CoolEdit / Audition filter) - 2.6
+ -----------------------------------------------
+  fixed: very rare decoding bug causing overflow with hi-res files
+  improved: handle ID3v1.1 tags (now includes track number)
+  improved: more robust decoding of damaged (or invalid) files
+  added: handle non-standard sampling rates
+
+ foo_wavpack.dll (foobar plugin) - 2.3
+ -----------------------------------------------
+  fixed: any error during WavPack file open caused crash if wvc file present
+  fixed: very rare decoding bug causing overflow with hi-res files
+  improved: more robust decoding of damaged (or invalid) files
+  added: handle non-standard sampling rates
+
+ WavPack Library Source Code - 4.3
+ ---------------------------------
+  fixed: very rare decoding bug causing overflow with hi-res files
+  added: automatic generation of RIFF wav header during encoding
+  added: new functions to access tags by index (instead of item name)
+  added: automatically detect lower resolution data during encoding
+  added: handle non-standard sampling rates
+  improved: more robust decoding of damaged (or invalid) files
+  improved: use longer blocks in multichannel files (better "high" compression)
+  improved: two structures renamed to avoid namespace conflict
+  removed: legacy code for Borland compiler
+
+
+                        --------------------------
+                        Update - September 1, 2005
+                        --------------------------
+
+ wavpack.exe (command-line encoder) - 4.22
+ cool_wv4.flt (CoolEdit / Audition filter) - 2.5
+ -----------------------------------------------
+  fixed: possible corrupt files written (24 or 32-bit + "extra" mode)
+
+
                        ---------------------------
                        Release 4.2 - April 2, 2005
                        ---------------------------

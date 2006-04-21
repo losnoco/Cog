@@ -21,8 +21,10 @@
 		return NO;
 	
 	channels = WavpackGetNumChannels(wpc);
-//	bitsPerSample = WavpackGetBitsPerSample(wpc);
-	bitsPerSample = 32;
+	bitsPerSample = WavpackGetBitsPerSample(wpc);
+//	bitsPerSample = 32;
+	NSLog(@"BYTES PER SAMPLE: %i", WavpackGetBitsPerSample(wpc));
+	NSLog(@"BYTES PER SAMPLE: %i", WavpackGetBytesPerSample(wpc));
 	
 	frequency = WavpackGetSampleRate(wpc);
 
@@ -32,7 +34,7 @@
 	
 	bitRate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
 
-	//isBigEndian = YES;
+	isBigEndian = hostIsBigEndian();
 
 	return YES;
 }
@@ -48,19 +50,18 @@
 {
 	int numsamples;
 	int n;
+	void *sampleBuf = malloc(size*2);
 	
-	numsamples = size/4/channels;
+	numsamples = size/(bitsPerSample/8)/channels;
 //	DBLog(@"NUM SAMPLES: %i %i", numsamples, size);
-	n = WavpackUnpackSamples(wpc, buf, numsamples);
+	n = WavpackUnpackSamples(wpc, sampleBuf, numsamples);
 	
-	n *= 4*channels;
-
 	int i;
-	for (i = 0; i < n/2; i++)
+	for (i = 0; i < n*channels; i++)
 	{
-//		((UInt32 *)buf)[i] = CFSwapInt32LittleToHost(((UInt32 *)buf)[i]);
-		((UInt16 *)buf)[i] = CFSwapInt16LittleToHost(((UInt16 *)buf)[i]);
+		((UInt16 *)buf)[i] = ((UInt32 *)sampleBuf)[i];
 	}
+	n *= (bitsPerSample/8)*channels;
 	
 	return n;
 }

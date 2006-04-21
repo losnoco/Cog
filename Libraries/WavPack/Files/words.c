@@ -200,7 +200,7 @@ void word_set_bitrate (WavpackStream *wps)
     if (wps->wphdr.flags & HYBRID_BITRATE) {
 	bitrate_0 = wps->bits < 568 ? 0 : wps->bits - 568;
 
-	if (!(wps->wphdr.flags & MONO_FLAG)) {
+	if (!(wps->wphdr.flags & MONO_DATA)) {
 
 	    if (wps->wphdr.flags & HYBRID_BALANCE)
 		bitrate_1 = (wps->wphdr.flags & JOINT_STEREO) ? 256 : 0;
@@ -248,7 +248,7 @@ void write_entropy_vars (WavpackStream *wps, WavpackMetadata *wpmd)
     *byteptr++ = temp = mylog2 (wps->w.median [2] [0]);
     *byteptr++ = temp >> 8;
 
-    if (!(wps->wphdr.flags & MONO_FLAG)) {
+    if (!(wps->wphdr.flags & MONO_DATA)) {
 	*byteptr++ = temp = mylog2 (wps->w.median [0] [1]);
 	*byteptr++ = temp >> 8;
 	*byteptr++ = temp = mylog2 (wps->w.median [1] [1]);
@@ -281,7 +281,7 @@ void write_hybrid_profile (WavpackStream *wps, WavpackMetadata *wpmd)
 	*byteptr++ = temp = log2s (wps->w.slow_level [0]);
 	*byteptr++ = temp >> 8;
 
-	if (!(wps->wphdr.flags & MONO_FLAG)) {
+	if (!(wps->wphdr.flags & MONO_DATA)) {
 	    *byteptr++ = temp = log2s (wps->w.slow_level [1]);
 	    *byteptr++ = temp >> 8;
 	}
@@ -290,7 +290,7 @@ void write_hybrid_profile (WavpackStream *wps, WavpackMetadata *wpmd)
     *byteptr++ = temp = wps->w.bitrate_acc [0] >> 16;
     *byteptr++ = temp >> 8;
 
-    if (!(wps->wphdr.flags & MONO_FLAG)) {
+    if (!(wps->wphdr.flags & MONO_DATA)) {
 	*byteptr++ = temp = wps->w.bitrate_acc [1] >> 16;
 	*byteptr++ = temp >> 8;
     }
@@ -299,7 +299,7 @@ void write_hybrid_profile (WavpackStream *wps, WavpackMetadata *wpmd)
 	*byteptr++ = temp = log2s (wps->w.bitrate_delta [0]);
 	*byteptr++ = temp >> 8;
 
-	if (!(wps->wphdr.flags & MONO_FLAG)) {
+	if (!(wps->wphdr.flags & MONO_DATA)) {
 	    *byteptr++ = temp = log2s (wps->w.bitrate_delta [1]);
 	    *byteptr++ = temp >> 8;
 	}
@@ -319,14 +319,14 @@ int read_entropy_vars (WavpackStream *wps, WavpackMetadata *wpmd)
 {
     uchar *byteptr = wpmd->data;
 
-    if (wpmd->byte_length != ((wps->wphdr.flags & MONO_FLAG) ? 6 : 12))
+    if (wpmd->byte_length != ((wps->wphdr.flags & MONO_DATA) ? 6 : 12))
 	return FALSE;
 
     wps->w.median [0] [0] = exp2s (byteptr [0] + (byteptr [1] << 8));
     wps->w.median [1] [0] = exp2s (byteptr [2] + (byteptr [3] << 8));
     wps->w.median [2] [0] = exp2s (byteptr [4] + (byteptr [5] << 8));
 
-    if (!(wps->wphdr.flags & MONO_FLAG)) {
+    if (!(wps->wphdr.flags & MONO_DATA)) {
 	wps->w.median [0] [1] = exp2s (byteptr [6] + (byteptr [7] << 8));
 	wps->w.median [1] [1] = exp2s (byteptr [8] + (byteptr [9] << 8));
 	wps->w.median [2] [1] = exp2s (byteptr [10] + (byteptr [11] << 8));
@@ -349,7 +349,7 @@ int read_hybrid_profile (WavpackStream *wps, WavpackMetadata *wpmd)
 	wps->w.slow_level [0] = exp2s (byteptr [0] + (byteptr [1] << 8));
 	byteptr += 2;
 
-	if (!(wps->wphdr.flags & MONO_FLAG)) {
+	if (!(wps->wphdr.flags & MONO_DATA)) {
 	    wps->w.slow_level [1] = exp2s (byteptr [0] + (byteptr [1] << 8));
 	    byteptr += 2;
 	}
@@ -358,7 +358,7 @@ int read_hybrid_profile (WavpackStream *wps, WavpackMetadata *wpmd)
     wps->w.bitrate_acc [0] = (int32_t)(byteptr [0] + (byteptr [1] << 8)) << 16;
     byteptr += 2;
 
-    if (!(wps->wphdr.flags & MONO_FLAG)) {
+    if (!(wps->wphdr.flags & MONO_DATA)) {
 	wps->w.bitrate_acc [1] = (int32_t)(byteptr [0] + (byteptr [1] << 8)) << 16;
 	byteptr += 2;
     }
@@ -367,7 +367,7 @@ int read_hybrid_profile (WavpackStream *wps, WavpackMetadata *wpmd)
 	wps->w.bitrate_delta [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
 	byteptr += 2;
 
-	if (!(wps->wphdr.flags & MONO_FLAG)) {
+	if (!(wps->wphdr.flags & MONO_DATA)) {
 	    wps->w.bitrate_delta [1] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
 	    byteptr += 2;
 	}
@@ -391,7 +391,7 @@ static void update_error_limit (WavpackStream *wps)
 {
     int bitrate_0 = (wps->w.bitrate_acc [0] += wps->w.bitrate_delta [0]) >> 16;
 
-    if (wps->wphdr.flags & MONO_FLAG) {
+    if (wps->wphdr.flags & MONO_DATA) {
 	if (wps->wphdr.flags & HYBRID_BITRATE) {
 	    int slow_log_0 = (wps->w.slow_level [0] + SLO) >> SLS;
 
@@ -781,13 +781,6 @@ void flush_word (WavpackStream *wps)
     }
 
     if (wps->w.pend_count) {
-
-	while (wps->w.pend_count > 24) {
-	    putbit (wps->w.pend_data & 1, &wps->wvbits);
-	    wps->w.pend_data >>= 1;
-	    wps->w.pend_count--;
-	}
-
 	putbits (wps->w.pend_data, wps->w.pend_count, &wps->wvbits);
 	wps->w.pend_data = wps->w.pend_count = 0;
     }
@@ -872,7 +865,7 @@ void scan_word (WavpackStream *wps, int32_t *samples, uint32_t num_samples, int 
     CLEAR (wps->w.slow_level);
     CLEAR (wps->w.median);
 
-    if (flags & MONO_FLAG) {
+    if (flags & MONO_DATA) {
 	if (dir < 0) {
 	    samples += (num_samples - 1);
 	    dir = -1;
@@ -921,7 +914,7 @@ void scan_word (WavpackStream *wps, int32_t *samples, uint32_t num_samples, int 
 	    }
 	}
 
-	if (!(flags & MONO_FLAG)) {
+	if (!(flags & MONO_DATA)) {
 	    value = labs (samples [chan = 1]);
 
 	    if (wps->wphdr.flags & HYBRID_BITRATE) {
@@ -1353,7 +1346,7 @@ static int FASTCALL mylog2 (uint32_t avalue)
 // because the bitstream storage required for entropy coding is proportional
 // to the base 2 log of the samples.
 
-uint32_t log2buffer (int32_t *samples, uint32_t num_samples)
+uint32_t log2buffer (int32_t *samples, uint32_t num_samples, int limit)
 {
     uint32_t result = 0, avalue;
     int dbits;
@@ -1373,7 +1366,10 @@ uint32_t log2buffer (int32_t *samples, uint32_t num_samples)
 	    else
 		dbits = nbits_table [avalue >> 24] + 24;
 
-	    result += (dbits << 8) + log2_table [(avalue >> (dbits - 9)) & 0xff];
+	    result += dbits = (dbits << 8) + log2_table [(avalue >> (dbits - 9)) & 0xff];
+
+  	    if (limit && dbits >= limit)
+  		return (uint32_t) -1;
 	}
     }
 
@@ -1413,7 +1409,7 @@ int32_t exp2s (int log)
 // to and from an 8-bit signed character version for storage in metadata. The
 // weights are clipped here in the case that they are outside that range.
 
-char store_weight (int weight)
+signed char store_weight (int weight)
 {
     if (weight > 1024)
 	weight = 1024;
@@ -1426,7 +1422,7 @@ char store_weight (int weight)
     return (weight + 4) >> 3;
 }
 
-int restore_weight (char weight)
+int restore_weight (signed char weight)
 {
     int result;
 

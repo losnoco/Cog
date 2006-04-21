@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 //			     **** WAVPACK ****				  //
 //		    Hybrid Lossless Wavefile Compressor			  //
 //		Copyright (c) 1998 - 2005 Conifer Software.		  //
@@ -61,8 +61,8 @@ static void free_tag (M_Tag *m_tag);
 
 #if defined(UNPACK) || defined(INFO_ONLY)
 
-static uint32_t read_next_header (stream_reader *reader, void *id, WavpackHeader *wphdr);
-static uint32_t seek_final_index (stream_reader *reader, void *id);
+static uint32_t read_next_header (WavpackStreamReader *reader, void *id, WavpackHeader *wphdr);
+static uint32_t seek_final_index (WavpackStreamReader *reader, void *id);
 
 // This code provides an interface between the reader callback mechanism that
 // WavPack uses internally and the standard fstream C library.
@@ -113,16 +113,23 @@ static int can_seek (void *id)
     return file && !fstat (fileno (file), &statbuf) && (statbuf.st_mode & S_IFREG);
 }
 
-static stream_reader freader = {
-    read_bytes, get_pos, set_pos_abs, set_pos_rel, push_back_byte, get_length, can_seek
+static int32_t write_bytes (void *id, void *data, int32_t bcount)
+{
+    return fwrite (data, 1, bcount, (FILE*) id);
+}
+
+static WavpackStreamReader freader = {
+    read_bytes, get_pos, set_pos_abs, set_pos_rel, push_back_byte, get_length, can_seek,
+    write_bytes
 };
 	
 // This function attempts to open the specified WavPack file for reading. If
 // this fails for any reason then an appropriate message is copied to "error"
-// and NULL is returned, otherwise a pointer to a WavpackContext structure is
-// returned (which is used to call all other functions in this module). A
-// filename beginning with "-" is assumed to be stdin. The "flags" argument
-// has the following bit mask values to specify details of the open operation:
+// (which must accept 80 characters) and NULL is returned, otherwise a
+// pointer to a WavpackContext structure is returned (which is used to call
+// all other functions in this module). A filename beginning with "-" is
+// assumed to be stdin. The "flags" argument has the following bit mask
+// values to specify details of the open operation:
 
 // OPEN_WVC:  attempt to open/read "correction" file
 // OPEN_TAGS:  attempt to read ID3v1 / APEv2 tags (requires seekable file)
@@ -130,6 +137,7 @@ static stream_reader freader = {
 // OPEN_2CH_MAX:  open only first stream of multichannel file (usually L/R)
 // OPEN_NORMALIZE:  normalize floating point data to +/- 1.0 (w/ offset exp)
 // OPEN_STREAMING:  blindly unpacks blocks w/o regard to header file position
+// OPEN_EDIT_TAGS:  allow editing of tags (file must be writable)
 
 // Version 4.2 of the WavPack library adds the OPEN_STREAMING flag. This is
 // essentially a "raw" mode where the library will simply decode any blocks
@@ -146,6 +154,7 @@ static stream_reader freader = {
 
 WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int flags, int norm_offset)
 {
+    char *file_mode = (flags & OPEN_EDIT_TAGS) ? "r+b" : "rb";
     FILE *wv_id, *wvc_id;
     WavpackContext *wpc;
 
@@ -155,8 +164,8 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 	setmode (fileno (stdin), O_BINARY);
 #endif
     }
-    else if ((wv_id = fopen (infilename, "rb")) == NULL) {
-	strcpy (error, "can't open file");
+    else if ((wv_id = fopen (infilename, file_mode)) == NULL) {
+	strcpy (error, (flags & OPEN_EDIT_TAGS) ? "can't open file for editing" : "can't open file");
 	return NULL;
     }
 
@@ -166,6 +175,7 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 	strcpy (in2filename, infilename);
 	strcat (in2filename, "c");
 	wvc_id = fopen (in2filename, "rb");
+        free (in2filename);
     }
     else
 	wvc_id = NULL;
@@ -195,7 +205,7 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 // function which handles the correction file transparently, in this case it
 // is the responsibility of the caller to be aware of correction files.
 
-WavpackContext *WavpackOpenFileInputEx (stream_reader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset)
+WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset)
 {
     WavpackContext *wpc = malloc (sizeof (WavpackContext));
     WavpackStream *wps;
@@ -218,7 +228,7 @@ WavpackContext *WavpackOpenFileInputEx (stream_reader *reader, void *wv_id, void
     wpc->filelen = wpc->reader->get_length (wpc->wv_in);
 
 #ifdef TAGS
-    if ((flags & OPEN_TAGS) && wpc->reader->can_seek (wpc->wv_in)) {
+    if ((flags & (OPEN_TAGS | OPEN_EDIT_TAGS)) && wpc->reader->can_seek (wpc->wv_in)) {
 	load_tag (wpc);
 	wpc->reader->set_pos_abs (wpc->wv_in, 0);
     }
@@ -259,7 +269,7 @@ WavpackContext *WavpackOpenFileInputEx (stream_reader *reader, void *wv_id, void
 	    return WavpackCloseFile (wpc);
 	}
 
-	if ((wps->wphdr.flags & UNKNOWN_FLAGS) || wps->wphdr.version < 0x402 || wps->wphdr.version > 0x40f) {
+	if (wps->wphdr.flags & UNKNOWN_FLAGS) {
 	    strcpy (error, "not compatible with this version of WavPack file!");
 	    return WavpackCloseFile (wpc);
 	}
@@ -288,7 +298,7 @@ WavpackContext *WavpackOpenFileInputEx (stream_reader *reader, void *wv_id, void
 	    bcount = read_next_header (wpc->reader, wpc->wvc_in, &wps->wphdr);
 
 	    if (bcount == (uint32_t) -1) {
-		strcpy (error, "problem with correction file");
+		strcpy (error, "not compatible with this version of correction file!");
 		return WavpackCloseFile (wpc);
 	    }
 
@@ -298,8 +308,13 @@ WavpackContext *WavpackOpenFileInputEx (stream_reader *reader, void *wv_id, void
 
 	    if (wpc->reader->read_bytes (wpc->wvc_in, wps->block2buff + 32, wps->wphdr.ckSize - 24) !=
 		wps->wphdr.ckSize - 24) {
-		    strcpy (error, "can't read all of WavPack file!");
+		    strcpy (error, "problem with correction file!");
 		    return WavpackCloseFile (wpc);
+	    }
+
+	    if (wps->wphdr.flags & UNKNOWN_FLAGS) {
+		strcpy (error, "not compatible with this version of correction file!");
+		return WavpackCloseFile (wpc);
 	    }
 	}
 
@@ -337,8 +352,8 @@ WavpackContext *WavpackOpenFileInputEx (stream_reader *reader, void *wv_id, void
     return wpc;
 }
 
-// This function obtains general information about an open file and returns
-// a mask with the following bit values:
+// This function obtains general information about an open input file and
+// returns a mask with the following bit values:
 
 // MODE_WVC:  a .wvc file has been found and will be used for lossless
 // MODE_LOSSLESS:  file is lossless (either pure or hybrid)
@@ -427,13 +442,15 @@ int WavpackGetVersion (WavpackContext *wpc)
 // can be optionally normalized to +/-1.0 by using the appropriate flag
 // in the call to WavpackOpenFileInput ()). The actual number of samples
 // unpacked is returned, which should be equal to the number requested unless
-// the end of fle is encountered or an error occurs.
+// the end of fle is encountered or an error occurs. After all samples have
+// been unpacked then 0 will be returned.
 
 uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t samples)
 {
     WavpackStream *wps = wpc->streams [wpc->current_stream = 0];
     uint32_t bcount, samples_unpacked = 0, samples_to_unpack;
     int num_channels = wpc->config.num_channels;
+    int file_done = FALSE;
 
 #ifdef VER3
     if (wpc->stream3)
@@ -447,8 +464,10 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 		wpc->filepos = wpc->reader->get_pos (wpc->wv_in);
 		bcount = read_next_header (wpc->reader, wpc->wv_in, &wps->wphdr);
 
-		if (bcount == (uint32_t) -1)
+		if (bcount == (uint32_t) -1) {
+		    file_done = TRUE;
 		    break;
+		}
 
 		if (wpc->open_flags & OPEN_STREAMING)
 		    wps->wphdr.block_index = wps->sample_index = 0;
@@ -460,11 +479,13 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 		if (wpc->reader->read_bytes (wpc->wv_in, wps->blockbuff + 32, wps->wphdr.ckSize - 24) !=
 		    wps->wphdr.ckSize - 24) {
 			strcpy (wpc->error_message, "can't read all of WavPack file!");
+			file_done = TRUE;
 			break;
 		}
 
-		if (wps->wphdr.version < 0x402 || wps->wphdr.version > 0x40f) {
+		if (wps->wphdr.flags & UNKNOWN_FLAGS) {
 		    strcpy (wpc->error_message, "not compatible with this version of WavPack file!");
+		    wpc->crc_errors++;
 		    break;
 		}
 
@@ -472,8 +493,10 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 		    wpc->file2pos = wpc->reader->get_pos (wpc->wvc_in);
 		    bcount = read_next_header (wpc->reader, wpc->wvc_in, &wps->wphdr);
 
-		    if (bcount == (uint32_t) -1)
+		    if (bcount == (uint32_t) -1) {
+			file_done = TRUE;
 			break;
+		    }
 
 		    if (wpc->open_flags & OPEN_STREAMING)
 			wps->wphdr.block_index = wps->sample_index = 0;
@@ -483,13 +506,23 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 		    memcpy (wps->block2buff, &wps->wphdr, 32);
 
 		    if (wpc->reader->read_bytes (wpc->wvc_in, wps->block2buff + 32, wps->wphdr.ckSize - 24) !=
-			wps->wphdr.ckSize - 24)
+			wps->wphdr.ckSize - 24) {
+			    file_done = TRUE;
 			    break;
+		    }
+
+		    if (wps->wphdr.flags & UNKNOWN_FLAGS) {
+			strcpy (wpc->error_message, "not compatible with this version of WavPack file!");
+			wpc->crc_errors++;
+			break;
+		    }
 		}
 
 		if (!wps->wphdr.block_samples || wps->sample_index == wps->wphdr.block_index)
-		    if (!unpack_init (wpc))
+		    if (!unpack_init (wpc)) {
+			wpc->crc_errors++;
 			break;
+		    }
 	}
 
 	if (!wps->wphdr.block_samples || !(wps->wphdr.flags & INITIAL_BLOCK) ||
@@ -533,8 +566,10 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 		    CLEAR (*wps);
 		    bcount = read_next_header (wpc->reader, wpc->wv_in, &wps->wphdr);
 
-		    if (bcount == (uint32_t) -1)
+		    if (bcount == (uint32_t) -1) {
+			file_done = TRUE;
 			break;
+		    }
 
 		    if (wpc->open_flags & OPEN_STREAMING)
 			wps->wphdr.block_index = wps->sample_index = 0;
@@ -545,14 +580,23 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 		    if (wpc->reader->read_bytes (wpc->wv_in, wps->blockbuff + 32, wps->wphdr.ckSize - 24) !=
 			wps->wphdr.ckSize - 24) {
 			    strcpy (wpc->error_message, "can't read all of WavPack file!");
+			    file_done = TRUE;
 			    break;
+		    }
+
+		    if (wps->wphdr.flags & UNKNOWN_FLAGS) {
+			strcpy (wpc->error_message, "not compatible with this version of WavPack file!");
+			wpc->crc_errors++;
+			break;
 		    }
 
 		    if (wpc->wvc_flag) {
 			bcount = read_next_header (wpc->reader, wpc->wvc_in, &wps->wphdr);
 
-			if (bcount == (uint32_t) -1)
+			if (bcount == (uint32_t) -1) {
+			    file_done = TRUE;
 			    break;
+			}
 
 			if (wpc->open_flags & OPEN_STREAMING)
 			    wps->wphdr.block_index = wps->sample_index = 0;
@@ -561,12 +605,22 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 			memcpy (wps->block2buff, &wps->wphdr, 32);
 
 			if (wpc->reader->read_bytes (wpc->wvc_in, wps->block2buff + 32, wps->wphdr.ckSize - 24) !=
-			    wps->wphdr.ckSize - 24)
+			    wps->wphdr.ckSize - 24) {
+				file_done = TRUE;
 				break;
+			}
+
+			if (wps->wphdr.flags & UNKNOWN_FLAGS) {
+			    strcpy (wpc->error_message, "not compatible with this version of WavPack file!");
+			    wpc->crc_errors++;
+			    break;
+			}
 		    }
 
-		    if (!unpack_init (wpc))
+		    if (!unpack_init (wpc)) {
+			wpc->crc_errors++;
 			break;
+		    }
 		}
 		else
 		    wps = wpc->streams [wpc->current_stream];
@@ -630,8 +684,22 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 	    }
 	}
 
-	if (wps->sample_index == wpc->total_samples)
+	if (wps->sample_index == wpc->total_samples) {
+	    file_done = TRUE;
 	    break;
+	}
+    }
+
+    if (samples) {
+	if (wps->wphdr.block_samples && (wps->wphdr.flags & INITIAL_BLOCK))
+	    wps->sample_index = wps->wphdr.block_index + wps->wphdr.block_samples;
+
+	if (!samples_unpacked && !file_done) {
+	    while (num_channels--)
+		*buffer++ = 0;
+
+	    samples_unpacked++;
+	}
     }
 
     return samples_unpacked;
@@ -776,92 +844,253 @@ int WavpackSeekSample (WavpackContext *wpc, uint32_t sample)
 
 #ifdef TAGS
 
-// Attempt to get the specified item from the specified ID3v1 or APEv2 tag.
-// The "size" parameter specifies the amount of space available at "value",
-// if the desired item will not fit in this space then ellipses (...) will
-// be appended and the string terminated. Only text data are supported.
+// Count and return the total number of tag items in the specified file.
 
-static void tagcpy (char *dest, char *src, int tag_size);
+int WavpackGetNumTagItems (WavpackContext *wpc)
+{
+    int i = 0;
+
+    while (WavpackGetTagItemIndexed (wpc, i, NULL, 0))
+	++i;
+
+    return i;
+}
+
+// Attempt to get the specified item from the specified file's ID3v1 or APEv2
+// tag. The "size" parameter specifies the amount of space available at "value",
+// if the desired item will not fit in this space then ellipses (...) will
+// be appended and the string terminated. Only text data are supported. The
+// actual length of the string is returned (or 0 if no matching value found).
+// Note that with APEv2 tags the length might not be the same as the number of
+// characters because UTF-8 encoding is used. Also, APEv2 tags can have multiple
+// (NULL separated) strings for a single value (this is why the length is
+// returned). If this function is called with a NULL "value" pointer (or a
+// zero "length") then only the actual length of the value data is returned
+// (not counting the terminating NULL). This can be used to determine the
+// actual memory to be allocated beforehand.
+
+static int get_ape_tag_item (M_Tag *m_tag, const char *item, char *value, int size);
+static int get_id3_tag_item (M_Tag *m_tag, const char *item, char *value, int size);
 
 int WavpackGetTagItem (WavpackContext *wpc, const char *item, char *value, int size)
 {
     M_Tag *m_tag = &wpc->m_tag;
-    char *lvalue = NULL;
 
-    if (value)
+    if (value && size)
 	*value = 0;
 
-    if (m_tag->ape_tag_hdr.ID [0] == 'A') {
-	char *p = m_tag->ape_tag_data;
-	char *q = p + m_tag->ape_tag_hdr.length - sizeof (APE_Tag_Hdr);
-	int i;
+    if (m_tag->ape_tag_hdr.ID [0] == 'A')
+	return get_ape_tag_item (m_tag, item, value, size);
+    else if (m_tag->id3_tag.tag_id [0] == 'T')
+	return get_id3_tag_item (m_tag, item, value, size);
+    else
+	return 0;
+}
 
-	for (i = 0; i < m_tag->ape_tag_hdr.item_count; ++i) {
-	    int vsize, flags, isize;
+static int get_ape_tag_item (M_Tag *m_tag, const char *item, char *value, int size)
+{
+    char *p = m_tag->ape_tag_data;
+    char *q = p + m_tag->ape_tag_hdr.length - sizeof (APE_Tag_Hdr);
+    int i;
 
-	    vsize = * (int32_t *) p; p += 4;
-	    flags = * (int32_t *) p; p += 4;
-	    isize = strlen (p);
+    for (i = 0; i < m_tag->ape_tag_hdr.item_count; ++i) {
+	int vsize, flags, isize;
 
-	    little_endian_to_native (&vsize, "L");
-	    little_endian_to_native (&flags, "L");
+	vsize = * (int32_t *) p; p += 4;
+	flags = * (int32_t *) p; p += 4;
+	isize = strlen (p);
 
-	    if (p + isize + vsize + 1 > q)
-		break;
+	little_endian_to_native (&vsize, "L");
+	little_endian_to_native (&flags, "L");
 
-	    if (isize && vsize && !stricmp (item, p) && !(flags & 6)) {
+	if (p + isize + vsize + 1 > q)
+	    break;
 
-		if ((lvalue = malloc (vsize + 1)) != NULL) {
-		    strncpy (lvalue, p + isize + 1, vsize);
-		    lvalue [vsize] = 0;
-		}
+	if (isize && vsize && !stricmp (item, p) && !(flags & 6)) {
 
-		break;
+	    if (!value || !size)
+		return vsize;
+
+	    if (vsize < size) {
+		memcpy (value, p + isize + 1, vsize);
+		value [vsize] = 0;
+		return vsize;
+	    }
+	    else if (size >= 4) {
+		memcpy (value, p + isize + 1, size - 1);
+		value [size - 4] = value [size - 3] = value [size - 2] = '.';
+		value [size - 1] = 0;
+		return size - 1;
 	    }
 	    else
-		p += isize + vsize + 1;
+		return 0;
 	}
+	else
+	    p += isize + vsize + 1;
     }
-    else if (m_tag->id3_tag.tag_id [0] == 'T') {
-	if ((lvalue = malloc (128)) == NULL)
-	    return FALSE;
 
-	lvalue [0] = 0;
+    return 0;
+}
 
-	if (!stricmp (item, "title"))
-	    tagcpy (lvalue, m_tag->id3_tag.title, sizeof (m_tag->id3_tag.title));
-	else if (!stricmp (item, "artist"))
-	    tagcpy (lvalue, m_tag->id3_tag.artist, sizeof (m_tag->id3_tag.artist));
-	else if (!stricmp (item, "album"))
-	    tagcpy (lvalue, m_tag->id3_tag.album, sizeof (m_tag->id3_tag.album));
-	else if (!stricmp (item, "year"))
-	    tagcpy (lvalue, m_tag->id3_tag.year, sizeof (m_tag->id3_tag.year));
-	else if (!stricmp (item, "comment"))
-	    tagcpy (lvalue, m_tag->id3_tag.comment, sizeof (m_tag->id3_tag.title));
+static void tagcpy (char *dest, char *src, int tag_size);
 
-	if (!lvalue [0]) {
-	    free (lvalue);
-	    return FALSE;
-	}
+static int get_id3_tag_item (M_Tag *m_tag, const char *item, char *value, int size)
+{
+    char lvalue [64];
+    int len;
+
+    lvalue [0] = 0;
+
+    if (!stricmp (item, "title"))
+	tagcpy (lvalue, m_tag->id3_tag.title, sizeof (m_tag->id3_tag.title));
+    else if (!stricmp (item, "artist"))
+	tagcpy (lvalue, m_tag->id3_tag.artist, sizeof (m_tag->id3_tag.artist));
+    else if (!stricmp (item, "album"))
+	tagcpy (lvalue, m_tag->id3_tag.album, sizeof (m_tag->id3_tag.album));
+    else if (!stricmp (item, "year"))
+	tagcpy (lvalue, m_tag->id3_tag.year, sizeof (m_tag->id3_tag.year));
+    else if (!stricmp (item, "comment"))
+	tagcpy (lvalue, m_tag->id3_tag.comment, sizeof (m_tag->id3_tag.comment));
+    else if (!stricmp (item, "track") && m_tag->id3_tag.comment [29] && !m_tag->id3_tag.comment [28])
+	sprintf (lvalue, "%d", m_tag->id3_tag.comment [29]);
+    else
+	return 0;
+
+    len = strlen (lvalue);
+
+    if (!value || !size)
+	return len;
+
+    if (len < size) {
+	strcpy (value, lvalue);
+	return len;
+    }
+    else if (size >= 4) {
+	strncpy (value, lvalue, size - 1);
+	value [size - 4] = value [size - 3] = value [size - 2] = '.';
+	value [size - 1] = 0;
+	return size - 1;
     }
     else
-	return FALSE;
+	return 0;
+}
 
-    if (lvalue) {
-	if (value && size >= 4) {
-	    if (strlen (lvalue) >= size) {
-		lvalue [size - 4] = lvalue [size - 3] = lvalue [size - 2] = '.';
-		lvalue [size - 1] = 0;
+// This function looks up the tag item name by index and is used when the
+// application wants to access all the items in the file's ID3v1 or APEv2 tag.
+// Note that this function accesses only the item's name; WavpackGetTagItem()
+// still must be called to get the actual value. The "size" parameter specifies
+// the amount of space available at "item", if the desired item will not fit in
+// this space then ellipses (...) will be appended and the string terminated.
+// The actual length of the string is returned (or 0 if no item exists for
+// index). If this function is called with a NULL "value" pointer (or a
+// zero "length") then only the actual length of the item name is returned
+// (not counting the terminating NULL). This can be used to determine the
+// actual memory to be allocated beforehand.
+
+static int get_ape_tag_item_indexed (M_Tag *m_tag, int index, char *item, int size);
+static int get_id3_tag_item_indexed (M_Tag *m_tag, int index, char *item, int size);
+
+int WavpackGetTagItemIndexed (WavpackContext *wpc, int index, char *item, int size)
+{
+    M_Tag *m_tag = &wpc->m_tag;
+
+    if (item && size)
+	*item = 0;
+
+    if (m_tag->ape_tag_hdr.ID [0] == 'A')
+	return get_ape_tag_item_indexed (m_tag, index, item, size);
+    else if (m_tag->id3_tag.tag_id [0] == 'T')
+	return get_id3_tag_item_indexed (m_tag, index, item, size);
+    else
+	return 0;
+}
+
+static int get_ape_tag_item_indexed (M_Tag *m_tag, int index, char *item, int size)
+{
+    char *p = m_tag->ape_tag_data;
+    char *q = p + m_tag->ape_tag_hdr.length - sizeof (APE_Tag_Hdr);
+    int i;
+
+    for (i = 0; i < m_tag->ape_tag_hdr.item_count && index >= 0; ++i) {
+	int vsize, flags, isize;
+
+	vsize = * (int32_t *) p; p += 4;
+	flags = * (int32_t *) p; p += 4;
+	isize = strlen (p);
+
+	little_endian_to_native (&vsize, "L");
+	little_endian_to_native (&flags, "L");
+
+	if (p + isize + vsize + 1 > q)
+	    break;
+
+	if (isize && vsize && !(flags & 6) && !index--) {
+
+	    if (!item || !size)
+		return isize;
+
+	    if (isize < size) {
+		memcpy (item, p, isize);
+		item [isize] = 0;
+		return isize;
 	    }
-
-	    strcpy (value, lvalue);
+	    else if (size >= 4) {
+		memcpy (item, p, size - 1);
+		item [size - 4] = item [size - 3] = item [size - 2] = '.';
+		item [size - 1] = 0;
+		return size - 1;
+	    }
+	    else
+		return 0;
 	}
+	else
+	    p += isize + vsize + 1;
+    }
 
-	free (lvalue);
-	return TRUE;
+    return 0;
+}
+
+static int tagdata (char *src, int tag_size);
+
+static int get_id3_tag_item_indexed (M_Tag *m_tag, int index, char *item, int size)
+{
+    char lvalue [16];
+    int len;
+
+    lvalue [0] = 0;
+
+    if (tagdata (m_tag->id3_tag.title, sizeof (m_tag->id3_tag.title)) && !index--)
+	strcpy (lvalue, "Title");
+    else if (tagdata (m_tag->id3_tag.artist, sizeof (m_tag->id3_tag.artist)) && !index--)
+	strcpy (lvalue, "Artist");
+    else if (tagdata (m_tag->id3_tag.album, sizeof (m_tag->id3_tag.album)) && !index--)
+	strcpy (lvalue, "Album");
+    else if (tagdata (m_tag->id3_tag.year, sizeof (m_tag->id3_tag.year)) && !index--)
+	strcpy (lvalue, "Year");
+    else if (tagdata (m_tag->id3_tag.comment, sizeof (m_tag->id3_tag.comment)) && !index--)
+	strcpy (lvalue, "Comment");
+    else if (m_tag->id3_tag.comment [29] && !m_tag->id3_tag.comment [28] && !index--)
+	strcpy (lvalue, "Track");
+    else
+	return 0;
+
+    len = strlen (lvalue);
+
+    if (!item || !size)
+	return len;
+
+    if (len < size) {
+	strcpy (item, lvalue);
+	return len;
+    }
+    else if (size >= 4) {
+	strncpy (item, lvalue, size - 1);
+	item [size - 4] = item [size - 3] = item [size - 2] = '.';
+	item [size - 1] = 0;
+	return size - 1;
     }
     else
-	return FALSE;
+	return 0;
 }
 
 #endif
@@ -877,7 +1106,7 @@ int WavpackGetTagItem (WavpackContext *wpc, const char *item, char *value, int s
 // wvc file). A return value of NULL indicates that memory could not be
 // allocated for the context.
 
-WavpackContext *WavpackOpenFileOutput (blockout blockout, void *wv_id, void *wvc_id)
+WavpackContext *WavpackOpenFileOutput (WavpackBlockOutput blockout, void *wv_id, void *wvc_id)
 {
     WavpackContext *wpc = malloc (sizeof (WavpackContext));
 
@@ -921,6 +1150,8 @@ WavpackContext *WavpackOpenFileOutput (blockout blockout, void *wv_id, void *wvc
 // o CONFIG_CALC_NOISE          calc noise in hybrid mode
 // o CONFIG_EXTRA_MODE          extra processing mode (slow!)
 // o CONFIG_SKIP_WVX		no wvx stream for floats & large ints
+// o CONFIG_MD5_CHECKSUM	specify if you plan to store MD5 signature
+// o CONFIG_CREATE_EXE		specify if you plan to prepend sfx module
 
 // config->bitrate              hybrid bitrate in either bits/sample or kbps
 // config->shaping_weight       hybrid noise shaping coefficient override
@@ -963,6 +1194,7 @@ int WavpackSetConfiguration (WavpackContext *wpc, WavpackConfig *config, uint32_
 
     if (config->float_norm_exp) {
 	wpc->config.float_norm_exp = config->float_norm_exp;
+	wpc->config.flags |= CONFIG_FLOAT_DATA;
 	flags |= FLOAT_DATA;    
     }
     else
@@ -1008,6 +1240,8 @@ int WavpackSetConfiguration (WavpackContext *wpc, WavpackConfig *config, uint32_
     if (config->flags & CONFIG_CREATE_WVC)
 	wpc->wvc_flag = TRUE;
 
+    wpc->stream_version = CUR_STREAM_VERS;
+
     for (wpc->current_stream = 0; num_chans; wpc->current_stream++) {
 	WavpackStream *wps = malloc (sizeof (WavpackStream));
 	uint32_t stereo_mask, mono_mask;
@@ -1043,7 +1277,7 @@ int WavpackSetConfiguration (WavpackContext *wpc, WavpackConfig *config, uint32_
 	memcpy (wps->wphdr.ckID, "wvpk", 4);
 	wps->wphdr.ckSize = sizeof (WavpackHeader) - 8;
 	wps->wphdr.total_samples = wpc->total_samples;
-	wps->wphdr.version = 0x403;
+	wps->wphdr.version = wpc->stream_version;
 	wps->wphdr.flags = flags;
 	wps->bits = bps;
 
@@ -1098,14 +1332,12 @@ int WavpackPackInit (WavpackContext *wpc)
     else {
 	if (wpc->config.flags & CONFIG_HIGH_FLAG)
 	    wpc->block_samples = wpc->config.sample_rate;
-//	else if ((wpc->config.flags & CONFIG_FAST_FLAG) && !(wpc->config.sample_rate % 4))
-//	    wpc->block_samples = wpc->config.sample_rate / 4;
 	else if (!(wpc->config.sample_rate % 2))
 	    wpc->block_samples = wpc->config.sample_rate / 2;
 	else
 	    wpc->block_samples = wpc->config.sample_rate;
 
-	while (wpc->block_samples * wpc->config.num_channels > 100000)
+	while (wpc->block_samples * wpc->config.num_channels > 150000)
 	    wpc->block_samples /= 2;
 
 	while (wpc->block_samples * wpc->config.num_channels < 40000)
@@ -1136,6 +1368,7 @@ int WavpackPackInit (WavpackContext *wpc)
 // WavpackOpenFileOutput(). A return of FALSE indicates an error.
 
 static int pack_streams (WavpackContext *wpc, uint32_t block_samples);
+static int create_riff_header (WavpackContext *wpc);
 
 int WavpackPackSamples (WavpackContext *wpc, int32_t *sample_buffer, uint32_t sample_count)
 {
@@ -1144,6 +1377,9 @@ int WavpackPackSamples (WavpackContext *wpc, int32_t *sample_buffer, uint32_t sa
     while (sample_count) {
 	int32_t *source_pointer = sample_buffer;
 	uint samples_to_copy;
+
+	if (!wpc->riff_header_added && !wpc->riff_header_created && !create_riff_header (wpc))
+	    return FALSE; 
 
 	if (wpc->acc_samples + sample_count > wpc->max_samples)
 	    samples_to_copy = wpc->max_samples - wpc->acc_samples;
@@ -1215,6 +1451,12 @@ int WavpackFlushSamples (WavpackContext *wpc)
     return TRUE;
 }
 
+// Note: The following function is no longer required because a proper wav
+// header is now automatically generated for the application. However, if the
+// application wants to generate its own header or wants to include additional
+// chunks, then this function can still be used in which case the automatic
+// wav header generation is suppressed.
+
 // Add wrapper (currently RIFF only) to WavPack blocks. This should be called
 // before sending any audio samples for the RIFF header or after all samples
 // have been sent for any RIFF trailer. WavpackFlushSamples() should be called
@@ -1230,9 +1472,16 @@ int WavpackFlushSamples (WavpackContext *wpc)
 int WavpackAddWrapper (WavpackContext *wpc, void *data, uint32_t bcount)
 {
     uint32_t index = WavpackGetSampleIndex (wpc);
+    uchar meta_id;
 
-    return add_to_metadata (wpc, data, bcount,
-	(uchar)((!index || index == (uint32_t) -1) ? ID_RIFF_HEADER : ID_RIFF_TRAILER));
+    if (!index || index == (uint32_t) -1) {
+	wpc->riff_header_added = TRUE;
+	meta_id = ID_RIFF_HEADER;
+    }
+    else
+	meta_id = ID_RIFF_TRAILER;
+
+    return add_to_metadata (wpc, data, bcount, meta_id);
 }
 
 // Store computed MD5 sum in WavPack metadata. Note that the user must compute
@@ -1241,6 +1490,85 @@ int WavpackAddWrapper (WavpackContext *wpc, void *data, uint32_t bcount)
 int WavpackStoreMD5Sum (WavpackContext *wpc, uchar data [16])
 {
     return add_to_metadata (wpc, data, 16, ID_MD5_CHECKSUM);
+}
+
+static int create_riff_header (WavpackContext *wpc)
+{
+    RiffChunkHeader riffhdr;
+    ChunkHeader datahdr, fmthdr;
+    WaveHeader wavhdr;
+
+    uint32_t total_samples = wpc->total_samples, total_data_bytes;
+    int32_t channel_mask = wpc->config.channel_mask;
+    int32_t sample_rate = wpc->config.sample_rate;
+    int bytes_per_sample = wpc->config.bytes_per_sample;
+    int bits_per_sample = wpc->config.bits_per_sample;
+    int format = (wpc->config.float_norm_exp) ? 3 : 1;
+    int num_channels = wpc->config.num_channels;
+    int wavhdrsize = 16;
+
+    wpc->riff_header_created = TRUE;
+
+    if (format == 3 && wpc->config.float_norm_exp != 127) {
+	strcpy (wpc->error_message, "can't create valid RIFF wav header for non-normalized floating data!");
+	return FALSE;
+    }
+
+    if (total_samples != (uint32_t) -1)
+	total_data_bytes = total_samples * bytes_per_sample * num_channels;
+    else
+	total_data_bytes = -1;
+
+    CLEAR (wavhdr);
+
+    wavhdr.FormatTag = format;
+    wavhdr.NumChannels = num_channels;
+    wavhdr.SampleRate = sample_rate;
+    wavhdr.BytesPerSecond = sample_rate * num_channels * bytes_per_sample;
+    wavhdr.BlockAlign = bytes_per_sample * num_channels; 
+    wavhdr.BitsPerSample = bits_per_sample;
+
+    if (num_channels > 2 || channel_mask != 0x5 - num_channels) {
+	wavhdrsize = sizeof (wavhdr);
+	wavhdr.cbSize = 22;
+	wavhdr.ValidBitsPerSample = bits_per_sample;
+	wavhdr.SubFormat = format;
+	wavhdr.ChannelMask = channel_mask;
+	wavhdr.FormatTag = 0xfffe;
+	wavhdr.BitsPerSample = bytes_per_sample * 8;
+	wavhdr.GUID [4] = 0x10;
+	wavhdr.GUID [6] = 0x80;
+	wavhdr.GUID [9] = 0xaa;
+	wavhdr.GUID [11] = 0x38;
+	wavhdr.GUID [12] = 0x9b;
+	wavhdr.GUID [13] = 0x71;
+    }
+
+    strncpy (riffhdr.ckID, "RIFF", sizeof (riffhdr.ckID));
+    strncpy (riffhdr.formType, "WAVE", sizeof (riffhdr.formType));
+
+    if (total_data_bytes != (uint32_t) -1)
+	riffhdr.ckSize = sizeof (riffhdr) + wavhdrsize + sizeof (datahdr) + total_data_bytes;
+    else
+	riffhdr.ckSize = total_data_bytes;
+
+    strncpy (fmthdr.ckID, "fmt ", sizeof (fmthdr.ckID));
+    fmthdr.ckSize = wavhdrsize;
+
+    strncpy (datahdr.ckID, "data", sizeof (datahdr.ckID));
+    datahdr.ckSize = total_data_bytes; 
+
+    // write the RIFF chunks up to just before the data starts
+
+    native_to_little_endian (&riffhdr, ChunkHeaderFormat);
+    native_to_little_endian (&fmthdr, ChunkHeaderFormat);
+    native_to_little_endian (&wavhdr, WaveHeaderFormat);
+    native_to_little_endian (&datahdr, ChunkHeaderFormat);
+
+    return add_to_metadata (wpc, &riffhdr, sizeof (riffhdr), ID_RIFF_HEADER) &&
+	add_to_metadata (wpc, &fmthdr, sizeof (fmthdr), ID_RIFF_HEADER) &&
+	add_to_metadata (wpc, &wavhdr, wavhdrsize, ID_RIFF_HEADER) &&
+	add_to_metadata (wpc, &datahdr, sizeof (datahdr), ID_RIFF_HEADER);
 }
 
 static int pack_streams (WavpackContext *wpc, uint32_t block_samples)
@@ -1317,33 +1645,115 @@ static int pack_streams (WavpackContext *wpc, uint32_t block_samples)
 }
 
 // Given the pointer to the first block written (to either a .wv or .wvc file),
-// update the block with the actual number of samples written. This should
+// update the block with the actual number of samples written. If the wav
+// header was generated by the library, then it is updated also. This should
 // be done if WavpackSetConfiguration() was called with an incorrect number
 // of samples (or -1). It is the responsibility of the application to read and
 // rewrite the block. An example of this can be found in the Audition filter.
 
 void WavpackUpdateNumSamples (WavpackContext *wpc, void *first_block)
 {
-    little_endian_to_native (wpc, WavpackHeaderFormat);
+    uint32_t wrapper_size;
+
+    little_endian_to_native (first_block, WavpackHeaderFormat);
     ((WavpackHeader *) first_block)->total_samples = WavpackGetSampleIndex (wpc);
-    native_to_little_endian (wpc, WavpackHeaderFormat);
+
+    if (wpc->riff_header_created) {
+	if (WavpackGetWrapperLocation (first_block, &wrapper_size)) {
+	    RiffChunkHeader *riffhdr = WavpackGetWrapperLocation (first_block, NULL);
+	    ChunkHeader *datahdr = (ChunkHeader *)((char *) riffhdr + wrapper_size - sizeof (ChunkHeader));
+	    uint32_t data_size = WavpackGetSampleIndex (wpc) * WavpackGetNumChannels (wpc) * WavpackGetBytesPerSample (wpc);
+
+	    if (!strncmp (riffhdr->ckID, "RIFF", 4)) {
+		little_endian_to_native (riffhdr, ChunkHeaderFormat);
+		riffhdr->ckSize = wrapper_size + data_size - 8;
+		native_to_little_endian (riffhdr, ChunkHeaderFormat);
+	    }
+
+	    if (!strncmp (datahdr->ckID, "data", 4)) {
+		little_endian_to_native (datahdr, ChunkHeaderFormat);
+		datahdr->ckSize = data_size;
+		native_to_little_endian (datahdr, ChunkHeaderFormat);
+	    }
+	}
+    }
+
+    native_to_little_endian (first_block, WavpackHeaderFormat);
 }
+
+// Note: The following function is no longer required because the wav header
+// automatically generated for the application will also be updated by
+// WavpackUpdateNumSamples (). However, if the application wants to generate
+// its own header or wants to include additional chunks, then this function
+// still must be used to update the application generated header.
 
 // Given the pointer to the first block written to a WavPack file, this
 // function returns the location of the stored RIFF header that was originally
 // written with WavpackAddWrapper(). This would normally be used to update
 // the wav header to indicate that a different number of samples was actually
 // written or if additional RIFF chunks are written at the end of the file.
-// It is the responsibility of the application to read and rewrite the block.
-// An example of this can be found in the Audition filter.
+// The "size" parameter can be set to non-NULL to obtain the exact size of the
+// RIFF header, and the function will return FALSE if the header is not found
+// in the block's metadata (or it is not a valid WavPack block). It is the
+// responsibility of the application to read and rewrite the block. An example
+// of this can be found in the Audition filter.
 
-void *WavpackGetWrapperLocation (void *first_block)
+static void *find_metadata (void *wavpack_block, int desired_id, uint32_t *size);
+
+void *WavpackGetWrapperLocation (void *first_block, uint32_t *size)
 {
-    if (((uchar *) first_block) [32] == ID_RIFF_HEADER)
-	return ((uchar *) first_block) + 34;
-    else
-	return NULL;
+    void *loc;
+
+    little_endian_to_native (first_block, WavpackHeaderFormat);
+    loc = find_metadata (first_block, ID_RIFF_HEADER, size);
+    native_to_little_endian (first_block, WavpackHeaderFormat);
+
+    return loc;
 }
+
+static void *find_metadata (void *wavpack_block, int desired_id, uint32_t *size)
+{
+    WavpackHeader *wphdr = wavpack_block;
+    uchar *dp, meta_id, c1, c2;
+    uint32_t bcount, meta_bc;
+
+    if (strncmp (wphdr->ckID, "wvpk", 4))
+	return NULL;
+
+    bcount = wphdr->ckSize - sizeof (WavpackHeader) + 8;
+    dp = (uchar *)(wphdr + 1);
+
+    while (bcount >= 2) {
+	meta_id = *dp++;
+	c1 = *dp++;
+
+	meta_bc = c1 << 1;
+	bcount -= 2;
+
+	if (meta_id & ID_LARGE) {
+	    if (bcount < 2)
+		break;
+
+	    c1 = *dp++;
+	    c2 = *dp++;
+	    meta_bc += ((uint32_t) c1 << 9) + ((uint32_t) c2 << 17);
+	    bcount -= 2;
+	}
+
+	if ((meta_id & ID_UNIQUE) == desired_id) {
+	    if (size)
+		*size = meta_bc + ((meta_id & ID_ODD_SIZE) ? 1 : 0);
+
+	    return dp;
+	}
+
+	bcount -= meta_bc;
+    }
+
+    return FALSE;
+}
+
+#endif
 
 #ifdef TAGS
 
@@ -1353,13 +1763,15 @@ void *WavpackGetWrapperLocation (void *first_block)
 // an empty one will be allocated first. When finished, use WavpackWriteTag()
 // to write the completed tag to the file. Note that ID3 tags are not
 // supported and that no editing of existing tags is allowed (there are several
-// fine libraries available for this).
+// fine libraries available for this). A size parameter is included so that
+// values containing multiple (NULL separated) strings can be written.
 
-int WavpackAppendTagItem (WavpackContext *wpc, const char *item, const char *value)
+int WavpackAppendTagItem (WavpackContext *wpc, const char *item, const char *value, int vsize)
 {
     M_Tag *m_tag = &wpc->m_tag;
-    int vsize = strlen (value);
     int isize = strlen (item);
+
+    while (WavpackDeleteTagItem (wpc, item));
 
     if (!m_tag->ape_tag_hdr.ID [0]) {
 	strncpy (m_tag->ape_tag_hdr.ID, "APETAGEX", sizeof (m_tag->ape_tag_hdr.ID));
@@ -1393,17 +1805,70 @@ int WavpackAppendTagItem (WavpackContext *wpc, const char *item, const char *val
 	return FALSE;
 }
 
+int WavpackDeleteTagItem (WavpackContext *wpc, const char *item)
+{
+    M_Tag *m_tag = &wpc->m_tag;
+
+    if (m_tag->ape_tag_hdr.ID [0] == 'A') {
+	char *p = m_tag->ape_tag_data;
+	char *q = p + m_tag->ape_tag_hdr.length - sizeof (APE_Tag_Hdr);
+	int i;
+
+	for (i = 0; i < m_tag->ape_tag_hdr.item_count; ++i) {
+	    int vsize, flags, isize;
+
+	    vsize = * (int32_t *) p; p += 4;
+	    flags = * (int32_t *) p; p += 4;
+	    isize = strlen (p);
+
+	    little_endian_to_native (&vsize, "L");
+	    little_endian_to_native (&flags, "L");
+
+	    if (p + isize + vsize + 1 > q)
+		break;
+
+	    if (isize && vsize && !stricmp (item, p)) {
+		char *d = p - 8;
+
+		p += isize + vsize + 1;
+
+		while (p < q)
+		    *d++ = *p++;
+
+		m_tag->ape_tag_hdr.length = d - m_tag->ape_tag_data + sizeof (APE_Tag_Hdr);
+		m_tag->ape_tag_hdr.item_count--;
+		return 1;
+	    }
+	    else
+		p += isize + vsize + 1;
+	}
+    }
+
+    return 0;
+}
+
 // Once a APEv2 tag has been created with WavpackAppendTag(), this function is
 // used to write the completed tag to the end of the WavPack file. Note that
 // this function uses the same "blockout" function that is used to write
 // regular WavPack blocks, although that's where the similarity ends.
 
+static int write_tag_blockout (WavpackContext *wpc);
+static int write_tag_reader (WavpackContext *wpc);
+
 int WavpackWriteTag (WavpackContext *wpc)
+{
+    if (wpc->blockout)
+	return write_tag_blockout (wpc);
+    else
+	return write_tag_reader (wpc);
+}
+
+static int write_tag_blockout (WavpackContext *wpc)
 {
     M_Tag *m_tag = &wpc->m_tag;
     int result = TRUE;
 
-    if (m_tag->ape_tag_hdr.ID [0] == 'A') {
+    if (m_tag->ape_tag_hdr.ID [0] == 'A' && m_tag->ape_tag_hdr.item_count) {
 	m_tag->ape_tag_hdr.flags |= 0x20000000;
 	native_to_little_endian (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
 	result = wpc->blockout (wpc->wv_out, &m_tag->ape_tag_hdr, sizeof (m_tag->ape_tag_hdr));
@@ -1417,8 +1882,6 @@ int WavpackWriteTag (WavpackContext *wpc)
 	result = wpc->blockout (wpc->wv_out, &m_tag->ape_tag_hdr, sizeof (m_tag->ape_tag_hdr));
 	little_endian_to_native (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
     }
-    else if (m_tag->id3_tag.tag_id [0] == 'T')
-	result = wpc->blockout (wpc->wv_out, &m_tag->id3_tag, sizeof (m_tag->id3_tag));
 
     if (!result)
 	strcpy (wpc->error_message, "can't write WavPack data, disk probably full!");
@@ -1426,7 +1889,44 @@ int WavpackWriteTag (WavpackContext *wpc)
     return result;
 }
 
-#endif
+static int write_tag_reader (WavpackContext *wpc)
+{
+    M_Tag *m_tag = &wpc->m_tag;
+    uint32_t tag_size = 0;
+    int result = TRUE;
+
+    if (m_tag->ape_tag_hdr.ID [0] == 'A' && m_tag->ape_tag_hdr.item_count &&
+	m_tag->ape_tag_hdr.length > sizeof (m_tag->ape_tag_hdr))
+	    tag_size = m_tag->ape_tag_hdr.length + sizeof (m_tag->ape_tag_hdr);
+
+    result = (wpc->open_flags & OPEN_EDIT_TAGS) && wpc->reader->can_seek (wpc->wv_in) &&
+	!wpc->reader->set_pos_rel (wpc->wv_in, m_tag->tag_file_pos, SEEK_END);
+
+    if (result && tag_size < -m_tag->tag_file_pos) {
+	int nullcnt = -m_tag->tag_file_pos - tag_size;
+	char zero [1] = { 0 };
+
+	while (nullcnt--)
+	    wpc->reader->write_bytes (wpc->wv_in, &zero, 1);
+    }
+
+    if (result && tag_size) {
+	m_tag->ape_tag_hdr.flags |= 0x20000000;
+	native_to_little_endian (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
+	result = (wpc->reader->write_bytes (wpc->wv_in, &m_tag->ape_tag_hdr, sizeof (m_tag->ape_tag_hdr)) == sizeof (m_tag->ape_tag_hdr));
+	little_endian_to_native (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
+	result = (wpc->reader->write_bytes (wpc->wv_in, m_tag->ape_tag_data, m_tag->ape_tag_hdr.length - sizeof (m_tag->ape_tag_hdr)) == sizeof (m_tag->ape_tag_hdr));
+	m_tag->ape_tag_hdr.flags &= ~0x20000000;
+	native_to_little_endian (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
+	result = (wpc->reader->write_bytes (wpc->wv_in, &m_tag->ape_tag_hdr, sizeof (m_tag->ape_tag_hdr)) == sizeof (m_tag->ape_tag_hdr));
+	little_endian_to_native (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
+    }
+
+    if (!result)
+	strcpy (wpc->error_message, "can't write WavPack data, disk probably full!");
+
+    return result;
+}
 
 #endif
 
@@ -1685,7 +2185,7 @@ void WavpackFreeWrapper (WavpackContext *wpc)
 // last sample or an extra seek will occur). A return value of FALSE indicates
 // that no MD5 checksum was stored.
 
-static int seek_md5 (stream_reader *reader, void *id, uchar data [16]);
+static int seek_md5 (WavpackStreamReader *reader, void *id, uchar data [16]);
 
 int WavpackGetMD5Sum (WavpackContext *wpc, uchar data [16])
 {
@@ -1782,7 +2282,7 @@ static void free_tag (M_Tag *m_tag)
 // to indicate the error. No additional bytes are read past the header and it
 // is returned in the processor's native endian mode. Seeking is not required.
 
-static uint32_t read_next_header (stream_reader *reader, void *id, WavpackHeader *wphdr)
+static uint32_t read_next_header (WavpackStreamReader *reader, void *id, WavpackHeader *wphdr)
 {
     char buffer [sizeof (*wphdr)], *sp = buffer + sizeof (*wphdr), *ep = sp;
     uint32_t bytes_skipped = 0;
@@ -1802,7 +2302,8 @@ static uint32_t read_next_header (stream_reader *reader, void *id, WavpackHeader
 	sp = buffer;
 
 	if (*sp++ == 'w' && *sp == 'v' && *++sp == 'p' && *++sp == 'k' &&
-	    !(*++sp & 1) && sp [2] < 16 && !sp [3] && sp [5] == 4 && sp [4] >= 2 && sp [4] <= 0xf) {
+	    !(*++sp & 1) && sp [2] < 16 && !sp [3] && sp [5] == 4 &&
+	    sp [4] >= (MIN_STREAM_VERS & 0xff) && sp [4] <= (MAX_STREAM_VERS & 0xff)) {
 		memcpy (wphdr, buffer, sizeof (*wphdr));
 		little_endian_to_native (wphdr, WavpackHeaderFormat);
 		return bytes_skipped;
@@ -1824,7 +2325,7 @@ static uint32_t read_next_header (stream_reader *reader, void *id, WavpackHeader
 // pointer undefined. A return value of -1 indicates the length could not
 // be determined.
 
-static uint32_t seek_final_index (stream_reader *reader, void *id)
+static uint32_t seek_final_index (WavpackStreamReader *reader, void *id)
 {
     uint32_t result = (uint32_t) -1, bcount;
     WavpackHeader wphdr;
@@ -1846,7 +2347,7 @@ static uint32_t seek_final_index (stream_reader *reader, void *id)
     }
 }
 
-static int seek_md5 (stream_reader *reader, void *id, uchar data [16])
+static int seek_md5 (WavpackStreamReader *reader, void *id, uchar data [16])
 {
     uchar meta_id, c1, c2;
     uint32_t bcount, meta_bc;
@@ -1901,7 +2402,7 @@ static int seek_md5 (stream_reader *reader, void *id, uchar data [16])
 
 #define BUFSIZE 4096
 
-static uint32_t find_header (stream_reader *reader, void *id, uint32_t filepos, WavpackHeader *wphdr)
+static uint32_t find_header (WavpackStreamReader *reader, void *id, uint32_t filepos, WavpackHeader *wphdr)
 {
     char *buffer = malloc (BUFSIZE), *sp = buffer, *ep = buffer;
 
@@ -1939,7 +2440,8 @@ static uint32_t find_header (stream_reader *reader, void *id, uint32_t filepos, 
 
 	while (sp + 32 <= ep)
 	    if (*sp++ == 'w' && *sp == 'v' && *++sp == 'p' && *++sp == 'k' &&
-		!(*++sp & 1) && sp [2] < 16 && !sp [3] && sp [5] == 4 && sp [4] >= 2 && sp [4] <= 0xf) {
+		!(*++sp & 1) && sp [2] < 16 && !sp [3] && sp [5] == 4 &&
+		sp [4] >= (MIN_STREAM_VERS & 0xff) && sp [4] <= (MAX_STREAM_VERS & 0xff)) {
 		    memcpy (wphdr, sp - 4, sizeof (*wphdr));
 		    little_endian_to_native (wphdr, WavpackHeaderFormat);
 
@@ -1973,7 +2475,7 @@ static uint32_t find_sample (WavpackContext *wpc, void *infile, uint32_t header_
     if (sample >= wpc->total_samples)
 	return -1;
 
-    if (header_pos) {
+    if (header_pos && wps->wphdr.block_samples) {
 	if (wps->wphdr.block_index > sample) {
 	    sample_pos2 = wps->wphdr.block_index;
 	    file_pos2 = header_pos;
@@ -2039,44 +2541,79 @@ static int load_tag (WavpackContext *wpc)
 
     CLEAR (*m_tag);
 
-    // First, attempt to find an APEv2 tag...
+    while (1) {
 
-    wpc->reader->set_pos_rel (wpc->wv_in, -sizeof (APE_Tag_Hdr), SEEK_END);
+	// attempt to find an APEv2 tag either at end-of-file or before a ID3v1 tag we found
 
-    if (wpc->reader->read_bytes (wpc->wv_in, &m_tag->ape_tag_hdr, sizeof (APE_Tag_Hdr)) == sizeof (APE_Tag_Hdr) &&
-	!strncmp (m_tag->ape_tag_hdr.ID, "APETAGEX", 8)) {
+	if (m_tag->id3_tag.tag_id [0] == 'T')
+	    wpc->reader->set_pos_rel (wpc->wv_in, -(sizeof (APE_Tag_Hdr) + sizeof (ID3_Tag)), SEEK_END);
+	else
+	    wpc->reader->set_pos_rel (wpc->wv_in, -sizeof (APE_Tag_Hdr), SEEK_END);
 
-	    little_endian_to_native (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
+	if (wpc->reader->read_bytes (wpc->wv_in, &m_tag->ape_tag_hdr, sizeof (APE_Tag_Hdr)) == sizeof (APE_Tag_Hdr) &&
+	    !strncmp (m_tag->ape_tag_hdr.ID, "APETAGEX", 8)) {
 
-	    if (m_tag->ape_tag_hdr.version == 2000 && m_tag->ape_tag_hdr.item_count &&
-		m_tag->ape_tag_hdr.length > sizeof (m_tag->ape_tag_hdr) &&
-		m_tag->ape_tag_hdr.length < (1024 * 1024) &&
-		(m_tag->ape_tag_data = malloc (m_tag->ape_tag_hdr.length)) != NULL) {
+		little_endian_to_native (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
 
-		    memset (m_tag->ape_tag_data, 0, m_tag->ape_tag_hdr.length);
-		    wpc->reader->set_pos_rel (wpc->wv_in, -m_tag->ape_tag_hdr.length, SEEK_END);
+		if (m_tag->ape_tag_hdr.version == 2000 && m_tag->ape_tag_hdr.item_count &&
+		    m_tag->ape_tag_hdr.length > sizeof (m_tag->ape_tag_hdr) &&
+		    m_tag->ape_tag_hdr.length < (1024 * 1024) &&
+		    (m_tag->ape_tag_data = malloc (m_tag->ape_tag_hdr.length)) != NULL) {
 
-		    if (wpc->reader->read_bytes (wpc->wv_in, m_tag->ape_tag_data, m_tag->ape_tag_hdr.length - sizeof (APE_Tag_Hdr)) !=
-			m_tag->ape_tag_hdr.length - sizeof (APE_Tag_Hdr)) {
-			    free (m_tag->ape_tag_data);
-			    CLEAR (*m_tag);
-			    return FALSE;
-		    }
-		    else
-			return TRUE;
-	    }
-    }
+			if (m_tag->id3_tag.tag_id [0] == 'T')
+			    m_tag->tag_file_pos = -sizeof (ID3_Tag);
+			else
+			    m_tag->tag_file_pos = 0;
 
-    // ...if not, try a ID3v1 tag
+			m_tag->tag_file_pos -= m_tag->ape_tag_hdr.length + sizeof (APE_Tag_Hdr);
+			wpc->reader->set_pos_rel (wpc->wv_in, m_tag->tag_file_pos, SEEK_END);
+			memset (m_tag->ape_tag_data, 0, m_tag->ape_tag_hdr.length);
 
-    wpc->reader->set_pos_rel (wpc->wv_in, -sizeof (ID3_Tag), SEEK_END);
+			if (wpc->reader->read_bytes (wpc->wv_in, &m_tag->ape_tag_hdr, sizeof (APE_Tag_Hdr)) != sizeof (APE_Tag_Hdr) ||
+			    strncmp (m_tag->ape_tag_hdr.ID, "APETAGEX", 8)) {
+				free (m_tag->ape_tag_data);
+				CLEAR (*m_tag);
+				return FALSE;	    // something's wrong...
+			}
 
-    if (wpc->reader->read_bytes (wpc->wv_in, &m_tag->id3_tag, sizeof (ID3_Tag)) == sizeof (ID3_Tag) &&
-	!strncmp (m_tag->id3_tag.tag_id, "TAG", 3))
+			little_endian_to_native (&m_tag->ape_tag_hdr, APE_Tag_Hdr_Format);
+
+			if (m_tag->ape_tag_hdr.version != 2000 || !m_tag->ape_tag_hdr.item_count ||
+			    m_tag->ape_tag_hdr.length < sizeof (m_tag->ape_tag_hdr) ||
+			    m_tag->ape_tag_hdr.length > (1024 * 1024)) {
+				free (m_tag->ape_tag_data);
+				CLEAR (*m_tag);
+				return FALSE;	    // something's wrong...
+			}
+
+			if (wpc->reader->read_bytes (wpc->wv_in, m_tag->ape_tag_data, m_tag->ape_tag_hdr.length - sizeof (APE_Tag_Hdr)) !=
+			    m_tag->ape_tag_hdr.length - sizeof (APE_Tag_Hdr)) {
+				free (m_tag->ape_tag_data);
+				CLEAR (*m_tag);
+				return FALSE;	    // something's wrong...
+			}
+			else {
+			    CLEAR (m_tag->id3_tag); // ignore ID3v1 tag if we found APEv2 tag
+			    return TRUE;
+			}
+		}
+	}
+
+	if (m_tag->id3_tag.tag_id [0] == 'T') {	    // settle for the ID3v1 tag that we found
+	    CLEAR (m_tag->ape_tag_hdr);
 	    return TRUE;
-    else {
-	CLEAR (*m_tag);
-	return FALSE;
+	}
+
+	// look for ID3v1 tag if APEv2 tag not found during first pass
+
+	m_tag->tag_file_pos = -sizeof (ID3_Tag);
+	wpc->reader->set_pos_rel (wpc->wv_in, m_tag->tag_file_pos, SEEK_END);
+
+	if (wpc->reader->read_bytes (wpc->wv_in, &m_tag->id3_tag, sizeof (ID3_Tag)) != sizeof (ID3_Tag) ||
+	    strncmp (m_tag->id3_tag.tag_id, "TAG", 3)) {
+		CLEAR (*m_tag);
+		return FALSE;	    // neither type of tag found
+	}
     }
 }
 
@@ -2087,6 +2624,9 @@ static int load_tag (WavpackContext *wpc)
 static void tagcpy (char *dest, char *src, int tag_size)
 {
     char *s1 = src, *s2 = src + tag_size - 1;
+
+    if (*s2 && !s2 [-1])
+	s2--;
 
     while (s1 <= s2)
 	if (*s1 == ' ')
@@ -2102,6 +2642,25 @@ static void tagcpy (char *dest, char *src, int tag_size)
     *dest = 0;
 }
 
+static int tagdata (char *src, int tag_size)
+{
+    char *s1 = src, *s2 = src + tag_size - 1;
+
+    if (*s2 && !s2 [-1])
+	s2--;
+
+    while (s1 <= s2)
+	if (*s1 == ' ')
+	    ++s1;
+	else if (!*s2 || *s2 == ' ')
+	    --s2;
+	else
+	    break;
+
+    return (*s1 && s1 <= s2);
+}
+
 #endif
 
 #endif
+

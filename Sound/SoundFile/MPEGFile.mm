@@ -36,11 +36,7 @@
 	channels = outputFormat.nChannels;
 	bitsPerSample = 16;
 	
-#ifdef __BIG_ENDIAN__
-	isBigEndian = YES;
-#else
-	isBigEndian = NO;
-#endif
+	isBigEndian = hostIsBigEndian();
 	
 	long duration;
 	DecMPA_GetDuration(decoder, &duration);
