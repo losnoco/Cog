@@ -1,3 +1,7 @@
+0.05 alpha 5
+------------
+Hopefully fixes wavpack on intel.
+
 0.05 alpha 4
 ------------
 Volume slider now gravitates to 100%, in the middle.

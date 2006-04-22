@@ -144,13 +144,12 @@ BOOL hostIsBigEndian()
 	soundFile = [SoundFile soundFileFromFilename:filename];
 
 	b = [soundFile readInfo:[filename UTF8String]];
+	if (b == NO)
+		return nil;
 	
 	[soundFile close];
 	
-	if (b == YES)
-		return soundFile;
-		
-	return nil;
+	return soundFile;
 }
 
 - (void)reset

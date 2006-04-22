@@ -188,9 +188,9 @@
 
 - (void)readInfo
 {
-	SoundFile *sp;
 	SoundFile *sf = [SoundFile readInfo:filename];
-	sp= sf;
+	if (sf == nil)
+		return;
 	
 	length = [sf length];
 	bitRate = [sf bitRate];
