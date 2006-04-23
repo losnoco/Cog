@@ -16,12 +16,12 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#include "sfconfig.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef HAVE_UNISTD_H
+#if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -360,8 +360,8 @@ static void
 test_close_or_die (SF_PRIVATE *psf, int linenum)
 {
 	psf_fclose (psf) ;
-	if (psf->filedes >= 0)
-	{	printf ("\n\nLine %d: psf->filedes should be < 0.\n\n", linenum) ;
+	if (psf_file_valid (psf))
+	{	printf ("\n\nLine %d: psf->filedes should not be valid.\n\n", linenum) ;
 		exit (1) ;
 		} ;
 

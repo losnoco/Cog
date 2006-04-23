@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 2004-2006 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -16,7 +16,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#include "sfconfig.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -78,8 +78,7 @@ static int		avr_write_header (SF_PRIVATE *psf, int calc_length) ;
 
 int
 avr_open	(SF_PRIVATE *psf)
-{	int		subformat ;
-	int		error = 0 ;
+{	int		error = 0 ;
 
 	if (psf->mode == SFM_READ || (psf->mode == SFM_RDWR && psf->filelength > 0))
 	{	if ((error = avr_read_header (psf)))
@@ -88,8 +87,6 @@ avr_open	(SF_PRIVATE *psf)
 
 	if ((psf->sf.format & SF_FORMAT_TYPEMASK) != SF_FORMAT_AVR)
 		return	SFE_BAD_OPEN_FORMAT ;
-
-	subformat = psf->sf.format & SF_FORMAT_SUBMASK ;
 
 	if (psf->mode == SFM_WRITE || psf->mode == SFM_RDWR)
 	{	psf->endian = psf->sf.format & SF_FORMAT_ENDMASK ;
@@ -101,7 +98,7 @@ avr_open	(SF_PRIVATE *psf)
 		psf->write_header = avr_write_header ;
 		} ;
 
-	psf->close = avr_close ;
+	psf->container_close = avr_close ;
 
 	psf->blockwidth = psf->bytewidth * psf->sf.channels ;
 
@@ -150,7 +147,6 @@ avr_read_header (SF_PRIVATE *psf)
 		default :
 			psf_log_printf (psf, "Error : bad rez/sign combination.\n") ;
 			return SFE_AVR_X ;
-			break ;
 		} ;
 
 	psf_binheader_readf (psf, "E4444", &hdr.srate, &hdr.frames, &hdr.lbeg, &hdr.lend) ;
@@ -177,8 +173,6 @@ avr_read_header (SF_PRIVATE *psf)
 	if (psf_ftell (psf) != psf->dataoffset)
 		psf_binheader_readf (psf, "j", psf->dataoffset - psf_ftell (psf)) ;
 
-	psf->close = avr_close ;
-
 	psf->blockwidth = psf->sf.channels * psf->bytewidth ;
 
 	if (psf->sf.frames == 0 && psf->blockwidth)
@@ -190,7 +184,7 @@ avr_read_header (SF_PRIVATE *psf)
 static int
 avr_write_header (SF_PRIVATE *psf, int calc_length)
 {	sf_count_t	current ;
-	int			sign, datalength ;
+	int			sign ;
 
 	if (psf->pipeoffset > 0)
 		return 0 ;
@@ -218,9 +212,7 @@ avr_write_header (SF_PRIVATE *psf, int calc_length)
 	if (psf->is_pipe == SF_FALSE)
 		psf_fseek (psf, 0, SEEK_SET) ;
 
-	datalength = (int) (psf->datalength & 0x7FFFFFFF) ;
-
-	psf_binheader_writef (psf, "Emz22", TWOBIT_MARKER, (size_t) 8,
+	psf_binheader_writef (psf, "Emz22", TWOBIT_MARKER, make_size_t (8),
 			psf->sf.channels == 2 ? 0xFFFF : 0, psf->bytewidth * 8) ;
 
 	sign = ((psf->sf.format & SF_FORMAT_SUBMASK) == SF_FORMAT_PCM_U8) ? 0 : 0xFFFF ;
@@ -228,7 +220,7 @@ avr_write_header (SF_PRIVATE *psf, int calc_length)
 	psf_binheader_writef (psf, "E222", sign, 0, 0xFFFF) ;
 	psf_binheader_writef (psf, "E4444", psf->sf.samplerate, psf->sf.frames, 0, 0) ;
 
-	psf_binheader_writef (psf, "E222zz", 0, 0, 0, (size_t) 20, (size_t) 64) ;
+	psf_binheader_writef (psf, "E222zz", 0, 0, 0, make_size_t (20), make_size_t (64)) ;
 
 	/* Header construction complete so write it out. */
 	psf_fwrite (psf->header, psf->headindex, 1, psf) ;

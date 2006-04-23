@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2003,2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 2003-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -22,7 +22,7 @@
 #include <stdarg.h>
 #include <errno.h>
 
-#include "config.h"
+#include "sfconfig.h"
 
 /* 
 ** This is a bit rough, but it is the nicest way to do it.

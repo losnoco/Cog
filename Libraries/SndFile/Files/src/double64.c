@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 1999-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 1999-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -16,13 +16,13 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
 
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"common.h"
 #include	"float_cast.h"
@@ -36,7 +36,7 @@
 #endif
 
 /* A 32 number which will not overflow when multiplied by sizeof (double). */
-#define SENSIBLE_LEN   (0x8000000)
+#define SENSIBLE_LEN	(0x8000000)
 
 /*--------------------------------------------------------------------------------------------
 **	Processor floating point capabilities. double64_get_capability () returns one of the
@@ -60,12 +60,12 @@ static sf_count_t		host_read_d2i	(SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
 static sf_count_t		host_read_d2f	(SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
 static sf_count_t		host_read_d		(SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 
-static sf_count_t		host_write_s2d	(SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t		host_write_i2d	(SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t		host_write_f2d	(SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t		host_write_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
+static sf_count_t		host_write_s2d	(SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t		host_write_i2d	(SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t		host_write_f2d	(SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t		host_write_d	(SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
 
-static void		double64_peak_update	(SF_PRIVATE *psf, double *buffer, int count, int indx) ;
+static void		double64_peak_update	(SF_PRIVATE *psf, const double *buffer, int count, sf_count_t indx) ;
 
 static int		double64_get_capability	(SF_PRIVATE *psf) ;
 
@@ -74,10 +74,10 @@ static sf_count_t	replace_read_d2i	(SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
 static sf_count_t	replace_read_d2f	(SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
 static sf_count_t	replace_read_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 
-static sf_count_t	replace_write_s2d	(SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t	replace_write_i2d	(SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t	replace_write_f2d	(SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t	replace_write_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
+static sf_count_t	replace_write_s2d	(SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t	replace_write_i2d	(SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t	replace_write_f2d	(SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t	replace_write_d	(SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
 
 static	void	d2bd_read (double *buffer, int count) ;
 static	void	bd2d_write (double *buffer, int count) ;
@@ -276,19 +276,20 @@ double64_init	(SF_PRIVATE *psf)
 
 double
 double64_be_read (unsigned char *cptr)
-{	int		exponent, negative ;
+{	int		exponent, negative, upper, lower ;
 	double	dvalue ;
 
 	negative = (cptr [0] & 0x80) ? 1 : 0 ;
 	exponent = ((cptr [0] & 0x7F) << 4) | ((cptr [1] >> 4) & 0xF) ;
 
 	/* Might not have a 64 bit long, so load the mantissa into a double. */
-	dvalue = (((cptr [1] & 0xF) << 24) | (cptr [2] << 16) | (cptr [3] << 8) | cptr [4]) ;
-	dvalue += ((cptr [5] << 16) | (cptr [6] << 8) | cptr [7]) / ((double) 0x1000000) ;
+	upper = (((cptr [1] & 0xF) << 24) | (cptr [2] << 16) | (cptr [3] << 8) | cptr [4]) ;
+	lower = (cptr [5] << 16) | (cptr [6] << 8) | cptr [7] ;
 
-	if (exponent == 0 && dvalue == 0.0)
+	if (exponent == 0 && upper == 0 && lower == 0)
 		return 0.0 ;
 
+	dvalue = upper + lower / ((double) 0x1000000) ;
 	dvalue += 0x10000000 ;
 
 	exponent = exponent - 0x3FF ;
@@ -308,19 +309,20 @@ double64_be_read (unsigned char *cptr)
 
 double
 double64_le_read (unsigned char *cptr)
-{	int		exponent, negative ;
+{	int		exponent, negative, upper, lower ;
 	double	dvalue ;
 
 	negative = (cptr [7] & 0x80) ? 1 : 0 ;
 	exponent = ((cptr [7] & 0x7F) << 4) | ((cptr [6] >> 4) & 0xF) ;
 
 	/* Might not have a 64 bit long, so load the mantissa into a double. */
-	dvalue = (((cptr [6] & 0xF) << 24) | (cptr [5] << 16) | (cptr [4] << 8) | cptr [3]) ;
-	dvalue += ((cptr [2] << 16) | (cptr [1] << 8) | cptr [0]) / ((double) 0x1000000) ;
+	upper = ((cptr [6] & 0xF) << 24) | (cptr [5] << 16) | (cptr [4] << 8) | cptr [3] ;
+	lower = (cptr [2] << 16) | (cptr [1] << 8) | cptr [0] ;
 
-	if (exponent == 0 && dvalue == 0.0)
+	if (exponent == 0 && upper == 0 && lower == 0)
 		return 0.0 ;
 
+	dvalue = upper + lower / ((double) 0x1000000) ;
 	dvalue += 0x10000000 ;
 
 	exponent = exponent - 0x3FF ;
@@ -344,7 +346,7 @@ double64_be_write (double in, unsigned char *out)
 
 	memset (out, 0, sizeof (double)) ;
 
-	if (in == 0.0)
+	if (fabs (in) < 1e-30)
 		return ;
 
 	if (in < 0.0)
@@ -384,7 +386,7 @@ double64_le_write (double in, unsigned char *out)
 
 	memset (out, 0, sizeof (double)) ;
 
-	if (in == 0.0)
+	if (fabs (in) < 1e-30)
 		return ;
 
 	if (in < 0.0)
@@ -423,7 +425,7 @@ double64_le_write (double in, unsigned char *out)
 */
 
 static void
-double64_peak_update	(SF_PRIVATE *psf, double *buffer, int count, int indx)
+double64_peak_update	(SF_PRIVATE *psf, const double *buffer, int count, sf_count_t indx)
 {	int 	chan ;
 	int		k, position ;
 	float	fmaxval ;
@@ -437,9 +439,9 @@ double64_peak_update	(SF_PRIVATE *psf, double *buffer, int count, int indx)
 				position = k ;
 				} ;
 
-		if (fmaxval > psf->pchunk->peaks [chan].value)
-		{	psf->pchunk->peaks [chan].value = fmaxval ;
-			psf->pchunk->peaks [chan].position = psf->write_current + indx + (position / psf->sf.channels) ;
+		if (fmaxval > psf->peak_info->peaks [chan].value)
+		{	psf->peak_info->peaks [chan].value = fmaxval ;
+			psf->peak_info->peaks [chan].position = psf->write_current + indx + (position / psf->sf.channels) ;
 			} ;
 		} ;
 
@@ -478,42 +480,42 @@ double64_get_capability	(SF_PRIVATE *psf)
 */
 
 static inline void
-d2s_array (double *src, int count, short *dest, double scale)
+d2s_array (const double *src, int count, short *dest, double scale)
 {	while (--count >= 0)
 	{	dest [count] = lrint (scale * src [count]) ;
 		} ;
 } /* d2s_array */
 
 static inline void
-d2i_array (double *src, int count, int *dest, double scale)
+d2i_array (const double *src, int count, int *dest, double scale)
 {	while (--count >= 0)
 	{	dest [count] = lrint (scale * src [count]) ;
 		} ;
 } /* d2i_array */
 
 static inline void
-d2f_array (double *src, int count, float *dest)
+d2f_array (const double *src, int count, float *dest)
 {	while (--count >= 0)
 	{	dest [count] = src [count] ;
 		} ;
 } /* d2f_array */
 
 static inline void
-s2d_array (short *src, double *dest, int count)
+s2d_array (const short *src, double *dest, int count)
 {	while (--count >= 0)
 	{	dest [count] = src [count] ;
 		} ;
 } /* s2d_array */
 
 static inline void
-i2d_array (int *src, double *dest, int count)
+i2d_array (const int *src, double *dest, int count)
 {	while (--count >= 0)
 	{	dest [count] = src [count] ;
 		} ;
 } /* i2d_array */
 
 static inline void
-f2d_array (float *src, double *dest, int count)
+f2d_array (const float *src, double *dest, int count)
 {	while (--count >= 0)
 	{	dest [count] = src [count] ;
 		} ;
@@ -631,7 +633,7 @@ host_read_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 } /* host_read_d */
 
 static sf_count_t
-host_write_s2d	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+host_write_s2d	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -643,8 +645,8 @@ host_write_s2d	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 
 		s2d_array (ptr + total, psf->u.dbuf, bufferlen) ;
 
-		if (psf->has_peak)
-			double64_peak_update (psf, psf->u.dbuf, bufferlen, (int) (total / psf->sf.channels)) ;
+		if (psf->peak_info)
+			double64_peak_update (psf, psf->u.dbuf, bufferlen, total / psf->sf.channels) ;
 
 		if (psf->float_endswap == SF_TRUE)
 			endswap_double_array (psf->u.dbuf, bufferlen) ;
@@ -660,7 +662,7 @@ host_write_s2d	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* host_write_s2d */
 
 static sf_count_t
-host_write_i2d	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+host_write_i2d	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -671,8 +673,8 @@ host_write_i2d	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 			bufferlen = (int) len ;
 		i2d_array (ptr + total, psf->u.dbuf, bufferlen) ;
 
-		if (psf->has_peak)
-			double64_peak_update (psf, psf->u.dbuf, bufferlen, (int) (total / psf->sf.channels)) ;
+		if (psf->peak_info)
+			double64_peak_update (psf, psf->u.dbuf, bufferlen, total / psf->sf.channels) ;
 
 		if (psf->float_endswap == SF_TRUE)
 			endswap_double_array (psf->u.dbuf, bufferlen) ;
@@ -688,7 +690,7 @@ host_write_i2d	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* host_write_i2d */
 
 static sf_count_t
-host_write_f2d	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
+host_write_f2d	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -699,8 +701,8 @@ host_write_f2d	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 			bufferlen = (int) len ;
 		f2d_array (ptr + total, psf->u.dbuf, bufferlen) ;
 
-		if (psf->has_peak)
-			double64_peak_update (psf, psf->u.dbuf, bufferlen, (int) (total / psf->sf.channels)) ;
+		if (psf->peak_info)
+			double64_peak_update (psf, psf->u.dbuf, bufferlen, total / psf->sf.channels) ;
 
 		if (psf->float_endswap == SF_TRUE)
 			endswap_double_array (psf->u.dbuf, bufferlen) ;
@@ -716,11 +718,11 @@ host_write_f2d	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 } /* host_write_f2d */
 
 static sf_count_t
-host_write_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
+host_write_d	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
-	if (psf->has_peak)
+	if (psf->peak_info)
 		double64_peak_update (psf, ptr, len, 0) ;
 
 	if (psf->float_endswap != SF_TRUE)
@@ -863,7 +865,7 @@ replace_read_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 } /* replace_read_d */
 
 static sf_count_t
-replace_write_s2d	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+replace_write_s2d	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -874,8 +876,8 @@ replace_write_s2d	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 			bufferlen = (int) len ;
 		s2d_array (ptr + total, psf->u.dbuf, bufferlen) ;
 
-		if (psf->has_peak)
-			double64_peak_update (psf, psf->u.dbuf, bufferlen, (int) (total / psf->sf.channels)) ;
+		if (psf->peak_info)
+			double64_peak_update (psf, psf->u.dbuf, bufferlen, total / psf->sf.channels) ;
 
 		bd2d_write (psf->u.dbuf, bufferlen) ;
 
@@ -893,7 +895,7 @@ replace_write_s2d	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* replace_write_s2d */
 
 static sf_count_t
-replace_write_i2d	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+replace_write_i2d	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -904,8 +906,8 @@ replace_write_i2d	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 			bufferlen = (int) len ;
 		i2d_array (ptr + total, psf->u.dbuf, bufferlen) ;
 
-		if (psf->has_peak)
-			double64_peak_update (psf, psf->u.dbuf, bufferlen, (int) (total / psf->sf.channels)) ;
+		if (psf->peak_info)
+			double64_peak_update (psf, psf->u.dbuf, bufferlen, total / psf->sf.channels) ;
 
 		bd2d_write (psf->u.dbuf, bufferlen) ;
 
@@ -923,7 +925,7 @@ replace_write_i2d	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* replace_write_i2d */
 
 static sf_count_t
-replace_write_f2d	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
+replace_write_f2d	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -950,12 +952,12 @@ replace_write_f2d	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 } /* replace_write_f2d */
 
 static sf_count_t
-replace_write_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
+replace_write_d	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
 	/* FIXME : This is probably nowhere near optimal. */
-	if (psf->has_peak)
+	if (psf->peak_info)
 		double64_peak_update (psf, ptr, len, 0) ;
 
 	bufferlen = ARRAY_LEN (psf->u.dbuf) ;

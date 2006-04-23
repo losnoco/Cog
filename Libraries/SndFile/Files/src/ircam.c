@@ -16,13 +16,14 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<fcntl.h>
 #include	<string.h>
 #include	<ctype.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"common.h"
 
@@ -40,7 +41,7 @@
 #define IRCAM_LE_MASK		(MAKE_MARKER (0xFF, 0x00, 0xFF, 0xFF))
 #define IRCAM_LE_MARKER		(MAKE_MARKER (0x00, 0x00, 0xA3, 0x64))
 
-#define IRCAM_02B_MARKER	(MAKE_MARKER (0x00, 0x02, 0xA3, 0x64))
+#define IRCAM_02B_MARKER	(MAKE_MARKER (0x64, 0xA3, 0x02, 0x00))
 #define IRCAM_03L_MARKER	(MAKE_MARKER (0x64, 0xA3, 0x03, 0x00))
 
 #define IRCAM_DATA_OFFSET	(1024)
@@ -102,7 +103,7 @@ ircam_open	(SF_PRIVATE *psf)
 		psf->write_header = ircam_write_header ;
 		} ;
 
-	psf->close = ircam_close ;
+	psf->container_close = ircam_close ;
 
 	switch (subformat)
 	{	case SF_FORMAT_ULAW :		/* 8-bit Ulaw encoding. */
@@ -139,8 +140,7 @@ ircam_read_header	(SF_PRIVATE *psf)
 
 	psf_binheader_readf (psf, "epmf44", 0, &marker, &samplerate, &(psf->sf.channels), &encoding) ;
 
-	if (((marker & IRCAM_LE_MASK) != IRCAM_LE_MARKER) &&
-		((marker & IRCAM_BE_MASK) != IRCAM_BE_MARKER))
+	if (((marker & IRCAM_BE_MASK) != IRCAM_BE_MARKER) && ((marker & IRCAM_LE_MASK) != IRCAM_LE_MARKER))
 	{	psf_log_printf (psf, "marker: 0x%X\n", marker) ;
 		return SFE_IRCAM_NO_MARKER ;
 		} ;

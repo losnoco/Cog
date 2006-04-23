@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 2002-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -26,12 +26,13 @@
 ** Lidstrom and is copyright 1993 by NuEdge Development".
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"float_cast.h"
 #include	"common.h"
@@ -54,10 +55,10 @@ static sf_count_t dwvw_read_i (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
 static sf_count_t dwvw_read_f (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
 static sf_count_t dwvw_read_d (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 
-static sf_count_t dwvw_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t dwvw_write_i (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t dwvw_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t dwvw_write_d (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
+static sf_count_t dwvw_write_s (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t dwvw_write_i (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t dwvw_write_f (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t dwvw_write_d (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
 
 static sf_count_t	dwvw_seek	(SF_PRIVATE *psf, int mode, sf_count_t offset) ;
 static int	dwvw_close	(SF_PRIVATE *psf) ;
@@ -65,7 +66,7 @@ static int	dwvw_close	(SF_PRIVATE *psf) ;
 static int	dwvw_decode_data (SF_PRIVATE *psf, DWVW_PRIVATE *pdwvw, int *ptr, int len) ;
 static int	dwvw_decode_load_bits (SF_PRIVATE *psf, DWVW_PRIVATE *pdwvw, int bit_count) ;
 
-static int	dwvw_encode_data (SF_PRIVATE *psf, DWVW_PRIVATE *pdwvw, int *ptr, int len) ;
+static int	dwvw_encode_data (SF_PRIVATE *psf, DWVW_PRIVATE *pdwvw, const int *ptr, int len) ;
 static void dwvw_encode_store_bits (SF_PRIVATE *psf, DWVW_PRIVATE *pdwvw, int data, int new_bits) ;
 static void dwvw_read_reset (DWVW_PRIVATE *pdwvw) ;
 
@@ -76,6 +77,11 @@ static void dwvw_read_reset (DWVW_PRIVATE *pdwvw) ;
 int
 dwvw_init (SF_PRIVATE *psf, int bitwidth)
 {	DWVW_PRIVATE	*pdwvw ;
+
+	if (psf->fdata != NULL)
+	{	psf_log_printf (psf, "*** psf->fdata is not NULL.\n") ;
+		return SFE_INTERNAL ;
+		} ;
 
 	if (bitwidth > 24)
 		return SFE_DWVW_BAD_BITWIDTH ;
@@ -109,13 +115,13 @@ dwvw_init (SF_PRIVATE *psf, int bitwidth)
 		psf->write_double	= dwvw_write_d ;
 		} ;
 
-	psf->seek	= dwvw_seek ;
-	psf->close	= dwvw_close ;
+	psf->codec_close = dwvw_close ;
+	psf->seek = dwvw_seek ;
 
-	/* FIXME : This s bogus. */
+	/* FIXME : This is bogus. */
 	psf->sf.frames = SF_COUNT_MAX ;
 	psf->datalength = psf->sf.frames ;
-	/* EMXIF : This s bogus. */
+	/* EMXIF : This is bogus. */
 
 	return 0 ;
 } /* dwvw_init */
@@ -155,7 +161,7 @@ dwvw_seek	(SF_PRIVATE *psf, int mode, sf_count_t offset)
 
 	if (! psf->fdata)
 	{	psf->error = SFE_INTERNAL ;
-		return ((sf_count_t) -1) ;
+		return PSF_SEEK_ERROR ;
 		} ;
 
 	pdwvw = (DWVW_PRIVATE*) psf->fdata ;
@@ -167,7 +173,7 @@ dwvw_seek	(SF_PRIVATE *psf, int mode, sf_count_t offset)
 		} ;
 
 	psf->error = SFE_BAD_SEEK ;
-	return	((sf_count_t) -1) ;
+	return	PSF_SEEK_ERROR ;
 } /* dwvw_seek */
 
 
@@ -467,7 +473,7 @@ dump_bits (DWVW_PRIVATE *pdwvw)
 				} ;
 
 static int
-dwvw_encode_data (SF_PRIVATE *psf, DWVW_PRIVATE *pdwvw, int *ptr, int len)
+dwvw_encode_data (SF_PRIVATE *psf, DWVW_PRIVATE *pdwvw, const int *ptr, int len)
 {	int	count ;
 	int delta_width_modifier, delta, delta_negative, delta_width, extra_bit ;
 
@@ -542,7 +548,7 @@ dwvw_encode_data (SF_PRIVATE *psf, DWVW_PRIVATE *pdwvw, int *ptr, int len)
 } /* dwvw_encode_data */
 
 static sf_count_t
-dwvw_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len)
+dwvw_write_s (SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	DWVW_PRIVATE *pdwvw ;
 	int		*iptr ;
 	int		k, bufferlen, writecount = 0, count ;
@@ -570,7 +576,7 @@ dwvw_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* dwvw_write_s */
 
 static sf_count_t
-dwvw_write_i (SF_PRIVATE *psf, int *ptr, sf_count_t len)
+dwvw_write_i (SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	DWVW_PRIVATE *pdwvw ;
 	int			writecount, count ;
 	sf_count_t	total = 0 ;
@@ -595,7 +601,7 @@ dwvw_write_i (SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* dwvw_write_i */
 
 static sf_count_t
-dwvw_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len)
+dwvw_write_f (SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 {	DWVW_PRIVATE *pdwvw ;
 	int			*iptr ;
 	int			k, bufferlen, writecount = 0, count ;
@@ -626,7 +632,7 @@ dwvw_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len)
 } /* dwvw_write_f */
 
 static sf_count_t
-dwvw_write_d (SF_PRIVATE *psf, double *ptr, sf_count_t len)
+dwvw_write_d (SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 {	DWVW_PRIVATE *pdwvw ;
 	int			*iptr ;
 	int			k, bufferlen, writecount = 0, count ;

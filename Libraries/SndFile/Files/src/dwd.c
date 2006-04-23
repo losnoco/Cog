@@ -16,13 +16,14 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<fcntl.h>
 #include	<string.h>
 #include	<ctype.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"common.h"
 
@@ -95,7 +96,7 @@ dwd_open (SF_PRIVATE *psf)
 		-*/
 		} ;
 
-	psf->close = dwd_close ;
+	psf->container_close = dwd_close ;
 
 	/*-psf->blockwidth = psf->bytewidth * psf->sf.channels ;-*/
 

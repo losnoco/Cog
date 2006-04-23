@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 2002-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -29,12 +29,13 @@
 **		http://ibiblio.org/pub/linux/apps/sound/convert/vox.tar.gz
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"float_cast.h"
 #include	"common.h"
@@ -63,13 +64,12 @@ static sf_count_t vox_read_i (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
 static sf_count_t vox_read_f (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
 static sf_count_t vox_read_d (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 
-static sf_count_t vox_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t vox_write_i (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t vox_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t vox_write_d (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
+static sf_count_t vox_write_s (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t vox_write_i (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t vox_write_f (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t vox_write_d (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
 
 static int vox_read_block (SF_PRIVATE *psf, VOX_ADPCM_PRIVATE *pvox, short *ptr, int len) ;
-static int vox_write_block (SF_PRIVATE *psf, VOX_ADPCM_PRIVATE *pvox, short *ptr, int len) ;
 
 /*============================================================================================
 ** Predefined OKI ADPCM encoder/decoder tables.
@@ -397,7 +397,7 @@ vox_read_d (SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static int
-vox_write_block (SF_PRIVATE *psf, VOX_ADPCM_PRIVATE *pvox, short *ptr, int len)
+vox_write_block (SF_PRIVATE *psf, VOX_ADPCM_PRIVATE *pvox, const short *ptr, int len)
 {	int	indx = 0, k ;
 
 	while (indx < len)
@@ -417,7 +417,7 @@ vox_write_block (SF_PRIVATE *psf, VOX_ADPCM_PRIVATE *pvox, short *ptr, int len)
 } /* vox_write_block */
 
 static sf_count_t
-vox_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len)
+vox_write_s (SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	VOX_ADPCM_PRIVATE 	*pvox ;
 	int			writecount, count ;
 	sf_count_t	total = 0 ;
@@ -441,7 +441,7 @@ vox_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* vox_write_s */
 
 static sf_count_t
-vox_write_i	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+vox_write_i	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	VOX_ADPCM_PRIVATE *pvox ;
 	short		*sptr ;
 	int			k, bufferlen, writecount, count ;
@@ -468,7 +468,7 @@ vox_write_i	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* vox_write_i */
 
 static sf_count_t
-vox_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len)
+vox_write_f (SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 {	VOX_ADPCM_PRIVATE *pvox ;
 	short		*sptr ;
 	int			k, bufferlen, writecount, count ;
@@ -498,7 +498,7 @@ vox_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len)
 } /* vox_write_f */
 
 static sf_count_t
-vox_write_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
+vox_write_d	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 {	VOX_ADPCM_PRIVATE *pvox ;
 	short		*sptr ;
 	int			k, bufferlen, writecount, count ;

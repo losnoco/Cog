@@ -16,7 +16,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#include "sfconfig.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -80,7 +80,7 @@ static int 	svx_read_header	(SF_PRIVATE *psf) ;
 
 int
 svx_open	(SF_PRIVATE *psf)
-{	int error, subformat ;
+{	int error ;
 
 	if (psf->mode == SFM_READ || (psf->mode == SFM_RDWR && psf->filelength > 0))
 	{	if ((error = svx_read_header (psf)))
@@ -94,8 +94,6 @@ svx_open	(SF_PRIVATE *psf)
 
 		psf_fseek (psf, psf->dataoffset, SEEK_SET) ;
 		} ;
-
-	subformat = psf->sf.format & SF_FORMAT_SUBMASK ;
 
 	if (psf->mode == SFM_WRITE || psf->mode == SFM_RDWR)
 	{	if (psf->is_pipe)
@@ -118,7 +116,7 @@ svx_open	(SF_PRIVATE *psf)
 		psf->write_header = svx_write_header ;
 		} ;
 
-	psf->close = svx_close ;
+	psf->container_close = svx_close ;
 
 	if ((error = pcm_init (psf)))
 		return error ;
@@ -136,9 +134,10 @@ svx_read_header	(SF_PRIVATE *psf)
 	int				filetype = 0, parsestage = 0, done = 0 ;
 	int 			bytecount = 0, channels ;
 
+	memset (&vhdr, 0, sizeof (vhdr)) ;
 	psf_binheader_readf (psf, "p", 0) ;
 
-	/* Set default number of channels. */
+	/* Set default number of channels. Currently can't handle stereo SVX files. */
 	psf->sf.channels = 1 ;
 
 	psf->sf.format = SF_FORMAT_SVX ;
@@ -279,8 +278,9 @@ svx_read_header	(SF_PRIVATE *psf)
 					psf_log_printf (psf, " %M : %d\n", marker, dword) ;
 
 					bytecount += psf_binheader_readf (psf, "E4", &channels) ;
+					psf->sf.channels = channels ;
 
-					psf_log_printf (psf, "  Channels : %d => %d\n", channels) ;
+					psf_log_printf (psf, "  Channels : %d\n", channels) ;
 
 					psf_binheader_readf (psf, "j", dword - bytecount) ;
 					break ;

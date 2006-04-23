@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 1999-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 1999-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -16,7 +16,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#include "sfconfig.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,10 +85,10 @@ static sf_count_t paf24_read_i (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
 static sf_count_t paf24_read_f (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
 static sf_count_t paf24_read_d (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 
-static sf_count_t paf24_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t paf24_write_i (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t paf24_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t paf24_write_d (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
+static sf_count_t paf24_write_s (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t paf24_write_i (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t paf24_write_f (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t paf24_write_d (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
 
 static sf_count_t paf24_seek (SF_PRIVATE *psf, int mode, sf_count_t offset) ;
 
@@ -163,6 +163,7 @@ paf_read_header	(SF_PRIVATE *psf)
 {	PAF_FMT		paf_fmt ;
 	int			marker ;
 
+	memset (&paf_fmt, 0, sizeof (paf_fmt)) ;
 	psf_binheader_readf (psf, "pm", 0, &marker) ;
 
 	psf_log_printf (psf, "Signature   : '%M'\n", marker) ;
@@ -349,7 +350,7 @@ static int paf24_close (SF_PRIVATE *psf) ;
 static int
 paf24_init (SF_PRIVATE *psf)
 {	PAF24_PRIVATE	*ppaf24 ;
-	int	paf24size, max_blocks ;
+	int	paf24size ;
 
 	paf24size = sizeof (PAF24_PRIVATE) + psf->sf.channels *
 					(PAF24_BLOCK_SIZE + PAF24_SAMPLES_PER_BLOCK * sizeof (int)) ;
@@ -390,7 +391,7 @@ paf24_init (SF_PRIVATE *psf)
 		} ;
 
 	psf->seek	= paf24_seek ;
-	psf->close	= paf24_close ;
+	psf->container_close	= paf24_close ;
 
 	psf->filelength = psf_get_filelen (psf) ;
 	psf->datalength = psf->filelength - psf->dataoffset ;
@@ -398,18 +399,18 @@ paf24_init (SF_PRIVATE *psf)
 	if (psf->datalength % PAF24_BLOCK_SIZE)
 	{	if (psf->mode == SFM_READ)
 			psf_log_printf (psf, "*** Warning : file seems to be truncated.\n") ;
-		max_blocks = psf->datalength / ppaf24->blocksize + 1 ;
+		ppaf24->max_blocks = psf->datalength / ppaf24->blocksize + 1 ;
 		}
 	else
-		max_blocks = psf->datalength / ppaf24->blocksize ;
+		ppaf24->max_blocks = psf->datalength / ppaf24->blocksize ;
 
 	ppaf24->read_block = 0 ;
 	if (psf->mode == SFM_RDWR)
-		ppaf24->write_block = max_blocks ;
+		ppaf24->write_block = ppaf24->max_blocks ;
 	else
 		ppaf24->write_block = 0 ;
 
-	psf->sf.frames = ppaf24->samplesperblock * max_blocks ;
+	psf->sf.frames = ppaf24->samplesperblock * ppaf24->max_blocks ;
 	ppaf24->sample_count = psf->sf.frames ;
 
 	return 0 ;
@@ -422,7 +423,7 @@ paf24_seek (SF_PRIVATE *psf, int mode, sf_count_t offset)
 
 	if (psf->fdata == NULL)
 	{	psf->error = SFE_INTERNAL ;
-		return SF_SEEK_ERROR ;
+		return PSF_SEEK_ERROR ;
 		} ;
 
 	ppaf24 = (PAF24_PRIVATE*) psf->fdata ;
@@ -435,11 +436,6 @@ paf24_seek (SF_PRIVATE *psf, int mode, sf_count_t offset)
 
 	switch (mode)
 	{	case SFM_READ :
-				if (offset > ppaf24->read_block * ppaf24->samplesperblock + ppaf24->read_count)
-				{	psf->error = SFE_BAD_SEEK ;
-					return SF_SEEK_ERROR ;
-					} ;
-
 				if (psf->last_op == SFM_WRITE && ppaf24->write_count)
 					paf24_write_block (psf, ppaf24) ;
 
@@ -452,7 +448,7 @@ paf24_seek (SF_PRIVATE *psf, int mode, sf_count_t offset)
 		case SFM_WRITE :
 				if (offset > ppaf24->sample_count)
 				{	psf->error = SFE_BAD_SEEK ;
-					return SF_SEEK_ERROR ;
+					return PSF_SEEK_ERROR ;
 					} ;
 
 				if (psf->last_op == SFM_WRITE && ppaf24->write_count)
@@ -466,7 +462,7 @@ paf24_seek (SF_PRIVATE *psf, int mode, sf_count_t offset)
 
 		default :
 				psf->error = SFE_BAD_SEEK ;
-				return SF_SEEK_ERROR ;
+				return PSF_SEEK_ERROR ;
 		} ;
 
 	return newblock * ppaf24->samplesperblock + newsample ;
@@ -707,7 +703,7 @@ paf24_write_block (SF_PRIVATE *psf, PAF24_PRIVATE *ppaf24)
 } /* paf24_write_block */
 
 static int
-paf24_write (SF_PRIVATE *psf, PAF24_PRIVATE *ppaf24, int *ptr, int len)
+paf24_write (SF_PRIVATE *psf, PAF24_PRIVATE *ppaf24, const int *ptr, int len)
 {	int		count, total = 0 ;
 
 	while (total < len)
@@ -728,7 +724,7 @@ paf24_write (SF_PRIVATE *psf, PAF24_PRIVATE *ppaf24, int *ptr, int len)
 } /* paf24_write */
 
 static sf_count_t
-paf24_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len)
+paf24_write_s (SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	PAF24_PRIVATE 	*ppaf24 ;
 	int				*iptr ;
 	int				k, bufferlen, writecount = 0, count ;
@@ -754,7 +750,7 @@ paf24_write_s (SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* paf24_write_s */
 
 static sf_count_t
-paf24_write_i (SF_PRIVATE *psf, int *ptr, sf_count_t len)
+paf24_write_i (SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	PAF24_PRIVATE 	*ppaf24 ;
 	int				writecount, count ;
 	sf_count_t		total = 0 ;
@@ -778,7 +774,7 @@ paf24_write_i (SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* paf24_write_i */
 
 static sf_count_t
-paf24_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len)
+paf24_write_f (SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 {	PAF24_PRIVATE 	*ppaf24 ;
 	int				*iptr ;
 	int				k, bufferlen, writecount = 0, count ;
@@ -808,7 +804,7 @@ paf24_write_f (SF_PRIVATE *psf, float *ptr, sf_count_t len)
 } /* paf24_write_f */
 
 static sf_count_t
-paf24_write_d (SF_PRIVATE *psf, double *ptr, sf_count_t len)
+paf24_write_d (SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 {	PAF24_PRIVATE 	*ppaf24 ;
 	int				*iptr ;
 	int				k, bufferlen, writecount = 0, count ;

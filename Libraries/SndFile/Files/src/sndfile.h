@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 1999-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 1999-2006 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -52,7 +52,7 @@ extern "C" {
 
 enum
 {	/* Major formats. */
-	SF_FORMAT_WAV			= 0x010000,		/* Microsoft WAV format (little endian). */
+	SF_FORMAT_WAV			= 0x010000,		/* Microsoft WAV format (little endian default). */
 	SF_FORMAT_AIFF			= 0x020000,		/* Apple/SGI AIFF format (big endian). */
 	SF_FORMAT_AU			= 0x030000,		/* Sun/NeXT AU format (big endian). */
 	SF_FORMAT_RAW			= 0x040000,		/* RAW PCM data. */
@@ -71,6 +71,8 @@ enum
 	SF_FORMAT_AVR			= 0x120000,		/* Audio Visual Research */
 	SF_FORMAT_WAVEX			= 0x130000,		/* MS WAVE with WAVEFORMATEX */
 	SF_FORMAT_SD2			= 0x160000,		/* Sound Designer 2 */
+	SF_FORMAT_FLAC			= 0x170000,		/* FLAC lossless file format */
+	SF_FORMAT_CAF			= 0x180000,		/* Core Audio File format */
 
 	/* Subtypes from here on. */
 
@@ -103,7 +105,6 @@ enum
 
 	SF_FORMAT_DPCM_8		= 0x0050,		/* 8 bit differential PCM (XI only) */
 	SF_FORMAT_DPCM_16		= 0x0051,		/* 16 bit differential PCM (XI only) */
-
 
 	/* Endian-ness options. */
 
@@ -230,7 +231,9 @@ enum
 enum
 {	SF_ERR_NO_ERROR				= 0,
 	SF_ERR_UNRECOGNISED_FORMAT	= 1,
-	SF_ERR_SYSTEM				= 2
+	SF_ERR_SYSTEM				= 2,
+	SF_ERR_MALFORMED_FILE		= 3,
+	SF_ERR_UNSUPPORTED_ENCODING	= 4
 } ;
 
 /* A SNDFILE* pointer can be passed around much like stdio.h's FILE* pointer. */
@@ -309,32 +312,43 @@ typedef struct
 	sf_count_t	length ;
 } SF_EMBED_FILE_INFO ;
 
-/* Struct used to retrieve music sample information from a file.
+/*
+**	Structs used to retrieve music sample information from a file.
 */
 
+enum
+{	/*
+	**	The loop mode field in SF_INSTRUMENT will be one of the following.
+	*/
+	SF_LOOP_NONE = 800,
+	SF_LOOP_FORWARD,
+	SF_LOOP_BACKWARD,
+	SF_LOOP_ALTERNATING
+} ;
+
 typedef struct
-{	int basenote ;
-	int gain ;
-	int	sustain_mode ;
-	int sustain_start, sustain_end ;
-	int release_mode ;
-	int release_start, reslease_end ;
+{	int gain ;
+	char basenote, detune ;
+	char velocity_lo, velocity_hi ;
+	char key_lo, key_hi ;
+	int loop_count ;
+
+	struct
+	{	int mode ;
+		unsigned int start ;
+		unsigned int end ;
+		unsigned int count ;
+	} loops [16] ; /* make variable in a sensible way */
 } SF_INSTRUMENT ;
 
-/* sustain_mode and release_mode will be one of the following. */
 
-enum
-{	SF_LOOP_NONE = 800,
-	SF_LOOP_FORWARD,
-	SF_LOOP_BACKWARD
-} ;
 
 /* Struct used to retrieve loop information from a file.*/
 typedef struct
 {
-	short	time_sig_num ;	/* any positive integer    >0  */
-	short	time_sig_den ;	/* any positive power of 2 >0  */
-	int		loop_mode ;		/* see SF_LOOP enum            */
+	short	time_sig_num ;	/* any positive integer    > 0  */
+	short	time_sig_den ;	/* any positive power of 2 > 0  */
+	int		loop_mode ;		/* see SF_LOOP enum             */
 
 	int		num_beats ;		/* this is NOT the amount of quarter notes !!!*/
 							/* a full bar of 4/4 is 4 beats */
@@ -347,6 +361,22 @@ typedef struct
 	int	root_key ;			/* MIDI note, or -1 for None */
 	int future [6] ;
 } SF_LOOP_INFO ;
+
+typedef sf_count_t		(*sf_vio_get_filelen)	(void *user_data) ;
+typedef sf_count_t		(*sf_vio_seek)		(sf_count_t offset, int whence, void *user_data) ;
+typedef sf_count_t		(*sf_vio_read)		(void *ptr, sf_count_t count, void *user_data) ;
+typedef sf_count_t		(*sf_vio_write)		(const void *ptr, sf_count_t count, void *user_data) ;
+typedef sf_count_t		(*sf_vio_tell)		(void *user_data) ;
+
+struct SF_VIRTUAL_IO
+{	sf_vio_get_filelen	get_filelen ;
+	sf_vio_seek			seek ;
+	sf_vio_read			read ;
+	sf_vio_write		write ;
+	sf_vio_tell			tell ;
+} ;
+
+typedef	struct SF_VIRTUAL_IO SF_VIRTUAL_IO ;
 
 /* Open the specified file for read, write or both. On error, this will
 ** return a NULL pointer. To find the error number, pass a NULL SNDFILE
@@ -369,6 +399,8 @@ SNDFILE* 	sf_open		(const char *path, int mode, SF_INFO *sfinfo) ;
 */
 
 SNDFILE* 	sf_open_fd	(int fd, int mode, SF_INFO *sfinfo, int close_desc) ;
+
+SNDFILE* 	sf_open_virtual	(SF_VIRTUAL_IO *sfvirtual, int mode, SF_INFO *sfinfo, void *user_data) ;
 
 /* sf_error () returns a error number which can be translated to a text
 ** string using sf_error_number().
@@ -436,7 +468,7 @@ const char* sf_get_string (SNDFILE *sndfile, int str_type) ;
 */
 
 sf_count_t	sf_read_raw		(SNDFILE *sndfile, void *ptr, sf_count_t bytes) ;
-sf_count_t	sf_write_raw 	(SNDFILE *sndfile, void *ptr, sf_count_t bytes) ;
+sf_count_t	sf_write_raw 	(SNDFILE *sndfile, const void *ptr, sf_count_t bytes) ;
 
 /* Functions for reading and writing the data chunk in terms of frames.
 ** The number of items actually read/written = frames * number of channels.
@@ -449,16 +481,16 @@ sf_count_t	sf_write_raw 	(SNDFILE *sndfile, void *ptr, sf_count_t bytes) ;
 */
 
 sf_count_t	sf_readf_short	(SNDFILE *sndfile, short *ptr, sf_count_t frames) ;
-sf_count_t	sf_writef_short	(SNDFILE *sndfile, short *ptr, sf_count_t frames) ;
+sf_count_t	sf_writef_short	(SNDFILE *sndfile, const short *ptr, sf_count_t frames) ;
 
 sf_count_t	sf_readf_int	(SNDFILE *sndfile, int *ptr, sf_count_t frames) ;
-sf_count_t	sf_writef_int 	(SNDFILE *sndfile, int *ptr, sf_count_t frames) ;
+sf_count_t	sf_writef_int 	(SNDFILE *sndfile, const int *ptr, sf_count_t frames) ;
 
 sf_count_t	sf_readf_float	(SNDFILE *sndfile, float *ptr, sf_count_t frames) ;
-sf_count_t	sf_writef_float	(SNDFILE *sndfile, float *ptr, sf_count_t frames) ;
+sf_count_t	sf_writef_float	(SNDFILE *sndfile, const float *ptr, sf_count_t frames) ;
 
 sf_count_t	sf_readf_double		(SNDFILE *sndfile, double *ptr, sf_count_t frames) ;
-sf_count_t	sf_writef_double	(SNDFILE *sndfile, double *ptr, sf_count_t frames) ;
+sf_count_t	sf_writef_double	(SNDFILE *sndfile, const double *ptr, sf_count_t frames) ;
 
 /* Functions for reading and writing the data chunk in terms of items.
 ** Otherwise similar to above.
@@ -466,16 +498,16 @@ sf_count_t	sf_writef_double	(SNDFILE *sndfile, double *ptr, sf_count_t frames) ;
 */
 
 sf_count_t	sf_read_short	(SNDFILE *sndfile, short *ptr, sf_count_t items) ;
-sf_count_t	sf_write_short	(SNDFILE *sndfile, short *ptr, sf_count_t items) ;
+sf_count_t	sf_write_short	(SNDFILE *sndfile, const short *ptr, sf_count_t items) ;
 
 sf_count_t	sf_read_int		(SNDFILE *sndfile, int *ptr, sf_count_t items) ;
-sf_count_t	sf_write_int 	(SNDFILE *sndfile, int *ptr, sf_count_t items) ;
+sf_count_t	sf_write_int 	(SNDFILE *sndfile, const int *ptr, sf_count_t items) ;
 
 sf_count_t	sf_read_float	(SNDFILE *sndfile, float *ptr, sf_count_t items) ;
-sf_count_t	sf_write_float	(SNDFILE *sndfile, float *ptr, sf_count_t items) ;
+sf_count_t	sf_write_float	(SNDFILE *sndfile, const float *ptr, sf_count_t items) ;
 
 sf_count_t	sf_read_double	(SNDFILE *sndfile, double *ptr, sf_count_t items) ;
-sf_count_t	sf_write_double	(SNDFILE *sndfile, double *ptr, sf_count_t items) ;
+sf_count_t	sf_write_double	(SNDFILE *sndfile, const double *ptr, sf_count_t items) ;
 
 /* Close the SNDFILE and clean up all memory allocations associated with this
 ** file.
@@ -483,6 +515,13 @@ sf_count_t	sf_write_double	(SNDFILE *sndfile, double *ptr, sf_count_t items) ;
 */
 
 int		sf_close		(SNDFILE *sndfile) ;
+
+/* If the file is opened SFM_WRITE or SFM_RDWR, call fsync() on the file
+** to force the writing of data to disk. If the file is opened SFM_READ
+** no action is taken.
+*/
+
+void	sf_write_sync	(SNDFILE *sndfile) ;
 
 #ifdef __cplusplus
 }		/* extern "C" */

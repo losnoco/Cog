@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 2002-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -16,12 +16,12 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#include "sfconfig.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef HAVE_UNISTD_H
+#if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -76,15 +76,15 @@ test_endswap_short (void)
 
 	if (memcmp (orig, first, sizeof (orig)) == 0)
 	{	printf ("\n\nLine %d : test 1 : these two array should not be the same:\n\n", __LINE__) ;
-		dump_short_array ("orig", orig, ARRAY_LEN (orig));
-		dump_short_array ("first", first, ARRAY_LEN (first));
+		dump_short_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_short_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 
 	if (memcmp (orig, second, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 2 : these two array should be the same:\n\n", __LINE__) ;
-		dump_short_array ("orig", orig, ARRAY_LEN (orig));
-		dump_short_array ("second", second, ARRAY_LEN (second));
+		dump_short_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_short_array ("second", second, ARRAY_LEN (second)) ;
 		exit (1) ;
 		} ;
 
@@ -92,8 +92,8 @@ test_endswap_short (void)
 
 	if (memcmp (orig, first, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 3 : these two array should be the same:\n\n", __LINE__) ;
-		dump_short_array ("orig", orig, ARRAY_LEN (orig));
-		dump_short_array ("first", first, ARRAY_LEN (first));
+		dump_short_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_short_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 
@@ -102,8 +102,8 @@ test_endswap_short (void)
 
 	if (memcmp (orig, first, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 4 : these two array should be the same:\n\n", __LINE__) ;
-		dump_short_array ("orig", orig, ARRAY_LEN (orig));
-		dump_short_array ("first", first, ARRAY_LEN (first));
+		dump_short_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_short_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 
@@ -135,15 +135,15 @@ test_endswap_int (void)
 
 	if (memcmp (orig, first, sizeof (orig)) == 0)
 	{	printf ("\n\nLine %d : test 1 : these two array should not be the same:\n\n", __LINE__) ;
-		dump_int_array ("orig", orig, ARRAY_LEN (orig));
-		dump_int_array ("first", first, ARRAY_LEN (first));
+		dump_int_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_int_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 
 	if (memcmp (orig, second, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 2 : these two array should be the same:\n\n", __LINE__) ;
-		dump_int_array ("orig", orig, ARRAY_LEN (orig));
-		dump_int_array ("second", second, ARRAY_LEN (second));
+		dump_int_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_int_array ("second", second, ARRAY_LEN (second)) ;
 		exit (1) ;
 		} ;
 
@@ -151,8 +151,8 @@ test_endswap_int (void)
 
 	if (memcmp (orig, first, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 3 : these two array should be the same:\n\n", __LINE__) ;
-		dump_int_array ("orig", orig, ARRAY_LEN (orig));
-		dump_int_array ("first", first, ARRAY_LEN (first));
+		dump_int_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_int_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 
@@ -161,8 +161,8 @@ test_endswap_int (void)
 
 	if (memcmp (orig, first, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 4 : these two array should be the same:\n\n", __LINE__) ;
-		dump_int_array ("orig", orig, ARRAY_LEN (orig));
-		dump_int_array ("first", first, ARRAY_LEN (first));
+		dump_int_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_int_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 
@@ -194,15 +194,15 @@ test_endswap_int64_t (void)
 
 	if (memcmp (orig, first, sizeof (orig)) == 0)
 	{	printf ("\n\nLine %d : test 1 : these two array should not be the same:\n\n", __LINE__) ;
-		dump_int64_t_array ("orig", orig, ARRAY_LEN (orig));
-		dump_int64_t_array ("first", first, ARRAY_LEN (first));
+		dump_int64_t_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_int64_t_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 
 	if (memcmp (orig, second, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 2 : these two array should be the same:\n\n", __LINE__) ;
-		dump_int64_t_array ("orig", orig, ARRAY_LEN (orig));
-		dump_int64_t_array ("second", second, ARRAY_LEN (second));
+		dump_int64_t_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_int64_t_array ("second", second, ARRAY_LEN (second)) ;
 		exit (1) ;
 		} ;
 
@@ -210,8 +210,8 @@ test_endswap_int64_t (void)
 
 	if (memcmp (orig, first, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 3 : these two array should be the same:\n\n", __LINE__) ;
-		dump_int64_t_array ("orig", orig, ARRAY_LEN (orig));
-		dump_int64_t_array ("first", first, ARRAY_LEN (first));
+		dump_int64_t_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_int64_t_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 
@@ -220,8 +220,8 @@ test_endswap_int64_t (void)
 
 	if (memcmp (orig, first, sizeof (orig)) != 0)
 	{	printf ("\n\nLine %d : test 4 : these two array should be the same:\n\n", __LINE__) ;
-		dump_int64_t_array ("orig", orig, ARRAY_LEN (orig));
-		dump_int64_t_array ("first", first, ARRAY_LEN (first));
+		dump_int64_t_array ("orig", orig, ARRAY_LEN (orig)) ;
+		dump_int64_t_array ("first", first, ARRAY_LEN (first)) ;
 		exit (1) ;
 		} ;
 

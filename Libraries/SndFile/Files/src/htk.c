@@ -16,13 +16,14 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<fcntl.h>
 #include	<string.h>
 #include	<ctype.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"common.h"
 
@@ -73,7 +74,7 @@ htk_open	(SF_PRIVATE *psf)
 		psf->write_header = htk_write_header ;
 		} ;
 
-	psf->close = htk_close ;
+	psf->container_close = htk_close ;
 
 	psf->blockwidth = psf->bytewidth * psf->sf.channels ;
 
@@ -207,8 +208,6 @@ htk_read_header (SF_PRIVATE *psf)
 	psf->endian = SF_ENDIAN_BIG ;
 
 	psf->datalength = psf->filelength - psf->dataoffset ;
-
-	psf->close = htk_close ;
 
 	psf->blockwidth = psf->sf.channels * psf->bytewidth ;
 

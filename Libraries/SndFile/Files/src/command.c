@@ -16,12 +16,13 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<string.h>
 #include	<math.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"common.h"
 
 static SF_FORMAT_INFO const simple_formats [] =
@@ -45,6 +46,16 @@ static SF_FORMAT_INFO const simple_formats [] =
 	{	SF_FORMAT_AU | SF_FORMAT_ULAW,
 		"AU (Sun/Next 8-bit u-law)", "au"
 		},
+
+	{	SF_FORMAT_CAF | SF_FORMAT_PCM_16,
+		"CAF (Apple 16 bit PCM)", "caf"
+		},
+
+#ifdef HAVE_FLAC_ALL_H
+	{	SF_FORMAT_FLAC | SF_FORMAT_PCM_16,
+		"FLAC 16 bit", "flac"
+		},
+#endif
 
 	{	SF_FORMAT_RAW | SF_FORMAT_VOX_ADPCM,
 		"OKI Dialogic VOX ADPCM", "vox"
@@ -99,6 +110,10 @@ static SF_FORMAT_INFO const major_formats [] =
 	{	SF_FORMAT_AIFF,		"AIFF (Apple/SGI)",						"aiff" 	},
 	{	SF_FORMAT_AU,		"AU (Sun/NeXT)", 						"au"	},
 	{	SF_FORMAT_AVR,		"AVR (Audio Visual Research)",	 		"avr"	},
+	{	SF_FORMAT_CAF,		"CAF (Apple Core Audio File)",	 		"caf"	},
+#ifdef HAVE_FLAC_ALL_H
+	{	SF_FORMAT_FLAC,		"FLAC (FLAC Lossless Audio Codec)",	 	"flac"	},
+#endif
 	{	SF_FORMAT_HTK,		"HTK (HMM Tool Kit)",					"htk"	},
 	{	SF_FORMAT_SVX,		"IFF (Amiga IFF/SVX8/SV16)",			"iff"	},
 	{	SF_FORMAT_MAT4,		"MAT4 (GNU Octave 2.0 / Matlab 4.2)",	"mat"	},
@@ -106,10 +121,8 @@ static SF_FORMAT_INFO const major_formats [] =
 	{	SF_FORMAT_PAF,		"PAF (Ensoniq PARIS)", 					"paf"	},
 	{	SF_FORMAT_PVF,		"PVF (Portable Voice Format)",			"pvf"	},
 	{	SF_FORMAT_RAW,		"RAW (header-less)",				 	"raw"	},
+	{	SF_FORMAT_SD2,		"SD2 (Sound Designer II)", 				"sd2"	},
 	{	SF_FORMAT_SDS,		"SDS (Midi Sample Dump Standard)", 		"sds"	},
-	/* Not ready for mainstream use yet.
-	{	SF_FORMAT_SD2,		"SD2 (Sound Designer II)", 			"sd2"	},
-	*/
 	{	SF_FORMAT_IRCAM,	"SF (Berkeley/IRCAM/CARL)",				"sf"	},
 	{	SF_FORMAT_VOC,		"VOC (Creative Labs)",					"voc"	},
 	{	SF_FORMAT_W64,		"W64 (SoundFoundry WAVE 64)",			"w64"	},
@@ -170,7 +183,7 @@ static SF_FORMAT_INFO subtype_formats [] =
 	{	SF_FORMAT_VOX_ADPCM,	"VOX ADPCM",			"vox" 	},
 
 	{	SF_FORMAT_DPCM_16,		"16 bit DPCM",			NULL 	},
-	{	SF_FORMAT_DPCM_8,		"8 bit DPCM",			NULL 	},
+	{	SF_FORMAT_DPCM_8,		"8 bit DPCM",			NULL 	}
 } ; /* subtype_formats */
 
 int

@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 2002-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 ** Copyright (C) 2003 Ross Bencina <rbencina@iprimus.com.au>
 **
 ** This program is free software; you can redistribute it and/or modify
@@ -18,16 +18,26 @@
 */
 
 /*
-** This header file MUST be included before the others to ensure that
-** large file support is enabled.
+**	The file is split into three sections as follows:
+**		- The top section (USE_WINDOWS_API == 0) for Linux, Unix and MacOSX
+**			systems (including Cygwin).
+**		- The middle section (USE_WINDOWS_API == 1) for microsoft windows
+**			(including MinGW) using the native windows API.
+**		- A legacy windows section which attempted to work around grevious
+**			bugs in microsoft's POSIX implementation.
 */
 
-#include "config.h"
+/*
+**	The header file sfconfig.h MUST be included before the others to ensure
+**	that large file support is enabled correctly on Unix systems.
+*/
+
+#include "sfconfig.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef HAVE_UNISTD_H
+#if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -40,19 +50,21 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#if (defined (__MWERKS__) && defined (macintosh))
-typedef int ssize_t ;
-#include <Files.h>
-#endif
-
 #include "sndfile.h"
 #include "common.h"
 
 #define	SENSIBLE_SIZE	(0x40000000)
 
-static int psf_open_fd (const char * path, int mode) ;
-static int psf_close_fd (int fd) ;
 static void psf_log_syserr (SF_PRIVATE *psf, int error) ;
+
+#if (USE_WINDOWS_API == 0)
+
+/*------------------------------------------------------------------------------
+** Win32 stuff at the bottom of the file. Unix and other sensible OSes here.
+*/
+
+static int psf_close_fd (int fd) ;
+static int psf_open_fd (const char * path, int mode) ;
 static sf_count_t psf_get_filelen_fd (int fd) ;
 
 int
@@ -79,6 +91,9 @@ int
 psf_fclose (SF_PRIVATE *psf)
 {	int retval ;
 
+	if (psf->virtual_io)
+		return 0 ;
+
 	if (psf->do_not_close_descriptor)
 	{	psf->filedes = -1 ;
 		return 0 ;
@@ -94,22 +109,19 @@ psf_fclose (SF_PRIVATE *psf)
 
 int
 psf_open_rsrc (SF_PRIVATE *psf, int open_mode)
-{	char *fname ;
-
+{
 	if (psf->rsrcdes > 0)
 		return 0 ;
 
 	/* Test for MacOSX style resource fork on HPFS or HPFS+ filesystems. */
 	LSF_SNPRINTF (psf->rsrcpath, sizeof (psf->rsrcpath), "%s/rsrc", psf->filepath) ;
-
 	psf->error = SFE_NO_ERROR ;
 	if ((psf->rsrcdes = psf_open_fd (psf->rsrcpath, open_mode)) >= 0)
 	{	psf->rsrclength = psf_get_filelen_fd (psf->rsrcdes) ;
-		if (psf->rsrclength < 100)
-		{	psf->error = SFE_SD2_BAD_RSRC ;
-			return psf->error ;
-			} ;
-		return SFE_NO_ERROR ;
+		if (psf->rsrclength > 0 || (open_mode & SFM_WRITE))
+			return SFE_NO_ERROR ;
+		psf_close_fd (psf->rsrcdes) ;
+		psf->rsrcdes = -1 ;
 		} ;
 
 	if (psf->rsrcdes == - SFE_BAD_OPEN_MODE)
@@ -118,28 +130,28 @@ psf_open_rsrc (SF_PRIVATE *psf, int open_mode)
 		} ;
 
 	/*
-	** Now try for a resource fork stored as a separate file.
-	** Grab the un-adulterated filename again.
+	** Now try for a resource fork stored as a separate file in the same
+	** directory, but preceded with a dot underscore.
 	*/
-	LSF_SNPRINTF (psf->rsrcpath, sizeof (psf->rsrcpath), "%s", psf->filepath) ;
-
-	if ((fname = strrchr (psf->rsrcpath, '/')) != NULL)
-		fname ++ ;
-	else if ((fname = strrchr (psf->rsrcpath, '\\')) != NULL)
-		fname ++ ;
-	else
-		fname = psf->rsrcpath ;
-
-	memmove (fname + 2, fname, strlen (fname) + 1) ;
-	fname [0] = '.' ;
-	fname [1] = '_' ;
-
+	LSF_SNPRINTF (psf->rsrcpath, sizeof (psf->rsrcpath), "%s._%s", psf->directory, psf->filename) ;
 	psf->error = SFE_NO_ERROR ;
 	if ((psf->rsrcdes = psf_open_fd (psf->rsrcpath, open_mode)) >= 0)
 	{	psf->rsrclength = psf_get_filelen_fd (psf->rsrcdes) ;
 		return SFE_NO_ERROR ;
 		} ;
 
+	/*
+	** Now try for a resource fork stored in a separate file in the
+	** .AppleDouble/ directory.
+	*/
+	LSF_SNPRINTF (psf->rsrcpath, sizeof (psf->rsrcpath), "%s.AppleDouble/%s", psf->directory, psf->filename) ;
+	psf->error = SFE_NO_ERROR ;
+	if ((psf->rsrcdes = psf_open_fd (psf->rsrcpath, open_mode)) >= 0)
+	{	psf->rsrclength = psf_get_filelen_fd (psf->rsrcdes) ;
+		return SFE_NO_ERROR ;
+		} ;
+
+	/* No resource file found. */
 	if (psf->rsrcdes == -1)
 		psf_log_syserr (psf, errno) ;
 
@@ -148,17 +160,12 @@ psf_open_rsrc (SF_PRIVATE *psf, int open_mode)
 	return psf->error ;
 } /* psf_open_rsrc */
 
-int
-psf_close_rsrc (SF_PRIVATE *psf)
-{
-	psf_close_fd (psf->rsrcdes) ;
-	psf->rsrcdes = -1 ;
-	return 0 ;
-} /* psf_close_rsrc */
-
 sf_count_t
 psf_get_filelen (SF_PRIVATE *psf)
 {	sf_count_t	filelen ;
+
+	if (psf->virtual_io)
+		return psf->vio.get_filelen (psf->vio_user_data) ;
 
 	filelen = psf_get_filelen_fd (psf->filedes) ;
 
@@ -198,11 +205,14 @@ psf_get_filelen (SF_PRIVATE *psf)
 	return filelen ;
 } /* psf_get_filelen */
 
-#if ((defined (WIN32) || defined (_WIN32)) == 0)
-
-/*------------------------------------------------------------------------------
-** Win32 stuff at the bottom of the file. Unix and other sensible OSes here.
-*/
+int
+psf_close_rsrc (SF_PRIVATE *psf)
+{
+	if (psf->rsrcdes >= 0)
+		psf_close_fd (psf->rsrcdes) ;
+	psf->rsrcdes = -1 ;
+	return 0 ;
+} /* psf_close_rsrc */
 
 int
 psf_set_stdio (SF_PRIVATE *psf, int mode)
@@ -236,13 +246,16 @@ psf_set_file (SF_PRIVATE *psf, int fd)
 } /* psf_set_file */
 
 int
-psf_filedes_valid (SF_PRIVATE *psf)
+psf_file_valid (SF_PRIVATE *psf)
 {	return (psf->filedes >= 0) ? SF_TRUE : SF_FALSE ;
 } /* psf_set_file */
 
 sf_count_t
 psf_fseek (SF_PRIVATE *psf, sf_count_t offset, int whence)
 {	sf_count_t	new_position ;
+
+	if (psf->virtual_io)
+		return psf->vio.seek (offset, whence, psf->vio_user_data) ;
 
 	switch (whence)
 	{	case SEEK_SET :
@@ -287,6 +300,9 @@ psf_fread (void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf)
 {	sf_count_t total = 0 ;
 	ssize_t	count ;
 
+	if (psf->virtual_io)
+		return psf->vio.read (ptr, bytes*items, psf->vio_user_data) / bytes ;
+
 	items *= bytes ;
 
 	/* Do this check after the multiplication above. */
@@ -294,7 +310,7 @@ psf_fread (void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf)
 		return 0 ;
 
 	while (items > 0)
-	{	/* Break the writes down to a sensible size. */
+	{	/* Break the read down to a sensible size. */
 		count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
 
 		count = read (psf->filedes, ((char*) ptr) + total, (size_t) count) ;
@@ -324,6 +340,9 @@ sf_count_t
 psf_fwrite (const void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf)
 {	sf_count_t total = 0 ;
 	ssize_t	count ;
+
+	if (psf->virtual_io)
+		return psf->vio.write (ptr, bytes*items, psf->vio_user_data) / bytes ;
 
 	items *= bytes ;
 
@@ -362,6 +381,9 @@ sf_count_t
 psf_ftell (SF_PRIVATE *psf)
 {	sf_count_t pos ;
 
+	if (psf->virtual_io)
+		return psf->vio.tell (psf->vio_user_data) ;
+
 	if (psf->is_pipe)
 		return psf->pipeoffset ;
 
@@ -375,7 +397,7 @@ psf_ftell (SF_PRIVATE *psf)
 	return pos - psf->fileoffset ;
 } /* psf_ftell */
 
-int
+static int
 psf_close_fd (int fd)
 {	int retval ;
 
@@ -414,6 +436,9 @@ int
 psf_is_pipe (SF_PRIVATE *psf)
 {	struct stat statbuf ;
 
+	if (psf->virtual_io)
+		return SF_FALSE ;
+
 	if (fstat (psf->filedes, &statbuf) == -1)
 	{	psf_log_syserr (psf, errno) ;
 		/* Default to maximum safety. */
@@ -437,11 +462,6 @@ psf_get_filelen_fd (int fd)
 	if (sizeof (statbuf.st_size) == 4 && sizeof (sf_count_t) == 8)
 		return (sf_count_t) -SFE_BAD_STAT_SIZE ;
 
-/* Cygwin seems to need this. */
-#if (defined (__CYGWIN__) && HAVE_FSYNC)
-	fsync (psf->filedes) ;
-#endif
-
 	if (fstat (fd, &statbuf) == -1)
 		return (sf_count_t) -1 ;
 
@@ -459,17 +479,35 @@ psf_ftruncate (SF_PRIVATE *psf, sf_count_t len)
 	if ((sizeof (off_t) < sizeof (sf_count_t)) && len > 0x7FFFFFFF)
 		return -1 ;
 
-#if (defined (__MWERKS__) && defined (macintosh))
-	retval = FSSetForkSize (psf->filedes, fsFromStart, len) ;
-#else
 	retval = ftruncate (psf->filedes, len) ;
-#endif
 
 	if (retval == -1)
 		psf_log_syserr (psf, errno) ;
 
 	return retval ;
 } /* psf_ftruncate */
+
+void
+psf_init_files (SF_PRIVATE *psf)
+{	psf->filedes = -1 ;
+	psf->rsrcdes = -1 ;
+	psf->savedes = -1 ;
+} /* psf_init_files */
+
+void
+psf_use_rsrc (SF_PRIVATE *psf, int on_off)
+{
+	if (on_off)
+	{	if (psf->filedes != psf->rsrcdes)
+		{	psf->savedes = psf->filedes ;
+			psf->filedes = psf->rsrcdes ;
+			} ;
+		}
+	else if (psf->filedes == psf->rsrcdes)
+		psf->filedes = psf->savedes ;
+
+	return ;
+} /* psf_use_rsrc */
 
 static int
 psf_open_fd (const char * pathname, int open_mode)
@@ -478,7 +516,7 @@ psf_open_fd (const char * pathname, int open_mode)
 	/*
 	** Sanity check. If everything is OK, this test and the printfs will
 	** be optimised out. This is meant to catch the problems caused by
-	** "config.h" being included after <stdio.h>.
+	** "sfconfig.h" being included after <stdio.h>.
 	*/
 	if (sizeof (off_t) != sizeof (sf_count_t))
 	{	puts ("\n\n*** Fatal error : sizeof (off_t) != sizeof (sf_count_t)") ;
@@ -507,7 +545,8 @@ psf_open_fd (const char * pathname, int open_mode)
 				break ;
 		} ;
 
-#if defined (__CYGWIN__)
+#if OS_IS_WIN32
+	/* For Cygwin. */
 	oflag |= O_BINARY ;
 #endif
 
@@ -531,7 +570,18 @@ psf_log_syserr (SF_PRIVATE *psf, int error)
 	return ;
 } /* psf_log_syserr */
 
-#elif	OS_IS_WIN32
+void
+psf_fsync (SF_PRIVATE *psf)
+{
+#if HAVE_FSYNC
+    if (psf->mode == SFM_WRITE || psf->mode == SFM_RDWR)
+        fsync (psf->filedes) ;
+#else
+    psf = NULL ;
+#endif
+} /* psf_fsync */
+
+#elif	USE_WINDOWS_API
 
 /* Win32 file i/o functions implemented using native Win32 API */
 
@@ -542,8 +592,158 @@ psf_log_syserr (SF_PRIVATE *psf, int error)
 typedef long ssize_t ;
 #endif
 
-/* Win32 */ static int
-psf_open_fd (const char * pathname, int open_mode)
+static int psf_close_handle (HANDLE handle) ;
+static HANDLE psf_open_handle (const char * path, int mode) ;
+static sf_count_t psf_get_filelen_handle (HANDLE handle) ;
+
+/* USE_WINDOWS_API */ int
+psf_fopen (SF_PRIVATE *psf, const char *pathname, int open_mode)
+{
+	psf->error = 0 ;
+	psf->hfile = psf_open_handle (pathname, open_mode) ;
+
+	if (psf->hfile == NULL)
+		psf_log_syserr (psf, errno) ;
+
+	psf->mode = open_mode ;
+
+	return psf->error ;
+} /* psf_fopen */
+
+/* USE_WINDOWS_API */ int
+psf_fclose (SF_PRIVATE *psf)
+{	int retval ;
+
+	if (psf->virtual_io)
+		return 0 ;
+
+	if (psf->do_not_close_descriptor)
+	{	psf->hfile = NULL ;
+		return 0 ;
+		} ;
+
+	if ((retval = psf_close_handle (psf->hfile)) == -1)
+		psf_log_syserr (psf, errno) ;
+
+	psf->hfile = NULL ;
+
+	return retval ;
+} /* psf_fclose */
+
+/* USE_WINDOWS_API */ int
+psf_open_rsrc (SF_PRIVATE *psf, int open_mode)
+{
+	if (psf->hrsrc != NULL)
+		return 0 ;
+
+	/* Test for MacOSX style resource fork on HPFS or HPFS+ filesystems. */
+	LSF_SNPRINTF (psf->rsrcpath, sizeof (psf->rsrcpath), "%s/rsrc", psf->filepath) ;
+	psf->error = SFE_NO_ERROR ;
+	if ((psf->hrsrc = psf_open_handle (psf->rsrcpath, open_mode)) != NULL)
+	{	psf->rsrclength = psf_get_filelen_handle (psf->hrsrc) ;
+		return SFE_NO_ERROR ;
+		} ;
+
+	/*
+	** Now try for a resource fork stored as a separate file in the same
+	** directory, but preceded with a dot underscore.
+	*/
+	LSF_SNPRINTF (psf->rsrcpath, sizeof (psf->rsrcpath), "%s._%s", psf->directory, psf->filename) ;
+	psf->error = SFE_NO_ERROR ;
+	if ((psf->hrsrc = psf_open_handle (psf->rsrcpath, open_mode)) != NULL)
+	{	psf->rsrclength = psf_get_filelen_handle (psf->hrsrc) ;
+		return SFE_NO_ERROR ;
+		} ;
+
+	/*
+	** Now try for a resource fork stored in a separate file in the
+	** .AppleDouble/ directory.
+	*/
+	LSF_SNPRINTF (psf->rsrcpath, sizeof (psf->rsrcpath), "%s.AppleDouble/%s", psf->directory, psf->filename) ;
+	psf->error = SFE_NO_ERROR ;
+	if ((psf->hrsrc = psf_open_handle (psf->rsrcpath, open_mode)) != NULL)
+	{	psf->rsrclength = psf_get_filelen_handle (psf->hrsrc) ;
+		return SFE_NO_ERROR ;
+		} ;
+
+	/* No resource file found. */
+	if (psf->hrsrc == NULL)
+		psf_log_syserr (psf, errno) ;
+
+	psf->hrsrc = NULL ;
+
+	return psf->error ;
+} /* psf_open_rsrc */
+
+/* USE_WINDOWS_API */ sf_count_t
+psf_get_filelen (SF_PRIVATE *psf)
+{	sf_count_t	filelen ;
+
+	if (psf->virtual_io)
+		return psf->vio.get_filelen (psf->vio_user_data) ;
+
+	filelen = psf_get_filelen_handle (psf->hfile) ;
+
+	if (filelen == -1)
+	{	psf_log_syserr (psf, errno) ;
+		return (sf_count_t) -1 ;
+		} ;
+
+	if (filelen == -SFE_BAD_STAT_SIZE)
+	{	psf->error = SFE_BAD_STAT_SIZE ;
+		return (sf_count_t) -1 ;
+		} ;
+
+	switch (psf->mode)
+	{	case SFM_WRITE :
+			filelen = filelen - psf->fileoffset ;
+			break ;
+
+		case SFM_READ :
+			if (psf->fileoffset > 0 && psf->filelength > 0)
+				filelen = psf->filelength ;
+			break ;
+
+		case SFM_RDWR :
+			/*
+			** Cannot open embedded files SFM_RDWR so we don't need to
+			** subtract psf->fileoffset. We already have the answer we
+			** need.
+			*/
+			break ;
+
+		default :
+			/* Shouldn't be here, so return error. */
+			filelen = -1 ;
+		} ;
+
+	return filelen ;
+} /* psf_get_filelen */
+
+/* USE_WINDOWS_API */ void
+psf_init_files (SF_PRIVATE *psf)
+{	psf->hfile = NULL ;
+	psf->hrsrc = NULL ;
+	psf->hsaved = NULL ;
+} /* psf_init_files */
+
+/* USE_WINDOWS_API */ void
+psf_use_rsrc (SF_PRIVATE *psf, int on_off)
+{
+	if (on_off)
+	{	if (psf->hfile != psf->hrsrc)
+		{	psf->hsaved = psf->hfile ;
+			psf->hfile = psf->hrsrc ;
+			} ;
+		}
+	else if (psf->hfile == psf->hrsrc)
+		psf->hfile = psf->hsaved ;
+
+	return ;
+} /* psf_use_rsrc */
+
+/* USE_WINDOWS_API */ static HANDLE
+psf_open_handle (const char * pathname, int open_mode)
 {	DWORD dwDesiredAccess ;
 	DWORD dwShareMode ;
 	DWORD dwCreationDistribution ;
@@ -569,7 +769,7 @@ psf_open_fd (const char * pathname, int open_mode)
 				break ;
 
 		default :
-				return - SFE_BAD_OPEN_MODE ;
+				return NULL ;
 		} ;
 
 	handle = CreateFile (
@@ -583,12 +783,12 @@ psf_open_fd (const char * pathname, int open_mode)
 			) ;
 
 	if (handle == INVALID_HANDLE_VALUE)
-		return -1 ;
+		return NULL ;
 
-	return (int) handle ;
-} /* psf_open_fd */
+	return handle ;
+} /* psf_open_handle */
 
-/* Win32 */ static void
+/* USE_WINDOWS_API */ static void
 psf_log_syserr (SF_PRIVATE *psf, int error)
 {	LPVOID lpMsgBuf ;
 
@@ -614,7 +814,17 @@ psf_log_syserr (SF_PRIVATE *psf, int error)
 } /* psf_log_syserr */
 
 
-/* Win32 */ int
+/* USE_WINDOWS_API */ int
+psf_close_rsrc (SF_PRIVATE *psf)
+{
+	if (psf->hrsrc != NULL)
+		psf_close_handle (psf->hrsrc) ;
+	psf->hrsrc = NULL ;
+	return 0 ;
+} /* psf_close_rsrc */
+
+
+/* USE_WINDOWS_API */ int
 psf_set_stdio (SF_PRIVATE *psf, int mode)
 {	HANDLE	handle = NULL ;
 	int	error = 0 ;
@@ -639,13 +849,13 @@ psf_set_stdio (SF_PRIVATE *psf, int mode)
 				break ;
 		} ;
 
-	psf->filedes = (int) handle ;
+	psf->hfile = handle ;
 	psf->filelength = 0 ;
 
 	return error ;
 } /* psf_set_stdio */
 
-/* Win32 */ void
+/* USE_WINDOWS_API */ void
 psf_set_file (SF_PRIVATE *psf, int fd)
 {	HANDLE handle ;
 	long osfhandle ;
@@ -653,23 +863,27 @@ psf_set_file (SF_PRIVATE *psf, int fd)
 	osfhandle = _get_osfhandle (fd) ;
 	handle = (HANDLE) osfhandle ;
 
-	if (GetFileType (handle) == FILE_TYPE_DISK)
-		psf->filedes = (int) handle ;
-	else
-		psf->filedes = fd ;
+	psf->hfile = handle ;
 } /* psf_set_file */
 
-/* Win32 */ int
-psf_filedes_valid (SF_PRIVATE *psf)
-{	return (((HANDLE) psf->filedes) != INVALID_HANDLE_VALUE) ? SF_TRUE : SF_FALSE ;
+/* USE_WINDOWS_API */ int
+psf_file_valid (SF_PRIVATE *psf)
+{	if (psf->hfile == NULL)
+		return SF_FALSE ;
+	if (psf->hfile == INVALID_HANDLE_VALUE)
+		return SF_FALSE ;
+	return SF_TRUE ;
 } /* psf_set_file */
 
-/* Win32 */ sf_count_t
+/* USE_WINDOWS_API */ sf_count_t
 psf_fseek (SF_PRIVATE *psf, sf_count_t offset, int whence)
 {	sf_count_t new_position ;
 	LONG lDistanceToMove, lDistanceToMoveHigh ;
 	DWORD dwMoveMethod ;
 	DWORD dwResult, dwError ;
+
+	if (psf->virtual_io)
+		return psf->vio.seek (offset, whence, psf->vio_user_data) ;
 
 	switch (whence)
 	{	case SEEK_SET :
@@ -689,7 +903,7 @@ psf_fseek (SF_PRIVATE *psf, sf_count_t offset, int whence)
 	lDistanceToMove = (DWORD) (offset & 0xFFFFFFFF) ;
 	lDistanceToMoveHigh = (DWORD) ((offset >> 32) & 0xFFFFFFFF) ;
 
-	dwResult = SetFilePointer ((HANDLE) psf->filedes, lDistanceToMove, &lDistanceToMoveHigh, dwMoveMethod) ;
+	dwResult = SetFilePointer (psf->hfile, lDistanceToMove, &lDistanceToMoveHigh, dwMoveMethod) ;
 
 	if (dwResult == 0xFFFFFFFF)
 		dwError = GetLastError () ;
@@ -706,11 +920,14 @@ psf_fseek (SF_PRIVATE *psf, sf_count_t offset, int whence)
 	return new_position ;
 } /* psf_fseek */
 
-/* Win32 */ sf_count_t
+/* USE_WINDOWS_API */ sf_count_t
 psf_fread (void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf)
 {	sf_count_t total = 0 ;
 	ssize_t count ;
 	DWORD dwNumberOfBytesRead ;
+
+	if (psf->virtual_io)
+		return psf->vio.read (ptr, bytes*items, psf->vio_user_data) / bytes ;
 
 	items *= bytes ;
 
@@ -722,7 +939,7 @@ psf_fread (void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf)
 	{	/* Break the writes down to a sensible size. */
 		count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
 
-		if (ReadFile ((HANDLE) psf->filedes, ((char*) ptr) + total, count, &dwNumberOfBytesRead, 0) == 0)
+		if (ReadFile (psf->hfile, ((char*) ptr) + total, count, &dwNumberOfBytesRead, 0) == 0)
 		{	psf_log_syserr (psf, GetLastError ()) ;
 			break ;
 			}
@@ -742,11 +959,14 @@ psf_fread (void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf)
 	return total / bytes ;
 } /* psf_fread */
 
-/* Win32 */ sf_count_t
+/* USE_WINDOWS_API */ sf_count_t
 psf_fwrite (const void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf)
 {	sf_count_t total = 0 ;
 	ssize_t	 count ;
 	DWORD dwNumberOfBytesWritten ;
+
+	if (psf->virtual_io)
+		return psf->vio.write (ptr, bytes * items, psf->vio_user_data) / bytes ;
 
 	items *= bytes ;
 
@@ -758,7 +978,7 @@ psf_fwrite (const void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf
 	{	/* Break the writes down to a sensible size. */
 		count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
 
-		if (WriteFile ((HANDLE) psf->filedes, ((const char*) ptr) + total, count, &dwNumberOfBytesWritten, 0) == 0)
+		if (WriteFile (psf->hfile, ((const char*) ptr) + total, count, &dwNumberOfBytesWritten, 0) == 0)
 		{	psf_log_syserr (psf, GetLastError ()) ;
 			break ;
 			}
@@ -778,11 +998,14 @@ psf_fwrite (const void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf
 	return total / bytes ;
 } /* psf_fwrite */
 
-/* Win32 */ sf_count_t
+/* USE_WINDOWS_API */ sf_count_t
 psf_ftell (SF_PRIVATE *psf)
 {	sf_count_t pos ;
 	LONG lDistanceToMoveLow, lDistanceToMoveHigh ;
 	DWORD dwResult, dwError ;
+
+	if (psf->virtual_io)
+		return psf->vio.tell (psf->vio_user_data) ;
 
 	if (psf->is_pipe)
 		return psf->pipeoffset ;
@@ -790,7 +1013,7 @@ psf_ftell (SF_PRIVATE *psf)
 	lDistanceToMoveLow = 0 ;
 	lDistanceToMoveHigh = 0 ;
 
-	dwResult = SetFilePointer ((HANDLE) psf->filedes, lDistanceToMoveLow, &lDistanceToMoveHigh, FILE_CURRENT) ;
+	dwResult = SetFilePointer (psf->hfile, lDistanceToMoveLow, &lDistanceToMoveHigh, FILE_CURRENT) ;
 
 	if (dwResult == 0xFFFFFFFF)
 		dwError = GetLastError () ;
@@ -807,22 +1030,22 @@ psf_ftell (SF_PRIVATE *psf)
 	return pos - psf->fileoffset ;
 } /* psf_ftell */
 
-/* Win32 */ int
-psf_close_fd (int fd)
-{	if (CloseHandle ((HANDLE) fd) == 0)
+/* USE_WINDOWS_API */ static int
+psf_close_handle (HANDLE handle)
+{	if (CloseHandle (handle) == 0)
 		return -1 ;
 
 	return 0 ;
-} /* psf_close_fd */
+} /* psf_close_handle */
 
-/* Win32 */ sf_count_t
+/* USE_WINDOWS_API */ sf_count_t
 psf_fgets (char *buffer, sf_count_t bufsize, SF_PRIVATE *psf)
 {	sf_count_t k = 0 ;
 	sf_count_t count ;
 	DWORD dwNumberOfBytesRead ;
 
 	while (k < bufsize - 1)
-	{	if (ReadFile ((HANDLE) psf->filedes, &(buffer [k]), 1, &dwNumberOfBytesRead, 0) == 0)
+	{	if (ReadFile (psf->hfile, &(buffer [k]), 1, &dwNumberOfBytesRead, 0) == 0)
 		{	psf_log_syserr (psf, GetLastError ()) ;
 			break ;
 			}
@@ -839,21 +1062,25 @@ psf_fgets (char *buffer, sf_count_t bufsize, SF_PRIVATE *psf)
 	return k ;
 } /* psf_fgets */
 
-/* Win32 */ int
+/* USE_WINDOWS_API */ int
 psf_is_pipe (SF_PRIVATE *psf)
-{	if (GetFileType ((HANDLE) psf->filedes) == FILE_TYPE_DISK)
+{
+	if (psf->virtual_io)
+		return SF_FALSE ;
+
+	if (GetFileType (psf->hfile) == FILE_TYPE_DISK)
 		return SF_FALSE ;
 
 	/* Default to maximum safety. */
 	return SF_TRUE ;
 } /* psf_is_pipe */
 
-/* Win32 */ sf_count_t
-psf_get_filelen_fd (int fd)
+/* USE_WINDOWS_API */ sf_count_t
+psf_get_filelen_handle (HANDLE handle)
 {	sf_count_t filelen ;
 	DWORD dwFileSizeLow, dwFileSizeHigh, dwError = NO_ERROR ;
 
-	dwFileSizeLow = GetFileSize ((HANDLE) fd, &dwFileSizeHigh) ;
+	dwFileSizeLow = GetFileSize (handle, &dwFileSizeHigh) ;
 
 	if (dwFileSizeLow == 0xFFFFFFFF)
 		dwError = GetLastError () ;
@@ -864,9 +1091,15 @@ psf_get_filelen_fd (int fd)
 	filelen = dwFileSizeLow + ((__int64) dwFileSizeHigh << 32) ;
 
 	return filelen ;
-} /* psf_get_filelen_fd */
+} /* psf_get_filelen_handle */
 
-/* Win32 */ int
+/* USE_WINDOWS_API */ void
+psf_fsync (SF_PRIVATE *psf)
+{	FlushFileBuffers (psf->hfile) ;
+} /* psf_fsync */
+
+
+/* USE_WINDOWS_API */ int
 psf_ftruncate (SF_PRIVATE *psf, sf_count_t len)
 {	int retval = 0 ;
 	LONG lDistanceToMoveLow, lDistanceToMoveHigh ;
@@ -884,7 +1117,7 @@ psf_ftruncate (SF_PRIVATE *psf, sf_count_t len)
 	lDistanceToMoveLow = (DWORD) (len & 0xFFFFFFFF) ;
 	lDistanceToMoveHigh = (DWORD) ((len >> 32) & 0xFFFFFFFF) ;
 
-	dwResult = SetFilePointer ((HANDLE) psf->filedes, lDistanceToMoveLow, &lDistanceToMoveHigh, FILE_BEGIN) ;
+	dwResult = SetFilePointer (psf->hfile, lDistanceToMoveLow, &lDistanceToMoveHigh, FILE_BEGIN) ;
 
 	if (dwResult == 0xFFFFFFFF)
 		dwError = GetLastError () ;
@@ -899,7 +1132,7 @@ psf_ftruncate (SF_PRIVATE *psf, sf_count_t len)
 		** which guarantees that the new portion of the file will be zeroed.
 		** Not sure if this is important or not.
 		*/
-		if (SetEndOfFile ((HANDLE) psf->filedes) == 0)
+		if (SetEndOfFile (psf->hfile) == 0)
 		{	retval = -1 ;
 			psf_log_syserr (psf, GetLastError ()) ;
 			} ;
@@ -973,6 +1206,9 @@ psf_fopen (SF_PRIVATE *psf, const char *pathname, int open_mode)
 psf_fseek (SF_PRIVATE *psf, sf_count_t offset, int whence)
 {	sf_count_t	new_position ;
 
+	if (psf->virtual_io)
+		return psf->vio.seek (offset, whence, psf->vio_user_data) ;
+
 	switch (whence)
 	{	case SEEK_SET :
 				offset += psf->fileoffset ;
@@ -1025,6 +1261,9 @@ psf_fread (void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf)
 {	sf_count_t total = 0 ;
 	ssize_t	 count ;
 
+	if (psf->virtual_io)
+		return psf->vio.read (ptr, bytes*items, psf->vio_user_data) / bytes ;
+
 	items *= bytes ;
 
 	/* Do this check after the multiplication above. */
@@ -1060,6 +1299,9 @@ psf_fwrite (const void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf
 {	sf_count_t total = 0 ;
 	ssize_t	 count ;
 
+	if (psf->virtual_io)
+		return psf->vio.write (ptr, bytes*items, psf->vio_user_data) / bytes ;
+
 	items *= bytes ;
 
 	/* Do this check after the multiplication above. */
@@ -1093,6 +1335,9 @@ psf_fwrite (const void *ptr, sf_count_t bytes, sf_count_t items, SF_PRIVATE *psf
 /* Win32 */ sf_count_t
 psf_ftell (SF_PRIVATE *psf)
 {	sf_count_t pos ;
+
+	if (psf->virtual_io)
+		return psf->vio.tell (psf->vio_user_data) ;
 
 	pos = _telli64 (psf->filedes) ;
 
@@ -1148,8 +1393,10 @@ psf_fgets (char *buffer, sf_count_t bufsize, SF_PRIVATE *psf)
 psf_is_pipe (SF_PRIVATE *psf)
 {	struct stat statbuf ;
 
-	/* Not sure if this works. */
+	if (psf->virtual_io)
+		return SF_FALSE ;
 
+	/* Not sure if this works. */
 	if (fstat (psf->filedes, &statbuf) == -1)
 	{	psf_log_syserr (psf, errno) ;
 		/* Default to maximum safety. */
@@ -1182,6 +1429,9 @@ psf_get_filelen (SF_PRIVATE *psf)
 	return statbuf.st_size ;
 #else
 	sf_count_t current, filelen ;
+
+	if (psf->virtual_io)
+		return psf->vio.get_filelen (psf->vio_user_data) ;
 
 	if ((current = _telli64 (psf->filedes)) < 0)
 	{	psf_log_syserr (psf, errno) ;

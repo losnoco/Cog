@@ -16,13 +16,14 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<string.h>
 #include	<ctype.h>
 #include	<stdarg.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"common.h"
 
@@ -289,7 +290,7 @@ rx2_open	(SF_PRIVATE *psf)
 	if ((error = dwvw_init (psf, 16)))
 		return error ;
 
-	psf->close = rx2_close ;
+	psf->container_close = rx2_close ;
 
 	if (! psf->sf.frames && psf->blockwidth)
 		psf->sf.frames = psf->datalength / psf->blockwidth ;

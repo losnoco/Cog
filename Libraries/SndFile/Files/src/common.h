@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 1999-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 1999-2006 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -16,17 +16,25 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef COMMON_H_INCLUDED
-#define COMMON_H_INCLUDED
+#ifndef SNDFILE_COMMON_H
+#define SNDFILE_COMMON_H
 
-#include "config.h"
+#include "sfconfig.h"
 
-#ifndef SNDFILE_H
-#include <sndfile.h>
-#endif
+#include <stdlib.h>
 
 #if HAVE_STDINT_H
 #include <stdint.h>
+#endif
+
+#ifndef SNDFILE_H
+#include "sndfile.h"
+#elif HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
+#ifdef __cplusplus
+#error "This code is not designed to be compiled with a C++ compiler."
 #endif
 
 #ifdef UNUSED
@@ -39,19 +47,19 @@
 #endif
 
 #ifdef __GNUC__
-#	define WARN_UNUSED	__attribute__((warn_unused_result))
+#	define WARN_UNUSED	__attribute__ ((warn_unused_result))
 #else
 #	define WARN_UNUSED
 #endif
 
 #define	SF_BUFFER_LEN			(8192*2)
 #define	SF_FILENAME_LEN			(512)
-#define	SF_HEADER_LEN			(4096)
-#define	SF_TEXT_LEN				(1024)
 #define SF_SYSERR_LEN			(256)
 #define SF_MAX_STRINGS			(16)
+#define SF_STR_BUFFER_LEN		(8192)
+#define	SF_HEADER_LEN			(4100 + SF_STR_BUFFER_LEN)
 
-#define	SF_SEEK_ERROR			((sf_count_t) -1)
+#define	PSF_SEEK_ERROR			((sf_count_t) -1)
 
 
 #define	BITWIDTH2BYTES(x)	(((x) + 7) / 8)
@@ -111,7 +119,6 @@ enum
 	SF_FORMAT_KRZ			= 0x40E0000,		/* Kurzweil sampler file */
 	SF_FORMAT_WMA			= 0x4100000,		/* Windows Media Audio. */
 	SF_FORMAT_SHN			= 0x4110000,		/* Shorten. */
-	SF_FORMAT_FLAC			= 0x4120000,
 
 	/* Unsupported encodings. */
 	SF_FORMAT_VORBIS		= 0x1001,
@@ -128,13 +135,21 @@ enum
 */
 
 typedef struct
-{	float			value ;		/* signed value of peak */
-	unsigned int	position ;	/* the sample frame for the peak */
+{	double		value ;		/* signed value of peak */
+	sf_count_t	position ;	/* the sample frame for the peak */
 } PEAK_POS ;
 
 typedef struct
-{	unsigned int	version ;	/* version of the PEAK chunk */
+{	/* libsndfile internal : write a PEAK chunk at the start or end of the file? */
+	int				peak_loc ;
+
+	/* WAV/AIFF */
+	unsigned int	version ;	/* version of the PEAK chunk */
 	unsigned int	timestamp ;	/* secs since 1/1/1970  */
+
+	/* CAF */
+	unsigned int	edit_number ;
+
 #if HAVE_FLEXIBLE_ARRAY
 	/* the per channel peak info */
 	PEAK_POS		peaks [] ;
@@ -142,19 +157,29 @@ typedef struct
 	/*
 	** This is not ISO compliant C. It works on some compilers which
 	** don't support the ISO standard flexible struct array which is
-	** used above. If your compiler doesn't ike this I suggest you find
+	** used above. If your compiler doesn't like this I suggest you find
 	** youself a 1999 ISO C standards compilant compiler. GCC-3.X is
 	** highly recommended.
 	*/
 	PEAK_POS		peaks [0] ;
 #endif
-} PEAK_CHUNK ;
+} PEAK_INFO ;
+
+static inline PEAK_INFO *
+peak_info_calloc (int channels)
+{	return calloc (1, sizeof (PEAK_INFO) + channels * sizeof (PEAK_POS)) ;
+} /* peak_info_calloc */
 
 typedef struct
 {	int		type ;
 	int		flags ;
 	char 	*str ;
 } STR_DATA ;
+
+static inline size_t
+make_size_t (int x)
+{	return (size_t) x ;
+} /* size_t_of_int */
 
 /*=======================================================================================
 **	SF_PRIVATE stuct - a pointer to this struct is passed back to the caller of the
@@ -181,6 +206,7 @@ typedef struct sf_private_tag
 
 	char			filepath	[SF_FILENAME_LEN] ;
 	char			rsrcpath	[SF_FILENAME_LEN] ;
+	char			directory	[SF_FILENAME_LEN] ;
 	char			filename	[SF_FILENAME_LEN / 4] ;
 
 	char			syserr		[SF_SYSERR_LEN] ;
@@ -196,7 +222,7 @@ typedef struct sf_private_tag
 	** sound files.
 	*/
 	STR_DATA		strings [SF_MAX_STRINGS] ;
-	char			str_storage [SF_BUFFER_LEN] ;
+	char			str_storage [SF_STR_BUFFER_LEN] ;
 	char			*str_end ;
 	int				str_flags ;
 
@@ -209,10 +235,17 @@ typedef struct sf_private_tag
 	int				has_text ;
 	int				do_not_close_descriptor ;
 
-	/* File descriptors for the file and (possibly) the resource fork. */
-	int 			filedes, rsrcdes ;
+#if USE_WINDOWS_API
+	/*
+	**	These fields can only be used in src/file_io.c.
+	**	They are basically the same as a windows file HANDLE.
+	*/
+	void 			*hfile, *hrsrc, *hsaved ;
+#else
+	/* These fields can only be used in src/file_io.c. */
+	int 			filedes, rsrcdes, savedes ;
+#endif
 
-	int				end_of_file ;
 	int				error ;
 
 	int				mode ;			/* Open mode : SFM_READ, SFM_WRITE or SFM_RDWR. */
@@ -236,12 +269,11 @@ typedef struct sf_private_tag
 	SF_INFO			sf ;
 
 	int				have_written ;	/* Has a single write been done to the file? */
-	int				has_peak ;		/* Has a PEAK chunk (AIFF and WAVE) been read? */
-	int				peak_loc ;		/* Write a PEAK chunk at the start or end of the file? */
-	PEAK_CHUNK		*pchunk ;
+	PEAK_INFO		*peak_info ;
 
 	/* Loop Info */
 	SF_LOOP_INFO	*loop_info ;
+	SF_INSTRUMENT	*instrument ;
 
 	sf_count_t		filelength ;	/* Overall length of (embedded) file. */
 	sf_count_t		fileoffset ;	/* Offset in number of bytes from beginning of file. */
@@ -282,25 +314,38 @@ typedef struct sf_private_tag
 	sf_count_t		(*read_float)	(struct sf_private_tag*, float *ptr, sf_count_t len) ;
 	sf_count_t		(*read_double)	(struct sf_private_tag*, double *ptr, sf_count_t len) ;
 
-	sf_count_t		(*write_short)	(struct sf_private_tag*, short *ptr, sf_count_t len) ;
-	sf_count_t		(*write_int)	(struct sf_private_tag*, int *ptr, sf_count_t len) ;
-	sf_count_t		(*write_float)	(struct sf_private_tag*, float *ptr, sf_count_t len) ;
-	sf_count_t		(*write_double)	(struct sf_private_tag*, double *ptr, sf_count_t len) ;
+	sf_count_t		(*write_short)	(struct sf_private_tag*, const short *ptr, sf_count_t len) ;
+	sf_count_t		(*write_int)	(struct sf_private_tag*, const int *ptr, sf_count_t len) ;
+	sf_count_t		(*write_float)	(struct sf_private_tag*, const float *ptr, sf_count_t len) ;
+	sf_count_t		(*write_double)	(struct sf_private_tag*, const double *ptr, sf_count_t len) ;
 
 	sf_count_t		(*seek) 		(struct sf_private_tag*, int mode, sf_count_t samples_from_start) ;
 	int				(*write_header)	(struct sf_private_tag*, int calc_length) ;
 	int				(*command)		(struct sf_private_tag*, int command, void *data, int datasize) ;
-	int				(*close)		(struct sf_private_tag*) ;
+
+	/*
+	**	Separate close functions for the codec and the container.
+	**	The codec close function is always called first.
+	*/
+	int				(*codec_close)		(struct sf_private_tag*) ;
+	int				(*container_close)	(struct sf_private_tag*) ;
 
 	char			*format_desc ;
+
+	/* Virtual I/O functions. */
+	int					virtual_io ;
+	SF_VIRTUAL_IO		vio ;
+	void				*vio_user_data ;
 } SF_PRIVATE ;
 
 
 
 enum
-{	SFE_NO_ERROR		= SF_ERR_NO_ERROR,
-	SFE_BAD_OPEN_FORMAT	= SF_ERR_UNRECOGNISED_FORMAT,
-	SFE_SYSTEM			= SF_ERR_SYSTEM,
+{	SFE_NO_ERROR				= SF_ERR_NO_ERROR,
+	SFE_BAD_OPEN_FORMAT			= SF_ERR_UNRECOGNISED_FORMAT,
+	SFE_SYSTEM					= SF_ERR_SYSTEM,
+	SFE_MALFORMED_FILE			= SF_ERR_MALFORMED_FILE,
+	SFE_UNSUPPORTED_ENCODING	= SF_ERR_UNSUPPORTED_ENCODING,
 
 	SFE_BAD_FILE,
 	SFE_BAD_FILE_READ,
@@ -326,11 +371,12 @@ enum
 	SFE_NO_PIPE_WRITE,
 
 	SFE_INTERNAL,
-	SFE_LOG_OVERRUN,
 	SFE_BAD_CONTROL_CMD,
 	SFE_BAD_ENDIAN,
 	SFE_CHANNEL_COUNT,
 	SFE_BAD_RDWR_FORMAT,
+
+	SFE_BAD_VIRTUAL_IO,
 
 	SFE_INTERLEAVE_MODE,
 	SFE_INTERLEAVE_SEEK,
@@ -360,13 +406,13 @@ enum
 	SFE_WAV_NO_WAVE,
 	SFE_WAV_NO_FMT,
 	SFE_WAV_FMT_SHORT,
-	SFE_WAV_FMT_TOO_BIG,
 	SFE_WAV_BAD_FACT,
 	SFE_WAV_BAD_PEAK,
 	SFE_WAV_PEAK_B4_FMT,
 	SFE_WAV_BAD_FORMAT,
 	SFE_WAV_BAD_BLOCKALIGN,
 	SFE_WAV_NO_DATA,
+	SFE_WAV_BAD_LIST,
 	SFE_WAV_ADPCM_NOT4BIT,
 	SFE_WAV_ADPCM_CHANNELS,
 	SFE_WAV_GSM610_FORMAT,
@@ -468,6 +514,13 @@ enum
 	SFE_SD2_BAD_RSRC,
 	SFE_SD2_BAD_SAMPLE_SIZE,
 
+	SFE_FLAC_BAD_HEADER,
+	SFE_FLAC_NEW_DECODER,
+	SFE_FLAC_INIT_DECODER,
+	SFE_FLAC_LOST_SYNC,
+	SFE_FLAC_BAD_SAMPLE_RATE,
+	SFE_FLAC_UNKOWN_ERROR,
+
 	SFE_MAX_ERROR			/* This must be last in list. */
 } ;
 
@@ -549,8 +602,10 @@ int macos_guess_file_type (SF_PRIVATE *psf, const char *filename) ;
 
 int psf_fopen (SF_PRIVATE *psf, const char *pathname, int flags) ;
 int psf_set_stdio (SF_PRIVATE *psf, int mode) ;
-int psf_filedes_valid (SF_PRIVATE *psf) ;
+int psf_file_valid (SF_PRIVATE *psf) ;
 void psf_set_file (SF_PRIVATE *psf, int fd) ;
+void psf_init_files (SF_PRIVATE *psf) ;
+void psf_use_rsrc (SF_PRIVATE *psf, int on_off) ;
 
 sf_count_t psf_fseek (SF_PRIVATE *psf, sf_count_t offset, int whence) ;
 sf_count_t psf_fread (void *ptr, sf_count_t bytes, sf_count_t count, SF_PRIVATE *psf) ;
@@ -558,6 +613,8 @@ sf_count_t psf_fwrite (const void *ptr, sf_count_t bytes, sf_count_t count, SF_P
 sf_count_t psf_fgets (char *buffer, sf_count_t bufsize, SF_PRIVATE *psf) ;
 sf_count_t psf_ftell (SF_PRIVATE *psf) ;
 sf_count_t psf_get_filelen (SF_PRIVATE *psf) ;
+
+void psf_fsync (SF_PRIVATE *psf) ;
 
 int psf_is_pipe (SF_PRIVATE *psf) ;
 
@@ -579,7 +636,6 @@ int psf_ferror (SF_PRIVATE *psf) ;
 
 int		aiff_open	(SF_PRIVATE *psf) ;
 int		au_open		(SF_PRIVATE *psf) ;
-int		au_nh_open	(SF_PRIVATE *psf) ;	/* Headerless version of AU. */
 int		avr_open	(SF_PRIVATE *psf) ;
 int		htk_open	(SF_PRIVATE *psf) ;
 int		ircam_open	(SF_PRIVATE *psf) ;
@@ -596,9 +652,12 @@ int		voc_open	(SF_PRIVATE *psf) ;
 int		w64_open	(SF_PRIVATE *psf) ;
 int		wav_open	(SF_PRIVATE *psf) ;
 int		xi_open		(SF_PRIVATE *psf) ;
+int		flac_open	(SF_PRIVATE *psf) ;
+int		caf_open	(SF_PRIVATE *psf) ;
 
 /* In progress. Do not currently work. */
 
+int		mpeg_open	(SF_PRIVATE *psf) ;
 int		ogg_open	(SF_PRIVATE *psf) ;
 int		rx2_open	(SF_PRIVATE *psf) ;
 int		txw_open	(SF_PRIVATE *psf) ;
@@ -611,14 +670,16 @@ int		macbinary3_open (SF_PRIVATE *psf) ;
 **	Init functions for a number of common data encodings.
 */
 
-int 	pcm_init		(SF_PRIVATE *psf) ;
-int 	ulaw_init		(SF_PRIVATE *psf) ;
-int 	alaw_init		(SF_PRIVATE *psf) ;
-int 	float32_init	(SF_PRIVATE *psf) ;
-int 	double64_init	(SF_PRIVATE *psf) ;
-int 	dwvw_init		(SF_PRIVATE *psf, int bitwidth) ;
-int		gsm610_init 	(SF_PRIVATE *psf) ;
-int		vox_adpcm_init 	(SF_PRIVATE *psf) ;
+int		pcm_init		(SF_PRIVATE *psf) ;
+int		ulaw_init		(SF_PRIVATE *psf) ;
+int		alaw_init		(SF_PRIVATE *psf) ;
+int		float32_init	(SF_PRIVATE *psf) ;
+int		double64_init	(SF_PRIVATE *psf) ;
+int		dwvw_init		(SF_PRIVATE *psf, int bitwidth) ;
+int		gsm610_init		(SF_PRIVATE *psf) ;
+int		vox_adpcm_init	(SF_PRIVATE *psf) ;
+int		flac_init		(SF_PRIVATE *psf) ;
+int		g72x_init 		(SF_PRIVATE * psf) ;
 
 int 	dither_init		(SF_PRIVATE *psf, int mode) ;
 
@@ -635,12 +696,14 @@ int		interleave_init (SF_PRIVATE *psf) ;
 
 void	*psf_memset (void *s, int c, sf_count_t n) ;
 
+SF_INSTRUMENT * psf_instrument_alloc (void) ;
+
 /*------------------------------------------------------------------------------------
 ** Here's how we fix systems which don't snprintf / vsnprintf.
 ** Systems without these functions should use the
 */
 
-#if (defined (WIN32) || defined (_WIN32))
+#if USE_WINDOWS_API
 #define	LSF_SNPRINTF	_snprintf
 #elif		(HAVE_SNPRINTF && ! FORCE_MISSING_SNPRINTF)
 #define	LSF_SNPRINTF	snprintf
@@ -649,7 +712,7 @@ int missing_snprintf (char *str, size_t n, char const *fmt, ...) ;
 #define	LSF_SNPRINTF	missing_snprintf
 #endif
 
-#if (defined (WIN32) || defined (_WIN32))
+#if USE_WINDOWS_API
 #define	LSF_VSNPRINTF	_vsnprintf
 #elif		(HAVE_VSNPRINTF && ! FORCE_MISSING_SNPRINTF)
 #define	LSF_VSNPRINTF	vsnprintf
@@ -657,8 +720,6 @@ int missing_snprintf (char *str, size_t n, char const *fmt, ...) ;
 int missing_vsnprintf (char *str, size_t n, const char *fmt, ...) ;
 #define	LSF_VSNPRINTF	missing_vsnprintf
 #endif
-
-#endif /* COMMON_H_INCLUDED */
 
 /*------------------------------------------------------------------------------------
 ** Extra commands for sf_command(). Not for public use yet.
@@ -682,6 +743,9 @@ int sf_dither_int		(const SF_DITHER_INFO *dither, const int *in, int *out, int c
 int sf_dither_float		(const SF_DITHER_INFO *dither, const float *in, float *out, int count) ;
 int sf_dither_double	(const SF_DITHER_INFO *dither, const double *in, double *out, int count) ;
 #endif
+
+#endif /* SNDFILE_COMMON_H */
+
 /*
 ** Do not edit or modify anything in this comment block.
 ** The arch-tag line is a file identity tag for the GNU Arch

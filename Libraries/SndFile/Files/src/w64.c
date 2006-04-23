@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 1999-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 1999-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -16,13 +16,14 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<string.h>
 #include	<ctype.h>
 #include	<time.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"common.h"
 #include	"wav_w64.h"
@@ -140,7 +141,7 @@ w64_open	(SF_PRIVATE *psf)
 		psf->write_header = w64_write_header ;
 		} ;
 
-	psf->close = w64_close ;
+	psf->container_close = w64_close ;
 
 	switch (subformat)
 	{	case SF_FORMAT_PCM_U8 :
@@ -201,6 +202,7 @@ w64_read_header	(SF_PRIVATE *psf, int *blockalign, int *framesperblock)
 	int			parsestage = 0, error, done = 0 ;
 
 	/* Set position to start of file to begin reading header. */
+	memset (&wav_fmt, 0, sizeof (wav_fmt)) ;
 	psf_binheader_readf (psf, "p", 0) ;
 
 	while (! done)
@@ -304,9 +306,6 @@ w64_read_header	(SF_PRIVATE *psf, int *blockalign, int *framesperblock)
 
 		if (psf_ftell (psf) >= (psf->filelength - (2 * SIGNED_SIZEOF (dword))))
 			break ;
-
-		if (psf->logindex >= SIGNED_SIZEOF (psf->logbuffer) - 2)
-			return SFE_LOG_OVERRUN ;
 		} ; /* while (1) */
 
 	if (! psf->dataoffset)
@@ -316,8 +315,6 @@ w64_read_header	(SF_PRIVATE *psf, int *blockalign, int *framesperblock)
 
 	if (psf_ftell (psf) != psf->dataoffset)
 		psf_fseek (psf, psf->dataoffset, SEEK_SET) ;
-
-	psf->close = w64_close ;
 
 	if (psf->blockwidth)
 	{	if (psf->filelength - psf->dataoffset < psf->datalength)
@@ -546,7 +543,7 @@ w64_write_header (SF_PRIVATE *psf, int calc_length)
 		psf_binheader_writef (psf, "z", fmt_pad) ;
 
 	if (add_fact_chunk)
-		psf_binheader_writef (psf, "eh88", fact_MARKER16, 16 + 8 + 8, psf->sf.frames) ;
+		psf_binheader_writef (psf, "eh88", fact_MARKER16, (sf_count_t) (16 + 8 + 8), psf->sf.frames) ;
 
 	psf_binheader_writef (psf, "eh8", data_MARKER16, psf->datalength + 24) ;
 	psf_fwrite (psf->header, psf->headindex, 1, psf) ;

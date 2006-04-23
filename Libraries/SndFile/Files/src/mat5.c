@@ -16,13 +16,14 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
+
 #include	<stdio.h>
 #include	<fcntl.h>
 #include	<string.h>
 #include	<ctype.h>
 
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"common.h"
 #include	"float_cast.h"
@@ -111,7 +112,7 @@ mat5_open	(SF_PRIVATE *psf)
 		psf->write_header = mat5_write_header ;
 		} ;
 
-	psf->close = mat5_close ;
+	psf->container_close = mat5_close ;
 
 	psf->blockwidth = psf->bytewidth * psf->sf.channels ;
 
@@ -153,7 +154,8 @@ mat5_close	(SF_PRIVATE *psf)
 
 static int
 mat5_write_header (SF_PRIVATE *psf, int calc_length)
-{	static const char	*sr_name = "samplerate\0\0\0\0\0\0\0\0\0\0\0" ;
+{	static const char	*filename = "MATLAB 5.0 MAT-file, written by " PACKAGE "-" VERSION ", " ;
+	static const char	*sr_name = "samplerate\0\0\0\0\0\0\0\0\0\0\0" ;
 	static const char	*wd_name = "wavedata\0" ;
 	sf_count_t	current, datasize ;
 	int			encoding ;
@@ -202,9 +204,8 @@ mat5_write_header (SF_PRIVATE *psf, int calc_length)
 	psf->headindex = 0 ;
 	psf_fseek (psf, 0, SEEK_SET) ;
 
-	psf_binheader_writef (psf, "S", "MATLAB 5.0 MAT-file, written by " PACKAGE "-" VERSION ", ") ;
-	psf_get_date_str (psf->u.scbuf, sizeof (psf->u.scbuf)) ;
-	psf_binheader_writef (psf, "jS", -1, psf->u.scbuf) ;
+	psf_get_date_str (psf->u.cbuf, sizeof (psf->u.scbuf)) ;
+	psf_binheader_writef (psf, "bb", filename, strlen (filename), psf->u.cbuf, strlen (psf->u.cbuf) + 1) ;
 
 	memset (psf->u.scbuf, ' ', 124 - psf->headindex) ;
 	psf_binheader_writef (psf, "b", psf->u.scbuf, 124 - psf->headindex) ;
@@ -260,11 +261,11 @@ mat5_read_header (SF_PRIVATE *psf)
 	short	version, endian ;
 	int		type, size, flags1, flags2, rows, cols ;
 
-	psf_binheader_readf (psf, "pb", 0, psf->u.scbuf, 124) ;
+	psf_binheader_readf (psf, "pb", 0, psf->u.cbuf, 124) ;
 
 	psf->u.scbuf [125] = 0 ;
 
-	if (strlen (psf->u.scbuf) >= 124)
+	if (strlen (psf->u.cbuf) >= 124)
 		return SFE_UNIMPLEMENTED ;
 
 	if (strstr (psf->u.cbuf, "MATLAB 5.0 MAT-file") == psf->u.cbuf)

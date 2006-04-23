@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2003,2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 2003-2006 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -16,7 +16,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#include "sfconfig.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,7 +105,7 @@ xi_open	(SF_PRIVATE *psf)
 		psf->write_header = xi_write_header ;
 		} ;
 
-	psf->close = xi_close ;
+	psf->container_close = xi_close ;
 	psf->seek = dpcm_seek ;
 
 	psf->sf.seekable = SF_FALSE ;
@@ -143,20 +143,20 @@ static sf_count_t dpcm_read_dsc2i (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
 static sf_count_t dpcm_read_dsc2f (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
 static sf_count_t dpcm_read_dsc2d (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 
-static sf_count_t dpcm_write_s2dsc (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t dpcm_write_i2dsc (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t dpcm_write_f2dsc (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t dpcm_write_d2dsc (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
+static sf_count_t dpcm_write_s2dsc (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t dpcm_write_i2dsc (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t dpcm_write_f2dsc (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t dpcm_write_d2dsc (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
 
 static sf_count_t dpcm_read_dles2s (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
 static sf_count_t dpcm_read_dles2i (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
 static sf_count_t dpcm_read_dles2f (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
 static sf_count_t dpcm_read_dles2d (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 
-static sf_count_t dpcm_write_s2dles (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t dpcm_write_i2dles (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t dpcm_write_f2dles (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t dpcm_write_d2dles (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
+static sf_count_t dpcm_write_s2dles (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t dpcm_write_i2dles (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t dpcm_write_f2dles (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t dpcm_write_d2dles (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
 
 static int
 dpcm_init (SF_PRIVATE *psf)
@@ -226,7 +226,7 @@ dpcm_seek (SF_PRIVATE *psf, int mode, sf_count_t offset)
 
 	if (psf->datalength < 0 || psf->dataoffset < 0)
 	{	psf->error = SFE_BAD_SEEK ;
-		return	((sf_count_t) -1) ;
+		return	PSF_SEEK_ERROR ;
 		} ;
 
 	if (offset == 0)
@@ -237,13 +237,13 @@ dpcm_seek (SF_PRIVATE *psf, int mode, sf_count_t offset)
 
 	if (offset < 0 || offset > psf->sf.frames)
 	{	psf->error = SFE_BAD_SEEK ;
-		return	((sf_count_t) -1) ;
+		return	PSF_SEEK_ERROR ;
 		} ;
 
 	if (mode != SFM_READ)
 	{	/* What to do about write??? */
 		psf->error = SFE_BAD_SEEK ;
-		return	((sf_count_t) -1) ;
+		return	PSF_SEEK_ERROR ;
 		} ;
 
 	psf_fseek (psf, psf->dataoffset, SEEK_SET) ;
@@ -303,11 +303,10 @@ xi_write_header (SF_PRIVATE *psf, int calc_length)
 	/* Jump volume loop (3 bytes), pan loop (3), envelope flags (3), vibrato (3)
 	** fade out (2), 22 unknown bytes, and then write sample_count (2 bytes).
 	*/
-	psf_binheader_writef (psf, "ez2z2", (size_t) (4 * 3), 0x1234, (size_t) 22, 1) ;
+	psf_binheader_writef (psf, "ez2z2", (size_t) (4 * 3), 0x1234, make_size_t (22), 1) ;
 
-psf->sf.frames = 12 ;
-pxi->loop_begin = 0 ;
-pxi->loop_end = 0 ;
+	pxi->loop_begin = 0 ;
+	pxi->loop_end = 0 ;
 
 	psf_binheader_writef (psf, "et844", psf->sf.frames, pxi->loop_begin, pxi->loop_end) ;
 
@@ -389,6 +388,9 @@ xi_read_header (SF_PRIVATE *psf)
 	if (sample_count > MAX_XI_SAMPLES)
 		return SFE_XI_EXCESS_SAMPLES ;
 
+	if (psf->instrument == NULL && (psf->instrument = psf_instrument_alloc ()) == NULL)
+		return SFE_MALLOC_FAILED ;
+
 	/* Log all data for each sample. */
 	for (k = 0 ; k < sample_count ; k++)
 	{	psf_binheader_readf (psf, "e444", &(sample_sizes [k]), &loop_begin, &loop_end) ;
@@ -397,7 +399,12 @@ xi_read_header (SF_PRIVATE *psf)
 		psf_binheader_readf (psf, "bb", buffer, 6, name, 22) ;
 		name [21] = 0 ;
 
-		psf_log_printf (psf, "Sample #%d\n  name    : %s\n  size    : %d\n", k + 1, name, sample_sizes [k]) ;
+		psf_log_printf (psf, "Sample #%d\n  name    : %s\n", k + 1, name) ;
+
+		psf_log_printf (psf, "  size    : %d\n", sample_sizes [k]) ;
+
+
+
 		psf_log_printf (psf, "  loop\n    begin : %d\n    end   : %d\n", loop_begin, loop_end) ;
 
 		psf_log_printf (psf, "  volume  : %u\n  f. tune : %d\n  flags   : 0x%02X ",
@@ -453,8 +460,6 @@ xi_read_header (SF_PRIVATE *psf)
  	if (psf_fseek (psf, psf->dataoffset, SEEK_SET) != psf->dataoffset)
 		return SFE_BAD_SEEK ;
 
-	psf->close = xi_close ;
-
 	psf->endian = SF_ENDIAN_LITTLE ;
 	psf->sf.channels = 1 ; /* Always mono */
 	psf->sf.samplerate = 44100 ; /* Always */
@@ -463,6 +468,11 @@ xi_read_header (SF_PRIVATE *psf)
 
 	if (! psf->sf.frames && psf->blockwidth)
 		psf->sf.frames = (psf->filelength - psf->dataoffset) / psf->blockwidth ;
+
+	psf->instrument->basenote = 0 ;
+	psf->instrument->gain = 1 ;
+	psf->instrument->velocity_lo = psf->instrument->key_lo = 0 ;
+	psf->instrument->velocity_hi = psf->instrument->key_hi = 127 ;
 
 	return 0 ;
 } /* xi_read_header */
@@ -698,19 +708,19 @@ dpcm_read_dles2d (SF_PRIVATE *psf, double *ptr, sf_count_t len)
 /*==============================================================================
 */
 
-static void s2dsc_array (XI_PRIVATE *pxi, short *src, signed char *dest, int count) ;
-static void i2dsc_array (XI_PRIVATE *pxi, int *src, signed char *dest, int count) ;
-static void f2dsc_array (XI_PRIVATE *pxi, float *src, signed char *dest, int count, float normfact) ;
-static void d2dsc_array (XI_PRIVATE *pxi, double *src, signed char *dest, int count, double normfact) ;
+static void s2dsc_array (XI_PRIVATE *pxi, const short *src, signed char *dest, int count) ;
+static void i2dsc_array (XI_PRIVATE *pxi, const int *src, signed char *dest, int count) ;
+static void f2dsc_array (XI_PRIVATE *pxi, const float *src, signed char *dest, int count, float normfact) ;
+static void d2dsc_array (XI_PRIVATE *pxi, const double *src, signed char *dest, int count, double normfact) ;
 
-static void	s2dles_array (XI_PRIVATE *pxi, short *src, short *dest, int count) ;
-static void i2dles_array (XI_PRIVATE *pxi, int *src, short *dest, int count) ;
-static void f2dles_array (XI_PRIVATE *pxi, float *src, short *dest, int count, float normfact) ;
-static void d2dles_array (XI_PRIVATE *pxi, double *src, short *dest, int count, double normfact) ;
+static void	s2dles_array (XI_PRIVATE *pxi, const short *src, short *dest, int count) ;
+static void i2dles_array (XI_PRIVATE *pxi, const int *src, short *dest, int count) ;
+static void f2dles_array (XI_PRIVATE *pxi, const float *src, short *dest, int count, float normfact) ;
+static void d2dles_array (XI_PRIVATE *pxi, const double *src, short *dest, int count, double normfact) ;
 
 
 static sf_count_t
-dpcm_write_s2dsc (SF_PRIVATE *psf, short *ptr, sf_count_t len)
+dpcm_write_s2dsc (SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	XI_PRIVATE	*pxi ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
@@ -735,7 +745,7 @@ dpcm_write_s2dsc (SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* dpcm_write_s2dsc */
 
 static sf_count_t
-dpcm_write_i2dsc (SF_PRIVATE *psf, int *ptr, sf_count_t len)
+dpcm_write_i2dsc (SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	XI_PRIVATE	*pxi ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
@@ -760,7 +770,7 @@ dpcm_write_i2dsc (SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* dpcm_write_i2dsc */
 
 static sf_count_t
-dpcm_write_f2dsc (SF_PRIVATE *psf, float *ptr, sf_count_t len)
+dpcm_write_f2dsc (SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 {	XI_PRIVATE	*pxi ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
@@ -788,7 +798,7 @@ dpcm_write_f2dsc (SF_PRIVATE *psf, float *ptr, sf_count_t len)
 } /* dpcm_write_f2dsc */
 
 static sf_count_t
-dpcm_write_d2dsc (SF_PRIVATE *psf, double *ptr, sf_count_t len)
+dpcm_write_d2dsc (SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 {	XI_PRIVATE	*pxi ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
@@ -817,7 +827,7 @@ dpcm_write_d2dsc (SF_PRIVATE *psf, double *ptr, sf_count_t len)
 
 
 static sf_count_t
-dpcm_write_s2dles (SF_PRIVATE *psf, short *ptr, sf_count_t len)
+dpcm_write_s2dles (SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	XI_PRIVATE	*pxi ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
@@ -842,7 +852,7 @@ dpcm_write_s2dles (SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* dpcm_write_s2dles */
 
 static sf_count_t
-dpcm_write_i2dles (SF_PRIVATE *psf, int *ptr, sf_count_t len)
+dpcm_write_i2dles (SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	XI_PRIVATE	*pxi ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
@@ -867,7 +877,7 @@ dpcm_write_i2dles (SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* dpcm_write_i2dles */
 
 static sf_count_t
-dpcm_write_f2dles (SF_PRIVATE *psf, float *ptr, sf_count_t len)
+dpcm_write_f2dles (SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 {	XI_PRIVATE	*pxi ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
@@ -895,7 +905,7 @@ dpcm_write_f2dles (SF_PRIVATE *psf, float *ptr, sf_count_t len)
 } /* dpcm_write_f2dles */
 
 static sf_count_t
-dpcm_write_d2dles (SF_PRIVATE *psf, double *ptr, sf_count_t len)
+dpcm_write_d2dles (SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 {	XI_PRIVATE	*pxi ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
@@ -990,7 +1000,7 @@ dsc2d_array (XI_PRIVATE *pxi, signed char *src, int count, double *dest, double 
 */
 
 static void
-s2dsc_array (XI_PRIVATE *pxi, short *src, signed char *dest, int count)
+s2dsc_array (XI_PRIVATE *pxi, const short *src, signed char *dest, int count)
 {	signed char	last_val, current ;
 	int			k ;
 
@@ -1006,7 +1016,7 @@ s2dsc_array (XI_PRIVATE *pxi, short *src, signed char *dest, int count)
 } /* s2dsc_array */
 
 static void
-i2dsc_array (XI_PRIVATE *pxi, int *src, signed char *dest, int count)
+i2dsc_array (XI_PRIVATE *pxi, const int *src, signed char *dest, int count)
 {	signed char	last_val, current ;
 	int			k ;
 
@@ -1022,7 +1032,7 @@ i2dsc_array (XI_PRIVATE *pxi, int *src, signed char *dest, int count)
 } /* i2dsc_array */
 
 static void
-f2dsc_array (XI_PRIVATE *pxi, float *src, signed char *dest, int count, float normfact)
+f2dsc_array (XI_PRIVATE *pxi, const float *src, signed char *dest, int count, float normfact)
 {	signed char	last_val, current ;
 	int			k ;
 
@@ -1038,7 +1048,7 @@ f2dsc_array (XI_PRIVATE *pxi, float *src, signed char *dest, int count, float no
 } /* f2dsc_array */
 
 static void
-d2dsc_array (XI_PRIVATE *pxi, double *src, signed char *dest, int count, double normfact)
+d2dsc_array (XI_PRIVATE *pxi, const double *src, signed char *dest, int count, double normfact)
 {	signed char	last_val, current ;
 	int			k ;
 
@@ -1120,7 +1130,7 @@ dles2d_array (XI_PRIVATE *pxi, short *src, int count, double *dest, double normf
 */
 
 static void
-s2dles_array (XI_PRIVATE *pxi, short *src, short *dest, int count)
+s2dles_array (XI_PRIVATE *pxi, const short *src, short *dest, int count)
 {	short	diff, last_val ;
 	int		k ;
 
@@ -1136,7 +1146,7 @@ s2dles_array (XI_PRIVATE *pxi, short *src, short *dest, int count)
 } /* s2dles_array */
 
 static void
-i2dles_array (XI_PRIVATE *pxi, int *src, short *dest, int count)
+i2dles_array (XI_PRIVATE *pxi, const int *src, short *dest, int count)
 {	short	diff, last_val ;
 	int		k ;
 
@@ -1152,7 +1162,7 @@ i2dles_array (XI_PRIVATE *pxi, int *src, short *dest, int count)
 } /* i2dles_array */
 
 static void
-f2dles_array (XI_PRIVATE *pxi, float *src, short *dest, int count, float normfact)
+f2dles_array (XI_PRIVATE *pxi, const float *src, short *dest, int count, float normfact)
 {	short	diff, last_val, current ;
 	int		k ;
 
@@ -1169,7 +1179,7 @@ f2dles_array (XI_PRIVATE *pxi, float *src, short *dest, int count, float normfac
 } /* f2dles_array */
 
 static void
-d2dles_array (XI_PRIVATE *pxi, double *src, short *dest, int count, double normfact)
+d2dles_array (XI_PRIVATE *pxi, const double *src, short *dest, int count, double normfact)
 {	short	diff, last_val, current ;
 	int		k ;
 

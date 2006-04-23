@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 1999-2004 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (C) 1999-2005 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
@@ -16,8 +16,9 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include	"sfconfig.h"
+
 #include	"sndfile.h"
-#include	"config.h"
 #include	"sfendian.h"
 #include	"float_cast.h"
 #include	"common.h"
@@ -66,41 +67,41 @@ static sf_count_t	pcm_read_let2d	(SF_PRIVATE *psf, double *ptr, sf_count_t len) 
 static sf_count_t	pcm_read_bei2d	(SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 static sf_count_t	pcm_read_lei2d	(SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
 
-static sf_count_t	pcm_write_s2sc	(SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_s2uc	(SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_s2bes (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_s2les (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_s2bet (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_s2let (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_s2bei (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_s2lei (SF_PRIVATE *psf, short *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_s2sc	(SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_s2uc	(SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_s2bes (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_s2les (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_s2bet (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_s2let (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_s2bei (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_s2lei (SF_PRIVATE *psf, const short *ptr, sf_count_t len) ;
 
-static sf_count_t	pcm_write_i2sc	(SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_i2uc	(SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_i2bes (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_i2les (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_i2bet (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_i2let (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_i2bei (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_i2lei (SF_PRIVATE *psf, int *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_i2sc	(SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_i2uc	(SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_i2bes (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_i2les (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_i2bet (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_i2let (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_i2bei (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_i2lei (SF_PRIVATE *psf, const int *ptr, sf_count_t len) ;
 
-static sf_count_t	pcm_write_f2sc	(SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_f2uc	(SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_f2bes (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_f2les (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_f2bet (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_f2let (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_f2bei (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_f2lei (SF_PRIVATE *psf, float *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_f2sc	(SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_f2uc	(SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_f2bes (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_f2les (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_f2bet (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_f2let (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_f2bei (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_f2lei (SF_PRIVATE *psf, const float *ptr, sf_count_t len) ;
 
-static sf_count_t	pcm_write_d2sc	(SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_d2uc	(SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_d2bes (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_d2les (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_d2bet (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_d2let (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_d2bei (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
-static sf_count_t	pcm_write_d2lei (SF_PRIVATE *psf, double *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_d2sc	(SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_d2uc	(SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_d2bes (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_d2les (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_d2bet (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_d2let (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_d2bei (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
+static sf_count_t	pcm_write_d2lei (SF_PRIVATE *psf, const double *ptr, sf_count_t len) ;
 
 /*-----------------------------------------------------------------------------------------------
 */
@@ -558,19 +559,19 @@ bei2d_array (int *src, int count, double *dest, double normfact)
 */
 
 static inline void
-s2sc_array	(short *src, signed char *dest, int count)
+s2sc_array	(const short *src, signed char *dest, int count)
 {	while (--count >= 0)
 		dest [count] = src [count] >> 8 ;
 } /* s2sc_array */
 
 static inline void
-s2uc_array	(short *src, unsigned char *dest, int count)
+s2uc_array	(const short *src, unsigned char *dest, int count)
 {	while (--count >= 0)
 		dest [count] = (src [count] >> 8) + 0x80 ;
 } /* s2uc_array */
 
 static inline void
-s2let_array (short *src, tribyte *dest, int count)
+s2let_array (const short *src, tribyte *dest, int count)
 {	unsigned char	*ucptr ;
 
 	ucptr = ((unsigned char*) dest) + 3 * count ;
@@ -583,7 +584,7 @@ s2let_array (short *src, tribyte *dest, int count)
 } /* s2let_array */
 
 static inline void
-s2bet_array (short *src, tribyte *dest, int count)
+s2bet_array (const short *src, tribyte *dest, int count)
 {	unsigned char	*ucptr ;
 
 	ucptr = ((unsigned char*) dest) + 3 * count ;
@@ -596,7 +597,7 @@ s2bet_array (short *src, tribyte *dest, int count)
 } /* s2bet_array */
 
 static inline void
-s2lei_array (short *src, int *dest, int count)
+s2lei_array (const short *src, int *dest, int count)
 {	unsigned char	*ucptr ;
 
 	ucptr = ((unsigned char*) dest) + 4 * count ;
@@ -610,7 +611,7 @@ s2lei_array (short *src, int *dest, int count)
 } /* s2lei_array */
 
 static inline void
-s2bei_array (short *src, int *dest, int count)
+s2bei_array (const short *src, int *dest, int count)
 {	unsigned char	*ucptr ;
 
 	ucptr = ((unsigned char*) dest) + 4 * count ;
@@ -627,19 +628,19 @@ s2bei_array (short *src, int *dest, int count)
 */
 
 static inline void
-i2sc_array	(int *src, signed char *dest, int count)
+i2sc_array	(const int *src, signed char *dest, int count)
 {	while (--count >= 0)
 		dest [count] = (src [count] >> 24) ;
 } /* i2sc_array */
 
 static inline void
-i2uc_array	(int *src, unsigned char *dest, int count)
+i2uc_array	(const int *src, unsigned char *dest, int count)
 {	while (--count >= 0)
 		dest [count] = ((src [count] >> 24) + 128) ;
 } /* i2uc_array */
 
 static inline void
-i2bes_array (int *src, short *dest, int count)
+i2bes_array (const int *src, short *dest, int count)
 {	unsigned char	*ucptr ;
 
 	ucptr = ((unsigned char*) dest) + 2 * count ;
@@ -651,7 +652,7 @@ i2bes_array (int *src, short *dest, int count)
 } /* i2bes_array */
 
 static inline void
-i2les_array (int *src, short *dest, int count)
+i2les_array (const int *src, short *dest, int count)
 {	unsigned char	*ucptr ;
 
 	ucptr = ((unsigned char*) dest) + 2 * count ;
@@ -663,7 +664,7 @@ i2les_array (int *src, short *dest, int count)
 } /* i2les_array */
 
 static inline void
-i2let_array (int *src, tribyte *dest, int count)
+i2let_array (const int *src, tribyte *dest, int count)
 {	unsigned char	*ucptr ;
 	int				value ;
 
@@ -678,7 +679,7 @@ i2let_array (int *src, tribyte *dest, int count)
 } /* i2let_array */
 
 static inline void
-i2bet_array (int *src, tribyte *dest, int count)
+i2bet_array (const int *src, tribyte *dest, int count)
 {	unsigned char	*ucptr ;
 	int				value ;
 
@@ -1393,7 +1394,7 @@ pcm_read_lei2d (SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static sf_count_t
-pcm_write_s2sc	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+pcm_write_s2sc	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1414,7 +1415,7 @@ pcm_write_s2sc	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* pcm_write_s2sc */
 
 static sf_count_t
-pcm_write_s2uc	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+pcm_write_s2uc	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1435,7 +1436,7 @@ pcm_write_s2uc	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* pcm_write_s2uc */
 
 static sf_count_t
-pcm_write_s2bes	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+pcm_write_s2bes	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1460,7 +1461,7 @@ pcm_write_s2bes	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* pcm_write_s2bes */
 
 static sf_count_t
-pcm_write_s2les	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+pcm_write_s2les	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1484,7 +1485,7 @@ pcm_write_s2les	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* pcm_write_s2les */
 
 static sf_count_t
-pcm_write_s2bet	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+pcm_write_s2bet	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1505,7 +1506,7 @@ pcm_write_s2bet	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* pcm_write_s2bet */
 
 static sf_count_t
-pcm_write_s2let	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+pcm_write_s2let	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1526,7 +1527,7 @@ pcm_write_s2let	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* pcm_write_s2let */
 
 static sf_count_t
-pcm_write_s2bei	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+pcm_write_s2bei	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1547,7 +1548,7 @@ pcm_write_s2bei	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 } /* pcm_write_s2bei */
 
 static sf_count_t
-pcm_write_s2lei	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
+pcm_write_s2lei	(SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1571,7 +1572,7 @@ pcm_write_s2lei	(SF_PRIVATE *psf, short *ptr, sf_count_t len)
 */
 
 static sf_count_t
-pcm_write_i2sc	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+pcm_write_i2sc	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1592,7 +1593,7 @@ pcm_write_i2sc	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* pcm_write_i2sc */
 
 static sf_count_t
-pcm_write_i2uc	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+pcm_write_i2uc	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1613,7 +1614,7 @@ pcm_write_i2uc	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* pcm_write_i2uc */
 
 static sf_count_t
-pcm_write_i2bes	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+pcm_write_i2bes	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1634,7 +1635,7 @@ pcm_write_i2bes	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* pcm_write_i2bes */
 
 static sf_count_t
-pcm_write_i2les	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+pcm_write_i2les	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1655,7 +1656,7 @@ pcm_write_i2les	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* pcm_write_i2les */
 
 static sf_count_t
-pcm_write_i2bet	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+pcm_write_i2bet	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1676,7 +1677,7 @@ pcm_write_i2bet	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* pcm_write_i2bet */
 
 static sf_count_t
-pcm_write_i2let	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+pcm_write_i2let	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1697,7 +1698,7 @@ pcm_write_i2let	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* pcm_write_i2les */
 
 static sf_count_t
-pcm_write_i2bei	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+pcm_write_i2bei	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1721,7 +1722,7 @@ pcm_write_i2bei	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 } /* pcm_write_i2bei */
 
 static sf_count_t
-pcm_write_i2lei	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
+pcm_write_i2lei	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 {	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1750,7 +1751,7 @@ pcm_write_i2lei	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 */
 
 static void
-f2sc_array (float *src, signed char *dest, int count, int normalize)
+f2sc_array (const float *src, signed char *dest, int count, int normalize)
 {	float normfact ;
 
 	normfact = normalize ? (1.0 * 0x7F) : 1.0 ;
@@ -1761,7 +1762,7 @@ f2sc_array (float *src, signed char *dest, int count, int normalize)
 } /* f2sc_array */
 
 static void
-f2sc_clip_array (float *src, signed char *dest, int count, int normalize)
+f2sc_clip_array (const float *src, signed char *dest, int count, int normalize)
 {	float	normfact, scaled_value ;
 
 	normfact = normalize ? (8.0 * 0x10000000) : (1.0 * 0x1000000) ;
@@ -1782,8 +1783,8 @@ f2sc_clip_array (float *src, signed char *dest, int count, int normalize)
 } /* f2sc_clip_array */
 
 static sf_count_t
-pcm_write_f2sc	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
-{	void		(*convert) (float *, signed char *, int, int) ;
+pcm_write_f2sc	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
+{	void		(*convert) (const float *, signed char *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1808,7 +1809,7 @@ pcm_write_f2sc	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 */
 
 static	void
-f2uc_array	(float *src, unsigned char *dest, int count, int normalize)
+f2uc_array	(const float *src, unsigned char *dest, int count, int normalize)
 {	float normfact ;
 
 	normfact = normalize ? (1.0 * 0x7F) : 1.0 ;
@@ -1819,7 +1820,7 @@ f2uc_array	(float *src, unsigned char *dest, int count, int normalize)
 } /* f2uc_array */
 
 static	void
-f2uc_clip_array	(float *src, unsigned char *dest, int count, int normalize)
+f2uc_clip_array	(const float *src, unsigned char *dest, int count, int normalize)
 {	float	normfact, scaled_value ;
 
 	normfact = normalize ? (8.0 * 0x10000000) : (1.0 * 0x1000000) ;
@@ -1840,8 +1841,8 @@ f2uc_clip_array	(float *src, unsigned char *dest, int count, int normalize)
 } /* f2uc_clip_array */
 
 static sf_count_t
-pcm_write_f2uc	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
-{	void		(*convert) (float *, unsigned char *, int, int) ;
+pcm_write_f2uc	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
+{	void		(*convert) (const float *, unsigned char *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1866,7 +1867,7 @@ pcm_write_f2uc	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 */
 
 static void
-f2bes_array (float *src, short *dest, int count, int normalize)
+f2bes_array (const float *src, short *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float 			normfact ;
 	short			value ;
@@ -1883,7 +1884,7 @@ f2bes_array (float *src, short *dest, int count, int normalize)
 } /* f2bes_array */
 
 static void
-f2bes_clip_array (float *src, short *dest, int count, int normalize)
+f2bes_clip_array (const float *src, short *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact, scaled_value ;
 	int				value ;
@@ -1912,8 +1913,8 @@ f2bes_clip_array (float *src, short *dest, int count, int normalize)
 } /* f2bes_clip_array */
 
 static sf_count_t
-pcm_write_f2bes	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
-{	void		(*convert) (float *, short *t, int, int) ;
+pcm_write_f2bes	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
+{	void		(*convert) (const float *, short *t, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -1938,7 +1939,7 @@ pcm_write_f2bes	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 */
 
 static void
-f2les_array (float *src, short *dest, int count, int normalize)
+f2les_array (const float *src, short *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact ;
 	int				value ;
@@ -1955,7 +1956,7 @@ f2les_array (float *src, short *dest, int count, int normalize)
 } /* f2les_array */
 
 static void
-f2les_clip_array (float *src, short *dest, int count, int normalize)
+f2les_clip_array (const float *src, short *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact, scaled_value ;
 	int				value ;
@@ -1984,8 +1985,8 @@ f2les_clip_array (float *src, short *dest, int count, int normalize)
 } /* f2les_clip_array */
 
 static sf_count_t
-pcm_write_f2les	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
-{	void		(*convert) (float *, short *t, int, int) ;
+pcm_write_f2les	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
+{	void		(*convert) (const float *, short *t, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2010,7 +2011,7 @@ pcm_write_f2les	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 */
 
 static void
-f2let_array (float *src, tribyte *dest, int count, int normalize)
+f2let_array (const float *src, tribyte *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float 			normfact ;
 	int				value ;
@@ -2028,7 +2029,7 @@ f2let_array (float *src, tribyte *dest, int count, int normalize)
 } /* f2let_array */
 
 static void
-f2let_clip_array (float *src, tribyte *dest, int count, int normalize)
+f2let_clip_array (const float *src, tribyte *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact, scaled_value ;
 	int				value ;
@@ -2060,8 +2061,8 @@ f2let_clip_array (float *src, tribyte *dest, int count, int normalize)
 } /* f2let_clip_array */
 
 static sf_count_t
-pcm_write_f2let	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
-{	void		(*convert) (float *, tribyte *, int, int) ;
+pcm_write_f2let	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
+{	void		(*convert) (const float *, tribyte *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2086,7 +2087,7 @@ pcm_write_f2let	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 */
 
 static void
-f2bet_array (float *src, tribyte *dest, int count, int normalize)
+f2bet_array (const float *src, tribyte *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float 			normfact ;
 	int				value ;
@@ -2104,7 +2105,7 @@ f2bet_array (float *src, tribyte *dest, int count, int normalize)
 } /* f2bet_array */
 
 static void
-f2bet_clip_array (float *src, tribyte *dest, int count, int normalize)
+f2bet_clip_array (const float *src, tribyte *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact, scaled_value ;
 	int				value ;
@@ -2136,8 +2137,8 @@ f2bet_clip_array (float *src, tribyte *dest, int count, int normalize)
 } /* f2bet_clip_array */
 
 static sf_count_t
-pcm_write_f2bet	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
-{	void		(*convert) (float *, tribyte *, int, int) ;
+pcm_write_f2bet	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
+{	void		(*convert) (const float *, tribyte *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2162,7 +2163,7 @@ pcm_write_f2bet	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 */
 
 static void
-f2bei_array (float *src, int *dest, int count, int normalize)
+f2bei_array (const float *src, int *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact ;
 	int				value ;
@@ -2180,7 +2181,7 @@ f2bei_array (float *src, int *dest, int count, int normalize)
 } /* f2bei_array */
 
 static void
-f2bei_clip_array (float *src, int *dest, int count, int normalize)
+f2bei_clip_array (const float *src, int *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact, scaled_value ;
 	int				value ;
@@ -2215,8 +2216,8 @@ f2bei_clip_array (float *src, int *dest, int count, int normalize)
 } /* f2bei_clip_array */
 
 static sf_count_t
-pcm_write_f2bei	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
-{	void		(*convert) (float *, int *, int, int) ;
+pcm_write_f2bei	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
+{	void		(*convert) (const float *, int *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2241,7 +2242,7 @@ pcm_write_f2bei	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 */
 
 static void
-f2lei_array (float *src, int *dest, int count, int normalize)
+f2lei_array (const float *src, int *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact ;
 	int				value ;
@@ -2260,7 +2261,7 @@ f2lei_array (float *src, int *dest, int count, int normalize)
 } /* f2lei_array */
 
 static void
-f2lei_clip_array (float *src, int *dest, int count, int normalize)
+f2lei_clip_array (const float *src, int *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	float			normfact, scaled_value ;
 	int				value ;
@@ -2295,8 +2296,8 @@ f2lei_clip_array (float *src, int *dest, int count, int normalize)
 } /* f2lei_clip_array */
 
 static sf_count_t
-pcm_write_f2lei	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
-{	void		(*convert) (float *, int *, int, int) ;
+pcm_write_f2lei	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
+{	void		(*convert) (const float *, int *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2321,7 +2322,7 @@ pcm_write_f2lei	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 */
 
 static void
-d2sc_array	(double *src, signed char *dest, int count, int normalize)
+d2sc_array	(const double *src, signed char *dest, int count, int normalize)
 {	double	normfact ;
 
 	normfact = normalize ? (1.0 * 0x7F) : 1.0 ;
@@ -2332,7 +2333,7 @@ d2sc_array	(double *src, signed char *dest, int count, int normalize)
 } /* d2sc_array */
 
 static void
-d2sc_clip_array	(double *src, signed char *dest, int count, int normalize)
+d2sc_clip_array	(const double *src, signed char *dest, int count, int normalize)
 {	double	normfact, scaled_value ;
 
 	normfact = normalize ? (8.0 * 0x10000000) : (1.0 * 0x1000000) ;
@@ -2353,8 +2354,8 @@ d2sc_clip_array	(double *src, signed char *dest, int count, int normalize)
 } /* d2sc_clip_array */
 
 static sf_count_t
-pcm_write_d2sc	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
-{	void		(*convert) (double *, signed char *, int, int) ;
+pcm_write_d2sc	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
+{	void		(*convert) (const double *, signed char *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2379,7 +2380,7 @@ pcm_write_d2sc	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static	void
-d2uc_array	(double *src, unsigned char *dest, int count, int normalize)
+d2uc_array	(const double *src, unsigned char *dest, int count, int normalize)
 {	double normfact ;
 
 	normfact = normalize ? (1.0 * 0x7F) : 1.0 ;
@@ -2390,7 +2391,7 @@ d2uc_array	(double *src, unsigned char *dest, int count, int normalize)
 } /* d2uc_array */
 
 static	void
-d2uc_clip_array	(double *src, unsigned char *dest, int count, int normalize)
+d2uc_clip_array	(const double *src, unsigned char *dest, int count, int normalize)
 {	double	normfact, scaled_value ;
 
 	normfact = normalize ? (8.0 * 0x10000000) : (1.0 * 0x1000000) ;
@@ -2411,8 +2412,8 @@ d2uc_clip_array	(double *src, unsigned char *dest, int count, int normalize)
 } /* d2uc_clip_array */
 
 static sf_count_t
-pcm_write_d2uc	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
-{	void		(*convert) (double *, unsigned char *, int, int) ;
+pcm_write_d2uc	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
+{	void		(*convert) (const double *, unsigned char *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2437,7 +2438,7 @@ pcm_write_d2uc	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static void
-d2bes_array (double *src, short *dest, int count, int normalize)
+d2bes_array (const double *src, short *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	short			value ;
 	double			normfact ;
@@ -2454,7 +2455,7 @@ d2bes_array (double *src, short *dest, int count, int normalize)
 } /* d2bes_array */
 
 static void
-d2bes_clip_array (double *src, short *dest, int count, int normalize)
+d2bes_clip_array (const double *src, short *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	double			normfact, scaled_value ;
 	int				value ;
@@ -2483,8 +2484,8 @@ d2bes_clip_array (double *src, short *dest, int count, int normalize)
 } /* d2bes_clip_array */
 
 static sf_count_t
-pcm_write_d2bes	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
-{	void		(*convert) (double *, short *, int, int) ;
+pcm_write_d2bes	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
+{	void		(*convert) (const double *, short *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2509,7 +2510,7 @@ pcm_write_d2bes	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static void
-d2les_array (double *src, short *dest, int count, int normalize)
+d2les_array (const double *src, short *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	short			value ;
 	double			normfact ;
@@ -2526,7 +2527,7 @@ d2les_array (double *src, short *dest, int count, int normalize)
 } /* d2les_array */
 
 static void
-d2les_clip_array (double *src, short *dest, int count, int normalize)
+d2les_clip_array (const double *src, short *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact, scaled_value ;
@@ -2555,8 +2556,8 @@ d2les_clip_array (double *src, short *dest, int count, int normalize)
 } /* d2les_clip_array */
 
 static sf_count_t
-pcm_write_d2les	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
-{	void		(*convert) (double *, short *, int, int) ;
+pcm_write_d2les	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
+{	void		(*convert) (const double *, short *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2581,7 +2582,7 @@ pcm_write_d2les	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static void
-d2let_array (double *src, tribyte *dest, int count, int normalize)
+d2let_array (const double *src, tribyte *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact ;
@@ -2599,7 +2600,7 @@ d2let_array (double *src, tribyte *dest, int count, int normalize)
 } /* d2let_array */
 
 static void
-d2let_clip_array (double *src, tribyte *dest, int count, int normalize)
+d2let_clip_array (const double *src, tribyte *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact, scaled_value ;
@@ -2631,8 +2632,8 @@ d2let_clip_array (double *src, tribyte *dest, int count, int normalize)
 } /* d2let_clip_array */
 
 static sf_count_t
-pcm_write_d2let	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
-{	void		(*convert) (double *, tribyte *, int, int) ;
+pcm_write_d2let	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
+{	void		(*convert) (const double *, tribyte *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2657,7 +2658,7 @@ pcm_write_d2let	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static void
-d2bet_array (double *src, tribyte *dest, int count, int normalize)
+d2bet_array (const double *src, tribyte *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact ;
@@ -2675,7 +2676,7 @@ d2bet_array (double *src, tribyte *dest, int count, int normalize)
 } /* d2bet_array */
 
 static void
-d2bet_clip_array (double *src, tribyte *dest, int count, int normalize)
+d2bet_clip_array (const double *src, tribyte *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact, scaled_value ;
@@ -2707,8 +2708,8 @@ d2bet_clip_array (double *src, tribyte *dest, int count, int normalize)
 } /* d2bet_clip_array */
 
 static sf_count_t
-pcm_write_d2bet	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
-{	void		(*convert) (double *, tribyte *, int, int) ;
+pcm_write_d2bet	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
+{	void		(*convert) (const double *, tribyte *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2733,7 +2734,7 @@ pcm_write_d2bet	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static void
-d2bei_array (double *src, int *dest, int count, int normalize)
+d2bei_array (const double *src, int *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact ;
@@ -2752,7 +2753,7 @@ d2bei_array (double *src, int *dest, int count, int normalize)
 } /* d2bei_array */
 
 static void
-d2bei_clip_array (double *src, int *dest, int count, int normalize)
+d2bei_clip_array (const double *src, int *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact, scaled_value ;
@@ -2787,8 +2788,8 @@ d2bei_clip_array (double *src, int *dest, int count, int normalize)
 } /* d2bei_clip_array */
 
 static sf_count_t
-pcm_write_d2bei	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
-{	void		(*convert) (double *, int *, int, int) ;
+pcm_write_d2bei	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
+{	void		(*convert) (const double *, int *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 
@@ -2813,7 +2814,7 @@ pcm_write_d2bei	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 */
 
 static void
-d2lei_array (double *src, int *dest, int count, int normalize)
+d2lei_array (const double *src, int *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact ;
@@ -2832,7 +2833,7 @@ d2lei_array (double *src, int *dest, int count, int normalize)
 } /* d2lei_array */
 
 static void
-d2lei_clip_array (double *src, int *dest, int count, int normalize)
+d2lei_clip_array (const double *src, int *dest, int count, int normalize)
 {	unsigned char	*ucptr ;
 	int				value ;
 	double			normfact, scaled_value ;
@@ -2867,8 +2868,8 @@ d2lei_clip_array (double *src, int *dest, int count, int normalize)
 } /* d2lei_clip_array */
 
 static sf_count_t
-pcm_write_d2lei	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
-{	void		(*convert) (double *, int *, int, int) ;
+pcm_write_d2lei	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
+{	void		(*convert) (const double *, int *, int, int) ;
 	int			bufferlen, writecount ;
 	sf_count_t	total = 0 ;
 

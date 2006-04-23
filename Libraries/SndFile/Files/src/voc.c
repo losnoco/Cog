@@ -24,7 +24,7 @@
 **	Utterly woeful.
 */
 
-#include "config.h"
+#include "sfconfig.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -128,7 +128,7 @@ voc_open	(SF_PRIVATE *psf)
 
 	psf->blockwidth = psf->bytewidth * psf->sf.channels ;
 
-	psf->close = voc_close ;
+	psf->container_close = voc_close ;
 
 	switch (subformat)
 	{	case SF_FORMAT_PCM_U8 :
