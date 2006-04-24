@@ -11,10 +11,18 @@
 #define CPU_CLIPS_POSITIVE 1
 
 /* Target processor is big endian. */
+#if __BIG_ENDIAN__
 #define CPU_IS_BIG_ENDIAN 1
+#else
+#define CPU_IS_BIG_ENDIAN 0
+#endif
 
 /* Target processor is little endian. */
+#if __LITTLE_ENDIAN__
+#define CPU_IS_LITTLE_ENDIAN 1
+#else
 #define CPU_IS_LITTLE_ENDIAN 0
+#endif
 
 /* Set to 1 to enable experimental code. */
 #define ENABLE_EXPERIMENTAL_CODE 0

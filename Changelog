@@ -1,3 +1,8 @@
+0.05
+----
+Updated libsndfile to 1.0.15
+Wave/Aiff should now work on intel.
+
 0.05 alpha 5
 ------------
 Hopefully fixes wavpack on intel.
