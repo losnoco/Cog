@@ -1,5 +1,5 @@
-0.05
-----
+0.05 alpha 6
+-----------
 Updated libsndfile to 1.0.15
 Wave/Aiff should now work on intel.
 

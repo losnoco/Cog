@@ -30,7 +30,7 @@
 
 	int samples;
 	samples = WavpackGetNumSamples(wpc);
-	totalSize = samples * channels * 4;
+	totalSize = samples * channels * (bitsPerSample/8);
 	
 	bitRate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
 
@@ -69,7 +69,7 @@
 - (double)seekToTime:(double)milliseconds
 {
 	int sample;
-	sample = (frequency/2)*(milliseconds/1000.0);
+	sample = frequency*(milliseconds/1000.0);
 
 	WavpackSeekSample(wpc, sample);
 	
