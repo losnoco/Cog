@@ -73,7 +73,7 @@
 		8EF6C9D609FB14730045E26A /* sfconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EF6C96D09FB14730045E26A /* sfconfig.h */; };
 		8EF6C9D709FB14730045E26A /* sfendian.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EF6C96E09FB14730045E26A /* sfendian.h */; };
 		8EF6C9D809FB14730045E26A /* sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 8EF6C96F09FB14730045E26A /* sndfile.c */; };
-		8EF6C9D909FB14730045E26A /* sndfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EF6C97009FB14730045E26A /* sndfile.h */; };
+		8EF6C9D909FB14730045E26A /* sndfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EF6C97009FB14730045E26A /* sndfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8EF6C9DB09FB14730045E26A /* strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 8EF6C97209FB14730045E26A /* strings.c */; };
 		8EF6C9DC09FB14730045E26A /* svx.c in Sources */ = {isa = PBXBuildFile; fileRef = 8EF6C97309FB14730045E26A /* svx.c */; };
 		8EF6C9E409FB14730045E26A /* txw.c in Sources */ = {isa = PBXBuildFile; fileRef = 8EF6C97B09FB14730045E26A /* txw.c */; };
