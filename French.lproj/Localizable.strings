@@ -13,8 +13,8 @@
 "PrevButtonTooltip" = "Morceau précédent";
 "NextButtonTooltip" = "Morceau suivant";
 
-"TimeElapsed" = "Temps écoulé: %i:%02i";
-"TimeRemaining" = "Temps restant: %i:%02i";
+"TimeElapsed" = "Temps: %i:%02i";
+"TimeRemaining" = "Temps: -%i:%02i";
 
 "AddButtonTooltip" = "Ajouter des fichiers";
 "RemoveButtonTooltip" = "Retirer les fichiers sélectionnés";

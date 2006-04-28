@@ -12,6 +12,23 @@
 
 @implementation PlaylistView
 
+- (void)awakeFromNib
+{
+	id c;
+	NSControlSize s = NSSmallControlSize;
+	NSEnumerator *oe = [[self tableColumns] objectEnumerator];
+	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
+	
+	[self setRowHeight:[f defaultLineHeightForFont]];
+
+	//Resize the fonts
+	while (c = [oe nextObject])
+	{
+		[[c dataCell] setControlSize:s];
+		[[c dataCell] setFont:f];
+	}
+}
+
 - (BOOL)acceptsFirstResponder
 {
 	return YES;

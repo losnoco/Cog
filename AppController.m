@@ -50,7 +50,6 @@
 - (void)awakeFromNib
 {
 	//	DBLog(@"AWAKe");
-	
 	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
 	[stopButton setToolTip:NSLocalizedString(@"StopButtonTooltip", @"")];
 	[prevButton setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"")];

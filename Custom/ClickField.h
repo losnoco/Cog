@@ -1,10 +1,9 @@
 /* ClickField */
 
 #import <Cocoa/Cocoa.h>
-#import "SoundController.h"
-
-@interface ClickField : NSTextField
+#import "RoundBackgroundField.h"
+@interface ClickField : RoundBackgroundField
 {
-	IBOutlet SoundController *soundController;
+
 }
 @end

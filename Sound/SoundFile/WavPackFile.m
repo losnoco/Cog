@@ -63,6 +63,8 @@
 	}
 	n *= (bitsPerSample/8)*channels;
 	
+	free(sampleBuf);
+	
 	return n;
 }
 

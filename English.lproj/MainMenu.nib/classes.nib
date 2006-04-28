@@ -28,12 +28,7 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
-        {
-            CLASS = ClickField; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {soundController = SoundController; }; 
-            SUPERCLASS = NSTextField; 
-        }, 
+        {CLASS = ClickField; LANGUAGE = ObjC; SUPERCLASS = RoundBackgroundField; }, 
         {
             CLASS = DNDArrayController; 
             LANGUAGE = ObjC; 
@@ -101,6 +96,7 @@
             }; 
             SUPERCLASS = NSTableView; 
         }, 
+        {CLASS = RoundBackgroundField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
         {
             ACTIONS = {
                 changeVolume = id; 

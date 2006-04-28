@@ -1,3 +1,7 @@
+0.05
+----
+Wavpack length should be reported correctly.
+
 0.05 alpha 6
 -----------
 Updated libsndfile to 1.0.15
