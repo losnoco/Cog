@@ -9,7 +9,7 @@ NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
 - (void)awakeFromNib
 {
     // register for drag and drop
-//	DBLog(@"AWOKE");
+	NSLog(@"AWOKE");
     [tableView registerForDraggedTypes:[NSArray arrayWithObjects:MovedRowsType, NSFilenamesPboardType, nil]];
 //	[tableView setVerticalMotionCanBeginDrag:YES];
 //    [tableView setAllowsMultipleSelection:NO];
@@ -22,7 +22,7 @@ NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
 		writeRows:(NSArray*)rows
 	 toPasteboard:(NSPasteboard*)pboard
 {
-//	DBLog(@"WRITE ROWS");
+	NSLog(@"WRITE ROWS");
 	
 	NSData *data;
 	data = [NSKeyedArchiver archivedDataWithRootObject:rows];
@@ -41,7 +41,7 @@ NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
 {
 	NSDragOperation dragOp = NSDragOperationCopy;
 	
-//	DBLog(@"VALIDATING");
+	NSLog(@"VALIDATING");
     if ([info draggingSource] == tv)
 		dragOp = NSDragOperationMove;
 	
@@ -62,7 +62,7 @@ NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
 	{
 		row = 0;
 	}
-//	DBLog(@"ACCEPTATING");
+	NSLog(@"ACCEPTATING");
     // if drag source is self, it's a move
     if ([info draggingSource] == tableView)
 	{

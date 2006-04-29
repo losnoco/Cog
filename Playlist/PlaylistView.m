@@ -27,6 +27,8 @@
 		[[c dataCell] setControlSize:s];
 		[[c dataCell] setFont:f];
 	}
+	
+	[self setVerticalMotionCanBeginDrag:YES];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -45,14 +47,14 @@
 
 - (void)mouseDown:(NSEvent *)e
 {
-//	DBLog(@"MOUSE DOWN");
+	NSLog(@"MOUSE DOWN");
 	if ([e type] == NSLeftMouseDown && [e clickCount] == 2)
 	{
 		[playbackController play:self];
 	}
 	else
 	{
-//		DBLog(@"Super");
+		NSLog(@"Super");
 		[super mouseDown:e];
 	}
 }

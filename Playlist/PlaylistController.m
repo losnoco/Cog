@@ -158,13 +158,20 @@
 	return acceptableFileTypes;
 }
 
+- (void)tableView:(NSTableView *)tableView
+		didClickTableColumn:(NSTableColumn *)tableColumn
+{
+	NSLog(@"SORTING");
+	[self updateIndexesFromRow:0];
+}
+
 - (BOOL)tableView:(NSTableView*)tv
 	   acceptDrop:(id <NSDraggingInfo>)info
 			  row:(int)row
 	dropOperation:(NSTableViewDropOperation)op
 {
 	int i;
-	
+	NSLog(@"DRAGGING?");
 	[super tableView:tv acceptDrop:info row:row dropOperation:op];
 	if ([info draggingSource] == tableView)
 	{
@@ -183,6 +190,7 @@
 			i = firstIndex;
 		}
 	
+		NSLog(@"Updating indexes: %i", i);
 		[self updateIndexesFromRow:i];
 
 		return YES;
@@ -207,7 +215,7 @@
 {
 	double tt=0;
 	
-	NSEnumerator *enumerator = [[self content] objectEnumerator];
+	NSEnumerator *enumerator = [[self arrangedObjects] objectEnumerator];
 	PlaylistEntry* pe;
 	
 	while (pe = [enumerator nextObject]) {
@@ -238,10 +246,10 @@
 {
 //	DBLog(@"UPDATE INDEXES: %i", row);
 	int j;
-	for (j = row; j < [[self content] count]; j++)
+	for (j = row; j < [[self arrangedObjects] count]; j++)
 	{
 		PlaylistEntry *p;
-		p = [[self content] objectAtIndex:j];
+		p = [[self arrangedObjects] objectAtIndex:j];
 		
 		[p setIndex:j];
 	}

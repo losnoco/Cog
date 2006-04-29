@@ -11,25 +11,31 @@
 
 @implementation RoundBackgroundField
 
-- (void)awakeFromNib
+- (id)initWithCoder:(NSCoder *)decoder
 {
-	id cell = [[RoundBackgroundCell alloc] init];
-	id oldcell = [self cell];
+	self = [super initWithCoder:decoder];
+	if (self)
+	{
+		id cell = [[RoundBackgroundCell alloc] init];
+		id oldcell = [self cell];
+		
+		[cell setBackgroundColor: [self backgroundColor]];
+		[cell setDrawsBackground: NO];
+		
+		[cell setScrollable:[oldcell isScrollable]];
+		[cell setAlignment:[oldcell alignment]];
+		[cell setLineBreakMode:[oldcell lineBreakMode]];
+		
+		[cell setAction: [oldcell action]];
+		[cell setTarget: [oldcell target]];
+		
+		[cell setStringValue: [oldcell stringValue]];
+		
+		[self setCell: cell];
+		[cell release];
+	}
 	
-	[cell setBackgroundColor: [self backgroundColor]];
-	[cell setDrawsBackground: NO];
-	
-	[cell setScrollable:[oldcell isScrollable]];
-	[cell setAlignment:[oldcell alignment]];
-	[cell setLineBreakMode:[oldcell lineBreakMode]];
-	
-	[cell setAction: [oldcell action]];
-	[cell setTarget: [oldcell target]];
-
-	[cell setStringValue: [oldcell stringValue]];
-	
-	[self setCell: cell];
-	[cell release];
+	return self;
 }
 
 @end
