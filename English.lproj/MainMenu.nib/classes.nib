@@ -37,6 +37,7 @@
             OUTLETS = {tableView = NSTableView; }; 
             SUPERCLASS = NSArrayController; 
         }, 
+        {CLASS = DragScrollView; LANGUAGE = ObjC; SUPERCLASS = NSScrollView; }, 
         {
             ACTIONS = {cancel = id; openFeedbackWindow = id; sendFeedback = id; }; 
             CLASS = FeedbackController; 
@@ -98,7 +99,6 @@
             }; 
             SUPERCLASS = NSTableView; 
         }, 
-        {CLASS = RoundBackgroundField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
         {
             ACTIONS = {
                 changeVolume = id; 

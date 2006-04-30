@@ -591,6 +591,13 @@
 	return repeat;
 }
 
+- (void)setFilterPredicate:(NSPredicate *)filterPredicate
+{
+	[self updateIndexesFromRow:0];
+	
+	[super setFilterPredicate:filterPredicate];
+}
+
 - (void)savePlaylist:(NSString *)filename
 {
 //	DBLog(@"SAVING PLAYLIST: %@", filename);
