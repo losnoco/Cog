@@ -30,6 +30,9 @@
 
 - (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 
+- (IBAction)sortByPath:(id)sender;
+- (IBAction)shufflePlaylist:(id)sender;
+
 - (IBAction)donate:(id)sender;
 
 - (IBAction)toggleInfoDrawer:(id)sender;

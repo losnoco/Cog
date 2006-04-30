@@ -58,10 +58,10 @@
 		// Might want to change the text color here
 		// NSColor *originalTextColor = [self textColor];
 		if (highlightPath) {
-			[[self backgroundColor] set];
+			[[[NSColor controlAlternatingRowBackgroundColors] objectAtIndex:1] set];
 			[highlightPath fill];
 			
-			NSColor *strokeColor = [NSColor colorWithCalibratedHue:[[self backgroundColor] hueComponent] saturation:[[self backgroundColor] saturationComponent] brightness:[[self backgroundColor] brightnessComponent]-0.2 alpha:[[self backgroundColor] alphaComponent]];
+			NSColor *strokeColor = [NSColor secondarySelectedControlColor];
 			
 			[strokeColor set];
 			[highlightPath stroke];

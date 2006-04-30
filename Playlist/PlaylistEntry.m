@@ -283,9 +283,14 @@
 				[self setGenre:nil];
 			
 			if ([artist isEqualToString:@""] || [title isEqualToString:@""])
+			{
 				[self setDisplay:[filename lastPathComponent]];
+				[self setTitle:[filename lastPathComponent]];
+			}
 			else
+			{
 				[self setDisplay:[NSString stringWithFormat:@"%@ - %@", artist, title]];
+			}
 			
 			taglib_tag_free_strings();
 		}
@@ -295,6 +300,7 @@
 	else
 	{
 		[self setDisplay:[filename lastPathComponent]];
+		[self setTitle:[filename lastPathComponent]];
 	}
 }
 

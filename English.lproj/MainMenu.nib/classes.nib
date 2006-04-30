@@ -8,6 +8,8 @@
                 loadPlaylist = id; 
                 savePlaylist = id; 
                 savePlaylistAs = id; 
+                shufflePlaylist = id; 
+                sortByPath = id; 
                 toggleInfoDrawer = id; 
             }; 
             CLASS = AppController; 
@@ -50,7 +52,7 @@
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoController; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = InfoView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = InfoView; LANGUAGE = ObjC; SUPERCLASS = NSScrollView; }, 
         {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
         {
             ACTIONS = {

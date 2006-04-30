@@ -161,7 +161,9 @@
 - (void)tableView:(NSTableView *)tableView
 		didClickTableColumn:(NSTableColumn *)tableColumn
 {
-	NSLog(@"SORTING");
+	if (shuffle == YES)
+		[self resetShuffleList];
+
 	[self updateIndexesFromRow:0];
 }
 
@@ -285,6 +287,28 @@
 		[self resetShuffleList];
 	
 	[a release];
+}
+
+- (void)sortByPath
+{
+	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"filename" ascending:YES selector:@selector(compare:)];
+	[self setSortDescriptors:[NSArray arrayWithObject:s]];
+	[s release];	
+
+	if (shuffle == YES)
+		[self resetShuffleList];
+
+	[self updateIndexesFromRow:0];
+}
+
+- (void)randomizeList
+{
+	[self setSortDescriptors:nil];
+	[self setContent:[Shuffle shuffleList:[self content]]];
+	if (shuffle == YES)
+		[self resetShuffleList];
+
+	[self updateIndexesFromRow:0];
 }
 
 - (IBAction)takeShuffleFromObject:(id)sender
