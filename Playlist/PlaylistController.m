@@ -599,7 +599,7 @@
 	
 	NSEnumerator *enumerator;
 	PlaylistEntry *entry;
-	enumerator = [[self arrangedObjects] objectEnumerator];
+	enumerator = [[self content] objectEnumerator];
 	while (entry = [enumerator nextObject])
 	{
 		[filenames addObject:[entry filename]];

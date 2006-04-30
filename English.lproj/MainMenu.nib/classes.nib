@@ -30,7 +30,7 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = ClickField; LANGUAGE = ObjC; SUPERCLASS = RoundBackgroundField; }, 
+        {CLASS = ClickField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
         {
             CLASS = DNDArrayController; 
             LANGUAGE = ObjC; 

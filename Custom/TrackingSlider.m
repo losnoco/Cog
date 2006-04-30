@@ -13,6 +13,7 @@
 			TrackingCell *trackingCell;
 			trackingCell = [[TrackingCell alloc] init];
 			
+			[trackingCell setControlSize:[[self cell] controlSize]];
 			[trackingCell setAction:[[self cell] action]];
 			[trackingCell setContinuous:[[self cell] isContinuous]];
 			[trackingCell setTarget:[[self cell] target]];
