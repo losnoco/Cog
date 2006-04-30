@@ -593,9 +593,18 @@
 
 - (void)setFilterPredicate:(NSPredicate *)filterPredicate
 {
-	[self updateIndexesFromRow:0];
-	
 	[super setFilterPredicate:filterPredicate];
+
+	int j;
+	for (j = 0; j < [[self content] count]; j++)
+	{
+		PlaylistEntry *p;
+		p = [[self content] objectAtIndex:j];
+		
+		[p setIndex:-1];
+	}
+	
+	[self updateIndexesFromRow:0];
 }
 
 - (void)savePlaylist:(NSString *)filename
