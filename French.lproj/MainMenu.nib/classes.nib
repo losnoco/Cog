@@ -8,6 +8,8 @@
                 loadPlaylist = id; 
                 savePlaylist = id; 
                 savePlaylistAs = id; 
+                shufflePlaylist = id; 
+                sortByPath = id; 
                 toggleInfoDrawer = id; 
             }; 
             CLASS = AppController; 
@@ -40,6 +42,7 @@
             OUTLETS = {tableView = NSTableView; }; 
             SUPERCLASS = NSArrayController; 
         }, 
+        {CLASS = DragScrollView; LANGUAGE = ObjC; SUPERCLASS = NSScrollView; }, 
         {
             ACTIONS = {cancel = id; openFeedbackWindow = id; sendFeedback = id; }; 
             CLASS = FeedbackController; 
