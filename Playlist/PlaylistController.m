@@ -10,6 +10,8 @@
 #import "PlaylistEntry.h"
 #import "Shuffle.h"
 
+extern NSArray * getCoreAudioExtensions();
+
 @implementation PlaylistController
 
 #define SHUFFLE_HISTORY_SIZE 100
@@ -20,7 +22,8 @@
 	
 	if (self)
 	{
-		acceptableFileTypes = [[NSArray alloc] initWithObjects:@"shn",@"wv",@"ogg",@"wav",@"mpc",@"flac",@"ape",@"mp3",@"aiff",@"aif",@"aac",nil];
+		acceptableFileTypes = [NSArray arrayWithObjects:@"shn",@"wv",@"ogg",@"mpc",@"flac",@"ape",nil];
+		acceptableFileTypes = [[acceptableFileTypes arrayByAddingObjectsFromArray:getCoreAudioExtensions()] retain];
 		acceptablePlaylistTypes = [[NSArray alloc] initWithObjects:@"playlist",nil];
 		shuffleList = [[NSMutableArray alloc] init];
 //		DBLog(@"DAH BUTTER CHORNAR: %@", history);
@@ -40,7 +43,7 @@
 	{
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 
-		[pe	setFilename:filename]; //Setfilename takes car of opening the soundfile..cheap hack, but works for now
+		[pe	setFilename:filename];
 		[pe setIndex:index];
 		[pe readTags];
 		[pe readInfo];

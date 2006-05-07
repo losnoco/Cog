@@ -13,6 +13,10 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		8E4C7F080A0509FC003BE25F /* DragScrollView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E4C7F060A0509FC003BE25F /* DragScrollView.h */; };
 		8E4C7F090A0509FC003BE25F /* DragScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4C7F070A0509FC003BE25F /* DragScrollView.m */; };
+		8E6A8E2B0A0D8A68002ABE9C /* CoreAudioFile.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E6A8E270A0D8A68002ABE9C /* CoreAudioFile.h */; };
+		8E6A8E2C0A0D8A68002ABE9C /* CoreAudioFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */; };
+		8E6A8E370A0D8AD8002ABE9C /* CoreAudioUtils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E6A8E350A0D8AD8002ABE9C /* CoreAudioUtils.h */; };
+		8E6A8E380A0D8AD8002ABE9C /* CoreAudioUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6A8E360A0D8AD8002ABE9C /* CoreAudioUtils.m */; };
 		8E75756909F31D5A0080F1EE /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75751909F31D5A0080F1EE /* AppController.m */; };
 		8E75756A09F31D5A0080F1EE /* ClickField.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75751C09F31D5A0080F1EE /* ClickField.m */; };
 		8E75756B09F31D5A0080F1EE /* InfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75751E09F31D5A0080F1EE /* InfoView.m */; };
@@ -142,6 +146,8 @@
 				8E757B5809F326710080F1EE /* FAAD2.framework in CopyFiles */,
 				8E757B5909F326710080F1EE /* DecMPA.framework in CopyFiles */,
 				8E4C7F080A0509FC003BE25F /* DragScrollView.h in CopyFiles */,
+				8E6A8E2B0A0D8A68002ABE9C /* CoreAudioFile.h in CopyFiles */,
+				8E6A8E370A0D8AD8002ABE9C /* CoreAudioUtils.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +166,10 @@
 		8D1107320486CEB800E47090 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E4C7F060A0509FC003BE25F /* DragScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragScrollView.h; sourceTree = "<group>"; };
 		8E4C7F070A0509FC003BE25F /* DragScrollView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DragScrollView.m; sourceTree = "<group>"; };
+		8E6A8E270A0D8A68002ABE9C /* CoreAudioFile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioFile.h; sourceTree = "<group>"; };
+		8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CoreAudioFile.m; sourceTree = "<group>"; };
+		8E6A8E350A0D8AD8002ABE9C /* CoreAudioUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioUtils.h; sourceTree = "<group>"; };
+		8E6A8E360A0D8AD8002ABE9C /* CoreAudioUtils.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CoreAudioUtils.m; sourceTree = "<group>"; };
 		8E75751309F31D130080F1EE /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		8E75751809F31D5A0080F1EE /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		8E75751909F31D5A0080F1EE /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
@@ -474,6 +484,8 @@
 		8E75754409F31D5A0080F1EE /* SoundFile */ = {
 			isa = PBXGroup;
 			children = (
+				8E6A8E270A0D8A68002ABE9C /* CoreAudioFile.h */,
+				8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */,
 				8E75754509F31D5A0080F1EE /* AACFile.h */,
 				8E75754609F31D5A0080F1EE /* AACFile.m */,
 				8E75754709F31D5A0080F1EE /* FlacFile.h */,
@@ -512,6 +524,8 @@
 		8E75756209F31D5A0080F1EE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8E6A8E350A0D8AD8002ABE9C /* CoreAudioUtils.h */,
+				8E6A8E360A0D8AD8002ABE9C /* CoreAudioUtils.m */,
 				8E75756309F31D5A0080F1EE /* DBLog.h */,
 				8E75756409F31D5A0080F1EE /* DBLog.m */,
 				8E75756509F31D5A0080F1EE /* Semaphore.h */,
@@ -699,6 +713,8 @@
 				8E75758C09F31D5A0080F1EE /* Semaphore.m in Sources */,
 				8E75758D09F31D5A0080F1EE /* VirtualRingBuffer.m in Sources */,
 				8E4C7F090A0509FC003BE25F /* DragScrollView.m in Sources */,
+				8E6A8E2C0A0D8A68002ABE9C /* CoreAudioFile.m in Sources */,
+				8E6A8E380A0D8AD8002ABE9C /* CoreAudioUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

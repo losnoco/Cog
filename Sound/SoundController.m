@@ -50,6 +50,7 @@
 	if (bufferChain)
 	{
 		[bufferChain setShouldContinue:NO];
+
 		[bufferChain release];
 	}
 	bufferChain = [[BufferChain alloc] initWithController:self];

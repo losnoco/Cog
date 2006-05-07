@@ -9,14 +9,15 @@
 #import "SoundFile.h"
 
 #import "FlacFile.h"
-#import "AACFile.h"
+//#import "AACFile.h"
 #import "MonkeysFile.h"
-#import "MPEGFile.h"
+//#import "MPEGFile.h"
 #import "MusepackFile.h"
 #import "VorbisFile.h"
-#import "WaveFile.h"
+//#import "WaveFile.h"
 #import "WavPackFile.h"
 #import "ShnFile.h"
+#import "CoreAudioFile.h"
 
 extern "C" {
 BOOL hostIsBigEndian()
@@ -27,6 +28,9 @@ BOOL hostIsBigEndian()
 	return NO;
 #endif
 }
+
+extern NSArray * getCoreAudioExtensions();
+
 };
 
 @implementation SoundFile
@@ -75,14 +79,17 @@ BOOL hostIsBigEndian()
 */
 + (SoundFile *)soundFileFromFilename:(NSString *)filename
 {
-	SoundFile *soundFile;
+	SoundFile	*soundFile;
+	NSString	*extension;
 	DBLog(@"Filename: %@", filename);
 	
-	if (([[filename pathExtension] caseInsensitiveCompare:@"wav"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aiff"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aif"] == NSOrderedSame))
+	extension = [filename pathExtension];
+	
+	/*if (([[filename pathExtension] caseInsensitiveCompare:@"wav"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aiff"] == NSOrderedSame) || ([[filename pathExtension] caseInsensitiveCompare:@"aif"] == NSOrderedSame))
 	{
 		soundFile = [[WaveFile alloc] init];
-	}
-	else if ([[filename pathExtension] caseInsensitiveCompare:@"ogg"] == NSOrderedSame)
+	}*/
+	if ([[filename pathExtension] caseInsensitiveCompare:@"ogg"] == NSOrderedSame)
 	{
 		soundFile = [[VorbisFile alloc] init];
 	}
@@ -98,14 +105,14 @@ BOOL hostIsBigEndian()
 	{
 		soundFile = [[MonkeysFile alloc] init];
 	}
-	else if ([[filename pathExtension] caseInsensitiveCompare:@"mp3"] == NSOrderedSame)
+	/*else if ([[filename pathExtension] caseInsensitiveCompare:@"mp3"] == NSOrderedSame)
 	{
 		soundFile = [[MPEGFile alloc] init];
 	}
 	else if ([[filename pathExtension] caseInsensitiveCompare:@"aac"] == NSOrderedSame)
 	{
 		soundFile = [[AACFile alloc] init];
-	}
+	}*/
 	else if ([[filename pathExtension] caseInsensitiveCompare:@"wv"] == NSOrderedSame)
 	{
 		soundFile = [[WavPackFile alloc] init];
@@ -116,7 +123,17 @@ BOOL hostIsBigEndian()
 	}
 	else
 	{
+		unsigned i;
+		NSArray *extensions = getCoreAudioExtensions();
+		
 		soundFile = nil;
+
+		for(i = 0; i < [extensions count]; ++i) {
+			if([[extensions objectAtIndex:i] caseInsensitiveCompare:extension]) {
+				soundFile = [[CoreAudioFile alloc] init];
+				break;
+			}
+		}
 	}
 	
 	return soundFile;
@@ -148,7 +165,7 @@ BOOL hostIsBigEndian()
 		return nil;
 	
 	[soundFile close];
-	
+
 	return soundFile;
 }
 

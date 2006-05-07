@@ -199,6 +199,7 @@
 	sampleRate = [sf frequency];
 	
 	[self setLengthString:length];
+	[sf release];
 //	DBLog(@"Length: %f bitRate: %i channels: %i bps: %i samplerate: %f", length, bitRate, channels, bitsPerSample, sampleRate);
 	
 	//[(SoundFile *)sf close];

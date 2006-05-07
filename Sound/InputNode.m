@@ -40,7 +40,7 @@
 	char *buf;
 	int amountRead;
 	
-	DBLog(@"Playing file.\n");
+	NSLog(@"Playing file: %i", self);
 	buf = malloc(chunk_size);
 	
 	while ([self shouldContinue] == YES && [self endOfStream] == NO)
@@ -65,6 +65,8 @@
 	
 	free(buf);
 	[soundFile close];
+	
+	NSLog(@"CLOSED: %i", self);
 }
 
 - (void)seek:(double)time

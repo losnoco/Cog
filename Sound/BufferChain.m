@@ -67,6 +67,7 @@
 	[playlistEntry release];
 	
 	[inputNode release];
+	
 	[converterNode release];
 	
 	[super dealloc];
