@@ -6,7 +6,8 @@ __module_name__ = "Cog status plugin"
 __module_version__ = "0.1" 
 __module_description__ = "Displays the current song cog is playing"
  
-def cog_cb(word, word_eol, userdata):
+#def cog_cb(word, word_eol, userdata):
+def cog_test():
 	command = "osascript -e \\\n\
 			\"tell application \\\"Cog\\\"\n\
  				set this_title to the title of the currententry\n\
@@ -30,8 +31,9 @@ def cog_cb(word, word_eol, userdata):
 	print line
 #	xchat.command("me is playing %s" % line)
 
-	return xchat.EAT_ALL
+#	return xchat.EAT_ALL
 
 #xchat.hook_command("cog", cog_cb)
 
 print "Cog loaded..." 
+cog_test();

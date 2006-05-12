@@ -1,9 +1,9 @@
 tell application "Cog"
-   set this_title to the title of the currententry
-   set this_artist to the artist of the currententry
-   set this_album to the album of the currententry
-   set this_bitrate to the bitrate of the currententry
-   set this_length to the length of the currententry
+	set this_title to the title of the currentEntry
+	set this_artist to the artist of the currentEntry
+	set this_album to the album of the currentEntry
+	set this_bitrate to the bitrate of the currentEntry
+	set this_length to the length of the currentEntry
 end tell
 return this_title & tab & this_artist & tab & this_album & tab & this_bitrate & tab & this_length
 
