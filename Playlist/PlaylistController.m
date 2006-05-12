@@ -110,11 +110,10 @@
 	if (sort == YES)
 	{
 		sortedFiles = [files sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-		[files release];
 	}
 	else
 	{
-		sortedFiles = [files autorelease];
+		sortedFiles = files;
 	}
 
 	for (i = 0; i < [sortedFiles count]; i++)
@@ -147,6 +146,8 @@
 	//Other thread will release entries....crazy crazy bad idea...whatever
 	[NSThread detachNewThreadSelector:@selector(readMetaData:) toTarget:self withObject:entries];
 	
+	[files release];
+
 	return;
 }
 
@@ -224,8 +225,10 @@
 		row = 0;
 
 	NSArray *files = [[info draggingPasteboard] propertyListForType:NSFilenamesPboardType];
+	NSLog(@"INSERTING PATHS");
 	[self insertPaths:files atIndex:row sort:YES];
 
+	NSLog(@"UPDATING");
 	[self updateIndexesFromRow:row];
 	[self updateTotalTime];
 	
