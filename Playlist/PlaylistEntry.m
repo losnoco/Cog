@@ -186,6 +186,24 @@
 	return genre;
 }
 
+- (void)setYear:(int)y
+{
+	year = y;
+}
+- (int)year
+{
+	return year;
+}
+
+- (void)setTrack:(int)t
+{
+	track = t;
+}
+- (int)track
+{
+	return track;
+}
+
 - (void)readInfo
 {
 	SoundFile *sf = [SoundFile readInfo:filename];
@@ -259,8 +277,8 @@
 			pGenre = taglib_tag_genre(tag);
 			pComment = taglib_tag_comment(tag);
 			
-			year = taglib_tag_year(tag);
-			track = taglib_tag_track(tag);
+			[self setYear:taglib_tag_year(tag)];
+			[self setTrack:taglib_tag_track(tag)];
 			
 			
 			if (pArtist != NULL)
