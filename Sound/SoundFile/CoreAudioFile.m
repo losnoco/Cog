@@ -218,7 +218,7 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 		return NO;
 	}
 	
-	bitRate = totalBytes/((_totalPackets * asbd.mFramesPerPacket)/asbd.mSampleRate);
+	bitRate = ((totalBytes*8)/((_totalPackets * asbd.mFramesPerPacket)/asbd.mSampleRate))/1000.0;
 	// Set our properties
 	bitsPerSample		= asbd.mBitsPerChannel;
 	channels			= asbd.mChannelsPerFrame;
