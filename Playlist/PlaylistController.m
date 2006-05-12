@@ -37,41 +37,21 @@
 	[super awakeFromNib];
 }
 
-- (int)insertFile:(NSString *)filename atIndex:(int)index
-{
-	if ([acceptableFileTypes containsObject:[[filename pathExtension] lowercaseString]] && [[NSFileManager defaultManager] fileExistsAtPath:filename])
-	{
-		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
-
-		[pe	setFilename:filename];
-		[pe setIndex:index];
-		[pe readTags];
-		[pe readInfo];
-		
-		[self insertObject:pe atArrangedObjectIndex:index];	
-		[pe release];
-		
-		return 1;
-	}
-	
-	return 0;
-}
-
-- (int)insertPath:(NSString *)path atIndex:(int)index
+- (NSArray *)filesAtPath:(NSString *)path
 {
 	BOOL isDir;
 	NSFileManager *manager;
 	
 	manager = [NSFileManager defaultManager];
 	
-	DBLog(@"Checking if path is a directory: %@", path);
+	NSLog(@"Checking if path is a directory: %@", path);
 	if ([manager fileExistsAtPath:path isDirectory:&isDir] && isDir == YES)
 	{
 		DBLog(@"path is directory");
-		int count;
 		int j;
 		NSArray *subpaths;
-		count = 0;
+		NSMutableArray *validPaths = [[NSMutableArray alloc] init];
+		
 		subpaths = [manager subpathsAtPath:path];
 		
 		DBLog(@"Subpaths: %@", subpaths);
@@ -80,80 +60,118 @@
 			NSString *filepath;
 				
 			filepath = [NSString pathWithComponents:[NSArray arrayWithObjects:path,[subpaths objectAtIndex:j],nil]];
-
-			count += [self insertFile:filepath atIndex:index+count];
+			if ([manager fileExistsAtPath:filepath isDirectory:&isDir] && isDir == NO)
+			{
+				if ([acceptableFileTypes containsObject:[[filepath pathExtension] lowercaseString]] && [[NSFileManager defaultManager] fileExistsAtPath:filepath])
+				{
+					[validPaths addObject:filepath];
+				}
+			}
 		}
 		
-		return count;
+		return [validPaths autorelease];
 	}
 	else
 	{
-//		DBLog(@"Adding fiiiiile: %@", path);
-		DBLog(@"path is a file");
-		return [self insertFile:path atIndex:index];
+		NSLog(@"path is a file");
+		if ([acceptableFileTypes containsObject:[[path pathExtension] lowercaseString]] && [[NSFileManager defaultManager] fileExistsAtPath:path])
+		{
+			NSLog(@"RETURNING THING");
+			return [NSArray arrayWithObject:path];
+		}
+		else
+		{
+			return nil;
+		}
 	}
 }
 
-- (int)insertPaths:(NSArray *)paths atIndex:(int)index sort:(BOOL)sort
+- (void)insertPaths:(NSArray *)paths atIndex:(int)index sort:(BOOL)sort
 {
 	NSArray *sortedFiles;
-	int count;
+	NSMutableArray *files = [[NSMutableArray alloc] init];
+	NSMutableArray *entries= [[NSMutableArray alloc] init];
 	int i;
 
 	if (!paths)
-		return 0;
+		return;
 	
 	if (index < 0)
 		index = 0;
 	
-	count = 0;
+	DBLog(@"Paths sorted: %@", sortedFiles);
+	for(i=0; i < [paths count]; i++)
+	{
+		[files addObjectsFromArray:[self filesAtPath:[paths objectAtIndex:i]]];
+		NSLog(@"files is: %i", [files count]);
+	}
 	
 	DBLog(@"Sorting paths");
 	if (sort == YES)
 	{
-		sortedFiles = [paths sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+		sortedFiles = [files sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+		[files release];
 	}
 	else
 	{
-		sortedFiles = paths;
+		sortedFiles = [files autorelease];
+	}
+
+	for (i = 0; i < [sortedFiles count]; i++)
+	{
+		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
+		
+		[pe	setFilename:[files objectAtIndex:i]];
+		[pe setIndex:index+i];
+
+//		[pe performSelectorOnMainThread:@selector(readTags) withObject:nil waitUntilDone:NO];
+//		[pe performSelectorOnMainThread:@selector(readInfo) withObject:nil waitUntilDone:NO];
+		
+		[entries addObject:pe];
+		[pe release];
 	}
 	
-	DBLog(@"Paths sorted: %@", sortedFiles);
-	for(i=0; i < [sortedFiles count]; i++)
-	{
-		int j;
-		NSString *f;
-		f = [sortedFiles objectAtIndex:i];
-		
-		DBLog(@"Inserting path");
-		j = [self insertPath:f atIndex:(index+count)];
-//		DBLog(@"Number added: %i", j);
-		count+=j;
-	}
+	NSRange r = NSMakeRange(index, [entries count]);
+	NSLog(@"MAking range from: %i to %i", index, index + [entries count]);
+	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:r];
+	NSLog(@"INDex set: %@", is);
+	NSLog(@"Adding: %i files", [entries count]);
+	[self insertObjects:entries atArrangedObjectIndexes:is];
 	
 	if (shuffle == YES)
 		[self resetShuffleList];
 	
-	
 	[self setSelectionIndex:index];
-	[self updateTotalTime];
 	
-	return count;
+	//Other thread will release entries....crazy crazy bad idea...whatever
+	[NSThread detachNewThreadSelector:@selector(readMetaData:) toTarget:self withObject:entries];
+	
+	return;
 }
 
-- (int)addFile:(NSString *)filename
+- (void)readMetaData:(id)entries
 {
-	return [self insertFile:filename atIndex:[[self arrangedObjects] count]];
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	int i;
+	for (i = 0; i < [entries count]; i++)
+	{
+		PlaylistEntry *pe =[entries objectAtIndex:i];
+		
+//		[pe readInfo];
+		[pe performSelectorOnMainThread:@selector(readInfo) withObject:nil waitUntilDone:YES];
+//		[pe readTags];
+		[pe performSelectorOnMainThread:@selector(readTags) withObject:nil waitUntilDone:YES];
+	}
+
+	[self performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+
+	[entries release];
+	[pool release];
 }
 
-- (int)addPath:(NSString *)path
+- (void)addPaths:(NSArray *)paths sort:(BOOL)sort
 {
-	return [self insertPath:path atIndex:[[self arrangedObjects] count]];
-}
-
-- (int)addPaths:(NSArray *)paths sort:(BOOL)sort
-{
-	return [self insertPaths:paths atIndex:[[self arrangedObjects] count] sort:sort];
+	[self insertPaths:paths atIndex:[[self arrangedObjects] count] sort:sort];
 }
 
 - (NSArray *)acceptableFileTypes

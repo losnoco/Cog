@@ -27,17 +27,17 @@
 
 //All these return the number of things actually added
 //Private Methods
-- (int)addPath:(NSString *)path;
-- (int)insertPath:(NSString *)path atIndex:(int)index;
-- (int)insertFile:(NSString *)filename atIndex:(int)index;
-- (int)addFile:(NSString *)filename;
+//- (int)addPath:(NSString *)path;
+//- (int)insertPath:(NSString *)path atIndex:(int)index;
+//- (int)insertFile:(NSString *)filename atIndex:(int)index;
+//- (int)addFile:(NSString *)filename;
 - (void)updateIndexesFromRow:(int) row;
 - (void)updateTotalTime;
 
 
 //PUBLIC METHODS
-- (int)addPaths:(NSArray *)paths sort:(BOOL)sort;
-- (int)insertPaths:(NSArray *)paths atIndex:(int)index sort:(BOOL)sort;
+- (void)addPaths:(NSArray *)paths sort:(BOOL)sort;
+- (void)insertPaths:(NSArray *)paths atIndex:(int)index sort:(BOOL)sort;
 
 - (NSArray *)acceptableFileTypes;
 

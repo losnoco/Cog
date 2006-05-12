@@ -135,9 +135,8 @@
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
 	DBLog(@"Adding path: %@", filename);
-	if ([playlistController addPaths:[NSArray arrayWithObject:filename] sort:NO] != 1)
-		return NO;
-	
+	[playlistController addPaths:[NSArray arrayWithObject:filename] sort:NO];
+
 	return YES;
 }
 
