@@ -151,7 +151,6 @@
 
 - (void)readMetaData:(id)entries
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	int i;
 	for (i = 0; i < [entries count]; i++)
 	{
@@ -166,7 +165,6 @@
 	[self performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
 
 	[entries release];
-	[pool release];
 }
 
 - (void)addPaths:(NSArray *)paths sort:(BOOL)sort
