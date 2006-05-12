@@ -6,6 +6,8 @@ Definitions
 *************************************************************************************/
 class CIO;
 
+int IsAltiVecAvailable( void );
+
 /*************************************************************************************
 Read / Write from an IO source and return failure if the number of bytes specified
 isn't read or written

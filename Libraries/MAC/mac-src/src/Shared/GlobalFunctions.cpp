@@ -2,6 +2,7 @@
 #include "GlobalFunctions.h"
 #include "IO.h"
 #include "CharacterHelper.h"
+#include <sys/sysctl.h>
 
 /*
 #ifndef __GNUC_IA32__
@@ -37,6 +38,19 @@ extern "C" BOOL GetMMXAvailable(void)
 
 #endif // #ifndef __GNUC_IA32__
 */
+
+int IsAltiVecAvailable( void )
+{
+	
+	int selectors[2] = { CTL_HW, HW_VECTORUNIT };
+	int hasVectorUnit = 0;
+	size_t length = sizeof(hasVectorUnit);
+	int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0);
+	printf("ALTIVEC: %i\n", hasVectorUnit);
+	if( 0 == error ) return hasVectorUnit != 0;
+	
+	return 0;
+}
 
 int ReadSafe(CIO * pIO, void * pBuffer, int nBytes)
 {

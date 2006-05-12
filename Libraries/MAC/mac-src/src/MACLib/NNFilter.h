@@ -22,6 +22,7 @@ private:
     int m_nShift;
     int m_nVersion;
     BOOL m_bMMXAvailable;
+	int m_AltiVecAvailable;
     int m_nRunningAverage;
 
     CRollBuffer<short> m_rbInput;
@@ -36,6 +37,9 @@ private:
 
     inline int CalculateDotProductNoMMX(short * pA, short * pB, int nOrder);
     inline void AdaptNoMMX(short * pM, short * pAdapt, int nDirection, int nOrder);
+	int CalculateDotProductAltiVec(short * pA, short * pB, int nOrder);
+	void AdaptAltiVec(short * pM, short * pAdapt, int nDirection, int nOrder);
+
 };
 
 #endif // #ifndef APE_NNFILTER_H

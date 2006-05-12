@@ -3,6 +3,10 @@
 #include "NNFilter.h"
 #include "Assembly/Assembly.h"
 
+#ifdef __ppc__
+#include <altivec.h>
+#endif
+
 CNNFilter::CNNFilter(int nOrder, int nShift, int nVersion)
 {
     if ((nOrder <= 0) || ((nOrder % 16) != 0)) throw(1);
@@ -11,7 +15,8 @@ CNNFilter::CNNFilter(int nOrder, int nShift, int nVersion)
     m_nVersion = nVersion;
     
     m_bMMXAvailable = GetMMXAvailable();
-    
+    m_AltiVecAvailable = IsAltiVecAvailable();
+	
     m_rbInput.Create(NN_WINDOW_ELEMENTS, m_nOrder);
     m_rbDeltaM.Create(NN_WINDOW_ELEMENTS, m_nOrder);
     m_paryM = new short [m_nOrder];
@@ -41,7 +46,14 @@ int CNNFilter::Compress(int nInput)
 
     // figure a dot product
     int nDotProduct;
-    if (m_bMMXAvailable)
+	if(m_AltiVecAvailable)
+	{
+		nDotProduct = CalculateDotProductAltiVec(&m_rbInput[-m_nOrder], &m_paryM[0], m_nOrder);
+//		printf("Dot product altivec: %i\n", nDotProduct);
+		nDotProduct = CalculateDotProductNoMMX(&m_rbInput[-m_nOrder], &m_paryM[0], m_nOrder);
+//		printf("Dot product: %i\n", nDotProduct);
+	}
+    else if (m_bMMXAvailable)
         nDotProduct = CalculateDotProduct(&m_rbInput[-m_nOrder], &m_paryM[0], m_nOrder);
     else
         nDotProduct = CalculateDotProductNoMMX(&m_rbInput[-m_nOrder], &m_paryM[0], m_nOrder);
@@ -50,7 +62,10 @@ int CNNFilter::Compress(int nInput)
     int nOutput = nInput - ((nDotProduct + (1 << (m_nShift - 1))) >> m_nShift);
 
     // adapt
-    if (m_bMMXAvailable)
+	if(m_AltiVecAvailable)
+//		AdaptAltiVec(&m_paryM[0], &m_rbDeltaM[-m_nOrder], nOutput, m_nOrder);
+		AdaptNoMMX(&m_paryM[0], &m_rbDeltaM[-m_nOrder], nOutput, m_nOrder);
+    else if (m_bMMXAvailable)
         Adapt(&m_paryM[0], &m_rbDeltaM[-m_nOrder], -nOutput, m_nOrder);
     else
         AdaptNoMMX(&m_paryM[0], &m_rbDeltaM[-m_nOrder], nOutput, m_nOrder);
@@ -84,13 +99,23 @@ int CNNFilter::Decompress(int nInput)
     // figure a dot product
     int nDotProduct;
 
-    if (m_bMMXAvailable)
+	if(m_AltiVecAvailable)
+	{
+//		nDotProduct = CalculateDotProductAltiVec(&m_rbInput[-m_nOrder], &m_paryM[0], m_nOrder);
+//		printf("Dot product altivec: %i\n", nDotProduct);
+		nDotProduct = CalculateDotProductNoMMX(&m_rbInput[-m_nOrder], &m_paryM[0], m_nOrder);
+//		printf("Dot product: %i\n", nDotProduct);
+	}
+    else if (m_bMMXAvailable)
         nDotProduct = CalculateDotProduct(&m_rbInput[-m_nOrder], &m_paryM[0], m_nOrder);
     else
         nDotProduct = CalculateDotProductNoMMX(&m_rbInput[-m_nOrder], &m_paryM[0], m_nOrder);
     
     // adapt
-    if (m_bMMXAvailable)
+	if(m_AltiVecAvailable)
+		AdaptAltiVec(&m_paryM[0], &m_rbDeltaM[-m_nOrder], nInput, m_nOrder);
+//		AdaptNoMMX(&m_paryM[0], &m_rbDeltaM[-m_nOrder], nInput, m_nOrder);
+	else if (m_bMMXAvailable)
         Adapt(&m_paryM[0], &m_rbDeltaM[-m_nOrder], -nInput, m_nOrder);
     else
         AdaptNoMMX(&m_paryM[0], &m_rbDeltaM[-m_nOrder], nInput, m_nOrder);
@@ -133,6 +158,159 @@ int CNNFilter::Decompress(int nInput)
     
     return nOutput;
 }
+
+#ifdef __ppc__
+void CNNFilter::AdaptAltiVec(short * pM, short * pAdapt, int nDirection, int nOrder)
+{
+	vector signed short LSQ2, LSQ4, v1, v2;
+	vector unsigned char mask2;
+	
+	nOrder >>= 4;
+	
+	//mask1 = vec_lvsl(0,pM);
+	mask2 = vec_lvsl(0,pAdapt);
+	//align = vec_lvsr(0,pM);
+	//zero = (vector unsigned char)(0);
+	//(vector signed char) one = (vector signed char)(-1);
+	//mask3 = vec_perm((vector unsigned char)(0),(vector unsigned char)(-1),align);
+	
+	//LSQ3 = vec_ld(0,pM);
+	LSQ4 = vec_ld(0,pAdapt);
+	
+	if (nDirection < 0) 
+	{
+		while (nOrder--)
+		{
+			
+			v1 = vec_ld(0,pM);
+			LSQ2 = vec_ld(16,pAdapt);
+			v2 = vec_perm(LSQ4,LSQ2,mask2);
+			v1 = vec_add(v1,v2);
+			vec_st(v1,0,pM);
+			
+			/*
+				v1 = vec_perm(v1,v1,align);
+			 LSQ3 = vec_sel(LSQ3,v1,(vector unsigned short)mask3);
+			 vec_st(LSQ3,0,pM);
+			 LSQ4 = vec_sel(v1,LSQ,(vector unsigned short)mask3);
+			 vec_st(LSQ4,16,pM);
+			 */
+			
+			v1 = vec_ld(16,pM);
+			LSQ4 = vec_ld(32,pAdapt);
+			v2 = vec_perm(LSQ2,LSQ4,mask2);
+			v1 = vec_add(v1,v2);
+			vec_st(v1,16,pM);
+			
+			/*
+				v1 = vec_perm(v1,v1,align);
+			 LSQ = vec_sel(LSQ,v1,(vector unsigned short)mask3);
+			 vec_st(LSQ,16,pM);
+			 LSQ2 = vec_sel(v1,LSQ3,(vector unsigned short)mask3);
+			 vec_st(LSQ2,32,pM);
+			 */
+			
+			//memcpy(pM,buffer,32);
+			pM = pM + 16;
+			pAdapt = pAdapt + 16;
+		}
+	}
+	else if (nDirection > 0)
+	{
+		while (nOrder--)
+		{
+			
+			v1 = vec_ld(0,pM);
+			LSQ2 = vec_ld(16,pAdapt);
+			v2 = vec_perm(LSQ4,LSQ2,mask2);
+			v1 = vec_sub(v1,v2);
+			vec_st(v1,0,pM);
+			
+			/*
+				v1 = vec_perm(v1,v1,align);
+			 LSQ3 = vec_sel(LSQ3,v1,(vector unsigned short)mask3);
+			 vec_st(LSQ3,0,pM);
+			 LSQ4 = vec_sel(v1,LSQ,(vector unsigned short)mask3);
+			 vec_st(LSQ4,16,pM);
+			 */
+			
+			v1 = vec_ld(16,pM);
+			LSQ4 = vec_ld(32,pAdapt);
+			v2 = vec_perm(LSQ2,LSQ4,mask2);
+			v1 = vec_sub(v1,v2);
+			vec_st(v1,16,pM);
+			
+			/*
+				v1 = vec_perm(v1,v1,align);
+			 LSQ = vec_sel(LSQ,v1,(vector unsigned short)mask3);
+			 vec_st(LSQ,16,pM);
+			 LSQ2 = vec_sel(v1,LSQ3,(vector unsigned short)mask3);
+			 vec_st(LSQ2,32,pM);
+			 */
+			
+			//memcpy(pM,buffer,32);
+			pM = pM + 16;
+			pAdapt = pAdapt + 16;
+			
+			
+		}
+	}
+}
+
+int CNNFilter::CalculateDotProductAltiVec(short * pA, short * pB, int nOrder)
+{
+	vector signed short LSQ, LSQ3, v1, v2;
+	vector unsigned char mask1;
+	
+	vector signed int vzero = (vector signed int)(0);
+	vector signed int sum = (vector signed int)(0);
+//	sum = vec_xor(sum,sum);
+	
+	//int nDotProduct;
+	int p[4];
+	nOrder >>= 4;
+	
+	mask1 = vec_lvsl(0,pA);
+	//mask2 = vec_lvsl(0,pB);
+	
+	
+	LSQ3 = vec_ld(0, pA);
+	//LSQ4 = vec_ld(0, pB);
+	
+	while (nOrder--)
+	{
+		
+		LSQ = vec_ld(16,pA);
+		v1 = vec_perm(LSQ3,LSQ,mask1);
+		v2 = vec_ld(0,pB);
+		sum = vec_msum(v1,v2,sum);
+		
+		LSQ3 = vec_ld(32,pA);
+		v1 = vec_perm(LSQ,LSQ3,mask1);
+		v2 = vec_ld(16,pB);
+		sum = vec_msum(v1,v2,sum);
+		
+		pA = pA + 16;
+		pB = pB + 16;
+		
+	}
+	
+	sum = vec_sums(sum,vzero);
+	vec_st(sum,0,p); 
+	
+	return p[3];
+}
+
+#else
+void CNNFilter::AdaptAltiVec(short * pM, short * pAdapt, int nDirection, int nOrder)
+{
+	AdaptNoMMX(pM, pAdapt, nDirection, nOrder);
+}
+int CNNFilter::CalculateDotProductAltiVec(short * pA, short * pB, int nOrder)
+{
+	return CalculateDotProductNoMMX(pA, pB, nOrder);
+}
+#endif
 
 void CNNFilter::AdaptNoMMX(short * pM, short * pAdapt, int nDirection, int nOrder)
 {

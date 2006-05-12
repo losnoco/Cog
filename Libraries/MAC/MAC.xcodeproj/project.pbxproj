@@ -349,25 +349,8 @@
 				8CA0B48909CAD9E300B4B731 /* UnBitArray.h */,
 				8CA0B48A09CAD9E300B4B731 /* UnBitArrayBase.h */,
 				8CA0B48B09CAD9E300B4B731 /* WAVInputSource.h */,
-				8CA0B39709CAD77400B4B731 /* Assembly */,
 			);
 			name = "Library Headers";
-			sourceTree = "<group>";
-		};
-		8CA0B39709CAD77400B4B731 /* Assembly */ = {
-			isa = PBXGroup;
-			children = (
-				8CA0B39809CAD77400B4B731 /* .deps */,
-			);
-			name = Assembly;
-			path = src/MACLib/Assembly;
-			sourceTree = "<group>";
-		};
-		8CA0B39809CAD77400B4B731 /* .deps */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = .deps;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -566,10 +549,13 @@
 				FRAMEWORK_VERSION = A;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = MAC_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = "-Wl,-read_only_relocs,warning";
+				PER_ARCH_CFLAGS_ppc = "-maltivec";
 				PRODUCT_NAME = MAC;
 				USER_HEADER_SEARCH_PATHS = "mac-src";
 				WRAPPER_EXTENSION = framework;
@@ -591,6 +577,7 @@
 			buildSettings = {
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				PER_ARCH_CFLAGS_ppc = "-maltivec";
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
