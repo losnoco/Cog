@@ -197,7 +197,15 @@
 - (void)delegateRequestNextEntry:(PlaylistEntry *)curEntry
 {
 	PlaylistEntry *pe;
-	pe = [playlistController entryAtIndex:[curEntry index]+1];
+
+	if ([playlistController shuffle] == YES)
+	{
+		pe = [playlistController entryAtIndex:[curEntry shuffleIndex]+1];
+	}
+	else
+	{
+		pe = [playlistController entryAtIndex:[curEntry index]+1];
+	}
 	
 	if (pe == nil)
 		[soundController setNextEntry:nil];
