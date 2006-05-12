@@ -323,8 +323,11 @@
 		
 - (void)sortByPath
 {
+	[self setSortDescriptors:nil];
+
 	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"filename" ascending:YES selector:@selector(compare:)];
-	[self setSortDescriptors:[NSArray arrayWithObject:s]];
+	//	[self setSortDescriptors:[NSArray arrayWithObject:s]];
+	[self setContent:[[self content] sortedArrayUsingDescriptors:[NSArray arrayWithObject:s]]];
 	[s release];	
 
 	if (shuffle == YES)
@@ -336,6 +339,7 @@
 - (void)randomizeList
 {
 	[self setSortDescriptors:nil];
+
 	[self setContent:[Shuffle shuffleList:[self content]]];
 	if (shuffle == YES)
 		[self resetShuffleList];
