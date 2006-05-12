@@ -27,9 +27,15 @@
 
 @implementation CoreAudioFile
 
+#define _USE_CALLBACKS_
+//#undef  _USE_CALLBACKS_
+
+#ifdef _USE_CALLBACKS_
 OSStatus readFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, void *buffer, ByteCount* actualCount)
 {
-	FILE *fd = ((FILE *)inRefCon);
+	CoreAudioFile *caf = (CoreAudioFile *)inRefCon;
+	FILE *fd = caf->_inFd;
+
 	fseek(fd, inPosition, SEEK_SET);
 
 	*actualCount = fread(buffer, 1, requestCount, fd);
@@ -42,18 +48,27 @@ OSStatus readFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, vo
 
 SInt64 getSizeFunc(void *inRefCon)
 {
-	FILE *fd = ((FILE *)inRefCon);
-	int curPos;
-	int length;
+	CoreAudioFile *caf = (CoreAudioFile *)inRefCon;
+	FILE *fd = caf->_inFd;
 
+	if (caf->_fileSize != 0)
+	{
+		return caf->_fileSize;
+	}
+	
+	long curPos;
+	
+	NSLog(@"SIZE FUNC");
+	
 	curPos = ftell(fd);
 	
 	fseek(fd, 0, SEEK_END);
-	length = ftell(fd);
+
+	caf->_fileSize = ftell(fd);
 	
 	fseek(fd, curPos, SEEK_SET);
 
-	return length;
+	return caf->_fileSize;
 }
 
 OSStatus setSizeFunc(void * inRefCon, SInt64 inSize)
@@ -65,6 +80,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 {
 	return -1000; //Not supported at the moment
 }
+#endif
 
 OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPackets, AudioBufferList *ioData, AudioStreamPacketDescription **outDataPacketDescription, void *inUserData)
 {
@@ -133,8 +149,35 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 
 - (BOOL) open:(const char *)filename
 {
-	OSStatus		err;
+	return [self readInfo:filename];
+}
+
+- (void) close
+{
+#ifdef _USE_CALLBACKS_
+	int	err;
 	
+	err = fclose(_inFd);
+	if(err != 0)
+	{
+		NSLog(@"Error closing AudioFile: %i", err);
+	}
+#else
+	OSStatus err;
+	
+	err = AudioFileClose(_in);
+	if (err != noErr)
+	{
+		NSLog(@"Error closing AudioFile: %i", err);
+	}
+#endif
+}
+
+- (BOOL) readInfo:(const char *)filename
+{
+	OSStatus						err;
+	
+#ifdef _USE_CALLBACKS_
 	// Open the input file
 	_inFd = fopen(filename, "r");
 	if (!_inFd)
@@ -144,49 +187,26 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 	}
 	
 	//Using callbacks with fopen, ftell, fseek, fclose, because the default pread hangs when accessing the same file from multiple threads.
-	err = AudioFileOpenWithCallbacks(_inFd, readFunc, writeFunc, getSizeFunc, setSizeFunc, 0, &_in);
+	err = AudioFileOpenWithCallbacks(self, readFunc, writeFunc, getSizeFunc, setSizeFunc, 0, &_in);
 	if(noErr != err) {
 		NSLog(@"Error opening AudioFile: %i", err);
 		return NO;
 	}
+#else
+	FSRef ref;
+	err = FSPathMakeRef((const UInt8 *)filename, &ref, NULL);
+	if(noErr != err) {
+		return NO;
+	}
 	
-	// Read properties
+	err = AudioFileOpen(&ref, fsRdPerm, 0, &_in);
+	if(noErr != err) {
+		NSLog(@"Error opening AudioFile: %i", err);
+		return NO;
+	}
+#endif
+	
 	return [self readInfoFromAudioFile];
-}
-
-- (void) close
-{
-	int	err;
-	
-	err = fclose(_inFd);
-	if(err != 0) {
-		NSLog(@"Error closing AudioFile: %i", err);
-	}
-}
-
-- (BOOL) readInfo:(const char *)filename
-{
-	OSStatus						err;
-	BOOL							result;
-	
-	result = YES;
-
-	_inFd = fopen(filename, "r");
-	if (!_inFd)
-	{
-		NSLog(@"Error operning file: %s", filename);
-		return NO;
-	}
-
-	err = AudioFileOpenWithCallbacks(_inFd, readFunc, writeFunc, getSizeFunc, setSizeFunc, 0, &_in);
-	if(noErr != err) {
-		NSLog(@"Error opening AudioFile: %i", err);
-		return NO;
-	}
-	
-	result = [self readInfoFromAudioFile];
-	
-	return result;
 }
 
 - (BOOL) readInfoFromAudioFile

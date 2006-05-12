@@ -30,7 +30,7 @@
 	
 	SInt64 _packetCount;
 	SInt64 _totalPackets;
-
+	SInt64 _fileSize;
 	UInt32 _maxPacketSize;
 	UInt32 _framesPerPacket;
 	
