@@ -20,13 +20,26 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include <AudioToolbox/ExtendedAudioFile.h>
+#include <AudioToolbox/AudioFile.h>
 
 #import "SoundFile.h"
 
 @interface CoreAudioFile : SoundFile
 {
-	ExtAudioFileRef			_in;
+	AudioFileID _in;
+	
+	SInt64 _packetCount;
+	SInt64 _totalPackets;
+
+	UInt32 _maxPacketSize;
+	
+	AudioConverterRef _converter;
+	void *_convBuf;
+	
+	FILE *_inFd;
+	
+	NSLock *_countLock;
+	
 }
 
 @end

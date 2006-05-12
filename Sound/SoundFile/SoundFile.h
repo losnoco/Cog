@@ -31,11 +31,9 @@ BOOL hostIsBigEndian();
 	BOOL isUnsigned;
 
 	unsigned long totalSize;
-	unsigned long currentPosition;
 }
 
 - (unsigned long)totalSize;
-- (unsigned long)currentPosition;
 
 - (double)length;
 

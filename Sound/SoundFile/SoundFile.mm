@@ -222,11 +222,6 @@ extern NSArray * getCoreAudioExtensions();
 	return NO;
 }
 
-- (unsigned long)currentPosition
-{
-	return currentPosition;
-}	
-
 - (unsigned long)totalSize
 {
 	return totalSize;

@@ -60,8 +60,6 @@
 		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
     }
 	
-	currentPosition += total;
-	
     return total;
 }
 

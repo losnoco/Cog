@@ -21,109 +21,229 @@
 #import "CoreAudioFile.h"
 
 @interface CoreAudioFile (Private)
-- (BOOL) readInfoFromExtAudioFileRef:(ExtAudioFileRef)file;
+- (BOOL) readInfoFromAudioFile;
+- (BOOL) setupConverter: (AudioStreamBasicDescription *)inputFormat;
 @end
 
 @implementation CoreAudioFile
 
+OSStatus readFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, void *buffer, ByteCount* actualCount)
+{
+	FILE *fd = ((FILE *)inRefCon);
+	fseek(fd, inPosition, SEEK_SET);
+
+	*actualCount = fread(buffer, 1, requestCount, fd);
+	
+	if (*actualCount <= 0)
+		return -1000; //Error?
+
+	return noErr;
+}
+
+SInt64 getSizeFunc(void *inRefCon)
+{
+	FILE *fd = ((FILE *)inRefCon);
+	int curPos;
+	int length;
+
+	curPos = ftell(fd);
+	
+	fseek(fd, 0, SEEK_END);
+	length = ftell(fd);
+	
+	fseek(fd, curPos, SEEK_SET);
+
+	return length;
+}
+
+OSStatus setSizeFunc(void * inRefCon, SInt64 inSize)
+{
+	return -1000; //Not supported at the moment
+}
+
+OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, const void *buffer, ByteCount* actualCount)
+{
+	return -1000; //Not supported at the moment
+}
+
+OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPackets, AudioBufferList *ioData, AudioStreamPacketDescription **outDataPacketDescription, void *inUserData)
+{
+	CoreAudioFile *caf = (CoreAudioFile *)inUserData;
+	OSStatus err = noErr;
+	UInt32 numBytes = 0;
+
+	if (caf->_packetCount + *ioNumberDataPackets > caf->_totalPackets)
+	{
+		*ioNumberDataPackets = caf->_totalPackets - caf->_packetCount;
+	}
+
+	if (*ioNumberDataPackets <= 0)
+	{
+		ioData->mBuffers[0].mData = NULL;
+		ioData->mBuffers[0].mDataByteSize = 0;
+		
+		return noErr;
+	}
+
+	if (caf->_convBuf)
+	{
+		free(caf->_convBuf);
+		caf->_convBuf = NULL;
+	}
+	caf->_convBuf = malloc(*ioNumberDataPackets * caf->_maxPacketSize);
+	
+	SInt64 localPacketCount;
+	
+	[caf->_countLock lock];
+	localPacketCount = caf->_packetCount;
+	[caf->_countLock unlock];
+	
+	err	= AudioFileReadPackets(caf->_in, false, &numBytes, NULL, localPacketCount, ioNumberDataPackets, caf->_convBuf);
+	if(err != noErr) {
+		NSLog(@"Error reading AudioFile: %i", err);
+		return 0;
+	}
+	
+	[caf->_countLock lock]; //packetcount could have changed (user could have seeked) while reading
+	if (localPacketCount == caf->_packetCount)
+		caf->_packetCount += *ioNumberDataPackets;
+	[caf->_countLock unlock];
+	
+	
+	ioData->mBuffers[0].mData = caf->_convBuf;
+	ioData->mBuffers[0].mDataByteSize = numBytes;
+	
+	return err;
+}
+
+- (id)init
+{
+	self = [super init];
+	if (self)
+	{
+		_countLock = [[NSLock alloc] init];
+		_packetCount = 0;
+		_convBuf = NULL;
+		_totalPackets = 0;
+		_maxPacketSize = 0;
+	}
+	
+	return self;
+}
+
 - (BOOL) open:(const char *)filename
 {
 	OSStatus		err;
-	FSRef			ref;
 	
 	// Open the input file
-	err = FSPathMakeRef((const UInt8 *)filename, &ref, NULL);
-	if(noErr != err) {
-		NSLog(@"Error opening ExtAudioFile: %i", err);
+	_inFd = fopen(filename, "r");
+	if (!_inFd)
+	{
+		NSLog(@"Error operning file: %s", filename);
 		return NO;
 	}
 	
-	err = ExtAudioFileOpen(&ref, &_in);
+	//Using callbacks with fopen, ftell, fseek, fclose, because the default pread hangs when accessing the same file from multiple threads.
+	err = AudioFileOpenWithCallbacks(_inFd, readFunc, writeFunc, getSizeFunc, setSizeFunc, 0, &_in);
 	if(noErr != err) {
-		NSLog(@"Error opening ExtAudioFile: %i", err);
+		NSLog(@"Error opening AudioFile: %i", err);
 		return NO;
 	}
 	
 	// Read properties
-	return [self readInfoFromExtAudioFileRef:_in];
+	return [self readInfoFromAudioFile];
 }
 
 - (void) close
 {
-	OSStatus			err;
+	int	err;
 	
-	err = ExtAudioFileDispose(_in);
-	if(noErr != err) {
-		NSLog(@"Error closing ExtAudioFile: %i", err);
+	err = fclose(_inFd);
+	if(err != 0) {
+		NSLog(@"Error closing AudioFile: %i", err);
 	}
 }
 
 - (BOOL) readInfo:(const char *)filename
 {
 	OSStatus						err;
-	FSRef							ref;
 	BOOL							result;
 	
 	result = YES;
 
-	// Open the input file
-	err = FSPathMakeRef((const UInt8 *)filename, &ref, NULL);
+	_inFd = fopen(filename, "r");
+	if (!_inFd)
+	{
+		NSLog(@"Error operning file: %s", filename);
+		return NO;
+	}
+
+	err = AudioFileOpenWithCallbacks(_inFd, readFunc, writeFunc, getSizeFunc, setSizeFunc, 0, &_in);
 	if(noErr != err) {
-		NSLog(@"Error closing ExtAudioFile: %i", err);
+		NSLog(@"Error opening AudioFile: %i", err);
 		return NO;
 	}
 	
-	err = ExtAudioFileOpen(&ref, &_in);
-	if(noErr != err) {
-		NSLog(@"Error closing ExtAudioFile: %i", err);
-		return NO;
-	}
-	
-	result = [self readInfoFromExtAudioFileRef:_in];
+	result = [self readInfoFromAudioFile];
 	
 	return result;
 }
 
-- (BOOL) readInfoFromExtAudioFileRef:(ExtAudioFileRef)file
+- (BOOL) readInfoFromAudioFile
 {
 	OSStatus						err;
 	UInt32							size;
-	SInt64							totalFrames;
 	AudioStreamBasicDescription		asbd;
+	SInt64							totalBytes;
 
 	// Get input file information
 	size	= sizeof(asbd);
-	err		= ExtAudioFileGetProperty(file, kExtAudioFileProperty_FileDataFormat, &size, &asbd);
+	err		= AudioFileGetProperty(_in, kAudioFilePropertyDataFormat, &size, &asbd);
 	if(err != noErr) {
-		err = ExtAudioFileDispose(file);
-		NSLog(@"Error closing ExtAudioFile: %i", err);
+		[self close];
 		return NO;
 	}
 
-	size	= sizeof(totalFrames);
-	err		= ExtAudioFileGetProperty(file, kExtAudioFileProperty_FileLengthFrames, &size, &totalFrames);
+	size	= sizeof(_totalPackets);
+	err		= AudioFileGetProperty(_in, kAudioFilePropertyAudioDataPacketCount, &size, &_totalPackets);
 	if(err != noErr) {
-		err = ExtAudioFileDispose(file);
-		NSLog(@"Error closing ExtAudioFile: %i", err);
+		[self close];
 		return NO;
 	}
-		
+	
+	size	= sizeof(totalBytes);
+	err		= AudioFileGetProperty(_in, kAudioFilePropertyAudioDataByteCount, &size, &totalBytes);
+	if(err != noErr) {
+		[self close];
+		return NO;
+	}
+	
+	bitRate = totalBytes/((_totalPackets * asbd.mFramesPerPacket)/asbd.mSampleRate);
 	// Set our properties
 	bitsPerSample		= asbd.mBitsPerChannel;
 	channels			= asbd.mChannelsPerFrame;
 	frequency			= asbd.mSampleRate;
-	
+
 	// mBitsPerChannel will only be set for lpcm formats
 	if(0 == bitsPerSample) {
 		bitsPerSample = 16;
 	}
 	
-	totalSize			= totalFrames * channels * (bitsPerSample / 8);
-	currentPosition		= 0;
-	bitRate				= 0;
+	totalSize			= _totalPackets  *  asbd.mFramesPerPacket  *channels * (bitsPerSample/8);
+
+	isBigEndian = YES;
+	isUnsigned = NO;
+	
+	return [self setupConverter:&asbd];
+}
+
+- (BOOL)setupConverter: (AudioStreamBasicDescription *)inputFormat
+{
+	OSStatus err;
+	UInt32 size;
+	AudioStreamBasicDescription		result;
 
 	// Set output format
-	AudioStreamBasicDescription		result;
 	
 	bzero(&result, sizeof(AudioStreamBasicDescription));
 	
@@ -137,56 +257,85 @@
 	result.mBytesPerPacket		= channels * (bitsPerSample / 8);
 	result.mFramesPerPacket		= 1;
 	result.mBytesPerFrame		= channels * (bitsPerSample / 8);
-		
-	err = ExtAudioFileSetProperty(file, kExtAudioFileProperty_ClientDataFormat, sizeof(result), &result);
-	if(noErr != err) {
-		err = ExtAudioFileDispose(file);
-		NSLog(@"Error closing ExtAudioFile: %i", err);
+
+	err = AudioConverterNew(inputFormat, &result, &_converter);
+	if (err != noErr)
+	{
+		[self close];
+
+		NSLog(@"Error creating converter");
 		return NO;
 	}
 	
-	// Further properties
-	isBigEndian			= YES;
-	isUnsigned			= NO;
+    err = AudioFileGetPropertyInfo(	_in, 
+									kAudioFilePropertyMagicCookieData, 
+									&size, 
+									NULL); 
 	
-	NSLog(@"Successfully read file");
+	if (err == noErr) //Some data can be read without magic cookies...
+    {
+        void *magicCookie = malloc (size);
+		//Get Magic Cookie data from Audio File
+		err = AudioFileGetProperty(_in, 
+								   kAudioFilePropertyMagicCookieData, 
+								   &size, 
+								   magicCookie);       
+		
+		// Give the AudioConverter the magic cookie decompression params if there are any
+		if (err == noErr)
+		{
+			err = AudioConverterSetProperty(	_converter, 
+												kAudioConverterDecompressionMagicCookie, 
+												size, 
+												magicCookie);
+		}
+
+		free(magicCookie);
+    }
+	
+	size = sizeof(_maxPacketSize);
+    err = AudioFileGetProperty(	_in,
+								kAudioFilePropertyMaximumPacketSize, 
+								&size, 
+								&_maxPacketSize);
+	if(err != noErr) {
+		err = AudioFileClose(_in);
+		NSLog(@"Error getting maximum packet size: %i", err);
+		return NO;
+	}
 	
 	return YES;
 }
 
 - (int) fillBuffer:(void *)buf ofSize:(UInt32)size
 {
-	OSStatus				err;
-	AudioBufferList			bufferList;
-	UInt32					frameCount;
+	OSStatus						err;
+	UInt32							frameCount;
+	AudioBufferList ioData;
 	
-	// Set up the AudioBufferList
-	bufferList.mNumberBuffers				= 1;
-	bufferList.mBuffers[0].mNumberChannels	= channels;
-	bufferList.mBuffers[0].mData			= buf;
-	bufferList.mBuffers[0].mDataByteSize	= size;
-	
+	ioData.mNumberBuffers = 1;
+	ioData.mBuffers[0].mData			= buf;
+	ioData.mBuffers[0].mDataByteSize	= size;
+
+	frameCount	= size / (channels * (bitsPerSample / 8));
+
 	// Read a chunk of PCM input (converted from whatever format)
-	frameCount	= (size / (channels * (bitsPerSample / 8)));
-	err			= ExtAudioFileRead(_in, &frameCount, &bufferList);
+    err = AudioConverterFillComplexBuffer(_converter, ACInputProc , self , &frameCount, &ioData, NULL);
 	if(err != noErr) {
-		NSLog(@"Error reading ExtAudioFile: %i", err);
+		NSLog(@"Error reading converter: %i", err);
 		return 0;
 	}	
 
-	return frameCount * (channels * (bitsPerSample / 8));
+	return ioData.mBuffers[0].mDataByteSize;
 }
 
 - (double) seekToTime:(double)milliseconds
 {
-	OSStatus			err;
-
-	err = ExtAudioFileSeek(_in, ((milliseconds / 1000.f) * frequency));
-	if(noErr != err) {
-		return -1.f;
-	}
+	[_countLock lock];
+	_packetCount = ((milliseconds / 1000.f) * frequency);
+	[_countLock unlock];
 	
-	return milliseconds;	
+	return YES;
 }
 
 @end

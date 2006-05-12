@@ -91,7 +91,7 @@
 		((UInt16 *)buf)[n] = CFSwapInt16BigToHost(((UInt16 *)buf)[n]);
 	}
 	*/
-	currentPosition += total;
+
     return total;
 }
 

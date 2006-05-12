@@ -103,8 +103,6 @@
 		}
 	}
 */	
-	currentPosition += numread;
-	
 	return numread;
 }
 
