@@ -38,9 +38,6 @@
 	void *_convBuf;
 	
 	FILE *_inFd;
-	
-	NSLock *_countLock;
-	
 }
 
 @end

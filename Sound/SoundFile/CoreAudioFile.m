@@ -110,9 +110,7 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 	
 	SInt64 localPacketCount;
 	
-	[caf->_countLock lock];
 	localPacketCount = caf->_packetCount;
-	[caf->_countLock unlock];
 	
 	err	= AudioFileReadPackets(caf->_in, false, &numBytes, NULL, localPacketCount, ioNumberDataPackets, caf->_convBuf);
 	if(err != noErr) {
@@ -120,11 +118,7 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 		return 0;
 	}
 	
-	[caf->_countLock lock]; //packetcount could have changed (user could have seeked) while reading
-	if (localPacketCount == caf->_packetCount)
-		caf->_packetCount += *ioNumberDataPackets;
-	[caf->_countLock unlock];
-	
+	caf->_packetCount += *ioNumberDataPackets;
 	
 	ioData->mBuffers[0].mData = caf->_convBuf;
 	ioData->mBuffers[0].mDataByteSize = numBytes;
@@ -137,7 +131,6 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 	self = [super init];
 	if (self)
 	{
-		_countLock = [[NSLock alloc] init];
 		_packetCount = 0;
 		_convBuf = NULL;
 		_totalPackets = 0;
@@ -355,12 +348,7 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 {
 	double newTime;
 	
-	NSLog(@"Seeking to: %lf", milliseconds);
-	NSLog(@"Max frames: %lli", _totalPackets);
-	[_countLock lock];
 	_packetCount = ((milliseconds / 1000.f) * frequency)/_framesPerPacket;
-	NSLog(@"Seeking in coreaudio: %lli", _packetCount);
-	[_countLock unlock];
 
 	newTime = ((_packetCount * _framesPerPacket)/frequency)*1000.0;
 	

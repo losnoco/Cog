@@ -11,11 +11,8 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		8E4C7F080A0509FC003BE25F /* DragScrollView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E4C7F060A0509FC003BE25F /* DragScrollView.h */; };
 		8E4C7F090A0509FC003BE25F /* DragScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4C7F070A0509FC003BE25F /* DragScrollView.m */; };
-		8E6A8E2B0A0D8A68002ABE9C /* CoreAudioFile.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E6A8E270A0D8A68002ABE9C /* CoreAudioFile.h */; };
 		8E6A8E2C0A0D8A68002ABE9C /* CoreAudioFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */; };
-		8E6A8E370A0D8AD8002ABE9C /* CoreAudioUtils.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E6A8E350A0D8AD8002ABE9C /* CoreAudioUtils.h */; };
 		8E6A8E380A0D8AD8002ABE9C /* CoreAudioUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6A8E360A0D8AD8002ABE9C /* CoreAudioUtils.m */; };
 		8E75756909F31D5A0080F1EE /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75751909F31D5A0080F1EE /* AppController.m */; };
 		8E75756A09F31D5A0080F1EE /* ClickField.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75751C09F31D5A0080F1EE /* ClickField.m */; };
@@ -37,15 +34,12 @@
 		8E75757A09F31D5A0080F1EE /* OutputCoreAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75753F09F31D5A0080F1EE /* OutputCoreAudio.m */; };
 		8E75757B09F31D5A0080F1EE /* OutputNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75754109F31D5A0080F1EE /* OutputNode.m */; };
 		8E75757C09F31D5A0080F1EE /* SoundController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75754309F31D5A0080F1EE /* SoundController.m */; };
-		8E75757D09F31D5A0080F1EE /* AACFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75754609F31D5A0080F1EE /* AACFile.m */; };
 		8E75757E09F31D5A0080F1EE /* FlacFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75754809F31D5A0080F1EE /* FlacFile.m */; };
 		8E75757F09F31D5A0080F1EE /* MonkeysFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8E75754A09F31D5A0080F1EE /* MonkeysFile.mm */; };
-		8E75758009F31D5A0080F1EE /* MPEGFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8E75754C09F31D5A0080F1EE /* MPEGFile.mm */; };
 		8E75758109F31D5A0080F1EE /* MusepackFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75754E09F31D5A0080F1EE /* MusepackFile.m */; };
 		8E75758209F31D5A0080F1EE /* ShnFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755009F31D5A0080F1EE /* ShnFile.m */; };
 		8E75758309F31D5A0080F1EE /* SoundFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755209F31D5A0080F1EE /* SoundFile.mm */; };
 		8E75758409F31D5A0080F1EE /* VorbisFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755409F31D5A0080F1EE /* VorbisFile.m */; };
-		8E75758509F31D5A0080F1EE /* WaveFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755609F31D5A0080F1EE /* WaveFile.m */; };
 		8E75758609F31D5A0080F1EE /* WavPackFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755809F31D5A0080F1EE /* WavPackFile.m */; };
 		8E75758709F31D5A0080F1EE /* SOUNDTODO in Resources */ = {isa = PBXBuildFile; fileRef = 8E75755909F31D5A0080F1EE /* SOUNDTODO */; };
 		8E75758909F31D5A0080F1EE /* MacPADSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755F09F31D5A0080F1EE /* MacPADSocket.m */; };
@@ -95,7 +89,6 @@
 		8E75775109F31F6B0080F1EE /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E75775009F31F6B0080F1EE /* Vorbis.framework */; };
 		8E75775409F31F750080F1EE /* WavPack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E75775309F31F750080F1EE /* WavPack.framework */; };
 		8E75777909F320D50080F1EE /* SndFile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E75777809F320D50080F1EE /* SndFile.framework */; };
-		8E757B4E09F326710080F1EE /* SndFile.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75777809F320D50080F1EE /* SndFile.framework */; };
 		8E757B4F09F326710080F1EE /* WavPack.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75775309F31F750080F1EE /* WavPack.framework */; };
 		8E757B5009F326710080F1EE /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75775009F31F6B0080F1EE /* Vorbis.framework */; };
 		8E757B5109F326710080F1EE /* TagLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75774D09F31F600080F1EE /* TagLib.framework */; };
@@ -105,8 +98,6 @@
 		8E757B5509F326710080F1EE /* MAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773F09F31F2A0080F1EE /* MAC.framework */; };
 		8E757B5609F326710080F1EE /* FLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773709F31F1F0080F1EE /* FLAC.framework */; };
 		8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773809F31F1F0080F1EE /* OggFLAC.framework */; };
-		8E757B5809F326710080F1EE /* FAAD2.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773409F31F0C0080F1EE /* FAAD2.framework */; };
-		8E757B5909F326710080F1EE /* DecMPA.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773109F31EFD0080F1EE /* DecMPA.framework */; };
 		8E757C7C09F32F070080F1EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7A09F32F070080F1EE /* AudioToolbox.framework */; };
 		8E757C7D09F32F070080F1EE /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7B09F32F070080F1EE /* AudioUnit.framework */; };
 /* End PBXBuildFile section */
@@ -133,7 +124,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8E757B4E09F326710080F1EE /* SndFile.framework in CopyFiles */,
 				8E757B4F09F326710080F1EE /* WavPack.framework in CopyFiles */,
 				8E757B5009F326710080F1EE /* Vorbis.framework in CopyFiles */,
 				8E757B5109F326710080F1EE /* TagLib.framework in CopyFiles */,
@@ -143,11 +133,6 @@
 				8E757B5509F326710080F1EE /* MAC.framework in CopyFiles */,
 				8E757B5609F326710080F1EE /* FLAC.framework in CopyFiles */,
 				8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */,
-				8E757B5809F326710080F1EE /* FAAD2.framework in CopyFiles */,
-				8E757B5909F326710080F1EE /* DecMPA.framework in CopyFiles */,
-				8E4C7F080A0509FC003BE25F /* DragScrollView.h in CopyFiles */,
-				8E6A8E2B0A0D8A68002ABE9C /* CoreAudioFile.h in CopyFiles */,
-				8E6A8E370A0D8AD8002ABE9C /* CoreAudioUtils.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,10 +469,10 @@
 		8E75754409F31D5A0080F1EE /* SoundFile */ = {
 			isa = PBXGroup;
 			children = (
-				8E6A8E270A0D8A68002ABE9C /* CoreAudioFile.h */,
-				8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */,
 				8E75754509F31D5A0080F1EE /* AACFile.h */,
 				8E75754609F31D5A0080F1EE /* AACFile.m */,
+				8E6A8E270A0D8A68002ABE9C /* CoreAudioFile.h */,
+				8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */,
 				8E75754709F31D5A0080F1EE /* FlacFile.h */,
 				8E75754809F31D5A0080F1EE /* FlacFile.m */,
 				8E75754909F31D5A0080F1EE /* MonkeysFile.h */,
@@ -697,15 +682,12 @@
 				8E75757A09F31D5A0080F1EE /* OutputCoreAudio.m in Sources */,
 				8E75757B09F31D5A0080F1EE /* OutputNode.m in Sources */,
 				8E75757C09F31D5A0080F1EE /* SoundController.m in Sources */,
-				8E75757D09F31D5A0080F1EE /* AACFile.m in Sources */,
 				8E75757E09F31D5A0080F1EE /* FlacFile.m in Sources */,
 				8E75757F09F31D5A0080F1EE /* MonkeysFile.mm in Sources */,
-				8E75758009F31D5A0080F1EE /* MPEGFile.mm in Sources */,
 				8E75758109F31D5A0080F1EE /* MusepackFile.m in Sources */,
 				8E75758209F31D5A0080F1EE /* ShnFile.m in Sources */,
 				8E75758309F31D5A0080F1EE /* SoundFile.mm in Sources */,
 				8E75758409F31D5A0080F1EE /* VorbisFile.m in Sources */,
-				8E75758509F31D5A0080F1EE /* WaveFile.m in Sources */,
 				8E75758609F31D5A0080F1EE /* WavPackFile.m in Sources */,
 				8E75758909F31D5A0080F1EE /* MacPADSocket.m in Sources */,
 				8E75758A09F31D5A0080F1EE /* UpdateController.m in Sources */,
