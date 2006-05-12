@@ -32,6 +32,7 @@
 	SInt64 _totalPackets;
 
 	UInt32 _maxPacketSize;
+	UInt32 _framesPerPacket;
 	
 	AudioConverterRef _converter;
 	void *_convBuf;

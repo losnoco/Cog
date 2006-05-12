@@ -10,7 +10,7 @@
 #import "PlaylistEntry.h"
 #import "Shuffle.h"
 
-extern NSArray * getCoreAudioExtensions();
+#import "CoreAudioUtils.h"
 
 @implementation PlaylistController
 

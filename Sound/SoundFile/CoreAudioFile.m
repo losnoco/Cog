@@ -224,12 +224,14 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 	channels			= asbd.mChannelsPerFrame;
 	frequency			= asbd.mSampleRate;
 
+	_framesPerPacket = asbd.mFramesPerPacket;
+	
 	// mBitsPerChannel will only be set for lpcm formats
 	if(0 == bitsPerSample) {
 		bitsPerSample = 16;
 	}
 	
-	totalSize			= _totalPackets  *  asbd.mFramesPerPacket  *channels * (bitsPerSample/8);
+	totalSize  = _totalPackets  *  asbd.mFramesPerPacket  *channels * (bitsPerSample/8);
 
 	isBigEndian = YES;
 	isUnsigned = NO;
@@ -331,11 +333,18 @@ OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32 *ioNumberDataPac
 
 - (double) seekToTime:(double)milliseconds
 {
-	[_countLock lock];
-	_packetCount = ((milliseconds / 1000.f) * frequency);
-	[_countLock unlock];
+	double newTime;
 	
-	return YES;
+	NSLog(@"Seeking to: %lf", milliseconds);
+	NSLog(@"Max frames: %lli", _totalPackets);
+	[_countLock lock];
+	_packetCount = ((milliseconds / 1000.f) * frequency)/_framesPerPacket;
+	NSLog(@"Seeking in coreaudio: %lli", _packetCount);
+	[_countLock unlock];
+
+	newTime = ((_packetCount * _framesPerPacket)/frequency)*1000.0;
+	
+	return newTime;
 }
 
 @end
