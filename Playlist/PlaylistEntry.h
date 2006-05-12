@@ -18,7 +18,7 @@
 	NSString *title;
 	NSString *genre;
 
-	unsigned int year;
+	NSString *year;
 	unsigned int track;	
 	
 	NSString *lengthString;
@@ -61,8 +61,8 @@
 - (NSString *)lengthString;
 - (void)setLengthString:(double)l;
 
--(void)setYear:(int)y;
--(int)year;
+-(void)setYear:(NSString *)y;
+-(NSString *)year;
 -(void)setTrack:(int)y;
 -(int)track;
 

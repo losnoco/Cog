@@ -186,11 +186,19 @@
 	return genre;
 }
 
-- (void)setYear:(int)y
+- (void)setYear:(NSString *)y
 {
+	[y retain];
+	[year release];
+	
+	if ([y intValue] == 0)
+	{
+		y = @"";
+	}
+	
 	year = y;
 }
-- (int)year
+- (NSString *)year
 {
 	return year;
 }
@@ -300,7 +308,7 @@
 			pGenre = taglib_tag_genre(tag);
 			pComment = taglib_tag_comment(tag);
 			
-			[self setYear:taglib_tag_year(tag)];
+			[self setYear:[[NSNumber numberWithInt:taglib_tag_year(tag)] stringValue]];
 			[self setTrack:taglib_tag_track(tag)];
 			
 			
@@ -355,7 +363,7 @@
 	[self setArtist:[a objectAtIndex:2]];
 	[self setAlbum:[a objectAtIndex:3]];
 	[self setGenre:[a objectAtIndex:4]];
-	[self setYear:[[a objectAtIndex:5] intValue]];
+	[self setYear:[[a objectAtIndex:5] stringValue]];
 	[self setTrack:[[a objectAtIndex:6] intValue]];
 }	
 
