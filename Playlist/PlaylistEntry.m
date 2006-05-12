@@ -217,11 +217,34 @@
 	sampleRate = [sf frequency];
 	
 	[self setLengthString:length];
+
 	[sf release];
 //	DBLog(@"Length: %f bitRate: %i channels: %i bps: %i samplerate: %f", length, bitRate, channels, bitsPerSample, sampleRate);
 	
 	//[(SoundFile *)sf close];
 //	[sp close];
+}
+
+- (void)readInfoThreadSetVariables:(SoundFile *)sf
+{
+	length = [sf length];
+	bitRate = [sf bitRate];
+	channels = [sf channels];
+	bitsPerSample = [sf bitsPerSample];
+	sampleRate = [sf frequency];
+	
+	[self setLengthString:length];
+
+	[sf release];
+}
+
+- (void)readInfoThread
+{
+	SoundFile *sf = [SoundFile readInfo:filename];
+	if (sf == nil)
+		return;
+
+	[self performSelectorOnMainThread:@selector(readInfoThreadSetVariables:) withObject:sf waitUntilDone:YES];
 }
 
 - (NSString *)lengthString
@@ -321,6 +344,103 @@
 		[self setDisplay:[filename lastPathComponent]];
 		[self setTitle:[filename lastPathComponent]];
 	}
+}
+
+- (void)readTagsThreadSetVariables: (NSArray *)a
+{
+	
+	[self setDisplay:[a objectAtIndex:0]];
+	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:1]);
+	[self setTitle:[a objectAtIndex:1]];
+	[self setArtist:[a objectAtIndex:2]];
+	[self setAlbum:[a objectAtIndex:3]];
+	[self setGenre:[a objectAtIndex:4]];
+	[self setYear:[[a objectAtIndex:5] intValue]];
+	[self setTrack:[[a objectAtIndex:6] intValue]];
+}	
+
+- (void)readTagsThread
+{
+	NSString *lDisplay = nil, *lArtist = nil, *lTitle = nil, *lAlbum = nil, *lGenre = nil;
+	int lYear = 0, lTrack = 0;
+	
+	TagLib_File *tagFile = taglib_file_new((const char *)[filename UTF8String]);
+	DBLog(@"Does it have a file? %i %s", tagFile, (const char *)[filename UTF8String]);
+	if (tagFile)
+	{
+		TagLib_Tag *tag = taglib_file_tag(tagFile);
+		DBLog(@"Does it have a tag? %i", tag);
+		
+		if (tag)
+		{
+			char *pArtist, *pTitle, *pAlbum, *pGenre, *pComment;
+			
+			pArtist = taglib_tag_artist(tag);
+			pTitle = taglib_tag_title(tag);
+			pAlbum = taglib_tag_album(tag);
+			pGenre = taglib_tag_genre(tag);
+			pComment = taglib_tag_comment(tag);
+			
+			lYear = taglib_tag_year(tag);
+			lTrack = taglib_tag_track(tag);
+			
+			if (pArtist != NULL)
+				lArtist = [NSString stringWithUTF8String:(char *)pArtist];
+			else
+				lArtist = nil;
+			
+			if (pAlbum != NULL)
+				lAlbum = [NSString stringWithUTF8String:(char *)pAlbum];
+			else
+				lAlbum = nil;
+			
+			if (pTitle != NULL)
+			{
+				NSLog(@"SET TITLE PROPERLY");
+				lTitle = [NSString stringWithUTF8String:(char *)pTitle];
+			}
+			else
+				lTitle = nil;
+			
+			if (pGenre != NULL)	
+				lGenre = [NSString stringWithUTF8String:(char *)pGenre];
+			else
+				lGenre = nil;
+				
+			if ([lArtist isEqualToString:@""] || [lTitle isEqualToString:@""])
+			{
+				NSLog(@"SET TITLE IMPROPERLY");
+
+				lDisplay = [filename lastPathComponent];
+				lTitle = [filename lastPathComponent];
+			}
+			else
+			{
+				lDisplay = [NSString stringWithFormat:@"%@ - %@", lArtist, lTitle];
+			}
+			
+			taglib_tag_free_strings();
+		}
+		
+		taglib_file_free(tagFile);
+	}
+	else
+	{
+		NSLog(@"SET TITLE IMPROPERLY2");
+		lDisplay = [filename lastPathComponent];
+		lTitle = [filename lastPathComponent];
+	}
+	NSLog(@"TITLE IS: %@", lTitle);
+	[self performSelectorOnMainThread:@selector(readTagsThreadSetVariables:) withObject:
+		[NSArray arrayWithObjects:
+			lDisplay,
+			lTitle,
+			lArtist,
+			lAlbum,
+			lGenre,
+			[NSNumber numberWithInt:lYear],
+			[NSNumber numberWithInt:lTrack],nil]
+		waitUntilDone:YES];
 }
 
 @end

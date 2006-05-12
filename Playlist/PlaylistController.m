@@ -152,20 +152,22 @@
 
 - (void)readMetaData:(id)entries
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	int i;
 	for (i = 0; i < [entries count]; i++)
 	{
 		PlaylistEntry *pe =[entries objectAtIndex:i];
 		
-//		[pe readInfo];
-		[pe performSelectorOnMainThread:@selector(readInfo) withObject:nil waitUntilDone:YES];
-//		[pe readTags];
-		[pe performSelectorOnMainThread:@selector(readTags) withObject:nil waitUntilDone:YES];
+		[pe readInfoThread];
+//		[pe performSelectorOnMainThread:@selector(readInfoThread) withObject:nil waitUntilDone:YES];
+		[pe readTagsThread];
+//		[pe performSelectorOnMainThread:@selector(readTagsThread) withObject:nil waitUntilDone:YES];
 	}
 
 	[self performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
 
 	[entries release];
+	[pool release];
 }
 
 - (void)addPaths:(NSArray *)paths sort:(BOOL)sort
