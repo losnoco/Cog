@@ -61,6 +61,11 @@
 - (NSString *)lengthString;
 - (void)setLengthString:(double)l;
 
+-(void)setYear:(int)y;
+-(int)year;
+-(void)setTrack:(int)y;
+-(int)track;
+
 - (double)length;
 - (int)bitRate;
 - (int)channels;
