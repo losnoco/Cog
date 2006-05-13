@@ -20,24 +20,22 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include <AudioToolbox/AudioFile.h>
+#include <AudioToolbox/ExtendedAudioFile.h>
 
 #import "SoundFile.h"
 
+#define _USE_WRAPPER_
+
 @interface CoreAudioFile : SoundFile
 {
-	AudioFileID _in;
+	ExtAudioFileRef			_in;
+
+#ifdef _USE_WRAPPER_
+	FILE *					_inFd;
+	AudioFileID				_audioID;
 	
-	SInt64 _packetCount;
-	SInt64 _totalPackets;
 	SInt64 _fileSize;
-	UInt32 _maxPacketSize;
-	UInt32 _framesPerPacket;
-	
-	AudioConverterRef _converter;
-	void *_convBuf;
-	
-	FILE *_inFd;
+#endif
 }
 
 @end
