@@ -235,11 +235,11 @@
 
 - (void)readInfoThreadSetVariables:(SoundFile *)sf
 {
-	length = [sf length];
-	bitRate = [sf bitRate];
-	channels = [sf channels];
-	bitsPerSample = [sf bitsPerSample];
-	sampleRate = [sf frequency];
+	[self setLength:[sf length]];
+	[self setBitRate:[sf bitRate]];
+	[self setChannels:[sf channels]];
+	[self setBitsPerSample:[sf bitsPerSample]];
+	[self setSampleRate:(float)[sf frequency]];
 	
 	[self setLengthString:length];
 
@@ -267,22 +267,46 @@
 	lengthString = [[NSString alloc] initWithFormat:@"%i:%02i",sec/60,sec%60]; 
 }
 
+
+- (void)setLength:(double)l
+{
+	length = l;
+}
 - (double)length
 {
 	return length;
+}
+
+- (void)setBitRate:(int) br
+{
+	bitRate = br;
 }
 - (int)bitRate
 {
 	return bitRate;
 }
 
+- (void)setChannels:(int)c
+{
+	channels = c;
+}
 - (int)channels
 {
 	return channels;
 }
+
+- (void)setBitsPerSample:(int)bps
+{
+	bitsPerSample = bps;
+}
 - (int)bitsPerSample
 {
 	return bitsPerSample;
+}
+
+- (void)setSampleRate:(float)s
+{
+	sampleRate = s;
 }
 - (float)sampleRate
 {

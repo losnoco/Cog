@@ -163,10 +163,14 @@
 //		[pe performSelectorOnMainThread:@selector(readInfoThread) withObject:nil waitUntilDone:YES];
 		[pe readTagsThread];
 //		[pe performSelectorOnMainThread:@selector(readTagsThread) withObject:nil waitUntilDone:YES];
+
+		//Hack so the display gets updated
+		if (pe == [self currentEntry])
+			[self performSelectorOnMainThread:@selector(setCurrentEntry:) withObject:[self currentEntry] waitUntilDone:YES];
 	}
 
 	[self performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-
+	
 	[entries release];
 	[pool release];
 }

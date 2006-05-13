@@ -69,8 +69,6 @@
 {
 	PlaylistEntry *pe = [[playlistController arrangedObjects] objectAtIndex:i];
 
-	[playlistController setCurrentEntry:pe];
-
 	[self playEntry:pe];
 }
 
@@ -88,8 +86,8 @@
 	if (playbackStatus != kCogStatusStopped)
 		[self stop:self];
 	
-	DBLog(@"LENGTH: %lf", [pe length]);
-	[positionSlider setMaxValue:[pe length]];
+	[playlistController setCurrentEntry:pe];
+
 	[positionSlider setDoubleValue:0.0f];
 	
 	[self updateTimeField:0.0f];
@@ -228,7 +226,6 @@
 {
 	[playlistController setCurrentEntry:pe];
 	
-	[positionSlider setMaxValue:[pe length]];
 	[positionSlider setDoubleValue:0.0f];
 
 	[self updateTimeField:0.0f];
