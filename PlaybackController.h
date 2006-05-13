@@ -14,6 +14,7 @@
 	IBOutlet PlaylistView *playlistView;
 	
 	IBOutlet TrackingSlider *positionSlider;
+	IBOutlet NSSlider *volumeSlider;
 	IBOutlet NSTextField *timeField;
 	IBOutlet NSTextField *lengthField;
 	IBOutlet NSTextField *bitrateField;

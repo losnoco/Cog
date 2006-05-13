@@ -23,6 +23,7 @@
 - (void)awakeFromNib
 {
 	currentVolume = 100.0;
+	[volumeSlider setDoubleValue:pow(10.0, log10(0.5)/4.0)*[volumeSlider maxValue]];
 }
 
 
@@ -157,15 +158,22 @@
 
 - (IBAction)changeVolume:(id)sender
 {
-	currentVolume = (float)[sender doubleValue];
+	float percent;
 	
-	//gravitates at the halfway mark
-	float v = ([sender frame].size.width/[sender maxValue])*(currentVolume-([sender maxValue]/2.0));
+	//Approximated log
+	percent = (float)[sender doubleValue]/[sender maxValue];
+	percent = percent * percent * percent * percent;
+
+	//gravitates at the 100% mark
+	float v = [sender frame].size.width - ([sender frame].size.width*(percent*[sender maxValue])/100.0);
 	if (fabs(v) < 10.0)
 	{
-		currentVolume = [sender maxValue]/2.0;
-		[sender setDoubleValue:currentVolume];
+		percent = 0.5;
+		v = pow(10.0, log10(percent)/4.0);
+		[sender setDoubleValue:v*[sender maxValue]];
 	}
+	
+	currentVolume = percent * [sender maxValue];
 	
 	[soundController  setVolume:currentVolume];
 }

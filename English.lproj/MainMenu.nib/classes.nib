@@ -79,6 +79,7 @@
                 playlistView = PlaylistView; 
                 positionSlider = TrackingSlider; 
                 timeField = NSTextField; 
+                volumeSlider = NSSlider; 
             }; 
             SUPERCLASS = NSObject; 
         }, 
