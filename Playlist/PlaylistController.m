@@ -250,10 +250,7 @@
 	PlaylistEntry* pe;
 	
 	while (pe = [enumerator nextObject]) {
-		NSLog(@"Updating :%i", pe);
-		NSLog(@"Updating :%@", pe);
 		tt += [pe length];
-		NSLog(@"UpdateD");
 	}
 	
 	int sec = (int)(tt/1000.0);

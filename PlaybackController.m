@@ -188,6 +188,8 @@
 	else
 	{
 		int sec = (int)(([positionSlider maxValue] - pos)/1000.0);
+		if (sec < 0)
+			sec = 0;
 		text = [NSString stringWithFormat:NSLocalizedString(@"TimeRemaining", @""), sec/60, sec%60];
 	}
 	[timeField setStringValue:text];

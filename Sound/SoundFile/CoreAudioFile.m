@@ -106,7 +106,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 {
 	OSStatus						err;
 
-#ifdef _USE_WRAPPER_
+#ifdef _USE_WRAPPER_	
 	// Open the input file
 	_inFd = fopen(filename, "r");
 	if (!_inFd)
@@ -177,7 +177,23 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 		err = ExtAudioFileDispose(_in);
 		return NO;
 	}
-		
+
+#ifdef _USE_WRAPPER_
+	SInt64 totalBytes;
+	
+	size	= sizeof(totalBytes);
+	err		= AudioFileGetProperty(_audioID, kAudioFilePropertyAudioDataByteCount, &size, &totalBytes);
+	if(err != noErr) {
+		[self close];
+		return NO;
+	}
+	
+	bitRate = ((totalBytes*8)/((totalFrames)/asbd.mSampleRate))/1000.0;
+#else
+	//Is there a way to get bitrate with extAudioFile?
+	bitRate				= 0;
+#endif
+	
 	// Set our properties
 	bitsPerSample		= asbd.mBitsPerChannel;
 	channels			= asbd.mChannelsPerFrame;
@@ -189,7 +205,6 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	}
 	
 	totalSize			= totalFrames * channels * (bitsPerSample / 8);
-	bitRate				= 0;
 
 	// Set output format
 	AudioStreamBasicDescription		result;
