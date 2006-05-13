@@ -105,6 +105,7 @@
             }; 
             SUPERCLASS = NSTableView; 
         }, 
+        {CLASS = SeekSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
         {
             ACTIONS = {
                 changeVolume = id; 
