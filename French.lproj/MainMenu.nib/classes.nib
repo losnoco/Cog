@@ -36,6 +36,7 @@
             OUTLETS = {soundController = SoundController; }; 
             SUPERCLASS = NSTextField; 
         }, 
+        {CLASS = CurrentSongView; LANGUAGE = ObjC; SUPERCLASS = NSBox; }, 
         {
             CLASS = DNDArrayController; 
             LANGUAGE = ObjC; 
@@ -83,6 +84,7 @@
                 playlistView = PlaylistView; 
                 positionSlider = TrackingSlider; 
                 timeField = NSTextField; 
+                volumeSlider = NSSlider; 
             }; 
             SUPERCLASS = NSObject; 
         }, 
