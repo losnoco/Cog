@@ -11,7 +11,7 @@
 	[p setCanChooseDirectories:YES];
 	[p setAllowsMultipleSelection:YES];
 	
-	//	[p beginSheetForDirectory:nil file:nil types:[`listController acceptableFileTypes] modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
+	//	[p beginSheetForDirectory:nil file:nil types:[listController acceptableFileTypes] modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
 	//	[p beginForDirectory:nil file:nil types:[playlistController acceptableFileTypes] modelessDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
 	
 	if ([p runModalForTypes:[playlistController acceptableFileTypes]] == NSOKButton)
@@ -105,22 +105,23 @@
 		[playlistController savePlaylist:[p filename]];
 	}
 }
+
 - (IBAction)loadPlaylist:(id)sender
 {
 	NSOpenPanel *p;
-	
+
 	p = [NSOpenPanel openPanel];
-	
+
 	[p setCanChooseDirectories:NO];
 	[p setAllowsMultipleSelection:NO];
-	
+
 	if ([p runModalForTypes:[playlistController acceptablePlaylistTypes]] == NSOKButton)
 	{
 		[playlistController setPlaylistFilename:[p filename]];
-		
+
 		[playlistController loadPlaylist:[p filename]];
 	}
-	
+
 	[mainWindow makeKeyAndOrderFront:self];
 }
 

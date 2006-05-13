@@ -356,20 +356,25 @@
 
 - (void)readTagsThreadSetVariables: (NSArray *)a
 {
-	
+	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:0]);
 	[self setDisplay:[a objectAtIndex:0]];
 	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:1]);
 	[self setTitle:[a objectAtIndex:1]];
+	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:2]);
 	[self setArtist:[a objectAtIndex:2]];
+	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:3]);
 	[self setAlbum:[a objectAtIndex:3]];
+	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:4]);
 	[self setGenre:[a objectAtIndex:4]];
+	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:5]);
 	[self setYear:[[a objectAtIndex:5] stringValue]];
+	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:6]);
 	[self setTrack:[[a objectAtIndex:6] intValue]];
 }	
 
 - (void)readTagsThread
 {
-	NSString *lDisplay = nil, *lArtist = nil, *lTitle = nil, *lAlbum = nil, *lGenre = nil;
+	NSString *lDisplay = @"", *lArtist = @"", *lTitle = @"", *lAlbum = @"", *lGenre = @"";
 	int lYear = 0, lTrack = 0;
 	
 	TagLib_File *tagFile = taglib_file_new((const char *)[filename UTF8String]);
@@ -395,12 +400,12 @@
 			if (pArtist != NULL)
 				lArtist = [NSString stringWithUTF8String:(char *)pArtist];
 			else
-				lArtist = nil;
+				lArtist = @"";
 			
 			if (pAlbum != NULL)
 				lAlbum = [NSString stringWithUTF8String:(char *)pAlbum];
 			else
-				lAlbum = nil;
+				lAlbum = @"";
 			
 			if (pTitle != NULL)
 			{
@@ -408,12 +413,12 @@
 				lTitle = [NSString stringWithUTF8String:(char *)pTitle];
 			}
 			else
-				lTitle = nil;
+				lTitle = @"";
 			
 			if (pGenre != NULL)	
 				lGenre = [NSString stringWithUTF8String:(char *)pGenre];
 			else
-				lGenre = nil;
+				lGenre = @"";
 				
 			if ([lArtist isEqualToString:@""] || [lTitle isEqualToString:@""])
 			{
@@ -447,7 +452,9 @@
 			lAlbum,
 			lGenre,
 			[NSNumber numberWithInt:lYear],
-			[NSNumber numberWithInt:lTrack],nil]
+			[NSNumber numberWithInt:lTrack],
+			nil]
+
 		waitUntilDone:YES];
 }
 
