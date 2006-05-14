@@ -1,4 +1,4 @@
-libs=( DecMPA FAAD2 MAC MPCDec Ogg FLAC Shorten SndFile TagLib Vorbis WavPack )
+libs=( MAC MPCDec Ogg FLAC Shorten TagLib Vorbis WavPack )
 
 for lib in "${libs[@]}"
 do
