@@ -187,8 +187,8 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 		[self close];
 		return NO;
 	}
-	
-	bitRate = ((totalBytes*8)/((totalFrames)/asbd.mSampleRate))/1000.0;
+	NSLog(@"BITRATE: %lli %lli %lf", totalBytes, totalFrames, asbd.mSampleRate);
+	bitRate = round(((totalBytes*8.0)/((double)(totalFrames)/asbd.mSampleRate))/1000.0);
 #else
 	//Is there a way to get bitrate with extAudioFile?
 	bitRate				= 0;

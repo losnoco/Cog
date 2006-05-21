@@ -97,6 +97,7 @@
 		8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773809F31F1F0080F1EE /* OggFLAC.framework */; };
 		8E757C7C09F32F070080F1EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7A09F32F070080F1EE /* AudioToolbox.framework */; };
 		8E757C7D09F32F070080F1EE /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7B09F32F070080F1EE /* AudioUnit.framework */; };
+		8EEBC1B50A177D70006F6251 /* PlaylistEntry.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 8EEBC1B40A177D70006F6251 /* PlaylistEntry.xcdatamodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -270,6 +271,7 @@
 		8E75777809F320D50080F1EE /* SndFile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SndFile.framework; path = Libraries/SndFile/build/Release/SndFile.framework; sourceTree = "<group>"; };
 		8E757C7A09F32F070080F1EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		8E757C7B09F32F070080F1EE /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		8EEBC1B40A177D70006F6251 /* PlaylistEntry.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = PlaylistEntry.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -339,6 +341,7 @@
 		29B97314FDCFA39411CA2CEA /* Cog */ = {
 			isa = PBXGroup;
 			children = (
+				8EEBC1AF0A177D14006F6251 /* Models */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				8E75751809F31D5A0080F1EE /* AppController.h */,
 				8E75751909F31D5A0080F1EE /* AppController.m */,
@@ -562,6 +565,14 @@
 			name = "Codec Frameworks";
 			sourceTree = "<group>";
 		};
+		8EEBC1AF0A177D14006F6251 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8EEBC1B40A177D70006F6251 /* PlaylistEntry.xcdatamodel */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -691,6 +702,7 @@
 				8E4C7F090A0509FC003BE25F /* DragScrollView.m in Sources */,
 				8E6A8E2C0A0D8A68002ABE9C /* CoreAudioFile.m in Sources */,
 				8E6A8E380A0D8AD8002ABE9C /* CoreAudioUtils.m in Sources */,
+				8EEBC1B50A177D70006F6251 /* PlaylistEntry.xcdatamodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
