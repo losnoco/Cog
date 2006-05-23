@@ -696,4 +696,24 @@
 	playlistFilename = pf;
 }
 
+- (IBAction)showFileInFinder:(id)sender
+{
+	NSWorkspace* ws = [NSWorkspace sharedWorkspace];
+	if (selectedRow < 0)
+		return;
+	
+	PlaylistEntry* curr = [self entryAtIndex:selectedRow];
+	[ws selectFile:[curr filename] inFileViewerRootedAtPath:[curr filename]];
+}
+
+- (void)setSelectedRow:(int)row
+{
+	selectedRow = row;
+}
+
+- (int)selectedRow
+{
+	return selectedRow;
+}
+
 @end

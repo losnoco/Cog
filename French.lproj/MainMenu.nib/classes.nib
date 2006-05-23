@@ -89,7 +89,11 @@
             SUPERCLASS = NSObject; 
         }, 
         {
-            ACTIONS = {takeRepeatFromObject = id; takeShuffleFromObject = id; }; 
+            ACTIONS = {
+                showFileInFinder = id; 
+                takeRepeatFromObject = id; 
+                takeShuffleFromObject = id; 
+            }; 
             CLASS = PlaylistController; 
             LANGUAGE = ObjC; 
             SUPERCLASS = DNDArrayController; 
@@ -105,7 +109,6 @@
             }; 
             SUPERCLASS = NSTableView; 
         }, 
-        {CLASS = SeekSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
         {
             ACTIONS = {
                 changeVolume = id; 

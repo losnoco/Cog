@@ -12,6 +12,8 @@
 		<string>486 586 308 187 0 0 1280 1002 </string>
 		<key>513</key>
 		<string>689 788 166 137 0 0 1280 1002 </string>
+		<key>760</key>
+		<string>465 451 189 49 0 0 1280 1002 </string>
 	</dict>
 	<key>IBFramework Version</key>
 	<string>443.0</string>
@@ -22,7 +24,7 @@
 	<key>IBOpenObjects</key>
 	<array>
 		<integer>21</integer>
-		<integer>463</integer>
+		<integer>760</integer>
 	</array>
 	<key>IBSystem Version</key>
 	<string>8I127</string>

@@ -23,6 +23,8 @@
 	
 	BOOL shuffle;
 	BOOL repeat;
+	
+	int selectedRow;
 }
 
 //All these return the number of things actually added
@@ -73,4 +75,7 @@
 - (void)setPlaylistFilename:(NSString *)pf;
 - (NSArray *)acceptablePlaylistTypes;
 
+- (IBAction)showFileInFinder:(id)sender;
+- (void)setSelectedRow:(int)row;
+- (int)selectedRow;
 @end
