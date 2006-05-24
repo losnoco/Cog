@@ -74,8 +74,6 @@
 	if (!currentRowIsSelected)
 		[self selectRow:row byExtendingSelection:NO];
 		
-	[playlistController setSelectedRow:[self selectedRow]];
-
 	if ([self numberOfSelectedRows] <=0)
 	{
 		//No rows are selected, so the table should be displayed with all items disabled

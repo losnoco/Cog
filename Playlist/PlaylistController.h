@@ -76,6 +76,5 @@
 - (NSArray *)acceptablePlaylistTypes;
 
 - (IBAction)showFileInFinder:(id)sender;
-- (void)setSelectedRow:(int)row;
-- (int)selectedRow;
+
 @end
