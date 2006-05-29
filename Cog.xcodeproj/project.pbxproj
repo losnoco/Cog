@@ -99,6 +99,7 @@
 		8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773809F31F1F0080F1EE /* OggFLAC.framework */; };
 		8E757C7C09F32F070080F1EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7A09F32F070080F1EE /* AudioToolbox.framework */; };
 		8E757C7D09F32F070080F1EE /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7B09F32F070080F1EE /* AudioUnit.framework */; };
+		8EB450080A2BB8B300AA711F /* Cog Help in Resources */ = {isa = PBXBuildFile; fileRef = 8EB44FF90A2BB8B300AA711F /* Cog Help */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -133,6 +134,15 @@
 				8E757B5609F326710080F1EE /* FLAC.framework in CopyFiles */,
 				8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */,
 				8E1296DA0A2BA9CE00443124 /* PlaylistHeaderView.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8EB44F4B0A2BB82B00AA711F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,6 +287,7 @@
 		8E75777809F320D50080F1EE /* SndFile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SndFile.framework; path = Libraries/SndFile/build/Release/SndFile.framework; sourceTree = "<group>"; };
 		8E757C7A09F32F070080F1EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		8E757C7B09F32F070080F1EE /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		8EB44FF90A2BB8B300AA711F /* Cog Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Cog Help"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -371,6 +382,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8EB44FF90A2BB8B300AA711F /* Cog Help */,
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
 				8E75758E09F31D800080F1EE /* Icons */,
 				8D1107310486CEB800E47090 /* Info.plist */,
@@ -584,6 +596,7 @@
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				8E757AEC09F3265E0080F1EE /* CopyFiles */,
+				8EB44F4B0A2BB82B00AA711F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -656,6 +669,7 @@
 				8E7575D109F31DCA0080F1EE /* README in Resources */,
 				8E7575D209F31DCA0080F1EE /* TODO in Resources */,
 				8E7575DB09F31E930080F1EE /* Localizable.strings in Resources */,
+				8EB450080A2BB8B300AA711F /* Cog Help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

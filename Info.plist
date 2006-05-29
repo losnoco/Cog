@@ -96,6 +96,10 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>0.06</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Cog Help</string>	
+	<key>CFBundleHelpBookName</key>
+	<string>Cog Help</string>	
 	<key>NSAppleScriptEnabled</key>
 	<string>YES</string>
 	<key>NSMainNibFile</key>
