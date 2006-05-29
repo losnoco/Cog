@@ -18,6 +18,7 @@
 #import "WavPackFile.h"
 #import "ShnFile.h"
 #import "CoreAudioFile.h"
+#import "GameFile.h"
 
 extern "C" {
 BOOL hostIsBigEndian()

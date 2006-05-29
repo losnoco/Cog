@@ -23,7 +23,6 @@
 #include <AudioToolbox/ExtendedAudioFile.h>
 
 #import "SoundFile.h"
-
 #define _USE_WRAPPER_
 
 @interface CoreAudioFile : SoundFile
@@ -31,10 +30,11 @@
 	ExtAudioFileRef			_in;
 
 #ifdef _USE_WRAPPER_
-	FILE *					_inFd;
+	int						_inFd;
 	AudioFileID				_audioID;
 	
 	SInt64 _fileSize;
+	SInt64 _startOffset;
 #endif
 }
 

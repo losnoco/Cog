@@ -149,6 +149,8 @@
 		8D1107320486CEB800E47090 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E4C7F060A0509FC003BE25F /* DragScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragScrollView.h; sourceTree = "<group>"; };
 		8E4C7F070A0509FC003BE25F /* DragScrollView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DragScrollView.m; sourceTree = "<group>"; };
+		8E643DF20A2B585600844A28 /* GameFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameFile.h; sourceTree = "<group>"; };
+		8E643DF30A2B585600844A28 /* GameFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameFile.mm; sourceTree = "<group>"; };
 		8E6A8E270A0D8A68002ABE9C /* CoreAudioFile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioFile.h; sourceTree = "<group>"; };
 		8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CoreAudioFile.m; sourceTree = "<group>"; };
 		8E6A8E350A0D8AD8002ABE9C /* CoreAudioUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioUtils.h; sourceTree = "<group>"; };
@@ -488,6 +490,8 @@
 				8E75755609F31D5A0080F1EE /* WaveFile.m */,
 				8E75755709F31D5A0080F1EE /* WavPackFile.h */,
 				8E75755809F31D5A0080F1EE /* WavPackFile.m */,
+				8E643DF20A2B585600844A28 /* GameFile.h */,
+				8E643DF30A2B585600844A28 /* GameFile.mm */,
 			);
 			path = SoundFile;
 			sourceTree = "<group>";
@@ -755,6 +759,7 @@
 					"$(SRCROOT)/Libraries/Vorbis/build/Release",
 					"$(SRCROOT)/Libraries/WavPack/build/Release",
 					"$(SRCROOT)/Libraries/SndFile/build/Release",
+					"$(SRCROOT)/Libraries/GME/build/Release",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -792,6 +797,7 @@
 					"$(SRCROOT)/Libraries/Vorbis/build/Release",
 					"$(SRCROOT)/Libraries/WavPack/build/Release",
 					"$(SRCROOT)/Libraries/SndFile/build/Release",
+					"$(SRCROOT)/Libraries/GME/build/Release",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;

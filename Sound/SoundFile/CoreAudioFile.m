@@ -18,6 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <unistd.h>
+
 #import "CoreAudioFile.h"
 
 @interface CoreAudioFile (Private)
@@ -30,11 +32,13 @@
 OSStatus readFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, void *buffer, ByteCount* actualCount)
 {
 	CoreAudioFile *caf = (CoreAudioFile *)inRefCon;
-	FILE *fd = caf->_inFd;
+	int fd = caf->_inFd;
 	
-	fseek(fd, inPosition, SEEK_SET);
+	//	fseek(fd, inPosition, SEEK_SET);
+//	NSLog(@"Requesting %u", requestCount);
+//	NSLog(@"Currently at %lli", inPosition);
 	
-	*actualCount = fread(buffer, 1, requestCount, fd);
+	*actualCount = pread(fd, buffer, requestCount, inPosition+caf->_startOffset);
 	
 	if (*actualCount <= 0)
 	{
@@ -47,15 +51,14 @@ OSStatus readFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, vo
 SInt64 getSizeFunc(void *inRefCon)
 {
 	CoreAudioFile *caf = (CoreAudioFile *)inRefCon;
-	FILE *fd = caf->_inFd;
-	
-	
+	int fd = caf->_inFd;
+		
 	if (caf->_fileSize != 0)
 	{
 		return caf->_fileSize;
 	}
 	
-	long curPos;
+	/*	long curPos;	
 	
 	curPos = ftell(fd);
 	
@@ -64,7 +67,12 @@ SInt64 getSizeFunc(void *inRefCon)
 	caf->_fileSize = ftell(fd);
 	
 	fseek(fd, curPos, SEEK_SET);
-	
+	*/
+
+	caf->_fileSize = lseek(fd, 0, SEEK_END) - caf->_startOffset;
+	NSLog(@"SIZE at %lli", caf->_fileSize);
+
+	NSLog(@"ERROR: %i = %i %i %i", errno, EBADF, ESPIPE, EINVAL);
 	return caf->_fileSize;
 }
 
@@ -90,9 +98,10 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 - (void) close
 {
 	OSStatus			err;
-
+	
 #ifdef _USE_WRAPPER_
-	fclose(_inFd);
+	if (_inFd)
+		close(_inFd);
 	AudioFileClose(_audioID);
 #endif
 	
@@ -105,31 +114,73 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 - (BOOL) readInfo:(const char *)filename
 {
 	OSStatus						err;
-
+	AudioFileTypeID					type = 0;
+	NSString						*ext;
+	
 #ifdef _USE_WRAPPER_	
 	// Open the input file
-	_inFd = fopen(filename, "r");
-	if (!_inFd)
+	_inFd = open(filename, O_RDONLY, 0777);
+	if (_inFd < 0)
 	{
 		NSLog(@"Error operning file: %s", filename);
 		return NO;
 	}
+	_startOffset = 0;
 	
+	ext = [[NSString stringWithCString:filename encoding:NSASCIIStringEncoding] pathExtension];
+	//Find first sync frame for MP3
+	if([ext caseInsensitiveCompare:@"mp3"] == NSOrderedSame) {
+		size_t bytesRead;
+		uint8_t buf[2];
+		
+		type = kAudioFileMP3Type;
+		
+		for(;;) {
+			bytesRead = read(_inFd, buf, 2);
+			
+			
+			if(2 != bytesRead) {
+				NSLog(@"Error finding mp3 sync frame");
+				close(_inFd);
+				return NO;
+			}
+			
+			
+			// found some kind of data
+			if(0x00 != buf[0] || 0x00 != buf[1]) {
+				_startOffset = lseek(_inFd, 0, SEEK_CUR) - 2;
+				NSLog(@"Found sync frame at: %llx", _startOffset);
+				break;
+			}
+		}
+	}
+	else if([ext caseInsensitiveCompare:@"aac"] == NSOrderedSame) {
+		type = kAudioFileAAC_ADTSType;
+	}
+	else if([ext caseInsensitiveCompare:@"m4a"] == NSOrderedSame) {
+		type = kAudioFileM4AType;
+	}
+	else if([ext caseInsensitiveCompare:@"mp4"] == NSOrderedSame) {
+		type = kAudioFileMPEG4Type;
+	}
+		
 	//Using callbacks with fopen, ftell, fseek, fclose, because the default pread hangs when accessing the same file from multiple threads.
-	err = AudioFileOpenWithCallbacks(self, readFunc, writeFunc, getSizeFunc, setSizeFunc, 0, &_audioID);
+	err = AudioFileOpenWithCallbacks(self, readFunc, writeFunc, getSizeFunc, setSizeFunc, type, &_audioID);
 	if(noErr != err)
 	{
+		NSLog(@"Error opening with callbacks, falling back: %s", (char *)&err);
 		FSRef ref;
-		fclose(_inFd);
+		close(_inFd);
+		_inFd = 0;
 		
 		err = FSPathMakeRef((const UInt8 *)filename, &ref, NULL);
 		if(noErr != err) {
 			return NO;
 		}
 		
-		err = AudioFileOpen(&ref, fsRdPerm, 0, &_audioID);
+		err = AudioFileOpen(&ref, fsRdPerm, type, &_audioID);
 		if(noErr != err) {
-			NSLog(@"Error opening AudioFile: %i", (char *)&err);
+			NSLog(@"Error opening AudioFile: %s", (char *)&err);
 			return NO;
 		}
 	}
@@ -141,7 +192,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	
 #else
 	FSRef							ref;
-
+	
 	// Open the input file
 	err = FSPathMakeRef((const UInt8 *)filename, &ref, NULL);
 	if(noErr != err) {
@@ -150,6 +201,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	
 	err = ExtAudioFileOpen(&ref, &_in);
 	if(noErr != err) {
+		NSLog(@"Error opening file: %s", &err);
 		return NO;
 	}
 #endif	
@@ -162,7 +214,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	UInt32							size;
 	SInt64							totalFrames;
 	AudioStreamBasicDescription		asbd;
-
+	
 	// Get input file information
 	size	= sizeof(asbd);
 	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileDataFormat, &size, &asbd);
@@ -170,14 +222,14 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 		err = ExtAudioFileDispose(_in);
 		return NO;
 	}
-
+	
 	size	= sizeof(totalFrames);
 	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileLengthFrames, &size, &totalFrames);
 	if(err != noErr) {
 		err = ExtAudioFileDispose(_in);
 		return NO;
 	}
-
+	
 #ifdef _USE_WRAPPER_
 	SInt64 totalBytes;
 	
@@ -205,7 +257,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	}
 	
 	totalSize			= totalFrames * channels * (bitsPerSample / 8);
-
+	
 	// Set output format
 	AudioStreamBasicDescription		result;
 	
@@ -221,7 +273,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	result.mBytesPerPacket		= channels * (bitsPerSample / 8);
 	result.mFramesPerPacket		= 1;
 	result.mBytesPerFrame		= channels * (bitsPerSample / 8);
-		
+	
 	err = ExtAudioFileSetProperty(_in, kExtAudioFileProperty_ClientDataFormat, sizeof(result), &result);
 	if(noErr != err) {
 		err = ExtAudioFileDispose(_in);
@@ -231,7 +283,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	// Further properties
 	isBigEndian			= YES;
 	isUnsigned			= NO;
-		
+	
 	return YES;
 }
 
@@ -260,7 +312,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 - (double) seekToTime:(double)milliseconds
 {
 	OSStatus			err;
-
+	
 	err = ExtAudioFileSeek(_in, ((milliseconds / 1000.f) * frequency));
 	if(noErr != err) {
 		return -1.f;
