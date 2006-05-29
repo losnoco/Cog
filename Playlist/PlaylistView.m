@@ -127,4 +127,16 @@
 	}
 }
 
+- (IBAction)sortByPath:(id)sender
+{
+	[self setSortDescriptors:nil];
+	[playlistController sortByPath];
+}
+
+- (IBAction)shufflePlaylist:(id)sender
+{
+	[self setSortDescriptors:nil];
+	[playlistController randomizeList];
+}
+
 @end

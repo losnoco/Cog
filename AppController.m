@@ -166,16 +166,6 @@
 	[infoButton setState:NSOffState];
 }
 
-- (IBAction)sortByPath:(id)sender
-{
-	[playlistController sortByPath];
-}
-
-- (IBAction)shufflePlaylist:(id)sender
-{
-	[playlistController randomizeList];
-}
-
 - (IBAction)donate:(id)sender
 {
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://sourceforge.net/project/project_donations.php?group_id=140003"]];

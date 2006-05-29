@@ -321,17 +321,16 @@
 - (void)setSortDescriptors:(NSArray *)sortDescriptors
 {
 	//Cheap hack so the index column isn't sorted
-	NSLog(@"KEY: %@", [[sortDescriptors objectAtIndex:0] key]);
-	if ([[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"displayIndex"] != NSOrderedSame)
+	if (([sortDescriptors count] != 0) && [[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"displayIndex"] == NSOrderedSame)
 	{
-		[super setSortDescriptors:sortDescriptors];
+		return;
 	}
+
+	[super setSortDescriptors:sortDescriptors];
 }
 		
 - (void)sortByPath
 {
-	[self setSortDescriptors:nil];
-
 	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"filename" ascending:YES selector:@selector(compare:)];
 	//	[self setSortDescriptors:[NSArray arrayWithObject:s]];
 	[self setContent:[[self content] sortedArrayUsingDescriptors:[NSArray arrayWithObject:s]]];

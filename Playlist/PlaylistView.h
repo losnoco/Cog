@@ -19,4 +19,8 @@
 	
 }
 
+- (IBAction)sortByPath:(id)sender;
+- (IBAction)shufflePlaylist:(id)sender;
+
+
 @end
