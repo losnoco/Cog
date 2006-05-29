@@ -10,6 +10,8 @@
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 
+#import "PlaylistHeaderView.h"
+
 @implementation PlaylistView
 
 - (void)awakeFromNib
@@ -27,6 +29,15 @@
 		[[c dataCell] setControlSize:s];
 		[[c dataCell] setFont:f];
 	}
+	
+	NSTableHeaderView *currentTableHeaderView = [self headerView];
+	PlaylistHeaderView *customTableHeaderView = [[PlaylistHeaderView alloc] init];
+	
+	[customTableHeaderView setFrame:[currentTableHeaderView frame]];
+	[customTableHeaderView setBounds:[currentTableHeaderView bounds]];
+//	[self setColumnAutoresizingStyle:NSTableViewNoColumnAutoresizing];
+	
+	[self setHeaderView:customTableHeaderView];
 	
 	[self setVerticalMotionCanBeginDrag:YES];
 }
@@ -73,7 +84,7 @@
 	BOOL currentRowIsSelected = [[self selectedRowIndexes] containsIndex:row];
 	if (!currentRowIsSelected)
 		[self selectRow:row byExtendingSelection:NO];
-		
+
 	if ([self numberOfSelectedRows] <=0)
 	{
 		//No rows are selected, so the table should be displayed with all items disabled

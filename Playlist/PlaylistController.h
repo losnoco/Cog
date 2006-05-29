@@ -77,4 +77,5 @@
 
 - (IBAction)showFileInFinder:(id)sender;
 
+- (void)handlePlaylistViewHeaderNotification:(NSNotification*)notif;
 @end
