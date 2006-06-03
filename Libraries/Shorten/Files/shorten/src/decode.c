@@ -13,6 +13,12 @@
 #define FALSE 0
 #endif
 
+/* Derek  start */
+pthread_mutex_t		mRingLock;
+pthread_cond_t		mRunCond;
+pthread_t			mThread;
+/* Derek  end */
+
 int shn_seek(shn_file *this_shn, unsigned int time);
 int shn_seekable(shn_file *this_shn);
 shn_file *shn_load(char *filename, shn_config config);

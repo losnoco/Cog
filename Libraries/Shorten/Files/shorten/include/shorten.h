@@ -1,3 +1,12 @@
+/*
+ *  shorten.h
+ *  shorten_decoder
+ *
+ *  Created by Alex Lagutin on Sun Jul 07 2002.
+ *  Copyright (c) 2002 Eckysoft All rights reserved.
+ *
+ */
+
 /******************************************************************************
 *                                                                             *
 *  Copyright (C) 1992-1995 Tony Robinson                                      *
@@ -7,7 +16,7 @@
 ******************************************************************************/
 
 /*
- * $Id: shorten.h 19 2005-06-07 04:16:15Z vspader $
+ * $Id: shorten.h,v 1.4 2001/12/30 05:12:04 jason Exp $
  */
 
 #ifndef _SHORTEN_H
@@ -18,7 +27,6 @@
 #endif
 
 #include <stdlib.h>
-#include <pthread.h>
 
 #ifdef HAVE_INTTYPES_H
 #  include <inttypes.h>
@@ -48,8 +56,6 @@
 #define slong   int32_t
 #define sshort  int16_t
 #define schar   int8_t
-
-#include "shn.h"
 
 #define MAGIC			"ajkg"
 #define FORMAT_VERSION		2
@@ -155,66 +161,7 @@
 
 #define V2LPCQOFFSET (1 << LPCQUANT);
 
-#define UINT_GET(nbit, file) \
-  ((version == 0) ? uvar_get(nbit, file) : ulong_get(file))
-			
-#define putc_exit(val, stream)\
-{ char rval;\
-  if((rval = putc((val), (stream))) != (char) (val))\
-    complain("FATALERROR: write failed: putc returns EOF");\
-}
-
-extern int getc_exit_val;
-#define getc_exit(stream)\
-(((getc_exit_val = getc(stream)) == EOF) ? \
-  complain("FATALERROR: read failed: getc returns EOF"), 0: getc_exit_val)
-
-/************************/
-/* defined in shorten.c */
-extern void	init_offset(slong**, int, int, int);
-extern int	shorten(FILE*, FILE*, int, char**);
-
-/**************************/
-/* defined in Sulawalaw.c */
-extern int Sulaw2lineartab[];
-#define Sulaw2linear(i) (Sulaw2lineartab[i])
-#ifndef Sulaw2linear
-extern int	Sulaw2linear(uchar);
-#endif
-extern uchar	Slinear2ulaw(int);
-
-extern int Salaw2lineartab[];
-#define Salaw2linear(i) (Salaw2lineartab[i])
-#ifndef Salaw2linear
-extern int	Salaw2linear(uchar);
-#endif
-extern uchar	Slinear2alaw(int);
-
-/**********************/
-/* defined in fixio.c */
-extern void	init_sizeof_sample(void);
-extern void     fwrite_type_init(shn_file*);
-extern void     fwrite_type(slong**,int,int,int,shn_file*);
-extern void     fwrite_type_quit(shn_file*);
-extern void	fix_bitshift(slong*, int, int, int);
-
-/**********************/
-/* defined in vario.c */
-extern void	var_get_init(shn_file*);
-extern slong	uvar_get(int, shn_file*);
-extern slong	var_get(int, shn_file*);
-extern ulong	ulong_get(shn_file*);
-extern void	var_get_quit(shn_file*);
-
-extern int	sizeof_uvar(ulong, int);
-extern int	sizeof_var(slong, int);
-
-extern void	mkmasktab(void);
-extern ulong	word_get(shn_file*);
-
-/**********************/
-/* defined in array.c */
-extern void* 	pmalloc(ulong, shn_file*);
-extern slong**	long2d(ulong, ulong, shn_file*);
+#define UINT_GET(nbit) \
+  ((version == 0) ? uvar_get(nbit) : ulong_get())
 
 #endif

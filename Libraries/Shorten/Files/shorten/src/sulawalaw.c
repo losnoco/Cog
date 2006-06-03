@@ -1,5 +1,5 @@
 /*
- * $Id: sulawalaw.c 19 2005-06-07 04:16:15Z vspader $
+ * $Id: sulawalaw.c,v 1.5 2001/12/30 05:12:04 jason Exp $
  */
 
 #include <stdio.h>

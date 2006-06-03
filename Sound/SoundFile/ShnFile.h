@@ -7,18 +7,18 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <Shorten/shn_reader.h>
+
 #import "SoundFile.h"
 
-#import "Shorten/shorten.h"
-#import "Shorten/shn.h"
-#import "Shorten/decode.h"
-
 @interface ShnFile : SoundFile {
-	shn_file *handle;
+	//shn_file *handle;
+	shn_reader *decoder;
 	
-	int bufferSize; //total size
+	long bufferSize; //total size
 	void *buffer;
-	int bufferAmount; //amount currently in
+	void *inputBuffer;//derek
+	long bufferAmount; //amount currently in
 }
 
 @end
