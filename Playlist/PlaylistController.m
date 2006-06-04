@@ -718,7 +718,7 @@
 	SEL sel;
 	NSString* identifier = [col identifier];
 	BOOL isNumeric = NO;
-	if ([identifier compare:@"name"] == NSOrderedSame)
+	if ([identifier compare:@"title"] == NSOrderedSame)
 		sel = @selector(title);
 	else if ([identifier compare:@"length"] == NSOrderedSame) 
 		sel = @selector(lengthString);

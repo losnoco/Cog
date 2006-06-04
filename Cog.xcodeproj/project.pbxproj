@@ -97,6 +97,7 @@
 		8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773809F31F1F0080F1EE /* OggFLAC.framework */; };
 		8E757C7C09F32F070080F1EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7A09F32F070080F1EE /* AudioToolbox.framework */; };
 		8E757C7D09F32F070080F1EE /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7B09F32F070080F1EE /* AudioUnit.framework */; };
+		8EA917300A336CC30087CDE2 /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EA9172F0A336CC30087CDE2 /* Shorten.framework */; };
 		8EB450080A2BB8B300AA711F /* Cog Help in Resources */ = {isa = PBXBuildFile; fileRef = 8EB44FF90A2BB8B300AA711F /* Cog Help */; };
 /* End PBXBuildFile section */
 
@@ -270,8 +271,6 @@
 		8E7575CA09F31DCA0080F1EE /* TODO */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		8E7575DA09F31E930080F1EE /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E7575DC09F31EAF0080F1EE /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
-		8E75773109F31EFD0080F1EE /* DecMPA.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DecMPA.framework; path = Libraries/DecMPA/build/Release/DecMPA.framework; sourceTree = "<group>"; };
-		8E75773409F31F0C0080F1EE /* FAAD2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FAAD2.framework; path = Libraries/FAAD2/build/Release/FAAD2.framework; sourceTree = "<group>"; };
 		8E75773709F31F1F0080F1EE /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = Libraries/FLAC/build/Release/FLAC.framework; sourceTree = "<group>"; };
 		8E75773809F31F1F0080F1EE /* OggFLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OggFLAC.framework; path = Libraries/FLAC/build/Release/OggFLAC.framework; sourceTree = "<group>"; };
 		8E75773F09F31F2A0080F1EE /* MAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MAC.framework; path = Libraries/MAC/build/Release/MAC.framework; sourceTree = "<group>"; };
@@ -280,9 +279,9 @@
 		8E75774D09F31F600080F1EE /* TagLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TagLib.framework; path = Libraries/TagLib/build/Release/TagLib.framework; sourceTree = "<group>"; };
 		8E75775009F31F6B0080F1EE /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = Libraries/Vorbis/build/Release/Vorbis.framework; sourceTree = "<group>"; };
 		8E75775309F31F750080F1EE /* WavPack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WavPack.framework; path = Libraries/WavPack/build/Release/WavPack.framework; sourceTree = "<group>"; };
-		8E75777809F320D50080F1EE /* SndFile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SndFile.framework; path = Libraries/SndFile/build/Release/SndFile.framework; sourceTree = "<group>"; };
 		8E757C7A09F32F070080F1EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		8E757C7B09F32F070080F1EE /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		8EA9172F0A336CC30087CDE2 /* Shorten.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Shorten.framework; path = Libraries/Shorten/build/Release/Shorten.framework; sourceTree = "<group>"; };
 		8EB44FF90A2BB8B300AA711F /* Cog Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Cog Help"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -302,6 +301,7 @@
 				8E75775409F31F750080F1EE /* WavPack.framework in Frameworks */,
 				8E757C7C09F32F070080F1EE /* AudioToolbox.framework in Frameworks */,
 				8E757C7D09F32F070080F1EE /* AudioUnit.framework in Frameworks */,
+				8EA917300A336CC30087CDE2 /* Shorten.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -564,7 +564,7 @@
 		8E757C0A09F32EDC0080F1EE /* Codec Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8E75777809F320D50080F1EE /* SndFile.framework */,
+				8EA9172F0A336CC30087CDE2 /* Shorten.framework */,
 				8E75775309F31F750080F1EE /* WavPack.framework */,
 				8E75775009F31F6B0080F1EE /* Vorbis.framework */,
 				8E75774D09F31F600080F1EE /* TagLib.framework */,
@@ -573,8 +573,6 @@
 				8E75773F09F31F2A0080F1EE /* MAC.framework */,
 				8E75773709F31F1F0080F1EE /* FLAC.framework */,
 				8E75773809F31F1F0080F1EE /* OggFLAC.framework */,
-				8E75773409F31F0C0080F1EE /* FAAD2.framework */,
-				8E75773109F31EFD0080F1EE /* DecMPA.framework */,
 			);
 			name = "Codec Frameworks";
 			sourceTree = "<group>";

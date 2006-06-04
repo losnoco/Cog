@@ -40,6 +40,70 @@
 	[self setHeaderView:customTableHeaderView];
 	
 	[self setVerticalMotionCanBeginDrag:YES];
+	
+	
+	//Test for hiding columns
+//	[self setupColumns];
+}
+
+- (void)setupColumns
+{
+	NSLog(@"SETTING UP COLUMNS");
+	NSEnumerator *columnEnumerator = [[self tableColumns] objectEnumerator];
+	NSTableColumn *nextColumn;
+	while( nextColumn = [columnEnumerator nextObject] )
+	{
+		NSString *identifier = [nextColumn identifier];
+		if(![self shouldShowColumn:identifier])
+			[self removeTableColumn:nextColumn];
+	}
+}
+
+- (BOOL)shouldShowColumn:(NSString *)identifier
+{
+	if ([identifier isEqualToString:@"title"] || [identifier isEqualToString:@"artist"] || [identifier isEqualToString:@"length"])
+		return YES;
+	
+	return NO;
+}
+
+//FUN HACKS SO COLUMNS DONT DISAPPEAR WHEN THE TABLE IS AUTOSAVED
+- (void)removeTableColumn:(NSTableColumn *)aTableColumn
+{
+    if (aTableColumn)
+    {
+        if (!_removedColumns)
+            _removedColumns = [[NSMutableArray alloc] init];
+		
+        // Cache the removed table column so we don't have to set it up again.
+        [_removedColumns addObject:aTableColumn];
+    }
+    [super removeTableColumn:aTableColumn];
+}
+
+- (NSTableColumn *)tableColumnWithIdentifier:(id)anObject
+{
+    NSTableColumn *tc = [super tableColumnWithIdentifier:anObject];
+	
+    if (!tc && _removedColumns)
+    {
+        NSEnumerator *e = [_removedColumns objectEnumerator];
+        NSTableColumn *t = nil;
+		
+        while (t = [e nextObject])
+        {
+            // Locate cached version if there is one.
+            if ([[t identifier] isEqual:anObject])
+            {
+                // Remove it from the array and release the array if it isn't needed any more.
+                [_removedColumns removeObject:t];
+                if ([_removedColumns count] == 0) [_removedColumns release];
+                return t;
+            }
+        }
+    }
+	
+    return tc;
 }
 
 - (BOOL)acceptsFirstResponder

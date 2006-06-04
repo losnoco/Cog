@@ -17,6 +17,8 @@
 	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
 	
+	NSArray *_tableColumns;
+	NSMutableArray *_removedColumns;
 }
 
 - (IBAction)sortByPath:(id)sender;
