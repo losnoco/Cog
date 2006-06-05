@@ -17,7 +17,7 @@
 	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
 	
-	NSArray *_tableColumns;
+	NSArray *_tableColumnsCache;
 	NSMutableArray *_removedColumns;
 }
 
