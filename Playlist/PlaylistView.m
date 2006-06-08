@@ -35,7 +35,8 @@
 	
 	[customTableHeaderView setFrame:[currentTableHeaderView frame]];
 	[customTableHeaderView setBounds:[currentTableHeaderView bounds]];
-//	[self setColumnAutoresizingStyle:NSTableViewNoColumnAutoresizing];
+	// has to be disabled for optimal resizing to work properly...
+	[self setColumnAutoresizingStyle:NSTableViewNoColumnAutoresizing];
 	
 	[self setHeaderView:customTableHeaderView];
 	

@@ -100,10 +100,10 @@
         }, 
         {CLASS = PlaylistEntry; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
+            ACTIONS = {shufflePlaylist = id; sortByPath = id; }; 
             CLASS = PlaylistView; 
             LANGUAGE = ObjC; 
             OUTLETS = {
-                appController = AppController; 
                 playbackController = PlaybackController; 
                 playlistController = PlaylistController; 
             }; 
