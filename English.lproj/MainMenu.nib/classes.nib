@@ -95,7 +95,17 @@
         }, 
         {CLASS = PlaylistEntry; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {shufflePlaylist = id; sortByPath = id; }; 
+            ACTIONS = {
+                shufflePlaylist = id; 
+                sortByPath = id; 
+                takeBoolForAlbum = id; 
+                takeBoolForArtist = id; 
+                takeBoolForGenre = id; 
+                takeBoolForLength = id; 
+                takeBoolForTitle = id; 
+                takeBoolForTrack = id; 
+                takeBoolForYear = id; 
+            }; 
             CLASS = PlaylistView; 
             LANGUAGE = ObjC; 
             OUTLETS = {

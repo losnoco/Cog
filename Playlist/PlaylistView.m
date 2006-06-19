@@ -35,72 +35,107 @@
 	
 	[customTableHeaderView setFrame:[currentTableHeaderView frame]];
 	[customTableHeaderView setBounds:[currentTableHeaderView bounds]];
-	// has to be disabled for optimal resizing to work properly...
-	[self setColumnAutoresizingStyle:NSTableViewNoColumnAutoresizing];
+//	[self setColumnAutoresizingStyle:NSTableViewNoColumnAutoresizing];
 	
 	[self setHeaderView:customTableHeaderView];
 	
 	[self setVerticalMotionCanBeginDrag:YES];
 	
-	
-	//Test for hiding columns
-//	[self setupColumns];
+	//Hack for bindings and columns
+	_tableColumnsCache = [[NSArray alloc] initWithArray:[self tableColumns] copyItems:NO];
 }
 
-- (void)setupColumns
+- (IBAction)takeBoolForTitle:(id)sender
 {
-	NSLog(@"SETTING UP COLUMNS");
-	NSEnumerator *columnEnumerator = [[self tableColumns] objectEnumerator];
-	NSTableColumn *nextColumn;
-	while( nextColumn = [columnEnumerator nextObject] )
+	[self showColumn:sender withIdentifier:@"title"];
+}
+
+- (IBAction)takeBoolForArtist:(id)sender
+{
+	[self showColumn:sender withIdentifier:@"artist"];
+}
+
+- (IBAction)takeBoolForAlbum:(id)sender
+{
+	[self showColumn:sender withIdentifier:@"album"];
+}
+
+- (IBAction)takeBoolForLength:(id)sender
+{
+	[self showColumn:sender withIdentifier:@"length"];
+}
+
+- (IBAction)takeBoolForYear:(id)sender
+{
+	[self showColumn:sender withIdentifier:@"year"];
+}
+
+- (IBAction)takeBoolForGenre:(id)sender
+{
+	[self showColumn:sender withIdentifier:@"genre"];
+}
+
+- (IBAction)takeBoolForTrack:(id)sender
+{
+	[self showColumn:sender withIdentifier:@"track"];
+}
+
+- (void)showColumn:(id)sender withIdentifier:(NSString *)identifier
+{
+	if ([sender state] == NSOffState)
 	{
-		NSString *identifier = [nextColumn identifier];
-		if(![self shouldShowColumn:identifier])
-			[self removeTableColumn:nextColumn];
+		[sender setState:NSOnState];
+		[self showColumnWithIdentifier:identifier];
+	}
+	else
+	{
+		[sender setState:NSOffState];
+		[self hideColumnWithIdentifier:identifier];
 	}
 }
 
-- (BOOL)shouldShowColumn:(NSString *)identifier
+- (void)hideColumnWithIdentifier:(NSString *)identifier
 {
-	if ([identifier isEqualToString:@"title"] || [identifier isEqualToString:@"artist"] || [identifier isEqualToString:@"length"])
-		return YES;
+	NSTableColumn *tc = [super tableColumnWithIdentifier:identifier];
+	if (!tc)
+		return;
 	
-	return NO;
+	[self removeTableColumn:tc];
+}
+
+- (void)showColumnWithIdentifier:(NSString *)identifier
+{
+	if ([super tableColumnWithIdentifier:identifier])
+		return;
+
+	NSEnumerator *e = [_tableColumnsCache objectEnumerator];
+	NSTableColumn *t = nil;
+	
+	while (t = [e nextObject])
+	{
+		// Locate cached version if there is one.
+		if ([[t identifier] isEqualToString:identifier])
+			// Remove it from the array and release the array if it isn't needed any more.
+			[self addTableColumn:t];
+	}	
 }
 
 //FUN HACKS SO COLUMNS DONT DISAPPEAR WHEN THE TABLE IS AUTOSAVED
-- (void)removeTableColumn:(NSTableColumn *)aTableColumn
-{
-    if (aTableColumn)
-    {
-        if (!_removedColumns)
-            _removedColumns = [[NSMutableArray alloc] init];
-		
-        // Cache the removed table column so we don't have to set it up again.
-        [_removedColumns addObject:aTableColumn];
-    }
-    [super removeTableColumn:aTableColumn];
-}
-
 - (NSTableColumn *)tableColumnWithIdentifier:(id)anObject
 {
     NSTableColumn *tc = [super tableColumnWithIdentifier:anObject];
-	
-    if (!tc && _removedColumns)
+
+    if (!tc)
     {
-        NSEnumerator *e = [_removedColumns objectEnumerator];
+        NSEnumerator *e = [_tableColumnsCache objectEnumerator];
         NSTableColumn *t = nil;
 		
         while (t = [e nextObject])
         {
             // Locate cached version if there is one.
             if ([[t identifier] isEqual:anObject])
-            {
                 // Remove it from the array and release the array if it isn't needed any more.
-                [_removedColumns removeObject:t];
-                if ([_removedColumns count] == 0) [_removedColumns release];
                 return t;
-            }
         }
     }
 	

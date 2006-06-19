@@ -24,7 +24,7 @@
 	NSString *lengthString;
 	
 	double length;
-	int bitRate;
+	int bitrate;
 	int channels;
 	int bitsPerSample;
 	float sampleRate;
@@ -67,7 +67,7 @@
 -(int)track;
 
 - (double)length;
-- (int)bitRate;
+- (int)bitrate;
 - (int)channels;
 - (int)bitsPerSample;
 - (float)sampleRate;

@@ -56,7 +56,7 @@
 	}
 	err = DecMPA_GetMPEGHeader(decoder, &mpegHeader);
 */
-	bitRate = mpegHeader.nBitRateKbps;
+	bitrate = mpegHeader.nBitRateKbps;
 //	DBLog(@"Bitrate? %i", mpegHeader.);
 //	DBLog(@"Mpeg file opened.");
 	err =  DecMPA_SeekToTime(decoder, 0);

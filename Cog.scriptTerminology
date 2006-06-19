@@ -55,12 +55,12 @@
 					<key>Name</key>
 					<string>length</string>
 				</dict>
-				<key>bitRate</key>
+				<key>bitrate</key>
 				<dict>
 					<key>Description</key>
 					<string>This is the... whatever.</string>
 					<key>Name</key>
-					<string>bitRate</string>
+					<string>bitrate</string>
 				</dict>
 				<key>title</key>
 				<dict>

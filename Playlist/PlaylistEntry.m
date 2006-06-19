@@ -219,7 +219,7 @@
 		return;
 	
 	length = [sf length];
-	bitRate = [sf bitRate];
+	bitrate = [sf bitrate];
 	channels = [sf channels];
 	bitsPerSample = [sf bitsPerSample];
 	sampleRate = [sf frequency];
@@ -227,7 +227,7 @@
 	[self setLengthString:length];
 
 	[sf release];
-//	DBLog(@"Length: %f bitRate: %i channels: %i bps: %i samplerate: %f", length, bitRate, channels, bitsPerSample, sampleRate);
+//	DBLog(@"Length: %f bitrate: %i channels: %i bps: %i samplerate: %f", length, bitrate, channels, bitsPerSample, sampleRate);
 	
 	//[(SoundFile *)sf close];
 //	[sp close];
@@ -236,7 +236,7 @@
 - (void)readInfoThreadSetVariables:(SoundFile *)sf
 {
 	[self setLength:[sf length]];
-	[self setBitRate:[sf bitRate]];
+	[self setBitrate:[sf bitrate]];
 	[self setChannels:[sf channels]];
 	[self setBitsPerSample:[sf bitsPerSample]];
 	[self setSampleRate:(float)[sf frequency]];
@@ -277,13 +277,13 @@
 	return length;
 }
 
-- (void)setBitRate:(int) br
+- (void)setBitrate:(int) br
 {
-	bitRate = br;
+	bitrate = br;
 }
-- (int)bitRate
+- (int)bitrate
 {
-	return bitRate;
+	return bitrate;
 }
 
 - (void)setChannels:(int)c

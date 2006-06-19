@@ -102,7 +102,7 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 	bitsPerSample = streamInfo.data.stream_info.bits_per_sample;
 	
 	totalSize = streamInfo.data.stream_info.total_samples*channels*(bitsPerSample/8);
-	bitRate = 0;
+	bitrate = 0;
 	
 	return YES;
 }

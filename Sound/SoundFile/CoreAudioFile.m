@@ -224,7 +224,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	}
 	
 	size	= sizeof(totalFrames);
-	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileLengthFrames, &size, &totalFrames);
+//	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileLengthFrames, &size, &totalFrames);
 	if(err != noErr) {
 		err = ExtAudioFileDispose(_in);
 		return NO;
@@ -240,10 +240,10 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 		return NO;
 	}
 	NSLog(@"BITRATE: %lli %lli %lf", totalBytes, totalFrames, asbd.mSampleRate);
-	bitRate = round(((totalBytes*8.0)/((double)(totalFrames)/asbd.mSampleRate))/1000.0);
+	bitrate = round(((totalBytes*8.0)/((double)(totalFrames)/asbd.mSampleRate))/1000.0);
 #else
 	//Is there a way to get bitrate with extAudioFile?
-	bitRate				= 0;
+	bitrate				= 0;
 #endif
 	
 	// Set our properties

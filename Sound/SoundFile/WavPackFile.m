@@ -32,7 +32,7 @@
 	samples = WavpackGetNumSamples(wpc);
 	totalSize = samples * channels * (bitsPerSample/8);
 	
-	bitRate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
+	bitrate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
 
 	isBigEndian = hostIsBigEndian();
 

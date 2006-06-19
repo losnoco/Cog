@@ -22,7 +22,7 @@
 
 - (BOOL)readInfo
 {
-	bitRate = 0;
+	bitrate = 0;
 	frequency = info.samplerate;
 	channels = info.channels;
 	isUnsigned = NO;

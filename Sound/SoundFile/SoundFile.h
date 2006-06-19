@@ -26,7 +26,7 @@ BOOL hostIsBigEndian();
 	UInt16 bitsPerSample;
 	UInt16 channels;
 	UInt32 frequency;
-	UInt32 bitRate;
+	UInt32 bitrate;
 	BOOL isBigEndian;
 	BOOL isUnsigned;
 
@@ -37,7 +37,7 @@ BOOL hostIsBigEndian();
 
 - (double)length;
 
-- (int)bitRate;
+- (int)bitrate;
 
 + (SoundFile *)soundFileFromFilename:(NSString *)filename; //PRIVATE
 + (SoundFile *)open:(NSString *)filename;

@@ -55,7 +55,7 @@
 	frequency = (int)samplerate;
 	channels = c;
 	
-	bitRate = (int)((float)info.bitrate/1000.0);
+	bitrate = (int)((float)info.bitrate/1000.0);
 	totalSize = (long int)(info.length*(double)frequency/1000.0*channels*bitsPerSample/8);
 	
 	isBigEndian = YES;

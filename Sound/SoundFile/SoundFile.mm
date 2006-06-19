@@ -19,6 +19,7 @@
 #import "ShnFile.h"
 #import "CoreAudioFile.h"
 //#import "GameFile.h"
+#import "MadFile.h"
 
 extern "C" {
 BOOL hostIsBigEndian()
@@ -55,9 +56,9 @@ extern NSArray * getCoreAudioExtensions();
 	return (totalSize/channels/(bitsPerSample/8)/(frequency/1000.0));
 }
 
-- (int)bitRate
+- (int)bitrate
 {
-	return bitRate;
+	return bitrate;
 }
 
 //this should be done by the soundfile....not seek...
@@ -106,11 +107,11 @@ extern NSArray * getCoreAudioExtensions();
 	{
 		soundFile = [[MonkeysFile alloc] init];
 	}
-	/*else if ([[filename pathExtension] caseInsensitiveCompare:@"mp3"] == NSOrderedSame)
+	else if ([[filename pathExtension] caseInsensitiveCompare:@"mp3"] == NSOrderedSame)
 	{
-		soundFile = [[MPEGFile alloc] init];
+		soundFile = [[MADFile alloc] init];
 	}
-	else if ([[filename pathExtension] caseInsensitiveCompare:@"aac"] == NSOrderedSame)
+	/*else if ([[filename pathExtension] caseInsensitiveCompare:@"aac"] == NSOrderedSame)
 	{
 		soundFile = [[AACFile alloc] init];
 	}*/

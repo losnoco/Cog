@@ -67,7 +67,7 @@
 					<key>Type</key>
 					<string>NSNumber&lt;Double&gt;</string>
 				</dict>
-				<key>bitRate</key>
+				<key>bitrate</key>
 				<dict>
 					<key>AppleEventCode</key>
 					<string>CoBi</string>

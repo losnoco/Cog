@@ -24,5 +24,13 @@
 - (IBAction)sortByPath:(id)sender;
 - (IBAction)shufflePlaylist:(id)sender;
 
+- (IBAction)takeBoolForTitle:(id)sender;
+- (IBAction)takeBoolForArtist:(id)sender;
+- (IBAction)takeBoolForAlbum:(id)sender;
+- (IBAction)takeBoolForLength:(id)sender;
+- (IBAction)takeBoolForYear:(id)sender;
+- (IBAction)takeBoolForGenre:(id)sender;
+- (IBAction)takeBoolForTrack:(id)sender;
+
 
 @end

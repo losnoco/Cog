@@ -54,10 +54,10 @@
 	length = decoder->shn_get_song_length();
 	//NSLog(@"length: %d",length);
 	totalSize = (((double)(length)*frequency)/1000.0) * channels * (bitsPerSample/8);
-	bitRate = (int)((double)totalSize/((double)length/1000.0));
+	bitrate = (int)((double)totalSize/((double)length/1000.0));
 	
 	/*NSLog(@"totalSize: %d",totalSize);
-	NSLog(@"bitRate: %d",bitRate);*/
+	NSLog(@"bitrate: %d",bitrate);*/
 	
 	decoder->go();
 	

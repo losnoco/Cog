@@ -102,7 +102,6 @@
 	if (index < 0)
 		index = 0;
 	
-	DBLog(@"Paths sorted: %@", sortedFiles);
 	for(i=0; i < [paths count]; i++)
 	{
 		[files addObjectsFromArray:[self filesAtPath:[paths objectAtIndex:i]]];

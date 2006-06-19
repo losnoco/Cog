@@ -86,7 +86,7 @@ BOOL CanSeekProc(void *data)
         return NO;
     }
 
-	bitRate = (int)(info.average_bitrate/1000.0);
+	bitrate = (int)(info.average_bitrate/1000.0);
 	frequency = info.sample_freq;
 	bitsPerSample = 16;
 	channels = 2;

@@ -28,7 +28,7 @@
 	vorbis_info *vi;
 	
 	vi = ov_info(&vorbisRef, -1);
-	bitRate = (int)(vi->bitrate_nominal/1000.0);
+	bitrate = (int)(vi->bitrate_nominal/1000.0);
 	channels = vi->channels;
 	bitsPerSample = vi->channels * 8;
 	frequency = vi->rate;
