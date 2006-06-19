@@ -168,19 +168,23 @@ fail:
 				bitrate = header.bitrate;
 				frequency = header.samplerate;
 				channels = MAD_NCHANNELS(&header);
-				
+
 				if (use_xing)
 				{
 					frame.header = header;
 					if (mad_frame_decode(&frame, &stream) == -1)
-						break;
+						continue;
+
 					if (xing_parse (&xing, stream.anc_ptr, stream.anc_bitlen) == 0) 
 					{
 						has_xing = YES;
-						vbr = YES; 
+						vbr = YES;
+
 						frames = xing.frames;
 						mad_timer_multiply (&_duration, frames);
+
 						bitrate = 8.0 * xing.bytes / mad_timer_count(_duration, MAD_UNITS_SECONDS); 
+
 						break;
 					}
 				}
@@ -247,9 +251,8 @@ fail:
 	bitsPerSample = 16;
 	isBigEndian=YES;
 	isUnsigned=NO;
-	[self scanFileFast:YES useXing:YES];
-	channels = 2;
-	return YES;
+	
+	return [self scanFileFast:YES useXing:YES];
 }
 
 - (BOOL)readInfo:(const char *)filename
@@ -498,7 +501,6 @@ static inline signed int scale (mad_fixed_t sample)
 
 - (double)seekToTime:(double)milliseconds
 {
-	NSLog(@"Seeking");
 	int new_position;
 	int seconds = milliseconds/1000.0;
 	int total_seconds = mad_timer_count(_duration, MAD_UNITS_SECONDS);
