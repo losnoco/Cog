@@ -184,7 +184,7 @@ fail:
 						mad_timer_multiply (&_duration, frames);
 
 						bitrate = 8.0 * xing.bytes / mad_timer_count(_duration, MAD_UNITS_SECONDS); 
-
+						NSLog(@"Xing bitrate: %i", bitrate);
 						break;
 					}
 				}
@@ -209,8 +209,10 @@ fail:
 				mad_timer_multiply (&_duration, frames);
 				
 				
-				bitrate /= N_AVERAGE_FRAMES;
-				bitrate *= frames;
+				if (vbr && !has_xing) {
+					bitrate /= N_AVERAGE_FRAMES;
+					bitrate *= frames;
+				}
 
 				break;
 			}
@@ -229,7 +231,7 @@ fail:
 	totalSize = (mad_timer_count(_duration, MAD_UNITS_MILLISECONDS)*(frequency/1000.0))*channels*(bitsPerSample/8);	
 
 	bitrate /= 1000;
-	
+	NSLog(@"BITRATE: %i %i", bitrate, vbr);
 	fseek(_inFd, 0, SEEK_SET);
 	
 	return frames != 0;	
