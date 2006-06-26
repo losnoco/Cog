@@ -8,8 +8,6 @@
                 loadPlaylist = id; 
                 savePlaylist = id; 
                 savePlaylistAs = id; 
-                shufflePlaylist = id; 
-                sortByPath = id; 
                 toggleInfoDrawer = id; 
             }; 
             CLASS = AppController; 
@@ -100,7 +98,17 @@
         }, 
         {CLASS = PlaylistEntry; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {shufflePlaylist = id; sortByPath = id; }; 
+            ACTIONS = {
+                shufflePlaylist = id; 
+                sortByPath = id; 
+                takeBoolForAlbum = id; 
+                takeBoolForArtist = id; 
+                takeBoolForGenre = id; 
+                takeBoolForLength = id; 
+                takeBoolForTitle = id; 
+                takeBoolForTrack = id; 
+                takeBoolForYear = id; 
+            }; 
             CLASS = PlaylistView; 
             LANGUAGE = ObjC; 
             OUTLETS = {
@@ -110,30 +118,9 @@
             SUPERCLASS = NSTableView; 
         }, 
         {
-            ACTIONS = {
-                changeVolume = id; 
-                next = id; 
-                pause = id; 
-                pauseResume = id; 
-                play = id; 
-                playPauseResume = id; 
-                prev = id; 
-                resume = id; 
-                seek = id; 
-                stop = id; 
-                toggleShowTimeRemaining = id; 
-            }; 
             CLASS = SoundController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {
-                bitrateField = NSTextField; 
-                lengthField = NSTextField; 
-                playButton = NSButton; 
-                playlistController = PlaylistController; 
-                playlistView = PlaylistView; 
-                positionSlider = TrackingSlider; 
-                timeField = NSTextField; 
-            }; 
+            OUTLETS = {delegate = id; }; 
             SUPERCLASS = NSObject; 
         }, 
         {CLASS = TrackingSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
