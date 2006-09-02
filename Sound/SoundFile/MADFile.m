@@ -15,6 +15,8 @@
 /*XING FUN*/
 
 #define XING_MAGIC	(('X' << 24) | ('i' << 16) | ('n' << 8) | 'g')
+#define INFO_MAGIC	(('I' << 24) | ('n' << 16) | ('f' << 8) | 'o')
+#define LAME_MAGIC  (('L' << 24) | ('A' << 16) | ('M' << 8) | 'E')
 
 struct xing
 {
@@ -25,6 +27,11 @@ struct xing
 	long scale;			/* ?? */
 };
 
+struct lame
+{
+	long flags;
+};
+
 enum
 {
 	XING_FRAMES = 0x00000001L,
@@ -33,29 +40,52 @@ enum
 	XING_SCALE  = 0x00000008L
 };
 
-int xing_parse(struct xing *xing, struct mad_bitptr ptr, unsigned int bitlen)
+int lame_parse(struct lame *lame, struct mad_bitptr *ptr, unsigned int bitlen)
+{
+	unsigned long magic;
+	unsigned long garbage;
+	
+	magic = mad_bit_read(ptr, 32); //4 bytes
+	
+	if (magic != LAME_MAGIC)
+		return 0;
+	
+	mad_bit_skip(ptr, 17*8); //17 bytes skipped
+	garbage = mad_bit_read(ptr, 24); //3 bytes
+//	_startPadding = (garbage >> 12) & 0x000FFF;
+//	_endPadding = garbage & 0x000FFF;
+
+	return 1;
+}	
+
+int xing_parse(struct xing *xing, struct mad_bitptr *ptr, unsigned int bitlen)
 {
 	xing->flags = 0;
+	unsigned long magic;
 	
-	if (bitlen < 64 || mad_bit_read(&ptr, 32) != XING_MAGIC)
-		goto fail;
+	if (bitlen < 64)
+		return 0;
+
+	magic = mad_bit_read(ptr, 32);
+	if (magic != INFO_MAGIC && magic != XING_MAGIC)
+		return 0;
 	
-	xing->flags = mad_bit_read(&ptr, 32);
+	xing->flags = mad_bit_read(ptr, 32);
 	bitlen -= 64;
 	
 	if (xing->flags & XING_FRAMES) {
 		if (bitlen < 32)
-			goto fail;
+			return 0;
 		
-		xing->frames = mad_bit_read(&ptr, 32);
+		xing->frames = mad_bit_read(ptr, 32);
 		bitlen -= 32;
 	}
 	
 	if (xing->flags & XING_BYTES) {
 		if (bitlen < 32)
-			goto fail;
+			return 0;
 		
-		xing->bytes = mad_bit_read(&ptr, 32);
+		xing->bytes = mad_bit_read(ptr, 32);
 		bitlen -= 32;
 	}
 	
@@ -63,27 +93,38 @@ int xing_parse(struct xing *xing, struct mad_bitptr ptr, unsigned int bitlen)
 		int i;
 		
 		if (bitlen < 800)
-			goto fail;
+			return 0;
 		
 		for (i = 0; i < 100; ++i)
-			xing->toc[i] = mad_bit_read(&ptr, 8);
+			xing->toc[i] = mad_bit_read(ptr, 8);
 		
 		bitlen -= 800;
 	}
 	
 	if (xing->flags & XING_SCALE) {
 		if (bitlen < 32)
-			goto fail;
+			return 0;
 		
-		xing->scale = mad_bit_read(&ptr, 32);
+		xing->scale = mad_bit_read(ptr, 32);
 		bitlen -= 32;
 	}
 	
-	return 0;
+	return 1;
+}
+
+int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, unsigned int bitlen)
+{
+	xing->flags = 0;
+	lame->flags = 0;
 	
-fail:
-		xing->flags = 0;
-	return -1;
+	if (xing_parse(xing, &ptr, bitlen))
+	{
+		lame_parse(lame, &ptr, bitlen);
+		
+		return 1;
+	}
+	
+	return 0;
 }
 
 
@@ -96,6 +137,7 @@ fail:
 	struct mad_header header;
 	struct mad_frame frame; /* to read xing data */
 	struct xing xing;
+	struct lame lame;
 	int remainder = 0;
 	int data_used = 0;
 	int len = 0;
@@ -175,7 +217,7 @@ fail:
 					if (mad_frame_decode(&frame, &stream) == -1)
 						continue;
 
-					if (xing_parse (&xing, stream.anc_ptr, stream.anc_bitlen) == 0) 
+					if (parse_headers(&xing, &lame, stream.anc_ptr, stream.anc_bitlen)) 
 					{
 						has_xing = YES;
 						vbr = YES;
@@ -427,7 +469,7 @@ static inline signed int scale (mad_fixed_t sample)
 			mad_stream_buffer(&_stream, _inputBuffer, len);
 			_stream.error = 0;
 			
-			if (_seekSkip)
+/*			if (_seekSkip)
 			{
 				int skip = 2;
 				do
@@ -444,7 +486,7 @@ static inline signed int scale (mad_fixed_t sample)
 				
 				_seekSkip = NO;
 			}
-			
+*/			
 		}		
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
 			if (!MAD_RECOVERABLE (_stream.error))
@@ -514,11 +556,13 @@ static inline signed int scale (mad_fixed_t sample)
 	new_position = ((double) seconds / (double) total_seconds) * _fileSize;
 
 	fseek(_inFd, new_position, SEEK_SET);
-	mad_frame_mute(&_frame);
-	mad_synth_mute(&_synth);
+	mad_stream_sync(&_stream);
 	_stream.error = MAD_ERROR_BUFLEN;
 	_stream.sync = 0;
 	_outputAvailable = 0;
+
+	mad_frame_mute(&_frame);
+	mad_synth_mute(&_synth);
 
 	_seekSkip = YES;
 	

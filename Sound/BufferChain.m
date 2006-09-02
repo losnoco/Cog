@@ -78,8 +78,8 @@
 	NSLog(@"SEEKING IN BUFFERCHIAN");
 	[inputNode seek:time];
 
-	[inputNode resetBuffer];
 	[converterNode resetBuffer];
+	[inputNode resetBuffer];
 }
 
 - (void)endOfInputReached

@@ -6,16 +6,19 @@
                 delEntries = id; 
                 donate = id; 
                 loadPlaylist = id; 
+                openFiles = id; 
                 savePlaylist = id; 
                 savePlaylistAs = id; 
-                shufflePlaylist = id; 
-                sortByPath = id; 
+                toggleFileDrawer = id; 
                 toggleInfoDrawer = id; 
             }; 
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
                 addButton = NSButton; 
+                fileButton = NSButton; 
+                fileDrawer = NSDrawer; 
+                fileTreeController = FileTreeController; 
                 infoButton = NSButton; 
                 infoDrawer = NSDrawer; 
                 mainWindow = NSPanel; 
@@ -51,10 +54,18 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
+        {CLASS = FileOutlineView; LANGUAGE = ObjC; SUPERCLASS = NSOutlineView; }, 
+        {
+            CLASS = FileTreeController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {playlistController = PlaylistController; }; 
+            SUPERCLASS = NSTreeController; 
+        }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoController; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoView; LANGUAGE = ObjC; SUPERCLASS = NSScrollView; }, 
         {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {CLASS = PathNode; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             ACTIONS = {
                 changeVolume = id; 

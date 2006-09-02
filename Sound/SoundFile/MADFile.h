@@ -28,6 +28,12 @@
 	FILE *_inFd;
 	
 	BOOL _seekSkip;
+
+	//For gapless playback of mp3s
+	BOOL _gapless;
+	long _currentFrame;
+	int _startPadding;
+	int _endPadding;
 }
 
 @end

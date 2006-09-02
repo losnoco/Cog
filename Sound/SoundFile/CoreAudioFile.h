@@ -23,7 +23,7 @@
 #include <AudioToolbox/ExtendedAudioFile.h>
 
 #import "SoundFile.h"
-#define _USE_WRAPPER_
+#undef _USE_WRAPPER_
 
 @interface CoreAudioFile : SoundFile
 {

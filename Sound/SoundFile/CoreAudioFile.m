@@ -224,7 +224,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 	}
 	
 	size	= sizeof(totalFrames);
-//	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileLengthFrames, &size, &totalFrames);
+	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileLengthFrames, &size, &totalFrames);
 	if(err != noErr) {
 		err = ExtAudioFileDispose(_in);
 		return NO;
@@ -256,7 +256,7 @@ OSStatus writeFunc(void * inRefCon, SInt64 inPosition, ByteCount requestCount, c
 		bitsPerSample = 16;
 	}
 	
-	totalSize			= totalFrames * channels * (bitsPerSample / 8);
+	totalSize	= totalFrames * channels * (bitsPerSample / 8);
 	
 	// Set output format
 	AudioStreamBasicDescription		result;

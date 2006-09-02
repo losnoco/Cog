@@ -202,7 +202,7 @@
 	dropOperation:(NSTableViewDropOperation)op
 {
 	int i;
-	NSLog(@"DRAGGING?");
+	NSLog(@"DROPPED");
 	[super tableView:tv acceptDrop:info row:row dropOperation:op];
 	if ([info draggingSource] == tableView)
 	{
@@ -231,7 +231,7 @@
 		row = 0;
 
 	NSArray *files = [[info draggingPasteboard] propertyListForType:NSFilenamesPboardType];
-	NSLog(@"INSERTING PATHS");
+	NSLog(@"INSERTING PATHS: %@", files);
 	[self insertPaths:files atIndex:row sort:YES];
 
 	NSLog(@"UPDATING");
