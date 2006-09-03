@@ -17,7 +17,7 @@
 	watcher = [[FileTreeWatcher alloc] init];
 	[watcher setDelegate:self];
 	
-	[self setRootPath: @"/Users/xugg/Music"];
+	[self setRootPath: [@"~/Music" stringByExpandingTildeInPath]]; 
 }
 
 - (void)dealloc
