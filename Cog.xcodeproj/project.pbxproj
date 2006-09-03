@@ -11,8 +11,6 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		8E0290AE0AAA0771003D200F /* PrefPaneController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E0290AC0AAA0771003D200F /* PrefPaneController.h */; };
-		8E0290AF0AAA0771003D200F /* PrefPaneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E0290AD0AAA0771003D200F /* PrefPaneController.m */; };
 		8E0AD92B0A338CFF00215AEF /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EA9172F0A336CC30087CDE2 /* Shorten.framework */; };
 		8E1296DA0A2BA9CE00443124 /* PlaylistHeaderView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */; };
 		8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */; };
@@ -173,7 +171,6 @@
 				8EFFCD720AA093AF00C458A5 /* UKFNSubscribeFileWatcher.h in CopyFiles */,
 				8EFFCD750AA093AF00C458A5 /* UKKQueue.h in CopyFiles */,
 				8EFFCD770AA093AF00C458A5 /* UKMainThreadProxy.h in CopyFiles */,
-				8E0290AE0AAA0771003D200F /* PrefPaneController.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,8 +196,6 @@
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E0290AC0AAA0771003D200F /* PrefPaneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefPaneController.h; sourceTree = "<group>"; };
-		8E0290AD0AAA0771003D200F /* PrefPaneController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefPaneController.m; sourceTree = "<group>"; };
 		8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
 		8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
 		8E1849C40A43DB5C0084C69D /* MAD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MAD.framework; path = Libraries/MAD/build/Release/MAD.framework; sourceTree = "<group>"; };
@@ -442,8 +437,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				8E0290AC0AAA0771003D200F /* PrefPaneController.h */,
-				8E0290AD0AAA0771003D200F /* PrefPaneController.m */,
 			);
 			name = Cog;
 			sourceTree = "<group>";
@@ -847,7 +840,6 @@
 				8EFFCD730AA093AF00C458A5 /* UKFNSubscribeFileWatcher.m in Sources */,
 				8EFFCD760AA093AF00C458A5 /* UKKQueue.m in Sources */,
 				8EFFCD780AA093AF00C458A5 /* UKMainThreadProxy.m in Sources */,
-				8E0290AF0AAA0771003D200F /* PrefPaneController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
