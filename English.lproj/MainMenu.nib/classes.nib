@@ -126,6 +126,12 @@
             SUPERCLASS = NSTableView; 
         }, 
         {
+            ACTIONS = {showPrefs = id; }; 
+            CLASS = PreferencesController; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
             ACTIONS = {
                 changeVolume = id; 
                 next = id; 

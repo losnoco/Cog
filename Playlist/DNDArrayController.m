@@ -41,7 +41,6 @@ NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
 {
 	NSDragOperation dragOp = NSDragOperationCopy;
 	
-	NSLog(@"VALIDATING");
     if ([info draggingSource] == tv)
 		dragOp = NSDragOperationMove;
 	

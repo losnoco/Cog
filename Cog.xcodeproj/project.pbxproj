@@ -11,6 +11,12 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		8E07AAF10AAC910500A4B32F /* SS_PreferencePaneProtocol.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */; };
+		8E07AAF20AAC910500A4B32F /* SS_PrefsController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E07AAEF0AAC910500A4B32F /* SS_PrefsController.h */; };
+		8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AAF00AAC910500A4B32F /* SS_PrefsController.m */; };
+		8E07AB780AAC930B00A4B32F /* PreferencesController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E07AB760AAC930B00A4B32F /* PreferencesController.h */; };
+		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
+		8E07AEEA0AACA08100A4B32F /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 8E07AEE90AACA08100A4B32F /* General.preferencePane */; };
 		8E0AD92B0A338CFF00215AEF /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EA9172F0A336CC30087CDE2 /* Shorten.framework */; };
 		8E1296DA0A2BA9CE00443124 /* PlaylistHeaderView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */; };
 		8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */; };
@@ -171,15 +177,9 @@
 				8EFFCD720AA093AF00C458A5 /* UKFNSubscribeFileWatcher.h in CopyFiles */,
 				8EFFCD750AA093AF00C458A5 /* UKKQueue.h in CopyFiles */,
 				8EFFCD770AA093AF00C458A5 /* UKMainThreadProxy.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8EB44F4B0A2BB82B00AA711F /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
-			files = (
+				8E07AAF10AAC910500A4B32F /* SS_PreferencePaneProtocol.h in CopyFiles */,
+				8E07AAF20AAC910500A4B32F /* SS_PrefsController.h in CopyFiles */,
+				8E07AB780AAC930B00A4B32F /* PreferencesController.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +196,12 @@
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PreferencePaneProtocol.h; path = Preferences/SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
+		8E07AAEF0AAC910500A4B32F /* SS_PrefsController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PrefsController.h; path = Preferences/SS_PrefsController.h; sourceTree = "<group>"; };
+		8E07AAF00AAC910500A4B32F /* SS_PrefsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SS_PrefsController.m; path = Preferences/SS_PrefsController.m; sourceTree = "<group>"; };
+		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
+		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
+		8E07AEE90AACA08100A4B32F /* General.preferencePane */ = {isa = PBXFileReference; lastKnownFileType = folder; name = General.preferencePane; path = Preferences/General/build/Release/General.preferencePane; sourceTree = "<group>"; };
 		8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
 		8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
 		8E1849C40A43DB5C0084C69D /* MAD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MAD.framework; path = Libraries/MAD/build/Release/MAD.framework; sourceTree = "<group>"; };
@@ -385,6 +391,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
 				8EFFCD410AA093AF00C458A5 /* FileDrawer */,
 				8E75752309F31D5A0080F1EE /* Feedback */,
 				8E75755D09F31D5A0080F1EE /* Updates */,
@@ -453,11 +460,12 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				8EB44FF90A2BB8B300AA711F /* Cog Help */,
-				8E7575D909F31E930080F1EE /* Localizable.strings */,
+				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
 				8E75758E09F31D800080F1EE /* Icons */,
+				8EB44FF90A2BB8B300AA711F /* Cog Help */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				8E7575D909F31E930080F1EE /* Localizable.strings */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				8E7575C309F31DCA0080F1EE /* Changelog */,
 				8E7575C409F31DCA0080F1EE /* Cog.scriptSuite */,
@@ -479,6 +487,26 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */,
+				8E07AAEF0AAC910500A4B32F /* SS_PrefsController.h */,
+				8E07AAF00AAC910500A4B32F /* SS_PrefsController.m */,
+				8E07AB760AAC930B00A4B32F /* PreferencesController.h */,
+				8E07AB770AAC930B00A4B32F /* PreferencesController.m */,
+			);
+			name = Preferences;
+			sourceTree = "<group>";
+		};
+		8E07AD280AAC9BE600A4B32F /* Preference Panes */ = {
+			isa = PBXGroup;
+			children = (
+				8E07AEE90AACA08100A4B32F /* General.preferencePane */,
+			);
+			name = "Preference Panes";
 			sourceTree = "<group>";
 		};
 		8E75751A09F31D5A0080F1EE /* Custom */ = {
@@ -660,6 +688,7 @@
 		8EFFCD410AA093AF00C458A5 /* FileDrawer */ = {
 			isa = PBXGroup;
 			children = (
+				8EFFCD540AA093AF00C458A5 /* UKKQueue */,
 				8EFFCD440AA093AF00C458A5 /* FileIconCell.h */,
 				8EFFCD450AA093AF00C458A5 /* FileIconCell.m */,
 				8EFFCD4E0AA093AF00C458A5 /* ImageTextCell.h */,
@@ -678,7 +707,6 @@
 				8EFFCD470AA093AF00C458A5 /* FileNode.m */,
 				8EFFCD520AA093AF00C458A5 /* PathNode.h */,
 				8EFFCD530AA093AF00C458A5 /* PathNode.m */,
-				8EFFCD540AA093AF00C458A5 /* UKKQueue */,
 			);
 			path = FileDrawer;
 			sourceTree = "<group>";
@@ -710,7 +738,6 @@
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				8E757AEC09F3265E0080F1EE /* CopyFiles */,
-				8EB44F4B0A2BB82B00AA711F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -742,6 +769,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E07AEEA0AACA08100A4B32F /* General.preferencePane in Resources */,
 				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				8E75758709F31D5A0080F1EE /* SOUNDTODO in Resources */,
@@ -840,6 +868,8 @@
 				8EFFCD730AA093AF00C458A5 /* UKFNSubscribeFileWatcher.m in Sources */,
 				8EFFCD760AA093AF00C458A5 /* UKKQueue.m in Sources */,
 				8EFFCD780AA093AF00C458A5 /* UKMainThreadProxy.m in Sources */,
+				8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */,
+				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

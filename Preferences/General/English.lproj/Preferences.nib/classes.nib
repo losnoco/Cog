@@ -1,0 +1,20 @@
+{
+    IBClasses = (
+        {CLASS = FileDrawerPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = HotKeyPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }, 
+        {
+            CLASS = PrefPaneController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {fileDrawerPane = FileDrawerPane; hotKeyPane = HotKeyPane; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = PreferencePane; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {view = NSView; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
