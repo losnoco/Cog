@@ -2,8 +2,8 @@
 //  PreferencesController.m
 //  Preferences
 //
-//  Created by Zaphod Beeblebrox on 9/4/06.
-//  Copyright 2006 __MyCompanyName__. All rights reserved.
+//  Created by Vincent Spader on 9/4/06.
+//  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
 #import "PrefPaneController.h"

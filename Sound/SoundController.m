@@ -2,8 +2,8 @@
 //  SoundController.m
 //  Cog
 //
-//  Created by Zaphod Beeblebrox on 8/7/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Created by Vincent Spader on 8/7/05.
+//  Copyright 2005 Vincent Spader. All rights reserved.
 //
 
 #import "SoundController.h"

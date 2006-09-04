@@ -3,7 +3,7 @@
 //  Cog
 //
 //  Created by Vincent Spader on 5/7/05.
-//  Copyright __MyCompanyName__ 2005. All rights reserved.
+//  Copyright Vincent Spader 2005. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>

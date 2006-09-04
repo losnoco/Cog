@@ -2,8 +2,8 @@
 //  GameFile.m
 //  Cog
 //
-//  Created by Zaphod Beeblebrox on 5/29/06.
-//  Copyright 2006 __MyCompanyName__. All rights reserved.
+//  Created by Vincent Spader on 5/29/06.
+//  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
 #import "GameFile.h"

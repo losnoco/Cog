@@ -2,8 +2,8 @@
 //  MADFile.h
 //  Cog
 //
-//  Created by Zaphod Beeblebrox on 6/17/06.
-//  Copyright 2006 __MyCompanyName__. All rights reserved.
+//  Created by Vincent Spader on 6/17/06.
+//  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>

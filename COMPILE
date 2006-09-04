@@ -1,5 +1,5 @@
-To compile Cog, you must first compile all of the projects in the Libraries folder with the Deployment build configuration.
+To compile Cog, you must first compile all of the projects in the Libraries and Preferences folders with the Release build configuration.
 
-To make this easier, I have created a bash script named build_libs.sh in the Libraries folder. Just run that in a terminal, and when it is finished, all the libraries should be built.
+To make this easier, I have created a bash script named build_dependencies.sh in the main folder. Just run that in a terminal, and when it is finished, all the dependencies should be built.
 
-If you have any problems, email me at vspader@users.sf.net
+If you have any problems, email me at vspader@users.sourceforge.net

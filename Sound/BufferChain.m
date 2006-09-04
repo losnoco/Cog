@@ -2,8 +2,8 @@
 //  BufferChain.m
 //  CogNew
 //
-//  Created by Zaphod Beeblebrox on 1/4/06.
-//  Copyright 2006 __MyCompanyName__. All rights reserved.
+//  Created by Vincent Spader on 1/4/06.
+//  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
 #import "BufferChain.h"
