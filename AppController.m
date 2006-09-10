@@ -206,74 +206,76 @@
 - (void)initDefaults
 {
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:35] forKey:@"hotkeyCodePlay"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:controlKey+cmdKey] forKey:@"hotkeyModifiersPlay"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:35] forKey:@"hotKeyPlayKeyCode"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyPlayModifiers"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'P'] forKey:@"hotKeyPlayCharacter"];
 	
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:45] forKey:@"hotkeyCodeNext"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:controlKey+cmdKey] forKey:@"hotkeyModifiersNext"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:45] forKey:@"hotKeyNextKeyCode"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyNextModifiers"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'N'] forKey:@"hotKeyNextCharacter"];
 	
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:15] forKey:@"hotkeyCodePrevious"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:controlKey+cmdKey] forKey:@"hotkeyModifiersPrevious"];
-	
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:15] forKey:@"hotKeyPreviousKeyCode"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyPreviousModifiers"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'R'] forKey:@"hotKeyPreviousCharacter"];
+
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
+
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyPlayKeyCode"		options:0 context:nil];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyPreviousKeyCode"	options:0 context:nil];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyNextKeyCode"		options:0 context:nil];
 }
 
-//Register the Hotkeys.  Added by Chris Henderson, 21 May 2006
-//See http://www.dbachrach.com/blog/2005/11/program-global-hotkeys-in-cocoa-easily.html
+- (void) observeValueForKeyPath:(NSString *)keyPath
+					   ofObject:(id)object
+						 change:(NSDictionary *)change
+                        context:(void *)context
+{
+	if ([keyPath isEqualToString:@"values.hotKeyPlayKeyCode"]) {
+		[self registerHotKeys];
+	}
+	else if ([keyPath isEqualToString:@"values.hotKeyPreviousKeyCode"]) {
+		[self registerHotKeys];
+	}
+	else if ([keyPath isEqualToString:@"values.hotKeyNextKeyCode"]) {
+		[self registerHotKeys];
+	}
+}
+
 - (void)registerHotKeys
 {
-	EventHotKeyRef gMyHotKeyRef;
-	EventHotKeyID gMyHotKeyID;
-	EventTypeSpec eventType;
-	eventType.eventClass=kEventClassKeyboard;
-	eventType.eventKind=kEventHotKeyPressed;
-	InstallApplicationEventHandler(&handleHotKey,1,&eventType,self,NULL);
-	//Play
-	gMyHotKeyID.signature='htk1';
-	gMyHotKeyID.id=1;
-	if([[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyCodePlay"]!=-999)
-	{
-		RegisterEventHotKey([[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyCodePlay"], [[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyModifiersPlay"], gMyHotKeyID, GetApplicationEventTarget(), 0, &gMyHotKeyRef);
-	}
-	//Previous
-	gMyHotKeyID.signature='htk2';
-	gMyHotKeyID.id=2;
-	if([[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyCodePrevious"]!=-999)
-	{
-		NSLog(@"REGISTERING: %i", [[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyCodePrevious"]);
-		RegisterEventHotKey([[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyCodePrevious"], [[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyModifiersPrevious"], gMyHotKeyID, GetApplicationEventTarget(), 0, &gMyHotKeyRef);
-	}
-	//Next
-	gMyHotKeyID.signature='htk3';
-	gMyHotKeyID.id=3;
-	if([[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyCodeNext"]!=-999)
-	{
-		RegisterEventHotKey([[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyCodeNext"], [[NSUserDefaults standardUserDefaults] integerForKey:@"hotkeyModifiersNext"], gMyHotKeyID, GetApplicationEventTarget(), 0, &gMyHotKeyRef);
-	}
+	NSLog(@"REGISTERING HOTKEYS");
+	
+	[playHotKey release];
+	playHotKey = [[NDHotKeyEvent alloc]
+		initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
+			  character: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayCharacter"] intValue]
+		  modifierFlags: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]
+		];
+	
+	[prevHotKey release];
+	prevHotKey = [[NDHotKeyEvent alloc]
+		initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
+				character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousCharacter"]
+			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousModifiers"]
+		];
+	
+	[nextHotKey release];
+	nextHotKey = [[NDHotKeyEvent alloc]
+		initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextKeyCode"]
+				character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextCharacter"]
+			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextModifiers"]
+		];
+	
+	[playHotKey setTarget:self selector:@selector(clickPlay)];
+	[prevHotKey setTarget:self selector:@selector(clickPrev)];
+	[nextHotKey setTarget:self selector:@selector(clickNext)];
+	
+	[playHotKey setEnabled:YES];	
+	[prevHotKey setEnabled:YES];
+	[nextHotKey setEnabled:YES];
 }
-
-//Handle the Hotkeys.  Added by Chris Henderson, 21 May 2006
-OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *userData)
-{
-	EventHotKeyID hkID;
-	GetEventParameter(theEvent,kEventParamDirectObject,typeEventHotKeyID,NULL,sizeof(hkID),NULL,&hkID);
-	int i = hkID.id;
-
-	NSLog(@"Handling: %i", i);
-	switch (i) 
-	{
-		case 1: [userData clickPlay];
-			break;
-		case 2: [userData clickPrev];
-			break;
-		case 3: [userData clickNext];
-			break;
-	}
-	return noErr;
-}
-
 
 - (void)clickPlay
 {

@@ -112,6 +112,8 @@
 		8E7A0F2B0A8FEB4A00F27EE8 /* shuffle_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F170A8FEB4A00F27EE8 /* shuffle_on.png */; };
 		8E7A0F2C0A8FEB4A00F27EE8 /* volume_high.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F180A8FEB4A00F27EE8 /* volume_high.png */; };
 		8E7A0F2D0A8FEB4A00F27EE8 /* volume_low.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F190A8FEB4A00F27EE8 /* volume_low.png */; };
+		8E7C2B160AACE0F2009B4EAD /* NDHotKeyEvent.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E7C2B140AACE0F2009B4EAD /* NDHotKeyEvent.h */; };
+		8E7C2B170AACE0F2009B4EAD /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7C2B150AACE0F2009B4EAD /* NDHotKeyEvent.m */; };
 		8EA917300A336CC30087CDE2 /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EA9172F0A336CC30087CDE2 /* Shorten.framework */; };
 		8EB450080A2BB8B300AA711F /* Cog Help in Resources */ = {isa = PBXBuildFile; fileRef = 8EB44FF90A2BB8B300AA711F /* Cog Help */; };
 		8EB971790A44B74A009803E3 /* MAD.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E1849C40A43DB5C0084C69D /* MAD.framework */; };
@@ -180,6 +182,7 @@
 				8E07AAF10AAC910500A4B32F /* SS_PreferencePaneProtocol.h in CopyFiles */,
 				8E07AAF20AAC910500A4B32F /* SS_PrefsController.h in CopyFiles */,
 				8E07AB780AAC930B00A4B32F /* PreferencesController.h in CopyFiles */,
+				8E7C2B160AACE0F2009B4EAD /* NDHotKeyEvent.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,6 +334,8 @@
 		8E7A0F170A8FEB4A00F27EE8 /* shuffle_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shuffle_on.png; sourceTree = "<group>"; };
 		8E7A0F180A8FEB4A00F27EE8 /* volume_high.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = volume_high.png; sourceTree = "<group>"; };
 		8E7A0F190A8FEB4A00F27EE8 /* volume_low.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = volume_low.png; sourceTree = "<group>"; };
+		8E7C2B140AACE0F2009B4EAD /* NDHotKeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NDHotKeyEvent.h; sourceTree = "<group>"; };
+		8E7C2B150AACE0F2009B4EAD /* NDHotKeyEvent.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyEvent.m; sourceTree = "<group>"; };
 		8EA9172F0A336CC30087CDE2 /* Shorten.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Shorten.framework; path = Libraries/Shorten/build/Release/Shorten.framework; sourceTree = "<group>"; };
 		8EB44FF90A2BB8B300AA711F /* Cog Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Cog Help"; sourceTree = "<group>"; };
 		8EFFCD420AA093AF00C458A5 /* DirectoryNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DirectoryNode.h; sourceTree = "<group>"; };
@@ -522,6 +527,8 @@
 				8E75752209F31D5A0080F1EE /* TrackingSlider.m */,
 				8E4C7F060A0509FC003BE25F /* DragScrollView.h */,
 				8E4C7F070A0509FC003BE25F /* DragScrollView.m */,
+				8E7C2B140AACE0F2009B4EAD /* NDHotKeyEvent.h */,
+				8E7C2B150AACE0F2009B4EAD /* NDHotKeyEvent.m */,
 			);
 			path = Custom;
 			sourceTree = "<group>";
@@ -870,6 +877,7 @@
 				8EFFCD780AA093AF00C458A5 /* UKMainThreadProxy.m in Sources */,
 				8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
+				8E7C2B170AACE0F2009B4EAD /* NDHotKeyEvent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

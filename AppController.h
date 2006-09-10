@@ -4,6 +4,8 @@
 
 #import "PlaylistController.h"
 #import "FileTreeController.h"
+#import "NDHotKeyEvent.h"
+
 
 @interface AppController : NSObject
 {
@@ -25,6 +27,10 @@
 	IBOutlet NSDrawer *fileDrawer;
 
 	IBOutlet FileTreeController *fileTreeController;
+	
+	NDHotKeyEvent *playHotKey;
+	NDHotKeyEvent *prevHotKey;
+	NDHotKeyEvent *nextHotKey;
 }
 
 - (IBAction)openFiles:(id)sender;

@@ -22,7 +22,7 @@
 		[prefs setDebug:YES];
 		
         // Set which panes are included, and their order.
-//        [prefs setPanesOrder:[NSArray arrayWithObjects:@"General", @"Updating", @"A Non-Existent Preference Pane", nil]];
+        //[prefs setPanesOrder:[NSArray arrayWithObjects:@"General", @"Updating", @"A Non-Existent Preference Pane", nil]];
     }
     
     // Show the preferences window.

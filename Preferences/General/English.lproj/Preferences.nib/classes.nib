@@ -2,7 +2,24 @@
     IBClasses = (
         {CLASS = FileDrawerPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = HotKeyPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }, 
+        {CLASS = HotKeyControl; LANGUAGE = ObjC; SUPERCLASS = NDHotKeyControl; }, 
+        {
+            ACTIONS = {
+                grabNextHotKey = id; 
+                grabPlayHotKey = id; 
+                grabPrevHotKey = id; 
+                hotKeyChanged = id; 
+            }; 
+            CLASS = HotKeyPane; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                nextHotKeyControl = HotKeyControl; 
+                playHotKeyControl = HotKeyControl; 
+                prevHotKeyControl = HotKeyControl; 
+            }; 
+            SUPERCLASS = PreferencePane; 
+        }, 
+        {CLASS = NDHotKeyControl; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
         {
             CLASS = PrefPaneController; 
             LANGUAGE = ObjC; 

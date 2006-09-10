@@ -16,6 +16,10 @@
 		8E07ABDC0AAC95BC00A4B32F /* file_drawer.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E07ABDA0AAC95BC00A4B32F /* file_drawer.png */; };
 		8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E07ABDB0AAC95BC00A4B32F /* hot_keys.png */; };
 		8E07AC050AAC968C00A4B32F /* Preferences.nib in Resources */ = {isa = PBXBuildFile; fileRef = 8E07AC030AAC968C00A4B32F /* Preferences.nib */; };
+		8E6C12160AACAE4100819171 /* NDHotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C12130AACAE4100819171 /* NDHotKeyControl.m */; };
+		8E6C12170AACAE4100819171 /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C12150AACAE4100819171 /* NDHotKeyEvent.m */; };
+		8E6C123A0AACAEF200819171 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6C12390AACAEF200819171 /* Carbon.framework */; };
+		8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C139F0AACBAB500819171 /* HotKeyControl.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +42,13 @@
 		8E07ABDA0AAC95BC00A4B32F /* file_drawer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_drawer.png; path = Icons/file_drawer.png; sourceTree = "<group>"; };
 		8E07ABDB0AAC95BC00A4B32F /* hot_keys.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hot_keys.png; path = Icons/hot_keys.png; sourceTree = "<group>"; };
 		8E07AC040AAC968C00A4B32F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Preferences.nib; sourceTree = "<group>"; };
+		8E6C12120AACAE4100819171 /* NDHotKeyControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NDHotKeyControl.h; sourceTree = "<group>"; };
+		8E6C12130AACAE4100819171 /* NDHotKeyControl.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyControl.m; sourceTree = "<group>"; };
+		8E6C12140AACAE4100819171 /* NDHotKeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NDHotKeyEvent.h; sourceTree = "<group>"; };
+		8E6C12150AACAE4100819171 /* NDHotKeyEvent.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyEvent.m; sourceTree = "<group>"; };
+		8E6C12390AACAEF200819171 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		8E6C139E0AACBAB500819171 /* HotKeyControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HotKeyControl.h; sourceTree = "<group>"; };
+		8E6C139F0AACBAB500819171 /* HotKeyControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HotKeyControl.m; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -47,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
+				8E6C123A0AACAEF200819171 /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +109,12 @@
 				8E07AA7F0AAC8EA200A4B32F /* FileDrawerPane.m */,
 				8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */,
 				8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */,
+				8E6C12120AACAE4100819171 /* NDHotKeyControl.h */,
+				8E6C12130AACAE4100819171 /* NDHotKeyControl.m */,
+				8E6C12140AACAE4100819171 /* NDHotKeyEvent.h */,
+				8E6C12150AACAE4100819171 /* NDHotKeyEvent.m */,
+				8E6C139E0AACBAB500819171 /* HotKeyControl.h */,
+				8E6C139F0AACBAB500819171 /* HotKeyControl.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -104,6 +122,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8E6C12390AACAEF200819171 /* Carbon.framework */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -203,6 +222,9 @@
 				8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */,
 				8E07AA890AAC8EA200A4B32F /* PreferencePane.m in Sources */,
 				8E07AA8A0AAC8EA200A4B32F /* PrefPaneController.m in Sources */,
+				8E6C12160AACAE4100819171 /* NDHotKeyControl.m in Sources */,
+				8E6C12170AACAE4100819171 /* NDHotKeyEvent.m in Sources */,
+				8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

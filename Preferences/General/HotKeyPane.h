@@ -8,10 +8,18 @@
 
 #import <Cocoa/Cocoa.h>
 #import "PreferencePane.h"
-
+#import "HotKeyControl.h"
 
 @interface HotKeyPane : PreferencePane {
-
+	IBOutlet HotKeyControl *playHotKeyControl;
+	IBOutlet HotKeyControl *prevHotKeyControl;
+	IBOutlet HotKeyControl *nextHotKeyControl;
 }
+
+- (IBAction) grabPlayHotKey:(id)sender;
+- (IBAction) grabPrevHotKey:(id)sender;
+- (IBAction) grabNextHotKey:(id)sender;
+
+- (IBAction) hotKeyChanged:(id)sender;
 
 @end
