@@ -11,7 +11,9 @@
 
 
 @interface FileDrawerPane : PreferencePane {
-
+	IBOutlet NSTextField *rootPathTextView;
 }
+
+- (IBAction)openSheet:(id)sender;
 
 @end

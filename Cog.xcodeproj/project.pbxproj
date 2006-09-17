@@ -404,6 +404,10 @@
 				8E75751A09F31D5A0080F1EE /* Custom */,
 				8E75752A09F31D5A0080F1EE /* Playlist */,
 				8E75753509F31D5A0080F1EE /* Sound */,
+				8E75751809F31D5A0080F1EE /* AppController.h */,
+				8E75751909F31D5A0080F1EE /* AppController.m */,
+				8E75752809F31D5A0080F1EE /* PlaybackController.h */,
+				8E75752909F31D5A0080F1EE /* PlaybackController.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -441,10 +445,6 @@
 			isa = PBXGroup;
 			children = (
 				080E96DDFE201D6D7F000001 /* Classes */,
-				8E75751809F31D5A0080F1EE /* AppController.h */,
-				8E75751909F31D5A0080F1EE /* AppController.m */,
-				8E75752809F31D5A0080F1EE /* PlaybackController.h */,
-				8E75752909F31D5A0080F1EE /* PlaybackController.m */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,

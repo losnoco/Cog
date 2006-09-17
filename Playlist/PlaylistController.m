@@ -122,10 +122,10 @@
 	{
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 		
-		[pe	setFilename:[files objectAtIndex:i]];
+		[pe	setFilename:[sortedFiles objectAtIndex:i]];
 		[pe setIndex:index+i];
-		[pe setTitle:[[files objectAtIndex:i] lastPathComponent]];
-		[pe setDisplay:[[files objectAtIndex:i] lastPathComponent]];
+		[pe setTitle:[[sortedFiles objectAtIndex:i] lastPathComponent]];
+		[pe setDisplay:[[sortedFiles objectAtIndex:i] lastPathComponent]];
 //		[pe performSelectorOnMainThread:@selector(readTags) withObject:nil waitUntilDone:NO];
 //		[pe performSelectorOnMainThread:@selector(readInfo) withObject:nil waitUntilDone:NO];
 		

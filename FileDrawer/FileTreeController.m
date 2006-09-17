@@ -17,12 +17,16 @@
 	watcher = [[FileTreeWatcher alloc] init];
 	[watcher setDelegate:self];
 	
-	[self setRootPath: [@"~/Music" stringByExpandingTildeInPath]]; 
+	[self setRootPath: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"] ]; 
 }
 
 - (void)dealloc
 {
 	[rootPath release];
+	[watcher release];
+	
+	NSLog(@"DEALLOCATING CONTROLLER");
+	
 	[super dealloc];
 }
 
@@ -43,8 +47,24 @@
 - (void) refreshRoot
 {
 	DirectoryNode *base = [[DirectoryNode alloc] initWithPath:rootPath controller:self];
+	NSLog(@"Subpaths: %i", [[base subpaths] count]);
 	[self setContent: [base subpaths]];
+	NSLog(@"Test: %i", [[self content] retainCount]);
+
 	[base release];
+}
+
+//BUG IN NSTREECONTROLLER'S SETCONTENT. FIX YOUR SHIT, APPLE!
+- (void)setContent:(id)content
+{
+	if(![content isEqual:[self content]])
+	{
+		NSArray *paths = [[self selectionIndexPaths] retain];
+		[super setContent:nil];
+		[super setContent:content];
+		[self setSelectionIndexPaths:paths];
+		[paths release];
+	}
 }
 
 - (void)refreshPath:(NSString *)path

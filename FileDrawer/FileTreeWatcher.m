@@ -40,6 +40,12 @@
 	}
 }
 
+- (void)removePath: (NSString *)path
+{
+	[watchedPaths removeObject:path];
+	[kqueue removePath:path];
+}
+
 -(void) setDelegate: (id)d
 {
 	delegate = [d retain];

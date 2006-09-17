@@ -26,6 +26,8 @@
 - (void)dealloc
 {
 	[path release];
+	[pathIcon release];
+	
 	[super dealloc];
 }
 

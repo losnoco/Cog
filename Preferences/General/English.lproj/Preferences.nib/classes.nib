@@ -1,6 +1,12 @@
 {
     IBClasses = (
-        {CLASS = FileDrawerPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }, 
+        {
+            ACTIONS = {openSheet = id; }; 
+            CLASS = FileDrawerPane; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {rootPathTextView = NSTextField; }; 
+            SUPERCLASS = PreferencePane; 
+        }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = HotKeyControl; LANGUAGE = ObjC; SUPERCLASS = NDHotKeyControl; }, 
         {

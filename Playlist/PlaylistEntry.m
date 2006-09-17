@@ -482,4 +482,9 @@
 		waitUntilDone:YES];
 }
 
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)",idx, filename];
+}
+
 @end

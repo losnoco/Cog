@@ -25,6 +25,12 @@
 	return self;
 }
 
+- (void)dealloc
+{
+	[path release];
+	[icon release];
+}
+
 - (NSString *) path 
 {
 	return path;

@@ -16,4 +16,7 @@
 	NSMutableArray *watchedPaths;
 }
 
+- (void)addPath: (NSString *)path;
+- (void)removePath: (NSString *)path;
+
 @end

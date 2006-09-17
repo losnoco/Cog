@@ -100,21 +100,11 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				17D503410ABDB1660022D1E8 /* Custom */,
+				17D5033F0ABDB1570022D1E8 /* Panes */,
 				8E07AA860AAC8EA200A4B32F /* SS_PreferencePaneProtocol.h */,
 				8E07AA840AAC8EA200A4B32F /* PrefPaneController.h */,
 				8E07AA850AAC8EA200A4B32F /* PrefPaneController.m */,
-				8E07AA820AAC8EA200A4B32F /* PreferencePane.h */,
-				8E07AA830AAC8EA200A4B32F /* PreferencePane.m */,
-				8E07AA7E0AAC8EA200A4B32F /* FileDrawerPane.h */,
-				8E07AA7F0AAC8EA200A4B32F /* FileDrawerPane.m */,
-				8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */,
-				8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */,
-				8E6C12120AACAE4100819171 /* NDHotKeyControl.h */,
-				8E6C12130AACAE4100819171 /* NDHotKeyControl.m */,
-				8E6C12140AACAE4100819171 /* NDHotKeyEvent.h */,
-				8E6C12150AACAE4100819171 /* NDHotKeyEvent.m */,
-				8E6C139E0AACBAB500819171 /* HotKeyControl.h */,
-				8E6C139F0AACBAB500819171 /* HotKeyControl.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -136,6 +126,32 @@
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		17D5033F0ABDB1570022D1E8 /* Panes */ = {
+			isa = PBXGroup;
+			children = (
+				8E07AA820AAC8EA200A4B32F /* PreferencePane.h */,
+				8E07AA830AAC8EA200A4B32F /* PreferencePane.m */,
+				8E07AA7E0AAC8EA200A4B32F /* FileDrawerPane.h */,
+				8E07AA7F0AAC8EA200A4B32F /* FileDrawerPane.m */,
+				8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */,
+				8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */,
+			);
+			name = Panes;
+			sourceTree = "<group>";
+		};
+		17D503410ABDB1660022D1E8 /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				8E6C12120AACAE4100819171 /* NDHotKeyControl.h */,
+				8E6C12130AACAE4100819171 /* NDHotKeyControl.m */,
+				8E6C12140AACAE4100819171 /* NDHotKeyEvent.h */,
+				8E6C12150AACAE4100819171 /* NDHotKeyEvent.m */,
+				8E6C139E0AACBAB500819171 /* HotKeyControl.h */,
+				8E6C139F0AACBAB500819171 /* HotKeyControl.m */,
+			);
+			name = Custom;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
