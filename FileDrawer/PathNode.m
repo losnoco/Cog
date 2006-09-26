@@ -48,5 +48,4 @@
 	pathIcon = pi;
 }
 
-
 @end

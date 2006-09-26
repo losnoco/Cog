@@ -8,6 +8,7 @@
 
 #import "DirectoryNode.h"
 #import "FileNode.h"
+#import "SmartFolderNode.h"
 
 @implementation DirectoryNode
 
@@ -39,24 +40,27 @@
 	return NO;
 }
 
-- (NSArray *)subpaths
+- (void)processContents: (NSArray *)contents
 {
-	if (subpaths == nil)
+	NSEnumerator *e = [contents objectEnumerator];
+	NSString *s;
+	while ((s = [e nextObject]))
 	{
-		subpaths = [[NSMutableArray alloc] init];
-		NSArray *contents = [[NSFileManager defaultManager] directoryContentsAtPath:path];
-		NSEnumerator *e = [contents objectEnumerator];
-		NSString *s;
-		while ((s = [e nextObject]))
+		if ([s characterAtIndex:0] == '.')
 		{
-			if ([s characterAtIndex:0] == '.')
-			{
-				continue;
-			}
-
+			continue;
+		}
+		
+		PathNode *newNode;
+		NSString *newSubpath = [path stringByAppendingPathComponent: s];
+		
+		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
+		{
+			newNode = [[SmartFolderNode alloc] initWithPath:newSubpath controller:controller];
+		}
+		else
+		{
 			BOOL isDir;
-			PathNode *newNode;
-			NSString *newSubpath = [path stringByAppendingPathComponent: s];
 			
 			[[NSFileManager defaultManager] fileExistsAtPath:newSubpath isDirectory:&isDir];
 			
@@ -69,15 +73,26 @@
 				newNode = [[DirectoryNode alloc] initWithPath: newSubpath controller:controller];
 			else
 				newNode = [[FileNode alloc] initWithPath: newSubpath];
-			
-			[subpaths addObject:newNode];
-
-			[newNode release];
 		}
+					
+		[subpaths addObject:newNode];
+
+		[newNode release];
+	}
+}
+
+- (NSArray *)subpaths
+{
+	if (subpaths == nil)
+	{
+		subpaths = [[NSMutableArray alloc] init];
+		NSArray *contents = [[NSFileManager defaultManager] directoryContentsAtPath:path];
+		
+		[self processContents: contents];
+		
 		[[controller watcher] addPath:[self path]];
 	}
 	
-//	NSLog(@"subpaths; %@", subpaths);
 	return subpaths;
 }
 

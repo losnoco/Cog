@@ -40,6 +40,9 @@
 	[r retain];
 	[rootPath release];
 	rootPath = r;
+
+	[watcher removePath:r];
+	[watcher addPath:rootPath];
 	
 	[self refreshRoot];
 }

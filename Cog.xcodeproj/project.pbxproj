@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		171678BF0AC8C39E00C28CF3 /* SmartFolderNode.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 171678BD0AC8C39E00C28CF3 /* SmartFolderNode.h */; };
+		171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -183,6 +185,7 @@
 				8E07AAF20AAC910500A4B32F /* SS_PrefsController.h in CopyFiles */,
 				8E07AB780AAC930B00A4B32F /* PreferencesController.h in CopyFiles */,
 				8E7C2B160AACE0F2009B4EAD /* NDHotKeyEvent.h in CopyFiles */,
+				171678BF0AC8C39E00C28CF3 /* SmartFolderNode.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +195,8 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		171678BD0AC8C39E00C28CF3 /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFolderNode.h; sourceTree = "<group>"; };
+		171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFolderNode.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -714,6 +719,8 @@
 				8EFFCD470AA093AF00C458A5 /* FileNode.m */,
 				8EFFCD520AA093AF00C458A5 /* PathNode.h */,
 				8EFFCD530AA093AF00C458A5 /* PathNode.m */,
+				171678BD0AC8C39E00C28CF3 /* SmartFolderNode.h */,
+				171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */,
 			);
 			path = FileDrawer;
 			sourceTree = "<group>";
@@ -878,6 +885,7 @@
 				8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
 				8E7C2B170AACE0F2009B4EAD /* NDHotKeyEvent.m in Sources */,
+				171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
