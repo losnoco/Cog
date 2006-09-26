@@ -100,7 +100,7 @@
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(id)query];
 
 		NSLog(@"PATHS: %@", searchPaths);
-		MDQueryExecute(query, kMDQueryWantsUpdates | kMDQuerySynchronous);
+		MDQueryExecute(query, kMDQueryWantsUpdates);
 		NSLog(@"QUERY FINISHED: %@", subpaths);
 	}
 	
@@ -130,6 +130,7 @@
 
 	NSMutableArray *results = [NSMutableArray array];
 
+	MDQueryDisableUpdates(query);
 	int c = MDQueryGetResultCount(query);
 	
 	int i;
@@ -144,15 +145,19 @@
 		
 		[itemPath release];
 	}
+
+	MDQueryEnableUpdates(query);
 	
 	[self processContents:results];
-	NSLog(@"CONTENTS PROCESSED");
+	[self setSubpaths:subpaths];
 }
 
 - (void)queryUpdate:(NSNotification *)notification
 {
-	MDQueryRef query = [notification object];
 	NSLog(@"QUERY UPDATE: %@", notification);
+
+	[subpaths removeAllObjects];
+	[self queryFinished: notification];
 }
 
 
