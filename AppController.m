@@ -2,6 +2,17 @@
 
 @implementation AppController
 
+- (id)init
+{
+	self = [super init];
+	if (self)
+	{
+		[self initDefaults];
+	}
+	
+	return self; 
+}
+
 - (IBAction)openFiles:(id)sender
 {
 	NSOpenPanel *p;
@@ -64,7 +75,7 @@
 
 - (void)awakeFromNib
 {
-	[self initDefaults];
+//	[self initDefaults];
 	
 	//	DBLog(@"AWAKe");
 	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
