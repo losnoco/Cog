@@ -1,5 +1,15 @@
 language=$1
 
+if [ $language = "English" ]; then
+  echo "You cannot load English."
+  exit 1
+fi
+
+if ! [ -d Localizations/$language ]; then
+  echo "You do not have that language available."
+  exit 1
+fi
+
 if ! [ -d $language.lproj ]; then
   mkdir $language.lproj
 fi
