@@ -3,6 +3,8 @@
 #import <Cocoa/Cocoa.h>
 
 #import "PlaylistController.h"
+#import "PlaylistView.h"
+
 #import "FileTreeController.h"
 #import "NDHotKeyEvent.h"
 
@@ -10,10 +12,10 @@
 @interface AppController : NSObject
 {
     IBOutlet PlaylistController *playlistController;
+	
 	IBOutlet NSPanel *mainWindow;
 	
 	IBOutlet NSButton *playButton;
-	IBOutlet NSButton *stopButton;
 	IBOutlet NSButton *prevButton;
 	IBOutlet NSButton *nextButton;
 	IBOutlet NSButton *addButton;
@@ -27,6 +29,17 @@
 	IBOutlet NSDrawer *fileDrawer;
 
 	IBOutlet FileTreeController *fileTreeController;
+	
+	IBOutlet PlaylistView *playlistView;
+	
+	IBOutlet NSMenuItem *showIndexColumn;
+	IBOutlet NSMenuItem *showTitleColumn;
+	IBOutlet NSMenuItem *showArtistColumn;
+	IBOutlet NSMenuItem *showAlbumColumn;
+	IBOutlet NSMenuItem *showGenreColumn;
+	IBOutlet NSMenuItem *showLengthColumn;
+	IBOutlet NSMenuItem *showTrackColumn;
+	IBOutlet NSMenuItem *showYearColumn;
 	
 	NDHotKeyEvent *playHotKey;
 	NDHotKeyEvent *prevHotKey;

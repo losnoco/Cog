@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "AppController.h"
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 
@@ -23,14 +22,7 @@
 - (IBAction)sortByPath:(id)sender;
 - (IBAction)shufflePlaylist:(id)sender;
 
-- (IBAction)toggleColumnForIndex:(id)sender;
-- (IBAction)toggleColumnForTitle:(id)sender;
-- (IBAction)toggleColumnForArtist:(id)sender;
-- (IBAction)toggleColumnForAlbum:(id)sender;
-- (IBAction)toggleColumnForLength:(id)sender;
-- (IBAction)toggleColumnForYear:(id)sender;
-- (IBAction)toggleColumnForGenre:(id)sender;
-- (IBAction)toggleColumnForTrack:(id)sender;
+- (IBAction)toggleColumn:(id)sender;
 
 
 @end

@@ -73,13 +73,33 @@
 	return [key isEqualToString:@"currentEntry"];
 }
 
+- (void)initShowColumn:(NSMenuItem *)showColumn withIdentifier:(NSString *)identifier
+{
+	id tc = [playlistView tableColumnWithIdentifier:identifier];
+
+	NSArray *visibleColumnIdentifiers = [[NSUserDefaults standardUserDefaults] objectForKey:[playlistView columnVisibilitySaveName]];
+	if (visibleColumnIdentifiers) {
+		NSEnumerator *enumerator = [visibleColumnIdentifiers objectEnumerator];
+		id column;
+		while (column = [enumerator nextObject]) {
+			if ([visibleColumnIdentifiers containsObject:identifier]) {
+				[showColumn setState:NSOnState];
+			}
+			else {
+				[showColumn setState:NSOffState];
+			}
+		}
+	}
+	
+	[showColumn setRepresentedObject: tc];
+}
+
 - (void)awakeFromNib
 {
 //	[self initDefaults];
 	
 	//	DBLog(@"AWAKe");
 	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
-	[stopButton setToolTip:NSLocalizedString(@"StopButtonTooltip", @"")];
 	[prevButton setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"")];
 	[nextButton setToolTip:NSLocalizedString(@"NextButtonTooltip", @"")];
 	[addButton setToolTip:NSLocalizedString(@"AddButtonTooltip", @"")];
@@ -88,6 +108,15 @@
 	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
 	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
 	
+	[self initShowColumn: showIndexColumn	withIdentifier: @"index"];
+	[self initShowColumn: showTitleColumn	withIdentifier: @"title"];
+	[self initShowColumn: showArtistColumn	withIdentifier: @"artist"];
+	[self initShowColumn: showAlbumColumn	withIdentifier: @"album"];
+	[self initShowColumn: showGenreColumn	withIdentifier: @"genre"];
+	[self initShowColumn: showLengthColumn	withIdentifier: @"length"];
+	[self initShowColumn: showTrackColumn	withIdentifier: @"track"];
+	[self initShowColumn: showYearColumn	withIdentifier: @"year"];
+
 	[self registerHotKeys];
 	
 	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
@@ -274,7 +303,7 @@
 	
 	[prevHotKey release];
 	prevHotKey = [[NDHotKeyEvent alloc]
-		initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
+		  initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
 				character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousCharacter"]
 			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousModifiers"]
 		];
@@ -310,11 +339,6 @@
 {
 	NSLog(@"NEXT");
 	[nextButton performClick:nil];
-}
-
-- (void)clickStop
-{
-	[stopButton performClick:nil];
 }
 
 

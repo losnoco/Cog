@@ -37,11 +37,19 @@
                 nextButton = NSButton; 
                 playButton = NSButton; 
                 playlistController = PlaylistController; 
+                playlistView = PlaylistView; 
                 prevButton = NSButton; 
                 remButton = NSButton; 
                 repeatButton = NSButton; 
+                showAlbumColumn = NSMenuItem; 
+                showArtistColumn = NSMenuItem; 
+                showGenreColumn = NSMenuItem; 
+                showIndexColumn = NSMenuItem; 
+                showLengthColumn = NSMenuItem; 
+                showTitleColumn = NSMenuItem; 
+                showTrackColumn = NSMenuItem; 
+                showYearColumn = NSMenuItem; 
                 shuffleButton = NSButton; 
-                stopButton = NSButton; 
             }; 
             SUPERCLASS = NSObject; 
         }, 
@@ -118,18 +126,7 @@
         }, 
         {CLASS = PlaylistEntry; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {
-                shufflePlaylist = id; 
-                sortByPath = id; 
-                toggleColumnForAlbum = id; 
-                toggleColumnForArtist = id; 
-                toggleColumnForGenre = id; 
-                toggleColumnForIndex = id; 
-                toggleColumnForLength = id; 
-                toggleColumnForTitle = id; 
-                toggleColumnForTrack = id; 
-                toggleColumnForYear = id; 
-            }; 
+            ACTIONS = {shufflePlaylist = id; sortByPath = id; toggleColumn = id; }; 
             CLASS = PlaylistView; 
             LANGUAGE = ObjC; 
             OUTLETS = {

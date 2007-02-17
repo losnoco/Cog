@@ -45,9 +45,9 @@
 }
 
 
-- (void)toggleColumn:(id)sender withIdentifier:(NSString *)identifier
+- (IBAction)toggleColumn:(id)sender
 {
-	NSTableColumn *tc = [super tableColumnWithIdentifier:identifier];
+	id tc = [sender representedObject];
 	
 	if ([sender state] == NSOffState)
 	{
@@ -61,47 +61,6 @@
 		[self hideTableColumn:tc];
 	}
 }
-
-- (IBAction)toggleColumnForIndex:(id)sender
-{
-	[self toggleColumn:sender withIdentifier:@"index"];
-}
-
-- (IBAction)toggleColumnForTitle:(id)sender
-{
-	[self toggleColumn:sender withIdentifier:@"title"];
-}
-
-- (IBAction)toggleColumnForArtist:(id)sender
-{
-	[self toggleColumn:sender withIdentifier:@"artist"];
-}
-
-- (IBAction)toggleColumnForAlbum:(id)sender
-{
-	[self toggleColumn:sender withIdentifier:@"album"];
-}
-
-- (IBAction)toggleColumnForLength:(id)sender
-{
-	[self toggleColumn:sender withIdentifier:@"length"];
-}
-
-- (IBAction)toggleColumnForYear:(id)sender
-{
-	[self toggleColumn:sender withIdentifier:@"year"];
-}
-
-- (IBAction)toggleColumnForGenre:(id)sender
-{
-	[self toggleColumn:sender withIdentifier:@"genre"];
-}
-
-- (IBAction)toggleColumnForTrack:(id)sender
-{
-	[self toggleColumn:sender withIdentifier:@"track"];
-}
-
 
 - (BOOL)acceptsFirstResponder
 {
