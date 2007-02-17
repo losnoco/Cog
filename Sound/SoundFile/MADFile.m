@@ -448,7 +448,6 @@ static inline signed int scale (mad_fixed_t sample)
 			else
 			{
 				remainder = 0;
-				_seekSkip = NO;
 			}
 
 			len = fread(_inputBuffer+remainder, 1, INPUT_BUFFER_SIZE-remainder, _inFd);
@@ -469,7 +468,7 @@ static inline signed int scale (mad_fixed_t sample)
 			mad_stream_buffer(&_stream, _inputBuffer, len);
 			_stream.error = 0;
 			
-/*			if (_seekSkip)
+			if (_seekSkip)
 			{
 				int skip = 2;
 				do
@@ -486,7 +485,7 @@ static inline signed int scale (mad_fixed_t sample)
 				
 				_seekSkip = NO;
 			}
-*/			
+			
 		}		
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
 			if (!MAD_RECOVERABLE (_stream.error))

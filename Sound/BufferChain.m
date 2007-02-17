@@ -78,8 +78,24 @@
 	NSLog(@"SEEKING IN BUFFERCHIAN");
 	[inputNode seek:time];
 
+	[[converterNode readLock] lock];
+	[[converterNode writeLock] lock];
+	
+	[[inputNode readLock] lock];
+	[[inputNode writeLock] lock];
+
+	//Signal so its waiting when we unlock
+	[[converterNode semaphore] signal];
+	[[inputNode semaphore] signal];
+	
 	[converterNode resetBuffer];
 	[inputNode resetBuffer];
+	
+	[[inputNode writeLock] unlock];
+	[[inputNode readLock] unlock];
+	
+	[[converterNode writeLock] unlock];
+	[[converterNode readLock] unlock];
 }
 
 - (void)endOfInputReached
