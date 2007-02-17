@@ -94,6 +94,10 @@
 		8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773809F31F1F0080F1EE /* OggFLAC.framework */; };
 		8E757C7C09F32F070080F1EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7A09F32F070080F1EE /* AudioToolbox.framework */; };
 		8E757C7D09F32F070080F1EE /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7B09F32F070080F1EE /* AudioUnit.framework */; };
+		8E76ED760B877C0700494D51 /* AMRemovableColumnsTableView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E76ED720B877C0700494D51 /* AMRemovableColumnsTableView.h */; };
+		8E76ED770B877C0700494D51 /* AMRemovableColumnsTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E76ED730B877C0700494D51 /* AMRemovableColumnsTableView.m */; };
+		8E76ED780B877C0700494D51 /* AMRemovableTableColumn.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E76ED740B877C0700494D51 /* AMRemovableTableColumn.h */; };
+		8E76ED790B877C0700494D51 /* AMRemovableTableColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E76ED750B877C0700494D51 /* AMRemovableTableColumn.m */; };
 		8E7A0F1A0A8FEB4A00F27EE8 /* add_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F060A8FEB4A00F27EE8 /* add_blue.png */; };
 		8E7A0F1B0A8FEB4A00F27EE8 /* add_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F070A8FEB4A00F27EE8 /* add_gray.png */; };
 		8E7A0F1C0A8FEB4A00F27EE8 /* info_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F080A8FEB4A00F27EE8 /* info_blue.png */; };
@@ -186,6 +190,8 @@
 				8E07AB780AAC930B00A4B32F /* PreferencesController.h in CopyFiles */,
 				8E7C2B160AACE0F2009B4EAD /* NDHotKeyEvent.h in CopyFiles */,
 				171678BF0AC8C39E00C28CF3 /* SmartFolderNode.h in CopyFiles */,
+				8E76ED760B877C0700494D51 /* AMRemovableColumnsTableView.h in CopyFiles */,
+				8E76ED780B877C0700494D51 /* AMRemovableTableColumn.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +325,10 @@
 		8E75775309F31F750080F1EE /* WavPack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WavPack.framework; path = Libraries/WavPack/build/Release/WavPack.framework; sourceTree = "<group>"; };
 		8E757C7A09F32F070080F1EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		8E757C7B09F32F070080F1EE /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		8E76ED720B877C0700494D51 /* AMRemovableColumnsTableView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AMRemovableColumnsTableView.h; sourceTree = "<group>"; };
+		8E76ED730B877C0700494D51 /* AMRemovableColumnsTableView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AMRemovableColumnsTableView.m; sourceTree = "<group>"; };
+		8E76ED740B877C0700494D51 /* AMRemovableTableColumn.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AMRemovableTableColumn.h; sourceTree = "<group>"; };
+		8E76ED750B877C0700494D51 /* AMRemovableTableColumn.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AMRemovableTableColumn.m; sourceTree = "<group>"; };
 		8E7A0F060A8FEB4A00F27EE8 /* add_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_blue.png; sourceTree = "<group>"; };
 		8E7A0F070A8FEB4A00F27EE8 /* add_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_gray.png; sourceTree = "<group>"; };
 		8E7A0F080A8FEB4A00F27EE8 /* info_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = info_blue.png; sourceTree = "<group>"; };
@@ -522,6 +532,10 @@
 		8E75751A09F31D5A0080F1EE /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				8E76ED720B877C0700494D51 /* AMRemovableColumnsTableView.h */,
+				8E76ED730B877C0700494D51 /* AMRemovableColumnsTableView.m */,
+				8E76ED740B877C0700494D51 /* AMRemovableTableColumn.h */,
+				8E76ED750B877C0700494D51 /* AMRemovableTableColumn.m */,
 				8E75751B09F31D5A0080F1EE /* ClickField.h */,
 				8E75751C09F31D5A0080F1EE /* ClickField.m */,
 				8E75751D09F31D5A0080F1EE /* InfoView.h */,
@@ -886,6 +900,8 @@
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
 				8E7C2B170AACE0F2009B4EAD /* NDHotKeyEvent.m in Sources */,
 				171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */,
+				8E76ED770B877C0700494D51 /* AMRemovableColumnsTableView.m in Sources */,
+				8E76ED790B877C0700494D51 /* AMRemovableTableColumn.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

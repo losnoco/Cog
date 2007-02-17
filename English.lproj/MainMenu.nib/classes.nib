@@ -1,6 +1,18 @@
 {
     IBClasses = (
         {
+            CLASS = AMRemovableColumnsTableView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {obligatoryColumnIdentifiers = id; }; 
+            SUPERCLASS = NSTableView; 
+        }, 
+        {
+            CLASS = AMRemovableTableColumn; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {mainTableView = AMRemovableColumnsTableView; }; 
+            SUPERCLASS = NSTableColumn; 
+        }, 
+        {
             ACTIONS = {
                 addFiles = id; 
                 delEntries = id; 
@@ -109,13 +121,14 @@
             ACTIONS = {
                 shufflePlaylist = id; 
                 sortByPath = id; 
-                takeBoolForAlbum = id; 
-                takeBoolForArtist = id; 
-                takeBoolForGenre = id; 
-                takeBoolForLength = id; 
-                takeBoolForTitle = id; 
-                takeBoolForTrack = id; 
-                takeBoolForYear = id; 
+                toggleColumnForAlbum = id; 
+                toggleColumnForArtist = id; 
+                toggleColumnForGenre = id; 
+                toggleColumnForIndex = id; 
+                toggleColumnForLength = id; 
+                toggleColumnForTitle = id; 
+                toggleColumnForTrack = id; 
+                toggleColumnForYear = id; 
             }; 
             CLASS = PlaylistView; 
             LANGUAGE = ObjC; 
@@ -123,7 +136,7 @@
                 playbackController = PlaybackController; 
                 playlistController = PlaylistController; 
             }; 
-            SUPERCLASS = NSTableView; 
+            SUPERCLASS = AMRemovableColumnsTableView; 
         }, 
         {
             ACTIONS = {showPrefs = id; }; 

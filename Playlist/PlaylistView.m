@@ -16,14 +16,16 @@
 
 - (void)awakeFromNib
 {
-	id c;
+	[super awakeFromNib];
+	
 	NSControlSize s = NSSmallControlSize;
-	NSEnumerator *oe = [[self tableColumns] objectEnumerator];
+	NSEnumerator *oe = [[self allTableColumns] objectEnumerator];
 	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
 	
 	[self setRowHeight:[f defaultLineHeightForFont]];
 
 	//Resize the fonts
+	id c;
 	while (c = [oe nextObject])
 	{
 		[[c dataCell] setControlSize:s];
@@ -40,107 +42,66 @@
 	[self setHeaderView:customTableHeaderView];
 	
 	[self setVerticalMotionCanBeginDrag:YES];
+}
+
+
+- (void)toggleColumn:(id)sender withIdentifier:(NSString *)identifier
+{
+	NSTableColumn *tc = [super tableColumnWithIdentifier:identifier];
 	
-	//Hack for bindings and columns
-	_tableColumnsCache = [[NSArray alloc] initWithArray:[self tableColumns] copyItems:NO];
-}
-
-- (IBAction)takeBoolForTitle:(id)sender
-{
-	[self showColumn:sender withIdentifier:@"title"];
-}
-
-- (IBAction)takeBoolForArtist:(id)sender
-{
-	[self showColumn:sender withIdentifier:@"artist"];
-}
-
-- (IBAction)takeBoolForAlbum:(id)sender
-{
-	[self showColumn:sender withIdentifier:@"album"];
-}
-
-- (IBAction)takeBoolForLength:(id)sender
-{
-	[self showColumn:sender withIdentifier:@"length"];
-}
-
-- (IBAction)takeBoolForYear:(id)sender
-{
-	[self showColumn:sender withIdentifier:@"year"];
-}
-
-- (IBAction)takeBoolForGenre:(id)sender
-{
-	[self showColumn:sender withIdentifier:@"genre"];
-}
-
-- (IBAction)takeBoolForTrack:(id)sender
-{
-	[self showColumn:sender withIdentifier:@"track"];
-}
-
-- (void)showColumn:(id)sender withIdentifier:(NSString *)identifier
-{
 	if ([sender state] == NSOffState)
 	{
 		[sender setState:NSOnState];
-		[self showColumnWithIdentifier:identifier];
+
+		[self showTableColumn:tc];
 	}
 	else
 	{
 		[sender setState:NSOffState];
-		[self hideColumnWithIdentifier:identifier];
+		[self hideTableColumn:tc];
 	}
 }
 
-- (void)hideColumnWithIdentifier:(NSString *)identifier
+- (IBAction)toggleColumnForIndex:(id)sender
 {
-	NSTableColumn *tc = [super tableColumnWithIdentifier:identifier];
-	if (!tc)
-		return;
-	
-	[self removeTableColumn:tc];
+	[self toggleColumn:sender withIdentifier:@"index"];
 }
 
-- (void)showColumnWithIdentifier:(NSString *)identifier
+- (IBAction)toggleColumnForTitle:(id)sender
 {
-	if ([super tableColumnWithIdentifier:identifier])
-		return;
-
-	NSEnumerator *e = [_tableColumnsCache objectEnumerator];
-	NSTableColumn *t = nil;
-	
-	while (t = [e nextObject])
-	{
-		// Locate cached version if there is one.
-		if ([[t identifier] isEqualToString:identifier])
-			// Remove it from the array and release the array if it isn't needed any more.
-			[self addTableColumn:t];
-	}	
+	[self toggleColumn:sender withIdentifier:@"title"];
 }
 
-//FUN HACKS SO COLUMNS DONT DISAPPEAR WHEN THE TABLE IS AUTOSAVED
-- (NSTableColumn *)tableColumnWithIdentifier:(id)anObject
+- (IBAction)toggleColumnForArtist:(id)sender
 {
-    NSTableColumn *tc = [super tableColumnWithIdentifier:anObject];
-
-    if (!tc)
-    {
-        NSEnumerator *e = [_tableColumnsCache objectEnumerator];
-        NSTableColumn *t = nil;
-		
-        while (t = [e nextObject])
-        {
-            // Locate cached version if there is one.
-            if ([[t identifier] isEqual:anObject])
-                // Remove it from the array and release the array if it isn't needed any more.
-                return t;
-        }
-    }
-	
-    return tc;
+	[self toggleColumn:sender withIdentifier:@"artist"];
 }
+
+- (IBAction)toggleColumnForAlbum:(id)sender
+{
+	[self toggleColumn:sender withIdentifier:@"album"];
+}
+
+- (IBAction)toggleColumnForLength:(id)sender
+{
+	[self toggleColumn:sender withIdentifier:@"length"];
+}
+
+- (IBAction)toggleColumnForYear:(id)sender
+{
+	[self toggleColumn:sender withIdentifier:@"year"];
+}
+
+- (IBAction)toggleColumnForGenre:(id)sender
+{
+	[self toggleColumn:sender withIdentifier:@"genre"];
+}
+
+- (IBAction)toggleColumnForTrack:(id)sender
+{
+	[self toggleColumn:sender withIdentifier:@"track"];
+}
+
 
 - (BOOL)acceptsFirstResponder
 {
