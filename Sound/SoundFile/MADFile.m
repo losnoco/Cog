@@ -160,7 +160,9 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 	_fileSize = ftell(_inFd);
 	fseek(_inFd, 0, SEEK_SET);
 	
-	while (1)
+	BOOL done = NO;
+	
+	while (!done)
     {
 		remainder = stream.bufend - stream.next_frame;
 				
@@ -226,7 +228,7 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 						mad_timer_multiply (&_duration, frames);
 
 						bitrate = 8.0 * xing.bytes / mad_timer_count(_duration, MAD_UNITS_SECONDS); 
-						NSLog(@"Xing bitrate: %i", bitrate);
+						done = YES;
 						break;
 					}
 				}
@@ -241,7 +243,7 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 					bitrate += header.bitrate;
 			}
 			
-			if ((vbr && !has_xing) && fast && frames >= N_AVERAGE_FRAMES)
+			if ((!vbr || (vbr && !has_xing)) && fast && frames >= N_AVERAGE_FRAMES)
 			{
 				float frame_size = ((double)data_used) / N_AVERAGE_FRAMES;
 				frames = (_fileSize - tagsize) / frame_size;
@@ -249,12 +251,8 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 				_duration.seconds /= N_AVERAGE_FRAMES;
 				_duration.fraction /= N_AVERAGE_FRAMES;
 				mad_timer_multiply (&_duration, frames);
-				
-				if (vbr && !has_xing) {
-					bitrate /= N_AVERAGE_FRAMES;
-					bitrate *= frames;
-				}
-				
+
+				done = YES;
 				break;
 			}
 		}
