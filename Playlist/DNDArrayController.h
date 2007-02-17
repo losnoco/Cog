@@ -2,6 +2,7 @@
 #import <Cocoa/Cocoa.h>
 
 extern NSString *MovedRowsType;
+extern NSString *iTunesDropType;
 
 @interface DNDArrayController : NSArrayController
 {

@@ -5,12 +5,17 @@
 
 NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
 
+// @"CorePasteboardFlavorType 0x6974756E" is the "itun" type representing an iTunes plist
+NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 
 - (void)awakeFromNib
 {
     // register for drag and drop
 	NSLog(@"AWOKE");
-    [tableView registerForDraggedTypes:[NSArray arrayWithObjects:MovedRowsType, NSFilenamesPboardType, nil]];
+
+    [tableView registerForDraggedTypes:[NSArray arrayWithObjects:MovedRowsType, NSFilenamesPboardType, 
+		iTunesDropType, nil]];
+	
 //	[tableView setVerticalMotionCanBeginDrag:YES];
 //    [tableView setAllowsMultipleSelection:NO];
 //	[super awakeFromNib];

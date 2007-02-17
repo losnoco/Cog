@@ -229,11 +229,44 @@
 
 	if (row < 0)
 		row = 0;
+		
+	// Determine the type of object that was dropped
+	NSArray *supportedtypes = [NSArray arrayWithObjects:NSFilenamesPboardType, iTunesDropType, nil];
+	NSPasteboard *pboard = [info draggingPasteboard];
+	NSString *bestType = [pboard availableTypeFromArray:supportedtypes];
+	
+	// Get files from a normal file drop (such as from Finder)
+	if ([bestType isEqualToString:NSFilenamesPboardType]) {
+		NSArray *files = [[info draggingPasteboard] propertyListForType:NSFilenamesPboardType];
+		
+		NSLog(@"INSERTING PATHS: %@", files);
+		[self insertPaths:files atIndex:row sort:YES];
+	}
+	
+	// Get files from an iTunes drop
+	if ([bestType isEqualToString:iTunesDropType]) {
+		NSDictionary *iTunesDict = [pboard propertyListForType:iTunesDropType];
+		NSDictionary *tracks = [iTunesDict valueForKey:@"Tracks"];
 
-	NSArray *files = [[info draggingPasteboard] propertyListForType:NSFilenamesPboardType];
-	NSLog(@"INSERTING PATHS: %@", files);
-	[self insertPaths:files atIndex:row sort:YES];
-
+		// Convert the iTunes URLs to filenames
+		NSMutableArray *files = [[NSMutableArray alloc] init];
+		NSEnumerator *e = [[tracks allValues] objectEnumerator];
+		NSDictionary *trackInfo;
+		NSURL *url;
+		while (trackInfo = [e nextObject]) {
+			url = [[NSURL alloc] initWithString:[trackInfo valueForKey:@"Location"]];
+			if ([url isFileURL]) {
+				[files addObject:[url path]];
+			}
+			
+			[url release];
+		}
+		
+		NSLog(@"INSERTING ITUNES PATHS: %@", files);
+		[self insertPaths:files atIndex:row sort:YES];
+		[files release];
+	}
+	
 	NSLog(@"UPDATING");
 	[self updateIndexesFromRow:row];
 	[self updateTotalTime];
