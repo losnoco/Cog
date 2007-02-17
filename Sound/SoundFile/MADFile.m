@@ -241,7 +241,7 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 					bitrate += header.bitrate;
 			}
 			
-			if (fast && frames >= N_AVERAGE_FRAMES)
+			if ((vbr && !has_xing) && fast && frames >= N_AVERAGE_FRAMES)
 			{
 				float frame_size = ((double)data_used) / N_AVERAGE_FRAMES;
 				frames = (_fileSize - tagsize) / frame_size;
@@ -250,12 +250,11 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 				_duration.fraction /= N_AVERAGE_FRAMES;
 				mad_timer_multiply (&_duration, frames);
 				
-				
 				if (vbr && !has_xing) {
 					bitrate /= N_AVERAGE_FRAMES;
 					bitrate *= frames;
 				}
-
+				
 				break;
 			}
 		}
@@ -449,6 +448,7 @@ static inline signed int scale (mad_fixed_t sample)
 			else
 			{
 				remainder = 0;
+				_seekSkip = NO;
 			}
 
 			len = fread(_inputBuffer+remainder, 1, INPUT_BUFFER_SIZE-remainder, _inFd);
