@@ -20,8 +20,6 @@
 	IBOutlet NSButton *playButton;
 	IBOutlet NSButton *prevButton;
 	IBOutlet NSButton *nextButton;
-	IBOutlet NSButton *addButton;
-	IBOutlet NSButton *remButton;
 	IBOutlet NSButton *infoButton;
 	IBOutlet NSButton *fileButton;
 	IBOutlet NSButton *shuffleButton;

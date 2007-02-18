@@ -93,8 +93,6 @@
 	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
 	[prevButton setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"")];
 	[nextButton setToolTip:NSLocalizedString(@"NextButtonTooltip", @"")];
-	[addButton setToolTip:NSLocalizedString(@"AddButtonTooltip", @"")];
-	[remButton setToolTip:NSLocalizedString(@"RemoveButtonTooltip", @"")];
 	[infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
 	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
 	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
@@ -209,7 +207,7 @@
 - (IBAction)toggleFileDrawer:(id)sender
 {
 	[mainWindow makeKeyAndOrderFront:self];
-	NSLog(@"TOGGLING...");
+
 	[fileDrawer toggle:self];
 }
 
@@ -231,6 +229,7 @@
 		[infoButton setState:NSOffState];
 	}
 	else if ([notification object] == fileDrawer) {
+		NSLog(@"CLOSED");
 		[fileButton setState:NSOffState];
 		
 		[mainWindow makeFirstResponder: playlistView];

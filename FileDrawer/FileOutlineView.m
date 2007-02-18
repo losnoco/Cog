@@ -62,6 +62,8 @@
 			[[self delegate] addSelectedToPlaylist];
 			
 			[fileDrawer close];
+		} else if (pressedChar == 0x1b) {//Escape
+			[fileDrawer close];
 		} else if (pressedChar == NSLeftArrowFunctionKey ||  pressedChar == NSRightArrowFunctionKey) { //left or right
 			[super keyDown:theEvent];
 	
