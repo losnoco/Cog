@@ -123,6 +123,7 @@
         {
             ACTIONS = {
                 showFileInFinder = id; 
+                sortByPath = id; 
                 takeRepeatFromObject = id; 
                 takeShuffleFromObject = id; 
             }; 

@@ -354,17 +354,23 @@
 	//Cheap hack so the index column isn't sorted
 	if (([sortDescriptors count] != 0) && [[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"displayIndex"] == NSOrderedSame)
 	{
+		//Remove the sort descriptors
+		[super setSortDescriptors:nil];
+		[self rearrangeObjects];
+		
 		return;
 	}
 
 	[super setSortDescriptors:sortDescriptors];
 }
 		
-- (void)sortByPath
+- (IBAction)sortByPath:(id)sender
 {
 	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"filename" ascending:YES selector:@selector(compare:)];
-	//	[self setSortDescriptors:[NSArray arrayWithObject:s]];
-	[self setContent:[[self content] sortedArrayUsingDescriptors:[NSArray arrayWithObject:s]]];
+	
+	[self setSortDescriptors:[NSArray arrayWithObject:s]];
+	[self rearrangeObjects];
+
 	[s release];	
 
 	if (shuffle == YES)

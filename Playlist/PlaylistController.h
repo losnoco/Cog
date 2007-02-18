@@ -51,6 +51,8 @@
 - (IBAction)takeShuffleFromObject:(id)sender;
 - (IBAction)takeRepeatFromObject:(id)sender;
 
+- (IBAction)sortByPath:(id)sender;
+
 - (void)setTotalTimeDisplay:(NSString *)ttd;
 - (NSString *)totalTimeDisplay;
 
