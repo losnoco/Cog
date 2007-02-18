@@ -53,21 +53,6 @@
 	[playlistController remove:self];
 }
 
-- (IBAction)addFiles:(id)sender
-{
-	NSMutableArray *paths = [[NSMutableArray alloc] init];
-	NSArray *nodes = [fileTreeController selectedObjects];
-	NSEnumerator *e = [nodes objectEnumerator];
-	
-	id n;
-	while (n = [e nextObject]) {
-		[paths addObject:[n path]];
-	}
-	
-	[playlistController addPaths:paths sort:YES];
-	[paths release];
-}
-
 - (PlaylistEntry *)currentEntry
 {
 	return [playlistController currentEntry];

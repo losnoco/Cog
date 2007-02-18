@@ -55,8 +55,6 @@
 - (IBAction)savePlaylistAs:(id)sender;
 - (IBAction)loadPlaylist:(id)sender;
 
-- (IBAction)addFiles:(id)sender;
-
 - (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 
 - (IBAction)donate:(id)sender;
