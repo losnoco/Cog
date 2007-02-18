@@ -633,12 +633,12 @@
 	return currentEntry;
 }
 
-- (void)setCurrentEntry:(id)pe
+- (void)setCurrentEntry:(PlaylistEntry *)pe
 {
 	[currentEntry setCurrent:NO];
 	
 	[pe setCurrent:YES];
-	[tableView scrollRowToVisible:[(PlaylistEntry *)pe index]];
+	[tableView scrollRowToVisible:[pe index]];
 	
 	[pe retain];
 	[currentEntry release];
