@@ -638,7 +638,7 @@
 	[currentEntry setCurrent:NO];
 	
 	[pe setCurrent:YES];
-	[tableView scrollRowToVisible:([(PlaylistEntry *)pe index]-1)];
+	[tableView scrollRowToVisible:[(PlaylistEntry *)pe index]];
 	
 	[pe retain];
 	[currentEntry release];
