@@ -2,6 +2,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "PlaybackController.h"
+
 #import "PlaylistController.h"
 #import "PlaylistView.h"
 
@@ -15,6 +17,7 @@
 @interface AppController : NSObject
 {
     IBOutlet PlaylistController *playlistController;
+	IBOutlet PlaybackController *playbackController;
 	
 	IBOutlet NSPanel *mainWindow;
 	

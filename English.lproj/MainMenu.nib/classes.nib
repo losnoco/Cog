@@ -14,7 +14,6 @@
         }, 
         {
             ACTIONS = {
-                addFiles = id; 
                 delEntries = id; 
                 donate = id; 
                 loadPlaylist = id; 
@@ -27,7 +26,6 @@
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
-                addButton = NSButton; 
                 fileButton = NSButton; 
                 fileDrawer = NSDrawer; 
                 fileOutlineView = FileOutlineView; 
@@ -37,10 +35,10 @@
                 mainWindow = NSPanel; 
                 nextButton = NSButton; 
                 playButton = NSButton; 
+                playbackController = PlaybackController; 
                 playlistController = PlaylistController; 
                 playlistView = PlaylistView; 
                 prevButton = NSButton; 
-                remButton = NSButton; 
                 repeatButton = NSButton; 
                 showAlbumColumn = NSMenuItem; 
                 showArtistColumn = NSMenuItem; 
@@ -105,6 +103,8 @@
                 seek = id; 
                 stop = id; 
                 toggleShowTimeRemaining = id; 
+                volumeDown = id; 
+                volumeUp = id; 
             }; 
             CLASS = PlaybackController; 
             LANGUAGE = ObjC; 

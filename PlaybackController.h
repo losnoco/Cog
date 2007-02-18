@@ -28,13 +28,16 @@
 	
 	int playbackStatus;
 	
-	float currentVolume;
+	double currentVolume;
 	
 	BOOL showTimeRemaining;
  }
 
 - (IBAction)toggleShowTimeRemaining:(id)sender;
 - (IBAction)changeVolume:(id)sender;
+
+- (IBAction)volumeDown:(id)sender;
+- (IBAction)volumeUp:(id)sender;
 
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;

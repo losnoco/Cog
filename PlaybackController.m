@@ -156,7 +156,7 @@
 
 - (IBAction)changeVolume:(id)sender
 {
-	float percent;
+	double percent;
 	
 	//Approximated log
 	percent = (float)[sender doubleValue]/[sender maxValue];
@@ -172,6 +172,34 @@
 	}
 	
 	currentVolume = percent * [sender maxValue];
+	
+	[soundController  setVolume:currentVolume];
+}
+
+- (IBAction)volumeDown:(id)sender
+{
+	double percent;
+	
+	[volumeSlider setDoubleValue:([volumeSlider doubleValue] - 5)];
+	
+	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];
+	percent = percent * percent * percent * percent;
+	
+	currentVolume = percent * [volumeSlider maxValue];
+	
+	[soundController  setVolume:currentVolume];
+}
+
+- (IBAction)volumeUp:(id)sender
+{
+	double percent;
+	
+	[volumeSlider setDoubleValue:([volumeSlider doubleValue] + 5)];
+	
+	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];
+	percent = percent * percent * percent * percent;
+	
+	currentVolume = percent * [volumeSlider maxValue];
 	
 	[soundController  setVolume:currentVolume];
 }
