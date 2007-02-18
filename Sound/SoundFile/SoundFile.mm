@@ -21,6 +21,10 @@
 //#import "GameFile.h"
 #import "MadFile.h"
 
+
+//Something is redefining BOOL
+#undef BOOL
+
 extern "C" {
 BOOL hostIsBigEndian()
 {

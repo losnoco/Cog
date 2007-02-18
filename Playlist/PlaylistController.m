@@ -161,10 +161,9 @@
 	{
 		PlaylistEntry *pe =[entries objectAtIndex:i];
 		
-		[pe readInfoThread];
-//		[pe performSelectorOnMainThread:@selector(readInfoThread) withObject:nil waitUntilDone:YES];
-		[pe readTagsThread];
-//		[pe performSelectorOnMainThread:@selector(readTagsThread) withObject:nil waitUntilDone:YES];
+		[pe readInfoThreaded];
+
+		[pe readTagsThreaded];
 
 		//Hack so the display gets updated
 		if (pe == [self currentEntry])

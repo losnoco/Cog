@@ -30,7 +30,7 @@
 - (BufferChain *) bufferChain;
 - (id)initWithDelegate:(id)d;
 
-- (void)play:(NSString *)filename;
+- (void)play:(PlaylistEntry *)pe;
 - (void)stop;
 - (void)pause;
 - (void)resume;

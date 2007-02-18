@@ -233,7 +233,7 @@
 //	[sp close];
 }
 
-- (void)readInfoThreadSetVariables:(SoundFile *)sf
+- (void)readInfoThreadedSetVariables:(SoundFile *)sf
 {
 	[self setLength:[sf length]];
 	[self setBitrate:[sf bitrate]];
@@ -246,13 +246,13 @@
 	[sf release];
 }
 
-- (void)readInfoThread
+- (void)readInfoThreaded
 {
 	SoundFile *sf = [SoundFile readInfo:filename];
 	if (sf == nil)
 		return;
 
-	[self performSelectorOnMainThread:@selector(readInfoThreadSetVariables:) withObject:sf waitUntilDone:YES];
+	[self performSelectorOnMainThread:@selector(readInfoThreadedSetVariables:) withObject:sf waitUntilDone:YES];
 }
 
 - (NSString *)lengthString
@@ -378,7 +378,7 @@
 	}
 }
 
-- (void)readTagsThreadSetVariables: (NSArray *)a
+- (void)readTagsThreadedSetVariables: (NSArray *)a
 {
 	NSLog(@"SETTING TITLE TO: %@", [a objectAtIndex:0]);
 	[self setDisplay:[a objectAtIndex:0]];
@@ -396,7 +396,7 @@
 	[self setTrack:[[a objectAtIndex:6] intValue]];
 }	
 
-- (void)readTagsThread
+- (void)readTagsThreaded
 {
 	NSString *lDisplay = @"", *lArtist = @"", *lTitle = @"", *lAlbum = @"", *lGenre = @"";
 	int lYear = 0, lTrack = 0;
@@ -468,7 +468,7 @@
 		lTitle = [filename lastPathComponent];
 	}
 	NSLog(@"TITLE IS: %@", lTitle);
-	[self performSelectorOnMainThread:@selector(readTagsThreadSetVariables:) withObject:
+	[self performSelectorOnMainThread:@selector(readTagsThreadedSetVariables:) withObject:
 		[NSArray arrayWithObjects:
 			lDisplay,
 			lTitle,

@@ -73,6 +73,8 @@
 - (float)sampleRate;
 
 - (void)readTags;
+- (void)readTagsThreaded;
 - (void)readInfo;
+- (void)readInfoThreaded;
 
 @end
