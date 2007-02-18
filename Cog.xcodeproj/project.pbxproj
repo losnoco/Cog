@@ -29,6 +29,8 @@
 		8E4CAB5B0A32251B00214C1D /* ShnFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8E4CAB5A0A32251B00214C1D /* ShnFile.mm */; };
 		8E4E7C1A0AA1ED4500D11405 /* file_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4E7C180AA1ED4500D11405 /* file_blue.png */; };
 		8E4E7C1B0AA1ED4500D11405 /* file_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4E7C190AA1ED4500D11405 /* file_gray.png */; };
+		8E513F410B890FB90012904D /* AppleRemote.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E513F3F0B890FB90012904D /* AppleRemote.h */; };
+		8E513F420B890FB90012904D /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E513F400B890FB90012904D /* AppleRemote.m */; };
 		8E53E8610A44C11B007E5BCE /* ID3Tag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E53E8600A44C11B007E5BCE /* ID3Tag.framework */; };
 		8E53E8690A44C121007E5BCE /* ID3Tag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E53E8600A44C11B007E5BCE /* ID3Tag.framework */; };
 		8E57824B0B88B7AC00C97376 /* KFTypeSelectTableView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E5782490B88B7AC00C97376 /* KFTypeSelectTableView.h */; };
@@ -195,6 +197,7 @@
 				8E76ED760B877C0700494D51 /* AMRemovableColumnsTableView.h in CopyFiles */,
 				8E76ED780B877C0700494D51 /* AMRemovableTableColumn.h in CopyFiles */,
 				8E57824B0B88B7AC00C97376 /* KFTypeSelectTableView.h in CopyFiles */,
+				8E513F410B890FB90012904D /* AppleRemote.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,6 +232,8 @@
 		8E4CAB5A0A32251B00214C1D /* ShnFile.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ShnFile.mm; sourceTree = "<group>"; };
 		8E4E7C180AA1ED4500D11405 /* file_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = file_blue.png; sourceTree = "<group>"; };
 		8E4E7C190AA1ED4500D11405 /* file_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = file_gray.png; sourceTree = "<group>"; };
+		8E513F3F0B890FB90012904D /* AppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppleRemote.h; sourceTree = "<group>"; };
+		8E513F400B890FB90012904D /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppleRemote.m; sourceTree = "<group>"; };
 		8E53E8600A44C11B007E5BCE /* ID3Tag.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ID3Tag.framework; path = Libraries/ID3Tag/build/Release/ID3Tag.framework; sourceTree = "<group>"; };
 		8E5782490B88B7AC00C97376 /* KFTypeSelectTableView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KFTypeSelectTableView.h; sourceTree = "<group>"; };
 		8E57824A0B88B7AC00C97376 /* KFTypeSelectTableView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; path = KFTypeSelectTableView.m; sourceTree = "<group>"; };
@@ -658,6 +663,8 @@
 		8E75756209F31D5A0080F1EE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8E513F3F0B890FB90012904D /* AppleRemote.h */,
+				8E513F400B890FB90012904D /* AppleRemote.m */,
 				8E6A8E350A0D8AD8002ABE9C /* CoreAudioUtils.h */,
 				8E6A8E360A0D8AD8002ABE9C /* CoreAudioUtils.m */,
 				8E75756309F31D5A0080F1EE /* DBLog.h */,
@@ -910,6 +917,7 @@
 				8E76ED770B877C0700494D51 /* AMRemovableColumnsTableView.m in Sources */,
 				8E76ED790B877C0700494D51 /* AMRemovableTableColumn.m in Sources */,
 				8E57824C0B88B7AC00C97376 /* KFTypeSelectTableView.m in Sources */,
+				8E513F420B890FB90012904D /* AppleRemote.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

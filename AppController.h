@@ -10,6 +10,7 @@
 
 #import "NDHotKeyEvent.h"
 
+#import "AppleRemote.h"
 
 @interface AppController : NSObject
 {
@@ -45,6 +46,9 @@
 	NDHotKeyEvent *playHotKey;
 	NDHotKeyEvent *prevHotKey;
 	NDHotKeyEvent *nextHotKey;
+	
+	AppleRemote *remote;
+	BOOL remoteButtonHeld; /* true as long as the user holds the left,right,plus or minus on the remote control */
 }
 
 - (IBAction)openFiles:(id)sender;

@@ -14,10 +14,98 @@
 	     * table and outline views.
 		*/
 		[[KFTypeSelectTableView class] poseAsClass:[NSTableView class]];
+		
+		remote = [[AppleRemote alloc] init];
+		[remote setDelegate: self];
 	}
 	
 	return self; 
 }
+
+// Listen to the remote in exclusive mode, only when Cog is the active application
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+{
+    [remote startListening: self];
+}
+- (void)applicationDidResignActive:(NSNotification *)motification
+{
+    [remote stopListening: self];
+}
+
+/* Helper method for the remote control interface in order to trigger forward/backward and volume
+increase/decrease as long as the user holds the left/right, plus/minus button */
+- (void) executeHoldActionForRemoteButton: (NSNumber*) buttonIdentifierNumber 
+{
+    if (remoteButtonHeld) 
+    {
+        switch([buttonIdentifierNumber intValue]) 
+        {
+            case kRemoteButtonRight_Hold:       
+				//Seek forward?
+				break;
+            case kRemoteButtonLeft_Hold:
+				//Seek back
+				break;
+            case kRemoteButtonVolume_Plus_Hold:
+                //Volume Up
+				break;
+            case kRemoteButtonVolume_Minus_Hold:
+                //Volume Down
+				break;              
+        }
+        if (remoteButtonHeld) 
+        {
+            /* trigger event */
+            [self performSelector:@selector(executeHoldActionForRemoteButton:) 
+					   withObject:buttonIdentifierNumber
+					   afterDelay:0.25];         
+        }
+    }
+}
+
+/* Apple Remote callback */
+- (void) appleRemoteButton: (AppleRemoteEventIdentifier)buttonIdentifier 
+               pressedDown: (BOOL) pressedDown 
+                clickCount: (unsigned int) count 
+{
+    switch( buttonIdentifier )
+    {
+        case kRemoteButtonPlay:
+			[self clickPlay: self];
+
+            break;
+        case kRemoteButtonVolume_Plus:
+            break;
+        case kRemoteButtonVolume_Minus:
+            break;
+        case kRemoteButtonRight:
+            [self clickNext: self];
+            break;
+        case kRemoteButtonLeft:
+            [self clickPrev: self];
+            break;
+        case kRemoteButtonRight_Hold:
+        case kRemoteButtonLeft_Hold:
+        case kRemoteButtonVolume_Plus_Hold:
+        case kRemoteButtonVolume_Minus_Hold:
+            /* simulate an event as long as the user holds the button */
+            remoteButtonHeld = pressedDown;
+            if( pressedDown )
+            {                
+                NSNumber* buttonIdentifierNumber = [NSNumber numberWithInt: buttonIdentifier];  
+                [self performSelector:@selector(executeHoldActionForRemoteButton:) 
+                           withObject:buttonIdentifierNumber];
+            }
+				break;
+        case kRemoteButtonMenu:
+            break;
+        default:
+            /* Add here whatever you want other buttons to do */
+            break;
+    }
+}
+
+
 
 - (IBAction)openFiles:(id)sender
 {
