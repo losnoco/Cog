@@ -9,6 +9,7 @@
 #import "FileTreeController.h"
 #import "DirectoryNode.h"
 #import "ImageTextCell.h"
+#import "KFTypeSelectTableView.h"
 
 @implementation FileTreeController
 
@@ -116,27 +117,6 @@
 	return watcher;
 }
 
-// Required Protocol Bullshit (RPB)
-- (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item
-{
-	return nil;
-}
-
-- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
-{
-	return NO;
-}
-
-- (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
-{
-	return 0;
-}
-- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
-{
-	return nil;
-}
-//End of RPB
-
 - (BOOL)outlineView:(NSOutlineView *)olv writeItems:(NSArray*)items toPasteboard:(NSPasteboard*)pboard {
 	//Get selected paths
 	NSLog(@"Items: %@", items);
@@ -164,5 +144,27 @@
     return YES;
 }
 
+//For type-select
+
+- (void)configureTypeSelectTableView:(KFTypeSelectTableView *)tableView
+{
+    [tableView setSearchWraps:YES];
+}
+
+- (int)typeSelectTableViewInitialSearchRow:(id)tableView
+{
+	return [tableView selectedRow];
+}
+
+// Return the string value used for type selection
+- (NSString *)typeSelectTableView:(KFTypeSelectTableView *)tableView stringValueForTableColumn:(NSTableColumn *)col row:(int)row
+{
+	id item = [tableView itemAtRow:row];
+	
+	//Reaching down into NSTreeController...yikes
+	return  [[[item observedObject] path] lastPathComponent];
+}
+
+//End type-select
 
 @end

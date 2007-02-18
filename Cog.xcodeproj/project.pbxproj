@@ -31,6 +31,8 @@
 		8E4E7C1B0AA1ED4500D11405 /* file_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4E7C190AA1ED4500D11405 /* file_gray.png */; };
 		8E53E8610A44C11B007E5BCE /* ID3Tag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E53E8600A44C11B007E5BCE /* ID3Tag.framework */; };
 		8E53E8690A44C121007E5BCE /* ID3Tag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E53E8600A44C11B007E5BCE /* ID3Tag.framework */; };
+		8E57824B0B88B7AC00C97376 /* KFTypeSelectTableView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E5782490B88B7AC00C97376 /* KFTypeSelectTableView.h */; };
+		8E57824C0B88B7AC00C97376 /* KFTypeSelectTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E57824A0B88B7AC00C97376 /* KFTypeSelectTableView.m */; };
 		8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6889230AAA403C00AD3950 /* Carbon.framework */; };
 		8E6A8E2C0A0D8A68002ABE9C /* CoreAudioFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */; };
 		8E6A8E380A0D8AD8002ABE9C /* CoreAudioUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6A8E360A0D8AD8002ABE9C /* CoreAudioUtils.m */; };
@@ -192,6 +194,7 @@
 				171678BF0AC8C39E00C28CF3 /* SmartFolderNode.h in CopyFiles */,
 				8E76ED760B877C0700494D51 /* AMRemovableColumnsTableView.h in CopyFiles */,
 				8E76ED780B877C0700494D51 /* AMRemovableTableColumn.h in CopyFiles */,
+				8E57824B0B88B7AC00C97376 /* KFTypeSelectTableView.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,6 +230,8 @@
 		8E4E7C180AA1ED4500D11405 /* file_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = file_blue.png; sourceTree = "<group>"; };
 		8E4E7C190AA1ED4500D11405 /* file_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = file_gray.png; sourceTree = "<group>"; };
 		8E53E8600A44C11B007E5BCE /* ID3Tag.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ID3Tag.framework; path = Libraries/ID3Tag/build/Release/ID3Tag.framework; sourceTree = "<group>"; };
+		8E5782490B88B7AC00C97376 /* KFTypeSelectTableView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KFTypeSelectTableView.h; sourceTree = "<group>"; };
+		8E57824A0B88B7AC00C97376 /* KFTypeSelectTableView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; path = KFTypeSelectTableView.m; sourceTree = "<group>"; };
 		8E643DF20A2B585600844A28 /* GameFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameFile.h; sourceTree = "<group>"; };
 		8E643DF30A2B585600844A28 /* GameFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameFile.mm; sourceTree = "<group>"; };
 		8E6889230AAA403C00AD3950 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -532,6 +537,8 @@
 		8E75751A09F31D5A0080F1EE /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				8E5782490B88B7AC00C97376 /* KFTypeSelectTableView.h */,
+				8E57824A0B88B7AC00C97376 /* KFTypeSelectTableView.m */,
 				8E76ED720B877C0700494D51 /* AMRemovableColumnsTableView.h */,
 				8E76ED730B877C0700494D51 /* AMRemovableColumnsTableView.m */,
 				8E76ED740B877C0700494D51 /* AMRemovableTableColumn.h */,
@@ -902,6 +909,7 @@
 				171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */,
 				8E76ED770B877C0700494D51 /* AMRemovableColumnsTableView.m in Sources */,
 				8E76ED790B877C0700494D51 /* AMRemovableTableColumn.m in Sources */,
+				8E57824C0B88B7AC00C97376 /* KFTypeSelectTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,4 +1,5 @@
 #import "AppController.h"
+#import "KFTypeSelectTableView.h""
 
 @implementation AppController
 
@@ -8,6 +9,11 @@
 	if (self)
 	{
 		[self initDefaults];
+		
+		/* Use KFTypeSelectTableView as our NSTableView base class to allow type-select searching of all
+	     * table and outline views.
+		*/
+		[[KFTypeSelectTableView class] poseAsClass:[NSTableView class]];
 	}
 	
 	return self; 
