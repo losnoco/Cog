@@ -30,6 +30,7 @@
                 addButton = NSButton; 
                 fileButton = NSButton; 
                 fileDrawer = NSDrawer; 
+                fileOutlineView = FileOutlineView; 
                 fileTreeController = FileTreeController; 
                 infoButton = NSButton; 
                 infoDrawer = NSDrawer; 
@@ -74,7 +75,12 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = FileOutlineView; LANGUAGE = ObjC; SUPERCLASS = NSOutlineView; }, 
+        {
+            CLASS = FileOutlineView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {fileDrawer = NSDrawer; }; 
+            SUPERCLASS = NSOutlineView; 
+        }, 
         {
             CLASS = FileTreeController; 
             LANGUAGE = ObjC; 

@@ -6,6 +6,8 @@
 #import "PlaylistView.h"
 
 #import "FileTreeController.h"
+#import "FileOutlineView.h"
+
 #import "NDHotKeyEvent.h"
 
 
@@ -29,6 +31,7 @@
 	IBOutlet NSDrawer *fileDrawer;
 
 	IBOutlet FileTreeController *fileTreeController;
+	IBOutlet FileOutlineView *fileOutlineView;
 	
 	IBOutlet PlaylistView *playlistView;
 	

@@ -224,24 +224,32 @@
 - (IBAction)toggleFileDrawer:(id)sender
 {
 	[mainWindow makeKeyAndOrderFront:self];
-	
+	NSLog(@"TOGGLING...");
 	[fileDrawer toggle:self];
 }
 
 - (void)drawerDidOpen:(NSNotification *)notification
 {
-	if ([notification object] == infoDrawer)
+	if ([notification object] == infoDrawer) {
 		[infoButton setState:NSOnState];
-	else if ([notification object] == fileDrawer)
+	}
+	else if ([notification object] == fileDrawer) {
 		[fileButton setState:NSOnState];
+		
+		[mainWindow makeFirstResponder: fileOutlineView];
+	}
 }
 
 - (void)drawerDidClose:(NSNotification *)notification
 {
-	if ([notification object] == infoDrawer)
+	if ([notification object] == infoDrawer) {
 		[infoButton setState:NSOffState];
-	else if ([notification object] == fileDrawer)
+	}
+	else if ([notification object] == fileDrawer) {
 		[fileButton setState:NSOffState];
+		
+		[mainWindow makeFirstResponder: playlistView];
+	}
 }
 
 - (IBAction)donate:(id)sender

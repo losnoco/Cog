@@ -144,6 +144,31 @@
     return YES;
 }
 
+
+// Required Protocol Bullshit (RPB) This is neccessary so it can be used as a datasource for drag/drop things.
+
+ - (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item
+ {
+	 return nil;
+ }
+ 
+ - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
+ {
+	 return NO;
+ }
+ 
+ - (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
+ {
+	 return 0;
+ }
+ - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
+ {
+	 return nil;
+ }
+
+//End of RPB
+
+
 //For type-select
 
 - (void)configureTypeSelectTableView:(KFTypeSelectTableView *)tableView
@@ -166,5 +191,20 @@
 }
 
 //End type-select
+
+- (void)addSelectedToPlaylist {
+	NSMutableArray *paths = [[NSMutableArray alloc] init];
+	NSArray *nodes = [self selectedObjects];
+	NSEnumerator *e = [nodes objectEnumerator];
+	
+	id n;
+	while (n = [e nextObject]) {
+		[paths addObject:[n path]];
+	}
+	
+	[playlistController addPaths:paths sort:YES];
+	[paths release];
+}
+
 
 @end

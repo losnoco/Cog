@@ -86,7 +86,7 @@
 	if (subpaths == nil)
 	{
 		subpaths = [[NSMutableArray alloc] init];
-		NSArray *contents = [[NSFileManager defaultManager] directoryContentsAtPath:path];
+		NSArray *contents = [[[NSFileManager defaultManager] directoryContentsAtPath:path] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 		
 		[self processContents: contents];
 		

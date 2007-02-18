@@ -66,6 +66,7 @@
 {
 	return YES;
 }
+
 - (BOOL)resignFirstResponder
 {
 	return YES;

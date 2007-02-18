@@ -32,6 +32,17 @@
 }
 
 
+- (BOOL)acceptsFirstResponder
+{
+	return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+	return YES;
+}
+
+
 //Navigate outline view with the keyboard, send select actions to delegate
 - (void)keyDown:(NSEvent *)theEvent
 {
@@ -43,7 +54,19 @@
 		//Get the pressed character
 		if ([charString length] == 1) pressedChar = [charString characterAtIndex:0];
 		
-    	if ((pressedChar == '\031') && // backtab
+    	if (pressedChar == NSDeleteFunctionKey || pressedChar == NSBackspaceCharacter || pressedChar == NSDeleteCharacter) { //Delete
+			//As Weird-al said....EAT IT JUST EAT IT!!!
+			[self kfResetSearch];
+		} else if (pressedChar == NSCarriageReturnCharacter || pressedChar == NSEnterCharacter) { //Enter or return
+			//Add songs to list
+			[[self delegate] addSelectedToPlaylist];
+			
+			[fileDrawer close];
+		} else if (pressedChar == NSLeftArrowFunctionKey ||  pressedChar == NSRightArrowFunctionKey) { //left or right
+			[super keyDown:theEvent];
+	
+			[self kfResetSearch];
+		} else if ((pressedChar == '\031') && // backtab
 			([self respondsToSelector:@selector(findPrevious:)])) {
 			/* KFTypeSelectTableView supports findPrevious; backtab is added to AIOutlineView as a find previous action
 			* if KFTypeSelectTableView is being used via posing */
@@ -62,6 +85,5 @@
 		[super keyDown:theEvent];
 	}
 }
-
 
 @end

@@ -10,7 +10,7 @@
 
 
 @interface FileOutlineView : NSOutlineView {
-
+	IBOutlet NSDrawer *fileDrawer;
 }
 
 @end
