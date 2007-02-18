@@ -71,7 +71,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     switch( buttonIdentifier )
     {
         case kRemoteButtonPlay:
-			[self clickPlay: self];
+			[self clickPlay];
 
             break;
         case kRemoteButtonVolume_Plus:
@@ -79,10 +79,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         case kRemoteButtonVolume_Minus:
             break;
         case kRemoteButtonRight:
-            [self clickNext: self];
+            [self clickNext];
             break;
         case kRemoteButtonLeft:
-            [self clickPrev: self];
+            [self clickPrev];
             break;
         case kRemoteButtonRight_Hold:
         case kRemoteButtonLeft_Hold:
