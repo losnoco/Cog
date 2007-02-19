@@ -204,7 +204,9 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[self registerHotKeys];
 	
 	//Init Remote
-
+	if (![[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"remoteOnlyOnActive"] boolValue]) {
+		[remote startListening:self];
+	}
 	
 	
 	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
