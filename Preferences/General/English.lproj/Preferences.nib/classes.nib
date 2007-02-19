@@ -29,7 +29,11 @@
         {
             CLASS = PrefPaneController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {fileDrawerPane = FileDrawerPane; hotKeyPane = HotKeyPane; }; 
+            OUTLETS = {
+                fileDrawerPane = FileDrawerPane; 
+                hotKeyPane = HotKeyPane; 
+                remotePane = RemotePane; 
+            }; 
             SUPERCLASS = NSObject; 
         }, 
         {
@@ -37,6 +41,13 @@
             LANGUAGE = ObjC; 
             OUTLETS = {view = NSView; }; 
             SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {takeBool = id; }; 
+            CLASS = RemotePane; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {onlyOnActive = NSButton; }; 
+            SUPERCLASS = PreferencePane; 
         }
     ); 
     IBVersion = 1; 

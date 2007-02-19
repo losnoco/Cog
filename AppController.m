@@ -25,11 +25,17 @@
 // Listen to the remote in exclusive mode, only when Cog is the active application
 - (void)applicationDidBecomeActive:(NSNotification *)notification
 {
-    [remote startListening: self];
+	BOOL onlyOnActive = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"remoteOnlyOnActive"] boolValue];
+	if (onlyOnActive) {
+		[remote startListening: self];
+	}
 }
 - (void)applicationDidResignActive:(NSNotification *)motification
 {
-    [remote stopListening: self];
+	BOOL onlyOnActive = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"remoteOnlyOnActive"] boolValue];
+	if (onlyOnActive) {
+		[remote stopListening: self];
+	}
 }
 
 /* Helper method for the remote control interface in order to trigger forward/backward and volume
@@ -179,9 +185,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)awakeFromNib
 {
-//	[self initDefaults];
-	
-	//	DBLog(@"AWAKe");
 	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
 	[prevButton setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"")];
 	[nextButton setToolTip:NSLocalizedString(@"NextButtonTooltip", @"")];
@@ -199,6 +202,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[self initShowColumn: showYearColumn	withIdentifier: @"year"];
 
 	[self registerHotKeys];
+	
+	//Init Remote
+
+	
 	
 	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
 	[playlistController loadPlaylist:[filename stringByExpandingTildeInPath]];
@@ -336,6 +343,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 - (void)initDefaults
 {
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
+	
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:35] forKey:@"hotKeyPlayKeyCode"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyPlayModifiers"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'P'] forKey:@"hotKeyPlayCharacter"];
@@ -349,6 +357,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'R'] forKey:@"hotKeyPreviousCharacter"];
 
 	[userDefaultsValuesDict setObject:[@"~/Music" stringByExpandingTildeInPath] forKey:@"fileDrawerRootPath"];
+
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteOnlyOnActive"];
 
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
@@ -378,6 +388,16 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	else if ([keyPath isEqualToString:@"values.fileDrawerRootPath"]) {
 		[fileTreeController setRootPath:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"]];
 	}
+	else if ([keyPath isEqualToString:@"values.remoteOnlyOnActive"]) {
+		BOOL onlyOnActive = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"remoteOnlyOnActive"] boolValue];
+		if (!onlyOnActive || [NSApp isActive]) {
+			[remote startListening: self];
+		}
+		if (onlyOnActive && ![NSApp isActive]) { //Setting a preference without being active? *shrugs*
+			[remote stopListening: self]; 
+		}
+	}
+
 }
 
 - (void)registerHotKeys

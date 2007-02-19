@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		172D72480B891FEF00D095BB /* RemotePane.m in Sources */ = {isa = PBXBuildFile; fileRef = 172D72470B891FEF00D095BB /* RemotePane.m */; };
+		172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */ = {isa = PBXBuildFile; fileRef = 172D72AC0B8926CA00D095BB /* apple_remote.png */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E07AA870AAC8EA200A4B32F /* FileDrawerPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA7F0AAC8EA200A4B32F /* FileDrawerPane.m */; };
@@ -27,6 +29,9 @@
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		172D72460B891FEF00D095BB /* RemotePane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RemotePane.h; sourceTree = "<group>"; };
+		172D72470B891FEF00D095BB /* RemotePane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = RemotePane.m; sourceTree = "<group>"; };
+		172D72AC0B8926CA00D095BB /* apple_remote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple_remote.png; path = Icons/apple_remote.png; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* General_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = General_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* General.preferencePane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = General.preferencePane; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -137,6 +142,8 @@
 				8E07AA7F0AAC8EA200A4B32F /* FileDrawerPane.m */,
 				8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */,
 				8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */,
+				172D72460B891FEF00D095BB /* RemotePane.h */,
+				172D72470B891FEF00D095BB /* RemotePane.m */,
 			);
 			name = Panes;
 			sourceTree = "<group>";
@@ -173,6 +180,7 @@
 		8E07ABD90AAC95AF00A4B32F /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				172D72AC0B8926CA00D095BB /* apple_remote.png */,
 				8E07ABDA0AAC95BC00A4B32F /* file_drawer.png */,
 				8E07ABDB0AAC95BC00A4B32F /* hot_keys.png */,
 			);
@@ -224,6 +232,7 @@
 				8E07ABDC0AAC95BC00A4B32F /* file_drawer.png in Resources */,
 				8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */,
 				8E07AC050AAC968C00A4B32F /* Preferences.nib in Resources */,
+				172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +250,7 @@
 				8E6C12160AACAE4100819171 /* NDHotKeyControl.m in Sources */,
 				8E6C12170AACAE4100819171 /* NDHotKeyEvent.m in Sources */,
 				8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */,
+				172D72480B891FEF00D095BB /* RemotePane.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
