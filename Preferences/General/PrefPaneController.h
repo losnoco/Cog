@@ -12,15 +12,18 @@
 #import "HotKeyPane.h"
 #import "FileDrawerPane.h"
 #import "RemotePane.h"
+#import "UpdatesPane.h"
 
 @interface PrefPaneController : NSObject <SS_PreferencePaneProtocol> {
 	IBOutlet HotKeyPane *hotKeyPane;
 	IBOutlet FileDrawerPane *fileDrawerPane;
 	IBOutlet RemotePane *remotePane;
+	IBOutlet UpdatesPane *updatesPane;
 }
 
 - (HotKeyPane *)hotKeyPane;
 - (FileDrawerPane *)fileDrawerPane;
 - (RemotePane *)remotePane;
+- (UpdatesPane *)updatesPane;
 
 @end

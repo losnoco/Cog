@@ -7,33 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		171678BF0AC8C39E00C28CF3 /* SmartFolderNode.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 171678BD0AC8C39E00C28CF3 /* SmartFolderNode.h */; };
 		171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		8E07AAF10AAC910500A4B32F /* SS_PreferencePaneProtocol.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */; };
-		8E07AAF20AAC910500A4B32F /* SS_PrefsController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E07AAEF0AAC910500A4B32F /* SS_PrefsController.h */; };
 		8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AAF00AAC910500A4B32F /* SS_PrefsController.m */; };
-		8E07AB780AAC930B00A4B32F /* PreferencesController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E07AB760AAC930B00A4B32F /* PreferencesController.h */; };
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
 		8E07AEEA0AACA08100A4B32F /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 8E07AEE90AACA08100A4B32F /* General.preferencePane */; };
 		8E0AD92B0A338CFF00215AEF /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EA9172F0A336CC30087CDE2 /* Shorten.framework */; };
-		8E1296DA0A2BA9CE00443124 /* PlaylistHeaderView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */; };
 		8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */; };
+		8E15A7EA0B894327006DC802 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E15A7E90B894327006DC802 /* Sparkle.framework */; };
+		8E15A8140B894336006DC802 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E15A7E90B894327006DC802 /* Sparkle.framework */; };
 		8E1849C50A43DB5C0084C69D /* MAD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E1849C40A43DB5C0084C69D /* MAD.framework */; };
-		8E1849C80A43DB730084C69D /* MADFile.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E1849C60A43DB730084C69D /* MADFile.h */; };
 		8E1849C90A43DB730084C69D /* MADFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1849C70A43DB730084C69D /* MADFile.m */; };
 		8E4C7F090A0509FC003BE25F /* DragScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4C7F070A0509FC003BE25F /* DragScrollView.m */; };
 		8E4CAB5B0A32251B00214C1D /* ShnFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8E4CAB5A0A32251B00214C1D /* ShnFile.mm */; };
 		8E4E7C1A0AA1ED4500D11405 /* file_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4E7C180AA1ED4500D11405 /* file_blue.png */; };
 		8E4E7C1B0AA1ED4500D11405 /* file_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4E7C190AA1ED4500D11405 /* file_gray.png */; };
-		8E513F410B890FB90012904D /* AppleRemote.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E513F3F0B890FB90012904D /* AppleRemote.h */; };
 		8E513F420B890FB90012904D /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E513F400B890FB90012904D /* AppleRemote.m */; };
 		8E53E8610A44C11B007E5BCE /* ID3Tag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E53E8600A44C11B007E5BCE /* ID3Tag.framework */; };
 		8E53E8690A44C121007E5BCE /* ID3Tag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E53E8600A44C11B007E5BCE /* ID3Tag.framework */; };
-		8E57824B0B88B7AC00C97376 /* KFTypeSelectTableView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E5782490B88B7AC00C97376 /* KFTypeSelectTableView.h */; };
 		8E57824C0B88B7AC00C97376 /* KFTypeSelectTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E57824A0B88B7AC00C97376 /* KFTypeSelectTableView.m */; };
 		8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6889230AAA403C00AD3950 /* Carbon.framework */; };
 		8E6A8E2C0A0D8A68002ABE9C /* CoreAudioFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6A8E280A0D8A68002ABE9C /* CoreAudioFile.m */; };
@@ -65,8 +59,6 @@
 		8E75758409F31D5A0080F1EE /* VorbisFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755409F31D5A0080F1EE /* VorbisFile.m */; };
 		8E75758609F31D5A0080F1EE /* WavPackFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755809F31D5A0080F1EE /* WavPackFile.m */; };
 		8E75758709F31D5A0080F1EE /* SOUNDTODO in Resources */ = {isa = PBXBuildFile; fileRef = 8E75755909F31D5A0080F1EE /* SOUNDTODO */; };
-		8E75758909F31D5A0080F1EE /* MacPADSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75755F09F31D5A0080F1EE /* MacPADSocket.m */; };
-		8E75758A09F31D5A0080F1EE /* UpdateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75756109F31D5A0080F1EE /* UpdateController.m */; };
 		8E75758B09F31D5A0080F1EE /* DBLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75756409F31D5A0080F1EE /* DBLog.m */; };
 		8E75758C09F31D5A0080F1EE /* Semaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75756609F31D5A0080F1EE /* Semaphore.m */; };
 		8E75758D09F31D5A0080F1EE /* VirtualRingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75756809F31D5A0080F1EE /* VirtualRingBuffer.m */; };
@@ -98,9 +90,7 @@
 		8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75773809F31F1F0080F1EE /* OggFLAC.framework */; };
 		8E757C7C09F32F070080F1EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7A09F32F070080F1EE /* AudioToolbox.framework */; };
 		8E757C7D09F32F070080F1EE /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E757C7B09F32F070080F1EE /* AudioUnit.framework */; };
-		8E76ED760B877C0700494D51 /* AMRemovableColumnsTableView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E76ED720B877C0700494D51 /* AMRemovableColumnsTableView.h */; };
 		8E76ED770B877C0700494D51 /* AMRemovableColumnsTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E76ED730B877C0700494D51 /* AMRemovableColumnsTableView.m */; };
-		8E76ED780B877C0700494D51 /* AMRemovableTableColumn.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E76ED740B877C0700494D51 /* AMRemovableTableColumn.h */; };
 		8E76ED790B877C0700494D51 /* AMRemovableTableColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E76ED750B877C0700494D51 /* AMRemovableTableColumn.m */; };
 		8E7A0F1A0A8FEB4A00F27EE8 /* add_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F060A8FEB4A00F27EE8 /* add_blue.png */; };
 		8E7A0F1B0A8FEB4A00F27EE8 /* add_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F070A8FEB4A00F27EE8 /* add_gray.png */; };
@@ -122,37 +112,23 @@
 		8E7A0F2B0A8FEB4A00F27EE8 /* shuffle_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F170A8FEB4A00F27EE8 /* shuffle_on.png */; };
 		8E7A0F2C0A8FEB4A00F27EE8 /* volume_high.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F180A8FEB4A00F27EE8 /* volume_high.png */; };
 		8E7A0F2D0A8FEB4A00F27EE8 /* volume_low.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E7A0F190A8FEB4A00F27EE8 /* volume_low.png */; };
-		8E7C2B160AACE0F2009B4EAD /* NDHotKeyEvent.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E7C2B140AACE0F2009B4EAD /* NDHotKeyEvent.h */; };
 		8E7C2B170AACE0F2009B4EAD /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7C2B150AACE0F2009B4EAD /* NDHotKeyEvent.m */; };
 		8EA917300A336CC30087CDE2 /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EA9172F0A336CC30087CDE2 /* Shorten.framework */; };
 		8EB450080A2BB8B300AA711F /* Cog Help in Resources */ = {isa = PBXBuildFile; fileRef = 8EB44FF90A2BB8B300AA711F /* Cog Help */; };
 		8EB971790A44B74A009803E3 /* MAD.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E1849C40A43DB5C0084C69D /* MAD.framework */; };
-		8EFFCD5E0AA093AF00C458A5 /* DirectoryNode.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD420AA093AF00C458A5 /* DirectoryNode.h */; };
 		8EFFCD5F0AA093AF00C458A5 /* DirectoryNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD430AA093AF00C458A5 /* DirectoryNode.m */; };
-		8EFFCD600AA093AF00C458A5 /* FileIconCell.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD440AA093AF00C458A5 /* FileIconCell.h */; };
 		8EFFCD610AA093AF00C458A5 /* FileIconCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD450AA093AF00C458A5 /* FileIconCell.m */; };
-		8EFFCD620AA093AF00C458A5 /* FileNode.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD460AA093AF00C458A5 /* FileNode.h */; };
 		8EFFCD630AA093AF00C458A5 /* FileNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD470AA093AF00C458A5 /* FileNode.m */; };
-		8EFFCD640AA093AF00C458A5 /* FileOutlineView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD480AA093AF00C458A5 /* FileOutlineView.h */; };
 		8EFFCD650AA093AF00C458A5 /* FileOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD490AA093AF00C458A5 /* FileOutlineView.m */; };
-		8EFFCD660AA093AF00C458A5 /* FileTreeController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD4A0AA093AF00C458A5 /* FileTreeController.h */; };
 		8EFFCD670AA093AF00C458A5 /* FileTreeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD4B0AA093AF00C458A5 /* FileTreeController.m */; };
-		8EFFCD680AA093AF00C458A5 /* FileTreeWatcher.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD4C0AA093AF00C458A5 /* FileTreeWatcher.h */; };
 		8EFFCD690AA093AF00C458A5 /* FileTreeWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD4D0AA093AF00C458A5 /* FileTreeWatcher.m */; };
-		8EFFCD6A0AA093AF00C458A5 /* ImageTextCell.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD4E0AA093AF00C458A5 /* ImageTextCell.h */; };
 		8EFFCD6B0AA093AF00C458A5 /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD4F0AA093AF00C458A5 /* ImageTextCell.m */; };
-		8EFFCD6C0AA093AF00C458A5 /* PathIcon.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD500AA093AF00C458A5 /* PathIcon.h */; };
 		8EFFCD6D0AA093AF00C458A5 /* PathIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD510AA093AF00C458A5 /* PathIcon.m */; };
-		8EFFCD6E0AA093AF00C458A5 /* PathNode.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD520AA093AF00C458A5 /* PathNode.h */; };
 		8EFFCD6F0AA093AF00C458A5 /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD530AA093AF00C458A5 /* PathNode.m */; };
-		8EFFCD700AA093AF00C458A5 /* UKFileWatcher.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD550AA093AF00C458A5 /* UKFileWatcher.h */; };
 		8EFFCD710AA093AF00C458A5 /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD560AA093AF00C458A5 /* UKFileWatcher.m */; };
-		8EFFCD720AA093AF00C458A5 /* UKFNSubscribeFileWatcher.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD570AA093AF00C458A5 /* UKFNSubscribeFileWatcher.h */; };
 		8EFFCD730AA093AF00C458A5 /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD580AA093AF00C458A5 /* UKFNSubscribeFileWatcher.m */; };
 		8EFFCD740AA093AF00C458A5 /* UKKQueue Readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8EFFCD590AA093AF00C458A5 /* UKKQueue Readme.txt */; };
-		8EFFCD750AA093AF00C458A5 /* UKKQueue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD5A0AA093AF00C458A5 /* UKKQueue.h */; };
 		8EFFCD760AA093AF00C458A5 /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD5B0AA093AF00C458A5 /* UKKQueue.m */; };
-		8EFFCD770AA093AF00C458A5 /* UKMainThreadProxy.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EFFCD5C0AA093AF00C458A5 /* UKMainThreadProxy.h */; };
 		8EFFCD780AA093AF00C458A5 /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD5D0AA093AF00C458A5 /* UKMainThreadProxy.m */; };
 /* End PBXBuildFile section */
 
@@ -163,6 +139,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				8E15A8140B894336006DC802 /* Sparkle.framework in CopyFiles */,
 				8E53E8690A44C121007E5BCE /* ID3Tag.framework in CopyFiles */,
 				8EB971790A44B74A009803E3 /* MAD.framework in CopyFiles */,
 				8E0AD92B0A338CFF00215AEF /* Shorten.framework in CopyFiles */,
@@ -174,30 +151,6 @@
 				8E757B5509F326710080F1EE /* MAC.framework in CopyFiles */,
 				8E757B5609F326710080F1EE /* FLAC.framework in CopyFiles */,
 				8E757B5709F326710080F1EE /* OggFLAC.framework in CopyFiles */,
-				8E1296DA0A2BA9CE00443124 /* PlaylistHeaderView.h in CopyFiles */,
-				8E1849C80A43DB730084C69D /* MADFile.h in CopyFiles */,
-				8EFFCD5E0AA093AF00C458A5 /* DirectoryNode.h in CopyFiles */,
-				8EFFCD600AA093AF00C458A5 /* FileIconCell.h in CopyFiles */,
-				8EFFCD620AA093AF00C458A5 /* FileNode.h in CopyFiles */,
-				8EFFCD640AA093AF00C458A5 /* FileOutlineView.h in CopyFiles */,
-				8EFFCD660AA093AF00C458A5 /* FileTreeController.h in CopyFiles */,
-				8EFFCD680AA093AF00C458A5 /* FileTreeWatcher.h in CopyFiles */,
-				8EFFCD6A0AA093AF00C458A5 /* ImageTextCell.h in CopyFiles */,
-				8EFFCD6C0AA093AF00C458A5 /* PathIcon.h in CopyFiles */,
-				8EFFCD6E0AA093AF00C458A5 /* PathNode.h in CopyFiles */,
-				8EFFCD700AA093AF00C458A5 /* UKFileWatcher.h in CopyFiles */,
-				8EFFCD720AA093AF00C458A5 /* UKFNSubscribeFileWatcher.h in CopyFiles */,
-				8EFFCD750AA093AF00C458A5 /* UKKQueue.h in CopyFiles */,
-				8EFFCD770AA093AF00C458A5 /* UKMainThreadProxy.h in CopyFiles */,
-				8E07AAF10AAC910500A4B32F /* SS_PreferencePaneProtocol.h in CopyFiles */,
-				8E07AAF20AAC910500A4B32F /* SS_PrefsController.h in CopyFiles */,
-				8E07AB780AAC930B00A4B32F /* PreferencesController.h in CopyFiles */,
-				8E7C2B160AACE0F2009B4EAD /* NDHotKeyEvent.h in CopyFiles */,
-				171678BF0AC8C39E00C28CF3 /* SmartFolderNode.h in CopyFiles */,
-				8E76ED760B877C0700494D51 /* AMRemovableColumnsTableView.h in CopyFiles */,
-				8E76ED780B877C0700494D51 /* AMRemovableTableColumn.h in CopyFiles */,
-				8E57824B0B88B7AC00C97376 /* KFTypeSelectTableView.h in CopyFiles */,
-				8E513F410B890FB90012904D /* AppleRemote.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +177,7 @@
 		8E07AEE90AACA08100A4B32F /* General.preferencePane */ = {isa = PBXFileReference; lastKnownFileType = folder; name = General.preferencePane; path = Preferences/General/build/Release/General.preferencePane; sourceTree = "<group>"; };
 		8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
 		8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
+		8E15A7E90B894327006DC802 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		8E1849C40A43DB5C0084C69D /* MAD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MAD.framework; path = Libraries/MAD/build/Release/MAD.framework; sourceTree = "<group>"; };
 		8E1849C60A43DB730084C69D /* MADFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MADFile.h; sourceTree = "<group>"; };
 		8E1849C70A43DB730084C69D /* MADFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MADFile.m; sourceTree = "<group>"; };
@@ -304,10 +258,6 @@
 		8E75755809F31D5A0080F1EE /* WavPackFile.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WavPackFile.m; sourceTree = "<group>"; };
 		8E75755909F31D5A0080F1EE /* SOUNDTODO */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SOUNDTODO; sourceTree = "<group>"; };
 		8E75755A09F31D5A0080F1EE /* Status.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Status.h; sourceTree = "<group>"; };
-		8E75755E09F31D5A0080F1EE /* MacPADSocket.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MacPADSocket.h; sourceTree = "<group>"; };
-		8E75755F09F31D5A0080F1EE /* MacPADSocket.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MacPADSocket.m; sourceTree = "<group>"; };
-		8E75756009F31D5A0080F1EE /* UpdateController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UpdateController.h; sourceTree = "<group>"; };
-		8E75756109F31D5A0080F1EE /* UpdateController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = UpdateController.m; sourceTree = "<group>"; };
 		8E75756309F31D5A0080F1EE /* DBLog.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DBLog.h; sourceTree = "<group>"; };
 		8E75756409F31D5A0080F1EE /* DBLog.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DBLog.m; sourceTree = "<group>"; };
 		8E75756509F31D5A0080F1EE /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
@@ -412,6 +362,7 @@
 				8E1849C50A43DB5C0084C69D /* MAD.framework in Frameworks */,
 				8E53E8610A44C11B007E5BCE /* ID3Tag.framework in Frameworks */,
 				8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */,
+				8E15A7EA0B894327006DC802 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,7 +375,6 @@
 				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
 				8EFFCD410AA093AF00C458A5 /* FileDrawer */,
 				8E75752309F31D5A0080F1EE /* Feedback */,
-				8E75755D09F31D5A0080F1EE /* Updates */,
 				8E75756209F31D5A0080F1EE /* Utils */,
 				8E75751A09F31D5A0080F1EE /* Custom */,
 				8E75752A09F31D5A0080F1EE /* Playlist */,
@@ -440,6 +390,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8E15A7E90B894327006DC802 /* Sparkle.framework */,
 				8E6889230AAA403C00AD3950 /* Carbon.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
@@ -647,17 +598,6 @@
 				8E1849C70A43DB730084C69D /* MADFile.m */,
 			);
 			path = SoundFile;
-			sourceTree = "<group>";
-		};
-		8E75755D09F31D5A0080F1EE /* Updates */ = {
-			isa = PBXGroup;
-			children = (
-				8E75755E09F31D5A0080F1EE /* MacPADSocket.h */,
-				8E75755F09F31D5A0080F1EE /* MacPADSocket.m */,
-				8E75756009F31D5A0080F1EE /* UpdateController.h */,
-				8E75756109F31D5A0080F1EE /* UpdateController.m */,
-			);
-			path = Updates;
 			sourceTree = "<group>";
 		};
 		8E75756209F31D5A0080F1EE /* Utils */ = {
@@ -886,8 +826,6 @@
 				8E75758309F31D5A0080F1EE /* SoundFile.mm in Sources */,
 				8E75758409F31D5A0080F1EE /* VorbisFile.m in Sources */,
 				8E75758609F31D5A0080F1EE /* WavPackFile.m in Sources */,
-				8E75758909F31D5A0080F1EE /* MacPADSocket.m in Sources */,
-				8E75758A09F31D5A0080F1EE /* UpdateController.m in Sources */,
 				8E75758B09F31D5A0080F1EE /* DBLog.m in Sources */,
 				8E75758C09F31D5A0080F1EE /* Semaphore.m in Sources */,
 				8E75758D09F31D5A0080F1EE /* VirtualRingBuffer.m in Sources */,
@@ -973,9 +911,11 @@
 					"$(SRCROOT)/Libraries/GME/build/Release",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Libraries/MAD/build/Release\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/Libraries/ID3Tag/build/Release\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -1015,9 +955,11 @@
 					"$(SRCROOT)/Libraries/GME/build/Release",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Libraries/MAD/build/Release\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/Libraries/ID3Tag/build/Release\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;

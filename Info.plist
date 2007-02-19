@@ -106,5 +106,8 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+
+	<key>SUFeedURL</key> 
+	<string>http://cogosx.sourceforge.net/appcast.xml</string>
 </dict>
 </plist>
