@@ -17,6 +17,9 @@
 	verify_noerr(AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propsize, devids));
 	int i;
 	NSLog(@"Number of devices: %d", nDevices);
+	
+	NSDictionary *defaultDevice = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
+	
 	for (i = 0; i < nDevices; ++i) {
 		char name[64];
 		UInt32 maxlen = 64;
@@ -37,11 +40,21 @@
 			[NSNumber numberWithLong:devids[i]], @"deviceID",
 			nil];
 		[self addObject:deviceInfo];
+		
+		if (defaultDevice) {
+			if ([[defaultDevice objectForKey:@"deviceID"] isEqualToNumber:[deviceInfo objectForKey:@"deviceID"]]) {
+				[self setSelectedObjects:[NSArray arrayWithObject:deviceInfo]];
+				NSLog(@"Selected default!");
+			}
+		}
+
 		[deviceInfo release];
 	}
 	free(devids);
 	
-	[self setSelectionIndex:0];
+		
+	if (!defaultDevice)
+		[self setSelectionIndex:0];
 }
 
 @end
