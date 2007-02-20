@@ -26,7 +26,7 @@
 	[volumeSlider setDoubleValue:pow(10.0, log10(0.5)/4.0)*[volumeSlider maxValue]];
 }
 
-
+	
 - (IBAction)playPauseResume:(id)sender
 {
 	DBLog(@"PLAYING");

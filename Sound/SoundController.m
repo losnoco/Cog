@@ -14,7 +14,7 @@
 - (id)initWithDelegate:(id)d
 {
 	DBLog(@"Initializing\n");
-
+	
 	self = [super init];
 	if (self)
 	{
@@ -120,7 +120,6 @@
 - (void)setNextEntry:(PlaylistEntry *)pe
 {
 	[pe retain];
-	NSLog(@"Releasing: %@", [pe display]);
 	[nextEntry release];
 	nextEntry = pe;
 }

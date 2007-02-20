@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		172D72480B891FEF00D095BB /* RemotePane.m in Sources */ = {isa = PBXBuildFile; fileRef = 172D72470B891FEF00D095BB /* RemotePane.m */; };
 		172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */ = {isa = PBXBuildFile; fileRef = 172D72AC0B8926CA00D095BB /* apple_remote.png */; };
+		17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C643360B8A77CC00C53518 /* OutputsArrayController.m */; };
+		17C6433F0B8A783F00C53518 /* OutputPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C6433E0B8A783F00C53518 /* OutputPane.m */; };
+		17C643690B8A788000C53518 /* output.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C643680B8A788000C53518 /* output.png */; };
+		17C644330B8A791D00C53518 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C644310B8A791D00C53518 /* CoreAudio.framework */; };
+		17C644340B8A791D00C53518 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C644320B8A791D00C53518 /* CoreAudioKit.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E07AA870AAC8EA200A4B32F /* FileDrawerPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA7F0AAC8EA200A4B32F /* FileDrawerPane.m */; };
@@ -34,6 +39,13 @@
 		172D72460B891FEF00D095BB /* RemotePane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RemotePane.h; sourceTree = "<group>"; };
 		172D72470B891FEF00D095BB /* RemotePane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = RemotePane.m; sourceTree = "<group>"; };
 		172D72AC0B8926CA00D095BB /* apple_remote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple_remote.png; path = Icons/apple_remote.png; sourceTree = "<group>"; };
+		17C643360B8A77CC00C53518 /* OutputsArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputsArrayController.m; sourceTree = "<group>"; };
+		17C643370B8A77CC00C53518 /* OutputsArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputsArrayController.h; sourceTree = "<group>"; };
+		17C6433D0B8A783F00C53518 /* OutputPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputPane.h; sourceTree = "<group>"; };
+		17C6433E0B8A783F00C53518 /* OutputPane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputPane.m; sourceTree = "<group>"; };
+		17C643680B8A788000C53518 /* output.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = output.png; path = Icons/output.png; sourceTree = "<group>"; };
+		17C644310B8A791D00C53518 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
+		17C644320B8A791D00C53518 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = /System/Library/Frameworks/CoreAudioKit.framework; sourceTree = "<absolute>"; };
 		32DBCF630370AF2F00C91783 /* General_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = General_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* General.preferencePane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = General.preferencePane; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -69,6 +81,8 @@
 			files = (
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 				8E6C123A0AACAEF200819171 /* Carbon.framework in Frameworks */,
+				17C644330B8A791D00C53518 /* CoreAudio.framework in Frameworks */,
+				17C644340B8A791D00C53518 /* CoreAudioKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +145,8 @@
 		1058C7AEFEA557BF11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				17C644310B8A791D00C53518 /* CoreAudio.framework */,
+				17C644320B8A791D00C53518 /* CoreAudioKit.framework */,
 				089C167FFE841241C02AAC07 /* AppKit.framework */,
 				D2F7E65807B2D6F200F64583 /* CoreData.framework */,
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
@@ -151,6 +167,8 @@
 				172D72470B891FEF00D095BB /* RemotePane.m */,
 				8E15A8340B8944C4006DC802 /* UpdatesPane.h */,
 				8E15A8350B8944C4006DC802 /* UpdatesPane.m */,
+				17C6433D0B8A783F00C53518 /* OutputPane.h */,
+				17C6433E0B8A783F00C53518 /* OutputPane.m */,
 			);
 			name = Panes;
 			sourceTree = "<group>";
@@ -164,6 +182,8 @@
 				8E6C12150AACAE4100819171 /* NDHotKeyEvent.m */,
 				8E6C139E0AACBAB500819171 /* HotKeyControl.h */,
 				8E6C139F0AACBAB500819171 /* HotKeyControl.m */,
+				17C643370B8A77CC00C53518 /* OutputsArrayController.h */,
+				17C643360B8A77CC00C53518 /* OutputsArrayController.m */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -187,6 +207,7 @@
 		8E07ABD90AAC95AF00A4B32F /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				17C643680B8A788000C53518 /* output.png */,
 				8E15A86B0B894768006DC802 /* updates.png */,
 				172D72AC0B8926CA00D095BB /* apple_remote.png */,
 				8E07ABDA0AAC95BC00A4B32F /* file_drawer.png */,
@@ -242,6 +263,7 @@
 				8E07AC050AAC968C00A4B32F /* Preferences.nib in Resources */,
 				172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */,
 				8E15A86C0B894768006DC802 /* updates.png in Resources */,
+				17C643690B8A788000C53518 /* output.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +283,8 @@
 				8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */,
 				172D72480B891FEF00D095BB /* RemotePane.m in Sources */,
 				8E15A8360B8944C4006DC802 /* UpdatesPane.m in Sources */,
+				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
+				17C6433F0B8A783F00C53518 /* OutputPane.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

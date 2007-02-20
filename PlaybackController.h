@@ -21,6 +21,8 @@
 	
 	IBOutlet NSButton *playButton;
 	
+	IBOutlet NSArrayController *outputDevices;
+	
 	NSTimer *positionTimer;
 		
 	BOOL waitingForPlay; //No sneaky changing on us

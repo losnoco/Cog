@@ -18,6 +18,8 @@
 	{
 		outputController = c;
 		outputUnit = NULL;
+
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	}
 	
 	return self;
@@ -54,11 +56,65 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	ioData->mBuffers[0].mDataByteSize = amountRead;
 
 	return err;
-}	
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"values.outputDevice"]) {
+		NSLog(@"CHANGED!");
+		NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
+
+		NSNumber *deviceID = [device objectForKey:@"deviceID"];
+		
+		NSLog(@"Selecting output device %d %@", [deviceID longValue], [device objectForKey:@"name"]);
+		[self setOutputDevice:[deviceID longValue]];
+	}
+}
+
+
+
+- (BOOL)setOutputDevice:(AudioDeviceID)outputDevice
+{
+	// Set the output device
+	AudioDeviceID deviceID = outputDevice; //XXX use default if null
+	NSLog(@"WEEE");
+	NSLog(@"Using output device %d", deviceID);
+	OSStatus err;
+	
+	if (outputDevice == -1) {
+		UInt32 size = sizeof(AudioDeviceID);
+		err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+									  &size,
+									  &deviceID);
+								
+		if (err != noErr) {
+			NSLog(@"THERES NO DEFAULT OUTPUT DEVICE! GARRRGGHHH");
+			
+			return NO;
+		}
+		
+		NSLog(@"Default output device: %i", deviceID);
+	}
+
+	
+	err = AudioUnitSetProperty(outputUnit,
+							  kAudioOutputUnitProperty_CurrentDevice, 
+							  kAudioUnitScope_Global, 
+							  0, 
+							  &deviceID, 
+							  sizeof(AudioDeviceID));
+	
+	if (err != noErr) {
+		NSLog(@"THERES NO OUTPUT DEVICE! AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH!!!!! %i", err);
+		
+		return NO;
+	}
+	
+	return YES;
+}
 
 - (BOOL)setup
 {
-	DBLog(@"SETUP");
 	if (outputUnit)
 		[self stop];
 	
@@ -84,6 +140,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	if (err != noErr)
 		return NO;
 	
+	NSLog(@"SETUP");
 	
 	UInt32 size = sizeof (AudioStreamBasicDescription);
 	Boolean outWritable;
@@ -138,6 +195,25 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	DBLog(@"Audio output successfully initialized");
 
+	NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
+	
+	if (device) {
+		NSLog(@"THIS ONE");
+		BOOL ok = [self setOutputDevice:[[device objectForKey:@"deviceID"] longValue]];
+		if (!ok) {
+			//Ruh roh.
+			[self setOutputDevice: -1];
+			
+			[[[NSUserDefaultsController sharedUserDefaultsController] defaults] removeObjectForKey:@"outputDevice"];
+		}
+	}
+	else {
+		NSLog(@"THAT ONE");
+
+		[self setOutputDevice: -1];
+	}
+	
+	NSLog(@"DONE SETTING UP");
 	return (err == noErr);	
 }
 

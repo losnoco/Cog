@@ -27,11 +27,24 @@
         }, 
         {CLASS = NDHotKeyControl; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
         {
+            ACTIONS = {takeDeviceID = id; }; 
+            CLASS = OutputPane; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {outputDevices = OutputsArrayController; }; 
+            SUPERCLASS = PreferencePane; 
+        }, 
+        {
+            CLASS = OutputsArrayController; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSArrayController; 
+        }, 
+        {
             CLASS = PrefPaneController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
                 fileDrawerPane = FileDrawerPane; 
                 hotKeyPane = HotKeyPane; 
+                outputPane = OutputPane; 
                 remotePane = RemotePane; 
                 updatesPane = UpdatesPane; 
             }; 

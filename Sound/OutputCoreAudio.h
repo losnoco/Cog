@@ -23,7 +23,11 @@
 - (id)initWithController:(id)c;
 
 - (BOOL)setup;
+- (BOOL)setOutputDevice:(AudioDeviceID)outputDevice;
 - (void)start;
+- (void)pause;
+- (void)resume;
+- (void)stop;
 
 - (void)setVolume:(double) v;
 

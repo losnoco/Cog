@@ -18,7 +18,7 @@
 	PrefPaneController *prefPaneController = [[PrefPaneController alloc] init];
 	loaded = [NSBundle loadNibNamed:@"Preferences" owner:prefPaneController];
 
-	return [NSArray arrayWithObjects: [prefPaneController hotKeyPane], [prefPaneController fileDrawerPane], [prefPaneController remotePane], [prefPaneController updatesPane], nil];
+	return [NSArray arrayWithObjects: [prefPaneController hotKeyPane], [prefPaneController fileDrawerPane], [prefPaneController remotePane], [prefPaneController updatesPane], [prefPaneController outputPane], nil];
 }	
 
 - (HotKeyPane *)hotKeyPane
@@ -39,6 +39,11 @@
 - (UpdatesPane *)updatesPane
 {
 	return updatesPane;
+}
+
+- (OutputPane *)outputPane
+{
+	return outputPane;
 }
 
 @end
