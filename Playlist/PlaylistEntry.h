@@ -7,11 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "SoundFile.h"
 
 @interface PlaylistEntry : NSObject {
 	NSString *filename;
-	NSString *display;
 
 	NSString *artist;
 	NSString *album;
@@ -44,8 +42,6 @@
 
 -(void)setFilename:(NSString *)f;
 -(NSString *)filename;
--(void)setDisplay:(NSString *)d;
--(NSString *)display;
 -(void)setCurrent:(BOOL) b;
 -(BOOL)current;
 
@@ -65,6 +61,12 @@
 -(NSString *)year;
 -(void)setTrack:(int)y;
 -(int)track;
+
+- (void)setLength:(double)l;
+- (void)setBitrate:(int) br;
+- (void)setChannels:(int)c;
+- (void)setBitsPerSample:(int)bps;
+- (void)setSampleRate:(float)s;
 
 - (double)length;
 - (int)bitrate;

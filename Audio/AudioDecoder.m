@@ -1,0 +1,25 @@
+//
+//  AudioDecoder.m
+//  CogAudio
+//
+//  Created by Vincent Spader on 2/21/07.
+//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//
+
+#import "AudioDecoder.h"
+
+
+@implementation AudioDecoder
+
++ audioDecoderForURL:(NSURL *)url
+{
+	NSString *ext = [[url path] pathExtension];
+	
+	NSDictionary *decoders = [[PluginController sharedPluginController] decoders];
+	
+	Class decoder = NSClassFromString([decoders objectForKey:ext]);
+	
+	return [[[decoder alloc] init] autorelease];
+}
+
+@end

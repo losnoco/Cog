@@ -97,7 +97,7 @@
 	<key>CFBundleVersion</key>
 	<string>0.06</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>Cog Help</string>	
+	<string>Help</string>	
 	<key>CFBundleHelpBookName</key>
 	<string>Cog Help</string>	
 	<key>NSAppleScriptEnabled</key>

@@ -11,6 +11,7 @@
 #import "Shuffle.h"
 
 #import "CoreAudioUtils.h"
+#import "CogAudio/AudioPlayer.h"
 
 @implementation PlaylistController
 
@@ -22,9 +23,9 @@
 	
 	if (self)
 	{
-		acceptableFileTypes = [NSArray arrayWithObjects:@"shn",@"wv",@"ogg",@"mpc",@"flac",@"ape",nil];
-		acceptableFileTypes = [[acceptableFileTypes arrayByAddingObjectsFromArray:getCoreAudioExtensions()] retain];
+		acceptableFileTypes = [[AudioPlayer fileTypes] retain];
 		acceptablePlaylistTypes = [[NSArray alloc] initWithObjects:@"playlist",nil];
+		
 		shuffleList = [[NSMutableArray alloc] init];
 //		DBLog(@"DAH BUTTER CHORNAR: %@", history);
 	}
@@ -125,7 +126,6 @@
 		[pe	setFilename:[sortedFiles objectAtIndex:i]];
 		[pe setIndex:index+i];
 		[pe setTitle:[[sortedFiles objectAtIndex:i] lastPathComponent]];
-		[pe setDisplay:[[sortedFiles objectAtIndex:i] lastPathComponent]];
 //		[pe performSelectorOnMainThread:@selector(readTags) withObject:nil waitUntilDone:NO];
 //		[pe performSelectorOnMainThread:@selector(readInfo) withObject:nil waitUntilDone:NO];
 		

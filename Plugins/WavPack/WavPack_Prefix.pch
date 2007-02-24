@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'WavPack' target in the 'WavPack' project.
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
