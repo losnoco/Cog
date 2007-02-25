@@ -4,7 +4,7 @@ libs=( MAC MPCDec Ogg FLAC Shorten TagLib Vorbis WavPack MAD ID3Tag )
 
 for lib in "${libs[@]}"
 do
-	cd ../Frameworks/$lib
+	cd Frameworks/$lib
 	xcodebuild -alltargets -configuration Release
-	cd ..
+	cd ../..
 done

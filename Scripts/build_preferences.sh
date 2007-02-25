@@ -4,7 +4,7 @@ prefs=( General )
 
 for pref in "${prefs[@]}"
 do
-	cd ../Preferences/$pref
+	cd Preferences/$pref
 	xcodebuild -alltargets -configuration Release
-	cd ..
+	cd ../..
 done
