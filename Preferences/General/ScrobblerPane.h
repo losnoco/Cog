@@ -10,7 +10,7 @@
 #import "PreferencePane.h"
 
 
-@interface RemotePane : PreferencePane {
+@interface ScrobblerPane : PreferencePane {
 
 }
 

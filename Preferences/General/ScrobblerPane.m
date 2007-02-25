@@ -6,15 +6,15 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import "RemotePane.h"
+#import "ScrobblerPane.h"
 
 
-@implementation RemotePane
+@implementation ScrobblerPane
 
 - (void)awakeFromNib
 {
-	[self setName:@"Remote"];
-	[self setIcon:@"apple_remote"];
+	[self setName:@"Last.fm"];
+	[self setIcon:@"lastfm"];
 }
 
 @end

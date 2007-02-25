@@ -14,6 +14,7 @@
 #import "RemotePane.h"
 #import "UpdatesPane.h"
 #import "OutputPane.h"
+#import "ScrobblerPane.h"
 
 @interface PrefPaneController : NSObject <SS_PreferencePaneProtocol> {
 	IBOutlet HotKeyPane *hotKeyPane;
@@ -21,12 +22,14 @@
 	IBOutlet RemotePane *remotePane;
 	IBOutlet UpdatesPane *updatesPane;
 	IBOutlet OutputPane *outputPane;
+	IBOutlet ScrobblerPane *scrobblerPane;
 }
 
 - (HotKeyPane *)hotKeyPane;
 - (FileDrawerPane *)fileDrawerPane;
 - (RemotePane *)remotePane;
 - (UpdatesPane *)updatesPane;
-- (UpdatesPane *)outputPane;
+- (OutputPane *)outputPane;
+- (ScrobblerPane *)scrobblerPane;
 
 @end

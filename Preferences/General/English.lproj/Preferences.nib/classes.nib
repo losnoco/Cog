@@ -46,6 +46,7 @@
                 hotKeyPane = HotKeyPane; 
                 outputPane = OutputPane; 
                 remotePane = RemotePane; 
+                scrobblerPane = ScrobblerPane; 
                 updatesPane = UpdatesPane; 
             }; 
             SUPERCLASS = NSObject; 
@@ -63,6 +64,7 @@
             OUTLETS = {onlyOnActive = NSButton; }; 
             SUPERCLASS = PreferencePane; 
         }, 
+        {CLASS = ScrobblerPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }, 
         {CLASS = UpdatesPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }
     ); 
     IBVersion = 1; 
