@@ -16,6 +16,8 @@
 		playbackStatus = kCogStatusStopped;
 		
 		showTimeRemaining = NO;
+		
+		scrobbler = [[AudioScrobbler alloc] init];
 	}
 	
 	return self;
@@ -50,12 +52,21 @@
 {
 //	DBLog(@"Pause Sent!");
 	[audioPlayer pause];
+	
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
+		[scrobbler pause];
+	}
 }
 
 - (IBAction)resume:(id)sender
 {
 //	DBLog(@"Resume Sent!");
 	[audioPlayer resume];
+
+	
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
+		[scrobbler resume];
+	}
 }
 
 - (IBAction)stop:(id)sender
@@ -63,6 +74,10 @@
 //	DBLog(@"Stop Sent!");
 
 	[audioPlayer stop];
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
+		[scrobbler stop];
+	}
 }
 
 //called by double-clicking on table
@@ -81,7 +96,7 @@
 	[self playEntryAtIndex:[playlistView selectedRow]];
 }
 
-- (void)playEntry:(PlaylistEntry *)pe;
+- (void)playEntry:(PlaylistEntry *)pe
 {
 //	DBLog(@"PlayEntry: %@ Sent!", [pe filename]);
 	if (playbackStatus != kCogStatusStopped)
@@ -95,6 +110,10 @@
 	
 	[audioPlayer play:[NSURL fileURLWithPath:[pe filename]] withUserInfo:pe];
 	[audioPlayer setVolume:currentVolume];
+	
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
+		[scrobbler start:pe];
+	}
 }
 
 - (IBAction)next:(id)sender
@@ -264,6 +283,9 @@
 
 	[self updateTimeField:0.0f];
 	
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
+		[scrobbler start:pe];
+	}
 }
 
 - (void)updatePosition:(id)sender

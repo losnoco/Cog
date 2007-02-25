@@ -25,15 +25,13 @@
 // Listen to the remote in exclusive mode, only when Cog is the active application
 - (void)applicationDidBecomeActive:(NSNotification *)notification
 {
-	BOOL onlyOnActive = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"remoteOnlyOnActive"] boolValue];
-	if (onlyOnActive) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"]) {
 		[remote startListening: self];
 	}
 }
 - (void)applicationDidResignActive:(NSNotification *)motification
 {
-	BOOL onlyOnActive = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"remoteOnlyOnActive"] boolValue];
-	if (onlyOnActive) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"]) {
 		[remote stopListening: self];
 	}
 }
@@ -204,7 +202,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[self registerHotKeys];
 	
 	//Init Remote
-	if (![[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"remoteOnlyOnActive"] boolValue]) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"] && ![[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"]) {
 		[remote startListening:self];
 	}
 	
@@ -360,17 +358,30 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 	[userDefaultsValuesDict setObject:[@"~/Music" stringByExpandingTildeInPath] forKey:@"fileDrawerRootPath"];
 
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteEnabled"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteOnlyOnActive"];
+
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"enableAudioScrobbler"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"automaticallyLaunchLastFM"];
 
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
-
+	
+	//Add observers
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyPlayKeyCode"		options:0 context:nil];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyPreviousKeyCode"	options:0 context:nil];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyNextKeyCode"		options:0 context:nil];
 
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileDrawerRootPath"		options:0 context:nil];
+
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileDrawerRootPath"		options:0 context:nil];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileDrawerRootPath"		options:0 context:nil];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileDrawerRootPath"		options:0 context:nil];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileDrawerRootPath"		options:0 context:nil];
+
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.remoteEnabled"			options:0 context:nil];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.remoteOnlyOnActive"		options:0 context:nil];
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath
@@ -390,16 +401,22 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	else if ([keyPath isEqualToString:@"values.fileDrawerRootPath"]) {
 		[fileTreeController setRootPath:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"]];
 	}
-	else if ([keyPath isEqualToString:@"values.remoteOnlyOnActive"]) {
-		BOOL onlyOnActive = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"remoteOnlyOnActive"] boolValue];
-		if (!onlyOnActive || [NSApp isActive]) {
-			[remote startListening: self];
+	else if ([keyPath isEqualToString:@"values.remoteEnabled"] || [keyPath isEqualToString:@"values.remoteOnlyOnActive"]) {
+		if([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"]) {
+			NSLog(@"Remote enabled...");
+			BOOL onlyOnActive = [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"];
+			if (!onlyOnActive || [NSApp isActive]) {
+				[remote startListening: self];
+			}
+			if (onlyOnActive && ![NSApp isActive]) { //Setting a preference without being active? *shrugs*
+				[remote stopListening: self]; 
+			}
 		}
-		if (onlyOnActive && ![NSApp isActive]) { //Setting a preference without being active? *shrugs*
+		else {
+			NSLog(@"DISABLE REMOTE");
 			[remote stopListening: self]; 
 		}
 	}
-
 }
 
 - (void)registerHotKeys

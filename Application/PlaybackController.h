@@ -5,6 +5,7 @@
 #import "CogAudio/AudioPlayer.h"
 #import "PlaylistController.h"
 #import "TrackingSlider.h"
+#import "AudioScrobbler.h"
 
 @class PlaylistView;
 
@@ -33,6 +34,8 @@
 	double currentVolume;
 	
 	BOOL showTimeRemaining;
+	
+	AudioScrobbler *scrobbler;
  }
 
 - (IBAction)toggleShowTimeRemaining:(id)sender;
