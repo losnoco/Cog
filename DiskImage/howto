@@ -1,0 +1,23 @@
+1) Create (or modify) a template image that contains all of the files with their final names. Image can be created through Disk Utiliy. The defaults should be good.
+
+2) Make sure the template image is bzip2'ed and named template.dmg.bz2. (The name can be changed in make-release.sh)
+
+3)In make-release.sh:
+  a) Set the VERSION.
+  b) Ensure that the .app folder and the misc files are put in the destination folder. (Including Application link).
+
+4) With the template image mounted:
+  a) Change the name of the template image to have the same name as the final image, which is "Cog $VERSION".
+  b) Copy in a background image to /Volumes/Cog $VERSION/.background/background.png
+  c) Set the background in View->Show View Options. Ensure "This window only" is selected. Use shift+apple+G to type in the path to the background.
+  d) Set custom icons.
+  e) Hide the toolbar and set the size.
+
+5) Eject the image very carefully.
+
+6) Custom icons are copied through applescript in dmg-cog.scrpt. Make sure all files with custom icons have them copied.
+
+7) Run make-release.sh, and hope his noodly appendage looks favourably upon you.
+
+8) When it fails, maybe it'd be easier to just make the image manually.
+
