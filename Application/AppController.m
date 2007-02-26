@@ -213,6 +213,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
+	[playbackController stop:self];
+	
 	//	DBLog(@"QUITTING");
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *folder = @"~/Library/Application Support/Cog/";

@@ -230,6 +230,8 @@
 		177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Vorbis.bundle; path = Plugins/Vorbis/build/Release/Vorbis.bundle; sourceTree = "<group>"; };
 		177FD0330B90CAF40011C3B5 /* WavPack.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = WavPack.bundle; path = Plugins/WavPack/build/Release/WavPack.bundle; sourceTree = "<group>"; };
 		17B61B5D0B90A27F00BC003F /* CogAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CogAudio.framework; path = Audio/build/Release/CogAudio.framework; sourceTree = "<group>"; };
+		17BA97E10B928CD0002180B0 /* NetSocket.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NetSocket.h; sourceTree = "<group>"; };
+		17BA97E20B928CD0002180B0 /* NetSocket.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NetSocket.m; sourceTree = "<group>"; };
 		17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
@@ -381,6 +383,7 @@
 		177EBF770B8BC2A70000BC8C /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				17BA97E00B928CC3002180B0 /* NetSocket */,
 				17D21DF20B8BE86900D1EBDE /* CoreAudioUtils */,
 				177EBF780B8BC2A70000BC8C /* AMRemovableColumnsTableView */,
 				177EBF7D0B8BC2A70000BC8C /* AppleRemote */,
@@ -525,6 +528,15 @@
 				177FD0130B90CAB50011C3B5 /* CoreAudio.bundle */,
 			);
 			name = PlugIns;
+			sourceTree = "<group>";
+		};
+		17BA97E00B928CC3002180B0 /* NetSocket */ = {
+			isa = PBXGroup;
+			children = (
+				17BA97E10B928CD0002180B0 /* NetSocket.h */,
+				17BA97E20B928CD0002180B0 /* NetSocket.m */,
+			);
+			name = NetSocket;
 			sourceTree = "<group>";
 		};
 		17D21DF20B8BE86900D1EBDE /* CoreAudioUtils */ = {
@@ -879,6 +891,7 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/Audio/build/Release\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
@@ -917,6 +930,7 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/Audio/build/Release\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/Audio/build/Debug\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/Audio/build/Release\"";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;
