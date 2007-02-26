@@ -11,6 +11,8 @@
 	self = [super init];
 	if (self)
 	{
+		[self initDefaults];
+	
 		audioPlayer = [[AudioPlayer alloc] init];
 		[audioPlayer setDelegate:self];
 		playbackStatus = kCogStatusStopped;
@@ -21,6 +23,16 @@
 	}
 	
 	return self;
+}
+
+- (void)initDefaults
+{
+	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithBool:YES], @"enableAudioScrobbler",
+		[NSNumber numberWithBool:NO],  @"automaticallyLaunchLastFM",
+		nil];
+		
+	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
 
 - (void)awakeFromNib

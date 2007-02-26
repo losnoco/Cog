@@ -64,7 +64,10 @@ escapeForLastFM(NSString *string)
 		_pluginID = @"tst";
 
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"automaticallyLaunchLastFM"]) {
-			[[NSWorkspace sharedWorkspace] launchApplication:@"Last.fm.app"];
+			NSLog(@"Launching client...");
+		}
+		else {
+			NSLog(@"NOT launching: %i", [[NSUserDefaults standardUserDefaults] boolForKey:@"automaticallyLaunchLastFM"]);
 		}
 		
 		_keepProcessingAudioScrobblerCommands = YES;

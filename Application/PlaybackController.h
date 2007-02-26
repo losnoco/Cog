@@ -56,6 +56,7 @@
 - (IBAction)prev:(id)sender;
 - (IBAction)seek:(id)sender;
 
+- (void)initDefaults;
 
 - (void)updateTimeField:(double)pos;
 
