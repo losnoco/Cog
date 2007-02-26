@@ -203,7 +203,7 @@ escapeForLastFM(NSString *string)
 		@synchronized([myself queue]) {
 			
 			enumerator	= [[myself queue] objectEnumerator];
-			command		= [enumerator nextObject];
+			command		= [[enumerator nextObject] retain];
 		
 			[[myself queue] removeObjectIdenticalTo:command];
 		}
@@ -212,6 +212,8 @@ escapeForLastFM(NSString *string)
 			@try {
 				port = [client connectToHost:@"localhost" port:port];
 				[client send:command];
+
+				[command release];
 
 				response = [client receive];
 				if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)]) {
