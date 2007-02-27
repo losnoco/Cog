@@ -1,5 +1,5 @@
-To compile Cog, you must first compile all of the projects in the Frameworks and Preferences folders with the Release build configuration.
+To compile Cog, you must first compile all of the projects in the Frameworks, Plugins, and Preferences folders with the Release build configuration.
 
-To make this easier, I have created a bash script named build_dependencies.sh in the Scripts folder. Just run that in a terminal from the project root, and when it is finished, all the dependencies should be built.
+To make this easier, I have created a bash script named build_dependencies.sh in the Scripts folder. Just run that in a terminal from the project root (./Scripts/build_dependencies.sh). When it is finished, all the dependencies should be built.
 
 If you have any problems, email me at vspader@users.sourceforge.net

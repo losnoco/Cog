@@ -18,7 +18,7 @@
 @interface FlacDecoder : NSObject <CogDecoder>
 {
 	FLAC__FileDecoder *decoder;
-	char buffer[SAMPLE_BUFFER_SIZE];
+	void *buffer;
 	int bufferAmount;
 	
 	int bitsPerSample;

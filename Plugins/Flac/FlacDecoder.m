@@ -14,23 +14,65 @@
 FLAC__StreamDecoderWriteStatus WriteProc(const FLAC__FileDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const sampleBuffer[], void *client_data)
 {
 	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
-	unsigned wide_samples = frame->header.blocksize;
-	unsigned channels = frame->header.channels;
 	
-	UInt16 *buffer = (UInt16 *)[flacDecoder buffer];
-	int i, j, c;
+	void *buffer = [flacDecoder buffer];
 
-	for (i = j = 0; i < wide_samples; i++)
-	{
-		for (c = 0; c < channels; c++, j++)
-		{
-//			buffer[j] = CFSwapInt16LittleToHost(sampleBuffer[c][i]);
-			buffer[j] = sampleBuffer[c][i];
-		}
+	int8_t  *alias8;
+	int16_t *alias16;
+	int32_t *alias32;
+	int sample, channel;
+	int32_t	audioSample;
+
+    switch(frame->header.bits_per_sample) {
+        case 8:
+            // Interleave the audio (no need for byte swapping)
+            alias8 = buffer;
+            for(sample = 0; sample < frame->header.blocksize; ++sample) {
+                for(channel = 0; channel < frame->header.channels; ++channel) {
+                    *alias8++ = (int8_t)sampleBuffer[channel][sample];
+                }
+            }
+
+            break;
+
+        case 16:
+            // Interleave the audio, converting to big endian byte order
+            alias16 = buffer;
+            for(sample = 0; sample < frame->header.blocksize; ++sample) {
+                for(channel = 0; channel < frame->header.channels; ++channel) {
+                    *alias16++ = (int16_t)OSSwapHostToBigInt16((int16_t)sampleBuffer[channel][sample]);
+                }
+            }
+
+            break;
+
+        case 24:
+            // Interleave the audio (no need for byte swapping)
+            alias8 = buffer;
+            for(sample = 0; sample < frame->header.blocksize; ++sample) {
+                for(channel = 0; channel < frame->header.channels; ++channel) {
+                    audioSample = sampleBuffer[channel][sample];
+                    *alias8++   = (int8_t)(audioSample >> 16);
+                    *alias8++   = (int8_t)(audioSample >> 8);
+                    *alias8++   = (int8_t)audioSample;
+                }
+            }
+
+            break;
+
+        case 32:
+            // Interleave the audio, converting to big endian byte order
+            alias32 = buffer;
+            for(sample = 0; sample < frame->header.blocksize; ++sample) {
+                for(channel = 0; channel < frame->header.channels; ++channel) {
+                    *alias32++ = OSSwapHostToBigInt32(sampleBuffer[channel][sample]);
+                }
+            }
+		default:
+			NSLog(@"Error, unsupported sample size.");
 	}
-	
-//	memcpy([flacDecoder buffer], sampleBuffer, wide_samples*[flacDecoder bitsPerSample]/8);
-	[flacDecoder setBufferAmount:(wide_samples * channels*2)];
+
+	[flacDecoder setBufferAmount:frame->header.blocksize * frame->header.channels * (frame->header.bits_per_sample/8)];
 
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
@@ -84,6 +126,8 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 
 	FLAC__file_decoder_process_until_end_of_metadata(decoder);
 
+	buffer = malloc(SAMPLE_BUFFER_SIZE);
+
 	return YES;
 }
 
@@ -117,7 +161,7 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 	bufferAmount -= count;
 	
 	if (bufferAmount > 0)
-		memmove(buffer, &buffer[count], bufferAmount);
+		memmove((char *)buffer, &((char *)buffer)[count], bufferAmount);
 	
 	if (count < size)
 		numread = [self fillBuffer:(&((char *)buf)[count]) ofSize:(size - count)];
@@ -135,8 +179,13 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 		FLAC__file_decoder_finish(decoder);
 		FLAC__file_decoder_delete(decoder);
 	}
+	if (buffer)
+	{
+		free(buffer);
+	}
+
 	decoder = NULL;
-	
+	buffer = NULL;
 }
 
 - (double)seekToTime:(double)milliseconds
@@ -172,7 +221,7 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:length],@"length",
-		@"host",@"endian",
+		@"big",@"endian",
 		nil];
 }
 
