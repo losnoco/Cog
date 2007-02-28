@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1706814C0B9519A5006BA573 /* growl.png in Resources */ = {isa = PBXBuildFile; fileRef = 1706814B0B9519A5006BA573 /* growl.png */; };
 		172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */ = {isa = PBXBuildFile; fileRef = 172D72AC0B8926CA00D095BB /* apple_remote.png */; };
 		1766C7A80B912A71004A7AE4 /* lastfm.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C7A70B912A71004A7AE4 /* lastfm.png */; };
 		17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C643360B8A77CC00C53518 /* OutputsArrayController.m */; };
@@ -34,6 +35,7 @@
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1706814B0B9519A5006BA573 /* growl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = growl.png; path = Icons/growl.png; sourceTree = "<group>"; };
 		172D72AC0B8926CA00D095BB /* apple_remote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple_remote.png; path = Icons/apple_remote.png; sourceTree = "<group>"; };
 		1766C7A70B912A71004A7AE4 /* lastfm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lastfm.png; path = Icons/lastfm.png; sourceTree = "<group>"; };
 		17C643360B8A77CC00C53518 /* OutputsArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputsArrayController.m; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 		8E07ABD90AAC95AF00A4B32F /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				1706814B0B9519A5006BA573 /* growl.png */,
 				1766C7A70B912A71004A7AE4 /* lastfm.png */,
 				17C643680B8A788000C53518 /* output.png */,
 				8E15A86B0B894768006DC802 /* updates.png */,
@@ -252,6 +255,7 @@
 				8E15A86C0B894768006DC802 /* updates.png in Resources */,
 				17C643690B8A788000C53518 /* output.png in Resources */,
 				1766C7A80B912A71004A7AE4 /* lastfm.png in Resources */,
+				1706814C0B9519A5006BA573 /* growl.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,9 +7,7 @@
 	<key>IBEditorPositions</key>
 	<dict>
 		<key>10</key>
-		<string>562 607 506 102 0 0 1680 1028 </string>
-		<key>102</key>
-		<string>762 667 248 96 0 0 1680 1028 </string>
+		<string>587 659 506 102 0 0 1680 1028 </string>
 		<key>11</key>
 		<string>640 634 400 151 0 0 1680 1028 </string>
 		<key>43</key>
@@ -17,7 +15,7 @@
 		<key>50</key>
 		<string>640 662 400 96 0 0 1680 1028 </string>
 		<key>58</key>
-		<string>614 441 411 101 0 0 1680 1028 </string>
+		<string>634 659 411 101 0 0 1680 1028 </string>
 		<key>85</key>
 		<string>614 652 452 116 0 0 1680 1028 </string>
 	</dict>
@@ -25,13 +23,12 @@
 	<string>446.1</string>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>58</integer>
-		<integer>102</integer>
-		<integer>85</integer>
-		<integer>43</integer>
-		<integer>50</integer>
-		<integer>11</integer>
 		<integer>10</integer>
+		<integer>43</integer>
+		<integer>58</integer>
+		<integer>11</integer>
+		<integer>50</integer>
+		<integer>85</integer>
 	</array>
 	<key>IBSystem Version</key>
 	<string>8L2127</string>

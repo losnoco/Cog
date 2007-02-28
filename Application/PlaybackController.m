@@ -31,7 +31,6 @@
 	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithBool:YES], @"enableAudioScrobbler",
 		[NSNumber numberWithBool:NO],  @"automaticallyLaunchLastFM",
-		[NSNumber numberWithBool:YES],  @"enableGrowlNotifications",
 		nil];
 		
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
@@ -140,15 +139,13 @@
 		[scrobbler start:pe];
 	}
 
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableGrowlNotifications"]) {
-		[GrowlApplicationBridge notifyWithTitle:[pe title]
-									description:[pe artist]
-							   notificationName:@"Stream Changed"
-									   iconData:nil
-									   priority:0 
-									   isSticky:NO 
-								   clickContext:nil];
-	}
+	[GrowlApplicationBridge notifyWithTitle:[pe title]
+								description:[pe artist]
+						   notificationName:@"Stream Changed"
+								   iconData:nil
+								   priority:0 
+								   isSticky:NO 
+							   clickContext:nil];
 }
 
 - (IBAction)next:(id)sender
@@ -322,15 +319,13 @@
 		[scrobbler start:pe];
 	}
 
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableGrowlNotifications"]) {
-		[GrowlApplicationBridge notifyWithTitle:[pe title]
-									description:[pe artist]
-							   notificationName:@"Stream Changed"
-									   iconData:nil
-									   priority:0 
-									   isSticky:NO 
-								   clickContext:nil];
-	}
+	[GrowlApplicationBridge notifyWithTitle:[pe title]
+								description:[pe artist]
+						   notificationName:@"Stream Changed"
+								   iconData:nil
+								   priority:0 
+								   isSticky:NO 
+							   clickContext:nil];
 }
 
 - (void)updatePosition:(id)sender
