@@ -10,7 +10,6 @@
 #import "PlaylistEntry.h"
 #import "Shuffle.h"
 
-#import "CoreAudioUtils.h"
 #import "CogAudio/AudioPlayer.h"
 
 @implementation PlaylistController
