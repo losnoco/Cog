@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1705F1510B8BCB0C00C8B40D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 1705F1420B8BCB0C00C8B40D /* Help */; };
+		170680630B950158006BA573 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
+		170680840B950164006BA573 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */; };
-		1766C6920B911DF1004A7AE4 /* AudioScrobbler.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
-		1766C6940B911DF1004A7AE4 /* AudioScrobblerClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1766C6900B911DF1004A7AE4 /* AudioScrobblerClient.h */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
 		1766C8920B912FB4004A7AE4 /* files_off.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C88A0B912FB4004A7AE4 /* files_off.png */; };
 		1766C8930B912FB4004A7AE4 /* files_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C88B0B912FB4004A7AE4 /* files_on.png */; };
@@ -78,7 +78,6 @@
 		17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */; };
 		17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF80B8A86350009ACB1 /* CoreAudioKit.framework */; };
 		17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5EA50B8A87850009ACB1 /* IOKit.framework */; };
-		17D21DF60B8BE86900D1EBDE /* CoreAudioUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21DF40B8BE86900D1EBDE /* CoreAudioUtils.m */; };
 		17F94CC20B8D08FB00A34E87 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F94CC10B8D08FB00A34E87 /* Sparkle.framework */; };
 		17F94CCD0B8D090800A34E87 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F94CC10B8D08FB00A34E87 /* Sparkle.framework */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
@@ -141,10 +140,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 				17B61B630B90A28100BC003F /* CogAudio.framework in CopyFiles */,
 				17F94CCD0B8D090800A34E87 /* Sparkle.framework in CopyFiles */,
-				1766C6920B911DF1004A7AE4 /* AudioScrobbler.h in CopyFiles */,
-				1766C6940B911DF1004A7AE4 /* AudioScrobblerClient.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,6 +152,7 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1705F1420B8BCB0C00C8B40D /* Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Help; sourceTree = "<group>"; };
+		170680620B950158006BA573 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = ThirdParty/Frameworks/Growl.framework; sourceTree = "<group>"; };
 		171678BD0AC8C39E00C28CF3 /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFolderNode.h; sourceTree = "<group>"; };
 		171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFolderNode.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -235,8 +234,6 @@
 		17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		17BB5CF80B8A86350009ACB1 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = /System/Library/Frameworks/CoreAudioKit.framework; sourceTree = "<absolute>"; };
 		17BB5EA50B8A87850009ACB1 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
-		17D21DF30B8BE86900D1EBDE /* CoreAudioUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioUtils.h; sourceTree = "<group>"; };
-		17D21DF40B8BE86900D1EBDE /* CoreAudioUtils.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CoreAudioUtils.m; sourceTree = "<group>"; };
 		17F94CC10B8D08FB00A34E87 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
@@ -310,6 +307,7 @@
 				17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */,
 				17F94CC20B8D08FB00A34E87 /* Sparkle.framework in Frameworks */,
 				17B61B5E0B90A27F00BC003F /* CogAudio.framework in Frameworks */,
+				170680630B950158006BA573 /* Growl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +332,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				170680620B950158006BA573 /* Growl.framework */,
 				17B61B5D0B90A27F00BC003F /* CogAudio.framework */,
 				17F94CC10B8D08FB00A34E87 /* Sparkle.framework */,
 				8E6889230AAA403C00AD3950 /* Carbon.framework */,
@@ -381,10 +380,8 @@
 		177EBF770B8BC2A70000BC8C /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				17D21DF20B8BE86900D1EBDE /* CoreAudioUtils */,
 				177EBF780B8BC2A70000BC8C /* AMRemovableColumnsTableView */,
 				177EBF7D0B8BC2A70000BC8C /* AppleRemote */,
-				177EBF800B8BC2A70000BC8C /* CoreAudioUtils */,
 				177EBF850B8BC2A70000BC8C /* ImageTextCell */,
 				177EBF880B8BC2A70000BC8C /* KFTypeSelectTableView */,
 				177EBF8B0B8BC2A70000BC8C /* NDHotKeys */,
@@ -411,13 +408,6 @@
 				177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */,
 			);
 			path = AppleRemote;
-			sourceTree = "<group>";
-		};
-		177EBF800B8BC2A70000BC8C /* CoreAudioUtils */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = CoreAudioUtils;
 			sourceTree = "<group>";
 		};
 		177EBF850B8BC2A70000BC8C /* ImageTextCell */ = {
@@ -525,15 +515,6 @@
 				177FD0130B90CAB50011C3B5 /* CoreAudio.bundle */,
 			);
 			name = PlugIns;
-			sourceTree = "<group>";
-		};
-		17D21DF20B8BE86900D1EBDE /* CoreAudioUtils */ = {
-			isa = PBXGroup;
-			children = (
-				17D21DF30B8BE86900D1EBDE /* CoreAudioUtils.h */,
-				17D21DF40B8BE86900D1EBDE /* CoreAudioUtils.m */,
-			);
-			path = CoreAudioUtils;
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
@@ -823,7 +804,6 @@
 				177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */,
 				1770429C0B8BC53600B86321 /* AppController.m in Sources */,
 				1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */,
-				17D21DF60B8BE86900D1EBDE /* CoreAudioUtils.m in Sources */,
 				1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */,
 				1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */,
 			);

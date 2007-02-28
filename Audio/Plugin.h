@@ -1,6 +1,7 @@
 typedef enum 
 {
 	kCogPluginCodec = 1,
+	kCogPluginGeneral
 } PluginType;
 
 @protocol CogPlugin

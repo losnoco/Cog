@@ -2,6 +2,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <Growl/GrowlApplicationBridge.h>
+
 #import "CogAudio/AudioPlayer.h"
 #import "PlaylistController.h"
 #import "TrackingSlider.h"
@@ -9,7 +11,7 @@
 
 @class PlaylistView;
 
-@interface PlaybackController : NSObject
+@interface PlaybackController : NSObject <GrowlApplicationBridgeDelegate>
 {
     IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaylistView *playlistView;

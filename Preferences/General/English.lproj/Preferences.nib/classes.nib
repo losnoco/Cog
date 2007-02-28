@@ -45,9 +45,9 @@
                 fileDrawerPane = FileDrawerPane; 
                 hotKeyPane = HotKeyPane; 
                 outputPane = OutputPane; 
-                remotePane = RemotePane; 
-                scrobblerPane = ScrobblerPane; 
-                updatesPane = UpdatesPane; 
+                remoteView = NSView; 
+                scrobblerView = NSView; 
+                updatesView = NSView; 
             }; 
             SUPERCLASS = NSObject; 
         }, 

@@ -31,24 +31,24 @@
 	return fileDrawerPane;
 }
 
-- (RemotePane *)remotePane
-{
-	return remotePane;
-}
-
-- (UpdatesPane *)updatesPane
-{
-	return updatesPane;
-}
-
 - (OutputPane *)outputPane
 {
 	return outputPane;
 }
 
-- (ScrobblerPane *)scrobblerPane
+- (PreferencePane *)remotePane
 {
-	return scrobblerPane;
+	return [PreferencePane preferencePaneWithView:remoteView name:@"Remote" icon:@"apple_remote"];
+}
+
+- (PreferencePane *)updatesPane
+{
+	return [PreferencePane preferencePaneWithView:updatesView name:@"Updates" icon:@"updates"];
+}
+
+- (PreferencePane *)scrobblerPane
+{
+	return [PreferencePane preferencePaneWithView:scrobblerView name:@"Last.fm" icon:@"lastfm"];
 }
 
 @end

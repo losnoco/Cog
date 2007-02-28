@@ -11,6 +11,19 @@
 
 @implementation PreferencePane
 
++ (PreferencePane *)preferencePaneWithView:(NSView *)v name:(NSString *)n icon:(NSString *)i
+{
+	PreferencePane *pane = [[[PreferencePane alloc] init] autorelease];
+	if (pane)
+	{
+		[pane setView:v];
+		[pane setName:n];
+		[pane setIcon:i];
+	}
+	
+	return pane;
+}
+
 - (NSView *)paneView
 {
 	return view;
@@ -41,11 +54,18 @@
 	return NO;
 }
 
-- (void)setName:(NSString *)s
+- (void)setView:(NSView *)v
 {
-	[s retain];
+	[v retain];
+	[view release];
+	view = v;
+}
+
+- (void)setName:(NSString *)n
+{
+	[n retain];
 	[name release];
-	name = s;
+	name = n;
 }
 
 - (void)setIcon:(NSString *)i

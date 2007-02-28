@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		172D72480B891FEF00D095BB /* RemotePane.m in Sources */ = {isa = PBXBuildFile; fileRef = 172D72470B891FEF00D095BB /* RemotePane.m */; };
 		172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */ = {isa = PBXBuildFile; fileRef = 172D72AC0B8926CA00D095BB /* apple_remote.png */; };
-		1766C73D0B9126E7004A7AE4 /* ScrobblerPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C73C0B9126E7004A7AE4 /* ScrobblerPane.m */; };
 		1766C7A80B912A71004A7AE4 /* lastfm.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C7A70B912A71004A7AE4 /* lastfm.png */; };
 		17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C643360B8A77CC00C53518 /* OutputsArrayController.m */; };
 		17C6433F0B8A783F00C53518 /* OutputPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C6433E0B8A783F00C53518 /* OutputPane.m */; };
@@ -24,7 +22,6 @@
 		8E07ABDC0AAC95BC00A4B32F /* file_drawer.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E07ABDA0AAC95BC00A4B32F /* file_drawer.png */; };
 		8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E07ABDB0AAC95BC00A4B32F /* hot_keys.png */; };
 		8E07AC050AAC968C00A4B32F /* Preferences.nib in Resources */ = {isa = PBXBuildFile; fileRef = 8E07AC030AAC968C00A4B32F /* Preferences.nib */; };
-		8E15A8360B8944C4006DC802 /* UpdatesPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E15A8350B8944C4006DC802 /* UpdatesPane.m */; };
 		8E15A86C0B894768006DC802 /* updates.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E15A86B0B894768006DC802 /* updates.png */; };
 		8E6C12160AACAE4100819171 /* NDHotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C12130AACAE4100819171 /* NDHotKeyControl.m */; };
 		8E6C12170AACAE4100819171 /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C12150AACAE4100819171 /* NDHotKeyEvent.m */; };
@@ -37,11 +34,7 @@
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		172D72460B891FEF00D095BB /* RemotePane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RemotePane.h; sourceTree = "<group>"; };
-		172D72470B891FEF00D095BB /* RemotePane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = RemotePane.m; sourceTree = "<group>"; };
 		172D72AC0B8926CA00D095BB /* apple_remote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple_remote.png; path = Icons/apple_remote.png; sourceTree = "<group>"; };
-		1766C73B0B9126E7004A7AE4 /* ScrobblerPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScrobblerPane.h; sourceTree = "<group>"; };
-		1766C73C0B9126E7004A7AE4 /* ScrobblerPane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ScrobblerPane.m; sourceTree = "<group>"; };
 		1766C7A70B912A71004A7AE4 /* lastfm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lastfm.png; path = Icons/lastfm.png; sourceTree = "<group>"; };
 		17C643360B8A77CC00C53518 /* OutputsArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputsArrayController.m; sourceTree = "<group>"; };
 		17C643370B8A77CC00C53518 /* OutputsArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputsArrayController.h; sourceTree = "<group>"; };
@@ -64,8 +57,6 @@
 		8E07ABDA0AAC95BC00A4B32F /* file_drawer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_drawer.png; path = Icons/file_drawer.png; sourceTree = "<group>"; };
 		8E07ABDB0AAC95BC00A4B32F /* hot_keys.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hot_keys.png; path = Icons/hot_keys.png; sourceTree = "<group>"; };
 		8E07AC040AAC968C00A4B32F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Preferences.nib; sourceTree = "<group>"; };
-		8E15A8340B8944C4006DC802 /* UpdatesPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UpdatesPane.h; sourceTree = "<group>"; };
-		8E15A8350B8944C4006DC802 /* UpdatesPane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = UpdatesPane.m; sourceTree = "<group>"; };
 		8E15A86B0B894768006DC802 /* updates.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = updates.png; path = Icons/updates.png; sourceTree = "<group>"; };
 		8E6C12120AACAE4100819171 /* NDHotKeyControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NDHotKeyControl.h; sourceTree = "<group>"; };
 		8E6C12130AACAE4100819171 /* NDHotKeyControl.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyControl.m; sourceTree = "<group>"; };
@@ -162,14 +153,8 @@
 				8E07AA7F0AAC8EA200A4B32F /* FileDrawerPane.m */,
 				8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */,
 				8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */,
-				172D72460B891FEF00D095BB /* RemotePane.h */,
-				172D72470B891FEF00D095BB /* RemotePane.m */,
-				8E15A8340B8944C4006DC802 /* UpdatesPane.h */,
-				8E15A8350B8944C4006DC802 /* UpdatesPane.m */,
 				17C6433D0B8A783F00C53518 /* OutputPane.h */,
 				17C6433E0B8A783F00C53518 /* OutputPane.m */,
-				1766C73B0B9126E7004A7AE4 /* ScrobblerPane.h */,
-				1766C73C0B9126E7004A7AE4 /* ScrobblerPane.m */,
 			);
 			name = Panes;
 			sourceTree = "<group>";
@@ -284,11 +269,8 @@
 				8E6C12160AACAE4100819171 /* NDHotKeyControl.m in Sources */,
 				8E6C12170AACAE4100819171 /* NDHotKeyEvent.m in Sources */,
 				8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */,
-				172D72480B891FEF00D095BB /* RemotePane.m in Sources */,
-				8E15A8360B8944C4006DC802 /* UpdatesPane.m in Sources */,
 				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
 				17C6433F0B8A783F00C53518 /* OutputPane.m in Sources */,
-				1766C73D0B9126E7004A7AE4 /* ScrobblerPane.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

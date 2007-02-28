@@ -16,6 +16,8 @@
 	NSImage *icon;
 }
 
++ (PreferencePane *)preferencePaneWithView:(NSView *)v name:(NSString *)n icon:(NSString *)i;
+
 - (NSView *)paneView;
 - (NSString *)paneName;
 - (NSImage *)paneIcon;
@@ -24,8 +26,8 @@
 - (BOOL)allowsHorizontalResizing;
 - (BOOL)allowsVerticalResizing;
 
+- (void)setView:(NSView *)v;
 - (void)setName:(NSString *)s;
 - (void)setIcon:(NSString *)i;
-- (void)setToolTip:(NSString *)t;
 
 @end

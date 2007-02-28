@@ -20,6 +20,7 @@
 		showTimeRemaining = NO;
 		
 		scrobbler = [[AudioScrobbler alloc] init];
+		[GrowlApplicationBridge setGrowlDelegate:self];
 	}
 	
 	return self;
@@ -30,9 +31,21 @@
 	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithBool:YES], @"enableAudioScrobbler",
 		[NSNumber numberWithBool:NO],  @"automaticallyLaunchLastFM",
+		[NSNumber numberWithBool:YES],  @"enableGrowlNotifications",
 		nil];
 		
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
+}
+
+- (NSDictionary *) registrationDictionaryForGrowl
+{
+	NSArray *notifications = [NSArray arrayWithObjects:@"Stream Changed", nil];
+	
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+		@"Cog", GROWL_APP_NAME,  
+		notifications, GROWL_NOTIFICATIONS_ALL, 
+		notifications, GROWL_NOTIFICATIONS_DEFAULT,
+		nil];
 }
 
 - (void)awakeFromNib
@@ -40,7 +53,6 @@
 	currentVolume = 100.0;
 	[volumeSlider setDoubleValue:pow(10.0, log10(0.5)/4.0)*[volumeSlider maxValue]];
 }
-
 	
 - (IBAction)playPauseResume:(id)sender
 {
@@ -90,6 +102,7 @@
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler stop];
 	}
+
 }
 
 //called by double-clicking on table
@@ -125,6 +138,16 @@
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler start:pe];
+	}
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableGrowlNotifications"]) {
+		[GrowlApplicationBridge notifyWithTitle:[pe title]
+									description:[pe artist]
+							   notificationName:@"Stream Changed"
+									   iconData:nil
+									   priority:0 
+									   isSticky:NO 
+								   clickContext:nil];
 	}
 }
 
@@ -297,6 +320,16 @@
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler start:pe];
+	}
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableGrowlNotifications"]) {
+		[GrowlApplicationBridge notifyWithTitle:[pe title]
+									description:[pe artist]
+							   notificationName:@"Stream Changed"
+									   iconData:nil
+									   priority:0 
+									   isSticky:NO 
+								   clickContext:nil];
 	}
 }
 
