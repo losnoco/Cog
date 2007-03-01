@@ -30,8 +30,7 @@
 	frequency = vi->rate;
 	NSLog(@"INFO: %i", bitsPerSample);
 	
-	length = 0;
-	//((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
+	length = ((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
 
 	NSLog(@"Ok to go WITH OGG.");
 
