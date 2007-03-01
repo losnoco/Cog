@@ -23,15 +23,17 @@
 	vorbis_info *vi;
 	
 	vi = ov_info(&vorbisRef, -1);
-
+	
 	bitsPerSample = vi->channels * 8;
 	bitrate = (vi->bitrate_nominal/1000.0);
 	channels = vi->channels;
 	frequency = vi->rate;
+	NSLog(@"INFO: %i", bitsPerSample);
+	
+	length = 0;
+	//((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
 
-	length = ((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
-
-//	DBLog(@"Ok to go WITH OGG.");
+	NSLog(@"Ok to go WITH OGG.");
 
 	return YES;
 }
@@ -42,13 +44,15 @@
     int total = 0;
 	
     numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
-    while (total != size && numread > 0)
+    while (total != size && numread != 0)
     {
-		total += numread;
+		if (numread > 0) {
+			total += numread;
 		
+		}
 		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
     }
-	
+
     return total;
 }
 

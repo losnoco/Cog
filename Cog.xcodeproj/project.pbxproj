@@ -53,15 +53,6 @@
 		177EC0530B8BC2FF0000BC8C /* remove_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC03D0B8BC2FF0000BC8C /* remove_gray.png */; };
 		177EC0580B8BC2FF0000BC8C /* volume_high.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0420B8BC2FF0000BC8C /* volume_high.png */; };
 		177EC0590B8BC2FF0000BC8C /* volume_low.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0430B8BC2FF0000BC8C /* volume_low.png */; };
-		177FD0140B90CAB50011C3B5 /* CoreAudio.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD0130B90CAB50011C3B5 /* CoreAudio.bundle */; };
-		177FD0180B90CABF0011C3B5 /* Flac.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD0170B90CABF0011C3B5 /* Flac.bundle */; };
-		177FD01C0B90CAC60011C3B5 /* MAD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD01B0B90CAC60011C3B5 /* MAD.bundle */; };
-		177FD0200B90CACE0011C3B5 /* MonkeysAudio.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD01F0B90CACE0011C3B5 /* MonkeysAudio.bundle */; };
-		177FD0240B90CAD60011C3B5 /* Musepack.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD0230B90CAD60011C3B5 /* Musepack.bundle */; };
-		177FD0280B90CADE0011C3B5 /* Shorten.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD0270B90CADE0011C3B5 /* Shorten.bundle */; };
-		177FD02C0B90CAE50011C3B5 /* TagLib.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD02B0B90CAE50011C3B5 /* TagLib.bundle */; };
-		177FD0300B90CAEC0011C3B5 /* Vorbis.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */; };
-		177FD0340B90CAF40011C3B5 /* WavPack.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 177FD0330B90CAF40011C3B5 /* WavPack.bundle */; };
 		177FD1030B90CB5F0011C3B5 /* WavPack.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD0330B90CAF40011C3B5 /* WavPack.bundle */; };
 		177FD1040B90CB5F0011C3B5 /* Vorbis.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */; };
 		177FD1050B90CB5F0011C3B5 /* TagLib.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD02B0B90CAE50011C3B5 /* TagLib.bundle */; };
@@ -739,15 +730,6 @@
 				177EC0580B8BC2FF0000BC8C /* volume_high.png in Resources */,
 				177EC0590B8BC2FF0000BC8C /* volume_low.png in Resources */,
 				1705F1510B8BCB0C00C8B40D /* Help in Resources */,
-				177FD0140B90CAB50011C3B5 /* CoreAudio.bundle in Resources */,
-				177FD0180B90CABF0011C3B5 /* Flac.bundle in Resources */,
-				177FD01C0B90CAC60011C3B5 /* MAD.bundle in Resources */,
-				177FD0200B90CACE0011C3B5 /* MonkeysAudio.bundle in Resources */,
-				177FD0240B90CAD60011C3B5 /* Musepack.bundle in Resources */,
-				177FD0280B90CADE0011C3B5 /* Shorten.bundle in Resources */,
-				177FD02C0B90CAE50011C3B5 /* TagLib.bundle in Resources */,
-				177FD0300B90CAEC0011C3B5 /* Vorbis.bundle in Resources */,
-				177FD0340B90CAF40011C3B5 /* WavPack.bundle in Resources */,
 				1766C8920B912FB4004A7AE4 /* files_off.png in Resources */,
 				1766C8930B912FB4004A7AE4 /* files_on.png in Resources */,
 				1766C8940B912FB4004A7AE4 /* info_off.png in Resources */,
