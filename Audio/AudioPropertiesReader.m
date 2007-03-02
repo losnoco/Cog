@@ -7,6 +7,8 @@
 //
 
 #import "AudioPropertiesReader.h"
+#import "AudioSource.h"
+#import "Plugin.h"
 #import "PluginController.h"
 
 @implementation AudioPropertiesReader
@@ -15,11 +17,19 @@
 {
 	NSString *ext = [[url path] pathExtension];
 	
+	id<CogSource> source = [AudioSource audioSourceForURL:url];
+	if (![source open:url])
+		return nil;
+	
 	NSDictionary *propertiesReaders = [[PluginController sharedPluginController] propertiesReaders];
 	
 	Class propertiesReader = NSClassFromString([propertiesReaders objectForKey:ext]);
 	
-	return [[[[propertiesReader alloc] init] autorelease] propertiesForURL:url];
+	NSDictionary *properties =  [propertiesReader propertiesForSource:source];
+	
+	[source close];
+	
+	return properties;
 
 }
 

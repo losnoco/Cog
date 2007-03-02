@@ -1,0 +1,2 @@
+Changed SourceNode to BufferedSource. It's not really a node.
+Fix all plugins besides ogg vorbis (already fixed), so they use callbacks and the source.

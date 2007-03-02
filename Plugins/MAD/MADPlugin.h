@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
-@interface MusepackCodec : NSObject <CogCodecPlugin>
+@interface MADPlugin : NSObject <CogPlugin>
 {
 
 }

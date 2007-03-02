@@ -8,11 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "PluginController.h"
+#import "Plugin.h"
 
 @interface AudioDecoder : NSObject {
 }
 
-+ audioDecoderForURL:(NSURL *)url;
++ (id<CogDecoder>)audioDecoderForURL:(NSURL *)url;
 
 @end

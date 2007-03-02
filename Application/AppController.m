@@ -144,6 +144,37 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 //	[panel release];
 }
 
+- (IBAction)addURL:(id)sender
+{
+	[NSApp beginSheet:addURLPanel modalForWindow:mainWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
+}
+
+- (IBAction)addURLSheetOK:(id)sender
+{
+	NSURL *url = [NSURL URLWithString:[urlField stringValue]];
+	
+	PlaylistEntry *pe = [[PlaylistEntry alloc] init];
+	
+	[pe	setURL:url];
+	[pe setIndex:[[playlistController arrangedObjects] count]];
+	[pe setTitle:[urlField stringValue]];
+	
+	[playlistController addObject:pe];
+	
+	[pe release];
+	
+    [NSApp endSheet:addURLPanel];
+    [addURLPanel orderOut:self];
+}
+
+- (IBAction)addURLSheetCancel:(id)sender
+{
+	NSLog(@"GONE!");
+    [NSApp endSheet:addURLPanel];
+    [addURLPanel orderOut:self];
+}
+
+
 - (IBAction)delEntries:(id)sender
 {
 	[playlistController remove:self];

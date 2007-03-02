@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
-@interface FlacCodec : NSObject <CogCodecPlugin>
+@interface VorbisPlugin : NSObject <CogPlugin>
 {
 
 }

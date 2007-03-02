@@ -11,27 +11,12 @@
 
 @implementation TagLibPlugin
 
-- (int)pluginType
++ (NSDictionary *)pluginInfo
 {
-	return kCogPluginCodec;
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+		kCogMetadataReader, [TagLibMetadataReader className],
+		nil
+	];
 }
-
-- (Class)decoder
-{
-	return nil;
-}
-
-- (Class)metadataReader
-{
-	return [TagLibMetadataReader class];
-}
-
-- (Class)propertiesReader
-{
-	return nil;
-}
-
-
-
 
 @end

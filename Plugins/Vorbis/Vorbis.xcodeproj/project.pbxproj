@@ -11,7 +11,8 @@
 		177FCF9E0B90C9530011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCF9D0B90C9530011C3B5 /* Plugin.h */; };
 		179CFDEE0B90C79800C8C4DB /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179CFDED0B90C79800C8C4DB /* Vorbis.framework */; };
 		179CFDF20B90C79A00C8C4DB /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179CFDED0B90C79800C8C4DB /* Vorbis.framework */; };
-		17C93D350B8FDA66008627D6 /* VorbisCodec.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D320B8FDA66008627D6 /* VorbisCodec.m */; };
+		17ADB2480B97944D00257CA2 /* VorbisPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB2460B97944D00257CA2 /* VorbisPlugin.h */; };
+		17ADB2490B97944D00257CA2 /* VorbisPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB2470B97944D00257CA2 /* VorbisPlugin.m */; };
 		17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D340B8FDA66008627D6 /* VorbisDecoder.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -25,6 +26,7 @@
 			files = (
 				179CFDF20B90C79A00C8C4DB /* Vorbis.framework in CopyFiles */,
 				177FCF9E0B90C9530011C3B5 /* Plugin.h in CopyFiles */,
+				17ADB2480B97944D00257CA2 /* VorbisPlugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,8 +40,8 @@
 		1745C2820B90B9F200A6768C /* VorbisPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisPropertiesReader.m; sourceTree = "<group>"; };
 		177FCF9D0B90C9530011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		179CFDED0B90C79800C8C4DB /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = ../../Frameworks/Vorbis/build/Release/Vorbis.framework; sourceTree = SOURCE_ROOT; };
-		17C93D310B8FDA66008627D6 /* VorbisCodec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VorbisCodec.h; sourceTree = "<group>"; };
-		17C93D320B8FDA66008627D6 /* VorbisCodec.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisCodec.m; sourceTree = "<group>"; };
+		17ADB2460B97944D00257CA2 /* VorbisPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VorbisPlugin.h; sourceTree = "<group>"; };
+		17ADB2470B97944D00257CA2 /* VorbisPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisPlugin.m; sourceTree = "<group>"; };
 		17C93D330B8FDA66008627D6 /* VorbisDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VorbisDecoder.h; sourceTree = "<group>"; };
 		17C93D340B8FDA66008627D6 /* VorbisDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisDecoder.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* Vorbis_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vorbis_Prefix.pch; sourceTree = "<group>"; };
@@ -94,8 +96,8 @@
 			isa = PBXGroup;
 			children = (
 				177FCF9D0B90C9530011C3B5 /* Plugin.h */,
-				17C93D310B8FDA66008627D6 /* VorbisCodec.h */,
-				17C93D320B8FDA66008627D6 /* VorbisCodec.m */,
+				17ADB2460B97944D00257CA2 /* VorbisPlugin.h */,
+				17ADB2470B97944D00257CA2 /* VorbisPlugin.m */,
 				17C93D330B8FDA66008627D6 /* VorbisDecoder.h */,
 				17C93D340B8FDA66008627D6 /* VorbisDecoder.m */,
 				1745C2810B90B9F200A6768C /* VorbisPropertiesReader.h */,
@@ -191,9 +193,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17C93D350B8FDA66008627D6 /* VorbisCodec.m in Sources */,
 				17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */,
 				1745C2840B90B9F200A6768C /* VorbisPropertiesReader.m in Sources */,
+				17ADB2490B97944D00257CA2 /* VorbisPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

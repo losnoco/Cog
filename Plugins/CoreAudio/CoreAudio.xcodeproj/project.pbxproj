@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1745C21A0B90B7F800A6768C /* CoreAudioPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1745C2190B90B7F800A6768C /* CoreAudioPropertiesReader.m */; };
+		17ADB19A0B97937600257CA2 /* CoreAudioPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1990B97937600257CA2 /* CoreAudioPlugin.m */; };
 		17C93E740B8FF192008627D6 /* CoreAudioDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93E730B8FF192008627D6 /* CoreAudioDecoder.m */; };
 		17C93EAC0B8FF3CE008627D6 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C93EAB0B8FF3CE008627D6 /* CoreAudio.framework */; };
 		17C93EB30B8FF3E1008627D6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C93EB20B8FF3E1008627D6 /* AudioToolbox.framework */; };
-		17F94E1D0B8D128500A34E87 /* CoreAudioCodec.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F94E1C0B8D128500A34E87 /* CoreAudioCodec.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -22,12 +22,12 @@
 		1745C2180B90B7F800A6768C /* CoreAudioPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioPropertiesReader.h; sourceTree = "<group>"; };
 		1745C2190B90B7F800A6768C /* CoreAudioPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CoreAudioPropertiesReader.m; sourceTree = "<group>"; };
 		177FCFCA0B90C9A10011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
+		17ADB1980B97937600257CA2 /* CoreAudioPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioPlugin.h; sourceTree = "<group>"; };
+		17ADB1990B97937600257CA2 /* CoreAudioPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CoreAudioPlugin.m; sourceTree = "<group>"; };
 		17C93E720B8FF192008627D6 /* CoreAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioDecoder.h; sourceTree = "<group>"; };
 		17C93E730B8FF192008627D6 /* CoreAudioDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CoreAudioDecoder.m; sourceTree = "<group>"; };
 		17C93EAB0B8FF3CE008627D6 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		17C93EB20B8FF3E1008627D6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
-		17F94E1B0B8D128500A34E87 /* CoreAudioCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioCodec.h; sourceTree = "<group>"; };
-		17F94E1C0B8D128500A34E87 /* CoreAudioCodec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreAudioCodec.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* CoreAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudio_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* CoreAudio.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreAudio.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -81,8 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				177FCFCA0B90C9A10011C3B5 /* Plugin.h */,
-				17F94E1B0B8D128500A34E87 /* CoreAudioCodec.h */,
-				17F94E1C0B8D128500A34E87 /* CoreAudioCodec.m */,
+				17ADB1980B97937600257CA2 /* CoreAudioPlugin.h */,
+				17ADB1990B97937600257CA2 /* CoreAudioPlugin.m */,
 				17C93E720B8FF192008627D6 /* CoreAudioDecoder.h */,
 				17C93E730B8FF192008627D6 /* CoreAudioDecoder.m */,
 				1745C2180B90B7F800A6768C /* CoreAudioPropertiesReader.h */,
@@ -178,9 +178,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F94E1D0B8D128500A34E87 /* CoreAudioCodec.m in Sources */,
 				17C93E740B8FF192008627D6 /* CoreAudioDecoder.m in Sources */,
 				1745C21A0B90B7F800A6768C /* CoreAudioPropertiesReader.m in Sources */,
+				17ADB19A0B97937600257CA2 /* CoreAudioPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

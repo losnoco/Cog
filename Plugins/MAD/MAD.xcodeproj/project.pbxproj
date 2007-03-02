@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		170335470B8FC4EE00327265 /* MADDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 170335430B8FC4EE00327265 /* MADDecoder.m */; };
-		170335480B8FC4EE00327265 /* MADCodec.m in Sources */ = {isa = PBXBuildFile; fileRef = 170335450B8FC4EE00327265 /* MADCodec.m */; };
 		177FCEF40B90C8910011C3B5 /* MAD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177FCEF30B90C8910011C3B5 /* MAD.framework */; };
 		177FCEF80B90C8990011C3B5 /* ID3Tag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177FCEF70B90C8990011C3B5 /* ID3Tag.framework */; };
 		177FCF000B90C8A20011C3B5 /* ID3Tag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCEF70B90C8990011C3B5 /* ID3Tag.framework */; };
 		177FCF010B90C8A20011C3B5 /* MAD.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCEF30B90C8910011C3B5 /* MAD.framework */; };
 		177FCFBC0B90C98A0011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFBB0B90C98A0011C3B5 /* Plugin.h */; };
+		17ADB1D20B9793C500257CA2 /* MADPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB1D00B9793C500257CA2 /* MADPlugin.h */; };
+		17ADB1D30B9793C500257CA2 /* MADPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1D10B9793C500257CA2 /* MADPlugin.m */; };
 		17B618AF0B90997E00BC003F /* MADPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B618AD0B90997E00BC003F /* MADPropertiesReader.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -28,6 +29,7 @@
 				177FCF000B90C8A20011C3B5 /* ID3Tag.framework in CopyFiles */,
 				177FCF010B90C8A20011C3B5 /* MAD.framework in CopyFiles */,
 				177FCFBC0B90C98A0011C3B5 /* Plugin.h in CopyFiles */,
+				17ADB1D20B9793C500257CA2 /* MADPlugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,11 +41,11 @@
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		170335420B8FC4EE00327265 /* MADDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MADDecoder.h; sourceTree = "<group>"; };
 		170335430B8FC4EE00327265 /* MADDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MADDecoder.m; sourceTree = "<group>"; };
-		170335440B8FC4EE00327265 /* MADCodec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MADCodec.h; sourceTree = "<group>"; };
-		170335450B8FC4EE00327265 /* MADCodec.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MADCodec.m; sourceTree = "<group>"; };
 		177FCEF30B90C8910011C3B5 /* MAD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MAD.framework; path = ../../Frameworks/MAD/build/Release/MAD.framework; sourceTree = SOURCE_ROOT; };
 		177FCEF70B90C8990011C3B5 /* ID3Tag.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ID3Tag.framework; path = ../../Frameworks/ID3Tag/build/Release/ID3Tag.framework; sourceTree = SOURCE_ROOT; };
 		177FCFBB0B90C98A0011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
+		17ADB1D00B9793C500257CA2 /* MADPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MADPlugin.h; sourceTree = "<group>"; };
+		17ADB1D10B9793C500257CA2 /* MADPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MADPlugin.m; sourceTree = "<group>"; };
 		17B618AC0B90997E00BC003F /* MADPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MADPropertiesReader.h; sourceTree = "<group>"; };
 		17B618AD0B90997E00BC003F /* MADPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MADPropertiesReader.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* MAD_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAD_Prefix.pch; sourceTree = "<group>"; };
@@ -99,8 +101,8 @@
 			isa = PBXGroup;
 			children = (
 				177FCFBB0B90C98A0011C3B5 /* Plugin.h */,
-				170335440B8FC4EE00327265 /* MADCodec.h */,
-				170335450B8FC4EE00327265 /* MADCodec.m */,
+				17ADB1D00B9793C500257CA2 /* MADPlugin.h */,
+				17ADB1D10B9793C500257CA2 /* MADPlugin.m */,
 				170335420B8FC4EE00327265 /* MADDecoder.h */,
 				170335430B8FC4EE00327265 /* MADDecoder.m */,
 				17B618AC0B90997E00BC003F /* MADPropertiesReader.h */,
@@ -198,8 +200,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				170335470B8FC4EE00327265 /* MADDecoder.m in Sources */,
-				170335480B8FC4EE00327265 /* MADCodec.m in Sources */,
 				17B618AF0B90997E00BC003F /* MADPropertiesReader.m in Sources */,
+				17ADB1D30B9793C500257CA2 /* MADPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

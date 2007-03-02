@@ -62,6 +62,8 @@
 		177FD1090B90CB5F0011C3B5 /* MAD.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD01B0B90CAC60011C3B5 /* MAD.bundle */; };
 		177FD10A0B90CB5F0011C3B5 /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD0170B90CABF0011C3B5 /* Flac.bundle */; };
 		177FD10B0B90CB5F0011C3B5 /* CoreAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD0130B90CAB50011C3B5 /* CoreAudio.bundle */; };
+		17ADB4580B979C7C00257CA2 /* FileSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB4450B979C5700257CA2 /* FileSource.bundle */; };
+		17ADB6650B97A97100257CA2 /* HTTPSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB65C0B97A96400257CA2 /* HTTPSource.bundle */; };
 		17B61B5E0B90A27F00BC003F /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B61B5D0B90A27F00BC003F /* CogAudio.framework */; };
 		17B61B630B90A28100BC003F /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17B61B5D0B90A27F00BC003F /* CogAudio.framework */; };
 		17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */; };
@@ -113,6 +115,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				17ADB6650B97A97100257CA2 /* HTTPSource.bundle in CopyFiles */,
+				17ADB4580B979C7C00257CA2 /* FileSource.bundle in CopyFiles */,
 				177FD1030B90CB5F0011C3B5 /* WavPack.bundle in CopyFiles */,
 				177FD1040B90CB5F0011C3B5 /* Vorbis.bundle in CopyFiles */,
 				177FD1050B90CB5F0011C3B5 /* TagLib.bundle in CopyFiles */,
@@ -219,6 +223,8 @@
 		177FD02B0B90CAE50011C3B5 /* TagLib.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TagLib.bundle; path = Plugins/TagLib/build/Release/TagLib.bundle; sourceTree = "<group>"; };
 		177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Vorbis.bundle; path = Plugins/Vorbis/build/Release/Vorbis.bundle; sourceTree = "<group>"; };
 		177FD0330B90CAF40011C3B5 /* WavPack.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = WavPack.bundle; path = Plugins/WavPack/build/Release/WavPack.bundle; sourceTree = "<group>"; };
+		17ADB4450B979C5700257CA2 /* FileSource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FileSource.bundle; path = Plugins/FileSource/build/Release/FileSource.bundle; sourceTree = "<group>"; };
+		17ADB65C0B97A96400257CA2 /* HTTPSource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = HTTPSource.bundle; path = Plugins/HTTPSource/build/Release/HTTPSource.bundle; sourceTree = "<group>"; };
 		17B61B5D0B90A27F00BC003F /* CogAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CogAudio.framework; path = Audio/build/Release/CogAudio.framework; sourceTree = "<group>"; };
 		17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
@@ -495,6 +501,8 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
+				17ADB65C0B97A96400257CA2 /* HTTPSource.bundle */,
+				17ADB4450B979C5700257CA2 /* FileSource.bundle */,
 				177FD0330B90CAF40011C3B5 /* WavPack.bundle */,
 				177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */,
 				177FD02B0B90CAE50011C3B5 /* TagLib.bundle */,

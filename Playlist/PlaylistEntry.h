@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface PlaylistEntry : NSObject {
-	NSString *filename;
+	NSURL *url;
 
 	NSString *artist;
 	NSString *album;
@@ -40,8 +40,8 @@
 -(void)setShuffleIndex:(int)si;
 -(int)shuffleIndex;
 
--(void)setFilename:(NSString *)f;
--(NSString *)filename;
+-(void)setURL:(NSURL *)u;
+-(NSURL *)url;
 -(void)setCurrent:(BOOL) b;
 -(BOOL)current;
 

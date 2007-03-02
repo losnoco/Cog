@@ -11,13 +11,13 @@
 
 @implementation VorbisPropertiesReader
 
-- (NSDictionary *)propertiesForURL:(NSURL *)url
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source
 {
 	NSDictionary *properties;
 	VorbisDecoder *decoder;
 	
 	decoder = [[VorbisDecoder alloc] init];
-	if (![decoder open:url])
+	if (![decoder open:source])
 	{
 		return nil;
 	}
@@ -25,6 +25,7 @@
 	properties = [decoder properties];
 	
 	[decoder close];
+	[decoder release];
 	
 	return properties;
 }

@@ -58,8 +58,7 @@ static PluginController *sharedPluginController = nil;
 - (id)init {
 	self = [super init];
 	if (self) {
-		codecPlugins = [[NSMutableArray alloc] init];
-
+		sources = [[NSMutableDictionary alloc] init];
 		decoders = [[NSMutableDictionary alloc] init];
 		metadataReaders = [[NSMutableDictionary alloc] init];
 		propertiesReaders = [[NSMutableDictionary alloc] init];
@@ -73,7 +72,6 @@ static PluginController *sharedPluginController = nil;
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
 	[self loadPlugins];
-	[self setupPlugins];
 	[self printPluginInfo];
 
 	[pool release];
@@ -99,20 +97,36 @@ static PluginController *sharedPluginController = nil;
 			if (b)
 			{
 				NSLog(@"Loaded bundle: %@", b);
-				id plugin = [[[b principalClass] alloc] init];
+				Class plugin = [b principalClass];
 				NSLog(@"Candidate: %@", plugin);
-				if ([plugin respondsToSelector:@selector(pluginType)])
+				if ([plugin respondsToSelector:@selector(pluginInfo)])
 				{
-					NSLog(@"Responds to selector");
-					switch([plugin pluginType])
-					{
-						case kCogPluginCodec: //Only type currently
-							NSLog(@"Its a codec");
-							[codecPlugins addObject:plugin];
-							break;
-						default:
-							NSLog(@"Unknown plugin type");
-							break;
+					NSLog(@"Responds to selector...");
+					//PluginInfo is a dictionary that contains keys/values like pluginClass,classType...ex: VorbisDecoder, Decoder
+					NSDictionary *pluginInfo = [plugin pluginInfo];
+					NSEnumerator *e = [pluginInfo keyEnumerator];
+					id className;
+					while (className = [e nextObject]) {
+						id pluginType = [pluginInfo objectForKey:className];
+						if ([pluginType isEqualToString:kCogDecoder]) {
+							NSLog(@"DECODER");
+							[self setupDecoder:className];
+						}
+						else if ([pluginType isEqualToString:kCogMetadataReader]) {
+							NSLog(@"Metadata");
+							[self setupMetadataReader:className];
+						}
+						else if ([pluginType isEqualToString:kCogPropertiesReader]) {
+							NSLog(@"Properties");
+							[self setupPropertiesReader:className];
+						}
+						else if ([pluginType isEqualToString:kCogSource]) {
+							NSLog(@"Source");
+							[self setupSource:className];
+						}
+						else {
+							NSLog(@"Unknown plugin type!!");
+						}
 					}
 				}
 			}
@@ -126,55 +140,69 @@ static PluginController *sharedPluginController = nil;
 	[self loadPluginsAtPath:[@"~/Library/Application Support/Cog/Plugins" stringByExpandingTildeInPath]];
 }
 
-- (void)setupInputPlugins
+- (void)setupDecoder:(NSString *)className
 {
-	NSEnumerator *pluginsEnum = [codecPlugins objectEnumerator];
-	id plugin;
-	while (plugin = [pluginsEnum nextObject])
-	{
-		Class decoder = [plugin decoder];
-		Class metadataReader = [plugin metadataReader];
-		Class propertiesReader = [plugin propertiesReader];
-
-		if (decoder) {
-			NSEnumerator *fileTypesEnum = [[decoder fileTypes] objectEnumerator];
-			id fileType;
-			NSString *classString = NSStringFromClass(decoder);
-			while (fileType = [fileTypesEnum nextObject])
-			{
-				[decoders setObject:classString forKey:fileType];
-			}
-		}
-
-		if (metadataReader) {
-			NSEnumerator *fileTypesEnum = [[metadataReader fileTypes] objectEnumerator];
-			id fileType;
-			NSString *classString = NSStringFromClass(metadataReader);
-			while (fileType = [fileTypesEnum nextObject])
-			{
-				[metadataReaders setObject:classString forKey:fileType];
-			}
-		}
-
-		if (propertiesReader) {
-			NSEnumerator *fileTypesEnum = [[propertiesReader fileTypes] objectEnumerator];
-			id fileType;
-			NSString *classString = NSStringFromClass(propertiesReader);
-			while (fileType = [fileTypesEnum nextObject])
-			{
-				[propertiesReaders setObject:classString forKey:fileType];
-			}
+	Class decoder = NSClassFromString(className);
+	if (decoder && [decoder respondsToSelector:@selector(fileTypes)]) {
+		NSEnumerator *fileTypesEnum = [[decoder fileTypes] objectEnumerator];
+		id fileType;
+		while (fileType = [fileTypesEnum nextObject])
+		{
+			[decoders setObject:className forKey:fileType];
 		}
 	}
 }
 
-- (void)setupPlugins {
-	[self setupInputPlugins];
+- (void)setupMetadataReader:(NSString *)className
+{
+	Class metadataReader = NSClassFromString(className);
+	if (metadataReader && [metadataReader respondsToSelector:@selector(fileTypes)]) {
+		NSEnumerator *fileTypesEnum = [[metadataReader fileTypes] objectEnumerator];
+		id fileType;
+		while (fileType = [fileTypesEnum nextObject])
+		{
+			[metadataReaders setObject:className forKey:fileType];
+		}
+	}
+}
+
+- (void)setupPropertiesReader:(NSString *)className
+{
+	Class propertiesReader = NSClassFromString(className);
+	if (propertiesReader && [propertiesReader respondsToSelector:@selector(fileTypes)]) {
+		NSEnumerator *fileTypesEnum = [[propertiesReader fileTypes] objectEnumerator];
+		id fileType;
+		while (fileType = [fileTypesEnum nextObject])
+		{
+			[propertiesReaders setObject:className forKey:fileType];
+		}
+	}
+}
+
+- (void)setupSource:(NSString *)className
+{
+	Class source = NSClassFromString(className);
+	if (source && [source respondsToSelector:@selector(schemes)]) {
+		NSEnumerator *schemeEnum = [[source schemes] objectEnumerator];
+		id scheme;
+		while (scheme = [schemeEnum nextObject])
+		{
+			[sources setObject:className forKey:scheme];
+		}
+	}
 }
 
 - (void)printPluginInfo
 {
-	NSLog(@"Codecs: %@\n\n", codecPlugins);
+	NSLog(@"Sources: %@", sources);
+	NSLog(@"Decoders: %@", decoders);
+	NSLog(@"Metadata Readers: %@", metadataReaders);
+	NSLog(@"Properties Readers: %@", propertiesReaders);
+}
+
+- (NSDictionary *)sources
+{
+	return sources;
 }
 
 - (NSDictionary *)decoders
@@ -182,15 +210,18 @@ static PluginController *sharedPluginController = nil;
 	return decoders;
 }
 
+- (NSDictionary *)propertiesReaders
+{
+	return propertiesReaders;
+}
+
 - (NSDictionary *)metadataReaders
 {
 	return metadataReaders;
 }
 
-- (NSDictionary *)propertiesReaders
-{
-	return propertiesReaders;
-}
+
+
 
 @end
 

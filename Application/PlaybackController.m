@@ -132,7 +132,7 @@
 	
 	[self updateTimeField:0.0f];
 	
-	[audioPlayer play:[NSURL fileURLWithPath:[pe filename]] withUserInfo:pe];
+	[audioPlayer play:[pe url] withUserInfo:pe];
 	[audioPlayer setVolume:currentVolume];
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
@@ -300,8 +300,8 @@
 		[player setNextStream:nil];
 	else
 	{
-		DBLog(@"NEXT SONG: %@", [pe filename]);
-		[player setNextStream:[NSURL fileURLWithPath:[pe filename]] withUserInfo:pe];
+		DBLog(@"NEXT SONG: %@", [pe url]);
+		[player setNextStream:[pe url] withUserInfo:pe];
 	}
 }
 

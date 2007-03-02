@@ -11,14 +11,50 @@
 
 @implementation VorbisDecoder
 
-- (BOOL)open:(NSURL *)url
+size_t sourceRead(void *buf, size_t size, size_t nmemb, void *datasource)
 {
-	inFd = fopen([[url path] UTF8String], "rb");
-	if (inFd == 0)
-		return NO;
+	id source = (id)datasource;
+
+	return [source read:buf amount:(size*nmemb)];
+}
+
+int sourceSeek(void *datasource, ogg_int64_t offset, int whence)
+{
+	id source = (id)datasource;
+	return ([source seek:offset whence:whence] ? 0 : -1);
+}
+
+int sourceClose(void *datasource)
+{
+	id source = (id)datasource;
+	[source close];
+
+	return 0;
+}
+
+long sourceTell(void *datasource)
+{
+	id source = (id)datasource;
+
+	return [source tell];
+}
+
+- (BOOL)open:(id<CogSource>)s
+{
+	source = [s retain];
 	
-	if (ov_open(inFd, &vorbisRef, NULL, 0) != 0)
+	ov_callbacks callbacks = {
+		read_func: sourceRead,
+		seek_func: sourceSeek,
+		close_func: sourceClose,
+		tell_func: sourceTell
+	};
+	
+	if (ov_open_callbacks(source, &vorbisRef, NULL, 0, callbacks) != 0)
+	{
+		NSLog(@"FAILED TO OPEN VORBIS FILE");
 		return NO;
+	}
 	
 	vorbis_info *vi;
 	
@@ -30,9 +66,11 @@
 	frequency = vi->rate;
 	NSLog(@"INFO: %i", bitsPerSample);
 	
-	length = ((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
+	seekable = ov_seekable(&vorbisRef);
+	
+	length = 0.0;//((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
 
-	NSLog(@"Ok to go WITH OGG.");
+	NSLog(@"Ok to go WITH OGG. %i", seekable);
 
 	return YES;
 }
@@ -42,22 +80,34 @@
 	int numread;
     int total = 0;
 	
-    numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
-    while (total != size && numread != 0)
-    {
+    do {
+		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
 		if (numread > 0) {
 			total += numread;
 		
 		}
-		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
-    }
+    } while (total != size && numread != 0);
 
+	if (numread == 0) {
+		char **ptr=ov_comment(&vorbisRef,-1)->user_comments;
+	    vorbis_info *vi=ov_info(&vorbisRef,-1);
+		while(*ptr){
+		  NSLog(@"%s\n",*ptr);
+		  ++ptr;
+		}	
+		NSLog(@"Bitstream is %d channel, %ldHz\n",vi->channels,vi->rate);
+		NSLog(@"Decoded length: %ld samples\n",
+				(long)ov_pcm_total(&vorbisRef,-1));
+		NSLog(@"Encoded by: %s\n\n", ov_comment(&vorbisRef,-1)->vendor);
+		NSLog(@"Spewed out crap...");
+	}
     return total;
 }
 
 - (void)close
 {
 	ov_clear(&vorbisRef);
+	[source release];
 }
 
 - (double)seekToTime:(double)milliseconds
@@ -67,6 +117,10 @@
 	return milliseconds;
 }
 
+- (BOOL) seekable
+{
+	return [source seekable];
+}
 
 - (NSDictionary *)properties
 {

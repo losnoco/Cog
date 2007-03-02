@@ -21,6 +21,9 @@
 	
 	IBOutlet NSPanel *mainWindow;
 	
+	IBOutlet NSPanel *addURLPanel;
+	IBOutlet NSTextField *urlField;
+	
 	IBOutlet NSButton *playButton;
 	IBOutlet NSButton *prevButton;
 	IBOutlet NSButton *nextButton;
@@ -53,6 +56,10 @@
 	AppleRemote *remote;
 	BOOL remoteButtonHeld; /* true as long as the user holds the left,right,plus or minus on the remote control */
 }
+
+- (IBAction)addURL:(id)sender;
+- (IBAction)addURLSheetOK:(id)sender;
+- (IBAction)addURLSheetCancel:(id)sender;
 
 - (IBAction)openFiles:(id)sender;
 - (IBAction)delEntries:(id)sender;

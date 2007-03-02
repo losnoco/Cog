@@ -8,10 +8,11 @@
 
 #import "InputNode.h"
 #import "BufferChain.h"
+#import "Plugin.h"
 
 @implementation InputNode
 
-- (BOOL)open:(NSURL *)url
+- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source
 {
 	NSLog(@"Opening: %@", url);
 	decoder = [AudioDecoder audioDecoderForURL:url];
@@ -21,8 +22,11 @@
 	if (decoder == nil)
 		return NO;
 
-	if (![decoder open:url])
+	if (![decoder open:source])
+	{
+		NSLog(@"Couldn't open decoder...");
 		return NO;
+	}
 
 /*	while (decoder == nil)
 	{
@@ -37,6 +41,7 @@
 	shouldContinue = YES;
 	shouldSeek = NO;
 	
+	NSLog(@"OPENED");
 	return YES;
 }
 

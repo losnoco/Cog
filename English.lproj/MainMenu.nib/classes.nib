@@ -14,6 +14,9 @@
         }, 
         {
             ACTIONS = {
+                addURL = id; 
+                addURLSheetCancel = id; 
+                addURLSheetOK = id; 
                 delEntries = id; 
                 donate = id; 
                 loadPlaylist = id; 
@@ -26,6 +29,7 @@
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                addURLPanel = NSPanel; 
                 fileButton = NSButton; 
                 fileDrawer = NSDrawer; 
                 fileOutlineView = FileOutlineView; 
@@ -49,6 +53,7 @@
                 showTrackColumn = NSMenuItem; 
                 showYearColumn = NSMenuItem; 
                 shuffleButton = NSButton; 
+                urlField = NSTextField; 
             }; 
             SUPERCLASS = NSObject; 
         }, 

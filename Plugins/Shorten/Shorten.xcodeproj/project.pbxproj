@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1745C42F0B90C1DC00A6768C /* ShortenCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C42A0B90C1DC00A6768C /* ShortenCodec.mm */; };
 		1745C4300B90C1DC00A6768C /* ShortenDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C42C0B90C1DC00A6768C /* ShortenDecoder.mm */; };
 		1745C4310B90C1DC00A6768C /* ShortenPropertiesReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C42E0B90C1DC00A6768C /* ShortenPropertiesReader.mm */; };
 		177FCFAD0B90C96B0011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFAC0B90C96B0011C3B5 /* Plugin.h */; };
 		179CFD600B90C6F600C8C4DB /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179CFD5F0B90C6F600C8C4DB /* Shorten.framework */; };
 		179CFD630B90C6F800C8C4DB /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179CFD5F0B90C6F600C8C4DB /* Shorten.framework */; };
+		17ADB2240B97942800257CA2 /* ShortenPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB2220B97942800257CA2 /* ShortenPlugin.h */; };
+		17ADB2250B97942800257CA2 /* ShortenPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB2230B97942800257CA2 /* ShortenPlugin.mm */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -25,6 +26,7 @@
 			files = (
 				179CFD630B90C6F800C8C4DB /* Shorten.framework in CopyFiles */,
 				177FCFAD0B90C96B0011C3B5 /* Plugin.h in CopyFiles */,
+				17ADB2240B97942800257CA2 /* ShortenPlugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -34,14 +36,14 @@
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		1745C4290B90C1DC00A6768C /* ShortenCodec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShortenCodec.h; sourceTree = "<group>"; };
-		1745C42A0B90C1DC00A6768C /* ShortenCodec.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ShortenCodec.mm; sourceTree = "<group>"; };
 		1745C42B0B90C1DC00A6768C /* ShortenDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShortenDecoder.h; sourceTree = "<group>"; };
 		1745C42C0B90C1DC00A6768C /* ShortenDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ShortenDecoder.mm; sourceTree = "<group>"; };
 		1745C42D0B90C1DC00A6768C /* ShortenPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShortenPropertiesReader.h; sourceTree = "<group>"; };
 		1745C42E0B90C1DC00A6768C /* ShortenPropertiesReader.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ShortenPropertiesReader.mm; sourceTree = "<group>"; };
 		177FCFAC0B90C96B0011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		179CFD5F0B90C6F600C8C4DB /* Shorten.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Shorten.framework; path = ../../Frameworks/Shorten/build/Release/Shorten.framework; sourceTree = SOURCE_ROOT; };
+		17ADB2220B97942800257CA2 /* ShortenPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShortenPlugin.h; sourceTree = "<group>"; };
+		17ADB2230B97942800257CA2 /* ShortenPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ShortenPlugin.mm; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* Shorten_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shorten_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Shorten.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Shorten.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -94,8 +96,8 @@
 			isa = PBXGroup;
 			children = (
 				177FCFAC0B90C96B0011C3B5 /* Plugin.h */,
-				1745C4290B90C1DC00A6768C /* ShortenCodec.h */,
-				1745C42A0B90C1DC00A6768C /* ShortenCodec.mm */,
+				17ADB2220B97942800257CA2 /* ShortenPlugin.h */,
+				17ADB2230B97942800257CA2 /* ShortenPlugin.mm */,
 				1745C42B0B90C1DC00A6768C /* ShortenDecoder.h */,
 				1745C42C0B90C1DC00A6768C /* ShortenDecoder.mm */,
 				1745C42D0B90C1DC00A6768C /* ShortenPropertiesReader.h */,
@@ -191,9 +193,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1745C42F0B90C1DC00A6768C /* ShortenCodec.mm in Sources */,
 				1745C4300B90C1DC00A6768C /* ShortenDecoder.mm in Sources */,
 				1745C4310B90C1DC00A6768C /* ShortenPropertiesReader.mm in Sources */,
+				17ADB2250B97942800257CA2 /* ShortenPlugin.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

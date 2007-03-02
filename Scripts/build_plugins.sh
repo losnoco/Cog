@@ -1,6 +1,6 @@
 #!/bin/sh
 
-plugins=( CoreAudio MonkeysAudio Musepack Flac Shorten TagLib Vorbis WavPack MAD )
+plugins=( CoreAudio MonkeysAudio Musepack Flac Shorten TagLib Vorbis WavPack MAD FileSource HTTPSource)
 
 for plugin in "${plugins[@]}"
 do

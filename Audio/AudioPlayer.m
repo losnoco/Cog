@@ -10,7 +10,7 @@
 #import "BufferChain.h"
 #import "OutputNode.h"
 #import "Status.h"
-
+#import "PluginController.h"
 
 
 @implementation AudioPlayer

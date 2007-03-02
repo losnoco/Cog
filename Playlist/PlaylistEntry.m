@@ -18,7 +18,7 @@
 	if (self)
 	{
 		[self setIndex:0];
-		[self setFilename:@""];
+		[self setURL:nil];
 	}
 
 	return self;
@@ -26,7 +26,7 @@
 
 - (void)dealloc
 {
-	[filename release];
+	[url release];
 	
 	[super dealloc];
 }
@@ -62,16 +62,16 @@
 	return displayIdx;
 }
 
--(void)setFilename:(NSString *)f
+-(void)setURL:(NSURL *)u
 {
-	f = [f copy];
-	[filename release];
-	filename = f;
+	[u retain];
+	[url release];
+	url = u;
 }
 
--(NSString *)filename
+-(NSURL *)url
 {
-	return filename;
+	return url;
 }
 
 -(void)setCurrent:(BOOL) b
@@ -177,7 +177,7 @@
 
 - (void)readInfoThreaded
 {
-	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:[NSURL fileURLWithPath:filename]];
+	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:url];
 
 	[self performSelectorOnMainThread:@selector(readInfoThreadedSetVariables:) withObject:properties waitUntilDone:YES];
 }
@@ -245,7 +245,7 @@
 	NSString *ti = [m objectForKey:@"title"];
 
 	if ([ti isEqualToString:@""]) {
-		[self setTitle:[filename lastPathComponent]];
+		[self setTitle:[[url path] lastPathComponent]];
 	}
 	else {
 		[self setTitle:[m objectForKey:@"title"]];
@@ -260,7 +260,7 @@
 
 - (void)readTagsThreaded
 {
-	NSDictionary *metadata = [AudioMetadataReader metadataForURL:[NSURL fileURLWithPath:filename]];
+	NSDictionary *metadata = [AudioMetadataReader metadataForURL:url];
 	
 	[self performSelectorOnMainThread:@selector(readTagsThreadedSetVariables:) withObject:metadata	waitUntilDone:YES];
 
@@ -268,7 +268,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)",idx, filename];
+	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)",idx, url];
 }
 
 @end

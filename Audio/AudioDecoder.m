@@ -8,10 +8,11 @@
 
 #import "AudioDecoder.h"
 
+#import "PluginController.h"
 
 @implementation AudioDecoder
 
-+ audioDecoderForURL:(NSURL *)url
++ (id<CogDecoder>) audioDecoderForURL:(NSURL *)url
 {
 	NSString *ext = [[url path] pathExtension];
 	

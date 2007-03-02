@@ -122,7 +122,7 @@
 	{
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 		
-		[pe	setFilename:[sortedFiles objectAtIndex:i]];
+		[pe	setURL:[NSURL fileURLWithPath:[sortedFiles objectAtIndex:i]]];
 		[pe setIndex:index+i];
 		[pe setTitle:[[sortedFiles objectAtIndex:i] lastPathComponent]];
 //		[pe performSelectorOnMainThread:@selector(readTags) withObject:nil waitUntilDone:NO];
@@ -365,7 +365,7 @@
 		
 - (IBAction)sortByPath:(id)sender
 {
-	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"filename" ascending:YES selector:@selector(compare:)];
+	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"url" ascending:YES selector:@selector(compare:)];
 	
 	[self setSortDescriptors:[NSArray arrayWithObject:s]];
 	[self rearrangeObjects];
@@ -621,7 +621,7 @@
 		BOOL found = NO;
 		for (i = 1; i < [shuffleList count]; i++)
 		{
-			if (found == NO && [[shuffleList objectAtIndex:i] filename] == [currentEntry filename])
+			if (found == NO && [[shuffleList objectAtIndex:i] url] == [currentEntry url])
 			{
 				found = YES;
 				[shuffleList removeObjectAtIndex:i];
@@ -696,7 +696,7 @@
 	enumerator = [[self content] objectEnumerator];
 	while (entry = [enumerator nextObject])
 	{
-		[filenames addObject:[entry filename]];
+		[filenames addObject:[[entry url] path]];
 	}
 	
 	fileContents = [filenames componentsJoinedByString:@"\n"];
@@ -741,7 +741,7 @@
 		return;
 	
 	PlaylistEntry* curr = [self entryAtIndex:[self selectionIndex]];
-	[ws selectFile:[curr filename] inFileViewerRootedAtPath:[curr filename]];
+	[ws selectFile:[[curr url] path] inFileViewerRootedAtPath:[[curr url] path]];
 }
 
 - (void)handlePlaylistViewHeaderNotification:(NSNotification*)notif

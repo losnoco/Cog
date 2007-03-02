@@ -10,9 +10,12 @@
 
 #import "InputNode.h"
 #import "ConverterNode.h"
+#import "sourceNode.h"
+
 #import "AudioPlayer.h"
 
 @interface BufferChain : NSObject {
+	SourceNode *sourceNode;
 	InputNode *inputNode;
 	ConverterNode *converterNode;
 	
@@ -37,6 +40,7 @@
 - (void)setUserInfo:(id)i;
 
 - (NSURL *)streamURL;
+- (void)setStreamURL:(NSURL *)url;
 
 - (void)setShouldContinue:(BOOL)s;
 

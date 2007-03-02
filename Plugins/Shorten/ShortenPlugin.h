@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
-@interface MADCodec : NSObject <CogCodecPlugin>
+@interface ShortenPlugin : NSObject <CogPlugin>
 {
 
 }

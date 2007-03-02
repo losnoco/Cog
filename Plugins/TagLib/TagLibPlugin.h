@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
-@interface TagLibPlugin : NSObject <CogCodecPlugin>
+@interface TagLibPlugin : NSObject <CogPlugin>
 {
 
 }

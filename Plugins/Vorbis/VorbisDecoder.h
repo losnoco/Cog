@@ -21,15 +21,19 @@
 
 @interface VorbisDecoder : NSObject <CogDecoder>
 {
-	FILE *inFd;
+	id<CogSource> source;
+
 	OggVorbis_File vorbisRef;
 	int currentSection;
 	
+	BOOL seekable;
 	int bitsPerSample;
 	int bitrate;
 	int channels;
 	float frequency;
 	double length;
 }
+
+
 
 @end
