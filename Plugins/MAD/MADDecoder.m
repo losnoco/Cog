@@ -272,7 +272,10 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 	bitrate /= 1000;
 
 	[_source seek:0 whence:SEEK_SET];
-	
+
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+
 	return frames != 0;	
 }
 

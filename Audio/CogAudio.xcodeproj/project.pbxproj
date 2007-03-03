@@ -17,8 +17,6 @@
 		17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C940220B900909008627D6 /* AudioMetadataReader.m */; };
 		17D21CA10B8BE4BA00D1EBDE /* BufferChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C760B8BE4BA00D1EBDE /* BufferChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CA20B8BE4BA00D1EBDE /* BufferChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21C770B8BE4BA00D1EBDE /* BufferChain.m */; };
-		17D21CA30B8BE4BA00D1EBDE /* ConverterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C780B8BE4BA00D1EBDE /* ConverterNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D21CA40B8BE4BA00D1EBDE /* ConverterNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21C790B8BE4BA00D1EBDE /* ConverterNode.m */; };
 		17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C7A0B8BE4BA00D1EBDE /* InputNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21C7B0B8BE4BA00D1EBDE /* InputNode.m */; };
 		17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C7C0B8BE4BA00D1EBDE /* Node.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -46,6 +44,8 @@
 		17F94DD60B8D0F7000A34E87 /* PluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.m */; };
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		8EC1225F0B993BD500C5B3AD /* Converter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC1225D0B993BD500C5B3AD /* Converter.h */; };
+		8EC122600B993BD500C5B3AD /* Converter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC1225E0B993BD500C5B3AD /* Converter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,8 +74,6 @@
 		17C940220B900909008627D6 /* AudioMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioMetadataReader.m; sourceTree = "<group>"; };
 		17D21C760B8BE4BA00D1EBDE /* BufferChain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BufferChain.h; sourceTree = "<group>"; };
 		17D21C770B8BE4BA00D1EBDE /* BufferChain.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = BufferChain.m; sourceTree = "<group>"; };
-		17D21C780B8BE4BA00D1EBDE /* ConverterNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ConverterNode.h; sourceTree = "<group>"; };
-		17D21C790B8BE4BA00D1EBDE /* ConverterNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ConverterNode.m; sourceTree = "<group>"; };
 		17D21C7A0B8BE4BA00D1EBDE /* InputNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InputNode.h; sourceTree = "<group>"; };
 		17D21C7B0B8BE4BA00D1EBDE /* InputNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = InputNode.m; sourceTree = "<group>"; };
 		17D21C7C0B8BE4BA00D1EBDE /* Node.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
@@ -105,6 +103,8 @@
 		32DBCF5E0370ADEE00C91783 /* CogAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogAudio_Prefix.pch; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8EC1225D0B993BD500C5B3AD /* Converter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Converter.h; sourceTree = "<group>"; };
+		8EC1225E0B993BD500C5B3AD /* Converter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Converter.m; sourceTree = "<group>"; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -213,8 +213,8 @@
 			children = (
 				17D21C760B8BE4BA00D1EBDE /* BufferChain.h */,
 				17D21C770B8BE4BA00D1EBDE /* BufferChain.m */,
-				17D21C780B8BE4BA00D1EBDE /* ConverterNode.h */,
-				17D21C790B8BE4BA00D1EBDE /* ConverterNode.m */,
+				8EC1225D0B993BD500C5B3AD /* Converter.h */,
+				8EC1225E0B993BD500C5B3AD /* Converter.m */,
 				17D21C7A0B8BE4BA00D1EBDE /* InputNode.h */,
 				17D21C7B0B8BE4BA00D1EBDE /* InputNode.m */,
 				17D21C7C0B8BE4BA00D1EBDE /* Node.h */,
@@ -288,7 +288,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				17D21CA10B8BE4BA00D1EBDE /* BufferChain.h in Headers */,
-				17D21CA30B8BE4BA00D1EBDE /* ConverterNode.h in Headers */,
 				17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */,
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
@@ -305,6 +304,7 @@
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
 				17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */,
 				17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */,
+				8EC1225F0B993BD500C5B3AD /* Converter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,7 +363,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				17D21CA20B8BE4BA00D1EBDE /* BufferChain.m in Sources */,
-				17D21CA40B8BE4BA00D1EBDE /* ConverterNode.m in Sources */,
 				17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
@@ -378,6 +377,7 @@
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
+				8EC122600B993BD500C5B3AD /* Converter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

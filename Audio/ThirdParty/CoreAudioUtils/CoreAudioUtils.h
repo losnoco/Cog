@@ -21,10 +21,5 @@
 #import <Cocoa/Cocoa.h>
 #import <AudioToolbox/AudioToolbox.h>
 
-// Return an array of valid audio file extensions recognized by Core Audio
-NSArray *	getCoreAudioExtensions();
-
 AudioStreamBasicDescription propertiesToASBD(NSDictionary *properties);
-NSDictionary *ASBDToProperties(AudioStreamBasicDescription asbd);
-
-BOOL hostIsBigEndian();
+//NSDictionary *ASBDToProperties(AudioStreamBasicDescription asbd);

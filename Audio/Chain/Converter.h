@@ -11,21 +11,23 @@
 #import <CoreAudio/AudioHardware.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
-
-#import "Node.h"
-
-@interface ConverterNode : Node {
+@interface Converter : NSObject
+{
 	AudioConverterRef converter;
-	void *callbackBuffer;
+	
+	void *buffer;
+	void *inputBuffer;
+	int inputBufferSize;
 	
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription outputFormat;
 }
 
+- (void *)buffer;
+
 - (void)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat outputFormat:(AudioStreamBasicDescription)outputFormat;
 - (void)cleanUp;
 
-- (void)process;
 - (int)convert:(void *)dest amount:(int)amount;
 
 @end

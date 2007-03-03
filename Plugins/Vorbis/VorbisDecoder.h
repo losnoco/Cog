@@ -22,7 +22,7 @@
 @interface VorbisDecoder : NSObject <CogDecoder>
 {
 	id<CogSource> source;
-
+	
 	OggVorbis_File vorbisRef;
 	int currentSection;
 	int lastSection;

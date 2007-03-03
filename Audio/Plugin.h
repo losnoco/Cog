@@ -28,11 +28,14 @@
 - (void)close;
 @end
 
-@protocol CogDecoder <NSObject>
+@protocol CogDecoder <NSObject> 
 + (NSArray *)fileTypes; //mp3, ogg, etc
 
-- (BOOL)open:(id<CogSource>)source;
+//For KVO
+//- (void)setProperties:(NSDictionary *)p;
 - (NSDictionary *)properties;
+
+- (BOOL)open:(id<CogSource>)source;
 - (BOOL)seekable;
 - (double)seekToTime:(double)time; //time is in milleseconds, should return the time actually seeked to.
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size;

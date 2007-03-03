@@ -23,7 +23,6 @@
 		userInfo = nil;
 
 		inputNode = nil;
-		converterNode = nil;
 	}
 	
 	return self;
@@ -32,12 +31,10 @@
 - (void)buildChain
 {
 	[inputNode release];
-	[converterNode release];
 	
 	inputNode = [[InputNode alloc] initWithController:self previous:nil];
-	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
 
-	finalNode = converterNode;
+	finalNode = inputNode;
 }
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat
@@ -55,13 +52,8 @@
 	}
 	
 
-	if (![inputNode openURL:url withSource:source])
+	if (![inputNode openURL:url withSource:source outputFormat:outputFormat])
 		return NO;
-
-	AudioStreamBasicDescription inputFormat;
-	inputFormat = propertiesToASBD([inputNode properties]);
-	
-	[converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat ];
 	
 	return YES;
 }
@@ -70,8 +62,6 @@
 {
 	DBLog(@"LAUNCHING THREAD FOR INPUT");
 	[inputNode launchThread];
-	DBLog(@"LAUNCHING THREAD FOR CONVERTER");
-	[converterNode launchThread];
 }
 
 - (void)setUserInfo:(id)i
@@ -92,8 +82,6 @@
 	
 	[inputNode release];
 	
-	[converterNode release];
-	
 	[super dealloc];
 }
 
@@ -102,24 +90,16 @@
 	NSLog(@"SEEKING IN BUFFERCHIAN");
 	[inputNode seek:time];
 
-	[[converterNode readLock] lock];
-	[[converterNode writeLock] lock];
-	
 	[[inputNode readLock] lock];
 	[[inputNode writeLock] lock];
 
 	//Signal so its waiting when we unlock
-	[[converterNode semaphore] signal];
 	[[inputNode semaphore] signal];
 	
-	[converterNode resetBuffer];
 	[inputNode resetBuffer];
 	
 	[[inputNode writeLock] unlock];
 	[[inputNode readLock] unlock];
-	
-	[[converterNode writeLock] unlock];
-	[[converterNode readLock] unlock];
 }
 
 - (void)endOfInputReached
@@ -149,7 +129,6 @@
 - (void)setShouldContinue:(BOOL)s
 {
 	[inputNode setShouldContinue:s];
-	[converterNode setShouldContinue:s];
 }
 
 @end

@@ -13,20 +13,25 @@
 #import <AudioUnit/AudioUnit.h>
 
 #import "AudioDecoder.h"
+#import "Converter.h"
 #import "Node.h"
 #import "Plugin.h"
 
 @interface InputNode : Node {
 	id<CogDecoder> decoder;
+	Converter *converter;
+	
+	AudioStreamBasicDescription outputFormat;
 	
 	BOOL shouldSeek;
 	double seekTime;
 }
 
-- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source;
+- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source outputFormat:(AudioStreamBasicDescription)of;
 - (void)process;
 - (NSDictionary *) properties;
 - (void)seek:(double)time;
 
+- (void)registerObservers;
 
 @end

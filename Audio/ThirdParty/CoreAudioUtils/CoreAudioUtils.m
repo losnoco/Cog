@@ -22,32 +22,6 @@
 
 #include <AudioToolbox/AudioFile.h>
 
-// CoreAudio utility function
-static NSArray *sAudioExtensions		= nil;
-
-// Return an array of valid audio file extensions recognized by Core Audio
-NSArray *
-getCoreAudioExtensions()
-{
-	OSStatus			err;
-	UInt32				size;
-	
-	@synchronized(sAudioExtensions) {
-		if(nil == sAudioExtensions) {
-			size	= sizeof(sAudioExtensions);
-			err		= AudioFileGetGlobalInfo(kAudioFileGlobalInfo_AllExtensions, 0, NULL, &size, &sAudioExtensions);
-			if(noErr != err) {
-				return nil;
-			}
-			
-			[sAudioExtensions retain];
-		}
-	}
-	
-	return sAudioExtensions;
-}
-
-
 BOOL hostIsBigEndian()
 {
 #ifdef __BIG_ENDIAN__
