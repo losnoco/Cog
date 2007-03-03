@@ -80,30 +80,31 @@ long sourceTell(void *datasource)
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size
 {
 	int numread;
-    int total = 0;
 	
-    do {
-		lastSection = currentSection;
-		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
-		if (numread > 0) {
-			total += numread;
-		}
-	
-		if (currentSection != lastSection) {
-			vorbis_info *vi;
-			vi = ov_info(&vorbisRef, -1);
-			
-			bitsPerSample = vi->channels * 8;
-			bitrate = (vi->bitrate_nominal/1000.0);
-			channels = vi->channels;
-			frequency = vi->rate;
-			
-			NSLog(@"Format changed...");
-		}
+	if (currentSection != lastSection) {
+		vorbis_info *vi;
+		vi = ov_info(&vorbisRef, -1);
 		
-    } while (total != size && numread != 0);
+		bitsPerSample = vi->channels * 8;
+		bitrate = (vi->bitrate_nominal/1000.0);
+		channels = vi->channels;
+		frequency = vi->rate;
+		
+		NSLog(@"Format changed...");
+		[self willChangeValueForKey:@"properties"];
+		[self didChangeValueForKey:@"properties"];
+		NSLog(@"Done with format change...");
+	}
 
-    return total;
+	lastSection = currentSection;
+	do {		
+		numread = ov_read(&vorbisRef, (char *)buf, size, 0, bitsPerSample/8, 1, &currentSection);
+		if (numread < 0) {
+			NSLog(@"SOME KINDA ERROR!");
+		}
+	} while (numread < 0);
+	
+    return numread;
 }
 
 - (void)close

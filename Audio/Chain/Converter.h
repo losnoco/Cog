@@ -20,6 +20,7 @@
 	//Temporary for callback use
 	void *inputBuffer;
 	int inputBufferSize;
+	BOOL needsReset;
 	//end
 	
 	int outputSize;

@@ -95,12 +95,10 @@
 		}
 		
 		amountRead = [decoder fillBuffer:inputBuffer ofSize:CHUNK_SIZE];
-		
 		amountConverted = [converter convert:inputBuffer amount:amountRead]; //Convert fills in converter buffer, til the next call
 		if (amountConverted <= 0)
 		{
 			endOfStream = YES;
-			DBLog(@"END OF INPUT WAS REACHED");
 			[controller endOfInputReached];
 			break; //eof
 		}
