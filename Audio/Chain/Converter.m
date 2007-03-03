@@ -7,6 +7,7 @@
 //
 
 #import "Converter.h"
+#import "Node.h"
 
 void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 {
@@ -42,37 +43,25 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	return err;
 }
 
-- (int)convert:(void *)input amount:(int)inputSize
+- (int)convert:(int)inputSize
 {	
 	AudioBufferList ioData;
 	UInt32 ioNumberFrames;
-	int outputSize;
+
 	OSStatus err;
 	
-	outputSize = inputSize;
-    UInt32 dataSize = sizeof(outputSize);
-    err = AudioConverterGetProperty(converter,
-									kAudioConverterPropertyCalculateOutputBufferSize,
-									&dataSize,
-									(void*)&outputSize);
-
-	if (buffer != NULL)
-		free(buffer);
-	buffer = malloc(outputSize);
-		
 	ioNumberFrames = outputSize/outputFormat.mBytesPerFrame;
-	ioData.mBuffers[0].mData = buffer;
+	ioData.mBuffers[0].mData = outputBuffer;
 	ioData.mBuffers[0].mDataByteSize = outputSize;
 	ioData.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
 	ioData.mNumberBuffers = 1;
 	
-	inputBuffer = input;
-		inputBufferSize = inputSize;
+	inputBufferSize = inputSize;
 	
 	err = AudioConverterFillComplexBuffer(converter, ACInputProc, self, &ioNumberFrames, &ioData, NULL);
 	if (err == kAudioConverterErr_InvalidInputSize) //It returns insz at EOS at times...so run it again to make sure all data is converted
 	{
-		return [self convert:input amount:inputSize];
+		return [self convert:inputSize];
 	}
 
 	return ioData.mBuffers[0].mDataByteSize;
@@ -104,19 +93,50 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 		}	
 	}
 	
+	outputSize = CHUNK_SIZE;
+	maxInputSize = outputSize;
+    UInt32 dataSize = sizeof(maxInputSize);
+    AudioConverterGetProperty(converter,
+									kAudioConverterPropertyCalculateInputBufferSize,
+									&dataSize,
+									(void*)&maxInputSize);
+	
+	if (outputBuffer)
+		free(outputBuffer);
+	outputBuffer = malloc(outputSize);
+	
+	if (inputBuffer)
+		free(inputBuffer);
+	inputBuffer = malloc(maxInputSize);
+	
 	NSLog(@"Converter setup!");
 
 	PrintStreamDesc(&inf);
 	PrintStreamDesc(&outf);
 }
 
-- (void *)buffer
+- (int)maxInputSize
 {
-	return buffer;
+	return maxInputSize;
+}
+
+- (void *)outputBuffer
+{
+	return outputBuffer;
+}
+
+- (void *)inputBuffer
+{
+	return inputBuffer;
 }
 
 - (void)cleanUp
 {
+	if (inputBuffer)
+		free(inputBuffer);
+	if (outputBuffer)
+		free(outputBuffer);
+	
 	AudioConverterDispose(converter);
 }
 
