@@ -8,7 +8,6 @@
 
 #import "BufferChain.h"
 #import "OutputNode.h"
-#import "SourceNode.h"
 #import "AudioSource.h"
 #import "CoreAudioUtils.h"
 
@@ -23,7 +22,6 @@
 		streamURL = nil;
 		userInfo = nil;
 
-		sourceNode = nil;
 		inputNode = nil;
 		converterNode = nil;
 	}
@@ -33,7 +31,6 @@
 
 - (void)buildChain
 {
-	[sourceNode release]; //Source node is allocated on open..
 	[inputNode release];
 	[converterNode release];
 	
@@ -50,13 +47,6 @@
 	[self buildChain];
 	
 	id<CogSource> source = [AudioSource audioSourceForURL:url];
-	if ([source buffered]) {
-		sourceNode = [[SourceNode alloc] initWithSource:source];
-		source = sourceNode;
-	}
-	else {
-		sourceNode = nil;
-	}
 	
 	if (![source open:url])
 	{
@@ -64,11 +54,6 @@
 		return NO;
 	}
 	
-	if (sourceNode) { //If the source is buffered..
-		DBLog(@"LAUNCHING THREAD FOR SOURCE");
-		[sourceNode launchThread];
-	}
-
 
 	if (![inputNode openURL:url withSource:source])
 		return NO;

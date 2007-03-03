@@ -11,8 +11,6 @@
 		17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A2D3C40B8D1D37000778C4 /* AudioDecoder.m */; };
 		17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 17ADB13A0B97926D00257CA2 /* AudioSource.h */; };
 		17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB13B0B97926D00257CA2 /* AudioSource.m */; };
-		17ADB1410B97927C00257CA2 /* SourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 17ADB13F0B97927C00257CA2 /* SourceNode.h */; };
-		17ADB1420B97927C00257CA2 /* SourceNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1400B97927C00257CA2 /* SourceNode.m */; };
 		17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 17B6192E0B909BC300BC003F /* AudioPropertiesReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B6192F0B909BC300BC003F /* AudioPropertiesReader.m */; };
 		17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C940210B900909008627D6 /* AudioMetadataReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -70,8 +68,6 @@
 		17A2D3C40B8D1D37000778C4 /* AudioDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioDecoder.m; sourceTree = "<group>"; };
 		17ADB13A0B97926D00257CA2 /* AudioSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioSource.h; sourceTree = "<group>"; };
 		17ADB13B0B97926D00257CA2 /* AudioSource.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AudioSource.m; sourceTree = "<group>"; };
-		17ADB13F0B97927C00257CA2 /* SourceNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SourceNode.h; sourceTree = "<group>"; };
-		17ADB1400B97927C00257CA2 /* SourceNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SourceNode.m; sourceTree = "<group>"; };
 		17B6192E0B909BC300BC003F /* AudioPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioPropertiesReader.h; sourceTree = "<group>"; };
 		17B6192F0B909BC300BC003F /* AudioPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AudioPropertiesReader.m; sourceTree = "<group>"; };
 		17C940210B900909008627D6 /* AudioMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMetadataReader.h; sourceTree = "<group>"; };
@@ -215,8 +211,6 @@
 		17D21C750B8BE4BA00D1EBDE /* Chain */ = {
 			isa = PBXGroup;
 			children = (
-				17ADB13F0B97927C00257CA2 /* SourceNode.h */,
-				17ADB1400B97927C00257CA2 /* SourceNode.m */,
 				17D21C760B8BE4BA00D1EBDE /* BufferChain.h */,
 				17D21C770B8BE4BA00D1EBDE /* BufferChain.m */,
 				17D21C780B8BE4BA00D1EBDE /* ConverterNode.h */,
@@ -311,7 +305,6 @@
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
 				17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */,
 				17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */,
-				17ADB1410B97927C00257CA2 /* SourceNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,7 +378,6 @@
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
-				17ADB1420B97927C00257CA2 /* SourceNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

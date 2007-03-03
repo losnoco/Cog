@@ -10,12 +10,10 @@
 
 #import "InputNode.h"
 #import "ConverterNode.h"
-#import "sourceNode.h"
 
 #import "AudioPlayer.h"
 
 @interface BufferChain : NSObject {
-	SourceNode *sourceNode;
 	InputNode *inputNode;
 	ConverterNode *converterNode;
 	
