@@ -81,6 +81,7 @@
 - (void)process
 {
 	int amountRead, amountConverted;
+	void *inputBuffer = malloc(CHUNK_SIZE);
 	
 	NSLog(@"Playing file: %i", self);
 	
@@ -93,9 +94,9 @@
 			shouldSeek = NO;
 		}
 		
-		amountRead = [decoder fillBuffer:[converter inputBuffer] ofSize:[converter maxInputSize]];
+		amountRead = [decoder fillBuffer:inputBuffer ofSize:CHUNK_SIZE];
 		
-		amountConverted = [converter convert:amountRead]; //Convert fills in converter buffer, til the next call
+		amountConverted = [converter convert:inputBuffer amount:amountRead]; //Convert fills in converter buffer, til the next call
 		if (amountConverted <= 0)
 		{
 			endOfStream = YES;
@@ -109,6 +110,8 @@
 	
 	[decoder close];
 	[converter cleanUp];
+	
+	free(inputBuffer);
 	
 	NSLog(@"CLOSED: %i", self);
 }

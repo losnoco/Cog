@@ -15,28 +15,24 @@
 {
 	AudioConverterRef converter;
 	
-	void *inputBuffer;
 	void *outputBuffer;
 	
 	//Temporary for callback use
+	void *inputBuffer;
 	int inputBufferSize;
 	//end
 	
 	int outputSize;
-	int maxInputSize;
 	
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription outputFormat;
 }
 
 - (void *)outputBuffer;
-- (void *)inputBuffer;
 
 - (void)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat outputFormat:(AudioStreamBasicDescription)outputFormat;
 - (void)cleanUp;
 
-- (int)convert:(int)amount;
-
-- (int)maxInputSize;
+- (int)convert:(void *)input amount:(int)inputSize;
 
 @end

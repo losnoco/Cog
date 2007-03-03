@@ -35,15 +35,27 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	Converter *converter = (Converter *)inUserData;
 	OSStatus err = noErr;
 
-	ioData->mBuffers[0].mData = converter->inputBuffer;
-	ioData->mBuffers[0].mDataByteSize = converter->inputBufferSize;
-	ioData->mBuffers[0].mNumberChannels = (converter->inputFormat.mChannelsPerFrame);
-	ioData->mNumberBuffers = 1;
+	if (converter->inputBufferSize > 0) {
+		ioData->mBuffers[0].mData = converter->inputBuffer;
+		ioData->mBuffers[0].mDataByteSize = converter->inputBufferSize;
+		ioData->mBuffers[0].mNumberChannels = (converter->inputFormat.mChannelsPerFrame);
+		ioData->mNumberBuffers = 1;
+		
+		*ioNumberDataPackets = converter->inputBufferSize / converter->inputFormat.mBytesPerFrame;
+		
+		converter->inputBufferSize = 0;
+	}
+	else {
+		NSLog(@"RETURNING 0");
+		ioData->mBuffers[0].mData = NULL;
+		ioData->mBuffers[0].mDataByteSize = 0;
+		*ioNumberDataPackets = 0;
+	}
 	
 	return err;
 }
 
-- (int)convert:(int)inputSize
+- (int)convert:(void *)input amount:(int)inputSize
 {	
 	AudioBufferList ioData;
 	UInt32 ioNumberFrames;
@@ -56,12 +68,14 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	ioData.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
 	ioData.mNumberBuffers = 1;
 	
+	inputBuffer = input;
 	inputBufferSize = inputSize;
 	
 	err = AudioConverterFillComplexBuffer(converter, ACInputProc, self, &ioNumberFrames, &ioData, NULL);
 	if (err == kAudioConverterErr_InvalidInputSize) //It returns insz at EOS at times...so run it again to make sure all data is converted
 	{
-		return [self convert:inputSize];
+		NSLog(@"WOAH NELLY THIS SHOULDNT BE A-HAPPENIN");
+//		return [self convert:input amount:inputSize];
 	}
 
 	return ioData.mBuffers[0].mDataByteSize;
@@ -94,20 +108,16 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	}
 	
 	outputSize = CHUNK_SIZE;
-	maxInputSize = outputSize;
-    UInt32 dataSize = sizeof(maxInputSize);
+    UInt32 dataSize = sizeof(outputSize);
     AudioConverterGetProperty(converter,
-									kAudioConverterPropertyCalculateInputBufferSize,
+									kAudioConverterPropertyCalculateOutputBufferSize,
 									&dataSize,
-									(void*)&maxInputSize);
+									(void*)&outputSize);
 	
 	if (outputBuffer)
 		free(outputBuffer);
 	outputBuffer = malloc(outputSize);
 	
-	if (inputBuffer)
-		free(inputBuffer);
-	inputBuffer = malloc(maxInputSize);
 	
 	NSLog(@"Converter setup!");
 
@@ -115,25 +125,14 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	PrintStreamDesc(&outf);
 }
 
-- (int)maxInputSize
-{
-	return maxInputSize;
-}
 
 - (void *)outputBuffer
 {
 	return outputBuffer;
 }
 
-- (void *)inputBuffer
-{
-	return inputBuffer;
-}
-
 - (void)cleanUp
 {
-	if (inputBuffer)
-		free(inputBuffer);
 	if (outputBuffer)
 		free(outputBuffer);
 	
