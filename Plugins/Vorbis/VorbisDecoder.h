@@ -25,6 +25,7 @@
 
 	OggVorbis_File vorbisRef;
 	int currentSection;
+	int lastSection;
 	
 	BOOL seekable;
 	int bitsPerSample;

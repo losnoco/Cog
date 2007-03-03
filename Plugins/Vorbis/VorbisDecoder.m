@@ -81,26 +81,26 @@ long sourceTell(void *datasource)
     int total = 0;
 	
     do {
+		lastSection = currentSection;
 		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
 		if (numread > 0) {
 			total += numread;
-		
 		}
+	
+		if (currentSection != lastSection) {
+			vorbis_info *vi;
+			vi = ov_info(&vorbisRef, -1);
+			
+			bitsPerSample = vi->channels * 8;
+			bitrate = (vi->bitrate_nominal/1000.0);
+			channels = vi->channels;
+			frequency = vi->rate;
+			
+			NSLog(@"Format changed...");
+		}
+		
     } while (total != size && numread != 0);
 
-	if (numread == 0) {
-		char **ptr=ov_comment(&vorbisRef,-1)->user_comments;
-	    vorbis_info *vi=ov_info(&vorbisRef,-1);
-		while(*ptr){
-		  NSLog(@"%s\n",*ptr);
-		  ++ptr;
-		}	
-		NSLog(@"Bitstream is %d channel, %ldHz\n",vi->channels,vi->rate);
-		NSLog(@"Decoded length: %ld samples\n",
-				(long)ov_pcm_total(&vorbisRef,-1));
-		NSLog(@"Encoded by: %s\n\n", ov_comment(&vorbisRef,-1)->vendor);
-		NSLog(@"Spewed out crap...");
-	}
     return total;
 }
 

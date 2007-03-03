@@ -156,9 +156,9 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 	
 	frames = 0;
 	
-	fseek(_inFd, 0, SEEK_END);
-	_fileSize = ftell(_inFd);
-	fseek(_inFd, 0, SEEK_SET);
+	[_source seek:0 whence:SEEK_END];
+	_fileSize = [_source tell];
+	[_source seek:0 whence:SEEK_SET];
 	
 	BOOL done = NO;
 	
@@ -167,7 +167,7 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 		remainder = stream.bufend - stream.next_frame;
 				
 		memcpy (buffer, stream.this_frame, remainder);
-		len = fread(buffer + remainder, 1, BUFFER_SIZE - remainder, _inFd);
+		len = [_source read:buffer + remainder amount:BUFFER_SIZE - remainder];
 		
 		if (len <= 0)
 			break;
@@ -271,24 +271,24 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 
 	bitrate /= 1000;
 
-	fseek(_inFd, 0, SEEK_SET);
+	[_source seek:0 whence:SEEK_SET];
 	
 	return frames != 0;	
 }
 
 
-- (BOOL)open:(NSURL *)url
+- (BOOL)open:(id<CogSource>)source
 {	
+	[source retain];
+	[_source release];
+	_source = source;
+	
 	/* First the structures used by libmad must be initialized. */
 	mad_stream_init(&_stream);
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
 	mad_timer_reset(&_timer);
-	
-	_inFd = fopen([[url path] UTF8String], "r");
-	if (!_inFd)
-		return NO;
-	
+		
 	bitsPerSample = 16;
 	
 	return [self scanFileFast:YES useXing:YES];
@@ -442,7 +442,7 @@ static inline signed int scale (mad_fixed_t sample)
 				remainder = 0;
 			}
 
-			len = fread(_inputBuffer+remainder, 1, INPUT_BUFFER_SIZE-remainder, _inFd);
+			len = [_source read:_inputBuffer+remainder amount:INPUT_BUFFER_SIZE-remainder];
 			if (len <= 0)
 			{
 				eof = YES;
@@ -527,7 +527,7 @@ static inline signed int scale (mad_fixed_t sample)
 
 - (void)close
 {
-	fclose(_inFd);
+	[_source close];
 	
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
@@ -546,7 +546,7 @@ static inline signed int scale (mad_fixed_t sample)
 	mad_timer_set(&_timer, seconds, 0, 0);
 	new_position = ((double) seconds / (double) total_seconds) * _fileSize;
 
-	fseek(_inFd, new_position, SEEK_SET);
+	[_source seek:new_position whence:SEEK_SET];
 	mad_stream_sync(&_stream);
 	_stream.error = MAD_ERROR_BUFLEN;
 	_stream.sync = 0;
@@ -571,6 +571,12 @@ static inline signed int scale (mad_fixed_t sample)
 		@"big", @"endian",
 		nil];
 }
+
+- (BOOL)seekable
+{
+	return [_source seekable];
+}
+
 
 + (NSArray *)fileTypes
 {

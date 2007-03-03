@@ -29,7 +29,7 @@
 	int _outputAvailable;
 	int _fileSize;
 	
-	FILE *_inFd;
+	id<CogSource> _source;
 	
 	BOOL _seekSkip;
 
