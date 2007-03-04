@@ -55,7 +55,6 @@
 		177EC0530B8BC2FF0000BC8C /* remove_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC03D0B8BC2FF0000BC8C /* remove_gray.png */; };
 		177EC0580B8BC2FF0000BC8C /* volume_high.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0420B8BC2FF0000BC8C /* volume_high.png */; };
 		177EC0590B8BC2FF0000BC8C /* volume_low.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0430B8BC2FF0000BC8C /* volume_low.png */; };
-		177FD1030B90CB5F0011C3B5 /* WavPack.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD0330B90CAF40011C3B5 /* WavPack.bundle */; };
 		177FD1040B90CB5F0011C3B5 /* Vorbis.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */; };
 		177FD1050B90CB5F0011C3B5 /* TagLib.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD02B0B90CAE50011C3B5 /* TagLib.bundle */; };
 		177FD1060B90CB5F0011C3B5 /* Shorten.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD0270B90CADE0011C3B5 /* Shorten.bundle */; };
@@ -81,6 +80,7 @@
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
 		8E07AEEA0AACA08100A4B32F /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 8E07AEE90AACA08100A4B32F /* General.preferencePane */; };
 		8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */; };
+		8E2B90320B9B64BD00F2D9E8 /* WavPack.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E2B8F5E0B9B62F800F2D9E8 /* WavPack.bundle */; };
 		8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6889230AAA403C00AD3950 /* Carbon.framework */; };
 		8E75756E09F31D5A0080F1EE /* FeedbackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752509F31D5A0080F1EE /* FeedbackController.m */; };
 		8E75756F09F31D5A0080F1EE /* FeedbackSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752709F31D5A0080F1EE /* FeedbackSocket.m */; };
@@ -115,9 +115,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				8E2B90320B9B64BD00F2D9E8 /* WavPack.bundle in CopyFiles */,
 				17ADB6650B97A97100257CA2 /* HTTPSource.bundle in CopyFiles */,
 				17ADB4580B979C7C00257CA2 /* FileSource.bundle in CopyFiles */,
-				177FD1030B90CB5F0011C3B5 /* WavPack.bundle in CopyFiles */,
 				177FD1040B90CB5F0011C3B5 /* Vorbis.bundle in CopyFiles */,
 				177FD1050B90CB5F0011C3B5 /* TagLib.bundle in CopyFiles */,
 				177FD1060B90CB5F0011C3B5 /* Shorten.bundle in CopyFiles */,
@@ -223,7 +223,6 @@
 		177FD0270B90CADE0011C3B5 /* Shorten.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Shorten.bundle; path = Plugins/Shorten/build/Release/Shorten.bundle; sourceTree = "<group>"; };
 		177FD02B0B90CAE50011C3B5 /* TagLib.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TagLib.bundle; path = Plugins/TagLib/build/Release/TagLib.bundle; sourceTree = "<group>"; };
 		177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Vorbis.bundle; path = Plugins/Vorbis/build/Release/Vorbis.bundle; sourceTree = "<group>"; };
-		177FD0330B90CAF40011C3B5 /* WavPack.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = WavPack.bundle; path = Plugins/WavPack/build/Release/WavPack.bundle; sourceTree = "<group>"; };
 		17ADB4450B979C5700257CA2 /* FileSource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FileSource.bundle; path = Plugins/FileSource/build/Release/FileSource.bundle; sourceTree = "<group>"; };
 		17ADB65C0B97A96400257CA2 /* HTTPSource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = HTTPSource.bundle; path = Plugins/HTTPSource/build/Release/HTTPSource.bundle; sourceTree = "<group>"; };
 		17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -246,6 +245,7 @@
 		8E07AEE90AACA08100A4B32F /* General.preferencePane */ = {isa = PBXFileReference; lastKnownFileType = folder; name = General.preferencePane; path = Preferences/General/build/Release/General.preferencePane; sourceTree = "<group>"; };
 		8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
 		8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
+		8E2B8F5E0B9B62F800F2D9E8 /* WavPack.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = WavPack.bundle; path = Plugins/WavPack/build/Release/WavPack.bundle; sourceTree = "<group>"; };
 		8E6889230AAA403C00AD3950 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8E75751309F31D130080F1EE /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		8E75752409F31D5A0080F1EE /* FeedbackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FeedbackController.h; sourceTree = "<group>"; };
@@ -501,9 +501,9 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
+				8E2B8F5E0B9B62F800F2D9E8 /* WavPack.bundle */,
 				17ADB65C0B97A96400257CA2 /* HTTPSource.bundle */,
 				17ADB4450B979C5700257CA2 /* FileSource.bundle */,
-				177FD0330B90CAF40011C3B5 /* WavPack.bundle */,
 				177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */,
 				177FD02B0B90CAE50011C3B5 /* TagLib.bundle */,
 				177FD0270B90CADE0011C3B5 /* Shorten.bundle */,
