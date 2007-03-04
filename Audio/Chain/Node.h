@@ -10,7 +10,7 @@
 #import "VirtualRingBuffer.h"
 #import "Semaphore.h"
 
-#define BUFFER_SIZE 512 * 1024
+#define BUFFER_SIZE 1024 * 1024
 #define CHUNK_SIZE 16 * 1024
 
 @interface Node : NSObject {
