@@ -68,7 +68,7 @@ long sourceTell(void *datasource)
 	
 	seekable = ov_seekable(&vorbisRef);
 	
-	length = 0.0;//((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
+	length = ((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
 
 	NSLog(@"Ok to go WITH OGG. %i", seekable);
 	[self willChangeValueForKey:@"properties"];
