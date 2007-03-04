@@ -17,9 +17,13 @@
 
 @interface FlacDecoder : NSObject <CogDecoder>
 {
-	FLAC__FileDecoder *decoder;
+	FLAC__StreamDecoder *decoder;
 	void *buffer;
 	int bufferAmount;
+	
+	id<CogSource> source;
+	
+	BOOL endOfStream;
 	
 	int bitsPerSample;
 	int channels;
@@ -27,7 +31,13 @@
 	double length;
 }
 
-- (FLAC__FileDecoder *)decoder;
+- (void)setSource:(id<CogSource>)s;
+- (id<CogSource>)source;
+
+- (void)setEndOfStream:(BOOL)eos;
+- (BOOL)endOfStream;
+
+- (FLAC__StreamDecoder *)decoder;
 - (char *)buffer;
 - (int)bufferAmount;
 - (void)setBufferAmount:(int)amount;

@@ -11,13 +11,13 @@
 
 @implementation FlacPropertiesReader
 
-- (NSDictionary *)propertiesForURL:(NSURL *)url
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source
 {
 	NSDictionary *properties;
 	FlacDecoder *decoder;
 	
 	decoder = [[FlacDecoder alloc] init];
-	if (![decoder open:url])
+	if (![decoder open:source])
 	{
 		return nil;
 	}

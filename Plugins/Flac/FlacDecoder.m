@@ -11,7 +11,74 @@
 
 @implementation FlacDecoder
 
-FLAC__StreamDecoderWriteStatus WriteProc(const FLAC__FileDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const sampleBuffer[], void *client_data)
+FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data)
+{
+	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	*bytes = [[flacDecoder source] read:buffer amount:*bytes];
+	
+	if(*bytes < 0) {
+		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
+	}
+	else if(*bytes == 0) {
+		[flacDecoder setEndOfStream:YES];
+		return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+	}
+	else {
+		return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+	}
+}
+
+FLAC__StreamDecoderSeekStatus SeekCallback(const FLAC__StreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data)
+{
+	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	
+	if(![[flacDecoder source] seek:absolute_byte_offset whence:SEEK_SET])
+		return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
+	else
+		return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
+}
+
+FLAC__StreamDecoderTellStatus TellCallback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data)
+{
+	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+
+	off_t pos;
+	if((pos = [[flacDecoder source] tell]) < 0)
+		return FLAC__STREAM_DECODER_TELL_STATUS_ERROR;
+	else {
+		*absolute_byte_offset = (FLAC__uint64)pos;
+		return FLAC__STREAM_DECODER_TELL_STATUS_OK;
+	}
+}
+
+FLAC__bool EOFCallback(const FLAC__StreamDecoder *decoder, void *client_data)
+{
+	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	
+	return (FLAC__bool)[flacDecoder endOfStream];
+}
+
+FLAC__StreamDecoderLengthStatus LengthCallback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data)
+{
+	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	
+	if ([[flacDecoder source] seekable]) {
+		long currentPos = [[flacDecoder source] tell];
+		
+		[[flacDecoder source] seek:0 whence:SEEK_END];
+		*stream_length = [[flacDecoder source] tell];
+		
+		[[flacDecoder source] seek:currentPos whence:SEEK_SET];
+		
+		return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
+	}
+	else {
+		*stream_length = 0;
+		return FLAC__STREAM_DECODER_LENGTH_STATUS_ERROR;
+	}
+}
+
+FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const sampleBuffer[], void *client_data)
 {
 	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
 	
@@ -77,7 +144,7 @@ FLAC__StreamDecoderWriteStatus WriteProc(const FLAC__FileDecoder *decoder, const
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-void MetadataProc(const FLAC__FileDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data)
+void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data)
 {
 	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
 
@@ -86,45 +153,40 @@ void MetadataProc(const FLAC__FileDecoder *decoder, const FLAC__StreamMetadata *
 	flacDecoder->bitsPerSample = metadata->data.stream_info.bits_per_sample;
 	
 	flacDecoder->length = ((double)metadata->data.stream_info.total_samples*1000.0)/flacDecoder->frequency;
+	
+	[flacDecoder willChangeValueForKey:@"properties"];
+	[flacDecoder didChangeValueForKey:@"properties"];
 }
 
-void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data)
+void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data)
 {
 	//Do nothing?
 }
 
-- (BOOL)open:(NSURL *)url
+- (BOOL)open:(id<CogSource>)s
 {
-	FLAC__bool status;
+	[self setSource:s];
 	
-	decoder = FLAC__file_decoder_new();
+	decoder = FLAC__stream_decoder_new();
 	if (decoder == NULL)
 		return NO;
 		
-	status = FLAC__file_decoder_set_filename(decoder, [[url path] UTF8String]);
-	if (status == false)
+	if (FLAC__stream_decoder_init_stream(decoder,
+										 ReadCallback,
+										 ([source seekable] ? SeekCallback : NULL),
+										 ([source seekable] ? TellCallback : NULL),
+										 ([source seekable] ? LengthCallback : NULL),
+										 ([source seekable] ? EOFCallback : NULL),
+										 WriteCallback,
+										 MetadataCallback,
+										 ErrorCallback,
+										 self
+										 ) != FLAC__STREAM_DECODER_INIT_STATUS_OK)
+	{
 		return NO;
+	}
 	
-	status = FLAC__file_decoder_set_write_callback(decoder, WriteProc);
-	if (status == false)
-		return NO;
-
-	status = FLAC__file_decoder_set_metadata_callback(decoder, MetadataProc);
-	if (status == false)
-		return NO;
-
-	status = FLAC__file_decoder_set_error_callback(decoder, ErrorProc);
-	if (status == false)
-		return NO;
-	
-	status = FLAC__file_decoder_set_client_data(decoder, self);
-	if (status == false)
-		return NO;
-
-	if (FLAC__file_decoder_init(decoder) != FLAC__FILE_DECODER_OK)
-		return NO;
-
-	FLAC__file_decoder_process_until_end_of_metadata(decoder);
+	FLAC__stream_decoder_process_until_end_of_metadata(decoder);
 
 	buffer = malloc(SAMPLE_BUFFER_SIZE);
 
@@ -138,17 +200,12 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 	
 	if (bufferAmount == 0)
 	{
-		int i;
-		if (FLAC__file_decoder_get_state (decoder) == FLAC__FILE_DECODER_END_OF_FILE)
+		if (FLAC__stream_decoder_get_state (decoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
 		{
 			return 0;
 		}
 		
-		i = FLAC__file_decoder_process_single(decoder);// != FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE);
-			//return 0;
-//		[self writeSamplesToBuffer:buffer  fromBuffer:sampleBuffer ofSize:(status*2)];
-//			write callback sets bufferAmount...frickin weird, also sets sampleBuffer
-//		bufferAmount = status*4;
+		FLAC__stream_decoder_process_single(decoder);
 	}
 
 	count = bufferAmount;
@@ -176,8 +233,8 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 {
 	if (decoder)
 	{
-		FLAC__file_decoder_finish(decoder);
-		FLAC__file_decoder_delete(decoder);
+		FLAC__stream_decoder_finish(decoder);
+		FLAC__stream_decoder_delete(decoder);
 	}
 	if (buffer)
 	{
@@ -190,7 +247,7 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 
 - (double)seekToTime:(double)milliseconds
 {
-	FLAC__file_decoder_seek_absolute(decoder, frequency * ((double)milliseconds/1000.0));
+	FLAC__stream_decoder_seek_absolute(decoder, frequency * ((double)milliseconds/1000.0));
 	
 	return milliseconds;
 }
@@ -209,9 +266,35 @@ void ErrorProc(const FLAC__FileDecoder *decoder, FLAC__StreamDecoderErrorStatus 
 	bufferAmount = amount;
 }
 
-- (FLAC__FileDecoder *)decoder
+- (FLAC__StreamDecoder *)decoder
 {
 	return decoder;
+}
+
+- (void)setSource:(id<CogSource>)s
+{
+	[s retain];
+	[source release];
+	source = s;
+}
+- (id<CogSource>)source
+{
+	return source;
+}
+
+- (BOOL)seekable
+{
+	return [source seekable];
+}
+
+- (void)setEndOfStream:(BOOL)eos
+{
+	endOfStream = eos;
+}
+
+- (BOOL)endOfStream
+{
+	return endOfStream;
 }
 
 - (NSDictionary *)properties
