@@ -270,6 +270,8 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 	length = mad_timer_count(_duration, MAD_UNITS_MILLISECONDS);
 
 	bitrate /= 1000;
+	
+	bitsPerSample = 16;
 
 	[_source seek:0 whence:SEEK_SET];
 
@@ -291,10 +293,14 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
 	mad_timer_reset(&_timer);
-		
-	bitsPerSample = 16;
 	
-	return [self scanFileFast:YES useXing:YES];
+	_firstFrame = YES;
+	
+	if ([_source seekable]) {
+		return [self scanFileFast:YES useXing:YES];
+	}
+	NSLog(@"NOT SCANNING FILE!!!");
+	return YES;
 }
 
 
@@ -506,6 +512,18 @@ static inline signed int scale (mad_fixed_t sample)
 
 			continue;
 		}
+		if (_firstFrame && ![_source seekable]) {
+			frequency = _frame.header.samplerate;
+			channels = MAD_NCHANNELS(&_frame.header);
+			bitsPerSample = 16;
+
+			NSLog(@"FORMAT CHANGED: %f", frequency);
+			[self willChangeValueForKey:@"properties"];
+			[self didChangeValueForKey:@"properties"];
+			
+			_firstFrame = NO;
+		}
+			
 		mad_timer_add (&_timer, _frame.header.duration);
 		
 		mad_synth_frame (&_synth, &_frame);

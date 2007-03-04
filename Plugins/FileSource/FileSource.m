@@ -30,7 +30,7 @@
 
 - (BOOL)seekable
 {
-	return YES;
+	return NO;
 }
 
 - (BOOL)seek:(long)position whence:(int)whence

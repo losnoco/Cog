@@ -33,6 +33,8 @@
 	
 	BOOL _seekSkip;
 
+	BOOL _firstFrame;
+	
 	//For gapless playback of mp3s
 	BOOL _gapless;
 	long _currentFrame;

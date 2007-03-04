@@ -15,6 +15,8 @@
 {
 	Socket *_socket;
 	
+	BOOL pastHeader;
+	
 	long byteCount;
 }
 
