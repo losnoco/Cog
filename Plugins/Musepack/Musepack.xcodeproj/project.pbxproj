@@ -11,10 +11,10 @@
 		1745C1A40B90B57400A6768C /* MusepackPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1745C1A20B90B57400A6768C /* MusepackPropertiesReader.m */; };
 		177FCF280B90C8D00011C3B5 /* MPCDec.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177FCF270B90C8D00011C3B5 /* MPCDec.framework */; };
 		177FCF2B0B90C8D20011C3B5 /* MPCDec.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCF270B90C8D00011C3B5 /* MPCDec.framework */; };
-		177FCF390B90C8F10011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCF380B90C8F10011C3B5 /* Plugin.h */; };
 		17ADB2020B9793FF00257CA2 /* MusepackPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB2000B9793FF00257CA2 /* MusepackPlugin.h */; };
 		17ADB2030B9793FF00257CA2 /* MusepackPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB2010B9793FF00257CA2 /* MusepackPlugin.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
+		8E2B8B4B0B9B48D000F2D9E8 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E2B8B4A0B9B48D000F2D9E8 /* Plugin.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,8 +25,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				177FCF2B0B90C8D20011C3B5 /* MPCDec.framework in CopyFiles */,
-				177FCF390B90C8F10011C3B5 /* Plugin.h in CopyFiles */,
 				17ADB2020B9793FF00257CA2 /* MusepackPlugin.h in CopyFiles */,
+				8E2B8B4B0B9B48D000F2D9E8 /* Plugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,12 +41,12 @@
 		1745C1A10B90B57400A6768C /* MusepackPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MusepackPropertiesReader.h; sourceTree = "<group>"; };
 		1745C1A20B90B57400A6768C /* MusepackPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MusepackPropertiesReader.m; sourceTree = "<group>"; };
 		177FCF270B90C8D00011C3B5 /* MPCDec.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MPCDec.framework; path = ../../Frameworks/MPCDec/build/Release/MPCDec.framework; sourceTree = SOURCE_ROOT; };
-		177FCF380B90C8F10011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		17ADB2000B9793FF00257CA2 /* MusepackPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MusepackPlugin.h; sourceTree = "<group>"; };
 		17ADB2010B9793FF00257CA2 /* MusepackPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MusepackPlugin.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* Musepack_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Musepack_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Musepack.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Musepack.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		8E2B8B4A0B9B48D000F2D9E8 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -95,7 +95,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				177FCF380B90C8F10011C3B5 /* Plugin.h */,
+				8E2B8B4A0B9B48D000F2D9E8 /* Plugin.h */,
 				17ADB2000B9793FF00257CA2 /* MusepackPlugin.h */,
 				17ADB2010B9793FF00257CA2 /* MusepackPlugin.m */,
 				170333090B8FB64500327265 /* MusepackDecoder.h */,

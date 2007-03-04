@@ -10,24 +10,75 @@
 
 @implementation MusepackDecoder
 
-- (BOOL)open:(NSURL *)url
+mpc_int32_t ReadProc(void *data, void *ptr, mpc_int32_t size)
 {
-	NSLog(@"Decoder opening...$@", url);
-	inFd = fopen([[url path] UTF8String], "rb");
-	if (inFd == 0)
-		return NO;
+    MusepackDecoder *decoder = (MusepackDecoder *) data;
 	
-	mpc_reader_setup_file_reader(&reader , inFd);
+	return [[decoder source] read:ptr amount:size];
+}
 
+mpc_bool_t SeekProc(void *data, mpc_int32_t offset)
+{
+    MusepackDecoder *decoder = (MusepackDecoder *) data;
+	
+    return [[decoder source] seek:offset whence:SEEK_SET];
+}
+
+mpc_int32_t TellProc(void *data)
+{
+    MusepackDecoder *decoder = (MusepackDecoder *) data;
+	
+    return [[decoder source] tell];
+}
+
+mpc_int32_t GetSizeProc(void *data)
+{
+    MusepackDecoder *decoder = (MusepackDecoder *) data;
+	
+	if ([[decoder source] seekable]) {
+		long currentPos = [[decoder source] tell];
+		
+		[[decoder source] seek:0 whence:SEEK_END];
+		long size = [[decoder source] tell];
+		
+		[[decoder source] seek:currentPos whence:SEEK_SET];
+		
+		return size;
+	}
+	else {
+		return 0;
+	}
+}
+
+mpc_bool_t CanSeekProc(void *data)
+{
+    MusepackDecoder *decoder = (MusepackDecoder *) data;
+	
+	return [[decoder source] seekable];
+}
+
+- (BOOL)open:(id<CogSource>)s
+{
+	[self setSource: s];
+	
+	mpc_reader reader = {
+		read: ReadProc,
+		seek: SeekProc,
+		tell: TellProc,
+		get_size: GetSizeProc,
+		canseek: CanSeekProc
+	};
+	
+	mpc_streaminfo info;
     mpc_streaminfo_init(&info);
-    if (mpc_streaminfo_read(&info, &reader.reader) != ERROR_CODE_OK)
+    if (mpc_streaminfo_read(&info, &reader) != ERROR_CODE_OK)
 	{
         NSLog(@"Not a valid musepack file.");
         return NO;
     }
 	
 	/* instantiate a decoder with our file reader */
-	mpc_decoder_setup(&decoder, &reader.reader);
+	mpc_decoder_setup(&decoder, &reader);
 	if (!mpc_decoder_initialize(&decoder, &info))
 	{
 		NSLog(@"Error initializing decoder.");
@@ -41,6 +92,10 @@
 	length = ((double)mpc_streaminfo_get_length_samples(&info)*1000.0)/frequency;	
 
 	NSLog(@"Length: %lf", length);
+	
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+	
 	return YES;
 }
 
@@ -128,7 +183,7 @@
 
 - (void)close
 {
-	fclose(inFd);
+	[source close];
 }
 
 - (double)seekToTime:(double)milliseconds
@@ -136,6 +191,23 @@
 	mpc_decoder_seek_sample(&decoder, frequency*((double)milliseconds/1000.0));
 	
 	return milliseconds;
+}
+
+- (void)setSource:(id<CogSource>)s
+{
+	[s retain];
+	[source release];
+	source = s;
+}
+
+- (id<CogSource>)source
+{
+	return source;
+}
+
+- (BOOL)seekable
+{
+	return [source seekable];
 }
 
 - (NSDictionary *)properties
@@ -149,6 +221,8 @@
 		@"little",@"endian",
 		nil];
 }
+
+
 
 + (NSArray *)fileTypes
 {

@@ -27,4 +27,7 @@
 	double length;
 }
 
+- (void)setSource:(id<CogSource>)s;
+- (id<CogSource>)source;
+
 @end

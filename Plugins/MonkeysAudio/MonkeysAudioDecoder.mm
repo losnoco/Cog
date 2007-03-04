@@ -16,7 +16,9 @@
 {
 	int n;
 	sourceIO = new SourceIO(s);
-	
+
+	[self setSource:s];
+
 	decompress = CreateIAPEDecompressEx(sourceIO, &n);
 
 	if (decompress == NULL)
@@ -76,6 +78,23 @@
 	return milliseconds;
 }
 
+- (void)setSource:(id<CogSource>)s
+{
+	[s retain];
+	[source release];
+	source = s;
+}
+
+- (id<CogSource>)source
+{
+	return source;
+}
+
+- (BOOL)seekable
+{
+	return [source seekable];
+}
+
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -87,15 +106,10 @@
 		nil];
 }
 
+
 + (NSArray *)fileTypes
 {
 	return [NSArray arrayWithObject:@"ape"];
 }
-
-- (BOOL)seekable
-{
-	return [source seekable];
-}
-
 
 @end

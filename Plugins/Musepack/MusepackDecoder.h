@@ -12,10 +12,8 @@
 
 @interface MusepackDecoder : NSObject <CogDecoder>
 {
-	FILE *inFd;
+	id<CogSource> source;
 	mpc_decoder decoder;
-	mpc_reader_file reader;
-	mpc_streaminfo info;
 
 	char buffer[MPC_FRAME_LENGTH*4];
 	int bufferAmount;
@@ -26,6 +24,7 @@
 }
 - (BOOL)writeSamplesToBuffer:(uint16_t *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer ofSize:(unsigned)p_size;
 
-- (NSDictionary *)properties;
+- (void)setSource:(id<CogSource>)s;
+- (id<CogSource>)source;
 
 @end
