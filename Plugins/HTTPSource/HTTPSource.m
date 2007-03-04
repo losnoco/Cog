@@ -56,49 +56,52 @@
 
 - (int)read:(void *)buffer amount:(int)amount
 {
-	int l = [_socket receive:buffer amount:amount];
-
 	if (!pastHeader) {
-		uint8_t *f = (uint8_t *)strnstr((const char *)buffer, "\r\n\r\n", l);
-		if (f)
-		{
-			pastHeader = YES;
+		const int delimeter_size = 4; //\r\n\r\n
+		
+		int l = [_socket receive:buffer amount:amount];
+		uint8_t *f;
+		while(NULL == (f = (uint8_t *)strnstr((const char *)buffer, "\r\n\r\n", l))) {
+			//Need to check for boundary conditions
+			memmove(buffer, (uint8_t *)buffer + (l - delimeter_size), delimeter_size);
+			l = [_socket receive:((uint8_t *)buffer + delimeter_size) amount:(amount - delimeter_size)];
+		}
+		
+		pastHeader = YES;
 			
-			uint8_t *bufferOffset = f + 4; //\r\n\r\n
-			uint8_t *bufferEnd = (uint8_t *)buffer + l;
-			int amountRemaining = bufferEnd - bufferOffset;
-			
-			/*
-			//For testing only
-			FILE *testFout = fopen("header.raw", "w");
-			fwrite(buffer, 1, bufferOffset - (uint8_t *)buffer, testFout);
-			fclose(testFout);
+		uint8_t *bufferOffset = f + delimeter_size;
+		uint8_t *bufferEnd = (uint8_t *)buffer + l;
+		int amountRemaining = bufferEnd - bufferOffset;
+		
+		/*
+		//For testing only
+		FILE *testFout = fopen("header.raw", "w");
+		fwrite(buffer, 1, bufferOffset - (uint8_t *)buffer, testFout);
+		fclose(testFout);
 
-			testFout = fopen("test.raw", "w");
-			fwrite(bufferOffset, 1, amountRemaining, testFout);
-			fclose(testFout);
-			*/
-			
-			memmove(buffer,bufferOffset, amountRemaining);
-			
-			return amountRemaining + [self read:((uint8_t *)buffer + amountRemaining) amount:(amount - amountRemaining)];
-		}
-		else {
-			//Keep searching for header. Note: NEED TO WATCH BOUNDARY CASES
-			return [self read:buffer amount:amount];
-		}
+		testFout = fopen("test.raw", "w");
+		fwrite(bufferOffset, 1, amountRemaining, testFout);
+		fclose(testFout);
+		*/
+		
+		memmove(buffer,bufferOffset, amountRemaining);
+		
+		return amountRemaining + [self read:((uint8_t *)buffer + amountRemaining) amount:(amount - amountRemaining)];
 	}
+	else {
+		int l = [_socket receive:buffer amount:amount];
 
-	/*
-	//FOR TESTING ONLY
-	FILE *testFout = fopen("test.raw", "a");
-	fwrite(buffer, 1, l, testFout);
-	fclose(testFout);
-	*/
-	if (l > 0)
-		byteCount += l;
+		/*
+		//FOR TESTING ONLY
+		FILE *testFout = fopen("test.raw", "a");
+		fwrite(buffer, 1, l, testFout);
+		fclose(testFout);
+		*/
+		if (l > 0)
+			byteCount += l;
 
-	return l;
+		return l;
+	}
 }
 
 - (void)close
