@@ -59,12 +59,16 @@
 	if (!pastHeader) {
 		const int delimeter_size = 4; //\r\n\r\n
 		
+		FILE *testFout = fopen("header.raw", "w");
+
 		int l = [_socket receive:buffer amount:amount];
 		uint8_t *f;
 		while(NULL == (f = (uint8_t *)strnstr((const char *)buffer, "\r\n\r\n", l))) {
+			NSLog(@"LOOKING FOR HEADER! %i", f);
+			fwrite(buffer, 1,l, testFout);
 			//Need to check for boundary conditions
 			memmove(buffer, (uint8_t *)buffer + (l - delimeter_size), delimeter_size);
-			l = [_socket receive:((uint8_t *)buffer + delimeter_size) amount:(amount - delimeter_size)];
+			l = delimeter_size + [_socket receive:((uint8_t *)buffer + delimeter_size) amount:(amount - delimeter_size)];
 		}
 		
 		pastHeader = YES;
@@ -73,16 +77,15 @@
 		uint8_t *bufferEnd = (uint8_t *)buffer + l;
 		int amountRemaining = bufferEnd - bufferOffset;
 		
-		/*
+		
 		//For testing only
-		FILE *testFout = fopen("header.raw", "w");
 		fwrite(buffer, 1, bufferOffset - (uint8_t *)buffer, testFout);
 		fclose(testFout);
 
 		testFout = fopen("test.raw", "w");
 		fwrite(bufferOffset, 1, amountRemaining, testFout);
 		fclose(testFout);
-		*/
+		
 		
 		memmove(buffer,bufferOffset, amountRemaining);
 		
@@ -91,12 +94,12 @@
 	else {
 		int l = [_socket receive:buffer amount:amount];
 
-		/*
+		
 		//FOR TESTING ONLY
 		FILE *testFout = fopen("test.raw", "a");
 		fwrite(buffer, 1, l, testFout);
 		fclose(testFout);
-		*/
+		
 		if (l > 0)
 			byteCount += l;
 
