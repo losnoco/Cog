@@ -53,7 +53,7 @@
                 showTrackColumn = NSMenuItem; 
                 showYearColumn = NSMenuItem; 
                 shuffleButton = NSButton; 
-                urlField = NSTextField; 
+                urlComboBox = NSComboBox; 
             }; 
             SUPERCLASS = NSObject; 
         }, 

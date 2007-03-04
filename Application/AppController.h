@@ -22,7 +22,7 @@
 	IBOutlet NSPanel *mainWindow;
 	
 	IBOutlet NSPanel *addURLPanel;
-	IBOutlet NSTextField *urlField;
+	IBOutlet NSComboBox *urlComboBox;
 	
 	IBOutlet NSButton *playButton;
 	IBOutlet NSButton *prevButton;

@@ -151,13 +151,13 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (IBAction)addURLSheetOK:(id)sender
 {
-	NSURL *url = [NSURL URLWithString:[urlField stringValue]];
+	NSURL *url = [NSURL URLWithString:[urlComboBox stringValue]];
 	
 	PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 	
 	[pe	setURL:url];
 	[pe setIndex:[[playlistController arrangedObjects] count]];
-	[pe setTitle:[urlField stringValue]];
+	[pe setTitle:[urlComboBox stringValue]];
 	
 	[playlistController addObject:pe];
 	
