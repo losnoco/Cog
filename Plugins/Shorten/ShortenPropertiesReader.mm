@@ -11,13 +11,13 @@
 
 @implementation ShortenPropertiesReader
 
-- (NSDictionary *)propertiesForURL:(NSURL *)url
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source
 {
 	NSDictionary *properties;
 	ShortenDecoder *decoder;
 	
 	decoder = [[ShortenDecoder alloc] init];
-	if (![decoder open:url])
+	if (![decoder open:source])
 	{
 		return nil;
 	}

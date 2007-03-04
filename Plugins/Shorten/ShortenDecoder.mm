@@ -10,8 +10,14 @@
 
 @implementation ShortenDecoder
 
-- (BOOL)open:(NSURL *)url
+- (BOOL)open:(id<CogSource>)source
 {
+	NSURL *url = [source url];
+	if (![[url scheme] isEqualToString:@"file"])
+		return NO;
+	
+	[source close];
+	
 	decoder	= new shn_reader;
 	
 	if (!decoder)
@@ -124,6 +130,10 @@
 		shn_unload(handle);*/
 }
 
+- (BOOL)seekable
+{
+	return YES;
+}
 
 - (NSDictionary *)properties
 {
