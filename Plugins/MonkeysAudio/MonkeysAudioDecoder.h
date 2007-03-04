@@ -12,9 +12,14 @@
 
 #import "Plugin.h"
 
+#import "SourceIO.h"
+
 @interface MonkeysAudioDecoder : NSObject <CogDecoder>
 {
-	IAPEDecompress * decompress;
+	IAPEDecompress *decompress;
+	
+	id<CogSource> source;
+	SourceIO *sourceIO;
 	
 	int channels;
 	int bitsPerSample;

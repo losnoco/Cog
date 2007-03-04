@@ -12,17 +12,12 @@
 
 @implementation MonkeysAudioDecoder
 
-- (BOOL)open:(NSURL *)url
+- (BOOL)open:(id<CogSource>)s
 {
 	int n;
-	str_utf16 *chars = NULL;
-
-	chars = GetUTF16FromUTF8((const unsigned char *)[[url path] UTF8String]);
-	if(chars == NULL)
-		return NO;
+	sourceIO = new SourceIO(s);
 	
-	decompress = CreateIAPEDecompress(chars, &n);
-	free(chars);
+	decompress = CreateIAPEDecompressEx(sourceIO, &n);
 
 	if (decompress == NULL)
 	{
@@ -36,6 +31,9 @@
 
 	length = ((double)decompress->GetInfo(APE_INFO_TOTAL_BLOCKS)*1000.0)/frequency;
 
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+	
 	return YES;
 }
 
@@ -60,8 +58,13 @@
 //	DBLog(@"CLOSE");
 	if (decompress)
 		delete decompress;
+	if (sourceIO)
+		delete sourceIO;
+	
+	[source release];
 	
 	decompress = NULL;
+	sourceIO = NULL;
 }
 
 - (double)seekToTime:(double)milliseconds
@@ -87,6 +90,11 @@
 + (NSArray *)fileTypes
 {
 	return [NSArray arrayWithObject:@"ape"];
+}
+
+- (BOOL)seekable
+{
+	return [source seekable];
 }
 
 

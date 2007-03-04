@@ -15,6 +15,8 @@
 		17ADB1E80B9793E300257CA2 /* MonkeysAudioPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB1E60B9793E300257CA2 /* MonkeysAudioPlugin.h */; };
 		17ADB1E90B9793E300257CA2 /* MonkeysAudioPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1E70B9793E300257CA2 /* MonkeysAudioPlugin.mm */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
+		8EB1E6F90B9B39AA008F9F45 /* SourceIO.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EB1E6F80B9B39AA008F9F45 /* SourceIO.h */; };
+		8EB1E6FD0B9B39D4008F9F45 /* SourceIO.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1E6FC0B9B39D4008F9F45 /* SourceIO.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,6 +29,7 @@
 				179CFD7A0B90C70E00C8C4DB /* MAC.framework in CopyFiles */,
 				177FCFB50B90C97E0011C3B5 /* Plugin.h in CopyFiles */,
 				17ADB1E80B9793E300257CA2 /* MonkeysAudioPlugin.h in CopyFiles */,
+				8EB1E6F90B9B39AA008F9F45 /* SourceIO.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,6 +50,8 @@
 		32DBCF630370AF2F00C91783 /* MonkeysAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonkeysAudio_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* MonkeysAudio.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MonkeysAudio.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		8EB1E6F80B9B39AA008F9F45 /* SourceIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceIO.h; sourceTree = "<group>"; };
+		8EB1E6FC0B9B39D4008F9F45 /* SourceIO.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SourceIO.mm; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -95,13 +100,15 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				177FCFB40B90C97E0011C3B5 /* Plugin.h */,
 				17ADB1E60B9793E300257CA2 /* MonkeysAudioPlugin.h */,
 				17ADB1E70B9793E300257CA2 /* MonkeysAudioPlugin.mm */,
-				177FCFB40B90C97E0011C3B5 /* Plugin.h */,
 				1745C2E70B90BDD100A6768C /* MonkeysAudioDecoder.h */,
 				1745C2E80B90BDD100A6768C /* MonkeysAudioDecoder.mm */,
 				1745C2E90B90BDD100A6768C /* MonkeysAudioPropertiesReader.h */,
 				1745C2EA0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm */,
+				8EB1E6F80B9B39AA008F9F45 /* SourceIO.h */,
+				8EB1E6FC0B9B39D4008F9F45 /* SourceIO.mm */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -196,6 +203,7 @@
 				1745C2ED0B90BDD100A6768C /* MonkeysAudioDecoder.mm in Sources */,
 				1745C2EE0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm in Sources */,
 				17ADB1E90B9793E300257CA2 /* MonkeysAudioPlugin.mm in Sources */,
+				8EB1E6FD0B9B39D4008F9F45 /* SourceIO.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

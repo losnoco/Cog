@@ -11,13 +11,13 @@
 
 @implementation MonkeysAudioPropertiesReader
 
-- (NSDictionary *)propertiesForURL:(NSURL *)url
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source
 {
 	NSDictionary *properties;
 	MonkeysAudioDecoder *decoder;
 	
 	decoder = [[MonkeysAudioDecoder alloc] init];
-	if (![decoder open:url])
+	if (![decoder open:source])
 	{
 		return nil;
 	}
