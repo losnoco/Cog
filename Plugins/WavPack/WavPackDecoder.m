@@ -189,14 +189,14 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 			// Convert to big endian byte order 
 			alias16 = buf;
 			for(sample = 0; sample < samplesRead*channels; ++sample) {
-				*alias16++ = (int16_t)OSSwapHostToBigInt16((int16_t)inputBuffer[sample]);
+				*alias16++ = (int16_t)inputBuffer[sample];
 			}
 			break;
 		case 24:
 			// Convert to big endian byte order 
 			alias8 = buf;
 			for(sample = 0; sample < samplesRead * channels; ++sample) {
-				audioSample	= OSSwapHostToBigInt32(inputBuffer[sample]);
+				audioSample	= inputBuffer[sample];
 				*alias8++	= (int8_t)(audioSample >> 16);
 				*alias8++	= (int8_t)(audioSample >> 8);
 				*alias8++	= (int8_t)audioSample;
@@ -206,7 +206,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 			// Convert to big endian byte order 
 			alias32 = buf;
 			for(sample = 0; sample < samplesRead * channels; ++sample) {
-				*alias32++ = OSSwapHostToBigInt32(inputBuffer[sample]);
+				*alias32++ = inputBuffer[sample];
 			}
 			break;
 		default:
