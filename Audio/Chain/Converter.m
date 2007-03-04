@@ -63,6 +63,10 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	AudioBufferList ioData;
 	UInt32 ioNumberFrames;
 
+	if (inputSize <= 0) {
+		return inputSize;
+	}
+
 	OSStatus err;
 	
 	needsReset = NO;
