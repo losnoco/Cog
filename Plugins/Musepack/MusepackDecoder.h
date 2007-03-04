@@ -14,7 +14,9 @@
 {
 	id<CogSource> source;
 	mpc_decoder decoder;
-
+	mpc_streaminfo info;
+	mpc_reader reader;
+	
 	char buffer[MPC_FRAME_LENGTH*4];
 	int bufferAmount;
 

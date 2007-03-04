@@ -16,7 +16,7 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[WavPackDecoder className],
-		kCogPropertiesReader, 	[WavPackPropertiesReader className,
+		kCogPropertiesReader, 	[WavPackPropertiesReader className],
 		nil
 	];
 }

@@ -11,13 +11,13 @@
 
 @implementation WavPackPropertiesReader
 
-- (NSDictionary *)propertiesForURL:(NSURL *)url
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source
 {
 	NSDictionary *properties;
 	WavPackDecoder *decoder;
 	
 	decoder = [[WavPackDecoder alloc] init];
-	if (![decoder open:url])
+	if (![decoder open:source])
 	{
 		return nil;
 	}

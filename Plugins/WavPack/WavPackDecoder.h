@@ -14,6 +14,9 @@
 @interface WavPackDecoder : NSObject <CogDecoder>
 {
 	WavpackContext *wpc;
+	WavpackStreamReader reader;
+	
+	id<CogSource> source;
 	
 	int bitsPerSample;
 	int channels;
@@ -21,5 +24,8 @@
 	float frequency;
 	double length;
 }
+
+- (void)setSource:(id<CogSource>)s;
+- (id<CogSource>)source;
 
 @end
