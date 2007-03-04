@@ -24,19 +24,10 @@
 
 #import "Plugin.h"
 
-#undef _USE_WRAPPER_
 
 @interface CoreAudioDecoder : NSObject <CogDecoder>
 {
 	ExtAudioFileRef			_in;
-
-#ifdef _USE_WRAPPER_
-	int						_inFd;
-	AudioFileID				_audioID;
-	
-	SInt64 _fileSize;
-	SInt64 _startOffset;
-#endif
 
 	int bitrate;
 	int bitsPerSample;

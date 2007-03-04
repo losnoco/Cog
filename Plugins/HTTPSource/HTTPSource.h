@@ -15,9 +15,13 @@
 {
 	Socket *_socket;
 	
+	NSURL *_url;
+	
 	BOOL pastHeader;
 	
 	long byteCount;
 }
+
+- (void)setURL:(NSURL *)url;
 
 @end

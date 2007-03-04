@@ -13,6 +13,10 @@
 @interface FileSource : NSObject <CogSource>
 {
 	FILE *_fd;
+	
+	NSURL *_url;
 }
+
+- (void)setURL:(NSURL *)url;
 
 @end

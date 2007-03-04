@@ -17,7 +17,7 @@
 @protocol CogSource <NSObject>
 + (NSArray *)schemes; //http, file, etc
 
-- (BOOL)buffered; //Return YES if the input should be buffered, NO if it shouldn't. Used for remote connections (HTTP), not local stuff (file). 
+- (NSURL *)url;
 
 - (BOOL)open:(NSURL *)url;
 - (NSDictionary *)properties; //Perhaps contains header info for HTTP stream, or path for a regular file.

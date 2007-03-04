@@ -11,13 +11,13 @@
 
 @implementation CoreAudioPropertiesReader
 
-- (NSDictionary *)propertiesForURL:(NSURL *)url
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source
 {
 	NSDictionary *properties;
 	CoreAudioDecoder *decoder;
 	
 	decoder = [[CoreAudioDecoder alloc] init];
-	if (![decoder open:url])
+	if (![decoder open:source])
 	{
 		return nil;
 	}

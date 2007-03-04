@@ -18,6 +18,7 @@
 
 - (BOOL)open:(NSURL *)url
 {
+	[self setURL:url];
 
 	unsigned int port = [[url port] unsignedIntValue];
 	if (!port)
@@ -110,6 +111,26 @@
 - (void)close
 {
 	[_socket close];
+}
+
+- (void)dealloc
+{
+	[_socket release];
+	[_url release];
+	
+	[super dealloc];
+}
+
+- (NSURL *)url
+{
+	return _url;
+}
+
+- (void)setURL:(NSURL *)url
+{
+	[url retain];
+	[_url release];
+	_url = url;
 }
 
 + (NSArray *)schemes
