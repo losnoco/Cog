@@ -299,7 +299,7 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 	if ([_source seekable]) {
 		return [self scanFileFast:YES useXing:YES];
 	}
-	NSLog(@"NOT SCANNING FILE!!!");
+
 	return YES;
 }
 
