@@ -46,7 +46,6 @@ int IsAltiVecAvailable( void )
 	int hasVectorUnit = 0;
 	size_t length = sizeof(hasVectorUnit);
 	int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0);
-	printf("ALTIVEC: %i\n", hasVectorUnit);
 	if( 0 == error ) return hasVectorUnit != 0;
 	
 	return 0;
