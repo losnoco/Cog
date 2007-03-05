@@ -102,7 +102,7 @@
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:length],@"length",
-		@"big",@"endian",
+		@"host",@"endian",
 		nil];
 }
 
