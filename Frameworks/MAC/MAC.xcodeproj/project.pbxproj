@@ -507,6 +507,7 @@
 				GCC_PREFIX_HEADER = MAC_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				PER_ARCH_CFLAGS_ppc = "-maltivec";
 				PRODUCT_NAME = MAC;
 				USER_HEADER_SEARCH_PATHS = "mac-src";
 				WRAPPER_EXTENSION = framework;
