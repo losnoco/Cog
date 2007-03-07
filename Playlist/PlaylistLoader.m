@@ -119,15 +119,25 @@
 		return NO;
 	}
 
-	NSArray *entries = [contents componentsSeparatedByString:@"\n"];
-
 	NSString *entry;
-	NSEnumerator *e = [entries objectEnumerator];
+	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
 
 	while (entry = [e nextObject])
 	{
-		NSString *
+		NSString *lhs = nil;
+		if (![scanner scanUpToString:@"=" intoString:&lhs]) //get LHS
+			continue;
+		if (![scanner scanString:@"=" intoString:nil]) //skip the =
+			continue;
+		NSString *nameString = nil;
+		if (![scanner scanUpToString:@"" intoString:&rhs]) //get RHS
+			continue;
+		
+		if (![lhs isEqualToString:@"File"])
+			continue;
 
+		//get url if its a file?
+//		[entries addObject:nameString];
 	}
 
 	[playlistController addURLs:urls];
@@ -144,13 +154,14 @@
 
 	NSEnumerator *e = [[playlistController content] objectEnumerator];
 	PlaylistEntry *pe;
-
+	int i = 1;
 	while (pe = [e nextObject])
 	{
 		NSString *path = [self pathRelativeTo:filename forEntry:pe];
 		NSString *entry = [NSString stringWithFormat:@"File%i=%@\n",i,path];
 
 		[fileHandle writeData:[entry dataUsingEncoding:NSUTF8StringEncoding]];
+		i++;
 	}
 
 	[self setCurrentFile:filename];
