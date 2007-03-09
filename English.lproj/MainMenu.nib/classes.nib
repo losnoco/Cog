@@ -41,6 +41,7 @@
                 playButton = NSButton; 
                 playbackController = PlaybackController; 
                 playlistController = PlaylistController; 
+                playlistLoader = PlaylistLoader; 
                 playlistView = PlaylistView; 
                 prevButton = NSButton; 
                 repeatButton = NSButton; 
@@ -87,7 +88,7 @@
         {
             CLASS = FileTreeController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {playlistController = PlaylistController; }; 
+            OUTLETS = {playlistLoader = PlaylistLoader; }; 
             SUPERCLASS = NSTreeController; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
@@ -127,16 +128,22 @@
         }, 
         {
             ACTIONS = {
-                showFileInFinder = id; 
-                sortByPath = id; 
+                showEntryInFinder = id; 
                 takeRepeatFromObject = id; 
                 takeShuffleFromObject = id; 
             }; 
             CLASS = PlaylistController; 
             LANGUAGE = ObjC; 
+            OUTLETS = {playlistLoader = PlaylistLoader; }; 
             SUPERCLASS = DNDArrayController; 
         }, 
         {CLASS = PlaylistEntry; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = PlaylistLoader; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {playlistController = PlaylistController; }; 
+            SUPERCLASS = NSObject; 
+        }, 
         {
             ACTIONS = {shufflePlaylist = id; sortByPath = id; toggleColumn = id; }; 
             CLASS = PlaylistView; 

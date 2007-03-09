@@ -164,7 +164,7 @@
 	return track;
 }
 
-- (void)readInfoThreadedSetVariables:(NSDictionary *)dict
+- (void)setProperties:(NSDictionary *)dict
 {
 	[self setLength:		[[dict objectForKey:@"length"		] doubleValue]];
 	[self setBitrate:		[[dict objectForKey:@"bitrate"		] intValue]];
@@ -175,11 +175,11 @@
 	[self setLengthString:[[dict objectForKey:@"length"] doubleValue]];
 }
 
-- (void)readInfoThreaded
+- (void)readPropertiesThread
 {
 	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:url];
 
-	[self performSelectorOnMainThread:@selector(readInfoThreadedSetVariables:) withObject:properties waitUntilDone:YES];
+	[self performSelectorOnMainThread:@selector(setProperties:) withObject:properties waitUntilDone:YES];
 }
 
 - (NSString *)lengthString
@@ -240,7 +240,7 @@
 	return sampleRate;
 }
 
-- (void)readTagsThreadedSetVariables: (NSDictionary *)m
+- (void)setMetadata: (NSDictionary *)m
 {
 	NSString *ti = [m objectForKey:@"title"];
 
@@ -248,7 +248,7 @@
 		[self setTitle:[[url path] lastPathComponent]];
 	}
 	else {
-		[self setTitle:[m objectForKey:@"title"]];
+		[self setTitle:ti];
 	}
 	
 	[self setArtist:[m objectForKey:@"artist"]];
@@ -258,11 +258,11 @@
 	[self setTrack:[[m objectForKey:@"track"] intValue]];
 }	
 
-- (void)readTagsThreaded
+- (void)readMetadataThread
 {
 	NSDictionary *metadata = [AudioMetadataReader metadataForURL:url];
 	
-	[self performSelectorOnMainThread:@selector(readTagsThreadedSetVariables:) withObject:metadata	waitUntilDone:YES];
+	[self performSelectorOnMainThread:@selector(setMetadata:) withObject:metadata waitUntilDone:YES];
 
 }
 

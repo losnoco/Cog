@@ -2,22 +2,23 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "PlaybackController.h"
-
-#import "PlaylistController.h"
-#import "PlaylistView.h"
-
-#import "FileTreeController.h"
-#import "FileOutlineView.h"
-
 #import "NDHotKeyEvent.h"
 
-#import "AppleRemote.h"
+@class PlaybackController;
+@class PlaylistController;
+@class PlaylistView;
+@class FileTreeController;
+@class FileOutlineView;
+@class AppleRemote;
+@class PlaylistLoader;
+
 
 @interface AppController : NSObject
 {
-    IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaybackController *playbackController;
+
+    IBOutlet PlaylistController *playlistController;
+	IBOutlet PlaylistLoader *playlistLoader;
 	
 	IBOutlet NSPanel *mainWindow;
 	

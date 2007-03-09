@@ -7,12 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "FileTreeWatcher.h"
-#import "PlaylistController.h"
+
+@class FileTreeWatcher;
+@class PlaylistLoader;
 
 @interface FileTreeController : NSTreeController
 {
-	IBOutlet PlaylistController *playlistController;
+	IBOutlet PlaylistLoader *playlistLoader;
 
 	NSString *rootPath;
 	
@@ -21,5 +22,6 @@
 
 - (id)rootPath;
 - (void)setRootPath:(id)r;
+- (void) refreshRoot;
 
 @end

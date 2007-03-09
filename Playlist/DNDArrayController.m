@@ -11,15 +11,8 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 - (void)awakeFromNib
 {
     // register for drag and drop
-	NSLog(@"AWOKE");
-
     [tableView registerForDraggedTypes:[NSArray arrayWithObjects:MovedRowsType, NSFilenamesPboardType, 
 		iTunesDropType, nil]];
-	
-//	[tableView setVerticalMotionCanBeginDrag:YES];
-//    [tableView setAllowsMultipleSelection:NO];
-//	[super awakeFromNib];
-//	DBLog(@"HERE: %@", [tableView registeredDraggedTypes]);
 }
 
 
@@ -27,8 +20,6 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 		writeRows:(NSArray*)rows
 	 toPasteboard:(NSPasteboard*)pboard
 {
-	NSLog(@"WRITE ROWS");
-	
 	NSData *data;
 	data = [NSKeyedArchiver archivedDataWithRootObject:rows];
 	
@@ -66,11 +57,10 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 	{
 		row = 0;
 	}
-	NSLog(@"ACCEPTATING");
+
     // if drag source is self, it's a move
     if ([info draggingSource] == tableView)
 	{
-//		DBLog(@"ACCEPTATED");
 		NSArray *rows = [NSKeyedUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType: MovedRowsType]];
 	
 		NSIndexSet  *indexSet = [self indexSetFromRows:rows];

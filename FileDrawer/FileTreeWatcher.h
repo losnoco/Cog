@@ -19,4 +19,6 @@
 - (void)addPath: (NSString *)path;
 - (void)removePath: (NSString *)path;
 
+-(void) setDelegate: (id)d;
+
 @end

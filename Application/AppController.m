@@ -1,5 +1,13 @@
 #import "AppController.h"
 #import "KFTypeSelectTableView.h""
+#import "PlaybackController.h"
+#import "PlaylistController.h"
+#import "PlaylistView.h"
+#import "FileTreeController.h"
+#import "FileOutlineView.h"
+#import "NDHotKeyEvent.h"
+#import "AppleRemote.h"
+#import "PlaylistLoader.h"
 
 @implementation AppController
 
@@ -124,7 +132,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[p setCanChooseDirectories:YES];
 	[p setAllowsMultipleSelection:YES];
 	
-	[p beginSheetForDirectory:nil file:nil types:[playlistController acceptableFileTypes] modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
+	[p beginSheetForDirectory:nil file:nil types:[playlistLoader acceptableFileTypes] modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
 //	[p beginForDirectory:nil file:nil types:[playlistController acceptableFileTypes] modelessDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
 	
 /*	if ([p runModalForTypes:[playlistController acceptableFileTypes]] == NSOKButton)
@@ -138,7 +146,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	if (returnCode == NSOKButton)
 	{
-		[playlistController addPaths:[panel filenames] sort:YES];
+		[playlistLoader addURLs:[panel URLs] sort:YES];
 	}
 	
 //	[panel release];
@@ -238,8 +246,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	}
 	
 	
-	NSString *filename = @"~/Library/Application Support/Cog/Default.playlist";
-	[playlistController loadPlaylist:[filename stringByExpandingTildeInPath]];
+	NSString *filename = @"~/Library/Application Support/Cog/Default.m3u";
+	[playlistLoader loadM3u:[filename stringByExpandingTildeInPath]];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -257,18 +265,15 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 		[fileManager createDirectoryAtPath: folder attributes: nil];
 	}
 	
-	NSString *fileName = @"Default.playlist";
+	NSString *fileName = @"Default.m3u";
 	
-	[playlistController savePlaylist:[folder stringByAppendingPathComponent: fileName]];
+	[playlistLoader saveM3u:[folder stringByAppendingPathComponent: fileName]];
 	
 }
 
 - (IBAction)savePlaylist:(id)sender
 {
-	if ([playlistController playlistFilename] == nil)
-		[self savePlaylistAs:sender];
-	
-	[playlistController savePlaylist:[playlistController playlistFilename]];
+	[playlistLoader save];
 }
 - (IBAction)savePlaylistAs:(id)sender
 {
@@ -276,13 +281,11 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	p = [NSSavePanel savePanel];
 	
-	[p setAllowedFileTypes:[playlistController acceptablePlaylistTypes]];	
+	[p setAllowedFileTypes:[playlistLoader acceptablePlaylistTypes]];	
 	
-	if ([p runModalForDirectory:nil file:[[playlistController playlistFilename] lastPathComponent]] == NSOKButton)
+	if ([p runModalForDirectory:nil file:[[playlistLoader currentFile] lastPathComponent]] == NSOKButton)
 	{
-		[playlistController setPlaylistFilename:[p filename]];
-		
-		[playlistController savePlaylist:[p filename]];
+		[playlistLoader save:[p filename]];
 	}
 }
 
@@ -295,11 +298,9 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[p setCanChooseDirectories:NO];
 	[p setAllowsMultipleSelection:NO];
 
-	if ([p runModalForTypes:[playlistController acceptablePlaylistTypes]] == NSOKButton)
+	if ([p runModalForTypes:[playlistLoader acceptablePlaylistTypes]] == NSOKButton)
 	{
-		[playlistController setPlaylistFilename:[p filename]];
-
-		[playlistController loadPlaylist:[p filename]];
+		[playlistLoader load:[p filename]];
 	}
 
 	[mainWindow makeKeyAndOrderFront:self];
@@ -316,16 +317,24 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
 	DBLog(@"Adding path: %@", filename);
-	[playlistController addPaths:[NSArray arrayWithObject:filename] sort:NO];
+	[playlistLoader addURLs:[NSArray arrayWithObject:[NSURL fileURLWithPath:filename]] sort:NO];
 
 	return YES;
 }
 
 - (void)application:(NSApplication *)theApplication openFiles:(NSArray *)filenames
 {
-	DBLog(@"Adding paths: %@", filenames);
+	//Need to convert to urls
+	NSMutableArray *urls = [NSMutableArray array];
+	NSEnumerator *e = [filenames objectEnumerator];
+	NSString *filename;
 	
-	[playlistController addPaths:filenames sort:YES];
+	while (filename = [e nextObject])
+	{
+		[urls addObject:[NSURL fileURLWithPath:filename]];
+	}
+	[playlistLoader addURLs:urls sort:YES];
+	
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 

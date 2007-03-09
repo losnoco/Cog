@@ -7,9 +7,11 @@
 //
 
 #import "FileTreeController.h"
+#import "FileTreeWatcher.h"
 #import "DirectoryNode.h"
 #import "ImageTextCell.h"
 #import "KFTypeSelectTableView.h"
+#import "PlaylistLoader.h"
 
 @implementation FileTreeController
 
@@ -109,7 +111,7 @@
 
 - (NSArray *)acceptableFileTypes
 {
-	return [playlistController acceptableFileTypes];
+	return [playlistLoader acceptableFileTypes];
 }
 
 - (FileTreeWatcher *)watcher
@@ -119,22 +121,21 @@
 
 - (BOOL)outlineView:(NSOutlineView *)olv writeItems:(NSArray*)items toPasteboard:(NSPasteboard*)pboard {
 	//Get selected paths
-	NSLog(@"Items: %@", items);
 	NSMutableArray *paths = [NSMutableArray arrayWithCapacity:[items count]];
-	id p;
 	NSEnumerator *e = [items objectEnumerator];
+	id p;
 
 	while (p = [e nextObject]) {
 		int i;
 		PathNode *n = nil;
 		NSIndexPath *ip = [p indexPath];
-		NSLog(@"Content: %@", n);
+
 		for (i = 0; i < [ip length]; i++)
 		{
 			NSArray *a = (n == nil) ? [self content] : [n subpaths];
 			n = [a objectAtIndex:[ip indexAtPosition:i]];
 		}
-		NSLog(@"Path: %@", n);
+
 		[paths addObject:[n path]];
 	}
 	
@@ -193,17 +194,20 @@
 //End type-select
 
 - (void)addSelectedToPlaylist {
-	NSMutableArray *paths = [[NSMutableArray alloc] init];
+	NSMutableArray *urls = [[NSMutableArray alloc] init];
 	NSArray *nodes = [self selectedObjects];
 	NSEnumerator *e = [nodes objectEnumerator];
 	
 	id n;
 	while (n = [e nextObject]) {
-		[paths addObject:[n path]];
+		NSURL *url = [[NSURL alloc] initFileURLWithPath:[n path]];
+		[urls addObject:url];
+		[url release];
 	}
 	
-	[playlistController addPaths:paths sort:YES];
-	[paths release];
+	NSLog(@"Adding URLs: %@", urls);
+	[playlistLoader addURLs:urls sort:YES];
+	[urls release];
 }
 
 

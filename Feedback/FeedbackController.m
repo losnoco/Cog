@@ -23,7 +23,7 @@
 
 - (void)alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	if (contextInfo == YES)
+	if ([(NSNumber *)contextInfo boolValue]== YES)
 	{
 		[feedbackWindow close];
 	}
@@ -39,7 +39,7 @@
 	[alert setMessageText:NSLocalizedString(@"FeedbackFailedMessageText", @"")];
 	[alert setInformativeText:NSLocalizedString(@"FeedbackFailedInformativeText", @"")];
 	
-	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:NO];
+	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:[NSNumber numberWithBool:NO]];
 }
 
 - (void)FeedbackSent:(NSNotification *)aNotification
@@ -52,7 +52,7 @@
 	[alert setMessageText:NSLocalizedString(@"FeedbackSuccessMessageText", @"")];
 	[alert setInformativeText:NSLocalizedString(@"FeedbackSuccessInformativeText", @"")];
 
-	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:YES];
+	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:[NSNumber numberWithBool:YES]];
 }
 
 

@@ -6,6 +6,7 @@
 //  Copyright 2005 Vincent Spader All rights reserved.
 //
 
+#import "PlaylistLoader.h"
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
 #import "Shuffle.h"
@@ -22,11 +23,7 @@
 	
 	if (self)
 	{
-		acceptableFileTypes = [[AudioPlayer fileTypes] retain];
-		acceptablePlaylistTypes = [[NSArray alloc] initWithObjects:@"playlist",nil];
-		
 		shuffleList = [[NSMutableArray alloc] init];
-//		DBLog(@"DAH BUTTER CHORNAR: %@", history);
 	}
 	
 	return self;
@@ -40,150 +37,6 @@
 	[ns addObserver:self selector:@selector(handlePlaylistViewHeaderNotification:) name:@"PlaylistViewColumnSeparatorDoubleClick" object:nil];
 }
 
-- (NSArray *)filesAtPath:(NSString *)path
-{
-	BOOL isDir;
-	NSFileManager *manager;
-	
-	manager = [NSFileManager defaultManager];
-	
-	NSLog(@"Checking if path is a directory: %@", path);
-	if ([manager fileExistsAtPath:path isDirectory:&isDir] && isDir == YES)
-	{
-		DBLog(@"path is directory");
-		int j;
-		NSArray *subpaths;
-		NSMutableArray *validPaths = [[NSMutableArray alloc] init];
-		
-		subpaths = [manager subpathsAtPath:path];
-		
-		DBLog(@"Subpaths: %@", subpaths);
-		for (j = 0; j < [subpaths count]; j++)
-		{
-			NSString *filepath;
-				
-			filepath = [NSString pathWithComponents:[NSArray arrayWithObjects:path,[subpaths objectAtIndex:j],nil]];
-			if ([manager fileExistsAtPath:filepath isDirectory:&isDir] && isDir == NO)
-			{
-				if ([acceptableFileTypes containsObject:[[filepath pathExtension] lowercaseString]] && [[NSFileManager defaultManager] fileExistsAtPath:filepath])
-				{
-					[validPaths addObject:filepath];
-				}
-			}
-		}
-		
-		return [validPaths autorelease];
-	}
-	else
-	{
-		NSLog(@"path is a file");
-		if ([acceptableFileTypes containsObject:[[path pathExtension] lowercaseString]] && [[NSFileManager defaultManager] fileExistsAtPath:path])
-		{
-			NSLog(@"RETURNING THING");
-			return [NSArray arrayWithObject:path];
-		}
-		else
-		{
-			return nil;
-		}
-	}
-}
-
-- (void)insertPaths:(NSArray *)paths atIndex:(int)index sort:(BOOL)sort
-{
-	NSArray *sortedFiles;
-	NSMutableArray *files = [[NSMutableArray alloc] init];
-	NSMutableArray *entries= [[NSMutableArray alloc] init];
-	int i;
-
-	if (!paths)
-		return;
-	
-	if (index < 0)
-		index = 0;
-	
-	for(i=0; i < [paths count]; i++)
-	{
-		[files addObjectsFromArray:[self filesAtPath:[paths objectAtIndex:i]]];
-		NSLog(@"files is: %i", [files count]);
-	}
-	
-	DBLog(@"Sorting paths");
-	if (sort == YES)
-	{
-		sortedFiles = [files sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-	}
-	else
-	{
-		sortedFiles = files;
-	}
-
-	for (i = 0; i < [sortedFiles count]; i++)
-	{
-		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
-		
-		[pe	setURL:[NSURL fileURLWithPath:[sortedFiles objectAtIndex:i]]];
-		[pe setIndex:index+i];
-		[pe setTitle:[[sortedFiles objectAtIndex:i] lastPathComponent]];
-//		[pe performSelectorOnMainThread:@selector(readTags) withObject:nil waitUntilDone:NO];
-//		[pe performSelectorOnMainThread:@selector(readInfo) withObject:nil waitUntilDone:NO];
-		
-		[entries addObject:pe];
-		[pe release];
-	}
-	
-	NSRange r = NSMakeRange(index, [entries count]);
-	NSLog(@"MAking range from: %i to %i", index, index + [entries count]);
-	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:r];
-	NSLog(@"INDex set: %@", is);
-	NSLog(@"Adding: %i files", [entries count]);
-	[self insertObjects:entries atArrangedObjectIndexes:is];
-	
-	if (shuffle == YES)
-		[self resetShuffleList];
-	
-	[self setSelectionIndex:index];
-	
-	//Other thread will release entries....crazy crazy bad idea...whatever
-	[NSThread detachNewThreadSelector:@selector(readMetaData:) toTarget:self withObject:entries];
-	
-	[files release];
-
-	return;
-}
-
-- (void)readMetaData:(id)entries
-{
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	int i;
-	for (i = 0; i < [entries count]; i++)
-	{
-		PlaylistEntry *pe =[entries objectAtIndex:i];
-		
-		[pe readInfoThreaded];
-
-		[pe readTagsThreaded];
-
-		//Hack so the display gets updated
-		if (pe == [self currentEntry])
-			[self performSelectorOnMainThread:@selector(setCurrentEntry:) withObject:[self currentEntry] waitUntilDone:YES];
-	}
-
-	[self performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-	
-	[entries release];
-	[pool release];
-}
-
-- (void)addPaths:(NSArray *)paths sort:(BOOL)sort
-{
-	[self insertPaths:paths atIndex:[[self arrangedObjects] count] sort:sort];
-}
-
-- (NSArray *)acceptableFileTypes
-{
-	return acceptableFileTypes;
-}
 
 - (void)tableView:(NSTableView *)tableView
 		didClickTableColumn:(NSTableColumn *)tableColumn
@@ -199,27 +52,20 @@
 			  row:(int)row
 	dropOperation:(NSTableViewDropOperation)op
 {
-	int i;
-	NSLog(@"DROPPED");
 	[super tableView:tv acceptDrop:info row:row dropOperation:op];
 	if ([info draggingSource] == tableView)
 	{
-		//DNDArrayController handles moving...still need to update the uhm...indices
-		NSLog(@"Archive stuff");
+		//DNDArrayController handles moving...still need to update the indexes
+
+		int i;
 		NSArray *rows = [NSKeyedUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType: MovedRowsType]];
-		NSLog(@"Whatever");
-		NSIndexSet  *indexSet = [self indexSetFromRows:rows];
-		int firstIndex = [indexSet firstIndex];
+		int firstIndex = [[self indexSetFromRows:rows] firstIndex];
+
 		if (firstIndex > row)
-		{
 			i = row;
-		}
 		else
-		{
 			i = firstIndex;
-		}
 	
-		NSLog(@"Updating indexes: %i", i);
 		[self updateIndexesFromRow:i];
 
 		return YES;
@@ -235,10 +81,18 @@
 	
 	// Get files from a normal file drop (such as from Finder)
 	if ([bestType isEqualToString:NSFilenamesPboardType]) {
-		NSArray *files = [[info draggingPasteboard] propertyListForType:NSFilenamesPboardType];
+		NSMutableArray *urls = [[NSMutableArray alloc] init];
+
+		NSEnumerator *e = [[[info draggingPasteboard] propertyListForType:NSFilenamesPboardType] objectEnumerator];
+		NSString *file; 
+		while (file = [e nextObject])
+		{
+			[urls addObject:[NSURL fileURLWithPath:file]];
+		}
 		
-		NSLog(@"INSERTING PATHS: %@", files);
-		[self insertPaths:files atIndex:row sort:YES];
+		[playlistLoader insertURLs:urls atIndex:row sort:YES];
+
+		[urls release];
 	}
 	
 	// Get files from an iTunes drop
@@ -246,26 +100,19 @@
 		NSDictionary *iTunesDict = [pboard propertyListForType:iTunesDropType];
 		NSDictionary *tracks = [iTunesDict valueForKey:@"Tracks"];
 
-		// Convert the iTunes URLs to filenames
-		NSMutableArray *files = [[NSMutableArray alloc] init];
+		// Convert the iTunes URLs to URLs....MWAHAHAH!
+		NSMutableArray *urls = [[NSMutableArray alloc] init];
+
 		NSEnumerator *e = [[tracks allValues] objectEnumerator];
 		NSDictionary *trackInfo;
-		NSURL *url;
 		while (trackInfo = [e nextObject]) {
-			url = [[NSURL alloc] initWithString:[trackInfo valueForKey:@"Location"]];
-			if ([url isFileURL]) {
-				[files addObject:[url path]];
-			}
-			
-			[url release];
+			[urls addObject:[NSURL URLWithString:[trackInfo valueForKey:@"Location"]]];
 		}
 		
-		NSLog(@"INSERTING ITUNES PATHS: %@", files);
-		[self insertPaths:files atIndex:row sort:YES];
-		[files release];
+		[playlistLoader insertURLs:urls atIndex:row sort:YES];
+		[urls release];
 	}
 	
-	NSLog(@"UPDATING");
 	[self updateIndexesFromRow:row];
 	[self updateTotalTime];
 	
@@ -295,7 +142,6 @@
 	[ttd retain];
 	[totalTimeDisplay release];
 	totalTimeDisplay = ttd;
-	NSLog(@"Displaying: %@", ttd);
 }
 
 - (NSString *)totalTimeDisplay;
@@ -305,7 +151,6 @@
 
 - (void)updateIndexesFromRow:(int) row
 {
-//	DBLog(@"UPDATE INDEXES: %i", row);
 	int j;
 	for (j = row; j < [[self arrangedObjects] count]; j++)
 	{
@@ -318,20 +163,8 @@
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	unsigned int *indexBuffer;
-	NSMutableArray *a = [[NSMutableArray alloc] init];
-	int i;
-	
-	//10.3 fix
-	indexBuffer = malloc([indexes count]*sizeof(unsigned int));
-	[indexes getIndexes:indexBuffer maxCount:[indexes count] inIndexRange:nil];
-	for (i = 0; i < [indexes count]; i++)
-	{
-		NSLog(@"REMOVING FROM INDEX: %i", indexBuffer[i]);
-		[a addObject:[[self arrangedObjects] objectAtIndex:(indexBuffer[i])]];
-	}
-	
-//	a = [[self arrangedObjects] objectsAtIndexes:indexes]; //10.4 only
+	NSLog(@"REMOVING");
+	NSArray *a = [[self arrangedObjects] objectsAtIndexes:indexes]; //Screw 10.3
 	
 	if ([a containsObject:currentEntry])
 	{
@@ -344,8 +177,6 @@
 
 	if (shuffle == YES)
 		[self resetShuffleList];
-	
-	[a release];
 }
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors
@@ -363,7 +194,7 @@
 	[super setSortDescriptors:sortDescriptors];
 }
 		
-- (IBAction)sortByPath:(id)sender
+- (IBAction)sortByPath
 {
 	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"url" ascending:YES selector:@selector(compare:)];
 	
@@ -378,7 +209,7 @@
 	[self updateIndexesFromRow:0];
 }
 
-- (void)randomizeList
+- (IBAction)randomizeList
 {
 	[self setSortDescriptors:nil];
 
@@ -423,9 +254,9 @@
 	
 	return [[self arrangedObjects] objectAtIndex:i];
 }
+
 - (PlaylistEntry *)shuffledEntryAtIndex:(int)i
 {
-	//		NSLog(@"SHUFFLE: %i %i %i %i", i, shuffleIndex, offset, [shuffleList count]);
 	while (i < 0)
 	{
 		if (repeat == YES)
@@ -454,67 +285,6 @@
 	
 	return [shuffleList objectAtIndex:i];
 }
-
-/*- (PlaylistEntry *)entryAtOffset:(int)offset
-{
-	if (shuffle == YES)
-	{
-		int i = shuffleIndex;
-		i += offset;
-//		NSLog(@"SHUFFLE: %i %i %i %i", i, shuffleIndex, offset, [shuffleList count]);
-		while (i < 0)
-		{
-			if (repeat == YES)
-			{
-				[self addShuffledListToFront];
-				//change i appropriately
-				i += [[self arrangedObjects] count];
-			}
-			else
-			{
-				return nil;
-			}
-		}
-		while (i >= [shuffleList count])
-		{
-			if (repeat == YES)
-			{
-				NSLog(@"Adding shuffled list to back!");
-				[self addShuffledListToBack];
-			}
-			else
-			{
-				return nil;
-			}
-		}
-		
-		return [shuffleList objectAtIndex:i];
-	}
-	else
-	{
-		int i;
-		i = [currentEntry index];
-		i += (offset-1);
-
-		if (i < 0)
-		{
-			if (repeat == YES)
-				i += [[self arrangedObjects] count];
-			else
-				return nil;
-		}
-		else if (i >= [[self arrangedObjects] count])
-		{
-			if (repeat == YES)
-				i -= [[self arrangedObjects] count];
-			else
-				return nil;
-		}
-
-		return [[self arrangedObjects] objectAtIndex:i];
-	}		
-}
-*/
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe
 {
@@ -673,75 +443,18 @@
 {
 	[super setFilterPredicate:filterPredicate];
 
-	int j;
-	for (j = 0; j < [[self content] count]; j++)
-	{
-		PlaylistEntry *p;
-		p = [[self content] objectAtIndex:j];
-		
-		[p setIndex:-1];
-	}
-	
 	[self updateIndexesFromRow:0];
 }
 
-- (void)savePlaylist:(NSString *)filename
-{
-//	DBLog(@"SAVING PLAYLIST: %@", filename);
-	NSString *fileContents;
-	NSMutableArray *filenames = [NSMutableArray array];
-	
-	NSEnumerator *enumerator;
-	PlaylistEntry *entry;
-	enumerator = [[self content] objectEnumerator];
-	while (entry = [enumerator nextObject])
-	{
-		[filenames addObject:[[entry url] path]];
-	}
-	
-	fileContents = [filenames componentsJoinedByString:@"\n"];
-	[fileContents writeToFile:filename atomically:NO];
-}
-
-- (void)loadPlaylist:(NSString *)filename
-{
-	NSString *fileContents;
-
-	[self removeObjects:[self arrangedObjects]];
-	fileContents = [NSString stringWithContentsOfFile:filename];
-	if (fileContents)
-	{
-		NSArray *filenames = [fileContents componentsSeparatedByString:@"\n"];
-//		DBLog(@"filenames: %@", filenames);
-		[self addPaths:filenames sort:NO];
-	}
-}
-
-- (NSArray *)acceptablePlaylistTypes
-{
-	return acceptablePlaylistTypes;
-}
-
-- (NSString *)playlistFilename
-{
-	return playlistFilename;
-}
-- (void)setPlaylistFilename:(NSString *)pf
-{
-	[pf retain];
-	[playlistFilename release];
-	
-	playlistFilename = pf;
-}
-
-- (IBAction)showFileInFinder:(id)sender
+- (IBAction)showEntryInFinder:(id)sender
 {
 	NSWorkspace* ws = [NSWorkspace sharedWorkspace];
 	if ([self selectionIndex] < 0)
 		return;
 	
-	PlaylistEntry* curr = [self entryAtIndex:[self selectionIndex]];
-	[ws selectFile:[[curr url] path] inFileViewerRootedAtPath:[[curr url] path]];
+	NSURL *url = [[self entryAtIndex:[self selectionIndex]] url];
+	if ([url isFileURL])
+		[ws selectFile:[url path] inFileViewerRootedAtPath:[url path]];
 }
 
 - (void)handlePlaylistViewHeaderNotification:(NSNotification*)notif
@@ -750,6 +463,9 @@
 	NSNumber *colIdx = [[notif userInfo] objectForKey:@"column"];
 	NSTableColumn *col = [[tv tableColumns] objectAtIndex:[colIdx intValue]];
 	
+	//Change to use NSSelectorFromString and NSMethodSignature returnType, see http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_5_section_7.html for info
+	//Maybe we can pull the column bindings out somehow, instead of selectorfromstring
+
 	// find which function to call on PlaylistEntry*
 	SEL sel;
 	NSString* identifier = [col identifier];

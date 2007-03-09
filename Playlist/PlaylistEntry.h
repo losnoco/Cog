@@ -34,16 +34,16 @@
 	int displayIdx;
 }
 
--(void)setIndex:(int)i;
--(int)index;
+- (void)setIndex:(int)i;
+- (int)index;
 
--(void)setShuffleIndex:(int)si;
--(int)shuffleIndex;
+- (void)setShuffleIndex:(int)si;
+- (int)shuffleIndex;
 
--(void)setURL:(NSURL *)u;
--(NSURL *)url;
--(void)setCurrent:(BOOL) b;
--(BOOL)current;
+- (void)setURL:(NSURL *)u;
+- (NSURL *)url;
+- (void)setCurrent:(BOOL) b;
+- (BOOL)current;
 
 - (void)setArtist:(NSString *)s;
 - (NSString *)artist;
@@ -57,10 +57,10 @@
 - (NSString *)lengthString;
 - (void)setLengthString:(double)l;
 
--(void)setYear:(NSString *)y;
--(NSString *)year;
--(void)setTrack:(int)y;
--(int)track;
+- (void)setYear:(NSString *)y;
+- (NSString *)year;
+- (void)setTrack:(int)y;
+- (int)track;
 
 - (void)setLength:(double)l;
 - (void)setBitrate:(int) br;
@@ -74,9 +74,9 @@
 - (int)bitsPerSample;
 - (float)sampleRate;
 
-- (void)readTags;
-- (void)readTagsThreaded;
-- (void)readInfo;
-- (void)readInfoThreaded;
+- (void)setMetadata: (NSDictionary *)m;
+- (void)readMetadataThread;
+- (void)setProperties: (NSDictionary *)p;
+- (void)readPropertiesThread;
 
 @end

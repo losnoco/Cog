@@ -16,13 +16,15 @@ typedef enum {
 } PlaylistType;
 
 @interface PlaylistLoader : NSObject {
-	PlaylistController *playlistController;
+	IBOutlet PlaylistController *playlistController;
 
 	PlaylistType currentType; //m3u or pls
 	NSString *currentFile;
 }
 
-
+//load arrays of urls...
+- (void)addURLs:(NSArray *)urls sort:(BOOL)sort;
+- (void)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort;
 
 //load playlist auto-determines type to be either pls or m3u.
 - (BOOL)load:(NSString *)filename;
@@ -37,6 +39,7 @@ typedef enum {
 - (BOOL)saveM3u:(NSString *)filename;
 - (BOOL)savePls:(NSString *)filename;
 
+- (NSArray *)acceptableFileTypes;
 - (NSArray *)acceptablePlaylistTypes;
 
 - (PlaylistType)currentType;

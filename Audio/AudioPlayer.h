@@ -45,6 +45,7 @@
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo;
 
 + (NSArray *)fileTypes;
++ (NSArray *)schemes;
 
 @end
 

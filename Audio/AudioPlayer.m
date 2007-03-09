@@ -280,5 +280,12 @@
 	return [types allObjects];
 }
 
++ (NSArray *)schemes
+{
+	PluginController *pluginController = [PluginController sharedPluginController];
+	
+	return [[pluginController sources] allKeys];
+}
+
 
 @end

@@ -11,6 +11,8 @@
 		170680630B950158006BA573 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		170680840B950164006BA573 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */; };
+		1755E1F80BA0D2B600CA3560 /* PlaylistLoader.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */; };
+		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		175D8B640B9A514C005B3CD9 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 175D8B630B9A514C005B3CD9 /* CogAudio.framework */; };
 		175D8B670B9A5153005B3CD9 /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 175D8B630B9A514C005B3CD9 /* CogAudio.framework */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
@@ -138,6 +140,7 @@
 				175D8B670B9A5153005B3CD9 /* CogAudio.framework in CopyFiles */,
 				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 				17F94CCD0B8D090800A34E87 /* Sparkle.framework in CopyFiles */,
+				1755E1F80BA0D2B600CA3560 /* PlaylistLoader.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +153,8 @@
 		170680620B950158006BA573 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = ThirdParty/Frameworks/Growl.framework; sourceTree = "<group>"; };
 		171678BD0AC8C39E00C28CF3 /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFolderNode.h; sourceTree = "<group>"; };
 		171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFolderNode.m; sourceTree = "<group>"; };
+		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
+		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		175D8B630B9A514C005B3CD9 /* CogAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CogAudio.framework; path = Audio/build/Release/CogAudio.framework; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
 		1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AudioScrobbler.m; sourceTree = "<group>"; };
@@ -613,6 +618,8 @@
 			children = (
 				8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */,
 				8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */,
+				1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */,
+				1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */,
 				8E75752B09F31D5A0080F1EE /* DNDArrayController.h */,
 				8E75752C09F31D5A0080F1EE /* DNDArrayController.m */,
 				8E75752D09F31D5A0080F1EE /* PlaylistController.h */,
@@ -638,7 +645,6 @@
 		8EFFCD410AA093AF00C458A5 /* FileDrawer */ = {
 			isa = PBXGroup;
 			children = (
-				8EFFCD540AA093AF00C458A5 /* UKKQueue */,
 				8EFFCD440AA093AF00C458A5 /* FileIconCell.h */,
 				8EFFCD450AA093AF00C458A5 /* FileIconCell.m */,
 				8EFFCD500AA093AF00C458A5 /* PathIcon.h */,
@@ -659,13 +665,6 @@
 				171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */,
 			);
 			path = FileDrawer;
-			sourceTree = "<group>";
-		};
-		8EFFCD540AA093AF00C458A5 /* UKKQueue */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = UKKQueue;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -796,6 +795,7 @@
 				1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */,
 				1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */,
 				1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */,
+				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -836,21 +836,9 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks/CogAudio/build/Release",
+					"$(SRCROOT)/Audio/build/Release",
 					"$(SRCROOT)/ThirdParty/Frameworks/",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_4)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_5)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_6)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks/CogAudio/build/Debug\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/Audio/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/Audio/build/Debug\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/Audio/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_5 = "\"$(SRCROOT)/Audio/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_6 = "\"$(SRCROOT)/Audio/build/Debug\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -881,21 +869,9 @@
 					i386,
 				);
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks/CogAudio/build/Release",
+					"$(SRCROOT)/Audio/build/Release",
 					"$(SRCROOT)/ThirdParty/Frameworks/",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_4)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_5)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_6)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks/CogAudio/build/Debug\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/Audio/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/Audio/build/Debug\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/Audio/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_5 = "\"$(SRCROOT)/Audio/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_6 = "\"$(SRCROOT)/Audio/build/Debug\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
