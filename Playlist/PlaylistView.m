@@ -79,14 +79,12 @@
 
 - (void)mouseDown:(NSEvent *)e
 {
-	NSLog(@"MOUSE DOWN");
-	if ([e type] == NSLeftMouseDown && [e clickCount] == 2)
+	if ([e type] == NSLeftMouseDown && [e clickCount] == 2 && [self selectedRow] != -1)
 	{
 		[playbackController play:self];
 	}
 	else
 	{
-		NSLog(@"Super");
 		[super mouseDown:e];
 	}
 }
