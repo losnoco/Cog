@@ -28,7 +28,6 @@
 	
 	NSTimer *positionTimer;
 		
-	BOOL waitingForPlay; //No sneaky changing on us
 	AudioPlayer *audioPlayer;
 	
 	int playbackStatus;
