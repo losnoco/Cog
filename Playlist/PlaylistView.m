@@ -128,7 +128,8 @@
 		return;
 
 	c = [s characterAtIndex:0];
-	if (c == NSDeleteCharacter)
+
+	if (c == NSDeleteCharacter || c == NSBackspaceCharacter || c == NSDeleteFunctionKey)
 	{
 		[playlistController remove:self];
 	}
