@@ -29,15 +29,6 @@
 	return self;
 }
 
-- (void)awakeFromNib
-{
-	[super awakeFromNib];
-	
-	NSNotificationCenter* ns = [NSNotificationCenter defaultCenter];
-	[ns addObserver:self selector:@selector(handlePlaylistViewHeaderNotification:) name:@"PlaylistViewColumnSeparatorDoubleClick" object:nil];
-}
-
-
 - (void)tableView:(NSTableView *)tableView
 		didClickTableColumn:(NSTableColumn *)tableColumn
 {
@@ -455,65 +446,6 @@
 	NSURL *url = [[self entryAtIndex:[self selectionIndex]] url];
 	if ([url isFileURL])
 		[ws selectFile:[url path] inFileViewerRootedAtPath:[url path]];
-}
-
-- (void)handlePlaylistViewHeaderNotification:(NSNotification*)notif
-{
-	NSTableView *tv = [notif object];
-	NSNumber *colIdx = [[notif userInfo] objectForKey:@"column"];
-	NSTableColumn *col = [[tv tableColumns] objectAtIndex:[colIdx intValue]];
-	
-	//Change to use NSSelectorFromString and NSMethodSignature returnType, see http://developer.apple.com/documentation/Cocoa/Conceptual/ObjectiveC/Articles/chapter_5_section_7.html for info
-	//Maybe we can pull the column bindings out somehow, instead of selectorfromstring
-
-	// find which function to call on PlaylistEntry*
-	SEL sel;
-	NSString* identifier = [col identifier];
-	BOOL isNumeric = NO;
-	if ([identifier compare:@"title"] == NSOrderedSame)
-		sel = @selector(title);
-	else if ([identifier compare:@"length"] == NSOrderedSame) 
-		sel = @selector(lengthString);
-	else if ([identifier compare:@"index"] == NSOrderedSame) {
-		sel = @selector(index);
-		isNumeric = YES;
-	}
-	else if ([identifier compare:@"artist"] == NSOrderedSame)
-		sel = @selector(artist);
-	else if ([identifier compare:@"album"] == NSOrderedSame)
-		sel = @selector(album);
-	else if ([identifier compare:@"year"] == NSOrderedSame)
-		sel = @selector(year);
-	else if ([identifier compare:@"genre"] == NSOrderedSame)
-		sel = @selector(genre);
-	else if ([identifier compare:@"track"] == NSOrderedSame) {
-		sel = @selector(track);
-		isNumeric = YES;
-	}
-	else
-		return;
-	
-	NSCell *cell = [col dataCell];
-	NSAttributedString * as = [cell attributedStringValue];
-
-	// find the longest string display length in that column
-	NSArray *entries = [self arrangedObjects];
-	NSEnumerator *enumerator = [entries objectEnumerator];
-	PlaylistEntry *entry;
-	float maxlength = -1;
-	NSString *ret;
-	while (entry = [enumerator nextObject]) {
-		if (isNumeric)
-			ret = [NSString stringWithFormat:@"%d", objc_msgSend(entry, sel)];
-		else
-			ret = objc_msgSend(entry, sel);
-		if ([ret sizeWithAttributes:[as attributesAtIndex:0 effectiveRange:nil]].width > maxlength)
-			maxlength = [ret sizeWithAttributes:[as attributesAtIndex:0 effectiveRange:nil]].width;
-	}
-	
-
-	// set the new width (plus a 5 pixel extra to avoid "..." string substitution)
-	[col setWidth:maxlength+5];
 }
 
 @end

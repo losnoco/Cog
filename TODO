@@ -1,2 +1,5 @@
-Changed SourceNode to BufferedSource. It's not really a node.
-Fix all plugins besides ogg vorbis (already fixed), so they use callbacks and the source.
+Make playlist table header menu, (See Play _streamTableHeaderContextMenu).
+Make PlaylistEntry numbers use NSNumber.
+Instead of LengthString, use a formatter.
+
+Add automatic header seperator without testing explicit types. Pull out binding? Perhaps the table column can do a objectAtIndex and then get a stringValue to get the width.

@@ -33,12 +33,32 @@
 			clickedSeperator = YES;
 		
 		if (clickedSeperator) {
+			NSTableColumn *col = [[[self tableView] tableColumns] objectAtIndex:column];
+
+			//Info about the font and such
+			NSCell *cell = [col dataCell];
+			NSAttributedString * as = [cell attributedStringValue];
+
+			//Binding info...reaching deep!
+			NSDictionary *bindingInfo = [col infoForBinding:@"value"];
+			NSArray *boundArray = [[bindingInfo objectForKey:NSObservedObjectKey] valueForKeyPath:[bindingInfo objectForKey:NSObservedKeyPathKey]];
 			
-			NSNotificationCenter *center;
-			center = [NSNotificationCenter defaultCenter];
-			[center postNotificationName: @"PlaylistViewColumnSeparatorDoubleClick" object: 
-			   [self tableView] userInfo: 
-				[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:column],@"column", nil]];
+			//find the longest string display length in that column
+			float max_width = -1;
+			id row;
+			NSEnumerator *enumerator = [boundArray objectEnumerator];
+			while (row = [enumerator nextObject]) {
+				NSString *s = [row description];
+					
+				float width = [s sizeWithAttributes:[as attributesAtIndex:0 effectiveRange:nil]].width;
+				if (width > max_width)
+					max_width = width;
+			}
+			
+
+			// set the new width (plus a 5 pixel extra to avoid "..." string substitution)
+			[col setWidth:max_width+5];
+				
 		}
 		else
 			[super mouseDown: theEvent];
@@ -47,4 +67,12 @@
 		[super mouseDown: theEvent];
 }
 
+-(NSMenu*)menuForEvent:(NSEvent*)event
+{
+	NSString *hi = @"This is a test";
+	//Show a menu!
+	NSLog(@"MENU FOR HEADER!");
+
+	return nil;
+}
 @end
