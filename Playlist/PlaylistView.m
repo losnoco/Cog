@@ -44,6 +44,7 @@
 	
 	[self setHeaderView:customTableHeaderView];
 
+	//Set up formatters
 	NSFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
 	[[[self tableColumnWithIdentifier:@"length"] dataCell] setFormatter:secondsFormatter];
 	[secondsFormatter release];
@@ -51,8 +52,31 @@
 	NSFormatter *indexFormatter = [[IndexFormatter alloc] init];
 	[[[self tableColumnWithIdentifier:@"index"] dataCell] setFormatter:indexFormatter];
 	[indexFormatter release];
-	
+	//end setting up formatters
+
 	[self setVerticalMotionCanBeginDrag:YES];
+	
+	//Set up header context menu
+	headerContextMenu = [[NSMenu alloc] initWithTitle:@"Playlist Header Context Menu"];
+	
+	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"headerCell.title" ascending:YES];
+	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
+	NSEnumerator *e = [[[[self allTableColumns] allObjects] sortedArrayUsingDescriptors: sortDescriptors] objectEnumerator];
+
+	int menuIndex = 0;
+	NSTableColumn *col;	
+	while (col = [e nextObject]) {
+		NSMenuItem *contextMenuItem = [headerContextMenu insertItemWithTitle:[[col headerCell] title] action:@selector(toggleColumn:) keyEquivalent:@"" atIndex:menuIndex];
+		
+		[contextMenuItem setTarget:self];
+		[contextMenuItem setRepresentedObject:col];
+		[contextMenuItem setState:([[self visibleTableColumns] containsObject:col] ? NSOnState : NSOffState)];
+
+		menuIndex++;
+	}
+	[sortDescriptor release];
+	
+	[[self headerView] setMenu:headerContextMenu];
 }
 
 

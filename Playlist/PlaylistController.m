@@ -173,7 +173,7 @@
 - (void)setSortDescriptors:(NSArray *)sortDescriptors
 {
 	//Cheap hack so the index column isn't sorted
-	if (([sortDescriptors count] != 0) && [[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"displayIndex"] == NSOrderedSame)
+	if (([sortDescriptors count] != 0) && [[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"index"] == NSOrderedSame)
 	{
 		//Remove the sort descriptors
 		[super setSortDescriptors:nil];

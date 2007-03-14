@@ -67,12 +67,4 @@
 		[super mouseDown: theEvent];
 }
 
--(NSMenu*)menuForEvent:(NSEvent*)event
-{
-	NSString *hi = @"This is a test";
-	//Show a menu!
-	NSLog(@"MENU FOR HEADER!");
-
-	return nil;
-}
 @end

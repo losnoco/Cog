@@ -14,9 +14,10 @@
 #import "AMRemovableColumnsTableView.h"
 
 @interface PlaylistView : AMRemovableColumnsTableView {
-	
 	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
+
+	NSMenu *headerContextMenu;
 }
 
 - (IBAction)sortByPath:(id)sender;
