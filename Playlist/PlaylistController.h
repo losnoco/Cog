@@ -60,6 +60,6 @@
 - (void)addShuffledListToFront;
 - (void)resetShuffleList;
 
-- (void)handlePlaylistViewHeaderNotification:(NSNotification*)notif;
+- (PlaylistEntry *)entryAtIndex:(int)i;
 
 @end

@@ -17,28 +17,26 @@
 	NSString *genre;
 
 	NSString *year;
-	unsigned int track;	
+	NSNumber *track;	
 	
-	NSString *lengthString;
-	
-	double length;
-	int bitrate;
-	int channels;
-	int bitsPerSample;
-	float sampleRate;
+	NSNumber *length;
+	NSNumber *bitrate;
+	NSNumber *channels;
+	NSNumber *bitsPerSample;
+	NSNumber *sampleRate;
 	
 	BOOL current;
 	
-	int idx; //Can't use index due to some weird bug...might be fixed...should test in the future...think it was a conflict with flac, which is now an external lib
-	int shuffleIdx;
-	int displayIdx;
+	NSNumber *idx;
+	NSNumber *shuffleIndex;
+	NSNumber *displayIndex;
 }
 
-- (void)setIndex:(int)i;
-- (int)index;
+- (void)setIndex:(NSNumber *)i;
+- (NSNumber *)index;
 
-- (void)setShuffleIndex:(int)si;
-- (int)shuffleIndex;
+- (void)setShuffleIndex:(NSNumber *)si;
+- (NSNumber *)shuffleIndex;
 
 - (void)setURL:(NSURL *)u;
 - (NSURL *)url;
@@ -54,25 +52,23 @@
 - (void)setGenre:(NSString *)s;
 - (NSString *)genre;
 
-- (NSString *)lengthString;
-- (void)setLengthString:(double)l;
-
 - (void)setYear:(NSString *)y;
 - (NSString *)year;
-- (void)setTrack:(int)y;
-- (int)track;
+- (void)setTrack:(NSNumber *)y;
+- (NSNumber *)track;
 
-- (void)setLength:(double)l;
-- (void)setBitrate:(int) br;
-- (void)setChannels:(int)c;
-- (void)setBitsPerSample:(int)bps;
-- (void)setSampleRate:(float)s;
+- (void)setLength:(NSNumber *)l;
+- (NSNumber *)length;
 
-- (double)length;
-- (int)bitrate;
-- (int)channels;
-- (int)bitsPerSample;
-- (float)sampleRate;
+- (void)setBitrate:(NSNumber *) br;
+- (NSNumber *)bitrate;
+
+- (void)setChannels:(NSNumber *)c;
+- (NSNumber *)channels;
+- (void)setBitsPerSample:(NSNumber *)bps;
+- (NSNumber *)bitsPerSample;
+- (void)setSampleRate:(NSNumber *)s;
+- (NSNumber *)sampleRate;
 
 - (void)setMetadata: (NSDictionary *)m;
 - (void)readMetadataThread;

@@ -5,10 +5,10 @@
 #import <Growl/GrowlApplicationBridge.h>
 
 #import "CogAudio/AudioPlayer.h"
-#import "PlaylistController.h"
 #import "TrackingSlider.h"
 #import "AudioScrobbler.h"
 
+@class PlaylistController;
 @class PlaylistView;
 
 @interface PlaybackController : NSObject <GrowlApplicationBridgeDelegate>

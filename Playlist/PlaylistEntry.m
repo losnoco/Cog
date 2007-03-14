@@ -17,7 +17,7 @@
 	self = [super init];
 	if (self)
 	{
-		[self setIndex:0];
+		[self setIndex:nil];
 		[self setURL:nil];
 	}
 
@@ -31,35 +31,30 @@
 	[super dealloc];
 }
 
--(void)setShuffleIndex:(int)si
+-(void)setShuffleIndex:(NSNumber *)si
 {
-	shuffleIdx = si;
+	[si retain];
+	[shuffleIndex release];
+	
+	shuffleIndex = si;
 }
 
--(int)shuffleIndex
+-(NSNumber *)shuffleIndex
 {
-	return shuffleIdx;
+	return shuffleIndex;
 }
 
--(void)setIndex:(int)i
+-(void)setIndex:(NSNumber *)i
 {
+	[i retain];
+	[idx release];
+	NSLog(@"INDEX: %@", i);
 	idx = i;
-	[self setDisplayIndex:i+1];
 }
 
--(int)index
+-(NSNumber *)index
 {
 	return idx;
-}
-
--(void)setDisplayIndex:(int)i
-{
-	displayIdx=i;
-}
-
--(int)displayIndex
-{
-	return displayIdx;
 }
 
 -(void)setURL:(NSURL *)u
@@ -155,24 +150,25 @@
 	return year;
 }
 
-- (void)setTrack:(int)t
+- (void)setTrack:(NSNumber *)t
 {
+	[t retain];
+	[track release];
+	
 	track = t;
 }
-- (int)track
+- (NSNumber *)track
 {
 	return track;
 }
 
 - (void)setProperties:(NSDictionary *)dict
 {
-	[self setLength:		[[dict objectForKey:@"length"		] doubleValue]];
-	[self setBitrate:		[[dict objectForKey:@"bitrate"		] intValue]];
-	[self setChannels:		[[dict objectForKey:@"channels"		] intValue]];
-	[self setBitsPerSample:	[[dict objectForKey:@"bitsPerSample"] intValue]];
-	[self setSampleRate:	[[dict objectForKey:@"sampleRate"	] floatValue]];
-	
-	[self setLengthString:[[dict objectForKey:@"length"] doubleValue]];
+	[self setLength:		[dict objectForKey:@"length"		]];
+	[self setBitrate:		[dict objectForKey:@"bitrate"		]];
+	[self setChannels:		[dict objectForKey:@"channels"		]];
+	[self setBitsPerSample:	[dict objectForKey:@"bitsPerSample" ]];
+	[self setSampleRate:	[dict objectForKey:@"sampleRate"	]];
 }
 
 - (void)readPropertiesThread
@@ -182,60 +178,62 @@
 	[self performSelectorOnMainThread:@selector(setProperties:) withObject:properties waitUntilDone:YES];
 }
 
-- (NSString *)lengthString
+- (void)setLength:(NSNumber *)l
 {
-	return lengthString;
-}
-- (void)setLengthString:(double)l
-{
-	int sec = (int)(l/1000.0);
-
-	[lengthString release];
-	lengthString = [[NSString alloc] initWithFormat:@"%i:%02i",sec/60,sec%60]; 
-}
-
-
-- (void)setLength:(double)l
-{
+	[l retain];
+	[length release];
+	
 	length = l;
 }
-- (double)length
+- (NSNumber *)length
 {
 	return length;
 }
 
-- (void)setBitrate:(int) br
+- (void)setBitrate:(NSNumber *) br
 {
+	[br retain];
+	[bitrate release];
+	
 	bitrate = br;
 }
-- (int)bitrate
+- (NSNumber *)bitrate
 {
 	return bitrate;
 }
 
-- (void)setChannels:(int)c
+- (void)setChannels:(NSNumber *)c
 {
+	[c retain];
+	[channels release];
+	
 	channels = c;
 }
-- (int)channels
+- (NSNumber *)channels
 {
 	return channels;
 }
 
-- (void)setBitsPerSample:(int)bps
+- (void)setBitsPerSample:(NSNumber *)bps
 {
+	[bps retain];
+	[bitsPerSample release];
+	
 	bitsPerSample = bps;
 }
-- (int)bitsPerSample
+- (NSNumber *)bitsPerSample
 {
 	return bitsPerSample;
 }
 
-- (void)setSampleRate:(float)s
+- (void)setSampleRate:(NSNumber *)s
 {
+	[s retain];
+	[s release];
+	
 	sampleRate = s;
 }
-- (float)sampleRate
+- (NSNumber *)sampleRate
 {
 	return sampleRate;
 }
@@ -255,7 +253,7 @@
 	[self setAlbum:[m objectForKey:@"album"]];
 	[self setGenre:[m objectForKey:@"genre"]];
 	[self setYear:[m objectForKey:@"year"]];
-	[self setTrack:[[m objectForKey:@"track"] intValue]];
+	[self setTrack:[m objectForKey:@"track"]];
 }	
 
 - (void)readMetadataThread
@@ -268,7 +266,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)",idx, url];
+	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", idx, url];
 }
 
 @end

@@ -10,6 +10,8 @@
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
 
+#import "NSFileHandle+CreateFile.h"
+
 #import "CogAudio/AudioPlayer.h"
 
 @implementation PlaylistLoader
@@ -136,8 +138,9 @@
 
 - (BOOL)saveM3u:(NSString *)filename
 {
-	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename];
+	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if (!fileHandle) {
+		NSLog(@"Error!");
 		return NO;
 	}
 	[fileHandle truncateFileAtOffset:0];
@@ -201,7 +204,7 @@
 
 - (BOOL)savePls:(NSString *)filename
 {
-	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename];
+	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if (!fileHandle) {
 		return NO;
 	}
@@ -327,7 +330,7 @@
 		NSURL *url = [finalURLs objectAtIndex:i];
 
 		[pe	setURL:url];
-		[pe setIndex:index+i];
+		[pe setIndex:[NSNumber numberWithInt:(index+i)]];
 		[pe setTitle:[[url path] lastPathComponent]];
 		
 		[entries addObject:pe];

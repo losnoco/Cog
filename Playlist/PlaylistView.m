@@ -12,6 +12,9 @@
 
 #import "PlaylistHeaderView.h"
 
+#import "IndexFormatter.h"
+#import "SecondsFormatter.h"
+
 @implementation PlaylistView
 
 - (void)awakeFromNib
@@ -31,7 +34,7 @@
 		[[c dataCell] setControlSize:s];
 		[[c dataCell] setFont:f];
 	}
-	
+
 	NSTableHeaderView *currentTableHeaderView = [self headerView];
 	PlaylistHeaderView *customTableHeaderView = [[PlaylistHeaderView alloc] init];
 	
@@ -40,6 +43,14 @@
 //	[self setColumnAutoresizingStyle:NSTableViewNoColumnAutoresizing];
 	
 	[self setHeaderView:customTableHeaderView];
+
+	NSFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+	[[[self tableColumnWithIdentifier:@"length"] dataCell] setFormatter:secondsFormatter];
+	[secondsFormatter release];
+	
+	NSFormatter *indexFormatter = [[IndexFormatter alloc] init];
+	[[[self tableColumnWithIdentifier:@"index"] dataCell] setFormatter:indexFormatter];
+	[indexFormatter release];
 	
 	[self setVerticalMotionCanBeginDrag:YES];
 }

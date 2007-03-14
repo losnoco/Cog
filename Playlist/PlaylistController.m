@@ -121,7 +121,7 @@
 	PlaylistEntry* pe;
 	
 	while (pe = [enumerator nextObject]) {
-		tt += [pe length];
+		tt += [[pe length] doubleValue];
 	}
 	
 	int sec = (int)(tt/1000.0);
@@ -148,7 +148,7 @@
 		PlaylistEntry *p;
 		p = [[self arrangedObjects] objectAtIndex:j];
 		
-		[p setIndex:j];
+		[p setIndex:[NSNumber numberWithInt:j]];
 	}
 }
 
@@ -159,7 +159,7 @@
 	
 	if ([a containsObject:currentEntry])
 	{
-		[currentEntry setIndex:-1];
+		[currentEntry setIndex:[NSNumber numberWithInt:-1]];
 	}
 	
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
@@ -281,11 +281,11 @@
 {
 	if (shuffle == YES)
 	{
-		return [self shuffledEntryAtIndex:[pe shuffleIndex] + 1];
+		return [self shuffledEntryAtIndex:([[pe shuffleIndex] intValue] + 1)];
 	}
 	else
 	{
-		return [self entryAtIndex:[pe index] + 1];
+		return [self entryAtIndex:([[pe index] intValue] + 1)];
 	}
 }
 
@@ -293,18 +293,18 @@
 {
 	if (shuffle == YES)
 	{
-		return [self shuffledEntryAtIndex:[pe shuffleIndex] - 1];
+		return [self shuffledEntryAtIndex:([[pe shuffleIndex] intValue] - 1)];
 	}
 	else
 	{
 		//Fix for removing a track, then pressing prev with repeat turned on
-		if ([pe index] == -1)
+		if ([[pe index] intValue] == -1)
 		{
-			return [self entryAtIndex:[pe index]];
+			return [self entryAtIndex:[[pe index] intValue]];
 		}
 		else
 		{
-			return [self entryAtIndex:[pe index] - 1];
+			return [self entryAtIndex:[[pe index] intValue] - 1];
 		}
 	}
 }
@@ -347,7 +347,7 @@
 	int i;
 	for (i = 0; i < [shuffleList count]; i++)
 	{
-		[[shuffleList objectAtIndex:i] setShuffleIndex:i];
+		[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
 	}
 }
 
@@ -361,7 +361,7 @@
 	int i;
 	for (i = ([shuffleList count] - [newList count]); i < [shuffleList count]; i++)
 	{
-		[[shuffleList objectAtIndex:i] setShuffleIndex:i];
+		[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
 	}
 	
 }
@@ -372,7 +372,7 @@
 
 	[self addShuffledListToFront];
 
-	if (currentEntry && [currentEntry index] != -1)
+	if (currentEntry && [[currentEntry index] intValue] != -1)
 	{
 		[shuffleList insertObject:currentEntry atIndex:0];
 		[currentEntry setShuffleIndex:0];
@@ -388,7 +388,7 @@
 				[shuffleList removeObjectAtIndex:i];
 			}
 
-			[[shuffleList objectAtIndex:i] setShuffleIndex:i];
+			[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
 		}
 	}
 }
@@ -403,7 +403,7 @@
 	[currentEntry setCurrent:NO];
 	
 	[pe setCurrent:YES];
-	[tableView scrollRowToVisible:[pe index]];
+	[tableView scrollRowToVisible:[[pe index] intValue]];
 	
 	[pe retain];
 	[currentEntry release];

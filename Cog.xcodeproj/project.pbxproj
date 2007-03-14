@@ -100,6 +100,12 @@
 		8E7575D009F31DCA0080F1EE /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 8E7575C809F31DCA0080F1EE /* Credits.html */; };
 		8E7575D109F31DCA0080F1EE /* README in Resources */ = {isa = PBXBuildFile; fileRef = 8E7575C909F31DCA0080F1EE /* README */; };
 		8E7575DB09F31E930080F1EE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E7575D909F31E930080F1EE /* Localizable.strings */; };
+		8E9A2E850BA78B500091081B /* SecondsFormatter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E9A2E830BA78B500091081B /* SecondsFormatter.h */; };
+		8E9A2E860BA78B500091081B /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2E840BA78B500091081B /* SecondsFormatter.m */; };
+		8E9A2ED90BA78D9D0091081B /* IndexFormatter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E9A2ED70BA78D9D0091081B /* IndexFormatter.h */; };
+		8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */; };
+		8E9A30150BA792DC0091081B /* NSFileHandle+CreateFile.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */; };
+		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
 		8EFFCD5F0AA093AF00C458A5 /* DirectoryNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD430AA093AF00C458A5 /* DirectoryNode.m */; };
 		8EFFCD610AA093AF00C458A5 /* FileIconCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD450AA093AF00C458A5 /* FileIconCell.m */; };
 		8EFFCD630AA093AF00C458A5 /* FileNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD470AA093AF00C458A5 /* FileNode.m */; };
@@ -141,6 +147,9 @@
 				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 				17F94CCD0B8D090800A34E87 /* Sparkle.framework in CopyFiles */,
 				1755E1F80BA0D2B600CA3560 /* PlaylistLoader.h in CopyFiles */,
+				8E9A2E850BA78B500091081B /* SecondsFormatter.h in CopyFiles */,
+				8E9A2ED90BA78D9D0091081B /* IndexFormatter.h in CopyFiles */,
+				8E9A30150BA792DC0091081B /* NSFileHandle+CreateFile.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,6 +286,12 @@
 		8E7575C909F31DCA0080F1EE /* README */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		8E7575DA09F31E930080F1EE /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E7575DC09F31EAF0080F1EE /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8E9A2E830BA78B500091081B /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SecondsFormatter.h; sourceTree = "<group>"; };
+		8E9A2E840BA78B500091081B /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SecondsFormatter.m; sourceTree = "<group>"; };
+		8E9A2ED70BA78D9D0091081B /* IndexFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexFormatter.h; sourceTree = "<group>"; };
+		8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexFormatter.m; sourceTree = "<group>"; };
+		8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
+		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		8EFFCD420AA093AF00C458A5 /* DirectoryNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DirectoryNode.h; sourceTree = "<group>"; };
 		8EFFCD430AA093AF00C458A5 /* DirectoryNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DirectoryNode.m; sourceTree = "<group>"; };
 		8EFFCD440AA093AF00C458A5 /* FileIconCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileIconCell.h; sourceTree = "<group>"; };
@@ -470,6 +485,8 @@
 				177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */,
 				177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */,
 				177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */,
+				8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */,
+				8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -630,6 +647,10 @@
 				8E75753209F31D5A0080F1EE /* PlaylistView.m */,
 				8E75753309F31D5A0080F1EE /* Shuffle.h */,
 				8E75753409F31D5A0080F1EE /* Shuffle.m */,
+				8E9A2E830BA78B500091081B /* SecondsFormatter.h */,
+				8E9A2E840BA78B500091081B /* SecondsFormatter.m */,
+				8E9A2ED70BA78D9D0091081B /* IndexFormatter.h */,
+				8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */,
 			);
 			path = Playlist;
 			sourceTree = "<group>";
@@ -796,6 +817,9 @@
 				1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */,
 				1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */,
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
+				8E9A2E860BA78B500091081B /* SecondsFormatter.m in Sources */,
+				8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */,
+				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

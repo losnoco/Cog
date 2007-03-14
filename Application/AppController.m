@@ -161,15 +161,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	NSURL *url = [NSURL URLWithString:[urlComboBox stringValue]];
 	
-	PlaylistEntry *pe = [[PlaylistEntry alloc] init];
-	
-	[pe	setURL:url];
-	[pe setIndex:[[playlistController arrangedObjects] count]];
-	[pe setTitle:[urlComboBox stringValue]];
-	
-	[playlistController addObject:pe];
-	
-	[pe release];
+	[playlistLoader addURLs:[NSArray arrayWithObject:url] sort:NO];
 	
     [NSApp endSheet:addURLPanel];
     [addURLPanel orderOut:self];

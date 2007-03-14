@@ -4,6 +4,9 @@
 #import "DBLog.h"
 #import "CogAudio/Status.h"
 
+#import "PlaylistController.h"
+#import "PlaylistEntry.h"
+
 @implementation PlaybackController
 
 - (id)init
@@ -289,11 +292,11 @@
 
 	if ([playlistController shuffle] == YES)
 	{
-		pe = [playlistController entryAtIndex:[curEntry shuffleIndex]+1];
+		pe = [playlistController entryAtIndex:[[curEntry shuffleIndex] intValue] + 1];
 	}
 	else
 	{
-		pe = [playlistController entryAtIndex:[curEntry index]+1];
+		pe = [playlistController entryAtIndex:[[curEntry index] intValue] + 1];
 	}
 	
 	if (pe == nil)
