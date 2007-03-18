@@ -17,8 +17,25 @@
 	self = [super init];
 	if (self)
 	{
-		[self setIndex:nil];
-		[self setURL:nil];
+		url = nil;
+
+		artist = nil;
+		album = nil;
+		title = nil;
+		genre = nil;
+
+		year = nil;
+		track = nil;
+		length = nil;
+		bitrate = nil;
+		channels = nil;
+		bitsPerSample = nil;
+		sampleRate = nil;
+		
+		current = nil;
+		
+		idx = nil;
+		shuffleIndex = nil;
 	}
 
 	return self;
@@ -27,6 +44,20 @@
 - (void)dealloc
 {
 	[url release];
+	[artist release];
+	[album release];
+	[title release];
+	[genre release];
+	[year release];
+	[track release];
+	[length release];
+	[bitrate release];
+	[channels release];
+	[bitsPerSample release];
+	[sampleRate release];
+	[current release];
+	[idx release];
+	[shuffleIndex release];
 	
 	[super dealloc];
 }
@@ -69,12 +100,14 @@
 	return url;
 }
 
--(void)setCurrent:(BOOL) b
+-(void)setCurrent:(NSNumber *) b
 {
+	[b retain];
+	[current release];
 	current = b;
 }
 
--(BOOL)current
+-(NSNumber *)current
 {
 	return current;
 }
@@ -229,8 +262,8 @@
 - (void)setSampleRate:(NSNumber *)s
 {
 	[s retain];
-	[s release];
-	
+	[sampleRate release];
+
 	sampleRate = s;
 }
 - (NSNumber *)sampleRate

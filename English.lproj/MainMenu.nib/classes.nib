@@ -117,6 +117,7 @@
             OUTLETS = {
                 bitrateField = NSTextField; 
                 lengthField = NSTextField; 
+                outputDevices = NSArrayController; 
                 playButton = NSButton; 
                 playlistController = PlaylistController; 
                 playlistView = PlaylistView; 

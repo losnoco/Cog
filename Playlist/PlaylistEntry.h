@@ -25,11 +25,10 @@
 	NSNumber *bitsPerSample;
 	NSNumber *sampleRate;
 	
-	BOOL current;
+	NSNumber *current;
 	
 	NSNumber *idx;
 	NSNumber *shuffleIndex;
-	NSNumber *displayIndex;
 }
 
 - (void)setIndex:(NSNumber *)i;
@@ -40,8 +39,8 @@
 
 - (void)setURL:(NSURL *)u;
 - (NSURL *)url;
-- (void)setCurrent:(BOOL) b;
-- (BOOL)current;
+- (void)setCurrent:(NSNumber *) b;
+- (NSNumber *)current;
 
 - (void)setArtist:(NSString *)s;
 - (NSString *)artist;

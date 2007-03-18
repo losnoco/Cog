@@ -400,9 +400,9 @@
 
 - (void)setCurrentEntry:(PlaylistEntry *)pe
 {
-	[currentEntry setCurrent:NO];
+	[currentEntry setCurrent:[NSNumber numberWithBool:NO]];
 	
-	[pe setCurrent:YES];
+	[pe setCurrent:[NSNumber numberWithBool:YES]];
 	[tableView scrollRowToVisible:[[pe index] intValue]];
 	
 	[pe retain];
