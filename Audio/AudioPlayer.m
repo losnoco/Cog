@@ -22,6 +22,7 @@
 	{
 		output = NULL;
 		bufferChain = NULL;
+		outputLaunched = NO;
 		
 		chainQueue = [[NSMutableArray alloc] init];
 	}
@@ -91,9 +92,9 @@
 	[bufferChain setUserInfo:userInfo];
 
 	[self setShouldContinue:YES];
-	DBLog(@"DETACHING THREADS");
 	
-	[output launchThread];
+	outputLaunched = NO;
+	NSLog(@"Launching input thread!");
 	[bufferChain launchThreads];
 	
 	[self setPlaybackStatus:kCogStatusPlaying];
@@ -165,6 +166,13 @@
 	return [output amountPlayed];
 }
 
+- (void)launchOutputThread
+{
+	if (outputLaunched == NO) {
+		NSLog(@"Launching output thread!");
+		[output launchThread];
+	}
+}
 
 
 

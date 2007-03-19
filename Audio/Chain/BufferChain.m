@@ -107,6 +107,11 @@
 	[controller endOfInputReached:self];
 }
 
+- (void)initialBufferFilled
+{
+	[controller launchOutputThread];
+}
+
 
 - (id)finalNode
 {

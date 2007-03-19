@@ -24,6 +24,7 @@
 	
 	BOOL shouldContinue;	
 	BOOL endOfStream; //All data is now in buffer
+	BOOL initialBufferFilled;
 }
 - (id)initWithController:(id)c previous:(id)p;
 

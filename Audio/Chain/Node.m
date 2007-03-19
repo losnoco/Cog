@@ -20,6 +20,8 @@
 		readLock = [[NSLock alloc] init];
 		writeLock = [[NSLock alloc] init];
 		
+		initialBufferFilled = NO;
+		
 		controller = c;
 		previousNode = p;
 		endOfStream = NO;
@@ -43,6 +45,11 @@
 		if (availOutput == 0)
 		{
 			[writeLock unlock];
+			if (initialBufferFilled == NO) {
+				initialBufferFilled = YES;\
+				if ([controller respondsToSelector:@selector(initialBufferFilled)])
+					[controller performSelector:@selector(initialBufferFilled)];
+			}
 			[semaphore wait];
 			[writeLock lock];
 		}
@@ -104,7 +111,13 @@
 		//If it is the outputNode, [soundController newInputChain];
 		//else
 		endOfStream = YES;
-	}	
+	}
+	if (availInput <= 0) {
+		NSLog(@"BUFFER RAN DRY!");
+	}
+	else if (availInput < amount) {
+		NSLog(@"BUFFER IN DANGER");
+	}
 
 	amountToCopy = availInput;
 	if (amountToCopy > amount)

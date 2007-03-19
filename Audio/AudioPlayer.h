@@ -22,6 +22,8 @@
 	id nextStreamUserInfo;
 	
 	id delegate;
+	
+	BOOL outputLaunched;
 }
 
 - (id)init;
@@ -65,6 +67,7 @@
 - (void)endOfInputReached:(BufferChain *)sender;
 - (void)setShouldContinue:(BOOL)s;
 - (BufferChain *)bufferChain;
+- (void)launchOutputThread;
 - (void)endOfInputPlayed;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
 @end

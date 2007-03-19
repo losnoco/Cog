@@ -40,6 +40,8 @@
 
 - (void)setShouldContinue:(BOOL)s;
 
+- (void)initialBufferFilled;
+
 - (void)endOfInputReached;
 
 
