@@ -122,7 +122,7 @@
     NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
 	NSMutableArray *entries = [NSMutableArray array];
 
-    while (entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])
+    while (entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
     {
 		if ([entry hasPrefix:@"#"] || [entry isEqualToString:@""]) //Ignore extra info
 			continue;
@@ -176,7 +176,7 @@
 	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
 	NSMutableArray *entries = [NSMutableArray array];
 
-    while (entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]])
+    while (entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
 	{
 		NSScanner *scanner = [[NSScanner alloc] initWithString:entry];
 		NSString *lhs = nil;
