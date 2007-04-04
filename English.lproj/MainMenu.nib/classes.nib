@@ -91,12 +91,7 @@
             OUTLETS = {playlistLoader = PlaylistLoader; }; 
             SUPERCLASS = NSTreeController; 
         }, 
-        {
-            ACTIONS = {"" = id; }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoController; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoView; LANGUAGE = ObjC; SUPERCLASS = NSScrollView; }, 
         {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
