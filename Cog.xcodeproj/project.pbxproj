@@ -116,6 +116,23 @@
 		8EFFCD6F0AA093AF00C458A5 /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD530AA093AF00C458A5 /* PathNode.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildStyle section */
+		28FFB7160BC863C10047EC24 /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Development;
+		};
+		28FFB7170BC863C10047EC24 /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		177FD1000B90CB570011C3B5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -717,6 +734,12 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Cog" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				28FFB7160BC863C10047EC24 /* Development */,
+				28FFB7170BC863C10047EC24 /* Deployment */,
+			);
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			projectDirPath = "";
