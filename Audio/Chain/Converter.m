@@ -36,14 +36,20 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	OSStatus err = noErr;
 
 	if (converter->inputBufferSize > 0) {
+		int amountConverted = *ioNumberDataPackets * converter->inputFormat.mBytesPerPacket;
+		if (amountConverted > converter->inputBufferSize) {
+			amountConverted = converter->inputBufferSize;
+		}
+		
 		ioData->mBuffers[0].mData = converter->inputBuffer;
-		ioData->mBuffers[0].mDataByteSize = converter->inputBufferSize;
+		ioData->mBuffers[0].mDataByteSize = amountConverted;
 		ioData->mBuffers[0].mNumberChannels = (converter->inputFormat.mChannelsPerFrame);
 		ioData->mNumberBuffers = 1;
+
+		*ioNumberDataPackets = amountConverted / converter->inputFormat.mBytesPerPacket;
 		
-		*ioNumberDataPackets = converter->inputBufferSize / converter->inputFormat.mBytesPerFrame;
-		
-		converter->inputBufferSize = 0;
+		converter->inputBufferSize -= amountConverted;
+		converter->inputBuffer = ((char *)converter->inputBuffer) + amountConverted;
 	}
 	else {
 		ioData->mBuffers[0].mData = NULL;
@@ -71,7 +77,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	
 	needsReset = NO;
 	
-	ioNumberFrames = outputSize/outputFormat.mBytesPerFrame;
+	ioNumberFrames = inputSize/inputFormat.mBytesPerFrame;
 	ioData.mBuffers[0].mData = outputBuffer;
 	ioData.mBuffers[0].mDataByteSize = outputSize;
 	ioData.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
@@ -120,7 +126,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 									kAudioConverterPropertyCalculateOutputBufferSize,
 									&dataSize,
 									(void*)&outputSize);
-	
+	NSLog(@"Output size: %i %i", outputSize, CHUNK_SIZE);
 	if (outputBuffer)
 	{
 		NSLog(@"FREEING");
