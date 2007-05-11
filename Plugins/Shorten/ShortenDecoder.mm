@@ -35,13 +35,15 @@
 	length = decoder->shn_get_song_length();
 	
 	decoder->go();
-	
+
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+		
 	return YES;
 }
 
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size
 {
-
 	//long numread = bufferAmount;
 	//long count = 0;
 	long numread, count;
@@ -57,11 +59,11 @@
 		{
 			bufferAmount = decoder->read(inputBuffer, bufferSize);
 		}
-		if (bufferAmount == 0)
+		if (bufferAmount == 0) {
 			return 0;
+		}
 		else if(bufferAmount == (unsigned)( -2))
 		{
-			//NSLog(@"closing file, eof");
 			return -2;
 		}
 		else
@@ -70,8 +72,6 @@
 			free(inputBuffer);
 		}
 	}
-	
-	//NSLog(@"bufferAmount: %d",bufferAmount);
 	
 	
 	count = bufferAmount;
@@ -91,7 +91,7 @@
 		numread = [self fillBuffer:(&((char *)buf)[count]) ofSize:(size - count)];
 	else
 		numread = 0;
-	
+
 	return count + numread;
 }
 
