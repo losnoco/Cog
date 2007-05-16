@@ -107,7 +107,11 @@
 		
 		if ([converter outputBufferSize] <= 0)
 		{
-			NSLog(@"END OF FILE?!");
+			if (initialBufferFilled == NO) {
+				[controller initialBufferFilled];
+			}
+			
+			NSLog(@"END OF FILE?! %i %i", amountRead, amountConverted);
 			endOfStream = YES;
 			[controller endOfInputReached];
 			break; //eof
