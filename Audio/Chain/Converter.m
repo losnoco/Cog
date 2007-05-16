@@ -58,7 +58,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 		ioData->mBuffers[0].mDataByteSize = 0;
 		ioData->mNumberBuffers = 1;
 		*ioNumberDataPackets = 0;
-		
+
 		//Reset the converter's internal bufferrs.
 		converter->needsReset = YES;
 	}

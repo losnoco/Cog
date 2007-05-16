@@ -17,9 +17,6 @@
 	shn_reader *decoder;
 	
 	long bufferSize; //total size
-	void *buffer;
-	void *inputBuffer;//derek
-	long bufferAmount; //amount currently in
 	
 	int channels;
 	int bitsPerSample;
