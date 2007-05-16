@@ -110,7 +110,6 @@
 {
 	NSLog(@"Loading playlist: %@", filename);
 	
-
     NSError *error = nil;
     NSString *contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
     if (error || !contents) {

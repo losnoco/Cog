@@ -44,12 +44,14 @@ namespace TagLib {
 
     virtual String title() const
     {
-      if(file->ID3v2Tag() && !file->ID3v2Tag()->title().isEmpty())
+      if(file->ID3v2Tag() && !file->ID3v2Tag()->title().isEmpty()) {
+		printf("Id3v2\n");
         return file->ID3v2Tag()->title();
-
-      if(file->ID3v1Tag())
+	  }
+      if(file->ID3v1Tag()) {
+		printf("Id3v1\n");
         return file->ID3v1Tag()->title();
-
+	  }
       return String::null;
     }
 

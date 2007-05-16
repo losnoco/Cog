@@ -45,7 +45,7 @@ AudioStreamBasicDescription propertiesToASBD(NSDictionary *properties)
 	asbd.mBytesPerFrame = (asbd.mBitsPerChannel/8)*asbd.mChannelsPerFrame;
 	
 	asbd.mFramesPerPacket = 1;
-	asbd.mBytesPerPacket = asbd.mBytesPerFrame;
+	asbd.mBytesPerPacket = asbd.mBytesPerFrame * asbd.mFramesPerPacket;
 	asbd.mReserved = 0;
 	
 	if ([[properties objectForKey:@"endian"] isEqualToString:@"big"] || ([[properties objectForKey:@"endian"] isEqualToString:@"host"] && hostIsBigEndian() ))

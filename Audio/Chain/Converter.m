@@ -37,6 +37,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 
 	if (converter->inputBufferSize > 0) {
 		int amountConverted = *ioNumberDataPackets * converter->inputFormat.mBytesPerPacket;
+		NSLog(@"Asking: %i", amountConverted);
 		if (amountConverted > converter->inputBufferSize) {
 			amountConverted = converter->inputBufferSize;
 		}
@@ -50,6 +51,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 		
 		converter->inputBufferSize -= amountConverted;
 		converter->inputBuffer = ((char *)converter->inputBuffer) + amountConverted;
+		NSLog(@"Converted: %i", amountConverted);
 	}
 	else {
 		ioData->mBuffers[0].mData = NULL;
@@ -70,6 +72,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	UInt32 ioNumberFrames;
 
 	if (inputSize <= 0) {
+		outputBufferSize = inputSize;
 		return inputSize;
 	}
 
@@ -84,14 +87,20 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	ioData.mNumberBuffers = 1;
 	inputBuffer = input;
 	inputBufferSize = inputSize;
-	
+	NSLog(@"Converting: %i", inputSize);
+
 	err = AudioConverterFillComplexBuffer(converter, ACInputProc, self, &ioNumberFrames, &ioData, NULL);
 	if (err != noErr || needsReset) //It returns insz at EOS at times...so run it again to make sure all data is converted
 	{
+		NSLog(@"Error:%i %i", err, noErr); 
 		AudioConverterReset(converter);
 	}
+	
+	NSLog(@"Pass: %i", inputSize - inputBufferSize);
 
-	return ioData.mBuffers[0].mDataByteSize;
+	outputBufferSize = ioData.mBuffers[0].mDataByteSize;
+	
+	return inputSize - inputBufferSize;
 }
 
 - (void)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf
@@ -146,6 +155,11 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 - (void *)outputBuffer
 {
 	return outputBuffer;
+}
+
+- (int)outputBufferSize
+{
+	return outputBufferSize;
 }
 
 - (void)cleanUp
