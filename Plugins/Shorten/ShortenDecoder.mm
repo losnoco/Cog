@@ -27,7 +27,7 @@
 	
 	decoder->open([[url path] UTF8String], true);
 	
-	bufferSize = decoder->shn_get_buffer_block_size(512);
+	bufferSize = decoder->shn_get_buffer_block_size(NUM_DEFAULT_BUFFER_BLOCKS);
 	
 	decoder->file_info(NULL, &channels, &frequency, NULL, &bitsPerSample, NULL);
 	
@@ -47,7 +47,8 @@
 	
 	totalRead = 0;
 	
-	while (totalRead < size) {
+	//For some reason the busy loop is causing pops when output is set to 48000. Probably CPU starvation, since the SHN decoder seems to use a multithreaded approach.
+//	while (totalRead < size) {
 		amountToRead = size - totalRead;
 		if (amountToRead > bufferSize) { 
 			amountToRead = bufferSize;
@@ -55,15 +56,16 @@
 	
 		do
 		{
-			amountRead = decoder->read(((char *)buf) + totalRead, amountToRead);
-		} while(amountRead == -1);
+			amountRead = decoder->read(buf, amountToRead);
+		} while(amountRead == -1 && totalRead == 0);
 		
-		if (amountRead <= 0) {
-			return totalRead;
-		}
+//		if (amountRead <= 0) {
+//			return totalRead;
+//		}
 
 		totalRead += amountRead;
-	}
+//		buf = (void *)((char *)buf + amountRead);
+//	}
 
 	return totalRead;
 }
