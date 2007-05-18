@@ -1,26 +1,23 @@
 #!/sw/bin/ruby
 
-require 'yaml'
-require 'erb'
-include ERB::Util
+require 'tempfile'
+require 'open-uri'
+require 'rexml/document'
+include REXML
 
-yaml_file = 'Scripts/nightlies.yaml'
+appcast = open('http://cogx.org/appcast/nightly.xml')
 
-#Load yaml and get the current revision
-if File.exists?(yaml_file)
-	entries = YAML::load(File.open(yaml_file))
-	local_revision = entries[0]['revision'].to_i()
-else
-	entries = []
-	local_revision = 0
-end
+doc = Document.new(appcast)
+
+#Get the latest revision from the appcast
+appcast_revision = Regexp.new('\d+$').match(doc.elements['//channel/item/title'].text.to_s()).to_s().to_i() || 0
 
 #Update to the latest revision
 latest_revision = %x[svn update | tail -n 1].gsub(/[^\d]+/, '').to_i()
 
-if local_revision < latest_revision
+if appcast_revision < latest_revision
 	#Get the changelog
-	changelog = %x[svn log -r #{latest_revision}:#{local_revision+1}]
+	changelog = %x[svn log -r #{latest_revision}:#{appcast_revision+1}]
 
 	#Remove the previous build directories
 	%x[find . -type d -name build -print0 | xargs -0 rm -r ]
@@ -39,32 +36,39 @@ if local_revision < latest_revision
 
 	filesize = File.size("build/Release/#{filename}")
 
-	#Update yaml
-	entry = {
-		'revision' => latest_revision,
-		'changelog' => changelog,
-		'filename' => filename,
-		'filesize' => filesize,
-		'date' => Time.now().strftime("%a, %d %b %Y %H:%M:%S %Z") #RFC 822
-	}
-
 	#Send the new build to the server
-	%x[scp build/Release/#{filename} vince@vspader.com:~/public_html/]
+	%x[scp build/Release/#{filename} cogx@cogx.org:~/cogx.org/nightly_builds/]
 
-	entries.insert(0, entry)
-	File.open(yaml_file, 'w') do |output|
-		output << entries.to_yaml()
-	end
+  #Add new entry to appcast
+  new_item = Element.new('item')
+  
+  new_item.add_element('title')
+  new_item.elements['title'].text = "Cog r#{latest_revision}"
+  
+  new_item.add_element('description')
+  new_item.elements['description'].text = changelog
 
-	#Build the appcast from the template!
-	appcast = ERB.new(File.open('Scripts/appcast.erb'), 0, '<>')
-
-	File.open('Scripts/appcast.xml', 'w') do |output|
-		output <<  appcast.result()
-	end
+  new_item.add_element('pubDate')
+  new_item.elements['pubDate'].text = Time.now().strftime("%a, %d %b %Y %H:%M:%S %Z") #RFC 822
+  
+  new_item.add_element('enclosure')
+  new_item.elements['enclosure'].add_attribute('url', "http://cogx.org/nightly_builds/#{filename}")
+  new_item.elements['enclosure'].add_attribute('length', filesize)
+  new_item.elements['enclosure'].add_attribute('type', 'application/octet-stream')
+  
+  doc.insert_before('//channel/item', new_item)
+  
+  #Limit number of entries to 5
+  doc.delete_element('//channel/item[position()>5]')
+  
+  new_xml = Tempfile.new('appcast.xml')
+	new_xml << doc.to_s()
+	new_xml.close()
+	appcast.close()
 
 	#Send the updated appcast to the server
-	%x[scp Scripts/appcast.xml vince@vspader.com:~/public_html/]
+	%x[scp #{new_xml.path} cogx@cogx.org:~/cogx.org/appcast/nightly.xml]
+	
 end
 
 
