@@ -12,7 +12,7 @@
 	<key>UserName</key>
 	<string>vspader</string>
 	<key>WorkingDirectory</key>
-	<string>/Users/vspader/Projects/Cog</string>
+	<string>/Users/vspader/Projects/Cog.Nightly</string>
 	<key>StartCalendarInterval</key>
 	<dict>  
 		<key>Hour</key>
