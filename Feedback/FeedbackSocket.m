@@ -31,7 +31,7 @@ NSString *encodeForURL(NSString *s)
 	
 	NSData *postData = [postString dataUsingEncoding:NSASCIIStringEncoding];
 	
-	NSURL *url = [NSURL URLWithString:@"http://cogosx.sourceforge.net/feedback.php"];
+	NSURL *url = [NSURL URLWithString:@"http://cogx.org/feedback.php"];
 	NSMutableURLRequest *post = [NSMutableURLRequest requestWithURL:url];
 	
 	[post addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
