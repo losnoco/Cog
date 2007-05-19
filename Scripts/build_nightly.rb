@@ -23,15 +23,15 @@ if appcast_revision < latest_revision
 	%x[find . -type d -name build -print0 | xargs -0 rm -r ]
 
   #Update the version in the plist
-  plist = open('info.plist')
+  plist = open('Info.plist')
   plistdoc = Document.new(plist)
   plist.close()
 
   version_element = plistdoc.elements["//[. = 'CFBundleVersion']/following-sibling::string"];
-  version_element.text = "r#{latest_version}"
+  version_element.text = "r#{latest_revision}"
 
-  newplist = open('info.plist', 'w')
-  plistdoc.write(newplist, 2)
+  newplist = open('Info.plist', 'w')
+  plistdoc.write(newplist, 0)
   newplist.close()
 
 	#Build Cog!
@@ -68,7 +68,7 @@ if appcast_revision < latest_revision
 	new_item.elements['enclosure'].add_attribute('url', "http://cogx.org/nightly_builds/#{filename}")
 	new_item.elements['enclosure'].add_attribute('length', filesize)
 	new_item.elements['enclosure'].add_attribute('type', 'application/octet-stream')
-	new_item.elements['enclosure'].add_attribute('version', "r#{latest_revision}")
+	new_item.elements['enclosure'].add_attribute('sparkle:version', "r#{latest_revision}")
 	
 	appcastdoc.insert_before('//channel/item', new_item)
 	
@@ -76,7 +76,7 @@ if appcast_revision < latest_revision
 	appcastdoc.delete_element('//channel/item[position()>5]')
 	
 	new_xml = Tempfile.new('appcast.xml')
-	appcastdoc.write(new_xml, 2)
+	appcastdoc.write(new_xml, 0)
 	new_xml.close()
 	appcast.close()
 

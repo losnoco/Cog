@@ -1,9 +1,13 @@
-    <?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
+    
+    
     
 
     
-    <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version='1.0'>
+    
+    
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version='1.0'>
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -98,7 +102,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>BLARG!</string>
+	<string>0.06</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>Help</string>	
 	<key>CFBundleHelpBookName</key>
@@ -114,5 +118,7 @@
 	<string>http://cogosx.sourceforge.net/appcast.xml</string>
 </dict>
 </plist>
+
+
 
 
