@@ -395,6 +395,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteEnabled"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteOnlyOnActive"];
 
+	[userDefaultsValuesDict setObject:@"http://cogx.org/appcast/stable.xml" forKey:@"SUFeedURL"];
+
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];

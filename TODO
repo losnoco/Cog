@@ -5,3 +5,7 @@ Bug fixes:
   Windows M3U paths: http://sbooth.org/forums/viewtopic.php?t=1209
 ?  Playlist display: http://sbooth.org/forums/viewtopic.php?t=1050
 
+Nightlies:
+  Fix path inside nightly builds.
+  Make preference for update channels. Stable, Unstable, and Nightly.
+  Get sparkle working with nightlies!

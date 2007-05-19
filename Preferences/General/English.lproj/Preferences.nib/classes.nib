@@ -1,6 +1,11 @@
 {
     IBClasses = (
         {
+            CLASS = AppcastArrayController; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSArrayController; 
+        }, 
+        {
             ACTIONS = {openSheet = id; }; 
             CLASS = FileDrawerPane; 
             LANGUAGE = ObjC; 
