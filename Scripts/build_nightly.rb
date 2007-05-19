@@ -35,13 +35,13 @@ if appcast_revision < latest_revision
   newplist.close()
 
 	#Build Cog!
-	%x[./Scripts/build_cog.sh].each_line do |line|
+	%x[./Scripts/build_cog.sh 2>&1].each_line do |line|
 		if line.match(/\*\* BUILD FAILED \*\*/)
 			exit
 		end
 	end
 
-	filename = "Cog-r#{latest_revision}.tbz2"
+	filename = "Cog-r#{latest_revision}.tbz"
 
 	#Zip the app!
 	%x[rm -f build/Release/nightly.tar.bz2]
