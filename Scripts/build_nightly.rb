@@ -19,6 +19,22 @@ if appcast_revision < latest_revision
 	#Get the changelog
 	changelog = %x[svn log -r #{latest_revision}:#{appcast_revision+1}]
 
+  description = ''
+  ignore_next = false
+  changelog.each_line do |line|
+    if (ignore_next)
+      ignore_next = false
+      next
+    end
+    if Regexp.new('^-+$').match(line)
+      ignore_next = true
+      next
+    elsif Regexp.new('^\s*$').match(line)
+      next
+    end
+    description += line
+  end
+  
 	#Remove the previous build directories
 	%x[find . -type d -name build -print0 | xargs -0 rm -r ]
 
@@ -59,7 +75,7 @@ if appcast_revision < latest_revision
 	new_item.elements['title'].text = "Cog r#{latest_revision}"
 	
 	new_item.add_element('description')
-	new_item.elements['description'].text = changelog
+	new_item.elements['description'].text = description
 
 	new_item.add_element('pubDate')
 	new_item.elements['pubDate'].text = Time.now().strftime("%a, %d %b %Y %H:%M:%S %Z") #RFC 822
