@@ -300,7 +300,9 @@
 	}
 	
 	if (pe == nil)
+	{
 		[player setNextStream:nil];
+	}
 	else
 	{
 		DBLog(@"NEXT SONG: %@", [pe url]);

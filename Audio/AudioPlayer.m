@@ -73,12 +73,14 @@
 	while (![bufferChain open:url withOutputFormat:[output format]])
 	{
 		[bufferChain release];
-
+		bufferChain = nil;
+		
 		[self requestNextStream: userInfo];
 
 		url = nextStream;
 		if (url == nil)
 		{
+			NSLog(@"End of playlist? Nothing left.");
 			return;
 		}
 	
