@@ -557,9 +557,9 @@ static inline signed int scale (mad_fixed_t sample)
 
 - (double)seekToTime:(double)milliseconds
 {
-	int new_position;
-	int seconds = milliseconds/1000.0;
-	int total_seconds = mad_timer_count(_duration, MAD_UNITS_SECONDS);
+	unsigned long new_position;
+	unsigned long seconds = milliseconds/1000.0;
+	unsigned long total_seconds = mad_timer_count(_duration, MAD_UNITS_SECONDS);
 
 	if (seconds > total_seconds)
 		seconds = total_seconds;
@@ -577,6 +577,8 @@ static inline signed int scale (mad_fixed_t sample)
 	mad_synth_mute(&_synth);
 
 	_seekSkip = YES;
+	
+	NSLog(@"Seeking: %lf", seconds*1000.0);
 	
 	return seconds*1000.0;
 }

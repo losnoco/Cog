@@ -18,7 +18,7 @@
 @interface OutputNode : Node {
 	AudioStreamBasicDescription format;
 	
-	int amountPlayed;
+	unsigned long amountPlayed;
 	OutputCoreAudio *output;
 }
 
