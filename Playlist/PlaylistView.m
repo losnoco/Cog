@@ -26,16 +26,20 @@
 	NSControlSize s = NSSmallControlSize;
 	NSEnumerator *oe = [[self allTableColumns] objectEnumerator];
 	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
-	NSFont *bf = [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
-	
-	[self setRowHeight:[bf defaultLineHeightForFont]];
+	NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
+
+	NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+	[self setRowHeight:[layoutManager defaultLineHeightForFont:bf]];
+	[layoutManager release];
 
 	//Resize the fonts
 	id c;
 	while (c = [oe nextObject])
 	{
 		[[c dataCell] setControlSize:s];
-		[[c dataCell] setFont:f];
+
+		//Using the bold font defined from the default system font with the bold trait added seems to fix problems related to bold display with some fonts.
+		[[c dataCell] setFont:bf];
 	}
 
 	NSTableHeaderView *currentTableHeaderView = [self headerView];
