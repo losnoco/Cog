@@ -21,11 +21,14 @@
 {
 	[super awakeFromNib];
 	
+	[[self menu] setAutoenablesItems:NO];
+	
 	NSControlSize s = NSSmallControlSize;
 	NSEnumerator *oe = [[self allTableColumns] objectEnumerator];
 	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
+	NSFont *bf = [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
 	
-	[self setRowHeight:[f defaultLineHeightForFont]];
+	[self setRowHeight:[bf defaultLineHeightForFont]];
 
 	//Resize the fonts
 	id c;
@@ -136,20 +139,33 @@
 		Preserves the selection if the row under the mouse is selected (to allow for
 																		multiple items to be selected), otherwise selects the row under the mouse */
 	BOOL currentRowIsSelected = [[self selectedRowIndexes] containsIndex:row];
-	if (!currentRowIsSelected)
-		[self selectRow:row byExtendingSelection:NO];
-
+	if (!currentRowIsSelected) {
+		if (row == -1)
+		{
+			[self deselectAll:self];
+		}
+		else
+		{
+			[self selectRow:row byExtendingSelection:NO];
+		}
+	}
+	NSLog(@"Number of selected rows: %i", [self numberOfSelectedRows]);
 	if ([self numberOfSelectedRows] <=0)
 	{
 		//No rows are selected, so the table should be displayed with all items disabled
 		NSMenu* tableViewMenu = [[self menu] copy];
 		int i;
-		for (i=0;i<[tableViewMenu numberOfItems];i++)
+		for (i=0;i<[tableViewMenu numberOfItems];i++) {
 			[[tableViewMenu itemAtIndex:i] setEnabled:NO];
+			NSLog(@"Enabled: %@ %i", [[tableViewMenu itemAtIndex:i] title], [[tableViewMenu itemAtIndex:i] isEnabled]);
+		}
+		NSLog(@"All disabled!");
 		return [tableViewMenu autorelease];
 	}
 	else
+	{
 		return [self menu];
+	}
 }
 
 
