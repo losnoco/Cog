@@ -275,7 +275,7 @@
 {
 	NSString *ti = [m objectForKey:@"title"];
 
-	if ([ti isEqualToString:@""]) {
+	if (ti == nil || [ti isEqualToString:@""]) {
 		[self setTitle:[[url path] lastPathComponent]];
 	}
 	else {
