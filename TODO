@@ -5,3 +5,4 @@ Bug fixes:
   Fix playlist logic. http://sbooth.org/forums/viewtopic.php?t=762&highlight=document+based+playlist
     Note: Never load duplicates in a group of files. Ex: If you load an m3u containing a bunch of files AND the files themselves, only load them once! However, if you load the m3u, THEN load the group of files, they should appear twice!
   Hook up various menu items. Add missing functions and generally fix the menu.
+  Problems with 3rd party devices. http://sbooth.org/forums/viewtopic.php?t=255
