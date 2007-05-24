@@ -101,8 +101,12 @@
 	}
 	
 	NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+	NSMutableString *unixPath = [path mutableCopy];
 	
-	return [NSURL fileURLWithPath:[basePath stringByAppendingString:path]];
+	//Only relative paths would have windows backslashes.
+	[unixPath replaceOccurrencesOfString:@"\\" withString:@"/" options:0 range:NSMakeRange(0, [unixPath length])];
+	
+	return [NSURL fileURLWithPath:[basePath stringByAppendingString:[unixPath autorelease]]];
 }
 
 
