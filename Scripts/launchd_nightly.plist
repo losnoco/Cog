@@ -6,8 +6,7 @@
 	<string>com.vspader.cog.nightly</string>
 	<key>ProgramArguments</key>
 	<array> 
-		<string>./Scripts/build_nightly.rb</string>
-		<string>daily</string>
+		<string>/Users/vspader/Projects/Cog.Nightly/Scripts/build_nightly.rb</string>
 	</array>
 	<key>UserName</key>
 	<string>vspader</string>
