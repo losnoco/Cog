@@ -7,14 +7,14 @@
 			  "QTKit Programming Guide" documentation.
 
 
-	Copyright:   © Copyright 2004, 2005 Apple Computer, Inc.
+	Copyright:	 © Copyright 2004, 2005 Apple Computer, Inc.
 				 All rights reserved.
 
-	Disclaimer: IMPORTANT:  This Apple software is supplied to you by
+	Disclaimer: IMPORTANT:	This Apple software is supplied to you by
 	Apple Computer, Inc. ("Apple") in consideration of your agreement to the
 	following terms, and your use, installation, modification or
 	redistribution of this Apple software constitutes acceptance of these
-	terms.  If you do not agree with these terms, please do not use,
+	terms.	If you do not agree with these terms, please do not use,
 	install, modify or redistribute this Apple software.
 
 	In consideration of your agreement to abide by the following terms, and
@@ -27,7 +27,7 @@
 	text and disclaimers in all such redistributions of the Apple Software. 
 	Neither the name, trademarks, service marks or logos of Apple Computer,
 	Inc. may be used to endorse or promote products derived from the Apple
-	Software without specific prior written permission from Apple.  Except
+	Software without specific prior written permission from Apple.	Except
 	as expressly stated in this notice, no other rights or licenses, express
 	or implied, are granted by Apple herein, including but not limited to
 	any patent rights that may be infringed by your derivative works or by
@@ -56,38 +56,38 @@
 
 @interface OpenURLPanel : NSObject
 {
-        // panel
-    IBOutlet NSPanel	*mPanel;
-    IBOutlet NSComboBox	*mUrlComboBox;
+	// panel
+	IBOutlet NSPanel	*mPanel;
+	IBOutlet NSComboBox *mUrlComboBox;
 
-        // open url panel
-    id 					mDelegate;
-    SEL					mDidEndSelector;
-    void				*mContextInfo;
-    NSMutableArray		*mUrlArray;
-    BOOL				mIsSheet;
+	// open url panel
+	id					mDelegate;
+	SEL					mDidEndSelector;
+	void				*mContextInfo;
+	NSMutableArray		*mUrlArray;
+	BOOL				mIsSheet;
 }
 
-    // class methods
+// class methods
 + (id)openURLPanel;
 
-    // getters
+// getters
 - (NSString *)urlString;
 - (NSURL *)url;
 
-    // setters
+// setters
 - (void)setURLArray:(NSMutableArray *)urlArray;
 
-    // delegates
+// delegates
 - (void)awakeFromNib;
 
-    // notifications
+// notifications
 - (void)writeURLs:(NSNotification *)notification;
 
-    // actions
+// actions
 - (IBAction)doOpenURL:(id)sender;
 
-    // methods
+// methods
 - (void)beginSheetWithWindow:(NSWindow *)window delegate:(id)delegate didEndSelector:(SEL)didEndSelector contextInfo:(void *)contextInfo;
 - (void)close;
 

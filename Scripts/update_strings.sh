@@ -3,6 +3,7 @@ if ! [ -d Localizations/English ]; then
 fi
 
 nibtool -L English.lproj/MainMenu.nib > Localizations/English/MainUI.strings
+nibtool -L English.lproj/OpenURLPanel.nib > Localizations/English/OpenURLPanel.strings
 
 nibtool -L Preferences/General/English.lproj/Preferences.nib > Localizations/English/PreferencesUI.strings
 

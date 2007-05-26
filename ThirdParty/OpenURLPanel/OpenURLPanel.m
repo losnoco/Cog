@@ -7,14 +7,14 @@
 			  "QTKit Programming Guide" documentation.
 
 
-	Copyright:   © Copyright 2004, 2005 Apple Computer, Inc.
+	Copyright:	 © Copyright 2004, 2005 Apple Computer, Inc.
 				 All rights reserved.
 
-	Disclaimer: IMPORTANT:  This Apple software is supplied to you by
+	Disclaimer: IMPORTANT:	This Apple software is supplied to you by
 	Apple Computer, Inc. ("Apple") in consideration of your agreement to the
 	following terms, and your use, installation, modification or
 	redistribution of this Apple software constitutes acceptance of these
-	terms.  If you do not agree with these terms, please do not use,
+	terms.	If you do not agree with these terms, please do not use,
 	install, modify or redistribute this Apple software.
 
 	In consideration of your agreement to abide by the following terms, and
@@ -27,7 +27,7 @@
 	text and disclaimers in all such redistributions of the Apple Software. 
 	Neither the name, trademarks, service marks or logos of Apple Computer,
 	Inc. may be used to endorse or promote products derived from the Apple
-	Software without specific prior written permission from Apple.  Except
+	Software without specific prior written permission from Apple.	Except
 	as expressly stated in this notice, no other rights or licenses, express
 	or implied, are granted by Apple herein, including but not limited to
 	any patent rights that may be infringed by your derivative works or by
@@ -53,198 +53,199 @@
 
 #import "OpenURLPanel.h"
 
-    // user defaults keys
-#define kUserDefaultURLsKey	@"UserDefaultURLsKey"
+// user defaults keys
+#define kUserDefaultURLsKey @"UserDefaultURLsKey"
 
-    // maximum urls
+// maximum urls
 #define kMaximumURLs		15
 
 @implementation OpenURLPanel
 
 static OpenURLPanel *openURLPanel = nil;
 
-    // class methods
+// class methods
 + (id)openURLPanel
 {
-    if (openURLPanel == nil)
-        openURLPanel = [[self alloc] init];
+	if (openURLPanel == nil)
+		openURLPanel = [[self alloc] init];
 
-    return openURLPanel;
+	return openURLPanel;
 }
 
 - (id)init
 {
-    [super init];
+	[super init];
 
-    // init
-    [self setURLArray:[NSMutableArray arrayWithCapacity:10]];
+	// init
+	[self setURLArray:[NSMutableArray arrayWithCapacity:10]];
 
-    // listen for app termination notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeURLs:) name:NSApplicationWillTerminateNotification object:NSApp];
+	// listen for app termination notifications
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeURLs:) name:NSApplicationWillTerminateNotification object:NSApp];
 
-    return self;
+	return self;
 }
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self setURLArray:nil];
-    [super dealloc];
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[self setURLArray:nil];
+	[super dealloc];
 }
 
-    // getters
+// getters
 - (NSString *)urlString
 {
-    NSString *urlString = nil;
+	NSString *urlString = nil;
 
-    // get the url
-    urlString = [mUrlComboBox stringValue];
+	// get the url
+	urlString = [mUrlComboBox stringValue];
 
-    if (urlString == nil)
-        urlString = [mUrlComboBox objectValueOfSelectedItem];
+	if (urlString == nil)
+		urlString = [mUrlComboBox objectValueOfSelectedItem];
 
-    if ([urlString length] == 0)
-        urlString = nil;
+	if ([urlString length] == 0)
+		urlString = nil;
 
-    return urlString;
+	return urlString;
 }
 
 - (NSURL *)url
 {
-    NSURL		*url = nil;
-    NSString 	*urlString;
+	NSURL		*url = nil;
+	NSString	*urlString;
 
-    // get the url
-    urlString = [self urlString];
+	// get the url
+	urlString = [self urlString];
 
-    if (urlString)
-        url = [NSURL URLWithString:urlString];
+	if (urlString)
+		url = [NSURL URLWithString:urlString];
 
-    return url;
+	return url;
 }
 
-    // setters
+// setters
 - (void)setURLArray:(NSMutableArray *)urlLArray
 {
-    [urlLArray retain];
-    [mUrlArray retain];
-    mUrlArray = urlLArray;
+	[urlLArray retain];
+	[mUrlArray retain];
+	mUrlArray = urlLArray;
 }
 
-    // delegates
+// delegates
 - (void)awakeFromNib
 {
-    NSArray *urls;
+	NSArray *urls;
 
-    // restore the previous urls
-    urls = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultURLsKey];
-    [mUrlArray addObjectsFromArray:urls];
+	// restore the previous urls
+	urls = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultURLsKey];
+	[mUrlArray addObjectsFromArray:urls];
 
-    if (urls)
-        [mUrlComboBox addItemsWithObjectValues:urls];
+	if (urls)
+		[mUrlComboBox addItemsWithObjectValues:urls];
 }
 
-    // notifications
+// notifications
 - (void)writeURLs:(NSNotification *)notification
 {
-    NSUserDefaults *userDefaults;
+	NSUserDefaults *userDefaults;
 
-    if ([mUrlArray count])
-    {
-        // init
-        userDefaults = [NSUserDefaults standardUserDefaults];
-    
-        // write out the urls
-        [userDefaults setObject:mUrlArray forKey:kUserDefaultURLsKey];
-        [userDefaults synchronize];
-    }
+	if ([mUrlArray count])
+	{
+		// init
+		userDefaults = [NSUserDefaults standardUserDefaults];
+	
+		// write out the urls
+		[userDefaults setObject:mUrlArray forKey:kUserDefaultURLsKey];
+		[userDefaults synchronize];
+	}
 }
 
-    // actions
+// actions
 - (IBAction)doOpenURL:(id)sender
 {
-    NSString	*urlString;
-    NSURL		*url;
-    BOOL		informDelegate = YES;
-    IMP			callback;
+	NSString	*urlString;
+	NSURL		*url;
+	BOOL		informDelegate = YES;
+	IMP			callback;
 
-    if ([sender tag] == NSOKButton)
-    {
-        // validate the URL
-        url = [self url];
-        urlString = [self urlString];
+	if ([sender tag] == NSOKButton)
+	{
+		// validate the URL
+		url = [self url];
+		urlString = [self urlString];
 
-        if (url)
-        {
-            // save the url
-            if (![mUrlArray containsObject:urlString])
-            {
-                // save the url
-                [mUrlArray addObject:urlString];
+		if (url)
+		{
+			// save the url
+			if (![mUrlArray containsObject:urlString])
+			{
+				// save the url
+				[mUrlArray addObject:urlString];
 
-                // add the url to the combo box
-                [mUrlComboBox addItemWithObjectValue:urlString];
+				// add the url to the combo box
+				[mUrlComboBox addItemWithObjectValue:urlString];
 
-                // remove the oldest url if the maximum has been exceeded
-                if ([mUrlArray count] > kMaximumURLs)
-                {
-                    [mUrlArray removeObjectAtIndex:0];
-                    [mUrlComboBox removeItemAtIndex:0];
-                }
-            }
-            else
-            {
-                // move the url to the bottom of the list
-                [mUrlArray removeObject:urlString];
-                [mUrlArray addObject:urlString];
-                [mUrlComboBox removeItemWithObjectValue:urlString];
-                [mUrlComboBox addItemWithObjectValue:urlString];
-            }
-        }
-        else
-        {
-            if (mIsSheet)
-                NSRunAlertPanel(@"Invalid URL", @"The URL is not valid.", nil, nil, nil);
-            else
-                NSBeginAlertSheet(@"Invalid URL", nil, nil, nil, mPanel, nil, nil, nil, nil, @"The URL is not valid.");
+				// remove the oldest url if the maximum has been exceeded
+				if ([mUrlArray count] > kMaximumURLs)
+				{
+					[mUrlArray removeObjectAtIndex:0];
+					[mUrlComboBox removeItemAtIndex:0];
+				}
+			}
+			else
+			{
+				// move the url to the bottom of the list
+				[mUrlArray removeObject:urlString];
+				[mUrlArray addObject:urlString];
+				[mUrlComboBox removeItemWithObjectValue:urlString];
+				[mUrlComboBox addItemWithObjectValue:urlString];
+			}
+		}
+		else
+		{
+			if (mIsSheet)
+				NSRunAlertPanel(@"Invalid URL", @"The URL is not valid.", nil, nil, nil);
+			else
+				NSBeginAlertSheet(@"Invalid URL", nil, nil, nil, mPanel, nil, nil, nil, nil, @"The URL is not valid.");
 
-            informDelegate = NO;
-        }
+			informDelegate = NO;
+		}
 	}
 
-    // inform the delegate
-    if (informDelegate && mDelegate && mDidEndSelector)
-    {
-        callback = [mDelegate methodForSelector:mDidEndSelector];
-        callback(mDelegate, mDidEndSelector, self, [sender tag], mContextInfo);
+	// inform the delegate
+	if (informDelegate && mDelegate && mDidEndSelector)
+	{
+		callback = [mDelegate methodForSelector:mDidEndSelector];
+		callback(mDelegate, mDidEndSelector, self, [sender tag], mContextInfo);
+		
 		[self close];
-    }
+	}
 }
 
-    // methods
+// methods
 - (void)beginSheetWithWindow:(NSWindow *)window delegate:(id)delegate didEndSelector:(SEL)didEndSelector contextInfo:(void *)contextInfo
 {
-    // will this run as a sheet
-    mIsSheet = (window ? YES : NO);
+	// will this run as a sheet
+	mIsSheet = (window ? YES : NO);
 
-    // save the delegate, did end selector, and context info
-    mDelegate = delegate;
-    mDidEndSelector = (didEndSelector);
-    mContextInfo = contextInfo;
+	// save the delegate, did end selector, and context info
+	mDelegate = delegate;
+	mDidEndSelector = (didEndSelector);
+	mContextInfo = contextInfo;
 
-    // load the bundle (if necessary)
-    if (mPanel == nil)
-        [NSBundle loadNibNamed:@"OpenURLPanel" owner:self];
+	// load the bundle (if necessary)
+	if (mPanel == nil)
+		[NSBundle loadNibNamed:@"OpenURLPanel" owner:self];
 
-    // start the sheet (or window)
-    [NSApp beginSheet:mPanel modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+	// start the sheet (or window)
+	[NSApp beginSheet:mPanel modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
 }
 
 - (void)close
 {
-    // close it down
-    [NSApp endSheet:mPanel];
-    [mPanel close];
+	// close it down
+	[NSApp endSheet:mPanel];
+	[mPanel close];
 }
 
 @end
