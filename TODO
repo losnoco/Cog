@@ -1,7 +1,5 @@
 Bug fixes:
   Broken MP3: http://sbooth.org/forums/viewtopic.php?t=1103
 ?  Playlist display: http://sbooth.org/forums/viewtopic.php?t=1050
-  Fix playlist logic. http://sbooth.org/forums/viewtopic.php?t=762
-    Note: Never load duplicates in a group of files. Ex: If you load an m3u containing a bunch of files AND the files themselves, only load them once! However, if you load the m3u, THEN load the group of files, they should appear twice!
-  Hook up various menu items. Add missing functions and generally fix the menu.
+  Fix playlist/file loading so it never loads duplicates in a single action. Ex: If you load (an m3u containing a bunch of files) AND (the files themselves), only load them once! However, if you load the m3u, THEN load the group of files, they should appear twice!
   Problems with 3rd party devices. http://sbooth.org/forums/viewtopic.php?t=255
