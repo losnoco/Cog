@@ -127,9 +127,8 @@
 {
 	//Need to reset everything's buffers, and then seek?
 	/*HACK TO TEST HOW WELL THIS WOULD WORK*/
-	[bufferChain seek:time];
 	[output seek:time];
-	
+	[bufferChain seek:time];
 	
 	/*END HACK*/
 }

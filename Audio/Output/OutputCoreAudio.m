@@ -44,17 +44,20 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	amountToRead = inNumberFrames*(output->deviceFormat.mBytesPerPacket);
 	amountRead = [output->outputController readData:(readPointer) amount:amountToRead];
-//	NSLog(@"Amount read: %i %i", amountRead, [output->outputController endOfStream]);
+
 	if ((amountRead < amountToRead) && [output->outputController endOfStream] == NO) //Try one more time! for track changes!
 	{
+		NSLog(@"READING AGAIN! %i/%i", amountRead, amountToRead);
 		int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
 		amountRead2 = [output->outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
 		amountRead += amountRead2;
 	}
 	
-//	NSLog(@"Amount read: %i", amountRead);
 	ioData->mBuffers[0].mDataByteSize = amountRead;
-
+	ioData->mBuffers[0].mNumberChannels = output->deviceFormat.mChannelsPerFrame;
+ 
+//	NSLog(@"Amount read for output: (%i) %i %i/%i", ioData->mNumberBuffers, ioData->mBuffers[0].mNumberChannels, amountRead, amountToRead);
+	
 	return err;
 }
 

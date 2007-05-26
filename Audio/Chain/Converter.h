@@ -36,6 +36,8 @@
 - (void)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat outputFormat:(AudioStreamBasicDescription)outputFormat;
 - (void)cleanUp;
 
+- (void)reset;
+
 //Returns the amount actually read from input
 - (int)convert:(void *)input amount:(int)inputSize;
 

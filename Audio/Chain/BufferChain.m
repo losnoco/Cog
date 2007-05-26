@@ -87,19 +87,7 @@
 
 - (void)seek:(double)time
 {
-	[[inputNode readLock] lock];
-	[[inputNode writeLock] lock];
-
-	//Signal so its waiting when we unlock
-	[[inputNode semaphore] signal];
-	
-	NSLog(@"Reset input buffer!");
-	[inputNode resetBuffer];
-	NSLog(@"Seeking in bufferchain!");
 	[inputNode seek:time];
-	
-	[[inputNode writeLock] unlock];
-	[[inputNode readLock] unlock];
 }
 
 - (void)endOfInputReached
@@ -109,6 +97,7 @@
 
 - (void)initialBufferFilled
 {
+	NSLog(@"Filled initial buffer!");
 	[controller launchOutputThread];
 }
 

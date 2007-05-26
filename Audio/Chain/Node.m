@@ -166,7 +166,13 @@
 
 - (void)resetBuffer
 {
+	[readLock lock];
+	[writeLock lock];
+
 	[buffer empty];
+
+	[writeLock unlock];
+	[readLock unlock];
 }
 
 - (NSLock *)readLock

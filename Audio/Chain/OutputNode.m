@@ -24,8 +24,9 @@
 
 - (void)seek:(double)time
 {
+	NSLog(@"SEEKING!");
 	[output pause];
-	[semaphore signal];
+
 	amountPlayed = time*format.mBytesPerFrame*(format.mSampleRate/1000.0);
 }
 
@@ -52,15 +53,11 @@
 	previousNode = [[controller bufferChain] finalNode];
 	
 	n = [super readData:ptr amount:amount];
-//	NSLog(@"N: %i %i", n, endOfStream);
 	if (endOfStream == YES)
 	{
-		DBLog(@"End of stream reached: %i", endOfStream);
-
+		NSLog(@"End of stream reached!");
 		amountPlayed = 0;
 		[controller endOfInputPlayed]; //Updates shouldContinue appropriately?
-		DBLog(@"End of stream reached: %i", endOfStream);
-//		return (n + [self readData:ptr amount:(amount-n)]);
 	}
 
 	if (n == 0) {

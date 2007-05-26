@@ -92,6 +92,9 @@
 			NSLog(@"Actually seeking");
 			[decoder seekToTime:seekTime];
 			shouldSeek = NO;
+
+			[self resetBuffer];
+			initialBufferFilled = NO;
 		}
 
 		if (amountInBuffer < CHUNK_SIZE) {
@@ -133,7 +136,8 @@
 	NSLog(@"SEEKING IN INPUTNODE");
 	seekTime = time;
 	shouldSeek = YES;
-	initialBufferFilled = NO;
+	[self resetBuffer];
+	[semaphore signal];
 }
 
 - (void)dealloc
