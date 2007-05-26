@@ -62,6 +62,10 @@
 		DBLog(@"End of stream reached: %i", endOfStream);
 //		return (n + [self readData:ptr amount:(amount-n)]);
 	}
+
+	if (n == 0) {
+		NSLog(@"Output Buffer dry!");
+	}
 	
 	amountPlayed += n;
 
