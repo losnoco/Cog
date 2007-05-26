@@ -430,6 +430,16 @@
 	return repeat;
 }
 
+- (IBAction)clear:(id)sender
+{
+	[self removeObjects:[self content]];
+}
+
+- (IBAction)clearFilterPredicate:(id)sender
+{
+	[self setFilterPredicate:nil];
+}
+
 - (void)setFilterPredicate:(NSPredicate *)filterPredicate
 {
 	[super setFilterPredicate:filterPredicate];

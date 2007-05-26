@@ -45,6 +45,8 @@
 - (IBAction)randomizeList;
 
 - (IBAction)showEntryInFinder:(id)sender;
+- (IBAction)clearFilterPredicate:(id)sender;
+- (IBAction)clear:(id)sender;
 
 - (void)setTotalTimeDisplay:(NSString *)ttd;
 - (NSString *)totalTimeDisplay;

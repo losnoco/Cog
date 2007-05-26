@@ -25,5 +25,7 @@
 
 - (IBAction)toggleColumn:(id)sender;
 
+- (IBAction)scrollToCurrentEntry:(id)sender;
+
 
 @end

@@ -129,6 +129,8 @@
         }, 
         {
             ACTIONS = {
+                clear = id; 
+                clearFilterPredicate = id; 
                 showEntryInFinder = id; 
                 takeRepeatFromObject = id; 
                 takeShuffleFromObject = id; 
@@ -146,7 +148,12 @@
             SUPERCLASS = NSObject; 
         }, 
         {
-            ACTIONS = {shufflePlaylist = id; sortByPath = id; toggleColumn = id; }; 
+            ACTIONS = {
+                scrollToCurrentEntry = id; 
+                shufflePlaylist = id; 
+                sortByPath = id; 
+                toggleColumn = id; 
+            }; 
             CLASS = PlaylistView; 
             LANGUAGE = ObjC; 
             OUTLETS = {

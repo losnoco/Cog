@@ -175,31 +175,43 @@
 
 - (void)keyDown:(NSEvent *)e
 {
-	NSString *s;
+    unsigned int modifiers = [e modifierFlags] & (NSCommandKeyMask | NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask);
+    NSString *characters = [e characters];
 	unichar c;
+	NSLog(@"DOWN!");
+	if ([characters length] != 1) {
+		[super keyDown:e];
 	
-	s = [e charactersIgnoringModifiers];
-	if ([s length] != 1)
 		return;
-
-	c = [s characterAtIndex:0];
-
-	if (c == NSDeleteCharacter || c == NSBackspaceCharacter || c == NSDeleteFunctionKey)
+	}
+	
+	c = [characters characterAtIndex:0];
+	NSLog(@"Modifiers: %i", modifiers);
+	if (modifiers == 0 && (c == NSDeleteCharacter || c == NSBackspaceCharacter || c == NSDeleteFunctionKey))
 	{
 		[playlistController remove:self];
 	}
-	else if (c == ' ')
+	else if (modifiers == 0 && c == ' ')
 	{
 		[playbackController playPauseResume:self];
 	}
-	else if (c == NSEnterCharacter || c == NSCarriageReturnCharacter)
+	else if (modifiers == 0 && (c == NSEnterCharacter || c == NSCarriageReturnCharacter))
 	{
 		[playbackController play:self];
+	}
+	else if (modifiers == 0 && c == 0x1b) { //Escape
+		NSLog(@"ESCAPE!");
+		[playlistController clearFilterPredicate:self];
 	}
 	else
 	{
 		[super keyDown:e];
 	}
+}
+
+- (IBAction)scrollToCurrentEntry:(id)sender
+{
+	[self scrollRowToVisible:[(NSNumber *)[[playlistController currentEntry] index] intValue]];
 }
 
 - (IBAction)sortByPath:(id)sender
