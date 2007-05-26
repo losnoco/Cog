@@ -173,6 +173,11 @@
 	if (outputLaunched == NO) {
 		NSLog(@"Launching output thread!");
 		[output launchThread];
+		outputLaunched = YES;
+	}
+	else {
+		NSLog(@"Resuming not launching");
+		[output resume];
 	}
 }
 

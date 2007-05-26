@@ -24,6 +24,8 @@
 
 - (void)seek:(double)time
 {
+	[output pause];
+	[semaphore signal];
 	amountPlayed = time*format.mBytesPerFrame*(format.mSampleRate/1000.0);
 }
 

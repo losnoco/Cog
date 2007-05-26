@@ -130,9 +130,10 @@
 
 - (void)seek:(double)time
 {
-	NSLog(@"SEEKING WEEE");
+	NSLog(@"SEEKING IN INPUTNODE");
 	seekTime = time;
 	shouldSeek = YES;
+	initialBufferFilled = NO;
 }
 
 - (void)dealloc

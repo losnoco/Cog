@@ -77,7 +77,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 {
 	// Set the output device
 	AudioDeviceID deviceID = outputDevice; //XXX use default if null
-	NSLog(@"WEEE");
 	NSLog(@"Using output device %d", deviceID);
 	OSStatus err;
 	
@@ -253,11 +252,13 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)pause
 {
+	NSLog(@"PAUSE");
 	AudioOutputUnitStop(outputUnit);
 }
 
 - (void)resume
 {
+	NSLog(@"RESUME");
 	AudioOutputUnitStart(outputUnit);
 }
 
