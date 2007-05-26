@@ -34,11 +34,6 @@
 	}
 }
 
-- (BOOL)save
-{
-	return [self save:currentFile asType:currentType];
-}
-
 - (BOOL)save:(NSString *)filename
 {
 	NSString *ext = [filename pathExtension];
@@ -161,9 +156,6 @@
 
 	[fileHandle closeFile];
 
-	[self setCurrentFile:filename];
-	[self setCurrentType:kPlaylistM3u];
-
 	return YES;
 }
 
@@ -229,9 +221,6 @@
 
 	[fileHandle writeData:[@"\nVERSION=2" dataUsingEncoding:NSUTF8StringEncoding]];
 	[fileHandle closeFile];
-
-	[self setCurrentFile:filename];
-	[self setCurrentType:kPlaylistM3u];
 
 	return YES;
 }
@@ -393,28 +382,6 @@
 - (NSArray *)acceptablePlaylistTypes
 {
 	return [NSArray arrayWithObjects:@"m3u",@"pls",nil];
-}
-
-- (PlaylistType)currentType
-{
-	return currentType;
-}
-
-- (void)setCurrentType:(PlaylistType)type
-{
-	currentType = type;
-}
-
-- (NSString *)currentFile
-{
-	return currentFile;
-}
-
-- (void)setCurrentFile:(NSString *)file
-{
-	[file retain];
-	[currentFile release];
-	currentFile = file;
 }
 
 @end

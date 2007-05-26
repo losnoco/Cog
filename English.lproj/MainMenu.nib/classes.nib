@@ -14,15 +14,11 @@
         }, 
         {
             ACTIONS = {
-                addURL = id; 
-                addURLSheetCancel = id; 
-                addURLSheetOK = id; 
                 delEntries = id; 
                 donate = id; 
-                loadPlaylist = id; 
                 openFiles = id; 
+                openURL = id; 
                 savePlaylist = id; 
-                savePlaylistAs = id; 
                 toggleFileDrawer = id; 
                 toggleInfoDrawer = id; 
             }; 

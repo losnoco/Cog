@@ -22,9 +22,6 @@
 	
 	IBOutlet NSPanel *mainWindow;
 	
-	IBOutlet NSPanel *addURLPanel;
-	IBOutlet NSComboBox *urlComboBox;
-	
 	IBOutlet NSButton *playButton;
 	IBOutlet NSButton *prevButton;
 	IBOutlet NSButton *nextButton;
@@ -58,17 +55,11 @@
 	BOOL remoteButtonHeld; /* true as long as the user holds the left,right,plus or minus on the remote control */
 }
 
-- (IBAction)addURL:(id)sender;
-- (IBAction)addURLSheetOK:(id)sender;
-- (IBAction)addURLSheetCancel:(id)sender;
+- (IBAction)openURL:(id)sender;
 
 - (IBAction)openFiles:(id)sender;
 - (IBAction)delEntries:(id)sender;
 - (IBAction)savePlaylist:(id)sender;
-- (IBAction)savePlaylistAs:(id)sender;
-- (IBAction)loadPlaylist:(id)sender;
-
-- (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 
 - (IBAction)donate:(id)sender;
 

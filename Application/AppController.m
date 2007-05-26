@@ -8,6 +8,7 @@
 #import "NDHotKeyEvent.h"
 #import "AppleRemote.h"
 #import "PlaylistLoader.h"
+#import "OpenURLPanel.h"
 
 @implementation AppController
 
@@ -133,13 +134,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[p setAllowsMultipleSelection:YES];
 	
 	[p beginSheetForDirectory:nil file:nil types:[playlistLoader acceptableFileTypes] modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
-//	[p beginForDirectory:nil file:nil types:[playlistController acceptableFileTypes] modelessDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
-	
-/*	if ([p runModalForTypes:[playlistController acceptableFileTypes]] == NSOKButton)
-	{
-		[playlistController addPaths:[p filenames] sort:YES];
-	}
-*/	
 }
 
 - (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
@@ -148,32 +142,42 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	{
 		[playlistLoader addURLs:[panel URLs] sort:YES];
 	}
-	
-//	[panel release];
 }
 
-- (IBAction)addURL:(id)sender
+- (IBAction)savePlaylist:(id)sender
 {
-	[NSApp beginSheet:addURLPanel modalForWindow:mainWindow modalDelegate:self didEndSelector:nil contextInfo:nil];
-}
-
-- (IBAction)addURLSheetOK:(id)sender
-{
-	NSURL *url = [NSURL URLWithString:[urlComboBox stringValue]];
+	NSSavePanel *p;
 	
-	[playlistLoader addURLs:[NSArray arrayWithObject:url] sort:NO];
+	p = [NSSavePanel savePanel];
 	
-    [NSApp endSheet:addURLPanel];
-    [addURLPanel orderOut:self];
+	[p setAllowedFileTypes:[playlistLoader acceptablePlaylistTypes]];	
+	[p beginSheetForDirectory:nil file:nil modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
 }
 
-- (IBAction)addURLSheetCancel:(id)sender
+- (void)savePanelDidEnd:(NSSavePanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	NSLog(@"GONE!");
-    [NSApp endSheet:addURLPanel];
-    [addURLPanel orderOut:self];
+	if (returnCode == NSOKButton)
+	{
+		[playlistLoader save:[panel filename]];
+	}
 }
 
+- (IBAction)openURL:(id)sender
+{
+	OpenURLPanel *p;
+	
+	p = [OpenURLPanel openURLPanel];
+
+	[p beginSheetWithWindow:mainWindow delegate:self didEndSelector:@selector(openURLPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
+}
+
+- (void)openURLPanelDidEnd:(OpenURLPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	if (returnCode == NSOKButton)
+	{
+		[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO];
+	}
+}
 
 - (IBAction)delEntries:(id)sender
 {
@@ -187,7 +191,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key
 {
-	//	DBLog(@"W00t");
 	return [key isEqualToString:@"currentEntry"];
 }
 
@@ -261,41 +264,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	[playlistLoader saveM3u:[folder stringByAppendingPathComponent: fileName]];
 	
-}
-
-- (IBAction)savePlaylist:(id)sender
-{
-	[playlistLoader save];
-}
-- (IBAction)savePlaylistAs:(id)sender
-{
-	NSSavePanel *p;
-	
-	p = [NSSavePanel savePanel];
-	
-	[p setAllowedFileTypes:[playlistLoader acceptablePlaylistTypes]];	
-	
-	if ([p runModalForDirectory:nil file:[[playlistLoader currentFile] lastPathComponent]] == NSOKButton)
-	{
-		[playlistLoader save:[p filename]];
-	}
-}
-
-- (IBAction)loadPlaylist:(id)sender
-{
-	NSOpenPanel *p;
-
-	p = [NSOpenPanel openPanel];
-
-	[p setCanChooseDirectories:NO];
-	[p setAllowsMultipleSelection:NO];
-
-	if ([p runModalForTypes:[playlistLoader acceptablePlaylistTypes]] == NSOKButton)
-	{
-		[playlistLoader load:[p filename]];
-	}
-
-	[mainWindow makeKeyAndOrderFront:self];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag

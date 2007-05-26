@@ -1,0 +1,107 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                doArchive = id; 
+                doClone = id; 
+                doEditable = id; 
+                doEnableQTMovieNotifications = id; 
+                doExport = id; 
+                doFlatten = id; 
+                doLayer = id; 
+                doLoop = id; 
+                doLoopPalindrome = id; 
+                doNewMovieFromSelection = id; 
+                doPlayAllFrames = id; 
+                doPlaySelectionOnly = id; 
+                doPreserveAspectRatio = id; 
+                doRate = id; 
+                doSetBounds = id; 
+                doSetFillColour = id; 
+                doSetFillColourPanel = id; 
+                doSetPosterTime = id; 
+                doSetStartTime = id; 
+                doSetTime = id; 
+                doShowController = id; 
+                doShowMovieInspector = id; 
+                doShowTrackInspector = id; 
+                doVolume = id; 
+                updateCurrentTime = id; 
+            }; 
+            CLASS = MovieDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_exportAccessoryView" = NSView; 
+                "_exportTypePopUpButton" = NSPopUpButton; 
+                "_movieCanStepButton" = NSButton; 
+                "_movieCopyrightTextField" = NSTextField; 
+                "_movieCurrentTimeTextField" = NSTextField; 
+                "_movieDataRefTypeTextField" = NSTextField; 
+                "_movieDataSizeTextField" = NSTextField; 
+                "_movieDisplayNameTextField" = NSTextField; 
+                "_movieDurationTextField" = NSTextField; 
+                "_movieHasAudioButton" = NSButton; 
+                "_movieHasDurationButton" = NSButton; 
+                "_movieHasSkinButton" = NSButton; 
+                "_movieHasVideoButton" = NSButton; 
+                "_movieInspectorPanel" = NSPanel; 
+                "_movieIsEditableButton" = NSButton; 
+                "_movieIsInteractiveButton" = NSButton; 
+                "_movieIsLinearButton" = NSButton; 
+                "_movieMuteButton" = NSButton; 
+                "_movieNaturalSizeTextField" = NSTextField; 
+                "_movieNotificationsTextView" = NSTextView; 
+                "_moviePosterTimeTextField" = NSTextField; 
+                "_moviePreferredMuteButton" = NSButton; 
+                "_moviePreferredRateSlider" = NSSlider; 
+                "_moviePreferredVolumeSlider" = NSSlider; 
+                "_movieRateSlider" = NSSlider; 
+                "_movieSetTimeTextField" = NSTextField; 
+                "_movieURLTextField" = NSTextField; 
+                "_movieView" = QTMovieView; 
+                "_movieVolumeSlider" = NSSlider; 
+                "_movieWindow" = NSWindow; 
+                "_trackBoundsOriginTextField" = NSTextField; 
+                "_trackBoundsSizeTextField" = NSTextField; 
+                "_trackCanSendVideoButton" = NSButton; 
+                "_trackCanStepButton" = NSButton; 
+                "_trackDurationTextField" = NSTextField; 
+                "_trackHasAudioButton" = NSButton; 
+                "_trackHasDurationButton" = NSButton; 
+                "_trackHasSkinButton" = NSButton; 
+                "_trackHasVideoButton" = NSButton; 
+                "_trackHasVideoFrameRateButton" = NSButton; 
+                "_trackInspectorPanel" = NSPanel; 
+                "_trackIsLinearButton" = NSButton; 
+                "_trackLayerStepper" = NSStepper; 
+                "_trackLayerTextField" = NSTextField; 
+                "_trackMediaDataReferenceTableView" = NSTableView; 
+                "_trackProvidesActionsButton" = NSButton; 
+                "_trackProvidesKeyFocusButton" = NSButton; 
+                "_trackSetBoundsButton" = NSButton; 
+                "_trackSetBoundsTextField" = NSTextField; 
+                "_trackSetStartTimeTextField" = NSTextField; 
+                "_trackStartTimeTextField" = NSTextField; 
+                "_trackTableView" = NSTableView; 
+                "_trackVolumeSlider" = NSSlider; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {CLASS = NSTextField; LANGUAGE = ObjC; SUPERCLASS = NSControl; }, 
+        {
+            ACTIONS = {doOpenURL = id; }; 
+            CLASS = OpenURLPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {mPanel = NSPanel; mUrlComboBox = NSComboBox; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {doOpenURL = id; }; 
+            CLASS = QTKitPlayerAppDelegate; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

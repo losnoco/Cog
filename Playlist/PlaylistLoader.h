@@ -17,9 +17,6 @@ typedef enum {
 
 @interface PlaylistLoader : NSObject {
 	IBOutlet PlaylistController *playlistController;
-
-	PlaylistType currentType; //m3u or pls
-	NSString *currentFile;
 }
 
 //load arrays of urls...
