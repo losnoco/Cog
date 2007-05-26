@@ -182,7 +182,7 @@ addressForHost(NSString *hostname)
 		_doPortStepping = NO;
 		close(_socket);
 		_socket = -1;
-		NSAssert1(-1 != result, @"Couldn't connect to server (%s).", strerror(errno));
+//		NSAssert1(-1 != result, @"Couldn't connect to server (%s).", strerror(errno));
 	}
 }
 
