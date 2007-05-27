@@ -13,15 +13,17 @@
 	NSString *from;
 	NSString *subject;
 	NSString *message;
+	NSString *version;
 	
 	id delegate;
 }
 
 - (void)setDelegate:(id)d;
-- (void)sendFeedback: (NSString *)f subject:(NSString *)s message:(NSString *)m;
+- (void)sendFeedback: (NSString *)f subject:(NSString *)s message:(NSString *)m version:(NSString *)v;
 
 - (void)setFrom:(NSString *)f;
 - (void)setSubject:(NSString *)s;
 - (void)setMessage:(NSString *)m;
+- (void)setVersion:(NSString *)v;
 
 @end

@@ -65,8 +65,10 @@
 	//Using this so that if its a bad connection, it doesnt sit there looking stupid..or should it
 	feedbackSocket = [[FeedbackSocket alloc] init];
 	[feedbackSocket setDelegate:self];
+
+	NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 	
-	[feedbackSocket sendFeedback:[fromView stringValue] subject:[subjectView stringValue] message:[messageView string]];
+	[feedbackSocket sendFeedback:[fromView stringValue] subject:[subjectView stringValue] message:[messageView string] version:version];
 }
 
 - (IBAction)cancel:(id)sender

@@ -26,8 +26,9 @@ NSString *encodeForURL(NSString *s)
 	NSString *f = encodeForURL(from);
 	NSString *s = encodeForURL(subject);
 	NSString *m = encodeForURL(message);
+	NSString *v = encodeForURL(version);
 	
-	NSString *postString = [NSString stringWithFormat:@"from=%@&subject=%@&message=%@", f, s, m];
+	NSString *postString = [NSString stringWithFormat:@"from=%@&subject=%@&message=%@&version=%@", f, s, m, v];
 	
 	NSData *postData = [postString dataUsingEncoding:NSASCIIStringEncoding];
 	
@@ -55,7 +56,7 @@ NSString *encodeForURL(NSString *s)
 	[pool release];
 }
 
-- (void)sendFeedback: (NSString *)f subject:(NSString *)s message:(NSString *)m
+- (void)sendFeedback: (NSString *)f subject:(NSString *)s message:(NSString *)m version:(NSString *)v
 {
 //	DBLog(@"Detaching thread for feedback");
 	if ([f isEqualToString:@""])
@@ -65,6 +66,7 @@ NSString *encodeForURL(NSString *s)
 	[self setFrom:f];
 	[self setSubject:s];
 	[self setMessage:m];
+	[self setVersion:v];
 	
     [NSThread detachNewThreadSelector:@selector(sendFeedbackThread:) toTarget:self withObject:nil];
 }
@@ -126,6 +128,14 @@ NSString *encodeForURL(NSString *s)
 	[message release];
 	
 	message = m;
+}
+
+- (void)setVersion:(NSString *)v
+{
+	[v retain];
+	[version release];
+	
+	version = v;
 }
 
 @end
