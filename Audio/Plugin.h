@@ -36,7 +36,6 @@
 - (NSDictionary *)properties;
 
 - (BOOL)open:(id<CogSource>)source;
-- (BOOL)seekable;
 - (double)seekToTime:(double)time; //time is in milleseconds, should return the time actually seeked to.
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size;
 - (void)close;

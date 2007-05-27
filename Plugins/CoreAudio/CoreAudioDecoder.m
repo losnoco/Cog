@@ -186,13 +186,9 @@
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithBool:YES], @"seekable",
 		@"big", @"endian",
 		nil];
-}
-
-- (BOOL)seekable
-{
-	return YES; //Are you kidding me? it HAS to be seekable. The AudioFile API is 100% impossible to stream in any way. Even using callbacks gives problems. Sigh.
 }
 
 

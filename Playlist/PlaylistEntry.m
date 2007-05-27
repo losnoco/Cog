@@ -202,6 +202,7 @@
 	[self setChannels:		[dict objectForKey:@"channels"		]];
 	[self setBitsPerSample:	[dict objectForKey:@"bitsPerSample" ]];
 	[self setSampleRate:	[dict objectForKey:@"sampleRate"	]];
+	[self setSeekable:		[dict objectForKey:@"seekable"		]];
 }
 
 - (void)readPropertiesThread
@@ -269,6 +270,19 @@
 - (NSNumber *)sampleRate
 {
 	return sampleRate;
+}
+
+- (void)setSeekable:(NSNumber *)s
+{
+	[s retain];
+	[seekable release];
+	
+	seekable = s;
+}
+	
+- (NSNumber *)seekable
+{
+	return seekable;
 }
 
 - (void)setMetadata: (NSDictionary *)m

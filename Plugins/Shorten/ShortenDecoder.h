@@ -22,7 +22,7 @@
 	int bitsPerSample;
 	float frequency;
 	double length;
-	bool seekTable;
+	BOOL seekable;
 }
 
 @end

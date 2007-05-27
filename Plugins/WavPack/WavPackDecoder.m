@@ -245,11 +245,6 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	return source;
 }
 
-- (BOOL)seekable
-{
-	return [source seekable];
-}
-
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -258,6 +253,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host",@"endian",
 		nil];
 }

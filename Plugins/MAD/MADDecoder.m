@@ -591,13 +591,9 @@ static inline signed int scale (mad_fixed_t sample)
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithBool:[_source seekable]], @"seekable",
 		@"big", @"endian",
 		nil];
-}
-
-- (BOOL)seekable
-{
-	return [_source seekable];
 }
 
 

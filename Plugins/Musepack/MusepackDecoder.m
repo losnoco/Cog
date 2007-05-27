@@ -208,11 +208,6 @@ mpc_bool_t CanSeekProc(void *data)
 	return source;
 }
 
-- (BOOL)seekable
-{
-	return [source seekable];
-}
-
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -221,6 +216,7 @@ mpc_bool_t CanSeekProc(void *data)
 		[NSNumber numberWithDouble:length], @"length",
 		[NSNumber numberWithInt:16], @"bitsPerSample",
 		[NSNumber numberWithInt:2], @"channels",
+		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host",@"endian",
 		nil];
 }

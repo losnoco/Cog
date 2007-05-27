@@ -125,11 +125,6 @@ long sourceTell(void *datasource)
 	return milliseconds;
 }
 
-- (BOOL) seekable
-{
-	return [source seekable];
-}
-
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -138,6 +133,7 @@ long sourceTell(void *datasource)
 		[NSNumber numberWithFloat:frequency], @"sampleRate",
 		[NSNumber numberWithDouble:length], @"length",
 		[NSNumber numberWithInt:bitrate], @"bitrate",
+		[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
 		nil];
 }
 

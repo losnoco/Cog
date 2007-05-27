@@ -29,8 +29,11 @@
 	
 	bufferSize = decoder->shn_get_buffer_block_size(NUM_DEFAULT_BUFFER_BLOCKS);
 	
+	bool seekTable;
 	decoder->file_info(NULL, &channels, &frequency, NULL, &bitsPerSample, &seekTable);
-	NSLog(@"Seek table: %i", seekTable);
+
+	seekable = seekTable == true ? YES : NO;
+
 	length = decoder->shn_get_song_length();
 	
 	decoder->go();
@@ -100,11 +103,6 @@
 		shn_unload(handle);*/
 }
 
-- (BOOL)seekable
-{
-	return seekTable ? YES : NO;
-}
-
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -112,6 +110,7 @@
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithBool:seekable ],@"seekable",
 		@"little",@"endian",
 		nil];
 }

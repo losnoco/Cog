@@ -282,11 +282,6 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	return source;
 }
 
-- (BOOL)seekable
-{
-	return [source seekable];
-}
-
 - (void)setEndOfStream:(BOOL)eos
 {
 	endOfStream = eos;
@@ -304,6 +299,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"big",@"endian",
 		nil];
 }

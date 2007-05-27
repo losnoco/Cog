@@ -90,11 +90,6 @@
 	return source;
 }
 
-- (BOOL)seekable
-{
-	return [source seekable];
-}
-
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -102,6 +97,7 @@
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host",@"endian",
 		nil];
 }

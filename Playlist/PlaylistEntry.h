@@ -29,6 +29,8 @@
 	
 	NSNumber *idx;
 	NSNumber *shuffleIndex;
+	
+	NSNumber *seekable;
 }
 
 - (void)setIndex:(NSNumber *)i;
@@ -68,6 +70,9 @@
 - (NSNumber *)bitsPerSample;
 - (void)setSampleRate:(NSNumber *)s;
 - (NSNumber *)sampleRate;
+
+- (void)setSeekable:(NSNumber *)s;
+- (NSNumber *)seekable;
 
 - (void)setMetadata: (NSDictionary *)m;
 - (void)readMetadataThread;
