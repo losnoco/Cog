@@ -1,7 +1,6 @@
-<?xml version='1.0' encoding='UTF-8'?>
-
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version='1.0'>
+<plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -28,6 +27,8 @@
 				<string>aiff</string>
 				<string>aifc</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>aiff.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>AIFF Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -39,52 +40,128 @@
 				<string>wav</string>
 				<string>wave</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>wav.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Wave Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>mp3</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>mp3.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MP3 Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>flac</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>flac.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Flac Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>ape</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>ape.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Monkey's Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>mpc</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>mpc.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Musepack Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>ogg</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>ogg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Ogg Vorbis File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>shn</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>shn.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Shorten File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<true/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>wv</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>wv.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Wavpack File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<true/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>m4a</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>m4a.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>M4A File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<true/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Cog</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>Cog Help</string>
 	<key>CFBundleIconFile</key>
 	<string>wheel</string>
 	<key>CFBundleIdentifier</key>
@@ -97,19 +174,13 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>0.06</string>
-	<key>CFBundleHelpBookFolder</key>
-	<string>Help</string>	
-	<key>CFBundleHelpBookName</key>
-	<string>Cog Help</string>	
 	<key>NSAppleScriptEnabled</key>
 	<string>YES</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-
-	<key>SUFeedURL</key> 
+	<key>SUFeedURL</key>
 	<string>http://cogosx.sourceforge.net/appcast.xml</string>
 </dict>
 </plist>
-

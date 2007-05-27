@@ -1,5 +1,5 @@
 Bug fixes:
-  Broken MP3: http://sbooth.org/forums/viewtopic.php?t=1103
-  Fix playlist/file loading so it never loads duplicates in a single action. Ex: If you load (an m3u containing a bunch of files) AND (the files themselves), only load them once! However, if you load the m3u, THEN load the group of files, they should appear twice!
+  SHN resulting in high CPU usage: http://sbooth.org/forums/viewtopic.php?p=4711#4711
+  Window Menu: http://sbooth.org/forums/viewtopic.php?p=4717
 
-Document Icons?
+Fix playlist/file loading so it never loads duplicates in a single action. Ex: If you load (an m3u containing a bunch of files) AND (the files themselves), only load them once! However, if you load the m3u, THEN load the group of files, they should appear twice!
