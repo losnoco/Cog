@@ -1,6 +1,4 @@
 Bug fixes:
   SHN resulting in high CPU usage: http://sbooth.org/forums/viewtopic.php?p=4711#4711
-  Window Menu: http://sbooth.org/forums/viewtopic.php?p=4717
-  Reveal Song in Finder needs to be changed to Show Song in Finder and not be enabled when theres no selection: http://sbooth.org/forums/viewtopic.php?t=1420
 
-Fix playlist/file loading so it never loads duplicates in a single action. Ex: If you load (an m3u containing a bunch of files) AND (the files themselves), only load them once! However, if you load the m3u, THEN load the group of files, they should appear twice!
+Fix playlist/file loading so it never loads duplicates in a single action. Ex: If you load (an m3u containing a bunch of files) AND (the files themselves), only load them once! However, if you load the m3u, THEN load the group of files, they should appear twice! http://sbooth.org/forums/viewtopic.php?t=1434
