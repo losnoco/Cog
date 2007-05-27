@@ -17,20 +17,24 @@
 @implementation PlaylistLoader
 
 //load/save playlist auto-determines type to be either pls or m3u.
-- (BOOL)load:(NSString *)filename
+- (NSArray *)urlsFromPlaylist:(NSString *)filename
 {
 	NSString *ext = [filename pathExtension];
 	if ([ext isEqualToString:@"m3u"])
 	{
-		return [self loadM3u:filename];
+		return [self urlsFromM3u:filename];
 	}
 	else if ([ext isEqualToString:@"pls"])
 	{
-		return [self loadPls:filename];
+		return [self urlsFromPls:filename];
 	}
 	else
 	{
-		return [self loadPls:filename] || [self loadM3u:filename];
+		NSArray *entries = [self urlsFromPls:filename];
+		if (entries == nil)
+			return [self urlsFromM3u:filename];
+		
+		return entries;
 	}
 }
 
@@ -105,7 +109,7 @@
 }
 
 
-- (BOOL)loadM3u:(NSString *)filename
+- (NSArray *)urlsFromM3u:(NSString *)filename
 {
 	NSLog(@"Loading playlist: %@", filename);
 	
@@ -129,9 +133,7 @@
 		[entries addObject:[self urlForPath:entry relativeTo:filename]];		
 	}
 
-	[self addURLs:entries sort:NO];
-	
-	return YES;
+	return entries;
 }
 
 - (BOOL)saveM3u:(NSString *)filename
@@ -139,7 +141,7 @@
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if (!fileHandle) {
 		NSLog(@"Error!");
-		return NO;
+		return nil;
 	}
 	[fileHandle truncateFileAtOffset:0];
 	
@@ -159,12 +161,12 @@
 	return YES;
 }
 
-- (BOOL)loadPls:(NSString *)filename
+- (NSArray *)urlsFromPls:(NSString *)filename
 {
 	NSError *error;
 	NSString *contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
 	if (error || !contents) {
-		return NO;
+		return nil;
 	}
 
 	NSString *entry;
@@ -192,9 +194,7 @@
 		[scanner release];
 	}
 
-	[self addURLs:entries sort:NO];
-	
-	return YES;
+	return entries;
 }
 
 - (BOOL)savePls:(NSString *)filename
@@ -251,6 +251,7 @@
 
 - (void)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort
 {
+	NSMutableSet *uniqueURLs = [[NSMutableSet alloc] init];
 	NSMutableArray *allURLs = [[NSMutableArray alloc] init];
 	NSMutableArray *validURLs = [[NSMutableArray alloc] init];
 	NSArray *finalURLs;
@@ -278,7 +279,13 @@
 				else
 				{
 					//File url
-					[allURLs addObject:url];
+					if ([[self acceptablePlaylistTypes] containsObject:[[url path] pathExtension]]) {
+						[allURLs addObjectsFromArray:[self urlsFromPlaylist:[url path]]];
+					}
+					else {
+						//Not a playlist!
+						[allURLs addObject:url];
+					}
 				}
 			}
 		}
@@ -299,8 +306,13 @@
 		//Need a better way to determine acceptable file types than basing it on extensions.
 		if (![[self acceptableFileTypes] containsObject:[[[url path] pathExtension] lowercaseString]])
 			continue;
+		
+		if (![uniqueURLs containsObject:url])
+		{
+			[validURLs addObject:url];
 			
-		[validURLs addObject:url];
+			[uniqueURLs addObject:url];
+		}
 	}
 
 	finalURLs = validURLs;
@@ -342,6 +354,7 @@
 	
 	[allURLs release];
 	[validURLs release];
+	[uniqueURLs release];
 
 	return;
 }
@@ -374,9 +387,14 @@
 	[self insertURLs:urls atIndex:[[playlistController content] count] sort:sort];
 }
 
+- (void)addURL:(NSURL *)url
+{
+	[self insertURLs:[NSArray arrayWithObject:url] atIndex:[[playlistController content] count] sort:NO];
+}
+
 - (NSArray *)acceptableFileTypes
 {
-	return [AudioPlayer fileTypes];
+	return [[self acceptablePlaylistTypes] arrayByAddingObjectsFromArray:[AudioPlayer fileTypes]];
 }
 
 - (NSArray *)acceptablePlaylistTypes

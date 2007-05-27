@@ -242,7 +242,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	
 	NSString *filename = @"~/Library/Application Support/Cog/Default.m3u";
-	[playlistLoader loadM3u:[filename stringByExpandingTildeInPath]];
+	[playlistLoader addURL:[NSURL fileURLWithPath:[filename stringByExpandingTildeInPath]]];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
