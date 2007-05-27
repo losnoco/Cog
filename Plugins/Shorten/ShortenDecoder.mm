@@ -29,8 +29,8 @@
 	
 	bufferSize = decoder->shn_get_buffer_block_size(NUM_DEFAULT_BUFFER_BLOCKS);
 	
-	decoder->file_info(NULL, &channels, &frequency, NULL, &bitsPerSample, NULL);
-	
+	decoder->file_info(NULL, &channels, &frequency, NULL, &bitsPerSample, &seekTable);
+	NSLog(@"Seek table: %i", seekTable);
 	length = decoder->shn_get_song_length();
 	
 	decoder->go();
@@ -90,6 +90,7 @@
 {
 	if(decoder)
 	{
+		NSLog(@"Exiting decoder!");
 		decoder->exit();
 		delete decoder;
 		decoder	= NULL;
@@ -101,7 +102,7 @@
 
 - (BOOL)seekable
 {
-	return YES;
+	return seekTable ? YES : NO;
 }
 
 - (NSDictionary *)properties
