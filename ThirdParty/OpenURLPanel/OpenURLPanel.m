@@ -204,9 +204,9 @@ static OpenURLPanel *openURLPanel = nil;
 		else
 		{
 			if (mIsSheet)
-				NSRunAlertPanel(@"Invalid URL", @"The URL is not valid.", nil, nil, nil);
+				NSRunAlertPanel(NSLocalizedString(@"InvalidURLShort", @""), NSLocalizedString(@"InvalidURLLong", @""), nil, nil, nil);
 			else
-				NSBeginAlertSheet(@"Invalid URL", nil, nil, nil, mPanel, nil, nil, nil, nil, @"The URL is not valid.");
+				NSBeginAlertSheet(NSLocalizedString(@"InvalidURLShort", @""), nil, nil, nil, mPanel, nil, nil, nil, nil, NSLocalizedString(@"InvalidURLLong", @""));
 
 			informDelegate = NO;
 		}
