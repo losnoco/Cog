@@ -217,12 +217,15 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)awakeFromNib
 {
+	[mainWindow setExcludedFromWindowsMenu:YES];
+	
 	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
 	[prevButton setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"")];
 	[nextButton setToolTip:NSLocalizedString(@"NextButtonTooltip", @"")];
 	[infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
 	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
 	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
+	[fileButton setToolTip:NSLocalizedString(@"FileButtonTooltip", @"")];
 	
 	[self initShowColumn: showIndexColumn	withIdentifier: @"index"];
 	[self initShowColumn: showTitleColumn	withIdentifier: @"title"];

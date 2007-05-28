@@ -3,11 +3,6 @@
 "FeedbackSuccessMessageText" = "Success";
 "FeedbackSuccessInformativeText" = "Feedback successfully sent!";
 
-"CheckingForUpdate" = "Checking for update…";
-"UpdateAvailable" = "Update available!";
-"UpdateNotFound" = "No updates available.";
-"UpdateError" = "Error connecting to update server.";
-
 "PlayButtonTooltip" = "Play";
 "StopButtonTooltip" = "Stop";
 "PrevButtonTooltip" = "Previous";
@@ -21,3 +16,4 @@
 "InfoButtonTooltip" = "Information on the selected file";
 "ShuffleButtonTooltip" = "Shuffle mode";
 "RepeatButtonTooltip" = "Repeat mode";
+"FileButtonTooltip" = "File drawer";
