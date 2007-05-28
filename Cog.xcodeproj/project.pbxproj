@@ -183,7 +183,7 @@
 		1766C88F0B912FB4004A7AE4 /* repeat_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_on.png; path = Images/repeat_on.png; sourceTree = "<group>"; };
 		1766C8900B912FB4004A7AE4 /* shuffle_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = shuffle_off.png; path = Images/shuffle_off.png; sourceTree = "<group>"; };
 		1766C8910B912FB4004A7AE4 /* shuffle_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = shuffle_on.png; path = Images/shuffle_on.png; sourceTree = "<group>"; };
-		1770424E0B8BC41800B86321 /* Cog.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1770424E0B8BC41800B86321 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		177042970B8BC53600B86321 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		177042980B8BC53600B86321 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		177042990B8BC53600B86321 /* PlaybackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaybackController.h; sourceTree = "<group>"; };
