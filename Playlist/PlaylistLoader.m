@@ -251,10 +251,11 @@
 
 - (void)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort
 {
-	NSMutableSet *uniqueURLs = [[NSMutableSet alloc] init];
-	NSMutableArray *allURLs = [[NSMutableArray alloc] init];
-	NSMutableArray *validURLs = [[NSMutableArray alloc] init];
-	NSArray *finalURLs;
+	NSMutableSet *uniqueURLs = [NSMutableSet set];
+	
+	NSMutableArray *expandedURLs = [NSMutableArray array];
+	NSMutableArray *allURLs = [NSMutableArray array];
+	NSMutableArray *validURLs = [NSMutableArray array];
 	
 	if (!urls)
 		return;
@@ -274,29 +275,54 @@
 				if (isDir == YES)
 				{
 					//Get subpaths
-					[allURLs addObjectsFromArray:[self fileURLsAtPath:[url path]]];
+					[expandedURLs addObjectsFromArray:[self fileURLsAtPath:[url path]]];
 				}
 				else
 				{
-					//File url
-					if ([[self acceptablePlaylistTypes] containsObject:[[url path] pathExtension]]) {
-						[allURLs addObjectsFromArray:[self urlsFromPlaylist:[url path]]];
-					}
-					else {
-						//Not a playlist!
-						[allURLs addObject:url];
-					}
+					[expandedURLs addObject:url];
 				}
 			}
 		}
 		else
 		{
 			//Non-file URL..
+			[expandedURLs addObject:url];
+		}
+	}
+
+	NSLog(@"Expanded URLs: %@", expandedURLs);
+
+	NSArray *sortedURLs;
+	if (sort == YES)
+	{
+		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"absoluteString" ascending:YES];
+
+		sortedURLs = [expandedURLs sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+
+		[sortDescriptor release];
+	}
+	else
+	{
+		sortedURLs = [expandedURLs copy];
+	}
+
+	NSLog(@"Sorted URLs: %@", expandedURLs);
+	
+	urlEnumerator = [sortedURLs objectEnumerator];
+	while (url = [urlEnumerator nextObject])
+	{
+		//File url
+		if ([[self acceptablePlaylistTypes] containsObject:[[url path] pathExtension]]) {
+			[allURLs addObjectsFromArray:[self urlsFromPlaylist:[url path]]];
+		}
+		else
+		{
 			[allURLs addObject:url];
 		}
 	}
 
-
+	NSLog(@"All URLs: %@", allURLs);
+	
 	urlEnumerator = [allURLs objectEnumerator];
 	while (url = [urlEnumerator nextObject])
 	{
@@ -304,7 +330,7 @@
 			continue;
 
 		//Need a better way to determine acceptable file types than basing it on extensions.
-		if (![[self acceptableFileTypes] containsObject:[[[url path] pathExtension] lowercaseString]])
+		if (![[AudioPlayer fileTypes] containsObject:[[[url path] pathExtension] lowercaseString]])
 			continue;
 		
 		if (![uniqueURLs containsObject:url])
@@ -315,23 +341,16 @@
 		}
 	}
 
-	finalURLs = validURLs;
-	if (sort == YES)
-	{
-		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"absoluteString" ascending:YES];
-
-		finalURLs = [validURLs sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
-
-		[sortDescriptor release];
-	}
+	NSLog(@"Valid URLs: %@", validURLs);
+	
 
 	//Create actual entries
 	int i;
 	NSMutableArray *entries = [NSMutableArray array];
-	for (i = 0; i < [finalURLs count]; i++)
+	for (i = 0; i < [validURLs count]; i++)
 	{
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
-		NSURL *url = [finalURLs objectAtIndex:i];
+		NSURL *url = [validURLs objectAtIndex:i];
 
 		[pe	setURL:url];
 		[pe setIndex:[NSNumber numberWithInt:(index+i)]];
@@ -352,10 +371,6 @@
 	//Other thread for reading things...
 	[NSThread detachNewThreadSelector:@selector(readEntriesInfoThread:) toTarget:self withObject:entries];
 	
-	[allURLs release];
-	[validURLs release];
-	[uniqueURLs release];
-
 	return;
 }
 
