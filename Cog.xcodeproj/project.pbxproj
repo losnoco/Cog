@@ -66,6 +66,13 @@
 		177FD1090B90CB5F0011C3B5 /* MAD.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD01B0B90CAC60011C3B5 /* MAD.bundle */; };
 		177FD10A0B90CB5F0011C3B5 /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD0170B90CABF0011C3B5 /* Flac.bundle */; };
 		177FD10B0B90CB5F0011C3B5 /* CoreAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FD0130B90CAB50011C3B5 /* CoreAudio.bundle */; };
+		17818A950C0B27AC001C4916 /* aiff.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A8E0C0B27AC001C4916 /* aiff.icns */; };
+		17818A960C0B27AC001C4916 /* ape.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A8F0C0B27AC001C4916 /* ape.icns */; };
+		17818A970C0B27AC001C4916 /* m3u.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A900C0B27AC001C4916 /* m3u.icns */; };
+		17818A980C0B27AC001C4916 /* mpc.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A910C0B27AC001C4916 /* mpc.icns */; };
+		17818A990C0B27AC001C4916 /* shn.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A920C0B27AC001C4916 /* shn.icns */; };
+		17818A9A0C0B27AC001C4916 /* wav.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A930C0B27AC001C4916 /* wav.icns */; };
+		17818A9B0C0B27AC001C4916 /* wv.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A940C0B27AC001C4916 /* wv.icns */; };
 		179790E00C087AB7001D6996 /* OpenURLPanel.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179790DE0C087AB7001D6996 /* OpenURLPanel.h */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
 		179790F20C087B46001D6996 /* OpenURLPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 179790F00C087B46001D6996 /* OpenURLPanel.nib */; };
@@ -176,7 +183,7 @@
 		1766C88F0B912FB4004A7AE4 /* repeat_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_on.png; path = Images/repeat_on.png; sourceTree = "<group>"; };
 		1766C8900B912FB4004A7AE4 /* shuffle_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = shuffle_off.png; path = Images/shuffle_off.png; sourceTree = "<group>"; };
 		1766C8910B912FB4004A7AE4 /* shuffle_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = shuffle_on.png; path = Images/shuffle_on.png; sourceTree = "<group>"; };
-		1770424E0B8BC41800B86321 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1770424E0B8BC41800B86321 /* Cog.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		177042970B8BC53600B86321 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		177042980B8BC53600B86321 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		177042990B8BC53600B86321 /* PlaybackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaybackController.h; sourceTree = "<group>"; };
@@ -236,6 +243,13 @@
 		177FD0270B90CADE0011C3B5 /* Shorten.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Shorten.bundle; path = Plugins/Shorten/build/Release/Shorten.bundle; sourceTree = "<group>"; };
 		177FD02B0B90CAE50011C3B5 /* TagLib.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TagLib.bundle; path = Plugins/TagLib/build/Release/TagLib.bundle; sourceTree = "<group>"; };
 		177FD02F0B90CAEC0011C3B5 /* Vorbis.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Vorbis.bundle; path = Plugins/Vorbis/build/Release/Vorbis.bundle; sourceTree = "<group>"; };
+		17818A8E0C0B27AC001C4916 /* aiff.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = aiff.icns; sourceTree = "<group>"; };
+		17818A8F0C0B27AC001C4916 /* ape.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ape.icns; sourceTree = "<group>"; };
+		17818A900C0B27AC001C4916 /* m3u.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m3u.icns; sourceTree = "<group>"; };
+		17818A910C0B27AC001C4916 /* mpc.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mpc.icns; sourceTree = "<group>"; };
+		17818A920C0B27AC001C4916 /* shn.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = shn.icns; sourceTree = "<group>"; };
+		17818A930C0B27AC001C4916 /* wav.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = wav.icns; sourceTree = "<group>"; };
+		17818A940C0B27AC001C4916 /* wv.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = wv.icns; sourceTree = "<group>"; };
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
 		179790DF0C087AB7001D6996 /* OpenURLPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenURLPanel.m; sourceTree = "<group>"; };
 		179790F10C087B46001D6996 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
@@ -663,6 +677,13 @@
 		8E75758E09F31D800080F1EE /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				17818A8E0C0B27AC001C4916 /* aiff.icns */,
+				17818A8F0C0B27AC001C4916 /* ape.icns */,
+				17818A900C0B27AC001C4916 /* m3u.icns */,
+				17818A910C0B27AC001C4916 /* mpc.icns */,
+				17818A920C0B27AC001C4916 /* shn.icns */,
+				17818A930C0B27AC001C4916 /* wav.icns */,
+				17818A940C0B27AC001C4916 /* wv.icns */,
 				171B57D90C091F2B00F6AFAF /* flac.icns */,
 				171B57DA0C091F2B00F6AFAF /* m4a.icns */,
 				171B57DB0C091F2B00F6AFAF /* mp3.icns */,
@@ -776,6 +797,13 @@
 				171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */,
 				171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */,
 				171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */,
+				17818A950C0B27AC001C4916 /* aiff.icns in Resources */,
+				17818A960C0B27AC001C4916 /* ape.icns in Resources */,
+				17818A970C0B27AC001C4916 /* m3u.icns in Resources */,
+				17818A980C0B27AC001C4916 /* mpc.icns in Resources */,
+				17818A990C0B27AC001C4916 /* shn.icns in Resources */,
+				17818A9A0C0B27AC001C4916 /* wav.icns in Resources */,
+				17818A9B0C0B27AC001C4916 /* wv.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

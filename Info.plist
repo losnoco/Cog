@@ -155,6 +155,38 @@
 			<key>NSPersistentStoreTypeKey</key>
 			<string>Binary</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>pls</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>pls.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>PLS Playlist File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<true/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>m3u</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>m3u.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>M3U Playlist File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<true/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Cog</string>
