@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>  
 	<key>Label</key>
-	<string>com.vspader.cog.nightly</string>
+	<string>org.cogx.cog.nightly</string>
 	<key>ProgramArguments</key>
 	<array> 
 		<string>/Users/vspader/Projects/Cog.Nightly/Scripts/build_nightly.rb</string>
