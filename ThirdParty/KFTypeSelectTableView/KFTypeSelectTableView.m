@@ -208,6 +208,7 @@ static BOOL KFKeyEventIsCancelEvent(NSEvent *keyEvent);
             // 10.2.  I haven't had a chance to find out.
             [self cancelOperation:self];
             eatEvent = YES;
+			[super keyDown:keyEvent];
         }
     }
     
@@ -405,7 +406,7 @@ static BOOL KFKeyEventIsCancelEvent(NSEvent *keyEvent)
     {
         return YES;
     }    
-    
+
     return NO;    
 }
 
