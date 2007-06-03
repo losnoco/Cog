@@ -377,6 +377,13 @@
 		[self changePlayButtonImage:@"pause"];
 	}
 	
+	if (status == kCogStatusStopped) {
+		[positionSlider setEnabled:NO];
+	}
+	else {
+		[positionSlider setEnabled:[[[playlistController currentEntry] seekable] boolValue]];
+	}
+	
 	playbackStatus = status;
 }
 
