@@ -23,5 +23,6 @@ nibtool -d Localizations/$language/OpenURLPanel.strings English.lproj/OpenURLPan
 nibtool -d Localizations/$language/PreferencesUI.strings Preferences/General/English.lproj/Preferences.nib -W Preferences/General/$language.lproj/Preferences.nib
 cp Localizations/$language/MainProgram.strings $language.lproj/Localizable.strings
 cp Localizations/$language/PreferencesProgram.strings Preferences/General/$language.lproj/Localizable.strings
+cp Localizations/$language/Credits.html $language.lproj/Credits.html
 
 
