@@ -260,6 +260,9 @@
 		17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		17BB5CF80B8A86350009ACB1 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = /System/Library/Frameworks/CoreAudioKit.framework; sourceTree = "<absolute>"; };
 		17BB5EA50B8A87850009ACB1 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		17E41C470C1304BB00AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		17E41C480C1304C700AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
+		17E41C490C1304D200AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Swedish; path = Swedish.lproj/Localizable.strings; sourceTree = "<group>"; };
 		17E94E520C03B09500D92B9B /* CogAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CogAudio.framework; path = Audio/build/Release/CogAudio.framework; sourceTree = "<group>"; };
 		17F94CC10B8D08FB00A34E87 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -297,7 +300,6 @@
 		8E7575C509F31DCA0080F1EE /* Cog.scriptTerminology */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Cog.scriptTerminology; sourceTree = "<group>"; };
 		8E7575C809F31DCA0080F1EE /* Credits.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; path = Credits.html; sourceTree = "<group>"; };
 		8E7575DA09F31E930080F1EE /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
-		8E7575DC09F31EAF0080F1EE /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E9A2E830BA78B500091081B /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SecondsFormatter.h; sourceTree = "<group>"; };
 		8E9A2E840BA78B500091081B /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SecondsFormatter.m; sourceTree = "<group>"; };
 		8E9A2ED70BA78D9D0091081B /* IndexFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexFormatter.h; sourceTree = "<group>"; };
@@ -748,6 +750,13 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Cog" */;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				Swedish,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			projectDirPath = "";
 			targets = (
@@ -877,6 +886,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				179790F10C087B46001D6996 /* English */,
+				17E41C480C1304C700AC744D /* Swedish */,
 			);
 			name = OpenURLPanel.nib;
 			sourceTree = "<group>";
@@ -885,6 +895,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				29B97319FDCFA39411CA2CEA /* English */,
+				17E41C470C1304BB00AC744D /* Swedish */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -893,7 +904,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8E7575DA09F31E930080F1EE /* English */,
-				8E7575DC09F31EAF0080F1EE /* French */,
+				17E41C490C1304D200AC744D /* Swedish */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
