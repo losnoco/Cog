@@ -9,4 +9,5 @@ nibtool -L Preferences/General/English.lproj/Preferences.nib > Localizations/Eng
 
 cp English.lproj/Localizable.strings Localizations/English/MainProgram.strings
 cp Preferences/General/English.lproj/Localizable.strings Localizations/English/PreferencesProgram.strings
+cp English.lproj/Credits.html Localizations/English/Credits.html
 
