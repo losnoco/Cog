@@ -98,8 +98,6 @@
 	outputLaunched = NO;
 	NSLog(@"Launching input thread!");
 	[bufferChain launchThreads];
-	
-	[self setPlaybackStatus:kCogStatusPlaying];
 }
 
 - (void)stop
@@ -129,7 +127,6 @@
 	/*HACK TO TEST HOW WELL THIS WOULD WORK*/
 	[output seek:time];
 	[bufferChain seek:time];
-	
 	/*END HACK*/
 }
 
@@ -169,6 +166,7 @@
 
 - (void)launchOutputThread
 {
+	[self setPlaybackStatus:kCogStatusPlaying];	
 	if (outputLaunched == NO) {
 		NSLog(@"Launching output thread!");
 		[output launchThread];
