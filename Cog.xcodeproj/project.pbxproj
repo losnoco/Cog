@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1705F1510B8BCB0C00C8B40D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 1705F1420B8BCB0C00C8B40D /* Help */; };
 		170680630B950158006BA573 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		170680840B950164006BA573 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */; };
@@ -84,6 +83,7 @@
 		17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF80B8A86350009ACB1 /* CoreAudioKit.framework */; };
 		17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5EA50B8A87850009ACB1 /* IOKit.framework */; };
 		17E41E070C130DFF00AC744D /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E060C130DFF00AC744D /* Credits.html */; };
+		17E41E230C130EE200AC744D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E220C130EE200AC744D /* Help */; };
 		17E94E530C03B09500D92B9B /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E94E520C03B09500D92B9B /* CogAudio.framework */; };
 		17E94E560C03B09A00D92B9B /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17E94E520C03B09500D92B9B /* CogAudio.framework */; };
 		17F94CC20B8D08FB00A34E87 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F94CC10B8D08FB00A34E87 /* Sparkle.framework */; };
@@ -161,7 +161,7 @@
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		1705F1420B8BCB0C00C8B40D /* Help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Help; sourceTree = "<group>"; };
+		1705F1420B8BCB0C00C8B40D /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/Help; sourceTree = "<group>"; };
 		170680620B950158006BA573 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = ThirdParty/Frameworks/Growl.framework; sourceTree = "<group>"; };
 		171678BD0AC8C39E00C28CF3 /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFolderNode.h; sourceTree = "<group>"; };
 		171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFolderNode.m; sourceTree = "<group>"; };
@@ -598,7 +598,7 @@
 				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
 				8E75758E09F31D800080F1EE /* Icons */,
 				177EC02D0B8BC2E60000BC8C /* Images */,
-				1705F1420B8BCB0C00C8B40D /* Help */,
+				17E41E220C130EE200AC744D /* Help */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
@@ -792,7 +792,7 @@
 				177EC0530B8BC2FF0000BC8C /* remove_gray.png in Resources */,
 				177EC0580B8BC2FF0000BC8C /* volume_high.png in Resources */,
 				177EC0590B8BC2FF0000BC8C /* volume_low.png in Resources */,
-				1705F1510B8BCB0C00C8B40D /* Help in Resources */,
+				17E41E230C130EE200AC744D /* Help in Resources */,
 				1766C8920B912FB4004A7AE4 /* files_off.png in Resources */,
 				1766C8930B912FB4004A7AE4 /* files_on.png in Resources */,
 				1766C8940B912FB4004A7AE4 /* info_off.png in Resources */,
@@ -897,6 +897,14 @@
 				8E7575C809F31DCA0080F1EE /* English */,
 			);
 			name = Credits.html;
+			sourceTree = "<group>";
+		};
+		17E41E220C130EE200AC744D /* Help */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1705F1420B8BCB0C00C8B40D /* English */,
+			);
+			name = Help;
 			sourceTree = "<group>";
 		};
 		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {

@@ -24,5 +24,7 @@ nibtool -d Localizations/$language/PreferencesUI.strings Preferences/General/Eng
 cp Localizations/$language/MainProgram.strings $language.lproj/Localizable.strings
 cp Localizations/$language/PreferencesProgram.strings Preferences/General/$language.lproj/Localizable.strings
 cp Localizations/$language/Credits.html $language.lproj/Credits.html
+cp -r English.lproj/Help $language.lproj/
+cp Localizations/$language/help.html $language.lproj/Help/index.html
 
 
