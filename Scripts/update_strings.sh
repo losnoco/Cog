@@ -8,4 +8,5 @@ nibtool -L English.lproj/OpenURLPanel.nib > Localizations/English/OpenURLPanel.s
 nibtool -L Preferences/General/English.lproj/Preferences.nib > Localizations/English/PreferencesUI.strings
 
 cp English.lproj/Localizable.strings Localizations/English/MainProgram.strings
+cp Preferences/General/English.lproj/Localizable.strings Localizations/English/PreferencesProgram.strings
 
