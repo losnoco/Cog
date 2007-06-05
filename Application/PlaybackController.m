@@ -153,16 +153,11 @@
 
 - (IBAction)next:(id)sender
 {
-	DBLog(@"CALLING: %i %i", playbackStatus, kCogStatusStopped);
 	if ([playlistController next] == NO)
 		return;
 
-	if (playbackStatus != kCogStatusStopped)
-	{
-		DBLog(@"STOPPING");
-		[self stop:self];
-		[self playEntry:[playlistController currentEntry]];
-	}
+	[self stop:self];
+	[self playEntry:[playlistController currentEntry]];
 }
 
 - (IBAction)prev:(id)sender
@@ -171,11 +166,8 @@
 	if ([playlistController prev] == nil)
 		return;
 
-	if (playbackStatus != kCogStatusStopped)
-	{
-		[self stop:self];
-		[self playEntry:[playlistController currentEntry]];
-	}
+	[self stop:self];
+	[self playEntry:[playlistController currentEntry]];
 }
 
 - (IBAction)seek:(id)sender
