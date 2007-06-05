@@ -432,7 +432,13 @@
 
 - (IBAction)clear:(id)sender
 {
+	[currentEntry setIndex:[NSNumber numberWithInt:-1]];
+	
 	[self removeObjects:[self content]];
+	[self updateTotalTime];
+
+	if (shuffle == YES)
+		[self resetShuffleList];
 }
 
 - (IBAction)clearFilterPredicate:(id)sender
