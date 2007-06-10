@@ -19,13 +19,11 @@
 	OSErr						error; 
 	Handle						dataRef; 
 	OSType						dataRefType; 
-	Movie						soundToPlay;
 	AudioChannelLayout*			layout				= nil;
 	UInt32						size				= 0;
 
 	NSLog(@"EnterMovies...");		
 	EnterMovies();
-
 
 	NSLog(@"Creating new data reference...");
 	error = QTNewDataReferenceFromCFURL((CFURLRef)url, 0, &dataRef, &dataRefType);
@@ -34,14 +32,14 @@
 	NSLog(@"Creating new movie...");
 	short fileID = movieInDataForkResID; 
 	short flags = 0; 
-	error = NewMovieFromDataRef(&soundToPlay, flags, &fileID, dataRef, dataRefType);
+	error = NewMovieFromDataRef(&_movie, flags, &fileID, dataRef, dataRefType);
 	NSLog(@"   %d",error);
 
 	NSLog(@"Setting movie active...");
-	SetMovieActive(soundToPlay, TRUE);
+	SetMovieActive(_movie, TRUE);
 
 	NSLog(@"Beginning extraction session...");
-	error = MovieAudioExtractionBegin(soundToPlay, 0, &_extractionSessionRef); 
+	error = MovieAudioExtractionBegin(_movie, 0, &_extractionSessionRef); 
 	NSLog(@"   %d",error);
 
 	NSLog(@"Getting property info...");
@@ -111,7 +109,7 @@
 	NSLog(@"   channels/frame = %d",_asbd.mChannelsPerFrame);
 	NSLog(@"   b/channel      = %d",_asbd.mBitsPerChannel);
 
-	_totalFrames = _asbd.mSampleRate * ((float) GetMovieDuration(soundToPlay) / (float) GetMovieTimeScale(soundToPlay));
+	_totalFrames = _asbd.mSampleRate * ((float) GetMovieDuration(_movie) / (float) GetMovieTimeScale(_movie));
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -155,7 +153,22 @@
 
 - (double) seekToTime:(double)milliseconds
 {
-	return 0.0;
+	OSErr error;
+	TimeRecord timeRec;
+	
+	timeRec.scale	= GetMovieTimeScale(_movie);
+	timeRec.base	= NULL;
+	timeRec.value.hi = 0;
+	timeRec.value.lo = (milliseconds/1000.0) * timeRec.scale;
+	
+	error = MovieAudioExtractionSetProperty(_extractionSessionRef, kQTPropertyClass_MovieAudioExtraction_Movie,	kQTMovieAudioExtractionMoviePropertyID_CurrentTime, sizeof(timeRec), &timeRec);
+	if (error)
+	{
+		NSLog(@"Error seeking! %i", error);
+		return 0.0;
+	}
+	
+	return milliseconds;
 }
 
 + (NSArray *)fileTypes
@@ -208,7 +221,7 @@
 		[NSNumber numberWithInt:0],@"bitrate",
 		[NSNumber numberWithFloat:_asbd.mSampleRate],@"sampleRate",
 		[NSNumber numberWithDouble:_totalFrames/(_asbd.mSampleRate/1000.0)],@"length",
-		[NSNumber numberWithBool:NO], @"seekable",
+		[NSNumber numberWithBool:YES], @"seekable",
 		@"big", @"endian",
 		nil];
 }

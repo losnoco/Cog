@@ -16,12 +16,7 @@
 @interface QuicktimeDecoder : NSObject <CogDecoder> {
 	AudioStreamBasicDescription	_asbd;
 	MovieAudioExtractionRef _extractionSessionRef;
-
-	int bitrate;
-	int bitsPerSample;
-	int channels;
-	float frequency;
-	double length;
+	Movie _movie;
 	
 	unsigned long _totalFrames;
 }
