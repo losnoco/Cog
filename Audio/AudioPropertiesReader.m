@@ -23,7 +23,7 @@
 	
 	NSDictionary *propertiesReaders = [[PluginController sharedPluginController] propertiesReaders];
 	
-	Class propertiesReader = NSClassFromString([propertiesReaders objectForKey:ext]);
+	Class propertiesReader = NSClassFromString([propertiesReaders objectForKey:[ext lowercaseString]]);
 	
 	NSDictionary *properties =  [propertiesReader propertiesForSource:source];
 	

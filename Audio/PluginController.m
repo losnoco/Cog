@@ -148,7 +148,7 @@ static PluginController *sharedPluginController = nil;
 		id fileType;
 		while (fileType = [fileTypesEnum nextObject])
 		{
-			[decoders setObject:className forKey:fileType];
+			[decoders setObject:className forKey:[fileType lowercaseString]];
 		}
 	}
 }
@@ -161,7 +161,7 @@ static PluginController *sharedPluginController = nil;
 		id fileType;
 		while (fileType = [fileTypesEnum nextObject])
 		{
-			[metadataReaders setObject:className forKey:fileType];
+			[metadataReaders setObject:className forKey:[fileType lowercaseString]];
 		}
 	}
 }
@@ -174,7 +174,7 @@ static PluginController *sharedPluginController = nil;
 		id fileType;
 		while (fileType = [fileTypesEnum nextObject])
 		{
-			[propertiesReaders setObject:className forKey:fileType];
+			[propertiesReaders setObject:className forKey:[fileType lowercaseString]];
 		}
 	}
 }

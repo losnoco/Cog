@@ -17,7 +17,7 @@
 	
 	NSDictionary *metadataReaders = [[PluginController sharedPluginController] metadataReaders];
 	
-	Class metadataReader = NSClassFromString([metadataReaders objectForKey:ext]);
+	Class metadataReader = NSClassFromString([metadataReaders objectForKey:[ext lowercaseString]]);
 	
 	return [[[[metadataReader alloc] init] autorelease] metadataForURL:url];
 

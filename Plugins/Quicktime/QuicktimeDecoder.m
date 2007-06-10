@@ -7,7 +7,7 @@
 //
 
 #import "QuicktimeDecoder.h"
-
+#import "Quicktime/QuicktimeComponents.h"
 
 @implementation QuicktimeDecoder
 
@@ -160,7 +160,44 @@
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"m4a",nil];
+	NSMutableArray *extensions = [NSMutableArray array];
+
+	Component component = NULL;
+	ComponentDescription looking;
+	NSCharacterSet *spaceSet = [NSCharacterSet characterSetWithCharactersInString:@" '"];
+
+	looking.componentType = MovieImportType;
+	looking.componentSubType = 0; // Any subtype is OK
+	looking.componentManufacturer = 0; // Any manufacturer is OK
+	looking.componentFlags = movieImportSubTypeIsFileExtension;
+	looking.componentFlagsMask = movieImportSubTypeIsFileExtension;
+
+	while (component = FindNextComponent(component, &looking)) {
+		ComponentDescription description;
+		
+		if (GetComponentInfo(component, &description, NULL, NULL, NULL) == noErr) {
+			
+			NSString *HFSType = NSFileTypeForHFSTypeCode(description.componentSubType);
+			
+			NSLog(@"Extension?: %@", HFSType);
+			[extensions addObject:[HFSType stringByTrimmingCharactersInSet:spaceSet]];
+			
+			// the extension is present in the description.componentSubType field, which really holds
+			// a 32-bit number. you need to convert that to a string, and trim off any trailing spaces.
+			// here's a quickie...
+			char ext[5] = {0};
+			NSString *extension;
+
+			bcopy(&description.componentSubType, ext, 4);
+
+			extension = [[NSString stringWithCString:ext] stringByTrimmingCharactersInSet:spaceSet];
+
+			// do something with extension here ...    
+			[extensions addObject:extension];
+		}
+	}
+	
+	return extensions;
 }
 
 - (NSDictionary *)properties

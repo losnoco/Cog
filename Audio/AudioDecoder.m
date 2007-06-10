@@ -18,7 +18,7 @@
 	
 	NSDictionary *decoders = [[PluginController sharedPluginController] decoders];
 	
-	Class decoder = NSClassFromString([decoders objectForKey:ext]);
+	Class decoder = NSClassFromString([decoders objectForKey:[ext lowercaseString]]);
 	
 	return [[[decoder alloc] init] autorelease];
 }
