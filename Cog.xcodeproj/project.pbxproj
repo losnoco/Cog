@@ -14,6 +14,7 @@
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
+		1727C1940C1CA0EF0084363D /* Quicktime.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1727C1710C1CA0D40084363D /* Quicktime.bundle */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
@@ -72,7 +73,6 @@
 		17818A990C0B27AC001C4916 /* shn.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A920C0B27AC001C4916 /* shn.icns */; };
 		17818A9A0C0B27AC001C4916 /* wav.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A930C0B27AC001C4916 /* wav.icns */; };
 		17818A9B0C0B27AC001C4916 /* wv.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A940C0B27AC001C4916 /* wv.icns */; };
-		179790E00C087AB7001D6996 /* OpenURLPanel.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179790DE0C087AB7001D6996 /* OpenURLPanel.h */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
 		179790F20C087B46001D6996 /* OpenURLPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 179790F00C087B46001D6996 /* OpenURLPanel.nib */; };
 		17ADB4580B979C7C00257CA2 /* FileSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB4450B979C5700257CA2 /* FileSource.bundle */; };
@@ -140,6 +140,7 @@
 				177FD1090B90CB5F0011C3B5 /* MAD.bundle in CopyFiles */,
 				177FD10A0B90CB5F0011C3B5 /* Flac.bundle in CopyFiles */,
 				177FD10B0B90CB5F0011C3B5 /* CoreAudio.bundle in CopyFiles */,
+				1727C1940C1CA0EF0084363D /* Quicktime.bundle in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,7 +153,6 @@
 				17E94E560C03B09A00D92B9B /* CogAudio.framework in CopyFiles */,
 				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 				17F94CCD0B8D090800A34E87 /* Sparkle.framework in CopyFiles */,
-				179790E00C087AB7001D6996 /* OpenURLPanel.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +169,7 @@
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
+		1727C1710C1CA0D40084363D /* Quicktime.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Quicktime.bundle; path = Plugins/Quicktime/build/Debug/Quicktime.bundle; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -547,6 +548,7 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
+				1727C1710C1CA0D40084363D /* Quicktime.bundle */,
 				8E2B8F5E0B9B62F800F2D9E8 /* WavPack.bundle */,
 				17ADB65C0B97A96400257CA2 /* HTTPSource.bundle */,
 				17ADB4450B979C5700257CA2 /* FileSource.bundle */,
