@@ -311,9 +311,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* CogAudio */ = {
+		8DC2EF4F0486A6940098B216 /* CogAudio Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio Framework" */;
 			buildPhases = (
 				17D21D2B0B8BE6A200D1EBDE /* CopyFiles */,
 				8DC2EF500486A6940098B216 /* Headers */,
@@ -325,7 +325,7 @@
 			);
 			dependencies = (
 			);
-			name = CogAudio;
+			name = "CogAudio Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = CogAudio;
 			productReference = 8DC2EF5B0486A6940098B216 /* CogAudio.framework */;
@@ -342,7 +342,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* CogAudio */,
+				8DC2EF4F0486A6940098B216 /* CogAudio Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -439,6 +439,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SYMROOT = ../build;
 			};
 			name = Debug;
 		};
@@ -453,13 +454,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SYMROOT = ../build;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,

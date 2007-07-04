@@ -216,6 +216,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SYMROOT = ../../build;
 			};
 			name = Debug;
 		};
@@ -226,6 +227,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SYMROOT = ../../build;
 			};
 			name = Release;
 		};

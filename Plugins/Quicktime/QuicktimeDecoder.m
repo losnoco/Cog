@@ -29,7 +29,7 @@
 	
 	NSLog(@"Creating new movie...");
 	short fileID = movieInDataForkResID; 
-	short flags = 0; 
+	short flags = 0; //newMovieDontResolveDataRefs | newMovieDontAskUnresolvedDataRefs; 
 	error = NewMovieFromDataRef(&_movie, flags, &fileID, dataRef, dataRefType);
 	if (error != noErr) {
 		NSLog(@"   %d",error);
@@ -56,7 +56,7 @@
 		NSLog(@"   %d",error);
 		return NO;
 	}
-	
+
 	NSLog(@"bits per sample: %i", _asbd.mBitsPerChannel);
 	_asbd.mFormatID = kAudioFormatLinearPCM;
 	_asbd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsBigEndian;

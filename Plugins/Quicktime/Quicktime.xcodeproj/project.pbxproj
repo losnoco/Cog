@@ -134,9 +134,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* Quicktime */ = {
+		8D5B49AC048680CD000E48DA /* Quicktime Plugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Quicktime" */;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Quicktime Plugin" */;
 			buildPhases = (
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
@@ -146,7 +146,7 @@
 			);
 			dependencies = (
 			);
-			name = Quicktime;
+			name = "Quicktime Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
 			productName = Quicktime;
 			productReference = 8D5B49B6048680CD000E48DA /* Quicktime.bundle */;
@@ -162,7 +162,7 @@
 			mainGroup = 089C166AFE841209C02AAC07 /* Quicktime */;
 			projectDirPath = "";
 			targets = (
-				8D5B49AC048680CD000E48DA /* Quicktime */,
+				8D5B49AC048680CD000E48DA /* Quicktime Plugin */,
 			);
 		};
 /* End PBXProject section */
@@ -250,7 +250,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Quicktime" */ = {
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Quicktime Plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913B08733D840010E9CD /* Debug */,

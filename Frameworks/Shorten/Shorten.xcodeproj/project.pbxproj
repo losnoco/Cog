@@ -281,6 +281,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SYMROOT = ../../build;
 			};
 			name = Debug;
 		};
@@ -297,6 +298,7 @@
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SYMROOT = ../../build;
 			};
 			name = Release;
 		};
