@@ -166,9 +166,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* WavPack */ = {
+		8DC2EF4F0486A6940098B216 /* WavPack Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WavPack" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WavPack Framework" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -179,7 +179,7 @@
 			);
 			dependencies = (
 			);
-			name = WavPack;
+			name = "WavPack Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = WavPack;
 			productReference = 8DC2EF5B0486A6940098B216 /* WavPack.framework */;
@@ -196,7 +196,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* WavPack */,
+				8DC2EF4F0486A6940098B216 /* WavPack Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -341,7 +341,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WavPack" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WavPack Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,

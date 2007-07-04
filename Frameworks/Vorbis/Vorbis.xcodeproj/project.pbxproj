@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17C93DE70B8FDE20008627D6 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E75726F09F319F90080F1EE /* Ogg.framework */; };
-		17C93DEE0B8FDEE7008627D6 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E75726F09F319F90080F1EE /* Ogg.framework */; };
+		17F563540C3BDB130019975C /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563420C3BDAE80019975C /* Ogg.framework */; };
+		17F563570C3BDB150019975C /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563420C3BDAE80019975C /* Ogg.framework */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8E75727909F31A150080F1EE /* codec.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E75727609F31A150080F1EE /* codec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E75727A09F31A150080F1EE /* vorbisenc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E75727709F31A150080F1EE /* vorbisenc.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -61,6 +61,23 @@
 		8E75730309F31A200080F1EE /* window.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E7572D209F31A200080F1EE /* window.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		17F563410C3BDAE80019975C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F5633A0C3BDAE80019975C /* ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = "Ogg Framework";
+		};
+		17F563520C3BDB040019975C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F5633A0C3BDAE80019975C /* ogg.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = "Ogg Framework";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		17C93DEC0B8FDED8008627D6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -68,7 +85,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17C93DEE0B8FDEE7008627D6 /* Ogg.framework in CopyFiles */,
+				17F563570C3BDB150019975C /* Ogg.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,9 +93,9 @@
 
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		17F5633A0C3BDAE80019975C /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../Ogg/ogg.xcodeproj; sourceTree = SOURCE_ROOT; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Vorbis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Vorbis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E75726F09F319F90080F1EE /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = ../Ogg/build/Release/Ogg.framework; sourceTree = SOURCE_ROOT; };
 		8E75727609F31A150080F1EE /* codec.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = codec.h; path = Files/include/vorbis/codec.h; sourceTree = "<group>"; };
 		8E75727709F31A150080F1EE /* vorbisenc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = vorbisenc.h; path = Files/include/vorbis/vorbisenc.h; sourceTree = "<group>"; };
 		8E75727809F31A150080F1EE /* vorbisfile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = vorbisfile.h; path = Files/include/vorbis/vorbisfile.h; sourceTree = "<group>"; };
@@ -138,7 +155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17C93DE70B8FDE20008627D6 /* Ogg.framework in Frameworks */,
+				17F563540C3BDB130019975C /* Ogg.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,7 +203,7 @@
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8E75726F09F319F90080F1EE /* Ogg.framework */,
+				17F5633A0C3BDAE80019975C /* ogg.xcodeproj */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -196,6 +213,14 @@
 			children = (
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		17F5633B0C3BDAE80019975C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17F563420C3BDAE80019975C /* Ogg.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		8E75727409F31A000080F1EE /* Source */ = {
@@ -299,9 +324,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* Vorbis */ = {
+		8DC2EF4F0486A6940098B216 /* Vorbis Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Vorbis" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Vorbis Framework" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -313,8 +338,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				17F563530C3BDB040019975C /* PBXTargetDependency */,
 			);
-			name = Vorbis;
+			name = "Vorbis Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = Vorbis;
 			productReference = 8DC2EF5B0486A6940098B216 /* Vorbis.framework */;
@@ -330,11 +356,27 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* Vorbis */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 17F5633B0C3BDAE80019975C /* Products */;
+					ProjectRef = 17F5633A0C3BDAE80019975C /* ogg.xcodeproj */;
+				},
+			);
 			targets = (
-				8DC2EF4F0486A6940098B216 /* Vorbis */,
+				8DC2EF4F0486A6940098B216 /* Vorbis Framework */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		17F563420C3BDAE80019975C /* Ogg.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Ogg.framework;
+			remoteRef = 17F563410C3BDAE80019975C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8DC2EF520486A6940098B216 /* Resources */ = {
@@ -399,6 +441,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		17F563530C3BDB040019975C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Ogg Framework";
+			targetProxy = 17F563520C3BDB040019975C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
@@ -500,7 +550,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Vorbis" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Vorbis Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,

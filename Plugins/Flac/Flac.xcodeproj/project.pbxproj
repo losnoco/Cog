@@ -9,13 +9,30 @@
 /* Begin PBXBuildFile section */
 		1745C2C50B90BAC700A6768C /* FlacPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1745C2C30B90BAC700A6768C /* FlacPropertiesReader.m */; };
 		177FCFC20B90C9960011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFC10B90C9960011C3B5 /* Plugin.h */; };
-		179CFDB20B90C73400C8C4DB /* FLAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179CFDB10B90C73400C8C4DB /* FLAC.framework */; };
-		179CFDB50B90C73900C8C4DB /* FLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179CFDB10B90C73400C8C4DB /* FLAC.framework */; };
 		17ADB1B40B9793A600257CA2 /* FlacPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB1B20B9793A600257CA2 /* FlacPlugin.h */; };
 		17ADB1B50B9793A600257CA2 /* FlacPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1B30B9793A600257CA2 /* FlacPlugin.m */; };
 		17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93F040B8FF67A008627D6 /* FlacDecoder.m */; };
+		17F5643C0C3BDC820019975C /* FLAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; };
+		17F5643F0C3BDC840019975C /* FLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		17F564210C3BDC460019975C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F5641A0C3BDC460019975C /* flac.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = "FLAC Framework";
+		};
+		17F564250C3BDC5F0019975C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F5641A0C3BDC460019975C /* flac.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = "FLAC Framework";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		17C93F300B8FF7CC008627D6 /* CopyFiles */ = {
@@ -24,7 +41,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				179CFDB50B90C73900C8C4DB /* FLAC.framework in CopyFiles */,
+				17F5643F0C3BDC840019975C /* FLAC.framework in CopyFiles */,
 				177FCFC20B90C9960011C3B5 /* Plugin.h in CopyFiles */,
 				17ADB1B40B9793A600257CA2 /* FlacPlugin.h in CopyFiles */,
 			);
@@ -39,11 +56,11 @@
 		1745C2C20B90BAC700A6768C /* FlacPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FlacPropertiesReader.h; sourceTree = "<group>"; };
 		1745C2C30B90BAC700A6768C /* FlacPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FlacPropertiesReader.m; sourceTree = "<group>"; };
 		177FCFC10B90C9960011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		179CFDB10B90C73400C8C4DB /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = ../../Frameworks/FLAC/build/Release/FLAC.framework; sourceTree = SOURCE_ROOT; };
 		17ADB1B20B9793A600257CA2 /* FlacPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FlacPlugin.h; sourceTree = "<group>"; };
 		17ADB1B30B9793A600257CA2 /* FlacPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FlacPlugin.m; sourceTree = "<group>"; };
 		17C93F030B8FF67A008627D6 /* FlacDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FlacDecoder.h; sourceTree = "<group>"; };
 		17C93F040B8FF67A008627D6 /* FlacDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FlacDecoder.m; sourceTree = "<group>"; };
+		17F5641A0C3BDC460019975C /* flac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = flac.xcodeproj; path = ../../Frameworks/FLAC/flac.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* Flac_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flac_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Flac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Flac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -55,8 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17F5643C0C3BDC820019975C /* FLAC.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
-				179CFDB20B90C73400C8C4DB /* FLAC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,7 +126,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				179CFDB10B90C73400C8C4DB /* FLAC.framework */,
+				17F5641A0C3BDC460019975C /* flac.xcodeproj */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -123,6 +140,14 @@
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		17F5641B0C3BDC460019975C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17F564220C3BDC460019975C /* FLAC.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -144,9 +169,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* Flac */ = {
+		8D5B49AC048680CD000E48DA /* Flac Plugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Flac" */;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Flac Plugin" */;
 			buildPhases = (
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
@@ -156,8 +181,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				17F564260C3BDC5F0019975C /* PBXTargetDependency */,
 			);
-			name = Flac;
+			name = "Flac Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
 			productName = Flac;
 			productReference = 8D5B49B6048680CD000E48DA /* Flac.bundle */;
@@ -172,11 +198,27 @@
 			hasScannedForEncodings = 1;
 			mainGroup = 089C166AFE841209C02AAC07 /* Flac */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 17F5641B0C3BDC460019975C /* Products */;
+					ProjectRef = 17F5641A0C3BDC460019975C /* flac.xcodeproj */;
+				},
+			);
 			targets = (
-				8D5B49AC048680CD000E48DA /* Flac */,
+				8D5B49AC048680CD000E48DA /* Flac Plugin */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		17F564220C3BDC460019975C /* FLAC.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = FLAC.framework;
+			remoteRef = 17F564210C3BDC460019975C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D5B49AF048680CD000E48DA /* Resources */ = {
@@ -200,6 +242,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		17F564260C3BDC5F0019975C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "FLAC Framework";
+			targetProxy = 17F564250C3BDC5F0019975C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB913B08733D840010E9CD /* Debug */ = {
@@ -274,7 +324,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Flac" */ = {
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Flac Plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913B08733D840010E9CD /* Debug */,

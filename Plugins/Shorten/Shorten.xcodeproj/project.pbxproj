@@ -10,12 +10,29 @@
 		1745C4300B90C1DC00A6768C /* ShortenDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C42C0B90C1DC00A6768C /* ShortenDecoder.mm */; };
 		1745C4310B90C1DC00A6768C /* ShortenPropertiesReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C42E0B90C1DC00A6768C /* ShortenPropertiesReader.mm */; };
 		177FCFAD0B90C96B0011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFAC0B90C96B0011C3B5 /* Plugin.h */; };
-		179CFD600B90C6F600C8C4DB /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179CFD5F0B90C6F600C8C4DB /* Shorten.framework */; };
-		179CFD630B90C6F800C8C4DB /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179CFD5F0B90C6F600C8C4DB /* Shorten.framework */; };
 		17ADB2240B97942800257CA2 /* ShortenPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB2220B97942800257CA2 /* ShortenPlugin.h */; };
 		17ADB2250B97942800257CA2 /* ShortenPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB2230B97942800257CA2 /* ShortenPlugin.mm */; };
+		17F564EE0C3BDE010019975C /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; };
+		17F564EF0C3BDE030019975C /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		17F563E40C3BDBF10019975C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F563DD0C3BDBF10019975C /* Shorten.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = Shorten;
+		};
+		17F563E90C3BDC0A0019975C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F563DD0C3BDBF10019975C /* Shorten.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = Shorten;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1745C4400B90C21B00A6768C /* CopyFiles */ = {
@@ -24,7 +41,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				179CFD630B90C6F800C8C4DB /* Shorten.framework in CopyFiles */,
+				17F564EF0C3BDE030019975C /* Shorten.framework in CopyFiles */,
 				177FCFAD0B90C96B0011C3B5 /* Plugin.h in CopyFiles */,
 				17ADB2240B97942800257CA2 /* ShortenPlugin.h in CopyFiles */,
 			);
@@ -41,9 +58,9 @@
 		1745C42D0B90C1DC00A6768C /* ShortenPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShortenPropertiesReader.h; sourceTree = "<group>"; };
 		1745C42E0B90C1DC00A6768C /* ShortenPropertiesReader.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ShortenPropertiesReader.mm; sourceTree = "<group>"; };
 		177FCFAC0B90C96B0011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		179CFD5F0B90C6F600C8C4DB /* Shorten.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Shorten.framework; path = ../../Frameworks/Shorten/build/Release/Shorten.framework; sourceTree = SOURCE_ROOT; };
 		17ADB2220B97942800257CA2 /* ShortenPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShortenPlugin.h; sourceTree = "<group>"; };
 		17ADB2230B97942800257CA2 /* ShortenPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ShortenPlugin.mm; sourceTree = "<group>"; };
+		17F563DD0C3BDBF10019975C /* Shorten.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Shorten.xcodeproj; path = ../../Frameworks/Shorten/Shorten.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* Shorten_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shorten_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Shorten.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Shorten.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -55,8 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17F564EE0C3BDE010019975C /* Shorten.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
-				179CFD600B90C6F600C8C4DB /* Shorten.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,7 +126,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				179CFD5F0B90C6F600C8C4DB /* Shorten.framework */,
+				17F563DD0C3BDBF10019975C /* Shorten.xcodeproj */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -123,6 +140,14 @@
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		17F563DE0C3BDBF10019975C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17F563E50C3BDBF10019975C /* Shorten.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -144,9 +169,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* Shorten */ = {
+		8D5B49AC048680CD000E48DA /* Shorten Plugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Shorten" */;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Shorten Plugin" */;
 			buildPhases = (
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
@@ -156,8 +181,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				17F563EA0C3BDC0A0019975C /* PBXTargetDependency */,
 			);
-			name = Shorten;
+			name = "Shorten Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
 			productName = Shorten;
 			productReference = 8D5B49B6048680CD000E48DA /* Shorten.bundle */;
@@ -172,11 +198,27 @@
 			hasScannedForEncodings = 1;
 			mainGroup = 089C166AFE841209C02AAC07 /* Shorten */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 17F563DE0C3BDBF10019975C /* Products */;
+					ProjectRef = 17F563DD0C3BDBF10019975C /* Shorten.xcodeproj */;
+				},
+			);
 			targets = (
-				8D5B49AC048680CD000E48DA /* Shorten */,
+				8D5B49AC048680CD000E48DA /* Shorten Plugin */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		17F563E50C3BDBF10019975C /* Shorten.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Shorten.framework;
+			remoteRef = 17F563E40C3BDBF10019975C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D5B49AF048680CD000E48DA /* Resources */ = {
@@ -200,6 +242,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		17F563EA0C3BDC0A0019975C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Shorten;
+			targetProxy = 17F563E90C3BDC0A0019975C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB913B08733D840010E9CD /* Debug */ = {
@@ -275,7 +325,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Shorten" */ = {
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Shorten Plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913B08733D840010E9CD /* Debug */,

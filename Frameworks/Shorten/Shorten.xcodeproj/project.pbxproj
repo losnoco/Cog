@@ -147,9 +147,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* Shorten */ = {
+		8DC2EF4F0486A6940098B216 /* Shorten Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Shorten" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Shorten Framework" */;
 			buildPhases = (
 				597A374E0A2A2C5300730CFA /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -160,7 +160,7 @@
 			);
 			dependencies = (
 			);
-			name = Shorten;
+			name = "Shorten Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = Shorten;
 			productReference = 8DC2EF5B0486A6940098B216 /* Shorten.framework */;
@@ -177,7 +177,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* Shorten */,
+				8DC2EF4F0486A6940098B216 /* Shorten Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -303,7 +303,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Shorten" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Shorten Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,

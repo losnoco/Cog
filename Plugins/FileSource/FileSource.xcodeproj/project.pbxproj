@@ -117,9 +117,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* FileSource */ = {
+		8D5B49AC048680CD000E48DA /* FileSource Plugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "FileSource" */;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "FileSource Plugin" */;
 			buildPhases = (
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
@@ -129,7 +129,7 @@
 			);
 			dependencies = (
 			);
-			name = FileSource;
+			name = "FileSource Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
 			productName = FileSource;
 			productReference = 8D5B49B6048680CD000E48DA /* FileSource.bundle */;
@@ -145,7 +145,7 @@
 			mainGroup = 089C166AFE841209C02AAC07 /* FileSource */;
 			projectDirPath = "";
 			targets = (
-				8D5B49AC048680CD000E48DA /* FileSource */,
+				8D5B49AC048680CD000E48DA /* FileSource Plugin */,
 			);
 		};
 /* End PBXProject section */
@@ -232,7 +232,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "FileSource" */ = {
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "FileSource Plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913B08733D840010E9CD /* Debug */,

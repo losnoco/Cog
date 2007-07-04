@@ -10,14 +10,31 @@
 		1745C2ED0B90BDD100A6768C /* MonkeysAudioDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C2E80B90BDD100A6768C /* MonkeysAudioDecoder.mm */; };
 		1745C2EE0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C2EA0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm */; };
 		177FCFB50B90C97E0011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFB40B90C97E0011C3B5 /* Plugin.h */; };
-		179CFD770B90C70B00C8C4DB /* MAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179CFD760B90C70B00C8C4DB /* MAC.framework */; };
-		179CFD7A0B90C70E00C8C4DB /* MAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179CFD760B90C70B00C8C4DB /* MAC.framework */; };
 		17ADB1E80B9793E300257CA2 /* MonkeysAudioPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB1E60B9793E300257CA2 /* MonkeysAudioPlugin.h */; };
 		17ADB1E90B9793E300257CA2 /* MonkeysAudioPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1E70B9793E300257CA2 /* MonkeysAudioPlugin.mm */; };
+		17F564CC0C3BDDDB0019975C /* MAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562970C3BD9E10019975C /* MAC.framework */; };
+		17F564CF0C3BDDDD0019975C /* MAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F562970C3BD9E10019975C /* MAC.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8EB1E6F90B9B39AA008F9F45 /* SourceIO.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8EB1E6F80B9B39AA008F9F45 /* SourceIO.h */; };
 		8EB1E6FD0B9B39D4008F9F45 /* SourceIO.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1E6FC0B9B39D4008F9F45 /* SourceIO.mm */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		17F562960C3BD9E10019975C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F5628F0C3BD9E10019975C /* MAC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = MAC;
+		};
+		17F5629A0C3BDA010019975C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F5628F0C3BD9E10019975C /* MAC.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = MAC;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1745C30E0B90BE7500A6768C /* CopyFiles */ = {
@@ -26,7 +43,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				179CFD7A0B90C70E00C8C4DB /* MAC.framework in CopyFiles */,
+				17F564CF0C3BDDDD0019975C /* MAC.framework in CopyFiles */,
 				177FCFB50B90C97E0011C3B5 /* Plugin.h in CopyFiles */,
 				17ADB1E80B9793E300257CA2 /* MonkeysAudioPlugin.h in CopyFiles */,
 				8EB1E6F90B9B39AA008F9F45 /* SourceIO.h in CopyFiles */,
@@ -44,9 +61,9 @@
 		1745C2E90B90BDD100A6768C /* MonkeysAudioPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MonkeysAudioPropertiesReader.h; sourceTree = "<group>"; };
 		1745C2EA0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MonkeysAudioPropertiesReader.mm; sourceTree = "<group>"; };
 		177FCFB40B90C97E0011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		179CFD760B90C70B00C8C4DB /* MAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MAC.framework; path = ../../Frameworks/MAC/build/Release/MAC.framework; sourceTree = SOURCE_ROOT; };
 		17ADB1E60B9793E300257CA2 /* MonkeysAudioPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MonkeysAudioPlugin.h; sourceTree = "<group>"; };
 		17ADB1E70B9793E300257CA2 /* MonkeysAudioPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MonkeysAudioPlugin.mm; sourceTree = "<group>"; };
+		17F5628F0C3BD9E10019975C /* MAC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MAC.xcodeproj; path = ../../Frameworks/MAC/MAC.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* MonkeysAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonkeysAudio_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* MonkeysAudio.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MonkeysAudio.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -60,8 +77,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17F564CC0C3BDDDB0019975C /* MAC.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
-				179CFD770B90C70B00C8C4DB /* MAC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,7 +133,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				179CFD760B90C70B00C8C4DB /* MAC.framework */,
+				17F5628F0C3BD9E10019975C /* MAC.xcodeproj */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -130,6 +147,14 @@
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		17F562900C3BD9E10019975C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17F562970C3BD9E10019975C /* MAC.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -151,9 +176,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* MonkeysAudio */ = {
+		8D5B49AC048680CD000E48DA /* MonkeysAudio Plugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "MonkeysAudio" */;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "MonkeysAudio Plugin" */;
 			buildPhases = (
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
@@ -163,8 +188,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				17F5629B0C3BDA010019975C /* PBXTargetDependency */,
 			);
-			name = MonkeysAudio;
+			name = "MonkeysAudio Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
 			productName = MonkeysAudio;
 			productReference = 8D5B49B6048680CD000E48DA /* MonkeysAudio.bundle */;
@@ -179,11 +205,27 @@
 			hasScannedForEncodings = 1;
 			mainGroup = 089C166AFE841209C02AAC07 /* MonkeysAudio */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 17F562900C3BD9E10019975C /* Products */;
+					ProjectRef = 17F5628F0C3BD9E10019975C /* MAC.xcodeproj */;
+				},
+			);
 			targets = (
-				8D5B49AC048680CD000E48DA /* MonkeysAudio */,
+				8D5B49AC048680CD000E48DA /* MonkeysAudio Plugin */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		17F562970C3BD9E10019975C /* MAC.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MAC.framework;
+			remoteRef = 17F562960C3BD9E10019975C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D5B49AF048680CD000E48DA /* Resources */ = {
@@ -208,6 +250,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		17F5629B0C3BDA010019975C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MAC;
+			targetProxy = 17F5629A0C3BDA010019975C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB913B08733D840010E9CD /* Debug */ = {
@@ -283,7 +333,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "MonkeysAudio" */ = {
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "MonkeysAudio Plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913B08733D840010E9CD /* Debug */,

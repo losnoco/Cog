@@ -130,9 +130,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* HTTPSource */ = {
+		8D5B49AC048680CD000E48DA /* HTTPSource Plugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "HTTPSource" */;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "HTTPSource Plugin" */;
 			buildPhases = (
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
@@ -142,7 +142,7 @@
 			);
 			dependencies = (
 			);
-			name = HTTPSource;
+			name = "HTTPSource Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
 			productName = HTTPSource;
 			productReference = 8D5B49B6048680CD000E48DA /* HTTPSource.bundle */;
@@ -158,7 +158,7 @@
 			mainGroup = 089C166AFE841209C02AAC07 /* HTTPSource */;
 			projectDirPath = "";
 			targets = (
-				8D5B49AC048680CD000E48DA /* HTTPSource */,
+				8D5B49AC048680CD000E48DA /* HTTPSource Plugin */,
 			);
 		};
 /* End PBXProject section */
@@ -246,7 +246,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "HTTPSource" */ = {
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "HTTPSource Plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913B08733D840010E9CD /* Debug */,

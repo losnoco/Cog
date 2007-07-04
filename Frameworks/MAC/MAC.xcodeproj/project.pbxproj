@@ -390,9 +390,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* MAC */ = {
+		8DC2EF4F0486A6940098B216 /* MAC Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "MAC" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "MAC Framework" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -403,7 +403,7 @@
 			);
 			dependencies = (
 			);
-			name = MAC;
+			name = "MAC Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = MAC;
 			productReference = 8DC2EF5B0486A6940098B216 /* MAC.framework */;
@@ -420,7 +420,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* MAC */,
+				8DC2EF4F0486A6940098B216 /* MAC Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -564,7 +564,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "MAC" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "MAC Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,

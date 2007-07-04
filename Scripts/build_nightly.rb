@@ -54,7 +54,7 @@ if appcast_revision < latest_revision
   newplist.close()
 
   #Build Cog!
-  %x[./Scripts/build_cog.sh 2>&1].each_line do |line|
+  %x[xcodebuild -alltargets -configuration Release 2>&1].each_line do |line|
     if line.match(/\*\* BUILD FAILED \*\*/)
       exit
     end

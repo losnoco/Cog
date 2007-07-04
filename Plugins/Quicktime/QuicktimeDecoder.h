@@ -19,6 +19,7 @@
 	Movie _movie;
 	
 	unsigned long _totalFrames;
+	int _bitrate;
 }
 
 @end

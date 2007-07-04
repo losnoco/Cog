@@ -213,9 +213,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8D07F2BC0486CC7A007CD1D0 /* ID3Tag */ = {
+		8D07F2BC0486CC7A007CD1D0 /* ID3Tag Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4FADC24208B4156D00ABE55E /* Build configuration list for PBXNativeTarget "ID3Tag" */;
+			buildConfigurationList = 4FADC24208B4156D00ABE55E /* Build configuration list for PBXNativeTarget "ID3Tag Framework" */;
 			buildPhases = (
 				8D07F2BD0486CC7A007CD1D0 /* Headers */,
 				8D07F2BF0486CC7A007CD1D0 /* Resources */,
@@ -227,7 +227,7 @@
 			);
 			dependencies = (
 			);
-			name = ID3Tag;
+			name = "ID3Tag Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = ID3Tag;
 			productReference = 8D07F2C80486CC7A007CD1D0 /* ID3Tag.framework */;
@@ -244,7 +244,7 @@
 			productRefGroup = 034768DDFF38A45A11DB9C8B /* Products */;
 			projectDirPath = "";
 			targets = (
-				8D07F2BC0486CC7A007CD1D0 /* ID3Tag */,
+				8D07F2BC0486CC7A007CD1D0 /* ID3Tag Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -320,12 +320,13 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ID3Tag_Prefix.pch;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_NAME = ID3Tag;
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -350,6 +351,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_NAME = ID3Tag;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -378,7 +380,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4FADC24208B4156D00ABE55E /* Build configuration list for PBXNativeTarget "ID3Tag" */ = {
+		4FADC24208B4156D00ABE55E /* Build configuration list for PBXNativeTarget "ID3Tag Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4FADC24308B4156D00ABE55E /* Debug */,

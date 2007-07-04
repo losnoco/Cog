@@ -286,12 +286,18 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = flac_Prefix.pch;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-DFLaC__INLINE=__inline__",
+					"-DNDEBUG",
+				);
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_NAME = FLAC;
-				USER_HEADER_SEARCH_PATHS = "flac-1.1.2 flac-1.1.2/include flac-1.1.2/src/libFLAC/include";
+				USER_HEADER_SEARCH_PATHS = "flac-1.1.4/include flac-1.1.4/src/libFLAC/include";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
 			};
