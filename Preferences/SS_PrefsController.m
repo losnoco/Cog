@@ -61,7 +61,8 @@
 // Designated initializer
 - (id)initWithPanesSearchPath:(NSString*)path bundleExtension:(NSString *)ext
 {
-    if (self = [super init]) {
+    if (self = [super init])
+    {
         [self setDebug:NO];
         preferencePanes = [[NSMutableDictionary alloc] init];
         panesOrder = [[NSMutableArray alloc] init];
@@ -166,7 +167,7 @@
     
     [prefsWindow setReleasedWhenClosed:NO];
     [prefsWindow setTitle:@"Preferences"]; // initial default title
-    
+    [prefsWindow setShowsToolbarButton: NO];
     [prefsWindow center];
     [self createPrefsToolbar];
 
@@ -427,6 +428,7 @@ float ToolbarHeightForWindow(NSWindow *window)
     } else if (!alwaysShowsToolbar && prefsToolbarItems && ([prefsToolbarItems count] == 1)) {
         [self debugLog:@"Not showing toolbar in Preferences window because there is only one preference pane loaded. You can override this behaviour using -[setAlwaysShowsToolbar:YES]."];
     }
+    [prefsToolbar setSelectedItemIdentifier: [panesOrder objectAtIndex: 0]];
 }
 
 
@@ -465,6 +467,12 @@ float ToolbarHeightForWindow(NSWindow *window)
 
 
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
+{
+    return panesOrder;
+}
+
+
+- (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)toolbar
 {
     return panesOrder;
 }
