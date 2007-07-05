@@ -351,6 +351,23 @@
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
+		1743945B0C3DA58A00A52DE9 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
+		1743945C0C3DA59000A52DE9 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
+		1743945D0C3DA59700A52DE9 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Hebrew; path = Hebrew.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
+		1743945E0C3DA59A00A52DE9 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Greek; path = Greek.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
+		1743945F0C3DA5AF00A52DE9 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		174394600C3DA5B100A52DE9 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		174394610C3DA5B700A52DE9 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Greek; path = Greek.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		174394620C3DA5BC00A52DE9 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Hebrew; path = Hebrew.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		174394630C3DA5D600A52DE9 /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Swedish; path = Swedish.lproj/Credits.html; sourceTree = "<group>"; };
+		174394640C3DA5D900A52DE9 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = French; path = French.lproj/Credits.html; sourceTree = "<group>"; };
+		174394650C3DA5DB00A52DE9 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = German; path = German.lproj/Credits.html; sourceTree = "<group>"; };
+		174394660C3DA5DE00A52DE9 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Hebrew; path = Hebrew.lproj/Credits.html; sourceTree = "<group>"; };
+		174394670C3DA5E000A52DE9 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Greek; path = Greek.lproj/Credits.html; sourceTree = "<group>"; };
+		174394680C3DA5EB00A52DE9 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
+		174394690C3DA5EE00A52DE9 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1743946A0C3DA5F100A52DE9 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Hebrew; path = Hebrew.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1743946B0C3DA5F300A52DE9 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Greek; path = Greek.lproj/Localizable.strings; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -1054,6 +1071,8 @@
 				French,
 				German,
 				Swedish,
+				Hebrew,
+				Greek,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			projectDirPath = "";
@@ -1401,6 +1420,10 @@
 			children = (
 				179790F10C087B46001D6996 /* English */,
 				17E41C480C1304C700AC744D /* Swedish */,
+				1743945B0C3DA58A00A52DE9 /* French */,
+				1743945C0C3DA59000A52DE9 /* German */,
+				1743945D0C3DA59700A52DE9 /* Hebrew */,
+				1743945E0C3DA59A00A52DE9 /* Greek */,
 			);
 			name = OpenURLPanel.nib;
 			sourceTree = "<group>";
@@ -1409,6 +1432,11 @@
 			isa = PBXVariantGroup;
 			children = (
 				8E7575C809F31DCA0080F1EE /* English */,
+				174394630C3DA5D600A52DE9 /* Swedish */,
+				174394640C3DA5D900A52DE9 /* French */,
+				174394650C3DA5DB00A52DE9 /* German */,
+				174394660C3DA5DE00A52DE9 /* Hebrew */,
+				174394670C3DA5E000A52DE9 /* Greek */,
 			);
 			name = Credits.html;
 			sourceTree = "<group>";
@@ -1426,6 +1454,10 @@
 			children = (
 				29B97319FDCFA39411CA2CEA /* English */,
 				17E41C470C1304BB00AC744D /* Swedish */,
+				1743945F0C3DA5AF00A52DE9 /* French */,
+				174394600C3DA5B100A52DE9 /* German */,
+				174394610C3DA5B700A52DE9 /* Greek */,
+				174394620C3DA5BC00A52DE9 /* Hebrew */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -1435,6 +1467,10 @@
 			children = (
 				8E7575DA09F31E930080F1EE /* English */,
 				17E41C490C1304D200AC744D /* Swedish */,
+				174394680C3DA5EB00A52DE9 /* French */,
+				174394690C3DA5EE00A52DE9 /* German */,
+				1743946A0C3DA5F100A52DE9 /* Hebrew */,
+				1743946B0C3DA5F300A52DE9 /* Greek */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

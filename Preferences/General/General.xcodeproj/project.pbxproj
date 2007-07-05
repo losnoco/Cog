@@ -10,12 +10,12 @@
 		170744AD0BFF3938002475C9 /* AppcastArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 170744AC0BFF3938002475C9 /* AppcastArrayController.m */; };
 		172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */ = {isa = PBXBuildFile; fileRef = 172D72AC0B8926CA00D095BB /* apple_remote.png */; };
 		1766C7A80B912A71004A7AE4 /* lastfm.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C7A70B912A71004A7AE4 /* lastfm.png */; };
+		178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 178E386D0C3DA64500EE6711 /* InfoPlist.strings */; };
 		17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C643360B8A77CC00C53518 /* OutputsArrayController.m */; };
 		17C6433F0B8A783F00C53518 /* OutputPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C6433E0B8A783F00C53518 /* OutputPane.m */; };
 		17C643690B8A788000C53518 /* output.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C643680B8A788000C53518 /* output.png */; };
 		17C644330B8A791D00C53518 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C644310B8A791D00C53518 /* CoreAudio.framework */; };
 		17E41DB80C130AA500AC744D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 17E41DB70C130AA500AC744D /* Localizable.strings */; };
-		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E07AA870AAC8EA200A4B32F /* FileDrawerPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA7F0AAC8EA200A4B32F /* FileDrawerPane.m */; };
 		8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */; };
@@ -40,6 +40,14 @@
 		170744AC0BFF3938002475C9 /* AppcastArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppcastArrayController.m; sourceTree = "<group>"; };
 		172D72AC0B8926CA00D095BB /* apple_remote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple_remote.png; path = Icons/apple_remote.png; sourceTree = "<group>"; };
 		1766C7A70B912A71004A7AE4 /* lastfm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lastfm.png; path = Icons/lastfm.png; sourceTree = "<group>"; };
+		178E38740C3DA65900EE6711 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/Preferences.nib; sourceTree = "<group>"; };
+		178E38750C3DA65B00EE6711 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/Preferences.nib; sourceTree = "<group>"; };
+		178E38760C3DA65E00EE6711 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Hebrew; path = Hebrew.lproj/Preferences.nib; sourceTree = "<group>"; };
+		178E38770C3DA66000EE6711 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Greek; path = Greek.lproj/Preferences.nib; sourceTree = "<group>"; };
+		178E38780C3DA66800EE6711 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
+		178E38790C3DA66A00EE6711 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
+		178E387A0C3DA66D00EE6711 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Hebrew; path = Hebrew.lproj/Localizable.strings; sourceTree = "<group>"; };
+		178E387B0C3DA66F00EE6711 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Greek; path = Greek.lproj/Localizable.strings; sourceTree = "<group>"; };
 		17C643360B8A77CC00C53518 /* OutputsArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputsArrayController.m; sourceTree = "<group>"; };
 		17C643370B8A77CC00C53518 /* OutputsArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputsArrayController.h; sourceTree = "<group>"; };
 		17C6433D0B8A783F00C53518 /* OutputPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputPane.h; sourceTree = "<group>"; };
@@ -114,7 +122,7 @@
 			children = (
 				8E07ABD90AAC95AF00A4B32F /* Icons */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
-				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
+				178E386D0C3DA64500EE6711 /* InfoPlist.strings */,
 				8E07AC030AAC968C00A4B32F /* Preferences.nib */,
 				17E41DB70C130AA500AC744D /* Localizable.strings */,
 			);
@@ -247,6 +255,8 @@
 				French,
 				German,
 				Swedish,
+				Hebrew,
+				Greek,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* General */;
 			projectDirPath = "";
@@ -261,7 +271,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
+				178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */,
 				8E07ABDC0AAC95BC00A4B32F /* file_drawer.png in Resources */,
 				8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */,
 				8E07AC050AAC968C00A4B32F /* Preferences.nib in Resources */,
@@ -296,7 +306,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
+		178E386D0C3DA64500EE6711 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				089C167EFE841241C02AAC07 /* English */,
@@ -309,6 +319,10 @@
 			children = (
 				17E41DB50C130A9D00AC744D /* English */,
 				17E41DF80C130CAA00AC744D /* Swedish */,
+				178E38780C3DA66800EE6711 /* French */,
+				178E38790C3DA66A00EE6711 /* German */,
+				178E387A0C3DA66D00EE6711 /* Hebrew */,
+				178E387B0C3DA66F00EE6711 /* Greek */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -318,6 +332,10 @@
 			children = (
 				8E07AC040AAC968C00A4B32F /* English */,
 				17E41C660C13074400AC744D /* Swedish */,
+				178E38740C3DA65900EE6711 /* French */,
+				178E38750C3DA65B00EE6711 /* German */,
+				178E38760C3DA65E00EE6711 /* Hebrew */,
+				178E38770C3DA66000EE6711 /* Greek */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
