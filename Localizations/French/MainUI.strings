@@ -1,0 +1,292 @@
+/* AMRemovableTableColumn : <title:#> (oid:209) */
+"#" = "#";
+
+/* NSNibBindingConnector : <title:(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)> (oid:1039) */
+"(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)" = "(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)";
+
+/* ClickField (0:00) : <title:0:00> (oid:891) */
+"0:00" = "0:00";
+
+/* NSMenuItem : <title:About Cog> (oid:58) */
+"About Cog" = "À propos de Cog";
+
+/* NSMenuItem : <title:Album> (oid:1340) */
+"Album" = "Album";
+
+/* NSNibBindingConnector : <title:All> (oid:1039) */
+"All" = "Tout";
+
+/* NSMenuItem : <title:Artist> (oid:1339) */
+"Artist" = "Artiste";
+
+/* NSTextField (Bitrate:) : <title:Bitrate:> (oid:868) */
+"Bitrate:" = "Débit:";
+
+/* NSBox (Box) : <title:Box> (oid:888) */
+"Box" = "Box";
+
+/* NSTextField (Bps:) : <title:Bps:> (oid:866) */
+"Bps:" = "Bps:";
+
+/* NSMenuItem : <title:Bring All to Front> (oid:5) */
+"Bring All to Front" = "Tout ramener au premier plan";
+
+/* NSButton (Cancel) : <title:Cancel> (oid:277) */
+"Cancel" = "Annuler";
+
+/* NSTextField (Channels:) : <title:Channels:> (oid:867) */
+"Channels:" = "Canaux:";
+
+/* NSWindow (Check for Updates) : <title:Check for Updates> (oid:280) */
+"Check for Updates" = "Rechercher les mises à jour";
+
+/* NSMenuItem : <title:Check for Updates...> (oid:302) */
+"Check for Updates..." = "Rechercher les mises à jour...";
+
+/* NSButton (Check for updates automatically) : <title:Check for updates automatically> (oid:284) */
+"Check for updates automatically" = "Rechercher automatiquement les mises à jour";
+
+/* NSTextField (Checking for updates... ) : <title:Checking for updates...
+> (oid:283) */
+"Checking for updates...\n" = "Recherche de mises à jour...\n";
+
+/* NSMenuItem : <title:Clear> (oid:1402) */
+"Clear" = "Tout supprimer";
+
+/* NSMenuItem : <title:Clear Menu> (oid:126) */
+"Clear Menu" = "Effacer le menu";
+
+/* NSMenuItem : <title:Close Window> (oid:73) */
+"Close Window" = "Fermer la fenêtre";
+
+/* NSMenuItem : <title:Cog> (oid:702) */
+"Cog" = "Cog";
+
+/* NSMenuItem : <title:Cog Help> (oid:111) */
+"Cog Help" = "Aide Cog";
+
+/* NSMenu : <title:Control> (oid:419) */
+"Control" = "Commandes";
+
+/* NSMenuItem : <title:Copy> (oid:157) */
+"Copy" = "Copier";
+
+/* NSMenuItem : <title:Current Artist> (oid:1454) */
+"Current Artist" = "Artiste actuelle";
+
+/* NSMenuItem : <title:Current Song> (oid:791) */
+"Current Song" = "Chanson actuelle";
+
+/* NSMenuItem : <title:Cut> (oid:160) */
+"Cut" = "Couper";
+
+/* NSMenuItem : <title:Delete> (oid:164) */
+"Delete" = "Supprimer";
+
+/* NSMenu : <title:Edit> (oid:169) */
+"Edit" = "Édition";
+
+/* NSTextField (Email:) : <title:Email:> (oid:307) */
+"Email:" = "Adresse e-mail:";
+
+/* NSMenuItem : <title:File> (oid:83) */
+"File" = "Fichier";
+
+/* NSMenuItem : <title:Find Songs> (oid:1139) */
+"Find Songs" = "Rechercher";
+
+/* NSTextField (Frequency:) : <title:Frequency:> (oid:865) */
+"Frequency:" = "Fréquence:";
+
+/* NSMenuItem : <title:Genre> (oid:1341) */
+"Genre" = "Genre";
+
+/* NSMenu : <title:Help> (oid:106) */
+"Help" = "Aide";
+
+/* NSMenuItem : <title:Hide Cog> (oid:134) */
+"Hide Cog" = "Masquer Cog";
+
+/* NSMenuItem : <title:Hide Others> (oid:145) */
+"Hide Others" = "Masquer les autres";
+
+/* NSMenuItem : <title:Index> (oid:1337) */
+"Index" = "Index";
+
+/* NSMenuItem : <title:Length> (oid:1342) */
+"Length" = "Durée";
+
+/* NSMenu : <title:MainMenu> (oid:29) */
+"MainMenu" = "MainMenu";
+
+/* NSMenu : <title:Menu> (oid:1324) */
+"Menu" = "Menu";
+
+/* NSTextField (Message:) : <title:Message:> (oid:276) */
+"Message:" = "Message:";
+
+/* NSTextField (Mini System Font Text) : <title:Mini System Font Text> (oid:1284) */
+"Mini System Font Text" = "Mini System Font Text";
+
+/* NSMenuItem : <title:Minimize> (oid:23) */
+"Minimize" = "Placer dans le Dock";
+
+/* NSMenuItem : <title:Next Song> (oid:518) */
+"Next Song" = "Suivant";
+
+/* NSButton (Okay) : <title:Okay> (oid:285) */
+"Okay" = "OK";
+
+/* NSMenu : <title:Open Recent> (oid:125) */
+"Open Recent" = "Ouvrir l'élément récent";
+
+/* NSMenuItem : <title:Open URL...> (oid:1403) */
+"Open URL..." = "Ouvrir une adresse URL...";
+
+/* NSMenuItem : <title:Open...> (oid:72) */
+"Open..." = "Ouvrir...";
+
+/* NSMenuItem : <title:Paste> (oid:171) */
+"Paste" = "Coller";
+
+/* NSMenuItem : <title:Play/Pause> (oid:520) */
+"Play/Pause" = "Lecture/Pause";
+
+/* NSMenu : <title:Playlist> (oid:882) */
+"Playlist" = "Liste de lecture";
+
+/* NSMenuItem : <title:Preferences…> (oid:129) */
+"Preferences…" = "Préférences…";
+
+/* NSMenuItem : <title:Previous Song> (oid:519) */
+"Previous Song" = "Précédent";
+
+/* NSMenuItem : <title:Quit Cog> (oid:136) */
+"Quit Cog" = "Quitter Cog";
+
+/* NSMenuItem : <title:Redo> (oid:173) */
+"Redo" = "Rétablir";
+
+/* NSMenuItem : <title:Remove> (oid:1408) */
+"Remove" = "Supprimer";
+
+/* NSMenuItem : <title:Repeat> (oid:1118) */
+"Repeat" = "Répétition";
+
+/* NSMenuItem : <title:Save...> (oid:75) */
+"Save..." = "Enregistrer...";
+
+/* NSMenuItem : <title:Scroll to Currently Playing> (oid:1133) */
+"Scroll to Currently Playing" = "Défiler à la chanson actuelle";
+
+/* NSMenuItem : <title:Select All> (oid:172) */
+"Select All" = "Tout sélectionner";
+
+/* NSButton (Send) : <title:Send> (oid:274) */
+"Send" = "Envoyer";
+
+/* NSWindow (Send Feedback) : <title:Send Feedback> (oid:268) */
+"Send Feedback" = "Envoyer des commentaires";
+
+/* NSMenuItem : <title:Send Feedback...> (oid:303) */
+"Send Feedback..." = "Envoyer des commentaires...";
+
+/* NSMenuItem : <title:Services> (oid:131) */
+"Services" = "Services";
+
+/* NSMenuItem : <title:Show All> (oid:150) */
+"Show All" = "Tout afficher";
+
+/* NSMenuItem : <title:Show All Songs> (oid:1132) */
+"Show All Songs" = "Afficher toutes les chansons";
+
+/* NSMenuItem : <title:Show File Drawer> (oid:1210) */
+"Show File Drawer" = "Tiroir de fichiers";
+
+/* NSButton (Show In Finder) : <title:Show In Finder> (oid:1099) */
+"Show In Finder" = "Afficher dans le Finder";
+
+/* NSMenuItem : <title:Show Info Drawer> (oid:425) */
+"Show Info Drawer" = "Tiroir d'informations";
+
+/* NSMenuItem : <title:Show Song in Finder> (oid:1135) */
+"Show Song in Finder" = "Afficher dans le Finder";
+
+/* NSMenuItem : <title:Show in Finder> (oid:1064) */
+"Show in Finder" = "Afficher dans le Finder";
+
+/* NSMenuItem : <title:Shuffle> (oid:1120) */
+"Shuffle" = "Ordre aléatoire";
+
+/* NSMenuItem : <title:Stop> (oid:1362) */
+"Stop" = "Arrêter";
+
+/* NSTextField (Subject:) : <title:Subject:> (oid:275) */
+"Subject:" = "Objet:";
+
+/* NSMenuItem : <title:Support Cog...> (oid:751) */
+"Support Cog..." = "Supporter Cog...";
+
+/* NSTextField (System Font Text) : <title:System Font Text> (oid:892) */
+"System Font Text" = "System Font Text";
+
+/* NSMenuItem : <title:Title> (oid:1338) */
+"Title" = "Nom";
+
+/* NSTextField (Total Duration:  000:00) : <title:Total Duration:  000:00> (oid:778) */
+"Total Duration:  000:00" = "Durée totale:  000:00";
+
+/* NSNibBindingConnector : <title:Total Duration: %{value1}@> (oid:790) */
+"Total Duration: %{value1}@" = "Durée totale: %{value1}@";
+
+/* NSMenuItem : <title:Track> (oid:1343) */
+"Track" = "N° de piste";
+
+/* NSMenuItem : <title:Undo> (oid:158) */
+"Undo" = "Annuler";
+
+/* NSMenuItem : <title:Volume Down> (oid:1137) */
+"Volume Down" = "Baisser le volume";
+
+/* NSMenuItem : <title:Volume Up> (oid:1136) */
+"Volume Up" = "Augmenter le volume";
+
+/* NSMenu : <title:Window> (oid:24) */
+"Window" = "Fenêtre";
+
+/* NSMenuItem : <title:Year> (oid:1344) */
+"Year" = "Année";
+
+/* NSMenuItem : <title:Zoom> (oid:197) */
+"Zoom" = "Réduire/agrandir";
+
+/* NSNibBindingConnector : <title:album contains[cd] $value> (oid:1042) */
+"album contains[cd] $value" = "album contains[cd] $value";
+
+/* NSNibBindingConnector : <title:artist contains[cd] $value> (oid:1041) */
+"artist contains[cd] $value" = "artist contains[cd] $value";
+
+/* NSButton (file) : <title:file> (oid:1278) */
+"file" = "fichier";
+
+/* NSNibBindingConnector : <title:genre contains[cd] $value> (oid:1046) */
+"genre contains[cd] $value" = "genre contains[cd] $value";
+
+/* NSButton (info) : <title:info> (oid:1279) */
+"info" = "info";
+
+/* NSButton (next) : <title:next> (oid:213) */
+"next" = "suivant";
+
+/* NSButton (prev) : <title:prev> (oid:212) */
+"prev" = "précédent";
+
+/* NSButton (random) : <title:random> (oid:1280) */
+"random" = "aléatoire";
+
+/* NSButton (repeat) : <title:repeat> (oid:1281) */
+"repeat" = "répétition";
+
+/* NSNibBindingConnector : <title:title contains[cd] $value> (oid:1040) */
+"title contains[cd] $value" = "title contains[cd] $value";
+

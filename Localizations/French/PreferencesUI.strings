@@ -1,0 +1,57 @@
+/* NSButton (Automatically check for updates on startup.) : <title:Automatically check for updates on startup.> (oid:51) */
+"Automatically check for updates on startup." = "Rechercher automatiquement les mises à jour au démarrage.";
+
+/* NSButton (Automatically launch Last.fm client.) : <title:Automatically launch Last.fm client.> (oid:88) */
+"Automatically launch Last.fm client." = "Lancer automatiquement le client Last.fm.";
+
+/* NSButton (Browse) : <title:Browse> (oid:40) */
+"Browse" = "Choisir le fichier";
+
+/* NSButton (Edit) : <title:Edit> (oid:30) */
+"Edit" = "Changer";
+
+/* NSButton (Enable Last.fm support. (Must have Last.fm client installed)) : <title:Enable Last.fm support. (Must have Last.fm client installed)> (oid:87) */
+"Enable Last.fm support. (Must have Last.fm client installed)" = "Activer le support pour Last.fm. (Un client Last.fm doit être installé)";
+
+/* NSButton (Enable remote control.) : <title:Enable remote control.> (oid:77) */
+"Enable remote control." = "Activer la télécommande.";
+
+/* NSMenuItem : <title:Item1> (oid:62) */
+"Item1" = "Item1";
+
+/* NSMenuItem : <title:Item2> (oid:63) */
+"Item2" = "Item2";
+
+/* NSMenuItem : <title:Item3> (oid:64) */
+"Item3" = "Item3";
+
+/* NSTextField (Next:) : <title:Next:> (oid:26) */
+"Next:" = "Suivant:";
+
+/* NSMenuItem : <title:Nightly> (oid:110) */
+"Nightly" = "Nightly";
+
+/* NSButton (Only listen to remote when Cog is active.) : <title:Only listen to remote when Cog is active.> (oid:44) */
+"Only listen to remote when Cog is active." = "Écouter à la télécommande seulement lorsque Cog est actif.";
+
+/* NSMenu : <title:OtherViews> (oid:107) */
+"OtherViews" = "OtherViews";
+
+/* NSTextField (Output Device: ) : <title:Output Device: > (oid:65) */
+"Output Device: " = "Périphérique de sortie audio: ";
+
+/* NSTextField (Play:) : <title:Play:> (oid:24) */
+"Play:" = "Lecture:";
+
+/* NSTextField (Previous:) : <title:Previous:> (oid:25) */
+"Previous:" = "Précédent:";
+
+/* NSMenuItem : <title:Stable> (oid:108) */
+"Stable" = "Stable";
+
+/* NSMenuItem : <title:Unstable> (oid:109) */
+"Unstable" = "Unstable";
+
+/* NSTextField (Update Feed:) : <title:Update Feed:> (oid:111) */
+"Update Feed:" = "Rechercher seulement:";
+

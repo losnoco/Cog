@@ -1,0 +1,8 @@
+/* NSButton (Cancel) : <title:Cancel> (oid:9) */
+"Cancel" = "Cancel"; "לבטל"
+
+/* NSButton (OK) : <title:OK> (oid:8) */
+"OK" = "OK"; "בסדר"
+
+/* NSPanel (Open URL) : <title:Open URL> (oid:5) */
+"Open URL" = "Open URL"; "URL פתח"

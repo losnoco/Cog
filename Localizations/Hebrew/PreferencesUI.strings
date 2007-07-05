@@ -1,0 +1,57 @@
+/* NSButton (Automatically check for updates on startup.) : <title:Automatically check for updates on startup.> (oid:51) */
+"Automatically check for updates on startup." = "Automatically check for updates on startup."; "להפעיל עדכונים אוטומטיים"
+
+/* NSButton (Automatically launch Last.fm client.) : <title:Automatically launch Last.fm client.> (oid:88) */
+"Automatically launch Last.fm client." = "Automatically launch Last.fm client."; "Last.fm להפעיל לקוח"
+
+/* NSButton (Browse) : <title:Browse> (oid:40) */
+"Browse" = "Browse"; "לדפדף"
+
+/* NSButton (Edit) : <title:Edit> (oid:30) */
+"Edit" = "Edit"; "ערוך"
+
+/* NSButton (Enable Last.fm support. (Must have Last.fm client installed)) : <title:Enable Last.fm support. (Must have Last.fm client installed)> (oid:87) */
+"Enable Last.fm support. (Must have Last.fm client installed)" = "Enable Last.fm support. (Must have Last.fm client installed)"; "Last.fm הפוך לזמין תמיכה"
+
+/* NSButton (Enable remote control.) : <title:Enable remote control.> (oid:77) */
+"Enable remote control." = "Enable remote control."; "להפעיל שלט רחוק"
+
+/* NSMenuItem : <title:Item1> (oid:62) */
+"Item1" = "Item1"; "פריט אחד"
+
+/* NSMenuItem : <title:Item2> (oid:63) */
+"Item2" = "Item2"; "פריט שניים"
+
+/* NSMenuItem : <title:Item3> (oid:64) */
+"Item3" = "Item3"; "פריט שלוש"
+
+/* NSTextField (Next:) : <title:Next:> (oid:26) */
+"Next:" = "Next:"; "להעביר"
+
+/* NSMenuItem : <title:Nightly> (oid:110) */
+"Nightly" = "Nightly"; "לילי"
+
+/* NSButton (Only listen to remote when Cog is active.) : <title:Only listen to remote when Cog is active.> (oid:44) */
+"Only listen to remote when Cog is active." = "Only listen to remote when Cog is active."; "פעיל Cog להאזין שלט רחוק רק אם"
+
+/* NSMenu : <title:OtherViews> (oid:107) */
+"OtherViews" = "OtherViews"; "נוסף תצוגות"
+
+/* NSTextField (Output Device: ) : <title:Output Device: > (oid:65) */
+"Output Device: " = "Output Device: "; "התקן פלט"
+
+/* NSTextField (Play:) : <title:Play:> (oid:24) */
+"Play:" = "Play:"; "הפעל"
+
+/* NSTextField (Previous:) : <title:Previous:> (oid:25) */
+"Previous:" = "Previous:"; "לחזור"
+
+/* NSMenuItem : <title:Stable> (oid:108) */
+"Stable" = "Stable"; "יציב"
+
+/* NSMenuItem : <title:Unstable> (oid:109) */
+"Unstable" = "Unstable"; "לא יציב"
+
+/* NSTextField (Update Feed:) : <title:Update Feed:> (oid:111) */
+"Update Feed:" = "Update Feed:"; "Cog חדשות על עדכון של"
+

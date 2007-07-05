@@ -1,0 +1,22 @@
+"FeedbackFailedMessageText" = "Échec";
+"FeedbackFailedInformativeText" = "Les commentaires n'ont pas pu être envoyés.";
+"FeedbackSuccessMessageText" = "Réussite";
+"FeedbackSuccessInformativeText" = "Les commentaires ont été envoyés!";
+
+"PlayButtonTooltip" = "Lecture";
+"StopButtonTooltip" = "Arrêter";
+"PrevButtonTooltip" = "Précédent";
+"NextButtonTooltip" = "Suivant";
+
+"TimeElapsed" = "%i:%02i";
+"TimeRemaining" = "-%i:%02i";
+
+"AddButtonTooltip" = "Ajouter des fichiers";
+"RemoveButtonTooltip" = "Supprimer les fichiers sélectionnés";
+"InfoButtonTooltip" = "Informations sur le fichier sélectionné";
+"ShuffleButtonTooltip" = "Répétition";
+"RepeatButtonTooltip" = "Ordre aléatoire";
+"FileButtonTooltip" = "Tiroir de fichiers";
+
+"InvalidURLShort" = "URL non valide";
+"InvalidURLLong" = "L'adresse URL n'est pas valide.";

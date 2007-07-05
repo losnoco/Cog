@@ -1,0 +1,9 @@
+/* NSButton (Cancel) : <title:Cancel> (oid:9) */
+"Cancel" = "Άκυρο";
+
+/* NSButton (OK) : <title:OK> (oid:8) */
+"OK" = "Εντάξει";
+
+/* NSPanel (Open URL) : <title:Open URL> (oid:5) */
+"Open URL" = "Άνοιγμα διευθύνσεως URL";
+

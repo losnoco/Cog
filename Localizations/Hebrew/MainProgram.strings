@@ -1,0 +1,22 @@
+"FeedbackFailedMessageText" = "Failed"; "כשל"
+"FeedbackFailedInformativeText" = "Feedback failed to send."; "כשל"
+"FeedbackSuccessMessageText" = "Success"; "מצליחן"
+"FeedbackSuccessInformativeText" = "Feedback successfully sent!"; "מצליחן"
+
+"PlayButtonTooltip" = "Play"; "הפעל"
+"StopButtonTooltip" = "Stop"; "עצור"
+"PrevButtonTooltip" = "Previous"; "לחזור"
+"NextButtonTooltip" = "Next"; "להעביר"
+
+"TimeElapsed" = "%i:%02i";
+"TimeRemaining" = "-%i:%02i";
+
+"AddButtonTooltip" = "Add files"; "הוסף לרשימת השמעה"
+"RemoveButtonTooltip" = "Remove selected files"; "הסר בחירה מרשימת השמעה"
+"InfoButtonTooltip" = "Information on the selected file"; "מידע מדיה על קובץ בחירה"
+"ShuffleButtonTooltip" = "Shuffle mode"; "מצב אקראית"
+"RepeatButtonTooltip" = "Repeat mode"; "חזרה אוטומטית"
+"FileButtonTooltip" = "File drawer"; "לוח מקובץ"
+
+"InvalidURLShort" = "Invalid URL"; "לא חוקי"
+"InvalidURLLong" = "The URL is not valid."; "לא חוקי"

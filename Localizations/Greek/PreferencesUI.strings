@@ -1,0 +1,57 @@
+/* NSButton (Automatically check for updates on startup.) : <title:Automatically check for updates on startup.> (oid:51) */
+"Automatically check for updates on startup." = "Αυτόματη αναζήτηση ενημερώσεων κατά την έναρξη.";
+
+/* NSButton (Automatically launch Last.fm client.) : <title:Automatically launch Last.fm client.> (oid:88) */
+"Automatically launch Last.fm client." = "Αυτόματη έναρξη του πελάτη του Last.fm.";
+
+/* NSButton (Browse) : <title:Browse> (oid:40) */
+"Browse" = "Αναζήτηση";
+
+/* NSButton (Edit) : <title:Edit> (oid:30) */
+"Edit" = "Επεξεργασία";
+
+/* NSButton (Enable Last.fm support. (Must have Last.fm client installed)) : <title:Enable Last.fm support. (Must have Last.fm client installed)> (oid:87) */
+"Enable Last.fm support. (Must have Last.fm client installed)" = "Ενεργοποίηση της υποστήριξης για το Last.fm. (Ο πελάτης του Last.fm πρέπει να είναι εγκατεστημένος)";
+
+/* NSButton (Enable remote control.) : <title:Enable remote control.> (oid:77) */
+"Enable remote control." = "Ενεργοποίηση του τηλεκοντρόλ.";
+
+/* NSMenuItem : <title:Item1> (oid:62) */
+"Item1" = "Αντικείμενο1";
+
+/* NSMenuItem : <title:Item2> (oid:63) */
+"Item2" = "Αντικείμενο2";
+
+/* NSMenuItem : <title:Item3> (oid:64) */
+"Item3" = "Αντικείμενο3";
+
+/* NSTextField (Next:) : <title:Next:> (oid:26) */
+"Next:" = "Επόμενο:";
+
+/* NSMenuItem : <title:Nightly> (oid:110) */
+"Nightly" = "Πειραματική";
+
+/* NSButton (Only listen to remote when Cog is active.) : <title:Only listen to remote when Cog is active.> (oid:44) */
+"Only listen to remote when Cog is active." = "Το Cog να αντιδρά στο τηλεκοντρόλ μόνο όταν είναι ενεργό.";
+
+/* NSMenu : <title:OtherViews> (oid:107) */
+"OtherViews" = "ΆλλεςΌψεις";
+
+/* NSTextField (Output Device: ) : <title:Output Device: > (oid:65) */
+"Output Device: " = "Συσκευή Εξόδου: ";
+
+/* NSTextField (Play:) : <title:Play:> (oid:24) */
+"Play:" = "Αναπαραγωγή:";
+
+/* NSTextField (Previous:) : <title:Previous:> (oid:25) */
+"Previous:" = "Προηγούμενο:";
+
+/* NSMenuItem : <title:Stable> (oid:108) */
+"Stable" = "Σταθερή";
+
+/* NSMenuItem : <title:Unstable> (oid:109) */
+"Unstable" = "Δοκιμαστική";
+
+/* NSTextField (Update Feed:) : <title:Update Feed:> (oid:111) */
+"Update Feed:" = "Να ειδοποιούμαι όταν υπάρχει νέα έκδοση:";
+

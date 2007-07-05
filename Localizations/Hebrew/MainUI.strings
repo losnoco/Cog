@@ -1,0 +1,326 @@
+/* AMRemovableTableColumn : <title:#> (oid:209) */
+"#" = "#";
+
+/* NSNibBindingConnector : <title:(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)> (oid:1039) */
+"(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)" = "(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)"; difficult to align in proper direction, here are the translations though;
+
+artist = אמן
+genre = ז'אנר
+album = אלבומ
+title = כותר
+cd = תקליטור
+value = ערך
+
+/* ClickField (0:00) : <title:0:00> (oid:891) */
+"0:00" = "0:00";
+
+/* NSMenuItem : <title:About Cog> (oid:58) */
+"About Cog" = "About Cog"; "Cog אודות"
+
+/* NSMenuItem : <title:Album> (oid:1340) */
+"Album" = "Album"; "אלבומ"
+
+/* NSNibBindingConnector : <title:All> (oid:1039) */
+"All" = "All"; "כל"
+
+/* NSMenuItem : <title:Artist> (oid:1339) */
+"Artist" = "Artist"; "אמן"
+
+/* NSTextField (Bitrate:) : <title:Bitrate:> (oid:868) */
+"Bitrate:" = "Bitrate:"; "קצב סיביות"
+
+/* NSBox (Box) : <title:Box> (oid:888) */
+"Box" = "Box"; "תיבה"
+
+/* NSTextField (Bps:) : <title:Bps:> (oid:866) */
+"Bps:" = "Bps:"; "סיביות לשנייה"
+
+/* NSMenuItem : <title:Bring All to Front> (oid:5) */
+"Bring All to Front" = "Bring All to Front"; "פוקוס כל החלונות"
+
+/* NSButton (Cancel) : <title:Cancel> (oid:277) */
+"Cancel" = "Cancel"; "לבטל"
+
+/* NSTextField (Channels:) : <title:Channels:> (oid:867) */
+"Channels:" = "Channels:"; "‏‏ערוץים"
+
+/* NSWindow (Check for Updates) : <title:Check for Updates> (oid:280) */
+"Check for Updates" = "Check for Updates"; "חיפוש עדכונים"
+
+/* NSMenuItem : <title:Check for Updates...> (oid:302) */
+"Check for Updates..." = "Check for Updates..."; "...חיפוש עדכונים"
+
+/* NSButton (Check for updates automatically) : <title:Check for updates automatically> (oid:284) */
+"Check for updates automatically" = "Check for updates automatically"; "להפעיל עדכונים אוטומטיים"
+
+/* NSTextField (Checking for updates... ) : <title:Checking for updates...
+> (oid:283) */
+"Checking for updates...\n" = "Checking for updates...\n"; "...עיבוד שאילתה של עדכונים"
+
+/* NSMenuItem : <title:Clear> (oid:1402) */
+"Clear" = "Clear"; "נקה"
+
+/* NSMenuItem : <title:Clear Menu> (oid:126) */
+"Clear Menu" = "Clear Menu"; "נקה תפריט"
+
+/* NSMenuItem : <title:Close Window> (oid:73) */
+"Close Window" = "Close Window"; "סגור החלון"
+
+/* NSMenuItem : <title:Cog> (oid:702) */
+"Cog" = "Cog"; "Cog"
+
+/* NSMenuItem : <title:Cog Help> (oid:111) */
+"Cog Help" = "Cog Help"; "עזרה Cog"
+
+/* NSMenu : <title:Control> (oid:419) */
+"Control" = "Control"; "בקרה"
+
+/* NSMenuItem : <title:Copy> (oid:157) */
+"Copy" = "Copy"; "להעתיק"
+
+/* NSMenuItem : <title:Current Artist> (oid:1454) */
+"Current Artist" = "Current Artist"; "אמן נוכחית"
+
+/* NSMenuItem : <title:Current Song> (oid:791) */
+"Current Song" = "Current Song"; "שיר נוכחית"
+
+/* NSMenuItem : <title:Cut> (oid:160) */
+"Cut" = "Cut"; "לגזור"
+
+/* NSMenuItem : <title:Delete> (oid:164) */
+"Delete" = "Delete"; "מחק"
+
+/* NSMenu : <title:Edit> (oid:169) */
+"Edit" = "Edit"; "ערוך"
+
+/* NSTextField (Email:) : <title:Email:> (oid:307) */
+"Email:" = "Email:"; "דואר אלקטרוני"
+
+/* NSMenuItem : <title:File> (oid:83) */
+"File" = "File"; "קובץ"
+
+/* NSMenuItem : <title:Find Songs> (oid:1139) */
+"Find Songs" = "Find Songs"; "חיפוש שירים"
+
+/* NSTextField (Frequency:) : <title:Frequency:> (oid:865) */
+"Frequency:" = "Frequency:"; "תדר"
+
+/* NSMenuItem : <title:Genre> (oid:1341) */
+"Genre" = "Genre"; "ז'אנר"
+
+/* NSMenu : <title:Help> (oid:106) */
+"Help" = "Help"; "עזרה"
+
+/* NSMenuItem : <title:Hide Cog> (oid:134) */
+"Hide Cog" = "Hide Cog"; "Cog להחביא"
+
+/* NSMenuItem : <title:Hide Others> (oid:145) */
+"Hide Others" = "Hide Others"; "Cog להחביא מלבד"
+
+/* NSMenuItem : <title:Index> (oid:1337) */
+"Index" = "Index"; "אינדקס"
+
+/* NSMenuItem : <title:Length> (oid:1342) */
+"Length" = "Length"; "אורך"
+
+/* NSMenu : <title:MainMenu> (oid:29) */
+"MainMenu" = "MainMenu"; "תפריט ראשי"
+
+/* NSMenu : <title:Menu> (oid:1324) */
+"Menu" = "Menu"; "תפריט"
+
+/* NSTextField (Message:) : <title:Message:> (oid:276) */
+"Message:" = "Message:"; "הודעה"
+
+/* NSTextField (Mini System Font Text) : <title:Mini System Font Text> (oid:1284) */
+"Mini System Font Text" = "Mini System Font Text"; "מצומצם-מערכת גודל גופן"
+
+/* NSMenuItem : <title:Minimize> (oid:23) */
+"Minimize" = "Minimize"; "למזער"
+
+/* NSMenuItem : <title:Next Song> (oid:518) */
+"Next Song" = "Next Song"; "שיר אחר"
+
+/* NSButton (Okay) : <title:Okay> (oid:285) */
+"Okay" = "Okay"; "בסדר"
+
+/* NSMenu : <title:Open Recent> (oid:125) */
+"Open Recent" = "Open Recent"; "פתח אחרונה"
+
+/* NSMenuItem : <title:Open URL...> (oid:1403) */
+"Open URL..." = "Open URL..."; "...URL פתח"
+
+/* NSMenuItem : <title:Open...> (oid:72) */
+"Open..." = "Open..."; "...פתח"
+
+/* NSMenuItem : <title:Paste> (oid:171) */
+"Paste" = "Paste"; "הדבק"
+
+/* NSMenuItem : <title:Play/Pause> (oid:520) */
+"Play/Pause" = "Play/Pause"; "הפעל/השהה"
+
+/* NSMenu : <title:Playlist> (oid:882) */
+"Playlist" = "Playlist"; "רשימת השמעה"
+
+/* NSMenuItem : <title:Preferences…> (oid:129) */
+"Preferences…" = "Preferences…"; "קביעת העדפה"
+
+/* NSMenuItem : <title:Previous Song> (oid:519) */
+"Previous Song" = "Previous Song"; "שיר קודם"
+
+/* NSMenuItem : <title:Quit Cog> (oid:136) */
+"Quit Cog" = "Quit Cog"; "Cog יציאה"
+
+/* NSMenuItem : <title:Redo> (oid:173) */
+"Redo" = "Redo"; "לעשות מחדש"
+
+/* NSMenuItem : <title:Remove> (oid:1408) */
+"Remove" = "Remove"; "הסרה"
+
+/* NSMenuItem : <title:Repeat> (oid:1118) */
+"Repeat" = "Repeat"; "לחזור"
+
+/* NSMenuItem : <title:Save...> (oid:75) */
+"Save..." = "Save..."; "...שמור"
+
+/* NSMenuItem : <title:Scroll to Currently Playing> (oid:1133) */
+"Scroll to Currently Playing" = "Scroll to Currently Playing"; "בחר שיר נוכחי"
+
+/* NSMenuItem : <title:Select All> (oid:172) */
+"Select All" = "Select All"; "חיפוש הכל"
+
+/* NSButton (Send) : <title:Send> (oid:274) */
+"Send" = "Send"; "שלח"
+
+/* NSWindow (Send Feedback) : <title:Send Feedback> (oid:268) */
+"Send Feedback" = "Send Feedback"; "שלח פידבק"
+
+/* NSMenuItem : <title:Send Feedback...> (oid:303) */
+"Send Feedback..." = "Send Feedback..."; "...שלח פידבק"
+
+/* NSMenuItem : <title:Services> (oid:131) */
+"Services" = "Services"; "שירותימ"
+
+/* NSMenuItem : <title:Show All> (oid:150) */
+"Show All" = "Show All"; "הצג כל"
+
+/* NSMenuItem : <title:Show All Songs> (oid:1132) */
+"Show All Songs" = "Show All Songs"; "הצג כל השירים"
+
+/* NSMenuItem : <title:Show File Drawer> (oid:1210) */
+"Show File Drawer" = "Show File Drawer"; "הצג לוח מקובץ"
+
+/* NSButton (Show In Finder) : <title:Show In Finder> (oid:1099) */
+"Show In Finder" = "Show In Finder"; "הצג קובץ מקורי"
+
+/* NSMenuItem : <title:Show Info Drawer> (oid:425) */
+"Show Info Drawer" = "Show Info Drawer"; "הצג לוח מידע"
+
+/* NSMenuItem : <title:Show Song in Finder> (oid:1135) */
+"Show Song in Finder" = "Show Song in Finder"; "הצג שיר מקורי"
+
+/* NSMenuItem : <title:Show in Finder> (oid:1064) */
+"Show in Finder" = "Show in Finder"; "הצג קובץ מקורי"
+
+/* NSMenuItem : <title:Shuffle> (oid:1120) */
+"Shuffle" = "Shuffle"; "מצב אקראית"
+
+/* NSMenuItem : <title:Stop> (oid:1362) */
+"Stop" = "Stop"; "עצור"
+
+/* NSTextField (Subject:) : <title:Subject:> (oid:275) */
+"Subject:" = "Subject:"; "נושא"
+
+/* NSMenuItem : <title:Support Cog...> (oid:751) */
+"Support Cog..." = "Support Cog..."; "Cog תמיכה"
+
+/* NSTextField (System Font Text) : <title:System Font Text> (oid:892) */
+"System Font Text" = "System Font Text"; "מערכת גודל גופן"
+
+/* NSMenuItem : <title:Title> (oid:1338) */
+"Title" = "Title"; "כותר"
+
+/* NSTextField (Total Duration:  000:00) : <title:Total Duration:  000:00> (oid:778) */
+"Total Duration:  000:00" = "Total Duration:  000:00"; "000:00 :כל משך זמן"
+
+/* NSNibBindingConnector : <title:Total Duration: %{value1}@> (oid:790) */
+"Total Duration: %{value1}@" = "Total Duration: %{value1}@"; "%{value1}@; :כל משך זמן"
+
+/* NSMenuItem : <title:Track> (oid:1343) */
+"Track" = "Track"; "רצועה"
+
+/* NSMenuItem : <title:Undo> (oid:158) */
+"Undo" = "Undo"; "בטל"
+
+/* NSMenuItem : <title:Volume Down> (oid:1137) */
+"Volume Down" = "Volume Down"; "הפחתה עוצמה"
+
+/* NSMenuItem : <title:Volume Up> (oid:1136) */
+"Volume Up" = "Volume Up"; "הגדלה עוצמה"
+
+/* NSMenu : <title:Window> (oid:24) */
+"Window" = "Window"; "חלון"
+
+/* NSMenuItem : <title:Year> (oid:1344) */
+"Year" = "Year"; "שנה"
+
+/* NSMenuItem : <title:Zoom> (oid:197) */
+"Zoom" = "Zoom"; "הגדלת תצוגה"
+
+/* NSNibBindingConnector : <title:album contains[cd] $value> (oid:1042) */
+"album contains[cd] $value" = "album contains[cd] $value"; difficult to align in proper direction, here are the translations though;
+
+artist = אמן
+genre = ז'אנר
+album = אלבומ
+title = כותר
+cd = תקליטור
+value = ערך
+
+/* NSNibBindingConnector : <title:artist contains[cd] $value> (oid:1041) */
+"artist contains[cd] $value" = "artist contains[cd] $value"; difficult to align in proper direction, here are the translations though;
+
+artist = אמן
+genre = ז'אנר
+album = אלבומ
+title = כותר
+cd = תקליטור
+value = ערך
+
+/* NSButton (file) : <title:file> (oid:1278) */
+"file" = "file"; "קובץ"
+
+/* NSNibBindingConnector : <title:genre contains[cd] $value> (oid:1046) */
+"genre contains[cd] $value" = "genre contains[cd] $value"; difficult to align in proper direction, here are the translations though;
+
+artist = אמן
+genre = ז'אנר
+album = אלבומ
+title = כותר
+cd = תקליטור
+value = ערך
+
+/* NSButton (info) : <title:info> (oid:1279) */
+"info" = "info"; "מידע"
+
+/* NSButton (next) : <title:next> (oid:213) */
+"next" = "next"; "אחר"
+
+/* NSButton (prev) : <title:prev> (oid:212) */
+"prev" = "prev"; "קודם"
+
+/* NSButton (random) : <title:random> (oid:1280) */
+"random" = "random"; "מצב אקראית"
+
+/* NSButton (repeat) : <title:repeat> (oid:1281) */
+"repeat" = "repeat"; "לחזור"
+
+/* NSNibBindingConnector : <title:title contains[cd] $value> (oid:1040) */
+"title contains[cd] $value" = "title contains[cd] $value"; difficult to align in proper direction, here are the translations though;
+
+artist = אמן
+genre = ז'אנר
+album = אלבומ
+title = כותר
+cd = תקליטור
+value = ערך

@@ -1,0 +1,22 @@
+"FeedbackFailedMessageText" = "Απέτυχε";
+"FeedbackFailedInformativeText" = "Η γνώμη σας δεν ήταν δυνατόν να σταλεί.";
+"FeedbackSuccessMessageText" = "Επιτυχία";
+"FeedbackSuccessInformativeText" = "Η γνώμη σας εστάλη επιτυχώς!";
+
+"PlayButtonTooltip" = "Αναπαραγωγή";
+"StopButtonTooltip" = "Διακοπή";
+"PrevButtonTooltip" = "Προηγούμενο";
+"NextButtonTooltip" = "Επόμενο";
+
+"TimeElapsed" = "%i:%02i";
+"TimeRemaining" = "-%i:%02i";
+
+"AddButtonTooltip" = "Προσθήκη αρχείων";
+"RemoveButtonTooltip" = "Αφαίρεση επιλεγμένων αρχείων";
+"InfoButtonTooltip" = "Πληροφορίες επί του επιλεγμένου αρχείου";
+"ShuffleButtonTooltip" = "Τυχαία αναπαραγωγή";
+"RepeatButtonTooltip" = "Συνεχόμενη αναπαραγωγή";
+"FileButtonTooltip" = "Συρτάρι αρχείων";
+
+"InvalidURLShort" = "Μη έγκυρη διεύθυνση URL";
+"InvalidURLLong" = "Η διεύθυνση URL δεν είναι έγκυρη.";
