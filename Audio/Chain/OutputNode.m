@@ -38,11 +38,13 @@
 - (void)pause
 {
 	[output pause];
+	NSLog(@"PAUSED!");
 }
 
 - (void)resume
 {
 	[output resume];
+	NSLog(@"RESUMED");
 }
 
 - (int)readData:(void *)ptr amount:(int)amount

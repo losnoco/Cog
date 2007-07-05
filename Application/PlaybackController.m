@@ -54,6 +54,7 @@
 {
 	currentVolume = 100.0;
 	[volumeSlider setDoubleValue:pow(10.0, log10(0.5)/4.0)*[volumeSlider maxValue]];
+	[positionSlider setEnabled:NO];
 }
 	
 - (IBAction)playPauseResume:(id)sender

@@ -27,6 +27,7 @@
 
 static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp  *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList  *ioData)
 {
+	//NSLog(@"ASKING FOR DATA!");
 	OutputCoreAudio *output = (OutputCoreAudio *)inRefCon;
 	OSStatus err = noErr;
 	void *readPointer = ioData->mBuffers[0].mData;
@@ -35,7 +36,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	if ([output->outputController shouldContinue] == NO)
 	{
-		DBLog(@"STOPPING");
+		//NSLog(@"STOPPING");
         AudioOutputUnitStop(output->outputUnit);
 //		[output stop];
 		
@@ -47,7 +48,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	if ((amountRead < amountToRead) && [output->outputController endOfStream] == NO) //Try one more time! for track changes!
 	{
-		NSLog(@"READING AGAIN! %i/%i", amountRead, amountToRead);
+		//NSLog(@"READING AGAIN! %i/%i", amountRead, amountToRead);
 		int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
 		amountRead2 = [output->outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
 		amountRead += amountRead2;
@@ -56,7 +57,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	ioData->mBuffers[0].mDataByteSize = amountRead;
 	ioData->mBuffers[0].mNumberChannels = output->deviceFormat.mChannelsPerFrame;
  
-//	NSLog(@"Amount read for output: (%i) %i %i/%i", ioData->mNumberBuffers, ioData->mBuffers[0].mNumberChannels, amountRead, amountToRead);
+	//NSLog(@"Amount read for output: (%i) %i %i/%i", ioData->mNumberBuffers, ioData->mBuffers[0].mNumberChannels, amountRead, amountToRead);
 	
 	return err;
 }
@@ -243,6 +244,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
         AudioOutputUnitStop(outputUnit);
 		AudioUnitUninitialize (outputUnit);
 		CloseComponent(outputUnit);
+		outputUnit = NULL;
 	}
 }
 
@@ -262,7 +264,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 - (void)resume
 {
 	NSLog(@"RESUME");
-	AudioOutputUnitStart(outputUnit);
+	OSStatus err = AudioOutputUnitStart(outputUnit);
+	NSLog(@"Resume: %i", err);
 }
 
 @end

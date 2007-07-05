@@ -174,6 +174,7 @@
 	}
 	else {
 		NSLog(@"Resuming not launching");
+		[self setShouldContinue:YES];
 		[output resume];
 	}
 }
