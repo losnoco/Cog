@@ -5,8 +5,8 @@ Incubate.
 
 BUGS:
   Files still in use (File handle leak?): http://sbooth.org/forums/viewtopic.php?t=1619
-  Window order not preserved (incorrect use of makeKeyAndOrderFront in nsapp dock click delegate method?): http://sbooth.org/forums/viewtopic.php?t=1615
-  Slider enabled on launch: http://sbooth.org/forums/viewtopic.php?t=1471
-  Drag slider to the end: http://sbooth.org/forums/viewtopic.php?t=1537
+  #Window order not preserved (incorrect use of makeKeyAndOrderFront in nsapp dock click delegate method?): http://sbooth.org/forums/viewtopic.php?t=1615
+  #Slider enabled on launch: http://sbooth.org/forums/viewtopic.php?t=1471
+  #Drag slider to the end: http://sbooth.org/forums/viewtopic.php?t=1537
   Shuffle is not random: http://sbooth.org/forums/viewtopic.php?p=5225
 

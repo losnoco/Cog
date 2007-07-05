@@ -1,5 +1,5 @@
 /*
- *  $Id: AudioScrobblerClient.h 241 2007-01-26 23:02:09Z stephen_booth $
+ *  $Id: AudioScrobblerClient.h 666 2007-04-26 16:35:18Z stephen_booth $
  *
  *  Copyright (C) 2006 - 2007 Stephen F. Booth <me@sbooth.org>
  *
@@ -26,10 +26,13 @@
 {
 	int			_socket;
 	BOOL		_doPortStepping;
-	in_port_t	_lastPort;
+	in_port_t	_port;
 }
 
-- (in_port_t)	connectToHost:(NSString *)hostname port:(in_port_t)port;
+- (BOOL)		connectToHost:(NSString *)hostname port:(in_port_t)port;
+
+- (BOOL)		isConnected;
+- (in_port_t)	connectedPort;
 
 - (void)		send:(NSString *)data;
 - (NSString *)	receive;

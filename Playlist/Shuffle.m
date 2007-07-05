@@ -28,6 +28,8 @@ int randint(int low, int high)
 
 + (NSMutableArray *)shuffleList:(NSArray *)l
 {
+	srandom(time(NULL));
+
 	NSMutableArray *a = [l mutableCopy];
 	NSMutableArray *b = [[NSMutableArray alloc] init];
 	
