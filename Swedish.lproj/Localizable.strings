@@ -1,0 +1,22 @@
+"FeedbackFailedMessageText" = "Misslyckades";
+"FeedbackFailedInformativeText" = "Misslyckades att skicka respons.";
+"FeedbackSuccessMessageText" = "Lyckades";
+"FeedbackSuccessInformativeText" = "Respons skickad!";
+
+"PlayButtonTooltip" = "Spela";
+"StopButtonTooltip" = "Stanna";
+"PrevButtonTooltip" = "Föregående";
+"NextButtonTooltip" = "Nästa";
+
+"TimeElapsed" = "%i:%02i";
+"TimeRemaining" = "-%i:%02i";
+
+"AddButtonTooltip" = "Lägg till filer";
+"RemoveButtonTooltip" = "Ta bort markerade filer";
+"InfoButtonTooltip" = "Information om markerad fil";
+"ShuffleButtonTooltip" = "Slumpvis";
+"RepeatButtonTooltip" = "Repetera";
+"FileButtonTooltip" = "Fillåda";
+
+"InvalidURLShort" = "Ogiltig URL";
+"InvalidURLLong" = "URL ej giltig.";
