@@ -69,7 +69,7 @@ escapeForLastFM(NSString *string)
 {
 	if((self = [super init])) {
 
-		_pluginID = @"pla";
+		_pluginID = @"cog";
 
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"automaticallyLaunchLastFM"])
 			[[NSWorkspace sharedWorkspace] launchApplication:@"Last.fm.app"];
