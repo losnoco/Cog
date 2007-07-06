@@ -449,6 +449,11 @@
 		17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		17BB5CF80B8A86350009ACB1 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = /System/Library/Frameworks/CoreAudioKit.framework; sourceTree = "<absolute>"; };
 		17BB5EA50B8A87850009ACB1 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		17C4D3D10C3EF130004D0867 /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Swedish; path = Swedish.lproj/Help; sourceTree = "<group>"; };
+		17C4D3E00C3EF133004D0867 /* German */ = {isa = PBXFileReference; lastKnownFileType = folder; name = German; path = German.lproj/Help; sourceTree = "<group>"; };
+		17C4D3EF0C3EF135004D0867 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Greek; path = Greek.lproj/Help; sourceTree = "<group>"; };
+		17C4D3FE0C3EF138004D0867 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Hebrew; path = Hebrew.lproj/Help; sourceTree = "<group>"; };
+		17C4D40D0C3EF13A004D0867 /* French */ = {isa = PBXFileReference; lastKnownFileType = folder; name = French; path = French.lproj/Help; sourceTree = "<group>"; };
 		17C808660C3BD0F8005707C4 /* CoreAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CoreAudio.xcodeproj; path = Plugins/CoreAudio/CoreAudio.xcodeproj; sourceTree = SOURCE_ROOT; };
 		17C808710C3BD167005707C4 /* FileSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FileSource.xcodeproj; path = Plugins/FileSource/FileSource.xcodeproj; sourceTree = "<group>"; };
 		17C8087A0C3BD173005707C4 /* Flac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Flac.xcodeproj; path = Plugins/Flac/Flac.xcodeproj; sourceTree = "<group>"; };
@@ -1445,6 +1450,11 @@
 			isa = PBXVariantGroup;
 			children = (
 				1705F1420B8BCB0C00C8B40D /* English */,
+				17C4D3D10C3EF130004D0867 /* Swedish */,
+				17C4D3E00C3EF133004D0867 /* German */,
+				17C4D3EF0C3EF135004D0867 /* Greek */,
+				17C4D3FE0C3EF138004D0867 /* Hebrew */,
+				17C4D40D0C3EF13A004D0867 /* French */,
 			);
 			name = Help;
 			sourceTree = "<group>";
