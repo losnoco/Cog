@@ -54,7 +54,6 @@
 
 -(void) watcher: (id<UKFileWatcher>)kq receivedNotification: (NSString*)nm forPath: (NSString*)fpath
 {
-	NSLog(@"CHANGED! %@", fpath);
 	[delegate refreshPath: fpath];
 }
 

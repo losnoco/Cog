@@ -21,6 +21,7 @@
 	[watcher setDelegate:self];
 	
 	[self setRootPath: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"] ]; 
+	NSLog(@"AWAKENED");
 }
 
 - (void)dealloc
@@ -44,20 +45,17 @@
 	[rootPath release];
 	rootPath = r;
 
-	[watcher removePath:r];
-	[watcher addPath:rootPath];
-	
 	[self refreshRoot];
 }
 
 - (void) refreshRoot
 {
 	DirectoryNode *base = [[DirectoryNode alloc] initWithPath:rootPath controller:self];
-	NSLog(@"Subpaths: %i", [[base subpaths] count]);
 	[self setContent: [base subpaths]];
-	NSLog(@"Test: %i", [[self content] retainCount]);
 
 	[base release];
+	
+	[watcher addPath:rootPath];
 }
 
 //BUG IN NSTREECONTROLLER'S SETCONTENT. FIX YOUR SHIT, APPLE!
