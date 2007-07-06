@@ -13,7 +13,7 @@
 		<key>1324</key>
 		<string>664 542 137 182 0 0 1440 878 </string>
 		<key>29</key>
-		<string>128 827 383 44 0 0 1440 878 </string>
+		<string>160 976 468 44 0 0 1680 1028 </string>
 		<key>463</key>
 		<string>583 512 341 145 0 0 1440 878 </string>
 		<key>513</key>
@@ -32,6 +32,10 @@
 	</array>
 	<key>IBOldestOS</key>
 	<integer>4</integer>
+	<key>IBOpenObjects</key>
+	<array>
+		<integer>29</integer>
+	</array>
 	<key>IBSystem Version</key>
 	<string>8R2218</string>
 </dict>
