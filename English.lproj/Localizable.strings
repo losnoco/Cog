@@ -20,3 +20,5 @@
 
 "InvalidURLShort" = "Invalid URL";
 "InvalidURLLong" = "The URL is not valid.";
+
+"Preferences: " = "Preferences: ";
