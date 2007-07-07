@@ -345,6 +345,8 @@
     // Update defaults
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:name forKey:Last_Pane_Defaults_Key];
+
+    [prefsToolbar setSelectedItemIdentifier: name];
     
     return YES;
 }
@@ -428,7 +430,6 @@ float ToolbarHeightForWindow(NSWindow *window)
     } else if (!alwaysShowsToolbar && prefsToolbarItems && ([prefsToolbarItems count] == 1)) {
         [self debugLog:@"Not showing toolbar in Preferences window because there is only one preference pane loaded. You can override this behaviour using -[setAlwaysShowsToolbar:YES]."];
     }
-    [prefsToolbar setSelectedItemIdentifier: [panesOrder objectAtIndex: 0]];
 }
 
 

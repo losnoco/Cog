@@ -21,8 +21,8 @@
 	NSDictionary *defaultDevice = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 	
 	for (i = 0; i < nDevices; ++i) {
-		char name[64];
-		UInt32 maxlen = 64;
+		char name[256];
+		UInt32 maxlen = 256;
 		verify_noerr(AudioDeviceGetProperty(devids[i], 0, false, kAudioDevicePropertyDeviceName, &maxlen, name));
 		NSLog(@"Device: %d %s", devids[i], name);
 		
@@ -36,7 +36,7 @@
 		if (propSize <= sizeof(UInt32)) continue;
 
 		NSObject *deviceInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSString stringWithCString:name], @"name",
+			[NSString stringWithUTF8String:name], @"name",
 			[NSNumber numberWithLong:devids[i]], @"deviceID",
 			nil];
 		[self addObject:deviceInfo];
