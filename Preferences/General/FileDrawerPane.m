@@ -13,7 +13,7 @@
 
 - (void)awakeFromNib
 {
-	[self setName:@"File Drawer"];
+	[self setName:NSLocalizedString(@"File Drawer", @"")];
 	[self setIcon:@"file_drawer"];
 	
 	[rootPathTextView setStringValue:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"]];

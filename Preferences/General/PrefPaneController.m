@@ -38,17 +38,17 @@
 
 - (PreferencePane *)remotePane
 {
-	return [PreferencePane preferencePaneWithView:remoteView name:@"Remote" icon:@"apple_remote"];
+	return [PreferencePane preferencePaneWithView:remoteView name:NSLocalizedString(@"Remote", @"") icon:@"apple_remote"];
 }
 
 - (PreferencePane *)updatesPane
 {
-	return [PreferencePane preferencePaneWithView:updatesView name:@"Updates" icon:@"updates"];
+	return [PreferencePane preferencePaneWithView:updatesView name:NSLocalizedString(@"Updates", @"") icon:@"updates"];
 }
 
 - (PreferencePane *)scrobblerPane
 {
-	return [PreferencePane preferencePaneWithView:scrobblerView name:@"Last.fm" icon:@"lastfm"];
+	return [PreferencePane preferencePaneWithView:scrobblerView name:NSLocalizedString(@"Last.fm", @"") icon:@"lastfm"];
 }
 
 @end
