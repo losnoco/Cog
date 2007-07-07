@@ -6,20 +6,20 @@
 "PlayButtonTooltip" = "Wiedergabe";
 "StopButtonTooltip" = "Stop";
 "PrevButtonTooltip" = "Vorheriger";
-"NextButtonTooltip" = "N둩hster";
+"NextButtonTooltip" = "N채chster";
 
 "TimeElapsed" = "%i:%02i";
 "TimeRemaining" = "-%i:%02i";
 
-"AddButtonTooltip" = "Dateien hinzuf웗en";
-"RemoveButtonTooltip" = "Ausgew둯lte Dateien entfernen";
-"InfoButtonTooltip" = "Information 웑er ausgew둯lte Datei";
+"AddButtonTooltip" = "Dateien hinzuf체gen";
+"RemoveButtonTooltip" = "Ausgew채hlte Dateien entfernen";
+"InfoButtonTooltip" = "Information 체ber ausgew채hlte Datei";
 "ShuffleButtonTooltip" = "Zufallsreihenfolge";
 "RepeatButtonTooltip" = "Wiederholen";
 "FileButtonTooltip" = "Datei-Browser";
 
-"InvalidURLShort" = "Ung웞tige URL";
-"InvalidURLLong" = "Die URL ist nicht g웞tig.";
+"InvalidURLShort" = "Ung체ltige URL";
+"InvalidURLLong" = "Die URL ist nicht g체ltig.";
 
 "Preferences: " = "Preferences: ";
 

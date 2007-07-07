@@ -2,10 +2,10 @@
 "Stable" = "Stable";
 "Unstable" = "Unstable";
 
-"File Drawer" = "File Drawer";
-"Hot Keys" = "Hot Keys";
-"Output" = "Output";
+"File Drawer" = "Datei-Browser";
+"Hot Keys" = "Tastenkürzel";
+"Output" = "Ausgabe";
 
-"Remote" = "Remote";
+"Remote" = "Fernsteuerung";
 "Updates" = "Updates";
 "Last.fm" = "Last.fm";
