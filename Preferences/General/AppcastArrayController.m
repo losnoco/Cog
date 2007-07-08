@@ -17,15 +17,15 @@
 
 	[self addObject:
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedString(@"Stable", @""), @"name", @"http://cogx.org/appcast/stable.xml", @"url",nil]];
+			NSLocalizedStringFromTableInBundle(@"Stable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://cogx.org/appcast/stable.xml", @"url",nil]];
 			
 	[self addObject:
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedString(@"Unstable", @""), @"name", @"http://cogx.org/appcast/unstable.xml", @"url",nil]];
+			NSLocalizedStringFromTableInBundle(@"Unstable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://cogx.org/appcast/unstable.xml", @"url",nil]];
 			
 	[self addObject:
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedString(@"Nightly", @""), @"name", @"http://cogx.org/appcast/nightly.xml", @"url",nil]];
+			NSLocalizedStringFromTableInBundle(@"Nightly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://cogx.org/appcast/nightly.xml", @"url",nil]];
 }
 
 

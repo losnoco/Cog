@@ -14,7 +14,7 @@
 - (void)awakeFromNib
 {
 	NSLog(@"AWOKEN!");
-	[self setName:NSLocalizedString(@"Output", @"")];
+	[self setName:NSLocalizedStringFromTableInBundle(@"Output", nil, [NSBundle bundleForClass:[self class]], @"") ];
 	[self setIcon:@"output"];
 }
 

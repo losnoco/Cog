@@ -38,17 +38,18 @@
 
 - (PreferencePane *)remotePane
 {
-	return [PreferencePane preferencePaneWithView:remoteView name:NSLocalizedString(@"Remote", @"") icon:@"apple_remote"];
+	NSLog(@"Localizations; %@", [[NSBundle mainBundle] localizations]);
+	return [PreferencePane preferencePaneWithView:remoteView name:NSLocalizedStringFromTableInBundle(@"Remote", nil, [NSBundle bundleForClass:[self class]],  @"")  icon:@"apple_remote"];
 }
 
 - (PreferencePane *)updatesPane
 {
-	return [PreferencePane preferencePaneWithView:updatesView name:NSLocalizedString(@"Updates", @"") icon:@"updates"];
+	return [PreferencePane preferencePaneWithView:updatesView name:NSLocalizedStringFromTableInBundle(@"Updates", nil, [NSBundle bundleForClass:[self class]], @"")  icon:@"updates"];
 }
 
 - (PreferencePane *)scrobblerPane
 {
-	return [PreferencePane preferencePaneWithView:scrobblerView name:NSLocalizedString(@"Last.fm", @"") icon:@"lastfm"];
+	return [PreferencePane preferencePaneWithView:scrobblerView name:NSLocalizedStringFromTableInBundle(@"Last.fm", nil, [NSBundle bundleForClass:[self class]], @"")  icon:@"lastfm"];
 }
 
 @end

@@ -13,7 +13,7 @@
 
 - (void)awakeFromNib
 {
-	[self setName:NSLocalizedString(@"Hot Keys", @"")];
+	[self setName:NSLocalizedStringFromTableInBundle(@"Hot Keys", nil, [NSBundle bundleForClass:[self class]], @"") ];
 	[self setIcon:@"hot_keys"];	
 
 //	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object: [view window]];

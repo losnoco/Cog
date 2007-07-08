@@ -339,7 +339,7 @@
     [prefsWindow setShowsResizeIndicator:canResize];
 
     if ((prefsToolbarItems && ([prefsToolbarItems count] > 1)) || alwaysShowsToolbar) {
-        [prefsWindow setTitle:[NSLocalizedString(@"Preferences: ", @"") stringByAppendingString:name]];
+        [prefsWindow setTitle:name];
     }
     
     // Update defaults
