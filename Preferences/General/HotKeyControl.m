@@ -46,7 +46,7 @@ extern CGError CGSSetGlobalHotKeyOperatingMode(CGSConnection connection,
 	[self disableAllHotKeys];
 	
 	observing = YES;
-	[self setStringValue:@"Press Key..."];
+	[self setStringValue:NSLocalizedStringFromTableInBundle(@"Press Key...", nil, [NSBundle bundleForClass:[self class]], @"")];
 }
 
 - (void)stopObserving
