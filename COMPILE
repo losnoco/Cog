@@ -1,5 +1,3 @@
-To compile Cog, you must first compile all of the projects in the Frameworks, Plugins, and Preferences folders with the Release build configuration.
-
-To make this easier, I have created a bash script named build_dependencies.sh in the Scripts folder. Just run that in a terminal from the project root (./Scripts/build_dependencies.sh). When it is finished, all the dependencies should be built.
+To compile Cog, simply open the Cog xcode project and build it.
 
 If you have any problems, email me at vspader@users.sourceforge.net

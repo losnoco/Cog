@@ -1,8 +1,8 @@
-Cog is released under the GPL. See COPYING for details.
+Cog is authored by Vincent Spader. It is released under the GPL. See COPYING for details.
 
-The libraries folder contains various decoding and tagging libraries, which i have created Xcode projects for, and possibly modified to make compile on OS X. The various libraries are under each of their own licenses.
+The libraries folder contains various decoding and tagging libraries, which i have created Xcode projects for, and possibly modified to make compile on OS X. The various libraries are under each of their own licenses/copyrights.
 
-All Cog code is copyrighted by me, and is licensed under the GPL.
+All Cog code is copyrighted by me, and is licensed under the GPL. Cog contains bits of other code from third parties that are under their own licenses/copyright.
     
 If you would like the photoshop sources for the various icons and graphics, please send me an email, and I will be happy to get them to you.
 
