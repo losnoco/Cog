@@ -79,7 +79,7 @@
 {
 	[i retain];
 	[idx release];
-	NSLog(@"INDEX: %@", i);
+
 	idx = i;
 }
 
@@ -149,7 +149,6 @@
 
 - (NSString *)title
 {
-//	DBLog(@"HERE FUCK: %@", title);
 	return title;
 }
 

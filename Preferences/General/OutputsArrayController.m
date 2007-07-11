@@ -4,19 +4,16 @@
 
 - (void)awakeFromNib
 {
-	NSLog(@"initOutputDeviceList");
 	[self removeObjects:[self arrangedObjects]];
 	
 	[self setSelectsInsertedObjects:NO];
 			
-	NSLog(@"OutputCoreAudio.setup()");
 	UInt32 propsize;
 	verify_noerr(AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &propsize, NULL));
 	int nDevices = propsize / sizeof(AudioDeviceID);	
 	AudioDeviceID *devids = malloc(propsize);
 	verify_noerr(AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propsize, devids));
 	int i;
-	NSLog(@"Number of devices: %d", nDevices);
 	
 	NSDictionary *defaultDevice = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 	
@@ -24,7 +21,6 @@
 		char name[256];
 		UInt32 maxlen = 256;
 		verify_noerr(AudioDeviceGetProperty(devids[i], 0, false, kAudioDevicePropertyDeviceName, &maxlen, name));
-		NSLog(@"Device: %d %s", devids[i], name);
 		
 		// Ignore devices that have no output channels:
 		// This tells us the size of the buffer required to hold the information about the channels
@@ -44,7 +40,6 @@
 		if (defaultDevice) {
 			if ([[defaultDevice objectForKey:@"deviceID"] isEqualToNumber:[deviceInfo objectForKey:@"deviceID"]]) {
 				[self setSelectedObjects:[NSArray arrayWithObject:deviceInfo]];
-				NSLog(@"Selected default!");
 			}
 		}
 

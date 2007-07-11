@@ -16,7 +16,6 @@
     if (!prefs) {
         // Determine path to the sample preference panes
         NSString *pathToPanes = [[NSBundle mainBundle] resourcePath];
-		NSLog(@"Loading preferences...%@", pathToPanes);
         
         prefs = [[SS_PrefsController alloc] initWithPanesSearchPath:pathToPanes bundleExtension:@"preferencePane"];
 		[prefs setDebug:YES];

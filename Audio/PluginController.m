@@ -85,7 +85,6 @@ static PluginController *sharedPluginController = nil;
 
 	NSString *pname;
 
-	NSLog(@"Loading plugins at %@, candidates: %@", path, dirContents);
 	while (pname = [dirEnum nextObject])
 	{
 		NSString *ppath;
@@ -96,12 +95,10 @@ static PluginController *sharedPluginController = nil;
 			NSBundle *b = [NSBundle bundleWithPath:ppath];
 			if (b)
 			{
-				NSLog(@"Loaded bundle: %@", b);
 				Class plugin = [b principalClass];
-				NSLog(@"Candidate: %@", plugin);
+
 				if ([plugin respondsToSelector:@selector(pluginInfo)])
 				{
-					NSLog(@"Responds to selector...");
 					//PluginInfo is a dictionary that contains keys/values like pluginClass,classType...ex: VorbisDecoder, Decoder
 					NSDictionary *pluginInfo = [plugin pluginInfo];
 					NSEnumerator *e = [pluginInfo keyEnumerator];
@@ -109,19 +106,15 @@ static PluginController *sharedPluginController = nil;
 					while (className = [e nextObject]) {
 						id pluginType = [pluginInfo objectForKey:className];
 						if ([pluginType isEqualToString:kCogDecoder]) {
-							NSLog(@"DECODER");
 							[self setupDecoder:className];
 						}
 						else if ([pluginType isEqualToString:kCogMetadataReader]) {
-							NSLog(@"Metadata");
 							[self setupMetadataReader:className];
 						}
 						else if ([pluginType isEqualToString:kCogPropertiesReader]) {
-							NSLog(@"Properties");
 							[self setupPropertiesReader:className];
 						}
 						else if ([pluginType isEqualToString:kCogSource]) {
-							NSLog(@"Source");
 							[self setupSource:className];
 						}
 						else {
@@ -194,10 +187,10 @@ static PluginController *sharedPluginController = nil;
 
 - (void)printPluginInfo
 {
-	NSLog(@"Sources: %@", sources);
+/*	NSLog(@"Sources: %@", sources);
 	NSLog(@"Decoders: %@", decoders);
 	NSLog(@"Metadata Readers: %@", metadataReaders);
-	NSLog(@"Properties Readers: %@", propertiesReaders);
+	NSLog(@"Properties Readers: %@", propertiesReaders); */
 }
 
 - (NSDictionary *)sources

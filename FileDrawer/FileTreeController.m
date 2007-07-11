@@ -21,15 +21,12 @@
 	[watcher setDelegate:self];
 	
 	[self setRootPath: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"] ]; 
-	NSLog(@"AWAKENED");
 }
 
 - (void)dealloc
 {
 	[rootPath release];
 	[watcher release];
-	
-	NSLog(@"DEALLOCATING CONTROLLER");
 	
 	[super dealloc];
 }
@@ -203,7 +200,6 @@
 		[url release];
 	}
 	
-	NSLog(@"Adding URLs: %@", urls);
 	[playlistLoader addURLs:urls sort:YES];
 	[urls release];
 }

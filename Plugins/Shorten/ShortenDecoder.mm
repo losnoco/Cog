@@ -93,7 +93,6 @@
 {
 	if(decoder)
 	{
-		NSLog(@"Exiting decoder!");
 		decoder->exit();
 		delete decoder;
 		decoder	= NULL;

@@ -65,7 +65,6 @@
 		int l = [_socket receive:buffer amount:amount];
 		uint8_t *f;
 		while(NULL == (f = (uint8_t *)strnstr((const char *)buffer, "\r\n\r\n", l))) {
-			NSLog(@"LOOKING FOR HEADER! %i", f);
 			fwrite(buffer, 1,l, testFout);
 			//Need to check for boundary conditions
 			memmove(buffer, (uint8_t *)buffer + (l - delimeter_size), delimeter_size);

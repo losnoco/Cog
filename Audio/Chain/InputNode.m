@@ -17,7 +17,6 @@
 {
 	outputFormat = of;
 	
-	NSLog(@"Opening: %@", url);
 	decoder = [AudioDecoder audioDecoderForURL:url];
 	[decoder retain];
 
@@ -27,7 +26,6 @@
 	
 	[self registerObservers];
 
-	NSLog(@"Got decoder...%@", decoder);
 	if (decoder == nil)
 		return NO;
 
@@ -40,7 +38,6 @@
 	shouldContinue = YES;
 	shouldSeek = NO;
 	
-	NSLog(@"OPENED");
 	return YES;
 }
 
@@ -51,8 +48,6 @@
 				 options:(NSKeyValueObservingOptionNew)
 				 context:NULL];
 
-	NSLog(@"ADDED OBSERVER!!!");
-	
 	[decoder addObserver:self
 			  forKeyPath:@"metadata" 
 				 options:(NSKeyValueObservingOptionNew)
@@ -65,12 +60,9 @@
                        context:(void *)context
 {
 	if ([keyPath isEqual:@"properties"]) {
-		NSLog(@"Properties changed!");
 		//Setup converter!
 		[converter cleanUp];
-		NSLog(@"CLEANED UP");
 		[converter setupWithInputFormat:propertiesToASBD([decoder properties]) outputFormat:outputFormat];
-		NSLog(@"CREATED CONVERTED");
 		//Inform something of properties change
 	}
 	else if ([keyPath isEqual:@"metadata"]) {
@@ -82,14 +74,11 @@
 {
 	int amountRead = 0, amountConverted = 0, amountInBuffer = 0;
 	void *inputBuffer = malloc(CHUNK_SIZE);
-
-	NSLog(@"Playing file: %i", self);
 	
 	while ([self shouldContinue] == YES && [self endOfStream] == NO)
 	{
 		if (shouldSeek == YES)
 		{
-			NSLog(@"Actually seeking");
 			[decoder seekToTime:seekTime];
 			shouldSeek = NO;
 
@@ -114,7 +103,6 @@
 				[controller initialBufferFilled];
 			}
 			
-			NSLog(@"END OF FILE?! %i %i", amountRead, amountConverted);
 			endOfStream = YES;
 			[controller endOfInputReached];
 			break; //eof
@@ -127,13 +115,10 @@
 	[converter cleanUp];
 	
 	free(inputBuffer);
-	
-	NSLog(@"CLOSED: %i", self);
 }
 
 - (void)seek:(double)time
 {
-	NSLog(@"SEEKING IN INPUTNODE");
 	seekTime = time;
 	shouldSeek = YES;
 	[self resetBuffer];

@@ -26,7 +26,6 @@
 - (void)dealloc {
 	[[controller watcher] removePath:[self path]];
 	
-	NSLog(@"DEALLOC: %@", self);
 	if (subpaths)
 		[subpaths release];
 

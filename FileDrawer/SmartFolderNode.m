@@ -39,13 +39,11 @@
 //need to merge this and directorynode
 - (void)processContents: (NSArray *)contents
 {
-	NSLog(@"PROCESSING: %@", contents);
 	NSEnumerator *e = [contents objectEnumerator];
 	NSString *s;
 	
 	while (s = [e nextObject])
 	{
-		NSLog(@"STRING: %@", s);
 /*		if ([s characterAtIndex:0] == '.')
 		{
 			continue;
@@ -64,10 +62,9 @@
 			
 			[[NSFileManager defaultManager] fileExistsAtPath:s isDirectory:&isDir];
 			
-			NSLog(@"IS IT ACCEPTABLE?");
 			if (!isDir && ![[controller acceptableFileTypes] containsObject:[s pathExtension]])
 				continue;
-			NSLog(@"IS IT A FILE?");
+
 			if (isDir)
 				newNode = [[DirectoryNode alloc] initWithPath: s controller:controller];
 			else
@@ -75,7 +72,7 @@
 		}
 					
 		[subpaths addObject:newNode];
-		NSLog(@"SUBPATHS IN PROCESS: %@", subpaths);
+
 		[newNode release];
 	}
 }
@@ -90,7 +87,6 @@
 		NSString *rawQuery = [doc objectForKey:@"RawQuery"];
 		NSArray *searchPaths = [[doc objectForKey:@"SearchCriteria"] objectForKey:@"CurrentFolderPath"];
 		
-		NSLog(@"Query: %@", rawQuery);
 		// Ugh, Carbon from now on...
 		MDQueryRef query = MDQueryCreate(kCFAllocatorDefault, (CFStringRef)rawQuery, NULL, NULL);
 		
@@ -99,9 +95,7 @@
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString*)kMDQueryDidFinishNotification object:(id)query];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(id)query];
 
-		NSLog(@"PATHS: %@", searchPaths);
 		MDQueryExecute(query, kMDQueryWantsUpdates);
-		NSLog(@"QUERY FINISHED: %@", subpaths);
 	}
 	
 	return subpaths;
@@ -139,7 +133,6 @@
 		MDItemRef  item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
 		
 		NSString *itemPath = (NSString*)MDItemCopyAttribute(item, kMDItemPath);
-		NSLog(@"RESULT PATH: %@", itemPath);
 		
 		[results addObject:itemPath];
 		
@@ -154,8 +147,6 @@
 
 - (void)queryUpdate:(NSNotification *)notification
 {
-	NSLog(@"QUERY UPDATE: %@", notification);
-
 	[subpaths removeAllObjects];
 	[self queryFinished: notification];
 }

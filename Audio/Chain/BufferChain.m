@@ -60,7 +60,6 @@
 
 - (void)launchThreads
 {
-	DBLog(@"LAUNCHING THREAD FOR INPUT");
 	[inputNode launchThread];
 }
 
@@ -97,7 +96,6 @@
 
 - (void)initialBufferFilled
 {
-	NSLog(@"Filled initial buffer!");
 	[controller launchOutputThread];
 }
 

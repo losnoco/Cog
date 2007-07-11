@@ -236,7 +236,7 @@ void *allocateVirtualBuffer(UInt32 bufferLength)
     }
     if (realAddress != originalAddress) {
 #if DEBUG
-        DBLog(@"allocateVirtualBuffer: vm_allocate 2nd time didn't return same address (%p vs %p)", originalAddress, realAddress);
+        NSLog(@"allocateVirtualBuffer: vm_allocate 2nd time didn't return same address (%p vs %p)", originalAddress, realAddress);
 #endif
         goto errorReturn;
     }
@@ -252,13 +252,13 @@ void *allocateVirtualBuffer(UInt32 bufferLength)
     }
     if (!memoryEntry) {
 #if DEBUG
-        DBLog(@"mach_make_memory_entry: returned memoryEntry of NULL");
+        NSLog(@"mach_make_memory_entry: returned memoryEntry of NULL");
 #endif
         goto errorReturn;
     }
     if (memoryEntryLength != bufferLength) {
 #if DEBUG
-        DBLog(@"mach_make_memory_entry: size changed (from %0x to %0x)", bufferLength, memoryEntryLength);
+        NSLog(@"mach_make_memory_entry: size changed (from %0x to %0x)", bufferLength, memoryEntryLength);
 #endif
         goto errorReturn;
     }
@@ -277,7 +277,7 @@ void *allocateVirtualBuffer(UInt32 bufferLength)
     }
     if (virtualAddress != realAddress + bufferLength) {
 #if DEBUG
-        DBLog(@"vm_map: didn't return correct address (%p vs %p)", realAddress + bufferLength, virtualAddress);
+        NSLog(@"vm_map: didn't return correct address (%p vs %p)", realAddress + bufferLength, virtualAddress);
 #endif
         goto errorReturn;
     }

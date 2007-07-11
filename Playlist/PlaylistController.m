@@ -154,7 +154,6 @@
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	NSLog(@"REMOVING");
 	NSArray *a = [[self arrangedObjects] objectsAtIndexes:indexes]; //Screw 10.3
 	
 	if ([a containsObject:currentEntry])
@@ -265,7 +264,6 @@
 	{
 		if (repeat == YES)
 		{
-			NSLog(@"Adding shuffled list to back!");
 			[self addShuffledListToBack];
 		}
 		else

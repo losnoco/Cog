@@ -80,7 +80,6 @@
 		url = nextStream;
 		if (url == nil)
 		{
-			NSLog(@"End of playlist? Nothing left.");
 			return;
 		}
 	
@@ -96,7 +95,7 @@
 	[self setShouldContinue:YES];
 	
 	outputLaunched = NO;
-	NSLog(@"Launching input thread!");
+
 	[bufferChain launchThreads];
 }
 
@@ -168,12 +167,10 @@
 {
 	[self setPlaybackStatus:kCogStatusPlaying];	
 	if (outputLaunched == NO) {
-		NSLog(@"Launching output thread!");
 		[output launchThread];
 		outputLaunched = YES;
 	}
 	else {
-		NSLog(@"Resuming not launching");
 		[self setShouldContinue:YES];
 		[output resume];
 	}
@@ -227,15 +224,12 @@
 	if ([chainQueue count] <= 0)
 	{
 		//End of playlist
-		DBLog(@"STOPPED");
 		[self stop];
 		
 		return;
 	}
-//	NSLog(@"SWAPPING BUFFERS");
 	[bufferChain release];
 	
-	DBLog(@"END OF INPUT PLAYED");
 	bufferChain = [chainQueue objectAtIndex:0];
 	[bufferChain retain];
 	

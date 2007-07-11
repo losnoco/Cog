@@ -12,7 +12,6 @@
 
 mpc_int32_t ReadProc(void *data, void *ptr, mpc_int32_t size)
 {
-	NSLog(@"MPC Read: %i", size);
     MusepackDecoder *decoder = (MusepackDecoder *) data;
 	
 	return [[decoder source] read:ptr amount:size];
@@ -21,13 +20,12 @@ mpc_int32_t ReadProc(void *data, void *ptr, mpc_int32_t size)
 mpc_bool_t SeekProc(void *data, mpc_int32_t offset)
 {
     MusepackDecoder *decoder = (MusepackDecoder *) data;
-	NSLog(@"MPC Seek: %i", offset);
+
     return [[decoder source] seek:offset whence:SEEK_SET];
 }
 
 mpc_int32_t TellProc(void *data)
 {
-	NSLog(@"MPC Tell");
     MusepackDecoder *decoder = (MusepackDecoder *) data;
 	
     return [[decoder source] tell];
@@ -35,7 +33,6 @@ mpc_int32_t TellProc(void *data)
 
 mpc_int32_t GetSizeProc(void *data)
 {
-	NSLog(@"MPC GetSize");
     MusepackDecoder *decoder = (MusepackDecoder *) data;
 	
 	if ([[decoder source] seekable]) {
@@ -55,7 +52,6 @@ mpc_int32_t GetSizeProc(void *data)
 
 mpc_bool_t CanSeekProc(void *data)
 {
-	NSLog(@"MPC Canseek");
     MusepackDecoder *decoder = (MusepackDecoder *) data;
 	
 	return [[decoder source] seekable];
@@ -71,7 +67,6 @@ mpc_bool_t CanSeekProc(void *data)
 	reader.get_size = GetSizeProc;
 	reader.canseek = CanSeekProc;
 	reader.data = self;
-	NSLog(@"%@", reader.data);
 	
     mpc_streaminfo_init(&info);
     if (mpc_streaminfo_read(&info, &reader) != ERROR_CODE_OK)
@@ -94,8 +89,6 @@ mpc_bool_t CanSeekProc(void *data)
 		
 	length = ((double)mpc_streaminfo_get_length_samples(&info)*1000.0)/frequency;	
 
-	NSLog(@"Length: %lf", length);
-	
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 	

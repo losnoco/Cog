@@ -658,7 +658,6 @@ static void QueueCallbackFunction(void* target,  IOReturn result, void* refcon, 
 }
 
 - (void) dealloc {
-    NSLog(@"Dealloc");
     [applicationDelegate release];
     [super dealloc];
 }

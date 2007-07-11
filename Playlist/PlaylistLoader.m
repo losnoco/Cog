@@ -111,8 +111,6 @@
 
 - (NSArray *)urlsFromM3u:(NSString *)filename
 {
-	NSLog(@"Loading playlist: %@", filename);
-	
     NSError *error = nil;
     NSString *contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
     if (error || !contents) {
@@ -140,13 +138,11 @@
 {
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if (!fileHandle) {
-		NSLog(@"Error!");
+		NSLog(@"Error saving m3u!");
 		return nil;
 	}
 	[fileHandle truncateFileAtOffset:0];
 	
-	NSLog(@"Saving: %@", filename);
-
 	PlaylistEntry *pe;
 	NSEnumerator *e = [[playlistController content] objectEnumerator];
 
@@ -263,7 +259,6 @@
 	if (index < 0)
 		index = 0;
 	
-	NSLog(@"URLS: %@", urls);
 	NSEnumerator *urlEnumerator = [urls objectEnumerator];
 	NSURL *url;
 	while (url = [urlEnumerator nextObject])
@@ -290,8 +285,6 @@
 		}
 	}
 
-	NSLog(@"Expanded URLs: %@", expandedURLs);
-
 	NSArray *sortedURLs;
 	if (sort == YES)
 	{
@@ -306,8 +299,6 @@
 		sortedURLs = [expandedURLs copy];
 	}
 
-	NSLog(@"Sorted URLs: %@", expandedURLs);
-	
 	urlEnumerator = [sortedURLs objectEnumerator];
 	while (url = [urlEnumerator nextObject])
 	{
@@ -321,8 +312,6 @@
 		}
 	}
 
-	NSLog(@"All URLs: %@", allURLs);
-	
 	urlEnumerator = [allURLs objectEnumerator];
 	while (url = [urlEnumerator nextObject])
 	{
@@ -340,9 +329,6 @@
 			[uniqueURLs addObject:url];
 		}
 	}
-
-	NSLog(@"Valid URLs: %@", validURLs);
-	
 
 	//Create actual entries
 	int i;

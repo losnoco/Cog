@@ -31,7 +31,7 @@
 
 - (void)FeedbackErrorOccurred:(NSNotification *)aNotification
 {
-	DBLog(@"Error sending feedback");
+	NSLog(@"Error sending feedback");
 	
 	[sendingIndicator stopAnimation:self];
 
@@ -44,8 +44,6 @@
 
 - (void)FeedbackSent:(NSNotification *)aNotification
 {
-//	DBLog(@"Feedback Sent");
-
 	[sendingIndicator stopAnimation:self];
 
 	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
@@ -58,8 +56,6 @@
 
 - (IBAction)sendFeedback:(id)sender
 {
-//	DBLog(@"Sending feedback...");
-
 	[sendingIndicator startAnimation:self];
 	
 	//Using this so that if its a bad connection, it doesnt sit there looking stupid..or should it

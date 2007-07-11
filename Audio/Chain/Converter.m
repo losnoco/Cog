@@ -66,7 +66,6 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 
 - (void)reset
 {
-	NSLog(@"RESETTING");
 	AudioConverterReset(converter);
 }
 
@@ -105,7 +104,6 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 
 - (void)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf
 {
-	NSLog(@"CREATING THE CONVERTER");
 	//Make the converter
 	OSStatus stat = noErr;
 	
@@ -135,20 +133,15 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 									kAudioConverterPropertyCalculateOutputBufferSize,
 									&dataSize,
 									(void*)&outputSize);
-	NSLog(@"Output size: %i %i", outputSize, CHUNK_SIZE);
+
 	if (outputBuffer)
 	{
-		NSLog(@"FREEING");
 		free(outputBuffer);
-		NSLog(@"FREED");
 	}
 	outputBuffer = malloc(outputSize);
 	
-	
-	NSLog(@"Converter setup!");
-
-	PrintStreamDesc(&inf);
-	PrintStreamDesc(&outf);
+	//PrintStreamDesc(&inf);
+	//PrintStreamDesc(&outf);
 }
 
 

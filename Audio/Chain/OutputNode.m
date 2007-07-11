@@ -24,7 +24,6 @@
 
 - (void)seek:(double)time
 {
-	NSLog(@"SEEKING!");
 	[output pause];
 
 	amountPlayed = time*format.mBytesPerFrame*(format.mSampleRate/1000.0);
@@ -38,13 +37,11 @@
 - (void)pause
 {
 	[output pause];
-	NSLog(@"PAUSED!");
 }
 
 - (void)resume
 {
 	[output resume];
-	NSLog(@"RESUMED");
 }
 
 - (int)readData:(void *)ptr amount:(int)amount
@@ -57,15 +54,14 @@
 	n = [super readData:ptr amount:amount];
 	if (endOfStream == YES)
 	{
-		NSLog(@"End of stream reached!");
 		amountPlayed = 0;
 		[controller endOfInputPlayed]; //Updates shouldContinue appropriately?
 	}
 
-	if (n == 0) {
+/*	if (n == 0) {
 		NSLog(@"Output Buffer dry!");
 	}
-	
+*/	
 	amountPlayed += n;
 
 	[pool release];

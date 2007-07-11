@@ -59,7 +59,6 @@ extern CGError CGSSetGlobalHotKeyOperatingMode(CGSConnection connection,
 
 - (BOOL)becomeFirstResponder
 {
-	NSLog(@"BECAME FIRST");
 	[self startObserving];
 	
 	return YES;
@@ -94,7 +93,6 @@ extern CGError CGSSetGlobalHotKeyOperatingMode(CGSConnection connection,
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-	NSLog(@"MOUSE DOWN");
 	[self startObserving];
 }
 

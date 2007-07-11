@@ -41,7 +41,6 @@
 /*- (void)windowDidBecomeKey:(id)notification
 {
 	if ([notification object] == [view window]) {
-		NSLog(@"BECAME KEY: %@", notification);
 		[playHotKeyControl startObserving];
 		[prevHotKeyControl startObserving];
 		[nextHotKeyControl startObserving];
@@ -51,7 +50,6 @@
 - (void)windowDidResignKey:(id)notification
 {
 	if ([notification object] == [view window]) {
-		NSLog(@"RESIGNED KEY: %@", notification);
 		[playHotKeyControl stopObserving];
 		[prevHotKeyControl stopObserving];
 		[nextHotKeyControl stopObserving];

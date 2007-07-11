@@ -38,7 +38,6 @@
 
 - (PreferencePane *)remotePane
 {
-	NSLog(@"Localizations; %@", [[NSBundle mainBundle] localizations]);
 	return [PreferencePane preferencePaneWithView:remoteView name:NSLocalizedStringFromTableInBundle(@"Remote", nil, [NSBundle bundleForClass:[self class]],  @"")  icon:@"apple_remote"];
 }
 

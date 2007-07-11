@@ -1,7 +1,6 @@
 #import "PlaybackController.h"
 #import "PlaylistView.h"
 
-#import "DBLog.h"
 #import "CogAudio/Status.h"
 
 #import "PlaylistController.h"
@@ -59,7 +58,6 @@
 	
 - (IBAction)playPauseResume:(id)sender
 {
-	DBLog(@"PLAYING");
 	if (playbackStatus == kCogStatusStopped)
 		[self play:self];
 	else
@@ -68,7 +66,6 @@
 
 - (IBAction)pauseResume:(id)sender
 {
-//	DBLog(@"Pause/Resume Sent!");
 	if (playbackStatus == kCogStatusPaused)
 		[self resume:self];
 	else
@@ -77,7 +74,6 @@
 
 - (IBAction)pause:(id)sender
 {
-//	DBLog(@"Pause Sent!");
 	[audioPlayer pause];
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
@@ -87,7 +83,6 @@
 
 - (IBAction)resume:(id)sender
 {
-//	DBLog(@"Resume Sent!");
 	[audioPlayer resume];
 
 	
@@ -98,8 +93,6 @@
 
 - (IBAction)stop:(id)sender
 {
-//	DBLog(@"Stop Sent!");
-
 	[audioPlayer stop];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
@@ -126,7 +119,6 @@
 
 - (void)playEntry:(PlaylistEntry *)pe
 {
-//	DBLog(@"PlayEntry: %@ Sent!", [pe filename]);
 	if (playbackStatus != kCogStatusStopped)
 		[self stop:self];
 	
@@ -163,7 +155,6 @@
 
 - (IBAction)prev:(id)sender
 {
-	DBLog(@"CALLING");
 	if ([playlistController prev] == nil)
 		return;
 
@@ -173,7 +164,6 @@
 
 - (IBAction)seek:(id)sender
 {
-//	DBLog(@"SEEKING?");
 	double time;
 	time = [positionSlider doubleValue];
 
@@ -191,11 +181,11 @@
 	[alt retain];
 	if (img == nil)
 	{
-		DBLog(@"NIL IMAGE!!!");
+		NSLog(@"Error loading image!");
 	}
 	if (alt == nil)
 	{
-		DBLog(@"NIL ALT");
+		NSLog(@"Error loading alt image...");
 	}
 	
 	[playButton setImage:img];
@@ -298,7 +288,6 @@
 	}
 	else
 	{
-		DBLog(@"NEXT SONG: %@", [pe url]);
 		[player setNextStream:[pe url] withUserInfo:pe];
 	}
 }
@@ -332,7 +321,6 @@
 
 	if ([positionSlider tracking] == NO)
 	{
-		//		DBLog(@"Received pos update: %f", pos);
 		[positionSlider setDoubleValue:pos];
 		[self updateTimeField:pos];
 	}
@@ -345,7 +333,6 @@
 	int status = [s intValue];
 	if (status == kCogStatusStopped || status == kCogStatusPaused)
 	{
-		DBLog(@"INVALIDATING");
 		if (positionTimer)
 		{
 			[positionTimer invalidate];

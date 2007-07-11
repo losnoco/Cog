@@ -517,7 +517,6 @@ static inline signed int scale (mad_fixed_t sample)
 			channels = MAD_NCHANNELS(&_frame.header);
 			bitsPerSample = 16;
 
-			NSLog(@"FORMAT CHANGED: %f", frequency);
 			[self willChangeValueForKey:@"properties"];
 			[self didChangeValueForKey:@"properties"];
 			
@@ -577,8 +576,6 @@ static inline signed int scale (mad_fixed_t sample)
 	mad_synth_mute(&_synth);
 
 	_seekSkip = YES;
-	
-	NSLog(@"Seeking: %lf", seconds*1000.0);
 	
 	return seconds*1000.0;
 }

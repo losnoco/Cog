@@ -76,7 +76,6 @@
 //Should be overwriten by subclass.
 - (void)process
 {
-	DBLog(@"WRONG PROCESS");
 }
 
 - (void)threadEntry:(id)arg
@@ -84,7 +83,6 @@
 	[self retain];
 
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	DBLog(@"In thread entry");
 
 	[self process];
 
@@ -105,20 +103,18 @@
 	
 	if (availInput <= amount && [previousNode endOfStream] == YES)
 	{
-		NSLog(@"END OF NODE");
-//		NSLog(@"RELEASING: %i %i %i", availInput, [previousNode endOfStream], shouldContinue);
 //		[previousNode release]; 
 		//If it is the outputNode, [soundController newInputChain];
 		//else
 		endOfStream = YES;
 	}
-	if (availInput <= 0) {
+/*	if (availInput <= 0) {
 		NSLog(@"BUFFER RAN DRY!");
 	}
 	else if (availInput < amount) {
 		NSLog(@"BUFFER IN DANGER");
 	}
-
+*/
 	amountToCopy = availInput;
 	if (amountToCopy > amount)
 	{
@@ -140,7 +136,6 @@
 
 - (void)launchThread
 {
-	DBLog(@"THREAD LAUNCHED");
 	[NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
 }
 

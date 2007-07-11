@@ -27,7 +27,6 @@
 
 static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp  *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList  *ioData)
 {
-	//NSLog(@"ASKING FOR DATA!");
 	OutputCoreAudio *output = (OutputCoreAudio *)inRefCon;
 	OSStatus err = noErr;
 	void *readPointer = ioData->mBuffers[0].mData;
@@ -36,7 +35,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	if ([output->outputController shouldContinue] == NO)
 	{
-		//NSLog(@"STOPPING");
         AudioOutputUnitStop(output->outputUnit);
 //		[output stop];
 		
@@ -48,7 +46,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	if ((amountRead < amountToRead) && [output->outputController endOfStream] == NO) //Try one more time! for track changes!
 	{
-		//NSLog(@"READING AGAIN! %i/%i", amountRead, amountToRead);
 		int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
 		amountRead2 = [output->outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
 		amountRead += amountRead2;
@@ -65,12 +62,11 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if ([keyPath isEqualToString:@"values.outputDevice"]) {
-		NSLog(@"CHANGED!");
+
 		NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 
 		NSNumber *deviceID = [device objectForKey:@"deviceID"];
 		
-		NSLog(@"Selecting output device %d %@", [deviceID longValue], [device objectForKey:@"name"]);
 		[self setOutputDevice:[deviceID longValue]];
 	}
 }
@@ -81,7 +77,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 {
 	// Set the output device
 	AudioDeviceID deviceID = outputDevice; //XXX use default if null
-	NSLog(@"Using output device %d", deviceID);
 	OSStatus err;
 	
 	if (outputDevice == -1) {
@@ -91,12 +86,10 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 									  &deviceID);
 								
 		if (err != noErr) {
-			NSLog(@"THERES NO DEFAULT OUTPUT DEVICE! GARRRGGHHH");
+			NSLog(@"THERES NO DEFAULT OUTPUT DEVICE");
 			
 			return NO;
 		}
-		
-		NSLog(@"Default output device: %i", deviceID);
 	}
 
 	
@@ -108,7 +101,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 							  sizeof(AudioDeviceID));
 	
 	if (err != noErr) {
-		NSLog(@"THERES NO OUTPUT DEVICE! AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH!!!!! %i", err);
+		NSLog(@"THERES NO OUTPUT DEVICE!!!!!! %i", err);
 		
 		return NO;
 	}
@@ -143,8 +136,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	if (err != noErr)
 		return NO;
 	
-	NSLog(@"SETUP");
-	
 	UInt32 size = sizeof (AudioStreamBasicDescription);
 	Boolean outWritable;
 	//Gets the size of the Stream Format Property and if it is writable
@@ -172,7 +163,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 //	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
 	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
 	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
-	//	DBLog(@"stuff: %i %i %i %i", deviceFormat.mBitsPerChannel, deviceFormat.mBytesPerFrame, deviceFormat.mBytesPerPacket, deviceFormat.mFramesPerPacket);
+
 	err = AudioUnitSetProperty (outputUnit,
 								kAudioUnitProperty_StreamFormat,
 								kAudioUnitScope_Output,
@@ -196,12 +187,9 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	[outputController setFormat:&deviceFormat];
 	
-	DBLog(@"Audio output successfully initialized");
-
 	NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 	
 	if (device) {
-		NSLog(@"THIS ONE");
 		BOOL ok = [self setOutputDevice:[[device objectForKey:@"deviceID"] longValue]];
 		if (!ok) {
 			//Ruh roh.
@@ -211,12 +199,9 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		}
 	}
 	else {
-		NSLog(@"THAT ONE");
-
 		[self setOutputDevice: -1];
 	}
 	
-	NSLog(@"DONE SETTING UP");
 	return (err == noErr);	
 }
 
@@ -232,13 +217,11 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)start
 {
-	DBLog(@"START OUTPUT\n");
 	AudioOutputUnitStart(outputUnit);
 }
 
 - (void)stop
 {
-	DBLog(@"STOP!");
 	if (outputUnit)
 	{
         AudioOutputUnitStop(outputUnit);
@@ -257,15 +240,12 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)pause
 {
-	NSLog(@"PAUSE");
 	AudioOutputUnitStop(outputUnit);
 }
 
 - (void)resume
 {
-	NSLog(@"RESUME");
 	OSStatus err = AudioOutputUnitStart(outputUnit);
-	NSLog(@"Resume: %i", err);
 }
 
 @end

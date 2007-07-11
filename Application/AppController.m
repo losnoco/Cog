@@ -252,7 +252,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	[playbackController stop:self];
 	
-	//	DBLog(@"QUITTING");
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSString *folder = @"~/Library/Application Support/Cog/";
 	
@@ -279,7 +278,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-	DBLog(@"Adding path: %@", filename);
 	[playlistLoader addURLs:[NSArray arrayWithObject:[NSURL fileURLWithPath:filename]] sort:NO];
 
 	return YES;
@@ -333,7 +331,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 		[infoButton setState:NSOffState];
 	}
 	else if ([notification object] == fileDrawer) {
-		NSLog(@"CLOSED");
 		[fileButton setState:NSOffState];
 		
 		[mainWindow makeFirstResponder: playlistView];
@@ -407,7 +404,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	}
 	else if ([keyPath isEqualToString:@"values.remoteEnabled"] || [keyPath isEqualToString:@"values.remoteOnlyOnActive"]) {
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"]) {
-			NSLog(@"Remote enabled...");
 			BOOL onlyOnActive = [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"];
 			if (!onlyOnActive || [NSApp isActive]) {
 				[remote startListening: self];
@@ -417,7 +413,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 			}
 		}
 		else {
-			NSLog(@"DISABLE REMOTE");
 			[remote stopListening: self]; 
 		}
 	}
@@ -425,8 +420,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)registerHotKeys
 {
-	NSLog(@"REGISTERING HOTKEYS");
-	
 	[playHotKey release];
 	playHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
@@ -464,13 +457,11 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)clickPrev
 {
-	NSLog(@"PREV");
 	[prevButton performClick:nil];
 }
 
 - (void)clickNext
 {
-	NSLog(@"NEXT");
 	[nextButton performClick:nil];
 }
 

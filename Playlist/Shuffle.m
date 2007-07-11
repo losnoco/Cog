@@ -40,7 +40,7 @@ int randint(int low, int high)
 		t = sum([a count]);
 		r = randint(1, t);
 		p = reverse_sum(r) - 1;
-		printf("%i, %i, %i, %i\n", [a count], t, r, p);
+		//printf("%i, %i, %i, %i\n", [a count], t, r, p);
 		
 		[b insertObject:[a objectAtIndex:p] atIndex:0];
 		[a removeObjectAtIndex:p];

@@ -13,14 +13,12 @@
 
 - (void)awakeFromNib
 {
-	NSLog(@"AWOKEN!");
 	[self setName:NSLocalizedStringFromTableInBundle(@"Output", nil, [NSBundle bundleForClass:[self class]], @"") ];
 	[self setIcon:@"output"];
 }
 
 - (IBAction) takeDeviceID:(id)sender
 {
-	NSLog(@"Taking thing: %@", [outputDevices selectedObjects]);
 	NSDictionary *device = [[outputDevices selectedObjects] objectAtIndex:0];
 	[[NSUserDefaults standardUserDefaults] setObject: device forKey:@"outputDevice"];
 }

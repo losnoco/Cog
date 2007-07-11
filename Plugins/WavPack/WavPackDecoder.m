@@ -130,7 +130,6 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	void *sampleBuf = malloc(size*2);
 	
 	numsamples = size/(bitsPerSample/8)/channels;
-//	DBLog(@"NUM SAMPLES: %i %i", numsamples, size);
 	n = WavpackUnpackSamples(wpc, sampleBuf, numsamples);
 	
 	int i;

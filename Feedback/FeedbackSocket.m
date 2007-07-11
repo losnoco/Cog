@@ -43,7 +43,7 @@ NSString *encodeForURL(NSString *s)
 	NSURLResponse* response;
 	NSData* resultData = [NSURLConnection sendSynchronousRequest:post returningResponse:&response error:&error];
 	NSString *resultString = [[[NSString alloc] initWithData:resultData encoding:NSASCIIStringEncoding] autorelease];
-	DBLog(@"RESULT: %@", resultString);
+	//NSLog(@"RESULT: %@", resultString);
 	if ([resultString caseInsensitiveCompare:@"SUCCESS"] == NSOrderedSame)
 	{
 		[self performSelectorOnMainThread:@selector(returnSuccess:) withObject:nil waitUntilDone:NO];
@@ -58,7 +58,6 @@ NSString *encodeForURL(NSString *s)
 
 - (void)sendFeedback: (NSString *)f subject:(NSString *)s message:(NSString *)m version:(NSString *)v
 {
-//	DBLog(@"Detaching thread for feedback");
 	if ([f isEqualToString:@""])
 	{
 		f = @"Anonymous";

@@ -64,13 +64,11 @@ long sourceTell(void *datasource)
 	bitrate = (vi->bitrate_nominal/1000.0);
 	channels = vi->channels;
 	frequency = vi->rate;
-	NSLog(@"INFO: %i", bitsPerSample);
 	
 	seekable = ov_seekable(&vorbisRef);
 	
 	length = ((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
 
-	NSLog(@"Ok to go WITH OGG. %i", seekable);
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 	
@@ -91,7 +89,6 @@ long sourceTell(void *datasource)
 		channels = vi->channels;
 		frequency = vi->rate;
 		
-		NSLog(@"Format changed...");
 		[self willChangeValueForKey:@"properties"];
 		[self didChangeValueForKey:@"properties"];
 	}

@@ -26,7 +26,6 @@
 		struct hostent *he;
 
 		if (_fd < 0) {
-		   NSLog(@"%s\n", strerror(errno));
 		   return nil;
 		}
 
@@ -42,7 +41,7 @@
 		memcpy(&sin.sin_addr, he->h_addr, 4);
 
 		if (connect(_fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
-		   NSLog(@"%s\n", strerror(errno));
+		   NSLog(@"Error: %s\n", strerror(errno));
 		   close(_fd);
 		   return nil;
 		}

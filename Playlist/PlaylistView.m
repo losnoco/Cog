@@ -151,7 +151,7 @@
 			[self selectRow:row byExtendingSelection:NO];
 		}
 	}
-	NSLog(@"Number of selected rows: %i", [self numberOfSelectedRows]);
+
 	if ([self numberOfSelectedRows] <=0)
 	{
 		//No rows are selected, so the table should be displayed with all items disabled
@@ -159,9 +159,8 @@
 		int i;
 		for (i=0;i<[tableViewMenu numberOfItems];i++) {
 			[[tableViewMenu itemAtIndex:i] setEnabled:NO];
-			NSLog(@"Enabled: %@ %i", [[tableViewMenu itemAtIndex:i] title], [[tableViewMenu itemAtIndex:i] isEnabled]);
 		}
-		NSLog(@"All disabled!");
+
 		return [tableViewMenu autorelease];
 	}
 	else
@@ -176,7 +175,7 @@
     unsigned int modifiers = [e modifierFlags] & (NSCommandKeyMask | NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask);
     NSString *characters = [e characters];
 	unichar c;
-	NSLog(@"DOWN!");
+
 	if ([characters length] != 1) {
 		[super keyDown:e];
 	
@@ -184,7 +183,6 @@
 	}
 	
 	c = [characters characterAtIndex:0];
-	NSLog(@"Modifiers: %i", modifiers);
 	if (modifiers == 0 && (c == NSDeleteCharacter || c == NSBackspaceCharacter || c == NSDeleteFunctionKey))
 	{
 		[playlistController remove:self];
@@ -198,7 +196,6 @@
 		[playbackController play:self];
 	}
 	else if (modifiers == 0 && c == 0x1b) { //Escape
-		NSLog(@"ESCAPE!");
 		[playlistController clearFilterPredicate:self];
 	}
 	else
