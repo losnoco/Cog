@@ -1,3 +1,1 @@
-PLS icon.
-Incubate.
-
+Bug when loading flac file that doesn't exist through M3U. Crashes in TagLib. Try updating TagLib.
