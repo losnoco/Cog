@@ -94,6 +94,11 @@ void TextIdentificationFrame::setTextEncoding(String::Type encoding)
 
 void TextIdentificationFrame::parseFields(const ByteVector &data)
 {
+  // Don't try to parse invalid frames
+
+  if(data.size() < 2)
+    return;
+
   // read the string data type (the first byte of the field data)
 
   d->textEncoding = String::Type(data[0]);
@@ -103,7 +108,17 @@ void TextIdentificationFrame::parseFields(const ByteVector &data)
 
   int byteAlign = d->textEncoding == String::Latin1 || d->textEncoding == String::UTF8 ? 1 : 2;
 
-  ByteVectorList l = ByteVectorList::split(data.mid(1), textDelimiter(d->textEncoding), byteAlign);
+  // build a small counter to strip nulls off the end of the field
+
+  int dataLength = data.size() - 1;
+
+  while(dataLength > 0 && data[dataLength] == 0)
+    dataLength--;
+
+  while(dataLength % byteAlign != 0)
+    dataLength++;
+
+  ByteVectorList l = ByteVectorList::split(data.mid(1, dataLength), textDelimiter(d->textEncoding), byteAlign);
 
   d->fieldList.clear();
 
@@ -120,21 +135,18 @@ ByteVector TextIdentificationFrame::renderFields() const
 {
   ByteVector v;
 
-  if(d->fieldList.size() > 0) {
+  v.append(char(d->textEncoding));
 
-    v.append(char(d->textEncoding));
+  for(StringList::ConstIterator it = d->fieldList.begin(); it != d->fieldList.end(); it++) {
 
-    for(StringList::Iterator it = d->fieldList.begin(); it != d->fieldList.end(); it++) {
+    // Since the field list is null delimited, if this is not the first
+    // element in the list, append the appropriate delimiter for this
+    // encoding.
 
-      // Since the field list is null delimited, if this is not the first
-      // element in the list, append the appropriate delimiter for this
-      // encoding.
+    if(it != d->fieldList.begin())
+      v.append(textDelimiter(d->textEncoding));
 
-      if(it != d->fieldList.begin())
-        v.append(textDelimiter(d->textEncoding));
-
-      v.append((*it).data(d->textEncoding));
-    }
+    v.append((*it).data(d->textEncoding));
   }
 
   return v;
@@ -168,7 +180,7 @@ UserTextIdentificationFrame::UserTextIdentificationFrame(String::Type encoding) 
 UserTextIdentificationFrame::UserTextIdentificationFrame(const ByteVector &data) :
   TextIdentificationFrame(data)
 {
-
+  checkFields();
 }
 
 String UserTextIdentificationFrame::toString() const
@@ -185,14 +197,9 @@ String UserTextIdentificationFrame::description() const
 
 StringList UserTextIdentificationFrame::fieldList() const
 {
-  StringList l = TextIdentificationFrame::fieldList();
+  // TODO: remove this function
 
-  if(!l.isEmpty()) {
-    StringList::Iterator it = l.begin();
-    l.erase(it);
-  }
-
-  return l;
+  return TextIdentificationFrame::fieldList();
 }
 
 void UserTextIdentificationFrame::setText(const String &text)
@@ -223,7 +230,8 @@ void UserTextIdentificationFrame::setDescription(const String &s)
   TextIdentificationFrame::setText(l);
 }
 
-UserTextIdentificationFrame *find(ID3v2::Tag *tag, const String &description) // static
+UserTextIdentificationFrame *UserTextIdentificationFrame::find(
+  ID3v2::Tag *tag, const String &description) // static
 {
   FrameList l = tag->frameList("TXXX");
   for(FrameList::Iterator it = l.begin(); it != l.end(); ++it) {
@@ -241,5 +249,15 @@ UserTextIdentificationFrame *find(ID3v2::Tag *tag, const String &description) //
 UserTextIdentificationFrame::UserTextIdentificationFrame(const ByteVector &data, Header *h) :
   TextIdentificationFrame(data, h)
 {
-  
+  checkFields();
+}
+
+void UserTextIdentificationFrame::checkFields()
+{
+  int fields = fieldList().size();
+    
+  if(fields == 0)
+    setDescription(String::null);
+  if(fields <= 1)
+    setText(String::null);
 }

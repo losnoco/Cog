@@ -25,6 +25,8 @@
 
 #include <iostream>
 
+#include <string.h>
+
 namespace TagLib {
 
   inline unsigned short byteSwap(unsigned short x)
@@ -83,7 +85,7 @@ String::String(const std::string &s, Type t)
 {
   d = new StringPrivate;
 
-  if(t == UTF16 || t == UTF16BE) {
+  if(t == UTF16 || t == UTF16BE || t == UTF16LE) {
     debug("String::String() -- A std::string should not contain UTF16.");
     return;
   }
@@ -116,7 +118,7 @@ String::String(const char *s, Type t)
 {
   d = new StringPrivate;
 
-  if(t == UTF16 || t == UTF16BE) {
+  if(t == UTF16 || t == UTF16BE || t == UTF16LE) {
     debug("String::String() -- A const char * should not contain UTF16.");
     return;
   }
@@ -145,7 +147,7 @@ String::String(char c, Type t)
 {
   d = new StringPrivate;
 
-  if(t == UTF16 || t == UTF16BE) {
+  if(t == UTF16 || t == UTF16BE || t == UTF16LE) {
     debug("String::String() -- A std::string should not contain UTF16.");
     return;
   }
@@ -241,6 +243,11 @@ std::string String::to8Bit(bool unicode) const
   return s;
 }
 
+TagLib::wstring String::to32Bit() const
+{
+  return d->data;
+}
+
 const char *String::toCString(bool unicode) const
 {
   delete [] d->CString;
@@ -282,6 +289,14 @@ int String::find(const String &s, int offset) const
     return -1;
 }
 
+bool String::startsWith(const String &s) const
+{
+  if(s.length() > length())
+    return false;
+
+  return substr(0, s.length()) == s;
+}
+
 String String::substr(uint position, uint n) const
 {
   if(n > position + d->data.size())
@@ -318,6 +333,11 @@ String String::upper() const
 TagLib::uint String::size() const
 {
   return d->data.size();
+}
+
+TagLib::uint String::length() const
+{
+  return size();
 }
 
 bool String::isEmpty() const
@@ -373,8 +393,20 @@ ByteVector String::data(Type t) const
       char c1 = *it >> 8;
       char c2 = *it & 0xff;
 
-      v.append(c2);
       v.append(c1);
+      v.append(c2);
+    }
+    break;
+  }
+  case UTF16LE:
+  {
+    for(wstring::const_iterator it = d->data.begin(); it != d->data.end(); it++) {
+
+      char c1 = *it & 0xff;
+      char c2 = *it >> 8;
+
+      v.append(c1);
+      v.append(c2);
     }
     break;
   }
@@ -404,8 +436,9 @@ String String::stripWhiteSpace() const
   wstring::const_iterator begin = d->data.begin();
   wstring::const_iterator end = d->data.end();
 
-  while(*begin == '\t' || *begin == '\n' || *begin == '\f' ||
-        *begin == '\r' || *begin == ' ' && begin != end)
+  while(begin != end &&
+        (*begin == '\t' || *begin == '\n' || *begin == '\f' ||
+         *begin == '\r' || *begin == ' '))
   {
     ++begin;
   }
@@ -413,7 +446,7 @@ String String::stripWhiteSpace() const
   if(begin == end)
     return null;
 
-  // There must be at least one non-whitespace charater here for us to have
+  // There must be at least one non-whitespace character here for us to have
   // gotten this far, so we should be safe not doing bounds checking.
 
   do {
@@ -685,6 +718,14 @@ void String::prepare(Type t)
 
     delete [] sourceBuffer;
     delete [] targetBuffer;
+
+    break;
+  }
+  case UTF16LE:
+  {
+    for(uint i = 0; i < d->data.size(); i++)
+      d->data[i] = byteSwap((unsigned short)d->data[i]);
+    break;
   }
   default:
     break;

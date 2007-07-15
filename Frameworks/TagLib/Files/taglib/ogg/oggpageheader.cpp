@@ -238,7 +238,7 @@ void Ogg::PageHeader::read()
   // Sanity check -- make sure that we were in fact able to read as much data as
   // we asked for and that the page begins with "OggS".
 
-  if(data.size() != 27 || data.mid(0, 4) != "OggS") {
+  if(data.size() != 27 || !data.startsWith("OggS")) {
     debug("Ogg::PageHeader::read() -- error reading page header");
     return;
   }
@@ -255,7 +255,7 @@ void Ogg::PageHeader::read()
 
   // Byte number 27 is the number of page segments, which is the only variable
   // length portion of the page header.  After reading the number of page
-  // segments we'll then read in the coresponding data for this count.
+  // segments we'll then read in the corresponding data for this count.
 
   int pageSegmentCount = uchar(data[26]);
 

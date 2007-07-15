@@ -99,14 +99,14 @@ namespace TagLib {
     /*!
      * Inserts a copy of \a value before \a it.
      */
-    void insert(Iterator it, const T &value);
+    Iterator insert(Iterator it, const T &value);
 
     /*!
      * Inserts the \a value into the list.  This assumes that the list is
      * currently sorted.  If \a unique is true then the value will not
      * be inserted if it is already in the list.
      */
-    void sortedInsert(const T &value, bool unique = false);
+    List<T> &sortedInsert(const T &value, bool unique = false);
 
     /*!
      * Appends \a item to the end of the list and returns a reference to the
@@ -121,12 +121,24 @@ namespace TagLib {
     List<T> &append(const List<T> &l);
 
     /*!
+     * Prepends \a item to the beginning list and returns a reference to the
+     * list.
+     */
+    List<T> &prepend(const T &item);
+
+    /*!
+     * Prepends all of the items in \a l to the beginning list and returns a
+     * reference to the list.
+     */
+    List<T> &prepend(const List<T> &l);
+
+    /*!
      * Clears the list.  If auto deletion is enabled and this list contains a
      * pointer type the members are also deleted.
      *
      * \see setAutoDelete()
      */
-    void clear();
+    List<T> &clear();
 
     /*!
      * Returns the number of elements in the list.
@@ -135,12 +147,12 @@ namespace TagLib {
     bool isEmpty() const;
 
     /*!
-     * Find the first occurance of \a value.
+     * Find the first occurrence of \a value.
      */
     Iterator find(const T &value);
 
     /*!
-     * Find the first occurance of \a value.
+     * Find the first occurrence of \a value.
      */
     ConstIterator find(const T &value) const;
 
@@ -152,7 +164,7 @@ namespace TagLib {
     /*!
      * Erase the item at \a it from the list.
      */
-    void erase(Iterator it);
+    Iterator erase(Iterator it);
 
     /*!
      * Returns a reference to the first item in the list.

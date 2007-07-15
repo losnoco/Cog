@@ -1,4 +1,4 @@
-$Id: id3v2.4.0-frames.txt 3 2005-06-02 18:16:43Z vspader $
+$Id: id3v2.4.0-frames.txt 168944 2002-07-26 20:59:59Z wheeler $
 
 Informal standard                                             M. Nilsson
 Document: id3v2.4.0-frames.txt                         1st November 2000

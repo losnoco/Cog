@@ -19,8 +19,6 @@
  *   USA                                                                   *
  ***************************************************************************/
 
-#include <tdebug.h>
-
 #include <algorithm>
 
 namespace TagLib {
@@ -130,22 +128,23 @@ typename List<T>::ConstIterator List<T>::end() const
 }
 
 template <class T>
-void List<T>::insert(Iterator it, const T &item)
+typename List<T>::Iterator List<T>::insert(Iterator it, const T &item)
 {
   detach();
-  d->list.insert(it, item);
+  return d->list.insert(it, item);
 }
 
 template <class T>
-void List<T>::sortedInsert(const T &value, bool unique)
+List<T> &List<T>::sortedInsert(const T &value, bool unique)
 {
   detach();
   Iterator it = begin();
-  while(*it < value && it != end())
+  while(it != end() && *it < value)
     ++it;
   if(unique && it != end() && *it == value)
-    return;
+    return *this;
   insert(it, value);
+  return *this;
 }
 
 template <class T>
@@ -165,10 +164,27 @@ List<T> &List<T>::append(const List<T> &l)
 }
 
 template <class T>
-void List<T>::clear()
+List<T> &List<T>::prepend(const T &item)
+{
+  detach();
+  d->list.push_front(item);
+  return *this;
+}
+
+template <class T>
+List<T> &List<T>::prepend(const List<T> &l)
+{
+  detach();
+  d->list.insert(d->list.begin(), l.begin(), l.end());
+  return *this;
+}
+
+template <class T>
+List<T> &List<T>::clear()
 {
   detach();
   d->clear();
+  return *this;
 }
 
 template <class T>
@@ -202,9 +218,9 @@ bool List<T>::contains(const T &value) const
 }
 
 template <class T>
-void List<T>::erase(Iterator it)
+typename List<T>::Iterator List<T>::erase(Iterator it)
 {
-  d->list.erase(it);
+  return d->list.erase(it);
 }
 
 template <class T>

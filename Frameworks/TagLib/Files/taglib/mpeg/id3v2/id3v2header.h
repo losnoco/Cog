@@ -22,7 +22,7 @@
 #ifndef TAGLIB_ID3V2HEADER_H
 #define TAGLIB_ID3V2HEADER_H
 
-#include <tbytevector.h>
+#include "tbytevector.h"
 
 namespace TagLib {
 
@@ -128,8 +128,8 @@ namespace TagLib {
       static ByteVector fileIdentifier();
 
       /*!
-       * Sets the data that will be used as the extended header.  10 bytes,
-       * starting from \a data will be used.
+       * Sets the data that will be used as the header.  10 bytes, starting from
+       * the beginning of \a data are used.
        */
       void setData(const ByteVector &data);
 

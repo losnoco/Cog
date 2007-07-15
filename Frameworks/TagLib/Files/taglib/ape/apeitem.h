@@ -22,9 +22,9 @@
 #ifndef TAGLIB_APEITEM_H
 #define TAGLIB_APEITEM_H
 
-#include <tbytevector.h>
-#include <tstring.h>
-#include <tstringlist.h>
+#include "tbytevector.h"
+#include "tstring.h"
+#include "tstringlist.h"
 
 namespace TagLib {
 
@@ -70,6 +70,11 @@ namespace TagLib {
       Item(const Item &item);
 
       /*!
+       * Destroys the item.
+       */
+      virtual ~Item();
+
+      /*!
        * Copies the contents of \a item into this item.
        */
       Item &operator=(const Item &item);
@@ -81,8 +86,46 @@ namespace TagLib {
 
       /*!
        * Returns the binary value.
+       *
+       * \deprecated This will be removed in the next binary incompatible version
+       * as it is not kept in sync with the things that are set using setValue()
+       * and friends.
        */
       ByteVector value() const;
+
+      /*!
+       * Sets the key for the item to \a key.
+       */
+      void setKey(const String &key);
+
+      /*!
+       * Sets the value of the item to \a value and clears any previous contents.
+       *
+       * \see toString()
+       */
+      void setValue(const String &value);
+
+      /*!
+       * Sets the value of the item to the list of values in \a value and clears
+       * any previous contents.
+       *
+       * \see toStringList()
+       */
+      void setValues(const StringList &values);
+
+      /*!
+       * Appends \a value to create (or extend) the current list of values.
+       *
+       * \see toString()
+       */
+      void appendValue(const String &value);
+
+      /*!
+       * Appends \a values to extend the current list of values.
+       *
+       * \see toStringList()
+       */
+      void appendValues(const StringList &values);
 
       /*!
        * Returns the size of the full item.

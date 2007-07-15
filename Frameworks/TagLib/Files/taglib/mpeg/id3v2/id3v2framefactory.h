@@ -22,12 +22,14 @@
 #ifndef TAGLIB_ID3V2FRAMEFACTORY_H
 #define TAGLIB_ID3V2FRAMEFACTORY_H
 
-#include <tbytevector.h>
+#include "tbytevector.h"
 #include "id3v2frame.h"
 
 namespace TagLib {
 
   namespace ID3v2 {
+
+    class TextIdentificationFrame;
 
     //! A factory for creating ID3v2 frames
 
@@ -86,6 +88,8 @@ namespace TagLib {
        * \a encoding.  If no value is set the frames with either default to the
        * encoding type that was parsed and new frames default to Latin1.
        *
+       * Valid string types for ID3v2 tags are Latin1, UTF8, UTF16 and UTF16BE.
+       *
        * \see defaultTextEncoding()
        */
       void setDefaultTextEncoding(String::Type encoding);
@@ -127,6 +131,8 @@ namespace TagLib {
        */
       void convertFrame(const char *from, const char *to,
                         Frame::Header *header) const;
+
+      void updateGenre(TextIdentificationFrame *frame) const;
 
       static FrameFactory *factory;
 

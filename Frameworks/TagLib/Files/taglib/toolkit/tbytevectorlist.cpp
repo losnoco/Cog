@@ -35,14 +35,24 @@ class ByteVectorListPrivate
 ByteVectorList ByteVectorList::split(const ByteVector &v, const ByteVector &pattern,
                                      int byteAlign)
 {
+  return split(v, pattern, byteAlign, 0);
+}
+
+ByteVectorList ByteVectorList::split(const ByteVector &v, const ByteVector &pattern,
+                                     int byteAlign, int max)
+{
   ByteVectorList l;
 
   uint previousOffset = 0;
   for(int offset = v.find(pattern, 0, byteAlign);
-      offset != -1;
+      offset != -1 && (max == 0 || max > int(l.size()) + 1);
       offset = v.find(pattern, offset + pattern.size(), byteAlign))
   {
-    l.append(v.mid(previousOffset, offset - previousOffset));
+    if(offset - previousOffset > 1)
+      l.append(v.mid(previousOffset, offset - previousOffset));
+    else
+      l.append(ByteVector::null);
+
     previousOffset = offset + pattern.size();
   }
 

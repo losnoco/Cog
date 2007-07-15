@@ -22,11 +22,11 @@
 #ifndef TAGLIB_ID3V2TAG_H
 #define TAGLIB_ID3V2TAG_H
 
-#include <tag.h>
-#include <tbytevector.h>
-#include <tstring.h>
-#include <tlist.h>
-#include <tmap.h>
+#include "tag.h"
+#include "tbytevector.h"
+#include "tstring.h"
+#include "tlist.h"
+#include "tmap.h"
 
 #include "id3v2framefactory.h"
 
@@ -192,7 +192,7 @@ namespace TagLib {
        *   TagLib::ID3v2::FrameList l = f.ID3v2Tag()->frameListMap()["TBPM"];
        *
        *   if(!l.isEmpty())
-       *     std::cout << l.front().toString() << std::endl;
+       *     std::cout << l.front()->toString() << std::endl;
        * }
        *
        * \endcode

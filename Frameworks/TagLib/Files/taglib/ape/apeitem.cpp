@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include <tbytevectorlist.h>
+#include <tdebug.h>
 
 #include "apeitem.h"
 
@@ -62,6 +63,11 @@ APE::Item::Item(const Item &item)
   d = new ItemPrivate(*item.d);
 }
 
+APE::Item::~Item()
+{
+  delete d;
+}
+
 Item &APE::Item::operator=(const Item &item)
 {
   delete d;
@@ -96,7 +102,35 @@ String APE::Item::key() const
 
 ByteVector APE::Item::value() const
 {
+  // This seems incorrect as it won't be actually rendering the value to keep it
+  // up to date.
+
   return d->value;
+}
+
+void APE::Item::setKey(const String &key)
+{
+    d->key = key;
+}
+
+void APE::Item::setValue(const String &value)
+{
+    d->text = value;
+}
+
+void APE::Item::setValues(const StringList &value)
+{
+    d->text = value;
+}
+
+void APE::Item::appendValue(const String &value)
+{
+    d->text.append(value);
+}
+
+void APE::Item::appendValues(const StringList &values)
+{
+    d->text.append(values);
 }
 
 int APE::Item::size() const
@@ -111,7 +145,7 @@ StringList APE::Item::toStringList() const
 
 String APE::Item::toString() const
 {
-  return d->text.front();
+  return isEmpty() ? String::null : d->text.front();
 }
 
 bool APE::Item::isEmpty() const
@@ -121,7 +155,7 @@ bool APE::Item::isEmpty() const
     case 1:
       if(d->text.isEmpty())
         return true;
-      if(d->text.size() == 1 && d->text.front() == "")
+      if(d->text.size() == 1 && d->text.front().isEmpty())
         return true;
       return false;
     case 2:

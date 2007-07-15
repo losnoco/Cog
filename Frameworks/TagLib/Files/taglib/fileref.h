@@ -22,6 +22,8 @@
 #ifndef TAGLIB_FILEREF_H
 #define TAGLIB_FILEREF_H
 
+#include <tstringlist.h>
+
 #include "audioproperties.h"
 
 namespace TagLib {
@@ -43,32 +45,67 @@ namespace TagLib {
    * across file types.
    *
    * Also note that it is probably a good idea to plug this into your mime
-   * type system rather than using the constructor that accepts a file name.
+   * type system rather than using the constructor that accepts a file name using
+   * the FileTypeResolver.
    *
-   * For example in KDE this could be done with:
-   *
-   * \code
-   *
-   * TagLib::FileRef createFileRef( const QString &fileName )
-   * {
-   *   KMimeType::Ptr result = KMimeType::findByPath( fileName, 0, true );
-   *
-   *   if( result->name() == "audio/x-mp3" )
-   *     return FileRef( new MPEG::File( QFile::encodeName( fileName ).data() ) );
-   *
-   *   if( result->name() == "application/ogg" )
-   *     return FileRef( new Vorbis::File( QFile::encodeName( fileName ).data() ) );
-   *
-   *   return FileRef( 0 );
-   * }
-   *
-   * \endcode
+   * \see FileTypeResolver
+   * \see addFileTypeResolver()
    */
 
   class FileRef
   {
   public:
+    
+  //! A class for pluggable file type resolution.
 
+  /*!
+   * This class is used to add extend TagLib's very basic file name based file
+   * type resolution.
+   *
+   * This can be accomplished with:
+   *
+   * \code
+   *
+   * class MyFileTypeResolver : FileTypeResolver
+   * {
+   *   TagLib::File *createFile(const char *fileName, bool, AudioProperties::ReadStyle)
+   *   {
+   *     if(someCheckForAnMP3File(fileName))
+   *       return new TagLib::MPEG::File(fileName);
+   *     return 0;
+   *   }
+   * }
+   *
+   * FileRef::addFileTypeResolver(new MyFileTypeResolver);
+   *
+   * \endcode
+   *
+   * Naturally a less contrived example would be slightly more complex.  This
+   * can be used to plug in mime-type detection systems or to add new file types
+   * to TagLib.
+   */
+
+    class FileTypeResolver
+    {
+    public:
+      /*!
+       * This method must be overridden to provide an additional file type
+       * resolver.  If the resolver is able to determine the file type it should
+       * return a valid File object; if not it should return 0.
+       *
+       * \note The created file is then owned by the FileRef and should not be
+       * deleted.  Deletion will happen automatically when the FileRef passes
+       * out of scope.
+       */
+      virtual File *createFile(const char *fileName,
+                               bool readAudioProperties = true,
+                               AudioProperties::ReadStyle
+                               audioPropertiesStyle = AudioProperties::Average) const = 0;
+    };
+
+    /*!
+     * Creates a null FileRef.
+     */
     FileRef();
 
     /*!
@@ -140,6 +177,38 @@ namespace TagLib {
     bool save();
 
     /*!
+     * Adds a FileTypeResolver to the list of those used by TagLib.  Each
+     * additional FileTypeResolver is added to the front of a list of resolvers
+     * that are tried.  If the FileTypeResolver returns zero the next resolver
+     * is tried.
+     *
+     * Returns a pointer to the added resolver (the same one that's passed in --
+     * this is mostly so that static inialializers have something to use for
+     * assignment).
+     *
+     * \see FileTypeResolver
+     */
+    static const FileTypeResolver *addFileTypeResolver(const FileTypeResolver *resolver);
+
+    /*!
+     * As is mentioned elsewhere in this class's documentation, the default file
+     * type resolution code provided by TagLib only works by comparing file
+     * extensions.
+     *
+     * This method returns the list of file extensions that are used by default.
+     *
+     * The extensions are all returned in lowercase, though the comparison used
+     * by TagLib for resolution is case-insensitive.
+     *
+     * \note This does not account for any additional file type resolvers that
+     * are plugged in.  Also note that this is not intended to replace a propper
+     * mime-type resolution system, but is just here for reference.
+     *
+     * \see FileTypeResolver
+     */
+    static StringList defaultFileExtensions();
+
+    /*!
      * Returns true if the file (and as such other pointers) are null.
      */
     bool isNull() const;
@@ -168,10 +237,13 @@ namespace TagLib {
      *
      * \note You generally shouldn't use this method, but instead the constructor
      * directly.
+     *
+     * \deprecated
      */
     static File *create(const char *fileName,
                         bool readAudioProperties = true,
                         AudioProperties::ReadStyle audioPropertiesStyle = AudioProperties::Average);
+
 
   private:
     class FileRefPrivate;

@@ -163,12 +163,14 @@ ByteVector Frame::fieldData(const ByteVector &frameData) const
   uint frameDataLength = size();
 
   if(d->header->compression() || d->header->dataLengthIndicator()) {
-    frameDataLength = frameData.mid(headerSize, 4).toUInt();
+    frameDataLength = SynchData::toUInt(frameData.mid(headerSize, 4));
     frameDataOffset += 4;
   }
 
 #if HAVE_ZLIB
-  if(d->header->compression()) {
+  if(d->header->compression() &&
+     !d->header->encryption())
+  {
     ByteVector data(frameDataLength);
     uLongf uLongTmp = frameDataLength;
     ::uncompress((Bytef *) data.data(),
@@ -415,6 +417,11 @@ TagLib::uint Frame::Header::version() const
 bool Frame::Header::tagAlterPreservation() const
 {
   return d->tagAlterPreservation;
+}
+
+void Frame::Header::setTagAlterPreservation(bool preserve)
+{
+  d->tagAlterPreservation = preserve;
 }
 
 bool Frame::Header::fileAlterPreservation() const

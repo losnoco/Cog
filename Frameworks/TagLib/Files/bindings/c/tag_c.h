@@ -44,7 +44,7 @@ extern "C" {
 
 /*
  * These are used for type provide some type safety to the C API (as opposed to
- * using void *, but pointers to them are simply cast to the coresponding C++
+ * using void *, but pointers to them are simply cast to the corresponding C++
  * types in the implementation.
  */
 
@@ -75,7 +75,8 @@ typedef enum {
   TagLib_File_MPEG,
   TagLib_File_OggVorbis,
   TagLib_File_FLAC,
-  TagLib_File_MPC
+  TagLib_File_MPC,
+  TagLib_File_OggFlac
 } TagLib_File_Type;
 
 /*!
@@ -217,14 +218,14 @@ void taglib_tag_set_track(TagLib_Tag *tag, unsigned int track);
 /*!
  * Frees all of the strings that have been created by the tag.
  */
-void taglib_tag_free_strings();
+void taglib_tag_free_strings(void);
 
 /******************************************************************************
  * Audio Properties API
  ******************************************************************************/
 
 /*!
- * Returns the lenght of the file in seconds.
+ * Returns the length of the file in seconds.
  */
 int taglib_audioproperties_length(const TagLib_AudioProperties *audioProperties);
 
@@ -242,6 +243,23 @@ int taglib_audioproperties_samplerate(const TagLib_AudioProperties *audioPropert
  * Returns the number of channels in the audio stream.
  */
 int taglib_audioproperties_channels(const TagLib_AudioProperties *audioProperties);
+
+/*******************************************************************************
+ * Special convenience ID3v2 functions
+ *******************************************************************************/
+
+typedef enum {
+  TagLib_ID3v2_Latin1,
+  TagLib_ID3v2_UTF16,
+  TagLib_ID3v2_UTF16BE,
+  TagLib_ID3v2_UTF8
+} TagLib_ID3v2_Encoding;
+
+/*!
+ * This sets the default encoding for ID3v2 frames that are written to tags.
+ */
+
+void taglib_id3v2_set_default_text_encoding(TagLib_ID3v2_Encoding encoding);
 
 #ifdef __cplusplus
 }

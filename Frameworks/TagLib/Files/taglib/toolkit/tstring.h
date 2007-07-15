@@ -90,7 +90,11 @@ namespace TagLib {
       /*!
        * UTF8 encoding.  Characters are usually 8 bits but can be up to 32.
        */
-      UTF8 = 3
+      UTF8 = 3,
+      /*!
+       * UTF16 <i>little endian</i>.  16 bit characters.
+       */
+      UTF16LE = 4
     };
 
     /*!
@@ -166,6 +170,11 @@ namespace TagLib {
     std::string to8Bit(bool unicode = false) const;
 
     /*!
+     * Returns a wstring version of the TagLib string as a wide string.
+     */
+    wstring to32Bit() const;
+
+    /*!
      * Creates and returns a C-String based on the data.  This string is still
      * owned by the String (class) and as such should not be deleted by the user.
      *
@@ -205,10 +214,15 @@ namespace TagLib {
     ConstIterator end() const;
 
     /*!
-     * Finds the first occurance of pattern \a s in this string starting from
+     * Finds the first occurrence of pattern \a s in this string starting from
      * \a offset.  If the pattern is not found, -1 is returned.
      */
     int find(const String &s, int offset = 0) const;
+
+    /*!
+     * Returns true if the strings starts with the substring \a s.
+     */
+    bool startsWith(const String &s) const;
 
     /*!
      * Extract a substring from this string starting at \a position and
@@ -233,6 +247,11 @@ namespace TagLib {
      * Returns the size of the string.
      */
     uint size() const;
+
+    /*!
+     * Returns the length of the string.  Equivalent to size().
+     */
+    uint length() const;
 
     /*!
      * Returns true if the string is empty.
@@ -391,22 +410,29 @@ namespace TagLib {
 
 /*!
  * \relates TagLib::String
+ *
+ * Concatenates \a s1 and \a s2 and returns the result as a string.
  */
 const TagLib::String operator+(const TagLib::String &s1, const TagLib::String &s2);
 
 /*!
  * \relates TagLib::String
+ *
+ * Concatenates \a s1 and \a s2 and returns the result as a string.
  */
 const TagLib::String operator+(const char *s1, const TagLib::String &s2);
 
 /*!
  * \relates TagLib::String
+ *
+ * Concatenates \a s1 and \a s2 and returns the result as a string.
  */
 const TagLib::String operator+(const TagLib::String &s1, const char *s2);
 
 
 /*!
  * \relates TagLib::String
+ *
  * Send the string to an output stream.
  */
 std::ostream &operator<<(std::ostream &s, const TagLib::String &str);

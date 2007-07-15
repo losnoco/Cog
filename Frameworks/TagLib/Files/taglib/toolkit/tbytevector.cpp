@@ -24,6 +24,8 @@
 #include <tstring.h>
 #include <tdebug.h>
 
+#include <string.h>
+
 #include "tbytevector.h"
 
 // This is a bit ugly to keep writing over and over again.
@@ -92,21 +94,19 @@ namespace TagLib {
     if(pattern.size() > v.size() || offset >= v.size() - 1)
       return -1;
 
-    // if an offset was specified, just do a recursive call on the substring
+    // Let's go ahead and special case a pattern of size one since that's common
+    // and easy to make fast.
 
-    if(offset > 0) {
-
-      // start at the next byte aligned block
-
-      Vector section = v.mid(offset + byteAlign - 1 - offset % byteAlign);
-      int match = section.find(pattern, 0, byteAlign);
-      return match >= 0 ? int(match + offset) : -1;
+    if(pattern.size() == 1) {
+      char p = pattern[0];
+      for(uint i = offset; i < v.size(); i++) {
+        if(v[i] == p && i % byteAlign == 0)
+          return i;
+      }
+      return -1;
     }
 
-    // this is a simplified Boyer-Moore string searching algorithm
-
     uchar lastOccurrence[256];
-
 
     for(uint i = 0; i < 256; ++i)
       lastOccurrence[i] = uchar(pattern.size());
@@ -114,7 +114,7 @@ namespace TagLib {
     for(uint i = 0; i < pattern.size() - 1; ++i)
       lastOccurrence[unsigned(pattern[i])] = uchar(pattern.size() - i - 1);
 
-    for(uint i = pattern.size() - 1; i < v.size(); i += lastOccurrence[uchar(v.at(i))]) {
+    for(uint i = pattern.size() - 1 + offset; i < v.size(); i += lastOccurrence[uchar(v.at(i))]) {
       int iBuffer = i;
       int iPattern = pattern.size() - 1;
 
@@ -316,17 +316,19 @@ ByteVector::~ByteVector()
     delete d;
 }
 
-void ByteVector::setData(const char *data, uint length)
+ByteVector &ByteVector::setData(const char *data, uint length)
 {
   detach();
 
   resize(length);
   ::memcpy(DATA(d), data, length);
+
+  return *this;
 }
 
-void ByteVector::setData(const char *data)
+ByteVector &ByteVector::setData(const char *data)
 {
-  setData(data, ::strlen(data));
+  return setData(data, ::strlen(data));
 }
 
 char *ByteVector::data()
@@ -343,6 +345,9 @@ const char *ByteVector::data() const
 ByteVector ByteVector::mid(uint index, uint length) const
 {
   ByteVector v;
+
+  if(index > size())
+    return v;
 
   ConstIterator endIt;
 
@@ -427,19 +432,27 @@ int ByteVector::endsWithPartialMatch(const ByteVector &pattern) const
   return -1;
 }
 
-void ByteVector::append(const ByteVector &v)
+ByteVector &ByteVector::append(const ByteVector &v)
 {
+  if(v.d->size == 0)
+    return *this; // Simply return if appending nothing.
+
   detach();
 
   uint originalSize = d->size;
   resize(d->size + v.d->size);
   ::memcpy(DATA(d) + originalSize, DATA(v.d), v.size());
+
+  return *this;
 }
 
-void ByteVector::clear()
+ByteVector &ByteVector::clear()
 {
   detach();
   d->data.clear();
+  d->size = 0;
+
+  return *this;
 }
 
 TagLib::uint ByteVector::size() const
@@ -589,16 +602,12 @@ ByteVector &ByteVector::operator=(const ByteVector &v)
 
 ByteVector &ByteVector::operator=(char c)
 {
-  if(d->deref())
-    delete d;
   *this = ByteVector(c);
   return *this;
 }
 
 ByteVector &ByteVector::operator=(const char *data)
 {
-  if(d->deref())
-    delete d;
   *this = ByteVector(data);
   return *this;
 }

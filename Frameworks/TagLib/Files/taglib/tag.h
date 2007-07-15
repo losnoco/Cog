@@ -22,7 +22,7 @@
 #ifndef TAGLIB_TAG_H
 #define TAGLIB_TAG_H
 
-#include <tstring.h>
+#include "tstring.h"
 
 namespace TagLib {
 
@@ -32,7 +32,7 @@ namespace TagLib {
    * This is an attempt to abstract away the difference in the meta data formats
    * of various audio codecs and tagging schemes.  As such it is generally a
    * subset of what is available in the specific formats but should be suitable
-   * for most applications.  This is meant to complient the generic APIs found
+   * for most applications.  This is meant to compliment the generic APIs found
    * in TagLib::AudioProperties, TagLib::File and TagLib::FileRef.
    */
 
@@ -105,7 +105,7 @@ namespace TagLib {
     virtual void setAlbum(const String &s) = 0;
 
     /*!
-     * Sets the album to \a s.  If \a s is String::null then this value will be
+     * Sets the comment to \a s.  If \a s is String::null then this value will be
      * cleared.
      */
     virtual void setComment(const String &s) = 0;

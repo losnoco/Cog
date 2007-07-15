@@ -55,29 +55,12 @@ const ID3v1::StringHandler *ID3v1::Tag::TagPrivate::stringHandler = new StringHa
 
 String ID3v1::StringHandler::parse(const ByteVector &data) const
 {
-  return clean(String(data, String::Latin1));
+  return String(data, String::Latin1).stripWhiteSpace();
 }
 
 ByteVector ID3v1::StringHandler::render(const String &s) const
 {
   return s.data(String::Latin1);
-}
-
-String ID3v1::StringHandler::clean(const String &s) const
-{
-	String newString;
-	int i;
-	
-	newString = s;	
-	
-	i = newString.size() - 1;
-	while (s[i] == ' ' && i >= 0)
-	{
-		newString[i] = '\0';
-		i--;
-	}
-	
-	return newString;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -187,7 +170,7 @@ void ID3v1::Tag::setGenre(const String &s)
 
 void ID3v1::Tag::setYear(uint i)
 {
-  d->year = String::number(i);
+  d->year = i > 0 ? String::number(i) : String::null;
 }
 
 void ID3v1::Tag::setTrack(uint i)
@@ -213,7 +196,7 @@ void ID3v1::Tag::read()
     ByteVector data = d->file->readBlock(128);
 
     // some initial sanity checking
-    if(data.size() == 128 && data.mid(0, 3) == "TAG")
+    if(data.size() == 128 && data.startsWith("TAG"))
       parse(data);
     else
       debug("ID3v1 tag is not valid or could not be read at the specified offset.");

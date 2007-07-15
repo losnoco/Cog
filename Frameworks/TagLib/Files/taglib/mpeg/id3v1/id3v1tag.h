@@ -22,8 +22,8 @@
 #ifndef TAGLIB_ID3V1TAG_H
 #define TAGLIB_ID3V1TAG_H
 
-#include <tag.h>
-#include <tbytevector.h>
+#include "tag.h"
+#include "tbytevector.h"
 
 namespace TagLib {
 
@@ -70,10 +70,6 @@ namespace TagLib {
        * ISO-8859-1.
        */
       virtual ByteVector render(const String &s) const;
-	  
-	  
-	  //Fixes buggy taggers which do spaces instead of 0s.
-	  String ID3v1::StringHandler::clean(const String &s) const;
     };
 
     //! The main class in the ID3v1 implementation

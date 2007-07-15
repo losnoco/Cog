@@ -31,6 +31,7 @@ class Ogg::XiphComment::XiphCommentPrivate
 public:
   FieldListMap fieldListMap;
   String vendorID;
+  String commentField;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,9 +77,17 @@ String Ogg::XiphComment::album() const
 
 String Ogg::XiphComment::comment() const
 {
-  if(d->fieldListMap["DESCRIPTION"].isEmpty())
-    return String::null;
-  return d->fieldListMap["DESCRIPTION"].front();
+  if(!d->fieldListMap["DESCRIPTION"].isEmpty()) {
+    d->commentField = "DESCRIPTION";
+    return d->fieldListMap["DESCRIPTION"].front();    
+  }
+
+  if(!d->fieldListMap["COMMENT"].isEmpty()) {
+    d->commentField = "COMMENT";
+    return d->fieldListMap["COMMENT"].front();    
+  }
+
+  return String::null;
 }
 
 String Ogg::XiphComment::genre() const
@@ -119,7 +128,7 @@ void Ogg::XiphComment::setAlbum(const String &s)
 
 void Ogg::XiphComment::setComment(const String &s)
 {
-  addField("DESCRIPTION", s);
+  addField(d->commentField.isEmpty() ? "DESCRIPTION" : d->commentField, s);
 }
 
 void Ogg::XiphComment::setGenre(const String &s)
@@ -179,7 +188,7 @@ void Ogg::XiphComment::addField(const String &key, const String &value, bool rep
   if(replace)
     removeField(key.upper());
 
-  if(!key.isEmpty())
+  if(!key.isEmpty() && !value.isEmpty())
     d->fieldListMap[key.upper()].append(value);
 }
 
@@ -187,13 +196,20 @@ void Ogg::XiphComment::removeField(const String &key, const String &value)
 {
   if(!value.isNull()) {
     StringList::Iterator it = d->fieldListMap[key].begin();
-    for(; it != d->fieldListMap[key].end(); ++it) {
+    while(it != d->fieldListMap[key].end()) {
       if(value == *it)
-        d->fieldListMap[key].erase(it);
+        it = d->fieldListMap[key].erase(it);
+      else
+        it++;
     }
   }
   else
-    d->fieldListMap[key].clear();
+    d->fieldListMap.erase(key);
+}
+
+bool Ogg::XiphComment::contains(const String &key) const
+{
+  return d->fieldListMap.contains(key) && !d->fieldListMap[key].isEmpty();
 }
 
 ByteVector Ogg::XiphComment::render() const
@@ -206,7 +222,7 @@ ByteVector Ogg::XiphComment::render(bool addFramingBit) const
   ByteVector data;
 
   // Add the vendor ID length and the vendor ID.  It's important to use the
-  // lenght of the data(String::UTF8) rather than the lenght of the the string
+  // length of the data(String::UTF8) rather than the length of the the string
   // since this is UTF8 text and there may be more characters in the data than
   // in the UTF16 string.
 

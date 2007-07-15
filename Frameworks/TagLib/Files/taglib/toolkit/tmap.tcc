@@ -81,18 +81,19 @@ typename Map<Key, T>::ConstIterator Map<Key, T>::end() const
 }
 
 template <class Key, class T>
-void Map<Key, T>::insert(const Key &key, const T &value)
+Map<Key, T> &Map<Key, T>::insert(const Key &key, const T &value)
 {
   detach();
-  std::pair<Key, T> item(key, value);
-  d->map.insert(item);
+  d->map[key] = value;
+  return *this;
 }
 
 template <class Key, class T>
-void Map<Key, T>::clear()
+Map<Key, T> &Map<Key, T>::clear()
 {
   detach();
   d->map.clear();
+  return *this;
 }
 
 template <class Key, class T>
@@ -104,6 +105,7 @@ bool Map<Key, T>::isEmpty() const
 template <class Key, class T>
 typename Map<Key, T>::Iterator Map<Key, T>::find(const Key &key)
 {
+  detach();
   return d->map.find(key);
 }
 
@@ -120,9 +122,21 @@ bool Map<Key, T>::contains(const Key &key) const
 }
 
 template <class Key, class T>
-void Map<Key,T>::erase(Iterator it)
+Map<Key, T> &Map<Key,T>::erase(Iterator it)
 {
+  detach();
   d->map.erase(it);
+  return *this;
+}
+
+template <class Key, class T>
+Map<Key, T> &Map<Key,T>::erase(const Key &key)
+{
+  detach();
+  Iterator it = d->map.find(key);
+  if(it != d->map.end())
+    d->map.erase(it);
+  return *this;
 }
 
 template <class Key, class T>
@@ -140,7 +154,8 @@ const T &Map<Key, T>::operator[](const Key &key) const
 template <class Key, class T>
 T &Map<Key, T>::operator[](const Key &key)
 {
-    return d->map[key];
+  detach();  
+  return d->map[key];
 }
 
 template <class Key, class T>

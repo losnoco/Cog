@@ -35,7 +35,7 @@ using namespace ID3v2;
 class Header::HeaderPrivate
 {
 public:
-  HeaderPrivate() : majorVersion(0),
+  HeaderPrivate() : majorVersion(4),
                     revisionNumber(0),
                     unsynchronisation(false),
                     extendedHeader(false),
@@ -157,6 +157,12 @@ ByteVector Header::render() const
 
   v.append(char(4));
   v.append(char(0));
+
+  // Currently we don't actually support writing extended headers or footers, so
+  // make sure that the flags are set accordingly.
+
+  d->extendedHeader = false;
+  d->footerPresent = false;
 
   // render and add the flags
   std::bitset<8> flags;

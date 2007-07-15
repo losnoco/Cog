@@ -57,7 +57,7 @@ namespace TagLib {
         virtual ~XingHeader();
 
         /*!
-         * Returns true if the data was parsed properly and if there is a vaild
+         * Returns true if the data was parsed properly and if there is a valid
 	 * Xing header present.
          */
         bool isValid() const;
@@ -76,6 +76,7 @@ namespace TagLib {
          * Returns the offset for the start of this Xing header, given the
 	 * version and channels of the frame
          */
+        // BIC: rename to offset()
         static int xingHeaderOffset(TagLib::MPEG::Header::Version v,
                                     TagLib::MPEG::Header::ChannelMode c);
 

@@ -22,12 +22,12 @@
 #ifndef TAGLIB_VORBISCOMMENT_H
 #define TAGLIB_VORBISCOMMENT_H
 
-#include <tag.h>
-#include <tlist.h>
-#include <tmap.h>
-#include <tstring.h>
-#include <tstringlist.h>
-#include <tbytevector.h>
+#include "tag.h"
+#include "tlist.h"
+#include "tmap.h"
+#include "tstring.h"
+#include "tstringlist.h"
+#include "tbytevector.h"
 
 namespace TagLib {
 
@@ -155,6 +155,13 @@ namespace TagLib {
        * \a value is null, all of the fields with the given key will be removed.
        */
       void removeField(const String &key, const String &value = String::null);
+
+      /*!
+       * Returns true if the field is contained within the comment.
+       *
+       * \note This is safer than checking for membership in the FieldListMap. 
+       */
+      bool contains(const String &key) const;
 
       /*!
        * Renders the comment to a ByteVector suitable for inserting into a file.

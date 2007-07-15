@@ -124,69 +124,47 @@ String ID3v2::Tag::genre() const
   // should be separated by " / " instead of " ".  For the moment to keep
   // the behavior the same as released versions it is being left with " ".
 
-  if(!d->frameListMap["TCON"].isEmpty() &&
-     dynamic_cast<TextIdentificationFrame *>(d->frameListMap["TCON"].front()))
+  if(d->frameListMap["TCON"].isEmpty() ||
+     !dynamic_cast<TextIdentificationFrame *>(d->frameListMap["TCON"].front()))
   {
-    Frame *frame = d->frameListMap["TCON"].front();
-
-    // ID3v2.4 lists genres as the fields in its frames field list.  If the field
-    // is simply a number it can be assumed that it is an ID3v1 genre number.
-    // Here was assume that if an ID3v1 string is present that it should be
-    // appended to the genre string.  Multiple fields will be appended as the
-    // string is built.
-
-    if(d->header.majorVersion() == 4) {
-      TextIdentificationFrame *f = static_cast<TextIdentificationFrame *>(frame);
-      StringList fields = f->fieldList();
-
-      String genreString;
-      bool hasNumber = false;
-
-      for(StringList::ConstIterator it = fields.begin(); it != fields.end(); ++it) {
-        bool isNumber = true;
-        for(String::ConstIterator charIt = (*it).begin();
-            isNumber && charIt != (*it).end();
-            ++charIt)
-        {
-          isNumber = *charIt >= '0' && *charIt <= '9';
-        }
-
-        if(!genreString.isEmpty())
-          genreString.append(' ');
-
-        if(isNumber) {
-          int number = (*it).toInt();
-          if(number >= 0 && number <= 255) {
-            hasNumber = true;
-            genreString.append(ID3v1::genre(number));
-          }
-        }
-        else
-          genreString.append(*it);
-      }
-      if(hasNumber)
-        return genreString;
-    }
-
-    String s = frame->toString();
-
-    // ID3v2.3 "content type" can contain a ID3v1 genre number in parenthesis at
-    // the beginning of the field.  If this is all that the field contains, do a
-    // translation from that number to the name and return that.  If there is a
-    // string folloing the ID3v1 genre number, that is considered to be
-    // authoritative and we return that instead.  Or finally, the field may
-    // simply be free text, in which case we just return the value.
-
-    int closing = s.find(")");
-    if(s.substr(0, 1) == "(" && closing > 0) {
-      if(closing == int(s.size() - 1))
-        return ID3v1::genre(s.substr(1, s.size() - 2).toInt());
-      else
-        return s.substr(closing + 1);
-    }
-    return s;
+    return String::null;
   }
-  return String::null;
+
+  // ID3v2.4 lists genres as the fields in its frames field list.  If the field
+  // is simply a number it can be assumed that it is an ID3v1 genre number.
+  // Here was assume that if an ID3v1 string is present that it should be
+  // appended to the genre string.  Multiple fields will be appended as the
+  // string is built.
+
+  TextIdentificationFrame *f = static_cast<TextIdentificationFrame *>(
+    d->frameListMap["TCON"].front());
+
+  StringList fields = f->fieldList();
+
+  StringList genres;
+
+  for(StringList::Iterator it = fields.begin(); it != fields.end(); ++it) {
+
+    bool isNumber = true;
+
+    for(String::ConstIterator charIt = (*it).begin();
+        isNumber && charIt != (*it).end();
+        ++charIt)
+    {
+      isNumber = *charIt >= '0' && *charIt <= '9';
+    }
+
+    if(isNumber) {
+      int number = (*it).toInt();
+      if(number >= 0 && number <= 255)
+        *it = ID3v1::genre(number);
+    }
+
+    if(std::find(genres.begin(), genres.end(), *it) == genres.end())
+      genres.append(*it);
+  }
+
+  return genres.toString();
 }
 
 TagLib::uint ID3v2::Tag::year() const
@@ -320,7 +298,7 @@ void ID3v2::Tag::removeFrame(Frame *frame, bool del)
 
   // ...and delete as desired
   if(del)
-    delete *it;
+    delete frame;
 }
 
 void ID3v2::Tag::removeFrames(const ByteVector &id)
@@ -343,8 +321,10 @@ ByteVector ID3v2::Tag::render() const
 
   // Loop through the frames rendering them and adding them to the tagData.
 
-  for(FrameList::Iterator it = d->frameList.begin(); it != d->frameList.end(); it++)
-    tagData.append((*it)->render());
+  for(FrameList::Iterator it = d->frameList.begin(); it != d->frameList.end(); it++) {
+    if(!(*it)->header()->tagAlterPreservation())
+      tagData.append((*it)->render());
+  }
 
   // Compute the amount of padding, and append that to tagData.
 

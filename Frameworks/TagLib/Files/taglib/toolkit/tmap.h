@@ -89,13 +89,13 @@ namespace TagLib {
      * Inserts \a value under \a key in the map.  If a value for \a key already
      * exists it will be overwritten.
      */
-    void insert(const Key &key, const T &value);
+    Map<Key, T> &insert(const Key &key, const T &value);
 
     /*!
      * Removes all of the elements from elements from the map.  This however
      * will not delete pointers if the mapped type is a pointer type.
      */
-    void clear();
+    Map<Key, T> &clear();
 
     /*!
      * The number of elements in the map.
@@ -112,12 +112,12 @@ namespace TagLib {
     bool isEmpty() const;
 
     /*!
-     * Find the first occurance of \a key.
+     * Find the first occurrence of \a key.
      */
     Iterator find(const Key &key);
 
     /*!
-     * Find the first occurance of \a key.
+     * Find the first occurrence of \a key.
      */
     ConstIterator find(const Key &key) const;
 
@@ -129,7 +129,12 @@ namespace TagLib {
     /*!
      * Erase the item at \a it from the list.
      */
-    void erase(Iterator it);
+    Map<Key, T> &erase(Iterator it);
+
+    /*!
+     * Erase the item with \a key from the list.
+     */
+    Map<Key, T> &erase(const Key &key);
 
     /*!
      * Returns a reference to the value associated with \a key.

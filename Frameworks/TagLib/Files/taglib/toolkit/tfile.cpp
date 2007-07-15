@@ -24,8 +24,22 @@
 #include "tdebug.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#ifdef _WIN32
+# include <io.h>
+# define ftruncate _chsize
+#else
+ #include <unistd.h>
+#endif
+#include <stdlib.h>
+
+#ifndef R_OK
+# define R_OK 4
+#endif
+#ifndef W_OK
+# define W_OK 2
+#endif
 
 using namespace TagLib;
 
@@ -36,7 +50,8 @@ public:
     file(0),
     name(fileName),
     readOnly(true),
-    valid(true)
+    valid(true),
+    size(0)
     {}
 
   ~FilePrivate()
@@ -48,6 +63,7 @@ public:
   const char *name;
   bool readOnly;
   bool valid;
+  ulong size;
   static const uint bufferSize = 1024;
 };
 
@@ -59,9 +75,15 @@ File::File(const char *file)
 {
   d = new FilePrivate(::strdup(file));
 
-  d->readOnly = !isWritable(file);
-//  d->file = fopen(file, d->readOnly ? "r" : "r+");
-  d->file = fopen(file, "r");
+  // First try with read/write mode, if that fails, fall back to read only.
+  // We can't use ::access() since that works in odd ways on some file systems.
+
+  d->file = fopen(file, "rb+");
+
+  if(d->file)
+    d->readOnly = false;
+  else
+    d->file = fopen(file,"rb");
 
   if(!d->file)
     debug("Could not open file " + String(file));
@@ -84,6 +106,12 @@ ByteVector File::readBlock(ulong length)
   if(!d->file) {
     debug("File::readBlock() -- Invalid File");
     return ByteVector::null;
+  }
+
+  if(length > FilePrivate::bufferSize &&
+     length > ulong(File::length()))
+  {
+    length = File::length();
   }
 
   ByteVector v(static_cast<uint>(length));
@@ -232,7 +260,7 @@ long File::rfind(const ByteVector &pattern, long fromOffset, const ByteVector &b
   }
   else {
     seek(fromOffset + -1 * int(d->bufferSize), Beginning);
-    bufferOffset = tell();    
+    bufferOffset = tell();
   }
 
   // See the notes in find() for an explanation of this algorithm.
@@ -374,12 +402,11 @@ void File::removeBlock(ulong start, ulong length)
 
   ByteVector buffer(static_cast<uint>(bufferLength));
 
-  ulong bytesRead = true;
+  ulong bytesRead = 1;
 
   while(bytesRead != 0) {
     seek(readPosition);
     bytesRead = fread(buffer.data(), sizeof(char), bufferLength, d->file);
-    buffer.resize(bytesRead);
     readPosition += bytesRead;
 
     // Check to see if we just read the last block.  We need to call clear()
@@ -407,12 +434,12 @@ bool File::isReadable(const char *file)
 
 bool File::isOpen() const
 {
-  return d->file;
+  return (d->file != NULL);
 }
 
 bool File::isValid() const
 {
-  return d->file && d->valid;
+  return isOpen() && d->valid;
 }
 
 void File::seek(long offset, Position p)
@@ -447,8 +474,13 @@ long File::tell() const
 
 long File::length()
 {
+  // Do some caching in case we do multiple calls.
+
+  if(d->size > 0)
+    return d->size;
+
   if(!d->file)
-    return 0;	  
+    return 0;
 
   long curpos = tell();
   
@@ -456,7 +488,8 @@ long File::length()
   long endpos = tell();
   
   seek(curpos, Beginning);
-  
+
+  d->size = endpos;
   return endpos;
 }
 
