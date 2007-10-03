@@ -20,10 +20,6 @@
 	decoder = [AudioDecoder audioDecoderForURL:url];
 	[decoder retain];
 
-	converter = [[Converter alloc] init];
-	if (converter == nil)
-		return NO;
-	
 	[self registerObservers];
 
 	if (decoder == nil)
@@ -61,8 +57,6 @@
 {
 	if ([keyPath isEqual:@"properties"]) {
 		//Setup converter!
-		[converter cleanUp];
-		[converter setupWithInputFormat:propertiesToASBD([decoder properties]) outputFormat:outputFormat];
 		//Inform something of properties change
 	}
 	else if ([keyPath isEqual:@"metadata"]) {
@@ -72,47 +66,46 @@
 
 - (void)process
 {
-	int amountRead = 0, amountConverted = 0, amountInBuffer = 0;
+	int amountRead = 0, amountInBuffer = 0;
 	void *inputBuffer = malloc(CHUNK_SIZE);
 	
 	while ([self shouldContinue] == YES && [self endOfStream] == NO)
 	{
 		if (shouldSeek == YES)
 		{
+			NSLog(@"SEEKING!");
 			[decoder seekToTime:seekTime];
+			NSLog(@"Har");
 			shouldSeek = NO;
-
+			NSLog(@"Seeked! Resetting Buffer");
+			
 			[self resetBuffer];
+			
+			NSLog(@"Reset buffer!");
 			initialBufferFilled = NO;
 		}
 
 		if (amountInBuffer < CHUNK_SIZE) {
 			amountRead = [decoder fillBuffer:((char *)inputBuffer) + amountInBuffer ofSize:CHUNK_SIZE - amountInBuffer];
 			amountInBuffer += amountRead;
-		}
 		
-		amountConverted = [converter convert:inputBuffer amount:amountInBuffer]; //Convert fills in converter buffer, til the next call
-		if (amountInBuffer - amountConverted > 0) {
-			memmove(inputBuffer,((char *)inputBuffer) + amountConverted, amountInBuffer - amountConverted);
-		}
-		amountInBuffer -= amountConverted;
-		
-		if ([converter outputBufferSize] <= 0)
-		{
-			if (initialBufferFilled == NO) {
-				[controller initialBufferFilled];
+			if (amountRead <= 0)
+			{
+				if (initialBufferFilled == NO) {
+					[controller initialBufferFilled];
+				}
+				
+				endOfStream = YES;
+				[controller endOfInputReached];
+				break; //eof
 			}
-			
-			endOfStream = YES;
-			[controller endOfInputReached];
-			break; //eof
+		
+			[self writeData:inputBuffer amount:amountInBuffer];
+			amountInBuffer = 0;
 		}
-	
-		[self writeData:[converter outputBuffer] amount:[converter outputBufferSize]];
 	}
 	
 	[decoder close];
-	[converter cleanUp];
 	
 	free(inputBuffer);
 }
@@ -121,7 +114,7 @@
 {
 	seekTime = time;
 	shouldSeek = YES;
-	[self resetBuffer];
+	NSLog(@"Should seek!");
 	[semaphore signal];
 }
 

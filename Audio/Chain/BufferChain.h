@@ -9,11 +9,12 @@
 #import <Cocoa/Cocoa.h>
 
 #import "InputNode.h"
-
+#import "ConverterNode.h"
 #import "AudioPlayer.h"
 
 @interface BufferChain : NSObject {
 	InputNode *inputNode;
+	ConverterNode *converterNode;
 	
 	NSURL *streamURL;
 	id userInfo;

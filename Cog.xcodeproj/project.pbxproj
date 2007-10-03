@@ -1516,7 +1516,7 @@
 				);
 				PRODUCT_NAME = Cog;
 				WRAPPER_EXTENSION = app;
-				ZERO_LINK = YES;
+				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};

@@ -22,6 +22,8 @@
 	id previousNode;
 	id controller;
 	
+	BOOL shouldReset;
+	
 	BOOL shouldContinue;	
 	BOOL endOfStream; //All data is now in buffer
 	BOOL initialBufferFilled;
@@ -36,6 +38,9 @@
 
 - (void)launchThread;
 
+- (void)setShouldReset:(BOOL)s;
+- (BOOL)shouldReset;
+
 - (NSLock *)readLock;
 - (NSLock *)writeLock;
 
@@ -48,6 +53,8 @@
 - (void)resetBuffer; //WARNING! DANGER WILL ROBINSON!
 
 - (Semaphore *)semaphore;
+
+-(void)resetBuffer;
 
 - (BOOL)endOfStream;
 - (void)setEndOfStream:(BOOL)e;

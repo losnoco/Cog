@@ -13,13 +13,11 @@
 #import <AudioUnit/AudioUnit.h>
 
 #import "AudioDecoder.h"
-#import "Converter.h"
 #import "Node.h"
 #import "Plugin.h"
 
 @interface InputNode : Node {
 	id<CogDecoder> decoder;
-	Converter *converter;
 	
 	AudioStreamBasicDescription outputFormat;
 	

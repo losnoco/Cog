@@ -41,15 +41,17 @@
 	while (shouldContinue == YES && amountLeft > 0)
 	{
 		availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
-		
-		if (availOutput == 0)
-		{
-			[writeLock unlock];
+		if (availOutput == 0) {
 			if (initialBufferFilled == NO) {
-				initialBufferFilled = YES;\
+				initialBufferFilled = YES;
 				if ([controller respondsToSelector:@selector(initialBufferFilled)])
 					[controller performSelector:@selector(initialBufferFilled)];
 			}
+		}
+		
+		if (availOutput == 0 || shouldReset)
+		{
+			[writeLock unlock];
 			[semaphore wait];
 			[writeLock lock];
 		}
@@ -115,6 +117,19 @@
 		NSLog(@"BUFFER IN DANGER");
 	}
 */
+
+	if ([previousNode shouldReset] == YES) {
+		[writeLock lock];
+
+		[buffer empty];
+
+		shouldReset = YES;
+		[previousNode setShouldReset: NO];
+		[writeLock unlock];
+
+		[[previousNode semaphore] signal];
+	}
+
 	amountToCopy = availInput;
 	if (amountToCopy > amount)
 	{
@@ -161,13 +176,12 @@
 
 - (void)resetBuffer
 {
-	[readLock lock];
-	[writeLock lock];
-
-	[buffer empty];
-
-	[writeLock unlock];
-	[readLock unlock];
+	shouldReset = YES; //Will reset on next write.
+	if (previousNode == nil) {
+		[readLock lock];
+		[buffer empty];
+		[readLock unlock];
+	}
 }
 
 - (NSLock *)readLock
@@ -194,5 +208,15 @@
 {
 	endOfStream = e;
 }
+
+- (void)setShouldReset:(BOOL)s
+{
+	shouldReset = s;
+}
+- (BOOL)shouldReset
+{
+	return shouldReset;
+}
+
 
 @end

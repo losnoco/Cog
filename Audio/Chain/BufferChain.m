@@ -23,6 +23,7 @@
 		userInfo = nil;
 
 		inputNode = nil;
+		converterNode = nil;
 	}
 	
 	return self;
@@ -31,10 +32,12 @@
 - (void)buildChain
 {
 	[inputNode release];
+	[converterNode release];
 	
 	inputNode = [[InputNode alloc] initWithController:self previous:nil];
-
-	finalNode = inputNode;
+	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
+	
+	finalNode = converterNode;
 }
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat
@@ -54,6 +57,9 @@
 
 	if (![inputNode openURL:url withSource:source outputFormat:outputFormat])
 		return NO;
+
+	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
+		return NO;
 	
 	return YES;
 }
@@ -61,6 +67,7 @@
 - (void)launchThreads
 {
 	[inputNode launchThread];
+	[converterNode launchThread];
 }
 
 - (void)setUserInfo:(id)i
@@ -80,6 +87,7 @@
 	[userInfo release];
 	
 	[inputNode release];
+	[converterNode release];
 	
 	[super dealloc];
 }
@@ -120,6 +128,7 @@
 - (void)setShouldContinue:(BOOL)s
 {
 	[inputNode setShouldContinue:s];
+	[converterNode setShouldContinue:s];
 }
 
 @end
