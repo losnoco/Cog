@@ -191,7 +191,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key
 {
-	return [key isEqualToString:@"currentEntry"];
+	return [key isEqualToString:@"currentEntry"] ||  [key isEqualToString:@"play"];
 }
 
 - (void)initShowColumn:(NSMenuItem *)showColumn withIdentifier:(NSString *)identifier

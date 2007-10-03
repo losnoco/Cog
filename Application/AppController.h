@@ -76,4 +76,9 @@
 - (void)registerHotKeys;
 OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *userData);
 
+
+- (void)clickPlay;
+- (void)clickPrev;
+- (void)clickNext;
+
 @end

@@ -64,6 +64,10 @@
 		17818A990C0B27AC001C4916 /* shn.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A920C0B27AC001C4916 /* shn.icns */; };
 		17818A9A0C0B27AC001C4916 /* wav.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A930C0B27AC001C4916 /* wav.icns */; };
 		17818A9B0C0B27AC001C4916 /* wv.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A940C0B27AC001C4916 /* wv.icns */; };
+		1791005E0CB44D6D0070BC5C /* Cog.scriptSuite in Resources */ = {isa = PBXBuildFile; fileRef = 1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */; };
+		1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */; };
+		1791FF8F0CB43A2C0070BC5C /* MediaKeysApplication.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1791FF8D0CB43A2C0070BC5C /* MediaKeysApplication.h */; };
+		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
 		179790F20C087B46001D6996 /* OpenURLPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 179790F00C087B46001D6996 /* OpenURLPanel.nib */; };
 		17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */; };
@@ -104,8 +108,6 @@
 		8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75753209F31D5A0080F1EE /* PlaylistView.m */; };
 		8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75753409F31D5A0080F1EE /* Shuffle.m */; };
 		8E7575BE09F31D800080F1EE /* wheel.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8E7575A609F31D800080F1EE /* wheel.icns */; };
-		8E7575CC09F31DCA0080F1EE /* Cog.scriptSuite in Resources */ = {isa = PBXBuildFile; fileRef = 8E7575C409F31DCA0080F1EE /* Cog.scriptSuite */; };
-		8E7575CD09F31DCA0080F1EE /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 8E7575C509F31DCA0080F1EE /* Cog.scriptTerminology */; };
 		8E7575DB09F31E930080F1EE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E7575D909F31E930080F1EE /* Localizable.strings */; };
 		8E9A2E860BA78B500091081B /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2E840BA78B500091081B /* SecondsFormatter.m */; };
 		8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */; };
@@ -335,6 +337,7 @@
 				17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */,
 				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 				17F94CCD0B8D090800A34E87 /* Sparkle.framework in CopyFiles */,
+				1791FF8F0CB43A2C0070BC5C /* MediaKeysApplication.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,6 +444,10 @@
 		17818A920C0B27AC001C4916 /* shn.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = shn.icns; sourceTree = "<group>"; };
 		17818A930C0B27AC001C4916 /* wav.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = wav.icns; sourceTree = "<group>"; };
 		17818A940C0B27AC001C4916 /* wv.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = wv.icns; sourceTree = "<group>"; };
+		1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Cog.scriptSuite; sourceTree = "<group>"; };
+		1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Cog.scriptTerminology; sourceTree = "<group>"; };
+		1791FF8D0CB43A2C0070BC5C /* MediaKeysApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeysApplication.h; sourceTree = "<group>"; };
+		1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaKeysApplication.m; sourceTree = "<group>"; };
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
 		179790DF0C087AB7001D6996 /* OpenURLPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenURLPanel.m; sourceTree = "<group>"; };
 		179790F10C087B46001D6996 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
@@ -500,8 +507,6 @@
 		8E75753309F31D5A0080F1EE /* Shuffle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Shuffle.h; sourceTree = "<group>"; };
 		8E75753409F31D5A0080F1EE /* Shuffle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Shuffle.m; sourceTree = "<group>"; };
 		8E7575A609F31D800080F1EE /* wheel.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = wheel.icns; sourceTree = "<group>"; };
-		8E7575C409F31DCA0080F1EE /* Cog.scriptSuite */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Cog.scriptSuite; sourceTree = "<group>"; };
-		8E7575C509F31DCA0080F1EE /* Cog.scriptTerminology */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Cog.scriptTerminology; sourceTree = "<group>"; };
 		8E7575C809F31DCA0080F1EE /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; name = English; path = English.lproj/Credits.html; sourceTree = "<group>"; };
 		8E7575DA09F31E930080F1EE /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E9A2E830BA78B500091081B /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SecondsFormatter.h; sourceTree = "<group>"; };
@@ -607,6 +612,8 @@
 				177042980B8BC53600B86321 /* AppController.m */,
 				177042990B8BC53600B86321 /* PlaybackController.h */,
 				1770429A0B8BC53600B86321 /* PlaybackController.m */,
+				1791FF8D0CB43A2C0070BC5C /* MediaKeysApplication.h */,
+				1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -909,10 +916,10 @@
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
+				1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */,
+				1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */,
 				179790F00C087B46001D6996 /* OpenURLPanel.nib */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
-				8E7575C409F31DCA0080F1EE /* Cog.scriptSuite */,
-				8E7575C509F31DCA0080F1EE /* Cog.scriptTerminology */,
 				17E41E060C130DFF00AC744D /* Credits.html */,
 			);
 			name = Resources;
@@ -1244,8 +1251,6 @@
 				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				8E7575BE09F31D800080F1EE /* wheel.icns in Resources */,
-				8E7575CC09F31DCA0080F1EE /* Cog.scriptSuite in Resources */,
-				8E7575CD09F31DCA0080F1EE /* Cog.scriptTerminology in Resources */,
 				17E41E070C130DFF00AC744D /* Credits.html in Resources */,
 				8E7575DB09F31E930080F1EE /* Localizable.strings in Resources */,
 				177EC0440B8BC2FF0000BC8C /* add_blue.png in Resources */,
@@ -1283,6 +1288,8 @@
 				17818A990C0B27AC001C4916 /* shn.icns in Resources */,
 				17818A9A0C0B27AC001C4916 /* wav.icns in Resources */,
 				17818A9B0C0B27AC001C4916 /* wv.icns in Resources */,
+				1791005E0CB44D6D0070BC5C /* Cog.scriptSuite in Resources */,
+				1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1338,6 +1345,7 @@
 				8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */,
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
+				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

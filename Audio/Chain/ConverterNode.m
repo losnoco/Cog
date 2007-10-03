@@ -8,10 +8,6 @@
 
 #import "ConverterNode.h"
 
-#define BUFFER_SIZE 512 * 1024
-#define CHUNK_SIZE 16 * 1024
-
-
 void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 {
 	if (!inDesc) {
@@ -36,16 +32,12 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumberDataPackets, AudioBufferList* ioData, AudioStreamPacketDescription** outDataPacketDescription, void* inUserData)
 {
 	ConverterNode *converter = (ConverterNode *)inUserData;
-	id previousNode = [converter previousNode];
 	OSStatus err = noErr;
-	void *readPtr;
 	int amountToWrite;
-	int availInput;
 	int amountRead;
 	
 	if ([converter shouldContinue] == NO || [converter endOfStream] == YES)
 	{
-//		NSLog(@"END OF STREAM IN CONV");
 		ioData->mBuffers[0].mDataByteSize = 0; 
 		*ioNumberDataPackets = 0;
 
@@ -59,14 +51,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	converter->callbackBuffer = malloc(amountToWrite);
 
 	amountRead = [converter readData:converter->callbackBuffer amount:amountToWrite];
-/*	if ([converter endOfStream] == YES)
-	{
-		ioData->mBuffers[0].mDataByteSize = 0; 
-		*ioNumberDataPackets = 0;
-		
-		return noErr;
-	}
-*/	if (amountRead == 0)
+	if (amountRead == 0)
 	{
 		ioData->mBuffers[0].mDataByteSize = 0; 
 		*ioNumberDataPackets = 0;
@@ -74,43 +59,6 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 		return 100; //Keep asking for data
 	}
 
-	/*	
-	availInput = [[previousNode buffer] lengthAvailableToReadReturningPointer:&readPtr];
-	if (availInput == 0 )
-	{
-//		NSLog(@"0 INPUT");
-		ioData->mBuffers[0].mDataByteSize = 0; 
-		*ioNumberDataPackets = 0;
-		
-		if ([previousNode endOfStream] == YES)
-		{
-			NSLog(@"END OF CONVERTER INPUT");
-			[converter setEndOfStream:YES];
-			[converter setShouldContinue:NO];
-			
-			return noErr;
-		}
-		
-		return 100; //Keep asking for data
-	}
-		
-	if (amountToWrite > availInput)
-		amountToWrite = availInput;
-	
-	*ioNumberDataPackets = amountToWrite/(converter->inputFormat.mBytesPerPacket);
-	
-	if (converter->callbackBuffer != NULL)
-		free(converter->callbackBuffer);
-	converter->callbackBuffer = malloc(amountToWrite);
-	memcpy(converter->callbackBuffer, readPtr, amountToWrite);
-
-	if (amountToWrite > 0)
-	{
-		[[previousNode buffer] didReadLength:amountToWrite];
-		[[previousNode semaphore] signal];
-	}
-*/
-//	NSLog(@"Amount read: %@ %i", converter, amountRead);
 	ioData->mBuffers[0].mData = converter->callbackBuffer;
 	ioData->mBuffers[0].mDataByteSize = amountRead;
 	ioData->mBuffers[0].mNumberChannels = (converter->inputFormat.mChannelsPerFrame);
@@ -138,34 +86,6 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 
 		[self writeData:writeBuf amount:amountConverted];
 	}
-	
-/*	void *writePtr;
-	int availOutput;
-	int amountConverted;
-	
-	while ([self shouldContinue] == YES)
-	{
-		
-		availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
-
-		while (availOutput == 0)
-		{
-			[semaphore wait];
-			
-			if (shouldContinue == NO)
-			{
-				return;
-			}
-			
-			availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
-		}
-		
-		amountConverted = [self convert:writePtr amount:availOutput];
-		
-		if (amountConverted > 0)
-			[buffer didWriteLength:amountConverted];
-	}
-	*/
 }
 
 - (int)convert:(void *)dest amount:(int)amount
@@ -185,43 +105,8 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	{
 		return [self convert:dest amount:amount];
 	}
-//	if (err != noErr)
-//		NSLog(@"Converter error: %i", err);
 
 	return ioData.mBuffers[0].mDataByteSize;
-/*
-	void *readPtr;
-	int availInput;
-
-	availInput = [[previousLink buffer] lengthAvailableToReadReturningPointer:&readPtr];
-//	NSLog(@"AMOUNT: %i %i", amount, availInput);
-
-	if (availInput == 0)
-	{
-		if ([previousLink endOfInput] == YES)
-		{
-			endOfInput = YES;
-			NSLog(@"EOI");
-			shouldContinue = NO;
-			return 0;
-		}
-	}
-	
-	
-	if (availInput < amount)
-		amount = availInput;
-
-	memcpy(dest, readPtr, amount);
-
-	if (amount > 0)
-	{
-//		NSLog(@"READ: %i", amount);
-		[[previousLink buffer] didReadLength:amount];
-		[[previousLink semaphore] signal];
-	}
-	
-	return amount;
- */
 }
 
 - (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf
@@ -248,10 +133,6 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 			DBLog(@"Error mapping channels %i", stat);
 		}	
 	}
-	
-	//	DBLog(@"Created converter");
-	PrintStreamDesc(&inf);
-	PrintStreamDesc(&outf);
 	
 	return YES;
 }

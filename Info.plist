@@ -214,7 +214,7 @@
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
+	<string>MediaKeysApplication</string>
 	<key>SUFeedURL</key>
 	<string>http://cogx.org/appcast/stable.xml</string>
 </dict>
