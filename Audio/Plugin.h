@@ -5,6 +5,7 @@
 */
 
 #define	kCogSource 				@"CogSource"
+#define kCogContainer 			@"CogContainer"
 #define kCogDecoder 			@"CogDecoder"
 #define kCogMetadataReader 		@"CogMetadataReader"
 #define kCogPropertiesReader 	@"CogPropertiesReader"
@@ -28,6 +29,12 @@
 - (void)close;
 @end
 
+@protocol CogContainer <NSObject> 
++ (NSArray *)fileTypes; //mp3, ogg, etc
+
++ (NSArray *)urlsForContainerURL:(NSURL *)url;
+@end
+
 @protocol CogDecoder <NSObject> 
 + (NSArray *)fileTypes; //mp3, ogg, etc
 
@@ -43,12 +50,20 @@
 
 @protocol CogMetadataReader <NSObject>
 + (NSArray *)fileTypes;
-+ (NSDictionary *)metadataForURL;
++ (NSDictionary *)metadataForURL:(NSURL *)url;
 @end
 
 @protocol CogPropertiesReader <NSObject>
 + (NSArray *)fileTypes;
 + (NSDictionary *)propertiesForSource:(id<CogSource>)source;
+@end
+
+@protocol CogPluginController <NSObject>
+- (id<CogSource>) audioSourceForURL:(NSURL *)url;
+- (NSArray *) urlsForContainerURL:(NSURL *)url;
+- (id<CogDecoder>) audioDecoderForURL:(NSURL *)url;
+- (NSDictionary *) metadataForURL:(NSURL *)url;
+- (NSDictionary *) propertiesForURL:(NSURL *)url;
 @end
 
 

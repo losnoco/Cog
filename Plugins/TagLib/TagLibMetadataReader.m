@@ -12,7 +12,7 @@
 
 @implementation TagLibMetadataReader
 
-- (NSDictionary *)metadataForURL:(NSURL *)url
++ (NSDictionary *)metadataForURL:(NSURL *)url
 {
 	NSString *lArtist = @"", *lTitle = @"", *lAlbum = @"", *lGenre = @"";
 	int lYear = 0, lTrack = 0;

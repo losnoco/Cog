@@ -14,13 +14,7 @@
 
 + (id<CogDecoder>) audioDecoderForURL:(NSURL *)url
 {
-	NSString *ext = [[url path] pathExtension];
-	
-	NSDictionary *decoders = [[PluginController sharedPluginController] decoders];
-	
-	Class decoder = NSClassFromString([decoders objectForKey:[ext lowercaseString]]);
-	
-	return [[[decoder alloc] init] autorelease];
+	return [[PluginController sharedPluginController] audioDecoderForURL:url];
 }
 
 @end

@@ -306,7 +306,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObject:@"flac"];
+	return [NSArray arrayWithObjects:@"flac", @"fla", nil];
 }
 
 @end

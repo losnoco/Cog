@@ -48,6 +48,7 @@
 
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
++ (NSArray *)containerTypes;
 
 @end
 

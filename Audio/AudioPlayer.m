@@ -270,16 +270,23 @@
 	return output;
 }
 
++ (NSArray *)containerTypes
+{
+	return [[[PluginController sharedPluginController] containers] allKeys];
+}
+
 + (NSArray *)fileTypes
 {
 	PluginController *pluginController = [PluginController sharedPluginController];
 	
+	NSArray *containerTypes = [[pluginController containers] allKeys];
 	NSArray *decoderTypes = [[pluginController decoders] allKeys];
 	NSArray *metdataReaderTypes = [[pluginController metadataReaders] allKeys];
 	NSArray *propertiesReaderTypes = [[pluginController propertiesReaders] allKeys];
 	
 	NSMutableSet *types = [NSMutableSet set];
 	
+	[types addObjectsFromArray:containerTypes];
 	[types addObjectsFromArray:decoderTypes];
 	[types addObjectsFromArray:metdataReaderTypes];
 	[types addObjectsFromArray:propertiesReaderTypes];
@@ -293,6 +300,5 @@
 	
 	return [[pluginController sources] allKeys];
 }
-
 
 @end

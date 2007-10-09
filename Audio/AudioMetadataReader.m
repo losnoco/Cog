@@ -13,14 +13,7 @@
 
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
-	NSString *ext = [[url path] pathExtension];
-	
-	NSDictionary *metadataReaders = [[PluginController sharedPluginController] metadataReaders];
-	
-	Class metadataReader = NSClassFromString([metadataReaders objectForKey:[ext lowercaseString]]);
-	
-	return [[[[metadataReader alloc] init] autorelease] metadataForURL:url];
-
+	return [[PluginController sharedPluginController] metadataForURL:url];
 }
 
 @end

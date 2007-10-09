@@ -15,22 +15,7 @@
 
 + (NSDictionary *)propertiesForURL:(NSURL *)url
 {
-	NSString *ext = [[url path] pathExtension];
-	
-	id<CogSource> source = [AudioSource audioSourceForURL:url];
-	if (![source open:url])
-		return nil;
-	
-	NSDictionary *propertiesReaders = [[PluginController sharedPluginController] propertiesReaders];
-	
-	Class propertiesReader = NSClassFromString([propertiesReaders objectForKey:[ext lowercaseString]]);
-	
-	NSDictionary *properties =  [propertiesReader propertiesForSource:source];
-	
-	[source close];
-	
-	return properties;
-
+	return [[PluginController sharedPluginController] propertiesForURL:url];
 }
 
 @end

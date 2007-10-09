@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'M3u' target in the 'M3u' project.
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

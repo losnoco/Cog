@@ -44,6 +44,8 @@
 		17F94DD60B8D0F7000A34E87 /* PluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.m */; };
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
 		8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC1225D0B993BD500C5B3AD /* ConverterNode.h */; };
 		8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC1225E0B993BD500C5B3AD /* ConverterNode.m */; };
 /* End PBXBuildFile section */
@@ -103,6 +105,8 @@
 		32DBCF5E0370ADEE00C91783 /* CogAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogAudio_Prefix.pch; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
+		8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioContainer.m; sourceTree = "<group>"; };
 		8EC1225D0B993BD500C5B3AD /* ConverterNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ConverterNode.h; sourceTree = "<group>"; };
 		8EC1225E0B993BD500C5B3AD /* ConverterNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ConverterNode.m; sourceTree = "<group>"; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -167,6 +171,8 @@
 				17F94DDC0B8D101100A34E87 /* Plugin.h */,
 				17D21EBB0B8BF44000D1EBDE /* AudioPlayer.h */,
 				17D21EBC0B8BF44000D1EBDE /* AudioPlayer.m */,
+				8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */,
+				8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */,
 				17A2D3C30B8D1D37000778C4 /* AudioDecoder.h */,
 				17A2D3C40B8D1D37000778C4 /* AudioDecoder.m */,
 				17C940210B900909008627D6 /* AudioMetadataReader.h */,
@@ -305,6 +311,7 @@
 				17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */,
 				17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */,
 				8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */,
+				8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +385,7 @@
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
+				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

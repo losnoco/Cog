@@ -13,30 +13,9 @@
 #import "NSFileHandle+CreateFile.h"
 
 #import "CogAudio/AudioPlayer.h"
+#import "CogAudio/AudioContainer.h"
 
 @implementation PlaylistLoader
-
-//load/save playlist auto-determines type to be either pls or m3u.
-- (NSArray *)urlsFromPlaylist:(NSString *)filename
-{
-	NSString *ext = [filename pathExtension];
-	if ([ext isEqualToString:@"m3u"])
-	{
-		return [self urlsFromM3u:filename];
-	}
-	else if ([ext isEqualToString:@"pls"])
-	{
-		return [self urlsFromPls:filename];
-	}
-	else
-	{
-		NSArray *entries = [self urlsFromPls:filename];
-		if (entries == nil)
-			return [self urlsFromM3u:filename];
-		
-		return entries;
-	}
-}
 
 - (BOOL)save:(NSString *)filename
 {
@@ -109,31 +88,6 @@
 }
 
 
-- (NSArray *)urlsFromM3u:(NSString *)filename
-{
-    NSError *error = nil;
-    NSString *contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
-    if (error || !contents) {
-		NSLog(@"Could not open file...%@ %@", contents, error);
-        return NO;
-    }
-
-    NSString *entry;
-    NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
-	NSMutableArray *entries = [NSMutableArray array];
-
-    while (entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
-    {
-		if ([entry hasPrefix:@"#"] || [entry isEqualToString:@""]) //Ignore extra info
-			continue;
-
-		//Need to add basePath, and convert to URL
-		[entries addObject:[self urlForPath:entry relativeTo:filename]];		
-	}
-
-	return entries;
-}
-
 - (BOOL)saveM3u:(NSString *)filename
 {
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
@@ -155,42 +109,6 @@
 	[fileHandle closeFile];
 
 	return YES;
-}
-
-- (NSArray *)urlsFromPls:(NSString *)filename
-{
-	NSError *error;
-	NSString *contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
-	if (error || !contents) {
-		return nil;
-	}
-
-	NSString *entry;
-	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
-	NSMutableArray *entries = [NSMutableArray array];
-
-    while (entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
-	{
-		NSScanner *scanner = [[NSScanner alloc] initWithString:entry];
-		NSString *lhs = nil;
-		NSString *rhs = nil;
-		
-		if (![scanner scanUpToString:@"=" intoString:&lhs]	|| // get LHS
-			![scanner scanString:@"=" intoString:nil]		|| // skip the =
-			![scanner scanUpToString:@"" intoString:&rhs]	|| // get RHS
-			![lhs isEqualToString:@"File"]) // We only want file entries
-		{
-			[scanner release];
-			continue;
-		}
-		
-		//need to add basepath if its a file, and convert to URL
-		[entries addObject:[self urlForPath:rhs relativeTo:filename]];
-		
-		[scanner release];
-	}
-
-	return entries;
 }
 
 - (BOOL)savePls:(NSString *)filename
@@ -265,8 +183,8 @@
 	{
 		if ([url isFileURL]) {
 			BOOL isDir;
-		    if ([[NSFileManager defaultManager] fileExistsAtPath:[url path] isDirectory:&isDir])
-		    {
+			if ([[NSFileManager defaultManager] fileExistsAtPath:[url path] isDirectory:&isDir])
+			{
 				if (isDir == YES)
 				{
 					//Get subpaths
@@ -303,8 +221,10 @@
 	while (url = [urlEnumerator nextObject])
 	{
 		//File url
-		if ([[self acceptablePlaylistTypes] containsObject:[[url path] pathExtension]]) {
-			[allURLs addObjectsFromArray:[self urlsFromPlaylist:[url path]]];
+		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]]) {
+			if ([url isFileURL] ) {
+				[allURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
+			}
 		}
 		else
 		{
@@ -395,12 +315,12 @@
 
 - (NSArray *)acceptableFileTypes
 {
-	return [[self acceptablePlaylistTypes] arrayByAddingObjectsFromArray:[AudioPlayer fileTypes]];
+	return [[self acceptableContainerTypes] arrayByAddingObjectsFromArray:[AudioPlayer fileTypes]];
 }
 
-- (NSArray *)acceptablePlaylistTypes
+- (NSArray *)acceptableContainerTypes
 {
-	return [NSArray arrayWithObjects:@"m3u",@"pls",nil];
+	return [AudioPlayer containerTypes];
 }
 
 @end

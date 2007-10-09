@@ -11,15 +11,9 @@
 
 @implementation AudioSource
 
-+ audioSourceForURL:(NSURL *)url
++ (id<CogSource>) audioSourceForURL:(NSURL *)url
 {
-	NSString *scheme = [url scheme];
-	
-	NSDictionary *sources = [[PluginController sharedPluginController] sources];
-	
-	Class source = NSClassFromString([sources objectForKey:scheme]);
-	
-	return [[[source alloc] init] autorelease];
+	return [[PluginController sharedPluginController] audioSourceForURL:url];
 }
 
 @end
