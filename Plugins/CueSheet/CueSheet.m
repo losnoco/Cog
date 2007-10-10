@@ -16,26 +16,145 @@
 	return [[[CueSheet alloc] initWithFile:filename] autorelease];
 }
 
+- (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
+{
+	if ([path hasPrefix:@"/"]) {
+		return [NSURL fileURLWithPath:path];
+	}
+	
+	NSRange foundRange = [path rangeOfString:@"://"];
+	if (foundRange.location != NSNotFound) 
+	{
+		return [NSURL URLWithString:path];
+	}
+	
+	NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+	NSMutableString *unixPath = [path mutableCopy];
+
+	//Only relative paths would have windows backslashes.
+	[unixPath replaceOccurrencesOfString:@"\\" withString:@"/" options:0 range:NSMakeRange(0, [unixPath length])];
+
+	return [NSURL fileURLWithPath:[basePath stringByAppendingString:[unixPath autorelease]]];
+}
+
+
+- (void)parseFile:(NSString *)filename
+{
+	NSError *error = nil;
+	NSString *contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
+	if (error || !contents) {
+		NSLog(@"Could not open file...%@ %@ %@", filename, contents, error);
+		return;
+	}
+
+	NSMutableArray *entries = [[NSMutableArray alloc] init];
+
+	NSString *track = nil;
+	NSString *path = nil;
+	BOOL trackAdded = NO;
+
+	NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+
+	NSString *line;
+	NSScanner *scanner = nil;
+	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
+	while (line = [e nextObject])
+	{
+		[scanner release];
+		scanner = [[NSScanner alloc] initWithString:line];
+
+		NSString *command;
+		if (![scanner scanUpToCharactersFromSet:whitespace intoString:&command]) {
+			continue;
+		}
+		
+		//FILE "filename.shn" WAVE
+		if ([command isEqualToString:@"FILE"]) {
+			track = nil;
+			trackAdded = NO;
+
+			if (![scanner scanString:@"\"" intoString:&command]) {
+				continue;
+			}
+
+			//Read in the path
+			if (![scanner scanUpToString:@"\"" intoString:&path]) {
+				continue;
+			}
+		}
+		//TRACK 01 AUDIO
+		else if ([command isEqualToString:@"TRACK"]) {
+			trackAdded = NO;
+
+			if (![scanner scanUpToCharactersFromSet:whitespace intoString:&track]) {
+				continue;
+			}
+			
+			NSString *type = nil;
+			if (![scanner scanUpToCharactersFromSet:whitespace intoString:&type]
+					|| ![type isEqualToString:@"AUDIO"]) {
+				continue;
+			}
+		}
+		//INDEX 01 00:00:10
+		//Note that time is written in Minutes:Seconds:Frames, where frames are 1/75 of a second
+		else if ([command isEqualToString:@"INDEX"]) {
+			if (trackAdded) {
+				continue;
+			}
+			
+			if (!path) {
+				continue;
+			}
+
+			NSString *index = nil;
+			if (![scanner scanUpToCharactersFromSet:whitespace intoString:&index]) {
+				continue;
+			}
+
+			[scanner scanCharactersFromSet:whitespace intoString:nil];
+
+			NSString *time = nil;
+			if (![scanner scanUpToCharactersFromSet:whitespace intoString:&time]) {
+				continue;
+			}
+			
+			NSArray *msf = [time componentsSeparatedByString:@":"];
+			if ([msf count] != 3) {
+				continue;
+			}
+
+			double seconds = (60*[[msf objectAtIndex:0] intValue]) + [[msf objectAtIndex:1] intValue] + ([[msf objectAtIndex:2] floatValue]/75);
+
+			if (track == nil) {
+				track = @"01";
+			}
+
+			//Need to add basePath, and convert to URL
+			[entries addObject:
+								[CueSheetTrack trackWithURL:[self urlForPath:path relativeTo:filename]
+															 track: track
+															 time: seconds]];
+			trackAdded = YES;
+		}
+	}
+
+	[scanner release];
+	
+	tracks = [entries copy];
+
+	[entries release];
+}
+
 - (id)initWithFile:(NSString *)filename
 {
 	self = [super init];
 	if (self) {
-		
-		NSError *error = nil;
-		NSString *contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
-		if (error || !contents) {
-			NSLog(@"Could not open file...%@ %@", contents, error);
-			return nil;
-		}
-		
-		tracks = [[NSMutableArray alloc] init];
-		
-		//Actually parse file here.
+		[self parseFile:filename];
 	}
 	
 	return self;
 }
-
 
 - (NSArray *)tracks
 {

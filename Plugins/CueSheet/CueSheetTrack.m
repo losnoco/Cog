@@ -11,14 +11,19 @@
 
 @implementation CueSheetTrack
 
-- (void)initWithTrack:(NSString *)t start:(double)s end:(double)e
++ (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s
+{
+	return [[[CueSheetTrack alloc] initWithURL:u track:t time:s] autorelease];
+}
+
+- (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)s
 {
 	self = [super init];
 	if (self)
 	{
 		track = [t copy];
-		start = s;
-		end = e;
+		url = [u copy];
+		time = s;
 	}
 	
 	return self;
@@ -29,14 +34,14 @@
 	return track;
 }
 
-- (double)start
+- (NSURL *)url
 {
-	return start;
+	return url;
 }
 
-- (double)end
+- (double)time
 {
-	return end;
+	return time;
 }
 
 @end

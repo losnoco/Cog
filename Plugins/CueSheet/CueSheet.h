@@ -18,6 +18,8 @@
 
 - (id)initWithFile:(NSString *)filename;
 
+- (void)parseFile:(NSString *)filename;
+
 - (NSArray *)tracks;
 
 - (CueSheetTrack *)track:(NSString *)fragment;

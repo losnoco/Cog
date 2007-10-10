@@ -88,6 +88,7 @@
 		17C809E60C3BD487005707C4 /* CoreAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C809E30C3BD46D005707C4 /* CoreAudio.bundle */; };
 		17E41E070C130DFF00AC744D /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E060C130DFF00AC744D /* Credits.html */; };
 		17E41E230C130EE200AC744D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E220C130EE200AC744D /* Help */; };
+		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
 		17F94CC20B8D08FB00A34E87 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F94CC10B8D08FB00A34E87 /* Sparkle.framework */; };
@@ -279,6 +280,20 @@
 			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = CoreAudio;
 		};
+		17F3BB870CBC565100864489 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F3BB830CBC565100864489 /* CueSheet.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA /* CueSheet.bundle */;
+			remoteInfo = CueSheet;
+		};
+		17F3BB8A0CBC566200864489 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F3BB830CBC565100864489 /* CueSheet.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA /* CueSheet */;
+			remoteInfo = CueSheet;
+		};
 		17F561320C3BD4DC0019975C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */;
@@ -311,28 +326,28 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8D5B49B6048680CD000E48DA /* M3u.bundle */;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = M3u;
 		};
 		8E8D40920CBB03AF00135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA /* M3u */;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = M3u;
 		};
 		8E8D41C60CBB0DA000135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8D5B49B6048680CD000E48DA /* Pls.bundle */;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = Pls;
 		};
 		8E8D41CB0CBB0DD200135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA /* Pls */;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = Pls;
 		};
 /* End PBXContainerItemProxy section */
@@ -344,6 +359,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */,
 				8E8D41C80CBB0DA900135C1B /* Pls.bundle in CopyFiles */,
 				8E8D40880CBB038E00135C1B /* M3u.bundle in CopyFiles */,
 				17C809E60C3BD487005707C4 /* CoreAudio.bundle in CopyFiles */,
@@ -507,6 +523,7 @@
 		17E41C470C1304BB00AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		17E41C480C1304C700AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
 		17E41C490C1304D200AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Swedish; path = Swedish.lproj/Localizable.strings; sourceTree = "<group>"; };
+		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
 		17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = Audio/CogAudio.xcodeproj; sourceTree = "<group>"; };
 		17F562260C3BD8FB0019975C /* General.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = General.xcodeproj; path = Preferences/General/General.xcodeproj; sourceTree = "<group>"; };
 		17F94CC10B8D08FB00A34E87 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
@@ -791,6 +808,7 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
+				17F3BB830CBC565100864489 /* CueSheet.xcodeproj */,
 				8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */,
 				8E8D40820CBB036600135C1B /* M3u.xcodeproj */,
 				17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */,
@@ -892,6 +910,14 @@
 			isa = PBXGroup;
 			children = (
 				17C809E30C3BD46D005707C4 /* CoreAudio.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		17F3BB840CBC565100864489 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17F3BB880CBC565100864489 /* CueSheet.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1117,6 +1143,7 @@
 				17F5623B0C3BD9280019975C /* PBXTargetDependency */,
 				8E8D40930CBB03AF00135C1B /* PBXTargetDependency */,
 				8E8D41CC0CBB0DD200135C1B /* PBXTargetDependency */,
+				17F3BB8B0CBC566200864489 /* PBXTargetDependency */,
 			);
 			name = Cog;
 			productInstallPath = "$(HOME)/Applications";
@@ -1150,6 +1177,10 @@
 				{
 					ProductGroup = 17C809DF0C3BD46D005707C4 /* Products */;
 					ProjectRef = 17C808660C3BD0F8005707C4 /* CoreAudio.xcodeproj */;
+				},
+				{
+					ProductGroup = 17F3BB840CBC565100864489 /* Products */;
+					ProjectRef = 17F3BB830CBC565100864489 /* CueSheet.xcodeproj */;
 				},
 				{
 					ProductGroup = 17C808720C3BD167005707C4 /* Products */;
@@ -1286,6 +1317,13 @@
 			fileType = wrapper.cfbundle;
 			path = CoreAudio.bundle;
 			remoteRef = 17C809E20C3BD46D005707C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		17F3BB880CBC565100864489 /* CueSheet.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CueSheet.bundle;
+			remoteRef = 17F3BB870CBC565100864489 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		17F561330C3BD4DC0019975C /* CogAudio.framework */ = {
@@ -1482,6 +1520,11 @@
 			isa = PBXTargetDependency;
 			name = CoreAudio;
 			targetProxy = 17C809E40C3BD47C005707C4 /* PBXContainerItemProxy */;
+		};
+		17F3BB8B0CBC566200864489 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CueSheet;
+			targetProxy = 17F3BB8A0CBC566200864489 /* PBXContainerItemProxy */;
 		};
 		17F5613F0C3BD4E90019975C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

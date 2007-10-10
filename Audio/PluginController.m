@@ -204,11 +204,11 @@ static PluginController *sharedPluginController = nil;
 
 - (void)printPluginInfo
 {
-	//NSLog(@"Sources: %@", sources);
-	//NSLog(@"Containers: %@", containers);
-	//NSLog(@"Decoders: %@", decoders);
-	//NSLog(@"Metadata Readers: %@", metadataReaders);
-	//NSLog(@"Properties Readers: %@", propertiesReaders);
+	NSLog(@"Sources: %@", sources);
+	NSLog(@"Containers: %@", containers);
+	NSLog(@"Decoders: %@", decoders);
+	NSLog(@"Metadata Readers: %@", metadataReaders);
+	NSLog(@"Properties Readers: %@", propertiesReaders);
 }
 
 - (NSDictionary *)sources

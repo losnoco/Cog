@@ -18,13 +18,16 @@
 	return [NSArray arrayWithObject:@"cue"];
 }
 
-+ (NSArray *)urlsForContainerURL:(NSURL *)url {
++ (NSArray *)urlsForContainerURL:(NSURL *)url
+{
 	if (![url isFileURL]) {
 		return [NSArray array];
 	}
 	
 	NSMutableArray *tracks = [NSMutableArray array];
-	CueSheet *cuesheet = [[CueSheet alloc] initWithFile:[url path]];
+	
+	CueSheet *cuesheet = [CueSheet cueSheetWithFile:[url path]];
+
 	NSEnumerator *e = [[cuesheet tracks] objectEnumerator];
 	CueSheetTrack  *track;
 	while (track = [e nextObject]) {

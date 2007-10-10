@@ -567,7 +567,8 @@ static inline signed int scale (mad_fixed_t sample)
 	new_position = ((double) seconds / (double) total_seconds) * _fileSize;
 
 	[_source seek:new_position whence:SEEK_SET];
-	mad_stream_sync(&_stream);
+
+	//mad_stream_sync(&_stream);
 	_stream.error = MAD_ERROR_BUFLEN;
 	_stream.sync = 0;
 	_outputAvailable = 0;

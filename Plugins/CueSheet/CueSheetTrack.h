@@ -11,16 +11,18 @@
 
 @interface CueSheetTrack : NSObject {
 	NSString *track;
+	NSURL *url;
 
-	double start;
-	double end;
+	double time;
 }
 
-- (void)initWithTrack:(NSString *)t start:(double)s end:(double)e;
++ (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)t;
+- (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)t;
+
 
 - (NSString *)track;
+- (NSURL *)url;
 
-- (double)start;
-- (double)end;
+- (double)time;
 
 @end

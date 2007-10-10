@@ -13,10 +13,12 @@
 @class CueSheetTrack;
 
 @interface CueSheetDecoder : NSObject <CogDecoder> {
+	id<CogSource> source;
 	id<CogDecoder> decoder;
-	
+
 	int bytesPerSecond;
-	int trackPosition;
+	int bytePosition;
+	double trackEnd;
 	
 	CueSheetTrack *track;
 }
