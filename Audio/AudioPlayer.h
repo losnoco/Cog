@@ -65,7 +65,7 @@
 - (void)notifyStreamChanged:(id)userInfo;
 - (void)notifyStreamChangedMainThread:(id)userInfo;
 
-- (void)endOfInputReached:(BufferChain *)sender;
+- (BOOL)endOfInputReached:(BufferChain *)sender;
 - (void)setShouldContinue:(BOOL)s;
 - (BufferChain *)bufferChain;
 - (void)launchOutputThread;

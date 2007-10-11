@@ -10,6 +10,7 @@
 
 #import "Plugin.h"
 
+@class CueSheet;
 @class CueSheetTrack;
 
 @interface CueSheetDecoder : NSObject <CogDecoder> {
@@ -20,6 +21,7 @@
 	int bytePosition;
 	double trackEnd;
 	
+	CueSheet *cuesheet;
 	CueSheetTrack *track;
 }
 

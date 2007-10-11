@@ -38,14 +38,16 @@
 	NSURL *url = [s url];
 	[s close];
 
-	CueSheet *cuesheet = [CueSheet cueSheetWithFile:[url path]];
-
+	cuesheet = [CueSheet cueSheetWithFile:[url path]];
+	[cuesheet retain];
+	
 	NSArray *tracks = [cuesheet tracks];
 	int i;
 	for (i = 0; i < [tracks count]; i++) 
 	{
 		if ([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]){
 			track = [tracks objectAtIndex:i];
+			[track retain];
 
 			//Kind of a hackish way of accessing outside classes.
 			source = [NSClassFromString(@"AudioSource") audioSourceForURL:[track url]];
@@ -103,6 +105,47 @@
 		[source release];
 		source = nil;
 	}
+	if (cuesheet) {
+		[cuesheet release];
+		cuesheet = nil;
+	}
+	if (track) {
+		[track release];
+		track = nil;
+	}
+}
+
+- (BOOL)setTrack:(NSURL *)url
+{
+	if ([[url fragment] intValue] == [[track track] intValue] + 1) {
+		NSArray *tracks = [cuesheet tracks];
+		
+		int i;
+		for (i = 0; i < [tracks count]; i++) {
+			if ([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]){
+				[track release];
+				track = [tracks objectAtIndex:i];
+				[track retain];
+				
+				CueSheetTrack *nextTrack = nil;
+				if (i + 1 < [tracks count]) {
+					nextTrack = [tracks objectAtIndex:i + 1];
+				}
+
+				if (nextTrack && [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]) {
+					trackEnd = [nextTrack time];
+				}
+				else {
+					trackEnd = [[[decoder properties] objectForKey:@"length"] doubleValue]/1000.0;
+				}
+				
+				NSLog(@"CHANGING TRACK!");
+				return YES;
+			}
+		}
+	}
+	
+	return NO;
 }
 
 - (double)seekToTime:(double)time //milliseconds
@@ -118,6 +161,13 @@
 	time += trackStartMs;
 	
 	bytePosition = (time/1000.0) * bytesPerSecond;
+
+	int bitsPerSample = [[[decoder properties] objectForKey:@"bitsPerSample"] intValue];
+	int channels = [[[decoder properties] objectForKey:@"channels"] intValue];
+
+	NSLog(@"Before: %li", bytePosition);
+	bytePosition -= bytePosition % (bitsPerSample/8 * channels);
+	NSLog(@"After: %li", bytePosition);
 
 	return [decoder seekToTime:time];
 }

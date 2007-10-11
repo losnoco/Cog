@@ -55,7 +55,7 @@
 	}
 	
 
-	if (![inputNode openURL:url withSource:source outputFormat:outputFormat])
+	if (![inputNode openURL:url withSource:source])
 		return NO;
 
 	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
@@ -64,8 +64,25 @@
 	return YES;
 }
 
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat
+{
+	NSLog(@"New buffer chain!");
+	[self buildChain];
+
+	if (![inputNode openWithDecoder:[i decoder]])
+		return NO;
+		
+	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
+		return NO;
+		
+	NSLog(@"Buffer chain made");
+	return YES;
+}
+
 - (void)launchThreads
 {
+	NSLog(@"Properties: %@", [inputNode properties]);
+
 	[inputNode launchThread];
 	[converterNode launchThread];
 }
@@ -97,14 +114,24 @@
 	[inputNode seek:time];
 }
 
-- (void)endOfInputReached
+- (BOOL)endOfInputReached
 {
-	[controller endOfInputReached:self];
+	return [controller endOfInputReached:self];
+}
+
+- (BOOL)setTrack: (NSURL *)track
+{
+	return [inputNode setTrack:track];
 }
 
 - (void)initialBufferFilled
 {
 	[controller launchOutputThread];
+}
+
+- (InputNode *)inputNode
+{
+	return inputNode;
 }
 
 - (id)finalNode

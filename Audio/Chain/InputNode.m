@@ -13,17 +13,15 @@
 
 @implementation InputNode
 
-- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source outputFormat:(AudioStreamBasicDescription)of
+- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source
 {
-	outputFormat = of;
-	
 	decoder = [AudioDecoder audioDecoderForURL:url];
 	[decoder retain];
 
-	[self registerObservers];
-
 	if (decoder == nil)
 		return NO;
+
+	[self registerObservers];
 
 	if (![decoder open:source])
 	{
@@ -36,6 +34,22 @@
 	
 	return YES;
 }
+
+- (BOOL)openWithDecoder:(id<CogDecoder>) d
+{
+	NSLog(@"Opening with old decoder: %@", d);
+	decoder = d;
+	[decoder retain];
+	
+	[self registerObservers];
+	
+	shouldContinue = YES;
+	shouldSeek = NO;
+	
+	NSLog(@"DONES: %@", decoder);
+	return YES;
+}
+
 
 - (void)registerObservers
 {
@@ -69,13 +83,14 @@
 	int amountRead = 0, amountInBuffer = 0;
 	void *inputBuffer = malloc(CHUNK_SIZE);
 	
+	BOOL shouldClose = YES;
+	
 	while ([self shouldContinue] == YES && [self endOfStream] == NO)
 	{
 		if (shouldSeek == YES)
 		{
 			NSLog(@"SEEKING!");
 			[decoder seekToTime:seekTime];
-			NSLog(@"Har");
 			shouldSeek = NO;
 			NSLog(@"Seeked! Resetting Buffer");
 			
@@ -95,17 +110,19 @@
 					[controller initialBufferFilled];
 				}
 				
+				NSLog(@"End of stream?");
 				endOfStream = YES;
-				[controller endOfInputReached];
-				break; //eof
+				shouldClose = [controller endOfInputReached]; //Lets us know if we should keep going or not (occassionally, for track changes within a file)
+				NSLog(@"closing? is %i", shouldClose);
+				break; 
 			}
 		
 			[self writeData:inputBuffer amount:amountInBuffer];
 			amountInBuffer = 0;
 		}
 	}
-	
-	[decoder close];
+	if (shouldClose)
+		[decoder close];
 	
 	free(inputBuffer);
 }
@@ -118,8 +135,21 @@
 	[semaphore signal];
 }
 
+- (BOOL)setTrack:(NSURL *)track
+{
+	if ([decoder respondsToSelector:@selector(setTrack:)] && [decoder setTrack:track]) {
+		NSLog(@"SET TRACK!");
+		
+		return YES;
+	}
+	
+	return NO;
+}
+
 - (void)dealloc
 {
+	NSLog(@"DEALLOCATING");
+
 	[decoder removeObserver:self forKeyPath:@"properties"];
 	[decoder removeObserver:self forKeyPath:@"metadata"];
 
@@ -131,6 +161,11 @@
 - (NSDictionary *) properties
 {
 	return [decoder properties];
+}
+
+- (id<CogDecoder>) decoder
+{
+	return decoder;
 }
 
 @end

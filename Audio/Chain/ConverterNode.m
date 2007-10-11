@@ -134,6 +134,9 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 		}	
 	}
 	
+	PrintStreamDesc(&inf);
+	PrintStreamDesc(&outf);
+	
 	return YES;
 }
 

@@ -19,17 +19,21 @@
 @interface InputNode : Node {
 	id<CogDecoder> decoder;
 	
-	AudioStreamBasicDescription outputFormat;
-	
 	BOOL shouldSeek;
 	double seekTime;
 }
 
-- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source outputFormat:(AudioStreamBasicDescription)of;
+- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source;
+- (BOOL)openWithDecoder:(id<CogDecoder>) d;
+
 - (void)process;
 - (NSDictionary *) properties;
 - (void)seek:(double)time;
 
 - (void)registerObservers;
+
+- (BOOL)setTrack:(NSURL *)track;
+
+- (id<CogDecoder>) decoder;
 
 @end

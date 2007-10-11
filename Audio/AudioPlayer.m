@@ -134,6 +134,7 @@
 	[output setVolume:v];
 }
 
+//Note: This is called 
 - (void)setNextStream:(NSURL *)url
 {
 	[self setNextStream:url withUserInfo:nil];
@@ -176,8 +177,6 @@
 	}
 }
 
-
-
 - (void)requestNextStream:(id)userInfo
 {
 	[self sendDelegateMethod:@selector(audioPlayer:requestNextStream:) withObject:userInfo waitUntilDone:YES];
@@ -188,35 +187,68 @@
 	[self sendDelegateMethod:@selector(audioPlayer:streamChanged:) withObject:userInfo waitUntilDone:NO];
 }
 
-
-
-- (void)endOfInputReached:(BufferChain *)sender //Sender is a BufferChain
-{
-	BufferChain *newChain = nil;
-
-	nextStreamUserInfo = [sender userInfo];
-	[nextStreamUserInfo retain]; //Retained because when setNextStream is called, it will be released!!!
-	
-	do {
-		[newChain release];
-		[self requestNextStream: nextStreamUserInfo];
-
-		if (nextStream == nil)
-		{
-			return;
-		}
-		
-		newChain = [[BufferChain alloc] initWithController:self];
-	} while (![newChain open:nextStream withOutputFormat:[output format]]);
-	
+- (void)addChainToQueue:(BufferChain *)newChain
+{	
 	[newChain setUserInfo: nextStreamUserInfo];
 	
 	[newChain setShouldContinue:YES];
 	[newChain launchThreads];
 	
 	[chainQueue insertObject:newChain atIndex:[chainQueue count]];
+}
+
+- (BOOL)endOfInputReached:(BufferChain *)sender //Sender is a BufferChain
+{
+	BufferChain *newChain = nil;
+
+	nextStreamUserInfo = [sender userInfo];
+	[nextStreamUserInfo retain]; //Retained because when setNextStream is called, it will be released!!!
+	
+	[self requestNextStream: nextStreamUserInfo];
+	newChain = [[BufferChain alloc] initWithController:self];
+	
+	BufferChain *lastChain = [chainQueue lastObject];
+	if (lastChain == nil) {
+		lastChain = bufferChain;
+	}
+	
+	if ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]]
+		&& [[nextStream host] isEqualToString:[[lastChain streamURL] host]]
+		&& [[nextStream path] isEqualToString:[[lastChain streamURL] path]])
+	{
+		if ([lastChain setTrack:nextStream]) {
+			[newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format]];
+			
+			[newChain setStreamURL:nextStream];
+			[newChain setUserInfo:nextStreamUserInfo];
+
+			[self addChainToQueue:newChain];
+			NSLog(@"TRACK SET!!! %@", newChain);
+			//Keep on-playin
+			[newChain release];
+			
+			return NO;
+		}
+	}
+	
+	while (![newChain open:nextStream withOutputFormat:[output format]]) 
+	{
+		if (nextStream == nil)
+		{
+			return YES;
+		}
+		
+		[newChain release];
+		[self requestNextStream: nextStreamUserInfo];
+
+		newChain = [[BufferChain alloc] initWithController:self];
+	}
+	
+	[self addChainToQueue:newChain];
 
 	[newChain release];
+	
+	return YES;
 }
 
 - (void)endOfInputPlayed
@@ -232,6 +264,8 @@
 	
 	bufferChain = [chainQueue objectAtIndex:0];
 	[bufferChain retain];
+	
+	NSLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
 	
 	[chainQueue removeObjectAtIndex:0];
 

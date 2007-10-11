@@ -26,10 +26,17 @@
 
 - (id)initWithController:(id)c;
 - (void)buildChain;
+
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat;
+
+//Used when changing tracks to reuse the same decoder
+- (BOOL)openWithInput:(InputNode *)i  withOutputFormat:(AudioStreamBasicDescription)outputFormat;
+
 - (void)seek:(double)time;
 
 - (void)launchThreads;
+
+- (InputNode *)inputNode;
 
 - (id)finalNode;
 
@@ -43,7 +50,7 @@
 
 - (void)initialBufferFilled;
 
-- (void)endOfInputReached;
-
+- (BOOL)endOfInputReached;
+- (BOOL)setTrack:(NSURL *)track;
 
 @end
