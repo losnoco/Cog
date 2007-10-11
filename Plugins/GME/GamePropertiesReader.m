@@ -1,29 +1,32 @@
 //
-//  CueSheetPropertiesReader.m
-//  CueSheet
+//  GamePropertiesReader.m
+//  GME
 //
-//  Created by Vincent Spader on 10/08/07.
+//  Created by Vincent Spader on 10/10/07.
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-#import "CueSheetPropertiesReader.h"
-#import "CueSheetDecoder.h"
+#import "GamePropertiesReader.h"
+#import "GameDecoder.h"
 
-@implementation CueSheetPropertiesReader
+@implementation GamePropertiesReader
 
 + (NSDictionary *)propertiesForSource:(id<CogSource>)source
 {
 	NSDictionary *properties;
-	CueSheetDecoder *decoder;
+	GameDecoder *decoder;
 	
-	decoder = [[CueSheetDecoder alloc] init];
+	decoder = [[GameDecoder alloc] init];
 	if (![decoder open:source])
 	{
+		NSLog(@"Could not open");
 		return nil;
 	}
 	
 	properties = [decoder properties];
-	
+
+	NSLog(@"Properties! %@", properties);
+		
 	[decoder close];
 	[decoder release];
 	
@@ -33,7 +36,7 @@
 
 + (NSArray *)fileTypes
 {
-	return [CueSheetDecoder fileTypes];
+	return [GameDecoder fileTypes];
 }
 
 @end
