@@ -134,7 +134,7 @@
 	[output setVolume:v];
 }
 
-//Note: This is called 
+//This is called by the delegate DURING a requestNextStream request.
 - (void)setNextStream:(NSURL *)url
 {
 	[self setNextStream:url withUserInfo:nil];
