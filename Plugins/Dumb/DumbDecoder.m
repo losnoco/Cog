@@ -14,8 +14,6 @@ int skipCallback(void *f, long n)
 {
 	DumbDecoder *decoder = (DumbDecoder *)f;
 	
-	NSLog(@"SKIPPING");
-	
 	if (![[decoder source] seek:n whence: SEEK_CUR]) 
 	{
 		return 1; //Non-zero is error
@@ -28,9 +26,7 @@ int getCharCallback(void *f)
 {
 	DumbDecoder *decoder = (DumbDecoder *)f;
 
-	NSLog(@"Getting Character");
-	
-	char c;
+	unsigned char c;
 	
 	if ([[decoder source] read:&c amount:1] < 1)
 	{
@@ -42,7 +38,6 @@ int getCharCallback(void *f)
 
 long readCallback(char *ptr, long n, void *f)
 {
-	NSLog(@"READ");
 	DumbDecoder *decoder = (DumbDecoder *)f;
 	
 	return [[decoder source] read:ptr amount:n];
@@ -77,8 +72,7 @@ void closeCallback(void *f)
 	if ([ext isEqualToString:@"it"])
 		duh = dumb_read_it(df);
 	else if ([ext isEqualToString:@"xm"]) 
-//		duh = dumb_read_xm(df);
-		duh = dumb_load_xm([[[s url] path] UTF8String]);
+		duh = dumb_read_xm(df);
 	else if ([ext isEqualToString:@"s3m"])
 		duh = dumb_read_s3m(df);
 	else if ([ext isEqualToString:@"mod"])
