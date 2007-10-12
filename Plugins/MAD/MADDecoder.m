@@ -512,6 +512,7 @@ static inline signed int scale (mad_fixed_t sample)
 
 			continue;
 		}
+
 		if (_firstFrame && ![_source seekable]) {
 			frequency = _frame.header.samplerate;
 			channels = MAD_NCHANNELS(&_frame.header);

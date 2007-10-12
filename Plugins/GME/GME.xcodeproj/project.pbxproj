@@ -27,14 +27,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8F3320CBED393008D969D /* GME.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* GME.framework */;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
 			remoteInfo = GME;
 		};
 		17C8F4350CBEDD28008D969D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8F3320CBED393008D969D /* GME.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* GME Framework */;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = "GME Framework";
 		};
 /* End PBXContainerItemProxy section */

@@ -44,8 +44,8 @@
 		if (availOutput == 0) {
 			if (initialBufferFilled == NO) {
 				initialBufferFilled = YES;
-				if ([controller respondsToSelector:@selector(initialBufferFilled)])
-					[controller performSelector:@selector(initialBufferFilled)];
+				if ([controller respondsToSelector:@selector(initialBufferFilled:)])
+					[controller performSelector:@selector(initialBufferFilled:) withObject:self];
 			}
 		}
 		

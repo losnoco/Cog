@@ -286,28 +286,28 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8F3C80CBED663008D969D /* GME.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8D5B49B6048680CD000E48DA /* GME.bundle */;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = "GME Plugin";
 		};
 		17C8F44B0CBEDD37008D969D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8F3C80CBED663008D969D /* GME.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA /* GME Plugin */;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = "GME Plugin";
 		};
 		17C8F7D60CBEF3E8008D969D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8D5B49B6048680CD000E48DA /* Dumb.bundle */;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = Dumb;
 		};
 		17C8F7D90CBEF3F9008D969D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA /* Dumb */;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = Dumb;
 		};
 		17F3BB870CBC565100864489 /* PBXContainerItemProxy */ = {

@@ -24,6 +24,8 @@
 
 		inputNode = nil;
 		converterNode = nil;
+		
+		converterLaunched = NO;
 	}
 	
 	return self;
@@ -47,7 +49,7 @@
 	[self buildChain];
 	
 	id<CogSource> source = [AudioSource audioSourceForURL:url];
-	
+	NSLog(@"Opening: %@", url);
 	if (![source open:url])
 	{
 		NSLog(@"Couldn't open source...");
@@ -55,11 +57,12 @@
 	}
 	
 
+	[converterNode setOutputFormat:outputFormat];
+
 	if (![inputNode openURL:url withSource:source])
 		return NO;
 
-	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
-		return NO;
+//		return NO;
 	
 	return YES;
 }
@@ -76,6 +79,8 @@
 		return NO;
 		
 	NSLog(@"Buffer chain made");
+	[converterNode launchThread];
+	
 	return YES;
 }
 
@@ -84,7 +89,6 @@
 	NSLog(@"Properties: %@", [inputNode properties]);
 
 	[inputNode launchThread];
-	[converterNode launchThread];
 }
 
 - (void)setUserInfo:(id)i
@@ -124,10 +128,22 @@
 	return [inputNode setTrack:track];
 }
 
-- (void)initialBufferFilled
+- (void)initialBufferFilled:(id)sender
 {
+	NSLog(@"INITIAL BUFFER FILLED");
 	[controller launchOutputThread];
 }
+
+- (void)inputFormatDidChange:(AudioStreamBasicDescription)format
+{
+	NSLog(@"FORMAT DID CHANGE!");
+	if (!converterLaunched) {
+		converterLaunched = YES;
+		[converterNode inputFormatDidChange:format];
+		[converterNode launchThread];
+	}
+}
+
 
 - (InputNode *)inputNode
 {

@@ -140,9 +140,26 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	return YES;
 }
 
+- (void)setOutputFormat:(AudioStreamBasicDescription)format
+{
+	NSLog(@"SETTING OUTPUT FORMAT!");
+	outputFormat = format;
+}
+
+- (void)inputFormatDidChange:(AudioStreamBasicDescription)format
+{
+	NSLog(@"FORMAT CHANGED");
+	[self cleanUp];
+	[self setupWithInputFormat:format outputFormat:outputFormat];
+}
+
 - (void)cleanUp
 {
-	AudioConverterDispose(converter);
+	if (converter)
+	{
+		AudioConverterDispose(converter);
+		converter = NULL;
+	}
 }
 
 @end

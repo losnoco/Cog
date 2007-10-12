@@ -97,6 +97,9 @@ void closeCallback(void *f)
 		return NO;
 	}
 	
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+
 	return YES;
 }
 

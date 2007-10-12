@@ -25,8 +25,9 @@
 		port = 80;
 		
 	_socket = [[Socket alloc] initWithHost:[url host] port:port];
-
+	NSLog(@"SOCKET?");
 	if (_socket) {
+		NSLog(@"WE HAVE A SOCKET!");
 		NSData *request = [[NSString stringWithFormat:@"GET %@ HTTP/1.0\nHOST: %@\n\n",[url path],[url host]] dataUsingEncoding:NSUTF8StringEncoding];
 		[_socket send:(void *)[request bytes] amount:[request length]];
 		pastHeader = NO;
@@ -57,15 +58,17 @@
 
 - (int)read:(void *)buffer amount:(int)amount
 {
+	NSLog(@"READING DATA: %i", amount);
 	if (!pastHeader) {
 		const int delimeter_size = 4; //\r\n\r\n
 		
-		FILE *testFout = fopen("header.raw", "w");
+//		FILE *testFout = fopen("/Users/vspader/header.raw", "w");
 
 		int l = [_socket receive:buffer amount:amount];
+		NSLog(@"Received data: %i", l);
 		uint8_t *f;
 		while(NULL == (f = (uint8_t *)strnstr((const char *)buffer, "\r\n\r\n", l))) {
-			fwrite(buffer, 1,l, testFout);
+//			fwrite(buffer, 1,l, testFout);
 			//Need to check for boundary conditions
 			memmove(buffer, (uint8_t *)buffer + (l - delimeter_size), delimeter_size);
 			l = delimeter_size + [_socket receive:((uint8_t *)buffer + delimeter_size) amount:(amount - delimeter_size)];
@@ -79,12 +82,12 @@
 		
 		
 		//For testing only
-		fwrite(buffer, 1, bufferOffset - (uint8_t *)buffer, testFout);
-		fclose(testFout);
+//		fwrite(buffer, 1, bufferOffset - (uint8_t *)buffer, testFout);
+//		fclose(testFout);
 
-		testFout = fopen("test.raw", "w");
-		fwrite(bufferOffset, 1, amountRemaining, testFout);
-		fclose(testFout);
+//		testFout = fopen("/Users/vspader/test.raw", "w");
+//		fwrite(bufferOffset, 1, amountRemaining, testFout);
+//		fclose(testFout);
 		
 		
 		memmove(buffer,bufferOffset, amountRemaining);
@@ -96,9 +99,9 @@
 
 		
 		//FOR TESTING ONLY
-		FILE *testFout = fopen("test.raw", "a");
-		fwrite(buffer, 1, l, testFout);
-		fclose(testFout);
+//		FILE *testFout = fopen("/Users/vspader/test.raw", "a");
+//		fwrite(buffer, 1, l, testFout);
+//		fclose(testFout);
 		
 		if (l > 0)
 			byteCount += l;

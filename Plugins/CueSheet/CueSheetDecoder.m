@@ -87,6 +87,10 @@
 				trackEnd = [[properties objectForKey:@"length"] doubleValue]/1000.0;
 			}
 			
+			//Note: Should register for observations of the decoder, but laziness consumes all.
+			[self willChangeValueForKey:@"properties"];
+			[self didChangeValueForKey:@"properties"];
+
 			return YES;
 		}
 	}

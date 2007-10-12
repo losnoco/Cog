@@ -28,4 +28,8 @@
 - (void)process;
 - (int)convert:(void *)dest amount:(int)amount;
 
+- (void)setOutputFormat:(AudioStreamBasicDescription)format;
+
+- (void)inputFormatDidChange:(AudioStreamBasicDescription)format;
+
 @end

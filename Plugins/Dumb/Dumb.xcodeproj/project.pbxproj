@@ -22,14 +22,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8F6990CBEE857008D969D /* Dumb.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* Dumb.framework */;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
 			remoteInfo = "Dumb Framework";
 		};
 		17C8F6A00CBEE867008D969D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8F6990CBEE857008D969D /* Dumb.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* Dumb Framework */;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = "Dumb Framework";
 		};
 /* End PBXContainerItemProxy section */

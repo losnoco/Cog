@@ -98,6 +98,9 @@ gme_err_t readCallback( void* data, void* out, long count )
 		NSLog(@"Error starting track");
 		return NO;
 	}
+
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
 	
 	return YES;
 }

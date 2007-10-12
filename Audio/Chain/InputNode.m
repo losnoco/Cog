@@ -53,6 +53,7 @@
 
 - (void)registerObservers
 {
+	NSLog(@"REGISTERING OBSERVERS");
 	[decoder addObserver:self
 			  forKeyPath:@"properties" 
 				 options:(NSKeyValueObservingOptionNew)
@@ -69,9 +70,11 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
+	NSLog(@"SOMETHING CHANGED!");
 	if ([keyPath isEqual:@"properties"]) {
 		//Setup converter!
 		//Inform something of properties change
+		[controller inputFormatDidChange: propertiesToASBD([decoder properties])];
 	}
 	else if ([keyPath isEqual:@"metadata"]) {
 		//Inform something of metadata change
@@ -107,10 +110,10 @@
 			if (amountRead <= 0)
 			{
 				if (initialBufferFilled == NO) {
-					[controller initialBufferFilled];
+					[controller initialBufferFilled:self];
 				}
 				
-				NSLog(@"End of stream?");
+				NSLog(@"End of stream? %@", [self properties]);
 				endOfStream = YES;
 				shouldClose = [controller endOfInputReached]; //Lets us know if we should keep going or not (occassionally, for track changes within a file)
 				NSLog(@"closing? is %i", shouldClose);

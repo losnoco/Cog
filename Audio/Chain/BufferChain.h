@@ -16,6 +16,8 @@
 	InputNode *inputNode;
 	ConverterNode *converterNode;
 	
+	BOOL converterLaunched;
+	
 	NSURL *streamURL;
 	id userInfo;
 	
@@ -48,9 +50,11 @@
 
 - (void)setShouldContinue:(BOOL)s;
 
-- (void)initialBufferFilled;
+- (void)initialBufferFilled:(id)sender;
 
 - (BOOL)endOfInputReached;
 - (BOOL)setTrack:(NSURL *)track;
+
+- (void)inputFormatDidChange:(AudioStreamBasicDescription)format;
 
 @end
