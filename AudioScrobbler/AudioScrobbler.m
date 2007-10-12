@@ -26,7 +26,7 @@
 // ========================================
 // Symbolic Constants
 // ========================================
-NSString * const	AudioScrobblerRunLoopMode			= @"org.sbooth.Play.AudioScrobbler.RunLoopMode";
+NSString * const	AudioScrobblerRunLoopMode			= @"org.cogx.Cog.AudioScrobbler.RunLoopMode";
 
 // ========================================
 // Helpers

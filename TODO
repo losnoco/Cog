@@ -1,1 +1,1 @@
-Bug when loading flac file that doesn't exist through M3U. Crashes in TagLib. Try updating TagLib.
+Fix playback and leaks. Playback is very much busted when doing lots of next/forward/moving around.
