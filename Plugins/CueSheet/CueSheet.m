@@ -108,9 +108,11 @@
 			}
 
 			NSString *index = nil;
-			if (![scanner scanUpToCharactersFromSet:whitespace intoString:&index]) {
+			if (![scanner scanUpToCharactersFromSet:whitespace intoString:&index] || [index intValue] != 1) {
 				continue;
 			}
+			
+			NSLog(@"Index: %@", index);
 
 			[scanner scanCharactersFromSet:whitespace intoString:nil];
 
