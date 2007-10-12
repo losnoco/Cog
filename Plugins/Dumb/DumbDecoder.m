@@ -130,6 +130,8 @@ void closeCallback(void *f)
 	if (seekPos < pos) {
 		//Reset. Dumb cannot seek backwards. It's dumb.
 		[self cleanUp];
+		
+		[source seek:0 whence:SEEK_SET];
 		[self open:source];
 		
 		pos = 0.0;
