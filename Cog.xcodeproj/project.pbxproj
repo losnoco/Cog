@@ -87,6 +87,7 @@
 		17C8099A0C3BD233005707C4 /* FileSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808790C3BD167005707C4 /* FileSource.bundle */; };
 		17C809E60C3BD487005707C4 /* CoreAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C809E30C3BD46D005707C4 /* CoreAudio.bundle */; };
 		17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3CD0CBED663008D969D /* GME.bundle */; };
+		17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F7D70CBEF3E8008D969D /* Dumb.bundle */; };
 		17E41E070C130DFF00AC744D /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E060C130DFF00AC744D /* Credits.html */; };
 		17E41E230C130EE200AC744D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E220C130EE200AC744D /* Help */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
@@ -295,6 +296,20 @@
 			remoteGlobalIDString = 8D5B49AC048680CD000E48DA /* GME Plugin */;
 			remoteInfo = "GME Plugin";
 		};
+		17C8F7D60CBEF3E8008D969D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA /* Dumb.bundle */;
+			remoteInfo = Dumb;
+		};
+		17C8F7D90CBEF3F9008D969D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA /* Dumb */;
+			remoteInfo = Dumb;
+		};
 		17F3BB870CBC565100864489 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17F3BB830CBC565100864489 /* CueSheet.xcodeproj */;
@@ -374,6 +389,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
 				17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */,
 				17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */,
 				8E8D41C80CBB0DA900135C1B /* Pls.bundle in CopyFiles */,
@@ -537,6 +553,7 @@
 		17C808B70C3BD1D2005707C4 /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = Plugins/Vorbis/Vorbis.xcodeproj; sourceTree = "<group>"; };
 		17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WavPack.xcodeproj; path = Plugins/WavPack/WavPack.xcodeproj; sourceTree = "<group>"; };
 		17C8F3C80CBED663008D969D /* GME.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GME.xcodeproj; path = Plugins/GME/GME.xcodeproj; sourceTree = "<group>"; };
+		17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dumb.xcodeproj; path = Plugins/Dumb/Dumb.xcodeproj; sourceTree = "<group>"; };
 		17E41C470C1304BB00AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		17E41C480C1304C700AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
 		17E41C490C1304D200AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Swedish; path = Swedish.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -825,6 +842,7 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
+				17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */,
 				17C8F3C80CBED663008D969D /* GME.xcodeproj */,
 				17F3BB830CBC565100864489 /* CueSheet.xcodeproj */,
 				8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */,
@@ -936,6 +954,14 @@
 			isa = PBXGroup;
 			children = (
 				17C8F3CD0CBED663008D969D /* GME.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		17C8F7D30CBEF3E8008D969D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17C8F7D70CBEF3E8008D969D /* Dumb.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1171,6 +1197,7 @@
 				8E8D41CC0CBB0DD200135C1B /* PBXTargetDependency */,
 				17F3BB8B0CBC566200864489 /* PBXTargetDependency */,
 				17C8F44C0CBEDD37008D969D /* PBXTargetDependency */,
+				17C8F7DA0CBEF3F9008D969D /* PBXTargetDependency */,
 			);
 			name = Cog;
 			productInstallPath = "$(HOME)/Applications";
@@ -1208,6 +1235,10 @@
 				{
 					ProductGroup = 17F3BB840CBC565100864489 /* Products */;
 					ProjectRef = 17F3BB830CBC565100864489 /* CueSheet.xcodeproj */;
+				},
+				{
+					ProductGroup = 17C8F7D30CBEF3E8008D969D /* Products */;
+					ProjectRef = 17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */;
 				},
 				{
 					ProductGroup = 17C808720C3BD167005707C4 /* Products */;
@@ -1355,6 +1386,13 @@
 			fileType = wrapper.cfbundle;
 			path = GME.bundle;
 			remoteRef = 17C8F3CC0CBED663008D969D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		17C8F7D70CBEF3E8008D969D /* Dumb.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = Dumb.bundle;
+			remoteRef = 17C8F7D60CBEF3E8008D969D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		17F3BB880CBC565100864489 /* CueSheet.bundle */ = {
@@ -1563,6 +1601,11 @@
 			isa = PBXTargetDependency;
 			name = "GME Plugin";
 			targetProxy = 17C8F44B0CBEDD37008D969D /* PBXContainerItemProxy */;
+		};
+		17C8F7DA0CBEF3F9008D969D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Dumb;
+			targetProxy = 17C8F7D90CBEF3F9008D969D /* PBXContainerItemProxy */;
 		};
 		17F3BB8B0CBC566200864489 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -7,51 +7,42 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17C8F33A0CBED3B0008D969D /* GME.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; };
-		17C8F3410CBED3BE008D969D /* GameContainer.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F33B0CBED3BE008D969D /* GameContainer.h */; };
-		17C8F3420CBED3BE008D969D /* GameContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F33C0CBED3BE008D969D /* GameContainer.m */; };
-		17C8F3430CBED3BE008D969D /* GameDecoder.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F33D0CBED3BE008D969D /* GameDecoder.h */; };
-		17C8F3440CBED3BE008D969D /* GameDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F33E0CBED3BE008D969D /* GameDecoder.m */; };
-		17C8F3450CBED3BE008D969D /* GamePropertiesReader.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F33F0CBED3BE008D969D /* GamePropertiesReader.h */; };
-		17C8F3460CBED3BE008D969D /* GamePropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F3400CBED3BE008D969D /* GamePropertiesReader.m */; };
-		17C8F3480CBED3C7008D969D /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3470CBED3C7008D969D /* Plugin.h */; };
-		17C8F3C30CBED649008D969D /* GME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; };
-		17C8F3E00CBEDBE0008D969D /* GamePlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3DE0CBEDBE0008D969D /* GamePlugin.h */; };
-		17C8F3E10CBEDBE0008D969D /* GamePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F3DF0CBEDBE0008D969D /* GamePlugin.m */; };
+		17C8F6950CBEE846008D969D /* DumbDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F68F0CBEE846008D969D /* DumbDecoder.m */; };
+		17C8F6960CBEE846008D969D /* DumbPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F6910CBEE846008D969D /* DumbPlugin.m */; };
+		17C8F6970CBEE846008D969D /* DumbPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F6930CBEE846008D969D /* DumbPropertiesReader.m */; };
+		17C8F69F0CBEE85F008D969D /* Dumb.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; };
+		17C8F70D0CBEEC87008D969D /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F70C0CBEEC87008D969D /* Plugin.h */; };
+		17C8F7B90CBEF380008D969D /* Dumb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		17C8F3360CBED393008D969D /* PBXContainerItemProxy */ = {
+		17C8F69D0CBEE857008D969D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 17C8F3320CBED393008D969D /* GME.xcodeproj */;
+			containerPortal = 17C8F6990CBEE857008D969D /* Dumb.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* GME.framework */;
-			remoteInfo = GME;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* Dumb.framework */;
+			remoteInfo = "Dumb Framework";
 		};
-		17C8F4350CBEDD28008D969D /* PBXContainerItemProxy */ = {
+		17C8F6A00CBEE867008D969D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 17C8F3320CBED393008D969D /* GME.xcodeproj */;
+			containerPortal = 17C8F6990CBEE857008D969D /* Dumb.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* GME Framework */;
-			remoteInfo = "GME Framework";
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* Dumb Framework */;
+			remoteInfo = "Dumb Framework";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		17C8F3380CBED3A9008D969D /* CopyFiles */ = {
+		17C8F6A20CBEE86E008D969D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17C8F33A0CBED3B0008D969D /* GME.framework in CopyFiles */,
-				17C8F3410CBED3BE008D969D /* GameContainer.h in CopyFiles */,
-				17C8F3430CBED3BE008D969D /* GameDecoder.h in CopyFiles */,
-				17C8F3450CBED3BE008D969D /* GamePropertiesReader.h in CopyFiles */,
-				17C8F3480CBED3C7008D969D /* Plugin.h in CopyFiles */,
-				17C8F3E00CBEDBE0008D969D /* GamePlugin.h in CopyFiles */,
+				17C8F69F0CBEE85F008D969D /* Dumb.framework in CopyFiles */,
+				17C8F70D0CBEEC87008D969D /* Plugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,18 +53,16 @@
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		17C8F3320CBED393008D969D /* GME.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GME.xcodeproj; path = ../../Frameworks/GME/GME.xcodeproj; sourceTree = SOURCE_ROOT; };
-		17C8F33B0CBED3BE008D969D /* GameContainer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GameContainer.h; sourceTree = "<group>"; };
-		17C8F33C0CBED3BE008D969D /* GameContainer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = GameContainer.m; sourceTree = "<group>"; };
-		17C8F33D0CBED3BE008D969D /* GameDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GameDecoder.h; sourceTree = "<group>"; };
-		17C8F33E0CBED3BE008D969D /* GameDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = GameDecoder.m; sourceTree = "<group>"; };
-		17C8F33F0CBED3BE008D969D /* GamePropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GamePropertiesReader.h; sourceTree = "<group>"; };
-		17C8F3400CBED3BE008D969D /* GamePropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = GamePropertiesReader.m; sourceTree = "<group>"; };
-		17C8F3470CBED3C7008D969D /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17C8F3DE0CBEDBE0008D969D /* GamePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlugin.h; sourceTree = "<group>"; };
-		17C8F3DF0CBEDBE0008D969D /* GamePlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlugin.m; sourceTree = "<group>"; };
-		32DBCF630370AF2F00C91783 /* GME_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GME_Prefix.pch; sourceTree = "<group>"; };
-		8D5B49B6048680CD000E48DA /* GME.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GME.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		17C8F68E0CBEE846008D969D /* DumbDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DumbDecoder.h; sourceTree = "<group>"; };
+		17C8F68F0CBEE846008D969D /* DumbDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DumbDecoder.m; sourceTree = "<group>"; };
+		17C8F6900CBEE846008D969D /* DumbPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DumbPlugin.h; sourceTree = "<group>"; };
+		17C8F6910CBEE846008D969D /* DumbPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DumbPlugin.m; sourceTree = "<group>"; };
+		17C8F6920CBEE846008D969D /* DumbPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DumbPropertiesReader.h; sourceTree = "<group>"; };
+		17C8F6930CBEE846008D969D /* DumbPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DumbPropertiesReader.m; sourceTree = "<group>"; };
+		17C8F6990CBEE857008D969D /* Dumb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dumb.xcodeproj; path = ../../Frameworks/Dumb/Dumb.xcodeproj; sourceTree = SOURCE_ROOT; };
+		17C8F70C0CBEEC87008D969D /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
+		32DBCF630370AF2F00C91783 /* Dumb_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dumb_Prefix.pch; sourceTree = "<group>"; };
+		8D5B49B6048680CD000E48DA /* Dumb.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dumb.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -83,15 +72,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17C8F7B90CBEF380008D969D /* Dumb.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
-				17C8F3C30CBED649008D969D /* GME.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		089C166AFE841209C02AAC07 /* GME */ = {
+		089C166AFE841209C02AAC07 /* Dumb */ = {
 			isa = PBXGroup;
 			children = (
 				08FB77AFFE84173DC02AAC07 /* Classes */,
@@ -100,7 +89,7 @@
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 			);
-			name = GME;
+			name = Dumb;
 			sourceTree = "<group>";
 		};
 		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
@@ -124,15 +113,13 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				17C8F3470CBED3C7008D969D /* Plugin.h */,
-				17C8F3DE0CBEDBE0008D969D /* GamePlugin.h */,
-				17C8F3DF0CBEDBE0008D969D /* GamePlugin.m */,
-				17C8F33B0CBED3BE008D969D /* GameContainer.h */,
-				17C8F33C0CBED3BE008D969D /* GameContainer.m */,
-				17C8F33D0CBED3BE008D969D /* GameDecoder.h */,
-				17C8F33E0CBED3BE008D969D /* GameDecoder.m */,
-				17C8F33F0CBED3BE008D969D /* GamePropertiesReader.h */,
-				17C8F3400CBED3BE008D969D /* GamePropertiesReader.m */,
+				17C8F70C0CBEEC87008D969D /* Plugin.h */,
+				17C8F68E0CBEE846008D969D /* DumbDecoder.h */,
+				17C8F68F0CBEE846008D969D /* DumbDecoder.m */,
+				17C8F6900CBEE846008D969D /* DumbPlugin.h */,
+				17C8F6910CBEE846008D969D /* DumbPlugin.m */,
+				17C8F6920CBEE846008D969D /* DumbPropertiesReader.h */,
+				17C8F6930CBEE846008D969D /* DumbPropertiesReader.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -140,7 +127,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				17C8F3320CBED393008D969D /* GME.xcodeproj */,
+				17C8F6990CBEE857008D969D /* Dumb.xcodeproj */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -156,10 +143,10 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		17C8F3330CBED393008D969D /* Products */ = {
+		17C8F69A0CBEE857008D969D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				17C8F3370CBED393008D969D /* GME.framework */,
+				17C8F69E0CBEE857008D969D /* Dumb.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -167,7 +154,7 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D5B49B6048680CD000E48DA /* GME.bundle */,
+				8D5B49B6048680CD000E48DA /* Dumb.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -175,7 +162,7 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				32DBCF630370AF2F00C91783 /* GME_Prefix.pch */,
+				32DBCF630370AF2F00C91783 /* Dumb_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -183,24 +170,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* GME Plugin */ = {
+		8D5B49AC048680CD000E48DA /* Dumb */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "GME Plugin" */;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Dumb" */;
 			buildPhases = (
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
-				17C8F3380CBED3A9008D969D /* CopyFiles */,
+				17C8F6A20CBEE86E008D969D /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				17C8F4360CBEDD28008D969D /* PBXTargetDependency */,
+				17C8F6A10CBEE867008D969D /* PBXTargetDependency */,
 			);
-			name = "GME Plugin";
+			name = Dumb;
 			productInstallPath = "$(HOME)/Library/Bundles";
-			productName = GME;
-			productReference = 8D5B49B6048680CD000E48DA /* GME.bundle */;
+			productName = Dumb;
+			productReference = 8D5B49B6048680CD000E48DA /* Dumb.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -208,28 +195,28 @@
 /* Begin PBXProject section */
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "GME" */;
+			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Dumb" */;
 			hasScannedForEncodings = 1;
-			mainGroup = 089C166AFE841209C02AAC07 /* GME */;
+			mainGroup = 089C166AFE841209C02AAC07 /* Dumb */;
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 17C8F3330CBED393008D969D /* Products */;
-					ProjectRef = 17C8F3320CBED393008D969D /* GME.xcodeproj */;
+					ProductGroup = 17C8F69A0CBEE857008D969D /* Products */;
+					ProjectRef = 17C8F6990CBEE857008D969D /* Dumb.xcodeproj */;
 				},
 			);
 			targets = (
-				8D5B49AC048680CD000E48DA /* GME Plugin */,
+				8D5B49AC048680CD000E48DA /* Dumb */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		17C8F3370CBED393008D969D /* GME.framework */ = {
+		17C8F69E0CBEE857008D969D /* Dumb.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = GME.framework;
-			remoteRef = 17C8F3360CBED393008D969D /* PBXContainerItemProxy */;
+			path = Dumb.framework;
+			remoteRef = 17C8F69D0CBEE857008D969D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -250,20 +237,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17C8F3420CBED3BE008D969D /* GameContainer.m in Sources */,
-				17C8F3440CBED3BE008D969D /* GameDecoder.m in Sources */,
-				17C8F3460CBED3BE008D969D /* GamePropertiesReader.m in Sources */,
-				17C8F3E10CBEDBE0008D969D /* GamePlugin.m in Sources */,
+				17C8F6950CBEE846008D969D /* DumbDecoder.m in Sources */,
+				17C8F6960CBEE846008D969D /* DumbPlugin.m in Sources */,
+				17C8F6970CBEE846008D969D /* DumbPropertiesReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		17C8F4360CBEDD28008D969D /* PBXTargetDependency */ = {
+		17C8F6A10CBEE867008D969D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "GME Framework";
-			targetProxy = 17C8F4350CBEDD28008D969D /* PBXContainerItemProxy */;
+			name = "Dumb Framework";
+			targetProxy = 17C8F6A00CBEE867008D969D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -288,10 +274,11 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = GME_Prefix.pch;
+				GCC_PREFIX_HEADER = Dumb_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PRODUCT_NAME = GME;
+				OBJROOT = ../../build;
+				PRODUCT_NAME = Dumb;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
@@ -308,10 +295,11 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = GME_Prefix.pch;
+				GCC_PREFIX_HEADER = Dumb_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PRODUCT_NAME = GME;
+				OBJROOT = ../../build;
+				PRODUCT_NAME = Dumb;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -344,7 +332,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "GME Plugin" */ = {
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Dumb" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913B08733D840010E9CD /* Debug */,
@@ -353,7 +341,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "GME" */ = {
+		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Dumb" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913F08733D840010E9CD /* Debug */,
