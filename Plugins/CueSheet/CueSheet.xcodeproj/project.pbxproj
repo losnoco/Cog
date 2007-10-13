@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17DA346E0CC04FCD0003F6B2 /* CueSheetMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */; };
 		17F3BB680CBC560700864489 /* CueSheetPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F3BB670CBC560700864489 /* CueSheetPropertiesReader.m */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -22,6 +23,8 @@
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		17DA346C0CC04FCD0003F6B2 /* CueSheetMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheetMetadataReader.h; sourceTree = "<group>"; };
+		17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CueSheetMetadataReader.m; sourceTree = "<group>"; };
 		17F3BB660CBC560700864489 /* CueSheetPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CueSheetPropertiesReader.h; sourceTree = "<group>"; };
 		17F3BB670CBC560700864489 /* CueSheetPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CueSheetPropertiesReader.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* CueSheet_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheet_Prefix.pch; sourceTree = "<group>"; };
@@ -99,6 +102,8 @@
 				8E8D424C0CBB11C600135C1B /* CueSheet.m */,
 				8E8D43550CBB1AE900135C1B /* CueSheetTrack.h */,
 				8E8D43560CBB1AE900135C1B /* CueSheetTrack.m */,
+				17DA346C0CC04FCD0003F6B2 /* CueSheetMetadataReader.h */,
+				17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -195,6 +200,7 @@
 				8E8D424D0CBB11C600135C1B /* CueSheet.m in Sources */,
 				8E8D43570CBB1AE900135C1B /* CueSheetTrack.m in Sources */,
 				17F3BB680CBC560700864489 /* CueSheetPropertiesReader.m in Sources */,
+				17DA346E0CC04FCD0003F6B2 /* CueSheetMetadataReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

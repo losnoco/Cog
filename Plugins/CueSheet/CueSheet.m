@@ -51,6 +51,12 @@
 
 	NSString *track = nil;
 	NSString *path = nil;
+	NSString *artist = nil;
+	NSString *album = nil;
+	NSString *title = nil;
+	NSString *genre = nil;
+	NSString *year = nil;
+	
 	BOOL trackAdded = NO;
 
 	NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
@@ -73,7 +79,7 @@
 			track = nil;
 			trackAdded = NO;
 
-			if (![scanner scanString:@"\"" intoString:&command]) {
+			if (![scanner scanString:@"\"" intoString:nil]) {
 				continue;
 			}
 
@@ -112,8 +118,6 @@
 				continue;
 			}
 			
-			NSLog(@"Index: %@", index);
-
 			[scanner scanCharactersFromSet:whitespace intoString:nil];
 
 			NSString *time = nil;
@@ -136,8 +140,66 @@
 			[entries addObject:
 								[CueSheetTrack trackWithURL:[self urlForPath:path relativeTo:filename]
 															 track: track
-															 time: seconds]];
+															 time: seconds 
+															 artist:artist 
+															 album:album 
+															 title:title
+															 genre:genre
+															 year:year]];
 			trackAdded = YES;
+		}
+		else if ([command isEqualToString:@"PERFORMER"])
+		{
+			if (![scanner scanString:@"\"" intoString:nil]) {
+				continue;
+			}
+
+			//Read in the path
+			if (![scanner scanUpToString:@"\"" intoString:&artist]) {
+				continue;
+			}
+		}
+		else if ([command isEqualToString:@"TITLE"])
+		{
+			NSString **titleDest;
+			if (!path) //Have not come across a file yet.
+				titleDest = &album;
+			else
+				titleDest = &title;
+			
+			if (![scanner scanString:@"\"" intoString:nil]) {
+				continue;
+			}
+
+			//Read in the path
+			if (![scanner scanUpToString:@"\"" intoString:titleDest]) {
+				continue;
+			}
+		}
+		else if ([command isEqualToString:@"REM"]) //Additional metadata sometimes stored in comments
+		{
+			NSString *type;
+			NSString **dest = NULL;
+			
+			if (![scanner scanUpToCharactersFromSet:whitespace intoString:&type]) {
+				continue;
+			}
+			if ([type isEqualToString:@"GENRE"])
+			{
+				dest = &genre;
+			}
+			else if ([type isEqualToString:@"DATE"])
+			{
+				dest = &year;
+			}
+			else
+			{
+				continue;
+			}
+			
+			if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:dest]) {
+				continue;
+			}
 		}
 	}
 

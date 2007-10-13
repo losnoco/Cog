@@ -55,7 +55,6 @@
 		NSLog(@"Couldn't open source...");
 		return NO;
 	}
-	
 
 	[converterNode setOutputFormat:outputFormat];
 

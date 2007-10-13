@@ -11,18 +11,24 @@
 
 @implementation CueSheetTrack
 
-+ (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s
++ (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y
 {
-	return [[[CueSheetTrack alloc] initWithURL:u track:t time:s] autorelease];
+	return [[[CueSheetTrack alloc] initWithURL:u track:t time:s artist:a album:b title:l genre:g year:y] autorelease];
 }
 
-- (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)s
+- (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y
 {
 	self = [super init];
 	if (self)
 	{
 		track = [t copy];
 		url = [u copy];
+		artist = [a copy];
+		album = [b copy];
+		title = [l copy];
+		genre = [g copy];
+		year = [y copy];
+		
 		time = s;
 	}
 	
@@ -43,5 +49,31 @@
 {
 	return time;
 }
+
+- (NSString *)artist
+{
+	return artist;
+}
+
+- (NSString *)album
+{
+	return album;
+}
+
+- (NSString *)title
+{
+	return title;
+}
+
+- (NSString *)genre
+{
+	return genre;
+}
+
+- (NSString *)year
+{
+	return year;
+}
+
 
 @end
