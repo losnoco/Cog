@@ -54,6 +54,8 @@
 		17C6433E0B8A783F00C53518 /* OutputPane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputPane.m; sourceTree = "<group>"; };
 		17C643680B8A788000C53518 /* output.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = output.png; path = Icons/output.png; sourceTree = "<group>"; };
 		17C644310B8A791D00C53518 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
+		17D1AB680CC0BBB500924FEB /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/Preferences.nib; sourceTree = "<group>"; };
+		17D1AB6B0CC0BBCA00924FEB /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
 		17E41C660C13074400AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/Preferences.nib; sourceTree = "<group>"; };
 		17E41DB50C130A9D00AC744D /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		17E41DF80C130CAA00AC744D /* Swedish */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Swedish; path = Swedish.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -257,6 +259,7 @@
 				Swedish,
 				Hebrew,
 				Greek,
+				zh_CN,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* General */;
 			projectDirPath = "";
@@ -323,6 +326,7 @@
 				178E38790C3DA66A00EE6711 /* German */,
 				178E387A0C3DA66D00EE6711 /* Hebrew */,
 				178E387B0C3DA66F00EE6711 /* Greek */,
+				17D1AB6B0CC0BBCA00924FEB /* zh_CN */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -336,6 +340,7 @@
 				178E38750C3DA65B00EE6711 /* German */,
 				178E38760C3DA65E00EE6711 /* Hebrew */,
 				178E38770C3DA66000EE6711 /* Greek */,
+				17D1AB680CC0BBB500924FEB /* zh_CN */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";

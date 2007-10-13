@@ -554,6 +554,8 @@
 		17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WavPack.xcodeproj; path = Plugins/WavPack/WavPack.xcodeproj; sourceTree = "<group>"; };
 		17C8F3C80CBED663008D969D /* GME.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GME.xcodeproj; path = Plugins/GME/GME.xcodeproj; sourceTree = "<group>"; };
 		17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dumb.xcodeproj; path = Plugins/Dumb/Dumb.xcodeproj; sourceTree = "<group>"; };
+		17D1AC3F0CC0BBF000924FEB /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
+		17D1AC420CC0BBF500924FEB /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		17E41C470C1304BB00AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		17E41C480C1304C700AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
 		17E41C490C1304D200AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Swedish; path = Swedish.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1220,6 +1222,7 @@
 				Swedish,
 				Hebrew,
 				Greek,
+				zh_CN,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			projectDirPath = "";
@@ -1652,6 +1655,7 @@
 				1743945C0C3DA59000A52DE9 /* German */,
 				1743945D0C3DA59700A52DE9 /* Hebrew */,
 				1743945E0C3DA59A00A52DE9 /* Greek */,
+				17D1AC3F0CC0BBF000924FEB /* zh_CN */,
 			);
 			name = OpenURLPanel.nib;
 			sourceTree = "<group>";
@@ -1691,6 +1695,7 @@
 				174394600C3DA5B100A52DE9 /* German */,
 				174394610C3DA5B700A52DE9 /* Greek */,
 				174394620C3DA5BC00A52DE9 /* Hebrew */,
+				17D1AC420CC0BBF500924FEB /* zh_CN */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
