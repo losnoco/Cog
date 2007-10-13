@@ -158,8 +158,11 @@
 
 - (void)setShouldContinue:(BOOL)s
 {
-	[bufferChain setShouldContinue:s];
-	[output setShouldContinue:s];
+	if (bufferChain)
+		[bufferChain setShouldContinue:s];
+		
+	if (output)
+		[output setShouldContinue:s];
 }
 
 - (double)amountPlayed
@@ -256,15 +259,18 @@
 
 - (void)endOfInputPlayed
 {
-	[bufferChain release];
-	
 	if ([chainQueue count] <= 0)
 	{
 		//End of playlist
 		[self stop];
 		
+		[bufferChain release];
+		bufferChain = nil;
+		
 		return;
 	}
+	
+	[bufferChain release];
 	
 	@synchronized(chainQueue) {
 		bufferChain = [chainQueue objectAtIndex:0];
