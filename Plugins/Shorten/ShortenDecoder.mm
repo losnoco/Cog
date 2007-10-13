@@ -13,10 +13,10 @@
 - (BOOL)open:(id<CogSource>)source
 {
 	NSURL *url = [source url];
+	[source close];
+
 	if (![[url scheme] isEqualToString:@"file"])
 		return NO;
-	
-	[source close];
 	
 	decoder	= new shn_reader;
 	
@@ -50,7 +50,7 @@
 	
 	totalRead = 0;
 	
-	//For some reason the busy loop is causing pops when output is set to 48000. Probably CPU starvation, since the SHN decoder seems to use a multithreaded approach.
+	//For some reason the busy loop is causing pops when output is set to 48000. Probably CPU starvation, since the SHN decoder seems to use a multithreaded nonblocking approach.
 //	while (totalRead < size) {
 		amountToRead = size - totalRead;
 		if (amountToRead > bufferSize) { 

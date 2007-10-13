@@ -20,6 +20,7 @@
 	if (![decoder open:source])
 	{
 		NSLog(@"Could not open");
+		[decoder release];
 		return nil;
 	}
 	

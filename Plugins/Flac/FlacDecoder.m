@@ -240,6 +240,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	{
 		free(buffer);
 	}
+	[self setSource:nil];
 
 	decoder = NULL;
 	buffer = NULL;

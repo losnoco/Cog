@@ -554,6 +554,12 @@ static inline signed int scale (mad_fixed_t sample)
 		[_source release];
 		_source = nil;
 	}
+
+	if (_outputBuffer)
+	{
+		free(_outputBuffer);
+		_outputBuffer = NULL;
+	}
 	
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);

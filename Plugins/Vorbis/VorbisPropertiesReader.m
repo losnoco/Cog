@@ -19,6 +19,7 @@
 	decoder = [[VorbisDecoder alloc] init];
 	if (![decoder open:source])
 	{
+		[decoder release];
 		return nil;
 	}
 	
@@ -26,6 +27,7 @@
 	
 	[decoder close];
 	[decoder release];
+	NSLog(@"RELEASING");
 	
 	return properties;
 }

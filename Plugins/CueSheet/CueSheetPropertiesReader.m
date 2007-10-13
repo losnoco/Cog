@@ -19,6 +19,7 @@
 	decoder = [[CueSheetDecoder alloc] init];
 	if (![decoder open:source])
 	{
+		[decoder release];
 		return nil;
 	}
 	

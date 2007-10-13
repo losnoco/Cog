@@ -44,10 +44,11 @@
 	FSRef							ref;
 	
 	NSURL *url = [source url];
+	[source close]; //There's no room for your kind around here!
+	
 	if (![[url scheme] isEqualToString:@"file"])
 		return NO;
 		
-	[source close]; //There's no room for your kind around here!
 	
 	// Open the input file
 	err = FSPathMakeRef((const UInt8 *)[[url path] UTF8String], &ref, NULL);

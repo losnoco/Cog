@@ -229,6 +229,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 
 - (void)close
 {
+	[source release];
 	WavpackCloseFile(wpc);
 }
 

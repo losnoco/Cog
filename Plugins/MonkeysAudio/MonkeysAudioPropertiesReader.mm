@@ -19,12 +19,14 @@
 	decoder = [[MonkeysAudioDecoder alloc] init];
 	if (![decoder open:source])
 	{
+		[decoder release];
 		return nil;
 	}
 	
 	properties = [decoder properties];
 	
 	[decoder close];
+	[decoder release];
 	
 	return properties;
 }

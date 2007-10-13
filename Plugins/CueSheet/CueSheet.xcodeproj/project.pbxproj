@@ -98,12 +98,12 @@
 				8E8D42360CBB0F9800135C1B /* CueSheetDecoder.m */,
 				17F3BB660CBC560700864489 /* CueSheetPropertiesReader.h */,
 				17F3BB670CBC560700864489 /* CueSheetPropertiesReader.m */,
+				17DA346C0CC04FCD0003F6B2 /* CueSheetMetadataReader.h */,
+				17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */,
 				8E8D424B0CBB11C600135C1B /* CueSheet.h */,
 				8E8D424C0CBB11C600135C1B /* CueSheet.m */,
 				8E8D43550CBB1AE900135C1B /* CueSheetTrack.h */,
 				8E8D43560CBB1AE900135C1B /* CueSheetTrack.m */,
-				17DA346C0CC04FCD0003F6B2 /* CueSheetMetadataReader.h */,
-				17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
