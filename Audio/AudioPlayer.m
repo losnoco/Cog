@@ -54,20 +54,23 @@
 	output = [[OutputNode alloc] initWithController:self previous:nil];
 	[output setup];
 	
-	NSEnumerator *enumerator = [chainQueue objectEnumerator];
-	id anObject;
-	while (anObject = [enumerator nextObject])
-	{
-		[anObject setShouldContinue:NO];
-	}
-	[chainQueue removeAllObjects];
-				
-	if (bufferChain)
-	{
-		[bufferChain setShouldContinue:NO];
+	@synchronized(chainQueue) {
+		NSEnumerator *enumerator = [chainQueue objectEnumerator];
+		id anObject;
+		while (anObject = [enumerator nextObject])
+		{
+			[anObject setShouldContinue:NO];
+		}
+		[chainQueue removeAllObjects];
+		
+		if (bufferChain)
+		{
+			[bufferChain setShouldContinue:NO];
 
-		[bufferChain release];
+			[bufferChain release];
+		}
 	}
+	
 	bufferChain = [[BufferChain alloc] initWithController:self];
 
 	while (![bufferChain open:url withOutputFormat:[output format]])
@@ -263,13 +266,15 @@
 		return;
 	}
 	
-	bufferChain = [chainQueue objectAtIndex:0];
-	[bufferChain retain];
+	@synchronized(chainQueue) {
+		bufferChain = [chainQueue objectAtIndex:0];
+		[bufferChain retain];
+		
+		NSLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
+		
+		[chainQueue removeObjectAtIndex:0];
+	}
 	
-	NSLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
-	
-	[chainQueue removeObjectAtIndex:0];
-
 	[self notifyStreamChanged:[bufferChain userInfo]];
 	[output setEndOfStream:NO];
 }
