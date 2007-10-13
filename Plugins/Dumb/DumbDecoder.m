@@ -59,7 +59,7 @@ void closeCallback(void *f)
 	dfs.getnc = readCallback;
 	dfs.close = closeCallback;
 
-	dumb_register_stdfiles();
+//	dumb_register_stdfiles();
 
 	df = dumbfile_open_ex(self, &dfs);
 	if (!df)

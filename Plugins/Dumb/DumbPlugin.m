@@ -10,6 +10,7 @@
 
 #import "DumbDecoder.h"
 #import "DumbPropertiesReader.h"
+#import "DumbMetadataReader.h"
 
 @implementation DumbPlugin
 
@@ -18,6 +19,7 @@
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, [DumbDecoder className],
 		kCogPropertiesReader, [DumbPropertiesReader className],
+		kCogMetadataReader, [DumbMetadataReader className],
 		nil];
 }
 

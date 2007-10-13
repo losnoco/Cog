@@ -13,6 +13,8 @@
 		17C8F69F0CBEE85F008D969D /* Dumb.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; };
 		17C8F70D0CBEEC87008D969D /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F70C0CBEEC87008D969D /* Plugin.h */; };
 		17C8F7B90CBEF380008D969D /* Dumb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; };
+		17DA363D0CC0600E0003F6B2 /* DumbMetadataReader.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17DA363B0CC0600E0003F6B2 /* DumbMetadataReader.h */; };
+		17DA363E0CC0600E0003F6B2 /* DumbMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA363C0CC0600E0003F6B2 /* DumbMetadataReader.m */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -43,6 +45,7 @@
 			files = (
 				17C8F69F0CBEE85F008D969D /* Dumb.framework in CopyFiles */,
 				17C8F70D0CBEEC87008D969D /* Plugin.h in CopyFiles */,
+				17DA363D0CC0600E0003F6B2 /* DumbMetadataReader.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +64,8 @@
 		17C8F6930CBEE846008D969D /* DumbPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DumbPropertiesReader.m; sourceTree = "<group>"; };
 		17C8F6990CBEE857008D969D /* Dumb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dumb.xcodeproj; path = ../../Frameworks/Dumb/Dumb.xcodeproj; sourceTree = SOURCE_ROOT; };
 		17C8F70C0CBEEC87008D969D /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
+		17DA363B0CC0600E0003F6B2 /* DumbMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumbMetadataReader.h; sourceTree = "<group>"; };
+		17DA363C0CC0600E0003F6B2 /* DumbMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DumbMetadataReader.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* Dumb_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dumb_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Dumb.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dumb.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -114,12 +119,14 @@
 			isa = PBXGroup;
 			children = (
 				17C8F70C0CBEEC87008D969D /* Plugin.h */,
-				17C8F68E0CBEE846008D969D /* DumbDecoder.h */,
-				17C8F68F0CBEE846008D969D /* DumbDecoder.m */,
 				17C8F6900CBEE846008D969D /* DumbPlugin.h */,
 				17C8F6910CBEE846008D969D /* DumbPlugin.m */,
+				17C8F68E0CBEE846008D969D /* DumbDecoder.h */,
+				17C8F68F0CBEE846008D969D /* DumbDecoder.m */,
 				17C8F6920CBEE846008D969D /* DumbPropertiesReader.h */,
 				17C8F6930CBEE846008D969D /* DumbPropertiesReader.m */,
+				17DA363B0CC0600E0003F6B2 /* DumbMetadataReader.h */,
+				17DA363C0CC0600E0003F6B2 /* DumbMetadataReader.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -240,6 +247,7 @@
 				17C8F6950CBEE846008D969D /* DumbDecoder.m in Sources */,
 				17C8F6960CBEE846008D969D /* DumbPlugin.m in Sources */,
 				17C8F6970CBEE846008D969D /* DumbPropertiesReader.m in Sources */,
+				17DA363E0CC0600E0003F6B2 /* DumbMetadataReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
