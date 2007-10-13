@@ -38,7 +38,7 @@
 				[track artist], @"artist",
 				[track album], @"album",
 				[track title], @"title",
-				[track track], @"track",
+				[NSNumber numberWithInt:[[track track] intValue]], @"track",
 				[track genre], @"genre",
 				[track year], @"year",
 				nil];

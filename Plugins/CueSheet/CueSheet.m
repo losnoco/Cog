@@ -76,7 +76,6 @@
 		
 		//FILE "filename.shn" WAVE
 		if ([command isEqualToString:@"FILE"]) {
-			track = nil;
 			trackAdded = NO;
 
 			if (![scanner scanString:@"\"" intoString:nil]) {
@@ -179,25 +178,28 @@
 		else if ([command isEqualToString:@"REM"]) //Additional metadata sometimes stored in comments
 		{
 			NSString *type;
-			NSString **dest = NULL;
 			
-			if (![scanner scanUpToCharactersFromSet:whitespace intoString:&type]) {
-				continue;
-			}
 			if ([type isEqualToString:@"GENRE"])
 			{
-				dest = &genre;
+				if ([scanner scanString:@"\"" intoString:nil]) {
+					if (![scanner scanUpToString:@"\"" intoString:&genre]) {
+						continue;
+					}
+				}
+				else {
+					if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&genre]) {
+						continue;
+					}
+				}
 			}
 			else if ([type isEqualToString:@"DATE"])
 			{
-				dest = &year;
+				if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&year]) {
+					continue;
+				}
 			}
 			else
 			{
-				continue;
-			}
-			
-			if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:dest]) {
 				continue;
 			}
 		}
