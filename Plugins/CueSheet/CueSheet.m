@@ -178,15 +178,22 @@
 		else if ([command isEqualToString:@"REM"]) //Additional metadata sometimes stored in comments
 		{
 			NSString *type;
+			if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&type]) {
+				continue;
+			}
 			
 			if ([type isEqualToString:@"GENRE"])
 			{
+				NSLog(@"GENRE!");
 				if ([scanner scanString:@"\"" intoString:nil]) {
+					NSLog(@"QUOTED");
 					if (![scanner scanUpToString:@"\"" intoString:&genre]) {
+						NSLog(@"FAILED TO SCAN");
 						continue;
 					}
 				}
 				else {
+					NSLog(@"UNQUOTED");
 					if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&genre]) {
 						continue;
 					}
@@ -194,13 +201,10 @@
 			}
 			else if ([type isEqualToString:@"DATE"])
 			{
+				NSLog(@"DATE!");
 				if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&year]) {
 					continue;
 				}
-			}
-			else
-			{
-				continue;
 			}
 		}
 	}
