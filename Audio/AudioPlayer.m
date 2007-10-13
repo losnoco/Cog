@@ -172,14 +172,10 @@
 
 - (void)launchOutputThread
 {
-	[self setPlaybackStatus:kCogStatusPlaying];	
 	if (outputLaunched == NO) {
+		[self setPlaybackStatus:kCogStatusPlaying];	
 		[output launchThread];
 		outputLaunched = YES;
-	}
-	else {
-		[self setShouldContinue:YES];
-		[output resume];
 	}
 }
 
