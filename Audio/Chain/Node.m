@@ -219,4 +219,14 @@
 }
 
 
+- (void)dealloc
+{
+	[buffer release];
+	[semaphore release];
+	[readLock release];
+	[writeLock release];
+
+	[super dealloc];
+}
+
 @end

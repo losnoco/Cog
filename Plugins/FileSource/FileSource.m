@@ -52,6 +52,8 @@
 
 - (void)close
 {
+	[self setURL:nil];
+	
 	fclose(_fd);
 }
 
@@ -71,6 +73,12 @@
 + (NSArray *)schemes
 {
 	return [NSArray arrayWithObject:@"file"];
+}
+
+- (void)dealloc {
+	NSLog(@"DEALLOCATING SOURCE");
+	
+	[super dealloc];
 }
 
 @end

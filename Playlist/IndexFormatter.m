@@ -24,7 +24,7 @@
 	
 	result = [NSString stringWithFormat:@"%i", value];
 	
-	return [[result retain] autorelease];
+	return result;
 }
 
 - (BOOL) getObjectValue:(id *)object forString:(NSString *)string errorDescription:(NSString  **)error

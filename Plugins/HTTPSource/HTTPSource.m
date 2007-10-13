@@ -117,6 +117,8 @@
 
 - (void)dealloc
 {
+	[self setURL:nil];
+	
 	[_socket release];
 	[_url release];
 	

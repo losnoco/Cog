@@ -105,9 +105,12 @@
 - (void)dealloc
 {
 	[userInfo release];
+	[streamURL release];
 	
 	[inputNode release];
 	[converterNode release];
+
+	NSLog(@"Bufferchain dealloc");
 	
 	[super dealloc];
 }

@@ -63,7 +63,7 @@
 		result = [NSString stringWithFormat:@"0:%.2u", seconds];
 	}
 	
-	return [[result retain] autorelease];
+	return result;
 }
 
 - (BOOL) getObjectValue:(id *)object forString:(NSString *)string errorDescription:(NSString  **)error

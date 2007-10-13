@@ -234,6 +234,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 - (void)dealloc
 {
 	[self stop];
+	
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
 
 	[super dealloc];
 }

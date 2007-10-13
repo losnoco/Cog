@@ -253,6 +253,8 @@
 
 - (void)endOfInputPlayed
 {
+	[bufferChain release];
+	
 	if ([chainQueue count] <= 0)
 	{
 		//End of playlist
@@ -260,7 +262,6 @@
 		
 		return;
 	}
-	[bufferChain release];
 	
 	bufferChain = [chainQueue objectAtIndex:0];
 	[bufferChain retain];

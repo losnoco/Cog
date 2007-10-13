@@ -112,6 +112,8 @@ long sourceTell(void *datasource)
 - (void)close
 {
 	ov_clear(&vorbisRef);
+	
+	[source close];
 	[source release];
 }
 

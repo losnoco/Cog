@@ -140,6 +140,14 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	return YES;
 }
 
+- (void)dealloc
+{
+	NSLog(@"Decoder dealloc");
+	[self cleanUp];
+	[super dealloc];
+}
+
+
 - (void)setOutputFormat:(AudioStreamBasicDescription)format
 {
 	NSLog(@"SETTING OUTPUT FORMAT!");
@@ -159,6 +167,9 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	{
 		AudioConverterDispose(converter);
 		converter = NULL;
+	}
+	if (callbackBuffer) {
+		free(callbackBuffer);
 	}
 }
 

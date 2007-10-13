@@ -151,7 +151,7 @@
 
 - (void)dealloc
 {
-	NSLog(@"DEALLOCATING");
+	NSLog(@"Input Node dealloc");
 
 	[decoder removeObserver:self forKeyPath:@"properties"];
 	[decoder removeObserver:self forKeyPath:@"metadata"];

@@ -548,11 +548,22 @@ static inline signed int scale (mad_fixed_t sample)
 
 - (void)close
 {
-	[_source close];
+	if (_source)
+	{
+		[_source close];
+		[_source release];
+		_source = nil;
+	}
 	
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);	
+}
+
+- (void)dealloc
+{
+	NSLog(@"Decoder dealloc");
+	[super dealloc];
 }
 
 - (double)seekToTime:(double)milliseconds
