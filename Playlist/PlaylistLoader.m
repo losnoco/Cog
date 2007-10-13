@@ -48,7 +48,7 @@
 {
 	NSString *basePath = [[[filename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
 
-	if ([entryURL isFileURL]) {
+	if ([entryURL isFileURL] && [[entryURL fragment] isEqualToString:@""]) {
 		//We want relative paths.
 		NSMutableString *entryPath = [[[[entryURL path] stringByStandardizingPath] mutableCopy] autorelease];
 
@@ -61,32 +61,6 @@
 		return [entryURL absoluteString];
 	}
 }
-
-- (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
-{
-	if ([path hasPrefix:@"/"]) {
-		return [NSURL fileURLWithPath:path];
-	}
-	
-	NSEnumerator *e = [[AudioPlayer schemes] objectEnumerator];
-	NSString *scheme;
-	while (scheme = [e nextObject])
-	{
-		if ([path hasPrefix:[scheme stringByAppendingString:@"://"]])
-		{
-			return [NSURL URLWithString:path];
-		}
-	}
-	
-	NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
-	NSMutableString *unixPath = [path mutableCopy];
-	
-	//Only relative paths would have windows backslashes.
-	[unixPath replaceOccurrencesOfString:@"\\" withString:@"/" options:0 range:NSMakeRange(0, [unixPath length])];
-	
-	return [NSURL fileURLWithPath:[basePath stringByAppendingString:[unixPath autorelease]]];
-}
-
 
 - (BOOL)saveM3u:(NSString *)filename
 {
@@ -316,6 +290,11 @@
 - (NSArray *)acceptableFileTypes
 {
 	return [[self acceptableContainerTypes] arrayByAddingObjectsFromArray:[AudioPlayer fileTypes]];
+}
+
+- (NSArray *)acceptablePlaylistTypes
+{
+	return [NSArray arrayWithObjects:@"m3u", @"pls", nil];
 }
 
 - (NSArray *)acceptableContainerTypes

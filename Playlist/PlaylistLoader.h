@@ -31,6 +31,7 @@ typedef enum {
 - (BOOL)savePls:(NSString *)filename;
 
 - (NSArray *)acceptableFileTypes;
+- (NSArray *)acceptablePlaylistTypes; //Only m3u and pls saving
 - (NSArray *)acceptableContainerTypes;
 
 @end

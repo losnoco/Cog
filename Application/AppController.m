@@ -150,7 +150,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	p = [NSSavePanel savePanel];
 	
-	[p setAllowedFileTypes:[playlistLoader acceptableContainerTypes]];	
+	[p setAllowedFileTypes:[playlistLoader acceptablePlaylistTypes]];
 	[p beginSheetForDirectory:nil file:nil modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
 }
 
