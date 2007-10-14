@@ -8,7 +8,6 @@
 
 #import "MusepackPlugin.h"
 #import "MusepackDecoder.h"
-#import "MusepackPropertiesReader.h"
 
 @implementation MusepackPlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[MusepackDecoder className],
-		kCogPropertiesReader, 	[MusepackPropertiesReader className],
 		nil
 	];
 }

@@ -8,7 +8,6 @@
 
 #import "WavPackPlugin.h"
 #import "WavPackDecoder.h"
-#import "WavPackPropertiesReader.h"
 
 @implementation WavPackPlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[WavPackDecoder className],
-		kCogPropertiesReader, 	[WavPackPropertiesReader className],
 		nil
 	];
 }

@@ -274,6 +274,8 @@ static PluginController *sharedPluginController = nil;
 	
 }
 
+
+//If no properties reader is defined, use the decoder's properties.
 - (NSDictionary *)propertiesForURL:(NSURL *)url
 {
 	NSString *ext = [[url path] pathExtension];
@@ -282,14 +284,27 @@ static PluginController *sharedPluginController = nil;
 	if (![source open:url])
 		return nil;
 
-	Class propertiesReader = NSClassFromString([propertiesReaders objectForKey:[ext lowercaseString]]);
+	NSString *classString = [propertiesReaders objectForKey:[ext lowercaseString]];
+	if (classString)
+	{
+		Class propertiesReader = NSClassFromString(classString);
 
-	NSDictionary *properties =  [propertiesReader propertiesForSource:source];
-	
-	[source close];
-	
-	return properties;
-	
+		 return [propertiesReader propertiesForSource:source];
+	}
+	else
+	{
+		id<CogDecoder> decoder = [self audioDecoderForURL:url];
+		if (![decoder open:source])
+		{
+			return nil;
+		}
+		
+		NSDictionary *properties = [decoder properties];
+		
+		[decoder close];
+		
+		return properties;
+	}
 }
 
 @end

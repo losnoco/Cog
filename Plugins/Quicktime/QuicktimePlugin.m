@@ -8,7 +8,6 @@
 
 #import "QuicktimePlugin.h"
 #import "QuicktimeDecoder.h"
-#import "QuicktimePropertiesReader.h"
 
 @implementation QuicktimePlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[QuicktimeDecoder className],
-		kCogPropertiesReader, 	[QuicktimePropertiesReader className],
 		nil
 	];
 }

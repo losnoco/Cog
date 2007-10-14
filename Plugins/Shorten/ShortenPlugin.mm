@@ -8,7 +8,6 @@
 
 #import "ShortenPlugin.h"
 #import "ShortenDecoder.h"
-#import "ShortenPropertiesReader.h"
 
 @implementation ShortenPlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[ShortenDecoder className],
-		kCogPropertiesReader, 	[ShortenPropertiesReader className],
 		nil
 	];
 }

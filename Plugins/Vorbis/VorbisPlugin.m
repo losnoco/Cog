@@ -8,7 +8,6 @@
 
 #import "VorbisPlugin.h"
 #import "VorbisDecoder.h"
-#import "VorbisPropertiesReader.h"
 
 @implementation VorbisPlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[VorbisDecoder	className],
-		kCogPropertiesReader, 	[VorbisPropertiesReader className],
 		nil
 	];
 }

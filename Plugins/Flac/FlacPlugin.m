@@ -8,7 +8,6 @@
 
 #import "FlacPlugin.h"
 #import "FlacDecoder.h"
-#import "FlacPropertiesReader.h"
 
 @implementation FlacPlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[FlacDecoder className],
-		kCogPropertiesReader, 	[FlacPropertiesReader className],
 		nil
 	];
 }

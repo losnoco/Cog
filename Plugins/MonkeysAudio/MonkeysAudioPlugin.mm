@@ -8,7 +8,6 @@
 
 #import "MonkeysAudioPlugin.h"
 #import "MonkeysAudioDecoder.h"
-#import "MonkeysAudioPropertiesReader.h"
 
 @implementation MonkeysAudioPlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, [MonkeysAudioDecoder className],
-		kCogPropertiesReader, [MonkeysAudioPropertiesReader className],
 		nil
 	];
 }

@@ -28,8 +28,6 @@
 		17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C9E0B8BE4BA00D1EBDE /* Status.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CDF0B8BE5B400D1EBDE /* VirtualRingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21CDA0B8BE5B400D1EBDE /* VirtualRingBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CE00B8BE5B400D1EBDE /* VirtualRingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21CDB0B8BE5B400D1EBDE /* VirtualRingBuffer.m */; };
-		17D21CE10B8BE5B400D1EBDE /* DBLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21CDD0B8BE5B400D1EBDE /* DBLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D21CE20B8BE5B400D1EBDE /* DBLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21CDE0B8BE5B400D1EBDE /* DBLog.m */; };
 		17D21CF30B8BE5EF00D1EBDE /* Semaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21CF10B8BE5EF00D1EBDE /* Semaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21CF20B8BE5EF00D1EBDE /* Semaphore.m */; };
 		17D21DAD0B8BE76800D1EBDE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */; };
@@ -87,8 +85,6 @@
 		17D21C9E0B8BE4BA00D1EBDE /* Status.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Status.h; sourceTree = "<group>"; };
 		17D21CDA0B8BE5B400D1EBDE /* VirtualRingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VirtualRingBuffer.h; sourceTree = "<group>"; };
 		17D21CDB0B8BE5B400D1EBDE /* VirtualRingBuffer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VirtualRingBuffer.m; sourceTree = "<group>"; };
-		17D21CDD0B8BE5B400D1EBDE /* DBLog.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DBLog.h; sourceTree = "<group>"; };
-		17D21CDE0B8BE5B400D1EBDE /* DBLog.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DBLog.m; sourceTree = "<group>"; };
 		17D21CF10B8BE5EF00D1EBDE /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
 		17D21CF20B8BE5EF00D1EBDE /* Semaphore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Semaphore.m; sourceTree = "<group>"; };
 		17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -261,8 +257,6 @@
 		17D21CDC0B8BE5B400D1EBDE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				17D21CDD0B8BE5B400D1EBDE /* DBLog.h */,
-				17D21CDE0B8BE5B400D1EBDE /* DBLog.m */,
 				17D21CF10B8BE5EF00D1EBDE /* Semaphore.h */,
 				17D21CF20B8BE5EF00D1EBDE /* Semaphore.m */,
 			);
@@ -300,7 +294,6 @@
 				17D21CC50B8BE4BA00D1EBDE /* OutputCoreAudio.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
 				17D21CDF0B8BE5B400D1EBDE /* VirtualRingBuffer.h in Headers */,
-				17D21CE10B8BE5B400D1EBDE /* DBLog.h in Headers */,
 				17D21CF30B8BE5EF00D1EBDE /* Semaphore.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
 				17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */,
@@ -375,7 +368,6 @@
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
 				17D21CC60B8BE4BA00D1EBDE /* OutputCoreAudio.m in Sources */,
 				17D21CE00B8BE5B400D1EBDE /* VirtualRingBuffer.m in Sources */,
-				17D21CE20B8BE5B400D1EBDE /* DBLog.m in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,

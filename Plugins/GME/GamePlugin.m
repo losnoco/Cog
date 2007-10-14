@@ -10,7 +10,6 @@
 
 #import "GameContainer.h"
 #import "GameDecoder.h"
-#import "GamePropertiesReader.h"
 #import "GameMetadataReader.h"
 
 @implementation GamePlugin
@@ -20,7 +19,6 @@
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogContainer, [GameContainer className],
 		kCogDecoder, [GameDecoder className],
-		kCogPropertiesReader, [GamePropertiesReader className],
 		kCogMetadataReader, [GameMetadataReader className],
 		nil];
 }

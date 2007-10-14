@@ -16,10 +16,14 @@
 	NSURLConnection *_connection;
 	
 	long _byteCount;
+	
+	BOOL _responseReceived;
 	BOOL _connectionFinished;
 
 	NSMutableData *_data;
 	Semaphore *_sem;
+	
+	NSString *_mimeType;
 	
 	NSURL *_url;
 }

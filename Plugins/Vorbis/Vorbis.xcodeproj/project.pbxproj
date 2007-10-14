@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1745C2840B90B9F200A6768C /* VorbisPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1745C2820B90B9F200A6768C /* VorbisPropertiesReader.m */; };
 		177FCF9E0B90C9530011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCF9D0B90C9530011C3B5 /* Plugin.h */; };
 		17ADB2480B97944D00257CA2 /* VorbisPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB2460B97944D00257CA2 /* VorbisPlugin.h */; };
 		17ADB2490B97944D00257CA2 /* VorbisPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB2470B97944D00257CA2 /* VorbisPlugin.m */; };
@@ -53,8 +52,6 @@
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		1745C2810B90B9F200A6768C /* VorbisPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VorbisPropertiesReader.h; sourceTree = "<group>"; };
-		1745C2820B90B9F200A6768C /* VorbisPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisPropertiesReader.m; sourceTree = "<group>"; };
 		177FCF9D0B90C9530011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		17ADB2460B97944D00257CA2 /* VorbisPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VorbisPlugin.h; sourceTree = "<group>"; };
 		17ADB2470B97944D00257CA2 /* VorbisPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisPlugin.m; sourceTree = "<group>"; };
@@ -117,8 +114,6 @@
 				17ADB2470B97944D00257CA2 /* VorbisPlugin.m */,
 				17C93D330B8FDA66008627D6 /* VorbisDecoder.h */,
 				17C93D340B8FDA66008627D6 /* VorbisDecoder.m */,
-				1745C2810B90B9F200A6768C /* VorbisPropertiesReader.h */,
-				1745C2820B90B9F200A6768C /* VorbisPropertiesReader.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -236,7 +231,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */,
-				1745C2840B90B9F200A6768C /* VorbisPropertiesReader.m in Sources */,
 				17ADB2490B97944D00257CA2 /* VorbisPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -19,9 +19,9 @@
 + (NSArray *)schemes; //http, file, etc
 
 - (NSURL *)url;
+- (NSString *)mimeType;
 
 - (BOOL)open:(NSURL *)url;
-- (NSDictionary *)properties; //Perhaps contains header info for HTTP stream, or path for a regular file.
 - (BOOL)seekable;
 - (BOOL)seek:(long)position whence:(int)whence;
 - (long)tell;
@@ -36,6 +36,7 @@
 @end
 
 @protocol CogDecoder <NSObject> 
++ (NSArray *)mimeTypes;
 + (NSArray *)fileTypes; //mp3, ogg, etc
 
 //For KVO
@@ -55,6 +56,7 @@
 
 @protocol CogPropertiesReader <NSObject>
 + (NSArray *)fileTypes;
++ (NSArray *)mimeTypes;
 + (NSDictionary *)propertiesForSource:(id<CogSource>)source;
 @end
 

@@ -120,7 +120,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	stat = AudioConverterNew ( &inputFormat, &outputFormat, &converter);
 	if (stat != noErr)
 	{
-		DBLog(@"Error creating converter %i", stat);
+		NSLog(@"Error creating converter %i", stat);
 	}	
 	
 	if (inputFormat.mChannelsPerFrame == 1)
@@ -130,7 +130,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 		stat = AudioConverterSetProperty(converter,kAudioConverterChannelMap,sizeof(channelMap),channelMap);
 		if (stat != noErr)
 		{
-			DBLog(@"Error mapping channels %i", stat);
+			NSLog(@"Error mapping channels %i", stat);
 		}	
 	}
 	

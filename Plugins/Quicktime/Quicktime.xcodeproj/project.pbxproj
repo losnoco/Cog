@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1727BFD10C1C94FD0084363D /* QuicktimePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1727BFD00C1C94FD0084363D /* QuicktimePlugin.m */; };
 		1727BFDD0C1C95350084363D /* QuicktimeDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1727BFDC0C1C95350084363D /* QuicktimeDecoder.m */; };
-		1727BFE60C1C956F0084363D /* QuicktimePropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1727BFE50C1C956F0084363D /* QuicktimePropertiesReader.m */; };
 		1727C0670C1C97A00084363D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1727C0660C1C97A00084363D /* AudioToolbox.framework */; };
 		1727C0BE0C1C9E180084363D /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1727C0BD0C1C9E180084363D /* QuickTime.framework */; };
 		1727C2E50C1CA97C0084363D /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1727C2E40C1CA97C0084363D /* QTKit.framework */; };
@@ -25,8 +24,6 @@
 		1727BFD00C1C94FD0084363D /* QuicktimePlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuicktimePlugin.m; sourceTree = "<group>"; };
 		1727BFDB0C1C95350084363D /* QuicktimeDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuicktimeDecoder.h; sourceTree = "<group>"; };
 		1727BFDC0C1C95350084363D /* QuicktimeDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuicktimeDecoder.m; sourceTree = "<group>"; };
-		1727BFE40C1C956F0084363D /* QuicktimePropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuicktimePropertiesReader.h; sourceTree = "<group>"; };
-		1727BFE50C1C956F0084363D /* QuicktimePropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuicktimePropertiesReader.m; sourceTree = "<group>"; };
 		1727C0660C1C97A00084363D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		1727C0BD0C1C9E180084363D /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
 		1727C2E40C1CA97C0084363D /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
@@ -88,8 +85,6 @@
 				1727BFD00C1C94FD0084363D /* QuicktimePlugin.m */,
 				1727BFDB0C1C95350084363D /* QuicktimeDecoder.h */,
 				1727BFDC0C1C95350084363D /* QuicktimeDecoder.m */,
-				1727BFE40C1C956F0084363D /* QuicktimePropertiesReader.h */,
-				1727BFE50C1C956F0084363D /* QuicktimePropertiesReader.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -184,7 +179,6 @@
 			files = (
 				1727BFD10C1C94FD0084363D /* QuicktimePlugin.m in Sources */,
 				1727BFDD0C1C95350084363D /* QuicktimeDecoder.m in Sources */,
-				1727BFE60C1C956F0084363D /* QuicktimePropertiesReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

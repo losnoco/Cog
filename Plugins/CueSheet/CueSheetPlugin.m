@@ -10,7 +10,6 @@
 
 #import "CueSheetContainer.h"
 #import "CueSheetDecoder.h"
-#import "CueSheetPropertiesReader.h"
 #import "CueSheetMetadataReader.h"
 
 @implementation CueSheetPlugin
@@ -20,7 +19,6 @@
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogContainer, [CueSheetContainer className],
 		kCogDecoder, [CueSheetDecoder className],
-		kCogPropertiesReader, [CueSheetPropertiesReader className],
 		kCogMetadataReader, [CueSheetMetadataReader className],
 		nil];
 }

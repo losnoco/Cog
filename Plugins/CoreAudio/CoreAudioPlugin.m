@@ -8,7 +8,6 @@
 
 #import "CoreAudioPlugin.h"
 #import "CoreAudioDecoder.h"
-#import "CoreAudioPropertiesReader.h"
 
 @implementation CoreAudioPlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[CoreAudioDecoder className],
-		kCogPropertiesReader, 	[CoreAudioPropertiesReader className],
 		nil
 	];
 }

@@ -15,12 +15,18 @@
 {
 	_url = [url copy];
 	
+	_responseReceived = YES;
 	_connectionFinished = NO;
 	_byteCount = 0;
 	_data = [[NSMutableData alloc] init];
 	_sem = [[Semaphore alloc] init];
 	
 	[NSThread detachNewThreadSelector:@selector(doConnection) toTarget:self withObject:nil];
+	
+	//Wait for a response.
+	while (!_responseReceived && !_connectionFinished) {
+		[_sem wait];
+	}
 
 	NSLog(@"Connection opened!");
 
@@ -47,9 +53,9 @@
 	NSLog(@"Thread exit");
 }
 
-- (NSDictionary *)properties
+- (NSString *)mimeType
 {
-	return nil;
+	return _mimeType;
 }
 
 - (BOOL)seekable
@@ -78,10 +84,12 @@
 	if (amount > [_data length])
 		amount = [_data length];
 	
-	[_data getBytes:buffer length:amount];
+	@synchronized (_data) {
+		[_data getBytes:buffer length:amount];
 
-	//Remove the bytes
-	[_data replaceBytesInRange:NSMakeRange(0, amount) withBytes:NULL length:0];
+		//Remove the bytes
+		[_data replaceBytesInRange:NSMakeRange(0, amount) withBytes:NULL length:0];
+	}
 	
 	_byteCount += amount;
 
@@ -138,11 +146,11 @@
 
 -(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-	//May be called more than once. Mime-type may change. Will be called before didReceiveData
-	NSLog(@"Received response: %@", response);
+	NSLog(@"Received response: %@", [response MIMEType]);
+	_mimeType = [response MIMEType];
+	_responseReceived = YES;
 	
-	[_data release];
-	_data = [[NSMutableData alloc] init];
+	[_sem signal];
 }
 
 -(NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
@@ -172,7 +180,10 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-	[_data appendData:data];
+	@synchronized (_data) {
+		[_data appendData:data];
+	}
+	
 	[_sem signal];
 }
 

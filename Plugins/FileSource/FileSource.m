@@ -11,11 +11,6 @@
 
 @implementation FileSource
 
-- (BOOL)buffered
-{
-	return NO;
-}
-
 - (BOOL)open:(NSURL *)url
 {
 	[self setURL:url];

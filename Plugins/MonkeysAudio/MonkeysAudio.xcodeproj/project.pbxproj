@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1745C2ED0B90BDD100A6768C /* MonkeysAudioDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C2E80B90BDD100A6768C /* MonkeysAudioDecoder.mm */; };
-		1745C2EE0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C2EA0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm */; };
 		177FCFB50B90C97E0011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFB40B90C97E0011C3B5 /* Plugin.h */; };
 		17ADB1E80B9793E300257CA2 /* MonkeysAudioPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB1E60B9793E300257CA2 /* MonkeysAudioPlugin.h */; };
 		17ADB1E90B9793E300257CA2 /* MonkeysAudioPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1E70B9793E300257CA2 /* MonkeysAudioPlugin.mm */; };
@@ -58,8 +57,6 @@
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1745C2E70B90BDD100A6768C /* MonkeysAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MonkeysAudioDecoder.h; sourceTree = "<group>"; };
 		1745C2E80B90BDD100A6768C /* MonkeysAudioDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MonkeysAudioDecoder.mm; sourceTree = "<group>"; };
-		1745C2E90B90BDD100A6768C /* MonkeysAudioPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MonkeysAudioPropertiesReader.h; sourceTree = "<group>"; };
-		1745C2EA0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MonkeysAudioPropertiesReader.mm; sourceTree = "<group>"; };
 		177FCFB40B90C97E0011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		17ADB1E60B9793E300257CA2 /* MonkeysAudioPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MonkeysAudioPlugin.h; sourceTree = "<group>"; };
 		17ADB1E70B9793E300257CA2 /* MonkeysAudioPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MonkeysAudioPlugin.mm; sourceTree = "<group>"; };
@@ -122,8 +119,6 @@
 				17ADB1E70B9793E300257CA2 /* MonkeysAudioPlugin.mm */,
 				1745C2E70B90BDD100A6768C /* MonkeysAudioDecoder.h */,
 				1745C2E80B90BDD100A6768C /* MonkeysAudioDecoder.mm */,
-				1745C2E90B90BDD100A6768C /* MonkeysAudioPropertiesReader.h */,
-				1745C2EA0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm */,
 				8EB1E6F80B9B39AA008F9F45 /* SourceIO.h */,
 				8EB1E6FC0B9B39D4008F9F45 /* SourceIO.mm */,
 			);
@@ -243,7 +238,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1745C2ED0B90BDD100A6768C /* MonkeysAudioDecoder.mm in Sources */,
-				1745C2EE0B90BDD100A6768C /* MonkeysAudioPropertiesReader.mm in Sources */,
 				17ADB1E90B9793E300257CA2 /* MonkeysAudioPlugin.mm in Sources */,
 				8EB1E6FD0B9B39D4008F9F45 /* SourceIO.mm in Sources */,
 			);

@@ -8,7 +8,6 @@
 
 #import "MADPlugin.h"
 #import "MADDecoder.h"
-#import "MADPropertiesReader.h"
 
 @implementation MADPlugin
 
@@ -16,7 +15,6 @@
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		kCogDecoder, 			[MADDecoder className],
-		kCogPropertiesReader, 	[MADPropertiesReader className],
 		nil
 	];
 }

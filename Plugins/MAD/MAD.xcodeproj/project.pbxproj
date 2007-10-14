@@ -11,7 +11,6 @@
 		177FCFBC0B90C98A0011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFBB0B90C98A0011C3B5 /* Plugin.h */; };
 		17ADB1D20B9793C500257CA2 /* MADPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB1D00B9793C500257CA2 /* MADPlugin.h */; };
 		17ADB1D30B9793C500257CA2 /* MADPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1D10B9793C500257CA2 /* MADPlugin.m */; };
-		17B618AF0B90997E00BC003F /* MADPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B618AD0B90997E00BC003F /* MADPropertiesReader.m */; };
 		17F5648A0C3BDCEB0019975C /* ID3Tag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F564690C3BDCB70019975C /* ID3Tag.framework */; };
 		17F5648B0C3BDCEB0019975C /* MAD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F564600C3BDCAC0019975C /* MAD.framework */; };
 		17F5648E0C3BDCEE0019975C /* ID3Tag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F564690C3BDCB70019975C /* ID3Tag.framework */; };
@@ -75,8 +74,6 @@
 		177FCFBB0B90C98A0011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		17ADB1D00B9793C500257CA2 /* MADPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MADPlugin.h; sourceTree = "<group>"; };
 		17ADB1D10B9793C500257CA2 /* MADPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MADPlugin.m; sourceTree = "<group>"; };
-		17B618AC0B90997E00BC003F /* MADPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MADPropertiesReader.h; sourceTree = "<group>"; };
-		17B618AD0B90997E00BC003F /* MADPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MADPropertiesReader.m; sourceTree = "<group>"; };
 		17F564580C3BDCAC0019975C /* MAD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MAD.xcodeproj; path = ../../Frameworks/MAD/MAD.xcodeproj; sourceTree = SOURCE_ROOT; };
 		17F564610C3BDCB70019975C /* ID3Tag.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ID3Tag.xcodeproj; path = ../../Frameworks/ID3Tag/ID3Tag.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* MAD_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAD_Prefix.pch; sourceTree = "<group>"; };
@@ -136,8 +133,6 @@
 				17ADB1D10B9793C500257CA2 /* MADPlugin.m */,
 				170335420B8FC4EE00327265 /* MADDecoder.h */,
 				170335430B8FC4EE00327265 /* MADDecoder.m */,
-				17B618AC0B90997E00BC003F /* MADPropertiesReader.h */,
-				17B618AD0B90997E00BC003F /* MADPropertiesReader.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -276,7 +271,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				170335470B8FC4EE00327265 /* MADDecoder.m in Sources */,
-				17B618AF0B90997E00BC003F /* MADPropertiesReader.m in Sources */,
 				17ADB1D30B9793C500257CA2 /* MADPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
