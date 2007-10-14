@@ -5,7 +5,9 @@ require 'open-uri'
 require 'rexml/document'
 include REXML
 
-appcast = open('http://cogx.org/appcast/nightly.xml')
+feed = ARGV[0] || 'nightly'
+
+appcast = open("http://cogx.org/appcast/#{feed}.xml")
 
 appcastdoc = Document.new(appcast)
 
@@ -63,13 +65,13 @@ if appcast_revision < latest_revision
   filename = "Cog-r#{latest_revision}.tbz"
 
   #Zip the app!
-  %x[rm -f build/Release/nightly.tar.bz2]
-  %x[tar -C build/Release -cjf build/Release/nightly.tar.bz2 Cog.app]
+  %x[rm -f build/Release/#{feed}.tar.bz2]
+  %x[tar -C build/Release -cjf build/Release/#{feed}.tar.bz2 Cog.app]
 
-  filesize = File.size("build/Release/nightly.tar.bz2")
+  filesize = File.size("build/Release/#{feed}.tar.bz2")
 
   #Send the new build to the server
-  %x[scp build/Release/nightly.tar.bz2 cogx@cogx.org:~/cogx.org/nightly_builds/#{filename}]
+  %x[scp build/Release/#{feed}.tar.bz2 cogx@cogx.org:~/cogx.org/#{feed}_builds/#{filename}]
 
   #Add new entry to appcast
   new_item = Element.new('item')
@@ -84,7 +86,7 @@ if appcast_revision < latest_revision
   new_item.elements['pubDate'].text = Time.now().strftime("%a, %d %b %Y %H:%M:%S %Z") #RFC 822
   
   new_item.add_element('enclosure')
-  new_item.elements['enclosure'].add_attribute('url', "http://cogx.org/nightly_builds/#{filename}")
+  new_item.elements['enclosure'].add_attribute('url', "http://cogx.org/#{feed}_builds/#{filename}")
   new_item.elements['enclosure'].add_attribute('length', filesize)
   new_item.elements['enclosure'].add_attribute('type', 'application/octet-stream')
   new_item.elements['enclosure'].add_attribute('sparkle:version', "r#{latest_revision}")
@@ -100,7 +102,7 @@ if appcast_revision < latest_revision
   appcast.close()
 
   #Send the updated appcast to the server
-  %x[scp #{new_xml.path} cogx@cogx.org:~/cogx.org/appcast/nightly.xml]
+  %x[scp #{new_xml.path} cogx@cogx.org:~/cogx.org/appcast/#{feed}.xml]
   
 end
 
