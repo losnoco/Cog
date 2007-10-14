@@ -16,6 +16,11 @@
 	return [NSArray arrayWithObject:@"m3u"];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [NSArray arrayWithObjects:@"audio/x-mpegurl", @"audio/mpegurl", nil];
+}
+
 + (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
 {
 	if ([path hasPrefix:@"/"]) {

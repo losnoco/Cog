@@ -19,6 +19,11 @@
 	return [CueSheetDecoder fileTypes];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [CueSheetDecoder mimeTypes];
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
 	if (![url isFileURL]) {

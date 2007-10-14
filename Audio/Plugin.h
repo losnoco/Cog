@@ -31,6 +31,7 @@
 
 @protocol CogContainer <NSObject> 
 + (NSArray *)fileTypes; //mp3, ogg, etc
++ (NSArray *)mimeTypes;
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url;
 @end
@@ -51,6 +52,7 @@
 
 @protocol CogMetadataReader <NSObject>
 + (NSArray *)fileTypes;
++ (NSArray *)mimeTypes;
 + (NSDictionary *)metadataForURL:(NSURL *)url;
 @end
 

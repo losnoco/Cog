@@ -21,7 +21,7 @@
 
 + (NSArray *)mimeTypes
 {	
-	return [NSArray arrayWithObjects:@"application/x-cue", nil]; //This is basically useless
+	return [CueSheetContainer mimeTypes];
 }
 
 - (NSDictionary *)properties 
@@ -63,7 +63,7 @@
 				return NO;
 			}
 
-			decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForURL:[source url]];
+			decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source];
 			[decoder retain];
 
 			if (![decoder open:source]) {

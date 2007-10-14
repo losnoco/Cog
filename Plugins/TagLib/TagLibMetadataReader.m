@@ -74,7 +74,12 @@
 + (NSArray *)fileTypes
 {
 	//May be a way to get a list of supported formats
-	return [NSArray arrayWithObjects:@"shn",@"wv",@"ogg",@"mpc",@"flac",@"ape",@"mp3",@"m4a",nil];
+	return [NSArray arrayWithObjects:@"ogg", @"mpc", @"flac", @"ape", @"mp3", nil];
+}
+
++ (NSArray *)mimeTypes
+{
+	return [NSArray arrayWithObjects:@"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg", @"audio/x-musepack", @"audio/x-flac", @"audio/x-ape", @"audio/mpeg", @"audio/x-mp3", nil];
 }
 
 @end

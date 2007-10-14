@@ -620,7 +620,7 @@ static inline signed int scale (mad_fixed_t sample)
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/mpeg",nil];
+	return [NSArray arrayWithObjects:@"audio/mpeg", @"audio/x-mp3", nil];
 }
 
 @end

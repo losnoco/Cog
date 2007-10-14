@@ -19,6 +19,11 @@
 	return [GameContainer fileTypes];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [GameContainer mimeTypes];
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
 	if (![url isFileURL])

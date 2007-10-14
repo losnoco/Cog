@@ -18,6 +18,11 @@
 	return [DumbDecoder fileTypes];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [DumbDecoder mimeTypes];
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
 	if (![url isFileURL])

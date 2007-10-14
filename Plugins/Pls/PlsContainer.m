@@ -16,6 +16,11 @@
 	return [NSArray arrayWithObject:@"pls"];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [NSArray arrayWithObjects:@"audio/x-scpls", @"application/pls", nil];
+}
+
 + (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
 {
 	if ([path hasPrefix:@"/"]) {

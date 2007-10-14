@@ -18,6 +18,11 @@
 	return [NSArray arrayWithObject:@"cue"];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [NSArray arrayWithObjects:@"application/x-cue", nil]; //This is basically useless
+}
+
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
 	if (![url isFileURL]) {

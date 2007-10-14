@@ -163,7 +163,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 
 + (NSArray *)mimeTypes 
 {	
-	return nil;
+	return [GameContainer fileTypes];
 }
 
 - (void)setSource:(id<CogSource>)s

@@ -28,6 +28,11 @@
 	return [[types copy] autorelease];
 }
 
++ (NSArray *)mimeTypes 
+{
+	return nil;
+}
+
 //This really should be source...
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
