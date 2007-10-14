@@ -253,10 +253,6 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_4)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../Frameworks/WavPack/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../../Frameworks/WavPack/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../../Frameworks/WavPack/build/Debug\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/../../Frameworks/WavPack/build/Release\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -285,10 +281,6 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_4)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../Frameworks/WavPack/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../../Frameworks/WavPack/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../../Frameworks/WavPack/build/Debug\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/../../Frameworks/WavPack/build/Release\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

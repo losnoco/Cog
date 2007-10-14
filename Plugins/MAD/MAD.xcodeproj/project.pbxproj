@@ -304,12 +304,6 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_5)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_6)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../MAD/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../../../ID3Tag/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../../../Frameworks/MAD/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/../../../Frameworks/ID3Tag/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_5 = "\"$(SRCROOT)/../../Frameworks/MAD/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_6 = "\"$(SRCROOT)/../../Frameworks/ID3Tag/build/Release\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -340,12 +334,6 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_5)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_6)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../MAD/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../../../ID3Tag/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../../../Frameworks/MAD/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/../../../Frameworks/ID3Tag/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_5 = "\"$(SRCROOT)/../../Frameworks/MAD/build/Release\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_6 = "\"$(SRCROOT)/../../Frameworks/ID3Tag/build/Release\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

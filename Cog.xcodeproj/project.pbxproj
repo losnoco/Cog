@@ -1720,12 +1720,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Audio/build/Release",
-					"$(SRCROOT)/ThirdParty/Frameworks/",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Audio/build/Debug\"";
+				FRAMEWORK_SEARCH_PATHS = ThirdParty/Frameworks/;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1755,12 +1750,7 @@
 					ppc,
 					i386,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Audio/build/Release",
-					"$(SRCROOT)/ThirdParty/Frameworks/",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Audio/build/Debug\"";
+				FRAMEWORK_SEARCH_PATHS = ThirdParty/Frameworks/;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
