@@ -198,6 +198,9 @@
 		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]]) {
 			if ([url isFileURL] ) {
 				[allURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
+
+				//Make sure the container isn't added twice.
+				[uniqueURLs addObject:url];
 			}
 		}
 		else
