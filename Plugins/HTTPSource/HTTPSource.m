@@ -34,9 +34,15 @@
 	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 	
 	[request release];
+
+	NSDate*    endDate = [NSDate distantFuture];
+	do
+	{
+		NSLog(@"IN THREAD");
+		[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate];
+	} while (!_connectionFinished);	
 	
-	[[NSRunLoop currentRunLoop] run];
-	
+	NSLog(@"Exiting thread");
 }
 
 - (NSDictionary *)properties
@@ -62,7 +68,6 @@
 - (int)read:(void *)buffer amount:(int)amount
 {
 	while (amount > [_data length] && !_connectionFinished) {
-		NSLog(@"Waiting: %@", [NSThread currentThread]);
 		[_sem timedWait: 2];
 	}
 	
@@ -96,6 +101,8 @@
 
 - (void)close
 {
+	_connectionFinished = YES;
+
 	[_connection cancel];
 	[_connection release];
 	_connection = nil;
