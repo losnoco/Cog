@@ -20,14 +20,14 @@
 	_data = [[NSMutableData alloc] init];
 	_sem = [[Semaphore alloc] init];
 	
-	[NSThread detachNewThreadSelector:@selector(makeConnection) toTarget:self withObject:nil];
+	[NSThread detachNewThreadSelector:@selector(doConnection) toTarget:self withObject:nil];
 
 	NSLog(@"Connection opened!");
 
 	return YES;
 }
 
-- (void)makeConnection
+- (void)doConnection
 {
 	NSURLRequest *request = [[NSURLRequest alloc] initWithURL:_url];
 	
@@ -35,14 +35,16 @@
 	
 	[request release];
 
-	NSDate*    endDate = [NSDate distantFuture];
-	do
+	while (!_connectionFinished)
 	{
-		NSLog(@"IN THREAD");
-		[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate];
-	} while (!_connectionFinished);	
+		NSDate *date = [[NSDate alloc] init];
+
+		[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:date];
+
+		[date release];
+	}
 	
-	NSLog(@"Exiting thread");
+	NSLog(@"Thread exit");
 }
 
 - (NSDictionary *)properties
@@ -95,12 +97,11 @@
 	_connectionFinished = YES;
 
 	[_sem signal];
-	
-	[NSThread exit];
 }
 
 - (void)close
 {
+	NSLog(@"CLOSING HTTPSource!");
 	_connectionFinished = YES;
 
 	[_connection cancel];
@@ -167,14 +168,10 @@
 	_connectionFinished = YES;
 	
 	[_sem signal];
-
-	[NSThread exit];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-	NSLog(@"Connection received data.");
-
 	[_data appendData:data];
 	[_sem signal];
 }
