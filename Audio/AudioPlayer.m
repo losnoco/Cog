@@ -322,9 +322,9 @@
 	PluginController *pluginController = [PluginController sharedPluginController];
 	
 	NSArray *containerTypes = [[pluginController containers] allKeys];
-	NSArray *decoderTypes = [[pluginController decoders] allKeys];
+	NSArray *decoderTypes = [[pluginController decodersByExtension] allKeys];
 	NSArray *metdataReaderTypes = [[pluginController metadataReaders] allKeys];
-	NSArray *propertiesReaderTypes = [[pluginController propertiesReaders] allKeys];
+	NSArray *propertiesReaderTypes = [[pluginController propertiesReadersByExtension] allKeys];
 	
 	NSMutableSet *types = [NSMutableSet set];
 	

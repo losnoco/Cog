@@ -63,9 +63,10 @@
 @protocol CogPluginController <NSObject>
 - (id<CogSource>) audioSourceForURL:(NSURL *)url;
 - (NSArray *) urlsForContainerURL:(NSURL *)url;
-- (id<CogDecoder>) audioDecoderForURL:(NSURL *)url;
 - (NSDictionary *) metadataForURL:(NSURL *)url;
 - (NSDictionary *) propertiesForURL:(NSURL *)url;
+
+- (id<CogDecoder>) audioDecoderForSource:(id<CogSource>)source;
 @end
 
 

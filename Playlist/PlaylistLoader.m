@@ -213,7 +213,7 @@
 			continue;
 
 		//Need a better way to determine acceptable file types than basing it on extensions.
-		if (![[AudioPlayer fileTypes] containsObject:[[[url path] pathExtension] lowercaseString]])
+		if ([url isFileURL] && ![[AudioPlayer fileTypes] containsObject:[[[url path] pathExtension] lowercaseString]])
 			continue;
 		
 		if (![uniqueURLs containsObject:url])

@@ -13,16 +13,12 @@
 
 - (BOOL)open:(NSURL *)url
 {
-	[self setURL:url];
+	_url = url;
+	[_url retain];
 	
 	_fd = fopen([[url path] UTF8String], "r");
 	
 	return (_fd != NULL);
-}
-
-- (NSDictionary *)properties
-{
-	return nil;
 }
 
 - (BOOL)seekable
@@ -47,14 +43,21 @@
 
 - (void)close
 {
-	[self setURL:nil];
+	[_url release];
+	_url = nil;
 	
 	fclose(_fd);
+	_fd = NULL;
 }
 
 - (NSURL *)url
 {
 	return _url;
+}
+
+- (NSString *)mimeType
+{
+	return nil;
 }
 
 - (void)setURL:(NSURL *)url

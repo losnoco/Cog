@@ -17,6 +17,4 @@
 	NSURL *_url;
 }
 
-- (void)setURL:(NSURL *)url;
-
 @end

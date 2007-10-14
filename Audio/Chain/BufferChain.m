@@ -58,7 +58,7 @@
 
 	[converterNode setOutputFormat:outputFormat];
 
-	if (![inputNode openURL:url withSource:source])
+	if (![inputNode openWithSource:source])
 		return NO;
 
 //		return NO;

@@ -9,9 +9,13 @@
 {
 	NSMutableDictionary *sources;
 	NSMutableDictionary *containers;
-	NSMutableDictionary *decoders;
 	NSMutableDictionary *metadataReaders;
-	NSMutableDictionary *propertiesReaders;
+
+	NSMutableDictionary *propertiesReadersByExtension;
+	NSMutableDictionary *propertiesReadersByMimeType;
+
+	NSMutableDictionary *decodersByExtension;
+	NSMutableDictionary *decodersByMimeType;
 }
 
 + (PluginController *)sharedPluginController; //Use this to get the instance.
@@ -30,8 +34,12 @@
 
 - (NSDictionary *)sources;
 - (NSDictionary *)containers;
-- (NSDictionary *)decoders;
 - (NSDictionary *)metadataReaders;
-- (NSDictionary *)propertiesReaders;
+
+- (NSDictionary *)propertiesReadersByExtension;
+- (NSDictionary *)propertiesReadersByMimeType;
+
+- (NSDictionary *)decodersByExtension;
+- (NSDictionary *)decodersByMimeType;
 
 @end

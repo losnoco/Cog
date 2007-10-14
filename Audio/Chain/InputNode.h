@@ -23,7 +23,7 @@
 	double seekTime;
 }
 
-- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source;
+- (BOOL)openWithSource:(id<CogSource>)source;
 - (BOOL)openWithDecoder:(id<CogDecoder>) d;
 
 - (void)process;

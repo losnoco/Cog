@@ -60,9 +60,14 @@ static PluginController *sharedPluginController = nil;
 	if (self) {
 		sources = [[NSMutableDictionary alloc] init];
 		containers = [[NSMutableDictionary alloc] init];
-		decoders = [[NSMutableDictionary alloc] init];
+
 		metadataReaders = [[NSMutableDictionary alloc] init];
-		propertiesReaders = [[NSMutableDictionary alloc] init];
+
+		propertiesReadersByExtension = [[NSMutableDictionary alloc] init];
+		propertiesReadersByMimeType = [[NSMutableDictionary alloc] init];
+
+		decodersByExtension = [[NSMutableDictionary alloc] init];
+		decodersByMimeType = [[NSMutableDictionary alloc] init];
 	}
 	
 	return self;
@@ -154,11 +159,20 @@ static PluginController *sharedPluginController = nil;
 {
 	Class decoder = NSClassFromString(className);
 	if (decoder && [decoder respondsToSelector:@selector(fileTypes)]) {
-		NSEnumerator *fileTypesEnum = [[decoder fileTypes] objectEnumerator];
 		id fileType;
+		NSEnumerator *fileTypesEnum = [[decoder fileTypes] objectEnumerator];
 		while (fileType = [fileTypesEnum nextObject])
 		{
-			[decoders setObject:className forKey:[fileType lowercaseString]];
+			[decodersByExtension setObject:className forKey:[fileType lowercaseString]];
+		}
+	}
+	
+	if (decoder && [decoder respondsToSelector:@selector(mimeTypes)]) {
+		id mimeType;
+		NSEnumerator *mimeTypesEnum = [[decoder mimeTypes] objectEnumerator];
+		while (mimeType = [mimeTypesEnum nextObject])
+		{
+			[decodersByMimeType setObject:className forKey:[mimeType lowercaseString]];
 		}
 	}
 }
@@ -184,7 +198,16 @@ static PluginController *sharedPluginController = nil;
 		id fileType;
 		while (fileType = [fileTypesEnum nextObject])
 		{
-			[propertiesReaders setObject:className forKey:[fileType lowercaseString]];
+			[propertiesReadersByExtension setObject:className forKey:[fileType lowercaseString]];
+		}
+	}
+
+	if (propertiesReader && [propertiesReader respondsToSelector:@selector(mimeTypes)]) {
+		id mimeType;
+		NSEnumerator *mimeTypesEnum = [[propertiesReader mimeTypes] objectEnumerator];
+		while (mimeType = [mimeTypesEnum nextObject])
+		{
+			[propertiesReadersByMimeType setObject:className forKey:[mimeType lowercaseString]];
 		}
 	}
 }
@@ -206,9 +229,13 @@ static PluginController *sharedPluginController = nil;
 {
 	NSLog(@"Sources: %@", sources);
 	NSLog(@"Containers: %@", containers);
-	NSLog(@"Decoders: %@", decoders);
 	NSLog(@"Metadata Readers: %@", metadataReaders);
-	NSLog(@"Properties Readers: %@", propertiesReaders);
+
+	NSLog(@"Properties Readers By Extension: %@", propertiesReadersByExtension);
+	NSLog(@"Properties Readers By Mime Type: %@", propertiesReadersByMimeType);
+
+	NSLog(@"Decoders by Extension: %@", decodersByExtension);
+	NSLog(@"Decoders by Mime Type: %@", decodersByMimeType);
 }
 
 - (NSDictionary *)sources
@@ -221,14 +248,24 @@ static PluginController *sharedPluginController = nil;
 	return containers;
 }
 
-- (NSDictionary *)decoders
+- (NSDictionary *)decodersByExtension
 {
-	return decoders;
+	return decodersByExtension;
 }
 
-- (NSDictionary *)propertiesReaders
+- (NSDictionary *)decodersByMimeType
 {
-	return propertiesReaders;
+	return decodersByMimeType;
+}
+
+- (NSDictionary *)propertiesReadersByExtension
+{
+	return propertiesReadersByExtension;
+}
+
+- (NSDictionary *)propertiesReadersByMimeType
+{
+	return propertiesReadersByMimeType;
 }
 
 - (NSDictionary *)metadataReaders
@@ -255,11 +292,16 @@ static PluginController *sharedPluginController = nil;
 	return [container urlsForContainerURL:url];
 }
 
-- (id<CogDecoder>) audioDecoderForURL:(NSURL *)url
+//Note: Source is assumed to already be opened.
+- (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source
 {
-	NSString *ext = [[url path] pathExtension];
-	
-	Class decoder = NSClassFromString([decoders objectForKey:[ext lowercaseString]]);
+	NSString *ext = [[[source url] path] pathExtension];
+	NSString *classString = [decodersByExtension objectForKey:[ext lowercaseString]];
+	if (!classString) {
+		classString = [decodersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+	}
+
+	Class decoder = NSClassFromString(classString);
 	
 	return [[[decoder alloc] init] autorelease];
 }
@@ -284,7 +326,11 @@ static PluginController *sharedPluginController = nil;
 	if (![source open:url])
 		return nil;
 
-	NSString *classString = [propertiesReaders objectForKey:[ext lowercaseString]];
+	NSString *classString = [propertiesReadersByExtension objectForKey:[ext lowercaseString]];
+	if (!classString) {
+		classString = [propertiesReadersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+	}
+
 	if (classString)
 	{
 		Class propertiesReader = NSClassFromString(classString);
@@ -293,7 +339,8 @@ static PluginController *sharedPluginController = nil;
 	}
 	else
 	{
-		id<CogDecoder> decoder = [self audioDecoderForURL:url];
+	
+		id<CogDecoder> decoder = [self audioDecoderForSource:source];
 		if (![decoder open:source])
 		{
 			return nil;

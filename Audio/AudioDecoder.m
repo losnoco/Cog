@@ -12,9 +12,9 @@
 
 @implementation AudioDecoder
 
-+ (id<CogDecoder>) audioDecoderForURL:(NSURL *)url
++ (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source
 {
-	return [[PluginController sharedPluginController] audioDecoderForURL:url];
+	return [[PluginController sharedPluginController] audioDecoderForSource:source];
 }
 
 @end

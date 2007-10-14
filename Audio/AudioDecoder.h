@@ -13,6 +13,6 @@
 @interface AudioDecoder : NSObject {
 }
 
-+ (id<CogDecoder>)audioDecoderForURL:(NSURL *)url;
++ (id<CogDecoder>)audioDecoderForSource:(id <CogSource>)source;
 
 @end

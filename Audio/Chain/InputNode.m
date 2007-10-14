@@ -13,9 +13,9 @@
 
 @implementation InputNode
 
-- (BOOL)openURL:(NSURL *)url withSource:(id<CogSource>)source
+- (BOOL)openWithSource:(id<CogSource>)source
 {
-	decoder = [AudioDecoder audioDecoderForURL:url];
+	decoder = [AudioDecoder audioDecoderForSource:source];
 	[decoder retain];
 
 	if (decoder == nil)

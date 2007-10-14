@@ -15,7 +15,7 @@
 {
 	_url = [url copy];
 	
-	_responseReceived = YES;
+	_responseReceived = NO;
 	_connectionFinished = NO;
 	_byteCount = 0;
 	_data = [[NSMutableData alloc] init];
@@ -55,6 +55,7 @@
 
 - (NSString *)mimeType
 {
+	NSLog(@"Returning mimetype! %@", _mimeType);
 	return _mimeType;
 }
 
@@ -121,6 +122,9 @@
 
 	[_url release];
 	_url = nil;
+	
+	[_mimeType release];
+	_mimeType = nil;
  
 	[_sem release];
 	_sem = nil;
@@ -146,9 +150,10 @@
 
 -(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-	NSLog(@"Received response: %@", [response MIMEType]);
-	_mimeType = [response MIMEType];
+	_mimeType = [[response MIMEType] copy];
 	_responseReceived = YES;
+
+	NSLog(@"Received response: %@", _mimeType);
 	
 	[_sem signal];
 }
