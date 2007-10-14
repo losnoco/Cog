@@ -25,6 +25,8 @@
 		1766C8970B912FB4004A7AE4 /* repeat_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C88F0B912FB4004A7AE4 /* repeat_on.png */; };
 		1766C8980B912FB4004A7AE4 /* shuffle_off.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C8900B912FB4004A7AE4 /* shuffle_off.png */; };
 		1766C8990B912FB4004A7AE4 /* shuffle_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C8910B912FB4004A7AE4 /* shuffle_on.png */; };
+		1769D7D10CC2BFF7003F455B /* FileTreeDataSource.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1769D7CF0CC2BFF7003F455B /* FileTreeDataSource.h */; };
+		1769D7D20CC2BFF7003F455B /* FileTreeDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1769D7D00CC2BFF7003F455B /* FileTreeDataSource.m */; };
 		1770429C0B8BC53600B86321 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 177042980B8BC53600B86321 /* AppController.m */; };
 		1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1770429A0B8BC53600B86321 /* PlaybackController.m */; };
 		177EBF9E0B8BC2A70000BC8C /* AMRemovableColumnsTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF7A0B8BC2A70000BC8C /* AMRemovableColumnsTableView.m */; };
@@ -121,9 +123,7 @@
 		8EFFCD610AA093AF00C458A5 /* FileIconCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD450AA093AF00C458A5 /* FileIconCell.m */; };
 		8EFFCD630AA093AF00C458A5 /* FileNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD470AA093AF00C458A5 /* FileNode.m */; };
 		8EFFCD650AA093AF00C458A5 /* FileOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD490AA093AF00C458A5 /* FileOutlineView.m */; };
-		8EFFCD670AA093AF00C458A5 /* FileTreeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD4B0AA093AF00C458A5 /* FileTreeController.m */; };
 		8EFFCD690AA093AF00C458A5 /* FileTreeWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD4D0AA093AF00C458A5 /* FileTreeWatcher.m */; };
-		8EFFCD6D0AA093AF00C458A5 /* PathIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD510AA093AF00C458A5 /* PathIcon.m */; };
 		8EFFCD6F0AA093AF00C458A5 /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD530AA093AF00C458A5 /* PathNode.m */; };
 /* End PBXBuildFile section */
 
@@ -418,6 +418,7 @@
 				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 				17F94CCD0B8D090800A34E87 /* Sparkle.framework in CopyFiles */,
 				1791FF8F0CB43A2C0070BC5C /* MediaKeysApplication.h in CopyFiles */,
+				1769D7D10CC2BFF7003F455B /* FileTreeDataSource.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +466,8 @@
 		1766C88F0B912FB4004A7AE4 /* repeat_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_on.png; path = Images/repeat_on.png; sourceTree = "<group>"; };
 		1766C8900B912FB4004A7AE4 /* shuffle_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = shuffle_off.png; path = Images/shuffle_off.png; sourceTree = "<group>"; };
 		1766C8910B912FB4004A7AE4 /* shuffle_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = shuffle_on.png; path = Images/shuffle_on.png; sourceTree = "<group>"; };
+		1769D7CF0CC2BFF7003F455B /* FileTreeDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileTreeDataSource.h; sourceTree = "<group>"; };
+		1769D7D00CC2BFF7003F455B /* FileTreeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileTreeDataSource.m; sourceTree = "<group>"; };
 		1770424E0B8BC41800B86321 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		177042970B8BC53600B86321 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		177042980B8BC53600B86321 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
@@ -614,8 +617,6 @@
 		8EFFCD4B0AA093AF00C458A5 /* FileTreeController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FileTreeController.m; sourceTree = "<group>"; };
 		8EFFCD4C0AA093AF00C458A5 /* FileTreeWatcher.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileTreeWatcher.h; sourceTree = "<group>"; };
 		8EFFCD4D0AA093AF00C458A5 /* FileTreeWatcher.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FileTreeWatcher.m; sourceTree = "<group>"; };
-		8EFFCD500AA093AF00C458A5 /* PathIcon.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PathIcon.h; sourceTree = "<group>"; };
-		8EFFCD510AA093AF00C458A5 /* PathIcon.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PathIcon.m; sourceTree = "<group>"; };
 		8EFFCD520AA093AF00C458A5 /* PathNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PathNode.h; sourceTree = "<group>"; };
 		8EFFCD530AA093AF00C458A5 /* PathNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PathNode.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1146,10 +1147,10 @@
 			children = (
 				8EFFCD440AA093AF00C458A5 /* FileIconCell.h */,
 				8EFFCD450AA093AF00C458A5 /* FileIconCell.m */,
-				8EFFCD500AA093AF00C458A5 /* PathIcon.h */,
-				8EFFCD510AA093AF00C458A5 /* PathIcon.m */,
 				8EFFCD480AA093AF00C458A5 /* FileOutlineView.h */,
 				8EFFCD490AA093AF00C458A5 /* FileOutlineView.m */,
+				1769D7CF0CC2BFF7003F455B /* FileTreeDataSource.h */,
+				1769D7D00CC2BFF7003F455B /* FileTreeDataSource.m */,
 				8EFFCD4A0AA093AF00C458A5 /* FileTreeController.h */,
 				8EFFCD4B0AA093AF00C458A5 /* FileTreeController.m */,
 				8EFFCD4C0AA093AF00C458A5 /* FileTreeWatcher.h */,
@@ -1506,9 +1507,7 @@
 				8EFFCD610AA093AF00C458A5 /* FileIconCell.m in Sources */,
 				8EFFCD630AA093AF00C458A5 /* FileNode.m in Sources */,
 				8EFFCD650AA093AF00C458A5 /* FileOutlineView.m in Sources */,
-				8EFFCD670AA093AF00C458A5 /* FileTreeController.m in Sources */,
 				8EFFCD690AA093AF00C458A5 /* FileTreeWatcher.m in Sources */,
-				8EFFCD6D0AA093AF00C458A5 /* PathIcon.m in Sources */,
 				8EFFCD6F0AA093AF00C458A5 /* PathNode.m in Sources */,
 				8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
@@ -1539,6 +1538,7 @@
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
+				1769D7D20CC2BFF7003F455B /* FileTreeDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

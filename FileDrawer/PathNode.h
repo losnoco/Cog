@@ -7,17 +7,27 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "PathIcon.h"
 
 @interface PathNode : NSObject
 {
 	NSString *path;
-	PathIcon *pathIcon;
+	NSImage *icon;
+
+	NSArray *subpaths;
 }
 
 - (id)initWithPath:(NSString *)p;
 
-- (id)pathIcon;
-- (void)setPathIcon:(id)pi;
+- (NSString *)path;
+- (void)setPath:(NSString *)p;
+
+- (void)processPaths: (NSArray *)contents;
+
+- (NSArray *)subpaths;
+- (void)setSubpaths:(NSArray *)s;
+
+- (NSImage *)icon;
+
+- (BOOL)isLeaf;
 
 @end

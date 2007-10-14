@@ -12,77 +12,15 @@
 
 @implementation SmartFolderNode
 
--(id)initWithPath:(NSString *)p controller:(id) c
-{
-	self = [super initWithPath:p];
-	if (self)
-	{
-		controller = [c retain];
-	}
-	
-	return self;
-}
-
-- (void)dealloc {
-	if (subpaths)
-		[subpaths release];
-	
-	[super dealloc];
-}
-
-
 - (BOOL)isLeaf
 {
 	return NO;
-}
-
-//need to merge this and directorynode
-- (void)processContents: (NSArray *)contents
-{
-	NSEnumerator *e = [contents objectEnumerator];
-	NSString *s;
-	
-	while (s = [e nextObject])
-	{
-/*		if ([s characterAtIndex:0] == '.')
-		{
-			continue;
-		}
-*/		
-		PathNode *newNode;
-//		NSString *newSubpath = [path stringByAppendingPathComponent: s];
-	
-		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
-		{
-			newNode = [[SmartFolderNode alloc] initWithPath:s controller:controller];
-		}
-		else
-		{
-			BOOL isDir;
-			
-			[[NSFileManager defaultManager] fileExistsAtPath:s isDirectory:&isDir];
-			
-			if (!isDir && ![[controller acceptableFileTypes] containsObject:[s pathExtension]])
-				continue;
-
-			if (isDir)
-				newNode = [[DirectoryNode alloc] initWithPath: s controller:controller];
-			else
-				newNode = [[FileNode alloc] initWithPath: s];
-		}
-					
-		[subpaths addObject:newNode];
-
-		[newNode release];
-	}
 }
 
 - (NSArray *)subpaths
 {
 	if (subpaths == nil)
 	{
-		subpaths = [[NSMutableArray alloc] init];
-	
 		NSDictionary *doc = [NSDictionary dictionaryWithContentsOfFile:path];
 		NSString *rawQuery = [doc objectForKey:@"RawQuery"];
 		NSArray *searchPaths = [[doc objectForKey:@"SearchCriteria"] objectForKey:@"CurrentFolderPath"];
@@ -120,7 +58,7 @@
 
 - (void)queryFinished:(NSNotification *)notification
 {
-	MDQueryRef query = [notification object];
+	MDQueryRef query = (MDQueryRef)[notification object];
 
 	NSMutableArray *results = [NSMutableArray array];
 
@@ -141,13 +79,11 @@
 
 	MDQueryEnableUpdates(query);
 	
-	[self processContents:results];
-	[self setSubpaths:subpaths];
+	[self processPaths:results];
 }
 
 - (void)queryUpdate:(NSNotification *)notification
 {
-	[subpaths removeAllObjects];
 	[self queryFinished: notification];
 }
 

@@ -8,9 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class FileTreeDataSource;
 
 @interface FileOutlineView : NSOutlineView {
 	IBOutlet NSDrawer *fileDrawer;
+	
+	FileTreeDataSource *dataSource;
 }
 
 @end

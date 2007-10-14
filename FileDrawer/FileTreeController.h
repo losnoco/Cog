@@ -20,8 +20,11 @@
 	FileTreeWatcher *watcher;
 }
 
+- (FileTreeWatcher *)watcher;
+
 - (id)rootPath;
 - (void)setRootPath:(id)r;
-- (void) refreshRoot;
+- (void)refreshRoot;
+- (NSArray *)acceptableFileTypes;
 
 @end

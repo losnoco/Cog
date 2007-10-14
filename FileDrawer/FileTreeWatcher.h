@@ -7,7 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "UKKQueue.h"
+
+@class UKKQueue;
 
 @interface FileTreeWatcher : NSObject {
 	UKKQueue *kqueue;

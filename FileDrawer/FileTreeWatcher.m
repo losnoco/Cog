@@ -8,6 +8,8 @@
 
 #import "FileTreeWatcher.h"
 
+#import "UKKQueue.h"
+
 @implementation FileTreeWatcher
 
 - (id)init

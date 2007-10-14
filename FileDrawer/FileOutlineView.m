@@ -8,10 +8,13 @@
 
 #import "FileOutlineView.h"
 #import "FileIconCell.h"
+#import "FileTreeDataSource.h"
+
 
 @interface FileOutlineView (KFTypeSelectTableViewSupport)
 - (void)findPrevious:(id)sender;
 - (void)findNext:(id)sender;
+- (void)kfResetSearch;
 @end
 
 @implementation FileOutlineView
@@ -22,13 +25,15 @@
 	id c;
 	while ((c = [e nextObject]))
 	{
-//		id headerCell = [[ImageTextCell alloc] init];
 		id dataCell = [[FileIconCell alloc] init];
 		
 		[dataCell setLineBreakMode:NSLineBreakByTruncatingTail];
-//		[c setHeaderCell: headerCell];
 		[c setDataCell: dataCell];
+		NSLog(@"Setting data cell!");
 	}
+
+	dataSource = [[FileTreeDataSource alloc] initWithRoot: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"] ];
+	[self setDataSource: dataSource];
 }
 
 
@@ -59,7 +64,7 @@
 			[self kfResetSearch];
 		} else if (pressedChar == NSCarriageReturnCharacter || pressedChar == NSEnterCharacter) { //Enter or return
 			//Add songs to list
-			[[self delegate] addSelectedToPlaylist];
+			//[[self delegate] addSelectedToPlaylist];
 			
 			[fileDrawer close];
 		} else if (pressedChar == 0x1b) {//Escape

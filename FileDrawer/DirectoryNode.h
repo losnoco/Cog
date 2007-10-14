@@ -11,11 +11,6 @@
 
 @interface DirectoryNode : PathNode
 {
-	NSMutableArray *subpaths;
-	id controller;
 }
-
--(id)initWithPath:(NSString *)p controller:(id) c;
-- (NSArray *)subpaths;
 
 @end

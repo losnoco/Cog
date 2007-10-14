@@ -11,8 +11,6 @@
 #import "PathNode.h"
 
 @interface SmartFolderNode : PathNode {
-	NSMutableArray *subpaths;
-	id controller;
 }
 
 @end

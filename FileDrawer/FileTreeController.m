@@ -48,7 +48,7 @@
 - (void) refreshRoot
 {
 	DirectoryNode *base = [[DirectoryNode alloc] initWithPath:rootPath controller:self];
-	[self setContent: [base subpaths]];
+//	[self setContent: [base subpaths]];
 
 	[base release];
 	
@@ -122,7 +122,7 @@
 
 	while (p = [e nextObject]) {
 		int i;
-		PathNode *n = nil;
+		id n = nil;
 		NSIndexPath *ip = [p indexPath];
 
 		for (i = 0; i < [ip length]; i++)
