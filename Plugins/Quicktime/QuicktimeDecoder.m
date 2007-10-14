@@ -189,6 +189,11 @@
 	return extensions;
 }
 
++ (NSArray *)mimeTypes
+{
+	return nil;
+}
+
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:

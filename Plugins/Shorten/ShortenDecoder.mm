@@ -119,5 +119,10 @@
 	return [NSArray arrayWithObject:@"shn"];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [NSArray arrayWithObjects:@"application/x-shorten", nil]; //This is basically useless
+}
+
 
 @end

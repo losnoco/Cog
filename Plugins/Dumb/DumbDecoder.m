@@ -173,11 +173,6 @@ void closeCallback(void *f)
 	}
 }
 
-+ (NSArray *)fileTypes 
-{	
-	return [NSArray arrayWithObjects:@"it", @"xm", @"s3m", @"mod",nil];
-}
-
 - (void)setSource:(id<CogSource>)s
 {
 	[s retain];
@@ -188,6 +183,16 @@ void closeCallback(void *f)
 - (id<CogSource>)source
 {
 	return source;
+}
+
++ (NSArray *)fileTypes 
+{	
+	return [NSArray arrayWithObjects:@"it", @"xm", @"s3m", @"mod", nil];
+}
+
++ (NSArray *)mimeTypes 
+{	
+	return [NSArray arrayWithObjects:@"audio/x-it", @"audio/x-xm", @"audio/x-s3m", @"audio/x-mod", nil];
 }
 
 @end

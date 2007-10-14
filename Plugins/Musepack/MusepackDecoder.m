@@ -221,5 +221,9 @@ mpc_bool_t CanSeekProc(void *data)
 	return [NSArray arrayWithObject:@"mpc"];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [NSArray arrayWithObjects:@"audio/x-musepack", nil];
+}
 
 @end

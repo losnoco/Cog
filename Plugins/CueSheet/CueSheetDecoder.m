@@ -19,6 +19,11 @@
 	return [CueSheetContainer fileTypes];
 }
 
++ (NSArray *)mimeTypes
+{	
+	return [NSArray arrayWithObjects:@"application/x-cue", nil]; //This is basically useless
+}
+
 - (NSDictionary *)properties 
 {
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];

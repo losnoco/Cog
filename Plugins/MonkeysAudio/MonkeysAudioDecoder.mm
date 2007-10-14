@@ -108,4 +108,9 @@
 	return [NSArray arrayWithObject:@"ape"];
 }
 
++ (NSArray *)mimeTypes
+{
+	return [NSArray arrayWithObjects:@"audio/x-ape", nil];
+}
+
 @end
