@@ -11,29 +11,32 @@
 
 @implementation HTTPSource
 
-- (BOOL)buffered
-{
-	return NO;
-}
-
 - (BOOL)open:(NSURL *)url
 {
-	[self setURL:url];
-
-	unsigned int port = [[url port] unsignedIntValue];
-	if (!port)
-		port = 80;
-		
-	_socket = [[Socket alloc] initWithHost:[url host] port:port];
-	NSLog(@"SOCKET?");
-	if (_socket) {
-		NSLog(@"WE HAVE A SOCKET!");
-		NSData *request = [[NSString stringWithFormat:@"GET %@ HTTP/1.0\nHOST: %@\n\n",[url path],[url host]] dataUsingEncoding:NSUTF8StringEncoding];
-		[_socket send:(void *)[request bytes] amount:[request length]];
-		pastHeader = NO;
-	}
+	_url = [url copy];
 	
-	return (_socket != nil);
+	_connectionFinished = NO;
+	_byteCount = 0;
+	_data = [[NSMutableData alloc] init];
+	_sem = [[Semaphore alloc] init];
+	
+	[NSThread detachNewThreadSelector:@selector(makeConnection) toTarget:self withObject:nil];
+
+	NSLog(@"Connection opened!");
+
+	return YES;
+}
+
+- (void)makeConnection
+{
+	NSURLRequest *request = [[NSURLRequest alloc] initWithURL:_url];
+	
+	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+	
+	[request release];
+	
+	[[NSRunLoop currentRunLoop] run];
+	
 }
 
 - (NSDictionary *)properties
@@ -53,74 +56,125 @@
 
 - (long)tell
 {
-	return byteCount;
+	return _byteCount;
 }
 
 - (int)read:(void *)buffer amount:(int)amount
 {
-	NSLog(@"READING DATA: %i", amount);
-	if (!pastHeader) {
-		const int delimeter_size = 4; //\r\n\r\n
-		
-//		FILE *testFout = fopen("/Users/vspader/header.raw", "w");
-
-		int l = [_socket receive:buffer amount:amount];
-		NSLog(@"Received data: %i", l);
-		uint8_t *f;
-		while(NULL == (f = (uint8_t *)strnstr((const char *)buffer, "\r\n\r\n", l))) {
-//			fwrite(buffer, 1,l, testFout);
-			//Need to check for boundary conditions
-			memmove(buffer, (uint8_t *)buffer + (l - delimeter_size), delimeter_size);
-			l = delimeter_size + [_socket receive:((uint8_t *)buffer + delimeter_size) amount:(amount - delimeter_size)];
-		}
-		
-		pastHeader = YES;
-			
-		uint8_t *bufferOffset = f + delimeter_size;
-		uint8_t *bufferEnd = (uint8_t *)buffer + l;
-		int amountRemaining = bufferEnd - bufferOffset;
-		
-		
-		//For testing only
-//		fwrite(buffer, 1, bufferOffset - (uint8_t *)buffer, testFout);
-//		fclose(testFout);
-
-//		testFout = fopen("/Users/vspader/test.raw", "w");
-//		fwrite(bufferOffset, 1, amountRemaining, testFout);
-//		fclose(testFout);
-		
-		
-		memmove(buffer,bufferOffset, amountRemaining);
-		
-		return amountRemaining + [self read:((uint8_t *)buffer + amountRemaining) amount:(amount - amountRemaining)];
+	while (amount > [_data length] && !_connectionFinished) {
+		NSLog(@"Waiting: %@", [NSThread currentThread]);
+		[_sem timedWait: 2];
 	}
-	else {
-		int l = [_socket receive:buffer amount:amount];
+	
+	NSLog(@"Read called!");
+	
+	if (amount > [_data length])
+		amount = [_data length];
+	
+	[_data getBytes:buffer length:amount];
 
-		
-		//FOR TESTING ONLY
-//		FILE *testFout = fopen("/Users/vspader/test.raw", "a");
-//		fwrite(buffer, 1, l, testFout);
-//		fclose(testFout);
-		
-		if (l > 0)
-			byteCount += l;
+	//Remove the bytes
+	[_data replaceBytesInRange:NSMakeRange(0, amount) withBytes:NULL length:0];
+	
+	_byteCount += amount;
 
-		return l;
-	}
+	return amount;
+}
+
+//Only called from thread.
+- (void)cancel
+{
+	NSLog(@"CANCEL!");
+	
+	[_connection cancel];
+	_connectionFinished = YES;
+
+	[_sem signal];
+	
+	[NSThread exit];
 }
 
 - (void)close
 {
-	[_socket close];
+	[_connection cancel];
+	[_connection release];
+	_connection = nil;
+	
+	[_data release];
+	_data = nil;
+
+	[_url release];
+	_url = nil;
+ 
+	[_sem release];
+	_sem = nil;
+}
+
+- (void)connection:(NSURLConnection *)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+	NSLog(@"Authentication cancelled");
+	[self cancel];
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+	NSLog(@"Connection failed: %@", error);
+	[self cancel];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+	NSLog(@"Received authentication challenge. Canceling.");
+	[self cancel];
+}
+
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+	//May be called more than once. Mime-type may change. Will be called before didReceiveData
+	NSLog(@"Received response: %@", response);
+	
+	[_data release];
+	_data = [[NSMutableData alloc] init];
+}
+
+-(NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
+{
+	NSLog(@"Received cache request");
+	
+	//No caching an HTTP stream
+	return nil;
+}
+
+-(NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
+{
+	NSLog(@"Received redirect");
+
+	//Redirect away
+	return request;
+}
+
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+	NSLog(@"Connection finished loading.");
+
+	_connectionFinished = YES;
+	
+	[_sem signal];
+
+	[NSThread exit];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+	NSLog(@"Connection received data.");
+
+	[_data appendData:data];
+	[_sem signal];
 }
 
 - (void)dealloc
 {
-	[self setURL:nil];
-	
-	[_socket release];
-	[_url release];
+	[self close];
 	
 	[super dealloc];
 }
@@ -128,13 +182,6 @@
 - (NSURL *)url
 {
 	return _url;
-}
-
-- (void)setURL:(NSURL *)url
-{
-	[url retain];
-	[_url release];
-	_url = url;
 }
 
 + (NSArray *)schemes

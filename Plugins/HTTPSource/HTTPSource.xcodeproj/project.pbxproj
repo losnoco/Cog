@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17ADB60B0B97A73B00257CA2 /* Socket.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB60A0B97A73B00257CA2 /* Socket.m */; };
+		176A6E470CC272E8000F60DE /* Semaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 176A6E450CC272E8000F60DE /* Semaphore.m */; };
 		17ADB6100B97A74800257CA2 /* HTTPSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB60D0B97A74800257CA2 /* HTTPSource.m */; };
 		17ADB6110B97A74800257CA2 /* HTTPSourcePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB60F0B97A74800257CA2 /* HTTPSourcePlugin.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -17,8 +17,8 @@
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		17ADB6090B97A73B00257CA2 /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
-		17ADB60A0B97A73B00257CA2 /* Socket.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Socket.m; sourceTree = "<group>"; };
+		176A6E440CC272E8000F60DE /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
+		176A6E450CC272E8000F60DE /* Semaphore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Semaphore.m; sourceTree = "<group>"; };
 		17ADB60C0B97A74800257CA2 /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTTPSource.h; sourceTree = "<group>"; };
 		17ADB60D0B97A74800257CA2 /* HTTPSource.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = HTTPSource.m; sourceTree = "<group>"; };
 		17ADB60E0B97A74800257CA2 /* HTTPSourcePlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTTPSourcePlugin.h; sourceTree = "<group>"; };
@@ -79,7 +79,7 @@
 				17ADB60D0B97A74800257CA2 /* HTTPSource.m */,
 				17ADB60E0B97A74800257CA2 /* HTTPSourcePlugin.h */,
 				17ADB60F0B97A74800257CA2 /* HTTPSourcePlugin.m */,
-				17ADB6080B97A73B00257CA2 /* Utils */,
+				176A6E410CC272E8000F60DE /* Utils */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -102,14 +102,15 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		17ADB6080B97A73B00257CA2 /* Utils */ = {
+		176A6E410CC272E8000F60DE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				17ADB6090B97A73B00257CA2 /* Socket.h */,
-				17ADB60A0B97A73B00257CA2 /* Socket.m */,
+				176A6E440CC272E8000F60DE /* Semaphore.h */,
+				176A6E450CC272E8000F60DE /* Semaphore.m */,
 			);
-			path = Utils;
-			sourceTree = "<group>";
+			name = Utils;
+			path = ../../Audio/Utils;
+			sourceTree = SOURCE_ROOT;
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
@@ -178,9 +179,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17ADB60B0B97A73B00257CA2 /* Socket.m in Sources */,
 				17ADB6100B97A74800257CA2 /* HTTPSource.m in Sources */,
 				17ADB6110B97A74800257CA2 /* HTTPSourcePlugin.m in Sources */,
+				176A6E470CC272E8000F60DE /* Semaphore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

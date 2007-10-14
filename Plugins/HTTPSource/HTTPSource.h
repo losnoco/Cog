@@ -8,20 +8,20 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "Socket.h"
+#import "Semaphore.h"
 #import "Plugin.h"
 
 @interface HTTPSource : NSObject <CogSource>
 {
-	Socket *_socket;
+	NSURLConnection *_connection;
+	
+	long _byteCount;
+	BOOL _connectionFinished;
+
+	NSMutableData *_data;
+	Semaphore *_sem;
 	
 	NSURL *_url;
-	
-	BOOL pastHeader;
-	
-	long byteCount;
 }
-
-- (void)setURL:(NSURL *)url;
 
 @end
