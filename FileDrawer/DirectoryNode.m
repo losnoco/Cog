@@ -11,9 +11,6 @@
 #import "FileNode.h"
 #import "SmartFolderNode.h"
 
-#import "FileTreeController.h"
-#import "FileTreeWatcher.h"
-
 @implementation DirectoryNode
 
 - (BOOL)isLeaf
@@ -21,19 +18,11 @@
 	return NO;
 }
 
-- (NSArray *)subpaths
+- (void)updatePath
 {
-	if (subpaths == nil)
-	{
-		subpaths = [[NSMutableArray alloc] init];
-		NSArray *contents = [[[NSFileManager defaultManager] directoryContentsAtPath:path] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-		NSLog(@"Contents: %@", contents);
-		[self processPaths: contents];
-		
-//		[[controller watcher] addPath:[self path]];
-	}
-	
-	return subpaths;
+	NSArray *contents = [[[NSFileManager defaultManager] directoryContentsAtPath:path] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+
+	[self processPaths: contents];
 }
 
 @end

@@ -25,11 +25,10 @@
             CLASS = AppController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
-                addURLPanel = NSPanel; 
                 fileButton = NSButton; 
                 fileDrawer = NSDrawer; 
                 fileOutlineView = FileOutlineView; 
-                fileTreeController = FileTreeController; 
+                fileTreeDataSource = FileTreeDataSource; 
                 infoButton = NSButton; 
                 infoDrawer = NSDrawer; 
                 mainWindow = NSPanel; 
@@ -50,7 +49,6 @@
                 showTrackColumn = NSMenuItem; 
                 showYearColumn = NSMenuItem; 
                 shuffleButton = NSButton; 
-                urlComboBox = NSComboBox; 
             }; 
             SUPERCLASS = NSObject; 
         }, 
@@ -82,10 +80,10 @@
             SUPERCLASS = NSOutlineView; 
         }, 
         {
-            CLASS = FileTreeController; 
+            CLASS = FileTreeDataSource; 
             LANGUAGE = ObjC; 
-            OUTLETS = {playlistLoader = PlaylistLoader; }; 
-            SUPERCLASS = NSTreeController; 
+            OUTLETS = {outlineView = NSOutlineView; }; 
+            SUPERCLASS = NSObject; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = InfoController; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 

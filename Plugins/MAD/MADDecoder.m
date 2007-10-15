@@ -566,12 +566,6 @@ static inline signed int scale (mad_fixed_t sample)
 	mad_stream_finish(&_stream);	
 }
 
-- (void)dealloc
-{
-	NSLog(@"Decoder dealloc");
-	[super dealloc];
-}
-
 - (double)seekToTime:(double)milliseconds
 {
 	unsigned long new_position;

@@ -17,26 +17,23 @@
 	return NO;
 }
 
-- (NSArray *)subpaths
+- (void)updatePath
 {
-	if (subpaths == nil)
-	{
-		NSDictionary *doc = [NSDictionary dictionaryWithContentsOfFile:path];
-		NSString *rawQuery = [doc objectForKey:@"RawQuery"];
-		NSArray *searchPaths = [[doc objectForKey:@"SearchCriteria"] objectForKey:@"CurrentFolderPath"];
-		
-		// Ugh, Carbon from now on...
-		MDQueryRef query = MDQueryCreate(kCFAllocatorDefault, (CFStringRef)rawQuery, NULL, NULL);
-		
-		MDQuerySetSearchScope(query, (CFArrayRef)searchPaths, 0);
-		
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString*)kMDQueryDidFinishNotification object:(id)query];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(id)query];
-
-		MDQueryExecute(query, kMDQueryWantsUpdates);
-	}
+	NSDictionary *doc = [NSDictionary dictionaryWithContentsOfFile:path];
+	NSString *rawQuery = [doc objectForKey:@"RawQuery"];
+	NSArray *searchPaths = [[doc objectForKey:@"SearchCriteria"] objectForKey:@"CurrentFolderPath"];
 	
-	return subpaths;
+	// Ugh, Carbon from now on...
+	MDQueryRef query = MDQueryCreate(kCFAllocatorDefault, (CFStringRef)rawQuery, NULL, NULL);
+	
+	MDQuerySetSearchScope(query, (CFArrayRef)searchPaths, 0);
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString*)kMDQueryDidFinishNotification object:(id)query];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(id)query];
+
+	MDQueryExecute(query, kMDQueryWantsUpdates);
+	
+	//Note: This is asynchronous!
 }
 
 - (void)setSubpaths:(id)s

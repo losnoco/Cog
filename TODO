@@ -1,1 +1,2 @@
-Fix playback and leaks. Playback is very much busted when doing lots of next/forward/moving around.
+Ensure file drawer works with metadata search (Smart folders).
+Add alias support.

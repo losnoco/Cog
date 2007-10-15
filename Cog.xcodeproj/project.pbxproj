@@ -123,7 +123,6 @@
 		8EFFCD610AA093AF00C458A5 /* FileIconCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD450AA093AF00C458A5 /* FileIconCell.m */; };
 		8EFFCD630AA093AF00C458A5 /* FileNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD470AA093AF00C458A5 /* FileNode.m */; };
 		8EFFCD650AA093AF00C458A5 /* FileOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD490AA093AF00C458A5 /* FileOutlineView.m */; };
-		8EFFCD690AA093AF00C458A5 /* FileTreeWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD4D0AA093AF00C458A5 /* FileTreeWatcher.m */; };
 		8EFFCD6F0AA093AF00C458A5 /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD530AA093AF00C458A5 /* PathNode.m */; };
 /* End PBXBuildFile section */
 
@@ -613,10 +612,6 @@
 		8EFFCD470AA093AF00C458A5 /* FileNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FileNode.m; sourceTree = "<group>"; };
 		8EFFCD480AA093AF00C458A5 /* FileOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileOutlineView.h; sourceTree = "<group>"; };
 		8EFFCD490AA093AF00C458A5 /* FileOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FileOutlineView.m; sourceTree = "<group>"; };
-		8EFFCD4A0AA093AF00C458A5 /* FileTreeController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileTreeController.h; sourceTree = "<group>"; };
-		8EFFCD4B0AA093AF00C458A5 /* FileTreeController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FileTreeController.m; sourceTree = "<group>"; };
-		8EFFCD4C0AA093AF00C458A5 /* FileTreeWatcher.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileTreeWatcher.h; sourceTree = "<group>"; };
-		8EFFCD4D0AA093AF00C458A5 /* FileTreeWatcher.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FileTreeWatcher.m; sourceTree = "<group>"; };
 		8EFFCD520AA093AF00C458A5 /* PathNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PathNode.h; sourceTree = "<group>"; };
 		8EFFCD530AA093AF00C458A5 /* PathNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PathNode.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1151,10 +1146,6 @@
 				8EFFCD490AA093AF00C458A5 /* FileOutlineView.m */,
 				1769D7CF0CC2BFF7003F455B /* FileTreeDataSource.h */,
 				1769D7D00CC2BFF7003F455B /* FileTreeDataSource.m */,
-				8EFFCD4A0AA093AF00C458A5 /* FileTreeController.h */,
-				8EFFCD4B0AA093AF00C458A5 /* FileTreeController.m */,
-				8EFFCD4C0AA093AF00C458A5 /* FileTreeWatcher.h */,
-				8EFFCD4D0AA093AF00C458A5 /* FileTreeWatcher.m */,
 				8EFFCD420AA093AF00C458A5 /* DirectoryNode.h */,
 				8EFFCD430AA093AF00C458A5 /* DirectoryNode.m */,
 				8EFFCD460AA093AF00C458A5 /* FileNode.h */,
@@ -1507,7 +1498,6 @@
 				8EFFCD610AA093AF00C458A5 /* FileIconCell.m in Sources */,
 				8EFFCD630AA093AF00C458A5 /* FileNode.m in Sources */,
 				8EFFCD650AA093AF00C458A5 /* FileOutlineView.m in Sources */,
-				8EFFCD690AA093AF00C458A5 /* FileTreeWatcher.m in Sources */,
 				8EFFCD6F0AA093AF00C458A5 /* PathNode.m in Sources */,
 				8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,

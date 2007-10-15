@@ -46,8 +46,11 @@
 	[_url release];
 	_url = nil;
 	
-	fclose(_fd);
-	_fd = NULL;
+	if (_fd) 
+	{
+		fclose(_fd);
+		_fd = NULL;
+	}
 }
 
 - (NSURL *)url
@@ -74,7 +77,7 @@
 }
 
 - (void)dealloc {
-	NSLog(@"DEALLOCATING SOURCE");
+	[self close];
 	
 	[super dealloc];
 }

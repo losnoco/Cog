@@ -10,44 +10,76 @@
 
 #import "CogAudio/AudioPlayer.h"
 
+#import "FileTreeDataSource.h"
+
+#import "UKKQueue.h"
+
 @class FileNode;
 @class DirectoryNode;
 @class SmartFolderNode;
 
 @implementation PathNode
 
-- (id)initWithPath:(NSString *)p
+- (id)initWithDataSource:(FileTreeDataSource *)ds path:(NSString *)p
 {
 	self = [super init];
 
 	if (self)
 	{
+		dataSource = ds;
 		[self setPath: p];
 	}
 	
 	return self;
 }
 
-- (void)dealloc
+- (void)stopWatching
 {
-	[path release];
-	[icon release];
-
-	if (subpaths) {
-		[subpaths release];
-		subpaths = nil;
-	}
+	if (path)
+	{
+		NSLog(@"Stopped watching...: %@", path);
 		
-	[super dealloc];
+		//Remove all in one go
+		[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
+		
+		[[UKKQueue sharedFileWatcher] removePath:path];
+	}
+}
+
+- (void)startWatching
+{
+	if (path)
+	{
+		NSLog(@"WATCHING! %@ %i", path, path);
+
+		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherRenameNotification			object:nil];
+		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherWriteNotification			object:nil];
+		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherDeleteNotification			object:nil];
+		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherAttributeChangeNotification	object:nil];
+		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherSizeIncreaseNotification		object:nil];
+		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherLinkCountChangeNotification	object:nil];
+		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherAccessRevocationNotification object:nil];
+
+		[[UKKQueue sharedFileWatcher] addPath:path];
+	}
 }
 
 - (void)setPath:(NSString *)p
 {
 	[p retain];
-	[path release];
 	
+	[self stopWatching];
+	
+	[path release];
+
 	path = p;
 
+	[self startWatching];
+
+	[displayPath release];
+	displayPath = [[NSFileManager defaultManager] displayNameAtPath:path];
+	[displayPath retain];
+	
 	[icon release];
 	icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
 	[icon retain];
@@ -58,6 +90,28 @@
 - (NSString *)path
 {
 	return path;
+}
+
+- (void)updatePath
+{
+}
+
+- (void)updatePathNotification:(NSNotification *)notification
+{
+	[self performSelectorOnMainThread:@selector(updatePathNotificationMainThread:) withObject:notification waitUntilDone:YES];
+}
+
+- (void)updatePathNotificationMainThread:(NSNotification *)notification
+{
+	NSString *p = [[notification userInfo] objectForKey:@"path"];
+	if (p == path)
+	{
+		NSLog(@"Update path notification: %@", [NSThread currentThread]);
+		
+		[self updatePath];
+
+		[dataSource reloadPathNode:self];
+	}
 }
 
 - (void)processPaths: (NSArray *)contents
@@ -78,7 +132,7 @@
 		
 		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
 		{
-			newNode = [[SmartFolderNode alloc] initWithPath:newSubpath];
+			newNode = [[SmartFolderNode alloc] initWithDataSource:dataSource path:newSubpath];
 		}
 		else
 		{
@@ -92,9 +146,13 @@
 			}
 			
 			if (isDir)
-				newNode = [[DirectoryNode alloc] initWithPath: newSubpath];
+			{
+				newNode = [[DirectoryNode alloc] initWithDataSource:dataSource path: newSubpath];
+			}
 			else
-				newNode = [[FileNode alloc] initWithPath: newSubpath];
+			{
+				newNode = [[FileNode alloc] initWithDataSource:dataSource path: newSubpath];
+			}
 		}
 					
 		[newSubpaths addObject:newNode];
@@ -102,13 +160,18 @@
 		[newNode release];
 	}
 	
-	[self setSubpaths:[[newSubpaths copy] autorelease]];
+	[self setSubpaths:newSubpaths];
 	
 	[newSubpaths release];
 }
 
 - (NSArray *)subpaths
 {
+	if (subpaths == nil)
+	{
+		[self updatePath];
+	}
+	
 	return subpaths;
 }
 
@@ -125,11 +188,26 @@
 	return YES;
 }
 
+- (NSString *)displayPath
+{
+	return displayPath;
+}
 
 - (NSImage *)icon
 {
 	return icon;
 }
 
+- (void)dealloc
+{
+	[self stopWatching];
+	
+	[path release];
+	[icon release];
+
+	[subpaths release];
+		
+	[super dealloc];
+}
 
 @end

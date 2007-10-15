@@ -31,9 +31,6 @@
 		[c setDataCell: dataCell];
 		NSLog(@"Setting data cell!");
 	}
-
-	dataSource = [[FileTreeDataSource alloc] initWithRoot: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"] ];
-	[self setDataSource: dataSource];
 }
 
 

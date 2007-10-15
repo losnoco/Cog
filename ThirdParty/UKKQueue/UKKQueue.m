@@ -355,7 +355,8 @@ static UKKQueue * gUKKQueueSharedQueueSingleton = nil;
 					if( ev.fflags )
 					{
 						NSString*		fpath = [[(NSString *)ev.udata retain] autorelease];    // In case one of the notified folks removes the path.
-						//NSLog(@"UKKQueue: Detected file change: %@", fpath);
+						
+						//NSLog(@"UKKQueue: Detected file change: %@ %i", fpath, fpath);
 						[[NSWorkspace sharedWorkspace] noteFileSystemChanged: fpath];
 						
 						//NSLog(@"ev.flags = %u",ev.fflags);	// DEBUG ONLY!

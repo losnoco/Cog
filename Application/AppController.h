@@ -7,7 +7,7 @@
 @class PlaybackController;
 @class PlaylistController;
 @class PlaylistView;
-@class FileTreeController;
+@class FileTreeDataSource;
 @class FileOutlineView;
 @class AppleRemote;
 @class PlaylistLoader;
@@ -33,7 +33,7 @@
 	IBOutlet NSDrawer *infoDrawer;
 	IBOutlet NSDrawer *fileDrawer;
 
-	IBOutlet FileTreeController *fileTreeController;
+	IBOutlet FileTreeDataSource *fileTreeDataSource;
 	IBOutlet FileOutlineView *fileOutlineView;
 	
 	IBOutlet PlaylistView *playlistView;

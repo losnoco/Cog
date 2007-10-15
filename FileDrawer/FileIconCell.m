@@ -7,14 +7,14 @@
 //
 
 #import "FileIconCell.h"
-
+#import "PathNode.h"
 
 @implementation FileIconCell
 
 - (void)setObjectValue:(id)o
 {
-	if ([o respondsToSelector:@selector(icon)]) {
-		[super setObjectValue:[[o path] lastPathComponent]];
+	if ([o respondsToSelector:@selector(icon)] && [o respondsToSelector:@selector(displayPath)]) {
+		[super setObjectValue:[o displayPath]];
 		[super setImage: [o icon]];
 	}
 	else {

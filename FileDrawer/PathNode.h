@@ -8,15 +8,21 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class FileTreeDataSource;
+
 @interface PathNode : NSObject
 {
+	FileTreeDataSource *dataSource;
+	
 	NSString *path;
+	NSString *displayPath; //The pretty path to display.
+	
 	NSImage *icon;
 
 	NSArray *subpaths;
 }
 
-- (id)initWithPath:(NSString *)p;
+- (id)initWithDataSource:(FileTreeDataSource *)ds path:(NSString *)p;
 
 - (NSString *)path;
 - (void)setPath:(NSString *)p;
@@ -26,6 +32,7 @@
 - (NSArray *)subpaths;
 - (void)setSubpaths:(NSArray *)s;
 
+- (NSString *)displayPath;
 - (NSImage *)icon;
 
 - (BOOL)isLeaf;

@@ -3,7 +3,6 @@
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 #import "PlaylistView.h"
-#import "FileTreeController.h"
 #import "FileOutlineView.h"
 #import "NDHotKeyEvent.h"
 #import "AppleRemote.h"
@@ -400,7 +399,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 		[self registerHotKeys];
 	}
 	else if ([keyPath isEqualToString:@"values.fileDrawerRootPath"]) {
-		[fileTreeController setRootPath:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"]];
+		[fileTreeDataSource setRootPath:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"]];
 	}
 	else if ([keyPath isEqualToString:@"values.remoteEnabled"] || [keyPath isEqualToString:@"values.remoteOnlyOnActive"]) {
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"]) {
