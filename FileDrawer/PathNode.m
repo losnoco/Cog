@@ -128,17 +128,17 @@
 		}
 		
 		PathNode *newNode;
-		NSString *newSubpath = [path stringByAppendingPathComponent: s];
 		
 		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
 		{
-			newNode = [[SmartFolderNode alloc] initWithDataSource:dataSource path:newSubpath];
+			NSLog(@"Smart folder!");
+			newNode = [[SmartFolderNode alloc] initWithDataSource:dataSource path:s];
 		}
 		else
 		{
 			BOOL isDir;
 			
-			[[NSFileManager defaultManager] fileExistsAtPath:newSubpath isDirectory:&isDir];
+			[[NSFileManager defaultManager] fileExistsAtPath:s isDirectory:&isDir];
 			
 			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[s pathExtension]])
 			{
@@ -147,11 +147,11 @@
 			
 			if (isDir)
 			{
-				newNode = [[DirectoryNode alloc] initWithDataSource:dataSource path: newSubpath];
+				newNode = [[DirectoryNode alloc] initWithDataSource:dataSource path: s];
 			}
 			else
 			{
-				newNode = [[FileNode alloc] initWithDataSource:dataSource path: newSubpath];
+				newNode = [[FileNode alloc] initWithDataSource:dataSource path: s];
 			}
 		}
 					

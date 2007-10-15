@@ -9,6 +9,7 @@
 #import "SmartFolderNode.h"
 #import "DirectoryNode.h"
 #import "FileNode.h"
+#import "FileTreeDataSource.h"
 
 @implementation SmartFolderNode
 
@@ -31,6 +32,7 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString*)kMDQueryDidFinishNotification object:(id)query];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(id)query];
 
+	NSLog(@"Making query!");
 	MDQueryExecute(query, kMDQueryWantsUpdates);
 	
 	//Note: This is asynchronous!
@@ -55,6 +57,7 @@
 
 - (void)queryFinished:(NSNotification *)notification
 {
+	NSLog(@"Query finished!");
 	MDQueryRef query = (MDQueryRef)[notification object];
 
 	NSMutableArray *results = [NSMutableArray array];
@@ -68,7 +71,7 @@
 		MDItemRef  item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
 		
 		NSString *itemPath = (NSString*)MDItemCopyAttribute(item, kMDItemPath);
-		
+
 		[results addObject:itemPath];
 		
 		[itemPath release];
@@ -76,13 +79,16 @@
 
 	MDQueryEnableUpdates(query);
 	
-	[self processPaths:results];
+	NSLog(@"Query update!");
+	
+	[self processPaths:[results sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
 	
 	[dataSource reloadPathNode:self];
 }
 
 - (void)queryUpdate:(NSNotification *)notification
 {
+	NSLog(@"Query update!");
 	[self queryFinished: notification];
 }
 

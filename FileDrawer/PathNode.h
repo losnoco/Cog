@@ -37,4 +37,8 @@
 
 - (BOOL)isLeaf;
 
+- (void)startWatching;
+- (void)stopWatching;
+- (void)updatePathNotification:(NSNotification *)notification;
+
 @end
