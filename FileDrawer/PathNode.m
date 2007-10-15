@@ -20,6 +20,45 @@
 
 @implementation PathNode
 
+//From http://developer.apple.com/documentation/Cocoa/Conceptual/LowLevelFileMgmt/Tasks/ResolvingAliases.html
+NSString *resolveAliases(NSString *path)
+{
+	NSString *resolvedPath = nil;
+	CFURLRef url;
+	
+	url = CFURLCreateWithFileSystemPath(NULL /*allocator*/, (CFStringRef)path, kCFURLPOSIXPathStyle, NO /*isDirectory*/);
+	
+	if (url != NULL)
+	{
+		FSRef fsRef;
+		if (CFURLGetFSRef(url, &fsRef))
+		{
+			Boolean targetIsFolder, wasAliased;
+
+			if (FSResolveAliasFile (&fsRef, true /*resolveAliasChains*/, &targetIsFolder, &wasAliased) == noErr && wasAliased)
+			{
+				CFURLRef resolvedUrl = CFURLCreateFromFSRef(NULL, &fsRef);
+				
+				if (resolvedUrl != NULL)
+				{
+					resolvedPath = (NSString*)
+					
+					CFURLCopyFileSystemPath(resolvedUrl, kCFURLPOSIXPathStyle);
+					
+					CFRelease(resolvedUrl);
+				}
+			}
+		}
+
+		CFRelease(url);
+	}
+
+	if (resolvedPath==nil)
+		resolvedPath = [[NSString alloc] initWithString:path];
+
+	return resolvedPath;
+}
+
 - (id)initWithDataSource:(FileTreeDataSource *)ds path:(NSString *)p
 {
 	self = [super init];
@@ -128,6 +167,8 @@
 		}
 		
 		PathNode *newNode;
+		
+		s = resolveAliases(s);
 		
 		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
 		{
