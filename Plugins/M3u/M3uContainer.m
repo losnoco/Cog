@@ -23,10 +23,6 @@
 
 + (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
 {
-	if ([path hasPrefix:@"/"]) {
-		return [NSURL URLWithString:[@"file://" stringByAppendingString:path]];
-	}
-	
 	NSRange protocolRange = [path rangeOfString:@"://"];
 	if (protocolRange.location != NSNotFound) 
 	{
@@ -34,24 +30,28 @@
 	}
 
 	NSMutableString *unixPath = [path mutableCopy];
+
+	NSString *fragment = @"";
+	NSRange fragmentRange = [path rangeOfString:@"#"];
+	if (fragmentRange.location != NSNotFound) 
+	{
+		fragmentRange = NSMakeRange(fragmentRange.location, [unixPath length] - fragmentRange.location);
+		
+		fragment = [unixPath substringWithRange:fragmentRange];
+		[unixPath deleteCharactersInRange:fragmentRange];
+	}
+
+	if (![unixPath hasPrefix:@"/"]) {
+		//Only relative paths would have windows backslashes.
+		[unixPath replaceOccurrencesOfString:@"\\" withString:@"/" options:0 range:NSMakeRange(0, [unixPath length])];
+		
+		NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+
+		[unixPath insertString:basePath atIndex:0];
+	}
 	
-	//Only relative paths would have windows backslashes.
-	[unixPath replaceOccurrencesOfString:@"\\" withString:@"/" options:0 range:NSMakeRange(0, [unixPath length])];
-
-	NSMutableString *urlString = [[NSMutableString alloc] init];
-	[urlString setString:@"file://"];
-
-	NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
-
-	[urlString appendString:basePath];
-	[urlString appendString:unixPath];
-
-	[unixPath release];
-	
-	NSURL *url = [NSURL URLWithString:urlString];
-	[urlString release];
-
-	return url;
+	//Append the fragment
+	return [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
 }
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url
@@ -78,7 +78,7 @@
 			continue;
 		
 		//Need to add basePath, and convert to URL
-		[entries addObject:[M3uContainer urlForPath:entry relativeTo:filename]];		
+		[entries addObject:[self urlForPath:entry relativeTo:filename]];		
 	}
 	
 	return entries;
