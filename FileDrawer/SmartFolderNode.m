@@ -77,6 +77,8 @@
 	MDQueryEnableUpdates(query);
 	
 	[self processPaths:results];
+	
+	[dataSource reloadPathNode:self];
 }
 
 - (void)queryUpdate:(NSNotification *)notification

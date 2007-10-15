@@ -81,7 +81,8 @@
 			int channels = [[properties objectForKey:@"channels"] intValue];
 			float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
 
-			bytesPerSecond = (int)((bitsPerSample/8) * channels * sampleRate);
+			bytesPerFrame = (bitsPerSample/8) * channels;
+			bytesPerSecond = (int)(bytesPerFrame * sampleRate);
 
 			[decoder seekToTime: [track time] * 1000.0];
 
@@ -170,12 +171,9 @@
 	time += trackStartMs;
 	
 	bytePosition = (time/1000.0) * bytesPerSecond;
-
-	int bitsPerSample = [[[decoder properties] objectForKey:@"bitsPerSample"] intValue];
-	int channels = [[[decoder properties] objectForKey:@"channels"] intValue];
-
+	
 	NSLog(@"Before: %li", bytePosition);
-	bytePosition -= bytePosition % (bitsPerSample/8 * channels);
+	bytePosition -= bytePosition % bytesPerFrame;
 	NSLog(@"After: %li", bytePosition);
 
 	return [decoder seekToTime:time];
@@ -184,6 +182,7 @@
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size
 {
 	long trackByteEnd = trackEnd * bytesPerSecond;	
+	trackByteEnd -= trackByteEnd % (bytesPerFrame);
 	
 	if (bytePosition + size > trackByteEnd) {
 		size = trackByteEnd - bytePosition;

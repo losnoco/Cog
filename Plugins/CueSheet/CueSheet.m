@@ -19,24 +19,35 @@
 - (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
 {
 	if ([path hasPrefix:@"/"]) {
-		return [NSURL fileURLWithPath:path];
+		return [NSURL URLWithString:[@"file://" stringByAppendingString:path]];
 	}
 	
-	NSRange foundRange = [path rangeOfString:@"://"];
-	if (foundRange.location != NSNotFound) 
+	NSRange protocolRange = [path rangeOfString:@"://"];
+	if (protocolRange.location != NSNotFound) 
 	{
 		return [NSURL URLWithString:path];
 	}
-	
-	NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
-	NSMutableString *unixPath = [path mutableCopy];
 
+	NSMutableString *unixPath = [path mutableCopy];
+	
 	//Only relative paths would have windows backslashes.
 	[unixPath replaceOccurrencesOfString:@"\\" withString:@"/" options:0 range:NSMakeRange(0, [unixPath length])];
 
-	return [NSURL fileURLWithPath:[basePath stringByAppendingString:[unixPath autorelease]]];
-}
+	NSMutableString *urlString = [[NSMutableString alloc] init];
+	[urlString setString:@"file://"];
 
+	NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
+
+	[urlString appendString:basePath];
+	[urlString appendString:unixPath];
+
+	[unixPath release];
+	
+	NSURL *url = [NSURL URLWithString:urlString];
+	[urlString release];
+
+	return url;
+}
 
 - (void)parseFile:(NSString *)filename
 {

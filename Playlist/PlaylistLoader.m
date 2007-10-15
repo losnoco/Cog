@@ -48,11 +48,16 @@
 {
 	NSString *basePath = [[[filename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
 
-	if ([entryURL isFileURL] && [[entryURL fragment] isEqualToString:@""]) {
+	if ([entryURL isFileURL]) {
 		//We want relative paths.
 		NSMutableString *entryPath = [[[[entryURL path] stringByStandardizingPath] mutableCopy] autorelease];
 
 		[entryPath replaceOccurrencesOfString:basePath withString:@"" options:(NSAnchoredSearch | NSLiteralSearch | NSCaseInsensitiveSearch) range:NSMakeRange(0, [entryPath length])];
+		if ([entryURL fragment])
+		{
+			[entryPath appendString:@"#"];
+			[entryPath appendString:[entryURL fragment]];
+		}
 
 		return entryPath;		
 	}
