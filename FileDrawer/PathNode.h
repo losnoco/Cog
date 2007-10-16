@@ -14,25 +14,25 @@
 {
 	FileTreeDataSource *dataSource;
 	
-	NSString *path;
-	NSString *displayPath; //The pretty path to display.
+	NSURL *url;
+	NSString *display; //The pretty path to display.
 	
 	NSImage *icon;
 
 	NSArray *subpaths;
 }
 
-- (id)initWithDataSource:(FileTreeDataSource *)ds path:(NSString *)p;
+- (id)initWithDataSource:(FileTreeDataSource *)ds url:(NSURL *)u;
 
-- (NSString *)path;
-- (void)setPath:(NSString *)p;
+- (NSURL *)url;
+- (void)setURL:(NSURL *)url;
 
 - (void)processPaths: (NSArray *)contents;
 
 - (NSArray *)subpaths;
 - (void)setSubpaths:(NSArray *)s;
 
-- (NSString *)displayPath;
+- (NSString *)display;
 - (NSImage *)icon;
 
 - (BOOL)isLeaf;

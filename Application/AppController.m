@@ -4,6 +4,7 @@
 #import "PlaylistController.h"
 #import "PlaylistView.h"
 #import "FileOutlineView.h"
+#import "FileTreeDataSource.h"
 #import "NDHotKeyEvent.h"
 #import "AppleRemote.h"
 #import "PlaylistLoader.h"

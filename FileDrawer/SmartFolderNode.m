@@ -20,7 +20,7 @@
 
 - (void)updatePath
 {
-	NSDictionary *doc = [NSDictionary dictionaryWithContentsOfFile:path];
+	NSDictionary *doc = [NSDictionary dictionaryWithContentsOfFile:[url path]];
 	NSString *rawQuery = [doc objectForKey:@"RawQuery"];
 	NSArray *searchPaths = [[doc objectForKey:@"SearchCriteria"] objectForKey:@"CurrentFolderPath"];
 	

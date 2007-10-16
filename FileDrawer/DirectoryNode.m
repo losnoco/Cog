@@ -20,13 +20,13 @@
 
 - (void)updatePath
 {
-	NSArray *contents = [[[NSFileManager defaultManager] directoryContentsAtPath:path] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+	NSArray *contents = [[[NSFileManager defaultManager] directoryContentsAtPath:[url path]] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 	NSMutableArray *fullPaths = [[NSMutableArray alloc] init];
 	NSString *s;
 	NSEnumerator *e = [contents objectEnumerator];
 	while (s = [e nextObject])
 	{
-		[fullPaths addObject:[path stringByAppendingPathComponent: s]];
+		[fullPaths addObject:[[url path] stringByAppendingPathComponent: s]];
 	}
 
 	[self processPaths: fullPaths];

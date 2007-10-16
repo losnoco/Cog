@@ -72,6 +72,10 @@
 		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
 		179790F20C087B46001D6996 /* OpenURLPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 179790F00C087B46001D6996 /* OpenURLPanel.nib */; };
+		17BA9FBE0CC431890015F804 /* ContainerNode.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BA9FBC0CC431890015F804 /* ContainerNode.h */; };
+		17BA9FBF0CC431890015F804 /* ContainerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA9FBD0CC431890015F804 /* ContainerNode.m */; };
+		17BA9FC70CC432060015F804 /* ContainedNode.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BA9FC50CC432060015F804 /* ContainedNode.h */; };
+		17BA9FC80CC432060015F804 /* ContainedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA9FC60CC432060015F804 /* ContainedNode.m */; };
 		17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */; };
 		17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */; };
 		17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */; };
@@ -418,6 +422,8 @@
 				17F94CCD0B8D090800A34E87 /* Sparkle.framework in CopyFiles */,
 				1791FF8F0CB43A2C0070BC5C /* MediaKeysApplication.h in CopyFiles */,
 				1769D7D10CC2BFF7003F455B /* FileTreeDataSource.h in CopyFiles */,
+				17BA9FBE0CC431890015F804 /* ContainerNode.h in CopyFiles */,
+				17BA9FC70CC432060015F804 /* ContainedNode.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,6 +539,10 @@
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
 		179790DF0C087AB7001D6996 /* OpenURLPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenURLPanel.m; sourceTree = "<group>"; };
 		179790F10C087B46001D6996 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
+		17BA9FBC0CC431890015F804 /* ContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerNode.h; sourceTree = "<group>"; };
+		17BA9FBD0CC431890015F804 /* ContainerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContainerNode.m; sourceTree = "<group>"; };
+		17BA9FC50CC432060015F804 /* ContainedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainedNode.h; sourceTree = "<group>"; };
+		17BA9FC60CC432060015F804 /* ContainedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContainedNode.m; sourceTree = "<group>"; };
 		17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
@@ -1154,6 +1164,10 @@
 				8EFFCD530AA093AF00C458A5 /* PathNode.m */,
 				171678BD0AC8C39E00C28CF3 /* SmartFolderNode.h */,
 				171678BE0AC8C39E00C28CF3 /* SmartFolderNode.m */,
+				17BA9FBC0CC431890015F804 /* ContainerNode.h */,
+				17BA9FBD0CC431890015F804 /* ContainerNode.m */,
+				17BA9FC50CC432060015F804 /* ContainedNode.h */,
+				17BA9FC60CC432060015F804 /* ContainedNode.m */,
 			);
 			path = FileDrawer;
 			sourceTree = "<group>";
@@ -1529,6 +1543,8 @@
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
 				1769D7D20CC2BFF7003F455B /* FileTreeDataSource.m in Sources */,
+				17BA9FBF0CC431890015F804 /* ContainerNode.m in Sources */,
+				17BA9FC80CC432060015F804 /* ContainedNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

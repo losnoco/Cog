@@ -10,7 +10,6 @@
 #import "FileIconCell.h"
 #import "FileTreeDataSource.h"
 
-
 @interface FileOutlineView (KFTypeSelectTableViewSupport)
 - (void)findPrevious:(id)sender;
 - (void)findNext:(id)sender;

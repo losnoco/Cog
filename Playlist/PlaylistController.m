@@ -66,9 +66,16 @@
 		row = 0;
 		
 	// Determine the type of object that was dropped
-	NSArray *supportedtypes = [NSArray arrayWithObjects:NSFilenamesPboardType, iTunesDropType, nil];
+	NSArray *supportedtypes = [NSArray arrayWithObjects:CogUrlsPbboardType, NSFilenamesPboardType, iTunesDropType, nil];
 	NSPasteboard *pboard = [info draggingPasteboard];
 	NSString *bestType = [pboard availableTypeFromArray:supportedtypes];
+	
+	// Get files from an file drawer drop
+	if ([bestType isEqualToString:CogUrlsPbboardType]) {
+		NSArray *urls = [NSUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType:CogUrlsPbboardType]];
+		NSLog(@"URLS: %@", urls);
+		[playlistLoader insertURLs: urls atIndex:row sort:YES];
+	}
 	
 	// Get files from a normal file drop (such as from Finder)
 	if ([bestType isEqualToString:NSFilenamesPboardType]) {

@@ -17,56 +17,42 @@
 @class FileNode;
 @class DirectoryNode;
 @class SmartFolderNode;
+@class ContainerNode;
 
 @implementation PathNode
 
 //From http://developer.apple.com/documentation/Cocoa/Conceptual/LowLevelFileMgmt/Tasks/ResolvingAliases.html
-NSString *resolveAliases(NSString *path)
+NSURL *resolveAliases(NSURL *url)
 {
-	NSString *resolvedPath = nil;
-	CFURLRef url;
-	
-	url = CFURLCreateWithFileSystemPath(NULL /*allocator*/, (CFStringRef)path, kCFURLPOSIXPathStyle, NO /*isDirectory*/);
-	
-	if (url != NULL)
+	FSRef fsRef;
+	if (CFURLGetFSRef((CFURLRef)url, &fsRef))
 	{
-		FSRef fsRef;
-		if (CFURLGetFSRef(url, &fsRef))
-		{
-			Boolean targetIsFolder, wasAliased;
+		Boolean targetIsFolder, wasAliased;
 
-			if (FSResolveAliasFile (&fsRef, true /*resolveAliasChains*/, &targetIsFolder, &wasAliased) == noErr && wasAliased)
+		if (FSResolveAliasFile (&fsRef, true /*resolveAliasChains*/, &targetIsFolder, &wasAliased) == noErr && wasAliased)
+		{
+			CFURLRef resolvedUrl = CFURLCreateFromFSRef(NULL, &fsRef);
+			
+			if (resolvedUrl != NULL)
 			{
-				CFURLRef resolvedUrl = CFURLCreateFromFSRef(NULL, &fsRef);
-				
-				if (resolvedUrl != NULL)
-				{
-					resolvedPath = (NSString*)
-					
-					CFURLCopyFileSystemPath(resolvedUrl, kCFURLPOSIXPathStyle);
-					
-					CFRelease(resolvedUrl);
-				}
+				NSLog(@"Resolved...");
+				return [(NSURL *)resolvedUrl autorelease];
 			}
 		}
-
-		CFRelease(url);
 	}
 
-	if (resolvedPath==nil)
-		resolvedPath = [[NSString alloc] initWithString:path];
-
-	return resolvedPath;
+	NSLog(@"Not resolved");
+	return url;
 }
 
-- (id)initWithDataSource:(FileTreeDataSource *)ds path:(NSString *)p
+- (id)initWithDataSource:(FileTreeDataSource *)ds url:(NSURL *)u
 {
 	self = [super init];
 
 	if (self)
 	{
 		dataSource = ds;
-		[self setPath: p];
+		[self setURL: u];
 	}
 	
 	return self;
@@ -74,22 +60,22 @@ NSString *resolveAliases(NSString *path)
 
 - (void)stopWatching
 {
-	if (path)
+	if (url)
 	{
-		NSLog(@"Stopped watching...: %@", path);
+		NSLog(@"Stopped watching...: %@", [url path]);
 		
 		//Remove all in one go
 		[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
 		
-		[[UKKQueue sharedFileWatcher] removePath:path];
+		[[UKKQueue sharedFileWatcher] removePath:[url path]];
 	}
 }
 
 - (void)startWatching
 {
-	if (path)
+	if (url)
 	{
-		NSLog(@"WATCHING! %@ %i", path, path);
+		NSLog(@"WATCHING! %@", [url path]);
 
 		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherRenameNotification			object:nil];
 		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherWriteNotification			object:nil];
@@ -99,36 +85,36 @@ NSString *resolveAliases(NSString *path)
 		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherLinkCountChangeNotification	object:nil];
 		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherAccessRevocationNotification object:nil];
 
-		[[UKKQueue sharedFileWatcher] addPath:path];
+		[[UKKQueue sharedFileWatcher] addPath:[url path]];
 	}
 }
 
-- (void)setPath:(NSString *)p
+- (void)setURL:(NSURL *)u
 {
-	[p retain];
+	[u retain];
 	
 	[self stopWatching];
 	
-	[path release];
+	[url release];
 
-	path = p;
+	url = u;
 
 	[self startWatching];
 
-	[displayPath release];
-	displayPath = [[NSFileManager defaultManager] displayNameAtPath:path];
-	[displayPath retain];
+	[display release];
+	display = [[NSFileManager defaultManager] displayNameAtPath:[url path]];
+	[display retain];
 	
 	[icon release];
-	icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
+	icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
 	[icon retain];
 	
 	[icon setSize: NSMakeSize(16.0, 16.0)];
 }
 
-- (NSString *)path
+- (NSURL *)url
 {
-	return path;
+	return url;
 }
 
 - (void)updatePath
@@ -143,10 +129,8 @@ NSString *resolveAliases(NSString *path)
 - (void)updatePathNotificationMainThread:(NSNotification *)notification
 {
 	NSString *p = [[notification userInfo] objectForKey:@"path"];
-	if (p == path)
+	if ([p isEqualToString:[url path]])
 	{
-		NSLog(@"Update path notification: %@", [NSThread currentThread]);
-		
 		[self updatePath];
 
 		[dataSource reloadPathNode:self];
@@ -166,33 +150,41 @@ NSString *resolveAliases(NSString *path)
 			continue;
 		}
 		
+		NSURL *u = [NSURL fileURLWithPath:s];
+		
 		PathNode *newNode;
 		
-		s = resolveAliases(s);
+		NSLog(@"Before: %@", u);
+		u = resolveAliases(u);
+		NSLog(@"After: %@", u);
 		
 		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
 		{
 			NSLog(@"Smart folder!");
-			newNode = [[SmartFolderNode alloc] initWithDataSource:dataSource path:s];
+			newNode = [[SmartFolderNode alloc] initWithDataSource:dataSource url:u];
 		}
 		else
 		{
 			BOOL isDir;
 			
-			[[NSFileManager defaultManager] fileExistsAtPath:s isDirectory:&isDir];
-			
-			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[s pathExtension]])
+			[[NSFileManager defaultManager] fileExistsAtPath:[u path] isDirectory:&isDir];
+
+			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[[u path] pathExtension]])
 			{
 				continue;
 			}
 			
 			if (isDir)
 			{
-				newNode = [[DirectoryNode alloc] initWithDataSource:dataSource path: s];
+				newNode = [[DirectoryNode alloc] initWithDataSource:dataSource url:u];
+			}
+			else if ([[AudioPlayer containerTypes] containsObject:[[[u path] pathExtension] lowercaseString]])
+			{
+				newNode = [[ContainerNode alloc] initWithDataSource:dataSource url:u];
 			}
 			else
 			{
-				newNode = [[FileNode alloc] initWithDataSource:dataSource path: s];
+				newNode = [[FileNode alloc] initWithDataSource:dataSource url:u];
 			}
 		}
 					
@@ -229,9 +221,9 @@ NSString *resolveAliases(NSString *path)
 	return YES;
 }
 
-- (NSString *)displayPath
+- (NSString *)display
 {
-	return displayPath;
+	return display;
 }
 
 - (NSImage *)icon
@@ -243,7 +235,7 @@ NSString *resolveAliases(NSString *path)
 {
 	[self stopWatching];
 	
-	[path release];
+	[url release];
 	[icon release];
 
 	[subpaths release];

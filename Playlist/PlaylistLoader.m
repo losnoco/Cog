@@ -200,7 +200,7 @@
 	while (url = [urlEnumerator nextObject])
 	{
 		//File url
-		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]]) {
+		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]] && ([url fragment] == nil)) {
 			if ([url isFileURL] ) {
 				[allURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
 
