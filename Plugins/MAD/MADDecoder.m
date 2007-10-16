@@ -30,6 +30,8 @@ struct xing
 struct lame
 {
 	long flags;
+	int start_padding;
+	int end_padding;
 };
 
 enum
@@ -52,8 +54,11 @@ int lame_parse(struct lame *lame, struct mad_bitptr *ptr, unsigned int bitlen)
 	
 	mad_bit_skip(ptr, 17*8); //17 bytes skipped
 	garbage = mad_bit_read(ptr, 24); //3 bytes
-//	_startPadding = (garbage >> 12) & 0x000FFF;
-//	_endPadding = garbage & 0x000FFF;
+	
+	lame->start_padding = (garbage >> 12) & 0x000FFF;
+	lame->end_padding = garbage & 0x000FFF;
+	
+	NSLog(@"Padding; %i, %i", lame->start_padding, lame->end_padding);
 
 	return 1;
 }	
