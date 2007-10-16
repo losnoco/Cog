@@ -157,7 +157,7 @@ NSURL *resolveAliases(NSURL *url)
 		NSLog(@"Before: %@", u);
 		u = resolveAliases(u);
 		NSLog(@"After: %@", u);
-		
+
 		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
 		{
 			NSLog(@"Smart folder!");
@@ -169,7 +169,7 @@ NSURL *resolveAliases(NSURL *url)
 			
 			[[NSFileManager defaultManager] fileExistsAtPath:[u path] isDirectory:&isDir];
 
-			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[[u path] pathExtension]])
+			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[[[u path] pathExtension] lowercaseString]])
 			{
 				continue;
 			}
