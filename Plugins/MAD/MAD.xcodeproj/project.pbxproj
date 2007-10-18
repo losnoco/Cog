@@ -312,6 +312,7 @@
 				GCC_PREFIX_HEADER = MAD_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				OTHER_CFLAGS = "-Wall";
 				PRODUCT_NAME = MAD;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
@@ -340,6 +341,7 @@
 				GCC_PREFIX_HEADER = MAD_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				OTHER_CFLAGS = "-Wall";
 				PRODUCT_NAME = MAD;
 				WRAPPER_EXTENSION = bundle;
 			};

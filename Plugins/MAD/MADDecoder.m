@@ -8,282 +8,289 @@
 
 #import "MADDecoder.h"
 #undef HAVE_CONFIG_H
-#import <ID3Tag/id3tag.h>
 
 @implementation MADDecoder
 
-/*XING FUN*/
+#define LAME_HEADER_SIZE	((8 * 5) + 4 + 4 + 8 + 32 + 16 + 16 + 4 + 4 + 8 + 12 + 12 + 8 + 8 + 2 + 3 + 11 + 32 + 32 + 32)
 
-#define XING_MAGIC	(('X' << 24) | ('i' << 16) | ('n' << 8) | 'g')
-#define INFO_MAGIC	(('I' << 24) | ('n' << 16) | ('f' << 8) | 'o')
-#define LAME_MAGIC  (('L' << 24) | ('A' << 16) | ('M' << 8) | 'E')
+// From vbrheadersdk:
+// ========================================
+// A Xing header may be present in the ancillary
+// data field of the first frame of an mp3 bitstream
+// The Xing header (optionally) contains
+//      frames      total number of audio frames in the bitstream
+//      bytes       total number of bytes in the bitstream
+//      toc         table of contents
 
-struct xing
+// toc (table of contents) gives seek points
+// for random access
+// the ith entry determines the seek point for
+// i-percent duration
+// seek point in bytes = (toc[i]/256.0) * total_bitstream_bytes
+// e.g. half duration seek point = (toc[50]/256.0) * total_bitstream_bytes
+
+#define FRAMES_FLAG     0x0001
+#define BYTES_FLAG      0x0002
+#define TOC_FLAG        0x0004
+#define VBR_SCALE_FLAG  0x0008
+
+
+//Scan file quickly
+- (BOOL)scanFile
 {
-	long flags;			/* valid fields (see below) */
-	unsigned long frames;		/* total number of frames */
-	unsigned long bytes;		/* total number of bytes */
-	unsigned char toc[100];	/* 100-point seek table */
-	long scale;			/* ?? */
-};
-
-struct lame
-{
-	long flags;
-	int start_padding;
-	int end_padding;
-};
-
-enum
-{
-	XING_FRAMES = 0x00000001L,
-	XING_BYTES  = 0x00000002L,
-	XING_TOC    = 0x00000004L,
-	XING_SCALE  = 0x00000008L
-};
-
-int lame_parse(struct lame *lame, struct mad_bitptr *ptr, unsigned int bitlen)
-{
-	unsigned long magic;
-	unsigned long garbage;
+	BOOL inputEOF = NO;
 	
-	magic = mad_bit_read(ptr, 32); //4 bytes
-	
-	if (magic != LAME_MAGIC)
-		return 0;
-	
-	mad_bit_skip(ptr, 17*8); //17 bytes skipped
-	garbage = mad_bit_read(ptr, 24); //3 bytes
-	
-	lame->start_padding = (garbage >> 12) & 0x000FFF;
-	lame->end_padding = garbage & 0x000FFF;
-	
-	NSLog(@"Padding; %i, %i", lame->start_padding, lame->end_padding);
-
-	return 1;
-}	
-
-int xing_parse(struct xing *xing, struct mad_bitptr *ptr, unsigned int bitlen)
-{
-	xing->flags = 0;
-	unsigned long magic;
-	
-	if (bitlen < 64)
-		return 0;
-
-	magic = mad_bit_read(ptr, 32);
-	if (magic != INFO_MAGIC && magic != XING_MAGIC)
-		return 0;
-	
-	xing->flags = mad_bit_read(ptr, 32);
-	bitlen -= 64;
-	
-	if (xing->flags & XING_FRAMES) {
-		if (bitlen < 32)
-			return 0;
-		
-		xing->frames = mad_bit_read(ptr, 32);
-		bitlen -= 32;
-	}
-	
-	if (xing->flags & XING_BYTES) {
-		if (bitlen < 32)
-			return 0;
-		
-		xing->bytes = mad_bit_read(ptr, 32);
-		bitlen -= 32;
-	}
-	
-	if (xing->flags & XING_TOC) {
-		int i;
-		
-		if (bitlen < 800)
-			return 0;
-		
-		for (i = 0; i < 100; ++i)
-			xing->toc[i] = mad_bit_read(ptr, 8);
-		
-		bitlen -= 800;
-	}
-	
-	if (xing->flags & XING_SCALE) {
-		if (bitlen < 32)
-			return 0;
-		
-		xing->scale = mad_bit_read(ptr, 32);
-		bitlen -= 32;
-	}
-	
-	return 1;
-}
-
-int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, unsigned int bitlen)
-{
-	xing->flags = 0;
-	lame->flags = 0;
-	
-	if (xing_parse(xing, &ptr, bitlen))
-	{
-		lame_parse(lame, &ptr, bitlen);
-		
-		return 1;
-	}
-	
-	return 0;
-}
-
-
-- (BOOL)scanFileFast:(BOOL)fast useXing:(BOOL)use_xing
-{
-	const int BUFFER_SIZE = 16*1024;
-	const int N_AVERAGE_FRAMES = 10;
-
 	struct mad_stream stream;
-	struct mad_header header;
-	struct mad_frame frame; /* to read xing data */
-	struct xing xing;
-	struct lame lame;
-	int remainder = 0;
-	int data_used = 0;
-	int len = 0;
-	int tagsize = 0;
-	int frames = 0;
-	unsigned char buffer[BUFFER_SIZE];
-	BOOL has_xing = NO;
-	BOOL vbr = NO;
+	struct mad_frame frame;
+	
+	int framesDecoded = 0;
+	int bytesToRead, bytesRemaining;
+	int samplesPerMPEGFrame = 0;
+	
+	int id3_length = 0;
 	
 	mad_stream_init (&stream);
-	mad_header_init (&header);
 	mad_frame_init (&frame);	
-	
-	bitrate = 0;
-	_duration = mad_timer_zero;
-	
-	frames = 0;
 	
 	[_source seek:0 whence:SEEK_END];
 	_fileSize = [_source tell];
 	[_source seek:0 whence:SEEK_SET];
 	
-	BOOL done = NO;
-	
-	while (!done)
-    {
-		remainder = stream.bufend - stream.next_frame;
+	for (;;) {
+		if(NULL == stream.buffer || MAD_ERROR_BUFLEN == stream.error) {
+			if(stream.next_frame) {
+				bytesRemaining		= stream.bufend - stream.next_frame;
 				
-		memcpy (buffer, stream.this_frame, remainder);
-		len = [_source read:buffer + remainder amount:BUFFER_SIZE - remainder];
-		
-		if (len <= 0)
-			break;
-		
-		mad_stream_buffer (&stream, buffer, len + remainder);
-		
-		while (1)
-		{
-			if (mad_header_decode (&header, &stream) == -1)
+				memmove(_inputBuffer, stream.next_frame, bytesRemaining);
+				
+				bytesToRead			= INPUT_BUFFER_SIZE - bytesRemaining;
+			}
+			else {
+				bytesToRead			= INPUT_BUFFER_SIZE,
+				bytesRemaining		= 0;
+			}
+			
+			// Read raw bytes from the MP3 file
+			int bytesRead = [_source read:_inputBuffer + bytesRemaining amount: bytesToRead];
+			
+			if (bytesRead == 0)
 			{
-				if (stream.error == MAD_ERROR_BUFLEN)
-				{
-					break;
+				memset(_inputBuffer + bytesRemaining + bytesRead, 0, MAD_BUFFER_GUARD);
+				bytesRead += MAD_BUFFER_GUARD;
+				inputEOF = YES;
+			}
+			
+			mad_stream_buffer(&stream, _inputBuffer, bytesRead + bytesRemaining);
+			stream.error = MAD_ERROR_NONE;
+		}
+		
+		if (mad_frame_decode(&frame, &stream) == -1)
+		{
+			if (MAD_RECOVERABLE(stream.error))
+			{
+				// Prevent ID3 tags from reporting recoverable frame errors
+				const uint8_t	*buffer			= stream.this_frame;
+				unsigned		buflen			= stream.bufend - stream.this_frame;
+				
+				if(10 <= buflen && 0x49 == buffer[0] && 0x44 == buffer[1] && 0x33 == buffer[2]) {
+					id3_length = (((buffer[6] & 0x7F) << (3 * 7)) | ((buffer[7] & 0x7F) << (2 * 7)) |
+								  ((buffer[8] & 0x7F) << (1 * 7)) | ((buffer[9] & 0x7F) << (0 * 7)));
+					
+					// Add 10 bytes for ID3 header
+					id3_length += 10;
+					
+					mad_stream_skip(&stream, id3_length);
 				}
-				if (!MAD_RECOVERABLE (stream.error))
-				{
-					break;
-				}
-				if (stream.error == MAD_ERROR_LOSTSYNC)
-				{
-					/* ignore LOSTSYNC due to ID3 tags */
-					tagsize = id3_tag_query (stream.this_frame,
-											 stream.bufend -
-											 stream.this_frame);
-					if (tagsize > 0)
-					{
-						mad_stream_skip (&stream, tagsize);
-						continue;
-					}
-
-				}
-
+				
 				continue;
 			}
-			frames++;
-
-			mad_timer_add (&_duration, header.duration);
-			data_used += stream.next_frame - stream.this_frame;
-			if (frames == 1)
+			else if (stream.error == MAD_ERROR_BUFLEN && inputEOF)
 			{
-				/* most of these *should* remain constant */
-				bitrate = header.bitrate;
-				frequency = header.samplerate;
-				channels = MAD_NCHANNELS(&header);
-
-				if (use_xing)
-				{
-					frame.header = header;
-					if (mad_frame_decode(&frame, &stream) == -1)
-						continue;
-
-					if (parse_headers(&xing, &lame, stream.anc_ptr, stream.anc_bitlen)) 
-					{
-						has_xing = YES;
-						vbr = YES;
-
-						frames = xing.frames;
-						mad_timer_multiply (&_duration, frames);
-
-						bitrate = 8.0 * xing.bytes / mad_timer_count(_duration, MAD_UNITS_SECONDS); 
-						done = YES;
-						break;
-					}
-				}
-				
+				break;
+			}
+			else if (stream.error == MAD_ERROR_BUFLEN)
+			{
+				continue;
 			}
 			else
 			{
-				/* perhaps we have a VBR file */
-				if (bitrate != header.bitrate)
-					vbr = YES;
-				if (vbr)
-					bitrate += header.bitrate;
-			}
-			
-			if ((!vbr || (vbr && !has_xing)) && fast && frames >= N_AVERAGE_FRAMES)
-			{
-				float frame_size = ((double)data_used) / N_AVERAGE_FRAMES;
-				frames = (_fileSize - tagsize) / frame_size;
-
-				_duration.seconds /= N_AVERAGE_FRAMES;
-				_duration.fraction /= N_AVERAGE_FRAMES;
-				mad_timer_multiply (&_duration, frames);
-
-				done = YES;
+				//NSLog(@"Unrecoverable error: %s", mad_stream_errorstr(&stream));
 				break;
 			}
 		}
-		if (stream.error != MAD_ERROR_BUFLEN)
+		framesDecoded++;
+		
+		if (framesDecoded == 1)
+		{
+			frequency = frame.header.samplerate;
+			channels = MAD_NCHANNELS(&frame.header);
+			
+			if(MAD_FLAG_LSF_EXT & frame.header.flags || MAD_FLAG_MPEG_2_5_EXT & frame.header.flags) {
+				switch(frame.header.layer) {
+					case MAD_LAYER_I:		samplesPerMPEGFrame = 384;			break;
+					case MAD_LAYER_II:		samplesPerMPEGFrame = 1152;		break;
+					case MAD_LAYER_III:		samplesPerMPEGFrame = 576;			break;
+				}
+			}
+			else {
+				switch(frame.header.layer) {
+					case MAD_LAYER_I:		samplesPerMPEGFrame = 384;			break;
+					case MAD_LAYER_II:		samplesPerMPEGFrame = 1152;		break;
+					case MAD_LAYER_III:		samplesPerMPEGFrame = 1152;		break;
+				}
+			}
+			
+			unsigned ancillaryBitsRemaining = stream.anc_bitlen;
+			
+			if(32 > ancillaryBitsRemaining)
+				continue;
+			
+			uint32_t magic = mad_bit_read(&stream.anc_ptr, 32);
+			ancillaryBitsRemaining -= 32;
+			
+			if('Xing' == magic || 'Info' == magic) {
+				unsigned	i;
+				uint32_t	flags = 0, frames = 0, bytes = 0, vbrScale = 0;
+				
+				if(32 > ancillaryBitsRemaining)
+					continue;
+				
+				flags = mad_bit_read(&stream.anc_ptr, 32);
+				ancillaryBitsRemaining -= 32;
+				
+				// 4 byte value containing total frames
+				if(FRAMES_FLAG & flags) {
+					if(32 > ancillaryBitsRemaining)
+						continue;
+					
+					frames = mad_bit_read(&stream.anc_ptr, 32);
+					ancillaryBitsRemaining -= 32;
+					
+					// Determine number of samples, discounting encoder delay and padding
+					// Our concept of a frame is the same as CoreAudio's- one sample across all channels
+					_totalSamples = frames * samplesPerMPEGFrame;
+					//NSLog(@"TOTAL READ FROM XING");
+				}
+				
+				// 4 byte value containing total bytes
+				if(BYTES_FLAG & flags) {
+					if(32 > ancillaryBitsRemaining)
+						continue;
+					
+					bytes = mad_bit_read(&stream.anc_ptr, 32);
+					ancillaryBitsRemaining -= 32;
+				}
+				
+				// 100 bytes containing TOC information
+				if(TOC_FLAG & flags) {
+					if(8 * 100 > ancillaryBitsRemaining)
+						continue;
+					
+					for(i = 0; i < 100; ++i)
+						/*_xingTOC[i] = */ mad_bit_read(&stream.anc_ptr, 8);
+					
+					ancillaryBitsRemaining -= (8* 100);
+				}
+				
+				// 4 byte value indicating encoded vbr scale
+				if(VBR_SCALE_FLAG & flags) {
+					if(32 > ancillaryBitsRemaining)
+						continue;
+					
+					vbrScale = mad_bit_read(&stream.anc_ptr, 32);
+					ancillaryBitsRemaining -= 32;
+				}
+				
+				framesDecoded	= frames;
+				
+				_foundXingHeader = YES;
+				
+				// Loook for the LAME header next
+				// http://gabriel.mp3-tech.org/mp3infotag.html				
+				if(32 > ancillaryBitsRemaining)
+					continue;
+				magic = mad_bit_read(&stream.anc_ptr, 32);
+				
+				ancillaryBitsRemaining -= 32;
+				
+				if('LAME' == magic) {
+					
+					if(LAME_HEADER_SIZE > ancillaryBitsRemaining)
+						continue;
+					
+					/*unsigned char versionString [5 + 1];
+					memset(versionString, 0, 6);*/
+					
+					for(i = 0; i < 5; ++i)
+						/*versionString[i] =*/ mad_bit_read(&stream.anc_ptr, 8);
+					
+					/*uint8_t infoTagRevision =*/ mad_bit_read(&stream.anc_ptr, 4);
+					/*uint8_t vbrMethod =*/ mad_bit_read(&stream.anc_ptr, 4);
+					
+					/*uint8_t lowpassFilterValue =*/ mad_bit_read(&stream.anc_ptr, 8);
+					
+					/*float peakSignalAmplitude =*/ mad_bit_read(&stream.anc_ptr, 32);
+					/*uint16_t radioReplayGain =*/ mad_bit_read(&stream.anc_ptr, 16);
+					/*uint16_t audiophileReplayGain =*/ mad_bit_read(&stream.anc_ptr, 16);
+					
+					/*uint8_t encodingFlags =*/ mad_bit_read(&stream.anc_ptr, 4);
+					/*uint8_t athType =*/ mad_bit_read(&stream.anc_ptr, 4);
+					
+					/*uint8_t lameBitrate =*/ mad_bit_read(&stream.anc_ptr, 8);
+					
+					_startPadding = mad_bit_read(&stream.anc_ptr, 12);
+					_endPadding = mad_bit_read(&stream.anc_ptr, 12);
+					
+					_startPadding += 528 + 1; //MDCT/filterbank delay
+					_totalSamples += 528 + 1;
+					
+					/*uint8_t misc =*/ mad_bit_read(&stream.anc_ptr, 8);
+					
+					/*uint8_t mp3Gain =*/ mad_bit_read(&stream.anc_ptr, 8);
+					
+					/*uint8_t unused =*/mad_bit_read(&stream.anc_ptr, 2);
+					/*uint8_t surroundInfo =*/ mad_bit_read(&stream.anc_ptr, 3);
+					/*uint16_t presetInfo =*/ mad_bit_read(&stream.anc_ptr, 11);
+					
+					/*uint32_t musicGain =*/ mad_bit_read(&stream.anc_ptr, 32);
+					
+					/*uint32_t musicCRC =*/ mad_bit_read(&stream.anc_ptr, 32);
+					
+					/*uint32_t tagCRC =*/ mad_bit_read(&stream.anc_ptr, 32);
+					
+					ancillaryBitsRemaining -= LAME_HEADER_SIZE;
+					
+					_foundLAMEHeader = YES;
+					break;
+				}
+			}
+		}
+		else
+		{
+			_totalSamples = (double)frame.header.samplerate * ((_fileSize - id3_length) / (frame.header.bitrate / 8.0));
+			//NSLog(@"Guestimating total samples");
+			
 			break;
-    }
+		}
+	}
 	
-	if (vbr && !has_xing)
-		bitrate = bitrate / frames;
+	//Need to make sure this is correct
+	bitrate = (_fileSize - id3_length) / (length * 1000.0);
 	
 	mad_frame_finish (&frame);
-	mad_header_finish (&header);
 	mad_stream_finish (&stream);
 	
-	length = mad_timer_count(_duration, MAD_UNITS_MILLISECONDS);
-
-	bitrate /= 1000;
+	//Need to fix this too.
+	length = 1000.0 * (_totalSamples / frequency);
 	
 	bitsPerSample = 16;
-
+	
 	[_source seek:0 whence:SEEK_SET];
-
+	
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
-
-	return frames != 0;	
+	
+	return YES;	
 }
 
 
@@ -297,14 +304,14 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 	mad_stream_init(&_stream);
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
-	mad_timer_reset(&_timer);
 	
 	_firstFrame = YES;
+	//NSLog(@"OPEN: %i", _firstFrame);
 	
 	if ([_source seekable]) {
-		return [self scanFileFast:YES useXing:YES];
+		return [self scanFile];
 	}
-
+	
 	return YES;
 }
 
@@ -315,26 +322,8 @@ int parse_headers(struct xing *xing, struct lame *lame, struct mad_bitptr ptr, u
 static inline signed int scale (mad_fixed_t sample)
 {
 	BOOL hard_limit = YES;
-//	BOOL replaygain = NO;
-	/* replayGain by SamKR */
-	double scale = -1;
-/*	if (replaygain)
-    {
-		if (file_info->has_replaygain)
-        {
-			scale = file_info->replaygain_track_scale;
-			if (file_info->replaygain_album_scale != -1
-				&& (scale==-1 || ! xmmsmad_config.replaygain.track_mode))
-            {
-				scale = file_info->replaygain_album_scale;
-            }
-        }
-        if (scale == -1)
-            scale = xmmsmad_config.replaygain.default_scale;
-    }
-*/
-	if (scale == -1)
-		scale = 1.0;
+	
+	double scale = 1.0;
 	
 	/* hard-limit (clipping-prevention) */
 	if (hard_limit)
@@ -360,7 +349,7 @@ static inline signed int scale (mad_fixed_t sample)
 	/* round */
 	/* add half of the bits_to_loose range to round */
 	sample += (1L << (n_bits_to_loose - 1));
-			
+	
 	/* clip */
 	/* make sure we are between -1 and 1 */
 	if (sample >= MAD_F_ONE)
@@ -380,175 +369,194 @@ static inline signed int scale (mad_fixed_t sample)
 	 * to get the sign bit.
 	 */
 	sample >>= n_bits_to_loose;
-
+	
 	return sample;
 }
 
 
 - (void)writeOutput
 {
-	unsigned int nsamples;
-	mad_fixed_t const *left_ch, *right_ch;
+	unsigned int startingSample = 0;
+	unsigned int sampleCount = _synth.pcm.length;
+	
+	//NSLog(@"Position: %li/%li", _samplesDecoded, _totalSamples);
+	//NSLog(@"<%i, %i>", _startPadding, _endPadding);
 
-//	if (_outputAvailable) {
-//		NSLog(@"Losing Output: %i", _outputAvailable);
-//	}
-	nsamples = _synth.pcm.length;
-	left_ch = _synth.pcm.samples[0];
-	right_ch = _synth.pcm.samples[1];
-	_outputAvailable = nsamples * channels * (bitsPerSample/8);
+	//NSLog(@"Counts: %i, %i", startingSample, sampleCount);
+	if (_foundLAMEHeader) {
+		if (_samplesDecoded < _startPadding) {
+			//NSLog(@"Skipping start.");
+			startingSample = _startPadding - _samplesDecoded;
+		}
+		
+		if (_samplesDecoded > _totalSamples - _endPadding + startingSample) {
+			//NSLog(@"End of file. Not writing.");
+			return;
+		}
 
+		if (_samplesDecoded + (sampleCount - startingSample) > _totalSamples - _endPadding) {
+			sampleCount = _totalSamples - _endPadding - _samplesDecoded + startingSample;
+			//NSLog(@"End of file. %li",  _totalSamples - _endPadding - _samplesDecoded);
+		}
+
+		if (startingSample > sampleCount) {
+			_samplesDecoded += _synth.pcm.length;
+			//NSLog(@"Skipping entire sample");
+			return;
+		}
+		
+	}
+	
+	//NSLog(@"Revised: %i, %i", startingSample, sampleCount);
+	
+	_samplesDecoded += _synth.pcm.length;
+	
+	_outputAvailable = (sampleCount - startingSample) * channels * (bitsPerSample/8);
+	
 	if (_outputBuffer)
 		free(_outputBuffer);
-
+	
 	_outputBuffer = (unsigned char *) malloc (_outputAvailable * sizeof (char));
 	
-	unsigned char *outputPtr = _outputBuffer;
-	
-	int i;
-	for (i=0; i < nsamples; i++)
-    {
-		signed short sample;
-		/* output sample(s) in 16-bit signed little-endian PCM */
-		sample = scale(left_ch[i]);
-		*(outputPtr++) = sample>>8;
-		*(outputPtr++) = sample & 0xff;
-
-		if (channels == 2)
-		{
-			sample = scale(right_ch[i]);
-			*(outputPtr++) = sample>>8;
-			*(outputPtr++) = sample & 0xff;
-		}
-    }	
+	unsigned int i, j; 
+	unsigned int stride = channels * 2; 
+	for (j = 0; j < channels; j++) 
+	{ 
+		/* output sample(s) in 16-bit signed little-endian PCM */  
+		mad_fixed_t const *channel = _synth.pcm.samples[j]; 
+		unsigned char *outputPtr = _outputBuffer + (j * 2); 
+		
+		for (i = startingSample; i < sampleCount; i++) 
+		{  
+			signed short sample = scale(channel[i]); 
+			
+			outputPtr[0] = sample>>8;  
+			outputPtr[1] = sample & 0xff;  
+			outputPtr += stride; 
+		} 
+	} 
 }
 
 - (int)fillBuffer:(void *)buf ofSize:(UInt32)size
 {
-	int remainder;
-	int len;
-	BOOL eof = NO;
-	int amountToCopy = size;
-	int amountRemaining = size;
+	int inputToRead;
+	int inputRemaining;
+	BOOL inputEOF = NO;
 	
-	if (amountToCopy > _outputAvailable)
-		amountToCopy = _outputAvailable;
-
-	if (amountToCopy) {
-		memcpy(buf, _outputBuffer, amountToCopy);
-		memmove(_outputBuffer, _outputBuffer + amountToCopy, _outputAvailable - amountToCopy);
-
-		amountRemaining -= amountToCopy;
-		_outputAvailable -= amountToCopy;
-	}
-
-	while (amountRemaining > 0 && !eof) {
+	int bytesRead = 0;
+	
+	for (;;)
+	{
+		int bytesRemaining = size - bytesRead;
+		int bytesToCopy = (_outputAvailable > bytesRemaining ? bytesRemaining : _outputAvailable);
+		
+		memcpy(buf + bytesRead, _outputBuffer, bytesToCopy);
+		bytesRead += bytesToCopy;
+		
+		if (bytesToCopy != _outputAvailable) {
+			memmove(_outputBuffer, _outputBuffer + bytesToCopy, _outputAvailable - bytesToCopy);
+		}
+		
+		_outputAvailable -= bytesToCopy;
+		
+		if (bytesRead == size)
+			break;
+		
 		if (_stream.buffer == NULL || _stream.error == MAD_ERROR_BUFLEN)
 		{
-			if (!_seekSkip)
+			if (_stream.next_frame != NULL)
 			{
-				remainder = _stream.bufend - _stream.next_frame;
-				if (remainder)
-					memmove(_inputBuffer, _stream.this_frame, remainder);
+				inputRemaining = _stream.bufend - _stream.next_frame;
+				
+				memmove(_inputBuffer, _stream.next_frame, inputRemaining);
+				
+				inputToRead = INPUT_BUFFER_SIZE - inputRemaining;
 			}
 			else
 			{
-				remainder = 0;
+				inputToRead = INPUT_BUFFER_SIZE;
+				inputRemaining = 0;
 			}
-
-			len = [_source read:_inputBuffer+remainder amount:INPUT_BUFFER_SIZE-remainder];
-			if (len <= 0)
+			
+			int inputRead = [_source read:_inputBuffer + inputRemaining amount:INPUT_BUFFER_SIZE - inputRemaining];
+			if (inputRead == 0)
 			{
-				eof = YES;
+				memset(_inputBuffer + inputRemaining + inputRead, 0, MAD_BUFFER_GUARD);
+				inputRead += MAD_BUFFER_GUARD;
+				inputEOF = YES;
+			}
+			
+			mad_stream_buffer(&_stream, _inputBuffer, inputRead + inputRemaining);
+			_stream.error = MAD_ERROR_NONE;
+			//NSLog(@"Read stream.");
+		}
+		
+		if (mad_frame_decode(&_frame, &_stream) == -1) {
+			if (MAD_RECOVERABLE (_stream.error))
+			{
+				const uint8_t	*buffer			= _stream.this_frame;
+				unsigned		buflen			= _stream.bufend - _stream.this_frame;
+				uint32_t		id3_length		= 0;
+				
+				//No longer need ID3Tag framework
+				if(10 <= buflen && 0x49 == buffer[0] && 0x44 == buffer[1] && 0x33 == buffer[2]) {
+					id3_length = (((buffer[6] & 0x7F) << (3 * 7)) | ((buffer[7] & 0x7F) << (2 * 7)) |
+								  ((buffer[8] & 0x7F) << (1 * 7)) | ((buffer[9] & 0x7F) << (0 * 7)));
+					
+					// Add 10 bytes for ID3 header
+					id3_length += 10;
+					
+					mad_stream_skip(&_stream, id3_length);
+				}
+				
+				//NSLog(@"recoverable error");
+				continue;
+			}
+			else if (MAD_ERROR_BUFLEN == _stream.error && inputEOF)
+			{
+				//NSLog(@"EOF");
 				break;
 			}
-
-			len += remainder;
-			if (len < MAD_BUFFER_GUARD) {
-				int i;
-				for (i = len; i < MAD_BUFFER_GUARD; i++)
-					_inputBuffer[i] = 0;
-				len = MAD_BUFFER_GUARD;
-			}
-
-			mad_stream_buffer(&_stream, _inputBuffer, len);
-			_stream.error = 0;
-			
-			if (_seekSkip)
+			else if (MAD_ERROR_BUFLEN == _stream.error)
 			{
-				int skip = 2;
-				do
-				{
-					if (mad_frame_decode (&_frame, &_stream) == 0)
-					{
-						mad_timer_add (&_timer, _frame.header.duration);
-						if (--skip == 0)
-							mad_synth_frame (&_synth, &_frame);
-					}
-					else if (!MAD_RECOVERABLE (_stream.error))
-						break;
-				} while (skip);
-				
-				_seekSkip = NO;
+				//NSLog(@"Bufferlen");
+				continue;
 			}
-			
-		}		
-		if (mad_frame_decode(&_frame, &_stream) == -1) {
-			if (!MAD_RECOVERABLE (_stream.error))
+			else
 			{
-				if(_stream.error==MAD_ERROR_BUFLEN) {
-					continue;
-				}
-
-				eof = YES;
+				//NSLog(@"Unrecoverable stream error: %s", mad_stream_errorstr(&_stream));
+				break;
 			}
-
-			if (_stream.error == MAD_ERROR_LOSTSYNC)
-			{
-				// ignore LOSTSYNC due to ID3 tags
-				int tagsize = id3_tag_query (_stream.this_frame,
-											 _stream.bufend -
-											 _stream.this_frame);
-				if (tagsize > 0)
-				{
-					mad_stream_skip (&_stream, tagsize);
-				}
-			}
-
-			continue;
 		}
-
-		if (_firstFrame && ![_source seekable]) {
-			frequency = _frame.header.samplerate;
-			channels = MAD_NCHANNELS(&_frame.header);
-			bitsPerSample = 16;
-
-			[self willChangeValueForKey:@"properties"];
-			[self didChangeValueForKey:@"properties"];
-			
-			_firstFrame = NO;
-		}
-			
-		mad_timer_add (&_timer, _frame.header.duration);
 		
+		//NSLog(@"Decoded buffer.");
 		mad_synth_frame (&_synth, &_frame);
+		//NSLog(@"first frame: %i", _firstFrame);
+		if (_firstFrame)
+		{
+			_firstFrame = NO;
+			
+			if (![_source seekable]) {
+				frequency = _frame.header.samplerate;
+				channels = MAD_NCHANNELS(&_frame.header);
+				bitsPerSample = 16;
+				
+				[self willChangeValueForKey:@"properties"];
+				[self didChangeValueForKey:@"properties"];
+			}
+			//NSLog(@"FIRST FRAME!!! %i %i", _foundXingHeader, _foundLAMEHeader);
+			if (_foundXingHeader) {
+				//NSLog(@"Skipping xing header.");
+				continue;
+			}
+		}
 		
 		[self writeOutput];
-		amountToCopy = amountRemaining;
-		if (amountToCopy > _outputAvailable) {
-			amountToCopy = _outputAvailable;
-		}
-		if (amountRemaining < amountToCopy) {
-			amountToCopy = amountRemaining;
-		}
-		
-		memcpy(((char *)buf)+(size-amountRemaining), _outputBuffer, amountToCopy);
-		memmove(_outputBuffer, _outputBuffer + amountToCopy, _outputAvailable - amountToCopy); 
-		amountRemaining -= amountToCopy;
-		_outputAvailable -= amountToCopy;
+		//NSLog(@"Wrote output");
 	}
-
-	return (size - amountRemaining);
+	
+	//NSLog(@"Read: %i/%i", bytesRead, size);
+	return bytesRead;
 }
 
 - (void)close
@@ -559,7 +567,7 @@ static inline signed int scale (mad_fixed_t sample)
 		[_source release];
 		_source = nil;
 	}
-
+	
 	if (_outputBuffer)
 	{
 		free(_outputBuffer);
@@ -573,29 +581,18 @@ static inline signed int scale (mad_fixed_t sample)
 
 - (double)seekToTime:(double)milliseconds
 {
-	unsigned long new_position;
-	unsigned long seconds = milliseconds/1000.0;
-	unsigned long total_seconds = mad_timer_count(_duration, MAD_UNITS_SECONDS);
-
-	if (seconds > total_seconds)
-		seconds = total_seconds;
+	if (milliseconds > length)
+		milliseconds = length;
 	
-	mad_timer_set(&_timer, seconds, 0, 0);
-	new_position = ((double) seconds / (double) total_seconds) * _fileSize;
-
+	unsigned long new_position = (milliseconds / length) * _fileSize;
 	[_source seek:new_position whence:SEEK_SET];
-
-	//mad_stream_sync(&_stream);
-	_stream.error = MAD_ERROR_BUFLEN;
-	_stream.sync = 0;
-	_outputAvailable = 0;
-
-	mad_frame_mute(&_frame);
-	mad_synth_mute(&_synth);
-
-	_seekSkip = YES;
 	
-	return seconds*1000.0;
+	mad_stream_buffer(&_stream, NULL, 0);
+	
+	//Gapless busted after seek. Mp3 just doesn't have sample-accurate seeking. Maybe xing toc?
+	_samplesDecoded = (milliseconds / length) * _totalSamples;
+	
+	return milliseconds;
 }
 
 - (NSDictionary *)properties

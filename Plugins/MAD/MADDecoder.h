@@ -16,14 +16,12 @@
 
 #define INPUT_BUFFER_SIZE 5*8192
 
-
 @interface MADDecoder : NSObject <CogDecoder>
 {
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
-	mad_timer_t _timer;
-	mad_timer_t _duration;
+
 	unsigned char _inputBuffer[INPUT_BUFFER_SIZE+MAD_BUFFER_GUARD];
 	unsigned char *_outputBuffer;
 	int _outputAvailable;
@@ -31,15 +29,16 @@
 	
 	id<CogSource> _source;
 	
-	BOOL _seekSkip;
-
 	BOOL _firstFrame;
 	
 	//For gapless playback of mp3s
-	BOOL _gapless;
-	long _currentFrame;
-	int _startPadding;
-	int _endPadding;
+	BOOL _foundXingHeader;
+	BOOL _foundLAMEHeader;
+
+	long _samplesDecoded;
+	long _totalSamples;
+	uint16_t _startPadding;
+	uint16_t _endPadding;
 	
 	int channels;
 	int bitsPerSample;
