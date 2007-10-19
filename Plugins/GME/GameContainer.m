@@ -18,13 +18,13 @@
 	NSMutableArray *types = [NSMutableArray array];
 	gme_type_t const* type = gme_type_list();
 	while(*type)
-		{
-			//We're digging a little deep here, but there seems to be no other choice.
-			[types addObject:[NSString stringWithCString:(*type)->extension_ encoding: NSASCIIStringEncoding]];
-
-			type++;
-		}
-
+	{
+		//We're digging a little deep here, but there seems to be no other choice.
+		[types addObject:[NSString stringWithCString:(*type)->extension_ encoding: NSASCIIStringEncoding]];
+		
+		type++;
+	}
+	
 	return [[types copy] autorelease];
 }
 
@@ -44,9 +44,15 @@
 	Music_Emu *emu;
 	error = gme_open_file([[url path] UTF8String], &emu, 44100);
 	int track_count = gme_track_count(emu);
-
+	
+	//If there is only one track, we shouldn't append the #
+	if (track_count == 1) {
+		NSLog(@"Track count is 1...%@", url);
+		return [NSArray arrayWithObject:url];
+	}
+	
 	NSMutableArray *tracks = [NSMutableArray array];
-
+	
 	int i;
 	for (i = 0; i < track_count; i++) {
 		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];

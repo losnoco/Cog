@@ -27,11 +27,9 @@
 	NSMutableString *unixPath = [path mutableCopy];
 
 	NSString *fragment = @"";
-	NSRange fragmentRange = [path rangeOfString:@"#"];
+	NSRange fragmentRange = [path rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"#0123456789"] options:(NSAnchoredSearch | NSBackwardsSearch)];
 	if (fragmentRange.location != NSNotFound) 
 	{
-		fragmentRange = NSMakeRange(fragmentRange.location, [unixPath length] - fragmentRange.location);
-		
 		fragment = [unixPath substringWithRange:fragmentRange];
 		[unixPath deleteCharactersInRange:fragmentRange];
 	}
@@ -48,6 +46,8 @@
 	//Append the fragment
 	return [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
 }
+
+
 
 - (void)parseFile:(NSString *)filename
 {

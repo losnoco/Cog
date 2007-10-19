@@ -147,7 +147,8 @@
 	NSMutableSet *uniqueURLs = [NSMutableSet set];
 	
 	NSMutableArray *expandedURLs = [NSMutableArray array];
-	NSMutableArray *allURLs = [NSMutableArray array];
+	NSMutableArray *containedURLs = [NSMutableArray array];
+	NSMutableArray *fileURLs = [NSMutableArray array];
 	NSMutableArray *validURLs = [NSMutableArray array];
 	
 	if (!urls)
@@ -181,6 +182,8 @@
 			[expandedURLs addObject:url];
 		}
 	}
+	
+	NSLog(@"Expanded urls: %@", expandedURLs);
 
 	NSArray *sortedURLs;
 	if (sort == YES)
@@ -202,19 +205,23 @@
 		//File url
 		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]] && ([url fragment] == nil)) {
 			if ([url isFileURL] ) {
-				[allURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
+				[containedURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
 
 				//Make sure the container isn't added twice.
-				[uniqueURLs addObject:url];
+				[uniqueURLs addObjectsFromArray:containedURLs];
 			}
 		}
 		else
 		{
-			[allURLs addObject:url];
+			[fileURLs addObject:url];
 		}
 	}
 
-	urlEnumerator = [allURLs objectEnumerator];
+	NSLog(@"File urls: %@", fileURLs);
+
+	NSLog(@"Contained urls: %@", containedURLs);
+
+	urlEnumerator = [fileURLs objectEnumerator];
 	while (url = [urlEnumerator nextObject])
 	{
 		if (![[AudioPlayer schemes] containsObject:[url scheme]])
@@ -231,6 +238,22 @@
 			[uniqueURLs addObject:url];
 		}
 	}
+	
+	NSLog(@"Valid urls: %@", validURLs);
+
+	urlEnumerator = [containedURLs objectEnumerator];
+	while (url = [urlEnumerator nextObject])
+	{
+		if (![[AudioPlayer schemes] containsObject:[url scheme]])
+			continue;
+
+		//Need a better way to determine acceptable file types than basing it on extensions.
+		if (![[AudioPlayer fileTypes] containsObject:[[[url path] pathExtension] lowercaseString]])
+			continue;
+
+		[validURLs addObject:url];
+	}
+	
 
 	//Create actual entries
 	int i;

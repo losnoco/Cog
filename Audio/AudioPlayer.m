@@ -218,9 +218,9 @@
 		&& [[nextStream host] isEqualToString:[[lastChain streamURL] host]]
 		&& [[nextStream path] isEqualToString:[[lastChain streamURL] path]])
 	{
-		if ([lastChain setTrack:nextStream]) {
-			[newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format]];
-			
+		if ([lastChain setTrack:nextStream] 
+			&& [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format]])
+		{
 			[newChain setStreamURL:nextStream];
 			[newChain setUserInfo:nextStreamUserInfo];
 

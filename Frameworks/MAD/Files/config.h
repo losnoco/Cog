@@ -71,10 +71,10 @@
 #define HAVE_WAITPID 1
 
 /* Define to disable debugging assertions. */
-/* #undef NDEBUG */
+#define NDEBUG
 
 /* Define to optimize for accuracy over speed. */
-/* #undef OPT_ACCURACY */
+#define OPT_ACCURACY 1
 
 /* Define to optimize for speed over accuracy. */
 /* #undef OPT_SPEED */
