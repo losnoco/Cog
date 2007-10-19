@@ -84,8 +84,6 @@
 			bytesPerFrame = (bitsPerSample/8) * channels;
 			bytesPerSecond = (int)(bytesPerFrame * sampleRate);
 
-			[decoder seekToTime: [track time] * 1000.0];
-
 			if (nextTrack && [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]) {
 				trackEnd = [nextTrack time];
 			}
@@ -93,6 +91,8 @@
 				trackEnd = [[properties objectForKey:@"length"] doubleValue]/1000.0;
 			}
 			
+                       [self seekToTime: 0.0];
+
 			//Note: Should register for observations of the decoder, but laziness consumes all.
 			[self willChangeValueForKey:@"properties"];
 			[self didChangeValueForKey:@"properties"];
@@ -184,16 +184,23 @@
 	long trackByteEnd = trackEnd * bytesPerSecond;	
 	trackByteEnd -= trackByteEnd % (bytesPerFrame);
 	
+//     NSLog(@"Position: %i/%i", bytePosition, trackByteEnd);
+//     NSLog(@"Requested: %i", size);
 	if (bytePosition + size > trackByteEnd) {
 		size = trackByteEnd - bytePosition;
 	}
 
+//     NSLog(@"Revised size: %i", size);
+
 	if (!size) {
+               NSLog(@"Returning 0");
 		return 0;
 	}
 
 	int n = [decoder fillBuffer:buf ofSize:size];
 	
+//     NSLog(@"Received: %i", n);
+
 	bytePosition += n;
 	
 	return n;
