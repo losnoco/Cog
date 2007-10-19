@@ -31,13 +31,22 @@
 
 	NSMutableString *unixPath = [path mutableCopy];
 
+	//Get the fragment
 	NSString *fragment = @"";
-	NSRange fragmentRange = [path rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"#0123456789"] options:(NSAnchoredSearch | NSBackwardsSearch)];
-	if (fragmentRange.location != NSNotFound) 
-	{
-		fragment = [unixPath substringWithRange:fragmentRange];
-		[unixPath deleteCharactersInRange:fragmentRange];
+	NSScanner *scanner = [NSScanner scannerWithString:unixPath];
+	NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@"#1234567890"];
+	while (![scanner isAtEnd]) {
+		NSString *possibleFragment;
+		[scanner scanUpToString:@"#" intoString:nil];
+
+		if ([scanner scanCharactersFromSet:characterSet intoString:&possibleFragment] && [scanner isAtEnd]) 
+		{
+			fragment = possibleFragment;
+			[unixPath deleteCharactersInRange:NSMakeRange([scanner scanLocation] - [possibleFragment length], [possibleFragment length])];
+			break;
+		}
 	}
+	NSLog(@"Fragment: %@", fragment);
 
 	if (![unixPath hasPrefix:@"/"]) {
 		//Only relative paths would have windows backslashes.
