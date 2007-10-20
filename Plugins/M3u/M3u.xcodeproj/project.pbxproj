@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		8E8D40220CBAFF3900135C1B /* M3uPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D40210CBAFF3900135C1B /* M3uPlugin.m */; };
 		8E8D40290CBAFF4300135C1B /* M3uContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D40280CBAFF4300135C1B /* M3uContainer.m */; };
 /* End PBXBuildFile section */
 
@@ -22,8 +21,6 @@
 		8D5B49B6048680CD000E48DA /* M3u.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = M3u.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E8D401B0CBAFEF200135C1B /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		8E8D40200CBAFF3900135C1B /* M3uPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = M3uPlugin.h; sourceTree = "<group>"; };
-		8E8D40210CBAFF3900135C1B /* M3uPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = M3uPlugin.m; sourceTree = "<group>"; };
 		8E8D40270CBAFF4300135C1B /* M3uContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = M3uContainer.h; sourceTree = "<group>"; };
 		8E8D40280CBAFF4300135C1B /* M3uContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = M3uContainer.m; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -75,8 +72,6 @@
 			isa = PBXGroup;
 			children = (
 				8E8D401B0CBAFEF200135C1B /* Plugin.h */,
-				8E8D40200CBAFF3900135C1B /* M3uPlugin.h */,
-				8E8D40210CBAFF3900135C1B /* M3uPlugin.m */,
 				8E8D40270CBAFF4300135C1B /* M3uContainer.h */,
 				8E8D40280CBAFF4300135C1B /* M3uContainer.m */,
 			);
@@ -169,7 +164,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E8D40220CBAFF3900135C1B /* M3uPlugin.m in Sources */,
 				8E8D40290CBAFF4300135C1B /* M3uContainer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

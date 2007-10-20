@@ -16,6 +16,8 @@
 
 	NSMutableDictionary *decodersByExtension;
 	NSMutableDictionary *decodersByMimeType;
+	
+	BOOL isSetup;
 }
 
 + (PluginController *)sharedPluginController; //Use this to get the instance.
@@ -31,15 +33,5 @@
 - (void)setupDecoder:(NSString *)className;
 - (void)setupMetadataReader:(NSString *)className;
 - (void)setupPropertiesReader:(NSString *)className;
-
-- (NSDictionary *)sources;
-- (NSDictionary *)containers;
-- (NSDictionary *)metadataReaders;
-
-- (NSDictionary *)propertiesReadersByExtension;
-- (NSDictionary *)propertiesReadersByMimeType;
-
-- (NSDictionary *)decodersByExtension;
-- (NSDictionary *)decodersByMimeType;
 
 @end

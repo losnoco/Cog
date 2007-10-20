@@ -75,12 +75,43 @@ static PluginController *sharedPluginController = nil;
 
 - (void)setup
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	[self loadPlugins];
-	[self printPluginInfo];
+	if (isSetup == NO) {
+		isSetup = YES;
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bundleDidLoad:) name:NSBundleDidLoadNotification object:nil];
 
-	[pool release];
+		[self loadPlugins];
+		[self printPluginInfo];
+	}	
+}
+
+- (void)bundleDidLoad:(NSNotification *)notification
+{
+	NSString *className;
+	NSArray *classNames = [[notification userInfo] objectForKey:@"NSLoadedClasses"];
+	NSEnumerator *e = [classNames objectEnumerator];
+	while (className = [e nextObject])
+	{
+		Class bundleClass = NSClassFromString(className);
+		if ([bundleClass conformsToProtocol:@protocol(CogContainer)]) {
+			[self setupContainer:className];
+		}
+		else if ([bundleClass conformsToProtocol:@protocol(CogDecoder)]) {
+			[self setupDecoder:className];
+		}
+		else if ([bundleClass conformsToProtocol:@protocol(CogMetadataReader)]) {
+			[self setupMetadataReader:className];
+		}
+		else if ([bundleClass conformsToProtocol:@protocol(CogPropertiesReader)]) {
+			[self setupPropertiesReader:className];
+		}
+		else if ([bundleClass conformsToProtocol:@protocol(CogSource)]) {
+			[self setupSource:className];
+		}
+		else {
+			NSLog(@"Unknown plugin type!!");
+		}
+	}
 }
 
 - (void)loadPluginsAtPath:(NSString *)path
@@ -99,39 +130,7 @@ static PluginController *sharedPluginController = nil;
 		if ([[pname pathExtension] isEqualToString:@"bundle"])
 		{
 			NSBundle *b = [NSBundle bundleWithPath:ppath];
-			if (b)
-			{
-				Class plugin = [b principalClass];
-
-				if ([plugin respondsToSelector:@selector(pluginInfo)])
-				{
-					//PluginInfo is a dictionary that contains keys/values like pluginClass,classType...ex: VorbisDecoder, Decoder
-					NSDictionary *pluginInfo = [plugin pluginInfo];
-					NSEnumerator *e = [pluginInfo keyEnumerator];
-					id className;
-					while (className = [e nextObject]) {
-						id pluginType = [pluginInfo objectForKey:className];
-						if ([pluginType isEqualToString:kCogContainer]) {
-							[self setupContainer:className];
-						}
-						else if ([pluginType isEqualToString:kCogDecoder]) {
-							[self setupDecoder:className];
-						}
-						else if ([pluginType isEqualToString:kCogMetadataReader]) {
-							[self setupMetadataReader:className];
-						}
-						else if ([pluginType isEqualToString:kCogPropertiesReader]) {
-							[self setupPropertiesReader:className];
-						}
-						else if ([pluginType isEqualToString:kCogSource]) {
-							[self setupSource:className];
-						}
-						else {
-							NSLog(@"Unknown plugin type!!");
-						}
-					}
-				}
-			}
+			[b load];
 		}
 	}
 }
@@ -356,13 +355,3 @@ static PluginController *sharedPluginController = nil;
 
 @end
 
-//This is called when the framework is loaded.
-void __attribute__ ((constructor)) InitializePlugins(void) {
-	static BOOL wasInitialized = NO; 
-	if (!wasInitialized) {
-		// safety in case we get called twice.
-		[[PluginController sharedPluginController] setup];
-
-		wasInitialized = YES;
-	}
-}

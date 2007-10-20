@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1727BFD10C1C94FD0084363D /* QuicktimePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1727BFD00C1C94FD0084363D /* QuicktimePlugin.m */; };
 		1727BFDD0C1C95350084363D /* QuicktimeDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1727BFDC0C1C95350084363D /* QuicktimeDecoder.m */; };
 		1727C0670C1C97A00084363D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1727C0660C1C97A00084363D /* AudioToolbox.framework */; };
 		1727C0BE0C1C9E180084363D /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1727C0BD0C1C9E180084363D /* QuickTime.framework */; };
@@ -20,8 +19,6 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1727BFCE0C1C94E90084363D /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		1727BFCF0C1C94FD0084363D /* QuicktimePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuicktimePlugin.h; sourceTree = "<group>"; };
-		1727BFD00C1C94FD0084363D /* QuicktimePlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuicktimePlugin.m; sourceTree = "<group>"; };
 		1727BFDB0C1C95350084363D /* QuicktimeDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuicktimeDecoder.h; sourceTree = "<group>"; };
 		1727BFDC0C1C95350084363D /* QuicktimeDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuicktimeDecoder.m; sourceTree = "<group>"; };
 		1727C0660C1C97A00084363D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -81,8 +78,6 @@
 			isa = PBXGroup;
 			children = (
 				1727BFCE0C1C94E90084363D /* Plugin.h */,
-				1727BFCF0C1C94FD0084363D /* QuicktimePlugin.h */,
-				1727BFD00C1C94FD0084363D /* QuicktimePlugin.m */,
 				1727BFDB0C1C95350084363D /* QuicktimeDecoder.h */,
 				1727BFDC0C1C95350084363D /* QuicktimeDecoder.m */,
 			);
@@ -177,7 +172,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1727BFD10C1C94FD0084363D /* QuicktimePlugin.m in Sources */,
 				1727BFDD0C1C95350084363D /* QuicktimeDecoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

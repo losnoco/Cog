@@ -14,8 +14,6 @@
 		17C8F3440CBED3BE008D969D /* GameDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F33E0CBED3BE008D969D /* GameDecoder.m */; };
 		17C8F3480CBED3C7008D969D /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3470CBED3C7008D969D /* Plugin.h */; };
 		17C8F3C30CBED649008D969D /* GME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; };
-		17C8F3E00CBEDBE0008D969D /* GamePlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3DE0CBEDBE0008D969D /* GamePlugin.h */; };
-		17C8F3E10CBEDBE0008D969D /* GamePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F3DF0CBEDBE0008D969D /* GamePlugin.m */; };
 		17DA34BA0CC052030003F6B2 /* GameMetadataReader.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17DA34B80CC052030003F6B2 /* GameMetadataReader.h */; };
 		17DA34BB0CC052030003F6B2 /* GameMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA34B90CC052030003F6B2 /* GameMetadataReader.m */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
@@ -50,7 +48,6 @@
 				17C8F3410CBED3BE008D969D /* GameContainer.h in CopyFiles */,
 				17C8F3430CBED3BE008D969D /* GameDecoder.h in CopyFiles */,
 				17C8F3480CBED3C7008D969D /* Plugin.h in CopyFiles */,
-				17C8F3E00CBEDBE0008D969D /* GamePlugin.h in CopyFiles */,
 				17DA34BA0CC052030003F6B2 /* GameMetadataReader.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -68,8 +65,6 @@
 		17C8F33D0CBED3BE008D969D /* GameDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GameDecoder.h; sourceTree = "<group>"; };
 		17C8F33E0CBED3BE008D969D /* GameDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = GameDecoder.m; sourceTree = "<group>"; };
 		17C8F3470CBED3C7008D969D /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17C8F3DE0CBEDBE0008D969D /* GamePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePlugin.h; sourceTree = "<group>"; };
-		17C8F3DF0CBEDBE0008D969D /* GamePlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePlugin.m; sourceTree = "<group>"; };
 		17DA34B80CC052030003F6B2 /* GameMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameMetadataReader.h; sourceTree = "<group>"; };
 		17DA34B90CC052030003F6B2 /* GameMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameMetadataReader.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* GME_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GME_Prefix.pch; sourceTree = "<group>"; };
@@ -125,8 +120,6 @@
 			isa = PBXGroup;
 			children = (
 				17C8F3470CBED3C7008D969D /* Plugin.h */,
-				17C8F3DE0CBEDBE0008D969D /* GamePlugin.h */,
-				17C8F3DF0CBEDBE0008D969D /* GamePlugin.m */,
 				17C8F33B0CBED3BE008D969D /* GameContainer.h */,
 				17C8F33C0CBED3BE008D969D /* GameContainer.m */,
 				17C8F33D0CBED3BE008D969D /* GameDecoder.h */,
@@ -252,7 +245,6 @@
 			files = (
 				17C8F3420CBED3BE008D969D /* GameContainer.m in Sources */,
 				17C8F3440CBED3BE008D969D /* GameDecoder.m in Sources */,
-				17C8F3E10CBEDBE0008D969D /* GamePlugin.m in Sources */,
 				17DA34BB0CC052030003F6B2 /* GameMetadataReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

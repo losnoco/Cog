@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17ADB3FF0B979A4600257CA2 /* FileSourcePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB3FE0B979A4600257CA2 /* FileSourcePlugin.m */; };
 		17ADB41A0B979AEB00257CA2 /* FileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB4190B979AEB00257CA2 /* FileSource.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -16,8 +15,6 @@
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		17ADB3FD0B979A4600257CA2 /* FileSourcePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSourcePlugin.h; sourceTree = "<group>"; };
-		17ADB3FE0B979A4600257CA2 /* FileSourcePlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSourcePlugin.m; sourceTree = "<group>"; };
 		17ADB4080B979A8A00257CA2 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		17ADB4180B979AEB00257CA2 /* FileSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSource.h; sourceTree = "<group>"; };
 		17ADB4190B979AEB00257CA2 /* FileSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSource.m; sourceTree = "<group>"; };
@@ -72,8 +69,6 @@
 			isa = PBXGroup;
 			children = (
 				17ADB4080B979A8A00257CA2 /* Plugin.h */,
-				17ADB3FD0B979A4600257CA2 /* FileSourcePlugin.h */,
-				17ADB3FE0B979A4600257CA2 /* FileSourcePlugin.m */,
 				17ADB4180B979AEB00257CA2 /* FileSource.h */,
 				17ADB4190B979AEB00257CA2 /* FileSource.m */,
 			);
@@ -165,7 +160,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17ADB3FF0B979A4600257CA2 /* FileSourcePlugin.m in Sources */,
 				17ADB41A0B979AEB00257CA2 /* FileSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

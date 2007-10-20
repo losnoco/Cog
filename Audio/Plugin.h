@@ -1,19 +1,4 @@
-/*
-	Are defines really appropriate for this?
-	We want something easily insertable into a dictionary.
-	Maybe should extern these, and shove the instances in PluginController.m, but will that cause linking problems?
-*/
-
-#define	kCogSource 				@"CogSource"
-#define kCogContainer 			@"CogContainer"
-#define kCogDecoder 			@"CogDecoder"
-#define kCogMetadataReader 		@"CogMetadataReader"
-#define kCogPropertiesReader 	@"CogPropertiesReader"
-
-@protocol CogPlugin <NSObject>
-//Dictionary containing classname/plugintype pairs. ex: @"VorbisDecoder": kCogDecoder, @"VorbisPropertiesRaeder": kCogPropertiesReader
-+ (NSDictionary *)pluginInfo;
-@end
+//Plugins! HOORAY!
 
 @protocol CogSource <NSObject>
 + (NSArray *)schemes; //http, file, etc
@@ -63,11 +48,20 @@
 @end
 
 @protocol CogPluginController <NSObject>
+- (NSDictionary *)sources;
+- (NSDictionary *)containers;
+- (NSDictionary *)metadataReaders;
+
+- (NSDictionary *)propertiesReadersByExtension;
+- (NSDictionary *)propertiesReadersByMimeType;
+
+- (NSDictionary *)decodersByExtension;
+- (NSDictionary *)decodersByMimeType;
+
 - (id<CogSource>) audioSourceForURL:(NSURL *)url;
 - (NSArray *) urlsForContainerURL:(NSURL *)url;
 - (NSDictionary *) metadataForURL:(NSURL *)url;
 - (NSDictionary *) propertiesForURL:(NSURL *)url;
-
 - (id<CogDecoder>) audioDecoderForSource:(id<CogSource>)source;
 @end
 

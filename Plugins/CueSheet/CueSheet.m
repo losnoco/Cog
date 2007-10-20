@@ -172,6 +172,31 @@
 				track = @"01";
 			}
 
+			NSFileManager *fm = [NSFileManager defaultManager];
+			NSURL *url = [self urlForPath:path relativeTo:filename];
+			if ([url isFileURL] && ![fm fileExistsAtPath:[url absoluteString]] && ![[[url absoluteString] pathExtension] compare:@"wav"]) {
+				//creator fogot to edit cue... happens
+				NSString* originalURL = [url path];
+				
+				NSString *ext; 
+				NSEnumerator *e = [[NSClassFromString(@"PluginController") decodersByExtension] objectEnumerator];
+				while (ext = [e nextObject])
+				{
+					NSMutableString* newURL = [originalURL mutableCopy];
+					[newURL replaceOccurrencesOfString:@"wav" withString:ext options:(NSAnchoredSearch | NSBackwardsSearch) range:NSMakeRange(0, [newURL length])];
+					
+					NSLog(@"Trying: %@", newURL);
+					
+					if ([fm fileExistsAtPath:newURL])
+					{
+						url = [NSURL fileURLWithPath:newURL];
+						[newURL release];
+
+						break;
+					}
+					[newURL release];
+				}
+			}
 			//Need to add basePath, and convert to URL
 			[entries addObject:
 								[CueSheetTrack trackWithURL:[self urlForPath:path relativeTo:filename]

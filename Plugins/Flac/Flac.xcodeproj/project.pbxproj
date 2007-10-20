@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		177FCFC20B90C9960011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFC10B90C9960011C3B5 /* Plugin.h */; };
-		17ADB1B40B9793A600257CA2 /* FlacPlugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17ADB1B20B9793A600257CA2 /* FlacPlugin.h */; };
-		17ADB1B50B9793A600257CA2 /* FlacPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB1B30B9793A600257CA2 /* FlacPlugin.m */; };
 		17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93F040B8FF67A008627D6 /* FlacDecoder.m */; };
 		17F5643C0C3BDC820019975C /* FLAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; };
 		17F5643F0C3BDC840019975C /* FLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; };
@@ -42,7 +40,6 @@
 			files = (
 				17F5643F0C3BDC840019975C /* FLAC.framework in CopyFiles */,
 				177FCFC20B90C9960011C3B5 /* Plugin.h in CopyFiles */,
-				17ADB1B40B9793A600257CA2 /* FlacPlugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,8 +50,6 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		177FCFC10B90C9960011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17ADB1B20B9793A600257CA2 /* FlacPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FlacPlugin.h; sourceTree = "<group>"; };
-		17ADB1B30B9793A600257CA2 /* FlacPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FlacPlugin.m; sourceTree = "<group>"; };
 		17C93F030B8FF67A008627D6 /* FlacDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FlacDecoder.h; sourceTree = "<group>"; };
 		17C93F040B8FF67A008627D6 /* FlacDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FlacDecoder.m; sourceTree = "<group>"; };
 		17F5641A0C3BDC460019975C /* flac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = flac.xcodeproj; path = ../../Frameworks/FLAC/flac.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -110,8 +105,6 @@
 			isa = PBXGroup;
 			children = (
 				177FCFC10B90C9960011C3B5 /* Plugin.h */,
-				17ADB1B20B9793A600257CA2 /* FlacPlugin.h */,
-				17ADB1B30B9793A600257CA2 /* FlacPlugin.m */,
 				17C93F030B8FF67A008627D6 /* FlacDecoder.h */,
 				17C93F040B8FF67A008627D6 /* FlacDecoder.m */,
 			);
@@ -231,7 +224,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */,
-				17ADB1B50B9793A600257CA2 /* FlacPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

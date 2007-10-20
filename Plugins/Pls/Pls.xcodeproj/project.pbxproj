@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		8E8D41980CBB0C9F00135C1B /* PlsPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D41970CBB0C9F00135C1B /* PlsPlugin.m */; };
 		8E8D41A10CBB0CA700135C1B /* PlsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D41A00CBB0CA700135C1B /* PlsContainer.m */; };
 /* End PBXBuildFile section */
 
@@ -21,8 +20,6 @@
 		32DBCF630370AF2F00C91783 /* Pls_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pls_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Pls.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Pls.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E8D41960CBB0C9F00135C1B /* PlsPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlsPlugin.h; sourceTree = "<group>"; };
-		8E8D41970CBB0C9F00135C1B /* PlsPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlsPlugin.m; sourceTree = "<group>"; };
 		8E8D419F0CBB0CA700135C1B /* PlsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlsContainer.h; sourceTree = "<group>"; };
 		8E8D41A00CBB0CA700135C1B /* PlsContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlsContainer.m; sourceTree = "<group>"; };
 		8E8D41A50CBB0CBE00135C1B /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
@@ -75,8 +72,6 @@
 			isa = PBXGroup;
 			children = (
 				8E8D41A50CBB0CBE00135C1B /* Plugin.h */,
-				8E8D41960CBB0C9F00135C1B /* PlsPlugin.h */,
-				8E8D41970CBB0C9F00135C1B /* PlsPlugin.m */,
 				8E8D419F0CBB0CA700135C1B /* PlsContainer.h */,
 				8E8D41A00CBB0CA700135C1B /* PlsContainer.m */,
 			);
@@ -169,7 +164,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E8D41980CBB0C9F00135C1B /* PlsPlugin.m in Sources */,
 				8E8D41A10CBB0CA700135C1B /* PlsContainer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

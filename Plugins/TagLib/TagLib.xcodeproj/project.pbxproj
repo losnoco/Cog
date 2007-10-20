@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		177FCFA50B90C9600011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFA40B90C9600011C3B5 /* Plugin.h */; };
-		17C93FBC0B900538008627D6 /* TagLibPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93FBB0B900538008627D6 /* TagLibPlugin.m */; };
 		17C93FC30B90056C008627D6 /* TagLibMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93FC20B90056C008627D6 /* TagLibMetadataReader.m */; };
 		17F563B40C3BDBB30019975C /* TagLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563A60C3BDB8F0019975C /* TagLib.framework */; };
 		17F563B60C3BDBB50019975C /* TagLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563A60C3BDB8F0019975C /* TagLib.framework */; };
@@ -51,8 +50,6 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		177FCFA40B90C9600011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17C93FBA0B900538008627D6 /* TagLibPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TagLibPlugin.h; sourceTree = "<group>"; };
-		17C93FBB0B900538008627D6 /* TagLibPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TagLibPlugin.m; sourceTree = "<group>"; };
 		17C93FC10B90056C008627D6 /* TagLibMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagLibMetadataReader.h; sourceTree = "<group>"; };
 		17C93FC20B90056C008627D6 /* TagLibMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagLibMetadataReader.m; sourceTree = "<group>"; };
 		17F563A00C3BDB8F0019975C /* TagLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TagLib.xcodeproj; path = ../../Frameworks/TagLib/TagLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -108,8 +105,6 @@
 			isa = PBXGroup;
 			children = (
 				177FCFA40B90C9600011C3B5 /* Plugin.h */,
-				17C93FBA0B900538008627D6 /* TagLibPlugin.h */,
-				17C93FBB0B900538008627D6 /* TagLibPlugin.m */,
 				17C93FC10B90056C008627D6 /* TagLibMetadataReader.h */,
 				17C93FC20B90056C008627D6 /* TagLibMetadataReader.m */,
 			);
@@ -228,7 +223,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17C93FBC0B900538008627D6 /* TagLibPlugin.m in Sources */,
 				17C93FC30B90056C008627D6 /* TagLibMetadataReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

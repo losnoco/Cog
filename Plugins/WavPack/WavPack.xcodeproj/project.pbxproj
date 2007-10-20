@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1745C4DA0B90C42500A6768C /* WavPackDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1745C4D60B90C42500A6768C /* WavPackDecoder.m */; };
-		17ADB2630B97946600257CA2 /* WavPackPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB2610B97946600257CA2 /* WavPackPlugin.m */; };
 		17F562D80C3BDA6C0019975C /* WavPack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562CA0C3BDA5A0019975C /* WavPack.framework */; };
 		17F562DB0C3BDA6E0019975C /* WavPack.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F562CA0C3BDA5A0019975C /* WavPack.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -51,8 +50,6 @@
 		1745C4D50B90C42500A6768C /* WavPackDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WavPackDecoder.h; sourceTree = "<group>"; };
 		1745C4D60B90C42500A6768C /* WavPackDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WavPackDecoder.m; sourceTree = "<group>"; };
 		177FCF940B90C9450011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17ADB2600B97946600257CA2 /* WavPackPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WavPackPlugin.h; sourceTree = "<group>"; };
-		17ADB2610B97946600257CA2 /* WavPackPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WavPackPlugin.m; sourceTree = "<group>"; };
 		17F562C20C3BDA5A0019975C /* WavPack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WavPack.xcodeproj; path = ../../Frameworks/WavPack/WavPack.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* WavPack_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WavPack_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* WavPack.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WavPack.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,8 +103,6 @@
 			isa = PBXGroup;
 			children = (
 				177FCF940B90C9450011C3B5 /* Plugin.h */,
-				17ADB2600B97946600257CA2 /* WavPackPlugin.h */,
-				17ADB2610B97946600257CA2 /* WavPackPlugin.m */,
 				1745C4D50B90C42500A6768C /* WavPackDecoder.h */,
 				1745C4D60B90C42500A6768C /* WavPackDecoder.m */,
 			);
@@ -227,7 +222,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1745C4DA0B90C42500A6768C /* WavPackDecoder.m in Sources */,
-				17ADB2630B97946600257CA2 /* WavPackPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
