@@ -43,7 +43,6 @@
 			break;
 		}
 	}
-	NSLog(@"Fragment: %@", fragment);
 
 	if (![unixPath hasPrefix:@"/"]) {
 		//Only relative paths would have windows backslashes.
@@ -63,29 +62,26 @@
 
 - (void)parseFile:(NSString *)filename
 {
-       NSStringEncoding encoding;
+	NSStringEncoding encoding;
 	NSError *error = nil;
-       NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
+	NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
     if (error) {
-               NSLog(@"Trying UTF8");
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
     }
     if (error) {
-               NSLog(@"Trying windows CP1251");
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSWindowsCP1251StringEncoding error:&error];
-       }
+	}
     if (error) {
-               NSLog(@"Trying latin1");
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSISOLatin1StringEncoding error:&error];
-       }
+	}
 	if (error || !contents) {
 		NSLog(@"Could not open file...%@ %@ %@", filename, contents, error);
 		return;
 	}
-
+	
 	NSMutableArray *entries = [[NSMutableArray alloc] init];
 
 	NSString *track = nil;
@@ -174,20 +170,19 @@
 				track = @"01";
 			}
 
+			//Sometimes cue sheets will contain .wav tracks when they were actually reencoded.
 			NSFileManager *fm = [NSFileManager defaultManager];
 			NSURL *url = [self urlForPath:path relativeTo:filename];
-			if ([url isFileURL] && ![fm fileExistsAtPath:[url absoluteString]] && ![[[url absoluteString] pathExtension] compare:@"wav"]) {
+			if ([url isFileURL] && ![fm fileExistsAtPath:[url absoluteString]] && [[[url absoluteString] pathExtension] isEqualToString:@"wav"]) {
 				//creator fogot to edit cue... happens
 				NSString* originalURL = [url path];
 				
 				NSString *ext; 
-				NSEnumerator *e = [[[NSClassFromString(@"PluginController") sharedPluginController] decodersByExtension] objectEnumerator];
+				NSEnumerator *e = [[[[NSClassFromString(@"PluginController") sharedPluginController] decodersByExtension] allKeys] objectEnumerator];
 				while (ext = [e nextObject])
 				{
 					NSMutableString* newURL = [originalURL mutableCopy];
 					[newURL replaceOccurrencesOfString:@"wav" withString:ext options:(NSAnchoredSearch | NSBackwardsSearch) range:NSMakeRange(0, [newURL length])];
-					
-					NSLog(@"Trying: %@", newURL);
 					
 					if ([fm fileExistsAtPath:newURL])
 					{
@@ -201,7 +196,7 @@
 			}
 			//Need to add basePath, and convert to URL
 			[entries addObject:
-								[CueSheetTrack trackWithURL:[self urlForPath:path relativeTo:filename]
+								[CueSheetTrack trackWithURL:url
 															 track: track
 															 time: seconds 
 															 artist:artist 
