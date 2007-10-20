@@ -6,7 +6,7 @@
 //Start of singleton-related stuff.
 static PluginController *sharedPluginController = nil;
 
-+ (PluginController*)sharedPluginController
++ (id<CogPluginController>)sharedPluginController
 {
 	@synchronized(self) {
 		if (sharedPluginController == nil) {
@@ -68,6 +68,8 @@ static PluginController *sharedPluginController = nil;
 
 		decodersByExtension = [[NSMutableDictionary alloc] init];
 		decodersByMimeType = [[NSMutableDictionary alloc] init];
+
+		[self setup];
 	}
 	
 	return self;

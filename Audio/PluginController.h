@@ -20,8 +20,6 @@
 	BOOL isSetup;
 }
 
-+ (PluginController *)sharedPluginController; //Use this to get the instance.
-
 - (void)setup;
 - (void)printPluginInfo;
 

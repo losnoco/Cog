@@ -25,8 +25,6 @@
 		outputLaunched = NO;
 		
 		chainQueue = [[NSMutableArray alloc] init];
-		
-		[[PluginController sharedPluginController] setup];
 	}
 	
 	return self;

@@ -179,7 +179,7 @@
 				NSString* originalURL = [url path];
 				
 				NSString *ext; 
-				NSEnumerator *e = [[NSClassFromString(@"PluginController") decodersByExtension] objectEnumerator];
+				NSEnumerator *e = [[[NSClassFromString(@"PluginController") sharedPluginController] decodersByExtension] objectEnumerator];
 				while (ext = [e nextObject])
 				{
 					NSMutableString* newURL = [originalURL mutableCopy];

@@ -48,6 +48,8 @@
 @end
 
 @protocol CogPluginController <NSObject>
++ (id<CogPluginController>)sharedPluginController;
+
 - (NSDictionary *)sources;
 - (NSDictionary *)containers;
 - (NSDictionary *)metadataReaders;
