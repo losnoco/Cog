@@ -209,45 +209,46 @@
 	[self requestNextStream: nextStreamUserInfo];
 	newChain = [[BufferChain alloc] initWithController:self];
 	
-	BufferChain *lastChain = [chainQueue lastObject];
-	if (lastChain == nil) {
-		lastChain = bufferChain;
-	}
-	
-	if ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]]
-		&& [[nextStream host] isEqualToString:[[lastChain streamURL] host]]
-		&& [[nextStream path] isEqualToString:[[lastChain streamURL] path]])
-	{
-		if ([lastChain setTrack:nextStream] 
-			&& [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format]])
-		{
-			[newChain setStreamURL:nextStream];
-			[newChain setUserInfo:nextStreamUserInfo];
-
-			[self addChainToQueue:newChain];
-			NSLog(@"TRACK SET!!! %@", newChain);
-			//Keep on-playin
-			[newChain release];
-			
-			return NO;
-		}
-	}
-	
-	while (![newChain open:nextStream withOutputFormat:[output format]]) 
-	{
-		if (nextStream == nil)
-		{
-			return YES;
+	@synchronized (chainQueue) {
+		BufferChain *lastChain = [chainQueue lastObject];
+		if (lastChain == nil) {
+			lastChain = bufferChain;
 		}
 		
-		[newChain release];
-		[self requestNextStream: nextStreamUserInfo];
+		if ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]]
+			&& [[nextStream host] isEqualToString:[[lastChain streamURL] host]]
+			&& [[nextStream path] isEqualToString:[[lastChain streamURL] path]])
+		{
+			if ([lastChain setTrack:nextStream] 
+				&& [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format]])
+			{
+				[newChain setStreamURL:nextStream];
+				[newChain setUserInfo:nextStreamUserInfo];
 
-		newChain = [[BufferChain alloc] initWithController:self];
+				[self addChainToQueue:newChain];
+				NSLog(@"TRACK SET!!! %@", newChain);
+				//Keep on-playin
+				[newChain release];
+				
+				return NO;
+			}
+		}
+		
+		while (![newChain open:nextStream withOutputFormat:[output format]]) 
+		{
+			if (nextStream == nil)
+			{
+				return YES;
+			}
+			
+			[newChain release];
+			[self requestNextStream: nextStreamUserInfo];
+
+			newChain = [[BufferChain alloc] initWithController:self];
+		}
+		
+		[self addChainToQueue:newChain];
 	}
-	
-	[self addChainToQueue:newChain];
-
 	[newChain release];
 	
 	return YES;
@@ -255,20 +256,20 @@
 
 - (void)endOfInputPlayed
 {
-	if ([chainQueue count] <= 0)
-	{
-		//End of playlist
-		[self stop];
+	@synchronized(chainQueue) {
+		if ([chainQueue count] <= 0)
+		{
+			//End of playlist
+			[self stop];
+			
+			[bufferChain release];
+			bufferChain = nil;
+			
+			return;
+		}
 		
 		[bufferChain release];
-		bufferChain = nil;
-		
-		return;
-	}
 	
-	[bufferChain release];
-	
-	@synchronized(chainQueue) {
 		bufferChain = [chainQueue objectAtIndex:0];
 		[bufferChain retain];
 		

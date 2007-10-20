@@ -51,7 +51,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	converter->callbackBuffer = malloc(amountToWrite);
 
 	amountRead = [converter readData:converter->callbackBuffer amount:amountToWrite];
-	if (amountRead == 0)
+	if (amountRead == 0 && [converter endOfStream] == NO)
 	{
 		ioData->mBuffers[0].mDataByteSize = 0; 
 		*ioNumberDataPackets = 0;
@@ -69,21 +69,11 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 
 -(void)process
 {
-	char writeBuf[CHUNK_SIZE];
-	int amountConverted;
+	char writeBuf[CHUNK_SIZE];	
 	
-	
-	while ([self shouldContinue] == YES) //Need to watch EOS somehow....
+	while ([self shouldContinue] == YES && [self endOfStream] == NO) //Need to watch EOS somehow....
 	{
-		amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
-
-//		NSLog(@"Amount converted %@: %i %i", self, amountConverted, [self endOfStream]);
-		if (amountConverted == 0 && [self endOfStream] == YES)
-		{
-//			NSLog(@"END OF STREAM FOR ZINE DINNER!!!!");
-			return;
-		}
-
+		int amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
 		[self writeData:writeBuf amount:amountConverted];
 	}
 }
@@ -101,12 +91,16 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	ioData.mNumberBuffers = 1;
 	
 	err = AudioConverterFillComplexBuffer(converter, ACInputProc, self, &ioNumberFrames, &ioData, NULL);
+	int amountRead = ioData.mBuffers[0].mDataByteSize;
 	if (err == kAudioConverterErr_InvalidInputSize) //It returns insz at EOS at times...so run it again to make sure all data is converted
 	{
-		return [self convert:dest amount:amount];
+		NSLog(@"INSIZE: %i", amountRead);
+		amountRead += [self convert:dest + amountRead amount:amount - amountRead];
 	}
+	
+	NSLog(@"Amount read: %i/%i", amountRead, amount);
 
-	return ioData.mBuffers[0].mDataByteSize;
+	return amountRead;
 }
 
 - (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf
