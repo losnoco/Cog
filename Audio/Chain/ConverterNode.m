@@ -98,8 +98,6 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 		amountRead += [self convert:dest + amountRead amount:amount - amountRead];
 	}
 	
-	NSLog(@"Amount read: %i/%i", amountRead, amount);
-
 	return amountRead;
 }
 

@@ -68,11 +68,27 @@
 	
 	NSString *filename = [url path];
 	
+	NSStringEncoding encoding;
 	NSError *error = nil;
-	NSString *contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
+	NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
+    if (error) {
+		NSLog(@"Trying UTF8");
+        error = nil;
+        contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
+    }
+    if (error) {
+		NSLog(@"Trying windows CP1251");
+        error = nil;
+        contents = [NSString stringWithContentsOfFile:filename encoding:NSWindowsCP1251StringEncoding error:&error];
+	}
+    if (error) {
+		NSLog(@"Trying latin1");
+        error = nil;
+        contents = [NSString stringWithContentsOfFile:filename encoding:NSISOLatin1StringEncoding error:&error];
+	}
 	if (error || !contents) {
-		NSLog(@"Could not open file...%@ %@", contents, error);
-		return NO;
+		NSLog(@"Could not open file...%@ %@ %@", filename, contents, error);
+		return nil;
 	}
 	
 	NSString *entry;
