@@ -64,12 +64,15 @@
 	bytesPerFrame = (bitsPerSample/8) * channels;
 	bytesPerSecond = (int)(bytesPerFrame * sampleRate);
 	
-	if ([apl endBlock] > [apl startBlock]) trackEnd = ([apl endBlock] / sampleRate) * 1000.0;
-	else trackEnd = [[properties objectForKey:@"length"] doubleValue];
+	if ([apl endBlock] > [apl startBlock])
+		trackEnd = ([apl endBlock] / sampleRate) * 1000.0;
+	else 
+		trackEnd = [[properties objectForKey:@"length"] doubleValue];
+		
 	trackStart = ([apl startBlock]/sampleRate) * 1000.0;
 	trackLength = trackEnd - trackStart;
 	
-	[decoder seekToTime: trackStart];
+	[self seekToTime: 0.0];
 	
 	//Note: Should register for observations of the decoder, but laziness consumes all.
 	[self willChangeValueForKey:@"properties"];
@@ -94,41 +97,6 @@
 	}
 }
 
-#if 0
-- (BOOL)setTrack_1111:(NSURL *)url
-{
-	// see if next apl is next track...
-	if ([[url fragment] intValue] == [[track track] intValue] + 1) {
-		NSArray *tracks = [cuesheet tracks];
-		
-		int i;
-		for (i = 0; i < [tracks count]; i++) {
-			if ([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]){
-				[track release];
-				track = [tracks objectAtIndex:i];
-				[track retain];
-				
-				CueSheetTrack *nextTrack = nil;
-				if (i + 1 < [tracks count]) {
-					nextTrack = [tracks objectAtIndex:i + 1];
-				}
-				
-				if (nextTrack && [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]) {
-					trackEnd = [nextTrack time];
-				}
-				else {
-					trackEnd = [[[decoder properties] objectForKey:@"length"] doubleValue]/1000.0;
-				}
-				
-				NSLog(@"CHANGING TRACK!");
-				return YES;
-			}
-		}
-	}
-	
-	return NO;
-}
-#endif
 
 - (double)seekToTime:(double)time //milliseconds
 {

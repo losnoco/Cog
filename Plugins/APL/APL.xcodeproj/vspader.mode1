@@ -263,6 +263,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>4</integer>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
@@ -304,7 +306,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Info.plist</string>
+								<string>APLDecoder.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -312,23 +314,23 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Info.plist</string>
+										<string>APLDecoder.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>171D098A0CCA608C009FF3AB</string>
+										<string>171D09A90CCA61C5009FF3AB</string>
 										<key>history</key>
 										<array>
 											<string>171D095A0CCA608C009FF3AB</string>
 											<string>171D095B0CCA608C009FF3AB</string>
 											<string>171D095C0CCA608C009FF3AB</string>
 											<string>171D095D0CCA608C009FF3AB</string>
-											<string>171D095E0CCA608C009FF3AB</string>
 											<string>171D095F0CCA608C009FF3AB</string>
 											<string>171D09600CCA608C009FF3AB</string>
 											<string>171D09610CCA608C009FF3AB</string>
 											<string>171D09620CCA608C009FF3AB</string>
-											<string>171D09630CCA608C009FF3AB</string>
+											<string>171D099E0CCA616C009FF3AB</string>
+											<string>171D099F0CCA616C009FF3AB</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -336,40 +338,13 @@
 											<string>171D09650CCA608C009FF3AB</string>
 											<string>171D09660CCA608C009FF3AB</string>
 											<string>171D09670CCA608C009FF3AB</string>
-											<string>171D09680CCA608C009FF3AB</string>
 											<string>171D09690CCA608C009FF3AB</string>
-											<string>171D096A0CCA608C009FF3AB</string>
 											<string>171D096B0CCA608C009FF3AB</string>
 											<string>171D096C0CCA608C009FF3AB</string>
-											<string>171D096D0CCA608C009FF3AB</string>
-											<string>171D096E0CCA608C009FF3AB</string>
 											<string>171D096F0CCA608C009FF3AB</string>
-											<string>171D09700CCA608C009FF3AB</string>
-											<string>171D09710CCA608C009FF3AB</string>
 											<string>171D09720CCA608C009FF3AB</string>
 											<string>171D09730CCA608C009FF3AB</string>
-											<string>171D09740CCA608C009FF3AB</string>
-											<string>171D09750CCA608C009FF3AB</string>
-											<string>171D09760CCA608C009FF3AB</string>
-											<string>171D09770CCA608C009FF3AB</string>
-											<string>171D09780CCA608C009FF3AB</string>
-											<string>171D09790CCA608C009FF3AB</string>
-											<string>171D097A0CCA608C009FF3AB</string>
-											<string>171D097B0CCA608C009FF3AB</string>
-											<string>171D097C0CCA608C009FF3AB</string>
-											<string>171D097D0CCA608C009FF3AB</string>
-											<string>171D097E0CCA608C009FF3AB</string>
-											<string>171D097F0CCA608C009FF3AB</string>
-											<string>171D09800CCA608C009FF3AB</string>
-											<string>171D09810CCA608C009FF3AB</string>
-											<string>171D09820CCA608C009FF3AB</string>
-											<string>171D09830CCA608C009FF3AB</string>
-											<string>171D09840CCA608C009FF3AB</string>
-											<string>171D09850CCA608C009FF3AB</string>
-											<string>171D09860CCA608C009FF3AB</string>
-											<string>171D09870CCA608C009FF3AB</string>
-											<string>171D09880CCA608C009FF3AB</string>
-											<string>171D09890CCA608C009FF3AB</string>
+											<string>171D09A00CCA616C009FF3AB</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -427,9 +402,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>171D098B0CCA608C009FF3AB</string>
+				<string>171D09A20CCA616C009FF3AB</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>171D098C0CCA608C009FF3AB</string>
+				<string>171D09A30CCA616C009FF3AB</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -563,7 +538,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>171D094F0CCA606A009FF3AB</string>
 		<string>/Users/vspader/Projects/Cog/Plugins/Apl/APL.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

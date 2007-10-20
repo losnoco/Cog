@@ -14,6 +14,7 @@
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
+		171D09280CCA5FF0009FF3AB /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 171D09270CCA5FE1009FF3AB /* APL.bundle */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
@@ -131,6 +132,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		171D09260CCA5FE1009FF3AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 171D09220CCA5FE1009FF3AB /* APL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 99B989F40CC7E10400C256E9 /* APL.bundle */;
+			remoteInfo = "APL Plugin";
+		};
+		171D09410CCA6027009FF3AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 171D09220CCA5FE1009FF3AB /* APL.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 99B989F30CC7E10400C256E9 /* APL Plugin */;
+			remoteInfo = "APL Plugin";
+		};
 		17C808780C3BD167005707C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C808710C3BD167005707C4 /* FileSource.xcodeproj */;
@@ -392,6 +407,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				171D09280CCA5FF0009FF3AB /* APL.bundle in CopyFiles */,
 				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
 				17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */,
 				17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */,
@@ -440,6 +456,7 @@
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
+		171D09220CCA5FE1009FF3AB /* APL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = APL.xcodeproj; path = Plugins/Apl/APL.xcodeproj; sourceTree = "<group>"; };
 		1743945B0C3DA58A00A52DE9 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
 		1743945C0C3DA59000A52DE9 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
 		1743945D0C3DA59700A52DE9 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Hebrew; path = Hebrew.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
@@ -687,6 +704,14 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
+		171D09230CCA5FE1009FF3AB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				171D09270CCA5FE1009FF3AB /* APL.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		1766C68D0B911DF1004A7AE4 /* AudioScrobbler */ = {
 			isa = PBXGroup;
 			children = (
@@ -850,6 +875,7 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
+				171D09220CCA5FE1009FF3AB /* APL.xcodeproj */,
 				17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */,
 				17C8F3C80CBED663008D969D /* GME.xcodeproj */,
 				17F3BB830CBC565100864489 /* CueSheet.xcodeproj */,
@@ -1206,6 +1232,7 @@
 				17F3BB8B0CBC566200864489 /* PBXTargetDependency */,
 				17C8F44C0CBEDD37008D969D /* PBXTargetDependency */,
 				17C8F7DA0CBEF3F9008D969D /* PBXTargetDependency */,
+				171D09420CCA6027009FF3AB /* PBXTargetDependency */,
 			);
 			name = Cog;
 			productInstallPath = "$(HOME)/Applications";
@@ -1233,6 +1260,10 @@
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 171D09230CCA5FE1009FF3AB /* Products */;
+					ProjectRef = 171D09220CCA5FE1009FF3AB /* APL.xcodeproj */;
+				},
 				{
 					ProductGroup = 17F5612B0C3BD4DC0019975C /* Products */;
 					ProjectRef = 17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */;
@@ -1313,6 +1344,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		171D09270CCA5FE1009FF3AB /* APL.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = APL.bundle;
+			remoteRef = 171D09260CCA5FE1009FF3AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		17C808790C3BD167005707C4 /* FileSource.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -1551,6 +1589,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		171D09420CCA6027009FF3AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "APL Plugin";
+			targetProxy = 171D09410CCA6027009FF3AB /* PBXContainerItemProxy */;
+		};
 		17C8097E0C3BD1F5005707C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Musepack;
