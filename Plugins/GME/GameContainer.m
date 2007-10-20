@@ -15,17 +15,8 @@
 
 + (NSArray *)fileTypes
 {
-	NSMutableArray *types = [NSMutableArray array];
-	gme_type_t const* type = gme_type_list();
-	while(*type)
-	{
-		//We're digging a little deep here, but there seems to be no other choice.
-		[types addObject:[NSString stringWithCString:(*type)->extension_ encoding: NSASCIIStringEncoding]];
-		
-		type++;
-	}
-	
-	return [[types copy] autorelease];
+	//There doesn't seem to be a way to get this list. These are the only multitrack types.
+	return [NSArray arrayWithObjects:@"ay", @"gbs", @"nsf", @"nsfe", @"sap", nil];
 }
 
 + (NSArray *)mimeTypes 
@@ -37,19 +28,13 @@
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
 	if (![url isFileURL]) {
-		return [NSArray array];
+		return nil;
 	}
 	
 	gme_err_t error;
 	Music_Emu *emu;
 	error = gme_open_file([[url path] UTF8String], &emu, 44100);
 	int track_count = gme_track_count(emu);
-	
-	//If there is only one track, we shouldn't append the #
-	if (track_count == 1) {
-		NSLog(@"Track count is 1...%@", url);
-		return [NSArray arrayWithObject:url];
-	}
 	
 	NSMutableArray *tracks = [NSMutableArray array];
 	

@@ -8,7 +8,7 @@
 
 #import "GameMetadataReader.h"
 
-#import "GameContainer.h"
+#import "GameDecoder.h"
 
 #import <GME/gme.h>
 
@@ -16,12 +16,12 @@
 
 + (NSArray *)fileTypes
 {
-	return [GameContainer fileTypes];
+	return [GameDecoder fileTypes];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [GameContainer mimeTypes];
+	return [GameDecoder mimeTypes];
 }
 
 + (NSDictionary *)metadataForURL:(NSURL *)url

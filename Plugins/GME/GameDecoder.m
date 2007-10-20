@@ -7,7 +7,6 @@
 //
 
 #import "GameDecoder.h"
-#import "GameContainer.h"
 
 @implementation GameDecoder
 
@@ -158,12 +157,22 @@ gme_err_t readCallback( void* data, void* out, long count )
 
 + (NSArray *)fileTypes 
 {	
-	return [GameContainer fileTypes];
+	NSMutableArray *types = [NSMutableArray array];
+	gme_type_t const* type = gme_type_list();
+	while(*type)
+	{
+		//We're digging a little deep here, but there seems to be no other choice.
+		[types addObject:[NSString stringWithCString:(*type)->extension_ encoding: NSASCIIStringEncoding]];
+		
+		type++;
+	}
+	
+	return [[types copy] autorelease];
 }
 
 + (NSArray *)mimeTypes 
 {	
-	return [GameContainer fileTypes];
+	return nil;
 }
 
 - (void)setSource:(id<CogSource>)s
