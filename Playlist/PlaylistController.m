@@ -368,7 +368,6 @@
 	{
 		[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
 	}
-	
 }
 
 - (void)resetShuffleList

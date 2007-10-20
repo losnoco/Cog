@@ -18,7 +18,7 @@
 	
 	int column = [self columnAtPoint:local_point];
 
-	if ([theEvent clickCount]==2 && column!=-1) {
+	if ([theEvent clickCount] == 2 && column != -1) {
 
 		// compute whether the clickpoint is a column separator or not
 		BOOL clickedSeperator = NO;

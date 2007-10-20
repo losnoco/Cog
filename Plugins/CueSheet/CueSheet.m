@@ -170,43 +170,16 @@
 				track = @"01";
 			}
 
-			//Sometimes cue sheets will contain .wav tracks when they were actually reencoded.
-			NSFileManager *fm = [NSFileManager defaultManager];
-			NSURL *url = [self urlForPath:path relativeTo:filename];
-			if ([url isFileURL] && ![fm fileExistsAtPath:[url absoluteString]] && [[[url absoluteString] pathExtension] isEqualToString:@"wav"]) {
-				//creator fogot to edit cue... happens
-				NSString* originalURL = [url path];
-				
-				NSString *ext; 
-				NSEnumerator *e = [[[[NSClassFromString(@"PluginController") sharedPluginController] decodersByExtension] allKeys] objectEnumerator];
-				while (ext = [e nextObject])
-				{
-					if ([ext isEqualToString:@"cue"])
-						continue;
-						
-					NSMutableString* newURL = [originalURL mutableCopy];
-					[newURL replaceOccurrencesOfString:@"wav" withString:ext options:(NSAnchoredSearch | NSBackwardsSearch) range:NSMakeRange(0, [newURL length])];
-					
-					if ([fm fileExistsAtPath:newURL])
-					{
-						url = [NSURL fileURLWithPath:newURL];
-						[newURL release];
-
-						break;
-					}
-					[newURL release];
-				}
-			}
 			//Need to add basePath, and convert to URL
 			[entries addObject:
-								[CueSheetTrack trackWithURL:url
-															 track: track
-															 time: seconds 
-															 artist:artist 
-															 album:album 
-															 title:title
-															 genre:genre
-															 year:year]];
+								[CueSheetTrack trackWithURL:[self urlForPath:path relativeTo:filename];
+															track: track
+															time: seconds 
+															artist:artist 
+															album:album 
+															title:title
+															genre:genre
+															year:year]];
 			trackAdded = YES;
 		}
 		else if ([command isEqualToString:@"PERFORMER"])
