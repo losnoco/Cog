@@ -172,7 +172,7 @@
 
 			//Need to add basePath, and convert to URL
 			[entries addObject:
-								[CueSheetTrack trackWithURL:[self urlForPath:path relativeTo:filename];
+								[CueSheetTrack trackWithURL:[self urlForPath:path relativeTo:filename]
 															track: track
 															time: seconds 
 															artist:artist 
