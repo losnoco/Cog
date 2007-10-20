@@ -9,6 +9,8 @@
 #import "CueSheet.h"
 #import "CueSheetTrack.h"
 
+#import "Plugin.h"
+
 @implementation CueSheet
 
 + (id)cueSheetWithFile:(NSString *)filename
