@@ -202,14 +202,12 @@
 	urlEnumerator = [sortedURLs objectEnumerator];
 	while (url = [urlEnumerator nextObject])
 	{
-		//File url
-		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]] && ([url fragment] == nil)) {
-			if ([url isFileURL] ) {
-				[containedURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
+		//Container vs non-container url
+		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]]) {
+			[containedURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
 
-				//Make sure the container isn't added twice.
-				[uniqueURLs addObjectsFromArray:containedURLs];
-			}
+			//Make sure the container isn't added twice.
+			[uniqueURLs addObjectsFromArray:containedURLs];
 		}
 		else
 		{
