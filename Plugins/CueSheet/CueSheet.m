@@ -181,6 +181,9 @@
 				NSEnumerator *e = [[[[NSClassFromString(@"PluginController") sharedPluginController] decodersByExtension] allKeys] objectEnumerator];
 				while (ext = [e nextObject])
 				{
+					if ([ext isEqualToString:@"cue"])
+						continue;
+						
 					NSMutableString* newURL = [originalURL mutableCopy];
 					[newURL replaceOccurrencesOfString:@"wav" withString:ext options:(NSAnchoredSearch | NSBackwardsSearch) range:NSMakeRange(0, [newURL length])];
 					
