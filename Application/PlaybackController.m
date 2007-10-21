@@ -271,25 +271,9 @@
 - (void)audioPlayer:(AudioPlayer *)player requestNextStream:(id)userInfo
 {
 	PlaylistEntry *curEntry = (PlaylistEntry *)userInfo;
-	PlaylistEntry *pe;
+	PlaylistEntry *pe = [playlistController getNextEntry:curEntry];
 
-	if ([playlistController shuffle] == YES)
-	{
-		pe = [playlistController entryAtIndex:[[curEntry shuffleIndex] intValue] + 1];
-	}
-	else
-	{
-		pe = [playlistController entryAtIndex:[[curEntry index] intValue] + 1];
-	}
-	
-	if (pe == nil)
-	{
-		[player setNextStream:nil];
-	}
-	else
-	{
-		[player setNextStream:[pe url] withUserInfo:pe];
-	}
+	[player setNextStream:[pe url] withUserInfo:pe];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player streamChanged:(id)userInfo
