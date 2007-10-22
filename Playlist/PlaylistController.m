@@ -161,11 +161,30 @@
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	NSArray *a = [[self arrangedObjects] objectsAtIndexes:indexes]; //Screw 10.3
+	NSLog(@"Removing indexes: %@", indexes);
+	NSLog(@"Current index: %i", [[currentEntry index] intValue]);
 	
-	if ([a containsObject:currentEntry])
+	if ([[currentEntry index] intValue] >= 0 && [indexes containsIndex:[[currentEntry index] intValue]])
 	{
-		[currentEntry setIndex:[NSNumber numberWithInt:-1]];
+		[currentEntry setIndex:[NSNumber numberWithInt:-[[currentEntry index] intValue] - 1]];
+		NSLog(@"Current removed: %i", [[currentEntry index] intValue]);
+	}
+	
+	if ([[currentEntry index] intValue] < 0) //Need to update the negative index
+	{
+		int i = -[[currentEntry index] intValue] - 1;
+		NSLog(@"I is %i", i);
+		int j;
+		for (j = i - 1; j >= 0; j--)
+		{
+			if ([indexes containsIndex:j]) {
+				NSLog(@"Removing 1");
+				i--;
+			}
+		}
+		[currentEntry setIndex: [NSNumber numberWithInt:-i - 1]];
+
+		NSLog(@"UPDATING INDEX: %@", [currentEntry index]);
 	}
 	
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
@@ -290,7 +309,17 @@
 	}
 	else
 	{
-		return [self entryAtIndex:([[pe index] intValue] + 1)];
+		int i;
+		if ([[pe index] intValue] < 0) //Was a current entry, now removed.
+		{
+			i = -[[pe index] intValue] - 1;
+		}
+		else
+		{
+			i = [[pe index] intValue] + 1;
+		}
+		
+		return [self entryAtIndex:i];
 	}
 }
 
@@ -302,15 +331,17 @@
 	}
 	else
 	{
-		//Fix for removing a track, then pressing prev with repeat turned on
-		if ([[pe index] intValue] == -1)
+		int i;
+		if ([[pe index] intValue] < 0) //Was a current entry, now removed.
 		{
-			return [self entryAtIndex:[[pe index] intValue]];
+			i = -[[pe index] intValue] - 2;
 		}
 		else
 		{
-			return [self entryAtIndex:[[pe index] intValue] - 1];
+			i = [[pe index] intValue] - 1;
 		}
+		
+		return [self entryAtIndex:i];
 	}
 }
 
