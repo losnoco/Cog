@@ -262,8 +262,8 @@ int CNNFilter::CalculateDotProductAltiVec(short * pA, short * pB, int nOrder)
 	vector signed short LSQ, LSQ3, v1, v2;
 	vector unsigned char mask1;
 	
-	vector signed int vzero = (vector signed int)(0);
-	vector signed int sum = (vector signed int)(0);
+	vector signed int vzero = vec_splat_s32(0);
+	vector signed int sum = vec_splat_s32(0);
 //	sum = vec_xor(sum,sum);
 	
 	//int nDotProduct;
