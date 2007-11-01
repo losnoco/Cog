@@ -52,7 +52,7 @@
 - (void)awakeFromNib
 {
 	currentVolume = 100.0;
-	[volumeSlider setDoubleValue:pow(10.0, log10(0.5)/4.0)*[volumeSlider maxValue]];
+	[volumeSlider setDoubleValue:pow(10.0, log10(0.5)/4.0)*100];
 	[positionSlider setEnabled:NO];
 }
 	
@@ -108,6 +108,27 @@
 
 	[self playEntry:pe];
 }
+
+
+- (IBAction)playbackButtonClick:(id)sender
+{
+	int clickedSegment = [sender selectedSegment];
+	if (clickedSegment == 0) //Previous
+	{
+		[sender setSelected:YES forSegment:0];
+		[sender setSelected:YES forSegment:1];
+		[self prev:sender];
+	}
+	else if (clickedSegment == 1) //Play
+	{
+		[self playPauseResume:sender];
+	}
+	else if (clickedSegment == 2) //Next
+	{
+		[self next:sender];
+	}
+}
+
 
 - (IBAction)play:(id)sender
 {
@@ -175,21 +196,15 @@
 
 - (void)changePlayButtonImage:(NSString *)name
 {
-	NSImage *img = [NSImage imageNamed:[name stringByAppendingString:@"_gray"]];
-	NSImage *alt = [NSImage imageNamed:[name stringByAppendingString:@"_blue"]];
-	[img retain];
-	[alt retain];
+	NSImage *img = [NSImage imageNamed:name];
+//	[img retain];
+	
 	if (img == nil)
 	{
 		NSLog(@"Error loading image!");
 	}
-	if (alt == nil)
-	{
-		NSLog(@"Error loading alt image...");
-	}
 	
-	[playButton setImage:img];
-	[playButton setAlternateImage:alt];
+	[playbackButtons setImage:img forSegment:1];
 }
 
 - (IBAction)changeVolume:(id)sender
@@ -197,7 +212,7 @@
 	double percent;
 	
 	//Approximated log
-	percent = (float)[sender doubleValue]/[sender maxValue];
+	percent = (float)[sender doubleValue]/100.0;
 	percent = percent * percent * percent * percent;
 
 	//gravitates at the 100% mark
@@ -206,10 +221,10 @@
 	{
 		percent = 0.5;
 		v = pow(10.0, log10(percent)/4.0);
-		[sender setDoubleValue:v*[sender maxValue]];
+		[sender setDoubleValue:v*100.0];
 	}
 	
-	currentVolume = percent * [sender maxValue];
+	currentVolume = percent * 100.0;
 	
 	[audioPlayer  setVolume:currentVolume];
 }
@@ -220,10 +235,10 @@
 	
 	[volumeSlider setDoubleValue:([volumeSlider doubleValue] - 5)];
 	
-	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];
+	percent = (float)[volumeSlider doubleValue]/100.0;
 	percent = percent * percent * percent * percent;
 	
-	currentVolume = percent * [volumeSlider maxValue];
+	currentVolume = percent * 100.0;
 	
 	[audioPlayer  setVolume:currentVolume];
 }

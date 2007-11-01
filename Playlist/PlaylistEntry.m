@@ -12,6 +12,10 @@
 
 @implementation PlaylistEntry
 
++ (void)initialize { 
+	[self setKeys:[NSArray arrayWithObjects:@"artist",@"title",nil] triggerChangeNotificationsForDependentKey:@"display"]; 
+}
+
 - (id)init
 {
 	self = [super init];
@@ -269,6 +273,16 @@
 - (NSNumber *)sampleRate
 {
 	return sampleRate;
+}
+
+- (NSString *)display
+{
+	if ([[self artist] isEqualToString:@""]) {
+			return title;
+	}
+	else {
+		return [NSString stringWithFormat:@"%@ - %@", artist, title];
+	}
 }
 
 - (void)setSeekable:(NSNumber *)s

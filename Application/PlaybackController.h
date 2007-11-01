@@ -19,10 +19,8 @@
 	IBOutlet TrackingSlider *positionSlider;
 	IBOutlet NSSlider *volumeSlider;
 	IBOutlet NSTextField *timeField;
-	IBOutlet NSTextField *lengthField;
-	IBOutlet NSTextField *bitrateField;
 	
-	IBOutlet NSButton *playButton;
+	IBOutlet NSSegmentedControl *playbackButtons;
 	
 	IBOutlet NSArrayController *outputDevices;
 	
@@ -47,6 +45,8 @@
 
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;
+
+- (IBAction)playbackButtonClick:(id)sender;
 
 - (IBAction)play:(id)sender;
 - (IBAction)pause:(id)sender;

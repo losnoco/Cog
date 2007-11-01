@@ -10,12 +10,6 @@
 #import "FileIconCell.h"
 #import "FileTreeDataSource.h"
 
-@interface FileOutlineView (KFTypeSelectTableViewSupport)
-- (void)findPrevious:(id)sender;
-- (void)findNext:(id)sender;
-- (void)kfResetSearch;
-@end
-
 @implementation FileOutlineView
 
 - (void) awakeFromNib
@@ -69,18 +63,6 @@
 			[super keyDown:theEvent];
 	
 			[self kfResetSearch];
-		} else if ((pressedChar == '\031') && // backtab
-			([self respondsToSelector:@selector(findPrevious:)])) {
-			/* KFTypeSelectTableView supports findPrevious; backtab is added to AIOutlineView as a find previous action
-			* if KFTypeSelectTableView is being used via posing */
-			[self findPrevious:self];
-			
-		} else if ((pressedChar == '\t') &&
-				   ([self respondsToSelector:@selector(findNext:)])) {
-			/* KFTypeSelectTableView supports findNext; tab is added to AIOutlineView as a find next action
-			* if KFTypeSelectTableView is being used via posing */
-			[self findNext:self];
-			
 		} else {
 			[super keyDown:theEvent];
 		}

@@ -71,6 +71,8 @@
 - (void)setSampleRate:(NSNumber *)s;
 - (NSNumber *)sampleRate;
 
+- (NSString *)display;
+
 - (void)setSeekable:(NSNumber *)s;
 - (NSNumber *)seekable;
 

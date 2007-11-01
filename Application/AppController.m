@@ -1,5 +1,4 @@
 #import "AppController.h"
-#import "KFTypeSelectTableView.h""
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 #import "PlaylistView.h"
@@ -18,12 +17,7 @@
 	if (self)
 	{
 		[self initDefaults];
-		
-		/* Use KFTypeSelectTableView as our NSTableView base class to allow type-select searching of all
-	     * table and outline views.
-		*/
-		[[KFTypeSelectTableView class] poseAsClass:[NSTableView class]];
-		
+				
 		remote = [[AppleRemote alloc] init];
 		[remote setDelegate: self];
 	}
