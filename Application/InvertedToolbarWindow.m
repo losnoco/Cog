@@ -18,8 +18,6 @@
 
 - (void)toggleToolbarShown:(id)sender
 {
-	NSLog(@"Size: %lf %lf", [self minSize].width, [self minSize].height);
-
 	if (contentHidden) //Show
 	{
 		NSRect newFrame = [self frame];
