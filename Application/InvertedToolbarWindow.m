@@ -20,7 +20,8 @@
 {
 	NSLog(@"Size: %lf %lf", [self minSize].width, [self minSize].height);
 
-	if (contentHidden) {
+	if (contentHidden) //Show
+	{
 		NSRect newFrame = [self frame];
 	
 		newFrame.origin.y -= contentHeight;
@@ -29,8 +30,11 @@
 		[self setFrame:newFrame display:YES animate:YES];
 
 		[self setShowsResizeIndicator:YES];
+
+		[[self contentView] setAutoresizesSubviews:YES];
 	}
-	else {
+	else //Hide
+	{
 		NSRect newFrame = [self frame];
 	
 		contentHeight = [[self contentView] bounds].size.height;
@@ -39,10 +43,10 @@
 		newFrame.size.height -= contentHeight;
 		
 		[self setShowsResizeIndicator:NO];
+
+		[[self contentView] setAutoresizesSubviews:NO];
 		
 		[self setFrame:newFrame display:YES animate:YES];
-		
-		[self setShowsResizeIndicator:NO];
 	}
 	
 	contentHidden = !contentHidden;
