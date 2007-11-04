@@ -97,6 +97,9 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 		NSLog(@"INSIZE: %i", amountRead);
 		amountRead += [self convert:dest + amountRead amount:amount - amountRead];
 	}
+	else if (err != noErr && err != 100) {
+		NSLog(@"Error: %i", err);
+	}
 	
 	return amountRead;
 }

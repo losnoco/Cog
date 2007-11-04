@@ -90,6 +90,8 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
 	int sample, channel;
 	int32_t	audioSample;
 
+	NSLog(@"Bits per sample: %i", frame->header.bits_per_sample);
+
     switch(frame->header.bits_per_sample) {
         case 8:
             // Interleave the audio (no need for byte swapping)
@@ -198,6 +200,11 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	int count;
 	int numread;
 	
+	size -= size % ((bitsPerSample/8) * channels);
+	
+	NSLog(@"Requesting: %i", size);
+	NSLog(@"Overflow? %i", size % ((bitsPerSample/8) * channels));
+	
 	if (bufferAmount == 0)
 	{
 		if (FLAC__stream_decoder_get_state (decoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
@@ -221,9 +228,17 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		memmove((char *)buffer, &((char *)buffer)[count], bufferAmount);
 	
 	if (count < size)
-		numread = [self fillBuffer:(&((char *)buf)[count]) ofSize:(size - count)];
+	{
+		NSLog(@"Recursing: %i/%i", count, size);
+	
+		numread = [self fillBuffer:(((char *)buf) + count) ofSize:(size - count)];
+	}
 	else
+	{
 		numread = 0;
+	}
+	
+	NSLog(@"Done: %i/%i", count + numread, size);
 	
 	return count + numread;
 	
