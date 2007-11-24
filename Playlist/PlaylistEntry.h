@@ -19,7 +19,7 @@
 	NSString *year;
 	NSNumber *track;	
 	
-	NSNumber *length;
+	NSNumber *totalFrames;
 	NSNumber *bitrate;
 	NSNumber *channels;
 	NSNumber *bitsPerSample;
@@ -58,8 +58,8 @@
 - (void)setTrack:(NSNumber *)y;
 - (NSNumber *)track;
 
-- (void)setLength:(NSNumber *)l;
-- (NSNumber *)length;
+- (void)setTotalFrames:(NSNumber *)l;
+- (NSNumber *)totalFrames;
 
 - (void)setBitrate:(NSNumber *) br;
 - (NSNumber *)bitrate;
@@ -72,6 +72,7 @@
 - (NSNumber *)sampleRate;
 
 - (NSString *)display;
+- (NSNumber *)length;
 
 - (void)setSeekable:(NSNumber *)s;
 - (NSNumber *)seekable;

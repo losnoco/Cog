@@ -6,11 +6,11 @@
 //  Copyright 2005 Vincent Spader All rights reserved.
 //
 
+#import "Plugin.h"
+
 #import <Cocoa/Cocoa.h>
 #import "MAC/All.h"
 #import "MAC/MACLib.h"
-
-#import "Plugin.h"
 
 #import "SourceIO.h"
 
@@ -24,7 +24,7 @@
 	int channels;
 	int bitsPerSample;
 	float frequency;
-	double length;
+	long totalFrames;
 }
 
 - (void)setSource:(id<CogSource>)s;

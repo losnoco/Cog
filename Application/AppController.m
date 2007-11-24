@@ -213,6 +213,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	[mainWindow setExcludedFromWindowsMenu:YES];
 	
+	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
+	
 	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
 	[prevButton setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"")];
 	[nextButton setToolTip:NSLocalizedString(@"NextButtonTooltip", @"")];

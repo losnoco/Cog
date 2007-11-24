@@ -110,7 +110,7 @@ escapeForLastFM(NSString *string)
                 escapeForLastFM([pe title]), 
                 escapeForLastFM([pe album]), 
                 @"", // TODO: MusicBrainz support
-                (int)([[pe length] doubleValue]/1000.0),
+                (int)([[pe totalFrames] longValue]/[[pe sampleRate] floatValue]),
                 escapeForLastFM([[pe url] path])
                 ]];
 }

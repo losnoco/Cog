@@ -31,7 +31,7 @@
 	bitsPerSample = decompress->GetInfo(APE_INFO_BITS_PER_SAMPLE);
 	channels = decompress->GetInfo(APE_INFO_CHANNELS);
 
-	length = ((double)decompress->GetInfo(APE_INFO_TOTAL_BLOCKS)*1000.0)/frequency;
+	totalFrames = decompress->GetInfo(APE_INFO_TOTAL_BLOCKS);
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -39,19 +39,18 @@
 	return YES;
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
 	int n;
 	int numread;
-	int blockAlign = decompress->GetInfo(APE_INFO_BLOCK_ALIGN);
-	n = decompress->GetData((char *)buf, size/blockAlign, &numread);
+
+	n = decompress->GetData((char *)buf, frames, &numread);
 	if (n != ERROR_SUCCESS)
 	{
 		NSLog(@"ERROR: %i", n);
 		return 0;
 	}
-	numread *= blockAlign;
-	
+
 	return numread;
 }
 
@@ -69,13 +68,13 @@
 	sourceIO = NULL;
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)frame
 {
 	int r;
 //	DBLog(@"HELLO: %i", int(frequency*((double)milliseconds/1000.0)));
-	r = decompress->Seek(int(frequency*((double)milliseconds/1000.0)));
+	r = decompress->Seek(frame);
 	
-	return milliseconds;
+	return frame;
 }
 
 - (void)setSource:(id<CogSource>)s
@@ -96,7 +95,7 @@
 		[NSNumber numberWithInt:channels],@"channels",
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
-		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host",@"endian",
 		nil];

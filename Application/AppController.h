@@ -20,7 +20,7 @@
     IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaylistLoader *playlistLoader;
 	
-	IBOutlet NSPanel *mainWindow;
+	IBOutlet NSWindow *mainWindow;
 	
 	IBOutlet NSButton *playButton;
 	IBOutlet NSButton *prevButton;
@@ -29,6 +29,8 @@
 	IBOutlet NSButton *fileButton;
 	IBOutlet NSButton *shuffleButton;
 	IBOutlet NSButton *repeatButton;
+
+	IBOutlet NSTextField *totalTimeField;
 	
 	IBOutlet NSDrawer *infoDrawer;
 	IBOutlet NSDrawer *fileDrawer;

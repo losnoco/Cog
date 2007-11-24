@@ -24,8 +24,6 @@
 
 		inputNode = nil;
 		converterNode = nil;
-		
-		converterLaunched = NO;
 	}
 	
 	return self;
@@ -56,13 +54,14 @@
 		return NO;
 	}
 
-	[converterNode setOutputFormat:outputFormat];
-
 	if (![inputNode openWithSource:source])
 		return NO;
 
+	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
+		return NO;
+
 //		return NO;
-	
+
 	return YES;
 }
 
@@ -73,13 +72,11 @@
 
 	if (![inputNode openWithDecoder:[i decoder]])
 		return NO;
-		
+	
+	NSLog(@"Input Properties: %@", [inputNode properties]);
 	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
 		return NO;
 		
-	NSLog(@"Buffer chain made");
-	[converterNode launchThread];
-	
 	return YES;
 }
 
@@ -88,6 +85,7 @@
 	NSLog(@"Properties: %@", [inputNode properties]);
 
 	[inputNode launchThread];
+	[converterNode launchThread];
 }
 
 - (void)setUserInfo:(id)i
@@ -117,7 +115,9 @@
 
 - (void)seek:(double)time
 {
-	[inputNode seek:time];
+	long frame = time * [[[inputNode properties] objectForKey:@"sampleRate"] floatValue];
+
+	[inputNode seek:frame];
 }
 
 - (BOOL)endOfInputReached
@@ -139,11 +139,6 @@
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format
 {
 	NSLog(@"FORMAT DID CHANGE!");
-	if (!converterLaunched) {
-		converterLaunched = YES;
-		[converterNode inputFormatDidChange:format];
-		[converterNode launchThread];
-	}
 }
 
 

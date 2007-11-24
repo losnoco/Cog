@@ -94,6 +94,7 @@ static PluginController *sharedPluginController = nil;
 	NSEnumerator *e = [classNames objectEnumerator];
 	while (className = [e nextObject])
 	{
+		NSLog(@"Class loaded: %@", className);
 		Class bundleClass = NSClassFromString(className);
 		if ([bundleClass conformsToProtocol:@protocol(CogContainer)]) {
 			[self setupContainer:className];

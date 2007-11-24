@@ -29,7 +29,7 @@
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];
 
 	//Need to alter length
-	[properties setObject:[NSNumber numberWithDouble:((trackEnd - [track time]) * 1000)] forKey:@"length"];
+	[properties setObject:[NSNumber numberWithDouble:((trackEnd - [track time]) * 1000)] forKey:@"totalFrames"];
 
 	return [properties autorelease];
 }

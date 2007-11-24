@@ -33,7 +33,7 @@
 	int bitsPerSample;
 	int channels;
 	float frequency;
-	double length;
+	long totalFrames;
 }
 
 @end

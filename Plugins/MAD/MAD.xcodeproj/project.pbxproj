@@ -9,9 +9,7 @@
 /* Begin PBXBuildFile section */
 		170335470B8FC4EE00327265 /* MADDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 170335430B8FC4EE00327265 /* MADDecoder.m */; };
 		177FCFBC0B90C98A0011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFBB0B90C98A0011C3B5 /* Plugin.h */; };
-		17F5648A0C3BDCEB0019975C /* ID3Tag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F564690C3BDCB70019975C /* ID3Tag.framework */; };
 		17F5648B0C3BDCEB0019975C /* MAD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F564600C3BDCAC0019975C /* MAD.framework */; };
-		17F5648E0C3BDCEE0019975C /* ID3Tag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F564690C3BDCB70019975C /* ID3Tag.framework */; };
 		17F5648F0C3BDCEE0019975C /* MAD.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F564600C3BDCAC0019975C /* MAD.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -24,26 +22,12 @@
 			remoteGlobalIDString = 8D07F2C80486CC7A007CD1D0;
 			remoteInfo = MAD;
 		};
-		17F564680C3BDCB70019975C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F564610C3BDCB70019975C /* ID3Tag.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D07F2C80486CC7A007CD1D0;
-			remoteInfo = ID3Tag;
-		};
 		17F564900C3BDCF50019975C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17F564580C3BDCAC0019975C /* MAD.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
 			remoteInfo = MAD;
-		};
-		17F564920C3BDCF50019975C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F564610C3BDCB70019975C /* ID3Tag.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
-			remoteInfo = ID3Tag;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -54,7 +38,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17F5648E0C3BDCEE0019975C /* ID3Tag.framework in CopyFiles */,
 				17F5648F0C3BDCEE0019975C /* MAD.framework in CopyFiles */,
 				177FCFBC0B90C98A0011C3B5 /* Plugin.h in CopyFiles */,
 			);
@@ -70,7 +53,6 @@
 		170335430B8FC4EE00327265 /* MADDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MADDecoder.m; sourceTree = "<group>"; };
 		177FCFBB0B90C98A0011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		17F564580C3BDCAC0019975C /* MAD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MAD.xcodeproj; path = ../../Frameworks/MAD/MAD.xcodeproj; sourceTree = SOURCE_ROOT; };
-		17F564610C3BDCB70019975C /* ID3Tag.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ID3Tag.xcodeproj; path = ../../Frameworks/ID3Tag/ID3Tag.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* MAD_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAD_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* MAD.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MAD.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -82,7 +64,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F5648A0C3BDCEB0019975C /* ID3Tag.framework in Frameworks */,
 				17F5648B0C3BDCEB0019975C /* MAD.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
@@ -133,7 +114,6 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				17F564610C3BDCB70019975C /* ID3Tag.xcodeproj */,
 				17F564580C3BDCAC0019975C /* MAD.xcodeproj */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
@@ -154,14 +134,6 @@
 			isa = PBXGroup;
 			children = (
 				17F564600C3BDCAC0019975C /* MAD.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		17F564620C3BDCB70019975C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				17F564690C3BDCB70019975C /* ID3Tag.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -198,7 +170,6 @@
 			);
 			dependencies = (
 				17F564910C3BDCF50019975C /* PBXTargetDependency */,
-				17F564930C3BDCF50019975C /* PBXTargetDependency */,
 			);
 			name = "MAD Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
@@ -212,19 +183,17 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "MAD" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 089C166AFE841209C02AAC07 /* MAD */;
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 17F564620C3BDCB70019975C /* Products */;
-					ProjectRef = 17F564610C3BDCB70019975C /* ID3Tag.xcodeproj */;
-				},
-				{
 					ProductGroup = 17F564590C3BDCAC0019975C /* Products */;
 					ProjectRef = 17F564580C3BDCAC0019975C /* MAD.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				8D5B49AC048680CD000E48DA /* MAD Plugin */,
 			);
@@ -237,13 +206,6 @@
 			fileType = wrapper.framework;
 			path = MAD.framework;
 			remoteRef = 17F5645F0C3BDCAC0019975C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		17F564690C3BDCB70019975C /* ID3Tag.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ID3Tag.framework;
-			remoteRef = 17F564680C3BDCB70019975C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -274,11 +236,6 @@
 			isa = PBXTargetDependency;
 			name = MAD;
 			targetProxy = 17F564900C3BDCF50019975C /* PBXContainerItemProxy */;
-		};
-		17F564930C3BDCF50019975C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ID3Tag;
-			targetProxy = 17F564920C3BDCF50019975C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

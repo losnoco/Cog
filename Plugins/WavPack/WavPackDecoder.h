@@ -22,7 +22,7 @@
 	int channels;
 	int bitrate;
 	float frequency;
-	double length;
+	long totalFrames;
 }
 
 - (void)setSource:(id<CogSource>)s;

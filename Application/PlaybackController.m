@@ -145,7 +145,7 @@
 	
 	[playlistController setCurrentEntry:pe];
 
-	[positionSlider setDoubleValue:0.0f];
+	[positionSlider setDoubleValue:0.0];
 	
 	[self updateTimeField:0.0f];
 	
@@ -263,12 +263,12 @@
 	NSString *text;
 	if (showTimeRemaining == NO)
 	{
-		int sec = (int)(pos/1000.0);
+		int sec = (int)(pos);
 		text = [NSString stringWithFormat:NSLocalizedString(@"TimeElapsed", @""), sec/60, sec%60];
 	}
 	else
 	{
-		int sec = (int)(([positionSlider maxValue] - pos)/1000.0);
+		int sec = (int)(([positionSlider maxValue] - pos));
 		if (sec < 0)
 			sec = 0;
 		text = [NSString stringWithFormat:NSLocalizedString(@"TimeRemaining", @""), sec/60, sec%60];

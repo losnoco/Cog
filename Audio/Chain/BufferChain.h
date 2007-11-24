@@ -16,8 +16,6 @@
 	InputNode *inputNode;
 	ConverterNode *converterNode;
 	
-	BOOL converterLaunched;
-	
 	NSURL *streamURL;
 	id userInfo;
 	

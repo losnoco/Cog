@@ -29,9 +29,15 @@
 		return NO;
 	}
 	
+	NSDictionary *properties = [decoder properties];
+	int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
+	int channels = [[properties objectForKey:@"channels"] intValue];
+	
+	bytesPerFrame = (bitsPerSample/8) * channels;
+	
 	shouldContinue = YES;
 	shouldSeek = NO;
-	
+
 	return YES;
 }
 
@@ -74,7 +80,8 @@
 	if ([keyPath isEqual:@"properties"]) {
 		//Setup converter!
 		//Inform something of properties change
-		[controller inputFormatDidChange: propertiesToASBD([decoder properties])];
+		//Disable support until it is properly implimented.
+		//[controller inputFormatDidChange: propertiesToASBD([decoder properties])];
 	}
 	else if ([keyPath isEqual:@"metadata"]) {
 		//Inform something of metadata change
@@ -83,7 +90,7 @@
 
 - (void)process
 {
-	int amountRead = 0, amountInBuffer = 0;
+	int amountInBuffer = 0;
 	void *inputBuffer = malloc(CHUNK_SIZE);
 	
 	BOOL shouldClose = YES;
@@ -93,7 +100,7 @@
 		if (shouldSeek == YES)
 		{
 			NSLog(@"SEEKING!");
-			[decoder seekToTime:seekTime];
+			[decoder seek:seekFrame];
 			shouldSeek = NO;
 			NSLog(@"Seeked! Resetting Buffer");
 			
@@ -104,10 +111,11 @@
 		}
 
 		if (amountInBuffer < CHUNK_SIZE) {
-			amountRead = [decoder fillBuffer:((char *)inputBuffer) + amountInBuffer ofSize:CHUNK_SIZE - amountInBuffer];
-			amountInBuffer += amountRead;
+			int framesToRead = (CHUNK_SIZE - amountInBuffer)/bytesPerFrame;
+			int framesRead = [decoder readAudio:((char *)inputBuffer) + amountInBuffer frames:framesToRead];
+			amountInBuffer += (framesRead * bytesPerFrame);
 		
-			if (amountRead <= 0)
+			if (framesRead <= 0)
 			{
 				if (initialBufferFilled == NO) {
 					[controller initialBufferFilled:self];
@@ -130,9 +138,9 @@
 	free(inputBuffer);
 }
 
-- (void)seek:(double)time
+- (void)seek:(long)frame
 {
-	seekTime = time;
+	seekFrame = frame;
 	shouldSeek = YES;
 	NSLog(@"Should seek!");
 	[semaphore signal];

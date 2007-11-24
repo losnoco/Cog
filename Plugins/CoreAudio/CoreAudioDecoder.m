@@ -69,7 +69,6 @@
 {
 	OSStatus						err;
 	UInt32							size;
-	SInt64							totalFrames;
 	AudioStreamBasicDescription		asbd;
 	
 	// Get input file information
@@ -80,12 +79,14 @@
 		return NO;
 	}
 	
-	size	= sizeof(totalFrames);
-	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileLengthFrames, &size, &totalFrames);
+	SInt64 total;
+	size	= sizeof(total);
+	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileLengthFrames, &size, &total);
 	if(err != noErr) {
 		err = ExtAudioFileDispose(_in);
 		return NO;
 	}
+	totalFrames = total;
 	
 	//Is there a way to get bitrate with extAudioFile?
 	bitrate				= 0;
@@ -99,8 +100,6 @@
 	if(0 == bitsPerSample) {
 		bitsPerSample = 16;
 	}
-	
-	length = ((double)totalFrames*1000.0)/frequency;
 	
 	// Set output format
 	AudioStreamBasicDescription		result;
@@ -130,7 +129,7 @@
 	return YES;
 }
 
-- (int) fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int) readAudio:(void *)buf frames:(UInt32)frames
 {
 	OSStatus				err;
 	AudioBufferList			bufferList;
@@ -140,28 +139,28 @@
 	bufferList.mNumberBuffers				= 1;
 	bufferList.mBuffers[0].mNumberChannels	= channels;
 	bufferList.mBuffers[0].mData			= buf;
-	bufferList.mBuffers[0].mDataByteSize	= size;
+	bufferList.mBuffers[0].mDataByteSize	= frames * channels * (bitsPerSample/8);
 	
 	// Read a chunk of PCM input (converted from whatever format)
-	frameCount	= (size / (channels * (bitsPerSample / 8)));
+	frameCount	= frames;
 	err			= ExtAudioFileRead(_in, &frameCount, &bufferList);
 	if(err != noErr) {
 		return 0;
 	}	
 	
-	return frameCount * (channels * (bitsPerSample / 8));
+	return frameCount;
 }
 
-- (double) seekToTime:(double)milliseconds
+- (long) seek:(long)frame
 {
 	OSStatus			err;
 	
-	err = ExtAudioFileSeek(_in, ((milliseconds / 1000.f) * frequency));
+	err = ExtAudioFileSeek(_in, frame);
 	if(noErr != err) {
-		return -1.f;
+		return -1;
 	}
 	
-	return milliseconds;	
+	return frame;
 }
 
 + (NSArray *)fileTypes
@@ -191,7 +190,7 @@
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
-		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithLong:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:YES], @"seekable",
 		@"big", @"endian",
 		nil];

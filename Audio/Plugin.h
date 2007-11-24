@@ -22,6 +22,7 @@
 @end
 
 @protocol CogDecoder <NSObject> 
+@required
 + (NSArray *)mimeTypes;
 + (NSArray *)fileTypes; //mp3, ogg, etc
 
@@ -29,10 +30,18 @@
 //- (void)setProperties:(NSDictionary *)p;
 - (NSDictionary *)properties;
 
+- (int)readAudio:(void *)buffer frames:(UInt32)frames;
+
 - (BOOL)open:(id<CogSource>)source;
-- (double)seekToTime:(double)time; //time is in milleseconds, should return the time actually seeked to.
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size;
+- (long)seek:(long)frame;
 - (void)close;
+
+@optional
+- (BOOL)setTrack:(NSURL *)track;
+
+//These are in NSObject, so as long as you are a subclass of that, you are ok.
+- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context;
+- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath;
 @end
 
 @protocol CogMetadataReader <NSObject>

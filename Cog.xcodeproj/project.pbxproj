@@ -92,6 +92,13 @@
 		17C809E60C3BD487005707C4 /* CoreAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C809E30C3BD46D005707C4 /* CoreAudio.bundle */; };
 		17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3CD0CBED663008D969D /* GME.bundle */; };
 		17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F7D70CBEF3E8008D969D /* Dumb.bundle */; };
+		17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2760CF8B2830028F5B5 /* cue.icns */; };
+		17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2770CF8B2830028F5B5 /* it.icns */; };
+		17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2780CF8B2830028F5B5 /* pls.icns */; };
+		17D1B2800CF8B2830028F5B5 /* s3m.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2790CF8B2830028F5B5 /* s3m.icns */; };
+		17D1B2810CF8B2830028F5B5 /* song.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27A0CF8B2830028F5B5 /* song.icns */; };
+		17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27B0CF8B2830028F5B5 /* vg.icns */; };
+		17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27C0CF8B2830028F5B5 /* xm.icns */; };
 		17E41E070C130DFF00AC744D /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E060C130DFF00AC744D /* Credits.html */; };
 		17E41E230C130EE200AC744D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E220C130EE200AC744D /* Help */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
@@ -145,14 +152,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 17BF2B1F0CDD77EB007E1295 /* Sparkle.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* Sparkle.framework */;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
 			remoteInfo = Sparkle;
 		};
 		17BF2B390CDD7827007E1295 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17BF2B1F0CDD77EB007E1295 /* Sparkle.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* Sparkle */;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = Sparkle;
 		};
 		17C808780C3BD167005707C4 /* PBXContainerItemProxy */ = {
@@ -593,6 +600,13 @@
 		17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dumb.xcodeproj; path = Plugins/Dumb/Dumb.xcodeproj; sourceTree = "<group>"; };
 		17D1AC3F0CC0BBF000924FEB /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
 		17D1AC420CC0BBF500924FEB /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		17D1B2760CF8B2830028F5B5 /* cue.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = cue.icns; sourceTree = "<group>"; };
+		17D1B2770CF8B2830028F5B5 /* it.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = it.icns; sourceTree = "<group>"; };
+		17D1B2780CF8B2830028F5B5 /* pls.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = pls.icns; sourceTree = "<group>"; };
+		17D1B2790CF8B2830028F5B5 /* s3m.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = s3m.icns; sourceTree = "<group>"; };
+		17D1B27A0CF8B2830028F5B5 /* song.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = song.icns; sourceTree = "<group>"; };
+		17D1B27B0CF8B2830028F5B5 /* vg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = vg.icns; sourceTree = "<group>"; };
+		17D1B27C0CF8B2830028F5B5 /* xm.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = xm.icns; sourceTree = "<group>"; };
 		17E41C470C1304BB00AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		17E41C480C1304C700AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
 		17E41C490C1304D200AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Swedish; path = Swedish.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1158,6 +1172,13 @@
 		8E75758E09F31D800080F1EE /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				17D1B2760CF8B2830028F5B5 /* cue.icns */,
+				17D1B2770CF8B2830028F5B5 /* it.icns */,
+				17D1B2780CF8B2830028F5B5 /* pls.icns */,
+				17D1B2790CF8B2830028F5B5 /* s3m.icns */,
+				17D1B27A0CF8B2830028F5B5 /* song.icns */,
+				17D1B27B0CF8B2830028F5B5 /* vg.icns */,
+				17D1B27C0CF8B2830028F5B5 /* xm.icns */,
 				17818A8E0C0B27AC001C4916 /* aiff.icns */,
 				17818A8F0C0B27AC001C4916 /* ape.icns */,
 				17818A900C0B27AC001C4916 /* m3u.icns */,
@@ -1554,6 +1575,13 @@
 				17818A9B0C0B27AC001C4916 /* wv.icns in Resources */,
 				1791005E0CB44D6D0070BC5C /* Cog.scriptSuite in Resources */,
 				1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */,
+				17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */,
+				17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */,
+				17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */,
+				17D1B2800CF8B2830028F5B5 /* s3m.icns in Resources */,
+				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
+				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
+				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1822,6 +1850,7 @@
 					CogAudio,
 				);
 				PRODUCT_NAME = Cog;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -1850,6 +1879,7 @@
 					CogAudio,
 				);
 				PRODUCT_NAME = Cog;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1860,7 +1890,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
@@ -1870,7 +1900,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Release;
 		};

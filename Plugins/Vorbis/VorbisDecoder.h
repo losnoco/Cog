@@ -32,7 +32,7 @@
 	int bitrate;
 	int channels;
 	float frequency;
-	double length;
+	long totalFrames;
 }
 
 

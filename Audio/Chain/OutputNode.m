@@ -26,7 +26,7 @@
 {
 //	[output pause];
 
-	amountPlayed = time*format.mBytesPerFrame*(format.mSampleRate/1000.0);
+	amountPlayed = time*format.mBytesPerFrame*(format.mSampleRate);
 }
 
 - (void)process
@@ -72,7 +72,7 @@
 
 - (double)amountPlayed
 {
-	return (amountPlayed/format.mBytesPerFrame)/(format.mSampleRate/1000.0);
+	return (amountPlayed/format.mBytesPerFrame)/(format.mSampleRate);
 }
 
 - (AudioStreamBasicDescription) format

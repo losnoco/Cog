@@ -67,7 +67,7 @@ long sourceTell(void *datasource)
 	
 	seekable = ov_seekable(&vorbisRef);
 	
-	length = ((double)ov_pcm_total(&vorbisRef, -1) * 1000.0)/frequency;
+	totalFrames = ov_pcm_total(&vorbisRef, -1);
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -75,7 +75,7 @@ long sourceTell(void *datasource)
 	return YES;
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
 	int numread;
 	int total = 0;
@@ -93,6 +93,8 @@ long sourceTell(void *datasource)
 		[self didChangeValueForKey:@"properties"];
 	}
 	
+	int size = frames * channels * (bitsPerSample/8);
+	
     do {
 		lastSection = currentSection;
 		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
@@ -106,7 +108,7 @@ long sourceTell(void *datasource)
 		
     } while (total != size && numread != 0);
 
-    return total;
+    return total/(channels * (bitsPerSample/8));
 }
 
 - (void)close
@@ -117,11 +119,11 @@ long sourceTell(void *datasource)
 	[source release];
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)frame
 {
-	ov_time_seek(&vorbisRef, (double)milliseconds/1000.0);
+	ov_pcm_seek(&vorbisRef, frame);
 	
-	return milliseconds;
+	return frame;
 }
 
 - (NSDictionary *)properties
@@ -130,7 +132,7 @@ long sourceTell(void *datasource)
 		[NSNumber numberWithInt:channels], @"channels",
 		[NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 		[NSNumber numberWithFloat:frequency], @"sampleRate",
-		[NSNumber numberWithDouble:length], @"length",
+		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 		[NSNumber numberWithInt:bitrate], @"bitrate",
 		[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
 		nil];

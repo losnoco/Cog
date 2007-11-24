@@ -6,9 +6,7 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#define HAVE_CONFIG_H
 #import <Cocoa/Cocoa.h>
-#undef HAVE_CONFIG_H
 
 #import "MAD/mad.h"
 
@@ -24,7 +22,7 @@
 
 	unsigned char _inputBuffer[INPUT_BUFFER_SIZE+MAD_BUFFER_GUARD];
 	unsigned char *_outputBuffer;
-	int _outputAvailable;
+	int _outputFrames;
 	int _fileSize;
 	
 	id<CogSource> _source;
@@ -35,16 +33,22 @@
 	BOOL _foundXingHeader;
 	BOOL _foundLAMEHeader;
 
-	long _samplesDecoded;
-	long _totalSamples;
+	long _framesDecoded;
 	uint16_t _startPadding;
 	uint16_t _endPadding;
 	
+	
+	BOOL inputEOF;
+	
+	int bytesPerFrame;
+	
 	int channels;
 	int bitsPerSample;
-	float frequency;
+	float sampleRate;
 	int bitrate;
-	double length;
+	long totalFrames;
 }
+
+- (int)decodeMPEGFrame;
 
 @end

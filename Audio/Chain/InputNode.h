@@ -19,8 +19,10 @@
 @interface InputNode : Node {
 	id<CogDecoder> decoder;
 	
+	int bytesPerFrame;
+	
 	BOOL shouldSeek;
-	double seekTime;
+	long seekFrame;
 }
 
 - (BOOL)openWithSource:(id<CogSource>)source;
@@ -28,7 +30,7 @@
 
 - (void)process;
 - (NSDictionary *) properties;
-- (void)seek:(double)time;
+- (void)seek:(long)frame;
 
 - (void)registerObservers;
 

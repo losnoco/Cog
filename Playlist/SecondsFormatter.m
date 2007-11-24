@@ -35,8 +35,8 @@
 		return nil;
 	}
 	
-	value		= (unsigned)([object doubleValue] / 1000.0);
-	
+	value		= (unsigned)([object doubleValue]);
+
 	seconds		= value % 60;
 	minutes		= value / 60;
 	

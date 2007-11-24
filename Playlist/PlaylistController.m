@@ -131,7 +131,7 @@
 		tt += [[pe length] doubleValue];
 	}
 	
-	int sec = (int)(tt/1000.0);
+	int sec = (int)(tt);
 	[self setTotalTimeDisplay:[NSString stringWithFormat:@"%i:%02i",sec/60, sec%60]];
 }
 

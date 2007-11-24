@@ -7,7 +7,6 @@
 //
 
 #import "MADDecoder.h"
-#undef HAVE_CONFIG_H
 
 @implementation MADDecoder
 
@@ -38,8 +37,6 @@
 //Scan file quickly
 - (BOOL)scanFile
 {
-	BOOL inputEOF = NO;
-	
 	struct mad_stream stream;
 	struct mad_frame frame;
 	
@@ -122,7 +119,7 @@
 		
 		if (framesDecoded == 1)
 		{
-			frequency = frame.header.samplerate;
+			sampleRate = frame.header.samplerate;
 			channels = MAD_NCHANNELS(&frame.header);
 			
 			if(MAD_FLAG_LSF_EXT & frame.header.flags || MAD_FLAG_MPEG_2_5_EXT & frame.header.flags) {
@@ -168,7 +165,7 @@
 					
 					// Determine number of samples, discounting encoder delay and padding
 					// Our concept of a frame is the same as CoreAudio's- one sample across all channels
-					_totalSamples = frames * samplesPerMPEGFrame;
+					totalFrames = frames * samplesPerMPEGFrame;
 					//NSLog(@"TOTAL READ FROM XING");
 				}
 				
@@ -242,7 +239,7 @@
 					_endPadding = mad_bit_read(&stream.anc_ptr, 12);
 					
 					_startPadding += 528 + 1; //MDCT/filterbank delay
-					_totalSamples += 528 + 1;
+					totalFrames += 528 + 1;
 					
 					/*uint8_t misc =*/ mad_bit_read(&stream.anc_ptr, 8);
 					
@@ -267,7 +264,7 @@
 		}
 		else
 		{
-			_totalSamples = (double)frame.header.samplerate * ((_fileSize - id3_length) / (frame.header.bitrate / 8.0));
+			totalFrames = (double)frame.header.samplerate * ((_fileSize - id3_length) / (frame.header.bitrate / 8.0));
 			//NSLog(@"Guestimating total samples");
 			
 			break;
@@ -275,20 +272,19 @@
 	}
 	
 	//Need to make sure this is correct
-	bitrate = (_fileSize - id3_length) / (length * 1000.0);
+	bitrate = (_fileSize - id3_length) / ((sampleRate/1000.0)/totalFrames);
 	
 	mad_frame_finish (&frame);
 	mad_stream_finish (&stream);
 	
-	//Need to fix this too.
-	length = 1000.0 * (_totalSamples / frequency);
-	
 	bitsPerSample = 16;
 	
-	[_source seek:0 whence:SEEK_SET];
+	bytesPerFrame = (bitsPerSample/8) * channels;
 	
-	[self willChangeValueForKey:@"properties"];
-	[self didChangeValueForKey:@"properties"];
+	[_source seek:0 whence:SEEK_SET];
+	inputEOF = NO;
+	
+	NSLog(@"Mad properties: %@", [self properties]);
 	
 	return YES;	
 }
@@ -307,12 +303,22 @@
 	
 	_firstFrame = YES;
 	//NSLog(@"OPEN: %i", _firstFrame);
+
+	inputEOF = NO;
 	
-	if ([_source seekable]) {
-		return [self scanFile];
+	if (![_source seekable])
+	{
+		//Decode the first frame to get the channels, samplerate, etc.
+		int r;
+		do {
+			r = [self decodeMPEGFrame];
+			NSLog(@"Decoding frame: %i", r);
+		} while (r == 0);
+		
+		return (r == -1 ? NO : YES);
 	}
-	
-	return YES;
+
+	return [self scanFile];
 }
 
 
@@ -379,28 +385,28 @@ static inline signed int scale (mad_fixed_t sample)
 	unsigned int startingSample = 0;
 	unsigned int sampleCount = _synth.pcm.length;
 	
-	//NSLog(@"Position: %li/%li", _samplesDecoded, _totalSamples);
+	//NSLog(@"Position: %li/%li", _framesDecoded, totalFrames);
 	//NSLog(@"<%i, %i>", _startPadding, _endPadding);
 
 	//NSLog(@"Counts: %i, %i", startingSample, sampleCount);
 	if (_foundLAMEHeader) {
-		if (_samplesDecoded < _startPadding) {
+		if (_framesDecoded < _startPadding) {
 			//NSLog(@"Skipping start.");
-			startingSample = _startPadding - _samplesDecoded;
+			startingSample = _startPadding - _framesDecoded;
 		}
 		
-		if (_samplesDecoded > _totalSamples - _endPadding + startingSample) {
+		if (_framesDecoded > totalFrames - _endPadding + startingSample) {
 			//NSLog(@"End of file. Not writing.");
 			return;
 		}
 
-		if (_samplesDecoded + (sampleCount - startingSample) > _totalSamples - _endPadding) {
-			sampleCount = _totalSamples - _endPadding - _samplesDecoded + startingSample;
-			//NSLog(@"End of file. %li",  _totalSamples - _endPadding - _samplesDecoded);
+		if (_framesDecoded + (sampleCount - startingSample) > totalFrames - _endPadding) {
+			sampleCount = totalFrames - _endPadding - _framesDecoded + startingSample;
+			//NSLog(@"End of file. %li",  totalFrames - _endPadding - _framesDecoded);
 		}
 
 		if (startingSample > sampleCount) {
-			_samplesDecoded += _synth.pcm.length;
+			_framesDecoded += _synth.pcm.length;
 			//NSLog(@"Skipping entire sample");
 			return;
 		}
@@ -409,14 +415,14 @@ static inline signed int scale (mad_fixed_t sample)
 	
 	//NSLog(@"Revised: %i, %i", startingSample, sampleCount);
 	
-	_samplesDecoded += _synth.pcm.length;
+	_framesDecoded += _synth.pcm.length;
 	
-	_outputAvailable = (sampleCount - startingSample) * channels * (bitsPerSample/8);
+	_outputFrames = (sampleCount - startingSample);
 	
 	if (_outputBuffer)
 		free(_outputBuffer);
 	
-	_outputBuffer = (unsigned char *) malloc (_outputAvailable * sizeof (char));
+	_outputBuffer = (unsigned char *) malloc (_outputFrames * bytesPerFrame * sizeof (char));
 	
 	unsigned int i, j; 
 	unsigned int stride = channels * 2; 
@@ -437,126 +443,140 @@ static inline signed int scale (mad_fixed_t sample)
 	} 
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)decodeMPEGFrame
 {
-	int inputToRead;
-	int inputRemaining;
-	BOOL inputEOF = NO;
-	
-	int bytesRead = 0;
+	if (_stream.buffer == NULL || _stream.error == MAD_ERROR_BUFLEN)
+	{
+		int inputToRead;
+		int inputRemaining;
+
+		if (_stream.next_frame != NULL)
+		{
+			inputRemaining = _stream.bufend - _stream.next_frame;
+
+			memmove(_inputBuffer, _stream.next_frame, inputRemaining);
+
+			inputToRead = INPUT_BUFFER_SIZE - inputRemaining;
+		}
+		else
+		{
+			inputToRead = INPUT_BUFFER_SIZE;
+			inputRemaining = 0;
+		}
+
+		int inputRead = [_source read:_inputBuffer + inputRemaining amount:INPUT_BUFFER_SIZE - inputRemaining];
+		if (inputRead == 0)
+		{
+			memset(_inputBuffer + inputRemaining + inputRead, 0, MAD_BUFFER_GUARD);
+			inputRead += MAD_BUFFER_GUARD;
+			inputEOF = YES;
+		}
+
+		mad_stream_buffer(&_stream, _inputBuffer, inputRead + inputRemaining);
+		_stream.error = MAD_ERROR_NONE;
+		//NSLog(@"Read stream.");
+	}
+
+	if (mad_frame_decode(&_frame, &_stream) == -1) {
+		if (MAD_RECOVERABLE (_stream.error))
+		{
+			const uint8_t	*buffer			= _stream.this_frame;
+			unsigned		buflen			= _stream.bufend - _stream.this_frame;
+			uint32_t		id3_length		= 0;
+
+			//No longer need ID3Tag framework
+			if(10 <= buflen && 0x49 == buffer[0] && 0x44 == buffer[1] && 0x33 == buffer[2]) {
+				id3_length = (((buffer[6] & 0x7F) << (3 * 7)) | ((buffer[7] & 0x7F) << (2 * 7)) |
+								((buffer[8] & 0x7F) << (1 * 7)) | ((buffer[9] & 0x7F) << (0 * 7)));
+
+				// Add 10 bytes for ID3 header
+				id3_length += 10;
+
+				mad_stream_skip(&_stream, id3_length);
+			}
+
+			NSLog(@"recoverable error");
+			return 0;
+		}
+		else if (MAD_ERROR_BUFLEN == _stream.error && inputEOF)
+		{
+			NSLog(@"EOF");
+			return -1;
+		}
+		else if (MAD_ERROR_BUFLEN == _stream.error)
+		{
+			NSLog(@"Bufferlen");
+			return 0;
+		}
+		else
+		{
+			//NSLog(@"Unrecoverable stream error: %s", mad_stream_errorstr(&_stream));
+			return -1;
+		}
+	}
+
+	//NSLog(@"Decoded buffer.");
+	mad_synth_frame (&_synth, &_frame);
+	//NSLog(@"first frame: %i", _firstFrame);
+	if (_firstFrame)
+	{
+		_firstFrame = NO;
+
+		if (![_source seekable]) {
+			sampleRate = _frame.header.samplerate;
+			channels = MAD_NCHANNELS(&_frame.header);
+			bitsPerSample = 16;
+			bytesPerFrame = (bitsPerSample/8) * channels;
+
+			[self willChangeValueForKey:@"properties"];
+			[self didChangeValueForKey:@"properties"];
+		}
+		//NSLog(@"FIRST FRAME!!! %i %i", _foundXingHeader, _foundLAMEHeader);
+		if (_foundXingHeader) {
+			//NSLog(@"Skipping xing header.");
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+- (int)readAudio:(void *)buffer frames:(UInt32)frames
+{
+	int framesRead = 0;
 	
 	for (;;)
 	{
-		int bytesRemaining = size - bytesRead;
-		int bytesToCopy = (_outputAvailable > bytesRemaining ? bytesRemaining : _outputAvailable);
+		int framesRemaining = frames - framesRead;
+		int framesToCopy = (_outputFrames > framesRemaining ? framesRemaining : _outputFrames);
 		
-		memcpy(buf + bytesRead, _outputBuffer, bytesToCopy);
-		bytesRead += bytesToCopy;
+		if (framesToCopy) {
+			memcpy(buffer + (framesRead * bytesPerFrame), _outputBuffer, framesToCopy*bytesPerFrame);
+			framesRead += framesToCopy;
 		
-		if (bytesToCopy != _outputAvailable) {
-			memmove(_outputBuffer, _outputBuffer + bytesToCopy, _outputAvailable - bytesToCopy);
+			if (framesToCopy != _outputFrames) {
+				memmove(_outputBuffer, _outputBuffer + (framesToCopy*bytesPerFrame), (_outputFrames - framesToCopy)*bytesPerFrame);
+			}
+
+			_outputFrames -= framesToCopy;
 		}
 		
-		_outputAvailable -= bytesToCopy;
-		
-		if (bytesRead == size)
+		if (framesRead == frames)
 			break;
 		
-		if (_stream.buffer == NULL || _stream.error == MAD_ERROR_BUFLEN)
-		{
-			if (_stream.next_frame != NULL)
-			{
-				inputRemaining = _stream.bufend - _stream.next_frame;
-				
-				memmove(_inputBuffer, _stream.next_frame, inputRemaining);
-				
-				inputToRead = INPUT_BUFFER_SIZE - inputRemaining;
-			}
-			else
-			{
-				inputToRead = INPUT_BUFFER_SIZE;
-				inputRemaining = 0;
-			}
-			
-			int inputRead = [_source read:_inputBuffer + inputRemaining amount:INPUT_BUFFER_SIZE - inputRemaining];
-			if (inputRead == 0)
-			{
-				memset(_inputBuffer + inputRemaining + inputRead, 0, MAD_BUFFER_GUARD);
-				inputRead += MAD_BUFFER_GUARD;
-				inputEOF = YES;
-			}
-			
-			mad_stream_buffer(&_stream, _inputBuffer, inputRead + inputRemaining);
-			_stream.error = MAD_ERROR_NONE;
-			//NSLog(@"Read stream.");
-		}
-		
-		if (mad_frame_decode(&_frame, &_stream) == -1) {
-			if (MAD_RECOVERABLE (_stream.error))
-			{
-				const uint8_t	*buffer			= _stream.this_frame;
-				unsigned		buflen			= _stream.bufend - _stream.this_frame;
-				uint32_t		id3_length		= 0;
-				
-				//No longer need ID3Tag framework
-				if(10 <= buflen && 0x49 == buffer[0] && 0x44 == buffer[1] && 0x33 == buffer[2]) {
-					id3_length = (((buffer[6] & 0x7F) << (3 * 7)) | ((buffer[7] & 0x7F) << (2 * 7)) |
-								  ((buffer[8] & 0x7F) << (1 * 7)) | ((buffer[9] & 0x7F) << (0 * 7)));
-					
-					// Add 10 bytes for ID3 header
-					id3_length += 10;
-					
-					mad_stream_skip(&_stream, id3_length);
-				}
-				
-				//NSLog(@"recoverable error");
-				continue;
-			}
-			else if (MAD_ERROR_BUFLEN == _stream.error && inputEOF)
-			{
-				//NSLog(@"EOF");
-				break;
-			}
-			else if (MAD_ERROR_BUFLEN == _stream.error)
-			{
-				//NSLog(@"Bufferlen");
-				continue;
-			}
-			else
-			{
-				//NSLog(@"Unrecoverable stream error: %s", mad_stream_errorstr(&_stream));
-				break;
-			}
-		}
-		
-		//NSLog(@"Decoded buffer.");
-		mad_synth_frame (&_synth, &_frame);
-		//NSLog(@"first frame: %i", _firstFrame);
-		if (_firstFrame)
-		{
-			_firstFrame = NO;
-			
-			if (![_source seekable]) {
-				frequency = _frame.header.samplerate;
-				channels = MAD_NCHANNELS(&_frame.header);
-				bitsPerSample = 16;
-				
-				[self willChangeValueForKey:@"properties"];
-				[self didChangeValueForKey:@"properties"];
-			}
-			//NSLog(@"FIRST FRAME!!! %i %i", _foundXingHeader, _foundLAMEHeader);
-			if (_foundXingHeader) {
-				//NSLog(@"Skipping xing header.");
-				continue;
-			}
-		}
+		int r = [self decodeMPEGFrame];
+		NSLog(@"Decoding frame: %i", r);
+		if (r == 0) //Recoverable error.
+			continue;
+		else if (r == -1) //Unrecoverable error
+			break;
 		
 		[self writeOutput];
 		//NSLog(@"Wrote output");
 	}
 	
 	//NSLog(@"Read: %i/%i", bytesRead, size);
-	return bytesRead;
+	return framesRead;
 }
 
 - (void)close
@@ -579,20 +599,20 @@ static inline signed int scale (mad_fixed_t sample)
 	mad_stream_finish(&_stream);	
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)frame
 {
-	if (milliseconds > length)
-		milliseconds = length;
+	if (frame > totalFrames)
+		frame = totalFrames;
 	
-	unsigned long new_position = (milliseconds / length) * _fileSize;
+	unsigned long new_position = ((double)frame / totalFrames) * _fileSize;
 	[_source seek:new_position whence:SEEK_SET];
 	
 	mad_stream_buffer(&_stream, NULL, 0);
 	
 	//Gapless busted after seek. Mp3 just doesn't have sample-accurate seeking. Maybe xing toc?
-	_samplesDecoded = (milliseconds / length) * _totalSamples;
+	_framesDecoded = frame;
 	
-	return milliseconds;
+	return frame;
 }
 
 - (NSDictionary *)properties
@@ -600,9 +620,9 @@ static inline signed int scale (mad_fixed_t sample)
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:channels],@"channels",
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
-		[NSNumber numberWithFloat:frequency],@"sampleRate",
+		[NSNumber numberWithFloat:sampleRate],@"sampleRate",
 		[NSNumber numberWithInt:bitrate],@"bitrate",
-		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithLong:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:[_source seekable]], @"seekable",
 		@"big", @"endian",
 		nil];

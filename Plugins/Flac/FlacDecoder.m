@@ -11,10 +11,10 @@
 
 @implementation FlacDecoder
 
-FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data)
+FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte blockBuffer[], size_t *bytes, void *client_data)
 {
 	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
-	*bytes = [[flacDecoder source] read:buffer amount:*bytes];
+	*bytes = [[flacDecoder source] read:blockBuffer amount:*bytes];
 	
 	if(*bytes < 0) {
 		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
@@ -78,11 +78,11 @@ FLAC__StreamDecoderLengthStatus LengthCallback(const FLAC__StreamDecoder *decode
 	}
 }
 
-FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const sampleBuffer[], void *client_data)
+FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const sampleblockBuffer[], void *client_data)
 {
 	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
 	
-	void *buffer = [flacDecoder buffer];
+	void *blockBuffer = [flacDecoder blockBuffer];
 
 	int8_t  *alias8;
 	int16_t *alias16;
@@ -95,10 +95,10 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
     switch(frame->header.bits_per_sample) {
         case 8:
             // Interleave the audio (no need for byte swapping)
-            alias8 = buffer;
+            alias8 = blockBuffer;
             for(sample = 0; sample < frame->header.blocksize; ++sample) {
                 for(channel = 0; channel < frame->header.channels; ++channel) {
-                    *alias8++ = (int8_t)sampleBuffer[channel][sample];
+                    *alias8++ = (int8_t)sampleblockBuffer[channel][sample];
                 }
             }
 
@@ -106,10 +106,10 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
 
         case 16:
             // Interleave the audio, converting to big endian byte order
-            alias16 = buffer;
+            alias16 = blockBuffer;
             for(sample = 0; sample < frame->header.blocksize; ++sample) {
                 for(channel = 0; channel < frame->header.channels; ++channel) {
-                    *alias16++ = (int16_t)OSSwapHostToBigInt16((int16_t)sampleBuffer[channel][sample]);
+                    *alias16++ = (int16_t)OSSwapHostToBigInt16((int16_t)sampleblockBuffer[channel][sample]);
                 }
             }
 
@@ -117,10 +117,10 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
 
         case 24:
             // Interleave the audio (no need for byte swapping)
-            alias8 = buffer;
+            alias8 = blockBuffer;
             for(sample = 0; sample < frame->header.blocksize; ++sample) {
                 for(channel = 0; channel < frame->header.channels; ++channel) {
-                    audioSample = sampleBuffer[channel][sample];
+                    audioSample = sampleblockBuffer[channel][sample];
                     *alias8++   = (int8_t)(audioSample >> 16);
                     *alias8++   = (int8_t)(audioSample >> 8);
                     *alias8++   = (int8_t)audioSample;
@@ -131,17 +131,17 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
 
         case 32:
             // Interleave the audio, converting to big endian byte order
-            alias32 = buffer;
+            alias32 = blockBuffer;
             for(sample = 0; sample < frame->header.blocksize; ++sample) {
                 for(channel = 0; channel < frame->header.channels; ++channel) {
-                    *alias32++ = OSSwapHostToBigInt32(sampleBuffer[channel][sample]);
+                    *alias32++ = OSSwapHostToBigInt32(sampleblockBuffer[channel][sample]);
                 }
             }
 		default:
 			NSLog(@"Error, unsupported sample size.");
 	}
 
-	[flacDecoder setBufferAmount:frame->header.blocksize * frame->header.channels * (frame->header.bits_per_sample/8)];
+	[flacDecoder setBlockBufferFrames:frame->header.blocksize];
 
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
@@ -154,7 +154,7 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 	flacDecoder->frequency = metadata->data.stream_info.sample_rate;
 	flacDecoder->bitsPerSample = metadata->data.stream_info.bits_per_sample;
 	
-	flacDecoder->length = ((double)metadata->data.stream_info.total_samples*1000.0)/flacDecoder->frequency;
+	flacDecoder->totalFrames = metadata->data.stream_info.total_samples;
 	
 	[flacDecoder willChangeValueForKey:@"properties"];
 	[flacDecoder didChangeValueForKey:@"properties"];
@@ -190,58 +190,45 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	
 	FLAC__stream_decoder_process_until_end_of_metadata(decoder);
 
-	buffer = malloc(SAMPLE_BUFFER_SIZE);
+	blockBuffer = malloc(SAMPLE_blockBuffer_SIZE);
 
 	return YES;
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buffer frames:(UInt32)frames
 {
-	int count;
-	int numread;
-	
-	size -= size % ((bitsPerSample/8) * channels);
-	
-	NSLog(@"Requesting: %i", size);
-	NSLog(@"Overflow? %i", size % ((bitsPerSample/8) * channels));
-	
-	if (bufferAmount == 0)
-	{
-		if (FLAC__stream_decoder_get_state (decoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
+	int framesRead = 0;
+	int bytesPerFrame = (bitsPerSample/8) * channels;
+	while (framesRead < frames)
+	{	
+		if (blockBufferFrames == 0)
 		{
-			return 0;
-		}
+			if (FLAC__stream_decoder_get_state (decoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
+			{
+				break;
+			}
 		
-		FLAC__stream_decoder_process_single(decoder);
-	}
+			FLAC__stream_decoder_process_single(decoder);
+		}
+	
+		int framesToRead = blockBufferFrames;
+		if (blockBufferFrames > frames)
+		{
+			framesToRead = frames;
+		}
 
-	count = bufferAmount;
-	if (bufferAmount > size)
-	{
-		count = size;
-	}
-	memcpy(buf, buffer, count);
+		memcpy(((uint8_t *)buffer) + (framesRead * bytesPerFrame), (uint8_t *)blockBuffer, framesToRead * bytesPerFrame);
+
+		framesRead += framesToRead;
+		blockBufferFrames -= framesToRead;
+		
+		if (blockBufferFrames > 0)
+		{
+			memmove((uint8_t *)blockBuffer, ((uint8_t *)blockBuffer) + (framesToRead * bytesPerFrame), blockBufferFrames * bytesPerFrame);
+		}
+	}	
 	
-	bufferAmount -= count;
-	
-	if (bufferAmount > 0)
-		memmove((char *)buffer, &((char *)buffer)[count], bufferAmount);
-	
-	if (count < size)
-	{
-		NSLog(@"Recursing: %i/%i", count, size);
-	
-		numread = [self fillBuffer:(((char *)buf) + count) ofSize:(size - count)];
-	}
-	else
-	{
-		numread = 0;
-	}
-	
-	NSLog(@"Done: %i/%i", count + numread, size);
-	
-	return count + numread;
-	
+	return framesRead;
 }
 
 - (void)close
@@ -251,35 +238,36 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		FLAC__stream_decoder_finish(decoder);
 		FLAC__stream_decoder_delete(decoder);
 	}
-	if (buffer)
+	if (blockBuffer)
 	{
-		free(buffer);
+		free(blockBuffer);
 	}
+	[source close];
 	[self setSource:nil];
 
 	decoder = NULL;
-	buffer = NULL;
+	blockBuffer = NULL;
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)sample
 {
-	FLAC__stream_decoder_seek_absolute(decoder, frequency * ((double)milliseconds/1000.0));
+	FLAC__stream_decoder_seek_absolute(decoder, sample);
 	
-	return milliseconds;
+	return sample;
 }
 
 //bs methods
-- (char *)buffer
+- (char *)blockBuffer
 {
-	return buffer;
+	return blockBuffer;
 }
-- (int)bufferAmount
+- (int)blockBufferFrames
 {
-	return bufferAmount;
+	return blockBufferFrames;
 }
-- (void)setBufferAmount:(int)amount
+- (void)setBlockBufferFrames:(int)frames
 {
-	bufferAmount = amount;
+	blockBufferFrames = frames;
 }
 
 - (FLAC__StreamDecoder *)decoder
@@ -314,7 +302,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		[NSNumber numberWithInt:channels],@"channels",
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
-		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"big",@"endian",
 		nil];

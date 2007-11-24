@@ -113,7 +113,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	
 	frequency = WavpackGetSampleRate(wpc);
 
-	length = ((double)WavpackGetNumSamples(wpc) * 1000.0)/frequency;
+	totalFrames = WavpackGetNumSamples(wpc);
 	
 	bitrate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
 
@@ -145,7 +145,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	return n;
 }
 */
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
 	uint32_t			sample;
 	int32_t				audioSample;
@@ -154,11 +154,10 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	int16_t				*alias16;
 	int32_t				*alias32;
 
-	int inputBufferLength = size / (bitsPerSample/8);
-	int32_t *inputBuffer = malloc(inputBufferLength*sizeof(int32_t));
+	int32_t *inputBuffer = malloc(frames*sizeof(int32_t));
 	
 	// Wavpack uses "complete" samples (one sample across all channels), i.e. a Core Audio frame
-	samplesRead	= WavpackUnpackSamples(wpc, inputBuffer, inputBufferLength/channels);
+	samplesRead	= WavpackUnpackSamples(wpc, inputBuffer, frames/channels);
 	
 	// Handle floating point files
 	// Perform hard clipping and convert to integers
@@ -214,17 +213,14 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	
 	free(inputBuffer);
 	
-	return samplesRead * channels * (bitsPerSample/8);
+	return samplesRead;
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)frame
 {
-	int sample;
-	sample = frequency*(milliseconds/1000.0);
-
-	WavpackSeekSample(wpc, sample);
+	WavpackSeekSample(wpc, frame);
 	
-	return milliseconds;
+	return frame;
 }
 
 - (void)close
@@ -252,7 +248,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
-		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host",@"endian",
 		nil];

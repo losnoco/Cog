@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -11,6 +11,8 @@
 			<array>
 				<string>*</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>****</string>
@@ -174,6 +176,8 @@
 			<array>
 				<string>gbs</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Game Boy Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -188,6 +192,8 @@
 			<array>
 				<string>gym</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Sega Genesis Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -202,6 +208,8 @@
 			<array>
 				<string>hes</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>PC Engine Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -216,6 +224,8 @@
 			<array>
 				<string>kss</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MSX Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -231,6 +241,8 @@
 				<string>nsf</string>
 				<string>nsfe</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>NES Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -245,6 +257,8 @@
 			<array>
 				<string>sap</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Atari XL Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -259,6 +273,8 @@
 			<array>
 				<string>spc</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Super Nintendo Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -274,6 +290,8 @@
 				<string>vgm</string>
 				<string>vgz</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Sega SMS/Genesis Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -288,6 +306,8 @@
 			<array>
 				<string>mod</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MOD Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -302,6 +322,8 @@
 			<array>
 				<string>xm</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>xm.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>XM Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -316,6 +338,8 @@
 			<array>
 				<string>s3m</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>s3m.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>S3M Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -330,6 +354,8 @@
 			<array>
 				<string>it</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>it.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>IT Audio File</string>
 			<key>CFBundleTypeRole</key>
@@ -376,6 +402,8 @@
 			<array>
 				<string>cue</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>cue.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Cue Sheet File</string>
 			<key>CFBundleTypeRole</key>

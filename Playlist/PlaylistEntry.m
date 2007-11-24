@@ -14,6 +14,7 @@
 
 + (void)initialize { 
 	[self setKeys:[NSArray arrayWithObjects:@"artist",@"title",nil] triggerChangeNotificationsForDependentKey:@"display"]; 
+	[self setKeys:[NSArray arrayWithObjects:@"totalFrames",nil] triggerChangeNotificationsForDependentKey:@"length"]; 
 }
 
 - (id)init
@@ -30,7 +31,7 @@
 
 		year = nil;
 		track = nil;
-		length = nil;
+		totalFrames = nil;
 		bitrate = nil;
 		channels = nil;
 		bitsPerSample = nil;
@@ -54,7 +55,7 @@
 	[genre release];
 	[year release];
 	[track release];
-	[length release];
+	[totalFrames release];
 	[bitrate release];
 	[channels release];
 	[bitsPerSample release];
@@ -200,7 +201,7 @@
 
 - (void)setProperties:(NSDictionary *)dict
 {
-	[self setLength:		[dict objectForKey:@"length"		]];
+	[self setTotalFrames:		[dict objectForKey:@"totalFrames"		]];
 	[self setBitrate:		[dict objectForKey:@"bitrate"		]];
 	[self setChannels:		[dict objectForKey:@"channels"		]];
 	[self setBitsPerSample:	[dict objectForKey:@"bitsPerSample" ]];
@@ -215,16 +216,16 @@
 	[self performSelectorOnMainThread:@selector(setProperties:) withObject:properties waitUntilDone:YES];
 }
 
-- (void)setLength:(NSNumber *)l
+- (void)setTotalFrames:(NSNumber *)t
 {
-	[l retain];
-	[length release];
+	[t retain];
+	[totalFrames release];
 	
-	length = l;
+	totalFrames = t;
 }
-- (NSNumber *)length
+- (NSNumber *)totalFrames
 {
-	return length;
+	return totalFrames;
 }
 
 - (void)setBitrate:(NSNumber *) br
@@ -327,6 +328,11 @@
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", idx, url];
+}
+
+- (NSNumber *)length
+{
+	return [NSNumber numberWithDouble:([totalFrames longValue] / [sampleRate floatValue])];
 }
 
 @end

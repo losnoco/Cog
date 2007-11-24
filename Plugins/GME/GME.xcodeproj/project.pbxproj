@@ -202,6 +202,7 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "GME" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 089C166AFE841209C02AAC07 /* GME */;
 			projectDirPath = "";
@@ -211,6 +212,7 @@
 					ProjectRef = 17C8F3320CBED393008D969D /* GME.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				8D5B49AC048680CD000E48DA /* GME Plugin */,
 			);
