@@ -62,24 +62,43 @@ const NSTimeInterval HOLD_RECOGNITION_TIME_INTERVAL=0.4;
 
 #pragma public interface
 
+- (void) setCookieMappingInDictionary: (NSMutableDictionary*) _cookieToButtonMapping	{	
+	if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_4) {
+		// 10.4.x Tiger
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonVolume_Plus]		forKey:@"14_12_11_6_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonVolume_Minus]		forKey:@"14_13_11_6_"];		
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonMenu]		forKey:@"14_7_6_14_7_6_"];			
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonPlay]		forKey:@"14_8_6_14_8_6_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonRight]		forKey:@"14_9_6_14_9_6_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonLeft]		forKey:@"14_10_6_14_10_6_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonRight_Hold]	forKey:@"14_6_4_2_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonLeft_Hold]	forKey:@"14_6_3_2_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonMenu_Hold]	forKey:@"14_6_14_6_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonPlay_Sleep]	forKey:@"18_14_6_18_14_6_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteControl_Switched]	forKey:@"19_"];			
+	} else {
+		// 10.5.x Leopard
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonVolume_Plus]		forKey:@"31_29_28_19_18_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonVolume_Minus]		forKey:@"31_30_28_19_18_"];	
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonMenu]		forKey:@"31_20_19_18_31_20_19_18_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonPlay]		forKey:@"31_21_19_18_31_21_19_18_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonRight]		forKey:@"31_22_19_18_31_22_19_18_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonLeft]		forKey:@"31_23_19_18_31_23_19_18_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonRight_Hold]	forKey:@"31_19_18_4_2_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonLeft_Hold]	forKey:@"31_19_18_3_2_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonMenu_Hold]	forKey:@"31_19_18_31_19_18_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonPlay_Sleep]	forKey:@"35_31_19_18_35_31_19_18_"];
+		[_cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteControl_Switched]	forKey:@"19_"];			
+	}
+}
+
 - (id) init {   
     if ( self = [super init] ) {
         openInExclusiveMode = YES;
         queue = NULL;
         hidDeviceInterface = NULL;
         cookieToButtonMapping = [[NSMutableDictionary alloc] init];
-
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonVolume_Plus]  forKey:@"14_12_11_6_"];
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonVolume_Minus] forKey:@"14_13_11_6_"];     
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonMenu]         forKey:@"14_7_6_14_7_6_"];      
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonPlay]         forKey:@"14_8_6_14_8_6_"];
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonRight]        forKey:@"14_9_6_14_9_6_"];
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonLeft]         forKey:@"14_10_6_14_10_6_"];
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonRight_Hold]   forKey:@"14_6_4_2_"];
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonLeft_Hold]    forKey:@"14_6_3_2_"];
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonMenu_Hold]    forKey:@"14_6_14_6_"];
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteButtonPlay_Sleep]   forKey:@"18_14_6_18_14_6_"];
-        [cookieToButtonMapping setObject:[NSNumber numberWithInt:kRemoteControl_Switched]   forKey:@"19_"]; 
+		[self setCookieMappingInDictionary:cookieToButtonMapping];
 
         /* defaults */
         [self setSimulatesPlusMinusHold: YES];
@@ -476,15 +495,10 @@ static void QueueCallbackFunction(void* target,  IOReturn result, void* refcon, 
 
         //printf("%d %d %d\n", event.elementCookie, event.value, event.longValue);      
 
-        if (REMOTE_SWITCH_COOKIE == (int)event.elementCookie) {
-            [remote setRemoteId: event.value];
-            [remote handleEventWithCookieString: @"19_" sumOfValues: 0];
-        } else {
-            if (((int)event.elementCookie)!=5) {
-                sumOfValues+=event.value;
-                [cookieString appendString:[NSString stringWithFormat:@"%d_", event.elementCookie]];
-            }
-        }               
+		if (((int)event.elementCookie)!=5) {
+			sumOfValues+=event.value;
+			[cookieString appendString:[NSString stringWithFormat:@"%d_", event.elementCookie]];
+		}
     }
 
     [remote handleEventWithCookieString: cookieString sumOfValues: sumOfValues];    
