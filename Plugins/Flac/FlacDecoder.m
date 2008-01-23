@@ -219,6 +219,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 		memcpy(((uint8_t *)buffer) + (framesRead * bytesPerFrame), (uint8_t *)blockBuffer, framesToRead * bytesPerFrame);
 
+		frames -= framesToRead;
 		framesRead += framesToRead;
 		blockBufferFrames -= framesToRead;
 		
