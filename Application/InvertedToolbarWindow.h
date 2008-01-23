@@ -12,6 +12,7 @@
 @interface InvertedToolbarWindow : NSWindow {
 	BOOL contentHidden;
 	double contentHeight;
+	double contentWidth;
 }
 
 @end

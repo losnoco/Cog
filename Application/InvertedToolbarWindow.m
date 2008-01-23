@@ -25,16 +25,19 @@
 		newFrame.origin.y -= contentHeight;
 		newFrame.size.height += contentHeight;
 		
+		[[self contentView] resizeSubviewsWithOldSize:NSMakeSize(contentWidth, 0)];
+
 		[self setFrame:newFrame display:YES animate:YES];
+		
+		[[self contentView] setAutoresizesSubviews:YES];
 
 		[self setShowsResizeIndicator:YES];
-
-		[[self contentView] setAutoresizesSubviews:YES];
 	}
 	else //Hide
 	{
 		NSRect newFrame = [self frame];
 	
+		contentWidth = [[self contentView] bounds].size.width;
 		contentHeight = [[self contentView] bounds].size.height;
 		
 		newFrame.origin.y += contentHeight;
@@ -43,7 +46,6 @@
 		[self setShowsResizeIndicator:NO];
 
 		[[self contentView] setAutoresizesSubviews:NO];
-		
 		[self setFrame:newFrame display:YES animate:YES];
 	}
 	
