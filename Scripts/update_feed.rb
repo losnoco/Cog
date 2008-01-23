@@ -52,7 +52,7 @@ if appcast_revision < latest_revision
   version_element.text = "r#{latest_revision}"
 
   newplist = open('Info.plist', 'w')
-  plistdoc.write(newplist, 0)
+  plistdoc.write(newplist)
   newplist.close()
 
   #Build Cog!
@@ -85,12 +85,14 @@ if appcast_revision < latest_revision
   new_item.add_element('pubDate')
   new_item.elements['pubDate'].text = Time.now().strftime("%a, %d %b %Y %H:%M:%S %Z") #RFC 822
   
+  new_item.add_element('sparkle:minimumSystemVersion')
+  new_item.elements['sparkle:minimumSystemVersion'].text =  '10.5.0'
+
   new_item.add_element('enclosure')
   new_item.elements['enclosure'].add_attribute('url', "http://cogx.org/#{feed}_builds/#{filename}")
   new_item.elements['enclosure'].add_attribute('length', filesize)
   new_item.elements['enclosure'].add_attribute('type', 'application/octet-stream')
   new_item.elements['enclosure'].add_attribute('sparkle:version', "r#{latest_revision}")
-  new_item.elements['enclosure'].add_attribute('sparkle:minimumSystemVersion', '10.5.0')
   
   appcastdoc.insert_before('//channel/item', new_item)
   
@@ -98,7 +100,7 @@ if appcast_revision < latest_revision
   appcastdoc.delete_element('//channel/item[position()>5]')
   
   new_xml = Tempfile.new('appcast.xml')
-  appcastdoc.write(new_xml, 0)
+  appcastdoc.write(new_xml)
   new_xml.close()
   appcast.close()
 
