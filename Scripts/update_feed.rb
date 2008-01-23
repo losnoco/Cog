@@ -90,6 +90,7 @@ if appcast_revision < latest_revision
   new_item.elements['enclosure'].add_attribute('length', filesize)
   new_item.elements['enclosure'].add_attribute('type', 'application/octet-stream')
   new_item.elements['enclosure'].add_attribute('sparkle:version', "r#{latest_revision}")
+  new_item.elements['enclosure'].add_attribute('sparkle:minimumSystemVersion', '10.5.0')
   
   appcastdoc.insert_before('//channel/item', new_item)
   
