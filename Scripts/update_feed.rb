@@ -1,4 +1,4 @@
-#!/sw/bin/ruby
+#!/usr/bin/env ruby
 
 require 'tempfile'
 require 'open-uri'
