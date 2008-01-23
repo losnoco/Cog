@@ -22,9 +22,7 @@
 	
 	IBOutlet NSWindow *mainWindow;
 	
-	IBOutlet NSButton *playButton;
-	IBOutlet NSButton *prevButton;
-	IBOutlet NSButton *nextButton;
+	IBOutlet NSSegmentedControl *playbackButtons;
 	IBOutlet NSButton *infoButton;
 	IBOutlet NSButton *fileButton;
 	IBOutlet NSButton *shuffleButton;

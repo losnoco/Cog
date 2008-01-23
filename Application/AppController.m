@@ -215,9 +215,9 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 	
-	[playButton setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"")];
-	[prevButton setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"")];
-	[nextButton setToolTip:NSLocalizedString(@"NextButtonTooltip", @"")];
+	[[playbackButtons cell] setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"") forSegment: 1];
+	[[playbackButtons cell] setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"") forSegment: 0];
+	[[playbackButtons cell] setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment: 2];
 	[infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
 	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
 	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
@@ -448,17 +448,17 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)clickPlay
 {
-	[playButton performClick:nil];
+	[playbackController playPauseResume:self];
 }
 
 - (void)clickPrev
 {
-	[prevButton performClick:nil];
+	[playbackController prev:nil];
 }
 
 - (void)clickNext
 {
-	[nextButton performClick:nil];
+	[playbackController next:nil];
 }
 
 
