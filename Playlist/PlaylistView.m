@@ -19,12 +19,10 @@
 
 - (void)awakeFromNib
 {
-	[super awakeFromNib];
-	
 	[[self menu] setAutoenablesItems:NO];
 	
 	NSControlSize s = NSSmallControlSize;
-	NSEnumerator *oe = [[self allTableColumns] objectEnumerator];
+	NSEnumerator *oe = [[self tableColumns] objectEnumerator];
 	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
 	NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
 
@@ -68,7 +66,7 @@
 	
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"headerCell.title" ascending:YES];
 	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-	NSEnumerator *e = [[[[self allTableColumns] allObjects] sortedArrayUsingDescriptors: sortDescriptors] objectEnumerator];
+	NSEnumerator *e = [[[self tableColumns] sortedArrayUsingDescriptors: sortDescriptors] objectEnumerator];
 
 	int menuIndex = 0;
 	NSTableColumn *col;	
@@ -77,7 +75,7 @@
 		
 		[contextMenuItem setTarget:self];
 		[contextMenuItem setRepresentedObject:col];
-		[contextMenuItem setState:([[self visibleTableColumns] containsObject:col] ? NSOnState : NSOffState)];
+		[contextMenuItem setState:([col isHidden] ? NSOffState : NSOnState)];
 
 		menuIndex++;
 	}
@@ -95,12 +93,13 @@
 	{
 		[sender setState:NSOnState];
 
-		[self showTableColumn:tc];
+		[tc setHidden: NO];
 	}
 	else
 	{
 		[sender setState:NSOffState];
-		[self hideTableColumn:tc];
+		
+		[tc setHidden: YES];
 	}
 }
 

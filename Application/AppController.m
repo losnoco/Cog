@@ -192,18 +192,12 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	id tc = [playlistView tableColumnWithIdentifier:identifier];
 
-	NSArray *visibleColumnIdentifiers = [[NSUserDefaults standardUserDefaults] objectForKey:[playlistView columnVisibilitySaveName]];
-	if (visibleColumnIdentifiers) {
-		NSEnumerator *enumerator = [visibleColumnIdentifiers objectEnumerator];
-		id column;
-		while (column = [enumerator nextObject]) {
-			if ([visibleColumnIdentifiers containsObject:identifier]) {
-				[showColumn setState:NSOnState];
-			}
-			else {
-				[showColumn setState:NSOffState];
-			}
-		}
+	
+	if ([tc isHidden]) {
+		[showColumn setState:NSOffState];
+	}
+	else {
+		[showColumn setState:NSOnState];
 	}
 	
 	[showColumn setRepresentedObject: tc];

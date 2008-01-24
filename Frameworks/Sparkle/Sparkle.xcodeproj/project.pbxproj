@@ -159,10 +159,6 @@
 		61B5F8E409C4CE3C00B25A18 /* SUUpdater.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SUUpdater.m; sourceTree = "<group>"; };
 		61B5F8E509C4CE3C00B25A18 /* NSFileManager+Authentication.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Authentication.m"; sourceTree = "<group>"; };
 		61B5F8F609C4CEB300B25A18 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
-		61B5F90409C4CEE200B25A18 /* Test Application-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "Test Application-Info.plist"; path = "Test Application/Test Application-Info.plist"; sourceTree = "<group>"; };
-		61B5F92409C4CFC900B25A18 /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "Test Application/main.m"; sourceTree = "<group>"; };
-		61B5F92B09C4CFD800B25A18 /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = "Test Application/English.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		61B5F92D09C4CFD800B25A18 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = "Test Application/English.lproj/MainMenu.nib"; sourceTree = "<group>"; };
 		61B5FB9409C4F04600B25A18 /* SUAppcast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUAppcast.h; sourceTree = "<group>"; };
 		61B5FB9509C4F04600B25A18 /* SUAppcast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUAppcast.m; sourceTree = "<group>"; };
 		61B5FBCB09C4FBAB00B25A18 /* SUUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUUtilities.h; sourceTree = "<group>"; };
@@ -339,10 +335,6 @@
 			isa = PBXGroup;
 			children = (
 				61BBDF810A49220C00378739 /* Sparkle.icns */,
-				61B5F92A09C4CFD800B25A18 /* InfoPlist.strings */,
-				61B5F92C09C4CFD800B25A18 /* MainMenu.nib */,
-				61B5F92409C4CFC900B25A18 /* main.m */,
-				61B5F90409C4CEE200B25A18 /* Test Application-Info.plist */,
 			);
 			name = "Test Application Sources";
 			sourceTree = "<group>";
@@ -587,22 +579,6 @@
 			name = SUUpdateAlert.nib;
 			sourceTree = "<group>";
 		};
-		61B5F92A09C4CFD800B25A18 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				61B5F92B09C4CFD800B25A18 /* English */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		61B5F92C09C4CFD800B25A18 /* MainMenu.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				61B5F92D09C4CFD800B25A18 /* English */,
-			);
-			name = MainMenu.nib;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -688,6 +664,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SYMROOT = ../../build;
 				WARNING_CFLAGS = "-wall";
 			};
 			name = Debug;

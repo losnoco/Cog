@@ -29,8 +29,6 @@
 		1769D7D20CC2BFF7003F455B /* FileTreeDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1769D7D00CC2BFF7003F455B /* FileTreeDataSource.m */; };
 		1770429C0B8BC53600B86321 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 177042980B8BC53600B86321 /* AppController.m */; };
 		1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1770429A0B8BC53600B86321 /* PlaybackController.m */; };
-		177EBF9E0B8BC2A70000BC8C /* AMRemovableColumnsTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF7A0B8BC2A70000BC8C /* AMRemovableColumnsTableView.m */; };
-		177EBFA00B8BC2A70000BC8C /* AMRemovableTableColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF7C0B8BC2A70000BC8C /* AMRemovableTableColumn.m */; };
 		177EBFA20B8BC2A70000BC8C /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */; };
 		177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF870B8BC2A70000BC8C /* ImageTextCell.m */; };
 		177EBFAB0B8BC2A70000BC8C /* NDHotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF8D0B8BC2A70000BC8C /* NDHotKeyControl.m */; };
@@ -69,6 +67,7 @@
 		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
 		179790F20C087B46001D6996 /* OpenURLPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 179790F00C087B46001D6996 /* OpenURLPanel.nib */; };
+		17B6FA7F0D48225300C3BEF1 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BF2B270CDD77EB007E1295 /* Sparkle.framework */; };
 		17BA9FBF0CC431890015F804 /* ContainerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA9FBD0CC431890015F804 /* ContainerNode.m */; };
 		17BA9FC80CC432060015F804 /* ContainedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA9FC60CC432060015F804 /* ContainedNode.m */; };
 		17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */; };
@@ -78,7 +77,6 @@
 		17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5EA50B8A87850009ACB1 /* IOKit.framework */; };
 		17BBE5BC0CD95CFA00258F7A /* InvertedToolbarWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BBE5BB0CD95CFA00258F7A /* InvertedToolbarWindow.m */; };
 		17BF2B280CDD7802007E1295 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BF2B270CDD77EB007E1295 /* Sparkle.framework */; };
-		17BF2B370CDD7810007E1295 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BF2B270CDD77EB007E1295 /* Sparkle.framework */; };
 		17C809910C3BD201005707C4 /* WavPack.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808C80C3BD1DD005707C4 /* WavPack.bundle */; };
 		17C809920C3BD206005707C4 /* Vorbis.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808BF0C3BD1D2005707C4 /* Vorbis.bundle */; };
 		17C809930C3BD21D005707C4 /* TagLib.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808B60C3BD1C5005707C4 /* TagLib.bundle */; };
@@ -449,7 +447,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17BF2B370CDD7810007E1295 /* Sparkle.framework in CopyFiles */,
+				17B6FA7F0D48225300C3BEF1 /* Sparkle.framework in CopyFiles */,
 				17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */,
 				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 			);
@@ -507,10 +505,6 @@
 		177042980B8BC53600B86321 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		177042990B8BC53600B86321 /* PlaybackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaybackController.h; sourceTree = "<group>"; };
 		1770429A0B8BC53600B86321 /* PlaybackController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaybackController.m; sourceTree = "<group>"; };
-		177EBF790B8BC2A70000BC8C /* AMRemovableColumnsTableView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AMRemovableColumnsTableView.h; sourceTree = "<group>"; };
-		177EBF7A0B8BC2A70000BC8C /* AMRemovableColumnsTableView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AMRemovableColumnsTableView.m; sourceTree = "<group>"; };
-		177EBF7B0B8BC2A70000BC8C /* AMRemovableTableColumn.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AMRemovableTableColumn.h; sourceTree = "<group>"; };
-		177EBF7C0B8BC2A70000BC8C /* AMRemovableTableColumn.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AMRemovableTableColumn.m; sourceTree = "<group>"; };
 		177EBF7E0B8BC2A70000BC8C /* AppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppleRemote.h; sourceTree = "<group>"; };
 		177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppleRemote.m; sourceTree = "<group>"; };
 		177EBF860B8BC2A70000BC8C /* ImageTextCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageTextCell.h; sourceTree = "<group>"; };
@@ -763,7 +757,6 @@
 			isa = PBXGroup;
 			children = (
 				178BAB920CD4E1B700B33D47 /* GCWindowMenu */,
-				177EBF780B8BC2A70000BC8C /* AMRemovableColumnsTableView */,
 				177EBF7D0B8BC2A70000BC8C /* AppleRemote */,
 				177EBF850B8BC2A70000BC8C /* ImageTextCell */,
 				179790DD0C087AB7001D6996 /* OpenURLPanel */,
@@ -771,17 +764,6 @@
 				177EBF900B8BC2A70000BC8C /* UKKQueue */,
 			);
 			path = ThirdParty;
-			sourceTree = "<group>";
-		};
-		177EBF780B8BC2A70000BC8C /* AMRemovableColumnsTableView */ = {
-			isa = PBXGroup;
-			children = (
-				177EBF790B8BC2A70000BC8C /* AMRemovableColumnsTableView.h */,
-				177EBF7A0B8BC2A70000BC8C /* AMRemovableColumnsTableView.m */,
-				177EBF7B0B8BC2A70000BC8C /* AMRemovableTableColumn.h */,
-				177EBF7C0B8BC2A70000BC8C /* AMRemovableTableColumn.m */,
-			);
-			path = AMRemovableColumnsTableView;
 			sourceTree = "<group>";
 		};
 		177EBF7D0B8BC2A70000BC8C /* AppleRemote */ = {
@@ -1609,8 +1591,6 @@
 				8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
 				171678C00AC8C39E00C28CF3 /* SmartFolderNode.m in Sources */,
-				177EBF9E0B8BC2A70000BC8C /* AMRemovableColumnsTableView.m in Sources */,
-				177EBFA00B8BC2A70000BC8C /* AMRemovableTableColumn.m in Sources */,
 				177EBFA20B8BC2A70000BC8C /* AppleRemote.m in Sources */,
 				177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */,
 				177EBFAB0B8BC2A70000BC8C /* NDHotKeyControl.m in Sources */,

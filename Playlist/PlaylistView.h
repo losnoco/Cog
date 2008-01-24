@@ -11,9 +11,7 @@
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 
-#import "AMRemovableColumnsTableView.h"
-
-@interface PlaylistView : AMRemovableColumnsTableView {
+@interface PlaylistView : NSTableView {
 	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
 
