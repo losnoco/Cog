@@ -62,6 +62,10 @@ const NSTimeInterval HOLD_RECOGNITION_TIME_INTERVAL=0.4;
 
 #pragma public interface
 
+#ifndef NSAppKitVersionNumber10_4
+	#define	NSAppKitVersionNumber10_4 824
+#endif
+
 - (void) setCookieMappingInDictionary: (NSMutableDictionary*) _cookieToButtonMapping	{	
 	if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_4) {
 		// 10.4.x Tiger

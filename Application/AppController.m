@@ -206,7 +206,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 - (void)awakeFromNib
 {
 	[mainWindow setExcludedFromWindowsMenu:YES];
-	
+	[mainWindow setContentBorderThickness:22.0 forEdge:NSMinYEdge];
+
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 	
 	[[playbackButtons cell] setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"") forSegment: 1];
