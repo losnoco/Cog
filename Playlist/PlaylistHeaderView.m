@@ -34,10 +34,9 @@
 		
 		if (clickedSeperator) {
 			NSTableColumn *col = [[[self tableView] tableColumns] objectAtIndex:column];
-
+			
 			//Info about the font and such
 			NSCell *cell = [col dataCell];
-			NSAttributedString * as = [cell attributedStringValue];
 
 			//Binding info...reaching deep!
 			NSDictionary *bindingInfo = [col infoForBinding:@"value"];
@@ -48,9 +47,10 @@
 			id row;
 			NSEnumerator *enumerator = [boundArray objectEnumerator];
 			while (row = [enumerator nextObject]) {
-				NSString *s = [row description];
-					
-				float width = [s sizeWithAttributes:[as attributesAtIndex:0 effectiveRange:nil]].width;
+			
+				[cell setObjectValue:row];
+				
+				float width = [cell cellSize].width;
 				if (width > max_width)
 					max_width = width;
 			}
