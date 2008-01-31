@@ -19,6 +19,11 @@
 	[self setRootPath: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"] ]; 
 }
 
+- (NSString *)rootPath
+{
+	return [[rootNode url] path];
+}
+
 - (void)setRootPath: (NSString *)rootPath
 {
 	[[[[outlineView tableColumns] objectAtIndex:0] headerCell] setStringValue:[[NSFileManager defaultManager] displayNameAtPath:rootPath]];

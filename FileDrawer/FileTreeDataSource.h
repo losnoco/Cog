@@ -16,6 +16,7 @@
 	IBOutlet NSOutlineView *outlineView;
 }
 
+- (NSString *)rootPath;
 - (void)setRootPath:(NSString *)rootPath;
 
 - (void)reloadPathNode:(PathNode *)item;
