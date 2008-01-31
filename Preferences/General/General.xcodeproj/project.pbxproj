@@ -40,25 +40,13 @@
 		170744AC0BFF3938002475C9 /* AppcastArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppcastArrayController.m; sourceTree = "<group>"; };
 		172D72AC0B8926CA00D095BB /* apple_remote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple_remote.png; path = Icons/apple_remote.png; sourceTree = "<group>"; };
 		1766C7A70B912A71004A7AE4 /* lastfm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lastfm.png; path = Icons/lastfm.png; sourceTree = "<group>"; };
-		178E38740C3DA65900EE6711 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/Preferences.nib; sourceTree = "<group>"; };
-		178E38750C3DA65B00EE6711 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/Preferences.nib; sourceTree = "<group>"; };
-		178E38760C3DA65E00EE6711 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Hebrew; path = Hebrew.lproj/Preferences.nib; sourceTree = "<group>"; };
-		178E38770C3DA66000EE6711 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Greek; path = Greek.lproj/Preferences.nib; sourceTree = "<group>"; };
-		178E38780C3DA66800EE6711 /* French */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
-		178E38790C3DA66A00EE6711 /* German */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
-		178E387A0C3DA66D00EE6711 /* Hebrew */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Hebrew; path = Hebrew.lproj/Localizable.strings; sourceTree = "<group>"; };
-		178E387B0C3DA66F00EE6711 /* Greek */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Greek; path = Greek.lproj/Localizable.strings; sourceTree = "<group>"; };
 		17C643360B8A77CC00C53518 /* OutputsArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputsArrayController.m; sourceTree = "<group>"; };
 		17C643370B8A77CC00C53518 /* OutputsArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputsArrayController.h; sourceTree = "<group>"; };
 		17C6433D0B8A783F00C53518 /* OutputPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputPane.h; sourceTree = "<group>"; };
 		17C6433E0B8A783F00C53518 /* OutputPane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputPane.m; sourceTree = "<group>"; };
 		17C643680B8A788000C53518 /* output.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = output.png; path = Icons/output.png; sourceTree = "<group>"; };
 		17C644310B8A791D00C53518 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
-		17D1AB680CC0BBB500924FEB /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/Preferences.nib; sourceTree = "<group>"; };
-		17D1AB6B0CC0BBCA00924FEB /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
-		17E41C660C13074400AC744D /* Swedish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Swedish; path = Swedish.lproj/Preferences.nib; sourceTree = "<group>"; };
 		17E41DB50C130A9D00AC744D /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
-		17E41DF80C130CAA00AC744D /* Swedish */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Swedish; path = Swedish.lproj/Localizable.strings; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* General_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = General_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* General.preferencePane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = General.preferencePane; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -250,6 +238,7 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "General" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -263,6 +252,7 @@
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* General */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8D5B49AC048680CD000E48DA /* General */,
 			);
@@ -321,12 +311,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				17E41DB50C130A9D00AC744D /* English */,
-				17E41DF80C130CAA00AC744D /* Swedish */,
-				178E38780C3DA66800EE6711 /* French */,
-				178E38790C3DA66A00EE6711 /* German */,
-				178E387A0C3DA66D00EE6711 /* Hebrew */,
-				178E387B0C3DA66F00EE6711 /* Greek */,
-				17D1AB6B0CC0BBCA00924FEB /* zh_CN */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -335,12 +319,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				8E07AC040AAC968C00A4B32F /* English */,
-				17E41C660C13074400AC744D /* Swedish */,
-				178E38740C3DA65900EE6711 /* French */,
-				178E38750C3DA65B00EE6711 /* German */,
-				178E38760C3DA65E00EE6711 /* Hebrew */,
-				178E38770C3DA66000EE6711 /* Greek */,
-				17D1AB680CC0BBB500924FEB /* zh_CN */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
