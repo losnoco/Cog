@@ -56,6 +56,8 @@
 - (IBAction)next:(id)sender;
 - (IBAction)prev:(id)sender;
 - (IBAction)seek:(id)sender;
+- (IBAction)seekForward:(id)sender;
+- (IBAction)seekBackward:(id)sender;
 
 - (void)initDefaults;
 

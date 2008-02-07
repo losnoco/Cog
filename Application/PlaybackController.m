@@ -194,6 +194,40 @@
 	[self updateTimeField:time];
 }
 
+- (IBAction)seekForward:(id)sender
+{
+	double time;
+	time = [audioPlayer amountPlayed];
+
+	if ((time + 10) > (int)[positionSlider maxValue]) 
+	{
+		[self next:self];
+	}
+	else
+	{
+		[audioPlayer seekToTime:time + 10];
+		[self updateTimeField:time + 10];
+	}
+}
+
+- (IBAction)seekBackward:(id)sender
+{
+	double time;
+	time = [audioPlayer amountPlayed];
+
+	if ((time - 10) < 0) 
+	{
+		[audioPlayer seekToTime:0];
+		[self updateTimeField:0];
+	}
+	else 
+	{
+		[audioPlayer seekToTime:time - 10];
+		[self updateTimeField:time - 10];
+	}
+}
+
+
 - (void)changePlayButtonImage:(NSString *)name
 {
 	NSImage *img = [NSImage imageNamed:name];
