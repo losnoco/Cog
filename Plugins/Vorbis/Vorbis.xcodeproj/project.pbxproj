@@ -262,7 +262,7 @@
 					"-weak_framework",
 					Vorbis,
 					"-weak_framework",
-					Ogg,
+					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
 				WRAPPER_EXTENSION = bundle;
@@ -293,7 +293,7 @@
 					"-weak_framework",
 					Vorbis,
 					"-weak_framework",
-					Ogg,
+					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
 				WRAPPER_EXTENSION = bundle;

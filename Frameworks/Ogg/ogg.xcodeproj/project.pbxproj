@@ -25,7 +25,7 @@
 		8C8BF5B0098FE7FA00CEE186 /* ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ogg.h; path = "libogg-1.1.3/include/ogg/ogg.h"; sourceTree = "<group>"; };
 		8C8BF5B1098FE7FA00CEE186 /* os_types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = os_types.h; path = "libogg-1.1.3/include/ogg/os_types.h"; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8DC2EF5B0486A6940098B216 /* Ogg.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Ogg.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DC2EF5B0486A6940098B216 /* ogg.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ogg.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -43,7 +43,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DC2EF5B0486A6940098B216 /* Ogg.framework */,
+				8DC2EF5B0486A6940098B216 /* ogg.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,9 +130,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* Ogg Framework */ = {
+		8DC2EF4F0486A6940098B216 /* ogg Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Ogg Framework" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "ogg Framework" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -143,10 +143,10 @@
 			);
 			dependencies = (
 			);
-			name = "Ogg Framework";
+			name = "ogg Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = ogg;
-			productReference = 8DC2EF5B0486A6940098B216 /* Ogg.framework */;
+			productReference = 8DC2EF5B0486A6940098B216 /* ogg.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -155,12 +155,14 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "ogg" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* ogg */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* Ogg Framework */,
+				8DC2EF4F0486A6940098B216 /* ogg Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -216,7 +218,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = __MACOSX__;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				PRODUCT_NAME = Ogg;
+				PRODUCT_NAME = ogg;
 				USER_HEADER_SEARCH_PATHS = "libogg-src/include";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -240,7 +242,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = __MACOSX__;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				PRODUCT_NAME = Ogg;
+				PRODUCT_NAME = ogg;
 				USER_HEADER_SEARCH_PATHS = "libogg-src/include";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -271,7 +273,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Ogg Framework" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "ogg Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,

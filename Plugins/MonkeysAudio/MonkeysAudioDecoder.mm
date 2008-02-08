@@ -7,7 +7,7 @@
 //
 
 #import "MonkeysAudioDecoder.h"
-#import "MAC/ApeInfo.h"
+#import "MAC/APEInfo.h"
 #import "MAC/CharacterHelper.h"
 
 @implementation MonkeysAudioDecoder

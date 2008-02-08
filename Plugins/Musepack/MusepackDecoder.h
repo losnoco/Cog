@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <MPCDec/mpcdec.h>
+#import <mpcdec/mpcdec.h>
 #import "Plugin.h"
 
 @interface MusepackDecoder : NSObject <CogDecoder>

@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
-#import "Wavpack/wputils.h"
+#import "WavPack/wputils.h"
 
 @interface WavPackDecoder : NSObject <CogDecoder>
 {

@@ -14,7 +14,6 @@
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
-		171D09280CCA5FF0009FF3AB /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 171D09270CCA5FE1009FF3AB /* APL.bundle */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
@@ -132,18 +131,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		171D09260CCA5FE1009FF3AB /* PBXContainerItemProxy */ = {
+		17643CBB0D5BD44900F0A9FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 171D09220CCA5FE1009FF3AB /* APL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 99B989F40CC7E10400C256E9;
-			remoteInfo = "APL Plugin";
-		};
-		171D09410CCA6027009FF3AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 171D09220CCA5FE1009FF3AB /* APL.xcodeproj */;
+			containerPortal = 566D32160D538550004466A5 /* APL.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 99B989F30CC7E10400C256E9;
+			remoteGlobalIDString = 99B989F30CC7E10400C256E9 /* APL Plugin */;
 			remoteInfo = "APL Plugin";
 		};
 		17BF2B260CDD77EB007E1295 /* PBXContainerItemProxy */ = {
@@ -384,6 +376,13 @@
 			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = General;
 		};
+		566D321A0D538550004466A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 566D32160D538550004466A5 /* APL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 99B989F40CC7E10400C256E9;
+			remoteInfo = "APL Plugin";
+		};
 		8E8D40860CBB036600135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
@@ -421,7 +420,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				171D09280CCA5FF0009FF3AB /* APL.bundle in CopyFiles */,
 				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
 				17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */,
 				17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */,
@@ -466,7 +464,6 @@
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
-		171D09220CCA5FE1009FF3AB /* APL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = APL.xcodeproj; path = Plugins/Apl/APL.xcodeproj; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -585,6 +582,7 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
+		566D32160D538550004466A5 /* APL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = APL.xcodeproj; path = Plugins/APL/APL.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PreferencePaneProtocol.h; path = Preferences/SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
 		8E07AAEF0AAC910500A4B32F /* SS_PrefsController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PrefsController.h; path = Preferences/SS_PrefsController.h; sourceTree = "<group>"; };
@@ -690,14 +688,6 @@
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		171D09230CCA5FE1009FF3AB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				171D09270CCA5FE1009FF3AB /* APL.bundle */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		1766C68D0B911DF1004A7AE4 /* AudioScrobbler */ = {
@@ -853,7 +843,7 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
-				171D09220CCA5FE1009FF3AB /* APL.xcodeproj */,
+				566D32160D538550004466A5 /* APL.xcodeproj */,
 				17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */,
 				17C8F3C80CBED663008D969D /* GME.xcodeproj */,
 				17F3BB830CBC565100864489 /* CueSheet.xcodeproj */,
@@ -1068,6 +1058,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		566D32170D538550004466A5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				566D321B0D538550004466A5 /* APL.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -1225,8 +1223,8 @@
 				17F3BB8B0CBC566200864489 /* PBXTargetDependency */,
 				17C8F44C0CBEDD37008D969D /* PBXTargetDependency */,
 				17C8F7DA0CBEF3F9008D969D /* PBXTargetDependency */,
-				171D09420CCA6027009FF3AB /* PBXTargetDependency */,
 				17BF2B3A0CDD7827007E1295 /* PBXTargetDependency */,
+				17643CBC0D5BD44900F0A9FE /* PBXTargetDependency */,
 			);
 			name = Cog;
 			productInstallPath = "$(HOME)/Applications";
@@ -1256,8 +1254,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 171D09230CCA5FE1009FF3AB /* Products */;
-					ProjectRef = 171D09220CCA5FE1009FF3AB /* APL.xcodeproj */;
+					ProductGroup = 566D32170D538550004466A5 /* Products */;
+					ProjectRef = 566D32160D538550004466A5 /* APL.xcodeproj */;
 				},
 				{
 					ProductGroup = 17F5612B0C3BD4DC0019975C /* Products */;
@@ -1344,13 +1342,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		171D09270CCA5FE1009FF3AB /* APL.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = APL.bundle;
-			remoteRef = 171D09260CCA5FE1009FF3AB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		17BF2B270CDD77EB007E1295 /* Sparkle.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1468,6 +1459,13 @@
 			fileType = wrapper.cfbundle;
 			path = General.preferencePane;
 			remoteRef = 17F5622D0C3BD8FB0019975C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		566D321B0D538550004466A5 /* APL.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = APL.bundle;
+			remoteRef = 566D321A0D538550004466A5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8E8D40870CBB036600135C1B /* M3u.bundle */ = {
@@ -1600,10 +1598,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		171D09420CCA6027009FF3AB /* PBXTargetDependency */ = {
+		17643CBC0D5BD44900F0A9FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "APL Plugin";
-			targetProxy = 171D09410CCA6027009FF3AB /* PBXContainerItemProxy */;
+			targetProxy = 17643CBB0D5BD44900F0A9FE /* PBXContainerItemProxy */;
 		};
 		17BF2B3A0CDD7827007E1295 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -33,7 +33,7 @@
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8DC2EF5B0486A6940098B216 /* MPCDec.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MPCDec.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DC2EF5B0486A6940098B216 /* mpcdec.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mpcdec.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E6096BC09F314CF006D8BD7 /* huffsv7.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = huffsv7.c; path = Files/src/huffsv7.c; sourceTree = "<group>"; };
 		8E6096BD09F314CF006D8BD7 /* huffsv46.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = huffsv46.c; path = Files/src/huffsv46.c; sourceTree = "<group>"; };
 		8E6096BE09F314CF006D8BD7 /* idtag.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = idtag.c; path = Files/src/idtag.c; sourceTree = "<group>"; };
@@ -71,7 +71,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DC2EF5B0486A6940098B216 /* MPCDec.framework */,
+				8DC2EF5B0486A6940098B216 /* mpcdec.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -189,9 +189,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* MPCDec Framework */ = {
+		8DC2EF4F0486A6940098B216 /* mpcdec Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "MPCDec Framework" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "mpcdec Framework" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -202,10 +202,10 @@
 			);
 			dependencies = (
 			);
-			name = "MPCDec Framework";
+			name = "mpcdec Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = MPCDec;
-			productReference = 8DC2EF5B0486A6940098B216 /* MPCDec.framework */;
+			productReference = 8DC2EF5B0486A6940098B216 /* mpcdec.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -214,12 +214,14 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "MPCDec" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* MPCDec */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* MPCDec Framework */,
+				8DC2EF4F0486A6940098B216 /* mpcdec Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -303,7 +305,7 @@
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				PRODUCT_NAME = MPCDec;
+				PRODUCT_NAME = mpcdec;
 				USER_HEADER_SEARCH_PATHS = Files/include/;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -334,7 +336,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "MPCDec Framework" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "mpcdec Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,
