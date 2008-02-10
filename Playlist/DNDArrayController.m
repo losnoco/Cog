@@ -69,11 +69,6 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 	
 		// set selected rows to those that were just moved
 		// Need to work out what moved where to determine proper selection...
-		int rowsAbove = [self rowsAboveRow:row inIndexSet:indexSet];
-		
-		NSRange range = NSMakeRange(row - rowsAbove, [indexSet count]);
-		indexSet = [NSIndexSet indexSetWithIndexesInRange:range];
-		[self setSelectionIndexes:indexSet];
 		
 		return YES;
 	}
@@ -82,16 +77,42 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 }
 
 
--(void) moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet*)indexSet
+-(void)moveObjectsFromArrangedObjectIndexes:(NSArray *) sources toIndexes:(NSArray *)destinations;
+{
+	//We expect [sources count] == [destinations count].
+	NSMutableArray *selectedObjects = [[NSMutableArray alloc] init];
+	
+	NSUInteger i = 0;
+	for (i = 0; i < [sources count]; i++) {
+		NSUInteger source = [[sources objectAtIndex:i] unsignedIntegerValue];
+		NSUInteger dest = [[destinations objectAtIndex:i] unsignedIntegerValue];
+		
+		id object = [[self arrangedObjects] objectAtIndex:source];
+
+		[object retain];
+
+		[self removeObjectAtArrangedObjectIndex:source];
+		[self insertObject:object atArrangedObjectIndex:dest];
+		
+		[selectedObjects addObject: object];
+
+		[object release];
+	}
+	
+	[self setSelectedObjects:selectedObjects];
+
+	[selectedObjects release];
+}
+
+-(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet*)indexSet
 										toIndex:(unsigned int)insertIndex
 {
-	
-    NSArray		*objects = [self arrangedObjects];
 	int			index = [indexSet lastIndex];
-	
     int			aboveInsertIndexCount = 0;
-    id			object;
     int			removeIndex;
+
+	NSMutableArray *sources = [NSMutableArray array];
+	NSMutableArray *destinations = [NSMutableArray array];
 	
     while (NSNotFound != index)
 	{
@@ -104,14 +125,14 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 			removeIndex = index;
 			insertIndex -= 1;
 		}
-		object = [objects objectAtIndex:removeIndex];
-		[object retain];
-		[self removeObjectAtArrangedObjectIndex:removeIndex];
-		[self insertObject:object atArrangedObjectIndex:insertIndex];
-		[object release];
+		
+		[sources addObject:[NSNumber numberWithUnsignedInteger:removeIndex]];
+		[destinations addObject: [NSNumber numberWithUnsignedInteger:insertIndex]];
 		
 		index = [indexSet indexLessThanIndex:index];
     }
+	
+	[self moveObjectsFromArrangedObjectIndexes:sources toIndexes:destinations];
 }
 
 - (NSIndexSet *)indexSetFromRows:(NSArray *)rows
@@ -124,18 +145,6 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 		[indexSet addIndex:[idx unsignedIntValue]];
     }
     return indexSet;
-}
-
-- (int)rowsAboveRow:(int)row inIndexSet:(NSIndexSet *)indexSet
-{
-    unsigned currentIndex = [indexSet firstIndex];
-    int i = 0;
-    while (currentIndex != NSNotFound)
-    {
-		if (currentIndex < row) { i++; }
-		currentIndex = [indexSet indexGreaterThanIndex:currentIndex];
-    }
-    return i;
 }
 
 @end

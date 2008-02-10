@@ -233,17 +233,17 @@
 	[[playlistController undoManager] redo];
 }
 
--(BOOL)validateMenuItem:(NSMenuItem*)menuItem
+
+-(BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
 {
-	SEL action = [menuItem action];
+	SEL action = [anItem action];
 
 	if (action == @selector(undo:) && [[playlistController undoManager] canUndo])
 		return YES;
-		
 	if (action == @selector(redo:) && [[playlistController undoManager] canRedo]) 
 		return YES;
-		
-	return NO;
+
+	return [super validateUserInterfaceItem:anItem];
 }
 
 @end

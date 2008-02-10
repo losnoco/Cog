@@ -17,7 +17,10 @@ extern NSString *iTunesDropType;
     
 
 // utility methods
--(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(unsigned)index;
+-(void)moveObjectsFromArrangedObjectIndexes:(NSArray *) sources toIndexes:(NSArray *)destinations;
+
+-(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet*)indexSet toIndex:(unsigned int)insertIndex;
+
 - (NSIndexSet *)indexSetFromRows:(NSArray *)rows;
 - (int)rowsAboveRow:(int)row inIndexSet:(NSIndexSet *)indexSet;
 

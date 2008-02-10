@@ -10,14 +10,13 @@
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
 #import "Shuffle.h"
-#import "UndoObject.h"
 
 #import "CogAudio/AudioPlayer.h"
 
 @implementation PlaylistController
 
 #define SHUFFLE_HISTORY_SIZE 100
-#define UNDO_STACK_LIMIT 25
+#define UNDO_STACK_LIMIT 100
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -43,6 +42,42 @@
 	[self updateIndexesFromRow:0];
 }
 
+-(void)moveObjectsFromArrangedObjectIndexes:(NSArray *) sources toIndexes:(NSArray *)destinations
+{
+	NSLog(@"MOVING!: %@ %@", sources, destinations);
+	
+	NSMutableArray *undoSources = [NSMutableArray array];
+	NSMutableArray *undoDests = [NSMutableArray array];
+	
+	for (id s in sources)
+	{
+		[undoDests insertObject:s atIndex:0];
+	}
+	for (id d in destinations)
+	{
+		[undoSources insertObject:d atIndex:0];
+	}
+	[[[self undoManager] prepareWithInvocationTarget:self] moveObjectsFromArrangedObjectIndexes:undoSources toIndexes:undoDests];
+	
+	[super moveObjectsFromArrangedObjectIndexes:sources toIndexes:destinations];
+
+	NSUInteger firstIndex = (NSUInteger)-1;
+	NSUInteger i = 0;
+	
+	for (i = 0; i < [sources count]; i++) {
+		NSUInteger source = [[sources objectAtIndex:i] unsignedIntegerValue];
+		NSUInteger dest = [[destinations objectAtIndex:i] unsignedIntegerValue];
+
+		if (source < firstIndex)
+			firstIndex = source;
+			
+		if (dest < firstIndex)
+			firstIndex = dest;
+	}
+	
+	[self updateIndexesFromRow:firstIndex];
+}
+
 - (BOOL)tableView:(NSTableView*)tv
 	   acceptDrop:(id <NSDraggingInfo>)info
 			  row:(int)row
@@ -50,53 +85,9 @@
 {
 	[super tableView:tv acceptDrop:info row:row dropOperation:op];
 	
-	UndoObject *undoEntry;
-	NSMutableArray *undoEntries = [[NSMutableArray alloc] init];
-	
 	if ([info draggingSource] == tableView)
 	{
-		//DNDArrayController handles moving...still need to update the indexes
-
-		NSArray			*rows = [NSKeyedUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType: MovedRowsType]];
-		NSIndexSet		*indexes = [self indexSetFromRows:rows];
-		int				firstIndex = [indexes firstIndex];
-		int				indexesSize = [indexes count];
-		NSUInteger		indexBuffer[indexesSize];
-
-		int				i;
-		int				adjustment;
-		int				counter;
-		
-		if (firstIndex > row)
-			i = row;
-		else
-			i = firstIndex;
-
-		[indexes getIndexes:indexBuffer maxCount:indexesSize inIndexRange:nil];
-
-		if (row > firstIndex)
-			adjustment = 1;
-		else
-			adjustment = 0;
-		
-		// create an UndoObject for each entry being moved, and store it away
-		// in the undoEntries array
-		for (counter = 0; counter < indexesSize; counter++)
-		{
-			undoEntry = [[UndoObject alloc] init];
-
-			[undoEntry setOrigin: row - adjustment];
-			[undoEntry setMovedTo: indexBuffer[counter]];
-			[undoEntries addObject: undoEntry];
-		}
-				
-		[[self undoManager] registerUndoWithTarget:self
-				 selector:@selector(undoMove:)
-				 object:undoEntries];
-				 
-
-	
-		[self updateIndexesFromRow:i];
+		//DNDArrayController handles moving...
 
 		return YES;
 	}
@@ -198,132 +189,29 @@
 	}
 }
 
--(void)undoDelete:(NSMutableArray *)undoEntries
-{
-	NSEnumerator   *enumerator = [undoEntries objectEnumerator];
-	UndoObject	   *current;
-
-	while (current = [enumerator nextObject])
-	{
-		[playlistLoader 
-			insertURLs: [NSArray arrayWithObject:[current path]]
-			atIndex:[current origin] 
-			sort:YES];
-		// make sure to dealloc the undo object after reinserting it
-		[current dealloc];
-					
-	}
-	[self updateIndexesFromRow: 0];
-}
-
--(void)undoMove:(NSMutableArray *) undoEntries
-{
-	NSArray			*objects = [super arrangedObjects];
-	NSEnumerator	*enumerator = [undoEntries objectEnumerator];
-	UndoObject		*current;
-	id				object;
-	int				len = [undoEntries count];
-	int				iterations = 0;
-	int				playlistLocation;
-
-	// register an undo for the undo with the undoManager, 
-	// so it knows what to do if a redo is requested
-	[[self undoManager] registerUndoWithTarget:self
-				 selector:@selector(undoMove:)
-				 object:undoEntries];
-	
-	while (current = [enumerator nextObject])
-	{
-		/* the exact opposite of an undo is required during a redo, hence
-		we have to check what we are dealing with and act accordingly */
-		
-		// originally moved entry up the list
-		if (([current origin] > [current movedTo])) 
-		{
-			if ([[self undoManager] isUndoing]) // we are undoing
-			{
-				playlistLocation = ([current origin] - (len - 1)) + iterations++;
-				object = [objects objectAtIndex: playlistLocation];
-				[object retain];
-				[super insertObject:object atArrangedObjectIndex:[current movedTo]];
-				[super removeObjectAtArrangedObjectIndex:playlistLocation + 1];
-			}
-			else // we are redoing the undo
-			{
-				playlistLocation = [current movedTo] -	iterations++;
-				object = [objects objectAtIndex: playlistLocation];
-				[object retain];
-				[super removeObjectAtArrangedObjectIndex:playlistLocation];
-				[super insertObject:object atArrangedObjectIndex:[current origin]];
-			}
-
-		}
-		// originally moved entry down the list
-		else
-		{
-			if ([[self undoManager] isUndoing])
-			{
-				object = [objects objectAtIndex: [current origin]];
-				[object retain];
-				[super insertObject:object atArrangedObjectIndex:[current movedTo] + len--];
-				[super removeObjectAtArrangedObjectIndex:[current origin]];
-			}
-			else
-			{
-				object = [objects objectAtIndex: [current movedTo]];
-				[object retain];
-				[super removeObjectAtArrangedObjectIndex:[current movedTo]];
-				[super insertObject:object atArrangedObjectIndex:[current origin] + iterations++];
-			}
-
-		}
-		[object release];
-		
-	}
-	
-	[self updateIndexesFromRow: 0];
-
-}
-
 - (NSUndoManager *)undoManager
 {
 	return undoManager;
 }
 
+- (void)insertObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes
+{
+	[[[self undoManager] prepareWithInvocationTarget:self] removeObjectsAtArrangedObjectIndexes:indexes];
+	[super insertObjects:objects atArrangedObjectIndexes:indexes];
+	
+	[self updateIndexesFromRow:[indexes firstIndex]];
+	[self updateTotalTime];
+
+	if (shuffle == YES)
+		[self resetShuffleList];
+}
+
+
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	int				 i; // loop counter
-	int				 indexesSize = [indexes count];
-	NSUInteger		 indexBuffer[indexesSize];
-	UndoObject		 *undoEntry;
-	PlaylistEntry	 *pre;
-	NSMutableArray	 *undoEntries = [[NSMutableArray alloc] init];
-
 	NSLog(@"Removing indexes: %@", indexes);
 	NSLog(@"Current index: %i", [[currentEntry index] intValue]);
 
-	// get indexes from IndexSet indexes and put them in indexBuffer
-	[indexes getIndexes:indexBuffer maxCount:indexesSize inIndexRange:nil];
-	
-	// loop through the list of indexes, saving each entry away
-	// in an undo object
-	for (i = 0; i < indexesSize; i++)
-	{
-		// alllocate a new object for each undo entry
-		undoEntry = [[UndoObject alloc] init];
-	
-		pre = [self entryAtIndex:indexBuffer[i]];
-	
-		[undoEntry setOrigin:indexBuffer[i] andPath: [pre url]];
-		[undoEntries addObject:undoEntry];
-	}
-	
-	// register the removals with the undoManager
-	[[self undoManager] registerUndoWithTarget:self
-				 selector:@selector(undoDelete:)
-				 object:undoEntries];
-				 
-	
 	if ([[currentEntry index] intValue] >= 0 && [indexes containsIndex:[[currentEntry index] intValue]])
 	{
 		[currentEntry setIndex:[NSNumber numberWithInt:-[[currentEntry index] intValue] - 1]];
@@ -347,7 +235,9 @@
 		NSLog(@"UPDATING INDEX: %@", [currentEntry index]);
 	}
 	
+	[[[self undoManager] prepareWithInvocationTarget:self] insertObjects:[[self arrangedObjects] objectsAtIndexes:indexes] atArrangedObjectIndexes:indexes];
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
+	
 	[self updateIndexesFromRow:[indexes firstIndex]];
 	[self updateTotalTime];
 

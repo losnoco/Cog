@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import <Foundation/NSUndoManager.h>
-#import "UndoObject.h"
 #import "DNDArrayController.h"
 
 @class PlaylistLoader;
@@ -44,8 +43,6 @@
 
 /* Methods for undoing various actions */
 - (NSUndoManager *)undoManager;
-- (void)undoDelete:(NSMutableArray *)undoEntries;
-- (void)undoMove:(NSMutableArray *) undoEntries;
 
 - (IBAction)takeShuffleFromObject:(id)sender;
 - (IBAction)takeRepeatFromObject:(id)sender;
