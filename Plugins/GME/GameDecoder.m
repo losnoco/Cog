@@ -109,7 +109,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:0], @"bitrate",
 		[NSNumber numberWithFloat:44100], @"sampleRate",
-		[NSNumber numberWithLong:length], @"length",
+		[NSNumber numberWithLong:length*44.1], @"totalFrames",
 		[NSNumber numberWithInt:sizeof(short)*8], @"bitsPerSample", //Samples are short
 		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
@@ -117,9 +117,9 @@ gme_err_t readCallback( void* data, void* out, long count )
 		nil];
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	int numSamples = size / (sizeof(short));
+	int numSamples = frames * 2; //channels = 2
 	
 	if (gme_track_ended(emu) || length < gme_tell(emu)) {
 		return 0;
@@ -129,18 +129,18 @@ gme_err_t readCallback( void* data, void* out, long count )
 	
 	//Some formats support length, but we'll add that in the future.
 	//(From gme.txt) If track length, then use it. If loop length, play for intro + loop * 2. Otherwise, default to 2.5 minutes
-	return size; //GME will always generate samples. There's no real EOS.
+	return frames; //GME will always generate samples. There's no real EOS.
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)frame
 {
 	gme_err_t error;
-	error = gme_seek(emu, milliseconds);
+	error = gme_seek(emu, frame/44.1);
 	if (error) {
 		return -1;
 	}
 	
-	return milliseconds;
+	return frame;
 }
 
 - (void)close
