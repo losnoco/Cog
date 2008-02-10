@@ -231,4 +231,27 @@
 	[playlistController randomizeList];
 }
 
+- (IBAction)undo:(id)sender
+{
+	[[playlistController undoManager] undo];
+}
+
+- (IBAction)redo:(id)sender
+{
+	[[playlistController undoManager] redo];
+}
+
+-(BOOL)validateMenuItem:(NSMenuItem*)menuItem
+{
+	SEL action = [menuItem action];
+
+	if (action == @selector(undo:) && [[playlistController undoManager] canUndo])
+		return YES;
+		
+	if (action == @selector(redo:) && [[playlistController undoManager] canRedo]) 
+		return YES;
+		
+	return NO;
+}
+
 @end

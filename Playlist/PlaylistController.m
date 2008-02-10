@@ -27,7 +27,7 @@
 	{
 		shuffleList = [[NSMutableArray alloc] init];
 		undoManager = [[NSUndoManager alloc] init];
-		
+
 		[undoManager setLevelsOfUndo:UNDO_STACK_LIMIT];
 	}
 	
@@ -90,7 +90,7 @@
 			[undoEntries addObject: undoEntry];
 		}
 				
-		[undoManager registerUndoWithTarget:self
+		[[self undoManager] registerUndoWithTarget:self
 				 selector:@selector(undoMove:)
 				 object:undoEntries];
 				 
@@ -228,7 +228,7 @@
 
 	// register an undo for the undo with the undoManager, 
 	// so it knows what to do if a redo is requested
-	[undoManager registerUndoWithTarget:self
+	[[self undoManager] registerUndoWithTarget:self
 				 selector:@selector(undoMove:)
 				 object:undoEntries];
 	
@@ -240,7 +240,7 @@
 		// originally moved entry up the list
 		if (([current origin] > [current movedTo])) 
 		{
-			if ([undoManager isUndoing]) // we are undoing
+			if ([[self undoManager] isUndoing]) // we are undoing
 			{
 				playlistLocation = ([current origin] - (len - 1)) + iterations++;
 				object = [objects objectAtIndex: playlistLocation];
@@ -261,7 +261,7 @@
 		// originally moved entry down the list
 		else
 		{
-			if ([undoManager isUndoing])
+			if ([[self undoManager] isUndoing])
 			{
 				object = [objects objectAtIndex: [current origin]];
 				[object retain];
@@ -289,18 +289,6 @@
 {
 	return undoManager;
 }
-
-- (void)doUndo:(id)sender
-{ 
-	[undoManager undo];
-
-}
-
-- (void)doRedo:(id)sender
-{
-	[undoManager redo];
-}
-
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
@@ -331,7 +319,7 @@
 	}
 	
 	// register the removals with the undoManager
-	[undoManager registerUndoWithTarget:self
+	[[self undoManager] registerUndoWithTarget:self
 				 selector:@selector(undoDelete:)
 				 object:undoEntries];
 				 

@@ -46,8 +46,6 @@
 - (NSUndoManager *)undoManager;
 - (void)undoDelete:(NSMutableArray *)undoEntries;
 - (void)undoMove:(NSMutableArray *) undoEntries;
-- (void)doUndo:(id)sender;
-- (void)doRedo:(id)sender;
 
 - (IBAction)takeShuffleFromObject:(id)sender;
 - (IBAction)takeRepeatFromObject:(id)sender;

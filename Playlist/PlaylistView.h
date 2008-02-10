@@ -25,5 +25,4 @@
 
 - (IBAction)scrollToCurrentEntry:(id)sender;
 
-
 @end
