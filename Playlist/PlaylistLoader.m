@@ -252,7 +252,8 @@
 		[validURLs addObject:url];
 	}
 	
-
+	NSUndoManager *undoManager = [playlistController undoManager];
+	
 	//Create actual entries
 	int i;
 	NSMutableArray *entries = [NSMutableArray array];
@@ -271,6 +272,10 @@
 	}
 	
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
+	
+	[undoManager registerUndoWithTarget:self
+				 selector:@selector(undoAdd:)
+				 object:is];
 
 	[playlistController insertObjects:entries atArrangedObjectIndexes:is];
 	
@@ -281,6 +286,12 @@
 	[NSThread detachNewThreadSelector:@selector(readEntriesInfoThread:) toTarget:self withObject:entries];
 	
 	return;
+}
+
+-(void)undoAdd:(NSIndexSet *)undoEntries
+{
+	[playlistController removeObjectsAtArrangedObjectIndexes:undoEntries];
+
 }
 
 - (void)readEntriesInfoThread:(NSArray *)entries

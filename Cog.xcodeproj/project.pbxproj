@@ -130,6 +130,7 @@
 		8EFFCD630AA093AF00C458A5 /* FileNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD470AA093AF00C458A5 /* FileNode.m */; };
 		8EFFCD650AA093AF00C458A5 /* FileOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD490AA093AF00C458A5 /* FileOutlineView.m */; };
 		8EFFCD6F0AA093AF00C458A5 /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFFCD530AA093AF00C458A5 /* PathNode.m */; };
+		B01946070D5F5467001A2FB8 /* UndoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B01946060D5F5467001A2FB8 /* UndoObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -632,6 +633,8 @@
 		8EFFCD490AA093AF00C458A5 /* FileOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FileOutlineView.m; sourceTree = "<group>"; };
 		8EFFCD520AA093AF00C458A5 /* PathNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PathNode.h; sourceTree = "<group>"; };
 		8EFFCD530AA093AF00C458A5 /* PathNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PathNode.m; sourceTree = "<group>"; };
+		B01946050D5F5467001A2FB8 /* UndoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoObject.h; sourceTree = "<group>"; };
+		B01946060D5F5467001A2FB8 /* UndoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UndoObject.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1116,6 +1119,8 @@
 		8E75752A09F31D5A0080F1EE /* Playlist */ = {
 			isa = PBXGroup;
 			children = (
+				B01946050D5F5467001A2FB8 /* UndoObject.h */,
+				B01946060D5F5467001A2FB8 /* UndoObject.m */,
 				8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */,
 				8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */,
 				1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */,
@@ -1610,6 +1615,7 @@
 				178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */,
 				17BBE5BC0CD95CFA00258F7A /* InvertedToolbarWindow.m in Sources */,
 				569C52E20D5F347800BDBDC9 /* SpotlightWindowController.m in Sources */,
+				B01946070D5F5467001A2FB8 /* UndoObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

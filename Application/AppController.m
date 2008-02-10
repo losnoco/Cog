@@ -236,9 +236,11 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 		[remote startListening:self];
 	}
 	
-	
+	NSUndoManager *undoManager = [playlistController undoManager];
+	[undoManager disableUndoRegistration];
 	NSString *filename = @"~/Library/Application Support/Cog/Default.m3u";
 	[playlistLoader addURL:[NSURL fileURLWithPath:[filename stringByExpandingTildeInPath]]];
+	[undoManager enableUndoRegistration];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification

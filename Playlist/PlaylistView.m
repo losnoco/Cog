@@ -133,8 +133,8 @@
 {
 	//Find which row is under the cursor
 	[[self window] makeFirstResponder:self];
-	NSPoint menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-	int row = [self rowAtPoint:menuPoint];
+	NSPoint   menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+	int       row = [self rowAtPoint:menuPoint];
 	
 	/* Update the table selection before showing menu
 		Preserves the selection if the row under the mouse is selected (to allow for
@@ -171,11 +171,12 @@
 
 - (void)keyDown:(NSEvent *)e
 {
-    unsigned int modifiers = [e modifierFlags] & (NSCommandKeyMask | NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask);
-    NSString *characters = [e characters];
-	unichar c;
+    unsigned int   modifiers = [e modifierFlags] & (NSCommandKeyMask | NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask);
+    NSString       *characters = [e characters];
+	unichar        c;
 
-	if ([characters length] != 1) {
+	if ([characters length] != 1) 
+	{
 		[super keyDown:e];
 	
 		return;
@@ -194,7 +195,9 @@
 	{
 		[playbackController play:self];
 	}
-	else if (modifiers == 0 && c == 0x1b) { //Escape
+	// Escape
+	else if (modifiers == 0 && c == 0x1b) 
+	{ 
 		[playlistController clearFilterPredicate:self];
 	}
 	else if (modifiers == NSControlKeyMask && c == 0xf703) // right arrow 

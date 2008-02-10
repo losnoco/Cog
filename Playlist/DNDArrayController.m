@@ -114,7 +114,6 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
     }
 }
 
-
 - (NSIndexSet *)indexSetFromRows:(NSArray *)rows
 {
     NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
@@ -126,7 +125,6 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
     }
     return indexSet;
 }
-
 
 - (int)rowsAboveRow:(int)row inIndexSet:(NSIndexSet *)indexSet
 {

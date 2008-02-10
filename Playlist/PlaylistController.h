@@ -7,6 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <Foundation/NSUndoManager.h>
+#import "UndoObject.h"
 #import "DNDArrayController.h"
 
 @class PlaylistLoader;
@@ -18,7 +20,9 @@
 	NSString *totalTimeDisplay;
 	
 	NSMutableArray *shuffleList;
-
+	
+	NSUndoManager *undoManager;
+	
 	PlaylistEntry *currentEntry;
 	
 	BOOL shuffle;
@@ -37,6 +41,13 @@
 - (BOOL)shuffle;
 - (void)setRepeat:(BOOL)r;
 - (BOOL)repeat;
+
+/* Methods for undoing various actions */
+- (NSUndoManager *)undoManager;
+- (void)undoDelete:(NSMutableArray *)undoEntries;
+- (void)undoMove:(NSMutableArray *) undoEntries;
+- (void)doUndo:(id)sender;
+- (void)doRedo:(id)sender;
 
 - (IBAction)takeShuffleFromObject:(id)sender;
 - (IBAction)takeRepeatFromObject:(id)sender;
