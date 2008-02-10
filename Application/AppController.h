@@ -11,6 +11,7 @@
 @class FileOutlineView;
 @class AppleRemote;
 @class PlaylistLoader;
+@class SpotlightWindowController;
 
 
 @interface AppController : NSObject
@@ -46,6 +47,8 @@
 	IBOutlet NSMenuItem *showLengthColumn;
 	IBOutlet NSMenuItem *showTrackColumn;
 	IBOutlet NSMenuItem *showYearColumn;
+	
+    IBOutlet SpotlightWindowController *spotlightWindowController;
 	
 	NDHotKeyEvent *playHotKey;
 	NDHotKeyEvent *prevHotKey;
