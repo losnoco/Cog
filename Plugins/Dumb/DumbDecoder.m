@@ -108,7 +108,7 @@ void closeCallback(void *f)
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:0], @"bitrate",
 		[NSNumber numberWithFloat:44100], @"sampleRate",
-		[NSNumber numberWithDouble:length / 65.536f], @"length",
+		[NSNumber numberWithDouble:((length / 65.536f)*44.1000)], @"totalFrames",
 		[NSNumber numberWithInt:16], @"bitsPerSample", //Samples are short
 		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
@@ -116,19 +116,19 @@ void closeCallback(void *f)
 		nil];
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
 	if (duh_sigrenderer_get_position(dsr) > length) {
 		return 0;
 	}
 	
-	return 4*duh_render(dsr, 16 /* shorts */, 0 /* not unsigned */, 1.0 /* volume */, 65536.0f / 44100.0f /* 65536 hz? */, size/(2*2), buf);
+	return duh_render(dsr, 16 /* shorts */, 0 /* not unsigned */, 1.0 /* volume */, 65536.0f / 44100.0f /* 65536 hz? */, frames, buf);
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)frame
 {
 	double pos = (double)duh_sigrenderer_get_position(dsr) / 65.536f;
-	double seekPos = milliseconds;
+	double seekPos = frame/44.100;
 	
 	if (seekPos < pos) {
 		//Reset. Dumb cannot seek backwards. It's dumb.
@@ -144,7 +144,7 @@ void closeCallback(void *f)
 	
 	duh_sigrenderer_generate_samples(dsr, 1.0f, 65536.0f / 44100.0f, numSamples, NULL);
    
-   return milliseconds;
+   return frame;
 }
 
 - (void)cleanUp
