@@ -52,8 +52,11 @@
 
 	//Some titles are all spaces?!
 	NSString *title = [[NSString stringWithUTF8String: duh_get_tag(duh, "TITLE")] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-	
 	unload_duh(duh);
+
+	if (title == nil) {
+		title = @"";
+	}
 	
 	return [NSDictionary dictionaryWithObject:title forKey:@"title"];
 }
