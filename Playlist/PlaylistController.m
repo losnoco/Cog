@@ -517,13 +517,9 @@
 
 - (IBAction)clear:(id)sender
 {
-	[currentEntry setIndex:[NSNumber numberWithInt:-1]];
+	[self setFilterPredicate:nil];
 	
-	[self removeObjects:[self content]];
-	[self updateTotalTime];
-
-	if (shuffle == YES)
-		[self resetShuffleList];
+	[self removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self arrangedObjects] count])]];
 }
 
 - (IBAction)clearFilterPredicate:(id)sender

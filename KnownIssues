@@ -1,4 +1,1 @@
-* Undo does not work for Playlist -> Clear
-* UndoManager starts dropping old undo entries after 25 undos 
-  on the stack. Memleak?
-
+Undo is broken badly when filtering.
