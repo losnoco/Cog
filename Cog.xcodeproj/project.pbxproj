@@ -101,7 +101,9 @@
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
-		569C52E20D5F347800BDBDC9 /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 569C52E10D5F347800BDBDC9 /* SpotlightWindowController.m */; };
+		567E73780D5F456D006C6486 /* SpotlightSearchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 567E73770D5F456D006C6486 /* SpotlightSearchController.m */; };
+		567E75070D5F71E7006C6486 /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 567E75060D5F71E7006C6486 /* SpotlightTransformers.m */; };
+		567E75750D5F8E20006C6486 /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 567E75740D5F8E20006C6486 /* SpotlightWindowController.m */; };
 		569C52E60D5F34F500BDBDC9 /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 569C52E50D5F34F500BDBDC9 /* SpotlightPanel.xib */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -585,8 +587,12 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
 		566D32160D538550004466A5 /* APL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = APL.xcodeproj; path = Plugins/APL/APL.xcodeproj; sourceTree = "<group>"; };
-		569C52E00D5F347800BDBDC9 /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightWindowController.h; sourceTree = "<group>"; };
-		569C52E10D5F347800BDBDC9 /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotlightWindowController.m; sourceTree = "<group>"; };
+		567E73760D5F456D006C6486 /* SpotlightSearchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightSearchController.h; sourceTree = "<group>"; };
+		567E73770D5F456D006C6486 /* SpotlightSearchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotlightSearchController.m; sourceTree = "<group>"; };
+		567E75050D5F71E7006C6486 /* SpotlightTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightTransformers.h; sourceTree = "<group>"; };
+		567E75060D5F71E7006C6486 /* SpotlightTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotlightTransformers.m; sourceTree = "<group>"; };
+		567E75730D5F8E20006C6486 /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightWindowController.h; sourceTree = "<group>"; };
+		567E75740D5F8E20006C6486 /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotlightWindowController.m; sourceTree = "<group>"; };
 		569C52E50D5F34F500BDBDC9 /* SpotlightPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpotlightPanel.xib; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PreferencePaneProtocol.h; path = Preferences/SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
@@ -1076,8 +1082,12 @@
 		569C52C50D5F2BD500BDBDC9 /* Spotlight */ = {
 			isa = PBXGroup;
 			children = (
-				569C52E00D5F347800BDBDC9 /* SpotlightWindowController.h */,
-				569C52E10D5F347800BDBDC9 /* SpotlightWindowController.m */,
+				567E73760D5F456D006C6486 /* SpotlightSearchController.h */,
+				567E73770D5F456D006C6486 /* SpotlightSearchController.m */,
+				567E75050D5F71E7006C6486 /* SpotlightTransformers.h */,
+				567E75060D5F71E7006C6486 /* SpotlightTransformers.m */,
+				567E75730D5F8E20006C6486 /* SpotlightWindowController.h */,
+				567E75740D5F8E20006C6486 /* SpotlightWindowController.m */,
 			);
 			name = Spotlight;
 			sourceTree = "<group>";
@@ -1609,7 +1619,9 @@
 				178BAB9A0CD4E1B700B33D47 /* GCWindowMenu.m in Sources */,
 				178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */,
 				17BBE5BC0CD95CFA00258F7A /* InvertedToolbarWindow.m in Sources */,
-				569C52E20D5F347800BDBDC9 /* SpotlightWindowController.m in Sources */,
+				567E73780D5F456D006C6486 /* SpotlightSearchController.m in Sources */,
+				567E75070D5F71E7006C6486 /* SpotlightTransformers.m in Sources */,
+				567E75750D5F8E20006C6486 /* SpotlightWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

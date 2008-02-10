@@ -1,14 +1,16 @@
 //
-//  SpotlightWindowController.m
+//  SpotlightTransformers.h
 //  Cog
 //
 //  Created by Matthew Grinshpun on 10/02/08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import "SpotlightWindowController.h"
+#import <Cocoa/Cocoa.h>
 
 
-@implementation SpotlightWindowController
+@interface SpotlightArtistTransformer : NSValueTransformer{
+
+}
 
 @end
