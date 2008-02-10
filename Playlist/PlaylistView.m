@@ -238,10 +238,20 @@
 {
 	SEL action = [anItem action];
 
-	if (action == @selector(undo:) && [[playlistController undoManager] canUndo])
-		return YES;
-	if (action == @selector(redo:) && [[playlistController undoManager] canRedo]) 
-		return YES;
+	if (action == @selector(undo:))
+	{
+		if ([[playlistController undoManager] canUndo]) 
+			return YES;
+		else
+			return NO;
+	}
+	if (action == @selector(redo:))
+	{
+		if ([[playlistController undoManager] canRedo]) 
+			return YES;
+		else
+			return NO;
+	}
 
 	return [super validateUserInterfaceItem:anItem];
 }

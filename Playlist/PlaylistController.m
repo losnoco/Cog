@@ -16,7 +16,7 @@
 @implementation PlaylistController
 
 #define SHUFFLE_HISTORY_SIZE 100
-#define UNDO_STACK_LIMIT 100
+#define UNDO_STACK_LIMIT 0
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -247,6 +247,9 @@
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors
 {
+	NSLog(@"Current: %@, setting: %@", [self sortDescriptors], sortDescriptors);
+	[[[self undoManager] prepareWithInvocationTarget:self] setSortDescriptors:[self sortDescriptors]];
+
 	//Cheap hack so the index column isn't sorted
 	if (([sortDescriptors count] != 0) && [[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"index"] == NSOrderedSame)
 	{
@@ -258,6 +261,8 @@
 	}
 
 	[super setSortDescriptors:sortDescriptors];
+	[self rearrangeObjects];
+	[self updateIndexesFromRow:0];
 }
 		
 - (IBAction)sortByPath
@@ -265,7 +270,6 @@
 	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"url" ascending:YES selector:@selector(compare:)];
 	
 	[self setSortDescriptors:[NSArray arrayWithObject:s]];
-	[self rearrangeObjects];
 
 	[s release];	
 
@@ -529,6 +533,8 @@
 
 - (void)setFilterPredicate:(NSPredicate *)filterPredicate
 {
+	[[[self undoManager] prepareWithInvocationTarget:self] setFilterPredicate:[self filterPredicate]];
+
 	[super setFilterPredicate:filterPredicate];
 
 	[self updateIndexesFromRow:0];
