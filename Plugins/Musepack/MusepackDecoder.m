@@ -87,7 +87,7 @@ mpc_bool_t CanSeekProc(void *data)
 	bitrate = (int)(info.average_bitrate/1000.0);
 	frequency = info.sample_freq;
 		
-	length = ((double)mpc_streaminfo_get_length_samples(&info)*1000.0)/frequency;	
+	totalFrames = mpc_streaminfo_get_length_samples(&info);	
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -95,13 +95,15 @@ mpc_bool_t CanSeekProc(void *data)
 	return YES;
 }
 
-- (BOOL)writeSamplesToBuffer:(uint16_t *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer ofSize:(unsigned)p_size
+- (BOOL)writeToBuffer:(uint16_t *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer frames:(unsigned)frames
 {
 	unsigned n;
 	int m_bps = 16;
 	int clip_min = - 1 << (m_bps - 1),
 		clip_max = (1 << (m_bps - 1)) - 1,
 		float_scale = 1 << (m_bps - 1);
+		
+	unsigned p_size = frames * 2; //2 = bits per sample
 
 	for (n = 0; n < p_size; n++)
 	{
@@ -125,56 +127,56 @@ mpc_bool_t CanSeekProc(void *data)
 	return YES;
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	int numread = bufferAmount;
-	int count = 0;
     MPC_SAMPLE_FORMAT sampleBuffer[MPC_DECODER_BUFFER_LENGTH];
 
-	//Fill from buffer, going by bufferAmount
-	//if still needs more, decode and repeat
-	if (bufferAmount == 0)
-	{
-		/* returns the length of the samples*/
-
-		unsigned status = mpc_decoder_decode(&decoder, sampleBuffer, 0, 0);
-		if (status == (unsigned)( -1))
+	int framesRead = 0;
+	int bytesPerFrame = 4; //bitsPerSample == 16, channels == 2
+	while (framesRead < frames)
+	{	
+		//Fill from buffer, going by bufferFrames
+		//if still needs more, decode and repeat
+		if (bufferFrames == 0)
 		{
-			//decode error
-			NSLog(@"Decode error");
-			return 0;
-		}
-		else if (status == 0) //EOF
-		{
-			return 0;
-		}
-		else //status>0 /* status == MPC_FRAME_LENGTH */
-		{
-			[self writeSamplesToBuffer:((uint16_t*)buffer)  fromBuffer:sampleBuffer ofSize:(status*2)];
-		}
+			/* returns the length of the samples*/
+			unsigned status = mpc_decoder_decode(&decoder, sampleBuffer, 0, 0);
+			if (status == (unsigned)( -1))
+			{
+				//decode error
+				NSLog(@"Decode error");
+				return 0;
+			}
+			else if (status == 0) //EOF
+			{
+				return 0;
+			}
+			else //status>0 /* status == MPC_FRAME_LENGTH */
+			{
+			}
 		
-		bufferAmount = status*4;
+			bufferFrames = status;
+		}
+
+		int framesToRead = bufferFrames;
+		if (bufferFrames > frames)
+		{
+			framesToRead = frames;
+		}
+
+		[self writeToBuffer:((uint16_t*)(buf + (framesRead*bytesPerFrame)))  fromBuffer:sampleBuffer frames: bufferFrames];
+
+		frames -= framesToRead;
+		framesRead += framesToRead;
+		bufferFrames -= framesToRead;
+		
+		if (bufferFrames > 0)
+		{
+			memmove((uint8_t *)sampleBuffer, ((uint8_t *)sampleBuffer) + (framesToRead * bytesPerFrame), bufferFrames * bytesPerFrame);
+		}
 	}
 
-	count = bufferAmount;
-	if (bufferAmount > size)
-	{
-		count = size;
-	}
-
-	memcpy(buf, buffer, count);
-
-	bufferAmount -= count;
-
-	if (bufferAmount > 0)
-		memmove(buffer, &buffer[count], bufferAmount);
-
-	if (count < size)
-		numread = [self fillBuffer:(&((char *)buf)[count]) ofSize:(size - count)];
-	else
-		numread = 0;
-
-	return count + numread;
+	return framesRead;
 }
 
 - (void)close
@@ -182,11 +184,11 @@ mpc_bool_t CanSeekProc(void *data)
 	[source close];
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)sample
 {
-	mpc_decoder_seek_sample(&decoder, frequency*((double)milliseconds/1000.0));
+	mpc_decoder_seek_sample(&decoder, sample);
 	
-	return milliseconds;
+	return sample;
 }
 
 - (void)setSource:(id<CogSource>)s
@@ -206,7 +208,7 @@ mpc_bool_t CanSeekProc(void *data)
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:bitrate], @"bitrate",
 		[NSNumber numberWithFloat:frequency], @"sampleRate",
-		[NSNumber numberWithDouble:length], @"length",
+		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 		[NSNumber numberWithInt:16], @"bitsPerSample",
 		[NSNumber numberWithInt:2], @"channels",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",

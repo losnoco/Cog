@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1703330D0B8FB64500327265 /* MusepackDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1703330A0B8FB64500327265 /* MusepackDecoder.m */; };
-		17F564B40C3BDD970019975C /* MPCDec.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* MPCDec.framework */; };
-		17F564B70C3BDD990019975C /* MPCDec.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* MPCDec.framework */; };
+		17F564B40C3BDD970019975C /* mpcdec.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* mpcdec.framework */; };
+		17F564B70C3BDD990019975C /* mpcdec.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* mpcdec.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E2B8B4B0B9B48D000F2D9E8 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E2B8B4A0B9B48D000F2D9E8 /* Plugin.h */; };
 /* End PBXBuildFile section */
@@ -38,7 +38,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17F564B70C3BDD990019975C /* MPCDec.framework in CopyFiles */,
+				17F564B70C3BDD990019975C /* mpcdec.framework in CopyFiles */,
 				8E2B8B4B0B9B48D000F2D9E8 /* Plugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F564B40C3BDD970019975C /* MPCDec.framework in Frameworks */,
+				17F564B40C3BDD970019975C /* mpcdec.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -133,7 +133,7 @@
 		17F562580C3BD97B0019975C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				17F5625F0C3BD97C0019975C /* MPCDec.framework */,
+				17F5625F0C3BD97C0019975C /* mpcdec.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -201,10 +201,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		17F5625F0C3BD97C0019975C /* MPCDec.framework */ = {
+		17F5625F0C3BD97C0019975C /* mpcdec.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = MPCDec.framework;
+			path = mpcdec.framework;
 			remoteRef = 17F5625E0C3BD97C0019975C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

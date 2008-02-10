@@ -18,13 +18,13 @@
 	mpc_reader reader;
 	
 	char buffer[MPC_FRAME_LENGTH*4];
-	int bufferAmount;
+	int bufferFrames;
 
 	int bitrate;
 	float frequency;	
-	double length;
+	long totalFrames;
 }
-- (BOOL)writeSamplesToBuffer:(uint16_t *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer ofSize:(unsigned)p_size;
+- (BOOL)writeToBuffer:(uint16_t *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer frames:(unsigned)frames;
 
 - (void)setSource:(id<CogSource>)s;
 - (id<CogSource>)source;
