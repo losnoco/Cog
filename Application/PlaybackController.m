@@ -8,6 +8,8 @@
 
 @implementation PlaybackController
 
+#define DEFAULT_SEEK 10
+
 - (id)init
 {
 	self = [super init];
@@ -196,37 +198,37 @@
 
 - (IBAction)seekForward:(id)sender
 {
-	double time;
-	time = [audioPlayer amountPlayed];
-
-	if ((time + 10) > (int)[positionSlider maxValue]) 
+	double seekTo = [audioPlayer amountPlayed] + DEFAULT_SEEK;
+	
+	if (seekTo > (int)[positionSlider maxValue]) 
 	{
 		[self next:self];
 	}
 	else
 	{
-		[audioPlayer seekToTime:time + 10];
-		[self updateTimeField:time + 10];
+		[audioPlayer seekToTime:seekTo];
+		[self updateTimeField:seekTo];
+		[positionSlider setDoubleValue:seekTo];
 	}
 }
 
 - (IBAction)seekBackward:(id)sender
 {
-	double time;
-	time = [audioPlayer amountPlayed];
-
-	if ((time - 10) < 0) 
+	double seekTo = [audioPlayer amountPlayed] - DEFAULT_SEEK;
+	
+	if (seekTo < 0) 
 	{
 		[audioPlayer seekToTime:0];
 		[self updateTimeField:0];
+		[positionSlider setDoubleValue:0.0];
 	}
 	else 
 	{
-		[audioPlayer seekToTime:time - 10];
-		[self updateTimeField:time - 10];
+		[audioPlayer seekToTime:seekTo];
+		[self updateTimeField:seekTo];
+		[positionSlider setDoubleValue:seekTo];
 	}
 }
-
 
 - (void)changePlayButtonImage:(NSString *)name
 {
@@ -360,6 +362,10 @@
 	
 }
 
+- (int)status
+{
+	return playbackStatus;
+}
 
 - (void)audioPlayer:(AudioPlayer *)player statusChanged:(id)s
 {
@@ -399,5 +405,23 @@
 	
 	playbackStatus = status;
 }
+
+-(BOOL)validateMenuItem:(NSMenuItem*)menuItem
+{
+	SEL action = [menuItem action];
+	
+	if (action == @selector(seekBackward:) && (playbackStatus == kCogStatusStopped))
+		return NO;
+	
+	if (action == @selector(seekForward:) && (playbackStatus == kCogStatusStopped))
+		return NO;
+	
+	if (action == @selector(stop:) && (playbackStatus == kCogStatusStopped))
+		return NO;
+	
+	return YES;
+}
+
+
 
 @end

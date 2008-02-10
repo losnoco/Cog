@@ -200,14 +200,6 @@
 	{ 
 		[playlistController clearFilterPredicate:self];
 	}
-	else if (modifiers == NSControlKeyMask && c == 0xf703) // right arrow 
-	{
-		[playbackController seekForward:self];
-	}
-	else if (modifiers == NSControlKeyMask && c == 0xf702) // left arrow
-	{
-		[playbackController seekBackward:self];
-	}
 	else
 	{
 		[super keyDown:e];

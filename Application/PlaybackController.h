@@ -66,4 +66,6 @@
 - (void)playEntryAtIndex:(int)i;
 - (void)playEntry:(PlaylistEntry *)pe;
 
+- (int)status;
+
 @end
