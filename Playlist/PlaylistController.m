@@ -16,7 +16,6 @@
 @implementation PlaylistController
 
 #define SHUFFLE_HISTORY_SIZE 100
-#define UNDO_STACK_LIMIT 0
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -25,12 +24,16 @@
 	if (self)
 	{
 		shuffleList = [[NSMutableArray alloc] init];
-		undoManager = [[NSUndoManager alloc] init];
-
-		[undoManager setLevelsOfUndo:UNDO_STACK_LIMIT];
 	}
 	
 	return self;
+}
+
+- (void)dealloc
+{
+	[shuffleList release];
+	
+	[super dealloc];
 }
 
 - (void)tableView:(NSTableView *)tableView
@@ -44,21 +47,6 @@
 
 -(void)moveObjectsFromArrangedObjectIndexes:(NSArray *) sources toIndexes:(NSArray *)destinations
 {
-	NSLog(@"MOVING!: %@ %@", sources, destinations);
-	
-	NSMutableArray *undoSources = [NSMutableArray array];
-	NSMutableArray *undoDests = [NSMutableArray array];
-	
-	for (id s in sources)
-	{
-		[undoDests insertObject:s atIndex:0];
-	}
-	for (id d in destinations)
-	{
-		[undoSources insertObject:d atIndex:0];
-	}
-	[[[self undoManager] prepareWithInvocationTarget:self] moveObjectsFromArrangedObjectIndexes:undoSources toIndexes:undoDests];
-	
 	[super moveObjectsFromArrangedObjectIndexes:sources toIndexes:destinations];
 
 	NSUInteger firstIndex = (NSUInteger)-1;
@@ -191,12 +179,11 @@
 
 - (NSUndoManager *)undoManager
 {
-	return undoManager;
+	return [entriesController undoManager];
 }
 
 - (void)insertObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	[[[self undoManager] prepareWithInvocationTarget:self] removeObjectsAtArrangedObjectIndexes:indexes];
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 	
 	[self updateIndexesFromRow:[indexes firstIndex]];
@@ -205,7 +192,6 @@
 	if (shuffle == YES)
 		[self resetShuffleList];
 }
-
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
@@ -235,7 +221,6 @@
 		NSLog(@"UPDATING INDEX: %@", [currentEntry index]);
 	}
 	
-	[[[self undoManager] prepareWithInvocationTarget:self] insertObjects:[[self arrangedObjects] objectsAtIndexes:indexes] atArrangedObjectIndexes:indexes];
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 	
 	[self updateIndexesFromRow:[indexes firstIndex]];
@@ -248,7 +233,6 @@
 - (void)setSortDescriptors:(NSArray *)sortDescriptors
 {
 	NSLog(@"Current: %@, setting: %@", [self sortDescriptors], sortDescriptors);
-	[[[self undoManager] prepareWithInvocationTarget:self] setSortDescriptors:[self sortDescriptors]];
 
 	//Cheap hack so the index column isn't sorted
 	if (([sortDescriptors count] != 0) && [[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"index"] == NSOrderedSame)
@@ -533,8 +517,6 @@
 
 - (void)setFilterPredicate:(NSPredicate *)filterPredicate
 {
-	[[[self undoManager] prepareWithInvocationTarget:self] setFilterPredicate:[self filterPredicate]];
-
 	[super setFilterPredicate:filterPredicate];
 
 	[self updateIndexesFromRow:0];

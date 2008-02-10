@@ -12,15 +12,15 @@
 
 @class PlaylistLoader;
 @class PlaylistEntry;
+@class EntriesController;
 
 @interface PlaylistController : DNDArrayController {
 	IBOutlet PlaylistLoader *playlistLoader;
+	IBOutlet EntriesController *entriesController;
 
 	NSString *totalTimeDisplay;
 	
 	NSMutableArray *shuffleList;
-	
-	NSUndoManager *undoManager;
 	
 	PlaylistEntry *currentEntry;
 	
