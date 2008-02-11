@@ -7,7 +7,7 @@
 //
 
 #import "SpotlightSearchController.h"
-//#import "SpotlightWindowController.h"
+#import "SpotlightWindowController.h"
 #import "PlaylistLoader.h"
 
 // Store a class predicate for searching for music
@@ -68,12 +68,16 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (IBAction)addToPlaylist:(id)sender;
 {
+    [self.query disableUpdates];
+    
     NSArray *songPaths = [[playlistController selectedObjects]valueForKey:@"kMDItemPath"];
     NSMutableArray *songURLs = [NSMutableArray arrayWithCapacity:[songPaths count]];
     for (NSString *songPath in songPaths) {
         [songURLs addObject:[NSURL fileURLWithPath:songPath]];
     }
-//    [spotlightWindowController.playlistLoader addURLs:songURLs sort:NO];
+   [spotlightWindowController.playlistLoader addURLs:songURLs sort:NO];
+   
+   [self.query enableUpdates];
 }
 
 @synthesize query;

@@ -8,6 +8,7 @@
 #import "AppleRemote.h"
 #import "PlaylistLoader.h"
 #import "OpenURLPanel.h"
+#import "SpotlightWindowController.h"
 
 @implementation AppController
 
