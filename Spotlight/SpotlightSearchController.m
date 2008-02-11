@@ -30,10 +30,20 @@ static NSPredicate * musicOnlyPredicate = nil;
     return self;
 }
 
+- (void)awakeFromNib
+{
+    // Will replace this with userdefaults, but for now just start in
+    // the home directory.
+    NSString *homeDirectory = @"~";
+    homeDirectory = [homeDirectory stringByExpandingTildeInPath];
+    [pathControl setURL:[NSURL fileURLWithPath:homeDirectory isDirectory:YES]];
+}
+
 - (void)performSearch
 {
     unsigned options = (NSCaseInsensitivePredicateOption|
                         NSDiacriticInsensitivePredicateOption);
+    [self.query setSearchScopes:[NSArray arrayWithObjects:pathControl.URL, nil]];
 	NSString *processedKey = [NSString stringWithFormat: @"*%@*", self.searchString];
 	
 	NSPredicate *searchPredicate = [NSComparisonPredicate
@@ -66,7 +76,15 @@ static NSPredicate * musicOnlyPredicate = nil;
 	[super dealloc];
 }
 
-- (IBAction)addToPlaylist:(id)sender;
+- (IBAction)changeSearchPath:(id)sender
+{
+    // When the search path is changed, restart search
+    if([self.query isStarted]) {
+        [self performSearch];
+    }
+}
+
+- (IBAction)addToPlaylist:(id)sender
 {
     [self.query disableUpdates];
     
