@@ -10,8 +10,12 @@
 #import "PlaylistEntry.h"
 
 
-@interface SpotlightPlaylistEntry : PlaylistEntry
+@interface SpotlightPlaylistEntry : PlaylistEntry {
+ 
+    NSNumber *length;
+}
 
 +(SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem;
 
+@property(copy) NSNumber *length;
 @end

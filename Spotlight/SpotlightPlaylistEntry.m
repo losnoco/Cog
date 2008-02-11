@@ -16,6 +16,9 @@ static NSArray * entryKeys;
 
 // extramdKeys represents those keys that require additional processing
 static NSArray * extramdKeys;
+
+// allmdKeys is a combined array of both mdKeys and entryKeys
+static NSArray * allmdKeys;
                      
 // And the dictionary that matches them
 static NSDictionary * tags;
@@ -26,23 +29,25 @@ static NSDictionary * tags;
 {
     mdKeys = [NSArray arrayWithObjects: 
                             @"kMDItemTitle",
-                            @"kMDItemAuthors",
                             @"kMDItemAlbum",
                             @"kMDItemAudioTrackNumber",
                             @"kMDItemRecordingYear",
                             @"kMDItemMusicalGenre",
+                            @"kMDItemDurationSeconds",
                             nil];
     entryKeys = [NSArray arrayWithObjects: 
                             @"title",
-                            @"artist",
                             @"album",
                             @"track",
                             @"year",
                             @"genre",
+                            @"length",
                             nil];
     extramdKeys = [NSArray arrayWithObjects:
                             @"kMDItemPath",
+                            @"kMDItemAuthors",
                             nil];
+    allmdKeys = [mdKeys arrayByAddingObjectsFromArray:extramdKeys];
     tags = [NSDictionary dictionaryWithObjects:entryKeys forKeys:mdKeys];
 }
 
@@ -50,15 +55,17 @@ static NSDictionary * tags;
 {
     // use the matching tag sets to generate a playlist entry
     SpotlightPlaylistEntry *entry = [[[SpotlightPlaylistEntry alloc] init] autorelease];
-    NSDictionary *songAttributes = [metadataItem valuesForAttributes:mdKeys];
-    NSDictionary *extraAttributes = [metadataItem valuesForAttributes:extramdKeys];
+    NSDictionary *songAttributes = [metadataItem valuesForAttributes:allmdKeys];
     for (NSString * mdKey in tags) {
         [entry setValue: [songAttributes objectForKey:mdKey]
                  forKey:[tags objectForKey:mdKey]];
     
     }
     // URL needs to be generated from the simple path stored in kMDItemPath
-    [entry setURL: [NSURL fileURLWithPath: [extraAttributes objectForKey:@"kMDItemPath"]]];
+    [entry setURL: [NSURL fileURLWithPath: [songAttributes objectForKey:@"kMDItemPath"]]];
+    
+    // Authors is an array, but we only care about the first item in it
+    [entry setArtist: [[songAttributes objectForKey:@"kMDItemAuthors"] objectAtIndex:0]];
     return entry;
 }
 
@@ -66,8 +73,10 @@ static NSDictionary * tags;
 {
     if (self = [super init])
     {
-        
+        length = nil;
     }
     return self;
 }
+
+@synthesize length;
 @end
