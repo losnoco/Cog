@@ -103,10 +103,10 @@
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
-		5604D4500D60332A004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D44E0D60332A004F5C5D /* SpotlightWindowController.m */; };
 		5604D4550D603430004F5C5D /* SpotlightSearchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4510D603430004F5C5D /* SpotlightSearchController.m */; };
 		5604D4560D603430004F5C5D /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4530D603430004F5C5D /* SpotlightTransformers.m */; };
 		5604D4580D603459004F5C5D /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5604D4570D603459004F5C5D /* SpotlightPanel.xib */; };
+		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -589,13 +589,13 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
-		5604D44E0D60332A004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotlightWindowController.m; sourceTree = "<group>"; };
-		5604D44F0D60332A004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightWindowController.h; sourceTree = "<group>"; };
 		5604D4510D603430004F5C5D /* SpotlightSearchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightSearchController.m; path = Spotlight/SpotlightSearchController.m; sourceTree = "<group>"; };
 		5604D4520D603430004F5C5D /* SpotlightSearchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearchController.h; path = Spotlight/SpotlightSearchController.h; sourceTree = "<group>"; };
 		5604D4530D603430004F5C5D /* SpotlightTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightTransformers.m; path = Spotlight/SpotlightTransformers.m; sourceTree = "<group>"; };
 		5604D4540D603430004F5C5D /* SpotlightTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightTransformers.h; path = Spotlight/SpotlightTransformers.h; sourceTree = "<group>"; };
 		5604D4570D603459004F5C5D /* SpotlightPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = SpotlightPanel.xib; path = Spotlight/SpotlightPanel.xib; sourceTree = "<group>"; };
+		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
+		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
 		566D32160D538550004466A5 /* APL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = APL.xcodeproj; path = Plugins/APL/APL.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PreferencePaneProtocol.h; path = Preferences/SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
@@ -1085,12 +1085,12 @@
 		569C52C50D5F2BD500BDBDC9 /* Spotlight */ = {
 			isa = PBXGroup;
 			children = (
+				5604D4590D60349B004F5C5D /* SpotlightWindowController.m */,
+				5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */,
 				5604D4510D603430004F5C5D /* SpotlightSearchController.m */,
 				5604D4520D603430004F5C5D /* SpotlightSearchController.h */,
 				5604D4530D603430004F5C5D /* SpotlightTransformers.m */,
 				5604D4540D603430004F5C5D /* SpotlightTransformers.h */,
-				5604D44E0D60332A004F5C5D /* SpotlightWindowController.m */,
-				5604D44F0D60332A004F5C5D /* SpotlightWindowController.h */,
 			);
 			name = Spotlight;
 			sourceTree = "<group>";
@@ -1625,9 +1625,9 @@
 				178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */,
 				17BBE5BC0CD95CFA00258F7A /* InvertedToolbarWindow.m in Sources */,
 				173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */,
-				5604D4500D60332A004F5C5D /* SpotlightWindowController.m in Sources */,
 				5604D4550D603430004F5C5D /* SpotlightSearchController.m in Sources */,
 				5604D4560D603430004F5C5D /* SpotlightTransformers.m in Sources */,
+				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
