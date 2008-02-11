@@ -15,6 +15,8 @@
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
 		173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173428F40D5FB1C400E8D854 /* EntriesController.m */; };
+		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
+		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
@@ -66,7 +68,6 @@
 		1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */; };
 		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
-		179790F20C087B46001D6996 /* OpenURLPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 179790F00C087B46001D6996 /* OpenURLPanel.nib */; };
 		17B6FA7F0D48225300C3BEF1 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BF2B270CDD77EB007E1295 /* Sparkle.framework */; };
 		17BA9FBF0CC431890015F804 /* ContainerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA9FBD0CC431890015F804 /* ContainerNode.m */; };
 		17BA9FC80CC432060015F804 /* ContainedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA9FC60CC432060015F804 /* ContainedNode.m */; };
@@ -104,9 +105,7 @@
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
 		567E73780D5F456D006C6486 /* SpotlightSearchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 567E73770D5F456D006C6486 /* SpotlightSearchController.m */; };
 		567E75070D5F71E7006C6486 /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 567E75060D5F71E7006C6486 /* SpotlightTransformers.m */; };
-		567E75750D5F8E20006C6486 /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 567E75740D5F8E20006C6486 /* SpotlightWindowController.m */; };
 		569C52E60D5F34F500BDBDC9 /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 569C52E50D5F34F500BDBDC9 /* SpotlightPanel.xib */; };
-		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -471,6 +470,8 @@
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
 		173428F30D5FB1C400E8D854 /* EntriesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntriesController.h; sourceTree = "<group>"; };
 		173428F40D5FB1C400E8D854 /* EntriesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntriesController.m; sourceTree = "<group>"; };
+		17342A990D5FD20B00E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		17342ABE0D5FD36400E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/OpenURLPanel.xib; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -548,7 +549,6 @@
 		1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaKeysApplication.m; sourceTree = "<group>"; };
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
 		179790DF0C087AB7001D6996 /* OpenURLPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenURLPanel.m; sourceTree = "<group>"; };
-		179790F10C087B46001D6996 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/OpenURLPanel.nib; sourceTree = "<group>"; };
 		17BA9FBC0CC431890015F804 /* ContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerNode.h; sourceTree = "<group>"; };
 		17BA9FBD0CC431890015F804 /* ContainerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContainerNode.m; sourceTree = "<group>"; };
 		17BA9FC50CC432060015F804 /* ContainedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainedNode.h; sourceTree = "<group>"; };
@@ -585,7 +585,6 @@
 		17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = Audio/CogAudio.xcodeproj; sourceTree = "<group>"; };
 		17F562260C3BD8FB0019975C /* General.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = General.xcodeproj; path = Preferences/General/General.xcodeproj; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
@@ -594,8 +593,6 @@
 		567E73770D5F456D006C6486 /* SpotlightSearchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotlightSearchController.m; sourceTree = "<group>"; };
 		567E75050D5F71E7006C6486 /* SpotlightTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightTransformers.h; sourceTree = "<group>"; };
 		567E75060D5F71E7006C6486 /* SpotlightTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotlightTransformers.m; sourceTree = "<group>"; };
-		567E75730D5F8E20006C6486 /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightWindowController.h; sourceTree = "<group>"; };
-		567E75740D5F8E20006C6486 /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotlightWindowController.m; sourceTree = "<group>"; };
 		569C52E50D5F34F500BDBDC9 /* SpotlightPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpotlightPanel.xib; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PreferencePaneProtocol.h; path = Preferences/SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
@@ -1057,8 +1054,8 @@
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
 				1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */,
 				1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */,
-				179790F00C087B46001D6996 /* OpenURLPanel.nib */,
-				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
+				17342A980D5FD20B00E8D854 /* MainMenu.xib */,
+				17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */,
 				17E41E060C130DFF00AC744D /* Credits.html */,
 				569C52E50D5F34F500BDBDC9 /* SpotlightPanel.xib */,
 			);
@@ -1089,8 +1086,6 @@
 				567E73770D5F456D006C6486 /* SpotlightSearchController.m */,
 				567E75050D5F71E7006C6486 /* SpotlightTransformers.h */,
 				567E75060D5F71E7006C6486 /* SpotlightTransformers.m */,
-				567E75730D5F8E20006C6486 /* SpotlightWindowController.h */,
-				567E75740D5F8E20006C6486 /* SpotlightWindowController.m */,
 			);
 			name = Spotlight;
 			sourceTree = "<group>";
@@ -1521,7 +1516,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				17F562390C3BD91B0019975C /* General.preferencePane in Resources */,
-				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				8E7575BE09F31D800080F1EE /* wheel.icns in Resources */,
 				17E41E070C130DFF00AC744D /* Credits.html in Resources */,
@@ -1545,7 +1539,6 @@
 				1766C8970B912FB4004A7AE4 /* repeat_on.png in Resources */,
 				1766C8980B912FB4004A7AE4 /* shuffle_off.png in Resources */,
 				1766C8990B912FB4004A7AE4 /* shuffle_on.png in Resources */,
-				179790F20C087B46001D6996 /* OpenURLPanel.nib in Resources */,
 				171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */,
 				171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */,
 				171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */,
@@ -1567,6 +1560,8 @@
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
 				569C52E60D5F34F500BDBDC9 /* SpotlightPanel.xib in Resources */,
+				17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */,
+				17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1626,7 +1621,6 @@
 				17BBE5BC0CD95CFA00258F7A /* InvertedToolbarWindow.m in Sources */,
 				567E73780D5F456D006C6486 /* SpotlightSearchController.m in Sources */,
 				567E75070D5F71E7006C6486 /* SpotlightTransformers.m in Sources */,
-				567E75750D5F8E20006C6486 /* SpotlightWindowController.m in Sources */,
 				173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1745,12 +1739,20 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		179790F00C087B46001D6996 /* OpenURLPanel.nib */ = {
+		17342A980D5FD20B00E8D854 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				179790F10C087B46001D6996 /* English */,
+				17342A990D5FD20B00E8D854 /* English */,
 			);
-			name = OpenURLPanel.nib;
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				17342ABE0D5FD36400E8D854 /* English */,
+			);
+			name = OpenURLPanel.xib;
 			sourceTree = "<group>";
 		};
 		17E41E060C130DFF00AC744D /* Credits.html */ = {
@@ -1767,14 +1769,6 @@
 				1705F1420B8BCB0C00C8B40D /* English */,
 			);
 			name = Help;
-			sourceTree = "<group>";
-		};
-		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				29B97319FDCFA39411CA2CEA /* English */,
-			);
-			name = MainMenu.nib;
 			sourceTree = "<group>";
 		};
 		8E7575D909F31E930080F1EE /* Localizable.strings */ = {

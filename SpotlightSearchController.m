@@ -7,7 +7,7 @@
 //
 
 #import "SpotlightSearchController.h"
-#import "SpotlightWindowController.h"
+//#import "SpotlightWindowController.h"
 #import "PlaylistLoader.h"
 
 // Store a class predicate for searching for music
@@ -73,7 +73,7 @@ static NSPredicate * musicOnlyPredicate = nil;
     for (NSString *songPath in songPaths) {
         [songURLs addObject:[NSURL fileURLWithPath:songPath]];
     }
-    [spotlightWindowController.playlistLoader addURLs:songURLs sort:NO];
+//    [spotlightWindowController.playlistLoader addURLs:songURLs sort:NO];
 }
 
 @synthesize query;

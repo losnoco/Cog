@@ -229,7 +229,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 	[self registerHotKeys];
 	
-	[spotlightWindowController initWithWindowNibName:@"SpotlightPanel"];
+	//[spotlightWindowController initWithWindowNibName:@"SpotlightPanel"];
 	
 	//Init Remote
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"] && ![[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"]) {
