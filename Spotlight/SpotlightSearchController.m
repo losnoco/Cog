@@ -20,6 +20,16 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
 	musicOnlyPredicate = [[NSPredicate predicateWithFormat:
                         @"kMDItemContentTypeTree==\'public.audio\'"] retain];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString * homeDir = @"~";
+    homeDir = [homeDir stringByExpandingTildeInPath];
+    homeDir = [[NSURL fileURLWithPath:homeDir isDirectory:YES] absoluteString];
+    NSDictionary *searchDefault = 
+                        [NSDictionary dictionaryWithObject:homeDir
+                                                    forKey:@"spotlightSearchPath"];
+
+    [defaults registerDefaults:searchDefault];
 }
 
 - (id)init
@@ -30,15 +40,6 @@ static NSPredicate * musicOnlyPredicate = nil;
 	}
 
     return self;
-}
-
-- (void)awakeFromNib
-{
-    // Will replace this with userdefaults, but for now just start in
-    // the home directory.
-    NSString *homeDirectory = @"~";
-    homeDirectory = [homeDirectory stringByExpandingTildeInPath];
-    [pathControl setURL:[NSURL fileURLWithPath:homeDirectory isDirectory:YES]];
 }
 
 - (void)performSearch
