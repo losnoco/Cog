@@ -107,6 +107,7 @@
 		5604D4560D603430004F5C5D /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4530D603430004F5C5D /* SpotlightTransformers.m */; };
 		5604D4580D603459004F5C5D /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5604D4570D603459004F5C5D /* SpotlightPanel.xib */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
+		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -596,6 +597,8 @@
 		5604D4570D603459004F5C5D /* SpotlightPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = SpotlightPanel.xib; path = Spotlight/SpotlightPanel.xib; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
+		5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistEntry.h; path = Spotlight/SpotlightPlaylistEntry.h; sourceTree = "<group>"; };
+		5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightPlaylistEntry.m; path = Spotlight/SpotlightPlaylistEntry.m; sourceTree = "<group>"; };
 		566D32160D538550004466A5 /* APL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = APL.xcodeproj; path = Plugins/APL/APL.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PreferencePaneProtocol.h; path = Preferences/SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
@@ -1091,6 +1094,8 @@
 				5604D4520D603430004F5C5D /* SpotlightSearchController.h */,
 				5604D4530D603430004F5C5D /* SpotlightTransformers.m */,
 				5604D4540D603430004F5C5D /* SpotlightTransformers.h */,
+				5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */,
+				5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */,
 			);
 			name = Spotlight;
 			sourceTree = "<group>";
@@ -1628,6 +1633,7 @@
 				5604D4550D603430004F5C5D /* SpotlightSearchController.m in Sources */,
 				5604D4560D603430004F5C5D /* SpotlightTransformers.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
+				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

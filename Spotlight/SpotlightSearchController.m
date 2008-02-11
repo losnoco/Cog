@@ -9,6 +9,7 @@
 #import "SpotlightSearchController.h"
 #import "SpotlightWindowController.h"
 #import "PlaylistLoader.h"
+#import "SpotlightPlaylistEntry.h"
 
 // Store a class predicate for searching for music
 static NSPredicate * musicOnlyPredicate = nil;
@@ -25,6 +26,7 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
 	if (self = [super init]) {
 		self.query = [[NSMetadataQuery alloc] init];
+        [self.query setDelegate:self];
 	}
 
     return self;
@@ -97,6 +99,17 @@ static NSPredicate * musicOnlyPredicate = nil;
    
    [self.query enableUpdates];
 }
+
+#pragma mark NSMetadataQuery delegate methods
+
+// replace the NSMetadataItem with a PlaylistEntry
+- (id)metadataQuery:(NSMetadataQuery*)query
+replacementObjectForResultObject:(NSMetadataItem*)result
+{
+    return [SpotlightPlaylistEntry playlistEntryWithMetadataItem: result];
+}
+
+#pragma mark Getters and setters
 
 @synthesize query;
 
