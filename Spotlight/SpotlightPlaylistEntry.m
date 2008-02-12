@@ -44,7 +44,7 @@ static NSDictionary * tags;
                             @"length",
                             nil]retain];
     extramdKeys = [[NSArray arrayWithObjects:
-                            // @"kMDItemPath",
+                            @"kMDItemPath",
                             @"kMDItemAuthors",
                             nil]retain];
     allmdKeys = [[mdKeys arrayByAddingObjectsFromArray:extramdKeys]retain];
@@ -68,9 +68,9 @@ static NSDictionary * tags;
                  forKey:[tags objectForKey:mdKey]];
     
     }
+    
     // URL needs to be generated from the simple path stored in kMDItemPath
-    // Will deal with this complication later.
-    // [entry setURL: [NSURL fileURLWithPath: [songAttributes objectForKey:@"kMDItemPath"]]];
+    [entry setURL: [NSURL fileURLWithPath: [songAttributes objectForKey:@"kMDItemPath"]]];
     
     // Authors is an array, but we only care about the first item in it
     

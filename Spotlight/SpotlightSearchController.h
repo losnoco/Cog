@@ -22,6 +22,7 @@
 - (IBAction)changeSearchPath:(id)sender;
 
 - (void)performSearch;
+- (NSPredicate *)processSearchString;
 
 @property(retain) NSMetadataQuery *query;
 @property(copy) NSString *searchString;

@@ -45,23 +45,15 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (void)performSearch
 {
-    unsigned options = (NSCaseInsensitivePredicateOption|
-                        NSDiacriticInsensitivePredicateOption);
-                        
+    // Process the search string into a compound predicate
+    NSPredicate *searchPredicate = [self processSearchString];
+    
     // Set scope to contents of pathControl
     [self.query setSearchScopes:[NSArray arrayWithObjects:pathControl.URL, nil]];
-    
-	NSString *processedKey = [NSString stringWithFormat: @"*%@*", self.searchString];
-	
-	NSPredicate *searchPredicate = [NSComparisonPredicate
-	         predicateWithLeftExpression:[NSExpression expressionForKeyPath:@"kMDItemAuthors"]
-	                     rightExpression:[NSExpression expressionForConstantValue:processedKey]
-	                            modifier:NSDirectPredicateModifier
-	                                type:NSLikePredicateOperatorType
-	                             options:options];
-    
+
     // spotlightPredicate, which is what will finally be used for the spotlight search
-    // is the union of the bound NSSearchField and the static musicOnlyPredicate
+    // is the union of the (potentially) compound searchPredicate and the static 
+    // musicOnlyPredicate
     
     NSPredicate *spotlightPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:
                                        [NSArray arrayWithObjects: musicOnlyPredicate,
@@ -72,6 +64,44 @@ static NSPredicate * musicOnlyPredicate = nil;
     self.query.predicate = spotlightPredicate;
     [self.query startQuery];
     NSLog(@"Started query: %@", [self.query.predicate description], [[self.query class]description]);
+}
+
+- (NSPredicate *)processSearchString
+{
+    // break the string up into an array of each word
+    NSArray * searchComponents = [self.searchString 
+        componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    // create an array of all the predicates to join together
+    NSMutableArray * subpredicates = [NSMutableArray 
+        arrayWithCapacity:[searchComponents count]];
+    
+    // we will ignore case and diacritics
+    unsigned options = (NSCaseInsensitivePredicateOption|
+						NSDiacriticInsensitivePredicateOption);
+    
+    for(NSString *s in searchComponents)
+    {
+        // convert each "word" into "*word*"
+        NSString *processedKey = [NSString stringWithFormat: @"*%@*", s];
+        
+        // Search all tags for something like word
+        NSPredicate *predicate = [NSComparisonPredicate
+                predicateWithLeftExpression:[NSExpression expressionForKeyPath:@"*"]
+                            rightExpression:[NSExpression expressionForConstantValue:processedKey]
+                                   modifier:NSDirectPredicateModifier
+                                       type:NSLikePredicateOperatorType
+                                       options:options];
+        
+        //TODO: Ability to search only artist, albums, etc.
+        [subpredicates addObject: predicate];
+    }
+    
+    if ([subpredicates count] == 1)
+        return [subpredicates objectAtIndex: 0];
+    
+    // Create a compound predicate from subPredicates
+    return [NSCompoundPredicate andPredicateWithSubpredicates: subpredicates];
 }
 
 - (void)dealloc
