@@ -1,6 +1,6 @@
 #import "PlaybackController.h"
 #import "PlaylistView.h"
-
+#import <Foundation/NSTimer.h>
 #import "CogAudio/Status.h"
 
 #import "PlaylistController.h"
@@ -53,8 +53,14 @@
 
 - (void)awakeFromNib
 {
-	currentVolume = 100.0;
 	[volumeSlider setDoubleValue:pow(10.0, log10(0.5)/4.0)*100];
+	
+	double percent;
+	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];//100.0;
+	percent = percent * percent * percent * percent;
+	
+	currentVolume = ((float)[volumeSlider doubleValue]/100.0)*[volumeSlider maxValue];//percent * 1000;//0;//[volumeSlider doubleValue];
+		
 	[positionSlider setEnabled:NO];
 }
 	
@@ -265,16 +271,57 @@
 	[audioPlayer  setVolume:currentVolume];
 }
 
+/* selector for NSTimer - gets passed the Timer object itself
+ and the appropriate userInfo, which in this case is an NSNumber
+ containing the current volume before we start fading. */
+- (void)audioFader:(NSTimer *)audioTimer
+{
+	double volume = currentVolume;
+	NSArray *origValues = [audioTimer userInfo];
+	id originalVolume = [origValues objectAtIndex:0];
+	id origSliderVolume = [origValues objectAtIndex:1];
+
+	if (volume > 0)
+	{
+		[self volumeDown:self];
+	}
+	else  // volume is at 0 or below, we are ready to release the timer and move on
+	{
+		[audioPlayer pause];
+		currentVolume = [originalVolume doubleValue];
+		[audioPlayer setVolume:currentVolume];
+		[volumeSlider setDoubleValue:[origSliderVolume doubleValue]];
+		[audioTimer invalidate];
+	}
+	
+}
+
+- (IBAction)fadeOut:(id)sender withTime:(double)time
+{
+	id      origCurrentVolume    = [NSNumber numberWithDouble: currentVolume];
+	id      origSliderVolume     = [NSNumber numberWithDouble: [volumeSlider doubleValue]];
+
+	NSArray *originalValues      = [NSArray arrayWithObjects:origCurrentVolume,origSliderVolume,nil];
+	NSTimer *fadeTimer;
+
+	NSLog(@"currentVolume here%f", [volumeSlider doubleValue]);
+	fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
+												 target:self
+											   selector:@selector(audioFader:) 
+											   userInfo:originalValues
+												repeats:YES];
+}
+
 - (IBAction)volumeDown:(id)sender
 {
 	double percent;
-	
 	[volumeSlider setDoubleValue:([volumeSlider doubleValue] - 5)];
 	
-	percent = (float)[volumeSlider doubleValue]/100.0;
+	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];//100.0;
 	percent = percent * percent * percent * percent;
 	
-	currentVolume = percent * 100.0;
+	currentVolume = (percent * [volumeSlider maxValue]) + [volumeSlider doubleValue];//100.0;
+	NSLog(@"currentVolume %f", currentVolume);
 	
 	[audioPlayer  setVolume:currentVolume];
 }
@@ -285,11 +332,16 @@
 	
 	[volumeSlider setDoubleValue:([volumeSlider doubleValue] + 5)];
 	
-	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];
+	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];//100.0;
 	percent = percent * percent * percent * percent;
 	
-	currentVolume = percent * [volumeSlider maxValue];
-	
+	currentVolume = (percent * [volumeSlider maxValue]) + [volumeSlider doubleValue];//100.0);
+	if (currentVolume > 400)
+		currentVolume = 400;
+
+	NSLog(@"%f", currentVolume);
+
+
 	[audioPlayer  setVolume:currentVolume];
 }
 
@@ -360,11 +412,6 @@
 		[self updateTimeField:pos];
 	}
 	
-}
-
-- (int)status
-{
-	return playbackStatus;
 }
 
 - (void)audioPlayer:(AudioPlayer *)player statusChanged:(id)s

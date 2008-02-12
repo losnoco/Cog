@@ -1,76 +1,157 @@
-{
-    IBClasses = (
-        {
-            CLASS = AppcastArrayController; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSArrayController; 
-        }, 
-        {
-            ACTIONS = {openSheet = id; }; 
-            CLASS = FileDrawerPane; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {rootPathTextView = NSTextField; }; 
-            SUPERCLASS = PreferencePane; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = HotKeyControl; LANGUAGE = ObjC; SUPERCLASS = NDHotKeyControl; }, 
-        {
-            ACTIONS = {
-                grabNextHotKey = id; 
-                grabPlayHotKey = id; 
-                grabPrevHotKey = id; 
-                hotKeyChanged = id; 
-            }; 
-            CLASS = HotKeyPane; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                nextHotKeyControl = HotKeyControl; 
-                playHotKeyControl = HotKeyControl; 
-                prevHotKeyControl = HotKeyControl; 
-            }; 
-            SUPERCLASS = PreferencePane; 
-        }, 
-        {CLASS = NDHotKeyControl; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
-        {
-            ACTIONS = {takeDeviceID = id; }; 
-            CLASS = OutputPane; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {outputDevices = OutputsArrayController; }; 
-            SUPERCLASS = PreferencePane; 
-        }, 
-        {
-            CLASS = OutputsArrayController; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSArrayController; 
-        }, 
-        {
-            CLASS = PrefPaneController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                fileDrawerPane = FileDrawerPane; 
-                hotKeyPane = HotKeyPane; 
-                outputPane = OutputPane; 
-                remoteView = NSView; 
-                scrobblerView = NSView; 
-                updatesView = NSView; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            CLASS = PreferencePane; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {view = NSView; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {takeBool = id; }; 
-            CLASS = RemotePane; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {onlyOnActive = NSButton; }; 
-            SUPERCLASS = PreferencePane; 
-        }, 
-        {CLASS = ScrobblerPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }, 
-        {CLASS = UpdatesPane; LANGUAGE = ObjC; SUPERCLASS = PreferencePane; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>AppcastArrayController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSArrayController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HotKeyControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NDHotKeyControl</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>grabNextHotKey</key>
+				<string>id</string>
+				<key>grabPlayHotKey</key>
+				<string>id</string>
+				<key>grabPrevHotKey</key>
+				<string>id</string>
+				<key>hotKeyChanged</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>HotKeyPane</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>nextHotKeyControl</key>
+				<string>HotKeyControl</string>
+				<key>playHotKeyControl</key>
+				<string>HotKeyControl</string>
+				<key>prevHotKeyControl</key>
+				<string>HotKeyControl</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>PreferencePane</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>PrefPaneController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>fileDrawerPane</key>
+				<string>FileDrawerPane</string>
+				<key>hotKeyPane</key>
+				<string>HotKeyPane</string>
+				<key>outputPane</key>
+				<string>OutputPane</string>
+				<key>remoteView</key>
+				<string>NSView</string>
+				<key>scrobblerView</key>
+				<string>NSView</string>
+				<key>updatesView</key>
+				<string>NSView</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>OutputsArrayController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSArrayController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>openSheet</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FileDrawerPane</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>rootPathTextView</key>
+				<string>NSTextField</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>PreferencePane</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NDHotKeyControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextField</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>PreferencePane</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>view</key>
+				<string>NSView</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>takeDeviceID</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>OutputPane</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>outputDevices</key>
+				<string>OutputsArrayController</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>PreferencePane</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

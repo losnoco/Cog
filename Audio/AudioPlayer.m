@@ -1,4 +1,4 @@
-//
+
 //  AudioController.m
 //  Cog
 //
@@ -136,6 +136,7 @@
 {
 	[output setVolume:v];
 }
+
 
 //This is called by the delegate DURING a requestNextStream request.
 - (void)setNextStream:(NSURL *)url

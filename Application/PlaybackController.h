@@ -58,14 +58,14 @@
 - (IBAction)seek:(id)sender;
 - (IBAction)seekForward:(id)sender;
 - (IBAction)seekBackward:(id)sender;
+- (IBAction)fadeOut:(id)sender withTime:(double)time;
 
 - (void)initDefaults;
+- (void)audioFader:(NSTimer *)audioTimer;
 
 - (void)updateTimeField:(double)pos;
 
 - (void)playEntryAtIndex:(int)i;
 - (void)playEntry:(PlaylistEntry *)pe;
-
-- (int)status;
 
 @end
