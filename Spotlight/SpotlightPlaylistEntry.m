@@ -20,7 +20,7 @@ static NSArray * extramdKeys;
 // allmdKeys is a combined array of both mdKeys and entryKeys
 static NSArray * allmdKeys;
                      
-// And the dictionary that matches them
+// tags matches mdKeys and entryKeys for automated extraction
 static NSDictionary * tags;
 
 @implementation SpotlightPlaylistEntry
@@ -51,6 +51,12 @@ static NSDictionary * tags;
     tags = [NSDictionary dictionaryWithObjects:entryKeys forKeys:mdKeys];
 }
 
+// Use this to access the array of all the keys we want.
++ (NSArray *)allmdKeys
+{
+    return allmdKeys;
+}
+
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem
 {
     // use the matching tag sets to generate a playlist entry
@@ -65,6 +71,7 @@ static NSDictionary * tags;
     [entry setURL: [NSURL fileURLWithPath: [songAttributes objectForKey:@"kMDItemPath"]]];
     
     // Authors is an array, but we only care about the first item in it
+    
     [entry setArtist: [[songAttributes objectForKey:@"kMDItemAuthors"] objectAtIndex:0]];
     return entry;
 }

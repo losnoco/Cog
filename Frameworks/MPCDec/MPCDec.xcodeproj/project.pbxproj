@@ -283,7 +283,7 @@
 				HEADER_SEARCH_PATHS = Files/include/;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				PRODUCT_NAME = MPCDec;
+				PRODUCT_NAME = mpcdec;
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
 			};

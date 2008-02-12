@@ -22,13 +22,14 @@ static NSPredicate * musicOnlyPredicate = nil;
                         @"kMDItemContentTypeTree==\'public.audio\'"] retain];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    // Set the home directory as the default search directory
     NSString * homeDir = @"~";
     homeDir = [homeDir stringByExpandingTildeInPath];
     homeDir = [[NSURL fileURLWithPath:homeDir isDirectory:YES] absoluteString];
     NSDictionary *searchDefault = 
                         [NSDictionary dictionaryWithObject:homeDir
                                                     forKey:@"spotlightSearchPath"];
-
     [defaults registerDefaults:searchDefault];
 }
 
@@ -46,11 +47,14 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
     unsigned options = (NSCaseInsensitivePredicateOption|
                         NSDiacriticInsensitivePredicateOption);
+                        
+    // Set scope to contents of pathControl
     [self.query setSearchScopes:[NSArray arrayWithObjects:pathControl.URL, nil]];
+    
 	NSString *processedKey = [NSString stringWithFormat: @"*%@*", self.searchString];
 	
 	NSPredicate *searchPredicate = [NSComparisonPredicate
-	         predicateWithLeftExpression:[NSExpression expressionForKeyPath:@"*"]
+	         predicateWithLeftExpression:[NSExpression expressionForKeyPath:@"kMDItemAuthors"]
 	                     rightExpression:[NSExpression expressionForConstantValue:processedKey]
 	                            modifier:NSDirectPredicateModifier
 	                                type:NSLikePredicateOperatorType
