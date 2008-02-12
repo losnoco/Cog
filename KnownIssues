@@ -1,1 +1,8 @@
 Undo is broken badly when filtering.
+
+Fade to pause is severely broken now that it uses volumeDown, since 
+this will not take into account the time used to fade.
+
+volumeUp and volumeDown of playbackController aren't quite right, and
+the slider sets the volume differently.
+
