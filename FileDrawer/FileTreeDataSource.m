@@ -74,8 +74,8 @@
 		[urls addObject:[p url]];
 	}
 	NSLog(@"URLS: %@", urls);
-    [pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPbboardType,nil] owner:nil];	//add it to pboard
-	[pboard setData:[NSArchiver archivedDataWithRootObject:urls] forType:CogUrlsPbboardType];
+    [pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard
+	[pboard setData:[NSArchiver archivedDataWithRootObject:urls] forType:CogUrlsPboardType];
 
     return YES;
 }

@@ -2,7 +2,7 @@
 #import <Cocoa/Cocoa.h>
 
 extern NSString *MovedRowsType;
-extern NSString *CogUrlsPbboardType;
+extern NSString *CogUrlsPboardType;
 extern NSString *iTunesDropType;
 
 @interface DNDArrayController : NSArrayController
