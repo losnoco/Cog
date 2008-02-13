@@ -87,5 +87,11 @@ static NSDictionary * tags;
     return self;
 }
 
+- (void)dealloc
+{
+    [length release];
+    [super dealloc];
+}
+
 @synthesize length;
 @end

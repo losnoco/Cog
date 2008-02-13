@@ -15,7 +15,7 @@
     NSNumber *length;
 }
 
-+(SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem;
++ (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem;
 + (NSArray *)allmdKeys;
 
 @property(copy) NSNumber *length;

@@ -11,6 +11,9 @@
 #import "PlaylistLoader.h"
 #import "SpotlightPlaylistEntry.h"
 
+// Minimum length of a search string (searching for very small strings gets ugly)
+#define MINIMUM_SEARCH_STRING_LENGTH 3
+
 // Store a class predicate for searching for music
 static NSPredicate * musicOnlyPredicate = nil;
 
@@ -45,46 +48,51 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (void)performSearch
 {
-    // Process the search string into a compound predicate
-    NSPredicate *searchPredicate = [self processSearchString];
+    NSPredicate *searchPredicate;
+    // Process the search string into a compound predicate. If Nil is returned do nothing
+    if(searchPredicate = [self processSearchString])
+    {
+        // spotlightPredicate, which is what will finally be used for the spotlight search
+        // is the union of the (potentially) compound searchPredicate and the static 
+        // musicOnlyPredicate
     
-    // Set scope to contents of pathControl
-    [self.query setSearchScopes:[NSArray arrayWithObjects:pathControl.URL, nil]];
-
-    // spotlightPredicate, which is what will finally be used for the spotlight search
-    // is the union of the (potentially) compound searchPredicate and the static 
-    // musicOnlyPredicate
-    
-    NSPredicate *spotlightPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:
-                                       [NSArray arrayWithObjects: musicOnlyPredicate,
-                                                            searchPredicate,
-                                                            nil]];
-    if([self.query isStarted])
-        [self.query stopQuery];
-    self.query.predicate = spotlightPredicate;
-    [self.query startQuery];
-    NSLog(@"Started query: %@", [self.query.predicate description], [[self.query class]description]);
+        NSPredicate *spotlightPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:
+                                           [NSArray arrayWithObjects: musicOnlyPredicate,
+                                                                searchPredicate,
+                                                                nil]];
+        // Only preform a new search if the predicate has changed
+        if(![self.query.predicate isEqual:spotlightPredicate])
+        {
+            if([self.query isStarted])
+                [self.query stopQuery];
+            self.query.predicate = spotlightPredicate;
+            // Set scope to contents of pathControl
+            self.query.searchScopes = [NSArray arrayWithObjects:pathControl.URL, nil];
+            [self.query startQuery];
+            NSLog(@"Started query: %@", [self.query.predicate description]);
+        }
+    }
 }
 
 - (NSPredicate *)processSearchString
 {
-    // a somewhat dumb way to collapse the whitespace in searchString
-    // TODO: write a more elegant way of accomplishing this
-    NSString * compareString = [self.searchString 
-        stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        
-    NSString * collapsedString = [compareString stringByReplacingOccurrencesOfString:@"  "
-                                                                         withString:@" "];
-    while (![collapsedString isEqualToString:compareString])
-    {
-        compareString = [collapsedString copy];
-        collapsedString = [compareString stringByReplacingOccurrencesOfString:@"  "
-                                                                  withString:@" "];
-    }
+    NSMutableArray *searchComponents = [NSMutableArray arrayWithCapacity:10];
     
-    // break the string up into an array of each word
-    NSArray * searchComponents = [collapsedString
-        componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    NSScanner *scanner = [NSScanner scannerWithString:self.searchString];
+    
+    while (![scanner isAtEnd])
+    {
+        NSString *scannedString;
+        if ([scanner scanUpToString:@" " intoString:&scannedString])
+        {
+            // don't add tiny strings in... They're make the system go nuts
+            // TODO: Maybe consider a better solution to the issue?
+            if ([scannedString length] >= MINIMUM_SEARCH_STRING_LENGTH)
+            {
+                [searchComponents addObject:scannedString];
+            }
+        }
+    }
     
     // create an array of all the predicates to join together
     NSMutableArray * subpredicates = [NSMutableArray 
@@ -105,13 +113,14 @@ static NSPredicate * musicOnlyPredicate = nil;
                             rightExpression:[NSExpression expressionForConstantValue:processedKey]
                                    modifier:NSDirectPredicateModifier
                                        type:NSLikePredicateOperatorType
-                                       options:options];
+                                    options:options];
         
         //TODO: Ability to search only artist, albums, etc.
         [subpredicates addObject: predicate];
     }
-    
-    if ([subpredicates count] == 1)
+    if ([subpredicates count] == 0)
+        return Nil;
+    else if ([subpredicates count] == 1)
         return [subpredicates objectAtIndex: 0];
     
     // Create a compound predicate from subPredicates
@@ -161,7 +170,9 @@ replacementObjectForResultObject:(NSMetadataItem*)result
 @synthesize searchString;
 - (void)setSearchString:(NSString *)aString 
 {
-	if (searchString != aString) {
+	// Make sure the string is changed
+	if (searchString != aString) 
+	{
 		searchString = [aString copy];
         [self performSearch];
 	}
