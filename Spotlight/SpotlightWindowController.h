@@ -12,8 +12,20 @@
 
 @interface SpotlightWindowController : NSWindowController {
     IBOutlet PlaylistLoader *playlistLoader;
+    IBOutlet NSArrayController *playlistController;
+    IBOutlet NSPathControl *pathControl;
+    NSMetadataQuery *query;
+    NSString *searchString;
+    NSString *spotlightSearchPath;
 }
 
-@property(retain) PlaylistLoader *playlistLoader;
+- (IBAction)addToPlaylist:(id)sender;
+
+- (void)performSearch;
+- (NSPredicate *)processSearchString;
+
+@property(retain) NSMetadataQuery *query;
+@property(copy) NSString *searchString;
+@property(copy) NSString *spotlightSearchPath;
 
 @end

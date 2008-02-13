@@ -15,13 +15,13 @@
     writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	        toPasteboard:(NSPasteboard*)pboard
 {
-    [spotlightSearchController.query disableUpdates];
+    [spotlightWindowController.query disableUpdates];
     
     NSArray *urls = [[self selectedObjects]valueForKey:@"url"];
     [pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard
 	[pboard setData:[NSArchiver archivedDataWithRootObject:urls] forType:CogUrlsPboardType];
     
-    [spotlightSearchController.query enableUpdates];
+    [spotlightWindowController.query enableUpdates];
 	
 	return YES;
 }

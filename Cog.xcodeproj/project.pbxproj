@@ -103,7 +103,6 @@
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
-		5604D4550D603430004F5C5D /* SpotlightSearchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4510D603430004F5C5D /* SpotlightSearchController.m */; };
 		5604D4580D603459004F5C5D /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5604D4570D603459004F5C5D /* SpotlightPanel.xib */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
@@ -592,8 +591,6 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
-		5604D4510D603430004F5C5D /* SpotlightSearchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightSearchController.m; path = Spotlight/SpotlightSearchController.m; sourceTree = "<group>"; };
-		5604D4520D603430004F5C5D /* SpotlightSearchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearchController.h; path = Spotlight/SpotlightSearchController.h; sourceTree = "<group>"; };
 		5604D4570D603459004F5C5D /* SpotlightPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = SpotlightPanel.xib; path = Spotlight/SpotlightPanel.xib; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
@@ -1098,8 +1095,6 @@
 				56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */,
 				5604D4590D60349B004F5C5D /* SpotlightWindowController.m */,
 				5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */,
-				5604D4510D603430004F5C5D /* SpotlightSearchController.m */,
-				5604D4520D603430004F5C5D /* SpotlightSearchController.h */,
 				5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */,
 				5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */,
 				56462DD80D61D71E000AB68C /* SpotlightPlaylistView.h */,
@@ -1638,7 +1633,6 @@
 				178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */,
 				17BBE5BC0CD95CFA00258F7A /* InvertedToolbarWindow.m in Sources */,
 				173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */,
-				5604D4550D603430004F5C5D /* SpotlightSearchController.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
 				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
 				56462DDA0D61D71E000AB68C /* SpotlightPlaylistView.m in Sources */,
