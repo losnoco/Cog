@@ -10,6 +10,24 @@
 
 #define DEFAULT_SEEK 10
 
+//MAX_VOLUME is in percent
+#define MAX_VOLUME 400
+
+//These functions are helpers for the process of converting volume from a linear to logarithmic scale.
+//Numbers that goes in to audioPlayer should be logarithmic. Numbers that are displayed to the user should be linear.
+//Here's why: http://www.dr-lex.34sp.com/info-stuff/volumecontrols.html
+//We are using the approximation of X^4.
+//Input/Output values are in percents.
+double logarithmicToLinear(double logarithmic)
+{
+	return pow((logarithmic/MAX_VOLUME), 0.25) * 100.0;
+}
+double linearToLogarithmic(double linear)
+{
+	return (linear/100) * (linear/100) * (linear/100) * (linear/100) * MAX_VOLUME;
+}
+//End helper volume function thingies. ONWARDS TO GLORY!
+
 - (id)init
 {
 	self = [super init];
@@ -51,15 +69,12 @@
 		nil];
 }
 
+
 - (void)awakeFromNib
 {
-	[volumeSlider setDoubleValue:pow(10.0, log10(0.5)/4.0)*100];
-	
-	double percent;
-	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];//100.0;
-	percent = percent * percent * percent * percent;
-	
-	currentVolume = ((float)[volumeSlider doubleValue]/100.0)*[volumeSlider maxValue];//percent * 1000;//0;//[volumeSlider doubleValue];
+
+	[volumeSlider setDoubleValue:logarithmicToLinear(100.0)];
+	[audioPlayer setVolume: 100];
 		
 	[positionSlider setEnabled:NO];
 }
@@ -158,7 +173,6 @@
 	[self updateTimeField:0.0f];
 	
 	[audioPlayer play:[pe url] withUserInfo:pe];
-	[audioPlayer setVolume:currentVolume];
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler start:pe];
@@ -251,24 +265,16 @@
 
 - (IBAction)changeVolume:(id)sender
 {
-	double percent;
-	
-	//Approximated log
-	percent = (float)[sender doubleValue]/100.0;
-	percent = percent * percent * percent * percent;
-
-	//gravitates at the 100% mark
-	float v = [sender frame].size.width - ([sender frame].size.width*(percent*[sender maxValue])/100.0);
-	if (fabs(v) < 10.0)
+	double oneLog = logarithmicToLinear(100.0);
+	double distance = [sender frame].size.height*([sender doubleValue] - oneLog)/100.0;
+	if (fabs(distance) < 2.0)
 	{
-		percent = 0.5;
-		v = pow(10.0, log10(percent)/4.0);
-		[sender setDoubleValue:v*100.0];
+		[sender setDoubleValue:oneLog];
 	}
-	
-	currentVolume = percent * 100.0;
-	
-	[audioPlayer  setVolume:currentVolume];
+
+	NSLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue]));
+
+	[audioPlayer setVolume:linearToLogarithmic([sender doubleValue])];
 }
 
 /* selector for NSTimer - gets passed the Timer object itself
@@ -276,21 +282,18 @@
  containing the current volume before we start fading. */
 - (void)audioFader:(NSTimer *)audioTimer
 {
-	double volume = currentVolume;
-	NSArray *origValues = [audioTimer userInfo];
-	id originalVolume = [origValues objectAtIndex:0];
-	id origSliderVolume = [origValues objectAtIndex:1];
-
-	if (volume > 0)
+	double volume = [audioPlayer volume];
+	double originalVolume = [[audioTimer userInfo] doubleValue];
+	NSLog(@"VOLUME IS %lf", volume);
+	if (volume > 0.0001) //YAY! Roundoff error!
 	{
 		[self volumeDown:self];
 	}
 	else  // volume is at 0 or below, we are ready to release the timer and move on
 	{
 		[audioPlayer pause];
-		currentVolume = [originalVolume doubleValue];
-		[audioPlayer setVolume:currentVolume];
-		[volumeSlider setDoubleValue:[origSliderVolume doubleValue]];
+		[audioPlayer setVolume:originalVolume];
+		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
 		[audioTimer invalidate];
 	}
 	
@@ -298,51 +301,36 @@
 
 - (IBAction)fadeOut:(id)sender withTime:(double)time
 {
-	id      origCurrentVolume    = [NSNumber numberWithDouble: currentVolume];
-	id      origSliderVolume     = [NSNumber numberWithDouble: [volumeSlider doubleValue]];
+	NSNumber *originalVolume    = [NSNumber numberWithDouble: [audioPlayer volume]];
 
-	NSArray *originalValues      = [NSArray arrayWithObjects:origCurrentVolume,origSliderVolume,nil];
 	NSTimer *fadeTimer;
 
 	NSLog(@"currentVolume here%f", [volumeSlider doubleValue]);
 	fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
 												 target:self
 											   selector:@selector(audioFader:) 
-											   userInfo:originalValues
+											   userInfo:originalVolume
 												repeats:YES];
 }
 
 - (IBAction)volumeDown:(id)sender
 {
-	double percent;
-	[volumeSlider setDoubleValue:([volumeSlider doubleValue] - 5)];
-	
-	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];//100.0;
-	percent = percent * percent * percent * percent;
-	
-	currentVolume = (percent * [volumeSlider maxValue]) + [volumeSlider doubleValue];//100.0;
-	NSLog(@"currentVolume %f", currentVolume);
-	
-	[audioPlayer  setVolume:currentVolume];
+	double newVolume = linearToLogarithmic(logarithmicToLinear([audioPlayer volume]) - 5.0);
+	if (newVolume < 0)
+		newVolume = 0.0;
+		
+	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
+	[audioPlayer setVolume:newVolume];
 }
 
 - (IBAction)volumeUp:(id)sender
 {
-	double percent;
-	
-	[volumeSlider setDoubleValue:([volumeSlider doubleValue] + 5)];
-	
-	percent = (float)[volumeSlider doubleValue]/[volumeSlider maxValue];//100.0;
-	percent = percent * percent * percent * percent;
-	
-	currentVolume = (percent * [volumeSlider maxValue]) + [volumeSlider doubleValue];//100.0);
-	if (currentVolume > 400)
-		currentVolume = 400;
+	double newVolume = linearToLogarithmic(logarithmicToLinear([audioPlayer volume]) + 5.0);
+	if (newVolume > MAX_VOLUME)
+		newVolume = MAX_VOLUME;
 
-	NSLog(@"%f", currentVolume);
-
-
-	[audioPlayer  setVolume:currentVolume];
+	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
+	[audioPlayer setVolume:newVolume];
 }
 
 

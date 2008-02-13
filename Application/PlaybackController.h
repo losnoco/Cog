@@ -30,8 +30,6 @@
 	
 	int playbackStatus;
 	
-	double currentVolume;
-	
 	BOOL showTimeRemaining;
 	
 	AudioScrobbler *scrobbler;

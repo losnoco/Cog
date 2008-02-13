@@ -16,6 +16,8 @@
 	BufferChain *bufferChain;
 	OutputNode *output;
 
+	double volume;
+
 	NSMutableArray *chainQueue;
 	
 	NSURL *nextStream;
@@ -40,6 +42,7 @@
 
 - (void)seekToTime:(double)time;
 - (void)setVolume:(double)v;
+- (double)volume;
 
 - (double)amountPlayed;
 

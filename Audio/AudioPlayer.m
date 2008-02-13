@@ -53,6 +53,7 @@
 	}
 	output = [[OutputNode alloc] initWithController:self previous:nil];
 	[output setup];
+	[output setVolume: volume];
 	
 	@synchronized(chainQueue) {
 		NSEnumerator *enumerator = [chainQueue objectEnumerator];
@@ -134,7 +135,14 @@
 
 - (void)setVolume:(double)v
 {
+	volume = v;
+	
 	[output setVolume:v];
+}
+
+- (double)volume
+{
+	return volume;
 }
 
 

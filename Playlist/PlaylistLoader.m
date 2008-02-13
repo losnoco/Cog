@@ -72,7 +72,7 @@
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if (!fileHandle) {
 		NSLog(@"Error saving m3u!");
-		return nil;
+		return NO;
 	}
 	[fileHandle truncateFileAtOffset:0];
 	
