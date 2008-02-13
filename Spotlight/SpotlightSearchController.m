@@ -60,8 +60,10 @@ static NSPredicate * musicOnlyPredicate = nil;
                                            [NSArray arrayWithObjects: musicOnlyPredicate,
                                                                 searchPredicate,
                                                                 nil]];
-        // Only preform a new search if the predicate has changed
-        if(![self.query.predicate isEqual:spotlightPredicate])
+        // Only preform a new search if the predicate has changed or there is a new path
+        if(![self.query.predicate isEqual:spotlightPredicate]
+            || ![self.query.searchScopes isEqualToArray:
+                [NSArray arrayWithObjects:pathControl.URL, nil]])
         {
             if([self.query isStarted])
                 [self.query stopQuery];
@@ -136,14 +138,6 @@ static NSPredicate * musicOnlyPredicate = nil;
 	[super dealloc];
 }
 
-- (IBAction)changeSearchPath:(id)sender
-{
-    // When the search path is changed, restart search
-    if([self.query isStarted]) {
-        [self performSearch];
-    }
-}
-
 - (IBAction)addToPlaylist:(id)sender
 {
     [self.query disableUpdates];
@@ -171,9 +165,32 @@ replacementObjectForResultObject:(NSMetadataItem*)result
 - (void)setSearchString:(NSString *)aString 
 {
 	// Make sure the string is changed
-	if (searchString != aString) 
+    if (![searchString isEqualToString:aString]) 
 	{
 		searchString = [aString copy];
+        [self performSearch];
+	}
+}
+
+@dynamic spotlightSearchPath;
+// getter reads from user defaults
+- (NSString *)spotlightSearchPath
+{
+    return [[[NSUserDefaults standardUserDefaults] 
+        stringForKey:@"spotlightSearchPath"]copy];
+}
+// Normally, our nspathcontrol would just bind to the user defaults
+// However, this does not allow us to perform a new search when
+// the path changes. This getter/setter combo wraps around the user
+// defaults while performing a new search when the value changes.
+- (void)setSpotlightSearchPath:(NSString *)aString
+{
+    // Make sure the string is changed
+	if (![spotlightSearchPath isEqualToString: aString]) 
+	{
+		spotlightSearchPath = [aString copy];
+        [[NSUserDefaults standardUserDefaults] setObject:spotlightSearchPath
+                                                  forKey:@"spotlightSearchPath"];
         [self performSearch];
 	}
 }
