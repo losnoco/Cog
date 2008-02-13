@@ -68,8 +68,22 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (NSPredicate *)processSearchString
 {
+    // a somewhat dumb way to collapse the whitespace in searchString
+    // TODO: write a more elegant way of accomplishing this
+    NSString * compareString = [self.searchString 
+        stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
+    NSString * collapsedString = [compareString stringByReplacingOccurrencesOfString:@"  "
+                                                                         withString:@" "];
+    while (![collapsedString isEqualToString:compareString])
+    {
+        compareString = [collapsedString copy];
+        collapsedString = [compareString stringByReplacingOccurrencesOfString:@"  "
+                                                                  withString:@" "];
+    }
+    
     // break the string up into an array of each word
-    NSArray * searchComponents = [self.searchString 
+    NSArray * searchComponents = [collapsedString
         componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     
     // create an array of all the predicates to join together
@@ -125,8 +139,8 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
     [self.query disableUpdates];
     
-    NSArray *songURLs = [[playlistController selectedObjects]valueForKey:@"url"];
-    [spotlightWindowController.playlistLoader addURLs:songURLs sort:NO];
+    NSArray *urls = [[playlistController selectedObjects]valueForKey:@"url"];
+    [spotlightWindowController.playlistLoader addURLs:urls sort:NO];
    
    [self.query enableUpdates];
 }
