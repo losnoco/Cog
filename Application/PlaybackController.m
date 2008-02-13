@@ -216,9 +216,14 @@ double linearToLogarithmic(double linear)
 	[self updateTimeField:time];
 }
 
-- (IBAction)seekForward:(id)sender
+- (IBAction)eventSeekForward:(id)sender
 {
-	double seekTo = [audioPlayer amountPlayed] + DEFAULT_SEEK;
+	[self seekForward:DEFAULT_SEEK];
+}
+
+- (void)seekForward:(double)amount
+{
+	double seekTo = [audioPlayer amountPlayed] + amount;
 	
 	if (seekTo > (int)[positionSlider maxValue]) 
 	{
@@ -232,9 +237,14 @@ double linearToLogarithmic(double linear)
 	}
 }
 
-- (IBAction)seekBackward:(id)sender
+- (IBAction)eventSeekBackward:(id)sender
 {
-	double seekTo = [audioPlayer amountPlayed] - DEFAULT_SEEK;
+	[self seekBackward:DEFAULT_SEEK];
+}
+
+- (void)seekBackward:(double)amount
+{
+	double seekTo = [audioPlayer amountPlayed] - amount;
 	
 	if (seekTo < 0) 
 	{
@@ -282,18 +292,22 @@ double linearToLogarithmic(double linear)
  containing the current volume before we start fading. */
 - (void)audioFader:(NSTimer *)audioTimer
 {
+	static int incrementalFader = 10;
 	double volume = [audioPlayer volume];
 	double originalVolume = [[audioTimer userInfo] doubleValue];
+
 	NSLog(@"VOLUME IS %lf", volume);
+	
 	if (volume > 0.0001) //YAY! Roundoff error!
 	{
-		[self volumeDown:self];
+		[self volumeDown:incrementalFader++];
 	}
 	else  // volume is at 0 or below, we are ready to release the timer and move on
 	{
 		[audioPlayer pause];
 		[audioPlayer setVolume:originalVolume];
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
+		incrementalFader = 10;
 		[audioTimer invalidate];
 	}
 	
@@ -301,11 +315,15 @@ double linearToLogarithmic(double linear)
 
 - (IBAction)fadeOut:(id)sender withTime:(double)time
 {
-	NSNumber *originalVolume    = [NSNumber numberWithDouble: [audioPlayer volume]];
-
-	NSTimer *fadeTimer;
-
-	NSLog(@"currentVolume here%f", [volumeSlider doubleValue]);
+	// we can not allow multiple fade timers to be registered
+	if (playbackStatus != kCogStatusPlaying)
+		return;
+	
+	NSNumber  *originalVolume = [NSNumber numberWithDouble: [audioPlayer volume]];
+	NSTimer   *fadeTimer;
+	
+	playbackStatus = kCogStatusFading;
+	
 	fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
 												 target:self
 											   selector:@selector(audioFader:) 
@@ -313,19 +331,30 @@ double linearToLogarithmic(double linear)
 												repeats:YES];
 }
 
-- (IBAction)volumeDown:(id)sender
+- (IBAction)eventVolumeDown:(id)sender
 {
-	double newVolume = linearToLogarithmic(logarithmicToLinear([audioPlayer volume]) - 5.0);
-	if (newVolume < 0)
+	[self volumeDown:DEFAULT_VOLUME_DOWN];
+}
+
+- (void)volumeDown:(double)amount
+{
+	double newVolume;
+	if (amount > [audioPlayer volume])
 		newVolume = 0.0;
-		
+	else
+		newVolume = linearToLogarithmic(logarithmicToLinear([audioPlayer volume]) - amount);
+
 	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
 	[audioPlayer setVolume:newVolume];
 }
 
-- (IBAction)volumeUp:(id)sender
+- (IBAction)eventVolumeUp:(id)sender
 {
-	double newVolume = linearToLogarithmic(logarithmicToLinear([audioPlayer volume]) + 5.0);
+	[self volumeUp:DEFAULT_VOLUME_UP];
+}
+- (void)volumeUp:(double)amount
+{
+	double newVolume = linearToLogarithmic(logarithmicToLinear([audioPlayer volume]) + amount);
 	if (newVolume > MAX_VOLUME)
 		newVolume = MAX_VOLUME;
 

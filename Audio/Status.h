@@ -12,6 +12,7 @@ enum
 	kCogStatusPaused = 0,
 	kCogStatusStopped,
 	kCogStatusPlaying,
+	kCogStatusFading,
 //	kCogStatusEndOfFile,
 //	kCogStatusEndOfPlaylist,
 //	kCogStatusPlaybackEnded

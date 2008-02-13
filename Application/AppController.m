@@ -44,33 +44,47 @@
 increase/decrease as long as the user holds the left/right, plus/minus button */
 - (void) executeHoldActionForRemoteButton: (NSNumber*) buttonIdentifierNumber 
 {
+	static int incrementalSearch = 1;
+	
     if (remoteButtonHeld) 
     {
         switch([buttonIdentifierNumber intValue]) 
         {
             case kRemoteButtonRight_Hold:       
-				//Seek forward?
+				[playbackController seekForward:incrementalSearch];
 				break;
             case kRemoteButtonLeft_Hold:
-				//Seek back
+				[playbackController seekBackward:incrementalSearch];
 				break;
             case kRemoteButtonVolume_Plus_Hold:
                 //Volume Up
-				[playbackController volumeUp: self];
+				[playbackController volumeUp:DEFAULT_VOLUME_UP];
 				break;
             case kRemoteButtonVolume_Minus_Hold:
                 //Volume Down
-				[playbackController volumeDown: self];
+				[playbackController volumeDown:DEFAULT_VOLUME_DOWN];
 				break;              
         }
         if (remoteButtonHeld) 
         {
+			/* there should perhaps be a max amount that incrementalSearch can
+			   be, so as to not start skipping ahead unreasonable amounts, even
+			   in very long files. */
+			if ((incrementalSearch % 3) == 0)
+				incrementalSearch += incrementalSearch/3;
+			else
+				incrementalSearch++;
+
             /* trigger event */
             [self performSelector:@selector(executeHoldActionForRemoteButton:) 
 					   withObject:buttonIdentifierNumber
 					   afterDelay:0.25];         
         }
     }
+	else
+		// if we're not holding the search button, reset the incremental search
+		// variable, making it ready for another search
+		incrementalSearch = 1;
 }
 
 /* Apple Remote callback */
@@ -85,10 +99,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
             break;
         case kRemoteButtonVolume_Plus:
-			[playbackController volumeUp: self];
+			[playbackController volumeUp:DEFAULT_VOLUME_UP];
             break;
         case kRemoteButtonVolume_Minus:
-			[playbackController volumeDown: self];
+			[playbackController volumeDown:DEFAULT_VOLUME_DOWN];
             break;
         case kRemoteButtonRight:
             [self clickNext];

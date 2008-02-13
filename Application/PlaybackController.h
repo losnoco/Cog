@@ -8,6 +8,9 @@
 #import "TrackingSlider.h"
 #import "AudioScrobbler.h"
 
+#define DEFAULT_VOLUME_DOWN 5
+#define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
+
 @class PlaylistController;
 @class PlaylistView;
 
@@ -38,9 +41,10 @@
 - (IBAction)toggleShowTimeRemaining:(id)sender;
 - (IBAction)changeVolume:(id)sender;
 
-- (IBAction)volumeDown:(id)sender;
-- (IBAction)volumeUp:(id)sender;
-
+- (void)volumeDown:(double)amount;
+- (IBAction)eventVolumeDown:(id)sender;
+- (void)volumeUp:(double)amount;
+- (IBAction)eventVolumeUp:(id)sender;
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;
 
@@ -54,8 +58,10 @@
 - (IBAction)next:(id)sender;
 - (IBAction)prev:(id)sender;
 - (IBAction)seek:(id)sender;
-- (IBAction)seekForward:(id)sender;
-- (IBAction)seekBackward:(id)sender;
+- (IBAction)eventSeekForward:(id)sender;
+- (void)seekForward:(double)sender;
+- (IBAction)eventSeekBackward:(id)sender;
+- (void)seekBackward:(double)amount;
 - (IBAction)fadeOut:(id)sender withTime:(double)time;
 
 - (void)initDefaults;
