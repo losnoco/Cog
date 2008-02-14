@@ -47,7 +47,8 @@
 - (IBAction)eventVolumeUp:(id)sender;
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;
-
+- (IBAction)skipToNextAlbum:(id)sender;
+- (IBAction)skipToPreviousAlbum:(id)sender;
 - (IBAction)playbackButtonClick:(id)sender;
 
 - (IBAction)play:(id)sender;

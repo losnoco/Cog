@@ -321,7 +321,6 @@ double linearToLogarithmic(double linear)
 	
 	NSNumber  *originalVolume = [NSNumber numberWithDouble: [audioPlayer volume]];
 	NSTimer   *fadeTimer;
-	
 	playbackStatus = kCogStatusFading;
 	
 	fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
@@ -330,6 +329,100 @@ double linearToLogarithmic(double linear)
 											   userInfo:originalVolume
 												repeats:YES];
 }
+
+- (IBAction)skipToNextAlbum:(id)sender
+{
+    BOOL found = NO;
+	
+	NSNumber *index = (NSNumber *)[[playlistController currentEntry] index];
+	NSString *origAlbum = [[playlistController entryAtIndex:[index intValue]] album];
+	
+	int playlistLength = [[playlistController arrangedObjects] count] - 1;
+	int i = [index intValue] + 1;
+	NSString *curAlbum;
+	
+	PlaylistEntry *pe;
+
+	while (!found)
+	{
+		pe = [[playlistController arrangedObjects] objectAtIndex:i];
+		curAlbum = [pe album];
+
+		// check for untagged files, and just play the first untagged one
+		// we come across
+		if (curAlbum == nil)
+			break;
+		
+		if (![curAlbum caseInsensitiveCompare:origAlbum])
+		{
+			i++;
+			if (i > playlistLength)
+				return;
+			continue;
+		}
+		else
+		{
+			found = YES;
+		}
+	}
+
+	[self playEntryAtIndex:i];
+
+}
+
+- (IBAction)skipToPreviousAlbum:(id)sender
+{
+    BOOL found = NO;
+	BOOL foundAlbum = NO;
+	
+	NSNumber *index = (NSNumber *)[[playlistController currentEntry] index];
+	NSString *origAlbum = [[playlistController entryAtIndex:[index intValue]] album];
+	NSString *curAlbum;
+	
+	int i = [index intValue] - 1;
+	
+	if (i <= 0)
+		return;
+	
+	PlaylistEntry *pe;
+	
+	while (!found)
+	{
+		pe = [[playlistController arrangedObjects] objectAtIndex:i];
+		curAlbum = [pe album];
+		if (curAlbum == nil)
+			break;
+		
+		if (![curAlbum caseInsensitiveCompare:origAlbum])
+		{
+			i--;
+			if (i == 0) // first entry in playlist
+				if (foundAlbum == YES)
+					break;
+				else
+					return;
+			continue;
+		}
+		else
+		{
+			if (foundAlbum == NO)
+			{
+				foundAlbum = YES;
+				origAlbum = [[playlistController entryAtIndex:i] album];
+				i--;
+			}
+			else
+				found = YES; // terminate loop
+			
+		}
+	}
+	
+	if (foundAlbum == YES)
+		i++;
+	[self playEntryAtIndex:i];
+	
+}
+
 
 - (IBAction)eventVolumeDown:(id)sender
 {
