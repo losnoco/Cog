@@ -198,7 +198,7 @@ double linearToLogarithmic(double linear)
 
 - (IBAction)prev:(id)sender
 {
-	if ([playlistController prev] == nil)
+	if ([playlistController prev] == NO)
 		return;
 
 	[self stop:self];

@@ -17,6 +17,7 @@
     NSMetadataQuery *query;
     NSString *searchString;
     NSString *spotlightSearchPath;
+    NSArray *oldResults;
 }
 
 - (IBAction)addToPlaylist:(id)sender;
@@ -27,5 +28,6 @@
 @property(retain) NSMetadataQuery *query;
 @property(copy) NSString *searchString;
 @property(copy) NSString *spotlightSearchPath;
+@property(retain) NSArray *oldResults;
 
 @end

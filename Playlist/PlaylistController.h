@@ -41,6 +41,9 @@
 - (void)setRepeat:(BOOL)r;
 - (BOOL)repeat;
 
+- (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe;
+- (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe;
+
 /* Methods for undoing various actions */
 - (NSUndoManager *)undoManager;
 

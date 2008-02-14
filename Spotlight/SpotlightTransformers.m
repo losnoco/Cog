@@ -10,6 +10,7 @@
 
 @interface StringToURLTransformer: NSValueTransformer {}
 @end
+
 @implementation StringToURLTransformer
 + (Class)transformedValueClass { return [NSURL class]; }
 + (BOOL)allowsReverseTransformation { return YES; }
@@ -27,4 +28,6 @@
     
     return [value absoluteString];
 }
+@end
+
 @end
