@@ -3,12 +3,13 @@
 //  Cog
 //
 //  Created by Matthew Grinshpun on 10/02/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
+//  Copyright 2008 Matthew Leon Grinshpun. All rights reserved.
 //
 
 #import "SpotlightWindowController.h"
 #import "PlaylistLoader.h"
 #import "SpotlightPlaylistEntry.h"
+#import "NSComparisonPredicate+CogPredicate.h"
 
 // Minimum length of a search string (searching for very small strings gets ugly)
 #define MINIMUM_SEARCH_STRING_LENGTH 3
@@ -77,7 +78,7 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (NSPredicate *)processSearchString
 {
-    NSMutableArray *searchComponents = [NSMutableArray arrayWithCapacity:10];
+    NSMutableArray *subpredicates = [NSMutableArray arrayWithCapacity:10];
     
     NSScanner *scanner = [NSScanner scannerWithString:self.searchString];
     
@@ -86,39 +87,47 @@ static NSPredicate * musicOnlyPredicate = nil;
         NSString *scannedString;
         if ([scanner scanUpToString:@" " intoString:&scannedString])
         {
-            // don't add tiny strings in... They're make the system go nuts
-            // TODO: Maybe consider a better solution to the issue?
-            if ([scannedString length] >= MINIMUM_SEARCH_STRING_LENGTH)
+            if ([scannedString length] < MINIMUM_SEARCH_STRING_LENGTH)
+                continue;
+                
+            if ([scannedString characterAtIndex:0] == '%')
             {
-                [searchComponents addObject:scannedString];
+                if ([scannedString length] < (MINIMUM_SEARCH_STRING_LENGTH + 2))
+                    continue;
+                    
+                // Search for artist
+                if([scannedString characterAtIndex:1] == 'a')
+                {
+                    [subpredicates addObject: 
+                        [NSComparisonPredicate predicateForMdKey:@"kMDItemAuthors"
+                                                      withString:[scannedString substringFromIndex:2]]];
+                }
+                
+                // Search for album
+                if([scannedString characterAtIndex:1] == 'l')
+                {
+                    [subpredicates addObject: 
+                        [NSComparisonPredicate predicateForMdKey:@"kMDItemAlbum"
+                                                      withString:[scannedString substringFromIndex:2]]];
+                }
+                
+                // Search for title
+                if([scannedString characterAtIndex:1] == 't')
+                {
+                    [subpredicates addObject: 
+                        [NSComparisonPredicate predicateForMdKey:@"kMDItemTitle"
+                                                      withString:[scannedString substringFromIndex:2]]];
+                }
+            }
+            else
+            {
+                [subpredicates addObject: 
+                    [NSComparisonPredicate predicateForMdKey:@"*"
+                                                  withString:scannedString]];
             }
         }
     }
     
-    // create an array of all the predicates to join together
-    NSMutableArray * subpredicates = [NSMutableArray 
-        arrayWithCapacity:[searchComponents count]];
-    
-    // we will ignore case and diacritics
-    unsigned options = (NSCaseInsensitivePredicateOption|
-						NSDiacriticInsensitivePredicateOption);
-    
-    for(NSString *s in searchComponents)
-    {
-        // convert each "word" into "*word*"
-        NSString *processedKey = [NSString stringWithFormat: @"*%@*", s];
-        
-        // Search all tags for something like word
-        NSPredicate *predicate = [NSComparisonPredicate
-                predicateWithLeftExpression:[NSExpression expressionForKeyPath:@"*"]
-                            rightExpression:[NSExpression expressionForConstantValue:processedKey]
-                                   modifier:NSDirectPredicateModifier
-                                       type:NSLikePredicateOperatorType
-                                    options:options];
-        
-        //TODO: Ability to search only artist, albums, etc.
-        [subpredicates addObject: predicate];
-    }
     if ([subpredicates count] == 0)
         return Nil;
     else if ([subpredicates count] == 1)
@@ -178,9 +187,9 @@ replacementObjectForResultObject:(NSMetadataItem*)result
     return [[[NSUserDefaults standardUserDefaults] 
         stringForKey:@"spotlightSearchPath"]copy];
 }
-// Normally, our nspathcontrol would just bind to the user defaults
+// Normally, our NSPathcontrol would just bind to the user defaults
 // However, this does not allow us to perform a new search when
-// the path changes. This getter/setter combo wraps around the user
+// the path changes. This getter/setter combo wraps the user
 // defaults while performing a new search when the value changes.
 - (void)setSpotlightSearchPath:(NSString *)aString
 {

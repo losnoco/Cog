@@ -3,7 +3,7 @@
 //  Cog
 //
 //  Created by Matthew Grinshpun on 13/02/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
+//  Copyright 2008 Matthew Leon Grinshpun. All rights reserved.
 //
 
 #import "SpotlightPlaylistController.h"
