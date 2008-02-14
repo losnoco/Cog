@@ -14,12 +14,17 @@ static const unsigned OPTIONS = (NSCaseInsensitivePredicateOption|
 
 @implementation NSComparisonPredicate (CogPredicate)
 
-+ (NSPredicate *)predicateForMdKey:(NSString *)key withString:(NSString *)aString
++ (NSPredicate*)predicateForMdKey:(NSString *)key
+                       withString:(NSString *)aString
+                      exactString:(BOOL)exactString
 {
-    NSString * likeString = [NSString stringWithFormat:@"*%@*", aString];
+    // We don't want an exact string, so wrap it in wildcards
+    if(!exactString)
+        aString = [NSString stringWithFormat:@"*%@*", aString];
+        
     return [NSComparisonPredicate
         predicateWithLeftExpression:[NSExpression expressionForKeyPath:key]
-                    rightExpression:[NSExpression expressionForConstantValue:likeString]
+                    rightExpression:[NSExpression expressionForConstantValue:aString]
                            modifier:NSDirectPredicateModifier
                                type:NSLikePredicateOperatorType
                             options:OPTIONS];

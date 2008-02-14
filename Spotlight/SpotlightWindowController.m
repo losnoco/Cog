@@ -81,49 +81,95 @@ static NSPredicate * musicOnlyPredicate = nil;
     NSMutableArray *subpredicates = [NSMutableArray arrayWithCapacity:10];
     
     NSScanner *scanner = [NSScanner scannerWithString:self.searchString];
-    
+    BOOL exactString;
+    NSString * scannedString;
+    NSMutableString * parsingString;
     while (![scanner isAtEnd])
     {
-        NSString *scannedString;
+        exactString = NO;
         if ([scanner scanUpToString:@" " intoString:&scannedString])
         {
             if ([scannedString length] < MINIMUM_SEARCH_STRING_LENGTH)
                 continue;
                 
-            if ([scannedString characterAtIndex:0] == '%')
+            // We use NSMutableString because this string will get abused a bit
+            // It potentially could be reading the entire search string
+            
+            parsingString = [NSMutableString stringWithCapacity: [self.searchString length]];
+            [parsingString setString: scannedString];
+            
+                
+            if ([parsingString characterAtIndex:0] == '%')
             {
-                if ([scannedString length] < (MINIMUM_SEARCH_STRING_LENGTH + 2))
+                if ([parsingString length] < (MINIMUM_SEARCH_STRING_LENGTH + 2))
                     continue;
+                
+                if ([parsingString characterAtIndex:2] == '\"')
+                {
+                    exactString = YES;
+                    // If the string does not end in a quotation mark and we're not at the end, 
+                    // scan until we find one.
+                    // Allows strings within quotation marks to include spaces
+                    if ([parsingString characterAtIndex:([parsingString length] - 1)] != '\"' &&
+                        ![scanner isAtEnd])
+                    {
+                        NSString *restOfString;
+                        [scanner scanUpToString:@"\"" intoString:&restOfString];
+                        [parsingString appendFormat:@" %@", restOfString];
+                    }
+                    else if ([parsingString characterAtIndex:([parsingString length] - 1)] == '\"')
+                    {
+                        // pick off the quotation mark at the end
+                        [parsingString deleteCharactersInRange:
+                            NSMakeRange([parsingString length] - 1, 1)];
+                        
+                    }
+                    // eliminate beginning quotation mark
+                    [parsingString deleteCharactersInRange: NSMakeRange(2, 1)];
+                }
                     
                 // Search for artist
-                if([scannedString characterAtIndex:1] == 'a')
+                if([parsingString characterAtIndex:1] == 'a')
                 {
                     [subpredicates addObject: 
                         [NSComparisonPredicate predicateForMdKey:@"kMDItemAuthors"
-                                                      withString:[scannedString substringFromIndex:2]]];
+                                                      withString:[parsingString substringFromIndex:2]
+                                                     exactString:exactString]];
                 }
                 
                 // Search for album
-                if([scannedString characterAtIndex:1] == 'l')
+                if([parsingString characterAtIndex:1] == 'l')
                 {
                     [subpredicates addObject: 
                         [NSComparisonPredicate predicateForMdKey:@"kMDItemAlbum"
-                                                      withString:[scannedString substringFromIndex:2]]];
+                                                      withString:[parsingString substringFromIndex:2]
+                                                     exactString:exactString]];
                 }
                 
                 // Search for title
-                if([scannedString characterAtIndex:1] == 't')
+                if([parsingString characterAtIndex:1] == 't')
                 {
                     [subpredicates addObject: 
                         [NSComparisonPredicate predicateForMdKey:@"kMDItemTitle"
-                                                      withString:[scannedString substringFromIndex:2]]];
+                                                      withString:[parsingString substringFromIndex:2]
+                                                     exactString:exactString]];
+                }
+                
+                // Search for genre
+                if([parsingString characterAtIndex:1] == 'g')
+                {
+                    [subpredicates addObject: 
+                        [NSComparisonPredicate predicateForMdKey:@"kMDItemMusicalGenre"
+                                                      withString:[parsingString substringFromIndex:2]
+                                                     exactString:exactString]];
                 }
             }
             else
             {
                 [subpredicates addObject: 
                     [NSComparisonPredicate predicateForMdKey:@"*"
-                                                  withString:scannedString]];
+                                                  withString:parsingString
+                                                 exactString:exactString]];
             }
         }
     }

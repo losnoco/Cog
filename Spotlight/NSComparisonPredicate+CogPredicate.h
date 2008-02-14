@@ -11,6 +11,8 @@
 
 @interface NSComparisonPredicate (CogPredicate)
 
-+ (NSPredicate *)predicateForMdKey:(NSString *)key withString:(NSString *)aString;
++ (NSPredicate*)predicateForMdKey:(NSString*)key
+                       withString:(NSString*)aString
+                      exactString:(BOOL)exactString;
 
 @end
