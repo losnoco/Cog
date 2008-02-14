@@ -69,6 +69,8 @@
 - (void)drawerDidOpen:(NSNotification *)notification;
 - (void)drawerDidClose:(NSNotification *)notification;
 
+- (void)initDefaults;
+
 	//Fun stuff
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag;
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
