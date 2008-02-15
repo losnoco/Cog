@@ -474,4 +474,42 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[playbackController next:nil];
 }
 
+- (void)changeFontSize:(float)size
+{
+	
+	
+    NSFont *f = [[NSFontManager sharedFontManager] selectedFont];
+    float origFontSize = [[f fontDescriptor] pointSize];
+	
+    f = [[NSFontManager sharedFontManager] convertFont:f toSize:origFontSize+size];
+	
+    NSEnumerator *oe = [[playlistView tableColumns] objectEnumerator];
+    id c;
+	
+    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+    [playlistView setRowHeight:[layoutManager defaultLineHeightForFont:f]];
+    [layoutManager release];
+    
+    while (c = [oe nextObject])
+    {
+        [[c dataCell] setFont:f];
+    }
+    
+	// we must set the selectedFont so that we have updated font information 
+	// next time we want to change it
+    [[NSFontManager sharedFontManager] setSelectedFont:f isMultiple:NO];
+	
+	
+}
+
+- (IBAction)increaseFontSize:(id)sender
+{
+	[self changeFontSize:1];
+}
+
+- (IBAction)decreaseFontSize:(id)sender
+{
+	[self changeFontSize:-1];
+	
+} 
 @end

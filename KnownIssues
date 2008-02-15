@@ -1,2 +1,12 @@
 Undo is broken badly when filtering.
 
+Font resize of playlist does not change filedrawer, and 
+does not resize columns (needs a lower bound)
+
+Code for fading and seeking should be moved into the AudioPlayer,
+so we can escape ugly event* functions
+
+
+
+
+

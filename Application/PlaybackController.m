@@ -408,6 +408,8 @@ double linearToLogarithmic(double linear)
 			if (foundAlbum == NO)
 			{
 				foundAlbum = YES;
+				// now we need to move up to the first song in the album, so we'll
+				// go till we either find index 0, or the first song in the album
 				origAlbum = [[playlistController entryAtIndex:i] album];
 				i--;
 			}
@@ -417,7 +419,7 @@ double linearToLogarithmic(double linear)
 		}
 	}
 	
-	if (foundAlbum == YES)
+	if ((foundAlbum == YES) && i != 0)
 		i++;
 	[self playEntryAtIndex:i];
 	

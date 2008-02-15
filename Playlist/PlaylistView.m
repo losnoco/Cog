@@ -40,6 +40,8 @@
 		[[c dataCell] setFont:bf];
 	}
 
+	[[NSFontManager sharedFontManager] setSelectedFont:bf isMultiple:NO];
+
 	NSTableHeaderView *currentTableHeaderView = [self headerView];
 	PlaylistHeaderView *customTableHeaderView = [[PlaylistHeaderView alloc] init];
 	

@@ -84,4 +84,9 @@ OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *us
 - (void)clickPrev;
 - (void)clickNext;
 
+- (IBAction)increaseFontSize:(id)sender;
+- (IBAction)decreaseFontSize:(id)sender;
+- (void)changeFontSize:(float)size;
+
+
 @end
