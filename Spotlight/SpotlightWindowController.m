@@ -163,6 +163,15 @@ static NSPredicate * musicOnlyPredicate = nil;
                                                       withString:[parsingString substringFromIndex:2]
                                                      exactString:exactString]];
                 }
+                
+                // Search for comment
+                if([parsingString characterAtIndex:1] == 'c')
+                {
+                    [subpredicates addObject: 
+                        [NSComparisonPredicate predicateForMdKey:@"kMDItemComment"
+                                                      withString:[parsingString substringFromIndex:2]
+                                                     exactString:exactString]];
+                }
             }
             else
             {
@@ -195,10 +204,12 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (IBAction)addToPlaylist:(id)sender
 {
+    NSArray *tracks;
     [self.query disableUpdates];
-    
-    NSArray *urls = [[playlistController selectedObjects]valueForKey:@"url"];
-    [playlistLoader addURLs:urls sort:NO];
+    tracks = playlistController.selectedObjects;
+    if ([tracks count] == 0)
+        tracks = playlistController.arrangedObjects;
+    [playlistLoader addURLs:[tracks valueForKey:@"url"] sort:NO];
    
    [self.query enableUpdates];
 }
