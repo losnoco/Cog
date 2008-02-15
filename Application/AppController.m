@@ -476,25 +476,34 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)changeFontSize:(float)size
 {
-	
-	
     NSFont *f = [[NSFontManager sharedFontManager] selectedFont];
     float origFontSize = [[f fontDescriptor] pointSize];
 	
+	// hack to make the file drawer stay unbolded - might affect things I haven't seen
+	f = [[NSFontManager sharedFontManager] convertFont:f toNotHaveTrait:NSBoldFontMask];
+
     f = [[NSFontManager sharedFontManager] convertFont:f toSize:origFontSize+size];
 	
-    NSEnumerator *oe = [[playlistView tableColumns] objectEnumerator];
+    NSEnumerator *playlistEntries = [[playlistView tableColumns] objectEnumerator];
+	NSEnumerator *fileDrawerEntries = [[fileOutlineView tableColumns] objectEnumerator];
+
     id c;
 	
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
     [playlistView setRowHeight:[layoutManager defaultLineHeightForFont:f]];
+    [fileOutlineView setRowHeight:[layoutManager defaultLineHeightForFont:f]];
     [layoutManager release];
     
-    while (c = [oe nextObject])
+    while (c = [playlistEntries nextObject])
     {
         [[c dataCell] setFont:f];
     }
-    
+
+	while (c = [fileDrawerEntries nextObject])
+    {
+        [[c dataCell] setFont:f];
+    }
+	
 	// we must set the selectedFont so that we have updated font information 
 	// next time we want to change it
     [[NSFontManager sharedFontManager] setSelectedFont:f isMultiple:NO];
