@@ -38,7 +38,7 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (id)init
 {
-	if (self = [super init]) {
+	if (self = [super initWithWindowNibName:@"SpotlightPanel"]) {
 		self.query = [[NSMetadataQuery alloc] init];
         [self.query setDelegate:self];
 	}
