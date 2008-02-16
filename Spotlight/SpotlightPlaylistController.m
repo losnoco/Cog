@@ -45,12 +45,13 @@
     return NSDragOperationNone;
 }
 
+// Don't update until something has been found
 - (NSArray *)arrangeObjects:(NSArray *)objects
 {
-    if(![spotlightWindowController.query isGathering])
-        self.oldObjects = [super arrangeObjects:objects];
+    if((![spotlightWindowController.query isGathering]) || ([objects count] > 0))
+		self.oldObjects = [super arrangeObjects:objects];
 
-    return oldObjects;
+    return self.oldObjects;
 }
 
 - (void)dealloc
