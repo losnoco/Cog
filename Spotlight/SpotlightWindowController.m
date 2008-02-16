@@ -12,6 +12,7 @@
 #import "NSComparisonPredicate+CogPredicate.h"
 #import "NSArray+CogSort.h"
 #import "NSString+CogSort.h"
+#import "NSNumber+CogSort.h"
 
 // Minimum length of a search string (searching for very small strings gets ugly)
 #define MINIMUM_SEARCH_STRING_LENGTH 3
@@ -84,8 +85,7 @@ static NSPredicate * musicOnlyPredicate = nil;
             // Set scope to contents of pathControl
             self.query.searchScopes = [NSArray arrayWithObjects:pathControl.URL, nil];
             [self.query startQuery];
-            NSLog(@"Started query: %@ \nWith descriptors: %@", [self.query.predicate description],
-                                                               [self.query.sortDescriptors description]);
+            NSLog(@"Started query: %@", [self.query.predicate description]);
         }
     }
 }
