@@ -242,19 +242,6 @@ static NSPredicate * musicOnlyPredicate = nil;
    [self.query enableUpdates];
 }
 
-// Don't update the track list until some results have been gathered
-- (id)valueForKeyPath:(NSString *)keyPath
-{
-    if([keyPath isEqualToString:@"query.results"])
-    {
-        if(([self.query.results count] == 0) && [self.query isGathering])
-            return self.oldResults;
-        self.oldResults = [NSArray arrayWithArray:self.query.results];
-        return self.oldResults;
-    }
-    return [super valueForKeyPath:keyPath];
-}
-
 #pragma mark NSMetadataQuery delegate methods
 
 // replace the NSMetadataItem with a PlaylistEntry

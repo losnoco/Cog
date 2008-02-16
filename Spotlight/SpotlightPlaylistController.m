@@ -11,6 +11,15 @@
 
 @implementation SpotlightPlaylistController
 
+- (id)init
+{
+    if(self = [super init])
+    {
+        oldObjects = nil;
+    }
+	return self;
+}
+
 // Allow drag and drop from Spotlight into main playlist
 - (BOOL)tableView:(NSTableView *)tv
     writeRowsWithIndexes:(NSIndexSet *)rowIndexes
@@ -35,5 +44,21 @@
 {
     return NSDragOperationNone;
 }
+
+- (NSArray *)arrangeObjects:(NSArray *)objects
+{
+    if(![spotlightWindowController.query isGathering])
+        self.oldObjects = [super arrangeObjects:objects];
+
+    return oldObjects;
+}
+
+- (void)dealloc
+{
+    [oldObjects release];
+    [super dealloc];
+}
+
+@synthesize oldObjects;
 
 @end
