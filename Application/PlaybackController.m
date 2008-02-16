@@ -98,6 +98,7 @@ double linearToLogarithmic(double linear)
 - (IBAction)pause:(id)sender
 {
 	[audioPlayer pause];
+	playbackStatus = kCogStatusPaused;
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler pause];
@@ -290,7 +291,7 @@ double linearToLogarithmic(double linear)
 /* selector for NSTimer - gets passed the Timer object itself
  and the appropriate userInfo, which in this case is an NSNumber
  containing the current volume before we start fading. */
-- (void)audioFader:(NSTimer *)audioTimer
+- (void)audioFadeDown:(NSTimer *)audioTimer
 {
 	double volume = [audioPlayer volume];
 	double originalVolume = [[audioTimer userInfo] doubleValue];
@@ -311,21 +312,56 @@ double linearToLogarithmic(double linear)
 	
 }
 
+- (void)audioFadeUp:(NSTimer *)audioTimer
+{
+	double volume = [audioPlayer volume];
+	double originalVolume = [[audioTimer userInfo] doubleValue];
+
+	NSLog(@"VOLUME IS %lf", volume);
+	
+	if (volume < originalVolume) 
+	{
+		if ((volume + 5) > originalVolume)
+			[self volumeUp:(originalVolume - volume)];
+		else
+			[self volumeUp:5];
+	}
+	else  // volume is at 0 or below, we are ready to release the timer and move on
+	{
+		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
+		[audioTimer invalidate];
+	}
+	
+}
+
 - (IBAction)fadeOut:(id)sender withTime:(double)time
 {
 	// we can not allow multiple fade timers to be registered
-	if (playbackStatus != kCogStatusPlaying)
+	if (playbackStatus == kCogStatusFading)
 		return;
-	
+
 	NSNumber  *originalVolume = [NSNumber numberWithDouble: [audioPlayer volume]];
 	NSTimer   *fadeTimer;
-	playbackStatus = kCogStatusFading;
 	
-	fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
+	if (playbackStatus == kCogStatusPlaying)
+		fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
 												 target:self
-											   selector:@selector(audioFader:) 
+											   selector:@selector(audioFadeDown:) 
 											   userInfo:originalVolume
 												repeats:YES];
+	else
+	{
+		[audioPlayer setVolume:0];
+		fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
+													 target:self
+												   selector:@selector(audioFadeUp:) 
+												   userInfo:originalVolume
+													repeats:YES];
+		[self pauseResume:self];
+	}
+
+	playbackStatus = kCogStatusFading;
+
 }
 
 - (IBAction)skipToNextAlbum:(id)sender

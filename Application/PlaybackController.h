@@ -66,7 +66,8 @@
 - (IBAction)fadeOut:(id)sender withTime:(double)time;
 
 - (void)initDefaults;
-- (void)audioFader:(NSTimer *)audioTimer;
+- (void)audioFadeDown:(NSTimer *)audioTimer;
+- (void)audioFadeUp:(NSTimer *)audioTimer;
 
 - (void)updateTimeField:(double)pos;
 
