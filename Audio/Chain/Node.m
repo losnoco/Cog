@@ -22,7 +22,7 @@
 		
 		initialBufferFilled = NO;
 		
-		controller = [c retain];
+		controller = c;
 		endOfStream = NO;
 		shouldContinue = YES;
 
@@ -228,7 +228,6 @@
 
 - (void)dealloc
 {
-	[controller release];
 	[previousNode release];
 	
 	[buffer release];
