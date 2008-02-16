@@ -10,11 +10,8 @@
 #import "PlaylistController.h"
 
 @interface SpotlightPlaylistController : PlaylistController {
-    NSArray *oldObjects;
 }
 
 - (BOOL)tableView:(NSTableView *)tv writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard*)pboard;
-
-@property(retain) NSArray *oldObjects;
 
 @end

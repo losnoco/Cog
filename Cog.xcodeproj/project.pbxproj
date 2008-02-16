@@ -603,6 +603,7 @@
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
 		5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistEntry.h; path = Spotlight/SpotlightPlaylistEntry.h; sourceTree = "<group>"; };
 		5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightPlaylistEntry.m; path = Spotlight/SpotlightPlaylistEntry.m; sourceTree = "<group>"; };
+		563EBE1D0D67987E00E12948 /* SpotlightTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightTransformers.h; path = Spotlight/SpotlightTransformers.h; sourceTree = "<group>"; };
 		56462DD80D61D71E000AB68C /* SpotlightPlaylistView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistView.h; path = Spotlight/SpotlightPlaylistView.h; sourceTree = "<group>"; };
 		56462DD90D61D71E000AB68C /* SpotlightPlaylistView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightPlaylistView.m; path = Spotlight/SpotlightPlaylistView.m; sourceTree = "<group>"; };
 		56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightTransformers.m; path = Spotlight/SpotlightTransformers.m; sourceTree = "<group>"; };
@@ -1110,6 +1111,7 @@
 				56DB08340D67166000453B6A /* Categories */,
 				56462EB00D634206000AB68C /* SpotlightPlaylistController.h */,
 				56462EB10D634206000AB68C /* SpotlightPlaylistController.m */,
+				563EBE1D0D67987E00E12948 /* SpotlightTransformers.h */,
 				56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */,
 				5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */,
 				5604D4590D60349B004F5C5D /* SpotlightWindowController.m */,

@@ -13,6 +13,7 @@
 #import "NSArray+CogSort.h"
 #import "NSString+CogSort.h"
 #import "NSNumber+CogSort.h"
+#import "SpotlightTransformers.h"
 
 // Minimum length of a search string (searching for very small strings gets ugly)
 #define MINIMUM_SEARCH_STRING_LENGTH 3
@@ -36,6 +37,14 @@ static NSPredicate * musicOnlyPredicate = nil;
     NSDictionary *searchDefault = 
                         [NSDictionary dictionaryWithObject:homeDir
                                                     forKey:@"spotlightSearchPath"];
+                                                    
+    // Register value transformers
+    NSValueTransformer *stringToURLTransformer = [[[StringToURLTransformer alloc]init]autorelease];
+    [NSValueTransformer setValueTransformer:stringToURLTransformer
+                                    forName:@"StringToURLTransformer"];
+    NSValueTransformer *pausingQueryTransformer = [[[PausingQueryTransformer alloc] init] autorelease];
+    [NSValueTransformer setValueTransformer:pausingQueryTransformer forName:@"PausingQueryTransformer"];
+
     [defaults registerDefaults:searchDefault];
 }
 
@@ -54,7 +63,7 @@ static NSPredicate * musicOnlyPredicate = nil;
         [[NSSortDescriptor alloc]initWithKey:@"kMDItemAudioTrackNumber"
                                    ascending:YES
                                     selector:@selector(compareTrackNumbers:)],
-        Nil];
+        nil];
 	}
 
     return self;
@@ -198,7 +207,7 @@ static NSPredicate * musicOnlyPredicate = nil;
     }
     
     if ([subpredicates count] == 0)
-        return Nil;
+        return nil;
     else if ([subpredicates count] == 1)
         return [subpredicates objectAtIndex: 0];
     
@@ -226,7 +235,6 @@ static NSPredicate * musicOnlyPredicate = nil;
 	[self.query release];
 	[self.searchString release];
     [musicOnlyPredicate release];
-    [self.oldResults release];
 	[super dealloc];
 }
 
@@ -288,7 +296,5 @@ replacementObjectForResultObject:(NSMetadataItem*)result
         [self performSearch];
 	}
 }
-
-@synthesize oldResults;
 
 @end
