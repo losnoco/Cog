@@ -14,6 +14,7 @@
 
 #import "IndexFormatter.h"
 #import "SecondsFormatter.h"
+#import "PlaylistEntry.h"
 
 @implementation PlaylistView
 
@@ -171,30 +172,41 @@
 	else
 	{
 		// Add Spotlight search items
-        NSMenuItem *spotlightMenuItem = Nil;
-        NSPoint menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-        NSInteger iColumn = [self columnAtPoint: menuPoint];
-        NSTableColumn *column = [[self tableColumns]objectAtIndex:iColumn];
-        NSString *identifier = (NSString *)[column identifier];
-        if ([identifier isEqualToString:@"artist"])
-        {
-            spotlightMenuItem = [NSMenuItem alloc];
-            [spotlightMenuItem initWithTitle:@"Search for songs by artist..."
-                                      action:@selector(searchByArtist:)
-                               keyEquivalent:@""];
-        }
-        else if ([identifier isEqualToString:@"album"])
-        {
-            spotlightMenuItem = [NSMenuItem alloc];
-            [spotlightMenuItem initWithTitle:@"Search for songs by album..."
-                                      action:@selector(searchByAlbum:)
-                               keyEquivalent:@""];
-        }
+        PlaylistEntry *song = [[playlistController arrangedObjects]objectAtIndex:iRow];
+        NSString *artist = [song artist];
+        NSString *album = [song album];
+        unsigned addedItems = 0; // Count the number of added items, used for separator
         
-        if(spotlightMenuItem)
+        if(album)
         {
-            spotlightMenuItem.target = playlistController;
-            [tableViewMenu insertItem:spotlightMenuItem atIndex:0];
+            NSMenuItem *albumMenuItem = [NSMenuItem alloc];
+            NSString *title = [NSString 
+                stringWithFormat:@"Search for Songs from %@...", album];
+            [albumMenuItem initWithTitle:title
+                                  action:@selector(searchByAlbum:)
+                           keyEquivalent:@""];
+            albumMenuItem.target = playlistController;
+            [tableViewMenu insertItem:albumMenuItem atIndex:0];
+            [albumMenuItem release];
+            addedItems++;
+        }
+        if(artist)
+        {
+            NSMenuItem *artistMenuItem = [NSMenuItem alloc];
+            NSString *title = [NSString
+                stringWithFormat:@"Search for Songs by %@...", artist];
+            [artistMenuItem initWithTitle:title
+                                   action:@selector(searchByArtist:)
+                            keyEquivalent:@""];
+            artistMenuItem.target = playlistController;
+            [tableViewMenu insertItem:artistMenuItem atIndex:0];
+            [artistMenuItem release];
+            addedItems++;
+        }
+        if(addedItems)
+        {
+            // add a separator in the right place
+            [tableViewMenu insertItem:[NSMenuItem separatorItem] atIndex:addedItems];
         }
 	}
 	
