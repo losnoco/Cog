@@ -32,7 +32,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{196, 192}, {480, 320}}</string>
 				<int key="NSWTFlags">536870912</int>
-				<string key="NSWindowTitle" id="674200188">Spotlight</string>
+				<string key="NSWindowTitle" id="727459485">Spotlight</string>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMinSize">{400, 260}</string>
@@ -53,7 +53,7 @@
 								<int key="NSCellFlags2">134217728</int>
 								<string key="NSContents">Add to Playlist</string>
 								<object class="NSFont" key="NSSupport" id="723568032">
-									<string key="NSName" id="119607599">LucidaGrande</string>
+									<string key="NSName" id="746911378">LucidaGrande</string>
 									<double key="NSSize">1.300000e+01</double>
 									<int key="NSfFlags">1044</int>
 								</object>
@@ -110,7 +110,7 @@
 														<int key="NSCellFlags2">0</int>
 														<string key="NSContents">Title</string>
 														<object class="NSFont" key="NSSupport" id="26">
-															<reference key="NSName" ref="119607599"/>
+															<reference key="NSName" ref="746911378"/>
 															<double key="NSSize">1.100000e+01</double>
 															<int key="NSfFlags">3100</int>
 														</object>
@@ -120,7 +120,7 @@
 														</object>
 														<object class="NSColor" key="NSTextColor" id="24919857">
 															<int key="NSColorSpace">6</int>
-															<string key="NSCatalogName" id="927064060">System</string>
+															<string key="NSCatalogName" id="327840376">System</string>
 															<string key="NSColorName">headerTextColor</string>
 															<object class="NSColor" key="NSColor" id="807894922">
 																<int key="NSColorSpace">3</int>
@@ -131,12 +131,12 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="756234421">
 														<int key="NSCellFlags">337772096</int>
 														<int key="NSCellFlags2">2048</int>
-														<string key="NSContents" id="313860962">Text Cell</string>
+														<string key="NSContents" id="973193438">Text Cell</string>
 														<reference key="NSSupport" ref="723568032"/>
 														<reference key="NSControlView" ref="1001643430"/>
 														<object class="NSColor" key="NSBackgroundColor" id="570822745">
 															<int key="NSColorSpace">6</int>
-															<reference key="NSCatalogName" ref="927064060"/>
+															<reference key="NSCatalogName" ref="327840376"/>
 															<string key="NSColorName">controlBackgroundColor</string>
 															<object class="NSColor" key="NSColor" id="613247351">
 																<int key="NSColorSpace">3</int>
@@ -145,7 +145,7 @@
 														</object>
 														<object class="NSColor" key="NSTextColor" id="472724546">
 															<int key="NSColorSpace">6</int>
-															<reference key="NSCatalogName" ref="927064060"/>
+															<reference key="NSCatalogName" ref="327840376"/>
 															<string key="NSColorName">controlTextColor</string>
 															<reference key="NSColor" ref="807894922"/>
 														</object>
@@ -166,7 +166,7 @@
 														<reference key="NSSupport" ref="26"/>
 														<object class="NSColor" key="NSBackgroundColor" id="142072741">
 															<int key="NSColorSpace">6</int>
-															<reference key="NSCatalogName" ref="927064060"/>
+															<reference key="NSCatalogName" ref="327840376"/>
 															<string key="NSColorName">headerColor</string>
 															<object class="NSColor" key="NSColor" id="71117423">
 																<int key="NSColorSpace">3</int>
@@ -178,7 +178,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="664713172">
 														<int key="NSCellFlags">337772096</int>
 														<int key="NSCellFlags2">2048</int>
-														<reference key="NSContents" ref="313860962"/>
+														<reference key="NSContents" ref="973193438"/>
 														<reference key="NSSupport" ref="723568032"/>
 														<reference key="NSControlView" ref="1001643430"/>
 														<reference key="NSBackgroundColor" ref="570822745"/>
@@ -204,7 +204,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="594990735">
 														<int key="NSCellFlags">337772096</int>
 														<int key="NSCellFlags2">2048</int>
-														<reference key="NSContents" ref="313860962"/>
+														<reference key="NSContents" ref="973193438"/>
 														<reference key="NSSupport" ref="723568032"/>
 														<reference key="NSControlView" ref="1001643430"/>
 														<reference key="NSBackgroundColor" ref="570822745"/>
@@ -311,7 +311,7 @@
 													<object class="NSTextFieldCell" key="NSDataCell" id="951203136">
 														<int key="NSCellFlags">337772096</int>
 														<int key="NSCellFlags2">67110912</int>
-														<reference key="NSContents" ref="313860962"/>
+														<reference key="NSContents" ref="973193438"/>
 														<reference key="NSSupport" ref="723568032"/>
 														<reference key="NSControlView" ref="1001643430"/>
 														<reference key="NSBackgroundColor" ref="570822745"/>
@@ -327,7 +327,7 @@
 											<reference key="NSBackgroundColor" ref="570822745"/>
 											<object class="NSColor" key="NSGridColor">
 												<int key="NSColorSpace">6</int>
-												<reference key="NSCatalogName" ref="927064060"/>
+												<reference key="NSCatalogName" ref="327840376"/>
 												<string key="NSColorName">gridColor</string>
 												<object class="NSColor" key="NSColor">
 													<int key="NSColorSpace">3</int>
@@ -418,7 +418,7 @@
 								<int key="NSTextBezelStyle">1</int>
 								<object class="NSColor" key="NSBackgroundColor">
 									<int key="NSColorSpace">6</int>
-									<reference key="NSCatalogName" ref="927064060"/>
+									<reference key="NSCatalogName" ref="327840376"/>
 									<string key="NSColorName">textBackgroundColor</string>
 									<reference key="NSColor" ref="71117423"/>
 								</object>
@@ -483,7 +483,7 @@
 								<reference key="NSControlView" ref="595225768"/>
 								<object class="NSColor" key="NSBackgroundColor">
 									<int key="NSColorSpace">6</int>
-									<reference key="NSCatalogName" ref="927064060"/>
+									<reference key="NSCatalogName" ref="327840376"/>
 									<string key="NSColorName">controlColor</string>
 									<reference key="NSColor" ref="613247351"/>
 								</object>
@@ -524,7 +524,7 @@
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMinSize">{400, 276}</string>
-				<reference key="NSFrameAutosaveName" ref="674200188"/>
+				<reference key="NSFrameAutosaveName" ref="727459485"/>
 			</object>
 			<object class="NSArrayController" id="498175063">
 				<object class="NSMutableArray" key="NSDeclaredKeys">
@@ -542,22 +542,22 @@
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
 				<bool key="NSFilterRestrictsInsertion">YES</bool>
 			</object>
-			<object class="NSMenu" id="114583314">
+			<object class="NSMenu" id="853465446">
 				<string key="NSTitle">ContextualMenu</string>
 				<object class="NSMutableArray" key="NSMenuItems">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSMenuItem" id="1066144928">
-						<reference key="NSMenu" ref="114583314"/>
+					<object class="NSMenuItem" id="434517784">
+						<reference key="NSMenu" ref="853465446"/>
 						<string key="NSTitle">Show in Finder</string>
 						<reference key="NSKeyEquiv" ref="432963935"/>
 						<int key="NSKeyEquivModMask">1048576</int>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<object class="NSCustomResource" key="NSOnImage">
-							<string key="NSClassName" id="1060890652">NSImage</string>
+							<string key="NSClassName" id="108258351">NSImage</string>
 							<string key="NSResourceName">NSMenuCheckmark</string>
 						</object>
 						<object class="NSCustomResource" key="NSMixedImage">
-							<reference key="NSClassName" ref="1060890652"/>
+							<reference key="NSClassName" ref="108258351"/>
 							<string key="NSResourceName">NSMenuMixedState</string>
 						</object>
 					</object>
@@ -825,9 +825,9 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label" id="494937557">showEntryInFinder:</string>
+						<string key="label">showEntryInFinder:</string>
 						<reference key="source" ref="498175063"/>
-						<reference key="destination" ref="1066144928"/>
+						<reference key="destination" ref="434517784"/>
 					</object>
 					<int key="connectionID">175</int>
 				</object>
@@ -835,7 +835,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">menu</string>
 						<reference key="source" ref="1001643430"/>
-						<reference key="destination" ref="114583314"/>
+						<reference key="destination" ref="853465446"/>
 					</object>
 					<int key="connectionID">176</int>
 				</object>
@@ -1094,17 +1094,17 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">171</int>
-						<reference key="object" ref="114583314"/>
+						<reference key="object" ref="853465446"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1066144928"/>
+							<reference ref="434517784"/>
 						</object>
 						<reference key="parent" ref="1002"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">172</int>
-						<reference key="object" ref="1066144928"/>
-						<reference key="parent" ref="114583314"/>
+						<reference key="object" ref="434517784"/>
+						<reference key="parent" ref="853465446"/>
 					</object>
 				</object>
 			</object>
@@ -1190,9 +1190,9 @@
 					<string>{400, 260}</string>
 					<string>SpotlightPlaylistController</string>
 					<reference ref="685108611"/>
-					<string id="561648572">com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string id="268034309">com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{81, 519}, {169, 23}}</string>
-					<reference ref="561648572"/>
+					<reference ref="268034309"/>
 					<reference ref="685108611"/>
 					<reference ref="685108611"/>
 					<reference ref="9"/>
@@ -1269,44 +1269,6 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">PlaylistView</string>
-					<string key="superclassName">NSTableView</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>scrollToCurrentEntry:</string>
-							<string>shufflePlaylist:</string>
-							<string>sortByPath:</string>
-							<string>toggleColumn:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string id="623005928">id</string>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>playbackController</string>
-							<string>playlistController</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>PlaybackController</string>
-							<string>PlaylistController</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey" id="156264982">IBProjectSource</string>
-						<string key="minorKey">Playlist/PlaylistView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">TrackingSlider</string>
 					<string key="superclassName">NSSlider</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -1328,29 +1290,8 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<string key="majorKey" id="924027018">IBProjectSource</string>
 						<string key="minorKey">Utils/TrackingSlider.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">SpotlightPlaylistController</string>
-					<string key="superclassName">PlaylistController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">spotlightWindowController</string>
-						<string key="NS.object.0">SpotlightWindowController</string>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
-						<string key="minorKey">Spotlight/SpotlightPlaylistController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -1375,7 +1316,7 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">Playlist/EntriesController.h</string>
 					</object>
 				</object>
@@ -1401,7 +1342,7 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">Spotlight/SpotlightPlaylistView.h</string>
 					</object>
 				</object>
@@ -1427,7 +1368,7 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">ThirdParty/NDHotKeys/NDHotKeyEvent.h</string>
 					</object>
 				</object>
@@ -1453,7 +1394,7 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">ThirdParty/UKKQueue/UKKQueue.h</string>
 					</object>
 				</object>
@@ -1479,7 +1420,7 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">ThirdParty/UKKQueue/UKFileWatcher.h</string>
 					</object>
 				</object>
@@ -1505,7 +1446,7 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">ThirdParty/AppleRemote/AppleRemote.h</string>
 					</object>
 				</object>
@@ -1531,7 +1472,7 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">ThirdParty/UKKQueue/UKMainThreadProxy.h</string>
 					</object>
 				</object>
@@ -1557,7 +1498,7 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">ThirdParty/GCWindowMenu/GCOneShotEffectTimer.h</string>
 					</object>
 				</object>
@@ -1578,7 +1519,7 @@
 						<string key="NS.object.0">NSTableView</string>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">Playlist/DNDArrayController.h</string>
 					</object>
 				</object>
@@ -1599,48 +1540,8 @@
 						<string key="NS.object.0">PlaylistController</string>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">Playlist/PlaylistLoader.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">PlaylistController</string>
-					<string key="superclassName">DNDArrayController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>clear:</string>
-							<string>clearFilterPredicate:</string>
-							<reference ref="494937557"/>
-							<string>takeRepeatFromObject:</string>
-							<string>takeShuffleFromObject:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>entriesController</string>
-							<string>playlistLoader</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>EntriesController</string>
-							<string>PlaylistLoader</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
-						<string key="minorKey">Playlist/PlaylistController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -1648,7 +1549,7 @@
 					<string key="superclassName">NSWindowController</string>
 					<object class="NSMutableDictionary" key="actions">
 						<string key="NS.key.0">addToPlaylist:</string>
-						<reference key="NS.object.0" ref="623005928"/>
+						<string key="NS.object.0" id="159816078">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1666,8 +1567,72 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">Spotlight/SpotlightWindowController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">PlaylistView</string>
+					<string key="superclassName">NSTableView</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>scrollToCurrentEntry:</string>
+							<string>shufflePlaylist:</string>
+							<string>sortByPath:</string>
+							<string>toggleColumn:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>playbackController</string>
+							<string>playlistController</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>PlaybackController</string>
+							<string>PlaylistController</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<reference key="majorKey" ref="924027018"/>
+						<string key="minorKey">Playlist/PlaylistView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">SpotlightPlaylistController</string>
+					<string key="superclassName">PlaylistController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<reference key="majorKey" ref="924027018"/>
+						<string key="minorKey">Spotlight/SpotlightPlaylistController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -1698,24 +1663,24 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
-							<reference ref="623005928"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
@@ -1742,8 +1707,50 @@
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<reference key="majorKey" ref="156264982"/>
+						<reference key="majorKey" ref="924027018"/>
 						<string key="minorKey">Application/PlaybackController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">PlaylistController</string>
+					<string key="superclassName">DNDArrayController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>clear:</string>
+							<string>clearFilterPredicate:</string>
+							<string>showEntryInFinder:</string>
+							<string>takeRepeatFromObject:</string>
+							<string>takeShuffleFromObject:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+							<reference ref="159816078"/>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>entriesController</string>
+							<string>playlistLoader</string>
+							<string>spotlightWindowController</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>EntriesController</string>
+							<string>PlaylistLoader</string>
+							<string>SpotlightWindowController</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<reference key="majorKey" ref="924027018"/>
+						<string key="minorKey">Playlist/PlaylistController.h</string>
 					</object>
 				</object>
 			</object>
@@ -1763,9 +1770,9 @@ AwcDCgMhAykDLwMwAzQDQwNEA0kDSgNLA04DUgNTA1YDWANZA10DYgNwA3EDcgN8A30DfwOBA4IDhwOI
 A40DjgOTA5QDmQOaA58DoAOjA6gDqQOuA68DtAO1A78DwAPBA8IDxQPOA88D0APWA9cD2QPhA+ID4wPp
 A+oD6wPzA/QD9QP7BAMEBAQFBAsEEwQUBBUEGwQjBCQEJQQrBDIEMwQ0BDUEPQQ+BD8ERQRNBE4ETwRV
 BHkEfAR9BH8EowTIBO0E7gTvBPAE8QTyBPME9AT1BPYE9wT4BPkE+gT7BPwE/QT+BP8FAAUBBQIFAwUE
-BQUFBgUHBQgFCQUKBQsFDAUNBQ4FDwUUBRkFUgWLBYwFjQWOBY8FkAWRBZIFkwWUBZUFlgBZBZcFmAWZ
-BZoFmwWcBZ0FngWfAWkFoAWhBaIFowWkBaUFpgWnBagFqQCSBaoFqwWsBa0FrgWvBbAFsQWyBbMFtAW1
-BbYAwQW3BbgAWAW5BboFuwW+BcEFxFUkbnVsbN8QEgANAA4ADwAQABEAEgATABQAFQAWABcAGAAZABoA
+BQUFBgUHBQgFCQUKBQsFDAUNBQ4FDwUUBRkFUgWLBYwFjQWOBY8FkAWRBZIFkwWUBZUFlgWXBZgFmQWa
+AFkFmwWcBZ0FngWfBaAFoQWiAWkFowWkBaUFpgWnBagFqQWqAJIFqwWsBa0FrgWvBbAFsQWyBbMFtADB
+BbUFtgW3BbgAWAW5BboFuwW+BcEFxFUkbnVsbN8QEgANAA4ADwAQABEAEgATABQAFQAWABcAGAAZABoA
 GwAcAB0AHgAfACAAIQAiACMAJAAlACYAJwAoACkAKgArACwALQAuAC8AMFZOU1Jvb3RWJGNsYXNzXU5T
 T2JqZWN0c0tleXNfEA9OU0NsYXNzZXNWYWx1ZXNfEBlOU0FjY2Vzc2liaWxpdHlPaWRzVmFsdWVzXU5T
 Q29ubmVjdGlvbnNbTlNOYW1lc0tleXNbTlNGcmFtZXdvcmtdTlNDbGFzc2VzS2V5c1pOU09pZHNLZXlz
@@ -1945,17 +1952,17 @@ bGljYXRpb25fEBFTZWFyY2ggRmllbGQgQ2VsbF8QGlN0YXRpYyBUZXh0IChTZWFyY2ggUGF0aDopXxAd
 U3BvdGxpZ2h0IFBsYXlsaXN0IENvbnRyb2xsZXJfEB1UZXh0IEZpZWxkIENlbGwgKFRleHQgQ2VsbCkt
 MV8QHUJ1dHRvbiBDZWxsIChBZGQgdG8gUGxheWxpc3QpXENvbnRlbnQgVmlld18QFFRhYmxlIENvbHVt
 biAoZ2VucmUpXxAaTWVudSBJdGVtIChTaG93IGluIEZpbmRlcinSAA4APgRWBRGA+aIDYADdgLCAHtIA
-DgA+BFYFFoD5ogNvAQaAsYAf0gAOAD4EVgUbgPmvEDYCHQByAHUDHQMbAHEA3QDJAHMDIAMSAt0BNwBB
-AZkBNgHTAxwDEQMmATMDFAJrAH0DGQMVATgDMwMQATQAHwMeAxYCwAD6Aw4DDwMTAL4BSAMfAgcBNQMN
-Ae4BOQRwAHQDYAG5AxoATwMYAxeAYIAagI6A5oDegA+AHoBpgHOA8oC+gJSAUoAHgEaATIBQgOKAvICg
-gCqAw4B1gBGA1IDFgFeAo4C6gD+AAoDqgMeAiYAigK+AuIDAgG2ANoDugFuAR4CfgFaAXID3gIeAsIBL
-gNqADIDOgMnSAA4APgRWBVSA+a8QNgVVBVYFVwVYBVkFWgVbBVwFXQVeBV8FYAVhAqwFYwVkBWUFZgVn
+DgA+BFYFFoD5ogNvAQaAsYAf0gAOAD4EVgUbgPmvEDYCHQByAxEAdQMdAxsDFgBxAN0AyQMSAHMDDgMg
+At0DDwE3AEEBmQE2AdMDHAMmATMCawMNAH0DGQE4AzMDEAE0AB8DHgLAAPoAvgFIAx8CBwE1Ae4BOQRw
+AxMAdANgAbkDGgMUAxUATwMYAxeAYIAagLyAjoDmgN6Ax4APgB6AaYC+gHOAr4DygJSAuIBSgAeARoBM
+gFCA4oCggCqAdYCfgBGA1IBXgKOAuoA/gAKA6oCJgCKAbYA2gO6AW4BHgFaAXID3gMCAh4CwgEuA2oDD
+gMWADIDOgMnSAA4APgRWBVSA+a8QNgVVBVYFVwVYBVkFWgVbBVwFXQVeBV8FYAVhBWIFYwVkBWUCrAVn
 BWgFaQVqBWsFbAVtBW4FbwVwBXEFcgVzBXQFdQV2BXcFeAV5BXoFewV8BX0FfgV/BYAFgQWCBYMFhAWF
-BYYFhwWIBYkFioEBI4EBJIEBJYEBJoEBJ4EBKIEBKYEBKoEBK4EBLIEBLYEBLoEBL4CCgQEwgQExgQEy
-gQEzgQE0gQE1gQE2gQE3gQE4gQE5gQE6gQE7gQE8gQE9gQE+gQE/gQFAgQFBgQFCgQFDgQFEgQFFgQFG
-gQFHgQFIgQFJgQFKgQFLgQFMgQFNgQFOgQFPgQFQgQFRgQFSgQFTgQFUgQFVgQFWgQFXECwQGBBYEF4Q
-aRAFEBwQGxA3EGYQnxBZECcQIBApEGsQoRCrECQQPRA4EJ0QlxAeEKwQoBAiELEQphCvEFAQlRBIEKMQ
-GhAlEGgQKxAhELAQKhAdE//////////9EE8QKBBlEF0QmtIADgA+AG8FvYBhoNIADgA+BFYFwID5oNIA
+BYYFhwWIBYkFioEBI4EBJIEBJYEBJoEBJ4EBKIEBKYEBKoEBK4EBLIEBLYEBLoEBL4EBMIEBMYEBMoEB
+M4CCgQE0gQE1gQE2gQE3gQE4gQE5gQE6gQE7gQE8gQE9gQE+gQE/gQFAgQFBgQFCgQFDgQFEgQFFgQFG
+gQFHgQFIgQFJgQFKgQFLgQFMgQFNgQFOgQFPgQFQgQFRgQFSgQFTgQFUgQFVgQFWgQFXECwQGBChEFgQ
+XhBpEK8QBRAcEBsQnxA3EJUQZhBZEEgQJxAgECkQaxCrECQQOBCwEJ0QHhCsEKAQIhCxEKYQUBAaECUQ
+aBArECEQKhAdE//////////9EKMQTxAoEGUQPRCXEF0QmtIADgA+AG8FvYBhoNIADgA+BFYFwID5oNIA
 DgA+BFYFw4D5oNIANwA4BcUFxqIFxgA7Xk5TSUJPYmplY3REYXRhAAgAGQAiACcAMQA6AD8ARABSAFQA
 ZgMiAygDcwN6A4EDjwOhA70DywPXA+MD8QP8BAoEJgQ0BEcEWQRzBH0EigSMBI8EkQSUBJcEmQSbBJ0E
 oASjBKUEqASqBKwErgSxBLMEtgS/BMsEzQTPBOsE9AT9BQgFDQUcBSUFOAVBBUwFTgVRBVMFiAWVBaIF
@@ -2002,10 +2009,10 @@ eyl+KYEphCmHKYopjSmQKZMplimZKZwpnymiKaUpqCmrKa4psSm0KbcpuinSKd8p6yoIKigqSSppKrYq
 yireKusrASshKysrSytiK3grjCukK8Ir4iwCLBksMSxILFQsaCyFLKUsxSzlLPItCS0mLS8tMS02LTgt
 Oi1DLUUtSi1MLU4tVy1ZLcgtyi3MLc4t0C3SLdQt1i3YLdot3C3eLeAt4i3kLeYt6C3qLewt7i3wLfIt
 9C32Lfgt+i38Lf4uAC4CLgQuBi4ILgouDC4OLhAuEi4ULhYuGC4aLhwuHi4gLiIuJC4mLiguKi4sLi4u
-MC4yLjQuPS4/Lq4usS60Lrcuui69LsAuwy7GLskuzC7PLtIu1S7XLtou3S7gLuMu5i7pLuwu7y7yLvUu
+MC4yLjQuPS4/Lq4usS60Lrcuui69LsAuwy7GLskuzC7PLtIu1S7YLtsu3i7hLuMu5i7pLuwu7y7yLvUu
 +C77Lv4vAS8ELwcvCi8NLxAvEy8WLxkvHC8fLyIvJS8oLysvLi8xLzQvNy86Lz0vQC9DL0YvSS9ML08v
 US9TL1UvVy9ZL1svXS9fL2EvYy9lL2cvaS9rL20vby9xL3MvdS93L3kvey99L38vgS+DL4Uvhy+JL4sv
-jS+PL5Evky+VL5cvmS+bL50vny+hL6MvrC+uL7Avsi+0L7Yvvy/BL8Ivyy/NL84v1y/ZL9ov4y/oAAAA
+jS+PL5Evky+VL5cvmS+bL50vpi+oL6ovrC+uL7Avsi+0L7Yvvy/BL8Ivyy/NL84v1y/ZL9ov4y/oAAAA
 AAAAAgIAAAAAAAAFxwAAAAAAAAAAAAAAAAAAL/c</bytes>
 		</object>
 	</data>

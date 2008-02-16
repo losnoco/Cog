@@ -8,10 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 #import "PlaylistController.h"
-#import "SpotlightWindowController.h"
 
 @interface SpotlightPlaylistController : PlaylistController {
-    IBOutlet SpotlightWindowController * spotlightWindowController;
 }
 
 - (BOOL)tableView:(NSTableView *)tv writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard*)pboard;

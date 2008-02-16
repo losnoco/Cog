@@ -14,7 +14,7 @@
 @interface PlaylistView : NSTableView {
 	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
-
+    
 	NSMenu *headerContextMenu;
 }
 

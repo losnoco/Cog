@@ -7,6 +7,7 @@
 //
 
 #import "SpotlightPlaylistController.h"
+#import "SpotlightWindowController.h"
 
 @implementation SpotlightPlaylistController
 

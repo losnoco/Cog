@@ -25,6 +25,9 @@
 - (void)performSearch;
 - (NSPredicate *)processSearchString;
 
+- (void)searchForArtist:(NSString *)artist;
+- (void)searchForAlbum:(NSString *)album;
+
 @property(retain) NSMetadataQuery *query;
 @property(copy) NSString *searchString;
 @property(copy) NSString *spotlightSearchPath;

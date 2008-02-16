@@ -228,6 +228,15 @@ static NSPredicate * musicOnlyPredicate = nil;
    [self.query enableUpdates];
 }
 
+- (void)searchForArtist:(NSString *)artist
+{
+    NSLog(@"When Matthew gets less lazy I will search for songs by %@", artist);
+}
+- (void)searchForAlbum:(NSString *)album
+{
+    NSLog(@"When Matthew gets less lazy I will search for songs from %@", album);
+}
+
 // Don't update the track list until some results have been gathered
 - (id)valueForKeyPath:(NSString *)keyPath
 {

@@ -10,6 +10,7 @@
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
 #import "Shuffle.h"
+#import "SpotlightWindowController.h"
 
 #import "CogAudio/AudioPlayer.h"
 
@@ -531,6 +532,17 @@
 	NSURL *url = [[self entryAtIndex:[self selectionIndex]] url];
 	if ([url isFileURL])
 		[ws selectFile:[url path] inFileViewerRootedAtPath:[url path]];
+}
+
+- (IBAction)searchByArtist:(id)sender;
+{
+    PlaylistEntry *entry = [[self arrangedObjects] objectAtIndex:[self selectionIndex]];
+    [spotlightWindowController searchForArtist:[entry artist]];
+}
+- (IBAction)searchByAlbum:(id)sender;
+{
+    PlaylistEntry *entry = [[self arrangedObjects] objectAtIndex:[self selectionIndex]];
+    [spotlightWindowController searchForAlbum:[entry album]];
 }
 
 @end

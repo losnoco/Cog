@@ -13,10 +13,12 @@
 @class PlaylistLoader;
 @class PlaylistEntry;
 @class EntriesController;
+@class SpotlightWindowController;
 
 @interface PlaylistController : DNDArrayController {
 	IBOutlet PlaylistLoader *playlistLoader;
 	IBOutlet EntriesController *entriesController;
+	IBOutlet SpotlightWindowController *spotlightWindowController;
 
 	NSString *totalTimeDisplay;
 	
@@ -56,6 +58,10 @@
 - (IBAction)showEntryInFinder:(id)sender;
 - (IBAction)clearFilterPredicate:(id)sender;
 - (IBAction)clear:(id)sender;
+
+// Spotlight
+- (IBAction)searchByArtist:(id)sender;
+- (IBAction)searchByAlbum:(id)sender;
 
 - (void)setTotalTimeDisplay:(NSString *)ttd;
 - (NSString *)totalTimeDisplay;
