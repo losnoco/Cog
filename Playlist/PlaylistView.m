@@ -68,20 +68,26 @@
 	
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"headerCell.title" ascending:YES];
 	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-	NSEnumerator *e = [[[self tableColumns] sortedArrayUsingDescriptors: sortDescriptors] objectEnumerator];
-
+	[sortDescriptor release];
+	
+	int visibleTableColumns = 0;
 	int menuIndex = 0;
-	NSTableColumn *col;	
-	while (col = [e nextObject]) {
+	for (NSTableColumn *col in [[self tableColumns] sortedArrayUsingDescriptors: sortDescriptors]) {
 		NSMenuItem *contextMenuItem = [headerContextMenu insertItemWithTitle:[[col headerCell] title] action:@selector(toggleColumn:) keyEquivalent:@"" atIndex:menuIndex];
 		
 		[contextMenuItem setTarget:self];
 		[contextMenuItem setRepresentedObject:col];
 		[contextMenuItem setState:([col isHidden] ? NSOffState : NSOnState)];
 
+		visibleTableColumns += ![col isHidden];
 		menuIndex++;
 	}
-	[sortDescriptor release];
+	
+	if (visibleTableColumns == 0) {
+		for (NSTableColumn *col in [self tableColumns]) {
+			[col setHidden:NO];
+		}
+	}
 	
 	[[self headerView] setMenu:headerContextMenu];
 }
