@@ -13,6 +13,7 @@
 
 }
 
++ (void)initialize;
 + (NSMutableArray *)shuffleList:(NSArray *)l;
 
 @end

@@ -49,7 +49,7 @@
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 	int n;
-	previousNode = [[controller bufferChain] finalNode];
+	[self setPreviousNode:[[controller bufferChain] finalNode]];
 	
 	n = [super readData:ptr amount:amount];
 	if (endOfStream == YES)

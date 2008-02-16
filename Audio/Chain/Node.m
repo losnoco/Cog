@@ -22,10 +22,11 @@
 		
 		initialBufferFilled = NO;
 		
-		controller = c;
-		previousNode = p;
+		controller = [c retain];
 		endOfStream = NO;
 		shouldContinue = YES;
+
+		[self setPreviousNode:p];
 	}
 	
 	return self;
@@ -87,7 +88,6 @@
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
 	[self process];
-
 
 	[pool release];
 
@@ -152,6 +152,13 @@
 - (void)launchThread
 {
 	[NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
+}
+
+- (void)setPreviousNode:(id)p
+{
+	[p retain];
+	[previousNode release];
+	previousNode = p;
 }
 
 - (id)previousNode
@@ -221,6 +228,9 @@
 
 - (void)dealloc
 {
+	[controller release];
+	[previousNode release];
+	
 	[buffer release];
 	[semaphore release];
 	[readLock release];

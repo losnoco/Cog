@@ -3,52 +3,39 @@
 //  Cog
 //
 //  Created by Vincent Spader on 1/14/06.
-//  Copyright 2006 Vincent Spader. All rights reserved.
+//  Revised by Eric Hanneken on 2/14/08.
+//  Copyright 2008 Vincent Spader. All rights reserved.
 //
 
 #import "Shuffle.h"
-
+#import "NSArray+ShuffleUtils.h"
 
 @implementation Shuffle
 
-int sum(int n)
++ (void)initialize
 {
-	return (n*n+n)/2;
-}
-
-int reverse_sum(int n)
-{
-	return (int)(ceil((-1.0 + sqrt(1.0 + 8.0*n))/2.0));
-}
-
-int randint(int low, int high)
-{
-	return (random()%high)+low;
+	static BOOL initialized = NO;
+	if (!initialized) {
+		// Call srandom() exactly once.
+		srandom((unsigned) time(NULL));
+		initialized = YES;
+	}
 }
 
 + (NSMutableArray *)shuffleList:(NSArray *)l
 {
-	srandom(time(NULL));
-
-	NSMutableArray *a = [l mutableCopy];
-	NSMutableArray *b = [[NSMutableArray alloc] init];
+	NSArray* randomLongs = [NSArray arrayWithRandomLongs:[l count]];
+	// randomLongs is an array of random integers, equal in length to l.
 	
-	while([a count] > 0)
-	{
-		int t, r, p;
-		
-		t = sum([a count]);
-		r = randint(1, t);
-		p = reverse_sum(r) - 1;
-		//printf("%i, %i, %i, %i\n", [a count], t, r, p);
-		
-		[b insertObject:[a objectAtIndex:p] atIndex:0];
-		[a removeObjectAtIndex:p];
-	}		
+	NSArray* pairs = [NSArray zipArray:randomLongs withArray:l];
+	// randomLongs and l are paired.
 	
-	[a release];
+	NSArray* shuffledPairs = [pairs sortedArrayUsingSelector:@selector(compareFirsts:)];
+	// The numbers from randomLongs are sorted in ascending order; the tracks from l
+	// are in random order.
 	
-	return [b autorelease];
+	// Peel the tracks off and return them.
+	return [[NSArray unzipArray:shuffledPairs] objectAtIndex:1];
 }
 
 @end

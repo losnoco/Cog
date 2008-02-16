@@ -44,6 +44,7 @@
 - (NSLock *)readLock;
 - (NSLock *)writeLock;
 
+- (void)setPreviousNode:(id)p;
 - (id)previousNode;
 
 - (BOOL)shouldContinue;

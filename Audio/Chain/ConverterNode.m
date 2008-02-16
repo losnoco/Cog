@@ -165,6 +165,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	}
 	if (callbackBuffer) {
 		free(callbackBuffer);
+		callbackBuffer = NULL;
 	}
 }
 
