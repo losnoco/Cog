@@ -189,10 +189,10 @@ static NSPredicate * musicOnlyPredicate = nil;
             }
             else
             {
-                [subpredicates addObject: 
-                    [NSComparisonPredicate predicateForMdKey:@"*"
-                                                  withString:parsingString
-                                                 exactString:exactString]];
+				NSString * wildcardString = [NSString stringWithFormat:@"*%@*", parsingString];
+                NSPredicate * pred =[NSPredicate predicateWithFormat:@"(kMDItemTitle LIKE[cd] %@) OR (kMDItemAlbum LIKE[cd] %@) OR (kMDItemAuthors LIKE[cd] %@)",
+                    wildcardString, wildcardString, wildcardString];
+                [subpredicates addObject: pred];
             }
         }
     }
