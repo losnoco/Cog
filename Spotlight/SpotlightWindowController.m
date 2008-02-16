@@ -10,6 +10,8 @@
 #import "PlaylistLoader.h"
 #import "SpotlightPlaylistEntry.h"
 #import "NSComparisonPredicate+CogPredicate.h"
+#import "NSArray+CogSort.h"
+#import "NSString+CogSort.h"
 
 // Minimum length of a search string (searching for very small strings gets ugly)
 #define MINIMUM_SEARCH_STRING_LENGTH 3
@@ -23,7 +25,7 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
 	musicOnlyPredicate = [[NSPredicate predicateWithFormat:
                         @"kMDItemContentTypeTree==\'public.audio\'"] retain];
-    
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     // Set the home directory as the default search directory
@@ -41,6 +43,17 @@ static NSPredicate * musicOnlyPredicate = nil;
 	if (self = [super initWithWindowNibName:@"SpotlightPanel"]) {
 		self.query = [[NSMetadataQuery alloc] init];
         [self.query setDelegate:self];
+        self.query.sortDescriptors = [NSArray arrayWithObjects:
+        [[NSSortDescriptor alloc]initWithKey:@"kMDItemAuthors"
+                                   ascending:YES
+                                    selector:@selector(compareFirstString:)],
+        [[NSSortDescriptor alloc]initWithKey:@"kMDItemAlbum"
+                                   ascending:YES
+                                    selector:@selector(caseInsensitiveCompare:)],
+        [[NSSortDescriptor alloc]initWithKey:@"kMDItemAudioTrackNumber"
+                                   ascending:YES
+                                    selector:@selector(compareTrackNumbers:)],
+        Nil];
 	}
 
     return self;
@@ -71,7 +84,8 @@ static NSPredicate * musicOnlyPredicate = nil;
             // Set scope to contents of pathControl
             self.query.searchScopes = [NSArray arrayWithObjects:pathControl.URL, nil];
             [self.query startQuery];
-            NSLog(@"Started query: %@", [self.query.predicate description]);
+            NSLog(@"Started query: %@ \nWith descriptors: %@", [self.query.predicate description],
+                                                               [self.query.sortDescriptors description]);
         }
     }
 }
