@@ -206,6 +206,20 @@ static NSPredicate * musicOnlyPredicate = nil;
     return [NSCompoundPredicate andPredicateWithSubpredicates: subpredicates];
 }
 
+- (void)searchForArtist:(NSString *)artist
+{
+    [self showWindow:self];
+    self.searchString = [NSString stringWithFormat:@"%%a\"%@\"", artist];
+}
+
+- (void)searchForAlbum:(NSString *)album
+{
+    [self showWindow:self];
+    self.searchString = [NSString stringWithFormat:@"%%l\"%@\"", album];
+}
+
+
+
 - (void)dealloc
 {
 	[self.query stopQuery];
@@ -226,19 +240,6 @@ static NSPredicate * musicOnlyPredicate = nil;
     [playlistLoader addURLs:[tracks valueForKey:@"url"] sort:NO];
    
    [self.query enableUpdates];
-}
-
-- (void)searchForArtist:(NSString *)artist
-{
-    [self showWindow:self];
-    searchField.stringValue = [NSString stringWithFormat:@"%%a\"%@\"", artist];
-    self.searchString = searchField.stringValue;
-}
-- (void)searchForAlbum:(NSString *)album
-{
-    [self showWindow:self];
-    searchField.stringValue = [NSString stringWithFormat:@"%%l\"%@\"", album];
-    self.searchString = searchField.stringValue;
 }
 
 // Don't update the track list until some results have been gathered
