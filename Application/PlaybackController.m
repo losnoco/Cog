@@ -292,7 +292,6 @@ double linearToLogarithmic(double linear)
  containing the current volume before we start fading. */
 - (void)audioFader:(NSTimer *)audioTimer
 {
-	static int incrementalFader = 10;
 	double volume = [audioPlayer volume];
 	double originalVolume = [[audioTimer userInfo] doubleValue];
 
@@ -300,14 +299,13 @@ double linearToLogarithmic(double linear)
 	
 	if (volume > 0.0001) //YAY! Roundoff error!
 	{
-		[self volumeDown:incrementalFader++];
+		[self volumeDown:5];
 	}
 	else  // volume is at 0 or below, we are ready to release the timer and move on
 	{
 		[audioPlayer pause];
 		[audioPlayer setVolume:originalVolume];
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
-		incrementalFader = 10;
 		[audioTimer invalidate];
 	}
 	

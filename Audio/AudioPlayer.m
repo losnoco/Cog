@@ -44,7 +44,6 @@
 	[self play:url withUserInfo:nil];
 }
 
-
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo
 {
 	if (output)
