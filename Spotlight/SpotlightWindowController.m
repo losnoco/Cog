@@ -230,11 +230,15 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (void)searchForArtist:(NSString *)artist
 {
-    NSLog(@"When Matthew gets less lazy I will search for songs by %@", artist);
+    [self showWindow:self];
+    searchField.stringValue = [NSString stringWithFormat:@"%%a\"%@\"", artist];
+    self.searchString = searchField.stringValue;
 }
 - (void)searchForAlbum:(NSString *)album
 {
-    NSLog(@"When Matthew gets less lazy I will search for songs from %@", album);
+    [self showWindow:self];
+    searchField.stringValue = [NSString stringWithFormat:@"%%l\"%@\"", album];
+    self.searchString = searchField.stringValue;
 }
 
 // Don't update the track list until some results have been gathered

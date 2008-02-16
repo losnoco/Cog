@@ -14,6 +14,7 @@
     IBOutlet PlaylistLoader *playlistLoader;
     IBOutlet NSArrayController *playlistController;
     IBOutlet NSPathControl *pathControl;
+    IBOutlet NSSearchField *searchField;
     NSMetadataQuery *query;
     NSString *searchString;
     NSString *spotlightSearchPath;
