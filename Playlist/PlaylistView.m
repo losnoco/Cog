@@ -130,7 +130,7 @@
 {
 	[super mouseDown:e];
 	
-	if ([e type] == NSLeftMouseDown && [e clickCount] == 2 && [self selectedRow] != -1)
+	if ([e type] == NSLeftMouseDown && [e clickCount] == 2 && [[self selectedRowIndexes] count] == 1)
 	{
 		[playbackController play:self];
 	}
