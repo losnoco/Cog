@@ -1,5 +1,5 @@
 //
-//  FileDrawerPane.h
+//  FileTreePane.h
 //  Preferences
 //
 //  Created by Vincent Spader on 9/4/06.
@@ -10,7 +10,7 @@
 #import "PreferencePane.h"
 
 
-@interface FileDrawerPane : PreferencePane {
+@interface FileTreePane : PreferencePane {
 	IBOutlet NSTextField *rootPathTextView;
 }
 

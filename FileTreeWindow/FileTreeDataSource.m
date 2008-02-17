@@ -14,10 +14,34 @@
 
 @implementation FileTreeDataSource
 
+- (void)initDefaults
+{
+	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
+	
+	[userDefaultsValuesDict setObject:[@"~/Music" stringByExpandingTildeInPath] forKey:@"fileTreeRootPath"];
+
+	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileTreeRootPath" options:0 context:nil];
+}
+
 - (void)awakeFromNib
 {
-	[self setRootPath: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"] ]; 
+	[self initDefaults];
+	[self setRootPath: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootPath"] ]; 
 }
+
+- (void) observeValueForKeyPath:(NSString *)keyPath
+					   ofObject:(id)object
+						 change:(NSDictionary *)change
+                        context:(void *)context
+{
+	if ([keyPath isEqualToString:@"values.fileTreeRootPath"]) {
+		[self setRootPath:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootPath"]];
+	}
+}
+
 
 - (NSString *)rootPath
 {

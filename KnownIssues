@@ -7,5 +7,4 @@ Code for fading and seeking should be moved into the AudioPlayer,
 so we can escape ugly event* functions
 
 
-File tree window root path user setting needs to be watched for changes.
 File tree window no longer changes text size. 

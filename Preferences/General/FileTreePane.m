@@ -1,22 +1,22 @@
 //
-//  FileDrawerPane.m
+//  FileTreePane.m
 //  Preferences
 //
 //  Created by Vincent Spader on 9/4/06.
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import "FileDrawerPane.h"
+#import "FileTreePane.h"
 
 
-@implementation FileDrawerPane
+@implementation FileTreePane
 
 - (void)awakeFromNib
 {
-	[self setName:NSLocalizedStringFromTableInBundle(@"File Drawer", nil, [NSBundle bundleForClass:[self class]], @"") ];
-	[self setIcon:@"file_drawer"];
+	[self setName:NSLocalizedStringFromTableInBundle(@"File Tree", nil, [NSBundle bundleForClass:[self class]], @"") ];
+	[self setIcon:@"file_tree"];
 	
-	[rootPathTextView setStringValue:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"]];
+	[rootPathTextView setStringValue:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootPath"]];
 }
 
 - (IBAction)openSheet:(id)sender
@@ -38,7 +38,7 @@
 	if (returnCode == NSOKButton)
 	{
 		[rootPathTextView setStringValue:[panel filename]];
-		[[NSUserDefaults standardUserDefaults] setObject:[panel filename] forKey:@"fileDrawerRootPath"];
+		[[NSUserDefaults standardUserDefaults] setObject:[panel filename] forKey:@"fileTreeRootPath"];
 	}
 }
 
