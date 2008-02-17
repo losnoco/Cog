@@ -9,6 +9,14 @@
 #import "StringToURLTransformer.h"
 
 @implementation StringToURLTransformer
+
++ (void)initialize
+{
+	NSValueTransformer *stringToURLTransformer = [[[StringToURLTransformer alloc] init]autorelease];
+    [NSValueTransformer setValueTransformer:stringToURLTransformer
+                                    forName:@"StringToURLTransformer"];
+}
+
 + (Class)transformedValueClass { return [NSURL class]; }
 + (BOOL)allowsReverseTransformation { return YES; }
 

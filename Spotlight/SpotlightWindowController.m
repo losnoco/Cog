@@ -14,7 +14,6 @@
 #import "NSString+CogSort.h"
 #import "NSNumber+CogSort.h"
 #import "SpotlightTransformers.h"
-#import "StringToURLTransformer.h"
 
 // Minimum length of a search string (searching for very small strings gets ugly)
 #define MINIMUM_SEARCH_STRING_LENGTH 3
@@ -40,9 +39,6 @@ static NSPredicate * musicOnlyPredicate = nil;
                                                     forKey:@"spotlightSearchPath"];
                                                     
     // Register value transformers
-    NSValueTransformer *stringToURLTransformer = [[[StringToURLTransformer alloc]init]autorelease];
-    [NSValueTransformer setValueTransformer:stringToURLTransformer
-                                    forName:@"StringToURLTransformer"];
     NSValueTransformer *pausingQueryTransformer = [[[PausingQueryTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:pausingQueryTransformer forName:@"PausingQueryTransformer"];
     
