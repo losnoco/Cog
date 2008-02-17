@@ -1,10 +1,7 @@
-Undo is broken badly when filtering.
-
-Font resize of playlist does not change filedrawer, and 
+Font resize of playlist does not change file tree, and 
 does not resize columns (needs a lower bound)
 
 Code for fading and seeking should be moved into the AudioPlayer,
 so we can escape ugly event* functions
 
-
-File tree window no longer changes text size. 
+File tree preference is redundant. Can just move the NSPathControl to the File Tree, and remove the Header.
