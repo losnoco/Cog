@@ -16,5 +16,7 @@
     NSArray *oldResults;
 }
 
++ (void)setSearchController:(SpotlightWindowController *)aSearchController;
+
 @property(copy) NSArray *oldResults;
 @end

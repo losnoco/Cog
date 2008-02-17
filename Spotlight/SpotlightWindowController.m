@@ -44,7 +44,7 @@ static NSPredicate * musicOnlyPredicate = nil;
                                     forName:@"StringToURLTransformer"];
     NSValueTransformer *pausingQueryTransformer = [[[PausingQueryTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:pausingQueryTransformer forName:@"PausingQueryTransformer"];
-
+    
     [defaults registerDefaults:searchDefault];
 }
 
@@ -64,6 +64,9 @@ static NSPredicate * musicOnlyPredicate = nil;
                                    ascending:YES
                                     selector:@selector(compareTrackNumbers:)],
         nil];
+        
+        // hook my query transformer up to me
+        [PausingQueryTransformer setSearchController:self];
 	}
 
     return self;
