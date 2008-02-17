@@ -141,7 +141,8 @@
 
 - (void)updateTotalTime
 {
-	double tt=0;
+	double tt = 0;
+	ldiv_t hoursAndMinutes;
 	
 	NSEnumerator *enumerator = [[self arrangedObjects] objectEnumerator];
 	PlaylistEntry* pe;
@@ -151,7 +152,9 @@
 	}
 	
 	int sec = (int)(tt);
-	[self setTotalTimeDisplay:[NSString stringWithFormat:@"%i:%02i",sec/60, sec%60]];
+	hoursAndMinutes = ldiv(sec/60, 60);
+	
+	[self setTotalTimeDisplay:[NSString stringWithFormat:@"%i minutes %02i seconds (%ld hours %ld minutes)",sec/60, sec%60, hoursAndMinutes.quot, hoursAndMinutes.rem]];
 }
 
 - (void)setTotalTimeDisplay:(NSString *)ttd
