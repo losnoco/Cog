@@ -9,9 +9,6 @@
 #import <Cocoa/Cocoa.h>
 @class SpotlightWindowController;
 
-@interface StringToURLTransformer: NSValueTransformer {}
-@end
-
 @interface PausingQueryTransformer: NSValueTransformer {
     NSArray *oldResults;
 }

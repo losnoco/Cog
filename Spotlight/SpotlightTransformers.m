@@ -9,25 +9,6 @@
 #import "SpotlightTransformers.h"
 #import "SpotlightWindowController.h"
 
-@implementation StringToURLTransformer
-+ (Class)transformedValueClass { return [NSURL class]; }
-+ (BOOL)allowsReverseTransformation { return YES; }
-
-// Convert from string to NSURL
-- (id)transformedValue:(id)value {
-    if (value == nil) return nil;
-
-    return [NSURL URLWithString:value];
-}
-
-// Convert from NSURL to string
-- (id)reverseTransformedValue:(id)value {
-    if (value == nil) return nil;
-    
-    return [value absoluteString];
-}
-@end
-
 // This is what we use instead of an outlet for PausingQueryTransformer
 static SpotlightWindowController * searchController;
 
