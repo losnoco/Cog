@@ -7,8 +7,6 @@
 @class PlaybackController;
 @class PlaylistController;
 @class PlaylistView;
-@class FileTreeDataSource;
-@class FileOutlineView;
 @class AppleRemote;
 @class PlaylistLoader;
 
@@ -30,11 +28,7 @@
 	IBOutlet NSTextField *totalTimeField;
 	
 	IBOutlet NSDrawer *infoDrawer;
-	IBOutlet NSDrawer *fileDrawer;
 
-	IBOutlet FileTreeDataSource *fileTreeDataSource;
-	IBOutlet FileOutlineView *fileOutlineView;
-	
 	IBOutlet PlaylistView *playlistView;
 	
 	IBOutlet NSMenuItem *showIndexColumn;
@@ -47,6 +41,7 @@
 	IBOutlet NSMenuItem *showYearColumn;
 	
     IBOutlet NSWindowController *spotlightWindowController;
+	IBOutlet NSWindowController *fileTreeWindowController;
 	
 	NDHotKeyEvent *playHotKey;
 	NDHotKeyEvent *prevHotKey;
@@ -65,7 +60,6 @@
 - (IBAction)donate:(id)sender;
 
 - (IBAction)toggleInfoDrawer:(id)sender;
-- (IBAction)toggleFileDrawer:(id)sender;
 - (void)drawerDidOpen:(NSNotification *)notification;
 - (void)drawerDidClose:(NSNotification *)notification;
 

@@ -14,10 +14,10 @@
 
 #import "UKKQueue.h"
 
-@class FileNode;
-@class DirectoryNode;
-@class SmartFolderNode;
-@class ContainerNode;
+#import "FileNode.h"
+#import "DirectoryNode.h"
+#import "SmartFolderNode.h"
+#import "ContainerNode.h"
 
 @implementation PathNode
 
@@ -57,6 +57,7 @@ NSURL *resolveAliases(NSURL *url)
 	
 	return self;
 }
+
 
 - (void)stopWatching
 {

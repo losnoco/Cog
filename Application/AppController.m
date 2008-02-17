@@ -2,8 +2,6 @@
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 #import "PlaylistView.h"
-#import "FileOutlineView.h"
-#import "FileTreeDataSource.h"
 #import "NDHotKeyEvent.h"
 #import "AppleRemote.h"
 #import "PlaylistLoader.h"
@@ -244,6 +242,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 	[self registerHotKeys];
 	
+	[fileTreeWindowController init];
     [spotlightWindowController init];
 	
 	//Init Remote
@@ -315,22 +314,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[infoDrawer toggle:self];
 }
 
-- (IBAction)toggleFileDrawer:(id)sender
-{
-	[mainWindow makeKeyAndOrderFront:self];
-
-	[fileDrawer toggle:self];
-}
-
 - (void)drawerDidOpen:(NSNotification *)notification
 {
 	if ([notification object] == infoDrawer) {
 		[infoButton setState:NSOnState];
-	}
-	else if ([notification object] == fileDrawer) {
-		[fileButton setState:NSOnState];
-		
-		[mainWindow makeFirstResponder: fileOutlineView];
 	}
 }
 
@@ -338,11 +325,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	if ([notification object] == infoDrawer) {
 		[infoButton setState:NSOffState];
-	}
-	else if ([notification object] == fileDrawer) {
-		[fileButton setState:NSOffState];
-		
-		[mainWindow makeFirstResponder: playlistView];
 	}
 }
 
@@ -407,9 +389,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	}
 	else if ([keyPath isEqualToString:@"values.hotKeyNextKeyCode"]) {
 		[self registerHotKeys];
-	}
-	else if ([keyPath isEqualToString:@"values.fileDrawerRootPath"]) {
-		[fileTreeDataSource setRootPath:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileDrawerRootPath"]];
 	}
 	else if ([keyPath isEqualToString:@"values.remoteEnabled"] || [keyPath isEqualToString:@"values.remoteOnlyOnActive"]) {
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"]) {
@@ -485,13 +464,11 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     f = [[NSFontManager sharedFontManager] convertFont:f toSize:origFontSize+size];
 	
     NSEnumerator *playlistEntries = [[playlistView tableColumns] objectEnumerator];
-	NSEnumerator *fileDrawerEntries = [[fileOutlineView tableColumns] objectEnumerator];
 
     id c;
 	
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
     [playlistView setRowHeight:[layoutManager defaultLineHeightForFont:f]];
-    [fileOutlineView setRowHeight:[layoutManager defaultLineHeightForFont:f]];
     [layoutManager release];
     
     while (c = [playlistEntries nextObject])
@@ -499,11 +476,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         [[c dataCell] setFont:f];
     }
 
-	while (c = [fileDrawerEntries nextObject])
-    {
-        [[c dataCell] setFont:f];
-    }
-	
 	// we must set the selectedFont so that we have updated font information 
 	// next time we want to change it
     [[NSFontManager sharedFontManager] setSelectedFont:f isMultiple:NO];
