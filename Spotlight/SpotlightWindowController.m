@@ -14,6 +14,7 @@
 #import "NSString+CogSort.h"
 #import "NSNumber+CogSort.h"
 #import "SpotlightTransformers.h"
+#import "StringToURLTransformer.h"
 
 // Minimum length of a search string (searching for very small strings gets ugly)
 #define MINIMUM_SEARCH_STRING_LENGTH 3
