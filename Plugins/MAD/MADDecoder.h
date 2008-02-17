@@ -23,7 +23,7 @@
 	unsigned char _inputBuffer[INPUT_BUFFER_SIZE+MAD_BUFFER_GUARD];
 	unsigned char *_outputBuffer;
 	int _outputFrames;
-	int _fileSize;
+	long _fileSize;
 	
 	id<CogSource> _source;
 	
