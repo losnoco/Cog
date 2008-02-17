@@ -2,6 +2,7 @@
 #import "PlaylistView.h"
 #import <Foundation/NSTimer.h>
 #import "CogAudio/Status.h"
+#import "CogAudio/Helper.h"
 
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
@@ -10,23 +11,6 @@
 
 #define DEFAULT_SEEK 10
 
-//MAX_VOLUME is in percent
-#define MAX_VOLUME 400
-
-//These functions are helpers for the process of converting volume from a linear to logarithmic scale.
-//Numbers that goes in to audioPlayer should be logarithmic. Numbers that are displayed to the user should be linear.
-//Here's why: http://www.dr-lex.34sp.com/info-stuff/volumecontrols.html
-//We are using the approximation of X^4.
-//Input/Output values are in percents.
-double logarithmicToLinear(double logarithmic)
-{
-	return pow((logarithmic/MAX_VOLUME), 0.25) * 100.0;
-}
-double linearToLogarithmic(double linear)
-{
-	return (linear/100) * (linear/100) * (linear/100) * (linear/100) * MAX_VOLUME;
-}
-//End helper volume function thingies. ONWARDS TO GLORY!
 
 - (id)init
 {
@@ -248,17 +232,11 @@ double linearToLogarithmic(double linear)
 	double seekTo = [audioPlayer amountPlayed] - amount;
 	
 	if (seekTo < 0) 
-	{
-		[audioPlayer seekToTime:0];
-		[self updateTimeField:0];
-		[positionSlider setDoubleValue:0.0];
-	}
-	else 
-	{
-		[audioPlayer seekToTime:seekTo];
-		[self updateTimeField:seekTo];
-		[positionSlider setDoubleValue:seekTo];
-	}
+		seekTo = 0;
+
+	[audioPlayer seekToTime:seekTo];
+	[self updateTimeField:seekTo];
+	[positionSlider setDoubleValue:seekTo];
 }
 
 - (void)changePlayButtonImage:(NSString *)name
@@ -295,12 +273,13 @@ double linearToLogarithmic(double linear)
 {
 	double volume = [audioPlayer volume];
 	double originalVolume = [[audioTimer userInfo] doubleValue];
-
+	double down = originalVolume/10;
+	
 	NSLog(@"VOLUME IS %lf", volume);
 	
 	if (volume > 0.0001) //YAY! Roundoff error!
 	{
-		[self volumeDown:5];
+		[audioPlayer volumeDown:down];
 	}
 	else  // volume is at 0 or below, we are ready to release the timer and move on
 	{
@@ -316,15 +295,16 @@ double linearToLogarithmic(double linear)
 {
 	double volume = [audioPlayer volume];
 	double originalVolume = [[audioTimer userInfo] doubleValue];
-
+	double up = originalVolume/10;
+	
 	NSLog(@"VOLUME IS %lf", volume);
 	
 	if (volume < originalVolume) 
 	{
-		if ((volume + 5) > originalVolume)
-			[self volumeUp:(originalVolume - volume)];
+		if ((volume + up) > originalVolume)
+			[audioPlayer volumeUp:(originalVolume - volume)];
 		else
-			[self volumeUp:5];
+			[audioPlayer volumeUp:up];
 	}
 	else  // volume is at 0 or below, we are ready to release the timer and move on
 	{
@@ -334,7 +314,7 @@ double linearToLogarithmic(double linear)
 	
 }
 
-- (IBAction)fadeOut:(id)sender withTime:(double)time
+- (IBAction)fade:(id)sender withTime:(double)time
 {
 	// we can not allow multiple fade timers to be registered
 	if (playbackStatus == kCogStatusFading)
@@ -460,35 +440,20 @@ double linearToLogarithmic(double linear)
 }
 
 
-- (IBAction)eventVolumeDown:(id)sender
-{
-	[self volumeDown:DEFAULT_VOLUME_DOWN];
-}
-
-- (void)volumeDown:(double)amount
+- (IBAction)volumeDown:(id)sender
 {
 	double newVolume;
-	if (amount > [audioPlayer volume])
-		newVolume = 0.0;
-	else
-		newVolume = linearToLogarithmic(logarithmicToLinear([audioPlayer volume]) - amount);
-
+	newVolume = [audioPlayer volumeDown:DEFAULT_VOLUME_DOWN];
 	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
-	[audioPlayer setVolume:newVolume];
+
 }
 
-- (IBAction)eventVolumeUp:(id)sender
+- (IBAction)volumeUp:(id)sender
 {
-	[self volumeUp:DEFAULT_VOLUME_UP];
-}
-- (void)volumeUp:(double)amount
-{
-	double newVolume = linearToLogarithmic(logarithmicToLinear([audioPlayer volume]) + amount);
-	if (newVolume > MAX_VOLUME)
-		newVolume = MAX_VOLUME;
-
+	double newVolume;
+	newVolume = [audioPlayer volumeUp:DEFAULT_VOLUME_UP];
 	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
-	[audioPlayer setVolume:newVolume];
+
 }
 
 

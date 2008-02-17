@@ -10,6 +10,7 @@
 #import "BufferChain.h"
 #import "OutputNode.h"
 #import "Status.h"
+#import "Helper.h"
 #import "PluginController.h"
 
 
@@ -351,5 +352,31 @@
 	
 	return [[pluginController sources] allKeys];
 }
+
+- (double)volumeUp:(double)amount
+{
+	double newVolume = linearToLogarithmic(logarithmicToLinear(volume + amount));
+	if (newVolume > MAX_VOLUME)
+		newVolume = MAX_VOLUME;
+	
+	[self setVolume:newVolume];
+	
+	// the playbackController needs to know the new volume, so it can update the
+	// volumeSlider accordingly.
+	return newVolume;
+}
+
+- (double)volumeDown:(double)amount
+{
+	double newVolume;
+	if (amount > volume)
+		newVolume = 0.0;
+	else
+		newVolume = linearToLogarithmic(logarithmicToLinear(volume - amount));
+	
+	[self setVolume:newVolume];
+	return newVolume;
+}
+
 
 @end

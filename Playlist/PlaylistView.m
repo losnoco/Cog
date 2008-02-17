@@ -248,7 +248,7 @@
 	// shift+command+p - fade to pause
 	else if (modifiers == (NSCommandKeyMask | NSShiftKeyMask) && c == 0x70)
 	{
-		[playbackController fadeOut:self withTime:0.1];
+		[playbackController fade:self withTime:0.1];
 	}
 	else
 	{

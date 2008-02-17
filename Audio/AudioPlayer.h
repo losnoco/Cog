@@ -43,6 +43,8 @@
 - (void)seekToTime:(double)time;
 - (void)setVolume:(double)v;
 - (double)volume;
+- (double)volumeUp:(double)amount;
+- (double)volumeDown:(double)amount;
 
 - (double)amountPlayed;
 

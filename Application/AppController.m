@@ -58,11 +58,11 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 				break;
             case kRemoteButtonVolume_Plus_Hold:
                 //Volume Up
-				[playbackController volumeUp:DEFAULT_VOLUME_UP];
+				[playbackController volumeUp:self];
 				break;
             case kRemoteButtonVolume_Minus_Hold:
                 //Volume Down
-				[playbackController volumeDown:DEFAULT_VOLUME_DOWN];
+				[playbackController volumeDown:self];
 				break;              
         }
         if (remoteButtonHeld) 
@@ -99,10 +99,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
             break;
         case kRemoteButtonVolume_Plus:
-			[playbackController volumeUp:DEFAULT_VOLUME_UP];
+			[playbackController volumeUp:self];
             break;
         case kRemoteButtonVolume_Minus:
-			[playbackController volumeDown:DEFAULT_VOLUME_DOWN];
+			[playbackController volumeDown:self];
             break;
         case kRemoteButtonRight:
             [self clickNext];

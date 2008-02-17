@@ -40,11 +40,9 @@
 
 - (IBAction)toggleShowTimeRemaining:(id)sender;
 - (IBAction)changeVolume:(id)sender;
+- (IBAction)volumeDown:(id)sender;
+- (IBAction)volumeUp:(id)sender;
 
-- (void)volumeDown:(double)amount;
-- (IBAction)eventVolumeDown:(id)sender;
-- (void)volumeUp:(double)amount;
-- (IBAction)eventVolumeUp:(id)sender;
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;
 - (IBAction)skipToNextAlbum:(id)sender;
@@ -63,7 +61,7 @@
 - (void)seekForward:(double)sender;
 - (IBAction)eventSeekBackward:(id)sender;
 - (void)seekBackward:(double)amount;
-- (IBAction)fadeOut:(id)sender withTime:(double)time;
+- (IBAction)fade:(id)sender withTime:(double)time;
 
 - (void)initDefaults;
 - (void)audioFadeDown:(NSTimer *)audioTimer;
