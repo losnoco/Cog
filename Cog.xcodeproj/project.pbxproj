@@ -107,6 +107,7 @@
 		17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27C0CF8B2830028F5B5 /* xm.icns */; };
 		17E41E070C130DFF00AC744D /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E060C130DFF00AC744D /* Credits.html */; };
 		17E41E230C130EE200AC744D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E220C130EE200AC744D /* Help */; };
+		17E78CB10D68D46F005C5A59 /* StringToURLTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E78CB00D68D46F005C5A59 /* StringToURLTransformer.m */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
@@ -603,6 +604,8 @@
 		17D1B27A0CF8B2830028F5B5 /* song.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = song.icns; sourceTree = "<group>"; };
 		17D1B27B0CF8B2830028F5B5 /* vg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = vg.icns; sourceTree = "<group>"; };
 		17D1B27C0CF8B2830028F5B5 /* xm.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = xm.icns; sourceTree = "<group>"; };
+		17E78CAF0D68D46F005C5A59 /* StringToURLTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringToURLTransformer.h; sourceTree = "<group>"; };
+		17E78CB00D68D46F005C5A59 /* StringToURLTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringToURLTransformer.m; sourceTree = "<group>"; };
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
 		17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = Audio/CogAudio.xcodeproj; sourceTree = "<group>"; };
 		17F562260C3BD8FB0019975C /* General.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = General.xcodeproj; path = Preferences/General/General.xcodeproj; sourceTree = "<group>"; };
@@ -854,6 +857,8 @@
 				8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */,
 				07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */,
 				07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */,
+				17E78CAF0D68D46F005C5A59 /* StringToURLTransformer.h */,
+				17E78CB00D68D46F005C5A59 /* StringToURLTransformer.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1682,6 +1687,7 @@
 				17211A770D68B79700911CA9 /* FileTreeWindowController.m in Sources */,
 				17211A780D68B79700911CA9 /* PathNode.m in Sources */,
 				17211A790D68B79700911CA9 /* SmartFolderNode.m in Sources */,
+				17E78CB10D68D46F005C5A59 /* StringToURLTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

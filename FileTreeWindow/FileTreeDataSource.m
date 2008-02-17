@@ -18,18 +18,18 @@
 {
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
 	
-	[userDefaultsValuesDict setObject:[@"~/Music" stringByExpandingTildeInPath] forKey:@"fileTreeRootPath"];
+	[userDefaultsValuesDict setObject:[[NSURL fileURLWithPath:[@"~/Music" stringByExpandingTildeInPath]] absoluteString] forKey:@"fileTreeRootURL"];
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileTreeRootPath" options:0 context:nil];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileTreeRootURL" options:0 context:nil];
 }
 
 - (void)awakeFromNib
 {
 	[self initDefaults];
-	[self setRootPath: [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootPath"] ]; 
+	[self setRootURL: [NSURL URLWithString:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]]]; 
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath
@@ -37,23 +37,23 @@
 						 change:(NSDictionary *)change
                         context:(void *)context
 {
-	if ([keyPath isEqualToString:@"values.fileTreeRootPath"]) {
-		[self setRootPath:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootPath"]];
+	if ([keyPath isEqualToString:@"values.fileTreeRootURL"]) {
+		[self setRootURL:[NSURL URLWithString:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]]];
 	}
 }
 
 
-- (NSString *)rootPath
+- (NSURL *)rootURL
 {
-	return [[rootNode url] path];
+	return [rootNode url];
 }
 
-- (void)setRootPath: (NSString *)rootPath
+- (void)setRootURL: (NSURL *)rootURL
 {
-	[[[[outlineView tableColumns] objectAtIndex:0] headerCell] setStringValue:[[NSFileManager defaultManager] displayNameAtPath:rootPath]];
+	[[[[outlineView tableColumns] objectAtIndex:0] headerCell] setStringValue:[[NSFileManager defaultManager] displayNameAtPath:[rootURL path]]];
 	
 	[rootNode release];
-	rootNode = [[DirectoryNode alloc] initWithDataSource:self url:[NSURL fileURLWithPath:rootPath]];
+	rootNode = [[DirectoryNode alloc] initWithDataSource:self url:rootURL];
 
 	[self reloadPathNode:rootNode];
 }

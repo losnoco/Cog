@@ -10,23 +10,22 @@
 #import "SS_PreferencePaneProtocol.h"
 
 #import "HotKeyPane.h"
-#import "FileTreePane.h"
 #import "OutputPane.h"
 
 @interface PrefPaneController : NSObject <SS_PreferencePaneProtocol> {
 	IBOutlet HotKeyPane *hotKeyPane;
-	IBOutlet FileTreePane *fileTreePane;
 	IBOutlet OutputPane *outputPane;
 
+	IBOutlet NSView *fileTreeView;
 	IBOutlet NSView *scrobblerView;
 	IBOutlet NSView *remoteView;
 	IBOutlet NSView *updatesView;
 }
 
 - (HotKeyPane *)hotKeyPane;
-- (FileTreePane *)fileTreePane;
 - (OutputPane *)outputPane;
 
+- (PreferencePane *)fileTreePane;
 - (PreferencePane *)remotePane;
 - (PreferencePane *)updatesPane;
 - (PreferencePane *)scrobblerPane;
