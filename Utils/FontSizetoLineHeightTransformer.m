@@ -11,14 +11,6 @@
 
 @implementation FontSizetoLineHeightTransformer
 
-+ (void)initialize
-{
-	NSValueTransformer *fontSizetoLineHeightTransformer = 
-	    [[[FontSizetoLineHeightTransformer alloc] init]autorelease];
-    [NSValueTransformer setValueTransformer:fontSizetoLineHeightTransformer
-                                    forName:@"FontSizetoLineHeightTransformer"];
-}
-
 + (Class)transformedValueClass { return [NSNumber class]; }
 + (BOOL)allowsReverseTransformation { return NO; }
 

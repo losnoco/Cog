@@ -8,14 +8,21 @@
 #import "OpenURLPanel.h"
 #import "SpotlightWindowController.h"
 #import "StringToURLTransformer.h"
+#import "FontSizetoLineHeightTransformer.h"
 
 @implementation AppController
 
 + (void)initialize
 {
+    // Register transformers
 	NSValueTransformer *stringToURLTransformer = [[[StringToURLTransformer alloc] init]autorelease];
     [NSValueTransformer setValueTransformer:stringToURLTransformer
                                     forName:@"StringToURLTransformer"];
+                                
+    NSValueTransformer *fontSizetoLineHeightTransformer = 
+        [[[FontSizetoLineHeightTransformer alloc] init]autorelease];
+    [NSValueTransformer setValueTransformer:fontSizetoLineHeightTransformer
+                                    forName:@"FontSizetoLineHeightTransformer"];
 }
 
 
