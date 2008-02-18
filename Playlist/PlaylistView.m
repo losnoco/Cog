@@ -22,6 +22,7 @@
 {
 	[[self menu] setAutoenablesItems:NO];
 	
+    // Configure bindings to scale font size and row height
     NSControlSize s = NSSmallControlSize;
 	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
     // NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
@@ -32,8 +33,7 @@
 	        toObject:[NSUserDefaultsController sharedUserDefaultsController]
 	     withKeyPath:@"values.fontSize"
              options:bindOptions];
-	for(NSTableColumn *col in [self tableColumns])
-	{
+	for(NSTableColumn *col in [self tableColumns]) {
         [[col dataCell] setControlSize:s];
         [[col dataCell] setFont:f];
         [col        bind:@"fontSize" 
@@ -72,7 +72,8 @@
 	
 	int visibleTableColumns = 0;
 	int menuIndex = 0;
-	for (NSTableColumn *col in [[self tableColumns] sortedArrayUsingDescriptors: sortDescriptors]) {
+	for (NSTableColumn *col in [[self tableColumns] sortedArrayUsingDescriptors: sortDescriptors]) 
+	{
 		NSMenuItem *contextMenuItem = [headerContextMenu insertItemWithTitle:[[col headerCell] title] action:@selector(toggleColumn:) keyEquivalent:@"" atIndex:menuIndex];
 		
 		[contextMenuItem setTarget:self];
