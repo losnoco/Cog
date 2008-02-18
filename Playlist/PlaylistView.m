@@ -258,7 +258,7 @@
 
 - (IBAction)scrollToCurrentEntry:(id)sender
 {
-	[self scrollRowToVisible:[(NSNumber *)[[playlistController currentEntry] index] intValue]-10];
+	[self scrollRowToVisible:[(NSNumber *)[[playlistController currentEntry] index] intValue]];
 	[self selectRow:[(NSNumber *)[[playlistController currentEntry] index] intValue] byExtendingSelection:NO];
 }
 
