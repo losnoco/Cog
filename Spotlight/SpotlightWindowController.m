@@ -79,6 +79,20 @@ static NSPredicate * musicOnlyPredicate = nil;
     return self;
 }
 
+- (void)awakeFromNib
+{
+    // We want to bind the query's search scope to the user default that is
+    // set from the NSPathControl.
+    NSDictionary *bindOptions = 
+        [NSDictionary dictionaryWithObject:@"StringToSearchScopeTransformer"
+                                    forKey:NSValueTransformerNameBindingOption];
+    
+    [self.query     bind:@"searchScopes"
+                toObject:[NSUserDefaultsController sharedUserDefaultsController]
+             withKeyPath:@"values.spotlightSearchPath"
+                 options:bindOptions];
+}
+
 - (void)performSearch
 {
     NSPredicate *searchPredicate;
