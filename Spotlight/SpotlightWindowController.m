@@ -42,16 +42,22 @@ static NSPredicate * musicOnlyPredicate = nil;
     // Register value transformers
     NSValueTransformer *pausingQueryTransformer = [[[PausingQueryTransformer alloc]init]autorelease];
     [NSValueTransformer setValueTransformer:pausingQueryTransformer forName:@"PausingQueryTransformer"];
+    
     NSValueTransformer *authorToArtistTransformer = [[[AuthorToArtistTransformer alloc]init]autorelease];
     [NSValueTransformer setValueTransformer:authorToArtistTransformer forName:@"AuthorToArtistTransformer"];
+    
     NSValueTransformer *pathToURLTransformer = [[[PathToURLTransformer alloc]init]autorelease];
     [NSValueTransformer setValueTransformer:pathToURLTransformer forName:@"PathToURLTransformers"];
+    
+    NSValueTransformer *stringToSearchScopeTransformer = [[[StringToSearchScopeTransformer alloc]init]autorelease];
+    [NSValueTransformer setValueTransformer:stringToSearchScopeTransformer forName:@"StringToSearchScopeTransformer"];
+    
 }
 
 - (id)init
 {
 	if (self = [super initWithWindowNibName:@"SpotlightPanel"]) {
-		self.query = [[NSMetadataQuery alloc] init];
+        self.query = [[[NSMetadataQuery alloc]init]autorelease];
         [self.query setDelegate:self];
         self.query.sortDescriptors = [NSArray arrayWithObjects:
         [[NSSortDescriptor alloc]initWithKey:@"kMDItemAuthors"
@@ -64,6 +70,17 @@ static NSPredicate * musicOnlyPredicate = nil;
                                    ascending:YES
                                     selector:@selector(compareTrackNumbers:)],
         nil];
+        
+        // We want to bind the query's search scope to the user default that is
+        // set from the NSPathControl.
+        NSDictionary *bindOptions = 
+            [NSDictionary dictionaryWithObject:@"StringToSearchScopeTransformer"
+                                        forKey:NSValueTransformerNameBindingOption];
+        
+        [self.query     bind:@"searchScopes"
+                    toObject:[NSUserDefaultsController sharedUserDefaultsController]
+                 withKeyPath:@"values.spotlightSearchPath"
+                     options:bindOptions];
         
         // hook my query transformer up to me
         [PausingQueryTransformer setSearchController:self];
@@ -234,9 +251,8 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (void)dealloc
 {
-	[self.query stopQuery];
-	[self.query release];
-	[self.searchString release];
+	self.query = nil;
+	self.searchString = nil;
     [musicOnlyPredicate release];
 	[super dealloc];
 }
@@ -273,29 +289,6 @@ replacementObjectForResultObject:(NSMetadataItem*)result
     if (![searchString isEqualToString:aString]) 
 	{
 		searchString = [aString copy];
-        [self performSearch];
-	}
-}
-
-@dynamic spotlightSearchPath;
-// getter reads from user defaults
-- (NSString *)spotlightSearchPath
-{
-    return [[[NSUserDefaults standardUserDefaults] 
-        stringForKey:@"spotlightSearchPath"]copy];
-}
-// Normally, our NSPathcontrol would just bind to the user defaults
-// However, this does not allow us to perform a new search when
-// the path changes. This getter/setter combo wraps the user
-// defaults while performing a new search when the value changes.
-- (void)setSpotlightSearchPath:(NSString *)aString
-{
-    // Make sure the string is changed
-	if (![spotlightSearchPath isEqualToString: aString]) 
-	{
-		spotlightSearchPath = [aString copy];
-        [[NSUserDefaults standardUserDefaults] setObject:spotlightSearchPath
-                                                  forKey:@"spotlightSearchPath"];
         [self performSearch];
 	}
 }

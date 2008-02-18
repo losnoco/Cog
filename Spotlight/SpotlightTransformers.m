@@ -70,3 +70,18 @@ static SpotlightWindowController * searchController;
 }
 
 @end
+
+@implementation StringToSearchScopeTransformer
+
++ (Class)transformedValueClass { return [NSArray class]; }
++ (BOOL)allowsReverseTransformation { return NO; }
+
+// Convert from URL string to Search Scope
+- (id)transformedValue:(id)value {
+    if (value == nil) return nil;
+    
+    NSURL *scope = [NSURL URLWithString:value];
+    return [NSArray arrayWithObject: scope];
+}
+
+@end

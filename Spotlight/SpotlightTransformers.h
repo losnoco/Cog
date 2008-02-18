@@ -19,9 +19,10 @@
 @end
 
 @interface AuthorToArtistTransformer: NSValueTransformer {}
-
 @end
 
 @interface PathToURLTransformer: NSValueTransformer {}
+@end
 
+@interface StringToSearchScopeTransformer: NSValueTransformer {}
 @end
