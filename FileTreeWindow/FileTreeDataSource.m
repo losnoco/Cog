@@ -59,29 +59,32 @@
 
 - (PathNode *)nodeForPath:(NSString *)path
 {
-	NSString *relativePath = [path stringByReplacingOccurrencesOfString:[[[self rootURL] path] stringByAppendingString:@"/"] withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [path length])];
-	relativePath = [relativePath stringByStandardizingPath];
-	PathNode *theNode = rootNode;
+	NSString *relativePath = [[path stringByReplacingOccurrencesOfString:[[[self rootURL] path] stringByAppendingString:@"/"] 
+															  withString:@""
+															     options:NSAnchoredSearch 
+																   range:NSMakeRange(0, [path length])
+							   ] stringByStandardizingPath];
+	PathNode *node = rootNode;
 	NSLog(@"Root | Relative | Path: %@ | %@ | %@",[[self rootURL] path], relativePath, path);
 	for(NSString *c in [relativePath pathComponents])
 	{
 		NSLog(@"COMPONENT: %@", c);
 		BOOL found = NO;
-		for (PathNode *node in [theNode subpaths]) {
-			if ([[[[node url] path] lastPathComponent] isEqualToString:c]) {
-				theNode = node;
+		for (PathNode *subnode in [node subpaths]) {
+			if ([[[[subnode url] path] lastPathComponent] isEqualToString:c]) {
+				node = subnode;
 				found = YES;
 			}
 		}
 		
 		if (!found)
 		{
+			NSLog(@"Not found!");
 			return nil;
 		}
-		NSLog(@"Component: %@", c);
 	}
 	
-	return theNode;
+	return node;
 }
 
 - (void)pathDidChange:(NSString *)path
