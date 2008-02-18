@@ -14,21 +14,19 @@
 
 @implementation FileTreeDataSource
 
-- (void)initDefaults
++ (void)initialize
 {
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
 	
 	[userDefaultsValuesDict setObject:[[NSURL fileURLWithPath:[@"~/Music" stringByExpandingTildeInPath]] absoluteString] forKey:@"fileTreeRootURL"];
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileTreeRootURL" options:0 context:nil];
 }
 
 - (void)awakeFromNib
 {
-	[self initDefaults];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileTreeRootURL" options:0 context:nil];
+	
 	[self setRootURL: [NSURL URLWithString:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]]]; 
 }
 

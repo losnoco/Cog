@@ -20,7 +20,6 @@
 
 	return [NSArray arrayWithObjects: 
 		[prefPaneController hotKeyPane],
-		[prefPaneController fileTreePane],
 		[prefPaneController remotePane],
 		[prefPaneController updatesPane],
 		[prefPaneController outputPane],
@@ -31,11 +30,6 @@
 - (HotKeyPane *)hotKeyPane
 {
 	return hotKeyPane;
-}
-
-- (PreferencePane *)fileTreePane
-{
-	return [PreferencePane preferencePaneWithView:fileTreeView name:NSLocalizedStringFromTableInBundle(@"File Tree", nil, [NSBundle bundleForClass:[self class]],  @"")  icon:@"file_tree"];
 }
 
 - (OutputPane *)outputPane

@@ -16,7 +16,6 @@
 	IBOutlet HotKeyPane *hotKeyPane;
 	IBOutlet OutputPane *outputPane;
 
-	IBOutlet NSView *fileTreeView;
 	IBOutlet NSView *scrobblerView;
 	IBOutlet NSView *remoteView;
 	IBOutlet NSView *updatesView;
@@ -25,7 +24,6 @@
 - (HotKeyPane *)hotKeyPane;
 - (OutputPane *)outputPane;
 
-- (PreferencePane *)fileTreePane;
 - (PreferencePane *)remotePane;
 - (PreferencePane *)updatesPane;
 - (PreferencePane *)scrobblerPane;

@@ -7,8 +7,17 @@
 #import "PlaylistLoader.h"
 #import "OpenURLPanel.h"
 #import "SpotlightWindowController.h"
+#import "StringToURLTransformer.h"
 
 @implementation AppController
+
++ (void)initialize
+{
+	NSValueTransformer *stringToURLTransformer = [[[StringToURLTransformer alloc] init]autorelease];
+    [NSValueTransformer setValueTransformer:stringToURLTransformer
+                                    forName:@"StringToURLTransformer"];
+}
+
 
 - (id)init
 {
