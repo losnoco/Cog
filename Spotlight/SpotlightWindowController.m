@@ -51,7 +51,8 @@ static NSPredicate * musicOnlyPredicate = nil;
     
     NSValueTransformer *stringToSearchScopeTransformer = [[[StringToSearchScopeTransformer alloc]init]autorelease];
     [NSValueTransformer setValueTransformer:stringToSearchScopeTransformer forName:@"StringToSearchScopeTransformer"];
-    
+	
+	[NSMetadataQuery exposeBinding:@"searchScopes"];
 }
 
 - (id)init
@@ -70,17 +71,6 @@ static NSPredicate * musicOnlyPredicate = nil;
                                    ascending:YES
                                     selector:@selector(compareTrackNumbers:)],
         nil];
-        
-        // We want to bind the query's search scope to the user default that is
-        // set from the NSPathControl.
-        NSDictionary *bindOptions = 
-            [NSDictionary dictionaryWithObject:@"StringToSearchScopeTransformer"
-                                        forKey:NSValueTransformerNameBindingOption];
-        
-        [self.query     bind:@"searchScopes"
-                    toObject:[NSUserDefaultsController sharedUserDefaultsController]
-                 withKeyPath:@"values.spotlightSearchPath"
-                     options:bindOptions];
         
         // hook my query transformer up to me
         [PausingQueryTransformer setSearchController:self];
@@ -246,8 +236,6 @@ static NSPredicate * musicOnlyPredicate = nil;
     [self showWindow:self];
     self.searchString = [NSString stringWithFormat:@"%%l\"%@\"", album];
 }
-
-
 
 - (void)dealloc
 {
