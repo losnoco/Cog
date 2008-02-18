@@ -278,9 +278,8 @@
 
 - (NSString *)display
 {
-	if ([[self artist] isEqualToString:@""]) {
-			return title;
-	}
+	if ((artist == NULL) || ([[self artist] isEqualToString:@""]))
+		return title;
 	else {
 		return [NSString stringWithFormat:@"%@ - %@", artist, title];
 	}
