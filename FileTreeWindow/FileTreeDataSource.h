@@ -9,10 +9,12 @@
 #import <Cocoa/Cocoa.h>
 
 @class PathNode;
+@class PathWatcher;
 
 @interface FileTreeDataSource : NSObject {
 	PathNode *rootNode;
 
+	IBOutlet PathWatcher *watcher;
 	IBOutlet NSOutlineView *outlineView;
 }
 

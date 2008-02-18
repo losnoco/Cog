@@ -12,8 +12,6 @@
 
 #import "FileTreeDataSource.h"
 
-#import "UKKQueue.h"
-
 #import "FileNode.h"
 #import "DirectoryNode.h"
 #import "SmartFolderNode.h"
@@ -59,48 +57,13 @@ NSURL *resolveAliases(NSURL *url)
 }
 
 
-- (void)stopWatching
-{
-	if (url)
-	{
-		NSLog(@"Stopped watching...: %@", [url path]);
-		
-		//Remove all in one go
-		[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
-		
-		[[UKKQueue sharedFileWatcher] removePath:[url path]];
-	}
-}
-
-- (void)startWatching
-{
-	if (url)
-	{
-		NSLog(@"WATCHING! %@", [url path]);
-
-		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherRenameNotification			object:nil];
-		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherWriteNotification			object:nil];
-		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherDeleteNotification			object:nil];
-		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherAttributeChangeNotification	object:nil];
-		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherSizeIncreaseNotification		object:nil];
-		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherLinkCountChangeNotification	object:nil];
-		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(updatePathNotification:) name:UKFileWatcherAccessRevocationNotification object:nil];
-
-		[[UKKQueue sharedFileWatcher] addPath:[url path]];
-	}
-}
-
 - (void)setURL:(NSURL *)u
 {
 	[u retain];
 	
-	[self stopWatching];
-	
 	[url release];
 
 	url = u;
-
-	[self startWatching];
 
 	[display release];
 	display = [[NSFileManager defaultManager] displayNameAtPath:[url path]];
@@ -120,22 +83,6 @@ NSURL *resolveAliases(NSURL *url)
 
 - (void)updatePath
 {
-}
-
-- (void)updatePathNotification:(NSNotification *)notification
-{
-	[self performSelectorOnMainThread:@selector(updatePathNotificationMainThread:) withObject:notification waitUntilDone:YES];
-}
-
-- (void)updatePathNotificationMainThread:(NSNotification *)notification
-{
-	NSString *p = [[notification userInfo] objectForKey:@"path"];
-	if ([p isEqualToString:[url path]])
-	{
-		[self updatePath];
-
-		[dataSource reloadPathNode:self];
-	}
 }
 
 - (void)processPaths: (NSArray *)contents
@@ -234,8 +181,6 @@ NSURL *resolveAliases(NSURL *url)
 
 - (void)dealloc
 {
-	[self stopWatching];
-	
 	[url release];
 	[icon release];
 

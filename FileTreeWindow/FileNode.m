@@ -15,15 +15,4 @@
 	return YES;
 }
 
-//Disable watching for us, it doesn't matter.
-- (void)startWatching
-{
-}
-- (void)stopWatching
-{
-}
-- (void)updatePathNotification:(NSNotification *)notification
-{
-}
-
 @end

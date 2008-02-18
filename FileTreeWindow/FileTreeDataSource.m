@@ -11,6 +11,7 @@
 #import "DNDArrayController.h"
 
 #import "DirectoryNode.h"
+#import "PathWatcher.h"
 
 @implementation FileTreeDataSource
 
@@ -48,12 +49,49 @@
 
 - (void)setRootURL: (NSURL *)rootURL
 {
-	[[[[outlineView tableColumns] objectAtIndex:0] headerCell] setStringValue:[[NSFileManager defaultManager] displayNameAtPath:[rootURL path]]];
-	
 	[rootNode release];
 	rootNode = [[DirectoryNode alloc] initWithDataSource:self url:rootURL];
 
+	[watcher setPath:[rootURL path]];
+
 	[self reloadPathNode:rootNode];
+}
+
+- (PathNode *)nodeForPath:(NSString *)path
+{
+	NSString *relativePath = [path stringByReplacingOccurrencesOfString:[[[self rootURL] path] stringByAppendingString:@"/"] withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [path length])];
+	relativePath = [relativePath stringByStandardizingPath];
+	PathNode *theNode = rootNode;
+	NSLog(@"Root | Relative | Path: %@ | %@ | %@",[[self rootURL] path], relativePath, path);
+	for(NSString *c in [relativePath pathComponents])
+	{
+		NSLog(@"COMPONENT: %@", c);
+		BOOL found = NO;
+		for (PathNode *node in [theNode subpaths]) {
+			if ([[[[node url] path] lastPathComponent] isEqualToString:c]) {
+				theNode = node;
+				found = YES;
+			}
+		}
+		
+		if (!found)
+		{
+			return nil;
+		}
+		NSLog(@"Component: %@", c);
+	}
+	
+	return theNode;
+}
+
+- (void)pathDidChange:(NSString *)path
+{
+	NSLog(@"PATH DID CHANGE: %@", path);
+	//Need to find the corresponding node...and call [node reloadPath], then [self reloadPathNode:node]
+	PathNode *node = [self nodeForPath:path];
+	NSLog(@"NODE IS: %@", node);
+	[node updatePath];
+	[self reloadPathNode:node];
 }
 
 - (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
