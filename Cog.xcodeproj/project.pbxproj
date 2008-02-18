@@ -117,6 +117,7 @@
 		56462DDA0D61D71E000AB68C /* SpotlightPlaylistView.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462DD90D61D71E000AB68C /* SpotlightPlaylistView.m */; };
 		56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */; };
 		56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EB10D634206000AB68C /* SpotlightPlaylistController.m */; };
+		56AE86C10D6901BC00B0F89B /* FontSizetoLineHeightTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 56AE86C00D6901BC00B0F89B /* FontSizetoLineHeightTransformer.m */; };
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
@@ -625,6 +626,8 @@
 		56462EB00D634206000AB68C /* SpotlightPlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistController.h; path = Spotlight/SpotlightPlaylistController.h; sourceTree = "<group>"; };
 		56462EB10D634206000AB68C /* SpotlightPlaylistController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightPlaylistController.m; path = Spotlight/SpotlightPlaylistController.m; sourceTree = "<group>"; };
 		566D32160D538550004466A5 /* APL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = APL.xcodeproj; path = Plugins/APL/APL.xcodeproj; sourceTree = "<group>"; };
+		56AE86BF0D6901BC00B0F89B /* FontSizetoLineHeightTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSizetoLineHeightTransformer.h; sourceTree = "<group>"; };
+		56AE86C00D6901BC00B0F89B /* FontSizetoLineHeightTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontSizetoLineHeightTransformer.m; sourceTree = "<group>"; };
 		56C63D8F0D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSComparisonPredicate+CogPredicate.h"; path = "Spotlight/NSComparisonPredicate+CogPredicate.h"; sourceTree = "<group>"; };
 		56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSComparisonPredicate+CogPredicate.m"; path = "Spotlight/NSComparisonPredicate+CogPredicate.m"; sourceTree = "<group>"; };
 		56DB084A0D6717DC00453B6A /* NSNumber+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNumber+CogSort.h"; path = "Spotlight/NSNumber+CogSort.h"; sourceTree = "<group>"; };
@@ -859,6 +862,8 @@
 				07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */,
 				17E78CAF0D68D46F005C5A59 /* StringToURLTransformer.h */,
 				17E78CB00D68D46F005C5A59 /* StringToURLTransformer.m */,
+				56AE86BF0D6901BC00B0F89B /* FontSizetoLineHeightTransformer.h */,
+				56AE86C00D6901BC00B0F89B /* FontSizetoLineHeightTransformer.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1688,6 +1693,7 @@
 				17211A780D68B79700911CA9 /* PathNode.m in Sources */,
 				17211A790D68B79700911CA9 /* SmartFolderNode.m in Sources */,
 				17E78CB10D68D46F005C5A59 /* StringToURLTransformer.m in Sources */,
+				56AE86C10D6901BC00B0F89B /* FontSizetoLineHeightTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

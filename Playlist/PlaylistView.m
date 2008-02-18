@@ -22,26 +22,19 @@
 {
 	[[self menu] setAutoenablesItems:NO];
 	
-	NSControlSize s = NSSmallControlSize;
-	NSEnumerator *oe = [[self tableColumns] objectEnumerator];
+    NSControlSize s = NSSmallControlSize;
 	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
-	NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
-
-	NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-	[self setRowHeight:[layoutManager defaultLineHeightForFont:bf]];
-	[layoutManager release];
-
-	//Resize the fonts
-	id c;
-	while (c = [oe nextObject])
+    // NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
+	
+	for(NSTableColumn *col in [self tableColumns])
 	{
-		[[c dataCell] setControlSize:s];
-
-		//Using the bold font defined from the default system font with the bold trait added seems to fix problems related to bold display with some fonts.
-		[[c dataCell] setFont:bf];
+        [[col dataCell] setControlSize:s];
+        [[col dataCell] setFont:f];
+        [col            bind:@"fontSize" 
+                    toObject:[NSUserDefaultsController sharedUserDefaultsController] 
+                 withKeyPath:@"values.fontSize" 
+                     options:nil];
 	}
-
-	[[NSFontManager sharedFontManager] setSelectedFont:bf isMultiple:NO];
 
 	NSTableHeaderView *currentTableHeaderView = [self headerView];
 	PlaylistHeaderView *customTableHeaderView = [[PlaylistHeaderView alloc] init];

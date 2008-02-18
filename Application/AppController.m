@@ -337,6 +337,11 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
 	
+    // Font defaults
+    float fFontSize = [NSFont systemFontSizeForControlSize:NSSmallControlSize];
+    NSNumber *fontSize = [NSNumber numberWithFloat:fFontSize];
+    [userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
+	
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:35] forKey:@"hotKeyPlayKeyCode"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyPlayModifiers"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'P'] forKey:@"hotKeyPlayCharacter"];
@@ -451,32 +456,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)changeFontSize:(float)size
 {
-    NSFont *f = [[NSFontManager sharedFontManager] selectedFont];
-    float origFontSize = [[f fontDescriptor] pointSize];
-	
-	// hack to make the file drawer stay unbolded - might affect things I haven't seen
-	f = [[NSFontManager sharedFontManager] convertFont:f toNotHaveTrait:NSBoldFontMask];
-
-    f = [[NSFontManager sharedFontManager] convertFont:f toSize:origFontSize+size];
-	
-    NSEnumerator *playlistEntries = [[playlistView tableColumns] objectEnumerator];
-
-    id c;
-	
-    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-    [playlistView setRowHeight:[layoutManager defaultLineHeightForFont:f]];
-    [layoutManager release];
-    
-    while (c = [playlistEntries nextObject])
-    {
-        [[c dataCell] setFont:f];
-    }
-
-	// we must set the selectedFont so that we have updated font information 
-	// next time we want to change it
-    [[NSFontManager sharedFontManager] setSelectedFont:f isMultiple:NO];
-	
-	
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    float fCurrentSize = [defaults floatForKey:@"fontSize"];
+    NSNumber *newSize = [NSNumber numberWithFloat:(fCurrentSize + size)];
+    [defaults setObject:newSize forKey:@"fontSize"];
 }
 
 - (IBAction)increaseFontSize:(id)sender
