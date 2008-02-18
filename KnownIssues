@@ -4,4 +4,3 @@ does not resize columns (needs a lower bound)
 Code for fading and seeking should be moved into the AudioPlayer,
 so we can escape ugly event* functions
 
-File tree watcher should use Leopard FSEvents API instead of individual kqueues.
