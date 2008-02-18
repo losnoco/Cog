@@ -11,12 +11,12 @@
 
 
 @interface SpotlightPlaylistEntry : PlaylistEntry {
- 
     NSNumber *length;
 }
 
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem;
-+ (NSArray *)allmdKeys;
 
-@property(copy) NSNumber *length;
+// New length getters/setters
+
+@property(retain) NSNumber *length;
 @end

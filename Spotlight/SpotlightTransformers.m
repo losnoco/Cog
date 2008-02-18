@@ -21,7 +21,6 @@ static SpotlightWindowController * searchController;
     searchController = aSearchController;
 }
 
-// Convert from string to NSURL
 - (id)transformedValue:(id)value {
     // Rather unintuitively, this piece of code eliminates the "flicker"
     // when searching for new results, which resulted from a pause when the
@@ -40,5 +39,14 @@ static SpotlightWindowController * searchController;
 }
 
 @synthesize oldResults;
+
+@end
+
+@implementation AuthorToArtistTransformer
++ (Class)transformedValueClass { return [NSString class]; }
++ (BOOL)allowsReverseTransformation { return NO; }
+- (id)transformedValue:(id)value {
+    return [value objectAtIndex:0];
+}
 
 @end

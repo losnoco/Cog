@@ -27,22 +27,23 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
 	musicOnlyPredicate = [[NSPredicate predicateWithFormat:
                         @"kMDItemContentTypeTree==\'public.audio\'"] retain];
-
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     // Set the home directory as the default search directory
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString * homeDir = @"~";
     homeDir = [homeDir stringByExpandingTildeInPath];
     homeDir = [[NSURL fileURLWithPath:homeDir isDirectory:YES] absoluteString];
     NSDictionary *searchDefault = 
                         [NSDictionary dictionaryWithObject:homeDir
                                                     forKey:@"spotlightSearchPath"];
+    [defaults registerDefaults:searchDefault];
+    
                                                     
     // Register value transformers
-    NSValueTransformer *pausingQueryTransformer = [[[PausingQueryTransformer alloc] init] autorelease];
+    NSValueTransformer *pausingQueryTransformer = [[[PausingQueryTransformer alloc]init]autorelease];
     [NSValueTransformer setValueTransformer:pausingQueryTransformer forName:@"PausingQueryTransformer"];
-    
-    [defaults registerDefaults:searchDefault];
+    NSValueTransformer *authorToArtistTransformer = [[[AuthorToArtistTransformer alloc]init]autorelease];
+    [NSValueTransformer setValueTransformer:authorToArtistTransformer forName:@"AuthorToArtistTransformer"];
 }
 
 - (id)init

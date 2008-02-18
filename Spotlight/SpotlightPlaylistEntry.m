@@ -8,90 +8,74 @@
 
 #import "SpotlightPlaylistEntry.h"
 
-// Class array for metadata keys we want
-static NSArray * mdKeys;
-
-// Corresponding array for playlist entry keys
-static NSArray * entryKeys; 
-
-// extramdKeys represents those keys that require additional processing
-static NSArray * extramdKeys;
-
-// allmdKeys is a combined array of both mdKeys and entryKeys
-static NSArray * allmdKeys;
-                     
-// tags matches mdKeys and entryKeys for automated extraction
-static NSDictionary * tags;
+// dictionary that lets us translate from and mdKey to an entryKey
+// if we need the help of a transformer, we use an nsarray
+// with format (entryKey, transformerName)
+static NSDictionary *importKeys;
 
 @implementation SpotlightPlaylistEntry
 
 + (void)initialize
 {
-    mdKeys = [[NSArray arrayWithObjects: 
-                            @"kMDItemTitle",
-                            @"kMDItemAlbum",
-                            @"kMDItemAudioTrackNumber",
-                            @"kMDItemRecordingYear",
-                            @"kMDItemMusicalGenre",
-                            @"kMDItemDurationSeconds",
-                            nil] retain];
-    entryKeys = [[NSArray arrayWithObjects: 
-                            @"title",
-                            @"album",
-                            @"track",
-                            @"year",
-                            @"genre",
-                            @"length",
-                            nil]retain];
-    extramdKeys = [[NSArray arrayWithObjects:
-                            @"kMDItemPath",
-                            @"kMDItemAuthors",
-                            nil]retain];
-    allmdKeys = [[mdKeys arrayByAddingObjectsFromArray:extramdKeys]retain];
-    tags = [[NSDictionary dictionaryWithObjects:entryKeys forKeys:mdKeys]retain];
-}
-
-// Use this to access the array of all the keys we want.
-+ (NSArray *)allmdKeys
-{
-    return allmdKeys;
+    // We need to translate the path string to a full URL
+    NSArray *URLTransform = 
+        [NSArray arrayWithObjects:@"URL", @"StringToURLTransformer", nil];
+        
+    // Extract the artist name from the authors array
+    NSArray *artistTransform = 
+        [NSArray arrayWithObjects:@"artist", @"AuthorToArtistTransformer", nil];
+    
+    importKeys = [[NSDictionary dictionaryWithObjectsAndKeys:
+        @"title",                   @"kMDItemTitle",
+        @"album",                   @"kMDItemAlbum",
+        @"track",                   @"kMDItemAudioTrackNumber",
+        @"year",                    @"kMDItemRecordingYear",
+        @"genre",                   @"kMDItemMusicalGenre",
+        @"length",                  @"kMDItemDurationSeconds",
+        URLTransform,               @"kMDItemPath",
+        artistTransform,            @"kMDItemAuthors",
+        nil]retain];
 }
 
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem
 {
-    // use the matching tag sets to generate a playlist entry
     SpotlightPlaylistEntry *entry = [[[SpotlightPlaylistEntry alloc] init] autorelease];
     
-    NSDictionary *songAttributes = [metadataItem valuesForAttributes:allmdKeys];
-    for (NSString * mdKey in tags) {
-        [entry setValue: [songAttributes objectForKey:mdKey]
-                 forKey:[tags objectForKey:mdKey]];
+    // Dictionary of the metadata values
+    NSDictionary *songAttributes = 
+        [metadataItem valuesForAttributes:[importKeys allKeys]];
     
+    // loop through the keys we want to extract
+    for (NSString *mdKey in importKeys) {
+        id importTarget = [importKeys objectForKey:mdKey];
+        // Just copy the object from metadata
+        if ([importTarget isKindOfClass:[NSString class]])
+        {
+            [entry setValue: [songAttributes objectForKey:mdKey]
+                     forKey: importTarget];
+        }
+        // Transform the value in metadata before copying it in
+        else if ([importTarget isKindOfClass:[NSArray class]])
+        {
+            NSString * importKey = [importTarget objectAtIndex:0];
+            NSValueTransformer *transformer = 
+                [NSValueTransformer valueTransformerForName:[importTarget objectAtIndex:1]];
+            id transformedValue = [transformer transformedValue:
+                                    [songAttributes objectForKey:mdKey]];
+            [entry setValue: transformedValue
+                     forKey: importKey];
+        }
+        // The importKeys dictionary contains something strange...
+        else
+        {
+            NSString *errString = 
+                [NSString stringWithFormat:@"ERROR: Could not import key %@", mdKey];
+            NSAssert(NO, errString);
+        }
     }
-    
-    // URL needs to be generated from the simple path stored in kMDItemPath
-    [entry setURL: [NSURL fileURLWithPath: [songAttributes objectForKey:@"kMDItemPath"]]];
-    
-    // Authors is an array, but we only care about the first item in it
-    
-    [entry setArtist: [[songAttributes objectForKey:@"kMDItemAuthors"] objectAtIndex:0]];
     return entry;
 }
 
-- (id)init
-{
-    if (self = [super init])
-    {
-        length = nil;
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    [length release];
-    [super dealloc];
-}
-
 @synthesize length;
+
 @end

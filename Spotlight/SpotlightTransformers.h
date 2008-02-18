@@ -17,3 +17,7 @@
 
 @property(copy) NSArray *oldResults;
 @end
+
+@interface AuthorToArtistTransformer: NSValueTransformer {}
+
+@end
