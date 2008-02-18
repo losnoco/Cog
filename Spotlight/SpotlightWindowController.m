@@ -44,6 +44,8 @@ static NSPredicate * musicOnlyPredicate = nil;
     [NSValueTransformer setValueTransformer:pausingQueryTransformer forName:@"PausingQueryTransformer"];
     NSValueTransformer *authorToArtistTransformer = [[[AuthorToArtistTransformer alloc]init]autorelease];
     [NSValueTransformer setValueTransformer:authorToArtistTransformer forName:@"AuthorToArtistTransformer"];
+    NSValueTransformer *pathToURLTransformer = [[[PathToURLTransformer alloc]init]autorelease];
+    [NSValueTransformer setValueTransformer:pathToURLTransformer forName:@"PathToURLTransformers"];
 }
 
 - (id)init

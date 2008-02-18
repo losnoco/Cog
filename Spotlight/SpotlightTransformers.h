@@ -21,3 +21,7 @@
 @interface AuthorToArtistTransformer: NSValueTransformer {}
 
 @end
+
+@interface PathToURLTransformer: NSValueTransformer {}
+
+@end

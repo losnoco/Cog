@@ -98,6 +98,13 @@
 	return idx;
 }
 
+
+// Hack for kvc compliance - fix this
+-(void)setUrl:(NSURL *)u
+{
+    [self setURL:u];
+}
+
 -(void)setURL:(NSURL *)u
 {
 	[u retain];

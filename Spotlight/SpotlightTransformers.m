@@ -48,5 +48,25 @@ static SpotlightWindowController * searchController;
 - (id)transformedValue:(id)value {
     return [value objectAtIndex:0];
 }
+@end
+
+@implementation PathToURLTransformer
+
++ (Class)transformedValueClass { return [NSURL class]; }
++ (BOOL)allowsReverseTransformation { return YES; }
+
+// Convert from path to NSURL
+- (id)transformedValue:(id)value {
+    if (value == nil) return nil;
+
+    return [NSURL fileURLWithPath:value];
+}
+
+// Convert from NSURL to path
+- (id)reverseTransformedValue:(id)value {
+    if (value == nil) return nil;
+    
+    return [value path];
+}
 
 @end

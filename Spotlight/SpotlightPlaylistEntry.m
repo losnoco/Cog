@@ -19,7 +19,7 @@ static NSDictionary *importKeys;
 {
     // We need to translate the path string to a full URL
     NSArray *URLTransform = 
-        [NSArray arrayWithObjects:@"URL", @"StringToURLTransformer", nil];
+        [NSArray arrayWithObjects:@"url", @"PathToURLTransformer", nil];
         
     // Extract the artist name from the authors array
     NSArray *artistTransform = 
@@ -62,8 +62,7 @@ static NSDictionary *importKeys;
                 [NSValueTransformer valueTransformerForName:[importTarget objectAtIndex:1]];
             id transformedValue = [transformer transformedValue:
                                     [songAttributes objectForKey:mdKey]];
-            [entry setValue: transformedValue
-                     forKey: importKey];
+            [entry setValue:transformedValue forKey: importKey];
         }
         // The importKeys dictionary contains something strange...
         else

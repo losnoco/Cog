@@ -41,6 +41,8 @@
 - (void)setShuffleIndex:(NSNumber *)si;
 - (NSNumber *)shuffleIndex;
 
+// Hack for KVC compliance
+- (void)setUrl:(NSURL *)u;
 - (void)setURL:(NSURL *)u;
 - (NSURL *)url;
 - (void)setCurrent:(NSNumber *) b;
