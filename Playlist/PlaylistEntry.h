@@ -10,7 +10,9 @@
 
 @interface PlaylistEntry : NSObject {
 	NSURL *url;
-
+	NSString *relativePath;
+	NSString *base;
+	
 	NSString *artist;
 	NSString *album;
 	NSString *title;
@@ -43,6 +45,11 @@
 - (NSURL *)url;
 - (void)setCurrent:(NSNumber *) b;
 - (NSNumber *)current;
+
+- (NSString *)relativePath;
+- (void)setRelativePath:(NSString *)rel;
+- (NSString *)base;
+- (void)setBase:(NSString *)newUrl;
 
 - (void)setArtist:(NSString *)s;
 - (NSString *)artist;

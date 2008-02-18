@@ -28,7 +28,10 @@
 		album = nil;
 		title = nil;
 		genre = nil;
-
+		
+		relativePath = nil;
+		base = nil;
+		
 		year = nil;
 		track = nil;
 		totalFrames = nil;
@@ -63,6 +66,8 @@
 	[current release];
 	[idx release];
 	[shuffleIndex release];
+	[relativePath release];
+	[base release];
 	
 	[super dealloc];
 }
@@ -298,6 +303,30 @@
 	return seekable;
 }
 
+- (NSString *)relativePath
+{
+	return relativePath;
+}
+
+- (void)setRelativePath:(NSString *)rel
+{
+	[rel retain];
+	[relativePath release];
+	relativePath = rel;
+}
+
+- (NSString *)base
+{
+	return base;
+}
+
+- (void)setBase:(NSString *)newUrl
+{
+	[newUrl retain];
+	[base release];
+	base = newUrl;
+}
+
 - (void)setMetadata: (NSDictionary *)m
 {
 	NSString *ti = [m objectForKey:@"title"];
@@ -309,6 +338,9 @@
 		[self setTitle:ti];
 	}
 	
+	[self setBase:[[url path] lastPathComponent]];
+	[self setRelativePath:[[url relativePath] stringByAbbreviatingWithTildeInPath]];
+	
 	[self setArtist:[m objectForKey:@"artist"]];
 	[self setAlbum:[m objectForKey:@"album"]];
 	[self setGenre:[m objectForKey:@"genre"]];
@@ -319,7 +351,7 @@
 - (void)readMetadataThread
 {
 	NSDictionary *metadata = [AudioMetadataReader metadataForURL:url];
-	
+
 	[self performSelectorOnMainThread:@selector(setMetadata:) withObject:metadata waitUntilDone:YES];
 
 }
