@@ -258,7 +258,8 @@
 
 - (IBAction)scrollToCurrentEntry:(id)sender
 {
-	[self scrollRowToVisible:[(NSNumber *)[[playlistController currentEntry] index] intValue]];
+	[self scrollRowToVisible:[(NSNumber *)[[playlistController currentEntry] index] intValue]-10];
+	[self selectRow:[(NSNumber *)[[playlistController currentEntry] index] intValue] byExtendingSelection:NO];
 }
 
 - (IBAction)sortByPath:(id)sender
