@@ -311,7 +311,7 @@
 		int r;
 		do {
 			r = [self decodeMPEGFrame];
-			NSLog(@"Decoding frame: %i", r);
+			NSLog(@"Decoding first frame: %i", r);
 		} while (r == 0);
 		
 		return (r == -1 ? NO : YES);
@@ -504,7 +504,7 @@ static inline signed int scale (mad_fixed_t sample)
 		}
 		else if (MAD_ERROR_BUFLEN == _stream.error)
 		{
-			NSLog(@"Bufferlen");
+			//NSLog(@"Bufferlen");
 			return 0;
 		}
 		else
@@ -564,7 +564,7 @@ static inline signed int scale (mad_fixed_t sample)
 			break;
 		
 		int r = [self decodeMPEGFrame];
-		NSLog(@"Decoding frame: %i", r);
+		//NSLog(@"Decoding frame: %i", r);
 		if (r == 0) //Recoverable error.
 			continue;
 		else if (r == -1) //Unrecoverable error

@@ -489,11 +489,15 @@
 
 	if ([playlistController repeat] == RepeatOne)
 		pe = curEntry;
-	// either this needs to be moved, or we need to determine a way to handle shuffle
-	// from here.
-	else if (([playlistController repeat] == RepeatAll) && 
-			 ([[curEntry index] intValue] == [[playlistController arrangedObjects]count]-1))
-		pe = [playlistController entryAtIndex:0];
+
+	else if ([playlistController repeat] == RepeatAll) 
+	{
+		if ([[curEntry index] intValue] == [[playlistController arrangedObjects] count] - 1)
+			if ([playlistController shuffle] == YES)
+				pe = [playlistController shuffledEntryAtIndex:0];
+			else
+				pe = [playlistController entryAtIndex:0];
+	}
 	else 
 		pe = [playlistController getNextEntry:curEntry];
 

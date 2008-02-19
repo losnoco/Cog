@@ -422,9 +422,20 @@
 {
 	PlaylistEntry *pe;
 	
-	pe = [self getNextEntry:[self currentEntry]];
-	if (pe == nil)
+	if (repeat == RepeatOne)
 		return NO;
+
+	pe = [self getNextEntry:[self currentEntry]];
+	
+	/* needs to reshuffle playlist for added greatness */
+	if (pe == nil)
+	{
+		// we are at end of shuffle list, and repeat all is requested
+		if ((shuffle = YES) && (repeat == RepeatAll))
+			pe = [self shuffledEntryAtIndex:0];
+		else
+			return NO;
+	}
 	
 	[self setCurrentEntry:pe];
 	
@@ -435,9 +446,18 @@
 {
 	PlaylistEntry *pe;
 	
+	if (repeat == RepeatOne)
+		return NO;
+	
 	pe = [self getPrevEntry:[self currentEntry]];
 	if (pe == nil)
-		return NO;
+	{
+		// we are at end of shuffle list, and repeat all is requested
+		if ((shuffle = YES) && (repeat == RepeatAll))
+			pe = [self shuffledEntryAtIndex:[shuffleList count]-1];
+		else
+			return NO;
+	}
 	
 	[self setCurrentEntry:pe];
 	

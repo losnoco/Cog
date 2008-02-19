@@ -85,6 +85,7 @@ typedef enum {
 - (void)addShuffledListToFront;
 - (void)resetShuffleList;
 
+- (PlaylistEntry *)shuffledEntryAtIndex:(int)i;
 - (PlaylistEntry *)entryAtIndex:(int)i;
 
 @end

@@ -6,11 +6,9 @@ so we can escape ugly event* functions (the problem is
 that the AppController needs access to seeker functions
 because of apple remote seeking incrementally)
 
-Repeat state Repeat Album is missing. Repeat All is 
-naively implemented in the playbackController, and
-does not heed Shuffle.
+Shuffle list is not reshuffled when shuffling reaches
+start or end of it (in Repeat All mode)
 
-Shuffle parts of the playlistController need rewrite,
-they still go by the old repeat code.
+Repeat Album isn't implemented.
 
 mp3 bitrate is a tad off.
