@@ -1,9 +1,16 @@
 Font resize of playlist does not change file tree, and 
 does not resize columns (needs a lower bound)
 
-Code for fading and seeking should be moved into the AudioPlayer,
-so we can escape ugly event* functions
+Code for seeking should be moved into the AudioPlayer,
+so we can escape ugly event* functions (the problem is
+that the AppController needs access to seeker functions
+because of apple remote seeking incrementally)
 
-Repeat states have no logic tied to them.
+Repeat state Repeat Album is missing. Repeat All is 
+naively implemented in the playbackController, and
+does not heed Shuffle.
+
+Shuffle parts of the playlistController need rewrite,
+they still go by the old repeat code.
 
 mp3 bitrate is a tad off.
