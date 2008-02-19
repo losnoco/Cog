@@ -485,21 +485,7 @@
 - (void)audioPlayer:(AudioPlayer *)player requestNextStream:(id)userInfo
 {
 	PlaylistEntry *curEntry = (PlaylistEntry *)userInfo;
-	PlaylistEntry *pe;
-
-	if ([playlistController repeat] == RepeatOne)
-		pe = curEntry;
-
-	else if ([playlistController repeat] == RepeatAll) 
-	{
-		if ([[curEntry index] intValue] == [[playlistController arrangedObjects] count] - 1)
-			if ([playlistController shuffle] == YES)
-				pe = [playlistController shuffledEntryAtIndex:0];
-			else
-				pe = [playlistController entryAtIndex:0];
-	}
-	else 
-		pe = [playlistController getNextEntry:curEntry];
+	PlaylistEntry *pe = [playlistController getNextEntry:curEntry];
 
 	[player setNextStream:[pe url] withUserInfo:pe];
 }

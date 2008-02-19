@@ -328,14 +328,14 @@
 {
 	if (i < 0)
 	{
-		if (repeat == YES)
+		if (repeat == RepeatAll)
 			i += [[self arrangedObjects] count];
 		else
 			return nil;
 	}
 	else if (i >= [[self arrangedObjects] count])
 	{
-		if (repeat == YES)
+		if (repeat == RepeatAll)
 			i -= [[self arrangedObjects] count];
 		else
 			return nil;
@@ -348,7 +348,7 @@
 {
 	while (i < 0)
 	{
-		if (repeat == YES)
+		if (repeat == RepeatAll)
 		{
 			[self addShuffledListToFront];
 			//change i appropriately
@@ -361,7 +361,7 @@
 	}
 	while (i >= [shuffleList count])
 	{
-		if (repeat == YES)
+		if (repeat == RepeatAll)
 		{
 			[self addShuffledListToBack];
 		}
@@ -376,6 +376,10 @@
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe
 {
+	if (repeat == RepeatOne) {
+		return pe;
+	}
+	
 	if (shuffle == YES)
 	{
 		return [self shuffledEntryAtIndex:([[pe shuffleIndex] intValue] + 1)];
@@ -398,6 +402,10 @@
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe
 {
+	if (repeat == RepeatOne) {
+		return pe;
+	}
+	
 	if (shuffle == YES)
 	{
 		return [self shuffledEntryAtIndex:([[pe shuffleIndex] intValue] - 1)];
@@ -422,23 +430,10 @@
 {
 	PlaylistEntry *pe;
 	
-	if (repeat == RepeatOne)
-		return NO;
-
 	pe = [self getNextEntry:[self currentEntry]];
 	
-	/* needs to reshuffle playlist for added greatness */
 	if (pe == nil)
-	{
-		// we are at end of shuffle list, and repeat all is requested
-		if (repeat == RepeatAll)
-			if (shuffle == YES)
-				pe = [self shuffledEntryAtIndex:0];
-			else
-				pe = [self entryAtIndex:0];
-		else
-			return NO;
-	}
+		return NO;
 	
 	[self setCurrentEntry:pe];
 	
@@ -449,18 +444,9 @@
 {
 	PlaylistEntry *pe;
 	
-	if (repeat == RepeatOne)
-		return NO;
-	
 	pe = [self getPrevEntry:[self currentEntry]];
 	if (pe == nil)
-	{
-		// we are at end of shuffle list, and repeat all is requested
-		if ((shuffle = YES) && (repeat == RepeatAll))
-			pe = [self shuffledEntryAtIndex:[shuffleList count]-1];
-		else
-			return NO;
-	}
+		return NO;
 	
 	[self setCurrentEntry:pe];
 	
