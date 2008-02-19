@@ -271,7 +271,7 @@
 		}
 	}
 	
-	bitrate = ((_fileSize - id3_length)/128) * (sampleRate/totalFrames);
+	bitrate = (((_fileSize - id3_length)*8)/1000) * (sampleRate/totalFrames);
 	
 	mad_frame_finish (&frame);
 	mad_stream_finish (&stream);

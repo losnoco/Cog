@@ -15,6 +15,12 @@
 @class EntriesController;
 @class SpotlightWindowController;
 
+typedef enum {
+	RepeatNone = 0,
+	RepeatOne,
+	RepeatAll
+} RepeatMode;
+
 @interface PlaylistController : DNDArrayController {
 	IBOutlet PlaylistLoader *playlistLoader;
 	IBOutlet EntriesController *entriesController;
@@ -27,7 +33,7 @@
 	PlaylistEntry *currentEntry;
 	
 	BOOL shuffle;
-	BOOL repeat;
+	RepeatMode repeat;
 	
 	int selectedRow;
 }
@@ -40,8 +46,8 @@
 //PUBLIC METHODS
 - (void)setShuffle:(BOOL)s;
 - (BOOL)shuffle;
-- (void)setRepeat:(BOOL)r;
-- (BOOL)repeat;
+- (void)setRepeat:(RepeatMode)r;
+- (RepeatMode)repeat;
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe;
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe;
@@ -50,7 +56,7 @@
 - (NSUndoManager *)undoManager;
 
 - (IBAction)takeShuffleFromObject:(id)sender;
-- (IBAction)takeRepeatFromObject:(id)sender;
+- (IBAction)toggleRepeat:(id)sender;
 
 - (IBAction)sortByPath;
 - (IBAction)randomizeList;

@@ -11,12 +11,30 @@
 #import "PlaylistEntry.h"
 #import "Shuffle.h"
 #import "SpotlightWindowController.h"
-
+#import "RepeatTransformers.h"
 #import "CogAudio/AudioPlayer.h"
 
 @implementation PlaylistController
 
 #define SHUFFLE_HISTORY_SIZE 100
+
++ (void)initialize {
+	NSValueTransformer *repeatNoneTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatNone] autorelease];
+    [NSValueTransformer setValueTransformer:repeatNoneTransformer
+                                    forName:@"RepeatNoneTransformer"];
+
+	NSValueTransformer *repeatOneTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatOne] autorelease];
+    [NSValueTransformer setValueTransformer:repeatOneTransformer
+                                    forName:@"RepeatOneTransformer"];
+
+	NSValueTransformer *repeatAllTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatAll] autorelease];
+    [NSValueTransformer setValueTransformer:repeatAllTransformer
+                                    forName:@"RepeatAllTransformer"];
+
+	NSValueTransformer *repeatModeImageTransformer = [[[RepeatModeImageTransformer alloc] init]autorelease];
+    [NSValueTransformer setValueTransformer:repeatModeImageTransformer
+                                    forName:@"RepeatModeImageTransformer"];
+}
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -285,12 +303,17 @@
 	else
 		[self setShuffle: [sender state]];
 }
-- (IBAction)takeRepeatFromObject:(id)sender
+- (IBAction)toggleRepeat:(id)sender
 {
-	if( [sender respondsToSelector: @selector(boolValue)] )
-		[self setRepeat: [sender boolValue]];
-	else
-		[self setRepeat: [sender state]];
+	if (repeat == RepeatNone) {
+		[self setRepeat: RepeatOne];
+	}
+	else if (repeat == RepeatOne) {
+		[self setRepeat: RepeatAll];
+	}
+	else if (repeat == RepeatAll) {
+		[self setRepeat: RepeatNone];
+	}
 }
 
 - (PlaylistEntry *)entryAtIndex:(int)i
@@ -498,11 +521,12 @@
 {
 	return shuffle;
 }
-- (void)setRepeat:(BOOL)r
+- (void)setRepeat:(RepeatMode)r
 {
+	NSLog(@"Repeat is now: %i", r);
 	repeat = r;
 }
-- (BOOL)repeat
+- (RepeatMode)repeat
 {
 	return repeat;
 }
