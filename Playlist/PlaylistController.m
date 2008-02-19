@@ -431,8 +431,11 @@
 	if (pe == nil)
 	{
 		// we are at end of shuffle list, and repeat all is requested
-		if ((shuffle = YES) && (repeat == RepeatAll))
-			pe = [self shuffledEntryAtIndex:0];
+		if (repeat == RepeatAll)
+			if (shuffle == YES)
+				pe = [self shuffledEntryAtIndex:0];
+			else
+				pe = [self entryAtIndex:0];
 		else
 			return NO;
 	}
