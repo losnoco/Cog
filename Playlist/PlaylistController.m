@@ -27,6 +27,10 @@
     [NSValueTransformer setValueTransformer:repeatOneTransformer
                                     forName:@"RepeatOneTransformer"];
 
+	NSValueTransformer *repeatAlbumTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatAlbum] autorelease];
+    [NSValueTransformer setValueTransformer:repeatAlbumTransformer
+                                    forName:@"RepeatAlbumTransformer"];
+
 	NSValueTransformer *repeatAllTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatAll] autorelease];
     [NSValueTransformer setValueTransformer:repeatAllTransformer
                                     forName:@"RepeatAllTransformer"];
@@ -303,12 +307,16 @@
 	else
 		[self setShuffle: [sender state]];
 }
+
 - (IBAction)toggleRepeat:(id)sender
 {
 	if (repeat == RepeatNone) {
 		[self setRepeat: RepeatOne];
 	}
 	else if (repeat == RepeatOne) {
+		[self setRepeat: RepeatAlbum];
+	}
+	else if (repeat == RepeatAlbum) {
 		[self setRepeat: RepeatAll];
 	}
 	else if (repeat == RepeatAll) {

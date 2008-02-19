@@ -18,6 +18,7 @@
 typedef enum {
 	RepeatNone = 0,
 	RepeatOne,
+	RepeatAlbum,
 	RepeatAll
 } RepeatMode;
 
@@ -56,6 +57,7 @@ typedef enum {
 - (NSUndoManager *)undoManager;
 
 - (IBAction)takeShuffleFromObject:(id)sender;
+
 - (IBAction)toggleRepeat:(id)sender;
 
 - (IBAction)sortByPath;

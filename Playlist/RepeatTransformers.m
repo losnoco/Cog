@@ -12,7 +12,7 @@
 @implementation RepeatModeTransformer
 
 + (Class)transformedValueClass { return [NSNumber class]; }
-+ (BOOL)allowsReverseTransformation { return NO; }
++ (BOOL)allowsReverseTransformation { return YES; }
 
 - (id)initWithMode:(RepeatMode) r
 {
@@ -41,6 +41,21 @@
 	return [NSNumber numberWithBool:NO];
 }
 
+- (id)reverseTransformedValue:(id)value {
+    if (value == nil) return nil;
+	
+	BOOL enabled = [value boolValue];
+	if (enabled) {
+		return [NSNumber numberWithInt:repeatMode];
+	}
+	else if(repeatMode == RepeatNone) {
+		return [NSNumber numberWithInt:RepeatAll];
+	}
+	else {
+		return [NSNumber numberWithInt:RepeatNone];
+	}
+}
+
 @end
 
 @implementation RepeatModeImageTransformer
@@ -61,6 +76,9 @@
 	}
 	else if (mode == RepeatOne) {
 		return [NSImage imageNamed:@"repeat_one"];
+	}
+	else if (mode == RepeatAlbum) {
+		return [NSImage imageNamed:@"repeat_album"];
 	}
 	else if (mode == RepeatAll) {
 		return [NSImage imageNamed:@"repeat_all"];
