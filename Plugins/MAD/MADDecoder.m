@@ -45,7 +45,7 @@
 	int samplesPerMPEGFrame = 0;
 	
 	int id3_length = 0;
-	
+		
 	mad_stream_init (&stream);
 	mad_frame_init (&frame);	
 	
@@ -271,7 +271,7 @@
 		}
 	}
 	
-	bitrate = (((_fileSize - id3_length)*8)/1000) * (sampleRate/totalFrames);
+	bitrate = ((double)((_fileSize - id3_length)*8)/1000.0) * (sampleRate/(double)totalFrames);
 	
 	mad_frame_finish (&frame);
 	mad_stream_finish (&stream);
