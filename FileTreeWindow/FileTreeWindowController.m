@@ -16,8 +16,16 @@
 	return [super initWithWindowNibName:@"FileTreePanel"];
 }
 
-- (void)addToPlaylist:(NSArray *)urls
+- (void)awakeFromNib
 {
+	[outlineView setDoubleAction:@selector(addToPlaylist:)];
+	[outlineView setTarget:self];
+}
+	
+- (IBAction)addToPlaylist:(id)sender
+{
+	NSArray *urls = [NSArray arrayWithObject:[[outlineView itemAtRow:[outlineView clickedRow]] URL]];
+
 	[playlistLoader addURLs:urls sort:NO];
 }
 

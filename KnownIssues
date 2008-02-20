@@ -11,5 +11,8 @@ start or end of it (in Repeat All mode)
 
 Repeat Album isn't implemented.
 
+Double dlick in File Tree will automatically add unexpanded
+directories.
+
 mp3 bitrate is a tad off.
 

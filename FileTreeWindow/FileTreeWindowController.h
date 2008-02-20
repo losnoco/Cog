@@ -13,8 +13,9 @@
 
 @interface FileTreeWindowController : NSWindowController {
 	IBOutlet PlaylistLoader *playlistLoader;
+	IBOutlet NSOutlineView *outlineView;
 }
 
-- (void)addToPlaylist:(NSArray *)urls;
+- (IBAction)addToPlaylist:(id)sender;
 
 @end

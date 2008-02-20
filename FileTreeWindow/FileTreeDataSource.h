@@ -10,20 +10,16 @@
 
 @class PathNode;
 @class PathWatcher;
-@class FileTreeWindowController;
 
 @interface FileTreeDataSource : NSObject {
 	PathNode *rootNode;
 
-	IBOutlet FileTreeWindowController *fileTreeController;
 	IBOutlet PathWatcher *watcher;
 	IBOutlet NSOutlineView *outlineView;
 }
 
 - (NSURL *)rootURL;
 - (void)setRootURL:(NSURL *)rootURL;
-
-- (IBAction)doubleClickSelector:(id)sender;
 
 - (void)reloadPathNode:(PathNode *)item;
 
