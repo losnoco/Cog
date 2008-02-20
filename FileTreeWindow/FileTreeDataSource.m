@@ -12,6 +12,7 @@
 
 #import "DirectoryNode.h"
 #import "PathWatcher.h"
+#import "FileTreeWindowController.h"
 
 @implementation FileTreeDataSource
 
@@ -29,8 +30,18 @@
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fileTreeRootURL" options:0 context:nil];
 	
 	[self setRootURL: [NSURL URLWithString:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]]]; 
+	
+	[outlineView setDoubleAction:@selector(doubleClickSelector:)];
+	[outlineView setTarget:self];
 }
 
+// double click in file tree view
+- (IBAction)doubleClickSelector:(id)sender
+{
+	NSArray *urls = [NSArray arrayWithObject:[[outlineView itemAtRow:[outlineView clickedRow]] URL]];
+    
+	[fileTreeController addToPlaylist:urls]; 
+}
 - (void) observeValueForKeyPath:(NSString *)keyPath
 					   ofObject:(id)object
 						 change:(NSDictionary *)change

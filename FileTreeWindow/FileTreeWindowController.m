@@ -16,5 +16,9 @@
 	return [super initWithWindowNibName:@"FileTreePanel"];
 }
 
+- (void)addToPlaylist:(NSArray *)urls
+{
+	[playlistLoader addURLs:urls sort:NO];
+}
 
 @end

@@ -7,10 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "PlaylistLoader.h"
 
+@class PlaylistLoader;
 
 @interface FileTreeWindowController : NSWindowController {
-
+	IBOutlet PlaylistLoader *playlistLoader;
 }
+
+- (void)addToPlaylist:(NSArray *)urls;
 
 @end
