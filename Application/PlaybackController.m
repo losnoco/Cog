@@ -373,7 +373,7 @@
 			break;
 		}
 			
-		if ([curAlbum caseInsensitiveCompare:origAlbum])
+		if ([curAlbum caseInsensitiveCompare:origAlbum] != NSOrderedSame)
 		{
 			found = YES;
 			break;
@@ -412,7 +412,7 @@
 			break;
 		}
 		
-		if ([curAlbum caseInsensitiveCompare:origAlbum])
+		if ([curAlbum caseInsensitiveCompare:origAlbum] != NSOrderedSame)
 		{
 			if (foundAlbum == NO)
 			{
