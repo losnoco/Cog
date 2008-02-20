@@ -169,7 +169,7 @@
 	int sec = (int)(tt);
 	hoursAndMinutes = ldiv(sec/60, 60);
 	
-	[self setTotalTimeDisplay:[NSString stringWithFormat:@"%i minutes %02i seconds (%ld hours %ld minutes)",sec/60, sec%60, hoursAndMinutes.quot, hoursAndMinutes.rem]];
+	[self setTotalTimeDisplay:[NSString stringWithFormat:@"%ld hours %ld minutes %d seconds", hoursAndMinutes.quot, hoursAndMinutes.rem, sec%60]];
 }
 
 - (void)setTotalTimeDisplay:(NSString *)ttd
