@@ -12,203 +12,32 @@
 
 @implementation PlaylistEntry
 
+@synthesize index;
+@synthesize shuffleIndex;
+@synthesize current;
+
+@synthesize URL;
+
+@synthesize artist;
+@synthesize album;
+@synthesize title;
+@synthesize genre;
+@synthesize year;
+@synthesize track;
+
+@synthesize totalFrames;
+@synthesize bitrate;
+@synthesize channels;
+@synthesize bitsPerSample;
+@synthesize sampleRate;
+
+@synthesize seekable;
+
 + (void)initialize { 
 	[self setKeys:[NSArray arrayWithObjects:@"artist",@"title",nil] triggerChangeNotificationsForDependentKey:@"display"]; 
 	[self setKeys:[NSArray arrayWithObjects:@"totalFrames",nil] triggerChangeNotificationsForDependentKey:@"length"]; 
-}
-
-- (id)init
-{
-	self = [super init];
-	if (self)
-	{
-		url = nil;
-
-		artist = nil;
-		album = nil;
-		title = nil;
-		genre = nil;
-		
-		relativePath = nil;
-		base = nil;
-		
-		year = nil;
-		track = nil;
-		totalFrames = nil;
-		bitrate = nil;
-		channels = nil;
-		bitsPerSample = nil;
-		sampleRate = nil;
-		
-		current = nil;
-		
-		idx = nil;
-		shuffleIndex = nil;
-	}
-
-	return self;
-}
-
-- (void)dealloc
-{
-	[url release];
-	[artist release];
-	[album release];
-	[title release];
-	[genre release];
-	[year release];
-	[track release];
-	[totalFrames release];
-	[bitrate release];
-	[channels release];
-	[bitsPerSample release];
-	[sampleRate release];
-	[current release];
-	[idx release];
-	[shuffleIndex release];
-	[relativePath release];
-	[base release];
-	
-	[super dealloc];
-}
-
--(void)setShuffleIndex:(NSNumber *)si
-{
-	[si retain];
-	[shuffleIndex release];
-	
-	shuffleIndex = si;
-}
-
--(NSNumber *)shuffleIndex
-{
-	return shuffleIndex;
-}
-
--(void)setIndex:(NSNumber *)i
-{
-	[i retain];
-	[idx release];
-
-	idx = i;
-}
-
--(NSNumber *)index
-{
-	return idx;
-}
-
-
-// Hack for kvc compliance - fix this
--(void)setUrl:(NSURL *)u
-{
-    [self setURL:u];
-}
-
--(void)setURL:(NSURL *)u
-{
-	[u retain];
-	[url release];
-	url = u;
-}
-
--(NSURL *)url
-{
-	return url;
-}
-
--(void)setCurrent:(NSNumber *) b
-{
-	[b retain];
-	[current release];
-	current = b;
-}
-
--(NSNumber *)current
-{
-	return current;
-}
-
-
-- (void)setArtist:(NSString *)s
-{
-	[s retain];
-	[artist release];
-	
-	artist = s;
-}
-
-- (NSString *)artist
-{
-	return artist;
-}
-
-- (void)setAlbum:(NSString *)s
-{
-	[s retain];
-	[album release];
-	
-	album = s;
-}
-
-- (NSString *)album
-{
-	return album;
-}
-
-- (void)setTitle:(NSString *)s
-{
-	[s retain];
-	[title release];
-	
-	title = s;
-}
-
-- (NSString *)title
-{
-	return title;
-}
-
-- (void)setGenre:(NSString *)s
-{
-	[s retain];
-	[genre release];
-	
-	genre = s;
-}
-
-- (NSString *)genre
-{
-	return genre;
-}
-
-- (void)setYear:(NSString *)y
-{
-	[y retain];
-	[year release];
-	
-	if ([y intValue] == 0)
-	{
-		y = @"";
-	}
-	
-	year = y;
-}
-- (NSString *)year
-{
-	return year;
-}
-
-- (void)setTrack:(NSNumber *)t
-{
-	[t retain];
-	[track release];
-	
-	track = t;
-}
-- (NSNumber *)track
-{
-	return track;
+	[self setKeys:[NSArray arrayWithObjects:@"url",nil] triggerChangeNotificationsForDependentKey:@"path"]; 
+	[self setKeys:[NSArray arrayWithObjects:@"url",nil] triggerChangeNotificationsForDependentKey:@"filename"]; 
 }
 
 - (void)setProperties:(NSDictionary *)dict
@@ -223,115 +52,9 @@
 
 - (void)readPropertiesThread
 {
-	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:url];
+	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:self.URL];
 
 	[self performSelectorOnMainThread:@selector(setProperties:) withObject:properties waitUntilDone:YES];
-}
-
-- (void)setTotalFrames:(NSNumber *)t
-{
-	[t retain];
-	[totalFrames release];
-	
-	totalFrames = t;
-}
-- (NSNumber *)totalFrames
-{
-	return totalFrames;
-}
-
-- (void)setBitrate:(NSNumber *) br
-{
-	[br retain];
-	[bitrate release];
-	
-	bitrate = br;
-}
-- (NSNumber *)bitrate
-{
-	return bitrate;
-}
-
-- (void)setChannels:(NSNumber *)c
-{
-	[c retain];
-	[channels release];
-	
-	channels = c;
-}
-- (NSNumber *)channels
-{
-	return channels;
-}
-
-- (void)setBitsPerSample:(NSNumber *)bps
-{
-	[bps retain];
-	[bitsPerSample release];
-	
-	bitsPerSample = bps;
-}
-- (NSNumber *)bitsPerSample
-{
-	return bitsPerSample;
-}
-
-- (void)setSampleRate:(NSNumber *)s
-{
-	[s retain];
-	[sampleRate release];
-
-	sampleRate = s;
-}
-- (NSNumber *)sampleRate
-{
-	return sampleRate;
-}
-
-- (NSString *)display
-{
-	if ((artist == NULL) || ([[self artist] isEqualToString:@""]))
-		return title;
-	else {
-		return [NSString stringWithFormat:@"%@ - %@", artist, title];
-	}
-}
-
-- (void)setSeekable:(NSNumber *)s
-{
-	[s retain];
-	[seekable release];
-	
-	seekable = s;
-}
-	
-- (NSNumber *)seekable
-{
-	return seekable;
-}
-
-- (NSString *)relativePath
-{
-	return relativePath;
-}
-
-- (void)setRelativePath:(NSString *)rel
-{
-	[rel retain];
-	[relativePath release];
-	relativePath = rel;
-}
-
-- (NSString *)base
-{
-	return base;
-}
-
-- (void)setBase:(NSString *)newUrl
-{
-	[newUrl retain];
-	[base release];
-	base = newUrl;
 }
 
 - (void)setMetadata: (NSDictionary *)m
@@ -339,14 +62,11 @@
 	NSString *ti = [m objectForKey:@"title"];
 
 	if (ti == nil || [ti isEqualToString:@""]) {
-		[self setTitle:[[url path] lastPathComponent]];
+		[self setTitle:[[self.URL path] lastPathComponent]];
 	}
 	else {
 		[self setTitle:ti];
 	}
-	
-	[self setBase:[[url path] lastPathComponent]];
-	[self setRelativePath:[[url relativePath] stringByAbbreviatingWithTildeInPath]];
 	
 	[self setArtist:[m objectForKey:@"artist"]];
 	[self setAlbum:[m objectForKey:@"album"]];
@@ -357,7 +77,7 @@
 
 - (void)readMetadataThread
 {
-	NSDictionary *metadata = [AudioMetadataReader metadataForURL:url];
+	NSDictionary *metadata = [AudioMetadataReader metadataForURL:self.URL];
 
 	[self performSelectorOnMainThread:@selector(setMetadata:) withObject:metadata waitUntilDone:YES];
 
@@ -365,12 +85,31 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", idx, url];
+	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", self.index, self.URL];
+}
+
+- (NSString *)display
+{
+	if ((self.artist == NULL) || ([self.artist isEqualToString:@""]))
+		return self.title;
+	else {
+		return [NSString stringWithFormat:@"%@ - %@", self.artist, self.title];
+	}
 }
 
 - (NSNumber *)length
 {
-	return [NSNumber numberWithDouble:([totalFrames longValue] / [sampleRate floatValue])];
+	return [NSNumber numberWithDouble:([self.totalFrames longValue] / [self.sampleRate floatValue])];
+}
+
+- (NSString *)path
+{
+	return [[self.URL path] stringByAbbreviatingWithTildeInPath];
+}
+
+- (NSString *)filename
+{
+	return [[self.URL path] lastPathComponent];
 }
 
 @end

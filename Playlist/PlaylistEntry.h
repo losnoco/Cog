@@ -9,17 +9,18 @@
 #import <Cocoa/Cocoa.h>
 
 @interface PlaylistEntry : NSObject {
-	NSURL *url;
-	NSString *relativePath;
-	NSString *base;
+	NSNumber *index;
+	NSNumber *shuffleIndex;
+	NSNumber *current;
+	
+	NSURL *URL;
 	
 	NSString *artist;
 	NSString *album;
 	NSString *title;
 	NSString *genre;
-
 	NSString *year;
-	NSNumber *track;	
+	NSNumber *track;
 	
 	NSNumber *totalFrames;
 	NSNumber *bitrate;
@@ -27,68 +28,38 @@
 	NSNumber *bitsPerSample;
 	NSNumber *sampleRate;
 	
-	NSNumber *current;
-	
-	NSNumber *idx;
-	NSNumber *shuffleIndex;
-	
 	NSNumber *seekable;
 }
-
-- (void)setIndex:(NSNumber *)i;
-- (NSNumber *)index;
-
-- (void)setShuffleIndex:(NSNumber *)si;
-- (NSNumber *)shuffleIndex;
-
-// Hack for KVC compliance
-- (void)setUrl:(NSURL *)u;
-- (void)setURL:(NSURL *)u;
-- (NSURL *)url;
-- (void)setCurrent:(NSNumber *) b;
-- (NSNumber *)current;
-
-- (NSString *)relativePath;
-- (void)setRelativePath:(NSString *)rel;
-- (NSString *)base;
-- (void)setBase:(NSString *)newUrl;
-
-- (void)setArtist:(NSString *)s;
-- (NSString *)artist;
-- (void)setAlbum:(NSString *)s;
-- (NSString *)album;
-- (void)setTitle:(NSString *)s;
-- (NSString *)title;
-- (void)setGenre:(NSString *)s;
-- (NSString *)genre;
-
-- (void)setYear:(NSString *)y;
-- (NSString *)year;
-- (void)setTrack:(NSNumber *)y;
-- (NSNumber *)track;
-
-- (void)setTotalFrames:(NSNumber *)l;
-- (NSNumber *)totalFrames;
-
-- (void)setBitrate:(NSNumber *) br;
-- (NSNumber *)bitrate;
-
-- (void)setChannels:(NSNumber *)c;
-- (NSNumber *)channels;
-- (void)setBitsPerSample:(NSNumber *)bps;
-- (NSNumber *)bitsPerSample;
-- (void)setSampleRate:(NSNumber *)s;
-- (NSNumber *)sampleRate;
-
-- (NSString *)display;
-- (NSNumber *)length;
-
-- (void)setSeekable:(NSNumber *)s;
-- (NSNumber *)seekable;
 
 - (void)setMetadata: (NSDictionary *)m;
 - (void)readMetadataThread;
 - (void)setProperties: (NSDictionary *)p;
 - (void)readPropertiesThread;
+
+@property(readonly) NSString *display;
+@property(readonly) NSNumber *length;
+@property(readonly) NSString *path;
+@property(readonly) NSString *filename;
+
+@property(retain) NSNumber *index;
+@property(retain) NSNumber *shuffleIndex;
+@property(retain) NSNumber *current;
+
+@property(retain) NSURL *URL;
+
+@property(retain) NSString *artist;
+@property(retain) NSString *album;
+@property(retain) NSString *title;
+@property(retain) NSString *genre;
+@property(retain) NSString *year;
+@property(retain) NSNumber *track;
+
+@property(retain) NSNumber *totalFrames;
+@property(retain) NSNumber *bitrate;
+@property(retain) NSNumber *channels;
+@property(retain) NSNumber *bitsPerSample;
+@property(retain) NSNumber *sampleRate;
+
+@property(retain) NSNumber *seekable;
 
 @end

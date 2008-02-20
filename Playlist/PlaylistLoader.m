@@ -81,7 +81,7 @@
 
 	while (pe = [e nextObject])
 	{
-		NSString *path = [self relativePathFrom:filename toURL:[pe url]];
+		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
 		[fileHandle writeData:[[path stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
 	}
 
@@ -105,7 +105,7 @@
 	int i = 1;
 	while (pe = [e nextObject])
 	{
-		NSString *path = [self relativePathFrom:filename toURL:[pe url]];
+		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
 		NSString *entry = [NSString stringWithFormat:@"File%i=%@\n",i,path];
 
 		[fileHandle writeData:[entry dataUsingEncoding:NSUTF8StringEncoding]];

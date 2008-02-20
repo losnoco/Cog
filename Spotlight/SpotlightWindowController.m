@@ -266,7 +266,7 @@ static NSPredicate * musicOnlyPredicate = nil;
     tracks = playlistController.selectedObjects;
     if ([tracks count] == 0)
         tracks = playlistController.arrangedObjects;
-    [playlistLoader addURLs:[tracks valueForKey:@"url"] sort:NO];
+    [playlistLoader addURLs:[tracks valueForKey:@"URL"] sort:NO];
    
    [self.query enableUpdates];
 }

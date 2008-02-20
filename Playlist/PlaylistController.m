@@ -572,7 +572,7 @@
 	if ([self selectionIndex] < 0)
 		return;
 	
-	NSURL *url = [[[self selectedObjects] objectAtIndex:0] url];
+	NSURL *url = [[[self selectedObjects] objectAtIndex:0] URL];
 	if ([url isFileURL])
 		[ws selectFile:[url path] inFileViewerRootedAtPath:[url path]];
 }

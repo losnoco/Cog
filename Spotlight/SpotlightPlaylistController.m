@@ -18,7 +18,7 @@
 {
     [spotlightWindowController.query disableUpdates];
     
-    NSArray *urls = [[self selectedObjects]valueForKey:@"url"];
+    NSArray *urls = [[self selectedObjects]valueForKey:@"URL"];
     [pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard
 	[pboard setData:[NSArchiver archivedDataWithRootObject:urls] forType:CogUrlsPboardType];
     

@@ -19,7 +19,7 @@ static NSDictionary *importKeys;
 {
     // We need to translate the path string to a full URL
     NSArray *URLTransform = 
-        [NSArray arrayWithObjects:@"url", @"PathToURLTransformer", nil];
+        [NSArray arrayWithObjects:@"URL", @"PathToURLTransformer", nil];
         
     // Extract the artist name from the authors array
     NSArray *artistTransform = 

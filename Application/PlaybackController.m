@@ -157,7 +157,7 @@
 	
 	[self updateTimeField:0.0f];
 	
-	[audioPlayer play:[pe url] withUserInfo:pe];
+	[audioPlayer play:[pe URL] withUserInfo:pe];
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler start:pe];
@@ -487,7 +487,7 @@
 	PlaylistEntry *curEntry = (PlaylistEntry *)userInfo;
 	PlaylistEntry *pe = [playlistController getNextEntry:curEntry];
 
-	[player setNextStream:[pe url] withUserInfo:pe];
+	[player setNextStream:[pe URL] withUserInfo:pe];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player streamChanged:(id)userInfo
