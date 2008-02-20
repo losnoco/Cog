@@ -44,7 +44,7 @@
 
 - (NSURL *)rootURL
 {
-	return [rootNode url];
+	return [rootNode URL];
 }
 
 - (void)setRootURL: (NSURL *)rootURL
@@ -71,7 +71,7 @@
 		NSLog(@"COMPONENT: %@", c);
 		BOOL found = NO;
 		for (PathNode *subnode in [node subpaths]) {
-			if ([[[[subnode url] path] lastPathComponent] isEqualToString:c]) {
+			if ([[[[subnode URL] path] lastPathComponent] isEqualToString:c]) {
 				node = subnode;
 				found = YES;
 			}
@@ -132,7 +132,7 @@
 	NSMutableArray *urls = [NSMutableArray arrayWithCapacity:[items count]];
 
 	for (id p in items) {
-		[urls addObject:[p url]];
+		[urls addObject:[p URL]];
 	}
 	NSLog(@"URLS: %@", urls);
     [pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard

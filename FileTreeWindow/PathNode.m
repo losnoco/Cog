@@ -76,7 +76,7 @@ NSURL *resolveAliases(NSURL *url)
 	[icon setSize: NSMakeSize(16.0, 16.0)];
 }
 
-- (NSURL *)url
+- (NSURL *)URL
 {
 	return url;
 }
@@ -89,7 +89,9 @@ NSURL *resolveAliases(NSURL *url)
 {
 	NSMutableArray *newSubpaths = [[NSMutableArray alloc] init];
 	
-	for (NSString *s in contents)
+	NSEnumerator *e = [contents objectEnumerator];
+	NSString *s;
+	while ((s = [e nextObject]))
 	{
 		if ([s characterAtIndex:0] == '.')
 		{

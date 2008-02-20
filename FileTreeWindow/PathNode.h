@@ -24,7 +24,7 @@
 
 - (id)initWithDataSource:(FileTreeDataSource *)ds url:(NSURL *)u;
 
-- (NSURL *)url;
+- (NSURL *)URL;
 - (void)setURL:(NSURL *)url;
 
 - (void)processPaths: (NSArray *)contents;

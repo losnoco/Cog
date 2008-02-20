@@ -36,8 +36,8 @@
 + (void)initialize { 
 	[self setKeys:[NSArray arrayWithObjects:@"artist",@"title",nil] triggerChangeNotificationsForDependentKey:@"display"]; 
 	[self setKeys:[NSArray arrayWithObjects:@"totalFrames",nil] triggerChangeNotificationsForDependentKey:@"length"]; 
-	[self setKeys:[NSArray arrayWithObjects:@"url",nil] triggerChangeNotificationsForDependentKey:@"path"]; 
-	[self setKeys:[NSArray arrayWithObjects:@"url",nil] triggerChangeNotificationsForDependentKey:@"filename"]; 
+	[self setKeys:[NSArray arrayWithObjects:@"URL",nil] triggerChangeNotificationsForDependentKey:@"path"]; 
+	[self setKeys:[NSArray arrayWithObjects:@"URL",nil] triggerChangeNotificationsForDependentKey:@"filename"]; 
 }
 
 - (void)setProperties:(NSDictionary *)dict
