@@ -42,7 +42,7 @@
 
 - (void)setProperties:(NSDictionary *)dict
 {
-	[self setTotalFrames:		[dict objectForKey:@"totalFrames"		]];
+	[self setTotalFrames:	[dict objectForKey:@"totalFrames"	]];
 	[self setBitrate:		[dict objectForKey:@"bitrate"		]];
 	[self setChannels:		[dict objectForKey:@"channels"		]];
 	[self setBitsPerSample:	[dict objectForKey:@"bitsPerSample" ]];
@@ -68,11 +68,11 @@
 		[self setTitle:ti];
 	}
 	
-	[self setArtist:[m objectForKey:@"artist"]];
-	[self setAlbum:[m objectForKey:@"album"]];
-	[self setGenre:[m objectForKey:@"genre"]];
-	[self setYear:[m objectForKey:@"year"]];
-	[self setTrack:[m objectForKey:@"track"]];
+	[self setArtist:[m objectForKey:@"artist"	]];
+	[self setAlbum:	[m objectForKey:@"album"	]];
+	[self setGenre:	[m objectForKey:@"genre"	]];
+	[self setYear:	[m objectForKey:@"year"		]];
+	[self setTrack:	[m objectForKey:@"track"	]];
 }	
 
 - (void)readMetadataThread
