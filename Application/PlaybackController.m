@@ -112,7 +112,7 @@
 //called by double-clicking on table
 - (void)playEntryAtIndex:(int)i
 {
-	PlaylistEntry *pe = [[playlistController arrangedObjects] objectAtIndex:i];
+	PlaylistEntry *pe = [playlistController entryAtIndex:i];
 
 	[self playEntry:pe];
 }
@@ -351,92 +351,91 @@
 	NSNumber *index = (NSNumber *)[[playlistController currentEntry] index];
 	NSString *origAlbum = [[playlistController currentEntry] album];
 	
-	int playlistLength = [[playlistController arrangedObjects] count] - 1;
-	int i = [index intValue] + 1;
+	int i;
 	NSString *curAlbum;
 	
 	PlaylistEntry *pe;
 
-	while (!found)
+	for (i = 1; i < [[playlistController arrangedObjects] count]; i++)
 	{
-		pe = [[playlistController arrangedObjects] objectAtIndex:i];
+		pe = [playlistController entryAtIndex:[index intValue] + i];
+		if (pe == nil) {
+			break;
+		}
+		
 		curAlbum = [pe album];
 
 		// check for untagged files, and just play the first untagged one
 		// we come across
 		if (curAlbum == nil)
-			break;
-		
-		if (![curAlbum caseInsensitiveCompare:origAlbum])
-		{
-			i++;
-			if (i > playlistLength)
-				return;
-			continue;
-		}
-		else
 		{
 			found = YES;
+			break;
+		}
+			
+		if ([curAlbum caseInsensitiveCompare:origAlbum])
+		{
+			found = YES;
+			break;
 		}
 	}
 
-	[self playEntryAtIndex:i];
-
+	if (found)
+	{
+		[self playEntryAtIndex:i + [index intValue]];
+	}
 }
 
 - (IBAction)skipToPreviousAlbum:(id)sender
 {
-    BOOL found = NO;
+	BOOL found = NO;
 	BOOL foundAlbum = NO;
 	
 	NSNumber *index = (NSNumber *)[[playlistController currentEntry] index];
 	NSString *origAlbum = [[playlistController currentEntry] album];
 	NSString *curAlbum;
 	
-	int i = [index intValue] - 1;
-	
-	if (i <= 0)
-		return;
+	int i;
 	
 	PlaylistEntry *pe;
-	
-	while (!found)
+
+	for (i = 1; i < [[playlistController arrangedObjects] count]; i++)
 	{
-		pe = [[playlistController arrangedObjects] objectAtIndex:i];
+		pe = [playlistController entryAtIndex:[index intValue] - i];
+		if (pe == nil) {
+			break;
+		}
 		curAlbum = [pe album];
 		if (curAlbum == nil)
-			break;
-		
-		if (![curAlbum caseInsensitiveCompare:origAlbum])
 		{
-			i--;
-			if (i == 0) // first entry in playlist
-				if (foundAlbum == YES)
-					break;
-				else
-					return;
-			continue;
+			found = YES;
+			break;
 		}
-		else
+		
+		if ([curAlbum caseInsensitiveCompare:origAlbum])
 		{
 			if (foundAlbum == NO)
 			{
 				foundAlbum = YES;
 				// now we need to move up to the first song in the album, so we'll
 				// go till we either find index 0, or the first song in the album
-				origAlbum = [[[playlistController arrangedObjects] objectAtIndex:i] album];
-				i--;
+				origAlbum = curAlbum;
+				continue;
 			}
 			else
+			{
 				found = YES; // terminate loop
-			
+				break;
+			}
 		}
 	}
 	
-	if ((foundAlbum == YES) && i != 0)
-		i++;
-	[self playEntryAtIndex:i];
-	
+	if (found || foundAlbum)
+	{
+		if (foundAlbum == YES)
+			i--;
+		[self playEntryAtIndex:[index intValue] - i];
+	}
 }
 
 
