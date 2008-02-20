@@ -328,14 +328,14 @@
 {
 	if (i < 0)
 	{
-		if (repeat == RepeatAll)
+		if (repeat != RepeatNone)
 			i += [[self arrangedObjects] count];
 		else
 			return nil;
 	}
 	else if (i >= [[self arrangedObjects] count])
 	{
-		if (repeat == RepeatAll)
+		if (repeat != RepeatNone)
 			i -= [[self arrangedObjects] count];
 		else
 			return nil;
@@ -453,8 +453,6 @@
 	return YES;
 }
 
-//Need to do...when first generated, need to have current entry at the beginning of the list.
-
 - (void)addShuffledListToFront
 {
 	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
@@ -489,7 +487,7 @@
 
 	[self addShuffledListToFront];
 
-	if (currentEntry && [[currentEntry index] intValue] != -1)
+	if (currentEntry && [[currentEntry index] intValue] >= 0)
 	{
 		[shuffleList insertObject:currentEntry atIndex:0];
 		[currentEntry setShuffleIndex:0];
@@ -497,15 +495,16 @@
 		//Need to rejigger so the current entry is at the start now...
 		int i;
 		BOOL found = NO;
-		for (i = 1; i < [shuffleList count]; i++)
+		for (i = 1; i < [shuffleList count] && !found; i++)
 		{
-			if (found == NO && [[shuffleList objectAtIndex:i] url] == [currentEntry url])
+			if ([shuffleList objectAtIndex:i] == currentEntry)
 			{
 				found = YES;
 				[shuffleList removeObjectAtIndex:i];
 			}
-
-			[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
+			else {
+				[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
+			}
 		}
 	}
 }
@@ -573,7 +572,7 @@
 	if ([self selectionIndex] < 0)
 		return;
 	
-	NSURL *url = [[self entryAtIndex:[self selectionIndex]] url];
+	NSURL *url = [[[self selectedObjects] objectAtIndex:0] url];
 	if ([url isFileURL])
 		[ws selectFile:[url path] inFileViewerRootedAtPath:[url path]];
 }

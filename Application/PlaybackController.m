@@ -349,7 +349,7 @@
     BOOL found = NO;
 	
 	NSNumber *index = (NSNumber *)[[playlistController currentEntry] index];
-	NSString *origAlbum = [[playlistController entryAtIndex:[index intValue]] album];
+	NSString *origAlbum = [[playlistController currentEntry] album];
 	
 	int playlistLength = [[playlistController arrangedObjects] count] - 1;
 	int i = [index intValue] + 1;
@@ -390,7 +390,7 @@
 	BOOL foundAlbum = NO;
 	
 	NSNumber *index = (NSNumber *)[[playlistController currentEntry] index];
-	NSString *origAlbum = [[playlistController entryAtIndex:[index intValue]] album];
+	NSString *origAlbum = [[playlistController currentEntry] album];
 	NSString *curAlbum;
 	
 	int i = [index intValue] - 1;
@@ -424,7 +424,7 @@
 				foundAlbum = YES;
 				// now we need to move up to the first song in the album, so we'll
 				// go till we either find index 0, or the first song in the album
-				origAlbum = [[playlistController entryAtIndex:i] album];
+				origAlbum = [[[playlistController arrangedObjects] objectAtIndex:i] album];
 				i--;
 			}
 			else
