@@ -1,1 +1,1 @@
-
+Get rid of negative index nonsense for removed playlist entry, instead just add a "removed" BOOL that gets set and can be checked.

@@ -89,9 +89,7 @@ NSURL *resolveAliases(NSURL *url)
 {
 	NSMutableArray *newSubpaths = [[NSMutableArray alloc] init];
 	
-	NSEnumerator *e = [contents objectEnumerator];
-	NSString *s;
-	while ((s = [e nextObject]))
+	for (NSString *s in contents)
 	{
 		if ([s characterAtIndex:0] == '.')
 		{

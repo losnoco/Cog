@@ -138,9 +138,8 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 - (NSIndexSet *)indexSetFromRows:(NSArray *)rows
 {
     NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
-    NSEnumerator *rowEnumerator = [rows objectEnumerator];
-    NSNumber *idx;
-    while (idx = [rowEnumerator nextObject])
+
+    for (NSNumber *idx in rows)
     {
 		[indexSet addIndex:[idx unsignedIntValue]];
     }

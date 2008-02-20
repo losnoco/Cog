@@ -130,10 +130,8 @@
 - (BOOL)outlineView:(NSOutlineView *)outlineView writeItems:(NSArray*)items toPasteboard:(NSPasteboard*)pboard {
 	//Get selected paths
 	NSMutableArray *urls = [NSMutableArray arrayWithCapacity:[items count]];
-	NSEnumerator *e = [items objectEnumerator];
-	id p;
 
-	while (p = [e nextObject]) {
+	for (id p in items) {
 		[urls addObject:[p url]];
 	}
 	NSLog(@"URLS: %@", urls);

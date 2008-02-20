@@ -76,10 +76,7 @@
 	}
 	[fileHandle truncateFileAtOffset:0];
 	
-	PlaylistEntry *pe;
-	NSEnumerator *e = [[playlistController content] objectEnumerator];
-
-	while (pe = [e nextObject])
+	for (PlaylistEntry *pe in [playlistController content])
 	{
 		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
 		[fileHandle writeData:[[path stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -100,10 +97,8 @@
 
 	[fileHandle writeData:[[NSString stringWithFormat:@"[playlist]\nnumberOfEntries=%i\n\n",[[playlistController content] count]] dataUsingEncoding:NSUTF8StringEncoding]];
 
-	NSEnumerator *e = [[playlistController content] objectEnumerator];
-	PlaylistEntry *pe;
 	int i = 1;
-	while (pe = [e nextObject])
+	for (PlaylistEntry *pe in [playlistController content])
 	{
 		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
 		NSString *entry = [NSString stringWithFormat:@"File%i=%@\n",i,path];
@@ -124,11 +119,9 @@
 	
 	NSMutableArray *urls = [NSMutableArray array];
 		
-	NSString *subpath;
 	NSArray *subpaths = [manager subpathsAtPath:path];
-	NSEnumerator *e = [subpaths objectEnumerator];
 
-	while(subpath = [e nextObject])
+	for(NSString *subpath in subpaths)
 	{
 		NSString *absoluteSubpath = [NSString pathWithComponents:[NSArray arrayWithObjects:path,subpath,nil]];
 		
@@ -157,9 +150,8 @@
 	if (index < 0)
 		index = 0;
 	
-	NSEnumerator *urlEnumerator = [urls objectEnumerator];
 	NSURL *url;
-	while (url = [urlEnumerator nextObject])
+	for (url in urls)
 	{
 		if ([url isFileURL]) {
 			BOOL isDir;
@@ -199,8 +191,7 @@
 		sortedURLs = [expandedURLs copy];
 	}
 
-	urlEnumerator = [sortedURLs objectEnumerator];
-	while (url = [urlEnumerator nextObject])
+	for (url in sortedURLs)
 	{
 		//Container vs non-container url
 		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]]) {
@@ -219,8 +210,7 @@
 
 	NSLog(@"Contained urls: %@", containedURLs);
 
-	urlEnumerator = [fileURLs objectEnumerator];
-	while (url = [urlEnumerator nextObject])
+	for (url in fileURLs)
 	{
 		if (![[AudioPlayer schemes] containsObject:[url scheme]])
 			continue;
@@ -239,8 +229,7 @@
 	
 	NSLog(@"Valid urls: %@", validURLs);
 
-	urlEnumerator = [containedURLs objectEnumerator];
-	while (url = [urlEnumerator nextObject])
+	for (url in containedURLs)
 	{
 		if (![[AudioPlayer schemes] containsObject:[url scheme]])
 			continue;
@@ -286,9 +275,8 @@
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-	NSEnumerator *e = [entries objectEnumerator];
 	PlaylistEntry *pe;
-	while (pe = [e nextObject])
+	for (pe in entries)
 	{
 		[pe readPropertiesThread];
 

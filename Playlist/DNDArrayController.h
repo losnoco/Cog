@@ -22,6 +22,5 @@ extern NSString *iTunesDropType;
 -(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet*)indexSet toIndex:(unsigned int)insertIndex;
 
 - (NSIndexSet *)indexSetFromRows:(NSArray *)rows;
-- (int)rowsAboveRow:(int)row inIndexSet:(NSIndexSet *)indexSet;
 
 @end

@@ -122,9 +122,7 @@
 	if ([bestType isEqualToString:NSFilenamesPboardType]) {
 		NSMutableArray *urls = [[NSMutableArray alloc] init];
 
-		NSEnumerator *e = [[[info draggingPasteboard] propertyListForType:NSFilenamesPboardType] objectEnumerator];
-		NSString *file; 
-		while (file = [e nextObject])
+		for (NSString *file in [[info draggingPasteboard] propertyListForType:NSFilenamesPboardType])
 		{
 			[urls addObject:[NSURL fileURLWithPath:file]];
 		}
@@ -142,9 +140,7 @@
 		// Convert the iTunes URLs to URLs....MWAHAHAH!
 		NSMutableArray *urls = [[NSMutableArray alloc] init];
 
-		NSEnumerator *e = [[tracks allValues] objectEnumerator];
-		NSDictionary *trackInfo;
-		while (trackInfo = [e nextObject]) {
+		for (NSDictionary *trackInfo in [tracks allValues]) {
 			[urls addObject:[NSURL URLWithString:[trackInfo valueForKey:@"Location"]]];
 		}
 		
@@ -166,10 +162,7 @@
 	double tt = 0;
 	ldiv_t hoursAndMinutes;
 	
-	NSEnumerator *enumerator = [[self arrangedObjects] objectEnumerator];
-	PlaylistEntry* pe;
-	
-	while (pe = [enumerator nextObject]) {
+	for (PlaylistEntry *pe in [self arrangedObjects]) {
 		tt += [[pe length] doubleValue];
 	}
 	
