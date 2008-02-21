@@ -47,6 +47,7 @@
 	if (self)
 	{
 		shuffleList = [[NSMutableArray alloc] init];
+		queueList = [[NSMutableArray alloc] init];
 	}
 	
 	return self;
@@ -55,6 +56,7 @@
 - (void)dealloc
 {
 	[shuffleList release];
+	[queueList release];
 	
 	[super dealloc];
 }
@@ -373,6 +375,14 @@
 		return pe;
 	}
 	
+	if ([queueList count] > 0)
+	{
+		
+		pe = [queueList objectAtIndex:0];
+		[queueList removeObjectAtIndex:0];
+		return pe;
+	}
+	
 	if (shuffle == YES)
 	{
 		return [self shuffledEntryAtIndex:([[pe shuffleIndex] intValue] + 1)];
@@ -559,6 +569,16 @@
 	[self updateIndexesFromRow:0];
 }
 
+- (NSMutableArray *)queueList
+{
+	return queueList;
+}
+
+- (IBAction)emptyQueueList:(id)sender
+{
+	[queueList removeAllObjects];
+}
+
 - (IBAction)showEntryInFinder:(id)sender
 {
 	NSWorkspace* ws = [NSWorkspace sharedWorkspace];
@@ -579,6 +599,12 @@
 {
     PlaylistEntry *entry = [[self arrangedObjects] objectAtIndex:[self selectionIndex]];
     [spotlightWindowController searchForAlbum:[entry album]];
+}
+
+- (IBAction)addToQueue:(id)sender
+{
+	for (PlaylistEntry *queueItem in [self selectedObjects])
+		[queueList addObject:queueItem];
 }
 
 @end

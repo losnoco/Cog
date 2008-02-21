@@ -30,6 +30,7 @@ typedef enum {
 	NSString *totalTimeDisplay;
 	
 	NSMutableArray *shuffleList;
+	NSMutableArray *queueList;
 	
 	PlaylistEntry *currentEntry;
 	
@@ -87,5 +88,10 @@ typedef enum {
 
 - (PlaylistEntry *)shuffledEntryAtIndex:(int)i;
 - (PlaylistEntry *)entryAtIndex:(int)i;
+
+// queue methods
+- (IBAction)addToQueue:(id)sender;
+- (IBAction)emptyQueueList:(id)sender;
+- (NSMutableArray *)queueList;
 
 @end

@@ -203,6 +203,17 @@
             [artistMenuItem release];
             addedItems++;
         }
+		NSMenuItem *queueMenuItem = [NSMenuItem alloc];
+		NSString *title = [NSString
+						   stringWithFormat:@"Add to Queue (%d queued)", [[playlistController queueList] count]];
+		[queueMenuItem initWithTitle:title
+							  action:@selector(addToQueue:)
+					   keyEquivalent:@""];
+		queueMenuItem.target = playlistController;
+		[tableViewMenu insertItem:queueMenuItem atIndex:0];
+		[queueMenuItem release];
+		addedItems++;
+		
         if(addedItems)
         {
             // add a separator in the right place
