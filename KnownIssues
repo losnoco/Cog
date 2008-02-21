@@ -11,8 +11,8 @@ start or end of it (in Repeat All mode)
 
 Repeat Album isn't implemented.
 
-Double dlick in File Tree will automatically add unexpanded
-directories.
+Menu items do not transform into "Hide Spotlight Panel" and
+"Hide File Drawer" when they are active.
 
 mp3 bitrate is a tad off.
 
