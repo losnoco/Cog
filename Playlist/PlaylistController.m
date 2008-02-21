@@ -569,16 +569,6 @@
 	[self updateIndexesFromRow:0];
 }
 
-- (NSMutableArray *)queueList
-{
-	return queueList;
-}
-
-- (IBAction)emptyQueueList:(id)sender
-{
-	[queueList removeAllObjects];
-}
-
 - (IBAction)showEntryInFinder:(id)sender
 {
 	NSWorkspace* ws = [NSWorkspace sharedWorkspace];
@@ -600,6 +590,17 @@
     PlaylistEntry *entry = [[self arrangedObjects] objectAtIndex:[self selectionIndex]];
     [spotlightWindowController searchForAlbum:[entry album]];
 }
+
+- (NSMutableArray *)queueList
+{
+	return queueList;
+}
+
+- (IBAction)emptyQueueList:(id)sender
+{
+	[queueList removeAllObjects];
+}
+
 
 - (IBAction)addToQueue:(id)sender
 {
