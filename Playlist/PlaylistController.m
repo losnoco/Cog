@@ -399,8 +399,30 @@
 			i = [[pe index] intValue] + 1;
 		}
 		
+		if (repeat == RepeatAlbum)
+		{
+			PlaylistEntry *next = [self entryAtIndex:i];
+			
+			if ((i > [[self arrangedObjects] count]-1) || ([[next album] caseInsensitiveCompare:[pe album]]) || ([next album] == nil))
+			{
+				NSArray *filtered = [self filterPlaylistOnAlbum:[pe album]];
+				if ([pe album] == nil)
+					i--;
+				else
+					i = [[[filtered objectAtIndex:0] index] intValue];
+			}
+			
+		}
+
 		return [self entryAtIndex:i];
 	}
+}
+
+- (NSArray *)filterPlaylistOnAlbum:(NSString *)album
+{
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"album like %@",
+							  album];		
+	return [[self arrangedObjects] filteredArrayUsingPredicate:predicate];
 }
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe

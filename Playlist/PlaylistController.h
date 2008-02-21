@@ -50,6 +50,7 @@ typedef enum {
 - (BOOL)shuffle;
 - (void)setRepeat:(RepeatMode)r;
 - (RepeatMode)repeat;
+- (NSArray *)filterPlaylistOnAlbum:(NSString *)album;
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe;
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe;
