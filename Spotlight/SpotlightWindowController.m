@@ -74,6 +74,8 @@ static NSPredicate * musicOnlyPredicate = nil;
         
         // hook my query transformer up to me
         [PausingQueryTransformer setSearchController:self];
+		[[self window] orderOut:self];
+
 	}
 
     return self;
@@ -91,6 +93,14 @@ static NSPredicate * musicOnlyPredicate = nil;
                 toObject:[NSUserDefaultsController sharedUserDefaultsController]
              withKeyPath:@"values.spotlightSearchPath"
                  options:bindOptions];
+}
+
+- (IBAction)toggleWindow:(id)sender
+{
+	if ([[self window] isVisible])
+		[[self window] orderOut:self];
+	else
+		[self showWindow:self];
 }
 
 - (void)performSearch

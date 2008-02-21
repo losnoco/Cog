@@ -16,6 +16,14 @@
 	return [super initWithWindowNibName:@"FileTreePanel"];
 }
 
+- (IBAction)toggleWindow:(id)sender
+{
+	if ([[self window] isVisible])
+		[[self window] orderOut:self];
+	else
+		[self showWindow:self];
+}
+
 - (void)awakeFromNib
 {
 	[outlineView setDoubleAction:@selector(addToPlaylist:)];

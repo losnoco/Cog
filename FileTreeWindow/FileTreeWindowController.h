@@ -17,5 +17,6 @@
 }
 
 - (IBAction)addToPlaylist:(id)sender;
+- (IBAction)toggleWindow:(id)sender;
 
 @end
