@@ -63,6 +63,7 @@
 - (BufferChain *) bufferChain;
 - (id)initWithDelegate:(id)d;
 
+- (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait;
 - (void)setPlaybackStatus:(int)s;
 
 - (void)requestNextStream:(id)userInfo;

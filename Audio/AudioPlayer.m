@@ -107,21 +107,21 @@
 {
 	//Set shouldoContinue to NO on allll things
 	[self setShouldContinue:NO];
-	[self setPlaybackStatus:kCogStatusStopped];
+	[self setPlaybackStatus:kCogStatusStopped waitUntilDone:YES];
 }
 
 - (void)pause
 {
 	[output pause];
 
-	[self setPlaybackStatus:kCogStatusPaused];	
+	[self setPlaybackStatus:kCogStatusPaused waitUntilDone:YES];
 }
 
 - (void)resume
 {
 	[output resume];
 
-	[self setPlaybackStatus:kCogStatusPlaying];	
+	[self setPlaybackStatus:kCogStatusPlaying waitUntilDone:YES];	
 }
 
 - (void)seekToTime:(double)time
@@ -307,9 +307,14 @@
 	[invocation invokeWithTarget:delegate];
 }
 
+- (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait
+{	
+	[self sendDelegateMethod:@selector(audioPlayer:statusChanged:) withObject:[NSNumber numberWithInt:status] waitUntilDone:wait];
+}
+
 - (void)setPlaybackStatus:(int)status
 {	
-	[self sendDelegateMethod:@selector(audioPlayer:statusChanged:) withObject:[NSNumber numberWithInt:status] waitUntilDone:NO];
+	[self setPlaybackStatus:status waitUntilDone:NO];
 }
 
 - (BufferChain *)bufferChain

@@ -182,7 +182,6 @@
 	if ([playlistController next] == NO)
 		return;
 
-	[self stop:self];
 	[self playEntry:[playlistController currentEntry]];
 }
 
@@ -191,7 +190,6 @@
 	if ([playlistController prev] == NO)
 		return;
 
-	[self stop:self];
 	[self playEntry:[playlistController currentEntry]];
 }
 
@@ -559,9 +557,12 @@
 	}
 	
 	if (status == kCogStatusStopped) {
+		NSLog(@"DONE!");
 		[playlistController setCurrentEntry:nil];
 	}
-	
+	else {
+		NSLog(@"PLAYING!");
+	}
 	
 	playbackStatus = status;
 }

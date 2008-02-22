@@ -431,7 +431,7 @@
 				if ([pe album] == nil)
 					i--;
 				else
-					i = [[[filtered objectAtIndex:0] index] intValue];
+					i = [(PlaylistEntry *)[[filtered objectAtIndex:0] index] intValue];
 			}
 			
 		}
