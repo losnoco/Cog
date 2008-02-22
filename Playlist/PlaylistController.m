@@ -394,6 +394,7 @@
 		[queueList removeObjectAtIndex:0];
 		[pe setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
 		[pe setStatusMessage:nil];
+		[pe setQueuePosition:-1];
 		
 		int i;
 		for (i = 0; i < [queueList count]; i++)
