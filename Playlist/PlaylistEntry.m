@@ -54,7 +54,13 @@
 - (void)readPropertiesThread
 {
 	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:self.URL];
+	if (!properties) {
+		[self setStatus:[NSNumber numberWithInteger:kCogEntryError]];
+		[self setStatusMessage:@"Failed to read properties!"];
 
+		return;
+	}
+	
 	[self performSelectorOnMainThread:@selector(setProperties:) withObject:properties waitUntilDone:YES];
 }
 

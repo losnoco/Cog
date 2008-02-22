@@ -31,7 +31,7 @@
 	unsigned		minutes			= 0;
 	unsigned		seconds			= 0;
 	
-	if(nil == object || NO == [object isKindOfClass:[NSNumber class]]) {
+	if(nil == object || NO == [object isKindOfClass:[NSNumber class]] || isnan([object doubleValue])) {
 		return nil;
 	}
 	
