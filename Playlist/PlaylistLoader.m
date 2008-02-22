@@ -252,7 +252,7 @@
 		[pe	setURL:url];
 		[pe setIndex:[NSNumber numberWithInt:(index+i)]];
 		[pe setTitle:[[url path] lastPathComponent]];
-		
+		[pe setQueuePosition:-1];
 		[entries addObject:pe];
 
 		[pe release];

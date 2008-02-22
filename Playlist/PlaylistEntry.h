@@ -21,6 +21,7 @@ typedef enum {
 	NSNumber *shuffleIndex;
 	NSNumber *status;
 	NSString *statusMessage;
+	int queuePosition;
 	
 	NSURL *URL;
 	
@@ -53,8 +54,8 @@ typedef enum {
 @property(retain) NSNumber *index;
 @property(retain) NSNumber *shuffleIndex;
 @property(retain) NSNumber *status;
-@property(retain) NSString *statusMessage;;
-
+@property(retain) NSString *statusMessage;
+@property int queuePosition;
 @property(retain) NSURL *URL;
 
 @property(retain) NSString *artist;

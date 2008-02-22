@@ -14,4 +14,8 @@ Repeat Album isn't implemented.
 Menu items do not transform into "Hide Spotlight Panel" and
 "Hide File Drawer" when they are active.
 
-I anticipate that status should be flag based so statuses are not mutually exclusive. 
+I anticipate that status should be flag based so statuses are not mutually exclusive.
+
+Right click menu item should gray out when not applicable.
+
+Issues with queueing the same song multiple times

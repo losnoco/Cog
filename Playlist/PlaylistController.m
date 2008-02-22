@@ -399,7 +399,8 @@
 		for (i = 0; i < [queueList count]; i++)
 		{
 			PlaylistEntry *queueItem = [queueList objectAtIndex:i];
-			[queueItem setStatusMessage:[NSString stringWithFormat:@"Queued: %i", i+1]];
+			[queueItem setQueuePosition: i+1];
+			[queueItem setStatusMessage:[NSString stringWithFormat:@"Queued: %i", queueItem.queuePosition]];
 		}
 		
 		return pe;
@@ -431,7 +432,7 @@
 				if ([pe album] == nil)
 					i--;
 				else
-					i = [(PlaylistEntry *)[[filtered objectAtIndex:0] index] intValue];
+					i = [(NSNumber *)[[filtered objectAtIndex:0] index] intValue];
 			}
 			
 		}
@@ -649,6 +650,7 @@
 	{
 		[queueItem setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
 		[queueItem setStatusMessage:nil];
+		[queueItem setQueuePosition:-1];
 	}
 
 	[queueList removeAllObjects];
@@ -660,10 +662,27 @@
 	for (PlaylistEntry *queueItem in [self selectedObjects])
 	{
 		[queueItem setStatus: [NSNumber numberWithInteger:kCogEntryQueued]];
-		[queueItem setStatusMessage: [NSString stringWithFormat:@"Queued: %i", [queueList count] + 1]];
+		[queueItem setQueuePosition: [queueList count]+1];
+		[queueItem setStatusMessage: [NSString stringWithFormat:@"Queued: %i", queueItem.queuePosition]];
 		
 		[queueList addObject:queueItem];
 	}
 }
+
+- (IBAction)removeFromQueue:(id)sender
+{
+	for (PlaylistEntry *queueItem in [self selectedObjects])
+	{
+		// temporary hack until Remove from Queue menu item gets validation.
+		if (queueItem.queuePosition < 0)
+			break;
+		
+		[queueItem setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
+		[queueItem setStatusMessage:nil];
+		[queueList removeObjectAtIndex:queueItem.queuePosition - 1];
+	}
+	
+}
+
 
 @end

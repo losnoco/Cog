@@ -216,6 +216,18 @@
 		[queueMenuItem release];
 		addedItems++;
 		
+		NSMenuItem *queueRemoveMenuItem = [NSMenuItem alloc];
+		NSString *retitle = [NSString
+						   stringWithFormat:@"Remove from Queue"];
+		[queueRemoveMenuItem initWithTitle:retitle
+							  action:@selector(removeFromQueue:)
+					   keyEquivalent:@""];
+		queueRemoveMenuItem.target = playlistController;
+		[tableViewMenu insertItem:queueRemoveMenuItem atIndex:1];
+		[queueRemoveMenuItem release];
+		addedItems++;
+		
+		
         if(addedItems)
         {
             // add a separator in the right place
@@ -225,7 +237,6 @@
 	
 	return [tableViewMenu autorelease];
 }
-
 
 - (void)keyDown:(NSEvent *)e
 {

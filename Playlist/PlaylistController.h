@@ -92,6 +92,7 @@ typedef enum {
 
 // queue methods
 - (IBAction)addToQueue:(id)sender;
+- (IBAction)removeFromQueue:(id)sender;
 - (IBAction)emptyQueueList:(id)sender;
 - (NSMutableArray *)queueList;
 

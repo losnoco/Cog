@@ -16,6 +16,7 @@
 @synthesize shuffleIndex;
 @synthesize status;
 @synthesize statusMessage;
+@synthesize queuePosition;
 
 @synthesize URL;
 
