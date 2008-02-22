@@ -645,6 +645,12 @@
 
 - (IBAction)emptyQueueList:(id)sender
 {
+	for (PlaylistEntry *queueItem in queueList)
+	{
+		[queueItem setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
+		[queueItem setStatusMessage:nil];
+	}
+
 	[queueList removeAllObjects];
 }
 
