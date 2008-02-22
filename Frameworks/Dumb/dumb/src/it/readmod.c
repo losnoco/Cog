@@ -547,9 +547,7 @@ static DUMB_IT_SIGDATA *it_mod_load_sigdata(DUMBFILE *f)
 	/* And finally, the sample data */
 	for (i = 0; i < sigdata->n_samples; i++) {
 		if (it_mod_read_sample_data(&sigdata->sample[i], f)) {
-			_dumb_it_unload_sigdata(sigdata);
-			dumbfile_close(f);
-			return NULL;
+			continue;
 		}
 	}
 
