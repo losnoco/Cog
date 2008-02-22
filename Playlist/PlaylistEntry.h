@@ -8,10 +8,19 @@
 
 #import <Cocoa/Cocoa.h>
 
+typedef enum {
+	kCogEntryNormal = 0,
+	kCogEntryPlaying,
+	kCogEntryError,
+	kCogEntryQueued,
+	kCogEntryRemoved 
+} PlaylistEntryStatus;
+
 @interface PlaylistEntry : NSObject {
 	NSNumber *index;
 	NSNumber *shuffleIndex;
-	NSNumber *current;
+	NSNumber *status;
+	NSString *statusMessage;
 	
 	NSURL *URL;
 	
@@ -43,7 +52,8 @@
 
 @property(retain) NSNumber *index;
 @property(retain) NSNumber *shuffleIndex;
-@property(retain) NSNumber *current;
+@property(retain) NSNumber *status;
+@property(retain) NSString *statusMessage;;
 
 @property(retain) NSURL *URL;
 

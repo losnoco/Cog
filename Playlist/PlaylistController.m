@@ -12,6 +12,8 @@
 #import "Shuffle.h"
 #import "SpotlightWindowController.h"
 #import "RepeatTransformers.h"
+#import "StatusImageTransformer.h"
+
 #import "CogAudio/AudioPlayer.h"
 
 @implementation PlaylistController
@@ -35,9 +37,13 @@
     [NSValueTransformer setValueTransformer:repeatAllTransformer
                                     forName:@"RepeatAllTransformer"];
 
-	NSValueTransformer *repeatModeImageTransformer = [[[RepeatModeImageTransformer alloc] init]autorelease];
+	NSValueTransformer *repeatModeImageTransformer = [[[RepeatModeImageTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:repeatModeImageTransformer
                                     forName:@"RepeatModeImageTransformer"];
+
+	NSValueTransformer *statusImageTransformer = [[[StatusImageTransformer alloc] init] autorelease];
+    [NSValueTransformer setValueTransformer:statusImageTransformer
+                                    forName:@"StatusImageTransformer"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -68,6 +74,12 @@
 		[self resetShuffleList];
 
 	[self updateIndexesFromRow:0];
+}
+
+- (NSString *)tableView:(NSTableView *)tv toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)tc row:(int)row mouseLocation:(NSPoint)mouseLocation
+{
+	NSLog(@"GETTING STATUS FOR ROW: %i: %@!", row, [[[self arrangedObjects] objectAtIndex:row] statusMessage]);
+	return [[[self arrangedObjects] objectAtIndex:row] statusMessage];
 }
 
 -(void)moveObjectsFromArrangedObjectIndexes:(NSArray *) sources toIndexes:(NSArray *)destinations
@@ -380,6 +392,16 @@
 		
 		pe = [queueList objectAtIndex:0];
 		[queueList removeObjectAtIndex:0];
+		[pe setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
+		[pe setStatusMessage:nil];
+		
+		int i;
+		for (i = 0; i < [queueList count]; i++)
+		{
+			PlaylistEntry *queueItem = [queueList objectAtIndex:i];
+			[queueItem setStatusMessage:[NSString stringWithFormat:@"Queued: %i", i+1]];
+		}
+		
 		return pe;
 	}
 	
@@ -541,9 +563,12 @@
 
 - (void)setCurrentEntry:(PlaylistEntry *)pe
 {
-	[currentEntry setCurrent:[NSNumber numberWithBool:NO]];
+	[currentEntry setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
+	[currentEntry setStatusMessage:nil];
 	
-	[pe setCurrent:[NSNumber numberWithBool:YES]];
+	[pe setStatus:[NSNumber numberWithInteger:kCogEntryPlaying]];
+	[pe setStatusMessage:@"Playing..."];
+	
 	[tableView scrollRowToVisible:[[pe index] intValue]];
 	
 	[pe retain];
@@ -627,7 +652,12 @@
 - (IBAction)addToQueue:(id)sender
 {
 	for (PlaylistEntry *queueItem in [self selectedObjects])
+	{
+		[queueItem setStatus: [NSNumber numberWithInteger:kCogEntryQueued]];
+		[queueItem setStatusMessage: [NSString stringWithFormat:@"Queued: %i", [queueList count] + 1]];
+		
 		[queueList addObject:queueItem];
+	}
 }
 
 @end

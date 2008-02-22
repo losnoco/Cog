@@ -14,5 +14,4 @@ Repeat Album isn't implemented.
 Menu items do not transform into "Hide Spotlight Panel" and
 "Hide File Drawer" when they are active.
 
-mp3 bitrate is a tad off.
-
+I anticipate that status should be flag based so statuses are not mutually exclusive. 

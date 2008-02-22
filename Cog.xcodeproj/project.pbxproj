@@ -10,6 +10,7 @@
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
 		170680630B950158006BA573 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		170680840B950164006BA573 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
+		170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */; };
 		171192BD0D691ED600FD76C5 /* PathWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 171192BC0D691ED600FD76C5 /* PathWatcher.m */; };
 		171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57D90C091F2B00F6AFAF /* flac.icns */; };
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
@@ -474,6 +475,8 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1705F1420B8BCB0C00C8B40D /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/Help; sourceTree = "<group>"; };
 		170680620B950158006BA573 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = ThirdParty/Frameworks/Growl.framework; sourceTree = "<group>"; };
+		170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusImageTransformer.h; sourceTree = "<group>"; };
+		170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusImageTransformer.m; sourceTree = "<group>"; };
 		171192BB0D691ED600FD76C5 /* PathWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathWatcher.h; sourceTree = "<group>"; };
 		171192BC0D691ED600FD76C5 /* PathWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathWatcher.m; sourceTree = "<group>"; };
 		171B57D90C091F2B00F6AFAF /* flac.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = flac.icns; sourceTree = "<group>"; };
@@ -1211,6 +1214,8 @@
 				173428F40D5FB1C400E8D854 /* EntriesController.m */,
 				17A8F6350D6A7B0F0095DA13 /* RepeatTransformers.h */,
 				17A8F6360D6A7B0F0095DA13 /* RepeatTransformers.m */,
+				170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */,
+				170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */,
 			);
 			path = Playlist;
 			sourceTree = "<group>";
@@ -1674,6 +1679,7 @@
 				56AE86C10D6901BC00B0F89B /* FontSizetoLineHeightTransformer.m in Sources */,
 				171192BD0D691ED600FD76C5 /* PathWatcher.m in Sources */,
 				17A8F6370D6A7B0F0095DA13 /* RepeatTransformers.m in Sources */,
+				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

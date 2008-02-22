@@ -36,10 +36,12 @@
 	for(NSTableColumn *col in [self tableColumns]) {
         [[col dataCell] setControlSize:s];
         [[col dataCell] setFont:f];
-        [col        bind:@"fontSize" 
-                toObject:[NSUserDefaultsController sharedUserDefaultsController] 
-             withKeyPath:@"values.fontSize" 
-                 options:nil];
+		if ([[col dataCell] respondsToSelector:@selector(setFontSize:)]) {
+			[col        bind:@"fontSize" 
+					toObject:[NSUserDefaultsController sharedUserDefaultsController] 
+				 withKeyPath:@"values.fontSize" 
+					 options:nil];
+		}
 	}
 
 	NSTableHeaderView *currentTableHeaderView = [self headerView];

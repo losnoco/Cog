@@ -14,7 +14,8 @@
 
 @synthesize index;
 @synthesize shuffleIndex;
-@synthesize current;
+@synthesize status;
+@synthesize statusMessage;
 
 @synthesize URL;
 
