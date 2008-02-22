@@ -66,9 +66,13 @@
 - (IBAction)playPauseResume:(id)sender
 {
 	if (playbackStatus == kCogStatusStopped)
+	{
 		[self play:self];
+	}
 	else
+	{
 		[self pauseResume:self];
+	}
 }
 
 - (IBAction)pauseResume:(id)sender
@@ -123,8 +127,6 @@
 	int clickedSegment = [sender selectedSegment];
 	if (clickedSegment == 0) //Previous
 	{
-		[sender setSelected:YES forSegment:0];
-		[sender setSelected:YES forSegment:1];
 		[self prev:sender];
 	}
 	else if (clickedSegment == 1) //Play
@@ -150,12 +152,15 @@
 {
 	if (playbackStatus != kCogStatusStopped)
 		[self stop:self];
-	
-	[playlistController setCurrentEntry:pe];
 
-	[positionSlider setDoubleValue:0.0];
+	NSLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
+	[playlistController setCurrentEntry:pe];
 	
+	[positionSlider setDoubleValue:0.0];
 	[self updateTimeField:0.0f];
+
+	if (pe == nil)
+		return;
 	
 	[audioPlayer play:[pe URL] withUserInfo:pe];
 	
@@ -554,11 +559,9 @@
 	}
 	
 	if (status == kCogStatusStopped) {
-		[positionSlider setEnabled:NO];
+		[playlistController setCurrentEntry:nil];
 	}
-	else {
-		[positionSlider setEnabled:[[[playlistController currentEntry] seekable] boolValue]];
-	}
+	
 	
 	playbackStatus = status;
 }

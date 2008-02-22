@@ -9,8 +9,8 @@
 
 enum
 {
-	kCogStatusPaused = 0,
-	kCogStatusStopped,
+	kCogStatusStopped = 0,
+	kCogStatusPaused,
 	kCogStatusPlaying,
 	kCogStatusFading,
 //	kCogStatusEndOfFile,

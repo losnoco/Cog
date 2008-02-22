@@ -692,15 +692,15 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
 				177042960B8BC53600B86321 /* Application */,
-				1766C68D0B911DF1004A7AE4 /* AudioScrobbler */,
+				8E75752A09F31D5A0080F1EE /* Playlist */,
 				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
 				17211A5E0D68B79700911CA9 /* FileTreeWindow */,
 				8E75752309F31D5A0080F1EE /* Feedback */,
-				8E75752A09F31D5A0080F1EE /* Playlist */,
-				177EBF770B8BC2A70000BC8C /* ThirdParty */,
+				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
+				1766C68D0B911DF1004A7AE4 /* AudioScrobbler */,
 				177EC0110B8BC2CF0000BC8C /* Utils */,
+				177EBF770B8BC2A70000BC8C /* ThirdParty */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
