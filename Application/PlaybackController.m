@@ -584,6 +584,9 @@
 	if (action == @selector(stop:) && (playbackStatus == kCogStatusStopped))
 		return NO;
 	
+	if (action == @selector(fade:) && (playbackStatus == kCogStatusStopped))
+		return NO;
+	
 	return YES;
 }
 
