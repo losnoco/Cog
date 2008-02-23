@@ -44,20 +44,20 @@
 
 - (void)setProperties:(NSDictionary *)dict
 {
-	[self setTotalFrames:	[dict objectForKey:@"totalFrames"	]];
-	[self setBitrate:		[dict objectForKey:@"bitrate"		]];
-	[self setChannels:		[dict objectForKey:@"channels"		]];
-	[self setBitsPerSample:	[dict objectForKey:@"bitsPerSample" ]];
-	[self setSampleRate:	[dict objectForKey:@"sampleRate"	]];
-	[self setSeekable:		[dict objectForKey:@"seekable"		]];
+	[self setTotalFrames:	[[dict objectForKey:@"totalFrames"	] longLongValue]];
+	[self setBitrate:		[[dict objectForKey:@"bitrate"		] intValue]];
+	[self setChannels:		[[dict objectForKey:@"channels"		] intValue]];
+	[self setBitsPerSample:	[[dict objectForKey:@"bitsPerSample" ] intValue]];
+	[self setSampleRate:	[[dict objectForKey:@"sampleRate"	] floatValue]];
+	[self setSeekable:		[[dict objectForKey:@"seekable"		] boolValue]];
 }
 
 - (void)readPropertiesThread
 {
 	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:self.URL];
 	if (!properties) {
-		[self setStatus:[NSNumber numberWithInteger:kCogEntryError]];
-		[self setStatusMessage:@"Failed to read properties!"];
+		self.status = kCogEntryError;
+		self.statusMessage = @"Failed to read properties!";
 
 		return;
 	}
@@ -80,7 +80,7 @@
 	[self setAlbum:	[m objectForKey:@"album"	]];
 	[self setGenre:	[m objectForKey:@"genre"	]];
 	[self setYear:	[m objectForKey:@"year"		]];
-	[self setTrack:	[m objectForKey:@"track"	]];
+	[self setTrack:	[[m objectForKey:@"track"	] intValue]];
 }	
 
 - (void)readMetadataThread
@@ -105,9 +105,9 @@
 	}
 }
 
-- (NSNumber *)length
+- (double)length
 {
-	return [NSNumber numberWithDouble:([self.totalFrames longValue] / [self.sampleRate floatValue])];
+	return ((double)self.totalFrames / self.sampleRate);
 }
 
 - (NSString *)path

@@ -36,9 +36,9 @@ typedef enum {
 	
 	BOOL shuffle;
 	RepeatMode repeat;
-	
-	int selectedRow;
 }
+
+@property(retain) PlaylistEntry *currentEntry;
 
 //Private Methods
 - (void)updateIndexesFromRow:(int) row;
@@ -77,9 +77,6 @@ typedef enum {
 - (NSString *)totalTimeDisplay;
 
 //FUN PLAYLIST MANAGEMENT STUFF!
-- (id)currentEntry;
-- (void)setCurrentEntry:(PlaylistEntry *)pe;
-
 - (BOOL)next;
 - (BOOL)prev;
 

@@ -17,9 +17,9 @@ typedef enum {
 } PlaylistEntryStatus;
 
 @interface PlaylistEntry : NSObject {
-	NSNumber *index;
-	NSNumber *shuffleIndex;
-	NSNumber *status;
+	int index;
+	int shuffleIndex;
+	PlaylistEntryStatus status;
 	NSString *statusMessage;
 	int queuePosition;
 	
@@ -30,15 +30,15 @@ typedef enum {
 	NSString *title;
 	NSString *genre;
 	NSString *year;
-	NSNumber *track;
+	int track;
 	
-	NSNumber *totalFrames;
-	NSNumber *bitrate;
-	NSNumber *channels;
-	NSNumber *bitsPerSample;
-	NSNumber *sampleRate;
+	long long totalFrames;
+	int bitrate;
+	int channels;
+	int bitsPerSample;
+	float sampleRate;
 	
-	NSNumber *seekable;
+	BOOL seekable;
 }
 
 - (void)setMetadata: (NSDictionary *)m;
@@ -47,13 +47,13 @@ typedef enum {
 - (void)readPropertiesThread;
 
 @property(readonly) NSString *display;
-@property(readonly) NSNumber *length;
+@property(readonly) double length;
 @property(readonly) NSString *path;
 @property(readonly) NSString *filename;
 
-@property(retain) NSNumber *index;
-@property(retain) NSNumber *shuffleIndex;
-@property(retain) NSNumber *status;
+@property int index;
+@property int shuffleIndex;
+@property PlaylistEntryStatus status;
 @property(retain) NSString *statusMessage;
 @property int queuePosition;
 @property(retain) NSURL *URL;
@@ -63,14 +63,14 @@ typedef enum {
 @property(retain) NSString *title;
 @property(retain) NSString *genre;
 @property(retain) NSString *year;
-@property(retain) NSNumber *track;
+@property int track;
 
-@property(retain) NSNumber *totalFrames;
-@property(retain) NSNumber *bitrate;
-@property(retain) NSNumber *channels;
-@property(retain) NSNumber *bitsPerSample;
-@property(retain) NSNumber *sampleRate;
+@property long long totalFrames;
+@property int bitrate;
+@property int channels;
+@property int bitsPerSample;
+@property float sampleRate;
 
-@property(retain) NSNumber *seekable;
+@property BOOL seekable;
 
 @end

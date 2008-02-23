@@ -18,6 +18,8 @@
 
 @implementation PlaylistController
 
+@synthesize currentEntry;
+
 #define SHUFFLE_HISTORY_SIZE 100
 
 + (void)initialize {
@@ -177,7 +179,7 @@
 	ldiv_t hoursAndMinutes;
 	
 	for (PlaylistEntry *pe in [self arrangedObjects]) {
-		tt += [[pe length] doubleValue];
+		tt += pe.length;
 	}
 	
 	int sec = (int)(tt);
@@ -206,7 +208,7 @@
 		PlaylistEntry *p;
 		p = [[self arrangedObjects] objectAtIndex:j];
 		
-		[p setIndex:[NSNumber numberWithInt:j]];
+		p.index = j;
 	}
 }
 
@@ -229,17 +231,17 @@
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
 	NSLog(@"Removing indexes: %@", indexes);
-	NSLog(@"Current index: %i", [[currentEntry index] intValue]);
+	NSLog(@"Current index: %i", currentEntry.index);
 
-	if ([[currentEntry index] intValue] >= 0 && [indexes containsIndex:[[currentEntry index] intValue]])
+	if (currentEntry.index >= 0 && [indexes containsIndex:currentEntry.index])
 	{
-		[currentEntry setIndex:[NSNumber numberWithInt:-[[currentEntry index] intValue] - 1]];
-		NSLog(@"Current removed: %i", [[currentEntry index] intValue]);
+		currentEntry.index = -currentEntry.index - 1;
+		NSLog(@"Current removed: %i", currentEntry.index);
 	}
 	
-	if ([[currentEntry index] intValue] < 0) //Need to update the negative index
+	if (currentEntry.index < 0) //Need to update the negative index
 	{
-		int i = -[[currentEntry index] intValue] - 1;
+		int i = -currentEntry.index - 1;
 		NSLog(@"I is %i", i);
 		int j;
 		for (j = i - 1; j >= 0; j--)
@@ -249,9 +251,8 @@
 				i--;
 			}
 		}
-		[currentEntry setIndex: [NSNumber numberWithInt:-i - 1]];
+		currentEntry.index = -i - 1;
 
-		NSLog(@"UPDATING INDEX: %@", [currentEntry index]);
 	}
 	
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
@@ -392,7 +393,7 @@
 		
 		pe = [queueList objectAtIndex:0];
 		[queueList removeObjectAtIndex:0];
-		[pe setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
+		pe.status = kCogEntryNormal;
 		[pe setStatusMessage:nil];
 		[pe setQueuePosition:-1];
 		
@@ -409,18 +410,18 @@
 	
 	if (shuffle == YES)
 	{
-		return [self shuffledEntryAtIndex:([[pe shuffleIndex] intValue] + 1)];
+		return [self shuffledEntryAtIndex:(pe.shuffleIndex + 1)];
 	}
 	else
 	{
 		int i;
-		if ([[pe index] intValue] < 0) //Was a current entry, now removed.
+		if (pe.index < 0) //Was a current entry, now removed.
 		{
-			i = -[[pe index] intValue] - 1;
+			i = -pe.index - 1;
 		}
 		else
 		{
-			i = [[pe index] intValue] + 1;
+			i = pe.index + 1;
 		}
 		
 		if (repeat == RepeatAlbum)
@@ -457,18 +458,18 @@
 	
 	if (shuffle == YES)
 	{
-		return [self shuffledEntryAtIndex:([[pe shuffleIndex] intValue] - 1)];
+		return [self shuffledEntryAtIndex:(pe.shuffleIndex - 1)];
 	}
 	else
 	{
 		int i;
-		if ([[pe index] intValue] < 0) //Was a current entry, now removed.
+		if (pe.index < 0) //Was a current entry, now removed.
 		{
-			i = -[[pe index] intValue] - 2;
+			i = -pe.index - 2;
 		}
 		else
 		{
-			i = [[pe index] intValue] - 1;
+			i = pe.index - 1;
 		}
 		
 		return [self entryAtIndex:i];
@@ -512,7 +513,7 @@
 	int i;
 	for (i = 0; i < [shuffleList count]; i++)
 	{
-		[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
+		[[shuffleList objectAtIndex:i] setShuffleIndex:i];
 	}
 }
 
@@ -526,7 +527,7 @@
 	int i;
 	for (i = ([shuffleList count] - [newList count]); i < [shuffleList count]; i++)
 	{
-		[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
+		[[shuffleList objectAtIndex:i] setShuffleIndex:i];
 	}
 }
 
@@ -536,7 +537,7 @@
 
 	[self addShuffledListToFront];
 
-	if (currentEntry && [[currentEntry index] intValue] >= 0)
+	if (currentEntry && currentEntry.index >= 0)
 	{
 		[shuffleList insertObject:currentEntry atIndex:0];
 		[currentEntry setShuffleIndex:0];
@@ -552,26 +553,21 @@
 				[shuffleList removeObjectAtIndex:i];
 			}
 			else {
-				[[shuffleList objectAtIndex:i] setShuffleIndex:[NSNumber numberWithInt:i]];
+				[[shuffleList objectAtIndex:i] setShuffleIndex: i];
 			}
 		}
 	}
 }
 
-- (id)currentEntry
-{
-	return currentEntry;
-}
-
 - (void)setCurrentEntry:(PlaylistEntry *)pe
 {
-	[currentEntry setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
+	currentEntry.status = kCogEntryNormal;
 	[currentEntry setStatusMessage:nil];
 	
-	[pe setStatus:[NSNumber numberWithInteger:kCogEntryPlaying]];
+	pe.status = kCogEntryPlaying;
 	[pe setStatusMessage:@"Playing..."];
 	
-	[tableView scrollRowToVisible:[[pe index] intValue]];
+	[tableView scrollRowToVisible:pe.index];
 	
 	[pe retain];
 	[currentEntry release];
@@ -649,7 +645,7 @@
 {
 	for (PlaylistEntry *queueItem in queueList)
 	{
-		[queueItem setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
+		queueItem.status = kCogEntryNormal;
 		[queueItem setStatusMessage:nil];
 		[queueItem setQueuePosition:-1];
 	}
@@ -662,7 +658,7 @@
 {
 	for (PlaylistEntry *queueItem in [self selectedObjects])
 	{
-		[queueItem setStatus: [NSNumber numberWithInteger:kCogEntryQueued]];
+		queueItem.status = kCogEntryQueued;
 		[queueItem setQueuePosition: [queueList count]+1];
 		[queueItem setStatusMessage: [NSString stringWithFormat:@"Queued: %i", queueItem.queuePosition]];
 		
@@ -678,7 +674,7 @@
 		if (queueItem.queuePosition < 0)
 			break;
 		
-		[queueItem setStatus:[NSNumber numberWithInteger:kCogEntryNormal]];
+		queueItem.status = kCogEntryNormal;
 		[queueItem setStatusMessage:nil];
 		[queueList removeObjectAtIndex:queueItem.queuePosition - 1];
 	}
