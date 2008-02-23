@@ -27,17 +27,6 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
 	musicOnlyPredicate = [[NSPredicate predicateWithFormat:
                         @"kMDItemContentTypeTree==\'public.audio\'"] retain];
-    
-    // Set the home directory as the default search directory
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString * homeDir = @"~";
-    homeDir = [homeDir stringByExpandingTildeInPath];
-    homeDir = [[NSURL fileURLWithPath:homeDir isDirectory:YES] absoluteString];
-    NSDictionary *searchDefault = 
-                        [NSDictionary dictionaryWithObject:homeDir
-                                                    forKey:@"spotlightSearchPath"];
-    [defaults registerDefaults:searchDefault];
-    
                                                     
     // Register value transformers
     NSValueTransformer *pausingQueryTransformer = [[[PausingQueryTransformer alloc]init]autorelease];
@@ -53,6 +42,19 @@ static NSPredicate * musicOnlyPredicate = nil;
     [NSValueTransformer setValueTransformer:stringToSearchScopeTransformer forName:@"StringToSearchScopeTransformer"];
 	
 	[NSMetadataQuery exposeBinding:@"searchScopes"];
+}
+
+- (void)registerDefaults
+{
+    // Set the home directory as the default search directory
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString * homeDir = @"~";
+    homeDir = [homeDir stringByExpandingTildeInPath];
+    homeDir = [[NSURL fileURLWithPath:homeDir isDirectory:YES] absoluteString];
+    NSDictionary *searchDefault = 
+                        [NSDictionary dictionaryWithObject:homeDir
+                                                    forKey:@"spotlightSearchPath"];
+    [defaults registerDefaults:searchDefault];
 }
 
 - (id)init
@@ -83,6 +85,8 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (void)awakeFromNib
 {
+	[self registerDefaults];
+
     // We want to bind the query's search scope to the user default that is
     // set from the NSPathControl.
     NSDictionary *bindOptions = 
