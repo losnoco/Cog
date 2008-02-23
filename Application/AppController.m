@@ -217,21 +217,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	return [key isEqualToString:@"currentEntry"] ||  [key isEqualToString:@"play"];
 }
 
-- (void)initShowColumn:(NSMenuItem *)showColumn withIdentifier:(NSString *)identifier
-{
-	id tc = [playlistView tableColumnWithIdentifier:identifier];
-
-	
-	if ([tc isHidden]) {
-		[showColumn setState:NSOffState];
-	}
-	else {
-		[showColumn setState:NSOnState];
-	}
-	
-	[showColumn setRepresentedObject: tc];
-}
-
 - (void)awakeFromNib
 {
 	[mainWindow setExcludedFromWindowsMenu:YES];
@@ -247,15 +232,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
 	[fileButton setToolTip:NSLocalizedString(@"FileButtonTooltip", @"")];
 	
-	[self initShowColumn: showIndexColumn	withIdentifier: @"index"];
-	[self initShowColumn: showTitleColumn	withIdentifier: @"title"];
-	[self initShowColumn: showArtistColumn	withIdentifier: @"artist"];
-	[self initShowColumn: showAlbumColumn	withIdentifier: @"album"];
-	[self initShowColumn: showGenreColumn	withIdentifier: @"genre"];
-	[self initShowColumn: showLengthColumn	withIdentifier: @"length"];
-	[self initShowColumn: showTrackColumn	withIdentifier: @"track"];
-	[self initShowColumn: showYearColumn	withIdentifier: @"year"];
-
 	[self registerHotKeys];
 	
 	[fileTreeWindowController init];

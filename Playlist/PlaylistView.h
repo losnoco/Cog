@@ -20,7 +20,6 @@
 
 - (IBAction)sortByPath:(id)sender;
 - (IBAction)shufflePlaylist:(id)sender;
-- (BOOL)validateMenuItem:(NSMenuItem *)item;
 	
 - (IBAction)toggleColumn:(id)sender;
 

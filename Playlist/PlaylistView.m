@@ -10,8 +10,6 @@
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 
-#import "PlaylistHeaderView.h"
-
 #import "IndexFormatter.h"
 #import "SecondsFormatter.h"
 #import "PlaylistEntry.h"
@@ -33,6 +31,7 @@
 	        toObject:[NSUserDefaultsController sharedUserDefaultsController]
 	     withKeyPath:@"values.fontSize"
              options:bindOptions];
+			 
 	for(NSTableColumn *col in [self tableColumns]) {
         [[col dataCell] setControlSize:s];
         [[col dataCell] setFont:f];
@@ -43,15 +42,6 @@
 					 options:nil];
 		}
 	}
-
-	NSTableHeaderView *currentTableHeaderView = [self headerView];
-	PlaylistHeaderView *customTableHeaderView = [[PlaylistHeaderView alloc] init];
-	
-	[customTableHeaderView setFrame:[currentTableHeaderView frame]];
-	[customTableHeaderView setBounds:[currentTableHeaderView bounds]];
-//	[self setColumnAutoresizingStyle:NSTableViewNoColumnAutoresizing];
-	
-	[self setHeaderView:customTableHeaderView];
 
 	//Set up formatters
 	NSFormatter *secondsFormatter = [[SecondsFormatter alloc] init];

@@ -12,25 +12,39 @@
 
 @implementation StatusImageTransformer
 
+@synthesize playImage;
+@synthesize queueImage;
+@synthesize errorImage;
+
 + (Class)transformedValueClass { return [NSImage class]; }
 + (BOOL)allowsReverseTransformation { return NO; }
 
+- (id)init
+{
+	self = [super init];
+	if (self)
+	{
+		self.playImage = [NSImage imageNamed:@"play"];
+		self.queueImage = [NSImage imageNamed:@"NSAddTemplate"];
+		self.errorImage = [NSImage imageNamed:@"NSStopProgressTemplate"];
+	}
+	
+	return self;
+}
+
 // Convert from string to RepeatMode
 - (id)transformedValue:(id)value {
-	NSLog(@"Transforming value: %@", value);
-	
     if (value == nil) return nil;
 
 	PlaylistEntryStatus status = [value integerValue];
-	NSLog(@"STATUS IS %i", status);
 	if (status == kCogEntryPlaying) {
-		return [NSImage imageNamed:@"play"];
+		return self.playImage;
 	}
 	else if (status == kCogEntryQueued) {
-		return [NSImage imageNamed:@"NSAddTemplate"];
+		return self.queueImage;
 	}
 	else if (status == kCogEntryError) {
-		return [NSImage imageNamed:@"NSStopProgressTemplate"];
+		return self.errorImage;
 	}
 
 	return nil;
