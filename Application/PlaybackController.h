@@ -38,6 +38,8 @@
 	AudioScrobbler *scrobbler;
  }
 
+@property int playbackStatus;
+
 - (IBAction)toggleShowTimeRemaining:(id)sender;
 - (IBAction)changeVolume:(id)sender;
 - (IBAction)volumeDown:(id)sender;
@@ -61,7 +63,7 @@
 - (void)seekForward:(double)sender;
 - (IBAction)eventSeekBackward:(id)sender;
 - (void)seekBackward:(double)amount;
-- (IBAction)fade:(id)sender withTime:(double)time;
+- (IBAction)fade:(id)sender;
 
 - (void)initDefaults;
 - (void)audioFadeDown:(NSTimer *)audioTimer;

@@ -11,6 +11,7 @@
 
 #define DEFAULT_SEEK 10
 
+@synthesize playbackStatus;
 
 - (id)init
 {
@@ -290,6 +291,7 @@
 		[audioPlayer setVolume:originalVolume];
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
 		[audioTimer invalidate];
+		playbackStatus = kCogStatusPaused;
 	}
 	
 }
@@ -313,12 +315,15 @@
 	{
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
 		[audioTimer invalidate];
+		playbackStatus = kCogStatusPlaying;
 	}
 	
 }
 
-- (IBAction)fade:(id)sender withTime:(double)time
+- (IBAction)fade:(id)sender
 {
+	double time = 0.1;
+	
 	// we can not allow multiple fade timers to be registered
 	if (playbackStatus == kCogStatusFading)
 		return;
@@ -351,7 +356,7 @@
 {
     BOOL found = NO;
 	
-	NSNumber *index = (NSNumber *)[[playlistController currentEntry] index];
+	int index = [[playlistController currentEntry] index];
 	NSString *origAlbum = [[playlistController currentEntry] album];
 	
 	int i;
@@ -361,10 +366,9 @@
 
 	for (i = 1; i < [[playlistController arrangedObjects] count]; i++)
 	{
-		pe = [playlistController entryAtIndex:[index intValue] + i];
-		if (pe == nil) {
+		pe = [playlistController entryAtIndex:index + i];
+		if (pe == nil) 
 			break;
-		}
 		
 		curAlbum = [pe album];
 
@@ -385,7 +389,7 @@
 
 	if (found)
 	{
-		[self playEntryAtIndex:i + [index intValue]];
+		[self playEntryAtIndex:i + index];
 	}
 }
 
@@ -394,7 +398,7 @@
 	BOOL found = NO;
 	BOOL foundAlbum = NO;
 	
-	NSNumber *index = (NSNumber *)[[playlistController currentEntry] index];
+	int index = [[playlistController currentEntry] index];
 	NSString *origAlbum = [[playlistController currentEntry] album];
 	NSString *curAlbum;
 	
@@ -404,10 +408,10 @@
 
 	for (i = 1; i < [[playlistController arrangedObjects] count]; i++)
 	{
-		pe = [playlistController entryAtIndex:[index intValue] - i];
-		if (pe == nil) {
+		pe = [playlistController entryAtIndex:index - i];
+		if (pe == nil) 
 			break;
-		}
+
 		curAlbum = [pe album];
 		if (curAlbum == nil)
 		{
@@ -437,7 +441,7 @@
 	{
 		if (foundAlbum == YES)
 			i--;
-		[self playEntryAtIndex:[index intValue] - i];
+		[self playEntryAtIndex:index - i];
 	}
 }
 
@@ -571,10 +575,10 @@
 {
 	SEL action = [menuItem action];
 	
-	if (action == @selector(seekBackward:) && (playbackStatus == kCogStatusStopped))
+	if (action == @selector(eventSeekBackward:) && (playbackStatus == kCogStatusStopped))
 		return NO;
 	
-	if (action == @selector(seekForward:) && (playbackStatus == kCogStatusStopped))
+	if (action == @selector(eventSeekForward:) && (playbackStatus == kCogStatusStopped))
 		return NO;
 	
 	if (action == @selector(stop:) && (playbackStatus == kCogStatusStopped))

@@ -685,5 +685,24 @@
 	}
 }
 
+-(BOOL)validateMenuItem:(NSMenuItem*)menuItem
+{
+	SEL action = [menuItem action];
+	
+	if (action == @selector(removeFromQueue:))
+	{
+		for (PlaylistEntry *q in [self selectedObjects])
+			if (q.queuePosition > 0)
+				return YES;
+
+		return NO;
+	}
+
+	if (action == @selector(emptyQueueList:) && ([queueList count] < 1))
+		return NO;
+	
+	return YES;
+}
+
 
 @end

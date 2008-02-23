@@ -14,6 +14,8 @@
 #import "SecondsFormatter.h"
 #import "PlaylistEntry.h"
 
+#import "CogAudio/Status.h"
+
 @implementation PlaylistView
 
 - (void)awakeFromNib
@@ -262,11 +264,6 @@
 	{ 
 		[playlistController clearFilterPredicate:self];
 	}
-	// shift+command+p - fade to pause
-	else if (modifiers == (NSCommandKeyMask | NSShiftKeyMask) && c == 0x70)
-	{
-		[playbackController fade:self withTime:0.1];
-	}
 	else
 	{
 		[super keyDown:e];
@@ -275,8 +272,8 @@
 
 - (IBAction)scrollToCurrentEntry:(id)sender
 {
-	[self scrollRowToVisible:[(NSNumber *)[[playlistController currentEntry] index] intValue]];
-	[self selectRow:[(NSNumber *)[[playlistController currentEntry] index] intValue] byExtendingSelection:NO];
+	[self scrollRowToVisible:[[playlistController currentEntry] index]];
+	[self selectRow:[[playlistController currentEntry] index] byExtendingSelection:NO];
 }
 
 - (IBAction)sortByPath:(id)sender
@@ -320,7 +317,10 @@
 		else
 			return NO;
 	}
-
+	
+	if (action == @selector(scrollToCurrentEntry:) && ([playbackController playbackStatus] == kCogStatusStopped))
+		return NO;
+	
 	return [super validateUserInterfaceItem:anItem];
 }
 
