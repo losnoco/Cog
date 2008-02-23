@@ -668,17 +668,21 @@
 
 - (IBAction)removeFromQueue:(id)sender
 {
+		
 	for (PlaylistEntry *queueItem in [self selectedObjects])
 	{
-		// temporary hack until Remove from Queue menu item gets validation.
-		if (queueItem.queuePosition < 0)
-			break;
-		
 		queueItem.status = kCogEntryNormal;
 		[queueItem setStatusMessage:nil];
-		[queueList removeObjectAtIndex:queueItem.queuePosition - 1];
+		[queueItem setQueuePosition:-1];
+		[queueList removeObject:queueItem];
 	}
-	
+
+	int i = 1;
+	for (PlaylistEntry *cur in queueList)
+	{
+		[cur setQueuePosition:i++];
+		[cur setStatusMessage:[NSString stringWithFormat:@"Queued: %i", cur.queuePosition]];
+	}
 }
 
 

@@ -195,6 +195,7 @@
             [artistMenuItem release];
             addedItems++;
         }
+
 		NSMenuItem *queueMenuItem = [NSMenuItem alloc];
 		NSString *title = [NSString
 						   stringWithFormat:@"Add to Queue (%d queued)", [[playlistController queueList] count]];
@@ -206,17 +207,19 @@
 		[queueMenuItem release];
 		addedItems++;
 		
-		NSMenuItem *queueRemoveMenuItem = [NSMenuItem alloc];
-		NSString *retitle = [NSString
-						   stringWithFormat:@"Remove from Queue"];
-		[queueRemoveMenuItem initWithTitle:retitle
-							  action:@selector(removeFromQueue:)
-					   keyEquivalent:@""];
-		queueRemoveMenuItem.target = playlistController;
-		[tableViewMenu insertItem:queueRemoveMenuItem atIndex:1];
-		[queueRemoveMenuItem release];
-		addedItems++;
-		
+		if (song.queuePosition > 0)
+		{
+			NSMenuItem *queueRemoveMenuItem = [NSMenuItem alloc];
+			NSString *retitle = [NSString
+								 stringWithFormat:@"Remove from Queue"];
+			[queueRemoveMenuItem initWithTitle:retitle
+										action:@selector(removeFromQueue:)
+								 keyEquivalent:@""];
+			queueRemoveMenuItem.target = playlistController;
+			[tableViewMenu insertItem:queueRemoveMenuItem atIndex:1];
+			[queueRemoveMenuItem release];
+			addedItems++;
+		}
 		
         if(addedItems)
         {
