@@ -27,10 +27,10 @@ typedef enum {
 	IBOutlet EntriesController *entriesController;
 	IBOutlet SpotlightWindowController *spotlightWindowController;
 
-	NSString *totalTimeDisplay;
-	
 	NSMutableArray *shuffleList;
 	NSMutableArray *queueList;
+	
+	NSString *totalTime;
 	
 	PlaylistEntry *currentEntry;
 	
@@ -39,9 +39,11 @@ typedef enum {
 }
 
 @property(retain) PlaylistEntry *currentEntry;
+@property(retain) NSString *totalTime;
 
 //Private Methods
 - (void)updateTotalTime;
+- (void)updatePlaylistIndexes;
 
 
 //PUBLIC METHODS
@@ -71,9 +73,6 @@ typedef enum {
 // Spotlight
 - (IBAction)searchByArtist:(id)sender;
 - (IBAction)searchByAlbum:(id)sender;
-
-- (void)setTotalTimeDisplay:(NSString *)ttd;
-- (NSString *)totalTimeDisplay;
 
 //FUN PLAYLIST MANAGEMENT STUFF!
 - (BOOL)next;

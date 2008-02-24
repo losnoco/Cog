@@ -19,8 +19,7 @@
 @implementation PlaylistController
 
 @synthesize currentEntry;
-
-#define SHUFFLE_HISTORY_SIZE 100
+@synthesize totalTime;
 
 + (void)initialize {
 	NSValueTransformer *repeatNoneTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatNone] autorelease];
@@ -78,6 +77,15 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+	if ([keyPath isEqualToString:@"arrangedObjects"])
+	{
+		[self updatePlaylistIndexes];
+		[self updateTotalTime];
+	}
+}
+
+- (void)updatePlaylistIndexes
+{
 	int i;
 	NSArray *arranged = [self arrangedObjects];
 	for (i = 0; i < [arranged count]; i++)
@@ -86,6 +94,22 @@
 		if (pe.index != i) //Make sure we don't get into some kind of crazy observing loop...
 			pe.index = i;
 	}
+}
+
+- (void)updateTotalTime
+{
+	double tt = 0;
+	ldiv_t hoursAndMinutes;
+	
+	for (PlaylistEntry *pe in [self arrangedObjects]) {
+		if (!isnan(pe.length))
+			tt += pe.length;
+	}
+	
+	int sec = (int)(tt);
+	hoursAndMinutes = ldiv(sec/60, 60);
+	
+	[self setTotalTime:[NSString stringWithFormat:@"%ld hours %ld minutes %d seconds", hoursAndMinutes.quot, hoursAndMinutes.rem, sec%60]];
 }
 
 - (void)tableView:(NSTableView *)tableView
@@ -191,39 +215,10 @@
 		[urls release];
 	}
 	
-	[self updateTotalTime];
-	
 	if (shuffle == YES)
 		[self resetShuffleList];
 	
 	return YES;
-}
-
-- (void)updateTotalTime
-{
-	double tt = 0;
-	ldiv_t hoursAndMinutes;
-	
-	for (PlaylistEntry *pe in [self arrangedObjects]) {
-		tt += pe.length;
-	}
-	
-	int sec = (int)(tt);
-	hoursAndMinutes = ldiv(sec/60, 60);
-	
-	[self setTotalTimeDisplay:[NSString stringWithFormat:@"%ld hours %ld minutes %d seconds", hoursAndMinutes.quot, hoursAndMinutes.rem, sec%60]];
-}
-
-- (void)setTotalTimeDisplay:(NSString *)ttd
-{
-	[ttd retain];
-	[totalTimeDisplay release];
-	totalTimeDisplay = ttd;
-}
-
-- (NSString *)totalTimeDisplay;
-{
-	return totalTimeDisplay;
 }
 
 - (NSUndoManager *)undoManager
@@ -235,8 +230,6 @@
 {
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 	
-	[self updateTotalTime];
-
 	if (shuffle == YES)
 		[self resetShuffleList];
 }
@@ -270,8 +263,6 @@
 	
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 	
-	[self updateTotalTime];
-
 	if (shuffle == YES)
 		[self resetShuffleList];
 }
