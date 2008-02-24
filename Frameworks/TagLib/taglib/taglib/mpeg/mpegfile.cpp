@@ -44,6 +44,9 @@ namespace TagLib {
 
     virtual String title() const
     {
+	  if (file->APETag() && !file->APETag()->title().isEmpty())
+		return file->APETag()->title();
+	
       if(file->ID3v2Tag() && !file->ID3v2Tag()->title().isEmpty())
         return file->ID3v2Tag()->title();
 
@@ -55,6 +58,9 @@ namespace TagLib {
 
     virtual String artist() const
     {
+	  if (file->APETag() && !file->APETag()->artist().isEmpty())
+		return file->APETag()->artist();
+	
       if(file->ID3v2Tag() && !file->ID3v2Tag()->artist().isEmpty())
         return file->ID3v2Tag()->artist();
 
@@ -66,6 +72,9 @@ namespace TagLib {
 
     virtual String album() const
     {
+	  if (file->APETag() && !file->APETag()->album().isEmpty())
+		return file->APETag()->album();
+	
       if(file->ID3v2Tag() && !file->ID3v2Tag()->album().isEmpty())
         return file->ID3v2Tag()->album();
 
@@ -77,6 +86,9 @@ namespace TagLib {
 
     virtual String comment() const
     {
+	  if (file->APETag() && !file->APETag()->comment().isEmpty())
+		return file->APETag()->comment();
+	
       if(file->ID3v2Tag() && !file->ID3v2Tag()->comment().isEmpty())
         return file->ID3v2Tag()->comment();
 
@@ -88,6 +100,9 @@ namespace TagLib {
 
     virtual String genre() const
     {
+	  if (file->APETag() && !file->APETag()->genre().isEmpty())
+		return file->APETag()->genre();
+	
       if(file->ID3v2Tag() && !file->ID3v2Tag()->genre().isEmpty())
         return file->ID3v2Tag()->genre();
 
@@ -99,6 +114,9 @@ namespace TagLib {
 
     virtual uint year() const
     {
+	  if (file->APETag() && !file->APETag()->year() > 0)
+		return file->APETag()->year();
+	
       if(file->ID3v2Tag() && file->ID3v2Tag()->year() > 0)
         return file->ID3v2Tag()->year();
 
@@ -110,6 +128,9 @@ namespace TagLib {
 
     virtual uint track() const
     {
+	  if (file->APETag() && !file->APETag()->track() > 0)
+		return file->APETag()->track();
+	
       if(file->ID3v2Tag() && file->ID3v2Tag()->track() > 0)
         return file->ID3v2Tag()->track();
 
