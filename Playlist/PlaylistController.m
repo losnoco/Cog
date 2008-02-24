@@ -84,25 +84,42 @@
 	return [[[self arrangedObjects] objectAtIndex:row] statusMessage];
 }
 
--(void)moveObjectsFromArrangedObjectIndexes:(NSArray *) sources toIndexes:(NSArray *)destinations
+-(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet*)indexSet
+										toIndex:(unsigned int)insertIndex
 {
-	[super moveObjectsFromArrangedObjectIndexes:sources toIndexes:destinations];
+	[super moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
 
-	NSUInteger firstIndex = (NSUInteger)-1;
-	NSUInteger i = 0;
+	NSUInteger lowerIndex = insertIndex;
+	NSUInteger index = insertIndex;
 	
-	for (i = 0; i < [sources count]; i++) {
-		NSUInteger source = [[sources objectAtIndex:i] unsignedIntegerValue];
-		NSUInteger dest = [[destinations objectAtIndex:i] unsignedIntegerValue];
-
-		if (source < firstIndex)
-			firstIndex = source;
-			
-		if (dest < firstIndex)
-			firstIndex = dest;
+	while (NSNotFound != lowerIndex) {
+		lowerIndex = [indexSet indexLessThanIndex:lowerIndex];
+		
+		if (lowerIndex != NSNotFound)
+			index = lowerIndex;
 	}
 	
-	[self updateIndexesFromRow:firstIndex];
+	[self updateIndexesFromRow:index];
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
+{
+	[super tableView:aTableView writeRowsWithIndexes:rowIndexes toPasteboard:pboard];
+
+	NSMutableArray *filenames = [NSMutableArray array];
+	NSInteger row;
+	for (row = [rowIndexes firstIndex];
+		 row <= [rowIndexes lastIndex];
+		 row = [rowIndexes indexGreaterThanIndex:row])
+	{
+		PlaylistEntry *song = [[self arrangedObjects] objectAtIndex:row];
+		[filenames addObject:[[song path] stringByExpandingTildeInPath]];
+	}
+
+	[pboard addTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:self];
+    [pboard setPropertyList:filenames forType:NSFilenamesPboardType];
+	
+	return YES;
 }
 
 - (BOOL)tableView:(NSTableView*)tv
@@ -110,14 +127,9 @@
 			  row:(int)row
 	dropOperation:(NSTableViewDropOperation)op
 {
-	[super tableView:tv acceptDrop:info row:row dropOperation:op];
-	
-	if ([info draggingSource] == tableView)
-	{
-		//DNDArrayController handles moving...
-
+	//Check if DNDArrayController handles it.
+	if ([super tableView:tv acceptDrop:info row:row dropOperation:op])
 		return YES;
-	}
 
 	if (row < 0)
 		row = 0;

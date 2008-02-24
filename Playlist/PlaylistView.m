@@ -324,4 +324,12 @@
 	return [super validateUserInterfaceItem:anItem];
 }
 
+- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
+{
+	if (isLocal)
+		return NSDragOperationNone;
+	else
+		return NSDragOperationCopy;
+}
+
 @end
