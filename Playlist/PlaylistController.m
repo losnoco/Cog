@@ -567,7 +567,7 @@
 	pe.status = kCogEntryPlaying;
 	[pe setStatusMessage:@"Playing..."];
 	
-	[tableView scrollRowToVisible:pe.index];
+	//[tableView scrollRowToVisible:pe.index];
 	
 	[pe retain];
 	[currentEntry release];
