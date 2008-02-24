@@ -180,7 +180,7 @@
                                   action:@selector(searchByAlbum:)
                            keyEquivalent:@""];
             albumMenuItem.target = playlistController;
-            [tableViewMenu insertItem:albumMenuItem atIndex:0];
+            [tableViewMenu insertItem:albumMenuItem atIndex:[tableViewMenu numberOfItems]];
             [albumMenuItem release];
             addedItems++;
         }
@@ -193,22 +193,12 @@
                                    action:@selector(searchByArtist:)
                             keyEquivalent:@""];
             artistMenuItem.target = playlistController;
-            [tableViewMenu insertItem:artistMenuItem atIndex:0];
+            [tableViewMenu insertItem:artistMenuItem atIndex:[tableViewMenu numberOfItems]];
             [artistMenuItem release];
             addedItems++;
         }
 
-		NSMenuItem *queueMenuItem = [NSMenuItem alloc];
-		NSString *title = [NSString
-						   stringWithFormat:@"Add to Queue (%d queued)", [[playlistController queueList] count]];
-		[queueMenuItem initWithTitle:title
-							  action:@selector(addToQueue:)
-					   keyEquivalent:@""];
-		queueMenuItem.target = playlistController;
-		[tableViewMenu insertItem:queueMenuItem atIndex:0];
-		[queueMenuItem release];
-		addedItems++;
-		
+
 		if (song.queuePosition > 0)
 		{
 			NSMenuItem *queueRemoveMenuItem = [NSMenuItem alloc];
@@ -220,13 +210,12 @@
 			queueRemoveMenuItem.target = playlistController;
 			[tableViewMenu insertItem:queueRemoveMenuItem atIndex:1];
 			[queueRemoveMenuItem release];
-			addedItems++;
 		}
 		
         if(addedItems)
         {
-            // add a separator in the right place
-            [tableViewMenu insertItem:[NSMenuItem separatorItem] atIndex:addedItems];
+            // add a separator in the right place - turned into a hack now
+            [tableViewMenu insertItem:[NSMenuItem separatorItem] atIndex:[tableViewMenu numberOfItems]-2];
         }
 	}
 	

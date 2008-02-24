@@ -660,6 +660,9 @@
 		
 		[queueList addObject:queueItem];
 	}
+	
+	for (PlaylistEntry *ap in queueList)
+		NSLog(@"hehe now: %d", ap.queuePosition);
 }
 
 - (IBAction)removeFromQueue:(id)sender
@@ -696,6 +699,23 @@
 
 	if (action == @selector(emptyQueueList:) && ([queueList count] < 1))
 		return NO;
+	
+	// if nothing is selected, gray out these
+	if ([[self selectedObjects] count] < 1)
+	{
+		
+		if (action == @selector(remove:))
+			return NO;
+	
+		if (action == @selector(addToQueue:))
+			return NO;
+
+		if (action == @selector(searchByArtist:))
+			return NO;
+
+		if (action == @selector(searchByAlbum:))
+			return NO;
+	}
 	
 	return YES;
 }
