@@ -41,7 +41,6 @@ typedef enum {
 @property(retain) PlaylistEntry *currentEntry;
 
 //Private Methods
-- (void)updateIndexesFromRow:(int) row;
 - (void)updateTotalTime;
 
 

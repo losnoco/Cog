@@ -39,6 +39,7 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
     if ([info draggingSource] == tv)
 		dragOp = NSDragOperationMove;
 	
+	NSLog(@"VALIDATING DROP!");
     // we want to put the object at, not over,
     // the current row (contrast NSTableViewDropOn) 
     [tv setDropRow:row dropOperation:NSTableViewDropAbove];
@@ -69,10 +70,11 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 			
 			[self setSelectedObjects:selected];
 			
+			NSLog(@"ACCEPTING DROP!");
 			return YES;
 		}
 	}
-	
+	NSLog(@"REJECTING DROP!");
 	return NO;
 }
 

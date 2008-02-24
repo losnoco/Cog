@@ -69,13 +69,30 @@
 	[super dealloc];
 }
 
+- (void)awakeFromNib
+{
+	[super awakeFromNib];
+
+	[self addObserver:self forKeyPath:@"arrangedObjects" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	int i;
+	NSArray *arranged = [self arrangedObjects];
+	for (i = 0; i < [arranged count]; i++)
+	{
+		PlaylistEntry *pe = [arranged objectAtIndex:i];
+		if (pe.index != i) //Make sure we don't get into some kind of crazy observing loop...
+			pe.index = i;
+	}
+}
+
 - (void)tableView:(NSTableView *)tableView
 		didClickTableColumn:(NSTableColumn *)tableColumn
 {
 	if (shuffle == YES)
 		[self resetShuffleList];
-
-	[self updateIndexesFromRow:0];
 }
 
 - (NSString *)tableView:(NSTableView *)tv toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)tc row:(int)row mouseLocation:(NSPoint)mouseLocation
@@ -98,8 +115,6 @@
 		if (lowerIndex != NSNotFound)
 			index = lowerIndex;
 	}
-	
-	[self updateIndexesFromRow:index];
 }
 
 - (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
@@ -176,7 +191,6 @@
 		[urls release];
 	}
 	
-	[self updateIndexesFromRow:row];
 	[self updateTotalTime];
 	
 	if (shuffle == YES)
@@ -212,18 +226,6 @@
 	return totalTimeDisplay;
 }
 
-- (void)updateIndexesFromRow:(int) row
-{
-	int j;
-	for (j = row; j < [[self arrangedObjects] count]; j++)
-	{
-		PlaylistEntry *p;
-		p = [[self arrangedObjects] objectAtIndex:j];
-		
-		p.index = j;
-	}
-}
-
 - (NSUndoManager *)undoManager
 {
 	return [entriesController undoManager];
@@ -233,7 +235,6 @@
 {
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 	
-	[self updateIndexesFromRow:[indexes firstIndex]];
 	[self updateTotalTime];
 
 	if (shuffle == YES)
@@ -269,7 +270,6 @@
 	
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 	
-	[self updateIndexesFromRow:[indexes firstIndex]];
 	[self updateTotalTime];
 
 	if (shuffle == YES)
@@ -292,7 +292,6 @@
 
 	[super setSortDescriptors:sortDescriptors];
 	[self rearrangeObjects];
-	[self updateIndexesFromRow:0];
 }
 		
 - (IBAction)sortByPath
@@ -305,8 +304,6 @@
 
 	if (shuffle == YES)
 		[self resetShuffleList];
-
-	[self updateIndexesFromRow:0];
 }
 
 - (IBAction)randomizeList
@@ -316,8 +313,6 @@
 	[self setContent:[Shuffle shuffleList:[self content]]];
 	if (shuffle == YES)
 		[self resetShuffleList];
-
-	[self updateIndexesFromRow:0];
 }
 
 - (IBAction)takeShuffleFromObject:(id)sender
@@ -622,8 +617,6 @@
 - (void)setFilterPredicate:(NSPredicate *)filterPredicate
 {
 	[super setFilterPredicate:filterPredicate];
-
-	[self updateIndexesFromRow:0];
 }
 
 - (IBAction)showEntryInFinder:(id)sender
