@@ -382,9 +382,6 @@
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe
 {
-	if (pe.status == kCogEntryStoppingAfterCurrent)
-		return nil;
-	
 	if (repeat == RepeatOne) {
 		return pe;
 	}
@@ -687,6 +684,14 @@
 	}
 }
 
+- (IBAction)stopAfterCurrent:(id)sender
+{
+	if (currentEntry.status != kCogEntryStoppingAfterCurrent)
+		currentEntry.status = kCogEntryStoppingAfterCurrent;
+	else
+		currentEntry.status = kCogEntryPlaying;
+}
+
 -(BOOL)validateMenuItem:(NSMenuItem*)menuItem
 {
 	SEL action = [menuItem action];
@@ -701,6 +706,9 @@
 	}
 
 	if (action == @selector(emptyQueueList:) && ([queueList count] < 1))
+		return NO;
+	
+	if (action == @selector(stopAfterCurrent:) && (currentEntry.status == kCogEntryNormal))
 		return NO;
 	
 	// if nothing is selected, gray out these
@@ -723,12 +731,5 @@
 	return YES;
 }
 
-- (IBAction)stopAfterCurrent:(id)sender
-{
-	if (currentEntry.status != kCogEntryStoppingAfterCurrent)
-		currentEntry.status = kCogEntryStoppingAfterCurrent;
-	else
-		currentEntry.status = kCogEntryPlaying;
-}
 
 @end

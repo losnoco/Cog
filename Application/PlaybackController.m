@@ -491,7 +491,12 @@
 - (void)audioPlayer:(AudioPlayer *)player requestNextStream:(id)userInfo
 {
 	PlaylistEntry *curEntry = (PlaylistEntry *)userInfo;
-	PlaylistEntry *pe = [playlistController getNextEntry:curEntry];
+	PlaylistEntry *pe;
+	
+	if (curEntry.status == kCogEntryStoppingAfterCurrent)
+		return;
+	else
+		pe = [playlistController getNextEntry:curEntry];
 
 	[player setNextStream:[pe URL] withUserInfo:pe];
 }
