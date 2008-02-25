@@ -13,7 +13,8 @@ typedef enum {
 	kCogEntryPlaying,
 	kCogEntryError,
 	kCogEntryQueued,
-	kCogEntryRemoved 
+	kCogEntryRemoved,
+	kCogEntryStoppingAfterCurrent,
 } PlaylistEntryStatus;
 
 @interface PlaylistEntry : NSObject {

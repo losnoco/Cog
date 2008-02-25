@@ -143,6 +143,7 @@
 		8E9A2E860BA78B500091081B /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2E840BA78B500091081B /* SecondsFormatter.m */; };
 		8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */; };
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
+		B09E93000D7316850064F138 /* stop_current.png in Resources */ = {isa = PBXBuildFile; fileRef = B09E92FF0D7316850064F138 /* stop_current.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -667,6 +668,7 @@
 		8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexFormatter.m; sourceTree = "<group>"; };
 		8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
+		B09E92FF0D7316850064F138 /* stop_current.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_current.png; path = Images/stop_current.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -853,6 +855,7 @@
 		177EC02D0B8BC2E60000BC8C /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				B09E92FF0D7316850064F138 /* stop_current.png */,
 				17A8F7190D6A89730095DA13 /* repeat_album.png */,
 				17A8F6820D6A7FCA0095DA13 /* repeat_all.png */,
 				17A8F6830D6A7FCA0095DA13 /* repeat_none.png */,
@@ -1612,6 +1615,7 @@
 				17A8F6860D6A7FCA0095DA13 /* repeat_none.png in Resources */,
 				17A8F6870D6A7FCA0095DA13 /* repeat_one.png in Resources */,
 				17A8F71A0D6A89730095DA13 /* repeat_album.png in Resources */,
+				B09E93000D7316850064F138 /* stop_current.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
