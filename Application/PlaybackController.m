@@ -494,7 +494,7 @@
 	PlaylistEntry *pe;
 	
 	if (curEntry.status == kCogEntryStoppingAfterCurrent)
-		return;
+		pe = nil;
 	else
 		pe = [playlistController getNextEntry:curEntry];
 
