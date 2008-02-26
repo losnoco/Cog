@@ -1,0 +1,392 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+		B09E94880D74834B0064F138 /* allcodecs.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94670D74834B0064F138 /* allcodecs.c */; };
+		B09E94890D74834B0064F138 /* allformats.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94680D74834B0064F138 /* allformats.c */; };
+		B09E948A0D74834B0064F138 /* asf.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94690D74834B0064F138 /* asf.c */; };
+		B09E948B0D74834B0064F138 /* avcodec.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E946A0D74834B0064F138 /* avcodec.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E948C0D74834B0064F138 /* avformat.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E946B0D74834B0064F138 /* avformat.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E948D0D74834B0064F138 /* avi.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E946C0D74834B0064F138 /* avi.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E948E0D74834B0064F138 /* avio.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E946D0D74834B0064F138 /* avio.c */; };
+		B09E948F0D74834B0064F138 /* avio.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E946E0D74834B0064F138 /* avio.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E94900D74834B0064F138 /* aviobuf.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E946F0D74834B0064F138 /* aviobuf.c */; };
+		B09E94910D74834B0064F138 /* bswap.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E94700D74834B0064F138 /* bswap.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E94920D74834B0064F138 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94710D74834B0064F138 /* common.c */; };
+		B09E94930D74834B0064F138 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E94720D74834B0064F138 /* common.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E94940D74834B0064F138 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E94730D74834B0064F138 /* config.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E94980D74834B0064F138 /* cutils.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94770D74834B0064F138 /* cutils.c */; };
+		B09E94990D74834B0064F138 /* dsputil.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94780D74834B0064F138 /* dsputil.c */; };
+		B09E949A0D74834B0064F138 /* dsputil.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E94790D74834B0064F138 /* dsputil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E949B0D74834B0064F138 /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E947A0D74834B0064F138 /* fft.c */; };
+		B09E949C0D74834B0064F138 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E947B0D74834B0064F138 /* file.c */; };
+		B09E949D0D74834B0064F138 /* futils.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E947C0D74834B0064F138 /* futils.c */; };
+		B09E949F0D74834B0064F138 /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E947E0D74834B0064F138 /* mdct.c */; };
+		B09E94A10D74834B0064F138 /* os_support.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94800D74834B0064F138 /* os_support.c */; };
+		B09E94A20D74834B0064F138 /* os_support.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E94810D74834B0064F138 /* os_support.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E94A30D74834B0064F138 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94820D74834B0064F138 /* parser.c */; };
+		B09E94A40D74834B0064F138 /* simple_idct.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94830D74834B0064F138 /* simple_idct.c */; };
+		B09E94A50D74834B0064F138 /* simple_idct.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E94840D74834B0064F138 /* simple_idct.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E94A60D74834B0064F138 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94850D74834B0064F138 /* utils.c */; };
+		B09E94A70D74834B0064F138 /* wmadata.h in Headers */ = {isa = PBXBuildFile; fileRef = B09E94860D74834B0064F138 /* wmadata.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B09E94A80D74834B0064F138 /* wmadec.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94870D74834B0064F138 /* wmadec.c */; };
+		B09E94F00D748DEE0064F138 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B09E94EF0D748DEE0064F138 /* libiconv.dylib */; };
+		B09E94F80D748EB80064F138 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B09E94F70D748EB80064F138 /* mem.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		32DBCF5E0370ADEE00C91783 /* WMA_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMA_Prefix.pch; sourceTree = "<group>"; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DC2EF5B0486A6940098B216 /* WMA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WMA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B09E94670D74834B0064F138 /* allcodecs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = allcodecs.c; sourceTree = "<group>"; };
+		B09E94680D74834B0064F138 /* allformats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = allformats.c; sourceTree = "<group>"; };
+		B09E94690D74834B0064F138 /* asf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = asf.c; sourceTree = "<group>"; };
+		B09E946A0D74834B0064F138 /* avcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avcodec.h; sourceTree = "<group>"; };
+		B09E946B0D74834B0064F138 /* avformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avformat.h; sourceTree = "<group>"; };
+		B09E946C0D74834B0064F138 /* avi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avi.h; sourceTree = "<group>"; };
+		B09E946D0D74834B0064F138 /* avio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = avio.c; sourceTree = "<group>"; };
+		B09E946E0D74834B0064F138 /* avio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avio.h; sourceTree = "<group>"; };
+		B09E946F0D74834B0064F138 /* aviobuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aviobuf.c; sourceTree = "<group>"; };
+		B09E94700D74834B0064F138 /* bswap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bswap.h; sourceTree = "<group>"; };
+		B09E94710D74834B0064F138 /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
+		B09E94720D74834B0064F138 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		B09E94730D74834B0064F138 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		B09E94770D74834B0064F138 /* cutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cutils.c; sourceTree = "<group>"; };
+		B09E94780D74834B0064F138 /* dsputil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsputil.c; sourceTree = "<group>"; };
+		B09E94790D74834B0064F138 /* dsputil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsputil.h; sourceTree = "<group>"; };
+		B09E947A0D74834B0064F138 /* fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft.c; sourceTree = "<group>"; };
+		B09E947B0D74834B0064F138 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
+		B09E947C0D74834B0064F138 /* futils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = futils.c; sourceTree = "<group>"; };
+		B09E947E0D74834B0064F138 /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdct.c; sourceTree = "<group>"; };
+		B09E94800D74834B0064F138 /* os_support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = os_support.c; sourceTree = "<group>"; };
+		B09E94810D74834B0064F138 /* os_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os_support.h; sourceTree = "<group>"; };
+		B09E94820D74834B0064F138 /* parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parser.c; sourceTree = "<group>"; };
+		B09E94830D74834B0064F138 /* simple_idct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = simple_idct.c; sourceTree = "<group>"; };
+		B09E94840D74834B0064F138 /* simple_idct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simple_idct.h; sourceTree = "<group>"; };
+		B09E94850D74834B0064F138 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		B09E94860D74834B0064F138 /* wmadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wmadata.h; sourceTree = "<group>"; };
+		B09E94870D74834B0064F138 /* wmadec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wmadec.c; sourceTree = "<group>"; };
+		B09E94EF0D748DEE0064F138 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = /usr/lib/libiconv.dylib; sourceTree = "<absolute>"; };
+		B09E94F70D748EB80064F138 /* mem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mem.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B09E94F00D748DEE0064F138 /* libiconv.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5B0486A6940098B216 /* WMA.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* WMA */ = {
+			isa = PBXGroup;
+			children = (
+				B09E94EF0D748DEE0064F138 /* libiconv.dylib */,
+				B09E94660D74834B0064F138 /* ffmpeg-strip-wma */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = WMA;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */,
+				1058C7B2FEA5585E11CA2CBB /* Other Frameworks */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5A0486A6940098B216 /* Info.plist */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32DBCF5E0370ADEE00C91783 /* WMA_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		B09E94660D74834B0064F138 /* ffmpeg-strip-wma */ = {
+			isa = PBXGroup;
+			children = (
+				B09E94F70D748EB80064F138 /* mem.c */,
+				B09E946D0D74834B0064F138 /* avio.c */,
+				B09E94670D74834B0064F138 /* allcodecs.c */,
+				B09E94680D74834B0064F138 /* allformats.c */,
+				B09E94690D74834B0064F138 /* asf.c */,
+				B09E946A0D74834B0064F138 /* avcodec.h */,
+				B09E946B0D74834B0064F138 /* avformat.h */,
+				B09E946C0D74834B0064F138 /* avi.h */,
+				B09E946E0D74834B0064F138 /* avio.h */,
+				B09E946F0D74834B0064F138 /* aviobuf.c */,
+				B09E94700D74834B0064F138 /* bswap.h */,
+				B09E94710D74834B0064F138 /* common.c */,
+				B09E94720D74834B0064F138 /* common.h */,
+				B09E94730D74834B0064F138 /* config.h */,
+				B09E94770D74834B0064F138 /* cutils.c */,
+				B09E94780D74834B0064F138 /* dsputil.c */,
+				B09E94790D74834B0064F138 /* dsputil.h */,
+				B09E947A0D74834B0064F138 /* fft.c */,
+				B09E947B0D74834B0064F138 /* file.c */,
+				B09E947C0D74834B0064F138 /* futils.c */,
+				B09E947E0D74834B0064F138 /* mdct.c */,
+				B09E94800D74834B0064F138 /* os_support.c */,
+				B09E94810D74834B0064F138 /* os_support.h */,
+				B09E94820D74834B0064F138 /* parser.c */,
+				B09E94830D74834B0064F138 /* simple_idct.c */,
+				B09E94840D74834B0064F138 /* simple_idct.h */,
+				B09E94850D74834B0064F138 /* utils.c */,
+				B09E94860D74834B0064F138 /* wmadata.h */,
+				B09E94870D74834B0064F138 /* wmadec.c */,
+			);
+			path = "ffmpeg-strip-wma";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B09E948B0D74834B0064F138 /* avcodec.h in Headers */,
+				B09E948C0D74834B0064F138 /* avformat.h in Headers */,
+				B09E948D0D74834B0064F138 /* avi.h in Headers */,
+				B09E948F0D74834B0064F138 /* avio.h in Headers */,
+				B09E94910D74834B0064F138 /* bswap.h in Headers */,
+				B09E94930D74834B0064F138 /* common.h in Headers */,
+				B09E94940D74834B0064F138 /* config.h in Headers */,
+				B09E949A0D74834B0064F138 /* dsputil.h in Headers */,
+				B09E94A20D74834B0064F138 /* os_support.h in Headers */,
+				B09E94A50D74834B0064F138 /* simple_idct.h in Headers */,
+				B09E94A70D74834B0064F138 /* wmadata.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8DC2EF4F0486A6940098B216 /* WMA Framework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WMA Framework" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "WMA Framework";
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = WMA;
+			productReference = 8DC2EF5B0486A6940098B216 /* WMA.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WMA" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* WMA */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DC2EF4F0486A6940098B216 /* WMA Framework */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B09E94880D74834B0064F138 /* allcodecs.c in Sources */,
+				B09E94890D74834B0064F138 /* allformats.c in Sources */,
+				B09E948A0D74834B0064F138 /* asf.c in Sources */,
+				B09E948E0D74834B0064F138 /* avio.c in Sources */,
+				B09E94900D74834B0064F138 /* aviobuf.c in Sources */,
+				B09E94920D74834B0064F138 /* common.c in Sources */,
+				B09E94980D74834B0064F138 /* cutils.c in Sources */,
+				B09E94990D74834B0064F138 /* dsputil.c in Sources */,
+				B09E949B0D74834B0064F138 /* fft.c in Sources */,
+				B09E949C0D74834B0064F138 /* file.c in Sources */,
+				B09E949D0D74834B0064F138 /* futils.c in Sources */,
+				B09E949F0D74834B0064F138 /* mdct.c in Sources */,
+				B09E94A10D74834B0064F138 /* os_support.c in Sources */,
+				B09E94A30D74834B0064F138 /* parser.c in Sources */,
+				B09E94A40D74834B0064F138 /* simple_idct.c in Sources */,
+				B09E94A60D74834B0064F138 /* utils.c in Sources */,
+				B09E94A80D74834B0064F138 /* wmadec.c in Sources */,
+				B09E94F80D748EB80064F138 /* mem.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = WMA_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				PRODUCT_NAME = WMA;
+				SYMROOT = ../../build;
+				WRAPPER_EXTENSION = framework;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = WMA_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				PRODUCT_NAME = WMA;
+				SYMROOT = ../../build;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SYMROOT = ../../build;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WMA Framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WMA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

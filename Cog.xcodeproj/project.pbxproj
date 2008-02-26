@@ -143,7 +143,8 @@
 		8E9A2E860BA78B500091081B /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2E840BA78B500091081B /* SecondsFormatter.m */; };
 		8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */; };
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
-		B09E93000D7316850064F138 /* stop_current.png in Resources */ = {isa = PBXBuildFile; fileRef = B09E92FF0D7316850064F138 /* stop_current.png */; };
+		B09E964C0D74A6680064F138 /* WMA.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* WMA.bundle */; };
+		B09E96630D74A7BC0064F138 /* stop_current.png in Resources */ = {isa = PBXBuildFile; fileRef = B09E96620D74A7BC0064F138 /* stop_current.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -427,6 +428,20 @@
 			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = Pls;
 		};
+		B09E94340D747F7B0064F138 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B09E94300D747F7B0064F138 /* WMA.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
+			remoteInfo = WMA;
+		};
+		B09E959A0D749FF90064F138 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B09E94300D747F7B0064F138 /* WMA.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
+			remoteInfo = "WMA Plugin";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -436,6 +451,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				B09E964C0D74A6680064F138 /* WMA.bundle in CopyFiles */,
 				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
 				17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */,
 				17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */,
@@ -668,7 +684,8 @@
 		8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexFormatter.m; sourceTree = "<group>"; };
 		8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
-		B09E92FF0D7316850064F138 /* stop_current.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_current.png; path = Images/stop_current.png; sourceTree = "<group>"; };
+		B09E94300D747F7B0064F138 /* WMA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WMA.xcodeproj; path = Plugins/WMA/WMA.xcodeproj; sourceTree = "<group>"; };
+		B09E96620D74A7BC0064F138 /* stop_current.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_current.png; path = Images/stop_current.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -855,7 +872,7 @@
 		177EC02D0B8BC2E60000BC8C /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				B09E92FF0D7316850064F138 /* stop_current.png */,
+				B09E96620D74A7BC0064F138 /* stop_current.png */,
 				17A8F7190D6A89730095DA13 /* repeat_album.png */,
 				17A8F6820D6A7FCA0095DA13 /* repeat_all.png */,
 				17A8F6830D6A7FCA0095DA13 /* repeat_none.png */,
@@ -905,6 +922,7 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
+				B09E94300D747F7B0064F138 /* WMA.xcodeproj */,
 				566D32160D538550004466A5 /* APL.xcodeproj */,
 				17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */,
 				17C8F3C80CBED663008D969D /* GME.xcodeproj */,
@@ -1265,6 +1283,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B09E94310D747F7B0064F138 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B09E94350D747F7B0064F138 /* WMA.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1301,6 +1327,7 @@
 				17C8F7DA0CBEF3F9008D969D /* PBXTargetDependency */,
 				17BF2B3A0CDD7827007E1295 /* PBXTargetDependency */,
 				17643CBC0D5BD44900F0A9FE /* PBXTargetDependency */,
+				B09E959B0D749FF90064F138 /* PBXTargetDependency */,
 			);
 			name = Cog;
 			productInstallPath = "$(HOME)/Applications";
@@ -1408,6 +1435,10 @@
 				{
 					ProductGroup = 17C808C10C3BD1DD005707C4 /* Products */;
 					ProjectRef = 17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */;
+				},
+				{
+					ProductGroup = B09E94310D747F7B0064F138 /* Products */;
+					ProjectRef = B09E94300D747F7B0064F138 /* WMA.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1558,6 +1589,13 @@
 			remoteRef = 8E8D41C60CBB0DA000135C1B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		B09E94350D747F7B0064F138 /* WMA.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = WMA.bundle;
+			remoteRef = B09E94340D747F7B0064F138 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1615,7 +1653,7 @@
 				17A8F6860D6A7FCA0095DA13 /* repeat_none.png in Resources */,
 				17A8F6870D6A7FCA0095DA13 /* repeat_one.png in Resources */,
 				17A8F71A0D6A89730095DA13 /* repeat_album.png in Resources */,
-				B09E93000D7316850064F138 /* stop_current.png in Resources */,
+				B09E96630D74A7BC0064F138 /* stop_current.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1790,6 +1828,11 @@
 			name = Pls;
 			targetProxy = 8E8D41CB0CBB0DD200135C1B /* PBXContainerItemProxy */;
 		};
+		B09E959B0D749FF90064F138 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "WMA Plugin";
+			targetProxy = B09E959A0D749FF90064F138 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1856,7 +1899,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = ThirdParty/Frameworks/;
+				FRAMEWORK_SEARCH_PATHS = (
+					ThirdParty/Frameworks/,
+					"\"$(SRCROOT)/build/Release\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1864,7 +1910,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/Release/WMA.framework\"",
+				);
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
@@ -1887,13 +1936,19 @@
 					ppc,
 					i386,
 				);
-				FRAMEWORK_SEARCH_PATHS = ThirdParty/Frameworks/;
+				FRAMEWORK_SEARCH_PATHS = (
+					ThirdParty/Frameworks/,
+					"\"$(SRCROOT)/build/Release\"",
+				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/Release/WMA.framework\"",
+				);
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
