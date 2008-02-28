@@ -15,6 +15,9 @@
 @interface WMADecoder : NSObject <CogDecoder> 
 {
 	id<CogSource> source;
+	void *sampleBuffer;
+	int numSamples;
+	int samplePos;
 	
 	AVFormatContext *ic;
 	AVCodecContext *c;

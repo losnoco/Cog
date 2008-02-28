@@ -25,7 +25,9 @@
 	const char *filename = [[[source url] path] UTF8String];
 	
 	ic = NULL;
-	
+	numSamples = 0;
+	samplePos = 0;
+	sampleBuffer = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE);
 	// register all available codecs
 	av_register_all();
 	
@@ -97,6 +99,7 @@
 {
 	avcodec_close(c);
 	av_close_input_file(ic);
+	av_free(sampleBuffer);
 	
 	[source close];
 	[source release];
@@ -104,51 +107,61 @@
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	uint8_t *outbuf, *s_outbuf, *inbuf_ptr;
-	int size, out_size, st_buff, len;
+	uint8_t *inbuf_ptr;
+	int size, out_size, len;
 	AVPacket framePacket;
-	//int bytesPerFrame = (bitsPerSample/8) * channels;
+	int framesRead = 0;
 	
-	st_buff = ST_BUFF;
-	outbuf = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE);
-    s_outbuf = av_malloc(st_buff);
+	int bytesPerFrame = (bitsPerSample/8) * channels;
+	
 
-	
-	// this NSLog is the only one I've ever seen activate for the end of file
-	if (av_read_frame(ic, &framePacket) < 0)
-		NSLog(@"Uh oh...");
+	while (frames > 0)
+	{
+		if (samplePos < numSamples)
+		{
+			int samplesLeft;
+			samplesLeft = numSamples - samplePos;
+			
+			if (samplesLeft > frames)
+				samplesLeft = frames;
+			
+			memcpy(buf, sampleBuffer + (samplePos * bytesPerFrame), samplesLeft * bytesPerFrame);
+			buf += samplesLeft * bytesPerFrame;
+			framesRead += samplesLeft;
+			frames -= samplesLeft;
+			samplePos += samplesLeft;
+		}
+		if (frames > 0)
+		{
+			if (av_read_frame(ic, &framePacket) < 0)
+			{
+				NSLog(@"Uh oh...");
+				break;
+			}
 		
-	size = framePacket.size;
-	inbuf_ptr = framePacket.data;
+			size = framePacket.size;
+			inbuf_ptr = framePacket.data;
 	
-	if (size < 0)
-		NSLog(@"NOES!");
-	
-	len = avcodec_decode_audio(c, (short *)outbuf, &out_size, 
-					   inbuf_ptr, size);
+			len = avcodec_decode_audio(c, (void *)sampleBuffer, &numSamples, 
+										   inbuf_ptr, size);
+			
+			if (len < 0) 
+				break;
+			
+            if (out_size <= 0) 
+				continue;
+			
+			numSamples /= bytesPerFrame;
+			samplePos = 0;
+				
+			// the frame packet needs to be freed before we av_read_frame a new one
+			if (framePacket.data)
+				av_free_packet(&framePacket);
 
-		
-	if (out_size == 0)
-		NSLog(@"out_size is 0");
-
-	/* need to do both looping for the right amount of frames and memcpy'ing around
-	 this neck of the woods. */
+		}
+	}
 	
-	// loops loops, memcpy(buffer, readbuffer, length), epic lulz
-	
-	// the frame packet needs to be freed before we av_read_frame a new one
-	if (framePacket.data)
-		av_free_packet(&framePacket);
-	
-		
-	
-	if (outbuf)
-		av_free(outbuf);
-	if (s_outbuf)
-		av_free(s_outbuf);
-
-	// return the actual number of frames read here, not the wanted number
-	return frames;
+	return framesRead;
 	
 }
 
