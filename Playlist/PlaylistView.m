@@ -198,7 +198,7 @@
             addedItems++;
         }
 
-
+		int remQ = 0;
 		if (song.queuePosition > 0)
 		{
 			NSMenuItem *queueRemoveMenuItem = [NSMenuItem alloc];
@@ -210,8 +210,13 @@
 			queueRemoveMenuItem.target = playlistController;
 			[tableViewMenu insertItem:queueRemoveMenuItem atIndex:1];
 			[queueRemoveMenuItem release];
+			remQ = 1;
 		}
-		
+		if (remQ == 1)
+            [tableViewMenu insertItem:[NSMenuItem separatorItem] atIndex:2];
+		else
+            [tableViewMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
+			
         if(addedItems)
         {
             // add a separator in the right place - turned into a hack now

@@ -9,7 +9,7 @@
 
 @implementation PlaybackController
 
-#define DEFAULT_SEEK 10
+#define DEFAULT_SEEK 5
 
 @synthesize playbackStatus;
 

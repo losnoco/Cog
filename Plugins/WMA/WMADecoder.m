@@ -18,10 +18,12 @@
 
 - (BOOL)open:(id<CogSource>)s
 {
+	source = [s retain];
+
+	
 	int err, i;
 	const char *filename = [[[source url] path] UTF8String];
 	
-	source = [s retain];
 	ic = NULL;
 	
 	// register all available codecs
