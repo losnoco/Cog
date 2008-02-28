@@ -18,14 +18,14 @@
 
 - (BOOL)open:(id<CogSource>)s
 {
-	source = [s retain];
-	
-	ic = NULL;
-	av_register_all();
 	int err, i;
 	const char *filename = [[[source url] path] UTF8String];
-	int st_buff;
-	uint8_t *outbuf, *s_outbuf;
+	
+	source = [s retain];
+	ic = NULL;
+	
+	// register all available codecs
+	av_register_all();
 	
 	
 	NSLog(@"lolbots: %s", filename);
@@ -58,11 +58,6 @@
         return NO;
     }
     
-    st_buff = ST_BUFF;
-	
-    outbuf = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE);
-    s_outbuf = av_malloc(st_buff);
-	
     dump_format(ic, 0, filename, 0);	
 	
 	if (ic->title[0] != '\0')
@@ -83,6 +78,15 @@
         NSLog(@"Comments: %s", ic->comment);
 
 	NSLog(@"bitrate: %d", ic->bit_rate);
+	NSLog(@"sample rate: %d", c->sample_rate);
+	NSLog(@"channels: %d", c->channels);
+	
+	channels = c->channels;
+	bitrate = ic->bit_rate;
+	bitsPerSample = c->channels * 8;
+	totalFrames = c->sample_rate * (ic->duration/1000000LL);
+	frequency = 0;
+	
 	return YES;
 	
 }
@@ -98,7 +102,51 @@
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	return 0;
+	uint8_t *outbuf, *s_outbuf, *inbuf_ptr;
+	int size, out_size, st_buff, len;
+	AVPacket framePacket;
+	//int bytesPerFrame = (bitsPerSample/8) * channels;
+	
+	st_buff = ST_BUFF;
+	outbuf = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE);
+    s_outbuf = av_malloc(st_buff);
+
+	
+	// this NSLog is the only one I've ever seen activate for the end of file
+	if (av_read_frame(ic, &framePacket) < 0)
+		NSLog(@"Uh oh...");
+		
+	size = framePacket.size;
+	inbuf_ptr = framePacket.data;
+	
+	if (size < 0)
+		NSLog(@"NOES!");
+	
+	len = avcodec_decode_audio(c, (short *)outbuf, &out_size, 
+					   inbuf_ptr, size);
+
+		
+	if (out_size == 0)
+		NSLog(@"out_size is 0");
+
+	/* need to do both looping for the right amount of frames and memcpy'ing around
+	 this neck of the woods. */
+	
+	// loops loops, memcpy(buffer, readbuffer, length), epic lulz
+	
+	// the frame packet needs to be freed before we av_read_frame a new one
+	if (framePacket.data)
+		av_free_packet(&framePacket);
+	
+		
+	
+	if (outbuf)
+		av_free(outbuf);
+	if (s_outbuf)
+		av_free(s_outbuf);
+
+	// return the actual number of frames read here, not the wanted number
+	return frames;
 	
 }
 
