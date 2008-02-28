@@ -19,14 +19,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B09E95030D748F9B0064F138 /* WMA.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* WMA.framework */;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
 			remoteInfo = WMA;
 		};
 		B09E95450D7496C60064F138 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B09E95030D748F9B0064F138 /* WMA.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* WMA Framework */;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = "WMA Framework";
 		};
 /* End PBXContainerItemProxy section */
@@ -56,7 +56,6 @@
 		B09E942E0D747F410064F138 /* WMADecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMADecoder.m; sourceTree = "<group>"; };
 		B09E94370D747FAD0064F138 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		B09E95030D748F9B0064F138 /* WMA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WMA.xcodeproj; path = ../../Frameworks/WMA/WMA.xcodeproj; sourceTree = SOURCE_ROOT; };
-		B09E958A0D749E890064F138 /* WMA.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WMA.framework; path = ../../build/Release/WMA.framework; sourceTree = SOURCE_ROOT; };
 		B09E95F50D74A3ED0064F138 /* Frameworks-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Frameworks-Info.plist"; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -77,7 +76,6 @@
 		089C166AFE841209C02AAC07 /* WMA */ = {
 			isa = PBXGroup;
 			children = (
-				B09E958A0D749E890064F138 /* WMA.framework */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,

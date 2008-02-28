@@ -399,9 +399,9 @@ int av_open_input_file(AVFormatContext **ic_ptr, const char *filename,
 
     if (!fmt || must_open_file) {
         /* if no file needed do not try to open one */
-        if (url_fopen(pb, filename, URL_RDONLY) < 0) {
-            err = AVERROR_IO;
-            goto fail;
+      if ((err = url_fopen(pb, filename, URL_RDONLY)) < 0) {
+        //err = AVERROR_IO;
+          goto fail;
         }
         file_opened = 1;
         if (buf_size > 0) {

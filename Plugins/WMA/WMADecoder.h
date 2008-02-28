@@ -9,8 +9,24 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
-@interface WMADecoder : NSObject {
+#import "WMA/avcodec.h"
+#import "WMA/avformat.h"
 
+@interface WMADecoder : NSObject <CogDecoder> 
+{
+	id<CogSource> source;
+	
+	AVFormatContext *ic;
+	AVCodecContext *c;
+	AVCodec *codec;
+	
+	BOOL seekable;
+	int bitsPerSample;
+	int bitrate;
+	int channels;
+	float frequency;
+	long totalFrames;
+	
 }
 
 @end

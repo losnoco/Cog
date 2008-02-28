@@ -832,6 +832,7 @@ static char *getlocale()
 
 static void tag_recode(char *before, unsigned int len)
 {
+  return;
        int result;
        iconv_t frt;
        char ansb[len];
