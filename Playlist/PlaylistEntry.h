@@ -42,9 +42,12 @@ typedef enum {
 	BOOL seekable;
 }
 
-- (void)setMetadata: (NSDictionary *)m;
++ (NSSet *)keyPathsForValuesAffectingDisplay;
++ (NSSet *)keyPathsForValuesAffectingLength;
++ (NSSet *)keyPathsForValuesAffectingPath;
++ (NSSet *)keyPathsForValuesAffectingFilename;
+
 - (void)readMetadataThread;
-- (void)setProperties: (NSDictionary *)p;
 - (void)readPropertiesThread;
 
 @property(readonly) NSString *display;

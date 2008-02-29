@@ -75,6 +75,12 @@ static NSDictionary *importKeys;
     return entry;
 }
 
+// Length is no longer a dependent key
++ (NSSet *)keyPathsForValuesAffectingLength
+{
+    return Nil;
+}
+
 @synthesize length;
 
 @end

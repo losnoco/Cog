@@ -22,7 +22,6 @@
 
 @synthesize artist;
 @synthesize album;
-@synthesize title;
 @synthesize genre;
 @synthesize year;
 @synthesize track;
@@ -35,21 +34,26 @@
 
 @synthesize seekable;
 
-+ (void)initialize { 
-	[self setKeys:[NSArray arrayWithObjects:@"artist",@"title",nil] triggerChangeNotificationsForDependentKey:@"display"]; 
-	[self setKeys:[NSArray arrayWithObjects:@"totalFrames",nil] triggerChangeNotificationsForDependentKey:@"length"]; 
-	[self setKeys:[NSArray arrayWithObjects:@"URL",nil] triggerChangeNotificationsForDependentKey:@"path"]; 
-	[self setKeys:[NSArray arrayWithObjects:@"URL",nil] triggerChangeNotificationsForDependentKey:@"filename"]; 
+// The following read-only keys depend on the values of other properties
+
++ (NSSet *)keyPathsForValuesAffectingDisplay
+{
+    return [NSSet setWithObjects:@"artist",@"title",nil];
 }
 
-- (void)setProperties:(NSDictionary *)dict
++ (NSSet *)keyPathsForValuesAffectingLength
 {
-	[self setTotalFrames:	[[dict objectForKey:@"totalFrames"	] longLongValue]];
-	[self setBitrate:		[[dict objectForKey:@"bitrate"		] intValue]];
-	[self setChannels:		[[dict objectForKey:@"channels"		] intValue]];
-	[self setBitsPerSample:	[[dict objectForKey:@"bitsPerSample" ] intValue]];
-	[self setSampleRate:	[[dict objectForKey:@"sampleRate"	] floatValue]];
-	[self setSeekable:		[[dict objectForKey:@"seekable"		] boolValue]];
+    return [NSSet setWithObject:@"totalFrames"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingPath
+{
+    return [NSSet setWithObject:@"URL"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingFilename
+{
+    return [NSSet setWithObject:@"URL"];
 }
 
 - (void)readPropertiesThread
@@ -62,32 +66,14 @@
 		return;
 	}
 	
-	[self performSelectorOnMainThread:@selector(setProperties:) withObject:properties waitUntilDone:YES];
+	[self performSelectorOnMainThread:@selector(setValuesForKeysWithDictionary:) withObject:properties waitUntilDone:YES];
 }
-
-- (void)setMetadata: (NSDictionary *)m
-{
-	NSString *ti = [m objectForKey:@"title"];
-
-	if (ti == nil || [ti isEqualToString:@""]) {
-		self.title = [[self.URL path] lastPathComponent];
-	}
-	else {
-        self.title = ti;
-	}
-	
-	self.artist = [m objectForKey:@"artist"];
-	self.album = [m objectForKey:@"album"];
-	self.genre = [m objectForKey:@"genre"];
-	self.year =	[m objectForKey:@"year"];
-    self.track = [m objectForKey:@"track"];
-}	
 
 - (void)readMetadataThread
 {
 	NSDictionary *metadata = [AudioMetadataReader metadataForURL:self.URL];
 
-	[self performSelectorOnMainThread:@selector(setMetadata:) withObject:metadata waitUntilDone:YES];
+	[self performSelectorOnMainThread:@selector(setValuesForKeysWithDictionary:) withObject:metadata waitUntilDone:YES];
 
 }
 
@@ -103,6 +89,17 @@
 	else {
 		return [NSString stringWithFormat:@"%@ - %@", self.artist, self.title];
 	}
+}
+
+// Get the URL if the title is blank
+@synthesize title;
+- (NSString *)title
+{
+    if(self.URL && (title == nil || [title isEqualToString:@""]))
+    {
+        return [[self.URL path] lastPathComponent];
+    }
+    return [[title retain] autorelease];
 }
 
 @dynamic length;
