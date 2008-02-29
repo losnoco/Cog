@@ -102,8 +102,8 @@
 	ldiv_t hoursAndMinutes;
 	
 	for (PlaylistEntry *pe in [self arrangedObjects]) {
-		if (!isnan(pe.length))
-			tt += pe.length;
+        if (!isnan([pe.length doubleValue]))
+            tt += [pe.length doubleValue];
 	}
 	
 	int sec = (int)(tt);

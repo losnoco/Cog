@@ -105,16 +105,19 @@
 	}
 }
 
-- (double)length
+@dynamic length;
+- (NSNumber *)length
 {
-	return ((double)self.totalFrames / self.sampleRate);
+    return [NSNumber numberWithDouble:((double)self.totalFrames / self.sampleRate)];
 }
 
+@dynamic path;
 - (NSString *)path
 {
 	return [[self.URL path] stringByAbbreviatingWithTildeInPath];
 }
 
+@dynamic filename;
 - (NSString *)filename
 {
 	return [[self.URL path] lastPathComponent];

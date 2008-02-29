@@ -48,7 +48,7 @@ typedef enum {
 - (void)readPropertiesThread;
 
 @property(readonly) NSString *display;
-@property(readonly) double length;
+@property(retain, readonly) NSNumber *length;
 @property(readonly) NSString *path;
 @property(readonly) NSString *filename;
 

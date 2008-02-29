@@ -16,7 +16,5 @@
 
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem;
 
-// New length getters/setters
-
-@property(retain) NSNumber *length;
+@property(retain, readwrite) NSNumber *length;
 @end
