@@ -82,15 +82,6 @@
 	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", self.index, self.URL];
 }
 
-- (NSString *)display
-{
-	if ((self.artist == NULL) || ([self.artist isEqualToString:@""]))
-		return self.title;
-	else {
-		return [NSString stringWithFormat:@"%@ - %@", self.artist, self.title];
-	}
-}
-
 // Get the URL if the title is blank
 @synthesize title;
 - (NSString *)title
@@ -100,6 +91,16 @@
         return [[self.URL path] lastPathComponent];
     }
     return [[title retain] autorelease];
+}
+
+@dynamic display;
+- (NSString *)display
+{
+	if ((self.artist == NULL) || ([self.artist isEqualToString:@""]))
+		return self.title;
+	else {
+		return [NSString stringWithFormat:@"%@ - %@", self.artist, self.title];
+	}
 }
 
 @dynamic length;
