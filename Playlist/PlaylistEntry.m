@@ -70,17 +70,17 @@
 	NSString *ti = [m objectForKey:@"title"];
 
 	if (ti == nil || [ti isEqualToString:@""]) {
-		[self setTitle:[[self.URL path] lastPathComponent]];
+		self.title = [[self.URL path] lastPathComponent];
 	}
 	else {
-		[self setTitle:ti];
+        self.title = ti;
 	}
 	
-	[self setArtist:[m objectForKey:@"artist"	]];
-	[self setAlbum:	[m objectForKey:@"album"	]];
-	[self setGenre:	[m objectForKey:@"genre"	]];
-	[self setYear:	[m objectForKey:@"year"		]];
-	[self setTrack:	[[m objectForKey:@"track"	] intValue]];
+	self.artist = [m objectForKey:@"artist"];
+	self.album = [m objectForKey:@"album"];
+	self.genre = [m objectForKey:@"genre"];
+	self.year =	[m objectForKey:@"year"];
+    self.track = [m objectForKey:@"track"];
 }	
 
 - (void)readMetadataThread

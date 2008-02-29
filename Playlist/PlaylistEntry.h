@@ -31,7 +31,7 @@ typedef enum {
 	NSString *title;
 	NSString *genre;
 	NSString *year;
-	int track;
+	NSNumber *track;
 	
 	long long totalFrames;
 	int bitrate;
@@ -64,7 +64,7 @@ typedef enum {
 @property(retain) NSString *title;
 @property(retain) NSString *genre;
 @property(retain) NSString *year;
-@property int track;
+@property(retain) NSNumber *track;
 
 @property long long totalFrames;
 @property int bitrate;
