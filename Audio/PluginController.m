@@ -70,16 +70,16 @@ static PluginController *sharedPluginController = nil;
 - (id)init {
 	self = [super init];
 	if (self) {
-		sources = [[NSMutableDictionary alloc] init];
-		containers = [[NSMutableDictionary alloc] init];
-
-		metadataReaders = [[NSMutableDictionary alloc] init];
-
-		propertiesReadersByExtension = [[NSMutableDictionary alloc] init];
-		propertiesReadersByMimeType = [[NSMutableDictionary alloc] init];
-
-		decodersByExtension = [[NSMutableDictionary alloc] init];
-		decodersByMimeType = [[NSMutableDictionary alloc] init];
+        self.sources = [[[NSMutableDictionary alloc] init] autorelease];
+        self.containers = [[[NSMutableDictionary alloc] init] autorelease];
+ 
+        self.metadataReaders = [[[NSMutableDictionary alloc] init] autorelease];
+ 
+        self.propertiesReadersByExtension = [[[NSMutableDictionary alloc] init] autorelease];
+        self.propertiesReadersByMimeType = [[[NSMutableDictionary alloc] init] autorelease];
+ 
+        self.decodersByExtension = [[[NSMutableDictionary alloc] init] autorelease];
+        self.decodersByMimeType = [[[NSMutableDictionary alloc] init] autorelease];
 
         [self setup];
 	}
@@ -90,7 +90,7 @@ static PluginController *sharedPluginController = nil;
 - (void)setup
 {
 	if (self.configured == NO) {
-		self.configured == YES;
+		self.configured = YES;
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bundleDidLoad:) name:NSBundleDidLoadNotification object:nil];
 
@@ -222,15 +222,15 @@ static PluginController *sharedPluginController = nil;
 
 - (void)printPluginInfo
 {
-	NSLog(@"Sources: %@", sources);
-	NSLog(@"Containers: %@", containers);
-	NSLog(@"Metadata Readers: %@", metadataReaders);
+	NSLog(@"Sources: %@", self.sources);
+	NSLog(@"Containers: %@", self.containers);
+	NSLog(@"Metadata Readers: %@", self.metadataReaders);
 
-	NSLog(@"Properties Readers By Extension: %@", propertiesReadersByExtension);
-	NSLog(@"Properties Readers By Mime Type: %@", propertiesReadersByMimeType);
+	NSLog(@"Properties Readers By Extension: %@", self.propertiesReadersByExtension);
+	NSLog(@"Properties Readers By Mime Type: %@", self.propertiesReadersByMimeType);
 
-	NSLog(@"Decoders by Extension: %@", decodersByExtension);
-	NSLog(@"Decoders by Mime Type: %@", decodersByMimeType);
+	NSLog(@"Decoders by Extension: %@", self.decodersByExtension);
+	NSLog(@"Decoders by Mime Type: %@", self.decodersByMimeType);
 }
 
 - (id<CogSource>) audioSourceForURL:(NSURL *)url
