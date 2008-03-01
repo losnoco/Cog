@@ -36,9 +36,8 @@
 - (void)doConnection
 {
 	NSURLRequest *request = [[NSURLRequest alloc] initWithURL:_url];
-	
 	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-	
+
 	[request release];
 
 	while (!_connectionFinished)

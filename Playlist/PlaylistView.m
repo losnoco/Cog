@@ -60,7 +60,7 @@
 	//Set up header context menu
 	headerContextMenu = [[NSMenu alloc] initWithTitle:@"Playlist Header Context Menu"];
 	
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"headerCell.title" ascending:YES];
+	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"identifier" ascending:YES];
 	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
 	[sortDescriptor release];
 	
@@ -68,7 +68,21 @@
 	int menuIndex = 0;
 	for (NSTableColumn *col in [[self tableColumns] sortedArrayUsingDescriptors: sortDescriptors]) 
 	{
-		NSMenuItem *contextMenuItem = [headerContextMenu insertItemWithTitle:[[col headerCell] title] action:@selector(toggleColumn:) keyEquivalent:@"" atIndex:menuIndex];
+		NSString *title;
+		if ([[col identifier]  isEqualToString:@"status"])
+		{
+			title = @"Status";
+		}
+		else if ([[col identifier] isEqualToString:@"index"])
+		{
+			title = @"Index";
+		}
+		else
+		{
+			title = [[col headerCell] title];
+		}
+		
+		NSMenuItem *contextMenuItem = [headerContextMenu insertItemWithTitle:title action:@selector(toggleColumn:) keyEquivalent:@"" atIndex:menuIndex];
 		
 		[contextMenuItem setTarget:self];
 		[contextMenuItem setRepresentedObject:col];
