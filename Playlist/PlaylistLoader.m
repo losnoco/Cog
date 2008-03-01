@@ -246,16 +246,16 @@
 	
 	//Create actual entries
 	int i;
-	NSMutableArray *entries = [NSMutableArray array];
+	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:[validURLs count]];
 	for (i = 0; i < [validURLs count]; i++)
 	{
 		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 		NSURL *url = [validURLs objectAtIndex:i];
 
-		[pe	setURL:url];
+		pe.URL = url;
 		pe.index = index+i;
-		[pe setTitle:[[url path] lastPathComponent]];
-		[pe setQueuePosition:-1];
+		pe.title = [[url path] lastPathComponent];
+		pe.queuePosition = -1;
 		[entries addObject:pe];
 
 		[pe release];
@@ -297,8 +297,8 @@
 
 - (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe
 {
-    // Just setting this to 30 for now...
-    NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:30];
+    // Just setting this to 20 for now...
+    NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
     NSDictionary *entryProperties;
     entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
     if (entryProperties == nil)
@@ -335,8 +335,10 @@
         }
         
         //Hack so the display gets updated
-        if (pe == [playlistController currentEntry])
-            [playlistController setCurrentEntry:[playlistController currentEntry]];
+        PlaylistEntry *tempEntry = [playlistController currentEntry];
+        [playlistController setCurrentEntry:pe];
+        [playlistController setCurrentEntry:tempEntry];
+            
         // stop observing
         [object removeObserver:self forKeyPath:keyPath];
     }
