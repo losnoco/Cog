@@ -291,6 +291,7 @@
         [queue addOperation:readEntryInfoOperation];
         oldReadEntryInfoOperation = [readEntryInfoOperation retain];
     }
+    [oldReadEntryInfoOperation release];
 	return;
 }
 
@@ -338,6 +339,13 @@
             [playlistController setCurrentEntry:[playlistController currentEntry]];
         // stop observing
         [object removeObserver:self forKeyPath:keyPath];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath
+                             ofObject:object
+                               change:change
+                              context:context];
     }
 }
 
