@@ -34,7 +34,7 @@
 	     withKeyPath:@"values.fontSize"
              options:bindOptions];
 			 
-	for(NSTableColumn *col in [self tableColumns]) {
+	for (NSTableColumn *col in [self tableColumns]) {
         [[col dataCell] setControlSize:s];
         [[col dataCell] setFont:f];
 		if ([[col dataCell] respondsToSelector:@selector(setFontSize:)]) {

@@ -89,10 +89,8 @@ static PluginController *sharedPluginController = nil;
 
 - (void)bundleDidLoad:(NSNotification *)notification
 {
-	NSString *className;
 	NSArray *classNames = [[notification userInfo] objectForKey:@"NSLoadedClasses"];
-	NSEnumerator *e = [classNames objectEnumerator];
-	while (className = [e nextObject])
+	for (NSString *className in classNames)
 	{
 		NSLog(@"Class loaded: %@", className);
 		Class bundleClass = NSClassFromString(className);

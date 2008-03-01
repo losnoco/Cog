@@ -121,7 +121,7 @@
 		
 	NSArray *subpaths = [manager subpathsAtPath:path];
 
-	for(NSString *subpath in subpaths)
+	for (NSString *subpath in subpaths)
 	{
 		NSString *absoluteSubpath = [NSString pathWithComponents:[NSArray arrayWithObjects:path,subpath,nil]];
 		
@@ -266,7 +266,7 @@
 	[playlistController setSelectionIndex:index];
 	
 	//Other thread for reading things...
-	[NSThread detachNewThreadSelector:@selector(readEntriesInfoThread:) toTarget:self withObject:entries];
+    [self performSelectorInBackground:@selector(readEntriesInfoThread:) withObject:entries];
 	
 	return;
 }

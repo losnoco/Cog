@@ -67,7 +67,7 @@
 							   ] stringByStandardizingPath];
 	PathNode *node = rootNode;
 	NSLog(@"Root | Relative | Path: %@ | %@ | %@",[[self rootURL] path], relativePath, path);
-	for(NSString *c in [relativePath pathComponents])
+	for (NSString *c in [relativePath pathComponents])
 	{
 		NSLog(@"COMPONENT: %@", c);
 		BOOL found = NO;
