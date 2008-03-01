@@ -391,16 +391,14 @@
 		
 		pe = [queueList objectAtIndex:0];
 		[queueList removeObjectAtIndex:0];
-		pe.status = kCogEntryNormal;
-		[pe setStatusMessage:nil];
+		pe.queued = NO;
 		[pe setQueuePosition:-1];
 		
 		int i;
 		for (i = 0; i < [queueList count]; i++)
 		{
 			PlaylistEntry *queueItem = [queueList objectAtIndex:i];
-			[queueItem setQueuePosition: i+1];
-			[queueItem setStatusMessage:[NSString stringWithFormat:@"Queued: %i", queueItem.queuePosition]];
+			[queueItem setQueuePosition: i];
 		}
 		
 		return pe;
@@ -559,11 +557,9 @@
 
 - (void)setCurrentEntry:(PlaylistEntry *)pe
 {
-	currentEntry.status = kCogEntryNormal;
-	[currentEntry setStatusMessage:nil];
+	currentEntry.current = NO;
 	
-	pe.status = kCogEntryPlaying;
-	[pe setStatusMessage:@"Playing..."];
+	pe.current = YES;
 	
 	//[tableView scrollRowToVisible:pe.index];
 	
@@ -641,8 +637,7 @@
 {
 	for (PlaylistEntry *queueItem in queueList)
 	{
-		queueItem.status = kCogEntryNormal;
-		[queueItem setStatusMessage:nil];
+		queueItem.queued = NO;
 		[queueItem setQueuePosition:-1];
 	}
 
@@ -654,9 +649,8 @@
 {
 	for (PlaylistEntry *queueItem in [self selectedObjects])
 	{
-		queueItem.status = kCogEntryQueued;
-		[queueItem setQueuePosition: [queueList count]+1];
-		[queueItem setStatusMessage: [NSString stringWithFormat:@"Queued: %i", queueItem.queuePosition]];
+		queueItem.queued = YES;
+		[queueItem setQueuePosition: [queueList count]];
 		
 		[queueList addObject:queueItem];
 	}
@@ -670,26 +664,21 @@
 		
 	for (PlaylistEntry *queueItem in [self selectedObjects])
 	{
-		queueItem.status = kCogEntryNormal;
-		[queueItem setStatusMessage:nil];
+		queueItem.queued = NO;
 		[queueItem setQueuePosition:-1];
 		[queueList removeObject:queueItem];
 	}
 
-	int i = 1;
+	int i = 0;
 	for (PlaylistEntry *cur in queueList)
 	{
 		[cur setQueuePosition:i++];
-		[cur setStatusMessage:[NSString stringWithFormat:@"Queued: %i", cur.queuePosition]];
 	}
 }
 
 - (IBAction)stopAfterCurrent:(id)sender
 {
-	if (currentEntry.status != kCogEntryStoppingAfterCurrent)
-		currentEntry.status = kCogEntryStoppingAfterCurrent;
-	else
-		currentEntry.status = kCogEntryPlaying;
+	currentEntry.stopAfter = !currentEntry.stopAfter;
 }
 
 -(BOOL)validateMenuItem:(NSMenuItem*)menuItem
@@ -699,7 +688,7 @@
 	if (action == @selector(removeFromQueue:))
 	{
 		for (PlaylistEntry *q in [self selectedObjects])
-			if (q.queuePosition > 0)
+			if (q.queuePosition >= 0)
 				return YES;
 
 		return NO;
@@ -708,7 +697,7 @@
 	if (action == @selector(emptyQueueList:) && ([queueList count] < 1))
 		return NO;
 	
-	if (action == @selector(stopAfterCurrent:) && (currentEntry.status == kCogEntryNormal))
+	if (action == @selector(stopAfterCurrent:) && !currentEntry.stopAfter)
 		return NO;
 	
 	// if nothing is selected, gray out these

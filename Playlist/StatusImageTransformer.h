@@ -13,11 +13,11 @@
 	NSImage *playImage;
 	NSImage *queueImage;
 	NSImage *errorImage;
-	NSImage *stopAfterCurrentImage;
+	NSImage *stopAfterImage;
 }
 
 @property(retain) NSImage *playImage;
 @property(retain) NSImage *queueImage;
 @property(retain) NSImage *errorImage;
-@property(retain) NSImage *stopAfterCurrentImage;
+@property(retain) NSImage *stopAfterImage;
 @end

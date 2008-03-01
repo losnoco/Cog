@@ -15,7 +15,7 @@
 @synthesize playImage;
 @synthesize queueImage;
 @synthesize errorImage;
-@synthesize stopAfterCurrentImage;
+@synthesize stopAfterImage;
 
 + (Class)transformedValueClass { return [NSImage class]; }
 + (BOOL)allowsReverseTransformation { return NO; }
@@ -28,7 +28,7 @@
 		self.playImage = [NSImage imageNamed:@"play"];
 		self.queueImage = [NSImage imageNamed:@"NSAddTemplate"];
 		self.errorImage = [NSImage imageNamed:@"NSStopProgressTemplate"];
-		self.stopAfterCurrentImage = [NSImage imageNamed:@"stop_current"];
+		self.stopAfterImage = [NSImage imageNamed:@"stop_current"];
 	}
 	
 	return self;
@@ -38,18 +38,19 @@
 - (id)transformedValue:(id)value {
     if (value == nil) return nil;
 
-	PlaylistEntryStatus status = [value integerValue];
-	if (status == kCogEntryPlaying) {
+	if ([value isEqualToString:@"playing"])
+	{
 		return self.playImage;
 	}
-	else if (status == kCogEntryQueued) {
+	else if ([value isEqualToString:@"queued"])
+	{
 		return self.queueImage;
 	}
-	else if (status == kCogEntryError) {
+	else if ([value isEqualToString:@"error"]) {
 		return self.errorImage;
 	}
-	else if (status == kCogEntryStoppingAfterCurrent) {
-		return self.stopAfterCurrentImage;
+	else if ([value isEqualToString:@"stopAfter"]) {
+		return self.stopAfterImage;
 	}
 
 	return nil;

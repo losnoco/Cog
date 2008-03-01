@@ -8,21 +8,20 @@
 
 #import <Cocoa/Cocoa.h>
 
-typedef enum {
-	kCogEntryNormal = 0,
-	kCogEntryPlaying,
-	kCogEntryError,
-	kCogEntryQueued,
-	kCogEntryRemoved,
-	kCogEntryStoppingAfterCurrent,
-} PlaylistEntryStatus;
-
 @interface PlaylistEntry : NSObject {
 	int index;
 	int shuffleIndex;
-	PlaylistEntryStatus status;
-	NSString *statusMessage;
+	
+	BOOL current;
+	BOOL removed;
+	
+	BOOL stopAfter;
+	
+	BOOL queued;
 	int queuePosition;
+	
+	BOOL error;
+	NSString *errorMessage;
 	
 	NSURL *URL;
 	
@@ -39,6 +38,8 @@ typedef enum {
 	int bitsPerSample;
 	float sampleRate;
 	
+	NSString *endian;
+	
 	BOOL seekable;
 }
 
@@ -46,9 +47,12 @@ typedef enum {
 + (NSSet *)keyPathsForValuesAffectingLength;
 + (NSSet *)keyPathsForValuesAffectingPath;
 + (NSSet *)keyPathsForValuesAffectingFilename;
++ (NSSet *)keyPathsForValuesAffectingStatus;
++ (NSSet *)keyPathsForValuesAffectingStatusMessage;
 
-- (void)readMetadataThread;
+- (void)setProperties:(NSDictionary *)properties;
 - (void)readPropertiesThread;
+- (void)readMetadataThread;
 
 @property(readonly) NSString *display;
 @property(retain, readonly) NSNumber *length;
@@ -57,9 +61,21 @@ typedef enum {
 
 @property int index;
 @property int shuffleIndex;
-@property PlaylistEntryStatus status;
-@property(retain) NSString *statusMessage;
+
+@property(readonly) NSString *status;
+@property(readonly) NSString *statusMessage;
+
+@property BOOL current;
+@property BOOL removed;
+
+@property BOOL stopAfter;
+
+@property BOOL queued;
 @property int queuePosition;
+
+@property BOOL error;
+@property(retain) NSString *errorMessage;
+
 @property(retain) NSURL *URL;
 
 @property(retain) NSString *artist;
@@ -74,6 +90,8 @@ typedef enum {
 @property int channels;
 @property int bitsPerSample;
 @property float sampleRate;
+
+@property(retain) NSString *endian;
 
 @property BOOL seekable;
 

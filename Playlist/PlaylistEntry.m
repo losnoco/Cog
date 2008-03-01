@@ -14,9 +14,17 @@
 
 @synthesize index;
 @synthesize shuffleIndex;
-@synthesize status;
-@synthesize statusMessage;
+
+@synthesize current;
+@synthesize removed;
+
+@synthesize stopAfter;
+
+@synthesize queued;
 @synthesize queuePosition;
+
+@synthesize error;
+@synthesize errorMessage;
 
 @synthesize URL;
 
@@ -31,6 +39,8 @@
 @synthesize channels;
 @synthesize bitsPerSample;
 @synthesize sampleRate;
+
+@synthesize endian;
 
 @synthesize seekable;
 
@@ -56,17 +66,34 @@
     return [NSSet setWithObject:@"URL"];
 }
 
-- (void)readPropertiesThread
++ (NSSet *)keyPathsForValuesAffectingStatus
 {
-	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:self.URL];
-	if (!properties) {
-		self.status = kCogEntryError;
-		self.statusMessage = @"Failed to read properties!";
+	return [NSSet setWithObjects:@"current",@"queued", @"error", nil];
+}
+
++ (NSSet *)keyPathsForValuesAffectingStatusMessage
+{
+	return [NSSet setWithObjects:@"current", @"queued", @"queuePosition", @"error", @"errorMessage", nil];
+}
+
+- (void)setProperties:(NSDictionary *)properties
+{
+	if (properties == nil)
+	{
+		self.error = YES;
+		self.errorMessage = @"Unable to retrieve properties.";
 
 		return;
 	}
-	
-	[self performSelectorOnMainThread:@selector(setValuesForKeysWithDictionary:) withObject:properties waitUntilDone:YES];
+
+	[self setValuesForKeysWithDictionary:properties];
+}
+
+- (void)readPropertiesThread
+{
+	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:self.URL];
+
+	[self performSelectorOnMainThread:@selector(setProperties:) withObject:properties waitUntilDone:YES];
 }
 
 - (void)readMetadataThread
@@ -119,6 +146,52 @@
 - (NSString *)filename
 {
 	return [[self.URL path] lastPathComponent];
+}
+
+@dynamic status;
+- (NSString *)status
+{
+	if (self.stopAfter)
+	{
+		return @"stopAfter";
+	}
+	else if (self.current)
+	{
+		return @"playing";
+	}
+	else if (self.queued)
+	{
+		return @"queued";
+	}
+	else if (self.error)
+	{
+		return @"error";
+	}
+	
+	return nil;
+}
+
+@dynamic statusMessage;
+- (NSString *)statusMessage
+{
+	if (self.stopAfter)
+	{
+		return @"Stopping once finished...";
+	}
+	else if (self.current)
+	{
+		return @"Playing...";
+	}
+	else if (self.queued)
+	{
+		return [NSString stringWithFormat:@"Queued: %i", self.queuePosition + 1];
+	}
+	else if (self.error)
+	{
+		return errorMessage;
+	}
+	
+	return nil;
 }
 
 @end
