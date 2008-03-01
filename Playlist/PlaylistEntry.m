@@ -7,8 +7,6 @@
 //
 
 #import "PlaylistEntry.h"
-#import "CogAudio/AudioPropertiesReader.h"
-#import "CogAudio/AudioMetadataReader.h"
 
 @implementation PlaylistEntry
 
@@ -74,34 +72,6 @@
 + (NSSet *)keyPathsForValuesAffectingStatusMessage
 {
 	return [NSSet setWithObjects:@"current", @"queued", @"queuePosition", @"error", @"errorMessage", @"stopAfter", nil];
-}
-
-- (void)setProperties:(NSDictionary *)properties
-{
-	if (properties == nil)
-	{
-		self.error = YES;
-		self.errorMessage = @"Unable to retrieve properties.";
-
-		return;
-	}
-
-	[self setValuesForKeysWithDictionary:properties];
-}
-
-- (void)readPropertiesThread
-{
-	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:self.URL];
-
-	[self performSelectorOnMainThread:@selector(setProperties:) withObject:properties waitUntilDone:YES];
-}
-
-- (void)readMetadataThread
-{
-	NSDictionary *metadata = [AudioMetadataReader metadataForURL:self.URL];
-
-	[self performSelectorOnMainThread:@selector(setValuesForKeysWithDictionary:) withObject:metadata waitUntilDone:YES];
-
 }
 
 - (NSString *)description

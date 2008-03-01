@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class PlaylistController;
+@class PlaylistEntry;
 
 typedef enum {
 	kPlaylistM3u,
@@ -29,6 +30,9 @@ typedef enum {
 - (BOOL)save:(NSString *)filename asType:(PlaylistType)type;
 - (BOOL)saveM3u:(NSString *)filename;
 - (BOOL)savePls:(NSString *)filename;
+
+//read info for a playlist entry
+- (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe;
 
 - (NSArray *)acceptableFileTypes;
 - (NSArray *)acceptablePlaylistTypes; //Only m3u and pls saving

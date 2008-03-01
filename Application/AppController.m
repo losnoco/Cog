@@ -35,9 +35,17 @@
 				
 		remote = [[AppleRemote alloc] init];
 		[remote setDelegate: self];
+		
+        queue = [[NSOperationQueue alloc]init];
 	}
 	
 	return self; 
+}
+
+- (void)dealloc
+{
+    [queue release];
+    [super dealloc];
 }
 
 // Listen to the remote in exclusive mode, only when Cog is the active application
@@ -462,4 +470,9 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[self changeFontSize:-1];
 	
 } 
+
+- (NSOperationQueue *)sharedOperationQueue
+{
+    return queue;
+}
 @end

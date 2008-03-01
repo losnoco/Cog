@@ -50,10 +50,6 @@
 + (NSSet *)keyPathsForValuesAffectingStatus;
 + (NSSet *)keyPathsForValuesAffectingStatusMessage;
 
-- (void)setProperties:(NSDictionary *)properties;
-- (void)readPropertiesThread;
-- (void)readMetadataThread;
-
 @property(readonly) NSString *display;
 @property(retain, readonly) NSNumber *length;
 @property(readonly) NSString *path;

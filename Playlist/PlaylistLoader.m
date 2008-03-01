@@ -9,11 +9,14 @@
 #import "PlaylistLoader.h"
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
+#import "AppController.h"
 
 #import "NSFileHandle+CreateFile.h"
 
 #import "CogAudio/AudioPlayer.h"
 #import "CogAudio/AudioContainer.h"
+#import "CogAudio/AudioPropertiesReader.h"
+#import "CogAudio/AudioMetadataReader.h"
 
 @implementation PlaylistLoader
 
@@ -265,32 +268,77 @@
 	//Select the first entry in the group that was just added
 	[playlistController setSelectionIndex:index];
 	
-	//Other thread for reading things...
-    [self performSelectorInBackground:@selector(readEntriesInfoThread:) withObject:entries];
-	
+    NSOperationQueue *queue;
+    queue = [[[NSApplication sharedApplication] delegate] sharedOperationQueue];
+    
+    NSInvocationOperation *oldReadEntryInfoOperation = Nil;
+    for (PlaylistEntry *pe in entries)
+    {
+        NSInvocationOperation *readEntryInfoOperation;
+        readEntryInfoOperation = [[[NSInvocationOperation alloc]
+                                    initWithTarget:self
+                                          selector:@selector(readEntryInfo:)
+                                            object:pe] autorelease];
+        if (oldReadEntryInfoOperation)
+        {
+            [readEntryInfoOperation addDependency:oldReadEntryInfoOperation];
+            [oldReadEntryInfoOperation release];
+        }
+        [readEntryInfoOperation addObserver:self
+                                 forKeyPath:@"isFinished"
+                                    options:NSKeyValueObservingOptionNew
+                                    context:NULL];
+        [queue addOperation:readEntryInfoOperation];
+        oldReadEntryInfoOperation = [readEntryInfoOperation retain];
+    }
 	return;
 }
 
-- (void)readEntriesInfoThread:(NSArray *)entries
+- (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    // Just setting this to 30 for now...
+    NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:30];
+    NSDictionary *entryProperties;
+    entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
+    if (entryProperties == nil)
+        return nil;
+        
+    [entryInfo addEntriesFromDictionary:entryProperties];
+    [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
+    return entryInfo;
+}
 
-	PlaylistEntry *pe;
-	for (pe in entries)
-	{
-		[pe readPropertiesThread];
-
-		[pe readMetadataThread];
-
-		//Hack so the display gets updated
-		if (pe == [playlistController currentEntry])
-			[playlistController performSelectorOnMainThread:@selector(setCurrentEntry:) withObject:[playlistController currentEntry] waitUntilDone:YES];
-	}
-
-
-	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-	
-	[pool release];
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+    // We finished reading the info for a playlist entry
+    if ([keyPath isEqualToString:@"isFinished"] && [object isFinished])
+    {
+        // get the results
+        NSDictionary *entryInfo = [object result];
+        // get the playlist entry that the thread was inspecting
+        PlaylistEntry *pe;
+        [[object invocation]getArgument:&pe atIndex:2];
+        
+        if (entryInfo == nil)
+        {
+            pe.error = YES;
+            pe.errorMessage = @"Unable to retrieve properties.";
+        }
+        else
+        {
+            [pe setValuesForKeysWithDictionary:entryInfo];
+            [playlistController updateTotalTime];
+        }
+        
+        //Hack so the display gets updated
+        if (pe == [playlistController currentEntry])
+            [playlistController setCurrentEntry:[playlistController currentEntry]];
+        // stop observing
+        [object removeObserver:self forKeyPath:keyPath];
+    }
 }
 
 - (void)addURLs:(NSArray *)urls sort:(BOOL)sort
