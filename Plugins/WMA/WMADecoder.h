@@ -16,7 +16,7 @@
 {
 	id<CogSource> source;
 	void *sampleBuffer;
-	int numSamples;
+	int numFrames;
 	int samplePos;
 	
 	AVFormatContext *ic;

@@ -25,20 +25,20 @@
 	const char *filename = [[[source url] path] UTF8String];
 	
 	ic = NULL;
-	numSamples = 0;
+	numFrames = 0;
 	samplePos = 0;
 	sampleBuffer = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE);
 	// register all available codecs
 	av_register_all();
 	
 	
-	NSLog(@"lolbots: %s", filename);
-	
-	
 	err = av_open_input_file(&ic, filename, NULL, 0, NULL);
 	
 	if (err < 0)
+	{
 		NSLog(@"Opening .WMA file failed horribly: %d", err);
+		return NO;
+	}
 	
 	for(i = 0; i < ic->nb_streams; i++) {
         c = &ic->streams[i]->codec;
@@ -89,7 +89,8 @@
 	bitrate = ic->bit_rate;
 	bitsPerSample = c->channels * 8;
 	totalFrames = c->sample_rate * (ic->duration/1000000LL);
-	frequency = 0;
+	frequency = c->sample_rate;
+	seekable = YES;
 	
 	return YES;
 	
@@ -117,10 +118,10 @@
 
 	while (frames > 0)
 	{
-		if (samplePos < numSamples)
+		if (samplePos < numFrames)
 		{
 			int samplesLeft;
-			samplesLeft = numSamples - samplePos;
+			samplesLeft = numFrames - samplePos;
 			
 			if (samplesLeft > frames)
 				samplesLeft = frames;
@@ -135,14 +136,14 @@
 		{
 			if (av_read_frame(ic, &framePacket) < 0)
 			{
-				NSLog(@"Uh oh...");
+				NSLog(@"Uh oh... av_read_frame returned negative");
 				break;
 			}
 		
 			size = framePacket.size;
 			inbuf_ptr = framePacket.data;
 	
-			len = avcodec_decode_audio(c, (void *)sampleBuffer, &numSamples, 
+			len = avcodec_decode_audio(c, (void *)sampleBuffer, &numFrames, 
 										   inbuf_ptr, size);
 			
 			if (len < 0) 
@@ -151,7 +152,7 @@
             if (out_size <= 0) 
 				continue;
 			
-			numSamples /= bytesPerFrame;
+			numFrames /= bytesPerFrame;
 			samplePos = 0;
 				
 			// the frame packet needs to be freed before we av_read_frame a new one
@@ -167,6 +168,7 @@
 
 - (long)seek:(long)frame
 {
+	NSLog(@"frame: %ld", frame);
 	return 0;
 }
 
