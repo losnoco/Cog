@@ -17,8 +17,20 @@
 	NSMutableDictionary *decodersByExtension;
 	NSMutableDictionary *decodersByMimeType;
 	
-	BOOL isSetup;
+	BOOL configured;
 }
+
+@property(retain) NSMutableDictionary *sources;
+@property(retain) NSMutableDictionary *containers;
+@property(retain) NSMutableDictionary *metadataReaders;
+
+@property(retain) NSMutableDictionary *propertiesReadersByExtension;
+@property(retain) NSMutableDictionary *propertiesReadersByMimeType;
+
+@property(retain) NSMutableDictionary *decodersByExtension;
+@property(retain) NSMutableDictionary *decodersByMimeType;
+
+@property BOOL configured;
 
 - (void)setup;
 - (void)printPluginInfo;
