@@ -558,6 +558,7 @@
 - (void)setCurrentEntry:(PlaylistEntry *)pe
 {
 	currentEntry.current = NO;
+	currentEntry.stopAfter = NO;
 	
 	pe.current = YES;
 	
@@ -697,7 +698,7 @@
 	if (action == @selector(emptyQueueList:) && ([queueList count] < 1))
 		return NO;
 	
-	if (action == @selector(stopAfterCurrent:) && !currentEntry.stopAfter)
+	if (action == @selector(stopAfterCurrent:) && currentEntry.stopAfter)
 		return NO;
 	
 	// if nothing is selected, gray out these

@@ -68,12 +68,12 @@
 
 + (NSSet *)keyPathsForValuesAffectingStatus
 {
-	return [NSSet setWithObjects:@"current",@"queued", @"error", nil];
+	return [NSSet setWithObjects:@"current",@"queued", @"error", @"stopAfter", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingStatusMessage
 {
-	return [NSSet setWithObjects:@"current", @"queued", @"queuePosition", @"error", @"errorMessage", nil];
+	return [NSSet setWithObjects:@"current", @"queued", @"queuePosition", @"error", @"errorMessage", @"stopAfter", nil];
 }
 
 - (void)setProperties:(NSDictionary *)properties
