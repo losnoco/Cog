@@ -13,7 +13,6 @@
 
 - (void)mediaKeyEvent: (int)key state: (BOOL)state repeat: (BOOL)repeat
 {
-	NSLog(@"MEDIA EVENT KEY!");
 	switch( key )
 	{
 		case NX_KEYTYPE_PLAY:
