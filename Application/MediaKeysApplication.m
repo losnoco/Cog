@@ -13,6 +13,7 @@
 
 - (void)mediaKeyEvent: (int)key state: (BOOL)state repeat: (BOOL)repeat
 {
+	NSLog(@"MEDIA EVENT KEY!");
 	switch( key )
 	{
 		case NX_KEYTYPE_PLAY:
@@ -20,11 +21,13 @@
 				[[self delegate] clickPlay]; //Play pressed and released
 		break;
 		
+		case NX_KEYTYPE_NEXT:
 		case NX_KEYTYPE_FAST:
 			if( state == 0 )
 				[[self delegate] clickNext]; //Next pressed and released
 		break;
 		
+		case NX_KEYTYPE_PREVIOUS:
 		case NX_KEYTYPE_REWIND:
 			if( state == 0 )
 				[[self delegate] clickPrev]; //Previous pressed and released
