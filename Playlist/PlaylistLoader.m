@@ -278,7 +278,7 @@
         readEntryInfoOperation = [[[NSInvocationOperation alloc]
                                     initWithTarget:self
                                           selector:@selector(readEntryInfo:)
-                                            object:pe] autorelease];
+                                            object:pe]autorelease];
         if (oldReadEntryInfoOperation)
         {
             [readEntryInfoOperation addDependency:oldReadEntryInfoOperation];
@@ -309,6 +309,25 @@
     return entryInfo;
 }
 
+- (void)processEntryInfo:(NSInvocationOperation *)operation
+{
+    NSDictionary *entryInfo = [operation result];
+    PlaylistEntry *pe;
+    // get the playlist entry that the thread was inspecting
+    [[operation invocation]getArgument:&pe atIndex:2];
+    if (entryInfo == nil)
+    {
+        pe.error = YES;
+        pe.errorMessage = @"Unable to retrieve properties.";
+    }
+    else
+    {
+        [pe setValuesForKeysWithDictionary:entryInfo];
+        [playlistController updateTotalTime];
+    }
+    return;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
@@ -317,30 +336,9 @@
     // We finished reading the info for a playlist entry
     if ([keyPath isEqualToString:@"isFinished"] && [object isFinished])
     {
-        // get the results
-        NSDictionary *entryInfo = [object result];
-        // get the playlist entry that the thread was inspecting
-        PlaylistEntry *pe;
-        [[object invocation]getArgument:&pe atIndex:2];
-        
-        if (entryInfo == nil)
-        {
-            pe.error = YES;
-            pe.errorMessage = @"Unable to retrieve properties.";
-        }
-        else
-        {
-            [pe setValuesForKeysWithDictionary:entryInfo];
-            [playlistController updateTotalTime];
-        }
-        
-        //Hack so the display gets updated
-        PlaylistEntry *tempEntry = [playlistController currentEntry];
-        [playlistController setCurrentEntry:pe];
-        [playlistController setCurrentEntry:tempEntry];
-            
         // stop observing
         [object removeObserver:self forKeyPath:keyPath];
+        [self performSelectorOnMainThread:@selector(processEntryInfo:) withObject:object waitUntilDone:NO];  
     }
     else
     {
