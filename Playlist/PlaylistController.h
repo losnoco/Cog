@@ -26,7 +26,7 @@ typedef enum {
 	IBOutlet PlaylistLoader *playlistLoader;
 	IBOutlet EntriesController *entriesController;
 	IBOutlet SpotlightWindowController *spotlightWindowController;
-
+	
 	NSMutableArray *shuffleList;
 	NSMutableArray *queueList;
 	
