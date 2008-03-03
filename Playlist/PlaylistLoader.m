@@ -267,28 +267,39 @@
 	
 	//Select the first entry in the group that was just added
 	[playlistController setSelectionIndex:index];
-	
+	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
+}
+
+- (void)loadInfoForEntries:(NSArray *)entries
+{
     NSOperationQueue *queue;
     queue = [[[NSApplication sharedApplication] delegate] sharedOperationQueue];
     
+    NSInvocationOperation *oldReadEntryInfoOperation = Nil;
     for (PlaylistEntry *pe in entries)
     {
         NSInvocationOperation *readEntryInfoOperation;
-        readEntryInfoOperation = [[NSInvocationOperation alloc]
+        readEntryInfoOperation = [[[NSInvocationOperation alloc]
                                     initWithTarget:self
                                           selector:@selector(readEntryInfo:)
-                                            object:pe];
-
+                                            object:pe]autorelease];
+        if (oldReadEntryInfoOperation)
+        {
+            [readEntryInfoOperation addDependency:oldReadEntryInfoOperation];
+            [oldReadEntryInfoOperation release];
+        }
         [readEntryInfoOperation addObserver:self
                                  forKeyPath:@"isFinished"
                                     options:NSKeyValueObservingOptionNew
                                     context:NULL];
         [queue addOperation:readEntryInfoOperation];
-		
-		[readEntryInfoOperation release];
+        oldReadEntryInfoOperation = [readEntryInfoOperation retain];
     }
+    [oldReadEntryInfoOperation release];
 
-	return;
+	[queue waitUntilAllOperationsAreFinished];
+
+	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
 }
 
 - (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe
