@@ -4,7 +4,7 @@
 
 #import "Plugin.h"
 
-//Singleton
+//Singletonish
 @interface PluginController : NSObject <CogPluginController>
 {
 	NSMutableDictionary *sources;

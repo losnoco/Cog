@@ -15,57 +15,19 @@
 
 @synthesize configured;
 
-//Start of singleton-related stuff.
 static PluginController *sharedPluginController = nil;
 
 + (id<CogPluginController>)sharedPluginController
 {
 	@synchronized(self) {
 		if (sharedPluginController == nil) {
-			[[self alloc] init]; // assignment not done here
+			sharedPluginController = [[self alloc] init];
 		}
 	}
+	
 	return sharedPluginController;
 }
 
-+ (id)allocWithZone:(NSZone *)zone
-{
-	@synchronized(self) {
-		if (sharedPluginController == nil) {
-			sharedPluginController = [super allocWithZone:zone];
-			return sharedPluginController;  // assignment and return on first allocation
-		}
-	}
-
-	return nil; //on subsequent allocation attempts return nil
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-	return self;
-}
-
-- (id)retain
-{
-	return self;
-}
-
-- (unsigned)retainCount
-{
-	return UINT_MAX;  //denotes an object that cannot be released
-}
- 
-- (void)release
-{
-	//do nothing
-}
-
-- (id)autorelease
-{
-	return self;
-}
-
-//End of singleton-related stuff
 
 - (id)init {
 	self = [super init];
