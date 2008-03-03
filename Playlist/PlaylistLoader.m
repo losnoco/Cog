@@ -271,27 +271,23 @@
     NSOperationQueue *queue;
     queue = [[[NSApplication sharedApplication] delegate] sharedOperationQueue];
     
-    NSInvocationOperation *oldReadEntryInfoOperation = Nil;
     for (PlaylistEntry *pe in entries)
     {
         NSInvocationOperation *readEntryInfoOperation;
-        readEntryInfoOperation = [[[NSInvocationOperation alloc]
+        readEntryInfoOperation = [[NSInvocationOperation alloc]
                                     initWithTarget:self
                                           selector:@selector(readEntryInfo:)
-                                            object:pe]autorelease];
-        if (oldReadEntryInfoOperation)
-        {
-            [readEntryInfoOperation addDependency:oldReadEntryInfoOperation];
-            [oldReadEntryInfoOperation release];
-        }
+                                            object:pe];
+
         [readEntryInfoOperation addObserver:self
                                  forKeyPath:@"isFinished"
                                     options:NSKeyValueObservingOptionNew
                                     context:NULL];
         [queue addOperation:readEntryInfoOperation];
-        oldReadEntryInfoOperation = [readEntryInfoOperation retain];
+		
+		[readEntryInfoOperation release];
     }
-    [oldReadEntryInfoOperation release];
+
 	return;
 }
 
@@ -323,7 +319,6 @@
     else
     {
         [pe setValuesForKeysWithDictionary:entryInfo];
-        [playlistController updateTotalTime];
     }
     return;
 }
@@ -339,6 +334,7 @@
         // stop observing
         [object removeObserver:self forKeyPath:keyPath];
         [self performSelectorOnMainThread:@selector(processEntryInfo:) withObject:object waitUntilDone:NO];  
+		
     }
     else
     {

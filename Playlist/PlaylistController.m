@@ -73,13 +73,18 @@
 	[super awakeFromNib];
 
 	[self addObserver:self forKeyPath:@"arrangedObjects" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
+	[self addObserver:self forKeyPath:@"arrangedObjects.length" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([keyPath isEqualToString:@"arrangedObjects"])
+	if ([keyPath isEqualToString:@"arrangedObjects"])	
 	{
 		[self updatePlaylistIndexes];
+		[self updateTotalTime];
+	}
+	else if ([keyPath isEqualToString:@"length"])
+	{
 		[self updateTotalTime];
 	}
 }
