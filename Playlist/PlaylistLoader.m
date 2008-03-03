@@ -272,6 +272,8 @@
 
 - (void)loadInfoForEntries:(NSArray *)entries
 {
+	NSAutoreleasePool *pool =[[NSAutoreleasePool alloc] init];
+
     NSOperationQueue *queue;
     queue = [[[NSApplication sharedApplication] delegate] sharedOperationQueue];
     
@@ -279,10 +281,10 @@
     for (PlaylistEntry *pe in entries)
     {
         NSInvocationOperation *readEntryInfoOperation;
-        readEntryInfoOperation = [[[NSInvocationOperation alloc]
+        readEntryInfoOperation = [[NSInvocationOperation alloc]
                                     initWithTarget:self
                                           selector:@selector(readEntryInfo:)
-                                            object:pe]autorelease];
+                                            object:pe];
         if (oldReadEntryInfoOperation)
         {
             [readEntryInfoOperation addDependency:oldReadEntryInfoOperation];
@@ -294,12 +296,14 @@
                                     context:NULL];
         [queue addOperation:readEntryInfoOperation];
         oldReadEntryInfoOperation = [readEntryInfoOperation retain];
+		[readEntryInfoOperation release];
     }
     [oldReadEntryInfoOperation release];
 
 	[queue waitUntilAllOperationsAreFinished];
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+	[pool release];
 }
 
 - (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe

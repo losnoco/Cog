@@ -35,13 +35,25 @@
 			lYear = tag->year();
 			lTrack = tag->track();
 			
-			lArtist = [NSString stringWithUTF8String:pArtist.toCString(true)];
+			if (!pArtist.isNull())
+				lArtist = [NSString stringWithUTF8String:pArtist.toCString(true)];
+			else
+				lArtist = @"";
 
-			lAlbum = [NSString stringWithUTF8String:pAlbum.toCString(true)];
+			if (!pAlbum.isNull())
+				lAlbum = [NSString stringWithUTF8String:pAlbum.toCString(true)];
+			else
+				lAlbum = @"";
 			
-			lTitle = [NSString stringWithUTF8String:pTitle.toCString(true)];
+			if (!pTitle.isNull())
+				lTitle = [NSString stringWithUTF8String:pTitle.toCString(true)];
+			else
+				lTitle = @"";
 			
-			lGenre = [NSString stringWithUTF8String:pGenre.toCString(true)];
+			if (!pGenre.isNull())
+				lGenre = [NSString stringWithUTF8String:pGenre.toCString(true)];
+			else
+				lGenre = @"";
 		}
 	}
 	

@@ -22,7 +22,7 @@
 #ifndef TAGLIB_FILEREF_H
 #define TAGLIB_FILEREF_H
 
-#include <tstringlist.h>
+#include "tstringlist.h"
 
 #include "taglib_export.h"
 #include "audioproperties.h"
