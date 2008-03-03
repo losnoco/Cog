@@ -7,8 +7,8 @@
 //
 
 #import "TagLibMetadataReader.h"
-#import "TagLib/tag_c.h"
-
+#import <TagLib/fileref.h>
+#import <TagLib/tag.h>
 
 @implementation TagLibMetadataReader
 
@@ -17,48 +17,32 @@
 	NSString *lArtist = @"", *lTitle = @"", *lAlbum = @"", *lGenre = @"";
 	int lYear = 0, lTrack = 0;
 	
-	TagLib_File *tagFile = taglib_file_new((const char *)[[url path] UTF8String]);
-	if (tagFile)
+	TagLib::FileRef f((const char *)[[url path] UTF8String], false);
+	if (!f.isNull())
 	{
-		TagLib_Tag *tag = taglib_file_tag(tagFile);
+		const TagLib::Tag *tag = f.tag();
 		
 		if (tag)
 		{
-			char *pArtist, *pTitle, *pAlbum, *pGenre, *pComment;
+			TagLib::String pArtist, pTitle, pAlbum, pGenre, pComment;
 			
-			pArtist = taglib_tag_artist(tag);
-			pTitle = taglib_tag_title(tag);
-			pAlbum = taglib_tag_album(tag);
-			pGenre = taglib_tag_genre(tag);
-			pComment = taglib_tag_comment(tag);
+			pArtist = tag->artist();
+			pTitle = tag->title();;
+			pAlbum = tag->album();
+			pGenre = tag->genre();
+			pComment = tag->comment();
 			
-			lYear = taglib_tag_year(tag);
-			lTrack = taglib_tag_track(tag);
+			lYear = tag->year();
+			lTrack = tag->track();
 			
-			if (pArtist != NULL)
-				lArtist = [NSString stringWithUTF8String:(char *)pArtist];
-			else
-				lArtist = @"";
+			lArtist = [NSString stringWithUTF8String:pArtist.toCString(true)];
+
+			lAlbum = [NSString stringWithUTF8String:pAlbum.toCString(true)];
 			
-			if (pAlbum != NULL)
-				lAlbum = [NSString stringWithUTF8String:(char *)pAlbum];
-			else
-				lAlbum = @"";
+			lTitle = [NSString stringWithUTF8String:pTitle.toCString(true)];
 			
-			if (pTitle != NULL)
-				lTitle = [NSString stringWithUTF8String:(char *)pTitle];
-			else
-				lTitle = @"";
-			
-			if (pGenre != NULL)	
-				lGenre = [NSString stringWithUTF8String:(char *)pGenre];
-			else
-				lGenre = @"";
-				
-			taglib_tag_free_strings();
+			lGenre = [NSString stringWithUTF8String:pGenre.toCString(true)];
 		}
-		
-		taglib_file_free(tagFile);
 	}
 	
 	return [NSDictionary dictionaryWithObjectsAndKeys:
