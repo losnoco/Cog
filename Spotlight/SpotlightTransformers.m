@@ -85,3 +85,23 @@ static SpotlightWindowController * searchController;
 }
 
 @end
+
+@implementation NumberToStringTransformer
+
++ (Class)transformedValueClass { return [NSString class]; }
++ (BOOL)allowsReverseTransformation { return NO; }
+
+// Convert from NSNumber to NSString
+- (id)transformedValue:(id)value {
+    if (value == nil) return nil;
+    
+    // If there's an NS/CFNumber hiding in here...
+    if([value respondsToSelector:@selector(stringValue:)])
+    {
+        return [value stringValue];
+    }
+    
+    return value; 
+}
+
+@end

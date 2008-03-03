@@ -12,9 +12,11 @@
 
 @interface SpotlightPlaylistEntry : PlaylistEntry {
     NSNumber *length;
+    NSString *spotlightTrack;
 }
 
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem;
 
 @property(retain, readwrite) NSNumber *length;
+@property(retain) NSString *spotlightTrack;
 @end

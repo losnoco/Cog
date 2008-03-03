@@ -26,3 +26,6 @@
 
 @interface StringToSearchScopeTransformer: NSValueTransformer {}
 @end
+
+@interface NumberToStringTransformer: NSValueTransformer {}
+@end
