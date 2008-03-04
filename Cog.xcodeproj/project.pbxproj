@@ -79,6 +79,7 @@
 		17A8F6870D6A7FCA0095DA13 /* repeat_one.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F6840D6A7FCA0095DA13 /* repeat_one.png */; };
 		17A8F71A0D6A89730095DA13 /* repeat_album.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F7190D6A89730095DA13 /* repeat_album.png */; };
 		17B6FA7F0D48225300C3BEF1 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BF2B270CDD77EB007E1295 /* Sparkle.framework */; };
+		17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7DD7C0D7CD10D00320E70 /* BlankZeroFormatter.m */; };
 		17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */; };
 		17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */; };
 		17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */; };
@@ -593,6 +594,8 @@
 		17A8F6830D6A7FCA0095DA13 /* repeat_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_none.png; path = Images/repeat_none.png; sourceTree = "<group>"; };
 		17A8F6840D6A7FCA0095DA13 /* repeat_one.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_one.png; path = Images/repeat_one.png; sourceTree = "<group>"; };
 		17A8F7190D6A89730095DA13 /* repeat_album.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_album.png; path = Images/repeat_album.png; sourceTree = "<group>"; };
+		17B7DD7B0D7CD10D00320E70 /* BlankZeroFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlankZeroFormatter.h; sourceTree = "<group>"; };
+		17B7DD7C0D7CD10D00320E70 /* BlankZeroFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlankZeroFormatter.m; sourceTree = "<group>"; };
 		17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
@@ -1237,6 +1240,8 @@
 				17A8F6360D6A7B0F0095DA13 /* RepeatTransformers.m */,
 				170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */,
 				170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */,
+				17B7DD7B0D7CD10D00320E70 /* BlankZeroFormatter.h */,
+				17B7DD7C0D7CD10D00320E70 /* BlankZeroFormatter.m */,
 			);
 			path = Playlist;
 			sourceTree = "<group>";
@@ -1722,6 +1727,7 @@
 				171192BD0D691ED600FD76C5 /* PathWatcher.m in Sources */,
 				17A8F6370D6A7B0F0095DA13 /* RepeatTransformers.m in Sources */,
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
+				17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

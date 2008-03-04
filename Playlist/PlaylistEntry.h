@@ -29,7 +29,7 @@
 	NSString *album;
 	NSString *title;
 	NSString *genre;
-	NSString *year;
+	NSNumber *year;
 	NSNumber *track;
 	
 	long long totalFrames;
@@ -78,7 +78,7 @@
 @property(retain) NSString *album;
 @property(retain) NSString *title;
 @property(retain) NSString *genre;
-@property(retain) NSString *year;
+@property(retain) NSNumber *year;
 @property(retain) NSNumber *track;
 
 @property long long totalFrames;

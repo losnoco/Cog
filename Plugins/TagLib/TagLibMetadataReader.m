@@ -37,23 +37,15 @@
 			
 			if (!pArtist.isNull())
 				lArtist = [NSString stringWithUTF8String:pArtist.toCString(true)];
-			else
-				lArtist = @"";
 
 			if (!pAlbum.isNull())
 				lAlbum = [NSString stringWithUTF8String:pAlbum.toCString(true)];
-			else
-				lAlbum = @"";
 			
 			if (!pTitle.isNull())
 				lTitle = [NSString stringWithUTF8String:pTitle.toCString(true)];
-			else
-				lTitle = @"";
 			
 			if (!pGenre.isNull())
 				lGenre = [NSString stringWithUTF8String:pGenre.toCString(true)];
-			else
-				lGenre = @"";
 		}
 	}
 	
@@ -62,7 +54,7 @@
 		lTitle, @"title",
 		lAlbum, @"album",
 		lGenre, @"genre",
-		[[NSNumber numberWithInt: lYear] stringValue], @"year",
+		[NSNumber numberWithInt: lYear], @"year",
 		[NSNumber numberWithInt: lTrack], @"track",
 		nil];
 }

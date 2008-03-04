@@ -12,6 +12,7 @@
 
 #import "IndexFormatter.h"
 #import "SecondsFormatter.h"
+#import "BlankZeroFormatter.h"
 #import "PlaylistEntry.h"
 
 #import "CogAudio/Status.h"
@@ -53,6 +54,11 @@
 	NSFormatter *indexFormatter = [[IndexFormatter alloc] init];
 	[[[self tableColumnWithIdentifier:@"index"] dataCell] setFormatter:indexFormatter];
 	[indexFormatter release];
+	
+	NSFormatter *blankZeroFormatter = [[BlankZeroFormatter alloc] init];
+	[[[self tableColumnWithIdentifier:@"track"] dataCell] setFormatter:blankZeroFormatter];
+	[[[self tableColumnWithIdentifier:@"year"] dataCell] setFormatter:blankZeroFormatter];
+	[blankZeroFormatter release];
 	//end setting up formatters
 
 	[self setVerticalMotionCanBeginDrag:YES];
