@@ -562,7 +562,8 @@
 	
 	pe.current = YES;
 	
-	//[tableView scrollRowToVisible:pe.index];
+	if (pe != nil)
+		[tableView scrollRowToVisible:pe.index];
 	
 	[pe retain];
 	[currentEntry release];
