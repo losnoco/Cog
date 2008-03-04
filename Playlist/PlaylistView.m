@@ -27,23 +27,10 @@
     NSControlSize s = NSSmallControlSize;
 	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
     // NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
-	NSDictionary *bindOptions = 
-	    [NSDictionary dictionaryWithObject:@"FontSizetoLineHeightTransformer"
-                                    forKey:NSValueTransformerNameBindingOption];
-	[self       bind:@"rowHeight"
-	        toObject:[NSUserDefaultsController sharedUserDefaultsController]
-	     withKeyPath:@"values.fontSize"
-             options:bindOptions];
 			 
 	for (NSTableColumn *col in [self tableColumns]) {
         [[col dataCell] setControlSize:s];
         [[col dataCell] setFont:f];
-		if ([[col dataCell] respondsToSelector:@selector(setFontSize:)]) {
-			[col        bind:@"fontSize" 
-					toObject:[NSUserDefaultsController sharedUserDefaultsController] 
-				 withKeyPath:@"values.fontSize" 
-					 options:nil];
-		}
 	}
 
 	//Set up formatters
