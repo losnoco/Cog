@@ -144,7 +144,6 @@
 		8E9A2E860BA78B500091081B /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2E840BA78B500091081B /* SecondsFormatter.m */; };
 		8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */; };
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
-		B09E964C0D74A6680064F138 /* WMA.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* WMA.bundle */; };
 		B09E96630D74A7BC0064F138 /* stop_current.png in Resources */ = {isa = PBXBuildFile; fileRef = B09E96620D74A7BC0064F138 /* stop_current.png */; };
 /* End PBXBuildFile section */
 
@@ -436,13 +435,6 @@
 			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = WMA;
 		};
-		B09E959A0D749FF90064F138 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B09E94300D747F7B0064F138 /* WMA.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
-			remoteInfo = "WMA Plugin";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -452,7 +444,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B09E964C0D74A6680064F138 /* WMA.bundle in CopyFiles */,
 				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
 				17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */,
 				17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */,
@@ -1332,7 +1323,6 @@
 				17C8F7DA0CBEF3F9008D969D /* PBXTargetDependency */,
 				17BF2B3A0CDD7827007E1295 /* PBXTargetDependency */,
 				17643CBC0D5BD44900F0A9FE /* PBXTargetDependency */,
-				B09E959B0D749FF90064F138 /* PBXTargetDependency */,
 			);
 			name = Cog;
 			productInstallPath = "$(HOME)/Applications";
@@ -1833,11 +1823,6 @@
 			isa = PBXTargetDependency;
 			name = Pls;
 			targetProxy = 8E8D41CB0CBB0DD200135C1B /* PBXContainerItemProxy */;
-		};
-		B09E959B0D749FF90064F138 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "WMA Plugin";
-			targetProxy = B09E959A0D749FF90064F138 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
