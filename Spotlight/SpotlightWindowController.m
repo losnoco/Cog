@@ -40,8 +40,6 @@ static NSPredicate * musicOnlyPredicate = nil;
     
     NSValueTransformer *stringToSearchScopeTransformer = [[[StringToSearchScopeTransformer alloc]init]autorelease];
     [NSValueTransformer setValueTransformer:stringToSearchScopeTransformer forName:@"StringToSearchScopeTransformer"];
-	
-	[NSMetadataQuery exposeBinding:@"searchScopes"];
 }
 
 - (void)registerDefaults
@@ -237,7 +235,7 @@ static NSPredicate * musicOnlyPredicate = nil;
             else
             {
 				NSString * wildcardString = [NSString stringWithFormat:@"*%@*", parsingString];
-                NSPredicate * pred =[NSPredicate predicateWithFormat:@"(kMDItemTitle LIKE[cd] %@) OR (kMDItemAlbum LIKE[cd] %@) OR (kMDItemAuthors LIKE[cd] %@)",
+                NSPredicate * pred = [NSPredicate predicateWithFormat:@"(kMDItemTitle LIKE[cd] %@) OR (kMDItemAlbum LIKE[cd] %@) OR (kMDItemAuthors LIKE[cd] %@)",
                     wildcardString, wildcardString, wildcardString];
                 [subpredicates addObject: pred];
             }
@@ -269,7 +267,6 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
 	self.query = nil;
 	self.searchString = nil;
-    [musicOnlyPredicate release];
 	[super dealloc];
 }
 

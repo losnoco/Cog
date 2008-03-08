@@ -43,11 +43,7 @@ static NSDictionary *importKeys;
 
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem
 {
-    SpotlightPlaylistEntry *entry = [[[SpotlightPlaylistEntry alloc] init] autorelease];
-    
-    // Dictionary of the metadata values
-    NSDictionary *songAttributes = 
-        [metadataItem valuesForAttributes:[importKeys allKeys]];
+    SpotlightPlaylistEntry *entry = [[[SpotlightPlaylistEntry alloc]init]autorelease];
     
     // loop through the keys we want to extract
     for (NSString *mdKey in importKeys) {
@@ -55,7 +51,7 @@ static NSDictionary *importKeys;
         // Just copy the object from metadata
         if ([importTarget isKindOfClass:[NSString class]])
         {
-            [entry setValue: [songAttributes objectForKey:mdKey]
+            [entry setValue: [metadataItem valueForAttribute:mdKey]
                      forKey: importTarget];
         }
         // Transform the value in metadata before copying it in
@@ -65,7 +61,7 @@ static NSDictionary *importKeys;
             NSValueTransformer *transformer = 
                 [NSValueTransformer valueTransformerForName:[importTarget objectAtIndex:1]];
             id transformedValue = [transformer transformedValue:
-                                    [songAttributes objectForKey:mdKey]];
+                                    [metadataItem valueForAttribute:mdKey]];
             [entry setValue:transformedValue forKey: importKey];
         }
         // The importKeys dictionary contains something strange...
@@ -83,6 +79,13 @@ static NSDictionary *importKeys;
 + (NSSet *)keyPathsForValuesAffectingLength
 {
     return Nil;
+}
+
+- (void)dealloc
+{
+    spotlightTrack = Nil;
+    length = Nil; 
+    [super dealloc];
 }
 
 @synthesize length;
