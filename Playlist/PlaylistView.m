@@ -141,6 +141,8 @@
 // enables right-click selection for "Show in Finder" contextual menu
 -(NSMenu*)menuForEvent:(NSEvent*)event
 {
+	return [self menu];
+
 	//Find which row is under the cursor
 	[[self window] makeFirstResponder:self];
 	NSPoint   menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];
@@ -203,31 +205,6 @@
             [tableViewMenu insertItem:artistMenuItem atIndex:[tableViewMenu numberOfItems]];
             [artistMenuItem release];
             addedItems++;
-        }
-
-		int remQ = 0;
-		if (song.queuePosition > 0)
-		{
-			NSMenuItem *queueRemoveMenuItem = [NSMenuItem alloc];
-			NSString *retitle = [NSString
-								 stringWithFormat:@"Remove from Queue"];
-			[queueRemoveMenuItem initWithTitle:retitle
-										action:@selector(removeFromQueue:)
-								 keyEquivalent:@""];
-			queueRemoveMenuItem.target = playlistController;
-			[tableViewMenu insertItem:queueRemoveMenuItem atIndex:1];
-			[queueRemoveMenuItem release];
-			remQ = 1;
-		}
-		if (remQ == 1)
-            [tableViewMenu insertItem:[NSMenuItem separatorItem] atIndex:2];
-		else
-            [tableViewMenu insertItem:[NSMenuItem separatorItem] atIndex:1];
-			
-        if(addedItems)
-        {
-            // add a separator in the right place - turned into a hack now
-            [tableViewMenu insertItem:[NSMenuItem separatorItem] atIndex:[tableViewMenu numberOfItems]-2];
         }
 	}
 	

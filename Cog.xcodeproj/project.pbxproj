@@ -26,6 +26,7 @@
 		17211A780D68B79700911CA9 /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A6E0D68B79700911CA9 /* PathNode.m */; };
 		17211A790D68B79700911CA9 /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A700D68B79700911CA9 /* SmartFolderNode.m */; };
 		17211A7E0D68B7C500911CA9 /* FileTreePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17211A7C0D68B7C500911CA9 /* FileTreePanel.xib */; };
+		17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */; };
 		173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173428F40D5FB1C400E8D854 /* EntriesController.m */; };
 		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
@@ -511,6 +512,8 @@
 		17211A6F0D68B79700911CA9 /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFolderNode.h; sourceTree = "<group>"; };
 		17211A700D68B79700911CA9 /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFolderNode.m; sourceTree = "<group>"; };
 		17211A7D0D68B7C500911CA9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileTreePanel.xib; sourceTree = "<group>"; };
+		17249F0D0D82E17700F33392 /* ToggleQueueTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToggleQueueTitleTransformer.h; sourceTree = "<group>"; };
+		17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToggleQueueTitleTransformer.m; sourceTree = "<group>"; };
 		173428F30D5FB1C400E8D854 /* EntriesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntriesController.h; sourceTree = "<group>"; };
 		173428F40D5FB1C400E8D854 /* EntriesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntriesController.m; sourceTree = "<group>"; };
 		17342A990D5FD20B00E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -1233,6 +1236,8 @@
 				170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */,
 				17B7DD7B0D7CD10D00320E70 /* BlankZeroFormatter.h */,
 				17B7DD7C0D7CD10D00320E70 /* BlankZeroFormatter.m */,
+				17249F0D0D82E17700F33392 /* ToggleQueueTitleTransformer.h */,
+				17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */,
 			);
 			path = Playlist;
 			sourceTree = "<group>";
@@ -1718,6 +1723,7 @@
 				17A8F6370D6A7B0F0095DA13 /* RepeatTransformers.m in Sources */,
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
 				17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */,
+				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

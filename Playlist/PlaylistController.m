@@ -13,6 +13,7 @@
 #import "SpotlightWindowController.h"
 #import "RepeatTransformers.h"
 #import "StatusImageTransformer.h"
+#import "ToggleQueueTitleTransformer.h"
 
 #import "CogAudio/AudioPlayer.h"
 
@@ -45,7 +46,17 @@
 	NSValueTransformer *statusImageTransformer = [[[StatusImageTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:statusImageTransformer
                                     forName:@"StatusImageTransformer"];
+									
+	NSValueTransformer *toggleQueueTitleTransformer = [[[ToggleQueueTitleTransformer alloc] init] autorelease];
+    [NSValueTransformer setValueTransformer:toggleQueueTitleTransformer
+                                    forName:@"ToggleQueueTitleTransformer"];
 }
+
++ (NSSet *)keyPathsForValuesAffectingSelection
+{
+	return [NSSet setWithObjects:@"content.bitrate", @"content.sampleRate", nil];
+}
+
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -647,34 +658,32 @@
 }
 
 
-- (IBAction)addToQueue:(id)sender
+- (IBAction)toggleQueued:(id)sender
 {
 	for (PlaylistEntry *queueItem in [self selectedObjects])
 	{
-		queueItem.queued = YES;
-		[queueItem setQueuePosition: [queueList count]];
-		
-		[queueList addObject:queueItem];
-	}
-	
-	for (PlaylistEntry *ap in queueList)
-		NSLog(@"hehe now: %d", ap.queuePosition);
-}
+		if (queueItem.queued)
+		{
+			queueItem.queued = NO;
+			queueItem.queuePosition = -1;
 
-- (IBAction)removeFromQueue:(id)sender
-{
+			[queueList removeObject:queueItem];
+		}
+		else
+		{
+			queueItem.queued = YES;
+			queueItem.queuePosition = [queueList count];
+			
+			[queueList addObject:queueItem];
+		}
 		
-	for (PlaylistEntry *queueItem in [self selectedObjects])
-	{
-		queueItem.queued = NO;
-		[queueItem setQueuePosition:-1];
-		[queueList removeObject:queueItem];
+		NSLog(@"TOGGLE QUEUED: %i", queueItem.queued);
 	}
 
 	int i = 0;
 	for (PlaylistEntry *cur in queueList)
 	{
-		[cur setQueuePosition:i++];
+		cur.queuePosition = i++;
 	}
 }
 

@@ -87,8 +87,7 @@ typedef enum {
 - (PlaylistEntry *)entryAtIndex:(int)i;
 
 // queue methods
-- (IBAction)addToQueue:(id)sender;
-- (IBAction)removeFromQueue:(id)sender;
+- (IBAction)toggleQueued:(id)sender;
 - (IBAction)emptyQueueList:(id)sender;
 - (NSMutableArray *)queueList;
 
