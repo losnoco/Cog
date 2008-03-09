@@ -83,10 +83,12 @@ static NSDictionary *importKeys;
 
 - (void)dealloc
 {
-    spotlightTrack = nil;
-    length = nil; 
-    [super dealloc];
+	self.length = nil;
+	self.spotlightTrack = nil;
+
+	[super dealloc];
 }
+
 
 @synthesize length;
 @synthesize spotlightTrack;

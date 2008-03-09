@@ -81,17 +81,20 @@
 
 - (void)dealloc
 {
-    self.errorMessage = nil;
-    
-    self.URL = nil;
-    self.artist = nil;
-    self.album = nil;
-    self.genre = nil;
-    self.year = nil;
-    self.track = nil;
-
-    self.endian = nil;
-    [super dealloc];
+	self.errorMessage = nil;
+	
+	self.URL = nil;
+	
+	self.artist = nil;
+	self.album = nil;
+	self.title = nil;
+	self.genre = nil;
+	self.year = nil;
+	self.track = nil;
+	
+	self.endian = nil;
+	
+	[super dealloc];
 }
 
 // Get the URL if the title is blank
@@ -102,7 +105,7 @@
     {
         return [[self.URL path] lastPathComponent];
     }
-    return [[title retain] autorelease];
+    return title;
 }
 
 @dynamic display;
