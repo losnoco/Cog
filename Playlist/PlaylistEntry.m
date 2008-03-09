@@ -79,6 +79,21 @@
 	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", self.index, self.URL];
 }
 
+- (void)dealloc
+{
+    self.errorMessage = nil;
+    
+    self.URL = nil;
+    self.artist = nil;
+    self.album = nil;
+    self.genre = nil;
+    self.year = nil;
+    self.track = nil;
+
+    self.endian = nil;
+    [super dealloc];
+}
+
 // Get the URL if the title is blank
 @synthesize title;
 - (NSString *)title

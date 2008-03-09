@@ -78,13 +78,13 @@ static NSDictionary *importKeys;
 // Length is no longer a dependent key
 + (NSSet *)keyPathsForValuesAffectingLength
 {
-    return Nil;
+    return nil;
 }
 
 - (void)dealloc
 {
-    spotlightTrack = Nil;
-    length = Nil; 
+    spotlightTrack = nil;
+    length = nil; 
     [super dealloc];
 }
 
