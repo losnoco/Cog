@@ -52,11 +52,6 @@
                                     forName:@"ToggleQueueTitleTransformer"];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingSelection
-{
-	return [NSSet setWithObjects:@"content.bitrate", @"content.sampleRate", nil];
-}
-
 
 - (id)initWithCoder:(NSCoder *)decoder
 {

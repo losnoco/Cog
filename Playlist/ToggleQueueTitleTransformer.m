@@ -12,37 +12,23 @@
 @implementation ToggleQueueTitleTransformer
 
 
-+ (Class)transformedValueClass { return [NSArray class]; }
++ (Class)transformedValueClass { return [NSNumber class]; }
 + (BOOL)allowsReverseTransformation { return NO; }
 
 // Convert from NSNumber to NSString
 - (id)transformedValue:(id)value {
+	NSLog(@"VALUE: %@", value);
     if (value == nil) return nil;
-	if ([value count] == 0) return nil;
+	BOOL queued = [value boolValue];
 	
-	BOOL trueFound = NO;
-	BOOL falseFound = NO;
-	
-	for (NSNumber *q in value) {
-		BOOL queued = [q boolValue];
-		
-		if (queued)
-		{
-			trueFound = YES;
-		}
-		else if (!queued)
-		{
-			falseFound = YES;
-		}
-	}
-	
-	
-	if (trueFound && !falseFound)
+	if (queued)
+	{
 		return @"Remove from Queue";
-	else if (falseFound && !trueFound)
-		return @"Add to Queue";
+	}
 	else
-		return @"Toggle Queued";
+	{
+		return @"Add to Queue";
+	}
 
 }
 

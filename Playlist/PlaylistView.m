@@ -141,8 +141,6 @@
 // enables right-click selection for "Show in Finder" contextual menu
 -(NSMenu*)menuForEvent:(NSEvent*)event
 {
-	return [self menu];
-
 	//Find which row is under the cursor
 	[[self window] makeFirstResponder:self];
 	NSPoint   menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];

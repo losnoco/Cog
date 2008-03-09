@@ -8,12 +8,12 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="29"/>
-			<integer value="513"/>
-			<integer value="21"/>
-			<integer value="463"/>
 			<integer value="1324"/>
 			<integer value="1063"/>
+			<integer value="29"/>
+			<integer value="21"/>
+			<integer value="463"/>
+			<integer value="513"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3222,14 +3222,11 @@ QXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 					<object class="NSMutableString">
 						<characters key="NS.bytes">queued</characters>
 					</object>
+					<string>title</string>
 				</object>
-				<bool key="NSEditable">YES</bool>
+				<string key="NSObjectClassName">PlaylistEntry</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
-				<bool key="NSAvoidsEmptySelection">YES</bool>
-				<bool key="NSPreservesSelection">YES</bool>
-				<bool key="NSSelectsInsertedObjects">YES</bool>
 				<bool key="NSFilterRestrictsInsertion">YES</bool>
-				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -3750,22 +3747,6 @@ QXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 						</object>
 					</object>
 					<int key="connectionID">853</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.bitsPerSample</string>
-						<reference key="source" ref="794243417"/>
-						<reference key="destination" ref="710316598"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="794243417"/>
-							<reference key="NSDestination" ref="710316598"/>
-							<string key="NSLabel">value: selection.bitsPerSample</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.bitsPerSample</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">878</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -5229,120 +5210,132 @@ QXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.channels</string>
-						<reference key="source" ref="219351690"/>
-						<reference key="destination" ref="710316598"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="219351690"/>
-							<reference key="NSDestination" ref="710316598"/>
-							<string key="NSLabel">value: selection.channels</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.channels</string>
-							<object class="NSDictionary" key="NSOptions">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSMutableArray" key="dict.sortedKeys">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>NSAllowsEditingMultipleValuesSelection</string>
-									<string>NSAlwaysPresentsApplicationModalAlerts</string>
-									<string>NSConditionallySetsEditable</string>
-									<string>NSConditionallySetsEnabled</string>
-									<string>NSConditionallySetsHidden</string>
-									<string>NSContinuouslyUpdatesValue</string>
-									<string>NSMultipleValuesPlaceholder</string>
-									<string>NSNoSelectionPlaceholder</string>
-									<string>NSNotApplicablePlaceholder</string>
-									<string>NSNullPlaceholder</string>
-									<string>NSRaisesForNotApplicableKeys</string>
-									<string>NSValidatesImmediately</string>
-								</object>
-								<object class="NSMutableArray" key="dict.values">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<reference ref="9"/>
-									<reference ref="8"/>
-									<reference ref="8"/>
-									<reference ref="8"/>
-									<reference ref="8"/>
-									<reference ref="8"/>
-									<string/>
-									<string/>
-									<string/>
-									<string/>
-									<reference ref="9"/>
-									<reference ref="9"/>
-								</object>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1970</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.bitrate</string>
-						<reference key="source" ref="994782662"/>
-						<reference key="destination" ref="710316598"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="994782662"/>
-							<reference key="NSDestination" ref="710316598"/>
-							<string key="NSLabel">value: selection.bitrate</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.bitrate</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">2015</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">contentArray: selectedObjects</string>
-						<reference key="source" ref="1039052152"/>
-						<reference key="destination" ref="710316598"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1039052152"/>
-							<reference key="NSDestination" ref="710316598"/>
-							<string key="NSLabel">contentArray: selectedObjects</string>
-							<string key="NSBinding">contentArray</string>
-							<string key="NSKeyPath">selectedObjects</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">2023</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">title: arrangedObjects.queued</string>
-						<reference key="source" ref="203290105"/>
-						<reference key="destination" ref="1039052152"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="203290105"/>
-							<reference key="NSDestination" ref="1039052152"/>
-							<string key="NSLabel">title: arrangedObjects.queued</string>
-							<string key="NSBinding">title</string>
-							<string key="NSKeyPath">arrangedObjects.queued</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">ToggleQueueTitleTransformer</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">2025</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: selection.sampleRate</string>
 						<reference key="source" ref="363335288"/>
-						<reference key="destination" ref="710316598"/>
+						<reference key="destination" ref="1039052152"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="363335288"/>
-							<reference key="NSDestination" ref="710316598"/>
+							<reference key="NSDestination" ref="1039052152"/>
 							<string key="NSLabel">value: selection.sampleRate</string>
 							<string key="NSBinding">value</string>
 							<string key="NSKeyPath">selection.sampleRate</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">2028</int>
+					<int key="connectionID">2034</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.bitrate</string>
+						<reference key="source" ref="994782662"/>
+						<reference key="destination" ref="1039052152"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="994782662"/>
+							<reference key="NSDestination" ref="1039052152"/>
+							<string key="NSLabel">value: selection.bitrate</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.bitrate</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2035</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">contentArray: arrangedObjects</string>
+						<reference key="source" ref="1039052152"/>
+						<reference key="destination" ref="710316598"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1039052152"/>
+							<reference key="NSDestination" ref="710316598"/>
+							<string key="NSLabel">contentArray: arrangedObjects</string>
+							<string key="NSBinding">contentArray</string>
+							<string key="NSKeyPath">arrangedObjects</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2039</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">selectionIndexes: selectionIndexes</string>
+						<reference key="source" ref="1039052152"/>
+						<reference key="destination" ref="710316598"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1039052152"/>
+							<reference key="NSDestination" ref="710316598"/>
+							<string key="NSLabel">selectionIndexes: selectionIndexes</string>
+							<string key="NSBinding">selectionIndexes</string>
+							<string key="NSKeyPath">selectionIndexes</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2041</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">title: selection.queued</string>
+						<reference key="source" ref="203290105"/>
+						<reference key="destination" ref="1039052152"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="203290105"/>
+							<reference key="NSDestination" ref="1039052152"/>
+							<string key="NSLabel">title: selection.queued</string>
+							<string key="NSBinding">title</string>
+							<string key="NSKeyPath">selection.queued</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMutableArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSMultipleValuesPlaceholder</string>
+									<string>NSValueTransformerName</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>Toggle Queued</string>
+									<string>ToggleQueueTitleTransformer</string>
+								</object>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2042</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.channels</string>
+						<reference key="source" ref="219351690"/>
+						<reference key="destination" ref="1039052152"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="219351690"/>
+							<reference key="NSDestination" ref="1039052152"/>
+							<string key="NSLabel">value: selection.channels</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.channels</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValidatesImmediately</string>
+								<integer value="1" key="NS.object.0"/>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2043</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.bitsPerSample</string>
+						<reference key="source" ref="794243417"/>
+						<reference key="destination" ref="1039052152"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="794243417"/>
+							<reference key="NSDestination" ref="1039052152"/>
+							<string key="NSLabel">value: selection.bitsPerSample</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.bitsPerSample</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2044</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -8263,7 +8256,7 @@ QXBwbGUsIEluYy4sIDIwMDgAA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2028</int>
+			<int key="maxID">2044</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
