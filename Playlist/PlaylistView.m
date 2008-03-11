@@ -145,7 +145,7 @@
 	[[self window] makeFirstResponder:self];
 	NSPoint   menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];
 	NSInteger iRow = [self rowAtPoint:menuPoint];
-    NSMenu* tableViewMenu = [[self menu] copy];
+    NSMenu* tableViewMenu = [self menu];
 	
 	/* Update the table selection before showing menu
 		Preserves the selection if the row under the mouse is selected (to allow for
@@ -170,43 +170,8 @@
 			[[tableViewMenu itemAtIndex:i] setEnabled:NO];
 		}
 	}
-	else
-	{
-		// Add Spotlight search items
-        PlaylistEntry *song = [[playlistController arrangedObjects]objectAtIndex:iRow];
-        NSString *artist = [song artist];
-        NSString *album = [song album];
-        unsigned addedItems = 0; // Count the number of added items, used for separator
-        
-        if(album)
-        {
-            NSMenuItem *albumMenuItem = [NSMenuItem alloc];
-            NSString *title = [NSString 
-                stringWithFormat:@"Search for Songs from %@...", album];
-            [albumMenuItem initWithTitle:title
-                                  action:@selector(searchByAlbum:)
-                           keyEquivalent:@""];
-            albumMenuItem.target = playlistController;
-            [tableViewMenu insertItem:albumMenuItem atIndex:[tableViewMenu numberOfItems]];
-            [albumMenuItem release];
-            addedItems++;
-        }
-        if(artist)
-        {
-            NSMenuItem *artistMenuItem = [NSMenuItem alloc];
-            NSString *title = [NSString
-                stringWithFormat:@"Search for Songs by %@...", artist];
-            [artistMenuItem initWithTitle:title
-                                   action:@selector(searchByArtist:)
-                            keyEquivalent:@""];
-            artistMenuItem.target = playlistController;
-            [tableViewMenu insertItem:artistMenuItem atIndex:[tableViewMenu numberOfItems]];
-            [artistMenuItem release];
-            addedItems++;
-        }
-	}
 	
-	return [tableViewMenu autorelease];
+	return tableViewMenu;
 }
 
 - (void)keyDown:(NSEvent *)e
