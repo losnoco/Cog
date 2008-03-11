@@ -74,8 +74,6 @@ static NSPredicate * musicOnlyPredicate = nil;
         
         // hook my query transformer up to me
         [PausingQueryTransformer setSearchController:self];
-		[[self window] orderOut:self];
-
 	}
 
     return self;
