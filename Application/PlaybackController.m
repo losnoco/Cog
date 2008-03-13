@@ -576,25 +576,6 @@
 	playbackStatus = status;
 }
 
--(BOOL)validateMenuItem:(NSMenuItem*)menuItem
-{
-	SEL action = [menuItem action];
-	
-	if (action == @selector(eventSeekBackward:) && (playbackStatus == kCogStatusStopped))
-		return NO;
-	
-	if (action == @selector(eventSeekForward:) && (playbackStatus == kCogStatusStopped))
-		return NO;
-	
-	if (action == @selector(stop:) && (playbackStatus == kCogStatusStopped))
-		return NO;
-	
-	if (action == @selector(fade:) && (playbackStatus == kCogStatusStopped))
-		return NO;
-	
-	return YES;
-}
-
 
 
 @end
