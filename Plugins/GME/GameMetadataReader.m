@@ -54,7 +54,11 @@
 		return NO;
 	}
 	
-	int track_num = [[url fragment] intValue]; //What if theres no fragment? Assuming we get 0.
+	int track_num;
+	if ([[url fragment] length] == 0)
+		track_num = 0;
+	else
+		track_num = [[url fragment] intValue] + 1;
 	
 	track_info_t info;
 	error = gme_track_info( emu, &info, track_num );
