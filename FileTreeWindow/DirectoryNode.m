@@ -25,7 +25,8 @@
 
 	for (NSString *s in contents)
 	{
-		[fullPaths addObject:[[url path] stringByAppendingPathComponent: s]];
+		if (![s hasPrefix:@"."])
+			[fullPaths addObject:[[url path] stringByAppendingPathComponent: s]];
 	}
 
 	[self processPaths: fullPaths];
