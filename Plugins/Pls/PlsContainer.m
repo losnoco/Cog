@@ -102,11 +102,11 @@
 		NSScanner *scanner = [[NSScanner alloc] initWithString:entry];
 		NSString *lhs = nil;
 		NSString *rhs = nil;
-		
+
 		if (![scanner scanUpToString:@"=" intoString:&lhs]	|| // get LHS
 			![scanner scanString:@"=" intoString:nil]		|| // skip the =
 			![scanner scanUpToString:@"" intoString:&rhs]	|| // get RHS
-			![lhs isEqualToString:@"File"]) // We only want file entries
+			![lhs caseInsensitiveCompare:@"File"]) // We only want file entries
 		{
 			[scanner release];
 			continue;
