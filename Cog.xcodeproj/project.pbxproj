@@ -74,6 +74,7 @@
 		1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */; };
 		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
+		17A140E90D88B954004852F9 /* FilePlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A140E80D88B954004852F9 /* FilePlaylistEntry.m */; };
 		17A8F6370D6A7B0F0095DA13 /* RepeatTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A8F6360D6A7B0F0095DA13 /* RepeatTransformers.m */; };
 		17A8F6850D6A7FCA0095DA13 /* repeat_all.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F6820D6A7FCA0095DA13 /* repeat_all.png */; };
 		17A8F6860D6A7FCA0095DA13 /* repeat_none.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F6830D6A7FCA0095DA13 /* repeat_none.png */; };
@@ -582,6 +583,8 @@
 		1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaKeysApplication.m; sourceTree = "<group>"; };
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
 		179790DF0C087AB7001D6996 /* OpenURLPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenURLPanel.m; sourceTree = "<group>"; };
+		17A140E70D88B954004852F9 /* FilePlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePlaylistEntry.h; sourceTree = "<group>"; };
+		17A140E80D88B954004852F9 /* FilePlaylistEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilePlaylistEntry.m; sourceTree = "<group>"; };
 		17A8F6350D6A7B0F0095DA13 /* RepeatTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatTransformers.h; sourceTree = "<group>"; };
 		17A8F6360D6A7B0F0095DA13 /* RepeatTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepeatTransformers.m; sourceTree = "<group>"; };
 		17A8F6820D6A7FCA0095DA13 /* repeat_all.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_all.png; path = Images/repeat_all.png; sourceTree = "<group>"; };
@@ -1238,6 +1241,8 @@
 				17B7DD7C0D7CD10D00320E70 /* BlankZeroFormatter.m */,
 				17249F0D0D82E17700F33392 /* ToggleQueueTitleTransformer.h */,
 				17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */,
+				17A140E70D88B954004852F9 /* FilePlaylistEntry.h */,
+				17A140E80D88B954004852F9 /* FilePlaylistEntry.m */,
 			);
 			path = Playlist;
 			sourceTree = "<group>";
@@ -1724,6 +1729,7 @@
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
 				17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */,
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
+				17A140E90D88B954004852F9 /* FilePlaylistEntry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

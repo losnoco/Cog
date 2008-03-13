@@ -9,6 +9,7 @@
 #import "PlaylistLoader.h"
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
+#import "FilePlaylistEntry.h"
 #import "AppController.h"
 
 #import "NSFileHandle+CreateFile.h"
@@ -249,8 +250,13 @@
 	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:[validURLs count]];
 	for (i = 0; i < [validURLs count]; i++)
 	{
-		PlaylistEntry *pe = [[PlaylistEntry alloc] init];
 		NSURL *url = [validURLs objectAtIndex:i];
+		
+		PlaylistEntry *pe;
+		if ([url isFileURL]) 
+			pe = [[FilePlaylistEntry alloc] init];
+		else
+			pe = [[PlaylistEntry alloc] init];
 
 		pe.URL = url;
 		pe.index = index+i;
