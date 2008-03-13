@@ -74,6 +74,19 @@ static NSPredicate * musicOnlyPredicate = nil;
         
         // hook my query transformer up to me
         [PausingQueryTransformer setSearchController:self];
+
+		[self registerDefaults];
+
+		// We want to bind the query's search scope to the user default that is
+		// set from the NSPathControl.
+		NSDictionary *bindOptions = 
+			[NSDictionary dictionaryWithObject:@"StringToSearchScopeTransformer"
+										forKey:NSValueTransformerNameBindingOption];
+		
+		[self.query     bind:@"searchScopes"
+					toObject:[NSUserDefaultsController sharedUserDefaultsController]
+				 withKeyPath:@"values.spotlightSearchPath"
+					 options:bindOptions];
 	}
 
     return self;
@@ -81,18 +94,6 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 - (void)awakeFromNib
 {
-	[self registerDefaults];
-
-    // We want to bind the query's search scope to the user default that is
-    // set from the NSPathControl.
-    NSDictionary *bindOptions = 
-        [NSDictionary dictionaryWithObject:@"StringToSearchScopeTransformer"
-                                    forKey:NSValueTransformerNameBindingOption];
-    
-    [self.query     bind:@"searchScopes"
-                toObject:[NSUserDefaultsController sharedUserDefaultsController]
-             withKeyPath:@"values.spotlightSearchPath"
-                 options:bindOptions];
 }
 
 - (IBAction)toggleWindow:(id)sender
