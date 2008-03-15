@@ -13,6 +13,9 @@
 
 @interface FilePlaylistEntry : PlaylistEntry {
 	FSRef fileRef;
+	NSString *fragment;
 }
+
+@property(retain) NSString *fragment;
 
 @end
