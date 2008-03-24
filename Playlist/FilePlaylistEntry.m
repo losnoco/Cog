@@ -27,7 +27,11 @@
 	if (status != noErr) 
 		return nil;
 		
-    return [NSURL URLWithString:[[[NSURL fileURLWithPath: [NSString stringWithUTF8String:(const char *)path]] absoluteString] stringByAppendingFormat:@"#%@", self.fragment]]; 
+	NSString *after = @"";
+	if (self.fragment != nil) {
+		after = [@"#" stringByAppendingString:self.fragment];
+	}
+    return [NSURL URLWithString:[[[NSURL fileURLWithPath: [NSString stringWithUTF8String:(const char *)path]] absoluteString] stringByAppendingString:after]]; 
 }
 
 @end
