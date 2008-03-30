@@ -21,7 +21,7 @@
 	int channels;
 	int bitsPerSample;
 	float frequency;
-	double length;
+	long totalFrames;
 	BOOL seekable;
 }
 

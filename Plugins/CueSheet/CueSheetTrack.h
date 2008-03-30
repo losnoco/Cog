@@ -19,7 +19,7 @@
 	NSString *genre;
 	NSString *year;
 
-	double time;
+	double time; //Starting time for the track
 }
 
 + (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y;

@@ -18,11 +18,11 @@
 	id<CogDecoder> decoder;
 
 	int bytesPerFrame; //Number of bytes per frame, ie channels * (bitsPerSample/8)
-	int bytesPerSecond; //Number of bytes per second, ie bytesPerFrame * sampleRate
 
-	int bytePosition; //Current position in bytes.
+	long framePosition; //Current position in frames.
 
-	double trackEnd; //Seconds until end of track.
+	long trackStart; //Starting frame of track.
+	long trackEnd; //Frames until end of track.
 	
 	CueSheet *cuesheet;
 	CueSheetTrack *track;

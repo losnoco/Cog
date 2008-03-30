@@ -29,7 +29,7 @@
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];
 
 	//Need to alter length
-	[properties setObject:[NSNumber numberWithDouble:((trackEnd - [track time]) * 1000)] forKey:@"totalFrames"];
+	[properties setObject:[NSNumber numberWithLong:(trackEnd - trackStart)] forKey:@"totalFrames"];
 
 	return [properties autorelease];
 }
@@ -82,18 +82,19 @@
 			float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
 
 			bytesPerFrame = (bitsPerSample/8) * channels;
-			bytesPerSecond = (int)(bytesPerFrame * sampleRate);
+			
+			trackStart = [track time] * sampleRate;
 
 			if (nextTrack && [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]) {
-				trackEnd = [nextTrack time];
+				trackEnd = [nextTrack time] * sampleRate;
 			}
 			else {
-				trackEnd = [[properties objectForKey:@"length"] doubleValue]/1000.0;
+				trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue];
 			}
 			
-                       [self seekToTime: 0.0];
+			[self seek: 0];
 
-			//Note: Should register for observations of the decoder, but laziness consumes all.
+			//Note: Should register for observations of the decoder
 			[self willChangeValueForKey:@"properties"];
 			[self didChangeValueForKey:@"properties"];
 
@@ -127,7 +128,8 @@
 
 - (BOOL)setTrack:(NSURL *)url
 {
-	if ([[url fragment] intValue] == [[track track] intValue] + 1) {
+	//Same file, just next track...this may be unnecessary since frame-based decoding is done now...
+	if ([[[track url] path] isEqualToString:[url path]] && [[[track url] host] isEqualToString:[url host]] && [[url fragment] intValue] == [[track track] intValue] + 1) {
 		NSArray *tracks = [cuesheet tracks];
 		
 		int i;
@@ -137,16 +139,20 @@
 				track = [tracks objectAtIndex:i];
 				[track retain];
 				
+				float sampleRate = [[[decoder properties] objectForKey:@"sampleRate"] floatValue];
+				
+				trackStart = [track time] * sampleRate;
+				
 				CueSheetTrack *nextTrack = nil;
 				if (i + 1 < [tracks count]) {
 					nextTrack = [tracks objectAtIndex:i + 1];
 				}
 
 				if (nextTrack && [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]) {
-					trackEnd = [nextTrack time];
+					trackEnd = [nextTrack time] * sampleRate;
 				}
 				else {
-					trackEnd = [[[decoder properties] objectForKey:@"length"] doubleValue]/1000.0;
+					trackEnd = [[[decoder properties] objectForKey:@"totalFrames"] longValue];
 				}
 				
 				NSLog(@"CHANGING TRACK!");
@@ -158,50 +164,35 @@
 	return NO;
 }
 
-- (double)seekToTime:(double)time //milliseconds
+- (long)seek:(long)frame
 {
-	double trackStartMs = [track time] * 1000.0;
-	double trackEndMs =  trackEnd * 1000.0;
-	
-	if (time > trackEndMs - trackStartMs) {
+	if (frame > trackEnd - trackStart) {
 		//need a better way of returning fail.
-		return -1.0;
+		return -1;
 	}
 	
-	time += trackStartMs;
+	frame += trackStart;
 	
-	bytePosition = (time/1000.0) * bytesPerSecond;
-	
-	NSLog(@"Before: %li", bytePosition);
-	bytePosition -= bytePosition % bytesPerFrame;
-	NSLog(@"After: %li", bytePosition);
+	framePosition = [decoder seek:frame];
 
-	return [decoder seekToTime:time];
+	return framePosition;
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	long trackByteEnd = trackEnd * bytesPerSecond;	
-	trackByteEnd -= trackByteEnd % (bytesPerFrame);
-	
-//     NSLog(@"Position: %i/%i", bytePosition, trackByteEnd);
-//     NSLog(@"Requested: %i", size);
-	if (bytePosition + size > trackByteEnd) {
-		size = trackByteEnd - bytePosition;
+	if (framePosition + frames > trackEnd) {
+		frames = trackEnd - framePosition;
 	}
 
-//     NSLog(@"Revised size: %i", size);
-
-	if (!size) {
-               NSLog(@"Returning 0");
+	if (!frames)
+	{
+		NSLog(@"Returning 0");
 		return 0;
 	}
 
-	int n = [decoder fillBuffer:buf ofSize:size];
+	int n = [decoder readAudio:buf frames:frames];
 	
-//     NSLog(@"Received: %i", n);
-
-	bytePosition += n;
+	framePosition += n;
 	
 	return n;
 }

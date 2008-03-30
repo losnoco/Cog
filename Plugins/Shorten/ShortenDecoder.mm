@@ -34,7 +34,7 @@
 
 	seekable = seekTable == true ? YES : NO;
 
-	length = decoder->shn_get_song_length();
+	totalFrames = (decoder->shn_get_song_length() * frequency)/1000.0;
 	
 	decoder->go();
 
@@ -44,49 +44,28 @@
 	return YES;
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	long totalRead, amountRead, amountToRead;
-	
-	totalRead = 0;
-	
-	//For some reason the busy loop is causing pops when output is set to 48000. Probably CPU starvation, since the SHN decoder seems to use a multithreaded nonblocking approach.
-//	while (totalRead < size) {
-		amountToRead = size - totalRead;
-		if (amountToRead > bufferSize) { 
-			amountToRead = bufferSize;
-		}
-	
-		do
-		{
-			amountRead = decoder->read(buf, amountToRead);
-		} while(amountRead == -1 && totalRead == 0);
+	int bytesPerFrame = channels * (bitsPerSample/8);
+	int amountRead;
+
+	//For some reason a busy loop is causing pops when output is set to 48000. Probably CPU starvation, since the SHN decoder seems to use a multithreaded nonblocking approach.
+	do
+	{
+		amountRead = decoder->read(buf, frames * bytesPerFrame);
+	} while(amountRead == -1);
 		
-//		if (amountRead <= 0) {
-//			return totalRead;
-//		}
 
-		totalRead += amountRead;
-//		buf = (void *)((char *)buf + amountRead);
-//	}
-
-	return totalRead;
+	return amountRead/bytesPerFrame;
 }
 
-- (double)seekToTime:(double)milliseconds
+- (long)seek:(long)sample
 {
-	unsigned int sec;
-	
-	/*if (!shn_seekable(handle))
-		return -1.0;*/
-	
-	sec = (int)(milliseconds/1000.0);
-	
-	//shn_seek(handle, sec);
-	
+	unsigned int sec = sample/frequency;
+		
 	decoder->seek(sec);
 	
-	return (sec * 1000.0);
+	return sample;
 }
 
 - (void)close
@@ -108,7 +87,7 @@
 		[NSNumber numberWithInt:channels],@"channels",
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
-		[NSNumber numberWithDouble:length],@"length",
+		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:seekable ],@"seekable",
 		@"little",@"endian",
 		nil];
@@ -121,7 +100,7 @@
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"application/x-shorten", nil]; //This is basically useless
+	return [NSArray arrayWithObjects:@"application/x-shorten", nil]; //This is basically useless, since we cant stream shorten yet
 }
 
 
