@@ -46,9 +46,15 @@
 	NSLog(@"Opening with old decoder: %@", d);
 	decoder = d;
 	[decoder retain];
+
+	NSDictionary *properties = [decoder properties];
+	int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
+	int channels = [[properties objectForKey:@"channels"] intValue];
+	
+	bytesPerFrame = (bitsPerSample/8) * channels;
 	
 	[self registerObservers];
-	
+
 	shouldContinue = YES;
 	shouldSeek = NO;
 	
