@@ -321,62 +321,33 @@
 }
 
 
-/**
-* Scale PCM data
+// Clipping and rounding code from madplay(audio.c):
+/*
+ * madplay - MPEG audio decoder and player
+ * Copyright (C) 2000-2004 Robert Leslie
  */
-static inline signed int scale (mad_fixed_t sample)
+static int32_t 
+audio_linear_round(unsigned int bits, 
+				   mad_fixed_t sample)
 {
-	BOOL hard_limit = YES;
-	
-	double scale = 1.0;
-	
-	/* hard-limit (clipping-prevention) */
-	if (hard_limit)
-    {
-		/* convert to double before computation, to avoid mad_fixed_t wrapping */
-		double x = mad_f_todouble(sample) * scale;
-		static const double k = 0.5; // -6dBFS
-		if (x > k)
-		{
-			x = tanh((x - k) / (1-k)) * (1-k) + k;
-		}
-		else if(x < -k)
-		{
-			x = tanh((x + k) / (1-k)) * (1-k) - k;
-		}
-		sample = x * (MAD_F_ONE);
-    }
-	else
-		sample *= scale;
-	
-	int n_bits_to_loose = MAD_F_FRACBITS + 1 - 16;
+	enum {
+		MIN = -MAD_F_ONE,
+		MAX =  MAD_F_ONE - 1
+	};
 	
 	/* round */
-	/* add half of the bits_to_loose range to round */
-	sample += (1L << (n_bits_to_loose - 1));
+	sample += (1L << (MAD_F_FRACBITS - bits));
 	
 	/* clip */
-	/* make sure we are between -1 and 1 */
-	if (sample >= MAD_F_ONE)
-    {
-		sample = MAD_F_ONE - 1;
-    }
-	else if (sample < -MAD_F_ONE)
-    {
-		sample = -MAD_F_ONE;
-    }
+	if(MAX < sample)
+		sample = MAX;
+	else if(MIN > sample)
+		sample = MIN;
 	
-	/* quantize */
-	/*
-	 * Turn our mad_fixed_t into an integer.
-	 * Shift all but 16-bits of the fractional part
-	 * off the right hand side and shift an extra place
-	 * to get the sign bit.
-	 */
-	sample >>= n_bits_to_loose;
-	
-	return sample;
+	/* quantize and scale */
+	return sample >> (MAD_F_FRACBITS + 1 - bits);
 }
+// End madplay code
 
 
 - (void)writeOutput
@@ -433,7 +404,7 @@ static inline signed int scale (mad_fixed_t sample)
 		
 		for (i = startingSample; i < sampleCount; i++) 
 		{  
-			signed short sample = scale(channel[i]); 
+			signed short sample = audio_linear_round(bitsPerSample, channel[i]); 
 			
 			outputPtr[0] = sample>>8;  
 			outputPtr[1] = sample & 0xff;  
