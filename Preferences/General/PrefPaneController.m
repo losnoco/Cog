@@ -19,12 +19,13 @@
 	loaded = [NSBundle loadNibNamed:@"Preferences" owner:prefPaneController];
 
 	return [NSArray arrayWithObjects: 
-		[prefPaneController hotKeyPane],
-		[prefPaneController remotePane],
-		[prefPaneController updatesPane],
-		[prefPaneController outputPane],
-		[prefPaneController scrobblerPane],
-		nil];
+			[prefPaneController playlistPane],
+			[prefPaneController hotKeyPane],
+			[prefPaneController remotePane],
+			[prefPaneController updatesPane],
+			[prefPaneController outputPane],
+			[prefPaneController scrobblerPane],
+			nil];
 }	
 
 - (HotKeyPane *)hotKeyPane
@@ -50,6 +51,11 @@
 - (PreferencePane *)scrobblerPane
 {
 	return [PreferencePane preferencePaneWithView:scrobblerView name:NSLocalizedStringFromTableInBundle(@"Last.fm", nil, [NSBundle bundleForClass:[self class]], @"")  icon:@"lastfm"];
+}
+
+- (PreferencePane *)playlistPane
+{
+	return [PreferencePane preferencePaneWithView:playlistView name:NSLocalizedStringFromTableInBundle(@"Playlist", nil, [NSBundle bundleForClass:[self class]], @"")  icon:@"playlist"];
 }
 
 @end

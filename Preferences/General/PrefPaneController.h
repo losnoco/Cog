@@ -16,6 +16,7 @@
 	IBOutlet HotKeyPane *hotKeyPane;
 	IBOutlet OutputPane *outputPane;
 
+	IBOutlet NSView *playlistView;
 	IBOutlet NSView *scrobblerView;
 	IBOutlet NSView *remoteView;
 	IBOutlet NSView *updatesView;
@@ -27,5 +28,6 @@
 - (PreferencePane *)remotePane;
 - (PreferencePane *)updatesPane;
 - (PreferencePane *)scrobblerPane;
+- (PreferencePane *)playlistPane;
 
 @end

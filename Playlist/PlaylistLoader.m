@@ -22,6 +22,30 @@
 
 @implementation PlaylistLoader
 
+- (id)init
+{
+	self = [super init];
+	if (self)
+	{
+		[self initDefaults];
+	}
+	
+	return self; 
+}
+
+- (void)initDefaults
+{
+	NSLog(@"INITIIALIZING PLAYLIST LOADER DEFAULTS");
+	
+	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"playOnAdd"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"clearOnAdd"];
+	
+	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
 - (BOOL)save:(NSString *)filename
 {
 	NSString *ext = [filename pathExtension];
@@ -155,7 +179,7 @@
 	if (index < 0)
 		index = 0;
 
-	if (1) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"clearOnAdd"]) {
 		[playlistController clear:self];
 		index = 0;
 	}
@@ -284,7 +308,7 @@
 	
 	
 	//Auto start playback
-	if (1) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"playOnAdd"]) {
 		[playbackController playEntry: [entries objectAtIndex:0]];
 	}
 }

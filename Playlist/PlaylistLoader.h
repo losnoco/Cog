@@ -22,6 +22,8 @@ typedef enum {
 	IBOutlet PlaybackController *playbackController;
 }
 
+- (void)initDefaults;
+
 //load arrays of urls...
 - (void)addURLs:(NSArray *)urls sort:(BOOL)sort;
 - (void)addURL:(NSURL *)url;
