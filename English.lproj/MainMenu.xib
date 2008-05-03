@@ -8,11 +8,11 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="21"/>
-			<integer value="1063"/>
-			<integer value="513"/>
 			<integer value="1324"/>
 			<integer value="463"/>
+			<integer value="1063"/>
+			<integer value="21"/>
+			<integer value="513"/>
 			<integer value="419"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -5859,6 +5859,14 @@ MDA4AA</bytes>
 					</object>
 					<int key="connectionID">2119</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">playbackController</string>
+						<reference key="source" ref="362908833"/>
+						<reference key="destination" ref="936098491"/>
+					</object>
+					<int key="connectionID">2120</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -8799,7 +8807,7 @@ MDA4AA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2119</int>
+			<int key="maxID">2120</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -9298,8 +9306,17 @@ MDA4AA</bytes>
 					<string key="className">PlaylistLoader</string>
 					<string key="superclassName">NSObject</string>
 					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">playlistController</string>
-						<string key="NS.object.0">PlaylistController</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>playbackController</string>
+							<string>playlistController</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>PlaybackController</string>
+							<string>PlaylistController</string>
+						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>

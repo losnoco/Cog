@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class PlaylistController;
+@class PlaybackController;
 @class PlaylistEntry;
 
 typedef enum {
@@ -18,6 +19,7 @@ typedef enum {
 
 @interface PlaylistLoader : NSObject {
 	IBOutlet PlaylistController *playlistController;
+	IBOutlet PlaybackController *playbackController;
 }
 
 //load arrays of urls...

@@ -8,6 +8,7 @@
 
 #import "PlaylistLoader.h"
 #import "PlaylistController.h"
+#import "PlaybackController.h"
 #import "PlaylistEntry.h"
 #import "FilePlaylistEntry.h"
 #import "AppController.h"
@@ -153,7 +154,13 @@
 	
 	if (index < 0)
 		index = 0;
+
+	if (1) {
+		[playlistController clear:self];
+		index = 0;
+	}
 	
+
 	NSURL *url;
 	for (url in urls)
 	{
@@ -274,6 +281,12 @@
 	//Select the first entry in the group that was just added
 	[playlistController setSelectionIndex:index];
 	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
+	
+	
+	//Auto start playback
+	if (1) {
+		[playbackController playEntry: [entries objectAtIndex:0]];
+	}
 }
 
 - (void)loadInfoForEntries:(NSArray *)entries
