@@ -308,7 +308,7 @@
 	
 	
 	//Auto start playback
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"playOnAdd"]) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"playOnAdd"] && [entries count] > 0) {
 		[playbackController playEntry: [entries objectAtIndex:0]];
 	}
 }
