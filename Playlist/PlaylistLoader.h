@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "PlaylistController.h"
 
 @class PlaylistController;
 @class PlaybackController;
@@ -19,15 +20,14 @@ typedef enum {
 
 @interface PlaylistLoader : NSObject {
 	IBOutlet PlaylistController *playlistController;
-	IBOutlet PlaybackController *playbackController;
 }
 
 - (void)initDefaults;
 
 //load arrays of urls...
-- (void)addURLs:(NSArray *)urls sort:(BOOL)sort;
-- (void)addURL:(NSURL *)url;
-- (void)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort;
+- (NSArray*)addURLs:(NSArray *)urls sort:(BOOL)sort;
+- (NSArray*)addURL:(NSURL *)url;
+- (NSArray*)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort;
 
 //save playlist, auto-determines type based on extension. Uses m3u if it cannot be determined.
 - (BOOL)save:(NSString *)filename;
@@ -38,8 +38,14 @@ typedef enum {
 //read info for a playlist entry
 - (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe;
 
+- (void)loadInfoForEntries:(NSArray *)entries;
+
 - (NSArray *)acceptableFileTypes;
 - (NSArray *)acceptablePlaylistTypes; //Only m3u and pls saving
 - (NSArray *)acceptableContainerTypes;
+
+// Event inlets (passed to playlist controler):
+- (void)willInsertFiles:(NSArray*)urls origin:(AddedFilesSource)src;
+- (void)didInsertFiles:(NSArray*)entries origin:(AddedFilesSource)src;
 
 @end

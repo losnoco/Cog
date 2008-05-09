@@ -413,7 +413,23 @@
 			<key>NSPersistentStoreTypeKey</key>
 			<string>Binary</string>
 		</dict>
-	</array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>apl</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>cue.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>APL Link File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+</array>
 	<key>CFBundleExecutable</key>
 	<string>Cog</string>
 	<key>CFBundleHelpBookFolder</key>

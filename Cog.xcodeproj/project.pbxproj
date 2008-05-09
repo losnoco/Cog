@@ -146,6 +146,8 @@
 		8E9A2E860BA78B500091081B /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2E840BA78B500091081B /* SecondsFormatter.m */; };
 		8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */; };
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
+		99EAACA20DD1B9DB00423C38 /* APL.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; };
+		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; };
 		B09E96630D74A7BC0064F138 /* stop_current.png in Resources */ = {isa = PBXBuildFile; fileRef = B09E96620D74A7BC0064F138 /* stop_current.png */; };
 /* End PBXBuildFile section */
 
@@ -446,6 +448,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */,
 				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
 				17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */,
 				17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */,
@@ -1659,6 +1662,7 @@
 				17A8F6870D6A7FCA0095DA13 /* repeat_one.png in Resources */,
 				17A8F71A0D6A89730095DA13 /* repeat_album.png in Resources */,
 				B09E96630D74A7BC0064F138 /* stop_current.png in Resources */,
+				99EAACA20DD1B9DB00423C38 /* APL.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

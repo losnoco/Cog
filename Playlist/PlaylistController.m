@@ -8,6 +8,8 @@
 
 #import "PlaylistLoader.h"
 #import "PlaylistController.h"
+#import "PlaybackController.h"
+#import "EntriesController.h"
 #import "PlaylistEntry.h"
 #import "Shuffle.h"
 #import "SpotlightWindowController.h"
@@ -178,17 +180,21 @@
 
 	if (row < 0)
 		row = 0;
-		
+	
+			
 	// Determine the type of object that was dropped
 	NSArray *supportedtypes = [NSArray arrayWithObjects:CogUrlsPboardType, NSFilenamesPboardType, iTunesDropType, nil];
 	NSPasteboard *pboard = [info draggingPasteboard];
 	NSString *bestType = [pboard availableTypeFromArray:supportedtypes];
+
+	NSMutableArray *accept_urls = [[NSMutableArray alloc] init];
 	
 	// Get files from an file drawer drop
 	if ([bestType isEqualToString:CogUrlsPboardType]) {
 		NSArray *urls = [NSUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType:CogUrlsPboardType]];
 		NSLog(@"URLS: %@", urls);
-		[playlistLoader insertURLs: urls atIndex:row sort:YES];
+		//[playlistLoader insertURLs: urls atIndex:row sort:YES];
+		[accept_urls addObjectsFromArray:urls];
 	}
 	
 	// Get files from a normal file drop (such as from Finder)
@@ -200,8 +206,8 @@
 			[urls addObject:[NSURL fileURLWithPath:file]];
 		}
 		
-		[playlistLoader insertURLs:urls atIndex:row sort:YES];
-
+		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
+		[accept_urls addObjectsFromArray:urls];
 		[urls release];
 	}
 	
@@ -217,9 +223,21 @@
 			[urls addObject:[NSURL URLWithString:[trackInfo valueForKey:@"Location"]]];
 		}
 		
-		[playlistLoader insertURLs:urls atIndex:row sort:YES];
+		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
+		[accept_urls addObjectsFromArray:urls];
 		[urls release];
 	}
+	
+	if ([accept_urls count])
+		{
+		[self willInsertFiles:accept_urls origin:DropOnPlaylist];
+		if (![[entriesController entries] count])
+			row = 0;
+		NSArray* entries = [playlistLoader insertURLs:accept_urls atIndex:row sort:YES];
+		[self didInsertFiles:entries origin:DropOnPlaylist];
+		}
+		
+	[accept_urls release];
 	
 	if (shuffle == YES)
 		[self resetShuffleList];
@@ -724,6 +742,51 @@
 	}
 	
 	return YES;
+}
+
+// Event inlets:
+- (void)willInsertFiles:(NSArray*)urls origin:(AddedFilesSource)src
+{
+	if (![urls count])
+		return;
+	CGEventRef event = CGEventCreate(NULL /*default event source*/);
+	CGEventFlags mods = CGEventGetFlags(event);
+	CFRelease(event);
+	
+	
+	bool modifier1_pressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
+	bool should_clean = false;
+	
+	if (src >= OpenFinder_Related && src <= OpenFinder_Related_end)
+		should_clean = [[NSUserDefaults standardUserDefaults] boolForKey:@"clearOnAdd"] ^ modifier1_pressed;
+	if (src >= OpenPlaylist_related && src <= OpenPlaylist_related_end)
+		should_clean = modifier1_pressed;
+					
+	if (should_clean)
+		[self clear:self];
+}
+
+- (void)didInsertFiles:(NSArray*)entries origin:(AddedFilesSource)src
+{
+	if (![entries count])
+		return;
+	CGEventRef event = CGEventCreate(NULL);
+	CGEventFlags mods = CGEventGetFlags(event);
+	CFRelease(event);
+	
+	bool modifier1_pressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
+	bool should_autoplay = false;
+	
+	if (src >= OpenFinder_Related && src <= OpenFinder_Related_end)
+		should_autoplay = [[NSUserDefaults standardUserDefaults] boolForKey:@"playOnAdd"] ^ modifier1_pressed;
+	if (src >= OpenPlaylist_related && src <= OpenPlaylist_related_end)
+		should_autoplay = modifier1_pressed;
+	
+	//Auto start playback
+	if (should_autoplay	&& [[entriesController entries] count] > 0) {
+		[[entries objectAtIndex:0] setValuesForKeysWithDictionary:[playlistLoader readEntryInfo:[entries objectAtIndex:0]]];
+		[playbackController playEntry: [entries objectAtIndex:0]];
+		}
 }
 
 

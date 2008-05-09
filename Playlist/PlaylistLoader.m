@@ -8,7 +8,6 @@
 
 #import "PlaylistLoader.h"
 #import "PlaylistController.h"
-#import "PlaybackController.h"
 #import "PlaylistEntry.h"
 #import "FilePlaylistEntry.h"
 #import "AppController.h"
@@ -35,14 +34,7 @@
 
 - (void)initDefaults
 {
-	NSLog(@"INITIIALIZING PLAYLIST LOADER DEFAULTS");
-	
-	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"playOnAdd"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"clearOnAdd"];
-	
-	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+
 }
 
 
@@ -164,7 +156,7 @@
 	return urls;
 }
 
-- (void)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort
+- (NSArray*)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort
 {
 	NSMutableSet *uniqueURLs = [NSMutableSet set];
 	
@@ -174,16 +166,10 @@
 	NSMutableArray *validURLs = [NSMutableArray array];
 	
 	if (!urls)
-		return;
+		return [NSArray array];
 	
 	if (index < 0)
 		index = 0;
-
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"clearOnAdd"]) {
-		[playlistController clear:self];
-		index = 0;
-	}
-	
 
 	NSURL *url;
 	for (url in urls)
@@ -305,12 +291,7 @@
 	//Select the first entry in the group that was just added
 	[playlistController setSelectionIndex:index];
 	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
-	
-	
-	//Auto start playback
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"playOnAdd"] && [entries count] > 0) {
-		[playbackController playEntry: [entries objectAtIndex:0]];
-	}
+	return entries;
 }
 
 - (void)loadInfoForEntries:(NSArray *)entries
@@ -404,14 +385,14 @@
     }
 }
 
-- (void)addURLs:(NSArray *)urls sort:(BOOL)sort
+- (NSArray*)addURLs:(NSArray *)urls sort:(BOOL)sort
 {
-	[self insertURLs:urls atIndex:[[playlistController content] count] sort:sort];
+	return [self insertURLs:urls atIndex:[[playlistController content] count] sort:sort];
 }
 
-- (void)addURL:(NSURL *)url
+- (NSArray*)addURL:(NSURL *)url
 {
-	[self insertURLs:[NSArray arrayWithObject:url] atIndex:[[playlistController content] count] sort:NO];
+	return [self insertURLs:[NSArray arrayWithObject:url] atIndex:[[playlistController content] count] sort:NO];
 }
 
 - (NSArray *)acceptableFileTypes
@@ -427,6 +408,15 @@
 - (NSArray *)acceptableContainerTypes
 {
 	return [AudioPlayer containerTypes];
+}
+
+- (void)willInsertFiles:(NSArray*)urls origin:(AddedFilesSource)src
+{
+	[playlistController willInsertFiles:urls origin:src];
+}
+- (void)didInsertFiles:(NSArray*)entries origin:(AddedFilesSource)src
+{
+	[playlistController didInsertFiles:entries origin:src];
 }
 
 @end

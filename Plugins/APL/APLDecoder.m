@@ -23,13 +23,13 @@
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];
 	
 	//Need to alter length
-	[properties setObject:[NSNumber numberWithDouble:trackLength] forKey:@"length"];
+	[properties setObject:[NSNumber numberWithLong:trackLength] forKey:@"totalFrames"];
 	return [properties autorelease];
 }
 
 - (BOOL)open:(id<CogSource>)s
 {
-	NSLog(@"Loading apl...");
+	//NSLog(@"Loading apl...");
 	if (![[s url] isFileURL])
 		return NO;
 	
@@ -58,21 +58,20 @@
 	NSDictionary *properties = [decoder properties];
 	int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 	int channels = [[properties objectForKey:@"channels"] intValue];
-	float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
+//	float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
 	
 	
 	bytesPerFrame = (bitsPerSample/8) * channels;
-	bytesPerSecond = (int)(bytesPerFrame * sampleRate);
 	
 	if ([apl endBlock] > [apl startBlock])
-		trackEnd = ([apl endBlock] / sampleRate) * 1000.0;
+		trackEnd = [apl endBlock]; //([apl endBlock] / sampleRate) * 1000.0;
 	else 
-		trackEnd = [[properties objectForKey:@"length"] doubleValue];
+		trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue]; //!!? double?
 		
-	trackStart = ([apl startBlock]/sampleRate) * 1000.0;
+	trackStart = [apl startBlock];
 	trackLength = trackEnd - trackStart;
 	
-	[self seekToTime: 0.0];
+	[self seek: 0];
 	
 	//Note: Should register for observations of the decoder, but laziness consumes all.
 	[self willChangeValueForKey:@"properties"];
@@ -98,37 +97,32 @@
 }
 
 
-- (double)seekToTime:(double)time //milliseconds
+- (long)seek:(long)frame
 {
-	if (time > trackLength || time < 0) {
+	if (frame > trackEnd - trackStart) {
 		//need a better way of returning fail.
-		return -1.0;
+		return -1;
 	}
 	
-	time += trackStart;
+	frame += trackStart;
 	
-	bytePosition = (time/1000.0) * bytesPerSecond;
-	
-	NSLog(@"Before: %li", bytePosition);
-	bytePosition -= bytePosition % bytesPerFrame;
-	NSLog(@"After: %li", bytePosition);
-	
-	return [decoder seekToTime:time];
+	framePosition = [decoder seek:frame];
+
+	return framePosition;
 }
 
-- (int)fillBuffer:(void *)buf ofSize:(UInt32)size
+- (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	long trackByteEnd = (trackEnd/1000.0) * bytesPerSecond;	
-	trackByteEnd -= trackByteEnd % (bytesPerFrame);
-	
-	if (bytePosition + size > trackByteEnd)
-		size = trackByteEnd - bytePosition;
-	
-	if (!size)
+	if (framePosition + frames > trackEnd)
+		frames = trackEnd - framePosition;
+
+	if (!frames) {
+		NSLog(@"APL readAudio Returning 0");
 		return 0;
-	
-	int n = [decoder fillBuffer:buf ofSize:size];
-	bytePosition += n;
+	}
+
+	int n = [decoder readAudio:buf frames:frames];
+	framePosition += n;
 	return n;
 }
 

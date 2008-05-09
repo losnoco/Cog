@@ -143,7 +143,7 @@ The footer at the end of APE tagged files (can also optionally be at the front o
 -(NSArray*) fields { return fields; }
 
 -(NSDictionary*) convertToCogTag {
-	NSLog(@"Converting ape tag to cog tag");
+	//NSLog(@"Converting ape tag to cog tag");
 	NSMutableDictionary* d = [NSMutableDictionary dictionaryWithCapacity:6];
 	NSEnumerator *e = [fields objectEnumerator]; 
 	ApeTagItem* item; 
@@ -152,7 +152,7 @@ The footer at the end of APE tagged files (can also optionally be at the front o
 		if (![[item tag] compare:APE_TAG_FIELD_ARTIST]) { [d setObject:[item getString] forKey:@"artist"]; 	n++;}
 		if (![[item tag] compare:APE_TAG_FIELD_ALBUM])	{[d setObject:[item getString] forKey:@"album"];	n++;}
 		if (![[item tag] compare:APE_TAG_FIELD_TITLE])	{[d setObject:[item getString] forKey:@"title"];	n++;}
-		if (![[item tag] compare:APE_TAG_FIELD_TRACK])	{[d setObject:[item getString] forKey:@"track"];	n++;}
+		if (![[item tag] compare:APE_TAG_FIELD_TRACK])	{[d setObject:[NSNumber numberWithInt:[[item getString] intValue]] forKey:@"track"];	n++;}
 		if (![[item tag] compare:APE_TAG_FIELD_GENRE])	{[d setObject:[item getString] forKey:@"genre"];	n++;}
 		if (![[item tag] compare:APE_TAG_FIELD_YEAR])	{[d setObject:[item getString] forKey:@"year"];		n++;}
 	}
@@ -234,7 +234,7 @@ The footer at the end of APE tagged files (can also optionally be at the front o
 		UInt32 flags = CFSwapInt32LittleToHost(*(uint32_t*)[f_flag bytes]);
 		NSData* data = [f readDataOfLength:len];
 		ApeTagItem* item = [ApeTagItem createTag:f_name flags:flags data:data];
-		NSLog(@"Read tag '%@'='%@'", [item tag], [item getString]);
+		//NSLog(@"Read tag '%@'='%@'", [item tag], [item getString]);
 		[fields addObject:item];
 	}
 	//here we should read footer and check number of fields etc. - but who cares? =)

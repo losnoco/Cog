@@ -12,14 +12,12 @@
 	id<CogDecoder> decoder;
 	
 	int bytesPerFrame; //Number of bytes per frame, ie channels * (bitsPerSample/8)
-	int bytesPerSecond; //Number of bytes per second, ie bytesPerFrame * sampleRate
-	int bytePosition; //Current position in bytes.
+	long framePosition; //current position in frames
 	
 	
-	
-	double trackStart;
-	double trackEnd; //miliseconds until end of track.
-	double trackLength; //track len in miliseconds
+	long trackStart;
+	long trackEnd; //frames until end of track.
+	long trackLength; //track len in frames
 	
 	APLFile *apl;
 }

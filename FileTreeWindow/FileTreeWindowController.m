@@ -6,6 +6,7 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
+#import "PlaylistController.h"
 #import "FileTreeWindowController.h"
 
 
@@ -42,7 +43,8 @@
 		[urls addObject:[[outlineView itemAtRow:index] URL]];
 	}
 	
-	[playlistLoader addURLs:urls sort:NO];
+	[playlistLoader willInsertFiles:urls origin:OpenFromFiletree];
+	[playlistLoader didInsertFiles:[playlistLoader addURLs:urls sort:NO] origin:OpenFromFiletree];
 	[urls release];
 }
 

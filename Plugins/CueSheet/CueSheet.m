@@ -219,16 +219,16 @@
 			
 			if ([type isEqualToString:@"GENRE"])
 			{
-				NSLog(@"GENRE!");
+				//NSLog(@"GENRE!");
 				if ([scanner scanString:@"\"" intoString:nil]) {
-					NSLog(@"QUOTED");
+					//NSLog(@"QUOTED");
 					if (![scanner scanUpToString:@"\"" intoString:&genre]) {
 						NSLog(@"FAILED TO SCAN");
 						continue;
 					}
 				}
 				else {
-					NSLog(@"UNQUOTED");
+					//NSLog(@"UNQUOTED");
 					if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&genre]) {
 						continue;
 					}
@@ -236,7 +236,7 @@
 			}
 			else if ([type isEqualToString:@"DATE"])
 			{
-				NSLog(@"DATE!");
+				//NSLog(@"DATE!");
 				if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&year]) {
 					continue;
 				}

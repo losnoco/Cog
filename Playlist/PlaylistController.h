@@ -14,6 +14,7 @@
 @class PlaylistEntry;
 @class EntriesController;
 @class SpotlightWindowController;
+@class PlaybackController;
 
 typedef enum {
 	RepeatNone = 0,
@@ -22,10 +23,26 @@ typedef enum {
 	RepeatAll
 } RepeatMode;
 
+typedef enum {
+	OpenPlaylist_related = 0,
+	LoadPlaylist,
+	DropOnPlaylist,
+	OpenFromOpenPanel,
+	OpenFromOpenUrlPanel,
+	OpenPlaylist_related_end,
+	
+	OpenFinder_Related, //meta-value
+	OpenFromFinder,
+	OpenFromFiletree,
+	OpenFromSpotlight, //?
+	OpenFinder_Related_end,
+} AddedFilesSource;
+
 @interface PlaylistController : DNDArrayController {
 	IBOutlet PlaylistLoader *playlistLoader;
 	IBOutlet EntriesController *entriesController;
 	IBOutlet SpotlightWindowController *spotlightWindowController;
+	IBOutlet PlaybackController *playbackController;
 	
 	NSMutableArray *shuffleList;
 	NSMutableArray *queueList;
@@ -85,6 +102,10 @@ typedef enum {
 
 - (PlaylistEntry *)shuffledEntryAtIndex:(int)i;
 - (PlaylistEntry *)entryAtIndex:(int)i;
+
+// Event inlets:
+- (void)willInsertFiles:(NSArray*)urls origin:(AddedFilesSource)src;
+- (void)didInsertFiles:(NSArray*)entries origin:(AddedFilesSource)src;
 
 // queue methods
 - (IBAction)toggleQueued:(id)sender;

@@ -100,19 +100,19 @@
 			{
 				[file release];
 				file = [self urlForPath:value relativeTo:filename];
-				NSLog(@"APL refers to file '%@'", file);
+				//NSLog(@"APL refers to file '%@'", file);
 				continue;
 			}
 			if (![field compare:@"Start Block" options:NSCaseInsensitiveSearch])
 			{
 				startBlock = [value intValue]; //!!! bugs with files over 2GB
-				NSLog(@"APL start block %d (%@)", startBlock, value);
+				//NSLog(@"APL start block %d (%@)", startBlock, value);
 				continue;
 			}
 			if (![field compare:@"Finish Block" options:NSCaseInsensitiveSearch])
 			{
 				endBlock = [value intValue]; //!!! bugs with files over 2GB
-				NSLog(@"APL start block %d (%@)", endBlock, value);
+				//NSLog(@"APL start block %d (%@)", endBlock, value);
 				continue;
 			}
 		}

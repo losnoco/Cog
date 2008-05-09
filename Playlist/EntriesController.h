@@ -14,6 +14,7 @@
 	NSMutableArray *playlistEntries;
 }
 
+- (NSUndoManager *)undoManager;
 - (NSMutableArray *)entries;
 - (void)setEntries:(NSMutableArray *)array;
 - (void)insertObject:(PlaylistEntry *)pe inEntriesAtIndex:(int)index;

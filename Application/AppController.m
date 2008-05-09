@@ -171,7 +171,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	if (returnCode == NSOKButton)
 	{
-		[playlistLoader addURLs:[panel URLs] sort:YES];
+		[playlistLoader willInsertFiles:[panel URLs] origin:OpenFromOpenPanel];
+		[playlistLoader didInsertFiles:[playlistLoader addURLs:[panel URLs] sort:YES] origin:OpenFromOpenPanel];
 	}
 }
 
@@ -206,7 +207,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	if (returnCode == NSOKButton)
 	{
-		[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO];
+		[playlistLoader willInsertFiles:[NSArray arrayWithObject:[panel url]] origin:OpenFromOpenUrlPanel];
+		[playlistLoader didInsertFiles:[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO] origin:OpenFromOpenUrlPanel];
 	}
 }
 
@@ -286,8 +288,9 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-	[playlistLoader addURLs:[NSArray arrayWithObject:[NSURL fileURLWithPath:filename]] sort:NO];
-
+	NSArray* urls = [NSArray arrayWithObject:[NSURL fileURLWithPath:filename]];
+	[playlistLoader willInsertFiles:urls origin:OpenFromFinder];
+	[playlistLoader didInsertFiles:[playlistLoader addURLs:urls sort:NO] origin:OpenFromFinder];
 	return YES;
 }
 
@@ -300,8 +303,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	{
 		[urls addObject:[NSURL fileURLWithPath:filename]];
 	}
-	[playlistLoader addURLs:urls sort:YES];
-	
+	[playlistLoader willInsertFiles:urls origin:OpenFromFinder];
+	[playlistLoader didInsertFiles:[playlistLoader addURLs:urls sort:YES] origin:OpenFromFinder];
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 
@@ -357,6 +360,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 	[userDefaultsValuesDict setObject:@"http://cogx.org/appcast/stable.xml" forKey:@"SUFeedURL"];
 
+
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"clearOnAdd"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"playOnAdd"];
+	
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];

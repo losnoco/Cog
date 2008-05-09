@@ -276,9 +276,10 @@ static NSPredicate * musicOnlyPredicate = nil;
     tracks = playlistController.selectedObjects;
     if ([tracks count] == 0)
         tracks = playlistController.arrangedObjects;
-    [playlistLoader addURLs:[tracks valueForKey:@"URL"] sort:NO];
-   
-   [self.query enableUpdates];
+	
+	[playlistLoader willInsertFiles:[tracks valueForKey:@"URL"] origin:OpenFromSpotlight];
+    [playlistLoader didInsertFiles:[playlistLoader addURLs:[tracks valueForKey:@"URL"] sort:NO] origin:OpenFromSpotlight];
+	[self.query enableUpdates];
 }
 
 #pragma mark NSMetadataQuery delegate methods
