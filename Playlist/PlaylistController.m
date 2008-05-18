@@ -757,9 +757,13 @@
 	bool modifier1_pressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
 	modifier1_pressed |= ((mods & kCGEventFlagMaskShift)!=0);
 	bool should_clean = false;
-	
+	NSLog(@"Behavior: %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"]);
+	NSLog(@"Altered Behavior: %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"]);
+
 	if (src >= OpenFinder_Related && src <= OpenFinder_Related_end)
-		should_clean = [[NSUserDefaults standardUserDefaults] boolForKey:@"clearOnAdd"] ^ modifier1_pressed;
+		//possible settings are "clearAndPlay", "enqueue", "enqueueAndPlay"
+		should_clean = (!modifier1_pressed && ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"clearAndPlay"])
+					|| ( modifier1_pressed && ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"clearAndPlay"]);
 	if (src >= OpenPlaylist_related && src <= OpenPlaylist_related_end)
 		should_clean = modifier1_pressed;
 					
@@ -780,7 +784,10 @@
 	bool should_autoplay = false;
 	
 	if (src >= OpenFinder_Related && src <= OpenFinder_Related_end)
-		should_autoplay = [[NSUserDefaults standardUserDefaults] boolForKey:@"playOnAdd"] ^ modifier1_pressed;
+		should_autoplay = (!modifier1_pressed && (![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"clearAndPlay"] 
+											||    ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"enqueueAndPlay"]))
+					|| ( modifier1_pressed && (![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"clearAndPlay"] 
+											|| ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"enqueueAndPlay"]));
 	if (src >= OpenPlaylist_related && src <= OpenPlaylist_related_end)
 		should_autoplay = modifier1_pressed;
 	

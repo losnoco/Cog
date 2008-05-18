@@ -361,8 +361,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[userDefaultsValuesDict setObject:@"http://cogx.org/appcast/stable.xml" forKey:@"SUFeedURL"];
 
 
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"clearOnAdd"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"playOnAdd"];
+	[userDefaultsValuesDict setObject:@"clearAndPlay" forKey:@"openingFilesBehavior"];
+	[userDefaultsValuesDict setObject:@"enqueue" forKey:@"openingFilesAlteredBehavior"];
 	
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];

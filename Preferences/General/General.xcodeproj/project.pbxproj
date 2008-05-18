@@ -29,6 +29,7 @@
 		8E6C12170AACAE4100819171 /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C12150AACAE4100819171 /* NDHotKeyEvent.m */; };
 		8E6C123A0AACAEF200819171 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6C12390AACAEF200819171 /* Carbon.framework */; };
 		8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C139F0AACBAB500819171 /* HotKeyControl.m */; };
+		99F1813F0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 99F1813E0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,8 @@
 		8E6C12390AACAEF200819171 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8E6C139E0AACBAB500819171 /* HotKeyControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HotKeyControl.h; sourceTree = "<group>"; };
 		8E6C139F0AACBAB500819171 /* HotKeyControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HotKeyControl.m; sourceTree = "<group>"; };
+		99F1813D0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaylistBehaviorArrayController.h; sourceTree = "<group>"; };
+		99F1813E0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaylistBehaviorArrayController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +178,8 @@
 				8E6C139F0AACBAB500819171 /* HotKeyControl.m */,
 				17C643370B8A77CC00C53518 /* OutputsArrayController.h */,
 				17C643360B8A77CC00C53518 /* OutputsArrayController.m */,
+				99F1813D0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.h */,
+				99F1813E0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -291,6 +296,7 @@
 				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
 				17C6433F0B8A783F00C53518 /* OutputPane.m in Sources */,
 				170744AD0BFF3938002475C9 /* AppcastArrayController.m in Sources */,
+				99F1813F0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
