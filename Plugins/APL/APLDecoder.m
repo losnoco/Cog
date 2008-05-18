@@ -1,11 +1,3 @@
-//
-//  CueSheetDecoder.m
-//  CueSheet
-//
-//  Created by Zaphod Beeblebrox on 10/8/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
-//
-
 #import "APLDecoder.h"
 #import "APLFile.h"
 

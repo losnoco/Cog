@@ -1,10 +1,3 @@
-//
-//  APLFile.h
-//  APL
-//
-//  Created by ??????? ???????? on 10/18/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
-//
 
 #import <Cocoa/Cocoa.h>
 

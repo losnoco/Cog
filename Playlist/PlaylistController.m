@@ -755,6 +755,7 @@
 	
 	
 	bool modifier1_pressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
+	modifier1_pressed |= ((mods & kCGEventFlagMaskShift)!=0);
 	bool should_clean = false;
 	
 	if (src >= OpenFinder_Related && src <= OpenFinder_Related_end)
@@ -775,6 +776,7 @@
 	CFRelease(event);
 	
 	bool modifier1_pressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
+	modifier1_pressed |= ((mods & kCGEventFlagMaskShift)!=0);
 	bool should_autoplay = false;
 	
 	if (src >= OpenFinder_Related && src <= OpenFinder_Related_end)

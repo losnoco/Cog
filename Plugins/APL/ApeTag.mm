@@ -1,10 +1,3 @@
-//
-//  ApeTag.mm
-//  MacApl
-//
-//  Created by ??????? ???????? on 10/15/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
-//
 
 // as simple as it can be - just write a readable tag, no options etc.
 

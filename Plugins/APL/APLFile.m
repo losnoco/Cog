@@ -1,10 +1,4 @@
-//
-//  APLFile.m
-//  APL
-//
-//  Created by ??????? ???????? on 10/18/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
-//
+
 
 #import "APLFile.h"
 #import "ApeTag.h"
@@ -33,33 +27,17 @@
 {
 	NSRange protocolRange = [path rangeOfString:@"://"];
 	if (protocolRange.location != NSNotFound) 
-	{
 		return [NSURL URLWithString:path];
-	}
 	
 	NSMutableString *unixPath = [path mutableCopy];
-	
-	NSString *fragment = @"";
-	NSRange fragmentRange = [path rangeOfString:@"#"];
-	if (fragmentRange.location != NSNotFound) 
-	{
-		fragmentRange = NSMakeRange(fragmentRange.location, [unixPath length] - fragmentRange.location);
-		
-		fragment = [unixPath substringWithRange:fragmentRange];
-		[unixPath deleteCharactersInRange:fragmentRange];
-	}
-	
 	if (![unixPath hasPrefix:@"/"]) {
 		//Only relative paths would have windows backslashes.
 		[unixPath replaceOccurrencesOfString:@"\\" withString:@"/" options:0 range:NSMakeRange(0, [unixPath length])];
 		
 		NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
-		
 		[unixPath insertString:basePath atIndex:0];
-	}
-	
-	//Append the fragment
-	return [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
+		}
+	return [NSURL URLWithString:[[NSURL fileURLWithPath:unixPath] absoluteString]];
 }
 
 -initWithFile:(NSString*)filename {
@@ -100,7 +78,7 @@
 			{
 				[file release];
 				file = [self urlForPath:value relativeTo:filename];
-				//NSLog(@"APL refers to file '%@'", file);
+				NSLog(@"APL refers to file '%@' read '%@'", file, value);
 				continue;
 			}
 			if (![field compare:@"Start Block" options:NSCaseInsensitiveSearch])

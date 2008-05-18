@@ -1,11 +1,3 @@
-//
-//  ApeTag.h
-//  MacApl
-//
-//  Created by ??????? ???????? on 10/15/07.
-//  Copyright 2007 Vasfed. All rights reserved.
-//
-
 #import <Cocoa/Cocoa.h>
 
 //not full support!! and even may have not enougth checks to find a non-supported data!
