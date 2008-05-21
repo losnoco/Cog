@@ -11,12 +11,11 @@
 
 @implementation FilePlaylistEntry
 
-@synthesize fragment;
-
 - (void)setURL:(NSURL *)url
 {
 	FSPathMakeRef((UInt8 *)[[url path] fileSystemRepresentation], &fileRef, NULL);
-	self.fragment = [url fragment];
+	
+	[super setURL:url];
 }
 
 - (NSURL *)URL
@@ -24,14 +23,17 @@
     UInt8 path[PATH_MAX];
 
 	OSStatus status = FSRefMakePath(&fileRef, (UInt8*)path, sizeof(path)); 
-	if (status != noErr) 
-		return nil;
+	if (status == noErr)
+	{
+		NSString *after = @"";
+		if ([URL fragment] != nil) {
+			after = [@"#" stringByAppendingString:[URL fragment]];
+		}
 		
-	NSString *after = @"";
-	if (self.fragment != nil) {
-		after = [@"#" stringByAppendingString:self.fragment];
+		[super setURL:[NSURL URLWithString:[[[NSURL fileURLWithPath: [NSString stringWithUTF8String:(const char *)path]] absoluteString] stringByAppendingString:after]]];
 	}
-    return [NSURL URLWithString:[[[NSURL fileURLWithPath: [NSString stringWithUTF8String:(const char *)path]] absoluteString] stringByAppendingString:after]]; 
+	
+    return URL;
 }
 
 @end
