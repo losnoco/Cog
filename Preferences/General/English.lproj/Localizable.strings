@@ -13,6 +13,6 @@
 
 "Press Key..." = "Press Key...";
 
-"Clear playlist and play" = "Clear playlist and play files";
-"Enqueue" = "Enqueue files";
-"Enqueue and play" = "Enqueue files and play";
+"Clear playlist and play" = "Clear playlist and play";
+"Enqueue" = "Enqueue";
+"Enqueue and play" = "Enqueue and play";
