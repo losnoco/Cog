@@ -17,15 +17,15 @@
 	[self addObject:
 		[NSDictionary dictionaryWithObjectsAndKeys:
 			NSLocalizedStringFromTableInBundle(@"Clear playlist and play", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", 
-			@"clearAndPlay", @"slug",nil]];
+			@"clearAndPlay", @"preference",nil]];
 	[self addObject:
 		[NSDictionary dictionaryWithObjectsAndKeys:
 			NSLocalizedStringFromTableInBundle(@"Enqueue", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", 
-			@"enqueue", @"slug",nil]];
+			@"enqueue", @"preference",nil]];
 	[self addObject:
 		[NSDictionary dictionaryWithObjectsAndKeys:
 			NSLocalizedStringFromTableInBundle(@"Enqueue and play", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", 
-			@"enqueueAndPlay", @"slug",nil]];
+			@"enqueueAndPlay", @"preference",nil]];
 			
 }
 
