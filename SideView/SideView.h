@@ -12,11 +12,14 @@
 
 @interface SideView : NSObject {
 	IBOutlet NSView *view;
+	IBOutlet NSResponder *firstResponder;
+	
 	SideViewController *controller;
 }
 
 - (id)initWithNibNamed:(NSString *)nibName controller:(SideViewController *)c;
 - (NSView *)view;
+- (NSResponder *)firstResponder;
 
 - (void) addToPlaylist:(NSArray *)urls;
 

@@ -30,6 +30,11 @@
 	return view;
 }
 
+- (NSResponder *)firstResponder
+{
+	return firstResponder;
+}
+
 - (void) addToPlaylist:(NSArray *)urls
 {
 	[controller addToPlaylist:urls];

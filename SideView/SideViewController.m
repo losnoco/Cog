@@ -171,6 +171,10 @@
 	
 	[self setDividerPosition: [[NSUserDefaults standardUserDefaults] floatForKey:@"sideViewDividerPosition"]];
 
+	NSWindow *window = [[sideView view] window];
+	BOOL r = [window makeFirstResponder:[sideView firstResponder]];
+	NSLog(@"FIRST: %@ %i", window, r);
+	
 	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"showSideView"];
 }
 
