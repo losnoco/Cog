@@ -8,12 +8,12 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1324"/>
 			<integer value="1849"/>
-			<integer value="463"/>
-			<integer value="2123"/>
-			<integer value="1063"/>
 			<integer value="513"/>
+			<integer value="463"/>
+			<integer value="1324"/>
+			<integer value="1063"/>
+			<integer value="2123"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1694,23 +1694,38 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 								</object>
 								<object class="NSMenuItem" id="702725944">
 									<reference key="NSMenu" ref="130084864"/>
-									<string key="NSTitle">Side View</string>
+									<string key="NSTitle">Sidebar</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="448348853"/>
 									<reference key="NSMixedImage" ref="415275279"/>
 									<string key="NSAction">submenuAction:</string>
 									<object class="NSMenu" key="NSSubmenu" id="188765993">
-										<string key="NSTitle">Side View</string>
+										<string key="NSTitle">Sidebar</string>
 										<object class="NSMutableArray" key="NSMenuItems">
 											<bool key="EncodedWithXMLCoder">YES</bool>
 										</object>
 										<bool key="NSNoAutoenable">YES</bool>
 									</object>
 								</object>
+								<object class="NSMenuItem" id="157922357">
+									<reference key="NSMenu" ref="130084864"/>
+									<string key="NSTitle">Window</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="448348853"/>
+									<reference key="NSMixedImage" ref="415275279"/>
+									<string key="NSAction">submenuAction:</string>
+									<object class="NSMenu" key="NSSubmenu" id="121209843">
+										<string key="NSTitle">Window</string>
+										<object class="NSMutableArray" key="NSMenuItems">
+											<bool key="EncodedWithXMLCoder">YES</bool>
+										</object>
+									</object>
+								</object>
 								<object class="NSMenuItem" id="665562447">
 									<reference key="NSMenu" ref="130084864"/>
-									<string key="NSTitle">Toggle Orientation</string>
+									<string key="NSTitle">Toggle Sidebar Orientation</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="448348853"/>
@@ -1718,7 +1733,7 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 								</object>
 								<object class="NSMenuItem" id="268734593">
 									<reference key="NSMenu" ref="130084864"/>
-									<string key="NSTitle">Show/Hide Side View</string>
+									<string key="NSTitle">Show/Hide Sidebar</string>
 									<string key="NSKeyEquiv">d</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
@@ -1726,6 +1741,16 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 									<reference key="NSMixedImage" ref="415275279"/>
 								</object>
 								<object class="NSMenuItem" id="775965595">
+									<reference key="NSMenu" ref="130084864"/>
+									<bool key="NSIsDisabled">YES</bool>
+									<bool key="NSIsSeparator">YES</bool>
+									<string key="NSTitle"/>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="448348853"/>
+									<reference key="NSMixedImage" ref="415275279"/>
+								</object>
+								<object class="NSMenuItem" id="261953318">
 									<reference key="NSMenu" ref="130084864"/>
 									<bool key="NSIsDisabled">YES</bool>
 									<bool key="NSIsSeparator">YES</bool>
@@ -3333,8 +3358,11 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
 				<bool key="NSFilterRestrictsInsertion">YES</bool>
 			</object>
-			<object class="NSCustomObject" id="219305080">
-				<string key="NSClassName">SideViewController</string>
+			<object class="NSCustomObject" id="366497202">
+				<string key="NSClassName">SideBarController</string>
+			</object>
+			<object class="NSCustomObject" id="597913418">
+				<string key="NSClassName">SideWindowController</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -5890,59 +5918,67 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">splitView</string>
-						<reference key="source" ref="219305080"/>
-						<reference key="destination" ref="640589646"/>
+						<string key="label">sideViewMenu</string>
+						<reference key="source" ref="597913418"/>
+						<reference key="destination" ref="121209843"/>
 					</object>
-					<int key="connectionID">2153</int>
+					<int key="connectionID">2174</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">sideViewMenu</string>
-						<reference key="source" ref="219305080"/>
+						<reference key="source" ref="366497202"/>
 						<reference key="destination" ref="188765993"/>
 					</object>
-					<int key="connectionID">2159</int>
+					<int key="connectionID">2175</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleVertical:</string>
-						<reference key="source" ref="219305080"/>
+						<reference key="source" ref="366497202"/>
 						<reference key="destination" ref="665562447"/>
 					</object>
-					<int key="connectionID">2161</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">playlistView</string>
-						<reference key="source" ref="219305080"/>
-						<reference key="destination" ref="381323260"/>
-					</object>
-					<int key="connectionID">2163</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="640589646"/>
-						<reference key="destination" ref="219305080"/>
-					</object>
-					<int key="connectionID">2164</int>
+					<int key="connectionID">2176</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleSideView:</string>
-						<reference key="source" ref="219305080"/>
+						<string key="label">toggleSideBar:</string>
+						<reference key="source" ref="366497202"/>
 						<reference key="destination" ref="268734593"/>
 					</object>
-					<int key="connectionID">2166</int>
+					<int key="connectionID">2177</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">playlistLoader</string>
-						<reference key="source" ref="219305080"/>
+						<reference key="source" ref="597913418"/>
 						<reference key="destination" ref="362908833"/>
 					</object>
-					<int key="connectionID">2167</int>
+					<int key="connectionID">2178</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">playlistLoader</string>
+						<reference key="source" ref="366497202"/>
+						<reference key="destination" ref="362908833"/>
+					</object>
+					<int key="connectionID">2179</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">playlistView</string>
+						<reference key="source" ref="366497202"/>
+						<reference key="destination" ref="381323260"/>
+					</object>
+					<int key="connectionID">2180</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">splitView</string>
+						<reference key="source" ref="366497202"/>
+						<reference key="destination" ref="640589646"/>
+					</object>
+					<int key="connectionID">2181</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -7453,6 +7489,8 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 							<reference ref="702725944"/>
 							<reference ref="665562447"/>
 							<reference ref="268734593"/>
+							<reference ref="261953318"/>
+							<reference ref="157922357"/>
 						</object>
 						<reference key="parent" ref="313099820"/>
 					</object>
@@ -7808,11 +7846,6 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 						<reference key="parent" ref="756482179"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">2151</int>
-						<reference key="object" ref="219305080"/>
-						<reference key="parent" ref="293114310"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">1853</int>
 						<reference key="object" ref="1070603681"/>
 						<reference key="parent" ref="130084864"/>
@@ -7853,6 +7886,38 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 						<int key="objectID">2165</int>
 						<reference key="object" ref="268734593"/>
 						<reference key="parent" ref="130084864"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2168</int>
+						<reference key="object" ref="261953318"/>
+						<reference key="parent" ref="130084864"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2169</int>
+						<reference key="object" ref="157922357"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="121209843"/>
+						</object>
+						<reference key="parent" ref="130084864"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2170</int>
+						<reference key="object" ref="121209843"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+						</object>
+						<reference key="parent" ref="157922357"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2172</int>
+						<reference key="object" ref="366497202"/>
+						<reference key="parent" ref="293114310"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2173</int>
+						<reference key="object" ref="597913418"/>
+						<reference key="parent" ref="293114310"/>
 					</object>
 				</object>
 			</object>
@@ -8207,13 +8272,18 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 					<string>21.editorWindowContentRectSynchronizationRect</string>
 					<string>21.windowTemplate.hasMaxSize</string>
 					<string>21.windowTemplate.maxSize</string>
-					<string>2151.IBPluginDependency</string>
 					<string>2155.IBPluginDependency</string>
 					<string>2156.IBPluginDependency</string>
 					<string>2157.IBEditorWindowLastContentRect</string>
 					<string>2157.IBPluginDependency</string>
 					<string>2160.IBPluginDependency</string>
 					<string>2165.IBPluginDependency</string>
+					<string>2168.IBPluginDependency</string>
+					<string>2169.IBPluginDependency</string>
+					<string>2170.IBEditorWindowLastContentRect</string>
+					<string>2170.IBPluginDependency</string>
+					<string>2172.IBPluginDependency</string>
+					<string>2173.IBPluginDependency</string>
 					<string>218.CustomClassName</string>
 					<string>218.IBPluginDependency</string>
 					<string>218.ImportedFromIB2</string>
@@ -8677,7 +8747,7 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{342, 763}, {237, 213}}</string>
+					<string>{{342, 733}, {277, 243}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{257, 573}, {237, 163}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -8729,9 +8799,9 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{218, 272}, {691, 397}}</string>
+					<string>{{347, 268}, {691, 397}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{218, 272}, {691, 397}}</string>
+					<string>{{347, 268}, {691, 397}}</string>
 					<reference ref="9"/>
 					<reference ref="9"/>
 					<string>{{25, 14}, {683, 396}}</string>
@@ -8739,8 +8809,13 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 					<string>{3.40282e+38, 3.40282e+38}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{619, 920}, {64, 6}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{579, 920}, {64, 6}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{619, 900}, {64, 6}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -8939,7 +9014,7 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2167</int>
+			<int key="maxID">2181</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -9513,19 +9588,17 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">SideViewController</string>
-					<string key="superclassName">NSObject</string>
+					<string key="className">SideBarController</string>
+					<string key="superclassName">SideController</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>selectSideView:</string>
-							<string>toggleSideView:</string>
+							<string>toggleSideBar:</string>
 							<string>toggleVertical:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 						</object>
@@ -9534,22 +9607,47 @@ ZSwgSW5jLiwgMjAwOAA</bytes>
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>playlistLoader</string>
 							<string>playlistView</string>
-							<string>sideViewMenu</string>
 							<string>splitView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>PlaylistLoader</string>
 							<string>NSView</string>
-							<string>NSMenu</string>
 							<string>NSSplitView</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">SideView/SideViewController.h</string>
+						<string key="minorKey">SideBarController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">SideController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSMutableArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>playlistLoader</string>
+							<string>sideViewMenu</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>PlaylistLoader</string>
+							<string>NSMenu</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">SideView/SideController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">SideWindowController</string>
+					<string key="superclassName">SideController</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">SideWindowController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

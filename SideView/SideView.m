@@ -18,8 +18,7 @@
 	{
 		controller = c;
 		
-		BOOL r = [NSBundle loadNibNamed:nibName owner:self];
-		NSLog(@"LOADED NIB: %i", r);
+		[NSBundle loadNibNamed:nibName owner:self];
 	}
 	
 	return self;
@@ -39,4 +38,5 @@
 {
 	[controller addToPlaylist:urls];
 }
+
 @end

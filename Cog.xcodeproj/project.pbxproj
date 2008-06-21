@@ -21,6 +21,8 @@
 		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
 		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
+		1738589B0E0D92DD00488CD4 /* SideBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173858950E0D92DD00488CD4 /* SideBarController.m */; };
+		1738589D0E0D92DD00488CD4 /* SideWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173858990E0D92DD00488CD4 /* SideWindowController.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
@@ -506,6 +508,10 @@
 		17342ABE0D5FD36400E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/OpenURLPanel.xib; sourceTree = "<group>"; };
 		173855FD0E0CC81F00488CD4 /* FileTreeOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeOutlineView.h; path = FileTree/FileTreeOutlineView.h; sourceTree = "<group>"; };
 		173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeOutlineView.m; path = FileTree/FileTreeOutlineView.m; sourceTree = "<group>"; };
+		173858940E0D92DD00488CD4 /* SideBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideBarController.h; path = SideView/SideBarController.h; sourceTree = "<group>"; };
+		173858950E0D92DD00488CD4 /* SideBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideBarController.m; path = SideView/SideBarController.m; sourceTree = "<group>"; };
+		173858980E0D92DD00488CD4 /* SideWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideWindowController.h; path = SideView/SideWindowController.h; sourceTree = "<group>"; };
+		173858990E0D92DD00488CD4 /* SideWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideWindowController.m; path = SideView/SideWindowController.m; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -907,10 +913,14 @@
 		179DFCDF0E0C5A130064A77A /* SideView */ = {
 			isa = PBXGroup;
 			children = (
-				179D02EA0E0CB0B00064A77A /* SideView.h */,
-				179D02EB0E0CB0B00064A77A /* SideView.m */,
+				173858940E0D92DD00488CD4 /* SideBarController.h */,
+				173858950E0D92DD00488CD4 /* SideBarController.m */,
+				173858980E0D92DD00488CD4 /* SideWindowController.h */,
+				173858990E0D92DD00488CD4 /* SideWindowController.m */,
 				179D02EC0E0CB0B00064A77A /* SideViewController.h */,
 				179D02ED0E0CB0B00064A77A /* SideViewController.m */,
+				179D02EA0E0CB0B00064A77A /* SideView.h */,
+				179D02EB0E0CB0B00064A77A /* SideView.m */,
 			);
 			name = SideView;
 			sourceTree = "<group>";
@@ -1758,6 +1768,8 @@
 				179D03270E0CB2500064A77A /* PathWatcher.m in Sources */,
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
+				1738589B0E0D92DD00488CD4 /* SideBarController.m in Sources */,
+				1738589D0E0D92DD00488CD4 /* SideWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
