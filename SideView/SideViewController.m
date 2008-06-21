@@ -171,9 +171,7 @@
 	
 	[self setDividerPosition: [[NSUserDefaults standardUserDefaults] floatForKey:@"sideViewDividerPosition"]];
 
-	NSWindow *window = [[sideView view] window];
-	BOOL r = [window makeFirstResponder:[sideView firstResponder]];
-	NSLog(@"FIRST: %@ %i", window, r);
+	[[[sideView view] window] makeFirstResponder:[sideView firstResponder]];
 	
 	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"showSideView"];
 }
@@ -182,6 +180,8 @@
 {
 	[splitView setSubviews:[NSArray arrayWithObject:playlistView]];
 	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"showSideView"];
+	
+	[[playlistView window] makeFirstResponder:playlistView];
 }
 
 - (BOOL)sideViewIsHidden
