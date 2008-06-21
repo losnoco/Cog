@@ -33,7 +33,7 @@ typedef enum {
 	
 	OpenFinder_Related, //meta-value
 	OpenFromFinder,
-	OpenFromFiletree,
+	OpenFromFileTree,
 	OpenFromSpotlight, //?
 	OpenFinder_Related_end,
 } AddedFilesSource;

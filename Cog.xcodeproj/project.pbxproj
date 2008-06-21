@@ -11,21 +11,11 @@
 		170680630B950158006BA573 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		170680840B950164006BA573 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */; };
-		171192BD0D691ED600FD76C5 /* PathWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 171192BC0D691ED600FD76C5 /* PathWatcher.m */; };
 		171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57D90C091F2B00F6AFAF /* flac.icns */; };
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
-		17211A710D68B79700911CA9 /* ContainedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A600D68B79700911CA9 /* ContainedNode.m */; };
-		17211A720D68B79700911CA9 /* ContainerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A620D68B79700911CA9 /* ContainerNode.m */; };
-		17211A730D68B79700911CA9 /* DirectoryNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A640D68B79700911CA9 /* DirectoryNode.m */; };
-		17211A740D68B79700911CA9 /* FileIconCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A660D68B79700911CA9 /* FileIconCell.m */; };
-		17211A750D68B79700911CA9 /* FileNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A680D68B79700911CA9 /* FileNode.m */; };
-		17211A760D68B79700911CA9 /* FileTreeDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A6A0D68B79700911CA9 /* FileTreeDataSource.m */; };
-		17211A770D68B79700911CA9 /* FileTreeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A6C0D68B79700911CA9 /* FileTreeWindowController.m */; };
-		17211A780D68B79700911CA9 /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A6E0D68B79700911CA9 /* PathNode.m */; };
-		17211A790D68B79700911CA9 /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17211A700D68B79700911CA9 /* SmartFolderNode.m */; };
-		17211A7E0D68B7C500911CA9 /* FileTreePanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17211A7C0D68B7C500911CA9 /* FileTreePanel.xib */; };
+		17211A7E0D68B7C500911CA9 /* FileTree.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17211A7C0D68B7C500911CA9 /* FileTree.xib */; };
 		17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */; };
 		173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173428F40D5FB1C400E8D854 /* EntriesController.m */; };
 		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
@@ -74,6 +64,18 @@
 		1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */; };
 		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
+		179D02EE0E0CB0B00064A77A /* SideView.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D02EB0E0CB0B00064A77A /* SideView.m */; };
+		179D02EF0E0CB0B00064A77A /* SideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D02ED0E0CB0B00064A77A /* SideViewController.m */; };
+		179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03090E0CB2500064A77A /* ContainedNode.m */; };
+		179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D030B0E0CB2500064A77A /* ContainerNode.m */; };
+		179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D030D0E0CB2500064A77A /* DirectoryNode.m */; };
+		179D03210E0CB2500064A77A /* FileIconCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D030F0E0CB2500064A77A /* FileIconCell.m */; };
+		179D03220E0CB2500064A77A /* FileNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03110E0CB2500064A77A /* FileNode.m */; };
+		179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03130E0CB2500064A77A /* FileTreeDataSource.m */; };
+		179D03240E0CB2500064A77A /* FileTreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03150E0CB2500064A77A /* FileTreeViewController.m */; };
+		179D03260E0CB2500064A77A /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03190E0CB2500064A77A /* PathNode.m */; };
+		179D03270E0CB2500064A77A /* PathWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D031B0E0CB2500064A77A /* PathWatcher.m */; };
+		179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D031D0E0CB2500064A77A /* SmartFolderNode.m */; };
 		17A140E90D88B954004852F9 /* FilePlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A140E80D88B954004852F9 /* FilePlaylistEntry.m */; };
 		17A8F6370D6A7B0F0095DA13 /* RepeatTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A8F6360D6A7B0F0095DA13 /* RepeatTransformers.m */; };
 		17A8F6850D6A7FCA0095DA13 /* repeat_all.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F6820D6A7FCA0095DA13 /* repeat_all.png */; };
@@ -146,7 +148,6 @@
 		8E9A2E860BA78B500091081B /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2E840BA78B500091081B /* SecondsFormatter.m */; };
 		8E9A2EDA0BA78D9D0091081B /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */; };
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
-		99EAACA20DD1B9DB00423C38 /* APL.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; };
 		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; };
 		B09E96630D74A7BC0064F138 /* stop_current.png in Resources */ = {isa = PBXBuildFile; fileRef = B09E96620D74A7BC0064F138 /* stop_current.png */; };
 /* End PBXBuildFile section */
@@ -491,31 +492,11 @@
 		170680620B950158006BA573 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = ThirdParty/Frameworks/Growl.framework; sourceTree = "<group>"; };
 		170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusImageTransformer.h; sourceTree = "<group>"; };
 		170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusImageTransformer.m; sourceTree = "<group>"; };
-		171192BB0D691ED600FD76C5 /* PathWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathWatcher.h; sourceTree = "<group>"; };
-		171192BC0D691ED600FD76C5 /* PathWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathWatcher.m; sourceTree = "<group>"; };
 		171B57D90C091F2B00F6AFAF /* flac.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = flac.icns; sourceTree = "<group>"; };
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
-		17211A5F0D68B79700911CA9 /* ContainedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainedNode.h; sourceTree = "<group>"; };
-		17211A600D68B79700911CA9 /* ContainedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContainedNode.m; sourceTree = "<group>"; };
-		17211A610D68B79700911CA9 /* ContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerNode.h; sourceTree = "<group>"; };
-		17211A620D68B79700911CA9 /* ContainerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContainerNode.m; sourceTree = "<group>"; };
-		17211A630D68B79700911CA9 /* DirectoryNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryNode.h; sourceTree = "<group>"; };
-		17211A640D68B79700911CA9 /* DirectoryNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectoryNode.m; sourceTree = "<group>"; };
-		17211A650D68B79700911CA9 /* FileIconCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileIconCell.h; sourceTree = "<group>"; };
-		17211A660D68B79700911CA9 /* FileIconCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileIconCell.m; sourceTree = "<group>"; };
-		17211A670D68B79700911CA9 /* FileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileNode.h; sourceTree = "<group>"; };
-		17211A680D68B79700911CA9 /* FileNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileNode.m; sourceTree = "<group>"; };
-		17211A690D68B79700911CA9 /* FileTreeDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileTreeDataSource.h; sourceTree = "<group>"; };
-		17211A6A0D68B79700911CA9 /* FileTreeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileTreeDataSource.m; sourceTree = "<group>"; };
-		17211A6B0D68B79700911CA9 /* FileTreeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileTreeWindowController.h; sourceTree = "<group>"; };
-		17211A6C0D68B79700911CA9 /* FileTreeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileTreeWindowController.m; sourceTree = "<group>"; };
-		17211A6D0D68B79700911CA9 /* PathNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathNode.h; sourceTree = "<group>"; };
-		17211A6E0D68B79700911CA9 /* PathNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathNode.m; sourceTree = "<group>"; };
-		17211A6F0D68B79700911CA9 /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFolderNode.h; sourceTree = "<group>"; };
-		17211A700D68B79700911CA9 /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFolderNode.m; sourceTree = "<group>"; };
-		17211A7D0D68B7C500911CA9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileTreePanel.xib; sourceTree = "<group>"; };
+		17211A7D0D68B7C500911CA9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileTree.xib; sourceTree = "<group>"; };
 		17249F0D0D82E17700F33392 /* ToggleQueueTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToggleQueueTitleTransformer.h; sourceTree = "<group>"; };
 		17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToggleQueueTitleTransformer.m; sourceTree = "<group>"; };
 		173428F30D5FB1C400E8D854 /* EntriesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntriesController.h; sourceTree = "<group>"; };
@@ -586,6 +567,30 @@
 		1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaKeysApplication.m; sourceTree = "<group>"; };
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
 		179790DF0C087AB7001D6996 /* OpenURLPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenURLPanel.m; sourceTree = "<group>"; };
+		179D02EA0E0CB0B00064A77A /* SideView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideView.h; path = SideView/SideView.h; sourceTree = "<group>"; };
+		179D02EB0E0CB0B00064A77A /* SideView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideView.m; path = SideView/SideView.m; sourceTree = "<group>"; };
+		179D02EC0E0CB0B00064A77A /* SideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideViewController.h; path = SideView/SideViewController.h; sourceTree = "<group>"; };
+		179D02ED0E0CB0B00064A77A /* SideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideViewController.m; path = SideView/SideViewController.m; sourceTree = "<group>"; };
+		179D03080E0CB2500064A77A /* ContainedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainedNode.h; path = FileTree/ContainedNode.h; sourceTree = SOURCE_ROOT; };
+		179D03090E0CB2500064A77A /* ContainedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainedNode.m; path = FileTree/ContainedNode.m; sourceTree = SOURCE_ROOT; };
+		179D030A0E0CB2500064A77A /* ContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainerNode.h; path = FileTree/ContainerNode.h; sourceTree = SOURCE_ROOT; };
+		179D030B0E0CB2500064A77A /* ContainerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainerNode.m; path = FileTree/ContainerNode.m; sourceTree = SOURCE_ROOT; };
+		179D030C0E0CB2500064A77A /* DirectoryNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryNode.h; path = FileTree/DirectoryNode.h; sourceTree = SOURCE_ROOT; };
+		179D030D0E0CB2500064A77A /* DirectoryNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DirectoryNode.m; path = FileTree/DirectoryNode.m; sourceTree = SOURCE_ROOT; };
+		179D030E0E0CB2500064A77A /* FileIconCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileIconCell.h; path = FileTree/FileIconCell.h; sourceTree = SOURCE_ROOT; };
+		179D030F0E0CB2500064A77A /* FileIconCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileIconCell.m; path = FileTree/FileIconCell.m; sourceTree = SOURCE_ROOT; };
+		179D03100E0CB2500064A77A /* FileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileNode.h; path = FileTree/FileNode.h; sourceTree = SOURCE_ROOT; };
+		179D03110E0CB2500064A77A /* FileNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileNode.m; path = FileTree/FileNode.m; sourceTree = SOURCE_ROOT; };
+		179D03120E0CB2500064A77A /* FileTreeDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeDataSource.h; path = FileTree/FileTreeDataSource.h; sourceTree = SOURCE_ROOT; };
+		179D03130E0CB2500064A77A /* FileTreeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeDataSource.m; path = FileTree/FileTreeDataSource.m; sourceTree = SOURCE_ROOT; };
+		179D03140E0CB2500064A77A /* FileTreeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeViewController.h; path = FileTree/FileTreeViewController.h; sourceTree = SOURCE_ROOT; };
+		179D03150E0CB2500064A77A /* FileTreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeViewController.m; path = FileTree/FileTreeViewController.m; sourceTree = SOURCE_ROOT; };
+		179D03180E0CB2500064A77A /* PathNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathNode.h; path = FileTree/PathNode.h; sourceTree = SOURCE_ROOT; };
+		179D03190E0CB2500064A77A /* PathNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PathNode.m; path = FileTree/PathNode.m; sourceTree = SOURCE_ROOT; };
+		179D031A0E0CB2500064A77A /* PathWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathWatcher.h; path = FileTree/PathWatcher.h; sourceTree = SOURCE_ROOT; };
+		179D031B0E0CB2500064A77A /* PathWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PathWatcher.m; path = FileTree/PathWatcher.m; sourceTree = SOURCE_ROOT; };
+		179D031C0E0CB2500064A77A /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartFolderNode.h; path = FileTree/SmartFolderNode.h; sourceTree = SOURCE_ROOT; };
+		179D031D0E0CB2500064A77A /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SmartFolderNode.m; path = FileTree/SmartFolderNode.m; sourceTree = SOURCE_ROOT; };
 		17A140E70D88B954004852F9 /* FilePlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePlaylistEntry.h; sourceTree = "<group>"; };
 		17A140E80D88B954004852F9 /* FilePlaylistEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilePlaylistEntry.m; sourceTree = "<group>"; };
 		17A8F6350D6A7B0F0095DA13 /* RepeatTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatTransformers.h; sourceTree = "<group>"; };
@@ -717,7 +722,8 @@
 				177042960B8BC53600B86321 /* Application */,
 				8E75752A09F31D5A0080F1EE /* Playlist */,
 				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
-				17211A5E0D68B79700911CA9 /* FileTreeWindow */,
+				179DFCDF0E0C5A130064A77A /* SideView */,
+				17211A5E0D68B79700911CA9 /* FileTree */,
 				8E75752309F31D5A0080F1EE /* Feedback */,
 				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
 				1766C68D0B911DF1004A7AE4 /* AudioScrobbler */,
@@ -753,30 +759,31 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		17211A5E0D68B79700911CA9 /* FileTreeWindow */ = {
+		17211A5E0D68B79700911CA9 /* FileTree */ = {
 			isa = PBXGroup;
 			children = (
-				17211A6B0D68B79700911CA9 /* FileTreeWindowController.h */,
-				17211A6C0D68B79700911CA9 /* FileTreeWindowController.m */,
-				17211A690D68B79700911CA9 /* FileTreeDataSource.h */,
-				17211A6A0D68B79700911CA9 /* FileTreeDataSource.m */,
-				17211A650D68B79700911CA9 /* FileIconCell.h */,
-				17211A660D68B79700911CA9 /* FileIconCell.m */,
-				17211A6D0D68B79700911CA9 /* PathNode.h */,
-				17211A6E0D68B79700911CA9 /* PathNode.m */,
-				17211A5F0D68B79700911CA9 /* ContainedNode.h */,
-				17211A600D68B79700911CA9 /* ContainedNode.m */,
-				17211A610D68B79700911CA9 /* ContainerNode.h */,
-				17211A620D68B79700911CA9 /* ContainerNode.m */,
-				17211A630D68B79700911CA9 /* DirectoryNode.h */,
-				17211A640D68B79700911CA9 /* DirectoryNode.m */,
-				17211A670D68B79700911CA9 /* FileNode.h */,
-				17211A680D68B79700911CA9 /* FileNode.m */,
-				17211A6F0D68B79700911CA9 /* SmartFolderNode.h */,
-				17211A700D68B79700911CA9 /* SmartFolderNode.m */,
-				171192BB0D691ED600FD76C5 /* PathWatcher.h */,
-				171192BC0D691ED600FD76C5 /* PathWatcher.m */,
+				179D03140E0CB2500064A77A /* FileTreeViewController.h */,
+				179D03150E0CB2500064A77A /* FileTreeViewController.m */,
+				179D03120E0CB2500064A77A /* FileTreeDataSource.h */,
+				179D03130E0CB2500064A77A /* FileTreeDataSource.m */,
+				179D03080E0CB2500064A77A /* ContainedNode.h */,
+				179D03090E0CB2500064A77A /* ContainedNode.m */,
+				179D030A0E0CB2500064A77A /* ContainerNode.h */,
+				179D030B0E0CB2500064A77A /* ContainerNode.m */,
+				179D030C0E0CB2500064A77A /* DirectoryNode.h */,
+				179D030D0E0CB2500064A77A /* DirectoryNode.m */,
+				179D030E0E0CB2500064A77A /* FileIconCell.h */,
+				179D030F0E0CB2500064A77A /* FileIconCell.m */,
+				179D03100E0CB2500064A77A /* FileNode.h */,
+				179D03110E0CB2500064A77A /* FileNode.m */,
+				179D03180E0CB2500064A77A /* PathNode.h */,
+				179D03190E0CB2500064A77A /* PathNode.m */,
+				179D031A0E0CB2500064A77A /* PathWatcher.h */,
+				179D031B0E0CB2500064A77A /* PathWatcher.m */,
+				179D031C0E0CB2500064A77A /* SmartFolderNode.h */,
+				179D031D0E0CB2500064A77A /* SmartFolderNode.m */,
 			);
+			name = FileTree;
 			path = FileTreeWindow;
 			sourceTree = "<group>";
 		};
@@ -920,6 +927,17 @@
 				179790DF0C087AB7001D6996 /* OpenURLPanel.m */,
 			);
 			path = OpenURLPanel;
+			sourceTree = "<group>";
+		};
+		179DFCDF0E0C5A130064A77A /* SideView */ = {
+			isa = PBXGroup;
+			children = (
+				179D02EA0E0CB0B00064A77A /* SideView.h */,
+				179D02EB0E0CB0B00064A77A /* SideView.m */,
+				179D02EC0E0CB0B00064A77A /* SideViewController.h */,
+				179D02ED0E0CB0B00064A77A /* SideViewController.m */,
+			);
+			name = SideView;
 			sourceTree = "<group>";
 		};
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
@@ -1128,7 +1146,7 @@
 				17342A980D5FD20B00E8D854 /* MainMenu.xib */,
 				17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */,
 				5604D4570D603459004F5C5D /* SpotlightPanel.xib */,
-				17211A7C0D68B7C500911CA9 /* FileTreePanel.xib */,
+				17211A7C0D68B7C500911CA9 /* FileTree.xib */,
 				17E41E060C130DFF00AC744D /* Credits.html */,
 			);
 			name = Resources;
@@ -1656,13 +1674,12 @@
 				17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */,
 				17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */,
 				5604D4580D603459004F5C5D /* SpotlightPanel.xib in Resources */,
-				17211A7E0D68B7C500911CA9 /* FileTreePanel.xib in Resources */,
+				17211A7E0D68B7C500911CA9 /* FileTree.xib in Resources */,
 				17A8F6850D6A7FCA0095DA13 /* repeat_all.png in Resources */,
 				17A8F6860D6A7FCA0095DA13 /* repeat_none.png in Resources */,
 				17A8F6870D6A7FCA0095DA13 /* repeat_one.png in Resources */,
 				17A8F71A0D6A89730095DA13 /* repeat_album.png in Resources */,
 				B09E96630D74A7BC0064F138 /* stop_current.png in Resources */,
-				99EAACA20DD1B9DB00423C38 /* APL.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1717,23 +1734,25 @@
 				56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */,
 				56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */,
 				56DB08580D67186500453B6A /* NSString+CogSort.m in Sources */,
-				17211A710D68B79700911CA9 /* ContainedNode.m in Sources */,
-				17211A720D68B79700911CA9 /* ContainerNode.m in Sources */,
-				17211A730D68B79700911CA9 /* DirectoryNode.m in Sources */,
-				17211A740D68B79700911CA9 /* FileIconCell.m in Sources */,
-				17211A750D68B79700911CA9 /* FileNode.m in Sources */,
-				17211A760D68B79700911CA9 /* FileTreeDataSource.m in Sources */,
-				17211A770D68B79700911CA9 /* FileTreeWindowController.m in Sources */,
-				17211A780D68B79700911CA9 /* PathNode.m in Sources */,
-				17211A790D68B79700911CA9 /* SmartFolderNode.m in Sources */,
 				17E78CB10D68D46F005C5A59 /* StringToURLTransformer.m in Sources */,
 				56AE86C10D6901BC00B0F89B /* FontSizetoLineHeightTransformer.m in Sources */,
-				171192BD0D691ED600FD76C5 /* PathWatcher.m in Sources */,
 				17A8F6370D6A7B0F0095DA13 /* RepeatTransformers.m in Sources */,
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
 				17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */,
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
 				17A140E90D88B954004852F9 /* FilePlaylistEntry.m in Sources */,
+				179D02EE0E0CB0B00064A77A /* SideView.m in Sources */,
+				179D02EF0E0CB0B00064A77A /* SideViewController.m in Sources */,
+				179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */,
+				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,
+				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
+				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,
+				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
+				179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */,
+				179D03240E0CB2500064A77A /* FileTreeViewController.m in Sources */,
+				179D03260E0CB2500064A77A /* PathNode.m in Sources */,
+				179D03270E0CB2500064A77A /* PathWatcher.m in Sources */,
+				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1851,12 +1870,12 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		17211A7C0D68B7C500911CA9 /* FileTreePanel.xib */ = {
+		17211A7C0D68B7C500911CA9 /* FileTree.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				17211A7D0D68B7C500911CA9 /* English */,
 			);
-			name = FileTreePanel.xib;
+			name = FileTree.xib;
 			sourceTree = "<group>";
 		};
 		17342A980D5FD20B00E8D854 /* MainMenu.xib */ = {

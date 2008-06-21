@@ -41,7 +41,6 @@
 	IBOutlet NSMenuItem *showYearColumn;
 	
     IBOutlet NSWindowController *spotlightWindowController;
-	IBOutlet NSWindowController *fileTreeWindowController;
 	
 	NDHotKeyEvent *playHotKey;
 	NDHotKeyEvent *prevHotKey;

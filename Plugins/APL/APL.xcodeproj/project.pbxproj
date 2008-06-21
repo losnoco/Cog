@@ -12,7 +12,6 @@
 		99B98A200CC7E1CE00C256E9 /* APLFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 99B9863F0CC7A08600C256E9 /* APLFile.m */; };
 		99B98A210CC7E1D100C256E9 /* APLMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA346D0CC04FCD0003F6B2 /* APLMetadataReader.m */; };
 		99B98A260CC7E22500C256E9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		99B98CE10CC7FD0000C256E9 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D5B49B7048680CD000E48DA /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,7 +21,7 @@
 		17DA346C0CC04FCD0003F6B2 /* APLMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APLMetadataReader.h; sourceTree = "<group>"; };
 		17DA346D0CC04FCD0003F6B2 /* APLMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APLMetadataReader.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* APL_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APL_Prefix.pch; sourceTree = "<group>"; };
-		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E8D42350CBB0F9800135C1B /* APLDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APLDecoder.h; sourceTree = "<group>"; };
 		8E8D42360CBB0F9800135C1B /* APLDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APLDecoder.m; sourceTree = "<group>"; };
 		8E8D423C0CBB0FF600135C1B /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
@@ -167,7 +166,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				99B98CE10CC7FD0000C256E9 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

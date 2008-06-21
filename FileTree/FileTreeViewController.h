@@ -10,13 +10,13 @@
 #import "PlaylistLoader.h"
 
 @class PlaylistLoader;
+@class SideView;
 
-@interface FileTreeWindowController : NSWindowController {
-	IBOutlet PlaylistLoader *playlistLoader;
+@interface FileTreeViewController : NSObject {
+	IBOutlet SideView *controller;
 	IBOutlet NSOutlineView *outlineView;
 }
 
 - (IBAction)addToPlaylist:(id)sender;
-- (IBAction)toggleWindow:(id)sender;
 
 @end
