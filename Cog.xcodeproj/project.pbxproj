@@ -20,6 +20,7 @@
 		173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173428F40D5FB1C400E8D854 /* EntriesController.m */; };
 		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
+		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
@@ -503,6 +504,8 @@
 		173428F40D5FB1C400E8D854 /* EntriesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntriesController.m; sourceTree = "<group>"; };
 		17342A990D5FD20B00E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		17342ABE0D5FD36400E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/OpenURLPanel.xib; sourceTree = "<group>"; };
+		173855FD0E0CC81F00488CD4 /* FileTreeOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeOutlineView.h; path = FileTree/FileTreeOutlineView.h; sourceTree = "<group>"; };
+		173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeOutlineView.m; path = FileTree/FileTreeOutlineView.m; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -1052,6 +1055,8 @@
 		17DDF6400E0CB6F100A2E4AD /* FileTree */ = {
 			isa = PBXGroup;
 			children = (
+				173855FD0E0CC81F00488CD4 /* FileTreeOutlineView.h */,
+				173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */,
 				179D03140E0CB2500064A77A /* FileTreeViewController.h */,
 				179D03150E0CB2500064A77A /* FileTreeViewController.m */,
 				179D03120E0CB2500064A77A /* FileTreeDataSource.h */,
@@ -1752,6 +1757,7 @@
 				179D03260E0CB2500064A77A /* PathNode.m in Sources */,
 				179D03270E0CB2500064A77A /* PathWatcher.m in Sources */,
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
+				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

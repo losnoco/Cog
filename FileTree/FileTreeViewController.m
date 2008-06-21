@@ -12,12 +12,6 @@
 
 @implementation FileTreeViewController
 
-- (void)awakeFromNib
-{
-	[outlineView setDoubleAction:@selector(addToPlaylist:)];
-	[outlineView setTarget:self];
-}
-	
 - (IBAction)addToPlaylist:(id)sender
 {
 	unsigned int index;
