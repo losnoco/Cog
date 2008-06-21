@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17F563540C3BDB130019975C /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563420C3BDAE80019975C /* Ogg.framework */; };
-		17F563570C3BDB150019975C /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563420C3BDAE80019975C /* Ogg.framework */; };
+		17F563540C3BDB130019975C /* ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563420C3BDAE80019975C /* ogg.framework */; };
+		17F563570C3BDB150019975C /* ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563420C3BDAE80019975C /* ogg.framework */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8E75727909F31A150080F1EE /* codec.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E75727609F31A150080F1EE /* codec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E75727A09F31A150080F1EE /* vorbisenc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E75727709F31A150080F1EE /* vorbisenc.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -85,7 +85,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17F563570C3BDB150019975C /* Ogg.framework in CopyFiles */,
+				17F563570C3BDB150019975C /* ogg.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,7 +155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F563540C3BDB130019975C /* Ogg.framework in Frameworks */,
+				17F563540C3BDB130019975C /* ogg.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,7 +218,7 @@
 		17F5633B0C3BDAE80019975C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				17F563420C3BDAE80019975C /* Ogg.framework */,
+				17F563420C3BDAE80019975C /* ogg.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -363,6 +363,7 @@
 					ProjectRef = 17F5633A0C3BDAE80019975C /* ogg.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* Vorbis Framework */,
 			);
@@ -370,10 +371,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		17F563420C3BDAE80019975C /* Ogg.framework */ = {
+		17F563420C3BDAE80019975C /* ogg.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Ogg.framework;
+			path = ogg.framework;
 			remoteRef = 17F563410C3BDAE80019975C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

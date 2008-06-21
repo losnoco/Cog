@@ -31,7 +31,7 @@
 		// (we don't care about the exact number of channels, only if there are more than zero or not)
 		if (propSize <= sizeof(UInt32)) continue;
 
-		NSObject *deviceInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSDictionary *deviceInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 			[NSString stringWithUTF8String:name], @"name",
 			[NSNumber numberWithLong:devids[i]], @"deviceID",
 			nil];

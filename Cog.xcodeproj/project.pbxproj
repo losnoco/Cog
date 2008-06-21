@@ -571,26 +571,26 @@
 		179D02EB0E0CB0B00064A77A /* SideView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideView.m; path = SideView/SideView.m; sourceTree = "<group>"; };
 		179D02EC0E0CB0B00064A77A /* SideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideViewController.h; path = SideView/SideViewController.h; sourceTree = "<group>"; };
 		179D02ED0E0CB0B00064A77A /* SideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideViewController.m; path = SideView/SideViewController.m; sourceTree = "<group>"; };
-		179D03080E0CB2500064A77A /* ContainedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainedNode.h; path = FileTree/ContainedNode.h; sourceTree = SOURCE_ROOT; };
-		179D03090E0CB2500064A77A /* ContainedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainedNode.m; path = FileTree/ContainedNode.m; sourceTree = SOURCE_ROOT; };
-		179D030A0E0CB2500064A77A /* ContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainerNode.h; path = FileTree/ContainerNode.h; sourceTree = SOURCE_ROOT; };
-		179D030B0E0CB2500064A77A /* ContainerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainerNode.m; path = FileTree/ContainerNode.m; sourceTree = SOURCE_ROOT; };
-		179D030C0E0CB2500064A77A /* DirectoryNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryNode.h; path = FileTree/DirectoryNode.h; sourceTree = SOURCE_ROOT; };
-		179D030D0E0CB2500064A77A /* DirectoryNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DirectoryNode.m; path = FileTree/DirectoryNode.m; sourceTree = SOURCE_ROOT; };
-		179D030E0E0CB2500064A77A /* FileIconCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileIconCell.h; path = FileTree/FileIconCell.h; sourceTree = SOURCE_ROOT; };
-		179D030F0E0CB2500064A77A /* FileIconCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileIconCell.m; path = FileTree/FileIconCell.m; sourceTree = SOURCE_ROOT; };
-		179D03100E0CB2500064A77A /* FileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileNode.h; path = FileTree/FileNode.h; sourceTree = SOURCE_ROOT; };
-		179D03110E0CB2500064A77A /* FileNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileNode.m; path = FileTree/FileNode.m; sourceTree = SOURCE_ROOT; };
-		179D03120E0CB2500064A77A /* FileTreeDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeDataSource.h; path = FileTree/FileTreeDataSource.h; sourceTree = SOURCE_ROOT; };
-		179D03130E0CB2500064A77A /* FileTreeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeDataSource.m; path = FileTree/FileTreeDataSource.m; sourceTree = SOURCE_ROOT; };
-		179D03140E0CB2500064A77A /* FileTreeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeViewController.h; path = FileTree/FileTreeViewController.h; sourceTree = SOURCE_ROOT; };
-		179D03150E0CB2500064A77A /* FileTreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeViewController.m; path = FileTree/FileTreeViewController.m; sourceTree = SOURCE_ROOT; };
-		179D03180E0CB2500064A77A /* PathNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathNode.h; path = FileTree/PathNode.h; sourceTree = SOURCE_ROOT; };
-		179D03190E0CB2500064A77A /* PathNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PathNode.m; path = FileTree/PathNode.m; sourceTree = SOURCE_ROOT; };
-		179D031A0E0CB2500064A77A /* PathWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathWatcher.h; path = FileTree/PathWatcher.h; sourceTree = SOURCE_ROOT; };
-		179D031B0E0CB2500064A77A /* PathWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PathWatcher.m; path = FileTree/PathWatcher.m; sourceTree = SOURCE_ROOT; };
-		179D031C0E0CB2500064A77A /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartFolderNode.h; path = FileTree/SmartFolderNode.h; sourceTree = SOURCE_ROOT; };
-		179D031D0E0CB2500064A77A /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SmartFolderNode.m; path = FileTree/SmartFolderNode.m; sourceTree = SOURCE_ROOT; };
+		179D03080E0CB2500064A77A /* ContainedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainedNode.h; path = FileTree/ContainedNode.h; sourceTree = "<group>"; };
+		179D03090E0CB2500064A77A /* ContainedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainedNode.m; path = FileTree/ContainedNode.m; sourceTree = "<group>"; };
+		179D030A0E0CB2500064A77A /* ContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainerNode.h; path = FileTree/ContainerNode.h; sourceTree = "<group>"; };
+		179D030B0E0CB2500064A77A /* ContainerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainerNode.m; path = FileTree/ContainerNode.m; sourceTree = "<group>"; };
+		179D030C0E0CB2500064A77A /* DirectoryNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryNode.h; path = FileTree/DirectoryNode.h; sourceTree = "<group>"; };
+		179D030D0E0CB2500064A77A /* DirectoryNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DirectoryNode.m; path = FileTree/DirectoryNode.m; sourceTree = "<group>"; };
+		179D030E0E0CB2500064A77A /* FileIconCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileIconCell.h; path = FileTree/FileIconCell.h; sourceTree = "<group>"; };
+		179D030F0E0CB2500064A77A /* FileIconCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileIconCell.m; path = FileTree/FileIconCell.m; sourceTree = "<group>"; };
+		179D03100E0CB2500064A77A /* FileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileNode.h; path = FileTree/FileNode.h; sourceTree = "<group>"; };
+		179D03110E0CB2500064A77A /* FileNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileNode.m; path = FileTree/FileNode.m; sourceTree = "<group>"; };
+		179D03120E0CB2500064A77A /* FileTreeDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeDataSource.h; path = FileTree/FileTreeDataSource.h; sourceTree = "<group>"; };
+		179D03130E0CB2500064A77A /* FileTreeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeDataSource.m; path = FileTree/FileTreeDataSource.m; sourceTree = "<group>"; };
+		179D03140E0CB2500064A77A /* FileTreeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeViewController.h; path = FileTree/FileTreeViewController.h; sourceTree = "<group>"; };
+		179D03150E0CB2500064A77A /* FileTreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeViewController.m; path = FileTree/FileTreeViewController.m; sourceTree = "<group>"; };
+		179D03180E0CB2500064A77A /* PathNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathNode.h; path = FileTree/PathNode.h; sourceTree = "<group>"; };
+		179D03190E0CB2500064A77A /* PathNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PathNode.m; path = FileTree/PathNode.m; sourceTree = "<group>"; };
+		179D031A0E0CB2500064A77A /* PathWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathWatcher.h; path = FileTree/PathWatcher.h; sourceTree = "<group>"; };
+		179D031B0E0CB2500064A77A /* PathWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PathWatcher.m; path = FileTree/PathWatcher.m; sourceTree = "<group>"; };
+		179D031C0E0CB2500064A77A /* SmartFolderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartFolderNode.h; path = FileTree/SmartFolderNode.h; sourceTree = "<group>"; };
+		179D031D0E0CB2500064A77A /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SmartFolderNode.m; path = FileTree/SmartFolderNode.m; sourceTree = "<group>"; };
 		17A140E70D88B954004852F9 /* FilePlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePlaylistEntry.h; sourceTree = "<group>"; };
 		17A140E80D88B954004852F9 /* FilePlaylistEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilePlaylistEntry.m; sourceTree = "<group>"; };
 		17A8F6350D6A7B0F0095DA13 /* RepeatTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatTransformers.h; sourceTree = "<group>"; };
@@ -723,7 +723,7 @@
 				8E75752A09F31D5A0080F1EE /* Playlist */,
 				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
 				179DFCDF0E0C5A130064A77A /* SideView */,
-				17211A5E0D68B79700911CA9 /* FileTree */,
+				17DDF6400E0CB6F100A2E4AD /* FileTree */,
 				8E75752309F31D5A0080F1EE /* Feedback */,
 				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
 				1766C68D0B911DF1004A7AE4 /* AudioScrobbler */,
@@ -757,34 +757,6 @@
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		17211A5E0D68B79700911CA9 /* FileTree */ = {
-			isa = PBXGroup;
-			children = (
-				179D03140E0CB2500064A77A /* FileTreeViewController.h */,
-				179D03150E0CB2500064A77A /* FileTreeViewController.m */,
-				179D03120E0CB2500064A77A /* FileTreeDataSource.h */,
-				179D03130E0CB2500064A77A /* FileTreeDataSource.m */,
-				179D03080E0CB2500064A77A /* ContainedNode.h */,
-				179D03090E0CB2500064A77A /* ContainedNode.m */,
-				179D030A0E0CB2500064A77A /* ContainerNode.h */,
-				179D030B0E0CB2500064A77A /* ContainerNode.m */,
-				179D030C0E0CB2500064A77A /* DirectoryNode.h */,
-				179D030D0E0CB2500064A77A /* DirectoryNode.m */,
-				179D030E0E0CB2500064A77A /* FileIconCell.h */,
-				179D030F0E0CB2500064A77A /* FileIconCell.m */,
-				179D03100E0CB2500064A77A /* FileNode.h */,
-				179D03110E0CB2500064A77A /* FileNode.m */,
-				179D03180E0CB2500064A77A /* PathNode.h */,
-				179D03190E0CB2500064A77A /* PathNode.m */,
-				179D031A0E0CB2500064A77A /* PathWatcher.h */,
-				179D031B0E0CB2500064A77A /* PathWatcher.m */,
-				179D031C0E0CB2500064A77A /* SmartFolderNode.h */,
-				179D031D0E0CB2500064A77A /* SmartFolderNode.m */,
-			);
-			name = FileTree;
-			path = FileTreeWindow;
 			sourceTree = "<group>";
 		};
 		1766C68D0B911DF1004A7AE4 /* AudioScrobbler */ = {
@@ -1075,6 +1047,33 @@
 				17C8F7D70CBEF3E8008D969D /* Dumb.bundle */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		17DDF6400E0CB6F100A2E4AD /* FileTree */ = {
+			isa = PBXGroup;
+			children = (
+				179D03140E0CB2500064A77A /* FileTreeViewController.h */,
+				179D03150E0CB2500064A77A /* FileTreeViewController.m */,
+				179D03120E0CB2500064A77A /* FileTreeDataSource.h */,
+				179D03130E0CB2500064A77A /* FileTreeDataSource.m */,
+				179D03080E0CB2500064A77A /* ContainedNode.h */,
+				179D03090E0CB2500064A77A /* ContainedNode.m */,
+				179D030A0E0CB2500064A77A /* ContainerNode.h */,
+				179D030B0E0CB2500064A77A /* ContainerNode.m */,
+				179D030C0E0CB2500064A77A /* DirectoryNode.h */,
+				179D030D0E0CB2500064A77A /* DirectoryNode.m */,
+				179D030E0E0CB2500064A77A /* FileIconCell.h */,
+				179D030F0E0CB2500064A77A /* FileIconCell.m */,
+				179D03100E0CB2500064A77A /* FileNode.h */,
+				179D03110E0CB2500064A77A /* FileNode.m */,
+				179D03180E0CB2500064A77A /* PathNode.h */,
+				179D03190E0CB2500064A77A /* PathNode.m */,
+				179D031A0E0CB2500064A77A /* PathWatcher.h */,
+				179D031B0E0CB2500064A77A /* PathWatcher.m */,
+				179D031C0E0CB2500064A77A /* SmartFolderNode.h */,
+				179D031D0E0CB2500064A77A /* SmartFolderNode.m */,
+			);
+			name = FileTree;
 			sourceTree = "<group>";
 		};
 		17F3BB840CBC565100864489 /* Products */ = {
