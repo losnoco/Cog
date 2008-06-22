@@ -15,14 +15,14 @@
 {
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
 	
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"CogWindowHidden"];
-	NSLog(@"DICT: %@", userDefaultsValuesDict);
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"WindowContentHidden"];
+
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 }
 
 - (void)awakeFromNib
 {
-	contentHidden = [[NSUserDefaults standardUserDefaults] boolForKey:@"CogWindowHidden"];
+	contentHidden = [[NSUserDefaults standardUserDefaults] boolForKey:@"WindowContentHidden"];
 	if (contentHidden)
 	{
 		[self hideContentwithAnimation:YES];
@@ -61,7 +61,7 @@
 	[self setFrame:newFrame display:YES animate:animate];
 	
 	contentHidden = YES;
-	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"CogWindowHidden"];
+	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WindowContentHidden"];
 }
 
 - (void)showContent
@@ -80,7 +80,7 @@
 	[self setShowsResizeIndicator:YES];
 
 	contentHidden = NO;
-	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"CogWindowHidden"];
+	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WindowContentHidden"];
 }
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)proposedFrameSize {
