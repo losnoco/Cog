@@ -11,21 +11,61 @@
 
 @implementation InvertedToolbarWindow
 
-+ (void)initialize
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
-	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
+	self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+	if (self)
+	{
+		contentHidden = NO;
+	}
 	
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"WindowContentHidden"];
+	return self;
+}
 
-	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
+- (NSString *)contentHiddenDefaultsKey
+{
+	if ([self frameAutosaveName])
+	{
+		return [[self frameAutosaveName] stringByAppendingString:@" Window Content Hidden"];
+	}
+	
+	return nil;
+}
+
+- (NSString *)contentHeightDefaultsKey
+{
+	if ([self frameAutosaveName])
+	{
+		return [[self frameAutosaveName] stringByAppendingString:@" Window Content Height"];
+	}
+	
+	return nil;
 }
 
 - (void)awakeFromNib
 {
-	contentHidden = [[NSUserDefaults standardUserDefaults] boolForKey:@"WindowContentHidden"];
-	if (contentHidden)
+	NSString *contentHiddenDefaultsKey = [self contentHiddenDefaultsKey];
+	if (contentHiddenDefaultsKey != nil)
 	{
-		[self hideContentwithAnimation:YES];
+		NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
+		[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:contentHiddenDefaultsKey];
+		[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
+	}
+	
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:contentHiddenDefaultsKey])
+	{
+		//Rejigger the height
+		float contentHeight = [[NSUserDefaults standardUserDefaults] floatForKey:[self contentHeightDefaultsKey]];
+		
+		contentSize = [[self contentView] bounds].size;
+		
+		NSRect newFrame = [self frame];
+		newFrame.size.height -= contentSize.height;
+		newFrame.size.height += contentHeight;
+		
+		[self setFrame:newFrame display:NO animate:NO];
+
+		[self hideContent];
 	}
 }
 
@@ -43,14 +83,19 @@
 
 - (void)hideContent
 {
-	[self hideContentwithAnimation:YES];
-}
-
-- (void)hideContentwithAnimation:(BOOL)animate
-{
 	NSRect newFrame = [self frame];
 
+	BOOL animate = YES;
 	contentSize = [[self contentView] bounds].size;
+	[[NSUserDefaults standardUserDefaults] setFloat:contentSize.height forKey:[self contentHeightDefaultsKey]];
+	
+	if (contentHidden)
+	{
+		//Content is already set as hidden...so we are pretending we were hidden the whole time.
+		//Currently, this only happens on init.
+		
+		animate = NO;
+	}
 
 	newFrame.origin.y += contentSize.height;
 	newFrame.size.height -= contentSize.height;
@@ -60,8 +105,7 @@
 	[[self contentView] setAutoresizesSubviews:NO];
 	[self setFrame:newFrame display:YES animate:animate];
 	
-	contentHidden = YES;
-	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WindowContentHidden"];
+	[self setContentHidden:YES];
 }
 
 - (void)showContent
@@ -79,8 +123,7 @@
 	
 	[self setShowsResizeIndicator:YES];
 
-	contentHidden = NO;
-	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WindowContentHidden"];
+	[self setContentHidden:NO];
 }
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)proposedFrameSize {
@@ -89,6 +132,13 @@
 	}
 	
 	return proposedFrameSize;
+}
+
+
+- (void)setContentHidden:(BOOL)hidden
+{
+	[[NSUserDefaults standardUserDefaults] setBool:hidden forKey:[self contentHiddenDefaultsKey]];
+	contentHidden = hidden;
 }
 
 @end

@@ -15,9 +15,12 @@
 }
 
 - (void)hideContent;
-- (void)hideContentwithAnimation:(BOOL)animate;
-
 - (void)showContent;
 
+
+//Only sets the flag, doesn't do anything.
+- (void)setContentHidden:(BOOL)hidden;
+- (NSString *)contentHiddenDefaultsKey;
+- (NSString *)contentHeightDefaultsKey;
 
 @end
