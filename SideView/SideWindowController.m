@@ -16,8 +16,7 @@
 	self = [super init];
 	if (self)
 	{
-		[sideViewNibs setObject:@"FileTree" forKey:@"File Tree In a Window!"];
-		[sideViewNibs setObject:@"FileTree" forKey:@"Another File Tree (In a window)!"];
+		[sideViewNibs setObject:@"FileTree" forKey:@"File Tree"];
 		
 		windows = [[NSMutableDictionary alloc] init];
 	}

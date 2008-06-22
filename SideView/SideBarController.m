@@ -31,7 +31,6 @@
 	if (self)
 	{
 		[sideViewNibs setObject:@"FileTree" forKey:@"File Tree"];
-		[sideViewNibs setObject:@"FileTree" forKey:@"Another File Tree!"];
 		
 		sideView = nil;
 	}
