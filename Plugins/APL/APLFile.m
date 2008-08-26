@@ -37,7 +37,9 @@
 		NSString *basePath = [[[baseFilename stringByStandardizingPath] stringByDeletingLastPathComponent] stringByAppendingString:@"/"];
 		[unixPath insertString:basePath atIndex:0];
 		}
-	return [NSURL URLWithString:[[NSURL fileURLWithPath:unixPath] absoluteString]];
+	NSURL *url = [NSURL URLWithString:[[NSURL fileURLWithPath:unixPath] absoluteString]];
+	[unixPath release];
+	return url;
 }
 
 -initWithFile:(NSString*)filename {
@@ -56,7 +58,7 @@
 			NSLog(@"Cannot read header");
 			return nil;
 		}
-		NSString* str = [[NSString alloc] initWithData:da encoding: NSASCIIStringEncoding];	
+		NSString* str = [[[NSString alloc] autorelease] initWithData:da encoding: NSASCIIStringEncoding];	
 		if([str compare:header options:NSCaseInsensitiveSearch]) {
 			NSLog(@"APL header mismatch");
 			return nil;

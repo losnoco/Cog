@@ -67,6 +67,8 @@ static void myFSEventCallback(
         kFSEventStreamCreateFlagNone // Watch this and all its subdirectories
     );
 	
+	CFRelease(pathsToWatch);
+	
     FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);	
 	
 	FSEventStreamStart(stream);

@@ -71,7 +71,7 @@
 	NSScanner		*scanner		= nil;
 	BOOL			result			= NO;
 	int				value			= 0;
-	unsigned		seconds;
+	unsigned		seconds			= 0;
 
 	scanner		= [NSScanner scannerWithString:string];
 	

@@ -54,7 +54,9 @@
 	}
 	
 	//Append the fragment
-	return [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
+	NSURL *url = [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
+	[unixPath release];
+	return url;
 }
 
 
