@@ -108,6 +108,7 @@
 {
 	[audioPlayer stop];
 
+
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler stop];
 	}
@@ -144,9 +145,14 @@
 - (IBAction)play:(id)sender
 {
 	if ([playlistView selectedRow] == -1)
-		[playlistView selectRow:0 byExtendingSelection:NO];
+		[playlistView selectRow:0 byExtendingSelection:NO];	
 	
-	[self playEntryAtIndex:[playlistView selectedRow]];
+	// IF added by safari (23:52 - 11Nov2008)
+	// - to fix the trackingslider getting enabled, when play is
+	//   pressed and there is nothing on the playlist
+	// - check if selectedRow is empty, before playing.
+	if ([playlistView selectedRow] == 0)
+		[self playEntryAtIndex:[playlistView selectedRow]];
 }
 
 - (void)playEntry:(PlaylistEntry *)pe
@@ -549,8 +555,8 @@
 		if (status == kCogStatusStopped)
 		{
 			[positionSlider setDoubleValue:0.0f];
-			
-			[self updateTimeField:0.0f];			
+			[positionSlider setEnabled:NO]; // the player stopped, disable the slider
+			[self updateTimeField:0.0f];		
 		}
 		
 		//Show play image
@@ -568,6 +574,7 @@
 	if (status == kCogStatusStopped) {
 		NSLog(@"DONE!");
 		[playlistController setCurrentEntry:nil];
+		[positionSlider setEnabled:NO]; // the player stopped, disable the slider
 	}
 	else {
 		NSLog(@"PLAYING!");

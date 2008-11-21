@@ -50,6 +50,12 @@
 + (NSDictionary *)metadataForURL:(NSURL *)url;
 @end
 
+@protocol CogMetadataWriter <NSObject>
+//+ (NSArray *)fileTypes;
+//+ (NSArray *)mimeTypes;
++ (int)putMetadataInURL:(NSURL *)url;
+@end
+
 @protocol CogPropertiesReader <NSObject>
 + (NSArray *)fileTypes;
 + (NSArray *)mimeTypes;
@@ -74,6 +80,8 @@
 - (NSDictionary *) metadataForURL:(NSURL *)url;
 - (NSDictionary *) propertiesForURL:(NSURL *)url;
 - (id<CogDecoder>) audioDecoderForSource:(id<CogSource>)source;
+
+- (int) putMetadataInURL:(NSURL *)url;
 @end
 
 

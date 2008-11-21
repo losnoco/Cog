@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagEditorController.m */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
 		170680630B950158006BA573 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
 		170680840B950164006BA573 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
@@ -446,6 +447,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		07DFC3930ECDF80100DA400D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		177FD1000B90CB570011C3B5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -487,6 +497,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		07D971E40ED1DAA800E7602E /* TagEditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TagEditorController.h; path = TagEditor/TagEditorController.h; sourceTree = "<group>"; };
+		07D971E50ED1DAA800E7602E /* TagEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagEditorController.m; path = TagEditor/TagEditorController.m; sourceTree = "<group>"; };
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -725,6 +737,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		07D973050ED1E8F200E7602E /* ID3TagEditor */ = {
+			isa = PBXGroup;
+			children = (
+				07D971E40ED1DAA800E7602E /* TagEditorController.h */,
+				07D971E50ED1DAA800E7602E /* TagEditorController.m */,
+			);
+			name = ID3TagEditor;
+			sourceTree = "<group>";
+		};
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -738,6 +759,7 @@
 				1766C68D0B911DF1004A7AE4 /* AudioScrobbler */,
 				177EC0110B8BC2CF0000BC8C /* Utils */,
 				177EBF770B8BC2A70000BC8C /* ThirdParty */,
+				07D973050ED1E8F200E7602E /* ID3TagEditor */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1344,6 +1366,7 @@
 				8D1107290486CEB800E47090 /* Resources */,
 				8E757AEC09F3265E0080F1EE /* CopyFiles */,
 				177FD1000B90CB570011C3B5 /* CopyFiles */,
+				07DFC3930ECDF80100DA400D /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1770,6 +1793,7 @@
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
 				1738589B0E0D92DD00488CD4 /* SideBarController.m in Sources */,
 				1738589D0E0D92DD00488CD4 /* SideWindowController.m in Sources */,
+				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1956,6 +1980,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Release/WMA.framework\"",
+					"\"$(SRCROOT)/ID3/libid3\"",
 				);
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
@@ -1991,6 +2016,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Release/WMA.framework\"",
+					"\"$(SRCROOT)/ID3/libid3\"",
 				);
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
