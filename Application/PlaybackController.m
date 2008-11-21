@@ -108,7 +108,6 @@
 {
 	[audioPlayer stop];
 
-
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler stop];
 	}
@@ -146,12 +145,8 @@
 {
 	if ([playlistView selectedRow] == -1)
 		[playlistView selectRow:0 byExtendingSelection:NO];	
-	
-	// IF added by safari (23:52 - 11Nov2008)
-	// - to fix the trackingslider getting enabled, when play is
-	//   pressed and there is nothing on the playlist
-	// - check if selectedRow is empty, before playing.
-	if ([playlistView selectedRow] == 0)
+
+	if ([playlistView selectedRow] > -1)
 		[self playEntryAtIndex:[playlistView selectedRow]];
 }
 
