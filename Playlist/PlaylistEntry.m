@@ -101,7 +101,7 @@
 @synthesize title;
 - (NSString *)title
 {
-    if(self.URL && (title == nil || [title isEqualToString:@""]))
+    if((title == nil || [title isEqualToString:@""]) && self.URL)
     {
         return [[self.URL path] lastPathComponent];
     }
