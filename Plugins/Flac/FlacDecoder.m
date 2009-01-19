@@ -90,8 +90,6 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
 	int sample, channel;
 	int32_t	audioSample;
 
-	NSLog(@"Bits per sample: %i", frame->header.bits_per_sample);
-
     switch(frame->header.bits_per_sample) {
         case 8:
             // Interleave the audio (no need for byte swapping)
