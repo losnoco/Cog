@@ -258,7 +258,7 @@
 	
 	NSLog(@"starting tracking; initial event = %@", event);
 		
-	//[NSEvent startPeriodicEventsAfterDelay:1.0 withPeriod:0.1];
+	// [NSEvent startPeriodicEventsAfterDelay:1.0 withPeriod:0.1];
 	
 	NSTimeInterval startTime = [event timestamp];
 	
@@ -292,7 +292,7 @@
 
 		switch ([theEvent type])
 		{
-			case NSMouseMovedMask:
+			case NSMouseMoved:
 				[[self mainView] mouseMoved:theEvent];
 				break;
 				

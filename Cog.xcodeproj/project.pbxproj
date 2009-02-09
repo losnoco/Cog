@@ -24,6 +24,9 @@
 		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
 		1738589B0E0D92DD00488CD4 /* SideBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173858950E0D92DD00488CD4 /* SideBarController.m */; };
 		1738589D0E0D92DD00488CD4 /* SideWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173858990E0D92DD00488CD4 /* SideWindowController.m */; };
+		173A43A10F3FD26500676A7B /* ToolTipWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 173A43A00F3FD26500676A7B /* ToolTipWindow.m */; };
+		173A43B80F3FD3B200676A7B /* VolumeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 173A43B70F3FD3B200676A7B /* VolumeButton.m */; };
+		1752C6B00F3FE3CC00FC3235 /* VolumeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752C6AF0F3FE3CC00FC3235 /* VolumeSlider.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
@@ -524,6 +527,12 @@
 		173858950E0D92DD00488CD4 /* SideBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideBarController.m; path = SideView/SideBarController.m; sourceTree = "<group>"; };
 		173858980E0D92DD00488CD4 /* SideWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideWindowController.h; path = SideView/SideWindowController.h; sourceTree = "<group>"; };
 		173858990E0D92DD00488CD4 /* SideWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideWindowController.m; path = SideView/SideWindowController.m; sourceTree = "<group>"; };
+		173A439F0F3FD26500676A7B /* ToolTipWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToolTipWindow.h; path = ToolTip/ToolTipWindow.h; sourceTree = "<group>"; };
+		173A43A00F3FD26500676A7B /* ToolTipWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ToolTipWindow.m; path = ToolTip/ToolTipWindow.m; sourceTree = "<group>"; };
+		173A43B60F3FD3B200676A7B /* VolumeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeButton.h; sourceTree = "<group>"; };
+		173A43B70F3FD3B200676A7B /* VolumeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeButton.m; sourceTree = "<group>"; };
+		1752C6AE0F3FE3CC00FC3235 /* VolumeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeSlider.h; sourceTree = "<group>"; };
+		1752C6AF0F3FE3CC00FC3235 /* VolumeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeSlider.m; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -790,6 +799,15 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
+		173A439D0F3FD25500676A7B /* ToolTip */ = {
+			isa = PBXGroup;
+			children = (
+				173A439F0F3FD26500676A7B /* ToolTipWindow.h */,
+				173A43A00F3FD26500676A7B /* ToolTipWindow.m */,
+			);
+			name = ToolTip;
+			sourceTree = "<group>";
+		};
 		1766C68D0B911DF1004A7AE4 /* AudioScrobbler */ = {
 			isa = PBXGroup;
 			children = (
@@ -819,6 +837,7 @@
 		177EBF770B8BC2A70000BC8C /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				173A439D0F3FD25500676A7B /* ToolTip */,
 				178BAB920CD4E1B700B33D47 /* GCWindowMenu */,
 				177EBF7D0B8BC2A70000BC8C /* AppleRemote */,
 				177EBF850B8BC2A70000BC8C /* ImageTextCell */,
@@ -878,6 +897,10 @@
 				17E78CB00D68D46F005C5A59 /* StringToURLTransformer.m */,
 				56AE86BF0D6901BC00B0F89B /* FontSizetoLineHeightTransformer.h */,
 				56AE86C00D6901BC00B0F89B /* FontSizetoLineHeightTransformer.m */,
+				173A43B60F3FD3B200676A7B /* VolumeButton.h */,
+				173A43B70F3FD3B200676A7B /* VolumeButton.m */,
+				1752C6AE0F3FE3CC00FC3235 /* VolumeSlider.h */,
+				1752C6AF0F3FE3CC00FC3235 /* VolumeSlider.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1794,6 +1817,9 @@
 				1738589B0E0D92DD00488CD4 /* SideBarController.m in Sources */,
 				1738589D0E0D92DD00488CD4 /* SideWindowController.m in Sources */,
 				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,
+				173A43A10F3FD26500676A7B /* ToolTipWindow.m in Sources */,
+				173A43B80F3FD3B200676A7B /* VolumeButton.m in Sources */,
+				1752C6B00F3FE3CC00FC3235 /* VolumeSlider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

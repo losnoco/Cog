@@ -22,6 +22,6 @@ double logarithmicToLinear(double logarithmic)
 
 double linearToLogarithmic(double linear)
 {
-	return (linear/100) * (linear/100) * (linear/100) * (linear/100) * MAX_VOLUME;
+	return (linear/100.0) * (linear/100.0) * (linear/100.0) * (linear/100.0) * MAX_VOLUME;
 }
 //End helper volume function thingies. ONWARDS TO GLORY!

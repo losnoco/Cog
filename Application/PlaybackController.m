@@ -259,13 +259,6 @@
 
 - (IBAction)changeVolume:(id)sender
 {
-	double oneLog = logarithmicToLinear(100.0);
-	double distance = [sender frame].size.height*([sender doubleValue] - oneLog)/100.0;
-	if (fabs(distance) < 2.0)
-	{
-		[sender setDoubleValue:oneLog];
-	}
-
 	NSLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue]));
 
 	[audioPlayer setVolume:linearToLogarithmic([sender doubleValue])];
