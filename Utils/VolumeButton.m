@@ -13,6 +13,12 @@
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
+	double change = [theEvent deltaY];
+	
+	[(VolumeSlider *)_popView setDoubleValue:[(VolumeSlider *)_popView doubleValue] + change];
+	
+	[playbackController changeVolume:_popView];
+	
 	[(VolumeSlider *)_popView showToolTipForDuration:1.0];
 }
 

@@ -8,7 +8,10 @@
 
 #import "PopupButton.h"
 
+@class PlaybackController;
+
 @interface VolumeButton : PopupButton {
+	IBOutlet PlaybackController *playbackController;
 }
 
 @end
