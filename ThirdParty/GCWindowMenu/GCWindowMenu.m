@@ -289,7 +289,7 @@
 	while (keepOn)
 	{
 		theEvent = [self transmogrify:[self nextEventMatchingMask:mask]];
-		NSLog(@"Event: %@", theEvent);
+
 		switch ([theEvent type])
 		{
 			case NSMouseMoved:
