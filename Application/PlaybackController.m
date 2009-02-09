@@ -325,20 +325,23 @@
 	NSNumber  *originalVolume = [NSNumber numberWithDouble: [audioPlayer volume]];
 	NSTimer   *fadeTimer;
 	
-	if (playbackStatus == kCogStatusPlaying)
-		fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
+	if (playbackStatus == kCogStatusPlaying) {
+		fadeTimer = [NSTimer timerWithTimeInterval:time
 												 target:self
 											   selector:@selector(audioFadeDown:) 
 											   userInfo:originalVolume
 												repeats:YES];
+		[[NSRunLoop currentRunLoop] addTimer:fadeTimer forMode:NSRunLoopCommonModes];
+	}
 	else
 	{
 		[audioPlayer setVolume:0];
-		fadeTimer = [NSTimer scheduledTimerWithTimeInterval:time
+		fadeTimer = [NSTimer timerWithTimeInterval:time
 													 target:self
 												   selector:@selector(audioFadeUp:) 
 												   userInfo:originalVolume
 													repeats:YES];
+		[[NSRunLoop currentRunLoop] addTimer:fadeTimer forMode:NSRunLoopCommonModes];
 		[self pauseResume:self];
 	}
 
@@ -552,8 +555,10 @@
 	}
 	else if (status == kCogStatusPlaying)
 	{
-		if (!positionTimer)
-			positionTimer = [NSTimer scheduledTimerWithTimeInterval:1.00 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
+		if (!positionTimer) {
+			positionTimer = [NSTimer timerWithTimeInterval:1.00 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
+			[[NSRunLoop currentRunLoop] addTimer:positionTimer forMode:NSRunLoopCommonModes];
+		}
 
 		//Show pause
 		[self changePlayButtonImage:@"pause"];
