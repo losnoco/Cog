@@ -8,6 +8,7 @@
 
 #import "VolumeButton.h"
 #import "VolumeSlider.h"
+#import "PlaybackController.h"
 
 @implementation VolumeButton
 
@@ -17,7 +18,7 @@
 	
 	[(VolumeSlider *)_popView setDoubleValue:[(VolumeSlider *)_popView doubleValue] + change];
 	
-	[playbackController changeVolume:_popView];
+	[[(VolumeSlider *)_popView target] changeVolume:_popView];
 	
 	[(VolumeSlider *)_popView showToolTipForDuration:1.0];
 }

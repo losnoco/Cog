@@ -7,6 +7,7 @@
 //
 
 #import "VolumeSlider.h"
+#import "PlaybackController.h"
 #import "CogAudio/Helper.h"
 
 @implementation VolumeSlider
@@ -83,5 +84,15 @@
 	return [super sendAction:theAction to:theTarget];
 }
 
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+	double change = [theEvent deltaY];
+	
+	[self setDoubleValue:[self doubleValue] + change];
+	
+	[[self target] changeVolume:self];
+	
+	[self showToolTipForDuration:1.0];
+}
 
 @end
