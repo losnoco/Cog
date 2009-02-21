@@ -17,12 +17,16 @@ appcast_revision = Regexp.new('\d+$').match(appcastdoc.elements['//channel/item/
 #Remove modified files that may cause conflicts.
 %x[rm -f Info.plist]
 
+#Offset needed for SVN <=> HG conversion. We'll use 1000 because it's simple.
+revision_offset = 1000
+
 #Update to the latest revision
-latest_revision = %x[svn update | tail -n 1].gsub(/[^\d]+/, '').to_i()
+%x[hg pull -u]
+latest_revision = %x[hg tip --style compact].match(/^[0-9]+/)[0].to_i() + revision_offset
 
 if appcast_revision < latest_revision
   #Get the changelog
-  changelog = %x[svn log -r #{latest_revision}:#{appcast_revision+1}]
+  changelog = %x[hg log --template '{desc}\n' -r #{latest_revision - revision_offset}:#{appcast_revision - revision_offset + 1}]
 
   description = ''
   ignore_next = false
@@ -103,7 +107,7 @@ if appcast_revision < latest_revision
   appcastdoc.write(new_xml)
   new_xml.close()
   appcast.close()
-
+  
   #Send the updated appcast to the server
   %x[scp #{new_xml.path} cogx@cogx.org:~/cogx.org/appcast/#{feed}.xml]
   
