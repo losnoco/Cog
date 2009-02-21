@@ -125,6 +125,78 @@
 		174C7A2E0F4FD40B00E18B0F /* wavpackproperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 174C79B70F4FD40B00E18B0F /* wavpackproperties.cpp */; };
 		174C7A2F0F4FD40B00E18B0F /* wavpackproperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 174C79B80F4FD40B00E18B0F /* wavpackproperties.h */; };
 		174C7A370F4FD43100E18B0F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 174C7A360F4FD43100E18B0F /* libz.dylib */; };
+		176607FF0F50A49000FD5752 /* boxfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607B70F50A49000FD5752 /* boxfactory.cpp */; };
+		176608000F50A49000FD5752 /* boxfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607B80F50A49000FD5752 /* boxfactory.h */; };
+		176608010F50A49000FD5752 /* itunesalbbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607B90F50A49000FD5752 /* itunesalbbox.cpp */; };
+		176608020F50A49000FD5752 /* itunesalbbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607BA0F50A49000FD5752 /* itunesalbbox.h */; };
+		176608030F50A49000FD5752 /* itunesartbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607BB0F50A49000FD5752 /* itunesartbox.cpp */; };
+		176608040F50A49000FD5752 /* itunesartbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607BC0F50A49000FD5752 /* itunesartbox.h */; };
+		176608050F50A49000FD5752 /* itunescmtbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607BD0F50A49000FD5752 /* itunescmtbox.cpp */; };
+		176608060F50A49000FD5752 /* itunescmtbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607BE0F50A49000FD5752 /* itunescmtbox.h */; };
+		176608070F50A49000FD5752 /* itunescvrbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607BF0F50A49000FD5752 /* itunescvrbox.cpp */; };
+		176608080F50A49000FD5752 /* itunescvrbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607C00F50A49000FD5752 /* itunescvrbox.h */; };
+		176608090F50A49000FD5752 /* itunesdatabox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607C10F50A49000FD5752 /* itunesdatabox.cpp */; };
+		1766080A0F50A49000FD5752 /* itunesdatabox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607C20F50A49000FD5752 /* itunesdatabox.h */; };
+		1766080B0F50A49000FD5752 /* itunesdaybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607C30F50A49000FD5752 /* itunesdaybox.cpp */; };
+		1766080C0F50A49000FD5752 /* itunesdaybox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607C40F50A49000FD5752 /* itunesdaybox.h */; };
+		1766080D0F50A49000FD5752 /* itunesdiskbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607C50F50A49000FD5752 /* itunesdiskbox.cpp */; };
+		1766080E0F50A49000FD5752 /* itunesdiskbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607C60F50A49000FD5752 /* itunesdiskbox.h */; };
+		1766080F0F50A49000FD5752 /* itunesgenbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607C70F50A49000FD5752 /* itunesgenbox.cpp */; };
+		176608100F50A49000FD5752 /* itunesgenbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607C80F50A49000FD5752 /* itunesgenbox.h */; };
+		176608110F50A49000FD5752 /* itunesgrpbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607C90F50A49000FD5752 /* itunesgrpbox.cpp */; };
+		176608120F50A49000FD5752 /* itunesgrpbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607CA0F50A49000FD5752 /* itunesgrpbox.h */; };
+		176608130F50A49000FD5752 /* itunesnambox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607CB0F50A49000FD5752 /* itunesnambox.cpp */; };
+		176608140F50A49000FD5752 /* itunesnambox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607CC0F50A49000FD5752 /* itunesnambox.h */; };
+		176608150F50A49000FD5752 /* itunestmpobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607CD0F50A49000FD5752 /* itunestmpobox.cpp */; };
+		176608160F50A49000FD5752 /* itunestmpobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607CE0F50A49000FD5752 /* itunestmpobox.h */; };
+		176608170F50A49000FD5752 /* itunestrknbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607CF0F50A49000FD5752 /* itunestrknbox.cpp */; };
+		176608180F50A49000FD5752 /* itunestrknbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607D00F50A49000FD5752 /* itunestrknbox.h */; };
+		176608190F50A49000FD5752 /* ituneswrtbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607D10F50A49000FD5752 /* ituneswrtbox.cpp */; };
+		1766081A0F50A49000FD5752 /* ituneswrtbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607D20F50A49000FD5752 /* ituneswrtbox.h */; };
+		1766081B0F50A49000FD5752 /* mp4audioproperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607D30F50A49000FD5752 /* mp4audioproperties.cpp */; };
+		1766081C0F50A49000FD5752 /* mp4audioproperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607D40F50A49000FD5752 /* mp4audioproperties.h */; };
+		1766081D0F50A49000FD5752 /* mp4audiosampleentry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607D50F50A49000FD5752 /* mp4audiosampleentry.cpp */; };
+		1766081E0F50A49000FD5752 /* mp4audiosampleentry.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607D60F50A49000FD5752 /* mp4audiosampleentry.h */; };
+		1766081F0F50A49000FD5752 /* mp4file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607D70F50A49000FD5752 /* mp4file.cpp */; };
+		176608200F50A49000FD5752 /* mp4file.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607D80F50A49000FD5752 /* mp4file.h */; };
+		176608210F50A49000FD5752 /* mp4fourcc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607D90F50A49000FD5752 /* mp4fourcc.cpp */; };
+		176608220F50A49000FD5752 /* mp4fourcc.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607DA0F50A49000FD5752 /* mp4fourcc.h */; };
+		176608230F50A49000FD5752 /* mp4hdlrbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607DB0F50A49000FD5752 /* mp4hdlrbox.cpp */; };
+		176608240F50A49000FD5752 /* mp4hdlrbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607DC0F50A49000FD5752 /* mp4hdlrbox.h */; };
+		176608250F50A49000FD5752 /* mp4ilstbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607DD0F50A49000FD5752 /* mp4ilstbox.cpp */; };
+		176608260F50A49000FD5752 /* mp4ilstbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607DE0F50A49000FD5752 /* mp4ilstbox.h */; };
+		176608270F50A49000FD5752 /* mp4isobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607DF0F50A49000FD5752 /* mp4isobox.cpp */; };
+		176608280F50A49000FD5752 /* mp4isobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607E00F50A49000FD5752 /* mp4isobox.h */; };
+		176608290F50A49000FD5752 /* mp4isofullbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607E10F50A49000FD5752 /* mp4isofullbox.cpp */; };
+		1766082A0F50A49000FD5752 /* mp4isofullbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607E20F50A49000FD5752 /* mp4isofullbox.h */; };
+		1766082B0F50A49000FD5752 /* mp4itunestag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607E30F50A49000FD5752 /* mp4itunestag.cpp */; };
+		1766082C0F50A49000FD5752 /* mp4itunestag.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607E40F50A49000FD5752 /* mp4itunestag.h */; };
+		1766082D0F50A49000FD5752 /* mp4mdiabox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607E50F50A49000FD5752 /* mp4mdiabox.cpp */; };
+		1766082E0F50A49000FD5752 /* mp4mdiabox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607E60F50A49000FD5752 /* mp4mdiabox.h */; };
+		1766082F0F50A49000FD5752 /* mp4metabox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607E70F50A49000FD5752 /* mp4metabox.cpp */; };
+		176608300F50A49000FD5752 /* mp4metabox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607E80F50A49000FD5752 /* mp4metabox.h */; };
+		176608310F50A49000FD5752 /* mp4minfbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607E90F50A49000FD5752 /* mp4minfbox.cpp */; };
+		176608320F50A49000FD5752 /* mp4minfbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607EA0F50A49000FD5752 /* mp4minfbox.h */; };
+		176608330F50A49000FD5752 /* mp4moovbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607EB0F50A49000FD5752 /* mp4moovbox.cpp */; };
+		176608340F50A49000FD5752 /* mp4moovbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607EC0F50A49000FD5752 /* mp4moovbox.h */; };
+		176608350F50A49000FD5752 /* mp4mvhdbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607ED0F50A49000FD5752 /* mp4mvhdbox.cpp */; };
+		176608360F50A49000FD5752 /* mp4mvhdbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607EE0F50A49000FD5752 /* mp4mvhdbox.h */; };
+		176608370F50A49000FD5752 /* mp4propsproxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607EF0F50A49000FD5752 /* mp4propsproxy.cpp */; };
+		176608380F50A49000FD5752 /* mp4propsproxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607F00F50A49000FD5752 /* mp4propsproxy.h */; };
+		176608390F50A49000FD5752 /* mp4sampleentry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607F10F50A49000FD5752 /* mp4sampleentry.cpp */; };
+		1766083A0F50A49000FD5752 /* mp4sampleentry.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607F20F50A49000FD5752 /* mp4sampleentry.h */; };
+		1766083B0F50A49000FD5752 /* mp4skipbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607F30F50A49000FD5752 /* mp4skipbox.cpp */; };
+		1766083C0F50A49000FD5752 /* mp4skipbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607F40F50A49000FD5752 /* mp4skipbox.h */; };
+		1766083D0F50A49000FD5752 /* mp4stblbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607F50F50A49000FD5752 /* mp4stblbox.cpp */; };
+		1766083E0F50A49000FD5752 /* mp4stblbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607F60F50A49000FD5752 /* mp4stblbox.h */; };
+		1766083F0F50A49000FD5752 /* mp4stsdbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607F70F50A49000FD5752 /* mp4stsdbox.cpp */; };
+		176608400F50A49000FD5752 /* mp4stsdbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607F80F50A49000FD5752 /* mp4stsdbox.h */; };
+		176608410F50A49000FD5752 /* mp4tagsproxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607F90F50A49000FD5752 /* mp4tagsproxy.cpp */; };
+		176608420F50A49000FD5752 /* mp4tagsproxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607FA0F50A49000FD5752 /* mp4tagsproxy.h */; };
+		176608430F50A49000FD5752 /* mp4trakbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607FB0F50A49000FD5752 /* mp4trakbox.cpp */; };
+		176608440F50A49000FD5752 /* mp4trakbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607FC0F50A49000FD5752 /* mp4trakbox.h */; };
+		176608450F50A49000FD5752 /* mp4udtabox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 176607FD0F50A49000FD5752 /* mp4udtabox.cpp */; };
+		176608460F50A49000FD5752 /* mp4udtabox.h in Headers */ = {isa = PBXBuildFile; fileRef = 176607FE0F50A49000FD5752 /* mp4udtabox.h */; };
 		17F767190F4FE2B2008498A7 /* tlist.tcc in Headers */ = {isa = PBXBuildFile; fileRef = 174C79A60F4FD40B00E18B0F /* tlist.tcc */; settings = {ATTRIBUTES = (Public, ); }; };
 		17F7671A0F4FE2B2008498A7 /* tmap.tcc in Headers */ = {isa = PBXBuildFile; fileRef = 174C79A80F4FD40B00E18B0F /* tmap.tcc */; settings = {ATTRIBUTES = (Public, ); }; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -252,6 +324,78 @@
 		174C79B70F4FD40B00E18B0F /* wavpackproperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wavpackproperties.cpp; sourceTree = "<group>"; };
 		174C79B80F4FD40B00E18B0F /* wavpackproperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpackproperties.h; sourceTree = "<group>"; };
 		174C7A360F4FD43100E18B0F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
+		176607B70F50A49000FD5752 /* boxfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = boxfactory.cpp; sourceTree = "<group>"; };
+		176607B80F50A49000FD5752 /* boxfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boxfactory.h; sourceTree = "<group>"; };
+		176607B90F50A49000FD5752 /* itunesalbbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunesalbbox.cpp; sourceTree = "<group>"; };
+		176607BA0F50A49000FD5752 /* itunesalbbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunesalbbox.h; sourceTree = "<group>"; };
+		176607BB0F50A49000FD5752 /* itunesartbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunesartbox.cpp; sourceTree = "<group>"; };
+		176607BC0F50A49000FD5752 /* itunesartbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunesartbox.h; sourceTree = "<group>"; };
+		176607BD0F50A49000FD5752 /* itunescmtbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunescmtbox.cpp; sourceTree = "<group>"; };
+		176607BE0F50A49000FD5752 /* itunescmtbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunescmtbox.h; sourceTree = "<group>"; };
+		176607BF0F50A49000FD5752 /* itunescvrbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunescvrbox.cpp; sourceTree = "<group>"; };
+		176607C00F50A49000FD5752 /* itunescvrbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunescvrbox.h; sourceTree = "<group>"; };
+		176607C10F50A49000FD5752 /* itunesdatabox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunesdatabox.cpp; sourceTree = "<group>"; };
+		176607C20F50A49000FD5752 /* itunesdatabox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunesdatabox.h; sourceTree = "<group>"; };
+		176607C30F50A49000FD5752 /* itunesdaybox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunesdaybox.cpp; sourceTree = "<group>"; };
+		176607C40F50A49000FD5752 /* itunesdaybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunesdaybox.h; sourceTree = "<group>"; };
+		176607C50F50A49000FD5752 /* itunesdiskbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunesdiskbox.cpp; sourceTree = "<group>"; };
+		176607C60F50A49000FD5752 /* itunesdiskbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunesdiskbox.h; sourceTree = "<group>"; };
+		176607C70F50A49000FD5752 /* itunesgenbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunesgenbox.cpp; sourceTree = "<group>"; };
+		176607C80F50A49000FD5752 /* itunesgenbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunesgenbox.h; sourceTree = "<group>"; };
+		176607C90F50A49000FD5752 /* itunesgrpbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunesgrpbox.cpp; sourceTree = "<group>"; };
+		176607CA0F50A49000FD5752 /* itunesgrpbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunesgrpbox.h; sourceTree = "<group>"; };
+		176607CB0F50A49000FD5752 /* itunesnambox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunesnambox.cpp; sourceTree = "<group>"; };
+		176607CC0F50A49000FD5752 /* itunesnambox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunesnambox.h; sourceTree = "<group>"; };
+		176607CD0F50A49000FD5752 /* itunestmpobox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunestmpobox.cpp; sourceTree = "<group>"; };
+		176607CE0F50A49000FD5752 /* itunestmpobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunestmpobox.h; sourceTree = "<group>"; };
+		176607CF0F50A49000FD5752 /* itunestrknbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = itunestrknbox.cpp; sourceTree = "<group>"; };
+		176607D00F50A49000FD5752 /* itunestrknbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itunestrknbox.h; sourceTree = "<group>"; };
+		176607D10F50A49000FD5752 /* ituneswrtbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ituneswrtbox.cpp; sourceTree = "<group>"; };
+		176607D20F50A49000FD5752 /* ituneswrtbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ituneswrtbox.h; sourceTree = "<group>"; };
+		176607D30F50A49000FD5752 /* mp4audioproperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4audioproperties.cpp; sourceTree = "<group>"; };
+		176607D40F50A49000FD5752 /* mp4audioproperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4audioproperties.h; sourceTree = "<group>"; };
+		176607D50F50A49000FD5752 /* mp4audiosampleentry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4audiosampleentry.cpp; sourceTree = "<group>"; };
+		176607D60F50A49000FD5752 /* mp4audiosampleentry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4audiosampleentry.h; sourceTree = "<group>"; };
+		176607D70F50A49000FD5752 /* mp4file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4file.cpp; sourceTree = "<group>"; };
+		176607D80F50A49000FD5752 /* mp4file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4file.h; sourceTree = "<group>"; };
+		176607D90F50A49000FD5752 /* mp4fourcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4fourcc.cpp; sourceTree = "<group>"; };
+		176607DA0F50A49000FD5752 /* mp4fourcc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4fourcc.h; sourceTree = "<group>"; };
+		176607DB0F50A49000FD5752 /* mp4hdlrbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4hdlrbox.cpp; sourceTree = "<group>"; };
+		176607DC0F50A49000FD5752 /* mp4hdlrbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4hdlrbox.h; sourceTree = "<group>"; };
+		176607DD0F50A49000FD5752 /* mp4ilstbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4ilstbox.cpp; sourceTree = "<group>"; };
+		176607DE0F50A49000FD5752 /* mp4ilstbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4ilstbox.h; sourceTree = "<group>"; };
+		176607DF0F50A49000FD5752 /* mp4isobox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4isobox.cpp; sourceTree = "<group>"; };
+		176607E00F50A49000FD5752 /* mp4isobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4isobox.h; sourceTree = "<group>"; };
+		176607E10F50A49000FD5752 /* mp4isofullbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4isofullbox.cpp; sourceTree = "<group>"; };
+		176607E20F50A49000FD5752 /* mp4isofullbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4isofullbox.h; sourceTree = "<group>"; };
+		176607E30F50A49000FD5752 /* mp4itunestag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4itunestag.cpp; sourceTree = "<group>"; };
+		176607E40F50A49000FD5752 /* mp4itunestag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4itunestag.h; sourceTree = "<group>"; };
+		176607E50F50A49000FD5752 /* mp4mdiabox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4mdiabox.cpp; sourceTree = "<group>"; };
+		176607E60F50A49000FD5752 /* mp4mdiabox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4mdiabox.h; sourceTree = "<group>"; };
+		176607E70F50A49000FD5752 /* mp4metabox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4metabox.cpp; sourceTree = "<group>"; };
+		176607E80F50A49000FD5752 /* mp4metabox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4metabox.h; sourceTree = "<group>"; };
+		176607E90F50A49000FD5752 /* mp4minfbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4minfbox.cpp; sourceTree = "<group>"; };
+		176607EA0F50A49000FD5752 /* mp4minfbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4minfbox.h; sourceTree = "<group>"; };
+		176607EB0F50A49000FD5752 /* mp4moovbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4moovbox.cpp; sourceTree = "<group>"; };
+		176607EC0F50A49000FD5752 /* mp4moovbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4moovbox.h; sourceTree = "<group>"; };
+		176607ED0F50A49000FD5752 /* mp4mvhdbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4mvhdbox.cpp; sourceTree = "<group>"; };
+		176607EE0F50A49000FD5752 /* mp4mvhdbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4mvhdbox.h; sourceTree = "<group>"; };
+		176607EF0F50A49000FD5752 /* mp4propsproxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4propsproxy.cpp; sourceTree = "<group>"; };
+		176607F00F50A49000FD5752 /* mp4propsproxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4propsproxy.h; sourceTree = "<group>"; };
+		176607F10F50A49000FD5752 /* mp4sampleentry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4sampleentry.cpp; sourceTree = "<group>"; };
+		176607F20F50A49000FD5752 /* mp4sampleentry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4sampleentry.h; sourceTree = "<group>"; };
+		176607F30F50A49000FD5752 /* mp4skipbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4skipbox.cpp; sourceTree = "<group>"; };
+		176607F40F50A49000FD5752 /* mp4skipbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4skipbox.h; sourceTree = "<group>"; };
+		176607F50F50A49000FD5752 /* mp4stblbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4stblbox.cpp; sourceTree = "<group>"; };
+		176607F60F50A49000FD5752 /* mp4stblbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4stblbox.h; sourceTree = "<group>"; };
+		176607F70F50A49000FD5752 /* mp4stsdbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4stsdbox.cpp; sourceTree = "<group>"; };
+		176607F80F50A49000FD5752 /* mp4stsdbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4stsdbox.h; sourceTree = "<group>"; };
+		176607F90F50A49000FD5752 /* mp4tagsproxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4tagsproxy.cpp; sourceTree = "<group>"; };
+		176607FA0F50A49000FD5752 /* mp4tagsproxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4tagsproxy.h; sourceTree = "<group>"; };
+		176607FB0F50A49000FD5752 /* mp4trakbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4trakbox.cpp; sourceTree = "<group>"; };
+		176607FC0F50A49000FD5752 /* mp4trakbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4trakbox.h; sourceTree = "<group>"; };
+		176607FD0F50A49000FD5752 /* mp4udtabox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mp4udtabox.cpp; sourceTree = "<group>"; };
+		176607FE0F50A49000FD5752 /* mp4udtabox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4udtabox.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* TagLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TagLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -329,6 +473,7 @@
 				174C793F0F4FD40B00E18B0F /* fileref.cpp */,
 				174C79400F4FD40B00E18B0F /* fileref.h */,
 				174C79410F4FD40B00E18B0F /* flac */,
+				176607B60F50A49000FD5752 /* m4a */,
 				174C79460F4FD40B00E18B0F /* mpc */,
 				174C794B0F4FD40B00E18B0F /* mpeg */,
 				174C797F0F4FD40B00E18B0F /* ogg */,
@@ -558,6 +703,85 @@
 			path = wavpack;
 			sourceTree = "<group>";
 		};
+		176607B60F50A49000FD5752 /* m4a */ = {
+			isa = PBXGroup;
+			children = (
+				176607B70F50A49000FD5752 /* boxfactory.cpp */,
+				176607B80F50A49000FD5752 /* boxfactory.h */,
+				176607B90F50A49000FD5752 /* itunesalbbox.cpp */,
+				176607BA0F50A49000FD5752 /* itunesalbbox.h */,
+				176607BB0F50A49000FD5752 /* itunesartbox.cpp */,
+				176607BC0F50A49000FD5752 /* itunesartbox.h */,
+				176607BD0F50A49000FD5752 /* itunescmtbox.cpp */,
+				176607BE0F50A49000FD5752 /* itunescmtbox.h */,
+				176607BF0F50A49000FD5752 /* itunescvrbox.cpp */,
+				176607C00F50A49000FD5752 /* itunescvrbox.h */,
+				176607C10F50A49000FD5752 /* itunesdatabox.cpp */,
+				176607C20F50A49000FD5752 /* itunesdatabox.h */,
+				176607C30F50A49000FD5752 /* itunesdaybox.cpp */,
+				176607C40F50A49000FD5752 /* itunesdaybox.h */,
+				176607C50F50A49000FD5752 /* itunesdiskbox.cpp */,
+				176607C60F50A49000FD5752 /* itunesdiskbox.h */,
+				176607C70F50A49000FD5752 /* itunesgenbox.cpp */,
+				176607C80F50A49000FD5752 /* itunesgenbox.h */,
+				176607C90F50A49000FD5752 /* itunesgrpbox.cpp */,
+				176607CA0F50A49000FD5752 /* itunesgrpbox.h */,
+				176607CB0F50A49000FD5752 /* itunesnambox.cpp */,
+				176607CC0F50A49000FD5752 /* itunesnambox.h */,
+				176607CD0F50A49000FD5752 /* itunestmpobox.cpp */,
+				176607CE0F50A49000FD5752 /* itunestmpobox.h */,
+				176607CF0F50A49000FD5752 /* itunestrknbox.cpp */,
+				176607D00F50A49000FD5752 /* itunestrknbox.h */,
+				176607D10F50A49000FD5752 /* ituneswrtbox.cpp */,
+				176607D20F50A49000FD5752 /* ituneswrtbox.h */,
+				176607D30F50A49000FD5752 /* mp4audioproperties.cpp */,
+				176607D40F50A49000FD5752 /* mp4audioproperties.h */,
+				176607D50F50A49000FD5752 /* mp4audiosampleentry.cpp */,
+				176607D60F50A49000FD5752 /* mp4audiosampleentry.h */,
+				176607D70F50A49000FD5752 /* mp4file.cpp */,
+				176607D80F50A49000FD5752 /* mp4file.h */,
+				176607D90F50A49000FD5752 /* mp4fourcc.cpp */,
+				176607DA0F50A49000FD5752 /* mp4fourcc.h */,
+				176607DB0F50A49000FD5752 /* mp4hdlrbox.cpp */,
+				176607DC0F50A49000FD5752 /* mp4hdlrbox.h */,
+				176607DD0F50A49000FD5752 /* mp4ilstbox.cpp */,
+				176607DE0F50A49000FD5752 /* mp4ilstbox.h */,
+				176607DF0F50A49000FD5752 /* mp4isobox.cpp */,
+				176607E00F50A49000FD5752 /* mp4isobox.h */,
+				176607E10F50A49000FD5752 /* mp4isofullbox.cpp */,
+				176607E20F50A49000FD5752 /* mp4isofullbox.h */,
+				176607E30F50A49000FD5752 /* mp4itunestag.cpp */,
+				176607E40F50A49000FD5752 /* mp4itunestag.h */,
+				176607E50F50A49000FD5752 /* mp4mdiabox.cpp */,
+				176607E60F50A49000FD5752 /* mp4mdiabox.h */,
+				176607E70F50A49000FD5752 /* mp4metabox.cpp */,
+				176607E80F50A49000FD5752 /* mp4metabox.h */,
+				176607E90F50A49000FD5752 /* mp4minfbox.cpp */,
+				176607EA0F50A49000FD5752 /* mp4minfbox.h */,
+				176607EB0F50A49000FD5752 /* mp4moovbox.cpp */,
+				176607EC0F50A49000FD5752 /* mp4moovbox.h */,
+				176607ED0F50A49000FD5752 /* mp4mvhdbox.cpp */,
+				176607EE0F50A49000FD5752 /* mp4mvhdbox.h */,
+				176607EF0F50A49000FD5752 /* mp4propsproxy.cpp */,
+				176607F00F50A49000FD5752 /* mp4propsproxy.h */,
+				176607F10F50A49000FD5752 /* mp4sampleentry.cpp */,
+				176607F20F50A49000FD5752 /* mp4sampleentry.h */,
+				176607F30F50A49000FD5752 /* mp4skipbox.cpp */,
+				176607F40F50A49000FD5752 /* mp4skipbox.h */,
+				176607F50F50A49000FD5752 /* mp4stblbox.cpp */,
+				176607F60F50A49000FD5752 /* mp4stblbox.h */,
+				176607F70F50A49000FD5752 /* mp4stsdbox.cpp */,
+				176607F80F50A49000FD5752 /* mp4stsdbox.h */,
+				176607F90F50A49000FD5752 /* mp4tagsproxy.cpp */,
+				176607FA0F50A49000FD5752 /* mp4tagsproxy.h */,
+				176607FB0F50A49000FD5752 /* mp4trakbox.cpp */,
+				176607FC0F50A49000FD5752 /* mp4trakbox.h */,
+				176607FD0F50A49000FD5752 /* mp4udtabox.cpp */,
+				176607FE0F50A49000FD5752 /* mp4udtabox.h */,
+			);
+			path = m4a;
+			sourceTree = "<group>";
+		};
 		8E75700C09F318D70080F1EE /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -634,6 +858,42 @@
 				174C7A2F0F4FD40B00E18B0F /* wavpackproperties.h in Headers */,
 				17F767190F4FE2B2008498A7 /* tlist.tcc in Headers */,
 				17F7671A0F4FE2B2008498A7 /* tmap.tcc in Headers */,
+				176608000F50A49000FD5752 /* boxfactory.h in Headers */,
+				176608020F50A49000FD5752 /* itunesalbbox.h in Headers */,
+				176608040F50A49000FD5752 /* itunesartbox.h in Headers */,
+				176608060F50A49000FD5752 /* itunescmtbox.h in Headers */,
+				176608080F50A49000FD5752 /* itunescvrbox.h in Headers */,
+				1766080A0F50A49000FD5752 /* itunesdatabox.h in Headers */,
+				1766080C0F50A49000FD5752 /* itunesdaybox.h in Headers */,
+				1766080E0F50A49000FD5752 /* itunesdiskbox.h in Headers */,
+				176608100F50A49000FD5752 /* itunesgenbox.h in Headers */,
+				176608120F50A49000FD5752 /* itunesgrpbox.h in Headers */,
+				176608140F50A49000FD5752 /* itunesnambox.h in Headers */,
+				176608160F50A49000FD5752 /* itunestmpobox.h in Headers */,
+				176608180F50A49000FD5752 /* itunestrknbox.h in Headers */,
+				1766081A0F50A49000FD5752 /* ituneswrtbox.h in Headers */,
+				1766081C0F50A49000FD5752 /* mp4audioproperties.h in Headers */,
+				1766081E0F50A49000FD5752 /* mp4audiosampleentry.h in Headers */,
+				176608200F50A49000FD5752 /* mp4file.h in Headers */,
+				176608220F50A49000FD5752 /* mp4fourcc.h in Headers */,
+				176608240F50A49000FD5752 /* mp4hdlrbox.h in Headers */,
+				176608260F50A49000FD5752 /* mp4ilstbox.h in Headers */,
+				176608280F50A49000FD5752 /* mp4isobox.h in Headers */,
+				1766082A0F50A49000FD5752 /* mp4isofullbox.h in Headers */,
+				1766082C0F50A49000FD5752 /* mp4itunestag.h in Headers */,
+				1766082E0F50A49000FD5752 /* mp4mdiabox.h in Headers */,
+				176608300F50A49000FD5752 /* mp4metabox.h in Headers */,
+				176608320F50A49000FD5752 /* mp4minfbox.h in Headers */,
+				176608340F50A49000FD5752 /* mp4moovbox.h in Headers */,
+				176608360F50A49000FD5752 /* mp4mvhdbox.h in Headers */,
+				176608380F50A49000FD5752 /* mp4propsproxy.h in Headers */,
+				1766083A0F50A49000FD5752 /* mp4sampleentry.h in Headers */,
+				1766083C0F50A49000FD5752 /* mp4skipbox.h in Headers */,
+				1766083E0F50A49000FD5752 /* mp4stblbox.h in Headers */,
+				176608400F50A49000FD5752 /* mp4stsdbox.h in Headers */,
+				176608420F50A49000FD5752 /* mp4tagsproxy.h in Headers */,
+				176608440F50A49000FD5752 /* mp4trakbox.h in Headers */,
+				176608460F50A49000FD5752 /* mp4udtabox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -752,6 +1012,42 @@
 				174C7A2A0F4FD40B00E18B0F /* trueaudioproperties.cpp in Sources */,
 				174C7A2C0F4FD40B00E18B0F /* wavpackfile.cpp in Sources */,
 				174C7A2E0F4FD40B00E18B0F /* wavpackproperties.cpp in Sources */,
+				176607FF0F50A49000FD5752 /* boxfactory.cpp in Sources */,
+				176608010F50A49000FD5752 /* itunesalbbox.cpp in Sources */,
+				176608030F50A49000FD5752 /* itunesartbox.cpp in Sources */,
+				176608050F50A49000FD5752 /* itunescmtbox.cpp in Sources */,
+				176608070F50A49000FD5752 /* itunescvrbox.cpp in Sources */,
+				176608090F50A49000FD5752 /* itunesdatabox.cpp in Sources */,
+				1766080B0F50A49000FD5752 /* itunesdaybox.cpp in Sources */,
+				1766080D0F50A49000FD5752 /* itunesdiskbox.cpp in Sources */,
+				1766080F0F50A49000FD5752 /* itunesgenbox.cpp in Sources */,
+				176608110F50A49000FD5752 /* itunesgrpbox.cpp in Sources */,
+				176608130F50A49000FD5752 /* itunesnambox.cpp in Sources */,
+				176608150F50A49000FD5752 /* itunestmpobox.cpp in Sources */,
+				176608170F50A49000FD5752 /* itunestrknbox.cpp in Sources */,
+				176608190F50A49000FD5752 /* ituneswrtbox.cpp in Sources */,
+				1766081B0F50A49000FD5752 /* mp4audioproperties.cpp in Sources */,
+				1766081D0F50A49000FD5752 /* mp4audiosampleentry.cpp in Sources */,
+				1766081F0F50A49000FD5752 /* mp4file.cpp in Sources */,
+				176608210F50A49000FD5752 /* mp4fourcc.cpp in Sources */,
+				176608230F50A49000FD5752 /* mp4hdlrbox.cpp in Sources */,
+				176608250F50A49000FD5752 /* mp4ilstbox.cpp in Sources */,
+				176608270F50A49000FD5752 /* mp4isobox.cpp in Sources */,
+				176608290F50A49000FD5752 /* mp4isofullbox.cpp in Sources */,
+				1766082B0F50A49000FD5752 /* mp4itunestag.cpp in Sources */,
+				1766082D0F50A49000FD5752 /* mp4mdiabox.cpp in Sources */,
+				1766082F0F50A49000FD5752 /* mp4metabox.cpp in Sources */,
+				176608310F50A49000FD5752 /* mp4minfbox.cpp in Sources */,
+				176608330F50A49000FD5752 /* mp4moovbox.cpp in Sources */,
+				176608350F50A49000FD5752 /* mp4mvhdbox.cpp in Sources */,
+				176608370F50A49000FD5752 /* mp4propsproxy.cpp in Sources */,
+				176608390F50A49000FD5752 /* mp4sampleentry.cpp in Sources */,
+				1766083B0F50A49000FD5752 /* mp4skipbox.cpp in Sources */,
+				1766083D0F50A49000FD5752 /* mp4stblbox.cpp in Sources */,
+				1766083F0F50A49000FD5752 /* mp4stsdbox.cpp in Sources */,
+				176608410F50A49000FD5752 /* mp4tagsproxy.cpp in Sources */,
+				176608430F50A49000FD5752 /* mp4trakbox.cpp in Sources */,
+				176608450F50A49000FD5752 /* mp4udtabox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
