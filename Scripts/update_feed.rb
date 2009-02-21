@@ -15,7 +15,7 @@ appcastdoc = Document.new(appcast)
 appcast_revision = Regexp.new('\d+$').match(appcastdoc.elements['//channel/item/title'].text.to_s()).to_s().to_i() || 0
 
 #Remove modified files that may cause conflicts.
-%x[rm -f Info.plist]
+%x[hg revert --all]
 
 #Offset needed for SVN <=> HG conversion. We'll use 1000 because it's simple.
 revision_offset = 1000
