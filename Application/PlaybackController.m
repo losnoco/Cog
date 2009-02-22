@@ -465,32 +465,6 @@
 
 }
 
-/*
-- (void)updateTimeField:(double)pos
-{
-	NSString *text;
-	if (showTimeRemaining == NO)
-	{
-		int sec = (int)(pos);
-		text = [NSString stringWithFormat:NSLocalizedString(@"TimeElapsed", @""), sec/60, sec%60];
-	}
-	else
-	{
-		int sec = (int)(([[[playlistController currentEntry] length] doubleValue] - pos));
-		if (sec < 0)
-			sec = 0;
-		text = [NSString stringWithFormat:NSLocalizedString(@"TimeRemaining", @""), sec/60, sec%60];
-	}
-	[timeField setStringValue:text];
-}	
-*/
-- (IBAction)toggleShowTimeRemaining:(id)sender
-{
-	showTimeRemaining = !showTimeRemaining;
-
-	// [self updateTimeField:position];
-}
-
 - (void)audioPlayer:(AudioPlayer *)player requestNextStream:(id)userInfo
 {
 	PlaylistEntry *curEntry = (PlaylistEntry *)userInfo;
