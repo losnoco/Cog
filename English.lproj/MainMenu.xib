@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="21"/>
-			<integer value="29"/>
 			<integer value="2234"/>
+			<integer value="807"/>
+			<integer value="29"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -186,7 +186,7 @@
 									<string key="NSFrame">{{0, 14}, {96, 15}}</string>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSSliderCell" key="NSCell" id="543888159">
-										<int key="NSCellFlags">604372736</int>
+										<int key="NSCellFlags">604110336</int>
 										<int key="NSCellFlags2">131072</int>
 										<string key="NSContents"/>
 										<object class="NSFont" key="NSSupport" id="26">
@@ -5048,22 +5048,6 @@ OQA</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">timeField</string>
-						<reference key="source" ref="936098491"/>
-						<reference key="destination" ref="362320150"/>
-					</object>
-					<int key="connectionID">1598</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleShowTimeRemaining:</string>
-						<reference key="source" ref="936098491"/>
-						<reference key="destination" ref="362320150"/>
-					</object>
-					<int key="connectionID">1599</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">playbackButtons</string>
 						<reference key="source" ref="936098491"/>
 						<reference key="destination" ref="40234197"/>
@@ -5682,42 +5666,6 @@ OQA</bytes>
 						</object>
 					</object>
 					<int key="connectionID">1903</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">maxValue: content.length</string>
-						<reference key="source" ref="505703107"/>
-						<reference key="destination" ref="200345764"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="505703107"/>
-							<reference key="NSDestination" ref="200345764"/>
-							<string key="NSLabel">maxValue: content.length</string>
-							<string key="NSBinding">maxValue</string>
-							<string key="NSKeyPath">content.length</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSRaisesForNotApplicableKeys</string>
-								<reference key="NS.object.0" ref="8"/>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1905</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: content.seekable</string>
-						<reference key="source" ref="505703107"/>
-						<reference key="destination" ref="200345764"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="505703107"/>
-							<reference key="NSDestination" ref="200345764"/>
-							<string key="NSLabel">enabled: content.seekable</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">content.seekable</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1908</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -6709,6 +6657,124 @@ OQA</bytes>
 						</object>
 					</object>
 					<int key="connectionID">2374</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: seekable</string>
+						<reference key="source" ref="505703107"/>
+						<reference key="destination" ref="936098491"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="505703107"/>
+							<reference key="NSDestination" ref="936098491"/>
+							<string key="NSLabel">enabled: seekable</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">seekable</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2376</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">maxValue: content.length</string>
+						<reference key="source" ref="505703107"/>
+						<reference key="destination" ref="200345764"/>
+						<object class="NSNibBindingConnector" key="connector" id="875245063">
+							<reference key="NSSource" ref="505703107"/>
+							<reference key="NSDestination" ref="200345764"/>
+							<string key="NSLabel">maxValue: content.length</string>
+							<string key="NSBinding">maxValue</string>
+							<string key="NSKeyPath">content.length</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSRaisesForNotApplicableKeys</string>
+								<boolean value="NO" key="NS.object.0" id="6"/>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2377</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: position</string>
+						<reference key="source" ref="505703107"/>
+						<reference key="destination" ref="936098491"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="505703107"/>
+							<reference key="NSDestination" ref="936098491"/>
+							<string key="NSLabel">value: position</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">position</string>
+							<reference key="NSPreviousConnector" ref="875245063"/>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2378</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">maxValue: content.length</string>
+						<reference key="source" ref="163997941"/>
+						<reference key="destination" ref="200345764"/>
+						<object class="NSNibBindingConnector" key="connector" id="518066525">
+							<reference key="NSSource" ref="163997941"/>
+							<reference key="NSDestination" ref="200345764"/>
+							<string key="NSLabel">maxValue: content.length</string>
+							<string key="NSBinding">maxValue</string>
+							<string key="NSKeyPath">content.length</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2381</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: position</string>
+						<reference key="source" ref="163997941"/>
+						<reference key="destination" ref="936098491"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="163997941"/>
+							<reference key="NSDestination" ref="936098491"/>
+							<string key="NSLabel">value: position</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">position</string>
+							<reference key="NSPreviousConnector" ref="518066525"/>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2382</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: seekable</string>
+						<reference key="source" ref="163997941"/>
+						<reference key="destination" ref="936098491"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="163997941"/>
+							<reference key="NSDestination" ref="936098491"/>
+							<string key="NSLabel">enabled: seekable</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">seekable</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2384</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">positionTextField</string>
+						<reference key="source" ref="505703107"/>
+						<reference key="destination" ref="362320150"/>
+					</object>
+					<int key="connectionID">2385</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">positionTextField</string>
+						<reference key="source" ref="163997941"/>
+						<reference key="destination" ref="201123626"/>
+					</object>
+					<int key="connectionID">2386</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -9834,7 +9900,7 @@ OQA</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>TrackingSlider</string>
+					<string>PositionSlider</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>TrackingCell</string>
@@ -9845,7 +9911,7 @@ OQA</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>ClickField</string>
+					<string>TimeField</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -9997,7 +10063,7 @@ OQA</bytes>
 					<string>{{334, 92}, {691, 397}}</string>
 					<string>{{334, 92}, {691, 397}}</string>
 					<reference ref="9"/>
-					<boolean value="NO" id="6"/>
+					<reference ref="6"/>
 					<string>{{25, 14}, {683, 396}}</string>
 					<reference ref="8"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
@@ -10079,12 +10145,12 @@ OQA</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>ClickField</string>
+					<string>TimeField</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>TrackingSlider</string>
+					<string>PositionSlider</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>TrackingCell</string>
@@ -10285,7 +10351,7 @@ OQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2374</int>
+			<int key="maxID">2386</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -10392,22 +10458,6 @@ OQA</bytes>
 							<string>NSButton</string>
 						</object>
 					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">ClickField</string>
-					<string key="superclassName">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Utils/ClickField.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">ClickField</string>
-					<string key="superclassName">NSTextField</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
@@ -10655,8 +10705,6 @@ OQA</bytes>
 							<string>playbackButtons</string>
 							<string>playlistController</string>
 							<string>playlistView</string>
-							<string>positionSlider</string>
-							<string>timeField</string>
 							<string>volumeSlider</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -10665,8 +10713,6 @@ OQA</bytes>
 							<string>NSSegmentedControl</string>
 							<string>PlaylistController</string>
 							<string>PlaylistView</string>
-							<string>TrackingSlider</string>
-							<string>NSTextField</string>
 							<string>NSSlider</string>
 						</object>
 					</object>
@@ -10847,6 +10893,18 @@ OQA</bytes>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">PositionSlider</string>
+					<string key="superclassName">TrackingSlider</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">positionTextField</string>
+						<string key="NS.object.0">TimeField</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Application/PositionSlider.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">PreferencesController</string>
 					<string key="superclassName">NSObject</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -10993,6 +11051,14 @@ OQA</bytes>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">TagEditor/TagEditorController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TimeField</string>
+					<string key="superclassName">NSTextField</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Application/TimeField.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

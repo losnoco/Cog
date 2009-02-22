@@ -13,6 +13,11 @@
 
 @synthesize playbackStatus;
 
++ (NSSet *)keyPathsForValuesAffectingSeekable
+{
+    return [NSSet setWithObjects:@"playlistController.currentEntry",@"playlistController.currentEntry.seekable",nil];
+}
+
 - (id)init
 {
 	self = [super init];
@@ -60,8 +65,8 @@
 
 	[volumeSlider setDoubleValue:logarithmicToLinear(100.0)];
 	[audioPlayer setVolume: 100];
-		
-	[positionSlider setEnabled:NO];
+
+	[self setSeekable:NO];
 }
 	
 - (IBAction)playPauseResume:(id)sender
@@ -158,8 +163,7 @@
 	NSLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
 	
-	[positionSlider setDoubleValue:0.0];
-	[self updateTimeField:0.0f];
+	[self setPosition:0.0];
 
 	if (pe == nil)
 		return;
@@ -195,15 +199,19 @@
 	[self playEntry:[playlistController currentEntry]];
 }
 
+- (void)updatePosition:(id)sender
+{
+	double pos = [audioPlayer amountPlayed];
+	
+	[self setPosition:pos];
+}
+
 - (IBAction)seek:(id)sender
 {
-	double time;
-	time = [positionSlider doubleValue];
+	double time = [sender doubleValue];
 
-	if ([sender tracking] == NO) // check if user stopped sliding  before playing audio
-        [audioPlayer seekToTime:time];
+    [audioPlayer seekToTime:time];
 	
-	[self updateTimeField:time];
 }
 
 - (IBAction)eventSeekForward:(id)sender
@@ -215,15 +223,14 @@
 {
 	double seekTo = [audioPlayer amountPlayed] + amount;
 	
-	if (seekTo > (int)[positionSlider maxValue]) 
+	if (seekTo > [[[playlistController currentEntry] length] doubleValue]) 
 	{
 		[self next:self];
 	}
 	else
 	{
 		[audioPlayer seekToTime:seekTo];
-		[self updateTimeField:seekTo];
-		[positionSlider setDoubleValue:seekTo];
+		[self setPosition:seekTo];
 	}
 }
 
@@ -240,8 +247,7 @@
 		seekTo = 0;
 
 	[audioPlayer seekToTime:seekTo];
-	[self updateTimeField:seekTo];
-	[positionSlider setDoubleValue:seekTo];
+	[self setPosition:seekTo];
 }
 
 - (void)changePlayButtonImage:(NSString *)name
@@ -459,7 +465,7 @@
 
 }
 
-
+/*
 - (void)updateTimeField:(double)pos
 {
 	NSString *text;
@@ -470,19 +476,19 @@
 	}
 	else
 	{
-		int sec = (int)(([positionSlider maxValue] - pos));
+		int sec = (int)(([[[playlistController currentEntry] length] doubleValue] - pos));
 		if (sec < 0)
 			sec = 0;
 		text = [NSString stringWithFormat:NSLocalizedString(@"TimeRemaining", @""), sec/60, sec%60];
 	}
 	[timeField setStringValue:text];
 }	
-
+*/
 - (IBAction)toggleShowTimeRemaining:(id)sender
 {
 	showTimeRemaining = !showTimeRemaining;
 
-	[self updateTimeField:[positionSlider doubleValue]];
+	// [self updateTimeField:position];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player requestNextStream:(id)userInfo
@@ -504,10 +510,8 @@
 	
 	[playlistController setCurrentEntry:pe];
 	
-	[positionSlider setDoubleValue:0.0f];
+	[self setPosition:0];
 
-	[self updateTimeField:0.0f];
-	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler start:pe];
 	}
@@ -521,18 +525,6 @@
 							   clickContext:nil];
 }
 
-- (void)updatePosition:(id)sender
-{
-	double pos = [audioPlayer amountPlayed];
-
-	if ([positionSlider tracking] == NO)
-	{
-		[positionSlider setDoubleValue:pos];
-		[self updateTimeField:pos];
-	}
-	
-}
-
 - (void)audioPlayer:(AudioPlayer *)player statusChanged:(id)s
 {
 	int status = [s intValue];
@@ -543,11 +535,11 @@
 			[positionTimer invalidate];
 			positionTimer = NULL;
 		}
+		
 		if (status == kCogStatusStopped)
 		{
-			[positionSlider setDoubleValue:0.0f];
-			[positionSlider setEnabled:NO]; // the player stopped, disable the slider
-			[self updateTimeField:0.0f];		
+			[self setPosition:0];
+			[self setSeekable:NO]; // the player stopped, disable the slider
 		}
 		
 		//Show play image
@@ -559,7 +551,7 @@
 			positionTimer = [NSTimer timerWithTimeInterval:1.00 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
 			[[NSRunLoop currentRunLoop] addTimer:positionTimer forMode:NSRunLoopCommonModes];
 		}
-
+		
 		//Show pause
 		[self changePlayButtonImage:@"pause"];
 	}
@@ -567,15 +559,35 @@
 	if (status == kCogStatusStopped) {
 		NSLog(@"DONE!");
 		[playlistController setCurrentEntry:nil];
-		[positionSlider setEnabled:NO]; // the player stopped, disable the slider
+		[self setSeekable:NO]; // the player stopped, disable the slider
 	}
 	else {
 		NSLog(@"PLAYING!");
+		[self setSeekable:YES];
 	}
 	
 	playbackStatus = status;
 }
 
+- (void)setPosition:(double)p
+{
+	position = p;
+}
+
+- (double)position
+{
+	return position;
+}
+
+- (void)setSeekable:(BOOL)s
+{
+	seekable = s;
+}
+
+- (BOOL)seekable
+{
+	return seekable && [[playlistController currentEntry] seekable];
+}
 
 
 @end

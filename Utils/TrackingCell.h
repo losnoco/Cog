@@ -9,6 +9,7 @@
 
 - (BOOL)startTrackingAt:(NSPoint)startPoint inView:(NSView *)controlView;
 - (void)stopTracking:(NSPoint)lastPoint at:(NSPoint)stopPoint inView:(NSView *)controlView mouseIsUp:(BOOL)flags;
-- (BOOL)tracking;
+
+- (BOOL)isTracking;
 
 @end

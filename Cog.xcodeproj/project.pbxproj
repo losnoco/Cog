@@ -42,7 +42,6 @@
 		177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF870B8BC2A70000BC8C /* ImageTextCell.m */; };
 		177EBFAB0B8BC2A70000BC8C /* NDHotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF8D0B8BC2A70000BC8C /* NDHotKeyControl.m */; };
 		177EBFAD0B8BC2A70000BC8C /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF8F0B8BC2A70000BC8C /* NDHotKeyEvent.m */; };
-		177EC01F0B8BC2CF0000BC8C /* ClickField.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC0130B8BC2CF0000BC8C /* ClickField.m */; };
 		177EC0210B8BC2CF0000BC8C /* DBLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC0150B8BC2CF0000BC8C /* DBLog.m */; };
 		177EC0230B8BC2CF0000BC8C /* DragScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC0170B8BC2CF0000BC8C /* DragScrollView.m */; };
 		177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */; };
@@ -120,6 +119,8 @@
 		17D1B2810CF8B2830028F5B5 /* song.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27A0CF8B2830028F5B5 /* song.icns */; };
 		17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27B0CF8B2830028F5B5 /* vg.icns */; };
 		17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27C0CF8B2830028F5B5 /* xm.icns */; };
+		17E0D4CA0F51FF78005B6FED /* PositionSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D4C90F51FF78005B6FED /* PositionSlider.m */; };
+		17E0D55B0F520636005B6FED /* TimeField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D55A0F520636005B6FED /* TimeField.m */; };
 		17E41E070C130DFF00AC744D /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E060C130DFF00AC744D /* Credits.html */; };
 		17E41E230C130EE200AC744D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E220C130EE200AC744D /* Help */; };
 		17E78CB10D68D46F005C5A59 /* StringToURLTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E78CB00D68D46F005C5A59 /* StringToURLTransformer.m */; };
@@ -560,8 +561,6 @@
 		177EBF8D0B8BC2A70000BC8C /* NDHotKeyControl.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyControl.m; sourceTree = "<group>"; };
 		177EBF8E0B8BC2A70000BC8C /* NDHotKeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NDHotKeyEvent.h; sourceTree = "<group>"; };
 		177EBF8F0B8BC2A70000BC8C /* NDHotKeyEvent.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyEvent.m; sourceTree = "<group>"; };
-		177EC0120B8BC2CF0000BC8C /* ClickField.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ClickField.h; sourceTree = "<group>"; };
-		177EC0130B8BC2CF0000BC8C /* ClickField.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ClickField.m; sourceTree = "<group>"; };
 		177EC0140B8BC2CF0000BC8C /* DBLog.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DBLog.h; sourceTree = "<group>"; };
 		177EC0150B8BC2CF0000BC8C /* DBLog.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DBLog.m; sourceTree = "<group>"; };
 		177EC0160B8BC2CF0000BC8C /* DragScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragScrollView.h; sourceTree = "<group>"; };
@@ -665,6 +664,10 @@
 		17D1B27A0CF8B2830028F5B5 /* song.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = song.icns; sourceTree = "<group>"; };
 		17D1B27B0CF8B2830028F5B5 /* vg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = vg.icns; sourceTree = "<group>"; };
 		17D1B27C0CF8B2830028F5B5 /* xm.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = xm.icns; sourceTree = "<group>"; };
+		17E0D4C80F51FF78005B6FED /* PositionSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionSlider.h; sourceTree = "<group>"; };
+		17E0D4C90F51FF78005B6FED /* PositionSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PositionSlider.m; sourceTree = "<group>"; };
+		17E0D5590F520636005B6FED /* TimeField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeField.h; sourceTree = "<group>"; };
+		17E0D55A0F520636005B6FED /* TimeField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeField.m; sourceTree = "<group>"; };
 		17E78CAF0D68D46F005C5A59 /* StringToURLTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringToURLTransformer.h; sourceTree = "<group>"; };
 		17E78CB00D68D46F005C5A59 /* StringToURLTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringToURLTransformer.m; sourceTree = "<group>"; };
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
@@ -840,6 +843,10 @@
 				179571580F51DF4100E4168D /* MiniWindow.m */,
 				179571710F51E21400E4168D /* MainWindow.h */,
 				179571720F51E21400E4168D /* MainWindow.m */,
+				17E0D4C80F51FF78005B6FED /* PositionSlider.h */,
+				17E0D4C90F51FF78005B6FED /* PositionSlider.m */,
+				17E0D5590F520636005B6FED /* TimeField.h */,
+				17E0D55A0F520636005B6FED /* TimeField.m */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -889,8 +896,6 @@
 		177EC0110B8BC2CF0000BC8C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				177EC0120B8BC2CF0000BC8C /* ClickField.h */,
-				177EC0130B8BC2CF0000BC8C /* ClickField.m */,
 				177EC0140B8BC2CF0000BC8C /* DBLog.h */,
 				177EC0150B8BC2CF0000BC8C /* DBLog.m */,
 				177EC0160B8BC2CF0000BC8C /* DragScrollView.h */,
@@ -1775,7 +1780,6 @@
 				177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */,
 				177EBFAB0B8BC2A70000BC8C /* NDHotKeyControl.m in Sources */,
 				177EBFAD0B8BC2A70000BC8C /* NDHotKeyEvent.m in Sources */,
-				177EC01F0B8BC2CF0000BC8C /* ClickField.m in Sources */,
 				177EC0210B8BC2CF0000BC8C /* DBLog.m in Sources */,
 				177EC0230B8BC2CF0000BC8C /* DragScrollView.m in Sources */,
 				177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */,
@@ -1832,6 +1836,8 @@
 				1752C6B00F3FE3CC00FC3235 /* VolumeSlider.m in Sources */,
 				179571590F51DF4100E4168D /* MiniWindow.m in Sources */,
 				179571730F51E21400E4168D /* MainWindow.m in Sources */,
+				17E0D4CA0F51FF78005B6FED /* PositionSlider.m in Sources */,
+				17E0D55B0F520636005B6FED /* TimeField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

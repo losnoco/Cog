@@ -13,7 +13,9 @@
 
 @interface TrackingSlider : NSSlider
 {
+	NSMutableDictionary *bindingInfo;
 }
--(BOOL)tracking;
+
+- (BOOL)isTracking;
 
 @end

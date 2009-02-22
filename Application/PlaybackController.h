@@ -19,9 +19,7 @@
     IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaylistView *playlistView;
 	
-	IBOutlet TrackingSlider *positionSlider;
 	IBOutlet NSSlider *volumeSlider;
-	IBOutlet NSTextField *timeField;
 	
 	IBOutlet NSSegmentedControl *playbackButtons;
 	
@@ -32,10 +30,13 @@
 	AudioPlayer *audioPlayer;
 	
 	int playbackStatus;
+	double position;
+	BOOL seekable;
 	
 	BOOL showTimeRemaining;
 	
 	AudioScrobbler *scrobbler;
+	
  }
 
 @property int playbackStatus;
@@ -69,9 +70,15 @@
 - (void)audioFadeDown:(NSTimer *)audioTimer;
 - (void)audioFadeUp:(NSTimer *)audioTimer;
 
-- (void)updateTimeField:(double)pos;
-
 - (void)playEntryAtIndex:(int)i;
 - (void)playEntry:(PlaylistEntry *)pe;
+
+// For bindings
+
+- (void)setPosition:(double)p;
+- (double)position;
+
+- (void)setSeekable:(BOOL)s;
+- (BOOL)seekable;
 
 @end
