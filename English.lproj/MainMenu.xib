@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="29"/>
 			<integer value="2234"/>
 			<integer value="807"/>
-			<integer value="29"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1507,7 +1507,7 @@ OQA</bytes>
 									<string key="NSFrame">{{0, 14}, {96, 15}}</string>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSSliderCell" key="NSCell" id="503443845">
-										<int key="NSCellFlags">604372736</int>
+										<int key="NSCellFlags">604110336</int>
 										<int key="NSCellFlags2">131072</int>
 										<string key="NSContents"/>
 										<reference key="NSSupport" ref="26"/>
@@ -6776,6 +6776,14 @@ OQA</bytes>
 					</object>
 					<int key="connectionID">2386</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">seek:</string>
+						<reference key="source" ref="936098491"/>
+						<reference key="destination" ref="163997941"/>
+					</object>
+					<int key="connectionID">2387</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -10351,7 +10359,7 @@ OQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2386</int>
+			<int key="maxID">2387</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

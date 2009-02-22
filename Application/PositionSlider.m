@@ -21,6 +21,8 @@
 - (void)setMaxValue:(double)value
 {
 	[positionTextField setMaxDoubleValue:value];
+	
+	[super setMaxValue:value];
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
