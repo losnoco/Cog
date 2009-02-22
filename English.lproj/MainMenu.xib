@@ -1298,7 +1298,7 @@ OQA</bytes>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{196, 509}, {481, 0}}</string>
 				<int key="NSWTFlags">1677723648</int>
-				<string key="NSWindowTitle">Window</string>
+				<string key="NSWindowTitle">Cog</string>
 				<string key="NSWindowClass">MiniWindow</string>
 				<object class="NSToolbar" key="NSViewClass" id="387608983">
 					<object class="NSMutableString" key="NSToolbarIdentifier">
@@ -6664,22 +6664,6 @@ OQA</bytes>
 					<int key="connectionID">2231</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">title: content.display</string>
-						<reference key="source" ref="276041541"/>
-						<reference key="destination" ref="200345764"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="276041541"/>
-							<reference key="NSDestination" ref="200345764"/>
-							<string key="NSLabel">title: content.display</string>
-							<string key="NSBinding">title</string>
-							<string key="NSKeyPath">content.display</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">2303</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">otherWindow</string>
 						<reference key="source" ref="459383411"/>
@@ -6694,6 +6678,37 @@ OQA</bytes>
 						<reference key="destination" ref="459383411"/>
 					</object>
 					<int key="connectionID">2305</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">title: content.display</string>
+						<reference key="source" ref="276041541"/>
+						<reference key="destination" ref="200345764"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="276041541"/>
+							<reference key="NSDestination" ref="200345764"/>
+							<string key="NSLabel">title: content.display</string>
+							<string key="NSBinding">title</string>
+							<string key="NSKeyPath">content.display</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMutableArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSNoSelectionPlaceholder</string>
+									<string>NSNotApplicablePlaceholder</string>
+									<string>NSNullPlaceholder</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>Cog</string>
+									<string>Cog</string>
+									<string>Cog</string>
+								</object>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2374</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -9979,8 +9994,8 @@ OQA</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{218, 54}, {691, 397}}</string>
-					<string>{{218, 54}, {691, 397}}</string>
+					<string>{{334, 92}, {691, 397}}</string>
+					<string>{{334, 92}, {691, 397}}</string>
 					<reference ref="9"/>
 					<boolean value="NO" id="6"/>
 					<string>{{25, 14}, {683, 396}}</string>
@@ -10270,7 +10285,7 @@ OQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2371</int>
+			<int key="maxID">2374</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
