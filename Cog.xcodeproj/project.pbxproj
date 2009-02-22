@@ -96,7 +96,7 @@
 		17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */; };
 		17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF80B8A86350009ACB1 /* CoreAudioKit.framework */; };
 		17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5EA50B8A87850009ACB1 /* IOKit.framework */; };
-		17BBE5BC0CD95CFA00258F7A /* InvertedToolbarWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BBE5BB0CD95CFA00258F7A /* InvertedToolbarWindow.m */; };
+		17BBE5BC0CD95CFA00258F7A /* DualWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BBE5BB0CD95CFA00258F7A /* DualWindow.m */; };
 		17BF2B280CDD7802007E1295 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BF2B270CDD77EB007E1295 /* Sparkle.framework */; };
 		17C809910C3BD201005707C4 /* WavPack.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808C80C3BD1DD005707C4 /* WavPack.bundle */; };
 		17C809920C3BD206005707C4 /* Vorbis.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808BF0C3BD1D2005707C4 /* Vorbis.bundle */; };
@@ -636,8 +636,8 @@
 		17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		17BB5CF80B8A86350009ACB1 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = /System/Library/Frameworks/CoreAudioKit.framework; sourceTree = "<absolute>"; };
 		17BB5EA50B8A87850009ACB1 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
-		17BBE5BA0CD95CFA00258F7A /* InvertedToolbarWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InvertedToolbarWindow.h; sourceTree = "<group>"; };
-		17BBE5BB0CD95CFA00258F7A /* InvertedToolbarWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InvertedToolbarWindow.m; sourceTree = "<group>"; };
+		17BBE5BA0CD95CFA00258F7A /* DualWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DualWindow.h; sourceTree = "<group>"; };
+		17BBE5BB0CD95CFA00258F7A /* DualWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DualWindow.m; sourceTree = "<group>"; };
 		17BF2B1F0CDD77EB007E1295 /* Sparkle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sparkle.xcodeproj; path = Frameworks/Sparkle/Sparkle.xcodeproj; sourceTree = "<group>"; };
 		17C808660C3BD0F8005707C4 /* CoreAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CoreAudio.xcodeproj; path = Plugins/CoreAudio/CoreAudio.xcodeproj; sourceTree = SOURCE_ROOT; };
 		17C808710C3BD167005707C4 /* FileSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FileSource.xcodeproj; path = Plugins/FileSource/FileSource.xcodeproj; sourceTree = "<group>"; };
@@ -828,8 +828,8 @@
 				1770429A0B8BC53600B86321 /* PlaybackController.m */,
 				1791FF8D0CB43A2C0070BC5C /* MediaKeysApplication.h */,
 				1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */,
-				17BBE5BA0CD95CFA00258F7A /* InvertedToolbarWindow.h */,
-				17BBE5BB0CD95CFA00258F7A /* InvertedToolbarWindow.m */,
+				17BBE5BA0CD95CFA00258F7A /* DualWindow.h */,
+				17BBE5BB0CD95CFA00258F7A /* DualWindow.m */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -1783,7 +1783,7 @@
 				178BAB990CD4E1B700B33D47 /* GCOneShotEffectTimer.m in Sources */,
 				178BAB9A0CD4E1B700B33D47 /* GCWindowMenu.m in Sources */,
 				178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */,
-				17BBE5BC0CD95CFA00258F7A /* InvertedToolbarWindow.m in Sources */,
+				17BBE5BC0CD95CFA00258F7A /* DualWindow.m in Sources */,
 				173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
 				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
