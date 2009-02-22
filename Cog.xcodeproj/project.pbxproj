@@ -70,6 +70,7 @@
 		1791005E0CB44D6D0070BC5C /* Cog.scriptSuite in Resources */ = {isa = PBXBuildFile; fileRef = 1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */; };
 		1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */; };
 		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
+		179571590F51DF4100E4168D /* MiniWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 179571580F51DF4100E4168D /* MiniWindow.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
 		179D02EE0E0CB0B00064A77A /* SideView.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D02EB0E0CB0B00064A77A /* SideView.m */; };
 		179D02EF0E0CB0B00064A77A /* SideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D02ED0E0CB0B00064A77A /* SideViewController.m */; };
@@ -595,6 +596,8 @@
 		1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Cog.scriptTerminology; sourceTree = "<group>"; };
 		1791FF8D0CB43A2C0070BC5C /* MediaKeysApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeysApplication.h; sourceTree = "<group>"; };
 		1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaKeysApplication.m; sourceTree = "<group>"; };
+		179571570F51DF4100E4168D /* MiniWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MiniWindow.h; sourceTree = "<group>"; };
+		179571580F51DF4100E4168D /* MiniWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MiniWindow.m; sourceTree = "<group>"; };
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
 		179790DF0C087AB7001D6996 /* OpenURLPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenURLPanel.m; sourceTree = "<group>"; };
 		179D02EA0E0CB0B00064A77A /* SideView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideView.h; path = SideView/SideView.h; sourceTree = "<group>"; };
@@ -830,6 +833,8 @@
 				1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */,
 				17BBE5BA0CD95CFA00258F7A /* DualWindow.h */,
 				17BBE5BB0CD95CFA00258F7A /* DualWindow.m */,
+				179571570F51DF4100E4168D /* MiniWindow.h */,
+				179571580F51DF4100E4168D /* MiniWindow.m */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -1820,6 +1825,7 @@
 				173A43A10F3FD26500676A7B /* ToolTipWindow.m in Sources */,
 				173A43B80F3FD3B200676A7B /* VolumeButton.m in Sources */,
 				1752C6B00F3FE3CC00FC3235 /* VolumeSlider.m in Sources */,
+				179571590F51DF4100E4168D /* MiniWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

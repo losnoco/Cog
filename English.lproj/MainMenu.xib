@@ -8,6 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="2234"/>
 			<integer value="21"/>
 			<integer value="29"/>
 		</object>
@@ -1293,12 +1294,12 @@ OQA</bytes>
 				<string key="NSFrameAutosaveName">Cog</string>
 			</object>
 			<object class="NSWindowTemplate" id="276041541">
-				<int key="NSWindowStyleMask">4103</int>
+				<int key="NSWindowStyleMask">4111</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{196, 509}, {481, 0}}</string>
 				<int key="NSWTFlags">1677723648</int>
 				<string key="NSWindowTitle">Window</string>
-				<string key="NSWindowClass">DualWindow</string>
+				<string key="NSWindowClass">MiniWindow</string>
 				<object class="NSToolbar" key="NSViewClass" id="387608983">
 					<object class="NSMutableString" key="NSToolbarIdentifier">
 						<characters key="NS.bytes">35998ECE-5AD8-429E-8479-657249B22C9C</characters>
@@ -1701,9 +1702,10 @@ OQA</bytes>
 				</object>
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<object class="NSView" key="NSWindowView" id="292934259">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<string key="NSFrameSize">{481, 0}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
@@ -9413,6 +9415,8 @@ OQA</bytes>
 					<string>2234.IBEditorWindowLastContentRect</string>
 					<string>2234.IBWindowTemplateEditedContentRect</string>
 					<string>2234.NSWindowTemplate.visibleAtLaunch</string>
+					<string>2234.windowTemplate.hasMaxSize</string>
+					<string>2234.windowTemplate.maxSize</string>
 					<string>2235.IBPluginDependency</string>
 					<string>226.IBPluginDependency</string>
 					<string>226.ImportedFromIB2</string>
@@ -10027,9 +10031,11 @@ OQA</bytes>
 					<string>{{123, 619}, {616, 0}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{207, 619}, {481, 0}}</string>
-					<string>{{207, 619}, {481, 0}}</string>
-					<boolean value="NO"/>
+					<string>{{398, 631}, {481, 0}}</string>
+					<string>{{398, 631}, {481, 0}}</string>
+					<boolean value="NO" id="6"/>
+					<reference ref="6"/>
+					<string>{10000, 100000}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
@@ -10517,6 +10523,14 @@ OQA</bytes>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">MiniWindow</string>
+					<string key="superclassName">DualWindow</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Application/MiniWindow.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
