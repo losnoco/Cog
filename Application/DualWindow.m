@@ -21,11 +21,19 @@
 	return self;
 }
 
+- (void)awakeFromNib
+{
+	if (![self isHidden]) 
+	{
+		[self show];
+	}
+}
+
 - (NSString *)hiddenDefaultsKey
 {
 	if ([self frameAutosaveName])
 	{
-		return [[self frameAutosaveName] stringByAppendingString:@" Window Content Height"];
+		return [[self frameAutosaveName] stringByAppendingString:@" Window Hidden"];
 	}
 	
 	return nil;
@@ -43,11 +51,13 @@
 
 - (void)toggleToolbarShown:(id)sender
 {
-	[otherWindow showWindow];
+	[otherWindow show];
 }
 
-- (void)showWindow
+- (void)show
 {
+	[self setHidden:NO];
+	[otherWindow setHidden:YES];
 	[otherWindow close];
 	[self makeKeyAndOrderFront:self];
 }

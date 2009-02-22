@@ -13,8 +13,9 @@
 	IBOutlet DualWindow *otherWindow;
 }
 
-- (void)showWindow;
+- (void)show;
 
+- (NSString *)hiddenDefaultsKey;
 - (BOOL)isHidden;
 - (void)setHidden:(BOOL)h;
 

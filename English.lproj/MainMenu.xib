@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2234"/>
 			<integer value="21"/>
 			<integer value="29"/>
+			<integer value="2234"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -42,7 +42,7 @@
 				<string key="NSWindowRect">{{1051, 196}, {691, 397}}</string>
 				<int key="NSWTFlags">1618479104</int>
 				<string key="NSWindowTitle">Cog</string>
-				<string key="NSWindowClass">DualWindow</string>
+				<string key="NSWindowClass">MainWindow</string>
 				<object class="NSToolbar" key="NSViewClass" id="420567122">
 					<object class="NSMutableString" key="NSToolbarIdentifier">
 						<characters key="NS.bytes">B4998081-90DD-45DD-8243-0F7039C7DEA2</characters>
@@ -9982,7 +9982,7 @@ OQA</bytes>
 					<string>{{218, 54}, {691, 397}}</string>
 					<string>{{218, 54}, {691, 397}}</string>
 					<reference ref="9"/>
-					<reference ref="9"/>
+					<boolean value="NO" id="6"/>
 					<string>{{25, 14}, {683, 396}}</string>
 					<reference ref="8"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
@@ -10033,7 +10033,7 @@ OQA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{398, 631}, {481, 0}}</string>
 					<string>{{398, 631}, {481, 0}}</string>
-					<boolean value="NO" id="6"/>
+					<reference ref="6"/>
 					<reference ref="6"/>
 					<string>{10000, 100000}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -10523,6 +10523,14 @@ OQA</bytes>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">MainWindow</string>
+					<string key="superclassName">DualWindow</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Application/MainWindow.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
