@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="807"/>
-			<integer value="29"/>
 			<integer value="2234"/>
+			<integer value="21"/>
+			<integer value="29"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -6792,6 +6792,14 @@ OQA</bytes>
 					</object>
 					<int key="connectionID">2388</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">playbackButtonClick:</string>
+						<reference key="source" ref="936098491"/>
+						<reference key="destination" ref="554424892"/>
+					</object>
+					<int key="connectionID">2389</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -10125,7 +10133,7 @@ OQA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{123, 619}, {616, 0}}</string>
+					<string>{{330, 631}, {617, 0}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{398, 631}, {481, 0}}</string>
@@ -10367,7 +10375,7 @@ OQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2388</int>
+			<int key="maxID">2389</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -10508,7 +10516,7 @@ OQA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Application/DualWindow.h</string>
+						<string key="minorKey">Window/DualWindow.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -10611,7 +10619,7 @@ OQA</bytes>
 					<string key="superclassName">DualWindow</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Application/MainWindow.h</string>
+						<string key="minorKey">Window/MainWindow.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -10619,7 +10627,7 @@ OQA</bytes>
 					<string key="superclassName">DualWindow</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Application/MiniWindow.h</string>
+						<string key="minorKey">Window/MiniWindow.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -10917,7 +10925,7 @@ OQA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Application/PositionSlider.h</string>
+						<string key="minorKey">Window/PositionSlider.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -11074,7 +11082,7 @@ OQA</bytes>
 					<string key="superclassName">NSTextField</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Application/TimeField.h</string>
+						<string key="minorKey">Window/TimeField.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -11106,7 +11114,7 @@ OQA</bytes>
 					<string key="superclassName">PopupButton</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Utils/VolumeButton.h</string>
+						<string key="minorKey">Window/VolumeButton.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -11114,7 +11122,7 @@ OQA</bytes>
 					<string key="superclassName">NSSlider</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Utils/VolumeSlider.h</string>
+						<string key="minorKey">Window/VolumeSlider.h</string>
 					</object>
 				</object>
 			</object>
