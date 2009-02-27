@@ -355,29 +355,29 @@ audio_linear_round(unsigned int bits,
 	unsigned int startingSample = 0;
 	unsigned int sampleCount = _synth.pcm.length;
 	
-	//NSLog(@"Position: %li/%li", _framesDecoded, totalFrames);
-	//NSLog(@"<%i, %i>", _startPadding, _endPadding);
+	// NSLog(@"Position: %li/%li", _framesDecoded, totalFrames);
+	// NSLog(@"<%i, %i>", _startPadding, _endPadding);
 
-	//NSLog(@"Counts: %i, %i", startingSample, sampleCount);
+	// NSLog(@"Counts: %i, %i", startingSample, sampleCount);
 	if (_foundLAMEHeader) {
 		if (_framesDecoded < _startPadding) {
-			//NSLog(@"Skipping start.");
+			// NSLog(@"Skipping start.");
 			startingSample = _startPadding - _framesDecoded;
 		}
 		
 		if (_framesDecoded > totalFrames - _endPadding + startingSample) {
-			//NSLog(@"End of file. Not writing.");
+			// NSLog(@"End of file. Not writing.");
 			return;
 		}
 
-		if (_framesDecoded + (sampleCount - startingSample) > totalFrames - _endPadding) {
-			sampleCount = totalFrames - _endPadding - _framesDecoded + startingSample;
-			//NSLog(@"End of file. %li",  totalFrames - _endPadding - _framesDecoded);
+		if (_framesDecoded + sampleCount + _endPadding > totalFrames + startingSample ) {
+			// NSLog(@"End of file. %li",  totalFrames - _endPadding - _framesDecoded);
+			sampleCount = totalFrames + startingSample - _endPadding - _framesDecoded;
 		}
 
 		if (startingSample > sampleCount) {
+			// NSLog(@"Skipping entire sample");
 			_framesDecoded += _synth.pcm.length;
-			//NSLog(@"Skipping entire sample");
 			return;
 		}
 		
