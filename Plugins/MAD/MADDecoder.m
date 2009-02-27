@@ -239,7 +239,7 @@
 					_endPadding = mad_bit_read(&stream.anc_ptr, 12);
 					
 					_startPadding += 528 + 1; //MDCT/filterbank delay
-					totalFrames += 528 + 1;
+					_endPadding -= 528 + 1;
 					
 					/*uint8_t misc =*/ mad_bit_read(&stream.anc_ptr, 8);
 					
@@ -391,6 +391,9 @@ audio_linear_round(unsigned int bits,
 	
 	_framesDecoded += _synth.pcm.length;
 	
+	if (_outputFrames > 0) {
+		NSLog(@"LOSING FRAMES!");
+	}
 	_outputFrames = (sampleCount - startingSample);
 	
 	if (_outputBuffer)
@@ -415,6 +418,14 @@ audio_linear_round(unsigned int bits,
 			outputPtr += stride; 
 		} 
 	} 
+	
+	
+	
+	// Output to a file
+	// FILE *f = fopen("data.raw", "a");
+	// fwrite(_outputBuffer, sizeof(char), _outputFrames, f);
+	// fclose(f);
+	
 }
 
 - (int)decodeMPEGFrame
