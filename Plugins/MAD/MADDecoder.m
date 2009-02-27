@@ -360,27 +360,31 @@ audio_linear_round(unsigned int bits,
 
 	// NSLog(@"Counts: %i, %i", startingSample, sampleCount);
 	if (_foundLAMEHeader) {
-		if (_framesDecoded < _startPadding) {
+		// We are at the beginning and need to skip frames
+		if (_startPadding > _framesDecoded) {
 			// NSLog(@"Skipping start.");
 			startingSample = _startPadding - _framesDecoded;
 		}
 		
-		if (_framesDecoded > totalFrames - _endPadding + startingSample) {
+		// Past the end of the file. 
+		if (totalFrames - _endPadding <= _framesDecoded) {
 			// NSLog(@"End of file. Not writing.");
 			return;
 		}
 
-		if (_framesDecoded + sampleCount + _endPadding > totalFrames + startingSample ) {
-			// NSLog(@"End of file. %li",  totalFrames - _endPadding - _framesDecoded);
-			sampleCount = totalFrames + startingSample - _endPadding - _framesDecoded;
-		}
-
+		// We haven't even gotten to the start yet
 		if (startingSample > sampleCount) {
 			// NSLog(@"Skipping entire sample");
 			_framesDecoded += _synth.pcm.length;
 			return;
 		}
 		
+		// We are at the end of the file and need to read the last few frames
+		if (_framesDecoded + (sampleCount - startingSample) > totalFrames - _endPadding) {
+			// NSLog(@"End of file. %li",  totalFrames - _endPadding - _framesDecoded);
+			sampleCount = totalFrames - _endPadding - _framesDecoded + startingSample;
+		}
+
 	}
 	
 	//NSLog(@"Revised: %i, %i", startingSample, sampleCount);
