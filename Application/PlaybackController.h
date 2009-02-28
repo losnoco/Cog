@@ -41,7 +41,6 @@
 
 @property int playbackStatus;
 
-- (IBAction)toggleShowTimeRemaining:(id)sender;
 - (IBAction)changeVolume:(id)sender;
 - (IBAction)volumeDown:(id)sender;
 - (IBAction)volumeUp:(id)sender;
