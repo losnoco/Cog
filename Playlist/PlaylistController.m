@@ -61,6 +61,17 @@
 }
 
 
+- (void)initDefaults
+{
+	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+										[NSNumber numberWithInteger:RepeatNone], @"repeatMode",
+										[NSNumber numberWithBool:NO],  @"shuffle",
+										nil];
+	
+	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
+}
+
+
 - (id)initWithCoder:(NSCoder *)decoder
 {
 	self = [super initWithCoder:decoder];
@@ -69,10 +80,12 @@
 	{
 		shuffleList = [[NSMutableArray alloc] init];
 		queueList = [[NSMutableArray alloc] init];
+		[self initDefaults];
 	}
 	
 	return self;
 }
+
 
 - (void)dealloc
 {
