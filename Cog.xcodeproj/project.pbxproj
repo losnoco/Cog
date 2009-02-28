@@ -16,6 +16,7 @@
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
+		171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */ = {isa = PBXBuildFile; fileRef = 171EFE8B0F59FEAE000ADC42 /* DockIconController.m */; };
 		17211A7E0D68B7C500911CA9 /* FileTree.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17211A7C0D68B7C500911CA9 /* FileTree.xib */; };
 		17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */; };
 		172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12320F5911D20078EF0C /* RepeatTransformers.m */; };
@@ -46,14 +47,10 @@
 		177EBFAD0B8BC2A70000BC8C /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF8F0B8BC2A70000BC8C /* NDHotKeyEvent.m */; };
 		177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */; };
 		177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */; };
-		177EC0440B8BC2FF0000BC8C /* add_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC02E0B8BC2FF0000BC8C /* add_blue.png */; };
-		177EC0450B8BC2FF0000BC8C /* add_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC02F0B8BC2FF0000BC8C /* add_gray.png */; };
 		177EC04B0B8BC2FF0000BC8C /* next.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0350B8BC2FF0000BC8C /* next.png */; };
 		177EC04D0B8BC2FF0000BC8C /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0370B8BC2FF0000BC8C /* pause.png */; };
 		177EC04F0B8BC2FF0000BC8C /* play.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0390B8BC2FF0000BC8C /* play.png */; };
 		177EC0510B8BC2FF0000BC8C /* previous.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC03B0B8BC2FF0000BC8C /* previous.png */; };
-		177EC0520B8BC2FF0000BC8C /* remove_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC03C0B8BC2FF0000BC8C /* remove_blue.png */; };
-		177EC0530B8BC2FF0000BC8C /* remove_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC03D0B8BC2FF0000BC8C /* remove_gray.png */; };
 		177EC0580B8BC2FF0000BC8C /* volume_high.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0420B8BC2FF0000BC8C /* volume_high.png */; };
 		177EC0590B8BC2FF0000BC8C /* volume_low.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0430B8BC2FF0000BC8C /* volume_low.png */; };
 		17818A950C0B27AC001C4916 /* aiff.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A8E0C0B27AC001C4916 /* aiff.icns */; };
@@ -88,6 +85,9 @@
 		17A8F6870D6A7FCA0095DA13 /* repeat_one.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F6840D6A7FCA0095DA13 /* repeat_one.png */; };
 		17A8F71A0D6A89730095DA13 /* repeat_album.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F7190D6A89730095DA13 /* repeat_album.png */; };
 		17B6FA7F0D48225300C3BEF1 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BF2B270CDD77EB007E1295 /* Sparkle.framework */; };
+		17B7CF5C0F5A05EE00A47027 /* pauseBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = 17B7CF590F5A05EE00A47027 /* pauseBadge.png */; };
+		17B7CF5D0F5A05EE00A47027 /* playBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = 17B7CF5A0F5A05EE00A47027 /* playBadge.png */; };
+		17B7CF5E0F5A05EE00A47027 /* stopBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = 17B7CF5B0F5A05EE00A47027 /* stopBadge.png */; };
 		17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B7DD7C0D7CD10D00320E70 /* BlankZeroFormatter.m */; };
 		17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */; };
 		17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */; };
@@ -517,6 +517,8 @@
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
+		171EFE8A0F59FEAE000ADC42 /* DockIconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DockIconController.h; sourceTree = "<group>"; };
+		171EFE8B0F59FEAE000ADC42 /* DockIconController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DockIconController.m; sourceTree = "<group>"; };
 		17211A7D0D68B7C500911CA9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileTree.xib; sourceTree = "<group>"; };
 		17249F0D0D82E17700F33392 /* ToggleQueueTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToggleQueueTitleTransformer.h; sourceTree = "<group>"; };
 		17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToggleQueueTitleTransformer.m; sourceTree = "<group>"; };
@@ -568,14 +570,10 @@
 		177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TrackingCell.m; sourceTree = "<group>"; };
 		177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TrackingSlider.h; sourceTree = "<group>"; };
 		177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TrackingSlider.m; sourceTree = "<group>"; };
-		177EC02E0B8BC2FF0000BC8C /* add_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = add_blue.png; path = Images/add_blue.png; sourceTree = "<group>"; };
-		177EC02F0B8BC2FF0000BC8C /* add_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = add_gray.png; path = Images/add_gray.png; sourceTree = "<group>"; };
 		177EC0350B8BC2FF0000BC8C /* next.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = next.png; path = Images/next.png; sourceTree = "<group>"; };
 		177EC0370B8BC2FF0000BC8C /* pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pause.png; path = Images/pause.png; sourceTree = "<group>"; };
 		177EC0390B8BC2FF0000BC8C /* play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = play.png; path = Images/play.png; sourceTree = "<group>"; };
 		177EC03B0B8BC2FF0000BC8C /* previous.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = previous.png; path = Images/previous.png; sourceTree = "<group>"; };
-		177EC03C0B8BC2FF0000BC8C /* remove_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = remove_blue.png; path = Images/remove_blue.png; sourceTree = "<group>"; };
-		177EC03D0B8BC2FF0000BC8C /* remove_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = remove_gray.png; path = Images/remove_gray.png; sourceTree = "<group>"; };
 		177EC0420B8BC2FF0000BC8C /* volume_high.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = volume_high.png; path = Images/volume_high.png; sourceTree = "<group>"; };
 		177EC0430B8BC2FF0000BC8C /* volume_low.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = volume_low.png; path = Images/volume_low.png; sourceTree = "<group>"; };
 		17818A8E0C0B27AC001C4916 /* aiff.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = aiff.icns; sourceTree = "<group>"; };
@@ -627,6 +625,9 @@
 		17A8F6830D6A7FCA0095DA13 /* repeat_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_none.png; path = Images/repeat_none.png; sourceTree = "<group>"; };
 		17A8F6840D6A7FCA0095DA13 /* repeat_one.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_one.png; path = Images/repeat_one.png; sourceTree = "<group>"; };
 		17A8F7190D6A89730095DA13 /* repeat_album.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_album.png; path = Images/repeat_album.png; sourceTree = "<group>"; };
+		17B7CF590F5A05EE00A47027 /* pauseBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pauseBadge.png; path = Images/pauseBadge.png; sourceTree = "<group>"; };
+		17B7CF5A0F5A05EE00A47027 /* playBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playBadge.png; path = Images/playBadge.png; sourceTree = "<group>"; };
+		17B7CF5B0F5A05EE00A47027 /* stopBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopBadge.png; path = Images/stopBadge.png; sourceTree = "<group>"; };
 		17B7DD7B0D7CD10D00320E70 /* BlankZeroFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlankZeroFormatter.h; sourceTree = "<group>"; };
 		17B7DD7C0D7CD10D00320E70 /* BlankZeroFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlankZeroFormatter.m; sourceTree = "<group>"; };
 		17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -839,6 +840,8 @@
 				1770429A0B8BC53600B86321 /* PlaybackController.m */,
 				1791FF8D0CB43A2C0070BC5C /* MediaKeysApplication.h */,
 				1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */,
+				171EFE8A0F59FEAE000ADC42 /* DockIconController.h */,
+				171EFE8B0F59FEAE000ADC42 /* DockIconController.m */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -905,6 +908,9 @@
 		177EC02D0B8BC2E60000BC8C /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				17B7CF590F5A05EE00A47027 /* pauseBadge.png */,
+				17B7CF5A0F5A05EE00A47027 /* playBadge.png */,
+				17B7CF5B0F5A05EE00A47027 /* stopBadge.png */,
 				B09E96620D74A7BC0064F138 /* stop_current.png */,
 				17A8F7190D6A89730095DA13 /* repeat_album.png */,
 				17A8F6820D6A7FCA0095DA13 /* repeat_all.png */,
@@ -916,14 +922,10 @@
 				1766C88D0B912FB4004A7AE4 /* info_on.png */,
 				1766C8900B912FB4004A7AE4 /* shuffle_off.png */,
 				1766C8910B912FB4004A7AE4 /* shuffle_on.png */,
-				177EC02E0B8BC2FF0000BC8C /* add_blue.png */,
-				177EC02F0B8BC2FF0000BC8C /* add_gray.png */,
 				177EC0350B8BC2FF0000BC8C /* next.png */,
 				177EC0370B8BC2FF0000BC8C /* pause.png */,
 				177EC0390B8BC2FF0000BC8C /* play.png */,
 				177EC03B0B8BC2FF0000BC8C /* previous.png */,
-				177EC03C0B8BC2FF0000BC8C /* remove_blue.png */,
-				177EC03D0B8BC2FF0000BC8C /* remove_gray.png */,
 				177EC0420B8BC2FF0000BC8C /* volume_high.png */,
 				177EC0430B8BC2FF0000BC8C /* volume_low.png */,
 			);
@@ -1725,14 +1727,10 @@
 				8E7575BE09F31D800080F1EE /* wheel.icns in Resources */,
 				17E41E070C130DFF00AC744D /* Credits.html in Resources */,
 				8E7575DB09F31E930080F1EE /* Localizable.strings in Resources */,
-				177EC0440B8BC2FF0000BC8C /* add_blue.png in Resources */,
-				177EC0450B8BC2FF0000BC8C /* add_gray.png in Resources */,
 				177EC04B0B8BC2FF0000BC8C /* next.png in Resources */,
 				177EC04D0B8BC2FF0000BC8C /* pause.png in Resources */,
 				177EC04F0B8BC2FF0000BC8C /* play.png in Resources */,
 				177EC0510B8BC2FF0000BC8C /* previous.png in Resources */,
-				177EC0520B8BC2FF0000BC8C /* remove_blue.png in Resources */,
-				177EC0530B8BC2FF0000BC8C /* remove_gray.png in Resources */,
 				177EC0580B8BC2FF0000BC8C /* volume_high.png in Resources */,
 				177EC0590B8BC2FF0000BC8C /* volume_low.png in Resources */,
 				17E41E230C130EE200AC744D /* Help in Resources */,
@@ -1771,6 +1769,9 @@
 				17A8F6870D6A7FCA0095DA13 /* repeat_one.png in Resources */,
 				17A8F71A0D6A89730095DA13 /* repeat_album.png in Resources */,
 				B09E96630D74A7BC0064F138 /* stop_current.png in Resources */,
+				17B7CF5C0F5A05EE00A47027 /* pauseBadge.png in Resources */,
+				17B7CF5D0F5A05EE00A47027 /* playBadge.png in Resources */,
+				17B7CF5E0F5A05EE00A47027 /* stopBadge.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1854,6 +1855,7 @@
 				172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */,
 				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
 				1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */,
+				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
