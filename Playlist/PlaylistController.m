@@ -794,55 +794,60 @@
 {
 	if (![urls count])
 		return;
+
 	CGEventRef event = CGEventCreate(NULL /*default event source*/);
 	CGEventFlags mods = CGEventGetFlags(event);
 	CFRelease(event);
 	
-	
-	bool modifier1_pressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
-	modifier1_pressed |= ((mods & kCGEventFlagMaskShift)!=0);
-	bool should_clean = false;
-	NSLog(@"Behavior: %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"]);
-	NSLog(@"Altered Behavior: %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"]);
+	BOOL modifierPressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
+	modifierPressed |= ((mods & kCGEventFlagMaskShift)!=0);
 
-	if (origin == URLOriginExternal) {
-		//possible settings are "clearAndPlay", "enqueue", "enqueueAndPlay"
-		should_clean = (!modifier1_pressed && ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"clearAndPlay"])
-					|| ( modifier1_pressed && ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"clearAndPlay"]);
-	}
-	else {
-		should_clean = modifier1_pressed;
+	NSString *behavior = [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"];
+	if (modifierPressed) {
+		behavior =  [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"];
 	}
 	
-	if (should_clean) {
+	
+	BOOL shouldClear = modifierPressed; // By default, internal sources should not clear the playlist
+	if (origin == URLOriginExternal) { // For external insertions, we look at the preference
+		//possible settings are "clearAndPlay", "enqueue", "enqueueAndPlay"
+		shouldClear = [behavior isEqualToString:@"clearAndPlay"];
+	}
+	
+	if (shouldClear) {
 		[self clear:self];
 	}
 }
 
-- (void)didInsertURLs:(NSArray*)entries origin:(URLOrigin)origin
+- (void)didInsertURLs:(NSArray*)urls origin:(URLOrigin)origin
 {
-	if (![entries count])
+	if (![urls count])
 		return;
+	
 	CGEventRef event = CGEventCreate(NULL);
 	CGEventFlags mods = CGEventGetFlags(event);
 	CFRelease(event);
 	
-	bool modifier1_pressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
-	modifier1_pressed |= ((mods & kCGEventFlagMaskShift)!=0);
-	bool should_autoplay = false;
+	BOOL modifierPressed =  ((mods & kCGEventFlagMaskCommand)!=0)&((mods & kCGEventFlagMaskControl)!=0);
+	modifierPressed |= ((mods & kCGEventFlagMaskShift)!=0);
 	
-	if (origin == URLOriginExternal)
-		should_autoplay = (!modifier1_pressed && (![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"clearAndPlay"] 
-												  ||    ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"enqueueAndPlay"]))
-		|| ( modifier1_pressed && (![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"clearAndPlay"] 
-								   || ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"enqueueAndPlay"]));
-	if (origin == URLOriginInternal)
-		should_autoplay = modifier1_pressed;
-	
+	NSString *behavior = [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"];
+	if (modifierPressed) {
+		behavior =  [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"];
+	}
+		
+	BOOL shouldPlay = modifierPressed; // The default is NO for internal insertions
+	if (origin == URLOriginExternal) { // For external insertions, we look at the preference
+		shouldPlay = [behavior isEqualToString:@"clearAndPlay"] || [behavior isEqualToString:@"enqueueAndPlay"];;
+	}
+
 	//Auto start playback
-	if (should_autoplay	&& [[entriesController entries] count] > 0) {
-		[[entries objectAtIndex:0] setValuesForKeysWithDictionary:[playlistLoader readEntryInfo:[entries objectAtIndex:0]]];
-		[playbackController playEntry: [entries objectAtIndex:0]];
+	if (shouldPlay	&& [[entriesController entries] count] > 0) {
+		// HACK ALERT!
+		[[urls objectAtIndex:0] setValuesForKeysWithDictionary:[playlistLoader readEntryInfo:[urls objectAtIndex:0]]];
+		// END HACK
+		
+		[playbackController playEntry: [urls objectAtIndex:0]];
 	}
 }
 
