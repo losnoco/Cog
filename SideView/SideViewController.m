@@ -75,8 +75,8 @@
 
 - (void) addToPlaylist:(NSArray *)urls
 {
-	[playlistLoader willInsertFiles:urls origin:OpenFromFileTree];
-	[playlistLoader didInsertFiles:[playlistLoader addURLs:urls sort:YES] origin:OpenFromFileTree];
+	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
+	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:URLOriginExternal];
 }
 
 

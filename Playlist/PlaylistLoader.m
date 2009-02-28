@@ -406,13 +406,13 @@
 	return [AudioPlayer containerTypes];
 }
 
-- (void)willInsertFiles:(NSArray*)urls origin:(AddedFilesSource)src
+- (void)willInsertURLs:(NSArray*)urls origin:(URLOrigin)origin
 {
-	[playlistController willInsertFiles:urls origin:src];
+	[playlistController willInsertURLs:urls origin:origin];
 }
-- (void)didInsertFiles:(NSArray*)entries origin:(AddedFilesSource)src
+- (void)didInsertURLs:(NSArray*)urls origin:(URLOrigin)origin
 {
-	[playlistController didInsertFiles:entries origin:src];
+	[playlistController didInsertURLs:urls origin:origin];
 }
 
 @end

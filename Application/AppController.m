@@ -171,8 +171,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	if (returnCode == NSOKButton)
 	{
-		[playlistLoader willInsertFiles:[panel URLs] origin:OpenFromOpenPanel];
-		[playlistLoader didInsertFiles:[playlistLoader addURLs:[panel URLs] sort:YES] origin:OpenFromOpenPanel];
+		[playlistLoader willInsertURLs:[panel URLs] origin:URLOriginInternal];
+		[playlistLoader didInsertURLs:[playlistLoader addURLs:[panel URLs] sort:YES] origin:URLOriginInternal];
 	}
 }
 
@@ -207,8 +207,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 {
 	if (returnCode == NSOKButton)
 	{
-		[playlistLoader willInsertFiles:[NSArray arrayWithObject:[panel url]] origin:OpenFromOpenUrlPanel];
-		[playlistLoader didInsertFiles:[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO] origin:OpenFromOpenUrlPanel];
+		[playlistLoader willInsertURLs:[NSArray arrayWithObject:[panel url]] origin:URLOriginExternal];
+		[playlistLoader didInsertURLs:[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO] origin:URLOriginExternal];
 	}
 }
 
@@ -285,8 +285,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
 	NSArray* urls = [NSArray arrayWithObject:[NSURL fileURLWithPath:filename]];
-	[playlistLoader willInsertFiles:urls origin:OpenFromFinder];
-	[playlistLoader didInsertFiles:[playlistLoader addURLs:urls sort:NO] origin:OpenFromFinder];
+	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
+	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:NO] origin:URLOriginExternal];
 	return YES;
 }
 
@@ -299,8 +299,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	{
 		[urls addObject:[NSURL fileURLWithPath:filename]];
 	}
-	[playlistLoader willInsertFiles:urls origin:OpenFromFinder];
-	[playlistLoader didInsertFiles:[playlistLoader addURLs:urls sort:YES] origin:OpenFromFinder];
+	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
+	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:URLOriginExternal];
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 

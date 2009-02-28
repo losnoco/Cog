@@ -45,7 +45,7 @@ typedef enum {
 - (NSArray *)acceptableContainerTypes;
 
 // Event inlets (passed to playlist controler):
-- (void)willInsertFiles:(NSArray*)urls origin:(AddedFilesSource)src;
-- (void)didInsertFiles:(NSArray*)entries origin:(AddedFilesSource)src;
+- (void)willInsertURLs:(NSArray*)urls origin:(URLOrigin)origin;
+- (void)didInsertURLs:(NSArray*)entries origin:(URLOrigin)origin;
 
 @end

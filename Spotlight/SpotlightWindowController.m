@@ -277,8 +277,8 @@ static NSPredicate * musicOnlyPredicate = nil;
     if ([tracks count] == 0)
         tracks = playlistController.arrangedObjects;
 	
-	[playlistLoader willInsertFiles:[tracks valueForKey:@"URL"] origin:OpenFromSpotlight];
-    [playlistLoader didInsertFiles:[playlistLoader addURLs:[tracks valueForKey:@"URL"] sort:NO] origin:OpenFromSpotlight];
+	[playlistLoader willInsertURLs:[tracks valueForKey:@"URL"] origin:URLOriginExternal];
+    [playlistLoader didInsertURLs:[playlistLoader addURLs:[tracks valueForKey:@"URL"] sort:NO] origin:URLOriginExternal];
 	[self.query enableUpdates];
 }
 

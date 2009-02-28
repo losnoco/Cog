@@ -204,18 +204,18 @@
 	
 			
 	// Determine the type of object that was dropped
-	NSArray *supportedtypes = [NSArray arrayWithObjects:CogUrlsPboardType, NSFilenamesPboardType, iTunesDropType, nil];
+	NSArray *supportedTypes = [NSArray arrayWithObjects:CogUrlsPboardType, NSFilenamesPboardType, iTunesDropType, nil];
 	NSPasteboard *pboard = [info draggingPasteboard];
-	NSString *bestType = [pboard availableTypeFromArray:supportedtypes];
+	NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
 
-	NSMutableArray *accept_urls = [[NSMutableArray alloc] init];
+	NSMutableArray *acceptedURLs = [[NSMutableArray alloc] init];
 	
 	// Get files from an file drawer drop
 	if ([bestType isEqualToString:CogUrlsPboardType]) {
 		NSArray *urls = [NSUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType:CogUrlsPboardType]];
 		NSLog(@"URLS: %@", urls);
 		//[playlistLoader insertURLs: urls atIndex:row sort:YES];
-		[accept_urls addObjectsFromArray:urls];
+		[acceptedURLs addObjectsFromArray:urls];
 	}
 	
 	// Get files from a normal file drop (such as from Finder)
@@ -228,7 +228,7 @@
 		}
 		
 		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
-		[accept_urls addObjectsFromArray:urls];
+		[acceptedURLs addObjectsFromArray:urls];
 		[urls release];
 	}
 	
@@ -245,20 +245,23 @@
 		}
 		
 		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
-		[accept_urls addObjectsFromArray:urls];
+		[acceptedURLs addObjectsFromArray:urls];
 		[urls release];
 	}
 	
-	if ([accept_urls count])
-		{
-		[self willInsertFiles:accept_urls origin:DropOnPlaylist];
-		if (![[entriesController entries] count])
+	if ([acceptedURLs count])
+	{
+		[self willInsertURLs:acceptedURLs origin:URLOriginInternal];
+		
+		if (![[entriesController entries] count]) {
 			row = 0;
-		NSArray* entries = [playlistLoader insertURLs:accept_urls atIndex:row sort:YES];
-		[self didInsertFiles:entries origin:DropOnPlaylist];
 		}
 		
-	[accept_urls release];
+		NSArray* entries = [playlistLoader insertURLs:acceptedURLs atIndex:row sort:YES];
+		[self didInsertURLs:entries origin:URLOriginInternal];
+	}
+	
+	[acceptedURLs release];
 	
 	if ([self shuffle] == YES)
 		[self resetShuffleList];
@@ -787,7 +790,7 @@
 }
 
 // Event inlets:
-- (void)willInsertFiles:(NSArray*)urls origin:(AddedFilesSource)src
+- (void)willInsertURLs:(NSArray*)urls origin:(URLOrigin)origin
 {
 	if (![urls count])
 		return;
@@ -802,18 +805,21 @@
 	NSLog(@"Behavior: %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"]);
 	NSLog(@"Altered Behavior: %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"]);
 
-	if (src >= OpenFinder_Related && src <= OpenFinder_Related_end)
+	if (origin == URLOriginExternal) {
 		//possible settings are "clearAndPlay", "enqueue", "enqueueAndPlay"
 		should_clean = (!modifier1_pressed && ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"clearAndPlay"])
 					|| ( modifier1_pressed && ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"clearAndPlay"]);
-	if (src >= OpenPlaylist_related && src <= OpenPlaylist_related_end)
+	}
+	else {
 		should_clean = modifier1_pressed;
-					
-	if (should_clean)
+	}
+	
+	if (should_clean) {
 		[self clear:self];
+	}
 }
 
-- (void)didInsertFiles:(NSArray*)entries origin:(AddedFilesSource)src
+- (void)didInsertURLs:(NSArray*)entries origin:(URLOrigin)origin
 {
 	if (![entries count])
 		return;
@@ -825,19 +831,19 @@
 	modifier1_pressed |= ((mods & kCGEventFlagMaskShift)!=0);
 	bool should_autoplay = false;
 	
-	if (src >= OpenFinder_Related && src <= OpenFinder_Related_end)
+	if (origin == URLOriginExternal)
 		should_autoplay = (!modifier1_pressed && (![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"clearAndPlay"] 
-											||    ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"enqueueAndPlay"]))
-					|| ( modifier1_pressed && (![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"clearAndPlay"] 
-											|| ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"enqueueAndPlay"]));
-	if (src >= OpenPlaylist_related && src <= OpenPlaylist_related_end)
+												  ||    ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesBehavior"] compare:@"enqueueAndPlay"]))
+		|| ( modifier1_pressed && (![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"clearAndPlay"] 
+								   || ![[[NSUserDefaults standardUserDefaults] valueForKey:@"openingFilesAlteredBehavior"] compare:@"enqueueAndPlay"]));
+	if (origin == URLOriginInternal)
 		should_autoplay = modifier1_pressed;
 	
 	//Auto start playback
 	if (should_autoplay	&& [[entriesController entries] count] > 0) {
 		[[entries objectAtIndex:0] setValuesForKeysWithDictionary:[playlistLoader readEntryInfo:[entries objectAtIndex:0]]];
 		[playbackController playEntry: [entries objectAtIndex:0]];
-		}
+	}
 }
 
 

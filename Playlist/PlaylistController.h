@@ -24,19 +24,9 @@ typedef enum {
 } RepeatMode;
 
 typedef enum {
-	OpenPlaylist_related = 0,
-	LoadPlaylist,
-	DropOnPlaylist,
-	OpenFromOpenPanel,
-	OpenFromOpenUrlPanel,
-	OpenPlaylist_related_end,
-	
-	OpenFinder_Related, //meta-value
-	OpenFromFinder,
-	OpenFromFileTree,
-	OpenFromSpotlight, //?
-	OpenFinder_Related_end,
-} AddedFilesSource;
+	URLOriginInternal = 0,
+	URLOriginExternal,
+} URLOrigin;
 
 @interface PlaylistController : DNDArrayController {
 	IBOutlet PlaylistLoader *playlistLoader;
@@ -103,8 +93,8 @@ typedef enum {
 - (PlaylistEntry *)entryAtIndex:(int)i;
 
 // Event inlets:
-- (void)willInsertFiles:(NSArray*)urls origin:(AddedFilesSource)src;
-- (void)didInsertFiles:(NSArray*)entries origin:(AddedFilesSource)src;
+- (void)willInsertURLs:(NSArray*)urls origin:(URLOrigin)origin;
+- (void)didInsertURLs:(NSArray*)urls origin:(URLOrigin)origin;
 
 // queue methods
 - (IBAction)toggleQueued:(id)sender;
