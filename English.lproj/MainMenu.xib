@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2234"/>
 			<integer value="21"/>
 			<integer value="29"/>
+			<integer value="2234"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -5013,14 +5013,6 @@ OQA</bytes>
 						</object>
 					</object>
 					<int key="connectionID">1583</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">positionSlider</string>
-						<reference key="source" ref="936098491"/>
-						<reference key="destination" ref="505703107"/>
-					</object>
-					<int key="connectionID">1590</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
