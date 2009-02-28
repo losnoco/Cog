@@ -26,6 +26,7 @@
 	id delegate;
 	
 	BOOL outputLaunched;
+	BOOL endOfInputReached;
 }
 
 - (id)init;

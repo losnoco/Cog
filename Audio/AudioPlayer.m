@@ -24,6 +24,7 @@
 		output = NULL;
 		bufferChain = NULL;
 		outputLaunched = NO;
+		endOfInputReached = NO;
 		
 		chainQueue = [[NSMutableArray alloc] init];
 	}
@@ -63,6 +64,7 @@
 			[anObject setShouldContinue:NO];
 		}
 		[chainQueue removeAllObjects];
+		endOfInputReached = NO;
 		
 		if (bufferChain)
 		{
@@ -168,10 +170,9 @@
 - (void)resetNextStreams
 {
 	@synchronized (chainQueue) {
-		NSUInteger count = [chainQueue count];
 		[chainQueue removeAllObjects];
 	
-		if (count) {
+		if (endOfInputReached) {
 			[self endOfInputReached:bufferChain];
 		}
 	}
@@ -223,15 +224,17 @@
 
 - (BOOL)endOfInputReached:(BufferChain *)sender //Sender is a BufferChain
 {
-	BufferChain *newChain = nil;
-
-	nextStreamUserInfo = [sender userInfo];
-	[nextStreamUserInfo retain]; //Retained because when setNextStream is called, it will be released!!!
-	
-	[self requestNextStream: nextStreamUserInfo];
-	newChain = [[BufferChain alloc] initWithController:self];
-	
 	@synchronized (chainQueue) {
+		BufferChain *newChain = nil;
+		
+		nextStreamUserInfo = [sender userInfo];
+		[nextStreamUserInfo retain]; //Retained because when setNextStream is called, it will be released!!!
+		
+		[self requestNextStream: nextStreamUserInfo];
+		newChain = [[BufferChain alloc] initWithController:self];
+	
+		endOfInputReached = YES;
+		
 		BufferChain *lastChain = [chainQueue lastObject];
 		if (lastChain == nil) {
 			lastChain = bufferChain;
@@ -270,8 +273,9 @@
 		}
 		
 		[self addChainToQueue:newChain];
+
+		[newChain release];
 	}
-	[newChain release];
 	
 	return YES;
 }
@@ -281,6 +285,8 @@
 	@synchronized(chainQueue) {
 		if ([chainQueue count] <= 0)
 		{
+			endOfInputReached = NO;
+			
 			//End of playlist
 			[self stop];
 			
