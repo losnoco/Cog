@@ -628,6 +628,8 @@
 	[[NSUserDefaults standardUserDefaults] setBool:s forKey:@"shuffle"];
 	if (s == YES)
 		[self resetShuffleList];
+	
+	[audioPlayer resetNextStreams];
 }
 - (BOOL)shuffle
 {
@@ -636,6 +638,7 @@
 - (void)setRepeat:(RepeatMode)r
 {
 	[[NSUserDefaults standardUserDefaults] setInteger:r forKey:@"repeatMode"];
+	[audioPlayer resetNextStreams];
 }
 - (RepeatMode)repeat
 {
