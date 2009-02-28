@@ -43,6 +43,7 @@
 	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithBool:YES], @"enableAudioScrobbler",
 		[NSNumber numberWithBool:NO],  @"automaticallyLaunchLastFM",
+		[NSNumber numberWithDouble:100.0], @"volume",
 		nil];
 		
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
@@ -62,9 +63,10 @@
 
 - (void)awakeFromNib
 {
+	double volume = [[NSUserDefaults standardUserDefaults] doubleForKey:@"volume"];
 
-	[volumeSlider setDoubleValue:logarithmicToLinear(100.0)];
-	[audioPlayer setVolume: 100];
+	[volumeSlider setDoubleValue:logarithmicToLinear(volume)];
+	[audioPlayer setVolume:volume];
 
 	[self setSeekable:NO];
 }
@@ -268,6 +270,8 @@
 	NSLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue]));
 
 	[audioPlayer setVolume:linearToLogarithmic([sender doubleValue])];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
 
 /* selector for NSTimer - gets passed the Timer object itself
@@ -451,9 +455,10 @@
 
 - (IBAction)volumeDown:(id)sender
 {
-	double newVolume;
-	newVolume = [audioPlayer volumeDown:DEFAULT_VOLUME_DOWN];
+	double newVolume = [audioPlayer volumeDown:DEFAULT_VOLUME_DOWN];
 	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
+	
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 
 }
 
@@ -463,6 +468,7 @@
 	newVolume = [audioPlayer volumeUp:DEFAULT_VOLUME_UP];
 	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
 
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player requestNextStream:(id)userInfo
