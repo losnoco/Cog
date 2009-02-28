@@ -243,7 +243,8 @@
 					
 					/*uint8_t misc =*/ mad_bit_read(&stream.anc_ptr, 8);
 					
-					/*uint8_t mp3Gain =*/ mad_bit_read(&stream.anc_ptr, 8);
+					uint8_t mp3Gain = mad_bit_read(&stream.anc_ptr, 8);
+					NSLog(@"Gain: %i", mp3Gain);
 					
 					/*uint8_t unused =*/mad_bit_read(&stream.anc_ptr, 2);
 					/*uint8_t surroundInfo =*/ mad_bit_read(&stream.anc_ptr, 3);
@@ -419,11 +420,9 @@ audio_linear_round(unsigned int bits,
 		} 
 	} 
 	
-	
-	
 	// Output to a file
 	// FILE *f = fopen("data.raw", "a");
-	// fwrite(_outputBuffer, sizeof(char), _outputFrames, f);
+	// fwrite(_outputBuffer, channels * 2, _outputFrames, f);
 	// fclose(f);
 	
 }
@@ -607,7 +606,7 @@ audio_linear_round(unsigned int bits,
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithFloat:sampleRate],@"sampleRate",
 		[NSNumber numberWithInt:bitrate],@"bitrate",
-		[NSNumber numberWithLong:totalFrames],@"totalFrames",
+		[NSNumber numberWithLong:totalFrames - (_startPadding + _endPadding)],@"totalFrames",
 		[NSNumber numberWithBool:[_source seekable]], @"seekable",
 		@"big", @"endian",
 		nil];
