@@ -168,10 +168,13 @@
 - (void)resetNextStreams
 {
 	@synchronized (chainQueue) {
+		NSUInteger count = [chainQueue count];
 		[chainQueue removeAllObjects];
-	}
 	
-	[self endOfInputReached:bufferChain];
+		if (count) {
+			[self endOfInputReached:bufferChain];
+		}
+	}
 }
 
 
