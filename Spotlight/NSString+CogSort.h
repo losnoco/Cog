@@ -14,3 +14,9 @@
 - (NSComparisonResult)compareTrackNumbers:(NSString *)aString;
 
 @end
+
+@interface NSURL (CogSort)
+
+- (NSComparisonResult)compareTrackNumbers:(NSURL *)aURL;
+
+@end

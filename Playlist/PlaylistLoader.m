@@ -201,15 +201,11 @@
 	NSArray *sortedURLs;
 	if (sort == YES)
 	{
-		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"absoluteString" ascending:YES];
-
-		sortedURLs = [expandedURLs sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
-
-		[sortDescriptor release];
+		sortedURLs = [expandedURLs sortedArrayUsingSelector:@selector(compareTrackNumbers:)];
 	}
 	else
 	{
-		sortedURLs = [expandedURLs copy];
+		sortedURLs = expandedURLs;
 	}
 
 	for (url in sortedURLs)

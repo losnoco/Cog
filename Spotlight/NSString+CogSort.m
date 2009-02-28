@@ -19,3 +19,12 @@
 }
 
 @end
+
+@implementation NSURL (CogSort)
+
+- (NSComparisonResult)compareTrackNumbers:(NSURL *)aURL
+{
+	return [[self absoluteString] compareTrackNumbers:[aURL absoluteString]];
+}
+
+@end
