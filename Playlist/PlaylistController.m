@@ -14,6 +14,7 @@
 #import "Shuffle.h"
 #import "SpotlightWindowController.h"
 #import "RepeatTransformers.h"
+#import "ShuffleTransformers.h"
 #import "StatusImageTransformer.h"
 #import "ToggleQueueTitleTransformer.h"
 #import "TagEditorController.h"
@@ -45,7 +46,11 @@
 	NSValueTransformer *repeatModeImageTransformer = [[[RepeatModeImageTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:repeatModeImageTransformer
                                     forName:@"RepeatModeImageTransformer"];
-
+	
+	NSValueTransformer *shuffleImageTransformer = [[[ShuffleImageTransformer alloc] init] autorelease];
+    [NSValueTransformer setValueTransformer:shuffleImageTransformer
+                                    forName:@"ShuffleImageTransformer"];
+	
 	NSValueTransformer *statusImageTransformer = [[[StatusImageTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:statusImageTransformer
                                     forName:@"StatusImageTransformer"];
@@ -331,12 +336,9 @@
 		[self resetShuffleList];
 }
 
-- (IBAction)takeShuffleFromObject:(id)sender
+- (IBAction)toggleShuffle:(id)sender
 {
-	if( [sender respondsToSelector: @selector(boolValue)] )
-		[self setShuffle: [sender boolValue]];
-	else
-		[self setShuffle: [sender state]];
+	[self setShuffle: ![self shuffle]];
 }
 
 - (IBAction)toggleRepeat:(id)sender

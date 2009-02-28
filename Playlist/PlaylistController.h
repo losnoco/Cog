@@ -77,7 +77,7 @@ typedef enum {
 /* Methods for undoing various actions */
 - (NSUndoManager *)undoManager;
 
-- (IBAction)takeShuffleFromObject:(id)sender;
+- (IBAction)toggleShuffle:(id)sender;
 
 - (IBAction)toggleRepeat:(id)sender;
 

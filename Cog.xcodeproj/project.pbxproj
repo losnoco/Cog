@@ -18,6 +18,8 @@
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
 		17211A7E0D68B7C500911CA9 /* FileTree.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17211A7C0D68B7C500911CA9 /* FileTree.xib */; };
 		17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */; };
+		172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12320F5911D20078EF0C /* RepeatTransformers.m */; };
+		172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */; };
 		173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173428F40D5FB1C400E8D854 /* EntriesController.m */; };
 		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
@@ -79,7 +81,6 @@
 		179D03270E0CB2500064A77A /* PathWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D031B0E0CB2500064A77A /* PathWatcher.m */; };
 		179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D031D0E0CB2500064A77A /* SmartFolderNode.m */; };
 		17A140E90D88B954004852F9 /* FilePlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A140E80D88B954004852F9 /* FilePlaylistEntry.m */; };
-		17A8F6370D6A7B0F0095DA13 /* RepeatTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A8F6360D6A7B0F0095DA13 /* RepeatTransformers.m */; };
 		17A8F6850D6A7FCA0095DA13 /* repeat_all.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F6820D6A7FCA0095DA13 /* repeat_all.png */; };
 		17A8F6860D6A7FCA0095DA13 /* repeat_none.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F6830D6A7FCA0095DA13 /* repeat_none.png */; };
 		17A8F6870D6A7FCA0095DA13 /* repeat_one.png in Resources */ = {isa = PBXBuildFile; fileRef = 17A8F6840D6A7FCA0095DA13 /* repeat_one.png */; };
@@ -518,6 +519,10 @@
 		17211A7D0D68B7C500911CA9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileTree.xib; sourceTree = "<group>"; };
 		17249F0D0D82E17700F33392 /* ToggleQueueTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToggleQueueTitleTransformer.h; sourceTree = "<group>"; };
 		17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToggleQueueTitleTransformer.m; sourceTree = "<group>"; };
+		172A12310F5911D20078EF0C /* RepeatTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RepeatTransformers.h; path = Window/RepeatTransformers.h; sourceTree = "<group>"; };
+		172A12320F5911D20078EF0C /* RepeatTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RepeatTransformers.m; path = Window/RepeatTransformers.m; sourceTree = "<group>"; };
+		172A123A0F5912AE0078EF0C /* ShuffleTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShuffleTransformers.h; path = Window/ShuffleTransformers.h; sourceTree = "<group>"; };
+		172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ShuffleTransformers.m; path = Window/ShuffleTransformers.m; sourceTree = "<group>"; };
 		173428F30D5FB1C400E8D854 /* EntriesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntriesController.h; sourceTree = "<group>"; };
 		173428F40D5FB1C400E8D854 /* EntriesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntriesController.m; sourceTree = "<group>"; };
 		17342A990D5FD20B00E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -613,8 +618,6 @@
 		179D031D0E0CB2500064A77A /* SmartFolderNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SmartFolderNode.m; path = FileTree/SmartFolderNode.m; sourceTree = "<group>"; };
 		17A140E70D88B954004852F9 /* FilePlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePlaylistEntry.h; sourceTree = "<group>"; };
 		17A140E80D88B954004852F9 /* FilePlaylistEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilePlaylistEntry.m; sourceTree = "<group>"; };
-		17A8F6350D6A7B0F0095DA13 /* RepeatTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatTransformers.h; sourceTree = "<group>"; };
-		17A8F6360D6A7B0F0095DA13 /* RepeatTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepeatTransformers.m; sourceTree = "<group>"; };
 		17A8F6820D6A7FCA0095DA13 /* repeat_all.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_all.png; path = Images/repeat_all.png; sourceTree = "<group>"; };
 		17A8F6830D6A7FCA0095DA13 /* repeat_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_none.png; path = Images/repeat_none.png; sourceTree = "<group>"; };
 		17A8F6840D6A7FCA0095DA13 /* repeat_one.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = repeat_one.png; path = Images/repeat_one.png; sourceTree = "<group>"; };
@@ -1128,6 +1131,10 @@
 		17E0D5D20F520E75005B6FED /* Window */ = {
 			isa = PBXGroup;
 			children = (
+				172A123A0F5912AE0078EF0C /* ShuffleTransformers.h */,
+				172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */,
+				172A12310F5911D20078EF0C /* RepeatTransformers.h */,
+				172A12320F5911D20078EF0C /* RepeatTransformers.m */,
 				17E0D6180F520F9F005B6FED /* VolumeButton.h */,
 				17E0D6190F520F9F005B6FED /* VolumeButton.m */,
 				17E0D61A0F520F9F005B6FED /* VolumeSlider.h */,
@@ -1334,8 +1341,6 @@
 				8E9A2ED80BA78D9D0091081B /* IndexFormatter.m */,
 				173428F30D5FB1C400E8D854 /* EntriesController.h */,
 				173428F40D5FB1C400E8D854 /* EntriesController.m */,
-				17A8F6350D6A7B0F0095DA13 /* RepeatTransformers.h */,
-				17A8F6360D6A7B0F0095DA13 /* RepeatTransformers.m */,
 				170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */,
 				170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */,
 				17B7DD7B0D7CD10D00320E70 /* BlankZeroFormatter.h */,
@@ -1811,7 +1816,6 @@
 				56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */,
 				56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */,
 				56DB08580D67186500453B6A /* NSString+CogSort.m in Sources */,
-				17A8F6370D6A7B0F0095DA13 /* RepeatTransformers.m in Sources */,
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
 				17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */,
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
@@ -1842,6 +1846,8 @@
 				17E0D6170F520F87005B6FED /* StringToURLTransformer.m in Sources */,
 				17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */,
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
+				172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */,
+				172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
