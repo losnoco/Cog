@@ -24,6 +24,9 @@
 	if (self)
 	{
 		[self initDefaults];
+		
+		seekable = NO;
+		fading = NO;
 	
 		audioPlayer = [[AudioPlayer alloc] init];
 		[audioPlayer setDelegate:self];
@@ -276,7 +279,8 @@
 		[audioPlayer setVolume:originalVolume];
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
 		[audioTimer invalidate];
-		[self setPlaybackStatus: kCogStatusPaused];
+		
+		fading = NO;
 	}
 	
 }
@@ -300,7 +304,8 @@
 	{
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
 		[audioTimer invalidate];
-		[self setPlaybackStatus: kCogStatusPlaying];
+		
+		fading = NO;
 	}
 	
 }
@@ -310,8 +315,9 @@
 	double time = 0.1;
 	
 	// we can not allow multiple fade timers to be registered
-	if (playbackStatus == kCogStatusFading)
+	if (YES == fading)
 		return;
+	fading = YES;
 
 	NSNumber  *originalVolume = [NSNumber numberWithDouble: [audioPlayer volume]];
 	NSTimer   *fadeTimer;
@@ -335,9 +341,6 @@
 		[[NSRunLoop currentRunLoop] addTimer:fadeTimer forMode:NSRunLoopCommonModes];
 		[self pauseResume:self];
 	}
-
-	[self setPlaybackStatus: kCogStatusFading];
-
 }
 
 - (IBAction)skipToNextAlbum:(id)sender

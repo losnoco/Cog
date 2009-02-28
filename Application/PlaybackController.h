@@ -30,6 +30,7 @@
 	int playbackStatus;
 	double position;
 	BOOL seekable;
+	BOOL fading;
 	
 	AudioScrobbler *scrobbler;
 	
