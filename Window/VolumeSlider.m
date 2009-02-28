@@ -39,7 +39,7 @@
 	double value = [self doubleValue];
 	double volume = linearToLogarithmic(value);
 	
-	NSString *text = [[NSString alloc] initWithFormat:@"%0.lf", volume];
+	NSString *text = [[NSString alloc] initWithFormat:@"%0.lf%%", volume];
 	
 	NSSize size = [toolTip suggestedSizeForTooltip:text];
 	NSPoint mouseLocation = [NSEvent mouseLocation];
