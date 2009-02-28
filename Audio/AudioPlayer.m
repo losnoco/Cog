@@ -164,6 +164,16 @@
 	
 }
 
+// Called when the playlist changed before we actually started playing a requested stream. We will re-request.
+- (void)resetNextStreams
+{
+	@synchronized (chainQueue) {
+		[chainQueue removeAllObjects];
+	}
+	
+	[self endOfInputReached:bufferChain];
+}
+
 
 - (void)setShouldContinue:(BOOL)s
 {

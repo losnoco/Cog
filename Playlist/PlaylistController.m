@@ -166,6 +166,8 @@
 		if (lowerIndex != NSNotFound)
 			index = lowerIndex;
 	}
+	
+	[playbackController playlistDidChange:self];
 }
 
 - (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
@@ -308,6 +310,8 @@
 	
 	if ([self shuffle] == YES)
 		[self resetShuffleList];
+
+	[playbackController playlistDidChange:self];
 }
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors
@@ -326,6 +330,8 @@
 
 	[super setSortDescriptors:sortDescriptors];
 	[self rearrangeObjects];
+
+	[playbackController playlistDidChange:self];
 }
 		
 - (IBAction)sortByPath

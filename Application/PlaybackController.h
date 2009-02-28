@@ -72,6 +72,9 @@
 - (void)playEntryAtIndex:(int)i;
 - (void)playEntry:(PlaylistEntry *)pe;
 
+// Playlist notifications
+- (void)playlistDidChange:(PlaylistController *)p;
+
 // For bindings
 
 - (void)setPosition:(double)p;

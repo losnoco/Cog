@@ -549,6 +549,11 @@
 	playbackStatus = status;
 }
 
+- (void)playlistDidChange:(PlaylistController *)p
+{
+	[audioPlayer resetNextStreams];
+}
+
 - (void)setPosition:(double)p
 {
 	position = p;

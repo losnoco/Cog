@@ -50,6 +50,7 @@
 
 - (void)setNextStream:(NSURL *)url;
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo;
+- (void)resetNextStreams;
 
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
@@ -68,6 +69,7 @@
 
 - (void)requestNextStream:(id)userInfo;
 - (void)requestNextStreamMainThread:(id)userInfo;
+
 - (void)notifyStreamChanged:(id)userInfo;
 - (void)notifyStreamChangedMainThread:(id)userInfo;
 
