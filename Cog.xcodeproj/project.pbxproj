@@ -20,6 +20,7 @@
 		17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */; };
 		172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12320F5911D20078EF0C /* RepeatTransformers.m */; };
 		172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */; };
+		172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */; };
 		173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173428F40D5FB1C400E8D854 /* EntriesController.m */; };
 		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
@@ -135,7 +136,6 @@
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
-		56DB08580D67186500453B6A /* NSString+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08570D67186500453B6A /* NSString+CogSort.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -523,6 +523,8 @@
 		172A12320F5911D20078EF0C /* RepeatTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RepeatTransformers.m; path = Window/RepeatTransformers.m; sourceTree = "<group>"; };
 		172A123A0F5912AE0078EF0C /* ShuffleTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShuffleTransformers.h; path = Window/ShuffleTransformers.h; sourceTree = "<group>"; };
 		172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ShuffleTransformers.m; path = Window/ShuffleTransformers.m; sourceTree = "<group>"; };
+		172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CogSort.h"; sourceTree = "<group>"; };
+		172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CogSort.m"; sourceTree = "<group>"; };
 		173428F30D5FB1C400E8D854 /* EntriesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntriesController.h; sourceTree = "<group>"; };
 		173428F40D5FB1C400E8D854 /* EntriesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntriesController.m; sourceTree = "<group>"; };
 		17342A990D5FD20B00E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -692,8 +694,6 @@
 		56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNumber+CogSort.m"; path = "Spotlight/NSNumber+CogSort.m"; sourceTree = "<group>"; };
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
-		56DB08560D67186500453B6A /* NSString+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+CogSort.h"; path = "Spotlight/NSString+CogSort.h"; sourceTree = "<group>"; };
-		56DB08570D67186500453B6A /* NSString+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+CogSort.m"; path = "Spotlight/NSString+CogSort.m"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PreferencePaneProtocol.h; path = Preferences/SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
 		8E07AAEF0AAC910500A4B32F /* SS_PrefsController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PrefsController.h; path = Preferences/SS_PrefsController.h; sourceTree = "<group>"; };
@@ -885,6 +885,8 @@
 		177EC0110B8BC2CF0000BC8C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */,
+				172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */,
 				177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */,
 				177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */,
 				177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */,
@@ -1275,8 +1277,6 @@
 		56DB08340D67166000453B6A /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				56DB08560D67186500453B6A /* NSString+CogSort.h */,
-				56DB08570D67186500453B6A /* NSString+CogSort.m */,
 				56DB08530D67185300453B6A /* NSArray+CogSort.h */,
 				56DB08540D67185300453B6A /* NSArray+CogSort.m */,
 				56C63D8F0D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.h */,
@@ -1815,7 +1815,6 @@
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,
 				56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */,
 				56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */,
-				56DB08580D67186500453B6A /* NSString+CogSort.m in Sources */,
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
 				17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */,
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
@@ -1848,6 +1847,7 @@
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
 				172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */,
 				172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */,
+				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
