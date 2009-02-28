@@ -28,6 +28,7 @@
 		1738589B0E0D92DD00488CD4 /* SideBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173858950E0D92DD00488CD4 /* SideBarController.m */; };
 		1738589D0E0D92DD00488CD4 /* SideWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173858990E0D92DD00488CD4 /* SideWindowController.m */; };
 		173A43A10F3FD26500676A7B /* ToolTipWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 173A43A00F3FD26500676A7B /* ToolTipWindow.m */; };
+		1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752C36B0F59E00100F85F28 /* PlaybackButtons.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
 		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
@@ -537,6 +538,8 @@
 		173858990E0D92DD00488CD4 /* SideWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideWindowController.m; path = SideView/SideWindowController.m; sourceTree = "<group>"; };
 		173A439F0F3FD26500676A7B /* ToolTipWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToolTipWindow.h; path = ToolTip/ToolTipWindow.h; sourceTree = "<group>"; };
 		173A43A00F3FD26500676A7B /* ToolTipWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ToolTipWindow.m; path = ToolTip/ToolTipWindow.m; sourceTree = "<group>"; };
+		1752C36A0F59E00100F85F28 /* PlaybackButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaybackButtons.h; path = Window/PlaybackButtons.h; sourceTree = "<group>"; };
+		1752C36B0F59E00100F85F28 /* PlaybackButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaybackButtons.m; path = Window/PlaybackButtons.m; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
 		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
@@ -1133,6 +1136,8 @@
 		17E0D5D20F520E75005B6FED /* Window */ = {
 			isa = PBXGroup;
 			children = (
+				1752C36A0F59E00100F85F28 /* PlaybackButtons.h */,
+				1752C36B0F59E00100F85F28 /* PlaybackButtons.m */,
 				172A123A0F5912AE0078EF0C /* ShuffleTransformers.h */,
 				172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */,
 				172A12310F5911D20078EF0C /* RepeatTransformers.h */,
@@ -1848,6 +1853,7 @@
 				172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */,
 				172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */,
 				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
+				1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="29"/>
 			<integer value="2234"/>
 			<integer value="21"/>
+			<integer value="29"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -5047,22 +5047,6 @@ OQA</bytes>
 					<int key="connectionID">1597</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">playbackButtons</string>
-						<reference key="source" ref="936098491"/>
-						<reference key="destination" ref="40234197"/>
-					</object>
-					<int key="connectionID">1603</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">playbackButtonClick:</string>
-						<reference key="source" ref="936098491"/>
-						<reference key="destination" ref="40234197"/>
-					</object>
-					<int key="connectionID">1604</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">changeVolume:</string>
 						<reference key="source" ref="936098491"/>
@@ -6785,14 +6769,6 @@ OQA</bytes>
 					<int key="connectionID">2388</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">playbackButtonClick:</string>
-						<reference key="source" ref="936098491"/>
-						<reference key="destination" ref="554424892"/>
-					</object>
-					<int key="connectionID">2389</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">image: shuffle</string>
 						<reference key="source" ref="865953109"/>
@@ -6875,6 +6851,22 @@ OQA</bytes>
 						</object>
 					</object>
 					<int key="connectionID">2400</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">playbackController</string>
+						<reference key="source" ref="40234197"/>
+						<reference key="destination" ref="936098491"/>
+					</object>
+					<int key="connectionID">2401</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">playbackController</string>
+						<reference key="source" ref="554424892"/>
+						<reference key="destination" ref="936098491"/>
+					</object>
+					<int key="connectionID">2402</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -9375,6 +9367,7 @@ OQA</bytes>
 					<string>1532.ImportedFromIB2</string>
 					<string>1533.IBPluginDependency</string>
 					<string>1533.ImportedFromIB2</string>
+					<string>1537.CustomClassName</string>
 					<string>1537.IBPluginDependency</string>
 					<string>1537.ImportedFromIB2</string>
 					<string>1538.IBPluginDependency</string>
@@ -9637,6 +9630,7 @@ OQA</bytes>
 					<string>2294.CustomClassName</string>
 					<string>2294.IBPluginDependency</string>
 					<string>2294.ImportedFromIB2</string>
+					<string>2295.CustomClassName</string>
 					<string>2295.IBPluginDependency</string>
 					<string>2295.ImportedFromIB2</string>
 					<string>2296.IBPluginDependency</string>
@@ -9994,6 +9988,7 @@ OQA</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
+					<string>PlaybackButtons</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -10256,6 +10251,7 @@ OQA</bytes>
 					<string>TrackingCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
+					<string>PlaybackButtons</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -10451,7 +10447,7 @@ OQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2400</int>
+			<int key="maxID">2402</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -10748,6 +10744,18 @@ OQA</bytes>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">PlaybackButtons</string>
+					<string key="superclassName">NSSegmentedControl</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">playbackController</string>
+						<string key="NS.object.0">PlaybackController</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Window/PlaybackButtons.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">PlaybackController</string>
 					<string key="superclassName">NSObject</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -10763,21 +10771,17 @@ OQA</bytes>
 							<string>pauseResume:</string>
 							<string>play:</string>
 							<string>playPauseResume:</string>
-							<string>playbackButtonClick:</string>
 							<string>prev:</string>
 							<string>resume:</string>
 							<string>seek:</string>
 							<string>skipToNextAlbum:</string>
 							<string>skipToPreviousAlbum:</string>
 							<string>stop:</string>
-							<string>toggleShowTimeRemaining:</string>
 							<string>volumeDown:</string>
 							<string>volumeUp:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -10802,7 +10806,6 @@ OQA</bytes>
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>outputDevices</string>
-							<string>playbackButtons</string>
 							<string>playlistController</string>
 							<string>playlistView</string>
 							<string>volumeSlider</string>
@@ -10810,7 +10813,6 @@ OQA</bytes>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSArrayController</string>
-							<string>NSSegmentedControl</string>
 							<string>PlaylistController</string>
 							<string>PlaylistView</string>
 							<string>NSSlider</string>

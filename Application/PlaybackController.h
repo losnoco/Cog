@@ -21,8 +21,6 @@
 	
 	IBOutlet NSSlider *volumeSlider;
 	
-	IBOutlet NSSegmentedControl *playbackButtons;
-	
 	IBOutlet NSArrayController *outputDevices;
 	
 	NSTimer *positionTimer;
@@ -32,8 +30,6 @@
 	int playbackStatus;
 	double position;
 	BOOL seekable;
-	
-	BOOL showTimeRemaining;
 	
 	AudioScrobbler *scrobbler;
 	
@@ -49,7 +45,6 @@
 - (IBAction)pauseResume:(id)sender;
 - (IBAction)skipToNextAlbum:(id)sender;
 - (IBAction)skipToPreviousAlbum:(id)sender;
-- (IBAction)playbackButtonClick:(id)sender;
 
 - (IBAction)play:(id)sender;
 - (IBAction)pause:(id)sender;

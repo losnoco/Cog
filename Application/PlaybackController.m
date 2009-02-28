@@ -27,9 +27,7 @@
 	
 		audioPlayer = [[AudioPlayer alloc] init];
 		[audioPlayer setDelegate:self];
-		playbackStatus = kCogStatusStopped;
-		
-		showTimeRemaining = NO;
+		[self setPlaybackStatus: kCogStatusStopped];
 		
 		scrobbler = [[AudioScrobbler alloc] init];
 		[GrowlApplicationBridge setGrowlDelegate:self];
@@ -94,7 +92,7 @@
 - (IBAction)pause:(id)sender
 {
 	[audioPlayer pause];
-	playbackStatus = kCogStatusPaused;
+	[self setPlaybackStatus: kCogStatusPaused];
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler pause];
@@ -127,24 +125,6 @@
 	PlaylistEntry *pe = [playlistController entryAtIndex:i];
 
 	[self playEntry:pe];
-}
-
-
-- (IBAction)playbackButtonClick:(id)sender
-{
-	int clickedSegment = [sender selectedSegment];
-	if (clickedSegment == 0) //Previous
-	{
-		[self prev:sender];
-	}
-	else if (clickedSegment == 1) //Play
-	{
-		[self playPauseResume:sender];
-	}
-	else if (clickedSegment == 2) //Next
-	{
-		[self next:sender];
-	}
 }
 
 
@@ -252,7 +232,8 @@
 	[self setPosition:seekTo];
 }
 
-- (void)changePlayButtonImage:(NSString *)name
+/*
+ - (void)changePlayButtonImage:(NSString *)name
 {
 	NSImage *img = [NSImage imageNamed:name];
 //	[img retain];
@@ -264,7 +245,7 @@
 	
 	[playbackButtons setImage:img forSegment:1];
 }
-
+*/
 - (IBAction)changeVolume:(id)sender
 {
 	NSLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue]));
@@ -295,7 +276,7 @@
 		[audioPlayer setVolume:originalVolume];
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
 		[audioTimer invalidate];
-		playbackStatus = kCogStatusPaused;
+		[self setPlaybackStatus: kCogStatusPaused];
 	}
 	
 }
@@ -319,7 +300,7 @@
 	{
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
 		[audioTimer invalidate];
-		playbackStatus = kCogStatusPlaying;
+		[self setPlaybackStatus: kCogStatusPlaying];
 	}
 	
 }
@@ -355,7 +336,7 @@
 		[self pauseResume:self];
 	}
 
-	playbackStatus = kCogStatusFading;
+	[self setPlaybackStatus: kCogStatusFading];
 
 }
 
@@ -521,9 +502,6 @@
 			[self setPosition:0];
 			[self setSeekable:NO]; // the player stopped, disable the slider
 		}
-		
-		//Show play image
-		[self changePlayButtonImage:@"play"];
 	}
 	else if (status == kCogStatusPlaying)
 	{
@@ -531,9 +509,6 @@
 			positionTimer = [NSTimer timerWithTimeInterval:1.00 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
 			[[NSRunLoop currentRunLoop] addTimer:positionTimer forMode:NSRunLoopCommonModes];
 		}
-		
-		//Show pause
-		[self changePlayButtonImage:@"pause"];
 	}
 	
 	if (status == kCogStatusStopped) {
@@ -546,7 +521,7 @@
 		[self setSeekable:YES];
 	}
 	
-	playbackStatus = status;
+	[self setPlaybackStatus:status];
 }
 
 - (void)playlistDidChange:(PlaylistController *)p
