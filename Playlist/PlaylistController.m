@@ -129,7 +129,7 @@
 - (void)tableView:(NSTableView *)tableView
 		didClickTableColumn:(NSTableColumn *)tableColumn
 {
-	if (shuffle == YES)
+	if ([self shuffle] == YES)
 		[self resetShuffleList];
 }
 
@@ -245,7 +245,7 @@
 		
 	[accept_urls release];
 	
-	if (shuffle == YES)
+	if ([self shuffle] == YES)
 		[self resetShuffleList];
 	
 	return YES;
@@ -260,7 +260,7 @@
 {
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 	
-	if (shuffle == YES)
+	if ([self shuffle] == YES)
 		[self resetShuffleList];
 }
 
@@ -293,7 +293,7 @@
 	
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 	
-	if (shuffle == YES)
+	if ([self shuffle] == YES)
 		[self resetShuffleList];
 }
 
@@ -323,7 +323,7 @@
 
 	[s release];	
 
-	if (shuffle == YES)
+	if ([self shuffle] == YES)
 		[self resetShuffleList];
 }
 
@@ -332,7 +332,7 @@
 	[self setSortDescriptors:nil];
 
 	[self setContent:[Shuffle shuffleList:[self content]]];
-	if (shuffle == YES)
+	if ([self shuffle] == YES)
 		[self resetShuffleList];
 }
 
@@ -343,6 +343,8 @@
 
 - (IBAction)toggleRepeat:(id)sender
 {
+	RepeatMode repeat = [self repeat];
+	
 	if (repeat == RepeatNone) {
 		[self setRepeat: RepeatOne];
 	}
@@ -359,6 +361,8 @@
 
 - (PlaylistEntry *)entryAtIndex:(int)i
 {
+	RepeatMode repeat = [self repeat];
+	
 	if (i < 0)
 	{
 		if (repeat != RepeatNone)
@@ -379,6 +383,8 @@
 
 - (PlaylistEntry *)shuffledEntryAtIndex:(int)i
 {
+	RepeatMode repeat = [self repeat];
+	
 	while (i < 0)
 	{
 		if (repeat == RepeatAll)
@@ -409,7 +415,7 @@
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe
 {
-	if (repeat == RepeatOne) {
+	if ([self repeat] == RepeatOne) {
 		return pe;
 	}
 	
@@ -431,7 +437,7 @@
 		return pe;
 	}
 	
-	if (shuffle == YES)
+	if ([self shuffle] == YES)
 	{
 		return [self shuffledEntryAtIndex:(pe.shuffleIndex + 1)];
 	}
@@ -447,7 +453,7 @@
 			i = pe.index + 1;
 		}
 		
-		if (repeat == RepeatAlbum)
+		if ([self repeat] == RepeatAlbum)
 		{
 			PlaylistEntry *next = [self entryAtIndex:i];
 			
@@ -475,11 +481,11 @@
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe
 {
-	if (repeat == RepeatOne) {
+	if ([self repeat] == RepeatOne) {
 		return pe;
 	}
 	
-	if (shuffle == YES)
+	if ([self shuffle] == YES)
 	{
 		return [self shuffledEntryAtIndex:(pe.shuffleIndex - 1)];
 	}
@@ -600,22 +606,21 @@
 
 - (void)setShuffle:(BOOL)s
 {
-	shuffle = s;
-	if (shuffle == YES)
+	[[NSUserDefaults standardUserDefaults] setBool:s forKey:@"shuffle"];
+	if (s == YES)
 		[self resetShuffleList];
 }
 - (BOOL)shuffle
 {
-	return shuffle;
+	return [[NSUserDefaults standardUserDefaults] boolForKey:@"shuffle"];
 }
 - (void)setRepeat:(RepeatMode)r
 {
-	NSLog(@"Repeat is now: %i", r);
-	repeat = r;
+	[[NSUserDefaults standardUserDefaults] setInteger:r forKey:@"repeatMode"];
 }
 - (RepeatMode)repeat
 {
-	return repeat;
+	return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeatMode"];
 }
 
 - (IBAction)clear:(id)sender

@@ -50,9 +50,6 @@ typedef enum {
 	NSString *totalTime;
 	
 	PlaylistEntry *currentEntry;
-	
-	BOOL shuffle;
-	RepeatMode repeat;
 }
 
 @property(retain) PlaylistEntry *currentEntry;
