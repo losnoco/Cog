@@ -507,6 +507,8 @@ int32 psf2_start(uint8 *buffer, uint32 length)
 			return AO_FAIL;
 		}
 				
+		free(lib_raw_file);
+		
 		#if DEBUG_LOADER
 		printf("Lib FS section: size %x bytes\n", lib->res_size);
 		#endif

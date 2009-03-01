@@ -209,16 +209,14 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	{
 		NSLog(@"ERROR: File is unknown, signature bytes are %02x %02x %02x %02x\n", buffer[0], buffer[1], buffer[2], buffer[3]);
 
-		free(buffer);
 		return NO;
 	}
 	
 	
 	if ((*types[type].start)(buffer, size) != AO_SUCCESS)
 	{
-		free(buffer);
 		NSLog(@"ERROR: Engine rejected file!\n");
-
+		
 		return NO;
 	}
 
@@ -235,7 +233,9 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	[globalLock lock];
 	
 	BOOL ret = [self openUnderLock:source];
-	
+	if (!ret) {
+		[self close];
+	}
 	return ret;
 }
 
@@ -257,7 +257,10 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 - (void)closeUnderLock
 {
 	(*types[type ].stop)();
-	free(buffer);
+	if (NULL != buffer) {
+		free(buffer);
+		buffer = NULL;
+	}
 	
 	[currentSource release];
 	currentSource = nil;
@@ -307,6 +310,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	NSDictionary *metadata = [decoder metadata];
 	
 	[decoder closeUnderLock];
+	[decoder release];
 	
 	[globalLock unlock];
 	

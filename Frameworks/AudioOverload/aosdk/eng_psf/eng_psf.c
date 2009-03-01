@@ -254,11 +254,12 @@ int32 psf_start(uint8 *buffer, uint32 length)
 		
 			// Dispose the corlett structure for the lib - we don't use it
 			free(lib);
+			free(alib_decoded);
 		}
 	}
 
 	free(file);
-//	free(lib_decoded);
+	free(lib_decoded);
 	
 	// Finally, set psfby tag
 	strcpy(psfby, "n/a");

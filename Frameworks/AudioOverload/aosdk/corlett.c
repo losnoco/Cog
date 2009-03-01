@@ -115,6 +115,10 @@ int corlett_decode(uint8 *input, uint32 input_len, uint8 **output, uint64 *size,
 	
 		// Decompress data if any
 		decomp_dat = malloc(DECOMP_MAX_SIZE);
+		if (NULL == decomp_dat) {
+			return AO_FAIL;
+		}
+		
 		decomp_length = DECOMP_MAX_SIZE;
 		if (uncompress(decomp_dat, &decomp_length, (unsigned char *)&buf[4+(res_area/4)], comp_length) != Z_OK)
 		{
