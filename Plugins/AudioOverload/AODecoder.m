@@ -291,16 +291,6 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 			nil];
 }
 
-+ (NSArray *)fileTypes
-{
-	return [NSArray arrayWithObjects:@"psf",@"minipsf",nil];
-}
-
-+ (NSArray *)mimeTypes
-{
-	return [NSArray arrayWithObjects:@"audio/x-psf", nil];
-}
-
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
 	[globalLock lock];
@@ -322,6 +312,17 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	
 	return metadata;
 }
+
++ (NSArray *)fileTypes
+{
+	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"spu", @"psf2", @"ssf", @"dsf", @"qsf", nil];
+}
+
++ (NSArray *)mimeTypes
+{
+	return [NSArray arrayWithObjects:@"audio/x-psf", nil];
+}
+
 
 
 @end
