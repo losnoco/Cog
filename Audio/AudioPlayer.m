@@ -170,6 +170,9 @@
 - (void)resetNextStreams
 {
 	@synchronized (chainQueue) {
+		for (id anObject in chainQueue) {
+			[anObject setShouldContinue:NO];
+		}
 		[chainQueue removeAllObjects];
 	
 		if (endOfInputReached) {
