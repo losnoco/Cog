@@ -256,7 +256,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 			requestAmount = maxFrames;
 		}
 		
-		(*types[type].gen)((int16_t *)((int32_t *)buf + amountRead), requestAmount);
+		(*types[type].gen)((int16_t *)((uint32_t *)buf + amountRead), requestAmount);
 		
 		amountRead += requestAmount;
 	}

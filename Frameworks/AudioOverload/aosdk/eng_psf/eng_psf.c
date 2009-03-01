@@ -191,6 +191,7 @@ int32 psf_start(uint8 *buffer, uint32 length)
 		
 		// Dispose the corlett structure for the lib - we don't use it
 		free(lib);
+		free(lib_decoded);
 	}
 
 	// now patch the main file into RAM OVER the libraries (but not the aux lib)
@@ -259,7 +260,6 @@ int32 psf_start(uint8 *buffer, uint32 length)
 	}
 
 	free(file);
-	free(lib_decoded);
 	
 	// Finally, set psfby tag
 	strcpy(psfby, "n/a");
