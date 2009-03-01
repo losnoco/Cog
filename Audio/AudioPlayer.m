@@ -174,13 +174,12 @@
 			[anObject setShouldContinue:NO];
 		}
 		[chainQueue removeAllObjects];
-	
+
 		if (endOfInputReached) {
 			[self endOfInputReached:bufferChain];
-		}
+		} 
 	}
 }
-
 
 - (void)setShouldContinue:(BOOL)s
 {
@@ -286,10 +285,10 @@
 - (void)endOfInputPlayed
 {
 	@synchronized(chainQueue) {
+		endOfInputReached = NO;
+		
 		if ([chainQueue count] <= 0)
 		{
-			endOfInputReached = NO;
-			
 			//End of playlist
 			[self stop];
 			
