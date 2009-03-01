@@ -331,7 +331,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"spu", @"psf2", @"ssf", @"dsf", @"minidsf", @"qsf", nil];
+	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"spu", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", nil];
 }
 
 + (NSArray *)mimeTypes
