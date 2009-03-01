@@ -13,8 +13,7 @@
 
 - (BOOL)open:(NSURL *)url
 {
-	_url = url;
-	[_url retain];
+	[self setURL:url];
 	
 	_fd = fopen([[url path] UTF8String], "r");
 	
@@ -43,9 +42,6 @@
 
 - (void)close
 {
-	[_url release];
-	_url = nil;
-	
 	if (_fd) 
 	{
 		fclose(_fd);
@@ -78,6 +74,7 @@
 
 - (void)dealloc {
 	[self close];
+	[self setURL:nil];
 	
 	[super dealloc];
 }
