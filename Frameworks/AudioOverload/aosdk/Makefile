@@ -42,7 +42,7 @@ EXE  = aosdk
 LIBS = -lm -lz
 
 # main objects
-OBJS = corlett.o
+OBJS = corlett.o main_original.o
 
 # port objects
 #ifeq ($(OSTYPE),linux)
@@ -51,6 +51,7 @@ OBJS = corlett.o
 #OBJS += dsnd.o
 #LIBS += -ldsound -ldxguid
 #endif
+OBJS += file.o
 
 # DSF engine
 OBJS += eng_dsf/eng_dsf.o eng_dsf/dc_hw.o eng_dsf/aica.o eng_dsf/aicadsp.o eng_dsf/arm7.o eng_dsf/arm7i.o
