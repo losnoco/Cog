@@ -193,6 +193,7 @@ int32 qsf_start(uint8 *buffer, uint32 length)
 		
 		// Dispose the corlett structure for the lib - we don't use it
 		free(lib);
+		free(lib_decoded);
 	}
 
 	// now patch the file into RAM OVER the libraries
@@ -305,7 +306,8 @@ int32 qsf_stop(void)
 {
 	free(Z80ROM);
 	free(QSamples);
-
+	free(c);
+	
 	return AO_SUCCESS;
 }
 

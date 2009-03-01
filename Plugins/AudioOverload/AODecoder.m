@@ -103,7 +103,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	{
 		NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 		
-		for (int i =0 ; i < 8; i++) {
+		for (int i = 1 ; i < 9; i++) {
 			NSString *key = [[NSString alloc] initWithUTF8String:info.title[i]];
 			NSString *value = [[NSString alloc] initWithUTF8String:info.info[i]];
 			
@@ -137,7 +137,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	ao_display_info info;
 	if ((*types[type].fillinfo)(&info) == AO_SUCCESS)
 	{
-		for (int i =0 ; i < 8; i++) {
+		for (int i = 1 ; i < 9; i++) {
 			NSString *key = [[NSString alloc] initWithUTF8String:info.title[i]];
 			NSString *value = [[NSString alloc] initWithUTF8String:info.info[i]];
 			
@@ -247,7 +247,19 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 		return 0;
 	}
 	
-	(*types[type].gen)(buf, frames);
+	const int maxFrames = 1470; // The Dreamcast decoder starts smashing things if you try decoding more than this
+	
+	int amountRead = 0;
+	while (amountRead < frames) {
+		int requestAmount = frames - amountRead;
+		if (requestAmount > maxFrames) {
+			requestAmount = maxFrames;
+		}
+		
+		(*types[type].gen)((int16_t *)((int32_t *)buf + amountRead), requestAmount);
+		
+		amountRead += requestAmount;
+	}
 
 	framesRead += frames;
 
@@ -319,7 +331,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"spu", @"psf2", @"ssf", @"dsf", @"qsf", nil];
+	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"spu", @"psf2", @"ssf", @"dsf", @"minidsf", @"qsf", nil];
 }
 
 + (NSArray *)mimeTypes

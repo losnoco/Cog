@@ -1226,6 +1226,8 @@ void *aica_start(const void *config)
 
 void aica_stop(void)
 {
+	free(AllocedAICA->buffertmpl);
+	free(AllocedAICA->buffertmpr);
 	free(AllocedAICA);
 }
 

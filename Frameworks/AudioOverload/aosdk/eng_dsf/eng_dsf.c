@@ -33,6 +33,7 @@ static char 		psfby[256];
 static uint32		decaybegin, decayend, total_samples;
 
 void *aica_start(const void *config);
+void aica_stop(void);
 void AICA_Update(void *param, INT16 **inputs, INT16 **buf, int samples);
 
 int32 dsf_start(uint8 *buffer, uint32 length)
@@ -88,6 +89,7 @@ int32 dsf_start(uint8 *buffer, uint32 length)
 
 			// Dispose the corlett structure for the lib - we don't use it
 			free(lib);
+			free(lib_decoded);
 		}
 	}
 
@@ -209,6 +211,9 @@ int32 dsf_gen(int16 *buffer, uint32 samples)
 
 int32 dsf_stop(void)
 {
+	aica_stop();
+	free(c);
+	
 	return AO_SUCCESS;
 }
 
