@@ -48,6 +48,7 @@ static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackSt
 		[badgeImage drawInRect:NSMakeRect(92, 24, badgeSize.width,badgeSize.height) fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height) operation:NSCompositeSourceOver fraction:1.0];
 		[newDockImage unlockFocus];
 		[NSApp setApplicationIconImage:newDockImage];
+		[newDockImage release];
 	}
 	else
 	{
