@@ -354,7 +354,7 @@
     }
     else
     {
-        [pe setValuesForKeysWithDictionary:entryInfo];
+		[pe setValuesForKeysWithDictionary:entryInfo];
     }
     return;
 }
