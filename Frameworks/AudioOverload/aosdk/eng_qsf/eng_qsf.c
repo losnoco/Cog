@@ -304,6 +304,7 @@ int32 qsf_gen(int16 *buffer, uint32 samples)
 
 int32 qsf_stop(void)
 {
+	z80_exit();
 	free(Z80ROM);
 	free(QSamples);
 	free(c);
