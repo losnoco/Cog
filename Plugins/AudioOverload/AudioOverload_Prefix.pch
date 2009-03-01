@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'AudioOverload' target in the 'AudioOverload' project.
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
