@@ -1169,6 +1169,14 @@ void *scsp_start(const void *config)
 	return SCSP;
 }
 
+void scsp_stop(void)
+{
+	free(AllocedSCSP->buffertmpl);
+	free(AllocedSCSP->buffertmpr);
+
+	free(AllocedSCSP);
+}
+
 
 void SCSP_set_ram_base(int which, void *base)
 {

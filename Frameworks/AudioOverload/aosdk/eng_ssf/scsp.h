@@ -25,6 +25,8 @@ struct SCSPinterface
 };
 
 void *scsp_start(const void *config);
+void scsp_stop(void);
+
 void SCSP_Update(void *param, INT16 **inputs, INT16 **buf, int samples);
 
 #define READ16_HANDLER(name)	data16_t name(offs_t offset, data16_t mem_mask)

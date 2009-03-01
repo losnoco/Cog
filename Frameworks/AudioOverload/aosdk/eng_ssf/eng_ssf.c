@@ -144,6 +144,7 @@ int32 ssf_start(uint8 *buffer, uint32 length)
 
 			// Dispose the corlett structure for the lib - we don't use it
 			free(lib);
+			free(lib_decoded);
 		}
 	}
 
@@ -271,6 +272,9 @@ int32 ssf_gen(int16 *buffer, uint32 samples)
 
 int32 ssf_stop(void)
 {
+	scsp_stop();
+	free(c);
+	
 	return AO_SUCCESS;
 }
 
