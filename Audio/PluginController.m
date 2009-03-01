@@ -71,20 +71,17 @@ static PluginController *sharedPluginController = nil;
 		if ([bundleClass conformsToProtocol:@protocol(CogContainer)]) {
 			[self setupContainer:className];
 		}
-		else if ([bundleClass conformsToProtocol:@protocol(CogDecoder)]) {
+		if ([bundleClass conformsToProtocol:@protocol(CogDecoder)]) {
 			[self setupDecoder:className];
 		}
-		else if ([bundleClass conformsToProtocol:@protocol(CogMetadataReader)]) {
+		if ([bundleClass conformsToProtocol:@protocol(CogMetadataReader)]) {
 			[self setupMetadataReader:className];
 		}
-		else if ([bundleClass conformsToProtocol:@protocol(CogPropertiesReader)]) {
+		if ([bundleClass conformsToProtocol:@protocol(CogPropertiesReader)]) {
 			[self setupPropertiesReader:className];
 		}
-		else if ([bundleClass conformsToProtocol:@protocol(CogSource)]) {
+		if ([bundleClass conformsToProtocol:@protocol(CogSource)]) {
 			[self setupSource:className];
-		}
-		else {
-			NSLog(@"Unknown plugin type!!");
 		}
 	}
 }
