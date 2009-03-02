@@ -17,6 +17,9 @@ static GlobalLock *globalLock;
 
 @implementation AODecoder
 
+// The AO SDK requires you ask for 1 frame at a time.
+#define SAMPLES_PER_FRAME 44100/60
+
 static struct 
 { 
 	uint32_t sig; 
@@ -162,6 +165,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	return frames;
 }
 
+
 - (BOOL)openUnderLock:(id<CogSource>)source
 {
 	if (![source seekable] || ![[source url] isFileURL]) {
@@ -174,21 +178,21 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 	
-	buffer = malloc(size);
-	if (!buffer) {
+	fileBuffer = malloc(size);
+	if (!fileBuffer) {
 		return NO;
 	}
 	
 	long amountRead = 0;
 	while (amountRead < size) {
-		int read = [source read:buffer+amountRead amount:size - amountRead];
+		int read = [source read:fileBuffer+amountRead amount:size - amountRead];
 		amountRead += read;
 	}
 	
 	[source close];
 	
 	type = 0;
-	int filesig = buffer[0]<<24 | buffer[1]<<16 | buffer[2]<<8 | buffer[3];
+	int filesig = fileBuffer[0]<<24 | fileBuffer[1]<<16 | fileBuffer[2]<<8 | fileBuffer[3];
 	while (types[type].sig != 0xffffffff)
 	{
 		if (filesig == types[type].sig)
@@ -207,13 +211,13 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	}
 	else
 	{
-		NSLog(@"ERROR: File is unknown, signature bytes are %02x %02x %02x %02x\n", buffer[0], buffer[1], buffer[2], buffer[3]);
+		NSLog(@"ERROR: File is unknown, signature bytes are %02x %02x %02x %02x\n", fileBuffer[0], fileBuffer[1], fileBuffer[2], fileBuffer[3]);
 
 		return NO;
 	}
 	
 	
-	if ((*types[type].start)(buffer, size) != AO_SUCCESS)
+	if ((*types[type].start)(fileBuffer, size) != AO_SUCCESS)
 	{
 		NSLog(@"ERROR: Engine rejected file!\n");
 		
@@ -221,6 +225,9 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	}
 
 	totalFrames = [self retrieveTotalFrames];
+	
+	sampleBuffer = malloc(SAMPLES_PER_FRAME * 4); // 4 == bytes per sample * channels
+	samplesInBuffer = 0;
 	
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -247,16 +254,22 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 		return 0;
 	}
 	
-	const int maxFrames = 1470; // The Dreamcast decoder starts smashing things if you try decoding more than this
-	
 	int amountRead = 0;
 	while (amountRead < frames) {
-		int requestAmount = frames - amountRead;
-		if (requestAmount > maxFrames) {
-			requestAmount = maxFrames;
+		if (samplesInBuffer == 0) {
+			// Fill them up!
+			(*types[type].gen)((int16_t *)sampleBuffer, SAMPLES_PER_FRAME);
+			samplesInBuffer = SAMPLES_PER_FRAME;
 		}
 		
-		(*types[type].gen)((int16_t *)((uint32_t *)buf + amountRead), requestAmount);
+		int requestAmount = frames - amountRead;
+		if (requestAmount > samplesInBuffer) {
+			requestAmount = samplesInBuffer;
+		}
+		
+		memcpy(((uint8_t *)buf) + amountRead*4, sampleBuffer, requestAmount*4);
+		memmove(sampleBuffer, sampleBuffer + (requestAmount*4), (samplesInBuffer - requestAmount)*4);
+		samplesInBuffer -= requestAmount;
 		
 		amountRead += requestAmount;
 	}
@@ -269,9 +282,12 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 - (void)closeUnderLock
 {
 	(*types[type ].stop)();
-	if (NULL != buffer) {
-		free(buffer);
-		buffer = NULL;
+	if (NULL != fileBuffer) {
+		free(fileBuffer);
+		fileBuffer = NULL;
+		
+		free(sampleBuffer);
+		sampleBuffer = NULL;
 	}
 	
 	[currentSource release];

@@ -10,7 +10,10 @@
 #import "Plugin.h"
 
 @interface AODecoder : NSObject<CogDecoder,CogMetadataReader> {
-	uint8_t *buffer;
+	uint8_t *fileBuffer;
+	uint8_t *sampleBuffer;
+	int samplesInBuffer;
+	
 	int type;
 	
 	BOOL closed;
