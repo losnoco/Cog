@@ -538,7 +538,7 @@
 				);
 				HEADER_SEARCH_PATHS = aosdk;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = AudioOverload;
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = framework;
@@ -562,7 +562,7 @@
 				);
 				HEADER_SEARCH_PATHS = aosdk;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = AudioOverload;
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = framework;
