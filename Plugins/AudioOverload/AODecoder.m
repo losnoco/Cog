@@ -319,6 +319,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 			[NSNumber numberWithInteger:totalFrames], @"totalFrames",
 			[NSNumber numberWithInt:0], @"bitrate",
 			[NSNumber numberWithBool:NO], @"seekable",
+			@"host", @"endian",
 			nil];
 }
 
