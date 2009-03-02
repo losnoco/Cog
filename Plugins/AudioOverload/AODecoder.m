@@ -110,6 +110,9 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 			NSString *key = [[NSString alloc] initWithUTF8String:info.title[i]];
 			NSString *value = [[NSString alloc] initWithUTF8String:info.info[i]];
 			
+			if (nil == key || nil == value)
+				continue;
+			
 			if ([key hasPrefix:@"Name"]) {
 				[dict setObject:value forKey:@"title"];
 			}
