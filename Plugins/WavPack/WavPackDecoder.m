@@ -184,27 +184,27 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 			}
 			break;
 		case 16:
-			// Convert to big endian byte order 
+			// Convert to little endian byte order 
 			alias16 = buf;
 			for(sample = 0; sample < samplesRead*channels; ++sample) {
-				*alias16++ = (int16_t)inputBuffer[sample];
+				*alias16++ = OSSwapHostToLittleInt16((int16_t)inputBuffer[sample]);
 			}
 			break;
 		case 24:
-			// Convert to big endian byte order 
+			// Convert to little endian byte order 
 			alias8 = buf;
 			for(sample = 0; sample < samplesRead * channels; ++sample) {
 				audioSample	= inputBuffer[sample];
-				*alias8++	= (int8_t)(audioSample >> 16);
-				*alias8++	= (int8_t)(audioSample >> 8);
 				*alias8++	= (int8_t)audioSample;
+				*alias8++	= (int8_t)(audioSample >> 8);
+				*alias8++	= (int8_t)(audioSample >> 16);
 			}
 			break;
 		case 32:
-			// Convert to big endian byte order 
+			// Convert to little endian byte order 
 			alias32 = buf;
 			for(sample = 0; sample < samplesRead * channels; ++sample) {
-				*alias32++ = inputBuffer[sample];
+				*alias32++ = OSSwapHostToLittleInt32(inputBuffer[sample]);
 			}
 			break;
 		default:
@@ -250,7 +250,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
-		@"host",@"endian",
+		@"little",@"endian",
 		nil];
 }
 
