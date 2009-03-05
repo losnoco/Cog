@@ -38,8 +38,7 @@
 	}
 	
 	int st = _get->run();
-	if (st < 0)
-	{
+	if (st < 0) {
 		return NO;
 	}
 
