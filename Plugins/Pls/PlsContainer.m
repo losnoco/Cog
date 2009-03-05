@@ -108,7 +108,7 @@
 		if (![scanner scanUpToString:@"=" intoString:&lhs]	|| // get LHS
 			![scanner scanString:@"=" intoString:nil]		|| // skip the =
 			![scanner scanUpToString:@"" intoString:&rhs]	|| // get RHS
-			![lhs caseInsensitiveCompare:@"File"]) // We only want file entries
+			[lhs rangeOfString:@"File" options:NSCaseInsensitiveSearch|NSAnchoredSearch].location == NSNotFound) // We only want file entries
 		{
 			[scanner release];
 			continue;
