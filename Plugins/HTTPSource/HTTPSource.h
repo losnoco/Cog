@@ -8,20 +8,17 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "Semaphore.h"
+#import <JNetLib/jnetlib.h>
+
 #import "Plugin.h"
 
 @interface HTTPSource : NSObject <CogSource>
 {
 	NSURLConnection *_connection;
 	
-	long _byteCount;
+	JNL_HTTPGet *_get;
 	
-	BOOL _responseReceived;
-	BOOL _connectionFinished;
-
-	NSMutableData *_data;
-	Semaphore *_sem;
+	long _byteCount;
 	
 	NSString *_mimeType;
 	
