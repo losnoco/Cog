@@ -25,10 +25,13 @@
 	_get->addheader("Accept:*/*");
 	
 	_get->connect([[url absoluteString] UTF8String]);
-	for(;;)
-	{
+	for(;;) {
         int status = _get->get_status();
-        if (status < 0 || status > 1) break;
+		
+        if (status < 0 || status > 1) {
+			break;
+		}
+		
         if (_get->run() < 0) {
 			return 0;
         }
@@ -39,8 +42,6 @@
 	{
 		return NO;
 	}
-
-	// length = _get.content_length();
 
 	const char *mimeType = _get->getheader("content-type");
 	if (NULL != mimeType) {
