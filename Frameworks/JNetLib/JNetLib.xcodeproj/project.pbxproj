@@ -1,0 +1,334 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		17F6C5F80F5F9D5B000D9DA9 /* asyncdns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5D50F5F9D5B000D9DA9 /* asyncdns.cpp */; };
+		17F6C5F90F5F9D5B000D9DA9 /* asyncdns.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5D60F5F9D5B000D9DA9 /* asyncdns.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C5FB0F5F9D5B000D9DA9 /* connection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5D80F5F9D5B000D9DA9 /* connection.cpp */; };
+		17F6C5FC0F5F9D5B000D9DA9 /* connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5D90F5F9D5B000D9DA9 /* connection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C5FD0F5F9D5B000D9DA9 /* httpget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5DA0F5F9D5B000D9DA9 /* httpget.cpp */; };
+		17F6C5FE0F5F9D5B000D9DA9 /* httpget.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5DB0F5F9D5B000D9DA9 /* httpget.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C5FF0F5F9D5B000D9DA9 /* httppost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5DC0F5F9D5B000D9DA9 /* httppost.cpp */; };
+		17F6C6000F5F9D5B000D9DA9 /* httppost.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5DD0F5F9D5B000D9DA9 /* httppost.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C6010F5F9D5B000D9DA9 /* httpserv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5DE0F5F9D5B000D9DA9 /* httpserv.cpp */; };
+		17F6C6020F5F9D5B000D9DA9 /* httpserv.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5DF0F5F9D5B000D9DA9 /* httpserv.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C6050F5F9D5B000D9DA9 /* jnetlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5E20F5F9D5B000D9DA9 /* jnetlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C6060F5F9D5B000D9DA9 /* listen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5E30F5F9D5B000D9DA9 /* listen.cpp */; };
+		17F6C6070F5F9D5B000D9DA9 /* listen.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5E40F5F9D5B000D9DA9 /* listen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C6090F5F9D5B000D9DA9 /* netinc.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5E60F5F9D5B000D9DA9 /* netinc.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C60B0F5F9D5B000D9DA9 /* sslconnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5E80F5F9D5B000D9DA9 /* sslconnection.cpp */; };
+		17F6C60C0F5F9D5B000D9DA9 /* sslconnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5E90F5F9D5B000D9DA9 /* sslconnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C60D0F5F9D5B000D9DA9 /* ssllisten.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5EA0F5F9D5B000D9DA9 /* ssllisten.cpp */; };
+		17F6C60E0F5F9D5B000D9DA9 /* ssllisten.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5EB0F5F9D5B000D9DA9 /* ssllisten.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C6160F5F9D5B000D9DA9 /* udpconnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5F30F5F9D5B000D9DA9 /* udpconnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F6C6170F5F9D5B000D9DA9 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C5F40F5F9D5B000D9DA9 /* util.cpp */; };
+		17F6C6180F5F9D5B000D9DA9 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F6C5F50F5F9D5B000D9DA9 /* util.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		17F6C5D50F5F9D5B000D9DA9 /* asyncdns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = asyncdns.cpp; path = jnetlib/asyncdns.cpp; sourceTree = "<group>"; };
+		17F6C5D60F5F9D5B000D9DA9 /* asyncdns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asyncdns.h; path = jnetlib/asyncdns.h; sourceTree = "<group>"; };
+		17F6C5D80F5F9D5B000D9DA9 /* connection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = connection.cpp; path = jnetlib/connection.cpp; sourceTree = "<group>"; };
+		17F6C5D90F5F9D5B000D9DA9 /* connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = connection.h; path = jnetlib/connection.h; sourceTree = "<group>"; };
+		17F6C5DA0F5F9D5B000D9DA9 /* httpget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = httpget.cpp; path = jnetlib/httpget.cpp; sourceTree = "<group>"; };
+		17F6C5DB0F5F9D5B000D9DA9 /* httpget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = httpget.h; path = jnetlib/httpget.h; sourceTree = "<group>"; };
+		17F6C5DC0F5F9D5B000D9DA9 /* httppost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = httppost.cpp; path = jnetlib/httppost.cpp; sourceTree = "<group>"; };
+		17F6C5DD0F5F9D5B000D9DA9 /* httppost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = httppost.h; path = jnetlib/httppost.h; sourceTree = "<group>"; };
+		17F6C5DE0F5F9D5B000D9DA9 /* httpserv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = httpserv.cpp; path = jnetlib/httpserv.cpp; sourceTree = "<group>"; };
+		17F6C5DF0F5F9D5B000D9DA9 /* httpserv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = httpserv.h; path = jnetlib/httpserv.h; sourceTree = "<group>"; };
+		17F6C5E20F5F9D5B000D9DA9 /* jnetlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jnetlib.h; path = jnetlib/jnetlib.h; sourceTree = "<group>"; };
+		17F6C5E30F5F9D5B000D9DA9 /* listen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = listen.cpp; path = jnetlib/listen.cpp; sourceTree = "<group>"; };
+		17F6C5E40F5F9D5B000D9DA9 /* listen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = listen.h; path = jnetlib/listen.h; sourceTree = "<group>"; };
+		17F6C5E60F5F9D5B000D9DA9 /* netinc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = netinc.h; path = jnetlib/netinc.h; sourceTree = "<group>"; };
+		17F6C5E80F5F9D5B000D9DA9 /* sslconnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sslconnection.cpp; path = jnetlib/sslconnection.cpp; sourceTree = "<group>"; };
+		17F6C5E90F5F9D5B000D9DA9 /* sslconnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sslconnection.h; path = jnetlib/sslconnection.h; sourceTree = "<group>"; };
+		17F6C5EA0F5F9D5B000D9DA9 /* ssllisten.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ssllisten.cpp; path = jnetlib/ssllisten.cpp; sourceTree = "<group>"; };
+		17F6C5EB0F5F9D5B000D9DA9 /* ssllisten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ssllisten.h; path = jnetlib/ssllisten.h; sourceTree = "<group>"; };
+		17F6C5F30F5F9D5B000D9DA9 /* udpconnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udpconnection.h; path = jnetlib/udpconnection.h; sourceTree = "<group>"; };
+		17F6C5F40F5F9D5B000D9DA9 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = util.cpp; path = jnetlib/util.cpp; sourceTree = "<group>"; };
+		17F6C5F50F5F9D5B000D9DA9 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = jnetlib/util.h; sourceTree = "<group>"; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DC2EF5B0486A6940098B216 /* JNetLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JNetLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5B0486A6940098B216 /* JNetLib.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* JNetLib */ = {
+			isa = PBXGroup;
+			children = (
+				08FB77AEFE84172EC02AAC07 /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = JNetLib;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5A0486A6940098B216 /* Info.plist */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				17F6C5D50F5F9D5B000D9DA9 /* asyncdns.cpp */,
+				17F6C5D60F5F9D5B000D9DA9 /* asyncdns.h */,
+				17F6C5D80F5F9D5B000D9DA9 /* connection.cpp */,
+				17F6C5D90F5F9D5B000D9DA9 /* connection.h */,
+				17F6C5DA0F5F9D5B000D9DA9 /* httpget.cpp */,
+				17F6C5DB0F5F9D5B000D9DA9 /* httpget.h */,
+				17F6C5DC0F5F9D5B000D9DA9 /* httppost.cpp */,
+				17F6C5DD0F5F9D5B000D9DA9 /* httppost.h */,
+				17F6C5DE0F5F9D5B000D9DA9 /* httpserv.cpp */,
+				17F6C5DF0F5F9D5B000D9DA9 /* httpserv.h */,
+				17F6C5E20F5F9D5B000D9DA9 /* jnetlib.h */,
+				17F6C5E30F5F9D5B000D9DA9 /* listen.cpp */,
+				17F6C5E40F5F9D5B000D9DA9 /* listen.h */,
+				17F6C5E60F5F9D5B000D9DA9 /* netinc.h */,
+				17F6C5E80F5F9D5B000D9DA9 /* sslconnection.cpp */,
+				17F6C5E90F5F9D5B000D9DA9 /* sslconnection.h */,
+				17F6C5EA0F5F9D5B000D9DA9 /* ssllisten.cpp */,
+				17F6C5EB0F5F9D5B000D9DA9 /* ssllisten.h */,
+				17F6C5F30F5F9D5B000D9DA9 /* udpconnection.h */,
+				17F6C5F40F5F9D5B000D9DA9 /* util.cpp */,
+				17F6C5F50F5F9D5B000D9DA9 /* util.h */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17F6C5F90F5F9D5B000D9DA9 /* asyncdns.h in Headers */,
+				17F6C5FC0F5F9D5B000D9DA9 /* connection.h in Headers */,
+				17F6C5FE0F5F9D5B000D9DA9 /* httpget.h in Headers */,
+				17F6C6000F5F9D5B000D9DA9 /* httppost.h in Headers */,
+				17F6C6020F5F9D5B000D9DA9 /* httpserv.h in Headers */,
+				17F6C6050F5F9D5B000D9DA9 /* jnetlib.h in Headers */,
+				17F6C6070F5F9D5B000D9DA9 /* listen.h in Headers */,
+				17F6C6090F5F9D5B000D9DA9 /* netinc.h in Headers */,
+				17F6C60C0F5F9D5B000D9DA9 /* sslconnection.h in Headers */,
+				17F6C60E0F5F9D5B000D9DA9 /* ssllisten.h in Headers */,
+				17F6C6160F5F9D5B000D9DA9 /* udpconnection.h in Headers */,
+				17F6C6180F5F9D5B000D9DA9 /* util.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8DC2EF4F0486A6940098B216 /* JNetLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "JNetLib" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JNetLib;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = JNetLib;
+			productReference = 8DC2EF5B0486A6940098B216 /* JNetLib.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "JNetLib" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* JNetLib */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DC2EF4F0486A6940098B216 /* JNetLib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17F6C5F80F5F9D5B000D9DA9 /* asyncdns.cpp in Sources */,
+				17F6C5FB0F5F9D5B000D9DA9 /* connection.cpp in Sources */,
+				17F6C5FD0F5F9D5B000D9DA9 /* httpget.cpp in Sources */,
+				17F6C5FF0F5F9D5B000D9DA9 /* httppost.cpp in Sources */,
+				17F6C6010F5F9D5B000D9DA9 /* httpserv.cpp in Sources */,
+				17F6C6060F5F9D5B000D9DA9 /* listen.cpp in Sources */,
+				17F6C60B0F5F9D5B000D9DA9 /* sslconnection.cpp in Sources */,
+				17F6C60D0F5F9D5B000D9DA9 /* ssllisten.cpp in Sources */,
+				17F6C6170F5F9D5B000D9DA9 /* util.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_NAME = JNetLib;
+				SYMROOT = ../../build;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_NAME = JNetLib;
+				SYMROOT = ../../build;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "JNetLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "JNetLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
