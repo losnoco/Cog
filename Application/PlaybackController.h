@@ -2,8 +2,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <Growl/GrowlApplicationBridge.h>
-
 #import "CogAudio/AudioPlayer.h"
 #import "TrackingSlider.h"
 #import "AudioScrobbler.h"
@@ -11,10 +9,16 @@
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
 
+extern NSString *CogPlaybackDidBeginNotficiation;
+extern NSString *CogPlaybackDidPauseNotficiation;
+extern NSString *CogPlaybackDidResumeNotficiation;
+extern NSString *CogPlaybackDidStopNotficiation;
+
+
 @class PlaylistController;
 @class PlaylistView;
 
-@interface PlaybackController : NSObject <GrowlApplicationBridgeDelegate>
+@interface PlaybackController : NSObject
 {
     IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaylistView *playlistView;
@@ -31,9 +35,6 @@
 	double position;
 	BOOL seekable;
 	BOOL fading;
-	
-	AudioScrobbler *scrobbler;
-	
  }
 
 @property int playbackStatus;

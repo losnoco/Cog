@@ -130,6 +130,7 @@
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
+		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
 		5604D4580D603459004F5C5D /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5604D4570D603459004F5C5D /* SpotlightPanel.xib */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
@@ -695,6 +696,8 @@
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
 		17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = Audio/CogAudio.xcodeproj; sourceTree = "<group>"; };
 		17F562260C3BD8FB0019975C /* General.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = General.xcodeproj; path = Preferences/General/General.xcodeproj; sourceTree = "<group>"; };
+		17F6C8050F603701000D9DA9 /* PlaybackEventController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackEventController.h; sourceTree = "<group>"; };
+		17F6C8060F603701000D9DA9 /* PlaybackEventController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaybackEventController.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -859,6 +862,8 @@
 				1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */,
 				171EFE8A0F59FEAE000ADC42 /* DockIconController.h */,
 				171EFE8B0F59FEAE000ADC42 /* DockIconController.m */,
+				17F6C8050F603701000D9DA9 /* PlaybackEventController.h */,
+				17F6C8060F603701000D9DA9 /* PlaybackEventController.m */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -1894,6 +1899,7 @@
 				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
 				1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */,
 				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
+				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

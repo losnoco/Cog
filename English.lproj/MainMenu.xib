@@ -2845,6 +2845,9 @@ OQA</bytes>
 			<object class="NSCustomObject" id="1036762568">
 				<string key="NSClassName">DockIconController</string>
 			</object>
+			<object class="NSCustomObject" id="424025370">
+				<string key="NSClassName">PlaybackEventController</string>
+			</object>
 			<object class="NSCustomObject" id="558455632">
 				<string key="NSClassName">AppController</string>
 			</object>
@@ -6871,6 +6874,14 @@ OQA</bytes>
 					</object>
 					<int key="connectionID">2404</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">playbackController</string>
+						<reference key="source" ref="424025370"/>
+						<reference key="destination" ref="936098491"/>
+					</object>
+					<int key="connectionID">2406</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -9188,6 +9199,11 @@ OQA</bytes>
 						<reference key="object" ref="1036762568"/>
 						<reference key="parent" ref="293114310"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2405</int>
+						<reference key="object" ref="424025370"/>
+						<reference key="parent" ref="293114310"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -9650,6 +9666,7 @@ OQA</bytes>
 					<string>24.ImportedFromIB2</string>
 					<string>24.editorWindowContentRectSynchronizationRect</string>
 					<string>2403.IBPluginDependency</string>
+					<string>2405.IBPluginDependency</string>
 					<string>268.IBEditorWindowLastContentRect</string>
 					<string>268.IBWindowTemplateEditedContentRect</string>
 					<string>268.ImportedFromIB2</string>
@@ -10272,6 +10289,7 @@ OQA</bytes>
 					<reference ref="9"/>
 					<string>{{442, 733}, {197, 103}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{314, 416}, {480, 376}}</string>
 					<string>{{314, 416}, {480, 376}}</string>
 					<reference ref="9"/>
@@ -10457,7 +10475,7 @@ OQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2404</int>
+			<int key="maxID">2406</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -10866,6 +10884,18 @@ OQA</bytes>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">PlaybackEventController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">playbackController</string>
+						<string key="NS.object.0">PlaybackController</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Application/PlaybackEventController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

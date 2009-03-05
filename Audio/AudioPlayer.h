@@ -80,11 +80,12 @@
 - (void)launchOutputThread;
 - (void)endOfInputPlayed;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
+- (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait;
 @end
 
 @protocol AudioPlayerDelegate
-- (void)audioPlayer:(AudioPlayer *)player requestNextStream:(id)userInfo; //You must use setNextStream in this method
-- (void)audioPlayer:(AudioPlayer *)player streamChanged:(id)userInfo;
-- (void)audioPlayer:(AudioPlayer *)player changedStatus:(id)status;
+- (void)audioPlayer:(AudioPlayer *)player willEndStream:(id)userInfo; //You must use setNextStream in this method
+- (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo;
+- (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(id)status;
 @end
 

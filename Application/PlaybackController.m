@@ -11,6 +11,11 @@
 
 #define DEFAULT_SEEK 5
 
+NSString *CogPlaybackDidBeginNotficiation = @"CogPlaybackDidBeginNotficiation";
+NSString *CogPlaybackDidPauseNotficiation = @"CogPlaybackDidPauseNotficiation";
+NSString *CogPlaybackDidResumeNotficiation = @"CogPlaybackDidResumeNotficiation";
+NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
+
 @synthesize playbackStatus;
 
 + (NSSet *)keyPathsForValuesAffectingSeekable
@@ -31,9 +36,6 @@
 		audioPlayer = [[AudioPlayer alloc] init];
 		[audioPlayer setDelegate:self];
 		[self setPlaybackStatus: kCogStatusStopped];
-		
-		scrobbler = [[AudioScrobbler alloc] init];
-		[GrowlApplicationBridge setGrowlDelegate:self];
 	}
 	
 	return self;
@@ -42,24 +44,12 @@
 - (void)initDefaults
 {
 	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSNumber numberWithBool:YES], @"enableAudioScrobbler",
-		[NSNumber numberWithBool:NO],  @"automaticallyLaunchLastFM",
 		[NSNumber numberWithDouble:100.0], @"volume",
 		nil];
 		
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
 
-- (NSDictionary *) registrationDictionaryForGrowl
-{
-	NSArray *notifications = [NSArray arrayWithObjects:@"Stream Changed", nil];
-	
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-		@"Cog", GROWL_APP_NAME,  
-		notifications, GROWL_NOTIFICATIONS_ALL, 
-		notifications, GROWL_NOTIFICATIONS_DEFAULT,
-		nil];
-}
 
 
 - (void)awakeFromNib
@@ -96,30 +86,17 @@
 {
 	[audioPlayer pause];
 	[self setPlaybackStatus: kCogStatusPaused];
-	
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler pause];
-	}
 }
 
 - (IBAction)resume:(id)sender
 {
 	[audioPlayer resume];
 
-	
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler resume];
-	}
 }
 
 - (IBAction)stop:(id)sender
 {
 	[audioPlayer stop];
-
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler stop];
-	}
-
 }
 
 //called by double-clicking on table
@@ -154,18 +131,6 @@
 		return;
 	
 	[audioPlayer play:[pe URL] withUserInfo:pe];
-	
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler start:pe];
-	}
-
-	[GrowlApplicationBridge notifyWithTitle:[pe title]
-								description:[pe artist]
-						   notificationName:@"Stream Changed"
-								   iconData:nil
-								   priority:0 
-								   isSticky:NO 
-							   clickContext:nil];
 }
 
 - (IBAction)next:(id)sender
@@ -455,7 +420,7 @@
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
 
-- (void)audioPlayer:(AudioPlayer *)player requestNextStream:(id)userInfo
+- (void)audioPlayer:(AudioPlayer *)player willEndStream:(id)userInfo
 {
 	PlaylistEntry *curEntry = (PlaylistEntry *)userInfo;
 	PlaylistEntry *pe;
@@ -468,28 +433,18 @@
 	[player setNextStream:[pe URL] withUserInfo:pe];
 }
 
-- (void)audioPlayer:(AudioPlayer *)player streamChanged:(id)userInfo
+- (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo
 {
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 	
 	[playlistController setCurrentEntry:pe];
 	
 	[self setPosition:0];
-
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler start:pe];
-	}
-
-	[GrowlApplicationBridge notifyWithTitle:[pe title]
-								description:[pe artist]
-						   notificationName:@"Stream Changed"
-								   iconData:nil
-								   priority:0 
-								   isSticky:NO 
-							   clickContext:nil];
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 }
 
-- (void)audioPlayer:(AudioPlayer *)player statusChanged:(id)s
+- (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(NSNumber *)s userInfo:(id)userInfo
 {
 	int status = [s intValue];
 	if (status == kCogStatusStopped || status == kCogStatusPaused)
@@ -504,6 +459,12 @@
 		{
 			[self setPosition:0];
 			[self setSeekable:NO]; // the player stopped, disable the slider
+
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidStopNotficiation object:nil];
+		}
+		else // paused
+		{
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotficiation object:nil];
 		}
 	}
 	else if (status == kCogStatusPlaying)
@@ -512,6 +473,8 @@
 			positionTimer = [NSTimer timerWithTimeInterval:1.00 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
 			[[NSRunLoop currentRunLoop] addTimer:positionTimer forMode:NSRunLoopCommonModes];
 		}
+
+		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidResumeNotficiation object:nil];
 	}
 	
 	if (status == kCogStatusStopped) {

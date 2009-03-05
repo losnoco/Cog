@@ -75,7 +75,8 @@
 	}
 	
 	bufferChain = [[BufferChain alloc] initWithController:self];
-
+	[self notifyStreamChanged:userInfo];
+	
 	while (![bufferChain open:url withOutputFormat:[output format]])
 	{
 		[bufferChain release];
@@ -206,12 +207,12 @@
 
 - (void)requestNextStream:(id)userInfo
 {
-	[self sendDelegateMethod:@selector(audioPlayer:requestNextStream:) withObject:userInfo waitUntilDone:YES];
+	[self sendDelegateMethod:@selector(audioPlayer:willEndStream:) withObject:userInfo waitUntilDone:YES];
 }
 
 - (void)notifyStreamChanged:(id)userInfo
 {
-	[self sendDelegateMethod:@selector(audioPlayer:streamChanged:) withObject:userInfo waitUntilDone:NO];
+	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:NO];
 }
 
 - (void)addChainToQueue:(BufferChain *)newChain
@@ -318,7 +319,18 @@
 	[invocation setSelector:selector];
 	[invocation setArgument:&self	atIndex:2]; //Indexes start at 2, the first being self, the second being command.
 	[invocation setArgument:&obj	atIndex:3];
+	
+	[self performSelectorOnMainThread:@selector(sendDelegateMethodMainThread:) withObject:invocation waitUntilDone:wait];
+}
 
+- (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait
+{
+	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:selector]];
+	[invocation setSelector:selector];
+	[invocation setArgument:&self	atIndex:2]; //Indexes start at 2, the first being self, the second being command.
+	[invocation setArgument:&obj	atIndex:3];
+	[invocation setArgument:&obj2	atIndex:4];
+	
 	[self performSelectorOnMainThread:@selector(sendDelegateMethodMainThread:) withObject:invocation waitUntilDone:wait];
 }
 
@@ -330,7 +342,7 @@
 
 - (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait
 {	
-	[self sendDelegateMethod:@selector(audioPlayer:statusChanged:) withObject:[NSNumber numberWithInt:status] waitUntilDone:wait];
+	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:[NSNumber numberWithInt:status] withObject:[bufferChain userInfo] waitUntilDone:wait];
 }
 
 - (void)setPlaybackStatus:(int)status
