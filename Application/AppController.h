@@ -83,7 +83,4 @@ OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *us
 - (IBAction)decreaseFontSize:(id)sender;
 - (void)changeFontSize:(float)size;
 
-// return the operation queue
-- (NSOperationQueue *)sharedOperationQueue;
-
 @end

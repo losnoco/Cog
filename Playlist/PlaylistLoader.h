@@ -20,22 +20,22 @@ typedef enum {
 
 @interface PlaylistLoader : NSObject {
 	IBOutlet PlaylistController *playlistController;
+	
+	NSOperationQueue *queue;
 }
 
-- (void)initDefaults;
-
-//load arrays of urls...
+// Load arrays of urls...
 - (NSArray*)addURLs:(NSArray *)urls sort:(BOOL)sort;
 - (NSArray*)addURL:(NSURL *)url;
 - (NSArray*)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort;
 
-//save playlist, auto-determines type based on extension. Uses m3u if it cannot be determined.
+// Save playlist, auto-determines type based on extension. Uses m3u if it cannot be determined.
 - (BOOL)save:(NSString *)filename;
 - (BOOL)save:(NSString *)filename asType:(PlaylistType)type;
 - (BOOL)saveM3u:(NSString *)filename;
 - (BOOL)savePls:(NSString *)filename;
 
-//read info for a playlist entry
+// Read info for a playlist entry
 - (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe;
 
 - (void)loadInfoForEntries:(NSArray *)entries;
@@ -44,7 +44,7 @@ typedef enum {
 - (NSArray *)acceptablePlaylistTypes; //Only m3u and pls saving
 - (NSArray *)acceptableContainerTypes;
 
-// Event inlets (passed to playlist controler):
+// Events (passed to playlist controler):
 - (void)willInsertURLs:(NSArray*)urls origin:(URLOrigin)origin;
 - (void)didInsertURLs:(NSArray*)entries origin:(URLOrigin)origin;
 

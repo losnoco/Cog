@@ -843,10 +843,6 @@
 
 	//Auto start playback
 	if (shouldPlay	&& [[entriesController entries] count] > 0) {
-		// HACK ALERT!
-		[[urls objectAtIndex:0] setValuesForKeysWithDictionary:[playlistLoader readEntryInfo:[urls objectAtIndex:0]]];
-		// END HACK
-		
 		[playbackController playEntry: [urls objectAtIndex:0]];
 	}
 }

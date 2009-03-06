@@ -26,17 +26,19 @@
 	self = [super init];
 	if (self)
 	{
-		[self initDefaults];
+		queue = [[NSOperationQueue alloc] init];
+		[queue setMaxConcurrentOperationCount:1];
 	}
 	
 	return self; 
 }
 
-- (void)initDefaults
+- (void)dealloc
 {
-
+	[queue release];
+	
+	[super dealloc];
 }
-
 
 - (BOOL)save:(NSString *)filename
 {
@@ -292,10 +294,6 @@
 
 - (void)loadInfoForEntries:(NSArray *)entries
 {
-    NSOperationQueue *queue;
-    queue = [[[NSApplication sharedApplication] delegate] sharedOperationQueue];
-    
-    NSInvocationOperation *oldReadEntryInfoOperation = nil;
     for (PlaylistEntry *pe in entries)
     {
 		NSAutoreleasePool *pool =[[NSAutoreleasePool alloc] init];
@@ -305,22 +303,17 @@
                                     initWithTarget:self
                                           selector:@selector(readEntryInfo:)
                                             object:pe];
-        if (oldReadEntryInfoOperation)
-        {
-            [readEntryInfoOperation addDependency:oldReadEntryInfoOperation];
-            [oldReadEntryInfoOperation release];
-        }
+
         [readEntryInfoOperation addObserver:self
                                  forKeyPath:@"isFinished"
                                     options:NSKeyValueObservingOptionNew
                                     context:NULL];
         [queue addOperation:readEntryInfoOperation];
-        oldReadEntryInfoOperation = [readEntryInfoOperation retain];
+
 		[readEntryInfoOperation release];
 
 		[pool release];
     }
-    [oldReadEntryInfoOperation release];
 
 	[queue waitUntilAllOperationsAreFinished];
 
@@ -346,7 +339,7 @@
     NSDictionary *entryInfo = [operation result];
     PlaylistEntry *pe;
     // get the playlist entry that the thread was inspecting
-    [[operation invocation]getArgument:&pe atIndex:2];
+    [[operation invocation] getArgument:&pe atIndex:2];
     if (entryInfo == nil)
     {
         pe.error = YES;

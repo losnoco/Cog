@@ -469,8 +469,4 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 } 
 
-- (NSOperationQueue *)sharedOperationQueue
-{
-    return queue;
-}
 @end
