@@ -42,6 +42,8 @@
 
 @synthesize seekable;
 
+@synthesize metadataLoaded;
+
 // The following read-only keys depend on the values of other properties
 
 + (NSSet *)keyPathsForValuesAffectingDisplay
@@ -180,6 +182,21 @@
 	}
 	
 	return nil;
+}
+
+- (void)setMetadata:(NSDictionary *)metadata
+{
+    if (metadata == nil)
+    {
+        self.error = YES;
+        self.errorMessage = @"Unable to retrieve metadata.";
+    }
+    else
+    {
+		[self setValuesForKeysWithDictionary:metadata];
+    }
+	
+	metadataLoaded = YES;
 }
 
 @end

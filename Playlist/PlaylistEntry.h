@@ -41,6 +41,8 @@
 	NSString *endian;
 	
 	BOOL seekable;
+	
+	BOOL metadataLoaded;
 }
 
 + (NSSet *)keyPathsForValuesAffectingDisplay;
@@ -90,5 +92,9 @@
 @property(retain) NSString *endian;
 
 @property BOOL seekable;
+
+@property BOOL metadataLoaded;
+
+- (void)setMetadata:(NSDictionary *)metadata;
 
 @end

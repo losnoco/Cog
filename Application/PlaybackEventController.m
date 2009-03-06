@@ -51,7 +51,10 @@
 
 - (void)performPlaybackDidBeginActions:(PlaylistEntry *)pe
 {
-	[pe performSelectorOnMainThread:@selector(setValuesForKeysWithDictionary:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
+	// Race here, but the worst that could happen is we re-read the data
+	if ([pe metadataLoaded] != YES) {
+		[pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
+	}
 	
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler start:pe];

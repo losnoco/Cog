@@ -334,24 +334,6 @@
     return entryInfo;
 }
 
-- (void)processEntryInfo:(NSInvocationOperation *)operation
-{
-    NSDictionary *entryInfo = [operation result];
-    PlaylistEntry *pe;
-    // get the playlist entry that the thread was inspecting
-    [[operation invocation] getArgument:&pe atIndex:2];
-    if (entryInfo == nil)
-    {
-        pe.error = YES;
-        pe.errorMessage = @"Unable to retrieve properties.";
-    }
-    else
-    {
-		[pe setValuesForKeysWithDictionary:entryInfo];
-    }
-    return;
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
@@ -362,7 +344,11 @@
     {
         // stop observing
         [object removeObserver:self forKeyPath:keyPath];
-        [self performSelectorOnMainThread:@selector(processEntryInfo:) withObject:object waitUntilDone:NO];  
+
+		// get the playlist entry that the operation read for
+		PlaylistEntry *pe = nil;
+		[[object invocation] getArgument:&pe atIndex:2];
+        [pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[object result] waitUntilDone:NO];  
 		
     }
     else
