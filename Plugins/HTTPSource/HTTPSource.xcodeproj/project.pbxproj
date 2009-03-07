@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1716067D0F624E09008FA424 /* Socket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1716067C0F624E09008FA424 /* Socket.m */; };
 		1716068A0F624E27008FA424 /* HTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 171606870F624E27008FA424 /* HTTPConnection.m */; };
-		17ADB6100B97A74800257CA2 /* HTTPSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB60D0B97A74800257CA2 /* HTTPSource.mm */; };
+		1716093A0F627F02008FA424 /* HTTPSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 171609390F627F02008FA424 /* HTTPSource.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,8 +33,8 @@
 		1716067C0F624E09008FA424 /* Socket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Socket.m; sourceTree = "<group>"; };
 		171606860F624E27008FA424 /* HTTPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPConnection.h; sourceTree = "<group>"; };
 		171606870F624E27008FA424 /* HTTPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPConnection.m; sourceTree = "<group>"; };
+		171609390F627F02008FA424 /* HTTPSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPSource.m; sourceTree = "<group>"; };
 		17ADB60C0B97A74800257CA2 /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTTPSource.h; sourceTree = "<group>"; };
-		17ADB60D0B97A74800257CA2 /* HTTPSource.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = HTTPSource.mm; sourceTree = "<group>"; };
 		17ADB6340B97A8B400257CA2 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* HTTPSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPSource_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* HTTPSource.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HTTPSource.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,7 +89,7 @@
 			children = (
 				17ADB6340B97A8B400257CA2 /* Plugin.h */,
 				17ADB60C0B97A74800257CA2 /* HTTPSource.h */,
-				17ADB60D0B97A74800257CA2 /* HTTPSource.mm */,
+				171609390F627F02008FA424 /* HTTPSource.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -193,9 +193,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17ADB6100B97A74800257CA2 /* HTTPSource.mm in Sources */,
 				1716067D0F624E09008FA424 /* Socket.m in Sources */,
 				1716068A0F624E27008FA424 /* HTTPConnection.m in Sources */,
+				1716093A0F627F02008FA424 /* HTTPSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
