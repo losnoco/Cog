@@ -58,7 +58,7 @@
 	if ([[url fragment] length] == 0)
 		track_num = 0;
 	else
-		track_num = [[url fragment] intValue] + 1;
+		track_num = [[url fragment] intValue];
 	
 	track_info_t info;
 	error = gme_track_info( emu, &info, track_num );
@@ -74,7 +74,7 @@
 		[NSString stringWithUTF8String: info.game], @"album",
 		[NSString stringWithUTF8String: info.song], @"title",
 		[NSString stringWithUTF8String: info.author], @"artist",
-		[NSNumber numberWithInt:track_num], @"track",
+		[NSNumber numberWithInt:track_num+1], @"track",
 		nil];
 }
 
