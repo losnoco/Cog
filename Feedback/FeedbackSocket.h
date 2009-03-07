@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+@protocol FeedbackSocketDelegate;
 
 @interface FeedbackSocket : NSObject {
 	NSString *from;
@@ -15,15 +16,22 @@
 	NSString *message;
 	NSString *version;
 	
-	id delegate;
+	id<FeedbackSocketDelegate> delegate;
 }
 
-- (void)setDelegate:(id)d;
+- (void)setDelegate:(id<FeedbackSocketDelegate>)d;
 - (void)sendFeedback: (NSString *)f subject:(NSString *)s message:(NSString *)m version:(NSString *)v;
 
 - (void)setFrom:(NSString *)f;
 - (void)setSubject:(NSString *)s;
 - (void)setMessage:(NSString *)m;
 - (void)setVersion:(NSString *)v;
+
+@end
+
+@protocol FeedbackSocketDelegate<NSObject>
+
+- (void)feedbackDidSend:(FeedbackSocket *)feedback;
+- (void)feedbackDidNotSend:(FeedbackSocket *)feedback;
 
 @end

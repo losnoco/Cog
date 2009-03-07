@@ -8,10 +8,6 @@
 
 #import "FeedbackSocket.h"
 
-// NSNotifications
-NSString *FeedbackErrorOccurredNotification = @"FeedbackErrorOccurredNotification";
-NSString *FeedbackSentNotification = @"FeedbackSentNotification";
-
 @implementation FeedbackSocket
 
 NSString *encodeForURL(NSString *s)
@@ -72,36 +68,21 @@ NSString *encodeForURL(NSString *s)
 
 - (void)returnSuccess:(id)userInfo
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:FeedbackSentNotification object:self];
+    if ([delegate respondsToSelector:@selector(feedbackDidSend:)]) {
+		[delegate feedbackDidSend:self];
+	}
 }
 
 - (void)returnFailure:(id)userInfo
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:FeedbackErrorOccurredNotification object:self];
+    if ([delegate respondsToSelector:@selector(feedbackDidNotSend:)]) {
+		[delegate feedbackDidNotSend:self];
+	}
 }
 
--(void)setDelegate:(id)d
+-(void)setDelegate:(id<FeedbackSocketDelegate>)d
 {
-	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-	
-    if (delegate != nil) {
-        // Unregister with the notification center
-        [nc removeObserver:delegate name:FeedbackErrorOccurredNotification object:self];
-        [nc removeObserver:delegate name:FeedbackSentNotification object:self];
-        [delegate autorelease];
-    }
-    delegate = [d retain];
-    
-	// Register the new FeedbackNotification methods for the delegate
-    // Only register if the delegate implements it, though
-    if ([delegate respondsToSelector:@selector(FeedbackErrorOccurred:)])
-	{
-        [nc addObserver:delegate selector:@selector(FeedbackErrorOccurred:) name:FeedbackErrorOccurredNotification object:self];
-    }
-    if ([delegate respondsToSelector:@selector(FeedbackSent:)])
-	{
-        [nc addObserver:delegate selector:@selector(FeedbackSent:) name:FeedbackSentNotification object:self];
-    }
+    delegate = d;
 }
 
 

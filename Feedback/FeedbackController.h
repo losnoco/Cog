@@ -9,8 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "FeedbackSocket.h"
 
-@interface FeedbackController : NSObject {
-	IBOutlet NSWindow* feedbackWindow;
+@interface FeedbackController : NSWindowController<FeedbackSocketDelegate> {
 	IBOutlet NSTextField* fromView;
 	IBOutlet NSTextField* subjectView;
 	IBOutlet NSTextView* messageView;
@@ -19,7 +18,6 @@
 	FeedbackSocket *feedbackSocket;
 }
 
-- (IBAction)openFeedbackWindow:(id)sender;
 - (IBAction)sendFeedback:(id)sender;
 - (IBAction)cancel:(id)sender;
 

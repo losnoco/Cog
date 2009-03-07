@@ -11,25 +11,29 @@
 
 @implementation FeedbackController
 
-- (IBAction)openFeedbackWindow:(id)sender
+- (id)init
+{
+	return [super initWithWindowNibName:@"Feedback"];
+}
+
+- (IBAction)showWindow:(id)sender
 {	
 	[fromView setStringValue:@""];
 	[subjectView setStringValue:@""];
 	[messageView setString:@""];
 	
-	[feedbackWindow makeFirstResponder:fromView];
-	[feedbackWindow makeKeyAndOrderFront: sender];
+	[super showWindow:sender];
 }
 
 - (void)alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
 	if ([(NSNumber *)contextInfo boolValue]== YES)
 	{
-		[feedbackWindow close];
+		[[self window] close];
 	}
 }
 
-- (void)FeedbackErrorOccurred:(NSNotification *)aNotification
+- (void)feedbackDidNotSend:(FeedbackSocket *)feedback
 {
 	NSLog(@"Error sending feedback");
 	
@@ -39,10 +43,10 @@
 	[alert setMessageText:NSLocalizedString(@"FeedbackFailedMessageText", @"")];
 	[alert setInformativeText:NSLocalizedString(@"FeedbackFailedInformativeText", @"")];
 	
-	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:[NSNumber numberWithBool:NO]];
+	[alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:[NSNumber numberWithBool:NO]];
 }
 
-- (void)FeedbackSent:(NSNotification *)aNotification
+- (void)feedbackDidSend:(FeedbackSocket *)feedback
 {
 	[sendingIndicator stopAnimation:self];
 
@@ -50,7 +54,7 @@
 	[alert setMessageText:NSLocalizedString(@"FeedbackSuccessMessageText", @"")];
 	[alert setInformativeText:NSLocalizedString(@"FeedbackSuccessInformativeText", @"")];
 
-	[alert beginSheetModalForWindow:feedbackWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:[NSNumber numberWithBool:YES]];
+	[alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:[NSNumber numberWithBool:YES]];
 }
 
 
@@ -69,7 +73,7 @@
 
 - (IBAction)cancel:(id)sender
 {
-	[feedbackWindow close];
+	[[self window] close];
 }
 
 @end
