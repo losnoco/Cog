@@ -1,22 +1,17 @@
 //
-//  FileTreeController.h
+//  SideBarController.h
 //  Cog
 //
-//  Created by Vincent Spader on 2/17/08.
+//  Created by Vincent Spader on 6/21/08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
-#import "PlaylistLoader.h"
+#import "SideViewController.h"
 
 @class PlaylistLoader;
-@class SideView;
-
-@interface FileTreeViewController : NSObject {
-	IBOutlet SideView *controller;
-	IBOutlet NSOutlineView *outlineView;
+@interface FileTreeViewController : SideViewController {
+	IBOutlet PlaylistLoader *playlistLoader;
 }
-
-- (IBAction)addToPlaylist:(id)sender;
 
 @end

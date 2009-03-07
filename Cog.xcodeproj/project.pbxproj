@@ -26,8 +26,6 @@
 		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
 		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
-		1738589B0E0D92DD00488CD4 /* SideBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173858950E0D92DD00488CD4 /* SideBarController.m */; };
-		1738589D0E0D92DD00488CD4 /* SideWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173858990E0D92DD00488CD4 /* SideWindowController.m */; };
 		173A43A10F3FD26500676A7B /* ToolTipWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 173A43A00F3FD26500676A7B /* ToolTipWindow.m */; };
 		1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752C36B0F59E00100F85F28 /* PlaybackButtons.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
@@ -60,6 +58,8 @@
 		17818A990C0B27AC001C4916 /* shn.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A920C0B27AC001C4916 /* shn.icns */; };
 		17818A9A0C0B27AC001C4916 /* wav.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A930C0B27AC001C4916 /* wav.icns */; };
 		17818A9B0C0B27AC001C4916 /* wv.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A940C0B27AC001C4916 /* wv.icns */; };
+		1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1784560E0F631E24007E8021 /* FileTreeViewController.m */; };
+		178456120F631E31007E8021 /* SideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 178456110F631E31007E8021 /* SideViewController.m */; };
 		178BAB990CD4E1B700B33D47 /* GCOneShotEffectTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 178BAB940CD4E1B700B33D47 /* GCOneShotEffectTimer.m */; };
 		178BAB9A0CD4E1B700B33D47 /* GCWindowMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 178BAB960CD4E1B700B33D47 /* GCWindowMenu.m */; };
 		178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 178BAB980CD4E1B700B33D47 /* PopupButton.m */; };
@@ -67,15 +67,13 @@
 		1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */; };
 		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
-		179D02EE0E0CB0B00064A77A /* SideView.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D02EB0E0CB0B00064A77A /* SideView.m */; };
-		179D02EF0E0CB0B00064A77A /* SideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D02ED0E0CB0B00064A77A /* SideViewController.m */; };
 		179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03090E0CB2500064A77A /* ContainedNode.m */; };
 		179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D030B0E0CB2500064A77A /* ContainerNode.m */; };
 		179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D030D0E0CB2500064A77A /* DirectoryNode.m */; };
 		179D03210E0CB2500064A77A /* FileIconCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D030F0E0CB2500064A77A /* FileIconCell.m */; };
 		179D03220E0CB2500064A77A /* FileNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03110E0CB2500064A77A /* FileNode.m */; };
 		179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03130E0CB2500064A77A /* FileTreeDataSource.m */; };
-		179D03240E0CB2500064A77A /* FileTreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03150E0CB2500064A77A /* FileTreeViewController.m */; };
+		179D03240E0CB2500064A77A /* FileTreeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03150E0CB2500064A77A /* FileTreeController.m */; };
 		179D03260E0CB2500064A77A /* PathNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03190E0CB2500064A77A /* PathNode.m */; };
 		179D03270E0CB2500064A77A /* PathWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D031B0E0CB2500064A77A /* PathWatcher.m */; };
 		179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D031D0E0CB2500064A77A /* SmartFolderNode.m */; };
@@ -551,10 +549,6 @@
 		17342ABE0D5FD36400E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/OpenURLPanel.xib; sourceTree = "<group>"; };
 		173855FD0E0CC81F00488CD4 /* FileTreeOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeOutlineView.h; path = FileTree/FileTreeOutlineView.h; sourceTree = "<group>"; };
 		173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeOutlineView.m; path = FileTree/FileTreeOutlineView.m; sourceTree = "<group>"; };
-		173858940E0D92DD00488CD4 /* SideBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideBarController.h; path = SideView/SideBarController.h; sourceTree = "<group>"; };
-		173858950E0D92DD00488CD4 /* SideBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideBarController.m; path = SideView/SideBarController.m; sourceTree = "<group>"; };
-		173858980E0D92DD00488CD4 /* SideWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideWindowController.h; path = SideView/SideWindowController.h; sourceTree = "<group>"; };
-		173858990E0D92DD00488CD4 /* SideWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideWindowController.m; path = SideView/SideWindowController.m; sourceTree = "<group>"; };
 		173A439F0F3FD26500676A7B /* ToolTipWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToolTipWindow.h; path = ToolTip/ToolTipWindow.h; sourceTree = "<group>"; };
 		173A43A00F3FD26500676A7B /* ToolTipWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ToolTipWindow.m; path = ToolTip/ToolTipWindow.m; sourceTree = "<group>"; };
 		1752C36A0F59E00100F85F28 /* PlaybackButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaybackButtons.h; path = Window/PlaybackButtons.h; sourceTree = "<group>"; };
@@ -600,6 +594,10 @@
 		17818A920C0B27AC001C4916 /* shn.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = shn.icns; sourceTree = "<group>"; };
 		17818A930C0B27AC001C4916 /* wav.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = wav.icns; sourceTree = "<group>"; };
 		17818A940C0B27AC001C4916 /* wv.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = wv.icns; sourceTree = "<group>"; };
+		1784560D0F631E24007E8021 /* FileTreeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeViewController.h; path = FileTree/FileTreeViewController.h; sourceTree = "<group>"; };
+		1784560E0F631E24007E8021 /* FileTreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeViewController.m; path = FileTree/FileTreeViewController.m; sourceTree = "<group>"; };
+		178456100F631E31007E8021 /* SideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SideViewController.h; sourceTree = "<group>"; };
+		178456110F631E31007E8021 /* SideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SideViewController.m; sourceTree = "<group>"; };
 		178BAB930CD4E1B700B33D47 /* GCOneShotEffectTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCOneShotEffectTimer.h; sourceTree = "<group>"; };
 		178BAB940CD4E1B700B33D47 /* GCOneShotEffectTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCOneShotEffectTimer.m; sourceTree = "<group>"; };
 		178BAB950CD4E1B700B33D47 /* GCWindowMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCWindowMenu.h; sourceTree = "<group>"; };
@@ -612,10 +610,6 @@
 		1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaKeysApplication.m; sourceTree = "<group>"; };
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
 		179790DF0C087AB7001D6996 /* OpenURLPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OpenURLPanel.m; sourceTree = "<group>"; };
-		179D02EA0E0CB0B00064A77A /* SideView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideView.h; path = SideView/SideView.h; sourceTree = "<group>"; };
-		179D02EB0E0CB0B00064A77A /* SideView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideView.m; path = SideView/SideView.m; sourceTree = "<group>"; };
-		179D02EC0E0CB0B00064A77A /* SideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideViewController.h; path = SideView/SideViewController.h; sourceTree = "<group>"; };
-		179D02ED0E0CB0B00064A77A /* SideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideViewController.m; path = SideView/SideViewController.m; sourceTree = "<group>"; };
 		179D03080E0CB2500064A77A /* ContainedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainedNode.h; path = FileTree/ContainedNode.h; sourceTree = "<group>"; };
 		179D03090E0CB2500064A77A /* ContainedNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContainedNode.m; path = FileTree/ContainedNode.m; sourceTree = "<group>"; };
 		179D030A0E0CB2500064A77A /* ContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainerNode.h; path = FileTree/ContainerNode.h; sourceTree = "<group>"; };
@@ -628,8 +622,8 @@
 		179D03110E0CB2500064A77A /* FileNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileNode.m; path = FileTree/FileNode.m; sourceTree = "<group>"; };
 		179D03120E0CB2500064A77A /* FileTreeDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeDataSource.h; path = FileTree/FileTreeDataSource.h; sourceTree = "<group>"; };
 		179D03130E0CB2500064A77A /* FileTreeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeDataSource.m; path = FileTree/FileTreeDataSource.m; sourceTree = "<group>"; };
-		179D03140E0CB2500064A77A /* FileTreeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeViewController.h; path = FileTree/FileTreeViewController.h; sourceTree = "<group>"; };
-		179D03150E0CB2500064A77A /* FileTreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeViewController.m; path = FileTree/FileTreeViewController.m; sourceTree = "<group>"; };
+		179D03140E0CB2500064A77A /* FileTreeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeController.h; path = FileTree/FileTreeController.h; sourceTree = "<group>"; };
+		179D03150E0CB2500064A77A /* FileTreeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeController.m; path = FileTree/FileTreeController.m; sourceTree = "<group>"; };
 		179D03180E0CB2500064A77A /* PathNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathNode.h; path = FileTree/PathNode.h; sourceTree = "<group>"; };
 		179D03190E0CB2500064A77A /* PathNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PathNode.m; path = FileTree/PathNode.m; sourceTree = "<group>"; };
 		179D031A0E0CB2500064A77A /* PathWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathWatcher.h; path = FileTree/PathWatcher.h; sourceTree = "<group>"; };
@@ -792,7 +786,6 @@
 				17E0D5D20F520E75005B6FED /* Window */,
 				8E75752A09F31D5A0080F1EE /* Playlist */,
 				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
-				179DFCDF0E0C5A130064A77A /* SideView */,
 				17DDF6400E0CB6F100A2E4AD /* FileTree */,
 				8E75752309F31D5A0080F1EE /* Feedback */,
 				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
@@ -913,12 +906,14 @@
 		177EC0110B8BC2CF0000BC8C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */,
-				172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */,
 				177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */,
 				177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */,
 				177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */,
 				177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */,
+				178456100F631E31007E8021 /* SideViewController.h */,
+				178456110F631E31007E8021 /* SideViewController.m */,
+				172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */,
+				172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */,
 				8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */,
 				8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */,
 				07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */,
@@ -974,21 +969,6 @@
 				179790DF0C087AB7001D6996 /* OpenURLPanel.m */,
 			);
 			path = OpenURLPanel;
-			sourceTree = "<group>";
-		};
-		179DFCDF0E0C5A130064A77A /* SideView */ = {
-			isa = PBXGroup;
-			children = (
-				173858940E0D92DD00488CD4 /* SideBarController.h */,
-				173858950E0D92DD00488CD4 /* SideBarController.m */,
-				173858980E0D92DD00488CD4 /* SideWindowController.h */,
-				173858990E0D92DD00488CD4 /* SideWindowController.m */,
-				179D02EC0E0CB0B00064A77A /* SideViewController.h */,
-				179D02ED0E0CB0B00064A77A /* SideViewController.m */,
-				179D02EA0E0CB0B00064A77A /* SideView.h */,
-				179D02EB0E0CB0B00064A77A /* SideView.m */,
-			);
-			name = SideView;
 			sourceTree = "<group>";
 		};
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
@@ -1140,10 +1120,12 @@
 		17DDF6400E0CB6F100A2E4AD /* FileTree */ = {
 			isa = PBXGroup;
 			children = (
+				1784560D0F631E24007E8021 /* FileTreeViewController.h */,
+				1784560E0F631E24007E8021 /* FileTreeViewController.m */,
+				179D03140E0CB2500064A77A /* FileTreeController.h */,
+				179D03150E0CB2500064A77A /* FileTreeController.m */,
 				173855FD0E0CC81F00488CD4 /* FileTreeOutlineView.h */,
 				173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */,
-				179D03140E0CB2500064A77A /* FileTreeViewController.h */,
-				179D03150E0CB2500064A77A /* FileTreeViewController.m */,
 				179D03120E0CB2500064A77A /* FileTreeDataSource.h */,
 				179D03130E0CB2500064A77A /* FileTreeDataSource.m */,
 				179D03080E0CB2500064A77A /* ContainedNode.h */,
@@ -1868,21 +1850,17 @@
 				17B7DD7D0D7CD10D00320E70 /* BlankZeroFormatter.m in Sources */,
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
 				17A140E90D88B954004852F9 /* FilePlaylistEntry.m in Sources */,
-				179D02EE0E0CB0B00064A77A /* SideView.m in Sources */,
-				179D02EF0E0CB0B00064A77A /* SideViewController.m in Sources */,
 				179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */,
 				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,
 				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,
 				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
 				179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */,
-				179D03240E0CB2500064A77A /* FileTreeViewController.m in Sources */,
+				179D03240E0CB2500064A77A /* FileTreeController.m in Sources */,
 				179D03260E0CB2500064A77A /* PathNode.m in Sources */,
 				179D03270E0CB2500064A77A /* PathWatcher.m in Sources */,
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
-				1738589B0E0D92DD00488CD4 /* SideBarController.m in Sources */,
-				1738589D0E0D92DD00488CD4 /* SideWindowController.m in Sources */,
 				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,
 				173A43A10F3FD26500676A7B /* ToolTipWindow.m in Sources */,
 				17E0D5E90F520F02005B6FED /* DualWindow.m in Sources */,
@@ -1900,6 +1878,8 @@
 				1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */,
 				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
 				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
+				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
+				178456120F631E31007E8021 /* SideViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,31 +1,26 @@
 //
-//  FileTreeController.m
+//  SplitViewController.m
 //  Cog
 //
-//  Created by Vincent Spader on 2/17/08.
+//  Created by Vincent Spader on 6/20/08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import "PlaylistController.h"
 #import "FileTreeViewController.h"
-
+#import "PlaylistLoader.h"
 
 @implementation FileTreeViewController
 
-- (IBAction)addToPlaylist:(id)sender
+- (id)init
 {
-	unsigned int index;
-	NSIndexSet *selectedIndexes = [outlineView selectedRowIndexes];
-	NSMutableArray *urls = [[NSMutableArray alloc] init];
+	return [super initWithNibName:@"FileTree" bundle:[NSBundle mainBundle]];
+}
 
-	for (index = [selectedIndexes firstIndex];
-		 index != NSNotFound; index = [selectedIndexes indexGreaterThanIndex: index])  
-	{
-		[urls addObject:[[outlineView itemAtRow:index] URL]];
-	}
-	
-	[controller addToPlaylist:urls];
-	[urls release];
+
+- (void)addToPlaylist:(NSArray *)urls
+{
+	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
+	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:URLOriginExternal];
 }
 
 
