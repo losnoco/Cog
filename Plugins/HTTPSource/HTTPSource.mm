@@ -28,7 +28,7 @@
 	for(;;) {
         int status = _get->get_status();
 		
-        if (status < 0 || status > 1) {
+        if (status != 0 && status != 1) {
 			break;
 		}
 		
@@ -75,15 +75,38 @@
 {
 	int totalRead = 0;
 
+	NSTimeInterval timeout = 30;
+	BOOL timingOut = NO;
+	
 	while (totalRead < amount) {
 		int result = _get->run();
 		int amountRead = _get->get_bytes((char *)((uint8_t *)buffer) + totalRead, amount - totalRead);
 		
-		if (result != 0 && 0 == amountRead) break;
+		if (0 == amountRead) {
+			if (0 != result) break;
+			
+			if (NO == timingOut) {
+				timingOut = YES;
+				timeout = [NSDate timeIntervalSinceReferenceDate] + 30;
+			}
+			else {
+				if (timeout < [NSDate timeIntervalSinceReferenceDate]) {
+					NSLog(@"Timed out!");
+					break;
+				}
+				
+				// Sigh. We should just use blocking IO.
+				usleep(250);
+			}
+			
+		}
+		else {
+			timingOut = NO;
+		}
 
 		totalRead += amountRead;
 	}
-
+	
 	_byteCount += totalRead;
 
 	return totalRead;

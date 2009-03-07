@@ -120,7 +120,7 @@
 			int framesToRead = (CHUNK_SIZE - amountInBuffer)/bytesPerFrame;
 			int framesRead = [decoder readAudio:((char *)inputBuffer) + amountInBuffer frames:framesToRead];
 			amountInBuffer += (framesRead * bytesPerFrame);
-		
+
 			if (framesRead <= 0)
 			{
 				if (initialBufferFilled == NO) {
