@@ -85,8 +85,8 @@
 	}
 	
 	NSInteger lineLength = ((uint8_t *)newLine - (uint8_t *)_buffer);
-	NSString *line = [[NSString alloc] initWithBytes:_buffer length:lineLength encoding:NSUTF8StringEncoding];
-	NSLog(@"Received line: !%@!", line);
+	NSString *line = [[NSString alloc] initWithBytes:_buffer length:lineLength encoding:NSASCIIStringEncoding];
+	NSLog(@"Received line: \"%@\"", line);
 	memmove(_buffer, _buffer + lineLength + 2, _bufferSize - lineLength); // + 2 to skip the newline!
 	_bufferSize -= lineLength;
 	
@@ -186,7 +186,7 @@
 	for (id header in _requestHeaders) {
 		id value = [_requestHeaders objectForKey:header];
 		
-		[requestString appendFormat:@"%@:%@\r\n", header, value];
+		[requestString appendFormat:@"%@: %@\r\n", header, value];
 	}
 
 	// The final newline
