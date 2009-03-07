@@ -278,7 +278,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
 			*/
 		  int res = socket_recv(m_recv_buffer+m_recv_pos,len,0);
           
-          if (res == 0 || (res < 0 && ERRNO != EWOULDBLOCK))
+          if (res <= 0 || (res < 0 && ERRNO != EWOULDBLOCK))
           {        
             m_state=STATE_CLOSED;
             break;

@@ -18,14 +18,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 17F6C6400F5F9E3F000D9DA9 /* JNetLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* JNetLib.framework */;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
 			remoteInfo = JNetLib;
 		};
 		17F6C6800F5F9FFE000D9DA9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17F6C6400F5F9E3F000D9DA9 /* JNetLib.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* JNetLib */;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = JNetLib;
 		};
 /* End PBXContainerItemProxy section */

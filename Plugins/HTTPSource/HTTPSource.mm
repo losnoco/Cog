@@ -76,12 +76,12 @@
 	int totalRead = 0;
 
 	while (totalRead < amount) {
-		int status = _get->run();
+		int result = _get->run();
 		int amountRead = _get->get_bytes((char *)((uint8_t *)buffer) + totalRead, amount - totalRead);
 		
-		totalRead += amountRead;
+		if (result != 0 && 0 == amountRead) break;
 
-		if (status && 0 == amountRead) break;
+		totalRead += amountRead;
 	}
 
 	_byteCount += totalRead;
