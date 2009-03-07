@@ -18,7 +18,6 @@
 	{
 		[self setShowsResizeIndicator:NO];
 		[self setExcludedFromWindowsMenu:YES];
-		[self setContentBorderThickness:24.0 forEdge:NSMinYEdge];
 	}
 	
 	return self;
