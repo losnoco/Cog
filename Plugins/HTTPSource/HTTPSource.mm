@@ -7,45 +7,25 @@
 //
 
 #import "HTTPSource.h"
-#include <JNetLib/jnetlib.h>
+#import "HTTPConnection.h"
 
 @implementation HTTPSource
 
 - (BOOL)open:(NSURL *)url
 {
-	_url = [url copy];
+	_connection = [[HTTPConnection alloc] initWithURL:url];
 	
-	JNL::open_socketlib();
-	
-	_get = new JNL_HTTPGet();
-	
-	NSString *userAgent = [NSString stringWithFormat:@"User-Agent:Cog %@", [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey]];
-	_get->addheader([userAgent UTF8String]);
-	_get->addheader("Connection:close");
-	_get->addheader("Accept:*/*");
-	
-	_get->connect([[url absoluteString] UTF8String]);
-	for(;;) {
-        int status = _get->get_status();
-		
-        if (status != 0 && status != 1) {
-			break;
-		}
-		
-        if (_get->run() < 0) {
-			return 0;
-        }
-	}
-	
-	int st = _get->run();
-	if (st < 0) {
+	NSString *userAgent = [NSString stringWithFormat:@"Cog %@", [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey]];
+	[_connection setValue:userAgent forRequestHeader:@"User-Agent"];
+	[_connection setValue:@"close" forRequestHeader:@"Connection"];
+	[_connection setValue:@"*/*" forRequestHeader:@"Accept"];
+
+	BOOL success = [_connection connect];
+	if (NO == success) {
 		return NO;
 	}
-
-	const char *mimeType = _get->getheader("content-type");
-	if (NULL != mimeType) {
-		_mimeType = [[NSString alloc] initWithUTF8String:mimeType];
-	}
+	
+	_mimeType = [[_connection valueForResponseHeader:@"Content-type"] copy];
 
 	return YES;
 }
@@ -75,36 +55,13 @@
 {
 	int totalRead = 0;
 
-	NSTimeInterval timeout = 30;
-	BOOL timingOut = NO;
-	
 	while (totalRead < amount) {
-		int result = _get->run();
-		int amountRead = _get->get_bytes((char *)((uint8_t *)buffer) + totalRead, amount - totalRead);
-		
-		if (0 == amountRead) {
-			if (0 != result) break;
-			
-			if (NO == timingOut) {
-				timingOut = YES;
-				timeout = [NSDate timeIntervalSinceReferenceDate] + 30;
-			}
-			else {
-				if (timeout < [NSDate timeIntervalSinceReferenceDate]) {
-					NSLog(@"Timed out!");
-					break;
-				}
-				
-				// Sigh. We should just use blocking IO.
-				usleep(250);
-			}
-			
-		}
-		else {
-			timingOut = NO;
+		NSInteger amountReceived = [_connection receiveData:((uint8_t *)buffer) + totalRead amount:amount - totalRead];
+		if (amountReceived <= 0) {
+			break;
 		}
 
-		totalRead += amountRead;
+		totalRead += amountReceived;
 	}
 	
 	_byteCount += totalRead;
@@ -114,13 +71,9 @@
 
 - (void)close
 {
-	if (NULL != _get) {
-		delete _get;
-		_get = NULL;
-	}
-	
-	[_url release];
-	_url = nil;
+	[_connection close];
+	[_connection release];
+	_connection = nil;
 	
 	[_mimeType release];
 	_mimeType = nil;
@@ -136,7 +89,7 @@
 
 - (NSURL *)url
 {
-	return _url;
+	return [_connection URL];
 }
 
 + (NSArray *)schemes

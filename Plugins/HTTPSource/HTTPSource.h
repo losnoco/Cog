@@ -8,21 +8,19 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <JNetLib/jnetlib.h>
-
 #import "Plugin.h"
+
+@class HTTPConnection;
 
 @interface HTTPSource : NSObject <CogSource>
 {
-	NSURLConnection *_connection;
-	
-	JNL_HTTPGet *_get;
+	HTTPConnection *_connection;
 	
 	long _byteCount;
 	
 	NSString *_mimeType;
-	
-	NSURL *_url;
 }
+
+
 
 @end
