@@ -32,7 +32,7 @@
 	unsigned		seconds			= 0;
 	
 	if(nil == object || NO == [object isKindOfClass:[NSNumber class]] || isnan([object doubleValue])) {
-		return nil;
+		return @"";
 	}
 	
 	value		= (unsigned)([object doubleValue]);
