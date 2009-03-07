@@ -10,27 +10,8 @@
 		1716067D0F624E09008FA424 /* Socket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1716067C0F624E09008FA424 /* Socket.m */; };
 		1716068A0F624E27008FA424 /* HTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 171606870F624E27008FA424 /* HTTPConnection.m */; };
 		17ADB6100B97A74800257CA2 /* HTTPSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB60D0B97A74800257CA2 /* HTTPSource.mm */; };
-		17F6C6540F5F9E83000D9DA9 /* JNetLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F6C6450F5F9E3F000D9DA9 /* JNetLib.framework */; };
-		17F6C6550F5F9E86000D9DA9 /* JNetLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F6C6450F5F9E3F000D9DA9 /* JNetLib.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		17F6C6440F5F9E3F000D9DA9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F6C6400F5F9E3F000D9DA9 /* JNetLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = JNetLib;
-		};
-		17F6C6800F5F9FFE000D9DA9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F6C6400F5F9E3F000D9DA9 /* JNetLib.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = JNetLib;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		17F6C6610F5F9E8C000D9DA9 /* CopyFiles */ = {
@@ -39,7 +20,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17F6C6540F5F9E83000D9DA9 /* JNetLib.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,7 +36,6 @@
 		17ADB60C0B97A74800257CA2 /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTTPSource.h; sourceTree = "<group>"; };
 		17ADB60D0B97A74800257CA2 /* HTTPSource.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = HTTPSource.mm; sourceTree = "<group>"; };
 		17ADB6340B97A8B400257CA2 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17F6C6400F5F9E3F000D9DA9 /* JNetLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JNetLib.xcodeproj; path = ../../Frameworks/JNetLib/JNetLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* HTTPSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPSource_Prefix.pch; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* HTTPSource.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HTTPSource.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -68,7 +47,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F6C6550F5F9E86000D9DA9 /* JNetLib.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,7 +97,6 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				17F6C6400F5F9E3F000D9DA9 /* JNetLib.xcodeproj */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -144,14 +121,6 @@
 				1716067C0F624E09008FA424 /* Socket.m */,
 			);
 			path = Utils;
-			sourceTree = "<group>";
-		};
-		17F6C6410F5F9E3F000D9DA9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				17F6C6450F5F9E3F000D9DA9 /* JNetLib.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -185,7 +154,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				17F6C6810F5F9FFE000D9DA9 /* PBXTargetDependency */,
 			);
 			name = "HTTPSource Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
@@ -203,28 +171,12 @@
 			hasScannedForEncodings = 1;
 			mainGroup = 089C166AFE841209C02AAC07 /* HTTPSource */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 17F6C6410F5F9E3F000D9DA9 /* Products */;
-					ProjectRef = 17F6C6400F5F9E3F000D9DA9 /* JNetLib.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8D5B49AC048680CD000E48DA /* HTTPSource Plugin */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		17F6C6450F5F9E3F000D9DA9 /* JNetLib.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = JNetLib.framework;
-			remoteRef = 17F6C6440F5F9E3F000D9DA9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D5B49AF048680CD000E48DA /* Resources */ = {
@@ -248,14 +200,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		17F6C6810F5F9FFE000D9DA9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = JNetLib;
-			targetProxy = 17F6C6800F5F9FFE000D9DA9 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB913B08733D840010E9CD /* Debug */ = {
