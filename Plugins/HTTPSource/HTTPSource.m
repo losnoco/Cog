@@ -15,6 +15,7 @@
 {
 	_connection = [[HTTPConnection alloc] initWithURL:url];
 	
+	// Note: The User-Agent CANNOT contain the string "Mozilla" or Shoutcast/Icecast will serve up HTML
 	NSString *userAgent = [NSString stringWithFormat:@"Cog %@", [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey]];
 	[_connection setValue:userAgent forRequestHeader:@"User-Agent"];
 	[_connection setValue:@"close" forRequestHeader:@"Connection"];
