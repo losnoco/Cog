@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface BlankZeroFormatter : NSObject {
+@interface BlankZeroFormatter : NSFormatter {
 
 
 }

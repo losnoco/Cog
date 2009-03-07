@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface IndexFormatter : NSObject {
+@interface IndexFormatter : NSFormatter {
 
 }
 
