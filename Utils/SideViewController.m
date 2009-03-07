@@ -29,9 +29,9 @@
 {
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
 	
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"sideViewVertical"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"showSideView"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithFloat:100.0] forKey:@"sideViewDividerPosition"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:[self sideViewVerticalDefaultsKey]];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:[self showSideViewDefaultsKey]];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithFloat:100.0] forKey:[self sideViewDividerPositionDefaultsKey]];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 }
