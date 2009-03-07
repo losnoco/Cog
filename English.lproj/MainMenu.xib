@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2234"/>
 			<integer value="21"/>
-			<integer value="29"/>
+			<integer value="882"/>
+			<integer value="2234"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -4757,30 +4757,6 @@ OQA</bytes>
 					<int key="connectionID">1409</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: shuffle</string>
-						<reference key="source" ref="711304399"/>
-						<reference key="destination" ref="710316598"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="711304399"/>
-							<reference key="NSDestination" ref="710316598"/>
-							<string key="NSLabel">value: shuffle</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">shuffle</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1413</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">takeShuffleFromObject:</string>
-						<reference key="source" ref="710316598"/>
-						<reference key="destination" ref="711304399"/>
-					</object>
-					<int key="connectionID">1429</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">clearFilterPredicate:</string>
 						<reference key="source" ref="710316598"/>
@@ -6889,6 +6865,66 @@ OQA</bytes>
 						<reference key="destination" ref="362908833"/>
 					</object>
 					<int key="connectionID">2407</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: repeat</string>
+						<reference key="source" ref="2155"/>
+						<reference key="destination" ref="710316598"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="2155"/>
+							<reference key="NSDestination" ref="710316598"/>
+							<string key="NSLabel">value: repeat</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">repeat</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMutableArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSAllowsEditingMultipleValuesSelection</string>
+									<string>NSConditionallySetsEnabled</string>
+									<string>NSValueTransformerName</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<reference ref="6"/>
+									<reference ref="6"/>
+									<string>RepeatAlbumTransformer</string>
+								</object>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2412</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: shuffle</string>
+						<reference key="source" ref="711304399"/>
+						<reference key="destination" ref="710316598"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="711304399"/>
+							<reference key="NSDestination" ref="710316598"/>
+							<string key="NSLabel">value: shuffle</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">shuffle</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMutableArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSAllowsEditingMultipleValuesSelection</string>
+									<string>NSConditionallySetsEnabled</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<reference ref="6"/>
+									<reference ref="6"/>
+								</object>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2415</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -9500,6 +9536,7 @@ OQA</bytes>
 					<string>1736.IBPluginDependency</string>
 					<string>1737.IBPluginDependency</string>
 					<string>1740.IBPluginDependency</string>
+					<string>1741.IBEditorWindowLastContentRect</string>
 					<string>1741.IBPluginDependency</string>
 					<string>1741.editorWindowContentRectSynchronizationRect</string>
 					<string>1742.IBPluginDependency</string>
@@ -10123,6 +10160,7 @@ OQA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{744, 442}, {186, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{675, 786}, {186, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -10343,7 +10381,7 @@ OQA</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{181, 726}, {462, 20}}</string>
+					<string>{{181, 735}, {462, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{112, 736}, {462, 20}}</string>
@@ -10455,7 +10493,7 @@ OQA</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{445, 433}, {299, 293}}</string>
+					<string>{{445, 442}, {299, 293}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{376, 543}, {299, 293}}</string>
@@ -10483,7 +10521,7 @@ OQA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2407</int>
+			<int key="maxID">2415</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
