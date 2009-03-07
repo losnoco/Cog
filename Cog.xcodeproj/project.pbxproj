@@ -60,6 +60,7 @@
 		17818A9B0C0B27AC001C4916 /* wv.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A940C0B27AC001C4916 /* wv.icns */; };
 		1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1784560E0F631E24007E8021 /* FileTreeViewController.m */; };
 		178456120F631E31007E8021 /* SideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 178456110F631E31007E8021 /* SideViewController.m */; };
+		178456C30F6320B5007E8021 /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 178456C00F6320B5007E8021 /* SpotlightPanel.xib */; };
 		178BAB990CD4E1B700B33D47 /* GCOneShotEffectTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 178BAB940CD4E1B700B33D47 /* GCOneShotEffectTimer.m */; };
 		178BAB9A0CD4E1B700B33D47 /* GCWindowMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 178BAB960CD4E1B700B33D47 /* GCWindowMenu.m */; };
 		178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 178BAB980CD4E1B700B33D47 /* PopupButton.m */; };
@@ -129,7 +130,6 @@
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
 		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
-		5604D4580D603459004F5C5D /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5604D4570D603459004F5C5D /* SpotlightPanel.xib */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */; };
@@ -598,6 +598,7 @@
 		1784560E0F631E24007E8021 /* FileTreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeViewController.m; path = FileTree/FileTreeViewController.m; sourceTree = "<group>"; };
 		178456100F631E31007E8021 /* SideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SideViewController.h; sourceTree = "<group>"; };
 		178456110F631E31007E8021 /* SideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SideViewController.m; sourceTree = "<group>"; };
+		178456C10F6320B5007E8021 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SpotlightPanel.xib; sourceTree = "<group>"; };
 		178BAB930CD4E1B700B33D47 /* GCOneShotEffectTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCOneShotEffectTimer.h; sourceTree = "<group>"; };
 		178BAB940CD4E1B700B33D47 /* GCOneShotEffectTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCOneShotEffectTimer.m; sourceTree = "<group>"; };
 		178BAB950CD4E1B700B33D47 /* GCWindowMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCWindowMenu.h; sourceTree = "<group>"; };
@@ -696,7 +697,6 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
-		5604D4570D603459004F5C5D /* SpotlightPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = SpotlightPanel.xib; path = Spotlight/SpotlightPanel.xib; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
 		5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistEntry.h; path = Spotlight/SpotlightPlaylistEntry.h; sourceTree = "<group>"; };
@@ -1254,8 +1254,8 @@
 				1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */,
 				17342A980D5FD20B00E8D854 /* MainMenu.xib */,
 				17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */,
-				5604D4570D603459004F5C5D /* SpotlightPanel.xib */,
 				17211A7C0D68B7C500911CA9 /* FileTree.xib */,
+				178456C00F6320B5007E8021 /* SpotlightPanel.xib */,
 				17E41E060C130DFF00AC744D /* Credits.html */,
 			);
 			name = Resources;
@@ -1787,7 +1787,6 @@
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
 				17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */,
 				17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */,
-				5604D4580D603459004F5C5D /* SpotlightPanel.xib in Resources */,
 				17211A7E0D68B7C500911CA9 /* FileTree.xib in Resources */,
 				17A8F6850D6A7FCA0095DA13 /* repeat_all.png in Resources */,
 				17A8F6860D6A7FCA0095DA13 /* repeat_none.png in Resources */,
@@ -1797,6 +1796,7 @@
 				17B7CF5C0F5A05EE00A47027 /* pauseBadge.png in Resources */,
 				17B7CF5D0F5A05EE00A47027 /* playBadge.png in Resources */,
 				17B7CF5E0F5A05EE00A47027 /* stopBadge.png in Resources */,
+				178456C30F6320B5007E8021 /* SpotlightPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2024,6 +2024,14 @@
 				17342ABE0D5FD36400E8D854 /* English */,
 			);
 			name = OpenURLPanel.xib;
+			sourceTree = "<group>";
+		};
+		178456C00F6320B5007E8021 /* SpotlightPanel.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				178456C10F6320B5007E8021 /* English */,
+			);
+			name = SpotlightPanel.xib;
 			sourceTree = "<group>";
 		};
 		17E41E060C130DFF00AC744D /* Credits.html */ = {
