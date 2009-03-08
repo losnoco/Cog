@@ -44,6 +44,8 @@
 	[title release];
 	[genre release];
 	[year release];
+	
+	[super dealloc];
 }
 
 - (NSString *)track

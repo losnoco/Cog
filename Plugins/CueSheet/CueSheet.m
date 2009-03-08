@@ -263,6 +263,13 @@
 	return self;
 }
 
+- (void)dealloc
+{
+	[tracks release];
+	
+	[super dealloc];
+}
+
 - (NSArray *)tracks
 {
 	return tracks;
