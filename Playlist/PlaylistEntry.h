@@ -31,6 +31,7 @@
 	NSString *genre;
 	NSNumber *year;
 	NSNumber *track;
+	NSImage *albumArt;
 	
 	long long totalFrames;
 	int bitrate;
@@ -82,6 +83,7 @@
 @property(retain) NSString *genre;
 @property(retain) NSNumber *year;
 @property(retain) NSNumber *track;
+@property(retain) NSImage *albumArt;
 
 @property long long totalFrames;
 @property int bitrate;

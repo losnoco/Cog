@@ -7,11 +7,18 @@
 //
 
 #import "InfoWindowController.h"
-
+#import "MissingAlbumArtTransformer.h"
 
 @implementation InfoWindowController
 
 @synthesize playlistSelectionController;
+
++ (void)initialize
+{
+	NSValueTransformer *missingAlbumArtTransformer = [[[MissingAlbumArtTransformer alloc] init] autorelease];
+    [NSValueTransformer setValueTransformer:missingAlbumArtTransformer
+                                    forName:@"MissingAlbumArtTransformer"];
+}
 
 - (id)init
 {

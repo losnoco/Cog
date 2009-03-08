@@ -9,15 +9,19 @@
 #import "TagLibMetadataReader.h"
 #import <TagLib/fileref.h>
 #import <TagLib/tag.h>
+#import <Taglib/mpegfile.h>
+#import <Taglib/id3v2tag.h>
+#import <Taglib/attachedpictureframe.h>
 
 @implementation TagLibMetadataReader
 
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
-
+	if (![url isFileURL]) {
+		return [NSDictionary dictionary];
+	}
 	
-	NSString *lArtist = @"", *lTitle = @"", *lAlbum = @"", *lGenre = @"";
-	int lYear = 0, lTrack = 0;
+	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 	
 	TagLib::FileRef f((const char *)[[url path] UTF8String], false);
 	if (!f.isNull())
@@ -26,39 +30,67 @@
 		
 		if (tag)
 		{
-			TagLib::String pArtist, pTitle, pAlbum, pGenre, pComment;
+			TagLib::String artist, title, album, genre, comment;
+			int year, track;
 			
-			pArtist = tag->artist();
-			pTitle = tag->title();;
-			pAlbum = tag->album();
-			pGenre = tag->genre();
-			pComment = tag->comment();
+			artist = tag->artist();
+			title = tag->title();;
+			album = tag->album();
+			genre = tag->genre();
+			comment = tag->comment();
 			
-			lYear = tag->year();
-			lTrack = tag->track();
+			year = tag->year();
+			[dict setObject:[NSNumber numberWithInt:year] forKey:@"year"];
 			
-			if (!pArtist.isNull())
-				lArtist = [NSString stringWithUTF8String:pArtist.toCString(true)];
+			track = tag->track();
+			[dict setObject:[NSNumber numberWithInt:track] forKey:@"track"];
+			
+			if (!artist.isNull())
+				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
 
-			if (!pAlbum.isNull())
-				lAlbum = [NSString stringWithUTF8String:pAlbum.toCString(true)];
+			if (!album.isNull())
+				[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
 			
-			if (!pTitle.isNull())
-				lTitle = [NSString stringWithUTF8String:pTitle.toCString(true)];
+			if (!title.isNull())
+				[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
 			
-			if (!pGenre.isNull())
-				lGenre = [NSString stringWithUTF8String:pGenre.toCString(true)];
+			if (!genre.isNull())
+				[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
+		}
+		
+		NSString *imageCacheTag = [NSString stringWithFormat:@"%@-%@-%@-%@", [dict objectForKey:@"album"], [dict objectForKey:@"artist"], [dict objectForKey:@"genre"], [dict objectForKey:@"year"]];
+		NSImage *image = [NSImage imageNamed:imageCacheTag];
+		
+		if (nil == image) {
+			// Try to load the image.
+		
+			// WARNING: HACK
+			TagLib::MPEG::File *mf = dynamic_cast<TagLib::MPEG::File *>(f.file());
+			if (mf) {
+				TagLib::ID3v2::Tag *tag = mf->ID3v2Tag();
+				if (tag) {
+					TagLib::ID3v2::FrameList pictures = mf->ID3v2Tag()->frameListMap()["APIC"];
+					if (!pictures.isEmpty()) {
+						TagLib::ID3v2::AttachedPictureFrame *pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(pictures.front());
+						
+						NSData *data = [[NSData alloc] initWithBytes:pic->picture().data() length:pic->picture().size()];
+						image = [[[NSImage alloc] initWithData:data] autorelease];
+						[data release];
+					}
+				}
+			}
+			
+			if (nil != image) {
+				[image setName:imageCacheTag];
+			}
+		}
+
+		if (nil != image) {
+			[dict setObject:image forKey:@"albumArt"];
 		}
 	}
-	
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-		lArtist, @"artist",
-		lTitle, @"title",
-		lAlbum, @"album",
-		lGenre, @"genre",
-		[NSNumber numberWithInt: lYear], @"year",
-		[NSNumber numberWithInt: lTrack], @"track",
-		nil];
+
+	return [dict autorelease];
 }
 
 + (NSArray *)fileTypes

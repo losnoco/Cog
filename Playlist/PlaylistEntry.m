@@ -31,6 +31,7 @@
 @synthesize genre;
 @synthesize year;
 @synthesize track;
+@synthesize albumArt;
 
 @synthesize totalFrames;
 @synthesize bitrate;
@@ -93,6 +94,7 @@
 	self.genre = nil;
 	self.year = nil;
 	self.track = nil;
+	self.albumArt = nil;
 	
 	self.endian = nil;
 	

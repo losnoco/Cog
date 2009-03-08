@@ -40,6 +40,8 @@
 		1766C8990B912FB4004A7AE4 /* shuffle_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C8910B912FB4004A7AE4 /* shuffle_on.png */; };
 		1770429C0B8BC53600B86321 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 177042980B8BC53600B86321 /* AppController.m */; };
 		1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1770429A0B8BC53600B86321 /* PlaybackController.m */; };
+		1778D3B00F645A190037E7A0 /* missingArt.png in Resources */ = {isa = PBXBuildFile; fileRef = 1778D3AF0F645A190037E7A0 /* missingArt.png */; };
+		1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1778D3C90F645BF00037E7A0 /* MissingAlbumArtTransformer.m */; };
 		177EBFA20B8BC2A70000BC8C /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */; };
 		177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF870B8BC2A70000BC8C /* ImageTextCell.m */; };
 		177EBFAB0B8BC2A70000BC8C /* NDHotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF8D0B8BC2A70000BC8C /* NDHotKeyControl.m */; };
@@ -576,6 +578,9 @@
 		177042980B8BC53600B86321 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		177042990B8BC53600B86321 /* PlaybackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaybackController.h; sourceTree = "<group>"; };
 		1770429A0B8BC53600B86321 /* PlaybackController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaybackController.m; sourceTree = "<group>"; };
+		1778D3AF0F645A190037E7A0 /* missingArt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = missingArt.png; path = Images/missingArt.png; sourceTree = "<group>"; };
+		1778D3C80F645BF00037E7A0 /* MissingAlbumArtTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MissingAlbumArtTransformer.h; path = InfoInspector/MissingAlbumArtTransformer.h; sourceTree = "<group>"; };
+		1778D3C90F645BF00037E7A0 /* MissingAlbumArtTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MissingAlbumArtTransformer.m; path = InfoInspector/MissingAlbumArtTransformer.m; sourceTree = "<group>"; };
 		177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppleRemote.m; sourceTree = "<group>"; };
 		177EBF860B8BC2A70000BC8C /* ImageTextCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageTextCell.h; sourceTree = "<group>"; };
 		177EBF870B8BC2A70000BC8C /* ImageTextCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ImageTextCell.m; sourceTree = "<group>"; };
@@ -937,6 +942,7 @@
 		177EC02D0B8BC2E60000BC8C /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				1778D3AF0F645A190037E7A0 /* missingArt.png */,
 				17B7CF590F5A05EE00A47027 /* pauseBadge.png */,
 				17B7CF5A0F5A05EE00A47027 /* playBadge.png */,
 				17B7CF5B0F5A05EE00A47027 /* stopBadge.png */,
@@ -1134,6 +1140,8 @@
 			children = (
 				17D1B0FF0F63255200694C57 /* InfoWindowController.h */,
 				17D1B1000F63255200694C57 /* InfoWindowController.m */,
+				1778D3C80F645BF00037E7A0 /* MissingAlbumArtTransformer.h */,
+				1778D3C90F645BF00037E7A0 /* MissingAlbumArtTransformer.m */,
 			);
 			name = InfoInspector;
 			sourceTree = "<group>";
@@ -1831,6 +1839,7 @@
 				178456C30F6320B5007E8021 /* SpotlightPanel.xib in Resources */,
 				17D1B0D20F6320EA00694C57 /* InfoInspector.xib in Resources */,
 				17D1B1DC0F6330D400694C57 /* Feedback.xib in Resources */,
+				1778D3B00F645A190037E7A0 /* missingArt.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1916,6 +1925,7 @@
 				17D1B16A0F632ABB00694C57 /* SecondsFormatter.m in Sources */,
 				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
 				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
+				1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
