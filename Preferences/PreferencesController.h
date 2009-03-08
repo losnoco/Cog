@@ -7,12 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "SS_PrefsController.h"
 
+@class PreferencesWindow;
 @interface PreferencesController : NSObject {
-    SS_PrefsController *prefs;
+	PreferencesWindow *window;
 }
 
-- (IBAction)showPrefs:(id)sender;
+- (IBAction)showPreferences:(id)sender;
 
 @end

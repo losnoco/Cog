@@ -7,15 +7,16 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "SS_PreferencePaneProtocol.h"
+
+#import "PreferencePanePlugin.h"
 
 #import "HotKeyPane.h"
 #import "OutputPane.h"
 
-@interface PrefPaneController : NSObject <SS_PreferencePaneProtocol> {
+@interface GeneralPreferencesPlugin : NSObject <PreferencePanePlugin> {
 	IBOutlet HotKeyPane *hotKeyPane;
 	IBOutlet OutputPane *outputPane;
-
+	
 	IBOutlet NSView *playlistView;
 	IBOutlet NSView *scrobblerView;
 	IBOutlet NSView *remoteView;
@@ -25,9 +26,11 @@
 - (HotKeyPane *)hotKeyPane;
 - (OutputPane *)outputPane;
 
-- (PreferencePane *)remotePane;
-- (PreferencePane *)updatesPane;
-- (PreferencePane *)scrobblerPane;
-- (PreferencePane *)playlistPane;
+- (GeneralPreferencePane *)remotePane;
+- (GeneralPreferencePane *)updatesPane;
+- (GeneralPreferencePane *)scrobblerPane;
+- (GeneralPreferencePane *)playlistPane;
+
+
 
 @end

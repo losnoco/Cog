@@ -113,6 +113,8 @@
 		17D1B1690F632ABB00694C57 /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1650F632ABB00694C57 /* IndexFormatter.m */; };
 		17D1B16A0F632ABB00694C57 /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1670F632ABB00694C57 /* SecondsFormatter.m */; };
 		17D1B1DC0F6330D400694C57 /* Feedback.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B1DA0F6330D400694C57 /* Feedback.xib */; };
+		17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */; };
+		17D1B2600F633B1D00694C57 /* PreferencesWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B25F0F633B1D00694C57 /* PreferencesWindow.m */; };
 		17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2760CF8B2830028F5B5 /* cue.icns */; };
 		17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2770CF8B2830028F5B5 /* it.icns */; };
 		17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2780CF8B2830028F5B5 /* pls.icns */; };
@@ -145,7 +147,6 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AAF00AAC910500A4B32F /* SS_PrefsController.m */; };
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
 		8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */; };
 		8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6889230AAA403C00AD3950 /* Carbon.framework */; };
@@ -673,6 +674,11 @@
 		17D1B1660F632ABB00694C57 /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SecondsFormatter.h; path = Formatters/SecondsFormatter.h; sourceTree = "<group>"; };
 		17D1B1670F632ABB00694C57 /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SecondsFormatter.m; path = Formatters/SecondsFormatter.m; sourceTree = "<group>"; };
 		17D1B1DB0F6330D400694C57 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Feedback.xib; sourceTree = "<group>"; };
+		17D1B25B0F633A4F00694C57 /* PreferencePluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePluginController.h; path = Preferences/PreferencePluginController.h; sourceTree = "<group>"; };
+		17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreferencePluginController.m; path = Preferences/PreferencePluginController.m; sourceTree = "<group>"; };
+		17D1B25E0F633B1D00694C57 /* PreferencesWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindow.h; sourceTree = "<group>"; };
+		17D1B25F0F633B1D00694C57 /* PreferencesWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindow.m; sourceTree = "<group>"; };
+		17D1B2610F633D2C00694C57 /* PreferencePanePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePanePlugin.h; path = Preferences/PreferencePanePlugin.h; sourceTree = "<group>"; };
 		17D1B2760CF8B2830028F5B5 /* cue.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = cue.icns; sourceTree = "<group>"; };
 		17D1B2770CF8B2830028F5B5 /* it.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = it.icns; sourceTree = "<group>"; };
 		17D1B2780CF8B2830028F5B5 /* pls.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = pls.icns; sourceTree = "<group>"; };
@@ -724,9 +730,6 @@
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PreferencePaneProtocol.h; path = Preferences/SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
-		8E07AAEF0AAC910500A4B32F /* SS_PrefsController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SS_PrefsController.h; path = Preferences/SS_PrefsController.h; sourceTree = "<group>"; };
-		8E07AAF00AAC910500A4B32F /* SS_PrefsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SS_PrefsController.m; path = Preferences/SS_PrefsController.m; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
 		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
 		8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
@@ -1343,9 +1346,11 @@
 		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				8E07AAEE0AAC910500A4B32F /* SS_PreferencePaneProtocol.h */,
-				8E07AAEF0AAC910500A4B32F /* SS_PrefsController.h */,
-				8E07AAF00AAC910500A4B32F /* SS_PrefsController.m */,
+				17D1B2610F633D2C00694C57 /* PreferencePanePlugin.h */,
+				17D1B25B0F633A4F00694C57 /* PreferencePluginController.h */,
+				17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */,
+				17D1B25E0F633B1D00694C57 /* PreferencesWindow.h */,
+				17D1B25F0F633B1D00694C57 /* PreferencesWindow.m */,
 				8E07AB760AAC930B00A4B32F /* PreferencesController.h */,
 				8E07AB770AAC930B00A4B32F /* PreferencesController.m */,
 			);
@@ -1845,7 +1850,6 @@
 				8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */,
 				8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */,
 				8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */,
-				8E07AAF30AAC910500A4B32F /* SS_PrefsController.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
 				177EBFA20B8BC2A70000BC8C /* AppleRemote.m in Sources */,
 				177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */,
@@ -1910,6 +1914,8 @@
 				17D1B1680F632ABB00694C57 /* BlankZeroFormatter.m in Sources */,
 				17D1B1690F632ABB00694C57 /* IndexFormatter.m in Sources */,
 				17D1B16A0F632ABB00694C57 /* SecondsFormatter.m in Sources */,
+				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
+				17D1B2600F633B1D00694C57 /* PreferencesWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

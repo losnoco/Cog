@@ -7,10 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "PreferencePane.h"
+#import "GeneralPreferencePane.h"
 #import "OutputsArrayController.h"
 
-@interface OutputPane : PreferencePane {
+@interface OutputPane : GeneralPreferencePane {
 	IBOutlet OutputsArrayController *outputDevices;
 }
 

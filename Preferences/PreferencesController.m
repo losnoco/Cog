@@ -7,31 +7,35 @@
 //
 
 #import "PreferencesController.h"
-
+#import "PreferencePluginController.h"
+#import "PreferencesWindow.h"
 
 @implementation PreferencesController
 
-- (IBAction)showPrefs:(id)sender
+- (IBAction)showPreferences:(id)sender
 {
-    if (!prefs) {
+    if (nil == window) {
         // Determine path to the sample preference panes
-        NSString *pathToPanes = [[NSBundle mainBundle] resourcePath];
+        NSString *pluginPath = [[NSBundle mainBundle] pathForResource:@"General" ofType:@"preferencePane"];
+		NSBundle *bundle = [NSBundle bundleWithPath:pluginPath];
+
         
-        prefs = [[SS_PrefsController alloc] initWithPanesSearchPath:pathToPanes bundleExtension:@"preferencePane"];
-		[prefs setDebug:YES];
+		PreferencePluginController *pluginController = [[PreferencePluginController alloc] initWithPlugins:[NSArray arrayWithObject:bundle]];
+		
+		window = [[PreferencesWindow alloc] initWithPreferencePanes:[pluginController preferencePanes]];
 		
         // Set which panes are included, and their order.
         //[prefs setPanesOrder:[NSArray arrayWithObjects:@"General", @"Updating", @"A Non-Existent Preference Pane", nil]];
     }
     
     // Show the preferences window.
-    [prefs showPreferencesWindow];
+    [window show];
 }
 
 
 - (void)dealloc
 {
-    [prefs release];
+    [window release];
 	
 	[super dealloc];
 }

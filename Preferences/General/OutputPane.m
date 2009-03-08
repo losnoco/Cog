@@ -11,11 +11,17 @@
 
 @implementation OutputPane
 
-- (void)awakeFromNib
+- (NSString *)title
 {
-	[self setName:NSLocalizedStringFromTableInBundle(@"Output", nil, [NSBundle bundleForClass:[self class]], @"") ];
-	[self setIcon:@"output"];
+	return NSLocalizedStringFromTableInBundle(@"Output", nil, [NSBundle bundleForClass:[self class]], @"");
 }
+
+- (NSImage *)icon
+{
+	return [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"output"]] autorelease];
+}
+
+
 
 - (IBAction) takeDeviceID:(id)sender
 {

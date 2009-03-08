@@ -21,8 +21,8 @@
 		17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E78B680D68C1E3005C5A59 /* Preferences.xib */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */; };
-		8E07AA890AAC8EA200A4B32F /* PreferencePane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA830AAC8EA200A4B32F /* PreferencePane.m */; };
-		8E07AA8A0AAC8EA200A4B32F /* PrefPaneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA850AAC8EA200A4B32F /* PrefPaneController.m */; };
+		8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA830AAC8EA200A4B32F /* GeneralPreferencePane.m */; };
+		8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA850AAC8EA200A4B32F /* GeneralPreferencesPlugin.m */; };
 		8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E07ABDB0AAC95BC00A4B32F /* hot_keys.png */; };
 		8E15A86C0B894768006DC802 /* updates.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E15A86B0B894768006DC802 /* updates.png */; };
 		8E6C12160AACAE4100819171 /* NDHotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6C12130AACAE4100819171 /* NDHotKeyControl.m */; };
@@ -48,6 +48,7 @@
 		17C643680B8A788000C53518 /* output.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = output.png; path = Icons/output.png; sourceTree = "<group>"; };
 		17C644310B8A791D00C53518 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		17C7E5AF0DCCC30A003CBCF7 /* playlist.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playlist.png; path = Icons/playlist.png; sourceTree = "<group>"; };
+		17D1B3F60F6349CE00694C57 /* PreferencePanePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePanePlugin.h; path = ../PreferencePanePlugin.h; sourceTree = SOURCE_ROOT; };
 		17E41DB50C130A9D00AC744D /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		17E78A7D0D68BE3C005C5A59 /* file_tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_tree.png; path = Icons/file_tree.png; sourceTree = "<group>"; };
 		17E78B690D68C1E3005C5A59 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
@@ -56,11 +57,10 @@
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HotKeyPane.h; sourceTree = "<group>"; };
 		8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = HotKeyPane.m; sourceTree = "<group>"; };
-		8E07AA820AAC8EA200A4B32F /* PreferencePane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PreferencePane.h; sourceTree = "<group>"; };
-		8E07AA830AAC8EA200A4B32F /* PreferencePane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PreferencePane.m; sourceTree = "<group>"; };
-		8E07AA840AAC8EA200A4B32F /* PrefPaneController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PrefPaneController.h; sourceTree = "<group>"; };
-		8E07AA850AAC8EA200A4B32F /* PrefPaneController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PrefPaneController.m; sourceTree = "<group>"; };
-		8E07AA860AAC8EA200A4B32F /* SS_PreferencePaneProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SS_PreferencePaneProtocol.h; sourceTree = "<group>"; };
+		8E07AA820AAC8EA200A4B32F /* GeneralPreferencePane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GeneralPreferencePane.h; sourceTree = "<group>"; };
+		8E07AA830AAC8EA200A4B32F /* GeneralPreferencePane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = GeneralPreferencePane.m; sourceTree = "<group>"; };
+		8E07AA840AAC8EA200A4B32F /* GeneralPreferencesPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GeneralPreferencesPlugin.h; sourceTree = "<group>"; };
+		8E07AA850AAC8EA200A4B32F /* GeneralPreferencesPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = GeneralPreferencesPlugin.m; sourceTree = "<group>"; };
 		8E07ABDB0AAC95BC00A4B32F /* hot_keys.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hot_keys.png; path = Icons/hot_keys.png; sourceTree = "<group>"; };
 		8E15A86B0B894768006DC802 /* updates.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = updates.png; path = Icons/updates.png; sourceTree = "<group>"; };
 		8E6C12120AACAE4100819171 /* NDHotKeyControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NDHotKeyControl.h; sourceTree = "<group>"; };
@@ -126,9 +126,9 @@
 			children = (
 				17D503410ABDB1660022D1E8 /* Custom */,
 				17D5033F0ABDB1570022D1E8 /* Panes */,
-				8E07AA860AAC8EA200A4B32F /* SS_PreferencePaneProtocol.h */,
-				8E07AA840AAC8EA200A4B32F /* PrefPaneController.h */,
-				8E07AA850AAC8EA200A4B32F /* PrefPaneController.m */,
+				17D1B3F60F6349CE00694C57 /* PreferencePanePlugin.h */,
+				8E07AA840AAC8EA200A4B32F /* GeneralPreferencesPlugin.h */,
+				8E07AA850AAC8EA200A4B32F /* GeneralPreferencesPlugin.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -155,8 +155,8 @@
 		17D5033F0ABDB1570022D1E8 /* Panes */ = {
 			isa = PBXGroup;
 			children = (
-				8E07AA820AAC8EA200A4B32F /* PreferencePane.h */,
-				8E07AA830AAC8EA200A4B32F /* PreferencePane.m */,
+				8E07AA820AAC8EA200A4B32F /* GeneralPreferencePane.h */,
+				8E07AA830AAC8EA200A4B32F /* GeneralPreferencePane.m */,
 				8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */,
 				8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */,
 				17C6433D0B8A783F00C53518 /* OutputPane.h */,
@@ -288,8 +288,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */,
-				8E07AA890AAC8EA200A4B32F /* PreferencePane.m in Sources */,
-				8E07AA8A0AAC8EA200A4B32F /* PrefPaneController.m in Sources */,
+				8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */,
+				8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */,
 				8E6C12160AACAE4100819171 /* NDHotKeyControl.m in Sources */,
 				8E6C12170AACAE4100819171 /* NDHotKeyEvent.m in Sources */,
 				8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */,
@@ -372,7 +372,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				SYMROOT = ../../build;
 			};
 			name = Debug;
@@ -383,7 +383,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				SYMROOT = ../../build;
 			};
 			name = Release;

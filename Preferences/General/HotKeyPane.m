@@ -13,9 +13,6 @@
 
 - (void)awakeFromNib
 {
-	[self setName:NSLocalizedStringFromTableInBundle(@"Hot Keys", nil, [NSBundle bundleForClass:[self class]], @"") ];
-	[self setIcon:@"hot_keys"];	
-
 //	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object: [view window]];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignKey:) name:NSWindowDidResignKeyNotification object: [view window]];
 	
@@ -36,6 +33,16 @@
 	[playHotKeyControl setModifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPlayModifiers"] ];
 	
 	[playHotKeyControl updateStringValue];
+}
+
+- (NSString *)title
+{
+	return NSLocalizedStringFromTableInBundle(@"Hot Keys", nil, [NSBundle bundleForClass:[self class]], @""); 
+}
+
+- (NSImage *)icon
+{
+	return [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"hot_keys"]] autorelease];
 }
 
 /*- (void)windowDidBecomeKey:(id)notification

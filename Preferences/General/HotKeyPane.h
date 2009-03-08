@@ -7,10 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "PreferencePane.h"
+#import "GeneralPreferencePane.h"
 #import "HotKeyControl.h"
 
-@interface HotKeyPane : PreferencePane {
+@interface HotKeyPane : GeneralPreferencePane {
 	IBOutlet HotKeyControl *playHotKeyControl;
 	IBOutlet HotKeyControl *prevHotKeyControl;
 	IBOutlet HotKeyControl *nextHotKeyControl;
