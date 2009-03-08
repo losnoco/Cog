@@ -35,6 +35,17 @@
 	return self;
 }
 
+- (void)dealloc
+{
+	[track release];
+	[url release];
+	[artist release];
+	[album release];
+	[title release];
+	[genre release];
+	[year release];
+}
+
 - (NSString *)track
 {
 	return track;
