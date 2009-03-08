@@ -16,6 +16,7 @@
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
+		171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 171CB3DB0F63670D0047EF0A /* PreferencesWindow.m */; };
 		171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */ = {isa = PBXBuildFile; fileRef = 171EFE8B0F59FEAE000ADC42 /* DockIconController.m */; };
 		17211A7E0D68B7C500911CA9 /* FileTree.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17211A7C0D68B7C500911CA9 /* FileTree.xib */; };
 		17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */; };
@@ -114,7 +115,6 @@
 		17D1B16A0F632ABB00694C57 /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1670F632ABB00694C57 /* SecondsFormatter.m */; };
 		17D1B1DC0F6330D400694C57 /* Feedback.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B1DA0F6330D400694C57 /* Feedback.xib */; };
 		17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */; };
-		17D1B2600F633B1D00694C57 /* PreferencesWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B25F0F633B1D00694C57 /* PreferencesWindow.m */; };
 		17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2760CF8B2830028F5B5 /* cue.icns */; };
 		17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2770CF8B2830028F5B5 /* it.icns */; };
 		17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2780CF8B2830028F5B5 /* pls.icns */; };
@@ -536,6 +536,8 @@
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
+		171CB3DA0F63670D0047EF0A /* PreferencesWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindow.h; path = Preferences/PreferencesWindow.h; sourceTree = "<group>"; };
+		171CB3DB0F63670D0047EF0A /* PreferencesWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreferencesWindow.m; path = Preferences/PreferencesWindow.m; sourceTree = "<group>"; };
 		171EFE8A0F59FEAE000ADC42 /* DockIconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DockIconController.h; sourceTree = "<group>"; };
 		171EFE8B0F59FEAE000ADC42 /* DockIconController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DockIconController.m; sourceTree = "<group>"; };
 		17211A7D0D68B7C500911CA9 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FileTree.xib; sourceTree = "<group>"; };
@@ -676,8 +678,6 @@
 		17D1B1DB0F6330D400694C57 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Feedback.xib; sourceTree = "<group>"; };
 		17D1B25B0F633A4F00694C57 /* PreferencePluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePluginController.h; path = Preferences/PreferencePluginController.h; sourceTree = "<group>"; };
 		17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreferencePluginController.m; path = Preferences/PreferencePluginController.m; sourceTree = "<group>"; };
-		17D1B25E0F633B1D00694C57 /* PreferencesWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindow.h; sourceTree = "<group>"; };
-		17D1B25F0F633B1D00694C57 /* PreferencesWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindow.m; sourceTree = "<group>"; };
 		17D1B2610F633D2C00694C57 /* PreferencePanePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePanePlugin.h; path = Preferences/PreferencePanePlugin.h; sourceTree = "<group>"; };
 		17D1B2760CF8B2830028F5B5 /* cue.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = cue.icns; sourceTree = "<group>"; };
 		17D1B2770CF8B2830028F5B5 /* it.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = it.icns; sourceTree = "<group>"; };
@@ -1349,10 +1349,10 @@
 				17D1B2610F633D2C00694C57 /* PreferencePanePlugin.h */,
 				17D1B25B0F633A4F00694C57 /* PreferencePluginController.h */,
 				17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */,
-				17D1B25E0F633B1D00694C57 /* PreferencesWindow.h */,
-				17D1B25F0F633B1D00694C57 /* PreferencesWindow.m */,
 				8E07AB760AAC930B00A4B32F /* PreferencesController.h */,
 				8E07AB770AAC930B00A4B32F /* PreferencesController.m */,
+				171CB3DA0F63670D0047EF0A /* PreferencesWindow.h */,
+				171CB3DB0F63670D0047EF0A /* PreferencesWindow.m */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -1915,7 +1915,7 @@
 				17D1B1690F632ABB00694C57 /* IndexFormatter.m in Sources */,
 				17D1B16A0F632ABB00694C57 /* SecondsFormatter.m in Sources */,
 				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
-				17D1B2600F633B1D00694C57 /* PreferencesWindow.m in Sources */,
+				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
