@@ -28,6 +28,7 @@
 		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
 		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
 		173A43A10F3FD26500676A7B /* ToolTipWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 173A43A00F3FD26500676A7B /* ToolTipWindow.m */; };
+		1745CBA50F661DBB00E513F7 /* shuffle_albums.png in Resources */ = {isa = PBXBuildFile; fileRef = 1745CBA40F661DBB00E513F7 /* shuffle_albums.png */; };
 		1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752C36B0F59E00100F85F28 /* PlaybackButtons.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
@@ -559,6 +560,7 @@
 		173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeOutlineView.m; path = FileTree/FileTreeOutlineView.m; sourceTree = "<group>"; };
 		173A439F0F3FD26500676A7B /* ToolTipWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToolTipWindow.h; path = ToolTip/ToolTipWindow.h; sourceTree = "<group>"; };
 		173A43A00F3FD26500676A7B /* ToolTipWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ToolTipWindow.m; path = ToolTip/ToolTipWindow.m; sourceTree = "<group>"; };
+		1745CBA40F661DBB00E513F7 /* shuffle_albums.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = shuffle_albums.png; path = Images/shuffle_albums.png; sourceTree = "<group>"; };
 		1752C36A0F59E00100F85F28 /* PlaybackButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaybackButtons.h; path = Window/PlaybackButtons.h; sourceTree = "<group>"; };
 		1752C36B0F59E00100F85F28 /* PlaybackButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaybackButtons.m; path = Window/PlaybackButtons.m; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
@@ -956,6 +958,7 @@
 				1766C88C0B912FB4004A7AE4 /* info_off.png */,
 				1766C88D0B912FB4004A7AE4 /* info_on.png */,
 				1766C8900B912FB4004A7AE4 /* shuffle_off.png */,
+				1745CBA40F661DBB00E513F7 /* shuffle_albums.png */,
 				1766C8910B912FB4004A7AE4 /* shuffle_on.png */,
 				177EC0350B8BC2FF0000BC8C /* next.png */,
 				177EC0370B8BC2FF0000BC8C /* pause.png */,
@@ -1840,6 +1843,7 @@
 				17D1B0D20F6320EA00694C57 /* InfoInspector.xib in Resources */,
 				17D1B1DC0F6330D400694C57 /* Feedback.xib in Resources */,
 				1778D3B00F645A190037E7A0 /* missingArt.png in Resources */,
+				1745CBA50F661DBB00E513F7 /* shuffle_albums.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -24,6 +24,13 @@ typedef enum {
 } RepeatMode;
 
 typedef enum {
+	ShuffleOff = 0,
+	ShuffleAlbums,
+	ShuffleAll
+} ShuffleMode;
+	
+
+typedef enum {
 	URLOriginInternal = 0,
 	URLOriginExternal,
 } URLOrigin;
@@ -52,8 +59,8 @@ typedef enum {
 
 
 //PUBLIC METHODS
-- (void)setShuffle:(BOOL)s;
-- (BOOL)shuffle;
+- (void)setShuffle:(ShuffleMode)s;
+- (ShuffleMode)shuffle;
 - (void)setRepeat:(RepeatMode)r;
 - (RepeatMode)repeat;
 - (NSArray *)filterPlaylistOnAlbum:(NSString *)album;

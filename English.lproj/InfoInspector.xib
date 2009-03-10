@@ -468,7 +468,7 @@
 							<reference key="NSSuperview" ref="585628045"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSImageCell" key="NSCell" id="23346814">
-								<int key="NSCellFlags">67239424</int>
+								<int key="NSCellFlags">604110336</int>
 								<int key="NSCellFlags2">33685504</int>
 								<reference key="NSSupport" ref="26"/>
 								<int key="NSAlign">0</int>
@@ -1260,9 +1260,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilderKit</string>
 					<string>com.apple.InterfaceBuilderKit</string>
-					<string>{{395, 420}, {351, 498}}</string>
+					<string>{{548, 275}, {351, 498}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{395, 420}, {351, 498}}</string>
+					<string>{{548, 275}, {351, 498}}</string>
 					<reference ref="6"/>
 					<boolean value="YES" id="5"/>
 					<reference ref="5"/>

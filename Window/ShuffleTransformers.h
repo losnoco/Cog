@@ -7,8 +7,19 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import "PlaylistController.h"
 
 @interface ShuffleImageTransformer : NSValueTransformer {}
 @end
+
+@interface ShuffleModeTransformer : NSValueTransformer {
+	ShuffleMode shuffleMode;
+}
+
+- (id)initWithMode:(ShuffleMode)s;
+
+@end
+
+
+
 

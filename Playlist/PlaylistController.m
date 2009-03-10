@@ -47,9 +47,24 @@
     [NSValueTransformer setValueTransformer:repeatModeImageTransformer
                                     forName:@"RepeatModeImageTransformer"];
 	
+
+	NSValueTransformer *shuffleOffTransformer = [[[ShuffleModeTransformer alloc] initWithMode:ShuffleOff] autorelease];
+    [NSValueTransformer setValueTransformer:shuffleOffTransformer
+                                    forName:@"ShuffleOffTransformer"];
+	
+	NSValueTransformer *shuffleAlbumsTransformer = [[[ShuffleModeTransformer alloc] initWithMode:ShuffleAlbums] autorelease];
+    [NSValueTransformer setValueTransformer:shuffleAlbumsTransformer
+                                    forName:@"ShuffleAlbumsTransformer"];
+	
+	NSValueTransformer *shuffleAllTransformer = [[[ShuffleModeTransformer alloc] initWithMode:ShuffleAll] autorelease];
+    [NSValueTransformer setValueTransformer:shuffleAllTransformer
+                                    forName:@"ShuffleAllTransformer"];
+
 	NSValueTransformer *shuffleImageTransformer = [[[ShuffleImageTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:shuffleImageTransformer
                                     forName:@"ShuffleImageTransformer"];
+	
+	
 	
 	NSValueTransformer *statusImageTransformer = [[[StatusImageTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:statusImageTransformer
@@ -64,8 +79,8 @@
 - (void)initDefaults
 {
 	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-										[NSNumber numberWithInteger:RepeatNone], @"repeatMode",
-										[NSNumber numberWithBool:NO],  @"shuffle",
+										[NSNumber numberWithInteger:RepeatNone], @"repeat",
+										[NSNumber numberWithInteger:ShuffleOff],  @"shuffle",
 										nil];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
@@ -360,7 +375,17 @@
 
 - (IBAction)toggleShuffle:(id)sender
 {
-	[self setShuffle: ![self shuffle]];
+	ShuffleMode shuffle = [self shuffle];
+	
+	if (shuffle == ShuffleOff) {
+		[self setShuffle: ShuffleAlbums];
+	}
+	else if (shuffle == ShuffleAlbums) {
+		[self setShuffle: ShuffleAll];
+	}
+	else if (shuffle == ShuffleAll) {
+		[self setShuffle: ShuffleOff];
+	}
 }
 
 - (IBAction)toggleRepeat:(id)sender
@@ -626,26 +651,26 @@
 	currentEntry = pe;
 }	
 
-- (void)setShuffle:(BOOL)s
+- (void)setShuffle:(ShuffleMode)s
 {
-	[[NSUserDefaults standardUserDefaults] setBool:s forKey:@"shuffle"];
-	if (s == YES)
+	[[NSUserDefaults standardUserDefaults] setInteger:s forKey:@"shuffle"];
+	if (s != ShuffleOff)
 		[self resetShuffleList];
 	
 	[playbackController playlistDidChange:self];
 }
-- (BOOL)shuffle
+- (ShuffleMode)shuffle
 {
-	return [[NSUserDefaults standardUserDefaults] boolForKey:@"shuffle"];
+	return [[NSUserDefaults standardUserDefaults] integerForKey:@"shuffle"];
 }
 - (void)setRepeat:(RepeatMode)r
 {
-	[[NSUserDefaults standardUserDefaults] setInteger:r forKey:@"repeatMode"];
+	[[NSUserDefaults standardUserDefaults] setInteger:r forKey:@"repeat"];
 	[playbackController playlistDidChange:self];
 }
 - (RepeatMode)repeat
 {
-	return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeatMode"];
+	return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"];
 }
 
 - (IBAction)clear:(id)sender
