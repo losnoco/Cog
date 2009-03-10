@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2"/>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -36,15 +36,15 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSWindowTemplate" id="424734135">
-				<int key="NSWindowStyleMask">8215</int>
+				<int key="NSWindowStyleMask">8223</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{246, 60}, {351, 498}}</string>
 				<int key="NSWTFlags">-1543502848</int>
 				<string key="NSWindowTitle">Info Inspector</string>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
-				<string key="NSWindowContentMaxSize">{351, 498}</string>
-				<string key="NSWindowContentMinSize">{351, 498}</string>
+				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
+				<string key="NSWindowContentMinSize">{200, 450}</string>
 				<object class="NSView" key="NSWindowView" id="585628045">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -483,8 +483,8 @@
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
-				<string key="NSMinSize">{351, 517}</string>
-				<string key="NSMaxSize">{351, 517}</string>
+				<string key="NSMinSize">{200, 469}</string>
+				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSFrameAutosaveName">InfoInspector</string>
 			</object>
 			<object class="NSUserDefaultsController" id="837857312">
@@ -1264,10 +1264,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{548, 275}, {351, 498}}</string>
 					<reference ref="6"/>
-					<boolean value="YES" id="5"/>
-					<reference ref="5"/>
+					<reference ref="6"/>
+					<boolean value="YES"/>
 					<string>{351, 498}</string>
-					<string>{351, 498}</string>
+					<string>{200, 450}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
