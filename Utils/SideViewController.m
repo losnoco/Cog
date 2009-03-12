@@ -50,14 +50,11 @@
 
 - (void)awakeFromNib
 {
+	[splitView setVertical:[[NSUserDefaults standardUserDefaults] boolForKey:[self sideViewVerticalDefaultsKey]]];
+
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:[self showSideViewDefaultsKey]])
 	{
 		[self showSideView];
-	}
-	
-	if (![[NSUserDefaults standardUserDefaults] boolForKey:[self sideViewVerticalDefaultsKey]])
-	{
-		[self toggleVertical:self];
 	}
 }
 
