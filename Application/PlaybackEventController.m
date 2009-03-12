@@ -56,18 +56,20 @@
 		[pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
 	}
 	
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler start:pe];
+	if (NO == [pe error]) {
+		if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
+			[scrobbler start:pe];
+		}
+		
+		// Note: We don't want to send a growl notification on resume.
+		[GrowlApplicationBridge notifyWithTitle:[pe title]
+									description:[pe artist]
+							   notificationName:@"Stream Changed"
+									   iconData:[[pe albumArt] TIFFRepresentation]
+									   priority:0 
+									   isSticky:NO 
+								   clickContext:nil];
 	}
-	
-	// Note: We don't want to send a growl notification on resume.
-	[GrowlApplicationBridge notifyWithTitle:[pe title]
-								description:[pe artist]
-						   notificationName:@"Stream Changed"
-								   iconData:nil
-								   priority:0 
-								   isSticky:NO 
-							   clickContext:nil];
 }
 
 - (void)performPlaybackDidPauseActions
