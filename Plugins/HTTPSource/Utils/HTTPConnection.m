@@ -175,8 +175,13 @@
 {
 	NSURL *url = [self URL];
 	
+	NSString *path = [url path];
+	if (nil == path || [path isEqualToString:@""]) {
+		path = @"/";
+	}
+	
 	// The initial GET
-	NSMutableString *requestString = [[NSMutableString alloc] initWithFormat:@"GET %@ HTTP/1.0\r\n", [url path]];
+	NSMutableString *requestString = [[NSMutableString alloc] initWithFormat:@"GET %@ HTTP/1.0\r\n", path];
 	
 	// Make sure there is a Host entry
 	NSString *host = [url host];
