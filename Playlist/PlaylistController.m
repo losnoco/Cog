@@ -157,7 +157,7 @@
 - (void)tableView:(NSTableView *)tableView
 		didClickTableColumn:(NSTableColumn *)tableColumn
 {
-	if ([self shuffle] == YES)
+	if ([self shuffle] != ShuffleOff)
 		[self resetShuffleList];
 }
 
@@ -278,7 +278,7 @@
 	
 	[acceptedURLs release];
 	
-	if ([self shuffle] == YES)
+	if ([self shuffle] != ShuffleOff)
 		[self resetShuffleList];
 	
 	return YES;
@@ -293,7 +293,7 @@
 {
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 	
-	if ([self shuffle] == YES)
+	if ([self shuffle] != ShuffleOff)
 		[self resetShuffleList];
 }
 
@@ -326,7 +326,7 @@
 	
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 	
-	if ([self shuffle] == YES)
+	if ([self shuffle] != ShuffleOff)
 		[self resetShuffleList];
 
 	[playbackController playlistDidChange:self];
@@ -360,7 +360,7 @@
 
 	[s release];	
 
-	if ([self shuffle] == YES)
+	if ([self shuffle] != ShuffleOff)
 		[self resetShuffleList];
 }
 
@@ -369,7 +369,7 @@
 	[self setSortDescriptors:nil];
 
 	[self setContent:[Shuffle shuffleList:[self content]]];
-	if ([self shuffle] == YES)
+	if ([self shuffle] != ShuffleOff)
 		[self resetShuffleList];
 }
 
@@ -484,7 +484,7 @@
 		return pe;
 	}
 	
-	if ([self shuffle] == YES)
+	if ([self shuffle] != ShuffleOff)
 	{
 		return [self shuffledEntryAtIndex:(pe.shuffleIndex + 1)];
 	}
@@ -532,7 +532,7 @@
 		return pe;
 	}
 	
-	if ([self shuffle] == YES)
+	if ([self shuffle] != ShuffleOff)
 	{
 		return [self shuffledEntryAtIndex:(pe.shuffleIndex - 1)];
 	}
