@@ -59,7 +59,7 @@ escapeForLastFM(NSString *string)
 
 - (semaphore_t)			semaphore;
 
-- (void)				processAudioScrobblerCommands:(AudioScrobbler *)myself;
+- (void)				processAudioScrobblerCommands:(id)unused;
 
 @end
 
@@ -85,7 +85,7 @@ escapeForLastFM(NSString *string)
 			return nil;
 		}
 		
-		[NSThread detachNewThreadSelector:@selector(processAudioScrobblerCommands:) toTarget:self withObject:self];
+		[NSThread detachNewThreadSelector:@selector(processAudioScrobblerCommands:) toTarget:self withObject:nil];
 	}
 	return self;
 }
@@ -190,7 +190,7 @@ escapeForLastFM(NSString *string)
 	return _semaphore;
 }
 
-- (void) processAudioScrobblerCommands:(AudioScrobbler *)myself
+- (void) processAudioScrobblerCommands:(id)unused
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	AudioScrobblerClient	*client				= [[AudioScrobblerClient alloc] init];
@@ -200,18 +200,18 @@ escapeForLastFM(NSString *string)
 	NSString				*response			= nil;
 	in_port_t				port				= 33367;
 	
-	while([myself keepProcessingAudioScrobblerCommands]) {
+	while([self keepProcessingAudioScrobblerCommands]) {
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 		// Get the first command to be sent
-		@synchronized([myself queue]) {
-			enumerator	= [[myself queue] objectEnumerator];
+		@synchronized([self queue]) {
+			enumerator	= [[self queue] objectEnumerator];
 			command		= [[enumerator nextObject] retain];
 		
-			[[myself queue] removeObjectIdenticalTo:command];
+			[[self queue] removeObjectIdenticalTo:command];
 		}
 
-		if(nil != command) {
+		if(nil != command) { 
 			@try {
 				if([client connectToHost:@"localhost" port:port]) {
 					port = [client connectedPort];
@@ -234,14 +234,14 @@ escapeForLastFM(NSString *string)
 			}
 		}
 		
-		semaphore_timedwait([myself semaphore], timeout);
+		semaphore_timedwait([self semaphore], timeout);
 		[pool release];
 	}
 	
 	// Send a final stop command to cleanup
 	@try {
 		if([client connectToHost:@"localhost" port:port]) {
-			[client send:[NSString stringWithFormat:@"STOP c=%@\n", [myself pluginID]]];
+			[client send:[NSString stringWithFormat:@"STOP c=%@\n", [self pluginID]]];
 			
 			response = [client receive];
 			if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
@@ -256,7 +256,7 @@ escapeForLastFM(NSString *string)
 	}
 	
 	[client release];
-	[myself setAudioScrobblerThreadCompleted:YES];
+	[self setAudioScrobblerThreadCompleted:YES];
 
 	[pool release];
 }

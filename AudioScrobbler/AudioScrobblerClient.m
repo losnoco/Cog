@@ -188,42 +188,32 @@ addressForHost(NSString *hostname)
 {
 	NSParameterAssert(INADDR_NONE != remoteAddress);
 	
-	struct sockaddr_in		socketAddress;
-	int						result;
-
-	_socket = socket(AF_INET, SOCK_STREAM, 0);
-	if(-1 == _socket) {
-		NSLog(@"Unable to create socket (%s)", strerror(errno));
-		return NO;
-	}
-
-	_port							= port;
-	socketAddress.sin_family		= AF_INET;
-	socketAddress.sin_addr.s_addr	= remoteAddress;
-	socketAddress.sin_port			= htons(_port);
-
-	result = connect(_socket, (const struct sockaddr *)&socketAddress, sizeof(struct sockaddr_in));
-
-	// Don't check result yet
-	if(_doPortStepping) {
-		while(-1 == result && _port <= (port + kPortsToStep)) {
-			socketAddress.sin_port = htons(++_port);
-			result = connect(_socket, (const struct sockaddr *)&socketAddress, sizeof(struct sockaddr_in));
-		}
-	}
-
-	// Don't log failures, because the client may not be running
-	if(-1 == result) {
-		close(_socket);
-		
-		_socket				= -1;
-		_port				= 0;
-		_doPortStepping		= NO;
-		
-		return NO;
-	}
+	_port = port;
 	
-	return YES;
+	int result;
+	do {
+		struct sockaddr_in		socketAddress;
+
+		_socket = socket(AF_INET, SOCK_STREAM, 0);
+		if(-1 == _socket) {
+			NSLog(@"Unable to create socket (%s)", strerror(errno));
+			return NO;
+		}
+
+		socketAddress.sin_family		= AF_INET;
+		socketAddress.sin_addr.s_addr	= remoteAddress;
+		socketAddress.sin_port			= htons(_port);
+
+		result = connect(_socket, (const struct sockaddr *)&socketAddress, sizeof(struct sockaddr_in));
+		if(-1 == result) {
+			close(_socket);
+			_socket = -1;
+
+			_port++;
+		}
+	} while (YES == _doPortStepping && -1 == result && _port < (port + kPortsToStep));
+
+	return (-1 != result);
 }
 
 @end
