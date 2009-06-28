@@ -173,13 +173,15 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		return NO;
 	
 	// change output format...
+	
+	deviceFormat.mChannelsPerFrame = 2; // HACK: Force stereo. This breaks surround, but surround is likely busted anyways because there isn't a correct channel mapping.
 	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
 	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
 //	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
 //	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
 	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
 	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
-
+	
 	err = AudioUnitSetProperty (outputUnit,
 								kAudioUnitProperty_StreamFormat,
 								kAudioUnitScope_Output,
@@ -200,7 +202,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	renderCallback.inputProcRefCon = self;
 	
 	AudioUnitSetProperty(outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &renderCallback, sizeof(AURenderCallbackStruct));	
-
+	
 	[outputController setFormat:&deviceFormat];
 	
 	return (err == noErr);	
