@@ -53,8 +53,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	ioData->mBuffers[0].mDataByteSize = amountRead;
 	ioData->mBuffers[0].mNumberChannels = output->deviceFormat.mChannelsPerFrame;
- 
-	//NSLog(@"Amount read for output: (%i) %i %i/%i", ioData->mNumberBuffers, ioData->mBuffers[0].mNumberChannels, amountRead, amountToRead);
+	ioData->mNumberBuffers = 1;
 	
 	return err;
 }
@@ -80,6 +79,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	OSStatus err;
 	
 	if (outputDevice == -1) {
+		NSLog(@"DEVICE IS -1");
 		UInt32 size = sizeof(AudioDeviceID);
 		err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
 									  &size,
@@ -92,10 +92,11 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		}
 	}
 
+	printf("DEVICE: %i\n", deviceID);
 	
 	err = AudioUnitSetProperty(outputUnit,
 							  kAudioOutputUnitProperty_CurrentDevice, 
-							  kAudioUnitScope_Global, 
+							  kAudioUnitScope_Output, 
 							  0, 
 							  &deviceID, 
 							  sizeof(AudioDeviceID));
@@ -135,6 +136,21 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	err = AudioUnitInitialize(outputUnit);
 	if (err != noErr)
 		return NO;
+
+	// Setup the output device before mucking with settings
+	NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
+	if (device) {
+		BOOL ok = [self setOutputDevice:[[device objectForKey:@"deviceID"] longValue]];
+		if (!ok) {
+			//Ruh roh.
+			[self setOutputDevice: -1];
+			
+			[[[NSUserDefaultsController sharedUserDefaultsController] defaults] removeObjectForKey:@"outputDevice"];
+		}
+	}
+	else {
+		[self setOutputDevice: -1];
+	}
 	
 	UInt32 size = sizeof (AudioStreamBasicDescription);
 	Boolean outWritable;
@@ -186,21 +202,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	AudioUnitSetProperty(outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &renderCallback, sizeof(AURenderCallbackStruct));	
 
 	[outputController setFormat:&deviceFormat];
-	
-	NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
-	
-	if (device) {
-		BOOL ok = [self setOutputDevice:[[device objectForKey:@"deviceID"] longValue]];
-		if (!ok) {
-			//Ruh roh.
-			[self setOutputDevice: -1];
-			
-			[[[NSUserDefaultsController sharedUserDefaultsController] defaults] removeObjectForKey:@"outputDevice"];
-		}
-	}
-	else {
-		[self setOutputDevice: -1];
-	}
 	
 	return (err == noErr);	
 }
