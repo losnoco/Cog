@@ -27,7 +27,7 @@
 	if ((fp = fopen([archivePath UTF8String], "r")))
 	{
 		setenv("DESTINATION", [[archivePath stringByDeletingLastPathComponent] UTF8String], 1);
-		if ((cmdFP = popen([command cString], "w")))
+		if ((cmdFP = popen([command UTF8String], "w")))
 		{
 			char buf[32*1024];
 			long len;

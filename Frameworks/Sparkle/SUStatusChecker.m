@@ -67,7 +67,7 @@
 	}
 	@catch (NSException *e)
 	{
-		NSLog([e reason]);
+		NSLog(@"%@", [e reason]);
 
 		[scDelegate statusChecker:self foundVersion:nil isNewVersion:NO];	
 	}

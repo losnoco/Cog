@@ -121,7 +121,7 @@ EVP_PKEY* load_dsa_key(char *key)
 	for (di = 0; di < 16; di++)
 	    sprintf(hexDigest + di*2, "%02x", digest[di]);
 	
-	return [hash isEqualToString:[NSString stringWithCString:hexDigest]];
+	return [hash isEqualToString:[NSString stringWithUTF8String:hexDigest]];
 }
 
 - (BOOL)validatePath:(NSString *)path withEncodedDSASignature:(NSString *)encodedSignature
