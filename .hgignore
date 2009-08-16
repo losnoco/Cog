@@ -2,3 +2,5 @@ syntax: glob
 *.mode1v3
 *.mode2v3
 *.pbxuser
+build
+*/build
