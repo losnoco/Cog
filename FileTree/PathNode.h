@@ -33,6 +33,8 @@
 - (void)setSubpaths:(NSArray *)s;
 
 - (NSString *)display;
+- (void)setDisplay:(NSString *)s;
+
 - (NSImage *)icon;
 
 - (BOOL)isLeaf;

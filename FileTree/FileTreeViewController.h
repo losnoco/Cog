@@ -10,8 +10,10 @@
 #import "SideViewController.h"
 
 @class PlaylistLoader;
+@class PlaybackController;
 @interface FileTreeViewController : SideViewController {
 	IBOutlet PlaylistLoader *playlistLoader;
+	IBOutlet PlaybackController *playbackController;
 }
 
 @end

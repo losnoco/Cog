@@ -168,6 +168,7 @@
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
 		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; };
 		B09E96630D74A7BC0064F138 /* stop_current.png in Resources */ = {isa = PBXBuildFile; fileRef = B09E96620D74A7BC0064F138 /* stop_current.png */; };
+		F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -768,6 +769,8 @@
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		B09E94300D747F7B0064F138 /* WMA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WMA.xcodeproj; path = Plugins/WMA/WMA.xcodeproj; sourceTree = "<group>"; };
 		B09E96620D74A7BC0064F138 /* stop_current.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_current.png; path = Images/stop_current.png; sourceTree = "<group>"; };
+		F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FinderCompare.m"; sourceTree = "<group>"; };
+		F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FinderCompare.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -936,6 +939,8 @@
 				178456110F631E31007E8021 /* SideViewController.m */,
 				172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */,
 				172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */,
+				F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */,
+				F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */,
 				8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */,
 				8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */,
 				07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */,
@@ -1936,6 +1941,7 @@
 				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
 				1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */,
 				17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */,
+				F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

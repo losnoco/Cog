@@ -13,13 +13,15 @@
 
 @interface FileTreeDataSource : NSObject {
 	PathNode *rootNode;
-
+	
+	IBOutlet NSPathControl *pathControl;
 	IBOutlet PathWatcher *watcher;
 	IBOutlet NSOutlineView *outlineView;
 }
 
 - (NSURL *)rootURL;
 - (void)setRootURL:(NSURL *)rootURL;
+- (void)changeURL:(NSURL *)rootURL;
 
 - (void)reloadPathNode:(PathNode *)item;
 

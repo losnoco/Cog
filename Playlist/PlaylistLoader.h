@@ -24,6 +24,11 @@ typedef enum {
 	NSOperationQueue *queue;
 }
 
+- (void)initDefaults;
+
+// Clear playlist
+- (void)clear:(id)sender;
+
 // Load arrays of urls...
 - (NSArray*)addURLs:(NSArray *)urls sort:(BOOL)sort;
 - (NSArray*)addURL:(NSURL *)url;

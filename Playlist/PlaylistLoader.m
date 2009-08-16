@@ -26,11 +26,22 @@
 	self = [super init];
 	if (self)
 	{
+		[self initDefaults];
+		
 		queue = [[NSOperationQueue alloc] init];
 		[queue setMaxConcurrentOperationCount:1];
 	}
 	
 	return self; 
+}
+
+- (void)initDefaults
+{
+	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+										[NSNumber numberWithBool:YES], @"readCueSheetsInFolders",
+										nil];
+	
+	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
 
 - (void)dealloc
@@ -151,7 +162,11 @@
 		BOOL isDir;
 		if ( [manager fileExistsAtPath:absoluteSubpath isDirectory:&isDir] && isDir == NO)
 		{
-			[urls addObject:[NSURL fileURLWithPath:absoluteSubpath]];
+			if ([[absoluteSubpath pathExtension] caseInsensitiveCompare:@"cue"] != NSOrderedSame ||
+				[[NSUserDefaults standardUserDefaults] boolForKey:@"readCueSheetsInFolders"])
+			{
+				[urls addObject:[NSURL fileURLWithPath:absoluteSubpath]];
+			}
 		}
 	}
 	
@@ -203,7 +218,8 @@
 	NSArray *sortedURLs;
 	if (sort == YES)
 	{
-		sortedURLs = [expandedURLs sortedArrayUsingSelector:@selector(compareTrackNumbers:)];
+		sortedURLs = [expandedURLs sortedArrayUsingSelector:@selector(finderCompare:)];
+//		sortedURLs = [expandedURLs sortedArrayUsingSelector:@selector(compareTrackNumbers:)];
 	}
 	else
 	{
@@ -358,6 +374,11 @@
                                change:change
                               context:context];
     }
+}
+
+- (void)clear:(id)sender
+{
+	[playlistController clear:sender];
 }
 
 - (NSArray*)addURLs:(NSArray *)urls sort:(BOOL)sort

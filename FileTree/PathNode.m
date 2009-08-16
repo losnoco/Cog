@@ -33,13 +33,13 @@ NSURL *resolveAliases(NSURL *url)
 			
 			if (resolvedUrl != NULL)
 			{
-				NSLog(@"Resolved...");
+				//NSLog(@"Resolved...");
 				return [(NSURL *)resolvedUrl autorelease];
 			}
 		}
 	}
 
-	NSLog(@"Not resolved");
+	//NSLog(@"Not resolved");
 	return url;
 }
 
@@ -56,7 +56,6 @@ NSURL *resolveAliases(NSURL *url)
 	return self;
 }
 
-
 - (void)setURL:(NSURL *)u
 {
 	[u retain];
@@ -66,7 +65,7 @@ NSURL *resolveAliases(NSURL *url)
 	url = u;
 
 	[display release];
-	display = [[NSFileManager defaultManager] displayNameAtPath:[url path]];
+	display = [[NSFileManager defaultManager] displayNameAtPath:[u path]];
 	[display retain];
 	
 	[icon release];
@@ -99,12 +98,13 @@ NSURL *resolveAliases(NSURL *url)
 		}
 		
 		NSURL *u = [NSURL fileURLWithPath:s];
+		NSString *displayName = [[NSFileManager defaultManager] displayNameAtPath:[u path]];
 		
 		PathNode *newNode;
 		
-		NSLog(@"Before: %@", u);
+		//NSLog(@"Before: %@", u);
 		u = resolveAliases(u);
-		NSLog(@"After: %@", u);
+		//NSLog(@"After: %@", u);
 
 		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
 		{
@@ -135,7 +135,8 @@ NSURL *resolveAliases(NSURL *url)
 				newNode = [[FileNode alloc] initWithDataSource:dataSource url:u];
 			}
 		}
-					
+
+		[newNode setDisplay:displayName];
 		[newSubpaths addObject:newNode];
 
 		[newNode release];
@@ -167,6 +168,13 @@ NSURL *resolveAliases(NSURL *url)
 - (BOOL)isLeaf
 {
 	return YES;
+}
+
+- (void)setDisplay:(NSString *)s
+{
+	[display release];
+	display = s;
+	[display retain];
 }
 
 - (NSString *)display

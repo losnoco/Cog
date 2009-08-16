@@ -28,5 +28,39 @@
 	[urls release];
 }
 
+- (IBAction)setAsPlaylist:(id)sender
+{
+	[controller clear:sender];
+	[self addToPlaylist:sender];
+}
+
+- (IBAction)playPauseResume:(NSObject *)id
+{
+	[controller playPauseResume:id];
+}
+
+- (IBAction)showEntryInFinder:(id)sender
+{
+	unsigned int index;
+	NSWorkspace* ws = [NSWorkspace sharedWorkspace];
+	NSIndexSet *selectedIndexes = [outlineView selectedRowIndexes];
+	
+	for (index = [selectedIndexes firstIndex];
+		 index != NSNotFound; index = [selectedIndexes indexGreaterThanIndex: index])  
+	{
+		NSURL *url = [[outlineView itemAtRow:index] URL];
+		[ws selectFile:[url path] inFileViewerRootedAtPath:[url path]];
+	}
+}
+
+- (IBAction)setAsRoot:(id)sender
+{
+	unsigned int index = [[outlineView selectedRowIndexes] firstIndex];
+	
+	if (index != NSNotFound)
+	{
+		[dataSource changeURL:[[outlineView itemAtRow:index] URL]];
+	}
+}
 
 @end

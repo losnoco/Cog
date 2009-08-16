@@ -30,6 +30,8 @@
 	
 	[self setRootURL: [NSURL URLWithString:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]]]; 
 
+	[pathControl setTarget:self];
+    [pathControl setAction:@selector(pathControlAction:)];
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath
@@ -37,11 +39,27 @@
 						 change:(NSDictionary *)change
                         context:(void *)context
 {
+	NSLog([[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]);
 	if ([keyPath isEqualToString:@"values.fileTreeRootURL"]) {
 		[self setRootURL:[NSURL URLWithString:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]]];
 	}
 }
 
+- (void)changeURL:(NSURL *)url
+{
+	if (url != nil)
+	{
+		[[[NSUserDefaultsController sharedUserDefaultsController] defaults] setObject:[url absoluteString] forKey:@"fileTreeRootURL"];
+	}
+}
+
+- (void)pathControlAction:(id)sender
+{
+	if ([pathControl clickedPathComponentCell] != nil && [[pathControl clickedPathComponentCell] URL] != nil)
+	{
+		[self changeURL:[[pathControl clickedPathComponentCell] URL]];
+	}
+}
 
 - (NSURL *)rootURL
 {
@@ -131,13 +149,17 @@
 - (BOOL)outlineView:(NSOutlineView *)outlineView writeItems:(NSArray*)items toPasteboard:(NSPasteboard*)pboard {
 	//Get selected paths
 	NSMutableArray *urls = [NSMutableArray arrayWithCapacity:[items count]];
+	NSMutableArray *paths = [NSMutableArray arrayWithCapacity:[items count]];
 
 	for (id p in items) {
 		[urls addObject:[p URL]];
+		[paths addObject:[[p URL] path]];
 	}
-	NSLog(@"URLS: %@", urls);
-    [pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard
+	NSLog(@"Paths: %@", paths);
+	[pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard
 	[pboard setData:[NSArchiver archivedDataWithRootObject:urls] forType:CogUrlsPboardType];
+	[pboard addTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:self];
+	[pboard setPropertyList:paths forType:NSFilenamesPboardType];
 
     return YES;
 }

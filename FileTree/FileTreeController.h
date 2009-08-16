@@ -7,13 +7,18 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "FileTreeDataSource.h"
 
 @class SideViewController;
 @interface FileTreeController : NSObject {
 	IBOutlet SideViewController *controller;
 	IBOutlet NSOutlineView *outlineView;
+	IBOutlet FileTreeDataSource *dataSource;
 }
 
 - (IBAction)addToPlaylist:(id)sender;
+- (IBAction)setAsPlaylist:(id)sender;
+- (IBAction)showEntryInFinder:(id)sender;
+- (IBAction)setAsRoot:(id)sender;
 
 @end
