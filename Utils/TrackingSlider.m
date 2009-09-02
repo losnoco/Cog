@@ -52,8 +52,8 @@ static NSString *TrackingSliderValueObservationContext = @"TrackingSliderValueOb
 		
 		NSDictionary *bindingsData = [NSDictionary dictionaryWithObjectsAndKeys:
 									  observableController, NSObservedObjectKey,
-									  [keyPath copy], NSObservedKeyPathKey,
-									  [options copy], NSOptionsKey, nil];
+									  [[keyPath copy] autorelease], NSObservedKeyPathKey,
+									  [[options copy] autorelease], NSOptionsKey, nil];
 		
 		[bindingInfo setObject:bindingsData forKey:binding];
 	}

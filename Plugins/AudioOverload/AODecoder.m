@@ -110,8 +110,11 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 			NSString *key = [[NSString alloc] initWithUTF8String:info.title[i]];
 			NSString *value = [[NSString alloc] initWithUTF8String:info.info[i]];
 			
-			if (nil == key || nil == value)
+			if (nil == key || nil == value) {
+				[key release];
+				[value release];
 				continue;
+			}
 			
 			if ([key hasPrefix:@"Name"]) {
 				[dict setObject:value forKey:@"title"];
@@ -335,6 +338,7 @@ int ao_get_lib(char *fn, uint8 **buf, uint64 *length)
 	
 	AODecoder *decoder = [[self alloc] init];
 	if (![decoder openUnderLock:source]) {
+		[decoder release];
 		[globalLock unlock];
 		return nil;
 	}

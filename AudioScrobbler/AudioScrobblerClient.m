@@ -137,7 +137,7 @@ addressForHost(NSString *hostname)
 		}
 
 		buffer[bytesRead]	= '\0';
-		result				= [[[NSString alloc] autorelease] initWithUTF8String:buffer];
+		result				= [[[NSString alloc] initWithUTF8String:buffer] autorelease];
 		
 	} while(keepGoing);
 	

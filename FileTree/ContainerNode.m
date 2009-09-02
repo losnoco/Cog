@@ -28,6 +28,7 @@
 		ContainedNode *node = [[ContainedNode alloc] initWithDataSource:dataSource url:u];
 		NSLog(@"Node: %@", u);
 		[paths addObject:node];
+		[node release];
 	}	
 	
 	[self setSubpaths:paths];

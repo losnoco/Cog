@@ -208,6 +208,7 @@
 	// Send it off!
 	NSInteger sent = [_socket send:requestBytes amount:requestLength];
 	if (sent != requestLength) {
+		[requestString release];
 		return NO;
 	}
 	NSLog(@"Sent:\n%@\n", requestString);

@@ -33,7 +33,7 @@
 	// unlike the usual case, this is returned retained (by self, effectively). The one-shot releases
 	// itself when it's complete
 	
-	return ft;
+	return [ft autorelease];
 }
 
 

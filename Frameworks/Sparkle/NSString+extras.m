@@ -72,7 +72,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMA
 - (NSString *) ellipsizeAfterNWords: (int) n {
 	
 	NSArray *stringComponents = [self componentsSeparatedByString: @" "];
-	NSMutableArray *componentsCopy = [stringComponents mutableCopy];
+	NSMutableArray *componentsCopy = [[stringComponents mutableCopy] autorelease];
 	int ix = n;
 	int len = [componentsCopy count];
 	

@@ -12,7 +12,7 @@
 
 + (NSArray *)preferencePanes
 {
-	GeneralPreferencesPlugin *plugin = [[GeneralPreferencesPlugin alloc] init];
+	GeneralPreferencesPlugin *plugin = [[[GeneralPreferencesPlugin alloc] init] autorelease];
 	[NSBundle loadNibNamed:@"Preferences" owner:plugin];
 	
 	return [NSArray arrayWithObjects: 

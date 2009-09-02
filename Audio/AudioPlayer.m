@@ -266,6 +266,7 @@
 		{
 			if (nextStream == nil)
 			{
+				[newChain release];
 				return YES;
 			}
 			

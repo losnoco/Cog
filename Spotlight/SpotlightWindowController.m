@@ -61,16 +61,16 @@ static NSPredicate * musicOnlyPredicate = nil;
         self.query = [[[NSMetadataQuery alloc]init]autorelease];
         [self.query setDelegate:self];
         self.query.sortDescriptors = [NSArray arrayWithObjects:
-        [[NSSortDescriptor alloc]initWithKey:@"kMDItemAuthors"
-                                   ascending:YES
-                                    selector:@selector(compareFirstString:)],
-        [[NSSortDescriptor alloc]initWithKey:@"kMDItemAlbum"
-                                   ascending:YES
-                                    selector:@selector(caseInsensitiveCompare:)],
-        [[NSSortDescriptor alloc]initWithKey:@"kMDItemAudioTrackNumber"
-                                   ascending:YES
-                                    selector:@selector(compareTrackNumbers:)],
-        nil];
+									  [[[NSSortDescriptor alloc]initWithKey:@"kMDItemAuthors"
+																 ascending:YES
+																   selector:@selector(compareFirstString:)] autorelease],
+									  [[[NSSortDescriptor alloc]initWithKey:@"kMDItemAlbum"
+																 ascending:YES
+																  selector:@selector(caseInsensitiveCompare:)] autorelease],
+									  [[[NSSortDescriptor alloc]initWithKey:@"kMDItemAudioTrackNumber"
+																 ascending:YES
+																  selector:@selector(compareTrackNumbers:)] autorelease],
+									  nil];
         
         // hook my query transformer up to me
         [PausingQueryTransformer setSearchController:self];
