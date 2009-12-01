@@ -277,7 +277,7 @@
 	mad_frame_finish (&frame);
 	mad_stream_finish (&stream);
 	
-	bitsPerSample = 16;
+	bitsPerSample = 24;
 	
 	bytesPerFrame = (bitsPerSample/8) * channels;
 	
@@ -321,6 +321,89 @@
 	return [self scanFile];
 }
 
+/*
+ * NAME:	prng()
+ * DESCRIPTION:	32-bit pseudo-random number generator
+ */
+static inline
+unsigned long prng(unsigned long state)
+{
+	return (state * 0x0019660dL + 0x3c6ef35fL) & 0xffffffffL;
+}
+
+
+// Clipping and rounding code from madplay(audio.c):
+/*
+ * madplay - MPEG audio decoder and player
+ * Copyright (C) 2000-2004 Robert Leslie
+ */
+static inline signed long audio_linear_dither(unsigned int bits, mad_fixed_t sample,
+											  struct audio_dither *dither,
+											  struct audio_stats *stats)
+{
+	unsigned int scalebits;
+	mad_fixed_t output, mask, random;
+	
+	enum {
+		MIN = -MAD_F_ONE,
+		MAX =  MAD_F_ONE - 1
+	};
+	
+	/* noise shape */
+	sample += dither->error[0] - dither->error[1] + dither->error[2];
+	
+	dither->error[2] = dither->error[1];
+	dither->error[1] = dither->error[0] / 2;
+	
+	/* bias */
+	output = sample + (1L << (MAD_F_FRACBITS + 1 - bits - 1));
+	
+	scalebits = MAD_F_FRACBITS + 1 - bits;
+	mask = (1L << scalebits) - 1;
+	
+	/* dither */
+	random  = prng(dither->random);
+	output += (random & mask) - (dither->random & mask);
+	
+	dither->random = random;
+	
+	/* clip */
+	if (output >= stats->peak_sample) {
+		if (output > MAX) {
+			++stats->clipped_samples;
+			if (output - MAX > stats->peak_clipping)
+				stats->peak_clipping = output - MAX;
+			
+			output = MAX;
+			
+			if (sample > MAX)
+				sample = MAX;
+		}
+		stats->peak_sample = output;
+	}
+	else if (output < -stats->peak_sample) {
+		if (output < MIN) {
+			++stats->clipped_samples;
+			if (MIN - output > stats->peak_clipping)
+				stats->peak_clipping = MIN - output;
+			
+			output = MIN;
+			
+			if (sample < MIN)
+				sample = MIN;
+		}
+		stats->peak_sample = -output;
+	}
+	
+	/* quantize */
+	output &= ~mask;
+	
+	/* error feedback */
+	dither->error[0] = sample - output;
+	
+	/* scale */
+	return output >> scalebits;
+}
 
 // Clipping and rounding code from madplay(audio.c):
 /*
@@ -402,23 +485,36 @@ audio_linear_round(unsigned int bits,
 	
 	_outputBuffer = (unsigned char *) malloc (_outputFrames * bytesPerFrame * sizeof (char));
 	
-	unsigned int i, j; 
-	unsigned int stride = channels * 2; 
-	for (j = 0; j < channels; j++) 
-	{ 
-		/* output sample(s) in 16-bit signed little-endian PCM */  
-		mad_fixed_t const *channel = _synth.pcm.samples[j]; 
-		unsigned char *outputPtr = _outputBuffer + (j * 2); 
-		
-		for (i = startingSample; i < sampleCount; i++) 
-		{  
-			signed short sample = audio_linear_round(bitsPerSample, channel[i]); 
+	int ch;
+	int i;
+	int stride = bitsPerSample/8;
+	unsigned char *outputPtr = _outputBuffer;
+	
+	// samples [0 ... n]
+	for(i = startingSample; i < sampleCount; i++) 
+	{		
+		// channels [0 .. n] in this case LRLRLRLR
+		for (ch = 0; ch < channels; ch++) 
+		{
+			signed long sample = audio_linear_dither(bitsPerSample, 
+													 _synth.pcm.samples[ch][i], 
+													 &channel_dither[ch], 
+													 &stats);
 			
-			outputPtr[0] = sample>>8;  
-			outputPtr[1] = sample & 0xff;  
+			if(bitsPerSample == 24)
+			{
+				outputPtr[0] = sample >> 16;
+				outputPtr[1] = sample >> 8;
+				outputPtr[2] = sample >> 0;				
+			}
+			else 
+			{
+				outputPtr[0] = sample >> 8;  
+				outputPtr[1] = sample & 0xff;  
+			}
 			outputPtr += stride; 
-		} 
-	} 
+		}
+	}
 	
 	// Output to a file
 	// FILE *f = fopen("data.raw", "a");
