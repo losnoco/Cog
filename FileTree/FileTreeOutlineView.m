@@ -14,7 +14,6 @@
 
 - (void)awakeFromNib
 {
-	[[self menu] setAutoenablesItems:NO];
 	[self setDoubleAction:@selector(addToPlaylist:)];
 	[self setTarget:[self delegate]];
 }
@@ -52,7 +51,6 @@
 {
 	//Find which row is under the cursor
 	[[self window] makeFirstResponder:self];
-	BOOL isDir;
 	NSPoint   menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];
 	NSInteger iRow = [self rowAtPoint:menuPoint];
 	NSMenu* contextMenu = [self menu];
@@ -71,25 +69,6 @@
 		[self selectRow:iRow byExtendingSelection:NO];
 	}
 
-	if ([self numberOfSelectedRows] > 0)
-	{
-		[[contextMenu itemWithTag:1] setEnabled:YES];	// Add to Playlist
-		[[contextMenu itemWithTag:2] setEnabled:YES];	// Set as Playlist
-		[[contextMenu itemWithTag:3] setEnabled:YES];	// Show in Finder
-		
-		// Only let directories be Set as Root
-		[[NSFileManager defaultManager] fileExistsAtPath:[[[self itemAtRow:iRow] URL] path] isDirectory:&isDir];
-		[[contextMenu itemWithTag:4] setEnabled:(isDir? YES : NO)];
-	}
-	else
-	{
-		//No rows are selected, so the menu should be displayed with all items disabled
-		int i;
-		for (i=0;i<[contextMenu numberOfItems];i++) {
-			[[contextMenu itemAtIndex:i] setEnabled:NO];
-		}
-	}
-	 
 	return contextMenu;
 }
 
