@@ -87,12 +87,13 @@
 	NSInteger lineLength = ((uint8_t *)newLine - (uint8_t *)_buffer);
 	
 	// We are using ASCII encoding here because some Icecast servers will insert a random 0xaa or two into the headers
+	// Or I'm an idiot who doesn't know how to count (fixed now), but I don't remember what site I was seeing this on, so I can't really check.
 	NSString *line = [[NSString alloc] initWithBytes:_buffer length:lineLength encoding:NSASCIIStringEncoding];
 	NSLog(@"Received line: \"%@\"", line);
 	
 	memmove(_buffer, _buffer + lineLength + 2, _bufferSize - lineLength); // + 2 to skip the newline!
 
-	_bufferSize -= lineLength;
+	_bufferSize -= (lineLength + 2); // +2 since we also skipped the newline
 	
 	return [line autorelease];
 }
