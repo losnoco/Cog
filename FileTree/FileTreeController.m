@@ -63,4 +63,26 @@
 	}
 }
 
+-(BOOL)validateMenuItem:(NSMenuItem*)menuItem
+{
+	SEL action = [menuItem action];
+
+	if ([outlineView numberOfSelectedRows] == 0)
+		return NO;
+
+	if (action == @selector(setAsRoot:))
+	{
+		BOOL isDir;
+		NSInteger row = [outlineView selectedRow];
+
+		if ([outlineView numberOfSelectedRows] > 1)
+			return NO;
+
+		// Only let directories be Set as Root
+		[[NSFileManager defaultManager] fileExistsAtPath:[[[outlineView itemAtRow:row] URL] path] isDirectory:&isDir];
+		return isDir;
+	}
+
+	return YES;
+}
 @end

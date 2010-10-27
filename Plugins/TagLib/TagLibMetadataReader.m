@@ -85,12 +85,80 @@
 			}
 		}
 
+		if (nil == image) {
+			// Try to load image from external file
+
+			// If we find an appropriately-named image in this directory, it will
+			// be tagged with the first image cache tag. Subsequent directory entries
+			// may have a different tag, but an image search would result in the same
+			// artwork.
+			
+			static NSString *lastImagePath = nil;
+			static NSString *lastCacheTag = nil;
+						
+			NSString *path = [[url path] stringByDeletingLastPathComponent];
+
+			if ([path isEqualToString:lastImagePath]) {
+				// Use whatever image may have been stored with the initial tag for the path
+				// (might be nil but no point scanning again)
+				
+				image = [NSImage imageNamed:lastCacheTag];
+			} else {
+				// Book-keeping...
+				
+				if (nil != lastImagePath)
+					[lastImagePath release];
+				
+				lastImagePath = [path retain];
+
+				if (nil != lastCacheTag)
+					[lastCacheTag release];
+				
+				lastCacheTag = [imageCacheTag retain];
+				
+				// Gather list of candidate image files
+				
+				NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+				NSArray *imageFileNames = [fileNames pathsMatchingExtensions:[NSImage imageFileTypes]];
+				
+				NSEnumerator *imageEnumerator = [imageFileNames objectEnumerator];
+				NSString *fileName;
+				
+				while (fileName = [imageEnumerator nextObject]) {
+					if ([TagLibMetadataReader isCoverFile:fileName]) {
+						image = [[[NSImage alloc] initByReferencingFile:[path stringByAppendingPathComponent:fileName]] autorelease];
+						[image setName:imageCacheTag];
+						break;
+					}
+				}
+			}
+		}
+		
 		if (nil != image) {
 			[dict setObject:image forKey:@"albumArt"];
 		}
 	}
 
 	return [dict autorelease];
+}
+
++ (BOOL)isCoverFile:(NSString *)fileName
+{
+	NSEnumerator *coverEnumerator = [[TagLibMetadataReader coverNames] objectEnumerator];
+	NSString *coverFileName;
+	
+	while (coverFileName = [coverEnumerator nextObject]) {
+		if ([[[[fileName lastPathComponent] stringByDeletingPathExtension] lowercaseString] hasSuffix:coverFileName]) {
+			return true;
+		}
+	}
+	return false;
+			
+}
+
++ (NSArray *)coverNames
+{
+	return [NSArray arrayWithObjects:@"cover", @"folder", @"album", @"front", nil];
 }
 
 + (NSArray *)fileTypes
