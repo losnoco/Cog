@@ -1,9 +1,13 @@
-Game_Music_Emu 0.5.2
+Game_Music_Emu 0.6.0 Pre-release
 --------------------
 Author : Shay Green <gblargg@gmail.com>
+Author : Chris Moeller <kode54@gmail.com>
 Website: http://www.slack.net/~ant/libs/
+Website: http://bitbucket.com/kode54/Game_Music_Emu
 Forum  : http://groups.google.com/group/blargg-sound-libs
 License: GNU Lesser General Public License (LGPL)
+
+NOTE: This file has not been fully updated yet!
 
 Contents
 --------
