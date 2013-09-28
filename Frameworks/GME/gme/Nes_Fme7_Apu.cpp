@@ -1,8 +1,6 @@
-// Game_Music_Emu 0.5.2. http://www.slack.net/~ant/
+// $package. http://www.slack.net/~ant/
 
 #include "Nes_Fme7_Apu.h"
-
-#include <string.h>
 
 /* Copyright (C) 2003-2006 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -51,7 +49,6 @@ void Nes_Fme7_Apu::run_until( blip_time_t end_time )
 		Blip_Buffer* const osc_output = oscs [index].output;
 		if ( !osc_output )
 			continue;
-		osc_output->set_modified();
 		
 		// check for unsupported mode
 		#ifndef NDEBUG
@@ -78,11 +75,13 @@ void Nes_Fme7_Apu::run_until( blip_time_t end_time )
 		int amp = volume;
 		if ( !phases [index] )
 			amp = 0;
+		
 		{
 			int delta = amp - oscs [index].last_amp;
 			if ( delta )
 			{
 				oscs [index].last_amp = amp;
+				osc_output->set_modified();
 				synth.offset( last_time, delta, osc_output );
 			}
 		}
@@ -91,6 +90,7 @@ void Nes_Fme7_Apu::run_until( blip_time_t end_time )
 		if ( time < end_time )
 		{
 			int delta = amp * 2 - volume;
+			osc_output->set_modified();
 			if ( volume )
 			{
 				do
@@ -109,7 +109,7 @@ void Nes_Fme7_Apu::run_until( blip_time_t end_time )
 				// maintain phase when silent
 				int count = (end_time - time + period - 1) / period;
 				phases [index] ^= count & 1;
-				time += (blargg_long) count * period;
+				time += count * period;
 			}
 		}
 		

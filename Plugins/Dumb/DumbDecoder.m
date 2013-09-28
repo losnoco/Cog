@@ -49,6 +49,33 @@ void closeCallback(void *f)
 	NSLog(@"CLOSE"); //I DO NOTHING
 }
 
+int seekCallback(void *f, long n)
+{
+    DumbDecoder *decoder = (DumbDecoder *)f;
+    
+    if (![[decoder source] seekable]) return -1;
+    
+    if ([[decoder source] seek:n whence:SEEK_SET]) return 0;
+    else return -1;
+}
+
+long getsizeCallback(void *f)
+{
+    DumbDecoder *decoder = (DumbDecoder *)f;
+    
+    if (![[decoder source] seekable]) return 0;
+    
+    long current_offset = [[decoder source] tell];
+    
+    [[decoder source] seek:0 whence:SEEK_END];
+    
+    long size = [[decoder source] tell];
+    
+    [[decoder source] seek:current_offset whence:SEEK_SET];
+    
+    return size;
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
 	[self setSource:s];
@@ -58,6 +85,8 @@ void closeCallback(void *f)
 	dfs.getc = getCharCallback;
 	dfs.getnc = readCallback;
 	dfs.close = closeCallback;
+    dfs.seek = seekCallback;
+    dfs.get_size = getsizeCallback;
 
 //	dumb_register_stdfiles();
 
@@ -69,18 +98,7 @@ void closeCallback(void *f)
 	}
 
 	NSString *ext = [[[[s url] path] pathExtension] lowercaseString];
-	if ([ext isEqualToString:@"it"])
-		duh = dumb_read_it(df);
-	else if ([ext isEqualToString:@"xm"]) 
-		duh = dumb_read_xm(df);
-	else if ([ext isEqualToString:@"s3m"])
-		duh = dumb_read_s3m(df);
-	else if ([ext isEqualToString:@"mod"])
-		duh = dumb_read_mod(df);
-	else {
-		NSLog(@"DUH IS NUL!!!");
-		duh = NULL;
-	}
+    duh = dumb_read_any(df, [ext isEqualToString:@"mod"] ? 0 : 1, 0);
 	if (!duh)
 	{
 		NSLog(@"Failed to create duh");
@@ -97,7 +115,10 @@ void closeCallback(void *f)
 		return NO;
 	}
 	
-	[self willChangeValueForKey:@"properties"];
+    DUMB_IT_SIGRENDERER * itsr = duh_get_it_sigrenderer( dsr );
+    dumb_it_set_ramp_style( itsr, 2 );
+    
+    [self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
 	return YES;
@@ -187,7 +208,7 @@ void closeCallback(void *f)
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"it", @"xm", @"s3m", @"mod", nil];
+	return [NSArray arrayWithObjects:@"it", @"xm", @"s3m", @"mod", @"stm", @"ptm", @"mtm", @"669", @"psm", @"am", @"dsm", @"amf", @"okt", @"okta", nil];
 }
 
 + (NSArray *)mimeTypes 

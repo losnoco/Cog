@@ -1,6 +1,6 @@
 // Konami VRC6 sound chip emulator
 
-// Nes_Snd_Emu 0.1.8
+// Nes_Snd_Emu $vers
 #ifndef NES_VRC6_APU_H
 #define NES_VRC6_APU_H
 
@@ -15,9 +15,9 @@ public:
 	void reset();
 	void volume( double );
 	void treble_eq( blip_eq_t const& );
-	void output( Blip_Buffer* );
+	void set_output( Blip_Buffer* );
 	enum { osc_count = 3 };
-	void osc_output( int index, Blip_Buffer* );
+	void set_output( int index, Blip_Buffer* );
 	void end_frame( blip_time_t );
 	void save_state( vrc6_apu_state_t* ) const;
 	void load_state( vrc6_apu_state_t const& );
@@ -49,15 +49,15 @@ private:
 		
 		int period() const
 		{
-			return (regs [2] & 0x0F) * 0x100L + regs [1] + 1;
+			return (regs [2] & 0x0F) * 0x100 + regs [1] + 1;
 		}
 	};
 	
 	Vrc6_Osc oscs [osc_count];
 	blip_time_t last_time;
 	
-	Blip_Synth<blip_med_quality,1> saw_synth;
-	Blip_Synth<blip_good_quality,1> square_synth;
+	Blip_Synth_Fast saw_synth;
+	Blip_Synth_Norm square_synth;
 	
 	void run_until( blip_time_t );
 	void run_square( Vrc6_Osc& osc, blip_time_t );
@@ -73,7 +73,7 @@ struct vrc6_apu_state_t
 	BOOST::uint8_t unused;
 };
 
-inline void Nes_Vrc6_Apu::osc_output( int i, Blip_Buffer* buf )
+inline void Nes_Vrc6_Apu::set_output( int i, Blip_Buffer* buf )
 {
 	assert( (unsigned) i < osc_count );
 	oscs [i].output = buf;

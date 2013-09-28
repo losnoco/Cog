@@ -149,9 +149,15 @@
 /* Begin PBXProject section */
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "APL" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 089C166AFE841209C02AAC07 /* CueSheet */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -229,6 +235,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = APL;
+				SDKROOT = macosx10.6;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
 			};
@@ -237,6 +244,10 @@
 		99B989F90CC7E10500C256E9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					i386,
+					ppc,
+				);
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -253,6 +264,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = APL;
+				SDKROOT = macosx10.6;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = NO;
 			};

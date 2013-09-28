@@ -1,4 +1,4 @@
-// Nes_Snd_Emu 0.1.8. http://www.slack.net/~ant/
+// Nes_Snd_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nes_Namco_Apu.h"
 
@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 Nes_Namco_Apu::Nes_Namco_Apu()
 {
-	output( NULL );
+	set_output( NULL );
 	volume( 1.0 );
 	reset();
 }
@@ -40,10 +40,10 @@ void Nes_Namco_Apu::reset()
 	}
 }
 
-void Nes_Namco_Apu::output( Blip_Buffer* buf )
+void Nes_Namco_Apu::set_output( Blip_Buffer* buf )
 {
-	for ( int i = 0; i < osc_count; i++ )
-		osc_output( i, buf );
+	for ( int i = 0; i < osc_count; ++i )
+		set_output( i, buf );
 }
 
 /*
@@ -82,7 +82,6 @@ void Nes_Namco_Apu::run_until( blip_time_t nes_end_time )
 		Blip_Buffer* output = osc.output;
 		if ( !output )
 			continue;
-		output->set_modified();
 		
 		blip_resampled_time_t time =
 				output->resampled_time( last_time ) + osc.delay;
@@ -98,11 +97,17 @@ void Nes_Namco_Apu::run_until( blip_time_t nes_end_time )
 			if ( !volume )
 				continue;
 			
-			blargg_long freq = (osc_reg [4] & 3) * 0x10000 + osc_reg [2] * 0x100L + osc_reg [0];
+			int freq = (osc_reg [4] & 3) * 0x10000 + osc_reg [2] * 0x100 + osc_reg [0];
 			if ( freq < 64 * active_oscs )
 				continue; // prevent low frequencies from excessively delaying freq changes
+			
+			int const master_clock_divider = 12; // NES time derived via divider of master clock
+			int const n106_divider = 45; // N106 then divides master clock by this
+			int const max_freq = 0x3FFFF;
+			int const lowest_freq_period = (max_freq + 1) * n106_divider / master_clock_divider;
+			// divide by 8 to avoid overflow
 			blip_resampled_time_t period =
-					output->resampled_duration( 983040 ) / freq * active_oscs;
+					output->resampled_duration( lowest_freq_period / 8 ) / freq * 8 * active_oscs;
 			
 			int wave_size = 32 - (osc_reg [4] >> 2 & 7) * 4;
 			if ( !wave_size )
@@ -110,6 +115,8 @@ void Nes_Namco_Apu::run_until( blip_time_t nes_end_time )
 			
 			int last_amp = osc.last_amp;
 			int wave_pos = osc.wave_pos;
+			
+			output->set_modified();
 			
 			do
 			{

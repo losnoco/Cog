@@ -23,25 +23,12 @@
 #include "dumb.h"
 #include "internal/it.h"
 
+#ifndef min
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#endif
 
 
 #define INVESTIGATE_OLD_INSTRUMENTS
-
-
-
-static int it_seek(DUMBFILE *f, long offset)
-{
-	long pos = dumbfile_pos(f);
-
-	if (pos > offset)
-		return -1;
-
-	if (pos < offset)
-		if (dumbfile_skip(f, offset - pos))
-			return -1;
-
-	return 0;
-}
 
 
 
@@ -49,16 +36,17 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned long dword;
 
+typedef struct readblock_crap readblock_crap;
+
+struct readblock_crap {
+	unsigned char *sourcebuf;
+	unsigned char *sourcepos;
+	unsigned char *sourceend;
+	int rembits;
+};
 
 
-static unsigned char *sourcebuf = NULL;
-static unsigned char *sourcepos = NULL;
-static unsigned char *sourceend;
-static int rembits = 0;
-
-
-
-static int readblock(DUMBFILE *f)
+static int readblock(DUMBFILE *f, readblock_crap * crap)
 {
 	long size;
 	int c;
@@ -67,51 +55,51 @@ static int readblock(DUMBFILE *f)
 	if (size < 0)
 		return size;
 
-	sourcebuf = malloc(size);
-	if (!sourcebuf)
+	crap->sourcebuf = malloc(size);
+	if (!crap->sourcebuf)
 		return -1;
 
-	c = dumbfile_getnc((char *)sourcebuf, size, f);
+	c = dumbfile_getnc((char *)crap->sourcebuf, size, f);
 	if (c < size) {
-		free(sourcebuf);
-		sourcebuf = NULL;
+		free(crap->sourcebuf);
+		crap->sourcebuf = NULL;
 		return -1;
 	}
 
-	sourcepos = sourcebuf;
-	sourceend = sourcebuf + size;
-	rembits = 8;
+	crap->sourcepos = crap->sourcebuf;
+	crap->sourceend = crap->sourcebuf + size;
+	crap->rembits = 8;
 	return 0;
 }
 
 
 
-static void freeblock(void)
+static void freeblock(readblock_crap * crap)
 {
-	free(sourcebuf);
-	sourcebuf = NULL;
+	free(crap->sourcebuf);
+	crap->sourcebuf = NULL;
 }
 
 
 
-static int readbits(int bitwidth)
+static int readbits(int bitwidth, readblock_crap * crap)
 {
 	int val = 0;
 	int b = 0;
 
-	if (sourcepos >= sourceend) return val;
+	if (crap->sourcepos >= crap->sourceend) return val;
 
-	while (bitwidth > rembits) {
-		val |= *sourcepos++ << b;
-		if (sourcepos >= sourceend) return val;
-		b += rembits;
-		bitwidth -= rembits;
-		rembits = 8;
+	while (bitwidth > crap->rembits) {
+		val |= *crap->sourcepos++ << b;
+		if (crap->sourcepos >= crap->sourceend) return val;
+		b += crap->rembits;
+		bitwidth -= crap->rembits;
+		crap->rembits = 8;
 	}
 
-	val |= (*sourcepos & ((1 << bitwidth) - 1)) << b;
-	*sourcepos >>= bitwidth;
-	rembits -= bitwidth;
+	val |= (*crap->sourcepos & ((1 << bitwidth) - 1)) << b;
+	*crap->sourcepos >>= bitwidth;
+	crap->rembits -= bitwidth;
 
 	return val;
 }
@@ -121,18 +109,22 @@ static int readbits(int bitwidth)
 /** WARNING - do we even need to pass `right`? */
 /** WARNING - why bother memsetting at all? The whole array is written... */
 // if we do memset, dumb_silence() would be neater...
-static int decompress8(DUMBFILE *f, signed char *data, int len, int cmwt)
+static int decompress8(DUMBFILE *f, signed char *data, int len, int it215, int stereo)
 {
 	int blocklen, blockpos;
 	byte bitwidth;
 	word val;
 	char d1, d2;
+	readblock_crap crap;
 
-	memset(data, 0, len * sizeof(*data));
+	memset(&crap, 0, sizeof(crap));
+
+	for (blocklen = 0, blockpos = 0; blocklen < len; blocklen++, blockpos += 1 + stereo)
+		data[ blockpos ] = 0;
 
 	while (len > 0) {
 		//Read a block of compressed data:
-		if (readblock(f))
+		if (readblock(f, &crap))
 			return -1;
 		//Set up a few variables
 		blocklen = (len < 0x8000) ? len : 0x8000; //Max block length is 0x8000 bytes
@@ -142,12 +134,12 @@ static int decompress8(DUMBFILE *f, signed char *data, int len, int cmwt)
 		//Start the decompression:
 		while (blockpos < blocklen) {
 			//Read a value:
-			val = (word)readbits(bitwidth);
+			val = (word)readbits(bitwidth, &crap);
 			//Check for bit width change:
 
 			if (bitwidth < 7) { //Method 1:
 				if (val == (1 << (bitwidth - 1))) {
-					val = (word)readbits(3) + 1;
+					val = (word)readbits(3, &crap) + 1;
 					bitwidth = (val < bitwidth) ? val : val + 1;
 					continue;
 				}
@@ -168,7 +160,7 @@ static int decompress8(DUMBFILE *f, signed char *data, int len, int cmwt)
 				}
 			}
 			else { //Illegal width, abort ?
-				freeblock();
+				freeblock(&crap);
 				return -1;
 			}
 
@@ -193,29 +185,34 @@ static int decompress8(DUMBFILE *f, signed char *data, int len, int cmwt)
 			/* Version 2.15 was an unofficial version with hacked compression
 			 * code. Yay, better compression :D
 			 */
-			*data++ = cmwt == 0x215 ? d2 : d1;
+			*data++ = it215 ? d2 : d1;
+			data += stereo;
 			len--;
 			blockpos++;
 		}
-		freeblock();
+		freeblock(&crap);
 	}
 	return 0;
 }
 
 
 
-static int decompress16(DUMBFILE *f, short *data, int len, int cmwt)
+static int decompress16(DUMBFILE *f, short *data, int len, int it215, int stereo)
 {
 	int blocklen, blockpos;
 	byte bitwidth;
 	long val;
 	short d1, d2;
+	readblock_crap crap;
 
-	memset(data, 0, len * sizeof(*data));
+	memset(&crap, 0, sizeof(crap));
+
+	for ( blocklen = 0, blockpos = 0; blocklen < len; blocklen++, blockpos += 1 + stereo )
+		data[ blockpos ] = 0;
 
 	while (len > 0) {
 		//Read a block of compressed data:
-		if (readblock(f))
+		if (readblock(f, &crap))
 			return -1;
 		//Set up a few variables
 		blocklen = (len < 0x4000) ? len : 0x4000; // Max block length is 0x4000 bytes
@@ -224,12 +221,12 @@ static int decompress16(DUMBFILE *f, short *data, int len, int cmwt)
 		d1 = d2 = 0;
 		//Start the decompression:
 		while (blockpos < blocklen) {
-			val = readbits(bitwidth);
+			val = readbits(bitwidth, &crap);
 			//Check for bit width change:
 
 			if (bitwidth < 7) { //Method 1:
 				if (val == (1 << (bitwidth - 1))) {
-					val = readbits(4) + 1;
+					val = readbits(4, &crap) + 1;
 					bitwidth = (val < bitwidth) ? val : val + 1;
 					continue;
 				}
@@ -250,7 +247,7 @@ static int decompress16(DUMBFILE *f, short *data, int len, int cmwt)
 				}
 			}
 			else { //Illegal width, abort ?
-				freeblock();
+				freeblock(&crap);
 				return -1;
 			}
 
@@ -275,11 +272,12 @@ static int decompress16(DUMBFILE *f, short *data, int len, int cmwt)
 			/* Version 2.15 was an unofficial version with hacked compression
 			 * code. Yay, better compression :D
 			 */
-			*data++ = cmwt == 0x215 ? d2 : d1;
+			*data++ = it215 ? d2 : d1;
+			data += stereo;
 			len--;
 			blockpos++;
 		}
-		freeblock();
+		freeblock(&crap);
 	}
 	return 0;
 }
@@ -296,6 +294,8 @@ static int it_read_envelope(IT_ENVELOPE *envelope, DUMBFILE *f)
 	envelope->loop_end = dumbfile_getc(f);
 	envelope->sus_loop_start = dumbfile_getc(f);
 	envelope->sus_loop_end = dumbfile_getc(f);
+	if (envelope->n_nodes > 25)
+		envelope->n_nodes = 25;
 	for (n = 0; n < envelope->n_nodes; n++) {
 		envelope->node_y[n] = dumbfile_getc(f);
 		envelope->node_t[n] = dumbfile_igetw(f);
@@ -318,10 +318,12 @@ static int it_read_old_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f)
 {
 	int n;
 
-	if (dumbfile_mgetl(f) != IT_INSTRUMENT_SIGNATURE)
-		return -1;
+	/*if (dumbfile_mgetl(f) != IT_INSTRUMENT_SIGNATURE)
+		return -1;*/
+	// XXX
+	dumbfile_skip(f, 4);
 
-	dumbfile_getnc(instrument->filename, 13, f);
+    dumbfile_getnc((char *)instrument->filename, 13, f);
 	instrument->filename[13] = 0;
 
 	instrument->volume_envelope.flags = dumbfile_getc(f);
@@ -350,7 +352,7 @@ static int it_read_old_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f)
 	 */
 	dumbfile_skip(f, 4);
 
-	dumbfile_getnc(instrument->name, 26, f);
+    dumbfile_getnc((char *)instrument->name, 26, f);
 	instrument->name[26] = 0;
 
 	/* Skip unused bytes following the Instrument Name. */
@@ -424,14 +426,19 @@ static int it_read_old_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f)
 
 
 
-static int it_read_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f)
+static int it_read_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f, int maxlen)
 {
-	int n;
+	int n, len;
 
-	if (dumbfile_mgetl(f) != IT_INSTRUMENT_SIGNATURE)
-		return -1;
+	/*if (dumbfile_mgetl(f) != IT_INSTRUMENT_SIGNATURE)
+		return -1;*/
+	// XXX
 
-	dumbfile_getnc(instrument->filename, 13, f);
+	if (maxlen) len = dumbfile_pos(f);
+
+	dumbfile_skip(f, 4);
+
+    dumbfile_getnc((char *)instrument->filename, 13, f);
 	instrument->filename[13] = 0;
 
 	instrument->new_note_action = dumbfile_getc(f);
@@ -450,13 +457,21 @@ static int it_read_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f)
 	 */
 	dumbfile_skip(f, 4);
 
-	dumbfile_getnc(instrument->name, 26, f);
+    dumbfile_getnc((char *)instrument->name, 26, f);
 	instrument->name[26] = 0;
 
 	instrument->filter_cutoff = dumbfile_getc(f);
 	instrument->filter_resonance = dumbfile_getc(f);
 
 	/* Skip MIDI Channel, Program and Bank. */
+	//dumbfile_skip(f, 4);
+	/*instrument->output = dumbfile_getc(f);
+	if ( instrument->output > 16 ) {
+		instrument->output -= 128;
+	} else {
+		instrument->output = 0;
+	}
+	dumbfile_skip(f, 3);*/
 	dumbfile_skip(f, 4);
 
 	for (n = 0; n < 120; n++) {
@@ -471,6 +486,39 @@ static int it_read_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f)
 	if (it_read_envelope(&instrument->pan_envelope, f)) return -1;
 	if (it_read_envelope(&instrument->pitch_envelope, f)) return -1;
 
+	if (maxlen) {
+		len = dumbfile_pos(f) - len;
+		if ( maxlen - len < 124 ) return 0;
+	}
+
+	if ( dumbfile_mgetl(f) == IT_MPTX_SIGNATURE ) {
+		for ( n = 0; n < 120; n++ ) {
+			instrument->map_sample[ n ] += dumbfile_getc( f ) << 8;
+		}
+
+		if (dumbfile_error(f))
+			return -1;
+	}
+
+	/*if ( dumbfile_mgetl(f) == IT_INSM_SIGNATURE ) {
+		long end = dumbfile_igetl(f);
+		end += dumbfile_pos(f);
+		while ( dumbfile_pos(f) < end ) {
+			int chunkid = dumbfile_igetl(f);
+			switch ( chunkid ) {
+				case DUMB_ID('P','L','U','G'):
+					instrument->output = dumbfile_getc(f);
+					break;
+				default:
+					chunkid = chunkid / 0x100 + dumbfile_getc(f) * 0x1000000;
+					break;
+			}
+		}
+
+		if (dumbfile_error(f))
+			return -1;
+	}*/
+
 	return 0;
 }
 
@@ -478,17 +526,29 @@ static int it_read_instrument(IT_INSTRUMENT *instrument, DUMBFILE *f)
 
 static int it_read_sample_header(IT_SAMPLE *sample, unsigned char *convert, long *offset, DUMBFILE *f)
 {
+	/* XXX
 	if (dumbfile_mgetl(f) != IT_SAMPLE_SIGNATURE)
-		return -1;
+		return -1;*/
+	int hax = 0;
+	long s = dumbfile_mgetl(f);
+	if (s != IT_SAMPLE_SIGNATURE) {
+		if ( s == ( IT_SAMPLE_SIGNATURE >> 16 ) ) {
+			s <<= 16;
+			s |= dumbfile_mgetw(f);
+			if ( s != IT_SAMPLE_SIGNATURE )
+				return -1;
+			hax = 1;
+		}
+	}
 
-	dumbfile_getnc(sample->filename, 13, f);
+    dumbfile_getnc((char *)sample->filename, 13, f);
 	sample->filename[13] = 0;
 
 	sample->global_volume = dumbfile_getc(f);
 	sample->flags = dumbfile_getc(f);
 	sample->default_volume = dumbfile_getc(f);
 
-	dumbfile_getnc(sample->name, 26, f);
+    dumbfile_getnc((char *)sample->name, 26, f);
 	sample->name[26] = 0;
 
 	*convert = dumbfile_getc(f);
@@ -526,7 +586,8 @@ static int it_read_sample_header(IT_SAMPLE *sample, unsigned char *convert, long
 				sample->flags &= ~IT_SAMPLE_SUS_LOOP;
 
 			/* We may be able to truncate the sample to save memory. */
-			if (sample->flags & IT_SAMPLE_LOOP) {
+			if (sample->flags & IT_SAMPLE_LOOP &&
+				*convert != 0xFF) { /* not truncating compressed samples, for now... */
 				if ((sample->flags & IT_SAMPLE_SUS_LOOP) && sample->sus_loop_end >= sample->loop_end)
 					sample->length = sample->sus_loop_end;
 				else
@@ -539,15 +600,46 @@ static int it_read_sample_header(IT_SAMPLE *sample, unsigned char *convert, long
 
 	sample->vibrato_speed = dumbfile_getc(f);
 	sample->vibrato_depth = dumbfile_getc(f);
-	sample->vibrato_rate = dumbfile_getc(f);
-	sample->vibrato_waveform = dumbfile_getc(f);
+	if ( ! hax ) {
+		sample->vibrato_rate = dumbfile_getc(f);
+		sample->vibrato_waveform = dumbfile_getc(f);
+	} else {
+		sample->vibrato_rate = 0;
+		sample->vibrato_waveform = 0;
+	}
+	sample->finetune = 0;
+	sample->max_resampling_quality = -1;
 
 	return dumbfile_error(f);
 }
 
+long _dumb_it_read_sample_data_adpcm4(IT_SAMPLE *sample, DUMBFILE *f)
+{
+	long n, len, delta;
+	signed char * ptr, * end;
+	signed char compression_table[16];
+    if (dumbfile_getnc((char *)compression_table, 16, f) != 16)
+        return -1;
+	ptr = (signed char *) sample->data;
+	delta = 0;
+
+	end = ptr + sample->length;
+	len = (sample->length + 1) / 2;
+	for (n = 0; n < len; n++) {
+		int b = dumbfile_getc(f);
+		if (b < 0) return -1;
+		delta += compression_table[b & 0x0F];
+		*ptr++ = delta;
+		if (ptr >= end) break;
+		delta += compression_table[b >> 4];
+		*ptr++ = delta;
+	}
+
+	return 0;
+}
 
 
-static long it_read_sample_data(int cmwt, IT_SAMPLE *sample, unsigned char convert, DUMBFILE *f)
+static long it_read_sample_data(IT_SAMPLE *sample, unsigned char convert, DUMBFILE *f)
 {
 	long n;
 
@@ -558,33 +650,59 @@ static long it_read_sample_data(int cmwt, IT_SAMPLE *sample, unsigned char conve
 	if (!sample->data)
 		return -1;
 
-	if (sample->flags & 8) {
+	if (!(sample->flags & IT_SAMPLE_16BIT) && (convert == 0xFF)) {
+		if (_dumb_it_read_sample_data_adpcm4(sample, f) < 0)
+			return -1;
+	} else if (sample->flags & 8) {
 		/* If the sample is packed, then we must unpack it. */
 
-		/** WARNING - unresolved business here... test with ModPlug? */
+		/* Behavior as defined by greasemonkey's munch.py and observed by XMPlay and OpenMPT */
 
-		if (sample->flags & IT_SAMPLE_STEREO)
-			exit(37); // TODO: if this ever happens, maybe sample->length should be doubled below?
-
-/*
-//#ifndef STEREO_SAMPLES_COUNT_AS_TWO
-		ASSERT(!(sample->flags & IT_SAMPLE_STEREO));
-//#endif
-*/
-		if (sample->flags & IT_SAMPLE_16BIT)
-			decompress16(f, sample->data, datasize, cmwt);
-		else
-			decompress8(f, sample->data, datasize, cmwt);
-	} else if (sample->flags & IT_SAMPLE_16BIT) {
-		if (convert & 2)
+		if (sample->flags & IT_SAMPLE_STEREO) {
+			if (sample->flags & IT_SAMPLE_16BIT) {
+				decompress16(f, (short *) sample->data, datasize >> 1, convert & 4, 1);
+				decompress16(f, (short *) sample->data + 1, datasize >> 1, convert & 4, 1);
+			} else {
+				decompress8(f, (signed char *) sample->data, datasize >> 1, convert & 4, 1);
+				decompress8(f, (signed char *) sample->data + 1, datasize >> 1, convert & 4, 1);
+			}
+		} else {
+			if (sample->flags & IT_SAMPLE_16BIT)
+				decompress16(f, (short *) sample->data, datasize, convert & 4, 0);
+			else
+				decompress8(f, (signed char *) sample->data, datasize, convert & 4, 0);
+		}
+ 	} else if (sample->flags & IT_SAMPLE_16BIT) {
+		if (sample->flags & IT_SAMPLE_STEREO) {
+			if (convert & 2) {
+				for (n = 0; n < datasize; n += 2)
+					((short *)sample->data)[n] = dumbfile_mgetw(f);
+				for (n = 1; n < datasize; n += 2)
+					((short *)sample->data)[n] = dumbfile_mgetw(f);
+			} else {
+				for (n = 0; n < datasize; n += 2)
+					((short *)sample->data)[n] = dumbfile_igetw(f);
+				for (n = 1; n < datasize; n += 2)
+					((short *)sample->data)[n] = dumbfile_igetw(f);
+			}
+		} else {
+ 			if (convert & 2)
+				for (n = 0; n < datasize; n++)
+					((short *)sample->data)[n] = dumbfile_mgetw(f);
+			else
+				for (n = 0; n < datasize; n++)
+					((short *)sample->data)[n] = dumbfile_igetw(f);
+		}
+ 	} else {
+		if (sample->flags & IT_SAMPLE_STEREO) {
+			for (n = 0; n < datasize; n += 2)
+				((signed char *)sample->data)[n] = dumbfile_getc(f);
+			for (n = 1; n < datasize; n += 2)
+				((signed char *)sample->data)[n] = dumbfile_getc(f);
+		} else
 			for (n = 0; n < datasize; n++)
-				((short *)sample->data)[n] = dumbfile_mgetw(f);
-		else
-			for (n = 0; n < datasize; n++)
-				((short *)sample->data)[n] = dumbfile_igetw(f);
-	} else
-		for (n = 0; n < datasize; n++)
-			((signed char *)sample->data)[n] = dumbfile_getc(f);
+				((signed char *)sample->data)[n] = dumbfile_getc(f);
+	}
 
 	if (dumbfile_error(f))
 		return -1;
@@ -611,7 +729,7 @@ static long it_read_sample_data(int cmwt, IT_SAMPLE *sample, unsigned char conve
 
 
 
-#define DETECT_DUPLICATE_CHANNELS
+//#define DETECT_DUPLICATE_CHANNELS
 #ifdef DETECT_DUPLICATE_CHANNELS
 #include <stdio.h>
 #endif
@@ -659,7 +777,7 @@ static int it_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, unsigned char *buff
 		return -1;
 
 	/* Read in the pattern data. */
-	dumbfile_getnc(buffer, buflen, f);
+    dumbfile_getnc((char *)buffer, buflen, f);
 
 	if (dumbfile_error(f))
 		return -1;
@@ -794,7 +912,7 @@ static int it_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, unsigned char *buff
 typedef struct IT_COMPONENT
 {
 	unsigned char type;
-	unsigned char n;
+	unsigned short n;
 	long offset;
 	short sampfirst; /* component[sampfirst] = first sample data after this */
 	short sampnext; /* sampnext is used to create linked lists of sample data */
@@ -822,19 +940,23 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 	IT_COMPONENT *component;
 	int n_components = 0;
 
-	unsigned char sample_convert[256];
+	unsigned char sample_convert[4096];
 
 	int n;
 
 	unsigned char *buffer;
 
 	if (dumbfile_mgetl(f) != IT_SIGNATURE)
+    {
 		return NULL;
+    }
 
 	sigdata = malloc(sizeof(*sigdata));
 
 	if (!sigdata)
+    {
 		return NULL;
+    }
 
 	sigdata->song_message = NULL;
 	sigdata->order = NULL;
@@ -844,7 +966,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 	sigdata->midi = NULL;
 	sigdata->checkpoint = NULL;
 
-	dumbfile_getnc(sigdata->name, 26, f);
+    dumbfile_getnc((char *)sigdata->name, 26, f);
 	sigdata->name[26] = 0;
 
 	/* Skip pattern row highlight info. */
@@ -877,10 +999,11 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 	/* Skip Reserved. */
 	dumbfile_skip(f, 4);
 
-	dumbfile_getnc(sigdata->channel_pan, DUMB_IT_N_CHANNELS, f);
-	dumbfile_getnc(sigdata->channel_volume, DUMB_IT_N_CHANNELS, f);
+    dumbfile_getnc((char *)sigdata->channel_pan, DUMB_IT_N_CHANNELS, f);
+    dumbfile_getnc((char *)sigdata->channel_volume, DUMB_IT_N_CHANNELS, f);
 
-	if (dumbfile_error(f) || sigdata->n_orders <= 0 || sigdata->n_instruments > 256 || sigdata->n_samples > 256 || sigdata->n_patterns > 256) {
+	// XXX sample count
+	if (dumbfile_error(f) || sigdata->n_orders <= 0 || sigdata->n_instruments > 256 || sigdata->n_samples > 4000 || sigdata->n_patterns > 256) {
 		_dumb_it_unload_sigdata(sigdata);
 		return NULL;
 	}
@@ -919,7 +1042,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 			sigdata->pattern[n].entry = NULL;
 	}
 
-	dumbfile_getnc(sigdata->order, sigdata->n_orders, f);
+    dumbfile_getnc((char *)sigdata->order, sigdata->n_orders, f);
 	sigdata->restart_position = 0;
 
 	component = malloc(769 * sizeof(*component));
@@ -972,12 +1095,14 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 		return NULL;
 	}
 
+	/*
 	if (!(sigdata->flags & 128) != !(special & 8)) {
 		fprintf(stderr, "Flags   Bit 7 (\"Request embedded MIDI configuration\"): %s\n", sigdata->flags & 128 ? "=SET=" : "clear");
 		fprintf(stderr, "Special Bit 3     (\"MIDI configuration embedded\")    : %s\n", special        &   8 ? "=SET=" : "clear");
 		fprintf(stderr, "entheh would like to investigate this IT file.\n");
 		fprintf(stderr, "Please contact him! entheh@users.sf.net\n");
 	}
+	*/
 
 	if (special & 8) {
 		/* MIDI configuration is embedded. */
@@ -1007,7 +1132,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 		for (i = 0; i < 16; i++) {
 			unsigned char len = 0;
 			int j, leftdigit = -1;
-			if (dumbfile_getnc(mididata, 32, f) < 32) {
+            if (dumbfile_getnc((char *)mididata, 32, f) < 32) {
 				free(component);
 				_dumb_it_unload_sigdata(sigdata);
 				return NULL;
@@ -1039,7 +1164,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 		for (i = 0; i < 128; i++) {
 			unsigned char len = 0;
 			int j, leftdigit = -1;
-			dumbfile_getnc(mididata, 32, f);
+            dumbfile_getnc((char *)mididata, 32, f);
 			for (j = 0; j < 32; j++) {
 				if (leftdigit >= 0) {
 					if (mididata[j] == 0) {
@@ -1065,7 +1190,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 
 	sigdata->flags &= IT_REAL_FLAGS;
 
-	qsort(component, n_components, sizeof(IT_COMPONENT), &it_component_compare);
+    qsort(component, n_components, sizeof(IT_COMPONENT), &it_component_compare);
 
 	buffer = malloc(65536);
 	if (!buffer) {
@@ -1078,7 +1203,28 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 		long offset;
 		int m;
 
-		if (it_seek(f, component[n].offset)) {
+		/* XXX */
+		if ( component[n].offset == 0 ) {
+			switch (component[n].type) {
+				case IT_COMPONENT_INSTRUMENT:
+					memset( &sigdata->instrument[component[n].n], 0, sizeof(IT_INSTRUMENT) );
+					break;
+				case IT_COMPONENT_SAMPLE:
+					memset( &sigdata->sample[component[n].n], 0, sizeof(IT_SAMPLE) );
+					break;
+				case IT_COMPONENT_PATTERN:
+					{
+						IT_PATTERN * p = &sigdata->pattern[component[n].n];
+						p->entry = 0;
+						p->n_rows = 64;
+						p->n_entries = 0;
+					}
+					break;
+			}
+			continue;
+		}
+
+        if (dumbfile_seek(f, component[n].offset, DFS_SEEK_SET)) {
 			free(buffer);
 			free(component);
 			_dumb_it_unload_sigdata(sigdata);
@@ -1088,9 +1234,12 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 		switch (component[n].type) {
 
 			case IT_COMPONENT_SONG_MESSAGE:
+				if ( n < n_components ) {
+					message_length = min( message_length, component[n+1].offset - component[n].offset );
+				}
 				sigdata->song_message = malloc(message_length + 1);
 				if (sigdata->song_message) {
-					if (dumbfile_getnc(sigdata->song_message, message_length, f) < message_length) {
+                    if (dumbfile_getnc((char *)sigdata->song_message, message_length, f) < message_length) {
 						free(buffer);
 						free(component);
 						_dumb_it_unload_sigdata(sigdata);
@@ -1104,7 +1253,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 				if (cmwt < 0x200)
 					m = it_read_old_instrument(&sigdata->instrument[component[n].n], f);
 				else
-					m = it_read_instrument(&sigdata->instrument[component[n].n], f);
+					m = it_read_instrument(&sigdata->instrument[component[n].n], f, (n + 1 < n_components) ? (component[n+1].offset - component[n].offset) : 0);
 
 				if (m) {
 					free(buffer);
@@ -1154,14 +1303,14 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 		m = component[n].sampfirst;
 
 		while (m >= 0) {
-			if (it_seek(f, component[m].offset)) {
+            if (dumbfile_seek(f, component[m].offset, DFS_SEEK_SET)) {
 				free(buffer);
 				free(component);
 				_dumb_it_unload_sigdata(sigdata);
 				return NULL;
 			}
 
-			if (it_read_sample_data(cmwt, &sigdata->sample[component[m].n], sample_convert[component[m].n], f)) {
+			if (it_read_sample_data(&sigdata->sample[component[m].n], sample_convert[component[m].n], f)) {
 				free(buffer);
 				free(component);
 				_dumb_it_unload_sigdata(sigdata);
@@ -1170,9 +1319,67 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 
 			m = component[m].sampnext;
 		}
-	}
+    }
 
-	free(buffer);
+    for ( n = 0; n < 10; n++ )
+    {
+        if ( dumbfile_getc( f ) == 'X' )
+        {
+            if ( dumbfile_getc( f ) == 'T' )
+            {
+                if ( dumbfile_getc( f ) == 'P' )
+                {
+                    if ( dumbfile_getc( f ) == 'M' )
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if ( !dumbfile_error( f ) && n < 10 )
+    {
+        unsigned int mptx_id = dumbfile_igetl( f );
+        while ( !dumbfile_error( f ) && mptx_id != DUMB_ID('M','P','T','S') )
+        {
+            unsigned int size = dumbfile_igetw( f );
+            switch (mptx_id)
+            {
+            /* TODO: Add instrument extension readers */
+
+            default:
+                dumbfile_skip(f, size * sigdata->n_instruments);
+                break;
+            }
+
+            mptx_id = dumbfile_igetl( f );
+        }
+
+        mptx_id = dumbfile_igetl( f );
+        while ( !dumbfile_error(f) && dumbfile_pos(f) < dumbfile_get_size(f) )
+        {
+            unsigned int size = dumbfile_igetw( f );
+            switch (mptx_id)
+            {
+            /* TODO: Add more song extension readers */
+
+            case DUMB_ID('D','T','.','.'):
+                if ( size == 2 )
+                    sigdata->tempo = dumbfile_igetw( f );
+                else if ( size == 4 )
+                    sigdata->tempo = dumbfile_igetl( f );
+                break;
+
+            default:
+                dumbfile_skip(f, size);
+                break;
+            }
+            mptx_id = dumbfile_igetl( f );
+        }
+    }
+
+    free(buffer);
 	free(component);
 
 	_dumb_it_fix_invalid_orders(sigdata);
@@ -1189,14 +1396,16 @@ DUH *dumb_read_it_quick(DUMBFILE *f)
 	DUH_SIGTYPE_DESC *descptr = &_dumb_sigtype_it;
 
 	sigdata = it_load_sigdata(f);
-	printf("sigdata: %i\n", sigdata);
+
 	if (!sigdata)
 		return NULL;
 
 	{
-		const char *tag[1][2];
+		const char *tag[2][2];
 		tag[0][0] = "TITLE";
-		tag[0][1] = ((DUMB_IT_SIGDATA *)sigdata)->name;
-		return make_duh(-1, 1, (const char *const (*)[2])tag, 1, &descptr, &sigdata);
+        tag[0][1] = (const char *)(((DUMB_IT_SIGDATA *)sigdata)->name);
+		tag[1][0] = "FORMAT";
+		tag[1][1] = "IT";
+		return make_duh(-1, 2, (const char *const (*)[2])tag, 1, &descptr, &sigdata);
 	}
 }

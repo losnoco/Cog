@@ -16,7 +16,7 @@
 + (NSArray *)fileTypes
 {
 	//There doesn't seem to be a way to get this list. These are the only multitrack types.
-	return [NSArray arrayWithObjects:@"ay", @"gbs", @"nsf", @"nsfe", @"sap", nil];
+	return [NSArray arrayWithObjects:@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sgc", nil];
 }
 
 + (NSArray *)mimeTypes 

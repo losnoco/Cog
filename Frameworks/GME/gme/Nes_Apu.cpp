@@ -1,8 +1,8 @@
-// Nes_Snd_Emu 0.1.8. http://www.slack.net/~ant/
+// Nes_Snd_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nes_Apu.h"
 
-/* Copyright (C) 2003-2006 Shay Green. This module is free software; you
+/* Copyright (C) 2003-2008 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
 General Public License as published by the Free Software Foundation; either
 version 2.1 of the License, or (at your option) any later version. This
@@ -23,8 +23,6 @@ Nes_Apu::Nes_Apu() :
 {
 	tempo_ = 1.0;
 	dmc.apu = this;
-	dmc.prg_reader = NULL;
-	irq_notifier_ = NULL;
 	
 	oscs [0] = &square1;
 	oscs [1] = &square2;
@@ -32,28 +30,28 @@ Nes_Apu::Nes_Apu() :
 	oscs [3] = &noise;
 	oscs [4] = &dmc;
 	
-	output( NULL );
+	set_output( NULL );
+	dmc.nonlinear = false;
 	volume( 1.0 );
 	reset( false );
 }
 
 void Nes_Apu::treble_eq( const blip_eq_t& eq )
 {
-	square_synth.treble_eq( eq );
+	square_synth  .treble_eq( eq );
 	triangle.synth.treble_eq( eq );
-	noise.synth.treble_eq( eq );
-	dmc.synth.treble_eq( eq );
+	noise   .synth.treble_eq( eq );
+	dmc     .synth.treble_eq( eq );
 }
 
-void Nes_Apu::enable_nonlinear( double v )
+void Nes_Apu::enable_nonlinear_( double sq, double tnd )
 {
 	dmc.nonlinear = true;
-	square_synth.volume( 1.3 * 0.25751258 / 0.742467605 * 0.25 / amp_range * v );
+	square_synth.volume( sq );
 	
-	const double tnd = 0.48 / 202 * nonlinear_tnd_gain();
-	triangle.synth.volume( 3.0 * tnd );
-	noise.synth.volume( 2.0 * tnd );
-	dmc.synth.volume( tnd );
+	triangle.synth.volume( tnd * 2.752 );
+	noise   .synth.volume( tnd * 1.849 );
+	dmc     .synth.volume( tnd );
 	
 	square1 .last_amp = 0;
 	square2 .last_amp = 0;
@@ -64,17 +62,20 @@ void Nes_Apu::enable_nonlinear( double v )
 
 void Nes_Apu::volume( double v )
 {
-	dmc.nonlinear = false;
-	square_synth.volume(   0.1128  / amp_range * v );
-	triangle.synth.volume( 0.12765 / amp_range * v );
-	noise.synth.volume(    0.0741  / amp_range * v );
-	dmc.synth.volume(      0.42545 / 127 * v );
+	if ( !dmc.nonlinear )
+	{
+		v *= 1.0 / 1.11; // TODO: merge into values below
+		square_synth  .volume( 0.125 / amp_range * v ); // was 0.1128   1.108
+		triangle.synth.volume( 0.150 / amp_range * v ); // was 0.12765  1.175
+		noise   .synth.volume( 0.095 / amp_range * v ); // was 0.0741   1.282
+		dmc     .synth.volume( 0.450 / 2048      * v ); // was 0.42545  1.058
+	}
 }
 
-void Nes_Apu::output( Blip_Buffer* buffer )
+void Nes_Apu::set_output( Blip_Buffer* buffer )
 {
-	for ( int i = 0; i < osc_count; i++ )
-		osc_output( i, buffer );
+	for ( int i = 0; i < osc_count; ++i )
+		set_output( i, buffer );
 }
 
 void Nes_Apu::set_tempo( double t )
@@ -100,12 +101,13 @@ void Nes_Apu::reset( bool pal_mode, int initial_dmc_dac )
 	last_dmc_time = 0;
 	osc_enables = 0;
 	irq_flag = false;
+	enable_w4011 = true;
 	earliest_irq_ = no_irq;
 	frame_delay = 1;
 	write_register( 0, 0x4017, 0x00 );
 	write_register( 0, 0x4015, 0x00 );
 	
-	for ( nes_addr_t addr = start_addr; addr <= 0x4013; addr++ )
+	for ( int addr = io_addr; addr <= 0x4013; addr++ )
 		write_register( 0, addr, (addr & 3) ? 0x00 : 0x10 );
 	
 	dmc.dac = initial_dmc_dac;
@@ -117,7 +119,7 @@ void Nes_Apu::reset( bool pal_mode, int initial_dmc_dac )
 
 void Nes_Apu::irq_changed()
 {
-	nes_time_t new_irq = dmc.next_irq;
+	blip_time_t new_irq = dmc.next_irq;
 	if ( dmc.irq_flag | irq_flag ) {
 		new_irq = 0;
 	}
@@ -127,25 +129,25 @@ void Nes_Apu::irq_changed()
 	
 	if ( new_irq != earliest_irq_ ) {
 		earliest_irq_ = new_irq;
-		if ( irq_notifier_ )
-			irq_notifier_( irq_data );
+		if ( irq_notifier.f )
+			irq_notifier.f( irq_notifier.data );
 	}
 }
 
 // frames
 
-void Nes_Apu::run_until( nes_time_t end_time )
+void Nes_Apu::run_until( blip_time_t end_time )
 {
 	require( end_time >= last_dmc_time );
 	if ( end_time > next_dmc_read_time() )
 	{
-		nes_time_t start = last_dmc_time;
+		blip_time_t start = last_dmc_time;
 		last_dmc_time = end_time;
 		dmc.run( start, end_time );
 	}
 }
 
-void Nes_Apu::run_until_( nes_time_t end_time )
+void Nes_Apu::run_until_( blip_time_t end_time )
 {
 	require( end_time >= last_time );
 	
@@ -154,7 +156,7 @@ void Nes_Apu::run_until_( nes_time_t end_time )
 	
 	if ( last_dmc_time < end_time )
 	{
-		nes_time_t start = last_dmc_time;
+		blip_time_t start = last_dmc_time;
 		last_dmc_time = end_time;
 		dmc.run( start, end_time );
 	}
@@ -162,7 +164,7 @@ void Nes_Apu::run_until_( nes_time_t end_time )
 	while ( true )
 	{
 		// earlier of next frame time or end time
-		nes_time_t time = last_time + frame_delay;
+		blip_time_t time = last_time + frame_delay;
 		if ( time > end_time )
 			time = end_time;
 		frame_delay -= time - last_time;
@@ -226,7 +228,7 @@ void Nes_Apu::run_until_( nes_time_t end_time )
 }
 
 template<class T>
-inline void zero_apu_osc( T* osc, nes_time_t time )
+inline void zero_apu_osc( T* osc, blip_time_t time )
 {
 	Blip_Buffer* output = osc->output;
 	int last_amp = osc->last_amp;
@@ -235,7 +237,7 @@ inline void zero_apu_osc( T* osc, nes_time_t time )
 		osc->synth.offset( time, -last_amp, output );
 }
 
-void Nes_Apu::end_frame( nes_time_t end_time )
+void Nes_Apu::end_frame( blip_time_t end_time )
 {
 	if ( end_time > last_time )
 		run_until_( end_time );
@@ -280,13 +282,13 @@ static const unsigned char length_table [0x20] = {
 	0xC0, 0x18, 0x48, 0x1A, 0x10, 0x1C, 0x20, 0x1E
 };
 
-void Nes_Apu::write_register( nes_time_t time, nes_addr_t addr, int data )
+void Nes_Apu::write_register( blip_time_t time, int addr, int data )
 {
 	require( addr > 0x20 ); // addr must be actual address (i.e. 0x40xx)
 	require( (unsigned) data <= 0xFF );
 	
 	// Ignore addresses outside range
-	if ( unsigned (addr - start_addr) > end_addr - start_addr )
+	if ( unsigned (addr - io_addr) >= io_size )
 		return;
 	
 	run_until_( time );
@@ -294,7 +296,7 @@ void Nes_Apu::write_register( nes_time_t time, nes_addr_t addr, int data )
 	if ( addr < 0x4014 )
 	{
 		// Write to channel
-		int osc_index = (addr - start_addr) >> 2;
+		int osc_index = (addr - io_addr) >> 2;
 		Nes_Osc* osc = oscs [osc_index];
 		
 		int reg = addr & 3;
@@ -304,7 +306,8 @@ void Nes_Apu::write_register( nes_time_t time, nes_addr_t addr, int data )
 		if ( osc_index == 4 )
 		{
 			// handle DMC specially
-			dmc.write_register( reg, data );
+			if ( enable_w4011 || reg != 1 )
+				dmc.write_register( reg, data );
 		}
 		else if ( reg == 3 )
 		{
@@ -366,7 +369,7 @@ void Nes_Apu::write_register( nes_time_t time, nes_addr_t addr, int data )
 	}
 }
 
-int Nes_Apu::read_status( nes_time_t time )
+int Nes_Apu::read_status( blip_time_t time )
 {
 	run_until_( time - 1 );
 	

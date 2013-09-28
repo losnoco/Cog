@@ -1,4 +1,4 @@
-// Nes_Snd_Emu 0.1.8. http://www.slack.net/~ant/
+// Nes_Snd_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nes_Vrc6_Apu.h"
 
@@ -15,11 +15,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-Nes_Vrc6_Apu::Nes_Vrc6_Apu()
+void Nes_Vrc6_Apu::set_output( Blip_Buffer* buf )
 {
-	output( NULL );
-	volume( 1.0 );
-	reset();
+	for ( int i = 0; i < osc_count; ++i )
+		set_output( i, buf );
 }
 
 void Nes_Vrc6_Apu::reset()
@@ -37,10 +36,11 @@ void Nes_Vrc6_Apu::reset()
 	}
 }
 
-void Nes_Vrc6_Apu::output( Blip_Buffer* buf )
+Nes_Vrc6_Apu::Nes_Vrc6_Apu()
 {
-	for ( int i = 0; i < osc_count; i++ )
-		osc_output( i, buf );
+	set_output( NULL );
+	volume( 1.0 );
+	reset();
 }
 
 void Nes_Vrc6_Apu::run_until( blip_time_t time )
@@ -107,7 +107,6 @@ void Nes_Vrc6_Apu::run_square( Vrc6_Osc& osc, blip_time_t end_time )
 	Blip_Buffer* output = osc.output;
 	if ( !output )
 		return;
-	output->set_modified();
 	
 	int volume = osc.regs [0] & 15;
 	if ( !(osc.regs [2] & 0x80) )
@@ -120,6 +119,7 @@ void Nes_Vrc6_Apu::run_square( Vrc6_Osc& osc, blip_time_t end_time )
 	if ( delta )
 	{
 		osc.last_amp += delta;
+		output->set_modified();
 		square_synth.offset( time, delta, output );
 	}
 	
@@ -131,6 +131,7 @@ void Nes_Vrc6_Apu::run_square( Vrc6_Osc& osc, blip_time_t end_time )
 		if ( time < end_time )
 		{
 			int phase = osc.phase;
+			output->set_modified();
 			
 			do
 			{

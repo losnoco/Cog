@@ -99,9 +99,9 @@ void duh_sigrenderer_set_callback(
 	(void)sigrenderer;
 	(void)callback;
 	(void)data;
-	fprintf(stderr,
+	/*fprintf(stderr,
 		"Call to deprecated function duh_sigrenderer_set_callback(). The callback\n"
-		"was not installed. See dumb/docs/deprec.txt for how to fix this.\n");
+		"was not installed. See dumb/docs/deprec.txt for how to fix this.\n");*/
 }
 
 
@@ -143,7 +143,15 @@ int duh_sigrenderer_get_n_channels(DUH_SIGRENDERER *sigrenderer)
 
 long duh_sigrenderer_get_position(DUH_SIGRENDERER *sigrenderer)
 {
-	return sigrenderer ? sigrenderer->pos : -1;
+	DUH_SIGRENDERER_GET_POSITION proc;
+
+	if (!sigrenderer) return -1;
+
+	proc = sigrenderer->desc->sigrenderer_get_position;
+	if (proc)
+		return (*proc)(sigrenderer->sigrenderer);
+	else
+		return sigrenderer->pos;
 }
 
 

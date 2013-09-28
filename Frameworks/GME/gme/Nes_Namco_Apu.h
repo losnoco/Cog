@@ -1,6 +1,6 @@
 // Namco 106 sound chip emulator
 
-// Nes_Snd_Emu 0.1.8
+// Nes_Snd_Emu $vers
 #ifndef NES_NAMCO_APU_H
 #define NES_NAMCO_APU_H
 
@@ -14,9 +14,9 @@ public:
 	// See Nes_Apu.h for reference.
 	void volume( double );
 	void treble_eq( const blip_eq_t& );
-	void output( Blip_Buffer* );
+	void set_output( Blip_Buffer* );
 	enum { osc_count = 8 };
-	void osc_output( int index, Blip_Buffer* );
+	void set_output( int index, Blip_Buffer* );
 	void reset();
 	void end_frame( blip_time_t );
 	
@@ -42,7 +42,7 @@ private:
 	Nes_Namco_Apu& operator = ( const Nes_Namco_Apu& );
 	
 	struct Namco_Osc {
-		blargg_long delay;
+		int delay;
 		Blip_Buffer* output;
 		short last_amp;
 		short wave_pos;
@@ -55,7 +55,7 @@ private:
 	
 	enum { reg_count = 0x80 };
 	BOOST::uint8_t reg [reg_count];
-	Blip_Synth<blip_good_quality,15> synth;
+	Blip_Synth_Norm synth;
 	
 	BOOST::uint8_t& access();
 	void run_until( blip_time_t );
@@ -79,7 +79,7 @@ inline BOOST::uint8_t& Nes_Namco_Apu::access()
 	return reg [addr];
 }
 
-inline void Nes_Namco_Apu::volume( double v ) { synth.volume( 0.10 / osc_count * v ); }
+inline void Nes_Namco_Apu::volume( double v ) { synth.volume( 0.10 / osc_count / 15 * v ); }
 
 inline void Nes_Namco_Apu::treble_eq( const blip_eq_t& eq ) { synth.treble_eq( eq ); }
 
@@ -87,7 +87,7 @@ inline void Nes_Namco_Apu::write_addr( int v ) { addr_reg = v; }
 
 inline int Nes_Namco_Apu::read_data() { return access(); }
 
-inline void Nes_Namco_Apu::osc_output( int i, Blip_Buffer* buf )
+inline void Nes_Namco_Apu::set_output( int i, Blip_Buffer* buf )
 {
 	assert( (unsigned) i < osc_count );
 	oscs [i].output = buf;

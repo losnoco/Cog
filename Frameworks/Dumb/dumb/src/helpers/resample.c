@@ -45,6 +45,9 @@
 #include <math.h>
 #include "dumb.h"
 
+#include "internal/blip_buf.h"
+#include "internal/lanczos_resampler.h"
+
 
 
 /* Compile with -DHEAVYDEBUG if you want to make sure the pick-up function is
@@ -59,14 +62,22 @@
 
 
 
+/* Make MSVC shut the hell up about if ( upd ) UPDATE_VOLUME() conditions being constant */
+#ifdef _MSC_VER
+#pragma warning(disable:4127 4701)
+#endif
+
+
+
 /* A global variable for controlling resampling quality wherever a local
  * specification doesn't override it. The following values are valid:
  *
  *  0 - DUMB_RQ_ALIASING - fastest
  *  1 - DUMB_RQ_LINEAR
- *  2 - DUMB_RQ_CUBIC    - nicest
+ *  2 - DUMB_RQ_CUBIC
+ *  3 - DUMB_RQ_FIR      - nicest
  *
- * Values outside the range 0-2 will behave the same as the nearest
+ * Values outside the range 0-3 will behave the same as the nearest
  * value within the range.
  */
 int dumb_resampling_quality = DUMB_RQ_CUBIC;
@@ -75,6 +86,7 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
 
 //#define MULSC(a, b) ((int)((LONG_LONG)(a) * (b) >> 16))
 //#define MULSC(a, b) ((a) * ((b) >> 2) >> 14)
+#define MULSCV(a, b) ((int)((LONG_LONG)(a) * (b) >> 32))
 #define MULSC(a, b) ((int)((LONG_LONG)((a) << 4) * ((b) << 12) >> 32))
 #define MULSC16(a, b) ((int)((LONG_LONG)((a) << 12) * ((b) << 12) >> 32))
 
@@ -84,6 +96,7 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
  * Clobbers the 'iterator' variable.
  * The loop is unrolled by four.
  */
+#if 0
 #define LOOP4(iterator, CONTENT) \
 { \
 	if ((iterator) & 2) { \
@@ -102,8 +115,15 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
 		(iterator)--; \
 	} \
 }
-
-
+#else
+#define LOOP4(iterator, CONTENT) \
+{ \
+	while ( (iterator)-- ) \
+	{ \
+		CONTENT; \
+	} \
+}
+#endif
 
 #define PASTERAW(a, b) a ## b /* This does not expand macros in b ... */
 #define PASTE(a, b) PASTERAW(a, b) /* ... but b is expanded during this substitution. */
@@ -140,7 +160,7 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
 
 static short cubicA0[1025], cubicA1[1025];
 
-static void init_cubic(void)
+/*static*/ void init_cubic(void)
 {
 	unsigned int t; /* 3*1024*1024*1024 is within range if it's unsigned */
 	static int done = 0;
@@ -151,6 +171,8 @@ static void init_cubic(void)
 		cubicA0[t] = -(int)(  t*t*t >> 17) + (int)(  t*t >> 6) - (int)(t << 3);
 		cubicA1[t] =  (int)(3*t*t*t >> 17) - (int)(5*t*t >> 7)                 + (int)(1 << 14);
 	}
+
+    lanczos_init();
 }
 
 
@@ -168,7 +190,8 @@ static void init_cubic(void)
 
 #define SRCTYPE sample_t
 #define SRCBITS 24
-#define ALIAS(x, vol) MULSC(x, vol)
+#define ALIAS(x) (x >> 8)
+#define FIR(x) (x >> 8)
 #define LINEAR(x0, x1) (x0 + MULSC(x1 - x0, subpos))
 /*
 #define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
@@ -204,7 +227,8 @@ static void init_cubic(void)
 #define SUFFIX _16
 #define SRCTYPE short
 #define SRCBITS 16
-#define ALIAS(x, vol) (x * vol >> 8)
+#define ALIAS(x) (x)
+#define FIR(x) (x)
 #define LINEAR(x0, x1) ((x0 << 8) + MULSC16(x1 - x0, subpos))
 /*
 #define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
@@ -226,7 +250,8 @@ static void init_cubic(void)
 #define SUFFIX _8
 #define SRCTYPE signed char
 #define SRCBITS 8
-#define ALIAS(x, vol) (x * vol)
+#define ALIAS(x) (x << 8)
+#define FIR(x) (x << 8)
 #define LINEAR(x0, x1) ((x0 << 16) + (x1 - x0) * subpos)
 /*
 #define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
@@ -254,31 +279,31 @@ static void init_cubic(void)
 
 
 
-void dumb_reset_resampler_n(int n, DUMB_RESAMPLER *resampler, void *src, int src_channels, long pos, long start, long end)
+void dumb_reset_resampler_n(int n, DUMB_RESAMPLER *resampler, void *src, int src_channels, long pos, long start, long end, int quality)
 {
 	if (n == 8)
-		dumb_reset_resampler_8(resampler, src, src_channels, pos, start, end);
+		dumb_reset_resampler_8(resampler, src, src_channels, pos, start, end, quality);
 	else if (n == 16)
-		dumb_reset_resampler_16(resampler, src, src_channels, pos, start, end);
+		dumb_reset_resampler_16(resampler, src, src_channels, pos, start, end, quality);
 	else
-		dumb_reset_resampler(resampler, src, src_channels, pos, start, end);
+		dumb_reset_resampler(resampler, src, src_channels, pos, start, end, quality);
 }
 
 
 
-DUMB_RESAMPLER *dumb_start_resampler_n(int n, void *src, int src_channels, long pos, long start, long end)
+DUMB_RESAMPLER *dumb_start_resampler_n(int n, void *src, int src_channels, long pos, long start, long end, int quality)
 {
 	if (n == 8)
-		return dumb_start_resampler_8(src, src_channels, pos, start, end);
+		return dumb_start_resampler_8(src, src_channels, pos, start, end, quality);
 	else if (n == 16)
-		return dumb_start_resampler_16(src, src_channels, pos, start, end);
+		return dumb_start_resampler_16(src, src_channels, pos, start, end, quality);
 	else
-		return dumb_start_resampler(src, src_channels, pos, start, end);
+		return dumb_start_resampler(src, src_channels, pos, start, end, quality);
 }
 
 
 
-long dumb_resample_n_1_1(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, float volume, float delta)
+long dumb_resample_n_1_1(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, DUMB_VOLUME_RAMP_INFO * volume, float delta)
 {
 	if (n == 8)
 		return dumb_resample_8_1_1(resampler, dst, dst_size, volume, delta);
@@ -290,7 +315,7 @@ long dumb_resample_n_1_1(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long d
 
 
 
-long dumb_resample_n_1_2(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, float volume_left, float volume_right, float delta)
+long dumb_resample_n_1_2(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right, float delta)
 {
 	if (n == 8)
 		return dumb_resample_8_1_2(resampler, dst, dst_size, volume_left, volume_right, delta);
@@ -302,7 +327,7 @@ long dumb_resample_n_1_2(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long d
 
 
 
-long dumb_resample_n_2_1(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, float volume_left, float volume_right, float delta)
+long dumb_resample_n_2_1(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right, float delta)
 {
 	if (n == 8)
 		return dumb_resample_8_2_1(resampler, dst, dst_size, volume_left, volume_right, delta);
@@ -314,7 +339,7 @@ long dumb_resample_n_2_1(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long d
 
 
 
-long dumb_resample_n_2_2(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, float volume_left, float volume_right, float delta)
+long dumb_resample_n_2_2(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right, float delta)
 {
 	if (n == 8)
 		return dumb_resample_8_2_2(resampler, dst, dst_size, volume_left, volume_right, delta);
@@ -326,7 +351,7 @@ long dumb_resample_n_2_2(int n, DUMB_RESAMPLER *resampler, sample_t *dst, long d
 
 
 
-void dumb_resample_get_current_sample_n_1_1(int n, DUMB_RESAMPLER *resampler, float volume, sample_t *dst)
+void dumb_resample_get_current_sample_n_1_1(int n, DUMB_RESAMPLER *resampler, DUMB_VOLUME_RAMP_INFO * volume, sample_t *dst)
 {
 	if (n == 8)
 		dumb_resample_get_current_sample_8_1_1(resampler, volume, dst);
@@ -338,7 +363,7 @@ void dumb_resample_get_current_sample_n_1_1(int n, DUMB_RESAMPLER *resampler, fl
 
 
 
-void dumb_resample_get_current_sample_n_1_2(int n, DUMB_RESAMPLER *resampler, float volume_left, float volume_right, sample_t *dst)
+void dumb_resample_get_current_sample_n_1_2(int n, DUMB_RESAMPLER *resampler, DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right, sample_t *dst)
 {
 	if (n == 8)
 		dumb_resample_get_current_sample_8_1_2(resampler, volume_left, volume_right, dst);
@@ -350,7 +375,7 @@ void dumb_resample_get_current_sample_n_1_2(int n, DUMB_RESAMPLER *resampler, fl
 
 
 
-void dumb_resample_get_current_sample_n_2_1(int n, DUMB_RESAMPLER *resampler, float volume_left, float volume_right, sample_t *dst)
+void dumb_resample_get_current_sample_n_2_1(int n, DUMB_RESAMPLER *resampler, DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right, sample_t *dst)
 {
 	if (n == 8)
 		dumb_resample_get_current_sample_8_2_1(resampler, volume_left, volume_right, dst);
@@ -362,7 +387,7 @@ void dumb_resample_get_current_sample_n_2_1(int n, DUMB_RESAMPLER *resampler, fl
 
 
 
-void dumb_resample_get_current_sample_n_2_2(int n, DUMB_RESAMPLER *resampler, float volume_left, float volume_right, sample_t *dst)
+void dumb_resample_get_current_sample_n_2_2(int n, DUMB_RESAMPLER *resampler, DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right, sample_t *dst)
 {
 	if (n == 8)
 		dumb_resample_get_current_sample_8_2_2(resampler, volume_left, volume_right, dst);

@@ -1,4 +1,4 @@
-// Nes_Snd_Emu 0.1.8. http://www.slack.net/~ant/
+// Nes_Snd_Emu $vers. http://www.slack.net/~ant/
 
 #include "Nes_Apu.h"
 
@@ -26,12 +26,14 @@ void Nes_Osc::clock_length( int halt_mask )
 void Nes_Envelope::clock_envelope()
 {
 	int period = regs [0] & 15;
-	if ( reg_written [3] ) {
+	if ( reg_written [3] )
+	{
 		reg_written [3] = false;
 		env_delay = period;
 		envelope = 15;
 	}
-	else if ( --env_delay < 0 ) {
+	else if ( --env_delay < 0 )
+	{
 		env_delay = period;
 		if ( envelope | (regs [0] & 0x20) )
 			envelope = (envelope - 1) & 15;
@@ -72,14 +74,15 @@ void Nes_Square::clock_sweep( int negative_adjust )
 		}
 	}
 	
-	if ( reg_written [1] ) {
+	if ( reg_written [1] )
+	{
 		reg_written [1] = false;
 		sweep_delay = (sweep >> 4) & 7;
 	}
 }
 
 // TODO: clean up
-inline nes_time_t Nes_Square::maintain_phase( nes_time_t time, nes_time_t end_time,
+inline Nes_Square::nes_time_t Nes_Square::maintain_phase( nes_time_t time, nes_time_t end_time,
 		nes_time_t timer_period )
 {
 	nes_time_t remain = end_time - time;
@@ -87,7 +90,7 @@ inline nes_time_t Nes_Square::maintain_phase( nes_time_t time, nes_time_t end_ti
 	{
 		int count = (remain + timer_period - 1) / timer_period;
 		phase = (phase + count) & (phase_range - 1);
-		time += (blargg_long) count * timer_period;
+		time += count * timer_period;
 	}
 	return time;
 }
@@ -103,8 +106,6 @@ void Nes_Square::run( nes_time_t time, nes_time_t end_time )
 		return;
 	}
 	
-	output->set_modified();
-	
 	int offset = period >> (regs [1] & shift_mask);
 	if ( regs [1] & negate_flag )
 		offset = 0;
@@ -112,7 +113,9 @@ void Nes_Square::run( nes_time_t time, nes_time_t end_time )
 	const int volume = this->volume();
 	if ( volume == 0 || period < 8 || (period + offset) >= 0x800 )
 	{
-		if ( last_amp ) {
+		if ( last_amp )
+		{
+			output->set_modified();
 			synth.offset( time, -last_amp, output );
 			last_amp = 0;
 		}
@@ -126,13 +129,15 @@ void Nes_Square::run( nes_time_t time, nes_time_t end_time )
 		int duty_select = (regs [0] >> 6) & 3;
 		int duty = 1 << duty_select; // 1, 2, 4, 2
 		int amp = 0;
-		if ( duty_select == 3 ) {
+		if ( duty_select == 3 )
+		{
 			duty = 2; // negated 25%
 			amp = volume;
 		}
 		if ( phase < duty )
 			amp ^= volume;
 		
+		output->set_modified();
 		{
 			int delta = update_amp( amp );
 			if ( delta )
@@ -147,9 +152,11 @@ void Nes_Square::run( nes_time_t time, nes_time_t end_time )
 			int delta = amp * 2 - volume;
 			int phase = this->phase;
 			
-			do {
+			do
+			{
 				phase = (phase + 1) & (phase_range - 1);
-				if ( phase == 0 || phase == duty ) {
+				if ( phase == 0 || phase == duty )
+				{
 					delta = -delta;
 					synth.offset_inline( time, delta, output );
 				}
@@ -187,7 +194,7 @@ inline int Nes_Triangle::calc_amp() const
 }
 
 // TODO: clean up
-inline nes_time_t Nes_Triangle::maintain_phase( nes_time_t time, nes_time_t end_time,
+inline Nes_Square::nes_time_t Nes_Triangle::maintain_phase( nes_time_t time, nes_time_t end_time,
 		nes_time_t timer_period )
 {
 	nes_time_t remain = end_time - time;
@@ -196,7 +203,7 @@ inline nes_time_t Nes_Triangle::maintain_phase( nes_time_t time, nes_time_t end_
 		int count = (remain + timer_period - 1) / timer_period;
 		phase = ((unsigned) phase + 1 - count) & (phase_range * 2 - 1);
 		phase++;
-		time += (blargg_long) count * timer_period;
+		time += count * timer_period;
 	}
 	return time;
 }
@@ -213,14 +220,15 @@ void Nes_Triangle::run( nes_time_t time, nes_time_t end_time )
 		return;
 	}
 	
-	output->set_modified();
-	
 	// to do: track phase when period < 3
 	// to do: Output 7.5 on dac when period < 2? More accurate, but results in more clicks.
 	
 	int delta = update_amp( calc_amp() );
 	if ( delta )
+	{
+		output->set_modified();
 		synth.offset( time, delta, output );
+	}
 	
 	time += delay;
 	if ( length_counter == 0 || linear_counter == 0 || timer_period < 3 )
@@ -233,17 +241,22 @@ void Nes_Triangle::run( nes_time_t time, nes_time_t end_time )
 		
 		int phase = this->phase;
 		int volume = 1;
-		if ( phase > phase_range ) {
+		if ( phase > phase_range )
+		{
 			phase -= phase_range;
 			volume = -volume;
 		}
+		output->set_modified();
 		
-		do {
-			if ( --phase == 0 ) {
+		do
+		{
+			if ( --phase == 0 )
+			{
 				phase = phase_range;
 				volume = -volume;
 			}
-			else {
+			else
+			{
 				synth.offset_inline( time, volume, output );
 			}
 			
@@ -284,7 +297,8 @@ void Nes_Dmc::recalc_irq()
 	if ( irq_enabled && length_counter )
 		irq = apu->last_dmc_time + delay +
 				((length_counter - 1) * 8 + bits_remain - 1) * nes_time_t (period) + 1;
-	if ( irq != next_irq ) {
+	if ( irq != next_irq )
+	{
 		next_irq = irq;
 		apu->irq_changed();
 	}
@@ -332,17 +346,26 @@ inline void Nes_Dmc::reload_sample()
 	length_counter = regs [3] * 0x10 + 1;
 }
 
-static byte const dac_table [128] =
+static int const dmc_table [128] =
 {
-	 0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 9,10,11,12,13,14,
-	15,15,16,17,18,19,20,20,21,22,23,24,24,25,26,27,
-	27,28,29,30,31,31,32,33,33,34,35,36,36,37,38,38,
-	39,40,41,41,42,43,43,44,45,45,46,47,47,48,48,49,
-	50,50,51,52,52,53,53,54,55,55,56,56,57,58,58,59,
-	59,60,60,61,61,62,63,63,64,64,65,65,66,66,67,67,
-	68,68,69,70,70,71,71,72,72,73,73,74,74,75,75,75,
-	76,76,77,77,78,78,79,79,80,80,81,81,82,82,82,83,
+   0,  24,  48,  71,  94, 118, 141, 163, 186, 209, 231, 253, 275, 297, 319, 340,
+ 361, 383, 404, 425, 445, 466, 486, 507, 527, 547, 567, 587, 606, 626, 645, 664,
+ 683, 702, 721, 740, 758, 777, 795, 813, 832, 850, 867, 885, 903, 920, 938, 955,
+ 972, 989,1006,1023,1040,1056,1073,1089,1105,1122,1138,1154,1170,1185,1201,1217,
+1232,1248,1263,1278,1293,1308,1323,1338,1353,1368,1382,1397,1411,1425,1440,1454,
+1468,1482,1496,1510,1523,1537,1551,1564,1578,1591,1604,1618,1631,1644,1657,1670,
+1683,1695,1708,1721,1733,1746,1758,1771,1783,1795,1807,1819,1831,1843,1855,1867,
+1879,1890,1902,1914,1925,1937,1948,1959,1971,1982,1993,2004,2015,2026,2037,2048,
 };
+
+inline int Nes_Dmc::update_amp_nonlinear( int in )
+{
+	if ( !nonlinear )
+		in = dmc_table [in];
+	int delta = in - last_amp;
+	last_amp = in;
+	return delta;
+}
 
 void Nes_Dmc::write_register( int addr, int data )
 {
@@ -355,14 +378,7 @@ void Nes_Dmc::write_register( int addr, int data )
 	}
 	else if ( addr == 1 )
 	{
-		int old_dac = dac;
 		dac = data & 0x7F;
-		
-		// adjust last_amp so that "pop" amplitude will be properly non-linear
-		// with respect to change in dac
-		int faked_nonlinear = dac - (dac_table [dac] - dac_table [old_dac]);
-		if ( !nonlinear )
-			last_amp = faked_nonlinear;
 	}
 }
 
@@ -377,16 +393,18 @@ void Nes_Dmc::fill_buffer()
 {
 	if ( !buf_full && length_counter )
 	{
-		require( prg_reader ); // prg_reader must be set
-		buf = prg_reader( prg_reader_data, 0x8000u + address );
+		require( apu->dmc_reader.f ); // dmc_reader must be set
+		buf = apu->dmc_reader.f( apu->dmc_reader.data, 0x8000u + address );
 		address = (address + 1) & 0x7FFF;
 		buf_full = true;
 		if ( --length_counter == 0 )
 		{
-			if ( regs [0] & loop_flag ) {
+			if ( regs [0] & loop_flag )
+			{
 				reload_sample();
 			}
-			else {
+			else
+			{
 				apu->osc_enables &= ~0x10;
 				irq_flag = irq_enabled;
 				next_irq = Nes_Apu::no_irq;
@@ -398,16 +416,15 @@ void Nes_Dmc::fill_buffer()
 
 void Nes_Dmc::run( nes_time_t time, nes_time_t end_time )
 {
-	int delta = update_amp( dac );
+	int delta = update_amp_nonlinear( dac );
 	if ( !output )
 	{
 		silence = true;
 	}
-	else
+	else if ( delta )
 	{
 		output->set_modified();
-		if ( delta )
-			synth.offset( time, delta, output );
+		synth.offset( time, delta, output );
 	}
 	
 	time += delay;
@@ -426,6 +443,8 @@ void Nes_Dmc::run( nes_time_t time, nes_time_t end_time )
 			const int period = this->period;
 			int bits = this->bits;
 			int dac = this->dac;
+			if ( output )
+				output->set_modified();
 			
 			do
 			{
@@ -433,9 +452,10 @@ void Nes_Dmc::run( nes_time_t time, nes_time_t end_time )
 				{
 					int step = (bits & 1) * 4 - 2;
 					bits >>= 1;
-					if ( unsigned (dac + step) <= 0x7F ) {
+					if ( unsigned (dac + step) <= 0x7F )
+					{
 						dac += step;
-						synth.offset_inline( time, step, output );
+						synth.offset_inline( time, update_amp_nonlinear( dac ), output );
 					}
 				}
 				
@@ -444,10 +464,12 @@ void Nes_Dmc::run( nes_time_t time, nes_time_t end_time )
 				if ( --bits_remain == 0 )
 				{
 					bits_remain = 8;
-					if ( !buf_full ) {
+					if ( !buf_full )
+					{
 						silence = true;
 					}
-					else {
+					else
+					{
 						silence = false;
 						bits = buf;
 						buf_full = false;
@@ -460,7 +482,6 @@ void Nes_Dmc::run( nes_time_t time, nes_time_t end_time )
 			while ( time < end_time );
 			
 			this->dac = dac;
-			this->last_amp = dac;
 			this->bits = bits;
 		}
 		this->bits_remain = bits_remain;
@@ -487,14 +508,16 @@ void Nes_Noise::run( nes_time_t time, nes_time_t end_time )
 		return;
 	}
 	
-	output->set_modified();
 	
 	const int volume = this->volume();
 	int amp = (noise & 1) ? volume : 0;
 	{
 		int delta = update_amp( amp );
 		if ( delta )
+		{
+			output->set_modified();
 			synth.offset( time, delta, output );
+		}
 	}
 	
 	time += delay;
@@ -509,7 +532,8 @@ void Nes_Noise::run( nes_time_t time, nes_time_t end_time )
 			
 			// approximate noise cycling while muted, by shuffling up noise register
 			// to do: precise muted noise cycling?
-			if ( !(regs [2] & mode_flag) ) {
+			if ( !(regs [2] & mode_flag) )
+			{
 				int feedback = (noise << 13) ^ (noise << 14);
 				noise = (feedback & 0x4000) | (noise >> 1);
 			}
@@ -525,12 +549,15 @@ void Nes_Noise::run( nes_time_t time, nes_time_t end_time )
 			int noise = this->noise;
 			int delta = amp * 2 - volume;
 			const int tap = (regs [2] & mode_flag ? 8 : 13);
+			output->set_modified();
 			
-			do {
+			do
+			{
 				int feedback = (noise << tap) ^ (noise << 14);
 				time += period;
 				
-				if ( (noise + 1) & 2 ) {
+				if ( (noise + 1) & 2 )
+				{
 					// bits 0 and 1 of noise differ
 					delta = -delta;
 					synth.offset_resampled( rtime, delta, output );

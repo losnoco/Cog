@@ -1,152 +1,341 @@
-// Super Nintendo (SNES) SPC DSP emulator
+// Highly accurate SNES SPC-700 DSP emulator
 
-// Game_Music_Emu 0.5.2
+// snes_spc 0.9.0
 #ifndef SPC_DSP_H
 #define SPC_DSP_H
 
 #include "blargg_common.h"
 
+extern "C" { typedef void (*dsp_copy_func_t)( unsigned char** io, void* state, size_t ); }
+
+class Sfm_Emu;
+
 class Spc_Dsp {
-	typedef BOOST::int8_t int8_t;
-	typedef BOOST::uint8_t uint8_t;
+    friend class Sfm_Emu;
+
 public:
+	typedef BOOST::uint8_t uint8_t;
 	
-	// Keeps pointer to 64K ram
-	Spc_Dsp( uint8_t* ram );
+// Setup
+
+	// Initializes DSP and has it use the 64K RAM provided
+	void init( void* ram_64k );
+
+	// Sets destination for output samples. If out is NULL or out_size is 0,
+	// doesn't generate any.
+	typedef short sample_t;
+	void set_output( sample_t* out, int out_size );
+
+	// Number of samples written to output since it was last set, always
+	// a multiple of 2. Undefined if more samples were generated than
+	// output buffer could hold.
+	int sample_count() const;
+
+// Emulation
+
+	// Resets DSP to power-on state
+	void reset();
+
+	// Emulates pressing reset switch on SNES
+	void soft_reset();
 	
-	// Mute voice n if bit n (1 << n) of mask is clear.
+	// Reads/writes DSP registers. For accuracy, you must first call run()
+	// to catch the DSP up to present.
+	int  read ( int addr ) const;
+	void write( int addr, int data );
+
+	// Runs DSP for specified number of clocks (~1024000 per second). Every 32 clocks
+	// a pair of samples is be generated.
+	void run( int clock_count );
+	
+// Sound control
+
+	// Mutes voices corresponding to non-zero bits in mask (issues repeated KOFF events).
+	// Reduces emulation accuracy.
 	enum { voice_count = 8 };
 	void mute_voices( int mask );
+
+// State
 	
-	// Clear state and silence everything.
-	void reset();
-	
-	// Set gain, where 1.0 is normal. When greater than 1.0, output is clamped to
-	// the 16-bit sample range.
-	void set_gain( double );
-	
-	// If true, prevent channels and global volumes from being phase-negated
-	void disable_surround( bool disable );
-	
-	// Read/write register 'n', where n ranges from 0 to register_count - 1.
+	// Resets DSP and uses supplied values to initialize registers
 	enum { register_count = 128 };
-	int  read ( int n );
-	void write( int n, int );
+	void load( uint8_t const regs [register_count] );
+
+	// Saves/loads exact emulator state
+	enum { state_size = 640 }; // maximum space needed when saving
+	typedef dsp_copy_func_t copy_func_t;
+	void copy_state( unsigned char** io, copy_func_t );
+
+	// Returns non-zero if new key-on events occurred since last call
+	bool check_kon();
 	
-	// Run DSP for 'count' samples. Write resulting samples to 'buf' if not NULL.
-	void run( long count, short* buf = NULL );
+// DSP register addresses
+
+	// Global registers
+	enum {
+	    r_mvoll = 0x0C, r_mvolr = 0x1C,
+	    r_evoll = 0x2C, r_evolr = 0x3C,
+	    r_kon   = 0x4C, r_koff  = 0x5C,
+	    r_flg   = 0x6C, r_endx  = 0x7C,
+	    r_efb   = 0x0D, r_pmon  = 0x2D,
+	    r_non   = 0x3D, r_eon   = 0x4D,
+	    r_dir   = 0x5D, r_esa   = 0x6D,
+	    r_edl   = 0x7D,
+	    r_fir   = 0x0F // 8 coefficients at 0x0F, 0x1F ... 0x7F
+	};
+
+	// Voice registers
+	enum {
+		v_voll   = 0x00, v_volr   = 0x01,
+		v_pitchl = 0x02, v_pitchh = 0x03,
+		v_srcn   = 0x04, v_adsr0  = 0x05,
+		v_adsr1  = 0x06, v_gain   = 0x07,
+		v_envx   = 0x08, v_outx   = 0x09
+	};
+
+public:
+	enum { extra_size = 16 };
+	sample_t* extra()               { return m.extra; }
+	sample_t const* out_pos() const { return m.out; }
+	void disable_surround( bool disable = true );
+	void interpolation_level( int level = 0 ) { m.interpolation_level = level; }
+public:
+	BLARGG_DISABLE_NOTHROW
 	
+	typedef BOOST::int8_t   int8_t;
+	typedef BOOST::int16_t int16_t;
 	
-// End of public interface
+	enum { echo_hist_size = 8 };
+	
+	enum env_mode_t { env_release, env_attack, env_decay, env_sustain };
+	enum { brr_buf_size = 12 };
+	struct voice_t
+	{
+		int buf [brr_buf_size*2];// decoded samples (twice the size to simplify wrap handling)
+		int buf_pos;            // place in buffer where next samples will be decoded
+		int interp_pos;         // relative fractional position in sample (0x1000 = 1.0)
+		int brr_addr;           // address of current BRR block
+		int brr_offset;         // current decoding offset in BRR block
+		uint8_t* regs;          // pointer to voice's DSP registers
+		int vbit;               // bitmask for voice: 0x01 for voice 0, 0x02 for voice 1, etc.
+		int kon_delay;          // KON delay/current setup phase
+		env_mode_t env_mode;
+		int env;                // current envelope level
+		int hidden_env;         // used by GAIN mode 7, very obscure quirk
+		uint8_t t_envx_out;
+	};
+
+	// kill me now
+	const voice_t * get_voice( int ch ) const;
+	int get_max_level( int v, int ch ) const;
 private:
-	
-	struct raw_voice_t {
-		int8_t  left_vol;
-		int8_t  right_vol;
-		uint8_t rate [2];
-		uint8_t waveform;
-		uint8_t adsr [2];   // envelope rates for attack, decay, and sustain
-		uint8_t gain;       // envelope gain (if not using ADSR)
-		int8_t  envx;       // current envelope level
-		int8_t  outx;       // current sample
-		int8_t  unused [6];
+	enum { brr_block_size = 9 };
+
+	struct state_t
+	{
+		uint8_t regs [register_count];
+		
+		// Echo history keeps most recent 8 samples (twice the size to simplify wrap handling)
+		int echo_hist [echo_hist_size * 2] [2];
+		int (*echo_hist_pos) [2]; // &echo_hist [0 to 7]
+		
+		int every_other_sample; // toggles every sample
+		int kon;                // KON value when last checked
+		int noise;
+		int counter;
+		int echo_offset;        // offset from ESA in echo buffer
+		int echo_length;        // number of bytes that echo_offset will stop at
+		int phase;              // next clock cycle to run (0-31)
+		bool kon_check;         // set when a new KON occurs
+		
+		// Hidden registers also written to when main register is written to
+		int new_kon;
+		uint8_t endx_buf;
+		uint8_t envx_buf;
+		uint8_t outx_buf;
+		
+		// Temporary state between clocks
+		
+		// read once per sample
+		int t_pmon;
+		int t_non;
+		int t_eon;
+		int t_dir;
+		int t_koff;
+		
+		// read a few clocks ahead then used
+		int t_brr_next_addr;
+		int t_adsr0;
+		int t_brr_header;
+		int t_brr_byte;
+		int t_srcn;
+		int t_esa;
+		int t_echo_enabled;
+		
+		// internal state that is recalculated every sample
+		int t_dir_addr;
+		int t_pitch;
+		int t_output;
+		int t_looped;
+		int t_echo_ptr;
+		
+		// left/right sums
+		int t_main_out [2];
+		int t_echo_out [2];
+		int t_echo_in  [2];
+		
+		voice_t voices [voice_count];
+		
+		// non-emulation state
+		uint8_t* ram; // 64K shared RAM between DSP and SMP
+		int mute_mask;
+		int surround_threshold;
+		int interpolation_level;
+		sample_t* out;
+		sample_t* out_end;
+		sample_t* out_begin;
+		sample_t extra [extra_size];
+
+		int max_level[voice_count][2];
 	};
+	state_t m;
 	
-	struct globals_t {
-		int8_t  unused1 [12];
-		int8_t  left_volume;        // 0C   Main Volume Left (-.7)
-		int8_t  echo_feedback;      // 0D   Echo Feedback (-.7)
-		int8_t  unused2 [14];
-		int8_t  right_volume;       // 1C   Main Volume Right (-.7)
-		int8_t  unused3 [15];
-		int8_t  left_echo_volume;   // 2C   Echo Volume Left (-.7)
-		uint8_t pitch_mods;         // 2D   Pitch Modulation on/off for each voice
-		int8_t  unused4 [14];
-		int8_t  right_echo_volume;  // 3C   Echo Volume Right (-.7)
-		uint8_t noise_enables;      // 3D   Noise output on/off for each voice
-		int8_t  unused5 [14];
-		uint8_t key_ons;            // 4C   Key On for each voice
-		uint8_t echo_ons;           // 4D   Echo on/off for each voice
-		int8_t  unused6 [14];
-		uint8_t key_offs;           // 5C   key off for each voice (instantiates release mode)
-		uint8_t wave_page;          // 5D   source directory (wave table offsets)
-		int8_t  unused7 [14];
-		uint8_t flags;              // 6C   flags and noise freq
-		uint8_t echo_page;          // 6D
-		int8_t  unused8 [14];
-		uint8_t wave_ended;         // 7C
-		uint8_t echo_delay;         // 7D   ms >> 4
-		char    unused9 [2];
-	};
+	void init_counter();
+	void run_counters();
+	unsigned read_counter( int rate );
 	
-	union {
-		raw_voice_t voice [voice_count];
-		uint8_t reg [register_count];
-		globals_t g;
-	};
+	int  interpolate( voice_t const* v );
+	int  interpolate_cubic( voice_t const* v );
+	int  interpolate_sinc( voice_t const* v );
+	int  interpolate_linear( voice_t const* v );
+	int  interpolate_nearest( voice_t const* v );
+	void run_envelope( voice_t* const v );
+	void decode_brr( voice_t* v );
+
+	void misc_27();
+	void misc_28();
+	void misc_29();
+	void misc_30();
+
+	void voice_output( voice_t const* v, int ch );
+	void voice_V1( voice_t* const );
+	void voice_V2( voice_t* const );
+	void voice_V3( voice_t* const );
+	void voice_V3a( voice_t* const );
+	void voice_V3b( voice_t* const );
+	void voice_V3c( voice_t* const );
+	void voice_V4( voice_t* const );
+	void voice_V5( voice_t* const );
+	void voice_V6( voice_t* const );
+	void voice_V7( voice_t* const );
+	void voice_V8( voice_t* const );
+	void voice_V9( voice_t* const );
+	void voice_V7_V4_V1( voice_t* const );
+	void voice_V8_V5_V2( voice_t* const );
+	void voice_V9_V6_V3( voice_t* const );
+
+	void echo_read( int ch );
+	int  echo_output( int ch );
+	void echo_write( int ch );
+	void echo_22();
+	void echo_23();
+	void echo_24();
+	void echo_25();
+	void echo_26();
+	void echo_27();
+	void echo_28();
+	void echo_29();
+	void echo_30();
 	
-	uint8_t* const ram;
-	
-	// Cache of echo FIR values for faster access
-	short fir_coeff [voice_count];
-	
-	// fir_buf [i + 8] == fir_buf [i], to avoid wrap checking in FIR code
-	short fir_buf [16] [2];
-	int fir_offset; // (0 to 7)
-	
-	enum { emu_gain_bits = 8 };
-	int emu_gain;
-	
-	int keyed_on; // 8-bits for 8 voices
-	int keys;
-	
-	int echo_ptr;
-	int noise_amp;
-	int noise;
-	int noise_count;
-	
-	int surround_threshold;
-	
-	static BOOST::int16_t const gauss [];
-	
-	enum state_t {
-		state_attack,
-		state_decay,
-		state_sustain,
-		state_release
-	};
-	
-	struct voice_t {
-		short volume [2];
-		short fraction;// 12-bit fractional position
-		short interp3; // most recent four decoded samples
-		short interp2;
-		short interp1;
-		short interp0;
-		short block_remain; // number of nybbles remaining in current block
-		unsigned short addr;
-		short block_header; // header byte from current block
-		short envcnt;
-		short envx;
-		short on_cnt;
-		short enabled; // 7 if enabled, 31 if disabled
-		short envstate;
-		short unused; // pad to power of 2
-	};
-	
-	voice_t voice_state [voice_count];
-	
-	int clock_envelope( int );
+	void soft_reset_common();
 };
 
-inline void Spc_Dsp::disable_surround( bool disable ) { surround_threshold = disable ? 0 : -0x7FFF; }
+#include <assert.h>
 
-inline void Spc_Dsp::set_gain( double v ) { emu_gain = (int) (v * (1 << emu_gain_bits)); }
+inline int Spc_Dsp::sample_count() const { return m.out - m.out_begin; }
 
-inline int Spc_Dsp::read( int i )
+inline int Spc_Dsp::read( int addr ) const
 {
-	assert( (unsigned) i < register_count );
-	return reg [i];
+	assert( (unsigned) addr < register_count );
+	return m.regs [addr];
 }
+
+inline void Spc_Dsp::write( int addr, int data )
+{
+	assert( (unsigned) addr < register_count );
+	
+	m.regs [addr] = (uint8_t) data;
+	switch ( addr & 0x0F )
+	{
+	case v_envx:
+		m.envx_buf = (uint8_t) data;
+		break;
+		
+	case v_outx:
+		m.outx_buf = (uint8_t) data;
+		break;
+	
+	case 0x0C:
+		if ( addr == r_kon )
+			m.new_kon = (uint8_t) data;
+		
+		if ( addr == r_endx ) // always cleared, regardless of data written
+		{
+			m.endx_buf = 0;
+			m.regs [r_endx] = 0;
+		}
+		break;
+	}
+}
+
+inline void Spc_Dsp::mute_voices( int mask ) { m.mute_mask = mask; }
+
+inline void Spc_Dsp::disable_surround( bool disable )
+{
+	m.surround_threshold = disable ? 0 : -0x4000;
+}
+
+inline const Spc_Dsp::voice_t * Spc_Dsp::get_voice( int ch ) const
+{
+	assert( (unsigned) ch < voice_count );
+	return &m.voices[ ch ];
+}
+
+inline int Spc_Dsp::get_max_level( int v, int ch ) const
+{
+	assert( (unsigned) v < voice_count );
+	assert( (unsigned) ch < 2 );
+	int ret = m.max_level[ v ][ ch ];
+	(( Spc_Dsp * )this)->m.max_level[ v ][ ch ] = 0;
+	return ret;
+}
+
+inline bool Spc_Dsp::check_kon()
+{
+	bool old = m.kon_check;
+	m.kon_check = 0;
+	return old;
+}
+
+#if !SPC_NO_COPY_STATE_FUNCS
+
+class SPC_State_Copier {
+	Spc_Dsp::copy_func_t func;
+	unsigned char** buf;
+public:
+	SPC_State_Copier( unsigned char** p, Spc_Dsp::copy_func_t f ) { func = f; buf = p; }
+	void copy( void* state, size_t size );
+	int copy_int( int state, int size );
+	void skip( int count );
+	void extra();
+};
+
+#define SPC_COPY( type, state )\
+{\
+	state = (BOOST::type) copier.copy_int( state, sizeof (BOOST::type) );\
+	assert( (BOOST::type) state == state );\
+}
+
+#endif
 
 #endif

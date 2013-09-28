@@ -32,17 +32,7 @@
 
 	DUH *duh;
 	NSString *ext = [[[url path] pathExtension] lowercaseString];
-	if ([ext isEqualToString:@"it"])
-		duh = dumb_load_it_quick([[url path] UTF8String]);
-	else if ([ext isEqualToString:@"xm"]) 
-		duh = dumb_load_xm_quick([[url path] UTF8String]);
-	else if ([ext isEqualToString:@"s3m"])
-		duh = dumb_load_s3m_quick([[url path] UTF8String]);
-	else if ([ext isEqualToString:@"mod"])
-		duh = dumb_load_mod_quick([[url path] UTF8String]);
-	else {
-		duh = NULL;
-	}
+    duh = dumb_load_any_quick([[url path] UTF8String], [ext isEqualToString:@"mod"] ? 0 : 1, 0);
 
 	if (!duh)
 	{

@@ -25,8 +25,6 @@
 #include "dumb.h"
 #include "internal/it.h"
 
-
-
 #if 0
 unsigned char **_dumb_malloc2(int w, int h)
 {
@@ -76,7 +74,7 @@ static const char xm_has_memory[] = {
 
 
 /* Effects marked with 'special' are handled specifically in itrender.c */
-void _dumb_it_xm_convert_effect(int effect, int value, IT_ENTRY *entry)
+void _dumb_it_xm_convert_effect(int effect, int value, IT_ENTRY *entry, int mod)
 {
 const int log = 0;
 
@@ -126,7 +124,7 @@ if (log) printf(" - %2d %02X", effect, value);
 
 		case XM_APPREGIO:           effect = IT_ARPEGGIO;           break;
 		case XM_VIBRATO:            effect = IT_VIBRATO;            break;
-		case XM_TONE_PORTAMENTO:    effect = IT_TONE_PORTAMENTO;    break; /** TODO: glissando control */
+		case XM_TONE_PORTAMENTO:    effect = IT_TONE_PORTAMENTO;    break;
 		case XM_TREMOLO:            effect = IT_TREMOLO;            break;
 		case XM_SET_PANNING:        effect = IT_SET_PANNING;        break;
 		case XM_SAMPLE_OFFSET:      effect = IT_SET_SAMPLE_OFFSET;  break;
@@ -142,6 +140,7 @@ if (log) printf(" - %2d %02X", effect, value);
 		case XM_PATTERN_BREAK:
 			effect = IT_BREAK_TO_ROW;
 			value = BCD_TO_NORMAL(value);
+			if (value > 63) value = 0; /* FT2, maybe ProTracker? */
 			break;
 
 		case XM_VOLUME_SLIDE: /* special */
@@ -151,8 +150,8 @@ if (log) printf(" - %2d %02X", effect, value);
 
 		case XM_PANNING_SLIDE:
 			effect = IT_PANNING_SLIDE;
-			value = HIGH(value) ? EFFECT_VALUE(HIGH(value), 0) : EFFECT_VALUE(0, LOW(value));
-			//value = HIGH(value) ? EFFECT_VALUE(0, HIGH(value)) : EFFECT_VALUE(LOW(value), 0);
+			//value = HIGH(value) ? EFFECT_VALUE(HIGH(value), 0) : EFFECT_VALUE(0, LOW(value));
+			value = HIGH(value) ? EFFECT_VALUE(0, HIGH(value)) : EFFECT_VALUE(LOW(value), 0);
 			break;
 
 		case XM_GLOBAL_VOLUME_SLIDE: /* special */
@@ -161,12 +160,14 @@ if (log) printf(" - %2d %02X", effect, value);
 			break;
 
 		case XM_SET_TEMPO_BPM:
-			effect = (value < 0x20) ? (IT_SET_SPEED) : (IT_SET_SONG_TEMPO);
+			if (mod) effect = (value <= 0x20) ? (IT_SET_SPEED) : (IT_SET_SONG_TEMPO);
+			else effect = (value < 0x20) ? (IT_SET_SPEED) : (IT_SET_SONG_TEMPO);
 			break;
 
 		case XM_SET_GLOBAL_VOLUME:
 			effect = IT_SET_GLOBAL_VOLUME;
 			value *= 2;
+			if (value > 128) value = 128;
 			break;
 
 		case XM_KEY_OFF:
@@ -179,13 +180,15 @@ if (log) printf(" - %2d %02X", effect, value);
 
 		case EBASE+XM_E_SET_FILTER:            effect = SBASE+IT_S_SET_FILTER;            break;
 		case EBASE+XM_E_SET_GLISSANDO_CONTROL: effect = SBASE+IT_S_SET_GLISSANDO_CONTROL; break; /** TODO */
-		case EBASE+XM_E_SET_FINETUNE:          effect = SBASE+IT_S_FINETUNE;              break; /** TODO */
+		case EBASE+XM_E_SET_FINETUNE:          effect = SBASE+IT_S_FINETUNE;              break;
 		case EBASE+XM_E_SET_LOOP:              effect = SBASE+IT_S_PATTERN_LOOP;          break;
 		case EBASE+XM_E_NOTE_CUT:              effect = SBASE+IT_S_DELAYED_NOTE_CUT;      break;
 		case EBASE+XM_E_NOTE_DELAY:            effect = SBASE+IT_S_NOTE_DELAY;            break;
 		case EBASE+XM_E_PATTERN_DELAY:         effect = SBASE+IT_S_PATTERN_DELAY;         break;
+		case EBASE+XM_E_SET_PANNING:           effect = SBASE+IT_S_SET_PAN;               break;
 		case EBASE+XM_E_FINE_VOLSLIDE_UP:      effect = IT_XM_FINE_VOLSLIDE_UP;           break;
 		case EBASE+XM_E_FINE_VOLSLIDE_DOWN:    effect = IT_XM_FINE_VOLSLIDE_DOWN;         break;
+		case EBASE+XM_E_SET_MIDI_MACRO:        effect = SBASE+IT_S_SET_MIDI_MACRO;        break;
 
 		case EBASE + XM_E_FINE_PORTA_UP:
 			effect = IT_PORTAMENTO_UP;
@@ -204,12 +207,12 @@ if (log) printf(" - %2d %02X", effect, value);
 
 		case EBASE + XM_E_SET_VIBRATO_CONTROL:
 			effect = SBASE+IT_S_SET_VIBRATO_WAVEFORM;
-			value &= ~4; /** TODO: value&4 -> don't retrig wave */
+			value &= ~4;
 			break;
 
 		case EBASE + XM_E_SET_TREMOLO_CONTROL:
 			effect = SBASE+IT_S_SET_TREMOLO_WAVEFORM;
-			value &= ~4; /** TODO: value&4 -> don't retrig wave */
+			value &= ~4;
 			break;
 
 		case XBASE + XM_X_EXTRAFINE_PORTA_UP:

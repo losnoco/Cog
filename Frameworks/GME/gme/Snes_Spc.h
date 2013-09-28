@@ -1,121 +1,311 @@
-// Super Nintendo (SNES) SPC-700 APU Emulator
+// SNES SPC-700 APU emulator
 
-// Game_Music_Emu 0.5.2
+// snes_spc $vers
 #ifndef SNES_SPC_H
 #define SNES_SPC_H
 
-#include "blargg_common.h"
-#include "Spc_Cpu.h"
 #include "Spc_Dsp.h"
+#include "blargg_endian.h"
 
-class Snes_Spc {
+class Sfm_Emu;
+
+struct Snes_Spc {
+    friend class Sfm_Emu;
+
 public:
+	typedef BOOST::uint8_t uint8_t;
 	
-	// Load copy of SPC data into emulator. Clear echo buffer if 'clear_echo' is true.
-	enum { spc_file_size = 0x10180 };
-	blargg_err_t load_spc( const void* spc, long spc_size );
+	// Must be called once before using
+	blargg_err_t init();
 	
-	// Generate 'count' samples and optionally write to 'buf'. Count must be even.
-	// Sample output is 16-bit 32kHz, signed stereo pairs with the left channel first.
+	// Sample pairs generated per second
+	enum { sample_rate = 32000 };
+	
+// Emulator use
+	
+	// Sets IPL ROM data. Library does not include ROM data. Most SPC music files
+	// don't need ROM, but a full emulator must provide this.
+	enum { rom_size = 0x40 };
+	void init_rom( uint8_t const rom [rom_size] );
+
+	// Sets destination for output samples
 	typedef short sample_t;
-	blargg_err_t play( long count, sample_t* buf = NULL );
+	void set_output( sample_t* out, int out_size );
+
+	// Number of samples written to output since last set
+	int sample_count() const;
+
+	// Resets SPC to power-on state. This resets your output buffer, so you must
+	// call set_output() after this.
+	void reset();
+
+	// Emulates pressing reset switch on SNES. This resets your output buffer, so
+	// you must call set_output() after this.
+	void soft_reset();
+
+	// 1024000 SPC clocks per second, sample pair every 32 clocks
+	typedef int time_t;
+	enum { clock_rate = 1024000 };
+	enum { clocks_per_sample = 32 };
 	
-// Optional functionality
+	// Emulated port read/write at specified time
+	enum { port_count = 4 };
+	int  read_port ( time_t, int port );
+	void write_port( time_t, int port, int data );
+
+	// Runs SPC to end_time and starts a new time frame at 0
+	void end_frame( time_t end_time );
 	
-	// Load copy of state into emulator.
-	typedef Spc_Cpu::registers_t registers_t;
-	blargg_err_t load_state( const registers_t& cpu_state, const void* ram_64k,
-		const void* dsp_regs_128 );
+// Sound control
 	
-	// Clear echo buffer, useful because many tracks have junk in the buffer.
-	void clear_echo();
-	
-	// Mute voice n if bit n (1 << n) of mask is set
-	enum { voice_count = Spc_Dsp::voice_count };
+	// Mutes voices corresponding to non-zero bits in mask (issues repeated KOFF events).
+	// Reduces emulation accuracy.
+	enum { voice_count = 8 };
 	void mute_voices( int mask );
 	
-	// Skip forward by the specified number of samples (64000 samples = 1 second)
-	blargg_err_t skip( long count );
-	
-	// Set gain, where 1.0 is normal. When greater than 1.0, output is clamped the
-	// 16-bit sample range.
-	void set_gain( double );
-	
-	// If true, prevent channels and global volumes from being phase-negated
+	// If true, prevents channels and global volumes from being phase-negated.
 	void disable_surround( bool disable = true );
+
+	// If true, enables cubic interpolation
+	void interpolation_level( int level = 0 );
 	
-	// Set 128 bytes to use for IPL boot ROM. Makes copy. Default is zero filled,
-	// to avoid including copyrighted code from the SPC-700.
-	void set_ipl_rom( const void* );
+	// Sets tempo, where tempo_unit = normal, tempo_unit / 2 = half speed, etc.
+	enum { tempo_unit = 0x100 };
+	void set_tempo( int );
+
+// SPC music files
+
+	// Loads SPC data into emulator
+	enum { spc_min_file_size = 0x10180 };
+	enum { spc_file_size     = 0x10200 };
+	blargg_err_t load_spc( void const* in, long size );
 	
-	void set_tempo( double );
+	// Clears echo region. Useful after loading an SPC as many have garbage in echo.
+	void clear_echo(bool force = false);
+
+	// Plays for count samples and write samples to out. Discards samples if out
+	// is NULL. Count must be a multiple of 2 since output is stereo.
+	blargg_err_t play( int count, sample_t out [] );
 	
+	// Skips count samples. Several times faster than play() when using fast DSP.
+	blargg_err_t skip( int count );
+
+	// blah
+	Spc_Dsp const* get_dsp() const;
+    Spc_Dsp * get_dsp();
+
+    // SFM Queue
+    void set_sfm_queue(const uint8_t* queue, const uint8_t* queue_end);
+	
+// State save/load (only available with accurate DSP)
+
+#if !SPC_NO_COPY_STATE_FUNCS
+	// Saves/loads state
+	enum { state_size = 67 * 1024 }; // maximum space needed when saving
+	typedef Spc_Dsp::copy_func_t copy_func_t;
+	void copy_state( unsigned char** io, copy_func_t );
+	
+	// Writes minimal header to spc_out
+	static void init_header( void* spc_out );
+
+	// Saves emulator state as SPC file data. Writes spc_file_size bytes to spc_out.
+	// Does not set up SPC header; use init_header() for that.
+	void save_spc( void* spc_out );
+
+	// Returns true if new key-on events occurred since last check. Useful for
+	// trimming silence while saving an SPC.
+	bool check_kon();
+#endif
+
 public:
-	Snes_Spc();
-	typedef BOOST::uint8_t uint8_t;
-private:
-	// timers
+	// TODO: document
+	struct regs_t
+	{
+		int pc;
+		int a;
+		int x;
+		int y;
+		int psw;
+		int sp;
+	};
+	regs_t& smp_regs() { return m.cpu_regs; }
+	
+	uint8_t* smp_ram() { return m.ram.ram; }
+	
+	void run_until( time_t t ) { run_until_( t ); }
+public:
+	BLARGG_DISABLE_NOTHROW
+	
+	typedef BOOST::uint16_t uint16_t;
+	
+	// Time relative to m_spc_time. Speeds up code a bit by eliminating need to
+	// constantly add m_spc_time to time from CPU. CPU uses time that ends at
+	// 0 to eliminate reloading end time every instruction. It pays off.
+	typedef int rel_time_t;
+	
 	struct Timer
 	{
-		spc_time_t next_tick;
+		rel_time_t next_time; // time of next event
+		int prescaler;
 		int period;
-		int count;
-		int divisor;
+		int divider;
 		int enabled;
 		int counter;
-		
-		void run_until_( spc_time_t );
-		void run_until( spc_time_t time )
-		{
-			if ( time >= next_tick )
-				run_until_( time );
-		}
 	};
+    enum { reg_count = 0x10 };
 	enum { timer_count = 3 };
-	Timer timer [timer_count];
-
-	// hardware
-	int extra_cycles;
-	spc_time_t time() const;
-	int  read( spc_addr_t );
-	void write( spc_addr_t, int );
-	friend class Spc_Cpu;
+	enum { extra_size = Spc_Dsp::extra_size };
 	
-	// dsp
-	sample_t* sample_buf;
-	sample_t* buf_end; // to do: remove this once possible bug resolved
-	spc_time_t next_dsp;
+	enum { signature_size = 35 };
+	
+private:
 	Spc_Dsp dsp;
-	int keys_pressed;
-	int keys_released;
-	sample_t skip_sentinel [1]; // special value for play() passed by skip()
-	void run_dsp( spc_time_t );
-	void run_dsp_( spc_time_t );
-	bool echo_accessed;
-	void check_for_echo_access( spc_addr_t );
 	
-	// boot rom
-	enum { rom_size = 64 };
+	#if SPC_LESS_ACCURATE
+		static signed char const reg_times_ [256];
+		signed char reg_times [256];
+	#endif
+	
+	struct state_t
+	{
+		Timer timers [timer_count];
+
+		uint8_t smp_regs [2] [reg_count];
+		
+		regs_t cpu_regs;
+		
+		rel_time_t  dsp_time;
+		time_t      spc_time;
+		bool        echo_accessed;
+		bool        echo_cleared;
+		
+		int         tempo;
+		int         skipped_kon;
+		int         skipped_koff;
+		const char* cpu_error;
+		
+		int         extra_clocks;
+		sample_t*   buf_begin;
+		sample_t const* buf_end;
+		sample_t*   extra_pos;
+		sample_t    extra_buf [extra_size];
+		
+		int         rom_enabled;
+		uint8_t     rom    [rom_size];
+		uint8_t     hi_ram [rom_size];
+
+        uint8_t const* sfm_queue;
+        uint8_t const* sfm_queue_end;
+		
+		unsigned char cycle_table [256];
+		
+		struct
+		{
+			// padding to neutralize address overflow
+			union {
+				uint8_t padding1 [0x100];
+				uint16_t align; // makes compiler align data for 16-bit access
+			} padding1 [1];
+			uint8_t ram      [0x10000];
+			uint8_t padding2 [0x100];
+		} ram;
+	};
+	state_t m;
+	
 	enum { rom_addr = 0xFFC0 };
-	bool rom_enabled;
-	void enable_rom( bool );
 	
-	// CPU and RAM (at end because it's large)
-	Spc_Cpu cpu;
-	uint8_t extra_ram [rom_size];
-	struct {
-		// padding to catch jumps before beginning or past end
-		uint8_t padding1 [0x100];
+	enum { skipping_time = 127 };
+	
+	// Value that padding should be filled with
+	enum { cpu_pad_fill = 0xFF };
+	
+	enum {
+        r_test     = 0x0, r_control  = 0x1,
+        r_dspaddr  = 0x2, r_dspdata  = 0x3,
+        r_cpuio0   = 0x4, r_cpuio1   = 0x5,
+        r_cpuio2   = 0x6, r_cpuio3   = 0x7,
+        r_f8       = 0x8, r_f9       = 0x9,
+        r_t0target = 0xA, r_t1target = 0xB, r_t2target = 0xC,
+        r_t0out    = 0xD, r_t1out    = 0xE, r_t2out    = 0xF
+	};
+	
+	void timers_loaded();
+	void enable_rom( int enable );
+	void reset_buf();
+	void save_extra();
+	void load_regs( uint8_t const in [reg_count] );
+	void ram_loaded();
+	void regs_loaded();
+	void reset_time_regs();
+	void reset_common( int timer_counter_init );
+	
+	Timer* run_timer_      ( Timer* t, rel_time_t );
+	Timer* run_timer       ( Timer* t, rel_time_t );
+	int dsp_read           ( rel_time_t );
+	void dsp_write         ( int data, rel_time_t );
+	void cpu_write_smp_reg_( int data, rel_time_t, int addr );
+	void cpu_write_smp_reg ( int data, rel_time_t, int addr );
+	void cpu_write_high    ( int data, int i, rel_time_t );
+	void cpu_write         ( int data, int addr, rel_time_t );
+	int cpu_read_smp_reg   ( int i, rel_time_t );
+	int cpu_read           ( int addr, rel_time_t );
+	unsigned CPU_mem_bit   ( uint8_t const* pc, rel_time_t );
+	
+	bool check_echo_access ( int addr );
+	uint8_t* run_until_( time_t end_time );
+	
+	struct spc_file_t
+	{
+		char    signature [signature_size];
+		uint8_t has_id666;
+		uint8_t version;
+		uint8_t pcl, pch;
+		uint8_t a;
+		uint8_t x;
+		uint8_t y;
+		uint8_t psw;
+		uint8_t sp;
+		char    text [212];
 		uint8_t ram [0x10000];
-		uint8_t padding2 [0x100];
-	} mem;
-	uint8_t boot_rom [rom_size];
+		uint8_t dsp [128];
+		uint8_t unused [0x40];
+		uint8_t ipl_rom [0x40];
+	};
+
+	static char const signature [signature_size + 1];
+	
+	void save_regs( uint8_t out [reg_count] );
 };
 
-inline void Snes_Spc::disable_surround( bool disable ) { dsp.disable_surround( disable ); }
+#include <assert.h>
+
+inline int Snes_Spc::sample_count() const { return (m.extra_clocks >> 5) * 2; }
+
+inline int Snes_Spc::read_port( time_t t, int port )
+{
+	assert( (unsigned) port < port_count );
+	return run_until_( t ) [port];
+}
+
+inline void Snes_Spc::write_port( time_t t, int port, int data )
+{
+	assert( (unsigned) port < port_count );
+	run_until_( t ) [0x10 + port] = data;
+}
 
 inline void Snes_Spc::mute_voices( int mask ) { dsp.mute_voices( mask ); }
+	
+inline void Snes_Spc::disable_surround( bool disable ) { dsp.disable_surround( disable ); }
 
-inline void Snes_Spc::set_gain( double v ) { dsp.set_gain( v ); }
+inline void Snes_Spc::interpolation_level( int level ) { dsp.interpolation_level( level ); }
+
+inline Spc_Dsp const* Snes_Spc::get_dsp() const { return &dsp; }
+inline Spc_Dsp * Snes_Spc::get_dsp() { return &dsp; }
+
+inline void Snes_Spc::set_sfm_queue(const uint8_t *queue, const uint8_t *queue_end) { m.sfm_queue = queue; m.sfm_queue_end = queue_end; }
+
+#if !SPC_NO_COPY_STATE_FUNCS
+inline bool Snes_Spc::check_kon() { return dsp.check_kon(); }
+#endif
 
 #endif

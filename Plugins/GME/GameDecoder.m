@@ -67,7 +67,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 	
 	int track_num = [[[source url] fragment] intValue]; //What if theres no fragment? Assuming we get 0.
 	
-	track_info_t info;
+	gme_info_t * info;
 	error = gme_track_info( emu, &info, track_num );
 	if (error)
 	{
@@ -75,18 +75,20 @@ gme_err_t readCallback( void* data, void* out, long count )
 	}
 	
 	//As recommended
-	if (info.length > 0) {
-		NSLog(@"Using length: %li", info.length);
-		length = info.length;
+	if (info->length > 0) {
+		NSLog(@"Using length: %i", info->length);
+		length = info->length;
 	}
-	else if (info.loop_length > 0) {
-		NSLog(@"Using loop length: %li", info.loop_length);
-		length = info.intro_length + 2*info.loop_length;
+	else if (info->loop_length > 0) {
+		NSLog(@"Using loop length: %i", info->loop_length);
+		length = info->intro_length + 2*info->loop_length;
 	}
 	else {
 		length = 150000; 
 		NSLog(@"Setting default: %li", length);
 	}
+    
+    gme_free_info( info );
 
 	NSLog(@"Length: %li", length);
 	
@@ -157,17 +159,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 
 + (NSArray *)fileTypes 
 {	
-	NSMutableArray *types = [NSMutableArray array];
-	gme_type_t const* type = gme_type_list();
-	while(*type)
-	{
-		//We're digging a little deep here, but there seems to be no other choice.
-		[types addObject:[NSString stringWithCString:(*type)->extension_ encoding: NSASCIIStringEncoding]];
-		
-		type++;
-	}
-	
-	return [[types copy] autorelease];
+	return [NSArray arrayWithObjects:@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sgc", @"spc", @"vgm", nil];
 }
 
 + (NSArray *)mimeTypes 

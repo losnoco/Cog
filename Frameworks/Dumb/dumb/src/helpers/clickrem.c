@@ -151,14 +151,14 @@ void dumb_remove_clicks(DUMB_CLICK_REMOVER *cr, sample_t *samples, long length, 
 			offset = -offset;
 			while (pos < end) {
 				samples[pos] -= offset;
-				offset = (int)((LONG_LONG)(offset << 1) * factor >> 32);
+				offset = (int)(((LONG_LONG)(offset << 1) * factor) >> 32);
 				pos += step;
 			}
 			offset = -offset;
 		} else {
 			while (pos < end) {
 				samples[pos] += offset;
-				offset = (int)((LONG_LONG)(offset << 1) * factor >> 32);
+				offset = (int)(((LONG_LONG)(offset << 1) * factor) >> 32);
 				pos += step;
 			}
 		}

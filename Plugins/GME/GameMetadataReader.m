@@ -60,7 +60,7 @@
 	else
 		track_num = [[url fragment] intValue];
 	
-	track_info_t info;
+	gme_info_t * info;
 	error = gme_track_info( emu, &info, track_num );
 	if (error)
 	{
@@ -69,13 +69,17 @@
 	
 	gme_delete(emu);
 
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSString stringWithUTF8String: info.system], @"genre",
-		[NSString stringWithUTF8String: info.game], @"album",
-		[NSString stringWithUTF8String: info.song], @"title",
-		[NSString stringWithUTF8String: info.author], @"artist",
+	NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSString stringWithUTF8String: info->system], @"genre",
+		[NSString stringWithUTF8String: info->game], @"album",
+		[NSString stringWithUTF8String: info->song], @"title",
+		[NSString stringWithUTF8String: info->author], @"artist",
 		[NSNumber numberWithInt:track_num+1], @"track",
 		nil];
+    
+    gme_free_info( info );
+    
+    return dict;
 }
 
 @end

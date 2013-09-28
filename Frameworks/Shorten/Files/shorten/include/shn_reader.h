@@ -176,7 +176,7 @@ class shn_reader
 		void				*pmalloc(ulong size);
 		slong				**long2d(ulong n0, ulong n1);
 
-		friend void			*thread_runner(shn_reader *reader)
+		static void			*thread_runner(shn_reader *reader)
 							{
 								reader->Run();
 								return NULL;

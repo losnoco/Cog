@@ -1,10 +1,10 @@
-// Game_Music_Emu 0.5.2. http://www.slack.net/~ant/
+// SPC emulation support: init, sample buffering, reset, SPC loading
+
+// snes_spc $vers. http://www.slack.net/~ant/
 
 #include "Snes_Spc.h"
 
-#include <string.h>
-
-/* Copyright (C) 2004-2006 Shay Green. This module is free software; you
+/* Copyright (C) 2004-2007 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
 General Public License as published by the Free Software Foundation; either
 version 2.1 of the License, or (at your option) any later version. This
@@ -17,473 +17,359 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-// always in the future (CPU time can go over 0, but not by this much)
-int const timer_disabled_time = 127;
+#define RAM         (m.ram.ram)
+#define REGS        (m.smp_regs [0])
+#define REGS_IN     (m.smp_regs [1])
 
-Snes_Spc::Snes_Spc() : dsp( mem.ram ), cpu( this, mem.ram )
+// (n ? n : 256)
+#define IF_0_THEN_256( n ) ((uint8_t) ((n) - 1) + 1)
+
+
+//// Init
+
+blargg_err_t Snes_Spc::init()
 {
-	set_tempo( 1.0 );
+	memset( &m, 0, sizeof m );
+	dsp.init( RAM );
+
+    set_sfm_queue( 0, 0 );
 	
-	// Put STOP instruction around memory to catch PC underflow/overflow.
-	memset( mem.padding1, 0xFF, sizeof mem.padding1 );
-	memset( mem.padding2, 0xFF, sizeof mem.padding2 );
+	m.tempo = tempo_unit;
 	
-	// A few tracks read from the last four bytes of IPL ROM
-	boot_rom [sizeof boot_rom - 2] = 0xC0;
-	boot_rom [sizeof boot_rom - 1] = 0xFF;
-	memset( boot_rom, 0, sizeof boot_rom - 2 );
-}
-
-void Snes_Spc::set_tempo( double t )
-{
-	int unit = (int) (16.0 / t + 0.5);
+	// Most SPC music doesn't need ROM, and almost all the rest only rely
+	// on these two bytes
+	m.rom [0x3E] = 0xFF;
+	m.rom [0x3F] = 0xC0;
 	
-	timer [0].divisor = unit * 8; // 8 kHz
-	timer [1].divisor = unit * 8; // 8 kHz
-	timer [2].divisor = unit;     // 64 kHz
-}
-
-// Load
-
-void Snes_Spc::set_ipl_rom( void const* in )
-{
-	memcpy( boot_rom, in, sizeof boot_rom );
-}
-
-blargg_err_t Snes_Spc::load_spc( const void* data, long size )
-{
-	struct spc_file_t {
-		char    signature [27];
-		char    unused [10];
-		uint8_t pc [2];
-		uint8_t a;
-		uint8_t x;
-		uint8_t y;
-		uint8_t status;
-		uint8_t sp;
-		char    unused2 [212];
-		uint8_t ram [0x10000];
-		uint8_t dsp [128];
-		uint8_t ipl_rom [128];
+	static unsigned char const cycle_table [128] =
+	{//   01   23   45   67   89   AB   CD   EF
+	    0x28,0x47,0x34,0x36,0x26,0x54,0x54,0x68, // 0
+	    0x48,0x47,0x45,0x56,0x55,0x65,0x22,0x46, // 1
+	    0x28,0x47,0x34,0x36,0x26,0x54,0x54,0x74, // 2
+	    0x48,0x47,0x45,0x56,0x55,0x65,0x22,0x38, // 3
+	    0x28,0x47,0x34,0x36,0x26,0x44,0x54,0x66, // 4
+	    0x48,0x47,0x45,0x56,0x55,0x45,0x22,0x43, // 5
+	    0x28,0x47,0x34,0x36,0x26,0x44,0x54,0x75, // 6
+	    0x48,0x47,0x45,0x56,0x55,0x55,0x22,0x36, // 7
+	    0x28,0x47,0x34,0x36,0x26,0x54,0x52,0x45, // 8
+	    0x48,0x47,0x45,0x56,0x55,0x55,0x22,0xC5, // 9
+	    0x38,0x47,0x34,0x36,0x26,0x44,0x52,0x44, // A
+	    0x48,0x47,0x45,0x56,0x55,0x55,0x22,0x34, // B
+	    0x38,0x47,0x45,0x47,0x25,0x64,0x52,0x49, // C
+	    0x48,0x47,0x56,0x67,0x45,0x55,0x22,0x83, // D
+	    0x28,0x47,0x34,0x36,0x24,0x53,0x43,0x40, // E
+	    0x48,0x47,0x45,0x56,0x34,0x54,0x22,0x60, // F
 	};
-	assert( offsetof (spc_file_t,ipl_rom) == spc_file_size );
 	
-	const spc_file_t* spc = (spc_file_t const*) data;
-	
-	if ( size < spc_file_size )
-		return "Not an SPC file";
-	
-	if ( strncmp( spc->signature, "SNES-SPC700 Sound File Data", 27 ) != 0 )
-		return "Not an SPC file";
-	
-	registers_t regs;
-	regs.pc     = spc->pc [1] * 0x100 + spc->pc [0];
-	regs.a      = spc->a;
-	regs.x      = spc->x;
-	regs.y      = spc->y;
-	regs.status = spc->status;
-	regs.sp     = spc->sp;
-	
-	if ( (unsigned long) size >= sizeof *spc )
-		set_ipl_rom( spc->ipl_rom );
-	
-	const char* error = load_state( regs, spc->ram, spc->dsp );
-	
-	echo_accessed = false;
-	
-	return error;
-}
-
-void Snes_Spc::clear_echo()
-{
-	if ( !(dsp.read( 0x6C ) & 0x20) )
+	// unpack cycle table
+	for ( int i = 0; i < 128; i++ )
 	{
-		unsigned addr = 0x100 * dsp.read( 0x6D );
-		size_t   size = 0x800 * dsp.read( 0x7D );
-		memset( mem.ram + addr, 0xFF, min( size, sizeof mem.ram - addr ) );
+		int n = cycle_table [i];
+		m.cycle_table [i * 2 + 0] = n >> 4;
+		m.cycle_table [i * 2 + 1] = n & 0x0F;
 	}
+	
+	#if SPC_LESS_ACCURATE
+		memcpy( reg_times, reg_times_, sizeof reg_times );
+	#endif
+	
+	reset();
+	return blargg_ok;
 }
 
-// Handle other file formats (emulator save states) in user code, not here.
-
-blargg_err_t Snes_Spc::load_state( const registers_t& cpu_state, const void* new_ram,
-		const void* dsp_state )
+void Snes_Spc::init_rom( uint8_t const in [rom_size] )
 {
-	// cpu
-	cpu.r = cpu_state;
+	memcpy( m.rom, in, sizeof m.rom );
+}
+
+void Snes_Spc::set_tempo( int t )
+{
+	m.tempo = t;
+    int const timer2_shift = 4; // 64 kHz
+	int const other_shift  = 3; //  8 kHz
 	
-	// Allow DSP to generate one sample before code starts
-	// (Tengai Makyo Zero, Tenjin's Table Toss first notes are lost since it
-	// clears KON 31 cycles from starting execution. It works on the SNES
-	// since the SPC player adds a few extra cycles delay after restoring
-	// KON from the DSP registers at the end of an SPC file).
-	extra_cycles = 32; 
-	
-	// ram
-	memcpy( mem.ram, new_ram, sizeof mem.ram );
-	memcpy( extra_ram, mem.ram + rom_addr, sizeof extra_ram );
-	
-	// boot rom (have to force enable_rom() to update it)
-	rom_enabled = !(mem.ram [0xF1] & 0x80);
-	enable_rom( !rom_enabled );
-	
-	// dsp
-	dsp.reset();
+    if ( !t )
+        t = 1;
+    int const timer2_rate  = 1 << timer2_shift;
+    int rate = (timer2_rate * tempo_unit + (t >> 1)) / t;
+    if ( rate < timer2_rate / 4 )
+        rate = timer2_rate / 4; // max 4x tempo
+    m.timers [2].prescaler = rate;
+    m.timers [1].prescaler = rate << other_shift;
+    m.timers [0].prescaler = rate << other_shift;
+}
+
+// Timer registers have been loaded. Applies these to the timers. Does not
+// reset timer prescalers or dividers.
+void Snes_Spc::timers_loaded()
+{
 	int i;
-	for ( i = 0; i < Spc_Dsp::register_count; i++ )
-		dsp.write( i, ((uint8_t const*) dsp_state) [i] );
-	
-	// timers
 	for ( i = 0; i < timer_count; i++ )
 	{
-		Timer& t = timer [i];
-		
-		t.next_tick = 0;
-		t.enabled = (mem.ram [0xF1] >> i) & 1;
-		if ( !t.enabled )
-			t.next_tick = timer_disabled_time;
-		t.count = 0;
-		t.counter = mem.ram [0xFD + i] & 15;
-		
-		int p = mem.ram [0xFA + i];
-		t.period = p ? p : 0x100;
+		Timer* t = &m.timers [i];
+		t->period  = IF_0_THEN_256( REGS [r_t0target + i] );
+		t->enabled = REGS [r_control] >> i & 1;
+		t->counter = REGS_IN [r_t0out + i] & 0x0F;
 	}
 	
-	// Handle registers which already give 0 when read by setting RAM and not changing it.
-	// Put STOP instruction in registers which can be read, to catch attempted CPU execution.
-	mem.ram [0xF0] = 0;
-	mem.ram [0xF1] = 0;
-	mem.ram [0xF3] = 0xFF;
-	mem.ram [0xFA] = 0;
-	mem.ram [0xFB] = 0;
-	mem.ram [0xFC] = 0;
-	mem.ram [0xFD] = 0xFF;
-	mem.ram [0xFE] = 0xFF;
-	mem.ram [0xFF] = 0xFF;
-	
-	return 0; // success
+	set_tempo( m.tempo );
 }
 
-// Hardware
-
-// Current time starts negative and ends at 0
-inline spc_time_t Snes_Spc::time() const
+// Loads registers from unified 16-byte format
+void Snes_Spc::load_regs( uint8_t const in [reg_count] )
 {
-	return -cpu.remain();
+	memcpy( REGS, in, reg_count );
+	memcpy( REGS_IN, REGS, reg_count );
+	
+	// These always read back as 0
+	REGS_IN [r_test    ] = 0;
+	REGS_IN [r_control ] = 0;
+	REGS_IN [r_t0target] = 0;
+	REGS_IN [r_t1target] = 0;
+	REGS_IN [r_t2target] = 0;
 }
 
-// Keep track of next time to run and avoid a function call if it hasn't been reached.
-
-// Timers
-
-void Snes_Spc::Timer::run_until_( spc_time_t time )
+// RAM was just loaded from SPC, with $F0-$FF containing SMP registers
+// and timer counts. Copies these to proper registers.
+void Snes_Spc::ram_loaded()
 {
-	if ( !enabled )
-		dprintf( "next_tick: %ld, time: %ld", (long) next_tick, (long) time );
-	assert( enabled ); // when disabled, next_tick should always be in the future
+	m.rom_enabled = 0;
+	load_regs( &RAM [0xF0] );
 	
-	int elapsed = ((time - next_tick) / divisor) + 1;
-	next_tick += elapsed * divisor;
-	
-	elapsed += count;
-	if ( elapsed >= period ) // avoid unnecessary division
-	{
-		int n = elapsed / period;
-		elapsed -= n * period;
-		counter = (counter + n) & 15;
-	}
-	count = elapsed;
+	// Put STOP instruction around memory to catch PC underflow/overflow
+	memset( m.ram.padding1, cpu_pad_fill, sizeof m.ram.padding1 );
+	memset( m.ram.padding2, cpu_pad_fill, sizeof m.ram.padding2 );
 }
 
-// DSP
-
-const int clocks_per_sample = 32; // 1.024 MHz CPU clock / 32000 samples per second
-
-void Snes_Spc::run_dsp_( spc_time_t time )
+// Registers were just loaded. Applies these new values.
+void Snes_Spc::regs_loaded()
 {
-	int count = ((time - next_dsp) >> 5) + 1; // divide by clocks_per_sample
-	sample_t* buf = sample_buf;
-	if ( buf ) {
-		sample_buf = buf + count * 2; // stereo
-		assert( sample_buf <= buf_end );
-	}
-	next_dsp += count * clocks_per_sample;
-	dsp.run( count, buf );
+	enable_rom( REGS [r_control] & 0x80 );
+	timers_loaded();
 }
 
-inline void Snes_Spc::run_dsp( spc_time_t time )
+void Snes_Spc::reset_time_regs()
 {
-	if ( time >= next_dsp )
-		run_dsp_( time );
-}
-
-// Debug-only check for read/write within echo buffer, since this might result in
-// inaccurate emulation due to the DSP not being caught up to the present.
-inline void Snes_Spc::check_for_echo_access( spc_addr_t addr )
-{
-	if ( !echo_accessed && !(dsp.read( 0x6C ) & 0x20) )
-	{
-		// ** If echo accesses are found that require running the DSP, cache
-		// the start and end address on DSP writes to speed up checking.
-		
-		unsigned start = 0x100 * dsp.read( 0x6D );
-		unsigned end = start + 0x800 * dsp.read( 0x7D );
-		if ( start <= addr && addr < end ) {
-			echo_accessed = true;
-			dprintf( "Read/write at $%04X within echo buffer\n", (unsigned) addr );
-		}
-	}
-}
-
-// Read
-
-int Snes_Spc::read( spc_addr_t addr )
-{
-	int result = mem.ram [addr];
+	m.cpu_error     = NULL;
+	m.echo_accessed = 0;
+	m.spc_time      = 0;
+	m.dsp_time      = 0;
+	#if SPC_LESS_ACCURATE
+		m.dsp_time = clocks_per_sample + 1;
+	#endif
 	
-	if ( (rom_addr <= addr && addr < 0xFFFC || addr >= 0xFFFE) && rom_enabled )
-		dprintf( "Read from ROM: %04X -> %02X\n", addr, result );
-	
-	if ( unsigned (addr - 0xF0) < 0x10 )
-	{
-		assert( 0xF0 <= addr && addr <= 0xFF );
-		
-		// counters
-		int i = addr - 0xFD;
-		if ( i >= 0 )
-		{
-			Timer& t = timer [i];
-			t.run_until( time() );
-			int old = t.counter;
-			t.counter = 0;
-			return old;
-		}
-		
-		// dsp
-		if ( addr == 0xF3 )
-		{
-			run_dsp( time() );
-			if ( mem.ram [0xF2] >= Spc_Dsp::register_count )
-				dprintf( "DSP read from $%02X\n", (int) mem.ram [0xF2] );
-			return dsp.read( mem.ram [0xF2] & 0x7F );
-		}
-		
-		if ( addr == 0xF0 || addr == 0xF1 || addr == 0xF8 ||
-				addr == 0xF9 || addr == 0xFA )
-			dprintf( "Read from register $%02X\n", (int) addr );
-		
-		// Registers which always read as 0 are handled by setting mem.ram [reg] to 0
-		// at startup then never changing that value.
-		
-		check(( check_for_echo_access( addr ), true ));
-	}
-	
-	return result;
-}
-
-
-// Write
-
-void Snes_Spc::enable_rom( bool enable )
-{
-	if ( rom_enabled != enable )
-	{
-		rom_enabled = enable;
-		memcpy( mem.ram + rom_addr, (enable ? boot_rom : extra_ram), rom_size );
-		// TODO: ROM can still get overwritten when DSP writes to echo buffer
-	}
-}
-
-void Snes_Spc::write( spc_addr_t addr, int data )
-{
-	// first page is very common
-	if ( addr < 0xF0 ) {
-		mem.ram [addr] = (uint8_t) data;
-	}
-	else switch ( addr )
-	{
-		// RAM
-		default:
-			check(( check_for_echo_access( addr ), true ));
-			if ( addr < rom_addr ) {
-				mem.ram [addr] = (uint8_t) data;
-			}
-			else {
-				extra_ram [addr - rom_addr] = (uint8_t) data;
-				if ( !rom_enabled )
-					mem.ram [addr] = (uint8_t) data;
-			}
-			break;
-		
-		// DSP
-		//case 0xF2: // mapped to RAM
-		case 0xF3: {
-			run_dsp( time() );
-			int reg = mem.ram [0xF2];
-			if ( next_dsp > 0 ) {
-				// skip mode
-				
-				// key press
-				if ( reg == 0x4C )
-					keys_pressed |= data & ~dsp.read( 0x5C );
-				
-				// key release
-				if ( reg == 0x5C ) {
-					keys_released |= data;
-					keys_pressed &= ~data;
-				}
-			}
-			if ( reg < Spc_Dsp::register_count ) {
-				dsp.write( reg, data );
-			}
-			else {
-				dprintf( "DSP write to $%02X\n", (int) reg );
-			}
-			break;
-		}
-		
-		case 0xF0: // Test register
-			dprintf( "Wrote $%02X to $F0\n", (int) data );
-			break;
-		
-		// Config
-		case 0xF1:
-		{
-			// timers
-			for ( int i = 0; i < timer_count; i++ )
-			{
-				Timer& t = timer [i];
-				if ( !(data & (1 << i)) ) {
-					t.enabled = 0;
-					t.next_tick = timer_disabled_time;
-				}
-				else if ( !t.enabled ) {
-					// just enabled
-					t.enabled = 1;
-					t.counter = 0;
-					t.count = 0;
-					t.next_tick = time();
-				}
-			}
-			
-			// port clears
-			if ( data & 0x10 ) {
-				mem.ram [0xF4] = 0;
-				mem.ram [0xF5] = 0;
-			}
-			if ( data & 0x20 ) {
-				mem.ram [0xF6] = 0;
-				mem.ram [0xF7] = 0;
-			}
-			
-			enable_rom( (data & 0x80) != 0 );
-			
-			break;
-		}
-		
-		// Ports
-		case 0xF4:
-		case 0xF5:
-		case 0xF6:
-		case 0xF7:
-			// to do: handle output ports
-			break;
-		
-		//case 0xF8: // verified on SNES that these are read/write (RAM)
-		//case 0xF9:
-		
-		// Timers
-		case 0xFA:
-		case 0xFB:
-		case 0xFC: {
-			Timer& t = timer [addr - 0xFA];
-			if ( (t.period & 0xFF) != data ) {
-				t.run_until( time() );
-				t.period = data ? data : 0x100;
-			}
-			break;
-		}
-		
-		// Counters (cleared on write)
-		case 0xFD:
-		case 0xFE:
-		case 0xFF:
-			dprintf( "Wrote to counter $%02X\n", (int) addr );
-			timer [addr - 0xFD].counter = 0;
-			break;
-	}
-}
-
-// Play
-
-blargg_err_t Snes_Spc::skip( long count )
-{
-	if ( count > 4 * 32000L )
-	{
-		// don't run DSP for long durations (2-3 times faster)
-		
-		const long sync_count = 32000L * 2;
-		
-		// keep track of any keys pressed/released (and not subsequently released)
-		keys_pressed = 0;
-		keys_released = 0;
-		// sentinel tells play to ignore DSP
-		RETURN_ERR( play( count - sync_count, skip_sentinel ) );
-		
-		// press/release keys now
-		dsp.write( 0x5C, keys_released & ~keys_pressed );
-		dsp.write( 0x4C, keys_pressed );
-		
-		clear_echo();
-		
-		// play the last few seconds normally to help synchronize DSP
-		count = sync_count;
-	}
-	
-	return play( count );
-}
-
-blargg_err_t Snes_Spc::play( long count, sample_t* out )
-{
-	require( count % 2 == 0 ); // output is always in pairs of samples
-	
-	// CPU time() runs from -duration to 0
-	spc_time_t duration = (count / 2) * clocks_per_sample;
-	
-	// DSP output is made on-the-fly when the CPU reads/writes DSP registers
-	sample_buf = out;
-	buf_end = out + (out && out != skip_sentinel ? count : 0);
-	next_dsp = (out == skip_sentinel) ? clocks_per_sample : -duration + clocks_per_sample;
-	
-	// Localize timer next_tick times and run them to the present to prevent a running
-	// but ignored timer's next_tick from getting too far behind and overflowing.
 	for ( int i = 0; i < timer_count; i++ )
 	{
-		Timer& t = timer [i];
-		if ( t.enabled )
-		{
-			t.next_tick -= duration;
-			t.run_until( -duration );
-		}
+		Timer* t = &m.timers [i];
+		t->next_time = 1;
+		t->divider   = 0;
 	}
 	
-	// Run CPU for duration, reduced by any extra cycles from previous run
-	int elapsed = cpu.run( duration - extra_cycles );
-	if ( elapsed > 0 )
+	regs_loaded();
+	
+	m.extra_clocks = 0;
+	reset_buf();
+}
+
+void Snes_Spc::reset_common( int timer_counter_init )
+{
+	int i;
+	for ( i = 0; i < timer_count; i++ )
+		REGS_IN [r_t0out + i] = timer_counter_init;
+	
+	// Run IPL ROM
+	memset( &m.cpu_regs, 0, sizeof m.cpu_regs );
+	m.cpu_regs.pc = rom_addr;
+	
+	REGS [r_test   ] = 0x0A;
+	REGS [r_control] = 0xB0; // ROM enabled, clear ports
+	for ( i = 0; i < port_count; i++ )
+		REGS_IN [r_cpuio0 + i] = 0;
+	
+	reset_time_regs();
+}
+
+void Snes_Spc::soft_reset()
+{
+	reset_common( 0 );
+	dsp.soft_reset();
+}
+
+void Snes_Spc::reset()
+{
+	memset( RAM, 0xFF, 0x10000 );
+	ram_loaded();
+	reset_common( 0x0F );
+	dsp.reset();
+}
+
+char const Snes_Spc::signature [signature_size + 1] =
+		"SNES-SPC700 Sound File Data v0.30\x1A\x1A";
+
+blargg_err_t Snes_Spc::load_spc( void const* data, long size )
+{
+	spc_file_t const* const spc = (spc_file_t const*) data;
+	
+	// be sure compiler didn't insert any padding into fle_t
+	assert( sizeof (spc_file_t) == spc_min_file_size + 0x80 );
+	
+	// Check signature and file size
+	if ( size < signature_size || memcmp( spc, signature, 27 ) )
+		return "Not an SPC file";
+	
+	if ( size < spc_min_file_size )
+		return "Corrupt SPC file";
+	
+	// CPU registers
+	m.cpu_regs.pc  = spc->pch * 0x100 + spc->pcl;
+	m.cpu_regs.a   = spc->a;
+	m.cpu_regs.x   = spc->x;
+	m.cpu_regs.y   = spc->y;
+	m.cpu_regs.psw = spc->psw;
+	m.cpu_regs.sp  = spc->sp;
+	
+	// RAM and registers
+	memcpy( RAM, spc->ram, 0x10000 );
+	ram_loaded();
+	
+	// DSP registers
+	dsp.load( spc->dsp );
+	
+	reset_time_regs();
+	
+	return blargg_ok;
+}
+
+void Snes_Spc::clear_echo(bool force)
+{
+	if ( ( force || !m.echo_cleared ) && !(dsp.read( Spc_Dsp::r_flg ) & 0x20) )
 	{
-		dprintf( "Unhandled instruction $%02X, pc = $%04X\n",
-				(int) cpu.read( cpu.r.pc ), (unsigned) cpu.r.pc );
-		return "Emulation error (illegal/unsupported instruction)";
+		int addr = 0x100 * dsp.read( Spc_Dsp::r_esa );
+		int end  = addr + 0x800 * (dsp.read( Spc_Dsp::r_edl ) & 0x0F);
+		if ( end > 0x10000 )
+			end = 0x10000;
+		memset( &RAM [addr], 0xFF, end - addr );
+		m.echo_cleared = true;
 	}
-	extra_cycles = -elapsed;
+}
+
+
+//// Sample output
+
+void Snes_Spc::reset_buf()
+{
+	// Start with half extra buffer of silence
+	sample_t* out = m.extra_buf;
+	while ( out < &m.extra_buf [extra_size / 2] )
+		*out++ = 0;
 	
-	// Catch DSP up to present.
-	run_dsp( 0 );
-	if ( out ) {
-		assert( next_dsp == clocks_per_sample );
-		assert( out == skip_sentinel || sample_buf - out == count );
+	m.extra_pos = out;
+	m.buf_begin = NULL;
+	
+	dsp.set_output( NULL, 0 );
+}
+
+void Snes_Spc::set_output( sample_t out [], int size )
+{
+	require( (size & 1) == 0 ); // size must be even
+	
+	m.extra_clocks &= clocks_per_sample - 1;
+	if ( out )
+	{
+		sample_t const* out_end = out + size;
+		m.buf_begin = out;
+		m.buf_end   = out_end;
+		
+		// Copy extra to output
+		sample_t const* in = m.extra_buf;
+		while ( in < m.extra_pos && out < out_end )
+			*out++ = *in++;
+		
+		// Handle output being full already
+		if ( out >= out_end )
+		{
+			// Have DSP write to remaining extra space
+			out     = dsp.extra();
+			out_end = &dsp.extra() [extra_size];
+			
+			// Copy any remaining extra samples as if DSP wrote them
+			while ( in < m.extra_pos )
+				*out++ = *in++;
+			assert( out <= out_end );
+		}
+		
+		dsp.set_output( out, out_end - out );
 	}
-	buf_end = 0;
+	else
+	{
+		reset_buf();
+	}
+}
+
+void Snes_Spc::save_extra()
+{
+	// Get end pointers
+	sample_t const* main_end = m.buf_end;     // end of data written to buf
+	sample_t const* dsp_end  = dsp.out_pos(); // end of data written to dsp.extra()
+	if ( m.buf_begin <= dsp_end && dsp_end <= main_end )
+	{
+		main_end = dsp_end;
+		dsp_end  = dsp.extra(); // nothing in DSP's extra
+	}
 	
-	return 0;
+	// Copy any extra samples at these ends into extra_buf
+	sample_t* out = m.extra_buf;
+	sample_t const* in;
+	for ( in = m.buf_begin + sample_count(); in < main_end; in++ )
+		*out++ = *in;
+	for ( in = dsp.extra(); in < dsp_end ; in++ )
+		*out++ = *in;
+	
+	m.extra_pos = out;
+	assert( out <= &m.extra_buf [extra_size] );
+}
+
+blargg_err_t Snes_Spc::play( int count, sample_t out [] )
+{
+	require( (count & 1) == 0 ); // must be even
+	if ( count )
+	{
+		set_output( out, count );
+		end_frame( count * (clocks_per_sample / 2) );
+	}
+	
+	const char* err = m.cpu_error;
+	m.cpu_error = NULL;
+	return err;
+}
+
+blargg_err_t Snes_Spc::skip( int count )
+{
+	#if SPC_LESS_ACCURATE
+	if ( count > 2 * sample_rate * 2 )
+	{
+		set_output( NULL, 0 );
+		
+		// Skip a multiple of 4 samples
+		time_t end = count;
+		count = (count & 3) + 1 * sample_rate * 2;
+		end = (end - count) * (clocks_per_sample / 2);
+		
+		m.skipped_kon  = 0;
+		m.skipped_koff = 0;
+		
+		// Preserve DSP and timer synchronization
+		// TODO: verify that this really preserves it
+		int old_dsp_time = m.dsp_time + m.spc_time;
+		m.dsp_time = end - m.spc_time + skipping_time;
+		end_frame( end );
+		m.dsp_time = m.dsp_time - skipping_time + old_dsp_time;
+		
+		dsp.write( Spc_Dsp::r_koff, m.skipped_koff & ~m.skipped_kon );
+		dsp.write( Spc_Dsp::r_kon , m.skipped_kon );
+		clear_echo();
+	}
+	#endif
+	
+	return play( count, NULL );
 }

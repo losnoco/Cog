@@ -10,6 +10,10 @@
 
 #import <Dumb/dumb.h>
 
+#define __FRAMEWORK__
+#import <Dumb/it.h>
+#undef __FRAMEWORK__
+
 #import "Plugin.h"
 
 @interface DumbDecoder : NSObject <CogDecoder> {
