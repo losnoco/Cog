@@ -549,33 +549,9 @@ struct gsf_sound_out : public GBASoundOut
     }
 };
 
-- (BOOL)open:(id<CogSource>)source
+- (BOOL)initializeDecoder
 {
-	if (![source seekable]) {
-		return NO;
-	}
-	
-	currentSource = [source retain];
-	
-    struct psf_info_meta_state info;
-    
-    info.info = [NSMutableDictionary dictionary];
-    info.utf8 = false;
-    info.tag_length_ms = 0;
-    info.tag_fade_ms = 0;
-    info.volume_scale = 0;
-    
-    NSString * decodedUrl = [[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    type = psf_load( [decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info );
-    
-    if (type <= 0)
-        return NO;
-    
-    emulatorCore = nil;
-    emulatorExtra = nil;
-    
-    sampleRate = 44100;
+    NSString * decodedUrl = [[[currentSource url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     if ( type == 1 )
     {
@@ -614,8 +590,6 @@ struct gsf_sound_out : public GBASoundOut
             psx_set_refresh( emulatorCore, state.refresh );
         
         psx_set_readfile( emulatorCore, virtual_readfile, emulatorExtra );
-        
-        sampleRate = 48000;
     }
     else if ( type == 0x11 || type == 0x12 )
     {
@@ -675,7 +649,7 @@ struct gsf_sound_out : public GBASoundOut
     else if ( type == 0x41 )
     {
         struct qsf_loader_state * state = ( struct qsf_loader_state * ) calloc( 1, sizeof( *state ) );
-
+        
         emulatorExtra = state;
         
         if ( psf_load( [decodedUrl UTF8String], &source_callbacks, 0x41, qsf_loader, state, 0, 0) <= 0 )
@@ -699,7 +673,41 @@ struct gsf_sound_out : public GBASoundOut
         qsound_set_sample_rom( emulatorCore, state->sample_rom, state->sample_size );
     }
     else return NO;
+    
+    return YES;
+}
 
+- (BOOL)open:(id<CogSource>)source
+{
+	if (![source seekable]) {
+		return NO;
+	}
+	
+	currentSource = [source retain];
+	
+    struct psf_info_meta_state info;
+    
+    info.info = [NSMutableDictionary dictionary];
+    info.utf8 = false;
+    info.tag_length_ms = 0;
+    info.tag_fade_ms = 0;
+    info.volume_scale = 0;
+    
+    NSString * decodedUrl = [[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    type = psf_load( [decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info );
+    
+    if (type <= 0)
+        return NO;
+    
+    emulatorCore = nil;
+    emulatorExtra = nil;
+    
+    sampleRate = 44100;
+
+    if ( type == 2 )
+        sampleRate = 48000;
+    
     tagLengthMs = info.tag_length_ms;
     tagFadeMs = info.tag_fade_ms;
     volumeScale = info.volume_scale;
@@ -718,6 +726,12 @@ struct gsf_sound_out : public GBASoundOut
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
+    if ( !emulatorCore )
+    {
+        if (![self initializeDecoder])
+            return 0;
+    }
+    
     if ( type == 1 || type == 2 )
     {
         uint32_t howmany = frames;
@@ -812,7 +826,8 @@ struct gsf_sound_out : public GBASoundOut
 {
     if (frame < framesRead) {
         [self close];
-        [self open:currentSource];
+        if (![self initializeDecoder])
+            return -1;
     }
     
     if ( type == 1 || type == 2 )
