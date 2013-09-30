@@ -170,8 +170,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 			if(f > 1.0)		{ f = 1.0; }
 			if(f < -1.0)	{ f = -1.0; }
 			
-			//				*alias32++ = (int32_t) (f * 2147483647.0);
-			*alias32++ = (int32_t) (f * 32767.0);
+			*alias32++ = (int32_t) (f * 2147483647.0);
 		}
 	}
 
