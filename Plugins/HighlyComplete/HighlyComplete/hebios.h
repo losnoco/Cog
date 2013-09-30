@@ -1,6 +1,8 @@
 #ifndef __HEBIOS_H
 #define __HEBIOS_H
 
+/* It Is A Mystery :o */
+
 #define HEBIOS_SIZE 524288
 
 static uint8_t hebios[524288] =
