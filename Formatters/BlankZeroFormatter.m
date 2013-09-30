@@ -17,7 +17,7 @@
 	int value;
 
 	if(nil == object || NO == [object isKindOfClass:[NSNumber class]]) {
-		return nil;
+		return [NSString string];
 	}
 	
 	value = [object intValue];
