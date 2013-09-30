@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface StatusImageTransformer : NSObject {
+@interface StatusImageTransformer : NSValueTransformer {
 	NSImage *playImage;
 	NSImage *queueImage;
 	NSImage *errorImage;
