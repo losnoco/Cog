@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 //                           **** WAVPACK ****                            //
 //                  Hybrid Lossless Wavefile Compressor                   //
-//              Copyright (c) 1998 - 2005 Conifer Software.               //
+//              Copyright (c) 1998 - 2006 Conifer Software.               //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 // endian-ness, both for enhancing portability. Finally, a debug wrapper for
 // the malloc() system is provided.
 
-#include "wavpack.h"
+#include "wavpack_local.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -24,18 +24,21 @@
 #if defined(WIN32)
 #include <io.h>
 #else
+#if defined(__OS2__)
+#include <io.h>
+#endif
 #include <unistd.h>
 #endif
 
 ////////////////////////// Bitstream functions ////////////////////////////////
 
-#if defined(UNPACK) || defined(INFO_ONLY)
+#if !defined(NO_UNPACK) || defined(INFO_ONLY)
 
 // Open the specified BitStream and associate with the specified buffer.
 
 static void bs_read (Bitstream *bs);
 
-void bs_open_read (Bitstream *bs, uchar *buffer_start, uchar *buffer_end)
+void bs_open_read (Bitstream *bs, void *buffer_start, void *buffer_end)
 {
     bs->error = bs->sr = bs->bc = 0;
     bs->ptr = (bs->buf = buffer_start) - 1;
@@ -61,20 +64,21 @@ uint32_t bs_close_read (Bitstream *bs)
 {
     uint32_t bytes_read;
 
-    if (bs->bc < 8)
-	bs->ptr++;
+    if (bs->bc < sizeof (*(bs->ptr)) * 8)
+        bs->ptr++;
 
-    if ((bs->buf - bs->ptr) & 1)
-	bs->ptr++;
+    bytes_read = (uint32_t)(bs->ptr - bs->buf) * sizeof (*(bs->ptr));
 
-    bytes_read = bs->ptr - bs->buf;
+    if (!(bytes_read & 1))
+        ++bytes_read;
+
     CLEAR (*bs);
     return bytes_read;
 }
 
 #endif
 
-#ifdef PACK
+#ifndef NO_PACK
 
 // Open the specified BitStream using the specified buffer pointers. It is
 // assumed that enough buffer space has been allocated for all data that will
@@ -82,7 +86,7 @@ uint32_t bs_close_read (Bitstream *bs)
 
 static void bs_write (Bitstream *bs);
 
-void bs_open_write (Bitstream *bs, uchar *buffer_start, uchar *buffer_end)
+void bs_open_write (Bitstream *bs, void *buffer_start, void *buffer_end)
 {
     bs->error = bs->sr = bs->bc = 0;
     bs->ptr = bs->buf = buffer_start;
@@ -107,10 +111,21 @@ uint32_t bs_close_write (Bitstream *bs)
     uint32_t bytes_written;
 
     if (bs->error)
-	return (uint32_t) -1;
+        return (uint32_t) -1;
 
-    while (bs->bc || ((bs->ptr - bs->buf) & 1)) putbit_1 (bs);
-    bytes_written = bs->ptr - bs->buf;
+    while (1) {
+        while (bs->bc)
+            putbit_1 (bs);
+
+        bytes_written = (uint32_t)(bs->ptr - bs->buf) * sizeof (*(bs->ptr));
+
+        if (bytes_written & 1) {
+            putbit_1 (bs);
+        }
+        else
+            break;
+    };
+
     CLEAR (*bs);
     return bytes_written;
 }
@@ -121,63 +136,63 @@ uint32_t bs_close_write (Bitstream *bs)
 
 void little_endian_to_native (void *data, char *format)
 {
-    uchar *cp = (uchar *) data;
+    unsigned char *cp = (unsigned char *) data;
     int32_t temp;
 
     while (*format) {
-	switch (*format) {
-	    case 'L':
-		temp = cp [0] + ((int32_t) cp [1] << 8) + ((int32_t) cp [2] << 16) + ((int32_t) cp [3] << 24);
-		* (int32_t *) cp = temp;
-		cp += 4;
-		break;
+        switch (*format) {
+            case 'L':
+                temp = cp [0] + ((int32_t) cp [1] << 8) + ((int32_t) cp [2] << 16) + ((int32_t) cp [3] << 24);
+                * (int32_t *) cp = temp;
+                cp += 4;
+                break;
 
-	    case 'S':
-		temp = cp [0] + (cp [1] << 8);
-		* (short *) cp = (short) temp;
-		cp += 2;
-		break;
+            case 'S':
+                temp = cp [0] + (cp [1] << 8);
+                * (short *) cp = (short) temp;
+                cp += 2;
+                break;
 
-	    default:
-		if (isdigit (*format))
-		    cp += *format - '0';
+            default:
+                if (isdigit (*format))
+                    cp += *format - '0';
 
-		break;
-	}
+                break;
+        }
 
-	format++;
+        format++;
     }
 }
 
 void native_to_little_endian (void *data, char *format)
 {
-    uchar *cp = (uchar *) data;
+    unsigned char *cp = (unsigned char *) data;
     int32_t temp;
 
     while (*format) {
-	switch (*format) {
-	    case 'L':
-		temp = * (int32_t *) cp;
-		*cp++ = (uchar) temp;
-		*cp++ = (uchar) (temp >> 8);
-		*cp++ = (uchar) (temp >> 16);
-		*cp++ = (uchar) (temp >> 24);
-		break;
+        switch (*format) {
+            case 'L':
+                temp = * (int32_t *) cp;
+                *cp++ = (unsigned char) temp;
+                *cp++ = (unsigned char) (temp >> 8);
+                *cp++ = (unsigned char) (temp >> 16);
+                *cp++ = (unsigned char) (temp >> 24);
+                break;
 
-	    case 'S':
-		temp = * (short *) cp;
-		*cp++ = (uchar) temp;
-		*cp++ = (uchar) (temp >> 8);
-		break;
+            case 'S':
+                temp = * (short *) cp;
+                *cp++ = (unsigned char) temp;
+                *cp++ = (unsigned char) (temp >> 8);
+                break;
 
-	    default:
-		if (isdigit (*format))
-		    cp += *format - '0';
+            default:
+                if (isdigit (*format))
+                    cp += *format - '0';
 
-		break;
-	}
+                break;
+        }
 
-	format++;
+        format++;
     }
 }
 
@@ -192,13 +207,13 @@ static void *add_ptr (void *ptr)
     int i;
 
     for (i = 0; i < 512; ++i)
-	if (!vptrs [i]) {
-	    vptrs [i] = ptr;
-	    break;
-	}
+        if (!vptrs [i]) {
+            vptrs [i] = ptr;
+            break;
+        }
 
     if (i == 512)
-	error_line ("too many mallocs!");
+        error_line ("too many mallocs!");
 
     return ptr;
 }
@@ -208,13 +223,13 @@ static void *del_ptr (void *ptr)
     int i;
 
     for (i = 0; i < 512; ++i)
-	if (vptrs [i] == ptr) {
-	    vptrs [i] = NULL;
-	    break;
-	}
+        if (vptrs [i] == ptr) {
+            vptrs [i] = NULL;
+            break;
+        }
 
     if (i == 512)
-	error_line ("free invalid ptr!");
+        error_line ("free invalid ptr!");
 
     return ptr;
 }
@@ -222,25 +237,25 @@ static void *del_ptr (void *ptr)
 void *malloc_db (uint32_t size)
 {
     if (size)
-	return add_ptr (malloc (size));
+        return add_ptr (malloc (size));
     else
-	return NULL;
+        return NULL;
 }
 
 void free_db (void *ptr)
 {
     if (ptr)
-	free (del_ptr (ptr));
+        free (del_ptr (ptr));
 }
 
 void *realloc_db (void *ptr, uint32_t size)
 {
     if (ptr && size)
-	return add_ptr (realloc (del_ptr (ptr), size));
+        return add_ptr (realloc (del_ptr (ptr), size));
     else if (size)
-	return malloc_db (size);
+        return malloc_db (size);
     else
-	free_db (ptr);
+        free_db (ptr);
 
     return NULL;
 }
@@ -250,8 +265,8 @@ int32_t dump_alloc (void)
     int i, j;
 
     for (j = i = 0; i < 512; ++i)
-	if (vptrs [i])
-	    j++;
+        if (vptrs [i])
+            j++;
 
     return j;
 }

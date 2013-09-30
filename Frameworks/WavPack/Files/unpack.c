@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////
-//			     **** WAVPACK ****				  //
-//		    Hybrid Lossless Wavefile Compressor			  //
-//		Copyright (c) 1998 - 2005 Conifer Software.		  //
-//			    All Rights Reserved.			  //
+//                           **** WAVPACK ****                            //
+//                  Hybrid Lossless Wavefile Compressor                   //
+//              Copyright (c) 1998 - 2006 Conifer Software.               //
+//                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +13,7 @@
 // maximum efficiency, the conversion is isolated to tight loops that handle
 // an entire buffer.
 
-#include "wavpack.h"
+#include "wavpack_local.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -52,11 +52,8 @@ int32_t dump_alloc (void);
 int unpack_init (WavpackContext *wpc)
 {
     WavpackStream *wps = wpc->streams [wpc->current_stream];
-    uchar *blockptr, *block2ptr;
+    unsigned char *blockptr, *block2ptr;
     WavpackMetadata wpmd;
-
-    if (wps->wphdr.block_samples && wps->wphdr.block_index != (uint32_t) -1)
-	wps->sample_index = wps->wphdr.block_index;
 
     wps->mute_error = FALSE;
     wps->crc = wps->crc_x = 0xffffffff;
@@ -67,33 +64,54 @@ int unpack_init (WavpackContext *wpc)
     CLEAR (wps->dc);
     CLEAR (wps->w);
 
+    if (!(wps->wphdr.flags & MONO_FLAG) && wpc->config.num_channels && wps->wphdr.block_samples &&
+        (wpc->reduced_channels == 1 || wpc->config.num_channels == 1)) {
+            wps->mute_error = TRUE;
+            return FALSE;
+    }
+
+    if ((wps->wphdr.flags & UNKNOWN_FLAGS) || (wps->wphdr.flags & MONO_DATA) == MONO_DATA) {
+        wps->mute_error = TRUE;
+        return FALSE;
+    }
+
     blockptr = wps->blockbuff + sizeof (WavpackHeader);
 
     while (read_metadata_buff (&wpmd, wps->blockbuff, &blockptr))
-	if (!process_metadata (wpc, &wpmd))
-	    return FALSE;
+        if (!process_metadata (wpc, &wpmd)) {
+            wps->mute_error = TRUE;
+            return FALSE;
+        }
 
-    block2ptr = wps->block2buff + sizeof (WavpackHeader);
+    if (wps->wphdr.block_samples && wpc->wvc_flag && wps->block2buff) {
+        block2ptr = wps->block2buff + sizeof (WavpackHeader);
 
-    while (wpc->wvc_flag && wps->wphdr.block_samples && read_metadata_buff (&wpmd, wps->block2buff, &block2ptr))
-	if (!process_metadata (wpc, &wpmd))
-	    return FALSE;
+        while (read_metadata_buff (&wpmd, wps->block2buff, &block2ptr))
+            if (!process_metadata (wpc, &wpmd)) {
+                wps->mute_error = TRUE;
+                return FALSE;
+            }
+    }
 
     if (wps->wphdr.block_samples && !bs_is_open (&wps->wvbits)) {
-	if (bs_is_open (&wps->wvcbits))
-	    strcpy (wpc->error_message, "can't unpack correction files alone!");
+        if (bs_is_open (&wps->wvcbits))
+            strcpy (wpc->error_message, "can't unpack correction files alone!");
 
-	return FALSE;
+        wps->mute_error = TRUE;
+        return FALSE;
     }
 
     if (wps->wphdr.block_samples && !bs_is_open (&wps->wvxbits)) {
-	if ((wps->wphdr.flags & INT32_DATA) && wps->int32_sent_bits)
-	    wpc->lossy_blocks = TRUE;
+        if ((wps->wphdr.flags & INT32_DATA) && wps->int32_sent_bits)
+            wpc->lossy_blocks = TRUE;
 
-	if ((wps->wphdr.flags & FLOAT_DATA) &&
-	    wps->float_flags & (FLOAT_EXCEPTIONS | FLOAT_ZEROS_SENT | FLOAT_SHIFT_SENT | FLOAT_SHIFT_SAME))
-		wpc->lossy_blocks = TRUE;
+        if ((wps->wphdr.flags & FLOAT_DATA) &&
+            wps->float_flags & (FLOAT_EXCEPTIONS | FLOAT_ZEROS_SENT | FLOAT_SHIFT_SENT | FLOAT_SHIFT_SAME))
+                wpc->lossy_blocks = TRUE;
     }
+
+    if (wps->wphdr.block_samples)
+        wps->sample_index = wps->wphdr.block_index;
 
     return TRUE;
 }
@@ -103,7 +121,10 @@ int unpack_init (WavpackContext *wpc)
 
 int init_wv_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 {
-    bs_open_read (&wps->wvbits, wpmd->data, (uchar *) wpmd->data + wpmd->byte_length);
+    if (!wpmd->byte_length)
+        return FALSE;
+
+    bs_open_read (&wps->wvbits, wpmd->data, (unsigned char *) wpmd->data + wpmd->byte_length);
     return TRUE;
 }
 
@@ -112,7 +133,10 @@ int init_wv_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 
 int init_wvc_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 {
-    bs_open_read (&wps->wvcbits, wpmd->data, (uchar *) wpmd->data + wpmd->byte_length);
+    if (!wpmd->byte_length)
+        return FALSE;
+
+    bs_open_read (&wps->wvcbits, wpmd->data, (unsigned char *) wpmd->data + wpmd->byte_length);
     return TRUE;
 }
 
@@ -125,14 +149,17 @@ int init_wvc_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 
 int init_wvx_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 {
-    uchar *cp = wpmd->data;
+    unsigned char *cp = wpmd->data;
+
+    if (wpmd->byte_length <= 4)
+        return FALSE;
 
     wps->crc_wvx = *cp++;
     wps->crc_wvx |= (int32_t) *cp++ << 8;
     wps->crc_wvx |= (int32_t) *cp++ << 16;
     wps->crc_wvx |= (int32_t) *cp++ << 24;
 
-    bs_open_read (&wps->wvxbits, cp, (uchar *) wpmd->data + wpmd->byte_length);
+    bs_open_read (&wps->wvxbits, cp, (unsigned char *) wpmd->data + wpmd->byte_length);
     return TRUE;
 }
 
@@ -146,20 +173,20 @@ int init_wvx_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 int read_decorr_terms (WavpackStream *wps, WavpackMetadata *wpmd)
 {
     int termcnt = wpmd->byte_length;
-    uchar *byteptr = wpmd->data;
+    unsigned char *byteptr = wpmd->data;
     struct decorr_pass *dpp;
 
     if (termcnt > MAX_NTERMS)
-	return FALSE;
+        return FALSE;
 
     wps->num_terms = termcnt;
 
     for (dpp = wps->decorr_passes + termcnt - 1; termcnt--; dpp--) {
-	dpp->term = (int)(*byteptr & 0x1f) - 5;
-	dpp->delta = (*byteptr++ >> 5) & 0x7;
+        dpp->term = (int)(*byteptr & 0x1f) - 5;
+        dpp->delta = (*byteptr++ >> 5) & 0x7;
 
-	if (!dpp->term || dpp->term < -3 || (dpp->term > MAX_TERM && dpp->term < 17) || dpp->term > 18)
-	    return FALSE;
+        if (!dpp->term || dpp->term < -3 || (dpp->term > MAX_TERM && dpp->term < 17) || dpp->term > 18)
+            return FALSE;
     }
 
     return TRUE;
@@ -178,19 +205,19 @@ int read_decorr_weights (WavpackStream *wps, WavpackMetadata *wpmd)
     struct decorr_pass *dpp;
 
     if (!(wps->wphdr.flags & MONO_DATA))
-	termcnt /= 2;
+        termcnt /= 2;
 
     if (termcnt > wps->num_terms)
-	return FALSE;
+        return FALSE;
 
     for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-	dpp->weight_A = dpp->weight_B = 0;
+        dpp->weight_A = dpp->weight_B = 0;
 
     while (--dpp >= wps->decorr_passes && termcnt--) {
-	dpp->weight_A = restore_weight (*byteptr++);
+        dpp->weight_A = restore_weight (*byteptr++);
 
-	if (!(wps->wphdr.flags & MONO_DATA))
-	    dpp->weight_B = restore_weight (*byteptr++);
+        if (!(wps->wphdr.flags & MONO_DATA))
+            dpp->weight_B = restore_weight (*byteptr++);
     }
 
     return TRUE;
@@ -206,58 +233,70 @@ int read_decorr_weights (WavpackStream *wps, WavpackMetadata *wpmd)
 
 int read_decorr_samples (WavpackStream *wps, WavpackMetadata *wpmd)
 {
-    uchar *byteptr = wpmd->data;
-    uchar *endptr = byteptr + wpmd->byte_length;
+    unsigned char *byteptr = wpmd->data;
+    unsigned char *endptr = byteptr + wpmd->byte_length;
     struct decorr_pass *dpp;
     int tcount;
 
     for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
-	CLEAR (dpp->samples_A);
-	CLEAR (dpp->samples_B);
+        CLEAR (dpp->samples_A);
+        CLEAR (dpp->samples_B);
     }
 
     if (wps->wphdr.version == 0x402 && (wps->wphdr.flags & HYBRID_FLAG)) {
-	wps->dc.error [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-	byteptr += 2;
+        if (byteptr + (wps->wphdr.flags & MONO_DATA ? 2 : 4) > endptr)
+            return FALSE;
 
-	if (!(wps->wphdr.flags & MONO_DATA)) {
-	    wps->dc.error [1] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-	    byteptr += 2;
-	}
+        wps->dc.error [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+        byteptr += 2;
+
+        if (!(wps->wphdr.flags & MONO_DATA)) {
+            wps->dc.error [1] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+            byteptr += 2;
+        }
     }
 
     while (dpp-- > wps->decorr_passes && byteptr < endptr)
-	if (dpp->term > MAX_TERM) {
-	    dpp->samples_A [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-	    dpp->samples_A [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-	    byteptr += 4;
+        if (dpp->term > MAX_TERM) {
+            if (byteptr + (wps->wphdr.flags & MONO_DATA ? 4 : 8) > endptr)
+                return FALSE;
 
-	    if (!(wps->wphdr.flags & MONO_DATA)) {
-		dpp->samples_B [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-		dpp->samples_B [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-		byteptr += 4;
-	    }
-	}
-	else if (dpp->term < 0) {
-	    dpp->samples_A [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-	    dpp->samples_B [0] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-	    byteptr += 4;
-	}
-	else {
-	    int m = 0, cnt = dpp->term;
+            dpp->samples_A [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+            dpp->samples_A [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
+            byteptr += 4;
 
-	    while (cnt--) {
-		dpp->samples_A [m] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-		byteptr += 2;
+            if (!(wps->wphdr.flags & MONO_DATA)) {
+                dpp->samples_B [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+                dpp->samples_B [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
+                byteptr += 4;
+            }
+        }
+        else if (dpp->term < 0) {
+            if (byteptr + 4 > endptr)
+                return FALSE;
 
-		if (!(wps->wphdr.flags & MONO_DATA)) {
-		    dpp->samples_B [m] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-		    byteptr += 2;
-		}
+            dpp->samples_A [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+            dpp->samples_B [0] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
+            byteptr += 4;
+        }
+        else {
+            int m = 0, cnt = dpp->term;
 
-		m++;
-	    }
-	}
+            while (cnt--) {
+                if (byteptr + (wps->wphdr.flags & MONO_DATA ? 2 : 4) > endptr)
+                    return FALSE;
+
+                dpp->samples_A [m] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+                byteptr += 2;
+
+                if (!(wps->wphdr.flags & MONO_DATA)) {
+                    dpp->samples_B [m] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+                    byteptr += 2;
+                }
+
+                m++;
+            }
+        }
 
     return byteptr == endptr;
 }
@@ -272,33 +311,33 @@ int read_decorr_samples (WavpackStream *wps, WavpackMetadata *wpmd)
 int read_shaping_info (WavpackStream *wps, WavpackMetadata *wpmd)
 {
     if (wpmd->byte_length == 2) {
-	char *byteptr = wpmd->data;
+        char *byteptr = wpmd->data;
 
-	wps->dc.shaping_acc [0] = (int32_t) restore_weight (*byteptr++) << 16;
-	wps->dc.shaping_acc [1] = (int32_t) restore_weight (*byteptr++) << 16;
-	return TRUE;
+        wps->dc.shaping_acc [0] = (int32_t) restore_weight (*byteptr++) << 16;
+        wps->dc.shaping_acc [1] = (int32_t) restore_weight (*byteptr++) << 16;
+        return TRUE;
     }
     else if (wpmd->byte_length >= (wps->wphdr.flags & MONO_DATA ? 4 : 8)) {
-	uchar *byteptr = wpmd->data;
+        unsigned char *byteptr = wpmd->data;
 
-	wps->dc.error [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-	wps->dc.shaping_acc [0] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-	byteptr += 4;
+        wps->dc.error [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+        wps->dc.shaping_acc [0] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
+        byteptr += 4;
 
-	if (!(wps->wphdr.flags & MONO_DATA)) {
-	    wps->dc.error [1] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-	    wps->dc.shaping_acc [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-	    byteptr += 4;
-	}
+        if (!(wps->wphdr.flags & MONO_DATA)) {
+            wps->dc.error [1] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+            wps->dc.shaping_acc [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
+            byteptr += 4;
+        }
 
-	if (wpmd->byte_length == (wps->wphdr.flags & MONO_DATA ? 6 : 12)) {
-	    wps->dc.shaping_delta [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
+        if (wpmd->byte_length == (wps->wphdr.flags & MONO_DATA ? 6 : 12)) {
+            wps->dc.shaping_delta [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
 
-	    if (!(wps->wphdr.flags & MONO_DATA))
-		wps->dc.shaping_delta [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-	}
+            if (!(wps->wphdr.flags & MONO_DATA))
+                wps->dc.shaping_delta [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
+        }
 
-	return TRUE;
+        return TRUE;
     }
 
     return FALSE;
@@ -314,7 +353,7 @@ int read_int32_info (WavpackStream *wps, WavpackMetadata *wpmd)
     char *byteptr = wpmd->data;
 
     if (bytecnt != 4)
-	return FALSE;
+        return FALSE;
 
     wps->int32_sent_bits = *byteptr++;
     wps->int32_zeros = *byteptr++;
@@ -331,20 +370,41 @@ int read_int32_info (WavpackStream *wps, WavpackMetadata *wpmd)
 int read_channel_info (WavpackContext *wpc, WavpackMetadata *wpmd)
 {
     int bytecnt = wpmd->byte_length, shift = 0;
-    char *byteptr = wpmd->data;
+    unsigned char *byteptr = wpmd->data;
     uint32_t mask = 0;
 
-    if (!bytecnt || bytecnt > 5)
-	return FALSE;
+    if (!bytecnt || bytecnt > 6)
+        return FALSE;
 
-    wpc->config.num_channels = *byteptr++;
+    if (!wpc->config.num_channels) {
 
-    while (--bytecnt) {
-	mask |= (uint32_t) *byteptr++ << shift;
-	shift += 8;
+        if (bytecnt == 6) {
+            wpc->config.num_channels = (byteptr [0] | ((byteptr [2] & 0xf) << 8)) + 1;
+            wpc->max_streams = (byteptr [1] | ((byteptr [2] & 0xf0) << 4)) + 1;
+
+            if (wpc->config.num_channels < wpc->max_streams)
+                return FALSE;
+    
+            byteptr += 3;
+            mask = *byteptr++;
+            mask |= (uint32_t) *byteptr++ << 8;
+            mask |= (uint32_t) *byteptr << 16;
+        }
+        else {
+            wpc->config.num_channels = *byteptr++;
+
+            while (--bytecnt) {
+                mask |= (uint32_t) *byteptr++ << shift;
+                shift += 8;
+            }
+        }
+
+        if (wpc->config.num_channels > wpc->max_streams * 2)
+            return FALSE;
+
+        wpc->config.channel_mask = mask;
     }
 
-    wpc->config.channel_mask = mask;
     return TRUE;
 }
 
@@ -353,13 +413,16 @@ int read_channel_info (WavpackContext *wpc, WavpackMetadata *wpmd)
 int read_config_info (WavpackContext *wpc, WavpackMetadata *wpmd)
 {
     int bytecnt = wpmd->byte_length;
-    uchar *byteptr = wpmd->data;
+    unsigned char *byteptr = wpmd->data;
 
     if (bytecnt >= 3) {
-	wpc->config.flags &= 0xff;
-	wpc->config.flags |= (int32_t) *byteptr++ << 8;
-	wpc->config.flags |= (int32_t) *byteptr++ << 16;
-	wpc->config.flags |= (int32_t) *byteptr << 24;
+        wpc->config.flags &= 0xff;
+        wpc->config.flags |= (int32_t) *byteptr++ << 8;
+        wpc->config.flags |= (int32_t) *byteptr++ << 16;
+        wpc->config.flags |= (int32_t) *byteptr++ << 24;
+
+        if (bytecnt >= 4 && (wpc->config.flags & CONFIG_EXTRA_MODE))
+            wpc->config.xmode = *byteptr;
     }
 
     return TRUE;
@@ -370,12 +433,12 @@ int read_config_info (WavpackContext *wpc, WavpackMetadata *wpmd)
 int read_sample_rate (WavpackContext *wpc, WavpackMetadata *wpmd)
 {
     int bytecnt = wpmd->byte_length;
-    uchar *byteptr = wpmd->data;
+    unsigned char *byteptr = wpmd->data;
 
     if (bytecnt == 3) {
-	wpc->config.sample_rate = (int32_t) *byteptr++;
-	wpc->config.sample_rate |= (int32_t) *byteptr++ << 8;
-	wpc->config.sample_rate |= (int32_t) *byteptr++ << 16;
+        wpc->config.sample_rate = (int32_t) *byteptr++;
+        wpc->config.sample_rate |= (int32_t) *byteptr++ << 8;
+        wpc->config.sample_rate |= (int32_t) *byteptr++ << 16;
     }
 
     return TRUE;
@@ -389,16 +452,16 @@ int read_sample_rate (WavpackContext *wpc, WavpackMetadata *wpmd)
 
 int read_wrapper_data (WavpackContext *wpc, WavpackMetadata *wpmd)
 {
-    if (wpc->open_flags & OPEN_WRAPPER) {
-	wpc->wrapper_data = realloc (wpc->wrapper_data, wpc->wrapper_bytes + wpmd->byte_length);
-	memcpy (wpc->wrapper_data + wpc->wrapper_bytes, wpmd->data, wpmd->byte_length);
-	wpc->wrapper_bytes += wpmd->byte_length;
+    if ((wpc->open_flags & OPEN_WRAPPER) && wpc->wrapper_bytes < MAX_WRAPPER_BYTES) {
+        wpc->wrapper_data = realloc (wpc->wrapper_data, wpc->wrapper_bytes + wpmd->byte_length);
+        memcpy (wpc->wrapper_data + wpc->wrapper_bytes, wpmd->data, wpmd->byte_length);
+        wpc->wrapper_bytes += wpmd->byte_length;
     }
 
     return TRUE;
 }
 
-#ifdef UNPACK
+#ifndef NO_UNPACK
 
 // This monster actually unpacks the WavPack bitstream(s) into the specified
 // buffer as 32-bit integers or floats (depending on orignal data). Lossy
@@ -418,10 +481,10 @@ int read_wrapper_data (WavpackContext *wpc, WavpackMetadata *wpmd)
 
 static void decorr_stereo_pass (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
 static void decorr_stereo_pass_i (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-static void decorr_stereo_pass_id0 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-static void decorr_stereo_pass_id1 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-static void decorr_stereo_pass_id2 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-
+static void decorr_stereo_pass_1717 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
+static void decorr_stereo_pass_1718 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
+static void decorr_stereo_pass_1818 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
+static void decorr_stereo_pass_nn (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
 static void fixup_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_count);
 
 int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_count)
@@ -434,394 +497,418 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
     int tcount, m = 0;
 
     if (wps->sample_index + sample_count > wps->wphdr.block_index + wps->wphdr.block_samples)
-	sample_count = wps->wphdr.block_index + wps->wphdr.block_samples - wps->sample_index;
+        sample_count = wps->wphdr.block_index + wps->wphdr.block_samples - wps->sample_index;
 
     if (wps->mute_error) {
-	memset (buffer, 0, sample_count * (flags & MONO_FLAG ? 4 : 8));
-	wps->sample_index += sample_count;
-	return sample_count;
+        if (wpc->reduced_channels == 1 || wpc->config.num_channels == 1 || (flags & MONO_FLAG))
+            memset (buffer, 0, sample_count * 4);
+        else
+            memset (buffer, 0, sample_count * 8);
+
+        wps->sample_index += sample_count;
+        return sample_count;
     }
 
-    if ((flags & HYBRID_FLAG) && !wpc->wvc_flag)
-	mute_limit *= 2;
+    if ((flags & HYBRID_FLAG) && !wps->block2buff)
+        mute_limit *= 2;
 
-    ///////////////// handle version 4 lossless mono data /////////////////////
+    //////////////// handle lossless or hybrid lossy mono data /////////////////
 
-    if (!(flags & HYBRID_FLAG) && (flags & MONO_DATA))
-	for (bptr = buffer, i = 0; i < sample_count; ++i) {
-	    if ((read_word = get_word_lossless (wps, 0)) == WORD_EOF)
-		break;
+    if (!wps->block2buff && (flags & MONO_DATA)) {
+        int32_t *eptr = buffer + sample_count;
 
-	    for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
-		int32_t sam, temp;
-		int k;
+        if (flags & HYBRID_FLAG) {
+            i = sample_count;
 
-		if (dpp->term > MAX_TERM) {
-		    if (dpp->term & 1)
-			sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-		    else
-			sam = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
+            for (bptr = buffer; bptr < eptr;)
+                if ((*bptr++ = get_word (wps, 0, NULL)) == WORD_EOF) {
+                    i = (uint32_t)(bptr - buffer);
+                    break;
+                }
+        }
+        else
+            i = get_words_lossless (wps, buffer, sample_count);
 
-		    dpp->samples_A [1] = dpp->samples_A [0];
-		    k = 0;
-		}
-		else {
-		    sam = dpp->samples_A [m];
-		    k = (m + dpp->term) & (MAX_TERM - 1);
-		}
+        for (bptr = buffer; bptr < eptr;) {
+            read_word = *bptr;
 
-		temp = apply_weight (dpp->weight_A, sam) + read_word;
-		update_weight (dpp->weight_A, dpp->delta, sam, read_word);
-		dpp->samples_A [k] = read_word = temp;
-	    }
+            for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+                int32_t sam, temp;
+                int k;
 
-	    if (labs (read_word) > mute_limit)
-		break;
+                if (dpp->term > MAX_TERM) {
+                    if (dpp->term & 1)
+                        sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+                    else
+                        sam = dpp->samples_A [0] + ((dpp->samples_A [0] - dpp->samples_A [1]) >> 1);
 
-	    m = (m + 1) & (MAX_TERM - 1);
-	    crc = crc * 3 + read_word;
-	    *bptr++ = read_word;
-	}
+                    dpp->samples_A [1] = dpp->samples_A [0];
+                    k = 0;
+                }
+                else {
+                    sam = dpp->samples_A [m];
+                    k = (m + dpp->term) & (MAX_TERM - 1);
+                }
 
-    //////////////// handle version 4 lossless stereo data ////////////////////
+                temp = apply_weight (dpp->weight_A, sam) + read_word;
+                update_weight (dpp->weight_A, dpp->delta, sam, read_word);
+                dpp->samples_A [k] = read_word = temp;
+            }
 
-    else if (!wpc->wvc_flag && !(flags & MONO_DATA)) {
-	int32_t *eptr = buffer + (sample_count * 2);
+            if (labs (read_word) > mute_limit) {
+                i = (uint32_t)(bptr - buffer);
+                break;
+            }
 
-	i = sample_count;
+            m = (m + 1) & (MAX_TERM - 1);
+            crc += (crc << 1) + (*bptr++ = read_word);
+        }
+    }
 
-	if (flags & HYBRID_FLAG) {
-	    for (bptr = buffer; bptr < eptr; bptr += 2)
-		if ((bptr [0] = get_word (wps, 0, NULL)) == WORD_EOF ||
-		    (bptr [1] = get_word (wps, 1, NULL)) == WORD_EOF) {
-			i = (bptr - buffer) / 2;
-			break;
-		}
-	}
-	else
-	    for (bptr = buffer; bptr < eptr; bptr += 2)
-		if ((bptr [0] = get_word_lossless (wps, 0)) == WORD_EOF ||
-		    (bptr [1] = get_word_lossless (wps, 1)) == WORD_EOF) {
-			i = (bptr - buffer) / 2;
-			break;
-		}
+    /////////////// handle lossless or hybrid lossy stereo data ///////////////
+
+    else if (!wps->block2buff && !(flags & MONO_DATA)) {
+        int32_t *eptr = buffer + (sample_count * 2);
+
+        if (flags & HYBRID_FLAG) {
+            i = sample_count;
+
+            for (bptr = buffer; bptr < eptr; bptr += 2)
+                if ((bptr [0] = get_word (wps, 0, NULL)) == WORD_EOF ||
+                    (bptr [1] = get_word (wps, 1, NULL)) == WORD_EOF) {
+                        i = (uint32_t)(bptr - buffer) / 2;
+                        break;
+                }
+        }
+        else
+            i = get_words_lossless (wps, buffer, sample_count);
 
 #ifdef FAST_DECODE
-	for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-	    if (((flags & MAG_MASK) >> MAG_LSB) >= 16)
-		decorr_stereo_pass (dpp, buffer, sample_count);
-	    else if (dpp->delta > 2)
-		decorr_stereo_pass_i (dpp, buffer, sample_count);
-	    else if (dpp->delta == 2)
-		decorr_stereo_pass_id2 (dpp, buffer, sample_count);
-	    else if (dpp->delta == 1)
-		decorr_stereo_pass_id1 (dpp, buffer, sample_count);
-	    else
-		decorr_stereo_pass_id0 (dpp, buffer, sample_count);
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
+            if (((flags & MAG_MASK) >> MAG_LSB) >= 16)
+                decorr_stereo_pass (dpp, buffer, sample_count);
+            else if (tcount && dpp [0].term == 17 && dpp [1].term == 17) {
+                decorr_stereo_pass_1717 (dpp, buffer, sample_count);
+                tcount--;
+                dpp++;
+            }
+            else if (tcount && dpp [0].term == 17 && dpp [1].term == 18) {
+                decorr_stereo_pass_1718 (dpp, buffer, sample_count);
+                tcount--;
+                dpp++;
+            }
+            else if (tcount && dpp [0].term == 18 && dpp [1].term == 18) {
+                decorr_stereo_pass_1818 (dpp, buffer, sample_count);
+                tcount--;
+                dpp++;
+            }
+            else if (tcount && dpp [0].term >= 1 && dpp [0].term <= 7 &&
+                               dpp [1].term >= 1 && dpp [1].term <= 7) {
+                decorr_stereo_pass_nn (dpp, buffer, sample_count);
+                tcount--;
+                dpp++;
+            }
+            else
+                decorr_stereo_pass_i (dpp, buffer, sample_count);
 #else
-	for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-	    decorr_stereo_pass (dpp, buffer, sample_count);
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
+            decorr_stereo_pass (dpp, buffer, sample_count);
 #endif
 
-	if (flags & JOINT_STEREO)
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		bptr [0] += (bptr [1] -= (bptr [0] >> 1));
+        if (flags & JOINT_STEREO)
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                bptr [0] += (bptr [1] -= (bptr [0] >> 1));
+                crc += (crc << 3) + (bptr [0] << 1) + bptr [0] + bptr [1];
+            }
+        else
+            for (bptr = buffer; bptr < eptr; bptr += 2)
+                crc += (crc << 3) + (bptr [0] << 1) + bptr [0] + bptr [1];
 
-		if (labs (bptr [0]) > mute_limit || labs (bptr [1]) > mute_limit) {
-		    i = (bptr - buffer) / 2;
-		    break;
-		}
+        for (bptr = buffer; bptr < eptr; bptr += 16)
+            if (labs (bptr [0]) > mute_limit || labs (bptr [1]) > mute_limit) {
+                i = (uint32_t)(bptr - buffer) / 2;
+                break;
+            }
 
-		crc = (crc * 3 + bptr [0]) * 3 + bptr [1];
-	    }
-	else
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		if (labs (bptr [0]) > mute_limit || labs (bptr [1]) > mute_limit) {
-		    i = (bptr - buffer) / 2;
-		    break;
-		}
-
-		crc = (crc * 3 + bptr [0]) * 3 + bptr [1];
-	    }
-
-	m = sample_count & (MAX_TERM - 1);
+        m = sample_count & (MAX_TERM - 1);
     }
 
-    //////////////// handle version 4 lossy/hybrid mono data //////////////////
+    /////////////////// handle hybrid lossless mono data ////////////////////
 
     else if ((flags & HYBRID_FLAG) && (flags & MONO_DATA))
-	for (bptr = buffer, i = 0; i < sample_count; ++i) {
+        for (bptr = buffer, i = 0; i < sample_count; ++i) {
 
-	    if ((read_word = get_word (wps, 0, correction)) == WORD_EOF)
-		break;
+            if ((read_word = get_word (wps, 0, correction)) == WORD_EOF)
+                break;
 
-	    for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
-		int32_t sam, temp;
-		int k;
+            for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+                int32_t sam, temp;
+                int k;
 
-		if (dpp->term > MAX_TERM) {
-		    if (dpp->term & 1)
-			sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-		    else
-			sam = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
+                if (dpp->term > MAX_TERM) {
+                    if (dpp->term & 1)
+                        sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+                    else
+                        sam = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
 
-		    dpp->samples_A [1] = dpp->samples_A [0];
-		    k = 0;
-		}
-		else {
-		    sam = dpp->samples_A [m];
-		    k = (m + dpp->term) & (MAX_TERM - 1);
-		}
+                    dpp->samples_A [1] = dpp->samples_A [0];
+                    k = 0;
+                }
+                else {
+                    sam = dpp->samples_A [m];
+                    k = (m + dpp->term) & (MAX_TERM - 1);
+                }
 
-		temp = apply_weight (dpp->weight_A, sam) + read_word;
-		update_weight (dpp->weight_A, dpp->delta, sam, read_word);
-		dpp->samples_A [k] = read_word = temp;
-	    }
+                temp = apply_weight (dpp->weight_A, sam) + read_word;
+                update_weight (dpp->weight_A, dpp->delta, sam, read_word);
+                dpp->samples_A [k] = read_word = temp;
+            }
 
-	    m = (m + 1) & (MAX_TERM - 1);
+            m = (m + 1) & (MAX_TERM - 1);
 
-	    if (wpc->wvc_flag) {
-		if (flags & HYBRID_SHAPE) {
-		    int shaping_weight = (wps->dc.shaping_acc [0] += wps->dc.shaping_delta [0]) >> 16;
-		    int32_t temp = -apply_weight (shaping_weight, wps->dc.error [0]);
+            if (flags & HYBRID_SHAPE) {
+                int shaping_weight = (wps->dc.shaping_acc [0] += wps->dc.shaping_delta [0]) >> 16;
+                int32_t temp = -apply_weight (shaping_weight, wps->dc.error [0]);
 
-		    if ((flags & NEW_SHAPING) && shaping_weight < 0 && temp) {
-			if (temp == wps->dc.error [0])
-			    temp = (temp < 0) ? temp + 1 : temp - 1;
+                if ((flags & NEW_SHAPING) && shaping_weight < 0 && temp) {
+                    if (temp == wps->dc.error [0])
+                        temp = (temp < 0) ? temp + 1 : temp - 1;
 
-			wps->dc.error [0] = temp - correction [0];
-		    }
-		    else
-			wps->dc.error [0] = -correction [0];
+                    wps->dc.error [0] = temp - correction [0];
+                }
+                else
+                    wps->dc.error [0] = -correction [0];
 
-		    read_word += correction [0] - temp;
-		}
-		else
-		    read_word += correction [0];
-	    }
+                read_word += correction [0] - temp;
+            }
+            else
+                read_word += correction [0];
 
-	    crc = crc * 3 + read_word;
+            crc += (crc << 1) + read_word;
 
 #ifdef LOSSY_MUTE
-	    if (labs (read_word) > mute_limit)
-		break;
+            if (labs (read_word) > mute_limit)
+                break;
 #endif
-	    *bptr++ = read_word;
-	}
+            *bptr++ = read_word;
+        }
 
-    //////////////// handle version 4 lossy/hybrid stereo data ////////////////
+    //////////////////// handle hybrid lossless stereo data ///////////////////
 
-    else if (wpc->wvc_flag && !(flags & MONO_DATA))
-	for (bptr = buffer, i = 0; i < sample_count; ++i) {
-	    int32_t left, right, left_c, right_c, left2, right2;
+    else if (wps->block2buff && !(flags & MONO_DATA))
+        for (bptr = buffer, i = 0; i < sample_count; ++i) {
+            int32_t left, right, left2, right2;
+            int32_t left_c = 0, right_c = 0;
 
-	    if ((left = get_word (wps, 0, correction)) == WORD_EOF ||
-		(right = get_word (wps, 1, correction + 1)) == WORD_EOF)
-		    break;
+            if ((left = get_word (wps, 0, correction)) == WORD_EOF ||
+                (right = get_word (wps, 1, correction + 1)) == WORD_EOF)
+                    break;
 
-	    if (flags & CROSS_DECORR) {
-		left_c = left + correction [0];
-		right_c = right + correction [1];
+            if (flags & CROSS_DECORR) {
+                left_c = left + correction [0];
+                right_c = right + correction [1];
 
-		for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
-		    int32_t sam_A, sam_B;
+                for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+                    int32_t sam_A, sam_B;
 
-		    if (dpp->term > 0) {
-			if (dpp->term > MAX_TERM) {
-			    if (dpp->term & 1) {
-				sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-				sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
-			    }
-			    else {
-				sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
-				sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
-			    }
-			}
-			else {
-			    sam_A = dpp->samples_A [m];
-			    sam_B = dpp->samples_B [m];
-			}
+                    if (dpp->term > 0) {
+                        if (dpp->term > MAX_TERM) {
+                            if (dpp->term & 1) {
+                                sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+                                sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+                            }
+                            else {
+                                sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
+                                sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
+                            }
+                        }
+                        else {
+                            sam_A = dpp->samples_A [m];
+                            sam_B = dpp->samples_B [m];
+                        }
 
-			left_c += apply_weight (dpp->weight_A, sam_A);
-			right_c += apply_weight (dpp->weight_B, sam_B);
-		    }
-		    else if (dpp->term == -1) {
-			left_c += apply_weight (dpp->weight_A, dpp->samples_A [0]);
-			right_c += apply_weight (dpp->weight_B, left_c);
-		    }
-		    else {
-			right_c += apply_weight (dpp->weight_B, dpp->samples_B [0]);
+                        left_c += apply_weight (dpp->weight_A, sam_A);
+                        right_c += apply_weight (dpp->weight_B, sam_B);
+                    }
+                    else if (dpp->term == -1) {
+                        left_c += apply_weight (dpp->weight_A, dpp->samples_A [0]);
+                        right_c += apply_weight (dpp->weight_B, left_c);
+                    }
+                    else {
+                        right_c += apply_weight (dpp->weight_B, dpp->samples_B [0]);
 
-			if (dpp->term == -3)
-			    left_c += apply_weight (dpp->weight_A, dpp->samples_A [0]);
-			else
-			    left_c += apply_weight (dpp->weight_A, right_c);
-		    }
-		}
+                        if (dpp->term == -3)
+                            left_c += apply_weight (dpp->weight_A, dpp->samples_A [0]);
+                        else
+                            left_c += apply_weight (dpp->weight_A, right_c);
+                    }
+                }
 
-		if (flags & JOINT_STEREO)
-		    left_c += (right_c -= (left_c >> 1));
-	    }
+                if (flags & JOINT_STEREO)
+                    left_c += (right_c -= (left_c >> 1));
+            }
 
-	    for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
-		int32_t sam_A, sam_B;
+            for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+                int32_t sam_A, sam_B;
 
-		if (dpp->term > 0) {
-		    int k;
+                if (dpp->term > 0) {
+                    int k;
 
-		    if (dpp->term > MAX_TERM) {
-			if (dpp->term & 1) {
-			    sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-			    sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
-			}
-			else {
-			    sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
-			    sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
-			}
+                    if (dpp->term > MAX_TERM) {
+                        if (dpp->term & 1) {
+                            sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+                            sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+                        }
+                        else {
+                            sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
+                            sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
+                        }
 
-			dpp->samples_A [1] = dpp->samples_A [0];
-			dpp->samples_B [1] = dpp->samples_B [0];
-			k = 0;
-		    }
-		    else {
-			sam_A = dpp->samples_A [m];
-			sam_B = dpp->samples_B [m];
-			k = (m + dpp->term) & (MAX_TERM - 1);
-		    }
+                        dpp->samples_A [1] = dpp->samples_A [0];
+                        dpp->samples_B [1] = dpp->samples_B [0];
+                        k = 0;
+                    }
+                    else {
+                        sam_A = dpp->samples_A [m];
+                        sam_B = dpp->samples_B [m];
+                        k = (m + dpp->term) & (MAX_TERM - 1);
+                    }
 
-		    left2 = apply_weight (dpp->weight_A, sam_A) + left;
-		    right2 = apply_weight (dpp->weight_B, sam_B) + right;
+                    left2 = apply_weight (dpp->weight_A, sam_A) + left;
+                    right2 = apply_weight (dpp->weight_B, sam_B) + right;
 
-		    update_weight (dpp->weight_A, dpp->delta, sam_A, left);
-		    update_weight (dpp->weight_B, dpp->delta, sam_B, right);
+                    update_weight (dpp->weight_A, dpp->delta, sam_A, left);
+                    update_weight (dpp->weight_B, dpp->delta, sam_B, right);
 
-		    dpp->samples_A [k] = left = left2;
-		    dpp->samples_B [k] = right = right2;
-		}
-		else if (dpp->term == -1) {
-		    left2 = left + apply_weight (dpp->weight_A, dpp->samples_A [0]);
-		    update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], left);
-		    left = left2;
-		    right2 = right + apply_weight (dpp->weight_B, left2);
-		    update_weight_clip (dpp->weight_B, dpp->delta, left2, right);
-		    dpp->samples_A [0] = right = right2;
-		}
-		else {
-		    right2 = right + apply_weight (dpp->weight_B, dpp->samples_B [0]);
-		    update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], right);
-		    right = right2;
+                    dpp->samples_A [k] = left = left2;
+                    dpp->samples_B [k] = right = right2;
+                }
+                else if (dpp->term == -1) {
+                    left2 = left + apply_weight (dpp->weight_A, dpp->samples_A [0]);
+                    update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], left);
+                    left = left2;
+                    right2 = right + apply_weight (dpp->weight_B, left2);
+                    update_weight_clip (dpp->weight_B, dpp->delta, left2, right);
+                    dpp->samples_A [0] = right = right2;
+                }
+                else {
+                    right2 = right + apply_weight (dpp->weight_B, dpp->samples_B [0]);
+                    update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], right);
+                    right = right2;
 
-		    if (dpp->term == -3) {
-			right2 = dpp->samples_A [0];
-			dpp->samples_A [0] = right;
-		    }
+                    if (dpp->term == -3) {
+                        right2 = dpp->samples_A [0];
+                        dpp->samples_A [0] = right;
+                    }
 
-		    left2 = left + apply_weight (dpp->weight_A, right2);
-		    update_weight_clip (dpp->weight_A, dpp->delta, right2, left);
-		    dpp->samples_B [0] = left = left2;
-		}
-	    }
+                    left2 = left + apply_weight (dpp->weight_A, right2);
+                    update_weight_clip (dpp->weight_A, dpp->delta, right2, left);
+                    dpp->samples_B [0] = left = left2;
+                }
+            }
 
-	    m = (m + 1) & (MAX_TERM - 1);
+            m = (m + 1) & (MAX_TERM - 1);
 
-	    if (!(flags & CROSS_DECORR)) {
-		left_c = left + correction [0];
-		right_c = right + correction [1];
+            if (!(flags & CROSS_DECORR)) {
+                left_c = left + correction [0];
+                right_c = right + correction [1];
 
-		if (flags & JOINT_STEREO)
-		    left_c += (right_c -= (left_c >> 1));
-	    }
+                if (flags & JOINT_STEREO)
+                    left_c += (right_c -= (left_c >> 1));
+            }
 
-	    if (flags & JOINT_STEREO)
-		left += (right -= (left >> 1));
+            if (flags & JOINT_STEREO)
+                left += (right -= (left >> 1));
 
-	    if (flags & HYBRID_SHAPE) {
-		int shaping_weight;
-		int32_t temp;
-	
-		correction [0] = left_c - left;
-		shaping_weight = (wps->dc.shaping_acc [0] += wps->dc.shaping_delta [0]) >> 16;
-		temp = -apply_weight (shaping_weight, wps->dc.error [0]);
+            if (flags & HYBRID_SHAPE) {
+                int shaping_weight;
+                int32_t temp;
 
-		if ((flags & NEW_SHAPING) && shaping_weight < 0 && temp) {
-		    if (temp == wps->dc.error [0])
-			temp = (temp < 0) ? temp + 1 : temp - 1;
+                correction [0] = left_c - left;
+                shaping_weight = (wps->dc.shaping_acc [0] += wps->dc.shaping_delta [0]) >> 16;
+                temp = -apply_weight (shaping_weight, wps->dc.error [0]);
 
-		    wps->dc.error [0] = temp - correction [0];
-		}
-		else
-		    wps->dc.error [0] = -correction [0];
+                if ((flags & NEW_SHAPING) && shaping_weight < 0 && temp) {
+                    if (temp == wps->dc.error [0])
+                        temp = (temp < 0) ? temp + 1 : temp - 1;
 
-		left = left_c - temp;
-		correction [1] = right_c - right;
-		shaping_weight = (wps->dc.shaping_acc [1] += wps->dc.shaping_delta [1]) >> 16;
-		temp = -apply_weight (shaping_weight, wps->dc.error [1]);
+                    wps->dc.error [0] = temp - correction [0];
+                }
+                else
+                    wps->dc.error [0] = -correction [0];
 
-		if ((flags & NEW_SHAPING) && shaping_weight < 0 && temp) {
-		    if (temp == wps->dc.error [1])
-			temp = (temp < 0) ? temp + 1 : temp - 1;
+                left = left_c - temp;
+                correction [1] = right_c - right;
+                shaping_weight = (wps->dc.shaping_acc [1] += wps->dc.shaping_delta [1]) >> 16;
+                temp = -apply_weight (shaping_weight, wps->dc.error [1]);
 
-		    wps->dc.error [1] = temp - correction [1];
-		}
-		else
-		    wps->dc.error [1] = -correction [1];
+                if ((flags & NEW_SHAPING) && shaping_weight < 0 && temp) {
+                    if (temp == wps->dc.error [1])
+                        temp = (temp < 0) ? temp + 1 : temp - 1;
 
-		right = right_c - temp;
-	    }
-	    else {
-		left = left_c;
-		right = right_c;
-	    }
+                    wps->dc.error [1] = temp - correction [1];
+                }
+                else
+                    wps->dc.error [1] = -correction [1];
+
+                right = right_c - temp;
+            }
+            else {
+                left = left_c;
+                right = right_c;
+            }
 
 #ifdef LOSSY_MUTE
-	    if (labs (left) > mute_limit || labs (right) > mute_limit)
-		break;
+            if (labs (left) > mute_limit || labs (right) > mute_limit)
+                break;
 #endif
-	    crc = (crc * 3 + left) * 3 + right;
-	    *bptr++ = left;
-	    *bptr++ = right;
-	}
+            crc += (crc << 3) + (left << 1) + left + right;
+            *bptr++ = left;
+            *bptr++ = right;
+        }
+    else
+        i = 0;  /* this line can't execute, but suppresses compiler warning */
 
     if (i != sample_count) {
-	memset (buffer, 0, sample_count * (flags & MONO_FLAG ? 4 : 8));
-	wps->mute_error = TRUE;
-	i = sample_count;
+        memset (buffer, 0, sample_count * (flags & MONO_FLAG ? 4 : 8));
+        wps->mute_error = TRUE;
+        i = sample_count;
 
-	if (bs_is_open (&wps->wvxbits))
-	    bs_close_read (&wps->wvxbits);
+        if (bs_is_open (&wps->wvxbits))
+            bs_close_read (&wps->wvxbits);
     }
 
     if (m)
-	for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-	    if (dpp->term > 0 && dpp->term <= MAX_TERM) {
-		int32_t temp_A [MAX_TERM], temp_B [MAX_TERM];
-		int k;
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
+            if (dpp->term > 0 && dpp->term <= MAX_TERM) {
+                int32_t temp_A [MAX_TERM], temp_B [MAX_TERM];
+                int k;
 
-		memcpy (temp_A, dpp->samples_A, sizeof (dpp->samples_A));
-		memcpy (temp_B, dpp->samples_B, sizeof (dpp->samples_B));
+                memcpy (temp_A, dpp->samples_A, sizeof (dpp->samples_A));
+                memcpy (temp_B, dpp->samples_B, sizeof (dpp->samples_B));
 
-		for (k = 0; k < MAX_TERM; k++) {
-		    dpp->samples_A [k] = temp_A [m];
-		    dpp->samples_B [k] = temp_B [m];
-		    m = (m + 1) & (MAX_TERM - 1);
-		}
-	    }
+                for (k = 0; k < MAX_TERM; k++) {
+                    dpp->samples_A [k] = temp_A [m];
+                    dpp->samples_B [k] = temp_B [m];
+                    m = (m + 1) & (MAX_TERM - 1);
+                }
+            }
 
     fixup_samples (wpc, buffer, i);
 
     if ((flags & FLOAT_DATA) && (wpc->open_flags & OPEN_NORMALIZE))
-	float_normalize (buffer, (flags & MONO_DATA) ? i : i * 2,
-	    127 - wps->float_norm_exp + wpc->norm_offset);
+        WavpackFloatNormalize (buffer, (flags & MONO_DATA) ? i : i * 2,
+            127 - wps->float_norm_exp + wpc->norm_offset);
 
     if (flags & FALSE_STEREO) {
-	int32_t *dptr = buffer + i * 2;
-	int32_t *sptr = buffer + i;
-	int32_t c = i;
+        int32_t *dptr = buffer + i * 2;
+        int32_t *sptr = buffer + i;
+        int32_t c = i;
 
-	while (c--) {
-	    *--dptr = *--sptr;
-	    *--dptr = *sptr;
-	}
+        while (c--) {
+            *--dptr = *--sptr;
+            *--dptr = *sptr;
+        }
     }
 
     wps->sample_index += i;
@@ -830,497 +917,351 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
     return i;
 }
 
+// General function to perform stereo decorrelation pass on specified buffer
+// (although since this is the reverse function it might technically be called
+// "correlation" instead). This version handles all sample resolutions and
+// weight deltas. The dpp->samples_X[] data is *not* returned normalized for
+// term values 1-8, so it should be normalized if it is going to be used to
+// call this function again.
+
 static void decorr_stereo_pass (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
 {
-    int32_t *bptr, *eptr = buffer + (sample_count * 2), sam_A, sam_B;
+    int32_t *bptr, *eptr = buffer + (sample_count * 2);
     int m, k;
 
     switch (dpp->term) {
+        case 17:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam, tmp;
 
-	case 17:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-		sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+                sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+                dpp->samples_A [1] = dpp->samples_A [0];
+                bptr [0] = dpp->samples_A [0] = apply_weight (dpp->weight_A, sam) + (tmp = bptr [0]);
+                update_weight (dpp->weight_A, dpp->delta, sam, tmp);
 
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
+                sam = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+                dpp->samples_B [1] = dpp->samples_B [0];
+                bptr [1] = dpp->samples_B [0] = apply_weight (dpp->weight_B, sam) + (tmp = bptr [1]);
+                update_weight (dpp->weight_B, dpp->delta, sam, tmp);
+            }
 
-		dpp->samples_A [0] = apply_weight (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [0] = apply_weight (dpp->weight_B, sam_B) + bptr [1];
+            break;
 
-		update_weight (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
+        case 18:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam, tmp;
 
-		bptr [0] = dpp->samples_A [0];
-		bptr [1] = dpp->samples_B [0];
-	    }
+                sam = dpp->samples_A [0] + ((dpp->samples_A [0] - dpp->samples_A [1]) >> 1);
+                dpp->samples_A [1] = dpp->samples_A [0];
+                bptr [0] = dpp->samples_A [0] = apply_weight (dpp->weight_A, sam) + (tmp = bptr [0]);
+                update_weight (dpp->weight_A, dpp->delta, sam, tmp);
 
-	    break;
+                sam = dpp->samples_B [0] + ((dpp->samples_B [0] - dpp->samples_B [1]) >> 1);
+                dpp->samples_B [1] = dpp->samples_B [0];
+                bptr [1] = dpp->samples_B [0] = apply_weight (dpp->weight_B, sam) + (tmp = bptr [1]);
+                update_weight (dpp->weight_B, dpp->delta, sam, tmp);
+            }
 
-	case 18:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
-		sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
+            break;
 
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
+        default:
+            for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam;
 
-		dpp->samples_A [0] = apply_weight (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [0] = apply_weight (dpp->weight_B, sam_B) + bptr [1];
+                sam = dpp->samples_A [m];
+                dpp->samples_A [k] = apply_weight (dpp->weight_A, sam) + bptr [0];
+                update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
+                bptr [0] = dpp->samples_A [k];
 
-		update_weight (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
+                sam = dpp->samples_B [m];
+                dpp->samples_B [k] = apply_weight (dpp->weight_B, sam) + bptr [1];
+                update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
+                bptr [1] = dpp->samples_B [k];
 
-		bptr [0] = dpp->samples_A [0];
-		bptr [1] = dpp->samples_B [0];
-	    }
+                m = (m + 1) & (MAX_TERM - 1);
+                k = (k + 1) & (MAX_TERM - 1);
+            }
 
-	    break;
+            break;
 
-	default:
-	    for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = dpp->samples_A [m];
-		sam_B = dpp->samples_B [m];
+        case -1:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam;
 
-		dpp->samples_A [k] = apply_weight (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [k] = apply_weight (dpp->weight_B, sam_B) + bptr [1];
+                sam = bptr [0] + apply_weight (dpp->weight_A, dpp->samples_A [0]);
+                update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
+                bptr [0] = sam;
+                dpp->samples_A [0] = bptr [1] + apply_weight (dpp->weight_B, sam);
+                update_weight_clip (dpp->weight_B, dpp->delta, sam, bptr [1]);
+                bptr [1] = dpp->samples_A [0];
+            }
 
-		update_weight (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
+            break;
 
-		bptr [0] = dpp->samples_A [k];
-		bptr [1] = dpp->samples_B [k];
+        case -2:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam;
 
-		m = (m + 1) & (MAX_TERM - 1);
-		k = (k + 1) & (MAX_TERM - 1);
-	    }
+                sam = bptr [1] + apply_weight (dpp->weight_B, dpp->samples_B [0]);
+                update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
+                bptr [1] = sam;
+                dpp->samples_B [0] = bptr [0] + apply_weight (dpp->weight_A, sam);
+                update_weight_clip (dpp->weight_A, dpp->delta, sam, bptr [0]);
+                bptr [0] = dpp->samples_B [0];
+            }
 
-	    break;
+            break;
 
-	case -1:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = bptr [0] + apply_weight (dpp->weight_A, dpp->samples_A [0]);
-		update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-		bptr [0] = sam_A;
-		dpp->samples_A [0] = bptr [1] + apply_weight (dpp->weight_B, sam_A);
-		update_weight_clip (dpp->weight_B, dpp->delta, sam_A, bptr [1]);
-		bptr [1] = dpp->samples_A [0];
-	    }
+        case -3:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam_A, sam_B;
 
-	    break;
+                sam_A = bptr [0] + apply_weight (dpp->weight_A, dpp->samples_A [0]);
+                update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
+                sam_B = bptr [1] + apply_weight (dpp->weight_B, dpp->samples_B [0]);
+                update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
+                bptr [0] = dpp->samples_B [0] = sam_A;
+                bptr [1] = dpp->samples_A [0] = sam_B;
+            }
 
-	case -2:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_B = bptr [1] + apply_weight (dpp->weight_B, dpp->samples_B [0]);
-		update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-		bptr [1] = sam_B;
-		dpp->samples_B [0] = bptr [0] + apply_weight (dpp->weight_A, sam_B);
-		update_weight_clip (dpp->weight_A, dpp->delta, sam_B, bptr [0]);
-		bptr [0] = dpp->samples_B [0];
-	    }
-
-	    break;
-
-	case -3:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = bptr [0] + apply_weight (dpp->weight_A, dpp->samples_A [0]);
-		update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-		sam_B = bptr [1] + apply_weight (dpp->weight_B, dpp->samples_B [0]);
-		update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-		bptr [0] = dpp->samples_B [0] = sam_A;
-		bptr [1] = dpp->samples_A [0] = sam_B;
-	    }
-
-	    break;
+            break;
     }
 }
 
 #ifdef FAST_DECODE
 
+// This function is a specialized version of decorr_stereo_pass() that works
+// only with lower resolution data (<= 16-bit), but is otherwise identical.
+
 static void decorr_stereo_pass_i (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
 {
-    int32_t *bptr, *eptr = buffer + (sample_count * 2), sam_A, sam_B;
+    int32_t *bptr, *eptr = buffer + (sample_count * 2);
     int m, k;
 
     switch (dpp->term) {
+        case 17:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam, tmp;
 
-	case 17:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-		sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+                sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+                dpp->samples_A [1] = dpp->samples_A [0];
+                bptr [0] = dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + (tmp = bptr [0]);
+                update_weight (dpp->weight_A, dpp->delta, sam, tmp);
 
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
+                sam = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+                dpp->samples_B [1] = dpp->samples_B [0];
+                bptr [1] = dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + (tmp = bptr [1]);
+                update_weight (dpp->weight_B, dpp->delta, sam, tmp);
+            }
 
-		dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
+            break;
 
-		update_weight (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
+        case 18:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam, tmp;
 
-		bptr [0] = dpp->samples_A [0];
-		bptr [1] = dpp->samples_B [0];
-	    }
+                sam = dpp->samples_A [0] + ((dpp->samples_A [0] - dpp->samples_A [1]) >> 1);
+                dpp->samples_A [1] = dpp->samples_A [0];
+                bptr [0] = dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + (tmp = bptr [0]);
+                update_weight (dpp->weight_A, dpp->delta, sam, tmp);
 
-	    break;
+                sam = dpp->samples_B [0] + ((dpp->samples_B [0] - dpp->samples_B [1]) >> 1);
+                dpp->samples_B [1] = dpp->samples_B [0];
+                bptr [1] = dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + (tmp = bptr [1]);
+                update_weight (dpp->weight_B, dpp->delta, sam, tmp);
+            }
 
-	case 18:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
-		sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
+            break;
 
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
+        default:
+            for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam;
 
-		dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
+                sam = dpp->samples_A [m];
+                dpp->samples_A [k] = apply_weight_i (dpp->weight_A, sam) + bptr [0];
+                update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
+                bptr [0] = dpp->samples_A [k];
 
-		update_weight (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
+                sam = dpp->samples_B [m];
+                dpp->samples_B [k] = apply_weight_i (dpp->weight_B, sam) + bptr [1];
+                update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
+                bptr [1] = dpp->samples_B [k];
 
-		bptr [0] = dpp->samples_A [0];
-		bptr [1] = dpp->samples_B [0];
-	    }
+                m = (m + 1) & (MAX_TERM - 1);
+                k = (k + 1) & (MAX_TERM - 1);
+            }
 
-	    break;
+            break;
 
-	default:
-	    for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = dpp->samples_A [m];
-		sam_B = dpp->samples_B [m];
+        case -1:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam;
 
-		dpp->samples_A [k] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [k] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
+                sam = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
+                update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
+                bptr [0] = sam;
+                dpp->samples_A [0] = bptr [1] + apply_weight_i (dpp->weight_B, sam);
+                update_weight_clip (dpp->weight_B, dpp->delta, sam, bptr [1]);
+                bptr [1] = dpp->samples_A [0];
+            }
 
-		update_weight (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
+            break;
 
-		bptr [0] = dpp->samples_A [k];
-		bptr [1] = dpp->samples_B [k];
+        case -2:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam;
 
-		m = (m + 1) & (MAX_TERM - 1);
-		k = (k + 1) & (MAX_TERM - 1);
-	    }
+                sam = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
+                update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
+                bptr [1] = sam;
+                dpp->samples_B [0] = bptr [0] + apply_weight_i (dpp->weight_A, sam);
+                update_weight_clip (dpp->weight_A, dpp->delta, sam, bptr [0]);
+                bptr [0] = dpp->samples_B [0];
+            }
 
-	    break;
+            break;
 
-	case -1:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-		update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-		bptr [0] = sam_A;
-		dpp->samples_A [0] = bptr [1] + apply_weight_i (dpp->weight_B, sam_A);
-		update_weight_clip (dpp->weight_B, dpp->delta, sam_A, bptr [1]);
-		bptr [1] = dpp->samples_A [0];
-	    }
+        case -3:
+            for (bptr = buffer; bptr < eptr; bptr += 2) {
+                int32_t sam_A, sam_B;
 
-	    break;
+                sam_A = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
+                update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
+                sam_B = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
+                update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
+                bptr [0] = dpp->samples_B [0] = sam_A;
+                bptr [1] = dpp->samples_A [0] = sam_B;
+            }
 
-	case -2:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_B = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-		update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-		bptr [1] = sam_B;
-		dpp->samples_B [0] = bptr [0] + apply_weight_i (dpp->weight_A, sam_B);
-		update_weight_clip (dpp->weight_A, dpp->delta, sam_B, bptr [0]);
-		bptr [0] = dpp->samples_B [0];
-	    }
-
-	    break;
-
-	case -3:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-		update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-		sam_B = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-		update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-		bptr [0] = dpp->samples_B [0] = sam_A;
-		bptr [1] = dpp->samples_A [0] = sam_B;
-	    }
-
-	    break;
+            break;
     }
 }
 
-static void decorr_stereo_pass_id2 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
+// These functions are specialized versions of decorr_stereo_pass() that work
+// only with lower resolution data (<= 16-bit) and handle the equivalent of
+// *two* decorrelation passes. By combining two passes we save a read and write
+// of the sample data and some overhead dealing with buffer pointers and looping.
+//
+// The cases handled are:
+//     17,17 -- standard "fast" mode before version 4.40
+//     17,18 -- standard "fast" mode starting with 4.40
+//     18,18 -- used in the default and higher modes
+//     [1-7],[1-7] -- common in "high" and "very high" modes
+
+static void decorr_stereo_pass_1718 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
 {
-    int32_t *bptr, *eptr = buffer + (sample_count * 2), sam_A, sam_B;
-    int m, k;
+    int32_t *bptr, *eptr = buffer + (sample_count * 2);
 
-    switch (dpp->term) {
+    for (bptr = buffer; bptr < eptr; bptr += 2) {
+        int32_t sam;
 
-	case 17:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-		sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+        sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+        dpp->samples_A [1] = dpp->samples_A [0];
+        dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + bptr [0];
+        update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
 
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
+        sam = (dpp+1)->samples_A [0] + (((dpp+1)->samples_A [0] - (dpp+1)->samples_A [1]) >> 1);
+        (dpp+1)->samples_A [1] = (dpp+1)->samples_A [0];
+        bptr [0] = (dpp+1)->samples_A [0] = apply_weight_i ((dpp+1)->weight_A, sam) + dpp->samples_A [0];
+        update_weight ((dpp+1)->weight_A, (dpp+1)->delta, sam, dpp->samples_A [0]);
 
-		dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
+        sam = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+        dpp->samples_B [1] = dpp->samples_B [0];
+        dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + bptr [1];
+        update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
 
-		update_weight_d2 (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight_d2 (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
-
-		bptr [0] = dpp->samples_A [0];
-		bptr [1] = dpp->samples_B [0];
-	    }
-
-	    break;
-
-	case 18:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
-		sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
-
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
-
-		dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
-
-		update_weight_d2 (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight_d2 (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
-
-		bptr [0] = dpp->samples_A [0];
-		bptr [1] = dpp->samples_B [0];
-	    }
-
-	    break;
-
-	default:
-	    for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = dpp->samples_A [m];
-		sam_B = dpp->samples_B [m];
-
-		dpp->samples_A [k] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [k] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
-
-		update_weight_d2 (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight_d2 (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
-
-		bptr [0] = dpp->samples_A [k];
-		bptr [1] = dpp->samples_B [k];
-
-		m = (m + 1) & (MAX_TERM - 1);
-		k = (k + 1) & (MAX_TERM - 1);
-	    }
-
-	    break;
-
-	case -1:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-		update_weight_clip_d2 (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-		bptr [0] = sam_A;
-		dpp->samples_A [0] = bptr [1] + apply_weight_i (dpp->weight_B, sam_A);
-		update_weight_clip_d2 (dpp->weight_B, dpp->delta, sam_A, bptr [1]);
-		bptr [1] = dpp->samples_A [0];
-	    }
-
-	    break;
-
-	case -2:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_B = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-		update_weight_clip_d2 (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-		bptr [1] = sam_B;
-		dpp->samples_B [0] = bptr [0] + apply_weight_i (dpp->weight_A, sam_B);
-		update_weight_clip_d2 (dpp->weight_A, dpp->delta, sam_B, bptr [0]);
-		bptr [0] = dpp->samples_B [0];
-	    }
-
-	    break;
-
-	case -3:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-		update_weight_clip_d2 (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-		sam_B = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-		update_weight_clip_d2 (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-		bptr [0] = dpp->samples_B [0] = sam_A;
-		bptr [1] = dpp->samples_A [0] = sam_B;
-	    }
-
-	    break;
+        sam = (dpp+1)->samples_B [0] + (((dpp+1)->samples_B [0] - (dpp+1)->samples_B [1]) >> 1);
+        (dpp+1)->samples_B [1] = (dpp+1)->samples_B [0];
+        bptr [1] = (dpp+1)->samples_B [0] = apply_weight_i ((dpp+1)->weight_B, sam) + dpp->samples_B [0];
+        update_weight ((dpp+1)->weight_B, (dpp+1)->delta, sam, dpp->samples_B [0]);
     }
 }
 
-static void decorr_stereo_pass_id1 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
+static void decorr_stereo_pass_1717 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
 {
-    int32_t *bptr, *eptr = buffer + (sample_count * 2), sam_A, sam_B;
-    int m, k;
+    int32_t *bptr, *eptr = buffer + (sample_count * 2);
 
-    switch (dpp->term) {
+    for (bptr = buffer; bptr < eptr; bptr += 2) {
+        int32_t sam;
 
-	case 17:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-		sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+        sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+        dpp->samples_A [1] = dpp->samples_A [0];
+        dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + bptr [0];
+        update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
 
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
+        sam = 2 * (dpp+1)->samples_A [0] - (dpp+1)->samples_A [1];
+        (dpp+1)->samples_A [1] = (dpp+1)->samples_A [0];
+        bptr [0] = (dpp+1)->samples_A [0] = apply_weight_i ((dpp+1)->weight_A, sam) + dpp->samples_A [0];
+        update_weight ((dpp+1)->weight_A, (dpp+1)->delta, sam, dpp->samples_A [0]);
 
-		dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
+        sam = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+        dpp->samples_B [1] = dpp->samples_B [0];
+        dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + bptr [1];
+        update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
 
-		update_weight_d1 (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight_d1 (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
-
-		bptr [0] = dpp->samples_A [0];
-		bptr [1] = dpp->samples_B [0];
-	    }
-
-	    break;
-
-	case 18:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
-		sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
-
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
-
-		dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
-
-		update_weight_d1 (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight_d1 (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
-
-		bptr [0] = dpp->samples_A [0];
-		bptr [1] = dpp->samples_B [0];
-	    }
-
-	    break;
-
-	default:
-	    for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = dpp->samples_A [m];
-		sam_B = dpp->samples_B [m];
-
-		dpp->samples_A [k] = apply_weight_i (dpp->weight_A, sam_A) + bptr [0];
-		dpp->samples_B [k] = apply_weight_i (dpp->weight_B, sam_B) + bptr [1];
-
-		update_weight_d1 (dpp->weight_A, dpp->delta, sam_A, bptr [0]);
-		update_weight_d1 (dpp->weight_B, dpp->delta, sam_B, bptr [1]);
-
-		bptr [0] = dpp->samples_A [k];
-		bptr [1] = dpp->samples_B [k];
-
-		m = (m + 1) & (MAX_TERM - 1);
-		k = (k + 1) & (MAX_TERM - 1);
-	    }
-
-	    break;
-
-	case -1:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-		update_weight_clip_d1 (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-		bptr [0] = sam_A;
-		dpp->samples_A [0] = bptr [1] + apply_weight_i (dpp->weight_B, sam_A);
-		update_weight_clip_d1 (dpp->weight_B, dpp->delta, sam_A, bptr [1]);
-		bptr [1] = dpp->samples_A [0];
-	    }
-
-	    break;
-
-	case -2:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_B = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-		update_weight_clip_d1 (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-		bptr [1] = sam_B;
-		dpp->samples_B [0] = bptr [0] + apply_weight_i (dpp->weight_A, sam_B);
-		update_weight_clip_d1 (dpp->weight_A, dpp->delta, sam_B, bptr [0]);
-		bptr [0] = dpp->samples_B [0];
-	    }
-
-	    break;
-
-	case -3:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-		update_weight_clip_d1 (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-		sam_B = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-		update_weight_clip_d1 (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-		bptr [0] = dpp->samples_B [0] = sam_A;
-		bptr [1] = dpp->samples_A [0] = sam_B;
-	    }
-
-	    break;
+        sam = 2 * (dpp+1)->samples_B [0] - (dpp+1)->samples_B [1];
+        (dpp+1)->samples_B [1] = (dpp+1)->samples_B [0];
+        bptr [1] = (dpp+1)->samples_B [0] = apply_weight_i ((dpp+1)->weight_B, sam) + dpp->samples_B [0];
+        update_weight ((dpp+1)->weight_B, (dpp+1)->delta, sam, dpp->samples_B [0]);
     }
 }
 
-static void decorr_stereo_pass_id0 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
+static void decorr_stereo_pass_1818 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
 {
-    int32_t *bptr, *eptr = buffer + (sample_count * 2), sam_A, sam_B;
-    int m, k;
+    int32_t *bptr, *eptr = buffer + (sample_count * 2);
 
-    switch (dpp->term) {
+    for (bptr = buffer; bptr < eptr; bptr += 2) {
+        int32_t sam;
 
-	case 17:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-		sam_B = 2 * dpp->samples_B [0] - dpp->samples_B [1];
+        sam = dpp->samples_A [0] + ((dpp->samples_A [0] - dpp->samples_A [1]) >> 1);
+        dpp->samples_A [1] = dpp->samples_A [0];
+        dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + bptr [0];
+        update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
 
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
+        sam = (dpp+1)->samples_A [0] + (((dpp+1)->samples_A [0] - (dpp+1)->samples_A [1]) >> 1);
+        (dpp+1)->samples_A [1] = (dpp+1)->samples_A [0];
+        bptr [0] = (dpp+1)->samples_A [0] = apply_weight_i ((dpp+1)->weight_A, sam) + dpp->samples_A [0];
+        update_weight ((dpp+1)->weight_A, (dpp+1)->delta, sam, dpp->samples_A [0]);
 
-		dpp->samples_A [0] = bptr [0] += apply_weight_i (dpp->weight_A, sam_A);
-		dpp->samples_B [0] = bptr [1] += apply_weight_i (dpp->weight_B, sam_B);
-	    }
+        sam = dpp->samples_B [0] + ((dpp->samples_B [0] - dpp->samples_B [1]) >> 1);
+        dpp->samples_B [1] = dpp->samples_B [0];
+        dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + bptr [1];
+        update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
 
-	    break;
+        sam = (dpp+1)->samples_B [0] + (((dpp+1)->samples_B [0] - (dpp+1)->samples_B [1]) >> 1);
+        (dpp+1)->samples_B [1] = (dpp+1)->samples_B [0];
+        bptr [1] = (dpp+1)->samples_B [0] = apply_weight_i ((dpp+1)->weight_B, sam) + dpp->samples_B [0];
+        update_weight ((dpp+1)->weight_B, (dpp+1)->delta, sam, dpp->samples_B [0]);
+    }
+}
 
-	case 18:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
-		sam_B = (3 * dpp->samples_B [0] - dpp->samples_B [1]) >> 1;
+static void decorr_stereo_pass_nn (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
+{
+    int32_t *bptr, *eptr = buffer + (sample_count * 2);
+    int m, k, j;
 
-		dpp->samples_A [1] = dpp->samples_A [0];
-		dpp->samples_B [1] = dpp->samples_B [0];
+    m = 0;
+    k = dpp->term & (MAX_TERM - 1);
+    j = (dpp+1)->term & (MAX_TERM - 1);
 
-		dpp->samples_A [0] = bptr [0] += apply_weight_i (dpp->weight_A, sam_A);
-		dpp->samples_B [0] = bptr [1] += apply_weight_i (dpp->weight_B, sam_B);
-	    }
+    for (bptr = buffer; bptr < eptr; bptr += 2) {
+        int32_t tmp;
 
-	    break;
+        dpp->samples_A [k] = apply_weight_i (dpp->weight_A, dpp->samples_A [m]) + (tmp = bptr [0]);
+        update_weight (dpp->weight_A, dpp->delta, dpp->samples_A [m], tmp);
 
-	default:
-	    for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr += 2) {
-		dpp->samples_A [k] = bptr [0] += apply_weight_i (dpp->weight_A, dpp->samples_A [m]);
-		dpp->samples_B [k] = bptr [1] += apply_weight_i (dpp->weight_B, dpp->samples_B [m]);
-		m = (m + 1) & (MAX_TERM - 1);
-		k = (k + 1) & (MAX_TERM - 1);
-	    }
+        bptr [0] = (dpp+1)->samples_A [j] = apply_weight_i ((dpp+1)->weight_A, (dpp+1)->samples_A [m]) + (tmp = dpp->samples_A [k]);
+        update_weight ((dpp+1)->weight_A, (dpp+1)->delta, (dpp+1)->samples_A [m], tmp);
 
-	    break;
+        dpp->samples_B [k] = apply_weight_i (dpp->weight_B, dpp->samples_B [m]) + (tmp = bptr [1]);
+        update_weight (dpp->weight_B, dpp->delta, dpp->samples_B [m], tmp);
 
-	case -1:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		bptr [0] += apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-		dpp->samples_A [0] = bptr [1] += apply_weight_i (dpp->weight_B, bptr [0]);
-	    }
+        bptr [1] = (dpp+1)->samples_B [j] = apply_weight_i ((dpp+1)->weight_B, (dpp+1)->samples_B [m]) + (tmp = dpp->samples_B [k]);
+        update_weight ((dpp+1)->weight_B, (dpp+1)->delta, (dpp+1)->samples_B [m], tmp);
 
-	    break;
-
-	case -2:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		bptr [1] += apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-		dpp->samples_B [0] = bptr [0] += apply_weight_i (dpp->weight_A, bptr [1]);
-	    }
-
-	    break;
-
-	case -3:
-	    for (bptr = buffer; bptr < eptr; bptr += 2) {
-		bptr [0] += apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-		dpp->samples_A [0] = bptr [1] += apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-		dpp->samples_B [0] = bptr [0];
-	    }
-
-	    break;
+        m = (m + 1) & (MAX_TERM - 1);
+        k = (k + 1) & (MAX_TERM - 1);
+        j = (j + 1) & (MAX_TERM - 1);
     }
 }
 
@@ -1338,115 +1279,115 @@ static void fixup_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample
 {
     WavpackStream *wps = wpc->streams [wpc->current_stream];
     uint32_t flags = wps->wphdr.flags;
-    int lossy_flag = (flags & HYBRID_FLAG) && !wpc->wvc_flag;
+    int lossy_flag = (flags & HYBRID_FLAG) && !wps->block2buff;
     int shift = (flags & SHIFT_MASK) >> SHIFT_LSB;
 
     if (flags & FLOAT_DATA) {
-	float_values (wps, buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2);
-	return;
+        float_values (wps, buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2);
+        return;
     }
 
     if (flags & INT32_DATA) {
-	uint32_t count = (flags & MONO_DATA) ? sample_count : sample_count * 2;
-	int sent_bits = wps->int32_sent_bits, zeros = wps->int32_zeros;
-	int ones = wps->int32_ones, dups = wps->int32_dups;
-	uint32_t data, mask = (1 << sent_bits) - 1;
-	int32_t *dptr = buffer;
+        uint32_t count = (flags & MONO_DATA) ? sample_count : sample_count * 2;
+        int sent_bits = wps->int32_sent_bits, zeros = wps->int32_zeros;
+        int ones = wps->int32_ones, dups = wps->int32_dups;
+        uint32_t data, mask = (1 << sent_bits) - 1;
+        int32_t *dptr = buffer;
 
-	if (bs_is_open (&wps->wvxbits)) {
-	    uint32_t crc = wps->crc_x;
+        if (bs_is_open (&wps->wvxbits)) {
+            uint32_t crc = wps->crc_x;
 
-	    while (count--) {
-//		if (sent_bits) {
-		    getbits (&data, sent_bits, &wps->wvxbits);
-		    *dptr = (*dptr << sent_bits) | (data & mask);
-//		}
+            while (count--) {
+//              if (sent_bits) {
+                    getbits (&data, sent_bits, &wps->wvxbits);
+                    *dptr = (*dptr << sent_bits) | (data & mask);
+//              }
 
-		if (zeros)
-		    *dptr <<= zeros;
-		else if (ones)
-		    *dptr = ((*dptr + 1) << ones) - 1;
-		else if (dups)
-		    *dptr = ((*dptr + (*dptr & 1)) << dups) - (*dptr & 1);
+                if (zeros)
+                    *dptr <<= zeros;
+                else if (ones)
+                    *dptr = ((*dptr + 1) << ones) - 1;
+                else if (dups)
+                    *dptr = ((*dptr + (*dptr & 1)) << dups) - (*dptr & 1);
 
-		crc = crc * 9 + (*dptr & 0xffff) * 3 + ((*dptr >> 16) & 0xffff);
-		dptr++;
-	    }
+                crc = crc * 9 + (*dptr & 0xffff) * 3 + ((*dptr >> 16) & 0xffff);
+                dptr++;
+            }
 
-	    wps->crc_x = crc;
-	}
-	else if (!sent_bits && (zeros + ones + dups)) {
-	    while (lossy_flag && (flags & BYTES_STORED) == 3 && shift < 8) {
-		if (zeros)
-		    zeros--;
-		else if (ones)
-		    ones--;
-		else if (dups)
-		    dups--;
-		else
-		    break;
+            wps->crc_x = crc;
+        }
+        else if (!sent_bits && (zeros + ones + dups)) {
+            while (lossy_flag && (flags & BYTES_STORED) == 3 && shift < 8) {
+                if (zeros)
+                    zeros--;
+                else if (ones)
+                    ones--;
+                else if (dups)
+                    dups--;
+                else
+                    break;
 
-		shift++;
-	    }
+                shift++;
+            }
 
-	    while (count--) {
-		if (zeros)
-		    *dptr <<= zeros;
-		else if (ones)
-		    *dptr = ((*dptr + 1) << ones) - 1;
-		else if (dups)
-		    *dptr = ((*dptr + (*dptr & 1)) << dups) - (*dptr & 1);
+            while (count--) {
+                if (zeros)
+                    *dptr <<= zeros;
+                else if (ones)
+                    *dptr = ((*dptr + 1) << ones) - 1;
+                else if (dups)
+                    *dptr = ((*dptr + (*dptr & 1)) << dups) - (*dptr & 1);
 
-		dptr++;
-	    }
-	}
-	else
-	    shift += zeros + sent_bits + ones + dups;
+                dptr++;
+            }
+        }
+        else
+            shift += zeros + sent_bits + ones + dups;
     }
 
     if (lossy_flag) {
-	int32_t min_value, max_value, min_shifted, max_shifted;
+        int32_t min_value, max_value, min_shifted, max_shifted;
 
-	switch (flags & BYTES_STORED) {
-	    case 0:
-		min_shifted = (min_value = -128 >> shift) << shift;
-		max_shifted = (max_value = 127 >> shift) << shift;
-		break;
+        switch (flags & BYTES_STORED) {
+            case 0:
+                min_shifted = (min_value = -128 >> shift) << shift;
+                max_shifted = (max_value = 127 >> shift) << shift;
+                break;
 
-	    case 1:
-		min_shifted = (min_value = -32768 >> shift) << shift;
-		max_shifted = (max_value = 32767 >> shift) << shift;
-		break;
+            case 1:
+                min_shifted = (min_value = -32768 >> shift) << shift;
+                max_shifted = (max_value = 32767 >> shift) << shift;
+                break;
 
-	    case 2:
-		min_shifted = (min_value = -8388608 >> shift) << shift;
-		max_shifted = (max_value = 8388607 >> shift) << shift;
-		break;
+            case 2:
+                min_shifted = (min_value = -8388608 >> shift) << shift;
+                max_shifted = (max_value = 8388607 >> shift) << shift;
+                break;
 
-	    case 3:
-		min_shifted = (min_value = (int32_t) 0x80000000 >> shift) << shift;
-		max_shifted = (max_value = (int32_t) 0x7fffffff >> shift) << shift;
-		break;
-	}
+            case 3: default:    /* "default" suppresses compiler warning */
+                min_shifted = (min_value = (int32_t) 0x80000000 >> shift) << shift;
+                max_shifted = (max_value = (int32_t) 0x7fffffff >> shift) << shift;
+                break;
+        }
 
-	if (!(flags & MONO_DATA))
-	    sample_count *= 2;
+        if (!(flags & MONO_DATA))
+            sample_count *= 2;
 
-	while (sample_count--) {
-	    if (*buffer < min_value)
-		*buffer++ = min_shifted;
-	    else if (*buffer > max_value)
-		*buffer++ = max_shifted;
-	    else
-		*buffer++ <<= shift;
-	}
+        while (sample_count--) {
+            if (*buffer < min_value)
+                *buffer++ = min_shifted;
+            else if (*buffer > max_value)
+                *buffer++ = max_shifted;
+            else
+                *buffer++ <<= shift;
+        }
     }
     else if (shift) {
-	if (!(flags & MONO_DATA))
-	    sample_count *= 2;
+        if (!(flags & MONO_DATA))
+            sample_count *= 2;
 
-	while (sample_count--)
-	    *buffer++ <<= shift;
+        while (sample_count--)
+            *buffer++ <<= shift;
     }
 }
 
@@ -1462,12 +1403,12 @@ int check_crc_error (WavpackContext *wpc)
     int result = 0, stream;
 
     for (stream = 0; stream < wpc->num_streams; stream++) {
-	WavpackStream *wps = wpc->streams [stream];
+        WavpackStream *wps = wpc->streams [stream];
 
-	if (wps->crc != wps->wphdr.crc)
-	    ++result;
-	else if (bs_is_open (&wps->wvxbits) && wps->crc_x != wps->crc_wvx)
-	    ++result;
+        if (wps->crc != wps->wphdr.crc)
+            ++result;
+        else if (bs_is_open (&wps->wvxbits) && wps->crc_x != wps->crc_wvx)
+            ++result;
     }
 
     return result;

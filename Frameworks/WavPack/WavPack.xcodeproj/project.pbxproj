@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83DD1DD017FA038A00249519 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCD17FA038A00249519 /* utils.h */; };
+		83DD1DD117FA038A00249519 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCE17FA038A00249519 /* wavpack_local.h */; };
+		83DD1DD217FA038A00249519 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCF17FA038A00249519 /* wavpack_version.h */; };
+		83DD1DD417FA03F900249519 /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DD1DD317FA03F900249519 /* tags.c */; };
+		83DD1DD517FA04E100249519 /* wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E7574C109F31BD50080F1EE /* wavpack.c */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8E7574B309F31BB90080F1EE /* md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E7574AF09F31BB90080F1EE /* md5.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E7574B409F31BB90080F1EE /* unpack3.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E7574B009F31BB90080F1EE /* unpack3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E7574B509F31BB90080F1EE /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E7574B109F31BB90080F1EE /* wavpack.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8E7574B609F31BB90080F1EE /* wputils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E7574B209F31BB90080F1EE /* wputils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E7574C509F31BD50080F1EE /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E7574B709F31BD50080F1EE /* bits.c */; };
 		8E7574C609F31BD50080F1EE /* extra1.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E7574B809F31BD50080F1EE /* extra1.c */; };
 		8E7574C709F31BD50080F1EE /* extra2.c in Sources */ = {isa = PBXBuildFile; fileRef = 8E7574B909F31BD50080F1EE /* extra2.c */; };
@@ -29,12 +33,15 @@
 
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83DD1DCD17FA038A00249519 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = Files/utils.h; sourceTree = "<group>"; };
+		83DD1DCE17FA038A00249519 /* wavpack_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_local.h; path = Files/wavpack_local.h; sourceTree = "<group>"; };
+		83DD1DCF17FA038A00249519 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_version.h; path = Files/wavpack_version.h; sourceTree = "<group>"; };
+		83DD1DD317FA03F900249519 /* tags.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tags.c; path = Files/tags.c; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WavPack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WavPack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E7574AF09F31BB90080F1EE /* md5.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = md5.h; path = Files/md5.h; sourceTree = "<group>"; };
 		8E7574B009F31BB90080F1EE /* unpack3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = unpack3.h; path = Files/unpack3.h; sourceTree = "<group>"; };
 		8E7574B109F31BB90080F1EE /* wavpack.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = wavpack.h; path = Files/wavpack.h; sourceTree = "<group>"; };
-		8E7574B209F31BB90080F1EE /* wputils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = wputils.h; path = Files/wputils.h; sourceTree = "<group>"; };
 		8E7574B709F31BD50080F1EE /* bits.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = bits.c; path = Files/bits.c; sourceTree = "<group>"; };
 		8E7574B809F31BD50080F1EE /* extra1.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = extra1.c; path = Files/extra1.c; sourceTree = "<group>"; };
 		8E7574B909F31BD50080F1EE /* extra2.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = extra2.c; path = Files/extra2.c; sourceTree = "<group>"; };
@@ -120,6 +127,7 @@
 		8E7574A809F31B940080F1EE /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				83DD1DD317FA03F900249519 /* tags.c */,
 				8E7574B709F31BD50080F1EE /* bits.c */,
 				8E7574B809F31BD50080F1EE /* extra1.c */,
 				8E7574B909F31BD50080F1EE /* extra2.c */,
@@ -141,10 +149,12 @@
 		8E7574A909F31B9A0080F1EE /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				83DD1DCD17FA038A00249519 /* utils.h */,
+				83DD1DCE17FA038A00249519 /* wavpack_local.h */,
+				83DD1DCF17FA038A00249519 /* wavpack_version.h */,
 				8E7574AF09F31BB90080F1EE /* md5.h */,
 				8E7574B009F31BB90080F1EE /* unpack3.h */,
 				8E7574B109F31BB90080F1EE /* wavpack.h */,
-				8E7574B209F31BB90080F1EE /* wputils.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -157,9 +167,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E7574B309F31BB90080F1EE /* md5.h in Headers */,
+				83DD1DD117FA038A00249519 /* wavpack_local.h in Headers */,
 				8E7574B409F31BB90080F1EE /* unpack3.h in Headers */,
+				83DD1DD217FA038A00249519 /* wavpack_version.h in Headers */,
+				83DD1DD017FA038A00249519 /* utils.h in Headers */,
 				8E7574B509F31BB90080F1EE /* wavpack.h in Headers */,
-				8E7574B609F31BB90080F1EE /* wputils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +237,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83DD1DD517FA04E100249519 /* wavpack.c in Sources */,
+				83DD1DD417FA03F900249519 /* tags.c in Sources */,
 				8E7574C509F31BD50080F1EE /* bits.c in Sources */,
 				8E7574C609F31BD50080F1EE /* extra1.c in Sources */,
 				8E7574C709F31BD50080F1EE /* extra2.c in Sources */,

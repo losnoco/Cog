@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 //                           **** WAVPACK ****                            //
 //                  Hybrid Lossless Wavefile Compressor                   //
-//              Copyright (c) 1998 - 2005 Conifer Software.               //
+//              Copyright (c) 1998 - 2006 Conifer Software.               //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
@@ -16,17 +16,25 @@
 #include <io.h>
 #include <conio.h>
 #include <shlobj.h>
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__sun)
 #include <glob.h>
+#include <unistd.h>
 #endif
 
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "wavpack.h"
+#include "utils.h"
 
+#ifdef WIN32
+#define fileno _fileno
+#define stat64 __stat64
+#define fstat64 _fstat64
+#endif
 
 #ifdef WIN32
 
@@ -37,24 +45,24 @@ int copy_timestamp (const char *src_filename, const char *dst_filename)
     int res = TRUE;
 
     if (*src_filename == '-' || *dst_filename == '-')
-	return res;
+        return res;
 
     src = CreateFile (src_filename, GENERIC_READ, FILE_SHARE_READ, NULL,
-	 OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+         OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
     dst = CreateFile (dst_filename, GENERIC_WRITE, FILE_SHARE_WRITE, NULL,
-	 OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-	
+         OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+
     if (src == INVALID_HANDLE_VALUE || dst == INVALID_HANDLE_VALUE ||
-	!GetFileTime (src, NULL, NULL, &last_modified) ||
-	!SetFileTime (dst, NULL, NULL, &last_modified))
-	    res = FALSE;
+        !GetFileTime (src, NULL, NULL, &last_modified) ||
+        !SetFileTime (dst, NULL, NULL, &last_modified))
+            res = FALSE;
 
     if (src != INVALID_HANDLE_VALUE)
-	CloseHandle (src);
+        CloseHandle (src);
 
     if (dst != INVALID_HANDLE_VALUE)
-	CloseHandle (dst);
+        CloseHandle (dst);
 
     return res;
 }
@@ -106,18 +114,18 @@ char *filespec_ext (char *filespec)
 
     while (--cp >= filespec) {
 
-	if (langid == 0x411 && is_second_byte (filespec, cp))
-	    --cp;
+        if (langid == 0x411 && is_second_byte (filespec, cp))
+            --cp;
 
-	if (*cp == '\\' || *cp == ':')
-	    return NULL;
+        if (*cp == '\\' || *cp == ':')
+            return NULL;
 
-	if (*cp == '.') {
-	    if (strlen (cp) > 1 && strlen (cp) <= 4)
-		return cp;
-	    else
-		return NULL;
-	}
+        if (*cp == '.') {
+            if (strlen (cp) > 1 && strlen (cp) <= 4)
+                return cp;
+            else
+                return NULL;
+        }
     }
 
     return NULL;
@@ -131,15 +139,15 @@ char *filespec_ext (char *filespec)
 
     while (--cp >= filespec) {
 
-	if (*cp == '/' || *cp == ':')
-	    return NULL;
+        if (*cp == '/' || *cp == ':')
+            return NULL;
 
-	if (*cp == '.') {
-	    if (strlen (cp) > 1 && strlen (cp) <= 4)
-		return cp;
-	    else
-		return NULL;
-	}
+        if (*cp == '.') {
+            if (strlen (cp) > 1 && strlen (cp) <= 4)
+                return cp;
+            else
+                return NULL;
+        }
     }
 
     return NULL;
@@ -156,7 +164,7 @@ char *filespec_ext (char *filespec)
 // returned.                                                                //
 //////////////////////////////////////////////////////////////////////////////
 
-#if defined(__GNUC__) && !defined(WIN32)
+#if (defined(__GNUC__) || defined(__sun)) && !defined(WIN32)
 
 char *filespec_path (char *filespec)
 {
@@ -165,24 +173,24 @@ char *filespec_path (char *filespec)
     struct stat fstats;
 
     if (cp == filespec || filespec_wild (filespec))
-	return NULL;
+        return NULL;
 
     if (*--cp == '/' || *cp == ':')
-	return filespec;
+        return filespec;
 
     if (*cp == '.' && cp == filespec)
-	return strcat (filespec, "/");
+        return strcat (filespec, "/");
 
     if (glob (filespec, GLOB_MARK|GLOB_NOSORT, NULL, &globs) == 0 &&
-	globs.gl_pathc > 0)
+        globs.gl_pathc > 0)
     {
-	/* test if the file is a directory */
-	if (stat(globs.gl_pathv[0], &fstats) == 0 && (fstats.st_mode & S_IFDIR)) {
-		filespec[0] = '\0';
-		strcat (filespec, globs.gl_pathv[0]);
-		globfree(&globs);
-		return filespec;
-	}
+        /* test if the file is a directory */
+        if (stat(globs.gl_pathv[0], &fstats) == 0 && (fstats.st_mode & S_IFDIR)) {
+                filespec[0] = '\0';
+                strcat (filespec, globs.gl_pathv[0]);
+                globfree(&globs);
+                return filespec;
+        }
     }
     globfree(&globs);
 
@@ -196,30 +204,30 @@ char *filespec_path (char *filespec)
     char *cp = filespec + strlen (filespec);
     LANGID langid = GetSystemDefaultLangID ();
     struct _finddata_t finddata;
-    int32_t file;
+    intptr_t file;
 
     if (cp == filespec || filespec_wild (filespec))
-	return NULL;
+        return NULL;
 
     --cp;
 
     if (langid == 0x411 && is_second_byte (filespec, cp))
-	--cp;
+        --cp;
 
     if (*cp == '\\' || *cp == ':')
-	return filespec;
+        return filespec;
 
     if (*cp == '.' && cp == filespec)
-	return strcat (filespec, "\\");
+        return strcat (filespec, "\\");
 
-    if ((file = _findfirst (filespec, &finddata)) != -1L &&
-	(finddata.attrib & _A_SUBDIR)) {
-	    _findclose (file);
-	    return strcat (filespec, "\\");
+    if ((file = _findfirst (filespec, &finddata)) != (intptr_t) -1 &&
+        (finddata.attrib & _A_SUBDIR)) {
+            _findclose (file);
+            return strcat (filespec, "\\");
     }
     if (file != -1L)
-	    _findclose(file);
-    
+            _findclose(file);
+
     return NULL;
 }
 
@@ -248,17 +256,17 @@ char *filespec_name (char *filespec)
     LANGID langid = GetSystemDefaultLangID ();
 
     while (--cp >= filespec) {
-	if (langid == 0x411 && is_second_byte (filespec, cp))
-	    --cp;
+        if (langid == 0x411 && is_second_byte (filespec, cp))
+            --cp;
 
-	if (*cp == '\\' || *cp == ':')
-	    break;
+        if (*cp == '\\' || *cp == ':')
+            break;
     }
 
     if (strlen (cp + 1))
-	return cp + 1;
+        return cp + 1;
     else
-	return NULL;
+        return NULL;
 }
 
 #else
@@ -268,13 +276,13 @@ char *filespec_name (char *filespec)
     char *cp = filespec + strlen (filespec);
 
     while (--cp >= filespec)
-	if (*cp == '/' || *cp == ':')
-	    break;
+        if (*cp == '/' || *cp == ':')
+            break;
 
     if (strlen (cp + 1))
-	return cp + 1;
+        return cp + 1;
     else
-	return NULL;
+        return NULL;
 }
 
 #endif
@@ -289,13 +297,13 @@ char *filespec_name (char *filespec)
 
 static int is_second_byte (char *filespec, char *pos)
 {
-    uchar *cp = pos;
+    unsigned char *cp = pos;
 
     while (cp > filespec && ((cp [-1] >= 0x81 && cp [-1] <= 0x9f) ||
                              (cp [-1] >= 0xe0 && cp [-1] <= 0xfc)))
-	cp--;
+        cp--;
 
-    return ((int) pos - (int) cp) & 1;
+    return (int)((unsigned char *)pos - cp) & 1;
 }
 
 #endif
@@ -317,36 +325,42 @@ char yna (void)
 
     while (1) {
 #if defined(WIN32)
-	key = getch ();
+        key = _getch ();
 #else
-	key = fgetc(stdin);
+        key = fgetc(stdin);
 #endif
-	if (key == 3) {
-	    fprintf (stderr, "^C\n");
-	    exit (1);
-	}
-	else if (key == '\r' || key == '\n') {
-	    if (choice) {
-		fprintf (stderr, "\r\n");
-		break;
-	    }
-	    else
-		fprintf (stderr, "%c", 7);
-	}
-	else if (key == 'Y' || key == 'y') {
-	    fprintf (stderr, "%c\b", key);
-	    choice = 'y';
-	}
-	else if (key == 'N' || key == 'n') {
-	    fprintf (stderr, "%c\b", key);
-	    choice = 'n';
-	}
-	else if (key == 'A' || key == 'a') {
-	    fprintf (stderr, "%c\b", key);
-	    choice = 'a';
-	}
-	else
-	    fprintf (stderr, "%c", 7);
+        if (key == 3) {
+            fprintf (stderr, "^C\n");
+            exit (1);
+        }
+        else if (key == '\r' || key == '\n') {
+            if (choice) {
+                fprintf (stderr, "\r\n");
+                break;
+            }
+            else
+                fprintf (stderr, "%c", 7);
+        }
+        else if (key == 'Y' || key == 'y') {
+#ifdef WIN32
+            fprintf (stderr, "%c\b", key);
+#endif
+            choice = 'y';
+        }
+        else if (key == 'N' || key == 'n') {
+#ifdef WIN32
+            fprintf (stderr, "%c\b", key);
+#endif
+            choice = 'n';
+        }
+        else if (key == 'A' || key == 'a') {
+#ifdef WIN32
+            fprintf (stderr, "%c\b", key);
+#endif
+            choice = 'a';
+        }
+        else
+            fprintf (stderr, "%c", 7);
     }
 
     waiting_input = 0;
@@ -361,7 +375,7 @@ char yna (void)
 // with printf strings and args.                                            //
 //////////////////////////////////////////////////////////////////////////////
 
-int debug_logging_mode = FALSE;
+extern int debug_logging_mode;
 
 #ifdef WIN32
 
@@ -373,46 +387,46 @@ int get_app_path (char *app_path)
     FARPROC ProcAdd;
 
     if (tried) {
-	if (result)
-	    strcpy (app_path, file_path);
+        if (result)
+            strcpy (app_path, file_path);
 
-	return result;
+        return result;
     }
 
     tried = TRUE;
     hinstLib = LoadLibrary ("shell32.dll");
 
     if (hinstLib) {
-	ProcAdd = GetProcAddress (hinstLib, "SHGetFolderPathA");
+        ProcAdd = GetProcAddress (hinstLib, "SHGetFolderPathA");
 
-	if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, CSIDL_APPDATA | 0x8000, NULL, 0, file_path)))
-	    result = TRUE;
+        if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, CSIDL_APPDATA | 0x8000, NULL, 0, file_path)))
+            result = TRUE;
 
-	if (!result) {
-	    ProcAdd = GetProcAddress (hinstLib, "SHGetSpecialFolderPathA");
+        if (!result) {
+            ProcAdd = GetProcAddress (hinstLib, "SHGetSpecialFolderPathA");
 
-	    if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, file_path, CSIDL_APPDATA, TRUE)))
-		result = TRUE;
-	}
+            if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, file_path, CSIDL_APPDATA, TRUE)))
+                result = TRUE;
+        }
 
-	FreeLibrary (hinstLib);
+        FreeLibrary (hinstLib);
     }
 
     if (!result) {
-	hinstLib = LoadLibrary ("shfolder.dll");
+        hinstLib = LoadLibrary ("shfolder.dll");
 
-	if (hinstLib) {
-	    ProcAdd = GetProcAddress (hinstLib, "SHGetFolderPathA");
+        if (hinstLib) {
+            ProcAdd = GetProcAddress (hinstLib, "SHGetFolderPathA");
 
-	    if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, CSIDL_APPDATA | 0x8000, NULL, 0, file_path)))
-		result = TRUE;
+            if (ProcAdd && SUCCEEDED ((ProcAdd) (NULL, CSIDL_APPDATA | 0x8000, NULL, 0, file_path)))
+                result = TRUE;
 
-	    FreeLibrary (hinstLib);
-	}
+            FreeLibrary (hinstLib);
+        }
     }
 
     if (result)
-	strcpy (app_path, file_path);
+        strcpy (app_path, file_path);
 
     return result;
 }
@@ -430,32 +444,32 @@ void error_line (char *error, ...)
     finish_line ();
 
     if (debug_logging_mode) {
-	char file_path [MAX_PATH];
-	FILE *error_log = NULL;
+        char file_path [MAX_PATH];
+        FILE *error_log = NULL;
 
-	if (get_app_path (file_path)) {
-	    strcat (file_path, "\\WavPack\\wavpack.log");
-	    error_log = fopen (file_path, "a+");
+        if (get_app_path (file_path)) {
+            strcat (file_path, "\\WavPack\\wavpack.log");
+            error_log = fopen (file_path, "a+");
 
-	    if (!error_log) {
-		get_app_path (file_path);
-		strcat (file_path, "\\WavPack");
+            if (!error_log) {
+                get_app_path (file_path);
+                strcat (file_path, "\\WavPack");
 
-		if (CreateDirectory (file_path, NULL)) {
-		    strcat (file_path, "\\wavpack.log");
-		    error_log = fopen (file_path, "a+");
-		}
-	    }
-	}
+                if (CreateDirectory (file_path, NULL)) {
+                    strcat (file_path, "\\wavpack.log");
+                    error_log = fopen (file_path, "a+");
+                }
+            }
+        }
 
-	if (!error_log)
-	    error_log = fopen ("c:\\wavpack.log", "a+");
+        if (!error_log)
+            error_log = fopen ("c:\\wavpack.log", "a+");
 
-	if (error_log) {
-	    fputs (error_msg + 1, error_log);
-	    fputc ('\n', error_log);
-	    fclose (error_log);
-	}
+        if (error_log) {
+            fputs (error_msg + 1, error_log);
+            fputc ('\n', error_log);
+            fclose (error_log);
+        }
     }
 }
 
@@ -482,7 +496,7 @@ void debug_line (char *error, ...)
     va_list argptr;
 
     if (!debug_logging_mode)
-	return;
+        return;
 
     error_msg [0] = '\r';
     va_start (argptr, error);
@@ -492,13 +506,13 @@ void debug_line (char *error, ...)
     finish_line ();
 
     if (debug_logging_mode) {
-	FILE *error_log = fopen ("c:\\wavpack.log", "a+");
+        FILE *error_log = fopen ("c:\\wavpack.log", "a+");
 
-	if (error_log) {
-	    fputs (error_msg + 1, error_log);
-	    fputc ('\n', error_log);
-	    fclose (error_log);
-	}
+        if (error_log) {
+            fputs (error_msg + 1, error_log);
+            fputc ('\n', error_log);
+            fclose (error_log);
+        }
     }
 }
 
@@ -511,19 +525,19 @@ static int break_flag;
 BOOL WINAPI ctrl_handler (DWORD ctrl)
 {
     if (ctrl == CTRL_C_EVENT) {
-	break_flag = TRUE;
-	return TRUE;
+        break_flag = TRUE;
+        return TRUE;
     }
 
     if (ctrl == CTRL_BREAK_EVENT) {
 
-	if (waiting_input) {
-	    return FALSE;
-	}
-	else {
-	    break_flag = TRUE;
-	    return TRUE;
-	}
+        if (waiting_input) {
+            return FALSE;
+        }
+        else {
+            break_flag = TRUE;
+            return TRUE;
+        }
     }
 
     return FALSE;
@@ -563,13 +577,13 @@ void finish_line (void)
     CONSOLE_SCREEN_BUFFER_INFO coninfo;
 
     if (hConIn && GetConsoleScreenBufferInfo (hConIn, &coninfo)) {
-	unsigned char spaces = coninfo.dwSize.X - coninfo.dwCursorPosition.X;
+        unsigned char spaces = coninfo.dwSize.X - coninfo.dwCursorPosition.X;
 
-	while (spaces--)
-	    fputc (' ', stderr);
+        while (spaces--)
+            fputc (' ', stderr);
     }
     else
-	fputc ('\n', stderr);
+        fputc ('\n', stderr);
 }
 #else
 //////////////////////////////////////////////////////////////////////////////
@@ -610,14 +624,14 @@ int DoReadFile (FILE *hFile, void *lpBuffer, uint32_t nNumberOfBytesToRead, uint
     *lpNumberOfBytesRead = 0;
 
     while (nNumberOfBytesToRead) {
-	bcount = fread ((uchar *) lpBuffer + *lpNumberOfBytesRead, 1, nNumberOfBytesToRead, hFile);
+        bcount = (uint32_t) fread ((unsigned char *) lpBuffer + *lpNumberOfBytesRead, 1, nNumberOfBytesToRead, hFile);
 
-	if (bcount) {
-	    *lpNumberOfBytesRead += bcount;
-	    nNumberOfBytesToRead -= bcount;
-	}
-	else
-	    break;
+        if (bcount) {
+            *lpNumberOfBytesRead += bcount;
+            nNumberOfBytesToRead -= bcount;
+        }
+        else
+            break;
     }
 
     return !ferror (hFile);
@@ -630,28 +644,44 @@ int DoWriteFile (FILE *hFile, void *lpBuffer, uint32_t nNumberOfBytesToWrite, ui
     *lpNumberOfBytesWritten = 0;
 
     while (nNumberOfBytesToWrite) {
-	bcount = fwrite ((uchar *) lpBuffer + *lpNumberOfBytesWritten, 1, nNumberOfBytesToWrite, hFile);
+        bcount = (uint32_t) fwrite ((unsigned char *) lpBuffer + *lpNumberOfBytesWritten, 1, nNumberOfBytesToWrite, hFile);
 
-	if (bcount) {
-	    *lpNumberOfBytesWritten += bcount;
-	    nNumberOfBytesToWrite -= bcount;
-	}
-	else
-	    break;
+        if (bcount) {
+            *lpNumberOfBytesWritten += bcount;
+            nNumberOfBytesToWrite -= bcount;
+        }
+        else
+            break;
     }
 
     return !ferror (hFile);
 }
 
-uint32_t DoGetFileSize (FILE *hFile)
+#ifdef WIN32
+
+int64_t DoGetFileSize (FILE *hFile)
+{
+    struct stat64 statbuf;
+
+    if (!hFile || fstat64 (fileno (hFile), &statbuf) || !(statbuf.st_mode & S_IFREG))
+        return 0;
+
+    return statbuf.st_size;
+}
+
+#else
+
+int64_t DoGetFileSize (FILE *hFile)
 {
     struct stat statbuf;
 
     if (!hFile || fstat (fileno (hFile), &statbuf) || !(statbuf.st_mode & S_IFREG))
-	return 0;
+        return 0;
 
-    return statbuf.st_size;
+    return (int64_t) statbuf.st_size;
 }
+
+#endif
 
 uint32_t DoGetFilePosition (FILE *hFile)
 {
@@ -684,11 +714,11 @@ int DoCloseHandle (FILE *hFile)
 int DoTruncateFile (FILE *hFile)
 {
     if (hFile) {
-	fflush (hFile);
+        fflush (hFile);
 #if defined(WIN32)
-	return !chsize (fileno (hFile), 0);
+        return !_chsize (_fileno (hFile), 0);
 #else
-	return !ftruncate(fileno (hFile), 0);
+        return !ftruncate(fileno (hFile), 0);
 #endif
     }
 
