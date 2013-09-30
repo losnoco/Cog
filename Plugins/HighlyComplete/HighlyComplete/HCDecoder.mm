@@ -734,8 +734,9 @@ struct gsf_sound_out : public GBASoundOut
     {
         GBASystem * system = ( GBASystem * ) emulatorCore;
         struct gsf_sound_out * sound_out = ( struct gsf_sound_out * ) emulatorExtra;
-        
-        CPULoop( system, 250000 );
+
+        if ( frames * 4 > sound_out->samples_written )
+            CPULoop( system, 250000 );
         
         UInt32 frames_rendered = sound_out->samples_written / 4;
         
