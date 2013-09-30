@@ -380,6 +380,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "HighlyAdvanced/HighlyAdvanced-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.6;
 				WRAPPER_EXTENSION = framework;
@@ -401,6 +402,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = EMU_COMPILE;
 				INFOPLIST_FILE = "HighlyAdvanced/HighlyAdvanced-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.6;
 				WRAPPER_EXTENSION = framework;
