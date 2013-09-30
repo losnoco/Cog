@@ -9,7 +9,9 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
-#import "WavPack/wputils.h"
+#define ChunkHeader WavPackChunkHeader
+
+#import <WavPack/wavpack.h>
 
 @interface WavPackDecoder : NSObject <CogDecoder>
 {

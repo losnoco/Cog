@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83DD1DD017FA038A00249519 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCD17FA038A00249519 /* utils.h */; };
+		83DD1DD017FA038A00249519 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCD17FA038A00249519 /* utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83DD1DD117FA038A00249519 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCE17FA038A00249519 /* wavpack_local.h */; };
 		83DD1DD217FA038A00249519 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCF17FA038A00249519 /* wavpack_version.h */; };
 		83DD1DD417FA03F900249519 /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DD1DD317FA03F900249519 /* tags.c */; };
@@ -169,8 +169,8 @@
 				8E7574B309F31BB90080F1EE /* md5.h in Headers */,
 				83DD1DD117FA038A00249519 /* wavpack_local.h in Headers */,
 				8E7574B409F31BB90080F1EE /* unpack3.h in Headers */,
-				83DD1DD217FA038A00249519 /* wavpack_version.h in Headers */,
 				83DD1DD017FA038A00249519 /* utils.h in Headers */,
+				83DD1DD217FA038A00249519 /* wavpack_version.h in Headers */,
 				8E7574B509F31BB90080F1EE /* wavpack.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
