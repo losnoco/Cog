@@ -43,12 +43,6 @@ long readCallback(char *ptr, long n, void *f)
 	return [[decoder source] read:ptr amount:n];
 }
 
-void closeCallback(void *f)
-{
-//	DumbDecoder *decoder = (DumbDecoder *)f;
-	NSLog(@"CLOSE"); //I DO NOTHING
-}
-
 int seekCallback(void *f, long n)
 {
     DumbDecoder *decoder = (DumbDecoder *)f;
@@ -76,15 +70,27 @@ long getsizeCallback(void *f)
     return size;
 }
 
+void oneTimeInit()
+{
+    static bool initialized = false;
+    if (!initialized)
+    {
+        
+    }
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
 	[self setSource:s];
 	
+	DUMBFILE *df;
+	DUMBFILE_SYSTEM	dfs;
+
 	dfs.open = NULL;
 	dfs.skip = skipCallback;
 	dfs.getc = getCharCallback;
 	dfs.getnc = readCallback;
-	dfs.close = closeCallback;
+	dfs.close = NULL;
     dfs.seek = seekCallback;
     dfs.get_size = getsizeCallback;
 
@@ -102,8 +108,10 @@ long getsizeCallback(void *f)
 	if (!duh)
 	{
 		NSLog(@"Failed to create duh");
+        dumbfile_close(df);
 		return NO;
 	}
+    dumbfile_close(df);
 	
 	length = duh_get_length(duh);
 
@@ -177,10 +185,6 @@ long getsizeCallback(void *f)
 	if (duh) {
 		unload_duh(duh);
 		duh = NULL;
-	}
-	if (df) {
-		dumbfile_close(df);
-		df = NULL;
 	}
 }
 
