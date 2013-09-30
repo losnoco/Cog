@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{01bc00bc-020b-4814-b54f-ac49730e2d00}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{17290422-dd57-475a-a6e4-acc55635519c}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="bios.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="iop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ioptimer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="psx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="r3000.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="r3000asm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="r3000dis.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spucore.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vfs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mkhebios.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bios.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ioptimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="psx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="r3000.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="r3000asm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="r3000dis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spucore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="emuconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mkhebios.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mkhebios_overlays.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mkhebios_scripts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

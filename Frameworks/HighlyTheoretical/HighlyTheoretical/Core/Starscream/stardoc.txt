@@ -1,0 +1,1056 @@
+-----------------------------------------------------------------------------
+Starscream 680x0 emulation library                              version 0.26c
+Copyright 1997, 1998, 1999 Neill Corlett
+Modified by Stéphane Dallongeville
+-----------------------------------------------------------------------------
+
+"Pathetic flesh creatures... can't you see we're INVINCIBLE?  Come,
+Decepticons, follow me to victory!"
+
+
+How to contact Neill Corlett:
+email: neill@neillcorlett.com
+www:   www.neillcorlett.com
+
+
+Contents
+--------
+
+ 0.  Terms of Use
+
+ 1.  What's New
+
+ 2.  Getting Started
+     2.1.  What You Will Need
+     2.2.  How to Compile
+
+ 3.  The Starscream Interface
+     3.1.  Function Reference
+     3.2.  Contexts
+     3.3.  Address Spaces
+     3.4.  Executing Code
+     3.5.  Read and Write Handlers
+     3.6.  The Odometer
+     3.7.  Interrupts
+     3.8.  Emulating More Than One CPU
+     3.9.  RESET and BKPT Instructions
+     3.10. Using the Interactive Debugger
+     3.11. Emulating the 68010
+
+ 4.  Tricks of the Trade
+     4.1.  Inter-CPU Communication
+     4.2.  Other Helpful Tips
+     4.3.  Pitfalls
+     4.4.  Ways to Abuse Starscream
+     4.5.  Emulating Other 68K-Series CPUs
+
+ 5.  Known Bugs
+
+ 6.  Credits
+
+
+-----------------------------------------------------------------------------
+0.  Terms of Use
+-----------------------------------------------------------------------------
+
+"Starscream" refers to the following files:
+*  STAR.C
+*  STARCPU.H
+*  CPUDEBUG.C
+*  CPUDEBUG.H
+*  STARDOC.TXT
+*  any object file or executable compiled from the above
+*  any source code generated from STAR.C, or object file assembled from such
+   code
+
+Starscream may be distributed freely in unmodified form, as long as this
+documentation is included.
+
+No money, goods, or services may be charged or solicited for Starscream, or
+any emulator or other program which includes Starscream, in whole or in part.
+Using Starscream in a shareware or commercial application is forbidden.
+Contact Neill Corlett if you'd like to license Starscream for commercial use.
+
+Any program which uses Starscream must include the following credit text, in
+its documentation or in the program itself:
+
+"Starscream 680x0 emulation library by Neill Corlett"
+
+
+-----------------------------------------------------------------------------
+1.  What's New
+-----------------------------------------------------------------------------
+
+Version 0.26c:
+*  Shift bits instructions fixed.
+
+Version 0.26b:
+*  IO DWord Write bug fixed.
+*  Interrupt processing bug fixed.
+   (all lines added are followed by "// Stef Fix (Gens)" )
+
+Version 0.26a:
+*  Egregious GetContext/SetContext bug fixed.
+*  Minor tweaking was done to the alignment rules.
+
+Version 0.26:
+*  First publicly redistributable version.
+*  Added the following exceptions:
+      Trace
+      Format Error (68010+)
+*  Added a Double Fault mechanism.  Currently the only thing that can cause
+   this is s68000reset().
+*  The memory map interface has changed to support different function codes /
+   address spaces (see section 3.3).
+*  Many improvements have been made to interrupt handling (see section 3.7).
+*  The unused bits of PC are now handled and preserved properly.
+*  Added fetch region caching.  Jumps within the same program region are
+   now faster.
+*  Added a user-definable BKPT instruction handler (68010+).
+*  All Illegal Instruction exceptions are now emulated.  The -illegal and
+   -noillegal options have been removed.
+*  Some features were added to the interactive debugger (see section 3.10).
+*  A few experimental 68020-related functions and variables have been added.
+   Ignore them for now.
+
+Version 0.25 and earlier:
+Ask if interested.
+
+
+-----------------------------------------------------------------------------
+2.  Getting Started
+-----------------------------------------------------------------------------
+
+2.1.  What You Will Need
+------------------------
+
+*  A 32-bit C or C++ compiler.  So far, the following compilers have been
+   proven to work:
+   -  DJGPP 2.01
+   -  Watcom 10.6
+   -  GCC, running under Linux
+   -  Microsoft Visual C++
+
+*  Netwide Assembler (NASM) version 0.95 or higher.  NASM is freeware, with
+   publicly available source code, and available on a multitude of x86-based
+   platforms.  It's available from Programmer's Heaven:
+   http://www.programmersheaven.com/
+
+*  Basic knowledge about the 680x0.  You don't (theoretically) need to know
+   any 680x0 assembly, but it helps.  A lot.
+
+   You can get a copy of the M68000 Family Programmer's Reference Manual (in
+   Adobe Acrobat .PDF format) from this web page:
+   http://www.mot.com/SPS/HPESD/prod/0X0/frames/68K.html
+
+
+2.2.  How to Compile
+--------------------
+
+Step 1
+   Generate the Starscream "code builder" executable by compiling STAR.C.
+   (for example:  gcc star.c -o star)
+
+Step 2
+   Generate the CPU source code.  Run the code builder with the following
+   command line:
+
+      star source.asm [options]
+
+   Replace "source.asm" with the source code filename of your choice.
+
+   Options that you might need:
+
+      -regcall          Use register calling conventions.
+      -stackcall        Use stack-based calling conventions (default).
+
+      -hog              Enable Hog mode.  This inlines the fetch-decode-
+                        execute loop, resulting in a decent speed increase,
+                        at the cost of about 130K of executable size.
+      -nohog            Disable Hog mode (default).
+
+      -cputype <type>   Specify the CPU type, 68000 or 68010 (default=68000).
+
+   Options that you should never need (but they're here anyway):
+
+      -addressbits n    Use n-bit addresses.  The default value depends on
+                        the CPU type (currently it's just 24).
+
+                        "-addressbits 32" might allow some 68020/68070 code
+                        to work.  No guarantees, though.
+
+      -name <name>      Appends the string <name> to all identifiers.  This
+                        overrides the default of s68000 or s68010 (depending
+                        on the CPU type).
+
+Step 3
+   Assemble the CPU source code.  Refer to the NASM documentation for how to
+   do this.
+
+   If you run out of memory, try using NASMW.EXE instead of NASM.EXE (note,
+   however, that the NASMW.EXE executable from v0.97 is somewhat unstable).
+   Better yet, just recompile NASM yourself.  Worked for me.
+
+   To generate a COFF object for DJGPP or GNUWin32, try this:
+
+      nasm -f coff source.asm
+
+   or to generate a Win32 object for Watcom or Visual C++:
+
+      nasm -f win32 source.asm
+
+Step 4
+   Strip your executable when you're done!  Starscream spews out symbols all
+   over the place (over 7000 of them), and you can save a ton of space by
+   stripping them once you're finished debugging.
+
+   For GCC, this means use the -s option in the linking phase.
+
+
+-----------------------------------------------------------------------------
+3.  The Starscream Interface
+-----------------------------------------------------------------------------
+
+3.1.  Function Reference
+------------------------
+
+The following is a brief summary of the functions declared in STARCPU.H.  For
+more information on a particular function, read the associated section.
+
+  int s68000init(void);                           (section 3.4)
+     Initializes Starscream.  Always returns 0.
+
+  int s68000reset(void);                          (section 3.4)
+     Resets the current CPU.
+     Return value:
+        0     Success
+        1     Failure:  Reset vector couldn't be fetched
+       -1     Failure:  Double fault
+
+  unsigned s68000exec(int n);                     (section 3.4)
+     Executes n cycles' worth of instructions on the current CPU.
+     Return value:
+        = 0x80000000   Success
+        = 0x80000001   Out of bounds
+        = 0x80000002   Unsupported stack frame (68010+)
+        = 0xFFFFFFFF   Double fault
+        < 0x80000000   Invalid instruction; the value returned is the address
+                       of the instruction
+
+  int s68000interrupt(int level, int vector);     (section 3.7)
+     Generates a hardware interrupt on the current CPU, with a given priority
+     level and vector number.  The interrupt is queued for processing as soon
+     as possible.
+     Valid levels: 1-7
+     Valid vectors:
+       0-255  Deliberately vectored interrupt
+       -1     Auto-vectored interrupt
+       -2     Spurious interrupt
+     Return value:
+        0     The interrupt was queued successfully.
+        1     The interrupt was not queued, because a previously queued
+              interrupt exists at the same level.
+        2     The interrupt was not queued, because either "level" or "vector"
+              were invalid.
+
+  void s68000flushInterrupts(void);               (section 3.7)
+     Check if there are any unmasked interrupts pending, and if so, process
+     them.
+
+  int s68000GetContextSize(void);
+     Returns the size of the context structure.  Useful for verifying that
+     the context struct is packed correctly, i.e.:
+     ASSERT(s68000GetContextSize() == sizeof(struct S68000CONTEXT));
+
+  void s68000GetContext(void *context);           (section 3.2)
+     Copies the current context into another context structure.
+
+  void s68000SetContext(void *context);           (section 3.2)
+     Copies a context structure into the current context.
+
+  int s68000fetch(unsigned address);
+     Fetches the word at the specified address, using the memoryfetch array.
+     Returns -1 if the address is out of bounds.
+
+  unsigned s68000readOdometer(void);              (section 3.6)
+     Returns the value of the odometer for the current CPU.  Works anywhere,
+     even from within memory read/write, RESET, or BKPT handlers.
+
+  unsigned s68000tripOdometer(void);              (section 3.6)
+     Returns the value of the odometer for the current CPU, and resets it to
+     zero.  Works anywhere.
+
+  unsigned s68000controlOdometer(int n);          (section 3.6)
+     Returns the value of the odometer for the current CPU.  If n!=0, it also
+     resets the odometer to zero.  Works anywhere.
+
+  void s68000releaseTimeslice(void);              (section 3.5)
+     When called from inside a memory read/write, RESET, or BKPT handler,
+     this causes s68000exec to end prematurely.  The early exit is reflected
+     in the odometer.
+
+  unsigned s68000readPC(void);
+     Returns the current program counter.  Works anywhere.
+
+
+3.2.  Contexts
+--------------
+
+A "context" is a memory structure which holds all the information needed to
+emulate a single CPU.  Starscream defines a 68000 context as follows:
+
+   struct S68000CONTEXT {
+      struct STARSCREAM_PROGRAMREGION *fetch;
+      struct STARSCREAM_DATAREGION    *readbyte;
+      struct STARSCREAM_DATAREGION    *readword;
+      struct STARSCREAM_DATAREGION    *writebyte;
+      struct STARSCREAM_DATAREGION    *writeword;
+      struct STARSCREAM_PROGRAMREGION *s_fetch;
+      struct STARSCREAM_DATAREGION    *s_readbyte;
+      struct STARSCREAM_DATAREGION    *s_readword;
+      struct STARSCREAM_DATAREGION    *s_writebyte;
+      struct STARSCREAM_DATAREGION    *s_writeword;
+      struct STARSCREAM_PROGRAMREGION *u_fetch;
+      struct STARSCREAM_DATAREGION    *u_readbyte;
+      struct STARSCREAM_DATAREGION    *u_readword;
+      struct STARSCREAM_DATAREGION    *u_writebyte;
+      struct STARSCREAM_DATAREGION    *u_writeword;
+      void         (*resethandler)(void);
+      unsigned       dreg[8];
+      unsigned       areg[8];
+      unsigned       asp;
+      unsigned       pc;
+      unsigned       odometer;
+      unsigned char  interrupts[8];
+      unsigned short sr;
+   };
+
+There is a built-in context, called s68000context, which contains information
+about the current CPU.  If you're only emulating one 68000, then
+s68000context is the only context you need.  On the other hand, if you're
+emulating more than one 68000, you'll need to define your own context for
+each one.
+
+Here is a detailed description of the contents of a S68000CONTEXT structure:
+
+*  "s_fetch", "s_readbyte", "s_readword", "s_writebyte", and "s_writeword"
+   are used to define the supervisor address space.  "u_fetch", etc. are
+   used to define the user address space.  (see section 3.3)
+
+*  "resethandler" points to your reset handler routine.  (see section 3.9)
+
+*  "pc" is the program counter.
+
+*  "dreg" holds the eight data registers, d0-d7, in order.
+
+*  "areg" holds the eight address registers, a0-a7, in order.  In supervisor
+   mode, areg[7] is the interrupt stack pointer.  Otherwise, it's the user
+   stack pointer.
+
+*  "asp" is whatever stack register areg[7] isn't.  In supervisor mode, asp
+   is the user stack pointer.  Othewise, it's the supervisor stack pointer.
+
+*  "odometer" holds the number of cycles executed so far.  It's incremented
+   as necessary on calls to s68000exec or s68000flushInterrupts.
+
+*  "interrupts" is an array containing information about pending interrupts.
+   (see section 3.7)
+
+*  "sr" is the status register.  The lower 8 bits are the condition code
+   register.
+
+
+3.3.  Address Spaces
+--------------------
+
+The 68000 communicates with other devices via a number of address spaces.
+There are different address spaces for program code and data, as well as
+different address spaces for Supervisor and User modes.  Most 68000-based
+architectures use the same address space for all these, but the distinction
+is there nonetheless.
+
+Starscream emulates program address spaces by translating the 68K address
+into a native host address, and fetching data directly from host memory (from
+an array of words with native byte order).  A program address space is
+defined using an array of STARSCREAM_PROGRAMREGION structures:
+
+   struct STARSCREAM_PROGRAMREGION {
+      unsigned lowaddr;
+      unsigned highaddr;
+      unsigned offset;
+   };
+
+Each structure contains the range of addresses in a program region, and an
+offset which is added to the 68K address to obtain the equivalent host
+address.
+
+IMPORTANT NOTE:  Program regions must be stored as an array of words with
+native byte order.  Since Intel's byte order is different than Motorola's,
+this means every other byte must be swapped.
+
+The s68000context fields "s_fetch" and "u_fetch" should be set to point to
+arrays of STARSCREAM_PROGRAMREGION structures in order to define the
+Supervisor Program and User Program address spaces, respectively.  Each array
+may contain any number of entries, and is terminated by an entry containing
+-1 for both lowaddr and highaddr, and NULL for the offset.
+
+Starscream emulates data address spaces in a completely different way.  Since
+the 68000 has no dedicated I/O bus, device interfaces (video/sound chips,
+input devices, etc.) are often mapped directly into a data address space.
+This raises some complex issues; for example, writing to an emulated serial
+port address might require that an extra routine be called, in order to pass
+the data through a real serial port, append it to a log file, etc.  To this
+end, Starscream defines data address spaces using an array of
+STARSCREAM_DATAREGION structures:
+
+   struct STARSCREAM_DATAREGION {
+      unsigned lowaddr;
+      unsigned highaddr;
+      void *memorycall;
+      void *userdata;
+   };
+
+Each structure contains the low and high addresses in a region, as before.
+Rather than simply adding a constant offset to translate a 68K address into
+a native one, Starscream offers two different ways to handle accesses to a
+data region:
+
+   1.  Call a user-defined handler routine whenever this region is accessed.
+
+          unsigned read_handler(unsigned address);
+          void write_handler(unsigned address, unsigned data);
+
+          memorycall = pointer to user handler
+          userdata   = unused
+
+       (For some important information about read and write handlers, refer
+       to section 3.5.)
+
+   2.  Handle accesses internally by reading/writing to an area of native
+       memory.  Don't trap anything.  This is ideal for a simple RAM or ROM
+       area as it requires the least processing.
+
+          memorycall = NULL
+          userdata   = pointer to native memory area where reads or writes
+                       will occur
+
+       NOTE: The native memory area must be byte swapped, same as program
+             regions are.
+
+The s68000context fields "s_readbyte", "u_readbyte", "s_writebyte", etc.
+should be set to point to arrays of STARSCREAM_DATAREGION structures in order
+to define the Supervisor Data and User Data address spaces.  Each array may
+contain any number of entries, and is terminated by an entry containing -1
+for lowaddr and highaddr, and NULL for memorycall and userdata.
+
+And now, for an example of address space definition.  Consider the following
+make-believe memory map:
+
+ 000000-03FFFF:   Program ROM
+ 300000-307FFF:   Main RAM
+ 400000-407FFF:   Extra RAM
+ 800000-81FFFF:   Video RAM
+ A00000-A00007:   Sound chip
+
+Assume that:
+ *  Program ROM is in an array called program_rom
+ *  Main RAM is in an array called main_ram
+ *  Extra RAM is in an array called extra_ram
+ *  Video RAM is in an array called video_ram
+ *  You've set up two routines to write to the sound chip:
+      void soundchip_writebyte(unsigned address, unsigned data);
+      void soundchip_writeword(unsigned address, unsigned data);
+
+The first step is to build the program address space.  Program code is
+probably only going to be fetched from Program ROM, Main RAM, or Extra RAM.
+The address space would thus be defined:
+
+   struct STARSCREAM_PROGRAMREGION pretend_programfetch[] = {
+      {0x000000, 0x03FFFF, (unsigned)program_rom - 0x000000},
+      {0x300000, 0x307FFF, (unsigned)main_ram - 0x300000},
+      {0x400000, 0x407FFF, (unsigned)extra_ram - 0x400000},
+      {-1, -1, NULL}
+   };
+
+The last entry must be {-1, -1, NULL}.
+
+The next step is to build the data address space.  This is accomplished with
+four arrays of STARSCREAM_DATAREGION structures:  one for byte reads, word
+reads, byte writes, and word writes.  For example:
+
+   struct STARSCREAM_DATAREGION pretend_readbyte[] = {
+      {0x000000, 0x03FFFF, NULL, program_rom},
+      {0x300000, 0x307FFF, NULL, main_ram},
+      {0x400000, 0x407FFF, NULL, extra_ram},
+      {0x800000, 0x81FFFF, NULL, video_ram},
+      {-1, -1, NULL, NULL}
+   };
+
+   struct STARSCREAM_DATAREGION pretend_readword[] = {
+      {0x000000, 0x03FFFF, NULL, program_rom},
+      {0x300000, 0x307FFF, NULL, main_ram},
+      {0x400000, 0x407FFF, NULL, extra_ram},
+      {0x800000, 0x81FFFF, NULL, video_ram},
+      {-1, -1, NULL, NULL}
+   };
+
+   struct STARSCREAM_DATAREGION pretend_writebyte[] = {
+      {0x300000, 0x307FFF, NULL, main_ram},
+      {0x400000, 0x407FFF, NULL, extra_ram},
+      {0x800000, 0x81FFFF, NULL, video_ram},
+      {0xA00000, 0xA00007, soundchip_writebyte, NULL},
+      {-1, -1, NULL, NULL}
+   };
+
+   struct STARSCREAM_DATAREGION pretend_writeword[] = {
+      {0x300000, 0x307FFF, NULL, main_ram},
+      {0x400000, 0x407FFF, NULL, extra_ram},
+      {0x800000, 0x81FFFF, NULL, video_ram},
+      {0xA00000, 0xA00007, soundchip_writeword, NULL},
+      {-1, -1, NULL, NULL}
+   };
+
+The last entry of each array must be {-1, -1, NULL, NULL}.
+
+The above structures take advantage of Starscream's internal handling for the
+Program ROM, Main RAM, Extra RAM, and Video RAM, and use the custom handler
+when writing to the sound chip.
+
+Now that you've defined your address spaces, you need to tie it in with the
+context (since each CPU can have different address spaces).  This is done by
+setting the address space pointers (s_fetch, u_fetch, etc.) to point to your
+addres space definitions.
+
+   s68000context.s_fetch = pretend_programfetch;
+   s68000context.u_fetch = pretend_programfetch;
+
+   s68000context.s_readbyte  = pretend_readbyte;
+   s68000context.u_readbyte  = pretend_readbyte;
+   s68000context.s_readword  = pretend_readword;
+   s68000context.u_readword  = pretend_readword;
+   s68000context.s_writebyte = pretend_writebyte;
+   s68000context.u_writebyte = pretend_writebyte;
+   s68000context.s_writeword = pretend_writeword;
+   s68000context.u_writeword = pretend_writeword;
+
+In this example, the Supervisor and User address spaces are set up to point
+to the same definitions.  For most 68000-based architectures, this is
+correct.
+
+If you are dynamically allocating memory for your emulated RAM or ROM areas
+(using malloc() or a similar function), you will have to set up the address
+space definitions at run time.  This is left as a trivial exercise for the
+reader.
+
+Veteran users of the UAE 680x0 core might wonder why there is no "readlong"
+or "writelong".  This is because the real 68000 has a 16-bit data bus, and
+therefore breaks up each 32-bit access into two 16-bit accesses.  Using
+separate handlers for 32-bit accesses is cumbersome and unnecessary.  For
+speed considerations, Starscream's internal memory read/write handlers access
+32 bits at a time wherever possible (using the readword/writeword map).
+
+
+3.4.  Executing Code
+--------------------
+
+Before you execute any code, you must call s68000init().  It only needs to
+be called one time.
+
+Once that's done, and you've set up the memory map, call s68000reset() to
+reset the CPU.  If everything works, it should read the initial stack pointer
+from address 0x000000, and the initial program counter from 0x000004, using
+the Supervisor Program address space.  (You can verify this by examining
+s68000context.areg[7] and s68000context.pc.)
+
+At this point, you can call the interactive debugger to try disassembling or
+stepping through code, and to make sure everything is in the right place.
+(see section 3.10 for details)
+
+To execute 68000 code, call s68000exec(n), where n is the number of cycles.
+s68000exec will return one of the following:
+
+ = 0x80000000:  Success.
+ = 0x80000001:  Out of range - the program "went off into the weeds".
+                More specifically, the program jumped to an address which was
+                not defined in the s_fetch or u_fetch array.
+ = 0x80000002:  Unsupported stack frame (68010+).  This happens when an RTE
+                instruction encounters a stack frame format that hasn't been
+                implemented (see section 5).
+ = 0xFFFFFFFF:  Double fault.  The CPU is dead and will stay dead until it
+                gets reset again.
+ < 0x80000000:  Invalid instruction.  The value returned is the address of
+                the instruction.  For 32-bit addresses, the highest bit is
+                cut off (s68000context.pc contains the complete address,
+                however).
+
+If you get a return code of 0x80000001, 0x80000002, or 0xFFFFFFFF, then the
+68000 CPU will be in an unstable state and should be reset.
+
+The real 68000 generates an exception for illegal instructions.  As of v0.26,
+this exception is always emulated.  You will only get a return code less than
+0x80000000 in an unexpected circumstance; upon encountering an invalid
+instruction that isn't supposed to be.  For example, a RESET instruction will
+cause this if the user-defined RESET handler is null (see section 3.9 for
+details on RESET handlers).
+
+Whenever you call s68000exec, it increments the odometer (see section 3.6).
+
+
+3.5.  Read and Write Handlers
+-----------------------------
+
+Memory read and write handlers (as described in section 3.3) are a special
+case, as they involve Starscream calling your code instead of the other way
+around.  Since Starscream is not re-entrant, there are some rules which all
+read and write handlers must follow.
+
+1.  They must not call any of the following routines:
+      s68000reset           s68000exec
+      s68000SetContext      s68000GetContext
+
+2.  They must not attempt to read or modify s68000context directly.  All
+    data in s68000context is undefined.
+
+The primary purpose of a read handler is to return data, and the primary
+purpose of a write handler is to take data and store it somewhere.  However,
+read and write handlers do have some control over the emulation process,
+beyond the data that they send or receive:
+
+*  You can call s68000interrupt() as much as you like (see section 3.7).
+
+*  You can cause s68000exec to quit early, by calling the
+   s68000releaseTimeslice() function.  This is useful if you need to transfer
+   control over to another emulated CPU.
+
+*  You can read and/or clear the odometer, with some specialized functions
+   (see section 3.6).
+
+*  You can read the program counter with s68000readPC(), but it probably
+   won't be located exactly at the beginning of the instruction.
+
+
+3.6.  The Odometer
+------------------
+
+Every context contains an integer field called "odometer".  Whenever you
+call s68000exec, the number of elapsed clock cycles is added to
+s68000context.odometer.
+
+Note:  When calling s68000exec, the number of elapsed cycles is not
+necessarily the same as the number of cycles you specify.  Imagine this
+scenario:  You call s68000exec(100).  The next instruction in the code stream
+is...
+
+   movem.l ($100000).L,d0-d7/a0-a7
+
+s68000exec would quit after that one instruction, returning the success code,
+80000000h (assuming nothing else went wrong), and s68000context.odometer
+would be incremented by 148.
+
+You can freely change the odometer between calls to s68000exec, but not from
+within read/write handlers (as it's part of the context).  If you need to use
+the odometer from a read or write handler, there are some specialized
+functions for that:
+
+s68000readOdometer()     - Returns the value of the odometer.
+s68000tripOdometer()     - Returns the value of the odometer, and sets it to
+                           zero in the process.
+
+s68000controlOdometer(n) - If n==0, it works just like s68000readOdometer.
+                           If n!=0, it works just like s68000tripOdometer.
+                           (We have Neil Bradley to thank for this gem...)
+
+
+3.7.  Interrupts
+----------------
+
+Hardware interrupts can be generated at any time, including within read/write
+handlers, by calling s68000interrupt(l, v) where l is the interrupt priority
+level, and v is the vector number.  Levels 1-7 are valid; vector numbers
+0-255 are valid.  Vector number -1 means "auto-vectored".  -2 will generate a
+Spurious Interrupt.
+
+The interrupt in question will be made pending until the Processor Priority
+Level allows it to be processed.  You can tell which interrupt levels are
+pending, if any, by examining s68000context.interrupts[0].  Bits 1-7
+correspond to interrupt level 1-7; bit 0 is set if the CPU is in a stopped
+state (waiting for an interrupt).  The vector numbers are stored in
+s68000context.interrupts[n] where n is the interrupt level.
+
+s68000interrupt returns one of the following values:
+
+   0    The interrupt was added successfully.
+   1    The interrupt was not added, because there was already a pending
+        interrupt at the same level.
+   2    The interrupt was not added, because the parameters were invalid.
+
+Pending interrupts are checked at the following times:
+
+*  s68000exec checks for pending interrupts before executing any code.  The
+   cycles taken by interrupt processing are subtracted from the total "cycle
+   budget", though s68000exec is still guaranteed to execute at least one
+   instruction.
+
+*  Interrupts generated from within a read/write, RESET, or BKPT handler will
+   be checked when the current instruction is finished.
+
+*  You can force a pending interrupt check by calling s68000flushInterrupts.
+   This has no effect if called from within a read/write, RESET, or BKPT
+   handler.
+
+
+3.8.  Emulating More Than One CPU
+---------------------------------
+
+If you want to emulate multiple 68000s, you'll need to create a context and a
+memory map for each one (see sections 3.2 and 3.3).  For example:
+
+   struct S68000CONTEXT myContext[number_of_68000s];
+
+When you use your own contexts, it's a good idea to initialize all the bytes
+in the new contexts to zero:
+
+   memset (myContext, 0, sizeof(myContext));
+
+To use one of your own contexts, you must follow these three steps:
+
+1.  Copy your context into s68000context:
+    s68000SetContext(myContext);
+
+2.  Use a function which reads or modifies the context - s68000exec,
+    s68000reset, s68000interrupt, etc.
+
+3.  Copy s68000context back into your context:
+    s68000GetContext(myContext);
+
+Expanding on the example in section 3.2 - say you're emulating two 68000s,
+and you've set up two contexts for them:
+
+   struct S68000CONTEXT myContext[2];
+
+To reset both CPUs, you'd do this:
+
+   for(i = 0; i < 2; i++) {
+      s68000SetContext(&myContext[i]);
+      s68000reset();
+      s68000GetContext(&myContext[i]);
+   }
+
+An emulation loop involving both CPUs might look something like this.  (Note:
+This is a CRUDE example.)
+
+   while(!done) {
+      /* Emulate primary 68000 */
+      s68000SetContext(&myContext[0]);
+      s68000exec(100000);
+      s68000GetContext(&myContext[0]);
+
+      /* Emulate secondary 68000 */
+      s68000SetContext(&myContext[1]);
+      s68000exec(100000);
+      s68000GetContext(&myContext[1]);
+   }
+
+The overhead of copying CPU contexts is compensated by the fact that you can
+emulate the CPUs in large timeslices.
+
+
+3.9.  RESET and BKPT Instructions
+---------------------------------
+
+Starscream can call a user-defined function to emulate the RESET instruction,
+and to notify when a BKPT instruction is executed.  The handlers must take no
+arguments, and return void.  For example:
+
+   void my_reset_handler(void) {
+      /* Reset some hardware */
+   }
+
+Note:  RESET and BKPT handlers must follow the same rules as memory
+read/write handlers (see section 3.5).
+
+To register a handler function, set the "resethandler" and/or "bkpthandler"
+field of the appropriate context to point to the function, i.e.:
+
+   s68000context.resethandler = my_reset_handler;
+
+You can also set "resethandler" or "bkpthandler" to NULL, in which case:
+
+*  A RESET instruction will cause an Invalid Instruction case.  s68000exec
+   will halt and return its address.
+
+*  A BKPT instruction will behave normally, but without notification.
+
+Calling s68000readPC() during a RESET or BKPT handler will return the address
+directly after the RESET or BKPT instruction.  So, to determine the exact
+BKPT opcode, you can do this:
+
+   opcode = s68000fetch(s68000readPC() - 2);
+
+
+3.10.  Using the Interactive Debugger
+-------------------------------------
+
+Included in the Starscream package is an interactive 68000 cross-debugger and
+built in disassembler, with an interface similar to the MS-DOS DEBUG utility.
+CPUDEBUG.C contains everything needed for the debugger.  If you don't need
+it, you can leave out CPUDEBUG.C and CPUDEBUG.H altogether.
+
+Before using the debugger, make sure to set up your memory map, and call
+s68000init() and s68000reset().
+
+To start the debugger, call the cpudebug_interactive routine, which is
+defined in CPUDEBUG.H as:
+
+   int cpudebug_interactive(
+      int cpun,
+      void (*put)(const char*),
+      void (*get)(char*, int),
+      void (*execstep)(void),
+      void (*dump)(void)
+   );
+
+"put", "get", "execstep", and "dump" are all optional - you can pass NULL
+values for any or all of them.  Their purpose is explained below.
+
+If you're only emulating one CPU, use a value of 1 for "cpun", and keep
+calling cpudebug_interactive until the return value is -1.
+
+If you're debugging more than one CPU, assign an ID number to each (starting
+at 1), including any non-68000 CPUs.  Switch to the context of the CPU you
+want to debug, and then call cpudebug_interactive with the appropriate ID
+number in "cpun".  Then, take one of the following actions depending on the
+return value:
+
+ -1   Quit
+  0   Switch to the next CPU in your list (ID + 1), wrap around if necessary,
+      and call cpudebug_interactive again.  Or, if the CPU in question is not
+      a 680x0, then use whatever debugger is appropriate.
+  N   Switch to CPU #N.  If N is invalid, don't switch.  In either case, call
+      the appropriate debugger.
+
+While you're at the debug prompt, enter "?" for a list of commands.
+
+Normally, the interactive debugger uses stdin and stdout for its input and
+output.  If you need to use another source of input or output, you can write
+custom replacement functions for puts() and gets(), and pass their addresses
+via "put" and "get".
+
+Normally, the debugger calls s68000exec() directly to step through each
+instruction.  If your emulator manages its own timing, you can write a custom
+replacement single-step function, and pass its address via "execstep".
+
+The debugger command 'h' (Hardware dump) will call the function specified by
+"dump", if it exists.
+
+
+3.11.  Emulating the 68010
+--------------------------
+
+To generate a 68010 emulator, use the "-cputype 68010" option when building
+your source code file.  The names of all identifiers will begin with s68010
+instead of s68000 (unless overridden by the -name option).
+
+When emulating the 68010, use the S68010CONTEXT structure instead of
+S68000CONTEXT.
+
+S68010CONTEXT has six new fields:
+
+   unsigned char sfc;
+   unsigned char dfc;
+   unsigned      vbr;
+   void        (*bkpthandler)(void);
+   unsigned char loopmode;
+   unsigned char contextfiller10[3];
+
+"vbr", "sfc", and "dfc" are control registers.
+
+"bkpthandler" is a user-defined routine for BKPT notification (see section
+3.8).
+
+"loopmode" is used internally for loop mode timing.  (Did I mention the loop
+mode timing is insanely accurate?)
+
+"contextfiller10" is there just to maintain alignment.
+
+An invalid MOVEC register code will cause s68010exec to return with an
+invalid instruction error, pointing to the MOVEC instruction (not the code
+itself).
+
+NOTE:  The interactive debugger currently does not support the 68010.
+
+
+-----------------------------------------------------------------------------
+4.  Tricks of the Trade
+-----------------------------------------------------------------------------
+
+4.1.  Inter-CPU Communication
+-----------------------------
+
+Many arcade and console game systems which use multiple CPUs use a sort of
+"mailbox" technique to allow the main CPU to send messages to the sub CPU
+(sound effect numbers, etc.)
+
+When one of your 68000s writes to another CPU's mailbox, it's generally a
+good idea to transfer control over to the other CPU temporarily.  This can be
+achieved by calling s68000releaseTimeslice() from your I/O handler.  This
+will cause s68000exec to exit, even if it's not finished.  (Always check the
+odometer to see how many cycles were really executed!)
+
+
+4.2.  Other Helpful Tips
+------------------------
+
+When defining your memory map(s):
+
+*  Take advantage of the built-in RAM and ROM handling as much as possible.
+   They involve much less "red tape" than using your own handlers.
+
+*  The addresses don't have to be in order.  You can rearrange them so that
+   the most commonly-accessed areas are at the beginning.  This will shave a
+   few cycles off each access.
+
+*  If you have two areas of fetchable RAM or ROM that are right next to each
+   other, consider coalescing them into one area.  This will make the memory
+   map simpler and facilitate fetch region caching.  It will also allow the
+   680x0 code to wander from one area into the next.  Starscream only checks
+   boundaries after JMP, JSR, RTS, RTR, RTD, RTE, and exceptions.
+
+When executing code:
+
+*  Instead of calling s68000exec with a fixed number of cycles, keep track of
+   how many cycles overflowed from the last call to s68000exec, and subtract
+   them:
+
+      #define TIMESLICE 100000
+
+      s68000context.odometer = 0;
+      while(!done) {
+         if (s68000context.odometer < TIMESLICE) {
+            s68000exec(TIMESLICE - s68000context.odometer);
+         }
+         s68000context.odometer -= TIMESLICE;
+      }
+
+*  Use big timeslices.  The fewer calls you make to s68000exec, the better.
+
+
+4.3.  Pitfalls
+--------------
+
+*  Make sure to include "starcpu.h" in any of your C modules that use
+   Starscream.  Also remember that starcpu.h is subject to change in new
+   versions.  (Hint hint.)
+
+*  Remember to call s68000init before executing any code.  s68000init doesn't
+   automatically call s68000reset, so you must call s68000reset also.
+
+*  Remember to set up your memory map before calling s68000reset.  The memory
+   map is required in order to read the initial SSP/PC from the vector table.
+
+*  When you store a context via s68000SetContext, remember to read it back
+   via s68000GetContext.
+
+*  The interactive debugger can only read memory areas that are defined in
+   your STARSCREAM_PROGRAMREGION array.  Everything else will appear as FFFF.
+   The upshot of this is that a memory dump is guaranteed not to trigger any
+   I/O hardware.
+
+*  Simplify your STARSCREAM_PROGRAMREGION map as much as possible, in case
+   the emulated code decides to wander from one area to another.
+
+*  Remember the rules for read/write handlers (section 3.5), and remember
+   that they also apply to RESET and BKPT handlers (section 3.9).
+
+*  When you use your own contexts, make sure to explicitly set "resethandler"
+   and "bkpthandler" to NULL if you're not using them.  (This is why it's a
+   good idea to initialize every byte of a new context to zero.)
+
+
+4.4.  Ways to Abuse Starscream
+------------------------------
+
+For the adventurous...
+
+*  Upon encountering an unrecognized opcode, s68000exec will return the
+   address of the opcode, instead of the success code, 0x80000000.  If you
+   need to emulate an instruction that's not implemented yet, you can take
+   advantage of this behavior and implement it in your own code.
+
+   Outside of s68000exec, the context can be modified freely.  You can use
+   the s68000fetch routine to fetch the unrecognized opcode and anything
+   after it (see section 3.1 for the declaration of s68000fetch).
+
+*  Using 32-bit addresses (-addressbits 32) saves one cycle for every memory
+   access, and simplifies the PC re-basing process.  This is safe only for
+   software that is "32-bit clean", however.
+
+*  Make a stand-alone 68000 disassembler out of CPUDEBUG.C.  ;)
+
+
+4.5.  Emulating Other 68K-Series CPUs
+-------------------------------------
+
+Note:  None of these are officially supported.
+
+68008
+  Try "-cputype 68000 -addressbits 20" or "-cputype 68000 -addressbits 22",
+  depending on the chip package.  You'll have to lower the clock speed to get
+  more accurate timing (try dividing it in half), and you might have to
+  compensate for the 8-bit data bus.
+
+68EC000
+  "-cputype 68000" should work.  If it's running in 8-bit mode, try dividing
+  the clock speed in half.
+
+SCC68070
+  Try "-cputype 68000 -addressbits 32".  Not sure about timing issues.
+
+6833X (CPU32)
+  Try "-cputype 68010".  Timing might be a little slow.  A few instructions
+  aren't supported.
+
+68020 and higher
+  Try "-cputype 68010 -addressbits 32".  This is a bit of a stretch, though,
+  since the 68020 supports many new address modes and instructions.  Failing
+  that, wait until official 68020 support is added.  ;)
+
+
+-----------------------------------------------------------------------------
+5.  Known Bugs
+-----------------------------------------------------------------------------
+
+*  Address and Bus Errors are not implemented.  For arcade game emulation,
+   this is probably OK, but if you're emulating a home computer system, this
+   could be cause for concern.
+
+*  The MOVES instruction (68010+) is not implemented.
+
+*  Stack frame format 8 (68010+) is not supported.  Starscream will never
+   generate such a stack frame itself; however, if this format is
+   encountered during a RTE, s68010exec() will return with an "Unsupported
+   stack frame" error.
+
+*  There are a few timing inaccuracies:
+   68000:  DIVS and DIVU: +/- 5%
+   68010:  MULS and MULU are inaccurate, but I'm not sure by how much.
+
+*  Flags which Motorola documents as "Undefined" are, in fact, undefined.
+   I could probably look up how they're calculated, and implement them, but
+   the need has not arisen (yet).
+
+
+-----------------------------------------------------------------------------
+6.  Credits
+-----------------------------------------------------------------------------
+
+Thanks to:
+
+*  Heinz Seltmann, for letting me borrow his M68000 Microprocessor User's
+   Manual (Ninth Edition) for way too long.
+
+*  Neil Bradley, Mike Cuddy, James Boulton, Richard Bush, and Dave (of DTMNT/
+   DGen fame) for various tips and ideas.
+
+*  Thierry Lescot, who gave me the idea to distribute Starscream in the first
+   place.

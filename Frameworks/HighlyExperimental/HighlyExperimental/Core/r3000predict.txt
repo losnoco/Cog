@@ -1,0 +1,2004 @@
+// PSFWorkArea.cpp : implementation file
+//
+
+#include "stdafx.h"
+#include "PSFLab.h"
+#include "PSFWorkArea.h"
+
+#include "../Emu/emu.h"
+
+#include "CodeView.h"
+#include "MemoryView.h"
+#include "EventView.h"
+
+#include "ImportBinaryDlg.h"
+#include "BreakpointsDlg.h"
+#include "ExeSettingsDlg.h"
+#include "RunToSpecificLineDlg.h"
+#include "StateSlotDlg.h"
+#include "TagDlg.h"
+#include "OptimizeDlg.h"
+
+#include "WaveOutput.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+#define R3000CLASS(x) (R3000_REG_##x)
+
+static const int anRegisterHWID[PSFWORKAREA_REG_N] = {
+  R3000CLASS(GEN)+ 0, R3000CLASS(GEN)+ 1, R3000CLASS(GEN)+ 2, R3000CLASS(GEN)+ 3,
+  R3000CLASS(GEN)+ 4, R3000CLASS(GEN)+ 5, R3000CLASS(GEN)+ 6, R3000CLASS(GEN)+ 7,
+  R3000CLASS(GEN)+ 8, R3000CLASS(GEN)+ 9, R3000CLASS(GEN)+10, R3000CLASS(GEN)+11,
+  R3000CLASS(GEN)+12, R3000CLASS(GEN)+13, R3000CLASS(GEN)+14, R3000CLASS(GEN)+15,
+  R3000CLASS(GEN)+16, R3000CLASS(GEN)+17, R3000CLASS(GEN)+18, R3000CLASS(GEN)+19,
+  R3000CLASS(GEN)+20, R3000CLASS(GEN)+21, R3000CLASS(GEN)+22, R3000CLASS(GEN)+23,
+  R3000CLASS(GEN)+24, R3000CLASS(GEN)+25, R3000CLASS(GEN)+26, R3000CLASS(GEN)+27,
+  R3000CLASS(GEN)+28, R3000CLASS(GEN)+29, R3000CLASS(GEN)+30, R3000CLASS(GEN)+31,
+
+  R3000CLASS(C0) + 0, R3000CLASS(C0) + 1, R3000CLASS(C0) + 2, R3000CLASS(C0) + 3,
+  R3000CLASS(C0) + 4, R3000CLASS(C0) + 5, R3000CLASS(C0) + 6, R3000CLASS(C0) + 7,
+  R3000CLASS(C0) + 8, R3000CLASS(C0) + 9, R3000CLASS(C0) +10, R3000CLASS(C0) +11,
+  R3000CLASS(C0) +12, R3000CLASS(C0) +13, R3000CLASS(C0) +14, R3000CLASS(C0) +15,
+  R3000CLASS(C0) +16, R3000CLASS(C0) +17, R3000CLASS(C0) +18, R3000CLASS(C0) +19,
+  R3000CLASS(C0) +20, R3000CLASS(C0) +21, R3000CLASS(C0) +22, R3000CLASS(C0) +23,
+  R3000CLASS(C0) +24, R3000CLASS(C0) +25, R3000CLASS(C0) +26, R3000CLASS(C0) +27,
+  R3000CLASS(C0) +28, R3000CLASS(C0) +29, R3000CLASS(C0) +30, R3000CLASS(C0) +31,
+
+  R3000CLASS(PC),
+  R3000CLASS(HI),
+  R3000CLASS(LO),
+
+  R3000CLASS(CI)
+};
+
+extern "C" void CPSFWorkArea__console_out(
+  void *context,
+  char c
+) {
+  ((CPSFWorkArea*)context)->console.AddChar(c);
+//  char asdf[2];
+//  asdf[0] = c;
+//  asdf[1] = 0;
+//  OutputDebugString(asdf);
+}
+
+extern "C" sint32 CPSFWorkArea__readfile_cb(
+  void *context,
+  const char *path,
+  sint32 offset,
+  char *buffer,
+  sint32 length
+) {
+  int r;
+  char fool[1000];
+//return -1;
+
+//sprintf(fool,"[readfile: %s(%d) %d]",path,offset,length);OutputDebugString(fool);
+
+
+  if(length < 0) return -1;
+  if(offset < 0) return -1;
+  strncpy(fool, 
+    (LPCTSTR)( ((CPSFLabApp*)(AfxGetApp()))->m_strPSF2Path ),
+
+//"C:/Corlett",
+//((CPSFWorkArea*)context)->m_sPSF2Path,
+
+    sizeof(fool)
+  );
+  fool[sizeof(fool)-1] = 0;
+  int l =strlen(fool);
+  while(l>0) {
+    char c=fool[l-1];
+    if(c=='/'||c=='\\'||c==':'){
+      fool[--l]=0;
+      continue;
+    }
+    break;
+  }
+  l = sizeof(fool)-strlen(fool);
+  strncpy(fool+strlen(fool),path,l);
+  fool[sizeof(fool)-1] = 0;
+
+
+  FILE *f = fopen(fool, "rb");
+  if(!f) return -1;
+  if(!length) { int l; fseek(f,0,SEEK_END);l=ftell(f);fclose(f); return l; }
+  fseek(f,offset,SEEK_SET);
+  r = fread(buffer, 1, length, f);
+  fclose(f);
+
+
+
+//sprintf(fool,"(returned %d)",r);OutputDebugString(fool);OutputDebugString("\n");
+
+
+
+  return r;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CPSFWorkArea
+
+IMPLEMENT_DYNCREATE(CPSFWorkArea, CDocument)
+
+CPSFWorkArea::CPSFWorkArea()
+{
+  /*
+  ** Initialize state pointers
+  */
+  m_pStateDebug = NULL;
+  m_pStatePlay = NULL;
+  m_nVersion = 1;
+
+  /*
+  ** Initialize thread information
+  */
+  m_pDebugThread = NULL;
+  m_pPlayThread = NULL;
+  m_bRunning = FALSE;
+  m_bPlaying = FALSE;
+
+  /*
+  ** Initialize saved state system
+  */
+  memset(m_apSavedStates, 0, sizeof(m_apSavedStates));
+  m_nCurrentStateSlot = 0;
+
+  /*
+  ** Allocate debug state - this is always here
+  */
+  m_pStateDebug = malloc(emu_get_state_size(m_nVersion));
+  ASSERT(m_pStateDebug);
+  /*
+  ** Initialize the state just to ensure no problems
+  */
+  emu_clear_state(m_pStateDebug, m_nVersion);
+  emu_set_readfile(m_pStateDebug, CPSFWorkArea__readfile_cb, this);
+  emu_set_console_out(m_pStateDebug, CPSFWorkArea__console_out, this);
+
+
+//  strcpy(m_sPSF2Path,
+ // (((CPSFLabApp*)(AfxGetApp()))->m_sPSF2Path)
+ // );
+}
+
+BOOL CPSFWorkArea::OnNewDocument()
+{
+	TRACE("CPSFWorkArea::OnNewDocument()\n");
+  if(IsModified()) {
+    TRACE("Creating a new document over an existing modified one\n");
+//    MessageBox(NULL,"trying to do a file new on a modified thingy\n",NULL,MB_OK);
+//    return FALSE;
+  }
+
+  DeleteContents();
+
+  int nDesiredVersion = ((CPSFLabApp*)(::AfxGetApp()))->m_nNewPSFVersion;
+  if(m_nVersion != nDesiredVersion) {
+    m_nVersion = nDesiredVersion;
+    if(m_pStateDebug) {
+      free(m_pStateDebug);
+      m_pStateDebug = NULL;
+    }
+    m_pStateDebug = malloc(emu_get_state_size(m_nVersion));
+    emu_clear_state(m_pStateDebug, m_nVersion);
+    emu_set_readfile(m_pStateDebug, CPSFWorkArea__readfile_cb, this);
+    emu_set_console_out(m_pStateDebug, CPSFWorkArea__console_out, this);
+
+//  strcpy(m_sPSF2Path,
+//  (((CPSFLabApp*)(AfxGetApp()))->m_sPSF2Path)
+//  );
+
+    DeleteContents();
+  }
+
+  m_strPathName.Empty();
+  SetModifiedFlag(FALSE);
+
+  /*
+  ** Restart debugger
+  */
+  DebugRestart();
+  RegisterMonitor();
+
+  UpdateAllViews(NULL);
+
+	return TRUE;
+}
+
+CPSFWorkArea::~CPSFWorkArea()
+{
+  KillDebugThreadAndBlock();
+  KillPlayThreadAndBlock();
+
+  ClearAllSavedStates();
+
+  if(m_pStateDebug) free(m_pStateDebug);
+  if(m_pStatePlay) free(m_pStatePlay);
+}
+
+
+BEGIN_MESSAGE_MAP(CPSFWorkArea, CDocument)
+	//{{AFX_MSG_MAP(CPSFWorkArea)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_GO, OnUpdateDebugGo)
+	ON_COMMAND(ID_DEBUG_GO, OnDebugGo)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_BREAK, OnUpdateDebugBreak)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_PLAY, OnUpdateDebugPlay)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_STOP, OnUpdateDebugStop)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_PAUSE, OnUpdateDebugPause)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_STEPINTO, OnUpdateDebugStepinto)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_STEPOUT, OnUpdateDebugStepout)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_STEPOVER, OnUpdateDebugStepover)
+	ON_COMMAND(ID_DEBUG_PLAY, OnDebugPlay)
+	ON_COMMAND(ID_DEBUG_PAUSE, OnDebugPause)
+	ON_COMMAND(ID_DEBUG_STOP, OnDebugStop)
+	ON_COMMAND(ID_DEBUG_BREAK, OnDebugBreak)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_RESTART, OnUpdateDebugRestart)
+	ON_COMMAND(ID_DEBUG_RESTART, OnDebugRestart)
+	ON_COMMAND(ID_DEBUG_STEPINTO, OnDebugStepinto)
+	ON_COMMAND(ID_DEBUG_STEPOUT, OnDebugStepout)
+	ON_COMMAND(ID_DEBUG_STEPOVER, OnDebugStepover)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_LOADSTATE, OnUpdateDebugLoadstate)
+	ON_COMMAND(ID_DEBUG_LOADSTATE, OnDebugLoadstate)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_SAVESTATE, OnUpdateDebugSavestate)
+	ON_COMMAND(ID_DEBUG_SAVESTATE, OnDebugSavestate)
+	ON_COMMAND(ID_FILE_IMPORTBINARY, OnFileImportbinary)
+	ON_UPDATE_COMMAND_UI(ID_FILE_IMPORTBINARY, OnUpdateFileImportbinary)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_RUNTOINT, OnUpdateDebugRuntoint)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_BREAKPOINTS, OnUpdateEditBreakpoints)
+	ON_COMMAND(ID_EDIT_BREAKPOINTS, OnEditBreakpoints)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_EXESETTINGS, OnUpdateEditExesettings)
+	ON_COMMAND(ID_EDIT_EXESETTINGS, OnEditExesettings)
+	ON_COMMAND(ID_DEBUG_EXECUTIONSTOPPED, OnDebugExecutionstopped)
+	ON_UPDATE_COMMAND_UI(ID_DEBUG_SPECIFICLINE, OnUpdateDebugSpecificline)
+	ON_COMMAND(ID_DEBUG_SPECIFICLINE, OnDebugSpecificline)
+	ON_COMMAND(ID_DEBUG_RUNTOINT, OnDebugRuntoint)
+	ON_COMMAND(ID_DEBUG_SELECTSLOT, OnDebugSelectslot)
+	ON_COMMAND(ID_EDIT_TAG, OnEditTag)
+	ON_COMMAND(ID_FILE_SAVEAS, OnFileSaveas)
+	ON_COMMAND(ID_FILE_IMPORTEXE, OnFileImportexe)
+	ON_UPDATE_COMMAND_UI(ID_FILE_IMPORTEXE, OnUpdateFileImportexe)
+	ON_COMMAND(ID_FILE_EXPORTEXE, OnFileExportexe)
+	ON_COMMAND(ID_FILE_FONDUE, OnFileFondue)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_OPTIMIZE, OnUpdateEditOptimize)
+	ON_COMMAND(ID_EDIT_OPTIMIZE, OnEditOptimize)
+	ON_COMMAND(ID_FILE_EXPORTBIOSAREA, OnFileExportbiosarea)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, OnUpdateFileSave)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVEAS, OnUpdateFileSaveas)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_TAG, OnUpdateEditTag)
+	ON_UPDATE_COMMAND_UI(ID_FILE_EXPORTEXE, OnUpdateFileExportexe)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CPSFWorkArea diagnostics
+
+#ifdef _DEBUG
+void CPSFWorkArea::AssertValid() const
+{
+	CDocument::AssertValid();
+}
+
+void CPSFWorkArea::Dump(CDumpContext& dc) const
+{
+	CDocument::Dump(dc);
+}
+#endif //_DEBUG
+
+/////////////////////////////////////////////////////////////////////////////
+// CPSFWorkArea serialization
+
+void CPSFWorkArea::Serialize(CArchive& ar)
+{
+	if (ar.IsStoring())
+	{
+		// TODO: add storing code here
+	}
+	else
+	{
+		// TODO: add loading code here
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CPSFWorkArea commands
+
+DWORD CPSFWorkArea::PeekWord(DWORD dwAddress) const
+{
+  ASSERT(m_pStateDebug);
+  return iop_getword(emu_get_iop_state(m_pStateDebug), dwAddress);
+}
+
+BOOL CPSFWorkArea::IsWordPatched(DWORD dwAddress) const
+{
+  int nEXEIndex = AddressToEXEIndex(dwAddress);
+  if(nEXEIndex < 0) return FALSE;
+  return ((m_adwPatchMap[nEXEIndex / 32] >> (nEXEIndex & 31)) & 1);
+}
+
+DWORD CPSFWorkArea::GetPatchWord(DWORD dwAddress) const
+{
+  int nEXEIndex = AddressToEXEIndex(dwAddress);
+  if(nEXEIndex < 0) return 0;
+  return m_adwPatchData[nEXEIndex];
+}
+
+void CPSFWorkArea::SetPatchWord(DWORD dwAddress, DWORD dwValue)
+{
+  if(m_nVersion == 1) SetModifiedFlag();
+
+  /*
+  ** Copy the change to the current debug state too
+  */
+  if(m_pStateDebug) {
+    iop_setword(emu_get_iop_state(m_pStateDebug), dwAddress, dwValue);
+  }
+
+  if(m_nVersion == 1) {
+    int nEXEIndex = AddressToEXEIndex(dwAddress);
+    if(nEXEIndex >= 0) {
+      m_adwPatchMap[nEXEIndex / 32] |= (1 << (nEXEIndex & 31));
+      m_adwPatchData[nEXEIndex] = dwValue;
+    }
+  }
+}
+
+int CPSFWorkArea::AddressToEXEIndex(DWORD dwAddress) const
+{
+  dwAddress &= 0x1FFFFFFC;
+  if(dwAddress >= 0x1F000000) return -1;
+  dwAddress &= 0x1FFFFC;
+  if(dwAddress < 0x10000) return -1;
+  return (dwAddress - 0x10000) / 4;
+}
+
+DWORD CPSFWorkArea::GetPC() const
+{
+  ASSERT(m_pStateDebug);
+  return r3000_getreg(iop_get_r3000_state(emu_get_iop_state(m_pStateDebug)), R3000CLASS(PC));
+}
+
+void CPSFWorkArea::DeletePatchWord(DWORD dwAddress)
+{
+  int nWordIndex = AddressToEXEIndex(dwAddress);
+  if(nWordIndex < 0) return;
+  // If it wasn't patched to begin with, don't do anything
+  if(!(m_adwPatchMap[nWordIndex / 32] & (1 << (nWordIndex & 31)))) return;
+  m_adwPatchMap[nWordIndex / 32] &= ~(1 << (nWordIndex & 31));
+  /*
+  ** Copy the change to the current debug state too
+  */
+  ASSERT(m_pStateDebug);
+  iop_setword(emu_get_iop_state(m_pStateDebug), dwAddress, m_adwEXEData[nWordIndex]);
+  SetModifiedFlag();
+}
+
+int CPSFWorkArea::AddressToBreakpointIndex(DWORD dwAddress) const
+{
+  dwAddress &= 0x1FFFFFFC;
+  if(dwAddress <  0x1F000000) return ((dwAddress & 0x1FFFFC) / 4);
+  if(dwAddress >= 0x1FC00000) return ((dwAddress &  0x7FFFC) / 4) + 0x80000;
+  return -1;
+}
+
+BOOL CPSFWorkArea::IsBreakpointOnExecute(DWORD dwAddress) const
+{
+  int nWordIndex = AddressToBreakpointIndex(dwAddress);
+  if(nWordIndex < 0) return FALSE;
+  return (m_adwBreakpointMapExecute[nWordIndex / 32] >> (nWordIndex & 31)) & 1;
+}
+
+void CPSFWorkArea::SetBreakpointOnExecute(DWORD dwAddress, BOOL bBreak)
+{
+  int nWordIndex = AddressToBreakpointIndex(dwAddress);
+  if(nWordIndex < 0) return;
+  if(bBreak) {
+    m_adwBreakpointMapExecute[nWordIndex / 32] |=  (1 << (nWordIndex & 31));
+  } else {
+    m_adwBreakpointMapExecute[nWordIndex / 32] &= ~(1 << (nWordIndex & 31));
+  }
+}
+
+BOOL CPSFWorkArea::IsBreakpointOnRead(DWORD dwAddress) const
+{
+  int nWordIndex = AddressToBreakpointIndex(dwAddress);
+  if(nWordIndex < 0) return FALSE;
+  return (m_adwBreakpointMapRead[nWordIndex / 32] >> (nWordIndex & 31)) & 1;
+}
+
+void CPSFWorkArea::SetBreakpointOnRead(DWORD dwAddress, BOOL bBreak)
+{
+  int nWordIndex = AddressToBreakpointIndex(dwAddress);
+  if(nWordIndex < 0) return;
+  if(bBreak) {
+    m_adwBreakpointMapRead[nWordIndex / 32] |=  (1 << (nWordIndex & 31));
+  } else {
+    m_adwBreakpointMapRead[nWordIndex / 32] &= ~(1 << (nWordIndex & 31));
+  }
+}
+
+BOOL CPSFWorkArea::IsBreakpointOnWrite(DWORD dwAddress) const
+{
+  int nWordIndex = AddressToBreakpointIndex(dwAddress);
+  if(nWordIndex < 0) return FALSE;
+  return (m_adwBreakpointMapWrite[nWordIndex / 32] >> (nWordIndex & 31)) & 1;
+}
+
+void CPSFWorkArea::SetBreakpointOnWrite(DWORD dwAddress, BOOL bBreak)
+{
+  int nWordIndex = AddressToBreakpointIndex(dwAddress);
+  if(nWordIndex < 0) return;
+  if(bBreak) {
+    m_adwBreakpointMapWrite[nWordIndex / 32] |=  (1 << (nWordIndex & 31));
+  } else {
+    m_adwBreakpointMapWrite[nWordIndex / 32] &= ~(1 << (nWordIndex & 31));
+  }
+}
+
+CEventLog* CPSFWorkArea::GetEventLog()
+{
+  return &m_eventlog;
+}
+
+void CPSFWorkArea::OnUpdateDebugGo     (CCmdUI* pCmdUI) { pCmdUI->Enable(!IsRunning()); }
+void CPSFWorkArea::OnUpdateDebugRestart(CCmdUI* pCmdUI) { pCmdUI->Enable(!IsRunning()); }
+void CPSFWorkArea::OnUpdateDebugBreak  (CCmdUI* pCmdUI) { pCmdUI->Enable( IsRunning()); }
+
+void CPSFWorkArea::OnUpdateDebugStepinto   (CCmdUI* pCmdUI) { pCmdUI->Enable(!IsRunning()); }
+void CPSFWorkArea::OnUpdateDebugStepout    (CCmdUI* pCmdUI) { pCmdUI->Enable(!IsRunning()); }
+void CPSFWorkArea::OnUpdateDebugStepover   (CCmdUI* pCmdUI) { pCmdUI->Enable(!IsRunning()); }
+
+void CPSFWorkArea::OnUpdateDebugPlay (CCmdUI* pCmdUI) { pCmdUI->Enable(!IsPlaying()); }
+void CPSFWorkArea::OnUpdateDebugPause(CCmdUI* pCmdUI) { pCmdUI->Enable( IsPlaying()); }
+void CPSFWorkArea::OnUpdateDebugStop (CCmdUI* pCmdUI) { pCmdUI->Enable( IsPlaying()); }
+
+void CPSFWorkArea::OnDebugGo() 
+{
+  KillDebugThreadAndBlock();
+  m_nDebugCommand = ID_DEBUG_GO;
+  StartDebugThreadAndBlock();
+  UpdateAllViews(NULL);
+}
+
+
+void CPSFWorkArea::OnDebugPlay() {
+  PlayStart();
+}
+
+void CPSFWorkArea::OnDebugPause() {
+  if(IsPlayPaused()) {
+    PlayUnpause();
+  } else {
+    PlayPause();
+  }
+}
+
+void CPSFWorkArea::OnDebugStop() 
+{
+  PlayStop();
+}
+
+void CPSFWorkArea::OnDebugBreak() 
+{
+  KillDebugThreadAndBlock();
+  OnDebugExecutionstopped();
+
+//FILE*f=fopen("statedump","wb");
+//if(f){
+//fwrite(m_pStateDebug,1,emu_get_state_size(2),f);
+//fclose(f);
+//}
+
+}
+
+void CPSFWorkArea::OnDebugRestart() 
+{
+	KillDebugThreadAndBlock();
+  DebugRestart();
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::OnDebugStepinto() 
+{
+  KillDebugThreadAndBlock();
+  m_nDebugCommand = ID_DEBUG_STEPINTO;
+  StartDebugThreadAndBlock();
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::OnDebugStepout() 
+{
+  KillDebugThreadAndBlock();
+  m_nDebugCommand = ID_DEBUG_STEPOUT;
+  StartDebugThreadAndBlock();
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::OnDebugStepover() 
+{
+  KillDebugThreadAndBlock();
+  m_nDebugCommand = ID_DEBUG_STEPOVER;
+  StartDebugThreadAndBlock();
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::OnUpdateDebugLoadstate(CCmdUI* pCmdUI) 
+{
+  ASSERT(m_nCurrentStateSlot >= 0 && m_nCurrentStateSlot <= 9);
+  if(IsRunning()) { pCmdUI->Enable(FALSE); return; }
+  if(m_apSavedStates[m_nCurrentStateSlot]) {
+    pCmdUI->Enable(TRUE);
+  } else {
+    pCmdUI->Enable(FALSE);
+  }
+}
+
+void CPSFWorkArea::OnDebugLoadstate() 
+{
+  KillDebugThreadAndBlock();
+  ASSERT(m_nCurrentStateSlot >= 0 && m_nCurrentStateSlot <= 9);
+  LoadDebugState(m_nCurrentStateSlot);
+
+  CodeJumpTo(r3000_getreg(iop_get_r3000_state(emu_get_iop_state(m_pStateDebug)), R3000CLASS(PC)));
+
+  UpdateAllViews(FALSE);
+}
+
+void CPSFWorkArea::OnUpdateDebugSavestate(CCmdUI* pCmdUI) { pCmdUI->Enable(!IsRunning()); }
+
+void CPSFWorkArea::OnDebugSavestate() 
+{
+  KillDebugThreadAndBlock();
+  ASSERT(m_nCurrentStateSlot >= 0 && m_nCurrentStateSlot <= 9);
+  SaveDebugState(m_nCurrentStateSlot);
+}
+
+void CPSFWorkArea::PlayStop()
+{
+  KillPlayThreadAndBlock();
+  /*
+  ** Free memory used by play state
+  */
+  if(m_pStatePlay) {
+    free(m_pStatePlay);
+    m_pStatePlay = NULL;
+  }
+}
+
+void CPSFWorkArea::DebugRestart()
+{
+  ASSERT(m_pStateDebug);
+  /*
+  ** Initialize the state
+  */
+  emu_clear_state(m_pStateDebug, m_nVersion);
+  emu_set_readfile(m_pStateDebug, CPSFWorkArea__readfile_cb, this);
+  emu_set_console_out(m_pStateDebug, CPSFWorkArea__console_out, this);
+
+//  strcpy(m_sPSF2Path,
+//  (((CPSFLabApp*)(AfxGetApp()))->m_sPSF2Path)
+//  );
+
+  if(m_nVersion == 1) {
+    /*
+    ** Load EXE data and apply patches
+    */
+    LoadEXEToState(m_pStateDebug);
+    ApplyPatchesToState(m_pStateDebug);
+  }
+
+  /*
+  ** Update the code view with the place where we are
+  */
+//  CodeJumpTo(m_dwEXEStartPC);
+  CodeJumpTo(GetPC());
+
+  /*
+  ** Clear the event log and call stack
+  */
+  m_eventlog.Clear();
+  m_callstack.Clear();
+  /*
+  ** Reset the register change monitor
+  */
+  RegisterMonitorReset();
+}
+
+CView* CPSFWorkArea::FindViewOfClass(CRuntimeClass *pClass)
+{
+  POSITION p = GetFirstViewPosition();
+  CView *v;
+  for(;;) {
+    v = GetNextView(p);
+    if(!v) break;
+    if(v->IsKindOf(pClass)) break;
+  }
+  ASSERT(v);
+  return v;
+}
+
+DWORD CPSFWorkArea::GetRegister(int nRegisterIndex)
+{
+  ASSERT(m_pStateDebug);
+  ASSERT(nRegisterIndex >= 0 && nRegisterIndex < PSFWORKAREA_REG_N);
+  return r3000_getreg(iop_get_r3000_state(emu_get_iop_state(m_pStateDebug)), anRegisterHWID[nRegisterIndex]);
+}
+
+void CPSFWorkArea::RegisterMonitor()
+{
+  for(int i = 0; i < PSFWORKAREA_REG_N; i++) {
+    if(m_anRegisterChangeTimeout[i]) m_anRegisterChangeTimeout[i]--;
+    DWORD r = GetRegister(i);
+    if(r != m_adwRegisterPrevious[i]) {
+      m_adwRegisterPrevious[i] = r;
+      m_anRegisterChangeTimeout[i] = PSFWORKAREA_REGISTER_CHANGE_TIMEOUT;
+    }
+  }
+}
+
+void CPSFWorkArea::RegisterMonitorReset()
+{
+  for(int i = 0; i < PSFWORKAREA_REG_N; i++) {
+    m_adwRegisterPrevious[i] = GetRegister(i);
+    m_anRegisterChangeTimeout[i] = 0;
+  }
+}
+
+BOOL CPSFWorkArea::RegisterChangedRecently(int nRegisterIndex) const
+{
+  ASSERT(nRegisterIndex >= 0 && nRegisterIndex < PSFWORKAREA_REG_N);
+  return m_anRegisterChangeTimeout[nRegisterIndex] ? TRUE : FALSE;
+}
+
+CCallStack* CPSFWorkArea::GetCallStack()
+{
+  return &m_callstack;
+}
+
+BOOL CPSFWorkArea::OnOpenDocument(LPCTSTR lpszPathName) 
+{
+	TRACE("CPSFWorkArea::OnOpenDocument(%s)\n", lpszPathName);
+  if(IsModified()) {
+    TRACE("Opening a new document over an existing modified one\n");
+  }
+
+  // can only open psf
+  SetVersion(1);
+
+  TRACE("set version to %d\n", m_nVersion);
+
+//  LPBYTE lpEXE = new BYTE[0x200000];
+
+  BOOL b;
+
+  CPSF psf;
+  CPSXEXE exe;
+
+  /*
+  ** Load the EXE into an EXE buffer which we have temporarily allocated
+  ** (if there's an error here, it's recoverable)
+  */
+  b = psf.ReadFromFile(lpszPathName, CPSF::PSF_FILE_ALL, TRUE);
+  if(!b) {
+    CString s;
+    s.Format(_T("%s\n%s"), lpszPathName, (LPCTSTR)psf.GetLastError());
+    AfxGetMainWnd()->MessageBox(s, _T("Open"), MB_OK|MB_ICONHAND);
+    return FALSE;
+  }
+  b = exe.ReadFromPSF(psf, TRUE);
+  if(!b) {
+    CString s;
+    s.Format(_T("%s\n%s"), lpszPathName, (LPCTSTR)exe.GetLastError());
+    AfxGetMainWnd()->MessageBox(s, _T("Open"), MB_OK|MB_ICONHAND);
+    return FALSE;
+  }
+
+  /*
+  ** Clear the document contents
+  */
+  DeleteContents();
+  SetPathName(lpszPathName);
+  SetModifiedFlag(FALSE);
+
+  /*
+  ** "Import" the EXE
+  */
+  ImportEXEFromBuffer(
+    exe.GetEXEBuffer(),
+    exe.GetEXESize()
+  );
+
+  /*
+  ** Silly reminder to myself that this hasn't been unicode-proofed yet
+  */
+  ASSERT(sizeof(TCHAR)==1);
+
+  /*
+  ** Attempt to load the tag
+  */
+  m_tag.ReadFromPSF(psf, FALSE);
+
+  /*
+  ** Restart debugger
+  */
+  DebugRestart();
+  RegisterMonitor();
+
+  UpdateAllViews(NULL);
+
+  TRACE("got here, version is %d\n",m_nVersion);
+
+	return TRUE;
+}
+
+BOOL CPSFWorkArea::OnSaveDocument(LPCTSTR lpszPathName) 
+{
+	TRACE("CPSFWorkArea::OnSaveDocument(%s)\n", lpszPathName);
+
+  CWaitCursor cwc;
+
+  /*
+  ** Silly reminder to myself that this hasn't been unicode-proofed yet
+  */
+  ASSERT(sizeof(TCHAR)==1);
+
+  /*
+  ** Create the EXE data
+  */
+  CByteArray aEXE;
+  aEXE.SetSize(0x200000);
+  DWORD dwEXELength = ExportEXEToBuffer(aEXE.GetData());
+  aEXE.SetSize(dwEXELength);
+
+  /*
+  ** Save the EXE data and tag to a PSF file
+  */
+
+  CPSF psf;
+
+  psf.SetVersion(0x01);
+  psf.SetReservedSize(0);
+  UINT uMethod = ((CPSFLabApp*)(::AfxGetApp()))->GetCompressionMethodNumber();
+  BOOL b;
+  b = psf.SetProgramData(aEXE.GetData(), aEXE.GetSize(), uMethod);
+  if(!b) {
+    CString s;
+    s.Format(_T("%s\n%s"), lpszPathName, (LPCTSTR)psf.GetLastError());
+    AfxGetMainWnd()->MessageBox(s, _T("Save"), MB_OK|MB_ICONHAND);
+    return FALSE;
+  }
+  m_tag.WriteToPSF(psf, FALSE);
+
+  b = psf.WriteToFile(lpszPathName, CPSF::PSF_FILE_ALL, TRUE);
+  if(!b) {
+    CString s;
+    s.Format(_T("%s\n%s"), lpszPathName, (LPCTSTR)psf.GetLastError());
+    AfxGetMainWnd()->MessageBox(s, _T("Save"), MB_OK|MB_ICONHAND);
+    return FALSE;
+  }
+
+  /*
+  ** Success
+  ** Document is no longer modified
+  ** (and may have a new pathname now)
+  */
+  SetPathName(lpszPathName);
+  SetModifiedFlag(FALSE);
+
+  UpdateAllViews(NULL);
+  return TRUE;
+}
+
+void CPSFWorkArea::ClearWorkArea()
+{
+  /*
+  ** Clear original EXE data
+  */
+  memset(m_adwEXEData, 0, sizeof(m_adwEXEData));
+  m_dwEXEStartAddress = 0x80010000;
+  m_dwEXEByteLength = 0;
+  m_dwEXEStartPC = 0x80010000;
+  m_dwEXEStartSP = 0x801FFFF0;
+  memset(m_EXEHeader, 0, 0x800);
+  memcpy(m_EXEHeader, "PS-X EXE", 8);
+  memcpy(m_EXEHeader+0x4C, "Sony Computer Entertainment Inc. for North America area", 0x37);
+
+  /*
+  ** Clear patch/breakpoint info
+  */
+  memset(m_adwPatchMap, 0, sizeof(m_adwPatchMap));
+  memset(m_adwBreakpointMapRead, 0, sizeof(m_adwBreakpointMapRead));
+  memset(m_adwBreakpointMapWrite, 0, sizeof(m_adwBreakpointMapWrite));
+  memset(m_adwBreakpointMapExecute, 0, sizeof(m_adwBreakpointMapExecute));
+
+  // clear register change monitoring
+  memset(m_adwRegisterPrevious, 0, sizeof(m_adwRegisterPrevious));
+  memset(m_anRegisterChangeTimeout, 0, sizeof(m_anRegisterChangeTimeout));
+
+  // clear console
+  console.Clear();
+}
+
+/***************************************************************************/
+/*
+** Debugging thread / debug core
+*/
+UINT AFX_CDECL CPSFWorkArea__DebugThread(LPVOID lpParam) {
+  CPSFWorkArea *me = (CPSFWorkArea*)lpParam;
+  ASSERT(me);
+  /*
+  ** Signal thread start
+  */
+  me->m_csDebug.Lock();
+  me->m_evDebug.SetEvent();
+  /*
+  ** Initial preparations
+  */
+  ASSERT(me->m_pStateDebug);
+  me->m_bDebugBreakpointReadFlag = FALSE;
+  me->m_bDebugBreakpointWriteFlag = FALSE;
+  me->m_bDebugBreakpointExecuteFlag = FALSE;
+  me->m_bDebugErrorFlag = FALSE;
+
+  me->m_bDebugBreakOnWeed = TRUE;
+  me->m_bDebugWeedFlag = FALSE;
+
+  /*
+  ** Initial call stack caching (size, top PC/SP)
+  */
+  int nInitialCallStackSize = me->m_callstack.GetSize();
+  int nCallStackSize = nInitialCallStackSize;
+  /*
+  ** Clear the hardware event buffer
+  */
+  iop_clear_events(emu_get_iop_state(me->m_pStateDebug));
+  /*
+  ** Debug core loop
+  */
+  while(!me->m_dwDebugKillFlag) {
+    DWORD dwIns;
+    #define INS_S ((DWORD)((dwIns>>21)&0x1F))
+    #define INS_T ((DWORD)((dwIns>>16)&0x1F))
+    #define INS_D ((DWORD)((dwIns>>11)&0x1F))
+    #define INS_H ((DWORD)((dwIns>>6 )&0x1F))
+    #define INS_I ((DWORD)((dwIns    )&0xFFFF))
+    #define   SIGNED16(x) ((INT32)(((SHORT)(x))))
+    #define UNSIGNED16(x) (((UINT32)(x))&0xFFFF)
+    #define REL_I(pc) ((pc)+4+((SIGNED16(INS_I))<<2))
+    #define ABS_I(pc) (((pc)&0xF0000000)|((dwIns<<2)&0x0FFFFFFC))
+
+    /*
+    ** Prepare to execute the next instruction
+    */
+    DWORD dwBeforePC = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(PC));
+    /*
+    ** Check for possible jump/call instructions and compute the target.
+    **
+    ** This way we'll know whether there was a call to add to the call stack
+    ** and be able to differentiate between jumps and exceptions.
+    **
+    ** "The program counter changed - was this intentional?"
+    ** We can know this ahead of time.
+    */
+    BOOL bPossibleJump = FALSE;
+    BOOL bPossibleCall = FALSE;
+    DWORD dwPossibleJumpTarget = 0;
+    dwIns = iop_getword(emu_get_iop_state(me->m_pStateDebug), dwBeforePC);
+    if(dwIns < 0x04000000) {
+      /* MINOR */
+      switch(dwIns & 0x3F) {
+      case 0x09: /* jalr  */
+        if(INS_D == 31) bPossibleCall = TRUE;
+        /* INTENTIONAL FALL THROUGH */
+      case 0x08: /* jr    */
+        bPossibleJump = TRUE;
+        dwPossibleJumpTarget = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+INS_S);
+        break;
+      }
+    } else {
+      /* MAJOR */
+      switch(dwIns >> 26) {
+      case 0x01: /* various branch types */
+        switch(INS_T) {
+        case 0x10: case 0x11: bPossibleCall = TRUE;
+        }
+        /* INTENTIONAL FALL THROUGH */
+      case 0x04: /* beq   */
+      case 0x05: /* bne   */
+      case 0x06: /* blez  */
+      case 0x07: /* bgtz  */
+        bPossibleJump = TRUE;
+        dwPossibleJumpTarget = REL_I(dwBeforePC);
+        break;
+      case 0x03: /* jal   */
+        bPossibleCall = TRUE;
+        /* INTENTIONAL FALL THROUGH */
+      case 0x02: /* j     */
+        bPossibleJump = TRUE;
+        dwPossibleJumpTarget = ABS_I(dwBeforePC);
+        break;
+      }
+    }
+
+    /*
+    ** Execute the next instruction
+    */
+    signed short samplebuffer[2*100];
+    unsigned dwSoundSamples = 100;
+    int nExecuteError = emu_execute(me->m_pStateDebug, 1, samplebuffer, &dwSoundSamples, me->m_dwDebugEventMask);
+    /*
+    ** Handle unrecoverable errors here
+    ** Set the error flag and terminate directly
+    */
+    if(nExecuteError < 0) {
+      me->m_bDebugErrorFlag = TRUE;
+      AfxGetMainWnd()->PostMessage(WM_COMMAND, ID_DEBUG_EXECUTIONSTOPPED, 0);
+      break;
+    }
+
+    /*
+    ** Update the event log
+    */
+    int c = iop_get_event_count(emu_get_iop_state(me->m_pStateDebug));
+    for(; c > 0; c--) {
+      TCHAR s[500];
+      UINT64 time;
+      char *fmt = "format not set(%08X,%08X,%08X,%08X)";
+      UINT32 type;
+      UINT32 arg[4];
+      iop_get_event(emu_get_iop_state(me->m_pStateDebug), &time, &type, &fmt, arg);
+      iop_dismiss_event(emu_get_iop_state(me->m_pStateDebug));
+      int i;
+      TCHAR *ps = s + 19;
+      for(i = 19; i >= 0; i--) {
+        int digit = (int)(time % 10);
+        time /= 10;
+        s[i] = _T("0123456789")[digit];
+        if(digit) ps = s + i;
+      }
+      s[20] = _T(':');
+      s[21] = _T(' ');
+      s[22] = 0;
+      wsprintf(s + lstrlen(s), _T("(pc=0x%08X) "), dwBeforePC);
+      wsprintf(s + lstrlen(s), fmt,
+        (UINT32)(arg[0]),
+        (UINT32)(arg[1]),
+        (UINT32)(arg[2]),
+        (UINT32)(arg[3])
+      );
+
+      me->m_eventlog.Add(ps);
+    }
+
+    /*
+    ** Perform post-analysis on the instruction just executed
+    */
+    DWORD dwPC = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(PC));
+    DWORD dwSP = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+29);
+    BOOL bException = FALSE;
+    if(dwPC != (dwBeforePC + 4)) {
+      /*
+      ** Check for return
+      */
+      if(nCallStackSize) {
+        me->m_callstack.CheckForReturn(dwPC, dwSP);
+        nCallStackSize = me->m_callstack.GetSize();
+      }
+      /*
+      ** Do some voodoo to see if an exception happened
+      */
+      if(bPossibleJump && dwPC == dwPossibleJumpTarget) {
+        bException = FALSE;
+      } else {
+        bException = TRUE;
+      }
+      /*
+      ** Handle calls or exceptions
+      */
+      if(bPossibleCall || bException) {
+        SCallStackEntry e;
+        e.bException = bException;
+        e.dwArg[0] = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+4);
+        e.dwArg[1] = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+5);
+        e.dwArg[2] = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+6);
+        e.dwArg[3] = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+7);
+        e.dwCause = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(C0)+13);
+        e.dwInvokedAddress = dwPC;
+        e.dwReturnPC = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), bException ? (R3000CLASS(C0)+14) : (R3000CLASS(GEN)+31));
+        e.dwReturnSP = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+29);
+        me->m_callstack.Add(e);
+        nCallStackSize++;
+      }
+    }
+
+    /*
+    ** Check for terminating conditions
+    */
+    BOOL bTerminate = FALSE;
+    /*
+    ** Code breakpoints
+    */
+    if(me->IsBreakpointOnExecute(dwPC)) {
+      me->m_bDebugBreakpointExecuteFlag = TRUE;
+      me->m_dwDebugBreakpointExecuteAddress = dwPC;
+      bTerminate = TRUE;
+    }
+
+    /* Invalid PC */
+    if(me->m_bDebugBreakOnWeed) {
+      BOOL inv = FALSE;
+      switch((dwPC >> 29) & 7) {
+      case 1: case 2: case 3: case 6: case 7: inv = TRUE;
+      }
+      DWORD t = dwPC & 0x1FFFFFFF;
+      if(t >= 0x00800000 && t < 0x1F000000) inv = TRUE;
+      if(t >= 0x1F000000 && t < 0x1FC00000) inv = TRUE;
+      if(inv) {
+        me->m_bDebugWeedFlag = TRUE;
+        me->m_dwDebugWeedAddress = dwPC;
+        bTerminate = TRUE;
+      }
+    }
+
+    /*
+    ** Memory breakpoints
+    ** Terminate if there's a triggering load or store instruction
+    */
+    dwIns = iop_getword(emu_get_iop_state(me->m_pStateDebug), dwPC);
+    DWORD dwOperandAddress;
+    switch(dwIns >> 26) {
+    case 0x20: /* lb    */
+    case 0x21: /* lh    */
+    case 0x23: /* lw    */
+    case 0x24: /* lbu   */
+    case 0x25: /* lhu   */
+      dwOperandAddress = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+INS_S) + SIGNED16(INS_I);
+      dwOperandAddress &= 0xFFFFFFFC;
+      if(me->IsBreakpointOnRead(dwOperandAddress)) {
+        me->m_bDebugBreakpointReadFlag = TRUE;
+        me->m_dwDebugBreakpointReadAddress = dwOperandAddress;
+        bTerminate = TRUE;
+      }
+      break;
+    case 0x28: /* sb    */
+    case 0x29: /* sh    */
+    case 0x2B: /* sw    */
+      dwOperandAddress = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(GEN)+INS_S) + SIGNED16(INS_I);
+      dwOperandAddress &= 0xFFFFFFFC;
+      if(me->IsBreakpointOnWrite(dwOperandAddress)) {
+        me->m_bDebugBreakpointWriteFlag = TRUE;
+        me->m_dwDebugBreakpointWriteAddress = dwOperandAddress;
+        bTerminate = TRUE;
+      }
+      break;
+    }
+
+    /*
+    ** Command-specific terminating conditions
+    */
+    switch(me->m_nDebugCommand) {
+    /*
+    ** Go: Never terminate
+    */
+    case ID_DEBUG_GO:
+      break;
+    /*
+    ** Step Into: Always terminate
+    */
+    case ID_DEBUG_STEPINTO:
+      bTerminate = TRUE;
+      break;
+    /*
+    ** Step Over: Terminate if the call stack level is the same as before
+    */
+    case ID_DEBUG_STEPOVER:
+      if(nCallStackSize == nInitialCallStackSize) bTerminate = TRUE;
+      break;
+    /*
+    ** Step Out: Terminate if the call stack level is less than before
+    */
+    case ID_DEBUG_STEPOUT:
+      if(nCallStackSize < nInitialCallStackSize) bTerminate = TRUE;
+      break;
+    /*
+    ** Run to Cursor / Run to Specific Address: Terminate when that address is reached
+    */
+    case ID_DEBUG_RUNTOCURSOR:
+    case ID_DEBUG_SPECIFICLINE:
+      if((dwPC & 0x1FFFFFFC) == (me->m_dwDebugRunTarget & 0x1FFFFFFC)) bTerminate = TRUE;
+      break;
+    /*
+    ** Run to Interrupt: Terminate if an interrupt just happened
+    */
+    case ID_DEBUG_RUNTOINT:
+      if(bException) {
+        DWORD dwCause = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(me->m_pStateDebug)), R3000CLASS(C0)+13);
+        /*
+        ** Examine Cause bits
+        ** 0 means hardware interrupt
+        */
+        if(((dwCause >> 2) & 0xF) == 0x0) bTerminate = TRUE;
+      }
+      break;
+    /*
+    ** Unknown command: Just terminate
+    */
+    default:
+      bTerminate = TRUE;
+      break;
+    }
+
+    /*
+    ** Handle terminating conditions, if they exist
+    */
+    if(bTerminate) {
+      AfxGetMainWnd()->PostMessage(WM_COMMAND, ID_DEBUG_EXECUTIONSTOPPED, 0);
+      break;
+    }
+
+  }
+
+  /*
+  ** Signal thread end; return
+  */
+  me->m_pDebugThread = NULL;
+  me->m_csDebug.Unlock();
+  return 0;
+}
+
+/***************************************************************************/
+/*
+** Play thread must never die until specifically told to
+** (via either m_dwPlayKillFlag or a WM_APP+1 message)
+*/
+UINT AFX_CDECL CPSFWorkArea__PlayThread(LPVOID lpParam) {
+  CPSFWorkArea *me = (CPSFWorkArea*)lpParam;
+  me->m_csPlay.Lock();
+  me->m_evPlay.SetEvent();
+
+  DWORD samplebuffer[8*4096];
+  CWaveOutput waveoutput;
+  waveoutput.Open(samplebuffer, 8, 4096,
+    (me->m_nVersion == 1) ? 44100 : 48000
+  );
+
+//  OutputDebugString("PlayThread started\n");
+
+//  void *pFilter = filter_open();
+
+  int q = 0;
+  while(!me->m_dwPlayKillFlag) {
+    MSG msg;
+    ::GetMessage(&msg, NULL, WM_APP, WM_APP+2);
+    if(msg.message == WM_APP+2) {
+//TRACE("pause %d\n",msg.wParam);
+      waveoutput.Pause(msg.wParam);
+      continue;
+    }
+
+    if(msg.message == WM_APP+1) break;
+    if(msg.message != WM_APP) continue;
+
+    short *pBuf = (short*)(msg.lParam);
+    int nSamples = 4096;
+
+    int r = 0;
+    while(nSamples > 0) {
+      int n = nSamples;
+      r = emu_execute(me->m_pStatePlay, 0x7FFFFFFF, pBuf, (unsigned*)(&n), 0);
+      /*
+      ** On error, simply play silence
+      */
+      if(r < 0) {
+        memset(pBuf, 0, sizeof(short)*2*nSamples);
+        n = nSamples;
+      } else {
+        /*
+        ** Shove it through the filter
+        */
+//        n = filter_process(pFilter, pBuf, n);
+      }
+//for(r=0;r<2*n;r++)pBuf[r]=((q++)%168)*10;
+      pBuf += 2 * n;
+      nSamples -= n;
+    }
+    waveoutput.BufferReady(msg.wParam);
+  }
+
+//  filter_close(pFilter);
+
+  waveoutput.Close();
+
+  me->m_pPlayThread = NULL;
+  me->m_csPlay.Unlock();
+  return 0;
+}
+
+/***************************************************************************/
+
+void CPSFWorkArea::DeleteContents()
+{
+  KillDebugThreadAndBlock();
+  KillPlayThreadAndBlock();
+  ClearWorkArea();
+  ClearAllSavedStates();
+  m_tag.Empty();
+}
+
+void CPSFWorkArea::OnCloseDocument() 
+{
+	// TODO: Add your specialized code here and/or call the base class
+	
+	CDocument::OnCloseDocument();
+}
+
+void CPSFWorkArea::OnFileImportbinary() 
+{
+  CImportBinaryDlg dlgImportBinary;
+
+  if(dlgImportBinary.DoModal() != IDOK) return;
+
+  CString strPathName = dlgImportBinary.m_strPathName;
+  DWORD dwOffset = dlgImportBinary.m_dwOffset;
+  DWORD dwLength = dlgImportBinary.m_dwLength;
+  DWORD dwDestinationAddress = dlgImportBinary.m_dwDestinationAddress;
+
+//  dwOffset &= 0xFFFFFFFC;
+//  dwLength &= 0xFFFFFFFC;
+//  dwDestinationAddress &= 0xFFFFFFFC;
+
+  if(!dwLength) return;
+  if(strPathName.IsEmpty()) return;
+
+  CString strCaption;
+  strCaption.LoadString(IDS_IMPORT_BINARY);
+
+  FILE *f = fopen((LPCSTR)strPathName, "rb");
+  if(!f) {
+    CString s;
+    s.Format(_T("Unable to open '%s'."), (LPCTSTR)strPathName);
+    AfxGetMainWnd()->MessageBox(s, (LPCTSTR)strCaption, MB_OK|MB_ICONHAND);
+  }
+
+  LPBYTE lpBuffer = new BYTE[dwLength];
+  memset(lpBuffer, 0, dwLength);
+  fseek(f, dwOffset, SEEK_SET);
+  fread(lpBuffer, 1, dwLength, f);
+  fclose(f);
+
+  ImportBinaryFromBuffer(lpBuffer, dwDestinationAddress, dwLength);
+
+  delete[] lpBuffer;
+
+  SetModifiedFlag();
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::OnUpdateFileImportbinary(CCmdUI* pCmdUI) {
+  pCmdUI->Enable(
+    (GetVersion() == 1) && (!IsRunning())
+  );
+}
+
+void CPSFWorkArea::OnUpdateDebugRuntoint(CCmdUI* pCmdUI) { pCmdUI->Enable(!IsRunning()); }
+void CPSFWorkArea::OnUpdateEditBreakpoints(CCmdUI* pCmdUI) { pCmdUI->Enable(!IsRunning()); }
+
+void CPSFWorkArea::OnEditBreakpoints() 
+{
+  CBreakpointsDlg dlgBreakpoints;
+
+  dlgBreakpoints.m_pWorkArea = this;
+
+  /*
+  ** Quick run through the breakpoint map to add all breakpoint addresses
+  ** This makes the dialog's job a lot easier
+  */
+  for(int i = 0; i < 0x5000; i++) {
+    DWORD dwMap =
+      m_adwBreakpointMapExecute[i] |
+      m_adwBreakpointMapRead[i] |
+      m_adwBreakpointMapWrite[i];
+    if(dwMap) {
+      DWORD dwBase = BreakpointIndexToAddress(32 * i);
+      for(int j = 0; j < 32; j++) {
+        if(dwMap & (1 << j)) dlgBreakpoints.m_adwBreakpoints.Add(dwBase + 4 * j);
+      }
+    }
+  }
+
+  /*
+  ** Dialog will handle everything from here
+  */
+  dlgBreakpoints.DoModal();
+
+}
+
+void CPSFWorkArea::OnUpdateEditExesettings(CCmdUI* pCmdUI) {
+  BOOL b = FALSE;
+  if((m_nVersion == 1) && (!IsRunning())) b = TRUE;
+  pCmdUI->Enable(b);
+}
+
+void CPSFWorkArea::OnEditExesettings() 
+{
+  CExeSettingsDlg dlgExeSettings;
+
+  dlgExeSettings.m_dwPC = m_dwEXEStartPC;
+  dlgExeSettings.m_dwSP = m_dwEXEStartSP;
+
+  dlgExeSettings.m_dwTextStart = m_dwEXEStartAddress;
+  dlgExeSettings.m_dwTextSize  = m_dwEXEByteLength;
+
+  if(dlgExeSettings.DoModal() != IDOK) return;
+
+  m_dwEXEStartPC      = dlgExeSettings.m_dwPC;
+  m_dwEXEStartSP      = dlgExeSettings.m_dwSP;
+  m_dwEXEStartAddress = dlgExeSettings.m_dwTextStart;
+  m_dwEXEByteLength   = dlgExeSettings.m_dwTextSize;
+
+}
+
+void CPSFWorkArea::PlayStart()
+{
+  /*
+  ** Kill old thread, if there was one
+  */
+  KillPlayThreadAndBlock();
+  /*
+  ** Allocate a play state if it doesn't already exist
+  */
+  if(!m_pStatePlay) {
+    m_pStatePlay = malloc(emu_get_state_size(m_nVersion));
+  }
+  ASSERT(m_pStatePlay);
+  emu_clear_state(m_pStatePlay, m_nVersion);
+  emu_set_readfile(m_pStatePlay, CPSFWorkArea__readfile_cb, this);
+
+//  strcpy(m_sPSF2Path,
+//  (((CPSFLabApp*)(AfxGetApp()))->m_sPSF2Path)
+//  );
+
+  //emu_set_console_out(m_pStatePlay, CPSFWorkArea__console_out, this);
+  //spu_enable_reverb(iop_get_spu_state(emu_get_iop_state(m_pStatePlay)), 0);
+  /*
+  ** Set emulation core settings
+  */
+  SPSFEmuSettings es;
+  theApp.GetEmuSettings(PSF_EMUSETTINGS_PLAY, es);
+  iop_set_compat(emu_get_iop_state(m_pStatePlay), es.bFriendly ? IOP_COMPAT_FRIENDLY : IOP_COMPAT_HARSH);
+  /*
+  ** Load the patched EXE into this play state
+  */
+  if(m_nVersion == 1) {
+    LoadEXEToState(m_pStatePlay);
+    ApplyPatchesToState(m_pStatePlay);
+  }
+  /*
+  ** Begin unpaused!
+  */
+  m_bPlayPaused = FALSE;
+  /*
+  ** Begin new thread
+  */
+  StartPlayThreadAndBlock();
+}
+
+void CPSFWorkArea::PlayPause() {
+  if(m_bPlayPaused) return;
+  if(m_pPlayThread) m_pPlayThread->PostThreadMessage(WM_APP+2, TRUE, 0);
+  m_bPlayPaused = TRUE;
+}
+
+void CPSFWorkArea::PlayUnpause() {
+  if(!m_bPlayPaused) return;
+  if(m_pPlayThread) m_pPlayThread->PostThreadMessage(WM_APP+2, FALSE, 0);
+  m_bPlayPaused = FALSE;
+}
+
+void CPSFWorkArea::LoadEXEToState(void *pState)
+{
+  ASSERT(pState);
+  /*
+  ** Copy EXE data
+  */
+  for(DWORD i = 0; i < 0x7C000; i++) {
+    iop_setword(emu_get_iop_state(pState), 0x80010000+4*i, m_adwEXEData[i]);
+  }
+  /*
+  ** Set the initial PC/SP
+  */
+  r3000_setreg(iop_get_r3000_state(emu_get_iop_state(pState)), R3000CLASS(PC)    , m_dwEXEStartPC);
+  r3000_setreg(iop_get_r3000_state(emu_get_iop_state(pState)), R3000CLASS(GEN)+29, m_dwEXEStartSP);
+}
+
+void CPSFWorkArea::ApplyPatchesToState(void *pState)
+{
+  ASSERT(pState);
+  DWORD dwAddress;
+  for(dwAddress = 0x80010000; dwAddress < 0x80200000; dwAddress += 4) {
+    if(IsWordPatched(dwAddress)) iop_setword(emu_get_iop_state(pState), dwAddress, GetPatchWord(dwAddress));
+  }
+}
+
+/***************************************************************************/
+
+void CPSFWorkArea::KillDebugThreadAndBlock() {
+  m_dwDebugKillFlag = 1;
+  m_csDebug.Lock(); m_csDebug.Unlock();
+  m_bRunning = FALSE;
+}
+
+void CPSFWorkArea::KillPlayThreadAndBlock() {
+  if(m_pPlayThread) m_pPlayThread->PostThreadMessage(WM_APP+1,0,0);
+  m_dwPlayKillFlag = 1;
+  m_csPlay.Lock(); m_csPlay.Unlock();
+  m_bPlaying = FALSE;
+}
+
+void CPSFWorkArea::StartDebugThreadAndBlock() {
+  KillDebugThreadAndBlock();
+  m_evDebug.ResetEvent();
+  m_dwDebugKillFlag = 0;
+  m_bRunning = TRUE;
+  /*
+  ** Must get app-global options here... can't really get them in the
+  ** debug thread itself
+  */
+  /*
+  ** Event mask
+  */
+  m_dwDebugEventMask = theApp.GetEventMask();
+  /*
+  ** Emulation core settings
+  */
+  SPSFEmuSettings es;
+  theApp.GetEmuSettings(PSF_EMUSETTINGS_DEBUG, es);
+  iop_set_compat(emu_get_iop_state(m_pStateDebug), es.bFriendly ? IOP_COMPAT_FRIENDLY : IOP_COMPAT_HARSH);
+  /*
+  ** Now begin the thread
+  */
+  m_pDebugThread = AfxBeginThread(CPSFWorkArea__DebugThread, (LPVOID)this);
+  m_evDebug.Lock();
+}
+
+void CPSFWorkArea::StartPlayThreadAndBlock() {
+  KillPlayThreadAndBlock();
+  m_evPlay.ResetEvent();
+  m_dwPlayKillFlag = 0;
+  m_bPlaying = TRUE;
+  m_pPlayThread = AfxBeginThread(CPSFWorkArea__PlayThread, (LPVOID)this);
+  m_evPlay.Lock();
+}
+
+/***************************************************************************/
+/*
+** This command is sent INTERNALLY when execution has stopped in the debug
+** thread.
+*/
+void CPSFWorkArea::OnDebugExecutionstopped() 
+{
+  KillDebugThreadAndBlock();
+  /*
+  ** Update views depending on what exactly happened
+  */
+  DWORD dwPC = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(m_pStateDebug)), R3000CLASS(PC));
+  CodeJumpTo(dwPC);
+  if(m_bDebugBreakpointReadFlag ) MemoryJumpTo(m_dwDebugBreakpointReadAddress );
+  if(m_bDebugBreakpointWriteFlag) MemoryJumpTo(m_dwDebugBreakpointWriteAddress);
+  CEventView *ev = (CEventView *)FindViewOfClass(RUNTIME_CLASS(CEventView ));
+  if(ev) { ev->JumpToBottom(); }
+  RegisterMonitor();
+  UpdateAllViews(NULL);
+
+  /*
+  ** Message box depending on what happened
+  */
+  CString str, strMessage;
+  CString strCaption;
+  strCaption.LoadString(IDS_BREAKPOINT);
+  UINT nType = MB_OK;
+  if(m_bDebugErrorFlag) {
+    str.Format(IDS_UNRECOVERABLE_ADDRESS, dwPC);
+    strMessage += str;
+    strCaption.LoadString(IDS_ERROR);
+    nType = MB_OK|MB_ICONHAND;
+  }
+  if(m_bDebugBreakpointExecuteFlag) {
+    str.Format(IDS_BREAKPOINT_EXECUTE_ADDRESS, dwPC);
+    strMessage += str;
+  }
+  if(m_bDebugBreakpointReadFlag) {
+    str.Format(IDS_BREAKPOINT_READ_ADDRESS, m_dwDebugBreakpointReadAddress);
+    strMessage += str;
+  }
+  if(m_bDebugBreakpointWriteFlag) {
+    str.Format(IDS_BREAKPOINT_WRITE_ADDRESS, m_dwDebugBreakpointWriteAddress);
+    strMessage += str;
+  }
+  if(m_bDebugWeedFlag) {
+    str.Format(IDS_WEED_ADDRESS, m_dwDebugWeedAddress);
+    strMessage += str;
+  }
+
+  if(!strMessage.IsEmpty()) {
+    AfxGetMainWnd()->MessageBox(strMessage, (LPCTSTR)strCaption, nType);
+  }
+
+  // commands will re-enable themselves automatically when this returns
+}
+
+void CPSFWorkArea::RunToAddress(DWORD dwAddress)
+{
+  KillDebugThreadAndBlock();
+  m_nDebugCommand = ID_DEBUG_SPECIFICLINE;
+  m_dwDebugRunTarget = dwAddress;
+  StartDebugThreadAndBlock();
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::OnUpdateDebugSpecificline(CCmdUI* pCmdUI) {
+  pCmdUI->Enable(!IsRunning());
+}
+
+void CPSFWorkArea::OnDebugSpecificline() {
+  CRunToSpecificLineDlg dlgRunToSpecificLine;
+  ASSERT(m_pStateDebug);
+  dlgRunToSpecificLine.m_dwAddress = r3000_getreg(iop_get_r3000_state(emu_get_iop_state(m_pStateDebug)), R3000CLASS(PC));
+  if(dlgRunToSpecificLine.DoModal() != IDOK) return;
+  RunToAddress(dlgRunToSpecificLine.m_dwAddress);
+}
+
+void CPSFWorkArea::OnDebugRuntoint() 
+{
+  KillDebugThreadAndBlock();
+  m_nDebugCommand = ID_DEBUG_RUNTOINT;
+  StartDebugThreadAndBlock();
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::ClearAllSavedStates()
+{
+  int i;
+  for(i = 0; i < 10; i++) {
+    if(m_apSavedStates[i]) {
+      free(m_apSavedStates[i]);
+      m_apSavedStates[i] = 0;
+    }
+  }
+  m_nCurrentStateSlot = 0;
+}
+
+void CPSFWorkArea::SaveDebugState(int nSlot)
+{
+  ASSERT(m_pStateDebug);
+  ASSERT(nSlot >= 0 && nSlot <= 9);
+  int nStateSize = emu_get_state_size(m_nVersion);
+  if(!m_apSavedStates[nSlot]) {
+    m_apSavedStates[nSlot] = malloc(nStateSize);
+  }
+
+  memcpy(m_apSavedStates[nSlot], m_pStateDebug, nStateSize);
+  m_aSavedCallStacks[nSlot].CopyFrom(m_callstack);
+  m_aSavedEventLogs[nSlot].CopyFrom(m_eventlog);
+
+}
+
+void CPSFWorkArea::LoadDebugState(int nSlot)
+{
+  ASSERT(m_pStateDebug);
+  ASSERT(nSlot >= 0 && nSlot <= 9);
+  if(!m_apSavedStates[nSlot]) return;
+  int nStateSize = emu_get_state_size(m_nVersion);
+
+  memcpy(m_pStateDebug, m_apSavedStates[nSlot], nStateSize);
+  m_callstack.CopyFrom(m_aSavedCallStacks[nSlot]);
+  m_eventlog.CopyFrom(m_aSavedEventLogs[nSlot]);
+}
+
+void CPSFWorkArea::OnDebugSelectslot() 
+{
+  CStateSlotDlg dlgStateSlot;
+
+  dlgStateSlot.m_nSlot = m_nCurrentStateSlot;
+
+  CString strInUse;
+  CString strNotInUse;
+  strInUse.LoadString(IDS_INUSE);
+  strNotInUse.LoadString(IDS_NOTINUSE);
+
+  dlgStateSlot.m_strInUse1 = m_apSavedStates[0] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse2 = m_apSavedStates[1] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse3 = m_apSavedStates[2] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse4 = m_apSavedStates[3] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse5 = m_apSavedStates[4] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse6 = m_apSavedStates[5] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse7 = m_apSavedStates[6] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse8 = m_apSavedStates[7] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse9 = m_apSavedStates[8] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+  dlgStateSlot.m_strInUse0 = m_apSavedStates[9] ? ((LPCTSTR)strInUse) : ((LPCTSTR)strNotInUse);
+
+  if(dlgStateSlot.DoModal() != IDOK) return;
+
+  m_nCurrentStateSlot = dlgStateSlot.m_nSlot;
+}
+
+DWORD CPSFWorkArea::BreakpointIndexToAddress(int nIndex)
+{
+  if(nIndex < 0) return 0;
+  if(nIndex >= 0xA0000) return 0;
+  if(nIndex < 0x80000) return 0x80000000 + 4 * nIndex;
+  return 0xBFC00000 + 4 * (nIndex - 0x80000);
+}
+
+void CPSFWorkArea::CodeJumpTo(DWORD dwAddress)
+{
+  CCodeView *cv = (CCodeView*)FindViewOfClass(RUNTIME_CLASS(CCodeView));
+  if(cv) {
+    cv->JumpTo(dwAddress);
+    cv->SetFocus();
+  }
+}
+
+void CPSFWorkArea::MemoryJumpTo(DWORD dwAddress)
+{
+  CMemoryView *mv = (CMemoryView*)FindViewOfClass(RUNTIME_CLASS(CMemoryView));
+  if(mv) {
+    mv->JumpTo(dwAddress);
+    mv->SetFocus();
+  }
+}
+
+void CPSFWorkArea::OnEditTag() 
+{
+  CTagDlg dlgTag;
+  CString strTag = m_tag.GetRaw();
+  dlgTag.m_strTag = strTag;
+  if(dlgTag.DoModal() != IDOK) return;
+  if(!lstrcmp((LPCTSTR)strTag, (LPCTSTR)dlgTag.m_strTag)) return;
+  m_tag.SetRaw(dlgTag.m_strTag);
+  SetModifiedFlag();
+}
+
+void CPSFWorkArea::ImportEXEFromBuffer(LPBYTE lpBuffer, DWORD dwLength)
+{
+  if(dwLength < 0x800) return;
+  memcpy(m_EXEHeader, lpBuffer, 0x800);
+  m_dwEXEStartPC      = *((DWORD*)(lpBuffer+0x10));
+  m_dwEXEStartSP      = *((DWORD*)(lpBuffer+0x30));
+  m_dwEXEStartAddress = *((DWORD*)(lpBuffer+0x18));
+  m_dwEXEByteLength   = *((DWORD*)(lpBuffer+0x1C));
+  if(m_dwEXEByteLength > (dwLength-0x800)) m_dwEXEByteLength = (dwLength-0x800);
+  ImportBinaryFromBuffer(lpBuffer+0x800, m_dwEXEStartAddress, m_dwEXEByteLength);
+}
+
+/*
+** TODO
+** Hi there!
+** Fix me so I can load unaligned data!
+*/
+void CPSFWorkArea::ImportBinaryFromBuffer(LPBYTE lpBuffer, DWORD dwAddress, DWORD dwLength)
+{
+  dwLength &= 0xFFFFFFFC;
+  for(DWORD i = 0; i < dwLength; i += 4) {
+    DWORD d = *((DWORD*)(lpBuffer+i));
+    DWORD a = (dwAddress + i) & 0xFFFFFFFC;
+    DeletePatchWord(a);
+    int nEXEIndex = AddressToEXEIndex(a);
+    if(nEXEIndex >= 0) m_adwEXEData[nEXEIndex] = d;
+    iop_setword(emu_get_iop_state(m_pStateDebug), a, d);
+  }
+}
+
+/*
+** TODO
+** Hi there!
+** Fix me so I can export unaligned data!
+*/
+void CPSFWorkArea::ExportBinaryToBuffer(LPBYTE lpBuffer, DWORD dwAddress, DWORD dwLength)
+{
+  dwLength &= 0xFFFFFFFC;
+  for(DWORD i = 0; i < dwLength; i += 4) {
+    DWORD a = (dwAddress & 0xFFFFFFFC) + i;
+    DWORD d = 0;
+    int nEXEIndex = AddressToEXEIndex(a);
+    if(nEXEIndex >= 0) d = m_adwEXEData[nEXEIndex];
+    if(IsWordPatched(a)) d = GetPatchWord(a);
+    *((DWORD*)(lpBuffer+i)) = d;
+  }
+}
+
+/*
+** Buffer must have 0x200000 bytes available
+*/
+DWORD CPSFWorkArea::ExportEXEToBuffer(LPBYTE lpBuffer)
+{
+  DWORD dwLen = m_dwEXEByteLength;
+  if(dwLen > 0x1F0000) dwLen = 0x1F0000;
+  /*
+  ** Write header, hooray
+  */
+  *((DWORD*)(m_EXEHeader+0x10)) = m_dwEXEStartPC;
+  *((DWORD*)(m_EXEHeader+0x30)) = m_dwEXEStartSP;
+  *((DWORD*)(m_EXEHeader+0x18)) = m_dwEXEStartAddress;
+  *((DWORD*)(m_EXEHeader+0x1C)) = m_dwEXEByteLength;
+  memcpy(lpBuffer, m_EXEHeader, 0x800);
+  /*
+  ** Export the text section
+  */
+  ExportBinaryToBuffer(lpBuffer + 0x800, m_dwEXEStartAddress, m_dwEXEByteLength);
+  /*
+  ** Return the total length
+  */
+  return (0x800 + m_dwEXEByteLength);
+}
+
+void CPSFWorkArea::OnFileSaveas() 
+{
+  CString strFilterName;
+  CString strFilterExt;
+
+  CDocTemplate *pDocTemplate = GetDocTemplate();
+  ASSERT(pDocTemplate);
+  pDocTemplate->GetDocString(strFilterName, CDocTemplate::filterName);
+  pDocTemplate->GetDocString(strFilterExt , CDocTemplate::filterExt );
+
+  CString strFilterString = strFilterName + _T("|*") + strFilterExt + _T("||");
+
+  CFileDialog dlgFile(
+    FALSE,
+    (LPCTSTR)strFilterExt,
+    (LPCTSTR)m_strPathName,
+    OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+    (LPCTSTR)strFilterString
+  );
+
+  if(dlgFile.DoModal() != IDOK) return;
+
+  CString strSaveAsPathName = dlgFile.GetPathName();
+
+  OnSaveDocument((LPCTSTR)strSaveAsPathName);
+}
+
+void CPSFWorkArea::OnFileImportexe() 
+{
+  CString strEXEFilter;
+  CString strAllFilter;
+  strEXEFilter.LoadString(IDS_FILTER_EXE);
+  strAllFilter.LoadString(IDS_FILTER_ALL);
+  CString strFilterString = strEXEFilter + _T("|") + strAllFilter + _T("||");
+  CFileDialog dlgFile(
+    TRUE,
+    _T(""),
+    _T(""),
+    OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+    (LPCTSTR)strFilterString
+  );
+  CString strTitle;
+  strTitle.LoadString(IDS_IMPORT_EXE);
+  dlgFile.m_ofn.lpstrTitle = (LPCTSTR)strTitle;
+  if(dlgFile.DoModal() != IDOK) return;
+  CString strPathName = dlgFile.GetPathName();
+
+  FILE *f;
+  f = fopen((LPCSTR)strPathName, "rb");
+  if(!f) {
+    CString s;
+    s.Format(_T("Unable to open '%s'."), (LPCTSTR)strPathName);
+    AfxGetMainWnd()->MessageBox(s, (LPCTSTR)strTitle, MB_OK|MB_ICONHAND);
+  }
+
+  fseek(f, 0, SEEK_END);
+  int nLength = ftell(f);
+  fseek(f, 0, SEEK_SET);
+  if(nLength < 0) nLength = 0;
+
+  LPBYTE lpEXE = new BYTE[nLength];
+  ASSERT(lpEXE);
+  memset(lpEXE, 0, nLength);
+
+  fread(lpEXE, 1, nLength, f);
+  fclose(f);
+
+  ImportEXEFromBuffer(lpEXE, nLength);
+  delete[] lpEXE;
+
+  /*
+  ** Might as well restart the debugger
+  */
+  DebugRestart();
+  RegisterMonitor();
+
+  SetModifiedFlag();
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::OnUpdateFileImportexe(CCmdUI* pCmdUI) {
+  pCmdUI->Enable(
+    (GetVersion() == 1) && (!IsRunning())
+  );
+}
+
+void CPSFWorkArea::OnFileExportexe() 
+{
+  CString strEXEFilter;
+  CString strAllFilter;
+  strEXEFilter.LoadString(IDS_FILTER_EXE);
+  strAllFilter.LoadString(IDS_FILTER_ALL);
+  CString strFilterString = strEXEFilter + _T("|") + strAllFilter + _T("||");
+  CFileDialog dlgFile(
+    FALSE,
+    _T(""),
+    _T(""),
+    OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+    (LPCTSTR)strFilterString
+  );
+  CString strTitle;
+  strTitle.LoadString(IDS_EXPORT_EXE);
+  dlgFile.m_ofn.lpstrTitle = (LPCTSTR)strTitle;
+  if(dlgFile.DoModal() != IDOK) return;
+  CString strPathName = dlgFile.GetPathName();
+
+  LPBYTE lpEXE = new BYTE[0x200000];
+  ASSERT(lpEXE);
+  DWORD dwEXELength = ExportEXEToBuffer(lpEXE);
+
+  FILE *f;
+  f = fopen((LPCSTR)strPathName, "wb");
+  if(!f) {
+    delete[] lpEXE;
+    CString s;
+    s.Format(_T("Unable to open '%s'."), (LPCTSTR)strPathName);
+    AfxGetMainWnd()->MessageBox(s, (LPCTSTR)strTitle, MB_OK|MB_ICONHAND);
+  }
+  fwrite(lpEXE, 1, dwEXELength, f);
+  fclose(f);
+
+  delete[] lpEXE;
+
+}
+
+void CPSFWorkArea::OnFileFondue() 
+{
+  while(AfxGetMainWnd()->MessageBox(
+    _T("Please insert Disk 22 to continue"),
+    _T("Disk Change"),
+    MB_OKCANCEL|MB_ICONINFORMATION
+  ) != IDCANCEL);
+	AfxGetMainWnd()->MessageBox(
+    _T("Unable to load overlay for CPSFWorkArea::OnFondue()\nFile not found"),
+    _T("Critical Error"),
+    MB_OK|MB_ICONHAND
+  );
+}
+
+void CPSFWorkArea::OnUpdateEditOptimize(CCmdUI* pCmdUI) {
+  BOOL b = FALSE;
+  if((m_nVersion == 1) && (!IsRunning())) b = TRUE;
+  pCmdUI->Enable(b);
+}
+
+void CPSFWorkArea::OnEditOptimize() 
+{
+  COptimizeDlg dlg;
+  dlg.m_pWorkArea = this;
+  if(dlg.DoModal() != IDOK) return;
+}
+
+void CPSFWorkArea::AuditCommit(CPSFAudit &audit) {
+  DWORD i;
+  DWORD last_i_read = 0;
+  for(i = 0x80010000; i < 0x80200000; i += 4) {
+    if(audit.IsWordUsed(i)) {
+      last_i_read = i;
+    } else {
+      SetPatchWord(i, 0);
+    }
+  }
+  last_i_read += 4;
+  last_i_read &= 0x1FFFFC;
+  if(last_i_read < (m_dwEXEStartAddress & 0x1FFFFC)) {
+    last_i_read = (m_dwEXEStartAddress & 0x1FFFFC);
+  }
+  m_dwEXEByteLength = last_i_read - (m_dwEXEStartAddress & 0x1FFFFC);
+  if(m_dwEXEByteLength > 0x1F0000) { m_dwEXEByteLength = 0x1F0000; }
+  UpdateAllViews(NULL);
+}
+
+void CPSFWorkArea::AuditUpload(CPSFAudit &audit) {
+  /*
+  ** Copy the executable there
+  */
+  audit.Upload(0x80010000, m_adwEXEData, 0x1F0000);
+  /*
+  ** Set the initial PC/SP
+  */
+  audit.SetPC(m_dwEXEStartPC);
+  audit.SetSP(m_dwEXEStartSP);
+  /*
+  ** Apply all patches
+  */
+  DWORD dwAddress;
+  for(dwAddress = 0x80010000; dwAddress < 0x80200000; dwAddress += 4) {
+    if(IsWordPatched(dwAddress)) {
+      DWORD dwData = GetPatchWord(dwAddress);
+      audit.Upload(dwAddress, &dwData, 4);
+    }
+  }
+}
+
+void CPSFWorkArea::OnFileExportbiosarea() 
+{
+	// TODO: Add your command handler code here
+	if(!m_pStateDebug) return;
+
+  FILE *f = fopen("test-ram", "wb");
+  if(!f) return;
+
+  DWORD tmp;
+  DWORD i;
+  for(i = 0; i < 0x200000; i += 4) {
+    tmp = iop_getword(emu_get_iop_state(m_pStateDebug), 0x80000000 + i);
+    fwrite(&tmp, 1, 4, f);
+  }
+
+  fclose(f);
+
+}
+
+void CPSFWorkArea::SetVersion(int n)
+{
+  if(m_nVersion == n) return;
+
+  ((CPSFLabApp*)(AfxGetApp()))->m_nNewPSFVersion = n;
+  ((CPSFLabApp*)(AfxGetApp()))->m_nWorkAreaVersion = n;
+
+  DeleteContents();
+
+  m_nVersion = n;
+
+  if(m_pStateDebug) {
+    free(m_pStateDebug);
+    m_pStateDebug = NULL;
+  }
+  m_pStateDebug = malloc(emu_get_state_size(m_nVersion));
+  emu_clear_state(m_pStateDebug, m_nVersion);
+  emu_set_readfile(m_pStateDebug, CPSFWorkArea__readfile_cb, this);
+  emu_set_console_out(m_pStateDebug, CPSFWorkArea__console_out, this);
+
+//  strcpy(m_sPSF2Path,
+//  (((CPSFLabApp*)(AfxGetApp()))->m_sPSF2Path)
+//  );
+
+
+  OnNewDocument();
+}
+
+int CPSFWorkArea::GetVersion()
+{
+  return m_nVersion;
+}
+
+void CPSFWorkArea::OnUpdateFileSave(CCmdUI* pCmdUI) 
+{
+  pCmdUI->Enable(GetVersion() == 1);
+}
+
+void CPSFWorkArea::OnUpdateFileSaveas(CCmdUI* pCmdUI) 
+{
+  pCmdUI->Enable(GetVersion() == 1);
+}
+
+void CPSFWorkArea::OnUpdateEditTag(CCmdUI* pCmdUI) 
+{
+  pCmdUI->Enable(GetVersion() == 1);
+}
+
+void CPSFWorkArea::OnUpdateFileExportexe(CCmdUI* pCmdUI) 
+{
+  pCmdUI->Enable(GetVersion() == 1);
+}

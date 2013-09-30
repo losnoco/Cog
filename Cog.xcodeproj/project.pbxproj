@@ -90,7 +90,6 @@
 		17B7CF5C0F5A05EE00A47027 /* pauseBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = 17B7CF590F5A05EE00A47027 /* pauseBadge.png */; };
 		17B7CF5D0F5A05EE00A47027 /* playBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = 17B7CF5A0F5A05EE00A47027 /* playBadge.png */; };
 		17B7CF5E0F5A05EE00A47027 /* stopBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = 17B7CF5B0F5A05EE00A47027 /* stopBadge.png */; };
-		17B7CF970F5A0A4D00A47027 /* AudioOverload.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17B7CF7C0F5A09FD00A47027 /* AudioOverload.bundle */; };
 		17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */; };
 		17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */; };
 		17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */; };
@@ -146,6 +145,7 @@
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
+		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -176,20 +176,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 99B989F30CC7E10400C256E9;
 			remoteInfo = "APL Plugin";
-		};
-		17B7CF7B0F5A09FD00A47027 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17B7CF770F5A09FD00A47027 /* AudioOverload.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
-			remoteInfo = AudioOverload;
-		};
-		17B7CF950F5A0A3700A47027 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17B7CF770F5A09FD00A47027 /* AudioOverload.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
-			remoteInfo = "AudioOverload Plugin";
 		};
 		17C808780C3BD167005707C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -422,6 +408,13 @@
 			remoteGlobalIDString = 99B989F40CC7E10400C256E9;
 			remoteInfo = "APL Plugin";
 		};
+		8360EF0417F92B24005208A4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8360EEE417F92AC8005208A4;
+			remoteInfo = HighlyComplete;
+		};
 		8E8D40860CBB036600135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
@@ -475,7 +468,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				17B7CF970F5A0A4D00A47027 /* AudioOverload.bundle in CopyFiles */,
+				8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */,
 				99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */,
 				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
 				17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */,
@@ -638,7 +631,6 @@
 		17B7CF590F5A05EE00A47027 /* pauseBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pauseBadge.png; path = Images/pauseBadge.png; sourceTree = "<group>"; };
 		17B7CF5A0F5A05EE00A47027 /* playBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playBadge.png; path = Images/playBadge.png; sourceTree = "<group>"; };
 		17B7CF5B0F5A05EE00A47027 /* stopBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopBadge.png; path = Images/stopBadge.png; sourceTree = "<group>"; };
-		17B7CF770F5A09FD00A47027 /* AudioOverload.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AudioOverload.xcodeproj; path = Plugins/AudioOverload/AudioOverload.xcodeproj; sourceTree = "<group>"; };
 		17BB5CEC0B8A86010009ACB1 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
@@ -722,6 +714,7 @@
 		56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNumber+CogSort.m"; path = "Spotlight/NSNumber+CogSort.m"; sourceTree = "<group>"; };
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
+		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
 		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
@@ -985,7 +978,7 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
-				17B7CF770F5A09FD00A47027 /* AudioOverload.xcodeproj */,
+				8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */,
 				B09E94300D747F7B0064F138 /* WMA.xcodeproj */,
 				566D32160D538550004466A5 /* APL.xcodeproj */,
 				17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */,
@@ -1006,14 +999,6 @@
 				17C808660C3BD0F8005707C4 /* CoreAudio.xcodeproj */,
 			);
 			name = PlugIns;
-			sourceTree = "<group>";
-		};
-		17B7CF780F5A09FD00A47027 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				17B7CF7C0F5A09FD00A47027 /* AudioOverload.bundle */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		17C808720C3BD167005707C4 /* Products */ = {
@@ -1336,6 +1321,14 @@
 			name = Categories;
 			sourceTree = "<group>";
 		};
+		8360EF0117F92B23005208A4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8360EF0517F92B24005208A4 /* HighlyComplete.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -1484,7 +1477,6 @@
 				17C8F44C0CBEDD37008D969D /* PBXTargetDependency */,
 				17C8F7DA0CBEF3F9008D969D /* PBXTargetDependency */,
 				17643CBC0D5BD44900F0A9FE /* PBXTargetDependency */,
-				17B7CF960F5A0A3700A47027 /* PBXTargetDependency */,
 			);
 			name = Cog;
 			productInstallPath = "$(HOME)/Applications";
@@ -1521,10 +1513,6 @@
 					ProjectRef = 566D32160D538550004466A5 /* APL.xcodeproj */;
 				},
 				{
-					ProductGroup = 17B7CF780F5A09FD00A47027 /* Products */;
-					ProjectRef = 17B7CF770F5A09FD00A47027 /* AudioOverload.xcodeproj */;
-				},
-				{
 					ProductGroup = 17F5612B0C3BD4DC0019975C /* Products */;
 					ProjectRef = 17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */;
 				},
@@ -1555,6 +1543,10 @@
 				{
 					ProductGroup = 17C8F3C90CBED663008D969D /* Products */;
 					ProjectRef = 17C8F3C80CBED663008D969D /* GME.xcodeproj */;
+				},
+				{
+					ProductGroup = 8360EF0117F92B23005208A4 /* Products */;
+					ProjectRef = 8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */;
 				},
 				{
 					ProductGroup = 17C808840C3BD181005707C4 /* Products */;
@@ -1609,13 +1601,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		17B7CF7C0F5A09FD00A47027 /* AudioOverload.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AudioOverload.bundle;
-			remoteRef = 17B7CF7B0F5A09FD00A47027 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		17C808790C3BD167005707C4 /* FileSource.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -1733,6 +1718,13 @@
 			fileType = wrapper.cfbundle;
 			path = APL.bundle;
 			remoteRef = 566D321A0D538550004466A5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8360EF0517F92B24005208A4 /* HighlyComplete.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = HighlyComplete.bundle;
+			remoteRef = 8360EF0417F92B24005208A4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8E8D40870CBB036600135C1B /* M3u.bundle */ = {
@@ -1915,11 +1907,6 @@
 			isa = PBXTargetDependency;
 			name = "APL Plugin";
 			targetProxy = 17643CBB0D5BD44900F0A9FE /* PBXContainerItemProxy */;
-		};
-		17B7CF960F5A0A3700A47027 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "AudioOverload Plugin";
-			targetProxy = 17B7CF950F5A0A3700A47027 /* PBXContainerItemProxy */;
 		};
 		17C8097E0C3BD1F5005707C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

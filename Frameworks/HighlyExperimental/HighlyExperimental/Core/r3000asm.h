@@ -1,0 +1,29 @@
+/////////////////////////////////////////////////////////////////////////////
+//
+// r3000asm - R3000 quick assembler (no symbols, no macro instructions)
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#ifndef __PSX_R3000ASM_H__
+#define __PSX_R3000ASM_H__
+
+#include "emuconfig.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Returns negative on error (and fills the error string buffer)
+// Must be 256 bytes in the error string buffer
+//
+sint32 EMU_CALL r3000asm(uint32 pc, const char *text, uint32 *ins, char *errorstring);
+
+/////////////////////////////////////////////////////////////////////////////
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

@@ -1,0 +1,5 @@
+m68k/m68kmake.exe
+m68k/m68kmake.obj
+*.user
+Debug
+Release

@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{fa08c089-e29d-41b4-a0ec-df151f82f17d}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{61a513d4-d05c-48e9-9199-903526c7098a}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="C68K">
+      <UniqueIdentifier>{f00dacbe-f20a-49f6-9151-c41e4ce2752b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="m68k">
+      <UniqueIdentifier>{b62210c8-e7eb-4724-be9b-f7e5509f30df}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="arm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dcsound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="satsound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sega.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="yam.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="c68k\c68kexec.c">
+      <Filter>C68K</Filter>
+    </ClCompile>
+    <ClCompile Include="c68k\c68k.c">
+      <Filter>C68K</Filter>
+    </ClCompile>
+    <ClCompile Include="m68k\m68kcpu.c">
+      <Filter>m68k</Filter>
+    </ClCompile>
+    <ClCompile Include="m68k\m68kops.c">
+      <Filter>m68k</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="arm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dcsound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="satsound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sega.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="yam.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="emuconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="c68k\c68k.h">
+      <Filter>C68K</Filter>
+    </ClInclude>
+    <ClInclude Include="c68k\core.h">
+      <Filter>C68K</Filter>
+    </ClInclude>
+    <ClInclude Include="m68k\m68k.h">
+      <Filter>m68k</Filter>
+    </ClInclude>
+    <ClInclude Include="m68k\m68kconf.h">
+      <Filter>m68k</Filter>
+    </ClInclude>
+    <ClInclude Include="m68k\m68kcpu.h">
+      <Filter>m68k</Filter>
+    </ClInclude>
+    <ClInclude Include="m68k\m68kops.h">
+      <Filter>m68k</Filter>
+    </ClInclude>
+    <ClInclude Include="m68k\macros.h">
+      <Filter>m68k</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Starscream\s68000.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="c68k\c68k_ini.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op0.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op1.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op2.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op3.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op4.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op5.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op6.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op7.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op8.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_op9.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_opA.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_opB.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_opC.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_opD.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_opE.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68k_opF.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="c68k\c68kmac.inc">
+      <Filter>C68K</Filter>
+    </None>
+    <None Include="m68k\readme.txt">
+      <Filter>m68k</Filter>
+    </None>
+  </ItemGroup>
+</Project>

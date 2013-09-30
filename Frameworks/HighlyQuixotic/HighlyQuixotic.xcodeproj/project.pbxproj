@@ -1,0 +1,336 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		834378EC17F96E2600584396 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 834378EA17F96E2600584396 /* InfoPlist.strings */; };
+		8343791E17F96EA600584396 /* emuconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791517F96EA600584396 /* emuconfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8343791F17F96EA600584396 /* kabuki.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343791617F96EA600584396 /* kabuki.c */; };
+		8343792017F96EA600584396 /* kabuki.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791717F96EA600584396 /* kabuki.h */; };
+		8343792117F96EA600584396 /* qmix.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343791817F96EA600584396 /* qmix.c */; };
+		8343792217F96EA600584396 /* qmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791917F96EA600584396 /* qmix.h */; };
+		8343792317F96EA600584396 /* qsound.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343791A17F96EA600584396 /* qsound.c */; };
+		8343792417F96EA600584396 /* qsound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791B17F96EA600584396 /* qsound.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8343792517F96EA600584396 /* z80.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343791C17F96EA600584396 /* z80.c */; };
+		8343792617F96EA600584396 /* z80.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791D17F96EA600584396 /* z80.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		834378DE17F96E2600584396 /* HighlyQuixotic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HighlyQuixotic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		834378E917F96E2600584396 /* HighlyQuixotic-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HighlyQuixotic-Info.plist"; sourceTree = "<group>"; };
+		834378EB17F96E2600584396 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8343791517F96EA600584396 /* emuconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emuconfig.h; path = Core/emuconfig.h; sourceTree = "<group>"; };
+		8343791617F96EA600584396 /* kabuki.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kabuki.c; path = Core/kabuki.c; sourceTree = "<group>"; };
+		8343791717F96EA600584396 /* kabuki.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kabuki.h; path = Core/kabuki.h; sourceTree = "<group>"; };
+		8343791817F96EA600584396 /* qmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = qmix.c; path = Core/qmix.c; sourceTree = "<group>"; };
+		8343791917F96EA600584396 /* qmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = qmix.h; path = Core/qmix.h; sourceTree = "<group>"; };
+		8343791A17F96EA600584396 /* qsound.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = qsound.c; path = Core/qsound.c; sourceTree = "<group>"; };
+		8343791B17F96EA600584396 /* qsound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = qsound.h; path = Core/qsound.h; sourceTree = "<group>"; };
+		8343791C17F96EA600584396 /* z80.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = z80.c; path = Core/z80.c; sourceTree = "<group>"; };
+		8343791D17F96EA600584396 /* z80.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = z80.h; path = Core/z80.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		834378DA17F96E2600584396 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		834378D417F96E2600584396 = {
+			isa = PBXGroup;
+			children = (
+				834378E717F96E2600584396 /* HighlyQuixotic */,
+				834378E017F96E2600584396 /* Frameworks */,
+				834378DF17F96E2600584396 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		834378DF17F96E2600584396 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				834378DE17F96E2600584396 /* HighlyQuixotic.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		834378E017F96E2600584396 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				834378E317F96E2600584396 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		834378E317F96E2600584396 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		834378E717F96E2600584396 /* HighlyQuixotic */ = {
+			isa = PBXGroup;
+			children = (
+				8343791517F96EA600584396 /* emuconfig.h */,
+				8343791617F96EA600584396 /* kabuki.c */,
+				8343791717F96EA600584396 /* kabuki.h */,
+				8343791817F96EA600584396 /* qmix.c */,
+				8343791917F96EA600584396 /* qmix.h */,
+				8343791A17F96EA600584396 /* qsound.c */,
+				8343791B17F96EA600584396 /* qsound.h */,
+				8343791C17F96EA600584396 /* z80.c */,
+				8343791D17F96EA600584396 /* z80.h */,
+				834378E817F96E2600584396 /* Supporting Files */,
+			);
+			path = HighlyQuixotic;
+			sourceTree = "<group>";
+		};
+		834378E817F96E2600584396 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				834378E917F96E2600584396 /* HighlyQuixotic-Info.plist */,
+				834378EA17F96E2600584396 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		834378DB17F96E2600584396 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8343792417F96EA600584396 /* qsound.h in Headers */,
+				8343791E17F96EA600584396 /* emuconfig.h in Headers */,
+				8343792217F96EA600584396 /* qmix.h in Headers */,
+				8343792017F96EA600584396 /* kabuki.h in Headers */,
+				8343792617F96EA600584396 /* z80.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		834378DD17F96E2600584396 /* HighlyQuixotic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8343790617F96E2600584396 /* Build configuration list for PBXNativeTarget "HighlyQuixotic" */;
+			buildPhases = (
+				834378D917F96E2600584396 /* Sources */,
+				834378DA17F96E2600584396 /* Frameworks */,
+				834378DB17F96E2600584396 /* Headers */,
+				834378DC17F96E2600584396 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HighlyQuixotic;
+			productName = HighlyQuixotic;
+			productReference = 834378DE17F96E2600584396 /* HighlyQuixotic.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		834378D517F96E2600584396 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Christopher Snowhill";
+			};
+			buildConfigurationList = 834378D817F96E2600584396 /* Build configuration list for PBXProject "HighlyQuixotic" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 834378D417F96E2600584396;
+			productRefGroup = 834378DF17F96E2600584396 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				834378DD17F96E2600584396 /* HighlyQuixotic */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		834378DC17F96E2600584396 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				834378EC17F96E2600584396 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		834378D917F96E2600584396 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8343792517F96EA600584396 /* z80.c in Sources */,
+				8343792317F96EA600584396 /* qsound.c in Sources */,
+				8343792117F96EA600584396 /* qmix.c in Sources */,
+				8343791F17F96EA600584396 /* kabuki.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		834378EA17F96E2600584396 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				834378EB17F96E2600584396 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8343790417F96E2600584396 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					HAVE_STDINT_H,
+					EMU_LITTLE_ENDIAN,
+					EMU_COMPILE,
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		8343790517F96E2600584396 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					i386,
+					ppc,
+				);
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					HAVE_STDINT_H,
+					EMU_LITTLE_ENDIAN,
+					EMU_COMPILE,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		8343790717F96E2600584396 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				INFOPLIST_FILE = "HighlyQuixotic/HighlyQuixotic-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		8343790817F96E2600584396 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				INFOPLIST_FILE = "HighlyQuixotic/HighlyQuixotic-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		834378D817F96E2600584396 /* Build configuration list for PBXProject "HighlyQuixotic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8343790417F96E2600584396 /* Debug */,
+				8343790517F96E2600584396 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8343790617F96E2600584396 /* Build configuration list for PBXNativeTarget "HighlyQuixotic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8343790717F96E2600584396 /* Debug */,
+				8343790817F96E2600584396 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 834378D517F96E2600584396 /* Project object */;
+}

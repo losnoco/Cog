@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{baa3dd43-4bab-4d0c-a4f8-a22442c85402}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{e522c574-c4ae-4ee1-b48b-d71847133a8d}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="kabuki.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qmix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qsound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="z80.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="kabuki.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qmix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qsound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="z80.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="emuconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

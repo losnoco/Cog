@@ -4,15 +4,20 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Dumb Framework.xcscheme</key>
+		<key>HighlyTheoretical.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>7</integer>
+			<integer>36</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>8DC2EF4F0486A6940098B216</key>
+		<key>8343786D17F9658E00584396</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8343788417F9658E00584396</key>
 		<dict>
 			<key>primary</key>
 			<true/>
