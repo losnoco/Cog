@@ -65,7 +65,7 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
 
 	if (VOLUMES_ARE_ZERO) dst = NULL;
 
-	init_cubic();
+	_dumb_init_cubic();
 
 	quality = resampler->quality;
 
@@ -382,7 +382,7 @@ void dumb_resample_get_current_sample(DUMB_RESAMPLER *resampler, VOLUME_PARAMETE
 
 	if (VOLUMES_ARE_ZERO) { MIX_ZEROS(=); return; }
 
-	init_cubic();
+	_dumb_init_cubic();
 
 	quality = resampler->quality;
 

@@ -19,6 +19,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "dumb.h"
 #include "internal/dumb.h"
@@ -786,11 +787,56 @@ static void it_filter_sse(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample
 
 #undef LOG10
 
-int _dumb_it_use_sse = 0;
+#if defined(_M_IX86) || defined(__i386__)
+
+#ifdef _MSC_VER
+#include <intrin.h>
+#else
+static inline void
+__cpuid(int *data, int selector)
+{
+    asm("cpuid"
+        : "=a" (data[0]),
+        "=b" (data[1]),
+        "=c" (data[2]),
+        "=d" (data[3])
+        : "a"(selector));
+}
+#endif
+
+static int query_cpu_feature_sse() {
+	int buffer[4];
+	__cpuid(buffer,1);
+	if ((buffer[3]&(1<<25)) == 0) return 0;
+	return 1;
+}
+
+static int _dumb_it_use_sse = 0;
+
+void _dumb_init_sse()
+{
+    static int initialized = 0;
+    if (!initialized)
+    {
+        _dumb_it_use_sse = query_cpu_feature_sse();
+        initialized = 1;
+    }
+}
+
+#elif defined(_M_X64) || defined(__amd64__)
+
+static const int _dumb_it_use_sse = 1;
+
+#else
+
+static const int _dumb_it_use_sse = 0;
+
+#endif
 
 static void it_filter(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample_t *dst, long pos, sample_t *src, long size, int step, int sampfreq, int cutoff, int resonance)
 {
 #if defined(_USE_SSE)
+    _dumb_init_sse();
 	if ( _dumb_it_use_sse ) it_filter_sse( cr, state, dst, pos, src, size, step, sampfreq, cutoff, resonance );
 	else
 #endif
@@ -938,7 +984,7 @@ static void reset_channel_effects(IT_CHANNEL *channel)
 	channel->xm_volslide = 0;
 	channel->panslide = 0;
 	channel->channelvolslide = 0;
-	channel->arpeggio_table = &arpeggio_mod;
+	channel->arpeggio_table = (const unsigned char *) &arpeggio_mod;
 	memset(channel->arpeggio_offsets, 0, sizeof(channel->arpeggio_offsets));
 	channel->retrig = 0;
 	if (channel->xm_retrig) {
@@ -2490,7 +2536,7 @@ Yxy             This uses a table 4 times larger (hence 4 times slower) than
 					channel->arpeggio_offsets[0] = 0;
 					channel->arpeggio_offsets[1] = (v & 0xF0) >> 4;
 					channel->arpeggio_offsets[2] = (v & 0x0F);
-					channel->arpeggio_table = ((sigdata->flags & (IT_WAS_AN_XM|IT_WAS_A_MOD))==IT_WAS_AN_XM) ? &arpeggio_xm : &arpeggio_mod;
+					channel->arpeggio_table = (const unsigned char *)(((sigdata->flags & (IT_WAS_AN_XM|IT_WAS_A_MOD))==IT_WAS_AN_XM) ? &arpeggio_xm : &arpeggio_mod);
 				}
 				break;
 			case IT_SET_CHANNEL_VOLUME:
@@ -3124,15 +3170,15 @@ Yxy             This uses a table 4 times larger (hence 4 times slower) than
 					switch (entry->effect)
 					{
 					case IT_OKT_ARPEGGIO_3:
-						channel->arpeggio_table = &arpeggio_okt_3;
+						channel->arpeggio_table = (const unsigned char *)&arpeggio_okt_3;
 						break;
 
 					case IT_OKT_ARPEGGIO_4:
-						channel->arpeggio_table = &arpeggio_okt_4;
+						channel->arpeggio_table = (const unsigned char *)&arpeggio_okt_4;
 						break;
 
 					case IT_OKT_ARPEGGIO_5:
-						channel->arpeggio_table = &arpeggio_okt_5;
+						channel->arpeggio_table = (const unsigned char *)&arpeggio_okt_5;
 						break;
 					}
 				}

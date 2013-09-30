@@ -160,12 +160,11 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
 
 static short cubicA0[1025], cubicA1[1025];
 
-/*static*/ void init_cubic(void)
+void _dumb_init_cubic(void)
 {
 	unsigned int t; /* 3*1024*1024*1024 is within range if it's unsigned */
 	static int done = 0;
 	if (done) return;
-	done = 1;
 	for (t = 0; t < 1025; t++) {
 		/* int casts to pacify warnings about negating unsigned values */
 		cubicA0[t] = -(int)(  t*t*t >> 17) + (int)(  t*t >> 6) - (int)(t << 3);
@@ -173,6 +172,8 @@ static short cubicA0[1025], cubicA1[1025];
 	}
 
     lanczos_init();
+
+	done = 1;
 }
 
 
