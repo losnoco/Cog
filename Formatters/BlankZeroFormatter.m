@@ -24,6 +24,8 @@
 	
 	if (value) 
 		result = [NSString stringWithFormat:@"%i", value];
+    else
+        result = [NSString string];
 	
 	return result;
 }
