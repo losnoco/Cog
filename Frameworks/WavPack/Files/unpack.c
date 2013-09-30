@@ -103,7 +103,7 @@ int unpack_init (WavpackContext *wpc)
 
 int init_wv_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 {
-    bs_open_read (&wps->wvbits, wpmd->data, (char *) wpmd->data + wpmd->byte_length);
+    bs_open_read (&wps->wvbits, wpmd->data, (uchar *) wpmd->data + wpmd->byte_length);
     return TRUE;
 }
 
@@ -112,7 +112,7 @@ int init_wv_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 
 int init_wvc_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
 {
-    bs_open_read (&wps->wvcbits, wpmd->data, (char *) wpmd->data + wpmd->byte_length);
+    bs_open_read (&wps->wvcbits, wpmd->data, (uchar *) wpmd->data + wpmd->byte_length);
     return TRUE;
 }
 
@@ -132,7 +132,7 @@ int init_wvx_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
     wps->crc_wvx |= (int32_t) *cp++ << 16;
     wps->crc_wvx |= (int32_t) *cp++ << 24;
 
-    bs_open_read (&wps->wvxbits, cp, (char *) wpmd->data + wpmd->byte_length);
+    bs_open_read (&wps->wvxbits, cp, (uchar *) wpmd->data + wpmd->byte_length);
     return TRUE;
 }
 

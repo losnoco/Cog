@@ -54,7 +54,6 @@ const signed char fast_terms [] = { 17,17,0 };
 void pack_init (WavpackContext *wpc)
 {
     WavpackStream *wps = wpc->streams [wpc->current_stream];
-    uint32_t flags = wps->wphdr.flags;
 
     wps->sample_index = 0;
     wps->delta_decay = 2.0;
@@ -663,7 +662,6 @@ static int pack_samples (WavpackContext *wpc, int32_t *buffer)
     WavpackStream *wps = wpc->streams [wpc->current_stream];
     uint32_t sample_count = wps->wphdr.block_samples;
     uint32_t flags = wps->wphdr.flags, data_count;
-    int mag16 = ((flags & MAG_MASK) >> MAG_LSB) >= 16;
     int tcount, lossy = FALSE, m = 0;
     double noise_acc = 0.0, noise;
     struct decorr_pass *dpp;

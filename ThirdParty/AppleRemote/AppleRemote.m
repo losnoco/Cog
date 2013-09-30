@@ -461,7 +461,7 @@ static AppleRemote* sharedInstance=nil;
         // happen when the main thread is too busy to handle all incoming events in time.
         NSString* subCookieString;
         NSString* lastSubCookieString=nil;
-        while(subCookieString = [self validCookieSubstring: cookieString]) {            
+        while((subCookieString = [self validCookieSubstring: cookieString])) {
             cookieString = [cookieString substringFromIndex: [subCookieString length]];
             lastSubCookieString = subCookieString;
             if (processesBacklog) [self handleEventWithCookieString: subCookieString sumOfValues:sumOfValues];
@@ -501,7 +501,7 @@ static void QueueCallbackFunction(void* target,  IOReturn result, void* refcon, 
 
 		if (((int)event.elementCookie)!=5) {
 			sumOfValues+=event.value;
-			[cookieString appendString:[NSString stringWithFormat:@"%d_", event.elementCookie]];
+			[cookieString appendString:[NSString stringWithFormat:@"%p_", event.elementCookie]];
 		}
     }
 

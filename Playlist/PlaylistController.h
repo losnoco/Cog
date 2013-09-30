@@ -49,7 +49,7 @@ typedef enum {
 	PlaylistEntry *currentEntry;
 }
 
-@property(retain) PlaylistEntry *currentEntry;
+@property(nonatomic, retain) PlaylistEntry *currentEntry;
 @property(retain) NSString *totalTime;
 
 //Private Methods

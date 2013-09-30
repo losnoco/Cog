@@ -79,7 +79,7 @@
 
 @property(retain) NSString *artist;
 @property(retain) NSString *album;
-@property(retain) NSString *title;
+@property(nonatomic, retain) NSString *title;
 @property(retain) NSString *genre;
 @property(retain) NSNumber *year;
 @property(retain) NSNumber *track;

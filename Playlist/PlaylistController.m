@@ -649,7 +649,7 @@
 	[currentEntry release];
 	
 	currentEntry = pe;
-}	
+}
 
 - (void)setShuffle:(ShuffleMode)s
 {

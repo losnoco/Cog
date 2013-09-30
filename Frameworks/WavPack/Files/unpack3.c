@@ -482,21 +482,23 @@ static int unpack_size (WavpackStream3 *wps)
 	byte_sum += sizeof (wps->dc.weight);
     }
 
-    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG))
-	for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-	    if (dpp->term > 0) {
-		byte_sum += sizeof (dpp->samples_A [0]) * dpp->term;
-		byte_sum += sizeof (dpp->weight_A);
+    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG)) {
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+            if (dpp->term > 0) {
+                byte_sum += sizeof (dpp->samples_A [0]) * dpp->term;
+                byte_sum += sizeof (dpp->weight_A);
 
-		if (!(flags & MONO_FLAG)) {
-		    byte_sum += sizeof (dpp->samples_B [0]) * dpp->term;
-		    byte_sum += sizeof (dpp->weight_B);
-		}
-	    }
-	    else {
-		byte_sum += sizeof (dpp->samples_A [0]) + sizeof (dpp->samples_B [0]);
-		byte_sum += sizeof (dpp->weight_A) + sizeof (dpp->weight_B);
-	    }
+                if (!(flags & MONO_FLAG)) {
+                    byte_sum += sizeof (dpp->samples_B [0]) * dpp->term;
+                    byte_sum += sizeof (dpp->weight_B);
+                }
+            }
+            else {
+                byte_sum += sizeof (dpp->samples_A [0]) + sizeof (dpp->samples_B [0]);
+                byte_sum += sizeof (dpp->weight_A) + sizeof (dpp->weight_B);
+            }
+        }
+    }
 
     return byte_sum;
 }
@@ -550,37 +552,39 @@ static void *unpack_save (WavpackStream3 *wps, void *destin)
 	SAVE (destin, wps->dc.weight);
     }
 
-    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG))
-	for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-	    if (dpp->term > 0) {
-		int count = dpp->term;
-		int index = wps->dc.m;
+    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG)) {
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+            if (dpp->term > 0) {
+                int count = dpp->term;
+            int index = wps->dc.m;
 
-		SAVE (destin, dpp->weight_A);
+                SAVE (destin, dpp->weight_A);
 
-		while (count--) {
-		    SAVE (destin, dpp->samples_A [index]);
-		    index = (index + 1) & (MAX_TERM - 1);
-		}
+                while (count--) {
+                    SAVE (destin, dpp->samples_A [index]);
+                    index = (index + 1) & (MAX_TERM - 1);
+                }
 
-		if (!(flags & MONO_FLAG)) {
-		    count = dpp->term;
-		    index = wps->dc.m;
+                if (!(flags & MONO_FLAG)) {
+                    count = dpp->term;
+                    index = wps->dc.m;
 
-		    SAVE (destin, dpp->weight_B);
+                    SAVE (destin, dpp->weight_B);
 
-		    while (count--) {
-			SAVE (destin, dpp->samples_B [index]);
-			index = (index + 1) & (MAX_TERM - 1);
-		    }
-		}
-	    }
-	    else {
-		SAVE (destin, dpp->weight_A);
-		SAVE (destin, dpp->weight_B);
-		SAVE (destin, dpp->samples_A [0]);
-		SAVE (destin, dpp->samples_B [0]);
-	    }
+                    while (count--) {
+                        SAVE (destin, dpp->samples_B [index]);
+                        index = (index + 1) & (MAX_TERM - 1);
+                    }
+                }
+            }
+            else {
+                SAVE (destin, dpp->weight_A);
+                SAVE (destin, dpp->weight_B);
+                SAVE (destin, dpp->samples_A [0]);
+                SAVE (destin, dpp->samples_B [0]);
+            }
+        }
+    }
 
     return destin;
 }
@@ -662,37 +666,39 @@ static void *unpack_restore (WavpackStream3 *wps, void *source, int keep_resourc
 	RESTORE (wps->dc.weight, source);
     }
 
-    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG))
-	for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-	    if (dpp->term > 0) {
-		int count = dpp->term;
-		int index = wps->dc.m;
+    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG)) {
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+            if (dpp->term > 0) {
+                int count = dpp->term;
+                int index = wps->dc.m;
 
-		RESTORE (dpp->weight_A, source);
+                RESTORE (dpp->weight_A, source);
 
-		while (count--) {
-		    RESTORE (dpp->samples_A [index], source);
-		    index = (index + 1) & (MAX_TERM - 1);
-		}
+                while (count--) {
+                    RESTORE (dpp->samples_A [index], source);
+                    index = (index + 1) & (MAX_TERM - 1);
+                }
 
-		if (!(flags & MONO_FLAG)) {
-		    count = dpp->term;
-		    index = wps->dc.m;
+                if (!(flags & MONO_FLAG)) {
+                    count = dpp->term;
+                    index = wps->dc.m;
 
-		    RESTORE (dpp->weight_B, source);
+                    RESTORE (dpp->weight_B, source);
 
-		    while (count--) {
-			RESTORE (dpp->samples_B [index], source);
-			index = (index + 1) & (MAX_TERM - 1);
-		    }
-		}
-	    }
-	    else {
-		RESTORE (dpp->weight_A, source);
-		RESTORE (dpp->weight_B, source);
-		RESTORE (dpp->samples_A [0], source);
-		RESTORE (dpp->samples_B [0], source);
-	    }
+                    while (count--) {
+                        RESTORE (dpp->samples_B [index], source);
+                        index = (index + 1) & (MAX_TERM - 1);
+                    }
+                }
+            }
+            else {
+                RESTORE (dpp->weight_A, source);
+                RESTORE (dpp->weight_B, source);
+                RESTORE (dpp->samples_A [0], source);
+                RESTORE (dpp->samples_B [0], source);
+            }
+        }
+    }
 
     return source;
 }

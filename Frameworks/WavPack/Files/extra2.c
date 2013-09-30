@@ -529,7 +529,7 @@ void analyze_stereo (WavpackContext *wpc, int32_t *samples)
     else if (wpc->config.flags & CONFIG_FAST_FLAG)
 	decorr_terms = fast_terms;
 
-    info.nterms = strlen (decorr_terms);
+    info.nterms = strlen ((const char *)decorr_terms);
 
     if (wpc->config.extra_flags & EXTRA_TERMS)
 	if ((info.nterms += (wpc->config.extra_flags & EXTRA_TERMS) >> 10) > MAX_NTERMS)
