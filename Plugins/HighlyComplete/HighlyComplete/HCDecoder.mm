@@ -24,40 +24,90 @@
 
 #import <HighlyAdvanced/GBA.h>
 
-
-@implementation HCDecoder
-
-+ (void)initialize
-{
-    bios_set_image(hebios, HEBIOS_SIZE);
-    psx_init();
-    sega_init();
-    qsound_init();
+@interface psf_file_container : NSObject {
+    NSLock * lock;
+    NSMutableDictionary * list;
 }
++ (psf_file_container *)instance;
+- (void)add_hint:(NSString *)path source:(id)source;
+- (void)remove_hint:(NSString *)path;
+- (BOOL)try_hint:(NSString *)path source:(id*)source;
+@end
 
-- (NSDictionary *)metadata
-{
-    return metadataList;
+@implementation psf_file_container
++ (psf_file_container *)instance {
+    static psf_file_container * instance;
+    
+    @synchronized(self) {
+        if (!instance) {
+            instance = [[self alloc] init];
+        }
+    }
+    
+    return instance;
 }
+- (psf_file_container *)init
+{
+    if ((self = [super init]))
+    {
+        lock = [[NSLock alloc] init];
+        list = [[NSMutableDictionary alloc] initWithCapacity:0];
+    }
+    return self;
+}
+- (void)dealloc
+{
+    [list release];
+    [lock release];
+    [super dealloc];
+}
+- (void)add_hint:(NSString *)path source:(id)source
+{
+    [lock lock];
+    [list setObject:source forKey:path];
+    [lock unlock];
+}
+- (void)remove_hint:(NSString *)path
+{
+    [lock lock];
+    [list removeObjectForKey:path];
+    [lock unlock];
+}
+- (BOOL)try_hint:(NSString *)path source:(id *)source
+{
+    [lock lock];
+    *source = [list objectForKey:path];
+    [lock unlock];
+    if ( *source )
+    {
+        [ *source seek:0 whence:0 ];
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+@end
 
-- (long)retrieveTotalFrames
-{
-    return (tagLengthMs + tagFadeMs) * (sampleRate / 100) / 10;
-}
 
 void * source_fopen(const char * path)
 {
-    NSString * urlString = [NSString stringWithUTF8String:path];
-    NSURL * url = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    
-	id audioSourceClass = NSClassFromString(@"AudioSource");
-	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
-    
-    if (![source open:url])
-        return 0;
-    
-    if (![source seekable])
-        return 0;
+    id<CogSource> source;
+    if ( ![[psf_file_container instance] try_hint:[NSString stringWithUTF8String:path] source:&source] )
+    {
+        NSString * urlString = [NSString stringWithUTF8String:path];
+        NSURL * url = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        
+        id audioSourceClass = NSClassFromString(@"AudioSource");
+        source = [audioSourceClass audioSourceForURL:url];
+        
+        if (![source open:url])
+            return 0;
+        
+        if (![source seekable])
+            return 0;
+    }
     
     return [source retain];
 }
@@ -101,6 +151,27 @@ static psf_file_callbacks source_callbacks =
     source_fclose,
     source_ftell
 };
+
+
+@implementation HCDecoder
+
++ (void)initialize
+{
+    bios_set_image(hebios, HEBIOS_SIZE);
+    psx_init();
+    sega_init();
+    qsound_init();
+}
+
+- (NSDictionary *)metadata
+{
+    return metadataList;
+}
+
+- (long)retrieveTotalFrames
+{
+    return (tagLengthMs + tagFadeMs) * (sampleRate / 100) / 10;
+}
 
 struct psf_info_meta_state
 {
@@ -151,6 +222,9 @@ static int psf_info_meta(void * context, const char * name, const char * value)
     NSString * tag = [NSString stringWithUTF8String:name];
 	NSString * taglc = [tag lowercaseString];
     NSString * svalue = [NSString stringWithUTF8String:value];
+    
+    if ( svalue == nil )
+        return 0;
     
 	if ([taglc isEqualToString:@"game"])
 	{
@@ -551,8 +625,6 @@ struct gsf_sound_out : public GBASoundOut
 
 - (BOOL)initializeDecoder
 {
-    NSString * decodedUrl = [[[currentSource url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
     if ( type == 1 )
     {
         emulatorCore = ( uint8_t * ) malloc( psx_get_state_size( 1 ) );
@@ -565,7 +637,7 @@ struct gsf_sound_out : public GBASoundOut
         state.first = true;
         state.refresh = 0;
         
-        if ( psf_load( [decodedUrl UTF8String], &source_callbacks, 1, psf1_loader, &state, psf1_info, &state ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 1, psf1_loader, &state, psf1_info, &state ) <= 0 )
             return NO;
         
         if ( state.refresh )
@@ -579,7 +651,7 @@ struct gsf_sound_out : public GBASoundOut
         
         state.refresh = 0;
         
-        if ( psf_load( [decodedUrl UTF8String], &source_callbacks, 2, psf2fs_load_callback, emulatorExtra, psf1_info, &state ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 2, psf2fs_load_callback, emulatorExtra, psf1_info, &state ) <= 0 )
             return NO;
         
         emulatorCore = ( uint8_t * ) malloc( psx_get_state_size( 2 ) );
@@ -596,7 +668,7 @@ struct gsf_sound_out : public GBASoundOut
         struct sdsf_loader_state state;
         memset( &state, 0, sizeof(state) );
         
-        if ( psf_load( [decodedUrl UTF8String], &source_callbacks, type, sdsf_loader, &state, 0, 0) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, type, sdsf_loader, &state, 0, 0) <= 0 )
             return NO;
         
         emulatorCore = ( uint8_t * ) malloc( sega_get_state_size( type - 0x10 ) );
@@ -623,7 +695,7 @@ struct gsf_sound_out : public GBASoundOut
         struct gsf_loader_state state;
         memset( &state, 0, sizeof(state) );
         
-        if ( psf_load( [decodedUrl UTF8String], &source_callbacks, 0x22, gsf_loader, &state, 0, 0 ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x22, gsf_loader, &state, 0, 0 ) <= 0 )
             return NO;
         
         GBASystem * system = new GBASystem;
@@ -652,7 +724,7 @@ struct gsf_sound_out : public GBASoundOut
         
         emulatorExtra = state;
         
-        if ( psf_load( [decodedUrl UTF8String], &source_callbacks, 0x41, qsf_loader, state, 0, 0) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x41, qsf_loader, state, 0, 0) <= 0 )
             return NO;
         
         emulatorCore = ( uint8_t * ) malloc( qsound_get_state_size() );
@@ -682,8 +754,8 @@ struct gsf_sound_out : public GBASoundOut
 	if (![source seekable]) {
 		return NO;
 	}
-	
-	currentSource = [source retain];
+    
+    currentSource = [source retain];
 	
     struct psf_info_meta_state info;
     
@@ -692,10 +764,12 @@ struct gsf_sound_out : public GBASoundOut
     info.tag_length_ms = 0;
     info.tag_fade_ms = 0;
     info.volume_scale = 0;
+
+    currentUrl = [[[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
     
-    NSString * decodedUrl = [[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [[psf_file_container instance] add_hint:currentUrl source:currentSource];
     
-    type = psf_load( [decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info );
+    type = psf_load( [currentUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info );
     
     if (type <= 0)
         return NO;
@@ -792,7 +866,7 @@ struct gsf_sound_out : public GBASoundOut
 	return frames;
 }
 
-- (void)close
+- (void)closeDecoder
 {
     if ( emulatorCore ) {
         if ( type == 0x22 ) {
@@ -822,10 +896,18 @@ struct gsf_sound_out : public GBASoundOut
     }
 }
 
+- (void)close
+{
+    [self closeDecoder];
+    [currentSource release];
+    [[psf_file_container instance] remove_hint:currentUrl];
+    [currentUrl release];
+}
+
 - (long)seek:(long)frame
 {
     if (frame < framesRead) {
-        [self close];
+        [self closeDecoder];
         if (![self initializeDecoder])
             return -1;
     }

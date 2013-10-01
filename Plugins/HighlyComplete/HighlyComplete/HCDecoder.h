@@ -10,7 +10,8 @@
 #import "Plugin.h"
 
 @interface HCDecoder : NSObject<CogDecoder,CogMetadataReader> {
-	id<CogSource> currentSource;
+    id<CogSource> currentSource;
+	NSString *currentUrl;
     uint8_t *emulatorCore;
     void *emulatorExtra;
     
