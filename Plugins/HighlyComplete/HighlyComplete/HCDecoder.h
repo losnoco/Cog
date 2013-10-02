@@ -20,7 +20,11 @@
     int tagLengthMs;
     int tagFadeMs;
     
-    int volumeScale;
+    float replayGainAlbumGain;
+    float replayGainAlbumPeak;
+    float replayGainTrackGain;
+    float replayGainTrackPeak;
+    float volume;
 	
 	int type;
     

@@ -19,7 +19,10 @@
 @interface InputNode : Node {
 	id<CogDecoder> decoder;
 	
+    int bytesPerSample;
 	int bytesPerFrame;
+    int volumeScale;
+    BOOL swapEndian;
 	
 	BOOL shouldSeek;
 	long seekFrame;
@@ -37,5 +40,7 @@
 - (BOOL)setTrack:(NSURL *)track;
 
 - (id<CogDecoder>) decoder;
+
+- (void)refreshVolumeScaling;
 
 @end

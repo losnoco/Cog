@@ -359,6 +359,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 	[userDefaultsValuesDict setObject:@"clearAndPlay" forKey:@"openingFilesBehavior"];
 	[userDefaultsValuesDict setObject:@"enqueue" forKey:@"openingFilesAlteredBehavior"];
+    
+    [userDefaultsValuesDict setObject:@"albumGainWithPeak" forKey:@"volumeScaling"];
 	
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];

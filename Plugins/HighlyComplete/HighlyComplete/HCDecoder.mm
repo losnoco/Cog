@@ -182,7 +182,11 @@ struct psf_info_meta_state
 	int tag_length_ms;
 	int tag_fade_ms;
     
-    int volume_scale;
+    float albumGain;
+    float albumPeak;
+    float trackGain;
+    float trackPeak;
+    float volume;
 };
 
 static int parse_time_crap(NSString * value)
@@ -203,16 +207,6 @@ static int parse_time_crap(NSString * value)
     }
                 
     return totalSeconds;
-}
-
-static int db_to_int(NSString * value)
-{
-    return pow(10.0, [value floatValue] / 20) * 4096;
-}
-
-static int scale_to_int(NSString * value)
-{
-    return [value floatValue] * 4096;
 }
 
 static int psf_info_meta(void * context, const char * name, const char * value)
@@ -237,19 +231,24 @@ static int psf_info_meta(void * context, const char * name, const char * value)
     
 	if ([taglc hasPrefix:@"replaygain_"])
 	{
-        if ([taglc isEqualToString:@"replaygain_album_gain"])
+        if ([taglc hasPrefix:@"replaygain_album_"])
         {
-            state->volume_scale = db_to_int(svalue);
+            if ([taglc hasSuffix:@"gain"])
+                state->albumGain = [svalue floatValue];
+            else if ([taglc hasSuffix:@"peak"])
+                state->albumPeak = [svalue floatValue];
         }
-        else if (!state->volume_scale && [taglc isEqualToString:@"replaygain_track_gain"])
+        else if ([taglc hasPrefix:@"replaygain_track_"])
         {
-            state->volume_scale = db_to_int(svalue);
+            if ([taglc hasSuffix:@"gain"])
+                state->trackGain = [svalue floatValue];
+            else if ([taglc hasSuffix:@"peak"])
+                state->trackPeak = [svalue floatValue];
         }
 	}
     else if ([taglc isEqualToString:@"volume"])
     {
-        if (!state->volume_scale)
-            state->volume_scale = scale_to_int(svalue);
+        state->volume = [svalue floatValue];
     }
 	else if ([taglc isEqualToString:@"length"])
 	{
@@ -763,8 +762,13 @@ struct gsf_sound_out : public GBASoundOut
     info.utf8 = false;
     info.tag_length_ms = 0;
     info.tag_fade_ms = 0;
-    info.volume_scale = 0;
 
+    info.albumGain = 0;
+    info.albumPeak = 0;
+    info.trackGain = 0;
+    info.trackPeak = 0;
+    info.volume = 1;
+    
     currentUrl = [[[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
     
     [[psf_file_container instance] add_hint:currentUrl source:currentSource];
@@ -784,7 +788,12 @@ struct gsf_sound_out : public GBASoundOut
     
     tagLengthMs = info.tag_length_ms;
     tagFadeMs = info.tag_fade_ms;
-    volumeScale = info.volume_scale;
+
+    replayGainAlbumGain = info.albumGain;
+    replayGainAlbumPeak = info.albumPeak;
+    replayGainTrackGain = info.trackGain;
+    replayGainTrackPeak = info.trackPeak;
+    volume = info.volume;
     
     metadataList = info.info;
     
@@ -847,18 +856,6 @@ struct gsf_sound_out : public GBASoundOut
         uint32_t howmany = frames;
         qsound_execute( emulatorCore, 0x7fffffff, ( int16_t * ) buf, &howmany);
         frames = howmany;
-    }
-    
-    if ( volumeScale )
-    {
-        int16_t * samples = ( int16_t * ) buf;
-        
-        for ( UInt32 i = 0, j = frames * 2; i < j; ++i )
-        {
-            int sample = ( samples[ i ] * volumeScale ) >> 12;
-            if ( (uint32_t)(sample + 0x8000) & 0xffff0000 ) sample = ( sample >> 31 ) ^ 0x7fff;
-            samples[ i ] = ( int16_t ) sample;
-        }
     }
 
 	framesRead += frames;
@@ -968,6 +965,11 @@ struct gsf_sound_out : public GBASoundOut
 			[NSNumber numberWithInteger:totalFrames], @"totalFrames",
 			[NSNumber numberWithInt:0], @"bitrate",
 			[NSNumber numberWithBool:YES], @"seekable",
+            [NSNumber numberWithFloat:replayGainAlbumGain], @"replayGainAlbumGain",
+            [NSNumber numberWithFloat:replayGainAlbumPeak], @"replayGainAlbumPeak",
+            [NSNumber numberWithFloat:replayGainTrackGain], @"replayGainTrackGain",
+            [NSNumber numberWithFloat:replayGainTrackPeak], @"replayGainTrackPeak",
+            [NSNumber numberWithFloat:volume], @"volume",
 			@"host", @"endian",
 			nil];
 }
@@ -980,7 +982,6 @@ struct gsf_sound_out : public GBASoundOut
     info.utf8 = false;
     info.tag_length_ms = 0;
     info.tag_fade_ms = 0;
-    info.volume_scale = 0;
     
     NSString * decodedUrl = [[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 

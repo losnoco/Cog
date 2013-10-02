@@ -32,6 +32,12 @@
 	NSNumber *year;
 	NSNumber *track;
 	NSImage *albumArt;
+    
+    float replayGainAlbumGain;
+    float replayGainAlbumPeak;
+    float replayGainTrackGain;
+    float replayGainTrackPeak;
+    float volume;
 	
 	long long totalFrames;
 	int bitrate;
@@ -90,6 +96,12 @@
 @property int channels;
 @property int bitsPerSample;
 @property float sampleRate;
+
+@property float replayGainAlbumGain;
+@property float replayGainAlbumPeak;
+@property float replayGainTrackGain;
+@property float replayGainTrackPeak;
+@property float volume;
 
 @property(retain) NSString *endian;
 
