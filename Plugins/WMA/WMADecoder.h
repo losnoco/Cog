@@ -9,13 +9,16 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
+#define __FRAMEWORK__
 #import "WMA/avcodec.h"
 #import "WMA/avformat.h"
+#undef __FRAMEWORK__
 
 @interface WMADecoder : NSObject <CogDecoder> 
 {
 	id<CogSource> source;
 	void *sampleBuffer;
+    int sampleBufferSize;
 	int numFrames;
 	int samplePos;
 	

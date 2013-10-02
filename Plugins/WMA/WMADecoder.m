@@ -9,12 +9,44 @@
 // test
 #import "WMADecoder.h"
 
+#include <pthread.h>
+
 #define ST_BUFF 2048
 
 @implementation WMADecoder
 
 
+int lockmgr_callback(void ** mutex, enum AVLockOp op)
+{
+    switch (op)
+    {
+        case AV_LOCK_CREATE:
+            *mutex = malloc(sizeof(pthread_mutex_t));
+            pthread_mutex_init(*mutex, NULL);
+            break;
+            
+        case AV_LOCK_DESTROY:
+            pthread_mutex_destroy(*mutex);
+            free(*mutex);
+            *mutex = NULL;
+            break;
+            
+        case AV_LOCK_OBTAIN:
+            pthread_mutex_lock(*mutex);
+            break;
+            
+        case AV_LOCK_RELEASE:
+            pthread_mutex_unlock(*mutex);
+            break;
+    }
+    return 0;
+}
 
++ (void)initialize
+{
+    av_register_all();
+    av_lockmgr_register(lockmgr_callback);
+}
 
 - (BOOL)open:(id<CogSource>)s
 {
@@ -27,12 +59,10 @@
 	ic = NULL;
 	numFrames = 0;
 	samplePos = 0;
-	sampleBuffer = av_malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE);
+	sampleBuffer = NULL;
 	// register all available codecs
-	av_register_all();
 	
-	
-	err = av_open_input_file(&ic, filename, NULL, 0, NULL);
+	err = avformat_open_input(&ic, filename, NULL, NULL);
 	
 	if (err < 0)
 	{
@@ -41,15 +71,15 @@
 	}
 	
 	for(i = 0; i < ic->nb_streams; i++) {
-        c = &ic->streams[i]->codec;
-        if(c->codec_type == CODEC_TYPE_AUDIO)
+        c = ic->streams[i]->codec;
+        if(c->codec_type == AVMEDIA_TYPE_AUDIO)
 		{
 			NSLog(@"audio codec found");
             break;
 		}
     }
 
-	av_find_stream_info(ic);
+	avformat_find_stream_info(ic, NULL);
 	
     codec = avcodec_find_decoder(c->codec_id);        
     if (!codec) {
@@ -57,29 +87,32 @@
 		return NO;
     }
     
-    if (avcodec_open(c, codec) < 0) {
+    if (avcodec_open2(c, codec, NULL) < 0) {
         NSLog(@"could not open codec");
         return NO;
     }
     
-    dump_format(ic, 0, filename, 0);	
+    av_dump_format(ic, 0, filename, 0);
 	
-	if (ic->title[0] != '\0')
-        NSLog(@"Title: %s", ic->title);
-    if (ic->author[0] != '\0')
-        NSLog(@"Author: %s", ic->author);
-    if (ic->album[0] != '\0')
-        NSLog(@"Album: %s", ic->album);
-    if (ic->year != 0)
-        NSLog(@"Year: %d", ic->year);
-    if (ic->track != 0)
-        NSLog(@"Track: %d", ic->track);
-    if (ic->genre[0] != '\0')
-        NSLog(@"Genre: %s", ic->genre);
-    if (ic->copyright[0] != '\0')
-        NSLog(@"Copyright: %s", ic->copyright);
-    if (ic->comment[0] != '\0')
-        NSLog(@"Comments: %s", ic->comment);
+    AVDictionary * metadata = ic->metadata;
+    AVDictionaryEntry * entry;
+    
+	if ((entry = av_dict_get(metadata, "title", NULL, 0)))
+        NSLog(@"Title: %s", entry->value);
+	if ((entry = av_dict_get(metadata, "author", NULL, 0)))
+        NSLog(@"Author: %s", entry->value);
+	if ((entry = av_dict_get(metadata, "album", NULL, 0)))
+        NSLog(@"Album: %s", entry->value);
+	if ((entry = av_dict_get(metadata, "year", NULL, 0)))
+        NSLog(@"Year: %d", entry->value);
+	if ((entry = av_dict_get(metadata, "track", NULL, 0)))
+        NSLog(@"Track: %d", entry->value);
+	if ((entry = av_dict_get(metadata, "genre", NULL, 0)))
+        NSLog(@"Genre: %s", entry->value);
+	if ((entry = av_dict_get(metadata, "copyright", NULL, 0)))
+        NSLog(@"Copyright: %s", entry->value);
+	if ((entry = av_dict_get(metadata, "comment", NULL, 0)))
+        NSLog(@"Comments: %s", entry->value);
 
 	NSLog(@"bitrate: %d", ic->bit_rate);
 	NSLog(@"sample rate: %d", c->sample_rate);
@@ -87,7 +120,26 @@
 	
 	channels = c->channels;
 	bitrate = ic->bit_rate;
-	bitsPerSample = c->channels * 8;
+    switch (c->sample_fmt) {
+        case AV_SAMPLE_FMT_U8:
+        case AV_SAMPLE_FMT_U8P:
+            bitsPerSample = 8;
+            break;
+            
+        case AV_SAMPLE_FMT_S16:
+        case AV_SAMPLE_FMT_S16P:
+            bitsPerSample = 16;
+            break;
+            
+        case AV_SAMPLE_FMT_S32:
+        case AV_SAMPLE_FMT_S32P:
+        case AV_SAMPLE_FMT_FLT:
+        case AV_SAMPLE_FMT_FLTP:
+        case AV_SAMPLE_FMT_DBL:
+        case AV_SAMPLE_FMT_DBLP:
+            bitsPerSample = 32;
+            break;
+    }
 	totalFrames = c->sample_rate * (ic->duration/1000000LL);
 	frequency = c->sample_rate;
 	seekable = YES;
@@ -99,7 +151,7 @@
 - (void)close
 {
 	avcodec_close(c);
-	av_close_input_file(ic);
+	avformat_close_input(&ic);
 	av_free(sampleBuffer);
 	
 	[source close];
@@ -114,7 +166,6 @@
 	int framesRead = 0;
 	
 	int bytesPerFrame = (bitsPerSample/8) * channels;
-	
 
 	while (frames > 0)
 	{
@@ -134,32 +185,99 @@
 		}
 		if (frames > 0)
 		{
+            size_t sampleBufferOffset = 0;
+            
 			if (av_read_frame(ic, &framePacket) < 0)
 			{
 				NSLog(@"Uh oh... av_read_frame returned negative");
 				break;
 			}
-		
-			size = framePacket.size;
-			inbuf_ptr = framePacket.data;
-	
-			len = avcodec_decode_audio(c, (void *)sampleBuffer, &numFrames, 
-										   inbuf_ptr, size);
-			
-			if (len < 0) 
-				break;
-			
-            if (out_size <= 0) 
-				continue;
-			
-			numFrames /= bytesPerFrame;
-			samplePos = 0;
-				
-			// the frame packet needs to be freed before we av_read_frame a new one
+            
+            AVFrame * frame = av_frame_alloc();
+            int ret, got_frame = 0;
+            
+            while ( framePacket.size && (ret = avcodec_decode_audio4(c, frame, &got_frame, &framePacket)) >= 0 )
+            {
+                ret = FFMIN(ret, framePacket.size);
+                framePacket.data += ret;
+                framePacket.size -= ret;
+                
+                if ( !got_frame ) continue;
+                
+                int plane_size;
+                int planar    = av_sample_fmt_is_planar(c->sample_fmt);
+                int data_size = av_samples_get_buffer_size(&plane_size, c->channels,
+                                                           frame->nb_samples,
+                                                           c->sample_fmt, 1);
+                
+                sampleBuffer = av_realloc(sampleBuffer, sampleBufferOffset + data_size);
+                
+                if (!planar) {
+                    memcpy((uint8_t *)sampleBuffer + sampleBufferOffset, frame->extended_data[0], plane_size);
+                }
+                else if (channels > 1) {
+                    uint8_t * out = (uint8_t *)sampleBuffer + sampleBufferOffset;
+                    int bytesPerSample = bitsPerSample / 8;
+                    for (int s = 0; s < plane_size; s += bytesPerSample) {
+                        for (int ch = 0; ch < channels; ++ch) {
+                            memcpy(out, frame->extended_data[ch] + s, bytesPerSample);
+                            out += bytesPerSample;
+                        }
+                    }
+                }
+                
+                sampleBufferOffset += plane_size * channels;
+            }
+            
+            av_frame_free(&frame);
+            
 			if (framePacket.data)
 				av_free_packet(&framePacket);
-
-		}
+            
+            if ( !sampleBufferOffset ) {
+                if ( ret < 0 ) break;
+                else continue;
+            }
+			
+			numFrames = sampleBufferOffset / bytesPerFrame;
+			samplePos = 0;
+            
+            if ( numFrames ) {
+                switch ( c->sample_fmt ) {
+                    case AV_SAMPLE_FMT_FLT:
+                    case AV_SAMPLE_FMT_FLTP:
+                    {
+                        float * input = (float *) sampleBuffer;
+                        int32_t * output = (int32_t *) sampleBuffer;
+                        
+                        for (int i = 0; i < numFrames * channels; ++i)
+                        {
+                            float sample = input[i];
+                            if (sample > 1.0) sample = 1.0;
+                            else if (sample < -1.0) sample = -1.0;
+                            output[i] = sample * INT_MAX;
+                        }
+                    }
+                    break;
+                        
+                    case AV_SAMPLE_FMT_DBL:
+                    case AV_SAMPLE_FMT_DBLP:
+                    {
+                        double * input = (double *) sampleBuffer;
+                        int32_t * output = (int32_t *) sampleBuffer;
+                        
+                        for (int i = 0; i < numFrames * channels; ++i)
+                        {
+                            double sample = input[i];
+                            if (sample > 1.0) sample = 1.0;
+                            else if (sample < -1.0) sample = -1.0;
+                            output[i] = sample * INT_MAX;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
 	}
 	
 	return framesRead;
