@@ -200,12 +200,20 @@
 
 #include <time.h>
 #include <stdio.h>  /* FILE */
+#ifdef __FRAMEWORK__
+#include "avcodec.h"
+#include "dict.h"
+#include "log.h"
+#else
 #include "libavcodec/avcodec.h"
 #include "libavutil/dict.h"
 #include "libavutil/log.h"
+#endif
 
 #include "avio.h"
+#ifndef __FRAMEWORK__
 #include "libavformat/version.h"
+#endif
 
 struct AVFormatContext;
 

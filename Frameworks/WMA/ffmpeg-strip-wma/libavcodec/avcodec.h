@@ -28,6 +28,20 @@
  */
 
 #include <errno.h>
+
+#ifdef __FRAMEWORK__
+#include "samplefmt.h"
+#include "attributes.h"
+#include "avutil.h"
+#include "buffer.h"
+#include "cpu.h"
+#include "channel_layout.h"
+#include "dict.h"
+#include "frame.h"
+#include "log.h"
+#include "pixfmt.h"
+#include "rational.h"
+#else
 #include "libavutil/samplefmt.h"
 #include "libavutil/attributes.h"
 #include "libavutil/avutil.h"
@@ -39,6 +53,7 @@
 #include "libavutil/log.h"
 #include "libavutil/pixfmt.h"
 #include "libavutil/rational.h"
+#endif
 
 #include "version.h"
 
