@@ -14,6 +14,7 @@ extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
 extern NSString *CogPlaybackDidStopNotficiation;
 
+extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 
 @class PlaylistController;
 @class PlaylistView;

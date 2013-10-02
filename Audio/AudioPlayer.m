@@ -43,10 +43,10 @@
 
 - (void)play:(NSURL *)url
 {
-	[self play:url withUserInfo:nil];
+	[self play:url withUserInfo:nil withRGInfo:nil];
 }
 
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi
 {
 	if (output)
 	{
@@ -91,6 +91,7 @@
 		}
 	
 		userInfo = nextStreamUserInfo;
+        rgi = nextStreamRGInfo;
 	
 		[self notifyStreamChanged:userInfo];
 		
@@ -98,6 +99,7 @@
 	}
 	
 	[bufferChain setUserInfo:userInfo];
+    [bufferChain setRGInfo:rgi];
 
 	[self setShouldContinue:YES];
 	
@@ -152,10 +154,10 @@
 //This is called by the delegate DURING a requestNextStream request.
 - (void)setNextStream:(NSURL *)url
 {
-	[self setNextStream:url withUserInfo:nil];
+	[self setNextStream:url withUserInfo:nil withRGInfo:nil];
 }
 
-- (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo
+- (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi
 {
 	[url retain];
 	[nextStream release];
@@ -164,7 +166,10 @@
 	[userInfo retain];
 	[nextStreamUserInfo release];
 	nextStreamUserInfo = userInfo;
-	
+
+	[rgi retain];
+    [nextStreamRGInfo release];
+    nextStreamRGInfo = rgi;
 }
 
 // Called when the playlist changed before we actually started playing a requested stream. We will re-request.
@@ -212,7 +217,7 @@
 
 - (void)notifyStreamChanged:(id)userInfo
 {
-	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:NO];
+	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:YES];
 }
 
 - (void)addChainToQueue:(BufferChain *)newChain
@@ -233,6 +238,9 @@
 		nextStreamUserInfo = [sender userInfo];
 		[nextStreamUserInfo retain]; //Retained because when setNextStream is called, it will be released!!!
 		
+        nextStreamRGInfo = [sender rgInfo];
+        [nextStreamRGInfo retain];
+        
 		[self requestNextStream: nextStreamUserInfo];
 		newChain = [[BufferChain alloc] initWithController:self];
 	

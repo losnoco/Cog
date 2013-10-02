@@ -45,6 +45,15 @@ using namespace TagLib;
     return tag(2)->method();                                         \
   return 0
 
+#define floatUnion(method)                                           \
+  if(tag(0) && tag(0)->method() != 0)                                \
+    return tag(0)->method();                                         \
+  if(tag(1) && tag(1)->method() != 0)                                \
+    return tag(1)->method();                                         \
+  if(tag(2) && tag(2)->method() != 0)                                \
+    return tag(2)->method();                                         \
+return 0
+
 #define setUnion(method, value)                                      \
   if(tag(0))                                                         \
     tag(0)->set##method(value);                                      \
@@ -136,6 +145,26 @@ TagLib::uint TagUnion::track() const
   numberUnion(track);
 }
 
+float TagUnion::rgAlbumGain() const
+{
+  floatUnion(rgAlbumGain);
+}
+
+float TagUnion::rgAlbumPeak() const
+{
+  floatUnion(rgAlbumPeak);
+}
+
+float TagUnion::rgTrackGain() const
+{
+  floatUnion(rgTrackGain);
+}
+
+float TagUnion::rgTrackPeak() const
+{
+  floatUnion(rgTrackPeak);
+}
+
 void TagUnion::setTitle(const String &s)
 {
   setUnion(Title, s);
@@ -169,6 +198,26 @@ void TagUnion::setYear(uint i)
 void TagUnion::setTrack(uint i)
 {
   setUnion(Track, i);
+}
+
+void TagUnion::setRGAlbumGain(float f)
+{
+  setUnion(RGAlbumGain, f);
+}
+
+void TagUnion::setRGAlbumPeak(float f)
+{
+  setUnion(RGAlbumPeak, f);
+}
+
+void TagUnion::setRGTrackGain(float f)
+{
+  setUnion(RGTrackGain, f);
+}
+
+void TagUnion::setRGTrackPeak(float f)
+{
+  setUnion(RGTrackPeak, f);
 }
 
 bool TagUnion::isEmpty() const

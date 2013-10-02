@@ -19,6 +19,10 @@ public:
   TagLib::uint       disk;
   TagLib::uint       numDisks;
   TagLib::uint       bpm;
+  float              rgAlbumGain;
+  float              rgAlbumPeak;
+  float              rgTrackGain;
+  float              rgTrackPeak;
   bool               isEmpty;
   TagLib::ByteVector cover;
 };
@@ -74,6 +78,26 @@ TagLib::uint MP4::Tag::year() const
 TagLib::uint MP4::Tag::track() const
 {
   return d->track;
+}
+
+float MP4::Tag::rgAlbumGain() const
+{
+  return d->rgAlbumGain;
+}
+
+float MP4::Tag::rgAlbumPeak() const
+{
+  return d->rgAlbumPeak;
+}
+
+float MP4::Tag::rgTrackGain() const
+{
+  return d->rgTrackGain;
+}
+
+float MP4::Tag::rgTrackPeak() const
+{
+  return d->rgTrackPeak;
 }
 
 TagLib::uint MP4::Tag::numTracks() const
@@ -151,6 +175,30 @@ void MP4::Tag::setTrack(TagLib::uint i)
 {
   d->track = i;
   d->isEmpty = false;
+}
+
+void MP4::Tag::setRGAlbumGain(float f)
+{
+  d->rgAlbumGain = f;
+  d->isEmpty = false;
+}
+
+void MP4::Tag::setRGAlbumPeak(float f)
+{
+    d->rgAlbumPeak = f;
+    d->isEmpty = false;
+}
+
+void MP4::Tag::setRGTrackGain(float f)
+{
+    d->rgTrackGain = f;
+    d->isEmpty = false;
+}
+
+void MP4::Tag::setRGTrackPeak(float f)
+{
+    d->rgTrackPeak = f;
+    d->isEmpty = false;
 }
 
 void MP4::Tag::setNumTracks(TagLib::uint i)

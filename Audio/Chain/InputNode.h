@@ -18,6 +18,7 @@
 
 @interface InputNode : Node {
 	id<CogDecoder> decoder;
+    NSDictionary * rgInfo;
 	
     int bytesPerSample;
 	int bytesPerFrame;
@@ -38,6 +39,8 @@
 - (void)registerObservers;
 
 - (BOOL)setTrack:(NSURL *)track;
+
+- (void)setRGInfo:(NSDictionary *)rgi;
 
 - (id<CogDecoder>) decoder;
 

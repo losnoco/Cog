@@ -31,6 +31,8 @@
 
 #include <string.h>
 
+#include <math.h>
+
 namespace TagLib {
 
   inline unsigned short byteSwap(unsigned short x)
@@ -435,6 +437,31 @@ int String::toInt() const
   return value;
 }
 
+float String::toFloat() const
+{
+  float value = 0;
+  float decimal_value = 1;
+    
+  bool negative = d->data[0] == '-';
+  uint i = negative ? 1 : 0;
+
+  for(; i < d->data.size() && d->data[i] >= '0' && d->data[i] <= '9'; i++)
+    value = value * 10 + (d->data[i] - '0');
+
+  if (i < d->data.size() && d->data[i] == '.')
+    for(++i; i < d->data.size() && d->data[i] >= '0' && d->data[i] <= '9'; i++) {
+      value = value * 10 + (d->data[i] - '0');
+      decimal_value *= 0.1;
+    }
+    
+  if(negative)
+    value = value * -1;
+
+  value *= decimal_value;
+    
+  return value;
+}
+
 String String::stripWhiteSpace() const
 {
   wstring::const_iterator begin = d->data.begin();
@@ -479,6 +506,11 @@ bool String::isAscii() const
   return true;
 }
 
+String String::number(uint n)
+{
+  return number((int)n);
+}
+
 String String::number(int n) // static
 {
   if(n == 0)
@@ -505,6 +537,48 @@ String String::number(int n) // static
   for(int i = charStack.d->data.size() - 1; i >= 0; i--)
     s += charStack.d->data[i];
 
+  return s;
+}
+
+String String::number(float n) // static
+{
+  if(n == 0)
+    return String("0");
+    
+  float decimal = fmod(n, 1);
+  n -= decimal;
+    
+  String charStack;
+    
+  bool negative = n < 0;
+    
+  if(negative)
+    n = n * -1;
+    
+  while(n > 0) {
+    float remainder = fmod(n, 10);
+    charStack += char(remainder + '0');
+    n = (n - remainder) / 10;
+  }
+    
+  String s;
+    
+  if(negative)
+    s += '-';
+    
+  for(int i = charStack.d->data.size() - 1; i >= 0; i--)
+    s += charStack.d->data[i];
+    
+  if (decimal > 0) {
+    s += '.';
+    while (decimal > 0) {
+      decimal *= 10;
+      float remainder = fmod(decimal, 1);
+      s += char(decimal + '0');
+      decimal = remainder;
+    }
+  }
+    
   return s;
 }
 

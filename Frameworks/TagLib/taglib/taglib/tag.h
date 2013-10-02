@@ -90,7 +90,31 @@ namespace TagLib {
      * return 0.
      */
     virtual uint track() const = 0;
+      
+    /*!
+     * Returns the ReplayGain album gain; if there is no gain level set, this
+     * will return 0.
+     */
+    virtual float rgAlbumGain() const = 0;
 
+    /*!
+     * Returns the ReplayGain album peak; if there is no gain level set, this
+     * will return 0.
+     */
+    virtual float rgAlbumPeak() const = 0;
+      
+    /*!
+     * Returns the ReplayGain track gain; if there is no gain level set, this
+     * will return 0.
+     */
+    virtual float rgTrackGain() const = 0;
+      
+    /*!
+     * Returns the ReplayGain track peak; if there is no gain level set, this
+     * will return 0.
+     */
+    virtual float rgTrackPeak() const = 0;
+      
     /*!
      * Sets the title to \a s.  If \a s is String::null then this value will be
      * cleared.
@@ -133,7 +157,31 @@ namespace TagLib {
      * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
      */
     virtual void setTrack(uint i) = 0;
+      
+    /*!
+     * Sets the ReplayGain album gain to \a f. If \a f is 0 then this value will
+     * be cleared.
+     */
+    virtual void setRGAlbumGain(float i) = 0;
 
+    /*!
+     * Sets the ReplayGain album peak to \a f. If \a f is 0 then this value will
+     * be cleared.
+     */
+    virtual void setRGAlbumPeak(float i) = 0;
+      
+    /*!
+     * Sets the ReplayGain track gain to \a f. If \a f is 0 then this value will
+     * be cleared.
+     */
+    virtual void setRGTrackGain(float i) = 0;
+      
+    /*!
+     * Sets the ReplayGain track peak to \a f. If \a f is 0 then this value will
+     * be cleared.
+     */
+    virtual void setRGTrackPeak(float i) = 0;
+      
     /*!
      * Returns true if the tag does not contain any data.  This should be
      * reimplemented in subclasses that provide more than the basic tagging

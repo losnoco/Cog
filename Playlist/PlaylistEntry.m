@@ -39,6 +39,12 @@
 @synthesize bitsPerSample;
 @synthesize sampleRate;
 
+@synthesize replayGainAlbumGain;
+@synthesize replayGainAlbumPeak;
+@synthesize replayGainTrackGain;
+@synthesize replayGainTrackPeak;
+@synthesize volume;
+
 @synthesize endian;
 
 @synthesize seekable;
@@ -80,6 +86,18 @@
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", self.index, self.URL];
+}
+
+- (id)init
+{
+    if (self = [super init]) {
+        self.replayGainAlbumGain = 0;
+        self.replayGainAlbumPeak = 0;
+        self.replayGainTrackGain = 0;
+        self.replayGainTrackPeak = 0;
+        self.volume = 1;
+    }
+    return self;
 }
 
 - (void)dealloc

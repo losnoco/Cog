@@ -286,6 +286,11 @@ namespace TagLib {
      * Convert the string to an integer.
      */
     int toInt() const;
+      
+    /*!
+     * Convert the string to a float.
+     */
+    float toFloat() const;
 
     /*!
      * Returns a string with the leading and trailing whitespace stripped.
@@ -305,7 +310,13 @@ namespace TagLib {
     /*!
      * Converts the base-10 integer \a n to a string.
      */
+    static String number(uint n);
     static String number(int n);
+      
+    /*!
+     * Converts the base-10 float \a n to a string.
+     */
+    static String number(float n);
 
     /*!
      * Returns a reference to the character at position \a i.

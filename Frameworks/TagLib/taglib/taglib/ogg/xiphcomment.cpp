@@ -115,6 +115,34 @@ TagLib::uint Ogg::XiphComment::track() const
   return d->fieldListMap["TRACKNUMBER"].front().toInt();
 }
 
+float Ogg::XiphComment::rgAlbumGain() const
+{
+  if(d->fieldListMap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+    return 0;
+  return d->fieldListMap["REPLAYGAIN_ALBUM_GAIN"].front().toFloat();
+}
+
+float Ogg::XiphComment::rgAlbumPeak() const
+{
+  if(d->fieldListMap["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
+    return 0;
+  return d->fieldListMap["REPLAYGAIN_ALBUM_PEAK"].front().toFloat();
+}
+
+float Ogg::XiphComment::rgTrackGain() const
+{
+  if(d->fieldListMap["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+    return 0;
+  return d->fieldListMap["REPLAYGAIN_TRACK_GAIN"].front().toFloat();
+}
+
+float Ogg::XiphComment::rgTrackPeak() const
+{
+  if(d->fieldListMap["REPLAYGAIN_TRACK_PEAK"].isEmpty())
+    return 0;
+  return d->fieldListMap["REPLAYGAIN_TRACK_PEAK"].front().toFloat();
+}
+
 void Ogg::XiphComment::setTitle(const String &s)
 {
   addField("TITLE", s);
@@ -154,6 +182,38 @@ void Ogg::XiphComment::setTrack(uint i)
     removeField("TRACKNUMBER");
   else
     addField("TRACKNUMBER", String::number(i));
+}
+
+void Ogg::XiphComment::setRGAlbumGain(float f)
+{
+  if (f == 0)
+    removeField("REPLAYGAIN_ALBUM_GAIN");
+  else
+    addField("REPLAYGAIN_ALBUM_GAIN", String::number(f) + " dB");
+}
+
+void Ogg::XiphComment::setRGAlbumPeak(float f)
+{
+  if (f == 0)
+    removeField("REPLAYGAIN_ALBUM_PEAK");
+  else
+    addField("REPLAYGAIN_ALBUM_PEAK", String::number(f));
+}
+
+void Ogg::XiphComment::setRGTrackGain(float f)
+{
+  if (f == 0)
+    removeField("REPLAYGAIN_TRACK_GAIN");
+  else
+    addField("REPLAYGAIN_TRACK_GAIN", String::number(f) + " dB");
+}
+
+void Ogg::XiphComment::setRGTrackPeak(float f)
+{
+  if (f == 0)
+    removeField("REPLAYGAIN_TRACK_PEAK");
+  else
+    addField("REPLAYGAIN_TRACK_PEAK", String::number(f));
 }
 
 bool Ogg::XiphComment::isEmpty() const

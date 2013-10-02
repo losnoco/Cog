@@ -133,11 +133,13 @@ static float db_to_scale(float db)
 - (void)refreshVolumeScaling
 {
 	NSDictionary *properties = [decoder properties];
+    if (rgInfo != nil)
+        properties = rgInfo;
     NSString * scaling = [[NSUserDefaults standardUserDefaults] stringForKey:@"volumeScaling"];
     BOOL useAlbum = [scaling hasPrefix:@"albumGain"];
     BOOL useTrack = useAlbum || [scaling hasPrefix:@"trackGain"];
     BOOL useVolume = useAlbum || useTrack || [scaling isEqualToString:@"volumeScale"];
-    bool usePeak = [scaling hasSuffix:@"WithPeak"];
+    BOOL usePeak = [scaling hasSuffix:@"WithPeak"];
     float scale = 1.0;
     float peak = 0.0;
     if (useVolume) {
@@ -319,9 +321,19 @@ static int32_t swap_32(uint32_t input)
 	return NO;
 }
 
+- (void)setRGInfo:(NSDictionary *)i
+{
+    [i retain];
+    [rgInfo release];
+    rgInfo = i;
+    [self refreshVolumeScaling];
+}
+
 - (void)dealloc
 {
 	NSLog(@"Input Node dealloc");
+    
+    [rgInfo release];
 
 	[decoder removeObserver:self forKeyPath:@"properties"];
 	[decoder removeObserver:self forKeyPath:@"metadata"];

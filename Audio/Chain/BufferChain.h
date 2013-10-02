@@ -18,6 +18,7 @@
 	
 	NSURL *streamURL;
 	id userInfo;
+    NSDictionary *rgInfo;
 	
 	id finalNode; //Final buffer in the chain.
 	
@@ -42,6 +43,9 @@
 
 - (id)userInfo;
 - (void)setUserInfo:(id)i;
+
+- (NSDictionary*)rgInfo;
+- (void)setRGInfo:(NSDictionary *)rgi;
 
 - (NSURL *)streamURL;
 - (void)setStreamURL:(NSURL *)url;

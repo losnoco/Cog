@@ -21,6 +21,7 @@
 		controller = c;
 		streamURL = nil;
 		userInfo = nil;
+        rgInfo = nil;
 
 		inputNode = nil;
 		converterNode = nil;
@@ -100,8 +101,22 @@
 	return userInfo;
 }
 
+- (void)setRGInfo:(NSDictionary *)rgi
+{
+    [rgi retain];
+    [rgInfo release];
+    rgInfo = rgi;
+    [inputNode setRGInfo:rgi];
+}
+
+- (NSDictionary *)rgInfo
+{
+    return rgInfo;
+}
+
 - (void)dealloc
 {
+    [rgInfo release];
 	[userInfo release];
 	[streamURL release];
 	

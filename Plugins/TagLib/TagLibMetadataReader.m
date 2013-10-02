@@ -32,6 +32,7 @@
 		{
 			TagLib::String artist, title, album, genre, comment;
 			int year, track;
+            float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
 			
 			artist = tag->artist();
 			title = tag->title();;
@@ -44,6 +45,15 @@
 			
 			track = tag->track();
 			[dict setObject:[NSNumber numberWithInt:track] forKey:@"track"];
+
+            rgAlbumGain = tag->rgAlbumGain();
+            rgAlbumPeak = tag->rgAlbumPeak();
+            rgTrackGain = tag->rgTrackGain();
+            rgTrackPeak = tag->rgTrackPeak();
+            [dict setObject:[NSNumber numberWithFloat:rgAlbumGain] forKey:@"replayGainAlbumGain"];
+            [dict setObject:[NSNumber numberWithFloat:rgAlbumPeak] forKey:@"replayGainAlbumPeak"];
+            [dict setObject:[NSNumber numberWithFloat:rgTrackGain] forKey:@"replayGainTrackGain"];
+            [dict setObject:[NSNumber numberWithFloat:rgTrackPeak] forKey:@"replayGainTrackPeak"];
 			
 			if (!artist.isNull())
 				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];

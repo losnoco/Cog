@@ -117,6 +117,22 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 		[self playEntryAtIndex:[playlistView selectedRow]];
 }
 
+NSDictionary * makeRGInfo(PlaylistEntry *pe)
+{
+    NSMutableDictionary * dictionary = [NSMutableDictionary dictionary];
+    if ([pe replayGainAlbumGain] != 0)
+        [dictionary setObject:[NSNumber numberWithFloat:[pe replayGainAlbumGain]] forKey:@"replayGainAlbumGain"];
+    if ([pe replayGainAlbumPeak] != 0)
+        [dictionary setObject:[NSNumber numberWithFloat:[pe replayGainAlbumPeak]] forKey:@"replayGainAlbumPeak"];
+    if ([pe replayGainTrackGain] != 0)
+        [dictionary setObject:[NSNumber numberWithFloat:[pe replayGainTrackGain]] forKey:@"replayGainTrackGain"];
+    if ([pe replayGainTrackPeak] != 0)
+        [dictionary setObject:[NSNumber numberWithFloat:[pe replayGainTrackPeak]] forKey:@"replayGainTrackPeak"];
+    if ([pe volume] != 1)
+        [dictionary setObject:[NSNumber numberWithFloat:[pe volume]] forKey:@"volume"];
+    return dictionary;
+}
+
 - (void)playEntry:(PlaylistEntry *)pe
 {
 	if (playbackStatus != kCogStatusStopped)
@@ -130,7 +146,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	if (pe == nil)
 		return;
 	
-	[audioPlayer play:[pe URL] withUserInfo:pe];
+	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe)];
 }
 
 - (IBAction)next:(id)sender
@@ -430,7 +446,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	else
 		pe = [playlistController getNextEntry:curEntry];
 
-	[player setNextStream:[pe URL] withUserInfo:pe];
+	[player setNextStream:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe)];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo

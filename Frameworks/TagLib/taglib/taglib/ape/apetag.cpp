@@ -133,6 +133,34 @@ TagLib::uint APE::Tag::track() const
   return d->itemListMap["TRACK"].toString().toInt();
 }
 
+float APE::Tag::rgAlbumGain() const
+{
+  if (d->itemListMap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
+    return 0;
+  return d->itemListMap["REPLAYGAIN_ALBUM_GAIN"].toString().toFloat();
+}
+
+float APE::Tag::rgAlbumPeak() const
+{
+  if (d->itemListMap["REPLAYGAIN_ALBUM_PEAK"].isEmpty())
+    return 0;
+  return d->itemListMap["REPLAYGAIN_ALBUM_PEAK"].toString().toFloat();
+}
+
+float APE::Tag::rgTrackGain() const
+{
+  if (d->itemListMap["REPLAYGAIN_TRACK_GAIN"].isEmpty())
+    return 0;
+  return d->itemListMap["REPLAYGAIN_TRACK_GAIN"].toString().toFloat();
+}
+
+float APE::Tag::rgTrackPeak() const
+{
+    if (d->itemListMap["REPLAYGAIN_TRACK_PEAK"].isEmpty())
+        return 0;
+    return d->itemListMap["REPLAYGAIN_TRACK_PEAK"].toString().toFloat();
+}
+
 void APE::Tag::setTitle(const String &s)
 {
   addValue("TITLE", s, true);
@@ -172,6 +200,38 @@ void APE::Tag::setTrack(uint i)
     removeItem("TRACK");
   else
     addValue("TRACK", String::number(i), true);
+}
+
+void APE::Tag::setRGAlbumGain(float f)
+{
+  if (f == 0)
+    removeItem("REPLAYGAIN_ALBUM_GAIN");
+  else
+    addValue("REPLAYGAIN_ALBUM_GAIN", String::number(f) + " dB", true);
+}
+
+void APE::Tag::setRGAlbumPeak(float f)
+{
+  if (f == 0)
+    removeItem("REPLAYGAIN_ALBUM_PEAK");
+  else
+    addValue("REPLAYGAIN_ALBUM_PEAK", String::number(f), true);
+}
+
+void APE::Tag::setRGTrackGain(float f)
+{
+  if (f == 0)
+    removeItem("REPLAYGAIN_TRACK_GAIN");
+  else
+    addValue("REPLAYGAIN_TRACK_GAIN", String::number(f) + " dB", true);
+}
+
+void APE::Tag::setRGTrackPeak(float f)
+{
+  if (f == 0)
+    removeItem("REPLAYGAIN_TRACK_PEAK");
+  else
+    addValue("REPLAYGAIN_TRACK_PEAK", String::number(f), true);
 }
 
 APE::Footer *APE::Tag::footer() const

@@ -140,6 +140,10 @@ namespace TagLib {
       virtual String genre() const;
       virtual uint year() const;
       virtual uint track() const;
+      virtual float rgAlbumGain() const;
+      virtual float rgAlbumPeak() const;
+      virtual float rgTrackGain() const;
+      virtual float rgTrackPeak() const;
 
       virtual void setTitle(const String &s);
       virtual void setArtist(const String &s);
@@ -148,6 +152,10 @@ namespace TagLib {
       virtual void setGenre(const String &s);
       virtual void setYear(uint i);
       virtual void setTrack(uint i);
+      virtual void setRGAlbumGain(float f);
+      virtual void setRGAlbumPeak(float f);
+      virtual void setRGTrackGain(float f);
+      virtual void setRGTrackPeak(float f);
 
       /*!
        * Sets the string handler that decides how the ID3v1 data will be

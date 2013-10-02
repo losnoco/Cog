@@ -22,6 +22,7 @@
 	
 	NSURL *nextStream;
 	id nextStreamUserInfo;
+    NSDictionary *nextStreamRGInfo;
 	
 	id delegate;
 	
@@ -35,7 +36,7 @@
 - (id)delegate;
 
 - (void)play:(NSURL *)url;
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo;
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi;
 
 - (void)stop;
 - (void)pause;
@@ -50,8 +51,10 @@
 - (double)amountPlayed;
 
 - (void)setNextStream:(NSURL *)url;
-- (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo;
+- (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi;
 - (void)resetNextStreams;
+
+- (void)setRGInfo:(NSDictionary *)rgi;
 
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
