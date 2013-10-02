@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 44;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -146,6 +146,7 @@
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
+		83BCB8DE17FC971300760340 /* WMA.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* WMA.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -415,6 +416,20 @@
 			remoteGlobalIDString = 8360EEE417F92AC8005208A4;
 			remoteInfo = HighlyComplete;
 		};
+		83BCB8D817FC96F800760340 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8360EEE317F92AC8005208A4;
+			remoteInfo = HighlyComplete;
+		};
+		83BCB8DC17FC96FC00760340 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B09E94300D747F7B0064F138 /* WMA.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
+			remoteInfo = "WMA Plugin";
+		};
 		8E8D40860CBB036600135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
@@ -468,6 +483,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				83BCB8DE17FC971300760340 /* WMA.bundle in CopyFiles */,
 				8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */,
 				99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */,
 				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
@@ -1458,6 +1474,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				83BCB8DD17FC96FC00760340 /* PBXTargetDependency */,
+				83BCB8D917FC96F800760340 /* PBXTargetDependency */,
 				17C8097E0C3BD1F5005707C4 /* PBXTargetDependency */,
 				17C809800C3BD1F5005707C4 /* PBXTargetDependency */,
 				17C809820C3BD1F5005707C4 /* PBXTargetDependency */,
@@ -1490,9 +1508,10 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Cog" */;
-			compatibilityVersion = "Xcode 3.0";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1988,6 +2007,16 @@
 			name = General;
 			targetProxy = 17F5623A0C3BD9280019975C /* PBXContainerItemProxy */;
 		};
+		83BCB8D917FC96F800760340 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = HighlyComplete;
+			targetProxy = 83BCB8D817FC96F800760340 /* PBXContainerItemProxy */;
+		};
+		83BCB8DD17FC96FC00760340 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "WMA Plugin";
+			targetProxy = 83BCB8DC17FC96FC00760340 /* PBXContainerItemProxy */;
+		};
 		8E8D40930CBB03AF00135C1B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = M3u;
@@ -2087,7 +2116,7 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					ThirdParty/Frameworks/,
@@ -2116,7 +2145,6 @@
 					dynamic_lookup,
 				);
 				PRODUCT_NAME = Cog;
-				SDKROOT = macosx10.6;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -2125,10 +2153,7 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					ThirdParty/Frameworks/,
 					"\"$(SRCROOT)/build/Release\"",
@@ -2154,7 +2179,6 @@
 					dynamic_lookup,
 				);
 				PRODUCT_NAME = Cog;
-				SDKROOT = macosx10.6;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -2164,8 +2188,10 @@
 			buildSettings = {
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -2174,8 +2200,9 @@
 			buildSettings = {
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
