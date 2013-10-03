@@ -1,6 +1,10 @@
 /***************************************************************************
     copyright            : (C) 2002 - 2008 by Scott Wheeler
     email                : wheeler@kde.org
+
+    copyright            : (C) 2010 by Alex Novichkov
+    email                : novichko@atnet.ru
+                           (added APE file support)
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,6 +31,7 @@
 #include <tstring.h>
 
 #include "fileref.h"
+#include "asffile.h"
 #include "mpegfile.h"
 #include "vorbisfile.h"
 #include "flacfile.h"
@@ -36,6 +41,7 @@
 #include "speexfile.h"
 #include "trueaudiofile.h"
 #include "mp4file.h"
+#include "apefile.h"
 
 using namespace TagLib;
 
@@ -123,6 +129,13 @@ StringList FileRef::defaultFileExtensions()
   l.append("spx");
   l.append("tta");
   l.append("m4a");
+  l.append("m4b");
+  l.append("m4p");
+  l.append("3g2");
+  l.append("mp4");
+  l.append("wma");
+  l.append("asf");
+  l.append("ape");
 
   return l;
 }
@@ -182,25 +195,36 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
   // updated.  However at some point that list should be created at the same time
   // that a default file type resolver is created.
 
-  if(s.size() > 4) {
-    if(s.substr(s.size() - 4, 4).upper() == ".OGG")
-      return new Ogg::Vorbis::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(s.substr(s.size() - 4, 4).upper() == ".MP3")
+  int pos = s.rfind(".");
+  if(pos != -1) {
+    String ext = s.substr(pos + 1).upper();
+    if(ext == "MP3")
       return new MPEG::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(s.substr(s.size() - 4, 4).upper() == ".OGA")
-      return new Ogg::FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(s.substr(s.size() - 5, 5).upper() == ".FLAC")
+    if(ext == "OGG")
+      return new Ogg::Vorbis::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(ext == "OGA") {
+      File *file = new Ogg::FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
+      if (file->isValid())
+        return file;
+      delete file;
+      return new Ogg::Vorbis::File(fileName, readAudioProperties, audioPropertiesStyle);
+    }
+    if(ext == "FLAC")
       return new FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(s.substr(s.size() - 4, 4).upper() == ".MPC")
+    if(ext == "MPC")
       return new MPC::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(s.substr(s.size() - 3, 3).upper() == ".WV")
+    if(ext == "WV")
       return new WavPack::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(s.substr(s.size() - 4, 4).upper() == ".SPX")
+    if(ext == "SPX")
       return new Ogg::Speex::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(s.substr(s.size() - 4, 4).upper() == ".TTA")
+    if(ext == "TTA")
       return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
-	if(s.substr(s.size() - 4, 4).upper() == ".M4A")
+	if(ext == "M4A" || ext == "M4B" || ext == "M4P" || ext == "MP4" || ext == "3G2")
 	  return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(ext == "WMA" || ext == "ASF")
+      return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(ext == "APE")
+      return new APE::File(fileName, readAudioProperties, audioPropertiesStyle);
   }
 
   return 0;
