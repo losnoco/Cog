@@ -144,6 +144,7 @@
  * without modification. Used to disable the definition of strings
  * (for example AVCodec long_names).
  */
+#undef NULL_IF_CONFIG_SMALL
 #if CONFIG_SMALL
 #   define NULL_IF_CONFIG_SMALL(x) NULL
 #else

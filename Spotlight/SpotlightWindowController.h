@@ -9,8 +9,9 @@
 #import <Cocoa/Cocoa.h>
 
 @class PlaylistLoader;
+@protocol NSMetadataQueryDelegate;
 
-@interface SpotlightWindowController : NSWindowController {
+@interface SpotlightWindowController : NSWindowController<NSMetadataQueryDelegate> {
     IBOutlet PlaylistLoader *playlistLoader;
     IBOutlet NSArrayController *playlistController;
     IBOutlet NSPathControl *pathControl;
@@ -29,6 +30,6 @@
 - (void)searchForAlbum:(NSString *)album;
 
 @property(retain) NSMetadataQuery *query;
-@property(copy) NSString *searchString;
+@property(copy, nonatomic) NSString *searchString;
 
 @end

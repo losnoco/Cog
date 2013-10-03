@@ -99,7 +99,7 @@
 	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
 	NSMutableArray *entries = [NSMutableArray array];
 	
-    while (entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
+    while ((entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]))
 	{
 		NSScanner *scanner = [[NSScanner alloc] initWithString:entry];
 		NSString *lhs = nil;

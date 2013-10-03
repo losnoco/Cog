@@ -100,7 +100,7 @@ void Gba_Pcm::update( int dac )
             if ( gba->soundInterpolation )
 			{
 				// base filtering on how long since last sample was output
-				int period = time - last_time;
+				blip_long period = time - last_time;
 
 				int idx = (unsigned) period / 512;
 				if ( idx >= 3 )
@@ -297,13 +297,13 @@ void flush_samples(GBASystem *gba, GBA::Multi_Buffer * buffer)
 	// that don't use the length parameter of the write method.
 	// TODO: Update the Win32 audio drivers (DS, OAL, XA2), and flush all the
 	// samples at once to help reducing the audio delay on all platforms.
-    int soundBufferLen = ( gba->soundSampleRate / 60 ) * 4;
+    blip_long soundBufferLen = ( gba->soundSampleRate / 60 ) * 4;
 
 	// soundBufferLen should have a whole number of sample pairs
     assert( soundBufferLen % (2 * sizeof *gba->soundFinalWave) == 0 );
 
 	// number of samples in output buffer
-    int const out_buf_size = soundBufferLen / sizeof *gba->soundFinalWave;
+    blip_long const out_buf_size = soundBufferLen / sizeof *gba->soundFinalWave;
 
     while ( buffer->samples_avail() )
 	{
@@ -320,11 +320,11 @@ static void apply_filtering(GBASystem *gba)
     gba->soundFiltering_ = gba->soundFiltering;
 
     int const base_freq = (int) (32768 - gba->soundFiltering_ * 16384);
-    int const nyquist = gba->stereo_buffer->sample_rate() / 2;
+    blip_long const nyquist = gba->stereo_buffer->sample_rate() / 2;
 
 	for ( int i = 0; i < 3; i++ )
 	{
-		int cutoff = base_freq >> i;
+		blip_long cutoff = base_freq >> i;
 		if ( cutoff > nyquist )
 			cutoff = nyquist;
         gba->pcm_synth [i].treble_eq( GBA::blip_eq_t( 0, 0, gba->stereo_buffer->sample_rate(), cutoff ) );

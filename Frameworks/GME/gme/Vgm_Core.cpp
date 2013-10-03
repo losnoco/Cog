@@ -1330,7 +1330,7 @@ blargg_err_t Vgm_Core::init_chips( double* rate, bool reinit )
 	}
     if ( qsound_rate )
     {
-        double pcm_rate = (double)qsound_rate / 166.0;
+        /*double pcm_rate = (double)qsound_rate / 166.0;*/
 		if ( !reinit )
 		{
 			int result = qsound[0].set_rate( qsound_rate );

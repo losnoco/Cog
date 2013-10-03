@@ -209,7 +209,7 @@ int avcodec_get_pix_fmt_loss(enum AVPixelFormat dst_pix_fmt,
                              int has_alpha)
 {
     int loss;
-    int ret = get_pix_fmt_score(dst_pix_fmt, src_pix_fmt, &loss, has_alpha ? ~0 : ~FF_LOSS_ALPHA);
+    int ret = get_pix_fmt_score(dst_pix_fmt, src_pix_fmt, (unsigned int *)&loss, has_alpha ? ~0 : ~FF_LOSS_ALPHA);
     if (ret < 0)
         return ret;
     return loss;
@@ -229,8 +229,8 @@ enum AVPixelFormat avcodec_find_best_pix_fmt_of_2(enum AVPixelFormat dst_pix_fmt
         loss_mask &= ~FF_LOSS_ALPHA;
 
     dst_pix_fmt = AV_PIX_FMT_NONE;
-    score1 = get_pix_fmt_score(dst_pix_fmt1, src_pix_fmt, &loss1, loss_mask);
-    score2 = get_pix_fmt_score(dst_pix_fmt2, src_pix_fmt, &loss2, loss_mask);
+    score1 = get_pix_fmt_score(dst_pix_fmt1, src_pix_fmt, (unsigned int *)&loss1, loss_mask);
+    score2 = get_pix_fmt_score(dst_pix_fmt2, src_pix_fmt, (unsigned int *)&loss2, loss_mask);
 
     if (score1 == score2) {
         if(av_get_padded_bits_per_pixel(desc2) != av_get_padded_bits_per_pixel(desc1)) {

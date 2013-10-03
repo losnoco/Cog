@@ -289,13 +289,13 @@ static void read_ttag(AVFormatContext *s, AVIOContext *pb, int taglen,
     }
 
     if (!(strcmp(key, "TCON") && strcmp(key, "TCO"))                         &&
-        (sscanf(dst, "(%d)", &genre) == 1 || sscanf(dst, "%d", &genre) == 1) &&
+        (sscanf((const char *) dst, "(%d)", &genre) == 1 || sscanf((const char *) dst, "%d", &genre) == 1) &&
         genre <= ID3v1_GENRE_MAX) {
         av_freep(&dst);
-        dst = av_strdup(ff_id3v1_genre_str[genre]);
+        dst = (uint8_t *) av_strdup(ff_id3v1_genre_str[genre]);
     } else if (!(strcmp(key, "TXXX") && strcmp(key, "TXX"))) {
         /* dst now contains the key, need to get value */
-        key = dst;
+        key = (const char *) dst;
         if (decode_str(s, pb, encoding, &dst, &taglen) < 0) {
             av_log(s, AV_LOG_ERROR, "Error reading frame %s, skipped\n", key);
             av_freep(&key);
@@ -306,7 +306,7 @@ static void read_ttag(AVFormatContext *s, AVIOContext *pb, int taglen,
         av_freep(&dst);
 
     if (dst)
-        av_dict_set(metadata, key, dst, dict_flags);
+        av_dict_set(metadata, key, (const char *) dst, dict_flags);
 }
 
 /**
@@ -536,7 +536,7 @@ static void read_chapter(AVFormatContext *s, AVIOContext *pb, int len, char *tta
     end   = avio_rb32(pb);
     avio_skip(pb, 8);
 
-    chapter = avpriv_new_chapter(s, s->nb_chapters + 1, time_base, start, end, dst);
+    chapter = avpriv_new_chapter(s, s->nb_chapters + 1, time_base, start, end, (const char *) dst);
     if (!chapter) {
         av_free(dst);
         return;
@@ -544,7 +544,7 @@ static void read_chapter(AVFormatContext *s, AVIOContext *pb, int len, char *tta
 
     len -= 16;
     while (len > 10) {
-        avio_read(pb, tag, 4);
+        avio_read(pb, (unsigned char *) tag, 4);
         tag[4] = 0;
         taglen = avio_rb32(pb);
         avio_skip(pb, 2);
@@ -667,7 +667,7 @@ static void id3v2_parse(AVFormatContext *s, int len, uint8_t version,
         unsigned long dlen;
 
         if (isv34) {
-            avio_read(s->pb, tag, 4);
+            avio_read(s->pb, (unsigned char *) tag, 4);
             tag[4] = 0;
             if (version == 3) {
                 tlen = avio_rb32(s->pb);
@@ -676,7 +676,7 @@ static void id3v2_parse(AVFormatContext *s, int len, uint8_t version,
             tflags  = avio_rb16(s->pb);
             tunsync = tflags & ID3v2_FLAG_UNSYNCH;
         } else {
-            avio_read(s->pb, tag, 3);
+            avio_read(s->pb, (unsigned char *) tag, 3);
             tag[3] = 0;
             tlen   = avio_rb24(s->pb);
         }
@@ -726,7 +726,7 @@ static void id3v2_parse(AVFormatContext *s, int len, uint8_t version,
             pbx = s->pb;
 
             if (unsync || tunsync || tcomp) {
-                av_fast_malloc(&buffer, &buffer_size, tlen);
+                av_fast_malloc(&buffer, (unsigned int *) &buffer_size, tlen);
                 if (!buffer) {
                     av_log(s, AV_LOG_ERROR, "Failed to alloc %d bytes\n", tlen);
                     goto seek;
@@ -758,7 +758,7 @@ static void id3v2_parse(AVFormatContext *s, int len, uint8_t version,
 
                     av_log(s, AV_LOG_DEBUG, "Compresssed frame %s tlen=%d dlen=%ld\n", tag, tlen, dlen);
 
-                    av_fast_malloc(&uncompressed_buffer, &uncompressed_buffer_size, dlen);
+                    av_fast_malloc(&uncompressed_buffer, (unsigned int *) &uncompressed_buffer_size, dlen);
                     if (!uncompressed_buffer) {
                         av_log(s, AV_LOG_ERROR, "Failed to alloc %ld bytes\n", dlen);
                         goto seek;
@@ -880,7 +880,7 @@ int ff_id3v2_parse_apic(AVFormatContext *s, ID3v2ExtraMeta **extra_meta)
         st->disposition      |= AV_DISPOSITION_ATTACHED_PIC;
         st->codec->codec_type = AVMEDIA_TYPE_VIDEO;
         st->codec->codec_id   = apic->id;
-        av_dict_set(&st->metadata, "title",   apic->description, 0);
+        av_dict_set(&st->metadata, "title",   (const char *) apic->description, 0);
         av_dict_set(&st->metadata, "comment", apic->type, 0);
 
         av_init_packet(&st->attached_pic);

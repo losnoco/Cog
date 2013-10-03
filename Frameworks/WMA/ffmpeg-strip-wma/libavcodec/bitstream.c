@@ -275,7 +275,7 @@ int ff_init_vlc_sparse(VLC *vlc, int nb_bits, int nb_codes,
 
     vlc->bits = nb_bits;
     if (flags & INIT_VLC_USE_NEW_STATIC) {
-        while (state = avpriv_atomic_ptr_cas(&vlc->init_state, NULL, vlc)) {
+        while ((state = avpriv_atomic_ptr_cas(&vlc->init_state, NULL, vlc))) {
             if (state == vlc + 1) {
                 av_assert0(vlc->table_size && vlc->table_size == vlc->table_allocated);
                 return 0;

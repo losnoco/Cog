@@ -111,7 +111,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 - (IBAction)play:(id)sender
 {
 	if ([playlistView selectedRow] == -1)
-		[playlistView selectRow:0 byExtendingSelection:NO];	
+		[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 
 	if ([playlistView selectedRow] > -1)
 		[self playEntryAtIndex:[playlistView selectedRow]];

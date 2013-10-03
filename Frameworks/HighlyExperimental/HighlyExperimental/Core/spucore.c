@@ -1477,7 +1477,6 @@ static void EMU_CALL reverb_engine22(struct SPUCORE_STATE *state, uint16 *ram, s
 ////////////////////////////////////////////////////////////////////////////////
 
 static void EMU_CALL reverb_process(struct SPUCORE_STATE *state, uint16 *ram, sint32 *buf, int samples) {
-  int n;
   int q = state->reverb.resampler.queue_index;
   /*
   ** Sample loop

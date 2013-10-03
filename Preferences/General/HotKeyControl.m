@@ -7,6 +7,7 @@
 //
 
 #import "HotKeyControl.h"
+#import "NDHotKeyEvent.h"
 
 typedef int CGSConnection;
 typedef enum {

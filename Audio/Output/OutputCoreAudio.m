@@ -81,9 +81,12 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	if (outputDevice == -1) {
 		NSLog(@"DEVICE IS -1");
 		UInt32 size = sizeof(AudioDeviceID);
-		err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-									  &size,
-									  &deviceID);
+        AudioObjectPropertyAddress theAddress = {
+            .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
+            .mScope = kAudioObjectPropertyScopeGlobal,
+            .mElement = kAudioObjectPropertyElementMaster
+        };
+        err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &size, &deviceID);
 								
 		if (err != noErr) {
 			NSLog(@"THERES NO DEFAULT OUTPUT DEVICE");
@@ -250,7 +253,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)resume
 {
-	OSStatus err = AudioOutputUnitStart(outputUnit);
+	AudioOutputUnitStart(outputUnit);
 }
 
 @end

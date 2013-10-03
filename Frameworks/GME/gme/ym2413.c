@@ -1575,7 +1575,7 @@ static void OPLLWriteReg(YM2413 *chip, int r, int v)
 				if ((chip->rhythm&0x20)==0)
 				/*rhythm off to on*/
 				{
-					logerror("YM2413: Rhythm mode enable\n");
+					/*logerror("YM2413: Rhythm mode enable\n");*/
 
 	/* Load instrument settings for channel seven(chan=6 since we're zero based). (Bass drum) */
 					chan = 6;
@@ -1637,7 +1637,7 @@ static void OPLLWriteReg(YM2413 *chip, int r, int v)
 				if ((chip->rhythm&0x20)==1)
 				/*rhythm on to off*/
 				{
-					logerror("YM2413: Rhythm mode disable\n");
+					/*logerror("YM2413: Rhythm mode disable\n");*/
 	/* Load instrument settings for channel seven(chan=6 since we're zero based).*/
 					chan = 6;
 					inst = &chip->inst_tab[chip->instvol_r[chan]>>4][0];
@@ -1710,8 +1710,8 @@ static void OPLLWriteReg(YM2413 *chip, int r, int v)
 			}
 
 
-			if (CH->sus!=(v&0x20))
-				logerror("chan=%i sus=%2x\n",chan,v&0x20);
+			/*if (CH->sus!=(v&0x20))
+				logerror("chan=%i sus=%2x\n",chan,v&0x20);*/
 
 			CH->sus = v & 0x20;
 		}

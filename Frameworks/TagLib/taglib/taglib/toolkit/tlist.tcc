@@ -73,7 +73,7 @@ public:
   }
   void clear() {
     if(autoDelete) {
-      typename std::list<TP *>::const_iterator it = list.begin();
+      typename std::list<TP *>::iterator it = list.begin();
       for(; it != list.end(); ++it)
         delete *it;
     }

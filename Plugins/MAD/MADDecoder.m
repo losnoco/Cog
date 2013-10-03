@@ -410,6 +410,7 @@ static inline signed long audio_linear_dither(unsigned int bits, mad_fixed_t sam
  * madplay - MPEG audio decoder and player
  * Copyright (C) 2000-2004 Robert Leslie
  */
+#if 0
 static int32_t 
 audio_linear_round(unsigned int bits, 
 				   mad_fixed_t sample)
@@ -431,6 +432,7 @@ audio_linear_round(unsigned int bits,
 	/* quantize and scale */
 	return sample >> (MAD_F_FRACBITS + 1 - bits);
 }
+#endif
 // End madplay code
 
 

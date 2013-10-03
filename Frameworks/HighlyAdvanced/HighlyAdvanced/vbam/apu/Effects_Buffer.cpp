@@ -121,7 +121,7 @@ blargg_err_t Effects_Buffer::set_channel_count( int count, int const* types )
 	}
 
 	{
-	for ( int i = chans.size(); --i >= 0; )
+	for ( blip_long i = chans.size(); --i >= 0; )
 	{
 		chan_t& ch = chans [i];
 		ch.cfg.vol      = 1.0f;
@@ -242,7 +242,7 @@ int Effects_Buffer::min_delay() const
 	return max_read * 1000L / sample_rate();
 }
 
-int Effects_Buffer::max_delay() const
+blip_long Effects_Buffer::max_delay() const
 {
 	require( sample_rate() );
 	return (echo_size / stereo - max_read) * 1000L / sample_rate();
@@ -250,7 +250,7 @@ int Effects_Buffer::max_delay() const
 
 void Effects_Buffer::apply_config()
 {
-	int i;
+	blip_long i;
 
 	if ( !bufs_size )
 		return;
@@ -406,7 +406,7 @@ void Effects_Buffer::assign_buffers()
 					CALC_LEVELS( ch.vol,       ch_sum,  ch_diff,  ch_surround );
 					CALC_LEVELS( bufs [h].vol, buf_sum, buf_diff, buf_surround );
 
-					fixed_t dist = abs( ch_sum - buf_sum ) + abs( ch_diff - buf_diff );
+					fixed_t dist = labs( ch_sum - buf_sum ) + labs( ch_diff - buf_diff );
 
 					if ( ch_surround != buf_surround )
 						dist += TO_FIXED( 1 ) / 2;

@@ -11,12 +11,12 @@
 
 @implementation Socket
 
-+ (id)socketWithHost:(NSString *)host port:(NSInteger)port
++ (id)socketWithHost:(NSString *)host port:(int)port
 {
 	return [[[Socket alloc] initWithHost:host port:port] autorelease];
 }
 
-- (id)initWithHost:(NSString *)host port:(NSInteger) port
+- (id)initWithHost:(NSString *)host port:(int) port
 {
 	self = [super init];
 	if (self)

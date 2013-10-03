@@ -38,7 +38,7 @@ public:
 
 	// Limits of delay (msec)
 	int min_delay() const;
-	int max_delay() const;
+	blip_long max_delay() const;
 
 	// Per-channel configuration. Two or more channels with matching parameters are
 	// optimized to internally use the same buffer.

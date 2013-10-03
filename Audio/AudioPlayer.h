@@ -54,8 +54,6 @@
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi;
 - (void)resetNextStreams;
 
-- (void)setRGInfo:(NSDictionary *)rgi;
-
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
 + (NSArray *)containerTypes;

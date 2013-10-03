@@ -104,9 +104,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	if ((entry = av_dict_get(metadata, "album", NULL, 0)))
         NSLog(@"Album: %s", entry->value);
 	if ((entry = av_dict_get(metadata, "year", NULL, 0)))
-        NSLog(@"Year: %d", entry->value);
+        NSLog(@"Year: %s", entry->value);
 	if ((entry = av_dict_get(metadata, "track", NULL, 0)))
-        NSLog(@"Track: %d", entry->value);
+        NSLog(@"Track: %s", entry->value);
 	if ((entry = av_dict_get(metadata, "genre", NULL, 0)))
         NSLog(@"Genre: %s", entry->value);
 	if ((entry = av_dict_get(metadata, "copyright", NULL, 0)))
@@ -139,6 +139,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         case AV_SAMPLE_FMT_DBLP:
             bitsPerSample = 32;
             break;
+            
+        default:
+            return NO;
     }
 	totalFrames = c->sample_rate * (ic->duration/1000000LL);
 	frequency = c->sample_rate;
@@ -160,8 +163,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	uint8_t *inbuf_ptr;
-	int size, out_size, len;
 	AVPacket framePacket;
 	int framesRead = 0;
 	
@@ -275,6 +276,8 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                         }
                     }
                     break;
+                        
+                    default: break;
                 }
             }
         }

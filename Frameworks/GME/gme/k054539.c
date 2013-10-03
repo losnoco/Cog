@@ -28,6 +28,7 @@ CHANNEL_DEBUG enables the following keys:
 #endif
 #include "k054539.h"
 
+#undef NULL
 #define NULL	((void *)0)
 
 #define CHANNEL_DEBUG 0
@@ -365,7 +366,7 @@ else
 				break;
 			}
 			default:
-				LOG(("Unknown sample type %x for channel %d\n", base2[0] & 0xc, ch));
+				/*LOG(("Unknown sample type %x for channel %d\n", base2[0] & 0xc, ch));*/
 				break;
 			}
 			chan->pos = cur_pos;
@@ -664,7 +665,7 @@ UINT8 k054539_r(void *chip, offs_t offset)
 	case 0x22c:
 		break;
 	default:
-		LOG(("K054539 read %03x\n", offset));
+		/*LOG(("K054539 read %03x\n", offset));*/
 		break;
 	}
 	return info->regs[offset];

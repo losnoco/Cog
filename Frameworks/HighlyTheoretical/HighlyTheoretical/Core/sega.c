@@ -100,12 +100,14 @@ sint32 EMU_CALL sega_init(void) {
 const char* EMU_CALL sega_getversion(void) {
   static const char s[] = "SegaCore0001 (built " __DATE__ ")";
   static char rv[500];
-  int sl = strlen(s);
+  int sl = (int)strlen(s);
   memcpy(rv, s, sl);
 #ifndef DISABLE_SSF
   rv[sl] = '\n';
 #ifdef USE_STARSCREAM
   strcpy(rv+sl+1, s68000_get_version());
+#elif defined(USE_M68K)
+  strcpy(rv+sl+1, "M68K");
 #else
   strcpy(rv+sl+1, "C68K");
 #endif
@@ -228,6 +230,7 @@ static uint32 get32lsb(uint8 *src) {
     ((((uint32)(src[3])) & 0xFF) << 24);
 }
 
+#if 0
 static uint32 get32msb(uint8 *src) {
   return
     ((((uint32)(src[3])) & 0xFF) <<  0) |
@@ -235,6 +238,7 @@ static uint32 get32msb(uint8 *src) {
     ((((uint32)(src[1])) & 0xFF) << 16) |
     ((((uint32)(src[0])) & 0xFF) << 24);
 }
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //

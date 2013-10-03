@@ -128,7 +128,7 @@ void av_fast_padded_mallocz(void *ptr, unsigned int *size, size_t min_size)
 /* encoder management */
 static AVCodec *first_avcodec = NULL;
 
-AVCodec *av_codec_next(const AVCodec *c)
+const AVCodec *av_codec_next(const AVCodec *c)
 {
     if (c)
         return c->next;
@@ -712,6 +712,7 @@ int ff_init_buffer_info(AVCodecContext *avctx, AVFrame *frame)
         }
         av_frame_set_channels(frame, avctx->channels);
         break;
+    default:break;
     }
     return 0;
 }
@@ -921,7 +922,7 @@ static int reget_buffer_internal(AVCodecContext *avctx, AVFrame *frame)
         return ret;
     }
 
-    av_image_copy(frame->data, frame->linesize, tmp.data, tmp.linesize,
+    av_image_copy(frame->data, frame->linesize, (const uint8_t **)tmp.data, tmp.linesize,
                   frame->format, frame->width, frame->height);
 
     av_frame_unref(&tmp);
@@ -1376,7 +1377,7 @@ int attribute_align_arg avcodec_open2(AVCodecContext *avctx, const AVCodec *code
                 avctx->channel_layout = 0;
             }
         }
-        if (avctx->channels && avctx->channels < 0 ||
+        if (avctx->channels < 0 ||
             avctx->channels > FF_SANE_NB_CHANNELS) {
             ret = AVERROR(EINVAL);
             goto free_and_end;
@@ -1455,7 +1456,7 @@ int ff_alloc_packet2(AVCodecContext *avctx, AVPacket *avpkt, int64_t size)
             av_fast_padded_malloc(&avctx->internal->byte_buffer, &avctx->internal->byte_buffer_size, size);
             avpkt->data = avctx->internal->byte_buffer;
             avpkt->size = avctx->internal->byte_buffer_size;
-            avpkt->destruct = NULL;
+            AV_NOWARN_DEPRECATED( avpkt->destruct = NULL; );
         }
     }
 
@@ -1622,7 +1623,7 @@ int attribute_align_arg avcodec_encode_audio2(AVCodecContext *avctx,
             }
             avpkt->buf      = user_pkt.buf;
             avpkt->data     = user_pkt.data;
-            avpkt->destruct = user_pkt.destruct;
+            AV_NOWARN_DEPRECATED( avpkt->destruct = user_pkt.destruct; );
         } else {
             if (av_dup_packet(avpkt) < 0) {
                 ret = AVERROR(ENOMEM);
@@ -1816,7 +1817,7 @@ int attribute_align_arg avcodec_encode_video2(AVCodecContext *avctx,
             }
             avpkt->buf      = user_pkt.buf;
             avpkt->data     = user_pkt.data;
-            avpkt->destruct = user_pkt.destruct;
+            AV_NOWARN_DEPRECATED( avpkt->destruct = user_pkt.destruct; );
         } else {
             if (av_dup_packet(avpkt) < 0) {
                 ret = AVERROR(ENOMEM);
@@ -1949,11 +1950,11 @@ static int add_metadata_from_side_data(AVCodecContext *avctx, AVFrame *frame)
     end = side_metadata + size;
     while (side_metadata < end) {
         const uint8_t *key = side_metadata;
-        const uint8_t *val = side_metadata + strlen(key) + 1;
-        int ret = av_dict_set(avpriv_frame_get_metadatap(frame), key, val, 0);
+        const uint8_t *val = side_metadata + strlen((const char *)key) + 1;
+        int ret = av_dict_set(avpriv_frame_get_metadatap(frame), (const char *)key, (const char *)val, 0);
         if (ret < 0)
             break;
-        side_metadata = val + strlen(val) + 1;
+        side_metadata = val + strlen((const char *)val) + 1;
     }
 end:
     return ret;
@@ -2313,7 +2314,7 @@ static int utf8_check(const uint8_t *str)
               1 << (5 * (byte - str) - 4);
         if (codepoint < min || codepoint >= 0x110000 ||
             codepoint == 0xFFFE /* BOM */ ||
-            codepoint >= 0xD800 && codepoint <= 0xDFFF /* surrogates */)
+            (codepoint >= 0xD800 && codepoint <= 0xDFFF) /* surrogates */)
             return 0;
         str = byte;
     }
@@ -2362,7 +2363,7 @@ int avcodec_decode_subtitle2(AVCodecContext *avctx, AVSubtitle *sub,
             }
 
             for (i = 0; i < sub->num_rects; i++) {
-                if (sub->rects[i]->ass && !utf8_check(sub->rects[i]->ass)) {
+                if (sub->rects[i]->ass && !utf8_check((const uint8_t *)sub->rects[i]->ass)) {
                     av_log(avctx, AV_LOG_ERROR,
                            "Invalid UTF-8 in decoded subtitles text; "
                            "maybe missing -sub_charenc option\n");
@@ -3011,6 +3012,7 @@ int av_get_audio_frame_duration(AVCodecContext *avctx, int frame_bytes)
                     return blocks * ((ba - 4 * ch) * 2 / ch);
                 case AV_CODEC_ID_ADPCM_MS:
                     return blocks * (2 + (ba - 7 * ch) * 2 / ch);
+                default:break;
                 }
             }
 
@@ -3027,6 +3029,7 @@ int av_get_audio_frame_duration(AVCodecContext *avctx, int frame_bytes)
                     return frame_bytes / ((FFALIGN(ch, 2) * bps) / 8);
                 case AV_CODEC_ID_S302M:
                     return 2 * (frame_bytes / ((bps + 4) / 4)) / ch;
+                default:break;
                 }
             }
         }
@@ -3286,7 +3289,7 @@ int avpriv_bprint_to_extradata(AVCodecContext *avctx, struct AVBPrint *buf)
     ret = av_bprint_finalize(buf, &str);
     if (ret < 0)
         return ret;
-    avctx->extradata = str;
+    avctx->extradata = (uint8_t *) str;
     /* Note: the string is NUL terminated (so extradata can be read as a
      * string), but the ending character is not accounted in the size (in
      * binary formats you are likely not supposed to mux that character). When

@@ -161,19 +161,19 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	p = [NSOpenPanel openPanel];
 	
+    [p setAllowedFileTypes:[playlistLoader acceptableFileTypes]];
 	[p setCanChooseDirectories:YES];
 	[p setAllowsMultipleSelection:YES];
+    [p setResolvesAliases:YES];
 	
-	[p beginSheetForDirectory:nil file:nil types:[playlistLoader acceptableFileTypes] modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
-}
-
-- (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-		[playlistLoader willInsertURLs:[panel URLs] origin:URLOriginInternal];
-		[playlistLoader didInsertURLs:[playlistLoader addURLs:[panel URLs] sort:YES] origin:URLOriginInternal];
-	}
+	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
+        if ( result == NSFileHandlingPanelOKButton ) {
+            [playlistLoader willInsertURLs:[p URLs] origin:URLOriginInternal];
+            [playlistLoader didInsertURLs:[playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginInternal];
+        } else {
+            [p close];
+        }
+    }];
 }
 
 - (IBAction)savePlaylist:(id)sender
@@ -182,16 +182,13 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	p = [NSSavePanel savePanel];
 	
-	[p setAllowedFileTypes:[playlistLoader acceptablePlaylistTypes]];
-	[p beginSheetForDirectory:nil file:nil modalForWindow:mainWindow modalDelegate:self didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:) contextInfo:NULL];
-}
-
-- (void)savePanelDidEnd:(NSSavePanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-		[playlistLoader save:[panel filename]];
-	}
+	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
+        if ( result == NSFileHandlingPanelOKButton ) {
+            [playlistLoader save:[[p URL] path]];
+        } else {
+            [p close];
+        }
+    }];
 }
 
 - (IBAction)openURL:(id)sender
@@ -265,7 +262,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	if ([fileManager fileExistsAtPath: folder] == NO)
 	{
-		[fileManager createDirectoryAtPath: folder attributes: nil];
+		[fileManager createDirectoryAtPath: folder withIntermediateDirectories:NO attributes:nil error:nil];
 	}
 	
 	NSString *fileName = @"Default.m3u";

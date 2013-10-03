@@ -294,7 +294,7 @@ int shn_reader::get_wave_header()
 {
   int   version = FORMAT_VERSION;
   int   ftype = TYPE_EOF;
-  char  *magic = MAGIC;
+  const char  *magic = MAGIC;
   int   internal_ftype;
   int   retval = 1;
 
@@ -549,7 +549,7 @@ void shn_reader::Run()
   slong  lpcqoffset = 0;
   int   version = FORMAT_VERSION, bitshift = 0;
   int   ftype = TYPE_EOF;
-  char  *magic = MAGIC;
+  const char  *magic = MAGIC;
   int   blocksize = DEFAULT_BLOCK_SIZE, nchan = DEFAULT_NCHAN;
   int   i, chan, nwrap, nskip = DEFAULT_NSKIP;
   int   *qlpc = NULL, maxnlpc = DEFAULT_MAXNLPC, nmean = UNDEFINED_UINT;

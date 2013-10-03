@@ -35,7 +35,7 @@
 #include "eval.h"
 #include "log.h"
 #include "mathematics.h"
-#include "time.h"
+#include "time_.h"
 #include "avstring.h"
 
 typedef struct Parser {
@@ -237,7 +237,9 @@ static double eval_expr(Parser *p, AVExpr *e)
             double x_max = eval_expr(p, e->param[1]);
             for(i=-1; i<1024; i++) {
                 if(i<255) {
+                    AV_NOWARN_DEPRECATED(
                     p->var[0] = av_reverse[i&255]*x_max/255;
+                    );
                 } else {
                     p->var[0] = x_max*pow(0.9, i-255);
                     if (i&1) p->var[0] *= -1;
@@ -294,6 +296,7 @@ static double eval_expr(Parser *p, AVExpr *e)
                 case e_hypot:return e->value * (sqrt(d*d + d2*d2));
                 case e_bitand: return isnan(d) || isnan(d2) ? NAN : e->value * ((long int)d & (long int)d2);
                 case e_bitor:  return isnan(d) || isnan(d2) ? NAN : e->value * ((long int)d | (long int)d2);
+                default:break;
             }
         }
     }

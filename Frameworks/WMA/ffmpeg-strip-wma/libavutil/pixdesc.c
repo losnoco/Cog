@@ -1992,10 +1992,13 @@ int av_pix_fmt_count_planes(enum AVPixelFormat pix_fmt)
 }
 
 void ff_check_pixfmt_descriptors(void){
-    int i, j;
+    int i, j, k;
 
-    for (i=0; i<FF_ARRAY_ELEMS(av_pix_fmt_descriptors); i++) {
+    AV_NOWARN_DEPRECATED( k = FF_ARRAY_ELEMS(av_pix_fmt_descriptors); );
+    for (i=0; i<k; i++) {
+        AV_NOWARN_DEPRECATED(
         const AVPixFmtDescriptor *d = &av_pix_fmt_descriptors[i];
+        );
         uint8_t fill[4][8+6+3] = {{0}};
         uint8_t *data[4] = {fill[0], fill[1], fill[2], fill[3]};
         int linesize[4] = {0,0,0,0};

@@ -9,6 +9,7 @@
 #include "rf5c68.h"
 #include <math.h>
 
+#undef NULL
 #define NULL	((void *)0)
 
 

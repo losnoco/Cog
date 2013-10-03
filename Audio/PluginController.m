@@ -89,7 +89,7 @@ static PluginController *sharedPluginController = nil;
 - (void)loadPluginsAtPath:(NSString *)path
 {
 
-	NSArray *dirContents = [[NSFileManager defaultManager] directoryContentsAtPath:path];
+	NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 
 	for (NSString *pname in dirContents)
 	{
@@ -270,6 +270,11 @@ static PluginController *sharedPluginController = nil;
 		
 		return properties;
 	}
+}
+
+- (int)putMetadataInURL:(NSURL *)url
+{
+    return 0;
 }
 
 @end

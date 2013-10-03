@@ -288,6 +288,7 @@ static int init_muxer(AVFormatContext *s, AVDictionary **options)
                 }
             }
             break;
+        default:break;
         }
 
         if (of->codec_tag) {
@@ -388,7 +389,7 @@ int avformat_write_header(AVFormatContext *s, AVDictionary **options)
 {
     int ret = 0;
 
-    if (ret = init_muxer(s, options))
+    if ((ret = init_muxer(s, options)))
         return ret;
 
     if (s->oformat->write_header) {

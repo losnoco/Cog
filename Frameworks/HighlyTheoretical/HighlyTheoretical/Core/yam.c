@@ -62,6 +62,7 @@
 // Static information
 //
 
+#if 0
 #define MAKELFOPHASEINC(x) (((uint64)(0x100000000)) / ((uint64)(x)))
 
 static uint32 lfophaseinctable[0x20] = {
@@ -85,6 +86,7 @@ static uint8 envattackshift[0x3D][4] = {
 /* 30-37 */ {4,4,4,4},{3,4,4,4},{3,4,3,4},{3,3,3,4},{3,3,3,3},{2,3,3,3},{2,3,2,3},{2,2,2,3},
 /* 38-3C */ {2,2,2,2},{1,2,2,2},{1,2,1,2},{1,1,1,2},{1,1,1,1}
 };
+#endif
 
 static uint8 envdecayvalue[0x3D][4] = {
 /* 00-07 */ {1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},
@@ -97,6 +99,7 @@ static uint8 envdecayvalue[0x3D][4] = {
 /* 38-3C */ {4,4,4,4},{8,4,4,4},{8,4,8,4},{8,8,8,4},{8,8,8,8}
 };
 
+#if 0
 static sint32 adpcmscale[8] = {
   0x0E6, 0x0E6, 0x0E6, 0x0E6, 0x133, 0x199, 0x200, 0x266
 };
@@ -105,6 +108,7 @@ static sint32 adpcmdiff[16] = {
  1, 3, 5, 7, 9, 11, 13, 15,
 -1,-3,-5,-7,-9,-11,-13,-15
 };
+#endif
 
 static sint32 qtable[32] = {
 0x0E00,0x0E80,0x0F00,0x0F80,
@@ -1655,7 +1659,9 @@ static void chan_aica_store_reg(struct YAM_STATE *state, uint8 ch, uint8 a, uint
 // DSP registers
 //
 static void coef_write(struct YAM_STATE *state, uint32 n, uint32 d, uint32 mask) {
+#ifdef ENABLE_DYNAREC
   sint16 old = state->coef[n];
+#endif
   yam_flush(state);
   n &= 0x7F;
   state->coef[n] <<= 3;
@@ -1668,7 +1674,9 @@ static void coef_write(struct YAM_STATE *state, uint32 n, uint32 d, uint32 mask)
 }
 
 static void madrs_write(struct YAM_STATE *state, uint32 n, uint32 d, uint32 mask) {
+#ifdef ENABLE_DYNAREC
   uint16 old = state->madrs[n];
+#endif
   yam_flush(state);
   n &= 0x3F;
   state->madrs[n] &= ~mask;
@@ -2345,10 +2353,12 @@ void EMU_CALL yam_aica_store_reg(void *state, uint32 a, uint32 d, uint32 mask, u
 //
 // Generate random data
 //
+#if 0
 static uint32 yamrand16(struct YAM_STATE *state) {
   state->randseed = 1103515245 * state->randseed + 12345;
   return state->randseed >> 16;
 }
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2795,7 +2805,7 @@ static void __fastcall dsp_sample_interpret(struct YAM_STATE *state) {
     if((mpro->__kisxzbon) & 0x80) {
       x = state->temp[(state->mdec_ct)&0x7F];
       state->xzbchoice[XZBCHOICE_ACC] =
-        ((((sint64)x) * ((sint64)(state->yychoice[YYCHOICE_FRC_REG]))) >> 12) + x;
+        (sint32)((((sint64)x) * ((sint64)(state->yychoice[YYCHOICE_FRC_REG]))) >> 12) + x;
       continue;
     }
     state->xzbchoice[XZBCHOICE_TEMP] = state->temp[((mpro->t_0rrrrrrr)+(state->mdec_ct))&0x7F];
@@ -2841,7 +2851,7 @@ static void __fastcall dsp_sample_interpret(struct YAM_STATE *state) {
     //
     // Multiply and accumulate
     //
-    state->xzbchoice[XZBCHOICE_ACC] = ((((sint64)x) * ((sint64)y)) >> 12) + b;
+    state->xzbchoice[XZBCHOICE_ACC] = (sint32)((((sint64)x) * ((sint64)y)) >> 12) + b;
     //
     // Temp write
     //
@@ -2916,6 +2926,7 @@ static void __fastcall dsp_sample_interpret(struct YAM_STATE *state) {
 #define STRUCTOFS(thetype,thefield) ((uint32)(&(((struct thetype*)0)->thefield)))
 #define STATEOFS(thefield) STRUCTOFS(YAM_STATE,thefield)
 
+#ifdef ENABLE_DYNAREC
 static int instruction_uses_shifted(struct MPRO *mpro) {
   // uses SHIFTED if:
   // - ADRL and INTERP
@@ -2933,6 +2944,7 @@ static int instruction_uses_shifted(struct MPRO *mpro) {
   // otherwise not
   return 0;
 }
+#endif
 
 //
 // Compile x86 code out of the current DSP program/coef/address set
@@ -3315,9 +3327,9 @@ struct render_priority
   sint32 channel_number;
   sint32 priority_level;
 };
-int __cdecl render_priority_compare(void * a, void * b) {
-  struct render_priority *_a = (struct render_priority *) a;
-  struct render_priority *_b = (struct render_priority *) b;
+int __cdecl render_priority_compare(const void * a, const void * b) {
+  const struct render_priority *_a = (const struct render_priority *) a;
+  const struct render_priority *_b = (const struct render_priority *) b;
   return _b->priority_level - _a->priority_level;
 }
 static void render(struct YAM_STATE *state, uint32 odometer, uint32 samples) {

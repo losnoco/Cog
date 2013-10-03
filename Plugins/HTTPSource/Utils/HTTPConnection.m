@@ -168,7 +168,7 @@
 		return [self connect];
 	}
 	
-	NSLog(@"Returned status: %i", statusCode);
+	NSLog(@"Returned status: %li", (long)statusCode);
 	return NO;
 }
 

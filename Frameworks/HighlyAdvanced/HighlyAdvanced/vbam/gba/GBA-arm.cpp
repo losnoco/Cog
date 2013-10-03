@@ -106,7 +106,7 @@ static INSN_REGPARM void armUnknownInsn(GBASystem *gba, u32 opcode)
  #define VALUE_LSL_REG_C \
     unsigned int shift = gba->reg[(opcode >> 8)&15].B.B0;    \
     unsigned int rm = gba->reg[opcode & 0x0F].I;        \
-    if(opcode & 0x0F == 15) {                           \
+    if((opcode & 0x0F) == 15) {                         \
         rm += 4;                                        \
     }                                                   \
     if (LIKELY(shift)) {                                \
@@ -142,7 +142,7 @@ static INSN_REGPARM void armUnknownInsn(GBASystem *gba, u32 opcode)
  #define VALUE_LSR_REG_C \
     unsigned int shift = gba->reg[(opcode >> 8)&15].B.B0;    \
     unsigned int rm = gba->reg[opcode & 0x0F].I;        \
-    if(opcode & 0x0F == 15) {                           \
+    if((opcode & 0x0F) == 15) {                         \
         rm += 4;                                        \
     }                                                   \
     if (LIKELY(shift)) {                                \
@@ -184,7 +184,7 @@ static INSN_REGPARM void armUnknownInsn(GBASystem *gba, u32 opcode)
  #define VALUE_ASR_REG_C \
     unsigned int shift = gba->reg[(opcode >> 8)&15].B.B0;    \
     s32 rm = gba->reg[opcode & 0x0F].I;                 \
-    if(opcode & 0x0F == 15) {                           \
+    if((opcode & 0x0F) == 15) {                         \
         rm += 4;                                        \
     }                                                   \
     if (LIKELY(shift < 32)) {                           \
@@ -225,7 +225,7 @@ static INSN_REGPARM void armUnknownInsn(GBASystem *gba, u32 opcode)
  #define VALUE_ROR_REG_C \
     unsigned int shift = gba->reg[(opcode >> 8)&15].B.B0;    \
     unsigned int rm = gba->reg[opcode & 0x0F].I;        \
-    if(opcode & 0x0F == 15) {                           \
+    if((opcode & 0x0F) == 15) {                         \
         rm += 4;                                        \
     }                                                   \
     if (LIKELY(shift & 0x1F)) {                         \
@@ -365,11 +365,13 @@ static INSN_REGPARM void armUnknownInsn(GBASystem *gba, u32 opcode)
 #ifndef OP_TST
  #define OP_TST \
     u32 res = gba->reg[(opcode >> 16) & 0x0F].I & value;     \
+    (void)dest;                                              \
     C_SETCOND_LOGICAL;
 #endif
 #ifndef OP_TEQ
  #define OP_TEQ \
     u32 res = gba->reg[(opcode >> 16) & 0x0F].I ^ value;     \
+    (void)dest;                                              \
     C_SETCOND_LOGICAL;
 #endif
 #ifndef OP_CMP
@@ -377,6 +379,7 @@ static INSN_REGPARM void armUnknownInsn(GBASystem *gba, u32 opcode)
     u32 lhs = gba->reg[(opcode>>16)&15].I;                   \
     u32 rhs = value;                                    \
     u32 res = lhs - rhs;                                \
+    (void)dest;                                              \
     C_SETCOND_SUB;
 #endif
 #ifndef OP_CMN
@@ -384,6 +387,7 @@ static INSN_REGPARM void armUnknownInsn(GBASystem *gba, u32 opcode)
     u32 lhs = gba->reg[(opcode>>16)&15].I;                   \
     u32 rhs = value;                                    \
     u32 res = lhs + rhs;                                \
+    (void)dest;                                              \
     C_SETCOND_ADD;
 #endif
 #ifndef OP_ORR
@@ -606,6 +610,7 @@ DEFINE_ALU_INSN_C (1F, 3F, MVNS, YES)
     gba->clockTicks += 1 + codeTicksAccess32(gba, gba->armNextPC);
 
 #define OP_MUL \
+    (void)acc; \
     gba->reg[dest].I = gba->reg[mult].I * rs;
 #define OP_MLA \
     gba->reg[dest].I = gba->reg[mult].I * rs + gba->reg[acc].I;

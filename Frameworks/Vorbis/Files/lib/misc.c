@@ -25,10 +25,6 @@ static void **pointers=NULL;
 static long *insertlist=NULL; /* We can't embed this in the pointer list;
 			  a pointer can have any value... */
 
-static char **files=NULL;
-static long *file_bytes=NULL;
-static int  filecount=0;
-
 static int ptop=0;
 static int palloced=0;
 static int pinsert=0;

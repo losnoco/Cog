@@ -605,7 +605,7 @@ void okim6295_write_command(okim6295_state *info, UINT8 data)
 				else
 				{
 					//logerror("OKIM6295:'%s' requested to play invalid sample %02x\n",device->tag(),info->command);
-					logerror("OKIM6295: Voice %u  requested to play invalid sample %02x\n",i,info->command);
+					/*logerror("OKIM6295: Voice %u  requested to play invalid sample %02x\n",i,info->command);*/
 					voice->playing = 0;
 				}
 			}

@@ -193,7 +193,7 @@ int av_parse_cpu_caps(unsigned *flags, const char *s)
     };
     const AVClass *pclass = &class;
 
-    return av_opt_eval_flags(&pclass, &cpuflags_opts[0], s, flags);
+    return av_opt_eval_flags(&pclass, &cpuflags_opts[0], s, (int *) flags);
 }
 
 int av_cpu_count(void)

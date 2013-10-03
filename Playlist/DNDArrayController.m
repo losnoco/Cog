@@ -84,7 +84,7 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 {
 	
     NSArray		*objects = [self arrangedObjects];
-	int			index = [indexSet lastIndex];
+	NSUInteger  index = [indexSet lastIndex];
 	
     int			aboveInsertIndexCount = 0;
     id			object;

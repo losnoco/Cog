@@ -491,8 +491,8 @@ static void EMU_CALL dma_transfer(struct IOP_STATE *state, uint32 core, uint32 c
   uint32 blocksize     = (state->dma[core].chan[chan].BCR  >>  0) & 0xFFFF;
   uint32 blockcount    = (state->dma[core].chan[chan].BCR  >> 16) & 0xFFFF;
   int    is_writing    = (state->dma[core].chan[chan].CHCR >>  0) & 1;
-  int    is_continuous = (state->dma[core].chan[chan].CHCR >>  9) & 1;
-  int    is_linked     = (state->dma[core].chan[chan].CHCR >> 10) & 1;
+//  int    is_continuous = (state->dma[core].chan[chan].CHCR >>  9) & 1;
+//  int    is_linked     = (state->dma[core].chan[chan].CHCR >> 10) & 1;
   uint32 len = blocksize * 4 * blockcount;
 //  uint32 i;
   uint64 cycles_delay = 0;

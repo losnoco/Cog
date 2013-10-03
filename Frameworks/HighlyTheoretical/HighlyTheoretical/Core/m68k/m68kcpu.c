@@ -501,11 +501,13 @@ void m68k_set_irq(m68ki_cpu_core *m68k, int irqline, int state)
 }
 
 /* translate logical to physical addresses */
+#if 0
 static int m68k_translate( m68ki_cpu_core *m68k, unsigned int *address )
 {
 	/* only applies to the program address space and only does something if the MMU's enabled */
 	return TRUE;
 }
+#endif
 
 /* Execute some instructions until we use up cycles clock cycles */
 int m68k_execute(m68ki_cpu_core *m68k, unsigned int cycles)

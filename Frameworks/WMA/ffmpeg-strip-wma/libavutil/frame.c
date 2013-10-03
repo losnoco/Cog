@@ -53,22 +53,26 @@ int av_frame_set_qp_table(AVFrame *f, AVBufferRef *buf, int stride, int qp_type)
 
     f->qp_table_buf = buf;
 
-    f->qscale_table = buf->data;
+AV_NOWARN_DEPRECATED(
+    f->qscale_table = (int8_t *) buf->data;
     f->qstride      = stride;
     f->qscale_type  = qp_type;
+);
 
     return 0;
 }
 
 int8_t *av_frame_get_qp_table(AVFrame *f, int *stride, int *type)
 {
+AV_NOWARN_DEPRECATED(
     *stride = f->qstride;
     *type   = f->qscale_type;
+);
 
     if (!f->qp_table_buf)
         return NULL;
 
-    return f->qp_table_buf->data;
+    return (int8_t *) f->qp_table_buf->data;
 }
 
 const char *av_get_colorspace_name(enum AVColorSpace val)
@@ -272,7 +276,7 @@ int av_frame_ref(AVFrame *dst, AVFrame *src)
             av_samples_copy(dst->extended_data, src->extended_data, 0, 0,
                             dst->nb_samples, ch, dst->format);
         } else {
-            av_image_copy(dst->data, dst->linesize, src->data, src->linesize,
+            av_image_copy(dst->data, dst->linesize, (const uint8_t **) src->data, src->linesize,
                           dst->format, dst->width, dst->height);
         }
         return 0;
@@ -425,7 +429,7 @@ int av_frame_make_writable(AVFrame *frame)
         av_samples_copy(tmp.extended_data, frame->extended_data, 0, 0,
                         frame->nb_samples, ch, frame->format);
     } else {
-        av_image_copy(tmp.data, tmp.linesize, frame->data, frame->linesize,
+        av_image_copy(tmp.data, tmp.linesize, (const uint8_t **) frame->data, frame->linesize,
                       frame->format, frame->width, frame->height);
     }
 
@@ -459,7 +463,9 @@ int av_frame_copy_props(AVFrame *dst, const AVFrame *src)
     dst->sample_rate         = src->sample_rate;
     dst->opaque              = src->opaque;
 #if FF_API_AVFRAME_LAVC
+AV_NOWARN_DEPRECATED(
     dst->type                = src->type;
+);
 #endif
     dst->pkt_pts             = src->pkt_pts;
     dst->pkt_dts             = src->pkt_dts;
@@ -496,15 +502,19 @@ int av_frame_copy_props(AVFrame *dst, const AVFrame *src)
         av_dict_copy(&sd_dst->metadata, sd_src->metadata, 0);
     }
 
+AV_NOWARN_DEPRECATED(
     dst->qscale_table = NULL;
     dst->qstride      = 0;
     dst->qscale_type  = 0;
+);
     if (src->qp_table_buf) {
         dst->qp_table_buf = av_buffer_ref(src->qp_table_buf);
         if (dst->qp_table_buf) {
-            dst->qscale_table = dst->qp_table_buf->data;
+AV_NOWARN_DEPRECATED(
+            dst->qscale_table = (int8_t *) dst->qp_table_buf->data;
             dst->qstride      = src->qstride;
             dst->qscale_type  = src->qscale_type;
+);
         }
     }
 

@@ -44,10 +44,10 @@ long sourceTell(void *datasource)
 	source = [s retain];
 	
 	ov_callbacks callbacks = {
-		read_func: sourceRead,
-		seek_func: sourceSeek,
-		close_func: sourceClose,
-		tell_func: sourceTell
+		.read_func =  sourceRead,
+		.seek_func =  sourceSeek,
+		.close_func =  sourceClose,
+		.tell_func =  sourceTell
 	};
 	
 	if (ov_open_callbacks(source, &vorbisRef, NULL, 0, callbacks) != 0)

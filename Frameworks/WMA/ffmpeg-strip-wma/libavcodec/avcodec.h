@@ -3186,7 +3186,7 @@ typedef struct AVSubtitle {
  * if c is non-NULL, returns the next registered codec after c,
  * or NULL if c is the last one.
  */
-AVCodec *av_codec_next(const AVCodec *c);
+const AVCodec *av_codec_next(const AVCodec *c);
 
 /**
  * Return the LIBAVCODEC_VERSION_INT constant.

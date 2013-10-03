@@ -39,7 +39,7 @@
 						 change:(NSDictionary *)change
                         context:(void *)context
 {
-	NSLog([[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]);
+	NSLog(@"File tree root URL: %@\n", [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]);
 	if ([keyPath isEqualToString:@"values.fileTreeRootURL"]) {
 		[self setRootURL:[NSURL URLWithString:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]]];
 	}

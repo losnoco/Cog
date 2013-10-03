@@ -229,7 +229,7 @@ static int asf_read_picture(AVFormatContext *s, int len)
     desc     = av_malloc(desc_len);
     if (!desc)
         return AVERROR(ENOMEM);
-    len -= avio_get_str16le(s->pb, len - picsize, desc, desc_len);
+    len -= avio_get_str16le(s->pb, len - picsize, (char *) desc, desc_len);
 
     ret = av_get_packet(s->pb, &pkt, picsize);
     if (ret < 0)
@@ -248,11 +248,11 @@ static int asf_read_picture(AVFormatContext *s, int len)
     st->attached_pic.flags       |= AV_PKT_FLAG_KEY;
 
     if (*desc)
-        av_dict_set(&st->metadata, "title", desc, AV_DICT_DONT_STRDUP_VAL);
+        av_dict_set(&st->metadata, "title", (char *) desc, AV_DICT_DONT_STRDUP_VAL);
     else
         av_freep(&desc);
 
-    av_dict_set(&st->metadata, "comment", ff_id3v2_picture_types[type], 0);
+    av_dict_set(&st->metadata, "comment", (const char *) ff_id3v2_picture_types[type], 0);
 
     return 0;
 
@@ -288,7 +288,7 @@ static void get_tag(AVFormatContext *s, const char *key, int type, int len, int 
     if (type == 0) {         // UTF16-LE
         avio_get_str16le(s->pb, len, value, 2 * len + 1);
     } else if (type == -1) { // ASCII
-        avio_read(s->pb, value, len);
+        avio_read(s->pb, (unsigned char *) value, len);
         value[len]=0;
     } else if (type == 1) {  // byte array
         if (!strcmp(key, "WM/Picture")) { // handle cover art

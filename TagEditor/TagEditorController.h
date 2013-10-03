@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-
+/*
 @interface TagEditorController : NSObject {
 
 	IBOutlet NSWindow* tageditorWindow;
@@ -19,3 +19,4 @@
 
 
 @end
+*/

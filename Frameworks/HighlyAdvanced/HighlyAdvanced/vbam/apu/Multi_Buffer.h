@@ -32,14 +32,14 @@ public:
 	virtual channel_t channel( int index ) BLARGG_PURE( ; )
 
 	// See Blip_Buffer.h
-	virtual blargg_err_t set_sample_rate( long rate, int msec = blip_default_length ) BLARGG_PURE( ; )
+	virtual blargg_err_t set_sample_rate( long rate, long msec = blip_default_length ) BLARGG_PURE( ; )
 	virtual void clock_rate( long ) BLARGG_PURE( { } )
 	virtual void bass_freq( int ) BLARGG_PURE( { } )
 	virtual void clear() BLARGG_PURE( { } )
 	long sample_rate() const;
 
 	// Length of buffer, in milliseconds
-	int length() const;
+	long length() const;
 
 	// See Blip_Buffer.h
 	virtual void end_frame( blip_time_t ) BLARGG_PURE( { } )
@@ -69,7 +69,7 @@ private:
 
 	unsigned channels_changed_count_;
 	long sample_rate_;
-	int length_;
+	long length_;
 	int channel_count_;
 	int const samples_per_frame_;
 	int const* channel_types_;
@@ -87,7 +87,7 @@ public:
 public:
 	Mono_Buffer();
 	~Mono_Buffer();
-	blargg_err_t set_sample_rate( long rate, int msec = blip_default_length );
+	blargg_err_t set_sample_rate( long rate, long msec = blip_default_length );
 	void clock_rate( long rate ) { buf.clock_rate( rate ); }
 	void bass_freq( int freq ) { buf.bass_freq( freq ); }
 	void clear() { buf.clear(); }
@@ -144,7 +144,7 @@ public:
 public:
 	Stereo_Buffer();
 	~Stereo_Buffer();
-	blargg_err_t set_sample_rate( long, int msec = blip_default_length );
+	blargg_err_t set_sample_rate( long, long msec = blip_default_length );
 	void clock_rate( long );
 	void bass_freq( int );
 	void clear();
@@ -168,7 +168,7 @@ class Silent_Buffer : public Multi_Buffer {
 	channel_t chan;
 public:
 	Silent_Buffer();
-	blargg_err_t set_sample_rate( long rate, int msec = blip_default_length );
+	blargg_err_t set_sample_rate( long rate, long msec = blip_default_length );
 	void clock_rate( long ) { }
 	void bass_freq( int ) { }
 	void clear() { }
@@ -179,14 +179,14 @@ public:
 };
 
 
-inline blargg_err_t Multi_Buffer::set_sample_rate( long rate, int msec )
+inline blargg_err_t Multi_Buffer::set_sample_rate( long rate, long msec )
 {
 	sample_rate_ = rate;
 	length_ = msec;
 	return 0;
 }
 
-inline blargg_err_t Silent_Buffer::set_sample_rate( long rate, int msec )
+inline blargg_err_t Silent_Buffer::set_sample_rate( long rate, long msec )
 {
 	return Multi_Buffer::set_sample_rate( rate, msec );
 }
@@ -195,7 +195,7 @@ inline int Multi_Buffer::samples_per_frame() const { return samples_per_frame_; 
 
 inline long Multi_Buffer::sample_rate() const { return sample_rate_; }
 
-inline int Multi_Buffer::length() const { return length_; }
+inline long Multi_Buffer::length() const { return length_; }
 
 inline blargg_err_t Multi_Buffer::set_channel_count( int n, int const* types )
 {

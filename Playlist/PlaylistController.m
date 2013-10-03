@@ -510,7 +510,7 @@
 				if ([pe album] == nil)
 					i--;
 				else
-					i = [(NSNumber *)[[filtered objectAtIndex:0] index] intValue];
+					i = [(PlaylistEntry *)[filtered objectAtIndex:0] index];
 			}
 			
 		}
@@ -693,8 +693,6 @@
 - (IBAction)showEntryInFinder:(id)sender
 {
 	NSWorkspace* ws = [NSWorkspace sharedWorkspace];
-	if ([self selectionIndex] < 0)
-		return;
 	
 	NSURL *url = [[[self selectedObjects] objectAtIndex:0] URL];
 	if ([url isFileURL])

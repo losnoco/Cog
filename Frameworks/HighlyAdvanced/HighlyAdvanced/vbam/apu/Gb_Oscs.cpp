@@ -376,7 +376,7 @@ void Gb_Square::run( blip_time_t time, blip_time_t end_time )
 		if ( !vol )
 		{
 			// Maintain phase when not playing
-			int count = (end_time - time + per - 1) / per;
+			blip_long count = (end_time - time + per - 1) / per;
 			ph += count; // will be masked below
 			time += (blip_time_t) count * per;
 		}
@@ -406,7 +406,7 @@ void Gb_Square::run( blip_time_t time, blip_time_t end_time )
 
 // Quickly runs LFSR for a large number of clocks. For use when noise is generating
 // no sound.
-static unsigned run_lfsr( unsigned s, unsigned mask, int count )
+static unsigned run_lfsr( unsigned s, unsigned mask, blip_long count )
 {
 	bool const optimized = true; // set to false to use only unoptimized loop in middle
 
@@ -518,11 +518,11 @@ void Gb_Noise::run( blip_time_t time, blip_time_t end_time )
 	static byte const period1s [8] = { 1, 2, 4, 6, 8, 10, 12, 14 };
 	int const period1 = period1s [regs [3] & 7] * clk_mul;
 	{
-		int extra = (end_time - time) - delay;
+		blip_long extra = (end_time - time) - delay;
 		int const per2 = this->period2();
 		time += delay + ((divider ^ (per2 >> 1)) & (per2 - 1)) * period1;
 
-		int count = (extra < 0 ? 0 : (extra + period1 - 1) / period1);
+		blip_long count = (extra < 0 ? 0 : (extra + period1 - 1) / period1);
 		divider = (divider - count) & period2_mask;
 		delay = count * period1 - extra;
 	}
@@ -541,7 +541,7 @@ void Gb_Noise::run( blip_time_t time, blip_time_t end_time )
 		else if ( !vol )
 		{
 			// Maintain phase when not playing
-			int count = (end_time - time + per - 1) / per;
+			blip_long count = (end_time - time + per - 1) / per;
 			time += (blip_time_t) count * per;
 			bits = run_lfsr( bits, ~mask, count );
 		}
@@ -627,7 +627,7 @@ void Gb_Wave::run( blip_time_t time, blip_time_t end_time )
 		if ( !playing )
 		{
 			// Maintain phase when not playing
-			int count = (end_time - time + per - 1) / per;
+			blip_long count = (end_time - time + per - 1) / per;
 			ph += count; // will be masked below
 			time += (blip_time_t) count * per;
 		}

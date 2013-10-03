@@ -413,7 +413,6 @@ static int accumulate_fit(const float *flr,const float *mdct,
 			  int x0, int x1,lsfit_acc *a,
 			  int n,vorbis_info_floor1 *info){
   long i;
-  int quantized=vorbis_dBquant(flr+x0);
 
   long xa=0,ya=0,x2a=0,y2a=0,xya=0,na=0, xb=0,yb=0,x2b=0,y2b=0,xyb=0,nb=0;
 
@@ -591,8 +590,6 @@ static int post_Y(int *A,int *B,int pos){
   return (A[pos]+B[pos])>>1;
 }
 
-static int seq=0;
-
 int *floor1_fit(vorbis_block *vb,vorbis_look_floor1 *look,
 			  const float *logmdct,   /* in */
 			  const float *logmask){
@@ -763,7 +760,6 @@ int floor1_encode(oggpack_buffer *opb,vorbis_block *vb,
 
   long i,j;
   vorbis_info_floor1 *info=look->vi;
-  long n=look->n;
   long posts=look->posts;
   codec_setup_info *ci=vb->vd->vi->codec_setup;
   int out[VIF_POSIT+2];

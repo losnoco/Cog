@@ -24,6 +24,7 @@
 
 #include "libavutil/attributes.h"
 #include "libavutil/avassert.h"
+#include "libavutil/internal.h"
 
 #include "avcodec.h"
 #include "internal.h"
@@ -676,7 +677,7 @@ static void mclms_predict(WmallDecodeCtx *s, int icoef, int *pred)
         for (i = 0; i < ich; i++)
             pred[ich] += s->channel_residues[i][icoef] *
                          s->mclms_coeffs_cur[i + num_channels * ich];
-        pred[ich] += 1 << s->mclms_scaling - 1;
+        pred[ich] += 1 << (s->mclms_scaling - 1);
         pred[ich] >>= s->mclms_scaling;
         s->channel_residues[ich][icoef] += pred[ich];
     }
@@ -708,7 +709,7 @@ static void lms_update(WmallDecodeCtx *s, int ich, int ilms,
 {
     int icoef;
     int recent = s->cdlms[ich][ilms].recent;
-    int range  = 1 << s->bits_per_sample - 1;
+    int range  = 1 << (s->bits_per_sample - 1);
 
     if (residue < 0) {
         for (icoef = 0; icoef < s->cdlms[ich][ilms].order; icoef++)

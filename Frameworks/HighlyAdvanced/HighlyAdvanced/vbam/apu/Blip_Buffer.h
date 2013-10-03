@@ -6,7 +6,7 @@
 
 	// internal
 	#include <limits.h>
-	#if INT_MAX < 0x7FFFFFFF || LONG_MAX == 0x7FFFFFFF
+	#if INT_MAX < 0x7FFFFFFF || LONG_MAX >= 0x7FFFFFFF
 		typedef long blip_long;
 		typedef unsigned long blip_ulong;
 	#else
@@ -32,7 +32,7 @@ public:
 	// Sets output sample rate and buffer length in milliseconds (1/1000 sec, defaults
 	// to 1/4 second) and clears buffer. If there isn't enough memory, leaves buffer
 	// untouched and returns "Out of memory", otherwise returns NULL.
-	blargg_err_t set_sample_rate( long samples_per_sec, int msec_length = 1000 / 4 );
+	blargg_err_t set_sample_rate( long samples_per_sec, long msec_length = 1000 / 4 );
 
 	// Sets number of source time units per second
 	void clock_rate( long clocks_per_sec );
@@ -67,7 +67,7 @@ public:
 	long sample_rate() const;
 
 	// Length of buffer in milliseconds
-	int length() const;
+	long length() const;
 
 	// Number of source time units per second
 	long clock_rate() const;
@@ -118,7 +118,7 @@ public:
 	// Deprecated
 	typedef blip_resampled_time_t resampled_time_t;
 	blargg_err_t sample_rate( long r ) { return set_sample_rate( r ); }
-	blargg_err_t sample_rate( long r, int msec ) { return set_sample_rate( r, msec ); }
+	blargg_err_t sample_rate( long r, long msec ) { return set_sample_rate( r, msec ); }
 private:
 	// noncopyable
 	Blip_Buffer( const Blip_Buffer& );
@@ -135,7 +135,7 @@ private:
 	long sample_rate_;
 	long clock_rate_;
 	int bass_freq_;
-	int length_;
+	blip_long length_;
 	Blip_Buffer* modified_; // non-zero = true (more optimal than using bool, heh)
 	friend class Blip_Reader;
 };
@@ -280,7 +280,7 @@ class Silent_Blip_Buffer : public Blip_Buffer {
 	buf_t_ buf [blip_buffer_extra_ + 1];
 public:
 	// The following cannot be used (an assertion will fail if attempted):
-	blargg_err_t set_sample_rate( long samples_per_sec, int msec_length );
+	blargg_err_t set_sample_rate( long samples_per_sec, long msec_length );
 	blip_time_t count_clocks( long count ) const;
 	void mix_samples( blip_sample_t const* buf, long count );
 
@@ -526,7 +526,7 @@ inline blip_eq_t::blip_eq_t( double t ) :
 inline blip_eq_t::blip_eq_t( double t, long rf, long sr, long cf ) :
 		treble( t ), rolloff_freq( rf ), sample_rate( sr ), cutoff_freq( cf ) { }
 
-inline int  Blip_Buffer::length() const         { return length_; }
+inline long Blip_Buffer::length() const         { return length_; }
 inline long Blip_Buffer::samples_avail() const  { return (long) (offset_ >> BLIP_BUFFER_ACCURACY); }
 inline long Blip_Buffer::sample_rate() const    { return sample_rate_; }
 inline int  Blip_Buffer::output_latency() const { return blip_widest_impulse_ / 2; }

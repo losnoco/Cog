@@ -97,7 +97,7 @@
 	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
 	NSMutableArray *entries = [NSMutableArray array];
 	
-	while (entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]])
+	while ((entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]))
 	{
 		if ([entry hasPrefix:@"#"] || [entry isEqualToString:@""]) //Ignore extra info
 			continue;

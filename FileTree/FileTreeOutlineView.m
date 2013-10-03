@@ -6,6 +6,7 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
+#import "FileTreeController.h"
 #import "FileTreeOutlineView.h"
 #import "FileTreeViewController.h"
 #import "PlaybackController.h"
@@ -30,13 +31,13 @@
 		
 		if (modifiers == 0 && (c == NSEnterCharacter || c == NSCarriageReturnCharacter))
 		{
-			[[self delegate] addToPlaylist:self];
+			[(FileTreeController *)[self delegate] addToPlaylist:self];
 
 			return;
 		}
 		else if (modifiers == 0 && c == ' ')
 		{
-			[[self delegate] playPauseResume:self];
+			[(FileTreeController *)[self delegate] playPauseResume:self];
 			return;
 		}
 	}
@@ -66,7 +67,7 @@
 	}
 	else if (!currentRowIsSelected)
 	{
-		[self selectRow:iRow byExtendingSelection:NO];
+		[self selectRowIndexes:[NSIndexSet indexSetWithIndex:iRow] byExtendingSelection:NO];
 	}
 
 	return contextMenu;

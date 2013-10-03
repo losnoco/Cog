@@ -269,7 +269,7 @@ static EMU_INLINE uint32 EMU_CALL get32lsb(uint8 *src) {
 // Determine if an ASCII string exists in a byte block
 //
 static int string_exists(const char *block, uint32 len, const char *string) {
-  uint32 sl = strlen(string);
+  uint32 sl = (uint32)strlen(string);
   uint32 i;
   if(sl > len) return 0;
   len = (len - sl) + 1;
@@ -408,7 +408,7 @@ static sint32 EMU_CALL vread(void *vfsstate, uint8 *ram_native, uint32 ram_size,
 #ifdef PSX_BIG_ENDIAN
   vreadswap(ram_native, ofs, len);
 #endif
-  r = vfs_read(vfsstate, emufd, ram_native + ofs, len);
+  r = vfs_read(vfsstate, emufd, (char *)ram_native + ofs, len);
 #ifdef PSX_BIG_ENDIAN
   vreadswap(ram_native, ofs, len);
 #endif

@@ -242,11 +242,11 @@ void av_log_default_callback(void* ptr, int level, const char* fmt, va_list vl)
         count = 0;
     }
     strcpy(prev, line);
-    sanitize(part[0].str);
+    sanitize((uint8_t *) part[0].str);
     colored_fputs(type[0], part[0].str);
-    sanitize(part[1].str);
+    sanitize((uint8_t *) part[1].str);
     colored_fputs(type[1], part[1].str);
-    sanitize(part[2].str);
+    sanitize((uint8_t *) part[2].str);
     colored_fputs(av_clip(level >> 3, 0, 6), part[2].str);
     av_bprint_finalize(part+2, NULL);
 }

@@ -108,6 +108,8 @@ namespace TagLib {
                                bool readAudioProperties = true,
                                AudioProperties::ReadStyle
                                audioPropertiesStyle = AudioProperties::Average) const = 0;
+        
+      virtual ~FileTypeResolver() { }
     };
 
     /*!

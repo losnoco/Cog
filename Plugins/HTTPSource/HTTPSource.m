@@ -52,9 +52,9 @@
 	return _byteCount;
 }
 
-- (int)read:(void *)buffer amount:(int)amount
+- (long)read:(void *)buffer amount:(long)amount
 {
-	int totalRead = 0;
+	long totalRead = 0;
 
 	while (totalRead < amount) {
 		NSInteger amountReceived = [_connection receiveData:((uint8_t *)buffer) + totalRead amount:amount - totalRead];

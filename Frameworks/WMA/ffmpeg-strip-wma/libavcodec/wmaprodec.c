@@ -89,6 +89,7 @@
 #include "libavutil/float_dsp.h"
 #include "libavutil/intfloat.h"
 #include "libavutil/intreadwrite.h"
+#include "libavutil/internal.h"
 #include "avcodec.h"
 #include "internal.h"
 #include "get_bits.h"

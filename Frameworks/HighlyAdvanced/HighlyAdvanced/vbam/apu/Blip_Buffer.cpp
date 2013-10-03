@@ -80,7 +80,7 @@ void Blip_Buffer::clear( int entire_buffer )
 	}
 }
 
-Blip_Buffer::blargg_err_t Blip_Buffer::set_sample_rate( long new_rate, int msec )
+Blip_Buffer::blargg_err_t Blip_Buffer::set_sample_rate( long new_rate, long msec )
 {
 	if ( buffer_size_ == silent_buf_size )
 	{
@@ -436,7 +436,7 @@ void Blip_Buffer::mix_samples( blip_sample_t const* in, long count )
 	buf_t_* out = buffer_ + (offset_ >> BLIP_BUFFER_ACCURACY) + blip_widest_impulse_ / 2;
 
 	int const sample_shift = blip_sample_bits - 16;
-	int prev = 0;
+	blip_long prev = 0;
 	while ( count-- )
 	{
 		blip_long s = (blip_long) *in++ << sample_shift;

@@ -231,7 +231,7 @@ value:   START, REC, MEMDAT, REPEAT, SPOFF, x,x,RESET   meaning:
 			/* if yes, then let's check if ADPCM memory is mapped and big enough */
 			if(DELTAT->memory == 0)
 			{
-				logerror("YM Delta-T ADPCM rom not mapped\n");
+				/*logerror("YM Delta-T ADPCM rom not mapped\n");*/
 				DELTAT->portstate = 0x00;
 				DELTAT->PCM_BSY = 0;
 			}
@@ -239,12 +239,12 @@ value:   START, REC, MEMDAT, REPEAT, SPOFF, x,x,RESET   meaning:
 			{
 				if( DELTAT->end >= DELTAT->memory_size )	/* Check End in Range */
 				{
-					logerror("YM Delta-T ADPCM end out of range: $%08x\n", DELTAT->end);
+					/*logerror("YM Delta-T ADPCM end out of range: $%08x\n", DELTAT->end);*/
 					DELTAT->end = DELTAT->memory_size - 1;
 				}
 				if( DELTAT->start >= DELTAT->memory_size )	/* Check Start in Range */
 				{
-					logerror("YM Delta-T ADPCM start out of range: $%08x\n", DELTAT->start);
+					/*logerror("YM Delta-T ADPCM start out of range: $%08x\n", DELTAT->start);*/
 					DELTAT->portstate = 0x00;
 					DELTAT->PCM_BSY = 0;
 				}

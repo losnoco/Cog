@@ -108,7 +108,7 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
     NSPredicate *searchPredicate;
     // Process the search string into a compound predicate. If Nil is returned do nothing
-    if(searchPredicate = [self processSearchString])
+    if((searchPredicate = [self processSearchString]))
     {
         // spotlightPredicate, which is what will finally be used for the spotlight search
         // is the union of the (potentially) compound searchPredicate and the static 
@@ -296,7 +296,7 @@ replacementObjectForResultObject:(NSMetadataItem*)result
 @synthesize query;
 
 @synthesize searchString;
-- (void)setSearchString:(NSString *)aString 
+- (void)setSearchString:(NSString *)aString
 {
 	// Make sure the string is changed
     if (![searchString isEqualToString:aString]) 

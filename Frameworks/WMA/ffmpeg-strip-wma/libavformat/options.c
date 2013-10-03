@@ -41,7 +41,7 @@ static void *format_child_next(void *obj, void *prev)
     AVFormatContext *s = obj;
     if (!prev && s->priv_data &&
         ((s->iformat && s->iformat->priv_class) ||
-          s->oformat && s->oformat->priv_class))
+          (s->oformat && s->oformat->priv_class)))
         return s->priv_data;
     if (s->pb && s->pb->av_class && prev != s->pb)
         return s->pb;
@@ -65,11 +65,11 @@ static const AVClass *format_child_class_next(const AVClass *prev)
             if (ofmt->priv_class == prev)
                 break;
     if (!ofmt)
-        while (ifmt = av_iformat_next(ifmt))
+        while ((ifmt = av_iformat_next(ifmt)))
             if (ifmt->priv_class)
                 return ifmt->priv_class;
 
-    while (ofmt = av_oformat_next(ofmt))
+    while ((ofmt = av_oformat_next(ofmt)))
         if (ofmt->priv_class)
             return ofmt->priv_class;
 

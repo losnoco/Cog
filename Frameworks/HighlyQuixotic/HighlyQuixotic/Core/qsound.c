@@ -575,7 +575,7 @@ sint32 EMU_CALL qsound_execute(
   //
   // Otherwise return the number of cycles we executed
   //
-  r = QSOUNDSTATE->odometer - old_odometer;
+  r = (sint32)(QSOUNDSTATE->odometer - old_odometer);
   return r;
 }
 

@@ -221,11 +221,11 @@ void Ay_Apu::run_until( blip_time_t final_end_time )
 		blip_time_t end_time   = final_end_time;
         int const vol_mode = regs [0x08 + index];
 		int const vol_mode_mask = type_ == Ay8914 ? 0x30 : 0x10;
-		int volume = amp_table [vol_mode & 0x0F] >> half_vol + env_step_scale;
+		int volume = amp_table [vol_mode & 0x0F] >> (half_vol + env_step_scale);
 		int osc_env_pos = env_pos;
 		if ( vol_mode & vol_mode_mask )
 		{
-			volume = env_wave [osc_env_pos] >> half_vol + env_step_scale;
+			volume = env_wave [osc_env_pos] >> (half_vol + env_step_scale);
 			if ( type_ == Ay8914 ) volume >>= 3 - ( ( vol_mode & vol_mode_mask ) >> 4 );
 			// use envelope only if it's a repeating wave or a ramp that hasn't finished
 			if ( !(regs [13] & 1) || osc_env_pos < -32 )
@@ -374,7 +374,7 @@ void Ay_Apu::run_until( blip_time_t final_end_time )
 			// next envelope step
 			if ( ++osc_env_pos >= 0 )
 				osc_env_pos -= 32;
-			volume = env_wave [osc_env_pos] >> half_vol + env_step_scale;
+			volume = env_wave [osc_env_pos] >> (half_vol + env_step_scale);
 			if ( type_ == Ay8914 ) volume >>= 3 - ( ( vol_mode & vol_mode_mask ) >> 4 );
 			
 			start_time = end_time;

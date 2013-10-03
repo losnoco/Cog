@@ -41,24 +41,13 @@
 - (BOOL)open:(id<CogSource>)source;
 {
 	OSStatus						err;
-	FSRef							ref;
 	
 	NSURL *url = [source url];
 	[source close]; //There's no room for your kind around here!
 	
-	if (![[url scheme] isEqualToString:@"file"])
-		return NO;
-		
-	
-	// Open the input file
-	err = FSPathMakeRef((const UInt8 *)[[url path] UTF8String], &ref, NULL);
+	err = ExtAudioFileOpenURL((CFURLRef)url, &_in);
 	if(noErr != err) {
-		return NO;
-	}
-	
-	err = ExtAudioFileOpen(&ref, &_in);
-	if(noErr != err) {
-		NSLog(@"Error opening file: %s", &err);
+		NSLog(@"Error opening file: %d", err);
 		return NO;
 	}
 	

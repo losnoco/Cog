@@ -255,7 +255,6 @@ void Dual_Resampler::mix_extra_mono( Stereo_Buffer& stereo_buf, dsample_t out_ [
 	typedef dsample_t stereo_dsample_t [2];
 	stereo_dsample_t* BLARGG_RESTRICT out = (stereo_dsample_t*) out_ + count;
 	int offset = -count;
-	int const gain = gain_;
 	do
 	{
 		int s = BLIP_READER_READ_RAW( sn ) >> (blip_sample_bits - 16);
@@ -290,7 +289,6 @@ void Dual_Resampler::mix_extra_stereo( Stereo_Buffer& stereo_buf, dsample_t out_
 	typedef dsample_t stereo_dsample_t [2];
 	stereo_dsample_t* BLARGG_RESTRICT out = (stereo_dsample_t*) out_ + count;
 	int offset = -count;
-	int const gain = gain_;
 	do
 	{
 		int sc = BLIP_READER_READ_RAW( snc ) >> (blip_sample_bits - 16);

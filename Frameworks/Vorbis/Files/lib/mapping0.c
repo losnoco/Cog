@@ -735,7 +735,6 @@ static int mapping0_inverse(vorbis_block *vb,vorbis_info_mapping *l){
   codec_setup_info     *ci=vi->codec_setup;
   private_state        *b=vd->backend_state;
   vorbis_info_mapping0 *info=(vorbis_info_mapping0 *)l;
-  int hs=ci->halfrate_flag; 
 
   int                   i,j;
   long                  n=vb->pcmend=ci->blocksizes[vb->W];

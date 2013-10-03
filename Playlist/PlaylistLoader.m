@@ -129,7 +129,7 @@
 	}
 	[fileHandle truncateFileAtOffset:0];
 
-	[fileHandle writeData:[[NSString stringWithFormat:@"[playlist]\nnumberOfEntries=%i\n\n",[[playlistController content] count]] dataUsingEncoding:NSUTF8StringEncoding]];
+	[fileHandle writeData:[[NSString stringWithFormat:@"[playlist]\nnumberOfEntries=%lu\n\n",(unsigned long)[[playlistController content] count]] dataUsingEncoding:NSUTF8StringEncoding]];
 
 	int i = 1;
 	for (PlaylistEntry *pe in [playlistController content])

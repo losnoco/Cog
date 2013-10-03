@@ -101,7 +101,7 @@ void MP4::Mp4AudioSampleEntry::parseEntry()
     if( DecCfgTag[0] != 0x04 )
       return;
     // read decoder configuration length
-    TagLib::uint deccfg_len = mp4file->readSystemsLen();
+    /*TagLib::uint deccfg_len =*/ mp4file->readSystemsLen();
     // read object type Id
     ByteVector objId = mp4file->readBlock(1);
     // read stream type id

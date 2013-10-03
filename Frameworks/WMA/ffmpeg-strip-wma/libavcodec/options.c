@@ -53,7 +53,7 @@ static void *codec_child_next(void *obj, void *prev)
 
 static const AVClass *codec_child_class_next(const AVClass *prev)
 {
-    AVCodec *c = NULL;
+    const AVCodec *c = NULL;
 
     /* find the codec that corresponds to prev */
     while (prev && (c = av_codec_next(c)))
@@ -61,7 +61,7 @@ static const AVClass *codec_child_class_next(const AVClass *prev)
             break;
 
     /* find next codec with priv options */
-    while (c = av_codec_next(c))
+    while ((c = av_codec_next(c)))
         if (c->priv_class)
             return c->priv_class;
     return NULL;
@@ -111,7 +111,9 @@ int avcodec_get_context_defaults3(AVCodecContext *s, const AVCodec *codec)
         flags= AV_OPT_FLAG_VIDEO_PARAM;
     else if(s->codec_type == AVMEDIA_TYPE_SUBTITLE)
         flags= AV_OPT_FLAG_SUBTITLE_PARAM;
+    AV_NOWARN_DEPRECATED(
     av_opt_set_defaults2(s, flags, flags);
+    );
 
     s->time_base           = (AVRational){0,1};
     s->get_buffer2         = avcodec_default_get_buffer2;
@@ -140,7 +142,7 @@ int avcodec_get_context_defaults3(AVCodecContext *s, const AVCodec *codec)
         int ret;
         const AVCodecDefault *d = codec->defaults;
         while (d->key) {
-            ret = av_opt_set(s, d->key, d->value, 0);
+            ret = av_opt_set(s, (const char *) d->key, (const char *) d->value, 0);
             av_assert0(ret >= 0);
             d++;
         }

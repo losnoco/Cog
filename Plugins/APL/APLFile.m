@@ -67,7 +67,7 @@
 		NSString* line = nil;
 		NSScanner *scanner = nil;
 		//NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-		while(line = [self readline:f]) {
+		while((line = [self readline:f])) {
 			if (![line compare:@"----- APE TAG (DO NOT TOUCH!!!) -----\r\n" options:NSCaseInsensitiveSearch]) break;
 			if([line characterAtIndex:0] == '-') break;
 			[scanner release];

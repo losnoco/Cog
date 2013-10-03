@@ -100,7 +100,7 @@ static int64_t wrap_timestamp(AVStream *st, int64_t timestamp)
 
 MAKE_ACCESSORS(AVStream, stream, AVRational, r_frame_rate)
 
-static AVCodec *find_decoder(AVStream *st, enum AVCodecID codec_id)
+static const AVCodec *find_decoder(AVStream *st, enum AVCodecID codec_id)
 {
     if (st->codec->codec)
         return st->codec->codec;
@@ -215,7 +215,7 @@ AVInputFormat *av_probe_input_format3(AVProbeData *pd, int is_opened, int *score
     const static uint8_t zerobuffer[AVPROBE_PADDING_SIZE];
 
     if (!lpd.buf)
-        lpd.buf = zerobuffer;
+        lpd.buf = (unsigned char *) zerobuffer;
 
     if (lpd.buf_size > 10 && ff_id3v2_match(lpd.buf, ID3v2_DEFAULT_MAGIC)) {
         int id3len = ff_id3v2_tag_len(lpd.buf);
@@ -347,7 +347,7 @@ int av_probe_input_buffer2(AVIOContext *pb, AVInputFormat **fmt,
     }
 
     if (!*fmt && pb->av_class && av_opt_get(pb, "mime_type", AV_OPT_SEARCH_CHILDREN, &mime_type) >= 0 && mime_type) {
-        if (!av_strcasecmp(mime_type, "audio/aacp")) {
+        if (!av_strcasecmp((const char *) mime_type, "audio/aacp")) {
             *fmt = av_find_input_format("aac");
         }
         av_freep(&mime_type);
@@ -579,6 +579,7 @@ static void force_codec_ids(AVFormatContext *s, AVStream *st)
     case AVMEDIA_TYPE_SUBTITLE:
         if(s->subtitle_codec_id)st->codec->codec_id= s->subtitle_codec_id;
         break;
+    default:break;
     }
 }
 
@@ -859,7 +860,7 @@ static int update_wrap_reference(AVFormatContext *s, AVStream *st, int stream_in
         // reference time stamp should be 60 s before first time stamp
         int64_t pts_wrap_reference = st->first_dts - av_rescale(60, st->time_base.den, st->time_base.num);
         // if first time stamp is not more than 1/8 and 60s before the wrap point, subtract rather than add wrap offset
-        int pts_wrap_behavior = (st->first_dts < (1LL<<st->pts_wrap_bits) - (1LL<<st->pts_wrap_bits-3)) ||
+        int pts_wrap_behavior = (st->first_dts < (1LL<<st->pts_wrap_bits) - (1LL<<(st->pts_wrap_bits-3))) ||
             (st->first_dts < (1LL<<st->pts_wrap_bits) - av_rescale(60, st->time_base.den, st->time_base.num)) ?
             AV_PTS_WRAP_ADD_OFFSET : AV_PTS_WRAP_SUB_OFFSET;
 
@@ -2431,6 +2432,8 @@ static int has_codec_parameters(AVStream *st, const char **errmsg_ptr)
         break;
     case AVMEDIA_TYPE_DATA:
         if(avctx->codec_id == AV_CODEC_ID_NONE) return 1;
+        break;
+    default:break;
     }
 
     if (avctx->codec_id == AV_CODEC_ID_NONE)
@@ -3068,6 +3071,7 @@ int avformat_find_stream_info(AVFormatContext *ic, AVDictionary **options)
                 st->disposition = AV_DISPOSITION_COMMENT;          break;
             case AV_AUDIO_SERVICE_TYPE_KARAOKE:
                 st->disposition = AV_DISPOSITION_KARAOKE;          break;
+            default:break;
             }
         }
     }
@@ -3129,13 +3133,13 @@ int av_find_best_stream(AVFormatContext *ic,
                         enum AVMediaType type,
                         int wanted_stream_nb,
                         int related_stream,
-                        AVCodec **decoder_ret,
+                        const AVCodec **decoder_ret,
                         int flags)
 {
     int i, nb_streams = ic->nb_streams;
     int ret = AVERROR_STREAM_NOT_FOUND, best_count = -1, best_bitrate = -1, best_multiframe = -1, count, bitrate, multiframe;
     unsigned *program = NULL;
-    AVCodec *decoder = NULL, *best_decoder = NULL;
+    const AVCodec *decoder = NULL, *best_decoder = NULL;
 
     if (related_stream >= 0 && wanted_stream_nb < 0) {
         AVProgram *p = av_find_program_from_stream(ic, NULL, related_stream);
@@ -3378,7 +3382,7 @@ AVProgram *av_new_program(AVFormatContext *ac, int id)
         program = av_mallocz(sizeof(AVProgram));
         if (!program)
             return NULL;
-        dynarray_add(&ac->programs, &ac->nb_programs, program);
+        dynarray_add(&ac->programs, (int *) &ac->nb_programs, program);
         program->discard = AVDISCARD_NONE;
     }
     program->id = id;
@@ -3404,7 +3408,7 @@ AVChapter *avpriv_new_chapter(AVFormatContext *s, int id, AVRational time_base, 
         chapter= av_mallocz(sizeof(AVChapter));
         if(!chapter)
             return NULL;
-        dynarray_add(&s->chapters, &s->nb_chapters, chapter);
+        dynarray_add(&s->chapters, (int *) &s->nb_chapters, chapter);
     }
     av_dict_set(&chapter->metadata, "title", title, 0);
     chapter->id    = id;

@@ -58,7 +58,7 @@ Mono_Buffer::Mono_Buffer() : Multi_Buffer( 1 )
 
 Mono_Buffer::~Mono_Buffer() { }
 
-blargg_err_t Mono_Buffer::set_sample_rate( long rate, int msec )
+blargg_err_t Mono_Buffer::set_sample_rate( long rate, long msec )
 {
 	RETURN_ERR( buf.set_sample_rate( rate, msec ) );
 	return Multi_Buffer::set_sample_rate( buf.sample_rate(), buf.length() );
@@ -138,7 +138,7 @@ Stereo_Buffer::Stereo_Buffer() : Multi_Buffer( 2 )
 
 Stereo_Buffer::~Stereo_Buffer() { }
 
-blargg_err_t Stereo_Buffer::set_sample_rate( long rate, int msec )
+blargg_err_t Stereo_Buffer::set_sample_rate( long rate, long msec )
 {
 	mixer.samples_read = 0;
 	for ( int i = bufs_size; --i >= 0; )

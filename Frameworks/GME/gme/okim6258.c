@@ -279,7 +279,6 @@ void device_reset_okim6258(void *chip)
 void okim6258_set_divider(void *chip, int val)
 {
 	okim6258_state *info = (okim6258_state *) chip;
-	int divider = dividers[val];
 
 	info->divider = dividers[val];
 	//stream_set_sample_rate(info->stream, info->master_clock / divider);
@@ -402,7 +401,7 @@ void okim6258_ctrl_w(void *chip, offs_t offset, UINT8 data)
 
 	if (data & COMMAND_RECORD)
 	{
-		logerror("M6258: Record enabled\n");
+		/*logerror("M6258: Record enabled\n");*/
 		info->status |= STATUS_RECORDING;
 	}
 	else

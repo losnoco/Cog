@@ -1497,8 +1497,8 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 			}
 			else
 			{	/* set IRQ mask ,timer enable*/
-				UINT8 st1 = v&1;
-				UINT8 st2 = (v>>1)&1;
+				/*UINT8 st1 = v&1;
+				UINT8 st2 = (v>>1)&1;*/
 
 				/* IRQRST,T1MSK,t2MSK,EOSMSK,BRMSK,x,ST2,ST1 */
 				OPL_STATUS_RESET(OPL, v & (0x78-0x08) );
@@ -1526,8 +1526,8 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 			{
 				if(OPL->keyboardhandler_w)
 					OPL->keyboardhandler_w(OPL->keyboard_param,v);
-				else
-					logerror("Y8950: write unmapped KEYBOARD port\n");
+				/*else
+					logerror("Y8950: write unmapped KEYBOARD port\n");*/
 			}
 			break;
 		case 0x07:	/* DELTA-T control 1 : START,REC,MEMDATA,REPT,SPOFF,x,x,RST */
@@ -1561,7 +1561,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 		case 0x15:		/* DAC data high 8 bits (F7,F6...F2) */
 		case 0x16:		/* DAC data low 2 bits (F1, F0 in bits 7,6) */
 		case 0x17:		/* DAC data shift (S2,S1,S0 in bits 2,1,0) */
-			logerror("FMOPL.C: DAC data register written, but not implemented reg=%02x val=%02x\n",r,v);
+			/*logerror("FMOPL.C: DAC data register written, but not implemented reg=%02x val=%02x\n",r,v);*/
 			break;
 
 		case 0x18:		/* I/O CTRL (Direction) */
@@ -1578,7 +1578,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 			break;
 #endif
 		default:
-			logerror("FMOPL.C: write to unknown register: %02x\n",r);
+			/*logerror("FMOPL.C: write to unknown register: %02x\n",r);*/
 			break;
 		}
 		break;
@@ -2095,8 +2095,8 @@ static unsigned char OPLRead(FM_OPL *OPL,int a)
 		{
 			if(OPL->keyboardhandler_r)
 				return OPL->keyboardhandler_r(OPL->keyboard_param);
-			else
-				logerror("Y8950: read unmapped KEYBOARD port\n");
+			/*else
+				logerror("Y8950: read unmapped KEYBOARD port\n");*/
 		}
 		return 0;
 
@@ -2116,14 +2116,14 @@ static unsigned char OPLRead(FM_OPL *OPL,int a)
 		{
 			if(OPL->porthandler_r)
 				return OPL->porthandler_r(OPL->port_param);
-			else
-				logerror("Y8950:read unmapped I/O port\n");
+			/*else
+				logerror("Y8950:read unmapped I/O port\n");*/
 		}
 		return 0;
 	case 0x1a: /* PCM-DATA    */
 		if(OPL->type&OPL_TYPE_ADPCM)
 		{
-			logerror("Y8950 A/D convertion is accessed but not implemented !\n");
+			/*logerror("Y8950 A/D convertion is accessed but not implemented !\n");*/
 			return 0x80; /* 2's complement PCM data - result from A/D convertion */
 		}
 		return 0;

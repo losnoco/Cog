@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -33,7 +33,6 @@
 		830F0BEA17FC4FB900042E8F /* wmaprodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0BA817FC4FB900042E8F /* wmaprodec.c */; };
 		830F0BEB17FC4FB900042E8F /* wmavoice.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0BA917FC4FB900042E8F /* wmavoice.c */; };
 		830F0BEC17FC4FB900042E8F /* wmavoice_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0BAA17FC4FB900042E8F /* wmavoice_data.h */; };
-		830F0BED17FC4FB900042E8F /* mathops.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0BAC17FC4FB900042E8F /* mathops.h */; };
 		830F0BEE17FC4FB900042E8F /* allformats.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0BAE17FC4FB900042E8F /* allformats.c */; };
 		830F0BEF17FC4FB900042E8F /* asf.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0BAF17FC4FB900042E8F /* asf.c */; };
 		830F0BF017FC4FB900042E8F /* avformat.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0BB017FC4FB900042E8F /* avformat.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -66,7 +65,6 @@
 		830F0C0B17FC4FB900042E8F /* pixfmt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0BCC17FC4FB900042E8F /* pixfmt.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		830F0C0C17FC4FB900042E8F /* rational.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0BCD17FC4FB900042E8F /* rational.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		830F0C0D17FC4FB900042E8F /* samplefmt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0BCE17FC4FB900042E8F /* samplefmt.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		830F0C0E17FC4FB900042E8F /* bswap.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0BD017FC4FB900042E8F /* bswap.h */; };
 		830F0C1117FC4FF400042E8F /* avfft.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0C0F17FC4FF400042E8F /* avfft.c */; };
 		830F0C1217FC4FF400042E8F /* avfft.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0C1017FC4FF400042E8F /* avfft.h */; };
 		830F0C1417FC500B00042E8F /* fft-internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0C1317FC500B00042E8F /* fft-internal.h */; };
@@ -1053,7 +1051,6 @@
 				830F0CEF17FC7F1E00042E8F /* mpegvideo.h in Headers */,
 				830F0C5017FC7CA300042E8F /* riff.h in Headers */,
 				830F0D5B17FC893E00042E8F /* tableprint.h in Headers */,
-				830F0C0E17FC4FB900042E8F /* bswap.h in Headers */,
 				830F0BE117FC4FB900042E8F /* simple_idct.h in Headers */,
 				830F0D0C17FC80B400042E8F /* rectangle.h in Headers */,
 				830F0C2F17FC551F00042E8F /* asfcrypt.h in Headers */,
@@ -1070,7 +1067,6 @@
 				830F0C1C17FC523000042E8F /* url.h in Headers */,
 				830F0BD717FC4FB900042E8F /* get_bits.h in Headers */,
 				830F0C2417FC527400042E8F /* atomic.h in Headers */,
-				830F0BED17FC4FB900042E8F /* mathops.h in Headers */,
 				830F0C5D17FC7CEA00042E8F /* id3v1.h in Headers */,
 				830F0C6A17FC7DB100042E8F /* avassert.h in Headers */,
 				830F0D6D17FC8C0700042E8F /* aactab.h in Headers */,
@@ -1158,9 +1154,10 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WMA" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1335,6 +1332,7 @@
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1362,6 +1360,7 @@
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1388,6 +1387,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx;
 			};

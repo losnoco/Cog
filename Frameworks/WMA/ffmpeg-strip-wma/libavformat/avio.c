@@ -64,7 +64,7 @@ static const AVClass *urlcontext_child_class_next(const AVClass *prev)
             break;
 
     /* find next protocol with priv options */
-    while (p = ffurl_protocol_next(p))
+    while ((p = ffurl_protocol_next(p)))
         if (p->priv_data_class)
             return p->priv_data_class;
     return NULL;
@@ -220,8 +220,8 @@ int ffurl_alloc(URLContext **puc, const char *filename, int flags,
                                      "Missing call to av_register_all()?\n");
     }
 
-    if (filename[proto_len] != ':' &&
-        (filename[proto_len] != ',' || !strchr(filename + proto_len + 1, ':')) ||
+    if ((filename[proto_len] != ':' &&
+        (filename[proto_len] != ',' || !strchr(filename + proto_len + 1, ':'))) ||
         is_dos_path(filename))
         strcpy(proto_str, "file");
     else
@@ -233,7 +233,7 @@ int ffurl_alloc(URLContext **puc, const char *filename, int flags,
     if ((ptr = strchr(proto_nested, '+')))
         *ptr = '\0';
 
-    while (up = ffurl_protocol_next(up)) {
+    while ((up = ffurl_protocol_next(up))) {
         if (!strcmp(proto_str, up->name))
             return url_alloc_for_protocol (puc, up, filename, flags, int_cb);
         if (up->flags & URL_PROTOCOL_FLAG_NESTED_SCHEME &&

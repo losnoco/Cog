@@ -900,7 +900,7 @@ void ff_er_frame_end(ERContext *s)
             s->cur_pic->motion_val_buf[i] = av_buffer_allocz((size + 4) * 2 * sizeof(uint16_t));
             if (!s->cur_pic->ref_index_buf[i] || !s->cur_pic->motion_val_buf[i])
                 break;
-            s->cur_pic->ref_index[i]  = s->cur_pic->ref_index_buf[i]->data;
+            s->cur_pic->ref_index[i]  = (int8_t*) s->cur_pic->ref_index_buf[i]->data;
             s->cur_pic->motion_val[i] = (int16_t (*)[2])s->cur_pic->motion_val_buf[i]->data + 4;
         }
         if (i < 2) {

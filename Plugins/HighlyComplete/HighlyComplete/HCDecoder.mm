@@ -323,7 +323,7 @@ static int psf1_info(void * context, const char * name, const char * value)
     
 	if ( !state->refresh && [sname isEqualToString:@"_refresh"] )
 	{
-		state->refresh = [svalue integerValue];
+		state->refresh = [svalue intValue];
 	}
     
 	return 0;
@@ -367,9 +367,10 @@ int psf1_loader(void * context, const uint8_t * exe, size_t exe_size,
     psxexe_hdr_t *psx = (psxexe_hdr_t *) exe;
     
     if ( exe_size < 0x800 ) return -1;
+    if ( exe_size > UINT_MAX ) return -1;
     
     uint32_t addr = get_le32( &psx->exec.t_addr );
-    uint32_t size = exe_size - 0x800;
+    uint32_t size = (uint32_t)exe_size - 0x800;
     
     addr &= 0x1fffff;
     if ( ( addr < 0x10000 ) || ( size > 0x1f0000 ) || ( addr + size > 0x200000 ) ) return -1;
@@ -426,8 +427,8 @@ int sdsf_loader(void * context, const uint8_t * exe, size_t exe_size,
     uint32_t src_start = get_le32( exe );
     dst_start &= 0x7fffff;
     src_start &= 0x7fffff;
-    uint32_t dst_len = state->data_size - 4;
-    uint32_t src_len = exe_size - 4;
+    size_t dst_len = state->data_size - 4;
+    size_t src_len = exe_size - 4;
     if ( dst_len > 0x800000 ) dst_len = 0x800000;
     if ( src_len > 0x800000 ) src_len = 0x800000;
     
@@ -444,7 +445,7 @@ int sdsf_loader(void * context, const uint8_t * exe, size_t exe_size,
     }
     if ( ( src_start + src_len ) > ( dst_start + dst_len ) )
     {
-        uint32_t diff = ( src_start + src_len ) - ( dst_start + dst_len );
+        size_t diff = ( src_start + src_len ) - ( dst_start + dst_len );
         state->data_size = dst_len + 4 + diff;
         state->data = dst = ( uint8_t * ) realloc( dst, state->data_size );
         memset( dst + 4 + dst_len, 0, diff );
@@ -537,7 +538,7 @@ int gsf_loader(void * context, const uint8_t * exe, size_t exe_size,
     struct gsf_loader_state * state = ( struct gsf_loader_state * ) context;
     
     unsigned char *iptr;
-    unsigned isize;
+    size_t isize;
     unsigned char *xptr;
     unsigned xentry = get_le32(exe + 0);
     unsigned xsize = get_le32(exe + 8);
@@ -556,7 +557,7 @@ int gsf_loader(void * context, const uint8_t * exe, size_t exe_size,
     }
     if (!iptr)
     {
-        unsigned rsize = xofs + xsize;
+        size_t rsize = xofs + xsize;
         {
             rsize -= 1;
             rsize |= rsize >> 1;
@@ -574,7 +575,7 @@ int gsf_loader(void * context, const uint8_t * exe, size_t exe_size,
     }
     else if (isize < xofs + xsize)
     {
-        unsigned rsize = xofs + xsize;
+        size_t rsize = xofs + xsize;
         {
             rsize -= 1;
             rsize |= rsize >> 1;
@@ -609,7 +610,7 @@ struct gsf_sound_out : public GBASoundOut
     gsf_sound_out() : buffer( nil ), samples_written( 0 ), buffer_size( 0 ) { }
     virtual ~gsf_sound_out() { if ( buffer ) free( buffer ); }
     // Receives signed 16-bit stereo audio and a byte count
-    virtual void write(const void * samples, unsigned bytes)
+    virtual void write(const void * samples, unsigned long bytes)
     {
         if ( bytes + samples_written > buffer_size )
         {
@@ -680,12 +681,12 @@ struct gsf_sound_out : public GBASoundOut
         sega_enable_dsp_dynarec( emulatorCore, 0 );
         
         uint32_t start  = *(uint32_t*) state.data;
-        uint32_t length = state.data_size;
-        const uint32_t max_length = ( type == 0x12 ) ? 0x800000 : 0x80000;
+        size_t length = state.data_size;
+        const size_t max_length = ( type == 0x12 ) ? 0x800000 : 0x80000;
         if ( ( start + ( length - 4 ) ) > max_length ) {
             length = max_length - start + 4;
         }
-        sega_upload_program( emulatorCore, state.data, length );
+        sega_upload_program( emulatorCore, state.data, (uint32_t)length );
         
         free( state.data );
     }
@@ -697,13 +698,16 @@ struct gsf_sound_out : public GBASoundOut
         if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x22, gsf_loader, &state, 0, 0 ) <= 0 )
             return NO;
         
+        if ( state.data_size > UINT_MAX )
+            return NO;
+        
         GBASystem * system = new GBASystem;
         
         emulatorCore = ( uint8_t * ) system;
         
         system->cpuIsMultiBoot = ((state.entry >> 24) == 2);
         
-        CPULoadRom( system, state.data, state.data_size );
+        CPULoadRom( system, state.data, (uint32_t)state.data_size );
         
         free( state.data );
         
@@ -835,7 +839,7 @@ struct gsf_sound_out : public GBASoundOut
         if ( frames * 4 > sound_out->samples_written )
             CPULoop( system, 250000 );
         
-        UInt32 frames_rendered = sound_out->samples_written / 4;
+        unsigned long frames_rendered = sound_out->samples_written / 4;
         
         if ( frames_rendered >= frames )
         {
@@ -846,7 +850,7 @@ struct gsf_sound_out : public GBASoundOut
         else
         {
             memcpy( buf, sound_out->buffer, frames_rendered * 4 );
-            frames = frames_rendered;
+            frames = (UInt32)frames_rendered;
             frames_rendered = 0;
         }
         sound_out->samples_written = frames_rendered;

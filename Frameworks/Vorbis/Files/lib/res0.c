@@ -369,8 +369,6 @@ static long **_01class(vorbis_block *vb,vorbis_look_residue *vl,
   long i,j,k;
   vorbis_look_residue0 *look=(vorbis_look_residue0 *)vl;
   vorbis_info_residue0 *info=look->info;
-  vorbis_info           *vi=vb->vd->vi;
-  codec_setup_info      *ci=vi->codec_setup;
 
   /* move all this setup out later */
   int samples_per_partition=info->grouping;
@@ -497,8 +495,6 @@ static int _01forward(oggpack_buffer *opb,
   long i,j,k,s;
   vorbis_look_residue0 *look=(vorbis_look_residue0 *)vl;
   vorbis_info_residue0 *info=look->info;
-
-  vorbis_dsp_state      *vd=vb->vd;
 
   /* move all this setup out later */
   int samples_per_partition=info->grouping;

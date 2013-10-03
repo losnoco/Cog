@@ -90,25 +90,6 @@ void psf2fs_delete(void *psf2fs) {
 
 static int isdirsep(char c) { return (c == '/' || c == '\\' || c == '|' || c == ':'); }
 
-static void makelibpath(const char *path, const char *libpath, char *finalpath, int finalpath_length) {
-  int l;
-  int p_l = 0;
-  for(l = 0; path[l]; l++) { if(isdirsep(path[l])) { p_l = l + 1; } }
-  while(isdirsep(*libpath)) libpath++;
-  if(!finalpath_length) return;
-  *finalpath = 0;
-  if(p_l > (finalpath_length - 1)) p_l = (finalpath_length - 1);
-  if(p_l) {
-    memcpy(finalpath, path, p_l);
-    finalpath[p_l] = 0;
-    finalpath += p_l;
-    finalpath_length -= p_l;
-  }
-  if(!finalpath_length) return;
-  strncpy(finalpath, libpath, finalpath_length);
-  finalpath[finalpath_length - 1] = 0;
-}
-
 /////////////////////////////////////////////////////////////////////////////
 
 static unsigned read32lsb(const uint8_t * foo) {
@@ -273,7 +254,7 @@ static struct DIR_ENTRY *mergedir(
     // delink entry_from
     entry_from->next = NULL;
     // look for a duplicate entry in "to"
-    entry_to = finddirentry(to, entry_from->name, strlen(entry_from->name));
+    entry_to = finddirentry(to, entry_from->name, (int)strlen(entry_from->name));
     // if there is one, do something fancy and then free entry_from.
     if(entry_to) {
       // if both are subdirs, merge the subdirs
@@ -358,7 +339,7 @@ int psf2fs_load_callback(void * psf2fs, const uint8_t * exe, size_t exe_size,
   struct PSF2FS *fs = (struct PSF2FS*)psf2fs;
   (void)exe;
   (void)exe_size;
-  return addarchive(fs, reserved, reserved_size, &(fs->sources), &(fs->dir));
+  return addarchive(fs, reserved, (int)reserved_size, &(fs->sources), &(fs->dir));
 }
 
 /////////////////////////////////////////////////////////////////////////////

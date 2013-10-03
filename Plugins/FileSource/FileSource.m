@@ -35,7 +35,7 @@
 	return ftell(_fd);
 }
 
-- (int)read:(void *)buffer amount:(int)amount
+- (long)read:(void *)buffer amount:(long)amount
 {
 	return fread(buffer, 1, amount, _fd);
 }

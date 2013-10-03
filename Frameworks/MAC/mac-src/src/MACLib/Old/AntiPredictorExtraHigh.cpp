@@ -246,15 +246,15 @@ void CAntiPredictorExtraHigh3800ToCurrent::AntiPredict(int *pInputArray, int *pO
             
             if (FP[0] == 0)
             {
-                EXPAND_8_TIMES(nDotProduct += *pFP * *pFM--; *pFP-- = *(pFP - 1);)
+                EXPAND_8_TIMES(nDotProduct += *pFP * *pFM--; *pFP = *(pFP - 1); --pFP;)
             }
             else if (FP[0] > 0)
             {
-                EXPAND_8_TIMES(nDotProduct += *pFP * *pFM; *pFM-- += ((*pFP >> 30) & 2) - 1; *pFP-- = *(pFP - 1);)
+                EXPAND_8_TIMES(nDotProduct += *pFP * *pFM; *pFM-- += ((*pFP >> 30) & 2) - 1; *pFP = *(pFP - 1); --pFP;)
             }
             else
             {
-                EXPAND_8_TIMES(nDotProduct += *pFP * *pFM; *pFM-- -= ((*pFP >> 30) & 2) - 1; *pFP-- = *(pFP - 1);)
+                EXPAND_8_TIMES(nDotProduct += *pFP * *pFM; *pFM-- -= ((*pFP >> 30) & 2) - 1; *pFP = *(pFP - 1); --pFP;)
             }
 
             *ip -= nDotProduct >> 9;

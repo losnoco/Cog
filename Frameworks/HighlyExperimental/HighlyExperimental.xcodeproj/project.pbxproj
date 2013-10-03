@@ -19,8 +19,6 @@
 		8360EF6217F92DB0005208A4 /* psx.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360EF4F17F92DB0005208A4 /* psx.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8360EF6317F92DB0005208A4 /* r3000.c in Sources */ = {isa = PBXBuildFile; fileRef = 8360EF5017F92DB0005208A4 /* r3000.c */; };
 		8360EF6417F92DB0005208A4 /* r3000.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360EF5117F92DB0005208A4 /* r3000.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8360EF6517F92DB0005208A4 /* r3000asm.c in Sources */ = {isa = PBXBuildFile; fileRef = 8360EF5217F92DB0005208A4 /* r3000asm.c */; };
-		8360EF6617F92DB0005208A4 /* r3000asm.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360EF5317F92DB0005208A4 /* r3000asm.h */; };
 		8360EF6717F92DB0005208A4 /* spu.c in Sources */ = {isa = PBXBuildFile; fileRef = 8360EF5417F92DB0005208A4 /* spu.c */; };
 		8360EF6817F92DB0005208A4 /* spu.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360EF5517F92DB0005208A4 /* spu.h */; };
 		8360EF6917F92DB0005208A4 /* spucore.c in Sources */ = {isa = PBXBuildFile; fileRef = 8360EF5617F92DB0005208A4 /* spucore.c */; };
@@ -44,8 +42,6 @@
 		8360EF4F17F92DB0005208A4 /* psx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = psx.h; path = Core/psx.h; sourceTree = "<group>"; };
 		8360EF5017F92DB0005208A4 /* r3000.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = r3000.c; path = Core/r3000.c; sourceTree = "<group>"; };
 		8360EF5117F92DB0005208A4 /* r3000.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = r3000.h; path = Core/r3000.h; sourceTree = "<group>"; };
-		8360EF5217F92DB0005208A4 /* r3000asm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = r3000asm.c; path = Core/r3000asm.c; sourceTree = "<group>"; };
-		8360EF5317F92DB0005208A4 /* r3000asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = r3000asm.h; path = Core/r3000asm.h; sourceTree = "<group>"; };
 		8360EF5417F92DB0005208A4 /* spu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = spu.c; path = Core/spu.c; sourceTree = "<group>"; };
 		8360EF5517F92DB0005208A4 /* spu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spu.h; path = Core/spu.h; sourceTree = "<group>"; };
 		8360EF5617F92DB0005208A4 /* spucore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = spucore.c; path = Core/spucore.c; sourceTree = "<group>"; };
@@ -111,8 +107,6 @@
 				8360EF4F17F92DB0005208A4 /* psx.h */,
 				8360EF5017F92DB0005208A4 /* r3000.c */,
 				8360EF5117F92DB0005208A4 /* r3000.h */,
-				8360EF5217F92DB0005208A4 /* r3000asm.c */,
-				8360EF5317F92DB0005208A4 /* r3000asm.h */,
 				8360EF5417F92DB0005208A4 /* spu.c */,
 				8360EF5517F92DB0005208A4 /* spu.h */,
 				8360EF5617F92DB0005208A4 /* spucore.c */,
@@ -146,7 +140,6 @@
 				8360EF5E17F92DB0005208A4 /* iop.h in Headers */,
 				8360EF6417F92DB0005208A4 /* r3000.h in Headers */,
 				8360EF6C17F92DB0005208A4 /* vfs.h in Headers */,
-				8360EF6617F92DB0005208A4 /* r3000asm.h in Headers */,
 				8360EF6A17F92DB0005208A4 /* spucore.h in Headers */,
 				8360EF6817F92DB0005208A4 /* spu.h in Headers */,
 				8360EF6017F92DB0005208A4 /* ioptimer.h in Headers */,
@@ -220,7 +213,6 @@
 				8360EF6117F92DB0005208A4 /* psx.c in Sources */,
 				8360EF6317F92DB0005208A4 /* r3000.c in Sources */,
 				8360EF6917F92DB0005208A4 /* spucore.c in Sources */,
-				8360EF6517F92DB0005208A4 /* r3000asm.c in Sources */,
 				8360EF5D17F92DB0005208A4 /* iop.c in Sources */,
 				8360EF6B17F92DB0005208A4 /* vfs.c in Sources */,
 				8360EF5A17F92DB0005208A4 /* bios.c in Sources */,

@@ -14,12 +14,13 @@
 FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte blockBuffer[], size_t *bytes, void *client_data)
 {
 	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
-	*bytes = [[flacDecoder source] read:blockBuffer amount:*bytes];
+    long ret = [[flacDecoder source] read:blockBuffer amount:*bytes];
+	*bytes = ret;
 	
-	if(*bytes < 0) {
+	if(ret < 0) {
 		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 	}
-	else if(*bytes == 0) {
+	else if(ret == 0) {
 		[flacDecoder setEndOfStream:YES];
 		return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
 	}

@@ -88,7 +88,7 @@ static uint32_t get_generic_seed(void)
             buffer[i&511]++;
         }else{
             buffer[++i&511]+= (t-last_t) % 3294638521U;
-            if(last_i && i-last_i > 4 || i-last_i > 64 || TEST && i-last_i > 8)
+            if((last_i && i-last_i > 4) || i-last_i > 64 || (TEST && i-last_i > 8))
                 break;
         }
         last_t = t;

@@ -303,7 +303,7 @@ INLINE void check_bounds( k053260_state *ic, int channel )
 	UINT32 channel_end = channel_start + ic->channels[channel].size - 1;
 
 	if ( channel_start > ic->rom_size ) {
-		logerror("K53260: Attempting to start playing past the end of the ROM ( start = %06x, end = %06x ).\n", channel_start, channel_end );
+		/*logerror("K53260: Attempting to start playing past the end of the ROM ( start = %06x, end = %06x ).\n", channel_start, channel_end );*/
 
 		ic->channels[channel].play = 0;
 
@@ -311,11 +311,11 @@ INLINE void check_bounds( k053260_state *ic, int channel )
 	}
 
 	if ( channel_end > ic->rom_size ) {
-		logerror("K53260: Attempting to play past the end of the ROM ( start = %06x, end = %06x ).\n", channel_start, channel_end );
+		/*logerror("K53260: Attempting to play past the end of the ROM ( start = %06x, end = %06x ).\n", channel_start, channel_end );*/
 
 		ic->channels[channel].size = ic->rom_size - channel_start;
 	}
-	if (LOG) logerror("K053260: Sample Start = %06x, Sample End = %06x, Sample rate = %04x, PPCM = %s\n", channel_start, channel_end, ic->channels[channel].rate, ic->channels[channel].ppcm ? "yes" : "no" );
+	/*if (LOG) logerror("K053260: Sample Start = %06x, Sample End = %06x, Sample rate = %04x, PPCM = %s\n", channel_start, channel_end, ic->channels[channel].rate, ic->channels[channel].ppcm ? "yes" : "no" );*/
 }
 
 //WRITE8_DEVICE_HANDLER( k053260_w )
@@ -328,7 +328,7 @@ void k053260_w(void *chip, offs_t offset, UINT8 data)
 	k053260_state *ic = (k053260_state *) chip;
 
 	if ( r > 0x2f ) {
-		logerror("K053260: Writing past registers\n" );
+		/*logerror("K053260: Writing past registers\n" );*/
 		return;
 	}
 
@@ -462,7 +462,7 @@ UINT8 k053260_r(void *chip, offs_t offset)
 
 				if ( offs > ic->rom_size ) {
 					//logerror("%s: K53260: Attempting to read past ROM size in ROM Read Mode (offs = %06x, size = %06x).\n", device->machine().describe_context(),offs,ic->rom_size );
-					logerror("K53260: Attempting to read past ROM size in ROM Read Mode (offs = %06x, size = %06x).\n", offs,ic->rom_size );
+					/*logerror("K53260: Attempting to read past ROM size in ROM Read Mode (offs = %06x, size = %06x).\n", offs,ic->rom_size );*/
 
 					return 0;
 				}

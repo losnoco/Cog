@@ -20,13 +20,14 @@
 
 - (void)updatePath
 {
-	NSArray *contents = [[[NSFileManager defaultManager] directoryContentsAtPath:[url path]] sortedArrayUsingSelector:@selector(finderCompare:)];
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:url includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLNameKey, NSURLIsDirectoryKey, nil] options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles) errorHandler:^BOOL(NSURL *url, NSError *error) {
+        return NO;
+    }];
 	NSMutableArray *fullPaths = [[NSMutableArray alloc] init];
 
-	for (NSString *s in contents)
+	for (NSURL * theUrl in enumerator)
 	{
-		if (![s hasPrefix:@"."])
-			[fullPaths addObject:[[url path] stringByAppendingPathComponent: s]];
+		[fullPaths addObject:[theUrl path]];
 	}
 
 	[self processPaths: fullPaths];

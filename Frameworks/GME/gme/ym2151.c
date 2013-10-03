@@ -961,7 +961,7 @@ void ym2151_write_reg(void *_chip, int r, int v)
 			break;
 
 		default:
-			logerror("YM2151 Write %02x to undocumented register #%02x\n",v,r);
+			/*logerror("YM2151 Write %02x to undocumented register #%02x\n",v,r);*/
 			break;
 		}
 		break;

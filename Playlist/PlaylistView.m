@@ -158,7 +158,7 @@
 		}
 		else
 		{
-			[self selectRow:iRow byExtendingSelection:NO];
+			[self selectRowIndexes:[NSIndexSet indexSetWithIndex:iRow] byExtendingSelection:NO];
 		}
 	}
 
@@ -214,7 +214,7 @@
 - (IBAction)scrollToCurrentEntry:(id)sender
 {
 	[self scrollRowToVisible:[[playlistController currentEntry] index]];
-	[self selectRow:[[playlistController currentEntry] index] byExtendingSelection:NO];
+	[self selectRowIndexes:[NSIndexSet indexSetWithIndex:[[playlistController currentEntry] index]] byExtendingSelection:NO];
 }
 
 - (IBAction)sortByPath:(id)sender

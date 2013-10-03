@@ -51,9 +51,9 @@ sint32 EMU_CALL bios_getenv(
   uint8 *romnative = bios_get_image_native();
   uint8 whole_env_area[129];
   uint8 *env;
-  uint8 *banner = "Highly Experimental";
-  sint32 banner_l = strlen(banner);
-  sint32 name_l = strlen(name);
+  const uint8 *banner = (const uint8 *) "Highly Experimental";
+  sint32 banner_l = (sint32) strlen((char *)banner);
+  sint32 name_l = (sint32) strlen(name);
   sint32 i;
 
   for(i = 0; i < 128; i++) {
@@ -90,7 +90,7 @@ sint32 EMU_CALL bios_getenv(
     // skip equals sign
     env++;
     // compute length
-    varnamelen = varnameend - varnamestart;
+    varnamelen = (sint32)(varnameend - varnamestart);
     // find the value
     for(;; env++) { uint8 c = *env; if(!c) return 1; if(c != ' ') break; }
     varvalstart = env;
@@ -107,7 +107,7 @@ sint32 EMU_CALL bios_getenv(
     // skip trailing quote if it's there
     if(isquote && *env == '\"') env++;
     // compute length
-    varvallen = varvalend - varvalstart;
+    varvallen = (sint32)(varvalend - varvalstart);
 
     // now, if this is the variable name we want...
     if(varnamelen == name_l && !memcmp(varnamestart, name, name_l)) {

@@ -109,7 +109,7 @@ struct GBASoundOut
 {
     virtual ~GBASoundOut() { }
     // Receives signed 16-bit stereo audio and a byte count
-    virtual void write(const void * samples, unsigned bytes) = 0;
+    virtual void write(const void * samples, unsigned long bytes) = 0;
 };
 
 struct GBASystem

@@ -176,7 +176,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" id="208">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="107">
                             <items>
                                 <menuItem title="Stable" id="108"/>
@@ -187,8 +187,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="115" name="content" keyPath="arrangedObjects" id="135"/>
-                        <binding destination="115" name="contentObjects" keyPath="arrangedObjects.url" previousBinding="135" id="144"/>
                         <binding destination="115" name="contentValues" keyPath="arrangedObjects.name" previousBinding="144" id="145"/>
+                        <binding destination="115" name="contentObjects" keyPath="arrangedObjects.url" previousBinding="135" id="144"/>
                         <binding destination="52" name="selectedObject" keyPath="values.SUFeedURL" previousBinding="145" id="147"/>
                     </connections>
                 </popUpButton>
@@ -230,7 +230,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Item1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="62" id="210">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="61">
                             <items>
                                 <menuItem title="Item1" state="on" id="62"/>
@@ -260,7 +260,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="vmS-eb-zen">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="V8o-Xy-HUW">
                             <items>
                                 <menuItem title="Item 1" id="oWh-lD-mFH"/>
@@ -271,8 +271,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="SuD-jI-ifw" name="content" keyPath="arrangedObjects" id="sCS-i7-Vgf"/>
-                        <binding destination="SuD-jI-ifw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="sCS-i7-Vgf" id="cEA-28-qQF"/>
                         <binding destination="SuD-jI-ifw" name="contentValues" keyPath="arrangedObjects.name" previousBinding="cEA-28-qQF" id="6uG-yb-1C2"/>
+                        <binding destination="SuD-jI-ifw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="sCS-i7-Vgf" id="cEA-28-qQF"/>
                         <binding destination="52" name="selectedObject" keyPath="values.volumeScaling" previousBinding="6uG-yb-1C2" id="mQV-hu-vZC"/>
                     </connections>
                 </popUpButton>
@@ -295,8 +295,8 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="52" name="enabled" keyPath="values.enableAudioScrobbler" id="93"/>
                         <binding destination="52" name="value" keyPath="values.automaticallyLaunchLastFM" id="95"/>
+                        <binding destination="52" name="enabled" keyPath="values.enableAudioScrobbler" id="93"/>
                     </connections>
                 </button>
                 <button id="87">
@@ -325,7 +325,7 @@
                 <button id="310">
                     <rect key="frame" x="18" y="18" width="395" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Read cue sheets when adding folders to playlist." bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" imageScaling="proportionallyDown" inset="2" id="311">
+                    <buttonCell key="cell" type="check" title="Read cue sheets when adding folders to playlist." bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="311">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -356,7 +356,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" id="254">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="255">
                             <items>
                                 <menuItem title="Item 1" id="256"/>
@@ -367,8 +367,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="246" name="content" keyPath="arrangedObjects" id="264"/>
-                        <binding destination="246" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="264" id="307"/>
                         <binding destination="246" name="contentValues" keyPath="arrangedObjects.name" previousBinding="307" id="308"/>
+                        <binding destination="246" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="264" id="307"/>
                         <binding destination="52" name="selectedObject" keyPath="values.openingFilesAlteredBehavior" previousBinding="308" id="309"/>
                     </connections>
                 </popUpButton>
@@ -377,7 +377,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" selectedItem="250" id="248">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="249">
                             <items>
                                 <menuItem title="Item 1" state="on" id="250"/>
@@ -388,8 +388,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="246" name="content" keyPath="arrangedObjects" id="263"/>
-                        <binding destination="246" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="263" id="304"/>
                         <binding destination="246" name="contentValues" keyPath="arrangedObjects.name" previousBinding="304" id="305"/>
+                        <binding destination="246" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="263" id="304"/>
                         <binding destination="52" name="selectedObject" keyPath="values.openingFilesBehavior" previousBinding="305" id="306"/>
                     </connections>
                 </popUpButton>

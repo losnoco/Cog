@@ -75,7 +75,8 @@ uint32 CUnBitArrayOld::DecodeValueRiceUnsigned(uint32 k)
     
     // plug through the string of 0's (the overflow)
     uint32 BitInitial = m_nCurrentBitIndex;
-    while (!(m_pBitArray[m_nCurrentBitIndex >> 5] & Powers_of_Two_Reversed[m_nCurrentBitIndex++ & 31])) {}
+    while (!(m_pBitArray[m_nCurrentBitIndex >> 5] & Powers_of_Two_Reversed[m_nCurrentBitIndex & 31])) {++m_nCurrentBitIndex;}
+    ++m_nCurrentBitIndex;
     
     // if k = 0, your done
     if (k == 0)
@@ -189,7 +190,8 @@ void CUnBitArrayOld::GenerateArrayOld(int* Output_Array, uint32 Number_of_Elemen
     {
         // plug through the string of 0's (the overflow)
         uint32 Bit_Initial = m_nCurrentBitIndex;
-        while (!(m_pBitArray[m_nCurrentBitIndex >> 5] & Powers_of_Two_Reversed[m_nCurrentBitIndex++ & 31])) {}
+        while (!(m_pBitArray[m_nCurrentBitIndex >> 5] & Powers_of_Two_Reversed[m_nCurrentBitIndex & 31])) {++m_nCurrentBitIndex;}
+        ++m_nCurrentBitIndex;
     
         // if k = 0, your done
         if (k == 0) 
@@ -295,7 +297,8 @@ __inline int CUnBitArrayOld::DecodeValueNew(BOOL bCapOverflow)
     
     // plug through the string of 0's (the overflow)
     uint32 Bit_Initial = m_nCurrentBitIndex;
-    while (!(m_pBitArray[m_nCurrentBitIndex >> 5] & Powers_of_Two_Reversed[m_nCurrentBitIndex++ & 31])) {}
+    while (!(m_pBitArray[m_nCurrentBitIndex >> 5] & Powers_of_Two_Reversed[m_nCurrentBitIndex & 31])) {++m_nCurrentBitIndex;}
+    ++m_nCurrentBitIndex;
     
     int nOverflow = (m_nCurrentBitIndex - Bit_Initial - 1);
     

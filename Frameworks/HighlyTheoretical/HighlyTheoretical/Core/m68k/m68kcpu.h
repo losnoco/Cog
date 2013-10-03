@@ -46,6 +46,10 @@
 /* ======================================================================== */
 
 /* Check for > 32bit sizes */
+#undef MAKE_INT_8
+#undef MAKE_INT_16
+#undef MAKE_INT_32
+
 #define MAKE_INT_8(A) (INT8)(A)
 #define MAKE_INT_16(A) (INT16)(A)
 #define MAKE_INT_32(A) (INT32)(A)
@@ -281,6 +285,7 @@
 
 
 /* Configuration switches (see m68kconf.h for explanation) */
+#undef M68K_EMULATE_TRACE
 #define M68K_EMULATE_TRACE          0
 
 /* Enable or disable trace emulation */
@@ -726,7 +731,9 @@ INLINE void m68kx_write_memory_32_pd(m68ki_cpu_core *m68k, unsigned int address,
  */
 INLINE UINT32 m68ki_read_imm_16(m68ki_cpu_core *m68k)
 {
+#if M68K_EMULATE_PREFETCH
 	UINT32 result;
+#endif
 	uint pc;
 
 	m68ki_check_address_error(m68k, REG_PC, MODE_READ, m68k->s_flag | FUNCTION_CODE_USER_PROGRAM); /* auto-disable (see m68kcpu.h) */
@@ -1299,6 +1306,7 @@ INLINE void m68ki_stack_frame_buserr(m68ki_cpu_core *m68k, UINT32 sr)
 /* Format 8 stack frame (68010).
  * 68010 only.  This is the 29 word bus/address error frame.
  */
+#if 0
 void m68ki_stack_frame_1000(m68ki_cpu_core *m68k, UINT32 pc, UINT32 sr, UINT32 vector)
 {
 	/* VERSION
@@ -1347,12 +1355,14 @@ void m68ki_stack_frame_1000(m68ki_cpu_core *m68k, UINT32 pc, UINT32 sr, UINT32 v
 	/* STATUS REGISTER */
 	m68ki_push_16(m68k, sr);
 }
+#endif
 
 /* Format A stack frame (short bus fault).
  * This is used only by 68020 for bus fault and address error
  * if the error happens at an instruction boundary.
  * PC stacked is address of next instruction.
  */
+#if 0
 void m68ki_stack_frame_1010(m68ki_cpu_core *m68k, UINT32 sr, UINT32 vector, UINT32 pc)
 {
 	/* INTERNAL REGISTER */
@@ -1394,12 +1404,14 @@ void m68ki_stack_frame_1010(m68ki_cpu_core *m68k, UINT32 sr, UINT32 vector, UINT
 	/* STATUS REGISTER */
 	m68ki_push_16(m68k, sr);
 }
+#endif
 
 /* Format B stack frame (long bus fault).
  * This is used only by 68020 for bus fault and address error
  * if the error happens during instruction execution.
  * PC stacked is address of instruction in progress.
  */
+#if 0
 void m68ki_stack_frame_1011(m68ki_cpu_core *m68k, UINT32 sr, UINT32 vector, UINT32 pc)
 {
 	/* INTERNAL REGISTERS (18 words) */
@@ -1466,6 +1478,7 @@ void m68ki_stack_frame_1011(m68ki_cpu_core *m68k, UINT32 sr, UINT32 vector, UINT
 	/* STATUS REGISTER */
 	m68ki_push_16(m68k, sr);
 }
+#endif
 
 
 /* Used for Group 2 exceptions.

@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface PreferencesWindow : NSWindow {
+@interface PreferencesWindow : NSWindow<NSToolbarDelegate> {
 	NSMutableArray *preferencePaneOrder;
 	NSMutableDictionary *preferencePanes;
 	NSMutableDictionary *toolbarItems;

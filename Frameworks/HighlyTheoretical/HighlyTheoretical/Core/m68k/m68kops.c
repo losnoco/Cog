@@ -26060,7 +26060,7 @@ static void m68k_op_ror_32_s(m68ki_cpu_core *m68k)
 
 	m68k->n_flag = NFLAG_32(res);
 	m68k->not_z_flag = res;
-	m68k->c_flag = src << (9-shift);
+	m68k->c_flag = (unsigned int)(src << (9-shift));
 	m68k->v_flag = VFLAG_CLEAR;
 }
 
@@ -26132,7 +26132,7 @@ static void m68k_op_ror_32_r(m68ki_cpu_core *m68k)
 		m68k->remaining_cycles -= orig_shift<<m68k->cyc_shift;
 
 		*r_dst = res;
-		m68k->c_flag = (src >> ((shift - 1) & 31)) << 8;
+		m68k->c_flag = (unsigned int)((src >> ((shift - 1) & 31)) << 8);
 		m68k->n_flag = NFLAG_32(res);
 		m68k->not_z_flag = res;
 		m68k->v_flag = VFLAG_CLEAR;
@@ -26140,8 +26140,8 @@ static void m68k_op_ror_32_r(m68ki_cpu_core *m68k)
 	}
 
 	m68k->c_flag = CFLAG_CLEAR;
-	m68k->n_flag = NFLAG_32(src);
-	m68k->not_z_flag = src;
+	m68k->n_flag = (unsigned int)NFLAG_32(src);
+	m68k->not_z_flag = (unsigned int)src;
 	m68k->v_flag = VFLAG_CLEAR;
 }
 
@@ -26304,7 +26304,7 @@ static void m68k_op_rol_32_s(m68ki_cpu_core *m68k)
 
 	m68k->n_flag = NFLAG_32(res);
 	m68k->not_z_flag = res;
-	m68k->c_flag = src >> (24-shift);
+	m68k->c_flag = (unsigned int)(src >> (24-shift));
 	m68k->v_flag = VFLAG_CLEAR;
 }
 
@@ -26393,7 +26393,7 @@ static void m68k_op_rol_32_r(m68ki_cpu_core *m68k)
 
 		*r_dst = res;
 
-		m68k->c_flag = (src >> ((32 - shift) & 0x1f)) << 8;
+		m68k->c_flag = (unsigned int)((src >> ((32 - shift) & 0x1f)) << 8);
 		m68k->n_flag = NFLAG_32(res);
 		m68k->not_z_flag = res;
 		m68k->v_flag = VFLAG_CLEAR;
@@ -26401,8 +26401,8 @@ static void m68k_op_rol_32_r(m68ki_cpu_core *m68k)
 	}
 
 	m68k->c_flag = CFLAG_CLEAR;
-	m68k->n_flag = NFLAG_32(src);
-	m68k->not_z_flag = src;
+	m68k->n_flag = (unsigned int)NFLAG_32(src);
+	m68k->not_z_flag = (unsigned int)src;
 	m68k->v_flag = VFLAG_CLEAR;
 }
 
@@ -26566,13 +26566,13 @@ static void m68k_op_roxr_32_s(m68ki_cpu_core *m68k)
 
 	res = ROR_33_64(res, shift);
 
-	m68k->c_flag = m68k->x_flag = res >> 24;
+	m68k->c_flag = m68k->x_flag = (unsigned int)(res >> 24);
 	res = MASK_OUT_ABOVE_32(res);
 
-	*r_dst =  res;
+	*r_dst =  (unsigned int)res;
 
-	m68k->n_flag = NFLAG_32(res);
-	m68k->not_z_flag = res;
+	m68k->n_flag = (unsigned int)NFLAG_32(res);
+	m68k->not_z_flag = (unsigned int)res;
 	m68k->v_flag = VFLAG_CLEAR;
 }
 
@@ -26652,12 +26652,12 @@ static void m68k_op_roxr_32_r(m68ki_cpu_core *m68k)
 
 		m68k->remaining_cycles -= orig_shift<<m68k->cyc_shift;
 
-		m68k->c_flag = m68k->x_flag = res >> 24;
+		m68k->c_flag = m68k->x_flag = (unsigned int)(res >> 24);
 		res = MASK_OUT_ABOVE_32(res);
 
-		*r_dst = res;
-		m68k->n_flag = NFLAG_32(res);
-		m68k->not_z_flag = res;
+		*r_dst = (unsigned int)res;
+		m68k->n_flag = (unsigned int)NFLAG_32(res);
+		m68k->not_z_flag = (unsigned int)res;
 		m68k->v_flag = VFLAG_CLEAR;
 		return;
 	}
@@ -26842,13 +26842,13 @@ static void m68k_op_roxl_32_s(m68ki_cpu_core *m68k)
 
 	res = ROL_33_64(res, shift);
 
-	m68k->c_flag = m68k->x_flag = res >> 24;
+	m68k->c_flag = m68k->x_flag = (unsigned int)(res >> 24);
 	res = MASK_OUT_ABOVE_32(res);
 
-	*r_dst = res;
+	*r_dst = (unsigned int)res;
 
-	m68k->n_flag = NFLAG_32(res);
-	m68k->not_z_flag = res;
+	m68k->n_flag = (unsigned int)NFLAG_32(res);
+	m68k->not_z_flag = (unsigned int)res;
 	m68k->v_flag = VFLAG_CLEAR;
 }
 
@@ -26929,12 +26929,12 @@ static void m68k_op_roxl_32_r(m68ki_cpu_core *m68k)
 
 		m68k->remaining_cycles -= orig_shift<<m68k->cyc_shift;
 
-		m68k->c_flag = m68k->x_flag = res >> 24;
+		m68k->c_flag = m68k->x_flag = (unsigned int)(res >> 24);
 		res = MASK_OUT_ABOVE_32(res);
 
-		*r_dst = res;
-		m68k->n_flag = NFLAG_32(res);
-		m68k->not_z_flag = res;
+		*r_dst = (unsigned int)res;
+		m68k->n_flag = (unsigned int)NFLAG_32(res);
+		m68k->not_z_flag = (unsigned int)res;
 		m68k->v_flag = VFLAG_CLEAR;
 		return;
 	}

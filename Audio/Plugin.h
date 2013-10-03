@@ -10,7 +10,7 @@
 - (BOOL)seekable;
 - (BOOL)seek:(long)position whence:(int)whence;
 - (long)tell;
-- (int)read:(void *)buffer amount:(int)amount; //reads UP TO amount, returns amount read.
+- (long)read:(void *)buffer amount:(long)amount; //reads UP TO amount, returns amount read.
 - (void)close;
 @end
 
@@ -53,7 +53,7 @@
 @protocol CogMetadataWriter <NSObject>
 //+ (NSArray *)fileTypes;
 //+ (NSArray *)mimeTypes;
-+ (int)putMetadataInURL:(NSURL *)url;
++ (int)putMetadataInURL:(NSURL *)url tagData:(NSDictionary *)tagData;
 @end
 
 @protocol CogPropertiesReader <NSObject>
