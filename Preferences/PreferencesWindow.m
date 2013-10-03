@@ -23,7 +23,7 @@
 - (id)initWithPreferencePanes:(NSArray *)panes
 {
     self = [super initWithContentRect:NSMakeRect(0, 0, 350, 200)
-                                              styleMask:(NSClosableWindowMask | NSResizableWindowMask)
+                                              styleMask:(NSClosableWindowMask | NSResizableWindowMask | NSTitledWindowMask)
                                                 backing:NSBackingStoreBuffered
                                                   defer:NO];
 	if (self)
