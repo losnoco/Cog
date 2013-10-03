@@ -22,6 +22,7 @@
 	int numFrames;
 	int samplePos;
 	
+    int streamIndex;
 	AVFormatContext *ic;
 	AVCodecContext *c;
 	AVCodec *codec;
@@ -32,7 +33,7 @@
 	int channels;
 	float frequency;
 	long totalFrames;
-	
+	long framesPlayed;
 }
 
 @end

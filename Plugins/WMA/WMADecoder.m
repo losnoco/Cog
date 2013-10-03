@@ -70,13 +70,20 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 		return NO;
 	}
 	
+    streamIndex = -1;
 	for(i = 0; i < ic->nb_streams; i++) {
         c = ic->streams[i]->codec;
         if(c->codec_type == AVMEDIA_TYPE_AUDIO)
 		{
 			NSLog(@"audio codec found");
+            streamIndex = i;
             break;
 		}
+    }
+    
+    if ( streamIndex < 0 ) {
+        NSLog(@"no audio codec found");
+        return NO;
     }
 
 	avformat_find_stream_info(ic, NULL);
@@ -143,7 +150,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         default:
             return NO;
     }
-	totalFrames = c->sample_rate * (ic->duration/1000000LL);
+	totalFrames = c->sample_rate * ((float)ic->duration/AV_TIME_BASE);
 	frequency = c->sample_rate;
 	seekable = YES;
 	
@@ -290,7 +297,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 - (long)seek:(long)frame
 {
 	NSLog(@"frame: %ld", frame);
-	return 0;
+    AVRational time_base = ic->streams[streamIndex]->time_base;
+    av_seek_frame(ic, streamIndex, frame * time_base.den / time_base.num / frequency, 0);
+	return frame;
 }
 
 
