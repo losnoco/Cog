@@ -679,7 +679,10 @@ typedef struct DUMB_VOLUME_RAMP_INFO DUMB_VOLUME_RAMP_INFO;
 
 typedef void (*DUMB_RESAMPLE_PICKUP)(DUMB_RESAMPLER *resampler, void *data);
 
+#ifndef BLIP_T_DEFINED
+#define BLIP_T_DEFINED
 typedef struct blip_t blip_t;
+#endif
 
 struct DUMB_RESAMPLER
 {

@@ -11,7 +11,10 @@ Sample buffer that resamples from input clock rate to output sample rate */
 
 /** First parameter of most functions is blip_t*, or const blip_t* if nothing
 is changed. */
+#ifndef BLIP_T_DEFINED
+#define BLIP_T_DEFINED
 typedef struct blip_t blip_t;
+#endif
 
 /** Creates new buffer that can hold at most sample_count samples. Sets rates
 so that there are blip_max_ratio clocks per sample. Returns pointer to new
