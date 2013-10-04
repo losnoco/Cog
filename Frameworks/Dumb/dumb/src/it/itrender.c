@@ -787,6 +787,7 @@ static void it_filter_sse(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample
 
 #undef LOG10
 
+#ifdef _USE_SSE
 #if defined(_M_IX86) || defined(__i386__)
 
 #ifdef _MSC_VER
@@ -827,10 +828,15 @@ void _dumb_init_sse()
 
 static const int _dumb_it_use_sse = 1;
 
+void _dumb_init_sse() { }
+
 #else
 
 static const int _dumb_it_use_sse = 0;
 
+void _dumb_init_sse() { }
+
+#endif
 #endif
 
 static void it_filter(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample_t *dst, long pos, sample_t *src, long size, int step, int sampfreq, int cutoff, int resonance)

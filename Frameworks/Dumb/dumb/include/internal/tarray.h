@@ -3,10 +3,16 @@
 
 #include <stdlib.h>
 
-#ifdef __FRAMEWORK__
-#include <Dumb/dumb.h>
+#ifndef LONG_LONG
+#if defined __GNUC__ || defined __INTEL_COMPILER || defined __MWERKS__
+#define LONG_LONG long long
+#elif defined _MSC_VER || defined __WATCOMC__
+#define LONG_LONG __int64
+#elif defined __sgi
+#define LONG_LONG long long
 #else
-#include "../dumb.h"
+#error 64-bit integer type unknown
+#endif
 #endif
 
 void * timekeeping_array_create(size_t size);

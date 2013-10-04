@@ -32,13 +32,8 @@
 
 #include <stddef.h>
 
-#ifdef __FRAMEWORK__
-#include <Dumb/barray.h>
-#include <Dumb/tarray.h>
-#else
 #include "barray.h"
 #include "tarray.h"
-#endif
 
 
 /** TO DO: THINK ABOUT THE FOLLOWING:
