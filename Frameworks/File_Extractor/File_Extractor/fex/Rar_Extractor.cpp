@@ -81,10 +81,8 @@ static inline unrar_err_t handle_err( Rar_Extractor::read_callback_t* h, blargg_
 
 extern "C"
 {
-	static unrar_err_t my_unrar_read( void* data, void* out, int* count, unrar_pos_t pos )
+	static unrar_err_t my_unrar_read( void* data, void* out, long* count, unrar_pos_t pos )
 	{
-		// TODO: 64-bit file support
-		
 		Rar_Extractor::read_callback_t* h = STATIC_CAST(Rar_Extractor::read_callback_t*,data);
 		if ( h->pos != pos )
 		{
@@ -145,7 +143,7 @@ blargg_err_t Rar_Extractor::skip_unextractables()
 		unrar_info_t const* info = unrar_info( unrar );
 		
 		set_name( info->name, (info->name_w && *info->name_w) ? info->name_w : NULL );
-		set_info( info->size, info->dos_date, (info->is_crc32 ? info->crc : 0) );
+		set_info( info->size, (unsigned int)info->dos_date, (unsigned int)(info->is_crc32 ? info->crc : 0) );
 	}
 	
 	return blargg_ok;
@@ -184,7 +182,7 @@ blargg_err_t Rar_Extractor::data_v( void const** out )
 	return convert_err( unrar_extract_mem( unrar, out ) );
 }
 
-blargg_err_t Rar_Extractor::extract_v( void* out, int count )
+blargg_err_t Rar_Extractor::extract_v( void* out, long count )
 {
 	// We can read entire file directly into user buffer
 	if ( count == size() )

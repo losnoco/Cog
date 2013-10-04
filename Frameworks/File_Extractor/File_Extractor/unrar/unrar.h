@@ -37,6 +37,10 @@ typedef unrar_long_long unrar_pos_t;
 /** Boolean, where 0 is false and 1 is true */
 typedef int unrar_bool;
 
+typedef unsigned char    byte;   //8 bits
+typedef unsigned short   ushort; //preferably 16 bits, but can be more
+typedef unsigned long    uint;   //32 bits or more
+        
 
 /******** Open/close ********/
 
@@ -53,7 +57,7 @@ file at offset pos and set *count to avail, where avail is the lesser of *count
 and file_size-pos. Put read bytes into *out and return unrar_ok. If fewer than
 avail bytes could be read successfully, return a non-zero error code. */
 typedef unrar_err_t (*unrar_read_func)( void* user_data,
-		void* out, int* count, unrar_pos_t pos );
+		void* out, long* count, unrar_pos_t pos );
 
 /** Same as unrar_open(), except data is read using supplied function rather
 than from file. */
@@ -94,8 +98,8 @@ typedef struct unrar_info_t
 	const char*     name;       /**< Name, in Unicode if is_unicode is true */
     const blargg_wchar_t*  name_w;     /**< Name in Unicode, "" if unavailable */
 	unrar_bool      is_unicode; /**< True if name is Unicode (UTF-8) */
-	unsigned int    dos_date;   /**< Date in DOS-style format, 0 if unavailable */
-	unsigned int    crc;        /**< Checksum; algorithm depends on archive */
+	uint            dos_date;   /**< Date in DOS-style format, 0 if unavailable */
+	uint            crc;        /**< Checksum; algorithm depends on archive */
 	unrar_bool      is_crc32;   /**< True if crc is CRC-32 */
 } unrar_info_t;
 
@@ -127,7 +131,7 @@ that passed to unrar_extract_custom(). Callback must do the following: Write
 count bytes from *in to wherever extracted data goes and return unrar_ok. If
 data cannot be written successfully, return a non-zero error code. */
 typedef unrar_err_t (*unrar_write_func)( void* user_data,
-		const void* in, int count );
+		const void* in, uint count );
 
 /**  Extracts current file and writes data using supplied function. Any error
 it returns will be returned by this function, and archive will still be

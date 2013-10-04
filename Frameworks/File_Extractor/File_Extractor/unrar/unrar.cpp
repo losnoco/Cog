@@ -147,8 +147,8 @@ static unrar_err_t next_( unrar_t* p, bool skipping_solid )
 		if ( type != FILE_HEAD )
 		{
 			// Skip non-files
-			if ( type != NEWSUB_HEAD && type != PROTECT_HEAD && type != SIGN_HEAD && type != SUB_HEAD )
-				debug_printf( "unrar: Skipping unknown block type: %X\n", (unsigned) type );
+			/*if ( type != NEWSUB_HEAD && type != PROTECT_HEAD && type != SIGN_HEAD && type != SUB_HEAD )
+				debug_printf( "unrar: Skipping unknown block type: %X\n", (unsigned) type );*/
 			
 			update_solid_pos( p );
 		}

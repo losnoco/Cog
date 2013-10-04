@@ -19,14 +19,14 @@ void SubAllocator::Clean()
 }
 
 
-inline void SubAllocator::InsertNode(void* p,int indx)
+inline void SubAllocator::InsertNode(void* p,long indx)
 {
 	((RAR_NODE*) p)->next=FreeList[indx].next;
 	FreeList[indx].next=(RAR_NODE*) p;
 }
 
 
-inline void* SubAllocator::RemoveNode(int indx)
+inline void* SubAllocator::RemoveNode(long indx)
 {
 	RAR_NODE* RetVal=FreeList[indx].next;
 	FreeList[indx].next=RetVal->next;
@@ -34,7 +34,7 @@ inline void* SubAllocator::RemoveNode(int indx)
 }
 
 
-inline uint SubAllocator::U2B(int NU)
+inline uint SubAllocator::U2B(long NU)
 {
 	return /*8*NU+4*NU*/UNIT_SIZE*NU;
 }
@@ -44,13 +44,13 @@ inline uint SubAllocator::U2B(int NU)
    calculate RAR_MEM_BLK + Items address. Real RAR_MEM_BLK size must be
    equal to UNIT_SIZE, so we cannot just add Items to RAR_MEM_BLK address
 */
-inline RAR_MEM_BLK* SubAllocator::MBPtr(RAR_MEM_BLK *BasePtr,int Items)
+inline RAR_MEM_BLK* SubAllocator::MBPtr(RAR_MEM_BLK *BasePtr,long Items)
 {
   return((RAR_MEM_BLK*)( ((byte *)(BasePtr))+U2B(Items) ));
 }
 
 
-inline void SubAllocator::SplitBlock(void* pv,int OldIndx,int NewIndx)
+inline void SubAllocator::SplitBlock(void* pv,long OldIndx,long NewIndx)
 {
 	int i, UDiff=Indx2Units[OldIndx]-Indx2Units[NewIndx];
 	byte* p=((byte*) pv)+U2B(Indx2Units[NewIndx]);
@@ -76,7 +76,7 @@ void SubAllocator::StopSubAllocator()
 }
 
 
-bool SubAllocator::StartSubAllocator(int SASize)
+bool SubAllocator::StartSubAllocator(long SASize)
 {
 	uint t=SASize << 20;
 	if (SubAllocatorSize == t)
@@ -163,7 +163,7 @@ inline void SubAllocator::GlueFreeBlocks()
 	}
 }
 
-void* SubAllocator::AllocUnitsRare(int indx)
+void* SubAllocator::AllocUnitsRare(long indx)
 {
 	if ( !GlueCount )
 	{
@@ -172,7 +172,7 @@ void* SubAllocator::AllocUnitsRare(int indx)
 		if ( FreeList[indx].next )
 			return RemoveNode(indx);
 	}
-	int i=indx;
+	long i=indx;
 	do
 	{
 		if (++i == N_INDEXES)
@@ -195,7 +195,7 @@ void* SubAllocator::AllocUnitsRare(int indx)
 }
 
 
-inline void* SubAllocator::AllocUnits(int NU)
+inline void* SubAllocator::AllocUnits(long NU)
 {
 	int indx=Units2Indx[NU-1];
 	if ( FreeList[indx].next )
@@ -219,7 +219,7 @@ void* SubAllocator::AllocContext()
 }
 
 
-void* SubAllocator::ExpandUnits(void* OldPtr,int OldNU)
+void* SubAllocator::ExpandUnits(void* OldPtr,long OldNU)
 {
 	int i0=Units2Indx[OldNU-1], i1=Units2Indx[OldNU-1+1];
 	if (i0 == i1)
@@ -234,7 +234,7 @@ void* SubAllocator::ExpandUnits(void* OldPtr,int OldNU)
 }
 
 
-void* SubAllocator::ShrinkUnits(void* OldPtr,int OldNU,int NewNU)
+void* SubAllocator::ShrinkUnits(void* OldPtr,long OldNU,long NewNU)
 {
 	int i0=Units2Indx[OldNU-1], i1=Units2Indx[NewNU-1];
 	if (i0 == i1)
@@ -254,7 +254,7 @@ void* SubAllocator::ShrinkUnits(void* OldPtr,int OldNU,int NewNU)
 }
 
 
-void SubAllocator::FreeUnits(void* ptr,int OldNU)
+void SubAllocator::FreeUnits(void* ptr,long OldNU)
 {
 	InsertNode(ptr,Units2Indx[OldNU-1]);
 }

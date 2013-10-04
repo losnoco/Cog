@@ -75,7 +75,7 @@ struct PPM_CONTEXT
 		inline void update2(ModelPPM *Model,STATE* p); //   BCDE   successor
 		void rescale(ModelPPM *Model);
 		inline PPM_CONTEXT* createChild(ModelPPM *Model,STATE* pStats,STATE& FirstState);
-		inline SEE2_CONTEXT* makeEscFreq2(ModelPPM *Model,int Diff);
+		inline SEE2_CONTEXT* makeEscFreq2(ModelPPM *Model,long Diff);
 };
 
 #ifndef STRICT_ALIGNMENT_REQUIRED

@@ -323,7 +323,7 @@ blargg_err_t File_Extractor::data_v( void const** out )
 	return err;
 }
 
-blargg_err_t File_Extractor::extract_v( void* out, int count )
+blargg_err_t File_Extractor::extract_v( void* out, long count )
 {
 	void const* p;
 	RETURN_ERR( data( &p ) );
@@ -332,7 +332,7 @@ blargg_err_t File_Extractor::extract_v( void* out, int count )
 	return blargg_ok;
 }
 
-blargg_err_t File_Extractor::read_v( void* out, int count )
+blargg_err_t File_Extractor::read_v( void* out, long count )
 {
 	if ( data_ptr_ )
 		return File_Extractor::extract_v( out, count );

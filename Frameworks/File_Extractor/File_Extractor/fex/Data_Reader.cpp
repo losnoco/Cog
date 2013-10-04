@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 // Data_Reader
 
-blargg_err_t Data_Reader::read( void* p, int n )
+blargg_err_t Data_Reader::read( void* p, long n )
 {
 	assert( n >= 0 );
 	
@@ -45,7 +45,7 @@ blargg_err_t Data_Reader::read_avail( void* p, int* n_ )
 {
 	assert( *n_ >= 0 );
 	
-	int n = min( (BOOST::uint64_t)(*n_), remain() );
+	long n = min( (BOOST::uint64_t)(*n_), remain() );
 	*n_ = 0;
 	
 	if ( n < 0 )
@@ -58,7 +58,7 @@ blargg_err_t Data_Reader::read_avail( void* p, int* n_ )
 	if ( !err )
 	{
 		remain_ -= n;
-		*n_ = n;
+		*n_ = (int) n;
 	}
 	
 	return err;
@@ -72,19 +72,19 @@ blargg_err_t Data_Reader::read_avail( void* p, long* n )
 	return err;
 }
 
-blargg_err_t Data_Reader::skip_v( int count )
+blargg_err_t Data_Reader::skip_v( BOOST::uint64_t count )
 {
 	char buf [512];
 	while ( count )
 	{
-		int n = min( count, (int) sizeof buf );
+        BOOST::uint64_t n = min( count, (BOOST::uint64_t) sizeof buf );
 		count -= n;
 		RETURN_ERR( read_v( buf, n ) );
 	}
 	return blargg_ok;
 }
 
-blargg_err_t Data_Reader::skip( int n )
+blargg_err_t Data_Reader::skip( long n )
 {
 	assert( n >= 0 );
 	
@@ -110,9 +110,6 @@ blargg_err_t Data_Reader::skip( int n )
 blargg_err_t File_Reader::seek( BOOST::uint64_t n )
 {
 	assert( n >= 0 );
-	
-	if ( n < 0 )
-		return blargg_err_caller;
 	
 	if ( n == tell() )
 		return blargg_ok;
@@ -141,7 +138,7 @@ Subset_Reader::Subset_Reader( Data_Reader* dr, BOOST::uint64_t size ) :
 	set_remain( min( size, dr->remain() ) );
 }
 
-blargg_err_t Subset_Reader::read_v( void* p, int s )
+blargg_err_t Subset_Reader::read_v( void* p, long s )
 {
 	return in->read( p, s );
 }
@@ -158,9 +155,9 @@ Remaining_Reader::Remaining_Reader( void const* h, int size, Data_Reader* r ) :
 	set_remain( size + r->remain() );
 }
 
-blargg_err_t Remaining_Reader::read_v( void* out, int count )
+blargg_err_t Remaining_Reader::read_v( void* out, long count )
 {
-	int first = min( count, header_remain );
+	long first = min( count, header_remain );
 	if ( first )
 	{
 		memcpy( out, header, first );
@@ -180,13 +177,13 @@ Mem_File_Reader::Mem_File_Reader( const void* p, long s ) :
 	set_size( s );
 }
 
-blargg_err_t Mem_File_Reader::read_v( void* p, int s )
+blargg_err_t Mem_File_Reader::read_v( void* p, long s )
 {
 	memcpy( p, begin + tell(), s );
 	return blargg_ok;
 }
 
-blargg_err_t Mem_File_Reader::seek_v( int )
+blargg_err_t Mem_File_Reader::seek_v( BOOST::uint64_t )
 {
 	return blargg_ok;
 }
@@ -201,7 +198,7 @@ Callback_Reader::Callback_Reader( callback_t c, BOOST::uint64_t s, void* d ) :
 	set_remain( s );
 }
 
-blargg_err_t Callback_Reader::read_v( void* out, int count )
+blargg_err_t Callback_Reader::read_v( void* out, long count )
 {
 	return callback( user_data, out, count );
 }
@@ -216,12 +213,12 @@ Callback_File_Reader::Callback_File_Reader( callback_t c, BOOST::uint64_t s, voi
 	set_size( s );
 }
 
-blargg_err_t Callback_File_Reader::read_v( void* out, int count )
+blargg_err_t Callback_File_Reader::read_v( void* out, long count )
 {
 	return callback( user_data, out, count, tell() );
 }
 
-blargg_err_t Callback_File_Reader::seek_v( int )
+blargg_err_t Callback_File_Reader::seek_v( BOOST::uint64_t )
 {
 	return blargg_ok;
 }
@@ -232,8 +229,6 @@ static const BOOST::uint8_t val_tab[6]={0,0xC0,0xE0,0xF0,0xF8,0xFC};
 
 size_t utf8_char_len_from_header( char p_c )
 {
-	BOOST::uint8_t c = (BOOST::uint8_t)p_c;
-
 	size_t cnt = 0;
 	for(;;)
 	{
@@ -599,13 +594,21 @@ blargg_err_t Std_File_Reader::open( const char path [] )
 
 void Std_File_Reader::make_unbuffered()
 {
-    long offset = ftell( STATIC_CAST(FILE*, file_) );
+#ifdef _WIN32
+    BOOST::uint64_t offset = _ftelli64( STATIC_CAST(FILE*, file_) );
+#else
+    BOOST::uint64_t offset = ftello( STATIC_CAST(FILE*, file_) );
+#endif
 	if ( setvbuf( STATIC_CAST(FILE*, file_), NULL, _IONBF, 0 ) )
 		check( false ); // shouldn't fail, but OK if it does
-    fseek( STATIC_CAST(FILE*, file_), offset, SEEK_SET );
+#ifdef _WIN32
+    _fseeki64( STATIC_CAST(FILE*, file_), offset, SEEK_SET );
+#else
+    fseeko( STATIC_CAST(FILE*, file_), offset, SEEK_SET );
+#endif
 }
 
-blargg_err_t Std_File_Reader::read_v( void* p, int s )
+blargg_err_t Std_File_Reader::read_v( void* p, long s )
 {
 	if ( (size_t) s != fread( p, 1, s, STATIC_CAST(FILE*, file_) ) )
 	{
@@ -731,21 +734,27 @@ static blargg_err_t convert_gz_error( gzFile file )
 	return blargg_err_internal;
 }
 
-blargg_err_t Gzip_File_Reader::read_v( void* p, int s )
+blargg_err_t Gzip_File_Reader::read_v( void* p, long s )
 {
-    int result = gzread( (gzFile) file_, p, s );
-	if ( result != s )
-	{
-		if ( result < 0 )
-            return convert_gz_error( (gzFile) file_ );
+    while ( s > 0 )
+    {
+        int s_i = (int)( s > INT_MAX ? INT_MAX : s );
+        int result = gzread( (gzFile) file_, p, s_i );
+        if ( result != s_i )
+        {
+            if ( result < 0 )
+                return convert_gz_error( (gzFile) file_ );
 		
-		return blargg_err_file_corrupt;
-	}
+            return blargg_err_file_corrupt;
+        }
+        p = (char*)p + result;
+        s -= result;
+    }
 	
 	return blargg_ok;
 }
 
-blargg_err_t Gzip_File_Reader::seek_v( int n )
+blargg_err_t Gzip_File_Reader::seek_v( BOOST::uint64_t n )
 {
     if ( gzseek( (gzFile) file_, n, SEEK_SET ) < 0 )
         return convert_gz_error( (gzFile) file_ );

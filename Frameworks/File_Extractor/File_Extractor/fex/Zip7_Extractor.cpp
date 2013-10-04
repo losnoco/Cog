@@ -231,7 +231,7 @@ blargg_err_t Zip7_Extractor::next_v()
                 localtime_r( &_time, &tm );
 #endif
 
-				date = ( tm.tm_sec >> 1 ) & 0x1F |
+				date = (( tm.tm_sec >> 1 ) & 0x1F) |
 					(( tm.tm_min & 0x3F ) << 5 ) |
 					(( tm.tm_hour & 0x1F ) << 11 ) |
 					(( tm.tm_mday & 0x1F ) << 16 ) |
@@ -243,11 +243,12 @@ blargg_err_t Zip7_Extractor::next_v()
 			name16.resize( name_length );
 			SzArEx_GetFileNameUtf16( &impl->db, index, ( UInt16 * ) name16.begin() );
 			char * temp = blargg_to_utf8( name16.begin() );
-			if ( !temp ) temp = "";
-			size_t utf8_length = strlen( temp );
+            const char * name_8 = temp;
+			if ( !temp ) name_8 = "";
+			size_t utf8_length = strlen( name_8 );
 			name8.resize( utf8_length + 1 );
-			memcpy( name8.begin(), temp, utf8_length + 1 );
-			free( temp );
+			memcpy( name8.begin(), name_8, utf8_length + 1 );
+			if ( temp ) free( temp );
 			set_name( name8.begin(), name16.begin() );
 			set_info( item.Size, 0, (item.CrcDefined ? item.Crc : 0) );
 			break;

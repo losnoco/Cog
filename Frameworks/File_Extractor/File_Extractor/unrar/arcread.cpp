@@ -121,7 +121,7 @@ unrar_err_t Archive::ReadHeader()
 					if (hd->Flags & LHD_UNICODE)
 					{
 						EncodeFileName NameCoder;
-						int Length=strlen(FileName);
+						int Length=(int)strlen(FileName);
 						if (Length==hd->NameSize)
 						{
 							UtfToWide(FileName,hd->FileNameW,sizeof(hd->FileNameW)/sizeof(hd->FileNameW[0])-1);
@@ -216,7 +216,7 @@ unrar_err_t Archive::ReadHeader()
 
 // Rar.Read()s are checked by caller of ReadOldHeader() (see above)
 #ifndef SFX_MODULE
-int Archive::ReadOldHeader()
+long Archive::ReadOldHeader()
 {
 	Raw.Reset();
 	if (CurBlockPos<=SFXSize)

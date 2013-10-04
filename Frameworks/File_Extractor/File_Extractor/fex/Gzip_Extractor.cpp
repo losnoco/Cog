@@ -92,7 +92,7 @@ blargg_err_t Gzip_Extractor::rewind_v()
 	return blargg_ok;
 }
 
-blargg_err_t Gzip_Extractor::extract_v( void* p, int n )
+blargg_err_t Gzip_Extractor::extract_v( void* p, long n )
 {
 	return gr.read( p, n );
 }

@@ -20,7 +20,7 @@ Archive::Archive() : Raw( this )
 bool Archive::IsSignature(byte *D)
 {
 	bool Valid=false;
-	if (D[0]==0x52)
+	if (D[0]==0x52) {
 #ifndef SFX_MODULE
 		if (D[1]==0x45 && D[2]==0x7e && D[3]==0x5e)
 		{
@@ -34,6 +34,7 @@ bool Archive::IsSignature(byte *D)
 				OldFormat=false;
 				Valid=true;
 			}
+    }
 	return(Valid);
 }
 

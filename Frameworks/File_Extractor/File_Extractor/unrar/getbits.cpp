@@ -22,7 +22,7 @@ void BitInput::handle_mem_error( Rar_Error_Handler& ErrHandler )
 		ErrHandler.MemoryError();
 }
 
-void BitInput::faddbits(int Bits)
+void BitInput::faddbits(long Bits)
 {
 	addbits(Bits);
 }

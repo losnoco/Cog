@@ -78,7 +78,7 @@ void Unpack::DoUnpack(int Method,bool Solid)
 }
 
 
-inline void Unpack::InsertOldDist(unsigned int Distance)
+inline void Unpack::InsertOldDist(uint Distance)
 {
 	OldDist[3]=OldDist[2];
 	OldDist[2]=OldDist[1];
@@ -87,7 +87,7 @@ inline void Unpack::InsertOldDist(unsigned int Distance)
 }
 
 
-inline void Unpack::InsertLastMatch(unsigned int Length,unsigned int Distance)
+inline void Unpack::InsertLastMatch(uint Length,uint Distance)
 {
 	LastDist=Distance;
 	LastLength=Length;
@@ -95,12 +95,12 @@ inline void Unpack::InsertLastMatch(unsigned int Length,unsigned int Distance)
 
 
 // These optimizations give 22% speedup on x86, 44% speedup on PowerPC
-void Unpack::CopyString(unsigned int Length,unsigned int Distance)
+void Unpack::CopyString(uint Length,uint Distance)
 {
-	unsigned    UnpPtr = this->UnpPtr; // cache in register
+	uint        UnpPtr = this->UnpPtr; // cache in register
 	byte* const Window = this->Window; // cache in register
 
-	unsigned int DestPtr=UnpPtr-Distance;
+	uint DestPtr=UnpPtr-Distance;
 	if (UnpPtr<MAXWINSIZE-260 && DestPtr<MAXWINSIZE-260)
 	{
 		this->UnpPtr += Length;
@@ -132,7 +132,7 @@ void Unpack::CopyString(unsigned int Length,unsigned int Distance)
 }
 
 
-int Unpack::DecodeNumber(struct Decode *Dec)
+long Unpack::DecodeNumber(struct Decode *Dec)
 {
 	unsigned int Bits;
 	unsigned int BitField=getbits() & 0xfffe;
@@ -180,7 +180,7 @@ int Unpack::DecodeNumber(struct Decode *Dec)
 			else
 				Bits=15;
 
-	unsigned int N=Dec->DecodePos[Bits]+((BitField-Dec->DecodeLen[Bits-1])>>(16-Bits));
+	uint N=Dec->DecodePos[Bits]+((BitField-Dec->DecodeLen[Bits-1])>>(16-Bits));
 	if (N>=Dec->MaxNum)
 		N=0;
 	// do after reading values, to allow better instruction scheduling
@@ -320,7 +320,7 @@ void Unpack::Unpack29(bool Solid)
 			continue;
 		}
 
-		int Number=DecodeNumber((struct Decode *)&LD);
+		long Number=DecodeNumber((struct Decode *)&LD);
 		if (Number<256)
 		{
 			Window[UnpPtr++]=(byte)Number;
@@ -335,8 +335,8 @@ void Unpack::Unpack29(bool Solid)
 				addbits(Bits);
 			}
 
-			int DistNumber=DecodeNumber((struct Decode *)&DD);
-			unsigned int Distance=DDecode[DistNumber]+1;
+			long DistNumber=DecodeNumber((struct Decode *)&DD);
+			uint Distance=DDecode[DistNumber]+1;
 			if ((Bits=DBits[DistNumber])>0)
 			{
 				if (DistNumber>9)
@@ -353,7 +353,7 @@ void Unpack::Unpack29(bool Solid)
 					}
 					else
 					{
-						int LowDist=DecodeNumber((struct Decode *)&LDD);
+						long LowDist=DecodeNumber((struct Decode *)&LDD);
 						if (LowDist==16)
 						{
 							LowDistRepCount=LOW_DIST_REP_COUNT-1;
@@ -405,14 +405,14 @@ void Unpack::Unpack29(bool Solid)
 		}
 		if (Number<263)
 		{
-			int DistNum=Number-259;
-			unsigned int Distance=OldDist[DistNum];
-			for (int I=DistNum;I>0;I--)
+			long DistNum=Number-259;
+			uint Distance=OldDist[DistNum];
+			for (long I=DistNum;I>0;I--)
 				OldDist[I]=OldDist[I-1];
 			OldDist[0]=Distance;
 
-			int LengthNumber=DecodeNumber((struct Decode *)&RD);
-			int Length=LDecode[LengthNumber]+2;
+			long LengthNumber=DecodeNumber((struct Decode *)&RD);
+			long Length=LDecode[LengthNumber]+2;
 			if ((Bits=LBits[LengthNumber])>0)
 			{
 				Length+=getbits()>>(16-Bits);
@@ -456,7 +456,7 @@ bool Unpack::ReadEndOfBlock()
 		addbits(2);
 	}
 	TablesRead=!NewTable;
-	return !(NewFile || NewTable && !ReadTables());
+	return !(NewFile || (NewTable && !ReadTables()));
 }
 
 
@@ -524,7 +524,7 @@ bool Unpack::ReadVMCodePPM()
 }
 
 
-bool Unpack::AddVMCode(unsigned int FirstByte,byte *Code,int CodeSize)
+bool Unpack::AddVMCode(uint FirstByte,byte *Code,long CodeSize)
 {
 	// TODO: auto clear object to free bit input on normal return?
 	Inp.InitBitInput();
@@ -595,7 +595,7 @@ bool Unpack::AddVMCode(unsigned int FirstByte,byte *Code,int CodeSize)
 		PrgStack.Add(1);
 		EmptyCount=1;
 	}
-	int StackPos=PrgStack.Size()-EmptyCount;
+	long StackPos=PrgStack.Size()-EmptyCount;
 	PrgStack[StackPos]=StackFilter;
 	LastStackFilter = NULL;
 	StackFilter->ExecCount=Filter->ExecCount;
@@ -647,7 +647,7 @@ bool Unpack::AddVMCode(unsigned int FirstByte,byte *Code,int CodeSize)
 	StackFilter->Prg.AltCmd=&Filter->Prg.Cmd[0];
 	StackFilter->Prg.CmdCount=Filter->Prg.CmdCount;
 
-	int StaticDataSize=Filter->Prg.StaticData.Size();
+	long StaticDataSize=Filter->Prg.StaticData.Size();
 	if (StaticDataSize>0 && StaticDataSize<VM_GLOBALMEMSIZE)
 	{
 		// read statically defined data contained in DB commands
@@ -675,7 +675,7 @@ bool Unpack::AddVMCode(unsigned int FirstByte,byte *Code,int CodeSize)
 		uint DataSize=RarVM::ReadData(Inp);
 		if (DataSize>VM_GLOBALMEMSIZE-VM_FIXEDGLOBALSIZE)
 			return(false);
-		unsigned int CurSize=StackFilter->Prg.GlobalData.Size();
+		uint CurSize=StackFilter->Prg.GlobalData.Size();
 		if (CurSize<DataSize+VM_FIXEDGLOBALSIZE)
 			StackFilter->Prg.GlobalData.Add(DataSize+VM_FIXEDGLOBALSIZE-CurSize);
 		byte *GlobalData=&StackFilter->Prg.GlobalData[VM_FIXEDGLOBALSIZE];
@@ -694,7 +694,7 @@ bool Unpack::AddVMCode(unsigned int FirstByte,byte *Code,int CodeSize)
 
 bool Unpack::UnpReadBuf()
 {
-	int DataSize=ReadTop-InAddr;
+	long DataSize=ReadTop-InAddr;
 	if (DataSize<0)
 		return(false);
 	if (InAddr>BitInput::MAX_SIZE/2)
@@ -706,7 +706,7 @@ bool Unpack::UnpReadBuf()
 	}
 	else
 		DataSize=ReadTop;
-	int ReadCode=UnpIO->UnpRead(InBuf+DataSize,(BitInput::MAX_SIZE-DataSize)&~0xf);
+	long ReadCode=UnpIO->UnpRead(InBuf+DataSize,(BitInput::MAX_SIZE-DataSize)&~0xf);
 	if (ReadCode>0)
 		ReadTop+=ReadCode;
 	ReadBorder=ReadTop-30;
@@ -716,8 +716,8 @@ bool Unpack::UnpReadBuf()
 
 void Unpack::UnpWriteBuf()
 {
-	unsigned int WrittenBorder=WrPtr;
-	unsigned int WriteSize=(UnpPtr-WrittenBorder)&MAXWINMASK;
+	uint WrittenBorder=WrPtr;
+	uint WriteSize=(UnpPtr-WrittenBorder)&MAXWINMASK;
 	for (int I=0;I<PrgStack.Size();I++)
 	{
 		UnpackFilter *flt=PrgStack[I];
@@ -728,8 +728,8 @@ void Unpack::UnpWriteBuf()
 			flt->NextWindow=false;
 			continue;
 		}
-		unsigned int BlockStart=flt->BlockStart;
-		unsigned int BlockLength=flt->BlockLength;
+		uint BlockStart=flt->BlockStart;
+		uint BlockLength=flt->BlockLength;
 		if (((BlockStart-WrittenBorder)&MAXWINMASK)<WriteSize)
 		{
 			if (WrittenBorder!=BlockStart)
@@ -740,12 +740,12 @@ void Unpack::UnpWriteBuf()
 			}
 			if (BlockLength<=WriteSize)
 			{
-				unsigned int BlockEnd=(BlockStart+BlockLength)&MAXWINMASK;
+				uint BlockEnd=(BlockStart+BlockLength)&MAXWINMASK;
 				if (BlockStart<BlockEnd || BlockEnd==0)
 					VM.SetMemory(0,Window+BlockStart,BlockLength);
 				else
 				{
-					unsigned int FirstPartLength=MAXWINSIZE-BlockStart;
+					uint FirstPartLength=MAXWINSIZE-BlockStart;
 					VM.SetMemory(0,Window+BlockStart,FirstPartLength);
 					VM.SetMemory(FirstPartLength,Window,BlockEnd);
 				}
@@ -773,7 +773,7 @@ void Unpack::UnpWriteBuf()
 					ParentPrg->GlobalData.Reset();
 
 				byte *FilteredData=Prg->FilteredData;
-				unsigned int FilteredDataSize=Prg->FilteredDataSize;
+				uint FilteredDataSize=Prg->FilteredDataSize;
 
 				delete PrgStack[I];
 				PrgStack[I]=NULL;
@@ -853,7 +853,7 @@ void Unpack::ExecuteCode(VM_PreparedProgram *Prg)
 }
 
 
-void Unpack::UnpWriteArea(unsigned int StartPtr,unsigned int EndPtr)
+void Unpack::UnpWriteArea(uint StartPtr,uint EndPtr)
 {
 	if (EndPtr!=StartPtr)
 		UnpSomeRead=true;
@@ -868,11 +868,11 @@ void Unpack::UnpWriteArea(unsigned int StartPtr,unsigned int EndPtr)
 }
 
 
-void Unpack::UnpWriteData(byte *Data,int Size)
+void Unpack::UnpWriteData(byte *Data,long Size)
 {
 	if (WrittenFileSize>=DestUnpSize)
 		return;
-	int WriteSize=Size;
+	long WriteSize=Size;
 	Int64 LeftToWrite=DestUnpSize-WrittenFileSize;
 	if (WriteSize>LeftToWrite)
 		WriteSize=int64to32(LeftToWrite);
@@ -928,13 +928,13 @@ bool Unpack::ReadTables()
 	}
 	MakeDecodeTables(BitLength,(struct Decode *)&BD,BC);
 
-	const int TableSize=HUFF_TABLE_SIZE;
-	for (int I=0;I<TableSize;)
+	const long TableSize=HUFF_TABLE_SIZE;
+	for (long I=0;I<TableSize;)
 	{
 		if (InAddr>ReadTop-5)
 			if (!UnpReadBuf())
 				return(false);
-		int Number=DecodeNumber((struct Decode *)&BD);
+		long Number=DecodeNumber((struct Decode *)&BD);
 		if (Number<16)
 		{
 			Table[I]=(Number+UnpOldTable[I]) & 0xf;
@@ -1038,9 +1038,9 @@ void Unpack::InitFilters()
 }
 
 
-void Unpack::MakeDecodeTables(unsigned char *LenTab,struct Decode *Dec,int Size)
+void Unpack::MakeDecodeTables(unsigned char *LenTab,struct Decode *Dec,long Size)
 {
-	int LenCount[16],TmpPos[16],I;
+	long LenCount[16],TmpPos[16],I;
 	long M,N;
 	memset(LenCount,0,sizeof(LenCount));
 	memset(Dec->DecodeNum,0,Size*sizeof(*Dec->DecodeNum));

@@ -53,14 +53,14 @@ struct RAR_NODE
 class SubAllocator
 {
 	private:
-		inline void InsertNode(void* p,int indx);
-		inline void* RemoveNode(int indx);
-		inline uint U2B(int NU);
-		inline void SplitBlock(void* pv,int OldIndx,int NewIndx);
+		inline void InsertNode(void* p,long indx);
+		inline void* RemoveNode(long indx);
+		inline uint U2B(long NU);
+		inline void SplitBlock(void* pv,long OldIndx,long NewIndx);
 		uint GetUsedMemory();
 		inline void GlueFreeBlocks();
-		void* AllocUnitsRare(int indx);
-		inline RAR_MEM_BLK* MBPtr(RAR_MEM_BLK *BasePtr,int Items);
+		void* AllocUnitsRare(long indx);
+		inline RAR_MEM_BLK* MBPtr(RAR_MEM_BLK *BasePtr,long Items);
 
 		long SubAllocatorSize;
 		byte Indx2Units[N_INDEXES], Units2Indx[128], GlueCount;
@@ -71,14 +71,14 @@ class SubAllocator
 		SubAllocator();
 		~SubAllocator() {StopSubAllocator();}
 		void Clean();
-		bool StartSubAllocator(int SASize);
+		bool StartSubAllocator(long SASize);
 		void StopSubAllocator();
 		void  InitSubAllocator();
 		inline void* AllocContext();
-		inline void* AllocUnits(int NU);
-		inline void* ExpandUnits(void* ptr,int OldNU);
-		inline void* ShrinkUnits(void* ptr,int OldNU,int NewNU);
-		inline void  FreeUnits(void* ptr,int OldNU);
+		inline void* AllocUnits(long NU);
+		inline void* ExpandUnits(void* ptr,long OldNU);
+		inline void* ShrinkUnits(void* ptr,long OldNU,long NewNU);
+		inline void  FreeUnits(void* ptr,long OldNU);
 		long GetAllocatedMemory() {return(SubAllocatorSize);};
 
 		byte *pText, *UnitsStart,*HeapEnd,*FakeUnitsStart;

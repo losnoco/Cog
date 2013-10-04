@@ -8,7 +8,7 @@ class RangeCoder
 {
 public:
 	void InitDecoder(Unpack *UnpackRead);
-	inline int GetCurrentCount();
+	inline long GetCurrentCount();
 	inline uint GetCurrentShiftCount(uint SHIFT);
 	inline void Decode();
 	inline void PutChar(unsigned int c);

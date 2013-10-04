@@ -118,7 +118,7 @@ protected:
 	virtual blargg_err_t data_v( const void** out );
 	
 	// Extract next n bytes
-	virtual blargg_err_t extract_v( void* out, int n );
+	virtual blargg_err_t extract_v( void* out, long n );
 	
 // Implementation
 public:
@@ -158,7 +158,7 @@ private:
 	
 	// Data_Reader overrides
 	// TODO: override skip_v?
-	virtual blargg_err_t read_v( void* out, int n );
+	virtual blargg_err_t read_v( void* out, long n );
 };
 
 struct fex_type_t_

@@ -19,7 +19,7 @@ public:
 	{
 		InAddr=InBit=0;
 	}
-	void addbits(int Bits)
+	void addbits(long Bits)
 	{
 		Bits+=InBit;
 		InAddr+=Bits>>3;
@@ -27,13 +27,13 @@ public:
 	}
 	unsigned int getbits()
 	{
-		unsigned int BitField=(uint)InBuf[InAddr] << 16;
+		uint BitField=(uint)InBuf[InAddr] << 16;
 		BitField|=(uint)InBuf[InAddr+1] << 8;
 		BitField|=(uint)InBuf[InAddr+2];
 		BitField >>= (8-InBit);
 		return(BitField & 0xffff);
 	}
-	void faddbits(int Bits);
+	void faddbits(long Bits);
 	unsigned int fgetbits();
 	bool Overflow(int IncPtr) {return(InAddr+IncPtr>=MAX_SIZE);}
 };
