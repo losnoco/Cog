@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		17ADB41A0B979AEB00257CA2 /* FileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB4190B979AEB00257CA2 /* FileSource.m */; };
 		8335FF7017FF767A002D8DD2 /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8335FF6D17FF765A002D8DD2 /* File_Extractor.framework */; };
+		833ED8AE17FF89DD001F63BF /* File_Extractor.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8335FF6D17FF765A002D8DD2 /* File_Extractor.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,19 @@
 			remoteInfo = File_Extractor;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		833ED8AD17FF89B0001F63BF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				833ED8AE17FF89DD001F63BF /* File_Extractor.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -148,6 +162,7 @@
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
+				833ED8AD17FF89B0001F63BF /* CopyFiles */,
 			);
 			buildRules = (
 			);
