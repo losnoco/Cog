@@ -7,6 +7,7 @@
 //
 
 #import "PlaylistEntry.h"
+#import "SecondsFormatter.h"
 
 @implementation PlaylistEntry
 
@@ -45,6 +46,8 @@
 @synthesize replayGainTrackPeak;
 @synthesize volume;
 
+@synthesize currentPosition;
+
 @synthesize endian;
 
 @synthesize seekable;
@@ -81,6 +84,11 @@
 + (NSSet *)keyPathsForValuesAffectingStatusMessage
 {
 	return [NSSet setWithObjects:@"current", @"queued", @"queuePosition", @"error", @"errorMessage", @"stopAfter", nil];
+}
+
++ (NSSet *)keyPathsForValuesAffectingSpam
+{
+    return [NSSet setWithObjects:@"artist", @"title", @"album", @"track", @"totalFrames", @"currentPosition", @"bitrate", nil];
 }
 
 - (NSString *)description
@@ -138,6 +146,86 @@
 	else {
 		return [NSString stringWithFormat:@"%@ - %@", self.artist, self.title];
 	}
+}
+
+@dynamic spam;
+- (NSString *)spam
+{
+    BOOL hasBitrate = (self.bitrate != 0);
+    BOOL hasArtist = (self.artist != nil) && (![self.artist isEqualToString:@""]);
+    BOOL hasAlbum = (self.album != nil) && (![self.album isEqualToString:@""]);
+    BOOL hasTrack = (self.track != 0);
+    BOOL hasLength = (self.totalFrames != 0);
+    BOOL hasCurrentPosition = (self.currentPosition != 0) && (self.current);
+    BOOL hasExtension = NO;
+    BOOL hasTitle = (title != nil) && (![title isEqualToString:@""]);
+    
+    NSMutableString * filename = [NSMutableString stringWithString:[self filename]];
+    NSRange dotPosition = [filename rangeOfString:@"." options:NSBackwardsSearch];
+    NSString * extension = nil;
+    
+    if (dotPosition.length > 0) {
+        dotPosition.location++;
+        dotPosition.length = [filename length] - dotPosition.location;
+        extension = [filename substringWithRange:dotPosition];
+        dotPosition.location--;
+        dotPosition.length++;
+        [filename deleteCharactersInRange:dotPosition];
+        hasExtension = YES;
+    }
+    
+    NSMutableArray * elements = [NSMutableArray array];
+
+    if (hasExtension) {
+        [elements addObject:@"["];
+        [elements addObject:[extension uppercaseString]];
+        if (hasBitrate) {
+            [elements addObject:@"@"];
+            [elements addObject:[NSString stringWithFormat:@"%u", self.bitrate / 1000]];
+            [elements addObject:@"kbps"];
+        }
+        [elements addObject:@"] "];
+    }
+    
+    if (hasArtist) {
+        [elements addObject:self.artist];
+        [elements addObject:@" - "];
+    }
+    
+    if (hasAlbum) {
+        [elements addObject:@"["];
+        [elements addObject:self.album];
+        if (hasTrack) {
+            [elements addObject:@" #"];
+            [elements addObject:[NSString stringWithFormat:@"%@", self.track]];
+        }
+        [elements addObject:@"] "];
+    }
+    
+    if (hasTitle) {
+        [elements addObject:title];
+    }
+    else {
+        [elements addObject:filename];
+    }
+    
+    if (hasCurrentPosition || hasLength) {
+        SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+        [elements addObject:@" ("];
+        if (hasCurrentPosition) {
+            [elements addObject:[secondsFormatter stringForObjectValue:[NSNumber numberWithFloat:currentPosition]]];
+        }
+        if (hasLength) {
+            if (hasCurrentPosition) {
+                [elements addObject:@" / "];
+            }
+            [elements addObject:[secondsFormatter stringForObjectValue:[self length]]];
+        }
+        [elements addObject:@")"];
+        [secondsFormatter release];
+    }
+    
+    return [elements componentsJoinedByString:@""];
 }
 
 @dynamic length;

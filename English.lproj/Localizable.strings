@@ -18,6 +18,9 @@
 "RepeatButtonTooltip" = "Repeat mode";
 "FileButtonTooltip" = "File drawer";
 
+"replayGainAlbumGain" = "The volume level of playback output will be detected through enumeration, \
+                         re";
+
 "InvalidURLShort" = "Invalid URL";
 "InvalidURLLong" = "The URL is not valid.";
 

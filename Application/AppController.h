@@ -45,6 +45,7 @@
 	NDHotKeyEvent *playHotKey;
 	NDHotKeyEvent *prevHotKey;
 	NDHotKeyEvent *nextHotKey;
+    NDHotKeyEvent *spamHotKey;
 	
 	AppleRemote *remote;
 	BOOL remoteButtonHeld; /* true as long as the user holds the left,right,plus or minus on the remote control */
@@ -78,6 +79,7 @@ OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *us
 - (void)clickPlay;
 - (void)clickPrev;
 - (void)clickNext;
+- (void)clickSpam;
 
 - (IBAction)increaseFontSize:(id)sender;
 - (IBAction)decreaseFontSize:(id)sender;

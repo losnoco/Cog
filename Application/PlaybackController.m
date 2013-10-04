@@ -170,6 +170,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	double pos = [audioPlayer amountPlayed];
 	
 	[self setPosition:pos];
+    
+    [[playlistController currentEntry] setCurrentPosition:pos];
 }
 
 - (IBAction)seek:(id)sender
@@ -177,7 +179,17 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	double time = [sender doubleValue];
 
     [audioPlayer seekToTime:time];
-	
+
+	[[playlistController currentEntry] setCurrentPosition:time];
+}
+
+- (IBAction)spam
+{
+    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+    
+    [pboard clearContents];
+
+    [pboard writeObjects:[NSArray arrayWithObjects:[[playlistController currentEntry] spam], nil]];
 }
 
 - (IBAction)eventSeekForward:(id)sender
@@ -514,6 +526,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 - (void)setPosition:(double)p
 {
 	position = p;
+
+	[[playlistController currentEntry] setCurrentPosition:p];
 }
 
 - (double)position

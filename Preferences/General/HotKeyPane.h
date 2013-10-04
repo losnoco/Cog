@@ -14,11 +14,13 @@
 	IBOutlet HotKeyControl *playHotKeyControl;
 	IBOutlet HotKeyControl *prevHotKeyControl;
 	IBOutlet HotKeyControl *nextHotKeyControl;
+    IBOutlet HotKeyControl *spamHotKeyControl;
 }
 
 - (IBAction) grabPlayHotKey:(id)sender;
 - (IBAction) grabPrevHotKey:(id)sender;
 - (IBAction) grabNextHotKey:(id)sender;
+- (IBAction) grabSpamHotKey:(id)sender;
 
 - (IBAction) hotKeyChanged:(id)sender;
 

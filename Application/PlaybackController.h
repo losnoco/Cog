@@ -63,6 +63,8 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 - (void)seekBackward:(double)amount;
 - (IBAction)fade:(id)sender;
 
+- (IBAction)spam;
+
 - (void)initDefaults;
 - (void)audioFadeDown:(NSTimer *)audioTimer;
 - (void)audioFadeUp:(NSTimer *)audioTimer;

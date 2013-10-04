@@ -38,6 +38,8 @@
     float replayGainTrackGain;
     float replayGainTrackPeak;
     float volume;
+    
+    double currentPosition;
 	
 	long long totalFrames;
 	int bitrate;
@@ -58,11 +60,14 @@
 + (NSSet *)keyPathsForValuesAffectingFilename;
 + (NSSet *)keyPathsForValuesAffectingStatus;
 + (NSSet *)keyPathsForValuesAffectingStatusMessage;
++ (NSSet *)keyPathsForValuesAffectingSpam;
 
 @property(readonly) NSString *display;
 @property(retain, readonly) NSNumber *length;
 @property(readonly) NSString *path;
 @property(readonly) NSString *filename;
+
+@property(readonly) NSString *spam;
 
 @property int index;
 @property int shuffleIndex;
@@ -102,6 +107,8 @@
 @property float replayGainTrackGain;
 @property float replayGainTrackPeak;
 @property float volume;
+
+@property double currentPosition;
 
 @property(retain) NSString *endian;
 

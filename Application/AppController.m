@@ -358,6 +358,19 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[userDefaultsValuesDict setObject:@"enqueue" forKey:@"openingFilesAlteredBehavior"];
     
     [userDefaultsValuesDict setObject:@"albumGainWithPeak" forKey:@"volumeScaling"];
+    
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPlayKeyCode"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPlayCharacter"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPlayModifiers"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyNextKeyCode"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyNextCharacter"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyNextModifiers"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPreviousKeyCode"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPreviousCharacter"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPreviousModifiers"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeySpamKeyCode"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeySpamCharacter"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeySpamModifiers"];
 	
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
@@ -367,6 +380,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyPlayKeyCode"		options:0 context:nil];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyPreviousKeyCode"	options:0 context:nil];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyNextKeyCode"		options:0 context:nil];
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self
+        forKeyPath:@"values.hotKeySpamKeyCode"      options:0 context:nil];
 
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.remoteEnabled"			options:0 context:nil];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.remoteOnlyOnActive"		options:0 context:nil];
@@ -386,6 +401,9 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	else if ([keyPath isEqualToString:@"values.hotKeyNextKeyCode"]) {
 		[self registerHotKeys];
 	}
+    else if ([keyPath isEqualToString:@"values.hotKeySpamKeyCode"]) {
+        [self registerHotKeys];
+    }
 	else if ([keyPath isEqualToString:@"values.remoteEnabled"] || [keyPath isEqualToString:@"values.remoteOnlyOnActive"]) {
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"]) {
 			BOOL onlyOnActive = [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"];
@@ -405,33 +423,48 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 - (void)registerHotKeys
 {
 	[playHotKey release];
+    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]) {
 	playHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
 			  character: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayCharacter"] intValue]
 		  modifierFlags: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]
 		];
+        [playHotKey setTarget:self selector:@selector(clickPlay)];
+        [playHotKey setEnabled:YES];
+    }
 	
 	[prevHotKey release];
+    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPreviousKeyCode"] intValue]) {
 	prevHotKey = [[NDHotKeyEvent alloc]
 		  initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
 				character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousCharacter"]
 			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousModifiers"]
 		];
+        [prevHotKey setTarget:self selector:@selector(clickPrev)];
+        [prevHotKey setEnabled:YES];
+    }
 	
 	[nextHotKey release];
+    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyNextKeyCode"] intValue]) {
 	nextHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextKeyCode"]
 				character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextCharacter"]
 			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextModifiers"]
 		];
-	
-	[playHotKey setTarget:self selector:@selector(clickPlay)];
-	[prevHotKey setTarget:self selector:@selector(clickPrev)];
-	[nextHotKey setTarget:self selector:@selector(clickNext)];
-	
-	[playHotKey setEnabled:YES];	
-	[prevHotKey setEnabled:YES];
-	[nextHotKey setEnabled:YES];
+        [nextHotKey setTarget:self selector:@selector(clickNext)];
+        [nextHotKey setEnabled:YES];
+    }
+
+	[spamHotKey release];
+    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeySpamKeyCode"] intValue]) {
+        spamHotKey = [[NDHotKeyEvent alloc]
+                      initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamKeyCode"]
+                      character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamCharacter"]
+                      modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamModifiers"]
+                      ];
+        [spamHotKey setTarget:self selector:@selector(clickSpam)];
+        [spamHotKey setEnabled:YES];
+    }
 }
 
 - (void)clickPlay
@@ -447,6 +480,11 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 - (void)clickNext
 {
 	[playbackController next:nil];
+}
+
+- (void)clickSpam
+{
+    [playbackController spam];
 }
 
 - (void)changeFontSize:(float)size

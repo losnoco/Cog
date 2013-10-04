@@ -33,6 +33,12 @@
 	[playHotKeyControl setModifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPlayModifiers"] ];
 	
 	[playHotKeyControl updateStringValue];
+
+	[spamHotKeyControl setKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamKeyCode"] ];
+	[spamHotKeyControl setCharacter: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamCharacter"] ];
+	[spamHotKeyControl setModifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamModifiers"] ];
+	
+	[spamHotKeyControl updateStringValue];
 }
 
 - (NSString *)title
@@ -60,6 +66,7 @@
 		[playHotKeyControl stopObserving];
 		[prevHotKeyControl stopObserving];
 		[nextHotKeyControl stopObserving];
+        [spamHotKeyControl stopObserving];
 	}
 }
 
@@ -78,6 +85,11 @@
 	[nextHotKeyControl startObserving];
 }
 
+- (IBAction) grabSpamHotKey:(id)sender
+{
+    [spamHotKeyControl startObserving];
+}
+
 - (IBAction) hotKeyChanged:(id)sender
 {
 	if (sender == playHotKeyControl) {
@@ -94,6 +106,11 @@
 		[[NSUserDefaults standardUserDefaults] setInteger:[nextHotKeyControl character] forKey:@"hotKeyNextCharacter"];
 		[[NSUserDefaults standardUserDefaults] setInteger:[nextHotKeyControl modifierFlags] forKey:@"hotKeyNextModifiers"];
 		[[NSUserDefaults standardUserDefaults] setInteger:[nextHotKeyControl keyCode] forKey:@"hotKeyNextKeyCode"];
+	}
+	else if (sender == spamHotKeyControl) {
+		[[NSUserDefaults standardUserDefaults] setInteger:[spamHotKeyControl character] forKey:@"hotKeySpamCharacter"];
+		[[NSUserDefaults standardUserDefaults] setInteger:[spamHotKeyControl modifierFlags] forKey:@"hotKeySpamModifiers"];
+		[[NSUserDefaults standardUserDefaults] setInteger:[spamHotKeyControl keyCode] forKey:@"hotKeySpamKeyCode"];
 	}
 	
 	[sender stopObserving];
