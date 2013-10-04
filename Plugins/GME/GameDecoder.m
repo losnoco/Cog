@@ -99,6 +99,11 @@ gme_err_t readCallback( void* data, void* out, long count )
 		NSLog(@"Error starting track");
 		return NO;
 	}
+    
+    gme_set_fade( emu, length, 8000 );
+    
+    length += 8000;
+    
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -123,7 +128,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 {
 	int numSamples = frames * 2; //channels = 2
 	
-	if (gme_track_ended(emu) || length < gme_tell(emu)) {
+	if (gme_track_ended(emu)) {
 		return 0;
 	}
 	
