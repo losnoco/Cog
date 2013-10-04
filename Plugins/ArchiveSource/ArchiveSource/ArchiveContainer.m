@@ -1,9 +1,9 @@
 //
-//  CueSheetContainer.m
-//  CueSheet
+//  ArchiveContainer.m
+//  ArchiveSource
 //
-//  Created by Zaphod Beeblebrox on 10/8/07.
-//  Copyright 2007 __MyCompanyName__. All rights reserved.
+//  Created by Christoper Snowhill on 10/8/07.
+//  Copyright 2013 __NoWork, Inc__. All rights reserved.
 //
 
 #import "ArchiveContainer.h"
