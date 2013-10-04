@@ -2,5 +2,7 @@ syntax: glob
 *.mode1v3
 *.mode2v3
 *.pbxuser
+xcuserdata
 build
 */build
+.DS_Store
