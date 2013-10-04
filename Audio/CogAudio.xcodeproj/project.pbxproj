@@ -429,6 +429,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = CogAudio;
+				SKIP_INSTALL = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -452,6 +453,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = CogAudio;
+				SKIP_INSTALL = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
 			};

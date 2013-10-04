@@ -206,6 +206,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				OBJROOT = ../../build;
 				PRODUCT_NAME = M3u;
+				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
@@ -224,6 +225,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				OBJROOT = ../../build;
 				PRODUCT_NAME = M3u;
+				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = NO;

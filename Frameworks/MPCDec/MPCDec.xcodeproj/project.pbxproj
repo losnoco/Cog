@@ -292,6 +292,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = mpcdec;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
 			};
@@ -311,6 +312,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = mpcdec;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = Files/include/;
 				WRAPPER_EXTENSION = framework;
 			};

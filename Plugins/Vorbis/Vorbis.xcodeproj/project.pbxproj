@@ -273,6 +273,7 @@
 					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
 			};
@@ -301,6 +302,7 @@
 					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;

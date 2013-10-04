@@ -227,6 +227,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = ogg;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "libogg-src/include";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -248,6 +249,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = ogg;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "libogg-src/include";
 				WRAPPER_EXTENSION = framework;
 			};

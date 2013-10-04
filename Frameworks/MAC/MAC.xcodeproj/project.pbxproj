@@ -519,6 +519,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PER_ARCH_CFLAGS_ppc = "-maltivec";
 				PRODUCT_NAME = MAC;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "mac-src";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -542,6 +543,7 @@
 				OTHER_LDFLAGS = "-Wl,-read_only_relocs,warning";
 				PER_ARCH_CFLAGS_ppc = "-maltivec";
 				PRODUCT_NAME = MAC;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "mac-src";
 				WRAPPER_EXTENSION = framework;
 			};

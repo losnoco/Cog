@@ -354,6 +354,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_NAME = General;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = preferencePane;
 				ZERO_LINK = YES;
 			};
@@ -370,6 +371,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_NAME = General;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = preferencePane;
 			};
 			name = Release;

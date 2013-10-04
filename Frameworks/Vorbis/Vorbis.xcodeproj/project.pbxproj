@@ -497,6 +497,7 @@
 					Ogg,
 				);
 				PRODUCT_NAME = Vorbis;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "Files/lib/ Files/include/";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -530,6 +531,7 @@
 					Ogg,
 				);
 				PRODUCT_NAME = Vorbis;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

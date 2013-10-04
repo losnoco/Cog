@@ -240,6 +240,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = APL;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
 			};
@@ -265,6 +266,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = APL;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = NO;
 			};

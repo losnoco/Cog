@@ -9,11 +9,6 @@
 #import "ArchiveSource.h"
 
 
-static BOOL g_is_unpack_path(NSString * url)
-{
-    return [url hasPrefix:@"unpack://"];
-}
-
 static NSString * path_unpack_string(NSString * src, NSRange * remainder)
 {
     NSRange bar = [src rangeOfString:@"|"];
@@ -138,7 +133,7 @@ static BOOL g_parse_unpack_path(NSString * src, NSString ** archive, NSString **
     
     offset = position;
     
-    return ((offset >= 0) && (offset <= size));
+    return (offset <= size);
 }
 
 - (long)tell
