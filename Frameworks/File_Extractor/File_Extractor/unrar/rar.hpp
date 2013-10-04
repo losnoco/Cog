@@ -96,6 +96,10 @@ struct Rar_Allocator
 	#define PRESENT_INT32
 #endif
 
+typedef unsigned char    byte;   //8 bits
+typedef unsigned short   ushort; //preferably 16 bits, but can be more
+typedef unsigned int     uint;   //32 bits or more
+
 typedef blargg_wchar_t wchar;
 
 #define SHORT16(x) (sizeof(ushort)==2 ? (ushort)(x):((x)&0xffff))
@@ -123,7 +127,7 @@ ushort OldCRC(ushort StartCRC,const void *Addr,size_t Size);
 //// rartime.hpp
 struct RarTime
 {
-	uint time;
+	unsigned time;
     void SetDos(uint DosTime) { time = DosTime; }
 };
 
@@ -145,8 +149,8 @@ private:
     bool SkipUnpCRC;
 
 public:
-	long UnpRead(byte *Addr,long Count);
-    void UnpWrite(byte *Addr,long Count);
+	int UnpRead(byte *Addr,uint Count);
+    void UnpWrite(byte *Addr,uint Count);
 	void SetSkipUnpCRC( bool b ) { SkipUnpCRC = b; }
 	void SetPackedSizeToRead( Int64 n ) { UnpPackedSize = n; }
 
@@ -154,7 +158,7 @@ public:
 
 	void Seek(Int64 Offset, int Method = 0 ) { (void)Method; Tell_ = Offset; }
 	Int64 Tell() { return Tell_; }
-	long Read( void* p, long n );
+	int Read( void* p, int n );
 };
 
 //// rar.hpp

@@ -399,7 +399,7 @@ inline bool PPM_CONTEXT::decodeSymbol1(ModelPPM *Model)
 	Model->Coder.SubRange.scale=U.SummFreq;
 	STATE* p=U.Stats;
 	int i, HiCnt;
-	long count=Model->Coder.GetCurrentCount();
+	int count=Model->Coder.GetCurrentCount();
 	if (count>=Model->Coder.SubRange.scale)
 		return(false);
 	if (count < (HiCnt=p->Freq))
@@ -450,7 +450,7 @@ inline void PPM_CONTEXT::update2(ModelPPM *Model,STATE* p)
 }
 
 
-inline SEE2_CONTEXT* PPM_CONTEXT::makeEscFreq2(ModelPPM *Model,long Diff)
+inline SEE2_CONTEXT* PPM_CONTEXT::makeEscFreq2(ModelPPM *Model,int Diff)
 {
 	SEE2_CONTEXT* psee2c;
 	if (NumStats != 256)
@@ -474,7 +474,7 @@ inline SEE2_CONTEXT* PPM_CONTEXT::makeEscFreq2(ModelPPM *Model,long Diff)
 
 inline bool PPM_CONTEXT::decodeSymbol2(ModelPPM *Model)
 {
-	long count, HiCnt, i=NumStats-Model->NumMasked;
+	int count, HiCnt, i=NumStats-Model->NumMasked;
 	SEE2_CONTEXT* psee2c=makeEscFreq2(Model,i);
 	STATE* ps[256], ** pps=ps, * p=U.Stats-1;
 	HiCnt=0;

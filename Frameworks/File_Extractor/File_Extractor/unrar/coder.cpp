@@ -29,7 +29,7 @@ void RangeCoder::InitDecoder(Unpack *UnpackRead)
 }
 
 
-inline long RangeCoder::GetCurrentCount()
+inline int RangeCoder::GetCurrentCount()
 {
 	return (code-low)/(range /= SubRange.scale);
 }

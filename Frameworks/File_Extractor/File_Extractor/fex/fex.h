@@ -150,10 +150,13 @@ unsigned int fex_crc32( const fex_t* );
 
 /** Reads n bytes from current file. Reading past end of file results in
 fex_err_file_eof. */
-fex_err_t fex_read( fex_t*, void* out, int n );
+fex_err_t fex_read( fex_t*, void* out, long n );
 
 /** Number of bytes read from current file */
 uint64_t fex_tell( const fex_t* );
+        
+/** Skips the specified number of bytes in the current file */
+fex_err_t fex_skip( fex_t*, long n );
 
 /** Points *out at current file's data in memory. Pointer is valid until
 fex_next(), fex_rewind(), fex_seek_arc(), or fex_close() is called. Pointer

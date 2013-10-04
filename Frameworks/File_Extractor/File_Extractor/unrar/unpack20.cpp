@@ -3,16 +3,16 @@
 #include "rar.hpp"
 
 // Presumably these optimizations give similar speedup as those for CopyString in unpack.cpp
-void Unpack::CopyString20(uint Length,uint Distance)
+void Unpack::CopyString20(unsigned int Length,unsigned int Distance)
 {
 	LastDist=OldDist[OldDistPtr++ & 3]=Distance;
 	LastLength=Length;
 	DestUnpSize-=Length;
 
-	uint        UnpPtr = this->UnpPtr; // cache in register
+	unsigned    UnpPtr = this->UnpPtr; // cache in register
 	byte* const Window = this->Window; // cache in register
 	
-	uint DestPtr=UnpPtr-Distance;
+	unsigned int DestPtr=UnpPtr-Distance;
 	if (UnpPtr<MAXWINSIZE-300 && DestPtr<MAXWINSIZE-300)
 	{
 		this->UnpPtr += Length;
@@ -87,7 +87,7 @@ void Unpack::Unpack20(bool Solid)
 		}
 		if (UnpAudioBlock)
 		{
-			long AudioNumber=DecodeNumber((struct Decode *)&MD[UnpCurChannel]);
+			int AudioNumber=DecodeNumber((struct Decode *)&MD[UnpCurChannel]);
 
 			if (AudioNumber==256)
 			{
@@ -102,7 +102,7 @@ void Unpack::Unpack20(bool Solid)
 			continue;
 		}
 
-		long Number=DecodeNumber((struct Decode *)&LD);
+		int Number=DecodeNumber((struct Decode *)&LD);
 		if (Number<256)
 		{
 			Window[UnpPtr++]=(byte)Number;
@@ -118,8 +118,8 @@ void Unpack::Unpack20(bool Solid)
 				addbits(Bits);
 			}
 
-			long DistNumber=DecodeNumber((struct Decode *)&DD);
-			uint Distance=DDecode[DistNumber]+1;
+			int DistNumber=DecodeNumber((struct Decode *)&DD);
+			unsigned int Distance=DDecode[DistNumber]+1;
 			if ((Bits=DBits[DistNumber])>0)
 			{
 				Distance+=getbits()>>(16-Bits);
@@ -149,9 +149,9 @@ void Unpack::Unpack20(bool Solid)
 		}
 		if (Number<261)
 		{
-			uint Distance=OldDist[(OldDistPtr-(Number-256)) & 3];
-			long LengthNumber=DecodeNumber((struct Decode *)&RD);
-			long Length=LDecode[LengthNumber]+2;
+			unsigned int Distance=OldDist[(OldDistPtr-(Number-256)) & 3];
+			int LengthNumber=DecodeNumber((struct Decode *)&RD);
+			int Length=LDecode[LengthNumber]+2;
 			if ((Bits=LBits[LengthNumber])>0)
 			{
 				Length+=getbits()>>(16-Bits);
@@ -225,7 +225,7 @@ bool Unpack::ReadTables20()
 		if (InAddr>ReadTop-5)
 			if (!UnpReadBuf())
 				return(false);
-		long Number=DecodeNumber((struct Decode *)&BD);
+		int Number=DecodeNumber((struct Decode *)&BD);
 		if (Number<16)
 		{
 			Table[I]=(Number+UnpOldTable20[I]) & 0xf;
@@ -304,7 +304,7 @@ void Unpack::UnpInitData20(int Solid)
 }
 
 
-byte Unpack::DecodeAudio(long Delta)
+byte Unpack::DecodeAudio(int Delta)
 {
 	struct AudioVariables *V=&AudV[UnpCurChannel];
 	V->ByteCount++;
@@ -312,10 +312,10 @@ byte Unpack::DecodeAudio(long Delta)
 	V->D3=V->D2;
 	V->D2=V->LastDelta-V->D1;
 	V->D1=V->LastDelta;
-	long PCh=8*V->LastChar+V->K1*V->D1+V->K2*V->D2+V->K3*V->D3+V->K4*V->D4+V->K5*UnpChannelDelta;
+	int PCh=8*V->LastChar+V->K1*V->D1+V->K2*V->D2+V->K3*V->D3+V->K4*V->D4+V->K5*UnpChannelDelta;
 	PCh=(PCh>>3) & 0xFF;
 
-	uint Ch=PCh-Delta;
+	unsigned int Ch=PCh-Delta;
 
 	int D=((signed char)Delta)<<3;
 
@@ -336,9 +336,9 @@ byte Unpack::DecodeAudio(long Delta)
 
 	if ((V->ByteCount & 0x1F)==0)
 	{
-		uint MinDif=V->Dif[0],NumMinDif=0;
+		unsigned int MinDif=V->Dif[0],NumMinDif=0;
 		V->Dif[0]=0;
-		for (long I=1;I<sizeof(V->Dif)/sizeof(V->Dif[0]);I++)
+		for (int I=1;I<sizeof(V->Dif)/sizeof(V->Dif[0]);I++)
 		{
 			if (V->Dif[I]<MinDif)
 			{

@@ -9,7 +9,7 @@ class Archive:public File
 private:
 	bool IsSignature(byte *D);
 	void ConvertUnknownHeader();
-	long ReadOldHeader();
+	int ReadOldHeader();
 
 	RawRead Raw;
 

@@ -81,7 +81,7 @@ static inline unrar_err_t handle_err( Rar_Extractor::read_callback_t* h, blargg_
 
 extern "C"
 {
-	static unrar_err_t my_unrar_read( void* data, void* out, long* count, unrar_pos_t pos )
+	static unrar_err_t my_unrar_read( void* data, void* out, int* count, unrar_pos_t pos )
 	{
 		Rar_Extractor::read_callback_t* h = STATIC_CAST(Rar_Extractor::read_callback_t*,data);
 		if ( h->pos != pos )

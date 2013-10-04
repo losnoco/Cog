@@ -5,18 +5,18 @@ template <class T> class Array
 {
 private:
 	T *Buffer;
-	long BufSize;
-	long AllocSize;
+	int BufSize;
+	int AllocSize;
 public:
 	Rar_Error_Handler& ErrHandler;
 	Array(Rar_Error_Handler*);
-	Array(long Size,Rar_Error_Handler*);
+	Array(int Size,Rar_Error_Handler*);
 	~Array();
 	inline void CleanData();
-    inline T& operator [](long Item);
-    inline long Size();
-	void Add(long Items);
-	void Alloc(long Items);
+    inline T& operator [](int Item);
+    inline int Size();
+	void Add(int Items);
+	void Alloc(int Items);
 	void Reset();
     void operator = (Array<T> &Src);
 	void Push(T Item);
@@ -37,7 +37,7 @@ template <class T> Array<T>::Array(Rar_Error_Handler* eh) : ErrHandler( *eh )
 }
 
 
-template <class T> Array<T>::Array(long Size, Rar_Error_Handler* eh) : ErrHandler( *eh )
+template <class T> Array<T>::Array(int Size, Rar_Error_Handler* eh) : ErrHandler( *eh )
 {
 	Buffer=(T *)rarmalloc(sizeof(T)*Size);
 	if (Buffer==NULL && Size!=0)
@@ -54,28 +54,28 @@ template <class T> Array<T>::~Array()
 }
 
 
-template <class T> inline T& Array<T>::operator [](long Item)
+template <class T> inline T& Array<T>::operator [](int Item)
 {
   return(Buffer[Item]);
 }
 
 
-template <class T> inline long Array<T>::Size()
+template <class T> inline int Array<T>::Size()
 {
   return(BufSize);
 }
 
 
-template <class T> void Array<T>::Add(long Items)
+template <class T> void Array<T>::Add(int Items)
 {
-	long BufSize = this->BufSize; // don't change actual vars until alloc succeeds
-	T*  Buffer   = this->Buffer;
+	int BufSize = this->BufSize; // don't change actual vars until alloc succeeds
+	T*  Buffer  = this->Buffer;
 	
 	BufSize+=Items;
 	if (BufSize>AllocSize)
 	{
-		long Suggested=AllocSize+AllocSize/4+32;
-		long NewSize=Max(BufSize,Suggested);
+		int Suggested=AllocSize+AllocSize/4+32;
+		int NewSize=Max(BufSize,Suggested);
 
 		Buffer=(T *)rarrealloc(Buffer,NewSize*sizeof(T));
 		if (Buffer==NULL)
@@ -88,7 +88,7 @@ template <class T> void Array<T>::Add(long Items)
 }
 
 
-template <class T> void Array<T>::Alloc(long Items)
+template <class T> void Array<T>::Alloc(int Items)
 {
 	if (Items>AllocSize)
 		Add(Items-BufSize);

@@ -24,7 +24,7 @@ struct unrar_extract_mem_t
 };
 
 extern "C" {
-	static unrar_err_t extract_write( void* user_data, const void* in, uint count )
+	static unrar_err_t extract_write( void* user_data, const void* in, int count )
 	{
 		unrar_extract_mem_t* p = (unrar_extract_mem_t*) user_data;
 		
@@ -32,7 +32,7 @@ extern "C" {
 		if ( remain > 0 )
 		{
 			if ( count > remain )
-				count = remain;
+				count = (int)remain;
 			
 			memcpy( p->out, in, count );
 			p->out += count;
@@ -53,13 +53,13 @@ unrar_err_t unrar_extract( unrar_t* p, void* out, unrar_pos_t size )
 }
 
 inline
-static bool is_entire_file( const unrar_t* p, const void* in, uint count )
+static bool is_entire_file( const unrar_t* p, const void* in, int count )
 {
 	return (count == p->Arc.NewLhd.UnpSize && p->Unp && in == p->Unp->window_wrptr());
 }
 	
 extern "C" {
-	static unrar_err_t extract_mem( void* data, void const* in, uint count )
+	static unrar_err_t extract_mem( void* data, void const* in, int count )
 	{
 		unrar_t* p = (unrar_t*) data;
 		
@@ -129,7 +129,7 @@ const char* unrar_err_str( unrar_err_t err )
 	return "problem with RAR";
 }
 
-long ComprDataIO::Read( void* p, long n )
+int ComprDataIO::Read( void* p, int n )
 {
 	unrar_err_t err = user_read( user_read_data, p, &n, Tell_ );
 	if ( err )
@@ -142,7 +142,7 @@ long ComprDataIO::Read( void* p, long n )
 	return n;
 }
 
-void ComprDataIO::UnpWrite( byte* out, long count )
+void ComprDataIO::UnpWrite( byte* out, uint count )
 {
 	if ( !SkipUnpCRC )
 	{
@@ -156,15 +156,15 @@ void ComprDataIO::UnpWrite( byte* out, long count )
 	}
 }
 
-long ComprDataIO::UnpRead( byte* out, long count )
+int ComprDataIO::UnpRead( byte* out, uint count )
 {
 	if ( count <= 0 )
 		return 0;
 
 	if ( count > (uint) UnpPackedSize )
-		count = UnpPackedSize;
+		count = (uint) UnpPackedSize;
 
-	long result = Read( out, count );
+	int result = Read( out, count );
 	UnpPackedSize -= result;
 	return result;
 }

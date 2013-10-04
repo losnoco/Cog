@@ -5,63 +5,63 @@ enum BLOCK_TYPES {BLOCK_LZ,BLOCK_PPM};
 
 struct Decode
 {
-	uint MaxNum;
-	uint DecodeLen[16];
-	uint DecodePos[16];
-	uint DecodeNum[2];
+	unsigned int MaxNum;
+	unsigned int DecodeLen[16];
+	unsigned int DecodePos[16];
+	unsigned int DecodeNum[2];
 };
 
 struct LitDecode
 {
-	uint MaxNum;
-	uint DecodeLen[16];
-	uint DecodePos[16];
-	uint DecodeNum[NC];
+	unsigned int MaxNum;
+	unsigned int DecodeLen[16];
+	unsigned int DecodePos[16];
+	unsigned int DecodeNum[NC];
 };
 
 struct DistDecode
 {
-	uint MaxNum;
-	uint DecodeLen[16];
-	uint DecodePos[16];
-	uint DecodeNum[DC];
+	unsigned int MaxNum;
+	unsigned int DecodeLen[16];
+	unsigned int DecodePos[16];
+	unsigned int DecodeNum[DC];
 };
 
 struct LowDistDecode
 {
-	uint MaxNum;
-	uint DecodeLen[16];
-	uint DecodePos[16];
-	uint DecodeNum[LDC];
+	unsigned int MaxNum;
+	unsigned int DecodeLen[16];
+	unsigned int DecodePos[16];
+	unsigned int DecodeNum[LDC];
 };
 
 struct RepDecode
 {
-	uint MaxNum;
-	uint DecodeLen[16];
-	uint DecodePos[16];
-	uint DecodeNum[RC];
+	unsigned int MaxNum;
+	unsigned int DecodeLen[16];
+	unsigned int DecodePos[16];
+	unsigned int DecodeNum[RC];
 };
 
 struct BitDecode
 {
-	uint MaxNum;
-	uint DecodeLen[16];
-	uint DecodePos[16];
-	uint DecodeNum[BC];
+	unsigned int MaxNum;
+	unsigned int DecodeLen[16];
+	unsigned int DecodePos[16];
+	unsigned int DecodeNum[BC];
 };
 
 struct UnpackFilter
 	: Rar_Allocator
 {
-	unsigned long BlockStart;
-	unsigned long BlockLength;
-	unsigned long ExecCount;
+	unsigned int BlockStart;
+	unsigned int BlockLength;
+	unsigned int ExecCount;
 	bool NextWindow;
 
 	// position of parent filter in Filters array used as prototype for filter
 	// in PrgStack array. Not defined for filters in Filters array.
-	unsigned long ParentFilter;
+	unsigned int ParentFilter;
 
 	VM_PreparedProgram Prg;
 	UnpackFilter( Rar_Error_Handler* eh ) : Prg( eh ) { }
@@ -70,10 +70,10 @@ struct UnpackFilter
 /***************************** Unpack v 2.0 *********************************/
 struct MultDecode
 {
-	uint MaxNum;
-	uint DecodeLen[16];
-	uint DecodePos[16];
-	uint DecodeNum[MC20];
+	unsigned int MaxNum;
+	unsigned int DecodeLen[16];
+	unsigned int DecodePos[16];
+	unsigned int DecodeNum[MC20];
 };
 
 struct AudioVariables
@@ -81,9 +81,9 @@ struct AudioVariables
 	int K1,K2,K3,K4,K5;
 	int D1,D2,D3,D4;
 	int LastDelta;
-	uint Dif[11];
-	uint ByteCount;
-	long LastChar;
+	unsigned int Dif[11];
+	unsigned int ByteCount;
+	int LastChar;
 };
 /***************************** Unpack v 2.0 *********************************/
 
@@ -98,20 +98,20 @@ private:
 	bool UnpReadBuf();
 	void UnpWriteBuf();
 	void ExecuteCode(VM_PreparedProgram *Prg);
-	void UnpWriteArea(uint StartPtr,uint EndPtr);
-	void UnpWriteData(byte *Data,long Size);
+	void UnpWriteArea(unsigned int StartPtr,unsigned int EndPtr);
+	void UnpWriteData(byte *Data,int Size);
 	bool ReadTables();
-	void MakeDecodeTables(unsigned char *LenTab,struct Decode *Dec,long Size);
-	long DecodeNumber(struct Decode *Dec);
+	void MakeDecodeTables(unsigned char *LenTab,struct Decode *Dec,int Size);
+	int DecodeNumber(struct Decode *Dec);
 	void CopyString();
-	inline void InsertOldDist(uint Distance);
-	inline void InsertLastMatch(uint Length,uint Distance);
+	inline void InsertOldDist(unsigned int Distance);
+	inline void InsertLastMatch(unsigned int Length,unsigned int Distance);
 	void UnpInitData(int Solid);
-	void CopyString(uint Length,uint Distance);
+	void CopyString(unsigned int Length,unsigned int Distance);
 	bool ReadEndOfBlock();
 	bool ReadVMCode();
 	bool ReadVMCodePPM();
-	bool AddVMCode(uint FirstByte,byte *Code,long CodeSize);
+	bool AddVMCode(unsigned int FirstByte,byte *Code,int CodeSize);
 	void InitFilters();
 
 	ComprDataIO *UnpIO;
@@ -133,9 +133,9 @@ private:
 
     /* lengths of preceding blocks, one length per filter. Used to reduce
        size required to write block length if lengths are repeating */
-	Array<long> OldFilterLengths;
+	Array<int> OldFilterLengths;
 
-	long LastFilter;
+	int LastFilter;
 
 	bool TablesRead;
 	struct LitDecode LD;
@@ -144,13 +144,13 @@ private:
 	struct RepDecode RD;
 	struct BitDecode BD;
 
-	uint OldDist[4],OldDistPtr;
-	uint LastDist,LastLength;
+	unsigned int OldDist[4],OldDistPtr;
+	unsigned int LastDist,LastLength;
 
-	uint UnpPtr,WrPtr;
+	unsigned int UnpPtr,WrPtr;
 
-	long ReadTop;
-	long ReadBorder;
+	int ReadTop;
+	int ReadBorder;
 
 	unsigned char UnpOldTable[HUFF_TABLE_SIZE];
 
@@ -168,7 +168,7 @@ private:
 	Int64 WrittenFileSize;
 	bool FileExtracted;
 
-	long PrevLowDist,LowDistRepCount;
+	int PrevLowDist,LowDistRepCount;
 
 	/***************************** Unpack v 1.5 *********************************/
 	void Unpack15(bool Solid);
@@ -178,18 +178,18 @@ private:
 	void GetFlagsBuf();
 	void OldUnpInitData(int Solid);
 	void InitHuff();
-	void CorrHuff(uint *CharSet,uint *NumToPlace);
-	void OldCopyString(uint Distance,uint Length);
-	uint DecodeNum(long Num,uint StartPos,
-	  const uint *DecTab,const uint *PosTab);
+	void CorrHuff(unsigned int *CharSet,unsigned int *NumToPlace);
+	void OldCopyString(unsigned int Distance,unsigned int Length);
+	unsigned int DecodeNum(int Num,unsigned int StartPos,
+	  const unsigned int *DecTab,const unsigned int *PosTab);
 	void OldUnpWriteBuf();
 
-	uint ChSet[256],ChSetA[256],ChSetB[256],ChSetC[256];
-	uint Place[256],PlaceA[256],PlaceB[256],PlaceC[256];
-	uint NToPl[256],NToPlB[256],NToPlC[256];
-	uint FlagBuf,AvrPlc,AvrPlcB,AvrLn1,AvrLn2,AvrLn3;
-	long Buf60,NumHuf,StMode,LCount,FlagsCnt;
-	uint Nhfb,Nlzb,MaxDist3;
+	unsigned int ChSet[256],ChSetA[256],ChSetB[256],ChSetC[256];
+	unsigned int Place[256],PlaceA[256],PlaceB[256],PlaceC[256];
+	unsigned int NToPl[256],NToPlB[256],NToPlC[256];
+	unsigned int FlagBuf,AvrPlc,AvrPlcB,AvrLn1,AvrLn2,AvrLn3;
+	int Buf60,NumHuf,StMode,LCount,FlagsCnt;
+	unsigned int Nhfb,Nlzb,MaxDist3;
 	/***************************** Unpack v 1.5 *********************************/
 
 	/***************************** Unpack v 2.0 *********************************/
@@ -197,11 +197,11 @@ private:
 	struct MultDecode MD[4];
 	unsigned char UnpOldTable20[MC20*4];
 	int UnpAudioBlock,UnpChannels,UnpCurChannel,UnpChannelDelta;
-	void CopyString20(uint Length,uint Distance);
+	void CopyString20(unsigned int Length,unsigned int Distance);
 	bool ReadTables20();
 	void UnpInitData20(int Solid);
 	void ReadLastTables();
-	byte DecodeAudio(long Delta);
+	byte DecodeAudio(int Delta);
 	struct AudioVariables AudV[4];
 	/***************************** Unpack v 2.0 *********************************/
 

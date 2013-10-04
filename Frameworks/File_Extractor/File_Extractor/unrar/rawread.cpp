@@ -14,7 +14,7 @@ void RawRead::Reset()
 	Data.Reset();
 }
 
-void RawRead::Read(long Size)
+void RawRead::Read(int Size)
 {
 	// (removed decryption)
 	if (Size!=0)

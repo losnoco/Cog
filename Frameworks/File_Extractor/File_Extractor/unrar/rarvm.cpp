@@ -139,10 +139,10 @@ inline uint* RarVM::GetOperand(VM_PreparedOperand *CmdOp)
 void RarVM::Execute(VM_PreparedProgram *Prg)
 {
 	memcpy(R,Prg->InitR,sizeof(Prg->InitR));
-	uint GlobalSize=Min(Prg->GlobalData.Size(),VM_GLOBALMEMSIZE);
+	unsigned int GlobalSize=Min(Prg->GlobalData.Size(),VM_GLOBALMEMSIZE);
 	if (GlobalSize)
 		memcpy(Mem+VM_GLOBALMEMADDR,&Prg->GlobalData[0],GlobalSize);
-	uint StaticSize=Min(Prg->StaticData.Size(),VM_GLOBALMEMSIZE-GlobalSize);
+	unsigned int StaticSize=Min(Prg->StaticData.Size(),VM_GLOBALMEMSIZE-GlobalSize);
 	if (StaticSize)
 		memcpy(Mem+VM_GLOBALMEMADDR+GlobalSize,&Prg->StaticData[0],StaticSize);
 
@@ -185,7 +185,7 @@ Note:
     return(false);                      \
 	Cmd=PreparedCode+(IP);
 
-bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode,long CodeSize)
+bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode,int CodeSize)
 {
 	int MaxOpCount=25000000;
 	VM_PreparedCommand *Cmd=PreparedCode;
@@ -399,7 +399,7 @@ bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode,long CodeSize)
 				break;
 			case VM_CALL:
 				R[7]-=4;
-				SET_VALUE(false,(uint *)&Mem[R[7]&VM_MEMMASK],Cmd-PreparedCode+1);
+				SET_VALUE(false,(uint *)&Mem[R[7]&VM_MEMMASK],(uint)(Cmd-PreparedCode+1));
 				SET_IP(GET_VALUE(false,Op1));
 				continue;
 			case VM_NOT:
@@ -449,8 +449,8 @@ bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode,long CodeSize)
 #endif
 			case VM_PUSHA:
 				{
-					const uint RegCount=sizeof(R)/sizeof(R[0]);
-					for (uint I=0,SP=R[7]-4;I<RegCount;I++,SP-=4)
+					const int RegCount=sizeof(R)/sizeof(R[0]);
+					for (int I=0,SP=R[7]-4;I<RegCount;I++,SP-=4)
 						SET_VALUE(false,(uint *)&Mem[SP & VM_MEMMASK],R[I]);
 					R[7]-=RegCount*4;
 				}
@@ -544,7 +544,7 @@ bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode,long CodeSize)
 
 
 
-void RarVM::Prepare(byte *Code,long CodeSize,VM_PreparedProgram *Prg)
+void RarVM::Prepare(byte *Code,int CodeSize,VM_PreparedProgram *Prg)
 {
 	InitBitInput();
 	memcpy(InBuf,Code,Min(CodeSize,BitInput::MAX_SIZE));
@@ -583,7 +583,7 @@ void RarVM::Prepare(byte *Code,long CodeSize,VM_PreparedProgram *Prg)
 
 		if (DataFlag&0x8000)
 		{
-			uint DataSize=ReadData(*this)+1;
+			int DataSize=ReadData(*this)+1;
 			for (int I=0;InAddr<CodeSize && I<DataSize;I++)
 			{
 				Prg->StaticData.Add(1);
@@ -627,7 +627,7 @@ void RarVM::Prepare(byte *Code,long CodeSize,VM_PreparedProgram *Prg)
 					if (CurCmd->Op1.Type==VM_OPINT && (VM_CmdFlags[CurCmd->OpCode]&(VMCF_JUMP|VMCF_PROC)))
 					{
 						// Calculating jump distance.
-						long Distance=CurCmd->Op1.Data;
+						int Distance=CurCmd->Op1.Data;
 						if (Distance>=256)
 							Distance-=256;
 						else
@@ -773,7 +773,7 @@ uint RarVM::ReadData(BitInput &Inp)
 }
 
 
-void RarVM::SetMemory(uint Pos,byte *Data,uint DataSize)
+void RarVM::SetMemory(unsigned int Pos,byte *Data,unsigned int DataSize)
 {
 	if (Pos<VM_MEMSIZE && Data!=Mem+Pos)
 		memmove(Mem+Pos,Data,Min(DataSize,VM_MEMSIZE-Pos));
@@ -854,7 +854,7 @@ void RarVM::Optimize(VM_PreparedProgram *Prg)
 
 
 #ifdef VM_STANDARDFILTERS
-VM_StandardFilters RarVM::IsStandardFilter(byte *Code,long CodeSize)
+VM_StandardFilters RarVM::IsStandardFilter(byte *Code,int CodeSize)
 {
 	static const
 	struct StandardFilterSignature
@@ -895,7 +895,7 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 		case VMSF_E8E9:
 			{
 				byte *Data=Mem;
-				long DataSize=R[4];
+				int DataSize=R[4];
 				uint FileOffset=R[6];
 
 				if (DataSize>=VM_GLOBALMEMADDR || DataSize<4)
@@ -910,8 +910,8 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 					if (CurByte==0xe8 || CurByte==CmpByte2)
 					{
 #ifdef PRESENT_INT32
-            sint32 Offset=(sint32)(CurPos+FileOffset);
-            sint32 Addr=(sint32)(GET_VALUE(false,Data));
+            sint32 Offset=CurPos+FileOffset;
+            sint32 Addr=GET_VALUE(false,Data);
             if (Addr<0)
             {
               if (Addr+Offset>=0)
@@ -941,7 +941,7 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 		case VMSF_ITANIUM:
 			{
 				byte *Data=Mem;
-				long DataSize=R[4];
+				int DataSize=R[4];
 				uint FileOffset=R[6];
 
 				if (DataSize>=VM_GLOBALMEMADDR || DataSize<21)
@@ -980,7 +980,7 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 			break;
 		case VMSF_DELTA:
 			{
-				long DataSize=R[4],Channels=R[0],SrcPos=0,Border=DataSize*2;
+				int DataSize=R[4],Channels=R[0],SrcPos=0,Border=DataSize*2;
 				SET_VALUE(false,&Mem[VM_GLOBALMEMADDR+0x20],DataSize);
 				if (DataSize>=VM_GLOBALMEMADDR/2)
 					break;
@@ -990,14 +990,14 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 				for (int CurChannel=0;CurChannel<Channels;CurChannel++)
 				{
 					byte PrevByte=0;
-					for (long DestPos=DataSize+CurChannel;DestPos<Border;DestPos+=Channels)
+					for (int DestPos=DataSize+CurChannel;DestPos<Border;DestPos+=Channels)
 						Mem[DestPos]=(PrevByte-=Mem[SrcPos++]);
 				}
 			}
 			break;
 		case VMSF_RGB:
 			{
-				long DataSize=R[4],Width=R[0]-3,PosR=R[1];
+				int DataSize=R[4],Width=R[0]-3,PosR=R[1];
 				byte *SrcData=Mem,*DestData=SrcData+DataSize;
 				const int Channels=3;
 				SET_VALUE(false,&Mem[VM_GLOBALMEMADDR+0x20],DataSize);
@@ -1010,7 +1010,7 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 					for (int I=CurChannel;I<DataSize;I+=Channels)
 					{
 						unsigned int Predicted;
-						long UpperPos=I-Width;
+						int UpperPos=I-Width;
 						if (UpperPos>=3)
 						{
 							byte *UpperData=DestData+UpperPos;
@@ -1033,7 +1033,7 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 						DestData[I]=PrevByte=(byte)(Predicted-*(SrcData++));
 					}
 				}
-				for (long I=PosR,Border=DataSize-2;I<Border;I+=3)
+				for (int I=PosR,Border=DataSize-2;I<Border;I+=3)
 				{
 					byte G=DestData[I+1];
 					DestData[I]+=G;
@@ -1043,7 +1043,7 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 			break;
 		case VMSF_AUDIO:
 			{
-				long DataSize=R[4],Channels=R[0];
+				int DataSize=R[4],Channels=R[0];
 				byte *SrcData=Mem,*DestData=SrcData+DataSize;
 				SET_VALUE(false,&Mem[VM_GLOBALMEMADDR+0x20],DataSize);
 				if (DataSize>=VM_GLOBALMEMADDR/2)
@@ -1110,7 +1110,7 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 			break;
 		case VMSF_UPCASE:
 			{
-				long DataSize=R[4],SrcPos=0,DestPos=DataSize;
+				int DataSize=R[4],SrcPos=0,DestPos=DataSize;
 				if (DataSize>=VM_GLOBALMEMADDR/2)
 					break;
 				while (SrcPos<DataSize)
@@ -1134,7 +1134,7 @@ unsigned int RarVM::FilterItanium_GetBits(byte *Data,int BitPos,int BitCount)
 {
 	int InAddr=BitPos/8;
 	int InBit=BitPos&7;
-	uint BitField=(uint)Data[InAddr++];
+	unsigned int BitField=(uint)Data[InAddr++];
 	BitField|=(uint)Data[InAddr++] << 8;
 	BitField|=(uint)Data[InAddr++] << 16;
 	BitField|=(uint)Data[InAddr] << 24;

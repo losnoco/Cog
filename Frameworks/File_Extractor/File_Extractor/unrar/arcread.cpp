@@ -216,7 +216,7 @@ unrar_err_t Archive::ReadHeader()
 
 // Rar.Read()s are checked by caller of ReadOldHeader() (see above)
 #ifndef SFX_MODULE
-long Archive::ReadOldHeader()
+int Archive::ReadOldHeader()
 {
 	Raw.Reset();
 	if (CurBlockPos<=SFXSize)

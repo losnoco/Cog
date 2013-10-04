@@ -295,10 +295,16 @@ BLARGG_EXPORT const char* fex_err_details( fex_err_t err )
 
 //// Wrappers
 
-BLARGG_EXPORT fex_err_t fex_read( fex_t* fe, void* out, int count )
+BLARGG_EXPORT fex_err_t fex_read( fex_t* fe, void* out, long count )
 {
 	RETURN_ERR( fe->stat() );
 	return fe->reader().read( out, count );
+}
+
+BLARGG_EXPORT fex_err_t fex_skip( fex_t* fe, long count )
+{
+    RETURN_ERR( fe->stat() );
+    return fe->reader().skip( count );
 }
 
 BLARGG_EXPORT void        fex_close           ( fex_t* fe )                         { delete fe; }

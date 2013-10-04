@@ -71,7 +71,7 @@ struct VM_PreparedProgram
 	uint InitR[7];
 
 	byte *FilteredData;
-	uint FilteredDataSize;
+	unsigned int FilteredDataSize;
 };
 
 class RarVM:private BitInput
@@ -84,9 +84,9 @@ class RarVM:private BitInput
 #ifdef VM_OPTIMIZE
 		void Optimize(VM_PreparedProgram *Prg);
 #endif
-		bool ExecuteCode(VM_PreparedCommand *PreparedCode,long CodeSize);
+		bool ExecuteCode(VM_PreparedCommand *PreparedCode,int CodeSize);
 #ifdef VM_STANDARDFILTERS
-		VM_StandardFilters IsStandardFilter(byte *Code,long CodeSize);
+		VM_StandardFilters IsStandardFilter(byte *Code,int CodeSize);
 		void ExecuteStandardFilter(VM_StandardFilters FilterType);
 		unsigned int FilterItanium_GetBits(byte *Data,int BitPos,int BitCount);
 		void FilterItanium_SetBits(byte *Data,unsigned int BitField,int BitPos,
@@ -102,10 +102,10 @@ class RarVM:private BitInput
 		void Init();
 		void handle_mem_error( Rar_Error_Handler& );
 		friend class Unpack;
-		void Prepare(byte *Code,long CodeSize,VM_PreparedProgram *Prg);
+		void Prepare(byte *Code,int CodeSize,VM_PreparedProgram *Prg);
 		void Execute(VM_PreparedProgram *Prg);
 		void SetLowEndianValue(uint *Addr,uint Value);
-		void SetMemory(uint Pos,byte *Data,uint DataSize);
+		void SetMemory(unsigned int Pos,byte *Data,unsigned int DataSize);
 		static uint ReadData(BitInput &Inp);
 };
 

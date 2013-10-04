@@ -95,10 +95,10 @@ unrar_err_t CmdExtract::ExtractCurrentFile( bool SkipSolid, bool check_compatibi
 
 void CmdExtract::UnstoreFile(Int64 DestUnpSize)
 {
-	Buffer.Alloc(Min(DestUnpSize,0x10000));
+	Buffer.Alloc((int)Min(DestUnpSize,0x10000));
 	while (1)
 	{
-		uint Code=DataIO.UnpRead(&Buffer[0],Buffer.Size());
+		unsigned int Code=DataIO.UnpRead(&Buffer[0],Buffer.Size());
 		if (Code==0 || (int)Code==-1)
 			break;
 		Code=Code<DestUnpSize ? Code:int64to32(DestUnpSize);

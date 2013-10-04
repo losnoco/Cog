@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 extern "C" {
-	static unrar_err_t unrar_read_file( void* user_data, void* out, long* count, unrar_pos_t pos )
+	static unrar_err_t unrar_read_file( void* user_data, void* out, int* count, unrar_pos_t pos )
 	{
 		FILE* file = (FILE*) user_data;
 		

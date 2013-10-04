@@ -6,20 +6,20 @@ class RawRead
 private:
 	Array<byte> Data;
 	File *SrcFile;
-	long DataSize;
-	long ReadPos;
+	int DataSize;
+	int ReadPos;
 	friend class Archive;
 public:
 	RawRead(File *SrcFile);
 	void Reset();
-	void Read(long Size);
+	void Read(int Size);
 	void Get(byte &Field);
 	void Get(ushort &Field);
 	void Get(uint &Field);
 	void Get(byte *Field,int Size);
 	uint GetCRC(bool ProcessedOnly);
-	long Size() {return DataSize;}
-    long PaddedSize() {return Data.Size()-DataSize;}
+	int Size() {return DataSize;}
+    int PaddedSize() {return Data.Size()-DataSize;}
 };
 
 #endif
