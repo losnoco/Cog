@@ -16,6 +16,8 @@
 
 #import "Plugin.h"
 
+extern DUMBFILE_SYSTEM	dfs;
+
 @interface DumbDecoder : NSObject <CogDecoder> {
 	DUH *duh;
 	DUH_SIGRENDERER *dsr;

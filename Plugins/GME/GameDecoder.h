@@ -12,6 +12,8 @@
 
 #import "Plugin.h"
 
+extern gme_err_t readCallback( void* data, void* out, long count );
+
 @interface GameDecoder : NSObject <CogDecoder> {
 	Music_Emu* emu;
 	id<CogSource> source;

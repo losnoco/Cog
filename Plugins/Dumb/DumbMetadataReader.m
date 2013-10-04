@@ -25,15 +25,28 @@
 
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
-	if (![url isFileURL])
-		return nil;
+    id audioSourceClass = NSClassFromString(@"AudioSource");
+    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
+    
+    if (![source open:url])
+        return 0;
+    
+    if (![source seekable])
+        return 0;
 
-	dumb_register_stdfiles();
-
+	DUMBFILE * df = dumbfile_open_ex(source, &dfs);
+	if (!df)
+	{
+		NSLog(@"EX Failed");
+		return NO;
+	}
+    
 	DUH *duh;
 	NSString *ext = [[[url path] pathExtension] lowercaseString];
-    duh = dumb_load_any_quick([[url path] UTF8String], [ext isEqualToString:@"mod"] ? 0 : 1, 0);
-
+    duh = dumb_read_any_quick(df, [ext isEqualToString:@"mod"] ? 0 : 1, 0);
+    
+    dumbfile_close(df);
+    
 	if (!duh)
 	{
 		NSLog(@"Failed to create duh");

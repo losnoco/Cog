@@ -12,9 +12,9 @@
 
 int skipCallback(void *f, long n)
 {
-	DumbDecoder *decoder = (DumbDecoder *)f;
+	id source = (id)f;
 	
-	if (![[decoder source] seek:n whence: SEEK_CUR]) 
+	if (![source seek:n whence: SEEK_CUR])
 	{
 		return 1; //Non-zero is error
 	}
@@ -24,11 +24,11 @@ int skipCallback(void *f, long n)
 
 int getCharCallback(void *f)
 {
-	DumbDecoder *decoder = (DumbDecoder *)f;
+	id source = (id)f;
 
 	unsigned char c;
 	
-	if ([[decoder source] read:&c amount:1] < 1)
+	if ([source read:&c amount:1] < 1)
 	{
 		return -1;
 	}
@@ -38,34 +38,34 @@ int getCharCallback(void *f)
 
 long readCallback(char *ptr, long n, void *f)
 {
-	DumbDecoder *decoder = (DumbDecoder *)f;
+	id source = (id)f;
 	
-	return [[decoder source] read:ptr amount:n];
+	return [source read:ptr amount:n];
 }
 
 int seekCallback(void *f, long n)
 {
-    DumbDecoder *decoder = (DumbDecoder *)f;
+    id source = (id)f;
     
-    if (![[decoder source] seekable]) return -1;
+    if (![source seekable]) return -1;
     
-    if ([[decoder source] seek:n whence:SEEK_SET]) return 0;
+    if ([source seek:n whence:SEEK_SET]) return 0;
     else return -1;
 }
 
 long getsizeCallback(void *f)
 {
-    DumbDecoder *decoder = (DumbDecoder *)f;
+    id source = (id)f;
     
-    if (![[decoder source] seekable]) return 0;
+    if (![source seekable]) return 0;
     
-    long current_offset = [[decoder source] tell];
+    long current_offset = [source tell];
     
-    [[decoder source] seek:0 whence:SEEK_END];
+    [source seek:0 whence:SEEK_END];
     
-    long size = [[decoder source] tell];
+    long size = [source tell];
     
-    [[decoder source] seek:current_offset whence:SEEK_SET];
+    [source seek:current_offset whence:SEEK_SET];
     
     return size;
 }
@@ -79,24 +79,25 @@ void oneTimeInit()
     }
 }
 
+DUMBFILE_SYSTEM	dfs = {
+    .open = NULL,
+    .skip = skipCallback,
+    .getc = getCharCallback,
+    .getnc = readCallback,
+    .close = NULL,
+    .seek = seekCallback,
+    .get_size = getsizeCallback
+};
+
 - (BOOL)open:(id<CogSource>)s
 {
 	[self setSource:s];
 	
 	DUMBFILE *df;
-	DUMBFILE_SYSTEM	dfs;
-
-	dfs.open = NULL;
-	dfs.skip = skipCallback;
-	dfs.getc = getCharCallback;
-	dfs.getnc = readCallback;
-	dfs.close = NULL;
-    dfs.seek = seekCallback;
-    dfs.get_size = getsizeCallback;
 
 //	dumb_register_stdfiles();
 
-	df = dumbfile_open_ex(self, &dfs);
+	df = dumbfile_open_ex(s, &dfs);
 	if (!df)
 	{
 		NSLog(@"EX Failed");

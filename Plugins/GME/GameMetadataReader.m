@@ -26,8 +26,14 @@
 
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
-	if (![url isFileURL])
-		return nil;
+    id audioSourceClass = NSClassFromString(@"AudioSource");
+    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
+    
+    if (![source open:url])
+        return 0;
+    
+    if (![source seekable])
+        return 0;
 
 	NSString *ext = [[[url path] pathExtension] lowercaseString];
 	
@@ -46,14 +52,18 @@
 		return NO;
 	}
 	
+	[source seek:0 whence:SEEK_END];
+	long size = [source tell];
+	[source seek:0 whence:SEEK_SET];
+
 	gme_err_t error;
-	error = gme_load_file(emu, [[url path] UTF8String]);
-	if (error) 
+	error = gme_load_custom(emu, readCallback, size, source);
+	if (error)
 	{
 		NSLog(@"ERROR Loding file!");
 		return NO;
 	}
-	
+    
 	int track_num;
 	if ([[url fragment] length] == 0)
 		track_num = 0;

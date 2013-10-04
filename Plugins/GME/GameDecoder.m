@@ -12,9 +12,9 @@
 
 gme_err_t readCallback( void* data, void* out, long count )
 {
-	GameDecoder *decoder = (GameDecoder *)data;
+    id source = (id)data;
 	NSLog(@"Amount: %li", count);
-	int n = [[decoder source] read:out amount:count];
+	int n = [source read:out amount:count];
 	NSLog(@"Read: %i", n);
 	if (n <= 0) {
 		
@@ -58,7 +58,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 	
 	NSLog(@"Size: %li", size);
 	
-	error = gme_load_custom(emu, readCallback, size, self);
+	error = gme_load_custom(emu, readCallback, size, s);
 	if (error) 
 	{
 		NSLog(@"ERROR Loding custom!");
