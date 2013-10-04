@@ -8,8 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		17ADB41A0B979AEB00257CA2 /* FileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB4190B979AEB00257CA2 /* FileSource.m */; };
+		8335FF7017FF767A002D8DD2 /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8335FF6D17FF765A002D8DD2 /* File_Extractor.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8335FF6C17FF765A002D8DD2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8335FF6817FF765A002D8DD2 /* File_Extractor.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8359FF3C17FEF39F0060F3ED;
+			remoteInfo = File_Extractor;
+		};
+		8335FF6E17FF766F002D8DD2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8335FF6817FF765A002D8DD2 /* File_Extractor.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8359FF3B17FEF39F0060F3ED;
+			remoteInfo = File_Extractor;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -19,6 +37,7 @@
 		17ADB4180B979AEB00257CA2 /* FileSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSource.h; sourceTree = "<group>"; };
 		17ADB4190B979AEB00257CA2 /* FileSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSource.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* FileSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSource_Prefix.pch; sourceTree = "<group>"; };
+		8335FF6817FF765A002D8DD2 /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* FileSource.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FileSource.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -29,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8335FF7017FF767A002D8DD2 /* File_Extractor.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -78,6 +98,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8335FF6817FF765A002D8DD2 /* File_Extractor.xcodeproj */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -109,6 +130,14 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		8335FF6917FF765A002D8DD2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8335FF6D17FF765A002D8DD2 /* File_Extractor.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -123,6 +152,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8335FF6F17FF766F002D8DD2 /* PBXTargetDependency */,
 			);
 			name = "FileSource Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
@@ -147,12 +177,28 @@
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* FileSource */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 8335FF6917FF765A002D8DD2 /* Products */;
+					ProjectRef = 8335FF6817FF765A002D8DD2 /* File_Extractor.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8D5B49AC048680CD000E48DA /* FileSource Plugin */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		8335FF6D17FF765A002D8DD2 /* File_Extractor.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = File_Extractor.framework;
+			remoteRef = 8335FF6C17FF765A002D8DD2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D5B49AF048680CD000E48DA /* Resources */ = {
@@ -174,6 +220,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8335FF6F17FF766F002D8DD2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = File_Extractor;
+			targetProxy = 8335FF6E17FF766F002D8DD2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB913B08733D840010E9CD /* Debug */ = {

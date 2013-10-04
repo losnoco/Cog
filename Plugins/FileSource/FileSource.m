@@ -11,9 +11,57 @@
 
 @implementation FileSource
 
++ (void)initialize
+{
+    fex_init();
+}
+
+- (id)init
+{
+    self = [super init];
+    if ( self ) {
+        fex = NULL;
+        _fd = NULL;
+    }
+    return self;
+}
+
 - (BOOL)open:(NSURL *)url
 {
 	[self setURL:url];
+    
+    NSString * path = [url path];
+    
+    fex_type_t type;
+    fex_err_t error = fex_identify_file( &type, [path UTF8String] );
+    
+    if ( !error && type && strcmp( fex_type_name( type ), "file" ) ) {
+        error = fex_open_type( &fex, [path UTF8String], type );
+        if ( !error ) {
+            while ( !fex_done( fex ) ) {
+                NSString * name = [[NSString stringWithUTF8String:fex_name( fex )] lowercaseString];
+                if ( [name hasSuffix:@".diz"] || [name hasSuffix:@".txt"] || [name hasSuffix:@".nfo"] ) {
+                    error = fex_next( fex );
+                    if ( error )
+                        return NO;
+                    continue;
+                }
+                break;
+            }
+            if ( fex_done( fex ) )
+                return NO;
+
+            error = fex_data( fex, &data );
+            if ( error )
+                return NO;
+            
+            size = fex_size( fex );
+            offset = 0;
+            
+            return YES;
+        }
+        else return NO;
+    }
 	
 	_fd = fopen([[url path] UTF8String], "r");
 	
@@ -27,17 +75,43 @@
 
 - (BOOL)seek:(long)position whence:(int)whence
 {
+    if ( fex ) {
+        switch ( whence ) {
+            case SEEK_CUR:
+                position += offset;
+                break;
+                
+            case SEEK_END:
+                position += size;
+                break;
+        }
+
+        offset = position;
+        
+        return (position >= 0) && (position < size);
+    }
+    
 	return (fseek(_fd, position, whence) == 0);
 }
 
 - (long)tell
 {
-	return ftell(_fd);
+    if ( fex ) return offset;
+	else return ftell(_fd);
 }
 
 - (long)read:(void *)buffer amount:(long)amount
 {
-	return fread(buffer, 1, amount, _fd);
+    if ( fex ) {
+        if ( amount + offset > size )
+            amount = size - offset;
+        memcpy( buffer, (const char *)data + offset, amount );
+        offset += amount;
+        return amount;
+    }
+    else {
+        return fread(buffer, 1, amount, _fd);
+    }
 }
 
 - (void)close
@@ -47,6 +121,11 @@
 		fclose(_fd);
 		_fd = NULL;
 	}
+
+    if ( fex ) {
+        fex_close( fex );
+        fex = NULL;
+    }
 }
 
 - (NSURL *)url
