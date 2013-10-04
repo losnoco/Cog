@@ -145,6 +145,7 @@
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
+		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
 		83BCB8DE17FC971300760340 /* WMA.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* WMA.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -409,6 +410,13 @@
 			remoteGlobalIDString = 99B989F40CC7E10400C256E9;
 			remoteInfo = "APL Plugin";
 		};
+		8359FF3017FEF35D0060F3ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8359FF1717FEF35C0060F3ED;
+			remoteInfo = ArchiveSource;
+		};
 		8360EF0417F92B24005208A4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */;
@@ -483,6 +491,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */,
 				83BCB8DE17FC971300760340 /* WMA.bundle in CopyFiles */,
 				8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */,
 				99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */,
@@ -730,6 +739,7 @@
 		56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNumber+CogSort.m"; path = "Spotlight/NSNumber+CogSort.m"; sourceTree = "<group>"; };
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
+		8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArchiveSource.xcodeproj; path = Plugins/ArchiveSource/ArchiveSource.xcodeproj; sourceTree = "<group>"; };
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -1013,6 +1023,7 @@
 				17C8087A0C3BD173005707C4 /* Flac.xcodeproj */,
 				17C808710C3BD167005707C4 /* FileSource.xcodeproj */,
 				17C808660C3BD0F8005707C4 /* CoreAudio.xcodeproj */,
+				8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */,
 			);
 			name = PlugIns;
 			sourceTree = "<group>";
@@ -1337,6 +1348,14 @@
 			name = Categories;
 			sourceTree = "<group>";
 		};
+		8359FF2D17FEF35C0060F3ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8360EF0117F92B23005208A4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1530,6 +1549,10 @@
 				{
 					ProductGroup = 566D32170D538550004466A5 /* Products */;
 					ProjectRef = 566D32160D538550004466A5 /* APL.xcodeproj */;
+				},
+				{
+					ProductGroup = 8359FF2D17FEF35C0060F3ED /* Products */;
+					ProjectRef = 8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */;
 				},
 				{
 					ProductGroup = 17F5612B0C3BD4DC0019975C /* Products */;
@@ -1737,6 +1760,13 @@
 			fileType = wrapper.cfbundle;
 			path = APL.bundle;
 			remoteRef = 566D321A0D538550004466A5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ArchiveSource.bundle;
+			remoteRef = 8359FF3017FEF35D0060F3ED /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8360EF0517F92B24005208A4 /* HighlyComplete.bundle */ = {
