@@ -24,7 +24,7 @@ static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSStri
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"zip", @"rar", @"7z", @"rsn", @"vgm7z", @"gz", @"vgm", @"vgz", nil];
+	return [NSArray arrayWithObjects:@"zip", @"rar", @"7z", @"rsn", @"vgm7z", @"gz", nil];
 }
 
 + (NSArray *)mimeTypes
