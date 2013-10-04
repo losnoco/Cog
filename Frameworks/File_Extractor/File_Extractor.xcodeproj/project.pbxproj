@@ -13,7 +13,6 @@
 		8359000717FEF40E0060F3ED /* 7zBuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7717FEF40E0060F3ED /* 7zBuf.c */; };
 		8359000817FEF40E0060F3ED /* 7zBuf.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF7817FEF40E0060F3ED /* 7zBuf.h */; };
 		8359000917FEF40E0060F3ED /* 7zBuf2.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7917FEF40E0060F3ED /* 7zBuf2.c */; };
-		8359000A17FEF40E0060F3ED /* 7zC.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF7A17FEF40E0060F3ED /* 7zC.txt */; };
 		8359000B17FEF40E0060F3ED /* 7zCrc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7B17FEF40E0060F3ED /* 7zCrc.c */; };
 		8359000C17FEF40E0060F3ED /* 7zCrc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF7C17FEF40E0060F3ED /* 7zCrc.h */; };
 		8359000D17FEF40E0060F3ED /* 7zCrcOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7D17FEF40E0060F3ED /* 7zCrcOpt.c */; };
@@ -35,7 +34,6 @@
 		8359002317FEF40E0060F3ED /* Bra.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF9317FEF40E0060F3ED /* Bra.h */; };
 		8359002417FEF40E0060F3ED /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF9417FEF40E0060F3ED /* Bra86.c */; };
 		8359002517FEF40E0060F3ED /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF9517FEF40E0060F3ED /* BraIA64.c */; };
-		8359002617FEF40E0060F3ED /* changes.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF9617FEF40E0060F3ED /* changes.txt */; };
 		8359002717FEF40E0060F3ED /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF9717FEF40E0060F3ED /* CpuArch.c */; };
 		8359002817FEF40E0060F3ED /* CpuArch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF9817FEF40E0060F3ED /* CpuArch.h */; };
 		8359002917FEF40E0060F3ED /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF9917FEF40E0060F3ED /* Delta.c */; };
@@ -45,7 +43,6 @@
 		8359002D17FEF40E0060F3ED /* LzFindMt.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF9D17FEF40E0060F3ED /* LzFindMt.c */; };
 		8359002E17FEF40E0060F3ED /* LzFindMt.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF9E17FEF40E0060F3ED /* LzFindMt.h */; };
 		8359002F17FEF40E0060F3ED /* LzHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF9F17FEF40E0060F3ED /* LzHash.h */; };
-		8359003017FEF40E0060F3ED /* lzma.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359FFA017FEF40E0060F3ED /* lzma.txt */; };
 		8359003117FEF40E0060F3ED /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFA117FEF40E0060F3ED /* Lzma2Dec.c */; };
 		8359003217FEF40E0060F3ED /* Lzma2Dec.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFA217FEF40E0060F3ED /* Lzma2Dec.h */; };
 		8359003317FEF40E0060F3ED /* Lzma2Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFA317FEF40E0060F3ED /* Lzma2Enc.c */; };
@@ -104,7 +101,6 @@
 		8359006A17FEF40E0060F3ED /* archive.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFDE17FEF40E0060F3ED /* archive.hpp */; };
 		8359006B17FEF40E0060F3ED /* arcread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFDF17FEF40E0060F3ED /* arcread.cpp */; };
 		8359006C17FEF40E0060F3ED /* array.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFE017FEF40E0060F3ED /* array.hpp */; };
-		8359006D17FEF40E0060F3ED /* changes.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359FFE117FEF40E0060F3ED /* changes.txt */; };
 		8359006E17FEF40E0060F3ED /* coder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFE217FEF40E0060F3ED /* coder.cpp */; };
 		8359006F17FEF40E0060F3ED /* coder.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFE317FEF40E0060F3ED /* coder.hpp */; };
 		8359007017FEF40E0060F3ED /* compress.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFE417FEF40E0060F3ED /* compress.hpp */; };
@@ -115,7 +111,6 @@
 		8359007517FEF40E0060F3ED /* getbits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFE917FEF40E0060F3ED /* getbits.cpp */; };
 		8359007617FEF40E0060F3ED /* getbits.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFEA17FEF40E0060F3ED /* getbits.hpp */; };
 		8359007717FEF40E0060F3ED /* headers.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFEB17FEF40E0060F3ED /* headers.hpp */; };
-		8359007817FEF40E0060F3ED /* license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359FFEC17FEF40E0060F3ED /* license.txt */; };
 		8359007917FEF40E0060F3ED /* model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFED17FEF40E0060F3ED /* model.cpp */; };
 		8359007A17FEF40E0060F3ED /* model.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFEE17FEF40E0060F3ED /* model.hpp */; };
 		8359007B17FEF40E0060F3ED /* rar.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFEF17FEF40E0060F3ED /* rar.hpp */; };
@@ -124,10 +119,8 @@
 		8359007E17FEF40E0060F3ED /* rarvmtbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF217FEF40E0060F3ED /* rarvmtbl.cpp */; };
 		8359007F17FEF40E0060F3ED /* rawread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF317FEF40E0060F3ED /* rawread.cpp */; };
 		8359008017FEF40E0060F3ED /* rawread.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFF417FEF40E0060F3ED /* rawread.hpp */; };
-		8359008117FEF40E0060F3ED /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359FFF517FEF40E0060F3ED /* readme.txt */; };
 		8359008217FEF40E0060F3ED /* suballoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF617FEF40E0060F3ED /* suballoc.cpp */; };
 		8359008317FEF40E0060F3ED /* suballoc.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFF717FEF40E0060F3ED /* suballoc.hpp */; };
-		8359008417FEF40E0060F3ED /* technote.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359FFF817FEF40E0060F3ED /* technote.txt */; };
 		8359008517FEF40E0060F3ED /* unicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF917FEF40E0060F3ED /* unicode.cpp */; };
 		8359008617FEF40E0060F3ED /* unicode.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFFA17FEF40E0060F3ED /* unicode.hpp */; };
 		8359008717FEF40E0060F3ED /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFB17FEF40E0060F3ED /* unpack.cpp */; };
@@ -137,8 +130,6 @@
 		8359008B17FEF40E0060F3ED /* unrar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFF17FEF40E0060F3ED /* unrar.cpp */; };
 		8359008C17FEF40E0060F3ED /* unrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359000017FEF40E0060F3ED /* unrar.h */; };
 		8359008D17FEF40E0060F3ED /* unrar_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359000117FEF40E0060F3ED /* unrar_misc.cpp */; };
-		8359008E17FEF40E0060F3ED /* unrar_open.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359000217FEF40E0060F3ED /* unrar_open.cpp */; };
-		8359008F17FEF40E0060F3ED /* whatsnew.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359000317FEF40E0060F3ED /* whatsnew.txt */; };
 		8359009117FEF5830060F3ED /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359009017FEF5830060F3ED /* libz.dylib */; };
 		8359009F17FF073E0060F3ED /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359009E17FF073E0060F3ED /* 7zStream.c */; };
 		8359FF4A17FEF39F0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF4817FEF39F0060F3ED /* InfoPlist.strings */; };
@@ -147,8 +138,6 @@
 /* Begin PBXFileReference section */
 		8359000017FEF40E0060F3ED /* unrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unrar.h; sourceTree = "<group>"; };
 		8359000117FEF40E0060F3ED /* unrar_misc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unrar_misc.cpp; sourceTree = "<group>"; };
-		8359000217FEF40E0060F3ED /* unrar_open.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unrar_open.cpp; sourceTree = "<group>"; };
-		8359000317FEF40E0060F3ED /* whatsnew.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = whatsnew.txt; sourceTree = "<group>"; };
 		8359009017FEF5830060F3ED /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		8359009E17FF073E0060F3ED /* 7zStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zStream.c; sourceTree = "<group>"; };
 		8359FF3C17FEF39F0060F3ED /* File_Extractor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = File_Extractor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,7 +149,6 @@
 		8359FF7717FEF40E0060F3ED /* 7zBuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zBuf.c; sourceTree = "<group>"; };
 		8359FF7817FEF40E0060F3ED /* 7zBuf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7zBuf.h; sourceTree = "<group>"; };
 		8359FF7917FEF40E0060F3ED /* 7zBuf2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zBuf2.c; sourceTree = "<group>"; };
-		8359FF7A17FEF40E0060F3ED /* 7zC.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 7zC.txt; sourceTree = "<group>"; };
 		8359FF7B17FEF40E0060F3ED /* 7zCrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zCrc.c; sourceTree = "<group>"; };
 		8359FF7C17FEF40E0060F3ED /* 7zCrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7zCrc.h; sourceTree = "<group>"; };
 		8359FF7D17FEF40E0060F3ED /* 7zCrcOpt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zCrcOpt.c; sourceTree = "<group>"; };
@@ -182,7 +170,6 @@
 		8359FF9317FEF40E0060F3ED /* Bra.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bra.h; sourceTree = "<group>"; };
 		8359FF9417FEF40E0060F3ED /* Bra86.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Bra86.c; sourceTree = "<group>"; };
 		8359FF9517FEF40E0060F3ED /* BraIA64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BraIA64.c; sourceTree = "<group>"; };
-		8359FF9617FEF40E0060F3ED /* changes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changes.txt; sourceTree = "<group>"; };
 		8359FF9717FEF40E0060F3ED /* CpuArch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CpuArch.c; sourceTree = "<group>"; };
 		8359FF9817FEF40E0060F3ED /* CpuArch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CpuArch.h; sourceTree = "<group>"; };
 		8359FF9917FEF40E0060F3ED /* Delta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Delta.c; sourceTree = "<group>"; };
@@ -192,7 +179,6 @@
 		8359FF9D17FEF40E0060F3ED /* LzFindMt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LzFindMt.c; sourceTree = "<group>"; };
 		8359FF9E17FEF40E0060F3ED /* LzFindMt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzFindMt.h; sourceTree = "<group>"; };
 		8359FF9F17FEF40E0060F3ED /* LzHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzHash.h; sourceTree = "<group>"; };
-		8359FFA017FEF40E0060F3ED /* lzma.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lzma.txt; sourceTree = "<group>"; };
 		8359FFA117FEF40E0060F3ED /* Lzma2Dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Lzma2Dec.c; sourceTree = "<group>"; };
 		8359FFA217FEF40E0060F3ED /* Lzma2Dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lzma2Dec.h; sourceTree = "<group>"; };
 		8359FFA317FEF40E0060F3ED /* Lzma2Enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Lzma2Enc.c; sourceTree = "<group>"; };
@@ -251,7 +237,6 @@
 		8359FFDE17FEF40E0060F3ED /* archive.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = archive.hpp; sourceTree = "<group>"; };
 		8359FFDF17FEF40E0060F3ED /* arcread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = arcread.cpp; sourceTree = "<group>"; };
 		8359FFE017FEF40E0060F3ED /* array.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = array.hpp; sourceTree = "<group>"; };
-		8359FFE117FEF40E0060F3ED /* changes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changes.txt; sourceTree = "<group>"; };
 		8359FFE217FEF40E0060F3ED /* coder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = coder.cpp; sourceTree = "<group>"; };
 		8359FFE317FEF40E0060F3ED /* coder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = coder.hpp; sourceTree = "<group>"; };
 		8359FFE417FEF40E0060F3ED /* compress.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = compress.hpp; sourceTree = "<group>"; };
@@ -262,7 +247,6 @@
 		8359FFE917FEF40E0060F3ED /* getbits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = getbits.cpp; sourceTree = "<group>"; };
 		8359FFEA17FEF40E0060F3ED /* getbits.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = getbits.hpp; sourceTree = "<group>"; };
 		8359FFEB17FEF40E0060F3ED /* headers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = headers.hpp; sourceTree = "<group>"; };
-		8359FFEC17FEF40E0060F3ED /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
 		8359FFED17FEF40E0060F3ED /* model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = model.cpp; sourceTree = "<group>"; };
 		8359FFEE17FEF40E0060F3ED /* model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = model.hpp; sourceTree = "<group>"; };
 		8359FFEF17FEF40E0060F3ED /* rar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rar.hpp; sourceTree = "<group>"; };
@@ -271,10 +255,8 @@
 		8359FFF217FEF40E0060F3ED /* rarvmtbl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rarvmtbl.cpp; sourceTree = "<group>"; };
 		8359FFF317FEF40E0060F3ED /* rawread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rawread.cpp; sourceTree = "<group>"; };
 		8359FFF417FEF40E0060F3ED /* rawread.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rawread.hpp; sourceTree = "<group>"; };
-		8359FFF517FEF40E0060F3ED /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		8359FFF617FEF40E0060F3ED /* suballoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = suballoc.cpp; sourceTree = "<group>"; };
 		8359FFF717FEF40E0060F3ED /* suballoc.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = suballoc.hpp; sourceTree = "<group>"; };
-		8359FFF817FEF40E0060F3ED /* technote.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = technote.txt; sourceTree = "<group>"; };
 		8359FFF917FEF40E0060F3ED /* unicode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode.cpp; sourceTree = "<group>"; };
 		8359FFFA17FEF40E0060F3ED /* unicode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unicode.hpp; sourceTree = "<group>"; };
 		8359FFFB17FEF40E0060F3ED /* unpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack.cpp; sourceTree = "<group>"; };
@@ -359,7 +341,6 @@
 				8359FF7717FEF40E0060F3ED /* 7zBuf.c */,
 				8359FF7817FEF40E0060F3ED /* 7zBuf.h */,
 				8359FF7917FEF40E0060F3ED /* 7zBuf2.c */,
-				8359FF7A17FEF40E0060F3ED /* 7zC.txt */,
 				8359FF7B17FEF40E0060F3ED /* 7zCrc.c */,
 				8359FF7C17FEF40E0060F3ED /* 7zCrc.h */,
 				8359FF7D17FEF40E0060F3ED /* 7zCrcOpt.c */,
@@ -381,7 +362,6 @@
 				8359FF9317FEF40E0060F3ED /* Bra.h */,
 				8359FF9417FEF40E0060F3ED /* Bra86.c */,
 				8359FF9517FEF40E0060F3ED /* BraIA64.c */,
-				8359FF9617FEF40E0060F3ED /* changes.txt */,
 				8359FF9717FEF40E0060F3ED /* CpuArch.c */,
 				8359FF9817FEF40E0060F3ED /* CpuArch.h */,
 				8359FF9917FEF40E0060F3ED /* Delta.c */,
@@ -391,7 +371,6 @@
 				8359FF9D17FEF40E0060F3ED /* LzFindMt.c */,
 				8359FF9E17FEF40E0060F3ED /* LzFindMt.h */,
 				8359FF9F17FEF40E0060F3ED /* LzHash.h */,
-				8359FFA017FEF40E0060F3ED /* lzma.txt */,
 				8359FFA117FEF40E0060F3ED /* Lzma2Dec.c */,
 				8359FFA217FEF40E0060F3ED /* Lzma2Dec.h */,
 				8359FFA317FEF40E0060F3ED /* Lzma2Enc.c */,
@@ -472,7 +451,6 @@
 				8359FFDE17FEF40E0060F3ED /* archive.hpp */,
 				8359FFDF17FEF40E0060F3ED /* arcread.cpp */,
 				8359FFE017FEF40E0060F3ED /* array.hpp */,
-				8359FFE117FEF40E0060F3ED /* changes.txt */,
 				8359FFE217FEF40E0060F3ED /* coder.cpp */,
 				8359FFE317FEF40E0060F3ED /* coder.hpp */,
 				8359FFE417FEF40E0060F3ED /* compress.hpp */,
@@ -483,7 +461,6 @@
 				8359FFE917FEF40E0060F3ED /* getbits.cpp */,
 				8359FFEA17FEF40E0060F3ED /* getbits.hpp */,
 				8359FFEB17FEF40E0060F3ED /* headers.hpp */,
-				8359FFEC17FEF40E0060F3ED /* license.txt */,
 				8359FFED17FEF40E0060F3ED /* model.cpp */,
 				8359FFEE17FEF40E0060F3ED /* model.hpp */,
 				8359FFEF17FEF40E0060F3ED /* rar.hpp */,
@@ -492,10 +469,8 @@
 				8359FFF217FEF40E0060F3ED /* rarvmtbl.cpp */,
 				8359FFF317FEF40E0060F3ED /* rawread.cpp */,
 				8359FFF417FEF40E0060F3ED /* rawread.hpp */,
-				8359FFF517FEF40E0060F3ED /* readme.txt */,
 				8359FFF617FEF40E0060F3ED /* suballoc.cpp */,
 				8359FFF717FEF40E0060F3ED /* suballoc.hpp */,
-				8359FFF817FEF40E0060F3ED /* technote.txt */,
 				8359FFF917FEF40E0060F3ED /* unicode.cpp */,
 				8359FFFA17FEF40E0060F3ED /* unicode.hpp */,
 				8359FFFB17FEF40E0060F3ED /* unpack.cpp */,
@@ -505,8 +480,6 @@
 				8359FFFF17FEF40E0060F3ED /* unrar.cpp */,
 				8359000017FEF40E0060F3ED /* unrar.h */,
 				8359000117FEF40E0060F3ED /* unrar_misc.cpp */,
-				8359000217FEF40E0060F3ED /* unrar_open.cpp */,
-				8359000317FEF40E0060F3ED /* whatsnew.txt */,
 			);
 			path = unrar;
 			sourceTree = "<group>";
@@ -637,16 +610,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8359006D17FEF40E0060F3ED /* changes.txt in Resources */,
 				8359004817FEF40E0060F3ED /* readme.txt in Resources */,
-				8359002617FEF40E0060F3ED /* changes.txt in Resources */,
-				8359007817FEF40E0060F3ED /* license.txt in Resources */,
 				8359FF4A17FEF39F0060F3ED /* InfoPlist.strings in Resources */,
-				8359008417FEF40E0060F3ED /* technote.txt in Resources */,
-				8359003017FEF40E0060F3ED /* lzma.txt in Resources */,
-				8359008F17FEF40E0060F3ED /* whatsnew.txt in Resources */,
-				8359008117FEF40E0060F3ED /* readme.txt in Resources */,
-				8359000A17FEF40E0060F3ED /* 7zC.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,7 +663,6 @@
 				8359003317FEF40E0060F3ED /* Lzma2Enc.c in Sources */,
 				8359008217FEF40E0060F3ED /* suballoc.cpp in Sources */,
 				8359003617FEF40E0060F3ED /* Lzma86Dec.c in Sources */,
-				8359008E17FEF40E0060F3ED /* unrar_open.cpp in Sources */,
 				8359002217FEF40E0060F3ED /* Bra.c in Sources */,
 				8359000517FEF40E0060F3ED /* 7zAlloc.c in Sources */,
 				8359007517FEF40E0060F3ED /* getbits.cpp in Sources */,
@@ -863,6 +827,7 @@
 				8359FF6617FEF39F0060F3ED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

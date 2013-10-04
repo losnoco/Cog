@@ -49,12 +49,12 @@
 		17C8F6680CBEE797008D969D /* readxm.c in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F63B0CBEE797008D969D /* readxm.c */; };
 		17C8F6690CBEE797008D969D /* readxm2.c in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F63C0CBEE797008D969D /* readxm2.c */; };
 		17C8F66A0CBEE797008D969D /* xmeffect.c in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F63D0CBEE797008D969D /* xmeffect.c */; };
-		8370B62617F60FE2001A4D7A /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B61E17F60FE2001A4D7A /* barray.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8370B62617F60FE2001A4D7A /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B61E17F60FE2001A4D7A /* barray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8370B62817F60FE2001A4D7A /* dumbfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B62017F60FE2001A4D7A /* dumbfile.h */; };
 		8370B62A17F60FE2001A4D7A /* lpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B62217F60FE2001A4D7A /* lpc.h */; };
 		8370B62B17F60FE2001A4D7A /* riff.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B62317F60FE2001A4D7A /* riff.h */; };
 		8370B62C17F60FE2001A4D7A /* stack_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B62417F60FE2001A4D7A /* stack_alloc.h */; };
-		8370B62D17F60FE2001A4D7A /* tarray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B62517F60FE2001A4D7A /* tarray.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8370B62D17F60FE2001A4D7A /* tarray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B62517F60FE2001A4D7A /* tarray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8370B63417F61001001A4D7A /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B62E17F61001001A4D7A /* barray.c */; };
 		8370B63517F61001001A4D7A /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B62F17F61001001A4D7A /* blip_buf.c */; };
 		8370B63617F61001001A4D7A /* lanczos_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B63017F61001001A4D7A /* lanczos_resampler.c */; };
@@ -449,10 +449,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17C8F63E0CBEE797008D969D /* dumb.h in Headers */,
-				17C8F6400CBEE797008D969D /* it.h in Headers */,
 				8370B62D17F60FE2001A4D7A /* tarray.h in Headers */,
 				8370B62617F60FE2001A4D7A /* barray.h in Headers */,
+				17C8F63E0CBEE797008D969D /* dumb.h in Headers */,
+				17C8F6400CBEE797008D969D /* it.h in Headers */,
 				8370B7EA17F62A40001A4D7A /* lanczos_resampler.h in Headers */,
 				8370B7E917F62A40001A4D7A /* blip_buf.h in Headers */,
 				17C8F63F0CBEE797008D969D /* dumb.h in Headers */,
