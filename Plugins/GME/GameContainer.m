@@ -27,12 +27,26 @@
 //This really should be source...
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
-	if (![url isFileURL]) {
-		return nil;
-	}
+    id audioSourceClass = NSClassFromString(@"AudioSource");
+    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
+    
+    if (![source open:url])
+        return 0;
+    
+    if (![source seekable])
+        return 0;
 	
+    [source seek:0 whence:SEEK_END];
+    long size = [source tell];
+    [source seek:0 whence:SEEK_SET];
+    
+    void * data = malloc(size);
+    [source read:data amount:size];
+    
 	Music_Emu *emu;
-	gme_err_t error = gme_open_file([[url path] UTF8String], &emu, 44100);
+	gme_err_t error = gme_open_data(data, size, &emu, 44100);
+    free(data);
+    
 	if (NULL != error) {
 		NSLog(@"GME: Error loading file: %@ %s", [url path], error);
 		return [NSArray arrayWithObject:url];
