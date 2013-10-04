@@ -599,8 +599,10 @@ blargg_err_t Std_File_Reader::open( const char path [] )
 
 void Std_File_Reader::make_unbuffered()
 {
+    long offset = ftell( STATIC_CAST(FILE*, file_) );
 	if ( setvbuf( STATIC_CAST(FILE*, file_), NULL, _IONBF, 0 ) )
 		check( false ); // shouldn't fail, but OK if it does
+    fseek( STATIC_CAST(FILE*, file_), offset, SEEK_SET );
 }
 
 blargg_err_t Std_File_Reader::read_v( void* p, int s )
