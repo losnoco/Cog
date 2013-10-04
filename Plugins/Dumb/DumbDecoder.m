@@ -104,8 +104,25 @@ DUMBFILE_SYSTEM	dfs = {
 		return NO;
 	}
 
+    int subsong = 0;
+    int startOrder = 0;
+    
+    NSURL * url = [s url];
+	int track_num;
+	if ([[url fragment] length] == 0)
+		track_num = 0;
+	else
+		track_num = [[url fragment] intValue];
+
+    if ( dumb_get_psm_subsong_count( df ) )
+        subsong = track_num;
+    else
+        startOrder = track_num;
+    
+    dumbfile_seek( df, 0, SEEK_SET );
+	
 	NSString *ext = [[[[s url] path] pathExtension] lowercaseString];
-    duh = dumb_read_any(df, [ext isEqualToString:@"mod"] ? 0 : 1, 0);
+    duh = dumb_read_any(df, [ext isEqualToString:@"mod"] ? 0 : 1, subsong);
 	if (!duh)
 	{
 		NSLog(@"Failed to create duh");
@@ -114,10 +131,9 @@ DUMBFILE_SYSTEM	dfs = {
 	}
     dumbfile_close(df);
 	
-	length = duh_get_length(duh);
-
+	length = dumb_it_build_checkpoints( duh_get_it_sigdata( duh ), startOrder );
 	
-	dsr = duh_start_sigrenderer(duh, 0, 2 /* stereo */, 0 /* start from the beginning */);
+	dsr = duh_start_sigrenderer(duh, 0, 2 /* stereo */, startOrder);
 	if (!dsr) 
 	{
 		NSLog(@"Failed to create dsr");
@@ -213,7 +229,7 @@ DUMBFILE_SYSTEM	dfs = {
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"it", @"xm", @"s3m", @"mod", @"stm", @"ptm", @"mtm", @"669", @"psm", @"am", @"dsm", @"amf", @"okt", @"okta", nil];
+	return [NSArray arrayWithObjects:@"it", @"itz", @"xm", @"xmz", @"s3m", @"s3z", @"mod", @"mdz", @"stm", @"stz", @"ptm", @"mtm", @"669", @"psm", @"am", @"dsm", @"amf", @"okt", @"okta", nil];
 }
 
 + (NSArray *)mimeTypes 
