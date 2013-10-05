@@ -71,7 +71,7 @@
 		830F0C1917FC523000042E8F /* rdt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0C1517FC523000042E8F /* rdt.h */; };
 		830F0C1A17FC523000042E8F /* rtp.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0C1617FC523000042E8F /* rtp.h */; };
 		830F0C1B17FC523000042E8F /* url.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0C1717FC523000042E8F /* url.c */; };
-		830F0C1C17FC523000042E8F /* url.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0C1817FC523000042E8F /* url.h */; };
+		830F0C1C17FC523000042E8F /* url.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0C1817FC523000042E8F /* url.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		830F0C2217FC527400042E8F /* atomic_gcc.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0C1D17FC527400042E8F /* atomic_gcc.h */; };
 		830F0C2317FC527400042E8F /* atomic.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0C1E17FC527400042E8F /* atomic.c */; };
 		830F0C2417FC527400042E8F /* atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0C1F17FC527400042E8F /* atomic.h */; };
@@ -201,7 +201,7 @@
 		830F0D3117FC841B00042E8F /* imgutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0D2917FC841B00042E8F /* imgutils.h */; };
 		830F0D3217FC841B00042E8F /* intfloat_readwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0D2A17FC841B00042E8F /* intfloat_readwrite.c */; };
 		830F0D3317FC841B00042E8F /* opt.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0D2B17FC841B00042E8F /* opt.c */; };
-		830F0D3417FC841B00042E8F /* opt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0D2C17FC841B00042E8F /* opt.h */; };
+		830F0D3417FC841B00042E8F /* opt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0D2C17FC841B00042E8F /* opt.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		830F0D3517FC841B00042E8F /* samplefmt.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0D2D17FC841B00042E8F /* samplefmt.c */; };
 		830F0D3817FC844E00042E8F /* parseutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0D3617FC844E00042E8F /* parseutils.c */; };
 		830F0D3917FC844E00042E8F /* parseutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0D3717FC844E00042E8F /* parseutils.h */; };
@@ -979,6 +979,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				830F0D3417FC841B00042E8F /* opt.h in Headers */,
+				830F0C1C17FC523000042E8F /* url.h in Headers */,
 				83BCB8E217FCA64400760340 /* avconfig.h in Headers */,
 				830F0BDC17FC4FB900042E8F /* old_codec_ids.h in Headers */,
 				830F0C0B17FC4FB900042E8F /* pixfmt.h in Headers */,
@@ -1064,7 +1066,6 @@
 				830F0DCA17FC931700042E8F /* pcm.h in Headers */,
 				830F0CCC17FC7F1E00042E8F /* celp_filters.h in Headers */,
 				830F0D5117FC880E00042E8F /* time_.h in Headers */,
-				830F0C1C17FC523000042E8F /* url.h in Headers */,
 				830F0BD717FC4FB900042E8F /* get_bits.h in Headers */,
 				830F0C2417FC527400042E8F /* atomic.h in Headers */,
 				830F0C5D17FC7CEA00042E8F /* id3v1.h in Headers */,
@@ -1091,7 +1092,6 @@
 				830F0D4117FC848D00042E8F /* sha.h in Headers */,
 				830F0CEE17FC7F1E00042E8F /* mpeg12data.h in Headers */,
 				830F0CE817FC7F1E00042E8F /* hpeldsp.h in Headers */,
-				830F0D3417FC841B00042E8F /* opt.h in Headers */,
 				830F0D8B17FC8E8B00042E8F /* aacpsdsp.h in Headers */,
 				830F0CD617FC7F1E00042E8F /* dctref.h in Headers */,
 				830F0C1917FC523000042E8F /* rdt.h in Headers */,

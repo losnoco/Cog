@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		834225D317FFBD2200DD3E2F /* WMAFileProtocols.m in Sources */ = {isa = PBXBuildFile; fileRef = 834225D217FFBD2200DD3E2F /* WMAFileProtocols.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		B09E942F0D747F410064F138 /* WMADecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = B09E942E0D747F410064F138 /* WMADecoder.m */; };
 		B09E95560D749A780064F138 /* WMA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B09E95080D748F9B0064F138 /* WMA.framework */; };
@@ -50,6 +51,8 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		32DBCF630370AF2F00C91783 /* WMA_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMA_Prefix.pch; sourceTree = "<group>"; };
+		834225D117FFBD2200DD3E2F /* WMAFileProtocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMAFileProtocols.h; sourceTree = "<group>"; };
+		834225D217FFBD2200DD3E2F /* WMAFileProtocols.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMAFileProtocols.m; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* WMA.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WMA.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B09E942D0D747F410064F138 /* WMADecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMADecoder.h; sourceTree = "<group>"; };
@@ -106,6 +109,8 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				834225D117FFBD2200DD3E2F /* WMAFileProtocols.h */,
+				834225D217FFBD2200DD3E2F /* WMAFileProtocols.m */,
 				B09E94370D747FAD0064F138 /* Plugin.h */,
 				B09E942D0D747F410064F138 /* WMADecoder.h */,
 				B09E942E0D747F410064F138 /* WMADecoder.m */,
@@ -235,6 +240,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B09E942F0D747F410064F138 /* WMADecoder.m in Sources */,
+				834225D317FFBD2200DD3E2F /* WMAFileProtocols.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

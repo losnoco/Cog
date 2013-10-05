@@ -26,10 +26,15 @@
 #define AVFORMAT_URL_H
 
 #include "avio.h"
+#ifdef __FRAMEWORK__
+#include "dict.h"
+#include "log.h"
+#else
 #include "libavformat/version.h"
 
 #include "libavutil/dict.h"
 #include "libavutil/log.h"
+#endif
 
 #define URL_PROTOCOL_FLAG_NESTED_SCHEME 1 /*< The protocol name can be the first part of a nested protocol scheme */
 #define URL_PROTOCOL_FLAG_NETWORK       2 /*< The protocol uses network */

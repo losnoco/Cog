@@ -8,6 +8,7 @@
 
 // test
 #import "WMADecoder.h"
+#import "WMAFileProtocols.h"
 
 #include <pthread.h>
 
@@ -45,6 +46,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 + (void)initialize
 {
     av_register_all();
+    registerCogProtocols();
     av_lockmgr_register(lockmgr_callback);
 }
 
@@ -54,7 +56,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 	
 	int err, i;
-	const char *filename = [[[source url] path] UTF8String];
+	const char *filename = [[[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String];
 	
 	ic = NULL;
 	numFrames = 0;
