@@ -39,6 +39,7 @@
 #include "mpcfile.h"
 #include "wavpackfile.h"
 #include "speexfile.h"
+#include "opusfile.h"
 #include "trueaudiofile.h"
 #include "mp4file.h"
 #include "apefile.h"
@@ -136,6 +137,7 @@ StringList FileRef::defaultFileExtensions()
   l.append("wma");
   l.append("asf");
   l.append("ape");
+  l.append("opus");
 
   return l;
 }
@@ -207,8 +209,14 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
       if (file->isValid())
         return file;
       delete file;
+      file = new Ogg::Opus::File(fileName, readAudioProperties, audioPropertiesStyle);
+      if (file->isValid())
+        return file;
+      delete file;
       return new Ogg::Vorbis::File(fileName, readAudioProperties, audioPropertiesStyle);
     }
+    if (ext == "OPUS")
+      return new Ogg::Opus::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "FLAC")
       return new FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "MPC")

@@ -174,7 +174,7 @@
 + (NSArray *)fileTypes
 {
 	//May be a way to get a list of supported formats
-	return [NSArray arrayWithObjects:@"ape", @"asf", @"wma", @"ogg", @"mpc", @"flac", @"m4a", @"mp3", nil];
+	return [NSArray arrayWithObjects:@"ape", @"asf", @"wma", @"ogg", @"opus", @"mpc", @"flac", @"m4a", @"mp3", nil];
 }
 
 + (NSArray *)mimeTypes

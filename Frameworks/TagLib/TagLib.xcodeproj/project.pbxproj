@@ -211,6 +211,10 @@
 		83BE027917FD716F00973169 /* asfproperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BE027117FD716F00973169 /* asfproperties.h */; };
 		83BE027A17FD716F00973169 /* asftag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BE027217FD716F00973169 /* asftag.cpp */; };
 		83BE027B17FD716F00973169 /* asftag.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BE027317FD716F00973169 /* asftag.h */; };
+		83BF7DDF1800015A0087D48B /* opusfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BF7DDB1800015A0087D48B /* opusfile.cpp */; };
+		83BF7DE01800015A0087D48B /* opusfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BF7DDC1800015A0087D48B /* opusfile.h */; };
+		83BF7DE11800015A0087D48B /* opusproperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BF7DDD1800015A0087D48B /* opusproperties.cpp */; };
+		83BF7DE21800015A0087D48B /* opusproperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BF7DDE1800015A0087D48B /* opusproperties.h */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -420,6 +424,10 @@
 		83BE027117FD716F00973169 /* asfproperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asfproperties.h; sourceTree = "<group>"; };
 		83BE027217FD716F00973169 /* asftag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = asftag.cpp; sourceTree = "<group>"; };
 		83BE027317FD716F00973169 /* asftag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asftag.h; sourceTree = "<group>"; };
+		83BF7DDB1800015A0087D48B /* opusfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opusfile.cpp; sourceTree = "<group>"; };
+		83BF7DDC1800015A0087D48B /* opusfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opusfile.h; sourceTree = "<group>"; };
+		83BF7DDD1800015A0087D48B /* opusproperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opusproperties.cpp; sourceTree = "<group>"; };
+		83BF7DDE1800015A0087D48B /* opusproperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opusproperties.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* TagLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TagLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -638,6 +646,7 @@
 		174C797F0F4FD40B00E18B0F /* ogg */ = {
 			isa = PBXGroup;
 			children = (
+				83BF7DDA1800015A0087D48B /* opus */,
 				174C79800F4FD40B00E18B0F /* flac */,
 				174C79830F4FD40B00E18B0F /* oggfile.cpp */,
 				174C79840F4FD40B00E18B0F /* oggfile.h */,
@@ -826,6 +835,17 @@
 			path = asf;
 			sourceTree = "<group>";
 		};
+		83BF7DDA1800015A0087D48B /* opus */ = {
+			isa = PBXGroup;
+			children = (
+				83BF7DDB1800015A0087D48B /* opusfile.cpp */,
+				83BF7DDC1800015A0087D48B /* opusfile.h */,
+				83BF7DDD1800015A0087D48B /* opusproperties.cpp */,
+				83BF7DDE1800015A0087D48B /* opusproperties.h */,
+			);
+			path = opus;
+			sourceTree = "<group>";
+		};
 		8E75700C09F318D70080F1EE /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -879,6 +899,7 @@
 				174C79FE0F4FD40B00E18B0F /* oggflacfile.h in Headers */,
 				174C7A000F4FD40B00E18B0F /* oggfile.h in Headers */,
 				83BE026A17FD6CF300973169 /* apeproperties.h in Headers */,
+				83BF7DE01800015A0087D48B /* opusfile.h in Headers */,
 				174C7A020F4FD40B00E18B0F /* oggpage.h in Headers */,
 				174C7A040F4FD40B00E18B0F /* oggpageheader.h in Headers */,
 				174C7A060F4FD40B00E18B0F /* speexfile.h in Headers */,
@@ -907,6 +928,7 @@
 				174C7A2F0F4FD40B00E18B0F /* wavpackproperties.h in Headers */,
 				17F767190F4FE2B2008498A7 /* tlist.tcc in Headers */,
 				17F7671A0F4FE2B2008498A7 /* tmap.tcc in Headers */,
+				83BF7DE21800015A0087D48B /* opusproperties.h in Headers */,
 				176608000F50A49000FD5752 /* boxfactory.h in Headers */,
 				176608020F50A49000FD5752 /* itunesalbbox.h in Headers */,
 				176608040F50A49000FD5752 /* itunesartbox.h in Headers */,
@@ -1020,6 +1042,7 @@
 				174C79BD0F4FD40B00E18B0F /* apeitem.cpp in Sources */,
 				174C79BF0F4FD40B00E18B0F /* apetag.cpp in Sources */,
 				174C79C10F4FD40B00E18B0F /* audioproperties.cpp in Sources */,
+				83BF7DDF1800015A0087D48B /* opusfile.cpp in Sources */,
 				174C79C30F4FD40B00E18B0F /* fileref.cpp in Sources */,
 				174C79C50F4FD40B00E18B0F /* flacfile.cpp in Sources */,
 				174C79C70F4FD40B00E18B0F /* flacproperties.cpp in Sources */,
@@ -1101,6 +1124,7 @@
 				1766082F0F50A49000FD5752 /* mp4metabox.cpp in Sources */,
 				176608310F50A49000FD5752 /* mp4minfbox.cpp in Sources */,
 				176608330F50A49000FD5752 /* mp4moovbox.cpp in Sources */,
+				83BF7DE11800015A0087D48B /* opusproperties.cpp in Sources */,
 				176608350F50A49000FD5752 /* mp4mvhdbox.cpp in Sources */,
 				83BE027417FD716F00973169 /* asfattribute.cpp in Sources */,
 				176608370F50A49000FD5752 /* mp4propsproxy.cpp in Sources */,
