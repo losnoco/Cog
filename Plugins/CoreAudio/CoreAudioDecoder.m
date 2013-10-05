@@ -84,10 +84,12 @@
 	bitsPerSample		= asbd.mBitsPerChannel;
 	channels			= asbd.mChannelsPerFrame;
 	frequency			= asbd.mSampleRate;
-	
+	floatingPoint       = NO;
+    
 	// mBitsPerChannel will only be set for lpcm formats
 	if(0 == bitsPerSample) {
-		bitsPerSample = 16;
+		bitsPerSample = 32;
+        floatingPoint = YES;
 	}
 	
 	// Set output format
@@ -96,7 +98,12 @@
 	bzero(&result, sizeof(AudioStreamBasicDescription));
 	
 	result.mFormatID			= kAudioFormatLinearPCM;
-	result.mFormatFlags			= kAudioFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsBigEndian;
+    if (floatingPoint) {
+        result.mFormatFlags     = kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked;
+    }
+    else {
+        result.mFormatFlags		= kAudioFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsBigEndian;
+    }
 	
 	result.mSampleRate			= frequency;
 	result.mChannelsPerFrame	= channels;
@@ -177,11 +184,12 @@
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:channels],@"channels",
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
+        [NSNumber numberWithBool:floatingPoint],@"floatingPoint",
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithLong:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:YES], @"seekable",
-		@"big", @"endian",
+        floatingPoint ? @"host" : @"big", @"endian",
 		nil];
 }
 

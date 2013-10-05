@@ -31,6 +31,7 @@
 
 	int bitrate;
 	int bitsPerSample;
+    BOOL floatingPoint;
 	int channels;
 	float frequency;
 	long totalFrames;

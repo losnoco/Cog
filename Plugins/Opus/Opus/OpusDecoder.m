@@ -6,6 +6,8 @@
 //  Copyright 2013 __NoWork, Inc__. All rights reserved.
 //
 
+#import "Plugin.h"
+
 #import "OpusDecoder.h"
 
 
@@ -97,14 +99,14 @@ opus_int64 sourceTell(void *_stream)
 		[self didChangeValueForKey:@"properties"];
 	}
 	
-    int size = frames * sizeof(int16_t);
+    int size = frames * channels;
     
     do {
 		lastSection = currentSection;
-        numread = op_read_stereo( opusRef, &((int16_t *)buf)[total], size - total);
+        numread = op_read_float_stereo( opusRef, &((float *)buf)[total], size - total);
         currentSection = op_current_link( opusRef );
 		if (numread > 0) {
-			total += numread * sizeof(int16_t);
+			total += numread * channels;
 		}
 	
 		if (currentSection != lastSection) {
@@ -113,7 +115,7 @@ opus_int64 sourceTell(void *_stream)
 		
     } while (total != frames && numread != 0);
 
-    return total/sizeof(int16_t);
+    return total/channels;
 }
 
 - (void)close
@@ -136,11 +138,13 @@ opus_int64 sourceTell(void *_stream)
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:channels], @"channels",
-		[NSNumber numberWithInt:16], @"bitsPerSample",
+		[NSNumber numberWithInt:32], @"bitsPerSample",
+        [NSNumber numberWithBool:YES], @"floatingPoint",
 		[NSNumber numberWithFloat:48000], @"sampleRate",
 		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 		[NSNumber numberWithInt:bitrate], @"bitrate",
 		[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
+        @"host", @"endian",
 		nil];
 }
 

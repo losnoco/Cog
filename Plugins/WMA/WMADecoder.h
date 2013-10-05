@@ -28,6 +28,7 @@
 	AVCodec *codec;
 	
 	BOOL seekable;
+    BOOL floatingPoint;
 	int bitsPerSample;
 	int bitrate;
 	int channels;

@@ -47,6 +47,8 @@ AudioStreamBasicDescription propertiesToASBD(NSDictionary *properties)
 	asbd.mFramesPerPacket = 1;
 	asbd.mBytesPerPacket = asbd.mBytesPerFrame * asbd.mFramesPerPacket;
 	asbd.mReserved = 0;
+    
+    BOOL isFloat = [[properties objectForKey:@"floatingPoint"] boolValue];
 	
 	if ([[properties objectForKey:@"endian"] isEqualToString:@"big"] || ([[properties objectForKey:@"endian"] isEqualToString:@"host"] && hostIsBigEndian() ))
 	{
@@ -54,9 +56,13 @@ AudioStreamBasicDescription propertiesToASBD(NSDictionary *properties)
 		asbd.mFormatFlags |= kLinearPCMFormatFlagIsAlignedHigh;
 	}
 	
-	if ([[properties objectForKey:@"unsigned"] boolValue] == NO) {
+	if (isFloat == NO && [[properties objectForKey:@"unsigned"] boolValue] == NO) {
 		asbd.mFormatFlags |= kLinearPCMFormatFlagIsSignedInteger;
 	}
+    
+    if (isFloat) {
+        asbd.mFormatFlags |= kLinearPCMFormatFlagIsFloat | kAudioFormatFlagIsPacked;
+    }
 	
 	return asbd;
 }

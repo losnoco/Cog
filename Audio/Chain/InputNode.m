@@ -54,6 +54,8 @@ static BOOL hostIsBigEndian()
         swapEndian = NO;
     }
     
+    floatingPoint = [[properties objectForKey:@"floatingPoint"] boolValue];
+    
     [self refreshVolumeScaling];
 	
 	shouldContinue = YES;
@@ -186,6 +188,34 @@ static int32_t swap_32(uint32_t input)
     return (input >> 24) | ((input >> 8) & 0xff00) | ((input << 8) & 0xff0000) | (input << 24);
 }
 
+static float swap_32f(float input)
+{
+    union {
+        float f;
+        int32_t i;
+    } val;
+    val.f = input;
+    val.i = swap_32(val.i);
+    return val.f;
+}
+
+static int64_t swap_64(uint64_t input)
+{
+    return (input >> 56) | ((input >> 40) & 0xff00) | ((input >> 24) & 0xff0000) | ((input >> 8) & 0xff000000) |
+    ((input << 8) & 0xff00000000) | ((input << 24) & 0xff0000000000) | ((input << 40) & 0xff000000000000) | (input << 56);
+}
+
+static double swap_64f(double input)
+{
+    union {
+        double f;
+        int64_t i;
+    } val;
+    val.f = input;
+    val.i = swap_64(val.i);
+    return val.f;
+}
+
 - (void)process
 {
 	int amountInBuffer = 0;
@@ -276,19 +306,70 @@ static int32_t swap_32(uint32_t input)
                     break;
                         
                     case 4:
-                    {
-                        int32_t * samples = (int32_t *)inputBuffer;
-                        for (int i = 0; i < totalFrames; i++)
+                        if (floatingPoint)
                         {
-                            int64_t sample = samples[i];
-                            if (swapEndian) sample = swap_32(sample);
-                            sample = (sample * volumeScale) >> 12;
-                            if ((unsigned)(sample + 0x80000000) & 0xffffffff00000000) sample = (sample >> 63) ^ 0x7fffffff;
-                            if (swapEndian) sample = swap_32(sample);
-                            samples[i] = sample;
+                            float * samples = (float *)inputBuffer;
+                            float scale = (float)volumeScale / 4096;
+                            for (int i = 0; i < totalFrames; i++)
+                            {
+                                float sample = samples[i];
+                                if (swapEndian) sample = swap_32f(sample);
+                                sample *= scale;
+                                if (swapEndian) sample = swap_32f(sample);
+                                samples[i] = sample;
+                            }
                         }
-                    }
-                    break;
+                        else
+                        {
+                            int32_t * samples = (int32_t *)inputBuffer;
+                            for (int i = 0; i < totalFrames; i++)
+                            {
+                                int64_t sample = samples[i];
+                                if (swapEndian) sample = swap_32(sample);
+                                sample = (sample * volumeScale) >> 12;
+                                if ((unsigned)(sample + 0x80000000) & 0xffffffff00000000) sample = (sample >> 63) ^ 0x7fffffff;
+                                if (swapEndian) sample = swap_32(sample);
+                                samples[i] = sample;
+                            }
+                        }
+                        break;
+
+                    case 8:
+                        if (floatingPoint)
+                        {
+                            double * samples = (double *)inputBuffer;
+                            double scale = (double)volumeScale / 4096;
+                            for (int i = 0; i < totalFrames; i++)
+                            {
+                                double sample = samples[i];
+                                if (swapEndian) sample = swap_64f(sample);
+                                sample *= scale;
+                                if (swapEndian) sample = swap_64f(sample);
+                                samples[i] = sample;
+                            }
+                        }
+                        else
+                        {
+                            int64_t * samples = (int64_t *)inputBuffer;
+                            for (int i = 0; i < totalFrames; i++)
+                            {
+                                int64_t sample = samples[i];
+                                if (swapEndian) sample = swap_64(sample);
+                                int64_t high_part = sample >> (32 + 12);
+                                int64_t low_part = (sample & 0xffffffff) | (sample >> 31);
+                                high_part *= volumeScale;
+                                low_part = (low_part * volumeScale) >> 12;
+                                if (((uint64_t)low_part + 0x100000000) & 0xfffffffe00000000)
+                                    high_part += low_part >> 32;
+                                if (((uint64_t)high_part + 0x80000000) & 0xffffffff00000000)
+                                    sample = high_part >> 63;
+                                else
+                                    sample = (high_part << 32) | (low_part & 0xffffffff);
+                                if (swapEndian) sample = swap_64(sample);
+                                samples[i] = sample;
+                            }
+                        }
+                        break;
                 }
             }
 		

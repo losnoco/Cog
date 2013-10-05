@@ -18,7 +18,8 @@ extern DUMBFILE *dumbfile_open_memory_and_free(char *data, long size);
 @interface DumbDecoder : NSObject <CogDecoder> {
 	DUH *duh;
 	DUH_SIGRENDERER *dsr;
-	
+	sample_t **sampptr;
+    
 	id<CogSource> source;
 	long length;
     

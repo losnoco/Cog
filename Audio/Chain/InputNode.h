@@ -23,6 +23,7 @@
     int bytesPerSample;
 	int bytesPerFrame;
     int volumeScale;
+    BOOL floatingPoint;
     BOOL swapEndian;
 	
 	BOOL shouldSeek;

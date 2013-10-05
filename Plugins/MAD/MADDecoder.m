@@ -277,9 +277,7 @@
 	mad_frame_finish (&frame);
 	mad_stream_finish (&stream);
 	
-	bitsPerSample = 24;
-	
-	bytesPerFrame = (bitsPerSample/8) * channels;
+	bytesPerFrame = sizeof(float) * channels;
 	
 	[_source seek:0 whence:SEEK_SET];
 	inputEOF = NO;
@@ -320,121 +318,6 @@
 
 	return [self scanFile];
 }
-
-/*
- * NAME:	prng()
- * DESCRIPTION:	32-bit pseudo-random number generator
- */
-static inline
-unsigned long prng(unsigned long state)
-{
-	return (state * 0x0019660dL + 0x3c6ef35fL) & 0xffffffffL;
-}
-
-
-// Clipping and rounding code from madplay(audio.c):
-/*
- * madplay - MPEG audio decoder and player
- * Copyright (C) 2000-2004 Robert Leslie
- */
-static inline signed long audio_linear_dither(unsigned int bits, mad_fixed_t sample,
-											  struct audio_dither *dither,
-											  struct audio_stats *stats)
-{
-	unsigned int scalebits;
-	mad_fixed_t output, mask, random;
-	
-	enum {
-		MIN = -MAD_F_ONE,
-		MAX =  MAD_F_ONE - 1
-	};
-	
-	/* noise shape */
-	sample += dither->error[0] - dither->error[1] + dither->error[2];
-	
-	dither->error[2] = dither->error[1];
-	dither->error[1] = dither->error[0] / 2;
-	
-	/* bias */
-	output = sample + (1L << (MAD_F_FRACBITS + 1 - bits - 1));
-	
-	scalebits = MAD_F_FRACBITS + 1 - bits;
-	mask = (1L << scalebits) - 1;
-	
-	/* dither */
-	random  = prng(dither->random);
-	output += (random & mask) - (dither->random & mask);
-	
-	dither->random = random;
-	
-	/* clip */
-	if (output >= stats->peak_sample) {
-		if (output > MAX) {
-			++stats->clipped_samples;
-			if (output - MAX > stats->peak_clipping)
-				stats->peak_clipping = output - MAX;
-			
-			output = MAX;
-			
-			if (sample > MAX)
-				sample = MAX;
-		}
-		stats->peak_sample = output;
-	}
-	else if (output < -stats->peak_sample) {
-		if (output < MIN) {
-			++stats->clipped_samples;
-			if (MIN - output > stats->peak_clipping)
-				stats->peak_clipping = MIN - output;
-			
-			output = MIN;
-			
-			if (sample < MIN)
-				sample = MIN;
-		}
-		stats->peak_sample = -output;
-	}
-	
-	/* quantize */
-	output &= ~mask;
-	
-	/* error feedback */
-	dither->error[0] = sample - output;
-	
-	/* scale */
-	return output >> scalebits;
-}
-
-// Clipping and rounding code from madplay(audio.c):
-/*
- * madplay - MPEG audio decoder and player
- * Copyright (C) 2000-2004 Robert Leslie
- */
-#if 0
-static int32_t 
-audio_linear_round(unsigned int bits, 
-				   mad_fixed_t sample)
-{
-	enum {
-		MIN = -MAD_F_ONE,
-		MAX =  MAD_F_ONE - 1
-	};
-	
-	/* round */
-	sample += (1L << (MAD_F_FRACBITS - bits));
-	
-	/* clip */
-	if(MAX < sample)
-		sample = MAX;
-	else if(MIN > sample)
-		sample = MIN;
-	
-	/* quantize and scale */
-	return sample >> (MAD_F_FRACBITS + 1 - bits);
-}
-#endif
-// End madplay code
-
 
 - (void)writeOutput
 {
@@ -489,32 +372,19 @@ audio_linear_round(unsigned int bits,
 	
 	int ch;
 	int i;
-	int stride = bitsPerSample/8;
-	unsigned char *outputPtr = _outputBuffer;
-	
+	float *outputPtr = (float *) _outputBuffer;
+	float scale = 1.0 / MAD_F_ONE;
+    
 	// samples [0 ... n]
 	for(i = startingSample; i < sampleCount; i++) 
 	{		
 		// channels [0 .. n] in this case LRLRLRLR
 		for (ch = 0; ch < channels; ch++) 
 		{
-			signed long sample = audio_linear_dither(bitsPerSample, 
-													 _synth.pcm.samples[ch][i], 
-													 &channel_dither[ch], 
-													 &stats);
-			
-			if(bitsPerSample == 24)
-			{
-				outputPtr[0] = sample >> 16;
-				outputPtr[1] = sample >> 8;
-				outputPtr[2] = sample >> 0;				
-			}
-			else 
-			{
-				outputPtr[0] = sample >> 8;  
-				outputPtr[1] = sample & 0xff;  
-			}
-			outputPtr += stride; 
+			float sample = _synth.pcm.samples[ch][i] * scale;
+
+			outputPtr[0] = sample;
+			outputPtr++;
 		}
 	}
 	
@@ -607,8 +477,7 @@ audio_linear_round(unsigned int bits,
 		if (![_source seekable]) {
 			sampleRate = _frame.header.samplerate;
 			channels = MAD_NCHANNELS(&_frame.header);
-			bitsPerSample = 16;
-			bytesPerFrame = (bitsPerSample/8) * channels;
+			bytesPerFrame = sizeof(float) * channels;
 
 			[self willChangeValueForKey:@"properties"];
 			[self didChangeValueForKey:@"properties"];
@@ -701,12 +570,13 @@ audio_linear_round(unsigned int bits,
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:channels],@"channels",
-		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
+		[NSNumber numberWithInt:32],@"bitsPerSample",
+        [NSNumber numberWithBool:YES],@"floatingPoint",
 		[NSNumber numberWithFloat:sampleRate],@"sampleRate",
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithLong:totalFrames - (_startPadding + _endPadding)],@"totalFrames",
 		[NSNumber numberWithBool:[_source seekable]], @"seekable",
-		@"big", @"endian",
+		@"host", @"endian",
 		nil];
 }
 

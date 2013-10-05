@@ -95,30 +95,24 @@ mpc_bool_t CanSeekProc(void *data)
 	return YES;
 }
 
-- (BOOL)writeToBuffer:(uint16_t *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer frames:(unsigned)frames
+- (BOOL)writeToBuffer:(float *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer frames:(unsigned)frames
 {
 	unsigned n;
-	int m_bps = 16;
-	int clip_min = - 1 << (m_bps - 1),
-		clip_max = (1 << (m_bps - 1)) - 1,
-		float_scale = 1 << (m_bps - 1);
 		
-	unsigned p_size = frames * 2; //2 = bits per sample
-
+	unsigned p_size = frames * 2; //2 = stereo
+#ifdef MPC_FIXED_POINT
+    const float float_scale = 1.0 / MPC_FIXED_POINT_SCALE;
+#endif
+    
 	for (n = 0; n < p_size; n++)
 	{
-		int val;
+		float val;
 #ifdef MPC_FIXED_POINT
-		val = shift_signed( p_buffer[n], m_bps - MPC_FIXED_POINT_SCALE_SHIFT );			
+		val = p_buffer[n] * float_scale;
 #else
-		val = (int)( p_buffer[n] * float_scale );
+		val = p_buffer[n];
 #endif
 		
-		if (val < clip_min)
-			val = clip_min;
-		else if (val > clip_max)
-			val = clip_max;
-
 //		sample_buffer[n] = CFSwapInt16LittleToHost(val);
 		sample_buffer[n] = val;
 	}
@@ -132,7 +126,7 @@ mpc_bool_t CanSeekProc(void *data)
     MPC_SAMPLE_FORMAT sampleBuffer[MPC_DECODER_BUFFER_LENGTH];
 
 	int framesRead = 0;
-	int bytesPerFrame = 4; //bitsPerSample == 16, channels == 2
+	int bytesPerFrame = sizeof(float) * 2; //bitsPerSample == 16, channels == 2
 	while (framesRead < frames)
 	{	
 		//Fill from buffer, going by bufferFrames
@@ -164,7 +158,7 @@ mpc_bool_t CanSeekProc(void *data)
 			framesToRead = frames;
 		}
 
-		[self writeToBuffer:((uint16_t*)(buf + (framesRead*bytesPerFrame)))  fromBuffer:sampleBuffer frames: bufferFrames];
+		[self writeToBuffer:((float*)(buf + (framesRead*bytesPerFrame)))  fromBuffer:sampleBuffer frames: bufferFrames];
 
 		frames -= framesToRead;
 		framesRead += framesToRead;
@@ -209,7 +203,8 @@ mpc_bool_t CanSeekProc(void *data)
 		[NSNumber numberWithInt:bitrate], @"bitrate",
 		[NSNumber numberWithFloat:frequency], @"sampleRate",
 		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
-		[NSNumber numberWithInt:16], @"bitsPerSample",
+		[NSNumber numberWithInt:32], @"bitsPerSample",
+        [NSNumber numberWithBool:YES], @"floatingPoint",
 		[NSNumber numberWithInt:2], @"channels",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host",@"endian",

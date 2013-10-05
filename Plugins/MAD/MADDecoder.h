@@ -14,25 +14,11 @@
 
 #define INPUT_BUFFER_SIZE 5*8192
 
-struct audio_dither {
-	mad_fixed_t error[3];
-	mad_fixed_t random;
-};
-
-struct audio_stats {
-	unsigned long clipped_samples;
-	mad_fixed_t peak_clipping;
-	mad_fixed_t peak_sample;
-};
-
 @interface MADDecoder : NSObject <CogDecoder>
 {
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
-
-	struct audio_dither channel_dither[2];
-	struct audio_stats	stats;
 
 	unsigned char _inputBuffer[INPUT_BUFFER_SIZE+MAD_BUFFER_GUARD];
 	unsigned char *_outputBuffer;
@@ -57,7 +43,6 @@ struct audio_stats {
 	int bytesPerFrame;
 	
 	int channels;
-	int bitsPerSample;
 	float sampleRate;
 	int bitrate;
 	long totalFrames;

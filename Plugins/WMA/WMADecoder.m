@@ -129,6 +129,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	
 	channels = c->channels;
 	bitrate = ic->bit_rate;
+    floatingPoint = NO;
     switch (c->sample_fmt) {
         case AV_SAMPLE_FMT_U8:
         case AV_SAMPLE_FMT_U8P:
@@ -142,11 +143,19 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             
         case AV_SAMPLE_FMT_S32:
         case AV_SAMPLE_FMT_S32P:
+            bitsPerSample = 32;
+            break;
+            
         case AV_SAMPLE_FMT_FLT:
         case AV_SAMPLE_FMT_FLTP:
+            bitsPerSample = 32;
+            floatingPoint = YES;
+            break;
+            
         case AV_SAMPLE_FMT_DBL:
         case AV_SAMPLE_FMT_DBLP:
-            bitsPerSample = 32;
+            bitsPerSample = 64;
+            floatingPoint = YES;
             break;
             
         default:
@@ -251,44 +260,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 			
 			numFrames = sampleBufferOffset / bytesPerFrame;
 			samplePos = 0;
-            
-            if ( numFrames ) {
-                switch ( c->sample_fmt ) {
-                    case AV_SAMPLE_FMT_FLT:
-                    case AV_SAMPLE_FMT_FLTP:
-                    {
-                        float * input = (float *) sampleBuffer;
-                        int32_t * output = (int32_t *) sampleBuffer;
-                        
-                        for (int i = 0; i < numFrames * channels; ++i)
-                        {
-                            float sample = input[i];
-                            if (sample > 1.0) sample = 1.0;
-                            else if (sample < -1.0) sample = -1.0;
-                            output[i] = sample * INT_MAX;
-                        }
-                    }
-                    break;
-                        
-                    case AV_SAMPLE_FMT_DBL:
-                    case AV_SAMPLE_FMT_DBLP:
-                    {
-                        double * input = (double *) sampleBuffer;
-                        int32_t * output = (int32_t *) sampleBuffer;
-                        
-                        for (int i = 0; i < numFrames * channels; ++i)
-                        {
-                            double sample = input[i];
-                            if (sample > 1.0) sample = 1.0;
-                            else if (sample < -1.0) sample = -1.0;
-                            output[i] = sample * INT_MAX;
-                        }
-                    }
-                    break;
-                        
-                    default: break;
-                }
-            }
         }
 	}
 	
@@ -311,9 +282,11 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 			[NSNumber numberWithInt:channels], @"channels",
 			[NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 			[NSNumber numberWithFloat:frequency], @"sampleRate",
+            [NSNumber numberWithBool:floatingPoint], @"floatingPoint",
 			[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 			[NSNumber numberWithInt:bitrate], @"bitrate",
 			[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
+            @"host", @"endian",
 			nil];
 }
 

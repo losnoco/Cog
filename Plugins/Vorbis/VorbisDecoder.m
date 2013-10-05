@@ -91,12 +91,16 @@ long sourceTell(void *datasource)
 		[self didChangeValueForKey:@"properties"];
 	}
 	
-	int size = frames * channels * 2;
-	
     do {
 		lastSection = currentSection;
-		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, 2, 1, &currentSection);
+        float ** pcm;
+        numread = ov_read_float(&vorbisRef, &pcm, frames - total, &currentSection);
 		if (numread > 0) {
+            for (int i = 0; i < channels; i++) {
+                for (int j = 0; j < numread; j++) {
+                    ((float *)buf)[(total + j) * channels + i] = pcm[i][j];
+                }
+            }
 			total += numread;
 		}
 	
@@ -104,9 +108,9 @@ long sourceTell(void *datasource)
 			break;
 		}
 		
-    } while (total != size && numread != 0);
+    } while (total != frames && numread != 0);
 
-    return total/(channels * 2);
+    return total;
 }
 
 - (void)close
@@ -128,11 +132,13 @@ long sourceTell(void *datasource)
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:channels], @"channels",
-		[NSNumber numberWithInt:16], @"bitsPerSample",
+		[NSNumber numberWithInt:32], @"bitsPerSample",
+        [NSNumber numberWithBool:YES], @"floatingPoint",
 		[NSNumber numberWithFloat:frequency], @"sampleRate",
 		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 		[NSNumber numberWithInt:bitrate], @"bitrate",
 		[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
+        @"host", @"endian",
 		nil];
 }
 

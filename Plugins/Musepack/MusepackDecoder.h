@@ -24,7 +24,7 @@
 	float frequency;	
 	long totalFrames;
 }
-- (BOOL)writeToBuffer:(uint16_t *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer frames:(unsigned)frames;
+- (BOOL)writeToBuffer:(float *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer frames:(unsigned)frames;
 
 - (void)setSource:(id<CogSource>)s;
 - (id<CogSource>)source;

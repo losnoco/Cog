@@ -185,6 +185,8 @@ int callbackLoop(void *data)
     loops = 0;
     fadeTotal = fadeRemain = 44100 * 8;
     
+    sampptr = allocate_sample_buffer(2, 1024);
+    
     [self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
@@ -197,7 +199,8 @@ int callbackLoop(void *data)
 		[NSNumber numberWithInt:0], @"bitrate",
 		[NSNumber numberWithFloat:44100], @"sampleRate",
 		[NSNumber numberWithDouble:((length / 65.536f)*44.1000)], @"totalFrames",
-		[NSNumber numberWithInt:16], @"bitsPerSample", //Samples are short
+		[NSNumber numberWithInt:32], @"bitsPerSample", //Samples are short
+        [NSNumber numberWithBool:YES], @"floatingPoint",
 		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host", @"endian",
@@ -206,27 +209,49 @@ int callbackLoop(void *data)
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	int rendered = duh_render(dsr, 16 /* shorts */, 0 /* not unsigned */, 1.0 /* volume */, 65536.0f / 44100.0f /* 65536 hz? */, frames, buf);
-    
-    if ( loops >= 2 ) {
-        int16_t * sampleBuf = ( int16_t * ) buf;
-        long fadeEnd = fadeRemain - rendered;
-        if ( fadeEnd < 0 )
-            fadeEnd = 0;
-        for ( long fadePos = fadeRemain; fadePos > fadeEnd; --fadePos ) {
-            long offset = (fadeRemain - fadePos) * 2;
-            int64_t sampleLeft = sampleBuf[ offset + 0 ];
-            int64_t sampleRight = sampleBuf[ offset + 1 ];
-            sampleLeft = (sampleLeft * fadePos) / fadeTotal;
-            sampleRight = (sampleRight * fadePos) / fadeTotal;
-            sampleBuf[ offset + 0 ] = sampleLeft;
-            sampleBuf[ offset + 1 ] = sampleRight;
+    int total = 0;
+    while ( total < frames ) {
+        int framesToRender = 1024;
+        if ( framesToRender > frames )
+            framesToRender = frames;
+        dumb_silence( sampptr[0], framesToRender * 2 );
+        int rendered = duh_sigrenderer_generate_samples( dsr, 1.0, 65536.0f / 44100.0f, framesToRender, sampptr );
+        
+        if (rendered <= 0)
+            break;
+        
+        for ( int i = 0; i < rendered * 2; i++ ) {
+            const float scale = 1.0 / 0x800000;
+            ((float *)buf)[(total * 2) + i] = (float)sampptr[0][i] * scale;
         }
-        rendered = fadeRemain - fadeEnd;
-        fadeRemain = fadeEnd;
+    
+        if ( loops >= 2 ) {
+            float * sampleBuf = ( float * ) buf;
+            long fadeEnd = fadeRemain - rendered;
+            if ( fadeEnd < 0 )
+                fadeEnd = 0;
+            float fadePosf = (float)fadeRemain / fadeTotal;
+            const float fadeStep = 1.0 / fadeTotal;
+            for ( long fadePos = fadeRemain; fadePos > fadeEnd; --fadePos, fadePosf -= fadeStep ) {
+                long offset = (fadeRemain - fadePos) * 2;
+                float sampleLeft = sampleBuf[ offset + 0 ];
+                float sampleRight = sampleBuf[ offset + 1 ];
+                sampleLeft *= fadePosf;
+                sampleRight *= fadePosf;
+                sampleBuf[ offset + 0 ] = sampleLeft;
+                sampleBuf[ offset + 1 ] = sampleRight;
+            }
+            rendered = fadeRemain - fadeEnd;
+            fadeRemain = fadeEnd;
+        }
+        
+        total += rendered;
+        
+        if ( rendered < framesToRender )
+            break;
     }
     
-    return rendered;
+    return total;
 }
 
 - (long)seek:(long)frame
@@ -253,6 +278,11 @@ int callbackLoop(void *data)
 
 - (void)cleanUp
 {
+    if (sampptr) {
+        destroy_sample_buffer(sampptr);
+        sampptr = NULL;
+    }
+    
 	if (dsr) {
 		duh_end_sigrenderer(dsr);
 		dsr = NULL;
