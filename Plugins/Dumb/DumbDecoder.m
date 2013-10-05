@@ -89,6 +89,13 @@ DUMBFILE_SYSTEM	dfs = {
     .get_size = getsizeCallback
 };
 
+int callbackLoop(void *data)
+{
+    long * loops = (long *) data;
+    ++ *loops;
+    return 0;
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
 	[self setSource:s];
@@ -143,6 +150,13 @@ DUMBFILE_SYSTEM	dfs = {
     DUMB_IT_SIGRENDERER * itsr = duh_get_it_sigrenderer( dsr );
     dumb_it_set_ramp_style( itsr, 2 );
     
+    dumb_it_set_loop_callback( itsr, callbackLoop, &loops);
+    dumb_it_set_xm_speed_zero_callback( itsr, dumb_it_callback_terminate, 0);
+    dumb_it_set_global_volume_zero_callback( itsr, dumb_it_callback_terminate, 0);
+    
+    loops = 0;
+    fadeTotal = fadeRemain = 44100 * 8;
+    
     [self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
@@ -164,11 +178,27 @@ DUMBFILE_SYSTEM	dfs = {
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	if (duh_sigrenderer_get_position(dsr) > length) {
-		return 0;
-	}
-	
-	return duh_render(dsr, 16 /* shorts */, 0 /* not unsigned */, 1.0 /* volume */, 65536.0f / 44100.0f /* 65536 hz? */, frames, buf);
+	int rendered = duh_render(dsr, 16 /* shorts */, 0 /* not unsigned */, 1.0 /* volume */, 65536.0f / 44100.0f /* 65536 hz? */, frames, buf);
+    
+    if ( loops >= 2 ) {
+        int16_t * sampleBuf = ( int16_t * ) buf;
+        long fadeEnd = fadeRemain - rendered;
+        if ( fadeEnd < 0 )
+            fadeEnd = 0;
+        for ( long fadePos = fadeRemain; fadePos > fadeEnd; --fadePos ) {
+            long offset = (fadeRemain - fadePos) * 2;
+            int64_t sampleLeft = sampleBuf[ offset + 0 ];
+            int64_t sampleRight = sampleBuf[ offset + 1 ];
+            sampleLeft = (sampleLeft * fadePos) / fadeTotal;
+            sampleRight = (sampleRight * fadePos) / fadeTotal;
+            sampleBuf[ offset + 0 ] = sampleLeft;
+            sampleBuf[ offset + 1 ] = sampleRight;
+        }
+        rendered = fadeRemain - fadeEnd;
+        fadeRemain = fadeEnd;
+    }
+    
+    return rendered;
 }
 
 - (long)seek:(long)frame

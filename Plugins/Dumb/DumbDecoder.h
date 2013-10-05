@@ -21,6 +21,10 @@ extern DUMBFILE_SYSTEM	dfs;
 	
 	id<CogSource> source;
 	long length;
+    
+    long loops;
+    long fadeTotal;
+    long fadeRemain;
 }
 
 - (void)setSource:(id<CogSource>)s;
