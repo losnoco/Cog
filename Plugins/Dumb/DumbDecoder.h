@@ -13,7 +13,7 @@
 
 #import "Plugin.h"
 
-extern DUMBFILE_SYSTEM	dfs;
+extern DUMBFILE *dumbfile_open_memory_and_free(char *data, long size);
 
 @interface DumbDecoder : NSObject <CogDecoder> {
 	DUH *duh;

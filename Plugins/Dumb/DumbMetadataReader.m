@@ -34,7 +34,14 @@
     if (![source seekable])
         return 0;
 
-	DUMBFILE * df = dumbfile_open_ex(source, &dfs);
+    [source seek:0 whence:SEEK_END];
+    long size = [source tell];
+    [source seek:0 whence:SEEK_SET];
+    
+    void * data = malloc(size);
+    [source read:data amount:size];
+	
+	DUMBFILE * df = dumbfile_open_memory_and_free( data, size );
 	if (!df)
 	{
 		NSLog(@"EX Failed");

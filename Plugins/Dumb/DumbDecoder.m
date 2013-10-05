@@ -8,66 +8,101 @@
 
 #import "DumbDecoder.h"
 
+#import "umx.h"
+#import "j2b.h"
+
 @implementation DumbDecoder
 
-int skipCallback(void *f, long n)
+struct MEMANDFREEFILE
 {
-	id source = (id)f;
-	
-	if (![source seek:n whence: SEEK_CUR])
-	{
-		return 1; //Non-zero is error
-	}
-	
-	return 0; //Zero for success
+	char *ptr, *ptr_begin;
+	long left, size;
+};
+
+static int dumb_maffile_skip(void *f, long n)
+{
+	struct MEMANDFREEFILE *m = f;
+	if (n > m->left) return -1;
+	m->ptr += n;
+	m->left -= n;
+	return 0;
 }
 
-int getCharCallback(void *f)
+static int dumb_maffile_getc(void *f)
 {
-	id source = (id)f;
-
-	unsigned char c;
-	
-	if ([source read:&c amount:1] < 1)
-	{
-		return -1;
-	}
-	
-	return c;
+	struct MEMANDFREEFILE *m = f;
+	if (m->left <= 0) return -1;
+	m->left--;
+	return *(const unsigned char *)m->ptr++;
 }
 
-long readCallback(char *ptr, long n, void *f)
+static long dumb_maffile_getnc(char *ptr, long n, void *f)
 {
-	id source = (id)f;
-	
-	return [source read:ptr amount:n];
+	struct MEMANDFREEFILE *m = f;
+	if (n > m->left) n = m->left;
+	memcpy(ptr, m->ptr, n);
+	m->ptr += n;
+	m->left -= n;
+	return n;
 }
 
-int seekCallback(void *f, long n)
+static void dumb_maffile_close(void *f)
 {
-    id source = (id)f;
-    
-    if (![source seekable]) return -1;
-    
-    if ([source seek:n whence:SEEK_SET]) return 0;
-    else return -1;
+    struct MEMANDFREEFILE *m = f;
+    free(m->ptr_begin);
+	free(f);
 }
 
-long getsizeCallback(void *f)
+static int dumb_maffile_seek(void *f, long n)
 {
-    id source = (id)f;
+	struct MEMANDFREEFILE *m = f;
     
-    if (![source seekable]) return 0;
+	m->ptr = m->ptr_begin + n;
+	m->left = m->size - n;
     
-    long current_offset = [source tell];
+	return 0;
+}
+
+static long dumb_maffile_get_size(void *f)
+{
+	struct MEMANDFREEFILE *m = f;
+	return m->size;
+}
+
+static const DUMBFILE_SYSTEM maffile_dfs = {
+	NULL,
+	&dumb_maffile_skip,
+	&dumb_maffile_getc,
+	&dumb_maffile_getnc,
+	&dumb_maffile_close,
+	&dumb_maffile_seek,
+	&dumb_maffile_get_size
+};
+
+DUMBFILE *dumbfile_open_memory_and_free(char *data, long size)
+{
+    char * try_data = unpackUmx( data, &size );
+    if ( try_data ) {
+        free( data );
+        data = try_data;
+    }
+    else {
+        try_data = unpackJ2b( data, &size );
+        if ( try_data ) {
+            free( data );
+            data = try_data;
+        }
+    }
     
-    [source seek:0 whence:SEEK_END];
+	struct MEMANDFREEFILE *m = malloc(sizeof(*m));
+	if (!m) return NULL;
     
-    long size = [source tell];
+	m->ptr_begin = data;
+	m->ptr = data;
+	m->left = size;
+	m->size = size;
     
-    [source seek:current_offset whence:SEEK_SET];
-    
-    return size;
+	return dumbfile_open_ex(m, &maffile_dfs);
 }
 
 void oneTimeInit()
@@ -78,16 +113,6 @@ void oneTimeInit()
         
     }
 }
-
-DUMBFILE_SYSTEM	dfs = {
-    .open = NULL,
-    .skip = skipCallback,
-    .getc = getCharCallback,
-    .getnc = readCallback,
-    .close = NULL,
-    .seek = seekCallback,
-    .get_size = getsizeCallback
-};
 
 int callbackLoop(void *data)
 {
@@ -100,11 +125,14 @@ int callbackLoop(void *data)
 {
 	[self setSource:s];
 	
-	DUMBFILE *df;
-
-//	dumb_register_stdfiles();
-
-	df = dumbfile_open_ex(s, &dfs);
+    [source seek:0 whence:SEEK_END];
+    long size = [source tell];
+    [source seek:0 whence:SEEK_SET];
+    
+    void * data = malloc(size);
+    [source read:data amount:size];
+	
+	DUMBFILE * df = dumbfile_open_memory_and_free( data, size );
 	if (!df)
 	{
 		NSLog(@"EX Failed");
@@ -259,7 +287,7 @@ int callbackLoop(void *data)
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"it", @"itz", @"xm", @"xmz", @"s3m", @"s3z", @"mod", @"mdz", @"stm", @"stz", @"ptm", @"mtm", @"669", @"psm", @"am", @"dsm", @"amf", @"okt", @"okta", nil];
+	return [NSArray arrayWithObjects:@"it", @"itz", @"xm", @"xmz", @"s3m", @"s3z", @"mod", @"mdz", @"stm", @"stz", @"ptm", @"mtm", @"669", @"psm", @"am", @"j2b", @"dsm", @"amf", @"okt", @"okta", @"umx", nil];
 }
 
 + (NSArray *)mimeTypes 

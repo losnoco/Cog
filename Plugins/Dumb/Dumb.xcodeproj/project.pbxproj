@@ -14,6 +14,11 @@
 		17DA363D0CC0600E0003F6B2 /* DumbMetadataReader.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17DA363B0CC0600E0003F6B2 /* DumbMetadataReader.h */; };
 		17DA363E0CC0600E0003F6B2 /* DumbMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA363C0CC0600E0003F6B2 /* DumbMetadataReader.m */; };
 		8335FF6717FF6FD9002D8DD2 /* DumbContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8335FF6617FF6FD9002D8DD2 /* DumbContainer.m */; };
+		8337AAEC17FFA0000081AFF8 /* umx.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAE817FFA0000081AFF8 /* umx.mm */; };
+		8337AAED17FFA0000081AFF8 /* unrealfmt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAE917FFA0000081AFF8 /* unrealfmt.cpp */; };
+		8337AAEE17FFA0000081AFF8 /* unrealfmtdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAEA17FFA0000081AFF8 /* unrealfmtdata.cpp */; };
+		8337AAF117FFA2D30081AFF8 /* j2b.c in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAEF17FFA2D30081AFF8 /* j2b.c */; };
+		8337AAF317FFA7640081AFF8 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8337AAF217FFA7640081AFF8 /* libz.dylib */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -64,6 +69,15 @@
 		32DBCF630370AF2F00C91783 /* Dumb_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dumb_Prefix.pch; sourceTree = "<group>"; };
 		8335FF6517FF6FD9002D8DD2 /* DumbContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumbContainer.h; sourceTree = "<group>"; };
 		8335FF6617FF6FD9002D8DD2 /* DumbContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DumbContainer.m; sourceTree = "<group>"; };
+		8337AAE617FFA0000081AFF8 /* umr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = umr.h; sourceTree = "<group>"; };
+		8337AAE717FFA0000081AFF8 /* umx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = umx.h; sourceTree = "<group>"; };
+		8337AAE817FFA0000081AFF8 /* umx.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = umx.mm; sourceTree = "<group>"; };
+		8337AAE917FFA0000081AFF8 /* unrealfmt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unrealfmt.cpp; sourceTree = "<group>"; };
+		8337AAEA17FFA0000081AFF8 /* unrealfmtdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unrealfmtdata.cpp; sourceTree = "<group>"; };
+		8337AAEB17FFA0000081AFF8 /* urf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = urf.h; sourceTree = "<group>"; };
+		8337AAEF17FFA2D30081AFF8 /* j2b.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = j2b.c; sourceTree = "<group>"; };
+		8337AAF017FFA2D30081AFF8 /* j2b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = j2b.h; sourceTree = "<group>"; };
+		8337AAF217FFA7640081AFF8 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		8D5B49B6048680CD000E48DA /* Dumb.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dumb.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -74,6 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8337AAF317FFA7640081AFF8 /* libz.dylib in Frameworks */,
 				17C8F7B90CBEF380008D969D /* Dumb.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
@@ -85,6 +100,7 @@
 		089C166AFE841209C02AAC07 /* Dumb */ = {
 			isa = PBXGroup;
 			children = (
+				8337AAF217FFA7640081AFF8 /* libz.dylib */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -115,6 +131,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8337AAE317FFA0000081AFF8 /* archive */,
 				8335FF6517FF6FD9002D8DD2 /* DumbContainer.h */,
 				8335FF6617FF6FD9002D8DD2 /* DumbContainer.m */,
 				17C8F70C0CBEEC87008D969D /* Plugin.h */,
@@ -167,6 +184,37 @@
 				32DBCF630370AF2F00C91783 /* Dumb_Prefix.pch */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		8337AAE317FFA0000081AFF8 /* archive */ = {
+			isa = PBXGroup;
+			children = (
+				8337AAE417FFA0000081AFF8 /* j2b */,
+				8337AAE517FFA0000081AFF8 /* umx */,
+			);
+			path = archive;
+			sourceTree = "<group>";
+		};
+		8337AAE417FFA0000081AFF8 /* j2b */ = {
+			isa = PBXGroup;
+			children = (
+				8337AAEF17FFA2D30081AFF8 /* j2b.c */,
+				8337AAF017FFA2D30081AFF8 /* j2b.h */,
+			);
+			path = j2b;
+			sourceTree = "<group>";
+		};
+		8337AAE517FFA0000081AFF8 /* umx */ = {
+			isa = PBXGroup;
+			children = (
+				8337AAE617FFA0000081AFF8 /* umr.h */,
+				8337AAE717FFA0000081AFF8 /* umx.h */,
+				8337AAE817FFA0000081AFF8 /* umx.mm */,
+				8337AAE917FFA0000081AFF8 /* unrealfmt.cpp */,
+				8337AAEA17FFA0000081AFF8 /* unrealfmtdata.cpp */,
+				8337AAEB17FFA0000081AFF8 /* urf.h */,
+			);
+			path = umx;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,8 +296,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8337AAF117FFA2D30081AFF8 /* j2b.c in Sources */,
+				8337AAED17FFA0000081AFF8 /* unrealfmt.cpp in Sources */,
+				8337AAEC17FFA0000081AFF8 /* umx.mm in Sources */,
 				8335FF6717FF6FD9002D8DD2 /* DumbContainer.m in Sources */,
 				17C8F6950CBEE846008D969D /* DumbDecoder.m in Sources */,
+				8337AAEE17FFA0000081AFF8 /* unrealfmtdata.cpp in Sources */,
 				17DA363E0CC0600E0003F6B2 /* DumbMetadataReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
