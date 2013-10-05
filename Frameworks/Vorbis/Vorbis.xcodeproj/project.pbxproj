@@ -493,7 +493,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				OTHER_CFLAGS = "-D__MACOSX__";
 				OTHER_LDFLAGS = (
-					"-sub_umbrella",
+					"-weak_framework",
 					Ogg,
 				);
 				PRODUCT_NAME = Vorbis;
@@ -527,7 +527,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				OTHER_CFLAGS = "-D__MACOSX__";
 				OTHER_LDFLAGS = (
-					"-sub_umbrella",
+					"-weak_framework",
 					Ogg,
 				);
 				PRODUCT_NAME = Vorbis;

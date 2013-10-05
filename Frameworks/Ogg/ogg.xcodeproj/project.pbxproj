@@ -225,7 +225,7 @@
 				GCC_PREFIX_HEADER = ogg_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = __MACOSX__;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@loader_path/Frameworks";
 				PRODUCT_NAME = ogg;
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "libogg-src/include";
@@ -247,7 +247,7 @@
 				GCC_PREFIX_HEADER = ogg_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = __MACOSX__;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@loader_path/Frameworks";
 				PRODUCT_NAME = ogg;
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "libogg-src/include";
