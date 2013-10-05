@@ -181,7 +181,7 @@
         [elements addObject:[extension uppercaseString]];
         if (hasBitrate) {
             [elements addObject:@"@"];
-            [elements addObject:[NSString stringWithFormat:@"%u", self.bitrate / 1000]];
+            [elements addObject:[NSString stringWithFormat:@"%u", self.bitrate]];
             [elements addObject:@"kbps"];
         }
         [elements addObject:@"] "];
