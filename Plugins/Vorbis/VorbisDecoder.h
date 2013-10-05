@@ -28,7 +28,6 @@
 	int lastSection;
 	
 	BOOL seekable;
-	int bitsPerSample;
 	int bitrate;
 	int channels;
 	float frequency;

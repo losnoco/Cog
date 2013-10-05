@@ -60,7 +60,6 @@ long sourceTell(void *datasource)
 	
 	vi = ov_info(&vorbisRef, -1);
 	
-	bitsPerSample = vi->channels * 8;
 	bitrate = (vi->bitrate_nominal/1000.0);
 	channels = vi->channels;
 	frequency = vi->rate;
@@ -84,7 +83,6 @@ long sourceTell(void *datasource)
 		vorbis_info *vi;
 		vi = ov_info(&vorbisRef, -1);
 		
-		bitsPerSample = vi->channels * 8;
 		bitrate = (vi->bitrate_nominal/1000.0);
 		channels = vi->channels;
 		frequency = vi->rate;
@@ -93,11 +91,11 @@ long sourceTell(void *datasource)
 		[self didChangeValueForKey:@"properties"];
 	}
 	
-	int size = frames * channels * (bitsPerSample/8);
+	int size = frames * channels * 2;
 	
     do {
 		lastSection = currentSection;
-		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, bitsPerSample/8, 1, &currentSection);
+		numread = ov_read(&vorbisRef, &((char *)buf)[total], size - total, 0, 2, 1, &currentSection);
 		if (numread > 0) {
 			total += numread;
 		}
@@ -108,7 +106,7 @@ long sourceTell(void *datasource)
 		
     } while (total != size && numread != 0);
 
-    return total/(channels * (bitsPerSample/8));
+    return total/(channels * 2);
 }
 
 - (void)close
@@ -130,7 +128,7 @@ long sourceTell(void *datasource)
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:channels], @"channels",
-		[NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
+		[NSNumber numberWithInt:16], @"bitsPerSample",
 		[NSNumber numberWithFloat:frequency], @"sampleRate",
 		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 		[NSNumber numberWithInt:bitrate], @"bitrate",
