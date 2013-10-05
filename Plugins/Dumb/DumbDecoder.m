@@ -226,7 +226,7 @@ int callbackLoop(void *data)
         }
     
         if ( loops >= 2 ) {
-            float * sampleBuf = ( float * ) buf;
+            float * sampleBuf = ( float * ) buf + total * 2;
             long fadeEnd = fadeRemain - rendered;
             if ( fadeEnd < 0 )
                 fadeEnd = 0;
