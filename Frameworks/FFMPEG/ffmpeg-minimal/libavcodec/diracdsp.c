@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-
 #include "dsputil.h"
 #include "diracdsp.h"
 #include "libavcodec/x86/diracdsp_mmx.h"

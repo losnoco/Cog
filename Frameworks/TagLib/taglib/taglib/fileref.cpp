@@ -138,6 +138,7 @@ StringList FileRef::defaultFileExtensions()
   l.append("asf");
   l.append("ape");
   l.append("opus");
+  l.append("tak");
 
   return l;
 }
@@ -233,6 +234,8 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
       return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "APE")
       return new APE::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(ext == "TAK")
+      return new APE::File(fileName, false, audioPropertiesStyle);
   }
 
   return 0;

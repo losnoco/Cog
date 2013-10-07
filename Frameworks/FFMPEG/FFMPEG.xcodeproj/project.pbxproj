@@ -271,6 +271,39 @@
 		830F0DD117FC934D00042E8F /* spdif.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0DCF17FC934D00042E8F /* spdif.c */; };
 		830F0DD217FC934D00042E8F /* spdif.h in Headers */ = {isa = PBXBuildFile; fileRef = 830F0DD017FC934D00042E8F /* spdif.h */; };
 		830F0DD617FC93E400042E8F /* xwma.c in Sources */ = {isa = PBXBuildFile; fileRef = 830F0DD417FC93E400042E8F /* xwma.c */; };
+		833C3795180328A300CBA602 /* takdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C3794180328A300CBA602 /* takdec.c */; };
+		833C379A180328B300CBA602 /* tak_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C3796180328B300CBA602 /* tak_parser.c */; };
+		833C379B180328B300CBA602 /* tak.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C3797180328B300CBA602 /* tak.c */; };
+		833C379C180328B300CBA602 /* tak.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C3798180328B300CBA602 /* tak.h */; };
+		833C379D180328B300CBA602 /* takdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C3799180328B300CBA602 /* takdec.c */; };
+		833C379F18032A2700CBA602 /* unary.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C379E18032A2700CBA602 /* unary.h */; };
+		833C37A218032A2F00CBA602 /* rawdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37A018032A2F00CBA602 /* rawdec.c */; };
+		833C37A318032A2F00CBA602 /* rawdec.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37A118032A2F00CBA602 /* rawdec.h */; };
+		833C37A618032A5000CBA602 /* apetag.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37A418032A5000CBA602 /* apetag.c */; };
+		833C37A718032A5000CBA602 /* apetag.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37A518032A5000CBA602 /* apetag.h */; };
+		833C37A918032AAD00CBA602 /* img2.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37A818032AAD00CBA602 /* img2.c */; };
+		833C37B118032AEF00CBA602 /* diracdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37AA18032AEF00CBA602 /* diracdsp.c */; };
+		833C37B218032AEF00CBA602 /* diracdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37AB18032AEF00CBA602 /* diracdsp.h */; };
+		833C37B318032AEF00CBA602 /* dsputil.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37AC18032AEF00CBA602 /* dsputil.c */; };
+		833C37B418032AEF00CBA602 /* dsputil.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37AD18032AEF00CBA602 /* dsputil.h */; };
+		833C37B518032AEF00CBA602 /* diracdsp_mmx.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37AE18032AEF00CBA602 /* diracdsp_mmx.c */; };
+		833C37B618032AEF00CBA602 /* diracdsp_mmx.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37AF18032AEF00CBA602 /* diracdsp_mmx.h */; };
+		833C37B718032AEF00CBA602 /* dsputil_x86.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37B018032AEF00CBA602 /* dsputil_x86.h */; };
+		833C37C218032CF600CBA602 /* dirac_arith.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37BA18032CF600CBA602 /* dirac_arith.c */; };
+		833C37C318032CF600CBA602 /* dirac_arith.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37BB18032CF600CBA602 /* dirac_arith.h */; };
+		833C37C418032CF600CBA602 /* dirac_dwt.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37BC18032CF600CBA602 /* dirac_dwt.c */; };
+		833C37C518032CF600CBA602 /* dirac_dwt.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37BD18032CF600CBA602 /* dirac_dwt.h */; };
+		833C37C618032CF600CBA602 /* dirac_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37BE18032CF600CBA602 /* dirac_parser.c */; };
+		833C37C718032CF600CBA602 /* dirac.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37BF18032CF600CBA602 /* dirac.c */; };
+		833C37C818032CF600CBA602 /* dirac.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37C018032CF600CBA602 /* dirac.h */; };
+		833C37C918032CF600CBA602 /* diracdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37C118032CF600CBA602 /* diracdec.c */; };
+		833C37CE18032D4800CBA602 /* golomb.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37CA18032D4800CBA602 /* golomb.c */; };
+		833C37CF18032D4800CBA602 /* golomb.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37CB18032D4800CBA602 /* golomb.h */; };
+		833C37D018032D4800CBA602 /* dirac_dwt.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37CC18032D4800CBA602 /* dirac_dwt.c */; };
+		833C37D118032D4800CBA602 /* dirac_dwt.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37CD18032D4800CBA602 /* dirac_dwt.h */; };
+		833C37D318032E4800CBA602 /* dsputil_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37D218032E4800CBA602 /* dsputil_init.c */; };
+		833C37D518032E7000CBA602 /* jrevdct.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37D418032E7000CBA602 /* jrevdct.c */; };
+		833C37D718032EA500CBA602 /* idct_xvid.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37D618032EA500CBA602 /* idct_xvid.h */; };
 		83BCB8E217FCA64400760340 /* avconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BCB8DF17FCA64400760340 /* avconfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83BCB8E317FCA64400760340 /* timecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BCB8E017FCA64400760340 /* timecode.c */; };
 		83BCB8E417FCA64400760340 /* timecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BCB8E117FCA64400760340 /* timecode.h */; };
@@ -548,6 +581,39 @@
 		830F0DCF17FC934D00042E8F /* spdif.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spdif.c; sourceTree = "<group>"; };
 		830F0DD017FC934D00042E8F /* spdif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spdif.h; sourceTree = "<group>"; };
 		830F0DD417FC93E400042E8F /* xwma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xwma.c; sourceTree = "<group>"; };
+		833C3794180328A300CBA602 /* takdec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = takdec.c; sourceTree = "<group>"; };
+		833C3796180328B300CBA602 /* tak_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tak_parser.c; sourceTree = "<group>"; };
+		833C3797180328B300CBA602 /* tak.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tak.c; sourceTree = "<group>"; };
+		833C3798180328B300CBA602 /* tak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tak.h; sourceTree = "<group>"; };
+		833C3799180328B300CBA602 /* takdec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = takdec.c; sourceTree = "<group>"; };
+		833C379E18032A2700CBA602 /* unary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unary.h; sourceTree = "<group>"; };
+		833C37A018032A2F00CBA602 /* rawdec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rawdec.c; sourceTree = "<group>"; };
+		833C37A118032A2F00CBA602 /* rawdec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rawdec.h; sourceTree = "<group>"; };
+		833C37A418032A5000CBA602 /* apetag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = apetag.c; sourceTree = "<group>"; };
+		833C37A518032A5000CBA602 /* apetag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apetag.h; sourceTree = "<group>"; };
+		833C37A818032AAD00CBA602 /* img2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = img2.c; sourceTree = "<group>"; };
+		833C37AA18032AEF00CBA602 /* diracdsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = diracdsp.c; sourceTree = "<group>"; };
+		833C37AB18032AEF00CBA602 /* diracdsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = diracdsp.h; sourceTree = "<group>"; };
+		833C37AC18032AEF00CBA602 /* dsputil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsputil.c; sourceTree = "<group>"; };
+		833C37AD18032AEF00CBA602 /* dsputil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsputil.h; sourceTree = "<group>"; };
+		833C37AE18032AEF00CBA602 /* diracdsp_mmx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = diracdsp_mmx.c; path = x86/diracdsp_mmx.c; sourceTree = "<group>"; };
+		833C37AF18032AEF00CBA602 /* diracdsp_mmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = diracdsp_mmx.h; path = x86/diracdsp_mmx.h; sourceTree = "<group>"; };
+		833C37B018032AEF00CBA602 /* dsputil_x86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dsputil_x86.h; path = x86/dsputil_x86.h; sourceTree = "<group>"; };
+		833C37BA18032CF600CBA602 /* dirac_arith.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dirac_arith.c; sourceTree = "<group>"; };
+		833C37BB18032CF600CBA602 /* dirac_arith.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dirac_arith.h; sourceTree = "<group>"; };
+		833C37BC18032CF600CBA602 /* dirac_dwt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dirac_dwt.c; sourceTree = "<group>"; };
+		833C37BD18032CF600CBA602 /* dirac_dwt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dirac_dwt.h; sourceTree = "<group>"; };
+		833C37BE18032CF600CBA602 /* dirac_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dirac_parser.c; sourceTree = "<group>"; };
+		833C37BF18032CF600CBA602 /* dirac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dirac.c; sourceTree = "<group>"; };
+		833C37C018032CF600CBA602 /* dirac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dirac.h; sourceTree = "<group>"; };
+		833C37C118032CF600CBA602 /* diracdec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = diracdec.c; sourceTree = "<group>"; };
+		833C37CA18032D4800CBA602 /* golomb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = golomb.c; sourceTree = "<group>"; };
+		833C37CB18032D4800CBA602 /* golomb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = golomb.h; sourceTree = "<group>"; };
+		833C37CC18032D4800CBA602 /* dirac_dwt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dirac_dwt.c; sourceTree = "<group>"; };
+		833C37CD18032D4800CBA602 /* dirac_dwt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dirac_dwt.h; sourceTree = "<group>"; };
+		833C37D218032E4800CBA602 /* dsputil_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsputil_init.c; sourceTree = "<group>"; };
+		833C37D418032E7000CBA602 /* jrevdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jrevdct.c; sourceTree = "<group>"; };
+		833C37D618032EA500CBA602 /* idct_xvid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = idct_xvid.h; sourceTree = "<group>"; };
 		83BCB8DF17FCA64400760340 /* avconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avconfig.h; sourceTree = "<group>"; };
 		83BCB8E017FCA64400760340 /* timecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timecode.c; sourceTree = "<group>"; };
 		83BCB8E117FCA64400760340 /* timecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timecode.h; sourceTree = "<group>"; };
@@ -635,6 +701,29 @@
 		830F0B8E17FC4FB900042E8F /* libavcodec */ = {
 			isa = PBXGroup;
 			children = (
+				833C37D418032E7000CBA602 /* jrevdct.c */,
+				833C37CA18032D4800CBA602 /* golomb.c */,
+				833C37CB18032D4800CBA602 /* golomb.h */,
+				833C37BA18032CF600CBA602 /* dirac_arith.c */,
+				833C37BB18032CF600CBA602 /* dirac_arith.h */,
+				833C37BC18032CF600CBA602 /* dirac_dwt.c */,
+				833C37BD18032CF600CBA602 /* dirac_dwt.h */,
+				833C37BE18032CF600CBA602 /* dirac_parser.c */,
+				833C37BF18032CF600CBA602 /* dirac.c */,
+				833C37C018032CF600CBA602 /* dirac.h */,
+				833C37C118032CF600CBA602 /* diracdec.c */,
+				833C37AA18032AEF00CBA602 /* diracdsp.c */,
+				833C37AB18032AEF00CBA602 /* diracdsp.h */,
+				833C37AC18032AEF00CBA602 /* dsputil.c */,
+				833C37AD18032AEF00CBA602 /* dsputil.h */,
+				833C37AE18032AEF00CBA602 /* diracdsp_mmx.c */,
+				833C37AF18032AEF00CBA602 /* diracdsp_mmx.h */,
+				833C37B018032AEF00CBA602 /* dsputil_x86.h */,
+				833C379E18032A2700CBA602 /* unary.h */,
+				833C3796180328B300CBA602 /* tak_parser.c */,
+				833C3797180328B300CBA602 /* tak.c */,
+				833C3798180328B300CBA602 /* tak.h */,
+				833C3799180328B300CBA602 /* takdec.c */,
 				830F0D9017FC8EAC00042E8F /* dvdata.c */,
 				830F0D9117FC8EAC00042E8F /* dvdata.h */,
 				830F0D8017FC8E8B00042E8F /* aac_tablegen_decl.h */,
@@ -764,6 +853,12 @@
 		830F0BAD17FC4FB900042E8F /* libavformat */ = {
 			isa = PBXGroup;
 			children = (
+				833C37A818032AAD00CBA602 /* img2.c */,
+				833C37A418032A5000CBA602 /* apetag.c */,
+				833C37A518032A5000CBA602 /* apetag.h */,
+				833C37A018032A2F00CBA602 /* rawdec.c */,
+				833C37A118032A2F00CBA602 /* rawdec.h */,
+				833C3794180328A300CBA602 /* takdec.c */,
 				830F0DD417FC93E400042E8F /* xwma.c */,
 				830F0DCF17FC934D00042E8F /* spdif.c */,
 				830F0DD017FC934D00042E8F /* spdif.h */,
@@ -948,6 +1043,10 @@
 		830F0D0717FC80B400042E8F /* x86 */ = {
 			isa = PBXGroup;
 			children = (
+				833C37D618032EA500CBA602 /* idct_xvid.h */,
+				833C37D218032E4800CBA602 /* dsputil_init.c */,
+				833C37CC18032D4800CBA602 /* dirac_dwt.c */,
+				833C37CD18032D4800CBA602 /* dirac_dwt.h */,
 				830F0DC317FC92EE00042E8F /* videodsp_init.c */,
 				830F0DBD17FC922C00042E8F /* h264chroma_init.c */,
 				830F0DA917FC8FBD00042E8F /* dct_init.c */,
@@ -1007,6 +1106,7 @@
 				B09E94940D74834B0064F138 /* config.h in Headers */,
 				830F0BD217FC4FB900042E8F /* avcodec.h in Headers */,
 				830F0D7217FC8C1300042E8F /* ast.h in Headers */,
+				833C37A718032A5000CBA602 /* apetag.h in Headers */,
 				830F0D8917FC8E8B00042E8F /* aac_tablegen.h in Headers */,
 				830F0D3117FC841B00042E8F /* imgutils.h in Headers */,
 				830F0C6C17FC7DB100042E8F /* bprint.h in Headers */,
@@ -1030,6 +1130,8 @@
 				830F0CFB17FC7F1E00042E8F /* thread.h in Headers */,
 				830F0D6617FC8A3300042E8F /* options_table.h in Headers */,
 				830F0CF317FC7F1E00042E8F /* raw.h in Headers */,
+				833C37B618032AEF00CBA602 /* diracdsp_mmx.h in Headers */,
+				833C37B418032AEF00CBA602 /* dsputil.h in Headers */,
 				830F0C3F17FC554D00042E8F /* timer.h in Headers */,
 				830F0D1E17FC82AB00042E8F /* colorspace.h in Headers */,
 				830F0DBA17FC921D00042E8F /* cpu.h in Headers */,
@@ -1037,15 +1139,18 @@
 				830F0BDF17FC4FB900042E8F /* put_bits.h in Headers */,
 				830F0C7217FC7DB100042E8F /* rc4.h in Headers */,
 				830F0C2517FC527400042E8F /* bswap.h in Headers */,
+				833C379F18032A2700CBA602 /* unary.h in Headers */,
 				830F0CDD17FC7F1E00042E8F /* faandct.h in Headers */,
 				830F0D0B17FC80B400042E8F /* lsp_mips.h in Headers */,
 				830F0C2B17FC54F800042E8F /* srtp.h in Headers */,
 				830F0D5E17FC89BD00042E8F /* options_table.h in Headers */,
 				830F0CEC17FC7F1E00042E8F /* lsp.h in Headers */,
 				830F0D6517FC8A3300042E8F /* audiointerleave.h in Headers */,
+				833C37A318032A2F00CBA602 /* rawdec.h in Headers */,
 				830F0D3D17FC846C00042E8F /* random_seed.h in Headers */,
 				830F0CCA17FC7F1E00042E8F /* bytestream.h in Headers */,
 				830F0D0317FC7F4000042E8F /* sinewin_tablegen.h in Headers */,
+				833C37C518032CF600CBA602 /* dirac_dwt.h in Headers */,
 				830F0CDF17FC7F1E00042E8F /* faanidct.h in Headers */,
 				830F0DD217FC934D00042E8F /* spdif.h in Headers */,
 				830F0BDE17FC4FB900042E8F /* parser.h in Headers */,
@@ -1072,6 +1177,7 @@
 				830F0C6A17FC7DB100042E8F /* avassert.h in Headers */,
 				830F0D6D17FC8C0700042E8F /* aactab.h in Headers */,
 				830F0BEC17FC4FB900042E8F /* wmavoice_data.h in Headers */,
+				833C37D118032D4800CBA602 /* dirac_dwt.h in Headers */,
 				830F0D7917FC8C7300042E8F /* mpeg4audio.h in Headers */,
 				830F0C3A17FC554D00042E8F /* des.h in Headers */,
 				830F0BF117FC4FB900042E8F /* avi.h in Headers */,
@@ -1088,6 +1194,7 @@
 				830F0CDB17FC7F1E00042E8F /* error_resilience.h in Headers */,
 				830F0C4A17FC7CA300042E8F /* avio_internal.h in Headers */,
 				830F0C7017FC7DB100042E8F /* pixdesc.h in Headers */,
+				833C37C318032CF600CBA602 /* dirac_arith.h in Headers */,
 				830F0CF717FC7F1E00042E8F /* rnd_avg.h in Headers */,
 				830F0D4117FC848D00042E8F /* sha.h in Headers */,
 				830F0CEE17FC7F1E00042E8F /* mpeg12data.h in Headers */,
@@ -1098,7 +1205,9 @@
 				830F0CF117FC7F1E00042E8F /* ratecontrol.h in Headers */,
 				830F0C1417FC500B00042E8F /* fft-internal.h in Headers */,
 				830F0D8E17FC8E8B00042E8F /* sbr.h in Headers */,
+				833C37B218032AEF00CBA602 /* diracdsp.h in Headers */,
 				830F0C3D17FC554D00042E8F /* internal.h in Headers */,
+				833C37D718032EA500CBA602 /* idct_xvid.h in Headers */,
 				830F0CF617FC7F1E00042E8F /* rl.h in Headers */,
 				830F0D8D17FC8E8B00042E8F /* dv_profile.h in Headers */,
 				830F0D3917FC844E00042E8F /* parseutils.h in Headers */,
@@ -1109,6 +1218,7 @@
 				830F0C4C17FC7CA300042E8F /* internal.h in Headers */,
 				830F0BFC17FC4FB900042E8F /* bswap.h in Headers */,
 				830F0D8A17FC8E8B00042E8F /* aacps.h in Headers */,
+				833C37C818032CF600CBA602 /* dirac.h in Headers */,
 				830F0BD617FC4FB900042E8F /* fft.h in Headers */,
 				830F0CE317FC7F1E00042E8F /* frame_thread_encoder.h in Headers */,
 				830F0BE617FC4FB900042E8F /* wmadata.h in Headers */,
@@ -1116,11 +1226,14 @@
 				830F0D2417FC82AB00042E8F /* fifo.h in Headers */,
 				830F0BD917FC4FB900042E8F /* mathops.h in Headers */,
 				830F0C3C17FC554D00042E8F /* float_dsp.h in Headers */,
+				833C37CF18032D4800CBA602 /* golomb.h in Headers */,
 				830F0C8117FC7ED100042E8F /* crc.h in Headers */,
+				833C379C180328B300CBA602 /* tak.h in Headers */,
 				830F0DB817FC921D00042E8F /* asm.h in Headers */,
 				830F0CC517FC7F1E00042E8F /* acelp_pitch_delay.h in Headers */,
 				830F0D8F17FC8E8B00042E8F /* sbrdsp.h in Headers */,
 				830F0CCE17FC7F1E00042E8F /* celp_math.h in Headers */,
+				833C37B718032AEF00CBA602 /* dsputil_x86.h in Headers */,
 				830F0CFA17FC7F1E00042E8F /* sinewin.h in Headers */,
 				830F0CC717FC7F1E00042E8F /* acelp_vectors.h in Headers */,
 			);
@@ -1189,6 +1302,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				833C37A918032AAD00CBA602 /* img2.c in Sources */,
 				830F0D6717FC8A3300042E8F /* options.c in Sources */,
 				830F0DAF17FC8FBD00042E8F /* fmtconvert_init.c in Sources */,
 				830F0DD617FC93E400042E8F /* xwma.c in Sources */,
@@ -1203,11 +1317,15 @@
 				830F0DAE17FC8FBD00042E8F /* fft_init.c in Sources */,
 				830F0D2F17FC841B00042E8F /* error.c in Sources */,
 				830F0BDB17FC4FB900042E8F /* mdct.c in Sources */,
+				833C37A618032A5000CBA602 /* apetag.c in Sources */,
 				830F0D5817FC893E00042E8F /* bitstream.c in Sources */,
+				833C37A218032A2F00CBA602 /* rawdec.c in Sources */,
 				830F0C7617FC7DCB00042E8F /* avstring.c in Sources */,
 				830F0DCD17FC933100042E8F /* w64.c in Sources */,
+				833C37D518032E7000CBA602 /* jrevdct.c in Sources */,
 				830F0BE217FC4FB900042E8F /* utils.c in Sources */,
 				830F0CF917FC7F1E00042E8F /* sinewin.c in Sources */,
+				833C37C418032CF600CBA602 /* dirac_dwt.c in Sources */,
 				830F0CE417FC7F1E00042E8F /* h264chroma_template.c in Sources */,
 				830F0BEF17FC4FB900042E8F /* asf.c in Sources */,
 				830F0BD517FC4FB900042E8F /* fft.c in Sources */,
@@ -1225,13 +1343,16 @@
 				830F0D3317FC841B00042E8F /* opt.c in Sources */,
 				830F0D7317FC8C1300042E8F /* astdec.c in Sources */,
 				830F0D5317FC891800042E8F /* file_open.c in Sources */,
+				833C379D180328B300CBA602 /* takdec.c in Sources */,
 				830F0D7B17FC8E2400042E8F /* avidec.c in Sources */,
 				830F0D4F17FC862400042E8F /* utils.c in Sources */,
 				830F0BEB17FC4FB900042E8F /* wmavoice.c in Sources */,
+				833C37B318032AEF00CBA602 /* dsputil.c in Sources */,
 				830F0CC217FC7F1E00042E8F /* acelp_filters.c in Sources */,
 				830F0DB017FC8FBD00042E8F /* hpeldsp_init.c in Sources */,
 				830F0C1B17FC523000042E8F /* url.c in Sources */,
 				830F0CC417FC7F1E00042E8F /* acelp_pitch_delay.c in Sources */,
+				833C37C218032CF600CBA602 /* dirac_arith.c in Sources */,
 				830F0CEB17FC7F1E00042E8F /* lsp.c in Sources */,
 				830F0D1317FC815000042E8F /* constants.c in Sources */,
 				830F0BE417FC4FB900042E8F /* wma_common.c in Sources */,
@@ -1242,9 +1363,12 @@
 				830F0CE917FC7F1E00042E8F /* imgconvert.c in Sources */,
 				830F0CE717FC7F1E00042E8F /* hpeldsp.c in Sources */,
 				830F0CCB17FC7F1E00042E8F /* celp_filters.c in Sources */,
+				833C37B518032AEF00CBA602 /* diracdsp_mmx.c in Sources */,
 				830F0BF717FC4FB900042E8F /* format.c in Sources */,
 				830F0CC817FC7F1E00042E8F /* avpacket.c in Sources */,
+				833C37CE18032D4800CBA602 /* golomb.c in Sources */,
 				830F0C3917FC554D00042E8F /* des.c in Sources */,
+				833C37C918032CF600CBA602 /* diracdec.c in Sources */,
 				830F0CD217FC7F1E00042E8F /* dct32_float.c in Sources */,
 				830F0D3217FC841B00042E8F /* intfloat_readwrite.c in Sources */,
 				830F0DC917FC931700042E8F /* pcm.c in Sources */,
@@ -1255,6 +1379,7 @@
 				830F0D4D17FC862400042E8F /* time.c in Sources */,
 				830F0C0817FC4FB900042E8F /* mem.c in Sources */,
 				830F0CDE17FC7F1E00042E8F /* faanidct.c in Sources */,
+				833C379B180328B300CBA602 /* tak.c in Sources */,
 				830F0CC917FC7F1E00042E8F /* bit_depth_template.c in Sources */,
 				830F0D4017FC848D00042E8F /* sha.c in Sources */,
 				830F0BF417FC4FB900042E8F /* aviobuf.c in Sources */,
@@ -1275,13 +1400,16 @@
 				830F0C8217FC7ED100042E8F /* dict.c in Sources */,
 				830F0D7817FC8C7300042E8F /* mpeg4audio.c in Sources */,
 				830F0D5F17FC89BD00042E8F /* options.c in Sources */,
+				833C37D318032E4800CBA602 /* dsputil_init.c in Sources */,
 				830F0DB917FC921D00042E8F /* cpu.c in Sources */,
 				830F0C7D17FC7E4E00042E8F /* mathematics.c in Sources */,
 				830F0BDD17FC4FB900042E8F /* parser.c in Sources */,
 				830F0C5C17FC7CEA00042E8F /* id3v1.c in Sources */,
 				830F0CFC17FC7F1E00042E8F /* videodsp.c in Sources */,
 				830F0D8C17FC8E8B00042E8F /* dv_profile.c in Sources */,
+				833C37B118032AEF00CBA602 /* diracdsp.c in Sources */,
 				830F0CD017FC7F1E00042E8F /* dct.c in Sources */,
+				833C3795180328A300CBA602 /* takdec.c in Sources */,
 				830F0DC217FC929E00042E8F /* mux.c in Sources */,
 				830F0BF517FC4FB900042E8F /* cutils.c in Sources */,
 				830F0D2E17FC841B00042E8F /* channel_layout.c in Sources */,
@@ -1289,13 +1417,17 @@
 				830F0BE717FC4FB900042E8F /* wmadec.c in Sources */,
 				830F0CC617FC7F1E00042E8F /* acelp_vectors.c in Sources */,
 				830F0DC417FC92EE00042E8F /* videodsp_init.c in Sources */,
+				833C379A180328B300CBA602 /* tak_parser.c in Sources */,
 				830F0C2E17FC551F00042E8F /* asfcrypt.c in Sources */,
 				830F0D6C17FC8C0700042E8F /* aactab.c in Sources */,
 				830F0D9217FC8EAC00042E8F /* dvdata.c in Sources */,
+				833C37D018032D4800CBA602 /* dirac_dwt.c in Sources */,
 				830F0BF617FC4FB900042E8F /* file.c in Sources */,
 				830F0D3817FC844E00042E8F /* parseutils.c in Sources */,
 				830F0D2017FC82AB00042E8F /* cpu.c in Sources */,
+				833C37C618032CF600CBA602 /* dirac_parser.c in Sources */,
 				830F0CED17FC7F1E00042E8F /* mpeg12data.c in Sources */,
+				833C37C718032CF600CBA602 /* dirac.c in Sources */,
 				830F0D7E17FC8E4800042E8F /* dv.c in Sources */,
 				830F0C7B17FC7E4E00042E8F /* crc.c in Sources */,
 				830F0BE817FC4FB900042E8F /* wmalosslessdec.c in Sources */,
