@@ -41,7 +41,7 @@
 	finalNode = converterNode;
 }
 
-- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat
+- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi
 {	
 	[self setStreamURL:url];
 
@@ -60,6 +60,8 @@
 
 	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
 		return NO;
+
+    [self setRGInfo:rgi];
 
 //		return NO;
 
