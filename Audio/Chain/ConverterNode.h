@@ -16,9 +16,14 @@
 
 @interface ConverterNode : Node {
 	AudioConverterRef converter;
+    AudioConverterRef converterDownmix;
 	void *callbackBuffer;
+    
+    void *downmixBuffer;
+    int downmixSize, downmixOffset;
 	
 	AudioStreamBasicDescription inputFormat;
+    AudioStreamBasicDescription downmixFormat;
 	AudioStreamBasicDescription outputFormat;
 }
 
