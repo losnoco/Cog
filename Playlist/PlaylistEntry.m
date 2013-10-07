@@ -39,6 +39,7 @@
 @synthesize channels;
 @synthesize bitsPerSample;
 @synthesize floatingPoint;
+@synthesize Unsigned;
 @synthesize sampleRate;
 
 @synthesize replayGainAlbumGain;

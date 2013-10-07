@@ -56,7 +56,7 @@ AudioStreamBasicDescription propertiesToASBD(NSDictionary *properties)
 		asbd.mFormatFlags |= kLinearPCMFormatFlagIsAlignedHigh;
 	}
 	
-	if (isFloat == NO && [[properties objectForKey:@"unsigned"] boolValue] == NO) {
+	if (isFloat == NO && [[properties objectForKey:@"Unsigned"] boolValue] == NO) {
 		asbd.mFormatFlags |= kLinearPCMFormatFlagIsSignedInteger;
 	}
     

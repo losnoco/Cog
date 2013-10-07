@@ -281,7 +281,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 			[NSNumber numberWithInt:channels], @"channels",
 			[NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
-            [NSNumber numberWithBool:(bitsPerSample == 8)], @"unsigned",
+            [NSNumber numberWithBool:(bitsPerSample == 8)], @"Unsigned",
 			[NSNumber numberWithFloat:frequency], @"sampleRate",
             [NSNumber numberWithBool:floatingPoint], @"floatingPoint",
 			[NSNumber numberWithDouble:totalFrames], @"totalFrames",

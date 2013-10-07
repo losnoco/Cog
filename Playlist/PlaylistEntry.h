@@ -46,6 +46,7 @@
 	int channels;
 	int bitsPerSample;
     BOOL floatingPoint;
+    BOOL Unsigned;
 	float sampleRate;
 	
 	NSString *endian;
@@ -102,6 +103,7 @@
 @property int channels;
 @property int bitsPerSample;
 @property BOOL floatingPoint;
+@property BOOL Unsigned;
 @property float sampleRate;
 
 @property float replayGainAlbumGain;
