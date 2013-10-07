@@ -1,6 +1,6 @@
 //
-//  WMADecoder.h
-//  WMA
+//  FFMPEGDecoder.h
+//  FFMPEG
 //
 //  Created by Andre Reffhaug on 2/26/08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
@@ -10,11 +10,11 @@
 #import "Plugin.h"
 
 #define __FRAMEWORK__
-#import "WMA/avcodec.h"
-#import "WMA/avformat.h"
+#import <FFMPEG/avcodec.h>
+#import <FFMPEG/avformat.h>
 #undef __FRAMEWORK__
 
-@interface WMADecoder : NSObject <CogDecoder> 
+@interface FFMPEGDecoder : NSObject <CogDecoder>
 {
 	id<CogSource> source;
 	void *sampleBuffer;

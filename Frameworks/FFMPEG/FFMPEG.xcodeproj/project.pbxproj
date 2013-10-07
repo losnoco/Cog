@@ -281,7 +281,7 @@
 
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		32DBCF5E0370ADEE00C91783 /* WMA_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMA_Prefix.pch; sourceTree = "<group>"; };
+		32DBCF5E0370ADEE00C91783 /* FFMPEG_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FFMPEG_Prefix.pch; sourceTree = "<group>"; };
 		830F0B8F17FC4FB900042E8F /* allcodecs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = allcodecs.c; sourceTree = "<group>"; };
 		830F0B9017FC4FB900042E8F /* avcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avcodec.h; sourceTree = "<group>"; };
 		830F0B9317FC4FB900042E8F /* fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft.c; sourceTree = "<group>"; };
@@ -552,7 +552,7 @@
 		83BCB8E017FCA64400760340 /* timecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timecode.c; sourceTree = "<group>"; };
 		83BCB8E117FCA64400760340 /* timecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timecode.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8DC2EF5B0486A6940098B216 /* WMA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WMA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DC2EF5B0486A6940098B216 /* FFMPEG.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FFMPEG.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B09E94730D74834B0064F138 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		B09E94EF0D748DEE0064F138 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = /usr/lib/libiconv.dylib; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -573,23 +573,23 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DC2EF5B0486A6940098B216 /* WMA.framework */,
+				8DC2EF5B0486A6940098B216 /* FFMPEG.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		0867D691FE84028FC02AAC07 /* WMA */ = {
+		0867D691FE84028FC02AAC07 /* FFMPEG */ = {
 			isa = PBXGroup;
 			children = (
 				830F0C5E17FC7D3100042E8F /* libz.dylib */,
 				B09E94EF0D748DEE0064F138 /* libiconv.dylib */,
-				B09E94660D74834B0064F138 /* ffmpeg-strip-wma */,
+				B09E94660D74834B0064F138 /* ffmpeg-minimal */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
-			name = WMA;
+			name = FFMPEG;
 			sourceTree = "<group>";
 		};
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
@@ -627,7 +627,7 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				32DBCF5E0370ADEE00C91783 /* WMA_Prefix.pch */,
+				32DBCF5E0370ADEE00C91783 /* FFMPEG_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -961,7 +961,7 @@
 			path = x86;
 			sourceTree = "<group>";
 		};
-		B09E94660D74834B0064F138 /* ffmpeg-strip-wma */ = {
+		B09E94660D74834B0064F138 /* ffmpeg-minimal */ = {
 			isa = PBXGroup;
 			children = (
 				830F0B8E17FC4FB900042E8F /* libavcodec */,
@@ -969,7 +969,7 @@
 				830F0BBA17FC4FB900042E8F /* libavutil */,
 				B09E94730D74834B0064F138 /* config.h */,
 			);
-			path = "ffmpeg-strip-wma";
+			path = "ffmpeg-minimal";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1129,9 +1129,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* WMA Framework */ = {
+		8DC2EF4F0486A6940098B216 /* FFMPEG Framework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WMA Framework" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "FFMPEG Framework" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -1142,10 +1142,10 @@
 			);
 			dependencies = (
 			);
-			name = "WMA Framework";
+			name = "FFMPEG Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
-			productName = WMA;
-			productReference = 8DC2EF5B0486A6940098B216 /* WMA.framework */;
+			productName = FFMPEG;
+			productReference = 8DC2EF5B0486A6940098B216 /* FFMPEG.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -1156,19 +1156,19 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 			};
-			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WMA" */;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "FFMPEG" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 0867D691FE84028FC02AAC07 /* WMA */;
+			mainGroup = 0867D691FE84028FC02AAC07 /* FFMPEG */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* WMA Framework */,
+				8DC2EF4F0486A6940098B216 /* FFMPEG Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -1342,15 +1342,15 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WMA_Prefix.pch;
+				GCC_PREFIX_HEADER = FFMPEG_Prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"ffmpeg-strip-wma",
+					"ffmpeg-minimal",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				PRODUCT_NAME = WMA;
+				PRODUCT_NAME = FFMPEG;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = framework;
@@ -1368,15 +1368,15 @@
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WMA_Prefix.pch;
+				GCC_PREFIX_HEADER = FFMPEG_Prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"ffmpeg-strip-wma",
+					"ffmpeg-minimal",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				PRODUCT_NAME = WMA;
+				PRODUCT_NAME = FFMPEG;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = framework;
@@ -1411,7 +1411,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WMA Framework" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "FFMPEG Framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,
@@ -1420,7 +1420,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WMA" */ = {
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "FFMPEG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,

@@ -1,6 +1,6 @@
 //
-//  WMAFileProtocols.m
-//  WMA
+//  FFMPEGFileProtocols.m
+//  FFMPEG
 //
 //  Created by Christopher Snowhill on 10/4/13.
 //  Copyright 2013 __NoWork, Inc__. All rights reserved.
@@ -9,9 +9,9 @@
 #include "Plugin.h"
 
 #define __FRAMEWORK__
-#import <WMA/avformat.h>
-#import <WMA/url.h>
-#import <WMA/opt.h>
+#import <FFMPEG/avformat.h>
+#import <FFMPEG/url.h>
+#import <FFMPEG/opt.h>
 #undef __FRAMEWORK__
 
 /* standard file protocol */

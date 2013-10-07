@@ -148,7 +148,7 @@
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
 		8375B36517FFEF130092A79F /* Opus.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B05717FFEA410092A79F /* Opus.bundle */; };
-		83BCB8DE17FC971300760340 /* WMA.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* WMA.bundle */; };
+		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -455,10 +455,10 @@
 		};
 		83BCB8DC17FC96FC00760340 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B09E94300D747F7B0064F138 /* WMA.xcodeproj */;
+			containerPortal = B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
-			remoteInfo = "WMA Plugin";
+			remoteInfo = "FFMPEG Plugin";
 		};
 		8E8D40860CBB036600135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -490,10 +490,10 @@
 		};
 		B09E94340D747F7B0064F138 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B09E94300D747F7B0064F138 /* WMA.xcodeproj */;
+			containerPortal = B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
-			remoteInfo = WMA;
+			remoteInfo = FFMPEG;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -515,7 +515,7 @@
 			files = (
 				8375B36517FFEF130092A79F /* Opus.bundle in CopyFiles */,
 				8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */,
-				83BCB8DE17FC971300760340 /* WMA.bundle in CopyFiles */,
+				83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */,
 				8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */,
 				99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */,
 				17C8F7D80CBEF3EF008D969D /* Dumb.bundle in CopyFiles */,
@@ -792,7 +792,7 @@
 		8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pls.xcodeproj; path = Plugins/Pls/Pls.xcodeproj; sourceTree = "<group>"; };
 		8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
-		B09E94300D747F7B0064F138 /* WMA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WMA.xcodeproj; path = Plugins/WMA/WMA.xcodeproj; sourceTree = "<group>"; };
+		B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FFMPEG.xcodeproj; path = Plugins/FFMPEG/FFMPEG.xcodeproj; sourceTree = "<group>"; };
 		B09E96620D74A7BC0064F138 /* stop_current.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_current.png; path = Images/stop_current.png; sourceTree = "<group>"; };
 		F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FinderCompare.m"; sourceTree = "<group>"; };
 		F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FinderCompare.h"; sourceTree = "<group>"; };
@@ -1029,7 +1029,7 @@
 			isa = PBXGroup;
 			children = (
 				8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */,
-				B09E94300D747F7B0064F138 /* WMA.xcodeproj */,
+				B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */,
 				566D32160D538550004466A5 /* APL.xcodeproj */,
 				17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */,
 				17C8F3C80CBED663008D969D /* GME.xcodeproj */,
@@ -1504,7 +1504,7 @@
 		B09E94310D747F7B0064F138 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B09E94350D747F7B0064F138 /* WMA.bundle */,
+				B09E94350D747F7B0064F138 /* FFMPEG.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1671,7 +1671,7 @@
 				},
 				{
 					ProductGroup = B09E94310D747F7B0064F138 /* Products */;
-					ProjectRef = B09E94300D747F7B0064F138 /* WMA.xcodeproj */;
+					ProjectRef = B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1836,10 +1836,10 @@
 			remoteRef = 8E8D41C60CBB0DA000135C1B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B09E94350D747F7B0064F138 /* WMA.bundle */ = {
+		B09E94350D747F7B0064F138 /* FFMPEG.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = WMA.bundle;
+			path = FFMPEG.bundle;
 			remoteRef = B09E94340D747F7B0064F138 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2100,7 +2100,7 @@
 		};
 		83BCB8DD17FC96FC00760340 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "WMA Plugin";
+			name = "FFMPEG Plugin";
 			targetProxy = 83BCB8DC17FC96FC00760340 /* PBXContainerItemProxy */;
 		};
 		8E8D40930CBB03AF00135C1B /* PBXTargetDependency */ = {
@@ -2217,7 +2217,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/build/Release/WMA.framework\"",
+					"\"$(SRCROOT)/build/Release/FFMPEG.framework\"",
 					"\"$(SRCROOT)/ID3/libid3\"",
 				);
 				OTHER_CFLAGS = (
@@ -2251,7 +2251,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/build/Release/WMA.framework\"",
+					"\"$(SRCROOT)/build/Release/FFMPEG.framework\"",
 					"\"$(SRCROOT)/ID3/libid3\"",
 				);
 				OTHER_CFLAGS = (

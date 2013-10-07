@@ -1,20 +1,20 @@
 //
-//  WMADecoder.m
-//  WMA
+//  FFMPEGDecoder.m
+//  FFMPEG
 //
 //  Created by Andre Reffhaug on 2/26/08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
 // test
-#import "WMADecoder.h"
-#import "WMAFileProtocols.h"
+#import "FFMPEGDecoder.h"
+#import "FFMPEGFileProtocols.h"
 
 #include <pthread.h>
 
 #define ST_BUFF 2048
 
-@implementation WMADecoder
+@implementation FFMPEGDecoder
 
 
 int lockmgr_callback(void ** mutex, enum AVLockOp op)
@@ -68,7 +68,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	
 	if (err < 0)
 	{
-		NSLog(@"Opening .WMA file failed horribly: %d", err);
+		NSLog(@"Opening file failed horribly: %d", err);
 		return NO;
 	}
 	
