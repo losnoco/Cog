@@ -17,6 +17,7 @@
 @interface OutputCoreAudio : NSObject {
 	OutputNode * outputController;
 	
+    AudioDeviceID outputDeviceID;
 	AudioUnit outputUnit;
 	AURenderCallbackStruct renderCallback;	
 	AudioStreamBasicDescription deviceFormat;	// info about the default device

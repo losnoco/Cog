@@ -96,6 +96,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	}
 
 	printf("DEVICE: %i\n", deviceID);
+    outputDeviceID = deviceID;
 	
 	err = AudioUnitSetProperty(outputUnit,
 							  kAudioOutputUnitProperty_CurrentDevice, 
@@ -118,7 +119,12 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	if (outputUnit)
 		[self stop];
 	
-	ComponentDescription desc;  
+	AudioObjectPropertyAddress propertyAddress = {
+		.mElement	= kAudioObjectPropertyElementMaster
+	};
+    UInt32 dataSize;
+	
+    ComponentDescription desc;
 	OSStatus err;
 	
 	desc.componentType = kAudioUnitType_Output;
@@ -177,7 +183,75 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	// change output format...
 	
-	deviceFormat.mChannelsPerFrame = 2; // HACK: Force stereo. This breaks surround, but surround is likely busted anyways because there isn't a correct channel mapping.
+	// The default channel map is silence
+	SInt32 deviceChannelMap [deviceFormat.mChannelsPerFrame];
+	for(UInt32 i = 0; i < deviceFormat.mChannelsPerFrame; ++i)
+		deviceChannelMap[i] = -1;
+    
+	// Determine the device's preferred stereo channels for output mapping
+	if(1 == deviceFormat.mChannelsPerFrame || 2 == deviceFormat.mChannelsPerFrame) {
+		propertyAddress.mSelector = kAudioDevicePropertyPreferredChannelsForStereo;
+		propertyAddress.mScope = kAudioDevicePropertyScopeOutput;
+        
+		UInt32 preferredStereoChannels [2] = { 1, 2 };
+		if(AudioObjectHasProperty(outputDeviceID, &propertyAddress)) {
+			dataSize = sizeof(preferredStereoChannels);
+            
+			err = AudioObjectGetPropertyData(outputDeviceID, &propertyAddress, 0, nil, &dataSize, &preferredStereoChannels);
+		}
+        
+		AudioChannelLayout stereoLayout;
+		stereoLayout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
+        
+		const AudioChannelLayout *specifier [1] = { &stereoLayout };
+        
+		SInt32 stereoChannelMap [2] = { 1, 2 };
+		dataSize = sizeof(stereoChannelMap);
+		err = AudioFormatGetProperty(kAudioFormatProperty_ChannelMap, sizeof(specifier), specifier, &dataSize, stereoChannelMap);
+        
+		if(noErr == err) {
+			deviceChannelMap[preferredStereoChannels[0] - 1] = stereoChannelMap[0];
+			deviceChannelMap[preferredStereoChannels[1] - 1] = stereoChannelMap[1];
+		}
+		else {
+			// Just use a channel map that makes sense
+			deviceChannelMap[preferredStereoChannels[0] - 1] = 0;
+			deviceChannelMap[preferredStereoChannels[1] - 1] = 1;
+		}
+	}
+	// Determine the device's preferred multichannel layout
+	else {
+		propertyAddress.mSelector = kAudioDevicePropertyPreferredChannelLayout;
+		propertyAddress.mScope = kAudioDevicePropertyScopeOutput;
+        
+		if(AudioObjectHasProperty(outputDeviceID, &propertyAddress)) {
+			err = AudioObjectGetPropertyDataSize(outputDeviceID, &propertyAddress, 0, nil, &dataSize);
+            
+			AudioChannelLayout *preferredChannelLayout = (AudioChannelLayout *)(malloc(dataSize));
+            
+			err = AudioObjectGetPropertyData(outputDeviceID, &propertyAddress, 0, nil, &dataSize, preferredChannelLayout);
+            
+			const AudioChannelLayout *specifier [1] = { preferredChannelLayout };
+            
+			// Not all channel layouts can be mapped, so handle failure with a generic mapping
+			dataSize = (UInt32)sizeof(deviceChannelMap);
+			err = AudioFormatGetProperty(kAudioFormatProperty_ChannelMap, sizeof(specifier), specifier, &dataSize, deviceChannelMap);
+            
+			if(noErr != err) {
+				// Just use a channel map that makes sense
+				for(UInt32 i = 0; i < deviceFormat.mChannelsPerFrame; ++i)
+					deviceChannelMap[i] = i;
+			}
+            
+			free(preferredChannelLayout), preferredChannelLayout = nil;
+		}
+		else {
+			// Just use a channel map that makes sense
+			for(UInt32 i = 0; i < deviceFormat.mChannelsPerFrame; ++i)
+				deviceChannelMap[i] = i;
+		}
+	}
+
 	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
 	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
 //	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
@@ -199,6 +273,14 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 								0,
 								&deviceFormat,
 								size);
+    
+    size = sizeof(deviceChannelMap);
+    err = AudioUnitSetProperty(outputUnit,
+                               kAudioOutputUnitProperty_ChannelMap,
+                               kAudioUnitScope_Output,
+                               0,
+                               deviceChannelMap,
+                               size);
 	
 	//setup render callbacks
 	renderCallback.inputProc = Sound_Renderer;
