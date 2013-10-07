@@ -128,7 +128,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	NSLog(@"channels: %d", c->channels);
 	
 	channels = c->channels;
-	bitrate = ic->bit_rate;
+	bitrate = ic->bit_rate / 1000;
     floatingPoint = NO;
     switch (c->sample_fmt) {
         case AV_SAMPLE_FMT_U8:
