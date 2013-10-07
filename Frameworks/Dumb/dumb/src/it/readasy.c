@@ -72,6 +72,13 @@ static int it_asy_read_pattern( IT_PATTERN *pattern, DUMBFILE *f, unsigned char 
 				}
 
 				_dumb_it_xm_convert_effect( buffer[ pos + 2 ], buffer[ pos + 3 ], entry, 1 );
+                
+                // fixup
+                switch ( entry->effect ) {
+                    case IT_SET_PANNING:
+                        entry->effectvalue <<= 1;
+                        break;
+                }
 
 				if ( entry->mask ) ++entry;
 			}
