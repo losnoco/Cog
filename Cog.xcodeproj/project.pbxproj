@@ -1606,6 +1606,10 @@
 					ProjectRef = 17C8F7D20CBEF3E8008D969D /* Dumb.xcodeproj */;
 				},
 				{
+					ProductGroup = B09E94310D747F7B0064F138 /* Products */;
+					ProjectRef = B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */;
+				},
+				{
 					ProductGroup = 17C808720C3BD167005707C4 /* Products */;
 					ProjectRef = 17C808710C3BD167005707C4 /* FileSource.xcodeproj */;
 				},
@@ -1668,10 +1672,6 @@
 				{
 					ProductGroup = 17C808C10C3BD1DD005707C4 /* Products */;
 					ProjectRef = 17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */;
-				},
-				{
-					ProductGroup = B09E94310D747F7B0064F138 /* Products */;
-					ProjectRef = B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */;
 				},
 			);
 			projectRoot = "";

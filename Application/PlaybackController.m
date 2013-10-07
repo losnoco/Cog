@@ -6,6 +6,7 @@
 
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
+#import "playlistLoader.h"
 
 @implementation PlaybackController
 
@@ -145,6 +146,11 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 	if (pe == nil)
 		return;
+	
+	// Race here, but the worst that could happen is we re-read the data
+	if ([pe metadataLoaded] != YES) {
+		[pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
+	}
 	
 	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe)];
 }
@@ -456,7 +462,12 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	if (curEntry.stopAfter)
 		pe = nil;
 	else
+    {
 		pe = [playlistController getNextEntry:curEntry];
+        if ([pe metadataLoaded] != YES) {
+            [pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
+        }
+    }
 
 	[player setNextStream:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe)];
 }

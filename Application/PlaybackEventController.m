@@ -10,7 +10,6 @@
 
 #import "AudioScrobbler.h"
 #import "PlaybackController.h"
-#import "PlaylistLoader.h"
 #import "PlaylistEntry.h"
 
 @implementation PlaybackEventController
@@ -51,11 +50,6 @@
 
 - (void)performPlaybackDidBeginActions:(PlaylistEntry *)pe
 {
-	// Race here, but the worst that could happen is we re-read the data
-	if ([pe metadataLoaded] != YES) {
-		[pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
-	}
-	
 	if (NO == [pe error]) {
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 			[scrobbler start:pe];

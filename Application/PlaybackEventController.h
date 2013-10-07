@@ -9,13 +9,11 @@
 #import <Cocoa/Cocoa.h>
 #import <Growl/GrowlApplicationBridge.h>
 
-@class PlaylistLoader;
 @class AudioScrobbler;
 @interface PlaybackEventController : NSObject <GrowlApplicationBridgeDelegate> {
 	NSOperationQueue *queue;
 	
 	AudioScrobbler *scrobbler;
-	IBOutlet PlaylistLoader *playlistLoader;
 }
 
 @end

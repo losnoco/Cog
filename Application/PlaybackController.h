@@ -18,11 +18,13 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 
 @class PlaylistController;
 @class PlaylistView;
+@class PlaylistLoader;
 
 @interface PlaybackController : NSObject
 {
     IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaylistView *playlistView;
+	IBOutlet PlaylistLoader *playlistLoader;
 	
 	IBOutlet NSSlider *volumeSlider;
 	
