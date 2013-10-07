@@ -12,15 +12,6 @@
 #import "CoreAudioUtils.h"
 
 
-static BOOL hostIsBigEndian()
-{
-#ifdef __BIG_ENDIAN__
-	return YES;
-#else
-	return NO;
-#endif
-}
-
 @implementation InputNode
 
 - (BOOL)openWithSource:(id<CogSource>)source
@@ -43,21 +34,8 @@ static BOOL hostIsBigEndian()
 	int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 	int channels = [[properties objectForKey:@"channels"] intValue];
 	
-    bytesPerSample = bitsPerSample / 8;
-	bytesPerFrame = bytesPerSample * channels;
+	bytesPerFrame = (bitsPerSample / 8) * channels;
     
-	if (([[properties objectForKey:@"endian"] isEqualToString:@"big"] && !hostIsBigEndian()) ||
-        ([[properties objectForKey:@"endian"] isEqualToString:@"little"] && hostIsBigEndian())) {
-        swapEndian = YES;
-    }
-    else {
-        swapEndian = NO;
-    }
-    
-    floatingPoint = [[properties objectForKey:@"floatingPoint"] boolValue];
-    
-    [self refreshVolumeScaling];
-	
 	shouldContinue = YES;
 	shouldSeek = NO;
 
@@ -74,11 +52,8 @@ static BOOL hostIsBigEndian()
 	int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 	int channels = [[properties objectForKey:@"channels"] intValue];
 	
-    bytesPerSample = bitsPerSample / 8;
-	bytesPerFrame = bytesPerSample * channels;
+	bytesPerFrame = (bitsPerSample / 8) * channels;
     
-    [self refreshVolumeScaling];
-	
 	[self registerObservers];
 
 	shouldContinue = YES;
@@ -101,8 +76,6 @@ static BOOL hostIsBigEndian()
 			  forKeyPath:@"metadata" 
 				 options:(NSKeyValueObservingOptionNew)
 				 context:NULL];
-
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -116,104 +89,10 @@ static BOOL hostIsBigEndian()
 		//Inform something of properties change
 		//Disable support until it is properly implimented.
 		//[controller inputFormatDidChange: propertiesToASBD([decoder properties])];
-        [self refreshVolumeScaling];
 	}
 	else if ([keyPath isEqual:@"metadata"]) {
 		//Inform something of metadata change
 	}
-    else if ([keyPath isEqual:@"values.volumeScaling"]) {
-        //User reset the volume scaling option
-        [self refreshVolumeScaling];
-    }
-}
-
-static float db_to_scale(float db)
-{
-    return pow(10.0, db / 20);
-}
-
-- (void)refreshVolumeScaling
-{
-	NSDictionary *properties = [decoder properties];
-    if (rgInfo != nil)
-        properties = rgInfo;
-    NSString * scaling = [[NSUserDefaults standardUserDefaults] stringForKey:@"volumeScaling"];
-    BOOL useAlbum = [scaling hasPrefix:@"albumGain"];
-    BOOL useTrack = useAlbum || [scaling hasPrefix:@"trackGain"];
-    BOOL useVolume = useAlbum || useTrack || [scaling isEqualToString:@"volumeScale"];
-    BOOL usePeak = [scaling hasSuffix:@"WithPeak"];
-    float scale = 1.0;
-    float peak = 0.0;
-    if (useVolume) {
-        id pVolumeScale = [properties objectForKey:@"volume"];
-        if (pVolumeScale != nil)
-            scale = [pVolumeScale floatValue];
-    }
-    if (useTrack) {
-        id trackGain = [properties objectForKey:@"replayGainTrackGain"];
-        id trackPeak = [properties objectForKey:@"replayGainTrackPeak"];
-        if (trackGain != nil)
-            scale = db_to_scale([trackGain floatValue]);
-        if (trackPeak != nil)
-            peak = [trackPeak floatValue];
-    }
-    if (useAlbum) {
-        id albumGain = [properties objectForKey:@"replayGainAlbumGain"];
-        id albumPeak = [properties objectForKey:@"replayGainAlbumPeak"];
-        if (albumGain != nil)
-            scale = db_to_scale([albumGain floatValue]);
-        if (albumPeak != nil)
-            peak = [albumPeak floatValue];
-    }
-    if (usePeak) {
-        if (scale * peak > 1.0)
-            scale = 1.0 / peak;
-    }
-    volumeScale = scale * 4096;
-}
-
-static int16_t swap_16(uint16_t input)
-{
-    return (input >> 8) | (input << 8);
-}
-
-static int32_t swap_24(uint32_t input)
-{
-    int32_t temp = (input << 24) >> 8;
-    return temp | ((input >> 16) & 0xff) | (input & 0xff00);
-}
-
-static int32_t swap_32(uint32_t input)
-{
-    return (input >> 24) | ((input >> 8) & 0xff00) | ((input << 8) & 0xff0000) | (input << 24);
-}
-
-static float swap_32f(float input)
-{
-    union {
-        float f;
-        int32_t i;
-    } val;
-    val.f = input;
-    val.i = swap_32(val.i);
-    return val.f;
-}
-
-static int64_t swap_64(uint64_t input)
-{
-    return (input >> 56) | ((input >> 40) & 0xff00) | ((input >> 24) & 0xff0000) | ((input >> 8) & 0xff000000) |
-    ((input << 8) & 0xff00000000) | ((input << 24) & 0xff0000000000) | ((input << 40) & 0xff000000000000) | (input << 56);
-}
-
-static double swap_64f(double input)
-{
-    union {
-        double f;
-        int64_t i;
-    } val;
-    val.f = input;
-    val.i = swap_64(val.i);
-    return val.f;
 }
 
 - (void)process
@@ -256,123 +135,6 @@ static double swap_64f(double input)
 				break; 
 			}
             
-            if (volumeScale != 4096) {
-                int totalFrames = amountInBuffer / bytesPerSample;
-                switch (bytesPerSample) {
-                    case 1:
-                    {
-                        uint8_t * samples = (uint8_t *)inputBuffer;
-                        for (int i = 0; i < totalFrames; i++)
-                        {
-                            int32_t sample = (int8_t)samples[i] - 128;
-                            sample = (sample * volumeScale) >> 12;
-                            if ((unsigned)(sample + 0x80) & 0xffffff00) sample = (sample >> 31) ^ 0x7f;
-                            samples[i] = sample + 128;
-                        }
-                    }
-                    break;
-                        
-                    case 2:
-                    {
-                        int16_t * samples = (int16_t *)inputBuffer;
-                        for (int i = 0; i < totalFrames; i++)
-                        {
-                            int32_t sample = samples[i];
-                            if (swapEndian) sample = swap_16(sample);
-                            sample = (sample * volumeScale) >> 12;
-                            if ((unsigned)(sample + 0x8000) & 0xffff0000) sample = (sample >> 31) ^ 0x7fff;
-                            if (swapEndian) sample = swap_16(sample);
-                            samples[i] = sample;
-                        }
-                    }
-                    break;
-                    
-                    case 3:
-                    {
-                        uint8_t * samples = (uint8_t *)inputBuffer;
-                        for (int i = 0; i < totalFrames; i++)
-                        {
-                            int32_t sample = (samples[i * 3] << 8) | (samples[i * 3 + 1] << 16) | (samples[i * 3 + 2] << 24);
-                            sample >>= 8;
-                            if (swapEndian) sample = swap_24(sample);
-                            sample = (sample * volumeScale) >> 12;
-                            if ((unsigned)(sample + 0x800000) & 0xff000000) sample = (sample >> 31) ^ 0x7fffff;
-                            if (swapEndian) sample = swap_24(sample);
-                            samples[i * 3] = sample;
-                            samples[i * 3 + 1] = sample >> 8;
-                            samples[i * 3 + 2] = sample >> 16;
-                        }
-                    }
-                    break;
-                        
-                    case 4:
-                        if (floatingPoint)
-                        {
-                            float * samples = (float *)inputBuffer;
-                            float scale = (float)volumeScale / 4096;
-                            for (int i = 0; i < totalFrames; i++)
-                            {
-                                float sample = samples[i];
-                                if (swapEndian) sample = swap_32f(sample);
-                                sample *= scale;
-                                if (swapEndian) sample = swap_32f(sample);
-                                samples[i] = sample;
-                            }
-                        }
-                        else
-                        {
-                            int32_t * samples = (int32_t *)inputBuffer;
-                            for (int i = 0; i < totalFrames; i++)
-                            {
-                                int64_t sample = samples[i];
-                                if (swapEndian) sample = swap_32(sample);
-                                sample = (sample * volumeScale) >> 12;
-                                if ((unsigned)(sample + 0x80000000) & 0xffffffff00000000) sample = (sample >> 63) ^ 0x7fffffff;
-                                if (swapEndian) sample = swap_32(sample);
-                                samples[i] = sample;
-                            }
-                        }
-                        break;
-
-                    case 8:
-                        if (floatingPoint)
-                        {
-                            double * samples = (double *)inputBuffer;
-                            double scale = (double)volumeScale / 4096;
-                            for (int i = 0; i < totalFrames; i++)
-                            {
-                                double sample = samples[i];
-                                if (swapEndian) sample = swap_64f(sample);
-                                sample *= scale;
-                                if (swapEndian) sample = swap_64f(sample);
-                                samples[i] = sample;
-                            }
-                        }
-                        else
-                        {
-                            int64_t * samples = (int64_t *)inputBuffer;
-                            for (int i = 0; i < totalFrames; i++)
-                            {
-                                int64_t sample = samples[i];
-                                if (swapEndian) sample = swap_64(sample);
-                                int64_t high_part = sample >> (32 + 12);
-                                int64_t low_part = (sample & 0xffffffff) | (sample >> 31);
-                                high_part *= volumeScale;
-                                low_part = (low_part * volumeScale) >> 12;
-                                if (((uint64_t)low_part + 0x100000000) & 0xfffffffe00000000)
-                                    high_part += low_part >> 32;
-                                if (((uint64_t)high_part + 0x80000000) & 0xffffffff00000000)
-                                    sample = high_part >> 63;
-                                else
-                                    sample = (high_part << 32) | (low_part & 0xffffffff);
-                                if (swapEndian) sample = swap_64(sample);
-                                samples[i] = sample;
-                            }
-                        }
-                        break;
-                }
-            }
-		
 			[self writeData:inputBuffer amount:amountInBuffer];
 			amountInBuffer = 0;
 		}
@@ -402,20 +164,10 @@ static double swap_64f(double input)
 	return NO;
 }
 
-- (void)setRGInfo:(NSDictionary *)i
-{
-    [i retain];
-    [rgInfo release];
-    rgInfo = i;
-    [self refreshVolumeScaling];
-}
-
 - (void)dealloc
 {
 	NSLog(@"Input Node dealloc");
     
-    [rgInfo release];
-
 	[decoder removeObserver:self forKeyPath:@"properties"];
 	[decoder removeObserver:self forKeyPath:@"metadata"];
 

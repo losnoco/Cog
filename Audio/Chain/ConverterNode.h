@@ -15,17 +15,23 @@
 #import "Node.h"
 
 @interface ConverterNode : Node {
+    NSDictionary * rgInfo;
+
 	AudioConverterRef converter;
-    AudioConverterRef converterDownmix;
+    AudioConverterRef converterFloat;
 	void *callbackBuffer;
     
-    void *downmixBuffer;
-    int downmixSize, downmixOffset;
+    float volumeScale;
+    
+    void *floatBuffer;
+    int floatSize, floatOffset;
 	
 	AudioStreamBasicDescription inputFormat;
-    AudioStreamBasicDescription downmixFormat;
+    AudioStreamBasicDescription floatFormat;
 	AudioStreamBasicDescription outputFormat;
 }
+
+- (void)registerObservers;
 
 - (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat outputFormat:(AudioStreamBasicDescription)outputFormat;
 - (void)cleanUp;
@@ -33,8 +39,12 @@
 - (void)process;
 - (int)convert:(void *)dest amount:(int)amount;
 
+- (void)setRGInfo:(NSDictionary *)rgi;
+
 - (void)setOutputFormat:(AudioStreamBasicDescription)format;
 
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format;
+
+- (void)refreshVolumeScaling;
 
 @end

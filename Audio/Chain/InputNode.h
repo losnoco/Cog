@@ -18,11 +18,9 @@
 
 @interface InputNode : Node {
 	id<CogDecoder> decoder;
-    NSDictionary * rgInfo;
 	
     int bytesPerSample;
 	int bytesPerFrame;
-    int volumeScale;
     BOOL floatingPoint;
     BOOL swapEndian;
 	
@@ -41,10 +39,6 @@
 
 - (BOOL)setTrack:(NSURL *)track;
 
-- (void)setRGInfo:(NSDictionary *)rgi;
-
 - (id<CogDecoder>) decoder;
-
-- (void)refreshVolumeScaling;
 
 @end

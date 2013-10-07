@@ -106,7 +106,7 @@
     [rgi retain];
     [rgInfo release];
     rgInfo = rgi;
-    [inputNode setRGInfo:rgi];
+    [converterNode setRGInfo:rgi];
 }
 
 - (NSDictionary *)rgInfo

@@ -75,6 +75,13 @@ static void downmix_to_stereo(float * buffer, int channels, int count)
     }
 }
 
+static void scale_by_volume(float * buffer, int count, float volume)
+{
+    if ( volume != 1.0 )
+        for (int i = 0; i < count; ++i )
+            buffer[i] *= volume;
+}
+
 //called from the complexfill when the audio is converted...good clean fun
 static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumberDataPackets, AudioBufferList* ioData, AudioStreamPacketDescription** outDataPacketDescription, void* inUserData)
 {
@@ -114,7 +121,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
 	return err;
 }
 
-static OSStatus ACDownmixProc(AudioConverterRef inAudioConverter, UInt32* ioNumberDataPackets, AudioBufferList* ioData, AudioStreamPacketDescription** outDataPacketDescription, void* inUserData)
+static OSStatus ACFloatProc(AudioConverterRef inAudioConverter, UInt32* ioNumberDataPackets, AudioBufferList* ioData, AudioStreamPacketDescription** outDataPacketDescription, void* inUserData)
 {
 	ConverterNode *converter = (ConverterNode *)inUserData;
 	OSStatus err = noErr;
@@ -128,17 +135,17 @@ static OSStatus ACDownmixProc(AudioConverterRef inAudioConverter, UInt32* ioNumb
 		return noErr;
 	}
 	
-	amountToWrite = (*ioNumberDataPackets)*(converter->downmixFormat.mBytesPerPacket);
+	amountToWrite = (*ioNumberDataPackets)*(converter->floatFormat.mBytesPerPacket);
 
-    if ( amountToWrite + converter->downmixOffset > converter->downmixSize )
-        amountToWrite = converter->downmixSize - converter->downmixOffset;
+    if ( amountToWrite + converter->floatOffset > converter->floatSize )
+        amountToWrite = converter->floatSize - converter->floatOffset;
     
-	ioData->mBuffers[0].mData = converter->downmixBuffer + converter->downmixOffset;
+	ioData->mBuffers[0].mData = converter->floatBuffer + converter->floatOffset;
 	ioData->mBuffers[0].mDataByteSize = amountToWrite;
-	ioData->mBuffers[0].mNumberChannels = (converter->downmixFormat.mChannelsPerFrame);
+	ioData->mBuffers[0].mNumberChannels = (converter->floatFormat.mChannelsPerFrame);
 	ioData->mNumberBuffers = 1;
 	
-    converter->downmixOffset += amountToWrite;
+    converter->floatOffset += amountToWrite;
     
 	return err;
 }
@@ -161,89 +168,134 @@ static OSStatus ACDownmixProc(AudioConverterRef inAudioConverter, UInt32* ioNumb
 	OSStatus err;
     int amountRead = 0;
 	
-    if ( converterDownmix )
-    {
-        if (downmixOffset == downmixSize) {
-            ioNumberFrames = amount / outputFormat.mBytesPerFrame;
-            
-            downmixBuffer = realloc( downmixBuffer, ioNumberFrames * downmixFormat.mBytesPerFrame );
-            ioData.mBuffers[0].mData = downmixBuffer;
-            ioData.mBuffers[0].mDataByteSize = ioNumberFrames * downmixFormat.mBytesPerFrame;
-            ioData.mBuffers[0].mNumberChannels = downmixFormat.mChannelsPerFrame;
-            ioData.mNumberBuffers = 1;
-            
-        tryagain:
-            err = AudioConverterFillComplexBuffer(converter, ACInputProc, self, &ioNumberFrames, &ioData, NULL);
-            amountRead += ioData.mBuffers[0].mDataByteSize;
-            if (err == 100)
-            {
-                NSLog(@"INSIZE: %i", amountRead);
-                ioData.mBuffers[0].mData = downmixBuffer + amountRead;
-                ioNumberFrames = ( amount / outputFormat.mBytesPerFrame ) - ( amountRead / downmixFormat.mBytesPerFrame );
-                ioData.mBuffers[0].mDataByteSize = ioNumberFrames * downmixFormat.mBytesPerFrame;
-                goto tryagain;
-            }
-            else if (err != noErr)
-            {
-                NSLog(@"Error: %i", err);
-            }
-            
-            downmix_to_stereo( (float*) downmixBuffer, downmixFormat.mChannelsPerFrame, amountRead / downmixFormat.mBytesPerFrame );
-        
-            downmixSize = amountRead;
-            downmixOffset = 0;
-        }
-        
+    if (floatOffset == floatSize) {
         ioNumberFrames = amount / outputFormat.mBytesPerFrame;
-        ioData.mBuffers[0].mData = dest;
-        ioData.mBuffers[0].mDataByteSize = amount;
-        ioData.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
+            
+        floatBuffer = realloc( floatBuffer, ioNumberFrames * floatFormat.mBytesPerFrame );
+        ioData.mBuffers[0].mData = floatBuffer;
+        ioData.mBuffers[0].mDataByteSize = ioNumberFrames * floatFormat.mBytesPerFrame;
+        ioData.mBuffers[0].mNumberChannels = floatFormat.mChannelsPerFrame;
         ioData.mNumberBuffers = 1;
-
-        amountRead = 0;
-        
-    tryagain2:
-        err = AudioConverterFillComplexBuffer(converterDownmix,  ACDownmixProc, self, &ioNumberFrames, &ioData, NULL);
+            
+    tryagain:
+        err = AudioConverterFillComplexBuffer(converterFloat, ACInputProc, self, &ioNumberFrames, &ioData, NULL);
         amountRead += ioData.mBuffers[0].mDataByteSize;
         if (err == 100)
         {
             NSLog(@"INSIZE: %i", amountRead);
-            ioData.mBuffers[0].mData = dest + amountRead;
-            ioNumberFrames = ( amount - amountRead ) / outputFormat.mBytesPerFrame;
-            ioData.mBuffers[0].mDataByteSize = ioNumberFrames * outputFormat.mBytesPerFrame;
-            goto tryagain2;
+            ioData.mBuffers[0].mData = floatBuffer + amountRead;
+            ioNumberFrames = ( amount / outputFormat.mBytesPerFrame ) - ( amountRead / floatFormat.mBytesPerFrame );
+            ioData.mBuffers[0].mDataByteSize = ioNumberFrames * floatFormat.mBytesPerFrame;
+            goto tryagain;
         }
         else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
         {
             NSLog(@"Error: %i", err);
+            return amountRead;
         }
+        
+        if ( inputFormat.mChannelsPerFrame > 2 && outputFormat.mChannelsPerFrame == 2 )
+            downmix_to_stereo( (float*) floatBuffer, inputFormat.mChannelsPerFrame, amountRead / floatFormat.mBytesPerFrame );
+        
+        scale_by_volume( (float*) floatBuffer, amountRead / sizeof(float), volumeScale);
+        
+        floatSize = amountRead;
+        floatOffset = 0;
     }
-    else
+
+    ioNumberFrames = amount / outputFormat.mBytesPerFrame;
+    ioData.mBuffers[0].mData = dest;
+    ioData.mBuffers[0].mDataByteSize = amount;
+    ioData.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
+    ioData.mNumberBuffers = 1;
+
+    amountRead = 0;
+        
+tryagain2:
+    err = AudioConverterFillComplexBuffer(converter, ACFloatProc, self, &ioNumberFrames, &ioData, NULL);
+    amountRead += ioData.mBuffers[0].mDataByteSize;
+    if (err == 100)
     {
-        ioNumberFrames = amount/outputFormat.mBytesPerFrame;
-        ioData.mBuffers[0].mData = dest;
-        ioData.mBuffers[0].mDataByteSize = amount;
-        ioData.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
-        ioData.mNumberBuffers = 1;
-	
-    tryagain3:
-        err = AudioConverterFillComplexBuffer(converter, ACInputProc, self, &ioNumberFrames, &ioData, NULL);
-        amountRead += ioData.mBuffers[0].mDataByteSize;
-        if (err == 100) //It returns insz at EOS at times...so run it again to make sure all data is converted
-        {
-            NSLog(@"INSIZE: %i", amountRead);
-            ioData.mBuffers[0].mData = dest + amountRead;
-            ioNumberFrames = ( amount - amountRead ) / outputFormat.mBytesPerFrame;
-            ioData.mBuffers[0].mDataByteSize = ioNumberFrames * outputFormat.mBytesPerFrame;
-            goto tryagain3;
-        }
-        else if (err != noErr) {
-            NSLog(@"Error: %i", err);
-        }
+        NSLog(@"INSIZE: %i", amountRead);
+        ioData.mBuffers[0].mData = dest + amountRead;
+        ioNumberFrames = ( amount - amountRead ) / outputFormat.mBytesPerFrame;
+        ioData.mBuffers[0].mDataByteSize = ioNumberFrames * outputFormat.mBytesPerFrame;
+        goto tryagain2;
+    }
+    else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
+    {
+        NSLog(@"Error: %i", err);
     }
 	
 	return amountRead;
 }
+
+- (void)registerObservers
+{
+	NSLog(@"REGISTERING OBSERVERS");
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+					  ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+	NSLog(@"SOMETHING CHANGED!");
+    if ([keyPath isEqual:@"values.volumeScaling"]) {
+        //User reset the volume scaling option
+        [self refreshVolumeScaling];
+    }
+}
+
+static float db_to_scale(float db)
+{
+    return pow(10.0, db / 20);
+}
+
+- (void)refreshVolumeScaling
+{
+    if (rgInfo == nil)
+    {
+        volumeScale = 1.0;
+        return;
+    }
+    
+    NSString * scaling = [[NSUserDefaults standardUserDefaults] stringForKey:@"volumeScaling"];
+    BOOL useAlbum = [scaling hasPrefix:@"albumGain"];
+    BOOL useTrack = useAlbum || [scaling hasPrefix:@"trackGain"];
+    BOOL useVolume = useAlbum || useTrack || [scaling isEqualToString:@"volumeScale"];
+    BOOL usePeak = [scaling hasSuffix:@"WithPeak"];
+    float scale = 1.0;
+    float peak = 0.0;
+    if (useVolume) {
+        id pVolumeScale = [rgInfo objectForKey:@"volume"];
+        if (pVolumeScale != nil)
+            scale = [pVolumeScale floatValue];
+    }
+    if (useTrack) {
+        id trackGain = [rgInfo objectForKey:@"replayGainTrackGain"];
+        id trackPeak = [rgInfo objectForKey:@"replayGainTrackPeak"];
+        if (trackGain != nil)
+            scale = db_to_scale([trackGain floatValue]);
+        if (trackPeak != nil)
+            peak = [trackPeak floatValue];
+    }
+    if (useAlbum) {
+        id albumGain = [rgInfo objectForKey:@"replayGainAlbumGain"];
+        id albumPeak = [rgInfo objectForKey:@"replayGainAlbumPeak"];
+        if (albumGain != nil)
+            scale = db_to_scale([albumGain floatValue]);
+        if (albumPeak != nil)
+            peak = [albumPeak floatValue];
+    }
+    if (usePeak) {
+        if (scale * peak > 1.0)
+            scale = 1.0 / peak;
+    }
+    volumeScale = scale;
+}
+
 
 - (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf
 {
@@ -252,44 +304,41 @@ static OSStatus ACDownmixProc(AudioConverterRef inAudioConverter, UInt32* ioNumb
 	
 	inputFormat = inf;
 	outputFormat = outf;
+    
+    [self registerObservers];
+
+    floatFormat = inputFormat;
+    floatFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
+    floatFormat.mBitsPerChannel = 32;
+    floatFormat.mBytesPerFrame = (32/8)*floatFormat.mChannelsPerFrame;
+    floatFormat.mBytesPerPacket = floatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
+    
+    stat = AudioConverterNew( &inputFormat, &floatFormat, &converterFloat );
+    if (stat != noErr)
+    {
+        NSLog(@"Error creating converter %i", stat);
+        return NO;
+    }
+    
+    stat = AudioConverterNew ( &floatFormat, &outputFormat, &converter );
+    if (stat != noErr)
+    {
+        NSLog(@"Error creating converter %i", stat);
+        return NO;
+    }
 
     if (inputFormat.mChannelsPerFrame > 2 && outputFormat.mChannelsPerFrame == 2)
     {
-        downmixFormat = inputFormat;
-        downmixFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
-        downmixFormat.mBitsPerChannel = 32;
-        downmixFormat.mBytesPerFrame = (32/8)*downmixFormat.mChannelsPerFrame;
-        downmixFormat.mBytesPerPacket = downmixFormat.mBytesPerFrame * downmixFormat.mFramesPerPacket;
-        stat = AudioConverterNew( &inputFormat, &downmixFormat, &converter );
-        if (stat != noErr)
-        {
-            NSLog(@"Error creating converter %i", stat);
-        }
-        stat = AudioConverterNew ( &downmixFormat, &outputFormat, &converterDownmix );
-        if (stat != noErr)
-        {
-            NSLog(@"Error creating converter %i", stat);
-        }
-            
         SInt32 channelMap[2] = { 0, 1 };
         
-		stat = AudioConverterSetProperty(converterDownmix,kAudioConverterChannelMap,sizeof(channelMap),channelMap);
+		stat = AudioConverterSetProperty(converter,kAudioConverterChannelMap,sizeof(channelMap),channelMap);
 		if (stat != noErr)
 		{
 			NSLog(@"Error mapping channels %i", stat);
+            return NO;
 		}
     }
-    else
-    {
-
-        stat = AudioConverterNew ( &inputFormat, &outputFormat, &converter);
-        if (stat != noErr)
-        {
-            NSLog(@"Error creating converter %i", stat);
-        }
-    }
-	
-	if (inputFormat.mChannelsPerFrame == 1)
+	else if (inputFormat.mChannelsPerFrame == 1)
 	{
 		SInt32 channelMap[2] = { 0, 0 };
 		
@@ -297,12 +346,15 @@ static OSStatus ACDownmixProc(AudioConverterRef inAudioConverter, UInt32* ioNumb
 		if (stat != noErr)
 		{
 			NSLog(@"Error mapping channels %i", stat);
+            return NO;
 		}	
 	}
 	
 	PrintStreamDesc(&inf);
 	PrintStreamDesc(&outf);
-	
+
+    [self refreshVolumeScaling];
+    
 	return YES;
 }
 
@@ -327,27 +379,40 @@ static OSStatus ACDownmixProc(AudioConverterRef inAudioConverter, UInt32* ioNumb
 	[self setupWithInputFormat:format outputFormat:outputFormat];
 }
 
+- (void)setRGInfo:(NSDictionary *)rgi
+{
+    NSLog(@"Setting ReplayGain info");
+    [rgInfo release];
+    [rgi retain];
+    rgInfo = rgi;
+    [self refreshVolumeScaling];
+}
+
 - (void)cleanUp
 {
-    if (converterDownmix)
+    [rgInfo release];
+    rgInfo = nil;
+    if (converterFloat)
     {
-        AudioConverterDispose(converterDownmix);
-        converterDownmix = NULL;
+        AudioConverterDispose(converterFloat);
+        converterFloat = NULL;
     }
 	if (converter)
 	{
 		AudioConverterDispose(converter);
 		converter = NULL;
 	}
-    if (downmixBuffer)
+    if (floatBuffer)
     {
-        free(downmixBuffer);
-        downmixBuffer = NULL;
+        free(floatBuffer);
+        floatBuffer = NULL;
     }
 	if (callbackBuffer) {
 		free(callbackBuffer);
 		callbackBuffer = NULL;
 	}
+    floatOffset = 0;
+    floatSize = 0;
 }
 
 @end
