@@ -390,6 +390,8 @@ static float db_to_scale(float db)
 
 - (void)cleanUp
 {
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self];
+
     [rgInfo release];
     rgInfo = nil;
     if (converterFloat)
