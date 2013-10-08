@@ -13,7 +13,7 @@
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObject:@"m3u"];
+	return [NSArray arrayWithObjects:@"m3u", @"m3u8", nil];
 }
 
 + (NSArray *)mimeTypes
