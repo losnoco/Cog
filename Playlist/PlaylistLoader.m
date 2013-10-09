@@ -235,10 +235,6 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
             }
             
             [dict setObject:[requiredBitmap representationUsingType:NSJPEG2000FileType properties:nil] forKey:@"albumArt"];
-            
-            [requiredBitmap release];
-            
-            [image release];
         }
         
         [topLevel addObject:dict];
