@@ -35,14 +35,18 @@
         theAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
 		verify_noerr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &name));
 		
-		// Ignore devices that have no output channels:
-		// This tells us the size of the buffer required to hold the information about the channels
+        propsize = 0;
         theAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
         verify_noerr(AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize));
-		// Knowing the size of the required buffer, we can determine how many channels there are
-		// without actually allocating a buffer and requesting the information.
-		// (we don't care about the exact number of channels, only if there are more than zero or not)
-		if (propsize <= sizeof(UInt32)) continue;
+        
+        if (propsize < sizeof(UInt32)) continue;
+        
+        AudioBufferList * bufferList = (AudioBufferList *) malloc(propsize);
+        verify_noerr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, bufferList));
+        UInt32 bufferCount = bufferList->mNumberBuffers;
+        free(bufferList);
+        
+        if (!bufferCount) continue;
 
 		NSDictionary *deviceInfo = [NSDictionary dictionaryWithObjectsAndKeys:
             [NSString stringWithString:(NSString*)name], @"name",
