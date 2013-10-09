@@ -30,7 +30,7 @@
 		[fullPaths addObject:[theUrl path]];
 	}
 
-	[self processPaths: fullPaths];
+	[self processPaths: [fullPaths sortedArrayUsingSelector:@selector(finderCompare:)]];
 
 	[fullPaths release];
 }
