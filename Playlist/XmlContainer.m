@@ -70,15 +70,23 @@
     NSData* plistData = [contents dataUsingEncoding:NSUTF8StringEncoding];
 	
     NSPropertyListFormat format;
-    NSArray* plist = [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:NSPropertyListImmutable format:&format errorDescription:&error];
+    id plist = [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:NSPropertyListImmutable format:&format errorDescription:&error];
     if(!plist){
         NSLog(@"Error: %@",error);
         [error release];
         return nil;
     }
+    
+    BOOL isArray = [plist isKindOfClass:[NSArray class]];
+    BOOL isDict = [plist isKindOfClass:[NSDictionary class]];
+    
+    if (!isDict && !isArray) return nil;
+    
+    NSArray * items = (isArray) ? (NSArray*)plist : [(NSDictionary *)plist objectForKey:@"items"];
 	
     NSDictionary *entry;
-	NSEnumerator *e = [plist objectEnumerator];
+    NSDictionary *albumArt = (isArray) ? nil : [(NSDictionary *)plist objectForKey:@"albumArt"];
+	NSEnumerator *e = [items objectEnumerator];
 	NSMutableArray *entries = [NSMutableArray array];
 	
 	while ((entry = [e nextObject]))
@@ -86,6 +94,9 @@
         NSMutableDictionary * preparedEntry = [NSMutableDictionary dictionaryWithDictionary:entry];
         
         [preparedEntry setObject:[self urlForPath:[preparedEntry objectForKey:@"URL"] relativeTo:filename] forKey:@"URL"];
+        
+        if (albumArt && [preparedEntry objectForKey:@"albumArt"])
+            [preparedEntry setObject:[albumArt objectForKey:[preparedEntry objectForKey:@"albumArt"]] forKey:@"albumArt"];
         
         [entries addObject:[NSDictionary dictionaryWithDictionary:preparedEntry]];
 	}

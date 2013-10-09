@@ -255,18 +255,7 @@
 
 - (void)setAlbumArt:(id)data
 {
-    BOOL isData = NO;
-    Class class = [data class];
-    while (class)
-    {
-        if (class == [NSData class])
-        {
-            isData = YES;
-            break;
-        }
-        class = [class superclass];
-    }
-    if (isData)
+    if ([data isKindOfClass:[NSData class]])
     {
         [self setAlbumArtInternal:data];
     }

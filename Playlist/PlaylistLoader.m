@@ -23,6 +23,8 @@
 
 #import "XMlContainer.h"
 
+#import "NSData+MD5.h"
+
 @implementation PlaylistLoader
 
 - (id)init
@@ -203,6 +205,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
     NSArray * filterList = [NSArray arrayWithObjects:@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", @"albumArt", nil];
     
+    NSMutableDictionary * albumArtSet = [[NSMutableDictionary alloc] init];
+    
     NSMutableArray * topLevel = [[NSMutableArray alloc] init];
     
 	for (PlaylistEntry *pe in [playlistController content])
@@ -215,8 +219,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         NSData * albumArt = [dict objectForKey:@"albumArtInternal"];
         if (albumArt)
         {
-            [dict setObject:albumArt forKey:@"albumArt"];
             [dict removeObjectForKey:@"albumArtInternal"];
+            NSString * hash = [albumArt MD5];
+            if (![albumArtSet objectForKey:hash])
+                [albumArtSet setObject:albumArt forKey:hash];
+            [dict setObject:hash forKey:@"albumArt"];
         }
         
         [topLevel addObject:dict];
@@ -224,7 +231,13 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         [dict release];
 	}
     
-    NSData * data = [NSPropertyListSerialization dataWithPropertyList:topLevel format:NSPropertyListXMLFormat_v1_0 options:0 error:0];
+    NSDictionary * dictionary = [NSDictionary dictionaryWithObjectsAndKeys:albumArtSet, @"albumArt", topLevel, @"items", nil];
+    
+    NSData * data = [NSPropertyListSerialization dataWithPropertyList:dictionary format:NSPropertyListXMLFormat_v1_0 options:0 error:0];
+
+    [albumArtSet release];
+    
+    [topLevel release];
     
     [fileHandle writeData:data];
     
