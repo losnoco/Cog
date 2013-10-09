@@ -86,6 +86,7 @@ NSURL *resolveAliases(NSURL *url)
 
 - (void)processPaths: (NSArray *)contents
 {
+    NSMutableArray *newSubpathsDirs = [[NSMutableArray alloc] init];
 	NSMutableArray *newSubpaths = [[NSMutableArray alloc] init];
 	
 	NSEnumerator *e = [contents objectEnumerator];
@@ -106,15 +107,16 @@ NSURL *resolveAliases(NSURL *url)
 		u = resolveAliases(u);
 		//NSLog(@"After: %@", u);
 
+        BOOL isDir;
+        
 		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
 		{
 			NSLog(@"Smart folder!");
 			newNode = [[SmartFolderNode alloc] initWithDataSource:dataSource url:u];
+            isDir = NO;
 		}
 		else
 		{
-			BOOL isDir;
-			
 			[[NSFileManager defaultManager] fileExistsAtPath:[u path] isDirectory:&isDir];
 
 			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[[[u path] pathExtension] lowercaseString]])
@@ -137,13 +139,19 @@ NSURL *resolveAliases(NSURL *url)
 		}
 
 		[newNode setDisplay:displayName];
-		[newSubpaths addObject:newNode];
+        
+        if (isDir)
+            [newSubpathsDirs addObject:newNode];
+        else
+            [newSubpaths addObject:newNode];
 
 		[newNode release];
 	}
 	
-	[self setSubpaths:newSubpaths];
+    [newSubpathsDirs addObjectsFromArray:newSubpaths];
+	[self setSubpaths:newSubpathsDirs];
 	
+    [newSubpathsDirs release];
 	[newSubpaths release];
 }
 
