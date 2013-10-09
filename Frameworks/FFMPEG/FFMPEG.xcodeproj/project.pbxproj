@@ -304,6 +304,31 @@
 		833C37D318032E4800CBA602 /* dsputil_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37D218032E4800CBA602 /* dsputil_init.c */; };
 		833C37D518032E7000CBA602 /* jrevdct.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37D418032E7000CBA602 /* jrevdct.c */; };
 		833C37D718032EA500CBA602 /* idct_xvid.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37D618032EA500CBA602 /* idct_xvid.h */; };
+		8393B7E218052BB000913C76 /* mp3dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7DF18052BB000913C76 /* mp3dec.c */; };
+		8393B7E318052BB000913C76 /* mpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7E018052BB000913C76 /* mpeg.c */; };
+		8393B7E418052BB000913C76 /* mpeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7E118052BB000913C76 /* mpeg.h */; };
+		8393B7F918052BC200913C76 /* mpegaudio_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7E518052BC200913C76 /* mpegaudio_parser.c */; };
+		8393B7FA18052BC200913C76 /* mpegaudio_tablegen.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7E618052BC200913C76 /* mpegaudio_tablegen.c */; };
+		8393B7FB18052BC200913C76 /* mpegaudio_tablegen.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7E718052BC200913C76 /* mpegaudio_tablegen.h */; };
+		8393B7FC18052BC200913C76 /* mpegaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7E818052BC200913C76 /* mpegaudio.c */; };
+		8393B7FD18052BC200913C76 /* mpegaudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7E918052BC200913C76 /* mpegaudio.h */; };
+		8393B7FE18052BC200913C76 /* mpegaudiodata.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7EA18052BC200913C76 /* mpegaudiodata.c */; };
+		8393B7FF18052BC200913C76 /* mpegaudiodata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7EB18052BC200913C76 /* mpegaudiodata.h */; };
+		8393B80018052BC200913C76 /* mpegaudiodec_float.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7EC18052BC200913C76 /* mpegaudiodec_float.c */; };
+		8393B80118052BC200913C76 /* mpegaudiodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7ED18052BC200913C76 /* mpegaudiodec.c */; };
+		8393B80218052BC200913C76 /* mpegaudiodecheader.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7EE18052BC200913C76 /* mpegaudiodecheader.c */; };
+		8393B80318052BC200913C76 /* mpegaudiodecheader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7EF18052BC200913C76 /* mpegaudiodecheader.h */; };
+		8393B80418052BC200913C76 /* mpegaudiodectab.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7F018052BC200913C76 /* mpegaudiodectab.h */; };
+		8393B80518052BC200913C76 /* mpegaudiodsp_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7F118052BC200913C76 /* mpegaudiodsp_data.c */; };
+		8393B80718052BC200913C76 /* mpegaudiodsp_float.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7F318052BC200913C76 /* mpegaudiodsp_float.c */; };
+		8393B80A18052BC200913C76 /* mpegaudiodsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7F618052BC200913C76 /* mpegaudiodsp.h */; };
+		8393B80B18052BC200913C76 /* mpegaudioenc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7F718052BC200913C76 /* mpegaudioenc.c */; };
+		8393B80C18052BC200913C76 /* mpegaudiotab.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7F818052BC200913C76 /* mpegaudiotab.h */; };
+		8393B80E18052BD500913C76 /* mpegaudiodsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B80D18052BD500913C76 /* mpegaudiodsp.c */; };
+		8393B81118052DB700913C76 /* bitstream_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B80F18052DB700913C76 /* bitstream_filter.c */; };
+		8393B81218052DB700913C76 /* mp3_header_decompress_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B81018052DB700913C76 /* mp3_header_decompress_bsf.c */; };
+		8393B81418052E7400913C76 /* mpegaudiodsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B81318052E7400913C76 /* mpegaudiodsp.c */; };
+		8393B81618052E9900913C76 /* mpegaudiodsp_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B81518052E9900913C76 /* mpegaudiodsp_fixed.c */; };
 		83BCB8E217FCA64400760340 /* avconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BCB8DF17FCA64400760340 /* avconfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83BCB8E317FCA64400760340 /* timecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BCB8E017FCA64400760340 /* timecode.c */; };
 		83BCB8E417FCA64400760340 /* timecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BCB8E117FCA64400760340 /* timecode.h */; };
@@ -614,6 +639,31 @@
 		833C37D218032E4800CBA602 /* dsputil_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsputil_init.c; sourceTree = "<group>"; };
 		833C37D418032E7000CBA602 /* jrevdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jrevdct.c; sourceTree = "<group>"; };
 		833C37D618032EA500CBA602 /* idct_xvid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = idct_xvid.h; sourceTree = "<group>"; };
+		8393B7DF18052BB000913C76 /* mp3dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3dec.c; sourceTree = "<group>"; };
+		8393B7E018052BB000913C76 /* mpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpeg.c; sourceTree = "<group>"; };
+		8393B7E118052BB000913C76 /* mpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeg.h; sourceTree = "<group>"; };
+		8393B7E518052BC200913C76 /* mpegaudio_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudio_parser.c; sourceTree = "<group>"; };
+		8393B7E618052BC200913C76 /* mpegaudio_tablegen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudio_tablegen.c; sourceTree = "<group>"; };
+		8393B7E718052BC200913C76 /* mpegaudio_tablegen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpegaudio_tablegen.h; sourceTree = "<group>"; };
+		8393B7E818052BC200913C76 /* mpegaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudio.c; sourceTree = "<group>"; };
+		8393B7E918052BC200913C76 /* mpegaudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpegaudio.h; sourceTree = "<group>"; };
+		8393B7EA18052BC200913C76 /* mpegaudiodata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodata.c; sourceTree = "<group>"; };
+		8393B7EB18052BC200913C76 /* mpegaudiodata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpegaudiodata.h; sourceTree = "<group>"; };
+		8393B7EC18052BC200913C76 /* mpegaudiodec_float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodec_float.c; sourceTree = "<group>"; };
+		8393B7ED18052BC200913C76 /* mpegaudiodec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodec.c; sourceTree = "<group>"; };
+		8393B7EE18052BC200913C76 /* mpegaudiodecheader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodecheader.c; sourceTree = "<group>"; };
+		8393B7EF18052BC200913C76 /* mpegaudiodecheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpegaudiodecheader.h; sourceTree = "<group>"; };
+		8393B7F018052BC200913C76 /* mpegaudiodectab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpegaudiodectab.h; sourceTree = "<group>"; };
+		8393B7F118052BC200913C76 /* mpegaudiodsp_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodsp_data.c; sourceTree = "<group>"; };
+		8393B7F318052BC200913C76 /* mpegaudiodsp_float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodsp_float.c; sourceTree = "<group>"; };
+		8393B7F618052BC200913C76 /* mpegaudiodsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpegaudiodsp.h; sourceTree = "<group>"; };
+		8393B7F718052BC200913C76 /* mpegaudioenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudioenc.c; sourceTree = "<group>"; };
+		8393B7F818052BC200913C76 /* mpegaudiotab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpegaudiotab.h; sourceTree = "<group>"; };
+		8393B80D18052BD500913C76 /* mpegaudiodsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodsp.c; sourceTree = "<group>"; };
+		8393B80F18052DB700913C76 /* bitstream_filter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitstream_filter.c; sourceTree = "<group>"; };
+		8393B81018052DB700913C76 /* mp3_header_decompress_bsf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3_header_decompress_bsf.c; sourceTree = "<group>"; };
+		8393B81318052E7400913C76 /* mpegaudiodsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodsp.c; sourceTree = "<group>"; };
+		8393B81518052E9900913C76 /* mpegaudiodsp_fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegaudiodsp_fixed.c; sourceTree = "<group>"; };
 		83BCB8DF17FCA64400760340 /* avconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avconfig.h; sourceTree = "<group>"; };
 		83BCB8E017FCA64400760340 /* timecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timecode.c; sourceTree = "<group>"; };
 		83BCB8E117FCA64400760340 /* timecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timecode.h; sourceTree = "<group>"; };
@@ -701,6 +751,27 @@
 		830F0B8E17FC4FB900042E8F /* libavcodec */ = {
 			isa = PBXGroup;
 			children = (
+				8393B81518052E9900913C76 /* mpegaudiodsp_fixed.c */,
+				8393B81318052E7400913C76 /* mpegaudiodsp.c */,
+				8393B80F18052DB700913C76 /* bitstream_filter.c */,
+				8393B81018052DB700913C76 /* mp3_header_decompress_bsf.c */,
+				8393B7E518052BC200913C76 /* mpegaudio_parser.c */,
+				8393B7E618052BC200913C76 /* mpegaudio_tablegen.c */,
+				8393B7E718052BC200913C76 /* mpegaudio_tablegen.h */,
+				8393B7E818052BC200913C76 /* mpegaudio.c */,
+				8393B7E918052BC200913C76 /* mpegaudio.h */,
+				8393B7EA18052BC200913C76 /* mpegaudiodata.c */,
+				8393B7EB18052BC200913C76 /* mpegaudiodata.h */,
+				8393B7EC18052BC200913C76 /* mpegaudiodec_float.c */,
+				8393B7ED18052BC200913C76 /* mpegaudiodec.c */,
+				8393B7EE18052BC200913C76 /* mpegaudiodecheader.c */,
+				8393B7EF18052BC200913C76 /* mpegaudiodecheader.h */,
+				8393B7F018052BC200913C76 /* mpegaudiodectab.h */,
+				8393B7F118052BC200913C76 /* mpegaudiodsp_data.c */,
+				8393B7F318052BC200913C76 /* mpegaudiodsp_float.c */,
+				8393B7F618052BC200913C76 /* mpegaudiodsp.h */,
+				8393B7F718052BC200913C76 /* mpegaudioenc.c */,
+				8393B7F818052BC200913C76 /* mpegaudiotab.h */,
 				833C37D418032E7000CBA602 /* jrevdct.c */,
 				833C37CA18032D4800CBA602 /* golomb.c */,
 				833C37CB18032D4800CBA602 /* golomb.h */,
@@ -853,6 +924,9 @@
 		830F0BAD17FC4FB900042E8F /* libavformat */ = {
 			isa = PBXGroup;
 			children = (
+				8393B7DF18052BB000913C76 /* mp3dec.c */,
+				8393B7E018052BB000913C76 /* mpeg.c */,
+				8393B7E118052BB000913C76 /* mpeg.h */,
 				833C37A818032AAD00CBA602 /* img2.c */,
 				833C37A418032A5000CBA602 /* apetag.c */,
 				833C37A518032A5000CBA602 /* apetag.h */,
@@ -1043,6 +1117,7 @@
 		830F0D0717FC80B400042E8F /* x86 */ = {
 			isa = PBXGroup;
 			children = (
+				8393B80D18052BD500913C76 /* mpegaudiodsp.c */,
 				833C37D618032EA500CBA602 /* idct_xvid.h */,
 				833C37D218032E4800CBA602 /* dsputil_init.c */,
 				833C37CC18032D4800CBA602 /* dirac_dwt.c */,
@@ -1091,6 +1166,7 @@
 				830F0C0617FC4FB900042E8F /* log.h in Headers */,
 				830F0C0317FC4FB900042E8F /* frame.h in Headers */,
 				830F0C0117FC4FB900042E8F /* dict.h in Headers */,
+				8393B80418052BC200913C76 /* mpegaudiodectab.h in Headers */,
 				830F0BFE17FC4FB900042E8F /* channel_layout.h in Headers */,
 				830F0C0017FC4FB900042E8F /* cpu.h in Headers */,
 				830F0C0217FC4FB900042E8F /* error.h in Headers */,
@@ -1101,6 +1177,7 @@
 				830F0BFB17FC4FB900042E8F /* avutil.h in Headers */,
 				830F0C0D17FC4FB900042E8F /* samplefmt.h in Headers */,
 				830F0BFD17FC4FB900042E8F /* buffer.h in Headers */,
+				8393B80A18052BC200913C76 /* mpegaudiodsp.h in Headers */,
 				830F0C1217FC4FF400042E8F /* avfft.h in Headers */,
 				830F0BF017FC4FB900042E8F /* avformat.h in Headers */,
 				B09E94940D74834B0064F138 /* config.h in Headers */,
@@ -1112,10 +1189,12 @@
 				830F0C6C17FC7DB100042E8F /* bprint.h in Headers */,
 				830F0CE117FC7F1E00042E8F /* fmtconvert.h in Headers */,
 				830F0D7717FC8C7300042E8F /* aac.h in Headers */,
+				8393B7FF18052BC200913C76 /* mpegaudiodata.h in Headers */,
 				830F0CD417FC7F1E00042E8F /* dct32.h in Headers */,
 				830F0CCF17FC7F1E00042E8F /* copy_block.h in Headers */,
 				830F0D9317FC8EAC00042E8F /* dvdata.h in Headers */,
 				830F0CEA17FC7F1E00042E8F /* imgconvert.h in Headers */,
+				8393B7FB18052BC200913C76 /* mpegaudio_tablegen.h in Headers */,
 				830F0D4717FC85ED00042E8F /* integer.h in Headers */,
 				830F0D7F17FC8E4800042E8F /* dv.h in Headers */,
 				830F0D0F17FC80B400042E8F /* mathops.h in Headers */,
@@ -1159,6 +1238,7 @@
 				830F0C5017FC7CA300042E8F /* riff.h in Headers */,
 				830F0D5B17FC893E00042E8F /* tableprint.h in Headers */,
 				830F0BE117FC4FB900042E8F /* simple_idct.h in Headers */,
+				8393B7FD18052BC200913C76 /* mpegaudio.h in Headers */,
 				830F0D0C17FC80B400042E8F /* rectangle.h in Headers */,
 				830F0C2F17FC551F00042E8F /* asfcrypt.h in Headers */,
 				830F0C0A17FC4FB900042E8F /* old_pix_fmts.h in Headers */,
@@ -1178,6 +1258,7 @@
 				830F0D6D17FC8C0700042E8F /* aactab.h in Headers */,
 				830F0BEC17FC4FB900042E8F /* wmavoice_data.h in Headers */,
 				833C37D118032D4800CBA602 /* dirac_dwt.h in Headers */,
+				8393B80318052BC200913C76 /* mpegaudiodecheader.h in Headers */,
 				830F0D7917FC8C7300042E8F /* mpeg4audio.h in Headers */,
 				830F0C3A17FC554D00042E8F /* des.h in Headers */,
 				830F0BF117FC4FB900042E8F /* avi.h in Headers */,
@@ -1202,6 +1283,7 @@
 				830F0D8B17FC8E8B00042E8F /* aacpsdsp.h in Headers */,
 				830F0CD617FC7F1E00042E8F /* dctref.h in Headers */,
 				830F0C1917FC523000042E8F /* rdt.h in Headers */,
+				8393B80C18052BC200913C76 /* mpegaudiotab.h in Headers */,
 				830F0CF117FC7F1E00042E8F /* ratecontrol.h in Headers */,
 				830F0C1417FC500B00042E8F /* fft-internal.h in Headers */,
 				830F0D8E17FC8E8B00042E8F /* sbr.h in Headers */,
@@ -1225,6 +1307,7 @@
 				830F0C5717FC7CC300042E8F /* avlanguage.h in Headers */,
 				830F0D2417FC82AB00042E8F /* fifo.h in Headers */,
 				830F0BD917FC4FB900042E8F /* mathops.h in Headers */,
+				8393B7E418052BB000913C76 /* mpeg.h in Headers */,
 				830F0C3C17FC554D00042E8F /* float_dsp.h in Headers */,
 				833C37CF18032D4800CBA602 /* golomb.h in Headers */,
 				830F0C8117FC7ED100042E8F /* crc.h in Headers */,
@@ -1324,21 +1407,27 @@
 				830F0DCD17FC933100042E8F /* w64.c in Sources */,
 				833C37D518032E7000CBA602 /* jrevdct.c in Sources */,
 				830F0BE217FC4FB900042E8F /* utils.c in Sources */,
+				8393B80E18052BD500913C76 /* mpegaudiodsp.c in Sources */,
+				8393B81418052E7400913C76 /* mpegaudiodsp.c in Sources */,
 				830F0CF917FC7F1E00042E8F /* sinewin.c in Sources */,
 				833C37C418032CF600CBA602 /* dirac_dwt.c in Sources */,
 				830F0CE417FC7F1E00042E8F /* h264chroma_template.c in Sources */,
 				830F0BEF17FC4FB900042E8F /* asf.c in Sources */,
 				830F0BD517FC4FB900042E8F /* fft.c in Sources */,
 				830F0CFE17FC7F1E00042E8F /* wma.c in Sources */,
+				8393B7E218052BB000913C76 /* mp3dec.c in Sources */,
 				830F0BD117FC4FB900042E8F /* allcodecs.c in Sources */,
+				8393B80718052BC200913C76 /* mpegaudiodsp_float.c in Sources */,
 				830F0D5917FC893E00042E8F /* codec_desc.c in Sources */,
 				830F0DBE17FC922C00042E8F /* h264chroma_init.c in Sources */,
 				830F0BF217FC4FB900042E8F /* avio.c in Sources */,
 				830F0CE217FC7F1E00042E8F /* frame_thread_encoder.c in Sources */,
+				8393B80118052BC200913C76 /* mpegaudiodec.c in Sources */,
 				830F0C3817FC554D00042E8F /* buffer.c in Sources */,
 				830F0C6B17FC7DB100042E8F /* bprint.c in Sources */,
 				830F0BE017FC4FB900042E8F /* simple_idct.c in Sources */,
 				830F0D6917FC8A3D00042E8F /* avpicture.c in Sources */,
+				8393B80518052BC200913C76 /* mpegaudiodsp_data.c in Sources */,
 				830F0CDA17FC7F1E00042E8F /* error_resilience.c in Sources */,
 				830F0D3317FC841B00042E8F /* opt.c in Sources */,
 				830F0D7317FC8C1300042E8F /* astdec.c in Sources */,
@@ -1346,16 +1435,19 @@
 				833C379D180328B300CBA602 /* takdec.c in Sources */,
 				830F0D7B17FC8E2400042E8F /* avidec.c in Sources */,
 				830F0D4F17FC862400042E8F /* utils.c in Sources */,
+				8393B81218052DB700913C76 /* mp3_header_decompress_bsf.c in Sources */,
 				830F0BEB17FC4FB900042E8F /* wmavoice.c in Sources */,
 				833C37B318032AEF00CBA602 /* dsputil.c in Sources */,
 				830F0CC217FC7F1E00042E8F /* acelp_filters.c in Sources */,
 				830F0DB017FC8FBD00042E8F /* hpeldsp_init.c in Sources */,
 				830F0C1B17FC523000042E8F /* url.c in Sources */,
 				830F0CC417FC7F1E00042E8F /* acelp_pitch_delay.c in Sources */,
+				8393B80218052BC200913C76 /* mpegaudiodecheader.c in Sources */,
 				833C37C218032CF600CBA602 /* dirac_arith.c in Sources */,
 				830F0CEB17FC7F1E00042E8F /* lsp.c in Sources */,
 				830F0D1317FC815000042E8F /* constants.c in Sources */,
 				830F0BE417FC4FB900042E8F /* wma_common.c in Sources */,
+				8393B7FA18052BC200913C76 /* mpegaudio_tablegen.c in Sources */,
 				830F0C5617FC7CC300042E8F /* avlanguage.c in Sources */,
 				830F0C5117FC7CA300042E8F /* riffdec.c in Sources */,
 				830F0D4617FC85ED00042E8F /* integer.c in Sources */,
@@ -1381,6 +1473,7 @@
 				830F0CDE17FC7F1E00042E8F /* faanidct.c in Sources */,
 				833C379B180328B300CBA602 /* tak.c in Sources */,
 				830F0CC917FC7F1E00042E8F /* bit_depth_template.c in Sources */,
+				8393B7E318052BB000913C76 /* mpeg.c in Sources */,
 				830F0D4017FC848D00042E8F /* sha.c in Sources */,
 				830F0BF417FC4FB900042E8F /* aviobuf.c in Sources */,
 				830F0C1117FC4FF400042E8F /* avfft.c in Sources */,
@@ -1400,11 +1493,13 @@
 				830F0C8217FC7ED100042E8F /* dict.c in Sources */,
 				830F0D7817FC8C7300042E8F /* mpeg4audio.c in Sources */,
 				830F0D5F17FC89BD00042E8F /* options.c in Sources */,
+				8393B7FE18052BC200913C76 /* mpegaudiodata.c in Sources */,
 				833C37D318032E4800CBA602 /* dsputil_init.c in Sources */,
 				830F0DB917FC921D00042E8F /* cpu.c in Sources */,
 				830F0C7D17FC7E4E00042E8F /* mathematics.c in Sources */,
 				830F0BDD17FC4FB900042E8F /* parser.c in Sources */,
 				830F0C5C17FC7CEA00042E8F /* id3v1.c in Sources */,
+				8393B7F918052BC200913C76 /* mpegaudio_parser.c in Sources */,
 				830F0CFC17FC7F1E00042E8F /* videodsp.c in Sources */,
 				830F0D8C17FC8E8B00042E8F /* dv_profile.c in Sources */,
 				833C37B118032AEF00CBA602 /* diracdsp.c in Sources */,
@@ -1412,6 +1507,7 @@
 				833C3795180328A300CBA602 /* takdec.c in Sources */,
 				830F0DC217FC929E00042E8F /* mux.c in Sources */,
 				830F0BF517FC4FB900042E8F /* cutils.c in Sources */,
+				8393B81618052E9900913C76 /* mpegaudiodsp_fixed.c in Sources */,
 				830F0D2E17FC841B00042E8F /* channel_layout.c in Sources */,
 				830F0CE517FC7F1E00042E8F /* h264chroma.c in Sources */,
 				830F0BE717FC4FB900042E8F /* wmadec.c in Sources */,
@@ -1425,6 +1521,7 @@
 				830F0BF617FC4FB900042E8F /* file.c in Sources */,
 				830F0D3817FC844E00042E8F /* parseutils.c in Sources */,
 				830F0D2017FC82AB00042E8F /* cpu.c in Sources */,
+				8393B7FC18052BC200913C76 /* mpegaudio.c in Sources */,
 				833C37C618032CF600CBA602 /* dirac_parser.c in Sources */,
 				830F0CED17FC7F1E00042E8F /* mpeg12data.c in Sources */,
 				833C37C718032CF600CBA602 /* dirac.c in Sources */,
@@ -1432,16 +1529,19 @@
 				830F0C7B17FC7E4E00042E8F /* crc.c in Sources */,
 				830F0BE817FC4FB900042E8F /* wmalosslessdec.c in Sources */,
 				83BCB8E317FCA64400760340 /* timecode.c in Sources */,
+				8393B80B18052BC200913C76 /* mpegaudioenc.c in Sources */,
 				830F0D3517FC841B00042E8F /* samplefmt.c in Sources */,
 				830F0BEA17FC4FB900042E8F /* wmaprodec.c in Sources */,
 				830F0CCD17FC7F1E00042E8F /* celp_math.c in Sources */,
 				830F0DC017FC927D00042E8F /* float_dsp_init.c in Sources */,
 				830F0C8317FC7ED100042E8F /* rational.c in Sources */,
 				830F0CD517FC7F1E00042E8F /* dctref.c in Sources */,
+				8393B81118052DB700913C76 /* bitstream_filter.c in Sources */,
 				830F0D2317FC82AB00042E8F /* fifo.c in Sources */,
 				830F0D3C17FC846C00042E8F /* random_seed.c in Sources */,
 				830F0C4F17FC7CA300042E8F /* riff.c in Sources */,
 				830F0C4D17FC7CA300042E8F /* metadata.c in Sources */,
+				8393B80018052BC200913C76 /* mpegaudiodec_float.c in Sources */,
 				830F0C7C17FC7E4E00042E8F /* log.c in Sources */,
 				830F0D6417FC8A3300042E8F /* audiointerleave.c in Sources */,
 			);

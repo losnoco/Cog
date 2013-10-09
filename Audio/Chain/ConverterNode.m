@@ -390,7 +390,7 @@ static float db_to_scale(float db)
 
 - (void)cleanUp
 {
-    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self];
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
 
     [rgInfo release];
     rgInfo = nil;
