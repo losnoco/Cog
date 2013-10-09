@@ -147,6 +147,7 @@
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
 		8375B36517FFEF130092A79F /* Opus.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B05717FFEA410092A79F /* Opus.bundle */; };
+		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -748,6 +749,8 @@
 		8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArchiveSource.xcodeproj; path = Plugins/ArchiveSource/ArchiveSource.xcodeproj; sourceTree = "<group>"; };
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* Opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Opus.xcodeproj; path = Plugins/Opus/Opus.xcodeproj; sourceTree = "<group>"; };
+		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
+		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
 		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
@@ -1407,6 +1410,8 @@
 		8E75752A09F31D5A0080F1EE /* Playlist */ = {
 			isa = PBXGroup;
 			children = (
+				8399D4E01805A55000B503B1 /* XmlContainer.m */,
+				8399D4E11805A55000B503B1 /* XmlContainer.h */,
 				8E75752D09F31D5A0080F1EE /* PlaylistController.h */,
 				8E75752E09F31D5A0080F1EE /* PlaylistController.m */,
 				8E75753109F31D5A0080F1EE /* PlaylistView.h */,
@@ -1952,6 +1957,7 @@
 				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
 				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
 				1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */,
+				8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */,
 				17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */,
 				F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */,
 			);

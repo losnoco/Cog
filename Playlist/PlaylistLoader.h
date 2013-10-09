@@ -16,6 +16,7 @@
 typedef enum {
 	kPlaylistM3u,
 	kPlaylistPls,
+    kPlaylistXml,
 } PlaylistType;
 
 @interface PlaylistLoader : NSObject {
@@ -39,6 +40,7 @@ typedef enum {
 - (BOOL)save:(NSString *)filename asType:(PlaylistType)type;
 - (BOOL)saveM3u:(NSString *)filename;
 - (BOOL)savePls:(NSString *)filename;
+- (BOOL)saveXml:(NSString *)filename;
 
 // Read info for a playlist entry
 - (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe;

@@ -6,6 +6,8 @@
 //  Copyright 2007 Vincent Spader All rights reserved.
 //
 
+#include <objc/runtime.h>
+
 #import "PlaylistLoader.h"
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
@@ -18,6 +20,8 @@
 #import "CogAudio/AudioContainer.h"
 #import "CogAudio/AudioPropertiesReader.h"
 #import "CogAudio/AudioMetadataReader.h"
+
+#import "XMlContainer.h"
 
 @implementation PlaylistLoader
 
@@ -58,6 +62,10 @@
 	{
 		return [self save:filename asType:kPlaylistPls];
 	}
+    else if ([ext isEqualToString:@"xml"])
+    {
+        return [self save:filename asType:kPlaylistXml];
+    }
 	else
 	{
 		return [self save:filename asType:kPlaylistM3u];
@@ -74,6 +82,10 @@
 	{
 		return [self savePls:filename];
 	}
+    else if (type == kPlaylistXml)
+    {
+        return [self saveXml:filename];
+    }
 
 	return NO;
 }
@@ -147,6 +159,66 @@
 	return YES;
 }
 
+NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterList)
+{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    
+    unsigned count;
+    objc_property_t *properties = class_copyPropertyList([obj class], &count);
+    
+    for (int i = 0; i < count; i++) {
+        NSString *key = [NSString stringWithUTF8String:property_getName(properties[i])];
+        if ([filterList containsObject:key]) continue;
+        
+        Class classObject = NSClassFromString([key capitalizedString]);
+        if (classObject) {
+            id subObj = dictionaryWithPropertiesOfObject([obj valueForKey:key], filterList);
+            [dict setObject:subObj forKey:key];
+        }
+        else
+        {
+            id value = [obj valueForKey:key];
+            if(value) [dict setObject:value forKey:key];
+        }
+    }
+    
+    free(properties);
+    
+    return dict;
+}
+
+- (BOOL)saveXml:(NSString *)filename
+{
+	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
+	if (!fileHandle) {
+		return NO;
+	}
+	[fileHandle truncateFileAtOffset:0];
+    
+    NSArray * filterList = [NSArray arrayWithObjects:@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"url", nil];
+    
+    NSMutableArray * topLevel = [[NSMutableArray alloc] init];
+    
+	for (PlaylistEntry *pe in [playlistController content])
+	{
+        NSMutableDictionary * dict = dictionaryWithPropertiesOfObject(pe, filterList);
+
+		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
+        
+        [dict setObject:path forKey:@"URL"];
+        
+        [topLevel addObject:dict];
+	}
+    
+    NSData * data = [NSPropertyListSerialization dataWithPropertyList:topLevel format:NSPropertyListXMLFormat_v1_0 options:0 error:0];
+    
+    [fileHandle writeData:data];
+    
+    [fileHandle closeFile];
+
+	return YES;
+}
+
 - (NSArray *)fileURLsAtPath:(NSString *)path
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
@@ -181,6 +253,7 @@
 	NSMutableArray *containedURLs = [NSMutableArray array];
 	NSMutableArray *fileURLs = [NSMutableArray array];
 	NSMutableArray *validURLs = [NSMutableArray array];
+    NSArray *xmlURLs = nil;
 	
 	if (!urls)
 		return [NSArray array];
@@ -235,6 +308,10 @@
 			//Make sure the container isn't added twice.
 			[uniqueURLs addObjectsFromArray:containedURLs];
 		}
+        else if ([[[[url path] pathExtension] lowercaseString] isEqualToString:@"xml"])
+        {
+            xmlURLs = [XmlContainer entriesForContainerURL:url];
+        }
 		else
 		{
 			[fileURLs addObject:url];
@@ -277,8 +354,11 @@
 	}
 	
 	//Create actual entries
+    int count = [validURLs count];
+    if (xmlURLs) count += [xmlURLs count];
+    
 	int i;
-	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:[validURLs count]];
+	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
 	for (i = 0; i < [validURLs count]; i++)
 	{
 		NSURL *url = [validURLs objectAtIndex:i];
@@ -297,6 +377,24 @@
 
 		[pe release];
 	}
+    
+    for (i = 0; i < [xmlURLs count]; i++)
+    {
+        NSDictionary * entry = [xmlURLs objectAtIndex:i];
+        
+        PlaylistEntry *pe;
+        if ([[entry objectForKey:@"URL"] isFileURL])
+            pe = [[FilePlaylistEntry alloc] init];
+        else
+            pe = [[PlaylistEntry alloc] init];
+        
+        [pe setValuesForKeysWithDictionary:entry];
+        pe.index = index+i+[validURLs count];
+        pe.queuePosition = -1;
+        [entries addObject:pe];
+        
+        [pe release];
+    }
 	
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
 	
@@ -312,6 +410,8 @@
 {
     for (PlaylistEntry *pe in entries)
     {
+        if ([pe metadataLoaded]) continue;
+        
 		NSAutoreleasePool *pool =[[NSAutoreleasePool alloc] init];
 
         NSInvocationOperation *readEntryInfoOperation;

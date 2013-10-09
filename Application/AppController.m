@@ -248,8 +248,19 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	}
 	
 	[[playlistController undoManager] disableUndoRegistration];
-	NSString *filename = @"~/Library/Application Support/Cog/Default.m3u";
-	[playlistLoader addURL:[NSURL fileURLWithPath:[filename stringByExpandingTildeInPath]]];
+	NSString *basePath = [@"~/Library/Application Support/Cog/" stringByExpandingTildeInPath];
+    NSString *oldFilename = @"Default.m3u";
+    NSString *newFilename = @"Default.xml";
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]])
+    {
+        [playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:newFilename]]];
+    }
+    else
+    {
+        [playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:oldFilename]]];
+    }
+    
 	[[playlistController undoManager] enableUndoRegistration];
     
     int lastStatus = [[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
@@ -292,10 +303,14 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 		[fileManager createDirectoryAtPath: folder withIntermediateDirectories:NO attributes:nil error:nil];
 	}
 	
-	NSString *fileName = @"Default.m3u";
-	
-	[playlistLoader saveM3u:[folder stringByAppendingPathComponent: fileName]];
-	
+    NSString * fileName = @"Default.xml";
+    
+    [playlistLoader saveXml:[folder stringByAppendingPathComponent: fileName]];
+    
+    fileName = @"Default.m3u";
+    
+    NSError *error;
+    [[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
