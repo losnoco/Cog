@@ -2,6 +2,7 @@
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 #import "PlaylistView.h"
+#import "PlaylistEntry.h"
 #import "NDHotKeyEvent.h"
 #import "AppleRemote.h"
 #import "PlaylistLoader.h"
@@ -9,6 +10,7 @@
 #import "SpotlightWindowController.h"
 #import "StringToURLTransformer.h"
 #import "FontSizetoLineHeightTransformer.h"
+#import <CogAudio/Status.h>
 
 @implementation AppController
 
@@ -249,10 +251,37 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	NSString *filename = @"~/Library/Application Support/Cog/Default.m3u";
 	[playlistLoader addURL:[NSURL fileURLWithPath:[filename stringByExpandingTildeInPath]]];
 	[[playlistController undoManager] enableUndoRegistration];
+    
+    int lastStatus = [[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
+    int lastIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
+    
+    if (lastStatus != kCogStatusStopped && lastIndex >= 0)
+    {
+        [playbackController playEntryAtIndex:lastIndex];
+        [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
+        if (lastStatus == kCogStatusPaused)
+            [playbackController pause:self];
+    }
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
+    int currentStatus = [playbackController playbackStatus];
+    int lastTrackPlaying = -1;
+    double lastTrackPosition = 0;
+    
+    [[NSUserDefaults standardUserDefaults] setInteger:currentStatus forKey:@"lastPlaybackStatus"];
+    
+    if (currentStatus != kCogStatusStopped)
+    {
+        PlaylistEntry * pe = [playlistController currentEntry];
+        lastTrackPlaying = [pe index];
+        lastTrackPosition = [pe currentPosition];
+    }
+
+    [[NSUserDefaults standardUserDefaults] setInteger:lastTrackPlaying forKey:@"lastTrackPlaying"];
+    [[NSUserDefaults standardUserDefaults] setDouble:lastTrackPosition forKey:@"lastTrackPosition"];
+    
 	[playbackController stop:self];
 	
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -372,6 +401,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeySpamCharacter"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeySpamModifiers"];
 	
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:kCogStatusStopped] forKey:@"lastPlaybackStatus"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];
+
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
