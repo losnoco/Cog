@@ -31,7 +31,8 @@
 	NSString *genre;
 	NSNumber *year;
 	NSNumber *track;
-	NSImage *albumArt;
+    
+    NSData *albumArtInternal;
     
     float replayGainAlbumGain;
     float replayGainAlbumPeak;
@@ -63,6 +64,7 @@
 + (NSSet *)keyPathsForValuesAffectingStatus;
 + (NSSet *)keyPathsForValuesAffectingStatusMessage;
 + (NSSet *)keyPathsForValuesAffectingSpam;
++ (NSSet *)keyPathsForValuesAffectingAlbumArt;
 
 @property(readonly) NSString *display;
 @property(retain, readonly) NSNumber *length;
@@ -96,7 +98,9 @@
 @property(retain) NSString *genre;
 @property(retain) NSNumber *year;
 @property(retain) NSNumber *track;
-@property(retain) NSImage *albumArt;
+
+@property(retain, readonly) NSImage *albumArt;
+@property(retain) NSData *albumArtInternal;
 
 @property long long totalFrames;
 @property int bitrate;

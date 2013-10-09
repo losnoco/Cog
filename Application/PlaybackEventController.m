@@ -59,7 +59,7 @@
 		[GrowlApplicationBridge notifyWithTitle:[pe title]
 									description:[pe artist]
 							   notificationName:@"Stream Changed"
-									   iconData:[[pe albumArt] TIFFRepresentation]
+									   iconData:[pe albumArtInternal]
 									   priority:0 
 									   isSticky:NO 
 								   clickContext:nil];

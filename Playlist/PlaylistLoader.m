@@ -201,7 +201,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	}
 	[fileHandle truncateFileAtOffset:0];
     
-    NSArray * filterList = [NSArray arrayWithObjects:@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", nil];
+    NSArray * filterList = [NSArray arrayWithObjects:@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", @"albumArt", nil];
     
     NSMutableArray * topLevel = [[NSMutableArray alloc] init];
     
@@ -212,29 +212,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
         
         [dict setObject:path forKey:@"URL"];
-        
-        NSImage * image = [dict objectForKey:@"albumArt"];
-        if (image)
+        NSData * albumArt = [dict objectForKey:@"albumArtInternal"];
+        if (albumArt)
         {
-            NSBitmapImageRep* requiredBitmap = nil;
-            BOOL setValue =NO;
-            
-            for(NSBitmapImageRep* imagerep in [image representations])
-            {
-                if ([imagerep isKindOfClass:[NSBitmapImageRep class]])
-                {
-                    if (!setValue) {
-                        requiredBitmap = imagerep;
-                        setValue =YES;
-                    }
-                    if ([requiredBitmap pixelsHigh]<[imagerep pixelsHigh]) {
-                        requiredBitmap = imagerep;
-                        
-                    }
-                }
-            }
-            
-            [dict setObject:[requiredBitmap representationUsingType:NSJPEG2000FileType properties:nil] forKey:@"albumArt"];
+            [dict setObject:albumArt forKey:@"albumArt"];
+            [dict removeObjectForKey:@"albumArtInternal"];
         }
         
         [topLevel addObject:dict];

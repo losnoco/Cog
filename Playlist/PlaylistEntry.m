@@ -32,7 +32,6 @@
 @synthesize genre;
 @synthesize year;
 @synthesize track;
-@synthesize albumArt;
 
 @synthesize totalFrames;
 @synthesize bitrate;
@@ -93,6 +92,11 @@
     return [NSSet setWithObjects:@"artist", @"title", @"album", @"track", @"totalFrames", @"currentPosition", @"bitrate", nil];
 }
 
++ (NSSet *)keyPathsForValuesAffectingAlbumArt
+{
+    return [NSSet setWithObject:@"albumArtInternal"];
+}
+
 - (NSString *)description
 {
 	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", self.index, self.URL];
@@ -122,7 +126,7 @@
 	self.genre = nil;
 	self.year = nil;
 	self.track = nil;
-	self.albumArt = nil;
+	self.albumArtInternal = nil;
 	
 	self.endian = nil;
 	
@@ -228,6 +232,44 @@
     }
     
     return [elements componentsJoinedByString:@""];
+}
+
+@synthesize albumArtInternal;
+
+@dynamic albumArt;
+- (NSImage *)albumArt
+{
+    if (!albumArtInternal) return nil;
+
+    NSString *imageCacheTag = [NSString stringWithFormat:@"%@-%@-%@-%@", album, artist, genre, year];
+    NSImage *image = [NSImage imageNamed:imageCacheTag];
+    
+    if (image == nil)
+    {
+        image = [[[NSImage alloc] initWithData:albumArtInternal] autorelease];
+        [image setName:imageCacheTag];
+    }
+    
+    return image;
+}
+
+- (void)setAlbumArt:(id)data
+{
+    BOOL isData = NO;
+    Class class = [data class];
+    while (class)
+    {
+        if (class == [NSData class])
+        {
+            isData = YES;
+            break;
+        }
+        class = [class superclass];
+    }
+    if (isData)
+    {
+        [self setAlbumArtInternal:data];
+    }
 }
 
 @dynamic length;
