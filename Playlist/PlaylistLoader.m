@@ -162,27 +162,33 @@
 NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterList)
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+
+    Class class = [obj class];
     
-    unsigned count;
-    objc_property_t *properties = class_copyPropertyList([obj class], &count);
-    
-    for (int i = 0; i < count; i++) {
-        NSString *key = [NSString stringWithUTF8String:property_getName(properties[i])];
-        if ([filterList containsObject:key]) continue;
+    do {
+        unsigned count;
+        objc_property_t *properties = class_copyPropertyList(class, &count);
         
-        Class classObject = NSClassFromString([key capitalizedString]);
-        if (classObject) {
-            id subObj = dictionaryWithPropertiesOfObject([obj valueForKey:key], filterList);
-            [dict setObject:subObj forKey:key];
+        for (int i = 0; i < count; i++) {
+            NSString *key = [NSString stringWithUTF8String:property_getName(properties[i])];
+            if ([filterList containsObject:key]) continue;
+            
+            Class classObject = NSClassFromString([key capitalizedString]);
+            if (classObject) {
+                id subObj = dictionaryWithPropertiesOfObject([obj valueForKey:key], filterList);
+                [dict setObject:subObj forKey:key];
+            }
+            else
+            {
+                id value = [obj valueForKey:key];
+                if(value) [dict setObject:value forKey:key];
+            }
         }
-        else
-        {
-            id value = [obj valueForKey:key];
-            if(value) [dict setObject:value forKey:key];
-        }
-    }
-    
-    free(properties);
+        
+        free(properties);
+        
+        class = [class superclass];
+    } while (class);
     
     return dict;
 }
@@ -195,7 +201,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	}
 	[fileHandle truncateFileAtOffset:0];
     
-    NSArray * filterList = [NSArray arrayWithObjects:@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"url", nil];
+    NSArray * filterList = [NSArray arrayWithObjects:@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", nil];
     
     NSMutableArray * topLevel = [[NSMutableArray alloc] init];
     
@@ -207,7 +213,37 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         
         [dict setObject:path forKey:@"URL"];
         
+        NSImage * image = [dict objectForKey:@"albumArt"];
+        if (image)
+        {
+            NSBitmapImageRep* requiredBitmap = nil;
+            BOOL setValue =NO;
+            
+            for(NSBitmapImageRep* imagerep in [image representations])
+            {
+                if ([imagerep isKindOfClass:[NSBitmapImageRep class]])
+                {
+                    if (!setValue) {
+                        requiredBitmap = imagerep;
+                        setValue =YES;
+                    }
+                    if ([requiredBitmap pixelsHigh]<[imagerep pixelsHigh]) {
+                        requiredBitmap = imagerep;
+                        
+                    }
+                }
+            }
+            
+            [dict setObject:[requiredBitmap representationUsingType:NSJPEG2000FileType properties:nil] forKey:@"albumArt"];
+            
+            [requiredBitmap release];
+            
+            [image release];
+        }
+        
         [topLevel addObject:dict];
+        
+        [dict release];
 	}
     
     NSData * data = [NSPropertyListSerialization dataWithPropertyList:topLevel format:NSPropertyListXMLFormat_v1_0 options:0 error:0];

@@ -87,6 +87,10 @@
         
         [preparedEntry setObject:[self urlForPath:[preparedEntry objectForKey:@"URL"] relativeTo:filename] forKey:@"URL"];
         
+        NSData * data = [preparedEntry objectForKey:@"albumArt"];
+        if (data)
+            [preparedEntry setObject:[[[NSImage alloc] initWithData:data] autorelease] forKey:@"albumArt"];
+        
         [entries addObject:[NSDictionary dictionaryWithDictionary:preparedEntry]];
 	}
 	
