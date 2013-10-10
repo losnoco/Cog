@@ -33,9 +33,7 @@
 	
 	CueSheet *cuesheet = [CueSheet cueSheetWithFile:[url path]];
 
-	NSEnumerator *e = [[cuesheet tracks] objectEnumerator];
-	CueSheetTrack  *track;
-	while (track = [e nextObject]) {
+    for (CueSheetTrack *track in [cuesheet tracks]) {
 		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%@", [track track]]]];
 	}
 	

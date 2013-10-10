@@ -138,10 +138,9 @@ The footer at the end of APE tagged files (can also optionally be at the front o
 -(NSDictionary*) convertToCogTag {
 	//NSLog(@"Converting ape tag to cog tag");
 	NSMutableDictionary* d = [NSMutableDictionary dictionaryWithCapacity:6];
-	NSEnumerator *e = [fields objectEnumerator]; 
-	ApeTagItem* item; 
+	ApeTagItem* item;
 	int n = 0;
-	while ((item = [e nextObject]) != nil) {
+    for (item in fields) {
 		if (![[item tag] compare:APE_TAG_FIELD_ARTIST]) { [d setObject:[item getString] forKey:@"artist"]; 	n++;}
 		if (![[item tag] compare:APE_TAG_FIELD_ALBUM])	{[d setObject:[item getString] forKey:@"album"];	n++;}
 		if (![[item tag] compare:APE_TAG_FIELD_TITLE])	{[d setObject:[item getString] forKey:@"title"];	n++;}
@@ -158,9 +157,8 @@ The footer at the end of APE tagged files (can also optionally be at the front o
 -(NSData*) pack {
 	int len = 0, num = 0;
 	NSMutableData* d = [NSMutableData dataWithCapacity:8];
-	NSEnumerator *e = [fields objectEnumerator]; 
-	id item; 
-	while ((item = [e nextObject]) != nil) 
+	id item;
+    for (item in fields)
 	{
 		NSData* i = [item pack];
 		[d appendData:i];

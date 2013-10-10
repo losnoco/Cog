@@ -98,10 +98,8 @@
 
 	NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 
-	NSString *line;
 	NSScanner *scanner = nil;
-	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
-	while (line = [e nextObject])
+    for (NSString *line in [contents componentsSeparatedByString:@"\n"])
 	{
 		[scanner release];
 		scanner = [[NSScanner alloc] initWithString:line];
@@ -277,9 +275,7 @@
 
 - (CueSheetTrack *)track:(NSString *)fragment
 {
-	CueSheetTrack *t;
-	NSEnumerator *e = [tracks objectEnumerator];
-	while (t = [e nextObject]) {
+    for (CueSheetTrack *t in tracks) {
 		if ([[t track] isEqualToString:fragment]) {
 			return t;
 		}

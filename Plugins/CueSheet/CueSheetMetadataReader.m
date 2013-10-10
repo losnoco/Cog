@@ -33,9 +33,7 @@
 	CueSheet *cuesheet = [CueSheet cueSheetWithFile:[url path]];
 
 	NSArray *tracks = [cuesheet tracks];
-	CueSheetTrack *track;
-	NSEnumerator *e = [tracks objectEnumerator];
-	while (track = [e nextObject])
+    for (CueSheetTrack *track in tracks)
 	{
 		if ([[url fragment] isEqualToString:[track track]])
 		{

@@ -348,9 +348,7 @@ static AppleRemote* sharedInstance=nil;
 
 - (NSString*) validCookieSubstring: (NSString*) cookieString {
     if (cookieString == nil || [cookieString length] == 0) return nil;
-    NSEnumerator* keyEnum = [[self cookieToButtonMapping] keyEnumerator];
-    NSString* key;
-    while(key = [keyEnum nextObject]) {
+    for (NSString *key in [[self cookieToButtonMapping] allKeys]) {
         NSRange range = [cookieString rangeOfString:key];
         if (range.location == 0) return key; 
     }

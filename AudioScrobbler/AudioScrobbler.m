@@ -195,7 +195,6 @@ escapeForLastFM(NSString *string)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	AudioScrobblerClient	*client				= [[AudioScrobblerClient alloc] init];
 	mach_timespec_t			timeout				= { 5, 0 };
-	NSEnumerator			*enumerator			= nil;
 	NSString				*command			= nil;
 	NSString				*response			= nil;
 	in_port_t				port				= 33367;
@@ -205,10 +204,10 @@ escapeForLastFM(NSString *string)
 
 		// Get the first command to be sent
 		@synchronized([self queue]) {
-			enumerator	= [[self queue] objectEnumerator];
-			command		= [[enumerator nextObject] retain];
-		
-			[[self queue] removeObjectIdenticalTo:command];
+            if ([[self queue] count]) {
+                command     = [[self queue] objectAtIndex:0];
+                [[self queue] removeObjectAtIndex:0];
+            }
 		}
 
 		if(nil != command) { 

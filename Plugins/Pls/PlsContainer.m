@@ -99,8 +99,10 @@
 	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
 	NSMutableArray *entries = [NSMutableArray array];
 	
-    while ((entry = [[e nextObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]))
-	{
+    for (NSString *entry in [contents componentsSeparatedByString:@"\n"])
+    {
+        entry = [entry stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
 		NSScanner *scanner = [[NSScanner alloc] initWithString:entry];
 		NSString *lhs = nil;
 		NSString *rhs = nil;

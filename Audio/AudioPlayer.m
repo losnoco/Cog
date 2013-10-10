@@ -57,9 +57,7 @@
 	[output setVolume: volume];
 	
 	@synchronized(chainQueue) {
-		NSEnumerator *enumerator = [chainQueue objectEnumerator];
-		id anObject;
-		while (anObject = [enumerator nextObject])
+        for (id anObject in chainQueue)
 		{
 			[anObject setShouldContinue:NO];
 		}

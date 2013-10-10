@@ -97,10 +97,7 @@
 			NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 			NSArray *imageFileNames = [fileNames pathsMatchingExtensions:[NSImage imageFileTypes]];
 
-			NSEnumerator *imageEnumerator = [imageFileNames objectEnumerator];
-			NSString *fileName;
-				
-			while (fileName = [imageEnumerator nextObject]) {
+            for (NSString *fileName in imageFileNames) {
 				if ([TagLibMetadataReader isCoverFile:fileName]) {
 					image = [NSData dataWithContentsOfFile:[path stringByAppendingPathComponent:fileName]];
 					break;
@@ -118,10 +115,7 @@
 
 + (BOOL)isCoverFile:(NSString *)fileName
 {
-	NSEnumerator *coverEnumerator = [[TagLibMetadataReader coverNames] objectEnumerator];
-	NSString *coverFileName;
-	
-	while (coverFileName = [coverEnumerator nextObject]) {
+    for (NSString *coverFileName in [TagLibMetadataReader coverNames]) {
 		if ([[[[fileName lastPathComponent] stringByDeletingPathExtension] lowercaseString] hasSuffix:coverFileName]) {
 			return true;
 		}
