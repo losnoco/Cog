@@ -68,8 +68,6 @@
 				[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
 		}
 		
-		NSString *imageCacheTag = [NSString stringWithFormat:@"%@-%@-%@-%@", [dict objectForKey:@"album"], [dict objectForKey:@"artist"], [dict objectForKey:@"genre"], [dict objectForKey:@"year"]];
-
 		// Try to load the image.
 		NSData * image = nil;
         
