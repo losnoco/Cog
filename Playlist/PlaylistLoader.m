@@ -64,10 +64,6 @@
 	{
 		return [self save:filename asType:kPlaylistPls];
 	}
-    else if ([ext isEqualToString:@"xml"])
-    {
-        return [self save:filename asType:kPlaylistXml];
-    }
 	else
 	{
 		return [self save:filename asType:kPlaylistM3u];
