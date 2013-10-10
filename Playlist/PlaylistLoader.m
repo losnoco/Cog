@@ -227,13 +227,22 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         [dict release];
 	}
     
-    NSDictionary * dictionary = [NSDictionary dictionaryWithObjectsAndKeys:albumArtSet, @"albumArt", topLevel, @"items", nil];
+    NSMutableArray * queueList = [[NSMutableArray alloc] init];
+    
+    for (PlaylistEntry *pe in [playlistController queueList])
+    {
+        [queueList addObject:[NSNumber numberWithInt:pe.index]];
+    }
+    
+    NSDictionary * dictionary = [NSDictionary dictionaryWithObjectsAndKeys:albumArtSet, @"albumArt", queueList, @"queue", topLevel, @"items", nil];
     
     NSData * data = [NSPropertyListSerialization dataWithPropertyList:dictionary format:NSPropertyListXMLFormat_v1_0 options:0 error:0];
 
     [albumArtSet release];
     
     [topLevel release];
+
+    [queueList release];
     
     [fileHandle writeData:data];
     
@@ -276,7 +285,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	NSMutableArray *containedURLs = [NSMutableArray array];
 	NSMutableArray *fileURLs = [NSMutableArray array];
 	NSMutableArray *validURLs = [NSMutableArray array];
-    NSArray *xmlURLs = nil;
+    NSDictionary *xmlData = nil;
 	
 	if (!urls)
 		return [NSArray array];
@@ -333,7 +342,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		}
         else if ([[[[url path] pathExtension] lowercaseString] isEqualToString:@"xml"])
         {
-            xmlURLs = [XmlContainer entriesForContainerURL:url];
+            xmlData = [XmlContainer entriesForContainerURL:url];
         }
 		else
 		{
@@ -378,14 +387,12 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	
 	//Create actual entries
     int count = [validURLs count];
-    if (xmlURLs) count += [xmlURLs count];
+    if (xmlData) count += [[xmlData objectForKey:@"entries"] count];
     
-	int i;
+	int i = 0;
 	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
-	for (i = 0; i < [validURLs count]; i++)
+	for (NSURL *url in validURLs)
 	{
-		NSURL *url = [validURLs objectAtIndex:i];
-		
 		PlaylistEntry *pe;
 		if ([url isFileURL]) 
 			pe = [[FilePlaylistEntry alloc] init];
@@ -399,30 +406,55 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		[entries addObject:pe];
 
 		[pe release];
+        
+        ++i;
 	}
+
+    int j = index + i;
     
-    for (i = 0; i < [xmlURLs count]; i++)
+    if (xmlData)
     {
-        NSDictionary * entry = [xmlURLs objectAtIndex:i];
-        
-        PlaylistEntry *pe;
-        if ([[entry objectForKey:@"URL"] isFileURL])
-            pe = [[FilePlaylistEntry alloc] init];
-        else
-            pe = [[PlaylistEntry alloc] init];
-        
-        [pe setValuesForKeysWithDictionary:entry];
-        pe.index = index+i+[validURLs count];
-        pe.queuePosition = -1;
-        [entries addObject:pe];
-        
-        [pe release];
+        for (NSDictionary *entry in [xmlData objectForKey:@"entries"])
+        {
+            PlaylistEntry *pe;
+            if ([[entry objectForKey:@"URL"] isFileURL])
+                pe = [[FilePlaylistEntry alloc] init];
+            else
+                pe = [[PlaylistEntry alloc] init];
+            
+            [pe setValuesForKeysWithDictionary:entry];
+            pe.index = index+i;
+            pe.queuePosition = -1;
+            [entries addObject:pe];
+            
+            [pe release];
+            
+            ++i;
+        }
     }
 	
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
 	
 	[playlistController insertObjects:entries atArrangedObjectIndexes:is];
-	
+
+	if (xmlData && [[xmlData objectForKey:@"queue"] count])
+    {
+        [playlistController emptyQueueList:self];
+        
+        i = 0;
+        for (NSNumber *index in [xmlData objectForKey:@"queue"])
+        {
+            int indexVal = [index intValue] + j;
+            PlaylistEntry *pe = [entries objectAtIndex:indexVal];
+            pe.queuePosition = i;
+            pe.queued = YES;
+            
+            [[playlistController queueList] addObject:pe];
+            
+            ++i;
+        }
+    }
+    
 	//Select the first entry in the group that was just added
 	[playlistController setSelectionIndex:index];
 	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];

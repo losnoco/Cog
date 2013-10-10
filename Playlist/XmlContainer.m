@@ -54,7 +54,7 @@
 	return url;
 }
 
-+ (NSArray *)entriesForContainerURL:(NSURL *)url
++ (NSDictionary *)entriesForContainerURL:(NSURL *)url
 {
 	if (![url isFileURL]) 
 		return [NSArray array];
@@ -84,12 +84,13 @@
     
     NSArray * items = (isArray) ? (NSArray*)plist : [(NSDictionary *)plist objectForKey:@"items"];
 	
-    NSDictionary *entry;
     NSDictionary *albumArt = (isArray) ? nil : [(NSDictionary *)plist objectForKey:@"albumArt"];
-	NSEnumerator *e = [items objectEnumerator];
+
+    NSArray *queueList = (isArray) ? [NSArray array] : [(NSDictionary *)plist objectForKey:@"queue"];
+    
 	NSMutableArray *entries = [NSMutableArray array];
 	
-	while ((entry = [e nextObject]))
+    for (NSDictionary *entry in items)
 	{
         NSMutableDictionary * preparedEntry = [NSMutableDictionary dictionaryWithDictionary:entry];
         
@@ -100,8 +101,8 @@
         
         [entries addObject:[NSDictionary dictionaryWithDictionary:preparedEntry]];
 	}
-	
-	return entries;
+    
+	return [NSDictionary dictionaryWithObjectsAndKeys:entries, @"entries", queueList, @"queue", nil];
 }
 
 @end

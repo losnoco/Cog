@@ -14,6 +14,6 @@
 
 + (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename;
 
-+ (NSArray *)entriesForContainerURL:(NSURL *)url;
++ (NSDictionary *)entriesForContainerURL:(NSURL *)url;
 
 @end
