@@ -310,6 +310,47 @@ static void read_ttag(AVFormatContext *s, AVIOContext *pb, int taglen,
 }
 
 /**
+ * Parse a comment tag.
+ */
+static void read_comm(AVFormatContext *s, AVIOContext *pb, int taglen,
+                      AVDictionary **metadata)
+{
+    const char *key = "comment";
+    uint8_t *dst;
+    int encoding, dict_flags = AV_DICT_DONT_OVERWRITE | AV_DICT_DONT_STRDUP_VAL;
+    int language;
+    
+    if (taglen < 4)
+        return;
+    
+    encoding = avio_r8(pb);
+    taglen--;
+    
+    language = avio_rl24(pb);
+    taglen -= 3;
+    
+    if (decode_str(s, pb, encoding, &dst, &taglen) < 0) {
+        av_log(s, AV_LOG_ERROR, "Error reading comment frame, skipped\n");
+        return;
+    }
+    
+    if (dst && dst[0]) {
+        key = (const char *) dst;
+        dict_flags |= AV_DICT_DONT_STRDUP_KEY;
+    }
+    
+    if (decode_str(s, pb, encoding, &dst, &taglen) < 0) {
+        av_log(s, AV_LOG_ERROR, "Error reading comment frame, skipped\n");
+        if (dict_flags & AV_DICT_DONT_STRDUP_KEY)
+            av_freep((void*)&key);
+        return;
+    }
+    
+    if (dst)
+        av_dict_set(metadata, key, (const char *) dst, dict_flags);
+}
+
+/**
  * Parse GEOB tag into a ID3v2ExtraMetaGEOB struct.
  */
 static void read_geobtag(AVFormatContext *s, AVIOContext *pb, int taglen,
@@ -720,7 +761,7 @@ static void id3v2_parse(AVFormatContext *s, int len, uint8_t version,
             av_log(s, AV_LOG_WARNING, "Skipping %s ID3v2 frame %s.\n", type, tag);
             avio_skip(s->pb, tlen);
         /* check for text tag or supported special meta tag */
-        } else if (tag[0] == 'T' ||
+        } else if (tag[0] == 'T' || memcmp(tag, "COMM", 4) == 0 ||
                    (extra_meta &&
                     (extra_func = get_extra_meta_func(tag, isv34)))) {
             pbx = s->pb;
@@ -786,6 +827,8 @@ static void id3v2_parse(AVFormatContext *s, int len, uint8_t version,
             if (tag[0] == 'T')
                 /* parse text tag */
                 read_ttag(s, pbx, tlen, &s->metadata, tag);
+            else if (memcmp(tag, "COMM", 4) == 0)
+                read_comm(s, pbx, tlen, &s->metadata);
             else
                 /* parse special meta tag */
                 extra_func->read(s, pbx, tlen, tag, extra_meta);

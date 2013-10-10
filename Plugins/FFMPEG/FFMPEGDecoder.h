@@ -35,6 +35,7 @@
 	float frequency;
 	long totalFrames;
 	long framesPlayed;
+    long framesToSkip;
 }
 
 @end

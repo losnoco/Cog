@@ -128,7 +128,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	NSLog(@"channels: %d", c->channels);
 	
 	channels = c->channels;
-	bitrate = ic->bit_rate / 1000;
+	bitrate = c->bit_rate / 1000;
     floatingPoint = NO;
     switch (c->sample_fmt) {
         case AV_SAMPLE_FMT_U8:
@@ -162,6 +162,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             return NO;
     }
 	totalFrames = c->sample_rate * ((float)ic->duration/AV_TIME_BASE);
+    framesPlayed = 0;
 	frequency = c->sample_rate;
 	seekable = YES;
 	
@@ -204,7 +205,11 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 		}
 		if (frames > 0)
 		{
+            if (framesPlayed >= totalFrames)
+                break;
+            
             size_t sampleBufferOffset = 0;
+            
             
 			if (av_read_frame(ic, &framePacket) < 0)
 			{
@@ -266,6 +271,11 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 			
 			numFrames = sampleBufferOffset / bytesPerFrame;
 			samplePos = 0;
+            
+            if (numFrames + framesPlayed > totalFrames)
+                numFrames = totalFrames - framesPlayed;
+            
+            framesPlayed += numFrames;
         }
 	}
 	
@@ -278,6 +288,8 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	NSLog(@"frame: %ld", frame);
     AVRational time_base = ic->streams[streamIndex]->time_base;
     av_seek_frame(ic, streamIndex, frame * time_base.den / time_base.num / frequency, 0);
+    numFrames = 0;
+    framesPlayed = frame;
 	return frame;
 }
 
