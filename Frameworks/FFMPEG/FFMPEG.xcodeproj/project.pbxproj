@@ -396,6 +396,10 @@
 		8384910F1807CEC400E7332D /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8384910E1807CEC400E7332D /* lpc.c */; };
 		838491111807CEF400E7332D /* sbrdsp_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 838491101807CEF400E7332D /* sbrdsp_init.c */; };
 		838491131807D06100E7332D /* spdifdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 838491121807D06100E7332D /* spdifdec.c */; };
+		838491151807D1D200E7332D /* tta.c in Sources */ = {isa = PBXBuildFile; fileRef = 838491141807D1D200E7332D /* tta.c */; };
+		838491191807D1D900E7332D /* tta.c in Sources */ = {isa = PBXBuildFile; fileRef = 838491161807D1D900E7332D /* tta.c */; };
+		8384911A1807D1D900E7332D /* ttadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 838491171807D1D900E7332D /* ttadata.c */; };
+		8384911B1807D1D900E7332D /* ttadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 838491181807D1D900E7332D /* ttadata.h */; };
 		8393B7E218052BB000913C76 /* mp3dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7DF18052BB000913C76 /* mp3dec.c */; };
 		8393B7E318052BB000913C76 /* mpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 8393B7E018052BB000913C76 /* mpeg.c */; };
 		8393B7E418052BB000913C76 /* mpeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 8393B7E118052BB000913C76 /* mpeg.h */; };
@@ -823,6 +827,10 @@
 		8384910E1807CEC400E7332D /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lpc.c; sourceTree = "<group>"; };
 		838491101807CEF400E7332D /* sbrdsp_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sbrdsp_init.c; sourceTree = "<group>"; };
 		838491121807D06100E7332D /* spdifdec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spdifdec.c; sourceTree = "<group>"; };
+		838491141807D1D200E7332D /* tta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tta.c; sourceTree = "<group>"; };
+		838491161807D1D900E7332D /* tta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tta.c; sourceTree = "<group>"; };
+		838491171807D1D900E7332D /* ttadata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ttadata.c; sourceTree = "<group>"; };
+		838491181807D1D900E7332D /* ttadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ttadata.h; sourceTree = "<group>"; };
 		8393B7DF18052BB000913C76 /* mp3dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3dec.c; sourceTree = "<group>"; };
 		8393B7E018052BB000913C76 /* mpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpeg.c; sourceTree = "<group>"; };
 		8393B7E118052BB000913C76 /* mpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeg.h; sourceTree = "<group>"; };
@@ -935,6 +943,9 @@
 		830F0B8E17FC4FB900042E8F /* libavcodec */ = {
 			isa = PBXGroup;
 			children = (
+				838491161807D1D900E7332D /* tta.c */,
+				838491171807D1D900E7332D /* ttadata.c */,
+				838491181807D1D900E7332D /* ttadata.h */,
 				8384910C1807CEB600E7332D /* sbrdsp.c */,
 				838491041807CDEC00E7332D /* cbrt_tablegen.h */,
 				838491001807CDC000E7332D /* lpc.c */,
@@ -1184,6 +1195,7 @@
 		830F0BAD17FC4FB900042E8F /* libavformat */ = {
 			isa = PBXGroup;
 			children = (
+				838491141807D1D200E7332D /* tta.c */,
 				838491121807D06100E7332D /* spdifdec.c */,
 				838490FE1807C58500E7332D /* aacdec.c */,
 				838490961807BC9C00E7332D /* dtshddec.c */,
@@ -1445,6 +1457,7 @@
 				830F0C0317FC4FB900042E8F /* frame.h in Headers */,
 				830F0C0117FC4FB900042E8F /* dict.h in Headers */,
 				8393B80418052BC200913C76 /* mpegaudiodectab.h in Headers */,
+				8384911B1807D1D900E7332D /* ttadata.h in Headers */,
 				830F0BFE17FC4FB900042E8F /* channel_layout.h in Headers */,
 				830F0C0017FC4FB900042E8F /* cpu.h in Headers */,
 				830F0C0217FC4FB900042E8F /* error.h in Headers */,
@@ -1728,6 +1741,7 @@
 				830F0DCD17FC933100042E8F /* w64.c in Sources */,
 				833C37D518032E7000CBA602 /* jrevdct.c in Sources */,
 				830F0BE217FC4FB900042E8F /* utils.c in Sources */,
+				838491191807D1D900E7332D /* tta.c in Sources */,
 				838490741807B07000E7332D /* md5.c in Sources */,
 				8393B80E18052BD500913C76 /* mpegaudiodsp.c in Sources */,
 				8384909C1807BE1300E7332D /* synth_filter.c in Sources */,
@@ -1748,6 +1762,7 @@
 				830F0BF217FC4FB900042E8F /* avio.c in Sources */,
 				838490DC1807C47E00E7332D /* g723_1.c in Sources */,
 				830F0CE217FC7F1E00042E8F /* frame_thread_encoder.c in Sources */,
+				838491151807D1D200E7332D /* tta.c in Sources */,
 				8393B80118052BC200913C76 /* mpegaudiodec.c in Sources */,
 				830F0C3817FC554D00042E8F /* buffer.c in Sources */,
 				8384905C1807AF0100E7332D /* ac3_parser.c in Sources */,
@@ -1894,6 +1909,7 @@
 				83BCB8E317FCA64400760340 /* timecode.c in Sources */,
 				8393B80B18052BC200913C76 /* mpegaudioenc.c in Sources */,
 				8384910D1807CEB600E7332D /* sbrdsp.c in Sources */,
+				8384911A1807D1D900E7332D /* ttadata.c in Sources */,
 				838490B91807C1C300E7332D /* truespeech.c in Sources */,
 				830F0D3517FC841B00042E8F /* samplefmt.c in Sources */,
 				830F0BEA17FC4FB900042E8F /* wmaprodec.c in Sources */,
