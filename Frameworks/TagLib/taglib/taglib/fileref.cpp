@@ -141,6 +141,8 @@ StringList FileRef::defaultFileExtensions()
   l.append("tak");
   l.append("ac3");
   l.append("apl");
+  l.append("dts");
+  l.append("dtshd");
 
   return l;
 }
@@ -236,7 +238,7 @@ File *FileRef::create(FileName fileName, bool readAudioProperties,
       return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "APE")
       return new APE::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "TAK" || ext == "AC3" || ext == "APL")
+    if(ext == "TAK" || ext == "AC3" || ext == "APL" || ext == "DTS" || ext == "DTSHD")
       return new APE::File(fileName, false, audioPropertiesStyle);
   }
 
