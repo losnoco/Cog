@@ -112,7 +112,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     lastReadPacket = malloc(sizeof(AVPacket));
     av_new_packet(lastReadPacket, 0);
     readNextPacket = YES;
-    bytesConsumedFromDecodedFrame = 0;
+    bytesConsumedFromDecodedFrame = INT_MAX;
     
     frequency = codecCtx->sample_rate;
     channels = codecCtx->channels;
@@ -229,7 +229,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             else
             {
                 // Something has been successfully decoded
-                dataSize = av_samples_get_buffer_size(NULL, codecCtx->channels,
+                dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
                                                       lastDecodedFrame->nb_samples,
                                                       codecCtx->sample_fmt, 1);
                 bytesReadFromPacket += len;
@@ -240,7 +240,11 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                 // decoding consumed all the read packet - read another next time
                 readNextPacket = YES;
             }
-            
+            else
+            {
+                lastReadPacket->data += len;
+                lastReadPacket->size -= len;
+            }
         }
 
         int toConsume = FFMIN((dataSize - bytesConsumedFromDecodedFrame), (bytesToRead - bytesRead));
@@ -252,7 +256,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         else {
             uint8_t * out = ( uint8_t * ) targetBuf + bytesRead;
             int bytesPerSample = bitsPerSample / 8;
-            int bytesConsumedPerPlane = bytesConsumedFromDecodedFrame / bytesPerSample;
+            int bytesConsumedPerPlane = bytesConsumedFromDecodedFrame / channels;
             int toConsumePerPlane = toConsume / channels;
             for (int s = 0; s < toConsumePerPlane; s += bytesPerSample) {
                 for (int ch = 0; ch < channels; ++ch) {
