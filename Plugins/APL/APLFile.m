@@ -1,7 +1,6 @@
 
 
 #import "APLFile.h"
-#import "ApeTag.h"
 
 @implementation APLFile
 +createWithFile:(NSString*)f { return [[APLFile alloc] initWithFile:f];	}
@@ -98,7 +97,6 @@
 		}
 		[scanner release];
 		//check here for EOF? cocoa does not have this functionality :(
-		tag = [ApeTag createFromFileRead:f];
 		[f closeFile];
 		}
 	return self;
@@ -106,7 +104,6 @@
 
 -(long)startBlock { return startBlock; }
 -(long)endBlock { return endBlock; }
--(ApeTag*) tag { return tag; }
 -(NSURL*) file { return file; }
 
 
