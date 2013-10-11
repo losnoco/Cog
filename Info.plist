@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSMinimumSystemVersion</key>
-	<string>10.6.0</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
@@ -30,70 +28,70 @@
 				<string>minincsf</string>
 				<string>ncsf</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Nitro Sound Composer Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>vgm7z</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>VGM7Z Archive</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>rsn</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>RSN Archive</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>xwma</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>XWMA Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>tak</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>TAK Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -102,28 +100,28 @@
 				<string>m2a</string>
 				<string>mp2</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MPEG Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>sgc</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>SGC Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -131,42 +129,42 @@
 				<string>minigsf</string>
 				<string>gsf</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Game Boy Advance Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>ay</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>ZX Spectrum Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>umx</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Unreal Music Archive</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -174,126 +172,126 @@
 				<string>okta</string>
 				<string>okt</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Oktalyzer Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>amf</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>AMF Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>dsm</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>DSM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>j2b</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Jazz Jackrabbit 2 J2B Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>am</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>RIFF AM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>psm</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>PSM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>669</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>669 Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>mtm</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MTM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>ptm</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>PTM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -301,28 +299,28 @@
 				<string>stz</string>
 				<string>stm</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>STM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>opus</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>ogg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Ogg Opus Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -330,14 +328,14 @@
 				<string>asf</string>
 				<string>wma</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Microsoft Windows Media Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -345,14 +343,14 @@
 				<string>miniqsf</string>
 				<string>qsf</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>QSound Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -360,14 +358,14 @@
 				<string>minidsf</string>
 				<string>dsf</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Sega Dreamcast Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -375,20 +373,16 @@
 				<string>minissf</string>
 				<string>ssf</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Sega Saturn Audio File</string>
-		</dict>
-		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
+		</dict>
+		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>minipsf2</string>
@@ -396,10 +390,14 @@
 				<string>psf2</string>
 				<string>psf</string>
 			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Sony Playstation Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -468,7 +466,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ape.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Monkey&apos;s Audio File</string>
+			<string>Monkey's Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -835,6 +833,10 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>r516</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.music</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.6.0</string>
 	<key>NSAppleScriptEnabled</key>
 	<string>YES</string>
 	<key>NSMainNibFile</key>
