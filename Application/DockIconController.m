@@ -32,20 +32,20 @@ static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackSt
 		NSImage *badgeImage = nil;
 		
 		if (playbackStatus == kCogStatusPlaying) {
-			badgeImage = [NSImage imageNamed:@"playBadge"];
+			badgeImage = [NSImage imageNamed:@"playDockBadge"];
 		}
 		else if (playbackStatus == kCogStatusPaused) {
-			badgeImage = [NSImage imageNamed:@"pauseBadge"];
+			badgeImage = [NSImage imageNamed:@"pauseDockBadge"];
 		}
 		else {
-			badgeImage = [NSImage imageNamed:@"stopBadge"];
+			badgeImage = [NSImage imageNamed:@"stopDockBadge"];
 		}
 		
 		NSSize badgeSize = [badgeImage size];
 		
 		NSImage *newDockImage = [dockImage copy];
 		[newDockImage lockFocus];
-		[badgeImage drawInRect:NSMakeRect(92, 24, badgeSize.width,badgeSize.height) fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height) operation:NSCompositeSourceOver fraction:1.0];
+		[badgeImage drawInRect:NSMakeRect(0, 0, 128, 128) fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height) operation:NSCompositeSourceOver fraction:1.0];
 		[newDockImage unlockFocus];
 		[NSApp setApplicationIconImage:newDockImage];
 		[newDockImage release];
@@ -58,7 +58,7 @@ static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackSt
 
 - (void)awakeFromNib
 {
-	dockImage = [[NSImage imageNamed:@"wheel"] copy];
+	dockImage = [[NSImage imageNamed:@"icon_blank"] copy];
 	[self startObserving];
 }
 

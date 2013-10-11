@@ -169,7 +169,7 @@
                 <button id="77">
                     <rect key="frame" x="18" y="38" width="281" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Enable remote control." bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="206">
+                    <buttonCell key="cell" type="check" title="Enable remote control" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="206">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -180,7 +180,7 @@
                 <button id="44">
                     <rect key="frame" x="18" y="18" width="281" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Only listen to remote when Cog is active." bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="205">
+                    <buttonCell key="cell" type="check" title="Only listen to remote when Cog is active" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="205">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -228,7 +228,7 @@
                 <button id="51">
                     <rect key="frame" x="18" y="46" width="299" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Automatically check for updates on startup." bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="207">
+                    <buttonCell key="cell" type="check" title="Automatically check for updates on startup" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="207">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -323,7 +323,7 @@
                 <button id="88">
                     <rect key="frame" x="18" y="18" width="396" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Automatically launch Last.fm client." bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="213">
+                    <buttonCell key="cell" type="check" title="Automatically launch Last.fm client" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="213">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -335,7 +335,7 @@
                 <button id="87">
                     <rect key="frame" x="18" y="38" width="396" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Enable Last.fm support. (Must have Last.fm client installed)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="212">
+                    <buttonCell key="cell" type="check" title="Enable Last.fm support (Last.fm client must be installed)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="212">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -358,7 +358,7 @@
                 <button id="310">
                     <rect key="frame" x="18" y="18" width="395" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Read cue sheets when adding folders to playlist." bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="311">
+                    <buttonCell key="cell" type="check" title="Read CUE sheets when adding folders to playlist" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="311">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -369,7 +369,7 @@
                 <textField verticalHuggingPriority="750" id="261">
                     <rect key="frame" x="17" y="42" width="138" height="35"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When opening file with ⇧ or ⌘+^ held:" id="262">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When opening file with ⇧ or ⌃⌘ held:" id="262">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

@@ -25,10 +25,10 @@
 	self = [super init];
 	if (self)
 	{
-		self.playImage = [NSImage imageNamed:@"play"];
+		self.playImage = [NSImage imageNamed:@"playTemplate"];
 		self.queueImage = [NSImage imageNamed:@"NSAddTemplate"];
 		self.errorImage = [NSImage imageNamed:@"NSStopProgressTemplate"];
-		self.stopAfterImage = [NSImage imageNamed:@"stop_current"];
+		self.stopAfterImage = [NSImage imageNamed:@"stopTemplate"];
 	}
 	
 	return self;

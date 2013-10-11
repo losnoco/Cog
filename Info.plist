@@ -509,7 +509,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>flac.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Flac Audio File</string>
+			<string>FLAC Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -523,7 +523,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ape.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Monkey&apos;s Audio File</string>
+			<string>Monkey's Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -845,7 +845,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>cue.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Cue Sheet File</string>
+			<string>CUE Sheet File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -877,7 +877,7 @@
 	<key>CFBundleHelpBookName</key>
 	<string>Cog Help</string>
 	<key>CFBundleIconFile</key>
-	<string>wheel</string>
+	<string>icon_main</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.cogx.cog</string>
 	<key>CFBundleInfoDictionaryVersion</key>
