@@ -24,6 +24,10 @@
 
 #import <HighlyAdvanced/GBA.h>
 
+#include <vector>
+#import <SSEQPlayer/SDAT.h>
+#import <SSEQPlayer/Player.h>
+
 @interface psf_file_container : NSObject {
     NSLock * lock;
     NSMutableDictionary * list;
@@ -168,9 +172,9 @@ static psf_file_callbacks source_callbacks =
     return metadataList;
 }
 
-- (long)retrieveTotalFrames
+- (long)retrieveFrameCount:(long)ms
 {
-    return (tagLengthMs + tagFadeMs) * (sampleRate / 100) / 10;
+    return ms * (sampleRate / 100) / 10;
 }
 
 struct psf_info_meta_state
@@ -623,6 +627,40 @@ struct gsf_sound_out : public GBASoundOut
     }
 };
 
+struct ncsf_loader_state
+{
+	uint32_t sseq;
+	std::vector<uint8_t> sdatData;
+	std::unique_ptr<SDAT> sdat;
+    
+	ncsf_loader_state() : sseq( 0 ) { }
+};
+
+int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
+                const uint8_t * reserved, size_t reserved_size)
+{
+    struct ncsf_loader_state * state = ( struct ncsf_loader_state * ) context;
+    
+	if ( reserved_size >= 4 )
+	{
+		state->sseq = get_le32( reserved );
+	}
+    
+	if ( exe_size >= 12 )
+	{
+		uint32_t sdat_size = get_le32( exe + 8 );
+		if ( sdat_size > exe_size ) return -1;
+        
+		if ( state->sdatData.empty() )
+			state->sdatData.resize( sdat_size, 0 );
+		else if ( state->sdatData.size() < sdat_size )
+			state->sdatData.resize( sdat_size );
+		memcpy( &state->sdatData[0], exe, sdat_size );
+	}
+    
+    return 0;
+}
+
 - (BOOL)initializeDecoder
 {
     if ( type == 1 )
@@ -721,6 +759,34 @@ struct gsf_sound_out : public GBASoundOut
         CPUInit( system );
         CPUReset( system );
     }
+    else if ( type == 0x25 )
+    {
+        struct ncsf_loader_state * state = new struct ncsf_loader_state;
+        
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x25, ncsf_loader, state, 0, 0) <= 0 )
+        {
+            delete state;
+            return NO;
+        }
+        
+        Player * player = new Player;
+        
+        player->interpolation = INTERPOLATION_LANCZOS;
+        
+        PseudoFile file;
+        file.data = &state->sdatData;
+        
+        state->sdat.reset(new SDAT(file, state->sseq));
+        
+        auto * sseqToPlay = state->sdat->sseq.get();
+        
+        player->sampleRate = 44100;
+        player->Setup( sseqToPlay );
+        player->Timer();
+        
+        emulatorCore = ( uint8_t * ) player;
+        emulatorExtra = state;
+    }
     else if ( type == 0x41 )
     {
         struct qsf_loader_state * state = ( struct qsf_loader_state * ) calloc( 1, sizeof( *state ) );
@@ -792,6 +858,11 @@ struct gsf_sound_out : public GBASoundOut
     
     tagLengthMs = info.tag_length_ms;
     tagFadeMs = info.tag_fade_ms;
+    
+    if (!tagLengthMs) {
+        tagLengthMs = ( 2 * 60 + 30 ) * 1000;
+        tagFadeMs = 8000;
+    }
 
     replayGainAlbumGain = info.albumGain;
     replayGainAlbumPeak = info.albumPeak;
@@ -802,7 +873,8 @@ struct gsf_sound_out : public GBASoundOut
     metadataList = info.info;
     
     framesRead = 0;
-	totalFrames = [self retrieveTotalFrames];
+    framesLength = [self retrieveFrameCount:tagLengthMs];
+	totalFrames = [self retrieveFrameCount:tagLengthMs + tagFadeMs];
 	
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -855,11 +927,39 @@ struct gsf_sound_out : public GBASoundOut
         }
         sound_out->samples_written = frames_rendered;
     }
+    else if ( type == 0x25 )
+    {
+        size_t buffer_size = frames * sizeof(int16_t) * 2;
+        std::vector<uint8_t> buffer;
+        buffer.resize( buffer_size );
+        Player * player = ( Player * ) emulatorCore;
+        player->GenerateSamples(buffer, 0, frames);
+        memcpy( buf, &buffer[0], buffer_size );
+    }
     else if ( type == 0x41 )
     {
         uint32_t howmany = frames;
         qsound_execute( emulatorCore, 0x7fffffff, ( int16_t * ) buf, &howmany);
         frames = howmany;
+    }
+    
+    if ( framesRead >= framesLength ) {
+        long fadeStart = framesRead;
+        long fadeEnd = framesRead + frames;
+        long fadeTotal = totalFrames - framesLength;
+        long fadePos;
+        
+        int16_t * buf16 = ( int16_t * ) buf;
+        
+        for (fadePos = fadeStart; fadePos < fadeEnd && fadePos < totalFrames; ++fadePos) {
+            long scale = totalFrames - fadePos;
+            buf16[ 0 ] = buf16[ 0 ] * scale / fadeTotal;
+            buf16[ 1 ] = buf16[ 1 ] * scale / fadeTotal;
+            buf16 += 2;
+        }
+        
+        if (fadePos < fadeEnd)
+            frames = (int)(fadePos - fadeStart);
     }
 
 	framesRead += frames;
@@ -875,6 +975,9 @@ struct gsf_sound_out : public GBASoundOut
             CPUCleanUp( system );
             soundShutdown( system );
             delete system;
+        } else if ( type == 0x25 ) {
+            Player * player = ( Player * ) emulatorCore;
+            delete player;
         } else {
             free( emulatorCore );
         }
@@ -886,6 +989,10 @@ struct gsf_sound_out : public GBASoundOut
         emulatorExtra = nil;
     } else if ( type == 0x22 && emulatorExtra ) {
         delete ( gsf_sound_out * ) emulatorExtra;
+        emulatorExtra = nil;
+    } else if ( type == 0x25 && emulatorExtra ) {
+        struct ncsf_loader_state * state = ( struct ncsf_loader_state * ) emulatorExtra;
+        delete state;
         emulatorExtra = nil;
     } else if ( type == 0x41 && emulatorExtra ) {
         struct qsf_loader_state * state = ( struct qsf_loader_state * ) emulatorExtra;
@@ -950,12 +1057,33 @@ struct gsf_sound_out : public GBASoundOut
                 CPULoop( system, 250000 );
         } while ( frames_to_run );
     }
+    else if ( type == 0x25 )
+    {
+        std::vector<uint8_t> buffer;
+        Player * player = ( Player * ) emulatorCore;
+        
+        buffer.resize(1024 * sizeof(int16_t) * 2);
+        
+        long frames_to_run = frame - framesRead;
+        
+        while ( frames_to_run )
+        {
+            int frames_to_render = 1024;
+            if ( frames_to_render > frames_to_run ) frames_to_render = (int)frames_to_run;
+            
+            player->GenerateSamples(buffer, 0, frames_to_render);
+            
+            frames_to_run -= frames_to_render;
+        }
+    }
     else if ( type == 0x41 )
     {
         uint32_t howmany = (uint32_t)(frame - framesRead);
         qsound_execute( emulatorCore, 0x7fffffff, 0, &howmany );
         frame = (long)(howmany + framesRead);
     }
+    
+    framesRead = frame;
     
 	return frame;
 }
@@ -997,7 +1125,7 @@ struct gsf_sound_out : public GBASoundOut
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", nil];
+	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", nil];
 }
 
 + (NSArray *)mimeTypes

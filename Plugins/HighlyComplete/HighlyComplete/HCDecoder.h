@@ -32,6 +32,7 @@
 	
 	long totalFrames;
 	long framesRead;
+    long framesLength;
 }
 
 @end
