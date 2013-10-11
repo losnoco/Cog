@@ -314,10 +314,10 @@ int avpriv_dirac_parse_sequence_header(AVCodecContext *avctx, GetBitContext *gb,
 
     /* [DIRAC_STD] 10.3 Source Parameters
      * Override the defaults. */
-    if (ret = parse_source_parameters(avctx, gb, source))
+    if ((ret = parse_source_parameters(avctx, gb, source)))
         return ret;
 
-    if (ret = av_image_check_size(source->width, source->height, 0, avctx))
+    if ((ret = av_image_check_size(source->width, source->height, 0, avctx)))
         return ret;
 
     avcodec_set_dimensions(avctx, source->width, source->height);

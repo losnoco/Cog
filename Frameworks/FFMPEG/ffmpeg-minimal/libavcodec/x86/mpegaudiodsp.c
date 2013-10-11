@@ -235,7 +235,9 @@ DECL_IMDCT_BLOCKS(avx,avx)
 
 av_cold void ff_mpadsp_init_x86(MPADSPContext *s)
 {
+#if HAVE_SSE2_INLINE || HAVE_YASM
     int cpu_flags = av_get_cpu_flags();
+#endif
 
     int i, j;
     for (j = 0; j < 4; j++) {

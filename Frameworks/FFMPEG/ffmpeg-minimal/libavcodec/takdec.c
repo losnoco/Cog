@@ -163,8 +163,8 @@ static void set_sample_rate_params(AVCodecContext *avctx)
     TAKDecContext *s  = avctx->priv_data;
     int shift         = 3 - (avctx->sample_rate / 11025);
     shift             = FFMAX(0, shift);
-    s->uval           = FFALIGN(avctx->sample_rate + 511 >> 9, 4) << shift;
-    s->subframe_scale = FFALIGN(avctx->sample_rate + 511 >> 9, 4) << 1;
+    s->uval           = FFALIGN((avctx->sample_rate + 511) >> 9, 4) << shift;
+    s->subframe_scale = FFALIGN((avctx->sample_rate + 511) >> 9, 4) << 1;
 }
 
 static av_cold int tak_decode_init(AVCodecContext *avctx)
@@ -190,7 +190,7 @@ static void decode_lpc(int32_t *coeffs, int mode, int length)
 
     if (mode == 1) {
         int a1 = *coeffs++;
-        for (i = 0; i < length - 1 >> 1; i++) {
+        for (i = 0; i < (length - 1) >> 1; i++) {
             *coeffs   += a1;
             coeffs[1] += *coeffs;
             a1         = coeffs[1];
@@ -204,7 +204,7 @@ static void decode_lpc(int32_t *coeffs, int mode, int length)
         coeffs[1] = a2;
         if (length > 2) {
             coeffs += 2;
-            for (i = 0; i < length - 2 >> 1; i++) {
+            for (i = 0; i < (length - 2) >> 1; i++) {
                 int a3    = *coeffs + a1;
                 int a4    = a3 + a2;
                 *coeffs   = a4;
@@ -436,8 +436,8 @@ static int decode_subframe(TAKDecContext *s, int32_t *decoded,
         int32_t *p2 = &tfilter[i - 1];
 
         for (j = 0; j < (i + 1) / 2; j++) {
-            x     = *p1 + (s->predictors[i] * *p2 + 256 >> 9);
-            *p2  += s->predictors[i] * *p1 + 256 >> 9;
+            x     = *p1 + ((s->predictors[i] * *p2 + 256) >> 9);
+            *p2  += (s->predictors[i] * *p1 + 256) >> 9;
             *p1++ = x;
             p2--;
         }
@@ -579,7 +579,7 @@ static int decorrelate(TAKDecContext *s, int c1, int c2, int length)
         for (i = 0; i < length; i++) {
             int32_t a = p1[i];
             int32_t b = p2[i];
-            b         = dfactor * (b >> dshift) + 128 >> 8 << dshift;
+            b         = (dfactor * (b >> dshift) + 128) >> 8 << dshift;
             p1[i]     = b - a;
         }
         break;
@@ -767,7 +767,7 @@ static int tak_decode_frame(AVCodecContext *avctx, void *data,
     } else {
         if (s->ti.codec == TAK_CODEC_MONO_STEREO) {
             for (chan = 0; chan < avctx->channels; chan++)
-                if (ret = decode_channel(s, chan))
+                if ((ret = decode_channel(s, chan)))
                     return ret;
 
             if (avctx->channels == 2) {
@@ -777,7 +777,7 @@ static int tak_decode_frame(AVCodecContext *avctx, void *data,
                 }
 
                 s->dmode = get_bits(gb, 3);
-                if (ret = decorrelate(s, 0, 1, s->nb_samples - 1))
+                if ((ret = decorrelate(s, 0, 1, s->nb_samples - 1)))
                     return ret;
             }
         } else if (s->ti.codec == TAK_CODEC_MULTICHANNEL) {
@@ -825,18 +825,18 @@ static int tak_decode_frame(AVCodecContext *avctx, void *data,
 
             for (i = 0; i < chan; i++) {
                 if (s->mcdparams[i].present && s->mcdparams[i].index == 1)
-                    if (ret = decode_channel(s, s->mcdparams[i].chan2))
+                    if ((ret = decode_channel(s, s->mcdparams[i].chan2)))
                         return ret;
 
-                if (ret = decode_channel(s, s->mcdparams[i].chan1))
+                if ((ret = decode_channel(s, s->mcdparams[i].chan1)))
                     return ret;
 
                 if (s->mcdparams[i].present) {
                     s->dmode = mc_dmodes[s->mcdparams[i].index];
-                    if (ret = decorrelate(s,
+                    if ((ret = decorrelate(s,
                                           s->mcdparams[i].chan2,
                                           s->mcdparams[i].chan1,
-                                          s->nb_samples - 1))
+                                          s->nb_samples - 1)))
                         return ret;
                 }
             }
@@ -894,6 +894,7 @@ static int tak_decode_frame(AVCodecContext *avctx, void *data,
                 samples[i] <<= 8;
         }
         break;
+    default: break;
     }
 
     *got_frame_ptr = 1;

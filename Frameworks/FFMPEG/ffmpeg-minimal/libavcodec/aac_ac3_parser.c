@@ -83,6 +83,7 @@ get_next:
         avctx->sample_rate = s->sample_rate;
 
         /* allow downmixing to stereo (or mono for AC-3) */
+        AV_NOWARN_DEPRECATED(
         if(avctx->request_channels > 0 &&
                 avctx->request_channels < s->channels &&
                 (avctx->request_channels <= 2 ||
@@ -94,6 +95,7 @@ get_next:
             avctx->channels = s->channels;
             avctx->channel_layout = s->channel_layout;
         }
+        );
         s1->duration = s->samples;
         avctx->audio_service_type = s->service_type;
     }

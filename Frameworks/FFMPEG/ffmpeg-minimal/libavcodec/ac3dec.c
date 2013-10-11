@@ -31,6 +31,7 @@
 
 #include "libavutil/crc.h"
 #include "libavutil/opt.h"
+#include "libavutil/internal.h"
 #include "internal.h"
 #include "aac_ac3_parser.h"
 #include "ac3_parser.h"
@@ -178,11 +179,13 @@ static av_cold int ac3_decode_init(AVCodecContext *avctx)
     avctx->sample_fmt = AV_SAMPLE_FMT_FLTP;
 
     /* allow downmixing to stereo or mono */
+    AV_NOWARN_DEPRECATED(
     if (avctx->channels > 0 && avctx->request_channels > 0 &&
             avctx->request_channels < avctx->channels &&
             avctx->request_channels <= 2) {
         avctx->channels = avctx->request_channels;
     }
+    );
     s->downmixed = 1;
 
     for (i = 0; i < AC3_MAX_CHANNELS; i++) {
@@ -1347,12 +1350,14 @@ static int ac3_decode_frame(AVCodecContext * avctx, void *data,
         s->output_mode  = s->channel_mode;
         if (s->lfe_on)
             s->output_mode |= AC3_OUTPUT_LFEON;
+        AV_NOWARN_DEPRECATED(
         if (avctx->request_channels > 0 && avctx->request_channels <= 2 &&
                 avctx->request_channels < s->channels) {
             s->out_channels = avctx->request_channels;
             s->output_mode  = avctx->request_channels == 1 ? AC3_CHMODE_MONO : AC3_CHMODE_STEREO;
             s->channel_layout = avpriv_ac3_channel_layout_tab[s->output_mode];
         }
+        );
         avctx->channels       = s->out_channels;
         avctx->channel_layout = s->channel_layout;
 

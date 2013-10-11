@@ -136,7 +136,7 @@ static int dirac_combine_frame(AVCodecParserContext *s, AVCodecContext *avctx,
 
     if ( next == -1) {
         /* Found a possible frame start but not a frame end */
-        void *new_buffer = av_fast_realloc(pc->buffer, &pc->buffer_size,
+        void *new_buffer = av_fast_realloc(pc->buffer, (unsigned int *) &pc->buffer_size,
                                            pc->index + (*buf_size -
                                                         pc->sync_offset));
         pc->buffer = new_buffer;
@@ -147,7 +147,7 @@ static int dirac_combine_frame(AVCodecParserContext *s, AVCodecContext *avctx,
     } else {
         /* Found a possible frame start and a  possible frame end */
         DiracParseUnit pu1, pu;
-        void *new_buffer = av_fast_realloc(pc->buffer, &pc->buffer_size,
+        void *new_buffer = av_fast_realloc(pc->buffer, (unsigned int *) &pc->buffer_size,
                                            pc->index + next);
         pc->buffer = new_buffer;
         memcpy(pc->buffer + pc->index, *buf, next);

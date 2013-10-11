@@ -1437,6 +1437,7 @@ static int dca_filter_channels(DCAContext *s, int block_index)
 {
     float (*subband_samples)[DCA_SUBBANDS][8] = s->subband_samples[block_index];
     int k;
+    int request_channels;
 
     /* 32 subbands QMF */
     for (k = 0; k < s->prim_channels; k++) {
@@ -1449,7 +1450,8 @@ static int dca_filter_channels(DCAContext *s, int block_index)
     }
 
     /* Down mixing */
-    if (s->avctx->request_channels == 2 && s->prim_channels > 2) {
+    AV_NOWARN_DEPRECATED( request_channels = s->avctx->request_channels; );
+    if (request_channels == 2 && s->prim_channels > 2) {
         dca_downmix(s->samples_chanptr, s->amode, s->downmix_coef, s->channel_order_tab);
     }
 
@@ -2077,6 +2079,7 @@ static int dca_decode_frame(AVCodecContext *avctx, void *data,
     DCAContext *s = avctx->priv_data;
     int core_ss_end;
     int channels, full_channels;
+    int request_channels;
     float scale;
     int achan;
     int chset;
@@ -2223,19 +2226,21 @@ static int dca_decode_frame(AVCodecContext *avctx, void *data,
     avctx->profile = s->profile;
 
     full_channels = channels = s->prim_channels + !!s->lfe;
+    
+    AV_NOWARN_DEPRECATED( request_channels = avctx->request_channels; );
 
     /* If we have XXCH then the channel layout is managed differently */
     /* note that XLL will also have another way to do things */
     if (!(s->core_ext_mask & DCA_EXT_XXCH)
-        || (s->core_ext_mask & DCA_EXT_XXCH && avctx->request_channels > 0
-            && avctx->request_channels
+        || (s->core_ext_mask & DCA_EXT_XXCH && request_channels > 0
+            && request_channels
             < num_core_channels + !!s->lfe + s->xxch_chset_nch[0]))
     { /* xxx should also do MA extensions */
         if (s->amode < 16) {
             avctx->channel_layout = dca_core_channel_layout[s->amode];
 
-            if (s->xch_present && (!avctx->request_channels ||
-                                   avctx->request_channels
+            if (s->xch_present && (!request_channels ||
+                                   request_channels
                                    > num_core_channels + !!s->lfe)) {
                 avctx->channel_layout |= AV_CH_BACK_CENTER;
                 if (s->lfe) {
@@ -2265,7 +2270,7 @@ static int dca_decode_frame(AVCodecContext *avctx, void *data,
                 return AVERROR_INVALIDDATA;
             }
 
-            if (avctx->request_channels == 2 && s->prim_channels > 2) {
+            if (request_channels == 2 && s->prim_channels > 2) {
                 channels = 2;
                 s->output = DCA_STEREO;
                 avctx->channel_layout = AV_CH_LAYOUT_STEREO;
@@ -2286,11 +2291,11 @@ static int dca_decode_frame(AVCodecContext *avctx, void *data,
         /* we only get here if an XXCH channel set can be added to the mix */
         channel_mask = s->xxch_core_spkmask;
 
-        if (avctx->request_channels > 0
-            && avctx->request_channels < s->prim_channels) {
+        if (request_channels > 0
+            && request_channels < s->prim_channels) {
             channels = num_core_channels + !!s->lfe;
             for (i = 0; i < s->xxch_chset && channels + s->xxch_chset_nch[i]
-                                              <= avctx->request_channels; i++) {
+                                              <= request_channels; i++) {
                 channels += s->xxch_chset_nch[i];
                 channel_mask |= s->xxch_spk_masks[i];
             }
@@ -2467,6 +2472,7 @@ static int dca_decode_frame(AVCodecContext *avctx, void *data,
 static av_cold int dca_decode_init(AVCodecContext *avctx)
 {
     DCAContext *s = avctx->priv_data;
+    int request_channels;
 
     s->avctx = avctx;
     dca_init_vlcs();
@@ -2480,9 +2486,10 @@ static av_cold int dca_decode_init(AVCodecContext *avctx)
     avctx->sample_fmt = AV_SAMPLE_FMT_FLTP;
 
     /* allow downmixing to stereo */
-    if (avctx->channels > 0 && avctx->request_channels < avctx->channels &&
-        avctx->request_channels == 2) {
-        avctx->channels = avctx->request_channels;
+    AV_NOWARN_DEPRECATED( request_channels = avctx->request_channels; );
+    if (avctx->channels > 0 && request_channels < avctx->channels &&
+        request_channels == 2) {
+        avctx->channels = request_channels;
     }
 
     return 0;

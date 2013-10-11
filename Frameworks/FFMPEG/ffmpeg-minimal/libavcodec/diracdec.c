@@ -616,7 +616,7 @@ static void decode_component(DiracContext *s, int comp)
 
     /* Unpack all subbands at all levels. */
     for (level = 0; level < s->wavelet_depth; level++) {
-        for (orientation = !!level; orientation < 4; orientation++) {
+        for (orientation = !!level; (int)orientation < 4; orientation++) {
             SubBand *b = &s->plane[comp].band[level][orientation];
             bands[num_bands++] = b;
 
@@ -707,7 +707,7 @@ static int decode_lowdelay_slice(AVCodecContext *avctx, void *arg)
 
     /* [DIRAC_STD] 13.5.5.2 luma_slice_band */
     for (level = 0; level < s->wavelet_depth; level++)
-        for (orientation = !!level; orientation < 4; orientation++) {
+        for (orientation = !!level; (int)orientation < 4; orientation++) {
             quant = FFMAX(quant_base - s->lowdelay.quant[level][orientation], 0);
             lowdelay_subband(s, gb, quant, slice->slice_x, slice->slice_y, luma_end,
                              &s->plane[0].band[level][orientation], NULL);
@@ -720,7 +720,7 @@ static int decode_lowdelay_slice(AVCodecContext *avctx, void *arg)
     chroma_end  = get_bits_count(gb) + FFMIN(chroma_bits, get_bits_left(gb));
     /* [DIRAC_STD] 13.5.5.3 chroma_slice_band */
     for (level = 0; level < s->wavelet_depth; level++)
-        for (orientation = !!level; orientation < 4; orientation++) {
+        for (orientation = !!level; (int)orientation < 4; orientation++) {
             quant = FFMAX(quant_base - s->lowdelay.quant[level][orientation], 0);
             lowdelay_subband(s, gb, quant, slice->slice_x, slice->slice_y, chroma_end,
                              &s->plane[1].band[level][orientation],
@@ -1678,6 +1678,7 @@ static int dirac_decode_picture_header(DiracContext *s)
     }
 
     /* retire the reference frames that are not used anymore */
+    AV_NOWARN_DEPRECATED(
     if (s->current_picture->avframe.reference) {
         retire = picnum + dirac_get_se_golomb(gb);
         if (retire != picnum) {
@@ -1695,6 +1696,7 @@ static int dirac_decode_picture_header(DiracContext *s)
             remove_frame(s->ref_frames, s->ref_frames[0]->avframe.display_picture_number)->avframe.reference &= DELAYED_PIC_REF;
         }
     }
+    );
 
     if (s->num_refs) {
         if (dirac_unpack_prediction_parameters(s))  /* [DIRAC_STD] 11.2 Picture Prediction Data. picture_prediction() */
@@ -1726,7 +1728,7 @@ static int get_delayed_pic(DiracContext *s, AVFrame *picture, int *got_frame)
         s->delay_frames[i] = s->delay_frames[i+1];
 
     if (out) {
-        out->avframe.reference ^= DELAYED_PIC_REF;
+        AV_NOWARN_DEPRECATED( out->avframe.reference ^= DELAYED_PIC_REF; );
         *got_frame = 1;
         if((ret = av_frame_ref(picture, &out->avframe)) < 0)
             return ret;
@@ -1778,7 +1780,7 @@ static int dirac_decode_data_unit(AVCodecContext *avctx, const uint8_t *buf, int
             int ver[3];
             /* versions older than 1.0.8 don't store quant delta for
                subbands with only one codeblock */
-            if (sscanf(buf+14, "Schroedinger %d.%d.%d", ver, ver+1, ver+2) == 3)
+            if (sscanf((const char *) buf+14, "Schroedinger %d.%d.%d", ver, ver+1, ver+2) == 3)
                 if (ver[0] == 1 && ver[1] == 0 && ver[2] <= 7)
                     s->old_delta_quant = 1;
         }
@@ -1808,7 +1810,7 @@ static int dirac_decode_data_unit(AVCodecContext *avctx, const uint8_t *buf, int
         s->num_refs    = tmp;
         s->is_arith    = (parse_code & 0x48) == 0x08;          /* [DIRAC_STD] using_ac()      */
         s->low_delay   = (parse_code & 0x88) == 0x88;          /* [DIRAC_STD] is_low_delay()  */
-        pic->avframe.reference = (parse_code & 0x0C) == 0x0C;  /* [DIRAC_STD]  is_reference() */
+        AV_NOWARN_DEPRECATED( pic->avframe.reference = (parse_code & 0x0C) == 0x0C; );  /* [DIRAC_STD]  is_reference() */
         pic->avframe.key_frame = s->num_refs == 0;             /* [DIRAC_STD] is_intra()      */
         pic->avframe.pict_type = s->num_refs + 1;              /* Definition of AVPictureType in avutil.h */
 
@@ -1841,10 +1843,12 @@ static int dirac_decode_frame(AVCodecContext *avctx, void *data, int *got_frame,
 
     /* release unused frames */
     for (i = 0; i < MAX_FRAMES; i++)
+        AV_NOWARN_DEPRECATED(
         if (s->all_frames[i].avframe.data[0] && !s->all_frames[i].avframe.reference) {
             av_frame_unref(&s->all_frames[i].avframe);
             memset(s->all_frames[i].interpolated, 0, sizeof(s->all_frames[i].interpolated));
         }
+        );
 
     s->current_picture = NULL;
     *got_frame = 0;
@@ -1890,7 +1894,7 @@ static int dirac_decode_frame(AVCodecContext *avctx, void *data, int *got_frame,
     if (s->current_picture->avframe.display_picture_number > s->frame_number) {
         DiracFrame *delayed_frame = remove_frame(s->delay_frames, s->frame_number);
 
-        s->current_picture->avframe.reference |= DELAYED_PIC_REF;
+        AV_NOWARN_DEPRECATED( s->current_picture->avframe.reference |= DELAYED_PIC_REF; );
 
         if (add_frame(s->delay_frames, MAX_DELAY, s->current_picture)) {
             int min_num = s->delay_frames[0]->avframe.display_picture_number;
@@ -1907,7 +1911,7 @@ static int dirac_decode_frame(AVCodecContext *avctx, void *data, int *got_frame,
         }
 
         if (delayed_frame) {
-            delayed_frame->avframe.reference ^= DELAYED_PIC_REF;
+            AV_NOWARN_DEPRECATED( delayed_frame->avframe.reference ^= DELAYED_PIC_REF; );
             if((ret=av_frame_ref(data, &delayed_frame->avframe)) < 0)
                 return ret;
             *got_frame = 1;
