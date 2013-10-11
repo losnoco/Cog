@@ -31,7 +31,7 @@
 	AudioStreamBasicDescription outputFormat;
 }
 
-- (void)registerObservers;
+- (id)initWithController:(id)c previous:(id)p;
 
 - (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat outputFormat:(AudioStreamBasicDescription)outputFormat;
 - (void)cleanUp;

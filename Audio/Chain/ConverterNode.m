@@ -28,6 +28,19 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 
 @implementation ConverterNode
 
+- (id)initWithController:(id)c previous:(id)p
+{
+    self = [super initWithController:c previous:p];
+    if (self)
+    {
+        rgInfo = nil;
+        
+        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
+    }
+    
+    return self;
+}
+
 static const float STEREO_DOWNMIX[8-2][8][2]={
     /*3.0*/
     {
@@ -230,12 +243,6 @@ tryagain2:
 	return amountRead;
 }
 
-- (void)registerObservers
-{
-	NSLog(@"REGISTERING OBSERVERS");
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath
 					  ofObject:(id)object
                         change:(NSDictionary *)change
@@ -305,8 +312,6 @@ static float db_to_scale(float db)
 	inputFormat = inf;
 	outputFormat = outf;
     
-    [self registerObservers];
-
     floatFormat = inputFormat;
     floatFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
     floatFormat.mBitsPerChannel = 32;
@@ -361,6 +366,9 @@ static float db_to_scale(float db)
 - (void)dealloc
 {
 	NSLog(@"Decoder dealloc");
+
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
+    
 	[self cleanUp];
 	[super dealloc];
 }
@@ -390,8 +398,6 @@ static float db_to_scale(float db)
 
 - (void)cleanUp
 {
-    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
-
     [rgInfo release];
     rgInfo = nil;
     if (converterFloat)
