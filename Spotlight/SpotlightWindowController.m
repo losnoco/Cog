@@ -79,16 +79,15 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 		[self registerDefaults];
 
-		// We want to bind the query's search scope to the user default that is
-		// set from the NSPathControl.
-		NSDictionary *bindOptions = 
-			[NSDictionary dictionaryWithObject:@"StringToSearchScopeTransformer"
-										forKey:NSValueTransformerNameBindingOption];
-		
-		[self.query     bind:@"searchScopes"
-					toObject:[NSUserDefaultsController sharedUserDefaultsController]
-				 withKeyPath:@"values.spotlightSearchPath"
-					 options:bindOptions];
+        // TODO: spotlightSearchPath is bound via IB, is the below needed?
+//		NSDictionary *bindOptions =
+//			[NSDictionary dictionaryWithObject:@"StringToSearchScopeTransformer"
+//										forKey:NSValueTransformerNameBindingOption];
+//
+//		[self.query     bind:@"searchScopes"
+//					toObject:[NSUserDefaultsController sharedUserDefaultsController]
+//				 withKeyPath:@"values.spotlightSearchPath"
+//					 options:bindOptions];
 	}
 
     return self;
