@@ -7,13 +7,19 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "AppController.h"
 
 
-@interface InfoWindowController : NSWindowController {
+@interface InfoWindowController : NSWindowController
+{
 	IBOutlet id playlistSelectionController;
+    IBOutlet id currentEntryController;
+    IBOutlet AppController *appController;
+
+    id valueToDisplay;
 }
 
-@property(readonly) id playlistSelectionController;
+@property(assign) id valueToDisplay;
 
 - (IBAction)toggleWindow:(id)sender;
 
