@@ -82,7 +82,7 @@
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
-                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="C79A6C44-27DA-457C-B140-0E8D6E1467A3" id="1801">
+                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="994CBAE0-3E74-406B-959D-9367068C0CF9" id="1801">
                                                         <font key="font" metaFont="system"/>
                                                     </imageCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
@@ -354,19 +354,19 @@
                                     <binding destination="218" name="predicate4" keyPath="filterPredicate" previousBinding="1580" id="1582">
                                         <dictionary key="options">
                                             <integer key="NSValidatesImmediately" value="0"/>
-                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
-                                            <string key="NSPredicateFormat">artist contains[cd] $value</string>
                                             <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                            <string key="NSPredicateFormat">artist contains[cd] $value</string>
                                             <string key="NSDisplayName">Album</string>
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                         </dictionary>
                                     </binding>
                                     <binding destination="218" name="predicate5" keyPath="filterPredicate" previousBinding="1582" id="1583">
                                         <dictionary key="options">
                                             <integer key="NSValidatesImmediately" value="0"/>
-                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
-                                            <string key="NSPredicateFormat">genre contains[cd] $value</string>
                                             <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                            <string key="NSPredicateFormat">genre contains[cd] $value</string>
                                             <string key="NSDisplayName">Genre</string>
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -924,6 +924,13 @@
                                     <action selector="decreaseFontSize:" target="226" id="1872"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="LXf-6h-S7b"/>
+                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="6FK-oo-X6Z" userLabel="Menu Item - Enter Full Screen">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleFullScreen:" target="-1" id="UCw-gd-iiw"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -1042,8 +1049,8 @@
                                             <string key="NSValueTransformerName">NSIsNotNil</string>
                                             <integer key="NSNotApplicablePlaceholder" value="0"/>
                                             <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                            <integer key="NSNullPlaceholder" value="0"/>
                                             <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -1093,8 +1100,8 @@ CA
                                             <string key="NSValueTransformerName">NSIsNotNil</string>
                                             <integer key="NSNotApplicablePlaceholder" value="0"/>
                                             <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                            <integer key="NSNullPlaceholder" value="0"/>
                                             <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -1130,11 +1137,11 @@ CA
                                                     <dictionary key="options">
                                                         <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                         <string key="NSValueTransformerName">RepeatAllTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
                                                         <integer key="NSValidatesImmediately" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
                                                     </dictionary>
                                                 </binding>
                                             </connections>
@@ -1156,11 +1163,11 @@ CA
                                                     <dictionary key="options">
                                                         <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                         <string key="NSValueTransformerName">RepeatOneTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
                                                         <integer key="NSValidatesImmediately" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
                                                     </dictionary>
                                                 </binding>
                                             </connections>
@@ -1174,11 +1181,11 @@ CA
                                                     <dictionary key="options">
                                                         <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                         <string key="NSValueTransformerName">RepeatNoneTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
                                                         <integer key="NSValidatesImmediately" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
                                                     </dictionary>
                                                 </binding>
                                             </connections>
@@ -1384,11 +1391,11 @@ Gw
                     <connections>
                         <binding destination="1897" name="title" keyPath="content.artist" id="2085">
                             <dictionary key="options">
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNotApplicablePlaceholder"></string>
                                 <string key="NSNoSelectionPlaceholder"></string>
-                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNullPlaceholder">Not Playing</string>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1398,11 +1405,11 @@ Gw
                     <connections>
                         <binding destination="1897" name="title" keyPath="content.title" id="2083">
                             <dictionary key="options">
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNotApplicablePlaceholder"></string>
                                 <string key="NSNoSelectionPlaceholder"></string>
-                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNullPlaceholder">Not Playing</string>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1502,8 +1509,8 @@ Gw
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                 <integer key="NSNotApplicablePlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1517,8 +1524,8 @@ Gw
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                 <integer key="NSNotApplicablePlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1535,8 +1542,8 @@ Gw
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                 <integer key="NSNotApplicablePlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1550,8 +1557,8 @@ Gw
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                 <integer key="NSNotApplicablePlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1584,7 +1591,7 @@ Gw
                 <slider horizontalHuggingPriority="750" id="1612" customClass="VolumeSlider">
                     <rect key="frame" x="43" y="39" width="15" height="120"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="100" tickMarkPosition="left" sliderType="linear" id="1613">
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="100" tickMarkPosition="right" sliderType="linear" id="1613">
                         <font key="font" metaFont="smallSystem"/>
                     </sliderCell>
                     <connections>
@@ -1641,7 +1648,7 @@ Gw
         <customObject id="2434" customClass="FeedbackController"/>
     </objects>
     <resources>
-        <image name="C79A6C44-27DA-457C-B140-0E8D6E1467A3" width="17" height="17">
+        <image name="994CBAE0-3E74-406B-959D-9367068C0CF9" width="17" height="17">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGRkdYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ExQZHh8qKyw0NzpAQ1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5T
