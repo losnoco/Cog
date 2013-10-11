@@ -217,18 +217,6 @@
 	[self selectRowIndexes:[NSIndexSet indexSetWithIndex:[[playlistController currentEntry] index]] byExtendingSelection:NO];
 }
 
-- (IBAction)sortByPath:(id)sender
-{
-	[self setSortDescriptors:nil];
-	[playlistController sortByPath];
-}
-
-- (IBAction)shufflePlaylist:(id)sender
-{
-	[self setSortDescriptors:nil];
-	[playlistController randomizeList];
-}
-
 - (IBAction)undo:(id)sender
 {
 	[[playlistController undoManager] undo];

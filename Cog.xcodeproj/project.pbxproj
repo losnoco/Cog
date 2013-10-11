@@ -23,7 +23,6 @@
 		172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12320F5911D20078EF0C /* RepeatTransformers.m */; };
 		172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */; };
 		172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */; };
-		173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 173428F40D5FB1C400E8D854 /* EntriesController.m */; };
 		17342A9A0D5FD20B00E8D854 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		17342ABF0D5FD36400E8D854 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
 		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
@@ -594,8 +593,6 @@
 		172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ShuffleTransformers.m; path = Window/ShuffleTransformers.m; sourceTree = "<group>"; };
 		172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CogSort.h"; sourceTree = "<group>"; };
 		172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CogSort.m"; sourceTree = "<group>"; };
-		173428F30D5FB1C400E8D854 /* EntriesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntriesController.h; sourceTree = "<group>"; };
-		173428F40D5FB1C400E8D854 /* EntriesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntriesController.m; sourceTree = "<group>"; };
 		17342A990D5FD20B00E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		17342ABE0D5FD36400E8D854 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/OpenURLPanel.xib; sourceTree = "<group>"; };
 		173855FD0E0CC81F00488CD4 /* FileTreeOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeOutlineView.h; path = FileTree/FileTreeOutlineView.h; sourceTree = "<group>"; };
@@ -1513,8 +1510,6 @@
 				8E75753009F31D5A0080F1EE /* PlaylistEntry.m */,
 				8E75753309F31D5A0080F1EE /* Shuffle.h */,
 				8E75753409F31D5A0080F1EE /* Shuffle.m */,
-				173428F30D5FB1C400E8D854 /* EntriesController.h */,
-				173428F40D5FB1C400E8D854 /* EntriesController.m */,
 				170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */,
 				170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */,
 				17249F0D0D82E17700F33392 /* ToggleQueueTitleTransformer.h */,
@@ -2042,7 +2037,6 @@
 				178BAB990CD4E1B700B33D47 /* GCOneShotEffectTimer.m in Sources */,
 				178BAB9A0CD4E1B700B33D47 /* GCWindowMenu.m in Sources */,
 				178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */,
-				173428F50D5FB1C400E8D854 /* EntriesController.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
 				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
 				56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */,

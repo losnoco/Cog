@@ -18,9 +18,6 @@
 	NSMenu *headerContextMenu;
 }
 
-- (IBAction)sortByPath:(id)sender;
-- (IBAction)shufflePlaylist:(id)sender;
-	
 - (IBAction)toggleColumn:(id)sender;
 
 - (IBAction)scrollToCurrentEntry:(id)sender;

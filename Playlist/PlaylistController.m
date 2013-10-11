@@ -6,22 +6,20 @@
 //	Copyright 2005 Vincent Spader All rights reserved.
 //
 
-#import "PlaylistLoader.h"
-#import "PlaylistController.h"
-#import "PlaybackController.h"
-#import "EntriesController.h"
 #import "PlaylistEntry.h"
+#import "PlaylistLoader.h"
+#import "PlaybackController.h"
 #import "Shuffle.h"
 #import "SpotlightWindowController.h"
 #import "RepeatTransformers.h"
 #import "ShuffleTransformers.h"
 #import "StatusImageTransformer.h"
 #import "ToggleQueueTitleTransformer.h"
-#import "TagEditorController.h"
-
-#import "CogAudio/AudioPlayer.h"
 
 #import "Logging.h"
+
+
+#define UNDO_STACK_LIMIT 0
 
 @implementation PlaylistController
 
@@ -97,6 +95,11 @@
 	{
 		shuffleList = [[NSMutableArray alloc] init];
 		queueList = [[NSMutableArray alloc] init];
+
+        undoManager = [[NSUndoManager alloc] init];
+
+        [undoManager setLevelsOfUndo:UNDO_STACK_LIMIT];
+
 		[self initDefaults];
 	}
 	
@@ -108,6 +111,8 @@
 {
 	[shuffleList release];
 	[queueList release];
+    
+    [undoManager release];
 	
 	[super dealloc];
 }
@@ -270,7 +275,7 @@
 	{
 		[self willInsertURLs:acceptedURLs origin:URLOriginInternal];
 		
-		if (![[entriesController entries] count]) {
+		if (![[self content] count]) {
 			row = 0;
 		}
 		
@@ -288,50 +293,59 @@
 
 - (NSUndoManager *)undoManager
 {
-	return [entriesController undoManager];
+	return undoManager;
 }
 
 - (void)insertObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	[super insertObjects:objects atArrangedObjectIndexes:indexes];
-	
-	if ([self shuffle] != ShuffleOff)
-		[self resetShuffleList];
+    [[[self undoManager] prepareWithInvocationTarget:self] removeObjectsAtArrangedObjectIndexes:indexes];
+    NSString *actionName = [NSString stringWithFormat:@"Adding %d entries", [objects count]];
+    [[self undoManager] setActionName:actionName];
+
+    [super insertObjects:objects atArrangedObjectIndexes:indexes];
+
+    if ([self shuffle] != ShuffleOff)
+        [self resetShuffleList];
 }
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	DLog(@"Removing indexes: %@", indexes);
-	DLog(@"Current index: %i", currentEntry.index);
+    NSArray *objects = [[self content] objectsAtIndexes:indexes];
+    [[[self undoManager] prepareWithInvocationTarget:self] insertObjects:objects atArrangedObjectIndexes:indexes];
+    NSString *actionName = [NSString stringWithFormat:@"Removing %d entries", [indexes count]];
+    [[self undoManager] setActionName:actionName];
+    
+    DLog(@"Removing indexes: %@", indexes);
+    DLog(@"Current index: %i", currentEntry.index);
+    
+    if (currentEntry.index >= 0 && [indexes containsIndex:currentEntry.index])
+    {
+        currentEntry.index = -currentEntry.index - 1;
+        DLog(@"Current removed: %i", currentEntry.index);
+    }
+    
+    if (currentEntry.index < 0) //Need to update the negative index
+    {
+        int i = -currentEntry.index - 1;
+        DLog(@"I is %i", i);
+        int j;
+        for (j = i - 1; j >= 0; j--)
+        {
+            if ([indexes containsIndex:j]) {
+                DLog(@"Removing 1");
+                i--;
+            }
+        }
+        currentEntry.index = -i - 1;
 
-	if (currentEntry.index >= 0 && [indexes containsIndex:currentEntry.index])
-	{
-		currentEntry.index = -currentEntry.index - 1;
-		DLog(@"Current removed: %i", currentEntry.index);
-	}
-	
-	if (currentEntry.index < 0) //Need to update the negative index
-	{
-		int i = -currentEntry.index - 1;
-		DLog(@"I is %i", i);
-		int j;
-		for (j = i - 1; j >= 0; j--)
-		{
-			if ([indexes containsIndex:j]) {
-				DLog(@"Removing 1");
-				i--;
-			}
-		}
-		currentEntry.index = -i - 1;
+    }
 
-	}
-	
-	[super removeObjectsAtArrangedObjectIndexes:indexes];
-	
-	if ([self shuffle] != ShuffleOff)
-		[self resetShuffleList];
+    [super removeObjectsAtArrangedObjectIndexes:indexes];
 
-	[playbackController playlistDidChange:self];
+    if ([self shuffle] != ShuffleOff)
+        [self resetShuffleList];
+
+    [playbackController playlistDidChange:self];
 }
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors
@@ -354,25 +368,25 @@
 	[playbackController playlistDidChange:self];
 }
 		
-- (IBAction)sortByPath
-{
-	NSSortDescriptor *s = [[NSSortDescriptor alloc] initWithKey:@"url" ascending:YES selector:@selector(compare:)];
-	
-	[self setSortDescriptors:[NSArray arrayWithObject:s]];
-
-	[s release];	
-
-	if ([self shuffle] != ShuffleOff)
-		[self resetShuffleList];
-}
-
-- (IBAction)randomizeList
+- (IBAction)randomizeList:(id)sender
 {
 	[self setSortDescriptors:nil];
 
-	[self setContent:[Shuffle shuffleList:[self content]]];
-	if ([self shuffle] != ShuffleOff)
-		[self resetShuffleList];
+    NSArray *unrandomized = [self content];
+    [[[self undoManager] prepareWithInvocationTarget:self] unrandomizeList:unrandomized];
+
+    [self setContent:[Shuffle shuffleList:[self content]]];
+
+    if ([self shuffle] != ShuffleOff)
+ 		[self resetShuffleList];
+
+    [[self undoManager] setActionName:@"Playlist Randomization"];
+}
+
+- (void)unrandomizeList:(NSArray *)entries
+{
+    [[[self undoManager] prepareWithInvocationTarget:self] randomizeList:self];
+    [self setContent:entries];
 }
 
 - (IBAction)toggleShuffle:(id)sender
@@ -867,7 +881,7 @@
 	}
 
 	//Auto start playback
-	if (shouldPlay	&& [[entriesController entries] count] > 0) {
+	if (shouldPlay	&& [[self content] count] > 0) {
 		[playbackController playEntry: [urls objectAtIndex:0]];
 	}
 }
