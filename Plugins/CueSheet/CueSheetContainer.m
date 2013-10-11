@@ -29,6 +29,11 @@
 		return [NSArray array];
 	}
 	
+    if ([url fragment]) {
+        // input url already has fragment defined - no need to expand further
+        return [NSMutableArray arrayWithObject:url];
+    }
+    
 	NSMutableArray *tracks = [NSMutableArray array];
 	
 	CueSheet *cuesheet = [CueSheet cueSheetWithFile:[url path]];

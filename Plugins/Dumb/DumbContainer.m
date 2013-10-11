@@ -42,6 +42,11 @@ int scanCallback(void *data, int startOrder, long length)
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
+    if ([url fragment]) {
+        // input url already has fragment defined - no need to expand further
+        return [NSMutableArray arrayWithObject:url];
+    }
+    
     id audioSourceClass = NSClassFromString(@"AudioSource");
     id<CogSource> source = [audioSourceClass audioSourceForURL:url];
     
