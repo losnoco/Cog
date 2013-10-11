@@ -14,6 +14,8 @@
 #import "PathNode.h"
 #import <CogAudio/Status.h>
 
+#import "Logging.h"
+
 @implementation AppController
 
 + (void)initialize
@@ -298,13 +300,13 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         expandedNodes = [[NSMutableSet alloc] init];
     }
     
-    NSLog(@"Nodes to expand: %@", [expandedNodes description]);
+    DLog(@"Nodes to expand: %@", [expandedNodes description]);
     
-    NSLog(@"Num of rows: %ld", [outlineView numberOfRows]);
+    DLog(@"Num of rows: %ld", [outlineView numberOfRows]);
     
     if (!outlineView)
     {
-        NSLog(@"outlineView is NULL!");
+        DLog(@"outlineView is NULL!");
     }
 
     [outlineView reloadData];
@@ -376,7 +378,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     NSError *error;
     [[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
 
-    NSLog(@"Saving expanded nodes: %@", [expandedNodes description]);
+    DLog(@"Saving expanded nodes: %@", [expandedNodes description]);
 
     [[NSUserDefaults standardUserDefaults] setValue:[expandedNodes allObjects] forKey:@"fileTreeViewExpandedNodes"];
 }
@@ -583,7 +585,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
-    NSLog(@"Entering fullscreen");
+    DLog(@"Entering fullscreen");
     if (nil == nowPlaying)
     {
         nowPlaying = [[NowPlayingBarController alloc] init];
@@ -610,7 +612,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
-    NSLog(@"Exiting fullscreen");
+    DLog(@"Exiting fullscreen");
     if (nowPlaying)
     {
         NSRect nowPlayingFrame = [[nowPlaying view] frame];

@@ -11,6 +11,8 @@
 #import "FileNode.h"
 #import "FileTreeDataSource.h"
 
+#import "Logging.h"
+
 @implementation SmartFolderNode
 
 - (BOOL)isLeaf
@@ -32,7 +34,7 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString*)kMDQueryDidFinishNotification object:(id)query];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(id)query];
 
-	NSLog(@"Making query!");
+	DLog(@"Making query!");
 	MDQueryExecute(query, kMDQueryWantsUpdates);
 	
 	//Note: This is asynchronous!
@@ -57,7 +59,7 @@
 
 - (void)queryFinished:(NSNotification *)notification
 {
-	NSLog(@"Query finished!");
+	DLog(@"Query finished!");
 	MDQueryRef query = (MDQueryRef)[notification object];
 
 	NSMutableArray *results = [NSMutableArray array];
@@ -79,7 +81,7 @@
 
 	MDQueryEnableUpdates(query);
 	
-	NSLog(@"Query update!");
+	DLog(@"Query update!");
 	
 	[self processPaths:[results sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
 	
@@ -88,7 +90,7 @@
 
 - (void)queryUpdate:(NSNotification *)notification
 {
-	NSLog(@"Query update!");
+	DLog(@"Query update!");
 	[self queryFinished: notification];
 }
 

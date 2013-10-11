@@ -11,6 +11,8 @@
 
 #import "ContainedNode.h"
 
+#import "Logging.h"
+
 @implementation ContainerNode
 
 - (BOOL)isLeaf
@@ -26,7 +28,7 @@
 	for (NSURL *u in urls)
 	{
 		ContainedNode *node = [[ContainedNode alloc] initWithDataSource:dataSource url:u];
-		NSLog(@"Node: %@", u);
+		DLog(@"Node: %@", u);
 		[paths addObject:node];
 		[node release];
 	}	

@@ -8,6 +8,7 @@
 
 #import "ToggleQueueTitleTransformer.h"
 
+#import "Logging.h"
 
 @implementation ToggleQueueTitleTransformer
 
@@ -17,7 +18,7 @@
 
 // Convert from NSNumber to NSString
 - (id)transformedValue:(id)value {
-	NSLog(@"VALUE: %@", value);
+	DLog(@"VALUE: %@", value);
     if (value == nil) return nil;
 	BOOL queued = [value boolValue];
 	

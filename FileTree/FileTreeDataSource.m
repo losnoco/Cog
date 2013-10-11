@@ -13,6 +13,8 @@
 #import "DirectoryNode.h"
 #import "PathWatcher.h"
 
+#import "Logging.h"
+
 @implementation FileTreeDataSource
 
 + (void)initialize
@@ -39,7 +41,7 @@
 						 change:(NSDictionary *)change
                         context:(void *)context
 {
-	NSLog(@"File tree root URL: %@\n", [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]);
+	DLog(@"File tree root URL: %@\n", [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]);
 	if ([keyPath isEqualToString:@"values.fileTreeRootURL"]) {
 		[self setRootURL:[NSURL URLWithString:[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"]]];
 	}
@@ -84,10 +86,10 @@
 																   range:NSMakeRange(0, [path length])
 							   ] stringByStandardizingPath];
 	PathNode *node = rootNode;
-	NSLog(@"Root | Relative | Path: %@ | %@ | %@",[[self rootURL] path], relativePath, path);
+	DLog(@"Root | Relative | Path: %@ | %@ | %@",[[self rootURL] path], relativePath, path);
 	for (NSString *c in [relativePath pathComponents])
 	{
-		NSLog(@"COMPONENT: %@", c);
+		DLog(@"COMPONENT: %@", c);
 		BOOL found = NO;
 		for (PathNode *subnode in [node subpaths]) {
 			if ([[[[subnode URL] path] lastPathComponent] isEqualToString:c]) {
@@ -98,7 +100,7 @@
 		
 		if (!found)
 		{
-			NSLog(@"Not found!");
+			DLog(@"Not found!");
 			return nil;
 		}
 	}
@@ -108,10 +110,10 @@
 
 - (void)pathDidChange:(NSString *)path
 {
-	NSLog(@"PATH DID CHANGE: %@", path);
+	DLog(@"PATH DID CHANGE: %@", path);
 	//Need to find the corresponding node...and call [node reloadPath], then [self reloadPathNode:node]
 	PathNode *node = [self nodeForPath:path];
-	NSLog(@"NODE IS: %@", node);
+	DLog(@"NODE IS: %@", node);
 	[node updatePath];
 	[self reloadPathNode:node];
 }
@@ -155,7 +157,7 @@
 		[urls addObject:[p URL]];
 		[paths addObject:[[p URL] path]];
 	}
-	NSLog(@"Paths: %@", paths);
+	DLog(@"Paths: %@", paths);
 	[pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard
 	[pboard setData:[NSArchiver archivedDataWithRootObject:urls] forType:CogUrlsPboardType];
 	[pboard addTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:self];

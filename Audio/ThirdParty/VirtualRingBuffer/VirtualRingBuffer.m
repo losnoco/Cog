@@ -20,6 +20,7 @@
 #include <mach/mach.h>
 #include <mach/mach_error.h>
 
+#import "Logging.h"
 
 @implementation VirtualRingBuffer
 
@@ -235,9 +236,7 @@ void *allocateVirtualBuffer(UInt32 bufferLength)
         return NULL;
     }
     if (realAddress != originalAddress) {
-#if DEBUG
-        NSLog(@"allocateVirtualBuffer: vm_allocate 2nd time didn't return same address (%p vs %p)", originalAddress, realAddress);
-#endif
+        DLog(@"allocateVirtualBuffer: vm_allocate 2nd time didn't return same address (%p vs %p)", (void *) originalAddress, (void *) realAddress);
         goto errorReturn;
     }
 
@@ -251,15 +250,11 @@ void *allocateVirtualBuffer(UInt32 bufferLength)
         goto errorReturn;
     }
     if (!memoryEntry) {
-#if DEBUG
-        NSLog(@"mach_make_memory_entry: returned memoryEntry of NULL");
-#endif
+        DLog(@"mach_make_memory_entry: returned memoryEntry of NULL");
         goto errorReturn;
     }
     if (memoryEntryLength != bufferLength) {
-#if DEBUG
-        NSLog(@"mach_make_memory_entry: size changed (from %0x to %0x)", bufferLength, memoryEntryLength);
-#endif
+        DLog(@"mach_make_memory_entry: size changed (from %0x to %0lx)", bufferLength, memoryEntryLength);
         goto errorReturn;
     }
 
@@ -276,9 +271,7 @@ void *allocateVirtualBuffer(UInt32 bufferLength)
         goto errorReturn;
     }
     if (virtualAddress != realAddress + bufferLength) {
-#if DEBUG
-        NSLog(@"vm_map: didn't return correct address (%p vs %p)", realAddress + bufferLength, virtualAddress);
-#endif
+        DLog(@"vm_map: didn't return correct address (%p vs %p)", (void *) realAddress + bufferLength, (void *) virtualAddress);
         goto errorReturn;
     }
     

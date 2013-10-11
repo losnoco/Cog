@@ -12,6 +12,8 @@
 #import "CoreAudioUtils.h"
 
 
+#import "Logging.h"
+
 @implementation InputNode
 
 - (BOOL)openWithSource:(id<CogSource>)source
@@ -26,7 +28,7 @@
 
 	if (![decoder open:source])
 	{
-		NSLog(@"Couldn't open decoder...");
+		ALog(@"Couldn't open decoder...");
 		return NO;
 	}
 	
@@ -44,7 +46,7 @@
 
 - (BOOL)openWithDecoder:(id<CogDecoder>) d
 {
-	NSLog(@"Opening with old decoder: %@", d);
+	DLog(@"Opening with old decoder: %@", d);
 	decoder = d;
 	[decoder retain];
 
@@ -59,14 +61,14 @@
 	shouldContinue = YES;
 	shouldSeek = NO;
 	
-	NSLog(@"DONES: %@", decoder);
+	DLog(@"DONES: %@", decoder);
 	return YES;
 }
 
 
 - (void)registerObservers
 {
-	NSLog(@"REGISTERING OBSERVERS");
+	DLog(@"REGISTERING OBSERVERS");
 	[decoder addObserver:self
 			  forKeyPath:@"properties" 
 				 options:(NSKeyValueObservingOptionNew)
@@ -83,7 +85,7 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-	NSLog(@"SOMETHING CHANGED!");
+	DLog(@"SOMETHING CHANGED!");
 	if ([keyPath isEqual:@"properties"]) {
 		//Setup converter!
 		//Inform something of properties change
@@ -106,14 +108,14 @@
 	{
 		if (shouldSeek == YES)
 		{
-			NSLog(@"SEEKING!");
+			DLog(@"SEEKING!");
 			[decoder seek:seekFrame];
 			shouldSeek = NO;
-			NSLog(@"Seeked! Resetting Buffer");
+			DLog(@"Seeked! Resetting Buffer");
 			
 			[self resetBuffer];
 			
-			NSLog(@"Reset buffer!");
+			DLog(@"Reset buffer!");
 			initialBufferFilled = NO;
 		}
 
@@ -128,10 +130,10 @@
 					[controller initialBufferFilled:self];
 				}
 				
-				NSLog(@"End of stream? %@", [self properties]);
+				DLog(@"End of stream? %@", [self properties]);
 				endOfStream = YES;
 				shouldClose = [controller endOfInputReached]; //Lets us know if we should keep going or not (occassionally, for track changes within a file)
-				NSLog(@"closing? is %i", shouldClose);
+				DLog(@"closing? is %i", shouldClose);
 				break; 
 			}
             
@@ -149,14 +151,14 @@
 {
 	seekFrame = frame;
 	shouldSeek = YES;
-	NSLog(@"Should seek!");
+	DLog(@"Should seek!");
 	[semaphore signal];
 }
 
 - (BOOL)setTrack:(NSURL *)track
 {
 	if ([decoder respondsToSelector:@selector(setTrack:)] && [decoder setTrack:track]) {
-		NSLog(@"SET TRACK!");
+		DLog(@"SET TRACK!");
 		
 		return YES;
 	}
@@ -166,7 +168,7 @@
 
 - (void)dealloc
 {
-	NSLog(@"Input Node dealloc");
+	DLog(@"Input Node dealloc");
     
 	[decoder removeObserver:self forKeyPath:@"properties"];
 	[decoder removeObserver:self forKeyPath:@"metadata"];

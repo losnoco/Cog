@@ -8,6 +8,8 @@
 
 #import "SideViewController.h"
 
+#import "Logging.h"
+
 @implementation SideViewController
 
 - (NSString *)showSideViewDefaultsKey
@@ -133,7 +135,7 @@
 	if (![self sideViewIsHidden])
 	{
 		[[NSUserDefaults standardUserDefaults] setFloat:[self dividerPosition] forKey:[self sideViewDividerPositionDefaultsKey]];
-		NSLog(@"DIVIDER POSITION: %f", [self dividerPosition]);
+		DLog(@"DIVIDER POSITION: %f", [self dividerPosition]);
 	}
 }
 

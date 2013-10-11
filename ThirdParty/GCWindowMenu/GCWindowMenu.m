@@ -15,6 +15,8 @@
 #import "GCWindowMenu.h"
 #import "GCOneShotEffectTimer.h"
 
+#import "Logging.h"
+
 @interface GCWindowMenu (Private)
 
 + (void)		popUpWindowMenu:(GCWindowMenu*) menu withEvent:(NSEvent*) event;
@@ -256,7 +258,7 @@
 {
 	// tracks the "menu" by keeping control until a mouse up (or down, if menu 'clicked' into being)
 	
-	NSLog(@"starting tracking; initial event = %@", event);
+	DLog(@"starting tracking; initial event = %@", event);
 		
 	// [NSEvent startPeriodicEventsAfterDelay:1.0 withPeriod:0.1];
 	
@@ -356,7 +358,7 @@
 	[self discardEventsMatchingMask:NSAnyEventMask beforeEvent:theEvent];
 		
 	//[NSEvent stopPeriodicEvents];
-	NSLog(@"tracking ended");
+	DLog(@"tracking ended");
 }
 
 

@@ -27,6 +27,8 @@
 
 #include <arpa/inet.h>
 
+#import "Logging.h"
+
 #define kBufferSize		1024
 #define	kPortsToStep	5
 
@@ -43,7 +45,7 @@ addressForHost(NSString *hostname)
     if(INADDR_NONE == address) {
         hostinfo = gethostbyname([hostname cStringUsingEncoding:NSASCIIStringEncoding]);
         if(NULL == hostinfo) {
-			NSLog(@"AudioScrobblerClient error: Unable to resolve address for \"%@\".", hostname);
+			ALog(@"AudioScrobblerClient error: Unable to resolve address for \"%@\".", hostname);
 			return INADDR_NONE;
         }
 		
@@ -99,7 +101,7 @@ addressForHost(NSString *hostname)
 	ssize_t			bytesSent		= 0;
 
 	if(NO == [self isConnected]) {
-		NSLog(@"AudioScrobblerClient error: Can't send data, client not connected");
+		ALog(@"AudioScrobblerClient error: Can't send data, client not connected");
 		return;
 	}
 	
@@ -107,7 +109,7 @@ addressForHost(NSString *hostname)
 		bytesSent = send(_socket, utf8data + totalBytesSent, bytesToSend - totalBytesSent, 0);
 		
 		if(-1 == bytesSent || 0 == bytesSent)
-			NSLog(@"AudioScrobblerClient error: Unable to send data through socket: %s", strerror(errno));
+			ALog(@"AudioScrobblerClient error: Unable to send data through socket: %s", strerror(errno));
 		
 		totalBytesSent += bytesSent;
 	}
@@ -122,14 +124,14 @@ addressForHost(NSString *hostname)
 	NSString	*result			= nil;
 
 	if(NO == [self isConnected]) {
-		NSLog(@"AudioScrobblerClient error: Can't receive data, client not connected");
+		ALog(@"AudioScrobblerClient error: Can't receive data, client not connected");
 		return nil;
 	}
 	
 	do {
 		bytesRead = recv(_socket, buffer, readSize, 0);
 		if(-1 == bytesRead || 0 == bytesRead) {
-			NSLog(@"AudioScrobblerClient error: Unable to receive data through socket: %s", strerror(errno));
+			ALog(@"AudioScrobblerClient error: Unable to receive data through socket: %s", strerror(errno));
 			break;
 		}
 			
@@ -158,16 +160,16 @@ addressForHost(NSString *hostname)
 	
 	result = shutdown(_socket, SHUT_WR);
 	if(-1 == result)
-		NSLog(@"AudioScrobblerClient error: Socket shutdown failed: %s", strerror(errno));
+		ALog(@"AudioScrobblerClient error: Socket shutdown failed: %s", strerror(errno));
 
 	for(;;) {
 		bytesRead = recv(_socket, buffer, kBufferSize, 0);
 		if(-1 == bytesRead)
-			NSLog(@"AudioScrobblerClient error: Waiting for shutdown confirmation failed: %s", strerror(errno));
+			ALog(@"AudioScrobblerClient error: Waiting for shutdown confirmation failed: %s", strerror(errno));
 		
 		if(0 != bytesRead) {
 			NSString *received = [[NSString alloc] initWithBytes:buffer length:bytesRead encoding:NSUTF8StringEncoding];
-			NSLog(@"Received unexpected bytes during shutdown: %@", received);
+			ALog(@"Received unexpected bytes during shutdown: %@", received);
 			[received release];
 		}
 		else
@@ -176,7 +178,7 @@ addressForHost(NSString *hostname)
 
 	result = close(_socket);
 	if(-1 == result)
-		NSLog(@"Couldn't close socket (%s)", strerror(errno));
+		ALog(@"Couldn't close socket (%s)", strerror(errno));
 	
 	_socket		= -1;
 	_port		= 0;
@@ -198,7 +200,7 @@ addressForHost(NSString *hostname)
 
 		_socket = socket(AF_INET, SOCK_STREAM, 0);
 		if(-1 == _socket) {
-			NSLog(@"Unable to create socket (%s)", strerror(errno));
+			ALog(@"Unable to create socket (%s)", strerror(errno));
 			return NO;
 		}
 

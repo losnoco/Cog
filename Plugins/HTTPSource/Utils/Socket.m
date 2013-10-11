@@ -9,6 +9,8 @@
 #import "Socket.h"
 #import <netdb.h>
 
+#import "Logging.h"
+
 @implementation Socket
 
 + (id)socketWithHost:(NSString *)host port:(int)port
@@ -34,14 +36,14 @@
 
 		he = gethostbyname([host UTF8String]);
 		if (!he) {
-		   NSLog(@"Socket error.");
+		   ALog(@"Socket error: %s\n", strerror(errno));
 		   close(_socket);
 		   return nil;
 		}
 		memcpy(&sin.sin_addr, he->h_addr, 4);
 
 		if (connect(_socket, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
-		   NSLog(@"Error: %s\n", strerror(errno));
+		   ALog(@"Error: %s\n", strerror(errno));
 		   close(_socket);
 		   return nil;
 		}

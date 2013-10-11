@@ -10,6 +10,8 @@
 
 #import <PlaylistEntry.h>
 
+#import "Logging.h"
+
 @implementation XmlContainer
 
 + (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
@@ -37,7 +39,7 @@
 			break;
 		}
 	}
-	NSLog(@"Fragment: %@", fragment);
+	DLog(@"Fragment: %@", fragment);
 
 	if (![unixPath hasPrefix:@"/"]) {
 		//Only relative paths would have windows backslashes.
@@ -72,7 +74,7 @@
     NSPropertyListFormat format;
     id plist = [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:NSPropertyListImmutable format:&format errorDescription:&error];
     if(!plist){
-        NSLog(@"Error: %@",error);
+        ALog(@"Error: %@",error);
         [error release];
         return nil;
     }

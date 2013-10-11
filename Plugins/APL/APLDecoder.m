@@ -1,6 +1,8 @@
 #import "APLDecoder.h"
 #import "APLFile.h"
 
+#import "Logging.h"
+
 @implementation APLDecoder
 
 + (NSArray *)fileTypes {	
@@ -21,7 +23,7 @@
 
 - (BOOL)open:(id<CogSource>)s
 {
-	//NSLog(@"Loading apl...");
+	//DLog(@"Loading apl...");
 	if (![[s url] isFileURL])
 		return NO;
 	
@@ -36,14 +38,14 @@
 	[source retain];
 	
 	if (![source open:[apl file]]) {
-		NSLog(@"Could not open source for file '%@' referenced in apl", [apl file]);
+		ALog(@"Could not open source for file '%@' referenced in apl", [apl file]);
 		return NO;
 	}
 	decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source];
 	[decoder retain];
 	
 	if (![decoder open:source]) {
-		NSLog(@"Could not open decoder for source for apl");
+		ALog(@"Could not open decoder for source for apl");
 		return NO;
 	}
 	
@@ -109,7 +111,7 @@
 		frames = trackEnd - framePosition;
 
 	if (!frames) {
-		NSLog(@"APL readAudio Returning 0");
+		DLog(@"APL readAudio Returning 0");
 		return 0;
 	}
 

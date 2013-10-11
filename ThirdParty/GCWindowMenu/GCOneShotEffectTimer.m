@@ -14,6 +14,8 @@
 
 #import "GCOneShotEffectTimer.h"
 
+#import "Logging.h"
+
 @interface GCOneShotEffectTimer (Private)
 
 - (id)		initWithTimeInterval:(NSTimeInterval) t forDelegate:(id) del;
@@ -80,7 +82,7 @@
 	NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - _start;
 	float val = elapsed / _total;
 	
-	//NSLog(@"t = %f", val );
+	//DLog(@"t = %f", val );
 	
 	if ( elapsed > _total )
 	{

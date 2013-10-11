@@ -8,6 +8,7 @@
 
 #import "ArchiveSource.h"
 
+#import "Logging.h"
 
 static NSString * path_unpack_string(NSString * src, NSRange * remainder)
 {
@@ -88,7 +89,7 @@ static BOOL g_parse_unpack_path(NSString * src, NSString ** archive, NSString **
     
     error = fex_open( &fex, [archive UTF8String] );
     if ( error ) {
-        NSLog(@"Error opening archive: %s", error);
+        ALog(@"Error opening archive: %s", error);
         return NO;
     }
     
@@ -103,7 +104,7 @@ static BOOL g_parse_unpack_path(NSString * src, NSString ** archive, NSString **
     
     error = fex_data( fex, &data );
     if ( error ) {
-        NSLog(@"Error unpacking file from archive: %s", error);
+        ALog(@"Error unpacking file from archive: %s", error);
         return NO;
     }
     

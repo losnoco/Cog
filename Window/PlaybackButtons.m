@@ -11,6 +11,8 @@
 
 #import <CogAudio/Status.h>
 
+#import "Logging.h"
+
 @implementation PlaybackButtons
 
 static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackButtonsPlaybackStatusObservationContext";
@@ -62,7 +64,7 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 
 - (BOOL)sendAction:(SEL)theAction to:(id)theTarget
 {
-	NSLog(@"Mouse down!");
+	DLog(@"Mouse down!");
 	
 	int clickedSegment = [self selectedSegment];
 	if (clickedSegment == 0) //Previous

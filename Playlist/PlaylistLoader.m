@@ -25,6 +25,8 @@
 
 #import "NSData+MD5.h"
 
+#import "Logging.h"
+
 @implementation PlaylistLoader
 
 - (id)init
@@ -115,7 +117,7 @@
 {
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if (!fileHandle) {
-		NSLog(@"Error saving m3u!");
+		ALog(@"Error saving m3u!");
 		return NO;
 	}
 	[fileHandle truncateFileAtOffset:0];
@@ -318,7 +320,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		}
 	}
 	
-	NSLog(@"Expanded urls: %@", expandedURLs);
+	DLog(@"Expanded urls: %@", expandedURLs);
 
 	NSArray *sortedURLs;
 	if (sort == YES)
@@ -350,9 +352,9 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		}
 	}
 
-	NSLog(@"File urls: %@", fileURLs);
+	DLog(@"File urls: %@", fileURLs);
 
-	NSLog(@"Contained urls: %@", containedURLs);
+	DLog(@"Contained urls: %@", containedURLs);
 
 	for (url in fileURLs)
 	{
@@ -371,7 +373,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		}
 	}
 	
-	NSLog(@"Valid urls: %@", validURLs);
+	DLog(@"Valid urls: %@", validURLs);
 
 	for (url in containedURLs)
 	{

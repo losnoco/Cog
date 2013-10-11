@@ -11,6 +11,8 @@
 #import "DumbContainer.h"
 #import "DumbDecoder.h"
 
+#import "Logging.h"
+
 @implementation DumbContainer
 
 + (NSArray *)fileTypes
@@ -59,7 +61,7 @@ int scanCallback(void *data, int startOrder, long length)
 	DUMBFILE * df = dumbfile_open_memory_and_free( data, size );
 	if (!df)
 	{
-		NSLog(@"EX Failed");
+		ALog(@"Open failed for file: %@", [url absoluteString]);
 		return NO;
 	}
     

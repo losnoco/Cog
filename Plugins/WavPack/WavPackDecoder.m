@@ -8,6 +8,7 @@
 
 #import "WavPackDecoder.h"
 
+#import "Logging.h"
 
 @implementation WavPackDecoder
 
@@ -104,7 +105,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	//No corrections file (WVC) support at the moment.
 	wpc = WavpackOpenFileInputEx(&reader, self, NULL, error, open_flags, 0);
 	if (!wpc) {
-		NSLog(@"Unable to open file..");
+		DLog(@"Unable to open file..");
 		return NO;
 	}
 	
@@ -207,7 +208,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 			}
 			break;
 		default:
-			NSLog(@"Unsupported sample size..");
+			ALog(@"Unsupported sample size: %d", bitsPerSample);
 	}
 	
 	free(inputBuffer);

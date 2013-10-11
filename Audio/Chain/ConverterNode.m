@@ -8,22 +8,24 @@
 
 #import "ConverterNode.h"
 
+#import "Logging.h"
+
 void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 {
 	if (!inDesc) {
-		printf ("Can't print a NULL desc!\n");
+		DLog (@"Can't print a NULL desc!\n");
 		return;
 	}
-	printf ("- - - - - - - - - - - - - - - - - - - -\n");
-	printf ("  Sample Rate:%f\n", inDesc->mSampleRate);
-	printf ("  Format ID:%s\n", (char*)&inDesc->mFormatID);
-	printf ("  Format Flags:%X\n", inDesc->mFormatFlags);
-	printf ("  Bytes per Packet:%d\n", inDesc->mBytesPerPacket);
-	printf ("  Frames per Packet:%d\n", inDesc->mFramesPerPacket);
-	printf ("  Bytes per Frame:%d\n", inDesc->mBytesPerFrame);
-	printf ("  Channels per Frame:%d\n", inDesc->mChannelsPerFrame);
-	printf ("  Bits per Channel:%d\n", inDesc->mBitsPerChannel);
-	printf ("- - - - - - - - - - - - - - - - - - - -\n");
+	DLog (@"- - - - - - - - - - - - - - - - - - - -\n");
+	DLog (@"  Sample Rate:%f\n", inDesc->mSampleRate);
+	DLog (@"  Format ID:%s\n", (char*)&inDesc->mFormatID);
+	DLog (@"  Format Flags:%X\n", inDesc->mFormatFlags);
+	DLog (@"  Bytes per Packet:%d\n", inDesc->mBytesPerPacket);
+	DLog (@"  Frames per Packet:%d\n", inDesc->mFramesPerPacket);
+	DLog (@"  Bytes per Frame:%d\n", inDesc->mBytesPerFrame);
+	DLog (@"  Channels per Frame:%d\n", inDesc->mChannelsPerFrame);
+	DLog (@"  Bits per Channel:%d\n", inDesc->mBitsPerChannel);
+	DLog (@"- - - - - - - - - - - - - - - - - - - -\n");
 }
 
 @implementation ConverterNode
@@ -195,7 +197,7 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
         amountRead += ioData.mBuffers[0].mDataByteSize;
         if (err == 100)
         {
-            NSLog(@"INSIZE: %i", amountRead);
+            DLog(@"INSIZE: %i", amountRead);
             ioData.mBuffers[0].mData = floatBuffer + amountRead;
             ioNumberFrames = ( amount / outputFormat.mBytesPerFrame ) - ( amountRead / floatFormat.mBytesPerFrame );
             ioData.mBuffers[0].mDataByteSize = ioNumberFrames * floatFormat.mBytesPerFrame;
@@ -203,7 +205,7 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter, UInt32* ioNumber
         }
         else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
         {
-            NSLog(@"Error: %i", err);
+            DLog(@"Error: %i", err);
             return amountRead;
         }
         
@@ -229,7 +231,7 @@ tryagain2:
     amountRead += ioData.mBuffers[0].mDataByteSize;
     if (err == 100)
     {
-        NSLog(@"INSIZE: %i", amountRead);
+        DLog(@"INSIZE: %i", amountRead);
         ioData.mBuffers[0].mData = dest + amountRead;
         ioNumberFrames = ( amount - amountRead ) / outputFormat.mBytesPerFrame;
         ioData.mBuffers[0].mDataByteSize = ioNumberFrames * outputFormat.mBytesPerFrame;
@@ -237,7 +239,7 @@ tryagain2:
     }
     else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
     {
-        NSLog(@"Error: %i", err);
+        DLog(@"Error: %i", err);
     }
 	
 	return amountRead;
@@ -248,7 +250,7 @@ tryagain2:
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-	NSLog(@"SOMETHING CHANGED!");
+	DLog(@"SOMETHING CHANGED!");
     if ([keyPath isEqual:@"values.volumeScaling"]) {
         //User reset the volume scaling option
         [self refreshVolumeScaling];
@@ -321,14 +323,14 @@ static float db_to_scale(float db)
     stat = AudioConverterNew( &inputFormat, &floatFormat, &converterFloat );
     if (stat != noErr)
     {
-        NSLog(@"Error creating converter %i", stat);
+        ALog(@"Error creating converter %i", stat);
         return NO;
     }
     
     stat = AudioConverterNew ( &floatFormat, &outputFormat, &converter );
     if (stat != noErr)
     {
-        NSLog(@"Error creating converter %i", stat);
+        ALog(@"Error creating converter %i", stat);
         return NO;
     }
 
@@ -339,7 +341,7 @@ static float db_to_scale(float db)
 		stat = AudioConverterSetProperty(converter,kAudioConverterChannelMap,sizeof(channelMap),channelMap);
 		if (stat != noErr)
 		{
-			NSLog(@"Error mapping channels %i", stat);
+			ALog(@"Error mapping channels %i", stat);
             return NO;
 		}
     }
@@ -350,7 +352,7 @@ static float db_to_scale(float db)
 		stat = AudioConverterSetProperty(converter,kAudioConverterChannelMap,sizeof(channelMap),channelMap);
 		if (stat != noErr)
 		{
-			NSLog(@"Error mapping channels %i", stat);
+			ALog(@"Error mapping channels %i", stat);
             return NO;
 		}	
 	}
@@ -365,7 +367,7 @@ static float db_to_scale(float db)
 
 - (void)dealloc
 {
-	NSLog(@"Decoder dealloc");
+	DLog(@"Decoder dealloc");
 
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
     
@@ -376,20 +378,20 @@ static float db_to_scale(float db)
 
 - (void)setOutputFormat:(AudioStreamBasicDescription)format
 {
-	NSLog(@"SETTING OUTPUT FORMAT!");
+	DLog(@"SETTING OUTPUT FORMAT!");
 	outputFormat = format;
 }
 
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format
 {
-	NSLog(@"FORMAT CHANGED");
+	DLog(@"FORMAT CHANGED");
 	[self cleanUp];
 	[self setupWithInputFormat:format outputFormat:outputFormat];
 }
 
 - (void)setRGInfo:(NSDictionary *)rgi
 {
-    NSLog(@"Setting ReplayGain info");
+    DLog(@"Setting ReplayGain info");
     [rgInfo release];
     [rgi retain];
     rgInfo = rgi;

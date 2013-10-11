@@ -11,6 +11,8 @@
 
 #import <Dumb/dumb.h>
 
+#import "Logging.H"
+
 @implementation DumbMetadataReader
 
 + (NSArray *)fileTypes
@@ -44,7 +46,7 @@
 	DUMBFILE * df = dumbfile_open_memory_and_free( data, size );
 	if (!df)
 	{
-		NSLog(@"EX Failed");
+		ALog(@"Open failed for file: %@", [url absoluteString]);
 		return NO;
 	}
     
@@ -56,7 +58,7 @@
     
 	if (!duh)
 	{
-		NSLog(@"Failed to create duh");
+		ALog(@"Failed to create duh");
 		return nil;
 	}
 

@@ -8,6 +8,7 @@
 
 #import "PlsContainer.h"
 
+#import "Logging.h"
 
 @implementation PlsContainer
 
@@ -46,7 +47,7 @@
 			break;
 		}
 	}
-	NSLog(@"Fragment: %@", fragment);
+	DLog(@"Fragment: %@", fragment);
 
 	if (![unixPath hasPrefix:@"/"]) {
 		//Only relative paths would have windows backslashes.
@@ -76,27 +77,25 @@
 	NSError *error;
 	NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
     if (error) {
-		NSLog(@"Trying UTF8");
+		DLog(@"Trying UTF8");
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
     }
     if (error) {
-		NSLog(@"Trying windows CP1251");
+		DLog(@"Trying windows CP1251");
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSWindowsCP1251StringEncoding error:&error];
 	}
     if (error) {
-		NSLog(@"Trying latin1");
+		DLog(@"Trying latin1");
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSISOLatin1StringEncoding error:&error];
 	}
 	if (error || !contents) {
-		NSLog(@"Could not open file...%@ %@ %@", filename, contents, error);
+		ALog(@"Could not open file...%@ %@ %@", filename, contents, error);
 		return nil;
 	}
 	
-	NSString *entry;
-	NSEnumerator *e = [[contents componentsSeparatedByString:@"\n"] objectEnumerator];
 	NSMutableArray *entries = [NSMutableArray array];
 	
     for (NSString *entry in [contents componentsSeparatedByString:@"\n"])

@@ -23,6 +23,8 @@
 #import "AudioScrobblerClient.h"
 #import "PlaylistEntry.h"
 
+#import "Logging.h"
+
 // ========================================
 // Symbolic Constants
 // ========================================
@@ -79,7 +81,7 @@ escapeForLastFM(NSString *string)
 		kern_return_t result = semaphore_create(mach_task_self(), &_semaphore, SYNC_POLICY_FIFO, 0);
 		
 		if(KERN_SUCCESS != result) {
-			NSLog(@"Couldn't create semaphore (%s).", mach_error_type(result));
+			ALog(@"Couldn't create semaphore (%s).", mach_error_type(result));
 
 			[self release];
 			return nil;
@@ -219,7 +221,7 @@ escapeForLastFM(NSString *string)
 					
 					response = [client receive];
 					if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
-						NSLog(@"AudioScrobbler error: %@", response);
+						ALog(@"AudioScrobbler error: %@", response);
 					
 					[client shutdown];
 				}
@@ -227,7 +229,7 @@ escapeForLastFM(NSString *string)
 			
 			@catch(NSException *exception) {
 				[client shutdown];
-//				NSLog(@"Exception: %@",exception);
+//				ALog(@"Exception: %@",exception);
 				[pool release];
 				continue;
 			}
@@ -244,7 +246,7 @@ escapeForLastFM(NSString *string)
 			
 			response = [client receive];
 			if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
-				NSLog(@"AudioScrobbler error: %@", response);
+				ALog(@"AudioScrobbler error: %@", response);
 			
 			[client shutdown];
 		}

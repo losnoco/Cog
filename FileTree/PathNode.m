@@ -17,6 +17,8 @@
 #import "SmartFolderNode.h"
 #import "ContainerNode.h"
 
+#import "Logging.h"
+
 @implementation PathNode
 
 //From http://developer.apple.com/documentation/Cocoa/Conceptual/LowLevelFileMgmt/Tasks/ResolvingAliases.html
@@ -33,13 +35,13 @@ NSURL *resolveAliases(NSURL *url)
 			
 			if (resolvedUrl != NULL)
 			{
-				//NSLog(@"Resolved...");
+				//DLog(@"Resolved...");
 				return [(NSURL *)resolvedUrl autorelease];
 			}
 		}
 	}
 
-	//NSLog(@"Not resolved");
+	//DLog(@"Not resolved");
 	return url;
 }
 
@@ -101,15 +103,15 @@ NSURL *resolveAliases(NSURL *url)
 		
 		PathNode *newNode;
 		
-		//NSLog(@"Before: %@", u);
+		//DLog(@"Before: %@", u);
 		u = resolveAliases(u);
-		//NSLog(@"After: %@", u);
+		//DLog(@"After: %@", u);
 
         BOOL isDir;
         
 		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
 		{
-			NSLog(@"Smart folder!");
+			DLog(@"Smart folder!");
 			newNode = [[SmartFolderNode alloc] initWithDataSource:dataSource url:u];
             isDir = NO;
 		}

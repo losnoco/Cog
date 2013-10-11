@@ -21,6 +21,8 @@
 
 #import "CogAudio/AudioPlayer.h"
 
+#import "Logging.h"
+
 @implementation PlaylistController
 
 @synthesize currentEntry;
@@ -163,7 +165,7 @@
 
 - (NSString *)tableView:(NSTableView *)tv toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)tc row:(int)row mouseLocation:(NSPoint)mouseLocation
 {
-	NSLog(@"GETTING STATUS FOR ROW: %i: %@!", row, [[[self arrangedObjects] objectAtIndex:row] statusMessage]);
+	DLog(@"GETTING STATUS FOR ROW: %i: %@!", row, [[[self arrangedObjects] objectAtIndex:row] statusMessage]);
 	return [[[self arrangedObjects] objectAtIndex:row] statusMessage];
 }
 
@@ -228,7 +230,7 @@
 	// Get files from an file drawer drop
 	if ([bestType isEqualToString:CogUrlsPboardType]) {
 		NSArray *urls = [NSUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType:CogUrlsPboardType]];
-		NSLog(@"URLS: %@", urls);
+		DLog(@"URLS: %@", urls);
 		//[playlistLoader insertURLs: urls atIndex:row sort:YES];
 		[acceptedURLs addObjectsFromArray:urls];
 	}
@@ -299,24 +301,24 @@
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-	NSLog(@"Removing indexes: %@", indexes);
-	NSLog(@"Current index: %i", currentEntry.index);
+	DLog(@"Removing indexes: %@", indexes);
+	DLog(@"Current index: %i", currentEntry.index);
 
 	if (currentEntry.index >= 0 && [indexes containsIndex:currentEntry.index])
 	{
 		currentEntry.index = -currentEntry.index - 1;
-		NSLog(@"Current removed: %i", currentEntry.index);
+		DLog(@"Current removed: %i", currentEntry.index);
 	}
 	
 	if (currentEntry.index < 0) //Need to update the negative index
 	{
 		int i = -currentEntry.index - 1;
-		NSLog(@"I is %i", i);
+		DLog(@"I is %i", i);
 		int j;
 		for (j = i - 1; j >= 0; j--)
 		{
 			if ([indexes containsIndex:j]) {
-				NSLog(@"Removing 1");
+				DLog(@"Removing 1");
 				i--;
 			}
 		}
@@ -334,7 +336,7 @@
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors
 {
-	NSLog(@"Current: %@, setting: %@", [self sortDescriptors], sortDescriptors);
+	DLog(@"Current: %@, setting: %@", [self sortDescriptors], sortDescriptors);
 
 	//Cheap hack so the index column isn't sorted
 	if (([sortDescriptors count] != 0) && [[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"index"] == NSOrderedSame)
@@ -758,7 +760,7 @@
 			[queueList addObject:queueItem];
 		}
 		
-		NSLog(@"TOGGLE QUEUED: %i", queueItem.queued);
+		DLog(@"TOGGLE QUEUED: %i", queueItem.queued);
 	}
 
 	int i = 0;

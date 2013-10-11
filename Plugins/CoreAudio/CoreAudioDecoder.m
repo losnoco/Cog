@@ -22,6 +22,8 @@
 
 #import "CoreAudioDecoder.h"
 
+#import "Logging.h"
+
 @interface CoreAudioDecoder (Private)
 - (BOOL) readInfoFromExtAudioFileRef;
 @end
@@ -34,7 +36,7 @@
 	
 	err = ExtAudioFileDispose(_in);
 	if(noErr != err) {
-		NSLog(@"Error closing ExtAudioFile");
+		DLog(@"Error closing ExtAudioFile");
 	}
 }
 
@@ -47,7 +49,7 @@
 	
 	err = ExtAudioFileOpenURL((CFURLRef)url, &_in);
 	if(noErr != err) {
-		NSLog(@"Error opening file: %d", err);
+		ALog(@"Error opening file: %d", err);
 		return NO;
 	}
 	

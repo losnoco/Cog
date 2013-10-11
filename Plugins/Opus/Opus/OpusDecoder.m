@@ -10,6 +10,7 @@
 
 #import "OpusDecoder.h"
 
+#import "Logging.h"
 
 @implementation OpusFile
 
@@ -17,7 +18,7 @@ int sourceRead(void *_stream, unsigned char *_ptr, int _nbytes)
 {
 	id source = (id)_stream;
 
-	return [source read:_ptr amount:_nbytes];
+	return (int) [source read:_ptr amount:_nbytes];
 }
 
 int sourceSeek(void *_stream, opus_int64 _offset, int _whence)
@@ -67,7 +68,7 @@ opus_int64 sourceTell(void *_stream)
 	
 	if (!opusRef)
 	{
-		NSLog(@"FAILED TO OPEN VORBIS FILE");
+		DLog(@"FAILED TO OPEN OPUS FILE");
 		return NO;
 	}
 

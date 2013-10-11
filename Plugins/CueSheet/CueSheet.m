@@ -11,6 +11,8 @@
 
 #import "Plugin.h"
 
+#import "Logging.h"
+
 @implementation CueSheet
 
 + (id)cueSheetWithFile:(NSString *)filename
@@ -80,7 +82,7 @@
         contents = [NSString stringWithContentsOfFile:filename encoding:NSISOLatin1StringEncoding error:&error];
 	}
 	if (error || !contents) {
-		NSLog(@"Could not open file...%@ %@ %@", filename, contents, error);
+		ALog(@"Could not open file...%@ %@ %@", filename, contents, error);
 		return;
 	}
 	
@@ -219,16 +221,16 @@
 			
 			if ([type isEqualToString:@"GENRE"])
 			{
-				//NSLog(@"GENRE!");
+				//DLog(@"GENRE!");
 				if ([scanner scanString:@"\"" intoString:nil]) {
-					//NSLog(@"QUOTED");
+					//DLog(@"QUOTED");
 					if (![scanner scanUpToString:@"\"" intoString:&genre]) {
-						NSLog(@"FAILED TO SCAN");
+						DLog(@"FAILED TO SCAN");
 						continue;
 					}
 				}
 				else {
-					//NSLog(@"UNQUOTED");
+					//DLog(@"UNQUOTED");
 					if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&genre]) {
 						continue;
 					}
@@ -236,7 +238,7 @@
 			}
 			else if ([type isEqualToString:@"DATE"])
 			{
-				//NSLog(@"DATE!");
+				//DLog(@"DATE!");
 				if ( ![scanner scanUpToCharactersFromSet:whitespace intoString:&year]) {
 					continue;
 				}

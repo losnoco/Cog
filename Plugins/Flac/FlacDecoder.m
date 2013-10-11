@@ -8,23 +8,26 @@
 
 #import "FlacDecoder.h"
 
+#import "Logging.h"
 
 @implementation FlacDecoder
 
 FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte blockBuffer[], size_t *bytes, void *client_data)
 {
 	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
-    long ret = [[flacDecoder source] read:blockBuffer amount:*bytes];
-	*bytes = ret;
+    long bytesRead = [[flacDecoder source] read:blockBuffer amount:*bytes];
 	
-	if(ret < 0) {
+	if(bytesRead < 0) {
+        *bytes = 0;
 		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 	}
-	else if(ret == 0) {
+	else if(bytesRead == 0) {
+        *bytes = 0;
 		[flacDecoder setEndOfStream:YES];
 		return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
 	}
 	else {
+        *bytes = bytesRead;
 		return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 	}
 }
@@ -137,7 +140,7 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
                 }
             }
 		default:
-			NSLog(@"Error, unsupported sample size.");
+			ALog(@"Error, unsupported sample size.");
 	}
 
 	[flacDecoder setBlockBufferFrames:frame->header.blocksize];

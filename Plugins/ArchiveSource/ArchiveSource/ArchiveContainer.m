@@ -10,6 +10,8 @@
 
 #import <File_Extractor/fex.h>
 
+#import "Logging.h"
+
 static NSString * path_pack_string(NSString * src)
 {
     return [NSString stringWithFormat:@"|%lu|%@|", [src length], src];
@@ -46,7 +48,7 @@ static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSStri
     fex_t * fex;
     fex_err_t error = fex_open( &fex, [[url path] UTF8String] );
     if ( error ) {
-        NSLog(@"Archive error: %s", error);
+        ALog(@"Archive error: %s", error);
         return [NSArray array];
     }
     

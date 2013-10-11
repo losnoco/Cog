@@ -11,6 +11,8 @@
 #import "GameContainer.h"
 #import "GameDecoder.h"
 
+#import "Logging.h"
+
 @implementation GameContainer
 
 + (NSArray *)fileTypes
@@ -48,7 +50,7 @@
     free(data);
     
 	if (NULL != error) {
-		NSLog(@"GME: Error loading file: %@ %s", [url path], error);
+		ALog(@"GME: Error loading file: %@ %s", [url path], error);
 		return [NSArray arrayWithObject:url];
 	}
 	int track_count = gme_track_count(emu);

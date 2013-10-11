@@ -8,6 +8,8 @@
 
 #import "Node.h"
 
+#import "Logging.h"
+
 @implementation Node
 
 - (id)initWithController:(id)c previous:(id)p
@@ -111,10 +113,10 @@
 		endOfStream = YES;
 	}
 /*	if (availInput <= 0) {
-		NSLog(@"BUFFER RAN DRY!");
+		DLog(@"BUFFER RAN DRY!");
 	}
 	else if (availInput < amount) {
-		NSLog(@"BUFFER IN DANGER");
+		DLog(@"BUFFER IN DANGER");
 	}
 */
 

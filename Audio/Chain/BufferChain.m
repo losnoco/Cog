@@ -11,6 +11,8 @@
 #import "AudioSource.h"
 #import "CoreAudioUtils.h"
 
+#import "Logging.h"
+
 @implementation BufferChain
 
 - (id)initWithController:(id)c
@@ -48,10 +50,10 @@
 	[self buildChain];
 	
 	id<CogSource> source = [AudioSource audioSourceForURL:url];
-	NSLog(@"Opening: %@", url);
+	DLog(@"Opening: %@", url);
 	if (![source open:url])
 	{
-		NSLog(@"Couldn't open source...");
+		DLog(@"Couldn't open source...");
 		return NO;
 	}
 
@@ -68,24 +70,26 @@
 	return YES;
 }
 
-- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi
 {
-	NSLog(@"New buffer chain!");
+	DLog(@"New buffer chain!");
 	[self buildChain];
 
 	if (![inputNode openWithDecoder:[i decoder]])
 		return NO;
 	
-	NSLog(@"Input Properties: %@", [inputNode properties]);
+	DLog(@"Input Properties: %@", [inputNode properties]);
 	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
 		return NO;
-		
+
+    [self setRGInfo:rgi];
+    
 	return YES;
 }
 
 - (void)launchThreads
 {
-	NSLog(@"Properties: %@", [inputNode properties]);
+	DLog(@"Properties: %@", [inputNode properties]);
 
 	[inputNode launchThread];
 	[converterNode launchThread];
@@ -125,7 +129,7 @@
 	[inputNode release];
 	[converterNode release];
 
-	NSLog(@"Bufferchain dealloc");
+	DLog(@"Bufferchain dealloc");
 	
 	[super dealloc];
 }
@@ -149,13 +153,13 @@
 
 - (void)initialBufferFilled:(id)sender
 {
-	NSLog(@"INITIAL BUFFER FILLED");
+	DLog(@"INITIAL BUFFER FILLED");
 	[controller launchOutputThread];
 }
 
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format
 {
-	NSLog(@"FORMAT DID CHANGE!");
+	DLog(@"FORMAT DID CHANGE!");
 }
 
 

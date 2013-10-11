@@ -1,6 +1,8 @@
 #import "PluginController.h"
 #import "Plugin.h"
 
+#import "Logging.h"
+
 @implementation PluginController
 
 @synthesize sources;
@@ -66,7 +68,7 @@ static PluginController *sharedPluginController = nil;
 	NSArray *classNames = [[notification userInfo] objectForKey:@"NSLoadedClasses"];
 	for (NSString *className in classNames)
 	{
-		NSLog(@"Class loaded: %@", className);
+		DLog(@"Class loaded: %@", className);
 		Class bundleClass = NSClassFromString(className);
 		if ([bundleClass conformsToProtocol:@protocol(CogContainer)]) {
 			[self setupContainer:className];
@@ -181,15 +183,15 @@ static PluginController *sharedPluginController = nil;
 
 - (void)printPluginInfo
 {
-	NSLog(@"Sources: %@", self.sources);
-	NSLog(@"Containers: %@", self.containers);
-	NSLog(@"Metadata Readers: %@", self.metadataReaders);
+	ALog(@"Sources: %@", self.sources);
+	ALog(@"Containers: %@", self.containers);
+	ALog(@"Metadata Readers: %@", self.metadataReaders);
 
-	NSLog(@"Properties Readers By Extension: %@", self.propertiesReadersByExtension);
-	NSLog(@"Properties Readers By Mime Type: %@", self.propertiesReadersByMimeType);
+	ALog(@"Properties Readers By Extension: %@", self.propertiesReadersByExtension);
+	ALog(@"Properties Readers By Mime Type: %@", self.propertiesReadersByMimeType);
 
-	NSLog(@"Decoders by Extension: %@", self.decodersByExtension);
-	NSLog(@"Decoders by Mime Type: %@", self.decodersByMimeType);
+	ALog(@"Decoders by Extension: %@", self.decodersByExtension);
+	ALog(@"Decoders by Mime Type: %@", self.decodersByMimeType);
 }
 
 - (id<CogSource>) audioSourceForURL:(NSURL *)url

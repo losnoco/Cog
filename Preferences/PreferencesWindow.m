@@ -9,6 +9,8 @@
 #import "PreferencesWindow.h"
 #import "PreferencePanePlugin.h"
 
+#import "Logging.h"
+
 @interface PreferencesWindow()
 
 - (NSString *)lastPaneDefaultsKey;
@@ -150,7 +152,7 @@
 	NSString *lastPane = [[NSUserDefaults standardUserDefaults] objectForKey:[self lastPaneDefaultsKey]];
 	if (nil == lastPane) {
 		if (0 >= [preferencePaneOrder count]) {
-			NSLog(@"Error: Preference panes not found!");
+			ALog(@"Error: Preference panes not found!");
 		}
 		
 		lastPane = [preferencePaneOrder objectAtIndex:0];

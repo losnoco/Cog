@@ -1,6 +1,8 @@
 
 #import "DNDArrayController.h"
 
+#import "Logging.h"
+
 @implementation DNDArrayController
 
 NSString *MovedRowsType = @"MOVED_ROWS_TYPE";
@@ -18,7 +20,7 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 
 - (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
 {
-	NSLog(@"INDEX SET ON DRAG: %@", rowIndexes);
+	DLog(@"INDEX SET ON DRAG: %@", rowIndexes);
 			
 	NSData *data = [NSArchiver archivedDataWithRootObject:rowIndexes];
 	
@@ -39,7 +41,7 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
     if ([info draggingSource] == tv)
 		dragOp = NSDragOperationMove;
 	
-	NSLog(@"VALIDATING DROP!");
+	DLog(@"VALIDATING DROP!");
     // we want to put the object at, not over,
     // the current row (contrast NSTableViewDropOn) 
     [tv setDropRow:row dropOperation:NSTableViewDropAbove];
@@ -64,17 +66,17 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 		NSIndexSet *indexSet = [NSUnarchiver unarchiveObjectWithData:[[info draggingPasteboard] dataForType:MovedRowsType]];
 		if (indexSet) 
 		{
-			NSLog(@"INDEX SET ON DROP: %@", indexSet);
+			DLog(@"INDEX SET ON DROP: %@", indexSet);
 			NSArray *selected = [[self arrangedObjects] objectsAtIndexes:indexSet];
 			[self moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:row];
 			
 			[self setSelectedObjects:selected];
 			
-			NSLog(@"ACCEPTING DROP!");
+			DLog(@"ACCEPTING DROP!");
 			return YES;
 		}
 	}
-	NSLog(@"REJECTING DROP!");
+	DLog(@"REJECTING DROP!");
 	return NO;
 }
 

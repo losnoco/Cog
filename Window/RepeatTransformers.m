@@ -9,6 +9,8 @@
 #import "RepeatTransformers.h"
 #import "PlaylistController.h"
 
+#import "Logging.h"
+
 @implementation RepeatModeTransformer
 
 + (Class)transformedValueClass { return [NSNumber class]; }
@@ -27,7 +29,7 @@
 
 // Convert from RepeatMode to BOOL
 - (id)transformedValue:(id)value {
-	NSLog(@"Transforming value: %@", value);
+	DLog(@"Transforming value: %@", value);
 	
     if (value == nil) return nil;
 	
@@ -65,7 +67,7 @@
 
 // Convert from string to RepeatMode
 - (id)transformedValue:(id)value {
-	NSLog(@"Transforming value: %@", value);
+	DLog(@"Transforming value: %@", value);
 	
     if (value == nil) return nil;
 

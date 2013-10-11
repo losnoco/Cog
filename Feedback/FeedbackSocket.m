@@ -8,6 +8,8 @@
 
 #import "FeedbackSocket.h"
 
+#import "Logging.h"
+
 @implementation FeedbackSocket
 
 NSString *encodeForURL(NSString *s)
@@ -39,7 +41,7 @@ NSString *encodeForURL(NSString *s)
 	NSURLResponse* response;
 	NSData* resultData = [NSURLConnection sendSynchronousRequest:post returningResponse:&response error:&error];
 	NSString *resultString = [[[NSString alloc] initWithData:resultData encoding:NSASCIIStringEncoding] autorelease];
-	//NSLog(@"RESULT: %@", resultString);
+	//DLog(@"RESULT: %@", resultString);
 	if ([resultString caseInsensitiveCompare:@"SUCCESS"] == NSOrderedSame)
 	{
 		[self performSelectorOnMainThread:@selector(returnSuccess:) withObject:nil waitUntilDone:NO];

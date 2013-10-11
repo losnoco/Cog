@@ -8,6 +8,8 @@
 
 #import "MusepackDecoder.h"
 
+#import "Logging.h"
+
 @implementation MusepackDecoder
 
 mpc_int32_t ReadProc(void *data, void *ptr, mpc_int32_t size)
@@ -71,7 +73,7 @@ mpc_bool_t CanSeekProc(void *data)
     mpc_streaminfo_init(&info);
     if (mpc_streaminfo_read(&info, &reader) != ERROR_CODE_OK)
 	{
-        NSLog(@"Not a valid musepack file.");
+        DLog(@"Not a valid musepack file.");
         return NO;
     }
 	
@@ -79,7 +81,7 @@ mpc_bool_t CanSeekProc(void *data)
 	mpc_decoder_setup(&decoder, &reader);
 	if (!mpc_decoder_initialize(&decoder, &info))
 	{
-		NSLog(@"Error initializing decoder.");
+		DLog(@"Error initializing decoder.");
 		return NO;
 	}
 	
@@ -138,7 +140,7 @@ mpc_bool_t CanSeekProc(void *data)
 			if (status == (unsigned)( -1))
 			{
 				//decode error
-				NSLog(@"Decode error");
+				DLog(@"Decode error");
 				return 0;
 			}
 			else if (status == 0) //EOF

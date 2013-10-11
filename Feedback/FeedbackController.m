@@ -8,6 +8,7 @@
 
 #import "FeedbackController.h"
 
+#import "Logging.h"
 
 @implementation FeedbackController
 
@@ -35,7 +36,7 @@
 
 - (void)feedbackDidNotSend:(FeedbackSocket *)feedback
 {
-	NSLog(@"Error sending feedback");
+	ALog(@"Error sending feedback");
 	
 	[sendingIndicator stopAnimation:self];
 

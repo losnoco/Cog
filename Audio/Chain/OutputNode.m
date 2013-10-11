@@ -11,6 +11,8 @@
 #import "AudioPlayer.h"
 #import "BufferChain.h"
 
+#import "Logging.h"
+
 @implementation OutputNode
 
 - (void)setup
@@ -59,7 +61,7 @@
 	}
 
 /*	if (n == 0) {
-		NSLog(@"Output Buffer dry!");
+		DLog(@"Output Buffer dry!");
 	}
 */	
 	amountPlayed += n;

@@ -12,6 +12,8 @@
 #import "CueSheetTrack.h"
 #import "CueSheetContainer.h"
 
+#import "Logging.h"
+
 @implementation CueSheetDecoder
 
 + (NSArray *)fileTypes 
@@ -59,7 +61,7 @@
 			[source retain];
 
 			if (![source open:[track url]]) {
-				NSLog(@"Could not open cuesheet source");
+				ALog(@"Could not open cuesheet source");
 				return NO;
 			}
 
@@ -67,7 +69,7 @@
 			[decoder retain];
 
 			if (![decoder open:source]) {
-				NSLog(@"Could not open cuesheet decoder");
+				ALog(@"Could not open cuesheet decoder");
 				return NO;
 			}
 
@@ -155,7 +157,7 @@
 					trackEnd = [[[decoder properties] objectForKey:@"totalFrames"] longValue];
 				}
 				
-				NSLog(@"CHANGING TRACK!");
+				DLog(@"CHANGING TRACK!");
 				return YES;
 			}
 		}
@@ -186,7 +188,7 @@
 
 	if (!frames)
 	{
-		NSLog(@"Returning 0");
+		DLog(@"Returning 0");
 		return 0;
 	}
 

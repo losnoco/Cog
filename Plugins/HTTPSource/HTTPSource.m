@@ -9,6 +9,8 @@
 #import "HTTPSource.h"
 #import "HTTPConnection.h"
 
+#import "Logging.h"
+
 @implementation HTTPSource
 
 - (BOOL)open:(NSURL *)url
@@ -33,7 +35,7 @@
 
 - (NSString *)mimeType
 {
-	NSLog(@"Returning mimetype! %@", _mimeType);
+	DLog(@"Returning mimetype! %@", _mimeType);
 	return _mimeType;
 }
 

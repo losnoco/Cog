@@ -2,6 +2,8 @@
 
 #import "APLFile.h"
 
+#import "Logging.h"
+
 @implementation APLFile
 +createWithFile:(NSString*)f { return [[APLFile alloc] initWithFile:f];	}
 
@@ -48,18 +50,18 @@
 		//startBlock must be always >= 0
 		NSFileHandle* f = (NSFileHandle*)[NSFileHandle fileHandleForReadingAtPath:filename];
 		if(!f){
-			NSLog(@"Failed to open apl file '%@' for reading", f);
+			ALog(@"Failed to open apl file '%@' for reading", f);
 			return nil;
 		}
 		NSString* header = @"[Monkey's Audio Image Link File]\r\n";
 		NSData* da = [f readDataOfLength:[header length]];
 		if (!da) {
-			NSLog(@"Cannot read header");
+			ALog(@"Cannot read header");
 			return nil;
 		}
 		NSString* str = [[[NSString alloc] autorelease] initWithData:da encoding: NSASCIIStringEncoding];	
 		if([str compare:header options:NSCaseInsensitiveSearch]) {
-			NSLog(@"APL header mismatch");
+			ALog(@"APL header mismatch");
 			return nil;
 		}
 		//now read by lines, skip empty, up to line <tagline> (or any starting with '-' - may be other tags can be present)
@@ -79,19 +81,19 @@
 			{
 				[file release];
 				file = [self urlForPath:value relativeTo:filename];
-				NSLog(@"APL refers to file '%@' read '%@'", file, value);
+				DLog(@"APL refers to file '%@' read '%@'", file, value);
 				continue;
 			}
 			if (![field compare:@"Start Block" options:NSCaseInsensitiveSearch])
 			{
 				startBlock = [value intValue]; //!!! bugs with files over 2GB
-				//NSLog(@"APL start block %d (%@)", startBlock, value);
+				//DLog(@"APL start block %d (%@)", startBlock, value);
 				continue;
 			}
 			if (![field compare:@"Finish Block" options:NSCaseInsensitiveSearch])
 			{
 				endBlock = [value intValue]; //!!! bugs with files over 2GB
-				//NSLog(@"APL start block %d (%@)", endBlock, value);
+				//DLog(@"APL start block %d (%@)", endBlock, value);
 				continue;
 			}
 		}

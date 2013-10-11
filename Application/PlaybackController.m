@@ -8,6 +8,8 @@
 #import "PlaylistEntry.h"
 #import "playlistLoader.h"
 
+#import "Logging.h"
+
 @implementation PlaybackController
 
 #define DEFAULT_SEEK 5
@@ -139,7 +141,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	if (playbackStatus != kCogStatusStopped)
 		[self stop:self];
 
-	NSLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
+	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
 	
 	[self setPosition:0.0];
@@ -242,7 +244,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	
 	if (img == nil)
 	{
-		NSLog(@"Error loading image!");
+		DLog(@"Error loading image!");
 	}
 	
 	[playbackButtons setImage:img forSegment:1];
@@ -250,7 +252,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 */
 - (IBAction)changeVolume:(id)sender
 {
-	NSLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue]));
+	DLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue]));
 
 	[audioPlayer setVolume:linearToLogarithmic([sender doubleValue])];
 
@@ -266,7 +268,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	double originalVolume = [[audioTimer userInfo] doubleValue];
 	double down = originalVolume/10;
 	
-	NSLog(@"VOLUME IS %lf", volume);
+	DLog(@"VOLUME IS %lf", volume);
 	
 	if (volume > 0.0001) //YAY! Roundoff error!
 	{
@@ -290,7 +292,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	double originalVolume = [[audioTimer userInfo] doubleValue];
 	double up = originalVolume/10;
 	
-	NSLog(@"VOLUME IS %lf", volume);
+	DLog(@"VOLUME IS %lf", volume);
 	
 	if (volume < originalVolume) 
 	{
@@ -517,12 +519,12 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	}
 	
 	if (status == kCogStatusStopped) {
-		NSLog(@"DONE!");
+		DLog(@"DONE!");
 		[playlistController setCurrentEntry:nil];
 		[self setSeekable:NO]; // the player stopped, disable the slider
 	}
 	else {
-		NSLog(@"PLAYING!");
+		DLog(@"PLAYING!");
 		[self setSeekable:YES];
 	}
 	

@@ -9,6 +9,8 @@
 #import "OutputCoreAudio.h"
 #import "OutputNode.h"
 
+#import "Logging.h"
+
 @implementation OutputCoreAudio
 
 - (id)initWithController:(OutputNode *)c
@@ -79,7 +81,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	OSStatus err;
 	
 	if (outputDevice == -1) {
-		NSLog(@"DEVICE IS -1");
+		DLog(@"DEVICE IS -1");
 		UInt32 size = sizeof(AudioDeviceID);
         AudioObjectPropertyAddress theAddress = {
             .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
@@ -89,7 +91,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
         err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &size, &deviceID);
 								
 		if (err != noErr) {
-			NSLog(@"THERES NO DEFAULT OUTPUT DEVICE");
+			ALog(@"THERES NO DEFAULT OUTPUT DEVICE");
 			
 			return NO;
 		}
@@ -106,7 +108,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 							  sizeof(AudioDeviceID));
 	
 	if (err != noErr) {
-		NSLog(@"THERES NO OUTPUT DEVICE!!!!!! %i", err);
+		ALog(@"No output device could be found, your random error code is %i. Have a nice day!", err);
 		
 		return NO;
 	}

@@ -10,6 +10,7 @@
 
 #include <netdb.h>
 
+#import "Logging.h"
 
 @implementation HTTPConnection
 
@@ -89,7 +90,7 @@
 	// We are using ASCII encoding here because some Icecast servers will insert a random 0xaa or two into the headers
 	// Or I'm an idiot who doesn't know how to count (fixed now), but I don't remember what site I was seeing this on, so I can't really check.
 	NSString *line = [[NSString alloc] initWithBytes:_buffer length:lineLength encoding:NSASCIIStringEncoding];
-	NSLog(@"Received line: \"%@\"", line);
+	DLog(@"Received line: \"%@\"", line);
 	
 	memmove(_buffer, _buffer + lineLength + 2, _bufferSize - lineLength); // + 2 to skip the newline!
 
@@ -132,7 +133,7 @@
 		NSString *line = [self _receiveLine];
 		if (nil == line) {
 			// Error receiving data. Let's get out of here!
-			NSLog(@"Headers ended prematurely");
+			DLog(@"Headers ended prematurely");
 			break;
 		}
 		
@@ -151,7 +152,7 @@
 		[scanner release];
 		
 		if (NO == success) {
-			NSLog(@"Could not scan header: %@", line);
+			DLog(@"Could not scan header: %@", line);
 			continue;
 		}
 		
@@ -168,7 +169,7 @@
 		return [self connect];
 	}
 	
-	NSLog(@"Returned status: %li", (long)statusCode);
+	DLog(@"Returned status: %li", (long)statusCode);
 	return NO;
 }
 
@@ -212,7 +213,7 @@
 		[requestString release];
 		return NO;
 	}
-	NSLog(@"Sent:\n%@\n", requestString);
+	DLog(@"Sent:\n%@\n", requestString);
 	[requestString release];
 	
 	return YES;

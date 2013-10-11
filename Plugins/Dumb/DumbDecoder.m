@@ -11,6 +11,8 @@
 #import "umx.h"
 #import "j2b.h"
 
+#import "Logging.h"
+
 @implementation DumbDecoder
 
 struct MEMANDFREEFILE
@@ -135,7 +137,7 @@ int callbackLoop(void *data)
 	DUMBFILE * df = dumbfile_open_memory_and_free( data, size );
 	if (!df)
 	{
-		NSLog(@"EX Failed");
+		ALog(@"Open failed for file: %@", [[s url] absoluteString]);
 		return NO;
 	}
 
@@ -160,7 +162,7 @@ int callbackLoop(void *data)
     duh = dumb_read_any(df, [ext isEqualToString:@"mod"] ? 0 : 1, subsong);
 	if (!duh)
 	{
-		NSLog(@"Failed to create duh");
+		ALog(@"Failed to create duh");
         dumbfile_close(df);
 		return NO;
 	}
@@ -171,7 +173,7 @@ int callbackLoop(void *data)
 	dsr = duh_start_sigrenderer(duh, 0, 2 /* stereo */, startOrder);
 	if (!dsr) 
 	{
-		NSLog(@"Failed to create dsr");
+		ALog(@"Failed to create dsr");
 		return NO;
 	}
 	

@@ -12,6 +12,8 @@
 
 #include <pthread.h>
 
+#import "Logging.h"
+
 #define ST_BUFF 2048
 
 @implementation FFMPEGDecoder
@@ -70,13 +72,13 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	{
         char errDescr[4096];
         av_strerror(errcode, errDescr, 4096);
-        NSLog(@"ERROR OPENING FILE, errcode = %d, error = %s", errcode, errDescr);
+        ALog(@"ERROR OPENING FILE, errcode = %d, error = %s", errcode, errDescr);
 		return NO;
 	}
 	
     if(avformat_find_stream_info(formatCtx, NULL) < 0)
     {
-        NSLog(@"CAN'T FIND STREAM INFO!");
+        ALog(@"CAN'T FIND STREAM INFO!");
         return NO;
     }
     
@@ -85,25 +87,25 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         codecCtx = formatCtx->streams[i]->codec;
         if(codecCtx->codec_type == AVMEDIA_TYPE_AUDIO)
 		{
-			NSLog(@"audio codec found");
+			DLog(@"audio codec found");
             streamIndex = i;
             break;
 		}
     }
     
     if ( streamIndex < 0 ) {
-        NSLog(@"no audio codec found");
+        ALog(@"no audio codec found");
         return NO;
     }
 
     AVCodec * codec = avcodec_find_decoder(codecCtx->codec_id);
     if (!codec) {
-        NSLog(@"codec not found");
+        ALog(@"codec not found");
 		return NO;
     }
     
     if (avcodec_open2(codecCtx, codec, NULL) < 0) {
-        NSLog(@"could not open codec");
+        ALog(@"could not open codec");
         return NO;
     }
 
@@ -184,25 +186,13 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     int bytesToRead = frames * frameSize;
     int bytesRead = 0;
     
+    BOOL endOfStream = NO;
+    
     int8_t* targetBuf = (int8_t*) buf;
     memset(buf, 0, bytesToRead);
     
     while (bytesRead < bytesToRead)
     {
-        
-        if(readNextPacket)
-        {
-            // consume next chunk of encoded data from input stream
-            av_free_packet(lastReadPacket);
-            if(av_read_frame(formatCtx, lastReadPacket) < 0)
-            {
-                NSLog(@"End of stream");
-                break; // end of stream;
-            }
-            
-            readNextPacket = NO;     // we probably won't need to consume another chunk
-            bytesReadFromPacket = 0; // until this one is fully decoded
-        }
         
         // buffer size needed to hold decoded samples, in bytes
         int planeSize;
@@ -211,8 +201,27 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                                               lastDecodedFrame->nb_samples,
                                               codecCtx->sample_fmt, 1);
         
+        if(readNextPacket && !endOfStream)
+        {
+            // consume next chunk of encoded data from input stream
+            av_free_packet(lastReadPacket);
+            if(av_read_frame(formatCtx, lastReadPacket) < 0)
+            {
+                DLog(@"End of stream");
+                endOfStream = YES;
+                if (dataSize <= bytesConsumedFromDecodedFrame)
+                    break; // end of stream;
+            }
+            
+            readNextPacket = NO;     // we probably won't need to consume another chunk
+            bytesReadFromPacket = 0; // until this one is fully decoded
+        }
+        
         if (dataSize <= bytesConsumedFromDecodedFrame)
         {
+            if (endOfStream)
+                break;
+            
             // consumed all decoded samples - decode more
             avcodec_get_frame_defaults(lastDecodedFrame);
             bytesConsumedFromDecodedFrame = 0;
@@ -221,7 +230,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             {
                 char errbuf[4096];
                 av_strerror(len, errbuf, 4096);
-                NSLog(@"Error decoding: len = %d, gotFrame = %d, strerr = %s", len, gotFrame, errbuf);
+                ALog(@"Error decoding: len = %d, gotFrame = %d, strerr = %s", len, gotFrame, errbuf);
                 
                 dataSize = 0;
                 readNextPacket = YES;

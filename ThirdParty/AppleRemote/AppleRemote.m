@@ -53,6 +53,8 @@
 
 #import "AppleRemote.h"
 
+#import "Logging.h"
+
 const char* AppleRemoteDeviceName = "AppleIRController";
 const int REMOTE_SWITCH_COOKIE=19;
 const NSTimeInterval DEFAULT_MAXIMUM_CLICK_TIME_DIFFERENCE=0.35;
@@ -447,7 +449,7 @@ static AppleRemote* sharedInstance=nil;
     /*
     if (previousRemainingCookieString) {
         cookieString = [previousRemainingCookieString stringByAppendingString: cookieString];
-        NSLog(@"New cookie string is %@", cookieString);
+        DLog(@"New cookie string is %@", cookieString);
         [previousRemainingCookieString release], previousRemainingCookieString=nil;                         
     }*/
     if (cookieString == nil || [cookieString length] == 0) return;
@@ -468,11 +470,11 @@ static AppleRemote* sharedInstance=nil;
             // process the last event of the backlog and assume that the button is not pressed down any longer.
             // The events in the backlog do not seem to be in order and therefore (in rare cases) the last event might be 
             // a button pressed down event while in reality the user has released it. 
-            // NSLog(@"processing last event of backlog");
+            // DLog(@"processing last event of backlog");
             [self handleEventWithCookieString: lastSubCookieString sumOfValues:0];
         }
         if ([cookieString length] > 0) {
-            NSLog(@"Unknown button for cookiestring %@", cookieString);
+            ALog(@"Unknown button for cookiestring %@", cookieString);
         }       
     }
 }
@@ -520,7 +522,7 @@ static void QueueCallbackFunction(void* target,  IOReturn result, void* refcon, 
     ioReturnValue = IOObjectGetClass(hidDevice, className);
 
     if (ioReturnValue != kIOReturnSuccess) {
-        NSLog(@"Error: Failed to get class name.");
+        ALog(@"Error: Failed to get class name.");
         return NULL;
     }
 
@@ -535,7 +537,7 @@ static void QueueCallbackFunction(void* target,  IOReturn result, void* refcon, 
         plugInResult = (*plugInInterface)->QueryInterface(plugInInterface, CFUUIDGetUUIDBytes(kIOHIDDeviceInterfaceID), (LPVOID) &hidDeviceInterface);
 
         if (plugInResult != S_OK) {
-            NSLog(@"Error: Couldn't create HID class device interface");
+            ALog(@"Error: Couldn't create HID class device interface");
         }
         // Release
         if (plugInInterface) (*plugInInterface)->Release(plugInInterface);
@@ -650,13 +652,13 @@ static void QueueCallbackFunction(void* target,  IOReturn result, void* refcon, 
                     (*queue)->start(queue); 
                     return YES;
                 } else {
-                    NSLog(@"Error when setting event callout");
+                    ALog(@"Error when setting event callout");
                 }
             } else {
-                NSLog(@"Error when creating async event source");
+                ALog(@"Error when creating async event source");
             }
         } else {
-            NSLog(@"Error when opening device");
+            ALog(@"Error when opening device");
         }
     }
     return NO;              

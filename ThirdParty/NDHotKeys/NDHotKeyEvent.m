@@ -10,6 +10,8 @@
 
 #import <objc/runtime.h>
 
+#import "Logging.h"
+
 @interface NDHotKeyEvent (Private)
 + (NSMapTable *)allHotKeyEvents;
 - (BOOL)addHotKey;
@@ -92,7 +94,7 @@ struct HotKeyMappingEntry
 				}
 				else
 				{
-					NSLog(@"Could not install Event handler");
+					DLog(@"Could not install Event handler");
 				}
 			}
 		NDHotKeyEventUnlock;
@@ -409,7 +411,7 @@ struct HotKeyMappingEntry
 - (void)dealloc
 {
 	if( UnregisterEventHotKey( reference ) != noErr )	// in lock from release
-		NSLog( @"Failed to unregister hot key %@", self );
+		DLog( @"Failed to unregister hot key %@", self );
 	[super dealloc];
 }
 
@@ -439,7 +441,7 @@ struct HotKeyMappingEntry
 		if( theResult )
 			isEnabled.individual = aFlag;
 		else
-			NSLog(@"%s failed ", aFlag ? "enable" : "disable" );
+			DLog(@"%s failed ", aFlag ? "enable" : "disable" );
 	}
 	else
 		theResult = NO;
@@ -838,7 +840,7 @@ void hashKeyReleaseFunction( NSMapTable * aTable, void * aNumber )
 		if( theResult )
 			isEnabled.collective = aFlag;
 		else
-			NSLog(@"%s failed", aFlag ? "enable" : "disable" );
+			DLog(@"%s failed", aFlag ? "enable" : "disable" );
 	}
 	else
 		theResult = NO;

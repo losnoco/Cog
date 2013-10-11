@@ -12,6 +12,8 @@
 
 #import <GME/gme.h>
 
+#import "Logging.h"
+
 @implementation GameMetadataReader
 
 + (NSArray *)fileTypes
@@ -40,7 +42,7 @@
 	gme_type_t type = gme_identify_extension([ext UTF8String]);
 	if (!type) 
 	{
-		NSLog(@"No type!");
+		ALog(@"GME: No type!");
 		return NO;
 	}
 	
@@ -48,7 +50,7 @@
 	emu = gme_new_emu(type, gme_info_only);
 	if (!emu)
 	{
-		NSLog(@"No new emu!");
+		ALog(@"GME: No new emu!");
 		return NO;
 	}
 	
@@ -60,7 +62,7 @@
 	error = gme_load_custom(emu, readCallback, size, source);
 	if (error)
 	{
-		NSLog(@"ERROR Loding file!");
+		ALog(@"GME: ERROR Loding file!");
 		return NO;
 	}
     
@@ -74,7 +76,7 @@
 	error = gme_track_info( emu, &info, track_num );
 	if (error)
 	{
-		NSLog(@"Unable to get track info");
+		ALog(@"GME: Unable to get track info");
 	}
 	
 	gme_delete(emu);

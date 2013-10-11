@@ -8,17 +8,19 @@
 
 #import "GameDecoder.h"
 
+#import "Logging.h"
+
 @implementation GameDecoder
 
 gme_err_t readCallback( void* data, void* out, long count )
 {
     id source = (id)data;
-	NSLog(@"Amount: %li", count);
+	DLog(@"Amount: %li", count);
 	int n = [source read:out amount:count];
-	NSLog(@"Read: %i", n);
+	DLog(@"Read: %i", n);
 	if (n <= 0) {
 		
-		NSLog(@"ERROR!");
+		DLog(@"ERROR!");
 		return (gme_err_t)1; //Return non-zero for error
 	}
 	
@@ -41,14 +43,14 @@ gme_err_t readCallback( void* data, void* out, long count )
 	gme_type_t type = gme_identify_extension([ext UTF8String]);
 	if (!type) 
 	{
-		NSLog(@"No type!");
+		ALog(@"GME: No type!");
 		return NO;
 	}
 	
 	emu = gme_new_emu(type, 44100);
 	if (!emu)
 	{
-		NSLog(@"No new emu!");
+		ALog(@"GME: No new emu!");
 		return NO;
 	}
 	
@@ -56,12 +58,12 @@ gme_err_t readCallback( void* data, void* out, long count )
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 	
-	NSLog(@"Size: %li", size);
+	DLog(@"Size: %li", size);
 	
 	error = gme_load_custom(emu, readCallback, size, s);
 	if (error) 
 	{
-		NSLog(@"ERROR Loding custom!");
+		ALog(@"GME: ERROR Loding custom!");
 		return NO;
 	}
 	
@@ -71,32 +73,33 @@ gme_err_t readCallback( void* data, void* out, long count )
 	error = gme_track_info( emu, &info, track_num );
 	if (error)
 	{
-		NSLog(@"Unable to get track info");
+		ALog(@"Unable to get track info");
+        return NO;
 	}
 	
 	//As recommended
 	if (info->length > 0) {
-		NSLog(@"Using length: %i", info->length);
+		DLog(@"Using length: %i", info->length);
 		length = info->length;
 	}
 	else if (info->loop_length > 0) {
-		NSLog(@"Using loop length: %i", info->loop_length);
+		DLog(@"Using loop length: %i", info->loop_length);
 		length = info->intro_length + 2*info->loop_length;
 	}
 	else {
 		length = 150000; 
-		NSLog(@"Setting default: %li", length);
+		DLog(@"Setting default: %li", length);
 	}
     
     gme_free_info( info );
 
-	NSLog(@"Length: %li", length);
+	DLog(@"Length: %li", length);
 	
-	NSLog(@"Track num: %i", track_num);
+	DLog(@"Track num: %i", track_num);
 	error = gme_start_track(emu, track_num);
 	if (error) 
 	{
-		NSLog(@"Error starting track");
+		ALog(@"GME: Error starting track");
 		return NO;
 	}
     

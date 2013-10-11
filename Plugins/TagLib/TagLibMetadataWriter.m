@@ -11,6 +11,8 @@
 #import <TagLib/fileref.h>
 #import <TagLib/tag.h>
 
+#import "Logging.h"
+
 @implementation TagLibMetadataWriter
 
 + (int)putMetadataInURL:(NSURL *)url tagData:(NSDictionary *)tagData
@@ -46,7 +48,7 @@
 			 
 			 for (id key in dictionary)
 			 {
-			 NSLog(@"key: %@, value: %@", key, [dictionary objectForKey:key]);
+			 DLog(@"key: %@, value: %@", key, [dictionary objectForKey:key]);
 			 }
 			 
 			pArtist = tag->artist();
