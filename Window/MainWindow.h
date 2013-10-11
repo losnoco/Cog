@@ -10,7 +10,8 @@
 #import "DualWindow.h"
 
 @interface MainWindow : DualWindow {
-
+    IBOutlet NSMenuItem * itemLionSeparator;
+    IBOutlet NSMenuItem * itemLionFullscreenToggle;
 }
 
 @end

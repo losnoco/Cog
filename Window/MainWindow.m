@@ -19,7 +19,7 @@
 		[self setExcludedFromWindowsMenu:YES];
 		[self setContentBorderThickness:24.0 forEdge:NSMinYEdge];
         [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
-	}
+    }
 	
 	return self;
 }
@@ -30,10 +30,13 @@
 		[[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:[self hiddenDefaultsKey]]];
 	}
 	
+    if ([self respondsToSelector:@selector(toggleFullScreen:)])
+    {
+        [itemLionSeparator setHidden:NO];
+        [itemLionFullscreenToggle setHidden:NO];
+    }
+
 	[super awakeFromNib];
 }
-
-
-
 
 @end

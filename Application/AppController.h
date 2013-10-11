@@ -99,4 +99,7 @@ OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *us
 - (void)nodeExpanded:(NSNotification*)notification;
 - (void)nodeCollapsed:(NSNotification*)notification;
 
+- (void)windowDidEnterFullScreen:(NSNotification *)notification;
+- (void)windowDidExitFullScreen:(NSNotification *)notification;
+
 @end

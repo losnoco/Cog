@@ -275,9 +275,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
     }
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterFullscreen) name:NSWindowDidEnterFullScreenNotification object:mainWindow];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(exitFullscreen) name:NSWindowDidExitFullScreenNotification object:mainWindow];
-    
     // We need file tree view to restore its state here
     // so attempt to access file tree view controller's root view
     // to force it to read nib and create file tree view for us
@@ -584,7 +581,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     }
 }
 
-- (void)enterFullscreen
+- (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
     NSLog(@"Entering fullscreen");
     if (nil == nowPlaying)
@@ -611,7 +608,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     }
 }
 
-- (void)exitFullscreen
+- (void)windowDidExitFullScreen:(NSNotification *)notification
 {
     NSLog(@"Exiting fullscreen");
     if (nowPlaying)

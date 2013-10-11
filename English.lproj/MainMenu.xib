@@ -82,7 +82,7 @@
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
-                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="9E1EC36B-776F-41F6-84BA-3BCF9937C65D" id="1801">
+                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="AE428D9F-3521-44E5-A3BF-1E9BBDE889D6" id="1801">
                                                         <font key="font" metaFont="system"/>
                                                     </imageCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
@@ -552,6 +552,8 @@
                 </binding>
                 <outlet property="delegate" destination="226" id="481"/>
                 <outlet property="initialFirstResponder" destination="207" id="720"/>
+                <outlet property="itemLionFullscreenToggle" destination="6FK-oo-X6Z" id="AFZ-tU-eoC"/>
+                <outlet property="itemLionSeparator" destination="LXf-6h-S7b" id="1Bl-jw-Bhi"/>
                 <outlet property="otherWindow" destination="2234" id="2304"/>
             </connections>
         </window>
@@ -924,8 +926,8 @@
                                     <action selector="decreaseFontSize:" target="226" id="1872"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" id="LXf-6h-S7b"/>
-                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="6FK-oo-X6Z" userLabel="Menu Item - Enter Full Screen">
+                            <menuItem isSeparatorItem="YES" hidden="YES" id="LXf-6h-S7b"/>
+                            <menuItem title="Enter Full Screen" hidden="YES" keyEquivalent="f" id="6FK-oo-X6Z" userLabel="Menu Item - Enter Full Screen">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
                                     <action selector="toggleFullScreen:" target="-1" id="UCw-gd-iiw"/>
@@ -1651,7 +1653,7 @@ Gw
         <customObject id="2434" customClass="FeedbackController"/>
     </objects>
     <resources>
-        <image name="9E1EC36B-776F-41F6-84BA-3BCF9937C65D" width="17" height="17">
+        <image name="AE428D9F-3521-44E5-A3BF-1E9BBDE889D6" width="17" height="17">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGRkdYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ExQZHh8qKyw0NzpAQ1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5T
