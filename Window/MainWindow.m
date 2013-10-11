@@ -26,10 +26,6 @@
 
 - (void)awakeFromNib
 {
-	if ([self hiddenDefaultsKey]) {
-		[[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:[self hiddenDefaultsKey]]];
-	}
-	
     if ([self respondsToSelector:@selector(toggleFullScreen:)])
     {
         [itemLionSeparator setHidden:NO];

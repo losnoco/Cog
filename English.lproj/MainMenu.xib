@@ -15,16 +15,19 @@
         <customObject id="-3" userLabel="Application"/>
         <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" oneShot="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" frameAutosaveName="Cog" animationBehavior="default" id="21" userLabel="Window" customClass="MainWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
-            <rect key="contentRect" x="1051" y="196" width="691" height="397"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1178"/>
+            <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
+            <windowPositionMask key="initialPositionMask" topStrut="YES"/>
+            <rect key="contentRect" x="331" y="367" width="760" height="400"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <value key="minSize" type="size" width="400" height="400"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="691" height="397"/>
+                <rect key="frame" x="0.0" y="0.0" width="760" height="400"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" id="778">
-                        <rect key="frame" x="17" y="5" width="649" height="15"/>
+                        <rect key="frame" x="17" y="4" width="718" height="15"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration:  00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -38,24 +41,24 @@
                         </connections>
                     </textField>
                     <splitView dividerStyle="thin" vertical="YES" id="2123">
-                        <rect key="frame" x="0.0" y="25" width="691" height="372"/>
+                        <rect key="frame" x="0.0" y="24" width="760" height="377"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="0.0" verticalLineScroll="19" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206">
-                                <rect key="frame" x="0.0" y="0.0" width="691" height="372"/>
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
+                                <rect key="frame" x="0.0" y="0.0" width="760" height="377"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="oCy-Ce-VrL">
-                                    <rect key="frame" x="0.0" y="17" width="691" height="355"/>
+                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
+                                    <rect key="frame" x="0.0" y="17" width="760" height="360"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" headerView="1517" id="207" customClass="PlaylistView">
-                                            <rect key="frame" x="0.0" y="0.0" width="691" height="355"/>
+                                        <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" id="207" customClass="PlaylistView">
+                                            <rect key="frame" x="0.0" y="0.0" width="760" height="360"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <size key="intercellSpacing" width="3" height="2"/>
+                                            <size key="intercellSpacing" width="3" height="6"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn identifier="index" editable="NO" width="22" minWidth="22" maxWidth="62" id="209">
+                                                <tableColumn identifier="index" editable="NO" width="35" minWidth="28" maxWidth="64" id="209">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="#">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -68,12 +71,12 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1913"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.index" id="1356">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1913"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="status" editable="NO" width="20" minWidth="20" maxWidth="20" id="1798">
@@ -82,7 +85,7 @@
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
-                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="CD676F83-6A9A-4E1D-AD0B-E9606E65D734" id="1801">
+                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="B0308767-B0DF-4283-86A8-2FE03FA4ADA4" id="1801">
                                                         <font key="font" metaFont="system"/>
                                                     </imageCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
@@ -95,7 +98,7 @@
                                                         </binding>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="title" editable="NO" width="95" minWidth="41" maxWidth="1000" id="208">
+                                                <tableColumn identifier="title" editable="NO" width="120" minWidth="96" maxWidth="1024" id="208">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -109,15 +112,15 @@
                                                     <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="title"/>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1914"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.title" id="814">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1914"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="artist" editable="NO" width="90" minWidth="36" maxWidth="1000" id="391">
+                                                <tableColumn identifier="artist" editable="NO" width="120" minWidth="96" maxWidth="1024" id="391">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Artist">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -131,15 +134,15 @@
                                                     <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="artist"/>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1916"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.artist" id="815">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1916"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="album" editable="NO" width="97" minWidth="39" maxWidth="1000" id="806">
+                                                <tableColumn identifier="album" editable="NO" width="120" minWidth="96" maxWidth="1024" id="806">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Album">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -153,15 +156,15 @@
                                                     <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="album"/>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1917"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.album" id="816">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1917"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="length" editable="NO" width="105.62009999999999" minWidth="40.62012" maxWidth="1000" id="807">
+                                                <tableColumn identifier="length" editable="NO" width="66" minWidth="43.62012" maxWidth="96" id="807">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Length">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -174,15 +177,15 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1919"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.length" id="1658">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1919"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="year" editable="NO" width="77" minWidth="10" maxWidth="1000" id="848">
+                                                <tableColumn identifier="year" editable="NO" width="66" minWidth="42" maxWidth="96" id="848">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Year">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -195,11 +198,11 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="218" name="value" keyPath="arrangedObjects.year" id="851"/>
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1921"/>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.year" id="851"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="genre" editable="NO" width="83" minWidth="10" maxWidth="1000" id="849">
+                                                <tableColumn identifier="genre" editable="NO" width="119" minWidth="96" maxWidth="512" id="849">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Genre">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -213,12 +216,12 @@
                                                     <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="genre"/>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="218" name="value" keyPath="arrangedObjects.genre" id="852"/>
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1922"/>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.genre" id="852"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="track" editable="NO" width="74" minWidth="4" maxWidth="1000" id="850">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Track">
+                                                <tableColumn identifier="track" editable="NO" width="67" minWidth="24" maxWidth="72" id="850">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="№">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -230,11 +233,11 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="218" name="value" keyPath="arrangedObjects.track" id="853"/>
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1923"/>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.track" id="853"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="path" editable="NO" width="57" minWidth="10" maxWidth="3.4028229999999999e+38" hidden="YES" id="1712">
+                                                <tableColumn identifier="path" editable="NO" width="64" minWidth="32" maxWidth="2048" hidden="YES" id="1712">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Path">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -247,15 +250,15 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1924"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.path" id="1788">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1924"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="filename" editable="NO" width="57" minWidth="10" maxWidth="3.4028229999999999e+38" hidden="YES" id="1736">
+                                                <tableColumn identifier="filename" editable="NO" width="64" minWidth="32" maxWidth="1024" hidden="YES" id="1736">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Filename">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -268,12 +271,12 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1925"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.filename" id="1787">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1925"/>
                                                     </connections>
                                                 </tableColumn>
                                             </tableColumns>
@@ -302,7 +305,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <tableHeaderView key="headerView" id="1517" customClass="PlaylistHeaderView">
-                                    <rect key="frame" x="0.0" y="0.0" width="691" height="17"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="760" height="17"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
@@ -321,9 +324,30 @@
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="1552"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1529"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="1673"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="1645"/>
+                    <toolbarItem implicitItemIdentifier="A06F7688-72A2-4AAD-B9E1-C66720B2B0D3" label="Playback Control" paletteLabel="Playback Control" id="1539">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="92" height="25"/>
+                        <size key="maxSize" width="94" height="25"/>
+                        <segmentedControl key="view" verticalHuggingPriority="750" id="1537" customClass="PlaybackButtons">
+                            <rect key="frame" x="3" y="14" width="92" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <segmentedCell key="cell" state="on" alignment="left" style="automatic" trackingMode="momentary" id="1538">
+                                <font key="font" metaFont="system"/>
+                                <segments>
+                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28" tag="1"/>
+                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28"/>
+                                </segments>
+                            </segmentedCell>
+                            <connections>
+                                <outlet property="playbackController" destination="705" id="2401"/>
+                            </connections>
+                        </segmentedControl>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="0D05748D-3258-44F5-9D1C-CBF211C15E2D" label="Search" paletteLabel="Search" id="1533">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="96" height="22"/>
+                        <size key="minSize" width="64" height="22"/>
                         <size key="maxSize" width="96" height="22"/>
                         <searchField key="view" verticalHuggingPriority="750" id="1531">
                             <rect key="frame" x="0.0" y="14" width="96" height="22"/>
@@ -333,12 +357,6 @@
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <connections>
-                                    <binding destination="218" name="predicate" keyPath="filterPredicate" id="1576">
-                                        <dictionary key="options">
-                                            <string key="NSDisplayName">All</string>
-                                            <string key="NSPredicateFormat">(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)</string>
-                                        </dictionary>
-                                    </binding>
                                     <binding destination="218" name="predicate2" keyPath="filterPredicate" previousBinding="1576" id="1578">
                                         <dictionary key="options">
                                             <string key="NSDisplayName">Title</string>
@@ -353,94 +371,75 @@
                                     </binding>
                                     <binding destination="218" name="predicate4" keyPath="filterPredicate" previousBinding="1580" id="1582">
                                         <dictionary key="options">
-                                            <integer key="NSValidatesImmediately" value="0"/>
-                                            <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                            <string key="NSPredicateFormat">artist contains[cd] $value</string>
-                                            <string key="NSDisplayName">Album</string>
                                             <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                            <integer key="NSValidatesImmediately" value="0"/>
+                                            <string key="NSPredicateFormat">artist contains[cd] $value</string>
+                                            <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                            <string key="NSDisplayName">Album</string>
                                         </dictionary>
                                     </binding>
                                     <binding destination="218" name="predicate5" keyPath="filterPredicate" previousBinding="1582" id="1583">
                                         <dictionary key="options">
-                                            <integer key="NSValidatesImmediately" value="0"/>
-                                            <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                            <string key="NSPredicateFormat">genre contains[cd] $value</string>
-                                            <string key="NSDisplayName">Genre</string>
                                             <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                            <integer key="NSValidatesImmediately" value="0"/>
+                                            <string key="NSPredicateFormat">genre contains[cd] $value</string>
+                                            <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                            <string key="NSDisplayName">Genre</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="218" name="predicate" keyPath="filterPredicate" id="1576">
+                                        <dictionary key="options">
+                                            <string key="NSDisplayName">All</string>
+                                            <string key="NSPredicateFormat">(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)</string>
                                         </dictionary>
                                     </binding>
                                 </connections>
                             </searchFieldCell>
                         </searchField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A06F7688-72A2-4AAD-B9E1-C66720B2B0D3" label="Playback Buttons" paletteLabel="Playback Buttons" id="1539">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="80" height="24"/>
-                        <size key="maxSize" width="80" height="25"/>
-                        <segmentedControl key="view" verticalHuggingPriority="750" id="1537" customClass="PlaybackButtons">
-                            <rect key="frame" x="9" y="14" width="80" height="25"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <segmentedCell key="cell" state="on" alignment="left" style="automatic" trackingMode="momentary" id="1538">
-                                <font key="font" metaFont="system"/>
-                                <segments>
-                                    <segment toolTip="Previous" image="previous" width="24"/>
-                                    <segment toolTip="Play" image="play" width="24" tag="1"/>
-                                    <segment toolTip="Next" image="next" width="24"/>
-                                </segments>
-                            </segmentedCell>
-                            <connections>
-                                <outlet property="playbackController" destination="705" id="2401"/>
-                            </connections>
-                        </segmentedControl>
-                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="2CDD90B4-2355-4E8A-AE42-A6C872DF700A" label="Position" paletteLabel="Position" id="1551">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="96" height="15"/>
-                        <size key="maxSize" width="10000" height="15"/>
+                        <size key="minSize" width="96" height="21"/>
+                        <size key="maxSize" width="1024" height="21"/>
                         <slider key="view" verticalHuggingPriority="750" id="1549" customClass="PositionSlider">
-                            <rect key="frame" x="0.0" y="14" width="96" height="15"/>
+                            <rect key="frame" x="0.0" y="14" width="96" height="21"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" maxValue="10000" tickMarkPosition="above" sliderType="linear" id="1550" customClass="TrackingCell">
-                                <font key="font" metaFont="smallSystem"/>
-                                <connections>
-                                    <binding destination="218" name="maxValue" keyPath="currentEntry.length" id="1593"/>
-                                </connections>
-                            </sliderCell>
+                            <sliderCell key="cell" enabled="NO" alignment="left" maxValue="10000" tickMarkPosition="above" sliderType="linear" id="1550" customClass="TrackingCell"/>
                             <connections>
                                 <action selector="seek:" target="705" id="1597"/>
+                                <binding destination="705" name="enabled" keyPath="seekable" id="2376"/>
                                 <binding destination="1897" name="maxValue" keyPath="content.length" id="2377">
                                     <dictionary key="options">
                                         <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
                                     </dictionary>
                                 </binding>
                                 <binding destination="705" name="value" keyPath="position" previousBinding="2377" id="2378"/>
-                                <binding destination="705" name="enabled" keyPath="seekable" id="2376"/>
                                 <outlet property="positionTextField" destination="1566" id="2385"/>
                             </connections>
                         </slider>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="B042D8A5-AFF4-43B2-9DFB-E87A09B7F861" label="Current Time" paletteLabel="Current Time" id="1568">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="38" height="14"/>
-                        <size key="maxSize" width="38" height="14"/>
+                        <size key="minSize" width="46" height="15"/>
+                        <size key="maxSize" width="58" height="15"/>
                         <textField key="view" verticalHuggingPriority="750" id="1566" customClass="TimeField">
-                            <rect key="frame" x="20" y="14" width="38" height="14"/>
+                            <rect key="frame" x="16" y="14" width="46" height="15"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0:00" id="1567">
+                            <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" usesSingleLineMode="YES" bezelStyle="round" id="1567">
                                 <font key="font" metaFont="smallSystem"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume_high" id="1610">
+                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume3Template" id="1610">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="1608" customClass="VolumeButton">
-                            <rect key="frame" x="12" y="14" width="24" height="25"/>
+                            <rect key="frame" x="10" y="14" width="28" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume_high" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1609">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="1609">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -449,14 +448,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="info_off" id="1629">
+                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" id="1629">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="1627">
-                            <rect key="frame" x="29" y="14" width="24" height="25"/>
+                            <rect key="frame" x="27" y="14" width="28" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="info_off" imagePosition="only" alignment="center" borderStyle="border" id="1628">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="infoTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1628">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -465,14 +464,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="6EE50288-54ED-448F-BB25-347479AE119F" label="File Tree" paletteLabel="File Tree" image="files_off" id="1630">
+                    <toolbarItem implicitItemIdentifier="6EE50288-54ED-448F-BB25-347479AE119F" label="File Tree" paletteLabel="File Tree" image="navigatorTemplate" id="1630">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="1631">
-                            <rect key="frame" x="15" y="14" width="24" height="25"/>
+                            <rect key="frame" x="13" y="14" width="28" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="files_off" imagePosition="only" alignment="center" borderStyle="border" id="1632">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="navigatorTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1632">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -481,14 +480,30 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="384C0EB5-D1D6-4D39-8113-03FB4958D7ED" label="Shuffle" paletteLabel="Shuffle" image="shuffle_on" id="1636">
+                    <toolbarItem implicitItemIdentifier="972E4070-D310-48FE-BA9B-C06B248FF020" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" id="2466">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
-                        <button key="view" verticalHuggingPriority="750" id="1637">
-                            <rect key="frame" x="10" y="14" width="24" height="25"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2467">
+                            <rect key="frame" x="20" y="14" width="28" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffle_on" imagePosition="only" alignment="center" borderStyle="border" id="1638">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2468">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="randomizeList" target="218" id="2541"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="384C0EB5-D1D6-4D39-8113-03FB4958D7ED" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" id="1636">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="1637">
+                            <rect key="frame" x="8" y="14" width="28" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1638">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -502,14 +517,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="63C54E84-6C1A-42A6-9FB7-1DF922B1C302" label="Repeat" paletteLabel="Repeat" image="repeat_on" id="1639">
+                    <toolbarItem implicitItemIdentifier="F3591DBA-E0EC-4564-896A-C6EFFABC7873" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" id="1639">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="1640">
-                            <rect key="frame" x="10" y="14" width="24" height="25"/>
+                            <rect key="frame" x="8" y="14" width="28" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeat_on" imagePosition="only" alignment="center" borderStyle="border" id="1641">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1641">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -523,38 +538,36 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="9674185F-CBA5-459A-99E9-4D4C8C40ED9A" label="Randomize" paletteLabel="Randomize" image="randomize" id="yMV-q5-Hn3" userLabel="Toolbar Item - Randomize">
+                    <toolbarItem implicitItemIdentifier="F636F7BD-E049-4DF5-B758-35DF87C40AA0" label="Mini Mode" paletteLabel="Mini Mode" image="miniModeOnTemplate" id="2532">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="116" height="25"/>
-                        <button key="view" verticalHuggingPriority="750" id="VbB-Rd-jZu">
-                            <rect key="frame" x="22" y="14" width="24" height="25"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2533">
+                            <rect key="frame" x="18" y="14" width="28" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomize" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="bJG-BX-OMx" userLabel="Button Cell">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOnTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2534">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <action selector="shufflePlaylist:" target="207" id="yOV-Dz-IF2"/>
+                                <action selector="toggleMiniMode:" target="226" id="2536"/>
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="1645"/>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="1539"/>
                     <toolbarItem reference="1552"/>
-                    <toolbarItem reference="1610"/>
-                    <toolbarItem reference="1552"/>
-                    <toolbarItem reference="1551"/>
-                    <toolbarItem reference="1568"/>
-                    <toolbarItem reference="1552"/>
                     <toolbarItem reference="1636"/>
-                    <toolbarItem reference="yMV-q5-Hn3"/>
                     <toolbarItem reference="1639"/>
+                    <toolbarItem reference="2466"/>
                     <toolbarItem reference="1552"/>
                     <toolbarItem reference="1629"/>
                     <toolbarItem reference="1630"/>
+                    <toolbarItem reference="1529"/>
+                    <toolbarItem reference="1568"/>
+                    <toolbarItem reference="1551"/>
+                    <toolbarItem reference="1610"/>
                     <toolbarItem reference="1552"/>
                     <toolbarItem reference="1533"/>
                 </defaultToolbarItems>
@@ -569,38 +582,37 @@
                 </binding>
                 <outlet property="delegate" destination="226" id="481"/>
                 <outlet property="initialFirstResponder" destination="207" id="720"/>
-                <outlet property="itemLionFullscreenToggle" destination="6FK-oo-X6Z" id="AFZ-tU-eoC"/>
-                <outlet property="itemLionSeparator" destination="LXf-6h-S7b" id="1Bl-jw-Bhi"/>
-                <outlet property="otherWindow" destination="2234" id="2304"/>
+                <outlet property="itemLionFullscreenToggle" destination="2456" id="5yZ-Jj-awr"/>
+                <outlet property="itemLionSeparator" destination="2455" id="0p5-i7-wLz"/>
             </connections>
         </window>
         <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
-            <rect key="contentRect" x="0.0" y="509" width="481" height="0.0"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1028"/>
-            <view key="contentView" id="2235">
-                <rect key="frame" x="0.0" y="0.0" width="481" height="0.0"/>
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES" unifiedTitleAndToolbar="YES"/>
+            <rect key="contentRect" x="192" y="547" width="480" height="0.0"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <value key="minSize" type="size" width="400" height="1"/>
+            <value key="maxSize" type="size" width="600" height="1"/>
+            <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="0.0"/>
                 <autoresizingMask key="autoresizingMask"/>
             </view>
             <toolbar key="toolbar" implicitIdentifier="35998ECE-5AD8-429E-8479-657249B22C9C" displayMode="iconOnly" sizeMode="regular" id="2222" userLabel="Mini Toolbar">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="2225"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="2227"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="2228"/>
-                    <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="2229"/>
                     <toolbarItem implicitItemIdentifier="6F5A6C43-A09C-462A-AEE2-C86DC3C55128" label="Playback Buttons" paletteLabel="Playback Buttons" id="2272">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="80" height="24"/>
-                        <size key="maxSize" width="80" height="25"/>
+                        <size key="minSize" width="92" height="25"/>
+                        <size key="maxSize" width="92" height="25"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="2295" customClass="PlaybackButtons">
-                            <rect key="frame" x="9" y="14" width="80" height="25"/>
+                            <rect key="frame" x="3" y="14" width="92" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <segmentedCell key="cell" state="on" alignment="left" style="automatic" trackingMode="momentary" id="2296">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment toolTip="Previous" image="previous" width="24"/>
-                                    <segment toolTip="Play" image="play" width="24" tag="1"/>
-                                    <segment toolTip="Next" image="next" width="24"/>
+                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28" tag="1"/>
+                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28"/>
                                 </segments>
                             </segmentedCell>
                             <connections>
@@ -611,7 +623,7 @@
                     <toolbarItem implicitItemIdentifier="C10E329B-9AB7-47DB-B3BA-7C40B57792E8" label="Position" paletteLabel="Position" id="2273">
                         <nil key="toolTip"/>
                         <size key="minSize" width="96" height="15"/>
-                        <size key="maxSize" width="10000" height="15"/>
+                        <size key="maxSize" width="2048" height="15"/>
                         <slider key="view" verticalHuggingPriority="750" id="2293" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="15"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -620,35 +632,35 @@
                             </sliderCell>
                             <connections>
                                 <action selector="seek:" target="705" id="2387"/>
+                                <binding destination="705" name="enabled" keyPath="seekable" id="2384"/>
                                 <binding destination="1897" name="maxValue" keyPath="content.length" id="2381"/>
                                 <binding destination="705" name="value" keyPath="position" previousBinding="2381" id="2382"/>
-                                <binding destination="705" name="enabled" keyPath="seekable" id="2384"/>
                                 <outlet property="positionTextField" destination="2291" id="2386"/>
                             </connections>
                         </slider>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="C0FF70A3-EE67-43F6-9956-95B89425CF0E" label="Current Time" paletteLabel="Current Time" id="2274">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="38" height="14"/>
-                        <size key="maxSize" width="38" height="14"/>
+                        <size key="minSize" width="38" height="15"/>
+                        <size key="maxSize" width="56" height="15"/>
                         <textField key="view" verticalHuggingPriority="750" id="2291" customClass="TimeField">
-                            <rect key="frame" x="20" y="14" width="38" height="14"/>
+                            <rect key="frame" x="20" y="14" width="38" height="15"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0:00" id="2292">
+                            <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" bezelStyle="round" id="2292">
                                 <font key="font" metaFont="smallSystem"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="volume_high" id="2275">
+                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="volume3Template" id="2275">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="2289" customClass="VolumeButton">
-                            <rect key="frame" x="12" y="14" width="24" height="25"/>
+                            <rect key="frame" x="11" y="14" width="26" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume_high" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2290">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="2290">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -657,14 +669,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="EE7CA50B-9B79-414A-A257-7AC385032675" label="Shuffle" paletteLabel="Shuffle" image="shuffle_on" id="2278">
+                    <toolbarItem implicitItemIdentifier="EE7CA50B-9B79-414A-A257-7AC385032675" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" id="2278">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="2283">
-                            <rect key="frame" x="10" y="14" width="24" height="25"/>
+                            <rect key="frame" x="9" y="14" width="26" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffle_on" imagePosition="only" alignment="center" borderStyle="border" id="2284">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2284">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -678,14 +690,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="9A52F396-9BBC-4791-AC12-664859F26F89" label="Repeat" paletteLabel="Repeat" image="repeat_on" id="2279">
+                    <toolbarItem implicitItemIdentifier="9A52F396-9BBC-4791-AC12-664859F26F89" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" id="2279">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="2281">
-                            <rect key="frame" x="10" y="14" width="24" height="25"/>
+                            <rect key="frame" x="9" y="14" width="26" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeat_on" imagePosition="only" alignment="center" borderStyle="border" id="2282">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2282">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -699,14 +711,33 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="info_off" id="2429">
+                    <toolbarItem implicitItemIdentifier="2064CD41-7C2B-4EE0-BCE9-8E18E09F02EF" label="Normal Mode" paletteLabel="Normal Mode" image="miniModeOffTemplate" id="2526">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="24" height="25"/>
-                        <size key="maxSize" width="24" height="25"/>
-                        <button key="view" verticalHuggingPriority="750" id="2430">
-                            <rect key="frame" x="29" y="14" width="24" height="25"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2527">
+                            <rect key="frame" x="27" y="14" width="26" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="info_off" imagePosition="only" alignment="center" borderStyle="border" id="2431">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2528">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleMiniMode:" target="226" id="2537"/>
+                            </connections>
+                        </button>
+                        <connections>
+                            <action selector="toggleMiniMode:" target="226" id="2531"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" id="2429">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2430">
+                            <rect key="frame" x="28" y="14" width="26" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="infoTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2431">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -715,17 +746,18 @@
                             <action selector="toggleWindow:" target="2422" id="2433"/>
                         </connections>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="2225"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="2229"/>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="2272"/>
-                    <toolbarItem reference="2227"/>
-                    <toolbarItem reference="2275"/>
-                    <toolbarItem reference="2227"/>
-                    <toolbarItem reference="2273"/>
-                    <toolbarItem reference="2274"/>
-                    <toolbarItem reference="2227"/>
+                    <toolbarItem reference="2228"/>
                     <toolbarItem reference="2278"/>
                     <toolbarItem reference="2279"/>
+                    <toolbarItem reference="2228"/>
+                    <toolbarItem reference="2274"/>
+                    <toolbarItem reference="2273"/>
+                    <toolbarItem reference="2275"/>
                 </defaultToolbarItems>
             </toolbar>
             <connections>
@@ -736,7 +768,6 @@
                         <string key="NSNullPlaceholder">Cog</string>
                     </dictionary>
                 </binding>
-                <outlet property="otherWindow" destination="21" id="2305"/>
             </connections>
         </window>
         <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
@@ -899,9 +930,9 @@
                 <menuItem title="View" id="1848">
                     <menu key="submenu" title="View" id="1849">
                         <items>
-                            <menuItem title="Show Info Inspector" keyEquivalent="i" id="1851">
+                            <menuItem title="Show Info Inspector" keyEquivalent="i" id="2453">
                                 <connections>
-                                    <action selector="toggleWindow:" target="2422" id="2423"/>
+                                    <action selector="toggleWindow:" target="2422" id="2454"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Show Spotlight Panel" keyEquivalent="F" id="1853">
@@ -943,11 +974,13 @@
                                     <action selector="decreaseFontSize:" target="226" id="1872"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" hidden="YES" id="LXf-6h-S7b"/>
-                            <menuItem title="Enter Full Screen" hidden="YES" keyEquivalent="f" id="6FK-oo-X6Z" userLabel="Menu Item - Enter Full Screen">
+                            <menuItem isSeparatorItem="YES" hidden="YES" id="2455">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Enter Full Screen" hidden="YES" keyEquivalent="f" id="2456">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
-                                    <action selector="toggleFullScreen:" target="-1" id="UCw-gd-iiw"/>
+                                    <action selector="toggleFullScreen:" target="-1" id="2457"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -1154,8 +1187,8 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1760">
                                                     <dictionary key="options">
-                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                         <string key="NSValueTransformerName">RepeatAllTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
@@ -1180,8 +1213,8 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1763">
                                                     <dictionary key="options">
-                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                         <string key="NSValueTransformerName">RepeatOneTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
@@ -1195,8 +1228,8 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1767">
                                                     <dictionary key="options">
-                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
                                                         <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                         <string key="NSValueTransformerName">RepeatNoneTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
@@ -1206,12 +1239,12 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="1748">
+                                        <menuItem isSeparatorItem="YES" id="2471">
                                             <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                         </menuItem>
-                                        <menuItem title="Toggle" keyEquivalent="R" id="VCT-s6-MLa" userLabel="Menu Item - Toggle">
+                                        <menuItem title="Toggle" keyEquivalent="R" id="2472">
                                             <connections>
-                                                <action selector="toggleRepeat:" target="218" id="gJn-74-iWL"/>
+                                                <action selector="toggleRepeat:" target="218" id="2474"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -1251,14 +1284,20 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="sBw-9K-wjO"/>
-                                        <menuItem title="Toggle" keyEquivalent="S" id="7lr-Ik-ppg" userLabel="Menu Item - Toggle">
+                                        <menuItem isSeparatorItem="YES" id="2475"/>
+                                        <menuItem title="Toggle" keyEquivalent="S" id="2476">
                                             <connections>
-                                                <action selector="toggleShuffle:" target="218" id="Emz-3I-IsL"/>
+                                                <action selector="toggleShuffle:" target="218" id="2478"/>
                                             </connections>
                                         </menuItem>
                                     </items>
                                 </menu>
+                            </menuItem>
+                            <menuItem title="Randomize" id="2545">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="randomizeList:" target="218" id="2550"/>
+                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="1079">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
@@ -1313,6 +1352,19 @@ Gw
                             <menuItem title="Zoom" id="197">
                                 <connections>
                                     <action selector="performZoom:" target="-1" id="198"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="2496">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Toggle Mini Mode" keyEquivalent="M" id="2493">
+                                <connections>
+                                    <action selector="toggleMiniMode:" target="226" id="2516"/>
+                                    <binding destination="226" name="title" keyPath="miniMode" id="2519">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">MiniModeMenuTitleTransformer</string>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="1642">
@@ -1377,8 +1429,6 @@ Gw
                 <mutableString>queued</mutableString>
             </declaredKeys>
             <connections>
-                <binding destination="1688" name="contentArray" keyPath="entries" id="1691"/>
-                <outlet property="entriesController" destination="1688" id="1692"/>
                 <outlet property="playbackController" destination="705" id="2121"/>
                 <outlet property="playlistLoader" destination="1319" id="1321"/>
                 <outlet property="spotlightWindowController" destination="1675" id="1709"/>
@@ -1390,21 +1440,26 @@ Gw
                 <outlet property="playbackController" destination="705" id="2404"/>
             </connections>
         </customObject>
-        <customObject id="2405" customClass="PlaybackEventController"/>
+        <customObject id="2405" customClass="PlaybackEventController">
+            <connections>
+                <outlet property="playlistLoader" destination="1319" id="2407"/>
+            </connections>
+        </customObject>
         <customObject id="226" userLabel="AppController" customClass="AppController">
             <connections>
-                <outlet property="currentEntryController" destination="1897" id="49h-Dv-ved"/>
+                <outlet property="currentEntryController" destination="1897" id="2459"/>
                 <outlet property="fileButton" destination="1631" id="1661"/>
-                <outlet property="fileTreeViewController" destination="2172" id="4Zw-gB-Lmo"/>
+                <outlet property="fileTreeViewController" destination="2172" id="2460"/>
                 <outlet property="infoButton" destination="1627" id="1663"/>
-                <outlet property="mainView" destination="2123" id="1rG-oa-1Yy"/>
+                <outlet property="mainView" destination="2123" id="2458"/>
                 <outlet property="mainWindow" destination="21" id="359"/>
+                <outlet property="miniWindow" destination="2234" id="2517"/>
                 <outlet property="playbackController" destination="705" id="1300"/>
                 <outlet property="playlistController" destination="218" id="236"/>
                 <outlet property="playlistLoader" destination="1319" id="1322"/>
                 <outlet property="playlistView" destination="207" id="1257"/>
-                <outlet property="randomizeButton" destination="VbB-Rd-jZu" id="DTQ-9N-yDD"/>
-                <outlet property="repeatButton" destination="1640" id="ff5-9p-1FL"/>
+                <outlet property="randomizeButton" destination="2467" id="swo-wn-Yr8"/>
+                <outlet property="repeatButton" destination="1640" id="twI-AO-RJG"/>
                 <outlet property="showAlbumColumn" destination="1340" id="1350"/>
                 <outlet property="showArtistColumn" destination="1339" id="1349"/>
                 <outlet property="showGenreColumn" destination="1341" id="1351"/>
@@ -1413,7 +1468,7 @@ Gw
                 <outlet property="showTitleColumn" destination="1338" id="1348"/>
                 <outlet property="showTrackColumn" destination="1343" id="1353"/>
                 <outlet property="showYearColumn" destination="1344" id="1354"/>
-                <outlet property="shuffleButton" destination="1637" id="Ts0-Pt-ZdW"/>
+                <outlet property="shuffleButton" destination="1637" id="Nzr-Mw-z9P"/>
                 <outlet property="spotlightWindowController" destination="1675" id="1677"/>
                 <outlet property="totalTimeField" destination="778" id="1659"/>
             </connections>
@@ -1425,11 +1480,11 @@ Gw
                     <connections>
                         <binding destination="1897" name="title" keyPath="content.artist" id="2085">
                             <dictionary key="options">
-                                <string key="NSMultipleValuesPlaceholder"></string>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                 <string key="NSNotApplicablePlaceholder"></string>
                                 <string key="NSNoSelectionPlaceholder"></string>
+                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNullPlaceholder">Not Playing</string>
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1439,11 +1494,11 @@ Gw
                     <connections>
                         <binding destination="1897" name="title" keyPath="content.title" id="2083">
                             <dictionary key="options">
-                                <string key="NSMultipleValuesPlaceholder"></string>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                 <string key="NSNotApplicablePlaceholder"></string>
                                 <string key="NSNoSelectionPlaceholder"></string>
+                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNullPlaceholder">Not Playing</string>
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1483,17 +1538,40 @@ Gw
                         </binding>
                     </connections>
                 </menuItem>
+                <menuItem title="Stop After Current" id="2483">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="stopAfterCurrent:" target="218" id="2484"/>
+                    </connections>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="1453">
                     <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                 </menuItem>
-                <menuItem title="Previous Song" id="519">
+                <menuItem title="Previous Track" id="519">
                     <connections>
                         <action selector="prev:" target="705" id="728"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Next Song" id="518">
+                <menuItem title="Next Track" id="518">
                     <connections>
                         <action selector="next:" target="705" id="727"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="2489">
+                    <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                </menuItem>
+                <menuItem title="Previous Album" id="2487">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="skipToPreviousAlbum:" target="705" id="2488"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Next Album" id="2485">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="skipToNextAlbum:" target="705" id="2486"/>
                     </connections>
                 </menuItem>
             </items>
@@ -1501,7 +1579,6 @@ Gw
         <customObject id="705" userLabel="PlaybackController" customClass="PlaybackController">
             <connections>
                 <outlet property="playlistController" destination="218" id="706"/>
-                <outlet property="playlistLoader" destination="1319" id="Xj8-Y6-EjQ"/>
                 <outlet property="playlistView" destination="207" id="717"/>
                 <outlet property="volumeSlider" destination="1612" id="1615"/>
             </connections>
@@ -1619,15 +1696,13 @@ Gw
             </items>
         </menu>
         <customView id="1611" userLabel="Volume View">
-            <rect key="frame" x="0.0" y="0.0" width="97" height="177"/>
+            <rect key="frame" x="0.0" y="0.0" width="26" height="168"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <slider horizontalHuggingPriority="750" id="1612" customClass="VolumeSlider">
-                    <rect key="frame" x="43" y="39" width="15" height="120"/>
+                    <rect key="frame" x="6" y="19" width="15" height="129"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="100" tickMarkPosition="right" sliderType="linear" id="1613">
-                        <font key="font" metaFont="smallSystem"/>
-                    </sliderCell>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="right" sliderType="linear" id="1613"/>
                     <connections>
                         <action selector="changeVolume:" target="705" id="1614"/>
                     </connections>
@@ -1639,7 +1714,6 @@ Gw
                 <outlet property="playlistLoader" destination="1319" id="1694"/>
             </connections>
         </customObject>
-        <customObject id="1688" customClass="EntriesController"/>
         <userDefaultsController representsSharedInstance="YES" id="1689"/>
         <objectController objectClassName="PlaylistEntry" id="1897" userLabel="Current Entry Controller">
             <declaredKeys>
@@ -1676,106 +1750,110 @@ Gw
         </customObject>
         <customObject id="2422" customClass="InfoWindowController">
             <connections>
-                <outlet property="playlistSelectionController" destination="2020" id="2426"/>
+                <outlet property="appController" destination="226" id="2538"/>
+                <outlet property="currentEntryController" destination="1897" id="2539"/>
+                <outlet property="playlistSelectionController" destination="2020" id="2540"/>
             </connections>
         </customObject>
         <customObject id="2434" customClass="FeedbackController"/>
     </objects>
     <resources>
-        <image name="CD676F83-6A9A-4E1D-AD0B-E9606E65D734" width="17" height="17">
+        <image name="B0308767-B0DF-4283-86A8-2FE03FA4ADA4" width="17" height="17">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGRkdYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ExQZHh8qKyw0NzpAQ1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5T
 UmVwc1dOU0NvbG9ygAKADhIgwAAAgAOADFh7MTcsIDE3fdIVChYYWk5TLm9iamVjdHOhF4AEgAvSFQoa
 HaIbHIAFgAaAChAA1iAhCiIjJCUmJygpHl8QEE5TQ2FjaGVXaW5kb3dCUFNfEBdOU0NhY2hlV2luZG93
 Q29sb3JTcGFjZV8QFE5TVElGRlJlcHJlc2VudGF0aW9uXxAQTlNDYWNoZVdpbmRvd0JQUF8QFU5TQ2Fj
-aGVXaW5kb3dJc1BsYW5hchAIgAiACYAHEBhPERA2TU0AKgAABACAACBQOCQWDQeEQmBAaBgmBvGFRGJR
-OFCELgoqCgJPwerdrvo3xSRQoFwMIQMGgICgUJAgGg8RoQtDs7g53tgNJZvBZiNJlsg+Px+PtpQSVgYM
-gYCgYQAoFg0RBYLhQPhIKBcOBAIhEMBkNBoNiERB4KhkLh0JBcLhUGvZ8PYBDR8r0AP9xNsAMsPGQAGA
-xmY3PV4ulJwQTCcWJA6ng7m0bjUZgIGg4HAAHgwGAAFgySgMCAMAOhyOUABMLBYAPd8PkAOZuMcAB94p
-0APhsuMANoRHu+nM/ppttVmmeCAqXmJTKRTJYmEsjgd4dEAAGGgoFAAE9kAM5hMMAPV1OoABwbjm6uVT
-gALv5cgB9tx2AByBg6AA1I1VsNhrpYEWBtYgQZESRhJFwOQ3jUCp7wWAADQdBoDoYdx2ne+RkGUAB6HG
-cIAHmAh9gAIAfQ4fx4GqAB+HO0h0H+LYAEQXTRE+S5HB6gZwIGDo1jkOpekWQhBBKfshgAA4EOuf5/n6
-ABmmaZIAGAYMnh2HcbAEbxXAAGgZG+1JwnSAABn2+J3HuHgAFMc4WH4PY5jYICBmKgYGCiLIul0UBNEw
-HJznMcwAG6bRowyeJ5PGBsTnMdLKnieh9AAJ4hAEAAEHooplGSfwABsF0KnkdKTl6f4ugAL4xDGNJ/n2
-ehMIGAIfiEJBXFUVRTCgfyhAAcRqGFIrWgAex3qKf4FCNBtfheGL4m4YhrgAYZogkAAtCG3B8nGdrtgc
-O4AC8OQ8kwdBvm2NKCBaGQbEyVxWFYMwLAraRnGbQYCni9IFgg8wFA1M4GHyXQAAoBZsV0bAMV0dYDgA
-GQHligR3HOACdjyAAxEIURgGiY5d2MgYNA4EA/FYVpXECHIbBiABnmgZwAG+ZLaBiIj6nuemIhKDlBnq
-bxtAAdoCCu6YEAnShnjizR/m8AB0gQMIAD2WpwHEVhPktOCBgcB4IDCURSlUTwnCU/xmmWZYAHgd8KhC
-E4WgAAR6GAAAPA8db5GKbsUAgGswnw+IIHgXwAH8dBsgAaRzBQABMHKDR+lST5MCIggBs8IpLk0UBcjK
-MQtgCey3Pcfp/gAbZrZaFoJmQ6YC0Mfx5nrwR7Wz11sn7MvBHcdwAF0Yx0YqVJ5EEex81YggBeOGgzjg
-PBiBqF4WAObJvG6dxtm2bx8jQKAVgyH4dNAf59Uef56tYfZ1ogdp00M0Z1HybZum8dpmGodBrk6Yx1jG
-fMlw4gwEzKAPCcPKAg8CBD/HAAwAwAgdCXECGEPg8x2jkHgNcao4x0jhfQOUcI5x2jaHKOcfA2h3qaHM
-ksADdSBDkIGPMgboyRkGNQQID5Az4kChUakgcKIYkFICAAAPAQAAAwAAAAEAEQAAAQEAAwAAAAEAEQAA
-AQIAAwAAAAQAAAS6AQMAAwAAAAEABQAAAQYAAwAAAAEAAgAAAREABAAAAAEAAAAIARIAAwAAAAEAAQAA
-ARUAAwAAAAEABAAAARYAAwAAAAEAEQAAARcABAAAAAEAAAP3ARwAAwAAAAEAAQAAAT0AAwAAAAEAAgAA
-AVIAAwAAAAEAAQAAAVMAAwAAAAQAAATCh3MABwAAC2wAAATKAAAAAAAIAAgACAAIAAEAAQABAAEAAAts
-YXBwbAIQAABtbnRyUkdCIFhZWiAH3QAJAAYAEAAfAChhY3NwQVBQTAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAA9tYAAQAAAADTLWFwcGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAABFkZXNjAAABUAAAAHBkc2NtAAABwAAAAEZjcHJ0AAACCAAAACR3dHB0AAACLAAAABRyWFla
-AAACQAAAABRnWFlaAAACVAAAABRiWFlaAAACaAAAABRyVFJDAAACfAAACAxhYXJnAAAKiAAAACB2Y2d0
-AAAKqAAAADBuZGluAAAK2AAAAD5jaGFkAAALGAAAACxtbW9kAAALRAAAAChiVFJDAAACfAAACAxnVFJD
-AAACfAAACAxhYWJnAAAKiAAAACBhYWdnAAAKiAAAACBkZXNjAAAAAAAAABZlbGVjdHIxOWIzIENhbGli
-cmF0ZWQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbWx1YwAAAAAAAAABAAAADGVuVVMAAAAqAAAAHABlAGwAZQBj
-AHQAcgAxADkAYgAzACAAQwBhAGwAaQBiAHIAYQB0AGUAZAAAdGV4dAAAAABDb3B5cmlnaHQgQXBwbGUs
-IEluYy4sIDIwMTMAWFlaIAAAAAAAAPQ2AAEAAAABahtYWVogAAAAAAAAcwAAADzHAAADIVhZWiAAAAAA
-AABbQgAAq/cAABb2WFlaIAAAAAAAACiUAAAXQgAAuRZjdXJ2AAAAAAAABAAAAAAFAAoADwAUABkAHgAj
-ACgALQAyADYAOwBAAEUASgBPAFQAWQBeAGMAaABtAHIAdwB8AIEAhgCLAJAAlQCaAJ8AowCoAK0AsgC3
-ALwAwQDGAMsA0ADVANsA4ADlAOsA8AD2APsBAQEHAQ0BEwEZAR8BJQErATIBOAE+AUUBTAFSAVkBYAFn
-AW4BdQF8AYMBiwGSAZoBoQGpAbEBuQHBAckB0QHZAeEB6QHyAfoCAwIMAhQCHQImAi8COAJBAksCVAJd
-AmcCcQJ6AoQCjgKYAqICrAK2AsECywLVAuAC6wL1AwADCwMWAyEDLQM4A0MDTwNaA2YDcgN+A4oDlgOi
-A64DugPHA9MD4APsA/kEBgQTBCAELQQ7BEgEVQRjBHEEfgSMBJoEqAS2BMQE0wThBPAE/gUNBRwFKwU6
-BUkFWAVnBXcFhgWWBaYFtQXFBdUF5QX2BgYGFgYnBjcGSAZZBmoGewaMBp0GrwbABtEG4wb1BwcHGQcr
-Bz0HTwdhB3QHhgeZB6wHvwfSB+UH+AgLCB8IMghGCFoIbgiCCJYIqgi+CNII5wj7CRAJJQk6CU8JZAl5
-CY8JpAm6Cc8J5Qn7ChEKJwo9ClQKagqBCpgKrgrFCtwK8wsLCyILOQtRC2kLgAuYC7ALyAvhC/kMEgwq
-DEMMXAx1DI4MpwzADNkM8w0NDSYNQA1aDXQNjg2pDcMN3g34DhMOLg5JDmQOfw6bDrYO0g7uDwkPJQ9B
-D14Peg+WD7MPzw/sEAkQJhBDEGEQfhCbELkQ1xD1ERMRMRFPEW0RjBGqEckR6BIHEiYSRRJkEoQSoxLD
-EuMTAxMjE0MTYxODE6QTxRPlFAYUJxRJFGoUixStFM4U8BUSFTQVVhV4FZsVvRXgFgMWJhZJFmwWjxay
-FtYW+hcdF0EXZReJF64X0hf3GBsYQBhlGIoYrxjVGPoZIBlFGWsZkRm3Gd0aBBoqGlEadxqeGsUa7BsU
-GzsbYxuKG7Ib2hwCHCocUhx7HKMczBz1HR4dRx1wHZkdwx3sHhYeQB5qHpQevh7pHxMfPh9pH5Qfvx/q
-IBUgQSBsIJggxCDwIRwhSCF1IaEhziH7IiciVSKCIq8i3SMKIzgjZiOUI8Ij8CQfJE0kfCSrJNolCSU4
-JWgllyXHJfcmJyZXJocmtyboJxgnSSd6J6sn3CgNKD8ocSiiKNQpBik4KWspnSnQKgIqNSpoKpsqzysC
-KzYraSudK9EsBSw5LG4soizXLQwtQS12Last4S4WLkwugi63Lu4vJC9aL5Evxy/+MDUwbDCkMNsxEjFK
-MYIxujHyMioyYzKbMtQzDTNGM38zuDPxNCs0ZTSeNNg1EzVNNYc1wjX9Njc2cjauNuk3JDdgN5w31zgU
-OFA4jDjIOQU5Qjl/Obw5+To2OnQ6sjrvOy07azuqO+g8JzxlPKQ84z0iPWE9oT3gPiA+YD6gPuA/IT9h
-P6I/4kAjQGRApkDnQSlBakGsQe5CMEJyQrVC90M6Q31DwEQDREdEikTORRJFVUWaRd5GIkZnRqtG8Ec1
-R3tHwEgFSEtIkUjXSR1JY0mpSfBKN0p9SsRLDEtTS5pL4kwqTHJMuk0CTUpNk03cTiVObk63TwBPSU+T
-T91QJ1BxULtRBlFQUZtR5lIxUnxSx1MTU19TqlP2VEJUj1TbVShVdVXCVg9WXFapVvdXRFeSV+BYL1h9
-WMtZGllpWbhaB1pWWqZa9VtFW5Vb5Vw1XIZc1l0nXXhdyV4aXmxevV8PX2Ffs2AFYFdgqmD8YU9homH1
-YklinGLwY0Njl2PrZEBklGTpZT1lkmXnZj1mkmboZz1nk2fpaD9olmjsaUNpmmnxakhqn2r3a09rp2v/
-bFdsr20IbWBtuW4SbmtuxG8eb3hv0XArcIZw4HE6cZVx8HJLcqZzAXNdc7h0FHRwdMx1KHWFdeF2Pnab
-dvh3VnezeBF4bnjMeSp5iXnnekZ6pXsEe2N7wnwhfIF84X1BfaF+AX5ifsJ/I3+Ef+WAR4CogQqBa4HN
-gjCCkoL0g1eDuoQdhICE44VHhauGDoZyhteHO4efiASIaYjOiTOJmYn+imSKyoswi5aL/IxjjMqNMY2Y
-jf+OZo7OjzaPnpAGkG6Q1pE/kaiSEZJ6kuOTTZO2lCCUipT0lV+VyZY0lp+XCpd1l+CYTJi4mSSZkJn8
-mmia1ZtCm6+cHJyJnPedZJ3SnkCerp8dn4uf+qBpoNihR6G2oiailqMGo3aj5qRWpMelOKWpphqmi6b9
-p26n4KhSqMSpN6mpqhyqj6sCq3Wr6axcrNCtRK24ri2uoa8Wr4uwALB1sOqxYLHWskuywrM4s660JbSc
-tRO1irYBtnm28Ldot+C4WbjRuUq5wro7urW7LrunvCG8m70VvY++Cr6Evv+/er/1wHDA7MFnwePCX8Lb
-w1jD1MRRxM7FS8XIxkbGw8dBx7/IPci8yTrJuco4yrfLNsu2zDXMtc01zbXONs62zzfPuNA50LrRPNG+
-0j/SwdNE08bUSdTL1U7V0dZV1tjXXNfg2GTY6Nls2fHadtr724DcBdyK3RDdlt4c3qLfKd+v4DbgveFE
-4cziU+Lb42Pj6+Rz5PzlhOYN5pbnH+ep6DLovOlG6dDqW+rl63Dr++yG7RHtnO4o7rTvQO/M8Fjw5fFy
-8f/yjPMZ86f0NPTC9VD13vZt9vv3ivgZ+Kj5OPnH+lf65/t3/Af8mP0p/br+S/7c/23//3BhcmEAAAAA
-AAMAAAACZmYAAPKnAAANWQAAE9AAAAoOdmNndAAAAAAAAAABAAD88AAAAAAAAQAAAAD88AAAAAAAAQAA
-AAD88AAAAAAAAQAAbmRpbgAAAAAAAAA2AACgQAAAVsAAAEeAAACZgAAAJkAAABKAAABIgAAATAAAAjoF
-AAI6BQACOgUAAAAAAAAAAHNmMzIAAAAAAAEY/QAACt///+lTAAAOKQAA/Xf///g////74gAABqwAAJNb
-bW1vZAAAAAAAADAjAAAZswAAKOi3+RIAAAAAAAAAAAAAAAAAAAAAAF8QGU5TQ2FsaWJyYXRlZFJHQkNv
-bG9yU3BhY2XSLS4vMFokY2xhc3NuYW1lWCRjbGFzc2VzXxAQTlNDYWNoZWRJbWFnZVJlcKMxMjNfEBBO
-U0NhY2hlZEltYWdlUmVwWk5TSW1hZ2VSZXBYTlNPYmplY3TSLS41NldOU0FycmF5ojUz0i0uODleTlNN
-dXRhYmxlQXJyYXmjODUz0zs8Cj0+P1dOU1doaXRlXE5TQ29sb3JTcGFjZUQwIDAAEAOADdItLkFCV05T
-Q29sb3KiQTPSLS5ERVdOU0ltYWdlokQzXxAPTlNLZXllZEFyY2hpdmVy0UhJVHJvb3SAAQAIABEAGgAj
-AC0AMgA3AEkATwBaAGEAaAB1AHwAhACGAIgAjQCPAJEAmgCfAKoArACuALAAtQC4ALoAvAC+AMAAzQDg
-APoBEQEkATwBPgFAAUIBRAFGEYARnBGhEawRtRHIEcwR3xHqEfMR+BIAEgMSCBIXEhsSIhIqEjcSPBI+
-EkASRRJNElASVRJdEmASchJ1EnoAAAAAAAACAQAAAAAAAABKAAAAAAAAAAAAAAAAAAASfA
+aGVXaW5kb3dJc1BsYW5hchAIgAiACYAHEBhPERAuTU0AKgAAA/iAACBQOCQWDQeEQmBAaBgmBvGFRGJR
+OFB8LgcqCYGgYertuPM3xSRQoFwMIQMGwMJAcHhIRoYujo7g11tcNJZwBZiNBksc+QNpQQBUMMgQCAUQ
+AsHg4RBenB8KBQLhwHg8GhgMBwPBsRiIPhUMhMPBIMBsKg16vh7AIaPldgAAuJtgBkh4zAAumAwG58vR
+3JOCCMSCtIHI7nQ2j0cjcBA0HA4AA4GSkGAwFAABgQBgB0ORygAJhYLAB7vl9ABzNtigAPvFPgB8tpxg
+BsiE9Xg4HxNN5sNAzwQDggFGJUKlTpYmkslgd4c24Q0FZcE9MAM5hsQAPV0ugABwbjqBOZTgALPxcAB9
+N15AByheQmZFKdhsdfLQiwN8wMZIVGJBcDsN42Aqe8CAAA0DwMA6GHadp4AAchkGQAB6HGcMJgGfgACA
+H0LH8eJqgAfhznYABzn8KgAEKXZzHIUZLkgHqBnAgYOjSN45F6RpDkKEp+x8ADgsuf5/n6ABmmcZIAGA
+YEkh2HQfAAARvlcAAaBkbzSHA7kMHuAB2nuGQAFEcQSn4QA8DmICBtWgQGCYKgsl0UpPk4HJznMcwAG8
+bRoQmeB5gADQHRAc50MgeB6NOKAhgCAAEHmaYAGUZJ/AAGwXHeAB5HUB4AF6fwvgALwwC8NIAH8fBMIG
+AIeh6I5XFYV5UCgfx+H2ABwmmYNHADPJ7HfSJ/gS+4C16AAYBidoAG4YkQGGaIKAALQgtmfJy2UZ4HDu
+AAsjcO5MHYcZu1MgYUhgGRMlkVxYDMCwKgk6pmqCAh4FMAAGAiHIAAUDQeAABZ9F08gFGxXBsAwABxHY
+hgZAeWSBHbQBvAsNoAC+QZPGAahkF+IyCAsDAOj8WBYlkQIchsGAAGeaBnAAb5kk4AAYiIOrSHo7gSg7
+Pp7G6bQAHYAgrrgBAJgABJnjhfZ/xIdIERQPJaG8cRXFATE1IGBetDCUpUlgTwnCUIkjGWZYAHgd9MhC
+E4WswehgAADwOnXB5jm69AHhoAACHzZQIHeXtTnMdQAGkc+EEqcIKn6VhSE7saDCKTROlKXIyjELQAns
+ex8PQfp/2Wa2XBaCkJAEAj1n6eZ6gAfp6xIf6/dadx7VOd1AF2Yx3AALhSnGQR9n6fNVIMGg0DaOhiBs
+GgZgOa5sm2d3oGyfI2iqGIMh+HbN1RW5/84AB9nWiB2nTQBxnIdB8m2bxvHaZZonSa5OmMdYx1vXCDgn
+rQFicer/0HECHAAoAQAAdCXEIGAPimxyDwGyNYcQ6RwDrHkOUbw5R3DaHMOsfY2h4pDHM6AADdCBDkIG
+oAgUIiRkFNGQID5A0SEChIaQgaRYVkGICAAADwEAAAMAAAABABEAAAEBAAMAAAABABEAAAECAAMAAAAE
+AAAEsgEDAAMAAAABAAUAAAEGAAMAAAABAAIAAAERAAQAAAABAAAACAESAAMAAAABAAEAAAEVAAMAAAAB
+AAQAAAEWAAMAAAABABEAAAEXAAQAAAABAAAD7wEcAAMAAAABAAEAAAE9AAMAAAABAAIAAAFSAAMAAAAB
+AAEAAAFTAAMAAAAEAAAEuodzAAcAAAtsAAAEwgAAAAAACAAIAAgACAABAAEAAQABAAALbGFwcGwCEAAA
+bW50clJHQiBYWVogB90ACQAGABAAHwAoYWNzcEFQUEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPbW
+AAEAAAAA0y1hcHBsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
+ZGVzYwAAAVAAAABwZHNjbQAAAcAAAABGY3BydAAAAggAAAAkd3RwdAAAAiwAAAAUclhZWgAAAkAAAAAU
+Z1hZWgAAAlQAAAAUYlhZWgAAAmgAAAAUclRSQwAAAnwAAAgMYWFyZwAACogAAAAgdmNndAAACqgAAAAw
+bmRpbgAACtgAAAA+Y2hhZAAACxgAAAAsbW1vZAAAC0QAAAAoYlRSQwAAAnwAAAgMZ1RSQwAAAnwAAAgM
+YWFiZwAACogAAAAgYWFnZwAACogAAAAgZGVzYwAAAAAAAAAWZWxlY3RyMTliMyBDYWxpYnJhdGVkAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAG1sdWMAAAAAAAAAAQAAAAxlblVTAAAAKgAAABwAZQBsAGUAYwB0AHIAMQA5
+AGIAMwAgAEMAYQBsAGkAYgByAGEAdABlAGQAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAy
+MDEzAFhZWiAAAAAAAAD0NgABAAAAAWobWFlaIAAAAAAAAHMAAAA8xwAAAyFYWVogAAAAAAAAW0IAAKv3
+AAAW9lhZWiAAAAAAAAAolAAAF0IAALkWY3VydgAAAAAAAAQAAAAABQAKAA8AFAAZAB4AIwAoAC0AMgA2
+ADsAQABFAEoATwBUAFkAXgBjAGgAbQByAHcAfACBAIYAiwCQAJUAmgCfAKMAqACtALIAtwC8AMEAxgDL
+ANAA1QDbAOAA5QDrAPAA9gD7AQEBBwENARMBGQEfASUBKwEyATgBPgFFAUwBUgFZAWABZwFuAXUBfAGD
+AYsBkgGaAaEBqQGxAbkBwQHJAdEB2QHhAekB8gH6AgMCDAIUAh0CJgIvAjgCQQJLAlQCXQJnAnECegKE
+Ao4CmAKiAqwCtgLBAssC1QLgAusC9QMAAwsDFgMhAy0DOANDA08DWgNmA3IDfgOKA5YDogOuA7oDxwPT
+A+AD7AP5BAYEEwQgBC0EOwRIBFUEYwRxBH4EjASaBKgEtgTEBNME4QTwBP4FDQUcBSsFOgVJBVgFZwV3
+BYYFlgWmBbUFxQXVBeUF9gYGBhYGJwY3BkgGWQZqBnsGjAadBq8GwAbRBuMG9QcHBxkHKwc9B08HYQd0
+B4YHmQesB78H0gflB/gICwgfCDIIRghaCG4IggiWCKoIvgjSCOcI+wkQCSUJOglPCWQJeQmPCaQJugnP
+CeUJ+woRCicKPQpUCmoKgQqYCq4KxQrcCvMLCwsiCzkLUQtpC4ALmAuwC8gL4Qv5DBIMKgxDDFwMdQyO
+DKcMwAzZDPMNDQ0mDUANWg10DY4NqQ3DDd4N+A4TDi4OSQ5kDn8Omw62DtIO7g8JDyUPQQ9eD3oPlg+z
+D88P7BAJECYQQxBhEH4QmxC5ENcQ9RETETERTxFtEYwRqhHJEegSBxImEkUSZBKEEqMSwxLjEwMTIxND
+E2MTgxOkE8UT5RQGFCcUSRRqFIsUrRTOFPAVEhU0FVYVeBWbFb0V4BYDFiYWSRZsFo8WshbWFvoXHRdB
+F2UXiReuF9IX9xgbGEAYZRiKGK8Y1Rj6GSAZRRlrGZEZtxndGgQaKhpRGncanhrFGuwbFBs7G2Mbihuy
+G9ocAhwqHFIcexyjHMwc9R0eHUcdcB2ZHcMd7B4WHkAeah6UHr4e6R8THz4faR+UH78f6iAVIEEgbCCY
+IMQg8CEcIUghdSGhIc4h+yInIlUigiKvIt0jCiM4I2YjlCPCI/AkHyRNJHwkqyTaJQklOCVoJZclxyX3
+JicmVyaHJrcm6CcYJ0kneierJ9woDSg/KHEooijUKQYpOClrKZ0p0CoCKjUqaCqbKs8rAis2K2krnSvR
+LAUsOSxuLKIs1y0MLUEtdi2rLeEuFi5MLoIuty7uLyQvWi+RL8cv/jA1MGwwpDDbMRIxSjGCMbox8jIq
+MmMymzLUMw0zRjN/M7gz8TQrNGU0njTYNRM1TTWHNcI1/TY3NnI2rjbpNyQ3YDecN9c4FDhQOIw4yDkF
+OUI5fzm8Ofk6Njp0OrI67zstO2s7qjvoPCc8ZTykPOM9Ij1hPaE94D4gPmA+oD7gPyE/YT+iP+JAI0Bk
+QKZA50EpQWpBrEHuQjBCckK1QvdDOkN9Q8BEA0RHRIpEzkUSRVVFmkXeRiJGZ0arRvBHNUd7R8BIBUhL
+SJFI10kdSWNJqUnwSjdKfUrESwxLU0uaS+JMKkxyTLpNAk1KTZNN3E4lTm5Ot08AT0lPk0/dUCdQcVC7
+UQZRUFGbUeZSMVJ8UsdTE1NfU6pT9lRCVI9U21UoVXVVwlYPVlxWqVb3V0RXklfgWC9YfVjLWRpZaVm4
+WgdaVlqmWvVbRVuVW+VcNVyGXNZdJ114XcleGl5sXr1fD19hX7NgBWBXYKpg/GFPYaJh9WJJYpxi8GND
+Y5dj62RAZJRk6WU9ZZJl52Y9ZpJm6Gc9Z5Nn6Wg/aJZo7GlDaZpp8WpIap9q92tPa6dr/2xXbK9tCG1g
+bbluEm5rbsRvHm94b9FwK3CGcOBxOnGVcfByS3KmcwFzXXO4dBR0cHTMdSh1hXXhdj52m3b4d1Z3s3gR
+eG54zHkqeYl553pGeqV7BHtje8J8IXyBfOF9QX2hfgF+Yn7CfyN/hH/lgEeAqIEKgWuBzYIwgpKC9INX
+g7qEHYSAhOOFR4Wrhg6GcobXhzuHn4gEiGmIzokziZmJ/opkisqLMIuWi/yMY4zKjTGNmI3/jmaOzo82
+j56QBpBukNaRP5GokhGSepLjk02TtpQglIqU9JVflcmWNJaflwqXdZfgmEyYuJkkmZCZ/JpomtWbQpuv
+nByciZz3nWSd0p5Anq6fHZ+Ln/qgaaDYoUehtqImopajBqN2o+akVqTHpTilqaYapoum/adup+CoUqjE
+qTepqaocqo+rAqt1q+msXKzQrUStuK4trqGvFq+LsACwdbDqsWCx1rJLssKzOLOutCW0nLUTtYq2AbZ5
+tvC3aLfguFm40blKucK6O7q1uy67p7whvJu9Fb2Pvgq+hL7/v3q/9cBwwOzBZ8Hjwl/C28NYw9TEUcTO
+xUvFyMZGxsPHQce/yD3IvMk6ybnKOMq3yzbLtsw1zLXNNc21zjbOts83z7jQOdC60TzRvtI/0sHTRNPG
+1EnUy9VO1dHWVdbY11zX4Nhk2OjZbNnx2nba+9uA3AXcit0Q3ZbeHN6i3ynfr+A24L3hROHM4lPi2+Nj
+4+vkc+T85YTmDeaW5x/nqegy6LzpRunQ6lvq5etw6/vshu0R7ZzuKO6070DvzPBY8OXxcvH/8ozzGfOn
+9DT0wvVQ9d72bfb794r4Gfio+Tj5x/pX+uf7d/wH/Jj9Kf26/kv+3P9t//9wYXJhAAAAAAADAAAAAmZm
+AADypwAADVkAABPQAAAKDnZjZ3QAAAAAAAAAAQAA/PAAAAAAAAEAAAAA/PAAAAAAAAEAAAAA/PAAAAAA
+AAEAAG5kaW4AAAAAAAAANgAAoEAAAFbAAABHgAAAmYAAACZAAAASgAAASIAAAEwAAAI6BQACOgUAAjoF
+AAAAAAAAAABzZjMyAAAAAAABGP0AAArf///pUwAADikAAP13///4P///++IAAAasAACTW21tb2QAAAAA
+AAAwIwAAGbMAACjot/kSAAAAAAAAAAAAAAAAAAAAAABfEBlOU0NhbGlicmF0ZWRSR0JDb2xvclNwYWNl
+0i0uLzBaJGNsYXNzbmFtZVgkY2xhc3Nlc18QEE5TQ2FjaGVkSW1hZ2VSZXCjMTIzXxAQTlNDYWNoZWRJ
+bWFnZVJlcFpOU0ltYWdlUmVwWE5TT2JqZWN00i0uNTZXTlNBcnJheaI1M9ItLjg5Xk5TTXV0YWJsZUFy
+cmF5ozg1M9M7PAo9Pj9XTlNXaGl0ZVxOU0NvbG9yU3BhY2VEMCAwABADgA3SLS5BQldOU0NvbG9yokEz
+0i0uREVXTlNJbWFnZaJEM18QD05TS2V5ZWRBcmNoaXZlctFISVRyb290gAEACAARABoAIwAtADIANwBJ
+AE8AWgBhAGgAdQB8AIQAhgCIAI0AjwCRAJoAnwCqAKwArgCwALUAuAC6ALwAvgDAAM0A4AD6AREBJAE8
+AT4BQAFCAUQBRhF4EZQRmRGkEa0RwBHEEdcR4hHrEfAR+BH7EgASDxITEhoSIhIvEjQSNhI4Ej0SRRJI
+Ek0SVRJYEmoSbRJyAAAAAAAAAgEAAAAAAAAASgAAAAAAAAAAAAAAAAAAEnQ
 </mutableData>
         </image>
-        <image name="files_off" width="16" height="16"/>
-        <image name="info_off" width="18" height="18"/>
-        <image name="next" width="16" height="16"/>
-        <image name="play" width="16" height="16"/>
-        <image name="previous" width="16" height="16"/>
-        <image name="randomize" width="16" height="16"/>
-        <image name="repeat_on" width="128" height="128"/>
-        <image name="shuffle_on" width="16" height="16"/>
-        <image name="volume_high" width="13" height="13"/>
+        <image name="infoTemplate" width="16" height="16"/>
+        <image name="miniModeOffTemplate" width="16" height="16"/>
+        <image name="miniModeOnTemplate" width="16" height="16"/>
+        <image name="navigatorTemplate" width="16" height="16"/>
+        <image name="nextTemplate" width="20" height="19"/>
+        <image name="playTemplate" width="16" height="16"/>
+        <image name="previousTemplate" width="20" height="19"/>
+        <image name="randomizeTemplate" width="17" height="16"/>
+        <image name="repeatModeOffTemplate" width="20" height="19"/>
+        <image name="shuffleOffTemplate" width="20" height="19"/>
+        <image name="volume3Template" width="17" height="16"/>
     </resources>
 </document>

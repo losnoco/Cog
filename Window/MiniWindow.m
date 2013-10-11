@@ -24,21 +24,17 @@
 	return self;
 }
 
-- (void)awakeFromNib
-{
-	if ([self hiddenDefaultsKey]) {
-		// Hide the mini window by default.
-		[[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:[self hiddenDefaultsKey]]];
-	}
-	
-	[super awakeFromNib];
-}
-
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)proposedFrameSize {
 	// Do not allow height to change
 	proposedFrameSize.height = [self frame].size.height;
 	
 	return proposedFrameSize;
 }
+
+- (void)toggleToolbarShown:(id)sender {
+    // Mini window IS the toolbar, no point in hiding it.
+    // Do nothing!
+}
+
 
 @end

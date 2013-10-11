@@ -25,3 +25,6 @@
 "InvalidURLShort" = "Invalid URL";
 "InvalidURLLong" = "The URL is not valid.";
 
+"SwitchToMiniPlayer" = "Switch to Mini Player";
+"SwitchFromMiniPlayer" = "Switch from Mini Player";
+

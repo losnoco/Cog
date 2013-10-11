@@ -7,9 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "DualWindow.h"
 
-@interface MiniWindow : DualWindow {
+@interface MiniWindow : NSWindow {
 
 }
 

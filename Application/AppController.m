@@ -15,6 +15,8 @@
 #import <CogAudio/Status.h>
 
 #import "Logging.h"
+#import "MiniModeMenuTitleTransformer.h"
+#import "DualWindow.h"
 
 @implementation AppController
 
@@ -29,6 +31,10 @@
         [[[FontSizetoLineHeightTransformer alloc] init]autorelease];
     [NSValueTransformer setValueTransformer:fontSizetoLineHeightTransformer
                                     forName:@"FontSizetoLineHeightTransformer"];
+
+    NSValueTransformer *miniModeMenuTitleTransformer = [[[MiniModeMenuTitleTransformer alloc] init] autorelease];
+    [NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
+                                    forName:@"MiniModeMenuTitleTransformer"];
 }
 
 
@@ -278,6 +284,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
     }
     
+
+    // Restore mini mode
+    [self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
+
     // We need file tree view to restore its state here
     // so attempt to access file tree view controller's root view
     // to force it to read nib and create file tree view for us
@@ -649,5 +659,26 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[self changeFontSize:-1];
 	
 } 
+
+- (IBAction)toggleMiniMode:(id)sender
+{
+    [self setMiniMode:(!miniMode)];
+}
+
+- (BOOL)miniMode
+{
+    return miniMode;
+}
+
+- (void)setMiniMode:(BOOL)newMiniMode
+{
+    miniMode = newMiniMode;
+    [[NSUserDefaults standardUserDefaults] setBool:miniMode forKey:@"miniMode"];
+    
+    NSWindow *windowToShow = miniMode ? miniWindow : mainWindow;
+    NSWindow *windowToHide = miniMode ? mainWindow : miniWindow;
+    [windowToHide close];
+    [windowToShow makeKeyAndOrderFront:self];
+}
 
 @end
