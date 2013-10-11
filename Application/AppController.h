@@ -2,7 +2,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "NDHotKeyEvent.h"
+#import <NDHotKey/NDHotKeyEvent.h>
 #import "NowPlayingBarController.h"
 
 @class FileTreeViewController;

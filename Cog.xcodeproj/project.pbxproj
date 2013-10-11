@@ -45,8 +45,6 @@
 		1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1778D3C90F645BF00037E7A0 /* MissingAlbumArtTransformer.m */; };
 		177EBFA20B8BC2A70000BC8C /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */; };
 		177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF870B8BC2A70000BC8C /* ImageTextCell.m */; };
-		177EBFAB0B8BC2A70000BC8C /* NDHotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF8D0B8BC2A70000BC8C /* NDHotKeyControl.m */; };
-		177EBFAD0B8BC2A70000BC8C /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF8F0B8BC2A70000BC8C /* NDHotKeyEvent.m */; };
 		177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */; };
 		177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */; };
 		177EC04B0B8BC2FF0000BC8C /* next.png in Resources */ = {isa = PBXBuildFile; fileRef = 177EC0350B8BC2FF0000BC8C /* next.png */; };
@@ -177,6 +175,8 @@
 		83849172180843B200E7332D /* pauseDockBadgeColorful.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384916F180843B200E7332D /* pauseDockBadgeColorful.png */; };
 		83849173180843B200E7332D /* playDockBadgeColorful.png in Resources */ = {isa = PBXBuildFile; fileRef = 83849170180843B200E7332D /* playDockBadgeColorful.png */; };
 		83849174180843B200E7332D /* stopDockBadgeColorful.png in Resources */ = {isa = PBXBuildFile; fileRef = 83849171180843B200E7332D /* stopDockBadgeColorful.png */; };
+		838491871808591F00E7332D /* NDHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8384917E1808585D00E7332D /* NDHotKey.framework */; };
+		838491881808593200E7332D /* NDHotKey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8384917E1808585D00E7332D /* NDHotKey.framework */; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -447,6 +447,20 @@
 			remoteGlobalIDString = 8375B03B17FFEA400092A79F;
 			remoteInfo = Opus;
 		};
+		8384917D1808585D00E7332D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 838491791808585C00E7332D /* NDHotKey.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 32F1615614E6BB3B00D6AB2F;
+			remoteInfo = NDHotKey;
+		};
+		838491851808591400E7332D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 838491791808585C00E7332D /* NDHotKey.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 32F1615514E6BB3B00D6AB2F;
+			remoteInfo = NDHotKey;
+		};
 		83BCB8D817FC96F800760340 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */;
@@ -542,6 +556,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				838491881808593200E7332D /* NDHotKey.framework in CopyFiles */,
 				17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */,
 				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 			);
@@ -611,10 +626,6 @@
 		177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppleRemote.m; sourceTree = "<group>"; };
 		177EBF860B8BC2A70000BC8C /* ImageTextCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageTextCell.h; sourceTree = "<group>"; };
 		177EBF870B8BC2A70000BC8C /* ImageTextCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ImageTextCell.m; sourceTree = "<group>"; };
-		177EBF8C0B8BC2A70000BC8C /* NDHotKeyControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NDHotKeyControl.h; sourceTree = "<group>"; };
-		177EBF8D0B8BC2A70000BC8C /* NDHotKeyControl.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyControl.m; sourceTree = "<group>"; };
-		177EBF8E0B8BC2A70000BC8C /* NDHotKeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NDHotKeyEvent.h; sourceTree = "<group>"; };
-		177EBF8F0B8BC2A70000BC8C /* NDHotKeyEvent.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyEvent.m; sourceTree = "<group>"; };
 		177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TrackingCell.h; sourceTree = "<group>"; };
 		177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TrackingCell.m; sourceTree = "<group>"; };
 		177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TrackingSlider.h; sourceTree = "<group>"; };
@@ -797,6 +808,7 @@
 		8384916F180843B200E7332D /* pauseDockBadgeColorful.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pauseDockBadgeColorful.png; path = Images/pauseDockBadgeColorful.png; sourceTree = "<group>"; };
 		83849170180843B200E7332D /* playDockBadgeColorful.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playDockBadgeColorful.png; path = Images/playDockBadgeColorful.png; sourceTree = "<group>"; };
 		83849171180843B200E7332D /* stopDockBadgeColorful.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopDockBadgeColorful.png; path = Images/stopDockBadgeColorful.png; sourceTree = "<group>"; };
+		838491791808585C00E7332D /* NDHotKey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NDHotKey.xcodeproj; path = Frameworks/NDHotKey/NDHotKey.xcodeproj; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -836,6 +848,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				838491871808591F00E7332D /* NDHotKey.framework in Frameworks */,
 				8355D6B8180613FB00D05687 /* Security.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */,
@@ -884,6 +897,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				838491791808585C00E7332D /* NDHotKey.xcodeproj */,
 				17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */,
 				170680620B950158006BA573 /* Growl.framework */,
 				8E6889230AAA403C00AD3950 /* Carbon.framework */,
@@ -951,7 +965,6 @@
 				177EBF7D0B8BC2A70000BC8C /* AppleRemote */,
 				177EBF850B8BC2A70000BC8C /* ImageTextCell */,
 				179790DD0C087AB7001D6996 /* OpenURLPanel */,
-				177EBF8B0B8BC2A70000BC8C /* NDHotKeys */,
 			);
 			path = ThirdParty;
 			sourceTree = "<group>";
@@ -972,17 +985,6 @@
 				177EBF870B8BC2A70000BC8C /* ImageTextCell.m */,
 			);
 			path = ImageTextCell;
-			sourceTree = "<group>";
-		};
-		177EBF8B0B8BC2A70000BC8C /* NDHotKeys */ = {
-			isa = PBXGroup;
-			children = (
-				177EBF8C0B8BC2A70000BC8C /* NDHotKeyControl.h */,
-				177EBF8D0B8BC2A70000BC8C /* NDHotKeyControl.m */,
-				177EBF8E0B8BC2A70000BC8C /* NDHotKeyEvent.h */,
-				177EBF8F0B8BC2A70000BC8C /* NDHotKeyEvent.m */,
-			);
-			path = NDHotKeys;
 			sourceTree = "<group>";
 		};
 		177EC0110B8BC2CF0000BC8C /* Utils */ = {
@@ -1445,6 +1447,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8384917A1808585C00E7332D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8384917E1808585D00E7332D /* NDHotKey.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -1579,6 +1589,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				838491861808591400E7332D /* PBXTargetDependency */,
 				8375B36217FFEF010092A79F /* PBXTargetDependency */,
 				8375B36417FFEF010092A79F /* PBXTargetDependency */,
 				83BCB8DD17FC96FC00760340 /* PBXTargetDependency */,
@@ -1691,6 +1702,10 @@
 				{
 					ProductGroup = 17C8089F0C3BD1AB005707C4 /* Products */;
 					ProjectRef = 17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */;
+				},
+				{
+					ProductGroup = 8384917A1808585C00E7332D /* Products */;
+					ProjectRef = 838491791808585C00E7332D /* NDHotKey.xcodeproj */;
 				},
 				{
 					ProductGroup = 8375B05217FFEA400092A79F /* Products */;
@@ -1851,6 +1866,13 @@
 			remoteRef = 8375B05617FFEA410092A79F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		8384917E1808585D00E7332D /* NDHotKey.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = NDHotKey.framework;
+			remoteRef = 8384917D1808585D00E7332D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8E8D40870CBB036600135C1B /* M3u.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -1997,8 +2019,6 @@
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
 				177EBFA20B8BC2A70000BC8C /* AppleRemote.m in Sources */,
 				177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */,
-				177EBFAB0B8BC2A70000BC8C /* NDHotKeyControl.m in Sources */,
-				177EBFAD0B8BC2A70000BC8C /* NDHotKeyEvent.m in Sources */,
 				177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */,
 				177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */,
 				1770429C0B8BC53600B86321 /* AppController.m in Sources */,
@@ -2157,6 +2177,11 @@
 			isa = PBXTargetDependency;
 			name = Opus;
 			targetProxy = 8375B36317FFEF010092A79F /* PBXContainerItemProxy */;
+		};
+		838491861808591400E7332D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NDHotKey;
+			targetProxy = 838491851808591400E7332D /* PBXContainerItemProxy */;
 		};
 		83BCB8D917FC96F800760340 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

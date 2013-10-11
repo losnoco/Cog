@@ -32,39 +32,6 @@
             <rect key="frame" x="0.0" y="0.0" width="432" height="131"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <button verticalHuggingPriority="750" id="30">
-                    <rect key="frame" x="175" y="34" width="64" height="32"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="push" title="Edit" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="204">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="grabNextHotKey:" target="6" id="33"/>
-                    </connections>
-                </button>
-                <button verticalHuggingPriority="750" id="KcI-9g-270">
-                    <rect key="frame" x="175" y="9" width="64" height="32"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="push" title="Edit" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="6zz-ME-x1V">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="grabSpamHotKey:" target="6" id="wyh-q1-p3g"/>
-                    </connections>
-                </button>
-                <button verticalHuggingPriority="750" id="29">
-                    <rect key="frame" x="175" y="59" width="64" height="32"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="push" title="Edit" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="203">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="grabPrevHotKey:" target="6" id="32"/>
-                    </connections>
-                </button>
                 <textField verticalHuggingPriority="750" id="28" customClass="HotKeyControl">
                     <rect key="frame" x="91" y="42" width="82" height="19"/>
                     <autoresizingMask key="autoresizingMask"/>
@@ -128,18 +95,6 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button verticalHuggingPriority="750" id="17">
-                    <rect key="frame" x="175" y="84" width="64" height="32"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="push" title="Edit" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="197">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="grabPlayHotKey:" target="6" id="31"/>
-                        <outlet property="nextKeyView" destination="16" id="23"/>
-                    </connections>
-                </button>
                 <textField verticalHuggingPriority="750" id="16" customClass="HotKeyControl">
                     <rect key="frame" x="91" y="92" width="82" height="19"/>
                     <autoresizingMask key="autoresizingMask"/>
@@ -150,7 +105,6 @@
                     </textFieldCell>
                     <connections>
                         <action selector="hotKeyChanged:" target="6" id="20"/>
-                        <outlet property="nextKeyView" destination="17" id="22"/>
                     </connections>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="eid-M4-6Cs">

@@ -4,7 +4,7 @@
 #import "PlaylistController.h"
 #import "PlaylistView.h"
 #import "PlaylistEntry.h"
-#import "NDHotKeyEvent.h"
+#import <NDHotKey/NDHotKeyEvent.h>
 #import "AppleRemote.h"
 #import "PlaylistLoader.h"
 #import "OpenURLPanel.h"
@@ -451,15 +451,15 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:35] forKey:@"hotKeyPlayKeyCode"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyPlayModifiers"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'P'] forKey:@"hotKeyPlayCharacter"];
 	
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:45] forKey:@"hotKeyNextKeyCode"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyNextModifiers"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'N'] forKey:@"hotKeyNextCharacter"];
 	
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:15] forKey:@"hotKeyPreviousKeyCode"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyPreviousModifiers"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:'R'] forKey:@"hotKeyPreviousCharacter"];
+    
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:8] forKey:@"hotKeySpamKeyCode"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeySpamModifiers"];
 
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteEnabled"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteOnlyOnActive"];
@@ -472,19 +472,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     
     [userDefaultsValuesDict setObject:@"albumGainWithPeak" forKey:@"volumeScaling"];
     
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPlayKeyCode"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPlayCharacter"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPlayModifiers"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyNextKeyCode"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyNextCharacter"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyNextModifiers"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPreviousKeyCode"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPreviousCharacter"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeyPreviousModifiers"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeySpamKeyCode"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeySpamCharacter"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:0] forKey:@"hotKeySpamModifiers"];
-	
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:kCogStatusStopped] forKey:@"lastPlaybackStatus"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];
@@ -543,7 +530,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]) {
 	playHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
-			  character: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayCharacter"] intValue]
 		  modifierFlags: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]
 		];
         [playHotKey setTarget:self selector:@selector(clickPlay)];
@@ -554,7 +540,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPreviousKeyCode"] intValue]) {
 	prevHotKey = [[NDHotKeyEvent alloc]
 		  initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
-				character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousCharacter"]
 			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousModifiers"]
 		];
         [prevHotKey setTarget:self selector:@selector(clickPrev)];
@@ -565,7 +550,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyNextKeyCode"] intValue]) {
 	nextHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextKeyCode"]
-				character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextCharacter"]
 			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextModifiers"]
 		];
         [nextHotKey setTarget:self selector:@selector(clickNext)];
@@ -576,7 +560,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeySpamKeyCode"] intValue]) {
         spamHotKey = [[NDHotKeyEvent alloc]
                       initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamKeyCode"]
-                      character: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamCharacter"]
                       modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamModifiers"]
                       ];
         [spamHotKey setTarget:self selector:@selector(clickSpam)];

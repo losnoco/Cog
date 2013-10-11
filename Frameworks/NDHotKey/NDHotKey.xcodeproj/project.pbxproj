@@ -1,0 +1,311 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		32F1615A14E6BB3B00D6AB2F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F1615914E6BB3B00D6AB2F /* Cocoa.framework */; };
+		32F1616414E6BB3B00D6AB2F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 32F1616214E6BB3B00D6AB2F /* InfoPlist.strings */; };
+		32F1617A14E6BBFC00D6AB2F /* NDHotKeyControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F1617414E6BBFC00D6AB2F /* NDHotKeyControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		32F1617B14E6BBFC00D6AB2F /* NDHotKeyControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 32F1617514E6BBFC00D6AB2F /* NDHotKeyControl.m */; };
+		32F1617C14E6BBFC00D6AB2F /* NDHotKeyEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F1617614E6BBFC00D6AB2F /* NDHotKeyEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		32F1617D14E6BBFC00D6AB2F /* NDHotKeyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 32F1617714E6BBFC00D6AB2F /* NDHotKeyEvent.m */; };
+		32F1617E14E6BBFC00D6AB2F /* NDKeyboardLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F1617814E6BBFC00D6AB2F /* NDKeyboardLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		32F1617F14E6BBFC00D6AB2F /* NDKeyboardLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 32F1617914E6BBFC00D6AB2F /* NDKeyboardLayout.m */; };
+		32F1618E14E6BE7300D6AB2F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F1618D14E6BE7300D6AB2F /* Carbon.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		32F1615614E6BB3B00D6AB2F /* NDHotKey.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NDHotKey.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		32F1615914E6BB3B00D6AB2F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		32F1615C14E6BB3B00D6AB2F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		32F1615D14E6BB3B00D6AB2F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		32F1615E14E6BB3B00D6AB2F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		32F1616114E6BB3B00D6AB2F /* NDHotKey-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NDHotKey-Info.plist"; sourceTree = "<group>"; };
+		32F1616314E6BB3B00D6AB2F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		32F1616514E6BB3B00D6AB2F /* NDHotKey-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NDHotKey-Prefix.pch"; sourceTree = "<group>"; };
+		32F1617414E6BBFC00D6AB2F /* NDHotKeyControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDHotKeyControl.h; sourceTree = "<group>"; };
+		32F1617514E6BBFC00D6AB2F /* NDHotKeyControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyControl.m; sourceTree = "<group>"; };
+		32F1617614E6BBFC00D6AB2F /* NDHotKeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDHotKeyEvent.h; sourceTree = "<group>"; };
+		32F1617714E6BBFC00D6AB2F /* NDHotKeyEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NDHotKeyEvent.m; sourceTree = "<group>"; };
+		32F1617814E6BBFC00D6AB2F /* NDKeyboardLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDKeyboardLayout.h; sourceTree = "<group>"; };
+		32F1617914E6BBFC00D6AB2F /* NDKeyboardLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NDKeyboardLayout.m; sourceTree = "<group>"; };
+		32F1618D14E6BE7300D6AB2F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		32F1615214E6BB3B00D6AB2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32F1618E14E6BE7300D6AB2F /* Carbon.framework in Frameworks */,
+				32F1615A14E6BB3B00D6AB2F /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		32F1614A14E6BB3B00D6AB2F = {
+			isa = PBXGroup;
+			children = (
+				32F1618D14E6BE7300D6AB2F /* Carbon.framework */,
+				32F1615F14E6BB3B00D6AB2F /* NDHotKey */,
+				32F1615814E6BB3B00D6AB2F /* Frameworks */,
+				32F1615714E6BB3B00D6AB2F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		32F1615714E6BB3B00D6AB2F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				32F1615614E6BB3B00D6AB2F /* NDHotKey.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		32F1615814E6BB3B00D6AB2F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				32F1615914E6BB3B00D6AB2F /* Cocoa.framework */,
+				32F1615B14E6BB3B00D6AB2F /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		32F1615B14E6BB3B00D6AB2F /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				32F1615C14E6BB3B00D6AB2F /* AppKit.framework */,
+				32F1615D14E6BB3B00D6AB2F /* CoreData.framework */,
+				32F1615E14E6BB3B00D6AB2F /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		32F1615F14E6BB3B00D6AB2F /* NDHotKey */ = {
+			isa = PBXGroup;
+			children = (
+				32F1617414E6BBFC00D6AB2F /* NDHotKeyControl.h */,
+				32F1617514E6BBFC00D6AB2F /* NDHotKeyControl.m */,
+				32F1617614E6BBFC00D6AB2F /* NDHotKeyEvent.h */,
+				32F1617714E6BBFC00D6AB2F /* NDHotKeyEvent.m */,
+				32F1617814E6BBFC00D6AB2F /* NDKeyboardLayout.h */,
+				32F1617914E6BBFC00D6AB2F /* NDKeyboardLayout.m */,
+				32F1616014E6BB3B00D6AB2F /* Supporting Files */,
+			);
+			path = NDHotKey;
+			sourceTree = "<group>";
+		};
+		32F1616014E6BB3B00D6AB2F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				32F1616114E6BB3B00D6AB2F /* NDHotKey-Info.plist */,
+				32F1616214E6BB3B00D6AB2F /* InfoPlist.strings */,
+				32F1616514E6BB3B00D6AB2F /* NDHotKey-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		32F1615314E6BB3B00D6AB2F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32F1617A14E6BBFC00D6AB2F /* NDHotKeyControl.h in Headers */,
+				32F1617C14E6BBFC00D6AB2F /* NDHotKeyEvent.h in Headers */,
+				32F1617E14E6BBFC00D6AB2F /* NDKeyboardLayout.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		32F1615514E6BB3B00D6AB2F /* NDHotKey */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 32F1616B14E6BB3B00D6AB2F /* Build configuration list for PBXNativeTarget "NDHotKey" */;
+			buildPhases = (
+				32F1615114E6BB3B00D6AB2F /* Sources */,
+				32F1615214E6BB3B00D6AB2F /* Frameworks */,
+				32F1615314E6BB3B00D6AB2F /* Headers */,
+				32F1615414E6BB3B00D6AB2F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NDHotKey;
+			productName = NDHotKey;
+			productReference = 32F1615614E6BB3B00D6AB2F /* NDHotKey.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		32F1614C14E6BB3B00D6AB2F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "dmitry.promsky@gmail.com";
+			};
+			buildConfigurationList = 32F1614F14E6BB3B00D6AB2F /* Build configuration list for PBXProject "NDHotKey" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 32F1614A14E6BB3B00D6AB2F;
+			productRefGroup = 32F1615714E6BB3B00D6AB2F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				32F1615514E6BB3B00D6AB2F /* NDHotKey */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		32F1615414E6BB3B00D6AB2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32F1616414E6BB3B00D6AB2F /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		32F1615114E6BB3B00D6AB2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32F1617B14E6BBFC00D6AB2F /* NDHotKeyControl.m in Sources */,
+				32F1617D14E6BBFC00D6AB2F /* NDHotKeyEvent.m in Sources */,
+				32F1617F14E6BBFC00D6AB2F /* NDKeyboardLayout.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		32F1616214E6BB3B00D6AB2F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				32F1616314E6BB3B00D6AB2F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		32F1616914E6BB3B00D6AB2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.7;
+				SYMROOT = ../../build;
+			};
+			name = Debug;
+		};
+		32F1616A14E6BB3B00D6AB2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx10.7;
+				SYMROOT = ../../build;
+			};
+			name = Release;
+		};
+		32F1616C14E6BB3B00D6AB2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NDHotKey/NDHotKey-Prefix.pch";
+				INFOPLIST_FILE = "NDHotKey/NDHotKey-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		32F1616D14E6BB3B00D6AB2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NDHotKey/NDHotKey-Prefix.pch";
+				INFOPLIST_FILE = "NDHotKey/NDHotKey-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		32F1614F14E6BB3B00D6AB2F /* Build configuration list for PBXProject "NDHotKey" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32F1616914E6BB3B00D6AB2F /* Debug */,
+				32F1616A14E6BB3B00D6AB2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		32F1616B14E6BB3B00D6AB2F /* Build configuration list for PBXNativeTarget "NDHotKey" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32F1616C14E6BB3B00D6AB2F /* Debug */,
+				32F1616D14E6BB3B00D6AB2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 32F1614C14E6BB3B00D6AB2F /* Project object */;
+}
