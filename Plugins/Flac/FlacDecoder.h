@@ -29,6 +29,8 @@
 	int channels;
 	float frequency;
 	long totalFrames;
+    
+    BOOL hasStreamInfo;
 }
 
 - (void)setSource:(id<CogSource>)s;

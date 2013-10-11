@@ -148,18 +148,26 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
+// This callback is only called for STREAMINFO blocks
 void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data)
 {
+    // Some flacs observed in the wild have multiple STREAMINFO metadata blocks,
+    // of which only first one has sane values, so only use values from the first STREAMINFO
+    // to determine stream format (this seems to be consistent with flac spec: http://flac.sourceforge.net/format.html)
 	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
 
-	flacDecoder->channels = metadata->data.stream_info.channels;
-	flacDecoder->frequency = metadata->data.stream_info.sample_rate;
-	flacDecoder->bitsPerSample = metadata->data.stream_info.bits_per_sample;
+    if (!flacDecoder->hasStreamInfo) {
+        flacDecoder->channels = metadata->data.stream_info.channels;
+        flacDecoder->frequency = metadata->data.stream_info.sample_rate;
+        flacDecoder->bitsPerSample = metadata->data.stream_info.bits_per_sample;
 	
-	flacDecoder->totalFrames = metadata->data.stream_info.total_samples;
+        flacDecoder->totalFrames = metadata->data.stream_info.total_samples;
 	
-	[flacDecoder willChangeValueForKey:@"properties"];
-	[flacDecoder didChangeValueForKey:@"properties"];
+        [flacDecoder willChangeValueForKey:@"properties"];
+        [flacDecoder didChangeValueForKey:@"properties"];
+        
+        flacDecoder->hasStreamInfo = YES;
+    }
 }
 
 void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data)
