@@ -23,6 +23,8 @@
 - (IBAction)addToPlaylist:(id)sender;
 - (IBAction)toggleWindow:(id)sender;
 
+- (IBAction)pathComponentClicked:(id)sender;
+
 - (void)performSearch;
 - (NSPredicate *)processSearchString;
 

@@ -283,6 +283,16 @@ static NSPredicate * musicOnlyPredicate = nil;
 	[self.query enableUpdates];
 }
 
+// If pop-up styled NSPathControl is set to /a/b/c path, then selecting either 'a' or 'b'
+// from its pop-up menu won't do anything by default (while we'd like it to select /a and
+// /a/b respectively). So here we set url of NSPathControl to be that of clicked cell.
+- (IBAction)pathComponentClicked:(id)sender
+{
+    NSPathComponentCell *pcc = [sender clickedPathComponentCell];
+    DLog(@"%@", pcc);
+    [sender setURL:[pcc URL]];
+}
+
 #pragma mark NSMetadataQuery delegate methods
 
 // replace the NSMetadataItem with a PlaylistEntry
