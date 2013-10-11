@@ -7,6 +7,7 @@
 //
 
 #import "ContainedNode.h"
+#import "CogAudio/AudioMetadataReader.h"
 
 
 @implementation ContainedNode
@@ -23,7 +24,25 @@
 	if ([u fragment])
 	{
 		[display release];
-		display = [[u fragment] retain];
+        NSDictionary *metadata = [AudioMetadataReader metadataForURL:u];
+        NSString *title = nil;
+        NSString *artist = nil;
+        if (metadata)
+        {
+            title = [metadata valueForKey:@"title"];
+            artist = [metadata valueForKey:@"artist"];
+        }
+        
+        if (title && [title length])
+        {
+            if (artist && [artist length]) { display = [[u fragment] stringByAppendingFormat:@": %@ - %@", artist, title];}
+            else { display = [[u fragment] stringByAppendingFormat:@": %@", title]; }
+            [display retain];
+        }
+        else
+        {
+            display = [[u fragment] retain];
+        }
 	}
 }
 
