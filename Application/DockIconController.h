@@ -14,6 +14,8 @@
 	NSImage *dockImage;
 	
 	IBOutlet PlaybackController *playbackController;
+    
+    NSInteger lastPlaybackStatus;
 }
 
 @end

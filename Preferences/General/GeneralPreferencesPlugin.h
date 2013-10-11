@@ -21,6 +21,8 @@
 	IBOutlet NSView *scrobblerView;
 	IBOutlet NSView *remoteView;
 	IBOutlet NSView *updatesView;
+    IBOutlet NSView *growlView;
+    IBOutlet NSView *appearanceView;
 }
 
 - (HotKeyPane *)hotKeyPane;
@@ -30,7 +32,8 @@
 - (GeneralPreferencePane *)updatesPane;
 - (GeneralPreferencePane *)scrobblerPane;
 - (GeneralPreferencePane *)playlistPane;
-
+- (GeneralPreferencePane *)growlPane;
+- (GeneralPreferencePane *)appearancePane;
 
 
 @end

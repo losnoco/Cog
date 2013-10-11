@@ -94,6 +94,26 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackDidPause:) name:CogPlaybackDidPauseNotficiation object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackDidResume:) name:CogPlaybackDidResumeNotficiation object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackDidStop:)  name:CogPlaybackDidStopNotficiation object:nil];
+    
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableGrowlMist"		options:0 context:nil];
+    
+    [self toggleGrowlMist];
+}
+
+- (void) toggleGrowlMist
+{
+    BOOL enableMist = [[NSUserDefaults standardUserDefaults] boolForKey:@"enableGrowlMist"];
+    [GrowlApplicationBridge setShouldUseBuiltInNotifications:enableMist];
+}
+
+- (void) observeValueForKeyPath:(NSString *)keyPath
+					   ofObject:(id)object
+						 change:(NSDictionary *)change
+                        context:(void *)context
+{
+	if ([keyPath isEqualToString:@"values.enableGrowlMist"]) {
+        [self toggleGrowlMist];
+	}
 }
 
 - (void)playbackDidBegin:(NSNotification *)notification

@@ -22,6 +22,8 @@
 			[plugin updatesPane],
 			[plugin outputPane],
 			[plugin scrobblerPane],
+            [plugin growlPane],
+            [plugin appearancePane],
 			nil];
 }	
 
@@ -53,6 +55,16 @@
 - (GeneralPreferencePane *)playlistPane
 {
 	return [GeneralPreferencePane preferencePaneWithView:playlistView title:NSLocalizedStringFromTableInBundle(@"Playlist", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"playlist"];
+}
+
+- (GeneralPreferencePane *)growlPane
+{
+    return [GeneralPreferencePane preferencePaneWithView:growlView title:NSLocalizedStringFromTableInBundle(@"Growl", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"growl"];
+}
+
+- (GeneralPreferencePane *)appearancePane
+{
+    return [GeneralPreferencePane preferencePaneWithView:appearanceView title:NSLocalizedStringFromTableInBundle(@"Appearance", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"appearance"];
 }
 
 @end

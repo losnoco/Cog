@@ -16,39 +16,76 @@ static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackSt
 - (void)startObserving
 {
 	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:DockIconPlaybackStatusObservationContext];
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.colorfulDockIcons"		options:0 context:DockIconPlaybackStatusObservationContext];
 }
 
 - (void)stopObserving
 {
 	[playbackController removeObserver:self forKeyPath:@"playbackStatus"];
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.colorfulDockIcons"];
+}
+
+static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons)
+{
+    if (colorfulIcons)
+    {
+        return [baseName stringByAppendingString:@"Colorful"];
+    }
+    else
+    {
+        return baseName;
+    }
+}
+
+- (void)refreshDockIcon:(NSInteger)playbackStatus
+{
+    if ( playbackStatus < 0 )
+        playbackStatus = lastPlaybackStatus;
+    else
+        lastPlaybackStatus = playbackStatus;
+    
+    NSImage *badgeImage = nil;
+    
+    BOOL colorfulIcons = [[NSUserDefaults standardUserDefaults] boolForKey:@"colorfulDockIcons"];
+    
+    if (playbackStatus == kCogStatusPlaying) {
+        badgeImage = [NSImage imageNamed:getBadgeName(@"playDockBadge", colorfulIcons)];
+    }
+    else if (playbackStatus == kCogStatusPaused) {
+        badgeImage = [NSImage imageNamed:getBadgeName(@"pauseDockBadge", colorfulIcons)];
+    }
+    else {
+        badgeImage = [NSImage imageNamed:getBadgeName(@"stopDockBadge", colorfulIcons)];
+    }
+    
+    NSSize badgeSize = [badgeImage size];
+    
+    NSImage *newDockImage = [dockImage copy];
+    [newDockImage lockFocus];
+    
+    [badgeImage drawInRect:NSMakeRect(0, 0, 128, 128)
+                  fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
+                 operation:NSCompositeSourceOver fraction:1.0];
+    
+    [newDockImage unlockFocus];
+    [NSApp setApplicationIconImage:newDockImage];
+    [newDockImage release];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if ([DockIconPlaybackStatusObservationContext isEqual:context])
 	{
-		NSInteger playbackStatus = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
-		
-		NSImage *badgeImage = nil;
-		
-		if (playbackStatus == kCogStatusPlaying) {
-			badgeImage = [NSImage imageNamed:@"playDockBadge"];
-		}
-		else if (playbackStatus == kCogStatusPaused) {
-			badgeImage = [NSImage imageNamed:@"pauseDockBadge"];
-		}
-		else {
-			badgeImage = [NSImage imageNamed:@"stopDockBadge"];
-		}
-		
-		NSSize badgeSize = [badgeImage size];
-		
-		NSImage *newDockImage = [dockImage copy];
-		[newDockImage lockFocus];
-		[badgeImage drawInRect:NSMakeRect(0, 0, 128, 128) fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height) operation:NSCompositeSourceOver fraction:1.0];
-		[newDockImage unlockFocus];
-		[NSApp setApplicationIconImage:newDockImage];
-		[newDockImage release];
+        if ([keyPath isEqualToString:@"playbackStatus"])
+        {
+            NSInteger playbackStatus = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
+
+            [self refreshDockIcon:playbackStatus];
+        }
+        else if ([keyPath isEqualToString:@"values.colorfulDockIcons"])
+        {
+            [self refreshDockIcon:-1];
+        }
 	}
 	else
 	{
