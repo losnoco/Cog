@@ -271,6 +271,9 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         [playbackController playEntryAtIndex:lastIndex];
         [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
     }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterFullscreen) name:NSWindowDidEnterFullScreenNotification object:mainWindow];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(exitFullscreen) name:NSWindowDidExitFullScreenNotification object:mainWindow];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -510,6 +513,50 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
                       ];
         [spamHotKey setTarget:self selector:@selector(clickSpam)];
         [spamHotKey setEnabled:YES];
+    }
+}
+
+- (void)enterFullscreen
+{
+    NSLog(@"Entering fullscreen");
+    if (nil == nowPlaying)
+    {
+        nowPlaying = [[NowPlayingBarController alloc] init];
+        [nowPlaying retain];
+        
+        NSView *contentView = [mainWindow contentView];
+        NSRect contentRect = [contentView frame];
+        const NSSize windowSize = [contentView convertSize:[mainWindow frame].size fromView: nil];
+        
+        NSRect nowPlayingFrame = [[nowPlaying view] frame];
+        nowPlayingFrame.size.width = windowSize.width;
+        [[nowPlaying view] setFrame: nowPlayingFrame];
+        
+        [contentView addSubview: [nowPlaying view]];
+        [[nowPlaying view] setFrameOrigin: NSMakePoint(0.0, NSMaxY(contentRect) - nowPlayingFrame.size.height)];
+        
+        NSRect mainViewFrame = [mainView frame];
+        mainViewFrame.size.height -= nowPlayingFrame.size.height;
+        [mainView setFrame:mainViewFrame];
+        
+        [[nowPlaying text] bind:@"value" toObject:currentEntryController withKeyPath:@"content.display" options:nil];
+    }
+}
+
+- (void)exitFullscreen
+{
+    NSLog(@"Exiting fullscreen");
+    if (nowPlaying)
+    {
+        NSRect nowPlayingFrame = [[nowPlaying view] frame];
+        NSRect mainViewFrame = [mainView frame];
+        mainViewFrame.size.height += nowPlayingFrame.size.height;
+        [mainView setFrame:mainViewFrame];
+        //        [mainView setFrameOrigin:NSMakePoint(0.0, 0.0)];
+        
+        [[nowPlaying view] removeFromSuperview];
+        [nowPlaying release];
+        nowPlaying = nil;
     }
 }
 

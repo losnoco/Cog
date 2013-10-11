@@ -148,6 +148,9 @@
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
 		8375B36517FFEF130092A79F /* Opus.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B05717FFEA410092A79F /* Opus.bundle */; };
+		838491211807F38A00E7332D /* NowPlayingBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8384911D1807F38A00E7332D /* NowPlayingBarView.m */; };
+		838491221807F38A00E7332D /* NowPlayingBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8384911E1807F38A00E7332D /* NowPlayingBarController.xib */; };
+		838491231807F38A00E7332D /* NowPlayingBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8384911F1807F38A00E7332D /* NowPlayingBarController.m */; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -737,6 +740,11 @@
 		8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArchiveSource.xcodeproj; path = Plugins/ArchiveSource/ArchiveSource.xcodeproj; sourceTree = "<group>"; };
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* Opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Opus.xcodeproj; path = Plugins/Opus/Opus.xcodeproj; sourceTree = "<group>"; };
+		8384911D1807F38A00E7332D /* NowPlayingBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NowPlayingBarView.m; path = Window/NowPlayingBarView.m; sourceTree = "<group>"; };
+		8384911E1807F38A00E7332D /* NowPlayingBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = NowPlayingBarController.xib; path = Window/NowPlayingBarController.xib; sourceTree = "<group>"; };
+		8384911F1807F38A00E7332D /* NowPlayingBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NowPlayingBarController.m; path = Window/NowPlayingBarController.m; sourceTree = "<group>"; };
+		838491201807F38A00E7332D /* NowPlayingBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NowPlayingBarController.h; path = Window/NowPlayingBarController.h; sourceTree = "<group>"; };
+		838491241807F75D00E7332D /* NowPlayingBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NowPlayingBarView.h; path = Window/NowPlayingBarView.h; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -1174,6 +1182,10 @@
 		17E0D5D20F520E75005B6FED /* Window */ = {
 			isa = PBXGroup;
 			children = (
+				8384911D1807F38A00E7332D /* NowPlayingBarView.m */,
+				838491241807F75D00E7332D /* NowPlayingBarView.h */,
+				8384911F1807F38A00E7332D /* NowPlayingBarController.m */,
+				838491201807F38A00E7332D /* NowPlayingBarController.h */,
 				1752C36A0F59E00100F85F28 /* PlaybackButtons.h */,
 				1752C36B0F59E00100F85F28 /* PlaybackButtons.m */,
 				172A123A0F5912AE0078EF0C /* ShuffleTransformers.h */,
@@ -1282,6 +1294,7 @@
 				178456C00F6320B5007E8021 /* SpotlightPanel.xib */,
 				17E41E060C130DFF00AC744D /* Credits.html */,
 				17D1B1DA0F6330D400694C57 /* Feedback.xib */,
+				8384911E1807F38A00E7332D /* NowPlayingBarController.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1821,6 +1834,7 @@
 				1791005E0CB44D6D0070BC5C /* Cog.scriptSuite in Resources */,
 				1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */,
 				17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */,
+				838491221807F38A00E7332D /* NowPlayingBarController.xib in Resources */,
 				17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */,
 				17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */,
 				17D1B2800CF8B2830028F5B5 /* s3m.icns in Resources */,
@@ -1894,6 +1908,7 @@
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
+				838491211807F38A00E7332D /* NowPlayingBarView.m in Sources */,
 				178BAB990CD4E1B700B33D47 /* GCOneShotEffectTimer.m in Sources */,
 				178BAB9A0CD4E1B700B33D47 /* GCWindowMenu.m in Sources */,
 				178BAB9B0CD4E1B700B33D47 /* PopupButton.m in Sources */,
@@ -1923,6 +1938,7 @@
 				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,
 				173A43A10F3FD26500676A7B /* ToolTipWindow.m in Sources */,
 				17E0D5E90F520F02005B6FED /* DualWindow.m in Sources */,
+				838491231807F38A00E7332D /* NowPlayingBarController.m in Sources */,
 				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
 				17E0D5EB0F520F02005B6FED /* MiniWindow.m in Sources */,
 				17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */,

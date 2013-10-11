@@ -3,6 +3,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "NDHotKeyEvent.h"
+#import "NowPlayingBarController.h"
 
 @class PlaybackController;
 @class PlaylistController;
@@ -12,12 +13,15 @@
 
 @interface AppController : NSObject
 {
+    IBOutlet NSObjectController *currentEntryController;
+    
 	IBOutlet PlaybackController *playbackController;
 
     IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaylistLoader *playlistLoader;
 	
 	IBOutlet NSWindow *mainWindow;
+    IBOutlet NSSplitView *mainView;
 	
 	IBOutlet NSSegmentedControl *playbackButtons;
 	IBOutlet NSButton *infoButton;
@@ -46,6 +50,8 @@
 	NDHotKeyEvent *prevHotKey;
 	NDHotKeyEvent *nextHotKey;
     NDHotKeyEvent *spamHotKey;
+    
+    NowPlayingBarController *nowPlaying;
 	
 	AppleRemote *remote;
 	BOOL remoteButtonHeld; /* true as long as the user holds the left,right,plus or minus on the remote control */
