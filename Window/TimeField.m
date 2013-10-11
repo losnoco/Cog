@@ -11,6 +11,11 @@
 
 @implementation TimeField
 
+- (void)awakeFromNib
+{
+    showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:@"timerShowTimeRemaining"];
+}
+
 - (void)update
 {
 	NSString *text;
@@ -32,6 +37,7 @@
 - (void)mouseDown:(NSEvent *)theEvent
 {
 	showTimeRemaining = !showTimeRemaining;
+    [[NSUserDefaults standardUserDefaults] setBool:showTimeRemaining forKey:@"timerShowTimeRemaining"];
 	[self update];
 }
 
