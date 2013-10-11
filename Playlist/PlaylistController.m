@@ -444,6 +444,21 @@
 	return [[self arrangedObjects] objectAtIndex:i];
 }
 
+- (void)remove:(id)sender {
+    // It's a kind of magic.
+    // Plain old NSArrayController's remove: isn't working properly for some reason.
+    // The method is definitely called but (overridden) removeObjectsAtArrangedObjectIndexes: isn't called
+    // and no entries are removed.
+    // Putting explicit call to removeObjectsAtArrangedObjectIndexes: here for now.
+    // TODO: figure it out
+
+    NSIndexSet *selected = [self selectionIndexes];
+    if ([selected count] > 0)
+    {
+        [self removeObjectsAtArrangedObjectIndexes:selected];
+    }
+}
+
 - (PlaylistEntry *)shuffledEntryAtIndex:(int)i
 {
 	RepeatMode repeat = [self repeat];
