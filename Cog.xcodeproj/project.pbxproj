@@ -100,7 +100,6 @@
 		17C809930C3BD21D005707C4 /* TagLib.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808B60C3BD1C5005707C4 /* TagLib.bundle */; };
 		17C809940C3BD220005707C4 /* Shorten.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808AF0C3BD1BA005707C4 /* Shorten.bundle */; };
 		17C809950C3BD223005707C4 /* Musepack.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808A60C3BD1AB005707C4 /* Musepack.bundle */; };
-		17C809960C3BD226005707C4 /* MonkeysAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8089D0C3BD19F005707C4 /* MonkeysAudio.bundle */; };
 		17C809980C3BD22E005707C4 /* HTTPSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8088B0C3BD181005707C4 /* HTTPSource.bundle */; };
 		17C809990C3BD231005707C4 /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808820C3BD173005707C4 /* Flac.bundle */; };
 		17C8099A0C3BD233005707C4 /* FileSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808790C3BD167005707C4 /* FileSource.bundle */; };
@@ -203,13 +202,6 @@
 			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = HTTPSource;
 		};
-		17C8089C0C3BD19F005707C4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17C808950C3BD19F005707C4 /* MonkeysAudio.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
-			remoteInfo = MonkeysAudio;
-		};
 		17C808A50C3BD1AB005707C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */;
@@ -251,13 +243,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = Musepack;
-		};
-		17C8097F0C3BD1F5005707C4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17C808950C3BD19F005707C4 /* MonkeysAudio.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
-			remoteInfo = MonkeysAudio;
 		};
 		17C809810C3BD1F5005707C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -515,7 +500,6 @@
 				17C8099A0C3BD233005707C4 /* FileSource.bundle in CopyFiles */,
 				17C809990C3BD231005707C4 /* Flac.bundle in CopyFiles */,
 				17C809980C3BD22E005707C4 /* HTTPSource.bundle in CopyFiles */,
-				17C809960C3BD226005707C4 /* MonkeysAudio.bundle in CopyFiles */,
 				17C809950C3BD223005707C4 /* Musepack.bundle in CopyFiles */,
 				17C809940C3BD220005707C4 /* Shorten.bundle in CopyFiles */,
 				17C809930C3BD21D005707C4 /* TagLib.bundle in CopyFiles */,
@@ -675,7 +659,6 @@
 		17C808710C3BD167005707C4 /* FileSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FileSource.xcodeproj; path = Plugins/FileSource/FileSource.xcodeproj; sourceTree = "<group>"; };
 		17C8087A0C3BD173005707C4 /* Flac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Flac.xcodeproj; path = Plugins/Flac/Flac.xcodeproj; sourceTree = "<group>"; };
 		17C808830C3BD181005707C4 /* HTTPSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HTTPSource.xcodeproj; path = Plugins/HTTPSource/HTTPSource.xcodeproj; sourceTree = "<group>"; };
-		17C808950C3BD19F005707C4 /* MonkeysAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MonkeysAudio.xcodeproj; path = Plugins/MonkeysAudio/MonkeysAudio.xcodeproj; sourceTree = "<group>"; };
 		17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Musepack.xcodeproj; path = Plugins/Musepack/Musepack.xcodeproj; sourceTree = "<group>"; };
 		17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Shorten.xcodeproj; path = Plugins/Shorten/Shorten.xcodeproj; sourceTree = "<group>"; };
 		17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TagLib.xcodeproj; path = Plugins/TagLib/TagLib.xcodeproj; sourceTree = "<group>"; };
@@ -1035,7 +1018,6 @@
 				17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */,
 				17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */,
 				17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */,
-				17C808950C3BD19F005707C4 /* MonkeysAudio.xcodeproj */,
 				17C808830C3BD181005707C4 /* HTTPSource.xcodeproj */,
 				17C8087A0C3BD173005707C4 /* Flac.xcodeproj */,
 				17C808710C3BD167005707C4 /* FileSource.xcodeproj */,
@@ -1066,14 +1048,6 @@
 			isa = PBXGroup;
 			children = (
 				17C8088B0C3BD181005707C4 /* HTTPSource.bundle */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		17C808960C3BD19F005707C4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				17C8089D0C3BD19F005707C4 /* MonkeysAudio.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1519,7 +1493,6 @@
 				83BCB8DD17FC96FC00760340 /* PBXTargetDependency */,
 				83BCB8D917FC96F800760340 /* PBXTargetDependency */,
 				17C8097E0C3BD1F5005707C4 /* PBXTargetDependency */,
-				17C809800C3BD1F5005707C4 /* PBXTargetDependency */,
 				17C809820C3BD1F5005707C4 /* PBXTargetDependency */,
 				17C809840C3BD1F5005707C4 /* PBXTargetDependency */,
 				17C809860C3BD1F5005707C4 /* PBXTargetDependency */,
@@ -1625,10 +1598,6 @@
 					ProjectRef = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
 				},
 				{
-					ProductGroup = 17C808960C3BD19F005707C4 /* Products */;
-					ProjectRef = 17C808950C3BD19F005707C4 /* MonkeysAudio.xcodeproj */;
-				},
-				{
 					ProductGroup = 17C8089F0C3BD1AB005707C4 /* Products */;
 					ProjectRef = 17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */;
 				},
@@ -1684,13 +1653,6 @@
 			fileType = wrapper.cfbundle;
 			path = HTTPSource.bundle;
 			remoteRef = 17C8088A0C3BD181005707C4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		17C8089D0C3BD19F005707C4 /* MonkeysAudio.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = MonkeysAudio.bundle;
-			remoteRef = 17C8089C0C3BD19F005707C4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		17C808A60C3BD1AB005707C4 /* Musepack.bundle */ = {
@@ -1985,11 +1947,6 @@
 			isa = PBXTargetDependency;
 			name = Musepack;
 			targetProxy = 17C8097D0C3BD1F5005707C4 /* PBXContainerItemProxy */;
-		};
-		17C809800C3BD1F5005707C4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MonkeysAudio;
-			targetProxy = 17C8097F0C3BD1F5005707C4 /* PBXContainerItemProxy */;
 		};
 		17C809820C3BD1F5005707C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

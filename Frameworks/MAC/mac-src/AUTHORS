@@ -1,5 +1,0 @@
-Matthew T. Ashland <email@monkeysaudio.com> : Original author of Monkey's Audio Codec
-
-Frank Klemm : First port to linux (with makefile)
-
-SuperMMX <SuperMMX163.com> : Package the source, include the frontend and shared lib.
