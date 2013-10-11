@@ -16,6 +16,7 @@
 "InfoButtonTooltip" = "Information on the selected file";
 "ShuffleButtonTooltip" = "Shuffle mode";
 "RepeatButtonTooltip" = "Repeat mode";
+"RandomizeButtonTooltip" = "Randomize playlist";
 "FileButtonTooltip" = "File drawer";
 
 "replayGainAlbumGain" = "The volume level of playback output will be detected through enumeration, \

@@ -151,6 +151,7 @@
 		838491211807F38A00E7332D /* NowPlayingBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8384911D1807F38A00E7332D /* NowPlayingBarView.m */; };
 		838491221807F38A00E7332D /* NowPlayingBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8384911E1807F38A00E7332D /* NowPlayingBarController.xib */; };
 		838491231807F38A00E7332D /* NowPlayingBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8384911F1807F38A00E7332D /* NowPlayingBarController.m */; };
+		8384913C1808217300E7332D /* randomize.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384913B1808217300E7332D /* randomize.png */; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -746,6 +747,7 @@
 		838491201807F38A00E7332D /* NowPlayingBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NowPlayingBarController.h; path = Window/NowPlayingBarController.h; sourceTree = "<group>"; };
 		838491241807F75D00E7332D /* NowPlayingBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NowPlayingBarView.h; path = Window/NowPlayingBarView.h; sourceTree = "<group>"; };
 		8384912518080F2D00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		8384913B1808217300E7332D /* randomize.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = randomize.png; path = Images/randomize.png; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -964,6 +966,7 @@
 		177EC02D0B8BC2E60000BC8C /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				8384913B1808217300E7332D /* randomize.png */,
 				1778D3AF0F645A190037E7A0 /* missingArt.png */,
 				17B7CF590F5A05EE00A47027 /* pauseBadge.png */,
 				17B7CF5A0F5A05EE00A47027 /* playBadge.png */,
@@ -1837,6 +1840,7 @@
 				1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */,
 				17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */,
 				838491221807F38A00E7332D /* NowPlayingBarController.xib in Resources */,
+				8384913C1808217300E7332D /* randomize.png in Resources */,
 				17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */,
 				17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */,
 				17D1B2800CF8B2830028F5B5 /* s3m.icns in Resources */,

@@ -29,6 +29,7 @@
 	IBOutlet NSButton *fileButton;
 	IBOutlet NSButton *shuffleButton;
 	IBOutlet NSButton *repeatButton;
+    IBOutlet NSButton *randomizeButton;
 
 	IBOutlet NSTextField *totalTimeField;
 	
