@@ -1484,6 +1484,7 @@
 				8E757AEC09F3265E0080F1EE /* CopyFiles */,
 				177FD1000B90CB570011C3B5 /* CopyFiles */,
 				07DFC3930ECDF80100DA400D /* CopyFiles */,
+				8384911C1807E9ED00E7332D /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1846,6 +1847,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8384911C1807E9ED00E7332D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = Scripts/genversion.sh;
+			shellScript = "";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {
