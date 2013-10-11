@@ -363,6 +363,7 @@
 				8375B05017FFEA400092A79F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
