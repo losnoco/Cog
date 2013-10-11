@@ -88,5 +88,8 @@
 	return year;
 }
 
+-(NSString *) description {
+    return [NSString stringWithFormat:@"CueSheetTrack{track: %@,  url: %@, artist: %@, album: %@, title: %@, genre: %@, year: %@}", track, [url absoluteURL], artist, album, title, genre, year];
+}
 
 @end
