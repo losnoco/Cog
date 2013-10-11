@@ -16,26 +16,24 @@
 
 @interface FFMPEGDecoder : NSObject <CogDecoder>
 {
-	id<CogSource> source;
-	void *sampleBuffer;
-    int sampleBufferSize;
-	int numFrames;
-	int samplePos;
-	
-    int streamIndex;
-	AVFormatContext *ic;
-	AVCodecContext *c;
-	AVCodec *codec;
-	
-	BOOL seekable;
+    BOOL seekable;
+    int channels;
+    int bitsPerSample;
     BOOL floatingPoint;
-	int bitsPerSample;
-	int bitrate;
-	int channels;
-	float frequency;
-	long totalFrames;
-	long framesPlayed;
-    long framesToSkip;
+    float frequency;
+    long totalFrames;
+    long framesRead;
+    int bitrate;
+    
+@private
+    int streamIndex;
+    AVFormatContext *formatCtx;
+    AVCodecContext *codecCtx;
+    AVFrame *lastDecodedFrame;
+    AVPacket *lastReadPacket;
+    int bytesConsumedFromDecodedFrame;
+    int bytesReadFromPacket;
+    BOOL readNextPacket;
 }
 
 @end
