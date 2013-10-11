@@ -1,4 +1,5 @@
 #import "AppController.h"
+#import "FileTreeViewController.h"
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 #import "PlaylistView.h"
@@ -10,6 +11,7 @@
 #import "SpotlightWindowController.h"
 #import "StringToURLTransformer.h"
 #import "FontSizetoLineHeightTransformer.h"
+#import "PathNode.h"
 #import <CogAudio/Status.h>
 
 @implementation AppController
@@ -47,6 +49,7 @@
 - (void)dealloc
 {
     [queue release];
+    [expandedNodes release];
     [super dealloc];
 }
 
@@ -57,7 +60,7 @@
 		[remote startListening: self];
 	}
 }
-- (void)applicationDidResignActive:(NSNotification *)motification
+- (void)applicationDidResignActive:(NSNotification *)notification
 {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"]) {
 		[remote stopListening: self];
@@ -274,6 +277,67 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterFullscreen) name:NSWindowDidEnterFullScreenNotification object:mainWindow];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(exitFullscreen) name:NSWindowDidExitFullScreenNotification object:mainWindow];
+    
+    // We need file tree view to restore its state here
+    // so attempt to access file tree view controller's root view
+    // to force it to read nib and create file tree view for us
+    //
+    // TODO: there probably is a more elegant way to do all this
+    //       but i'm too stupid/tired to figure it out now
+    [fileTreeViewController view];
+    
+    FileTreeOutlineView* outlineView = [fileTreeViewController outlineView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeExpanded:) name:NSOutlineViewItemDidExpandNotification object:outlineView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeCollapsed:) name:NSOutlineViewItemDidCollapseNotification object:outlineView];
+    
+    NSArray *expandedNodesArray = [[NSUserDefaults standardUserDefaults] valueForKey:@"fileTreeViewExpandedNodes"];
+    
+    if (expandedNodesArray)
+    {
+        expandedNodes = [[NSMutableSet alloc] initWithArray:expandedNodesArray];
+    }
+    else
+    {
+        expandedNodes = [[NSMutableSet alloc] init];
+    }
+    
+    NSLog(@"Nodes to expand: %@", [expandedNodes description]);
+    
+    NSLog(@"Num of rows: %ld", [outlineView numberOfRows]);
+    
+    if (!outlineView)
+    {
+        NSLog(@"outlineView is NULL!");
+    }
+
+    [outlineView reloadData];
+
+    for (NSInteger i=0; i<[outlineView numberOfRows]; i++)
+    {
+        PathNode *pn = [outlineView itemAtRow:i];
+        NSString *str = [[pn URL] absoluteString];
+        
+        if ([expandedNodes containsObject:str])
+        {
+            [outlineView expandItem:pn];
+        }
+    }
+}
+
+- (void)nodeExpanded:(NSNotification*)notification
+{
+    PathNode* node = [[notification userInfo] objectForKey:@"NSObject"];
+    NSString* url = [[node URL] absoluteString];
+    
+    [expandedNodes addObject:url];
+}
+
+- (void)nodeCollapsed:(NSNotification*)notification
+{
+    PathNode* node = [[notification userInfo] objectForKey:@"NSObject"];
+    NSString* url = [[node URL] absoluteString];
+    
+    [expandedNodes removeObject:url];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -314,6 +378,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     
     NSError *error;
     [[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
+
+    NSLog(@"Saving expanded nodes: %@", [expandedNodes description]);
+
+    [[NSUserDefaults standardUserDefaults] setValue:[expandedNodes allObjects] forKey:@"fileTreeViewExpandedNodes"];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag

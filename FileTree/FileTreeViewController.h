@@ -11,9 +11,13 @@
 
 @class PlaylistLoader;
 @class PlaybackController;
+@class FileTreeOutlineView;
 @interface FileTreeViewController : SideViewController {
 	IBOutlet PlaylistLoader *playlistLoader;
 	IBOutlet PlaybackController *playbackController;
+    IBOutlet FileTreeOutlineView *fileTreeOutlineView;
 }
+
+- (FileTreeOutlineView*)outlineView;
 
 @end

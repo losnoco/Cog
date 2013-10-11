@@ -32,4 +32,9 @@
 	[playbackController playPauseResume:id];
 }
 
+- (FileTreeOutlineView*)outlineView
+{
+    return fileTreeOutlineView;
+}
+
 @end

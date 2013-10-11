@@ -5,6 +5,7 @@
 #import "NDHotKeyEvent.h"
 #import "NowPlayingBarController.h"
 
+@class FileTreeViewController;
 @class PlaybackController;
 @class PlaylistController;
 @class PlaylistView;
@@ -45,6 +46,8 @@
 	IBOutlet NSMenuItem *showYearColumn;
 	
     IBOutlet NSWindowController *spotlightWindowController;
+    
+    IBOutlet FileTreeViewController *fileTreeViewController;
 	
 	NDHotKeyEvent *playHotKey;
 	NDHotKeyEvent *prevHotKey;
@@ -57,6 +60,8 @@
 	BOOL remoteButtonHeld; /* true as long as the user holds the left,right,plus or minus on the remote control */
 	
     NSOperationQueue *queue; // Since we are the app delegate, we take care of the op queue
+    
+    NSMutableSet* expandedNodes;
 }
 
 - (IBAction)openURL:(id)sender;
@@ -90,5 +95,8 @@ OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *us
 - (IBAction)increaseFontSize:(id)sender;
 - (IBAction)decreaseFontSize:(id)sender;
 - (void)changeFontSize:(float)size;
+
+- (void)nodeExpanded:(NSNotification*)notification;
+- (void)nodeCollapsed:(NSNotification*)notification;
 
 @end
