@@ -57,7 +57,6 @@
 	output = [[OutputNode alloc] initWithController:self previous:nil];
 	[output setup];
 	[output setVolume: volume];
-	
 	@synchronized(chainQueue) {
         for (id anObject in chainQueue)
 		{
@@ -65,7 +64,6 @@
 		}
 		[chainQueue removeAllObjects];
 		endOfInputReached = NO;
-		
 		if (bufferChain)
 		{
 			[bufferChain setShouldContinue:NO];
@@ -73,7 +71,7 @@
 			[bufferChain release];
 		}
 	}
-	
+
 	bufferChain = [[BufferChain alloc] initWithController:self];
 	[self notifyStreamChanged:userInfo];
 	
@@ -97,7 +95,7 @@
 		
 		bufferChain = [[BufferChain alloc] initWithController:self];
 	}
-	
+
 	[bufferChain setUserInfo:userInfo];
 
 	[self setShouldContinue:YES];

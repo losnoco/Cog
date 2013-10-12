@@ -15,6 +15,8 @@
 #import "Logging.h"
 
 @implementation InputNode
+@synthesize exitAtTheEndOfTheStream;
+
 
 - (id)initWithController:(id)c previous:(id)p {
     self = [super initWithController:c previous:p];
@@ -174,6 +176,8 @@
     free(inputBuffer);
 
     [exitAtTheEndOfTheStream signal];
+
+    DLog("Input node thread stopping");
 }
 
 - (void)seek:(long)frame
@@ -203,16 +207,13 @@
 - (void)dealloc
 {
 	DLog(@"Input Node dealloc");
-    [exitAtTheEndOfTheStream signal];
-    [exitAtTheEndOfTheStream wait]; // wait for decoder to be closed (see -(void)process )
-    [exitAtTheEndOfTheStream release];
-    
 	[decoder removeObserver:self forKeyPath:@"properties"];
 	[decoder removeObserver:self forKeyPath:@"metadata"];
 
 	[decoder release];
-	
-	[super dealloc];
+
+    [exitAtTheEndOfTheStream release];
+    [super dealloc];
 }
 
 - (NSDictionary *) properties
