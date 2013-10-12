@@ -10,6 +10,7 @@
 #import <TagLib/fileref.h>
 #import <TagLib/tag.h>
 #import <Taglib/mpegfile.h>
+#import <TagLib/mp4file.h>
 #import <Taglib/id3v2tag.h>
 #import <Taglib/attachedpictureframe.h>
 
@@ -71,6 +72,7 @@
 		// Try to load the image.
 		NSData * image = nil;
         
+		// Try to load the image.
 		// WARNING: HACK
 		TagLib::MPEG::File *mf = dynamic_cast<TagLib::MPEG::File *>(f.file());
 		if (mf) {
@@ -79,13 +81,31 @@
 				TagLib::ID3v2::FrameList pictures = mf->ID3v2Tag()->frameListMap()["APIC"];
 				if (!pictures.isEmpty()) {
 					TagLib::ID3v2::AttachedPictureFrame *pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(pictures.front());
-						
-						image = [NSData dataWithBytes:pic->picture().data() length:pic->picture().size()];
-				}
-			}
+
+					image = [NSData dataWithBytes:pic->picture().data() length:pic->picture().size()];
+                }
+            }
 		}
 
-		if (nil == image) {
+
+        // D-D-D-DOUBLE HACK!
+        TagLib::MP4::File *m4f = dynamic_cast<TagLib::MP4::File *>(f.file());
+        if (m4f) {
+            TagLib::MP4::Tag *tag = m4f->tag();
+            if (tag) {
+                TagLib::MP4::ItemListMap itemsListMap = tag->itemListMap();
+                if (itemsListMap.contains("covr")) {
+                    TagLib::MP4::Item coverItem = itemsListMap["covr"];
+                    TagLib::MP4::CoverArtList coverArtList = coverItem.toCoverArtList();
+                    if (!coverArtList.isEmpty()) {
+                        TagLib::MP4::CoverArt coverArt = coverArtList.front();
+                        image = [NSData dataWithBytes:coverArt.data().data() length:coverArt.data().size()];
+                    }
+                }
+            }
+        }
+
+        if (nil == image) {
 			// Try to load image from external file
 
 			NSString *path = [[url path] stringByDeletingLastPathComponent];
@@ -130,12 +150,12 @@
 + (NSArray *)fileTypes
 {
 	//May be a way to get a list of supported formats
-	return [NSArray arrayWithObjects:@"ape", @"asf", @"wma", @"ogg", @"opus", @"mpc", @"flac", @"m4a", @"mp3", @"tak", @"ac3", @"apl", @"dts", @"dtshd", @"tta", nil];
+	return [NSArray arrayWithObjects:@"ape", @"asf", @"wma", @"ogg", @"opus", @"mpc", @"flac", @"m4a", @"mp3", @"tak", @"ac3", @"apl", @"dts", @"dtshd", @"tta", @"wav", @"aif", @"aiff", nil];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-ape", @"audio/x-ms-wma", @"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg", @"audio/x-musepack", @"audio/x-flac", @"audio/x-m4a", @"audio/mpeg", @"audio/x-mp3", @"audio/x-tak", @"audio/x-ac3", @"audio/x-apl", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-tta", nil];
+	return [NSArray arrayWithObjects:@"audio/x-ape", @"audio/x-ms-wma", @"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg", @"audio/x-musepack", @"audio/x-flac", @"audio/x-m4a", @"audio/mpeg", @"audio/x-mp3", @"audio/x-tak", @"audio/x-ac3", @"audio/x-apl", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-tta", @"audio/wav", @"audio/aiff", nil];
 }
 
 @end

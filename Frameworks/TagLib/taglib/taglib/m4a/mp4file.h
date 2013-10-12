@@ -22,8 +22,8 @@
 #ifndef TAGLIB_MP4FILE_H
 #define TAGLIB_MP4FILE_H
 
-#include <tfile.h>
-#include <audioproperties.h>
+#include "tfile.h"
+#include "audioproperties.h"
 
 #include "mp4fourcc.h"
 
