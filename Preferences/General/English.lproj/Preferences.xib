@@ -13,7 +13,7 @@
                 <outlet property="outputPane" destination="57" id="75"/>
                 <outlet property="playlistView" destination="231" id="244"/>
                 <outlet property="remoteView" destination="43" id="100"/>
-                <outlet property="scrobblerView" destination="85" id="101"/>
+                <outlet property="scrobblerView" destination="0nK-XQ-5MY" id="dFj-Pk-FCG"/>
                 <outlet property="updatesView" destination="50" id="99"/>
             </connections>
         </customObject>
@@ -272,41 +272,65 @@
                 <string>name</string>
             </declaredKeys>
         </arrayController>
-        <customView id="85" userLabel="ScrobblerView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="74"/>
-            <autoresizingMask key="autoresizingMask"/>
-            <subviews>
-                <button id="88">
-                    <rect key="frame" x="18" y="18" width="396" height="18"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Automatically launch Last.fm client" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="213">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="52" name="value" keyPath="values.automaticallyLaunchLastFM" id="95"/>
-                        <binding destination="52" name="enabled" keyPath="values.enableAudioScrobbler" id="93"/>
-                    </connections>
-                </button>
-                <button id="87">
-                    <rect key="frame" x="18" y="38" width="396" height="18"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Enable Last.fm support (Last.fm client must be installed)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="212">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="52" name="value" keyPath="values.enableAudioScrobbler" id="90"/>
-                    </connections>
-                </button>
-            </subviews>
-        </customView>
         <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="115" userLabel="Appcasts" customClass="AppcastArrayController">
             <declaredKeys>
                 <string>name</string>
                 <string>url</string>
             </declaredKeys>
         </arrayController>
+        <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="246" userLabel="PlaylistBehavior" customClass="PlaylistBehaviorArrayController">
+            <declaredKeys>
+                <string>name</string>
+                <string>slug</string>
+                <string>preference</string>
+            </declaredKeys>
+        </arrayController>
+        <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="SuD-jI-ifw" userLabel="VolumeBehavior" customClass="VolumeBehaviorArrayController">
+            <declaredKeys>
+                <string>name</string>
+                <string>slug</string>
+                <string>preference</string>
+            </declaredKeys>
+        </arrayController>
+        <customView id="0nK-XQ-5MY" userLabel="ScrobblerView">
+            <rect key="frame" x="0.0" y="0.0" width="432" height="94"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <button id="3gi-0d-78Z">
+                    <rect key="frame" x="18" y="38" width="396" height="18"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="Automatically launch Last.fm client" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="ze8-9p-SeX">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.automaticallyLaunchLastFM" id="Ere-1R-mgh"/>
+                    </connections>
+                </button>
+                <button id="ABj-cO-MaV">
+                    <rect key="frame" x="18" y="58" width="396" height="18"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="Enable Last.fm support (Last.fm client must be installed)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="2N5-DH-IO6">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.enableAudioScrobbler" id="R2p-gP-5oR"/>
+                    </connections>
+                </button>
+                <button id="Hi4-pa-uDu">
+                    <rect key="frame" x="18" y="18" width="389" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Allow Last.fm client to control media keys" bezelStyle="regularSquare" imagePosition="left" inset="2" id="4Yi-67-ivc">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.allowLastfmMediaKeys" id="OZH-0Q-thF"/>
+                    </connections>
+                </button>
+            </subviews>
+        </customView>
         <customView id="231" userLabel="PlaylistView">
             <rect key="frame" x="0.0" y="0.0" width="432" height="122"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -384,20 +408,6 @@
                 </popUpButton>
             </subviews>
         </customView>
-        <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="246" userLabel="PlaylistBehavior" customClass="PlaylistBehaviorArrayController">
-            <declaredKeys>
-                <string>name</string>
-                <string>slug</string>
-                <string>preference</string>
-            </declaredKeys>
-        </arrayController>
-        <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="SuD-jI-ifw" userLabel="VolumeBehavior" customClass="VolumeBehaviorArrayController">
-            <declaredKeys>
-                <string>name</string>
-                <string>slug</string>
-                <string>preference</string>
-            </declaredKeys>
-        </arrayController>
         <customView id="U4w-jw-ca5" userLabel="GrowlView">
             <rect key="frame" x="0.0" y="0.0" width="432" height="54"/>
             <autoresizingMask key="autoresizingMask"/>

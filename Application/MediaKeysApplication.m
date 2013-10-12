@@ -26,6 +26,11 @@
 - (void)finishLaunching {
     [super finishLaunching];
 
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:@"allowLastfmMediaKeys"
+                                               options:NSKeyValueObservingOptionNew
+                                               context:nil];
+
     keyTap = [[SPMediaKeyTap alloc] initWithDelegate:self];
     if([SPMediaKeyTap usesGlobalMediaKeyTap])
         [keyTap startWatchingMediaKeys];
@@ -73,5 +78,32 @@
         }
     }
 }
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"allowLastfmMediaKeys"])
+    {
+        NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+        BOOL allowLastfmMediaKeys = [defs boolForKey:@"allowLastfmMediaKeys"];
+        NSArray *old = [defs arrayForKey:kMediaKeyUsingBundleIdentifiersDefaultsKey];
+        
+        NSMutableArray *new = [old mutableCopy];
+        NSArray *lastfmIds = [NSArray arrayWithObjects:@"fm.last.Last.fm", @"fm.last.Scrobbler", nil];
+        if (allowLastfmMediaKeys)
+        {
+            [new addObjectsFromArray:lastfmIds];
+        }
+        else
+        {
+            [new removeObjectsInArray:lastfmIds];
+        }
+        
+        [defs setObject:new forKey:kMediaKeyUsingBundleIdentifiersDefaultsKey];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 
 @end
