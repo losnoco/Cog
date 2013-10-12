@@ -339,8 +339,6 @@
 
         [chainQueue removeObjectAtIndex:0];
 		DLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
-		
-		[chainQueue removeObjectAtIndex:0];
 	}
 	
 	[self notifyStreamChanged:[bufferChain userInfo]];
