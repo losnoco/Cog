@@ -13,9 +13,14 @@
 
 <style type="text/css">
 
-body { font-family: "lucida grande"; font-size: 12px;  }
+html, body, button, input, select, textarea 
+{    font-family: sans-serif;
+    font-size: 14px;
+    color: #5f5c52}
 
-h2 { margin-top: 30px; }
+h1, h2, h3, strong, b 
+{    font-weight: 600;
+    color: #423f37}
 
 a:link, a:visited { color: black; }
 a:hover { text-decoration: none; }
@@ -29,7 +34,7 @@ td.icon { width: auto; }
 
 <body>
 
-<div id="header" style="clear: both;"><img src="images/logo.png" style="width: 200px; " />
+<div id="header" style="clear: both;"><img src="images/logo.png" style="width: 220px; " />
 
 <ul style="float: right; list-style-type: none; margin-right: 20px;">
      <li><a href="http://cogx.org/">Cog homepage</a></li>
@@ -55,7 +60,7 @@ td.icon { width: auto; }
      <li>Shorten</li>
      <li>WavPack</li>
      <li>Apple Lossless</li>
-     <li>Any codec supported by Mac OS X 10.4's Core Audio API</li>
+     <li>Any codec supported by Mac OS X's Core Audio API</li>
 </ul>
 
 <h2>Supported tags</h2>
@@ -70,33 +75,27 @@ td.icon { width: auto; }
 
 <div class="buttons">
 
-<h2>Buttons</h2>
+<h2>Controls</h2>
 
 <table>
 
      <tr>
-          <td class="icon"><img src="images/play_gray.png"/></td>
-          <td>Play/Pause</td>
+          <td class="icon"><img src="images/playback.png"/></td>
+          <td>Play/Pause/Previous/Next</td>
      </tr>
      
+    
      <tr>
-          <td class="icon"><img src="images/prev_gray.png"/></td>
-          <td>Previous Song</td>
-          <td class="icon"><img src="images/next_gray.png"/></td>
-          <td>Next Song</td>
-     </tr>
-     
-     <tr>
-          <td class="icon"><img src="images/files_off.png"/></td>
+          <td class="icon"><img src="images/files.png"/></td>
           <td>Show/hide<br>File Drawer</td>
-          <td class="icon"><img src="images/repeat_off.png"/></td>
+          <td class="icon"><img src="images/repeat.png"/></td>
           <td>Repeat on/off</td>
      </tr>
      
       <tr>
-          <td class="icon"><img src="images/info_off.png"/></td>
+          <td class="icon"><img src="images/info.png"/></td>
           <td>Show/hide<br>Info Drawer</td>
-          <td class="icon"><img src="images/shuffle_off.png"/></td>
+          <td class="icon"><img src="images/shuffle.png"/></td>
           <td>Shuffle on/off</td>
      </tr>
 

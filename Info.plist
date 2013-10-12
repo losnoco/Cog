@@ -523,7 +523,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ape.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Monkey's Audio File</string>
+			<string>Monkey&apos;s Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -875,7 +875,7 @@
 	<key>CFBundleHelpBookFolder</key>
 	<string>Help</string>
 	<key>CFBundleHelpBookName</key>
-	<string>Cog Help</string>
+	<string>org.cogx.cog.help</string>
 	<key>CFBundleIconFile</key>
 	<string>icon_main</string>
 	<key>CFBundleIdentifier</key>

@@ -8,44 +8,70 @@
 
 #import "MediaKeysApplication.h"
 #import "AppController.h"
+#import "SPMediaKeyTap.h"
+#import "Logging.h"
 
 @implementation MediaKeysApplication
 
-- (void)mediaKeyEvent: (int)key state: (BOOL)state repeat: (BOOL)repeat
++(void)initialize;
 {
-	switch( key )
-	{
-		case NX_KEYTYPE_PLAY:
-			if( state == 0 )
-				[(AppController *)[self delegate] clickPlay]; //Play pressed and released
-		break;
-		
-		case NX_KEYTYPE_NEXT:
-		case NX_KEYTYPE_FAST:
-			if( state == 0 )
-				[(AppController *)[self delegate] clickNext]; //Next pressed and released
-		break;
-		
-		case NX_KEYTYPE_PREVIOUS:
-		case NX_KEYTYPE_REWIND:
-			if( state == 0 )
-				[(AppController *)[self delegate] clickPrev]; //Previous pressed and released
-		break;
-	}
+    if([self class] != [MediaKeysApplication class]) return;
+
+    // Register defaults for the whitelist of apps that want to use media keys
+    [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:
+            [SPMediaKeyTap defaultMediaKeyUserBundleIdentifiers], kMediaKeyUsingBundleIdentifiersDefaultsKey,
+            nil]];
+}
+
+- (void)finishLaunching {
+    [super finishLaunching];
+
+    keyTap = [[SPMediaKeyTap alloc] initWithDelegate:self];
+    if([SPMediaKeyTap usesGlobalMediaKeyTap])
+        [keyTap startWatchingMediaKeys];
+    else
+        ALog(@"Media key monitoring disabled");
 }
 
 - (void)sendEvent: (NSEvent*)event
 {
-	if( [event type] == NSSystemDefined && [event subtype] == 8 )
+    BOOL shouldHandleMediaKeyEventLocally = ![SPMediaKeyTap usesGlobalMediaKeyTap];
+
+	if(shouldHandleMediaKeyEventLocally && [event type] == NSSystemDefined && [event subtype] == 8 )
 	{
-		int keyCode = (([event data1] & 0xFFFF0000) >> 16);
-		int keyFlags = ([event data1] & 0x0000FFFF);
-		int keyState = (((keyFlags & 0xFF00) >> 8)) ==0xA;
-		int keyRepeat = (keyFlags & 0x1);
-		
-		[self mediaKeyEvent: keyCode state: keyState repeat: keyRepeat];
+		[self mediaKeyTap:nil receivedMediaKeyEvent:event];
 	}
 
 	[super sendEvent: event];
 }
+
+-(void)mediaKeyTap:(SPMediaKeyTap*)keyTap receivedMediaKeyEvent:(NSEvent*)event;
+{
+    NSAssert([event type] == NSSystemDefined && [event subtype] == SPSystemDefinedEventMediaKeys, @"Unexpected NSEvent in mediaKeyTap:receivedMediaKeyEvent:");
+    
+    int keyCode = (([event data1] & 0xFFFF0000) >> 16);
+    int keyFlags = ([event data1] & 0x0000FFFF);
+    BOOL keyIsPressed = (((keyFlags & 0xFF00) >> 8)) == 0xA;
+    
+    if (!keyIsPressed) // pressed and released
+    {
+        switch( keyCode )
+        {
+            case NX_KEYTYPE_PLAY:
+                [(AppController *)[self delegate] clickPlay];
+                break;
+                
+            case NX_KEYTYPE_NEXT:
+            case NX_KEYTYPE_FAST:
+                [(AppController *)[self delegate] clickNext];
+                break;
+                
+            case NX_KEYTYPE_PREVIOUS:
+            case NX_KEYTYPE_REWIND:
+                [(AppController *)[self delegate] clickPrev];
+                break;
+        }
+    }
+}
+
 @end

@@ -9,8 +9,11 @@
 #import <Cocoa/Cocoa.h>
 #import <IOKit/hidsystem/ev_keymap.h>
 
+@class SPMediaKeyTap;
+
 @interface MediaKeysApplication : NSApplication
 {
+    SPMediaKeyTap *keyTap;
 }
 
 @end
