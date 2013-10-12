@@ -232,6 +232,16 @@
 - (BOOL)endOfInputReached:(BufferChain *)sender //Sender is a BufferChain
 {
 	@synchronized (chainQueue) {
+        // No point in constructing new chain for the next playlist entry
+        // if there's already one at the head of chainQueue... r-r-right?
+        for (BufferChain *chain in chainQueue)
+        {
+            if ([chain isRunning])
+            {
+                return YES;
+            }
+        }
+
 		BufferChain *newChain = nil;
 		
 		nextStreamUserInfo = [sender userInfo];
@@ -286,6 +296,17 @@
 		[self addChainToQueue:newChain];
 
 		[newChain release];
+
+        // I'm stupid and can't hold too much stuff in my head all at once, so writing it here.
+        //
+        // Once we get here:
+        // - buffer chain for previous stream finished reading
+        // - there are (probably) some bytes of the previous stream in the output buffer which haven't been played
+        //   (by output node) yet
+        // - self.bufferChain == previous playlist entry's buffer chain
+        // - self.nextStream == next playlist entry's URL
+        // - self.nextStreamUserInfo == next playlist entry
+        // - head of chainQueue is the buffer chain for the next entry (which has launched its threads already)
 	}
 	
 	return YES;
@@ -293,6 +314,11 @@
 
 - (void)endOfInputPlayed
 {
+    // Once we get here:
+    // - the buffer chain for the next playlist entry (started in endOfInputReached) have been working for some time
+    //   already, so that there is some decoded and converted data to play
+    // - the buffer chain for the next entry is the first item in chainQueue
+
 	@synchronized(chainQueue) {
 		endOfInputReached = NO;
 		
@@ -307,11 +333,13 @@
 			return;
 		}
 		
-		[bufferChain release];
-	
-		bufferChain = [chainQueue objectAtIndex:0];
+
+        BufferChain *oldChain = bufferChain;
+        bufferChain = [chainQueue objectAtIndex:0];
+		[oldChain release];
 		[bufferChain retain];
-		
+
+        [chainQueue removeObjectAtIndex:0];
 		DLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
 		
 		[chainQueue removeObjectAtIndex:0];

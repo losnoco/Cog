@@ -108,7 +108,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 							  sizeof(AudioDeviceID));
 	
 	if (err != noErr) {
-		ALog(@"No output device could be found, your random error code is %i. Have a nice day!", err);
+		ALog(@"No output device could be found, your random error code is %d. Have a nice day!", err);
 		
 		return NO;
 	}

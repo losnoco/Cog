@@ -17,5 +17,6 @@
 -(void)signal;
 -(void)timedWait:(int)seconds;
 -(void)wait;
+-(void)waitIndefinitely;
 
 @end

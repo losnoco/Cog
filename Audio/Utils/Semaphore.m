@@ -40,4 +40,9 @@
 	semaphore_timedwait(semaphore, t);
 }
 
+-(void)waitIndefinitely
+{
+    semaphore_wait(semaphore);
+}
+
 @end
