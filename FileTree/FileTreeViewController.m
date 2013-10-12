@@ -18,8 +18,8 @@
 
 - (void)addToPlaylist:(NSArray *)urls
 {
-	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
-	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:URLOriginExternal];
+	[playlistLoader willInsertURLs:urls origin:URLOriginInternal];
+	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:URLOriginInternal];
 }
 
 - (void)clear:(id)sender
