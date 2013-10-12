@@ -15,7 +15,7 @@
 
 - (void)awakeFromNib
 {
-	[self setDoubleAction:@selector(addToPlaylist:)];
+	[self setDoubleAction:@selector(addToPlaylistExternal:)];
 	[self setTarget:[self delegate]];
 }
 
@@ -31,7 +31,7 @@
 		
 		if (modifiers == 0 && (c == NSEnterCharacter || c == NSCarriageReturnCharacter))
 		{
-			[(FileTreeController *)[self delegate] addToPlaylist:self];
+			[(FileTreeController *)[self delegate] addToPlaylistExternal:self];
 
 			return;
 		}

@@ -16,10 +16,20 @@
 	return [super initWithNibName:@"FileTree" bundle:[NSBundle mainBundle]];
 }
 
-- (void)addToPlaylist:(NSArray *)urls
+- (void)addToPlaylistInternal:(NSArray *)urls
 {
-	[playlistLoader willInsertURLs:urls origin:URLOriginInternal];
-	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:URLOriginInternal];
+	[self doAddToPlaylist:urls origin:URLOriginInternal];
+}
+
+- (void)addToPlaylistExternal:(NSArray *)urls
+{
+    [self doAddToPlaylist:urls origin:URLOriginExternal];
+}
+
+- (void)doAddToPlaylist:(NSArray *)urls origin:(URLOrigin)origin
+{
+    [playlistLoader willInsertURLs:urls origin:origin];
+    [playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:origin];
 }
 
 - (void)clear:(id)sender

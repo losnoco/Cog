@@ -17,6 +17,7 @@
 }
 
 - (IBAction)addToPlaylist:(id)sender;
+- (IBAction)addToPlaylistExternal:(id)sender;
 - (IBAction)setAsPlaylist:(id)sender;
 - (IBAction)playPauseResume:(NSObject *)id;
 - (IBAction)showEntryInFinder:(id)sender;
