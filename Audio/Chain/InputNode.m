@@ -101,7 +101,7 @@
 	if ([keyPath isEqual:@"properties"]) {
 		//Setup converter!
 		//Inform something of properties change
-		//Disable support until it is properly implimented.
+		//Disable support until it is properly implemented.
 		//[controller inputFormatDidChange: propertiesToASBD([decoder properties])];
 	}
 	else if ([keyPath isEqual:@"metadata"]) {

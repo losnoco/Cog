@@ -122,6 +122,7 @@
 
 - (void)dealloc
 {
+    [inputNode setShouldContinue:NO];
     [[inputNode exitAtTheEndOfTheStream] signal];
     [[inputNode semaphore] signal];
     [[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
@@ -198,8 +199,8 @@
 
 - (BOOL)isRunning
 {
-    InputNode *theInputNode = [self inputNode];
-    if (nil != theInputNode && [theInputNode shouldContinue] && ![theInputNode endOfStream])
+    InputNode *node = [self inputNode];
+    if (nil != node && [node shouldContinue] && ![node endOfStream])
     {
         return YES;
     }
