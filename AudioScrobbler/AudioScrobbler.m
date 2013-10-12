@@ -78,7 +78,8 @@ escapeForLastFM(NSString *string)
             NSArray *launchedApps = [[NSWorkspace sharedWorkspace] runningApplications];
             BOOL running = NO;
             for(NSRunningApplication *app in launchedApps) {
-                if([[app bundleIdentifier] isEqualToString:@"fm.last.Last.fm"]) {
+                if([[app bundleIdentifier] isEqualToString:@"fm.last.Last.fm"] ||
+                   [[app bundleIdentifier] isEqualToString:@"fm.last.Scrobbler"]) {
                     running = YES;
                     break;
                 }
