@@ -37,6 +37,11 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
     {
         rgInfo = nil;
         
+        converterFloat = NULL;
+        converter = NULL;
+        floatBuffer = NULL;
+        callbackBuffer = NULL;
+
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
     }
     
@@ -119,11 +124,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter,
 	
 	amountToWrite = (*ioNumberDataPackets)*(converter->inputFormat.mBytesPerPacket);
 
-	if (converter->callbackBuffer != NULL)
-    {
-		free(converter->callbackBuffer);
-    }
-	converter->callbackBuffer = malloc(amountToWrite);
+	converter->callbackBuffer = realloc(converter->callbackBuffer, amountToWrite);
 
 	amountRead = [converter readData:converter->callbackBuffer amount:amountToWrite];
 	if (amountRead == 0 && [converter endOfStream] == NO)
@@ -329,6 +330,9 @@ static float db_to_scale(float db)
     floatFormat.mBitsPerChannel = 32;
     floatFormat.mBytesPerFrame = (32/8)*floatFormat.mChannelsPerFrame;
     floatFormat.mBytesPerPacket = floatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
+    
+    floatOffset = 0;
+    floatSize = 0;
     
     stat = AudioConverterNew( &inputFormat, &floatFormat, &converterFloat );
     if (stat != noErr)
