@@ -53,6 +53,7 @@
 	if (NO == [pe error]) {
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 			[scrobbler start:pe];
+            if ([AudioScrobbler isRunning]) return;
 		}
 		
 		// Note: We don't want to send a growl notification on resume.

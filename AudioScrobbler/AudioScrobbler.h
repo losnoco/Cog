@@ -34,6 +34,8 @@
     semaphore_t			_semaphore;
 }
 
++ (BOOL)    isRunning;
+
 - (void)	start:(PlaylistEntry *)pe;
 - (void)	stop;
 - (void)	pause;
