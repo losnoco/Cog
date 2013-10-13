@@ -259,8 +259,10 @@ int state_init(struct NDS_state *state)
 
 void state_deinit(struct NDS_state *state)
 {
-	MMU_unsetRom(state);
-	NDS_DeInit(state);
+    if (state->MMU)
+        MMU_unsetRom(state);
+    if (state->nds && state->MMU && state->NDS_ARM7 && state->NDS_ARM9 && state->MainScreen && state->SubScreen)
+        NDS_DeInit(state);
     if (state->nds) free(state->nds);
     state->nds = NULL;
     if (state->NDS_ARM7) free(state->NDS_ARM7);

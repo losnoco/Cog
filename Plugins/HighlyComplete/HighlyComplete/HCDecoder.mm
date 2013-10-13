@@ -1003,11 +1003,16 @@ static int twosf_info(void * context, const char * name, const char * value)
             return NO;
         }
         
+        if ( state_init(core) )
+        {
+            state_deinit(core);
+            if (state.rom) free(state.rom);
+            if (state.state) free(state.state);
+            return NO;
+        }
+        
         emulatorCore = ( uint8_t * ) core;
         emulatorExtra = state.rom;
-        
-        if ( state_init(core) )
-            return NO;
         
         if ( state.rom )
             state_setrom(core, state.rom, (u32) state.rom_size );
