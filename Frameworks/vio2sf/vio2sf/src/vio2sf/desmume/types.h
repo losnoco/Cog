@@ -97,7 +97,11 @@ typedef s16 v10;
 /*----------------------*/
 
 #ifndef OBJ_C
+#ifdef WIN32
+typedef int BOOL;
+#else
 typedef signed char BOOL;
+#endif
 #else
 //apple also defines BOOL
 typedef int desmume_BOOL;

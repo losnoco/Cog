@@ -83,7 +83,7 @@ int state_init(NDS_state *state);
 
 void state_deinit(NDS_state *state);
 
-void state_setrom(NDS_state *state, const u8 * rom, u32 rom_size);
+void state_setrom(NDS_state *state, u8 * rom, u32 rom_size);
 
 void state_loadstate(NDS_state *state, const u8 * ss, u32 ss_size);
     

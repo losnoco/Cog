@@ -7,6 +7,8 @@
 //
 
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "NDSSystem.h"
 #include "MMU.h"
@@ -123,7 +125,7 @@ int state_init(struct NDS_state *state)
     
     for (; i < 0x70; ++i)
     {
-        state->MMU_ARM9_MEM_MAP[i] = state->ARM9Mem->ARM9_OAM;
+        state->MMU_ARM9_MEM_MAP[i] = state->ARM9Mem->ARM9_LCD;
         state->MMU_ARM9_MEM_MASK[i] = 0x000FFFFF;
     }
     
@@ -279,7 +281,7 @@ void state_deinit(struct NDS_state *state)
     state->SubScreen = NULL;
 }
 
-void state_setrom(struct NDS_state *state, const u8 * rom, u32 rom_size)
+void state_setrom(struct NDS_state *state, u8 * rom, u32 rom_size)
 {
     assert(!(rom_size & (rom_size - 1)));
     NDS_SetROM(state, rom, rom_size - 1);
