@@ -11,6 +11,7 @@
 @interface MainWindow : NSWindow {
     IBOutlet NSMenuItem * itemLionSeparator;
     IBOutlet NSMenuItem * itemLionFullscreenToggle;
+    IBOutlet NSView *playlistView;
 }
 
 @end

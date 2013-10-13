@@ -31,7 +31,9 @@
         [itemLionSeparator setHidden:NO];
         [itemLionFullscreenToggle setHidden:NO];
     }
-
+    
+    [playlistView setNextResponder:self];
+    
 	[super awakeFromNib];
 }
 

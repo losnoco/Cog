@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" defaultVersion="1060" identifier="macosx"/>
+        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
     </dependencies>
     <objects>
@@ -71,12 +71,12 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1913"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.index" id="1356">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1913"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="status" editable="NO" width="20" minWidth="20" maxWidth="20" id="1798">
@@ -85,7 +85,7 @@
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
-                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="B0308767-B0DF-4283-86A8-2FE03FA4ADA4" id="1801">
+                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="9DCC8810-EF6B-49E3-96DC-98661029C60E" id="1801">
                                                         <font key="font" metaFont="system"/>
                                                     </imageCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
@@ -112,12 +112,12 @@
                                                     <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="title"/>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1914"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.title" id="814">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1914"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="artist" editable="NO" width="120" minWidth="96" maxWidth="1024" id="391">
@@ -134,12 +134,12 @@
                                                     <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="artist"/>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1916"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.artist" id="815">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1916"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="album" editable="NO" width="120" minWidth="96" maxWidth="1024" id="806">
@@ -156,12 +156,12 @@
                                                     <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="album"/>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1917"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.album" id="816">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1917"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="length" editable="NO" width="66" minWidth="43.62012" maxWidth="96" id="807">
@@ -177,12 +177,12 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1919"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.length" id="1658">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1919"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="year" editable="NO" width="66" minWidth="42" maxWidth="96" id="848">
@@ -198,8 +198,8 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1921"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.year" id="851"/>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1921"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="genre" editable="NO" width="119" minWidth="96" maxWidth="512" id="849">
@@ -216,8 +216,8 @@
                                                     <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="genre"/>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1922"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.genre" id="852"/>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1922"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="track" editable="NO" width="67" minWidth="24" maxWidth="72" id="850">
@@ -233,8 +233,8 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1923"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.track" id="853"/>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1923"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="path" editable="NO" width="64" minWidth="32" maxWidth="2048" hidden="YES" id="1712">
@@ -250,12 +250,12 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1924"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.path" id="1788">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1924"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="filename" editable="NO" width="64" minWidth="32" maxWidth="1024" hidden="YES" id="1736">
@@ -271,12 +271,12 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1925"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.filename" id="1787">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1925"/>
                                                     </connections>
                                                 </tableColumn>
                                             </tableColumns>
@@ -357,6 +357,12 @@
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <connections>
+                                    <binding destination="218" name="predicate" keyPath="filterPredicate" id="1576">
+                                        <dictionary key="options">
+                                            <string key="NSDisplayName">All</string>
+                                            <string key="NSPredicateFormat">(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)</string>
+                                        </dictionary>
+                                    </binding>
                                     <binding destination="218" name="predicate2" keyPath="filterPredicate" previousBinding="1576" id="1578">
                                         <dictionary key="options">
                                             <string key="NSDisplayName">Title</string>
@@ -371,26 +377,20 @@
                                     </binding>
                                     <binding destination="218" name="predicate4" keyPath="filterPredicate" previousBinding="1580" id="1582">
                                         <dictionary key="options">
-                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                             <integer key="NSValidatesImmediately" value="0"/>
-                                            <string key="NSPredicateFormat">artist contains[cd] $value</string>
                                             <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                            <string key="NSPredicateFormat">artist contains[cd] $value</string>
                                             <string key="NSDisplayName">Album</string>
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                         </dictionary>
                                     </binding>
                                     <binding destination="218" name="predicate5" keyPath="filterPredicate" previousBinding="1582" id="1583">
                                         <dictionary key="options">
-                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                             <integer key="NSValidatesImmediately" value="0"/>
-                                            <string key="NSPredicateFormat">genre contains[cd] $value</string>
                                             <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                            <string key="NSPredicateFormat">genre contains[cd] $value</string>
                                             <string key="NSDisplayName">Genre</string>
-                                        </dictionary>
-                                    </binding>
-                                    <binding destination="218" name="predicate" keyPath="filterPredicate" id="1576">
-                                        <dictionary key="options">
-                                            <string key="NSDisplayName">All</string>
-                                            <string key="NSPredicateFormat">(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)</string>
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -407,13 +407,13 @@
                             <sliderCell key="cell" enabled="NO" alignment="left" maxValue="10000" tickMarkPosition="above" sliderType="linear" id="1550" customClass="TrackingCell"/>
                             <connections>
                                 <action selector="seek:" target="705" id="1597"/>
-                                <binding destination="705" name="enabled" keyPath="seekable" id="2376"/>
                                 <binding destination="1897" name="maxValue" keyPath="content.length" id="2377">
                                     <dictionary key="options">
                                         <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
                                     </dictionary>
                                 </binding>
                                 <binding destination="705" name="value" keyPath="position" previousBinding="2377" id="2378"/>
+                                <binding destination="705" name="enabled" keyPath="seekable" id="2376"/>
                                 <outlet property="positionTextField" destination="1566" id="2385"/>
                             </connections>
                         </slider>
@@ -584,6 +584,7 @@
                 <outlet property="initialFirstResponder" destination="207" id="720"/>
                 <outlet property="itemLionFullscreenToggle" destination="2456" id="5yZ-Jj-awr"/>
                 <outlet property="itemLionSeparator" destination="2455" id="0p5-i7-wLz"/>
+                <outlet property="playlistView" destination="206" id="M6Y-oh-bGz"/>
             </connections>
         </window>
         <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
@@ -632,9 +633,9 @@
                             </sliderCell>
                             <connections>
                                 <action selector="seek:" target="705" id="2387"/>
-                                <binding destination="705" name="enabled" keyPath="seekable" id="2384"/>
                                 <binding destination="1897" name="maxValue" keyPath="content.length" id="2381"/>
                                 <binding destination="705" name="value" keyPath="position" previousBinding="2381" id="2382"/>
+                                <binding destination="705" name="enabled" keyPath="seekable" id="2384"/>
                                 <outlet property="positionTextField" destination="2291" id="2386"/>
                             </connections>
                         </slider>
@@ -1101,8 +1102,8 @@
                                             <string key="NSValueTransformerName">NSIsNotNil</string>
                                             <integer key="NSNotApplicablePlaceholder" value="0"/>
                                             <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
                                             <integer key="NSNullPlaceholder" value="0"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -1152,8 +1153,8 @@ CA
                                             <string key="NSValueTransformerName">NSIsNotNil</string>
                                             <integer key="NSNotApplicablePlaceholder" value="0"/>
                                             <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
                                             <integer key="NSNullPlaceholder" value="0"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
                                         </dictionary>
                                     </binding>
                                 </connections>
@@ -1187,13 +1188,13 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1760">
                                                     <dictionary key="options">
-                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
                                                         <integer key="NSConditionallySetsEnabled" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
                                                         <string key="NSValueTransformerName">RepeatAllTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
                                                         <integer key="NSValidatesImmediately" value="0"/>
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                     </dictionary>
                                                 </binding>
                                             </connections>
@@ -1213,13 +1214,13 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1763">
                                                     <dictionary key="options">
-                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
                                                         <integer key="NSConditionallySetsEnabled" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
                                                         <string key="NSValueTransformerName">RepeatOneTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
                                                         <integer key="NSValidatesImmediately" value="0"/>
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                     </dictionary>
                                                 </binding>
                                             </connections>
@@ -1228,13 +1229,13 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1767">
                                                     <dictionary key="options">
-                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
                                                         <integer key="NSConditionallySetsEnabled" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
                                                         <string key="NSValueTransformerName">RepeatNoneTransformer</string>
                                                         <integer key="NSConditionallySetsHidden" value="0"/>
                                                         <integer key="NSValidatesImmediately" value="0"/>
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                                     </dictionary>
                                                 </binding>
                                             </connections>
@@ -1480,11 +1481,11 @@ Gw
                     <connections>
                         <binding destination="1897" name="title" keyPath="content.artist" id="2085">
                             <dictionary key="options">
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNotApplicablePlaceholder"></string>
                                 <string key="NSNoSelectionPlaceholder"></string>
-                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNullPlaceholder">Not Playing</string>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1494,11 +1495,11 @@ Gw
                     <connections>
                         <binding destination="1897" name="title" keyPath="content.title" id="2083">
                             <dictionary key="options">
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNotApplicablePlaceholder"></string>
                                 <string key="NSNoSelectionPlaceholder"></string>
-                                <string key="NSMultipleValuesPlaceholder"></string>
                                 <string key="NSNullPlaceholder">Not Playing</string>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1620,8 +1621,8 @@ Gw
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                 <integer key="NSNotApplicablePlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
                                 <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1635,8 +1636,8 @@ Gw
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                 <integer key="NSNotApplicablePlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
                                 <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1653,8 +1654,8 @@ Gw
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                 <integer key="NSNotApplicablePlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
                                 <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1668,8 +1669,8 @@ Gw
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                 <integer key="NSNotApplicablePlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
                                 <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
                             </dictionary>
                         </binding>
                     </connections>
@@ -1702,7 +1703,7 @@ Gw
                 <slider horizontalHuggingPriority="750" id="1612" customClass="VolumeSlider">
                     <rect key="frame" x="6" y="19" width="15" height="129"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="right" sliderType="linear" id="1613"/>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="left" sliderType="linear" id="1613"/>
                     <connections>
                         <action selector="changeVolume:" target="705" id="1614"/>
                     </connections>
@@ -1758,7 +1759,7 @@ Gw
         <customObject id="2434" customClass="FeedbackController"/>
     </objects>
     <resources>
-        <image name="B0308767-B0DF-4283-86A8-2FE03FA4ADA4" width="17" height="17">
+        <image name="9DCC8810-EF6B-49E3-96DC-98661029C60E" width="17" height="17">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGRkdYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ExQZHh8qKyw0NzpAQ1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5T
