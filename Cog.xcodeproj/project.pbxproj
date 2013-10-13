@@ -2026,8 +2026,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = Scripts/genversion.sh;
-			shellScript = "";
+			shellPath = /bin/sh;
+			shellScript = "${PROJECT_DIR}/Scripts/genversion.sh";
 		};
 /* End PBXShellScriptBuildPhase section */
 
