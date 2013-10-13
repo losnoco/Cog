@@ -1020,6 +1020,7 @@ static int twosf_info(void * context, const char * name, const char * value)
             state.arm9_clockdown_level = state.clockdown;
         
         core->initial_frames = state.initial_frames;
+        core->sync_type = state.sync_type;
         core->arm7_clockdown_level = state.arm7_clockdown_level;
         core->arm9_clockdown_level = state.arm9_clockdown_level;
         
