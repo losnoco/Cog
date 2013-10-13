@@ -21,6 +21,9 @@
 		8360EF6E17F92E86005208A4 /* HighlyExperimental.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EF4417F92C92005208A4 /* HighlyExperimental.framework */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
 		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
+		83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
+		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
+		83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0CBF180B27C200269051 /* libz.dylib */; };
 		83F18C3917F9301400471B6C /* HighlyExperimental.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF4417F92C92005208A4 /* HighlyExperimental.framework */; };
 /* End PBXBuildFile section */
 
@@ -109,6 +112,20 @@
 			remoteGlobalIDString = 83848FB71807623F00E7332D;
 			remoteInfo = SSEQPlayer;
 		};
+		83DE0C39180A9BD500269051 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83DE0C06180A9BD400269051;
+			remoteInfo = vio2sf;
+		};
+		83DE0CBA180B02C500269051 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83DE0C05180A9BD400269051;
+			remoteInfo = vio2sf;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -118,6 +135,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */,
 				8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */,
 				834379A617F97EB000584396 /* HighlyAdvanced.framework in CopyFiles */,
 				8343792A17F96F2600584396 /* HighlyQuixotic.framework in CopyFiles */,
@@ -148,6 +166,8 @@
 		8360EEF317F92AC8005208A4 /* HighlyComplete-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HighlyComplete-Prefix.pch"; sourceTree = "<group>"; };
 		8360EF3E17F92C91005208A4 /* HighlyExperimental.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyExperimental.xcodeproj; path = ../../Frameworks/HighlyExperimental/HighlyExperimental.xcodeproj; sourceTree = "<group>"; };
 		83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SSEQPlayer.xcodeproj; path = ../../Frameworks/SSEQPlayer/SSEQPlayer.xcodeproj; sourceTree = "<group>"; };
+		83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = "<group>"; };
+		83DE0CBF180B27C200269051 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +175,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */,
+				83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */,
 				8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */,
 				834379A517F97EA100584396 /* HighlyAdvanced.framework in Frameworks */,
 				8343792917F96F1D00584396 /* HighlyQuixotic.framework in Frameworks */,
@@ -220,6 +242,7 @@
 		8360EEE617F92AC8005208A4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83DE0CBF180B27C200269051 /* libz.dylib */,
 				8360EEE717F92AC8005208A4 /* Cocoa.framework */,
 				8360EEE917F92AC8005208A4 /* Other Frameworks */,
 				8360EF3E17F92C91005208A4 /* HighlyExperimental.xcodeproj */,
@@ -228,6 +251,7 @@
 				8343790C17F96E2600584396 /* HighlyQuixotic.xcodeproj */,
 				8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */,
 				83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */,
+				83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -280,6 +304,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83DE0C35180A9BD400269051 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83DE0C3A180A9BD500269051 /* vio2sf.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -295,6 +327,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				83DE0CBB180B02C500269051 /* PBXTargetDependency */,
 				83849049180764AC00E7332D /* PBXTargetDependency */,
 				834379A417F97E9C00584396 /* PBXTargetDependency */,
 				8343792817F96F1900584396 /* PBXTargetDependency */,
@@ -351,6 +384,10 @@
 					ProductGroup = 83848FE71807623F00E7332D /* Products */;
 					ProjectRef = 83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */;
 				},
+				{
+					ProductGroup = 83DE0C35180A9BD400269051 /* Products */;
+					ProjectRef = 83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -400,6 +437,13 @@
 			fileType = wrapper.framework;
 			path = SSEQPlayer.framework;
 			remoteRef = 83848FEB1807624000E7332D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83DE0C3A180A9BD500269051 /* vio2sf.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = vio2sf.framework;
+			remoteRef = 83DE0C39180A9BD500269051 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -456,6 +500,11 @@
 			isa = PBXTargetDependency;
 			name = SSEQPlayer;
 			targetProxy = 83849048180764AC00E7332D /* PBXContainerItemProxy */;
+		};
+		83DE0CBB180B02C500269051 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = vio2sf;
+			targetProxy = 83DE0CBA180B02C500269051 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

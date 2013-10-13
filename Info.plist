@@ -25,6 +25,21 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>2sf</string>
+				<string>mini2sf</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Nintendo DS Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>at3</string>
 			</array>
 			<key>LSTypeIsPackage</key>

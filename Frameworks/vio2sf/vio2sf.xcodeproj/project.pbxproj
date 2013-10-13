@@ -1,0 +1,459 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		83DE0C14180A9BD400269051 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83DE0C12180A9BD400269051 /* InfoPlist.strings */; };
+		83DE0C81180A9CA400269051 /* ARM9.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C46180A9CA400269051 /* ARM9.h */; };
+		83DE0C82180A9CA400269051 /* arm_instructions.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C47180A9CA400269051 /* arm_instructions.c */; };
+		83DE0C83180A9CA400269051 /* arm_instructions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C48180A9CA400269051 /* arm_instructions.h */; };
+		83DE0C84180A9CA400269051 /* armcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C49180A9CA400269051 /* armcpu.c */; };
+		83DE0C85180A9CA400269051 /* armcpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C4A180A9CA400269051 /* armcpu.h */; };
+		83DE0C86180A9CA400269051 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C4B180A9CA400269051 /* bios.c */; };
+		83DE0C87180A9CA400269051 /* bios.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C4C180A9CA400269051 /* bios.h */; };
+		83DE0C88180A9CA400269051 /* bits.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C4D180A9CA400269051 /* bits.h */; };
+		83DE0C89180A9CA400269051 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C4E180A9CA400269051 /* config.h */; };
+		83DE0C8A180A9CA400269051 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 83DE0C4F180A9CA400269051 /* COPYING */; };
+		83DE0C8B180A9CA400269051 /* cp15.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C50180A9CA400269051 /* cp15.c */; };
+		83DE0C8C180A9CA400269051 /* cp15.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C51180A9CA400269051 /* cp15.h */; };
+		83DE0C8D180A9CA400269051 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C52180A9CA400269051 /* debug.h */; };
+		83DE0C8E180A9CA400269051 /* dscard.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C53180A9CA400269051 /* dscard.h */; };
+		83DE0C8F180A9CA400269051 /* FIFO.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C54180A9CA400269051 /* FIFO.c */; };
+		83DE0C90180A9CA400269051 /* FIFO.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C55180A9CA400269051 /* FIFO.h */; };
+		83DE0C91180A9CA400269051 /* GPU.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C56180A9CA400269051 /* GPU.c */; };
+		83DE0C92180A9CA400269051 /* GPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C57180A9CA400269051 /* GPU.h */; };
+		83DE0C93180A9CA400269051 /* instruction_tabdef.inc in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C58180A9CA400269051 /* instruction_tabdef.inc */; };
+		83DE0C94180A9CA400269051 /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C59180A9CA400269051 /* matrix.c */; };
+		83DE0C95180A9CA400269051 /* matrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C5A180A9CA400269051 /* matrix.h */; };
+		83DE0C96180A9CA400269051 /* mc.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C5B180A9CA400269051 /* mc.c */; };
+		83DE0C97180A9CA400269051 /* mc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C5C180A9CA400269051 /* mc.h */; };
+		83DE0C98180A9CA400269051 /* mem.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C5D180A9CA400269051 /* mem.h */; };
+		83DE0C99180A9CA400269051 /* MMU.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C5E180A9CA400269051 /* MMU.c */; };
+		83DE0C9A180A9CA400269051 /* MMU.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C5F180A9CA400269051 /* MMU.h */; };
+		83DE0C9B180A9CA400269051 /* NDSSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C60180A9CA400269051 /* NDSSystem.c */; };
+		83DE0C9C180A9CA400269051 /* NDSSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C61180A9CA400269051 /* NDSSystem.h */; };
+		83DE0C9D180A9CA400269051 /* registers.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C62180A9CA400269051 /* registers.h */; };
+		83DE0CA1180A9CA400269051 /* SPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C66180A9CA400269051 /* SPU.cpp */; };
+		83DE0CA2180A9CA400269051 /* SPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C67180A9CA400269051 /* SPU.h */; };
+		83DE0CA3180A9CA400269051 /* spu_exports.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C68180A9CA400269051 /* spu_exports.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83DE0CA4180A9CA400269051 /* thumb_instructions.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C69180A9CA400269051 /* thumb_instructions.c */; };
+		83DE0CA5180A9CA400269051 /* thumb_instructions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C6A180A9CA400269051 /* thumb_instructions.h */; };
+		83DE0CA6180A9CA400269051 /* thumb_tabdef.inc in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C6B180A9CA400269051 /* thumb_tabdef.inc */; };
+		83DE0CA7180A9CA400269051 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C6C180A9CA400269051 /* types.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83DE0CB8180A9FD000269051 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0CB7180A9FD000269051 /* state.c */; };
+		83DE0CBE180B21DD00269051 /* state.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0CB9180A9FE300269051 /* state.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		83DE0C06180A9BD400269051 /* vio2sf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vio2sf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		83DE0C11180A9BD400269051 /* vio2sf-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vio2sf-Info.plist"; sourceTree = "<group>"; };
+		83DE0C13180A9BD400269051 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83DE0C46180A9CA400269051 /* ARM9.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARM9.h; sourceTree = "<group>"; };
+		83DE0C47180A9CA400269051 /* arm_instructions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm_instructions.c; sourceTree = "<group>"; };
+		83DE0C48180A9CA400269051 /* arm_instructions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arm_instructions.h; sourceTree = "<group>"; };
+		83DE0C49180A9CA400269051 /* armcpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = armcpu.c; sourceTree = "<group>"; };
+		83DE0C4A180A9CA400269051 /* armcpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = armcpu.h; sourceTree = "<group>"; };
+		83DE0C4B180A9CA400269051 /* bios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios.c; sourceTree = "<group>"; };
+		83DE0C4C180A9CA400269051 /* bios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bios.h; sourceTree = "<group>"; };
+		83DE0C4D180A9CA400269051 /* bits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bits.h; sourceTree = "<group>"; };
+		83DE0C4E180A9CA400269051 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		83DE0C4F180A9CA400269051 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		83DE0C50180A9CA400269051 /* cp15.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cp15.c; sourceTree = "<group>"; };
+		83DE0C51180A9CA400269051 /* cp15.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cp15.h; sourceTree = "<group>"; };
+		83DE0C52180A9CA400269051 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
+		83DE0C53180A9CA400269051 /* dscard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dscard.h; sourceTree = "<group>"; };
+		83DE0C54180A9CA400269051 /* FIFO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FIFO.c; sourceTree = "<group>"; };
+		83DE0C55180A9CA400269051 /* FIFO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FIFO.h; sourceTree = "<group>"; };
+		83DE0C56180A9CA400269051 /* GPU.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GPU.c; sourceTree = "<group>"; };
+		83DE0C57180A9CA400269051 /* GPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPU.h; sourceTree = "<group>"; };
+		83DE0C58180A9CA400269051 /* instruction_tabdef.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = instruction_tabdef.inc; sourceTree = "<group>"; };
+		83DE0C59180A9CA400269051 /* matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = matrix.c; sourceTree = "<group>"; };
+		83DE0C5A180A9CA400269051 /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = matrix.h; sourceTree = "<group>"; };
+		83DE0C5B180A9CA400269051 /* mc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc.c; sourceTree = "<group>"; };
+		83DE0C5C180A9CA400269051 /* mc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mc.h; sourceTree = "<group>"; };
+		83DE0C5D180A9CA400269051 /* mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mem.h; sourceTree = "<group>"; };
+		83DE0C5E180A9CA400269051 /* MMU.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MMU.c; sourceTree = "<group>"; };
+		83DE0C5F180A9CA400269051 /* MMU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMU.h; sourceTree = "<group>"; };
+		83DE0C60180A9CA400269051 /* NDSSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NDSSystem.c; sourceTree = "<group>"; };
+		83DE0C61180A9CA400269051 /* NDSSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDSSystem.h; sourceTree = "<group>"; };
+		83DE0C62180A9CA400269051 /* registers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = registers.h; sourceTree = "<group>"; };
+		83DE0C66180A9CA400269051 /* SPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SPU.cpp; sourceTree = "<group>"; };
+		83DE0C67180A9CA400269051 /* SPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPU.h; sourceTree = "<group>"; };
+		83DE0C68180A9CA400269051 /* spu_exports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spu_exports.h; sourceTree = "<group>"; };
+		83DE0C69180A9CA400269051 /* thumb_instructions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thumb_instructions.c; sourceTree = "<group>"; };
+		83DE0C6A180A9CA400269051 /* thumb_instructions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thumb_instructions.h; sourceTree = "<group>"; };
+		83DE0C6B180A9CA400269051 /* thumb_tabdef.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = thumb_tabdef.inc; sourceTree = "<group>"; };
+		83DE0C6C180A9CA400269051 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		83DE0CB7180A9FD000269051 /* state.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = state.c; sourceTree = "<group>"; };
+		83DE0CB9180A9FE300269051 /* state.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		83DE0C02180A9BD400269051 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		83DE0BFC180A9BD400269051 = {
+			isa = PBXGroup;
+			children = (
+				83DE0C0F180A9BD400269051 /* vio2sf */,
+				83DE0C08180A9BD400269051 /* Frameworks */,
+				83DE0C07180A9BD400269051 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		83DE0C07180A9BD400269051 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83DE0C06180A9BD400269051 /* vio2sf.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83DE0C08180A9BD400269051 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				83DE0C0B180A9BD400269051 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		83DE0C0B180A9BD400269051 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		83DE0C0F180A9BD400269051 /* vio2sf */ = {
+			isa = PBXGroup;
+			children = (
+				83DE0C44180A9CA400269051 /* vio2sf */,
+				83DE0C10180A9BD400269051 /* Supporting Files */,
+			);
+			path = vio2sf;
+			sourceTree = "<group>";
+		};
+		83DE0C10180A9BD400269051 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				83DE0C11180A9BD400269051 /* vio2sf-Info.plist */,
+				83DE0C12180A9BD400269051 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		83DE0C44180A9CA400269051 /* vio2sf */ = {
+			isa = PBXGroup;
+			children = (
+				83DE0C45180A9CA400269051 /* desmume */,
+			);
+			name = vio2sf;
+			path = src/vio2sf;
+			sourceTree = "<group>";
+		};
+		83DE0C45180A9CA400269051 /* desmume */ = {
+			isa = PBXGroup;
+			children = (
+				83DE0C46180A9CA400269051 /* ARM9.h */,
+				83DE0C47180A9CA400269051 /* arm_instructions.c */,
+				83DE0C48180A9CA400269051 /* arm_instructions.h */,
+				83DE0C49180A9CA400269051 /* armcpu.c */,
+				83DE0C4A180A9CA400269051 /* armcpu.h */,
+				83DE0C4B180A9CA400269051 /* bios.c */,
+				83DE0C4C180A9CA400269051 /* bios.h */,
+				83DE0C4D180A9CA400269051 /* bits.h */,
+				83DE0C4E180A9CA400269051 /* config.h */,
+				83DE0C4F180A9CA400269051 /* COPYING */,
+				83DE0C50180A9CA400269051 /* cp15.c */,
+				83DE0C51180A9CA400269051 /* cp15.h */,
+				83DE0C52180A9CA400269051 /* debug.h */,
+				83DE0C53180A9CA400269051 /* dscard.h */,
+				83DE0C54180A9CA400269051 /* FIFO.c */,
+				83DE0C55180A9CA400269051 /* FIFO.h */,
+				83DE0C56180A9CA400269051 /* GPU.c */,
+				83DE0C57180A9CA400269051 /* GPU.h */,
+				83DE0C58180A9CA400269051 /* instruction_tabdef.inc */,
+				83DE0C59180A9CA400269051 /* matrix.c */,
+				83DE0C5A180A9CA400269051 /* matrix.h */,
+				83DE0C5B180A9CA400269051 /* mc.c */,
+				83DE0C5C180A9CA400269051 /* mc.h */,
+				83DE0C5D180A9CA400269051 /* mem.h */,
+				83DE0C5E180A9CA400269051 /* MMU.c */,
+				83DE0C5F180A9CA400269051 /* MMU.h */,
+				83DE0C60180A9CA400269051 /* NDSSystem.c */,
+				83DE0C61180A9CA400269051 /* NDSSystem.h */,
+				83DE0C62180A9CA400269051 /* registers.h */,
+				83DE0C66180A9CA400269051 /* SPU.cpp */,
+				83DE0C67180A9CA400269051 /* SPU.h */,
+				83DE0C68180A9CA400269051 /* spu_exports.h */,
+				83DE0C69180A9CA400269051 /* thumb_instructions.c */,
+				83DE0C6A180A9CA400269051 /* thumb_instructions.h */,
+				83DE0C6B180A9CA400269051 /* thumb_tabdef.inc */,
+				83DE0C6C180A9CA400269051 /* types.h */,
+				83DE0CB7180A9FD000269051 /* state.c */,
+				83DE0CB9180A9FE300269051 /* state.h */,
+			);
+			path = desmume;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		83DE0C03180A9BD400269051 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83DE0CBE180B21DD00269051 /* state.h in Headers */,
+				83DE0CA3180A9CA400269051 /* spu_exports.h in Headers */,
+				83DE0CA7180A9CA400269051 /* types.h in Headers */,
+				83DE0C8E180A9CA400269051 /* dscard.h in Headers */,
+				83DE0C88180A9CA400269051 /* bits.h in Headers */,
+				83DE0C83180A9CA400269051 /* arm_instructions.h in Headers */,
+				83DE0C9D180A9CA400269051 /* registers.h in Headers */,
+				83DE0C97180A9CA400269051 /* mc.h in Headers */,
+				83DE0C8C180A9CA400269051 /* cp15.h in Headers */,
+				83DE0C95180A9CA400269051 /* matrix.h in Headers */,
+				83DE0C9C180A9CA400269051 /* NDSSystem.h in Headers */,
+				83DE0C89180A9CA400269051 /* config.h in Headers */,
+				83DE0C8D180A9CA400269051 /* debug.h in Headers */,
+				83DE0C98180A9CA400269051 /* mem.h in Headers */,
+				83DE0C90180A9CA400269051 /* FIFO.h in Headers */,
+				83DE0C92180A9CA400269051 /* GPU.h in Headers */,
+				83DE0CA2180A9CA400269051 /* SPU.h in Headers */,
+				83DE0C87180A9CA400269051 /* bios.h in Headers */,
+				83DE0C85180A9CA400269051 /* armcpu.h in Headers */,
+				83DE0CA5180A9CA400269051 /* thumb_instructions.h in Headers */,
+				83DE0C81180A9CA400269051 /* ARM9.h in Headers */,
+				83DE0C9A180A9CA400269051 /* MMU.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		83DE0C05180A9BD400269051 /* vio2sf */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 83DE0C2E180A9BD400269051 /* Build configuration list for PBXNativeTarget "vio2sf" */;
+			buildPhases = (
+				83DE0C01180A9BD400269051 /* Sources */,
+				83DE0C02180A9BD400269051 /* Frameworks */,
+				83DE0C03180A9BD400269051 /* Headers */,
+				83DE0C04180A9BD400269051 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = vio2sf;
+			productName = vio2sf;
+			productReference = 83DE0C06180A9BD400269051 /* vio2sf.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83DE0BFD180A9BD400269051 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Christopher Snowhill";
+			};
+			buildConfigurationList = 83DE0C00180A9BD400269051 /* Build configuration list for PBXProject "vio2sf" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 83DE0BFC180A9BD400269051;
+			productRefGroup = 83DE0C07180A9BD400269051 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				83DE0C05180A9BD400269051 /* vio2sf */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		83DE0C04180A9BD400269051 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83DE0C8A180A9CA400269051 /* COPYING in Resources */,
+				83DE0C14180A9BD400269051 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		83DE0C01180A9BD400269051 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83DE0C99180A9CA400269051 /* MMU.c in Sources */,
+				83DE0C8B180A9CA400269051 /* cp15.c in Sources */,
+				83DE0C8F180A9CA400269051 /* FIFO.c in Sources */,
+				83DE0CA1180A9CA400269051 /* SPU.cpp in Sources */,
+				83DE0C86180A9CA400269051 /* bios.c in Sources */,
+				83DE0CA6180A9CA400269051 /* thumb_tabdef.inc in Sources */,
+				83DE0C96180A9CA400269051 /* mc.c in Sources */,
+				83DE0C91180A9CA400269051 /* GPU.c in Sources */,
+				83DE0CA4180A9CA400269051 /* thumb_instructions.c in Sources */,
+				83DE0C84180A9CA400269051 /* armcpu.c in Sources */,
+				83DE0C94180A9CA400269051 /* matrix.c in Sources */,
+				83DE0C93180A9CA400269051 /* instruction_tabdef.inc in Sources */,
+				83DE0C9B180A9CA400269051 /* NDSSystem.c in Sources */,
+				83DE0CB8180A9FD000269051 /* state.c in Sources */,
+				83DE0C82180A9CA400269051 /* arm_instructions.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		83DE0C12180A9BD400269051 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				83DE0C13180A9BD400269051 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		83DE0C2C180A9BD400269051 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		83DE0C2D180A9BD400269051 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		83DE0C2F180A9BD400269051 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "vio2sf/vio2sf-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		83DE0C30180A9BD400269051 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "vio2sf/vio2sf-Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		83DE0C00180A9BD400269051 /* Build configuration list for PBXProject "vio2sf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83DE0C2C180A9BD400269051 /* Debug */,
+				83DE0C2D180A9BD400269051 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83DE0C2E180A9BD400269051 /* Build configuration list for PBXNativeTarget "vio2sf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83DE0C2F180A9BD400269051 /* Debug */,
+				83DE0C30180A9BD400269051 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 83DE0BFD180A9BD400269051 /* Project object */;
+}

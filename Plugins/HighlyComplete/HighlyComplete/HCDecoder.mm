@@ -28,6 +28,10 @@
 #import <SSEQPlayer/SDAT.h>
 #import <SSEQPlayer/Player.h>
 
+#import <vio2sf/state.h>
+
+#include <zlib.h>
+
 @interface psf_file_container : NSObject {
     NSLock * lock;
     NSMutableDictionary * list;
@@ -267,16 +271,6 @@ static int psf_info_meta(void * context, const char * name, const char * value)
 	{
 		state->utf8 = true;
 	}
-	else if ([taglc hasPrefix:@"_lib"])
-	{
-	}
-	else if ([taglc isEqualToString:@"_refresh"])
-	{
-	}
-	else if ([taglc hasPrefix:@"_"])
-	{
-		return -1;
-	}
 	else if ([taglc isEqualToString:@"title"] ||
              [taglc isEqualToString:@"artist"] ||
              [taglc isEqualToString:@"album"] ||
@@ -473,7 +467,7 @@ struct qsf_loader_state
     uint32_t sample_size;
 };
 
-static int upload_section( struct qsf_loader_state * state, const char * section, uint32_t start,
+static int upload_gsf_section( struct qsf_loader_state * state, const char * section, uint32_t start,
                           const uint8_t * data, uint32_t size )
 {
     uint8_t ** array = NULL;
@@ -517,7 +511,7 @@ static int qsf_loader(void * context, const uint8_t * exe, size_t exe_size,
         if ( datasize > exe_size )
             return -1;
         
-        if ( upload_section( state, s, dataofs, exe, datasize ) < 0 )
+        if ( upload_gsf_section( state, s, dataofs, exe, datasize ) < 0 )
             return -1;
         
         exe += datasize;
@@ -535,7 +529,7 @@ struct gsf_loader_state
     size_t data_size;
 };
 
-int gsf_loader(void * context, const uint8_t * exe, size_t exe_size,
+static int gsf_loader(void * context, const uint8_t * exe, size_t exe_size,
                const uint8_t * reserved, size_t reserved_size)
 {
     if ( exe_size < 12 ) return -1;
@@ -637,7 +631,7 @@ struct ncsf_loader_state
 	ncsf_loader_state() : sseq( 0 ) { }
 };
 
-int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
+static int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
                 const uint8_t * reserved, size_t reserved_size)
 {
     struct ncsf_loader_state * state = ( struct ncsf_loader_state * ) context;
@@ -660,6 +654,227 @@ int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
 	}
     
     return 0;
+}
+
+struct twosf_loader_state
+{
+    uint8_t * rom;
+    uint8_t * state;
+    size_t rom_size;
+    size_t state_size;
+    
+    int initial_frames;
+    int sync_type;
+    int clockdown;
+    int arm9_clockdown_level;
+    int arm7_clockdown_level;
+};
+
+static int load_twosf_map(struct twosf_loader_state *state, int issave, const unsigned char *udata, unsigned usize)
+{
+    if (usize < 8) return -1;
+    
+	unsigned char *iptr;
+	size_t isize;
+	unsigned char *xptr;
+	unsigned xsize = get_le32(udata + 4);
+	unsigned xofs = get_le32(udata + 0);
+	if (issave)
+	{
+		iptr = state->state;
+		isize = state->state_size;
+		state->state = 0;
+		state->state_size = 0;
+	}
+	else
+	{
+		iptr = state->rom;
+		isize = state->rom_size;
+		state->rom = 0;
+		state->rom_size = 0;
+	}
+	if (!iptr)
+	{
+		size_t rsize = xofs + xsize;
+		if (!issave)
+		{
+			rsize -= 1;
+			rsize |= rsize >> 1;
+			rsize |= rsize >> 2;
+			rsize |= rsize >> 4;
+			rsize |= rsize >> 8;
+			rsize |= rsize >> 16;
+			rsize += 1;
+		}
+		iptr = (unsigned char *) malloc(rsize + 10);
+		if (!iptr)
+			return -1;
+		memset(iptr, 0, rsize + 10);
+		isize = rsize;
+	}
+	else if (isize < xofs + xsize)
+	{
+		size_t rsize = xofs + xsize;
+		if (!issave)
+		{
+			rsize -= 1;
+			rsize |= rsize >> 1;
+			rsize |= rsize >> 2;
+			rsize |= rsize >> 4;
+			rsize |= rsize >> 8;
+			rsize |= rsize >> 16;
+			rsize += 1;
+		}
+		xptr = (unsigned char *) realloc(iptr, xofs + rsize + 10);
+		if (!xptr)
+		{
+			free(iptr);
+			return -1;
+		}
+		iptr = xptr;
+		isize = rsize;
+	}
+	memcpy(iptr + xofs, udata + 8, xsize);
+	if (issave)
+	{
+		state->state = iptr;
+		state->state_size = isize;
+	}
+	else
+	{
+		state->rom = iptr;
+		state->rom_size = isize;
+	}
+	return 0;
+}
+
+static int load_twosf_mapz(struct twosf_loader_state *state, int issave, const unsigned char *zdata, unsigned zsize, unsigned zcrc)
+{
+	int ret;
+	int zerr;
+	uLongf usize = 8;
+	uLongf rsize = usize;
+	unsigned char *udata;
+	unsigned char *rdata;
+    
+	udata = (unsigned char *) malloc(usize);
+	if (!udata)
+		return -1;
+    
+	while (Z_OK != (zerr = uncompress(udata, &usize, zdata, zsize)))
+	{
+		if (Z_MEM_ERROR != zerr && Z_BUF_ERROR != zerr)
+		{
+			free(udata);
+			return -1;
+		}
+		if (usize >= 8)
+		{
+			usize = get_le32(udata + 4) + 8;
+			if (usize < rsize)
+			{
+				rsize += rsize;
+				usize = rsize;
+			}
+			else
+				rsize = usize;
+		}
+		else
+		{
+			rsize += rsize;
+			usize = rsize;
+		}
+        rdata = (unsigned char *) realloc(udata, usize);
+		if (!rdata)
+        {
+            free(udata);
+			return -1;
+        }
+        udata = rdata;
+	}
+    
+	rdata = (unsigned char *) realloc(udata, usize);
+	if (!rdata)
+	{
+		free(udata);
+		return -1;
+	}
+    
+	if (0)
+	{
+		uLong ccrc = crc32(crc32(0L, Z_NULL, 0), rdata, (uInt) usize);
+		if (ccrc != zcrc)
+			return -1;
+	}
+    
+	ret = load_twosf_map(state, issave, rdata, (unsigned) usize);
+	free(rdata);
+	return ret;
+}
+
+static int twosf_loader(void * context, const uint8_t * exe, size_t exe_size,
+                      const uint8_t * reserved, size_t reserved_size)
+{
+    struct twosf_loader_state * state = ( struct twosf_loader_state * ) context;
+    
+    if ( exe_size >= 8 )
+    {
+        if ( load_twosf_map(state, 0, exe, (unsigned) exe_size) )
+            return -1;
+    }
+    
+    if ( reserved_size )
+    {
+        size_t resv_pos = 0;
+        if ( reserved_size < 16 )
+            return -1;
+        while ( resv_pos + 12 < reserved_size )
+        {
+            unsigned save_size = get_le32(reserved + resv_pos + 4);
+            unsigned save_crc = get_le32(reserved + resv_pos + 8);
+            if (get_le32(reserved + resv_pos + 0) == 0x45564153)
+            {
+                if (resv_pos + 12 + save_size > reserved_size)
+                    return -1;
+                if (load_twosf_mapz(state, 1, reserved + resv_pos + 12, save_size, save_crc))
+                    return -1;
+            }
+            resv_pos += 12 + save_size;
+        }
+    }
+    
+    return 0;
+}
+
+static int twosf_info(void * context, const char * name, const char * value)
+{
+    struct twosf_loader_state * state = ( struct twosf_loader_state * ) context;
+    
+    NSString * sname = [[NSString stringWithUTF8String:name] lowercaseString];
+    NSString * svalue = [NSString stringWithUTF8String:value];
+    
+    if ( [sname isEqualToString:@"_frames"] )
+    {
+        state->initial_frames = [svalue intValue];
+    }
+    else if ( [sname isEqualToString:@"_clockdown"] )
+    {
+        state->clockdown = [svalue intValue];
+    }
+    else if ( [sname isEqualToString:@"_vio2sf_sync_type"] )
+    {
+        state->sync_type = [svalue intValue];
+    }
+    else if ( [sname isEqualToString:@"_vio2sf_arm9_clockdown_level"] )
+    {
+        state->arm9_clockdown_level = [svalue intValue];
+    }
+    else if ( [sname isEqualToString:@"_vio2sf_arm7_clockdown_level"] )
+    {
+        state->arm7_clockdown_level = [svalue intValue];
+    }
+    
+	return 0;
 }
 
 - (BOOL)initializeDecoder
@@ -759,6 +974,45 @@ int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
         
         CPUInit( system );
         CPUReset( system );
+    }
+    else if ( type == 0x24 )
+    {
+        struct twosf_loader_state state;
+        memset( &state, 0, sizeof(state) );
+        state.initial_frames = -1;
+        
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x24, twosf_loader, &state, twosf_info, &state) <= 0 )
+        {
+            if (state.rom) free(state.rom);
+            if (state.state) free(state.state);
+            return NO;
+        }
+        
+        if ( state.rom_size > UINT_MAX || state.state_size > UINT_MAX )
+        {
+            if (state.rom) free(state.rom);
+            if (state.state) free(state.state);
+            return NO;
+        }
+        
+        NDS_state * core = ( NDS_state * ) calloc(1, sizeof(NDS_state));
+        if (!core)
+        {
+            if (state.rom) free(state.rom);
+            if (state.state) free(state.state);
+            return NO;
+        }
+        
+        emulatorCore = ( uint8_t * ) core;
+        emulatorExtra = state.rom;
+        
+        if ( state_init(core) )
+            return NO;
+        
+        if ( state.rom )
+            state_setrom(core, state.rom, (u32) state.rom_size );
+        
+        state_loadstate(core, state.state, (u32) state.state_size);
     }
     else if ( type == 0x25 )
     {
@@ -928,6 +1182,11 @@ int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
         }
         sound_out->samples_written = frames_rendered;
     }
+    else if ( type == 0x24 )
+    {
+        NDS_state * state = ( NDS_state * ) emulatorCore;
+        state_render(state, (s16*) buf, frames);
+    }
     else if ( type == 0x25 )
     {
         size_t buffer_size = frames * sizeof(int16_t) * 2;
@@ -944,8 +1203,8 @@ int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
         frames = howmany;
     }
     
-    if ( framesRead >= framesLength ) {
-        long fadeStart = framesRead;
+    if ( framesRead + frames > framesLength ) {
+        long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
         long fadeEnd = framesRead + frames;
         long fadeTotal = totalFrames - framesLength;
         long fadePos;
@@ -976,7 +1235,11 @@ int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
             CPUCleanUp( system );
             soundShutdown( system );
             delete system;
-        } else if ( type == 0x25 ) {
+        } else if ( type == 0x24 ) {
+            NDS_state * state = ( NDS_state * ) emulatorCore;
+            state_deinit(state);
+            free(state);
+        }else if ( type == 0x25 ) {
             Player * player = ( Player * ) emulatorCore;
             delete player;
         } else {
@@ -990,6 +1253,9 @@ int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
         emulatorExtra = nil;
     } else if ( type == 0x22 && emulatorExtra ) {
         delete ( gsf_sound_out * ) emulatorExtra;
+        emulatorExtra = nil;
+    } else if ( type == 0x24 && emulatorExtra ) {
+        free( emulatorExtra );
         emulatorExtra = nil;
     } else if ( type == 0x25 && emulatorExtra ) {
         struct ncsf_loader_state * state = ( struct ncsf_loader_state * ) emulatorExtra;
@@ -1057,6 +1323,24 @@ int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
             if ( frames_to_run )
                 CPULoop( system, 250000 );
         } while ( frames_to_run );
+    }
+    else if ( type == 0x24 )
+    {
+        NDS_state * state = ( NDS_state * ) emulatorCore;
+        s16 temp[2048];
+        
+        long frames_to_run = frame - framesRead;
+        
+        while ( frames_to_run )
+        {
+            unsigned frames_this_run = 1024;
+            if ( frames_this_run > frames_to_run )
+                frames_this_run = (unsigned) frames_to_run;
+            
+            state_render(state, temp, frames_this_run);
+            
+            frames_to_run -= frames_this_run;
+        }
     }
     else if ( type == 0x25 )
     {
@@ -1126,7 +1410,7 @@ int ncsf_loader(void * context, const uint8_t * exe, size_t exe_size,
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", nil];
+	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf", nil];
 }
 
 + (NSArray *)mimeTypes
