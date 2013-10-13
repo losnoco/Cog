@@ -1011,6 +1011,9 @@ static int twosf_info(void * context, const char * name, const char * value)
             return NO;
         }
         
+        core->dwInterpolation = 1;
+        core->dwChannelMute = 0;
+        
         emulatorCore = ( uint8_t * ) core;
         emulatorExtra = state.rom;
         
