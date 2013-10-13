@@ -118,7 +118,7 @@ static int tta_check_crc(TTAContext *s, const uint8_t *buf, int buf_size)
 static uint64_t tta_check_crc64(uint8_t *pass)
 {
     uint64_t crc = UINT64_MAX, poly = 0x42F0E1EBA9EA3693U;
-    uint8_t *end = pass + strlen(pass);
+    uint8_t *end = pass + strlen((const char *) pass);
     int i;
 
     while (pass < end) {

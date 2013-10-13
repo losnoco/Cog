@@ -29,7 +29,7 @@ namespace UtfConverter
 			auto *targetstart = reinterpret_cast<UTF32 *>(&result[0]), *targetend = targetstart + widesize;
 			res = ConvertUTF8toUTF32(&sourcestart, sourceend, &targetstart, targetend, strictConversion);
 			*targetstart = 0;
-			unsigned end = targetstart - reinterpret_cast<UTF32 *>(&result[0]);
+			unsigned long end = targetstart - reinterpret_cast<UTF32 *>(&result[0]);
 			result.erase(result.begin() + end, result.end());
 		}
 		else

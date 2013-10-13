@@ -550,10 +550,12 @@ FLAC_API FLAC__StreamMetadata *FLAC__metadata_object_clone(const FLAC__StreamMet
 				break;
 			case FLAC__METADATA_TYPE_SEEKTABLE:
 				to->data.seek_table.num_points = object->data.seek_table.num_points;
+#if (UINT_MAX >= SIZE_MAX)
 				if(to->data.seek_table.num_points > SIZE_MAX / sizeof(FLAC__StreamMetadata_SeekPoint)) { /* overflow check */
 					FLAC__metadata_object_delete(to);
 					return 0;
 				}
+#endif
 				if(!copy_bytes_((FLAC__byte**)&to->data.seek_table.points, (FLAC__byte*)object->data.seek_table.points, object->data.seek_table.num_points * sizeof(FLAC__StreamMetadata_SeekPoint))) {
 					FLAC__metadata_object_delete(to);
 					return 0;

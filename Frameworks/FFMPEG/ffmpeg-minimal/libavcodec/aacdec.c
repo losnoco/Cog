@@ -81,6 +81,7 @@
 
 #include "libavutil/float_dsp.h"
 #include "libavutil/opt.h"
+#include "libavutil/internal.h"
 #include "avcodec.h"
 #include "internal.h"
 #include "get_bits.h"
@@ -2147,7 +2148,7 @@ static int decode_fill(AACContext *ac, GetBitContext *gb, int len) {
     if (ac->avctx->debug & FF_DEBUG_PICT_INFO)
         av_log(ac->avctx, AV_LOG_DEBUG, "FILL:%s\n", buf);
 
-    if (sscanf(buf, "libfaac %d.%d", &major, &minor) == 2){
+    if (sscanf((const char *) buf, "libfaac %d.%d", &major, &minor) == 2){
         ac->avctx->internal->skip_samples = 1024;
     }
 
