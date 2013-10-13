@@ -113,7 +113,7 @@
 		keyCode = [anEvent keyCode];
 		modifierFlags = theModifierFlags;
 
-		[self setStringValue:[theKeyboardLayout stringForKeyCode:keyCode modifierFlags:modifierFlags]];
+		[self setStringValue:[theKeyboardLayout stringForKeyCode:keyCode modifierFlags:(UInt32)modifierFlags]];
 		[self performClick:self];
 		if( ![self stayReadyForEvent] )
 			[self setReadyForHotKeyEvent:NO];

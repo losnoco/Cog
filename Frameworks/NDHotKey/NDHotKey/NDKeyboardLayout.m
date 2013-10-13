@@ -315,7 +315,7 @@ NSUInteger NDCarbonModifierFlagsForCocoaModifierFlags( NSUInteger aModifierFlags
 
 static volatile NDKeyboardLayout		* kCurrentKeyboardLayout = nil;
 
-void NDKeyboardLayoutNotificationCallback( CFNotificationCenterRef aCenter, void * self, CFStringRef aName, const void * anObj, CFDictionaryRef aUserInfo )
+static void NDKeyboardLayoutNotificationCallback( CFNotificationCenterRef aCenter, void * self, CFStringRef aName, const void * anObj, CFDictionaryRef aUserInfo )
 {
 	NSDictionary		* theUserInfo = [NSDictionary dictionaryWithObject:kCurrentKeyboardLayout forKey:NDKeyboardLayoutPreviousKeyboardLayoutUserInfoKey];
 	@synchronized(self) { [kCurrentKeyboardLayout release], kCurrentKeyboardLayout = nil; }
@@ -421,7 +421,7 @@ void NDKeyboardLayoutNotificationCallback( CFNotificationCenterRef aCenter, void
 
 		if( UCKeyTranslate( self.keyboardLayoutPtr, aKeyCode,
 							 kUCKeyActionDisplay,
-							 NDCarbonModifierFlagsForCocoaModifierFlags(aModifierFlags),
+							 (UInt32)NDCarbonModifierFlagsForCocoaModifierFlags(aModifierFlags),
 							 LMGetKbdType(),
 							 kUCKeyTranslateNoDeadKeysBit,
 							 &theDeadKeyState,

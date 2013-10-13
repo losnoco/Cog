@@ -87,7 +87,7 @@ static BOOL isEqualHashFunction( NSHashTable * aTable, const void * aFirstHotKey
 static NSString * describeHashFunction( NSHashTable * aTable, const void * aHotKeyEvent );
 #endif
 
-static UInt32 _idForCharacterAndModifer( unichar aCharacter, NSUInteger aModFlags ) { return (NSUInteger)aCharacter | (aModFlags<<16); }
+static UInt32 _idForCharacterAndModifer( unichar aCharacter, NSUInteger aModFlags ) { return (UInt32)aCharacter | (UInt32)(aModFlags<<16); }
 
 static void _getCharacterAndModiferForId( UInt32 anId, unichar *aCharacter, NSUInteger *aModFlags )
 {
@@ -465,7 +465,7 @@ struct HotKeyMappingEntry
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithUnsignedShort:[self keyCode]], kArchivingKeyCodeKey,
-		[NSNumber numberWithUnsignedInt:[self modifierFlags]], kArchivingModifierFlagsKey,
+		[NSNumber numberWithUnsignedLong:[self modifierFlags]], kArchivingModifierFlagsKey,
 		NSStringFromSelector( selectorPressed ), kArchivingSelectorPressedCodeKey,
 		NSStringFromSelector( selectorReleased ), kArchivingSelectorReleasedCodeKey,
 		nil];
@@ -654,7 +654,7 @@ struct HotKeyMappingEntry
 - (UInt16)keyCode { return [[NDKeyboardLayout keyboardLayout] keyCodeForCharacter:self.keyCharacter numericPad:self.keyPad]; }
 - (NSUInteger)modifierFlags { return modifierFlags; }
 - (UInt32)hotKeyId { return _idForCharacterAndModifer( self.keyCharacter, self.modifierFlags ); }
-- (NSString *)stringValue { return [[NDKeyboardLayout keyboardLayout] stringForKeyCode:[self keyCode] modifierFlags:[self modifierFlags]]; }
+- (NSString *)stringValue { return [[NDKeyboardLayout keyboardLayout] stringForKeyCode:[self keyCode] modifierFlags:(UInt32)[self modifierFlags]]; }
 
 - (BOOL)isEqual:(id)anObject
 {
@@ -870,7 +870,7 @@ static OSStatus switchHotKey( NDHotKeyEvent * self, BOOL aFlag )
 			NSCAssert( theHotKeyID.signature, @"HotKeyEvent signature has not been set yet" );
 			NSCParameterAssert(sizeof(unsigned long) >= sizeof(id) );
 
-			theError = RegisterEventHotKey( self.keyCode, NDCarbonModifierFlagsForCocoaModifierFlags(self->modifierFlags), theHotKeyID, GetEventDispatcherTarget(), 0, &self->reference );
+			theError = RegisterEventHotKey( self.keyCode, (UInt32)NDCarbonModifierFlagsForCocoaModifierFlags(self->modifierFlags), theHotKeyID, GetEventDispatcherTarget(), 0, &self->reference );
 		}
 	}
 	else
