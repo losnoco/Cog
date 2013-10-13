@@ -209,6 +209,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
 	for (PlaylistEntry *pe in [playlistController content])
 	{
+        BOOL error = [pe error];
+        
         NSMutableDictionary * dict = dictionaryWithPropertiesOfObject(pe, filterList);
 
 		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
@@ -223,6 +225,9 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
                 [albumArtSet setObject:albumArt forKey:hash];
             [dict setObject:hash forKey:@"albumArt"];
         }
+        
+        if (error)
+            [dict removeObjectForKey:@"metadataLoaded"];
         
         [topLevel addObject:dict];
         
