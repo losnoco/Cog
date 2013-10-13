@@ -17,6 +17,8 @@
 
 #import "CogAudio/Status.h"
 
+#import "Logging.h"
+
 @implementation PlaylistView
 
 - (void)awakeFromNib
@@ -227,6 +229,132 @@
 	[[playlistController undoManager] redo];
 }
 
+- (IBAction)copy:(id)sender
+{
+    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+    
+    [pboard clearContents];
+    
+    NSMutableArray *selectedURLs = [[NSMutableArray alloc] init];
+    
+    for (PlaylistEntry *pe in [[playlistController content] objectsAtIndexes:[playlistController selectionIndexes]])
+    {
+        [selectedURLs addObject:[pe URL]];
+    }
+    
+    [pboard setData:[NSArchiver archivedDataWithRootObject:selectedURLs] forType:CogUrlsPboardType];
+    
+    NSMutableDictionary * tracks = [[NSMutableDictionary alloc] init];
+    
+    unsigned long i = 0;
+    for (NSURL *url in selectedURLs)
+    {
+        NSMutableDictionary * track = [NSMutableDictionary dictionaryWithObjectsAndKeys:[url absoluteString], @"Location", nil];
+        [tracks setObject:track forKey:[NSString stringWithFormat:@"%lu", i]];
+        ++i;
+    }
+
+    NSMutableDictionary * itunesPlist = [NSMutableDictionary dictionaryWithObjectsAndKeys:tracks, @"Tracks", nil];
+    
+    [pboard setPropertyList:itunesPlist forType:iTunesDropType];
+    
+    [tracks release];
+    
+    NSMutableArray *filePaths = [[NSMutableArray alloc] init];
+    
+    for (NSURL *url in selectedURLs)
+    {
+        if ([url isFileURL])
+            [filePaths addObject:[url path]];
+    }
+    
+    if ([filePaths count])
+        [pboard setPropertyList:filePaths forType:NSFilenamesPboardType];
+    
+    [filePaths release];
+    
+    [selectedURLs release];
+}
+
+- (IBAction)cut:(id)sender
+{
+    [self copy:sender];
+    
+    [playlistController removeObjectsAtArrangedObjectIndexes:[playlistController selectionIndexes]];
+
+    if ([playlistController shuffle] != ShuffleOff)
+        [playlistController resetShuffleList];
+}
+
+- (IBAction)paste:(id)sender
+{
+	// Determine the type of object that was dropped
+	NSArray *supportedTypes = [NSArray arrayWithObjects:CogUrlsPboardType, NSFilenamesPboardType, iTunesDropType, nil];
+	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+	NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
+    
+	NSMutableArray *acceptedURLs = [[NSMutableArray alloc] init];
+	
+	// Get files from an file drawer drop
+	if ([bestType isEqualToString:CogUrlsPboardType]) {
+		NSArray *urls = [NSUnarchiver unarchiveObjectWithData:[pboard dataForType:CogUrlsPboardType]];
+		DLog(@"URLS: %@", urls);
+		//[playlistLoader insertURLs: urls atIndex:row sort:YES];
+		[acceptedURLs addObjectsFromArray:urls];
+	}
+	
+	// Get files from a normal file drop (such as from Finder)
+	if ([bestType isEqualToString:NSFilenamesPboardType]) {
+		NSMutableArray *urls = [[NSMutableArray alloc] init];
+        
+		for (NSString *file in [pboard propertyListForType:NSFilenamesPboardType])
+		{
+			[urls addObject:[NSURL fileURLWithPath:file]];
+		}
+		
+		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
+		[acceptedURLs addObjectsFromArray:urls];
+		[urls release];
+	}
+	
+	// Get files from an iTunes drop
+	if ([bestType isEqualToString:iTunesDropType]) {
+		NSDictionary *iTunesDict = [pboard propertyListForType:iTunesDropType];
+		NSDictionary *tracks = [iTunesDict valueForKey:@"Tracks"];
+        
+		// Convert the iTunes URLs to URLs....MWAHAHAH!
+		NSMutableArray *urls = [[NSMutableArray alloc] init];
+        
+		for (NSDictionary *trackInfo in [tracks allValues]) {
+			[urls addObject:[NSURL URLWithString:[trackInfo valueForKey:@"Location"]]];
+		}
+		
+		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
+		[acceptedURLs addObjectsFromArray:urls];
+		[urls release];
+	}
+	
+	if ([acceptedURLs count])
+	{
+        NSUInteger row = [[playlistController content] count];
+        
+        [playlistController willInsertURLs:acceptedURLs origin:URLOriginInternal];
+		
+		NSArray* entries = [playlistLoader insertURLs:acceptedURLs atIndex:row sort:NO];
+		[playlistLoader didInsertURLs:entries origin:URLOriginInternal];
+
+        if ([playlistController shuffle] != ShuffleOff)
+            [playlistController resetShuffleList];
+	}
+	
+	[acceptedURLs release];
+}
+
+- (IBAction)delete:(id)sender
+{
+    [playlistController removeObjectsAtArrangedObjectIndexes:[playlistController selectionIndexes]];
+}
+
 
 -(BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
 {
@@ -246,6 +374,26 @@
 		else
 			return NO;
 	}
+    if (action == @selector(cut:) || action == @selector(copy:) || action == @selector(delete:))
+    {
+        if ([[playlistController selectionIndexes] count] == 0)
+            return NO;
+        else
+            return YES;
+    }
+    if (action == @selector(paste:))
+    {
+        NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+
+        NSArray *supportedTypes = [NSArray arrayWithObjects:CogUrlsPboardType, NSFilenamesPboardType, iTunesDropType, nil];
+        
+        NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
+        
+        if (bestType != nil)
+            return YES;
+        else
+            return NO;
+    }
 	
 	if (action == @selector(scrollToCurrentEntry:) && ([playbackController playbackStatus] == kCogStatusStopped))
 		return NO;

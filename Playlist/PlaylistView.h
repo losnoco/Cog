@@ -10,10 +10,12 @@
 
 #import "PlaybackController.h"
 #import "PlaylistController.h"
+#import "PlaylistLoader.h"
 
 @interface PlaylistView : NSTableView {
 	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
+    IBOutlet PlaylistLoader *playlistLoader;
     
 	NSMenu *headerContextMenu;
 }
