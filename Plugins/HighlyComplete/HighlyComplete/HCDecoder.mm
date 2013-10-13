@@ -195,7 +195,8 @@ struct psf_info_meta_state
 
 static int parse_time_crap(NSString * value)
 {
-    NSArray *components = [value componentsSeparatedByString:@":"];
+    NSArray *crapFix = [value componentsSeparatedByString:@"\n"];
+    NSArray *components = [[crapFix objectAtIndex:0] componentsSeparatedByString:@":"];
 
     float totalSeconds = 0;
     float multiplier = 1000;
