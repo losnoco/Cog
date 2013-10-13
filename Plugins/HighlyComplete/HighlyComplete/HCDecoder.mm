@@ -1013,6 +1013,8 @@ static int twosf_info(void * context, const char * name, const char * value)
             state_setrom(core, state.rom, (u32) state.rom_size );
         
         state_loadstate(core, state.state, (u32) state.state_size);
+        
+        if (state.state) free(state.state);
     }
     else if ( type == 0x25 )
     {
