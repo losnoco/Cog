@@ -72,7 +72,9 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 - (void)audioFadeUp:(NSTimer *)audioTimer;
 
 - (void)playEntryAtIndex:(int)i;
+- (void)playEntryAtIndex:(int)i startPaused:(BOOL)paused;
 - (void)playEntry:(PlaylistEntry *)pe;
+- (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused;
 
 // Playlist notifications
 - (void)playlistDidChange:(PlaylistController *)p;

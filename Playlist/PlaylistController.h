@@ -75,7 +75,6 @@ typedef enum {
 
 - (IBAction)toggleRepeat:(id)sender;
 
-- (IBAction)sortByPath;
 - (IBAction)randomizeList:(id)sender;
 
 - (IBAction)showEntryInFinder:(id)sender;

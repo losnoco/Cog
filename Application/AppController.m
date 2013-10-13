@@ -284,7 +284,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     
     if (lastStatus != kCogStatusStopped && lastIndex >= 0)
     {
-        [playbackController playEntryAtIndex:lastIndex];
+        [playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == kCogStatusPaused)];
         [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
     }
     

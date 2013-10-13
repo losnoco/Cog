@@ -299,7 +299,7 @@
 - (void)insertObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes
 {
     [[[self undoManager] prepareWithInvocationTarget:self] removeObjectsAtArrangedObjectIndexes:indexes];
-    NSString *actionName = [NSString stringWithFormat:@"Adding %d entries", [objects count]];
+    NSString *actionName = [NSString stringWithFormat:@"Adding %lu entries", (unsigned long)[objects count]];
     [[self undoManager] setActionName:actionName];
 
     [super insertObjects:objects atArrangedObjectIndexes:indexes];
@@ -312,7 +312,7 @@
 {
     NSArray *objects = [[self content] objectsAtIndexes:indexes];
     [[[self undoManager] prepareWithInvocationTarget:self] insertObjects:objects atArrangedObjectIndexes:indexes];
-    NSString *actionName = [NSString stringWithFormat:@"Removing %d entries", [indexes count]];
+    NSString *actionName = [NSString stringWithFormat:@"Removing %lu entries", (unsigned long)[indexes count]];
     [[self undoManager] setActionName:actionName];
     
     DLog(@"Removing indexes: %@", indexes);

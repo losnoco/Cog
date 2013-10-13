@@ -45,10 +45,15 @@
 
 - (void)play:(NSURL *)url
 {
-	[self play:url withUserInfo:nil withRGInfo:nil];
+	[self play:url withUserInfo:nil withRGInfo:nil startPaused:NO];
 }
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi
+{
+    [self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:NO];
+}
+
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused
 {
 	if (output)
 	{
@@ -101,8 +106,13 @@
 	[self setShouldContinue:YES];
 	
 	outputLaunched = NO;
+    startedPaused = paused;
+    initialBufferFilled = NO;
 
 	[bufferChain launchThreads];
+    
+    if (paused)
+        [self setPlaybackStatus:kCogStatusPaused waitUntilDone:YES];
 }
 
 - (void)stop
@@ -121,6 +131,13 @@
 
 - (void)resume
 {
+    if (startedPaused)
+    {
+        startedPaused = NO;
+        if (initialBufferFilled)
+            [self launchOutputThread];
+    }
+    
 	[output resume];
 
 	[self setPlaybackStatus:kCogStatusPlaying waitUntilDone:YES];	
@@ -200,7 +217,8 @@
 
 - (void)launchOutputThread
 {
-	if (outputLaunched == NO) {
+    initialBufferFilled = YES;
+	if (outputLaunched == NO && startedPaused == NO) {
 		[self setPlaybackStatus:kCogStatusPlaying];	
 		[output launchThread];
 		outputLaunched = YES;

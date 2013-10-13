@@ -105,9 +105,14 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 //called by double-clicking on table
 - (void)playEntryAtIndex:(int)i
 {
+    [self playEntryAtIndex:i startPaused:NO];
+}
+
+- (void)playEntryAtIndex:(int)i startPaused:(BOOL)paused
+{
 	PlaylistEntry *pe = [playlistController entryAtIndex:i];
 
-	[self playEntry:pe];
+	[self playEntry:pe startPaused:paused];
 }
 
 
@@ -138,6 +143,11 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 - (void)playEntry:(PlaylistEntry *)pe
 {
+    [self playEntry:pe startPaused:NO];
+}
+
+- (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused
+{
 	if (playbackStatus != kCogStatusStopped)
 		[self stop:self];
 
@@ -154,7 +164,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 		[pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
 	}
 	
-	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe)];
+	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused];
 }
 
 - (IBAction)next:(id)sender
@@ -187,6 +197,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	double time = [sender doubleValue];
 
     [audioPlayer seekToTime:time];
+    
+    [self setPosition:time];
 
 	[[playlistController currentEntry] setCurrentPosition:time];
 }
