@@ -1014,6 +1014,15 @@ static int twosf_info(void * context, const char * name, const char * value)
         core->dwInterpolation = 1;
         core->dwChannelMute = 0;
         
+        if (!state.arm7_clockdown_level)
+            state.arm7_clockdown_level = state.clockdown;
+        if (!state.arm9_clockdown_level)
+            state.arm9_clockdown_level = state.clockdown;
+        
+        core->initial_frames = state.initial_frames;
+        core->arm7_clockdown_level = state.arm7_clockdown_level;
+        core->arm9_clockdown_level = state.arm9_clockdown_level;
+        
         emulatorCore = ( uint8_t * ) core;
         emulatorExtra = state.rom;
         
