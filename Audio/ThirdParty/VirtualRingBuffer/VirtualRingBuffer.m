@@ -69,7 +69,7 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 
 - (BOOL)isEmpty
 {
-    return (readPointer != NULL && writePointer != NULL);
+    return (readPointer == NULL && writePointer == NULL);
 }
 
 
@@ -127,6 +127,12 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     void *newReadPointer;
 
     newReadPointer = readPointer + length;
+    
+    if (newReadPointer == (void *)(intptr_t) length) {
+        // Someone somehow read from us before another thread emptied the buffer
+        newReadPointer = NULL;
+    }
+    
     if (newReadPointer >= bufferEnd)
         newReadPointer -= bufferLength;
 
