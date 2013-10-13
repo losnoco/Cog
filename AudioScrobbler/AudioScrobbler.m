@@ -221,7 +221,7 @@ escapeForLastFM(NSString *string)
 		// Get the first command to be sent
 		@synchronized([self queue]) {
             if ([[self queue] count]) {
-                command     = [[self queue] objectAtIndex:0];
+                command     = [[[self queue] objectAtIndex:0] retain];
                 [[self queue] removeObjectAtIndex:0];
             }
 		}
@@ -232,6 +232,7 @@ escapeForLastFM(NSString *string)
 					port = [client connectedPort];
 					[client send:command];
 					[command release];
+                    command = nil;
 					
 					response = [client receive];
 					if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
@@ -242,6 +243,9 @@ escapeForLastFM(NSString *string)
 			}
 			
 			@catch(NSException *exception) {
+                [command release];
+                command = nil;
+                
 				[client shutdown];
 //				ALog(@"Exception: %@",exception);
 				[pool release];
