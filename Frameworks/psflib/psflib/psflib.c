@@ -189,11 +189,16 @@ static psf_tag * add_tag_multi( psf_tag * tags, const char * name, const char **
     if ( tag->value )
     {
         size_t old_length = strlen(tag->value);
-        char * new_value = (char *) realloc( tag->value, old_length + strlen( values[ 0 ] ) + 2 );
+        size_t new_length = strlen( values[ 0 ] );
+        char * new_value = (char *) realloc( tag->value, old_length + new_length + 2 );
         if (!new_value) return footer;
         tag->value = new_value;
         new_value[ old_length ] = '\n';
+#if _MSC_VER >= 1300
+        strcpy_s( new_value + old_length + 1, new_length + 1, values[ 0 ] );
+#else
         strcpy( new_value + old_length + 1, values[ 0 ] );
+#endif
     }
     else
     {
@@ -247,10 +252,10 @@ static psf_tag * add_tag( psf_tag * tags, const char * name, const char * value 
         while ( split_point )
         {
             values_count++;
-            new_values = realloc( values, sizeof(const char*) * ((values_count + 3) & ~3) );
+            new_values = (const char **) realloc( (void *) values, sizeof(const char*) * ((values_count + 3) & ~3) );
             if ( !new_values )
             {
-                if ( values ) free( values );
+                if ( values ) free( (void *) values );
                 free( value_split );
                 return tags;
             }
@@ -263,10 +268,10 @@ static psf_tag * add_tag( psf_tag * tags, const char * name, const char * value 
         if ( *remain )
         {
             values_count++;
-            new_values = realloc( values, sizeof(char*) * ((values_count + 3) & ~3) );
+            new_values = (const char **) realloc( (void *) values, sizeof(char*) * ((values_count + 3) & ~3) );
             if ( !new_values )
             {
-                if ( values ) free( values );
+                if ( values ) free( (void *) values );
                 free( value_split );
                 return tags;
             }
@@ -286,7 +291,7 @@ static psf_tag * add_tag( psf_tag * tags, const char * name, const char * value 
     tags = add_tag_multi( tags, name, values, values_count );
 
     if ( value_split ) free( value_split );
-    free( values );
+    free( (void *) values );
 
     return tags;
 }
@@ -371,13 +376,21 @@ static int psf_load_internal( psf_load_state * state, const char * file_name )
 
     int zerr;
 
+    size_t full_path_size;
+
     if ( ++state->depth > max_recursion_depth ) return -1;
 
-    full_path = (char *) malloc( strlen(state->base_path) + strlen(file_name) + 1 );
+    full_path_size = strlen(state->base_path) + strlen(file_name) + 1;
+    full_path = (char *) malloc( full_path_size );
     if ( !full_path ) return -1;
 
+#if _MSC_VER >= 1300
+    strcpy_s( full_path, full_path_size, state->base_path );
+    strcat_s( full_path, full_path_size, file_name );
+#else
     strcpy( full_path, state->base_path );
     strcat( full_path, file_name );
+#endif
 
     file = state->file_callbacks->fopen( full_path );
 
@@ -399,7 +412,9 @@ static int psf_load_internal( psf_load_state * state, const char * file_name )
 
     file_size = state->file_callbacks->ftell( file );
 
-    if ( file_size >= 16 + reserved_size + exe_compressed_size + 5 )
+    if ( file_size <= 0 ) goto error_close_file;
+
+    if ( (unsigned long)file_size >= 16 + reserved_size + exe_compressed_size + 5 )
     {
         tag_size = file_size - ( 16 + reserved_size + exe_compressed_size );
         if ( state->file_callbacks->fseek( file, -tag_size, SEEK_CUR ) ) goto error_close_file;
@@ -442,35 +457,39 @@ static int psf_load_internal( psf_load_state * state, const char * file_name )
     state->file_callbacks->fclose( file );
     file = NULL;
 
-	if ( exe_compressed_size )
-	{
-		if ( exe_crc32 != crc32(crc32(0L, Z_NULL, 0), exe_compressed_buffer, exe_compressed_size) ) goto error_free_tags;
+    if ( exe_compressed_size )
+    {
+        if ( exe_crc32 != crc32(crc32(0L, Z_NULL, 0), exe_compressed_buffer, exe_compressed_size) ) goto error_free_tags;
 
-		exe_decompressed_size = try_exe_decompressed_size = exe_compressed_size * 3;
-		exe_decompressed_buffer = (uint8_t *) malloc( exe_decompressed_size );
-		if ( !exe_decompressed_buffer ) goto error_free_tags;
+        exe_decompressed_size = try_exe_decompressed_size = exe_compressed_size * 3;
+        exe_decompressed_buffer = (uint8_t *) malloc( exe_decompressed_size );
+        if ( !exe_decompressed_buffer ) goto error_free_tags;
 
-		while ( Z_OK != ( zerr = uncompress( exe_decompressed_buffer, &exe_decompressed_size, exe_compressed_buffer, exe_compressed_size ) ) )
-		{
-			void * try_exe_decompressed_buffer;
+        while ( Z_OK != ( zerr = uncompress( exe_decompressed_buffer, &exe_decompressed_size, exe_compressed_buffer, exe_compressed_size ) ) )
+        {
+            void * try_exe_decompressed_buffer;
 
-			if ( Z_MEM_ERROR != zerr && Z_BUF_ERROR != zerr ) goto error_free_tags;
+            if ( Z_MEM_ERROR != zerr && Z_BUF_ERROR != zerr ) goto error_free_tags;
 
-			try_exe_decompressed_size += 1 * 1024 * 1024;
-			exe_decompressed_size = try_exe_decompressed_size;
+            if ( try_exe_decompressed_size < 1 * 1024 * 1024 )
+                try_exe_decompressed_size += 1 * 1024 * 1024;
+            else
+                try_exe_decompressed_size += try_exe_decompressed_size;
 
-			try_exe_decompressed_buffer = realloc( exe_decompressed_buffer, exe_decompressed_size );
-			if ( !try_exe_decompressed_buffer ) goto error_free_tags;
+            exe_decompressed_size = try_exe_decompressed_size;
 
-			exe_decompressed_buffer = (uint8_t *) try_exe_decompressed_buffer;
-		}
-	}
-	else
-	{
-		exe_decompressed_size = 0;
-		exe_decompressed_buffer = (uint8_t *) malloc( exe_decompressed_size );
-		if ( !exe_decompressed_buffer ) goto error_free_tags;
-	}
+            try_exe_decompressed_buffer = realloc( exe_decompressed_buffer, exe_decompressed_size );
+            if ( !try_exe_decompressed_buffer ) goto error_free_tags;
+
+            exe_decompressed_buffer = (uint8_t *) try_exe_decompressed_buffer;
+        }
+    }
+    else
+    {
+        exe_decompressed_size = 0;
+        exe_decompressed_buffer = (uint8_t *) malloc( exe_decompressed_size );
+        if ( !exe_decompressed_buffer ) goto error_free_tags;
+    }
 
     free( exe_compressed_buffer );
     exe_compressed_buffer = NULL;

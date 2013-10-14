@@ -202,7 +202,7 @@ static struct DIR_ENTRY *makearchivedir(
       dir->offset_table[i] = dataofs;
     }
   }
-success:
+//success:
   return dir;
 
 corrupt:
@@ -317,7 +317,7 @@ static int addarchive(
   // now merge everything
   *psource = mergesource(source, this_source);
   *pdir = mergedir(dir, this_dir);
-success:
+//success:
   return 0;
 
 outofmemory:
@@ -411,7 +411,7 @@ static int virtual_read(struct PSF2FS *fs, struct DIR_ENTRY *entry, int offset, 
     buffer += canread;
   }
 
-success:
+//success:
   return length_read;
 
 bounds:
