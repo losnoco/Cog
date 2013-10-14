@@ -618,7 +618,7 @@ static void load_getu8(u8 *ptr, unsigned l, const u8 **ss, const u8 *sse)
 	if ((*ss >= sse) || ((*ss + s) > sse))
 		return;
 	for (i = 0; i < l; i++)
-		ptr[i] = *ss[i];
+		ptr[i] = (*ss)[i];
 	*ss += s;
 }
 
