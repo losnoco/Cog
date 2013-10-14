@@ -413,7 +413,7 @@ void state_render(struct NDS_state *state, s16 * buffer, int sample_count)
 				remain_samples = 0;
 			}
 		}
-		if (remain_samples == 0)
+		while (remain_samples == 0 && state->sample_pointer < 1024)
 		{
             
             /*
