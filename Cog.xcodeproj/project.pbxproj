@@ -123,7 +123,6 @@
 		17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D6190F520F9F005B6FED /* VolumeButton.m */; };
 		17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D61B0F520F9F005B6FED /* VolumeSlider.m */; };
 		17E41E070C130DFF00AC744D /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E060C130DFF00AC744D /* Credits.html */; };
-		17E41E230C130EE200AC744D /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E220C130EE200AC744D /* Help */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		17F562390C3BD91B0019975C /* General.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* General.preferencePane */; };
@@ -136,6 +135,7 @@
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
+		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
 		8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8355D6B5180612F300D05687 /* NSData+MD5.m */; };
 		8355D6B8180613FB00D05687 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8355D6B7180613FB00D05687 /* Security.framework */; };
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; };
@@ -574,7 +574,6 @@
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		1705F1420B8BCB0C00C8B40D /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/Help; sourceTree = "<group>"; };
 		170680620B950158006BA573 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = ThirdParty/Frameworks/Growl.framework; sourceTree = "<group>"; };
 		170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusImageTransformer.h; sourceTree = "<group>"; };
 		170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusImageTransformer.m; sourceTree = "<group>"; };
@@ -766,6 +765,7 @@
 		56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNumber+CogSort.m"; path = "Spotlight/NSNumber+CogSort.m"; sourceTree = "<group>"; };
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
+		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -1365,10 +1365,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				832C1252180BD1E2005507C1 /* Cog.help */,
 				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
 				8E75758E09F31D800080F1EE /* Icons */,
 				177EC02D0B8BC2E60000BC8C /* Images */,
-				17E41E220C130EE200AC744D /* Help */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
@@ -1930,6 +1930,7 @@
 			files = (
 				17F562390C3BD91B0019975C /* General.preferencePane in Resources */,
 				8384915B18083EAB00E7332D /* navigatorTemplate.pdf in Resources */,
+				832C1253180BD1E2005507C1 /* Cog.help in Resources */,
 				8384916218083EAB00E7332D /* randomizeTemplate.pdf in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				17E41E070C130DFF00AC744D /* Credits.html in Resources */,
@@ -1944,7 +1945,6 @@
 				83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */,
 				177EC0580B8BC2FF0000BC8C /* volume_high.png in Resources */,
 				177EC0590B8BC2FF0000BC8C /* volume_low.png in Resources */,
-				17E41E230C130EE200AC744D /* Help in Resources */,
 				83849173180843B200E7332D /* playDockBadgeColorful.png in Resources */,
 				8384916418083EAB00E7332D /* repeatModeAllTemplate.pdf in Resources */,
 				1766C8920B912FB4004A7AE4 /* files_off.png in Resources */,
@@ -2298,14 +2298,6 @@
 				8E7575C809F31DCA0080F1EE /* English */,
 			);
 			name = Credits.html;
-			sourceTree = "<group>";
-		};
-		17E41E220C130EE200AC744D /* Help */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1705F1420B8BCB0C00C8B40D /* English */,
-			);
-			name = Help;
 			sourceTree = "<group>";
 		};
 		8E7575D909F31E930080F1EE /* Localizable.strings */ = {

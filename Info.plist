@@ -888,7 +888,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Cog</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>Help</string>
+	<string>Cog.help</string>
 	<key>CFBundleHelpBookName</key>
 	<string>org.cogx.cog.help</string>
 	<key>CFBundleIconFile</key>
