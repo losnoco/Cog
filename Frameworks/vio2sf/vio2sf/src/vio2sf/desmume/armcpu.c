@@ -125,6 +125,7 @@ remove_post_exec_fn( void *instance) {
 }
 #endif
 
+#ifdef GDB_STUB
 static u32
 read_cpu_reg( void *instance, u32 reg_num) {
   armcpu_t *armcpu = (armcpu_t *)instance;
@@ -158,6 +159,7 @@ set_cpu_reg( void *instance, u32 reg_num, u32 value) {
     /* FIXME: setting the CPSR */
   }
 }
+#endif
 
 #ifdef GDB_STUB
 int armcpu_new( NDS_state *state, armcpu_t *armcpu, u32 id,
@@ -357,7 +359,9 @@ u32 armcpu_switchMode(armcpu_t *armcpu, u8 mode)
 static u32
 armcpu_prefetch(armcpu_t *armcpu)
 {
+#ifdef GDB_STUB
 	u32 temp_instruction;
+#endif
 
 	if(armcpu->CPSR.bits.T == 0)
 	{
@@ -406,6 +410,7 @@ armcpu_prefetch(armcpu_t *armcpu)
 }
  
 
+#if 0
 static BOOL FASTCALL test_EQ(Status_Reg CPSR) { return ( CPSR.bits.Z); }
 static BOOL FASTCALL test_NE(Status_Reg CPSR) { return (!CPSR.bits.Z); }
 static BOOL FASTCALL test_CS(Status_Reg CPSR) { return ( CPSR.bits.C); }
@@ -434,6 +439,7 @@ static BOOL (FASTCALL* test_conditions[])(Status_Reg CPSR)= {
 };
 #define TEST_COND2(cond, CPSR) \
 	(cond<15&&test_conditions[cond](CPSR))
+#endif
 
 
 BOOL armcpu_irqExeption(armcpu_t *armcpu)
@@ -485,6 +491,7 @@ static BOOL armcpu_prefetchExeption(armcpu_t *armcpu)
 }
 */
 
+/*
 static BOOL armcpu_prefetchExeption(armcpu_t *armcpu)
 {
     Status_Reg tmp;
@@ -513,6 +520,7 @@ static BOOL armcpu_prefetchExeption(armcpu_t *armcpu)
 	
     return TRUE;
 }
+*/
 
 BOOL
 armcpu_flagIrq( armcpu_t *armcpu) {

@@ -824,7 +824,7 @@ void FASTCALL MMU_write8(NDS_state *state, u32 proc, u32 adr, u8 val)
            }
         }
 
-	if (adr & 0xFF800000 == 0x04800000)
+	if ((adr & 0xFF800000) == 0x04800000)
 	{
 		/* is wifi hardware, dont intermix with regular hardware registers */
 		/* FIXME handle 8 bit writes */
@@ -1405,7 +1405,7 @@ void FASTCALL MMU_write16(NDS_state *state, u32 proc, u32 adr, u16 val)
 							break;
 							
                                                 case 1 : /* firmware memory device */
-                                                        if(spicnt & 0x3 != 0)      /* check SPI baudrate (must be 4mhz) */
+                                                        if((spicnt & 0x3) != 0)      /* check SPI baudrate (must be 4mhz) */
 							{
 								T1WriteWord(state->MMU->MMU_MEM[proc][(REG_SPIDATA >> 20) & 0xff], REG_SPIDATA & 0xfff, 0);
 								break;
@@ -1818,7 +1818,7 @@ void FASTCALL MMU_write32(NDS_state *state, u32 proc, u32 adr, u32 val)
            }
         }
 
-		if (adr & 0xFF800000 == 0x04800000) {
+		if ((adr & 0xFF800000) == 0x04800000) {
 		/* access to non regular hw registers */
 		/* return to not overwrite valid data */
 			return ;
@@ -3112,6 +3112,7 @@ print_memory_profiling( void) {
 }
 #endif /* End of PROFILE_MEMORY_ACCESS area */
 
+#ifdef GDB_STUB
 static u16 FASTCALL
 arm9_prefetch16( NDS_state *state, void *data, u32 adr) {
 #ifdef PROFILE_MEMORY_ACCESS
@@ -3378,7 +3379,6 @@ arm7_write32(NDS_state *state, void *data, u32 adr, u32 val) {
 }
 
 
-#ifdef GDB_STUB
 /*
  * the base memory interfaces
  */

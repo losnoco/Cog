@@ -235,7 +235,9 @@ int armcpu_new( NDS_state *, armcpu_t *armcpu, u32 id);
 #endif
 void armcpu_init(armcpu_t *armcpu, u32 adr);
 u32 armcpu_switchMode(armcpu_t *armcpu, u8 mode);
+#ifndef GDB_STUB
 static u32 armcpu_prefetch(armcpu_t *armcpu);
+#endif
 u32 armcpu_exec(armcpu_t *armcpu);
 BOOL armcpu_irqExeption(armcpu_t *armcpu);
 //BOOL armcpu_prefetchExeption(armcpu_t *armcpu);

@@ -714,7 +714,7 @@ void NDS_exec_hframe(NDS_state *state, int cpu_clockdown_level_arm9, int cpu_clo
 			T1WriteWord(state->MMU->ARM7_REG, 6, state->nds->VCount);
 
 			vmatch = T1ReadWord(state->ARM9Mem->ARM9_REG, 4);
-			if((state->nds->VCount==(vmatch>>8)|((vmatch<<1)&(1<<8))))
+			if(state->nds->VCount==((vmatch>>8)|((vmatch<<1)&(1<<8))))
 			{
 				T1WriteWord(state->ARM9Mem->ARM9_REG, 4, T1ReadWord(state->ARM9Mem->ARM9_REG, 4) | 4);
 				if(T1ReadWord(state->ARM9Mem->ARM9_REG, 4) & 32)
@@ -724,7 +724,7 @@ void NDS_exec_hframe(NDS_state *state, int cpu_clockdown_level_arm9, int cpu_clo
 				T1WriteWord(state->ARM9Mem->ARM9_REG, 4, T1ReadWord(state->ARM9Mem->ARM9_REG, 4) & 0xFFFB);
 
 			vmatch = T1ReadWord(state->MMU->ARM7_REG, 4);
-			if((state->nds->VCount==(vmatch>>8)|((vmatch<<1)&(1<<8))))
+			if(state->nds->VCount==((vmatch>>8)|((vmatch<<1)&(1<<8))))
 			{
 				T1WriteWord(state->MMU->ARM7_REG, 4, T1ReadWord(state->MMU->ARM7_REG, 4) | 4);
 				if(T1ReadWord(state->MMU->ARM7_REG, 4) & 32)

@@ -391,7 +391,7 @@ void state_render(struct NDS_state *state, s16 * buffer, int sample_count)
     
 	while (sample_count)
 	{
-		unsigned remain_samples = state->sample_pointer;
+		unsigned long remain_samples = state->sample_pointer;
 		if (remain_samples > 0)
 		{
 			if (remain_samples > sample_count)
@@ -490,7 +490,7 @@ static void SNDStateUpdateAudio(NDS_state *state, s16 *buffer, u32 num_samples)
 
 static u32 SNDStateGetAudioSpace(NDS_state *state)
 {
-	return state->sample_size - state->sample_pointer;
+	return (u32)(state->sample_size - state->sample_pointer);
 }
 
 static void SNDStateMuteAudio(NDS_state *state)
@@ -657,7 +657,7 @@ static void load_setstate(struct NDS_state *state, const u8 *ss, u32 ss_size)
 	load_getu32(&state->NDS_ARM7->instruction, 1, &ss, sse);
 	load_getu32(&state->NDS_ARM7->instruct_adr, 1, &ss, sse);
 	load_getu32(&state->NDS_ARM7->next_instruction, 1, &ss, sse);
-	load_getu32(&state->NDS_ARM7->R, 16, &ss, sse);
+	load_getu32(state->NDS_ARM7->R, 16, &ss, sse);
 	load_getsta(&state->NDS_ARM7->CPSR, 1, &ss, sse);
 	load_getsta(&state->NDS_ARM7->SPSR, 1, &ss, sse);
 	load_getu32(&state->NDS_ARM7->R13_usr, 1, &ss, sse);
@@ -693,7 +693,7 @@ static void load_setstate(struct NDS_state *state, const u8 *ss, u32 ss_size)
 	load_getu32(&state->NDS_ARM9->instruction, 1, &ss, sse);
 	load_getu32(&state->NDS_ARM9->instruct_adr, 1, &ss, sse);
 	load_getu32(&state->NDS_ARM9->next_instruction, 1, &ss, sse);
-	load_getu32(&state->NDS_ARM9->R, 16, &ss, sse);
+	load_getu32(state->NDS_ARM9->R, 16, &ss, sse);
 	load_getsta(&state->NDS_ARM9->CPSR, 1, &ss, sse);
 	load_getsta(&state->NDS_ARM9->SPSR, 1, &ss, sse);
 	load_getu32(&state->NDS_ARM9->R13_usr, 1, &ss, sse);
@@ -728,10 +728,10 @@ static void load_setstate(struct NDS_state *state, const u8 *ss, u32 ss_size)
 	load_gets32(&state->nds->ARM9Cycle, 1, &ss, sse);
 	load_gets32(&state->nds->ARM7Cycle, 1, &ss, sse);
 	load_gets32(&state->nds->cycles, 1, &ss, sse);
-	load_gets32(&state->nds->timerCycle[0], 4, &ss, sse);
-	load_gets32(&state->nds->timerCycle[1], 4, &ss, sse);
-	load_getbool(&state->nds->timerOver[0], 4, &ss, sse);
-	load_getbool(&state->nds->timerOver[1], 4, &ss, sse);
+	load_gets32(state->nds->timerCycle[0], 4, &ss, sse);
+	load_gets32(state->nds->timerCycle[1], 4, &ss, sse);
+	load_getbool(state->nds->timerOver[0], 4, &ss, sse);
+	load_getbool(state->nds->timerOver[1], 4, &ss, sse);
 	load_gets32(&state->nds->nextHBlank, 1, &ss, sse);
 	load_getu32(&state->nds->VCount, 1, &ss, sse);
 	load_getu32(&state->nds->old, 1, &ss, sse);

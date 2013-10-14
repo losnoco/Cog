@@ -126,12 +126,14 @@ struct armcpu_memory_iface {
   void *data;
 };
 
+#if 0
 static void mmu_select_savetype(NDS_state *state, int type, int *bmemtype, u32 *bmemsize) {
 	if (type<0 || type > 5) return;
 	*bmemtype=save_types[type][0];
 	*bmemsize=save_types[type][1];
 	mc_realloc(&state->MMU->bupmem, *bmemtype, *bmemsize);
 }
+#endif
 
 void MMU_Init(NDS_state *);
 void MMU_DeInit(NDS_state *);

@@ -45,6 +45,7 @@ extern "C" {
 #define MC_SIZE_16MBITS                 0x200000
 #define MC_SIZE_64MBITS                 0x800000
 
+#if 0
 static int save_types[6][2] = {
 	{MC_TYPE_AUTODETECT,1},
 	{MC_TYPE_EEPROM1,MC_SIZE_4KBITS},
@@ -53,6 +54,7 @@ static int save_types[6][2] = {
 	{MC_TYPE_FLASH,MC_SIZE_256KBITS},
 	{MC_TYPE_FRAM,MC_SIZE_2MBITS}
 };
+#endif
 
 typedef struct
 {

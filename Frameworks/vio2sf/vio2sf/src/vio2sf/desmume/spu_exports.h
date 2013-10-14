@@ -31,6 +31,6 @@ typedef struct SoundInterface_struct
    void (*SetVolume)(NDS_state *, int volume);
 } SoundInterface_struct;
 
-#endif _SPU_CPP_
+#endif //_SPU_CPP_
 
 #endif //_SPU_EXPORTS_H

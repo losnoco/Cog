@@ -28,7 +28,13 @@
 #include <math.h>
 #include <assert.h>
 
+#ifdef _MSC_VER
 #define FORCEINLINE __forceinline
+#elif defined(__GNUC__) || defined(__clang__)
+#define FORCEINLINE __inline__ __attribute__((always_inline))
+#else
+#define FORCEINLINE
+#endif
 
 FORCEINLINE u32 u32floor(float f)
 {
@@ -71,8 +77,6 @@ static FORCEINLINE s32 spumuldiv7(s32 val, u8 multiplier) {
 
 #define CHANSTAT_STOPPED          0
 #define CHANSTAT_PLAY             1
-
-typedef struct NDS_state;
 
 enum SPUInterpolationMode
 {
