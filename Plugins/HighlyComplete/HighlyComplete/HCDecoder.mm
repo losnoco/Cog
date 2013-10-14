@@ -1090,6 +1090,8 @@ static int twosf_info(void * context, const char * name, const char * value)
     }
     else return NO;
     
+    framesRead = 0;
+
     return YES;
 }
 
@@ -1147,7 +1149,6 @@ static int twosf_info(void * context, const char * name, const char * value)
     
     metadataList = info.info;
     
-    framesRead = 0;
     framesLength = [self retrieveFrameCount:tagLengthMs];
 	totalFrames = [self retrieveFrameCount:tagLengthMs + tagFadeMs];
 	
