@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		833B1A3E180BAD0200414852 /* isqrt.c in Sources */ = {isa = PBXBuildFile; fileRef = 833B1A3A180BAD0200414852 /* isqrt.c */; };
+		833B1A3F180BAD0200414852 /* isqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B1A3B180BAD0200414852 /* isqrt.h */; };
+		833B1A40180BAD0200414852 /* lanczos_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 833B1A3C180BAD0200414852 /* lanczos_resampler.c */; };
+		833B1A41180BAD0200414852 /* lanczos_resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B1A3D180BAD0200414852 /* lanczos_resampler.h */; };
 		83DE0C14180A9BD400269051 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83DE0C12180A9BD400269051 /* InfoPlist.strings */; };
 		83DE0C81180A9CA400269051 /* ARM9.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C46180A9CA400269051 /* ARM9.h */; };
 		83DE0C82180A9CA400269051 /* arm_instructions.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C47180A9CA400269051 /* arm_instructions.c */; };
@@ -49,6 +53,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		833B1A3A180BAD0200414852 /* isqrt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = isqrt.c; sourceTree = "<group>"; };
+		833B1A3B180BAD0200414852 /* isqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = isqrt.h; sourceTree = "<group>"; };
+		833B1A3C180BAD0200414852 /* lanczos_resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lanczos_resampler.c; sourceTree = "<group>"; };
+		833B1A3D180BAD0200414852 /* lanczos_resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lanczos_resampler.h; sourceTree = "<group>"; };
 		83DE0C06180A9BD400269051 /* vio2sf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vio2sf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83DE0C11180A9BD400269051 /* vio2sf-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vio2sf-Info.plist"; sourceTree = "<group>"; };
 		83DE0C13180A9BD400269051 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -165,6 +173,10 @@
 		83DE0C45180A9CA400269051 /* desmume */ = {
 			isa = PBXGroup;
 			children = (
+				833B1A3A180BAD0200414852 /* isqrt.c */,
+				833B1A3B180BAD0200414852 /* isqrt.h */,
+				833B1A3C180BAD0200414852 /* lanczos_resampler.c */,
+				833B1A3D180BAD0200414852 /* lanczos_resampler.h */,
 				83DE0C46180A9CA400269051 /* ARM9.h */,
 				83DE0C47180A9CA400269051 /* arm_instructions.c */,
 				83DE0C48180A9CA400269051 /* arm_instructions.h */,
@@ -214,6 +226,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				833B1A3F180BAD0200414852 /* isqrt.h in Headers */,
 				83DE0CBE180B21DD00269051 /* state.h in Headers */,
 				83DE0CA3180A9CA400269051 /* spu_exports.h in Headers */,
 				83DE0CA7180A9CA400269051 /* types.h in Headers */,
@@ -226,6 +239,7 @@
 				83DE0C95180A9CA400269051 /* matrix.h in Headers */,
 				83DE0C9C180A9CA400269051 /* NDSSystem.h in Headers */,
 				83DE0C89180A9CA400269051 /* config.h in Headers */,
+				833B1A41180BAD0200414852 /* lanczos_resampler.h in Headers */,
 				83DE0C8D180A9CA400269051 /* debug.h in Headers */,
 				83DE0C98180A9CA400269051 /* mem.h in Headers */,
 				83DE0C90180A9CA400269051 /* FIFO.h in Headers */,
@@ -312,8 +326,10 @@
 				83DE0C96180A9CA400269051 /* mc.c in Sources */,
 				83DE0C91180A9CA400269051 /* GPU.c in Sources */,
 				83DE0CA4180A9CA400269051 /* thumb_instructions.c in Sources */,
+				833B1A40180BAD0200414852 /* lanczos_resampler.c in Sources */,
 				83DE0C84180A9CA400269051 /* armcpu.c in Sources */,
 				83DE0C94180A9CA400269051 /* matrix.c in Sources */,
+				833B1A3E180BAD0200414852 /* isqrt.c in Sources */,
 				83DE0C93180A9CA400269051 /* instruction_tabdef.inc in Sources */,
 				83DE0C9B180A9CA400269051 /* NDSSystem.c in Sources */,
 				83DE0CB8180A9FD000269051 /* state.c in Sources */,
@@ -452,6 +468,7 @@
 				83DE0C30180A9BD400269051 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
