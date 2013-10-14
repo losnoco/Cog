@@ -37,10 +37,10 @@ void lanczos_init()
 
 typedef struct lanczos_resampler
 {
-    int write_pos, write_filled;
-    int read_pos, read_filled;
+    long write_pos, write_filled;
+    long read_pos, read_filled;
     unsigned short phase;
-    unsigned int phase_inc;
+    unsigned long phase_inc;
     float buffer_in[lanczos_buffer_size * 2];
     int buffer_out[lanczos_buffer_size];
 } lanczos_resampler;
@@ -67,31 +67,13 @@ void lanczos_resampler_delete(void * _r)
     free( _r );
 }
 
-void * lanczos_resampler_dup(void * _r)
-{
-    lanczos_resampler * r_in = ( lanczos_resampler * ) _r;
-    lanczos_resampler * r_out = ( lanczos_resampler * ) malloc( sizeof(lanczos_resampler) );
-    if ( !r_out ) return 0;
-
-    r_out->write_pos = r_in->write_pos;
-    r_out->write_filled = r_in->write_filled;
-    r_out->read_pos = r_in->read_pos;
-    r_out->read_filled = r_in->read_filled;
-    r_out->phase = r_in->phase;
-    r_out->phase_inc = r_in->phase_inc;
-    memcpy( r_out->buffer_in, r_in->buffer_in, sizeof(r_in->buffer_in) );
-    memcpy( r_out->buffer_out, r_in->buffer_out, sizeof(r_in->buffer_out) );
-
-    return r_out;
-}
-
-int lanczos_resampler_get_free_count(void *_r)
+long lanczos_resampler_get_free_count(void *_r)
 {
     lanczos_resampler * r = ( lanczos_resampler * ) _r;
     return lanczos_buffer_size - r->write_filled;
 }
 
-int lanczos_resampler_ready(void *_r)
+long lanczos_resampler_ready(void *_r)
 {
     lanczos_resampler * r = ( lanczos_resampler * ) _r;
     return r->write_filled > (LANCZOS_WIDTH * 2);
@@ -110,7 +92,7 @@ void lanczos_resampler_clear(void *_r)
 void lanczos_resampler_set_rate(void *_r, double new_factor)
 {
     lanczos_resampler * r = ( lanczos_resampler * ) _r;
-    r->phase_inc = (int)( new_factor * LANCZOS_RESOLUTION );
+    r->phase_inc = (long)( new_factor * LANCZOS_RESOLUTION );
 }
 
 void lanczos_resampler_write_sample(void *_r, int s)
@@ -130,28 +112,28 @@ void lanczos_resampler_write_sample(void *_r, int s)
     }
 }
 
-static int lanczos_resampler_run(lanczos_resampler * r, int ** out_, int * out_end)
+static long lanczos_resampler_run(lanczos_resampler * r, int ** out_, int * out_end)
 {
-    int in_size = r->write_filled;
+    long in_size = r->write_filled;
     float const* in_ = r->buffer_in + lanczos_buffer_size + r->write_pos - r->write_filled;
-    int used = 0;
+    long used = 0;
     in_size -= LANCZOS_WIDTH * 2;
     if ( in_size > 0 )
     {
         int* out = *out_;
         float const* in = in_;
         float const* const in_end = in + in_size;
-        int phase = r->phase;
-        int phase_inc = r->phase_inc;
+        long phase = r->phase;
+        long phase_inc = r->phase_inc;
 
-        int step = phase_inc > LANCZOS_RESOLUTION ? LANCZOS_RESOLUTION * LANCZOS_RESOLUTION / phase_inc : LANCZOS_RESOLUTION;
+        long step = phase_inc > LANCZOS_RESOLUTION ? LANCZOS_RESOLUTION * LANCZOS_RESOLUTION / phase_inc : LANCZOS_RESOLUTION;
 
         do
         {
             // accumulate in extended precision
             double kernel[LANCZOS_WIDTH * 2], kernel_sum = 0.0;
-            int i = LANCZOS_WIDTH;
-            int phase_adj = phase * step / LANCZOS_RESOLUTION;
+            long i = LANCZOS_WIDTH;
+            long phase_adj = phase * step / LANCZOS_RESOLUTION;
             double sample;
 
             if ( out >= out_end )
@@ -159,8 +141,8 @@ static int lanczos_resampler_run(lanczos_resampler * r, int ** out_, int * out_e
 
             for (; i >= -LANCZOS_WIDTH + 1; --i)
             {
-                int pos = i * step;
-                kernel_sum += kernel[i + LANCZOS_WIDTH - 1] = lanczos_lut[abs(phase_adj - pos)];
+                long pos = i * step;
+                kernel_sum += kernel[i + LANCZOS_WIDTH - 1] = lanczos_lut[labs(phase_adj - pos)];
             }
             for (sample = 0, i = 0; i < LANCZOS_WIDTH * 2; ++i)
                 sample += in[i] * kernel[i];
@@ -190,8 +172,8 @@ static void lanczos_resampler_fill(lanczos_resampler * r)
     while ( r->write_filled > (LANCZOS_WIDTH * 2) &&
             r->read_filled < lanczos_buffer_size )
     {
-        int write_pos = ( r->read_pos + r->read_filled ) % lanczos_buffer_size;
-        int write_size = lanczos_buffer_size - write_pos;
+        long write_pos = ( r->read_pos + r->read_filled ) % lanczos_buffer_size;
+        long write_size = lanczos_buffer_size - write_pos;
         int * out = r->buffer_out + write_pos;
         if ( write_size > ( lanczos_buffer_size - r->read_filled ) )
             write_size = lanczos_buffer_size - r->read_filled;
@@ -200,7 +182,7 @@ static void lanczos_resampler_fill(lanczos_resampler * r)
     }
 }
 
-int lanczos_resampler_get_sample_count(void *_r)
+long lanczos_resampler_get_sample_count(void *_r)
 {
     lanczos_resampler * r = ( lanczos_resampler * ) _r;
     if ( r->read_filled < 1 )
