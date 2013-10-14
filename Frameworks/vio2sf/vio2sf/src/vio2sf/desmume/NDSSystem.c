@@ -268,7 +268,7 @@ void NDS_FreeROM(NDS_state *state)
 void NDS_Reset( NDS_state *state)
 {
    BOOL oldexecute=state->execute;
-   int i;
+   unsigned int i;
    u32 src;
    u32 dst;
    NDS_header * header = NDS_getROMHeader(state);

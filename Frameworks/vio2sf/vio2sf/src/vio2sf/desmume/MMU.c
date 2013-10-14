@@ -42,6 +42,7 @@
 #include "cp15.h"
 //#include "wifi.h"
 #include "registers.h"
+#include "isqrt.h"
 
 #if VIO2SF_GPU_ENABLE
 #include "render3D.h"
@@ -1359,7 +1360,7 @@ void FASTCALL MMU_write16(NDS_state *state, u32 proc, u32 adr, u16 val)
                                    state->AUX_SPI_CMD = val & 0xFF;
                                 }
 
-                                T1WriteWord(state->MMU->MMU_MEM[proc][(REG_AUXSPIDATA >> 20) & 0xff], REG_AUXSPIDATA & 0xfff, bm_transfer(&state->MMU->bupmem, val));
+                                T1WriteWord(state->MMU->MMU_MEM[proc][(REG_AUXSPIDATA >> 20) & 0xff], REG_AUXSPIDATA & 0xfff, bm_transfer(&state->MMU->bupmem, (u8)val));
 				return;
 
 			case REG_SPICNT :
@@ -1410,7 +1411,7 @@ void FASTCALL MMU_write16(NDS_state *state, u32 proc, u32 adr, u16 val)
 								T1WriteWord(state->MMU->MMU_MEM[proc][(REG_SPIDATA >> 20) & 0xff], REG_SPIDATA & 0xfff, 0);
 								break;
 							}
-							T1WriteWord(state->MMU->MMU_MEM[proc][(REG_SPIDATA >> 20) & 0xff], REG_SPIDATA & 0xfff, fw_transfer(&state->MMU->fw, val));
+							T1WriteWord(state->MMU->MMU_MEM[proc][(REG_SPIDATA >> 20) & 0xff], REG_SPIDATA & 0xfff, fw_transfer(&state->MMU->fw, (u8)val));
 
 							return;
 							
@@ -2559,7 +2560,7 @@ void FASTCALL MMU_write32(NDS_state *state, u32 proc, u32 adr, u32 val)
 					case 1:
 						return;
 					}
-					T1WriteLong(state->MMU->MMU_MEM[proc][0x40], 0x2B4, (u32) sqrt((s64)v));
+					T1WriteLong(state->MMU->MMU_MEM[proc][0x40], 0x2B4, (u32) isqrt64(v));
 					T1WriteLong(state->MMU->MMU_MEM[proc][0x40], 0x2B0, cnt & 0x7FFF);
 					SQRTLOG("BOUT1 sqrt(%08X%08X) = %08X\r\n", (u32)(v>>32), (u32)v, 
 										T1ReadLong(state->MMU->MMU_MEM[proc][0x40], 0x2B4));
@@ -2580,7 +2581,7 @@ void FASTCALL MMU_write32(NDS_state *state, u32 proc, u32 adr, u32 val)
 						v = T1ReadQuad(state->MMU->MMU_MEM[proc][0x40], 0x2B8);
 						break;
 					}
-					T1WriteLong(state->MMU->MMU_MEM[proc][0x40], 0x2B4, (u32) sqrt((s64)v));
+					T1WriteLong(state->MMU->MMU_MEM[proc][0x40], 0x2B4, (u32) isqrt64(v));
 					T1WriteLong(state->MMU->MMU_MEM[proc][0x40], 0x2B0, cnt & 0x7FFF);
 					SQRTLOG("BOUT2 sqrt(%08X%08X) = %08X\r\n", (u32)(v>>32), (u32)v, 
 										T1ReadLong(state->MMU->MMU_MEM[proc][0x40], 0x2B4));

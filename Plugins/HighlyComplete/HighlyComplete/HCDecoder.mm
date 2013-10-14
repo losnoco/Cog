@@ -1011,7 +1011,7 @@ static int twosf_info(void * context, const char * name, const char * value)
             return NO;
         }
         
-        core->dwInterpolation = 1;
+        core->dwInterpolation = 2;
         core->dwChannelMute = 0;
         
         if (!state.arm7_clockdown_level)

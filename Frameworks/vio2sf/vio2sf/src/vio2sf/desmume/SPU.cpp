@@ -51,7 +51,7 @@
 #include "state.h"
 
 //===================CONFIGURATION========================
-bool isChannelMuted(NDS_state *state, int num) { return state->dwChannelMute&(1<<num); }
+bool isChannelMuted(NDS_state *state, int num) { return state->dwChannelMute&(1<<num) ? true : false; }
 SPUInterpolationMode spuInterpolationMode(NDS_state *state) { return (SPUInterpolationMode)state->dwInterpolation; }
 //=========================================================
 
@@ -308,6 +308,12 @@ void SPU_struct::KeyOn(int channel)
 {
 	channel_struct &thischan = channels[channel];
 
+	if (spuInterpolationMode(state) == SPUInterpolation_Lanczos)
+	{
+		thischan.init_lanczos();
+		lanczos_resampler_clear(thischan.lanczos_resampler);
+	}
+
 	adjust_channel_timer(&thischan);
 
 	//   LOG("Channel %d key on: vol = %d, datashift = %d, hold = %d, pan = %d, waveduty = %d, repeat = %d, format = %d, source address = %07X, timer = %04X, loop start = %04X, length = %06X, cpu->state->MMUARM7_REG[0x501] = %02X\n", channel, chan->vol, chan->datashift, chan->hold, chan->pan, chan->waveduty, chan->repeat, chan->format, chan->addr, chan->timer, chan->loopstart, chan->length, T1ReadByte(MMU->ARM7_REG, 0x501));
@@ -508,22 +514,11 @@ extern "C" void SPU_WriteLong(NDS_state *state, u32 addr, u32 val)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static FORCEINLINE s32 Interpolate(SPUInterpolationMode INTERPOLATE_MODE, s32 a, s32 b, double ratio)
+static FORCEINLINE s32 Interpolate(s32 a, s32 b, double ratio)
 {
-	if(INTERPOLATE_MODE == SPUInterpolation_Cosine)
-	{
-		//why did we change it away from the lookup table? somebody should research that
-		ratio = ratio - sputrunc(ratio);
-		double ratio2 = ((1.0 - cos(ratio * M_PI)) * 0.5);
-		//double ratio2 = (1.0f - cos_lut[((int)(ratio*256.0))&0xFF]) / 2.0f;
-		return s32floor((float)(((1-ratio2)*a) + (ratio2*b)));
-	}
-	else
-	{
-		//linear interpolation
-		ratio = ratio - sputrunc(ratio);
-		return s32floor((float)((1-ratio)*a + ratio*b));
-	}
+	//linear interpolation
+	ratio = ratio - sputrunc(ratio);
+	return s32floor((float)((1-ratio)*a + ratio*b));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -532,15 +527,15 @@ double round(double r)
     return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
 }
 
-static FORCEINLINE void Fetch8BitData(SPUInterpolationMode INTERPOLATE_MODE, channel_struct *chan, s32 *data)
+static FORCEINLINE void Fetch8BitDataInternal(SPUInterpolationMode INTERPOLATE_MODE, channel_struct *chan, s32 *data)
 {
 	u32 loc = sputrunc(chan->sampcnt);
-	if(INTERPOLATE_MODE != SPUInterpolation_None)
+	if(INTERPOLATE_MODE == SPUInterpolation_Linear)
 	{
 		s32 a = (s32)(chan->buf8[loc] << 8);
 		if(loc < (chan->totlength << 2) - 1) {
 			s32 b = (s32)(chan->buf8[loc + 1] << 8);
-			a = Interpolate(INTERPOLATE_MODE, a, b, chan->sampcnt);
+			a = Interpolate(a, b, chan->sampcnt);
 		}
 		*data = a;
 	}
@@ -548,18 +543,18 @@ static FORCEINLINE void Fetch8BitData(SPUInterpolationMode INTERPOLATE_MODE, cha
 		*data = (s32)chan->buf8[loc] << 8;
 }
 
-static FORCEINLINE void Fetch16BitData(SPUInterpolationMode INTERPOLATE_MODE, const channel_struct * const chan, s32 *data)
+static FORCEINLINE void Fetch16BitDataInternal(SPUInterpolationMode INTERPOLATE_MODE, const channel_struct * const chan, s32 *data)
 {
 	const s16* const buf16 = chan->buf16;
 	const int shift = 1;
-	if(INTERPOLATE_MODE != SPUInterpolation_None)
+	if(INTERPOLATE_MODE == SPUInterpolation_Linear)
 	{
 		u32 loc = sputrunc(chan->sampcnt);
 		s32 a = (s32)buf16[loc], b;
 		if(loc < (chan->totlength << shift) - 1)
 		{
 			b = (s32)buf16[loc + 1];
-			a = Interpolate(INTERPOLATE_MODE,a, b, chan->sampcnt);
+			a = Interpolate(a, b, chan->sampcnt);
 		}
 		*data = a;
 	}
@@ -567,7 +562,7 @@ static FORCEINLINE void Fetch16BitData(SPUInterpolationMode INTERPOLATE_MODE, co
 		*data = (s32)buf16[sputrunc(chan->sampcnt)];
 }
 
-static FORCEINLINE void FetchADPCMData(SPUInterpolationMode INTERPOLATE_MODE, channel_struct * const chan, s32 * const data)
+static FORCEINLINE void FetchADPCMDataInternal(SPUInterpolationMode INTERPOLATE_MODE, channel_struct * const chan, s32 * const data)
 {
 	// No sense decoding, just return the last sample
 	if (chan->lastsampcnt != sputrunc(chan->sampcnt)){
@@ -594,8 +589,8 @@ static FORCEINLINE void FetchADPCMData(SPUInterpolationMode INTERPOLATE_MODE, ch
 	    chan->lastsampcnt = sputrunc(chan->sampcnt);
     }
 
-	if(INTERPOLATE_MODE != SPUInterpolation_None)
-		*data = Interpolate(INTERPOLATE_MODE,(s32)chan->pcm16b_last,(s32)chan->pcm16b,chan->sampcnt);
+	if(INTERPOLATE_MODE == SPUInterpolation_Linear)
+		*data = Interpolate((s32)chan->pcm16b_last,(s32)chan->pcm16b,chan->sampcnt);
 	else
 		*data = (s32)chan->pcm16b;
 }
@@ -679,11 +674,18 @@ static FORCEINLINE void TestForLoop(NDS_state *state, int FORMAT, SPU_struct *SP
 		}
 		else
 		{
-			chan->status = CHANSTAT_STOPPED;
+			if (!chan->lanczos_resampler || !lanczos_resampler_get_sample_count(chan->lanczos_resampler))
+			{
+				chan->status = CHANSTAT_STOPPED;
 
-			if(SPU == state->SPU_core)
-				state->MMU->ARM7_REG[0x403 + (((chan-SPU->channels) ) * 0x10)] &= 0x7F;
-			SPU->bufpos = SPU->buflength;
+				if(SPU == state->SPU_core)
+					state->MMU->ARM7_REG[0x403 + (((chan-SPU->channels) ) * 0x10)] &= 0x7F;
+				SPU->bufpos = SPU->buflength;
+			}
+			else
+			{
+				chan->status = CHANSTAT_EMPTYBUFFER;
+			}
 		}
 	}
 }
@@ -715,12 +717,115 @@ static FORCEINLINE void TestForLoop2(NDS_state *state, SPU_struct *SPU, channel_
 		}
 		else
 		{
-			chan->status = CHANSTAT_STOPPED;
-			if(SPU == state->SPU_core)
-				state->MMU->ARM7_REG[0x403 + (((chan-SPU->channels) ) * 0x10)] &= 0x7F;
-			SPU->bufpos = SPU->buflength;
+			if (!chan->lanczos_resampler || !lanczos_resampler_get_sample_count(chan->lanczos_resampler))
+			{
+				chan->status = CHANSTAT_STOPPED;
+				if(SPU == state->SPU_core)
+					state->MMU->ARM7_REG[0x403 + (((chan-SPU->channels) ) * 0x10)] &= 0x7F;
+				SPU->bufpos = SPU->buflength;
+			}
+			else
+			{
+				chan->status = CHANSTAT_EMPTYBUFFER;
+			}
 		}
 	}
+}
+
+static FORCEINLINE void Fetch8BitData(SPUInterpolationMode INTERPOLATE_MODE, NDS_state *state, SPU_struct* const SPU, channel_struct *chan, s32 *data)
+{
+	if (INTERPOLATE_MODE != SPUInterpolation_Lanczos)
+		return Fetch8BitDataInternal(INTERPOLATE_MODE, chan, data);
+
+	double saved_inc = chan->sampinc;
+	chan->sampinc = 1.0;
+
+	lanczos_resampler_set_rate( chan->lanczos_resampler, saved_inc );
+
+	while (chan->status != CHANSTAT_EMPTYBUFFER && lanczos_resampler_get_free_count(chan->lanczos_resampler))
+	{
+		s32 sample;
+		Fetch8BitDataInternal(SPUInterpolation_None, chan, &sample);
+		TestForLoop(state, 0, SPU, chan);
+		lanczos_resampler_write_sample(chan->lanczos_resampler, sample);
+	}
+
+	chan->sampinc = saved_inc;
+
+	if (!lanczos_resampler_get_sample_count(chan->lanczos_resampler))
+	{
+		chan->status = CHANSTAT_STOPPED;
+		if(SPU == state->SPU_core)
+			state->MMU->ARM7_REG[0x403 + (((chan-SPU->channels) ) * 0x10)] &= 0x7F;
+		SPU->bufpos = SPU->buflength;
+	}
+
+	*data = lanczos_resampler_get_sample(chan->lanczos_resampler);
+	lanczos_resampler_remove_sample(chan->lanczos_resampler);
+}
+
+static FORCEINLINE void Fetch16BitData(SPUInterpolationMode INTERPOLATE_MODE, NDS_state *state, SPU_struct* const SPU, channel_struct *chan, s32 *data)
+{
+	if (INTERPOLATE_MODE != SPUInterpolation_Lanczos)
+		return Fetch16BitDataInternal(INTERPOLATE_MODE, chan, data);
+
+	double saved_inc = chan->sampinc;
+	chan->sampinc = 1.0;
+
+	lanczos_resampler_set_rate( chan->lanczos_resampler, saved_inc );
+
+	while (chan->status != CHANSTAT_EMPTYBUFFER && lanczos_resampler_get_free_count(chan->lanczos_resampler))
+	{
+		s32 sample;
+		Fetch16BitDataInternal(SPUInterpolation_None, chan, &sample);
+		TestForLoop(state, 1, SPU, chan);
+		lanczos_resampler_write_sample(chan->lanczos_resampler, sample);
+	}
+
+	chan->sampinc = saved_inc;
+
+	if (!lanczos_resampler_get_sample_count(chan->lanczos_resampler))
+	{
+		chan->status = CHANSTAT_STOPPED;
+		if(SPU == state->SPU_core)
+			state->MMU->ARM7_REG[0x403 + (((chan-SPU->channels) ) * 0x10)] &= 0x7F;
+		SPU->bufpos = SPU->buflength;
+	}
+
+	*data = lanczos_resampler_get_sample(chan->lanczos_resampler);
+	lanczos_resampler_remove_sample(chan->lanczos_resampler);
+}
+
+static FORCEINLINE void FetchADPCMData(SPUInterpolationMode INTERPOLATE_MODE, NDS_state *state, SPU_struct* const SPU, channel_struct *chan, s32 *data)
+{
+	if (INTERPOLATE_MODE != SPUInterpolation_Lanczos)
+		return FetchADPCMDataInternal(INTERPOLATE_MODE, chan, data);
+
+	double saved_inc = chan->sampinc;
+	chan->sampinc = 1.0;
+
+	lanczos_resampler_set_rate( chan->lanczos_resampler, saved_inc );
+
+	while (chan->status != CHANSTAT_EMPTYBUFFER && lanczos_resampler_get_free_count(chan->lanczos_resampler))
+	{
+		s32 sample;
+		FetchADPCMDataInternal(SPUInterpolation_None, chan, &sample);
+		TestForLoop2(state, SPU, chan);
+		lanczos_resampler_write_sample(chan->lanczos_resampler, sample);
+	}
+
+	chan->sampinc = saved_inc;
+
+	if (!lanczos_resampler_get_sample_count(chan->lanczos_resampler))
+	{
+		chan->status = CHANSTAT_STOPPED;
+		if(SPU == state->SPU_core)
+			state->MMU->ARM7_REG[0x403 + (((chan-SPU->channels) ) * 0x10)] &= 0x7F;
+		SPU->bufpos = SPU->buflength;
+	}
+
+	*data = lanczos_resampler_get_sample(chan->lanczos_resampler);
+	lanczos_resampler_remove_sample(chan->lanczos_resampler);
 }
 
 FORCEINLINE static void SPU_Mix(int CHANNELS, SPU_struct* SPU, channel_struct *chan, s32 data)
@@ -742,18 +847,21 @@ FORCEINLINE static void ____SPU_ChanUpdate(NDS_state *state, int CHANNELS, int F
 			s32 data;
 			switch(FORMAT)
 			{
-				case 0: Fetch8BitData(INTERPOLATE_MODE, chan, &data); break;
-				case 1: Fetch16BitData(INTERPOLATE_MODE, chan, &data); break;
-				case 2: FetchADPCMData(INTERPOLATE_MODE, chan, &data); break;
+				case 0: Fetch8BitData(INTERPOLATE_MODE, state, SPU, chan, &data); break;
+				case 1: Fetch16BitData(INTERPOLATE_MODE, state, SPU, chan, &data); break;
+				case 2: FetchADPCMData(INTERPOLATE_MODE, state, SPU, chan, &data); break;
 				case 3: FetchPSGData(chan, &data); break;
 			}
 			SPU_Mix(CHANNELS, SPU, chan, data);
 		}
 
-		switch(FORMAT) {
-			case 0: case 1: TestForLoop(state, FORMAT, SPU, chan); break;
-			case 2: TestForLoop2(state, SPU, chan); break;
-			case 3: chan->sampcnt += chan->sampinc; break;
+		if (INTERPOLATE_MODE != SPUInterpolation_Lanczos)
+		{
+			switch(FORMAT) {
+				case 0: case 1: TestForLoop(state, FORMAT, SPU, chan); break;
+				case 2: TestForLoop2(state, SPU, chan); break;
+				case 3: chan->sampcnt += chan->sampinc; break;
+			}
 		}
 	}
 }
@@ -807,7 +915,7 @@ static void SPU_MixAudio(NDS_state *state, bool actuallyMix, SPU_struct *SPU, in
 	{
 		channel_struct *chan = &SPU->channels[i];
 	
-		if (chan->status != CHANSTAT_PLAY)
+		if (chan->status == CHANSTAT_STOPPED)
 			continue;
 
 		SPU->bufpos = 0;

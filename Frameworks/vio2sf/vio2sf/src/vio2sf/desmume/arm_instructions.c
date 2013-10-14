@@ -3722,7 +3722,7 @@ static u32 FASTCALL  OP_SMLAL_B_B(armcpu_t *cpu)
      LOG("SMLALBB %08X * %08X + %08X%08X = %08X%08X\r\n", (int)cpu->R[REG_POS(i,0)], (int)cpu->R[REG_POS(i,8)], (int)cpu->R[REG_POS(i,16)], (int)cpu->R[REG_POS(i,12)], (int)(cpu->R[REG_POS(i,16)] + (res + ((tmp<0)*0xFFFFFFFF))), (int)(u32) res);
 
      cpu->R[REG_POS(i,12)] = (u32) res;
-     cpu->R[REG_POS(i,16)] += (res + ((tmp<0)*0xFFFFFFFF));
+     cpu->R[REG_POS(i,16)] += (u32) (res + ((tmp<0)*0xFFFFFFFF));
      
      return 2;
 }
@@ -3736,7 +3736,7 @@ static u32 FASTCALL  OP_SMLAL_B_T(armcpu_t *cpu)
      LOG("SMLALBT %08X * %08X + %08X%08X = %08X%08X\r\n", (int)cpu->R[REG_POS(i,0)], (int)cpu->R[REG_POS(i,8)], (int)cpu->R[REG_POS(i,16)], (int)cpu->R[REG_POS(i,12)], (int)(cpu->R[REG_POS(i,16)] + res + ((tmp<0)*0xFFFFFFFF)), (int)(u32) res);
 
      cpu->R[REG_POS(i,12)] = (u32) res;
-     cpu->R[REG_POS(i,16)] += res + ((tmp<0)*0xFFFFFFFF);
+     cpu->R[REG_POS(i,16)] += (u32) (res + ((tmp<0)*0xFFFFFFFF));
 
      return 2;
 }
@@ -3750,7 +3750,7 @@ static u32 FASTCALL  OP_SMLAL_T_B(armcpu_t *cpu)
      LOG("SMLALTB %08X * %08X + %08X%08X = %08X%08X\r\n", (int)cpu->R[REG_POS(i,0)], (int)cpu->R[REG_POS(i,8)], (int)cpu->R[REG_POS(i,16)], (int)cpu->R[REG_POS(i,12)], (int)(cpu->R[REG_POS(i,16)] + res + ((tmp<0)*0xFFFFFFFF)), (int)(u32) res);
 
      cpu->R[REG_POS(i,12)] = (u32) res;
-     cpu->R[REG_POS(i,16)] += res + ((tmp<0)*0xFFFFFFFF);
+     cpu->R[REG_POS(i,16)] += (u32) (res + ((tmp<0)*0xFFFFFFFF));
 
      return 2;
 }
@@ -3764,7 +3764,7 @@ static u32 FASTCALL  OP_SMLAL_T_T(armcpu_t *cpu)
      LOG("SMLALTT %08X * %08X + %08X%08X = %08X%08X\r\n", (int)cpu->R[REG_POS(i,0)], (int)cpu->R[REG_POS(i,8)], (int)cpu->R[REG_POS(i,16)], (int)cpu->R[REG_POS(i,12)], (int)(cpu->R[REG_POS(i,16)] + res + ((tmp<0)*0xFFFFFFFF)), (int)(u32) res);
      
      cpu->R[REG_POS(i,12)] = (u32) res;
-     cpu->R[REG_POS(i,16)] += res + ((tmp<0)*0xFFFFFFFF);
+     cpu->R[REG_POS(i,16)] += (u32) (res + ((tmp<0)*0xFFFFFFFF));
 
      return 2;
 }

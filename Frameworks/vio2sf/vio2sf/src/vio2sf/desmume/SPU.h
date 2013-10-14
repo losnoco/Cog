@@ -28,6 +28,8 @@
 #include <math.h>
 #include <assert.h>
 
+#include "lanczos_resampler.h"
+
 #ifdef _MSC_VER
 #define FORCEINLINE __forceinline
 #elif defined(__GNUC__) || defined(__clang__)
@@ -77,12 +79,13 @@ static FORCEINLINE s32 spumuldiv7(s32 val, u8 multiplier) {
 
 #define CHANSTAT_STOPPED          0
 #define CHANSTAT_PLAY             1
+#define CHANSTAT_EMPTYBUFFER      2
 
 enum SPUInterpolationMode
 {
 	SPUInterpolation_None = 0,
 	SPUInterpolation_Linear = 1,
-	SPUInterpolation_Cosine = 2
+	SPUInterpolation_Lanczos = 2
 };
 
 typedef struct NDS_state NDS_state;
@@ -103,10 +106,31 @@ typedef struct SoundInterface_struct
 extern SoundInterface_struct SNDDummy;
 extern SoundInterface_struct SNDFile;
 
+static bool lanczos_initialized = false;
+
 struct channel_struct
 {
 	channel_struct()
-	{}
+	{
+		lanczos_resampler = 0;
+	}
+	~channel_struct()
+	{
+		if (lanczos_resampler)
+			lanczos_resampler_delete(lanczos_resampler);
+	}
+	void init_lanczos()
+	{
+		if (!lanczos_resampler)
+		{
+			if (!lanczos_initialized)
+			{
+				lanczos_init();
+				lanczos_initialized = true;
+			}
+			lanczos_resampler = lanczos_resampler_create();
+		}
+	}
 	u32 num;
    u8 vol;
    u8 datashift;
@@ -136,11 +160,11 @@ struct channel_struct
    int loop_index;
    u16 x;
    s16 psgnoise_last;
+   void *lanczos_resampler;
 } ;
 
-class SPU_struct
+struct SPU_struct
 {
-public:
 	SPU_struct(NDS_state *state, int buffersize);
    u32 bufpos;
    u32 buflength;

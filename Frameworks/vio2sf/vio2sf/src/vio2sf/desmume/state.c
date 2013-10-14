@@ -385,7 +385,7 @@ void state_loadstate(struct NDS_state *state, const u8 *ss, u32 ss_size)
     state->execute = TRUE;
 }
 
-void state_render(struct NDS_state *state, s16 * buffer, int sample_count)
+void state_render(struct NDS_state *state, s16 * buffer, unsigned int sample_count)
 {
     s16 * ptr = buffer;
     

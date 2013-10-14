@@ -87,7 +87,7 @@ void state_setrom(NDS_state *state, u8 * rom, u32 rom_size);
 
 void state_loadstate(NDS_state *state, const u8 * ss, u32 ss_size);
     
-void state_render(NDS_state *state, s16 * buffer, int sample_count);
+void state_render(NDS_state *state, s16 * buffer, unsigned int sample_count);
 
 #ifdef __cplusplus
 };
