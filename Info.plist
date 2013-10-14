@@ -25,6 +25,21 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>amr-wb</string>
+				<string>amr</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>AMR Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>2sf</string>
 				<string>mini2sf</string>
 			</array>
