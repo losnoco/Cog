@@ -40,23 +40,23 @@ struct Cached_SoundFont
     Cached_SoundFont() : handle( 0 ) { }
 };
 
-pthread_mutex_t Cache_Lock;
+static pthread_mutex_t Cache_Lock;
 
 static std::map<std::string, Cached_SoundFont> Cache_List;
 
-bool Cache_Running = false;
+static bool Cache_Running = false;
 
-std::thread * Cache_Thread = NULL;
+static std::thread * Cache_Thread = NULL;
 
-void cache_run();
+static void cache_run();
 
-void cache_init()
+static void cache_init()
 {
     pthread_mutex_init( &Cache_Lock, NULL );
     Cache_Thread = new std::thread( cache_run );
 }
 
-void cache_deinit()
+static void cache_deinit()
 {
     Cache_Running = false;
     Cache_Thread->join();
@@ -68,7 +68,7 @@ void cache_deinit()
     }
 }
 
-HSOUNDFONT cache_open( const char * path )
+static HSOUNDFONT cache_open( const char * path )
 {
     HSOUNDFONT font = NULL;
     
@@ -97,7 +97,7 @@ HSOUNDFONT cache_open( const char * path )
     return font;
 }
 
-void cache_close( HSOUNDFONT handle )
+static void cache_close( HSOUNDFONT handle )
 {
     pthread_mutex_lock( &Cache_Lock );
     
@@ -114,7 +114,7 @@ void cache_close( HSOUNDFONT handle )
     pthread_mutex_unlock( &Cache_Lock );
 }
 
-void cache_run()
+static void cache_run()
 {
     Cache_Running = true;
     
@@ -143,7 +143,7 @@ void cache_run()
     }
 }
 
-class Bass_Initializer
+static class Bass_Initializer
 {
     pthread_mutex_t lock;
 
