@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
 		83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B0668A180D5668008E3612 /* Cocoa.framework */; };
 		83B06695180D5668008E3612 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83B06693180D5668008E3612 /* InfoPlist.strings */; };
 		83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
@@ -41,6 +42,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		839CA223180D901800553DBA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		83B06711180D6F87008E3612 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -187,6 +198,7 @@
 				83B06684180D5668008E3612 /* Frameworks */,
 				83B06685180D5668008E3612 /* Resources */,
 				83B06711180D6F87008E3612 /* CopyFiles */,
+				839CA223180D901800553DBA /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -405,6 +417,7 @@
 				83B0669B180D5668008E3612 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
