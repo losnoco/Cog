@@ -462,8 +462,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         }
     }
     
-	//Select the first entry in the group that was just added
-	[playlistController setSelectionIndex:index];
+	//Clear the selection
+	[playlistController setSelectionIndexes:nil];
 	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
 	return entries;
 }
