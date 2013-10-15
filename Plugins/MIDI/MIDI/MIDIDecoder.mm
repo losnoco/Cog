@@ -103,6 +103,9 @@
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
+    if ( framesRead >= totalFrames )
+        return 0;
+    
     if ( !soundFontsAssigned ) {
         NSString * soundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
         if (soundFontPath == nil)
@@ -123,7 +126,7 @@
         
             float * buff = ( float * ) buf;
         
-            float fadeScale = (fadeStart - framesLength) / framesFade;
+            float fadeScale = (float)(framesFade - (fadeStart - framesLength)) / framesFade;
             float fadeStep = 1 / framesFade;
             for (fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
                 buff[ 0 ] *= fadeScale;
@@ -134,7 +137,7 @@
             }
         
             if (fadePos < totalFrames)
-                frames = (int)(fadePos - fadeStart);
+                frames = (int)(fadePos - framesRead);
         }
         else {
             frames = (int)(totalFrames - framesRead);
