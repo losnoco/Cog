@@ -45,7 +45,7 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 {
 	assert(!mStream.size());
 
-	midi_file.serialize_as_stream( subsong, mStream, mSysexMap, clean_flags );
+	midi_file.serialize_as_stream( subsong, mStream, mSysexMap, uStreamLoopStart, uStreamEnd, clean_flags );
 
 	if (mStream.size())
 	{
@@ -53,45 +53,26 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 		uTimeCurrent = 0;
 
 		uLoopMode = loop_mode;
+        
+        uTimeEnd = midi_file.get_timestamp_end( subsong ) + 1000;
 
 		if (uLoopMode & loop_mode_enable)
 		{
 			uTimeLoopStart = midi_file.get_timestamp_loop_start( subsong, true );
 			unsigned long uTimeLoopEnd = midi_file.get_timestamp_loop_end( subsong, true );
-			uTimeEnd = midi_file.get_timestamp_end( subsong, true );
 
 			if ( uTimeLoopStart != ~0UL || uTimeLoopEnd != ~0UL )
 			{
 				uLoopMode |= loop_mode_force;
 			}
 
-			if ( uTimeLoopStart != ~0 )
-			{
-				for ( unsigned i = 0; i < mStream.size(); ++i )
-				{
-					if ( mStream[ i ].m_timestamp >= uTimeLoopStart )
-					{
-						uStreamLoopStart = i;
-						break;
-					}
-				}
-			}
-			else uStreamLoopStart = ~0UL;
-
-			if ( uTimeLoopEnd != ~0UL )
-			{
-				uTimeEnd = uTimeLoopEnd;
-			}
-
-			if (!(uLoopMode & loop_mode_force)) uTimeEnd += 1000;
-			else
+			if ((uLoopMode & loop_mode_force))
 			{
 				unsigned long i;
 				unsigned char note_on[128 * 16];
 				memset( note_on, 0, sizeof( note_on ) );
-				for (i = 0; i < mStream.size(); i++)
+				for (i = 0; i < mStream.size() && i < uStreamEnd; i++)
 				{
-					if (mStream[ i ].m_timestamp > uTimeEnd) break;
 					uint32_t ev = mStream[ i ].m_event & 0x800000F0;
 					if ( ev == 0x90 || ev == 0x80 )
 					{
@@ -103,7 +84,9 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 						note_on [ ch * 128 + note ] = ( note_on [ ch * 128 + note ] & ~bit ) | ( bit * on );
 					}
 				}
+                unsigned long uSavedEndTime = ( i < mStream.size() ) ? mStream[ i ].m_timestamp : mStream[ mStream.size() - 1 ].m_timestamp + 1;
 				mStream.resize( i );
+                uTimeEnd = mStream[ i - 1 ].m_timestamp;
 				for ( unsigned long j = 0; j < 128 * 16; j++ )
 				{
 					if ( note_on[ j ] )
@@ -117,9 +100,9 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 						}
 					}
 				}
+                uTimeEnd = uSavedEndTime;
 			}
 		}
-		else uTimeEnd = midi_file.get_timestamp_end( subsong, true ) + 1000;
 
 		if (uSampleRate != 1000)
 		{

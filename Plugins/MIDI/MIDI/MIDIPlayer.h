@@ -48,6 +48,7 @@ private:
 
 	unsigned long      uStreamLoopStart;
 	unsigned long      uTimeLoopStart;
+    unsigned long      uStreamEnd;
 };
 
 #endif

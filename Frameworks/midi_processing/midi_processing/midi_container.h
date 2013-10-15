@@ -216,7 +216,7 @@ public:
      */
     void apply_hackfix( unsigned hack );
 
-    void serialize_as_stream( unsigned long subsong, std::vector<midi_stream_event> & p_stream, system_exclusive_table & p_system_exclusive, unsigned clean_flags ) const;
+    void serialize_as_stream( unsigned long subsong, std::vector<midi_stream_event> & p_stream, system_exclusive_table & p_system_exclusive, unsigned long & loop_start, unsigned long & loop_end, unsigned clean_flags ) const;
 
     void serialize_as_standard_midi_file( std::vector<uint8_t> & p_midi_file ) const;
 

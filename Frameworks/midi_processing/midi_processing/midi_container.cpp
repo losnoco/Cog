@@ -512,13 +512,18 @@ void midi_container::apply_hackfix( unsigned hack )
     }
 }
 
-void midi_container::serialize_as_stream( unsigned long subsong, std::vector<midi_stream_event> & p_stream, system_exclusive_table & p_system_exclusive, unsigned clean_flags ) const
+void midi_container::serialize_as_stream( unsigned long subsong, std::vector<midi_stream_event> & p_stream, system_exclusive_table & p_system_exclusive, unsigned long & loop_start, unsigned long & loop_end, unsigned clean_flags ) const
 {
     std::vector<uint8_t> data;
     std::vector<std::size_t> track_positions;
     std::vector<uint8_t> port_numbers;
     std::vector<std::string> device_names;
     std::size_t track_count = m_tracks.size();
+    
+    unsigned long tick_loop_start = get_timestamp_loop_start(subsong);
+    unsigned long tick_loop_end = get_timestamp_loop_end(subsong);
+    unsigned long local_loop_start = ~0UL;
+    unsigned long local_loop_end = ~0UL;
 
     track_positions.resize( track_count, 0 );
     port_numbers.resize( track_count, 0 );
@@ -604,6 +609,12 @@ void midi_container::serialize_as_stream( unsigned long subsong, std::vector<mid
 			if ( m_form == 2 && subsong ) tempo_track = subsong;
 
 			const midi_event & event = m_tracks[ next_track ][ track_positions[ next_track ] ];
+
+            if ( local_loop_start == ~0UL && event.m_timestamp >= tick_loop_start )
+                local_loop_start = p_stream.size();
+            if ( local_loop_end == ~0UL && event.m_timestamp > tick_loop_end )
+                local_loop_end = p_stream.size();
+            
 			unsigned long timestamp_ms = timestamp_to_ms( event.m_timestamp, tempo_track );
 			if ( event.m_type != midi_event::extended )
 			{
@@ -673,6 +684,9 @@ void midi_container::serialize_as_stream( unsigned long subsong, std::vector<mid
 
 		track_positions[ next_track ]++;
 	}
+    
+    loop_start = local_loop_start;
+    loop_end = local_loop_end;
 }
 
 void midi_container::serialize_as_standard_midi_file( std::vector<uint8_t> & p_midi_file ) const
