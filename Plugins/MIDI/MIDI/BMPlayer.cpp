@@ -6,6 +6,11 @@
 
 #include <dlfcn.h>
 
+#include <map>
+#include <thread>
+#include <time.h>
+#include <unistd.h>
+
 #define SF2PACK
 
 #define _countof(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -27,6 +32,113 @@ static bool is_gs_reset(const unsigned char * data, unsigned long size)
 	return true;
 }
 
+struct Cached_SoundFont
+{
+    unsigned long ref_count;
+    time_t time_released;
+    HSOUNDFONT handle;
+    Cached_SoundFont() : handle( 0 ) { }
+};
+
+pthread_mutex_t Cache_Lock;
+
+static std::map<std::string, Cached_SoundFont> Cache_List;
+
+bool Cache_Running = false;
+
+std::thread * Cache_Thread = NULL;
+
+void cache_run();
+
+void cache_init()
+{
+    pthread_mutex_init( &Cache_Lock, NULL );
+    Cache_Thread = new std::thread( cache_run );
+}
+
+void cache_deinit()
+{
+    Cache_Running = false;
+    Cache_Thread->join();
+    delete Cache_Thread;
+    
+    for ( auto it = Cache_List.begin(); it != Cache_List.end(); ++it )
+    {
+        BASS_MIDI_FontFree( it->second.handle );
+    }
+}
+
+HSOUNDFONT cache_open( const char * path )
+{
+    HSOUNDFONT font = NULL;
+    
+    pthread_mutex_lock( &Cache_Lock );
+
+    Cached_SoundFont & entry = Cache_List[ path ];
+    
+    if ( !entry.handle )
+    {
+        font = BASS_MIDI_FontInit( path, 0 );
+        if ( font )
+        {
+            entry.handle = font;
+            entry.ref_count = 1;
+        }
+    }
+    else
+        font = entry.handle;
+    
+    pthread_mutex_unlock( &Cache_Lock );
+    
+    return font;
+}
+
+void cache_close( HSOUNDFONT handle )
+{
+    pthread_mutex_lock( &Cache_Lock );
+    
+    for ( auto it = Cache_List.begin(); it != Cache_List.end(); ++it )
+    {
+        if ( it->second.handle == handle )
+        {
+            if ( --it->second.ref_count == 0 )
+                time( &it->second.time_released );
+            break;
+        }
+    }
+    
+    pthread_mutex_unlock( &Cache_Lock );
+}
+
+void cache_run()
+{
+    Cache_Running = true;
+    
+    while ( Cache_Running )
+    {
+        time_t now;
+        time( &now );
+        
+        pthread_mutex_lock( &Cache_Lock );
+        
+        for ( auto it = Cache_List.begin(); it != Cache_List.end(); ++it )
+        {
+            if ( it->second.ref_count == 0 )
+            {
+                if ( difftime( it->second.time_released, now ) >= 10.0 )
+                {
+                    BASS_MIDI_FontFree( it->second.handle );
+                    Cache_List.erase( it );
+                }
+            }
+        }
+        
+        pthread_mutex_unlock( &Cache_Lock );
+        
+        usleep( 250000 );
+    }
+}
+
 class Bass_Initializer
 {
     pthread_mutex_t lock;
@@ -45,6 +157,7 @@ public:
 	{
 		if ( initialized )
 		{
+            cache_deinit();
 			BASS_Free();
 		}
         pthread_mutex_destroy( &lock );
@@ -93,6 +206,7 @@ public:
 			{
 				BASS_SetConfigPtr( BASS_CONFIG_MIDI_DEFFONT, NULL );
 				BASS_SetConfig( BASS_CONFIG_MIDI_VOICES, 256 );
+                cache_init();
                 this->initialized = initialized;
 			}
 		}
@@ -159,12 +273,12 @@ void BMPlayer::send_event(uint32_t b)
 	}
 	else
 	{
-		unsigned long n = b & 0xffffff;
+		uint32_t n = b & 0xffffff;
 		const uint8_t * data;
         std::size_t size, port;
 		mSysexMap.get_entry( n, data, size, port );
 		if ( port > 2 ) port = 2;
-		BASS_MIDI_StreamEvents( _stream, BASS_MIDI_EVENTS_RAW, data, size );
+		BASS_MIDI_StreamEvents( _stream, BASS_MIDI_EVENTS_RAW, data, (unsigned int) size );
 		if ( ( size == _countof( sysex_gm_reset ) && !memcmp( data, sysex_gm_reset, _countof( sysex_gm_reset ) ) ) ||
 			( size == _countof( sysex_gm2_reset ) && !memcmp( data, sysex_gm2_reset, _countof( sysex_gm2_reset ) ) ) ||
 			is_gs_reset( data, size ) ||
@@ -223,7 +337,7 @@ void BMPlayer::shutdown()
 	_stream = NULL;
 	for ( unsigned long i = 0; i < _soundFonts.size(); ++i )
 	{
-		BASS_MIDI_FontFree( _soundFonts[i] );
+		cache_close( _soundFonts[i] );
     }
 	_soundFonts.resize( 0 );
 }
@@ -248,7 +362,7 @@ bool BMPlayer::startup()
 #endif
 			)
 		{
-			HSOUNDFONT font = BASS_MIDI_FontInit( sSoundFontName.c_str(), 0 );
+			HSOUNDFONT font = cache_open( sSoundFontName.c_str() );
 			if ( !font )
 			{
 				shutdown();
@@ -282,7 +396,7 @@ bool BMPlayer::startup()
                         temp = path;
                         temp += name;
 					}
-					HSOUNDFONT font = BASS_MIDI_FontInit( temp.c_str(), 0 );
+					HSOUNDFONT font = cache_open( temp.c_str() );
 					if ( !font )
 					{
 						fclose( fl );
@@ -302,7 +416,7 @@ bool BMPlayer::startup()
 
 	if ( sFileSoundFontName.length() )
 	{
-		HSOUNDFONT font = BASS_MIDI_FontInit( sFileSoundFontName.c_str(), 0 );
+		HSOUNDFONT font = cache_open( sFileSoundFontName.c_str() );
 		if ( !font )
 		{
 			shutdown();
