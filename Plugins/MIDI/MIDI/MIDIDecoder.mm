@@ -38,12 +38,15 @@
     
     midi_file.scan_for_loops( true, true );
 
-    framesLength = midi_file.get_timestamp_end( track_num, true ) + 1000;
+    framesLength = midi_file.get_timestamp_end( track_num, true );
     
     unsigned long loopStart = midi_file.get_timestamp_loop_start( track_num, true );
     unsigned long loopEnd = midi_file.get_timestamp_loop_end( track_num, true );
     
-    if ( loopStart != ~0UL && loopEnd != ~0UL )
+    if ( loopStart == ~0UL ) loopStart = 0;
+    if ( loopEnd == ~0UL ) loopEnd = framesLength;
+    
+    if ( loopStart != 0 || loopEnd != framesLength )
     {
         // two loops and a fade
         framesLength = loopStart + ( loopEnd - loopStart ) * 2;
@@ -51,6 +54,7 @@
     }
     else
     {
+        framesLength += 1000;
         framesFade = 0;
     }
     
