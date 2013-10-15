@@ -84,6 +84,10 @@ HSOUNDFONT cache_open( const char * path )
             entry.handle = font;
             entry.ref_count = 1;
         }
+        else
+        {
+            Cache_List.erase( path );
+        }
     }
     else
         font = entry.handle;
