@@ -145,6 +145,8 @@
 {
     player->Seek( frame );
 	
+    framesRead = frame;
+    
 	return frame;
 }
 
