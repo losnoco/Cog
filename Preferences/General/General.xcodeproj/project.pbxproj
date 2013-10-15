@@ -22,6 +22,8 @@
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
 		8384917818084D9F00E7332D /* growl.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917618084D9F00E7332D /* growl.png */; };
 		8384918C1808596A00E7332D /* NDHotKey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838491841808588D00E7332D /* NDHotKey.framework */; };
+		83B06729180D85B8008E3612 /* MIDIPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.m */; };
+		83B0672B180D8B39008E3612 /* midi.png in Resources */ = {isa = PBXBuildFile; fileRef = 83B0672A180D8B39008E3612 /* midi.png */; };
 		83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */; };
@@ -89,6 +91,9 @@
 		8384917518084D9F00E7332D /* appearance.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = appearance.png; path = Icons/appearance.png; sourceTree = "<group>"; };
 		8384917618084D9F00E7332D /* growl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = growl.png; path = Icons/growl.png; sourceTree = "<group>"; };
 		8384917F1808588D00E7332D /* NDHotKey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NDHotKey.xcodeproj; path = ../../Frameworks/NDHotKey/NDHotKey.xcodeproj; sourceTree = "<group>"; };
+		83B06727180D85B8008E3612 /* MIDIPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIPane.h; sourceTree = "<group>"; };
+		83B06728180D85B8008E3612 /* MIDIPane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIPane.m; sourceTree = "<group>"; };
+		83B0672A180D8B39008E3612 /* midi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi.png; path = Icons/midi.png; sourceTree = "<group>"; };
 		83EF495D17FBC96A00642E3C /* VolumeBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeBehaviorArrayController.h; sourceTree = "<group>"; };
 		83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeBehaviorArrayController.m; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* General.preferencePane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = General.preferencePane; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -197,6 +202,8 @@
 				8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */,
 				17C6433D0B8A783F00C53518 /* OutputPane.h */,
 				17C6433E0B8A783F00C53518 /* OutputPane.m */,
+				83B06727180D85B8008E3612 /* MIDIPane.h */,
+				83B06728180D85B8008E3612 /* MIDIPane.m */,
 			);
 			name = Panes;
 			sourceTree = "<group>";
@@ -245,6 +252,7 @@
 		8E07ABD90AAC95AF00A4B32F /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				83B0672A180D8B39008E3612 /* midi.png */,
 				8384917518084D9F00E7332D /* appearance.png */,
 				8384917618084D9F00E7332D /* growl.png */,
 				17C7E5AF0DCCC30A003CBCF7 /* playlist.png */,
@@ -333,6 +341,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83B0672B180D8B39008E3612 /* midi.png in Resources */,
 				178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */,
 				8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */,
 				172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */,
@@ -355,6 +364,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83B06729180D85B8008E3612 /* MIDIPane.m in Sources */,
 				8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */,
 				8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */,
 				8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */,

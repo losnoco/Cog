@@ -12,10 +12,12 @@
 
 #import "HotKeyPane.h"
 #import "OutputPane.h"
+#import "MIDIPane.h"
 
 @interface GeneralPreferencesPlugin : NSObject <PreferencePanePlugin> {
 	IBOutlet HotKeyPane *hotKeyPane;
 	IBOutlet OutputPane *outputPane;
+    IBOutlet MIDIPane *midiPane;
 	
 	IBOutlet NSView *playlistView;
 	IBOutlet NSView *scrobblerView;
@@ -23,10 +25,12 @@
 	IBOutlet NSView *updatesView;
     IBOutlet NSView *growlView;
     IBOutlet NSView *appearanceView;
+    IBOutlet NSView *midiView;
 }
 
 - (HotKeyPane *)hotKeyPane;
 - (OutputPane *)outputPane;
+- (MIDIPane *)midiPane;
 
 - (GeneralPreferencePane *)remotePane;
 - (GeneralPreferencePane *)updatesPane;

@@ -10,6 +10,7 @@
                 <outlet property="appearanceView" destination="CgN-sy-RmM" id="wvB-aW-Gfx"/>
                 <outlet property="growlView" destination="U4w-jw-ca5" id="IUJ-gB-jwT"/>
                 <outlet property="hotKeyPane" destination="6" id="14"/>
+                <outlet property="midiPane" destination="i5B-ga-Atm" id="rbe-uK-5n2"/>
                 <outlet property="outputPane" destination="57" id="75"/>
                 <outlet property="playlistView" destination="231" id="244"/>
                 <outlet property="remoteView" destination="43" id="100"/>
@@ -267,6 +268,11 @@
                 </popUpButton>
             </subviews>
         </customView>
+        <customObject id="i5B-ga-Atm" userLabel="MIDIPane" customClass="MIDIPane">
+            <connections>
+                <outlet property="view" destination="JXu-ar-J3Y" id="Jal-Yh-Yg3"/>
+            </connections>
+        </customObject>
         <arrayController id="59" userLabel="OutputDevices" customClass="OutputsArrayController">
             <declaredKeys>
                 <string>name</string>
@@ -438,6 +444,23 @@
                     </buttonCell>
                     <connections>
                         <binding destination="52" name="value" keyPath="values.colorfulDockIcons" id="NZt-v6-8iW"/>
+                    </connections>
+                </button>
+            </subviews>
+        </customView>
+        <customView id="JXu-ar-J3Y" userLabel="MIDIView">
+            <rect key="frame" x="0.0" y="0.0" width="432" height="54"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <button verticalHuggingPriority="750" id="SBO-WF-DVS" userLabel="Push Button - Select a SoundFont">
+                    <rect key="frame" x="136" y="10" width="160" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="Select a SoundFont" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yeL-9c-lFq" userLabel="Button Cell - Select a SoundFont">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="setSoundFont:" target="i5B-ga-Atm" id="b2t-MX-dua"/>
                     </connections>
                 </button>
             </subviews>

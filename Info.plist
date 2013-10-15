@@ -25,6 +25,30 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>lds</string>
+				<string>xmi</string>
+				<string>mus</string>
+				<string>hmp</string>
+				<string>hmi</string>
+				<string>mds</string>
+				<string>mids</string>
+				<string>rmi</string>
+				<string>kar</string>
+				<string>midi</string>
+				<string>mid</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>MIDI Audio File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>amr-wb</string>
 				<string>amr</string>
 			</array>

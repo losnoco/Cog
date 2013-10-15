@@ -24,6 +24,7 @@
 			[plugin scrobblerPane],
             [plugin growlPane],
             [plugin appearancePane],
+            [plugin midiPane],
 			nil];
 }	
 
@@ -35,6 +36,11 @@
 - (OutputPane *)outputPane
 {
 	return outputPane;
+}
+
+- (MIDIPane *)midiPane
+{
+    return midiPane;
 }
 
 - (GeneralPreferencePane *)remotePane
