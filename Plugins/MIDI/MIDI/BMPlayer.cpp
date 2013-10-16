@@ -33,7 +33,7 @@ static bool is_gs_reset(const unsigned char * data, unsigned long size)
 struct Cached_SoundFont
 {
     unsigned long ref_count;
-    std::chrono::time_point<std::chrono::steady_clock> time_released;
+    std::chrono::steady_clock::time_point time_released;
     HSOUNDFONT handle;
     Cached_SoundFont() : handle( 0 ) { }
 };
@@ -115,7 +115,7 @@ static void cache_run()
     
     while ( Cache_Running )
     {
-        std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
+        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         
         {
             std::lock_guard<std::mutex> lock( Cache_Lock );
@@ -123,8 +123,8 @@ static void cache_run()
             {
                 if ( it->second.ref_count == 0 )
                 {
-                    std::chrono::duration<double> elapsed = now - it->second.time_released;
-                    if ( elapsed.count() >= 10.0 )
+                    auto elapsed = std::chrono::duration_cast<std::chrono::seconds> ( now - it->second.time_released );
+                    if ( elapsed.count() >= 10 )
                     {
                         BASS_MIDI_FontFree( it->second.handle );
                         it = Cache_List.erase( it );
