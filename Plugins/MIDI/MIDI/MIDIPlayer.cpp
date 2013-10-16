@@ -17,23 +17,23 @@ void MIDIPlayer::setSampleRate(unsigned long rate)
 	{
 		for (unsigned long i = 0; i < mStream.size(); i++)
 		{
-			mStream[i].m_timestamp = mStream[i].m_timestamp * rate / uSampleRate;
+			mStream[i].m_timestamp = (unsigned long)((uint64_t)mStream[i].m_timestamp * rate / uSampleRate);
 		}
 	}
 
 	if (uTimeCurrent)
 	{
-		uTimeCurrent = uTimeCurrent * rate / uSampleRate;
+		uTimeCurrent = (unsigned long)((uint64_t)uTimeCurrent * rate / uSampleRate);
 	}
 
 	if (uTimeEnd)
 	{
-		uTimeEnd = uTimeEnd * rate / uSampleRate;
+		uTimeEnd = (unsigned long)((uint64_t)uTimeEnd * rate / uSampleRate);
 	}
 
 	if (uTimeLoopStart)
 	{
-		uTimeLoopStart = uTimeLoopStart * rate / uSampleRate;
+		uTimeLoopStart = (unsigned long)((uint64_t)uTimeLoopStart * rate / uSampleRate);
 	}
 
 	uSampleRate = rate;
@@ -54,7 +54,7 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 
 		uLoopMode = loop_mode;
         
-        uTimeEnd = midi_file.get_timestamp_end( subsong ) + 1000;
+        uTimeEnd = midi_file.get_timestamp_end( subsong, true ) + 1000;
 
 		if (uLoopMode & loop_mode_enable)
 		{
