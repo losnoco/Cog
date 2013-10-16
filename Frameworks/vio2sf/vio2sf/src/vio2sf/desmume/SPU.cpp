@@ -595,7 +595,7 @@ static FORCEINLINE void FetchADPCMDataInternal(SPUInterpolationMode INTERPOLATE_
 		*data = (s32)chan->pcm16b;
 }
 
-static FORCEINLINE void FetchPSGData(channel_struct *chan, s32 *data)
+static FORCEINLINE void FetchPSGDataInternal(channel_struct *chan, s32 *data)
 {
 	if(chan->num < 8)
 	{
@@ -828,6 +828,32 @@ static FORCEINLINE void FetchADPCMData(SPUInterpolationMode INTERPOLATE_MODE, ND
 	lanczos_resampler_remove_sample(chan->lanczos_resampler);
 }
 
+static FORCEINLINE void FetchPSGData(SPUInterpolationMode INTERPOLATE_MODE, channel_struct *chan, s32 *data)
+{
+    const double PSG_RATIO = 32.0;
+    const double PSG_DIVIDER = 1.0 / PSG_RATIO;
+    
+	if (INTERPOLATE_MODE != SPUInterpolation_Lanczos)
+		return FetchPSGDataInternal(chan, data);
+    
+	lanczos_resampler_set_rate( chan->lanczos_resampler, chan->sampinc * PSG_RATIO );
+    
+	while (lanczos_resampler_get_free_count(chan->lanczos_resampler))
+	{
+		s32 sample;
+		FetchPSGDataInternal(chan, &sample);
+		chan->sampcnt += PSG_DIVIDER;
+		lanczos_resampler_write_sample(chan->lanczos_resampler, sample);
+	}
+
+    /* No need to check if resampler is empty since we always fill it completely, 
+     * and PSG channels never report terminating on their own.
+     */
+    
+	*data = lanczos_resampler_get_sample(chan->lanczos_resampler);
+	lanczos_resampler_remove_sample(chan->lanczos_resampler);
+}
+
 FORCEINLINE static void SPU_Mix(int CHANNELS, SPU_struct* SPU, channel_struct *chan, s32 data)
 {
 	switch(CHANNELS)
@@ -850,7 +876,7 @@ FORCEINLINE static void ____SPU_ChanUpdate(NDS_state *state, int CHANNELS, int F
 				case 0: Fetch8BitData(INTERPOLATE_MODE, state, SPU, chan, &data); break;
 				case 1: Fetch16BitData(INTERPOLATE_MODE, state, SPU, chan, &data); break;
 				case 2: FetchADPCMData(INTERPOLATE_MODE, state, SPU, chan, &data); break;
-				case 3: FetchPSGData(chan, &data); break;
+				case 3: FetchPSGData(INTERPOLATE_MODE, chan, &data); break;
 			}
 			SPU_Mix(CHANNELS, SPU, chan, data);
 		}
