@@ -2,14 +2,12 @@
 
 #include <string>
 
-#include <pthread.h>
-
 #include <dlfcn.h>
 
 #include <map>
+#include <chrono>
 #include <thread>
-#include <time.h>
-#include <unistd.h>
+#include <mutex>
 
 #define SF2PACK
 
@@ -35,12 +33,12 @@ static bool is_gs_reset(const unsigned char * data, unsigned long size)
 struct Cached_SoundFont
 {
     unsigned long ref_count;
-    time_t time_released;
+    std::chrono::time_point<std::chrono::steady_clock> time_released;
     HSOUNDFONT handle;
     Cached_SoundFont() : handle( 0 ) { }
 };
 
-static pthread_mutex_t Cache_Lock;
+static std::mutex Cache_Lock;
 
 static std::map<std::string, Cached_SoundFont> Cache_List;
 
@@ -52,7 +50,6 @@ static void cache_run();
 
 static void cache_init()
 {
-    pthread_mutex_init( &Cache_Lock, NULL );
     Cache_Thread = new std::thread( cache_run );
 }
 
@@ -71,8 +68,8 @@ static void cache_deinit()
 static HSOUNDFONT cache_open( const char * path )
 {
     HSOUNDFONT font = NULL;
-    
-    pthread_mutex_lock( &Cache_Lock );
+
+    std::lock_guard<std::mutex> lock( Cache_Lock );
 
     Cached_SoundFont & entry = Cache_List[ path ];
     
@@ -92,60 +89,59 @@ static HSOUNDFONT cache_open( const char * path )
     else
         font = entry.handle;
     
-    pthread_mutex_unlock( &Cache_Lock );
-    
     return font;
 }
 
 static void cache_close( HSOUNDFONT handle )
 {
-    pthread_mutex_lock( &Cache_Lock );
+    std::lock_guard<std::mutex> lock( Cache_Lock );
     
     for ( auto it = Cache_List.begin(); it != Cache_List.end(); ++it )
     {
         if ( it->second.handle == handle )
         {
             if ( --it->second.ref_count == 0 )
-                time( &it->second.time_released );
+                it->second.time_released = std::chrono::steady_clock::now();
             break;
         }
     }
-    
-    pthread_mutex_unlock( &Cache_Lock );
 }
 
 static void cache_run()
 {
+    std::chrono::milliseconds dura( 250 );
+    
     Cache_Running = true;
     
     while ( Cache_Running )
     {
-        time_t now;
-        time( &now );
+        std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
         
-        pthread_mutex_lock( &Cache_Lock );
-        
-        for ( auto it = Cache_List.begin(); it != Cache_List.end(); ++it )
         {
-            if ( it->second.ref_count == 0 )
+            std::lock_guard<std::mutex> lock( Cache_Lock );
+            for ( auto it = Cache_List.begin(); it != Cache_List.end(); )
             {
-                if ( difftime( it->second.time_released, now ) >= 10.0 )
+                if ( it->second.ref_count == 0 )
                 {
-                    BASS_MIDI_FontFree( it->second.handle );
-                    Cache_List.erase( it );
+                    std::chrono::duration<double> elapsed = now - it->second.time_released;
+                    if ( elapsed.count() >= 10.0 )
+                    {
+                        BASS_MIDI_FontFree( it->second.handle );
+                        it = Cache_List.erase( it );
+                        continue;
+                    }
                 }
+                ++it;
             }
         }
         
-        pthread_mutex_unlock( &Cache_Lock );
-        
-        usleep( 250000 );
+        std::this_thread::sleep_for( dura );
     }
 }
 
 static class Bass_Initializer
 {
-    pthread_mutex_t lock;
+    std::mutex lock;
 
 	bool initialized;
     
@@ -154,7 +150,6 @@ static class Bass_Initializer
 public:
 	Bass_Initializer() : initialized(false)
     {
-        pthread_mutex_init( &lock, NULL );
     }
 
 	~Bass_Initializer()
@@ -164,14 +159,11 @@ public:
             cache_deinit();
 			BASS_Free();
 		}
-        pthread_mutex_destroy( &lock );
 	}
 
 	bool check_initialized()
 	{
-        pthread_mutex_lock(&lock);
-        bool initialized = this->initialized;
-        pthread_mutex_unlock(&lock);
+        std::lock_guard<std::mutex> lock( this->lock );
 		return initialized;
 	}
     
@@ -193,8 +185,7 @@ public:
 
 	bool initialize()
 	{
-		pthread_mutex_lock(&lock);
-        bool initialized = this->initialized;
+        std::lock_guard<std::mutex> lock( this->lock );
 		if ( !initialized )
 		{
 #ifdef SF2PACK
@@ -211,10 +202,8 @@ public:
 				BASS_SetConfigPtr( BASS_CONFIG_MIDI_DEFFONT, NULL );
 				BASS_SetConfig( BASS_CONFIG_MIDI_VOICES, 256 );
                 cache_init();
-                this->initialized = initialized;
 			}
 		}
-        pthread_mutex_unlock(&lock);
 		return initialized;
 	}
 } g_initializer;
