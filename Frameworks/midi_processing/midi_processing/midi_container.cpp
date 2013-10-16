@@ -225,6 +225,7 @@ void midi_meta_data::add_item( const midi_meta_data_item & p_item )
 void midi_meta_data::append( const midi_meta_data & p_data )
 {
     m_data.insert( m_data.end(), p_data.m_data.begin(), p_data.m_data.end() );
+    m_bitmap = p_data.m_bitmap;
 }
 
 bool midi_meta_data::get_item( const char * p_name, midi_meta_data_item & p_out ) const
@@ -239,6 +240,17 @@ bool midi_meta_data::get_item( const char * p_name, midi_meta_data_item & p_out 
 		}
 	}
 	return false;
+}
+
+bool midi_meta_data::get_bitmap( std::vector<uint8_t> & p_out )
+{
+    p_out = m_bitmap;
+    return p_out.size() != 0;
+}
+
+void midi_meta_data::assign_bitmap( std::vector<uint8_t>::const_iterator const& begin, std::vector<uint8_t>::const_iterator const& end )
+{
+    m_bitmap.assign( begin, end );
 }
 
 std::size_t midi_meta_data::get_count() const

@@ -41,6 +41,10 @@ static const char * riff_tag_mappings[][2] =
 	{ "ITCH", "technician" }
 };
 
+#define CF_TEXT   1
+#define CF_TIFF   6
+#define CF_DIB    8
+
 bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi_container & p_out )
 {
     uint32_t file_size = p_file[ 4 ] | ( p_file[ 5 ] << 8 ) | ( p_file[ 6 ] << 16 ) | ( p_file[ 7 ] << 24 );
@@ -75,12 +79,45 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
         else if ( it[ 0 ] == 'D' && it[ 1 ] == 'I' && it[ 2 ] == 'S' && it[ 3 ] == 'P' )
 		{
             uint32_t type = it[ 8 ] | ( it[ 9 ] << 8 ) | ( it[ 10 ] << 16 ) | ( it[ 11 ] << 24 );
-			if ( type == 1 )
+			if ( type == CF_TEXT )
 			{
                 extra_buffer.resize( chunk_size - 4 );
                 std::copy( it + 12, it + 8 + chunk_size, extra_buffer.begin() );
                 meta_data.add_item( midi_meta_data_item( 0, "display_name", (const char *) &extra_buffer[0] ) );
 			}
+            else if ( type == CF_TIFF )
+            {
+                meta_data.assign_bitmap( it + 12, it + 8 + chunk_size );
+            }
+            else if ( type == CF_DIB )
+            {
+                if ( chunk_size >= 8 )
+                {
+                    uint32_t dib_header_size = it[ 12 ] | ( it[13] << 8 ) | ( it[14] << 16 ) | ( it[15] << 24 );
+                    if ( chunk_size >= 4 + dib_header_size )
+                    {
+                        uint32_t dib_image_offset = 14 + dib_header_size;
+                        uint32_t dib_size = chunk_size + 10;
+                        extra_buffer.resize( dib_size );
+                        extra_buffer[ 0 ] = 'B';
+                        extra_buffer[ 1 ] = 'M';
+                        extra_buffer[ 2 ] = dib_size;
+                        extra_buffer[ 3 ] = dib_size >> 8;
+                        extra_buffer[ 4 ] = dib_size >> 16;
+                        extra_buffer[ 5 ] = dib_size >> 24;
+                        extra_buffer[ 6 ] = 0;
+                        extra_buffer[ 7 ] = 0;
+                        extra_buffer[ 8 ] = 0;
+                        extra_buffer[ 9 ] = 0;
+                        extra_buffer[ 10 ] = dib_image_offset;
+                        extra_buffer[ 11 ] = dib_image_offset >> 8;
+                        extra_buffer[ 12 ] = dib_image_offset >> 16;
+                        extra_buffer[ 13 ] = dib_image_offset >> 24;
+                        std::copy(it + 12, it + 8 + chunk_size, extra_buffer.begin() + 14);
+                        meta_data.assign_bitmap(extra_buffer.begin(), extra_buffer.end());
+                    }
+                }
+            }
             it += 8 + chunk_size;
             if ( chunk_size & 1 && it < body_end ) ++it;
 		}

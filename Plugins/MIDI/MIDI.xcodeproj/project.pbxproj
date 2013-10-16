@@ -22,6 +22,8 @@
 		83B0671E180D6FD8008E3612 /* libbassopus.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06716180D6FC8008E3612 /* libbassopus.dylib */; };
 		83B0671F180D6FD8008E3612 /* libbasswv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06717180D6FC8008E3612 /* libbasswv.dylib */; };
 		83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06721180D70FE008E3612 /* MIDIDecoder.mm */; };
+		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
+		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +95,10 @@
 		83B06721180D70FE008E3612 /* MIDIDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIDecoder.mm; sourceTree = "<group>"; };
 		83B06723180D714F008E3612 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		83B06724180D792E008E3612 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
+		83C35700180EDB74007E9DF0 /* MIDIContainer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIContainer.mm; sourceTree = "<group>"; };
+		83C35701180EDB74007E9DF0 /* MIDIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIContainer.h; sourceTree = "<group>"; };
+		83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIMetadataReader.mm; sourceTree = "<group>"; };
+		83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIMetadataReader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +162,10 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */,
+				83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */,
+				83C35700180EDB74007E9DF0 /* MIDIContainer.mm */,
+				83C35701180EDB74007E9DF0 /* MIDIContainer.h */,
 				83B06724180D792E008E3612 /* Logging.h */,
 				83B06723180D714F008E3612 /* Plugin.h */,
 				83B06720180D70FE008E3612 /* MIDIDecoder.h */,
@@ -270,7 +280,9 @@
 			files = (
 				83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */,
 				83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */,
+				83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */,
 				83B0670C180D6665008E3612 /* BMPlayer.cpp in Sources */,
+				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
