@@ -87,7 +87,10 @@ static HSOUNDFONT cache_open( const char * path )
         }
     }
     else
+    {
         font = entry.handle;
+        ++entry.ref_count;
+    }
     
     return font;
 }
