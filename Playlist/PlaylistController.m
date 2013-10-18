@@ -478,6 +478,23 @@
     [originals release];
 }
 
+- (IBAction)removeDeadItems:(id)sender {
+    NSMutableIndexSet *deadItems = [[NSMutableIndexSet alloc] init];
+    
+    for (PlaylistEntry *pe in [self content])
+    {
+        NSURL *url = [pe URL];
+        if ([url isFileURL])
+            if (![[NSFileManager defaultManager] fileExistsAtPath:[url path]])
+                [deadItems addIndex:[pe index]];
+    }
+    
+    if ([deadItems count] > 0)
+        [self removeObjectsAtArrangedObjectIndexes:deadItems];
+    
+    [deadItems release];
+}
+
 - (PlaylistEntry *)shuffledEntryAtIndex:(int)i
 {
 	RepeatMode repeat = [self repeat];
