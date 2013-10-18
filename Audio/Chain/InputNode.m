@@ -141,8 +141,7 @@
                 [self writeData:inputBuffer amount:amountInBuffer];
                 amountInBuffer = 0;
             }
-            
-			if (framesRead < framesToRead)
+            else
 			{
 				if (initialBufferFilled == NO) {
 					[controller initialBufferFilled:self];
