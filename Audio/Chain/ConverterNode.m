@@ -153,7 +153,7 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
 	OSStatus err = noErr;
 	int amountToWrite;
 	
-	if ([converter shouldContinue] == NO || [converter endOfStream] == YES)
+	if ([converter shouldContinue] == NO)
 	{
 		ioData->mBuffers[0].mDataByteSize = 0;
 		*ioNumberDataPackets = 0;
