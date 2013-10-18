@@ -54,6 +54,8 @@
 	[self setPreviousNode:[[controller bufferChain] finalNode]];
 	
 	n = [super readData:ptr amount:amount];
+	amountPlayed += n;
+    
 	if (endOfStream == YES)
 	{
 		amountPlayed = 0;
@@ -64,8 +66,6 @@
 		DLog(@"Output Buffer dry!");
 	}
 */	
-	amountPlayed += n;
-
 	[pool release];
 	
 	return n;

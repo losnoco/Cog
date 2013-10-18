@@ -105,7 +105,7 @@
 	[readLock lock];
 	availInput = [[previousNode buffer] lengthAvailableToReadReturningPointer:&readPtr];
 	
-	if (availInput <= amount && [previousNode endOfStream] == YES)
+	if (availInput < amount && [previousNode endOfStream] == YES)
 	{
 //		[previousNode release]; 
 		//If it is the outputNode, [soundController newInputChain];

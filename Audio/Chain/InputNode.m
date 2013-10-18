@@ -134,9 +134,15 @@
 		if (amountInBuffer < CHUNK_SIZE) {
 			int framesToRead = (CHUNK_SIZE - amountInBuffer)/bytesPerFrame;
 			int framesRead = [decoder readAudio:((char *)inputBuffer) + amountInBuffer frames:framesToRead];
-			amountInBuffer += (framesRead * bytesPerFrame);
 
-			if (framesRead <= 0)
+            if (framesRead > 0)
+            {
+                amountInBuffer += (framesRead * bytesPerFrame);
+                [self writeData:inputBuffer amount:amountInBuffer];
+                amountInBuffer = 0;
+            }
+            
+			if (framesRead < framesToRead)
 			{
 				if (initialBufferFilled == NO) {
 					[controller initialBufferFilled:self];
@@ -163,10 +169,7 @@
                     break;
                 }
 			}
-            
-			[self writeData:inputBuffer amount:amountInBuffer];
-			amountInBuffer = 0;
-		}
+        }
 	}
 
 	if (shouldClose)
