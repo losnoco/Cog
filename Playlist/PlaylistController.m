@@ -297,9 +297,62 @@
 	return undoManager;
 }
 
+- (NSIndexSet *)disarrangeIndexes:(NSIndexSet *)indexes
+{
+    if ([[self arrangedObjects] count] <= [indexes lastIndex])
+        return indexes;
+    
+    NSMutableIndexSet *disarrangedIndexes = [[[NSMutableIndexSet alloc] init] autorelease];
+    
+    NSUInteger index = [indexes firstIndex];
+    while (index != NSNotFound)
+    {
+        [disarrangedIndexes addIndex:[[self content] indexOfObject:[[self arrangedObjects] objectAtIndex:index]]];
+        index = [indexes indexGreaterThanIndex:index];
+    }
+    
+    return disarrangedIndexes;
+}
+
+- (NSArray *)disarrangeObjects:(NSArray *)objects
+{
+    NSMutableArray *disarrangedObjects = [[[NSMutableArray alloc] init] autorelease];
+    
+    for (PlaylistEntry *pe in [self content])
+    {
+        if ([objects containsObject:pe])
+            [disarrangedObjects addObject:pe];
+    }
+    
+    return disarrangedObjects;
+}
+
+- (NSIndexSet *)rearrangeIndexes:(NSIndexSet *)indexes
+{
+    if ([[self content] count] <= [indexes lastIndex])
+        return indexes;
+    
+    NSMutableIndexSet *rearrangedIndexes = [[[NSMutableIndexSet alloc] init] autorelease];
+    
+    NSUInteger index = [indexes firstIndex];
+    while (index != NSNotFound)
+    {
+        [rearrangedIndexes addIndex:[[self arrangedObjects] indexOfObject:[[self content] objectAtIndex:index]]];
+        index = [indexes indexGreaterThanIndex:index];
+    }
+    
+    return rearrangedIndexes;
+}
+
+- (void)insertObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes
+{
+    [self insertObjects:objects atArrangedObjectIndexes:indexes];
+    [self rearrangeObjects];
+}
+
 - (void)insertObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-    [[[self undoManager] prepareWithInvocationTarget:self] removeObjectsAtArrangedObjectIndexes:indexes];
+    [[[self undoManager] prepareWithInvocationTarget:self] removeObjectsAtIndexes:[self disarrangeIndexes:indexes]];
     NSString *actionName = [NSString stringWithFormat:@"Adding %lu entries", (unsigned long)[objects count]];
     [[self undoManager] setActionName:actionName];
 
@@ -309,10 +362,15 @@
         [self resetShuffleList];
 }
 
+- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes
+{
+    [self removeObjectsAtArrangedObjectIndexes:[self rearrangeIndexes:indexes]];
+}
+
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
     NSArray *objects = [[self arrangedObjects] objectsAtIndexes:indexes];
-    [[[self undoManager] prepareWithInvocationTarget:self] insertObjects:objects atArrangedObjectIndexes:indexes];
+    [[[self undoManager] prepareWithInvocationTarget:self] insertObjects:[self disarrangeObjects:objects] atIndexes:[self disarrangeIndexes:indexes]];
     NSString *actionName = [NSString stringWithFormat:@"Removing %lu entries", (unsigned long)[indexes count]];
     [[self undoManager] setActionName:actionName];
     
