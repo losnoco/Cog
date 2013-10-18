@@ -122,7 +122,7 @@
 	}
 	[fileHandle truncateFileAtOffset:0];
 	
-	for (PlaylistEntry *pe in [playlistController content])
+	for (PlaylistEntry *pe in [playlistController arrangedObjects])
 	{
 		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
 		[fileHandle writeData:[[path stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -144,7 +144,7 @@
 	[fileHandle writeData:[[NSString stringWithFormat:@"[playlist]\nnumberOfEntries=%lu\n\n",(unsigned long)[[playlistController content] count]] dataUsingEncoding:NSUTF8StringEncoding]];
 
 	int i = 1;
-	for (PlaylistEntry *pe in [playlistController content])
+	for (PlaylistEntry *pe in [playlistController arrangedObjects])
 	{
 		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
 		NSString *entry = [NSString stringWithFormat:@"File%i=%@\n",i,path];
@@ -207,7 +207,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
     NSMutableArray * topLevel = [[NSMutableArray alloc] init];
     
-	for (PlaylistEntry *pe in [playlistController content])
+	for (PlaylistEntry *pe in [playlistController arrangedObjects])
 	{
         BOOL error = [pe error];
         
