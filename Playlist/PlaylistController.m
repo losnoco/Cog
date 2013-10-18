@@ -6,6 +6,7 @@
 //	Copyright 2005 Vincent Spader All rights reserved.
 //
 
+#import "PlaylistController.h"
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 #import "PlaybackController.h"
@@ -310,7 +311,7 @@
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes
 {
-    NSArray *objects = [[self content] objectsAtIndexes:indexes];
+    NSArray *objects = [[self arrangedObjects] objectsAtIndexes:indexes];
     [[[self undoManager] prepareWithInvocationTarget:self] insertObjects:objects atArrangedObjectIndexes:indexes];
     NSString *actionName = [NSString stringWithFormat:@"Removing %lu entries", (unsigned long)[indexes count]];
     [[self undoManager] setActionName:actionName];
@@ -318,7 +319,13 @@
     DLog(@"Removing indexes: %@", indexes);
     DLog(@"Current index: %i", currentEntry.index);
     
-    if (currentEntry.index >= 0 && [indexes containsIndex:currentEntry.index])
+    NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
+    for (PlaylistEntry *pe in objects)
+    {
+        [unarrangedIndexes addIndex:[pe index]];
+    }
+    
+    if (currentEntry.index >= 0 && [unarrangedIndexes containsIndex:currentEntry.index])
     {
         currentEntry.index = -currentEntry.index - 1;
         DLog(@"Current removed: %i", currentEntry.index);
@@ -331,7 +338,7 @@
         int j;
         for (j = i - 1; j >= 0; j--)
         {
-            if ([indexes containsIndex:j]) {
+            if ([unarrangedIndexes containsIndex:j]) {
                 DLog(@"Removing 1");
                 i--;
             }
@@ -339,6 +346,8 @@
         currentEntry.index = -i - 1;
 
     }
+    
+    [unarrangedIndexes release];
 
     [super removeObjectsAtArrangedObjectIndexes:indexes];
 
