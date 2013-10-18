@@ -30,7 +30,7 @@
             </connections>
         </customObject>
         <customView id="11" userLabel="HotKeyView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="131"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="131"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="28" customClass="HotKeyControl">
@@ -120,7 +120,7 @@
             </subviews>
         </customView>
         <customView id="43" userLabel="RemoteView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="74"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="74"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="77">
@@ -149,7 +149,7 @@
             </subviews>
         </customView>
         <customView id="50" userLabel="UpdatesView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="82"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="82"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="111">
@@ -203,7 +203,7 @@
             </connections>
         </customObject>
         <customView id="58" userLabel="OutputView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="103"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="103"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="65">
@@ -299,7 +299,7 @@
             </declaredKeys>
         </arrayController>
         <customView id="0nK-XQ-5MY" userLabel="ScrobblerView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="94"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="94"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="3gi-0d-78Z">
@@ -338,7 +338,7 @@
             </subviews>
         </customView>
         <customView id="231" userLabel="PlaylistView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="122"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="122"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button id="310">
@@ -415,7 +415,7 @@
             </subviews>
         </customView>
         <customView id="U4w-jw-ca5" userLabel="GrowlView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="54"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="54"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="njn-Xl-9k9">
@@ -432,7 +432,7 @@
             </subviews>
         </customView>
         <customView id="CgN-sy-RmM" userLabel="AppearanceView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="54"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="54"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="haX-dq-OIe">
@@ -449,11 +449,11 @@
             </subviews>
         </customView>
         <customView id="JXu-ar-J3Y" userLabel="MIDIView">
-            <rect key="frame" x="0.0" y="0.0" width="432" height="54"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="54"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button verticalHuggingPriority="750" id="SBO-WF-DVS" userLabel="Push Button - Select a SoundFont">
-                    <rect key="frame" x="136" y="10" width="160" height="32"/>
+                    <rect key="frame" x="156" y="10" width="160" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Select a SoundFont" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yeL-9c-lFq" userLabel="Button Cell - Select a SoundFont">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
