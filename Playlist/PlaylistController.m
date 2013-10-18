@@ -470,36 +470,55 @@
 
 - (IBAction)removeDuplicates:(id)sender {
     NSMutableArray *originals = [[NSMutableArray alloc] init];
-    NSMutableIndexSet *duplicates = [[NSMutableIndexSet alloc] init];
+    NSMutableArray *duplicates = [[NSMutableArray alloc] init];
     
     for (PlaylistEntry *pe in [self content])
     {
         if ([originals containsObject:[pe URL]])
-            [duplicates addIndex:[pe index]];
+            [duplicates addObject:pe];
         else
             [originals addObject:[pe URL]];
     }
     
     if ([duplicates count] > 0)
-        [self removeObjectsAtArrangedObjectIndexes:duplicates];
+    {
+        NSArray * arrangedContent = [self arrangedObjects];
+        NSMutableIndexSet * duplicatesIndex = [[NSMutableIndexSet alloc] init];
+        for (PlaylistEntry *pe in duplicates)
+        {
+            [duplicatesIndex addIndex:[arrangedContent indexOfObject:pe]];
+        }
+        [self removeObjectsAtArrangedObjectIndexes:duplicatesIndex];
+        [duplicatesIndex release];
+    }
     
     [duplicates release];
     [originals release];
 }
 
 - (IBAction)removeDeadItems:(id)sender {
-    NSMutableIndexSet *deadItems = [[NSMutableIndexSet alloc] init];
+    NSMutableArray *deadItems = [[NSMutableArray alloc] init];
     
     for (PlaylistEntry *pe in [self content])
     {
         NSURL *url = [pe URL];
         if ([url isFileURL])
             if (![[NSFileManager defaultManager] fileExistsAtPath:[url path]])
-                [deadItems addIndex:[pe index]];
+                [deadItems addObject:pe];
     }
     
     if ([deadItems count] > 0)
-        [self removeObjectsAtArrangedObjectIndexes:deadItems];
+    {
+        NSArray * arrangedContent = [self arrangedObjects];
+        NSMutableIndexSet * deadItemsIndex = [[NSMutableIndexSet alloc] init];
+        for (PlaylistEntry *pe in deadItems)
+        {
+            [deadItemsIndex addIndex:[arrangedContent indexOfObject:pe]];
+        }
+        [self removeObjectsAtArrangedObjectIndexes:deadItemsIndex];
+        [deadItemsIndex release];
+    }
+    
     
     [deadItems release];
 }
