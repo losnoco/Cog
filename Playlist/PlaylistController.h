@@ -77,6 +77,8 @@ typedef enum {
 
 - (IBAction)randomizeList:(id)sender;
 
+- (IBAction)removeDuplicates:(id)sender;
+
 - (IBAction)showEntryInFinder:(id)sender;
 - (IBAction)clearFilterPredicate:(id)sender;
 - (IBAction)clear:(id)sender;

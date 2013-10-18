@@ -459,6 +459,25 @@
     }
 }
 
+- (IBAction)removeDuplicates:(id)sender {
+    NSMutableArray *originals = [[NSMutableArray alloc] init];
+    NSMutableIndexSet *duplicates = [[NSMutableIndexSet alloc] init];
+    
+    for (PlaylistEntry *pe in [self content])
+    {
+        if ([originals containsObject:[pe URL]])
+            [duplicates addIndex:[pe index]];
+        else
+            [originals addObject:[pe URL]];
+    }
+    
+    if ([duplicates count] > 0)
+        [self removeObjectsAtArrangedObjectIndexes:duplicates];
+    
+    [duplicates release];
+    [originals release];
+}
+
 - (PlaylistEntry *)shuffledEntryAtIndex:(int)i
 {
 	RepeatMode repeat = [self repeat];
