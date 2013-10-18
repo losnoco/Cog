@@ -75,7 +75,11 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 	{
 		[playbackController playPauseResume:self];
 	}
-	else if (clickedSegment == 2) //Next
+    else if (clickedSegment == 2) //Stop
+    {
+        [playbackController stop:self];
+    }
+	else if (clickedSegment == 3) //Next
 	{
 		[playbackController next:self];
 	}
