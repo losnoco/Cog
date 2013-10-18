@@ -25,6 +25,12 @@
 		83B06729180D85B8008E3612 /* MIDIPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.m */; };
 		83B0672B180D8B39008E3612 /* midi.png in Resources */ = {isa = PBXBuildFile; fileRef = 83B0672A180D8B39008E3612 /* midi.png */; };
 		83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */; };
+		83F27E6B1810DD3A00CEF538 /* appearance@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E651810DD3A00CEF538 /* appearance@2x.png */; };
+		83F27E6C1810DD3A00CEF538 /* growl@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E661810DD3A00CEF538 /* growl@2x.png */; };
+		83F27E6D1810DD3A00CEF538 /* lastfm@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E671810DD3A00CEF538 /* lastfm@2x.png */; };
+		83F27E6E1810DD3A00CEF538 /* midi@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E681810DD3A00CEF538 /* midi@2x.png */; };
+		83F27E6F1810DD3A00CEF538 /* playlist@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E691810DD3A00CEF538 /* playlist@2x.png */; };
+		83F27E701810DD3A00CEF538 /* updates@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E6A1810DD3A00CEF538 /* updates@2x.png */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */; };
 		8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA830AAC8EA200A4B32F /* GeneralPreferencePane.m */; };
@@ -96,6 +102,12 @@
 		83B0672A180D8B39008E3612 /* midi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi.png; path = Icons/midi.png; sourceTree = "<group>"; };
 		83EF495D17FBC96A00642E3C /* VolumeBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeBehaviorArrayController.h; sourceTree = "<group>"; };
 		83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeBehaviorArrayController.m; sourceTree = "<group>"; };
+		83F27E651810DD3A00CEF538 /* appearance@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "appearance@2x.png"; path = "Icons/appearance@2x.png"; sourceTree = "<group>"; };
+		83F27E661810DD3A00CEF538 /* growl@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "growl@2x.png"; path = "Icons/growl@2x.png"; sourceTree = "<group>"; };
+		83F27E671810DD3A00CEF538 /* lastfm@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "lastfm@2x.png"; path = "Icons/lastfm@2x.png"; sourceTree = "<group>"; };
+		83F27E681810DD3A00CEF538 /* midi@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "midi@2x.png"; path = "Icons/midi@2x.png"; sourceTree = "<group>"; };
+		83F27E691810DD3A00CEF538 /* playlist@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "playlist@2x.png"; path = "Icons/playlist@2x.png"; sourceTree = "<group>"; };
+		83F27E6A1810DD3A00CEF538 /* updates@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "updates@2x.png"; path = "Icons/updates@2x.png"; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* General.preferencePane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = General.preferencePane; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HotKeyPane.h; sourceTree = "<group>"; };
@@ -252,6 +264,12 @@
 		8E07ABD90AAC95AF00A4B32F /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				83F27E651810DD3A00CEF538 /* appearance@2x.png */,
+				83F27E661810DD3A00CEF538 /* growl@2x.png */,
+				83F27E671810DD3A00CEF538 /* lastfm@2x.png */,
+				83F27E681810DD3A00CEF538 /* midi@2x.png */,
+				83F27E691810DD3A00CEF538 /* playlist@2x.png */,
+				83F27E6A1810DD3A00CEF538 /* updates@2x.png */,
 				83B0672A180D8B39008E3612 /* midi.png */,
 				8384917518084D9F00E7332D /* appearance.png */,
 				8384917618084D9F00E7332D /* growl.png */,
@@ -342,6 +360,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				83B0672B180D8B39008E3612 /* midi.png in Resources */,
+				83F27E6D1810DD3A00CEF538 /* lastfm@2x.png in Resources */,
 				178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */,
 				8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */,
 				172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */,
@@ -350,10 +369,15 @@
 				8384917718084D9F00E7332D /* appearance.png in Resources */,
 				17C643690B8A788000C53518 /* output.png in Resources */,
 				1766C7A80B912A71004A7AE4 /* lastfm.png in Resources */,
+				83F27E6F1810DD3A00CEF538 /* playlist@2x.png in Resources */,
 				17E41DB80C130AA500AC744D /* Localizable.strings in Resources */,
 				17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */,
+				83F27E701810DD3A00CEF538 /* updates@2x.png in Resources */,
 				17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */,
+				83F27E6C1810DD3A00CEF538 /* growl@2x.png in Resources */,
+				83F27E6B1810DD3A00CEF538 /* appearance@2x.png in Resources */,
 				17C7E5B00DCCC30A003CBCF7 /* playlist.png in Resources */,
+				83F27E6E1810DD3A00CEF538 /* midi@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
