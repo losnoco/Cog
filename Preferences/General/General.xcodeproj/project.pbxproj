@@ -31,6 +31,7 @@
 		83F27E6E1810DD3A00CEF538 /* midi@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E681810DD3A00CEF538 /* midi@2x.png */; };
 		83F27E6F1810DD3A00CEF538 /* playlist@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E691810DD3A00CEF538 /* playlist@2x.png */; };
 		83F27E701810DD3A00CEF538 /* updates@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E6A1810DD3A00CEF538 /* updates@2x.png */; };
+		83F27E741810E45D00CEF538 /* PathToFileTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F27E731810E45D00CEF538 /* PathToFileTransformer.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */; };
 		8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AA830AAC8EA200A4B32F /* GeneralPreferencePane.m */; };
@@ -108,6 +109,8 @@
 		83F27E681810DD3A00CEF538 /* midi@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "midi@2x.png"; path = "Icons/midi@2x.png"; sourceTree = "<group>"; };
 		83F27E691810DD3A00CEF538 /* playlist@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "playlist@2x.png"; path = "Icons/playlist@2x.png"; sourceTree = "<group>"; };
 		83F27E6A1810DD3A00CEF538 /* updates@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "updates@2x.png"; path = "Icons/updates@2x.png"; sourceTree = "<group>"; };
+		83F27E721810E45D00CEF538 /* PathToFileTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathToFileTransformer.h; sourceTree = "<group>"; };
+		83F27E731810E45D00CEF538 /* PathToFileTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathToFileTransformer.m; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* General.preferencePane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = General.preferencePane; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HotKeyPane.h; sourceTree = "<group>"; };
@@ -175,6 +178,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				83F27E711810E41A00CEF538 /* Transformers */,
 				8384913618081ECB00E7332D /* Logging.h */,
 				17D503410ABDB1660022D1E8 /* Custom */,
 				17D5033F0ABDB1570022D1E8 /* Panes */,
@@ -259,6 +263,15 @@
 				838491841808588D00E7332D /* NDHotKey.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		83F27E711810E41A00CEF538 /* Transformers */ = {
+			isa = PBXGroup;
+			children = (
+				83F27E721810E45D00CEF538 /* PathToFileTransformer.h */,
+				83F27E731810E45D00CEF538 /* PathToFileTransformer.m */,
+			);
+			name = Transformers;
 			sourceTree = "<group>";
 		};
 		8E07ABD90AAC95AF00A4B32F /* Icons */ = {
@@ -390,6 +403,7 @@
 			files = (
 				83B06729180D85B8008E3612 /* MIDIPane.m in Sources */,
 				8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */,
+				83F27E741810E45D00CEF538 /* PathToFileTransformer.m in Sources */,
 				8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */,
 				8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */,
 				8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */,

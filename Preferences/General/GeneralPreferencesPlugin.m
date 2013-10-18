@@ -7,15 +7,23 @@
 //
 
 #import "GeneralPreferencesPlugin.h"
+#import "PathToFileTransformer.h"
 
 @implementation GeneralPreferencesPlugin
+
++ (void)initialize
+{
+	NSValueTransformer *pathToFileTransformer = [[[PathToFileTransformer alloc] init]autorelease];
+    [NSValueTransformer setValueTransformer:pathToFileTransformer
+                                    forName:@"PathToFileTransformer"];
+}
 
 + (NSArray *)preferencePanes
 {
 	GeneralPreferencesPlugin *plugin = [[[GeneralPreferencesPlugin alloc] init] autorelease];
 	[NSBundle loadNibNamed:@"Preferences" owner:plugin];
 	
-	return [NSArray arrayWithObjects: 
+	return [NSArray arrayWithObjects:
 			[plugin playlistPane],
 			[plugin hotKeyPane],
 			[plugin remotePane],
