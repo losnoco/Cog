@@ -272,9 +272,9 @@
 					HAVE_STDINT_H,
 					EMU_LITTLE_ENDIAN,
 					EMU_COMPILE,
-					"$(inherited)",
 					HAVE_MPROTECT,
 					LSB_FIRST,
+					"DEBUG=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
