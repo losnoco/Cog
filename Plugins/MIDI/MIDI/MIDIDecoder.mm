@@ -127,17 +127,19 @@
             float * buff = ( float * ) buf;
         
             float fadeScale = (float)(framesFade - (fadeStart - framesLength)) / framesFade;
-            float fadeStep = 1 / framesFade;
+            float fadeStep = 1.0 / (float)framesFade;
             for (fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
                 buff[ 0 ] *= fadeScale;
                 buff[ 1 ] *= fadeScale;
                 buff += 2;
                 fadeScale -= fadeStep;
-                if (fadeScale < 0) break;
+                if (fadeScale < 0) {
+                    fadeScale = 0;
+                    fadeStep = 0;
+                }
             }
-        
-            if (fadePos < totalFrames)
-                frames = (int)(fadePos - framesRead);
+            
+            frames = (int)(fadeEnd - framesRead);
         }
         else {
             frames = (int)(totalFrames - framesRead);
