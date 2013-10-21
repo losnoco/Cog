@@ -628,6 +628,8 @@ struct ncsf_loader_state
 	std::vector<uint8_t> sdatData;
 	std::unique_ptr<SDAT> sdat;
     
+    std::vector<uint8_t> outputBuffer;
+    
 	ncsf_loader_state() : sseq( 0 ) { }
 };
 
@@ -1059,6 +1061,8 @@ static int twosf_info(void * context, const char * name, const char * value)
         player->Setup( sseqToPlay );
         player->Timer();
         
+        state->outputBuffer.resize( 1024 * sizeof(int16_t) * 2 );
+        
         emulatorCore = ( uint8_t * ) player;
         emulatorExtra = state;
     }
@@ -1237,12 +1241,20 @@ static int twosf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x25 )
     {
-        size_t buffer_size = frames * sizeof(int16_t) * 2;
-        std::vector<uint8_t> buffer;
-        buffer.resize( buffer_size );
         Player * player = ( Player * ) emulatorCore;
-        player->GenerateSamples(buffer, 0, frames);
-        memcpy( buf, &buffer[0], buffer_size );
+        ncsf_loader_state * state = ( ncsf_loader_state * ) emulatorExtra;
+        std::vector<uint8_t> & buffer = state->outputBuffer;
+        unsigned long frames_to_do = frames;
+        while ( frames_to_do )
+        {
+            unsigned frames_this_run = 1024;
+            if ( frames_this_run > frames_to_do )
+                frames_this_run = (unsigned int) frames_to_do;
+            player->GenerateSamples(buffer, 0, frames_this_run);
+            memcpy( buf, &buffer[0], frames_this_run * sizeof(int16_t) * 2 );
+            buf = ((uint8_t *)buf) + frames_this_run * sizeof(int16_t) * 2;
+            frames_to_do -= frames_this_run;
+        }
     }
     else if ( type == 0x41 )
     {
@@ -1441,10 +1453,9 @@ static int twosf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x25 )
     {
-        std::vector<uint8_t> buffer;
         Player * player = ( Player * ) emulatorCore;
-        
-        buffer.resize(1024 * sizeof(int16_t) * 2);
+        ncsf_loader_state * state = ( ncsf_loader_state * ) emulatorExtra;
+        std::vector<uint8_t> & buffer = state->outputBuffer;
         
         long frames_to_run = frame - framesRead;
         
