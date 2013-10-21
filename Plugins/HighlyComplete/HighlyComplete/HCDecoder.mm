@@ -1302,7 +1302,7 @@ static int twosf_info(void * context, const char * name, const char * value)
 
 - (long)seek:(long)frame
 {
-    if (frame < framesRead) {
+    if (frame < framesRead || emulatorCore == NULL) {
         [self closeDecoder];
         if (![self initializeDecoder])
             return -1;
