@@ -1179,7 +1179,7 @@ static int twosf_info(void * context, const char * name, const char * value)
         int samples_read = [self readAudioInternal:buf frames:(UInt32)samples_to_write / 2] * 2;
         if ( !samples_read ) break;
         silence_test_buffer.samples_written( samples_read );
-        free_space -= samples_read;
+        free_space -= samples_read / 2;
     }
     return !silence_test_buffer.test_silence();
 }
