@@ -20,6 +20,8 @@
 	
 	unsigned long long amountPlayed;
 	OutputCoreAudio *output;
+    
+    BOOL paused;
 }
 
 - (double)amountPlayed;
@@ -40,5 +42,7 @@
 
 - (void)pause;
 - (void)resume;
+
+- (BOOL)isPaused;
 
 @end

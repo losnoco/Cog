@@ -61,4 +61,6 @@
 
 - (BOOL)isRunning;
 
+- (id)controller;
+
 @end

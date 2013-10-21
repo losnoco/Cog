@@ -207,4 +207,9 @@
     return NO;
 }
 
+- (id)controller
+{
+    return controller;
+}
+
 @end

@@ -18,6 +18,8 @@
 - (void)setup
 {
 	amountPlayed = 0;
+    
+    paused = YES;
 
 	output = [[OutputCoreAudio alloc] initWithController:self];
 	
@@ -33,16 +35,19 @@
 
 - (void)process
 {
+    paused = NO;
 	[output start];
 }
 
 - (void)pause
 {
+    paused = YES;
 	[output pause];
 }
 
 - (void)resume
 {
+    paused = NO;
 	[output resume];
 }
 
@@ -110,5 +115,10 @@
 	
 //	if (s == NO)
 //		[output stop];
+}
+
+- (BOOL)isPaused
+{
+    return paused;
 }
 @end

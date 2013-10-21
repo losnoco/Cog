@@ -10,6 +10,8 @@
 #import "BufferChain.h"
 #import "Plugin.h"
 #import "CoreAudioUtils.h"
+#import "AudioPlayer.h"
+#import "OutputNode.h"
 
 
 #import "Logging.h"
@@ -120,8 +122,12 @@
 	{
 		if (shouldSeek == YES)
 		{
+            OutputNode *output = [[controller controller] output];
+            BOOL isPaused = [output isPaused];
+            if ( !isPaused ) [output pause];
 			DLog(@"SEEKING!");
 			[decoder seek:seekFrame];
+            if ( !isPaused ) [output resume];
 			shouldSeek = NO;
 			DLog(@"Seeked! Resetting Buffer");
 			
