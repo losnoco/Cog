@@ -163,7 +163,7 @@ mpc_bool_t CanSeekProc(void *data)
 			framesToRead = frames;
 		}
 
-		[self writeToBuffer:((float*)(buf + (framesRead*bytesPerFrame)))  fromBuffer:sampleBuffer frames: bufferFrames];
+		[self writeToBuffer:((float*)(buf + (framesRead*bytesPerFrame)))  fromBuffer:sampleBuffer frames: framesToRead];
 
 		frames -= framesToRead;
 		framesRead += framesToRead;
