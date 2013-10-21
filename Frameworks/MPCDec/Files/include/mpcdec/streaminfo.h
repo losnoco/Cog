@@ -81,6 +81,11 @@ typedef struct mpc_streaminfo {
     mpc_streaminfo_off_t tag_offset;         ///< offset to file tags
     mpc_streaminfo_off_t total_file_length;  ///< total length of underlying file
     //@}
+
+    /// @name fast seeking support
+    //@{
+    mpc_uint32_t        fast_seek;           ///< support fast seeking ? (0: no, 1: yes)
+    //@}
 } mpc_streaminfo;
 
 #endif // _mpcdec_streaminfo_h_

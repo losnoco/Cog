@@ -43,7 +43,7 @@ read_impl(void *data, void *ptr, mpc_int32_t size)
 {
     mpc_reader_file *d = (mpc_reader_file *) data;
 
-    return fread(ptr, 1, size, d->file);
+    return (mpc_int32_t) fread(ptr, 1, size, d->file);
 }
 
 static mpc_bool_t
@@ -51,7 +51,7 @@ seek_impl(void *data, mpc_int32_t offset)
 {
     mpc_reader_file *d = (mpc_reader_file *) data;
 
-    return d->is_seekable ? !fseek(d->file, offset, SEEK_SET) : FALSE;
+    return d->is_seekable ? fseek(d->file, offset, SEEK_SET) == 0 : FALSE;
 }
 
 static mpc_int32_t

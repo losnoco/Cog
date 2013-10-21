@@ -84,6 +84,9 @@ mpc_bool_t CanSeekProc(void *data)
 		DLog(@"Error initializing decoder.");
 		return NO;
 	}
+
+    /* Only use fast seeking if format supports it */
+    mpc_decoder_set_seeking(&decoder, &info, FALSE);
 	
 
 	bitrate = (int)(info.average_bitrate/1000.0);

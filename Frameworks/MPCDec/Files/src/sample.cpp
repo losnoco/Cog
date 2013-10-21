@@ -315,8 +315,8 @@ main(int argc, char **argv)
         delete wavwriter;
     }
 
+    printf("Total samples decoded: %u.\n", total_samples);
     if (successful) {
-        printf("\nFinished.\nTotal samples decoded: %u.\n", total_samples);
         unsigned ms = (end - begin) * 1000 / CLOCKS_PER_SEC;
         unsigned ratio =
             (unsigned)((double)total_samples / (double)info.sample_freq /

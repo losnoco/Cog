@@ -72,9 +72,9 @@ const mpc_int32_t  __Dc [1 + 18] = {
 #ifdef MPC_FIXED_POINT
 static mpc_uint32_t find_shift(double fval)
 {
-	mpc_int64_t val = (mpc_int64_t)fval;
-	if (val<0) val = -val;
+	mpc_int64_t  val = (mpc_int64_t)fval;
 	mpc_uint32_t ptr = 0;
+	if (val<0) val = -val;
 	while(val) {val>>=1;ptr++;}
 
 	return ptr > 31 ? 0 : 31 - ptr;
@@ -113,40 +113,8 @@ mpc_decoder_scale_output(mpc_decoder *d, double factor)
     }
 }
 
-static void
-mpc_decoder_quantisierungsmodes(mpc_decoder *d) // conversion: index -> quantizer (bitstream reading)
-{                                               // conversion: quantizer -> index (bitstream writing)
-    mpc_int32_t  Band = 0;
-    mpc_int32_t  i;
-
-    do {
-        d->Q_bit [Band] = 4;
-        for ( i = 0; i < 16-1; i++ )
-            d->Q_res [Band] [i] = i;
-        d->Q_res [Band][i] = 17;
-        Band++;
-    } while ( Band < 11 );
-
-    do {
-        d->Q_bit [Band] = 3;
-        for ( i = 0; i < 8-1; i++ )
-            d->Q_res [Band] [i] = i;
-        d->Q_res [Band] [i] = 17;
-        Band++;
-    } while ( Band < 23 );
-
-    do {
-        d->Q_bit [Band] = 2;
-        for ( i = 0; i < 4-1; i++ )
-            d->Q_res [Band] [i] = i;
-        d->Q_res [Band] [i] = 17;
-        Band++;
-    } while ( Band < 32 );
-}
-
 void
 mpc_decoder_initialisiere_quantisierungstabellen(mpc_decoder *d, double scale_factor) 
 {
-    mpc_decoder_quantisierungsmodes(d);
     mpc_decoder_scale_output(d, scale_factor);
 }

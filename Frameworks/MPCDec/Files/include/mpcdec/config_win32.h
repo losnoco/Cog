@@ -39,10 +39,14 @@ typedef unsigned char mpc_bool_t;
 #define TRUE  1
 #define FALSE 0
 
+typedef __int8           mpc_int8_t;
+typedef unsigned __int8  mpc_uint8_t;
 typedef __int16          mpc_int16_t;
 typedef unsigned __int16 mpc_uint16_t;
 typedef __int32          mpc_int32_t;
 typedef unsigned __int32 mpc_uint32_t;
 typedef __int64          mpc_int64_t;
+
+#define MPC_LITTLE_ENDIAN
 
 #endif // __MUSEPACK_CONFIG_WIN32_H__

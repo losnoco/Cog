@@ -43,6 +43,14 @@
 #include "reader.h"
 #include "streaminfo.h"
 
+#define MPC_SUPPORT_SV456
+
+#define SEEKING_TABLE_SIZE  256u
+// set it to SLOW_SEEKING_WINDOW to not use fast seeking
+#define FAST_SEEKING_WINDOW 32
+// set it to FAST_SEEKING_WINDOW to only use fast seeking
+#define SLOW_SEEKING_WINDOW 0x80000000
+
 enum {
     MPC_V_MEM = 2304,
     MPC_DECODER_MEMSIZE = 16384,  // overall buffer size
@@ -59,29 +67,24 @@ typedef struct mpc_decoder_t {
     /// @name internal state variables
     //@{
 
-    mpc_uint32_t  dword; /// actually decoded 32bit-word
+    mpc_uint32_t  dword; /// currently decoded 32bit-word
     mpc_uint32_t  pos;   /// bit-position within dword
     mpc_uint32_t  Speicher[MPC_DECODER_MEMSIZE]; /// read-buffer
     mpc_uint32_t  Zaehler; /// actual index within read-buffer
 
-    mpc_uint32_t samples_to_skip;
-
-    mpc_uint32_t  FwdJumpInfo;
-    mpc_uint32_t  ActDecodePos;
-    mpc_uint32_t  FrameWasValid;
+    mpc_uint32_t  samples_to_skip;
 
     mpc_uint32_t  DecodedFrames;
     mpc_uint32_t  OverallFrames;
     mpc_int32_t   SampleRate;                 // Sample frequency
 
     mpc_uint32_t  StreamVersion;              // version of bitstream
-    mpc_uint32_t  MS_used;                    // MS-coding used ?
     mpc_int32_t   Max_Band;
     mpc_uint32_t  MPCHeaderPos;               // AB: needed to support ID3v2
-    mpc_uint32_t  LastValidSamples;
-    mpc_uint32_t  TrueGaplessPresent;
 
-    mpc_uint32_t  EQ_activated;
+    mpc_uint32_t  FrameWasValid;
+    mpc_uint32_t  MS_used;                    // MS-coding used ?
+    mpc_uint32_t  TrueGaplessPresent;
 
     mpc_uint32_t  WordsRead;                  // counts amount of decoded dwords
 
@@ -89,49 +92,22 @@ typedef struct mpc_decoder_t {
     mpc_uint32_t  __r1; 
     mpc_uint32_t  __r2; 
 
-    mpc_uint32_t  Q_bit [32];     
-    mpc_uint32_t  Q_res [32][16];
-
-    // huffman table stuff
-    HuffmanTyp    HuffHdr  [10];
-    HuffmanTyp    HuffSCFI [ 4];
-    HuffmanTyp    HuffDSCF [16];
-    HuffmanTyp*   HuffQ [2] [8];
-
-    HuffmanTyp    HuffQ1 [2] [3*3*3];
-    HuffmanTyp    HuffQ2 [2] [5*5];
-    HuffmanTyp    HuffQ3 [2] [ 7];
-    HuffmanTyp    HuffQ4 [2] [ 9];
-    HuffmanTyp    HuffQ5 [2] [15];
-    HuffmanTyp    HuffQ6 [2] [31];
-    HuffmanTyp    HuffQ7 [2] [63];
-    const HuffmanTyp* SampleHuff [18];
-    HuffmanTyp    SCFI_Bundle   [ 8];
-    HuffmanTyp    DSCF_Entropie [13];
-    HuffmanTyp    Region_A [16];
-    HuffmanTyp    Region_B [ 8];
-    HuffmanTyp    Region_C [ 4];
-
-    HuffmanTyp    Entropie_1 [ 3];
-    HuffmanTyp    Entropie_2 [ 5];
-    HuffmanTyp    Entropie_3 [ 7];
-    HuffmanTyp    Entropie_4 [ 9];
-    HuffmanTyp    Entropie_5 [15];
-    HuffmanTyp    Entropie_6 [31];
-    HuffmanTyp    Entropie_7 [63];
+    // seeking
+    mpc_uint32_t  seeking_table[SEEKING_TABLE_SIZE];
+    mpc_uint32_t  seeking_pwr;                // distance between 2 frames in seeking_table = 2^seeking_pwr
+    mpc_uint32_t  seeking_table_frames;       // last frame in seaking table
+    mpc_uint32_t  seeking_window;             // number of frames to look for scalefactors
 
     mpc_int32_t   SCF_Index_L [32] [3];
     mpc_int32_t   SCF_Index_R [32] [3];       // holds scalefactor-indices
     QuantTyp      Q [32];                     // holds quantized samples
     mpc_int32_t   Res_L [32];
     mpc_int32_t   Res_R [32];                 // holds the chosen quantizer for each subband
-    mpc_int32_t   DSCF_Flag_L [32];
-    mpc_int32_t   DSCF_Flag_R [32];           // differential SCF used?
+    mpc_bool_t    DSCF_Flag_L [32];
+    mpc_bool_t    DSCF_Flag_R [32];           // differential SCF used?
     mpc_int32_t   SCFI_L [32];
     mpc_int32_t   SCFI_R [32];                // describes order of transmitted SCF
-    mpc_int32_t   DSCF_Reference_L [32];
-    mpc_int32_t   DSCF_Reference_R [32];      // holds last frames SCF
-    mpc_int32_t   MS_Flag[32];                // MS used?
+    mpc_bool_t    MS_Flag[32];                // MS used?
 #ifdef MPC_FIXED_POINT
     unsigned char SCF_shift[256];
 #endif

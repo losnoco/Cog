@@ -35,6 +35,8 @@
 #ifndef __MUSEPACK_CONFIG_TYPES_H__
 #define __MUSEPACK_CONFIG_TYPES_H__
 
+@INTTYPES_H@
+
 typedef unsigned char mpc_bool_t;
 #define TRUE  1
 #define FALSE 0

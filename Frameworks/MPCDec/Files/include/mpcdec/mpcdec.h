@@ -100,6 +100,13 @@ void mpc_decoder_setup(mpc_decoder *d, mpc_reader *r);
 /// \return TRUE if decoder was initalized successfully, FALSE otherwise    
 mpc_bool_t mpc_decoder_initialize(mpc_decoder *d, mpc_streaminfo *si);
 
+/// Call this next after calling mpc_decoder_setup.
+/// \param si streaminfo structure indicating format of source stream
+/// \param fast_seeking boolean 0 = use fast seeking if safe, 1 = force fast seeking
+void mpc_decoder_set_seeking(mpc_decoder *d, mpc_streaminfo *si, mpc_bool_t fast_seeking);
+
+void mpc_decoder_set_streaminfo(mpc_decoder *d, mpc_streaminfo *si);
+
 /// Sets decoder sample scaling factor.  All decoded samples will be multiplied
 /// by this factor.
 /// \param scale_factor multiplicative scaling factor
@@ -118,6 +125,12 @@ mpc_uint32_t mpc_decoder_decode(
     MPC_SAMPLE_FORMAT *buffer, 
     mpc_uint32_t *vbr_update_acc, 
     mpc_uint32_t *vbr_update_bits);
+
+mpc_uint32_t mpc_decoder_decode_frame(
+    mpc_decoder *d,
+    mpc_uint32_t *in_buffer,
+    mpc_uint32_t in_len,
+    MPC_SAMPLE_FORMAT *out_buffer);
 
 /// Seeks to the specified sample in the source stream.
 mpc_bool_t mpc_decoder_seek_sample(mpc_decoder *d, mpc_int64_t destsample);

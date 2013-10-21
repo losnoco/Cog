@@ -45,11 +45,9 @@ enum {
 
 /// Big/little endian 32 bit byte swapping routine.
 static __inline
-mpc_uint32_t swap32(mpc_uint32_t val) {
-    const unsigned char* src = (const unsigned char*)&val;
-    return 
-        (mpc_uint32_t)src[0] | 
-        ((mpc_uint32_t)src[1] << 8) | ((mpc_uint32_t)src[2] << 16) | ((mpc_uint32_t)src[3] << 24);
+mpc_uint32_t mpc_swap32(mpc_uint32_t val) {
+    return (((val & 0xff000000) >> 24) | ((val & 0x00ff0000) >> 8) |
+            ((val & 0x0000ff00) <<  8) | ((val & 0x000000ff) << 24));
 }
 
 /// Searches for a ID3v2-tag and reads the length (in bytes) of it.
