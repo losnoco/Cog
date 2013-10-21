@@ -1091,7 +1091,14 @@ static int twosf_info(void * context, const char * name, const char * value)
     else return NO;
     
     framesRead = 0;
+    
+    silence_test_buffer.resize( sampleRate * 30 * 2 );
 
+    if (![self fillBuffer])
+        return NO;
+    
+    silence_test_buffer.remove_leading_silence(1);
+    
     return YES;
 }
 
@@ -1158,15 +1165,23 @@ static int twosf_info(void * context, const char * name, const char * value)
 	return YES;
 }
 
-
-- (int)readAudio:(void *)buf frames:(UInt32)frames
+- (BOOL)fillBuffer
 {
-    if ( !emulatorCore )
+    unsigned long free_space = silence_test_buffer.free_space() / 2;
+    while ( free_space )
     {
-        if (![self initializeDecoder])
-            return 0;
+        unsigned long samples_to_write = 0;
+        int16_t * buf = silence_test_buffer.get_write_ptr( samples_to_write );
+        int samples_read = [self readAudioInternal:buf frames:(UInt32)samples_to_write / 2] * 2;
+        if ( !samples_read ) break;
+        silence_test_buffer.samples_written( samples_read );
+        free_space -= samples_read;
     }
-    
+    return !silence_test_buffer.test_silence();
+}
+
+- (int)readAudioInternal:(void *)buf frames:(UInt32)frames
+{
     if ( type == 1 || type == 2 )
     {
         uint32_t howmany = frames;
@@ -1224,28 +1239,48 @@ static int twosf_info(void * context, const char * name, const char * value)
         frames = howmany;
     }
     
-    if ( framesRead + frames > framesLength ) {
+	return frames;
+}
+
+- (int)readAudio:(void *)buf frames:(UInt32)frames
+{
+    if ( !emulatorCore )
+    {
+        if (![self initializeDecoder])
+            return 0;
+    }
+    else if ( ![self fillBuffer] )
+        return 0;
+    
+    unsigned long written = silence_test_buffer.data_available() / 2;
+    if ( written > frames )
+        written = frames;
+    if ( written > totalFrames - framesRead )
+        written = totalFrames - framesRead;
+    if ( written == 0 )
+        return 0;
+
+    silence_test_buffer.read( (int16_t *) buf, written * 2 );
+
+    if ( framesRead + written > framesLength ) {
         long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
-        long fadeEnd = framesRead + frames;
+        long fadeEnd = framesRead + written;
         long fadeTotal = totalFrames - framesLength;
         long fadePos;
         
         int16_t * buf16 = ( int16_t * ) buf;
         
-        for (fadePos = fadeStart; fadePos < fadeEnd && fadePos < totalFrames; ++fadePos) {
+        for (fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
             long scale = totalFrames - fadePos;
             buf16[ 0 ] = buf16[ 0 ] * scale / fadeTotal;
             buf16[ 1 ] = buf16[ 1 ] * scale / fadeTotal;
             buf16 += 2;
         }
-        
-        if (fadePos < fadeEnd)
-            frames = (int)(fadePos - fadeStart);
     }
-
-	framesRead += frames;
-
-	return frames;
+    
+	framesRead += written;
+    
+    return (int) written;
 }
 
 - (void)closeDecoder
@@ -1306,6 +1341,20 @@ static int twosf_info(void * context, const char * name, const char * value)
         [self closeDecoder];
         if (![self initializeDecoder])
             return -1;
+    }
+    
+    unsigned long buffered_samples = silence_test_buffer.data_available() / 2;
+    if ( buffered_samples >= ( frame - framesRead ) )
+    {
+        frame -= framesRead;
+        silence_test_buffer.read( NULL, frame * 2 );
+        framesRead += frame * 2;
+        return framesRead;
+    }
+    else if ( buffered_samples )
+    {
+        silence_test_buffer.read( NULL, buffered_samples * 2 );
+        framesRead += buffered_samples * 2;
     }
     
     if ( type == 1 || type == 2 )

@@ -148,6 +148,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8324C584181513A10046F78F /* circular_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = circular_buffer.h; sourceTree = "<group>"; };
 		8343780B17F932B600584396 /* HCDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HCDecoder.h; sourceTree = "<group>"; };
 		8343780E17F932C900584396 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		8343784A17F93CB500584396 /* psflib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = psflib.xcodeproj; path = ../../Frameworks/psflib/psflib.xcodeproj; sourceTree = "<group>"; };
@@ -269,6 +270,7 @@
 		8360EEED17F92AC8005208A4 /* HighlyComplete */ = {
 			isa = PBXGroup;
 			children = (
+				8324C584181513A10046F78F /* circular_buffer.h */,
 				834379A717F9818400584396 /* HCDecoder.mm */,
 				8343786117F944BD00584396 /* hebios.h */,
 				8343780E17F932C900584396 /* Plugin.h */,

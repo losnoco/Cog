@@ -8,13 +8,16 @@
 
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
+#include "circular_buffer.h"
 
 @interface HCDecoder : NSObject<CogDecoder,CogMetadataReader> {
     id<CogSource> currentSource;
 	NSString *currentUrl;
     uint8_t *emulatorCore;
     void *emulatorExtra;
-    
+
+    circular_buffer<int16_t> silence_test_buffer;
+
     NSDictionary *metadataList;
     
     int tagLengthMs;
