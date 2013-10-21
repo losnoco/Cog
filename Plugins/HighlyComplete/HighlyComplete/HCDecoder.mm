@@ -1219,6 +1219,7 @@ static int twosf_info(void * context, const char * name, const char * value)
             else
             {
                 memcpy( buf, sound_out->buffer, frames_rendered * 4 );
+                buf = ((uint8_t *) buf) + frames_rendered * 4;
                 frames_to_render -= frames_rendered;
                 frames_rendered = 0;
             }
