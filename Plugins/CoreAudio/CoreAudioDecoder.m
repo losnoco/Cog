@@ -181,6 +181,11 @@
 	return nil;
 }
 
++ (float)priority
+{
+    return 0.5;
+}
+
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:

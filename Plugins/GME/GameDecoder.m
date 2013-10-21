@@ -175,6 +175,11 @@ gme_err_t readCallback( void* data, void* out, long count )
 	return nil;
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 - (void)setSource:(id<CogSource>)s
 {
 	[s retain];

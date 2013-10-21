@@ -264,5 +264,10 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	return [NSArray arrayWithObjects:@"audio/x-wavpack", nil];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 
 @end

@@ -154,4 +154,9 @@ long sourceTell(void *datasource)
 	return [NSArray arrayWithObjects:@"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg", nil];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 @end

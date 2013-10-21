@@ -13,6 +13,10 @@
 	return [NSArray arrayWithObjects:@"application/x-apl", nil];
 }
 
++ (float)priority {
+    return 1.0;
+}
+
 - (NSDictionary *)properties {
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];
 	

@@ -25,6 +25,7 @@
 @required
 + (NSArray *)mimeTypes;
 + (NSArray *)fileTypes; //mp3, ogg, etc
++ (float)priority; // should be 0.0 ... 1.0, higher means you get selected first, should default to 1.0 unless you know a reason why any of your extensions may behave badly, ie. greedily taking over some file type extension without performing any header validation on it
 
 //For KVO
 //- (void)setProperties:(NSDictionary *)p;

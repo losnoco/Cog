@@ -1531,6 +1531,10 @@ static int twosf_info(void * context, const char * name, const char * value)
 	return [NSArray arrayWithObjects:@"audio/x-psf", nil];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
 
 
 @end

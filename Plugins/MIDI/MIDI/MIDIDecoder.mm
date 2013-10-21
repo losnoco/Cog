@@ -175,4 +175,9 @@
 	return [NSArray arrayWithObjects:@"audio/midi", @"audio/x-midi", nil];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 @end

@@ -228,4 +228,9 @@ mpc_bool_t CanSeekProc(void *data)
 	return [NSArray arrayWithObjects:@"audio/x-musepack", nil];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 @end

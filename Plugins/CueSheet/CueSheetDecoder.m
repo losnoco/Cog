@@ -26,6 +26,11 @@
 	return [CueSheetContainer mimeTypes];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 - (NSDictionary *)properties 
 {
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];

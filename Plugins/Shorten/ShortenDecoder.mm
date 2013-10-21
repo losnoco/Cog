@@ -103,5 +103,10 @@
 	return [NSArray arrayWithObjects:@"application/x-shorten", nil]; //This is basically useless, since we cant stream shorten yet
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 
 @end

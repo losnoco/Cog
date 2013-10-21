@@ -329,4 +329,9 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	return [NSArray arrayWithObjects:@"audio/x-flac", nil];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 @end

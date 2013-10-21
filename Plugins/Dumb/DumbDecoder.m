@@ -327,4 +327,9 @@ int callbackLoop(void *data)
 	return [NSArray arrayWithObjects:@"audio/x-it", @"audio/x-xm", @"audio/x-s3m", @"audio/x-mod", nil];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 @end

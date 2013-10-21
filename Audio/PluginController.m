@@ -1,5 +1,6 @@
 #import "PluginController.h"
 #import "Plugin.h"
+#import "CogDecoderMulti.h"
 
 #import "Logging.h"
 
@@ -129,7 +130,16 @@ static PluginController *sharedPluginController = nil;
 	if (decoder && [decoder respondsToSelector:@selector(fileTypes)]) {
 		for (id fileType in [decoder fileTypes])
 		{
-			[decodersByExtension setObject:className forKey:[fileType lowercaseString]];
+            NSString *ext = [fileType lowercaseString];
+            NSMutableArray *decoders;
+            if (![decodersByExtension objectForKey:ext])
+            {
+                decoders = [[[NSMutableArray alloc] init] autorelease];
+                [decodersByExtension setObject:decoders forKey:ext];
+            }
+            else
+                decoders = [decodersByExtension objectForKey:ext];
+			[decoders addObject:className];
 		}
 	}
 	
@@ -216,8 +226,17 @@ static PluginController *sharedPluginController = nil;
 - (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source
 {
 	NSString *ext = [[[source url] path] pathExtension];
-	NSString *classString = [decodersByExtension objectForKey:[ext lowercaseString]];
-	if (!classString) {
+	NSArray *decoders = [decodersByExtension objectForKey:[ext lowercaseString]];
+    NSString *classString;
+    if (decoders) {
+        if ( [decoders count] > 1 ) {
+            return [[[CogDecoderMulti alloc] initWithDecoders:decoders] autorelease];
+        }
+        else {
+            classString = [decoders objectAtIndex:0];
+        }
+    }
+	else {
 		classString = [decodersByMimeType objectForKey:[[source mimeType] lowercaseString]];
 	}
 

@@ -160,4 +160,9 @@ opus_int64 sourceTell(void *_stream)
 	return [NSArray arrayWithObjects:@"audio/x-opus+ogg", nil];
 }
 
++ (float)priority
+{
+    return 1.0;
+}
+
 @end
