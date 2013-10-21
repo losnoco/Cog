@@ -150,16 +150,23 @@
 {
 	double tt = 0;
 	ldiv_t hoursAndMinutes;
+    ldiv_t daysAndHours;
 	
 	for (PlaylistEntry *pe in [self arrangedObjects]) {
         if (!isnan([pe.length doubleValue]))
             tt += [pe.length doubleValue];
 	}
 	
-	int sec = (int)(tt);
+	long sec = (long)(tt);
 	hoursAndMinutes = ldiv(sec/60, 60);
 	
-	[self setTotalTime:[NSString stringWithFormat:@"%ld hours %ld minutes %d seconds", hoursAndMinutes.quot, hoursAndMinutes.rem, sec%60]];
+    if ( hoursAndMinutes.quot >= 24 )
+    {
+        daysAndHours = ldiv(hoursAndMinutes.quot, 24);
+        [self setTotalTime:[NSString stringWithFormat:@"%ld days %ld hours %ld minutes %ld seconds", daysAndHours.quot, daysAndHours.rem, hoursAndMinutes.rem, sec%60]];
+    }
+    else
+        [self setTotalTime:[NSString stringWithFormat:@"%ld hours %ld minutes %ld seconds", hoursAndMinutes.quot, hoursAndMinutes.rem, sec%60]];
 }
 
 - (void)tableView:(NSTableView *)tableView
