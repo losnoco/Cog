@@ -1199,24 +1199,36 @@ static int twosf_info(void * context, const char * name, const char * value)
         GBASystem * system = ( GBASystem * ) emulatorCore;
         struct gsf_sound_out * sound_out = ( struct gsf_sound_out * ) emulatorExtra;
 
-        if ( frames * 4 > sound_out->samples_written )
-            CPULoop( system, 250000 );
+        unsigned long frames_to_render = frames;
         
-        unsigned long frames_rendered = sound_out->samples_written / 4;
+        do
+        {
+            unsigned long frames_rendered = sound_out->samples_written / 4;
         
-        if ( frames_rendered >= frames )
-        {
-            memcpy( buf, sound_out->buffer, frames * 4 );
-            frames_rendered -= frames;
-            memcpy( sound_out->buffer, sound_out->buffer + frames * 4, frames_rendered * 4 );
+            if ( frames_rendered >= frames_to_render )
+            {
+                memcpy( buf, sound_out->buffer, frames_to_render * 4 );
+                frames_rendered -= frames_to_render;
+                memcpy( sound_out->buffer, sound_out->buffer + frames_to_render * 4, frames_rendered * 4 );
+                frames_to_render = 0;
+            }
+            else
+            {
+                memcpy( buf, sound_out->buffer, frames_rendered * 4 );
+                frames_to_render -= frames_rendered;
+                frames_rendered = 0;
+            }
+            sound_out->samples_written = frames_rendered * 4;
+    
+            if ( frames_to_render )
+            {
+                CPULoop( system, 250000 );
+                if ( !sound_out->samples_written )
+                    break;
+            }
         }
-        else
-        {
-            memcpy( buf, sound_out->buffer, frames_rendered * 4 );
-            frames = (UInt32)frames_rendered;
-            frames_rendered = 0;
-        }
-        sound_out->samples_written = frames_rendered;
+        while ( frames_to_render );
+        frames -= (UInt32) frames_to_render;
     }
     else if ( type == 0x24 )
     {
