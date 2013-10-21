@@ -49,9 +49,15 @@
          }];
         theDecoders = sortedDecoders;
         theDecoder = nil;
-        cachedObservers = [[[NSMutableArray alloc] init] autorelease];
+        cachedObservers = [[NSMutableArray alloc] init];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [cachedObservers release];
+    [super dealloc];
 }
 
 - (NSDictionary *)properties
@@ -97,6 +103,9 @@
 {
     if ( theDecoder != nil ) {
         [theDecoder close];
+        for (NSDictionary *obsItem in cachedObservers) {
+            [theDecoder removeObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"]];
+        }
         [theDecoder release];
         theDecoder = nil;
     }
@@ -114,14 +123,14 @@
     [cachedObservers addObject:[NSDictionary dictionaryWithObjectsAndKeys:observer, @"observer", keyPath, @"keyPath", options, @"options", context, @"context", nil]];
 }
 
+/* And this is currently called after the decoder is closed */
 - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
 {
-    if ( theDecoder != nil )
-        [theDecoder removeObserver:observer forKeyPath:keyPath];
     for (NSDictionary *obsItem in cachedObservers)
     {
         if ([obsItem objectForKey:@"observer"] == observer && [keyPath isEqualToString:[obsItem objectForKey:@"keyPath"]]) {
             [cachedObservers removeObject:obsItem];
+            break;
         }
     }
 }
