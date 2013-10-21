@@ -130,7 +130,7 @@ void Gba_Pcm_Fifo::timer_overflowed( int which_timer )
 		{
 			// Need to fill FIFO
             CPUCheckDMA( gba, 3, which ? 4 : 2 );
-			if ( count <= 16 )
+			if ( count == 0 ) // Mother 3 with the new core timing likes to fall through with a count of 16 due to stopping DMA on its own, but it never falls as low as 0
 			{
 				// Not filled by DMA, so fill with 16 bytes of silence
 				int reg = which ? FIFOB_L : FIFOA_L;
