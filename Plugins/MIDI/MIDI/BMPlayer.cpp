@@ -342,6 +342,33 @@ void BMPlayer::shutdown()
 	_soundFonts.resize( 0 );
 }
 
+void BMPlayer::compound_presets( std::vector<BASS_MIDI_FONTEX> & out, std::vector<BASS_MIDI_FONTEX> & in, std::vector<long> & channels )
+{
+    if ( !in.size() )
+        in.push_back( { 0, -1, -1, -1, 0, 0 } );
+    if ( channels.size() )
+    {
+        for ( auto pit = in.begin(); pit != in.end(); ++pit )
+        {
+            for ( auto it = channels.begin(); it != channels.end(); ++it )
+            {
+                bank_lsb_override[ *it - 1 ] = *it;
+                
+                int dbanklsb = (int) *it;
+                pit->dbanklsb = dbanklsb;
+                out.push_back( *pit );
+            }
+        }
+    }
+    else
+    {
+        for ( auto pit = in.begin(); pit != in.end(); ++pit )
+        {
+            out.push_back( *pit );
+        }
+    }
+}
+
 bool BMPlayer::startup()
 {
 	if ( _stream ) return true;
@@ -396,7 +423,7 @@ bool BMPlayer::startup()
                     cr = strchr( name, '|' );
                     if ( cr )
                     {
-                        long dbank = 0, dpreset = -1, sbank = -1, spreset = -1;
+                        std::vector<BASS_MIDI_FONTEX> nested_presets;
                         std::vector<long> channels;
                         bool valid = true;
                         bool pushed_back = true;
@@ -413,8 +440,8 @@ bool BMPlayer::startup()
                                     // patch override - "p[db#,]dp#=[sb#,]sp#" ex. "p0,5=0,1"
                                     // may be used once per preset group
                                     pushed_back = false;
-                                    dbank = 0;
-                                    dpreset = strtol( cr, &endchr, 10 );
+                                    long dbank = 0;
+                                    long dpreset = strtol( cr, &endchr, 10 );
                                     if ( endchr == cr )
                                     {
                                         valid = false;
@@ -437,8 +464,8 @@ bool BMPlayer::startup()
                                         break;
                                     }
                                     cr = endchr + 1;
-                                    sbank = -1;
-                                    spreset = strtol( cr, &endchr, 10 );
+                                    long sbank = -1;
+                                    long spreset = strtol( cr, &endchr, 10 );
                                     if ( endchr == cr )
                                     {
                                         valid = false;
@@ -451,39 +478,51 @@ bool BMPlayer::startup()
                                         spreset = strtol( cr, &endchr, 10 );
                                         if ( endchr == cr )
                                         {
-                                            cr = nameptr - 1;
+                                            valid = false;
                                             break;
                                         }
                                     }
                                     if ( *endchr && *endchr != ';' && *endchr != '&' )
                                     {
-                                        cr = nameptr - 1;
+                                        valid = false;
                                         break;
                                     }
                                     cr = endchr;
+                                    nested_presets.push_back( { 0, (int) spreset, (int) sbank, (int) dpreset, (int) dbank, 0 } );
                                 }
                                 break;
                                     
                                 case 'c':
                                 {
                                     // channel override - implemented using bank LSB, which is disabled from
-                                    // actual use. - format "c#" ex. "c16" (range is 1-48)
+                                    // actual use. - format "c#[-#]" ex. "c16" (range is 1-48)
                                     // may be used multiple times per preset group
                                     pushed_back = false;
-                                    long channel = strtol(cr, &endchr, 10);
+                                    long channel_start = strtol(cr, &endchr, 10);
+                                    long channel_end;
                                     if ( endchr == cr )
                                     {
                                         valid = false;
                                         break;
                                     }
-                                    if ( channel < 1 || channel > 48 )
+                                    if ( channel_start < 1 || channel_start > 48 )
                                     {
                                         valid = false;
                                         break;
                                     }
+                                    channel_end = channel_start;
+                                    if ( *endchr == '-' )
+                                    {
+                                        channel_end = strtol(cr, &endchr, 10);
+                                        if ( channel_end <= channel_start || channel_end > 48 )
+                                        {
+                                            valid = false;
+                                            break;
+                                        }
+                                    }
                                     for ( auto it = channels.begin(); it != channels.end(); ++it )
                                     {
-                                        if ( *it == channel )
+                                        if ( *it >= channel_start || *it <= channel_end )
                                         {
                                             valid = false;
                                             break;
@@ -495,7 +534,8 @@ bool BMPlayer::startup()
                                         break;
                                     }
                                     cr = endchr;
-                                    channels.push_back( channel );
+                                    for ( long channel = channel_start; channel <= channel_end; ++channel )
+                                        channels.push_back( channel );
                                 }
                                 break;
                                     
@@ -504,21 +544,8 @@ bool BMPlayer::startup()
                                     // separates preset groups per SoundFont bank
                                     if ( !pushed_back )
                                     {
-                                        if ( channels.size() )
-                                        {
-                                            for ( auto it = channels.begin(); it != channels.end(); ++it )
-                                            {
-                                                bank_lsb_override[ *it - 1 ] = *it;
-
-                                                int dbanklsb = (int) *it;
-                                                presets.push_back( { 0, (int) spreset, (int) sbank, (int) dpreset, (int) dbank, dbanklsb } );
-                                            }
-                                        }
-                                        else
-                                        {
-                                            presets.push_back( { 0, (int) spreset, (int) sbank, (int) dpreset, (int) dbank, 0 } );
-                                        }
-                                        sbank = -1; spreset = -1; dpreset = -1; dbank = 0; channels.clear();
+                                        compound_presets( presets, nested_presets, channels );
+                                        nested_presets.clear(); channels.clear();
                                         pushed_back = true;
                                     }
                                 }
@@ -535,22 +562,7 @@ bool BMPlayer::startup()
                             }
                         }
                         if ( !pushed_back && valid )
-                        {
-                            if ( channels.size() )
-                            {
-                                for ( auto it = channels.begin(); it != channels.end(); ++it )
-                                {
-                                    bank_lsb_override[ *it - 1 ] = *it;
-                                    
-                                    int dbanklsb = (int) *it;
-                                    presets.push_back( { 0, (int) spreset, (int) sbank, (int) dpreset, (int) dbank, dbanklsb } );
-                                }
-                            }
-                            else
-                            {
-                                presets.push_back( { 0, (int) spreset, (int) sbank, (int) dpreset, (int) dbank, 0 } );
-                            }
-                        }
+                            compound_presets( presets, nested_presets, channels );
                         if ( !valid )
                         {
                             presets.clear();

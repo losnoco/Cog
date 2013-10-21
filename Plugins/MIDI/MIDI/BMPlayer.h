@@ -25,6 +25,8 @@ private:
 
 	virtual void shutdown();
 	virtual bool startup();
+    
+    void compound_presets( std::vector<BASS_MIDI_FONTEX> & out, std::vector<BASS_MIDI_FONTEX> & in, std::vector<long> & channels );
 
 	void reset_parameters();
 
