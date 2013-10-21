@@ -283,23 +283,23 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					PACK,
+					UNPACK,
+					USE_FSTREAMS,
+					TAGS,
+					SEEKING,
+					VER3,
+					"PACKAGE_NAME='\"wavpack\"'",
+					"PACKAGE_TARNAME='\"wavpack\"'",
+					"PACKAGE_VERSION='\"4.70.0\"'",
+					"PACKAGE_STRING='\"wavpack 4.70.0\"'",
+					"PACKAGE_BUGREPORT='\"bryant@wavpack.com\"'",
+					"VERSION_OS='\"Darwin\"'",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DPACK",
-					"-DUNPACK",
-					"-DUSE_FSTREAMS",
-					"-DTAGS",
-					"-DSEEKING",
-					"-DVER3",
-					"-DPACKAGE_NAME=wavpack",
-					"-DPACKAGE_TARNAME=wavpack",
-					"-DPACKAGE_VERSION=4.2",
-					"$(OTHER_CFLAGS_QUOTED_1)",
-					"-DPACKAGE_BUGREPORT=bryant@wavpack.com",
-					"-DVERSION_OS=Darwin",
-				);
-				OTHER_CFLAGS_QUOTED_1 = "-DPACKAGE_STRING=\\\"wavpack\\ 4.2\\\"";
 				PRODUCT_NAME = WavPack;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -317,23 +317,22 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					PACK,
+					UNPACK,
+					USE_FSTREAMS,
+					TAGS,
+					SEEKING,
+					VER3,
+					"PACKAGE_NAME='\"wavpack\"'",
+					"PACKAGE_TARNAME='\"wavpack\"'",
+					"PACKAGE_VERSION='\"4.70.0\"'",
+					"PACKAGE_STRING='\"wavpack 4.70.0\"'",
+					"PACKAGE_BUGREPORT='\"bryant@wavpack.com\"'",
+					"VERSION_OS='\"Darwin\"'",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DPACK",
-					"-DUNPACK",
-					"-DUSE_FSTREAMS",
-					"-DTAGS",
-					"-DSEEKING",
-					"-DVER3",
-					"-DPACKAGE_NAME=wavpack",
-					"-DPACKAGE_TARNAME=wavpack",
-					"-DPACKAGE_VERSION=4.2",
-					"$(OTHER_CFLAGS_QUOTED_1)",
-					"-DPACKAGE_BUGREPORT=bryant@wavpack.com",
-					"-DVERSION_OS=Darwin",
-				);
-				OTHER_CFLAGS_QUOTED_1 = "-DPACKAGE_STRING=\\\"wavpack\\ 4.2\\\"";
 				PRODUCT_NAME = WavPack;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 //                           **** WAVPACK ****                            //
 //                  Hybrid Lossless Wavefile Compressor                   //
-//              Copyright (c) 1998 - 2009 Conifer Software.               //
+//              Copyright (c) 1998 - 2013 Conifer Software.               //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
@@ -11,6 +11,7 @@
 // This is the main module for the WavPack command-line compressor.
 
 #if defined(WIN32)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <io.h>
 #else
@@ -49,13 +50,7 @@
 #define strdup(x) _strdup(x)
 #define fileno _fileno
 #else
-#define stricmp(x,y) strcasecmp(x,y)
-#endif
-
-#ifdef __APPLE__
-#define VERSION_OS_STRING "Darwin"
-#else
-#define VERSION_OS_STRING VERSION_OS
+#define stricmp strcasecmp
 #endif
 
 #ifdef DEBUG_ALLOC
@@ -74,21 +69,22 @@ static char *strdup (const char *s)
 
 static const char *sign_on = "\n"
 " WAVPACK  Hybrid Lossless Audio Compressor  %s Version %s\n"
-" Copyright (c) 1998 - 2009 Conifer Software.  All Rights Reserved.\n\n";
+" Copyright (c) 1998 - 2013 Conifer Software.  All Rights Reserved.\n\n";
 
 static const char *usage =
 #if defined (WIN32)
-" Usage:   WAVPACK [-options] [@]infile[.wav]|- [[@]outfile[.wv]|outpath|-]\n"
+" Usage:   WAVPACK [-options] infile[.wav]|infile.wv|- [outfile[.wv]|outpath|-]\n"
 "             (default is lossless; infile may contain wildcards: ?,*)\n\n"
 #else
-" Usage:   WAVPACK [-options] [@]infile[.wav]|- [...] [-o [@]outfile[.wv]|outpath|-]\n"
-"             (default is lossless; infile(s) may contain wildcards: ?,*)\n\n"
+" Usage:   WAVPACK [-options] infile[.wav]|infile.wv|- [...] [-o outfile[.wv]|outpath|-]\n"
+"             (default is lossless; multiple input files allowed)\n\n"
 #endif
 " Options: -bn = enable hybrid compression, n = 2.0 to 23.9 bits/sample, or\n"
 "                                           n = 24-9600 kbits/second (kbps)\n"
 "          -c  = create correction file (.wvc) for hybrid mode (=lossless)\n"
 "          -f  = fast mode (fast, but some compromise in compression ratio)\n"
 "          -h  = high quality (better compression ratio, but slower)\n"
+"          -v  = verify output file integrity after write (no pipes)\n"
 "          -x  = extra encode processing (no decoding speed penalty)\n"
 "          --help = complete help\n\n"
 " Web:     Visit www.wavpack.com for latest version and info\n";
@@ -96,15 +92,22 @@ static const char *usage =
 static const char *help =
 #if defined (WIN32)
 " Usage:\n"
-"    WAVPACK [-options] [@]infile[.wav]|- [[@]outfile[.wv]|outpath|-]\n"
-"      (default operation is lossless; infile may contain wildcards: ?,*)\n\n"
+"    WAVPACK [-options] infile[.wav]|infile.wv|- [outfile[.wv]|outpath|-]\n\n"
+"    The default operation is lossless. Wildcard characters (*,?) may be included\n"
+"    in the input file and they may be either WAV or WAVPACK (.wv) files (or raw\n"
+"    PCM if --raw-pcm is included). When transcoding, all tags are copied.\n\n"
 #else
 " Usage:\n"
-"    WAVPACK [-options] [@]infile[.wav]|- [...] [-o [@]outfile[.wv]|outpath|-]\n"
-"      (default operation is lossless; infile(s) may contain wildcards: ?,*)\n\n"
+"    WAVPACK [-options] infile[.wav]|infile.wv|- [...] [-o outfile[.wv]|outpath|-]\n\n"
+"    The default operation is lossless. Multiple input files may be specified,\n"
+"    and they may be either WAV or WAVPACK (.wv) files (or raw PCM if --raw-pcm\n"
+"    is included). When transcoding, all tags are copied.\n\n"
 #endif
 " Options:\n"
 "    -a                      Adobe Audition (CoolEdit) mode for 32-bit floats\n"
+"    --allow-huge-tags       allow tag data up to 16 MB (embedding > 1 MB is not\n"
+"                             recommended for portable devices and may not work\n"
+"                             with some programs including WavPack pre-4.70)\n"
 "    -bn                     enable hybrid compression\n"
 "                              n = 2.0 to 23.9 bits/sample, or\n"
 "                              n = 24-9600 kbits/second (kbps)\n"
@@ -169,6 +172,8 @@ static const char *help =
 "                             in freq, use '0' for no shaping (white noise)\n"
 "    -t                      copy input file's time stamp to output file(s)\n"
 "    --use-dns               force use of dynamic noise shaping (hybrid mode only)\n"
+"    -v                      verify output file integrity after write (no pipes)\n"
+"    --version               write the version to stdout\n"
 "    -w \"Field=Value\"        write specified text metadata to APEv2 tag\n"
 "    -w \"Field=@file.ext\"    write specified text metadata from file to APEv2\n"
 "                             tag, normally used for embedded cuesheets and logs\n"
@@ -180,7 +185,8 @@ static const char *help =
 "    -x[n]                   extra encode processing (optional n = 1 to 6, 1=default)\n"
 "                             -x1 to -x3 to choose best of predefined filters\n"
 "                             -x4 to -x6 to generate custom filters (very slow!)\n"
-"    -y                      yes to all warnings (use with caution!)\n\n"
+"    -y                      yes to all warnings (use with caution!)\n"
+"    -z                      don't set console title to indicate progress\n\n"
 " Web:\n"
 "     Visit www.wavpack.com for latest version and complete information\n";
 
@@ -196,12 +202,13 @@ static const char *speakers [] = {
 
 int debug_logging_mode;
 
-static int overwrite_all, num_files, file_index, copy_time, quiet_mode,
-    adobe_mode, ignore_length, new_riff_header, do_md5_checksum, raw_pcm, no_utf8_convert;
+static int overwrite_all, num_files, file_index, copy_time, quiet_mode, verify_mode, delete_source, store_floats_as_ints,
+    adobe_mode, ignore_length, new_riff_header, raw_pcm, no_utf8_convert, no_console_title, allow_huge_tags;
 
 static int num_channels_order;
 static unsigned char channel_order [18], channel_order_undefined;
 static uint32_t channel_order_mask;
+static double encode_time_percent;
 
 // These two statics are used to keep track of tags that the user specifies on the
 // command line. The "num_tag_strings" and "tag_strings" fields in the WavpackConfig
@@ -224,9 +231,12 @@ static uint32_t wvselfx_size;
 
 static FILE *wild_fopen (char *filename, const char *mode);
 static int pack_file (char *infilename, char *outfilename, char *out2filename, const WavpackConfig *config);
-static int pack_audio (WavpackContext *wpc, FILE *infile, unsigned char *new_order);
+static int pack_audio (WavpackContext *wpc, FILE *infile, unsigned char *new_order, unsigned char *md5_digest_source);
+static int repack_file (char *infilename, char *outfilename, char *out2filename, const WavpackConfig *config);
+static int repack_audio (WavpackContext *wpc, WavpackContext *infile, unsigned char *md5_digest_source);
+static int verify_audio (char *infilename, unsigned char *md5_digest_source);
 static void display_progress (double file_progress);
-static void AnsiToUTF8 (char *string, int len);
+static void TextToUTF8 (void *string, int len);
 
 #define NO_ERROR 0L
 #define SOFT_ERROR 1
@@ -241,7 +251,7 @@ int main (argc, argv) int argc; char **argv;
 #ifdef __EMX__ /* OS/2 */
     _wildcard (&argc, &argv);
 #endif
-    int delete_source = 0, error_count = 0, tag_next_arg = 0, output_spec = 0, ask_help = 0;
+    int error_count = 0, tag_next_arg = 0, output_spec = 0;
     char *outfilename = NULL, *out2filename = NULL;
     char **matches = NULL;
     WavpackConfig config;
@@ -288,8 +298,15 @@ int main (argc, argv) int argc; char **argv;
                 if (*long_param++ == '=')
                     break;
 
-            if (!strcmp (long_option, "help"))                          // --help
-                ask_help = 1;
+            if (!strcmp (long_option, "help")) {                        // --help
+                printf ("%s", help);
+                return 1;
+            }
+            else if (!strcmp (long_option, "version")) {                // --version
+                printf ("wavpack %s\n", PACKAGE_VERSION);
+                printf ("libwavpack %s\n", WavpackGetLibraryVersionString ());
+                return 1;
+            }
             else if (!strcmp (long_option, "optimize-mono"))            // --optimize-mono
                 config.flags |= CONFIG_OPTIMIZE_MONO;
             else if (!strcmp (long_option, "dns")) {                    // --dns
@@ -304,6 +321,10 @@ int main (argc, argv) int argc; char **argv;
                 config.flags |= CONFIG_PAIR_UNDEF_CHANS;
             else if (!strcmp (long_option, "no-utf8-convert"))          // --no-utf8-convert
                 no_utf8_convert = 1;
+            else if (!strcmp (long_option, "allow-huge-tags"))          // --allow-huge-tags
+                allow_huge_tags = 1;
+            else if (!strcmp (long_option, "store-floats-as-ints"))     // --store-floats-as-ints
+                store_floats_as_ints = 1;
             else if (!strcmp (long_option, "write-binary-tag"))         // --write-binary-tag
                 tag_next_arg = 2;
             else if (!strncmp (long_option, "raw-pcm", 7)) {            // --raw-pcm
@@ -519,9 +540,12 @@ int main (argc, argv) int argc; char **argv;
                         quiet_mode = 1;
                         break;
 
+                    case 'Z': case 'z':
+                        no_console_title = 1;
+                        break;
+
                     case 'M': case 'm':
                         config.flags |= CONFIG_MD5_CHECKSUM;
-                        do_md5_checksum = 1;
                         break;
 
                     case 'I': case 'i':
@@ -530,6 +554,10 @@ int main (argc, argv) int argc; char **argv;
 
                     case 'R': case 'r':
                         new_riff_header = 1;
+                        break;
+
+                    case 'V': case 'v':
+                        verify_mode = 1;
                         break;
 
                     case 'B': case 'b':
@@ -674,7 +702,12 @@ int main (argc, argv) int argc; char **argv;
     if (ignore_length && outfilename && *outfilename == '-') {
         error_line ("can't ignore length in header when using stdout!");
         ++error_count;
-     }
+    }
+
+    if (verify_mode && outfilename && *outfilename == '-') {
+        error_line ("can't verify output file when using stdout!");
+        ++error_count;
+    }
 
     if (config.flags & CONFIG_HYBRID_FLAG) {
         if ((config.flags & CONFIG_CREATE_WVC) && outfilename && *outfilename == '-') {
@@ -709,7 +742,7 @@ int main (argc, argv) int argc; char **argv;
     }
 
     if (!quiet_mode && !error_count)
-        fprintf (stderr, sign_on, VERSION_OS_STRING, WavpackGetLibraryVersionString ());
+        fprintf (stderr, sign_on, VERSION_OS, WavpackGetLibraryVersionString ());
 
     // Loop through any tag specification strings and check for file access, convert text
     // strings to UTF-8, and otherwise prepare for writing to APE tags. This is done here
@@ -749,16 +782,15 @@ int main (argc, argv) int argc; char **argv;
                 if (filespec_ext (fn))
                     tag_items [i].ext = strdup (filespec_ext (fn));
 
-                if (tag_items [i].vsize < 1048576) {
-                    new_value = malloc (tag_items [i].vsize + 1);
+                if (tag_items [i].vsize < 1048576 * (allow_huge_tags ? 16 : 1)) {
+                    new_value = malloc (tag_items [i].vsize + 2);
+                    memset (new_value, 0, tag_items [i].vsize + 2);
 
                     if (!DoReadFile (file, new_value, tag_items [i].vsize, &bcount) ||
                         bcount != tag_items [i].vsize) {
                             free (new_value);
                             new_value = NULL;
                         }
-                        else
-                            new_value [tag_items [i].vsize] = 0;
                 }
 
                 DoCloseHandle (file);
@@ -795,13 +827,13 @@ int main (argc, argv) int argc; char **argv;
             tag_items [i].value = realloc (tag_items [i].value, tag_items [i].vsize * 2 + 1);
 
             if (!no_utf8_convert)
-                AnsiToUTF8 (tag_items [i].value, (int) tag_items [i].vsize * 2 + 1);
+                TextToUTF8 (tag_items [i].value, (int) tag_items [i].vsize * 2 + 1);
 
             tag_items [i].vsize = (int) strlen (tag_items [i].value);
         }
 
-        if ((total_tag_size += tag_items [i].vsize) > 1048576) {
-            error_line ("total APEv2 tag size exceeds 1 MB !");
+        if ((total_tag_size += tag_items [i].vsize) > 1048576 * (allow_huge_tags ? 16 : 1)) {
+            error_line ("total APEv2 tag size exceeds %d MB !", allow_huge_tags ? 16 : 1);
             ++error_count;
             break;
         }
@@ -809,11 +841,6 @@ int main (argc, argv) int argc; char **argv;
 
     if (error_count) {
         fprintf (stderr, "\ntype 'wavpack' for short help or 'wavpack --help' for full help\n");
-        return 1;
-    }
-
-    if (ask_help) {
-        printf ("%s", help);
         return 1;
     }
 
@@ -995,6 +1022,23 @@ int main (argc, argv) int argc; char **argv;
     if (num_files) {
         char outpath, addext;
 
+        // calculate an estimate for the percentage of the time that will be used for the encoding (as opposed
+        // to the optional verification step) based on the "extra" mode processing; this is only used for
+        // displaying the progress and so is not very critical
+
+        if (verify_mode) {
+            if (config.flags & CONFIG_EXTRA_MODE) {
+                if (config.xmode)
+                    encode_time_percent = 100.0 * (1.0 - (1.0 / ((1 << config.xmode) + 1)));
+                else
+                    encode_time_percent = 66.7;
+            }
+            else
+                encode_time_percent = 50.0;
+        }
+        else
+            encode_time_percent = 100.0;
+
         if (outfilename && *outfilename != '-') {
             outpath = (filespec_path (outfilename) != NULL);
 
@@ -1058,26 +1102,19 @@ int main (argc, argv) int argc; char **argv;
             else
                 out2filename = NULL;
 
-            if (num_files > 1)
+            if (num_files > 1 && !quiet_mode)
                 fprintf (stderr, "\n%s:\n", matches [file_index]);
 
-            result = pack_file (matches [file_index], outfilename, out2filename, &config);
+            if (filespec_ext (matches [file_index]) && !stricmp (filespec_ext (matches [file_index]), ".wv"))
+                result = repack_file (matches [file_index], outfilename, out2filename, &config);
+            else
+                result = pack_file (matches [file_index], outfilename, out2filename, &config);
 
             if (result != NO_ERROR)
                 ++error_count;
 
             if (result == HARD_ERROR)
                 break;
-
-            // delete source file if that option is enabled
-
-            if (result == NO_ERROR && delete_source) {
-                int res = DoDeleteFile (matches [file_index]);
-
-                if (!quiet_mode || !res)
-                    error_line ("%s source file %s", res ?
-                        "deleted" : "can't delete", matches [file_index]);
-            }
 
             // clean up in preparation for potentially another file
 
@@ -1116,6 +1153,9 @@ int main (argc, argv) int argc; char **argv;
 #ifdef DEBUG_ALLOC
     error_line ("malloc_count = %d", dump_alloc ());
 #endif
+
+    if (!no_console_title)
+        DoSetConsoleTitle ("WavPack Completed");
 
     return error_count ? 1 : 0;
 }
@@ -1203,7 +1243,37 @@ static FILE *wild_fopen (char *filename, const char *mode)
 
 static FILE *wild_fopen (char *filename, const char *mode)
 {
-    return fopen (filename, mode);
+    char *matchname = NULL;
+    struct stat statbuf;
+    FILE *res = NULL;
+    glob_t globbuf;
+    int i;
+
+    glob (filename, 0, NULL, &globbuf);
+
+    for (i = 0; i < globbuf.gl_pathc; ++i) {
+        if (stat (globbuf.gl_pathv [i], &statbuf) == -1 || S_ISDIR (statbuf.st_mode))
+            continue;
+
+        if (matchname) {
+            free (matchname);
+            matchname = NULL;
+            break;
+        }
+        else {
+            matchname = malloc (strlen (globbuf.gl_pathv [i]) + 10);
+            strcpy (matchname, globbuf.gl_pathv [i]);
+        }
+    }
+
+    globfree (&globbuf);
+
+    if (matchname) {
+        res = fopen (matchname, mode);
+        free (matchname);
+    }
+
+    return res;
 }
 
 #endif
@@ -1216,10 +1286,13 @@ static FILE *wild_fopen (char *filename, const char *mode)
 
 static int pack_file (char *infilename, char *outfilename, char *out2filename, const WavpackConfig *config)
 {
+    char *outfilename_temp, *out2filename_temp, dummy;
+    int use_tempfiles = (out2filename != NULL);
     uint32_t total_samples = 0, bcount;
     WavpackConfig loc_config = *config;
     RiffChunkHeader riff_chunk_header;
     unsigned char *new_channel_order = NULL;
+    unsigned char md5_digest [16];
     write_id wv_file, wvc_file;
     ChunkHeader chunk_header;
     WaveHeader WaveHeader;
@@ -1282,40 +1355,118 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
 
     // check both output files for overwrite warning required
 
-    if (*outfilename != '-' && !overwrite_all && (wv_file.file = fopen (outfilename, "rb")) != NULL) {
+    // note that for a file to be considered "overwritable", it must both be openable for reading
+    // and have at least 1 readable byte - this prevents us getting stuck on "nul" (Windows) 
+
+    if (*outfilename != '-' && (wv_file.file = fopen (outfilename, "rb")) != NULL) {
+        size_t res = fread (&dummy, 1, 1, wv_file.file);
+
         DoCloseHandle (wv_file.file);
-        fprintf (stderr, "overwrite %s (yes/no/all)? ", FN_FIT (outfilename));
-#if defined(WIN32)
-        SetConsoleTitle ("overwrite?");
-#endif
 
-        switch (yna ()) {
-            case 'n':
-                DoCloseHandle (infile);
-                WavpackCloseFile (wpc);
-                return SOFT_ERROR;
+        if (res == 1) {
+            use_tempfiles = 1;
 
-            case 'a':
-                overwrite_all = 1;
+            if (!overwrite_all) {
+                fprintf (stderr, "overwrite %s (yes/no/all)? ", FN_FIT (outfilename));
+
+                if (!no_console_title)
+                    DoSetConsoleTitle ("overwrite?");
+
+                switch (yna ()) {
+                    case 'n':
+                        DoCloseHandle (infile);
+                        WavpackCloseFile (wpc);
+                        return SOFT_ERROR;
+
+                    case 'a':
+                        overwrite_all = 1;
+                }
+            }
         }
     }
 
     if (out2filename && !overwrite_all && (wvc_file.file = fopen (out2filename, "rb")) != NULL) {
+        size_t res = fread (&dummy, 1, 1, wvc_file.file);
+
         DoCloseHandle (wvc_file.file);
-        fprintf (stderr, "overwrite %s (yes/no/all)? ", FN_FIT (out2filename));
-#if defined(WIN32)
-        SetConsoleTitle ("overwrite?");
-#endif
 
-        switch (yna ()) {
+        if (res == 1) {
+            fprintf (stderr, "overwrite %s (yes/no/all)? ", FN_FIT (out2filename));
 
-            case 'n':
-                DoCloseHandle (infile);
-                WavpackCloseFile (wpc);
-                return SOFT_ERROR;
+            if (!no_console_title)
+                DoSetConsoleTitle ("overwrite?");
 
-            case 'a':
-                overwrite_all = 1;
+            switch (yna ()) {
+
+                case 'n':
+                    DoCloseHandle (infile);
+                    WavpackCloseFile (wpc);
+                    return SOFT_ERROR;
+
+                case 'a':
+                    overwrite_all = 1;
+            }
+        }
+    }
+
+    // if we are using temp files, either because the output filename already exists or we are creating a
+    // "correction" file, search for and generate the corresponding names here
+
+    if (use_tempfiles) {
+        FILE *testfile;
+        int count = 0;
+
+        outfilename_temp = malloc (strlen (outfilename) + 16);
+
+        if (out2filename)
+            out2filename_temp = malloc (strlen (outfilename) + 16);
+
+        while (1) {
+            strcpy (outfilename_temp, outfilename);
+
+            if (filespec_ext (outfilename_temp)) {
+                if (count++)
+                    sprintf (filespec_ext (outfilename_temp), ".tmp%d", count-1);
+                else
+                    strcpy (filespec_ext (outfilename_temp), ".tmp");
+
+                strcat (outfilename_temp, filespec_ext (outfilename));
+            }
+            else {
+                if (count++)
+                    sprintf (outfilename_temp + strlen (outfilename_temp), ".tmp%d", count-1);
+                else
+                    strcat (outfilename_temp, ".tmp");
+            }
+
+            testfile = fopen (outfilename_temp, "rb");
+
+            if (testfile) {
+                int res = (int) fread (&dummy, 1, 1, testfile);
+
+                fclose (testfile);
+
+                if (res == 1)
+                    continue;
+            }
+
+            if (out2filename) {
+                strcpy (out2filename_temp, outfilename_temp);
+                strcat (out2filename_temp, "c");
+
+                testfile = fopen (out2filename_temp, "rb");
+
+                if (testfile) {
+                    int res = (int) fread (&dummy, 1, 1, testfile);
+
+                    fclose (testfile);
+
+                    if (res == 1)
+                        continue;
+                }
+            }   
+
+            break;
         }
     }
 
@@ -1336,8 +1487,8 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
         setmode (fileno (stdout), O_BINARY);
 #endif
     }
-    else if ((wv_file.file = fopen (outfilename, "w+b")) == NULL) {
-        error_line ("can't create file %s!", outfilename);
+    else if ((wv_file.file = fopen (use_tempfiles ? outfilename_temp : outfilename, "w+b")) == NULL) {
+        error_line ("can't create file %s!", use_tempfiles ? outfilename_temp : outfilename);
         DoCloseHandle (infile);
         WavpackCloseFile (wpc);
         return SOFT_ERROR;
@@ -1358,7 +1509,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
             error_line ("can't write WavPack data, disk probably full!");
             DoCloseHandle (infile);
             DoCloseHandle (wv_file.file);
-            DoDeleteFile (outfilename);
+            DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
             WavpackCloseFile (wpc);
             return SOFT_ERROR;
         }
@@ -1373,7 +1524,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("%s is not a valid .WAV file!", infilename);
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
         }
@@ -1382,7 +1533,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("%s", WavpackGetErrorMessage (wpc));
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
         }
@@ -1398,7 +1549,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("%s is not a valid .WAV file!", infilename);
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
         }
@@ -1407,7 +1558,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("%s", WavpackGetErrorMessage (wpc));
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
         }
@@ -1426,7 +1577,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                     error_line ("%s is not a valid .WAV file!", infilename);
                     DoCloseHandle (infile);
                     DoCloseHandle (wv_file.file);
-                    DoDeleteFile (outfilename);
+                    DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                     WavpackCloseFile (wpc);
                     return SOFT_ERROR;
             }
@@ -1435,7 +1586,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                     error_line ("%s", WavpackGetErrorMessage (wpc));
                     DoCloseHandle (infile);
                     DoCloseHandle (wv_file.file);
-                    DoDeleteFile (outfilename);
+                    DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                     WavpackCloseFile (wpc);
                     return SOFT_ERROR;
             }
@@ -1464,10 +1615,13 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
             format = (WaveHeader.FormatTag == 0xfffe && chunk_header.ckSize == 40) ?
                 WaveHeader.SubFormat : WaveHeader.FormatTag;
 
-            loc_config.bits_per_sample = chunk_header.ckSize == 40 ?
+            loc_config.bits_per_sample = (chunk_header.ckSize == 40 && WaveHeader.ValidBitsPerSample) ?
                 WaveHeader.ValidBitsPerSample : WaveHeader.BitsPerSample;
 
             if (format != 1 && format != 3)
+                supported = FALSE;
+
+            if (format == 3 && loc_config.bits_per_sample != 32 && !store_floats_as_ints)
                 supported = FALSE;
 
             if (!WaveHeader.NumChannels || WaveHeader.NumChannels > 256 ||
@@ -1483,7 +1637,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("%s is an unsupported .WAV format!", infilename);
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
             }
@@ -1496,20 +1650,18 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 else
                     loc_config.channel_mask = 0x3ffff;
             }
-            else {
+            else if (WaveHeader.ChannelMask && (num_channels_order || channel_order_undefined)) {
+                error_line ("this WAV file already has channel order information!");
+                DoCloseHandle (infile);
+                DoCloseHandle (wv_file.file);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
+                WavpackCloseFile (wpc);
+                return SOFT_ERROR;
+            }
+            else
                 loc_config.channel_mask = WaveHeader.ChannelMask;
 
-                if (num_channels_order || channel_order_undefined) {
-                    error_line ("this WAV file already has channel order information!");
-                    DoCloseHandle (infile);
-                    DoCloseHandle (wv_file.file);
-                    DoDeleteFile (outfilename);
-                    WavpackCloseFile (wpc);
-                    return SOFT_ERROR;
-                }
-            }
-
-            if (format == 3)
+            if (format == 3 && !store_floats_as_ints)
                 loc_config.float_norm_exp = 127;
             else if (adobe_mode &&
                 WaveHeader.BlockAlign / WaveHeader.NumChannels == 4) {
@@ -1538,7 +1690,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("%s is not a valid .WAV file!", infilename);
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
             }
@@ -1547,7 +1699,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("this .WAV file has over 16 MB of extra RIFF data, probably is corrupt!");
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
             }
@@ -1558,7 +1710,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("this .WAV file has no audio samples, probably is corrupt!");
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
             }
@@ -1585,7 +1737,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                     error_line ("%s", WavpackGetErrorMessage (wpc));
                     DoCloseHandle (infile);
                     DoCloseHandle (wv_file.file);
-                    DoDeleteFile (outfilename);
+                    DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                     free (buff);
                     WavpackCloseFile (wpc);
                     return SOFT_ERROR;
@@ -1603,7 +1755,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
                 error_line ("file does not have %d channel(s)!", num_channels_order);
                 DoCloseHandle (infile);
                 DoCloseHandle (wv_file.file);
-                DoDeleteFile (outfilename);
+                DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
                 WavpackCloseFile (wpc);
                 return SOFT_ERROR;
             }
@@ -1637,7 +1789,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
         error_line ("%s", WavpackGetErrorMessage (wpc));
         DoCloseHandle (infile);
         DoCloseHandle (wv_file.file);
-        DoDeleteFile (outfilename);
+        DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
         WavpackCloseFile (wpc);
         return SOFT_ERROR;
     }
@@ -1645,19 +1797,27 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
     // if we are creating a "correction" file, open it now for writing
 
     if (out2filename) {
-        if ((wvc_file.file = fopen (out2filename, "w+b")) == NULL) {
+        if ((wvc_file.file = fopen (use_tempfiles ? out2filename_temp : out2filename, "w+b")) == NULL) {
             error_line ("can't create correction file!");
             DoCloseHandle (infile);
             DoCloseHandle (wv_file.file);
-            DoDeleteFile (outfilename);
+            DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
             WavpackCloseFile (wpc);
             return SOFT_ERROR;
         }
     }
 
-    // pack the audio portion of the file now
+    // pack the audio portion of the file now; calculate md5 if we're writing it to the file or verify mode is active
 
-    result = pack_audio (wpc, infile, new_channel_order);
+    result = pack_audio (wpc, infile, new_channel_order, ((loc_config.flags & CONFIG_MD5_CHECKSUM) || verify_mode) ? md5_digest : NULL);
+
+    if (new_channel_order)
+        free (new_channel_order);
+
+    // write the md5 sum if the user asked for it to be included
+
+    if (result == NO_ERROR && (loc_config.flags & CONFIG_MD5_CHECKSUM))
+        WavpackStoreMD5Sum (wpc, md5_digest);
 
     // if everything went well (and we're not ignoring length) try to read
     // anything else that might be appended to the audio data and write that
@@ -1788,7 +1948,7 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
         }
     }
 
-    // at this point we're done with the files, so close 'em whether there
+    // at this point we're completely done with the files, so close 'em whether there
     // were any other errors or not
 
     if (!DoCloseHandle (wv_file.file)) {
@@ -1805,23 +1965,83 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
             result = SOFT_ERROR;
     }
 
-    // if there were any errors, delete the output files, close the context,
-    // and return the error
+    // if there have been no errors up to now, and verify mode is enabled, do that now; only pass in the md5 if this
+    // was a lossless operation (either explicitly or because a high lossy bitrate resulted in lossless)
+
+    if (result == NO_ERROR && verify_mode)
+        result = verify_audio (use_tempfiles ? outfilename_temp : outfilename, !WavpackLossyBlocks (wpc) ? md5_digest : NULL);
+
+    // if there were any errors, delete the output files, close the context, and return the error
 
     if (result != NO_ERROR) {
-        DoDeleteFile (outfilename);
+        DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
 
         if (out2filename)
-            DoDeleteFile (out2filename);
+            DoDeleteFile (use_tempfiles ? out2filename_temp : out2filename);
 
         WavpackCloseFile (wpc);
         return result;
+    }
+
+    // if we were writing to a temp file because the target file already existed,
+    // do the rename / overwrite now (and if that fails, return the error)
+
+    if (use_tempfiles) {
+#if defined(WIN32)
+        FILE *temp;
+
+        if (remove (outfilename) && (temp = fopen (outfilename, "rb"))) {
+            error_line ("can not remove file %s, result saved in %s!", outfilename, outfilename_temp);
+            result = SOFT_ERROR;
+            fclose (temp);
+        }
+        else
+#endif
+        if (rename (outfilename_temp, outfilename)) {
+            error_line ("can not rename temp file %s to %s!", outfilename_temp, outfilename);
+            result = SOFT_ERROR;
+        }
+
+        if (out2filename) {
+#if defined(WIN32)
+            FILE *temp;
+
+            if (remove (out2filename) && (temp = fopen (out2filename, "rb"))) {
+                error_line ("can not remove file %s, result saved in %s!", out2filename, out2filename_temp);
+                result = SOFT_ERROR;
+                fclose (temp);
+            }
+            else
+#endif
+            if (rename (out2filename_temp, out2filename)) {
+                error_line ("can not rename temp file %s to %s!", out2filename_temp, out2filename);
+                result = SOFT_ERROR;
+            }
+        }
+
+        free (outfilename_temp);
+        if (out2filename) free (out2filename_temp);
+
+        if (result != NO_ERROR) {
+            WavpackCloseFile (wpc);
+            return result;
+        }
     }
 
     if (result == NO_ERROR && copy_time)
         if (!copy_timestamp (infilename, outfilename) ||
             (out2filename && !copy_timestamp (infilename, out2filename)))
                 error_line ("failure copying time stamp!");
+
+    // delete source file if that option is enabled
+
+    if (result == NO_ERROR && delete_source) {
+        int res = DoDeleteFile (infilename);
+
+        if (!quiet_mode || !res)
+            error_line ("%s source file %s", res ?
+                "deleted" : "can't delete", infilename);
+    }
 
     // compute and display the time consumed along with some other details of
     // the packing operation, and then return NO_ERROR
@@ -1854,10 +2074,20 @@ static int pack_file (char *infilename, char *outfilename, char *out2filename, c
     if (!quiet_mode) {
         char *file, *fext, *oper, *cmode, cratio [16] = "";
 
+        if (loc_config.flags & CONFIG_MD5_CHECKSUM) {
+            char md5_string [] = "original md5 signature: 00000000000000000000000000000000";
+            int i;
+
+            for (i = 0; i < 16; ++i)
+                sprintf (md5_string + 24 + (i * 2), "%02x", md5_digest [i]);
+
+            error_line (md5_string);
+        }
+
         if (outfilename && *outfilename != '-') {
             file = FN_FIT (outfilename);
             fext = wvc_file.bytes_written ? " (+.wvc)" : "";
-            oper = "created";
+            oper = verify_mode ? "created (and verified)" : "created";
         }
         else {
             file = (*infilename == '-') ? "stdin" : FN_FIT (infilename);
@@ -1896,7 +2126,7 @@ static void reorder_channels (void *data, unsigned char *new_order, int num_chan
 
 #define INPUT_SAMPLES 65536
 
-static int pack_audio (WavpackContext *wpc, FILE *infile, unsigned char *new_order)
+static int pack_audio (WavpackContext *wpc, FILE *infile, unsigned char *new_order, unsigned char *md5_digest_source)
 {
     uint32_t samples_remaining, input_samples = INPUT_SAMPLES, samples_read = 0;
     double progress = -1.0;
@@ -1910,7 +2140,7 @@ static int pack_audio (WavpackContext *wpc, FILE *infile, unsigned char *new_ord
     while (input_samples * sizeof (int32_t) * WavpackGetNumChannels (wpc) > 2048*1024)
         input_samples >>= 1;
 
-    if (do_md5_checksum)
+    if (md5_digest_source)
         MD5Init (&md5_context);
 
     WavpackPackInit (wpc);
@@ -1936,7 +2166,7 @@ static int pack_audio (WavpackContext *wpc, FILE *infile, unsigned char *new_ord
             reorder_channels (input_buffer, new_order, WavpackGetNumChannels (wpc),
                 sample_count, WavpackGetBytesPerSample (wpc));
 
-        if (do_md5_checksum)
+        if (md5_digest_source)
             MD5Update (&md5_context, input_buffer, sample_count * bytes_per_sample);
 
         if (!sample_count)
@@ -1989,19 +2219,22 @@ static int pack_audio (WavpackContext *wpc, FILE *infile, unsigned char *new_ord
         }
 
         if (check_break ()) {
+#if defined(WIN32)
             fprintf (stderr, "^C\n");
+#else
+            fprintf (stderr, "\n");
+#endif
             free (sample_buffer);
             free (input_buffer);
             return SOFT_ERROR;
         }
 
         if (WavpackGetProgress (wpc) != -1.0 &&
-            progress != floor (WavpackGetProgress (wpc) * 100.0 + 0.5)) {
+            progress != floor (WavpackGetProgress (wpc) * encode_time_percent + 0.5)) {
                 int nobs = progress == -1.0;
 
-                progress = WavpackGetProgress (wpc);
-                display_progress (progress);
-                progress = floor (progress * 100.0 + 0.5);
+                progress = floor (WavpackGetProgress (wpc) * encode_time_percent + 0.5);
+                display_progress (progress / 100.0);
 
                 if (!quiet_mode)
                     fprintf (stderr, "%s%3d%% done...",
@@ -2017,20 +2250,650 @@ static int pack_audio (WavpackContext *wpc, FILE *infile, unsigned char *new_ord
         return HARD_ERROR;
     }
 
-    if (do_md5_checksum) {
-        char md5_string [] = "original md5 signature: 00000000000000000000000000000000";
-        unsigned char md5_digest [16];
-        int i;
+    if (md5_digest_source)
+        MD5Final (md5_digest_source, &md5_context);
 
-        MD5Final (md5_digest, &md5_context);
+    return NO_ERROR;
+}
 
-        for (i = 0; i < 16; ++i)
-            sprintf (md5_string + 24 + (i * 2), "%02x", md5_digest [i]);
+// This function transcodes a single WavPack file "infilename" and stores the resulting
+// WavPack file at "outfilename". If "out2filename" is specified, then the "correction"
+// file would go there. The files are opened and closed in this function and the "config"
+// structure specifies the mode of compression. Note that lossy to lossless transcoding
+// is not allowed (no technical reason, it's just dumb, and could result in files that
+// fail their MD5 verification test).
 
-        if (!quiet_mode)
+static int repack_file (char *infilename, char *outfilename, char *out2filename, const WavpackConfig *config)
+{
+    int output_lossless = !(config->flags & CONFIG_HYBRID_FLAG) || (config->flags & CONFIG_CREATE_WVC);
+    int use_tempfiles = (out2filename != NULL), input_mode;
+    unsigned char md5_verify [16], md5_display [16];
+    char *outfilename_temp, *out2filename_temp;
+    uint32_t total_samples = 0, bcount;
+    WavpackConfig loc_config = *config;
+    WavpackContext *infile, *outfile;
+    write_id wv_file, wvc_file;
+    char error [80];
+    double dtime;
+    int result;
+
+#if defined(WIN32)
+    struct _timeb time1, time2;
+#else
+    struct timeval time1, time2;
+    struct timezone timez;
+#endif
+
+    // use library to open input WavPack file
+
+    infile = WavpackOpenFileInput (infilename, error, OPEN_WVC | OPEN_TAGS | OPEN_WRAPPER, 0);
+
+    if (!infile) {
+        error_line (error);
+        return SOFT_ERROR;
+    }
+
+    input_mode = WavpackGetMode (infile);
+
+    if (!(input_mode & MODE_LOSSLESS) && output_lossless) {
+        error_line ("can't transcode lossy file %s to lossless...not allowed!", infilename);
+        WavpackCloseFile (infile);
+        return SOFT_ERROR;
+    }
+
+    total_samples = WavpackGetNumSamples (infile);
+
+    if (total_samples == (uint32_t) -1) {
+        error_line ("can't transcode file %s of unknown length!", infilename);
+        WavpackCloseFile (infile);
+        return SOFT_ERROR;
+    }
+
+    // open an output context
+
+    CLEAR (wv_file);
+    CLEAR (wvc_file);
+    outfile = WavpackOpenFileOutput (write_block, &wv_file, out2filename ? &wvc_file : NULL);
+
+    // check both output files for overwrite warning required
+
+    if (*outfilename != '-' && (wv_file.file = fopen (outfilename, "rb")) != NULL) {
+        DoCloseHandle (wv_file.file);
+        use_tempfiles = 1;
+
+        if (!overwrite_all) {
+            if (output_lossless)
+                fprintf (stderr, "overwrite %s (yes/no/all)? ", FN_FIT (outfilename));
+            else
+                fprintf (stderr, "overwrite %s with lossy transcode (yes/no/all)? ", FN_FIT (outfilename));
+
+            if (!no_console_title)
+                DoSetConsoleTitle ("overwrite?");
+
+            switch (yna ()) {
+                case 'n':
+                    WavpackCloseFile (infile);
+                    WavpackCloseFile (outfile);
+                    return SOFT_ERROR;
+
+                case 'a':
+                    overwrite_all = 1;
+            }
+        }
+    }
+
+    if (out2filename && !overwrite_all && (wvc_file.file = fopen (out2filename, "rb")) != NULL) {
+        DoCloseHandle (wvc_file.file);
+        fprintf (stderr, "overwrite %s (yes/no/all)? ", FN_FIT (out2filename));
+
+        if (!no_console_title)
+            DoSetConsoleTitle ("overwrite?");
+
+        switch (yna ()) {
+
+            case 'n':
+                WavpackCloseFile (infile);
+                WavpackCloseFile (outfile);
+                return SOFT_ERROR;
+
+            case 'a':
+                overwrite_all = 1;
+        }
+    }
+
+    // if we are using temp files, either because the output filename already exists or we are creating a
+    // "correction" file, search for and generate the corresponding names here
+
+    if (use_tempfiles) {
+        FILE *testfile;
+        int count = 0;
+
+        outfilename_temp = malloc (strlen (outfilename) + 16);
+
+        if (out2filename)
+            out2filename_temp = malloc (strlen (outfilename) + 16);
+
+        while (1) {
+            strcpy (outfilename_temp, outfilename);
+
+            if (filespec_ext (outfilename_temp)) {
+                if (count++)
+                    sprintf (filespec_ext (outfilename_temp), ".tmp%d", count-1);
+                else
+                    strcpy (filespec_ext (outfilename_temp), ".tmp");
+
+                strcat (outfilename_temp, filespec_ext (outfilename));
+            }
+            else {
+                if (count++)
+                    sprintf (outfilename_temp + strlen (outfilename_temp), ".tmp%d", count-1);
+                else
+                    strcat (outfilename_temp, ".tmp");
+            }
+
+            testfile = fopen (outfilename_temp, "rb");
+
+            if (testfile) {
+                fclose (testfile);
+                continue;
+            }
+
+            if (out2filename) {
+                strcpy (out2filename_temp, outfilename_temp);
+                strcat (out2filename_temp, "c");
+
+                testfile = fopen (out2filename_temp, "rb");
+
+                if (testfile) {
+                    fclose (testfile);
+                    continue;
+                }
+            }   
+
+            break;
+        }
+    }
+
+#if defined(WIN32)
+    _ftime (&time1);
+#else
+    gettimeofday(&time1,&timez);
+#endif
+
+    // open output file for writing
+
+    if (*outfilename == '-') {
+        wv_file.file = stdout;
+#if defined(WIN32)
+        _setmode (fileno (stdout), O_BINARY);
+#endif
+#if defined(__OS2__)
+        setmode (fileno (stdout), O_BINARY);
+#endif
+    }
+    else if ((wv_file.file = fopen (use_tempfiles ? outfilename_temp : outfilename, "w+b")) == NULL) {
+        error_line ("can't create file %s!", use_tempfiles ? outfilename_temp : outfilename);
+        WavpackCloseFile (infile);
+        WavpackCloseFile (outfile);
+        return SOFT_ERROR;
+    }
+
+    if (!quiet_mode) {
+        if (*outfilename == '-')
+            fprintf (stderr, "packing %s to stdout,", *infilename == '-' ? "stdin" : FN_FIT (infilename));
+        else if (out2filename)
+            fprintf (stderr, "creating %s (+%s),", FN_FIT (outfilename), filespec_ext (out2filename));
+        else
+            fprintf (stderr, "creating %s,", FN_FIT (outfilename));
+    }
+
+#if defined (WIN32)
+    if (loc_config.flags & CONFIG_CREATE_EXE)
+        if (!DoWriteFile (wv_file.file, wvselfx_image, wvselfx_size, &bcount) || bcount != wvselfx_size) {
+            error_line ("can't write WavPack data, disk probably full!");
+            WavpackCloseFile (infile);
+            DoCloseHandle (wv_file.file);
+            DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
+            WavpackCloseFile (outfile);
+            return SOFT_ERROR;
+        }
+#endif
+
+    // unless we've been specifically told not to, copy RIFF header
+
+    if (!new_riff_header && WavpackGetWrapperBytes (infile)) {
+        if (!WavpackAddWrapper (outfile, WavpackGetWrapperData (infile), WavpackGetWrapperBytes (infile))) {
+            error_line ("%s", WavpackGetErrorMessage (outfile));
+            WavpackCloseFile (infile);
+            DoCloseHandle (wv_file.file);
+            DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
+            WavpackCloseFile (outfile);
+            return SOFT_ERROR;
+        }
+
+        WavpackFreeWrapper (infile);
+    }
+
+    loc_config.bytes_per_sample = WavpackGetBytesPerSample (infile);
+    loc_config.bits_per_sample = WavpackGetBitsPerSample (infile);
+    loc_config.channel_mask = WavpackGetChannelMask (infile);
+    loc_config.num_channels = WavpackGetNumChannels (infile);
+    loc_config.sample_rate = WavpackGetSampleRate (infile);
+
+    if (input_mode & MODE_FLOAT)
+        loc_config.float_norm_exp = WavpackGetFloatNormExp (infile);
+
+    if (input_mode & MODE_MD5)
+        loc_config.flags |= CONFIG_MD5_CHECKSUM;
+
+    if (!WavpackSetConfiguration (outfile, &loc_config, total_samples)) {
+        error_line ("%s", WavpackGetErrorMessage (outfile));
+        WavpackCloseFile (infile);
+        DoCloseHandle (wv_file.file);
+        DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
+        WavpackCloseFile (outfile);
+        return SOFT_ERROR;
+    }
+
+    // if we are creating a "correction" file, open it now for writing
+
+    if (out2filename) {
+        if ((wvc_file.file = fopen (use_tempfiles ? out2filename_temp : out2filename, "w+b")) == NULL) {
+            error_line ("can't create correction file!");
+            WavpackCloseFile (infile);
+            DoCloseHandle (wv_file.file);
+            DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
+            WavpackCloseFile (outfile);
+            return SOFT_ERROR;
+        }
+    }
+
+    // pack the audio portion of the file now; calculate md5 if we're writing it to the file or verify mode is active
+
+    result = repack_audio (outfile, infile, md5_verify);
+
+    // before anything else, make sure the source file was read without errors
+
+    if (result == NO_ERROR) {
+        if (WavpackGetNumErrors (infile)) {
+            error_line ("missing data or crc errors detected in %d block(s)!", WavpackGetNumErrors (infile));
+            result = SOFT_ERROR;
+        }
+
+        if (WavpackGetNumSamples (outfile) != total_samples) {
+            error_line ("incorrect number of samples read from source file!");
+            result = SOFT_ERROR;
+        }
+
+        if (input_mode & MODE_LOSSLESS) {
+            unsigned char md5_source [16];
+
+            if (WavpackGetMD5Sum (infile, md5_source) && memcmp (md5_source, md5_verify, sizeof (md5_source))) {
+                error_line ("MD5 signature in source should match, but does not!");
+                result = SOFT_ERROR;
+            }
+        }
+    }
+
+    // copy the md5 sum if present in source; if there's not one there and the user asked to add it,
+    // store the one we just calculated
+
+    if (result == NO_ERROR) {
+        if (WavpackGetMD5Sum (infile, md5_display)) {
+            if (input_mode & MODE_LOSSLESS)
+                memcpy (md5_verify, md5_display, sizeof (md5_verify));
+                
+            WavpackStoreMD5Sum (outfile, md5_display);
+        }
+        else if (loc_config.flags & CONFIG_MD5_CHECKSUM) {
+            memcpy (md5_display, md5_verify, sizeof (md5_display));
+            WavpackStoreMD5Sum (outfile, md5_verify);
+        }
+    }
+
+    // unless we've been specifically told not to, copy RIFF trailer
+
+    if (result == NO_ERROR && !new_riff_header && WavpackGetWrapperBytes (infile)) {
+        if (!WavpackAddWrapper (outfile, WavpackGetWrapperData (infile), WavpackGetWrapperBytes (infile))) {
+            error_line ("%s", WavpackGetErrorMessage (outfile));
+            WavpackCloseFile (infile);
+            DoCloseHandle (wv_file.file);
+            DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
+            WavpackCloseFile (outfile);
+            return SOFT_ERROR;
+        }
+
+        WavpackFreeWrapper (infile);
+    }
+
+    // we're now done with any WavPack blocks, so flush any remaining data
+
+    if (result == NO_ERROR && !WavpackFlushSamples (outfile)) {
+        error_line ("%s", WavpackGetErrorMessage (outfile));
+        result = HARD_ERROR;
+    }
+
+    // if still no errors, check to see if we need to create & write a tag
+    // (which is NOT stored in regular WavPack blocks)
+
+    if (result == NO_ERROR && ((input_mode & MODE_VALID_TAG) || num_tag_items)) {
+        int num_binary_items = WavpackGetNumBinaryTagItems (infile);
+        int num_items = WavpackGetNumTagItems (infile), i;
+        int item_len, value_len;
+        char *item, *value;
+        int res = TRUE;
+
+        for (i = 0; i < num_items && res; ++i) {
+            item_len = WavpackGetTagItemIndexed (infile, i, NULL, 0);
+            item = malloc (item_len + 1);
+            WavpackGetTagItemIndexed (infile, i, item, item_len + 1);
+            value_len = WavpackGetTagItem (infile, item, NULL, 0);
+            value = malloc (value_len * 2 + 1);
+            WavpackGetTagItem (infile, item, value, value_len + 1);
+            res = WavpackAppendTagItem (outfile, item, value, value_len);
+            free (value);
+            free (item);
+        }
+
+        for (i = 0; i < num_binary_items && res; ++i) {
+            item_len = WavpackGetBinaryTagItemIndexed (infile, i, NULL, 0);
+            item = malloc (item_len + 1);
+            WavpackGetBinaryTagItemIndexed (infile, i, item, item_len + 1);
+            value_len = WavpackGetBinaryTagItem (infile, item, NULL, 0);
+            value = malloc (value_len);
+            value_len = WavpackGetBinaryTagItem (infile, item, value, value_len);
+            res = WavpackAppendBinaryTagItem (outfile, item, value, value_len);
+            free (value);
+            free (item);
+        }
+
+        for (i = 0; i < num_tag_items && res; ++i)
+            if (tag_items [i].vsize) {
+                if (tag_items [i].binary) 
+                    res = WavpackAppendBinaryTagItem (outfile, tag_items [i].item, tag_items [i].value, tag_items [i].vsize);
+                else
+                    res = WavpackAppendTagItem (outfile, tag_items [i].item, tag_items [i].value, tag_items [i].vsize);
+            }
+            else
+                WavpackDeleteTagItem (outfile, tag_items [i].item);
+
+        if (!res || !WavpackWriteTag (outfile)) {
+            error_line ("%s", WavpackGetErrorMessage (outfile));
+            result = HARD_ERROR;
+        }
+    }
+
+    WavpackCloseFile (infile);     // we're now done with input file, so close
+
+    // at this point we're completely done with the files, so close 'em whether there
+    // were any other errors or not
+
+    if (!DoCloseHandle (wv_file.file)) {
+        error_line ("can't close WavPack file!");
+
+        if (result == NO_ERROR)
+            result = SOFT_ERROR;
+    }
+
+    if (out2filename && !DoCloseHandle (wvc_file.file)) {
+        error_line ("can't close correction file!");
+
+        if (result == NO_ERROR)
+            result = SOFT_ERROR;
+    }
+
+    // if there have been no errors up to now, and verify mode is enabled, do that now; only pass in the md5 if this
+    // was a lossless operation (either explicitly or because a high lossy bitrate resulted in lossless)
+
+    if (result == NO_ERROR && verify_mode)
+        result = verify_audio (use_tempfiles ? outfilename_temp : outfilename, !WavpackLossyBlocks (outfile) ? md5_verify : NULL);
+
+    // if there were any errors, delete the output files, close the context, and return the error
+
+    if (result != NO_ERROR) {
+        DoDeleteFile (use_tempfiles ? outfilename_temp : outfilename);
+
+        if (out2filename)
+            DoDeleteFile (use_tempfiles ? out2filename_temp : out2filename);
+
+        WavpackCloseFile (outfile);
+        return result;
+    }
+
+    if (result == NO_ERROR && copy_time)
+        if (!copy_timestamp (infilename, use_tempfiles ? outfilename_temp : outfilename) ||
+            (out2filename && !copy_timestamp (infilename, use_tempfiles ? out2filename_temp : out2filename)))
+                error_line ("failure copying time stamp!");
+
+    // delete source file(s) if that option is enabled (this is done before temp file rename to make sure
+    // we don't delete the file(s) we just created)
+
+    if (result == NO_ERROR && delete_source) {
+        int res;
+
+        if (stricmp (infilename, outfilename)) {
+            res = DoDeleteFile (infilename);
+
+            if (!quiet_mode || !res)
+                error_line ("%s source file %s", res ?
+                    "deleted" : "can't delete", infilename);
+        }
+    
+        if (input_mode & MODE_WVC) {
+            char in2filename [PATH_MAX];
+
+            strcpy (in2filename, infilename);
+            strcat (in2filename, "c");
+
+            if (!out2filename || stricmp (in2filename, out2filename)) {
+                res = DoDeleteFile (in2filename);
+
+                if (!quiet_mode || !res)
+                    error_line ("%s source file %s", res ?
+                        "deleted" : "can't delete", in2filename);
+            }
+        }
+    }
+
+    // if we were writing to a temp file because the target file already existed,
+    // do the rename / overwrite now (and if that fails, return the error)
+
+    if (use_tempfiles) {
+#if defined(WIN32)
+        FILE *temp;
+
+        if (remove (outfilename) && (temp = fopen (outfilename, "rb"))) {
+            error_line ("can not remove file %s, result saved in %s!", outfilename, outfilename_temp);
+            result = SOFT_ERROR;
+            fclose (temp);
+        }
+        else
+#endif
+        if (rename (outfilename_temp, outfilename)) {
+            error_line ("can not rename temp file %s to %s!", outfilename_temp, outfilename);
+            result = SOFT_ERROR;
+        }
+
+        if (out2filename) {
+#if defined(WIN32)
+            FILE *temp;
+
+            if (remove (out2filename) && (temp = fopen (out2filename, "rb"))) {
+                error_line ("can not remove file %s, result saved in %s!", out2filename, out2filename_temp);
+                result = SOFT_ERROR;
+                fclose (temp);
+            }
+            else
+#endif
+            if (rename (out2filename_temp, out2filename)) {
+                error_line ("can not rename temp file %s to %s!", out2filename_temp, out2filename);
+                result = SOFT_ERROR;
+            }
+        }
+
+        free (outfilename_temp);
+        if (out2filename) free (out2filename_temp);
+
+        if (result != NO_ERROR) {
+            WavpackCloseFile (outfile);
+            return result;
+        }
+    }
+
+    // compute and display the time consumed along with some other details of
+    // the packing operation, and then return NO_ERROR
+
+#if defined(WIN32)
+    _ftime (&time2);
+    dtime = time2.time + time2.millitm / 1000.0;
+    dtime -= time1.time + time1.millitm / 1000.0;
+#else
+    gettimeofday(&time2,&timez);
+    dtime = time2.tv_sec + time2.tv_usec / 1000000.0;
+    dtime -= time1.tv_sec + time1.tv_usec / 1000000.0;
+#endif
+
+    if ((loc_config.flags & CONFIG_CALC_NOISE) && WavpackGetEncodedNoise (outfile, NULL) > 0.0) {
+        int full_scale_bits = WavpackGetBitsPerSample (outfile);
+        double full_scale_rms = 0.5, sum, peak;
+
+        while (full_scale_bits--)
+            full_scale_rms *= 2.0;
+
+        full_scale_rms = full_scale_rms * (full_scale_rms - 1.0) * 0.5;
+        sum = WavpackGetEncodedNoise (outfile, &peak);
+
+        error_line ("ave noise = %.2f dB, peak noise = %.2f dB",
+            log10 (sum / WavpackGetNumSamples (outfile) / full_scale_rms) * 10,
+            log10 (peak / full_scale_rms) * 10);
+    }
+
+    if (!quiet_mode) {
+        char *file, *fext, *oper, *cmode, cratio [16] = "";
+
+        if (config->flags & CONFIG_MD5_CHECKSUM) {
+            char md5_string [] = "original md5 signature: 00000000000000000000000000000000";
+            int i;
+
+            for (i = 0; i < 16; ++i)
+                sprintf (md5_string + 24 + (i * 2), "%02x", md5_display [i]);
+
             error_line (md5_string);
+        }
 
-        WavpackStoreMD5Sum (wpc, md5_digest);
+        if (outfilename && *outfilename != '-') {
+            file = FN_FIT (outfilename);
+            fext = wvc_file.bytes_written ? " (+.wvc)" : "";
+            oper = verify_mode ? "created (and verified)" : "created";
+        }
+        else {
+            file = (*infilename == '-') ? "stdin" : FN_FIT (infilename);
+            fext = "";
+            oper = "packed";
+        }
+
+        if (WavpackLossyBlocks (outfile)) {
+            cmode = "lossy";
+
+            if (WavpackGetAverageBitrate (outfile, TRUE) != 0.0)
+                sprintf (cratio, ", %d kbps", (int) (WavpackGetAverageBitrate (outfile, TRUE) / 1000.0));
+        }
+        else {
+            cmode = "lossless";
+
+            if (WavpackGetRatio (outfile) != 0.0)
+                sprintf (cratio, ", %.2f%%", 100.0 - WavpackGetRatio (outfile) * 100.0);
+        }
+
+        error_line ("%s %s%s in %.2f secs (%s%s)", oper, file, fext, dtime, cmode, cratio);
+    }
+
+    WavpackCloseFile (outfile);
+    return NO_ERROR;
+}
+
+// This function handles the actual audio data transcoding. It assumes that the
+// input file is positioned at the beginning of the audio data and that the
+// WavPack configuration has been set. If the "md5_digest_source" pointer is not
+// NULL, then a MD5 sum is calculated on the audio data during the transcoding
+// and stored there at the completion. Note that the md5 requires a conversion
+// to the native data format (endianness and bytes per sample) that is not
+// required overwise.
+
+static unsigned char *format_samples (int bps, unsigned char *dst, int32_t *src, uint32_t samcnt);
+
+static int repack_audio (WavpackContext *outfile, WavpackContext *infile, unsigned char *md5_digest_source)
+{
+    int bps = WavpackGetBytesPerSample (infile), num_channels = WavpackGetNumChannels (infile);
+    uint32_t input_samples = INPUT_SAMPLES, samples_read = 0;
+    unsigned char *format_buffer;
+    int32_t *sample_buffer;
+    double progress = -1.0;
+    MD5_CTX md5_context;
+
+    // don't use an absurd amount of memory just because we have an absurd number of channels
+
+    while (input_samples * sizeof (int32_t) * WavpackGetNumChannels (outfile) > 2048*1024)
+        input_samples >>= 1;
+
+    if (md5_digest_source) {
+        format_buffer = malloc (input_samples * bps * WavpackGetNumChannels (outfile));
+        MD5Init (&md5_context);
+    }
+
+    WavpackPackInit (outfile);
+    sample_buffer = malloc (input_samples * sizeof (int32_t) * WavpackGetNumChannels (outfile));
+
+    while (1) {
+        unsigned int sample_count = WavpackUnpackSamples (infile, sample_buffer, input_samples);
+
+        if (!sample_count)
+            break;
+
+        if (md5_digest_source) {
+            format_samples (bps, format_buffer, sample_buffer, sample_count * num_channels);
+            MD5Update (&md5_context, format_buffer, bps * sample_count * num_channels);
+        }
+
+        if (!WavpackPackSamples (outfile, sample_buffer, sample_count)) {
+            error_line ("%s", WavpackGetErrorMessage (outfile));
+            free (sample_buffer);
+            return HARD_ERROR;
+        }
+
+        if (check_break ()) {
+#if defined(WIN32)
+            fprintf (stderr, "^C\n");
+#else
+            fprintf (stderr, "\n");
+#endif
+            free (sample_buffer);
+            return SOFT_ERROR;
+        }
+
+        if (WavpackGetProgress (outfile) != -1.0 &&
+            progress != floor (WavpackGetProgress (outfile) * encode_time_percent + 0.5)) {
+                int nobs = progress == -1.0;
+
+                progress = floor (WavpackGetProgress (outfile) * encode_time_percent + 0.5);
+                display_progress (progress / 100.0);
+
+                if (!quiet_mode)
+                    fprintf (stderr, "%s%3d%% done...",
+                        nobs ? " " : "\b\b\b\b\b\b\b\b\b\b\b\b", (int) progress);
+        }
+    }
+
+    free (sample_buffer);
+
+    if (!WavpackFlushSamples (outfile)) {
+        error_line ("%s", WavpackGetErrorMessage (outfile));
+        return HARD_ERROR;
+    }
+
+    if (md5_digest_source) {
+        MD5Final (md5_digest_source, &md5_context);
+        free (format_buffer);
     }
 
     return NO_ERROR;
@@ -2060,6 +2923,183 @@ static void reorder_channels (void *data, unsigned char *order, int num_chans,
     free (temp);
 }
 
+// Verify the specified WavPack input file. This function uses the library
+// routines provided in wputils.c to do all unpacking. If an MD5 sum is provided
+// by the caller, then this function will take care of reformatting the data
+// (which is returned in native-endian longs) to the standard little-endian
+// for a proper MD5 verification. Otherwise a lossy verification is assumed,
+// and we only verify the exact number of samples and whether the decoding
+// library detected CRC errors in any WavPack blocks.
+
+static int verify_audio (char *infilename, unsigned char *md5_digest_source)
+{
+    int bytes_per_sample, num_channels, wvc_mode, bps;
+    uint32_t total_unpacked_samples = 0;
+    unsigned char md5_digest_result [16];
+    double progress = -1.0;
+    int result = NO_ERROR;
+    int32_t *temp_buffer;
+    MD5_CTX md5_context;
+    WavpackContext *wpc;
+    char error [80];
+
+    // use library to open WavPack file
+
+    wpc = WavpackOpenFileInput (infilename, error, OPEN_WVC, 0);
+
+    if (!wpc) {
+        error_line (error);
+        return SOFT_ERROR;
+    }
+
+    if (md5_digest_source)
+        MD5Init (&md5_context);
+
+    wvc_mode = WavpackGetMode (wpc) & MODE_WVC;
+    num_channels = WavpackGetNumChannels (wpc);
+    bps = WavpackGetBytesPerSample (wpc);
+    bytes_per_sample = num_channels * bps;
+    temp_buffer = malloc (4096L * num_channels * 4);
+
+    while (result == NO_ERROR) {
+        uint32_t samples_unpacked;
+
+        samples_unpacked = WavpackUnpackSamples (wpc, temp_buffer, 4096);
+        total_unpacked_samples += samples_unpacked;
+
+        if (md5_digest_source && samples_unpacked) {
+            format_samples (bps, (unsigned char *) temp_buffer, temp_buffer, samples_unpacked * num_channels);
+            MD5Update (&md5_context, (unsigned char *) temp_buffer, bps * samples_unpacked * num_channels);
+        }
+
+        if (!samples_unpacked)
+            break;
+
+        if (check_break ()) {
+#if defined(WIN32)
+            fprintf (stderr, "^C\n");
+#else
+            fprintf (stderr, "\n");
+#endif
+            result = SOFT_ERROR;
+            break;
+        }
+
+        if (WavpackGetProgress (wpc) != -1.0 &&
+            progress != floor (WavpackGetProgress (wpc) * (100.0 - encode_time_percent) + encode_time_percent + 0.5)) {
+
+                progress = floor (WavpackGetProgress (wpc) * (100.0 - encode_time_percent) + encode_time_percent + 0.5);
+                display_progress (progress / 100.0);
+
+                if (!quiet_mode)
+                    fprintf (stderr, "%s%3d%% done...",
+                        "\b\b\b\b\b\b\b\b\b\b\b\b", (int) progress);
+        }
+    }
+
+    free (temp_buffer);
+
+    // If we have been provided an MD5 sum, then the assumption is that we are doing lossless compression (either explicitly
+    // with lossless mode or having a high enough bitrate that the result is lossless) and we can use the MD5 sum as a pretty
+    // definitive verification.
+
+    if (result == NO_ERROR && md5_digest_source) {
+        MD5Final (md5_digest_result, &md5_context);
+
+        if (memcmp (md5_digest_result, md5_digest_source, 16)) {
+            char md5_string1 [] = "00000000000000000000000000000000";
+            char md5_string2 [] = "00000000000000000000000000000000";
+            int i;
+
+            for (i = 0; i < 16; ++i) {
+                sprintf (md5_string1 + (i * 2), "%02x", md5_digest_source [i]);
+                sprintf (md5_string2 + (i * 2), "%02x", md5_digest_result [i]);
+            }
+
+            error_line ("original md5: %s", md5_string1);
+            error_line ("verified md5: %s", md5_string2);
+            error_line ("MD5 signatures should match, but do not!");
+            result = SOFT_ERROR;
+        }
+    }
+
+    // If we have not been provided an MD5 sum, then the assumption is that we are doing lossy compression and cannot rely
+    // (obviously) on that for verification. For these cases we make sure that the number of samples generated was exactly
+    // correct and that the WavPack decoding library did not detect an error. There is a simple CRC on every WavPack block
+    // that should catch any random corruption, although it's possible that this might miss some decoder bug that occurs
+    // late in the decoding process (e.g., after the CRC).
+
+    if (result == NO_ERROR) {
+        if (WavpackGetNumSamples (wpc) != (uint32_t) -1) {
+            if (total_unpacked_samples < WavpackGetNumSamples (wpc)) {
+                error_line ("file is missing %u samples!",
+                    WavpackGetNumSamples (wpc) - total_unpacked_samples);
+                result = SOFT_ERROR;
+            }
+            else if (total_unpacked_samples > WavpackGetNumSamples (wpc)) {
+                error_line ("file has %u extra samples!",
+                    total_unpacked_samples - WavpackGetNumSamples (wpc));
+                result = SOFT_ERROR;
+            }
+        }
+
+        if (WavpackGetNumErrors (wpc)) {
+            error_line ("missing data or crc errors detected in %d block(s)!", WavpackGetNumErrors (wpc));
+            result = SOFT_ERROR;
+        }
+    }
+
+    WavpackCloseFile (wpc);
+    return result;
+}
+
+// Reformat samples from longs in processor's native endian mode to
+// little-endian data with (possibly) less than 4 bytes / sample.
+
+static unsigned char *format_samples (int bps, unsigned char *dst, int32_t *src, uint32_t samcnt)
+{
+    int32_t temp;
+
+    switch (bps) {
+
+        case 1:
+            while (samcnt--)
+                *dst++ = *src++ + 128;
+
+            break;
+
+        case 2:
+            while (samcnt--) {
+                *dst++ = (unsigned char) (temp = *src++);
+                *dst++ = (unsigned char) (temp >> 8);
+            }
+
+            break;
+
+        case 3:
+            while (samcnt--) {
+                *dst++ = (unsigned char) (temp = *src++);
+                *dst++ = (unsigned char) (temp >> 8);
+                *dst++ = (unsigned char) (temp >> 16);
+            }
+
+            break;
+
+        case 4:
+            while (samcnt--) {
+                *dst++ = (unsigned char) (temp = *src++);
+                *dst++ = (unsigned char) (temp >> 8);
+                *dst++ = (unsigned char) (temp >> 16);
+                *dst++ = (unsigned char) (temp >> 24);
+            }
+
+            break;
+    }
+
+    return dst;
+}
+#if defined(WIN32)
+
 // Convert the Unicode wide-format string into a UTF-8 string using no more
 // than the specified buffer length. The wide-format string must be NULL
 // terminated and the resulting string will be NULL terminated. The actual
@@ -2067,11 +3107,9 @@ static void reorder_channels (void *data, unsigned char *order, int num_chans,
 // may be less than the number of characters in the wide string if the buffer
 // length is exceeded.
 
-#if defined(WIN32)
-
-static int WideCharToUTF8 (const unsigned short *Wide, unsigned char *pUTF8, int len)
+static int WideCharToUTF8 (const wchar_t *Wide, unsigned char *pUTF8, int len)
 {
-    const unsigned short *pWide = Wide;
+    const wchar_t *pWide = Wide;
     int outndx = 0;
 
     while (*pWide) {
@@ -2094,27 +3132,38 @@ static int WideCharToUTF8 (const unsigned short *Wide, unsigned char *pUTF8, int
     return (int)(pWide - Wide);
 }
 
-#endif
-
-// Convert a Ansi string into its Unicode UTF-8 format equivalent. The
+// Convert a text string into its Unicode UTF-8 format equivalent. The
 // conversion is done in-place so the maximum length of the string buffer must
 // be specified because the string may become longer or shorter. If the
 // resulting string will not fit in the specified buffer size then it is
 // truncated.
 
-static void AnsiToUTF8 (char *string, int len)
+static void TextToUTF8 (void *string, int len)
 {
-    int max_chars = (int) strlen (string);
-#if defined(WIN32)
-    unsigned short *temp = (unsigned short *) malloc ((max_chars + 1) * 2);
+    if (* (wchar_t *) string == 0xFEFF) {
+        wchar_t *temp = _wcsdup (string);
 
-    MultiByteToWideChar (CP_ACP, 0, string, -1, temp, max_chars + 1);
-    WideCharToUTF8 (temp, (unsigned char *) string, len);
+        WideCharToUTF8 (temp + 1, (unsigned char *) string, len);
+        free (temp);
+    }
+    else {
+        int max_chars = (int) strlen (string);
+        wchar_t *temp = (wchar_t *) malloc ((max_chars + 1) * 2);
+
+        MultiByteToWideChar (CP_ACP, 0, string, -1, temp, max_chars + 1);
+        WideCharToUTF8 (temp, (unsigned char *) string, len);
+        free (temp);
+    }
+}
+
 #else
+
+static void TextToUTF8 (void *string, int len)
+{
     char *temp = malloc (len);
     char *outp = temp;
     char *inp = string;
-    size_t insize = max_chars;
+    size_t insize = 0;
     size_t outsize = len - 1;
     int err = 0;
     char *old_locale;
@@ -2122,7 +3171,19 @@ static void AnsiToUTF8 (char *string, int len)
 
     memset(temp, 0, len);
     old_locale = setlocale (LC_CTYPE, "");
-    converter = iconv_open ("UTF-8", "");
+
+    if ((unsigned char) inp [0] == 0xFF && (unsigned char) inp [1] == 0xFE) {
+        uint16_t *utf16p = (uint16_t *) (inp += 2);
+
+        while (*utf16p++)
+            insize += 2;
+
+        converter = iconv_open ("UTF-8", "UTF-16LE");
+    }
+    else {
+        insize = strlen (string);
+        converter = iconv_open ("UTF-8", "");
+    }
 
     if (converter != (iconv_t) -1) {
         err = iconv (converter, &inp, &insize, &outp, &outsize);
@@ -2139,9 +3200,10 @@ static void AnsiToUTF8 (char *string, int len)
     }
 
     memmove (string, temp, len);
-#endif
     free (temp);
 }
+
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // This function displays the progress status on the title bar of the DOS   //
@@ -2154,9 +3216,9 @@ static void display_progress (double file_progress)
 {
     char title [40];
 
-    file_progress = (file_index + file_progress) / num_files;
-    sprintf (title, "%d%% (WavPack)", (int) ((file_progress * 100.0) + 0.5));
-#if defined(WIN32)
-    SetConsoleTitle (title);
-#endif
+    if (!no_console_title) {
+        file_progress = (file_index + file_progress) / num_files;
+        sprintf (title, "%d%% (WavPack)", (int) ((file_progress * 100.0) + 0.5));
+        DoSetConsoleTitle (title);
+    }
 }

@@ -1585,7 +1585,7 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
 
     if (wps->dc.shaping_data) {
         if (wps->dc.shaping_samples != sample_count)
-            memcpy (wps->dc.shaping_data, wps->dc.shaping_data + sample_count,
+            memmove (wps->dc.shaping_data, wps->dc.shaping_data + sample_count,
                 (wps->dc.shaping_samples - sample_count) * sizeof (*wps->dc.shaping_data));
 
         wps->dc.shaping_samples -= sample_count;

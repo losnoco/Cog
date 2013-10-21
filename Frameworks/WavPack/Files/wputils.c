@@ -38,7 +38,7 @@
 #define stricmp(x,y) _stricmp(x,y)
 #define fileno _fileno
 #else
-#define stricmp(x,y) strcasecmp(x,y)
+#define stricmp strcasecmp
 #endif
 
 #ifdef DEBUG_ALLOC
@@ -170,7 +170,7 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 #endif
     }
     else if ((wv_id = fopen (infilename, file_mode)) == NULL) {
-        strcpy (error, (flags & OPEN_EDIT_TAGS) ? "can't open file for editing" : "can't open file");
+        if (error) strcpy (error, (flags & OPEN_EDIT_TAGS) ? "can't open file for editing" : "can't open file");
         return NULL;
     }
 
@@ -219,7 +219,7 @@ WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id
     uint32_t bcount;
 
     if (!wpc) {
-        strcpy (error, "can't allocate memory");
+        if (error) strcpy (error, "can't allocate memory");
         return NULL;
     }
 
@@ -238,12 +238,17 @@ WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id
     if ((flags & (OPEN_TAGS | OPEN_EDIT_TAGS)) && wpc->reader->can_seek (wpc->wv_in)) {
         load_tag (wpc);
         wpc->reader->set_pos_abs (wpc->wv_in, 0);
+
+        if ((flags & OPEN_EDIT_TAGS) && !editable_tag (&wpc->m_tag)) {
+            if (error) strcpy (error, "can't edit tags located at the beginning of files!");
+            return WavpackCloseFile (wpc);
+        }
     }
 #endif
 
 #ifndef VER4_ONLY
     if (wpc->reader->read_bytes (wpc->wv_in, &first_byte, 1) != 1) {
-        strcpy (error, "can't read all of WavPack file!");
+        if (error) strcpy (error, "can't read all of WavPack file!");
         return WavpackCloseFile (wpc);
     }
 
@@ -264,7 +269,7 @@ WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id
 
         if (bcount == (uint32_t) -1 ||
             (!wps->wphdr.block_samples && num_blocks++ > 16)) {
-                strcpy (error, "not compatible with this version of WavPack file!");
+                if (error) strcpy (error, "not compatible with this version of WavPack file!");
                 return WavpackCloseFile (wpc);
         }
 
@@ -273,7 +278,7 @@ WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id
         memcpy (wps->blockbuff, &wps->wphdr, 32);
 
         if (wpc->reader->read_bytes (wpc->wv_in, wps->blockbuff + 32, wps->wphdr.ckSize - 24) != wps->wphdr.ckSize - 24) {
-            strcpy (error, "can't read all of WavPack file!");
+            if (error) strcpy (error, "can't read all of WavPack file!");
             return WavpackCloseFile (wpc);
         }
 
@@ -304,12 +309,12 @@ WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id
         }
 
         if (wpc->wvc_flag && !read_wvc_block (wpc)) {
-            strcpy (error, "not compatible with this version of correction file!");
+            if (error) strcpy (error, "not compatible with this version of correction file!");
             return WavpackCloseFile (wpc);
         }
 
         if (!wps->init_done && !unpack_init (wpc)) {
-            strcpy (error, wpc->error_message [0] ? wpc->error_message :
+            if (error) strcpy (error, wpc->error_message [0] ? wpc->error_message :
                 "not compatible with this version of WavPack file!");
 
             return WavpackCloseFile (wpc);
@@ -327,7 +332,7 @@ WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id
         ((wps->wphdr.flags & SHIFT_MASK) >> SHIFT_LSB);
 
     if (!wpc->config.sample_rate) {
-        if (!wps || !wps->wphdr.block_samples || (wps->wphdr.flags & SRATE_MASK) == SRATE_MASK)
+        if (!wps->wphdr.block_samples || (wps->wphdr.flags & SRATE_MASK) == SRATE_MASK)
             wpc->config.sample_rate = 44100;
         else
             wpc->config.sample_rate = sample_rates [(wps->wphdr.flags & SRATE_MASK) >> SRATE_LSB];
@@ -478,15 +483,19 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
         if (!wps->wphdr.block_samples || !(wps->wphdr.flags & INITIAL_BLOCK) ||
             wps->sample_index >= wps->wphdr.block_index + wps->wphdr.block_samples) {
 
+                uint32_t nexthdrpos;
+
                 if (wpc->wrapper_bytes >= MAX_WRAPPER_BYTES)
                     break;
 
                 free_streams (wpc);
-                wpc->filepos = wpc->reader->get_pos (wpc->wv_in);
+                nexthdrpos = wpc->reader->get_pos (wpc->wv_in);
                 bcount = read_next_header (wpc->reader, wpc->wv_in, &wps->wphdr);
 
                 if (bcount == (uint32_t) -1)
                     break;
+
+                wpc->filepos = nexthdrpos;
 
                 if (wpc->open_flags & OPEN_STREAMING)
                     wps->wphdr.block_index = wps->sample_index = 0;
@@ -1396,7 +1405,7 @@ static int pack_streams (WavpackContext *wpc, uint32_t block_samples)
         }
 
         if (wpc->acc_samples != block_samples)
-            memcpy (wps->sample_buffer, wps->sample_buffer + block_samples * (flags & MONO_FLAG ? 1 : 2),
+            memmove (wps->sample_buffer, wps->sample_buffer + block_samples * (flags & MONO_FLAG ? 1 : 2),
                 (wpc->acc_samples - block_samples) * sizeof (int32_t) * (flags & MONO_FLAG ? 1 : 2));
     }
 
@@ -2233,7 +2242,7 @@ static uint32_t find_header (WavpackStreamReader *reader, void *id, uint32_t fil
 
                     if (wphdr->block_samples && (wphdr->flags & INITIAL_BLOCK)) {
                         free (buffer);
-                        return reader->get_pos (id) - (ep - sp + 4);
+                        return (uint32_t) (reader->get_pos (id) - (ep - sp + 4));
                     }
 
                     if (wphdr->ckSize > 1024)

@@ -12,6 +12,7 @@
 // utilities and the self-extraction module.
 
 #if defined(WIN32)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <io.h>
 #include <conio.h>
@@ -139,7 +140,7 @@ char *filespec_ext (char *filespec)
 
     while (--cp >= filespec) {
 
-        if (*cp == '/' || *cp == ':')
+        if (*cp == '/')
             return NULL;
 
         if (*cp == '.') {
@@ -175,7 +176,7 @@ char *filespec_path (char *filespec)
     if (cp == filespec || filespec_wild (filespec))
         return NULL;
 
-    if (*--cp == '/' || *cp == ':')
+    if (*--cp == '/')
         return filespec;
 
     if (*cp == '.' && cp == filespec)
@@ -276,7 +277,7 @@ char *filespec_name (char *filespec)
     char *cp = filespec + strlen (filespec);
 
     while (--cp >= filespec)
-        if (*cp == '/' || *cp == ':')
+        if (*cp == '/')
             break;
 
     if (strlen (cp + 1))
@@ -331,6 +332,10 @@ char yna (void)
 #endif
         if (key == 3) {
             fprintf (stderr, "^C\n");
+            exit (1);
+        }
+        else if (key == EOF) {
+            fprintf (stderr, "\r\n");
             exit (1);
         }
         else if (key == '\r' || key == '\n') {
@@ -600,8 +605,24 @@ void finish_line (void)
 // Function to initialize console for intercepting ^C and ^Break.           //
 //////////////////////////////////////////////////////////////////////////////
 
+#include <signal.h>
+
+static int break_flag;
+
+static void int_handler(int s)
+{
+    break_flag = 1;
+}
+
 void setup_break (void)
 {
+    struct sigaction sigIntHandler;
+
+    break_flag = 0;
+    sigIntHandler.sa_handler = int_handler;
+    sigemptyset (&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+    sigaction (SIGINT, &sigIntHandler, NULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -610,7 +631,7 @@ void setup_break (void)
 
 int check_break (void)
 {
-    return 0;
+    return break_flag;
 }
 
 #endif
@@ -661,12 +682,22 @@ int DoWriteFile (FILE *hFile, void *lpBuffer, uint32_t nNumberOfBytesToWrite, ui
 
 int64_t DoGetFileSize (FILE *hFile)
 {
-    struct stat64 statbuf;
+    LARGE_INTEGER Size;
+    HANDLE        fHandle;
 
-    if (!hFile || fstat64 (fileno (hFile), &statbuf) || !(statbuf.st_mode & S_IFREG))
+    if (hFile == NULL)
         return 0;
 
-    return statbuf.st_size;
+    fHandle = (HANDLE)_get_osfhandle(_fileno(hFile));
+    if (fHandle == INVALID_HANDLE_VALUE)
+        return 0;
+
+    Size.u.LowPart = GetFileSize(fHandle, &Size.u.HighPart);
+
+    if (Size.u.LowPart == INVALID_FILE_SIZE && GetLastError() != NO_ERROR)
+        return 0;
+
+    return (int64_t)Size.QuadPart;
 }
 
 #else
@@ -727,6 +758,27 @@ int DoTruncateFile (FILE *hFile)
 
 int DoDeleteFile (char *filename)
 {
-    return !remove (filename);
+    return filename ? !remove (filename) : 0;
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+// Function to set the name of the console window. This is very handy for      //
+// displaying progress of batch operations with the console window minimized.  //
+/////////////////////////////////////////////////////////////////////////////////
+
+#ifdef WIN32
+
+void DoSetConsoleTitle (char *text)
+{
+    SetConsoleTitle (text);
+}
+
+#else
+
+void DoSetConsoleTitle (char *text)
+{
+    fprintf (stderr, "\033]0;%s\007", text);
+}
+
+#endif
 

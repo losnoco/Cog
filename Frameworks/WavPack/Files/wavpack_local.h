@@ -11,6 +11,10 @@
 #ifndef WAVPACK_LOCAL_H
 #define WAVPACK_LOCAL_H
 
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
+
 #if defined(WIN32)
 #define FASTCALL __fastcall
 #else
@@ -85,10 +89,10 @@ typedef struct {
 #define APE_TAG_TYPE_BINARY     0x1
 #define APE_TAG_THIS_IS_HEADER  0x20000000
 #define APE_TAG_CONTAINS_HEADER 0x80000000
-#define APE_TAG_MAX_LENGTH      (1024 * 1024)
+#define APE_TAG_MAX_LENGTH      (1024 * 1024 * 16)
 
 typedef struct {
-    int32_t tag_file_pos;
+    int32_t tag_file_pos, tag_begins_file;
     ID3_Tag id3_tag;
     APE_Tag_Hdr ape_tag_hdr;
     unsigned char *ape_tag_data;
@@ -324,7 +328,7 @@ struct decorr_pass {
 };
 
 typedef struct {
-    char joint_stereo, delta, terms [MAX_NTERMS+1];
+    signed char joint_stereo, delta, terms [MAX_NTERMS+1];
 } WavpackDecorrSpec;
 
 struct entropy_data {
@@ -510,7 +514,7 @@ int DoCloseHandle (FILE *hFile), DoTruncateFile (FILE *hFile);
         ((bs)->sr >>= 1, 0) \
 )
 
-#define getbits(value, nbits, bs) { \
+#define getbits(value, nbits, bs) do { \
     while ((nbits) > (bs)->bc) { \
         if (++((bs)->ptr) == (bs)->end) (bs)->wrap (bs); \
         (bs)->sr |= (int32_t)*((bs)->ptr) << (bs)->bc; \
@@ -525,30 +529,30 @@ int DoCloseHandle (FILE *hFile), DoTruncateFile (FILE *hFile);
         (bs)->bc -= (nbits); \
         (bs)->sr >>= (nbits); \
     } \
-}
+} while (0)
 
-#define putbit(bit, bs) { if (bit) (bs)->sr |= (1 << (bs)->bc); \
+#define putbit(bit, bs) do { if (bit) (bs)->sr |= (1 << (bs)->bc); \
     if (++((bs)->bc) == sizeof (*((bs)->ptr)) * 8) { \
         *((bs)->ptr) = (bs)->sr; \
         (bs)->sr = (bs)->bc = 0; \
         if (++((bs)->ptr) == (bs)->end) (bs)->wrap (bs); \
-    }}
+    }} while (0)
 
-#define putbit_0(bs) { \
+#define putbit_0(bs) do { \
     if (++((bs)->bc) == sizeof (*((bs)->ptr)) * 8) { \
         *((bs)->ptr) = (bs)->sr; \
         (bs)->sr = (bs)->bc = 0; \
         if (++((bs)->ptr) == (bs)->end) (bs)->wrap (bs); \
-    }}
+    }} while (0)
 
-#define putbit_1(bs) { (bs)->sr |= (1 << (bs)->bc); \
+#define putbit_1(bs) do { (bs)->sr |= (1 << (bs)->bc); \
     if (++((bs)->bc) == sizeof (*((bs)->ptr)) * 8) { \
         *((bs)->ptr) = (bs)->sr; \
         (bs)->sr = (bs)->bc = 0; \
         if (++((bs)->ptr) == (bs)->end) (bs)->wrap (bs); \
-    }}
+    }} while (0)
 
-#define putbits(value, nbits, bs) { \
+#define putbits(value, nbits, bs) do { \
     (bs)->sr |= (int32_t)(value) << (bs)->bc; \
     if (((bs)->bc += (nbits)) >= sizeof (*((bs)->ptr)) * 8) \
         do { \
@@ -558,7 +562,7 @@ int DoCloseHandle (FILE *hFile), DoTruncateFile (FILE *hFile);
                 (bs)->sr |= ((value) >> ((nbits) - (bs)->bc)); \
             if (++((bs)->ptr) == (bs)->end) (bs)->wrap (bs); \
         } while ((bs)->bc >= sizeof (*((bs)->ptr)) * 8); \
-}
+} while (0)
 
 void little_endian_to_native (void *data, char *format);
 void native_to_little_endian (void *data, char *format);
@@ -736,6 +740,7 @@ int WavpackWriteTag (WavpackContext *wpc);
 int load_tag (WavpackContext *wpc);
 void free_tag (M_Tag *m_tag);
 int valid_tag (M_Tag *m_tag);
+int editable_tag (M_Tag *m_tag);
 
 ///////////////////////////// SIMD helper macros /////////////////////////////
 
@@ -768,7 +773,7 @@ typedef short __m64_16 __attribute__ ((__vector_size__ (8)));
 #define _m_paddd(m1, m2) __builtin_ia32_paddd (m1, m2)
 #define _m_pcmpeqd(m1, m2) __builtin_ia32_pcmpeqd (m1, m2)
 
-#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || __GNUC__ > 4
+#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || __GNUC__ > 4 || __has_builtin(__builtin_ia32_pslldi)
 #	define _m_pslldi(m1, m2) __builtin_ia32_pslldi ((__m64)m1, m2)
 #	define _m_psradi(m1, m2) __builtin_ia32_psradi ((__m64)m1, m2)
 #	define _m_psrldi(m1, m2) __builtin_ia32_psrldi ((__m64)m1, m2)

@@ -3,6 +3,7 @@
 //                  Hybrid Lossless Wavefile Compressor                   //
 //              Copyright (c) 1998 - 2006 Conifer Software.               //
 //                          All Rights Reserved.                          //
+//      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
 
 // words.c
@@ -39,6 +40,8 @@ int32_t dump_alloc (void);
 #endif
 
 //////////////////////////////// local macros /////////////////////////////////
+
+#define USE_NEXT8_OPTIMIZATION  // we normally want this, but code is easier to understand without it
 
 #define LIMIT_ONES 16   // maximum consecutive 1s sent for "div" data
 
@@ -156,6 +159,7 @@ static const unsigned char exp2_table [] = {
     0xea, 0xec, 0xed, 0xee, 0xf0, 0xf1, 0xf2, 0xf4, 0xf5, 0xf6, 0xf8, 0xf9, 0xfa, 0xfc, 0xfd, 0xff
 };
 
+#ifdef USE_NEXT8_OPTIMIZATION
 static const char ones_count_table [] = {
     0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,5,
     0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,6,
@@ -166,6 +170,7 @@ static const char ones_count_table [] = {
     0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,5,
     0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,8
 };
+#endif
 
 ///////////////////////////// executable code ////////////////////////////////
 
@@ -482,9 +487,8 @@ int32_t FASTCALL send_word (WavpackStream *wps, int32_t value, int chan)
                 return 0;
             }
         }
-        else if (value) {
+        else if (value)
             putbit_0 (&wps->wvbits);
-        }
         else {
             c->slow_level -= (c->slow_level + SLO) >> SLS;
             CLEAR (wps->w.c [0].median);
@@ -593,9 +597,8 @@ int32_t FASTCALL send_word (WavpackStream *wps, int32_t value, int chan)
         uint32_t extras = bitset [bitcount] - maxcode - 1;
 
         if (bitcount) {
-            if (code < extras) {
+            if (code < extras)
                 putbits (code, bitcount - 1, &wps->wvcbits);
-            }
             else {
                 putbits ((code + extras) >> 1, bitcount - 1, &wps->wvcbits);
                 putbit ((code + extras) & 1, &wps->wvcbits);
@@ -641,9 +644,8 @@ void send_words_lossless (WavpackStream *wps, int32_t *buffer, int32_t nsamples)
                     continue;
                 }
             }
-            else if (value) {
+            else if (value)
                 putbit_0 (&wps->wvbits);
-            }
             else {
                 CLEAR (wps->w.c [0].median);
                 CLEAR (wps->w.c [1].median);
@@ -737,9 +739,8 @@ void flush_word (WavpackStream *wps)
     if (wps->w.zeros_acc) {
         int cbits = count_bits (wps->w.zeros_acc);
 
-        while (cbits--) {
+        while (cbits--)
             putbit_1 (&wps->wvbits);
-        }
 
         putbit_0 (&wps->wvbits);
 
@@ -760,9 +761,8 @@ void flush_word (WavpackStream *wps)
             wps->w.holding_one -= LIMIT_ONES;
             cbits = count_bits (wps->w.holding_one);
 
-            while (cbits--) {
+            while (cbits--)
                 putbit_1 (&wps->wvbits);
-            }
 
             putbit_0 (&wps->wvbits);
 
@@ -1025,6 +1025,7 @@ int32_t FASTCALL get_word (WavpackStream *wps, int chan, int32_t *correction)
     if (wps->w.holding_zero)
         ones_count = wps->w.holding_zero = 0;
     else {
+#ifdef USE_NEXT8_OPTIMIZATION
         if (wps->wvbits.bc < 8) {
             if (++(wps->wvbits.ptr) == wps->wvbits.end)
                 wps->wvbits.wrap (&wps->wvbits);
@@ -1070,6 +1071,34 @@ int32_t FASTCALL get_word (WavpackStream *wps, int chan, int32_t *correction)
             wps->wvbits.bc -= (ones_count = ones_count_table [next8]) + 1;
             wps->wvbits.sr >>= ones_count + 1;
         }
+#else
+        for (ones_count = 0; ones_count < (LIMIT_ONES + 1) && getbit (&wps->wvbits); ++ones_count);
+
+        if (ones_count >= LIMIT_ONES) {
+            uint32_t mask;
+            int cbits;
+
+            if (ones_count == (LIMIT_ONES + 1))
+                return WORD_EOF;
+
+            for (cbits = 0; cbits < 33 && getbit (&wps->wvbits); ++cbits);
+
+            if (cbits == 33)
+                return WORD_EOF;
+
+            if (cbits < 2)
+                ones_count = cbits;
+            else {
+                for (mask = 1, ones_count = 0; --cbits; mask <<= 1)
+                    if (getbit (&wps->wvbits))
+                        ones_count |= mask;
+
+                ones_count |= mask;
+            }
+
+            ones_count += LIMIT_ONES;
+        }
+#endif
 
         if (wps->w.holding_one) {
             wps->w.holding_one = ones_count & 1;
@@ -1201,6 +1230,7 @@ int32_t get_words_lossless (WavpackStream *wps, int32_t *buffer, int32_t nsample
         if (wps->w.holding_zero)
             ones_count = wps->w.holding_zero = 0;
         else {
+#ifdef USE_NEXT8_OPTIMIZATION
             int next8;
 
             if (bs->bc < 8) {
@@ -1248,7 +1278,34 @@ int32_t get_words_lossless (WavpackStream *wps, int32_t *buffer, int32_t nsample
                 bs->bc -= (ones_count = ones_count_table [next8]) + 1;
                 bs->sr >>= ones_count + 1;
             }
+#else
+            for (ones_count = 0; ones_count < (LIMIT_ONES + 1) && getbit (bs); ++ones_count);
 
+            if (ones_count >= LIMIT_ONES) {
+                uint32_t mask;
+                int cbits;
+
+                if (ones_count == (LIMIT_ONES + 1))
+                    break;
+
+                for (cbits = 0; cbits < 33 && getbit (bs); ++cbits);
+
+                if (cbits == 33)
+                    break;
+
+                if (cbits < 2)
+                    ones_count = cbits;
+                else {
+                    for (mask = 1, ones_count = 0; --cbits; mask <<= 1)
+                        if (getbit (bs))
+                            ones_count |= mask;
+
+                    ones_count |= mask;
+                }
+
+                ones_count += LIMIT_ONES;
+            }
+#endif
             if (wps->w.holding_one) {
                 wps->w.holding_one = ones_count & 1;
                 ones_count = (ones_count >> 1) + 1;

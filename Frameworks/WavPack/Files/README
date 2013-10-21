@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 //                           **** WAVPACK ****                            //
 //                  Hybrid Lossless Wavefile Compressor                   //
-//              Copyright (c) 1998 - 2006 Conifer Software.               //
+//              Copyright (c) 1998 - 2013 Conifer Software.               //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
@@ -10,14 +10,15 @@ This package contains all the source code required to build the WavPack
 command-line programs and the WavPack library and it has been tested on many
 platforms.
 
-On Windows there are solution and project files for Visual Studio 2005 and
+On Windows there are solution and project files for Visual Studio 2008 and
 additional sourcecode to build the CoolEdit/Audition plugin and the winamp
 plugin. The CoolEdit/Audition plugin provides a good example for using the
-library to both read and write WavPack files.
+library to both read and write WavPack files. Both 32-bit and 64-bit
+platforms are provided.
 
 To build everything on Linux, type:
 
-1. ./configure [--enable-mmx]
+1. ./configure [--enable-mmx] [--enable-man]
 2. make
 3. make install (optionally, to install into /usr/local/bin)
 

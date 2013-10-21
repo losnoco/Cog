@@ -61,7 +61,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
 
     if (wpc->reader->read_bytes (wpc->wv_in, &RiffChunkHeader, sizeof (RiffChunkHeader)) !=
         sizeof (RiffChunkHeader)) {
-            strcpy (error, "not a valid WavPack file!");
+            if (error) strcpy (error, "not a valid WavPack file!");
             return WavpackCloseFile (wpc);
     }
 
@@ -81,7 +81,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
 
             if (wpc->reader->read_bytes (wpc->wv_in, &ChunkHeader, sizeof (ChunkHeader)) !=
                 sizeof (ChunkHeader)) {
-                    strcpy (error, "not a valid WavPack file!");
+                    if (error) strcpy (error, "not a valid WavPack file!");
                     return WavpackCloseFile (wpc);
             }
             else {
@@ -97,7 +97,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
 
                     if (ChunkHeader.ckSize < sizeof (wavhdr) ||
                         wpc->reader->read_bytes (wpc->wv_in, &wavhdr, sizeof (wavhdr)) != sizeof (wavhdr)) {
-                            strcpy (error, "not a valid WavPack file!");
+                            if (error) strcpy (error, "not a valid WavPack file!");
                             return WavpackCloseFile (wpc);
                     }
                     else if (wpc->open_flags & OPEN_WRAPPER) {
@@ -112,7 +112,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
                         uint32_t bytes_to_skip = (ChunkHeader.ckSize + 1 - sizeof (wavhdr)) & ~1L;
 
                         if (bytes_to_skip > 1024 * 1024) {
-                            strcpy (error, "not a valid WavPack file!");
+                            if (error) strcpy (error, "not a valid WavPack file!");
                             return WavpackCloseFile (wpc);
                         }
 
@@ -134,7 +134,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
                     uint32_t bytes_to_skip = (ChunkHeader.ckSize + 1) & ~1L;
 
                     if (bytes_to_skip > 1024 * 1024) {
-                        strcpy (error, "not a valid WavPack file!");
+                        if (error) strcpy (error, "not a valid WavPack file!");
                         return WavpackCloseFile (wpc);
                     }
 
@@ -153,7 +153,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
         }
     }
     else {
-        strcpy (error, "not a valid WavPack file!");
+        if (error) strcpy (error, "not a valid WavPack file!");
         return WavpackCloseFile (wpc);
     }
 
@@ -161,7 +161,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
         !wavhdr.SampleRate || wavhdr.BitsPerSample < 16 || wavhdr.BitsPerSample > 24 ||
         wavhdr.BlockAlign / wavhdr.NumChannels > 3 || wavhdr.BlockAlign % wavhdr.NumChannels ||
         wavhdr.BlockAlign / wavhdr.NumChannels < (wavhdr.BitsPerSample + 7) / 8) {
-            strcpy (error, "not a valid WavPack file!");
+            if (error) strcpy (error, "not a valid WavPack file!");
             return WavpackCloseFile (wpc);
     }
 
@@ -169,17 +169,17 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
         ((wavhdr.BitsPerSample > 16) ? 3 : 2);
 
     if (wpc->reader->read_bytes (wpc->wv_in, &wphdr, 10) != 10) {
-        strcpy (error, "not a valid WavPack file!");
+        if (error) strcpy (error, "not a valid WavPack file!");
         return WavpackCloseFile (wpc);
     }
 
     if (((char *) &wphdr) [8] == 2 && (wpc->reader->read_bytes (wpc->wv_in, ((char *) &wphdr) + 10, 2) != 2)) {
-        strcpy (error, "not a valid WavPack file!");
+        if (error) strcpy (error, "not a valid WavPack file!");
         return WavpackCloseFile (wpc);
     }
     else if (((char *) &wphdr) [8] == 3 && (wpc->reader->read_bytes (wpc->wv_in, ((char *) &wphdr) + 10,
         sizeof (wphdr) - 10) != sizeof (wphdr) - 10)) {
-            strcpy (error, "not a valid WavPack file!");
+            if (error) strcpy (error, "not a valid WavPack file!");
             return WavpackCloseFile (wpc);
     }
 
@@ -188,7 +188,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
     // make sure this is a version we know about
 
     if (strncmp (wphdr.ckID, "wvpk", 4) || wphdr.version < 1 || wphdr.version > 3) {
-        strcpy (error, "not a valid WavPack file!");
+        if (error) strcpy (error, "not a valid WavPack file!");
         return WavpackCloseFile (wpc);
     }
 
@@ -205,7 +205,7 @@ WavpackContext *open_file3 (WavpackContext *wpc, char *error)
                 (((wphdr.flags & NEW_HIGH_FLAG) &&
                 (wphdr.flags & (FAST_FLAG | HIGH_FLAG))) ||
                 (wphdr.flags & CROSS_DECORR)))) {
-                    strcpy (error, "not a valid WavPack file!");
+                    if (error) strcpy (error, "not a valid WavPack file!");
                     return WavpackCloseFile (wpc);
             }
 
@@ -503,8 +503,8 @@ static int unpack_size (WavpackStream3 *wps)
         byte_sum += sizeof (wps->dc.weight);
     }
 
-    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG)) {
-        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG))
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
             if (dpp->term > 0) {
                 byte_sum += sizeof (dpp->samples_A [0]) * dpp->term;
                 byte_sum += sizeof (dpp->weight_A);
@@ -518,8 +518,6 @@ static int unpack_size (WavpackStream3 *wps)
                 byte_sum += sizeof (dpp->samples_A [0]) + sizeof (dpp->samples_B [0]);
                 byte_sum += sizeof (dpp->weight_A) + sizeof (dpp->weight_B);
             }
-        }
-    }
 
     return byte_sum;
 }
@@ -573,8 +571,8 @@ static void *unpack_save (WavpackStream3 *wps, void *destin)
         SAVE (destin, wps->dc.weight);
     }
 
-    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG)) {
-        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG))
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
             if (dpp->term > 0) {
                 int count = dpp->term;
                 int index = wps->dc.m;
@@ -604,8 +602,6 @@ static void *unpack_save (WavpackStream3 *wps, void *destin)
                 SAVE (destin, dpp->samples_A [0]);
                 SAVE (destin, dpp->samples_B [0]);
             }
-        }
-    }
 
     return destin;
 }
@@ -687,8 +683,8 @@ static void *unpack_restore (WavpackStream3 *wps, void *source, int keep_resourc
         RESTORE (wps->dc.weight, source);
     }
 
-    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG)) {
-        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+    if (flags & (HIGH_FLAG | NEW_HIGH_FLAG))
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
             if (dpp->term > 0) {
                 int count = dpp->term;
                 int index = wps->dc.m;
@@ -718,8 +714,6 @@ static void *unpack_restore (WavpackStream3 *wps, void *source, int keep_resourc
                 RESTORE (dpp->samples_A [0], source);
                 RESTORE (dpp->samples_B [0], source);
             }
-        }
-    }
 
     return source;
 }

@@ -23,7 +23,12 @@
 
 #if defined(WIN32)
 #undef VERSION_OS
+#ifdef _WIN64
+#define VERSION_OS "Win64"
+#else
 #define VERSION_OS "Win32"
+#endif
+#define PACKAGE_VERSION "4.70.0"
 #endif
 
 #define FALSE 0
@@ -49,6 +54,7 @@ int DoUngetc (int c, FILE *hFile);
 int DoCloseHandle (FILE *hFile);
 int DoTruncateFile (FILE *hFile);
 int DoDeleteFile (char *filename);
+void DoSetConsoleTitle (char *text);
 
 #define FN_FIT(fn) ((strlen (fn) > 30) ? filespec_name (fn) : fn)
 

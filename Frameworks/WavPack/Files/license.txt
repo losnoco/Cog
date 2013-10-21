@@ -1,4 +1,4 @@
-               Copyright (c) 1998 - 2009 Conifer Software
+               Copyright (c) 1998 - 2013 Conifer Software
                           All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
