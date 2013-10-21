@@ -1310,15 +1310,23 @@ static int twosf_info(void * context, const char * name, const char * value)
     
     if ( type == 1 || type == 2 )
     {
-        uint32_t howmany = (uint32_t)(frame - framesRead);
-        psx_execute( emulatorCore, 0x7fffffff, 0, &howmany, 0 );
-        frame = (long)(howmany + framesRead);
+        do
+        {
+            uint32_t howmany = (uint32_t)(frame - framesRead);
+            if ( psx_execute( emulatorCore, 0x7fffffff, 0, &howmany, 0 ) < 0 ) break;
+            framesRead += howmany;
+        }
+        while (framesRead < frame);
     }
     else if ( type == 0x11 || type == 0x12 )
     {
-        uint32_t howmany = (uint32_t)(frame - framesRead);
-        sega_execute( emulatorCore, 0x7fffffff, 0, &howmany );
-        frame = (long)(howmany + framesRead);
+        do
+        {
+            uint32_t howmany = (uint32_t)(frame - framesRead);
+            if ( sega_execute( emulatorCore, 0x7fffffff, 0, &howmany ) < 0 ) break;
+            framesRead += howmany;
+        }
+        while (framesRead < frame);
     }
     else if ( type == 0x22 )
     {
@@ -1342,8 +1350,13 @@ static int twosf_info(void * context, const char * name, const char * value)
             }
             
             if ( frames_to_run )
+            {
                 CPULoop( system, 250000 );
+                if ( !sound_out->samples_written ) break;
+            }
         } while ( frames_to_run );
+        
+        framesRead = frame;
     }
     else if ( type == 0x24 )
     {
@@ -1362,6 +1375,8 @@ static int twosf_info(void * context, const char * name, const char * value)
             
             frames_to_run -= frames_this_run;
         }
+        
+        framesRead = frame;
     }
     else if ( type == 0x25 )
     {
@@ -1381,17 +1396,21 @@ static int twosf_info(void * context, const char * name, const char * value)
             
             frames_to_run -= frames_to_render;
         }
+        
+        framesRead = frame;
     }
     else if ( type == 0x41 )
     {
-        uint32_t howmany = (uint32_t)(frame - framesRead);
-        qsound_execute( emulatorCore, 0x7fffffff, 0, &howmany );
-        frame = (long)(howmany + framesRead);
+        do
+        {
+            uint32_t howmany = (uint32_t)(frame - framesRead);
+            if ( qsound_execute( emulatorCore, 0x7fffffff, 0, &howmany ) < 0 ) break;
+            framesRead += howmany;
+        }
+        while ( framesRead < frame );
     }
     
-    framesRead = frame;
-    
-	return frame;
+	return framesRead;
 }
 
 - (NSDictionary *)properties
