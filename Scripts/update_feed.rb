@@ -7,7 +7,7 @@ include REXML
 
 feed = ARGV[0] || 'mercury'
 
-appcast = open("http://kode54.net/cog/#{feed}.xml")
+appcast = open("https://kode54.net/cog/#{feed}.xml")
 
 appcastdoc = Document.new(appcast)
 
