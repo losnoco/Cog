@@ -1,0 +1,370 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		83A0F4731816CE5E00119DB4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0F4721816CE5E00119DB4 /* Cocoa.framework */; };
+		83A0F47D1816CE5E00119DB4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83A0F47B1816CE5E00119DB4 /* InfoPlist.strings */; };
+		83A0F4D91816D03C00119DB4 /* playptmod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0F4CC1816CEAE00119DB4 /* playptmod.framework */; };
+		83A0F4DB1816D04E00119DB4 /* playptmod.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83A0F4CC1816CEAE00119DB4 /* playptmod.framework */; };
+		83A0F4DE1816D09000119DB4 /* ptmodDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A0F4DD1816D09000119DB4 /* ptmodDecoder.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		83A0F4CB1816CEAE00119DB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83A0F4C61816CEAD00119DB4 /* playptmod.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83A0F4981816CEAD00119DB4;
+			remoteInfo = playptmod;
+		};
+		83A0F4D71816D03200119DB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83A0F4C61816CEAD00119DB4 /* playptmod.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83A0F4971816CEAD00119DB4;
+			remoteInfo = playptmod;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		83A0F4DA1816D04400119DB4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				83A0F4DB1816D04E00119DB4 /* playptmod.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		83A0F46F1816CE5E00119DB4 /* playptmod.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = playptmod.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		83A0F4721816CE5E00119DB4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		83A0F4751816CE5E00119DB4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		83A0F4761816CE5E00119DB4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		83A0F4771816CE5E00119DB4 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		83A0F47A1816CE5E00119DB4 /* playptmod-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "playptmod-Info.plist"; sourceTree = "<group>"; };
+		83A0F47C1816CE5E00119DB4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83A0F47E1816CE5E00119DB4 /* playptmod-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "playptmod-Prefix.pch"; sourceTree = "<group>"; };
+		83A0F4C61816CEAD00119DB4 /* playptmod.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = playptmod.xcodeproj; path = ../../Frameworks/playptmod/playptmod.xcodeproj; sourceTree = "<group>"; };
+		83A0F4DC1816D09000119DB4 /* ptmodDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ptmodDecoder.h; sourceTree = "<group>"; };
+		83A0F4DD1816D09000119DB4 /* ptmodDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ptmodDecoder.m; sourceTree = "<group>"; };
+		83A0F4DF1816D0AF00119DB4 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
+		83A0F4E01816D13000119DB4 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		83A0F46C1816CE5E00119DB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83A0F4D91816D03C00119DB4 /* playptmod.framework in Frameworks */,
+				83A0F4731816CE5E00119DB4 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		83A0F4661816CE5E00119DB4 = {
+			isa = PBXGroup;
+			children = (
+				83A0F4781816CE5E00119DB4 /* playptmod */,
+				83A0F4711816CE5E00119DB4 /* Frameworks */,
+				83A0F4701816CE5E00119DB4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		83A0F4701816CE5E00119DB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83A0F46F1816CE5E00119DB4 /* playptmod.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83A0F4711816CE5E00119DB4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				83A0F4721816CE5E00119DB4 /* Cocoa.framework */,
+				83A0F4741816CE5E00119DB4 /* Other Frameworks */,
+				83A0F4C61816CEAD00119DB4 /* playptmod.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		83A0F4741816CE5E00119DB4 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				83A0F4751816CE5E00119DB4 /* Foundation.framework */,
+				83A0F4761816CE5E00119DB4 /* CoreData.framework */,
+				83A0F4771816CE5E00119DB4 /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		83A0F4781816CE5E00119DB4 /* playptmod */ = {
+			isa = PBXGroup;
+			children = (
+				83A0F4E01816D13000119DB4 /* Logging.h */,
+				83A0F4DF1816D0AF00119DB4 /* Plugin.h */,
+				83A0F4DC1816D09000119DB4 /* ptmodDecoder.h */,
+				83A0F4DD1816D09000119DB4 /* ptmodDecoder.m */,
+				83A0F4791816CE5E00119DB4 /* Supporting Files */,
+			);
+			path = playptmod;
+			sourceTree = "<group>";
+		};
+		83A0F4791816CE5E00119DB4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				83A0F47A1816CE5E00119DB4 /* playptmod-Info.plist */,
+				83A0F47B1816CE5E00119DB4 /* InfoPlist.strings */,
+				83A0F47E1816CE5E00119DB4 /* playptmod-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		83A0F4C71816CEAD00119DB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83A0F4CC1816CEAE00119DB4 /* playptmod.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		83A0F46E1816CE5E00119DB4 /* playptmod */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 83A0F4811816CE5E00119DB4 /* Build configuration list for PBXNativeTarget "playptmod" */;
+			buildPhases = (
+				83A0F46B1816CE5E00119DB4 /* Sources */,
+				83A0F46C1816CE5E00119DB4 /* Frameworks */,
+				83A0F46D1816CE5E00119DB4 /* Resources */,
+				83A0F4DA1816D04400119DB4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				83A0F4D81816D03200119DB4 /* PBXTargetDependency */,
+			);
+			name = playptmod;
+			productName = playptmod;
+			productReference = 83A0F46F1816CE5E00119DB4 /* playptmod.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83A0F4671816CE5E00119DB4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Christopher Snowhill";
+			};
+			buildConfigurationList = 83A0F46A1816CE5E00119DB4 /* Build configuration list for PBXProject "playptmod" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 83A0F4661816CE5E00119DB4;
+			productRefGroup = 83A0F4701816CE5E00119DB4 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 83A0F4C71816CEAD00119DB4 /* Products */;
+					ProjectRef = 83A0F4C61816CEAD00119DB4 /* playptmod.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				83A0F46E1816CE5E00119DB4 /* playptmod */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		83A0F4CC1816CEAE00119DB4 /* playptmod.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = playptmod.framework;
+			remoteRef = 83A0F4CB1816CEAE00119DB4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		83A0F46D1816CE5E00119DB4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83A0F47D1816CE5E00119DB4 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		83A0F46B1816CE5E00119DB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83A0F4DE1816D09000119DB4 /* ptmodDecoder.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		83A0F4D81816D03200119DB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = playptmod;
+			targetProxy = 83A0F4D71816D03200119DB4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		83A0F47B1816CE5E00119DB4 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				83A0F47C1816CE5E00119DB4 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		83A0F47F1816CE5E00119DB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Christopher Snowhill";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		83A0F4801816CE5E00119DB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Christopher Snowhill";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		83A0F4821816CE5E00119DB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "playptmod/playptmod-Prefix.pch";
+				INFOPLIST_FILE = "playptmod/playptmod-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		83A0F4831816CE5E00119DB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "playptmod/playptmod-Prefix.pch";
+				INFOPLIST_FILE = "playptmod/playptmod-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		83A0F46A1816CE5E00119DB4 /* Build configuration list for PBXProject "playptmod" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83A0F47F1816CE5E00119DB4 /* Debug */,
+				83A0F4801816CE5E00119DB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83A0F4811816CE5E00119DB4 /* Build configuration list for PBXNativeTarget "playptmod" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83A0F4821816CE5E00119DB4 /* Debug */,
+				83A0F4831816CE5E00119DB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 83A0F4671816CE5E00119DB4 /* Project object */;
+}
