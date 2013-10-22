@@ -1062,7 +1062,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     int lateVerSTKFlag;
     int numSamples;
     int tmp;
-    unsigned int tempOffset;
+    unsigned long tempOffset;
     modnote_t *note;
     MODULE_SAMPLE *s;
     BUF *fmodule;
@@ -1345,29 +1345,28 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
         {
             s->reallength = s->length;
             bufread(tempSample + j, 1, s->length - j, fmodule);
-        }
-        
-        if (s->length > 8)
-        {
-            for (j = 0; j < (s->length - 8); ++j)
+            if (s->length > 8)
             {
-                if (memcmp(smpDat8, "8SVXVHDR", 8) == 0)
-                    iffHdrFound = 1;
-
-                if (iffHdrFound)
+                for (j = 0; j < (s->length - 8); ++j)
                 {
-                    if (memcmp(smpDat8, "BODY", 4) == 0)
+                    if (memcmp(smpDat8, "8SVXVHDR", 8) == 0)
+                        iffHdrFound = 1;
+                    
+                    if (iffHdrFound)
                     {
-                        s->iffSize = j + 8;
-                        s->length -= s->iffSize;
-                        break;
+                        if (memcmp(smpDat8, "BODY", 4) == 0)
+                        {
+                            s->iffSize = j + 8;
+                            s->length -= s->iffSize;
+                            break;
+                        }
                     }
+                    
+                    ++smpDat8;
                 }
-
-                ++smpDat8;
             }
         }
-
+        
         sampleOffset += s->length;
         p->source->head.totalSampleSize += s->length;
     }
@@ -1401,8 +1400,8 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
         
         if (s->reallength < s->length)
         {
-            const signed char * compressionTable = tempSample + 5;
-            const unsigned char * adpcmData = tempSample + 5 + 16;
+            const signed char * compressionTable = (const signed char *) tempSample + 5;
+            const unsigned char * adpcmData = (const unsigned char *) tempSample + 5 + 16;
             int delta = 0;
             bufread(tempSample, 1, s->reallength, fmodule);
             for ( j = 0; j < s->length; ++j )
