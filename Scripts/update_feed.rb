@@ -12,7 +12,7 @@ appcast = open("https://kode54.net/cog/#{feed}.xml")
 appcastdoc = Document.new(appcast)
 
 #Get the latest revision from the appcast
-appcast_revision = appcastdoc.elements['//channel/item/enclosure/sparkle:version'].text.to_s() || 0
+appcast_revision = REXML::XPath.match(appcastdoc, "//channel/item/enclosure/sparkle:version", {"sparkle" => 'http://www.andymatuschak.org/xml-namespaces/sparkle'}).to_s() || 0
 appcast_revision_split = appcast_revision.split( /-/ )
 appcast_revision_code = appcast_revision_split[2]
 
@@ -27,22 +27,26 @@ revision_code = revision_split[2]
 
 if appcast_revision < latest_revision
   #Get the changelog
-  changelog = %x[hg log --template '{desc}\n' -r #{revision_code}:children(#{appcast_revision_code})]
+  if appcast_revision_code
+    changelog = %x[hg log --template '{desc}\n' -r #{revision_code}:children\\(#{appcast_revision_code}\\)]
 
-  description = ''
-  ignore_next = false
-  changelog.each_line do |line|
-    if (ignore_next)
-      ignore_next = false
-      next
+    description = ''
+    ignore_next = false
+    changelog.each_line do |line|
+      if (ignore_next)
+        ignore_next = false
+        next
+      end
+      if Regexp.new('^-+$').match(line)
+        ignore_next = true
+        next
+      elsif Regexp.new('^\s*$').match(line)
+        next
+      end
+      description += line
     end
-    if Regexp.new('^-+$').match(line)
-      ignore_next = true
-      next
-    elsif Regexp.new('^\s*$').match(line)
-      next
-    end
-    description += line
+  else
+    description = ''
   end
   
   #Remove the previous build directories
