@@ -955,6 +955,6 @@
 	<key>NSPrincipalClass</key>
 	<string>MediaKeysApplication</string>
 	<key>SUFeedURL</key>
-	<string>http://kode54.net/cog/mercury.xml</string>
+	<string>https://kode54.net/cog/mercury.xml</string>
 </dict>
 </plist>
