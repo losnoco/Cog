@@ -45,12 +45,18 @@ if appcast_revision < latest_revision
     end
     description += line
 end
-  
+
+  %[xcodebuild -workspace Cog.xcodeproj/project.xcworkspace -scheme Cog -configuration Release 2>&1].each_line do |line|
+    if line.match(/\*\* BUILD FAILD \*\*/)
+      exit
+    end
+  end
+
   filename = "Cog-#{revision_code}.tbz"
 
   #Zip the app!
   %x[rm -f ~/Documents/#{feed}.tar.bz2]
-  %x[tar -C ~/Documents -cjf #{feed}.tar.bz2 Cog.app]
+  %x[tar -C ~/Library/Developer/Xcode/DerivedData/Cog-gnnabzpuhvwhikcgqtwgtiebzjli/Build/Products/Release -cjf ~/Documents/#{feed}.tar.bz2 Cog.app]
 
   filesize = File.size("~/Documents/#{feed}.tar.bz2")
 
