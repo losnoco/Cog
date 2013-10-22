@@ -22,9 +22,6 @@ appcast_revision_code = appcast_revision_split[2]
 
 #Update to the latest revision
 #%x[hg pull -u]
-#latest_revision = %x[/usr/local/bin/hg log -r . --template '{latesttag}-{latesttagdistance}-{node|short}']
-#revision_split = latest_revision.split( /-/ )
-#revision_code = revision_split[2]
 
 #  %[xcodebuild -workspace Cog.xcodeproj/project.xcworkspace -scheme Cog archive 2>&1].each_line do |line|
 #    if line.match(/\*\* BUILD FAILD \*\*/)
@@ -41,6 +38,10 @@ appcast_revision_code = appcast_revision_split[2]
 
   version_element = plistdoc.elements["//[. = 'CFBundleVersion']/following-sibling::string"];
   latest_revision = version_element.text
+
+#latest_revision = %x[/usr/local/bin/hg log -r . --template '{latesttag}-{latesttagdistance}-{node|short}']
+revision_split = latest_revision.split( /-/ )
+revision_code = revision_split[2]
 
 if appcast_revision < latest_revision
   #Get the changelog
@@ -65,8 +66,8 @@ end
   filename = "Cog-#{revision_code}.tbz"
 
   #Zip the app!
-  #%x[rm -f /tmp/#{feed}.tar.bz2]
-  #%x[tar -C '#{app_path}' -cjf /tmp/#{feed}.tar.bz2 Cog.app]
+  %x[rm -f /tmp/#{feed}.tar.bz2]
+  %x[tar -C '#{app_path}' -cjf /tmp/#{feed}.tar.bz2 Cog.app]
 
   filesize = File.size("/tmp/#{feed}.tar.bz2")
 
