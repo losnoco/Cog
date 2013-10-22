@@ -15,18 +15,21 @@
 {
 	[self removeObjects:[self arrangedObjects]];
 
-	[self addObject:
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedStringFromTableInBundle(@"Stable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://kode54.net/cog/stable.xml", @"url",nil]];
-			
-	[self addObject:
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedStringFromTableInBundle(@"Unstable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://kode54.net/cog/unstable.xml", @"url",nil]];
-			
-	[self addObject:
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedStringFromTableInBundle(@"Nightly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://kode54.net/cog/nightly.xml", @"url",nil]];
-}
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      NSLocalizedStringFromTableInBundle(@"Stable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://mamburu.net/cog/stable.xml", @"url",nil]];
+    
+    //      [self addObject:
+    //              [NSDictionary dictionaryWithObjectsAndKeys:
+    //                      NSLocalizedStringFromTableInBundle(@"Unstable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://cogx.org/appcast/unstable.xml", @"url",nil]];
+    
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      NSLocalizedStringFromTableInBundle(@"Nightly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://mamburu.net/cog/nightly.xml", @"url",nil]];
 
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      NSLocalizedStringFromTableInBundle(@"kode54.net wheneverly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://kode54.net/cog/mercury.xml", @"url",nil]];
+}
 
 @end
