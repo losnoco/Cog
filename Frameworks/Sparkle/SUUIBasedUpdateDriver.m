@@ -199,6 +199,8 @@
 	}
 }
 
+// XXX
+#pragma GCC diagnostic ignored "-Wformat-security"
 - (void)abortUpdateWithError:(NSError *)error
 {
 	NSAlert *alert = [NSAlert alertWithMessageText:SULocalizedString(@"Update Error!", nil) defaultButton:SULocalizedString(@"Cancel Update", nil) alternateButton:nil otherButton:nil informativeTextWithFormat:[error localizedDescription]];
