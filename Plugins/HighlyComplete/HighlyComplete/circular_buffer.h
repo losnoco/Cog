@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 
-long const silence_threshold = 8;
+long const silence_threshold = 16;
 
 template <typename T>
 class circular_buffer
