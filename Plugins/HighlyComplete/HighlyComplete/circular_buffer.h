@@ -74,7 +74,7 @@ public:
         mask = ~mask;
         if ( used )
         {
-            p = begin = &buffer[ 0 ] + readptr - 1;
+            p = ( begin = &buffer[ 0 ] + readptr ) - 1;
             end = &buffer[ 0 ] + ( writeptr > readptr ? writeptr : size );
             while ( ++p < end && ( ( unsigned long ) ( *p + silence_threshold ) <= ( unsigned long ) silence_threshold * 2 ) );
             unsigned long skipped = ( p - begin ) & mask;
@@ -83,7 +83,7 @@ public:
             readptr = ( readptr + skipped ) % size;
             if ( readptr == 0 && readptr != writeptr )
             {
-                p = begin = &buffer[ 0 ];
+                p = ( begin = &buffer[ 0 ] ) - 1;
                 end = &buffer[ 0 ] + writeptr;
                 while ( ++p < end && ( ( unsigned long ) ( *p + silence_threshold ) <= ( unsigned long ) silence_threshold * 2 ) );
                 skipped = ( p - begin ) & mask;
