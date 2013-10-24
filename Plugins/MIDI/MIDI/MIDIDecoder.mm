@@ -16,6 +16,18 @@
 
 @implementation MIDIDecoder
 
++ (NSInteger)testExtensions:(NSString *)pathMinusExtension extensions:(NSArray *)extensionsToTest
+{
+    NSInteger i = 0;
+    for (NSString * extension in extensionsToTest)
+    {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[pathMinusExtension stringByAppendingPathExtension:extension]])
+            return i;
+        ++i;
+    }
+    return -1;
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
 	//We need file-size to use midi_processing
@@ -62,6 +74,36 @@
     framesFade = framesFade * 441 / 10;
     
     totalFrames = framesLength + framesFade;
+    
+    NSString * soundFontPath = @"";
+    
+    if ( [[s url] isFileURL] )
+    {
+        // Let's check for a SoundFont
+        NSArray * extensions = [NSArray arrayWithObjects:@"sflist", @"sf2pack", @"sf2", nil];
+        NSString * filePath = [[s url] path];
+        NSString * fileNameBase = [filePath lastPathComponent];
+        filePath = [filePath stringByDeletingLastPathComponent];
+        soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
+        NSInteger extFound;
+        if ((extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions]) < 0)
+        {
+            fileNameBase = [fileNameBase stringByDeletingPathExtension];
+            soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
+            if ((extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions]) < 0)
+            {
+                fileNameBase = [filePath lastPathComponent];
+                soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
+                extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions];
+            }
+        }
+        if (extFound >= 0)
+        {
+            soundFontPath = [soundFontPath stringByAppendingPathExtension:[extensions objectAtIndex:extFound]];
+        }
+        else
+            soundFontPath = @"";
+    }
 	
 	DLog(@"Length: %li", totalFrames);
 	
@@ -72,6 +114,9 @@
     
     bmplayer->setSincInterpolation( true );
     bmplayer->setSampleRate( 44100 );
+    
+    if ( [soundFontPath length] )
+        bmplayer->setFileSoundFont( [soundFontPath UTF8String] );
     
     unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
     unsigned int clean_flags = midi_container::clean_flag_emidi;
