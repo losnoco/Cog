@@ -278,6 +278,7 @@ typedef struct
     float *frequencyTable;
     float *extendedFrequencyTable;
     unsigned char *sinusTable;
+    int *panTable;
     int minPeriod;
     int maxPeriod;
     int loopCounter;
@@ -522,8 +523,8 @@ static void mixerSetChSource(player *p, int ch, const char *src, int length, int
 
 static void mixerSetChPan(player *p, int ch, int pan)
 {
-    p->v[ch].panL = 256 - pan;
-    p->v[ch].panR = pan;
+    p->v[ch].panL = p->panTable[256 - pan];
+    p->v[ch].panR = p->panTable[pan];
 }
 
 static void mixerSetChVol(player *p, int ch, int vol)
@@ -2744,7 +2745,8 @@ void playptmod_Render(void *_p, short *target, int length)
 void *playptmod_Create(int samplingFrequency)
 {
     player *p = (player *) calloc(1, sizeof(player));
-
+    float norm;
+    
     int i, j;
 
     p->tempoTimerVal = (samplingFrequency * 125) / 50;
@@ -2769,7 +2771,16 @@ void *playptmod_Create(int samplingFrequency)
     p->extendedFrequencyTable = (float *)malloc(sizeof (float) * 1713);
     for (i = 14; i <= 1712; ++i) // 0..14 will never be looked up, junk is OK
         p->extendedFrequencyTable[i] = (float)samplingFrequency / (7093790.0f / (2.0f * (float)i));
-
+    
+    p->panTable = (int *)malloc(sizeof (int) * 257);
+    norm = 1.0f / sinf(1.0f / (M_PI / 2));
+    for (i = 0; i <= 256; ++i)
+    {
+        float pan = (float)i * 1.0f / 256.0f;
+        
+        // -3dB pan law ( pan = sin x/half_pi )
+        p->panTable[i] = 256.0f * sinf((pan) / (M_PI / 2)) * norm;
+    }
     p->mixBufferL = (float *)malloc(soundBufferSize * sizeof (float));
     p->mixBufferR = (float *)malloc(soundBufferSize * sizeof (float));
 
@@ -2873,6 +2884,7 @@ void playptmod_Free(void *_p)
 
     free(p->mixBufferL);
     free(p->mixBufferR);
+    free(p->panTable);
     free(p->sinusTable);
     free(p->frequencyTable);
     free(p->extendedFrequencyTable);
