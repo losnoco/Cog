@@ -18,6 +18,9 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
     uint32_t track_count        = it[ 0 ] | ( it[ 1 ] << 8 ) | ( it[ 2 ] << 16 ) | ( it[ 3 ] << 24 );
     uint32_t track_table_offset = it[ 4 ] | ( it[ 5 ] << 8 ) | ( it[ 6 ] << 16 ) | ( it[ 7 ] << 24 );
 
+	if ( track_table_offset >= p_file.size() || track_table_offset + track_count * 4 > p_file.size() )
+		return false;
+
     it = p_file.begin() + track_table_offset;
 
     std::vector<uint32_t> track_offsets;
@@ -50,6 +53,9 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
 		{
             track_length = p_file.size() - track_offset;
 		}
+		if ( track_offset >= p_file.size() || track_offset + track_length > p_file.size() )
+			return false;
+
         std::vector<uint8_t>::const_iterator track_body = p_file.begin() + track_offset;
         std::vector<uint8_t>::const_iterator track_end = track_body + track_length;
 
@@ -93,9 +99,9 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
 
         buffer.resize( 3 );
 
-        while ( it < track_end )
+        while ( it != track_end )
 		{
-            int delta = decode_delta( it );
+            int delta = decode_delta( it, track_end );
 			if ( delta > 0xFFFF || delta < 0 )
 			{
 				current_timestamp = last_event_timestamp;
@@ -110,13 +116,16 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
 				}
 			}
 
+			if ( it == track_end ) return false;
             buffer[ 0 ] = *it++;
 			if ( buffer[ 0 ] == 0xFF )
 			{
 				last_event_code = 0xFF;
+				if ( it == track_end ) return false;
                 buffer[ 1 ] = *it++;
-                int meta_count = decode_delta( it );
+                int meta_count = decode_delta( it, track_end );
                 if ( meta_count < 0 ) return false; /*throw exception_io_data( "Invalid HMI meta message" );*/
+				if ( track_end - it < meta_count ) return false;
                 buffer.resize( meta_count + 2 );
                 std::copy( it, it + meta_count, buffer.begin() + 2 );
                 it += meta_count;
@@ -130,8 +139,9 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
 			else if ( buffer[ 0 ] == 0xF0 )
 			{
 				last_event_code = 0xFF;
-                int system_exclusive_count = decode_delta( it );
+                int system_exclusive_count = decode_delta( it, track_end );
                 if ( system_exclusive_count < 0 ) return false; /*throw exception_io_data( "Invalid HMI System Exclusive message" );*/
+				if ( track_end - it < system_exclusive_count ) return false;
                 buffer.resize( system_exclusive_count + 1 );
                 std::copy( it, it + system_exclusive_count, buffer.begin() + 1 );
                 it += system_exclusive_count;
@@ -140,28 +150,35 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
 			else if ( buffer[ 0 ] == 0xFE )
 			{
 				last_event_code = 0xFF;
+				if ( it == track_end ) return false;
                 buffer[ 1 ] = *it++;
 				if ( buffer[ 1 ] == 0x10 )
 				{
+					if ( track_end - it < 3 ) return false;
                     it += 2;
                     buffer[ 2 ] = *it++;
+					if ( track_end - it < buffer[ 2 ] + 4 ) return false;
                     it += buffer[ 2 ] + 4;
 				}
 				else if ( buffer[ 1 ] == 0x12 )
 				{
+					if ( track_end - it < 2 ) return false;
                     it += 2;
 				}
 				else if ( buffer[ 1 ] == 0x13 )
 				{
+					if ( track_end - it < 10 ) return false;
                     it += 10;
 				}
 				else if ( buffer[ 1 ] == 0x14 )
 				{
+					if ( track_end - it < 2 ) return false;
                     it += 2;
 					p_out.add_track_event( 0, midi_event( current_timestamp, midi_event::extended, 0, loop_start, _countof( loop_start ) ) );
 				}
 				else if ( buffer[ 1 ] == 0x15 )
 				{
+					if ( track_end - it < 6 ) return false;
                     it += 6;
 					p_out.add_track_event( 0, midi_event( current_timestamp, midi_event::extended, 0, loop_end, _countof( loop_end ) ) );
 				}
@@ -172,6 +189,7 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
 				unsigned bytes_read = 1;
 				if ( buffer[ 0 ] >= 0x80 )
 				{
+					if ( it == track_end ) return false;
                     buffer[ 1 ] = *it++;
 					last_event_code = buffer[ 0 ];
 				}
@@ -185,6 +203,7 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
 				unsigned channel = buffer[ 0 ] & 0x0F;
 				if ( type != midi_event::program_change && type != midi_event::channel_aftertouch )
 				{
+					if ( it == track_end ) return false;
                     buffer[ 2 ] = *it++;
 					bytes_read = 2;
 				}
@@ -192,7 +211,7 @@ bool midi_processor::process_hmi( std::vector<uint8_t> const& p_file, midi_conta
 				if ( type == midi_event::note_on )
 				{
 					buffer[ 2 ] = 0x00;
-                    int note_length = decode_delta( it );
+                    int note_length = decode_delta( it, track_end );
                     if ( note_length < 0 ) return false; /*throw exception_io_data( "Invalid HMI note message" );*/
 					unsigned note_end_timestamp = current_timestamp + note_length;
 					if ( note_end_timestamp > last_event_timestamp ) last_event_timestamp = note_end_timestamp;

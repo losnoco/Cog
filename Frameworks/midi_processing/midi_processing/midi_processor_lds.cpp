@@ -334,20 +334,26 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
     std::vector<uint16_t> patterns;
 
     std::vector<uint8_t>::const_iterator it = p_file.begin();
+	std::vector<uint8_t>::const_iterator end = p_file.end();
 
+	if ( end == it ) return false;
     mode = *it++;
     if ( mode > 2 ) return false; /*throw exception_io_data( "Invalid LDS mode" );*/
     /*speed = it[ 0 ] | ( it[ 1 ] << 8 );*/
+	if ( end - it < 4 ) return false;
     tempo = it[ 2 ];
     pattern_length = it[ 3 ];
     it += 4;
+	if ( end - it < 9 ) return false;
 	for ( unsigned i = 0; i < 9; ++i )
         channel_delay[ i ] = *it++;
     /*register_bd = *it++;*/ it++;
 
+	if ( end - it < 2 ) return false;
     patch_count = it[ 0 ] | ( it[ 1 ] << 8 );
     it += 2;
     patches.resize( patch_count );
+	if ( end - it < 46 * patch_count ) return false;
 	for ( unsigned i = 0; i < patch_count; ++i )
 	{
 		sound_patch & patch = patches[ i ];
@@ -396,9 +402,11 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 #endif
 	}
 
+	if ( end - it < 2 ) return false;
     position_count = it[ 0 ] | ( it[ 1 ] << 8 );
     it += 2;
     positions.resize( 9 * position_count );
+	if ( end - it < 3 * position_count ) return false;
 	for ( unsigned i = 0; i < position_count; ++i )
 	{
 		for ( unsigned j = 0; j < 9; ++j )
@@ -412,9 +420,10 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 		}
 	}
 
+	if ( end - it < 2 ) return false;
     it += 2;
 
-    pattern_count = ( p_file.end() - it ) / 2;
+    pattern_count = ( end - it ) / 2;
     patterns.resize( pattern_count );
 	for ( unsigned i = 0; i < pattern_count; ++i )
 	{
@@ -550,7 +559,7 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 					}
 				}
 			}
-			else if(((allvolume + (0x100 - fadeonoff)) & 0xff) <= mainvolume)
+			else if((unsigned)((allvolume + (0x100 - fadeonoff)) & 0xff) <= mainvolume)
 			{
 				allvolume += 0x100 - fadeonoff;
 			}
@@ -596,7 +605,7 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 					unsigned short	patnum = positions[posplay * 9 + chan].pattern_number;
 					unsigned char	transpose = positions[posplay * 9 + chan].transpose;
 
-                    if ( patnum + c->packpos >= patterns.size() ) return false; /*throw exception_io_data( "Invalid LDS pattern number" );*/
+                    if ( (unsigned long)(patnum + c->packpos) >= patterns.size() ) return false; /*throw exception_io_data( "Invalid LDS pattern number" );*/
 
 					unsigned comword = patterns[patnum + c->packpos];
 					unsigned comhi = comword >> 8;

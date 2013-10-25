@@ -41,10 +41,6 @@ static const char * riff_tag_mappings[][2] =
 	{ "ITCH", "technician" }
 };
 
-#define CF_TEXT   1
-#define CF_TIFF   6
-#define CF_DIB    8
-
 bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi_container & p_out )
 {
     uint32_t file_size = p_file[ 4 ] | ( p_file[ 5 ] << 8 ) | ( p_file[ 6 ] << 16 ) | ( p_file[ 7 ] << 24 );
@@ -60,9 +56,11 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
 
     std::vector<uint8_t> extra_buffer;
 
-    while ( it < body_end )
+    while ( it != body_end )
 	{
+		if ( body_end - it < 8 ) return false;
         uint32_t chunk_size = it[ 4 ] | ( it[ 5 ] << 8 ) | ( it[ 6 ] << 16 ) | ( it[ 7 ] << 24 );
+		if ( (unsigned long)(body_end - it) < chunk_size ) return false;
         if ( it[ 0 ] == 'd' && it[ 1 ] == 'a' && it[ 2 ] == 't' && it[ 3 ] == 'a' )
 		{
 			if ( !found_data )
@@ -74,52 +72,19 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
             }
             else return false; /*throw exception_io_data( "Multiple RIFF data chunks found" );*/
             it += 8 + chunk_size;
-            if ( chunk_size & 1 && it < body_end ) ++it;
+            if ( chunk_size & 1 && it != body_end ) ++it;
 		}
         else if ( it[ 0 ] == 'D' && it[ 1 ] == 'I' && it[ 2 ] == 'S' && it[ 3 ] == 'P' )
 		{
             uint32_t type = it[ 8 ] | ( it[ 9 ] << 8 ) | ( it[ 10 ] << 16 ) | ( it[ 11 ] << 24 );
-			if ( type == CF_TEXT )
+			if ( type == 1 )
 			{
                 extra_buffer.resize( chunk_size - 4 );
                 std::copy( it + 12, it + 8 + chunk_size, extra_buffer.begin() );
                 meta_data.add_item( midi_meta_data_item( 0, "display_name", (const char *) &extra_buffer[0] ) );
 			}
-            else if ( type == CF_TIFF )
-            {
-                meta_data.assign_bitmap( it + 12, it + 8 + chunk_size );
-            }
-            else if ( type == CF_DIB )
-            {
-                if ( chunk_size >= 8 )
-                {
-                    uint32_t dib_header_size = it[ 12 ] | ( it[13] << 8 ) | ( it[14] << 16 ) | ( it[15] << 24 );
-                    if ( chunk_size >= 4 + dib_header_size )
-                    {
-                        uint32_t dib_image_offset = 14 + dib_header_size;
-                        uint32_t dib_size = chunk_size + 10;
-                        extra_buffer.resize( dib_size );
-                        extra_buffer[ 0 ] = 'B';
-                        extra_buffer[ 1 ] = 'M';
-                        extra_buffer[ 2 ] = dib_size;
-                        extra_buffer[ 3 ] = dib_size >> 8;
-                        extra_buffer[ 4 ] = dib_size >> 16;
-                        extra_buffer[ 5 ] = dib_size >> 24;
-                        extra_buffer[ 6 ] = 0;
-                        extra_buffer[ 7 ] = 0;
-                        extra_buffer[ 8 ] = 0;
-                        extra_buffer[ 9 ] = 0;
-                        extra_buffer[ 10 ] = dib_image_offset;
-                        extra_buffer[ 11 ] = dib_image_offset >> 8;
-                        extra_buffer[ 12 ] = dib_image_offset >> 16;
-                        extra_buffer[ 13 ] = dib_image_offset >> 24;
-                        std::copy(it + 12, it + 8 + chunk_size, extra_buffer.begin() + 14);
-                        meta_data.assign_bitmap(extra_buffer.begin(), extra_buffer.end());
-                    }
-                }
-            }
             it += 8 + chunk_size;
-            if ( chunk_size & 1 && it < body_end ) ++it;
+            if ( chunk_size & 1 && it != body_end ) ++it;
 		}
         else if ( it[ 0 ] == 'L' && it[ 1 ] == 'I' && it[ 2 ] == 'S' && it[ 3 ] == 'T' )
 		{
@@ -128,10 +93,13 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
 			{
 				if ( !found_info )
 				{
+					if ( chunk_end - it < 12 ) return false;
                     it += 12;
-                    while ( it < chunk_end )
+                    while ( it != chunk_end )
 					{
+						if ( chunk_end - it < 4 ) return false;
                         uint32_t field_size = it[ 4 ] | ( it[ 5 ] << 8 ) | ( it[ 6 ] << 16 ) | ( it[ 7 ] << 24 );
+						if ( (unsigned long)(chunk_end - it) < 8 + field_size ) return false;
                         std::string field;
                         field.assign( it, it + 4 );
 						for ( unsigned i = 0; i < _countof(riff_tag_mappings); ++i )
@@ -146,7 +114,7 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
                         std::copy( it + 8, it + 8 + field_size, extra_buffer.begin() );
                         it += 8 + field_size;
                         meta_data.add_item( midi_meta_data_item( 0, field.c_str(), ( const char * ) &extra_buffer[0] ) );
-                        if ( field_size & 1 && it < chunk_end ) ++it;
+                        if ( field_size & 1 && it != chunk_end ) ++it;
 					}
 					found_info = true;
 				}
@@ -154,12 +122,12 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
 			}
             else return false; /* unknown LIST chunk */
             it = chunk_end;
-            if ( chunk_size & 1 && it < body_end ) ++it;
+            if ( chunk_size & 1 && it != body_end ) ++it;
         }
         else
         {
             it += chunk_size;
-            if ( chunk_size & 1 && it < body_end ) ++it;
+            if ( chunk_size & 1 && it != body_end ) ++it;
         }
 
 		if ( found_data && found_info ) break;

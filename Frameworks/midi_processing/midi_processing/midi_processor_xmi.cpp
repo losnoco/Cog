@@ -16,15 +16,17 @@ const uint8_t midi_processor::xmi_default_tempo[5] = {0xFF, 0x51, 0x07, 0xA1, 0x
 unsigned midi_processor::decode_xmi_delta( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end )
 {
 	unsigned delta = 0;
+	if ( it == end ) return 0;
     uint8_t byte = *it++;
 	if ( !( byte & 0x80 ) )
 	{
 		do
 		{
 			delta += byte;
+			if ( it == end ) break;
             byte = *it++;
 		}
-        while ( !( byte & 0x80 ) && it < end );
+        while ( !( byte & 0x80 ) && it != end );
 	}
     --it;
 	return delta;
@@ -101,9 +103,11 @@ struct iff_stream
 
 static bool read_iff_chunk( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end, iff_chunk & p_out, bool first_chunk )
 {
+	if ( end - it < 8 ) return false;
     std::copy( it, it + 4, p_out.m_id );
     it += 4;
     uint32_t chunk_size = ( it[ 0 ] << 24 ) | ( it[ 1 ] << 16 ) | ( it[ 2 ] << 8 ) | it[ 3 ];
+	if ( (unsigned long)(end - it) < chunk_size ) return false;
     it += 4;
 	bool is_cat_chunk = !memcmp( p_out.m_id, "CAT ", 4 );
 	bool is_form_chunk = !memcmp( p_out.m_id, "FORM", 4 );
@@ -111,6 +115,7 @@ static bool read_iff_chunk( std::vector<uint8_t>::const_iterator & it, std::vect
 	if ( chunk_size > chunk_size_limit ) chunk_size = (uint32_t) chunk_size_limit;
 	if ( ( first_chunk && is_form_chunk ) || ( !first_chunk && is_cat_chunk ) )
 	{
+		if ( end - it < 4 ) return false;
         std::vector<uint8_t>::const_iterator chunk_end = it + chunk_size;
         std::copy( it, it + 4, p_out.m_type );
         it += 4;
@@ -121,13 +126,13 @@ static bool read_iff_chunk( std::vector<uint8_t>::const_iterator & it, std::vect
             p_out.m_sub_chunks.push_back( chunk );
 		}
         it = chunk_end;
-        if ( chunk_size & 1 && it < end ) ++it;
+        if ( chunk_size & 1 && it != end ) ++it;
 	}
 	else if ( !is_form_chunk && !is_cat_chunk )
 	{
         p_out.m_data.assign( it, it + chunk_size );
         it += chunk_size;
-        if ( chunk_size & 1 && it < end ) ++it;
+        if ( chunk_size & 1 && it != end ) ++it;
 	}
 	else
 	{
@@ -142,7 +147,7 @@ static bool read_iff_stream( std::vector<uint8_t> const& p_file, iff_stream & p_
 {
     std::vector<uint8_t>::const_iterator it = p_file.begin(), end = p_file.end();
 	bool first_chunk = true;
-    while ( it < end )
+    while ( it != end )
 	{
 		iff_chunk chunk;
         if ( !read_iff_chunk( it, end, chunk, first_chunk ) ) return false;
@@ -189,7 +194,7 @@ bool midi_processor::process_xmi( std::vector<uint8_t> const& p_file, midi_conta
 
         std::vector<uint8_t>::const_iterator it = event_body.begin(), end = event_body.end();
 
-        while ( it < end )
+        while ( it != end )
 		{
             unsigned delta = decode_xmi_delta( it, end );
 			current_timestamp += delta;
@@ -199,19 +204,22 @@ bool midi_processor::process_xmi( std::vector<uint8_t> const& p_file, midi_conta
 				last_event_timestamp = current_timestamp;
 			}
 
+			if ( it == end ) return false;
             buffer[ 0 ] = *it++;
 			if ( buffer[ 0 ] == 0xFF )
 			{
+				if ( it == end ) return false;
                 buffer[ 1 ] = *it++;
-				int meta_count;
+				long meta_count;
 				if ( buffer[ 1 ] == 0x2F )
 				{
 					meta_count = 0;
 				}
 				else
 				{
-                    meta_count = decode_delta( it );
+                    meta_count = decode_delta( it, end );
                     if ( meta_count < 0 ) return false; /*throw exception_io_data( "Invalid XMI meta message" );*/
+					if ( end - it < meta_count ) return false;
                     buffer.resize( meta_count + 2 );
                     std::copy( it, it + meta_count, buffer.begin() + 2 );
                     it += meta_count;
@@ -235,8 +243,9 @@ bool midi_processor::process_xmi( std::vector<uint8_t> const& p_file, midi_conta
 			}
 			else if ( buffer[ 0 ] == 0xF0 )
 			{
-                int system_exclusive_count = decode_delta( it );
+                long system_exclusive_count = decode_delta( it, end );
                 if ( system_exclusive_count < 0 ) return false; /*throw exception_io_data( "Invalid XMI System Exclusive message" );*/
+				if ( end - it < system_exclusive_count ) return false;
                 buffer.resize( system_exclusive_count + 1 );
                 std::copy( it, it + system_exclusive_count, buffer.begin() + 1 );
                 it += system_exclusive_count;
@@ -245,11 +254,13 @@ bool midi_processor::process_xmi( std::vector<uint8_t> const& p_file, midi_conta
 			else if ( buffer[ 0 ] >= 0x80 && buffer[ 0 ] <= 0xEF )
 			{
 				unsigned bytes_read = 1;
+				if ( it == end ) return false;
                 buffer[ 1 ] = *it++;
 				midi_event::event_type type = (midi_event::event_type)( ( buffer[ 0 ] >> 4 ) - 8 );
 				unsigned channel = buffer[ 0 ] & 0x0F;
 				if ( type != midi_event::program_change && type != midi_event::channel_aftertouch )
 				{
+					if ( it == end ) return false;
                     buffer[ 2 ] = *it++;
 					bytes_read = 2;
 				}
@@ -257,7 +268,7 @@ bool midi_processor::process_xmi( std::vector<uint8_t> const& p_file, midi_conta
 				if ( type == midi_event::note_on )
 				{
 					buffer[ 2 ] = 0x00;
-                    int note_length = decode_delta( it );
+                    int note_length = decode_delta( it, end );
                     if ( note_length < 0 ) return false; /*throw exception_io_data( "Invalid XMI note message" );*/
 					unsigned note_end_timestamp = current_timestamp + note_length;
 					if ( note_end_timestamp > last_event_timestamp ) last_event_timestamp = note_end_timestamp;

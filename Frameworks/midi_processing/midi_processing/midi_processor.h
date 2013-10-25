@@ -24,8 +24,8 @@ class midi_processor
 
     static const uint8_t lds_default_tempo[5];
 
-    static int decode_delta( std::vector<uint8_t>::const_iterator & it );
-    static unsigned decode_hmp_delta( std::vector<uint8_t>::const_iterator & it );
+    static int decode_delta( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end );
+    static unsigned decode_hmp_delta( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end );
     static unsigned decode_xmi_delta( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end );
 
     static bool is_standard_midi( std::vector<uint8_t> const& p_file );

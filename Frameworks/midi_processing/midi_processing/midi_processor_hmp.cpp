@@ -11,13 +11,14 @@ bool midi_processor::is_hmp( std::vector<uint8_t> const& p_file )
     return true;
 }
 
-unsigned midi_processor::decode_hmp_delta( std::vector<uint8_t>::const_iterator & it )
+unsigned midi_processor::decode_hmp_delta( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end )
 {
 	unsigned delta = 0;
 	unsigned shift = 0;
 	unsigned char byte;
 	do
     {
+		if ( it == end ) return 0;
         byte = *it++;
 		delta = delta + ( ( byte & 0x7F ) << shift );
 		shift += 7;
@@ -33,12 +34,20 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
     uint8_t track_count_8;
     uint16_t dtx = 0xC0;
 
-    std::vector<uint8_t>::const_iterator it = p_file.begin() + ( is_funky ? 0x1A : 0x30 );
+	uint32_t offset = is_funky ? 0x1A : 0x30;
+
+	if ( offset >= p_file.size() )
+		return false;
+
+    std::vector<uint8_t>::const_iterator it = p_file.begin() + offset;
+	std::vector<uint8_t>::const_iterator end = p_file.end();
 
     track_count_8 = *it;
 
 	if ( is_funky )
     {
+		if ( p_file.size() <= 0x4D )
+			return false;
         dtx = ( p_file[ 0x4C ] << 16 ) | p_file[ 0x4D ];
 	}
 
@@ -53,15 +62,17 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
 
     uint8_t buffer[ 4 ];
 
+	if ( it == end ) return false;
     buffer[ 0 ] = *it++;
 
-    while ( it < p_file.end() )
+    while ( it != end )
 	{
 		if ( buffer[ 0 ] != 0xFF )
 		{
             buffer[ 0 ] = *it++;
 			continue;
 		}
+		if ( it == end ) break;
         buffer[ 1 ] = *it++;
 		if ( buffer[ 1 ] != 0x2F )
 		{
@@ -71,7 +82,9 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
 		break;
 	}
 
-    it += ( is_funky ? 3 : 5 );
+	offset = is_funky ? 3 : 5;
+	if ( (unsigned long)(end - it) < offset ) return false;
+    it += offset;
 
 	unsigned track_count = track_count_8;
 
@@ -82,18 +95,20 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
 
 		if ( is_funky )
 		{
+			if ( end - it < 4 ) break;
             track_size_16 = it[ 0 ] | ( it[ 1 ] << 8 );
             it += 2;
             track_size_32 = track_size_16 - 4;
-            if ( p_file.end() - it < track_size_32 + 2 ) break;
+            if ( (unsigned long)(end - it) < track_size_32 + 2 ) break;
             it += 2;
 		}
 		else
 		{
+			if ( end - it < 8 ) break;
             track_size_32 = it[ 0 ] | ( it[ 1 ] << 8 ) | ( it[ 2 ] << 16 ) | ( it[ 3 ] << 24 );
             it += 4;
 			track_size_32 -= 12;
-            if ( p_file.end() - it < track_size_32 + 8 ) break;
+            if ( (unsigned long)(end - it) < track_size_32 + 8 ) break;
             it += 4;
 		}
 
@@ -106,16 +121,19 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
 
         std::vector<uint8_t>::const_iterator track_end = it + track_size_32;
 
-        while ( it < track_end )
+        while ( it != track_end )
 		{
-            unsigned delta = decode_hmp_delta( it );
+            unsigned delta = decode_hmp_delta( it, track_end );
 			current_timestamp += delta;
+			if ( it == track_end ) return false;
             buffer[ 0 ] = *it++;
 			if ( buffer[ 0 ] == 0xFF )
 			{
+				if ( it == track_end ) return false;
                 buffer[ 1 ] = *it++;
-                int meta_count = decode_delta( it );
+                int meta_count = decode_delta( it, track_end );
                 if ( meta_count < 0 ) return false; /*throw exception_io_data( "Invalid HMP meta message" );*/
+				if ( track_end - it < meta_count ) return false;
                 buffer.resize( meta_count + 2 );
                 std::copy( it, it + meta_count, buffer.begin() + 2 );
                 it += meta_count;
@@ -131,6 +149,7 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
 				case 0xD0:
 					bytes_read = 1;
                 }
+				if ( (unsigned long)(track_end - it) < bytes_read ) return false;
                 std::copy( it, it + bytes_read, buffer.begin() + 1 );
                 it += bytes_read;
                 track.add_event( midi_event( current_timestamp, (midi_event::event_type)( ( buffer[ 0 ] >> 4 ) - 8 ), buffer[ 0 ] & 0x0F, &buffer[1], bytes_read ) );
@@ -138,7 +157,9 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
             else return false; /*throw exception_io_data( "Unexpected status code in HMP track" );*/
 		}
 
-        it = track_end + ( is_funky ? 0 : 4 );
+		offset = is_funky ? 0 : 4;
+		if ( end - it < (signed long)offset ) return false;
+        it = track_end + offset;
 
 		p_out.add_track( track );
 	}

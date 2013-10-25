@@ -35,11 +35,14 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 
     uint8_t velocity_levels[ 16 ] = { 0 };
 
+	if ( offset >= p_file.size() || offset + length > p_file.size() )
+		return false;
+
     std::vector<uint8_t>::const_iterator it = p_file.begin() + offset, end = p_file.begin() + offset + length;
 
     uint8_t buffer[ 4 ];
 
-    while ( it < end )
+    while ( it != end )
 	{
         buffer[ 0 ] = *it++;
 		if ( buffer[ 0 ] == 0x60 ) break;
@@ -56,6 +59,7 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 		{
 		case 0x00:
 			type = midi_event::note_on;
+			if ( it == end ) return false;
             buffer[ 1 ] = *it++;
 			buffer[ 2 ] = 0;
 			bytes_to_write = 2;
@@ -63,9 +67,11 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 
 		case 0x10:
 			type = midi_event::note_on;
+			if ( it == end ) return false;
             buffer[ 1 ] = *it++;
 			if ( buffer[ 1 ] & 0x80 )
 			{
+				if ( it == end ) return false;
                 buffer[ 2 ] = *it++;
 				velocity_levels[ channel ] = buffer[ 2 ];
 				buffer[ 1 ] &= 0x7F;
@@ -79,6 +85,7 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 
 		case 0x20:
 			type = midi_event::pitch_wheel;
+			if ( it == end ) return false;
             buffer[ 1 ] = *it++;
 			buffer[ 2 ] = buffer[ 1 ] >> 1;
 			buffer[ 1 ] <<= 7;
@@ -87,6 +94,7 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 
 		case 0x30:
 			type = midi_event::control_change;
+			if ( it == end ) return false;
             buffer[ 1 ] = *it++;
 			if ( buffer[ 1 ] >= 10 && buffer[ 1 ] <= 14 )
 			{
@@ -98,6 +106,7 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 			break;
 
 		case 0x40:
+			if ( it == end ) return false;
             buffer[ 1 ] = *it++;
 			if ( buffer[ 1 ] )
 			{
@@ -105,6 +114,7 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 				{
 					type = midi_event::control_change;
 					buffer[ 1 ] = mus_controllers[ buffer[ 1 ] ];
+					if ( it == end ) return false;
                     buffer[ 2 ] = *it++;
 					bytes_to_write = 2;
 				}
@@ -113,6 +123,7 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 			else
 			{
 				type = midi_event::program_change;
+				if ( it == end ) return false;
                 buffer[ 1 ] = *it++;
 				bytes_to_write = 1;
 			}
@@ -126,7 +137,7 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 
 		if ( buffer[ 0 ] & 0x80 )
         {
-            int delta = decode_delta( it );
+            int delta = decode_delta( it, end );
             if ( delta < 0 ) return false; /*throw exception_io_data( "Invalid MUS delta" );*/
 			current_timestamp += delta;
 		}

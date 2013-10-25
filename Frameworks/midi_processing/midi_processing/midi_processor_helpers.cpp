@@ -4,12 +4,13 @@ const uint8_t midi_processor::end_of_track[2] = {0xFF, 0x2F};
 const uint8_t midi_processor::loop_start[11] = {0xFF, 0x06, 'l', 'o', 'o', 'p', 'S', 't', 'a', 'r', 't'};
 const uint8_t midi_processor::loop_end[9] =    {0xFF, 0x06, 'l', 'o', 'o', 'p', 'E', 'n', 'd'};
 
-int midi_processor::decode_delta( std::vector<uint8_t>::const_iterator & it )
+int midi_processor::decode_delta( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end )
 {
 	int delta = 0;
 	unsigned char byte;
 	do
 	{
+		if ( it == end ) return 0;
         byte = *it++;
 		delta = ( delta << 7 ) + ( byte & 0x7F );
 	}

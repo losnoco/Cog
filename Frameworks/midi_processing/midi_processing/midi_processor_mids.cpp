@@ -13,10 +13,13 @@ bool midi_processor::is_mids( std::vector<uint8_t> const& p_file )
 
 bool midi_processor::process_mids( std::vector<uint8_t> const& p_file, midi_container & p_out )
 {
+	if ( p_file.size() < 20 ) return false;
     std::vector<uint8_t>::const_iterator it = p_file.begin() + 16;
+	std::vector<uint8_t>::const_iterator end = p_file.end();
 
     uint32_t fmt_size = it[ 0 ] | ( it[ 1 ] << 8 ) | ( it[ 2 ] << 16 ) | ( it[ 3 ] << 24 );
     it += 4;
+	if ( (unsigned long)(end - it) < fmt_size ) return false;
 
     uint32_t time_format = 1;
     /*uint32_t max_buffer = 0;*/
@@ -42,10 +45,12 @@ bool midi_processor::process_mids( std::vector<uint8_t> const& p_file, midi_cont
 	}
 
     it += fmt_size;
+	if ( it == end ) return false;
     if ( fmt_size & 1 ) ++it;
 
 	p_out.initialize( 0, time_format );
 
+	if ( end - it < 4 ) return false;
     if ( it[ 0 ] != 'd' || it[ 1 ] != 'a' || it[ 2 ] != 't' || it[ 3 ] != 'a' ) return false; /*throw exception_io_data( "MIDS missing RIFF data chunk" );*/
 
     it += 4;
@@ -56,11 +61,13 @@ bool midi_processor::process_mids( std::vector<uint8_t> const& p_file, midi_cont
 		p_out.add_track( track );
 	}
 
+	if ( end - it < 4 ) return false;
     uint32_t data_size = it[ 0 ] | ( it[ 1 ] << 8 ) | ( it[ 2 ] << 16 ) | ( it[ 3 ] << 24 );
     it += 4;
 
     std::vector<uint8_t>::const_iterator body_end = it + data_size;
 
+	if ( body_end - it < 4 ) return false;
     uint32_t segment_count = it[ 0 ] | ( it[ 1 ] << 8 ) | ( it[ 2 ] << 16 ) | ( it[ 3 ] << 24 );
     it += 4;
 
@@ -72,17 +79,24 @@ bool midi_processor::process_mids( std::vector<uint8_t> const& p_file, midi_cont
 
 	for ( unsigned i = 0; i < segment_count; ++i )
 	{
+		if ( end - it < 12 ) return false;
         it += 4;
         uint32_t segment_size = it[ 0 ] | ( it[ 1 ] << 8 ) | ( it[ 2 ] << 16 ) | ( it[ 3 ] << 24 );
         it += 4;
         std::vector<uint8_t>::const_iterator segment_end = it + segment_size;
-        while ( it < segment_end && it < body_end )
+        while ( it != segment_end && it != body_end )
 		{
+			if ( segment_end - it < 4 ) return false;
             uint32_t delta = it[ 0 ] | ( it[ 1 ] << 8 ) | ( it[ 2 ] << 16 ) | ( it[ 3 ] << 24 );
             it += 4;
             uint32_t event;
 			current_timestamp += delta;
-            if ( !is_eight_byte ) it += 4;
+            if ( !is_eight_byte )
+			{
+				if ( segment_end - it < 4 ) return false;
+				it += 4;
+			}
+			if ( segment_end - it < 4 ) return false;
             event = it[ 0 ] | ( it[ 1 ] << 8 ) | ( it[ 2 ] << 16 ) | ( it[ 3 ] << 24 );
             it += 4;
 			if ( event >> 24 == 0x01 )

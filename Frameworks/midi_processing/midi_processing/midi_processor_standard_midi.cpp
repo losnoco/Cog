@@ -20,9 +20,9 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
 
     for (;;)
     {
-        if ( !needs_end_marker && it >= end ) break;
-        int delta = decode_delta( it );
-        if ( !needs_end_marker && it >= end ) break;
+        if ( !needs_end_marker && it == end ) break;
+        int delta = decode_delta( it, end );
+        if ( !needs_end_marker && it == end ) break;
 
         if ( delta < 0 )
         {
@@ -45,6 +45,7 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
             if ( !needs_end_marker && ( event_code & 0xF0 ) == 0xE0 ) continue;
             if ( data_bytes_read < 1 )
             {
+				if ( it == end ) return false;
                 buffer[ 0 ] = *it++;
                 ++data_bytes_read;
             }
@@ -54,6 +55,7 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
             case 0xD0:
                 break;
             default:
+				if ( it == end ) return false;
                 buffer[ data_bytes_read ] = *it++;
                 ++data_bytes_read;
             }
@@ -61,8 +63,9 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         }
         else if ( event_code == 0xF0 )
         {
-            int data_count = decode_delta( it );
+            int data_count = decode_delta( it, end );
             if ( data_count < 0 ) return false; /*throw exception_io_data( "Invalid System Exclusive message" );*/
+			if ( end - it > data_count ) return false;
             buffer.resize( data_count + 1 );
             buffer[ 0 ] = 0xF0;
             std::copy( it, it + data_count, buffer.begin() + 1 );
@@ -71,9 +74,11 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         }
         else if ( event_code == 0xFF )
         {
+			if ( it == end ) return false;
             unsigned char meta_type = *it++;
-            int data_count = decode_delta( it );
+            int data_count = decode_delta( it, end );
             if ( data_count < 0 ) return false; /*throw exception_io_data( "Invalid meta message" );*/
+			if ( end - it < data_count ) return false;
             buffer.resize( data_count + 2 );
             buffer[ 0 ] = 0xFF;
             buffer[ 1 ] = meta_type;
@@ -112,6 +117,7 @@ bool midi_processor::process_standard_midi( std::vector<uint8_t> const& p_file, 
     if ( p_file[ 4 ] != 0 || p_file[ 5 ] != 0 || p_file[ 6 ] != 0 || p_file[ 7 ] != 6 ) return false; /*throw exception_io_data("Bad MIDI header size");*/
 
     std::vector<uint8_t>::const_iterator it = p_file.begin() + 8;
+	std::vector<uint8_t>::const_iterator end = p_file.end();
 
     uint16_t form = ( it[0] << 8 ) | it[1];
     if ( form > 2 ) return false;
@@ -127,9 +133,11 @@ bool midi_processor::process_standard_midi( std::vector<uint8_t> const& p_file, 
 
     for ( std::size_t i = 0; i < track_count; ++i )
 	{
+		if ( end - it < 8 ) return false;
         if ( it[0] != 'M' || it[1] != 'T' || it[2] != 'r' || it[3] != 'k' ) return false;
 
         uint32_t track_size = ( it[4] << 24 ) | ( it[5] << 16 ) | ( it[6] << 8 ) | it[7];
+		if ( (unsigned long)(end - it) < track_size ) return false;
 
         it += 8;
 
