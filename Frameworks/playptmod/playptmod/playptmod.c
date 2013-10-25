@@ -354,7 +354,7 @@ static const short rawAmigaPeriods[606] =
     0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
-static short extendedRawPeriods[16 * 85 + 13];
+static short extendedRawPeriods[16 * 85 + 14];
 
 static const short npertab[84] =
 {
@@ -2071,15 +2071,16 @@ static void processTremolo(player *p, mod_channel *ch)
 
 static void fxArpeggio(player *p, mod_channel *ch)
 {
-    char noteToAdd;
     char l;
     char m;
     char h;
+    char noteToAdd;
     char arpeggioTick;
+    unsigned char i;
     short *tablePointer;
-
+    
     noteToAdd = 0;
-
+    
     arpeggioTick = p->modTick % 3;
     if (arpeggioTick == 0)
     {
@@ -2094,29 +2095,16 @@ static void fxArpeggio(player *p, mod_channel *ch)
     {
         noteToAdd = LO_NYBBLE(ch->param);
     }
-
+    
     if (p->minPeriod == PT_MIN_PERIOD) // PT/NT/UST/STK
     {
-        l = 0;
-        h = 35;
-
         tablePointer = (short *)&rawAmigaPeriods[ch->fineTune * 37];
-        while (h >= l)
+        for (i = 0; i < 36; ++i)
         {
-            m = (h + l) / 2;
-
-            if (tablePointer[m] == ch->period)
+            if (ch->period >= tablePointer[i])
             {
-                p->tempPeriod = tablePointer[m + noteToAdd];
+                p->tempPeriod = tablePointer[i + noteToAdd];
                 break;
-            }
-            else if (tablePointer[m] > ch->period)
-            {
-                l = m + 1;
-            }
-            else
-            {
-                h = m - 1;
             }
         }
     }
@@ -2124,12 +2112,12 @@ static void fxArpeggio(player *p, mod_channel *ch)
     {
         l = 0;
         h = 83;
-
+        
         tablePointer = (short *)&extendedRawPeriods[ch->fineTune * 85];
         while (h >= l)
         {
             m = (h + l) / 2;
-
+            
             if (tablePointer[m] == ch->period)
             {
                 p->tempPeriod = tablePointer[m + noteToAdd];
@@ -2763,7 +2751,7 @@ void *playptmod_Create(int samplingFrequency)
         for (i = 0; i < 85; ++i)
             extendedRawPeriods[(j * 85) + i] = i == 84 ? 0 : npertab[i] * 8363 / finetune[j];
 
-    for (i = 0; i < 13; ++i)
+    for (i = 0; i < 14; ++i)
         extendedRawPeriods[16 * 85 + i] = 0;
 
     p->soundFrequency = samplingFrequency;
