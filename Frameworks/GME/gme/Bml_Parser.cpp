@@ -228,7 +228,7 @@ void Bml_Parser::parseDocument( const char * source )
                 last_indent = *(indents.end() - 1);
                 indents.pop_back();
                 size_t colon = current_path.find_last_of( ':' );
-                if ( colon != ~0 ) current_path.resize( colon );
+                if ( colon != std::string::npos ) current_path.resize( colon );
                 else current_path.resize( 0 );
             }
             last_indent = indent;
