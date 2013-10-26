@@ -98,15 +98,6 @@ void SMP::op_buswrite(uint16_t addr, uint8_t data) {
   case 0xf1:  //CONTROL
     status.iplrom_enable = data & 0x80;
 
-    if ( data & 0x10 ) {
-      sfm_last [ 0 ] = 0;
-      sfm_last [ 1 ] = 0;
-    }
-    if ( data & 0x20 ) {
-      sfm_last [ 2 ] = 0;
-      sfm_last [ 3 ] = 0;
-    }
-
     //0->1 transistion resets timers
     if(timer2.enable == false && (data & 0x04)) {
       timer2.stage2_ticks = 0;
