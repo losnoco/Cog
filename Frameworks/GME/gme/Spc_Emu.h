@@ -5,7 +5,7 @@
 #define SPC_EMU_H
 
 #include "Music_Emu.h"
-#include "Snes_Spc.h"
+#include "higan/smp/smp.hpp"
 #include "Spc_Filter.h"
 
 #if GME_SPC_FAST_RESAMPLER
@@ -23,13 +23,13 @@ public:
 	enum { native_sample_rate = 32000 };
 	
 	// Disables annoying pseudo-surround effect some music uses
-	void disable_surround( bool disable = true )    { apu.disable_surround( disable ); }
+	void disable_surround( bool disable = true )    { smp.dsp.disable_surround( disable ); }
 
 	// Enables gaussian, cubic or sinc interpolation
-	void interpolation_level( int level = 0 )   { apu.interpolation_level( level ); }
+	void interpolation_level( int level = 0 )   { /* smp.dsp.interpolation_level( level ); */ }
 
-	Snes_Spc const* get_apu() const;
-	Snes_Spc * get_apu();
+    SuperFamicom::SMP const* get_smp() const;
+    SuperFamicom::SMP * get_smp();
 	
 	// SPC file header
 	struct header_t
@@ -80,14 +80,14 @@ protected:
 private:
 	Spc_Emu_Resampler resampler;
 	Spc_Filter filter;
-	Snes_Spc apu;
+    SuperFamicom::SMP smp;
 	
 	byte const* trailer_() const;
 	int trailer_size_() const;
 	blargg_err_t play_and_filter( int count, sample_t out [] );
 };
 
-inline Snes_Spc const* Spc_Emu::get_apu() const { return &apu; }
-inline Snes_Spc * Spc_Emu::get_apu() { return &apu; }
+inline SuperFamicom::SMP const* Spc_Emu::get_smp() const { return &smp; }
+inline SuperFamicom::SMP * Spc_Emu::get_smp() { return &smp; }
 
 #endif

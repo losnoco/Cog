@@ -167,7 +167,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sgc", @"spc", @"vgm", @"vgz", nil];
+	return [NSArray arrayWithObjects:@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sfm", @"sgc", @"spc", @"vgm", @"vgz", nil];
 }
 
 + (NSArray *)mimeTypes 

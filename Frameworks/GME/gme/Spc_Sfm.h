@@ -5,7 +5,7 @@
 #define SPC_SFM_H
 
 #include "Music_Emu.h"
-#include "Snes_Spc.h"
+#include "higan/smp/smp.hpp"
 #include "Spc_Filter.h"
 
 #include "Bml_Parser.h"
@@ -28,12 +28,12 @@ public:
     enum { native_sample_rate = 32000 };
 
     // Disables annoying pseudo-surround effect some music uses
-    void disable_surround( bool disable = true )    { apu.disable_surround( disable ); }
+    void disable_surround( bool disable = true )    { smp.dsp.disable_surround( disable ); }
 
     // Enables gaussian, cubic or sinc interpolation
-    void interpolation_level( int level = 0 )   { apu.interpolation_level( level ); }
+    void interpolation_level( int level = 0 )   { /*apu.interpolation_level( level );*/ }
 
-    const Snes_Spc * get_apu() const;
+    const SuperFamicom::SMP * get_smp() const;
 
     blargg_err_t hash_( Hash_Function& ) const;
 
@@ -57,7 +57,7 @@ protected:
 private:
     Spc_Emu_Resampler resampler;
     Spc_Filter filter;
-    Snes_Spc apu;
+    SuperFamicom::SMP smp;
 
     Bml_Parser metadata;
 

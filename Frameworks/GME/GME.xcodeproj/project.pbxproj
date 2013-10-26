@@ -82,12 +82,6 @@
 		17C8F2450CBED286008D969D /* Sap_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1DC0CBED286008D969D /* Sap_Emu.h */; };
 		17C8F2460CBED286008D969D /* Sms_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1DD0CBED286008D969D /* Sms_Apu.cpp */; };
 		17C8F2470CBED286008D969D /* Sms_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1DE0CBED286008D969D /* Sms_Apu.h */; };
-		17C8F2490CBED286008D969D /* Snes_Spc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1E00CBED286008D969D /* Snes_Spc.cpp */; };
-		17C8F24A0CBED286008D969D /* Snes_Spc.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1E10CBED286008D969D /* Snes_Spc.h */; };
-		17C8F24B0CBED286008D969D /* Spc_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1E20CBED286008D969D /* Spc_Cpu.cpp */; };
-		17C8F24C0CBED286008D969D /* Spc_Cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1E30CBED286008D969D /* Spc_Cpu.h */; };
-		17C8F24D0CBED286008D969D /* Spc_Dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1E40CBED286008D969D /* Spc_Dsp.cpp */; };
-		17C8F24E0CBED286008D969D /* Spc_Dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1E50CBED286008D969D /* Spc_Dsp.h */; };
 		17C8F24F0CBED286008D969D /* Spc_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1E60CBED286008D969D /* Spc_Emu.cpp */; };
 		17C8F2500CBED286008D969D /* Spc_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1E70CBED286008D969D /* Spc_Emu.h */; };
 		17C8F2530CBED286008D969D /* Vgm_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1EA0CBED286008D969D /* Vgm_Emu.cpp */; };
@@ -255,6 +249,15 @@
 		8370B7CF17F615FE001A4D7A /* Z80_Cpu_run.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B72C17F615FE001A4D7A /* Z80_Cpu_run.h */; };
 		8370B7D017F615FE001A4D7A /* Z80_Cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8370B72D17F615FE001A4D7A /* Z80_Cpu.cpp */; };
 		8370B7D117F615FE001A4D7A /* Z80_Cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B72E17F615FE001A4D7A /* Z80_Cpu.h */; };
+		83FC5D5E181B47FB00B917E5 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83FC5D3B181B47FB00B917E5 /* dsp.cpp */; };
+		83FC5D5F181B47FB00B917E5 /* dsp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83FC5D3C181B47FB00B917E5 /* dsp.hpp */; };
+		83FC5D78181B47FB00B917E5 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83FC5D57181B47FB00B917E5 /* smp.cpp */; };
+		83FC5D79181B47FB00B917E5 /* smp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83FC5D58181B47FB00B917E5 /* smp.hpp */; };
+		83FC5D99181B675900B917E5 /* SPC_DSP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83FC5D97181B675900B917E5 /* SPC_DSP.cpp */; };
+		83FC5D9A181B675900B917E5 /* SPC_DSP.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FC5D98181B675900B917E5 /* SPC_DSP.h */; };
+		83FC5DAB181B8B1900B917E5 /* registers.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83FC5DA3181B8B1900B917E5 /* registers.hpp */; };
+		83FC5DAD181B8B1900B917E5 /* spc700.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83FC5DA5181B8B1900B917E5 /* spc700.cpp */; };
+		83FC5DAE181B8B1900B917E5 /* spc700.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83FC5DA6181B8B1900B917E5 /* spc700.hpp */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -339,12 +342,6 @@
 		17C8F1DC0CBED286008D969D /* Sap_Emu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sap_Emu.h; path = gme/Sap_Emu.h; sourceTree = "<group>"; };
 		17C8F1DD0CBED286008D969D /* Sms_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Sms_Apu.cpp; path = gme/Sms_Apu.cpp; sourceTree = "<group>"; };
 		17C8F1DE0CBED286008D969D /* Sms_Apu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sms_Apu.h; path = gme/Sms_Apu.h; sourceTree = "<group>"; };
-		17C8F1E00CBED286008D969D /* Snes_Spc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Snes_Spc.cpp; path = gme/Snes_Spc.cpp; sourceTree = "<group>"; };
-		17C8F1E10CBED286008D969D /* Snes_Spc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Snes_Spc.h; path = gme/Snes_Spc.h; sourceTree = "<group>"; };
-		17C8F1E20CBED286008D969D /* Spc_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Cpu.cpp; path = gme/Spc_Cpu.cpp; sourceTree = "<group>"; };
-		17C8F1E30CBED286008D969D /* Spc_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Spc_Cpu.h; path = gme/Spc_Cpu.h; sourceTree = "<group>"; };
-		17C8F1E40CBED286008D969D /* Spc_Dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Dsp.cpp; path = gme/Spc_Dsp.cpp; sourceTree = "<group>"; };
-		17C8F1E50CBED286008D969D /* Spc_Dsp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Spc_Dsp.h; path = gme/Spc_Dsp.h; sourceTree = "<group>"; };
 		17C8F1E60CBED286008D969D /* Spc_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Emu.cpp; path = gme/Spc_Emu.cpp; sourceTree = "<group>"; };
 		17C8F1E70CBED286008D969D /* Spc_Emu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Spc_Emu.h; path = gme/Spc_Emu.h; sourceTree = "<group>"; };
 		17C8F1EA0CBED286008D969D /* Vgm_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Vgm_Emu.cpp; path = gme/Vgm_Emu.cpp; sourceTree = "<group>"; };
@@ -514,6 +511,20 @@
 		8370B72C17F615FE001A4D7A /* Z80_Cpu_run.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Z80_Cpu_run.h; path = gme/Z80_Cpu_run.h; sourceTree = "<group>"; };
 		8370B72D17F615FE001A4D7A /* Z80_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Z80_Cpu.cpp; path = gme/Z80_Cpu.cpp; sourceTree = "<group>"; };
 		8370B72E17F615FE001A4D7A /* Z80_Cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Z80_Cpu.h; path = gme/Z80_Cpu.h; sourceTree = "<group>"; };
+		83FC5D3B181B47FB00B917E5 /* dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dsp.cpp; sourceTree = "<group>"; };
+		83FC5D3C181B47FB00B917E5 /* dsp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dsp.hpp; sourceTree = "<group>"; };
+		83FC5D57181B47FB00B917E5 /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smp.cpp; sourceTree = "<group>"; };
+		83FC5D58181B47FB00B917E5 /* smp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = smp.hpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		83FC5D95181B638C00B917E5 /* memory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = memory.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		83FC5D96181B638C00B917E5 /* timing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = timing.cpp; sourceTree = "<group>"; };
+		83FC5D97181B675900B917E5 /* SPC_DSP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SPC_DSP.cpp; sourceTree = "<group>"; };
+		83FC5D98181B675900B917E5 /* SPC_DSP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPC_DSP.h; sourceTree = "<group>"; };
+		83FC5DA3181B8B1900B917E5 /* registers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = registers.hpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		83FC5DA5181B8B1900B917E5 /* spc700.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spc700.cpp; sourceTree = "<group>"; };
+		83FC5DA6181B8B1900B917E5 /* spc700.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = spc700.hpp; sourceTree = "<group>"; };
+		83FC5DB1181B93DD00B917E5 /* algorithms.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = algorithms.cpp; sourceTree = "<group>"; };
+		83FC5DB3181B93DD00B917E5 /* instructions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = instructions.cpp; sourceTree = "<group>"; };
+		83FC5DB4181B93DD00B917E5 /* memory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = memory.hpp; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* GME.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GME.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -598,6 +609,7 @@
 		17C8F1860CBED26C008D969D /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				83FC5D35181B47FB00B917E5 /* higan */,
 				8370B68C17F615FD001A4D7A /* adlib.h */,
 				8370B68D17F615FD001A4D7A /* Ay_Core.cpp */,
 				8370B68E17F615FD001A4D7A /* Ay_Core.h */,
@@ -833,12 +845,6 @@
 				17C8F1DC0CBED286008D969D /* Sap_Emu.h */,
 				17C8F1DD0CBED286008D969D /* Sms_Apu.cpp */,
 				17C8F1DE0CBED286008D969D /* Sms_Apu.h */,
-				17C8F1E00CBED286008D969D /* Snes_Spc.cpp */,
-				17C8F1E10CBED286008D969D /* Snes_Spc.h */,
-				17C8F1E20CBED286008D969D /* Spc_Cpu.cpp */,
-				17C8F1E30CBED286008D969D /* Spc_Cpu.h */,
-				17C8F1E40CBED286008D969D /* Spc_Dsp.cpp */,
-				17C8F1E50CBED286008D969D /* Spc_Dsp.h */,
 				17C8F1E60CBED286008D969D /* Spc_Emu.cpp */,
 				17C8F1E70CBED286008D969D /* Spc_Emu.h */,
 				17C8F1EA0CBED286008D969D /* Vgm_Emu.cpp */,
@@ -849,6 +855,60 @@
 				17C8F1EF0CBED286008D969D /* Ym2612_Emu.h */,
 			);
 			name = Source;
+			sourceTree = "<group>";
+		};
+		83FC5D35181B47FB00B917E5 /* higan */ = {
+			isa = PBXGroup;
+			children = (
+				83FC5D9D181B8B1900B917E5 /* processor */,
+				83FC5D36181B47FB00B917E5 /* dsp */,
+				83FC5D40181B47FB00B917E5 /* smp */,
+			);
+			name = higan;
+			path = gme/higan;
+			sourceTree = "<group>";
+		};
+		83FC5D36181B47FB00B917E5 /* dsp */ = {
+			isa = PBXGroup;
+			children = (
+				83FC5D97181B675900B917E5 /* SPC_DSP.cpp */,
+				83FC5D98181B675900B917E5 /* SPC_DSP.h */,
+				83FC5D3B181B47FB00B917E5 /* dsp.cpp */,
+				83FC5D3C181B47FB00B917E5 /* dsp.hpp */,
+			);
+			path = dsp;
+			sourceTree = "<group>";
+		};
+		83FC5D40181B47FB00B917E5 /* smp */ = {
+			isa = PBXGroup;
+			children = (
+				83FC5D95181B638C00B917E5 /* memory.cpp */,
+				83FC5D96181B638C00B917E5 /* timing.cpp */,
+				83FC5D57181B47FB00B917E5 /* smp.cpp */,
+				83FC5D58181B47FB00B917E5 /* smp.hpp */,
+			);
+			path = smp;
+			sourceTree = "<group>";
+		};
+		83FC5D9D181B8B1900B917E5 /* processor */ = {
+			isa = PBXGroup;
+			children = (
+				83FC5D9E181B8B1900B917E5 /* spc700 */,
+			);
+			path = processor;
+			sourceTree = "<group>";
+		};
+		83FC5D9E181B8B1900B917E5 /* spc700 */ = {
+			isa = PBXGroup;
+			children = (
+				83FC5DB1181B93DD00B917E5 /* algorithms.cpp */,
+				83FC5DB3181B93DD00B917E5 /* instructions.cpp */,
+				83FC5DB4181B93DD00B917E5 /* memory.hpp */,
+				83FC5DA3181B8B1900B917E5 /* registers.hpp */,
+				83FC5DA5181B8B1900B917E5 /* spc700.cpp */,
+				83FC5DA6181B8B1900B917E5 /* spc700.hpp */,
+			);
+			path = spc700;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -876,8 +936,10 @@
 				17C8F1FB0CBED286008D969D /* blargg_config.h in Headers */,
 				8370B78F17F615FE001A4D7A /* rf5c68.h in Headers */,
 				17C8F1FC0CBED286008D969D /* blargg_endian.h in Headers */,
+				83FC5D5F181B47FB00B917E5 /* dsp.hpp in Headers */,
 				17C8F1FD0CBED286008D969D /* blargg_source.h in Headers */,
 				8370B75617F615FE001A4D7A /* Hes_Core.h in Headers */,
+				83FC5D79181B47FB00B917E5 /* smp.hpp in Headers */,
 				8370B76017F615FE001A4D7A /* K053260_Emu.h in Headers */,
 				8370B78317F615FE001A4D7A /* Pwm_Emu.h in Headers */,
 				8370B73617F615FE001A4D7A /* Blip_Buffer_impl2.h in Headers */,
@@ -902,8 +964,10 @@
 				8370B79317F615FE001A4D7A /* Rom_Data.h in Headers */,
 				8370B7B817F615FE001A4D7A /* Ym2151_Emu.h in Headers */,
 				8370B79B17F615FE001A4D7A /* s_opltbl.h in Headers */,
+				83FC5DAE181B8B1900B917E5 /* spc700.hpp in Headers */,
 				17C8F20B0CBED286008D969D /* Gb_Apu.h in Headers */,
 				8370B7A517F615FE001A4D7A /* Sgc_Core.h in Headers */,
+				83FC5DAB181B8B1900B917E5 /* registers.hpp in Headers */,
 				8370B77217F615FE001A4D7A /* nestypes.h in Headers */,
 				17C8F20E0CBED286008D969D /* Gb_Cpu.h in Headers */,
 				17C8F2100CBED286008D969D /* Gb_Oscs.h in Headers */,
@@ -912,6 +976,7 @@
 				8370B7B217F615FE001A4D7A /* Track_Filter.h in Headers */,
 				8370B74417F615FE001A4D7A /* Downsampler.h in Headers */,
 				17C8F2120CBED286008D969D /* Gbs_Emu.h in Headers */,
+				83FC5D9A181B675900B917E5 /* SPC_DSP.h in Headers */,
 				17C8F2140CBED286008D969D /* Gme_File.h in Headers */,
 				8370B76217F615FE001A4D7A /* k053260.h in Headers */,
 				8370B7C017F615FE001A4D7A /* Ym2608_Emu.h in Headers */,
@@ -966,17 +1031,14 @@
 				17C8F2470CBED286008D969D /* Sms_Apu.h in Headers */,
 				8370B79917F615FE001A4D7A /* s_opl.h in Headers */,
 				8370B78917F615FE001A4D7A /* Qsound_Apu.h in Headers */,
-				17C8F24A0CBED286008D969D /* Snes_Spc.h in Headers */,
 				8370B7AE17F615FE001A4D7A /* Spc_Filter.h in Headers */,
 				8370B7AA17F615FE001A4D7A /* Sgc_Impl.h in Headers */,
-				17C8F24C0CBED286008D969D /* Spc_Cpu.h in Headers */,
 				8370B7CA17F615FE001A4D7A /* Ymf262_Emu.h in Headers */,
 				8370B79D17F615FE001A4D7A /* Sap_Core.h in Headers */,
 				8370B75E17F615FE001A4D7A /* k051649.h in Headers */,
 				8370B77D17F615FE001A4D7A /* Okim6295_Emu.h in Headers */,
 				8370B7C617F615FE001A4D7A /* Ym3812_Emu.h in Headers */,
 				8370B77717F615FE001A4D7A /* Nsf_Impl.h in Headers */,
-				17C8F24E0CBED286008D969D /* Spc_Dsp.h in Headers */,
 				8370B79F17F615FE001A4D7A /* scd_pcm.h in Headers */,
 				8370B7C217F615FE001A4D7A /* Ym2610b_Emu.h in Headers */,
 				8370B77917F615FE001A4D7A /* Okim6258_Emu.h in Headers */,
@@ -1079,6 +1141,7 @@
 				17C8F2020CBED286008D969D /* Data_Reader.cpp in Sources */,
 				8370B7C117F615FE001A4D7A /* Ym2610b_Emu.cpp in Sources */,
 				8370B75F17F615FE001A4D7A /* K053260_Emu.cpp in Sources */,
+				83FC5D78181B47FB00B917E5 /* smp.cpp in Sources */,
 				17C8F2040CBED286008D969D /* Dual_Resampler.cpp in Sources */,
 				8370B73217F615FE001A4D7A /* blargg_common.cpp in Sources */,
 				8370B74817F615FE001A4D7A /* fm2612.c in Sources */,
@@ -1110,6 +1173,7 @@
 				17C8F21D0CBED286008D969D /* Hes_Cpu.cpp in Sources */,
 				17C8F21F0CBED286008D969D /* Hes_Emu.cpp in Sources */,
 				8370B78617F615FE001A4D7A /* qmix.c in Sources */,
+				83FC5D5E181B47FB00B917E5 /* dsp.cpp in Sources */,
 				17C8F2210CBED286008D969D /* Kss_Cpu.cpp in Sources */,
 				8370B76117F615FE001A4D7A /* k053260.c in Sources */,
 				8370B79A17F615FE001A4D7A /* s_opltbl.c in Sources */,
@@ -1122,6 +1186,7 @@
 				8370B7C717F615FE001A4D7A /* ymdeltat.cpp in Sources */,
 				17C8F22C0CBED286008D969D /* Music_Emu.cpp in Sources */,
 				8370B7C517F615FE001A4D7A /* Ym3812_Emu.cpp in Sources */,
+				83FC5D99181B675900B917E5 /* SPC_DSP.cpp in Sources */,
 				17C8F22E0CBED286008D969D /* Nes_Apu.cpp in Sources */,
 				17C8F2310CBED286008D969D /* Nes_Cpu.cpp in Sources */,
 				17C8F2330CBED286008D969D /* Nes_Fme7_Apu.cpp in Sources */,
@@ -1136,6 +1201,7 @@
 				8370B75317F615FE001A4D7A /* Hes_Apu_Adpcm.cpp in Sources */,
 				8370B78817F615FE001A4D7A /* Qsound_Apu.cpp in Sources */,
 				17C8F23B0CBED286008D969D /* Nsf_Emu.cpp in Sources */,
+				83FC5DAD181B8B1900B917E5 /* spc700.cpp in Sources */,
 				8370B78217F615FE001A4D7A /* Pwm_Emu.cpp in Sources */,
 				8370B78C17F615FE001A4D7A /* Rf5C68_Emu.cpp in Sources */,
 				8370B73017F615FE001A4D7A /* Ay_Core.cpp in Sources */,
@@ -1155,16 +1221,13 @@
 				8370B75517F615FE001A4D7A /* Hes_Core.cpp in Sources */,
 				8370B7D017F615FE001A4D7A /* Z80_Cpu.cpp in Sources */,
 				17C8F2460CBED286008D969D /* Sms_Apu.cpp in Sources */,
-				17C8F2490CBED286008D969D /* Snes_Spc.cpp in Sources */,
 				8370B7B317F615FE001A4D7A /* Upsampler.cpp in Sources */,
 				8370B77817F615FE001A4D7A /* Okim6258_Emu.cpp in Sources */,
 				8370B7AD17F615FE001A4D7A /* Spc_Filter.cpp in Sources */,
-				17C8F24B0CBED286008D969D /* Spc_Cpu.cpp in Sources */,
 				8370B7AB17F615FE001A4D7A /* Sms_Fm_Apu.cpp in Sources */,
 				8370B78017F615FE001A4D7A /* Opl_Apu.cpp in Sources */,
 				8370B7CB17F615FE001A4D7A /* Ymz280b_Emu.cpp in Sources */,
 				8370B79017F615FE001A4D7A /* Rf5C164_Emu.cpp in Sources */,
-				17C8F24D0CBED286008D969D /* Spc_Dsp.cpp in Sources */,
 				17C8F24F0CBED286008D969D /* Spc_Emu.cpp in Sources */,
 				17C8F2530CBED286008D969D /* Vgm_Emu.cpp in Sources */,
 				17C8F2550CBED286008D969D /* Ym2413_Emu.cpp in Sources */,

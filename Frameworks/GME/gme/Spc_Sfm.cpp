@@ -25,6 +25,8 @@ Sfm_Emu::Sfm_Emu()
 {
     set_type( gme_sfm_type );
     set_gain( 1.4 );
+    set_max_initial_silence( 30 );
+	set_silence_lookahead( 30 ); // Some SFMs may have a lot of initialization code
 }
 
 Sfm_Emu::~Sfm_Emu() { }
@@ -67,6 +69,8 @@ struct Sfm_File : Gme_Info_
         RETURN_ERR( data.resize( file_size ) );
         RETURN_ERR( in.read( data.begin(), data.end() - data.begin() ) );
         RETURN_ERR( check_sfm_header( data.begin() ) );
+        if ( file_size < 8 )
+            return "SFM file too small";
         int metadata_size = get_le32( data.begin() + 4 );
         byte temp = data[ 8 + metadata_size ];
         data[ 8 + metadata_size ] = '\0';
@@ -100,7 +104,7 @@ gme_type_t_ const gme_sfm_type [1] = {{ "Super Nintendo with log", 1, &new_sfm_e
 
 blargg_err_t Sfm_Emu::set_sample_rate_( int sample_rate )
 {
-    RETURN_ERR( apu.init() );
+    smp.power();
     if ( sample_rate != native_sample_rate )
     {
         RETURN_ERR( resampler.resize_buffer( native_sample_rate / 20 * 2 ) );
@@ -112,16 +116,17 @@ blargg_err_t Sfm_Emu::set_sample_rate_( int sample_rate )
 void Sfm_Emu::mute_voices_( int m )
 {
     Music_Emu::mute_voices_( m );
-    apu.mute_voices( m );
+    for ( int i = 0, j = 1; i < 8; ++i, j <<= 1 )
+        smp.dsp.channel_enable( i, !( m & j ) );
 }
 
 blargg_err_t Sfm_Emu::load_mem_( byte const in [], int size )
 {
-    set_voice_count( Spc_Dsp::voice_count );
+    set_voice_count( 8 );
     if ( size < Sfm_Emu::sfm_min_file_size )
         return blargg_err_file_type;
 
-    static const char* const names [Spc_Dsp::voice_count] = {
+    static const char* const names [ 8 ] = {
         "DSP 1", "DSP 2", "DSP 3", "DSP 4", "DSP 5", "DSP 6", "DSP 7", "DSP 8"
     };
     set_voice_names( names );
@@ -133,7 +138,7 @@ blargg_err_t Sfm_Emu::load_mem_( byte const in [], int size )
 
 void Sfm_Emu::set_tempo_( double t )
 {
-    apu.set_tempo( (int) (t * Snes_Spc::tempo_unit) );
+    /*apu.set_tempo( (int) (t * Snes_Spc::tempo_unit) );*/
 }
 
 // (n ? n : 256)
@@ -159,6 +164,8 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     resampler.clear();
     filter.clear();
     const byte * ptr = file_begin();
+    if ( file_size() < Sfm_Emu::sfm_min_file_size )
+        return "SFM file too small";
     int metadata_size = get_le32(ptr + 4);
     if ( file_size() < metadata_size + Sfm_Emu::sfm_min_file_size )
         return "SFM file too small";
@@ -168,140 +175,127 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     metadata.parseDocument(temp);
     delete [] temp;
 
-    apu.init_rom( ipl_rom );
+    memcpy( smp.iplrom, ipl_rom, 64 );
 
-    apu.reset();
+    smp.reset();
 
-    memcpy( apu.m.ram.ram, ptr + 8 + metadata_size, 65536 );
+    memcpy( smp.apuram, ptr + 8 + metadata_size, 65536 );
 
-    memcpy( apu.dsp.m.regs, ptr + 8 + metadata_size + 65536, 128 );
+    memcpy( smp.dsp.spc_dsp.m.regs, ptr + 8 + metadata_size + 65536, 128 );
 
-    apu.set_sfm_queue( ptr + 8 + metadata_size + 65536 + 128, ptr + file_size() );
-
-    byte regs[Snes_Spc::reg_count] = {0};
+    smp.set_sfm_queue( ptr + 8 + metadata_size + 65536 + 128, ptr + file_size() );
 
     char * end;
     const char * value;
 
-    regs[Snes_Spc::r_test] = META_ENUM_INT("smp:test");
-    regs[Snes_Spc::r_control] |= META_ENUM_INT("smp:iplrom") ? 0x80 : 0;
-    regs[Snes_Spc::r_dspaddr] = META_ENUM_INT("smp:dspaddr");
+    uint32_t test = META_ENUM_INT("smp:test");
+    smp.status.clock_speed = (test >> 6) & 3;
+    smp.status.timer_speed = (test >> 4) & 3;
+    smp.status.timers_enable = test & 0x08;
+    smp.status.ram_disable = test & 0x04;
+    smp.status.ram_writable = test & 0x02;
+    smp.status.timers_disable = test & 0x01;
+
+    smp.status.iplrom_enable = META_ENUM_INT("smp:iplrom");
+    smp.status.dsp_addr = META_ENUM_INT("smp:dspaddr");
 
     value = metadata.enumValue("smp:ram");
     if (value)
     {
-        regs[Snes_Spc::r_f8] = strtoul(value, &end, 10);
+        smp.status.ram00f8 = strtoul(value, &end, 10);
         if (*end)
         {
             value = end + 1;
-            regs[Snes_Spc::r_f9] = strtoul(value, &end, 10);
+            smp.status.ram00f9 = strtoul(value, &end, 10);
         }
     }
 
     char temp_path[256];
     for (int i = 0; i < 3; ++i)
     {
+        SuperFamicom::SMP::Timer<192> &t = (i == 0 ? smp.timer0 : (i == 1 ? smp.timer1 : *(SuperFamicom::SMP::Timer<192>*)&smp.timer2));
         sprintf(temp_path, "smp:timer[%u]:", i);
         size_t length = strlen(temp_path);
         strcpy(temp_path + length, "enable");
         value = metadata.enumValue(temp_path);
         if (value)
         {
-            regs[Snes_Spc::r_control] |= strtoul(value, &end, 10) ? 1 << i : 0;
+            t.enable = !!strtoul(value, &end, 10);
         }
         strcpy(temp_path + length, "target");
         value = metadata.enumValue(temp_path);
         if (value)
         {
-            regs[Snes_Spc::r_t0target + i] = strtoul(value, &end, 10);
+            t.target = strtoul(value, &end, 10);
         }
         strcpy(temp_path + length, "stage");
         value = metadata.enumValue(temp_path);
         if (value)
         {
-            for (int j = 0; j < 3; ++j)
-            {
-                if (value) value = strchr(value, ',');
-                if (value) ++value;
-            }
-            if (value)
-            {
-                regs[Snes_Spc::r_t0out + i] = strtoul(value, &end, 10);
-            }
+            t.stage0_ticks = strtoul(value, &end, 10);
+            if (*end != ',') break;
+            value = end + 1;
+            t.stage1_ticks = strtoul(value, &end, 10);
+            if (*end != ',') break;
+            value = end + 1;
+            t.stage2_ticks = strtoul(value, &end, 10);
+            if (*end != ',') break;
+            value = end + 1;
+            t.stage3_ticks = strtoul(value, &end, 10);
         }
-    }
-
-    apu.load_regs( regs );
-    apu.m.rom_enabled = 0;
-    apu.regs_loaded();
-
-    for (int i = 0; i < 3; ++i)
-    {
-        sprintf(temp_path, "smp:timer[%u]:", i);
-        size_t length = strlen(temp_path);
-        strcpy(temp_path + length, "stage");
+        strcpy(temp_path + length, "line");
         value = metadata.enumValue(temp_path);
         if (value)
         {
-            const char * stage = value;
-            apu.m.timers[i].next_time = strtoul(stage, &end, 10) + 1;
-            for (int j = 0; j < 2; ++j)
-            {
-                if (stage) stage = strchr(stage, ',');
-                if (stage) ++stage;
-            }
-            if (stage)
-            {
-                apu.m.timers[i].divider = strtoul(value, &end, 10);
-            }
+            t.current_line = !!strtoul(value, &end, 10);
         }
     }
 
-    apu.dsp.m.echo_hist_pos = &apu.dsp.m.echo_hist[META_ENUM_INT("dsp:echohistaddr")];
+    smp.dsp.spc_dsp.m.echo_hist_pos = &smp.dsp.spc_dsp.m.echo_hist[META_ENUM_INT("dsp:echohistaddr")];
 
     value = metadata.enumValue("dsp:echohistdata");
     if (value)
     {
         for (int i = 0; i < 8; ++i)
         {
-            apu.dsp.m.echo_hist[i][0] = strtoul(value, &end, 10);
+            smp.dsp.spc_dsp.m.echo_hist[i][0] = strtoul(value, &end, 10);
             value = strchr(value, ',');
             if (!value) break;
             ++value;
-            apu.dsp.m.echo_hist[i][1] = strtoul(value, &end, 10);
+            smp.dsp.spc_dsp.m.echo_hist[i][1] = strtoul(value, &end, 10);
             value = strchr(value, ',');
             if (!value) break;
             ++value;
         }
     }
 
-    apu.dsp.m.phase = META_ENUM_INT("dsp:sample");
-    apu.dsp.m.kon = META_ENUM_INT("dsp:kon");
-    apu.dsp.m.noise = META_ENUM_INT("dsp:noise");
-    apu.dsp.m.counter = META_ENUM_INT("dsp:counter");
-    apu.dsp.m.echo_offset = META_ENUM_INT("dsp:echooffset");
-    apu.dsp.m.echo_length = META_ENUM_INT("dsp:echolength");
-    apu.dsp.m.new_kon = META_ENUM_INT("dsp:koncache");
-    apu.dsp.m.endx_buf = META_ENUM_INT("dsp:endx");
-    apu.dsp.m.envx_buf = META_ENUM_INT("dsp:envx");
-    apu.dsp.m.outx_buf = META_ENUM_INT("dsp:outx");
-    apu.dsp.m.t_pmon = META_ENUM_INT("dsp:pmon");
-    apu.dsp.m.t_non = META_ENUM_INT("dsp:non");
-    apu.dsp.m.t_eon = META_ENUM_INT("dsp:eon");
-    apu.dsp.m.t_dir = META_ENUM_INT("dsp:dir");
-    apu.dsp.m.t_koff = META_ENUM_INT("dsp:koff");
-    apu.dsp.m.t_brr_next_addr = META_ENUM_INT("dsp:brrnext");
-    apu.dsp.m.t_adsr0 = META_ENUM_INT("dsp:adsr0");
-    apu.dsp.m.t_brr_header = META_ENUM_INT("dsp:brrheader");
-    apu.dsp.m.t_brr_byte = META_ENUM_INT("dsp:brrdata");
-    apu.dsp.m.t_srcn = META_ENUM_INT("dsp:srcn");
-    apu.dsp.m.t_esa = META_ENUM_INT("dsp:esa");
-    apu.dsp.m.t_echo_enabled = !META_ENUM_INT("dsp:echodisable");
-    apu.dsp.m.t_dir_addr = META_ENUM_INT("dsp:diraddr");
-    apu.dsp.m.t_pitch = META_ENUM_INT("dsp:pitch");
-    apu.dsp.m.t_output = META_ENUM_INT("dsp:output");
-    apu.dsp.m.t_looped = META_ENUM_INT("dsp:looped");
-    apu.dsp.m.t_echo_ptr = META_ENUM_INT("dsp:echoaddr");
+    smp.dsp.spc_dsp.m.phase = META_ENUM_INT("dsp:sample");
+    smp.dsp.spc_dsp.m.kon = META_ENUM_INT("dsp:kon");
+    smp.dsp.spc_dsp.m.noise = META_ENUM_INT("dsp:noise");
+    smp.dsp.spc_dsp.m.counter = META_ENUM_INT("dsp:counter");
+    smp.dsp.spc_dsp.m.echo_offset = META_ENUM_INT("dsp:echooffset");
+    smp.dsp.spc_dsp.m.echo_length = META_ENUM_INT("dsp:echolength");
+    smp.dsp.spc_dsp.m.new_kon = META_ENUM_INT("dsp:koncache");
+    smp.dsp.spc_dsp.m.endx_buf = META_ENUM_INT("dsp:endx");
+    smp.dsp.spc_dsp.m.envx_buf = META_ENUM_INT("dsp:envx");
+    smp.dsp.spc_dsp.m.outx_buf = META_ENUM_INT("dsp:outx");
+    smp.dsp.spc_dsp.m.t_pmon = META_ENUM_INT("dsp:pmon");
+    smp.dsp.spc_dsp.m.t_non = META_ENUM_INT("dsp:non");
+    smp.dsp.spc_dsp.m.t_eon = META_ENUM_INT("dsp:eon");
+    smp.dsp.spc_dsp.m.t_dir = META_ENUM_INT("dsp:dir");
+    smp.dsp.spc_dsp.m.t_koff = META_ENUM_INT("dsp:koff");
+    smp.dsp.spc_dsp.m.t_brr_next_addr = META_ENUM_INT("dsp:brrnext");
+    smp.dsp.spc_dsp.m.t_adsr0 = META_ENUM_INT("dsp:adsr0");
+    smp.dsp.spc_dsp.m.t_brr_header = META_ENUM_INT("dsp:brrheader");
+    smp.dsp.spc_dsp.m.t_brr_byte = META_ENUM_INT("dsp:brrdata");
+    smp.dsp.spc_dsp.m.t_srcn = META_ENUM_INT("dsp:srcn");
+    smp.dsp.spc_dsp.m.t_esa = META_ENUM_INT("dsp:esa");
+    smp.dsp.spc_dsp.m.t_echo_enabled = !META_ENUM_INT("dsp:echodisable");
+    smp.dsp.spc_dsp.m.t_dir_addr = META_ENUM_INT("dsp:diraddr");
+    smp.dsp.spc_dsp.m.t_pitch = META_ENUM_INT("dsp:pitch");
+    smp.dsp.spc_dsp.m.t_output = META_ENUM_INT("dsp:output");
+    smp.dsp.spc_dsp.m.t_looped = META_ENUM_INT("dsp:looped");
+    smp.dsp.spc_dsp.m.t_echo_ptr = META_ENUM_INT("dsp:echoaddr");
 
 
 #define META_ENUM_LEVELS(n, o) \
@@ -316,9 +310,9 @@ blargg_err_t Sfm_Emu::start_track_( int track )
         } \
     }
 
-    META_ENUM_LEVELS("dsp:mainout", apu.dsp.m.t_main_out);
-    META_ENUM_LEVELS("dsp:echoout", apu.dsp.m.t_echo_out);
-    META_ENUM_LEVELS("dsp:echoin", apu.dsp.m.t_echo_in);
+    META_ENUM_LEVELS("dsp:mainout", smp.dsp.spc_dsp.m.t_main_out);
+    META_ENUM_LEVELS("dsp:echoout", smp.dsp.spc_dsp.m.t_echo_out);
+    META_ENUM_LEVELS("dsp:echoin", smp.dsp.spc_dsp.m.t_echo_in);
 
 #undef META_ENUM_LEVELS
 
@@ -326,7 +320,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     {
         sprintf(temp_path, "dsp:voice[%u]:", i);
         size_t length = strlen(temp_path);
-        Spc_Dsp::voice_t & voice = apu.dsp.m.voices[i];
+        SuperFamicom::SPC_DSP::voice_t & voice = smp.dsp.spc_dsp.m.voices[i];
         strcpy(temp_path + length, "brrhistaddr");
         value = metadata.enumValue(temp_path);
         if (value)
@@ -337,9 +331,9 @@ blargg_err_t Sfm_Emu::start_track_( int track )
         value = metadata.enumValue(temp_path);
         if (value)
         {
-            for (int j = 0; j < Spc_Dsp::brr_buf_size; ++j)
+            for (int j = 0; j < SuperFamicom::SPC_DSP::brr_buf_size; ++j)
             {
-                voice.buf[j] = voice.buf[j + Spc_Dsp::brr_buf_size] = strtoul(value, &end, 10);
+                voice.buf[j] = voice.buf[j + SuperFamicom::SPC_DSP::brr_buf_size] = strtoul(value, &end, 10);
                 if (!*end) break;
                 value = end + 1;
             }
@@ -353,11 +347,11 @@ blargg_err_t Sfm_Emu::start_track_( int track )
         strcpy(temp_path + length, "vbit");
         voice.vbit = META_ENUM_INT(temp_path);
         strcpy(temp_path + length, "vidx");
-        voice.regs = &apu.dsp.m.regs[META_ENUM_INT(temp_path)];
+        voice.regs = &smp.dsp.spc_dsp.m.regs[META_ENUM_INT(temp_path)];
         strcpy(temp_path + length, "kondelay");
         voice.kon_delay = META_ENUM_INT(temp_path);
         strcpy(temp_path + length, "envmode");
-        voice.env_mode = (Spc_Dsp::env_mode_t) META_ENUM_INT(temp_path);
+        voice.env_mode = (SuperFamicom::SPC_DSP::env_mode_t) META_ENUM_INT(temp_path);
         strcpy(temp_path + length, "env");
         voice.env = META_ENUM_INT(temp_path);
         strcpy(temp_path + length, "envxout");
@@ -367,7 +361,6 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     }
 
     filter.set_gain( (int) (gain() * Spc_Filter::gain_unit) );
-    apu.clear_echo( true );
     return blargg_ok;
 }
 
@@ -375,7 +368,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
 
 blargg_err_t Sfm_Emu::play_and_filter( int count, sample_t out [] )
 {
-    RETURN_ERR( apu.play( count, out ) );
+    smp.render( out, count );
     filter.run( out, count );
     return blargg_ok;
 }
@@ -392,7 +385,7 @@ blargg_err_t Sfm_Emu::skip_( int count )
 
     if ( count > 0 )
     {
-        RETURN_ERR( apu.skip( count ) );
+        smp.skip( count );
         filter.clear();
     }
 

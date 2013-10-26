@@ -281,7 +281,7 @@ struct Spc_File : Gme_Info_
 	blargg_err_t load_( Data_Reader& in )
 	{
 		int file_size = in.remain();
-		if ( file_size < Snes_Spc::spc_min_file_size )
+		if ( file_size < 0x10180 )
 			return blargg_err_file_type;
 		RETURN_ERR( in.read( &header, header.size ) );
 		RETURN_ERR( check_spc_header( header.tag ) );
@@ -319,7 +319,7 @@ gme_type_t_ const gme_spc_type [1] = {{ "Super Nintendo", 1, &new_spc_emu, &new_
 
 blargg_err_t Spc_Emu::set_sample_rate_( int sample_rate )
 {
-	RETURN_ERR( apu.init() );
+	smp.power();
 	if ( sample_rate != native_sample_rate )
 	{
 		RETURN_ERR( resampler.resize_buffer( native_sample_rate / 20 * 2 ) );
@@ -331,17 +331,18 @@ blargg_err_t Spc_Emu::set_sample_rate_( int sample_rate )
 void Spc_Emu::mute_voices_( int m )
 {
 	Music_Emu::mute_voices_( m );
-	apu.mute_voices( m );
+	for ( int i = 0, j = 1; i < 8; ++i, j <<= 1 )
+        smp.dsp.channel_enable( i, !( m & j ) );
 }
 
 blargg_err_t Spc_Emu::load_mem_( byte const in [], int size )
 {
 	assert( offsetof (header_t,unused2 [46]) == header_t::size );
-	set_voice_count( Spc_Dsp::voice_count );
-	if ( size < Snes_Spc::spc_min_file_size )
+	set_voice_count( 8 );
+	if ( size < 0x10180 )
 		return blargg_err_file_type;
 	
-	static const char* const names [Spc_Dsp::voice_count] = {
+	static const char* const names [ 8 ] = {
 		"DSP 1", "DSP 2", "DSP 3", "DSP 4", "DSP 5", "DSP 6", "DSP 7", "DSP 8"
 	};
 	set_voice_names( names );
@@ -353,7 +354,7 @@ blargg_err_t Spc_Emu::load_mem_( byte const in [], int size )
 
 void Spc_Emu::set_tempo_( double t )
 {
-	apu.set_tempo( (int) (t * Snes_Spc::tempo_unit) );
+	/*apu.set_tempo( (int) (t * Snes_Spc::tempo_unit) );*/
 }
 
 blargg_err_t Spc_Emu::start_track_( int track )
@@ -361,15 +362,46 @@ blargg_err_t Spc_Emu::start_track_( int track )
 	RETURN_ERR( Music_Emu::start_track_( track ) );
 	resampler.clear();
 	filter.clear();
-	RETURN_ERR( apu.load_spc( file_begin(), file_size() ) );
+    smp.reset();
+    const byte * ptr = file_begin();
+    
+    Spc_Emu::header_t & header = *(Spc_Emu::header_t*)ptr;
+    ptr += sizeof(header);
+
+    smp.regs.pc = header.pc[0] + header.pc[1] * 0x100;
+    smp.regs.a = header.a;
+    smp.regs.x = header.x;
+    smp.regs.y = header.y;
+    smp.regs.p = header.psw;
+    smp.regs.s = header.sp;
+    
+    memcpy( smp.apuram, ptr, 0x10000 );
+    memcpy( smp.sfm_last, ptr + 0xF4, 4 );
+    smp.op_buswrite( 0xF1, ptr[ 0xF1 ] );
+    smp.op_buswrite( 0xF2, ptr[ 0xF2 ] );
+    smp.op_buswrite( 0xFA, ptr[ 0xFA ] );
+    smp.op_buswrite( 0xFB, ptr[ 0xFB ] );
+    smp.op_buswrite( 0xFC, ptr[ 0xFC ] );
+    ptr += 0x10000;
+    
+    smp.dsp.spc_dsp.load( ptr );
+    
+    if ( !(smp.dsp.read( SuperFamicom::SPC_DSP::r_flg ) & 0x20) )
+    {
+        int addr = 0x100 * smp.dsp.read( SuperFamicom::SPC_DSP::r_esa );
+        int end  = addr + 0x800 * (smp.dsp.read( SuperFamicom::SPC_DSP::r_edl ) & 0x0F);
+        if ( end > 0x10000 )
+            end = 0x10000;
+        memset( &smp.apuram [addr], 0xFF, end - addr );
+    }
+
 	filter.set_gain( (int) (gain() * Spc_Filter::gain_unit) );
-	apu.clear_echo( true );
 	return blargg_ok;
 }
 
 blargg_err_t Spc_Emu::play_and_filter( int count, sample_t out [] )
 {
-	RETURN_ERR( apu.play( count, out ) );
+	smp.render( out, count );
 	filter.run( out, count );
 	return blargg_ok;
 }
@@ -386,7 +418,7 @@ blargg_err_t Spc_Emu::skip_( int count )
 	
 	if ( count > 0 )
 	{
-		RETURN_ERR( apu.skip( count ) );
+		smp.skip( count );
 		filter.clear();
 	}
 	
