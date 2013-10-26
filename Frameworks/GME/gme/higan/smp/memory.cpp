@@ -182,10 +182,4 @@ void SMP::op_write(uint16_t addr, uint8_t data) {
   cycle_edge();
 }
 
-uint8_t SMP::disassembler_read(uint16_t addr) {
-  if((addr & 0xfff0) == 0x00f0) return 0x00;
-  if((addr & 0xffc0) == 0xffc0 && status.iplrom_enable) return iplrom[addr & 0x3f];
-  return apuram[addr];
-}
-
 #endif

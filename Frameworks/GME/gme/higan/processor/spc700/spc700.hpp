@@ -11,8 +11,6 @@ struct SPC700 {
   virtual void op_write(uint16_t addr, uint8_t data) = 0;
   void op_step();
 
-  virtual uint8_t disassembler_read(uint16_t addr) = 0;
-
   #include "registers.hpp"
   #include "memory.hpp"
 
