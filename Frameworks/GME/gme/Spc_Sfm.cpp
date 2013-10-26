@@ -216,6 +216,19 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     smp.regs.y = META_ENUM_INT(name + "y", 0x00);
     smp.regs.s = META_ENUM_INT(name + "s", 0xef);
     smp.regs.p = META_ENUM_INT(name + "psw", 0x02);
+
+    value = metadata.enumValue("smp:ports");
+    if (value)
+    {
+        for (auto &n : smp.sfm_last)
+        {
+            n = strtol(value, &end, 10);
+            if (*end == ',')
+                value = end + 1;
+            else
+                break;
+        }
+    }
     
     for (int i = 0; i < 3; ++i)
     {
@@ -364,6 +377,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
 
 blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
 {
+    bool first;
     std::string name;
     std::ostringstream oss;
     Bml_Parser metadata;
@@ -388,6 +402,17 @@ blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
     metadata.setValue( name + "s", smp.regs.s );
     metadata.setValue( name + "psw", smp.regs.p );
 
+    oss.str("");
+    oss.clear();
+    first = true;
+    for (auto n : smp.sfm_last)
+    {
+        if (!first) oss << ",";
+        oss << (unsigned long)n;
+        first = false;
+    }
+    metadata.setValue("smp:ports", oss.str().c_str());
+    
     for (int i = 0; i < 3; ++i)
     {
         SuperFamicom::SMP::Timer<192> const& t = (i == 0 ? smp.timer0 : (i == 1 ? smp.timer1 : *(SuperFamicom::SMP::Timer<192>*)&smp.timer2));
