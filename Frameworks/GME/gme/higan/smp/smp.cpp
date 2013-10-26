@@ -10,7 +10,7 @@ namespace SuperFamicom {
 
 void SMP::step(unsigned clocks) {
   clock += clocks;
-  dsp.clock -= clocks;
+  dsp.clock -= clocks * dsp_clock_step;
 }
 
 void SMP::synchronize_dsp() {
@@ -133,6 +133,7 @@ void SMP::reset() {
 SMP::SMP() : dsp( *this ), timer0( *this ), timer1( *this ), timer2( *this ), clock( 0 ) {
   for(auto& byte : iplrom) byte = 0;
   set_sfm_queue(0, 0);
+  set_tempo(1.0);
 }
 
 SMP::~SMP() {

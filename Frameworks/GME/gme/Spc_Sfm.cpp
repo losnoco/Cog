@@ -138,7 +138,7 @@ blargg_err_t Sfm_Emu::load_mem_( byte const in [], int size )
 
 void Sfm_Emu::set_tempo_( double t )
 {
-    /*apu.set_tempo( (int) (t * Snes_Spc::tempo_unit) );*/
+    smp.set_tempo( t );
 }
 
 // (n ? n : 256)
@@ -255,7 +255,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
         }
     }
 
-    smp.dsp.clock = META_ENUM_INT("dsp:clock", 0);
+    smp.dsp.clock = META_ENUM_INT("dsp:clock", 0) * 4096;
     
     smp.dsp.spc_dsp.m.echo_hist_pos = &smp.dsp.spc_dsp.m.echo_hist[META_ENUM_INT("dsp:echohistaddr", 0)];
 
@@ -405,7 +405,7 @@ blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
         metadata.setValue( name + "line", t.current_line );
     }
     
-    metadata.setValue( "dsp:clock", smp.dsp.clock );
+    metadata.setValue( "dsp:clock", smp.dsp.clock / 4096 );
 
     metadata.setValue( "dsp:echohistaddr", smp.dsp.spc_dsp.m.echo_hist_pos - smp.dsp.spc_dsp.m.echo_hist );
     

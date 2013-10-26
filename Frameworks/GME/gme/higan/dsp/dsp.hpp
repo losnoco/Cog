@@ -8,10 +8,9 @@
 namespace SuperFamicom {
 
 struct DSP {
-  long clock;
+  int64_t clock;
 
   inline void step(unsigned clocks);
-  inline void synchronize_smp();
 
   bool mute();
   uint8_t read(uint8_t addr);

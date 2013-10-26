@@ -354,7 +354,7 @@ blargg_err_t Spc_Emu::load_mem_( byte const in [], int size )
 
 void Spc_Emu::set_tempo_( double t )
 {
-	/*apu.set_tempo( (int) (t * Snes_Spc::tempo_unit) );*/
+	smp.set_tempo( t );
 }
 
 blargg_err_t Spc_Emu::start_track_( int track )

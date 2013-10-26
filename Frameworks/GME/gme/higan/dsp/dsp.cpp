@@ -7,13 +7,9 @@ void DSP::step(unsigned clocks) {
   clock += clocks;
 }
 
-void DSP::synchronize_smp() {
-  while(clock >= 0) smp.enter();
-}
-
 void DSP::enter() {
   spc_dsp.run(1);
-  step(24);
+  step(24 * 4096);
 
   signed count = spc_dsp.sample_count();
   if(count > 0) {
