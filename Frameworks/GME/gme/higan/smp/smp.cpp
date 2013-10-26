@@ -29,13 +29,6 @@ void SMP::enter() {
 }
 
 void SMP::render(int16_t * buffer, unsigned count) {
-  while (count > 4096) {
-    sample_buffer = buffer;
-    sample_buffer_end = buffer + 4096;
-    buffer += 4096;
-    count -= 4096;
-    enter();
-  }
   sample_buffer = buffer;
   sample_buffer_end = buffer + count;
   enter();
@@ -44,17 +37,17 @@ void SMP::render(int16_t * buffer, unsigned count) {
 void SMP::skip(unsigned count) {
   while (count > 4096) {
     sample_buffer = 0;
-    sample_buffer_end = (const int16_t *) 4096;
+    sample_buffer_end = ((const int16_t *)0) + 4096;
     count -= 4096;
     enter();
   }
   sample_buffer = 0;
-  sample_buffer_end = (const int16_t *) (intptr_t) count;
+  sample_buffer_end = ((const int16_t *)0) + count;
   enter();
 }
 
 void SMP::sample(int16_t left, int16_t right) {
-  if ( sample_buffer >= (const int16_t *) (intptr_t) 4096 ) {
+  if ( sample_buffer > ((const int16_t *)0) + 4096 ) {
     if ( sample_buffer < sample_buffer_end ) *sample_buffer++ = left;
     if ( sample_buffer < sample_buffer_end ) *sample_buffer++ = right;
   }
