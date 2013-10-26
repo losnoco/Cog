@@ -36,6 +36,9 @@ private:
   uint8_t const* sfm_queue_end;
 public:
   void set_sfm_queue(const uint8_t* queue, const uint8_t* queue_end);
+
+  const uint8_t* get_sfm_queue() const;
+  size_t get_sfm_queue_remain() const;
     
 private:
   int16_t * sample_buffer;
@@ -113,6 +116,9 @@ public:
 };
 
 inline void SMP::set_sfm_queue(const uint8_t *queue, const uint8_t *queue_end) { sfm_queue = queue; sfm_queue_end = queue_end; sfm_last[0] = 0; sfm_last[1] = 0; sfm_last[2] = 0; sfm_last[3] = 0; }
+
+inline const uint8_t* SMP::get_sfm_queue() const { return sfm_queue; }
+inline size_t SMP::get_sfm_queue_remain() const { return sfm_queue_end - sfm_queue; }
 
 };
 

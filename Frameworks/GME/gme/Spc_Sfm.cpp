@@ -144,7 +144,7 @@ void Sfm_Emu::set_tempo_( double t )
 // (n ? n : 256)
 #define IF_0_THEN_256( n ) ((uint8_t) ((n) - 1) + 1)
 
-#define META_ENUM_INT(n) (value = metadata.enumValue(n), value ? strtoul(value, &end, 10) : 0)
+#define META_ENUM_INT(n,d) (value = metadata.enumValue(n), value ? strtol(value, &end, 10) : (d))
 
 static const byte ipl_rom[0x40] =
 {
@@ -169,11 +169,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     int metadata_size = get_le32(ptr + 4);
     if ( file_size() < metadata_size + Sfm_Emu::sfm_min_file_size )
         return "SFM file too small";
-    char * temp = new char[metadata_size + 1];
-    temp[metadata_size] = '\0';
-    memcpy(temp, ptr + 8, metadata_size);
-    metadata.parseDocument(temp);
-    delete [] temp;
+    metadata.parseDocument((const char *) ptr + 8, metadata_size);
 
     memcpy( smp.iplrom, ipl_rom, 64 );
 
@@ -188,7 +184,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     char * end;
     const char * value;
 
-    uint32_t test = META_ENUM_INT("smp:test");
+    uint32_t test = META_ENUM_INT("smp:test", 0);
     smp.status.clock_speed = (test >> 6) & 3;
     smp.status.timer_speed = (test >> 4) & 3;
     smp.status.timers_enable = test & 0x08;
@@ -196,117 +192,127 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     smp.status.ram_writable = test & 0x02;
     smp.status.timers_disable = test & 0x01;
 
-    smp.status.iplrom_enable = META_ENUM_INT("smp:iplrom");
-    smp.status.dsp_addr = META_ENUM_INT("smp:dspaddr");
+    smp.status.iplrom_enable = META_ENUM_INT("smp:iplrom",1);
+    smp.status.dsp_addr = META_ENUM_INT("smp:dspaddr",0);
 
     value = metadata.enumValue("smp:ram");
     if (value)
     {
-        smp.status.ram00f8 = strtoul(value, &end, 10);
+        smp.status.ram00f8 = strtol(value, &end, 10);
         if (*end)
         {
             value = end + 1;
-            smp.status.ram00f9 = strtoul(value, &end, 10);
+            smp.status.ram00f9 = strtol(value, &end, 10);
         }
     }
 
-    char temp_path[256];
+    std::string name;
+    std::ostringstream oss;
+    
+    name = "smp:regs:";
+    smp.regs.pc = META_ENUM_INT(name + "pc", 0xffc0);
+    smp.regs.a = META_ENUM_INT(name + "a", 0x00);
+    smp.regs.x = META_ENUM_INT(name + "x", 0x00);
+    smp.regs.y = META_ENUM_INT(name + "y", 0x00);
+    smp.regs.s = META_ENUM_INT(name + "s", 0xef);
+    smp.regs.p = META_ENUM_INT(name + "psw", 0x02);
+    
     for (int i = 0; i < 3; ++i)
     {
         SuperFamicom::SMP::Timer<192> &t = (i == 0 ? smp.timer0 : (i == 1 ? smp.timer1 : *(SuperFamicom::SMP::Timer<192>*)&smp.timer2));
-        sprintf(temp_path, "smp:timer[%u]:", i);
-        size_t length = strlen(temp_path);
-        strcpy(temp_path + length, "enable");
-        value = metadata.enumValue(temp_path);
+        oss.str("");
+        oss.clear();
+        oss << "smp:timer[" << i << "]:";
+        name = oss.str();
+        value = metadata.enumValue(name + "enable");
         if (value)
         {
-            t.enable = !!strtoul(value, &end, 10);
+            t.enable = !!strtol(value, &end, 10);
         }
-        strcpy(temp_path + length, "target");
-        value = metadata.enumValue(temp_path);
+        value = metadata.enumValue(name + "target");
         if (value)
         {
-            t.target = strtoul(value, &end, 10);
+            t.target = strtol(value, &end, 10);
         }
-        strcpy(temp_path + length, "stage");
-        value = metadata.enumValue(temp_path);
+        value = metadata.enumValue(name + "stage");
         if (value)
         {
-            t.stage0_ticks = strtoul(value, &end, 10);
+            t.stage0_ticks = strtol(value, &end, 10);
             if (*end != ',') break;
             value = end + 1;
-            t.stage1_ticks = strtoul(value, &end, 10);
+            t.stage1_ticks = strtol(value, &end, 10);
             if (*end != ',') break;
             value = end + 1;
-            t.stage2_ticks = strtoul(value, &end, 10);
+            t.stage2_ticks = strtol(value, &end, 10);
             if (*end != ',') break;
             value = end + 1;
-            t.stage3_ticks = strtoul(value, &end, 10);
+            t.stage3_ticks = strtol(value, &end, 10);
         }
-        strcpy(temp_path + length, "line");
-        value = metadata.enumValue(temp_path);
+        value = metadata.enumValue(name + "line");
         if (value)
         {
-            t.current_line = !!strtoul(value, &end, 10);
+            t.current_line = !!strtol(value, &end, 10);
         }
     }
 
-    smp.dsp.spc_dsp.m.echo_hist_pos = &smp.dsp.spc_dsp.m.echo_hist[META_ENUM_INT("dsp:echohistaddr")];
+    smp.dsp.clock = META_ENUM_INT("dsp:clock", 0);
+    
+    smp.dsp.spc_dsp.m.echo_hist_pos = &smp.dsp.spc_dsp.m.echo_hist[META_ENUM_INT("dsp:echohistaddr", 0)];
 
     value = metadata.enumValue("dsp:echohistdata");
     if (value)
     {
         for (int i = 0; i < 8; ++i)
         {
-            smp.dsp.spc_dsp.m.echo_hist[i][0] = strtoul(value, &end, 10);
+            smp.dsp.spc_dsp.m.echo_hist[i][0] = strtol(value, &end, 10);
             value = strchr(value, ',');
             if (!value) break;
             ++value;
-            smp.dsp.spc_dsp.m.echo_hist[i][1] = strtoul(value, &end, 10);
+            smp.dsp.spc_dsp.m.echo_hist[i][1] = strtol(value, &end, 10);
             value = strchr(value, ',');
             if (!value) break;
             ++value;
         }
     }
 
-    smp.dsp.spc_dsp.m.phase = META_ENUM_INT("dsp:sample");
-    smp.dsp.spc_dsp.m.kon = META_ENUM_INT("dsp:kon");
-    smp.dsp.spc_dsp.m.noise = META_ENUM_INT("dsp:noise");
-    smp.dsp.spc_dsp.m.counter = META_ENUM_INT("dsp:counter");
-    smp.dsp.spc_dsp.m.echo_offset = META_ENUM_INT("dsp:echooffset");
-    smp.dsp.spc_dsp.m.echo_length = META_ENUM_INT("dsp:echolength");
-    smp.dsp.spc_dsp.m.new_kon = META_ENUM_INT("dsp:koncache");
-    smp.dsp.spc_dsp.m.endx_buf = META_ENUM_INT("dsp:endx");
-    smp.dsp.spc_dsp.m.envx_buf = META_ENUM_INT("dsp:envx");
-    smp.dsp.spc_dsp.m.outx_buf = META_ENUM_INT("dsp:outx");
-    smp.dsp.spc_dsp.m.t_pmon = META_ENUM_INT("dsp:pmon");
-    smp.dsp.spc_dsp.m.t_non = META_ENUM_INT("dsp:non");
-    smp.dsp.spc_dsp.m.t_eon = META_ENUM_INT("dsp:eon");
-    smp.dsp.spc_dsp.m.t_dir = META_ENUM_INT("dsp:dir");
-    smp.dsp.spc_dsp.m.t_koff = META_ENUM_INT("dsp:koff");
-    smp.dsp.spc_dsp.m.t_brr_next_addr = META_ENUM_INT("dsp:brrnext");
-    smp.dsp.spc_dsp.m.t_adsr0 = META_ENUM_INT("dsp:adsr0");
-    smp.dsp.spc_dsp.m.t_brr_header = META_ENUM_INT("dsp:brrheader");
-    smp.dsp.spc_dsp.m.t_brr_byte = META_ENUM_INT("dsp:brrdata");
-    smp.dsp.spc_dsp.m.t_srcn = META_ENUM_INT("dsp:srcn");
-    smp.dsp.spc_dsp.m.t_esa = META_ENUM_INT("dsp:esa");
-    smp.dsp.spc_dsp.m.t_echo_enabled = !META_ENUM_INT("dsp:echodisable");
-    smp.dsp.spc_dsp.m.t_dir_addr = META_ENUM_INT("dsp:diraddr");
-    smp.dsp.spc_dsp.m.t_pitch = META_ENUM_INT("dsp:pitch");
-    smp.dsp.spc_dsp.m.t_output = META_ENUM_INT("dsp:output");
-    smp.dsp.spc_dsp.m.t_looped = META_ENUM_INT("dsp:looped");
-    smp.dsp.spc_dsp.m.t_echo_ptr = META_ENUM_INT("dsp:echoaddr");
+    smp.dsp.spc_dsp.m.phase = META_ENUM_INT("dsp:sample", 0);
+    smp.dsp.spc_dsp.m.kon = META_ENUM_INT("dsp:kon", 0);
+    smp.dsp.spc_dsp.m.noise = META_ENUM_INT("dsp:noise", 0);
+    smp.dsp.spc_dsp.m.counter = META_ENUM_INT("dsp:counter", 0);
+    smp.dsp.spc_dsp.m.echo_offset = META_ENUM_INT("dsp:echooffset", 0);
+    smp.dsp.spc_dsp.m.echo_length = META_ENUM_INT("dsp:echolength", 0);
+    smp.dsp.spc_dsp.m.new_kon = META_ENUM_INT("dsp:koncache", 0);
+    smp.dsp.spc_dsp.m.endx_buf = META_ENUM_INT("dsp:endx", 0);
+    smp.dsp.spc_dsp.m.envx_buf = META_ENUM_INT("dsp:envx", 0);
+    smp.dsp.spc_dsp.m.outx_buf = META_ENUM_INT("dsp:outx", 0);
+    smp.dsp.spc_dsp.m.t_pmon = META_ENUM_INT("dsp:pmon", 0);
+    smp.dsp.spc_dsp.m.t_non = META_ENUM_INT("dsp:non", 0);
+    smp.dsp.spc_dsp.m.t_eon = META_ENUM_INT("dsp:eon", 0);
+    smp.dsp.spc_dsp.m.t_dir = META_ENUM_INT("dsp:dir", 0);
+    smp.dsp.spc_dsp.m.t_koff = META_ENUM_INT("dsp:koff", 0);
+    smp.dsp.spc_dsp.m.t_brr_next_addr = META_ENUM_INT("dsp:brrnext", 0);
+    smp.dsp.spc_dsp.m.t_adsr0 = META_ENUM_INT("dsp:adsr0", 0);
+    smp.dsp.spc_dsp.m.t_brr_header = META_ENUM_INT("dsp:brrheader", 0);
+    smp.dsp.spc_dsp.m.t_brr_byte = META_ENUM_INT("dsp:brrdata", 0);
+    smp.dsp.spc_dsp.m.t_srcn = META_ENUM_INT("dsp:srcn", 0);
+    smp.dsp.spc_dsp.m.t_esa = META_ENUM_INT("dsp:esa", 0);
+    smp.dsp.spc_dsp.m.t_echo_enabled = !META_ENUM_INT("dsp:echodisable", 0);
+    smp.dsp.spc_dsp.m.t_dir_addr = META_ENUM_INT("dsp:diraddr", 0);
+    smp.dsp.spc_dsp.m.t_pitch = META_ENUM_INT("dsp:pitch", 0);
+    smp.dsp.spc_dsp.m.t_output = META_ENUM_INT("dsp:output", 0);
+    smp.dsp.spc_dsp.m.t_looped = META_ENUM_INT("dsp:looped", 0);
+    smp.dsp.spc_dsp.m.t_echo_ptr = META_ENUM_INT("dsp:echoaddr", 0);
 
 
 #define META_ENUM_LEVELS(n, o) \
     value = metadata.enumValue(n); \
     if (value) \
     { \
-        (o)[0] = strtoul(value, &end, 10); \
+        (o)[0] = strtol(value, &end, 10); \
         if (*end) \
         { \
             value = end + 1; \
-            (o)[1] = strtoul(value, &end, 10); \
+            (o)[1] = strtol(value, &end, 10); \
         } \
     }
 
@@ -318,46 +324,36 @@ blargg_err_t Sfm_Emu::start_track_( int track )
 
     for (int i = 0; i < 8; ++i)
     {
-        sprintf(temp_path, "dsp:voice[%u]:", i);
-        size_t length = strlen(temp_path);
+        oss.str("");
+        oss.clear();
+        oss << "dsp:voice[" << i << "]:";
+        name = oss.str();
         SuperFamicom::SPC_DSP::voice_t & voice = smp.dsp.spc_dsp.m.voices[i];
-        strcpy(temp_path + length, "brrhistaddr");
-        value = metadata.enumValue(temp_path);
+        value = metadata.enumValue(name + "brrhistaddr");
         if (value)
         {
-            voice.buf_pos = strtoul(value, &end, 10);
+            voice.buf_pos = strtol(value, &end, 10);
         }
-        strcpy(temp_path + length, "brrhistdata");
-        value = metadata.enumValue(temp_path);
+        value = metadata.enumValue(name + "brrhistdata");
         if (value)
         {
             for (int j = 0; j < SuperFamicom::SPC_DSP::brr_buf_size; ++j)
             {
-                voice.buf[j] = voice.buf[j + SuperFamicom::SPC_DSP::brr_buf_size] = strtoul(value, &end, 10);
+                voice.buf[j] = voice.buf[j + SuperFamicom::SPC_DSP::brr_buf_size] = strtol(value, &end, 10);
                 if (!*end) break;
                 value = end + 1;
             }
         }
-        strcpy(temp_path + length, "interpaddr");
-        voice.interp_pos = META_ENUM_INT(temp_path);
-        strcpy(temp_path + length, "brraddr");
-        voice.brr_addr = META_ENUM_INT(temp_path);
-        strcpy(temp_path + length, "brroffset");
-        voice.brr_offset = META_ENUM_INT(temp_path);
-        strcpy(temp_path + length, "vbit");
-        voice.vbit = META_ENUM_INT(temp_path);
-        strcpy(temp_path + length, "vidx");
-        voice.regs = &smp.dsp.spc_dsp.m.regs[META_ENUM_INT(temp_path)];
-        strcpy(temp_path + length, "kondelay");
-        voice.kon_delay = META_ENUM_INT(temp_path);
-        strcpy(temp_path + length, "envmode");
-        voice.env_mode = (SuperFamicom::SPC_DSP::env_mode_t) META_ENUM_INT(temp_path);
-        strcpy(temp_path + length, "env");
-        voice.env = META_ENUM_INT(temp_path);
-        strcpy(temp_path + length, "envxout");
-        voice.t_envx_out = META_ENUM_INT(temp_path);
-        strcpy(temp_path + length, "envcache");
-        voice.hidden_env = META_ENUM_INT(temp_path);
+        voice.interp_pos = META_ENUM_INT(name + "interpaddr",0);
+        voice.brr_addr = META_ENUM_INT(name + "brraddr",0);
+        voice.brr_offset = META_ENUM_INT(name + "brroffset",0);
+        voice.vbit = META_ENUM_INT(name + "vbit",0);
+        voice.regs = &smp.dsp.spc_dsp.m.regs[META_ENUM_INT(name + "vidx",0)];
+        voice.kon_delay = META_ENUM_INT(name + "kondelay", 0);
+        voice.env_mode = (SuperFamicom::SPC_DSP::env_mode_t) META_ENUM_INT(name + "envmode", 0);
+        voice.env = META_ENUM_INT(name + "env", 0);
+        voice.t_envx_out = META_ENUM_INT(name + "envxout", 0);
+        voice.hidden_env = META_ENUM_INT(name + "envcache", 0);
     }
 
     filter.set_gain( (int) (gain() * Spc_Filter::gain_unit) );
@@ -365,6 +361,153 @@ blargg_err_t Sfm_Emu::start_track_( int track )
 }
 
 #undef META_ENUM_INT
+
+blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
+{
+    std::string name;
+    std::ostringstream oss;
+    Bml_Parser metadata;
+    const byte * ptr = file_begin();
+    int metadata_size = get_le32(ptr + 4);
+    metadata.parseDocument((const char *) ptr + 8, metadata_size);
+
+    metadata.setValue( "smp:test", (smp.status.clock_speed << 6) | (smp.status.timer_speed << 4) | (smp.status.timers_enable << 3) | (smp.status.ram_disable << 2) | (smp.status.ram_writable << 1) | (smp.status.timers_disable << 0) );
+    metadata.setValue( "smp:iplrom", smp.status.iplrom_enable );
+    metadata.setValue( "smp:dspaddr", smp.status.dsp_addr );
+    
+    oss.str("");
+    oss.clear();
+    oss << smp.status.ram00f8 << "," << smp.status.ram00f9;
+    metadata.setValue( "smp:ram", oss.str().c_str() );
+    
+    name = "smp:regs:";
+    metadata.setValue( name + "pc", smp.regs.pc );
+    metadata.setValue( name + "a", smp.regs.a );
+    metadata.setValue( name + "x", smp.regs.x );
+    metadata.setValue( name + "y", smp.regs.y );
+    metadata.setValue( name + "s", smp.regs.s );
+    metadata.setValue( name + "psw", smp.regs.p );
+
+    for (int i = 0; i < 3; ++i)
+    {
+        SuperFamicom::SMP::Timer<192> const& t = (i == 0 ? smp.timer0 : (i == 1 ? smp.timer1 : *(SuperFamicom::SMP::Timer<192>*)&smp.timer2));
+        oss.str("");
+        oss.clear();
+        oss << "smp:timer[" << i << "]:";
+        name = oss.str();
+        metadata.setValue( name + "enable", t.enable );
+        metadata.setValue( name + "target", t.target );
+        oss.str("");
+        oss.clear();
+        oss << (unsigned long)t.stage0_ticks << "," << (unsigned long)t.stage1_ticks << ","
+            << (unsigned long)t.stage2_ticks << "," << (unsigned long)t.stage3_ticks;
+        metadata.setValue( name + "stage", oss.str().c_str() );
+        metadata.setValue( name + "line", t.current_line );
+    }
+    
+    metadata.setValue( "dsp:clock", smp.dsp.clock );
+
+    metadata.setValue( "dsp:echohistaddr", smp.dsp.spc_dsp.m.echo_hist_pos - smp.dsp.spc_dsp.m.echo_hist );
+    
+    oss.str("");
+    oss.clear();
+    for (int i = 0; i < 8; ++i)
+    {
+        oss << smp.dsp.spc_dsp.m.echo_hist[i][0] << ","
+            << smp.dsp.spc_dsp.m.echo_hist[i][1];
+        if ( i != 7 ) oss << ",";
+    }
+    metadata.setValue( "dsp:echohistdata", oss.str().c_str() );
+    
+    metadata.setValue( "dsp:sample", smp.dsp.spc_dsp.m.phase );
+    metadata.setValue( "dsp:kon", smp.dsp.spc_dsp.m.kon );
+    metadata.setValue( "dsp:noise", smp.dsp.spc_dsp.m.noise );
+    metadata.setValue( "dsp:counter", smp.dsp.spc_dsp.m.counter );
+    metadata.setValue( "dsp:echooffset", smp.dsp.spc_dsp.m.echo_offset );
+    metadata.setValue( "dsp:echolength", smp.dsp.spc_dsp.m.echo_length );
+    metadata.setValue( "dsp:koncache", smp.dsp.spc_dsp.m.new_kon );
+    metadata.setValue( "dsp:endx", smp.dsp.spc_dsp.m.endx_buf );
+    metadata.setValue( "dsp:envx", smp.dsp.spc_dsp.m.envx_buf );
+    metadata.setValue( "dsp:outx", smp.dsp.spc_dsp.m.outx_buf );
+    metadata.setValue( "dsp:pmon", smp.dsp.spc_dsp.m.t_pmon );
+    metadata.setValue( "dsp:non", smp.dsp.spc_dsp.m.t_non );
+    metadata.setValue( "dsp:eon", smp.dsp.spc_dsp.m.t_eon );
+    metadata.setValue( "dsp:dir", smp.dsp.spc_dsp.m.t_dir );
+    metadata.setValue( "dsp:koff", smp.dsp.spc_dsp.m.t_koff );
+    metadata.setValue( "dsp:brrnext", smp.dsp.spc_dsp.m.t_brr_next_addr );
+    metadata.setValue( "dsp:adsr0", smp.dsp.spc_dsp.m.t_adsr0 );
+    metadata.setValue( "dsp:brrheader", smp.dsp.spc_dsp.m.t_brr_header );
+    metadata.setValue( "dsp:brrdata", smp.dsp.spc_dsp.m.t_brr_byte );
+    metadata.setValue( "dsp:srcn", smp.dsp.spc_dsp.m.t_srcn );
+    metadata.setValue( "dsp:esa", smp.dsp.spc_dsp.m.t_esa );
+    metadata.setValue( "dsp:echodisable", !smp.dsp.spc_dsp.m.t_echo_enabled );
+    metadata.setValue( "dsp:diraddr", smp.dsp.spc_dsp.m.t_dir_addr );
+    metadata.setValue( "dsp:pitch", smp.dsp.spc_dsp.m.t_pitch );
+    metadata.setValue( "dsp:output", smp.dsp.spc_dsp.m.t_output );
+    metadata.setValue( "dsp:looped", smp.dsp.spc_dsp.m.t_looped );
+    metadata.setValue( "dsp:echoaddr", smp.dsp.spc_dsp.m.t_echo_ptr );
+
+#define META_WRITE_LEVELS(n, o) \
+    oss.str(""); \
+    oss.clear(); \
+    oss << (o)[0] << "," << (o)[1]; \
+    metadata.setValue((n), oss.str().c_str());
+    
+    META_WRITE_LEVELS("dsp:mainout", smp.dsp.spc_dsp.m.t_main_out);
+    META_WRITE_LEVELS("dsp:echoout", smp.dsp.spc_dsp.m.t_echo_out);
+    META_WRITE_LEVELS("dsp:echoin", smp.dsp.spc_dsp.m.t_echo_in);
+    
+#undef META_WRITE_LEVELS
+    
+    for (int i = 0; i < 8; ++i)
+    {
+        oss.str("");
+        oss.clear();
+        oss << "dsp:voice[" << i << "]:";
+        name = oss.str();
+        SuperFamicom::SPC_DSP::voice_t const& voice = smp.dsp.spc_dsp.m.voices[i];
+        metadata.setValue( name + "brrhistaddr", voice.buf_pos );
+        oss.str("");
+        oss.clear();
+        for (int j = 0; j < SuperFamicom::SPC_DSP::brr_buf_size; ++j)
+        {
+            oss << voice.buf[j];
+            if ( j != SuperFamicom::SPC_DSP::brr_buf_size - 1 )
+                oss << ",";
+        }
+        metadata.setValue( name + "brrhistdata", oss.str().c_str() );
+        metadata.setValue( name + "interpaddr", voice.interp_pos );
+        metadata.setValue( name + "brraddr", voice.brr_addr );
+        metadata.setValue( name + "brroffset", voice.brr_offset );
+        metadata.setValue( name + "vbit", voice.vbit );
+        metadata.setValue( name + "vidx", voice.regs - smp.dsp.spc_dsp.m.regs);
+        metadata.setValue( name + "kondelay", voice.kon_delay );
+        metadata.setValue( name + "envmode", voice.env_mode );
+        metadata.setValue( name + "env", voice.env );
+        metadata.setValue( name + "envxout", voice.t_envx_out );
+        metadata.setValue( name + "envcache", voice.hidden_env );
+    }
+    
+    metadata.serialize( name );
+
+    RETURN_ERR( writer( your_data, "SFM1", 4 ) );
+
+    uint8_t temp[4];
+    uint32_t meta_length = (uint32_t) name.length();
+    set_le32( temp, meta_length );
+    RETURN_ERR( writer( your_data, temp, 4 ) );
+    
+    RETURN_ERR( writer( your_data, name.c_str(), meta_length ) );
+
+    RETURN_ERR( writer( your_data, smp.apuram, 65536 ) );
+
+    RETURN_ERR( writer( your_data, smp.dsp.spc_dsp.m.regs, 128 ) );
+    
+    if ( smp.get_sfm_queue_remain() )
+        RETURN_ERR( writer( your_data, smp.get_sfm_queue(), smp.get_sfm_queue_remain() ) );
+    
+    return blargg_ok;
+}
 
 blargg_err_t Sfm_Emu::play_and_filter( int count, sample_t out [] )
 {

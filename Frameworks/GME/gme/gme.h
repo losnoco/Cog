@@ -230,6 +230,10 @@ gme_err_t gme_load_custom( gme_t*, gme_reader_t, long file_size, void* your_data
 /* Loads m3u playlist file from memory (must be done after loading music) */
 gme_err_t gme_load_m3u_data( gme_t*, void const* data, long size );
 
+        
+/******** Saving ********/
+typedef gme_err_t (*gme_writer_t)( void* your_data, void const* in, long count );
+gme_err_t gme_save( gme_t const*, gme_writer_t, void* your_data );
 
 /******** User data ********/
 

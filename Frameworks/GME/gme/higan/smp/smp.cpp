@@ -21,6 +21,10 @@ void SMP::enter() {
   while(status.clock_speed != 2 && sample_buffer < sample_buffer_end) op_step();
   if (status.clock_speed == 2) {
     synchronize_dsp();
+    if (sample_buffer < sample_buffer_end) {
+      dsp.clock -= 24 * 32 * (sample_buffer_end - sample_buffer) / 2;
+      synchronize_dsp();
+    }
   }
 }
 

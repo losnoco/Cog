@@ -1,15 +1,32 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string>
 
 #include "Bml_Parser.h"
+
+const char * strchr_limited( const char * in, const char * end, char c )
+{
+    while ( in < end && *in != c ) ++in;
+    if ( in < end ) return in;
+    else return 0;
+}
 
 Bml_Node Bml_Node::emptyNode;
 
 Bml_Node::Bml_Node()
 {
     name = 0;
+    value = 0;
+}
+
+Bml_Node::Bml_Node(char const* name, size_t max_length)
+{
+    size_t length = 0;
+    char const* ptr = name;
+    while (*ptr && length < max_length) ++ptr, ++length;
+    this->name = new char[ length + 1 ];
+    memcpy( this->name, name, length );
+    this->name[ length ] = '\0';
     value = 0;
 }
 
@@ -49,22 +66,25 @@ void Bml_Node::clear()
     children.resize( 0 );
 }
 
-void Bml_Node::setLine(const char *line)
+void Bml_Node::setLine(const char *line, size_t max_length)
 {
     delete [] name;
     delete [] value;
 
     name = 0;
     value = 0;
+    
+    size_t length = 0;
+    const char * end = line;
+    while (*end && length < max_length) ++end;
 
-    const char * line_end = strchr(line, '\n');
-    if ( !line_end ) line_end = line + strlen(line);
+    const char * line_end = strchr_limited(line, end, '\n');
+    if ( !line_end ) line_end = end;
 
     const char * first_letter = line;
     while ( first_letter < line_end && *first_letter <= 0x20 ) first_letter++;
 
-    const char * colon = strchr(first_letter, ':');
-    if (colon >= line_end) colon = 0;
+    const char * colon = strchr_limited(first_letter, line_end, ':');
     const char * last_letter = line_end - 1;
 
     if (colon)
@@ -88,9 +108,10 @@ void Bml_Node::setLine(const char *line)
     name[last_letter - first_letter + 1] = '\0';
 }
 
-void Bml_Node::addChild(const Bml_Node &child)
+Bml_Node& Bml_Node::addChild(const Bml_Node &child)
 {
     children.push_back(child);
+    return *(children.end() - 1);
 }
 
 const char * Bml_Node::getName() const
@@ -103,6 +124,14 @@ const char * Bml_Node::getValue() const
     return value;
 }
 
+void Bml_Node::setValue(char const* value)
+{
+    delete [] this->value;
+    size_t length = strlen( value ) + 1;
+    this->value = new char[ length ];
+    memcpy( this->value, value, length );
+}
+
 size_t Bml_Node::getChildCount() const
 {
     return children.size();
@@ -113,26 +142,63 @@ Bml_Node const& Bml_Node::getChild(size_t index) const
     return children[index];
 }
 
-Bml_Node & Bml_Node::walkToNode(const char *path)
+Bml_Node & Bml_Node::walkToNode(const char *path, bool use_indexes)
 {
+    Bml_Node * next_node;
     Bml_Node * node = this;
     while ( *path )
     {
         bool item_found = false;
+        size_t array_index = 0;
+        const char * array_index_start = strchr( path, '[' );
         const char * next_separator = strchr( path, ':' );
         if ( !next_separator ) next_separator = path + strlen(path);
-        for ( std::vector<Bml_Node>::iterator it = node->children.end(); it != node->children.begin(); )
+        if ( use_indexes && array_index_start && array_index_start < next_separator )
         {
-            --it;
-            if ( next_separator - path == strlen(it->name) &&
-                 strncmp( it->name, path, next_separator - path ) == 0 )
+            char * temp;
+            array_index = strtoul( array_index_start + 1, &temp, 10 );
+        }
+        else
+        {
+            array_index_start = next_separator;
+        }
+        if ( use_indexes )
+        {
+            for ( std::vector<Bml_Node>::iterator it = node->children.begin(); it != node->children.end(); ++it )
             {
-                node = &(*it);
-                item_found = true;
-                break;
+                if ( array_index_start - path == strlen(it->name) &&
+                    strncmp( it->name, path, array_index_start - path ) == 0 )
+                {
+                    next_node = &(*it);
+                    item_found = true;
+                    if ( array_index == 0 ) break;
+                    --array_index;
+                }
+                if (array_index)
+                    item_found = false;
             }
         }
-        if ( !item_found ) return emptyNode;
+        else
+        {
+            for ( std::vector<Bml_Node>::iterator it = node->children.end(); it != node->children.begin(); )
+            {
+                --it;
+                if ( next_separator - path == strlen(it->name) &&
+                    strncmp( it->name, path, next_separator - path ) == 0 )
+                {
+                    next_node = &(*it);
+                    item_found = true;
+                    break;
+                }
+            }
+        }
+        if ( !item_found )
+        {
+            Bml_Node child( path, next_separator - path );
+            node = &(node->addChild( child ));
+        }
+        else
+            node = next_node;
         if ( *next_separator )
         {
             path = next_separator + 1;
@@ -184,7 +250,7 @@ Bml_Node const& Bml_Node::walkToNode(const char *path) const
     return *node;
 }
 
-void Bml_Parser::parseDocument( const char * source )
+void Bml_Parser::parseDocument( const char * source, size_t max_length )
 {
     std::vector<size_t> indents;
     std::string last_name;
@@ -195,15 +261,19 @@ void Bml_Parser::parseDocument( const char * source )
     size_t last_indent = ~0;
 
     Bml_Node node;
+    
+    size_t length = 0;
+    const char * end = source;
+    while ( *end && length < max_length ) ++end, ++length;
 
-    while ( *source )
+    while ( source < end )
     {
-        const char * line_end = strchr( source, '\n' );
-        if ( !line_end ) line_end = source + strlen( source );
+        const char * line_end = strchr_limited( source, end, '\n' );
+        if ( !line_end ) line_end = end;
 
         if ( node.getName() ) last_name = node.getName();
 
-        node.setLine( source );
+        node.setLine( source, line_end - source );
 
         size_t indent = 0;
         while ( source < line_end && *source <= 0x20 )
@@ -241,28 +311,45 @@ void Bml_Parser::parseDocument( const char * source )
     }
 }
 
-const char * Bml_Parser::enumValue(const char *path) const
+const char * Bml_Parser::enumValue(std::string const& path) const
 {
-    return document.walkToNode(path).getValue();
+    return document.walkToNode(path.c_str()).getValue();
 }
 
-#if 0
-void Bml_Parser::print(Bml_Node const* node, unsigned int indent) const
+void Bml_Parser::setValue(std::string const& path, const char *value)
 {
-    if (node == 0) node = &document;
+    document.walkToNode(path.c_str(), true).setValue(value);
+}
 
-    for (unsigned i = 0; i < indent; ++i) printf("  ");
+void Bml_Parser::setValue(std::string const& path, long value)
+{
+    std::ostringstream str;
+    str << value;
+    setValue( path, str.str().c_str() );
+}
 
-    printf("%s", node->getName());
-    if (node->getValue()) printf(":%s", node->getValue());
-    printf("\n");
+void Bml_Parser::serialize(std::string & out)
+{
+    std::ostringstream strOut;
+    serialize(strOut, &document, 0);
+    out = strOut.str();
+}
 
-    indent++;
+void Bml_Parser::serialize(std::ostringstream & out, Bml_Node const* node, unsigned int indent) const
+{
+    for (unsigned i = 1; i < indent; ++i) out << "  ";
+
+    if ( indent )
+    {
+        out << node->getName();
+        if (node->getValue()) out << ":" << node->getValue();
+        out << std::endl;
+    }
 
     for (unsigned i = 0, j = node->getChildCount(); i < j; ++i)
     {
         Bml_Node const& child = node->getChild(i);
-        print( &child, indent );
+        serialize( out, &child, indent + 1 );
+        if ( indent == 0 ) out << std::endl;
     }
 }
-#endif

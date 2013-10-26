@@ -26,6 +26,9 @@ public:
     // The Super Nintendo hardware samples at 32kHz. Other sample rates are
     // handled by resampling the 32kHz output; emulation accuracy is not affected.
     enum { native_sample_rate = 32000 };
+    
+    // This will serialize the current state of the emulator into a new SFM file
+    blargg_err_t serialize( std::vector<uint8_t> & out );
 
     // Disables annoying pseudo-surround effect some music uses
     void disable_surround( bool disable = true )    { smp.dsp.disable_surround( disable ); }
@@ -39,6 +42,8 @@ public:
     blargg_err_t hash_( Hash_Function& ) const;
 
     static gme_type_t static_type()                 { return gme_sfm_type; }
+    
+    virtual blargg_err_t save( gme_writer_t, void* ) const;
 
 // Implementation
 public:

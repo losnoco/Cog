@@ -15,7 +15,7 @@ void SMP::cycle_edge() {
   switch(status.clock_speed) {
   case 0: break;                       //100% speed
   case 1: add_clocks(24); break;       // 50% speed
-  case 2: clock = 0; break;            //  0% speed -- locks S-SMP
+  case 2: break;                       //  0% speed -- locks S-SMP -- handled in outer loop
   case 3: add_clocks(24 * 9); break;   // 10% speed
   }
 }

@@ -919,6 +919,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8370B76C17F615FE001A4D7A /* Nes_Cpu_run.h in Headers */,
+				8370B7B017F615FE001A4D7A /* Spc_Sfm.h in Headers */,
 				8370B75A17F615FE001A4D7A /* i_vrc7.h in Headers */,
 				8370B7A817F615FE001A4D7A /* Sgc_Emu.h in Headers */,
 				8370B74217F615FE001A4D7A /* divfix.h in Headers */,
@@ -993,7 +994,6 @@
 				8370B79717F615FE001A4D7A /* s_logtbl.h in Headers */,
 				8370B77117F615FE001A4D7A /* Nes_Vrc7_Apu.h in Headers */,
 				8370B74517F615FE001A4D7A /* emuconfig.h in Headers */,
-				8370B7B017F615FE001A4D7A /* Spc_Sfm.h in Headers */,
 				17C8F2240CBED286008D969D /* Kss_Emu.h in Headers */,
 				17C8F2260CBED286008D969D /* Kss_Scc_Apu.h in Headers */,
 				17C8F2290CBED286008D969D /* M3u_Playlist.h in Headers */,

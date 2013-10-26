@@ -47,6 +47,8 @@ public:
 		virtual void hash_( byte const* data, size_t size ) BLARGG_PURE( ; )
 	};
 	virtual blargg_err_t hash_( Hash_Function& ) const BLARGG_PURE( ; )
+    
+    virtual blargg_err_t save( gme_writer_t, void* your_data) const { return "Not supported by this format"; }
 	
 // Track status/control
 

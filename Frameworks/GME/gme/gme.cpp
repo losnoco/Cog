@@ -324,6 +324,7 @@ void      gme_mute_voices    ( Music_Emu* gme, int mask )               { gme->m
 void      gme_set_equalizer  ( Music_Emu* gme, gme_equalizer_t const* eq ) { gme->set_equalizer( *eq ); }
 void      gme_equalizer      ( Music_Emu const* gme, gme_equalizer_t* o )  { *o = gme->equalizer(); }
 const char* gme_voice_name   ( Music_Emu const* gme, int i )            { return gme->voice_name( i ); }
+gme_err_t gme_save           ( Music_Emu const* gme, gme_writer_t writer, void* your_data ) { return gme->save( writer, your_data ); }
 
 void gme_effects( Music_Emu const* gme, gme_effects_t* out )
 {
