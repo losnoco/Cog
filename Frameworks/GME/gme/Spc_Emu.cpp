@@ -331,18 +331,18 @@ blargg_err_t Spc_Emu::set_sample_rate_( int sample_rate )
 void Spc_Emu::mute_voices_( int m )
 {
 	Music_Emu::mute_voices_( m );
-	for ( int i = 0, j = 1; i < 8; ++i, j <<= 1 )
+	for ( int i = 0, j = 1; i < SuperFamicom::SPC_DSP::voice_count; ++i, j <<= 1 )
         smp.dsp.channel_enable( i, !( m & j ) );
 }
 
 blargg_err_t Spc_Emu::load_mem_( byte const in [], int size )
 {
 	assert( offsetof (header_t,unused2 [46]) == header_t::size );
-	set_voice_count( 8 );
+	set_voice_count( SuperFamicom::SPC_DSP::voice_count );
 	if ( size < 0x10180 )
 		return blargg_err_file_type;
 	
-	static const char* const names [ 8 ] = {
+	static const char* const names [ SuperFamicom::SPC_DSP::voice_count ] = {
 		"DSP 1", "DSP 2", "DSP 3", "DSP 4", "DSP 5", "DSP 6", "DSP 7", "DSP 8"
 	};
 	set_voice_names( names );

@@ -26,7 +26,7 @@ public:
 	void disable_surround( bool disable = true )    { smp.dsp.disable_surround( disable ); }
 
 	// Enables gaussian, cubic or sinc interpolation
-	void interpolation_level( int level = 0 )   { /* smp.dsp.interpolation_level( level ); */ }
+	void interpolation_level( int level = 0 )   { smp.dsp.spc_dsp.interpolation_level( level ); }
 
     SuperFamicom::SMP const* get_smp() const;
     SuperFamicom::SMP * get_smp();

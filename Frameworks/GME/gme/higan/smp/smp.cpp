@@ -136,11 +136,9 @@ void SMP::reset() {
 SMP::SMP() : dsp( *this ), timer0( *this ), timer1( *this ), timer2( *this ), clock( 0 ) {
   for(auto& byte : iplrom) byte = 0;
   set_sfm_queue(0, 0);
-  f = fopen("/tmp/fucko", "w");
 }
 
 SMP::~SMP() {
-  fclose( f );
 }
 
 }

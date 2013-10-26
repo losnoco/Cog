@@ -7,8 +7,6 @@
 
 #include "../dsp/dsp.hpp"
 
-#include <stdio.h>
-
 namespace SuperFamicom {
 
 struct SMP : Processor::SPC700 {
@@ -31,9 +29,7 @@ struct SMP : Processor::SPC700 {
 
   void render(int16_t * buffer, unsigned count);
   void skip(unsigned count);
-    
-  FILE *f;
-    
+  
   uint8_t sfm_last[4];
 private:
   uint8_t const* sfm_queue;

@@ -31,9 +31,10 @@ public:
     void disable_surround( bool disable = true )    { smp.dsp.disable_surround( disable ); }
 
     // Enables gaussian, cubic or sinc interpolation
-    void interpolation_level( int level = 0 )   { /*apu.interpolation_level( level );*/ }
+    void interpolation_level( int level = 0 )   { smp.dsp.spc_dsp.interpolation_level( level ); }
 
-    const SuperFamicom::SMP * get_smp() const;
+    SuperFamicom::SMP const* get_smp() const;
+    SuperFamicom::SMP * get_smp();
 
     blargg_err_t hash_( Hash_Function& ) const;
 
@@ -63,5 +64,8 @@ private:
 
     blargg_err_t play_and_filter( int count, sample_t out [] );
 };
+
+inline SuperFamicom::SMP const* Sfm_Emu::get_smp() const { return &smp; }
+inline SuperFamicom::SMP * Sfm_Emu::get_smp() { return &smp; }
 
 #endif // SPC_SFM_H

@@ -95,6 +95,7 @@ public:
 	sample_t* extra()               { return m.extra; }
 	sample_t const* out_pos() const { return m.out; }
 	void disable_surround( bool disable = true );
+	void interpolation_level( int level = 0 ) { m.interpolation_level = level; }
 public:
 	BLARGG_DISABLE_NOTHROW
 	
@@ -182,10 +183,13 @@ public:
 		uint8_t* ram; // 64K shared RAM between DSP and SMP
 		int mute_mask;
         int surround_threshold;
+		int interpolation_level;
 		sample_t* out;
 		sample_t* out_end;
 		sample_t* out_begin;
 		sample_t extra [extra_size];
+
+		int max_level[voice_count][2];
 	};
 	state_t m;
 	
@@ -194,6 +198,11 @@ public:
 	unsigned read_counter( int rate );
 	
 	int  interpolate( voice_t const* v );
+	int  interpolate_cubic( voice_t const* v );
+	int  interpolate_sinc( voice_t const* v );
+	int  interpolate_linear( voice_t const* v );
+	int  interpolate_nearest( voice_t const* v );
+
 	void run_envelope( voice_t* const v );
 	void decode_brr( voice_t* v );
 
