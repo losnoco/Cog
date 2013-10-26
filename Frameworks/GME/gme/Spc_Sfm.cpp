@@ -532,10 +532,15 @@ blargg_err_t Sfm_Emu::skip_( int count )
         filter.clear();
     }
 
-    // eliminate pop due to resampler
-    const int resampler_latency = 64;
-    sample_t buf [resampler_latency];
-    return play_( resampler_latency, buf );
+	if ( sample_rate() != native_sample_rate )
+	{
+		// eliminate pop due to resampler
+		const int resampler_latency = 64;
+		sample_t buf [resampler_latency];
+		return play_( resampler_latency, buf );
+	}
+
+	return blargg_ok;
 }
 
 blargg_err_t Sfm_Emu::play_( int count, sample_t out [] )
