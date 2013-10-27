@@ -16,7 +16,8 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
 
   auto a = [&]{ return hex<4>((read(addr + 1) << 0) + (read(addr + 2) << 8)); };
   auto b = [&](unsigned n) { return hex<2>(read(addr + 1 + n)); };
-  auto r = [&](unsigned r, unsigned n = 0) { return hex<4>(addr + r + (int8_t)read(addr + 1 + n)); };
+  auto r = [&](unsigned r) { return hex<4>(addr + r + (int8_t)read(addr + 1)); };
+  auto ro = [&](unsigned r, unsigned n) { return hex<4>(addr + r + (int8_t)read(addr + 1 + n)); };
   auto dp = [&](unsigned n) { return hex<3>((regs.p.p << 8) + read(addr + 1 + n)); };
   auto ab = [&] {
     unsigned n = (read(addr + 1) << 0) + (read(addr + 2) << 8);
@@ -28,7 +29,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x00: return "nop";
     case 0x01: return "jst $ffde";
     case 0x02: return (std::string)"set $" + dp(0) + ":0";
-    case 0x03: return (std::string)"bbs $" + dp(0) + ":0=$" + r(+3, 1);
+    case 0x03: return (std::string)"bbs $" + dp(0) + ":0=$" + ro(+3, 1);
     case 0x04: return (std::string)"ora $" + dp(0);
     case 0x05: return (std::string)"ora $" + a();
     case 0x06: return "ora (x)";
@@ -44,7 +45,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x10: return (std::string)"bpl $" + r(+2);
     case 0x11: return "jst $ffdc";
     case 0x12: return (std::string)"clr $" + dp(0) + ":0";
-    case 0x13: return (std::string)"bbc $" + dp(0) + ":0=$" + r(+3, 1);
+    case 0x13: return (std::string)"bbc $" + dp(0) + ":0=$" + ro(+3, 1);
     case 0x14: return (std::string)"ora $" + dp(0) + ",x";
     case 0x15: return (std::string)"ora $" + a() + ",x";
     case 0x16: return (std::string)"ora $" + a() + ",y";
@@ -60,7 +61,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x20: return "clp";
     case 0x21: return "jst $ffda";
     case 0x22: return (std::string)"set $" + dp(0) + ":1";
-    case 0x23: return (std::string)"bbs $" + dp(0) + ":1=$" + r(+3, 1);
+    case 0x23: return (std::string)"bbs $" + dp(0) + ":1=$" + ro(+3, 1);
     case 0x24: return (std::string)"and $" + dp(0);
     case 0x25: return (std::string)"and $" + a();
     case 0x26: return "and (x)";
@@ -70,13 +71,13 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x2b: return (std::string)"rol $" + dp(0);
     case 0x2c: return (std::string)"rol $" + a();
     case 0x2d: return "pha";
-    case 0x2e: return (std::string)"bne $" + dp(0) + "=$" + r(+3, 1);
+    case 0x2e: return (std::string)"bne $" + dp(0) + "=$" + ro(+3, 1);
     case 0x28: return (std::string)"and #$" + b(0);
     case 0x2f: return (std::string)"bra $" + r(+2);
     case 0x30: return (std::string)"bmi $" + r(+2);
     case 0x31: return "jst $ffd8";
     case 0x32: return (std::string)"clr $" + dp(0) + ":1";
-    case 0x33: return (std::string)"bbc $" + dp(0) + ":1=$" + r(+3, 1);
+    case 0x33: return (std::string)"bbc $" + dp(0) + ":1=$" + ro(+3, 1);
     case 0x34: return (std::string)"and $" + dp(0) + ",x";
     case 0x35: return (std::string)"and $" + a() + ",x";
     case 0x36: return (std::string)"and $" + a() + ",y";
@@ -92,7 +93,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x40: return "sep";
     case 0x41: return "jst $ffd6";
     case 0x42: return (std::string)"set $" + dp(0) + ":2";
-    case 0x43: return (std::string)"bbs $" + dp(0) + ":2=$" + r(+3, 1);
+    case 0x43: return (std::string)"bbs $" + dp(0) + ":2=$" + ro(+3, 1);
     case 0x44: return (std::string)"eor $" + dp(0);
     case 0x45: return (std::string)"eor $" + a();
     case 0x46: return "eor (x)";
@@ -108,7 +109,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x50: return (std::string)"bvc $" + r(+2);
     case 0x51: return "jst $ffd4";
     case 0x52: return (std::string)"clr $" + dp(0) + ":2";
-    case 0x53: return (std::string)"bbc $" + dp(0) + ":2=$" + r(+3, 1);
+    case 0x53: return (std::string)"bbc $" + dp(0) + ":2=$" + ro(+3, 1);
     case 0x54: return (std::string)"eor $" + dp(0) + ",x";
     case 0x55: return (std::string)"eor $" + a() + ",x";
     case 0x56: return (std::string)"eor $" + a() + ",y";
@@ -124,7 +125,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x60: return "clc";
     case 0x61: return "jst $ffd2";
     case 0x62: return (std::string)"set $" + dp(0) + ":3";
-    case 0x63: return (std::string)"bbs $" + dp(0) + ":3=$" + r(+3, 1);
+    case 0x63: return (std::string)"bbs $" + dp(0) + ":3=$" + ro(+3, 1);
     case 0x64: return (std::string)"cmp $" + dp(0);
     case 0x65: return (std::string)"cmp $" + a();
     case 0x66: return "cmp (x)";
@@ -135,12 +136,12 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x6b: return (std::string)"ror $" + dp(0);
     case 0x6c: return (std::string)"ror $" + a();
     case 0x6d: return "phy";
-    case 0x6e: return (std::string)"bne --$" + dp(0) + "=$" + r(+3, 1);
+    case 0x6e: return (std::string)"bne --$" + dp(0) + "=$" + ro(+3, 1);
     case 0x6f: return "rts";
     case 0x70: return (std::string)"bvs $" + r(+2);
     case 0x71: return "jst $ffd0";
     case 0x72: return (std::string)"clr $" + dp(0) + ":3";
-    case 0x73: return (std::string)"bbc $" + dp(0) + ":3=$" + r(+3, 1);
+    case 0x73: return (std::string)"bbc $" + dp(0) + ":3=$" + ro(+3, 1);
     case 0x74: return (std::string)"cmp $" + dp(0) + ",x";
     case 0x75: return (std::string)"cmp $" + a() + ",x";
     case 0x76: return (std::string)"cmp $" + a() + ",y";
@@ -156,7 +157,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x80: return "sec";
     case 0x81: return "jst $ffce";
     case 0x82: return (std::string)"set $" + dp(0) + ":4";
-    case 0x83: return (std::string)"bbs $" + dp(0) + ":4=$" + r(+3, 1);
+    case 0x83: return (std::string)"bbs $" + dp(0) + ":4=$" + ro(+3, 1);
     case 0x84: return (std::string)"adc $" + dp(0);
     case 0x85: return (std::string)"adc $" + a();
     case 0x86: return "adc (x)";
@@ -172,7 +173,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0x90: return (std::string)"bcc $" + r(+2);
     case 0x91: return "jst $ffcc";
     case 0x92: return (std::string)"clr $" + dp(0) + ":4";
-    case 0x93: return (std::string)"bbc $" + dp(0) + ":4=$" + r(+3, 1);
+    case 0x93: return (std::string)"bbc $" + dp(0) + ":4=$" + ro(+3, 1);
     case 0x94: return (std::string)"adc $" + dp(0) + ",x";
     case 0x95: return (std::string)"adc $" + a() + ",x";
     case 0x96: return (std::string)"adc $" + a() + ",y";
@@ -188,7 +189,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0xa0: return "sei";
     case 0xa1: return "jst $ffca";
     case 0xa2: return (std::string)"set $" + dp(0) + ":5";
-    case 0xa3: return (std::string)"bbs $" + dp(0) + ":5=$" + r(+3, 1);
+    case 0xa3: return (std::string)"bbs $" + dp(0) + ":5=$" + ro(+3, 1);
     case 0xa4: return (std::string)"sbc $" + dp(0);
     case 0xa5: return (std::string)"sbc $" + a();
     case 0xa6: return "sbc (x)";
@@ -204,7 +205,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0xb0: return (std::string)"bcs $" + r(+2);
     case 0xb1: return "jst $ffc8";
     case 0xb2: return (std::string)"clr $" + dp(0) + ":5";
-    case 0xb3: return (std::string)"bbc $" + dp(0) + ":5=$" + r(+3, 1);
+    case 0xb3: return (std::string)"bbc $" + dp(0) + ":5=$" + ro(+3, 1);
     case 0xb4: return (std::string)"sbc $" + dp(0) + ",x";
     case 0xb5: return (std::string)"sbc $" + a() + ",x";
     case 0xb6: return (std::string)"sbc $" + a() + ",y";
@@ -220,7 +221,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0xc0: return "cli";
     case 0xc1: return "jst $ffc6";
     case 0xc2: return (std::string)"set $" + dp(0) + ":6";
-    case 0xc3: return (std::string)"bbs $" + dp(0) + ":6=$" + r(+3, 1);
+    case 0xc3: return (std::string)"bbs $" + dp(0) + ":6=$" + ro(+3, 1);
     case 0xc4: return (std::string)"sta $" + dp(0);
     case 0xc5: return (std::string)"sta $" + a();
     case 0xc6: return "sta (x)";
@@ -236,7 +237,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0xd0: return (std::string)"bne $" + r(+2);
     case 0xd1: return "jst $ffc4";
     case 0xd2: return (std::string)"clr $" + dp(0) + ":6";
-    case 0xd3: return (std::string)"bbc $" + dp(0) + ":6=$" + r(+3, 1);
+    case 0xd3: return (std::string)"bbc $" + dp(0) + ":6=$" + ro(+3, 1);
     case 0xd4: return (std::string)"sta $" + dp(0) + ",x";
     case 0xd5: return (std::string)"sta $" + a() + ",x";
     case 0xd6: return (std::string)"sta $" + a() + ",y";
@@ -247,12 +248,12 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0xdb: return (std::string)"sty $" + dp(0) + ",x";
     case 0xdc: return "dey";
     case 0xdd: return "tya";
-    case 0xde: return (std::string)"bne $" + dp(0) + ",x=$" + r(+3, 1);
+    case 0xde: return (std::string)"bne $" + dp(0) + ",x=$" + ro(+3, 1);
     case 0xdf: return "daa";
     case 0xe0: return "clv";
     case 0xe1: return "jst $ffc2";
     case 0xe2: return (std::string)"set $" + dp(0) + ":7";
-    case 0xe3: return (std::string)"bbs $" + dp(0) + ":7=$" + r(+3, 1);
+    case 0xe3: return (std::string)"bbs $" + dp(0) + ":7=$" + ro(+3, 1);
     case 0xe4: return (std::string)"lda $" + dp(0);
     case 0xe5: return (std::string)"lda $" + a();
     case 0xe6: return "lda (x)";
@@ -268,7 +269,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     case 0xf0: return (std::string)"beq $" + r(+2);
     case 0xf1: return "jst $ffc0";
     case 0xf2: return (std::string)"clr $" + dp(0) + ":7";
-    case 0xf3: return (std::string)"bbc $" + dp(0) + ":7=$" + r(+3, 1);
+    case 0xf3: return (std::string)"bbc $" + dp(0) + ":7=$" + ro(+3, 1);
     case 0xf4: return (std::string)"lda $" + dp(0) + ",x";
     case 0xf5: return (std::string)"lda $" + a() + ",x";
     case 0xf6: return (std::string)"lda $" + a() + ",y";
