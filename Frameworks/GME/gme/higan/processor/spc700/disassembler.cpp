@@ -14,7 +14,7 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     return pc + offset;
   };*/
 
-  auto a = [&](){ return hex<4>((read(addr + 1) << 0) + (read(addr + 2) << 8)); };
+  auto a = [&]{ return hex<4>((read(addr + 1) << 0) + (read(addr + 2) << 8)); };
   auto b = [&](unsigned n) { return hex<2>(read(addr + 1 + n)); };
   auto r = [&](unsigned r, unsigned n = 0) { return hex<4>(addr + r + (int8_t)read(addr + 1 + n)); };
   auto dp = [&](unsigned n) { return hex<3>((regs.p.p << 8) + read(addr + 1 + n)); };
