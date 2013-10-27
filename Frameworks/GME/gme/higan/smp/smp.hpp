@@ -47,7 +47,7 @@ private:
   int16_t * sample_buffer;
   int16_t const* sample_buffer_end;
 public:
-  void sample( int16_t, int16_t );
+  bool sample( int16_t, int16_t );
     
   SMP();
   ~SMP();

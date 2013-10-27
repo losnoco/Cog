@@ -3,18 +3,25 @@
 
 namespace SuperFamicom {
 
-void DSP::step(unsigned clocks) {
+void DSP::step(uint64_t clocks) {
   clock += clocks;
 }
 
 void DSP::enter() {
-  spc_dsp.run(1);
-  step(24 * 4096);
+  int64_t dsp_clocks = (-clock) / (24 * 4096) + 1;
+  spc_dsp.run(dsp_clocks);
+  step(dsp_clocks * 24 * 4096);
 
   signed count = spc_dsp.sample_count();
-  if(count > 0) {
-    for(unsigned n = 0; n < count; n += 2) smp.sample(samplebuffer[n + 0], samplebuffer[n + 1]);
+  if(count > removed_samples) {
+    for(unsigned n = removed_samples; n < count; n += 2) {
+      if (!smp.sample(samplebuffer[n + 0], samplebuffer[n + 1])) {
+        removed_samples = n;
+        return;
+      }
+    }
     spc_dsp.set_output(samplebuffer, 8192);
+    removed_samples = 0;
   }
 }
 
@@ -34,11 +41,13 @@ void DSP::power() {
   spc_dsp.init(smp.apuram);
   spc_dsp.reset();
   spc_dsp.set_output(samplebuffer, 8192);
+  removed_samples = 0;
 }
 
 void DSP::reset() {
   spc_dsp.soft_reset();
   spc_dsp.set_output(samplebuffer, 8192);
+  removed_samples = 0;
 }
 
 void DSP::channel_enable(unsigned channel, bool enable) {
@@ -55,7 +64,7 @@ void DSP::disable_surround(bool disable) {
 }
 
 DSP::DSP(struct SMP & p_smp)
-    : smp( p_smp ), clock( 0 ) {
+    : smp( p_smp ), clock( 0 ), removed_samples( 0 ) {
   for(unsigned i = 0; i < 8; i++) channel_enabled[i] = true;
 }
 

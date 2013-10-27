@@ -14,21 +14,26 @@ void SMP::step(unsigned clocks) {
 }
 
 void SMP::synchronize_dsp() {
-  while(dsp.clock < 0 && sample_buffer < sample_buffer_end) dsp.enter();
+  while(dsp.clock < 0) dsp.enter();
 }
 
 void SMP::enter() {
-  while(status.clock_speed != 2 && sample_buffer < sample_buffer_end) op_step();
-  if (status.clock_speed == 2) {
+  while(sample_buffer < sample_buffer_end) {
+    clock -= (sample_buffer_end - sample_buffer) * 24 * 16;
+    while(status.clock_speed != 2 && clock < 0) op_step();
+    if(status.clock_speed == 2) step(-clock);
     synchronize_dsp();
-    if (sample_buffer < sample_buffer_end) {
-      dsp.clock -= 24 * 32 * (sample_buffer_end - sample_buffer) / 2;
-      synchronize_dsp();
-    }
   }
 }
 
 void SMP::render(int16_t * buffer, unsigned count) {
+  while (count > 4096) {
+    sample_buffer = buffer;
+    sample_buffer_end = buffer + 4096;
+    buffer += 4096;
+    count -= 4096;
+    enter();
+  }
   sample_buffer = buffer;
   sample_buffer_end = buffer + count;
   enter();
@@ -46,14 +51,16 @@ void SMP::skip(unsigned count) {
   enter();
 }
 
-void SMP::sample(int16_t left, int16_t right) {
+bool SMP::sample(int16_t left, int16_t right) {
+  if ( sample_buffer_end - sample_buffer < 2 ) return false;
   if ( sample_buffer > ((const int16_t *)0) + 4096 ) {
-    if ( sample_buffer < sample_buffer_end ) *sample_buffer++ = left;
-    if ( sample_buffer < sample_buffer_end ) *sample_buffer++ = right;
+    *sample_buffer++ = left;
+    *sample_buffer++ = right;
   }
-  else if ( sample_buffer < sample_buffer_end ){
+  else {
     sample_buffer += 2;
   }
+  return true;
 }
 
 void SMP::power() {
