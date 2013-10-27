@@ -4,8 +4,13 @@ namespace Processor {
 
 #include "algorithms.cpp"
 #include "instructions.cpp"
+#include "disassembler.cpp"
 
 void SPC700::op_step() {
+#if 0
+  std::string disasm = disassemble_opcode(regs.pc) + "\n";
+  fputs(disasm.c_str(), f);
+#endif
   switch(opcode = op_readpc()) {
   case 0x00: return op_nop();
   case 0x01: return op_jst();

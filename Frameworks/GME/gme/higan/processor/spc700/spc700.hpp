@@ -2,14 +2,27 @@
 #define PROCESSOR_SPC700_HPP
 
 #include <stdint.h>
+#include <string>
+#include <sstream>
+#if 0
+#include <stdio.h>
+#endif
 
 namespace Processor {
 
 struct SPC700 {
+#if 0
+  FILE *f;
+  SPC700() { f = fopen("/tmp/spc_disasm", "w"); }
+  ~SPC700() { fclose(f); }
+#endif
+    
   virtual void op_io() = 0;
   virtual uint8_t op_read(uint16_t addr) = 0;
   virtual void op_write(uint16_t addr, uint8_t data) = 0;
   void op_step();
+    
+  virtual uint8_t disassembler_read(uint16_t addr) = 0;
 
   #include "registers.hpp"
   #include "memory.hpp"
@@ -17,6 +30,8 @@ struct SPC700 {
   regs_t regs;
   word_t dp, sp, rd, wr, bit, ya;
   uint8_t opcode;
+    
+  std::string disassemble_opcode(uint16_t addr);
 
 protected:
   uint8_t op_adc(uint8_t, uint8_t);

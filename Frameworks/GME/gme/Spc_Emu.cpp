@@ -376,10 +376,14 @@ blargg_err_t Spc_Emu::start_track_( int track )
     smp.regs.s = header.sp;
     
     memcpy( smp.apuram, ptr, 0x10000 );
-    
-    static const uint8_t regs_to_copy[] = { 0xF1, 0xF2, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC };
-    for (auto n : regs_to_copy) smp.op_buswrite( n, ptr[ n ] );
+    memset( smp.apuram + 0xF4, 0, 4 );
     memcpy( smp.sfm_last, ptr + 0xF4, 4 );
+    
+    static const uint8_t regs_to_copy[][2] = { {0xFC,0xFF}, {0xFB,0xFF}, {0xFA,0xFF}, {0xF9,0xFF}, {0xF8,0xFF}, {0xF2,0xFF}, {0xF1,0x87} };
+    for (auto n : regs_to_copy) smp.op_buswrite( n[0], ptr[ n[0] ] & n[1] );
+    smp.timer0.stage3_ticks = ptr[ 0xFD ] & 0x0F;
+    smp.timer1.stage3_ticks = ptr[ 0xFE ] & 0x0F;
+    smp.timer2.stage3_ticks = ptr[ 0xFF ] & 0x0F;
     ptr += 0x10000;
     
     smp.dsp.spc_dsp.load( ptr );
