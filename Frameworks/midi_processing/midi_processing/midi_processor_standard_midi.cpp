@@ -31,6 +31,7 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         }
 
         current_timestamp += delta;
+        if ( it == end ) return false;
         unsigned char event_code = *it++;
         unsigned data_bytes_read = 0;
         if ( event_code < 0x80 )
@@ -65,7 +66,7 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         {
             int data_count = decode_delta( it, end );
             if ( data_count < 0 ) return false; /*throw exception_io_data( "Invalid System Exclusive message" );*/
-			if ( end - it > data_count ) return false;
+			if ( end - it < data_count ) return false;
             buffer.resize( data_count + 1 );
             buffer[ 0 ] = 0xF0;
             std::copy( it, it + data_count, buffer.begin() + 1 );
