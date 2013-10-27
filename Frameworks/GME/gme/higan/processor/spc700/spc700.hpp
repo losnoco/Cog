@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <string>
 #include <sstream>
-#if 0
+#include <iomanip>
+#if 1
 #include <stdio.h>
 #endif
 

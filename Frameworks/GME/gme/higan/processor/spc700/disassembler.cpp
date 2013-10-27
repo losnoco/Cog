@@ -1,22 +1,7 @@
 template<signed precision> std::string hex(uintmax_t value) {
-  std::string buffer;
-  buffer.resize(sizeof(uintmax_t) * 2);
-
-  unsigned size = 0;
-  do {
-    unsigned n = value & 15;
-    buffer[size++] = n < 10 ? '0' + n : 'a' + n - 10;
-    value >>= 4;
-  } while(size < precision);
-  buffer.resize(precision);
-  const unsigned size_half = precision / 2;
-  for (unsigned i = 0; i < size_half; ++i) {
-    char temp = buffer[i];
-    buffer[i] = buffer[size - i - 1];
-    buffer[size - i - 1] = temp;
-  }
-
-  return buffer;
+  std::ostringstream s;
+  s << std::hex << std::setw( precision ) << std::setfill( '0' ) << value;
+  return s.str();
 }
 
 std::string SPC700::disassemble_opcode(uint16_t addr) {
@@ -24,12 +9,12 @@ std::string SPC700::disassemble_opcode(uint16_t addr) {
     return disassembler_read(addr);
   };	
 
-  auto relative = [&](unsigned length, int8_t offset) -> uint16_t {
+  /*auto relative = [&](unsigned length, int8_t offset) -> uint16_t {
     uint16_t pc = addr + length;
     return pc + offset;
-  };
+  };*/
 
-  auto a = [&] { return hex<4>((read(addr + 1) << 0) + (read(addr + 2) << 8)); };
+  auto a = [&](){ return hex<4>((read(addr + 1) << 0) + (read(addr + 2) << 8)); };
   auto b = [&](unsigned n) { return hex<2>(read(addr + 1 + n)); };
   auto r = [&](unsigned r, unsigned n = 0) { return hex<4>(addr + r + (int8_t)read(addr + 1 + n)); };
   auto dp = [&](unsigned n) { return hex<3>((regs.p.p << 8) + read(addr + 1 + n)); };
