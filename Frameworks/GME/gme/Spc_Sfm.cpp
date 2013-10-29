@@ -111,6 +111,7 @@ struct Sfm_File : Gme_Info_
 {
     blargg_vector<byte> data;
     Bml_Parser metadata;
+	unsigned long original_metadata_size;
 
     Sfm_File() { set_type( gme_sfm_type ); }
 
@@ -126,6 +127,7 @@ struct Sfm_File : Gme_Info_
             return "SFM file too small";
         int metadata_size = get_le32( data.begin() + 4 );
         metadata.parseDocument( (const char *)data.begin() + 8, metadata_size );
+		original_metadata_size = metadata_size;
         return blargg_ok;
     }
 
@@ -147,9 +149,17 @@ struct Sfm_File : Gme_Info_
         return blargg_ok;
     }
     
-    blargg_err_t save_( gme_writer_t writer, void* your_data )
+    blargg_err_t save_( gme_writer_t writer, void* your_data ) const
     {
-        
+		std::string metadata_serialized;
+		metadata.serialize( metadata_serialized );
+		uint8_t meta_length[4];
+		set_le32( meta_length, (unsigned int) metadata_serialized.length() );
+        writer( your_data, "SFM1", 4 );
+		writer( your_data, meta_length, 4 );
+		writer( your_data, metadata_serialized.c_str(), metadata_serialized.length() );
+		writer( your_data, data.begin() + 4 + 4 + original_metadata_size, data.size() - (4 + 4 + original_metadata_size) );
+		return blargg_ok;
     }
 };
 
@@ -458,7 +468,7 @@ void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
     
     oss.str("");
     oss.clear();
-    oss << smp.status.ram00f8 << "," << smp.status.ram00f9;
+    oss << (unsigned long)smp.status.ram00f8 << "," << (unsigned long)smp.status.ram00f9;
     out.setValue( "smp:ram", oss.str().c_str() );
     
     name = "smp:regs:";
