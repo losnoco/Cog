@@ -52,7 +52,8 @@ public:
     void setValue(std::string const& path, long value);
     void setValue(std::string const& path, const char * value);
 
-    void serialize(std::string & out);
+    void serialize(std::string & out) const;
+
 private:
     void serialize(std::ostringstream & out, Bml_Node const* node, unsigned int indent) const;
 };

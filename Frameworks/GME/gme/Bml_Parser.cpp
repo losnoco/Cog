@@ -328,7 +328,7 @@ void Bml_Parser::setValue(std::string const& path, long value)
     setValue( path, str.str().c_str() );
 }
 
-void Bml_Parser::serialize(std::string & out)
+void Bml_Parser::serialize(std::string & out) const
 {
     std::ostringstream strOut;
     serialize(strOut, &document, 0);
@@ -342,13 +342,15 @@ void Bml_Parser::serialize(std::ostringstream & out, Bml_Node const* node, unsig
     if ( indent )
     {
         out << node->getName();
-        if (node->getValue()) out << ":" << node->getValue();
+        if (node->getValue() && strlen(node->getValue())) out << ":" << node->getValue();
         out << std::endl;
     }
 
     for (unsigned i = 0, j = node->getChildCount(); i < j; ++i)
     {
         Bml_Node const& child = node->getChild(i);
+        if ( (!child.getValue() || !strlen(child.getValue())) && !child.getChildCount() )
+            continue;
         serialize( out, &child, indent + 1 );
         if ( indent == 0 ) out << std::endl;
     }

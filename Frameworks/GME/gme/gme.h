@@ -55,6 +55,9 @@ int gme_tell( const gme_t* );
 /* Seeks to new time in track. Seeking backwards or far forward can take a while. */
 gme_err_t gme_seek( gme_t*, int msec );
 
+/* Skips the specified number of samples. */
+gme_err_t gme_skip( gme_t*, int samples );
+
 
 /******** Informational ********/
 
@@ -78,6 +81,8 @@ Must be freed after use. */
 typedef struct gme_info_t gme_info_t;
 gme_err_t gme_track_info( const gme_t*, gme_info_t** out, int track );
 
+gme_err_t gme_set_track_info( gme_t*, const gme_info_t* in, int track );
+        
 /* Frees track information */
 void gme_free_info( gme_info_t* );
 

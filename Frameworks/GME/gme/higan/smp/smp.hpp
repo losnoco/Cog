@@ -37,8 +37,9 @@ struct SMP : Processor::SPC700 {
 private:
   uint8_t const* sfm_queue;
   uint8_t const* sfm_queue_end;
+  uint8_t const* sfm_queue_repeat;
 public:
-  void set_sfm_queue(const uint8_t* queue, const uint8_t* queue_end);
+  void set_sfm_queue(const uint8_t* queue, const uint8_t* queue_end, const uint8_t* queue_repeat);
 
   const uint8_t* get_sfm_queue() const;
   size_t get_sfm_queue_remain() const;
@@ -120,7 +121,7 @@ public:
 
 inline void SMP::set_tempo(double speed) { dsp_clock_step = (int64_t)(4096.0 / speed); }
 
-inline void SMP::set_sfm_queue(const uint8_t *queue, const uint8_t *queue_end) { sfm_queue = queue; sfm_queue_end = queue_end; sfm_last[0] = 0; sfm_last[1] = 0; sfm_last[2] = 0; sfm_last[3] = 0; }
+inline void SMP::set_sfm_queue(const uint8_t *queue, const uint8_t *queue_end, const uint8_t *queue_repeat) { sfm_queue = queue; sfm_queue_end = queue_end; sfm_queue_repeat = queue_repeat; sfm_last[0] = 0; sfm_last[1] = 0; sfm_last[2] = 0; sfm_last[3] = 0; }
 
 inline const uint8_t* SMP::get_sfm_queue() const { return sfm_queue; }
 inline size_t SMP::get_sfm_queue_remain() const { return sfm_queue_end - sfm_queue; }

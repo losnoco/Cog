@@ -22,14 +22,6 @@ void SMP::port_write(uint8_t port, uint8_t data) {
 uint8_t SMP::op_busread(uint16_t addr) {
   unsigned result;
 
-  if ( !(dsp.read( SPC_DSP::r_flg ) & 0x20) ) {
-    int start = 0x100 * dsp.read( SPC_DSP::r_esa );
-    int end  = start + 0x800 * (dsp.read( SPC_DSP::r_edl ) & 0x0F);
-    if ( end > 0x10000 )
-      end = 0x10000;
-    if ( addr >= start || addr < end) synchronize_dsp();
-  }
-    
   switch(addr) {
   case 0xf0:  //TEST -- write-only register
     return 0x00;
@@ -42,7 +34,6 @@ uint8_t SMP::op_busread(uint16_t addr) {
 
   case 0xf3:  //DSPDATA
     //0x80-0xff are read-only mirrors of 0x00-0x7f
-    synchronize_dsp();
     return dsp.read(status.dsp_addr & 0x7f);
 
   case 0xf4:  //CPUIO0
@@ -50,8 +41,11 @@ uint8_t SMP::op_busread(uint16_t addr) {
   case 0xf6:  //CPUIO2
   case 0xf7:  //CPUIO3
     if (sfm_queue && sfm_queue < sfm_queue_end) {
-      sfm_last[addr - 0xf4] = *sfm_queue;
-      return *sfm_queue++;
+      result = *sfm_queue;
+      if (++sfm_queue == sfm_queue_end)
+        sfm_queue = sfm_queue_repeat;
+      sfm_last[addr - 0xf4] = result;
+      return result;
     }
     return sfm_last[addr - 0xf4];
 
@@ -86,7 +80,6 @@ uint8_t SMP::op_busread(uint16_t addr) {
 }
 
 void SMP::op_buswrite(uint16_t addr, uint8_t data) {
-  synchronize_dsp();
   switch(addr) {
   case 0xf0:  //TEST
     if(regs.p.p) break;  //writes only valid when P flag is clear

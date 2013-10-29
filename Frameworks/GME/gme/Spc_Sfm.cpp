@@ -38,12 +38,65 @@ static void hash_sfm_file( byte const* data, int data_size, Music_Emu::Hash_Func
     out.hash_( data, data_size );
 }
 
+static void copy_field( char* out, size_t size, const Bml_Parser& in, char const* in_path )
+{
+    const char * value = in.enumValue( in_path );
+    if ( value ) strncpy( out, value, size - 1 ), out[ size - 1 ] = 0;
+    else out[ 0 ] = 0;
+}
+
+static void copy_info( track_info_t* out, const Bml_Parser& in )
+{
+    copy_field( out->song, sizeof(out->song), in, "information:title" );
+    copy_field( out->game, sizeof(out->game), in, "information:game" );
+    copy_field( out->author, sizeof(out->author), in, "information:author" );
+    copy_field( out->composer, sizeof(out->composer), in, "information:composer" );
+    copy_field( out->copyright, sizeof(out->copyright), in, "information:copyright" );
+    copy_field( out->date, sizeof(out->date), in, "information:date" );
+    copy_field( out->track, sizeof(out->track), in, "information:track" );
+    copy_field( out->disc, sizeof(out->disc), in, "information:disc" );
+    copy_field( out->dumper, sizeof(out->dumper), in, "information:dumper" );
+    
+    char * end;
+    const char * value = in.enumValue( "timing:length" );
+    if ( value )
+        out->length = strtoul( value, &end, 10 );
+    else
+        out->length = 0;
+    
+    value = in.enumValue( "timing:fade" );
+    if ( value )
+        out->fade_length = strtoul( value, &end, 10 );
+    else
+        out->fade_length = 0;
+}
+
 blargg_err_t Sfm_Emu::track_info_( track_info_t* out, int ) const
 {
-    const char * title = metadata.enumValue("information:title");
-    if (title) strncpy( out->song, title, 255 );
-    else out->song[0] = 0;
-    out->song[255] = '\0';
+    copy_info( out, metadata );
+    return blargg_ok;
+}
+
+static void set_track_info( const track_info_t* in, Bml_Parser& out )
+{
+    out.setValue( "information:title", in->song );
+    out.setValue( "information:game", in->game );
+    out.setValue( "information:author", in->author );
+    out.setValue( "information:composer", in->composer );
+    out.setValue( "information:copyright", in->copyright );
+    out.setValue( "information:date", in->date );
+    out.setValue( "information:track", in->track );
+    out.setValue( "information:disc", in->disc );
+    out.setValue( "information:dumper", in->dumper );
+    
+    out.setValue( "timing:length", in->length );
+    out.setValue( "timing:fade", in->fade_length );
+}
+
+blargg_err_t Sfm_Emu::set_track_info_( const track_info_t* in, int )
+{
+    ::set_track_info(in, metadata);
+    
     return blargg_ok;
 }
 
@@ -72,19 +125,19 @@ struct Sfm_File : Gme_Info_
         if ( file_size < 8 )
             return "SFM file too small";
         int metadata_size = get_le32( data.begin() + 4 );
-        byte temp = data[ 8 + metadata_size ];
-        data[ 8 + metadata_size ] = '\0';
-        metadata.parseDocument( (const char *)data.begin() + 8 );
-        data[ 8 + metadata_size ] = temp;
+        metadata.parseDocument( (const char *)data.begin() + 8, metadata_size );
         return blargg_ok;
     }
 
     blargg_err_t track_info_( track_info_t* out, int ) const
     {
-        const char * title = metadata.enumValue("information:title");
-        if (title) strncpy( out->song, title, 255 );
-        else out->song[0] = 0;
-        out->song[255] = '\0';
+        copy_info( out, metadata );
+        return blargg_ok;
+    }
+    
+    blargg_err_t set_track_info_( const track_info_t* in, int )
+    {
+        ::set_track_info( in, metadata );
         return blargg_ok;
     }
 
@@ -92,6 +145,11 @@ struct Sfm_File : Gme_Info_
     {
         hash_sfm_file( data.begin(), data.end() - data.begin(), out );
         return blargg_ok;
+    }
+    
+    blargg_err_t save_( gme_writer_t writer, void* your_data )
+    {
+        
     }
 };
 
@@ -131,7 +189,15 @@ blargg_err_t Sfm_Emu::load_mem_( byte const in [], int size )
     };
     set_voice_names( names );
 
-    return check_sfm_header( in );
+    RETURN_ERR( check_sfm_header( in ) );
+
+    const byte * ptr = file_begin();
+    int metadata_size = get_le32(ptr + 4);
+    if ( file_size() < metadata_size + Sfm_Emu::sfm_min_file_size )
+        return "SFM file too small";
+    metadata.parseDocument((const char *) ptr + 8, metadata_size);
+    
+    return blargg_ok;
 }
 
 // Emulation
@@ -164,12 +230,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     resampler.clear();
     filter.clear();
     const byte * ptr = file_begin();
-    if ( file_size() < Sfm_Emu::sfm_min_file_size )
-        return "SFM file too small";
     int metadata_size = get_le32(ptr + 4);
-    if ( file_size() < metadata_size + Sfm_Emu::sfm_min_file_size )
-        return "SFM file too small";
-    metadata.parseDocument((const char *) ptr + 8, metadata_size);
 
     memcpy( smp.iplrom, ipl_rom, 64 );
 
@@ -178,11 +239,17 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     memcpy( smp.apuram, ptr + 8 + metadata_size, 65536 );
 
     memcpy( smp.dsp.spc_dsp.m.regs, ptr + 8 + metadata_size + 65536, 128 );
-
-    smp.set_sfm_queue( ptr + 8 + metadata_size + 65536 + 128, ptr + file_size() );
-
+    
+    const uint8_t* log_begin = ptr + 8 + metadata_size + 65536 + 128;
+    const uint8_t* log_end = ptr + file_size();
+    size_t loop_begin = log_end - log_begin;
+    
     char * end;
     const char * value;
+    
+    loop_begin = META_ENUM_INT("timing:loopstart", loop_begin);
+
+    smp.set_sfm_queue( log_begin, log_end, log_begin + loop_begin );
 
     uint32_t test = META_ENUM_INT("smp:test", 0);
     smp.status.clock_speed = (test >> 6) & 3;
@@ -375,33 +442,33 @@ blargg_err_t Sfm_Emu::start_track_( int track )
 
 #undef META_ENUM_INT
 
-blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
+void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
 {
     bool first;
     std::string name;
     std::ostringstream oss;
-    Bml_Parser metadata;
-    const byte * ptr = file_begin();
-    int metadata_size = get_le32(ptr + 4);
-    metadata.parseDocument((const char *) ptr + 8, metadata_size);
-
-    metadata.setValue( "smp:test", (smp.status.clock_speed << 6) | (smp.status.timer_speed << 4) | (smp.status.timers_enable << 3) | (smp.status.ram_disable << 2) | (smp.status.ram_writable << 1) | (smp.status.timers_disable << 0) );
-    metadata.setValue( "smp:iplrom", smp.status.iplrom_enable );
-    metadata.setValue( "smp:dspaddr", smp.status.dsp_addr );
+    
+    metadata.serialize(name);
+    
+    out.parseDocument(name.c_str());
+    
+    out.setValue( "smp:test", (smp.status.clock_speed << 6) | (smp.status.timer_speed << 4) | (smp.status.timers_enable << 3) | (smp.status.ram_disable << 2) | (smp.status.ram_writable << 1) | (smp.status.timers_disable << 0) );
+    out.setValue( "smp:iplrom", smp.status.iplrom_enable );
+    out.setValue( "smp:dspaddr", smp.status.dsp_addr );
     
     oss.str("");
     oss.clear();
     oss << smp.status.ram00f8 << "," << smp.status.ram00f9;
-    metadata.setValue( "smp:ram", oss.str().c_str() );
+    out.setValue( "smp:ram", oss.str().c_str() );
     
     name = "smp:regs:";
-    metadata.setValue( name + "pc", smp.regs.pc );
-    metadata.setValue( name + "a", smp.regs.a );
-    metadata.setValue( name + "x", smp.regs.x );
-    metadata.setValue( name + "y", smp.regs.y );
-    metadata.setValue( name + "s", smp.regs.s );
-    metadata.setValue( name + "psw", smp.regs.p );
-
+    out.setValue( name + "pc", smp.regs.pc );
+    out.setValue( name + "a", smp.regs.a );
+    out.setValue( name + "x", smp.regs.x );
+    out.setValue( name + "y", smp.regs.y );
+    out.setValue( name + "s", smp.regs.s );
+    out.setValue( name + "psw", smp.regs.p );
+    
     oss.str("");
     oss.clear();
     first = true;
@@ -411,7 +478,7 @@ blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
         oss << (unsigned long)n;
         first = false;
     }
-    metadata.setValue("smp:ports", oss.str().c_str());
+    out.setValue("smp:ports", oss.str().c_str());
     
     for (int i = 0; i < 3; ++i)
     {
@@ -420,63 +487,63 @@ blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
         oss.clear();
         oss << "smp:timer[" << i << "]:";
         name = oss.str();
-        metadata.setValue( name + "enable", t.enable );
-        metadata.setValue( name + "target", t.target );
+        out.setValue( name + "enable", t.enable );
+        out.setValue( name + "target", t.target );
         oss.str("");
         oss.clear();
         oss << (unsigned long)t.stage0_ticks << "," << (unsigned long)t.stage1_ticks << ","
-            << (unsigned long)t.stage2_ticks << "," << (unsigned long)t.stage3_ticks;
-        metadata.setValue( name + "stage", oss.str().c_str() );
-        metadata.setValue( name + "line", t.current_line );
+        << (unsigned long)t.stage2_ticks << "," << (unsigned long)t.stage3_ticks;
+        out.setValue( name + "stage", oss.str().c_str() );
+        out.setValue( name + "line", t.current_line );
     }
     
-    metadata.setValue( "dsp:clock", smp.dsp.clock / 4096 );
-
-    metadata.setValue( "dsp:echohistaddr", smp.dsp.spc_dsp.m.echo_hist_pos - smp.dsp.spc_dsp.m.echo_hist );
+    out.setValue( "dsp:clock", smp.dsp.clock / 4096 );
+    
+    out.setValue( "dsp:echohistaddr", smp.dsp.spc_dsp.m.echo_hist_pos - smp.dsp.spc_dsp.m.echo_hist );
     
     oss.str("");
     oss.clear();
     for (int i = 0; i < 8; ++i)
     {
         oss << smp.dsp.spc_dsp.m.echo_hist[i][0] << ","
-            << smp.dsp.spc_dsp.m.echo_hist[i][1];
+        << smp.dsp.spc_dsp.m.echo_hist[i][1];
         if ( i != 7 ) oss << ",";
     }
-    metadata.setValue( "dsp:echohistdata", oss.str().c_str() );
+    out.setValue( "dsp:echohistdata", oss.str().c_str() );
     
-    metadata.setValue( "dsp:sample", smp.dsp.spc_dsp.m.phase );
-    metadata.setValue( "dsp:kon", smp.dsp.spc_dsp.m.kon );
-    metadata.setValue( "dsp:noise", smp.dsp.spc_dsp.m.noise );
-    metadata.setValue( "dsp:counter", smp.dsp.spc_dsp.m.counter );
-    metadata.setValue( "dsp:echooffset", smp.dsp.spc_dsp.m.echo_offset );
-    metadata.setValue( "dsp:echolength", smp.dsp.spc_dsp.m.echo_length );
-    metadata.setValue( "dsp:koncache", smp.dsp.spc_dsp.m.new_kon );
-    metadata.setValue( "dsp:endx", smp.dsp.spc_dsp.m.endx_buf );
-    metadata.setValue( "dsp:envx", smp.dsp.spc_dsp.m.envx_buf );
-    metadata.setValue( "dsp:outx", smp.dsp.spc_dsp.m.outx_buf );
-    metadata.setValue( "dsp:pmon", smp.dsp.spc_dsp.m.t_pmon );
-    metadata.setValue( "dsp:non", smp.dsp.spc_dsp.m.t_non );
-    metadata.setValue( "dsp:eon", smp.dsp.spc_dsp.m.t_eon );
-    metadata.setValue( "dsp:dir", smp.dsp.spc_dsp.m.t_dir );
-    metadata.setValue( "dsp:koff", smp.dsp.spc_dsp.m.t_koff );
-    metadata.setValue( "dsp:brrnext", smp.dsp.spc_dsp.m.t_brr_next_addr );
-    metadata.setValue( "dsp:adsr0", smp.dsp.spc_dsp.m.t_adsr0 );
-    metadata.setValue( "dsp:brrheader", smp.dsp.spc_dsp.m.t_brr_header );
-    metadata.setValue( "dsp:brrdata", smp.dsp.spc_dsp.m.t_brr_byte );
-    metadata.setValue( "dsp:srcn", smp.dsp.spc_dsp.m.t_srcn );
-    metadata.setValue( "dsp:esa", smp.dsp.spc_dsp.m.t_esa );
-    metadata.setValue( "dsp:echodisable", !smp.dsp.spc_dsp.m.t_echo_enabled );
-    metadata.setValue( "dsp:diraddr", smp.dsp.spc_dsp.m.t_dir_addr );
-    metadata.setValue( "dsp:pitch", smp.dsp.spc_dsp.m.t_pitch );
-    metadata.setValue( "dsp:output", smp.dsp.spc_dsp.m.t_output );
-    metadata.setValue( "dsp:looped", smp.dsp.spc_dsp.m.t_looped );
-    metadata.setValue( "dsp:echoaddr", smp.dsp.spc_dsp.m.t_echo_ptr );
-
+    out.setValue( "dsp:sample", smp.dsp.spc_dsp.m.phase );
+    out.setValue( "dsp:kon", smp.dsp.spc_dsp.m.kon );
+    out.setValue( "dsp:noise", smp.dsp.spc_dsp.m.noise );
+    out.setValue( "dsp:counter", smp.dsp.spc_dsp.m.counter );
+    out.setValue( "dsp:echooffset", smp.dsp.spc_dsp.m.echo_offset );
+    out.setValue( "dsp:echolength", smp.dsp.spc_dsp.m.echo_length );
+    out.setValue( "dsp:koncache", smp.dsp.spc_dsp.m.new_kon );
+    out.setValue( "dsp:endx", smp.dsp.spc_dsp.m.endx_buf );
+    out.setValue( "dsp:envx", smp.dsp.spc_dsp.m.envx_buf );
+    out.setValue( "dsp:outx", smp.dsp.spc_dsp.m.outx_buf );
+    out.setValue( "dsp:pmon", smp.dsp.spc_dsp.m.t_pmon );
+    out.setValue( "dsp:non", smp.dsp.spc_dsp.m.t_non );
+    out.setValue( "dsp:eon", smp.dsp.spc_dsp.m.t_eon );
+    out.setValue( "dsp:dir", smp.dsp.spc_dsp.m.t_dir );
+    out.setValue( "dsp:koff", smp.dsp.spc_dsp.m.t_koff );
+    out.setValue( "dsp:brrnext", smp.dsp.spc_dsp.m.t_brr_next_addr );
+    out.setValue( "dsp:adsr0", smp.dsp.spc_dsp.m.t_adsr0 );
+    out.setValue( "dsp:brrheader", smp.dsp.spc_dsp.m.t_brr_header );
+    out.setValue( "dsp:brrdata", smp.dsp.spc_dsp.m.t_brr_byte );
+    out.setValue( "dsp:srcn", smp.dsp.spc_dsp.m.t_srcn );
+    out.setValue( "dsp:esa", smp.dsp.spc_dsp.m.t_esa );
+    out.setValue( "dsp:echodisable", !smp.dsp.spc_dsp.m.t_echo_enabled );
+    out.setValue( "dsp:diraddr", smp.dsp.spc_dsp.m.t_dir_addr );
+    out.setValue( "dsp:pitch", smp.dsp.spc_dsp.m.t_pitch );
+    out.setValue( "dsp:output", smp.dsp.spc_dsp.m.t_output );
+    out.setValue( "dsp:looped", smp.dsp.spc_dsp.m.t_looped );
+    out.setValue( "dsp:echoaddr", smp.dsp.spc_dsp.m.t_echo_ptr );
+    
 #define META_WRITE_LEVELS(n, o) \
     oss.str(""); \
     oss.clear(); \
     oss << (o)[0] << "," << (o)[1]; \
-    metadata.setValue((n), oss.str().c_str());
+    out.setValue((n), oss.str().c_str());
     
     META_WRITE_LEVELS("dsp:mainout", smp.dsp.spc_dsp.m.t_main_out);
     META_WRITE_LEVELS("dsp:echoout", smp.dsp.spc_dsp.m.t_echo_out);
@@ -491,7 +558,7 @@ blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
         oss << "dsp:voice[" << i << "]:";
         name = oss.str();
         SuperFamicom::SPC_DSP::voice_t const& voice = smp.dsp.spc_dsp.m.voices[i];
-        metadata.setValue( name + "brrhistaddr", voice.buf_pos );
+        out.setValue( name + "brrhistaddr", voice.buf_pos );
         oss.str("");
         oss.clear();
         for (int j = 0; j < SuperFamicom::SPC_DSP::brr_buf_size; ++j)
@@ -500,29 +567,36 @@ blargg_err_t Sfm_Emu::save( gme_writer_t writer, void* your_data ) const
             if ( j != SuperFamicom::SPC_DSP::brr_buf_size - 1 )
                 oss << ",";
         }
-        metadata.setValue( name + "brrhistdata", oss.str().c_str() );
-        metadata.setValue( name + "interpaddr", voice.interp_pos );
-        metadata.setValue( name + "brraddr", voice.brr_addr );
-        metadata.setValue( name + "brroffset", voice.brr_offset );
-        metadata.setValue( name + "vbit", voice.vbit );
-        metadata.setValue( name + "vidx", voice.regs - smp.dsp.spc_dsp.m.regs);
-        metadata.setValue( name + "kondelay", voice.kon_delay );
-        metadata.setValue( name + "envmode", voice.env_mode );
-        metadata.setValue( name + "env", voice.env );
-        metadata.setValue( name + "envxout", voice.t_envx_out );
-        metadata.setValue( name + "envcache", voice.hidden_env );
+        out.setValue( name + "brrhistdata", oss.str().c_str() );
+        out.setValue( name + "interpaddr", voice.interp_pos );
+        out.setValue( name + "brraddr", voice.brr_addr );
+        out.setValue( name + "brroffset", voice.brr_offset );
+        out.setValue( name + "vbit", voice.vbit );
+        out.setValue( name + "vidx", voice.regs - smp.dsp.spc_dsp.m.regs);
+        out.setValue( name + "kondelay", voice.kon_delay );
+        out.setValue( name + "envmode", voice.env_mode );
+        out.setValue( name + "env", voice.env );
+        out.setValue( name + "envxout", voice.t_envx_out );
+        out.setValue( name + "envcache", voice.hidden_env );
     }
+}
+
+blargg_err_t Sfm_Emu::save_( gme_writer_t writer, void* your_data ) const
+{
+    std::string meta_serialized;
     
-    metadata.serialize( name );
+    Bml_Parser metadata;
+    create_updated_metadata( metadata );
+    metadata.serialize( meta_serialized );
 
     RETURN_ERR( writer( your_data, "SFM1", 4 ) );
 
     uint8_t temp[4];
-    uint32_t meta_length = (uint32_t) name.length();
+    uint32_t meta_length = (uint32_t) meta_serialized.length();
     set_le32( temp, meta_length );
     RETURN_ERR( writer( your_data, temp, 4 ) );
     
-    RETURN_ERR( writer( your_data, name.c_str(), meta_length ) );
+    RETURN_ERR( writer( your_data, meta_serialized.c_str(), meta_length ) );
 
     RETURN_ERR( writer( your_data, smp.apuram, 65536 ) );
 

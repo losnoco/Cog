@@ -224,6 +224,8 @@ void gme_delete( Music_Emu* gme ) { delete gme; }
 
 gme_type_t gme_type( Music_Emu const* gme ) { return gme->type(); }
 
+const char* gme_type_system( gme_type_t_ const* type ) { return type->system; }
+
 const char* gme_warning( Music_Emu* gme ) { return gme->warning(); }
 
 int gme_track_count( Music_Emu const* gme ) { return gme->track_count(); }
@@ -301,6 +303,37 @@ gme_err_t gme_track_info( Music_Emu const* me, gme_info_t** out, int track )
 	return blargg_ok;
 }
 
+gme_err_t gme_set_track_info( Music_Emu * me, gme_info_t* in, int track )
+{
+	track_info_t* info = BLARGG_NEW track_info_t;
+	CHECK_ALLOC( info );
+	
+#define COPY(name) info->name = in->name;
+	
+	COPY( length );
+	COPY( intro_length );
+	COPY( loop_length );
+	
+#undef COPY
+#define COPY(name) if ( in->name ) strncpy( info->name, in->name, sizeof(info->name) - 1 ), info->name[sizeof(info->name)-1] = '\0'; else info->name[0] = '\0';
+    
+	COPY( system );
+	COPY( game );
+	COPY( song );
+	COPY( author );
+	COPY( copyright );
+	COPY( comment );
+	COPY( dumper );
+	
+#undef COPY
+	
+	blargg_err_t err = me->set_track_info( info, track );
+    
+    delete info;
+    
+    return err;
+}
+
 void gme_free_info( gme_info_t* info )
 {
 	delete STATIC_CAST(gme_info_t_*,info);
@@ -316,6 +349,7 @@ void      gme_set_fade       ( Music_Emu* gme, int start_msec, int length_msec )
 gme_bool  gme_track_ended    ( Music_Emu const* gme )                   { return gme->track_ended(); }
 int       gme_tell           ( Music_Emu const* gme )                   { return gme->tell(); }
 gme_err_t gme_seek           ( Music_Emu* gme, int msec )               { return gme->seek( msec ); }
+gme_err_t gme_skip           ( Music_Emu* gme, int samples )            { return gme->skip( samples ); }
 int       gme_voice_count    ( Music_Emu const* gme )                   { return gme->voice_count(); }
 void      gme_ignore_silence ( Music_Emu* gme, gme_bool disable )       { gme->ignore_silence( disable != 0 ); }
 void      gme_set_tempo      ( Music_Emu* gme, double t )               { gme->set_tempo( t ); }

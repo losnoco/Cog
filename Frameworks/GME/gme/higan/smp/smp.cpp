@@ -139,7 +139,7 @@ void SMP::reset() {
 
 SMP::SMP() : dsp( *this ), timer0( *this ), timer1( *this ), timer2( *this ), clock( 0 ) {
   for(auto& byte : iplrom) byte = 0;
-  set_sfm_queue(0, 0);
+  set_sfm_queue(0, 0, 0);
   set_tempo(1.0);
 }
 

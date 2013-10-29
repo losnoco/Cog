@@ -2,7 +2,7 @@
 
 void SMP::add_clocks(unsigned clocks) {
   step(clocks);
-  //synchronize_dsp();
+  synchronize_dsp();
 }
 
 void SMP::cycle_edge() {
