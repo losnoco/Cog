@@ -141,6 +141,7 @@
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
+		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; };
 		8375B36517FFEF130092A79F /* Opus.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B05717FFEA410092A79F /* Opus.bundle */; };
 		83790D501809F4980073CF51 /* NSObject+SPInvocationGrabbing.m in Sources */ = {isa = PBXBuildFile; fileRef = 83790D4D1809F4980073CF51 /* NSObject+SPInvocationGrabbing.m */; };
 		83790D511809F4980073CF51 /* SPMediaKeyTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 83790D4F1809F4980073CF51 /* SPMediaKeyTap.m */; };
@@ -433,6 +434,20 @@
 			remoteGlobalIDString = 8360EEE417F92AC8005208A4;
 			remoteInfo = HighlyComplete;
 		};
+		836FB5461820538800B3AD2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 836FB5421820538700B3AD2D /* Hively.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 836FB52D1820538700B3AD2D;
+			remoteInfo = Hively;
+		};
+		836FB5A518206F1500B3AD2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 836FB5421820538700B3AD2D /* Hively.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 836FB52C1820538700B3AD2D;
+			remoteInfo = Hively;
+		};
 		8375B05617FFEA410092A79F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8375B05117FFEA400092A79F /* Opus.xcodeproj */;
@@ -605,6 +620,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */,
 				83A0F4E31816DBF900119DB4 /* playptmod.bundle in CopyFiles */,
 				83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */,
 				8375B36517FFEF130092A79F /* Opus.bundle in CopyFiles */,
@@ -850,6 +866,7 @@
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
+		836FB5421820538700B3AD2D /* Hively.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Hively.xcodeproj; path = Plugins/Hively/Hively.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* Opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Opus.xcodeproj; path = Plugins/Opus/Opus.xcodeproj; sourceTree = "<group>"; };
 		83790D4C1809F4980073CF51 /* NSObject+SPInvocationGrabbing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SPInvocationGrabbing.h"; sourceTree = "<group>"; };
 		83790D4D1809F4980073CF51 /* NSObject+SPInvocationGrabbing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SPInvocationGrabbing.m"; sourceTree = "<group>"; };
@@ -1203,6 +1220,7 @@
 				8375B05117FFEA400092A79F /* Opus.xcodeproj */,
 				83B0669C180D5668008E3612 /* MIDI.xcodeproj */,
 				83A0F4841816CE5E00119DB4 /* playptmod.xcodeproj */,
+				836FB5421820538700B3AD2D /* Hively.xcodeproj */,
 			);
 			name = PlugIns;
 			sourceTree = "<group>";
@@ -1533,6 +1551,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		836FB5431820538700B3AD2D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				836FB5471820538800B3AD2D /* Hively.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8375B05217FFEA400092A79F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1728,6 +1754,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				836FB5A618206F1500B3AD2D /* PBXTargetDependency */,
 				83A0F4E21816DBE800119DB4 /* PBXTargetDependency */,
 				83E6B7641816138800D4576D /* PBXTargetDependency */,
 				83B06703180D5776008E3612 /* PBXTargetDependency */,
@@ -1832,6 +1859,10 @@
 				{
 					ProductGroup = 8360EF0117F92B23005208A4 /* Products */;
 					ProjectRef = 8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */;
+				},
+				{
+					ProductGroup = 836FB5431820538700B3AD2D /* Products */;
+					ProjectRef = 836FB5421820538700B3AD2D /* Hively.xcodeproj */;
 				},
 				{
 					ProductGroup = 17C808840C3BD181005707C4 /* Products */;
@@ -2011,6 +2042,13 @@
 			fileType = wrapper.cfbundle;
 			path = HighlyComplete.bundle;
 			remoteRef = 8360EF0417F92B24005208A4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		836FB5471820538800B3AD2D /* Hively.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = Hively.bundle;
+			remoteRef = 836FB5461820538800B3AD2D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8375B05717FFEA410092A79F /* Opus.bundle */ = {
@@ -2373,6 +2411,11 @@
 			isa = PBXTargetDependency;
 			name = General;
 			targetProxy = 17F5623A0C3BD9280019975C /* PBXContainerItemProxy */;
+		};
+		836FB5A618206F1500B3AD2D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Hively;
+			targetProxy = 836FB5A518206F1500B3AD2D /* PBXContainerItemProxy */;
 		};
 		8375B36217FFEF010092A79F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
