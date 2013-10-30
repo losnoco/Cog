@@ -29,6 +29,7 @@
 #include "internal.h"
 #include "id3v2.h"
 #include "id3v1.h"
+#include "apetag.h"
 #include "libavcodec/mpegaudiodecheader.h"
 
 #define XING_FLAG_FRAMES 0x01
@@ -274,7 +275,48 @@ static int mp3_read_header(AVFormatContext *s)
         mp3->filesize = avio_size(s->pb);
 
     if (mp3_parse_vbr_tags(s, st, off) < 0)
+    {
+        uint64_t duration = 0;
+        uint8_t buf[8];
+        int sample_rate = 0;
+        /* Time for a full parse! */
+        avio_seek(s->pb, -128, SEEK_END);
+        avio_read(s->pb, buf, 3);
+        if (buf[0] == 'T' && buf[1] == 'A' && buf[2] == 'G')
+            mp3->filesize -= 128;
+        avio_seek(s->pb, mp3->filesize - APE_TAG_FOOTER_BYTES, SEEK_SET);
+        avio_read(s->pb, buf, 8);
+        if (memcmp(buf, APE_TAG_PREAMBLE, 8) == 0)
+        {
+            avio_seek(s->pb, 4, SEEK_CUR);
+            mp3->filesize -= avio_rl32(s->pb) + APE_TAG_FOOTER_BYTES;
+        }
         avio_seek(s->pb, off, SEEK_SET);
+        while (avio_tell(s->pb) < mp3->filesize)
+        {
+            MPADecodeHeader c;
+            uint32_t v, spf;
+            
+            v = avio_rb32(s->pb);
+            
+            if(ff_mpa_check_header(v) < 0)
+                break;
+            
+            if (avpriv_mpegaudio_decode_header(&c, v) != 0)
+                break;
+            
+            if (!sample_rate)
+                sample_rate = c.sample_rate;
+            
+            spf = c.lsf ? 576 : 1152; /* Samples per frame, layer 3 */
+            
+            duration += spf;
+            
+            avio_skip(s->pb, c.frame_size - 4);
+        }
+        avio_seek(s->pb, off, SEEK_SET);
+        st->duration = av_rescale_q(duration, (AVRational){1, sample_rate}, st->time_base);
+    }
 
     /* the parameters will be extracted from the compressed bitstream */
     return 0;
