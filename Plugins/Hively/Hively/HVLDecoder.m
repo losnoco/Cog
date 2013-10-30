@@ -8,8 +8,6 @@
 
 #import "HVLDecoder.h"
 
-#import "Logging.h"
-
 @implementation HVLDecoder
 
 void oneTimeInit()
@@ -34,10 +32,13 @@ void oneTimeInit()
     long size = [s tell];
     [s seek:0 whence:SEEK_SET];
     
+    if (size > UINT_MAX)
+        return NO;
+    
     void * data = malloc(size);
     [s read:data amount:size];
 	
-    tune = hvl_LoadTune( data, size, 44100, 2 );
+    tune = hvl_LoadTune( data, (uint32_t) size, 44100, 2 );
     free( data );
     if ( !tune )
         return NO;
@@ -88,9 +89,9 @@ void oneTimeInit()
 		[NSNumber numberWithInt:0], @"bitrate",
 		[NSNumber numberWithFloat:44100], @"sampleRate",
 		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
-		[NSNumber numberWithInt:32], @"bitsPerSample", //Samples are short
+		[NSNumber numberWithInt:32], @"bitsPerSample",
         [NSNumber numberWithBool:YES], @"floatingPoint",
-		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
+		[NSNumber numberWithInt:2], @"channels",
 		[NSNumber numberWithBool:YES], @"seekable",
 		@"host", @"endian",
 		nil];
@@ -98,6 +99,9 @@ void oneTimeInit()
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
+    if (framesRead >= totalFrames)
+        return 0;
+    
     int total = 0;
     while ( total < frames ) {
         if ( framesInBuffer )
@@ -105,7 +109,7 @@ void oneTimeInit()
             float * outbuffer = (( float * ) buf) + total * 2;
             int framesToCopy = frames - total;
             if ( framesToCopy > framesInBuffer )
-                framesToCopy = framesInBuffer;
+                framesToCopy = (int) framesInBuffer;
             for ( int i = 0; i < framesToCopy; ++i )
             {
                 outbuffer[ 0 ] = buffer[ i * 2 + 0 ] * (1.0f / 16777216.0f);
@@ -120,7 +124,7 @@ void oneTimeInit()
                 break;
             }
         }
-        hvl_DecodeFrame( tune, buffer, buffer + 1, 8 );
+        hvl_DecodeFrame( tune, (int8_t *) buffer, ((int8_t *) buffer) + 4, 8 );
         framesInBuffer = 44100 / 50;
     }
 
@@ -140,7 +144,7 @@ void oneTimeInit()
             fadeScale -= fadeStep;
             if (fadeScale <= 0.0) break;
         }
-        total = fadePos - fadeStart;
+        total = (int)(fadePos - fadeStart);
     }
     
 	framesRead += total;

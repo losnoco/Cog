@@ -9,8 +9,6 @@
 #import "HVLContainer.h"
 #import "HVLDecoder.h"
 
-#import "Logging.h"
-
 @implementation HVLContainer
 
 + (NSArray *)fileTypes
@@ -43,10 +41,13 @@
     long size = [source tell];
     [source seek:0 whence:SEEK_SET];
     
+    if ( size > UINT_MAX )
+        return nil;
+    
     void * data = malloc(size);
     [source read:data amount:size];
 	
-    struct hvl_tune * tune = hvl_LoadTune( data, size, 44100, 2 );
+    struct hvl_tune * tune = hvl_LoadTune( data, (uint32_t) size, 44100, 2 );
     free( data );
     if ( !tune )
         return nil;

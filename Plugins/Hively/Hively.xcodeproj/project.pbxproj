@@ -63,7 +63,6 @@
 		836FB59E1820556F00B3AD2D /* HVLContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HVLContainer.h; sourceTree = "<group>"; };
 		836FB59F1820556F00B3AD2D /* HVLContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HVLContainer.m; sourceTree = "<group>"; };
 		836FB5A31820557E00B3AD2D /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
-		836FB5A41820558900B3AD2D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,7 +118,6 @@
 		836FB5361820538700B3AD2D /* Hively */ = {
 			isa = PBXGroup;
 			children = (
-				836FB5A41820558900B3AD2D /* Logging.h */,
 				836FB5A31820557E00B3AD2D /* Plugin.h */,
 				836FB59A1820556F00B3AD2D /* HVLDecoder.h */,
 				836FB59B1820556F00B3AD2D /* HVLDecoder.m */,
@@ -371,6 +369,7 @@
 				836FB5411820538700B3AD2D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

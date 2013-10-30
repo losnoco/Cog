@@ -15,7 +15,7 @@
 @interface HVLDecoder : NSObject <CogDecoder> {
     struct hvl_tune *tune;
     int32_t *buffer;
-    long trackNumber;
+    int trackNumber;
     
 	long totalFrames;
     long framesLength;
