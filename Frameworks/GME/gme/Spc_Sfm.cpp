@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 Sfm_Emu::Sfm_Emu()
 {
     set_type( gme_sfm_type );
-    set_gain( 1.0 );
+    set_gain( 1.4 );
     set_max_initial_silence( 30 );
 	set_silence_lookahead( 30 ); // Some SFMs may have a lot of initialization code
 }

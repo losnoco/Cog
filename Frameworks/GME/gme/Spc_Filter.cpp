@@ -15,6 +15,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
+static const float limiter_max = (float)0.9999;
+static const float limiter_max_05 = (float)(limiter_max - 0.5);
+
+#include <math.h>
+
+static short hard_limit_sample( int sample )
+{
+	double val = (double)sample * (1.0 / 32768.0);
+	if (val < -0.5)
+		val = (tanh((val + 0.5) / limiter_max_05) * limiter_max_05 - 0.5);
+	else if (val > 0.5)
+		val = (tanh((val - 0.5) / limiter_max_05) * limiter_max_05 + 0.5);
+	return val * 32768.0;
+}
+
 void Spc_Filter::clear() { memset( ch, 0, sizeof ch ); }
 
 Spc_Filter::Spc_Filter()
@@ -52,12 +67,8 @@ void Spc_Filter::run( short io [], int count )
 				pp1 = f;
 				int s = sum >> (gain_bits + 2);
 				sum += (delta * gain) - (sum >> bass);
-				
-				// Clamp to 16 bits
-				if ( (short) s != s )
-					s = (s >> 31) ^ 0x7FFF;
-				
-				io [i] = (short) s;
+
+				io [i] = hard_limit_sample( s );
 			}
 			
 			c->p1  = p1;
@@ -73,9 +84,7 @@ void Spc_Filter::run( short io [], int count )
 		while ( io < end )
 		{
 			int s = (*io * gain) >> gain_bits;
-			if ( (short) s != s )
-				s = (s >> 31) ^ 0x7FFF;
-			*io++ = (short) s;
+			*io++ = hard_limit_sample( s );
 		}
 	}
 }
