@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 Spc_Emu::Spc_Emu()
 {
 	set_type( gme_spc_type );
-	set_gain( 1.4 );
+	set_gain( 1.0 );
 }
 
 Spc_Emu::~Spc_Emu() { }
