@@ -196,6 +196,10 @@ private:
 	double gain_;
 	int sample_rate_;
 	int current_track_;
+    
+    bool fade_set;
+    int length_msec;
+    int fade_msec;
 	
 	void clear_track_vars();
 	int msec_to_samples( int msec ) const;
