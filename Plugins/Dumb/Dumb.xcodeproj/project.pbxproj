@@ -19,6 +19,9 @@
 		8337AAEE17FFA0000081AFF8 /* unrealfmtdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAEA17FFA0000081AFF8 /* unrealfmtdata.cpp */; };
 		8337AAF117FFA2D30081AFF8 /* j2b.c in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAEF17FFA2D30081AFF8 /* j2b.c */; };
 		8337AAF317FFA7640081AFF8 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8337AAF217FFA7640081AFF8 /* libz.dylib */; };
+		83527EE818242FD5002F170E /* libunmo3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83527EE618242FD5002F170E /* libunmo3.dylib */; };
+		83527EEB18243069002F170E /* mo3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83527EEA18243069002F170E /* mo3.c */; };
+		83527EED182432CA002F170E /* libunmo3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83527EE618242FD5002F170E /* libunmo3.dylib */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -53,6 +56,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		83527EEC182432BD002F170E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				83527EED182432CA002F170E /* libunmo3.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +91,10 @@
 		8337AAEF17FFA2D30081AFF8 /* j2b.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = j2b.c; sourceTree = "<group>"; };
 		8337AAF017FFA2D30081AFF8 /* j2b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = j2b.h; sourceTree = "<group>"; };
 		8337AAF217FFA7640081AFF8 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		83527EE618242FD5002F170E /* libunmo3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libunmo3.dylib; path = ../../../ThirdParty/BASS/libunmo3.dylib; sourceTree = "<group>"; };
+		83527EE718242FD5002F170E /* unmo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unmo3.h; path = ../../../ThirdParty/BASS/unmo3.h; sourceTree = "<group>"; };
+		83527EE918243029002F170E /* mo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mo3.h; path = mo3/mo3.h; sourceTree = "<group>"; };
+		83527EEA18243069002F170E /* mo3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mo3.c; path = mo3/mo3.c; sourceTree = "<group>"; };
 		8384912B1808155E00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Dumb.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dumb.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -90,6 +107,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8337AAF317FFA7640081AFF8 /* libz.dylib in Frameworks */,
+				83527EE818242FD5002F170E /* libunmo3.dylib in Frameworks */,
 				17C8F7B90CBEF380008D969D /* Dumb.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
@@ -191,6 +209,7 @@
 		8337AAE317FFA0000081AFF8 /* archive */ = {
 			isa = PBXGroup;
 			children = (
+				83527EE518242FBE002F170E /* mo3 */,
 				8337AAE417FFA0000081AFF8 /* j2b */,
 				8337AAE517FFA0000081AFF8 /* umx */,
 			);
@@ -219,6 +238,17 @@
 			path = umx;
 			sourceTree = "<group>";
 		};
+		83527EE518242FBE002F170E /* mo3 */ = {
+			isa = PBXGroup;
+			children = (
+				83527EEA18243069002F170E /* mo3.c */,
+				83527EE918243029002F170E /* mo3.h */,
+				83527EE618242FD5002F170E /* libunmo3.dylib */,
+				83527EE718242FD5002F170E /* unmo3.h */,
+			);
+			name = mo3;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -230,6 +260,7 @@
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
 				17C8F6A20CBEE86E008D969D /* CopyFiles */,
+				83527EEC182432BD002F170E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -303,6 +334,7 @@
 				8337AAEC17FFA0000081AFF8 /* umx.mm in Sources */,
 				8335FF6717FF6FD9002D8DD2 /* DumbContainer.m in Sources */,
 				17C8F6950CBEE846008D969D /* DumbDecoder.m in Sources */,
+				83527EEB18243069002F170E /* mo3.c in Sources */,
 				8337AAEE17FFA0000081AFF8 /* unrealfmtdata.cpp in Sources */,
 				17DA363E0CC0600E0003F6B2 /* DumbMetadataReader.m in Sources */,
 			);
@@ -347,6 +379,10 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
+				);
 				OBJROOT = ../../build;
 				PRODUCT_NAME = Dumb;
 				SKIP_INSTALL = YES;
@@ -369,6 +405,10 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
+				);
 				OBJROOT = ../../build;
 				PRODUCT_NAME = Dumb;
 				SKIP_INSTALL = YES;

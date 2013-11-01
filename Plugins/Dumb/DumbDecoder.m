@@ -10,6 +10,7 @@
 
 #import "umx.h"
 #import "j2b.h"
+#import "mo3.h"
 
 #import "Logging.h"
 
@@ -19,6 +20,7 @@ struct MEMANDFREEFILE
 {
 	char *ptr, *ptr_begin;
 	long left, size;
+    int is_mo3;
 };
 
 static int dumb_maffile_skip(void *f, long n)
@@ -51,7 +53,8 @@ static long dumb_maffile_getnc(char *ptr, long n, void *f)
 static void dumb_maffile_close(void *f)
 {
     struct MEMANDFREEFILE *m = f;
-    free(m->ptr_begin);
+    if (m->is_mo3) freeMo3(m->ptr_begin);
+    else free(m->ptr_begin);
 	free(f);
 }
 
@@ -83,16 +86,25 @@ static const DUMBFILE_SYSTEM maffile_dfs = {
 
 DUMBFILE *dumbfile_open_memory_and_free(char *data, long size)
 {
-    char * try_data = unpackUmx( data, &size );
+    int is_mo3 = 0;
+    char * try_data = unpackMo3( data, &size );
     if ( try_data ) {
         free( data );
         data = try_data;
+        is_mo3 = 1;
     }
     else {
-        try_data = unpackJ2b( data, &size );
+        try_data = unpackUmx( data, &size );
         if ( try_data ) {
             free( data );
             data = try_data;
+        }
+        else {
+            try_data = unpackJ2b( data, &size );
+            if ( try_data ) {
+                free( data );
+                data = try_data;
+            }
         }
     }
     
@@ -103,6 +115,7 @@ DUMBFILE *dumbfile_open_memory_and_free(char *data, long size)
 	m->ptr = data;
 	m->left = size;
 	m->size = size;
+    m->is_mo3 = is_mo3;
     
 	return dumbfile_open_ex(m, &maffile_dfs);
 }
@@ -319,7 +332,7 @@ int callbackLoop(void *data)
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"it", @"itz", @"xm", @"xmz", @"s3m", @"s3z", @"mod", @"mdz", @"stm", @"stz", @"ptm", @"mtm", @"669", @"psm", @"am", @"j2b", @"dsm", @"amf", @"okt", @"okta", @"umx", nil];
+	return [NSArray arrayWithObjects:@"it", @"itz", @"xm", @"xmz", @"s3m", @"s3z", @"mod", @"mdz", @"stm", @"stz", @"ptm", @"mtm", @"669", @"psm", @"am", @"j2b", @"dsm", @"amf", @"okt", @"okta", @"umx", @"mo3", nil];
 }
 
 + (NSArray *)mimeTypes 

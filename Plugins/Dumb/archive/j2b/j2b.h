@@ -1,5 +1,5 @@
 //
-//  umx.h
+//  j2b.h
 //  Dumb J2B Archive parser
 //
 //  Created by Christopher Snowhill on 10/4/13.
