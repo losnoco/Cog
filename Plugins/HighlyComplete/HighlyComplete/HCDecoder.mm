@@ -1101,7 +1101,7 @@ static int twosf_info(void * context, const char * name, const char * value)
     if (![self fillBuffer])
         return NO;
     
-    silence_test_buffer.remove_leading_silence(1);
+    silence_test_buffer.remove_leading_silence();
     
     return YES;
 }
