@@ -40,8 +40,12 @@ private:
 	int gain;
 	int bass;
 	bool enabled;
+    bool limiting;
 	struct chan_t { int p1, pp1, sum; };
 	chan_t ch [2];
+    short hard_limit_table[131072];
+    void build_limit_table();
+    inline short limit_sample(int sample);
 };
 
 inline void Spc_Filter::enable( bool b )  { enabled = b; }

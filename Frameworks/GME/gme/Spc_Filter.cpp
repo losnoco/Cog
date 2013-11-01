@@ -22,15 +22,31 @@ static const float limiter_max_05 = (float)(limiter_max - 0.5);
 
 static short hard_limit_sample( int sample )
 {
-	double val = (double)sample * (1.0 / 32768.0);
-	if (val < -0.5)
-		val = (tanh((val + 0.5) / limiter_max_05) * limiter_max_05 - 0.5);
-	else if (val > 0.5)
-		val = (tanh((val - 0.5) / limiter_max_05) * limiter_max_05 + 0.5);
-	return val * 32768.0;
+    double val = (double)sample * (1.0 / 32768.0);
+    if (val < -0.5)
+        val = (tanh((val + 0.5) / limiter_max_05) * limiter_max_05 - 0.5);
+    else if (val > 0.5)
+        val = (tanh((val - 0.5) / limiter_max_05) * limiter_max_05 + 0.5);
+    return val * 32768.0;
 }
 
-void Spc_Filter::clear() { memset( ch, 0, sizeof ch ); }
+void Spc_Filter::build_limit_table()
+{
+    for (int i = -65536; i < 65536; ++i)
+    {
+        hard_limit_table[ i + 65536 ] = hard_limit_sample( i );
+    }
+}
+
+inline short Spc_Filter::limit_sample(int sample)
+{
+    if (!limiting && ((unsigned)sample + 32768) < 65536) return sample;
+    limiting = true;
+    if (((unsigned)sample + 65536) < 131072) return hard_limit_table[ sample + 65536 ];
+    return hard_limit_sample( sample );
+}
+
+void Spc_Filter::clear() { limiting = false; memset( ch, 0, sizeof ch ); }
 
 Spc_Filter::Spc_Filter()
 {
@@ -38,6 +54,7 @@ Spc_Filter::Spc_Filter()
 	gain    = gain_unit;
 	bass    = bass_norm;
 	clear();
+    build_limit_table();
 }
 
 void Spc_Filter::run( short io [], int count )
@@ -68,7 +85,7 @@ void Spc_Filter::run( short io [], int count )
 				int s = sum >> (gain_bits + 2);
 				sum += (delta * gain) - (sum >> bass);
 
-				io [i] = hard_limit_sample( s );
+				io [i] = limit_sample( s );
 			}
 			
 			c->p1  = p1;
@@ -84,7 +101,7 @@ void Spc_Filter::run( short io [], int count )
 		while ( io < end )
 		{
 			int s = (*io * gain) >> gain_bits;
-			*io++ = hard_limit_sample( s );
+			*io++ = limit_sample( s );
 		}
 	}
 }
