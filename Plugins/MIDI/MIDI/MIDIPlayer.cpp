@@ -53,8 +53,8 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 		uTimeCurrent = 0;
 
 		uLoopMode = loop_mode;
-        
-        uTimeEnd = midi_file.get_timestamp_end( subsong, true ) + 1000;
+
+		uTimeEnd = midi_file.get_timestamp_end( subsong, true ) + 1000;
 
 		if (uLoopMode & loop_mode_enable)
 		{
@@ -65,6 +65,11 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 			{
 				uLoopMode |= loop_mode_force;
 			}
+
+			if ( uTimeLoopStart == ~0UL )
+				uTimeLoopStart = 0;
+			if ( uTimeLoopEnd == ~0UL )
+				uTimeLoopEnd = uTimeEnd - 1000;
 
 			if ((uLoopMode & loop_mode_force))
 			{
@@ -84,9 +89,10 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 						note_on [ ch * 128 + note ] = ( note_on [ ch * 128 + note ] & ~bit ) | ( bit * on );
 					}
 				}
-                unsigned long uSavedEndTime = ( i < mStream.size() ) ? mStream[ i ].m_timestamp : mStream[ mStream.size() - 1 ].m_timestamp + 1;
 				mStream.resize( i );
-                uTimeEnd = mStream[ i - 1 ].m_timestamp;
+				uTimeEnd = uTimeLoopEnd - 1;
+				if ( uTimeEnd < mStream[ i - 1 ].m_timestamp )
+					uTimeEnd = mStream[ i - 1 ].m_timestamp;
 				for ( unsigned long j = 0; j < 128 * 16; j++ )
 				{
 					if ( note_on[ j ] )
@@ -100,7 +106,7 @@ bool MIDIPlayer::Load(const midi_container & midi_file, unsigned subsong, unsign
 						}
 					}
 				}
-                uTimeEnd = uSavedEndTime;
+				uTimeEnd = uTimeLoopEnd;
 			}
 		}
 
