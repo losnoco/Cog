@@ -31,7 +31,7 @@ appcast_revision_code = appcast_revision_split[2]
 
   archivedir = "~/Library/Developer/Xcode/Archives"
   latest_archive = %x[find #{archivedir} -type d -name 'Cog *.xcarchive' -print0 | xargs -0 stat -f "%m %N" -t "%Y" | sort -r | head -n1 | sed -E 's/^[0-9]+ //'].rstrip
-  app_path = "#{latest_archive}/Products/Users/#{ENV['USER']}/Applications"
+  app_path = "#{latest_archive}/Products#{ENV['HOME']}/Applications"
 
   plist = open("#{app_path}/Cog.app/Contents/Info.plist")
   plistdoc = Document.new(plist)
