@@ -196,7 +196,8 @@ float ID3v2::Tag::rg(const String &type) const
   const FrameList &list = d->frameListMap["TXXX"];
   if (!list.isEmpty()) {
     for (FrameList::ConstIterator it = list.begin(); it != list.end(); ++it) {
-      if (static_cast<UserTextIdentificationFrame *>(*it)->description() == type) {
+      UserTextIdentificationFrame const* frame = static_cast<UserTextIdentificationFrame *>(*it);
+      if (!frame->description().isNull() && frame->description() == type) {
         return static_cast<UserTextIdentificationFrame *>(*it)->toString().toFloat();
       }
     }
