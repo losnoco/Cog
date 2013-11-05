@@ -444,7 +444,7 @@ static int mp3_seek(AVFormatContext *s, int stream_index, int64_t timestamp,
             skipped += spf;
             
             avio_skip(s->pb, c.frame_size);
-        } while ( skipped < timestamp_samples && avio_tell(s->pb) < mp3->filesize );
+        } while ( (!timestamp_samples || skipped < timestamp_samples) && avio_tell(s->pb) < mp3->filesize );
         
         st->skip_samples = timestamp_samples - skipped + skip_extra;
     }
