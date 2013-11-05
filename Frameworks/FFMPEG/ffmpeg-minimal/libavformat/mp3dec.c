@@ -279,6 +279,7 @@ static int mp3_read_header(AVFormatContext *s)
         uint64_t duration = 0;
         uint8_t buf[8];
         int sample_rate = 0;
+        int retry_count;
         /* Time for a full parse! */
         avio_seek(s->pb, -128, SEEK_END);
         avio_read(s->pb, buf, 3);
@@ -292,6 +293,7 @@ static int mp3_read_header(AVFormatContext *s)
             mp3->filesize -= avio_rl32(s->pb) + APE_TAG_FOOTER_BYTES;
         }
         avio_seek(s->pb, off, SEEK_SET);
+        retry_count = 8192;
         while (avio_tell(s->pb) < mp3->filesize)
         {
             MPADecodeHeader c;
@@ -300,7 +302,16 @@ static int mp3_read_header(AVFormatContext *s)
             v = avio_rb32(s->pb);
             
             if(ff_mpa_check_header(v) < 0)
-                break;
+            {
+                if (--retry_count)
+                {
+                    avio_seek(s->pb, -3, SEEK_CUR);
+                    continue;
+                }
+                else break;
+            }
+            
+            retry_count = 8192;
             
             if (avpriv_mpegaudio_decode_header(&c, v) != 0)
                 break;
@@ -315,7 +326,7 @@ static int mp3_read_header(AVFormatContext *s)
             avio_skip(s->pb, c.frame_size - 4);
         }
         avio_seek(s->pb, off, SEEK_SET);
-        st->duration = av_rescale_q(duration, (AVRational){1, sample_rate}, st->time_base);
+        st->duration = duration && sample_rate ? av_rescale_q(duration, (AVRational){1, sample_rate}, st->time_base) : 0;
     }
 
     /* the parameters will be extracted from the compressed bitstream */
@@ -388,17 +399,29 @@ static int mp3_seek(AVFormatContext *s, int stream_index, int64_t timestamp,
     if (timestamp > 0) {
         int64_t skipped = 0;
         int64_t skip_extra = 0;
+        int retry_count = 8192;
         do {
             MPADecodeHeader c;
             
             v = avio_rb32(s->pb);
-            avio_seek(s->pb, -4, SEEK_CUR);
             
             if(ff_mpa_check_header(v) < 0)
-                return -1;
+            {
+                if (--retry_count)
+                {
+                    avio_seek(s->pb, -3, SEEK_CUR);
+                    continue;
+                }
+                else
+                    return -1;
+            }
+            
+            retry_count = 8192;
             
             if (avpriv_mpegaudio_decode_header(&c, v) != 0)
                 return -1;
+
+            avio_seek(s->pb, -4, SEEK_CUR);
 
             spf = c.lsf ? 576 : 1152; /* Samples per frame, layer 3 */
             
@@ -419,7 +442,7 @@ static int mp3_seek(AVFormatContext *s, int stream_index, int64_t timestamp,
             skipped += spf;
             
             avio_skip(s->pb, c.frame_size);
-        } while ( skipped < timestamp_samples );
+        } while ( skipped < timestamp_samples && avio_tell(s->pb) < mp3->filesize );
         
         st->skip_samples = timestamp_samples - skipped + skip_extra;
     }
