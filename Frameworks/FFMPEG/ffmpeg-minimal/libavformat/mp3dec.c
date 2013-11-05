@@ -32,6 +32,8 @@
 #include "apetag.h"
 #include "libavcodec/mpegaudiodecheader.h"
 
+#define MP3_RESYNC_TOLERANCE_BYTES 65536
+
 #define XING_FLAG_FRAMES 0x01
 #define XING_FLAG_SIZE   0x02
 #define XING_FLAG_TOC    0x04
@@ -274,14 +276,14 @@ static int mp3_read_header(AVFormatContext *s)
     if(s->pb->seekable)
         mp3->filesize = avio_size(s->pb);
 
-    if (mp3_parse_vbr_tags(s, st, off) < 0)
+    if (mp3_parse_vbr_tags(s, st, off) < 0 && s->pb->seekable)
     {
         uint64_t duration = 0;
         uint8_t buf[8];
         int sample_rate = 0;
         int retry_count;
         /* Time for a full parse! */
-        avio_seek(s->pb, -128, SEEK_END);
+        avio_seek(s->pb, mp3->filesize - 128, SEEK_SET);
         avio_read(s->pb, buf, 3);
         if (buf[0] == 'T' && buf[1] == 'A' && buf[2] == 'G')
             mp3->filesize -= 128;
@@ -293,7 +295,7 @@ static int mp3_read_header(AVFormatContext *s)
             mp3->filesize -= avio_rl32(s->pb) + APE_TAG_FOOTER_BYTES;
         }
         avio_seek(s->pb, off, SEEK_SET);
-        retry_count = 8192;
+        retry_count = MP3_RESYNC_TOLERANCE_BYTES;
         while (avio_tell(s->pb) < mp3->filesize)
         {
             MPADecodeHeader c;
@@ -311,7 +313,7 @@ static int mp3_read_header(AVFormatContext *s)
                 else break;
             }
             
-            retry_count = 8192;
+            retry_count = MP3_RESYNC_TOLERANCE_BYTES;
             
             if (avpriv_mpegaudio_decode_header(&c, v) != 0)
                 break;
@@ -399,7 +401,7 @@ static int mp3_seek(AVFormatContext *s, int stream_index, int64_t timestamp,
     if (timestamp > 0) {
         int64_t skipped = 0;
         int64_t skip_extra = 0;
-        int retry_count = 8192;
+        int retry_count = MP3_RESYNC_TOLERANCE_BYTES;
         do {
             MPADecodeHeader c;
             
@@ -416,7 +418,7 @@ static int mp3_seek(AVFormatContext *s, int stream_index, int64_t timestamp,
                     return -1;
             }
             
-            retry_count = 8192;
+            retry_count = MP3_RESYNC_TOLERANCE_BYTES;
             
             if (avpriv_mpegaudio_decode_header(&c, v) != 0)
                 return -1;
