@@ -1373,13 +1373,13 @@ static int twosf_info(void * context, const char * name, const char * value)
     {
         frame -= framesRead;
         silence_test_buffer.read( NULL, frame * 2 );
-        framesRead += frame * 2;
+        framesRead += frame;
         return framesRead;
     }
     else if ( buffered_samples )
     {
         silence_test_buffer.read( NULL, buffered_samples * 2 );
-        framesRead += buffered_samples * 2;
+        framesRead += buffered_samples;
     }
     
     if ( type == 1 || type == 2 )
