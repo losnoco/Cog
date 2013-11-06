@@ -1171,8 +1171,11 @@ static int twosf_info(void * context, const char * name, const char * value)
 
 - (BOOL)fillBuffer
 {
-    unsigned long free_space = silence_test_buffer.free_space() / 2;
-    while ( free_space )
+    long frames_left = totalFrames - framesRead - silence_test_buffer.data_available() / 2;
+    long free_space = silence_test_buffer.free_space() / 2;
+    if ( free_space > frames_left )
+        free_space = frames_left;
+    while ( free_space > 0 )
     {
         unsigned long samples_to_write = 0;
         int16_t * buf = silence_test_buffer.get_write_ptr( samples_to_write );
