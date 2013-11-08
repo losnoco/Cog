@@ -2072,7 +2072,7 @@ static void post_process_it_volpan(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *e
 				v = channel->lastvolslide;
 			channel->lastvolslide = v;
 			/* = effect Dx0 where x == entry->volpan - 85 */
-			channel->volslide = v;
+			channel->volslide += v;
 		} else if (entry->volpan <= 104) {
 			/* Volume slide down */
 			unsigned char v = entry->volpan - 95;
@@ -2080,7 +2080,7 @@ static void post_process_it_volpan(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *e
 				v = channel->lastvolslide;
 			channel->lastvolslide = v;
 			/* = effect D0x where x == entry->volpan - 95 */
-			channel->volslide = -v;
+			channel->volslide -= v;
 		} else if (entry->volpan <= 114) {
 			/* Portamento down */
 			unsigned char v = (entry->volpan - 105) << 2;
