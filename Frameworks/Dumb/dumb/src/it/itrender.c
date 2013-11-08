@@ -3993,14 +3993,15 @@ static void playing_volume_setup(DUMB_IT_SIGRENDERER * sigrenderer, IT_PLAYING *
 	pan = apply_pan_envelope(playing);
 
 	if ((sigrenderer->n_channels >= 2) && (sigdata->flags & IT_STEREO) && (sigrenderer->n_channels != 3 || !IT_IS_SURROUND_SHIFTED(pan))) {
-		span = (pan - (32<<8)) * sigdata->pan_separation * (1.0f / ((32<<8) * 128));
-		vol = 0.5f;
-		if (!IT_IS_SURROUND_SHIFTED(pan)) vol *= 1.0f - span;
-        else vol = -vol;
- 		playing->float_volume[0] = vol;
-		vol = -vol;
-		if (!IT_IS_SURROUND_SHIFTED(pan)) vol += 1.0f;
- 		playing->float_volume[1] = vol;
+		if (!IT_IS_SURROUND_SHIFTED(pan)) {
+			span = (pan - (32<<8)) * sigdata->pan_separation * (1.0f / ((32<<8) * 128));
+			vol = 0.5f * (1.0f - span);
+			playing->float_volume[0] = vol;
+			playing->float_volume[1] = 1.0f - vol;
+		} else {
+			playing->float_volume[0] = -0.5f;
+			playing->float_volume[1] = 0.5f;
+		}
  	} else {
 		playing->float_volume[0] = 1.0f;
 		playing->float_volume[1] = 1.0f;
