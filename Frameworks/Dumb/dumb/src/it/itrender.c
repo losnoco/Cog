@@ -3269,6 +3269,8 @@ static int process_it_note_data(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *entr
 			}
 		}
 
+		channel->toneporta = 0;
+
 		if ((entry->mask & IT_ENTRY_VOLPAN) && entry->volpan >= 193 && entry->volpan <= 202) {
 			/* Tone Portamento in the volume column */
 			static const unsigned char slidetable[] = {0, 1, 4, 8, 16, 32, 64, 96, 128, 255};
@@ -3282,16 +3284,10 @@ static int process_it_note_data(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *entr
 					v = channel->lastEF;
 				channel->lastEF = v;
 			}
-			if ((entry->mask & IT_ENTRY_NOTE) || ((sigdata->flags & IT_COMPATIBLE_GXX) && (entry->mask & IT_ENTRY_INSTRUMENT))) {
-				if (channel->note <= 120) {
-					if (channel->sample)
-						channel->destnote = channel->truenote;
-					else
-						channel->destnote = channel->note;
-				}
-			}
-			channel->toneporta = v << 4;
-		} else {
+			channel->toneporta += v << 4;
+		}
+
+		if ((entry->mask & IT_ENTRY_EFFECT) && (entry->effect == IT_TONE_PORTAMENTO || entry->effect == IT_VOLSLIDE_TONEPORTA)) {
 			/* Tone Portamento in the effect column */
 			unsigned char v;
 			if (entry->effect == IT_TONE_PORTAMENTO)
@@ -3307,16 +3303,18 @@ static int process_it_note_data(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *entr
 					v = channel->lastEF;
 				channel->lastEF = v;
 			}
-			if ((entry->mask & IT_ENTRY_NOTE) || ((sigdata->flags & IT_COMPATIBLE_GXX) && (entry->mask & IT_ENTRY_INSTRUMENT))) {
-				if (channel->note <= 120) {
-					if (channel->sample)
-						channel->destnote = channel->truenote;
-					else
-						channel->destnote = channel->note;
-				}
-			}
-			channel->toneporta = v << 4;
+			channel->toneporta += v << 4;
 		}
+
+		if ((entry->mask & IT_ENTRY_NOTE) || ((sigdata->flags & IT_COMPATIBLE_GXX) && (entry->mask & IT_ENTRY_INSTRUMENT))) {
+			if (channel->note <= 120) {
+				if (channel->sample)
+					channel->destnote = channel->truenote;
+				else
+					channel->destnote = channel->note;
+			}
+		}
+
 		if (channel->playing) goto skip_start_note;
 	}
 
