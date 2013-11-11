@@ -695,7 +695,7 @@ static void it_filter_int(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample
 	state->prevsample = prevsample;
 }
 
-#if defined(_USE_SSE)
+#if defined(_USE_SSE) && (defined(_M_IX86) || defined(__i386__) || defined(_M_X64) || defined(__amd64__))
 #include <xmmintrin.h>
 
 static void it_filter_sse(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample_t *dst, long pos, sample_t *src, long size, int step, int sampfreq, int cutoff, int resonance)
@@ -843,7 +843,7 @@ void _dumb_init_sse() { }
 
 static void it_filter(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample_t *dst, long pos, sample_t *src, long size, int step, int sampfreq, int cutoff, int resonance)
 {
-#if defined(_USE_SSE)
+#if defined(_USE_SSE) && (defined(_M_IX86) || defined(__i386__) || defined(_M_X64) || defined(__amd64__))
     _dumb_init_sse();
 	if ( _dumb_it_use_sse ) it_filter_sse( cr, state, dst, pos, src, size, step, sampfreq, cutoff, resonance );
 	else
