@@ -28,11 +28,11 @@
 using namespace TagLib;
 
 #define stringUnion(method)                                          \
-  if(tag(0) && !tag(0)->method().isEmpty())                          \
+  if(tag(0) && !tag(0)->method().isNull() && !tag(0)->method().isEmpty()) \
     return tag(0)->method();                                         \
-  if(tag(1) && !tag(1)->method().isEmpty())                          \
+  if(tag(1) && !tag(1)->method().isNull() && !tag(1)->method().isEmpty()) \
     return tag(1)->method();                                         \
-  if(tag(2) && !tag(2)->method().isEmpty())                          \
+  if(tag(2) && !tag(2)->method().isNull() && !tag(2)->method().isEmpty()) \
     return tag(2)->method();                                         \
   return String::null                                                \
 
