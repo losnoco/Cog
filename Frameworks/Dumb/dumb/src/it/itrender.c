@@ -792,7 +792,7 @@ static void it_filter_sse(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample
 
 #ifdef _MSC_VER
 #include <intrin.h>
-#else
+#elif defined(__clang__) || defined(__GNUC__)
 static inline void
 __cpuid(int *data, int selector)
 {
@@ -803,6 +803,8 @@ __cpuid(int *data, int selector)
         "=d" (data[3])
         : "a"(selector));
 }
+#else
+#define __cpuid(a,b) memset((a), 0, sizeof(int) * 4)
 #endif
 
 static int query_cpu_feature_sse() {
