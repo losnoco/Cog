@@ -591,10 +591,11 @@ static void outputAudio(player *p, short *target, int numSamples)
             step = p->v[i].step;
             for (j = 0; j < numSamples;)
             {
-                tempSample = (p->v[i].data ? (step == 2 ? (p->v[i].data[p->v[i].index] + p->v[i].data[p->v[i].index + 1] * 0x100) : p->v[i].data[p->v[i].index] * 0x100) : 0);
-                tempVolume = (p->v[i].data && !p->v[i].mute ? p->v[i].vol : 0);
+                int sample_valid = p->v[i].data && (p->v[i].data - p->source->sampleData + p->v[i].index < p->source->head.totalSampleSize);
+                tempSample = (sample_valid ? (step == 2 ? (p->v[i].data[p->v[i].index] + p->v[i].data[p->v[i].index + 1] * 0x100) : p->v[i].data[p->v[i].index] * 0x100) : 0);
+                tempVolume = (sample_valid && !p->v[i].mute ? p->v[i].vol : 0);
 
-                while (j < numSamples && (!p->v[i].data || p->v[i].frac >= 1.0f))
+                while (j < numSamples && (!sample_valid || p->v[i].frac >= 1.0f))
                 {
                     float t_vol = 0.0f;
                     float t_smp = 0.0f;
@@ -631,7 +632,7 @@ static void outputAudio(player *p, short *target, int numSamples)
                     ptm_blip_add_delta(&p->blepVol[i], 0, delta);
                 }
 
-                if (p->v[i].data)
+                if (sample_valid)
                 {
                     p->v[i].index += step;
                     p->v[i].frac += p->v[i].rate;
