@@ -45,7 +45,6 @@
 #include <math.h>
 #include "dumb.h"
 
-#include "internal/blip_buf.h"
 #include "internal/lanczos_resampler.h"
 
 
@@ -191,7 +190,6 @@ void _dumb_init_cubic(void)
 
 #define SRCTYPE sample_t
 #define SRCBITS 24
-#define ALIAS(x) (x >> 8)
 #define FIR(x) (x >> 8)
 #define LINEAR(x0, x1) (x0 + MULSC(x1 - x0, subpos))
 /*
@@ -228,7 +226,6 @@ void _dumb_init_cubic(void)
 #define SUFFIX _16
 #define SRCTYPE short
 #define SRCBITS 16
-#define ALIAS(x) (x)
 #define FIR(x) (x)
 #define LINEAR(x0, x1) ((x0 << 8) + MULSC16(x1 - x0, subpos))
 /*
@@ -251,7 +248,6 @@ void _dumb_init_cubic(void)
 #define SUFFIX _8
 #define SRCTYPE signed char
 #define SRCBITS 8
-#define ALIAS(x) (x << 8)
 #define FIR(x) (x << 8)
 #define LINEAR(x0, x1) ((x0 << 16) + (x1 - x0) * subpos)
 /*
