@@ -6,6 +6,8 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
+#define _USE_SSE 1
+
 #import "DumbDecoder.h"
 
 #import "umx.h"
@@ -13,6 +15,9 @@
 #import "mo3.h"
 
 #import "Logging.h"
+
+#include <sys/types.h>
+#include <sys/sysctl.h>
 
 @implementation DumbDecoder
 
@@ -120,12 +125,23 @@ DUMBFILE *dumbfile_open_memory_and_free(char *data, long size)
 	return dumbfile_open_ex(m, &maffile_dfs);
 }
 
-void oneTimeInit()
+static unsigned int cpu_freq = 0;
+
++ (void)initialize
 {
-    static bool initialized = false;
-    if (!initialized)
+    if (self == [DumbDecoder class])
     {
+        int mib[2];
+        size_t len;
         
+        mib[0] = CTL_HW;
+        mib[1] = HW_CPU_FREQ;
+        len = sizeof(cpu_freq);
+        sysctl(mib, 2, &cpu_freq, &len, NULL, 0);
+        
+        // do this here so we don't have to wait on it later
+        _dumb_init_cubic();
+        _dumb_init_sse();
     }
 }
 
@@ -191,6 +207,10 @@ int callbackLoop(void *data)
 	}
 	
     DUMB_IT_SIGRENDERER * itsr = duh_get_it_sigrenderer( dsr );
+    {
+        if (cpu_freq >= 2200000000)
+            dumb_it_set_resampling_quality( itsr, DUMB_RQ_FIR );
+    }
     dumb_it_set_ramp_style( itsr, 2 );
     
     dumb_it_set_loop_callback( itsr, callbackLoop, &loops);
