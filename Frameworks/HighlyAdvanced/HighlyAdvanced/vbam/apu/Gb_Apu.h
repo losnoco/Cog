@@ -115,7 +115,7 @@ private:
 
 	// large objects after everything else
 	Gb_Osc::Good_Synth  good_synth;
-	Gb_Osc::Med_Synth   med_synth;
+	Gb_Osc::Med_Synth   med_synth[2];
 
 	void reset_lengths();
 	void reset_regs();

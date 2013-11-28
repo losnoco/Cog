@@ -418,6 +418,7 @@ static void remake_stereo_buffer(GBASystem *gba)
 	{
         gba->gb_apu = new GBA::Gb_Apu; // TODO: handle out of memory
         reset_apu(gba);
+        gba->gb_apu->treble_eq( GBA::blip_eq_t( 0, 0, gba->soundSampleRate, gba->soundSampleRate / 2 ) );
 	}
 
     apply_muting(gba);

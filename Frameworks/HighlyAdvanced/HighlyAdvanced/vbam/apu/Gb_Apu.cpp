@@ -27,7 +27,8 @@ int const power_mask = 0x80;
 void Gb_Apu::treble_eq( blip_eq_t const& eq )
 {
 	good_synth.treble_eq( eq );
-	med_synth .treble_eq( eq );
+	med_synth[0].treble_eq( eq );
+    med_synth[1].treble_eq( eq );
 }
 
 inline int Gb_Apu::calc_output( int osc ) const
@@ -64,7 +65,8 @@ void Gb_Apu::synth_volume( int iv )
 {
 	double v = volume_ * 0.60 / osc_count / 15 /*steps*/ / 8 /*master vol range*/ * iv;
 	good_synth.volume( v );
-	med_synth .volume( v );
+	med_synth[0].volume( v );
+    med_synth[1].volume( v * 1.4 );
 }
 
 void Gb_Apu::apply_volume()
@@ -185,7 +187,7 @@ Gb_Apu::Gb_Apu()
 		o.outputs [2] = 0;
 		o.outputs [3] = 0;
 		o.good_synth  = &good_synth;
-		o.med_synth   = &med_synth;
+		o.med_synth   = (i == 3) ? &med_synth[1] : &med_synth[0];
 	}
 
 	reduce_clicks_ = false;
@@ -267,7 +269,7 @@ void Gb_Apu::silence_osc( Gb_Osc& o )
 		if ( o.output )
 		{
 			o.output->set_modified();
-			med_synth.offset( last_time, delta, o.output );
+			med_synth[0].offset( last_time, delta, o.output );
 		}
 	}
 }
