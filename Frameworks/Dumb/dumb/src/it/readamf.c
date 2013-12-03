@@ -72,9 +72,15 @@ static void it_amf_process_track( IT_ENTRY *entry_table, unsigned char *track, i
 					else effectvalue = ( effectvalue & 0x0F ) << 4;
 					break;
 
-				case 0x04: if ( effectvalue & 0x80 ) { effect = IT_PORTAMENTO_UP; effectvalue = ( -( signed char ) effectvalue ) & 0x7F; }
-						   else { effect = IT_PORTAMENTO_DOWN; }
-						   break;
+				case 0x04:
+					if ( effectvalue & 0x80 ) {
+						effect = IT_PORTAMENTO_UP;
+						effectvalue = ( -( signed char ) effectvalue ) & 0x7F;
+					}
+					else {
+						effect = IT_PORTAMENTO_DOWN;
+					}
+					break;
 
 				case 0x06: effect = IT_TONE_PORTAMENTO; break;
 
@@ -92,30 +98,57 @@ static void it_amf_process_track( IT_ENTRY *entry_table, unsigned char *track, i
 
 				case 0x10: effect = IT_SET_SAMPLE_OFFSET; break;
 
-				case 0x11: if ( effectvalue ) { effect = IT_VOLUME_SLIDE;
-							   if ( effectvalue & 0x80 ) effectvalue = 0xF0 | ( ( -( signed char ) effectvalue ) & 0x0F );
-							   else effectvalue = 0x0F | ( ( effectvalue & 0x0F ) << 4 );
-						   } else effect = 0;
-						   break;
+				case 0x11:
+					if ( effectvalue ) {
+						effect = IT_VOLUME_SLIDE;
+						if ( effectvalue & 0x80 )
+							effectvalue = 0xF0 | ( ( -( signed char ) effectvalue ) & 0x0F );
+						else
+							effectvalue = 0x0F | ( ( effectvalue & 0x0F ) << 4 );
+					}
+					else
+						effect = 0;
+					break;
 
 				case 0x12:
-				case 0x16: if ( effectvalue ) { int mask = ( effect == 0x16 ) ? 0xE0 : 0xF0;
-							   effect = ( effectvalue & 0x80 ) ? IT_PORTAMENTO_UP : IT_PORTAMENTO_DOWN;
-							   if ( effectvalue & 0x80 ) effectvalue = mask | ( ( -( signed char ) effectvalue ) & 0x0F );
-							   else effectvalue = mask | ( effectvalue & 0x0F );
-						   } else effect = 0;
-						   break;
+				case 0x16:
+					if ( effectvalue ) {
+						int mask = ( effect == 0x16 ) ? 0xE0 : 0xF0;
+						effect = ( effectvalue & 0x80 ) ? IT_PORTAMENTO_UP : IT_PORTAMENTO_DOWN;
+						if ( effectvalue & 0x80 )
+							effectvalue = mask | ( ( -( signed char ) effectvalue ) & 0x0F );
+						else
+							effectvalue = mask | ( effectvalue & 0x0F );
+                    }
+					else
+						effect = 0;
+					break;
 
-				case 0x13: effect = IT_S; effectvalue = EFFECT_VALUE( IT_S_NOTE_DELAY, effectvalue & 0x0F ); break;
+				case 0x13:
+					effect = IT_S;
+					effectvalue = EFFECT_VALUE( IT_S_NOTE_DELAY, effectvalue & 0x0F );
+					break;
 
-				case 0x14: effect = IT_S; effectvalue = EFFECT_VALUE( IT_S_DELAYED_NOTE_CUT, effectvalue & 0x0F ); break;
+				case 0x14:
+					effect = IT_S;
+					effectvalue = EFFECT_VALUE( IT_S_DELAYED_NOTE_CUT, effectvalue & 0x0F );
+					break;
 
 				case 0x15: effect = IT_SET_SONG_TEMPO; break;
 
-				case 0x17: effectvalue = ( effectvalue + 64 ) & 0x7F;
-						   if ( entry->mask & IT_ENTRY_EFFECT ) { if ( !( entry->mask & IT_ENTRY_VOLPAN ) ) { entry->volpan = ( effectvalue / 2 ) + 128; } effect = 0; }
-						   else { effect = IT_SET_PANNING; }
-						   break;
+				case 0x17:
+					effectvalue = ( effectvalue + 64 ) & 0x7F;
+					if ( entry->mask & IT_ENTRY_EFFECT ) {
+						if ( !( entry->mask & IT_ENTRY_VOLPAN ) ) {
+							entry->mask |= IT_ENTRY_VOLPAN;
+							entry->volpan = ( effectvalue / 2 ) + 128;
+						}
+						effect = 0;
+					}
+					else {
+						effect = IT_SET_PANNING;
+					}
+					break;
 
 				default: effect = effectvalue = 0;
 			}
@@ -202,7 +235,7 @@ static int it_amf_read_sample_header( IT_SAMPLE *sample, DUMBFILE *f, int * offs
 	sample->default_pan = 0;
 	sample->finetune = 0;
 
-	if ( sample->loop_start != 0 )
+	if ( sample->loop_end > sample->loop_start + 2 && sample->loop_end <= sample->length )
 		sample->flags |= IT_SAMPLE_LOOP;
 
 	sample->vibrato_speed = 0;
@@ -457,7 +490,7 @@ static DUMB_IT_SIGDATA *it_amf_load_sigdata(DUMBFILE *f, int * version)
 	}
 
 	/* Now let's initialise the remaining variables, and we're done! */
-	sigdata->flags = IT_OLD_EFFECTS | IT_COMPATIBLE_GXX | IT_STEREO;
+	sigdata->flags = IT_OLD_EFFECTS | IT_COMPATIBLE_GXX | IT_STEREO | IT_WAS_AN_S3M;
 
 	sigdata->global_volume = 128;
 	sigdata->mixing_volume = 48;
