@@ -48,7 +48,7 @@
     
 	int track_num = [[[s url] fragment] intValue]; //What if theres no fragment? Assuming we get 0.
     
-    midi_file.scan_for_loops( true, true );
+    midi_file.scan_for_loops( true, true, true );
 
     framesLength = midi_file.get_timestamp_end( track_num, true );
     

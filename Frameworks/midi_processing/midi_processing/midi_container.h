@@ -241,7 +241,7 @@ public:
 
 	void get_meta_data( unsigned long subsong, midi_meta_data & p_out );
 
-	void scan_for_loops( bool p_xmi_loops, bool p_marker_loops );
+	void scan_for_loops( bool p_xmi_loops, bool p_marker_loops, bool p_rpgmaker_loops );
 
     static void encode_delta( std::vector<uint8_t> & p_out, unsigned long delta );
 };
