@@ -65,6 +65,9 @@ end
 
   filename = "Cog-#{revision_code}.tbz"
 
+  #Sign it!
+  %x[codesign -s 'Developer ID Application' --deep --force '#{app_path}/Cog.app']
+
   #Zip the app!
   %x[rm -f /tmp/#{feed}.tar.bz2]
   %x[tar -C '#{app_path}' -cjf /tmp/#{feed}.tar.bz2 Cog.app]
