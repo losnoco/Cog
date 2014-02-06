@@ -879,6 +879,158 @@ static int twosf_info(void * context, const char * name, const char * value)
 	return 0;
 }
 
+#if 0
+struct usf_loader_state
+{
+    FILE * log;
+    FILE * fLazyusf;
+    bool donewriting;
+    uint32_t enablecompare;
+    uint32_t enablefifofull;
+    uint32_t samplerate;
+    uint32_t pairsleft;
+    
+    usf_loader_state()
+    : log(NULL), fLazyusf(NULL),
+    enablecompare(0), enablefifofull(0),
+    samplerate(0), pairsleft(0) { }
+    
+    ~usf_loader_state()
+    {
+        close();
+    }
+    
+    void fwrite( const void * buf, ssize_t size, ssize_t count, FILE * f )
+    {
+        ::fwrite( buf, size, count, f );
+        if ( log )
+            ::fwrite( buf, size, count, log );
+    }
+    
+    void open()
+    {
+        close();
+        
+        log = fopen("/tmp/lazyusf_transaction", "w");
+        fLazyusf = popen( "/usr/local/bin/lazyusf", "r+" );
+        fwrite( &enablecompare, sizeof(enablecompare), 1, fLazyusf );
+        fwrite( &enablefifofull, sizeof(enablefifofull), 1, fLazyusf );
+        donewriting = false;
+    }
+    
+    void close()
+    {
+        if (fLazyusf)
+        {
+            uint32_t zero = 0;
+            fwrite( &zero, sizeof(uint32_t), 1, fLazyusf );
+            pclose( fLazyusf );
+        }
+        fLazyusf = NULL;
+        if (log) fclose(log);
+        log = NULL;
+    }
+    
+    bool opened()
+    {
+        return fLazyusf != NULL;
+    }
+    
+    void write_reserved( const uint8_t * reserved, uint32_t reserved_size )
+    {
+        fwrite( &reserved_size, sizeof(reserved_size), 1, fLazyusf );
+        if ( reserved_size ) fwrite( reserved, 1, reserved_size, fLazyusf );
+    }
+    
+    ssize_t fread( void * buf, ssize_t size, ssize_t count, FILE * f )
+    {
+        int d = fileno( f );
+        for (;;)
+        {
+            ssize_t r = read( d, buf, size * count );
+            if ( r == -1 && errno == EAGAIN )
+            {
+                usleep( 1000 );
+                continue;
+            }
+            else if ( r > 0 )
+                return r / size;
+            else
+                return -1;
+        }
+    }
+    
+    BOOL read_samples( int16_t * out, uint32_t out_pairs )
+    {
+        if ( !donewriting )
+        {
+            write_reserved( NULL, 0 );
+            fflush( fLazyusf );
+            fclose( log ); log = NULL;
+            int d = fileno(fLazyusf);
+            fcntl(d, F_SETFL, fcntl(d, F_GETFL, 0) | O_NONBLOCK);
+            donewriting = true;
+        }
+        while ( out_pairs )
+        {
+            if ( !pairsleft )
+            {
+                if (fread( &samplerate, sizeof(samplerate), 1, fLazyusf ) < 0) return NO;
+                if (fread( &pairsleft, sizeof(pairsleft), 1, fLazyusf ) < 0) return NO;
+                pairsleft >>= 1;
+            }
+            if ( pairsleft )
+            {
+                if ( pairsleft >= out_pairs )
+                {
+                    if (fread( out, sizeof(int16_t) * 2, out_pairs, fLazyusf ) < 0) return NO;
+                    pairsleft -= out_pairs;
+                    return YES;
+                }
+            
+                if (fread( out, sizeof(int16_t) * 2, pairsleft, fLazyusf ) < 0) return NO;
+                out += pairsleft * 2;
+                out_pairs -= pairsleft;
+                pairsleft = 0;
+                
+                uint32_t one = 1;
+                fwrite( &one, sizeof(one), 1, fLazyusf );
+                fflush( fLazyusf );
+            }
+        }
+        return YES;
+    }
+};
+
+static int usf_loader(void * context, const uint8_t * exe, size_t exe_size,
+                      const uint8_t * reserved, size_t reserved_size)
+{
+    struct usf_loader_state * uUsf = ( struct usf_loader_state * ) context;
+    if ( exe && exe_size > 0 ) return -1;
+    
+    if ( !uUsf->opened() ) uUsf->open();
+    
+    uUsf->write_reserved( reserved, (uint32_t) reserved_size );
+    
+    return 0;
+}
+
+static int usf_info(void * context, const char * name, const char * value)
+{
+    struct usf_loader_state * uUsf = ( struct usf_loader_state * ) context;
+    
+    NSString * sname = [[NSString stringWithUTF8String:name] lowercaseString];
+    NSString * svalue = [NSString stringWithUTF8String:value];
+    
+    if ( [sname isEqualToString:@"_enablecompare"] && [svalue length] )
+        uUsf->enablecompare = 1;
+    else if ( [sname isEqualToString:@"_enablefifofull"] && [svalue length] )
+        uUsf->enablefifofull = 1;
+
+    return 0;
+}
+#endif
+
 - (BOOL)initializeDecoder
 {
     if ( type == 1 )
@@ -946,6 +1098,17 @@ static int twosf_info(void * context, const char * name, const char * value)
         
         free( state.data );
     }
+#if 0
+    else if ( type == 0x21 )
+    {
+        struct usf_loader_state * uUsf = new usf_loader_state;
+        
+        emulatorCore = (uint8_t *) uUsf;
+        
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, uUsf, usf_info, uUsf ) <= 0 )
+            return NO;
+    }
+#endif
     else if ( type == 0x22 )
     {
         struct gsf_loader_state state;
@@ -1098,10 +1261,18 @@ static int twosf_info(void * context, const char * name, const char * value)
     
     silence_test_buffer.resize( sampleRate * 30 * 2 );
 
-    if (![self fillBuffer])
-        return NO;
+    if ( type != 0x21 )
+    {
+        if (![self fillBuffer])
+            return NO;
     
-    silence_test_buffer.remove_leading_silence();
+        silence_test_buffer.remove_leading_silence();
+    }
+    else
+    {
+        if (![self fillBuffer:YES])
+            return NO;
+    }
     
     return YES;
 }
@@ -1143,6 +1314,8 @@ static int twosf_info(void * context, const char * name, const char * value)
 
     if ( type == 2 )
         sampleRate = 48000;
+    else if ( type == 0x21 )
+        [self initializeDecoder];
     
     tagLengthMs = info.tag_length_ms;
     tagFadeMs = info.tag_fade_ms;
@@ -1171,7 +1344,13 @@ static int twosf_info(void * context, const char * name, const char * value)
 
 - (BOOL)fillBuffer
 {
+    return [self fillBuffer:NO];
+}
+
+- (BOOL)fillBuffer:(BOOL)partial
+{
     long frames_left = totalFrames - framesRead - silence_test_buffer.data_available() / 2;
+    if ( partial ) frames_left = 1024;
     long free_space = silence_test_buffer.free_space() / 2;
     if ( free_space > frames_left )
         free_space = frames_left;
@@ -1179,10 +1358,13 @@ static int twosf_info(void * context, const char * name, const char * value)
     {
         unsigned long samples_to_write = 0;
         int16_t * buf = silence_test_buffer.get_write_ptr( samples_to_write );
+        if ( partial && samples_to_write > 2048 )
+            samples_to_write = 2048;
         int samples_read = [self readAudioInternal:buf frames:(UInt32)samples_to_write / 2];
         if ( !samples_read ) break;
         silence_test_buffer.samples_written( samples_read * 2 );
         free_space -= samples_read;
+        if ( partial ) break;
     }
     return !silence_test_buffer.test_silence();
 }
@@ -1201,6 +1383,17 @@ static int twosf_info(void * context, const char * name, const char * value)
         sega_execute( emulatorCore, 0x7fffffff, ( int16_t * ) buf, &howmany );
         frames = howmany;
     }
+#if 0
+    else if ( type == 0x21 )
+    {
+        struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
+
+        if ( !uUsf->read_samples( (int16_t *) buf, frames ) )
+            return 0;
+
+        sampleRate = uUsf->samplerate;
+    }
+#endif
     else if ( type == 0x22 )
     {
         GBASystem * system = ( GBASystem * ) emulatorCore;
@@ -1314,7 +1507,13 @@ static int twosf_info(void * context, const char * name, const char * value)
 - (void)closeDecoder
 {
     if ( emulatorCore ) {
-        if ( type == 0x22 ) {
+#if 0
+        if ( type == 0x21 ) {
+            struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
+            delete uUsf;
+        } else
+#endif
+            if ( type == 0x22 ) {
             GBASystem * system = ( GBASystem * ) emulatorCore;
             CPUCleanUp( system );
             soundShutdown( system );
@@ -1323,7 +1522,7 @@ static int twosf_info(void * context, const char * name, const char * value)
             NDS_state * state = ( NDS_state * ) emulatorCore;
             state_deinit(state);
             free(state);
-        }else if ( type == 0x25 ) {
+        } else if ( type == 0x25 ) {
             Player * player = ( Player * ) emulatorCore;
             delete player;
         } else {
@@ -1405,6 +1604,20 @@ static int twosf_info(void * context, const char * name, const char * value)
         }
         while (framesRead < frame);
     }
+#if 0
+    else if ( type == 0x21 )
+    {
+        struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
+        int16_t * temp = (int16_t *) malloc( sizeof(int16_t) * 4096 );
+        do
+        {
+            uint32_t howmany = (uint32_t)(frame - framesRead) * 2 * sizeof(int16_t);
+            if (howmany > 2048) howmany = 2048;
+            if (!uUsf->read_samples( temp, howmany )) return -1;
+            framesRead += howmany;
+        } while (framesRead < frame);
+    }
+#endif
     else if ( type == 0x22 )
     {
         GBASystem * system = ( GBASystem * ) emulatorCore;
@@ -1526,7 +1739,11 @@ static int twosf_info(void * context, const char * name, const char * value)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf", nil];
+	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf",
+#if 0
+            @"usf", @"miniusf",
+#endif
+            nil];
 }
 
 + (NSArray *)mimeTypes
