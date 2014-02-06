@@ -25,6 +25,22 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>vqf</string>
+				<string>vqe</string>
+				<string>vql</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleTypeName</key>
+			<string>VQF File</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>mo3</string>
 			</array>
 			<key>LSTypeIsPackage</key>

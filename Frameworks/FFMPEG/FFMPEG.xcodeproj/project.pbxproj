@@ -311,6 +311,11 @@
 		833C37D318032E4800CBA602 /* dsputil_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37D218032E4800CBA602 /* dsputil_init.c */; };
 		833C37D518032E7000CBA602 /* jrevdct.c in Sources */ = {isa = PBXBuildFile; fileRef = 833C37D418032E7000CBA602 /* jrevdct.c */; };
 		833C37D718032EA500CBA602 /* idct_xvid.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C37D618032EA500CBA602 /* idct_xvid.h */; };
+		833E5F9C18A31EB7006A85F9 /* vqf.c in Sources */ = {isa = PBXBuildFile; fileRef = 833E5F9B18A31EB7006A85F9 /* vqf.c */; };
+		833E5FA118A31EC4006A85F9 /* twinvq_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 833E5F9D18A31EC4006A85F9 /* twinvq_data.h */; };
+		833E5FA218A31EC4006A85F9 /* twinvq.c in Sources */ = {isa = PBXBuildFile; fileRef = 833E5F9E18A31EC4006A85F9 /* twinvq.c */; };
+		833E5FA318A31EC4006A85F9 /* twinvq.h in Headers */ = {isa = PBXBuildFile; fileRef = 833E5F9F18A31EC4006A85F9 /* twinvq.h */; };
+		833E5FA418A31EC4006A85F9 /* twinvqdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 833E5FA018A31EC4006A85F9 /* twinvqdec.c */; };
 		8384904D1807898200E7332D /* apedec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8384904C1807898200E7332D /* apedec.c */; };
 		8384904F1807898A00E7332D /* ape.c in Sources */ = {isa = PBXBuildFile; fileRef = 8384904E1807898A00E7332D /* ape.c */; };
 		8384905C1807AF0100E7332D /* ac3_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 838490501807AF0100E7332D /* ac3_parser.c */; };
@@ -749,6 +754,11 @@
 		833C37D218032E4800CBA602 /* dsputil_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsputil_init.c; sourceTree = "<group>"; };
 		833C37D418032E7000CBA602 /* jrevdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jrevdct.c; sourceTree = "<group>"; };
 		833C37D618032EA500CBA602 /* idct_xvid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = idct_xvid.h; sourceTree = "<group>"; };
+		833E5F9B18A31EB7006A85F9 /* vqf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vqf.c; sourceTree = "<group>"; };
+		833E5F9D18A31EC4006A85F9 /* twinvq_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twinvq_data.h; sourceTree = "<group>"; };
+		833E5F9E18A31EC4006A85F9 /* twinvq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = twinvq.c; sourceTree = "<group>"; };
+		833E5F9F18A31EC4006A85F9 /* twinvq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twinvq.h; sourceTree = "<group>"; };
+		833E5FA018A31EC4006A85F9 /* twinvqdec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = twinvqdec.c; sourceTree = "<group>"; };
 		8384904C1807898200E7332D /* apedec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = apedec.c; sourceTree = "<group>"; };
 		8384904E1807898A00E7332D /* ape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ape.c; sourceTree = "<group>"; };
 		838490501807AF0100E7332D /* ac3_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ac3_parser.c; sourceTree = "<group>"; };
@@ -957,6 +967,10 @@
 		830F0B8E17FC4FB900042E8F /* libavcodec */ = {
 			isa = PBXGroup;
 			children = (
+				833E5F9D18A31EC4006A85F9 /* twinvq_data.h */,
+				833E5F9E18A31EC4006A85F9 /* twinvq.c */,
+				833E5F9F18A31EC4006A85F9 /* twinvq.h */,
+				833E5FA018A31EC4006A85F9 /* twinvqdec.c */,
 				830C4B56180C3434007674D6 /* amr.h */,
 				830C4B57180C3434007674D6 /* amrnbdata.h */,
 				830C4B58180C3434007674D6 /* amrnbdec.c */,
@@ -1214,6 +1228,7 @@
 		830F0BAD17FC4FB900042E8F /* libavformat */ = {
 			isa = PBXGroup;
 			children = (
+				833E5F9B18A31EB7006A85F9 /* vqf.c */,
 				830C4B60180C343C007674D6 /* amr.c */,
 				838491141807D1D200E7332D /* tta.c */,
 				838491121807D06100E7332D /* spdifdec.c */,
@@ -1553,6 +1568,7 @@
 				830F0D6517FC8A3300042E8F /* audiointerleave.h in Headers */,
 				833C37A318032A2F00CBA602 /* rawdec.h in Headers */,
 				838490DF1807C47E00E7332D /* g722.h in Headers */,
+				833E5FA318A31EC4006A85F9 /* twinvq.h in Headers */,
 				830F0D3D17FC846C00042E8F /* random_seed.h in Headers */,
 				830F0CCA17FC7F1E00042E8F /* bytestream.h in Headers */,
 				830F0D0317FC7F4000042E8F /* sinewin_tablegen.h in Headers */,
@@ -1585,6 +1601,7 @@
 				830F0D5117FC880E00042E8F /* time_.h in Headers */,
 				830F0BD717FC4FB900042E8F /* get_bits.h in Headers */,
 				830F0C2417FC527400042E8F /* atomic.h in Headers */,
+				833E5FA118A31EC4006A85F9 /* twinvq_data.h in Headers */,
 				830F0C5D17FC7CEA00042E8F /* id3v1.h in Headers */,
 				838490631807AF0100E7332D /* ac3dec.h in Headers */,
 				838490C31807C37300E7332D /* atrac.h in Headers */,
@@ -1868,6 +1885,7 @@
 				8393B7E318052BB000913C76 /* mpeg.c in Sources */,
 				838491111807CEF400E7332D /* sbrdsp_init.c in Sources */,
 				830F0D4017FC848D00042E8F /* sha.c in Sources */,
+				833E5FA218A31EC4006A85F9 /* twinvq.c in Sources */,
 				838490EF1807C57B00E7332D /* aac_adtstoasc_bsf.c in Sources */,
 				830F0BF417FC4FB900042E8F /* aviobuf.c in Sources */,
 				830F0C1117FC4FF400042E8F /* avfft.c in Sources */,
@@ -1880,6 +1898,7 @@
 				830F0CDC17FC7F1E00042E8F /* faandct.c in Sources */,
 				830F0CE017FC7F1E00042E8F /* fmtconvert.c in Sources */,
 				830F0C6F17FC7DB100042E8F /* pixdesc.c in Sources */,
+				833E5F9C18A31EB7006A85F9 /* vqf.c in Sources */,
 				830F0C2917FC54F800042E8F /* asfdec.c in Sources */,
 				830F0C3B17FC554D00042E8F /* float_dsp.c in Sources */,
 				830F0BF817FC4FB900042E8F /* os_support.c in Sources */,
@@ -1946,6 +1965,7 @@
 				830F0C8317FC7ED100042E8F /* rational.c in Sources */,
 				830F0CD517FC7F1E00042E8F /* dctref.c in Sources */,
 				8393B81118052DB700913C76 /* bitstream_filter.c in Sources */,
+				833E5FA418A31EC4006A85F9 /* twinvqdec.c in Sources */,
 				838490F11807C57B00E7332D /* aacadtsdec.c in Sources */,
 				830F0D2317FC82AB00042E8F /* fifo.c in Sources */,
 				830F0D3C17FC846C00042E8F /* random_seed.c in Sources */,
