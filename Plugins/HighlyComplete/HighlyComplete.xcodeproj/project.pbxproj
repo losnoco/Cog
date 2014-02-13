@@ -21,6 +21,7 @@
 		8360EF6E17F92E86005208A4 /* HighlyExperimental.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EF4417F92C92005208A4 /* HighlyExperimental.framework */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
 		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
+		83D4481E18ACA5C8000F443A /* lazyusf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D4481B18ACA5AD000F443A /* lazyusf */; };
 		83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
 		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
 		83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0CBF180B27C200269051 /* libz.dylib */; };
@@ -129,6 +130,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		83D4481A18ACA591000F443A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				83D4481E18ACA5C8000F443A /* lazyusf in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		83F18C3717F9300400471B6C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -167,6 +178,7 @@
 		8360EEF317F92AC8005208A4 /* HighlyComplete-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HighlyComplete-Prefix.pch"; sourceTree = "<group>"; };
 		8360EF3E17F92C91005208A4 /* HighlyExperimental.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyExperimental.xcodeproj; path = ../../Frameworks/HighlyExperimental/HighlyExperimental.xcodeproj; sourceTree = "<group>"; };
 		83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SSEQPlayer.xcodeproj; path = ../../Frameworks/SSEQPlayer/SSEQPlayer.xcodeproj; sourceTree = "<group>"; };
+		83D4481B18ACA5AD000F443A /* lazyusf */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = lazyusf; path = ../../ThirdParty/lazyusf/lazyusf; sourceTree = "<group>"; };
 		83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = "<group>"; };
 		83DE0CBF180B27C200269051 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -226,6 +238,7 @@
 		8360EEDB17F92AC8005208A4 = {
 			isa = PBXGroup;
 			children = (
+				83D4481D18ACA5B1000F443A /* External */,
 				8360EEED17F92AC8005208A4 /* HighlyComplete */,
 				8360EEE617F92AC8005208A4 /* Frameworks */,
 				8360EEE517F92AC8005208A4 /* Products */,
@@ -306,6 +319,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83D4481D18ACA5B1000F443A /* External */ = {
+			isa = PBXGroup;
+			children = (
+				83D4481B18ACA5AD000F443A /* lazyusf */,
+			);
+			name = External;
+			sourceTree = "<group>";
+		};
 		83DE0C35180A9BD400269051 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -325,6 +346,7 @@
 				8360EEE117F92AC8005208A4 /* Frameworks */,
 				8360EEE217F92AC8005208A4 /* Resources */,
 				83F18C3717F9300400471B6C /* CopyFiles */,
+				83D4481A18ACA591000F443A /* CopyFiles */,
 			);
 			buildRules = (
 			);

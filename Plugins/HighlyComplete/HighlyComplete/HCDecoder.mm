@@ -32,6 +32,10 @@
 
 #include <zlib.h>
 
+#include <dlfcn.h>
+
+// #define USF_LOG
+
 @interface psf_file_container : NSObject {
     NSLock * lock;
     NSMutableDictionary * list;
@@ -879,11 +883,16 @@ static int twosf_info(void * context, const char * name, const char * value)
 	return 0;
 }
 
-#if 0
 struct usf_loader_state
 {
+#ifdef USF_LOG
     FILE * log;
-    FILE * fLazyusf;
+#endif
+    NSTask * task;
+    NSPipe * pipe_stdin;
+    NSPipe * pipe_stdout;
+    NSFileHandle * file_stdin;
+    NSFileHandle * file_stdout;
     bool donewriting;
     uint32_t enablecompare;
     uint32_t enablefifofull;
@@ -891,7 +900,11 @@ struct usf_loader_state
     uint32_t pairsleft;
     
     usf_loader_state()
-    : log(NULL), fLazyusf(NULL),
+    :
+#ifdef USF_LOG
+    log(NULL),
+#endif
+    task(nil), pipe_stdin(nil), pipe_stdout(nil),
     enablecompare(0), enablefifofull(0),
     samplerate(0), pairsleft(0) { }
     
@@ -900,64 +913,88 @@ struct usf_loader_state
         close();
     }
     
-    void fwrite( const void * buf, ssize_t size, ssize_t count, FILE * f )
+    void fwrite( const void * buf, ssize_t size, ssize_t count )
     {
-        ::fwrite( buf, size, count, f );
+        [file_stdin writeData:[NSData dataWithBytes:buf length:size * count]];
+#ifdef USF_LOG
         if ( log )
+        {
             ::fwrite( buf, size, count, log );
+            fflush( log );
+        }
+#endif
+    }
+    
+    ssize_t fread( void * buf, ssize_t size, ssize_t count )
+    {
+        NSData * data = [file_stdout readDataOfLength:size * count];
+        if ( data && [data length] )
+        {
+            memcpy( buf, [data bytes], [data length] );
+            return [data length] / size;
+        }
+        return 0;
     }
     
     void open()
     {
         close();
-        
+
+#ifdef USF_LOG
         log = fopen("/tmp/lazyusf_transaction", "w");
-        fLazyusf = popen( "/usr/local/bin/lazyusf", "r+" );
-        fwrite( &enablecompare, sizeof(enablecompare), 1, fLazyusf );
-        fwrite( &enablefifofull, sizeof(enablefifofull), 1, fLazyusf );
+#endif
+        Dl_info info;
+        dladdr( (void*) &twosf_info, &info );
+        
+        NSString * base_path = [[NSString stringWithUTF8String:info.dli_fname] stringByDeletingLastPathComponent];
+
+        task = [[NSTask alloc] init];
+        [task setLaunchPath:[base_path stringByAppendingPathComponent:@"lazyusf"]];
+        
+        pipe_stdin = [[NSPipe alloc] init];
+        pipe_stdout = [[NSPipe alloc] init];
+        
+        [task setStandardInput:pipe_stdin];
+        [task setStandardOutput:pipe_stdout];
+        
+        file_stdin = [pipe_stdin fileHandleForWriting];
+        file_stdout = [pipe_stdout fileHandleForReading];
+        
+        [task launch];
+        
+        fwrite( &enablecompare, sizeof(enablecompare), 1 );
+        fwrite( &enablefifofull, sizeof(enablefifofull), 1 );
         donewriting = false;
     }
     
     void close()
     {
-        if (fLazyusf)
+        if (task != nil)
         {
             uint32_t zero = 0;
-            fwrite( &zero, sizeof(uint32_t), 1, fLazyusf );
-            pclose( fLazyusf );
+            fwrite( &zero, sizeof(uint32_t), 1 );
+            [task release];
+            task = nil;
+            [pipe_stdin release];
+            pipe_stdin = nil;
+            [pipe_stdout release];
+            pipe_stdout = nil;
         }
-        fLazyusf = NULL;
+#ifdef USF_LOG
         if (log) fclose(log);
         log = NULL;
+#endif
     }
     
     bool opened()
     {
-        return fLazyusf != NULL;
+        return task != nil;
     }
     
     void write_reserved( const uint8_t * reserved, uint32_t reserved_size )
     {
-        fwrite( &reserved_size, sizeof(reserved_size), 1, fLazyusf );
-        if ( reserved_size ) fwrite( reserved, 1, reserved_size, fLazyusf );
-    }
-    
-    ssize_t fread( void * buf, ssize_t size, ssize_t count, FILE * f )
-    {
-        int d = fileno( f );
-        for (;;)
-        {
-            ssize_t r = read( d, buf, size * count );
-            if ( r == -1 && errno == EAGAIN )
-            {
-                usleep( 1000 );
-                continue;
-            }
-            else if ( r > 0 )
-                return r / size;
-            else
-                return -1;
-        }
+        fwrite( &reserved_size, sizeof(reserved_size), 1 );
+        if ( reserved_size ) fwrite( reserved, 1, reserved_size );
     }
     
     BOOL read_samples( int16_t * out, uint32_t out_pairs )
@@ -965,37 +1002,35 @@ struct usf_loader_state
         if ( !donewriting )
         {
             write_reserved( NULL, 0 );
-            fflush( fLazyusf );
+#ifdef USF_LOG
             fclose( log ); log = NULL;
-            int d = fileno(fLazyusf);
-            fcntl(d, F_SETFL, fcntl(d, F_GETFL, 0) | O_NONBLOCK);
+#endif
             donewriting = true;
         }
         while ( out_pairs )
         {
             if ( !pairsleft )
             {
-                if (fread( &samplerate, sizeof(samplerate), 1, fLazyusf ) < 0) return NO;
-                if (fread( &pairsleft, sizeof(pairsleft), 1, fLazyusf ) < 0) return NO;
+                if (fread( &samplerate, sizeof(samplerate), 1 ) < 1) return NO;
+                if (fread( &pairsleft, sizeof(pairsleft), 1 ) < 1) return NO;
                 pairsleft >>= 1;
             }
             if ( pairsleft )
             {
-                if ( pairsleft >= out_pairs )
+                if ( pairsleft > out_pairs )
                 {
-                    if (fread( out, sizeof(int16_t) * 2, out_pairs, fLazyusf ) < 0) return NO;
+                    if (fread( out, sizeof(int16_t) * 2, out_pairs ) < out_pairs) return NO;
                     pairsleft -= out_pairs;
                     return YES;
                 }
             
-                if (fread( out, sizeof(int16_t) * 2, pairsleft, fLazyusf ) < 0) return NO;
+                if (fread( out, sizeof(int16_t) * 2, pairsleft ) < pairsleft) return NO;
                 out += pairsleft * 2;
                 out_pairs -= pairsleft;
                 pairsleft = 0;
                 
                 uint32_t one = 1;
-                fwrite( &one, sizeof(one), 1, fLazyusf );
-                fflush( fLazyusf );
+                fwrite( &one, sizeof(one), 1 );
             }
         }
         return YES;
@@ -1029,7 +1064,6 @@ static int usf_info(void * context, const char * name, const char * value)
 
     return 0;
 }
-#endif
 
 - (BOOL)initializeDecoder
 {
@@ -1098,7 +1132,6 @@ static int usf_info(void * context, const char * name, const char * value)
         
         free( state.data );
     }
-#if 0
     else if ( type == 0x21 )
     {
         struct usf_loader_state * uUsf = new usf_loader_state;
@@ -1108,7 +1141,6 @@ static int usf_info(void * context, const char * name, const char * value)
         if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, uUsf, usf_info, uUsf ) <= 0 )
             return NO;
     }
-#endif
     else if ( type == 0x22 )
     {
         struct gsf_loader_state state;
@@ -1383,7 +1415,6 @@ static int usf_info(void * context, const char * name, const char * value)
         sega_execute( emulatorCore, 0x7fffffff, ( int16_t * ) buf, &howmany );
         frames = howmany;
     }
-#if 0
     else if ( type == 0x21 )
     {
         struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
@@ -1393,7 +1424,6 @@ static int usf_info(void * context, const char * name, const char * value)
 
         sampleRate = uUsf->samplerate;
     }
-#endif
     else if ( type == 0x22 )
     {
         GBASystem * system = ( GBASystem * ) emulatorCore;
@@ -1507,13 +1537,10 @@ static int usf_info(void * context, const char * name, const char * value)
 - (void)closeDecoder
 {
     if ( emulatorCore ) {
-#if 0
         if ( type == 0x21 ) {
             struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
             delete uUsf;
-        } else
-#endif
-            if ( type == 0x22 ) {
+        } else if ( type == 0x22 ) {
             GBASystem * system = ( GBASystem * ) emulatorCore;
             CPUCleanUp( system );
             soundShutdown( system );
@@ -1604,7 +1631,6 @@ static int usf_info(void * context, const char * name, const char * value)
         }
         while (framesRead < frame);
     }
-#if 0
     else if ( type == 0x21 )
     {
         struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
@@ -1617,7 +1643,6 @@ static int usf_info(void * context, const char * name, const char * value)
             framesRead += howmany;
         } while (framesRead < frame);
     }
-#endif
     else if ( type == 0x22 )
     {
         GBASystem * system = ( GBASystem * ) emulatorCore;
@@ -1739,11 +1764,7 @@ static int usf_info(void * context, const char * name, const char * value)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf",
-#if 0
-            @"usf", @"miniusf",
-#endif
-            nil];
+	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf", @"usf", @"miniusf", nil];
 }
 
 + (NSArray *)mimeTypes
