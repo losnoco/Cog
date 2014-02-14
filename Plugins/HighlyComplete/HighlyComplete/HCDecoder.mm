@@ -36,6 +36,8 @@
 
 #import "PlaylistController.h"
 
+#include <signal.h>
+
 // #define USF_LOG
 
 @interface psf_file_container : NSObject {
@@ -175,6 +177,13 @@ static psf_file_callbacks source_callbacks =
     psx_init();
     sega_init();
     qsound_init();
+    
+    // BAH
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGPIPE, &sa, NULL);
 }
 
 - (NSDictionary *)metadata
