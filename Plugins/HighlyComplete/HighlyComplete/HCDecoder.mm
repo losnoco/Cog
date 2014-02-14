@@ -899,6 +899,8 @@ struct usf_loader_state
     uint32_t samplerate;
     uint32_t pairsleft;
     
+    BOOL error_occurred;
+    
     usf_loader_state()
     :
 #ifdef USF_LOG
@@ -906,7 +908,8 @@ struct usf_loader_state
 #endif
     task(nil), pipe_stdin(nil), pipe_stdout(nil),
     enablecompare(0), enablefifofull(0),
-    samplerate(0), pairsleft(0) { }
+    samplerate(0), pairsleft(0),
+    error_occurred(NO) { }
     
     ~usf_loader_state()
     {
@@ -915,7 +918,20 @@ struct usf_loader_state
     
     void fwrite( const void * buf, ssize_t size, ssize_t count )
     {
-        [file_stdin writeData:[NSData dataWithBytes:buf length:size * count]];
+        if ( error_occurred )
+            return;
+        
+        @try
+        {
+            [file_stdin writeData:[NSData dataWithBytes:buf length:size * count]];
+        }
+        @catch (NSException *)
+        {
+            error_occurred = YES;
+            close();
+            return;
+        }
+
 #ifdef USF_LOG
         if ( log )
         {
@@ -927,7 +943,20 @@ struct usf_loader_state
     
     ssize_t fread( void * buf, ssize_t size, ssize_t count )
     {
-        NSData * data = [file_stdout readDataOfLength:size * count];
+        if ( error_occurred )
+            return 0;
+        
+        NSData * data = nil;
+        @try
+        {
+            data = [file_stdout readDataOfLength:size * count];
+        }
+        @catch (NSException *)
+        {
+            error_occurred = YES;
+            close();
+            return 0;
+        }
         if ( data && [data length] )
         {
             memcpy( buf, [data bytes], [data length] );
@@ -960,7 +989,16 @@ struct usf_loader_state
         file_stdin = [pipe_stdin fileHandleForWriting];
         file_stdout = [pipe_stdout fileHandleForReading];
         
-        [task launch];
+        @try
+        {
+            [task launch];
+        }
+        @catch (NSException *)
+        {
+            error_occurred = YES;
+            close();
+            return;
+        }
         
         fwrite( &enablecompare, sizeof(enablecompare), 1 );
         fwrite( &enablefifofull, sizeof(enablefifofull), 1 );
@@ -971,8 +1009,11 @@ struct usf_loader_state
     {
         if (task != nil)
         {
-            uint32_t zero = 0;
-            fwrite( &zero, sizeof(uint32_t), 1 );
+            if ( !error_occurred )
+            {
+                uint32_t zero = 0;
+                fwrite( &zero, sizeof(uint32_t), 1 );
+            }
             [task release];
             task = nil;
             [pipe_stdin release];
@@ -997,7 +1038,7 @@ struct usf_loader_state
         if ( reserved_size ) fwrite( reserved, 1, reserved_size );
     }
     
-    BOOL read_samples( int16_t * out, uint32_t out_pairs )
+    BOOL read_samples( int16_t * out, ssize_t out_pairs )
     {
         if ( !donewriting )
         {
@@ -1046,6 +1087,9 @@ static int usf_loader(void * context, const uint8_t * exe, size_t exe_size,
     if ( !uUsf->opened() ) uUsf->open();
     
     uUsf->write_reserved( reserved, (uint32_t) reserved_size );
+
+    if ( uUsf->error_occurred )
+        return -1;
     
     return 0;
 }
@@ -1634,11 +1678,11 @@ static int usf_info(void * context, const char * name, const char * value)
     else if ( type == 0x21 )
     {
         struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
-        int16_t * temp = (int16_t *) malloc( sizeof(int16_t) * 4096 );
+        int16_t temp[2048];
         do
         {
-            uint32_t howmany = (uint32_t)(frame - framesRead) * 2 * sizeof(int16_t);
-            if (howmany > 2048) howmany = 2048;
+            ssize_t howmany = frame - framesRead;
+            if (howmany > 1024) howmany = 1024;
             if (!uUsf->read_samples( temp, howmany )) return -1;
             framesRead += howmany;
         } while (framesRead < frame);
