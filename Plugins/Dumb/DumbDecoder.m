@@ -19,6 +19,8 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
+#import "PlaylistController.h"
+
 @implementation DumbDecoder
 
 struct MEMANDFREEFILE
@@ -260,7 +262,7 @@ int callbackLoop(void *data)
             ((float *)buf)[(total * 2) + i] = (float)sampptr[0][i] * scale;
         }
     
-        if ( loops >= 2 ) {
+        if ( !IsRepeatOneSet() && loops >= 2 ) {
             float * sampleBuf = ( float * ) buf + total * 2;
             long fadeEnd = fadeRemain - rendered;
             if ( fadeEnd < 0 )

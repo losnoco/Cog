@@ -8,6 +8,8 @@
 
 #import "HVLDecoder.h"
 
+#import "PlaylistController.h"
+
 @implementation HVLDecoder
 
 void oneTimeInit()
@@ -99,7 +101,9 @@ void oneTimeInit()
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-    if (framesRead >= totalFrames)
+    BOOL repeatone = IsRepeatOneSet();
+    
+    if (!repeatone && framesRead >= totalFrames)
         return 0;
     
     int total = 0;
@@ -128,7 +132,7 @@ void oneTimeInit()
         framesInBuffer = 44100 / 50;
     }
 
-    if ( framesRead + total > framesLength ) {
+    if ( !repeatone && framesRead + total > framesLength ) {
         long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
         long fadeEnd = (framesRead + total) > totalFrames ? totalFrames : (framesRead + total);
         long fadePos;

@@ -14,6 +14,8 @@
 
 #import <midi_processing/midi_processor.h>
 
+#import "PlaylistController.h"
+
 @implementation MIDIDecoder
 
 + (NSInteger)testExtensions:(NSString *)pathMinusExtension extensions:(NSArray *)extensionsToTest
@@ -148,7 +150,9 @@
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-    if ( framesRead >= totalFrames )
+    BOOL repeatone = IsRepeatOneSet();
+    
+    if ( !repeatone && framesRead >= totalFrames )
         return 0;
     
     if ( !soundFontsAssigned ) {
@@ -163,7 +167,7 @@
     
     player->Play( (float *) buf, frames );
     
-    if ( framesRead + frames > framesLength ) {
+    if ( !repeatone && framesRead + frames > framesLength ) {
         if ( framesFade ) {
             long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
             long fadeEnd = (framesRead + frames > totalFrames) ? totalFrames : (framesRead + frames);

@@ -96,6 +96,7 @@
 		83527EE918243029002F170E /* mo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mo3.h; path = mo3/mo3.h; sourceTree = "<group>"; };
 		83527EEA18243069002F170E /* mo3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mo3.c; path = mo3/mo3.c; sourceTree = "<group>"; };
 		8384912B1808155E00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
+		83FAF8A418ADD45600057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Dumb.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dumb.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -150,6 +151,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				83FAF8A418ADD45600057CAF /* PlaylistController.h */,
 				8337AAE317FFA0000081AFF8 /* archive */,
 				8384912B1808155E00E7332D /* Logging.h */,
 				8335FF6517FF6FD9002D8DD2 /* DumbContainer.h */,

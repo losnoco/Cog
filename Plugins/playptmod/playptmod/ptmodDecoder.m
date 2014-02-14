@@ -31,10 +31,21 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
     unsigned long length_total = 0;
     unsigned long length_saved;
     
-    while ( playptmod_LoopCounter( ptmod ) < 1 )
+    const long length_safety = 44100 * 60 * 30;
+    
+    while ( playptmod_LoopCounter( ptmod ) < 1 && length_total < length_safety )
     {
         playptmod_Render( ptmod, NULL, 512 );
         length_total += 512;
+    }
+    
+    if ( playptmod_LoopCounter( ptmod ) < 1 )
+    {
+        *loop_length = 0;
+        *intro_length = 44100 * 60 * 3;
+        playptmod_Stop( ptmod );
+        playptmod_Free( ptmod );
+        return YES;
     }
     
     length_saved = length_total;

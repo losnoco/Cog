@@ -22,6 +22,11 @@ typedef enum {
 	RepeatAll
 } RepeatMode;
 
+static BOOL IsRepeatOneSet()
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatOne;
+}
+
 typedef enum {
 	ShuffleOff = 0,
 	ShuffleAlbums,

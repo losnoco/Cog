@@ -99,6 +99,7 @@
 		83C35701180EDB74007E9DF0 /* MIDIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIContainer.h; sourceTree = "<group>"; };
 		83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIMetadataReader.mm; sourceTree = "<group>"; };
 		83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIMetadataReader.h; sourceTree = "<group>"; };
+		83FAF8A618ADD60100057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +163,7 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				83FAF8A618ADD60100057CAF /* PlaylistController.h */,
 				83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */,
 				83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */,
 				83C35700180EDB74007E9DF0 /* MIDIContainer.mm */,

@@ -10,6 +10,8 @@
 
 #import "Logging.h"
 
+#import "PlaylistController.h"
+
 @implementation GameDecoder
 
 gme_err_t readCallback( void* data, void* out, long count )
@@ -103,8 +105,6 @@ gme_err_t readCallback( void* data, void* out, long count )
 		return NO;
 	}
     
-    gme_set_fade( emu, length, 8000 );
-    
     length += 8000;
     
 
@@ -134,6 +134,11 @@ gme_err_t readCallback( void* data, void* out, long count )
 	if (gme_track_ended(emu)) {
 		return 0;
 	}
+    
+    if ( IsRepeatOneSet() )
+        gme_set_fade( emu, INT_MAX, 0 );
+    else
+        gme_set_fade( emu, length - 8000, 8000 );
 	
 	gme_play(emu, numSamples, (short int *)buf);
 	

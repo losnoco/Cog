@@ -181,6 +181,7 @@
 		83D4481B18ACA5AD000F443A /* lazyusf */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = lazyusf; path = ../../ThirdParty/lazyusf/lazyusf; sourceTree = "<group>"; };
 		83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = "<group>"; };
 		83DE0CBF180B27C200269051 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		83FAF8A318ADD27F00057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -283,6 +284,7 @@
 		8360EEED17F92AC8005208A4 /* HighlyComplete */ = {
 			isa = PBXGroup;
 			children = (
+				83FAF8A318ADD27F00057CAF /* PlaylistController.h */,
 				8324C584181513A10046F78F /* circular_buffer.h */,
 				834379A717F9818400584396 /* HCDecoder.mm */,
 				8343786117F944BD00584396 /* hebios.h */,

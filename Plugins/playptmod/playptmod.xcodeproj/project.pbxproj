@@ -58,6 +58,7 @@
 		83A0F4DD1816D09000119DB4 /* ptmodDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ptmodDecoder.m; sourceTree = "<group>"; };
 		83A0F4DF1816D0AF00119DB4 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		83A0F4E01816D13000119DB4 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
+		83FAF8A718ADD65200057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +114,7 @@
 		83A0F4781816CE5E00119DB4 /* playptmod */ = {
 			isa = PBXGroup;
 			children = (
+				83FAF8A718ADD65200057CAF /* PlaylistController.h */,
 				83A0F4E01816D13000119DB4 /* Logging.h */,
 				83A0F4DF1816D0AF00119DB4 /* Plugin.h */,
 				83A0F4DC1816D09000119DB4 /* ptmodDecoder.h */,

@@ -34,6 +34,8 @@
 
 #include <dlfcn.h>
 
+#import "PlaylistController.h"
+
 // #define USF_LOG
 
 @interface psf_file_container : NSObject {
@@ -1428,6 +1430,8 @@ static int usf_info(void * context, const char * name, const char * value)
     long frames_left = totalFrames - framesRead - silence_test_buffer.data_available() / 2;
     if ( partial ) frames_left = 1024;
     long free_space = silence_test_buffer.free_space() / 2;
+    if ( IsRepeatOneSet() )
+        frames_left = free_space;
     if ( free_space > frames_left )
         free_space = frames_left;
     while ( free_space > 0 )
@@ -1550,14 +1554,14 @@ static int usf_info(void * context, const char * name, const char * value)
     unsigned long written = silence_test_buffer.data_available() / 2;
     if ( written > frames )
         written = frames;
-    if ( written > totalFrames - framesRead )
+    if ( !IsRepeatOneSet() && written > totalFrames - framesRead )
         written = totalFrames - framesRead;
     if ( written == 0 )
         return 0;
 
     silence_test_buffer.read( (int16_t *) buf, written * 2 );
 
-    if ( framesRead + written > framesLength ) {
+    if ( !IsRepeatOneSet() && framesRead + written > framesLength ) {
         long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
         long fadeEnd = framesRead + written;
         long fadeTotal = totalFrames - framesLength;
