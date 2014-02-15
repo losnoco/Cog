@@ -21,7 +21,8 @@
 		8360EF6E17F92E86005208A4 /* HighlyExperimental.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EF4417F92C92005208A4 /* HighlyExperimental.framework */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
 		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
-		83D4481E18ACA5C8000F443A /* lazyusf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D4481B18ACA5AD000F443A /* lazyusf */; };
+		83C8B6FB18AF58FA0071B040 /* lazyusf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C8B65618AF57770071B040 /* lazyusf.framework */; };
+		83C8B6FC18AF59080071B040 /* lazyusf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83C8B65618AF57770071B040 /* lazyusf.framework */; };
 		83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
 		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
 		83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0CBF180B27C200269051 /* libz.dylib */; };
@@ -113,6 +114,13 @@
 			remoteGlobalIDString = 83848FB71807623F00E7332D;
 			remoteInfo = SSEQPlayer;
 		};
+		83C8B65518AF57770071B040 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83C8B65018AF57770071B040 /* lazyusf.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83C8B62218AF57770071B040;
+			remoteInfo = lazyusf;
+		};
 		83DE0C39180A9BD500269051 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */;
@@ -136,7 +144,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				83D4481E18ACA5C8000F443A /* lazyusf in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +153,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83C8B6FC18AF59080071B040 /* lazyusf.framework in CopyFiles */,
 				83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */,
 				8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */,
 				834379A617F97EB000584396 /* HighlyAdvanced.framework in CopyFiles */,
@@ -178,7 +186,7 @@
 		8360EEF317F92AC8005208A4 /* HighlyComplete-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HighlyComplete-Prefix.pch"; sourceTree = "<group>"; };
 		8360EF3E17F92C91005208A4 /* HighlyExperimental.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyExperimental.xcodeproj; path = ../../Frameworks/HighlyExperimental/HighlyExperimental.xcodeproj; sourceTree = "<group>"; };
 		83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SSEQPlayer.xcodeproj; path = ../../Frameworks/SSEQPlayer/SSEQPlayer.xcodeproj; sourceTree = "<group>"; };
-		83D4481B18ACA5AD000F443A /* lazyusf */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = lazyusf; path = ../../ThirdParty/lazyusf/lazyusf; sourceTree = "<group>"; };
+		83C8B65018AF57770071B040 /* lazyusf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lazyusf.xcodeproj; path = ../../Frameworks/lazyusf/lazyusf.xcodeproj; sourceTree = "<group>"; };
 		83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = "<group>"; };
 		83DE0CBF180B27C200269051 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		83FAF8A318ADD27F00057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
@@ -189,6 +197,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83C8B6FB18AF58FA0071B040 /* lazyusf.framework in Frameworks */,
 				83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */,
 				83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */,
 				8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */,
@@ -239,7 +248,6 @@
 		8360EEDB17F92AC8005208A4 = {
 			isa = PBXGroup;
 			children = (
-				83D4481D18ACA5B1000F443A /* External */,
 				8360EEED17F92AC8005208A4 /* HighlyComplete */,
 				8360EEE617F92AC8005208A4 /* Frameworks */,
 				8360EEE517F92AC8005208A4 /* Products */,
@@ -267,6 +275,7 @@
 				8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */,
 				83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */,
 				83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */,
+				83C8B65018AF57770071B040 /* lazyusf.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -321,12 +330,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		83D4481D18ACA5B1000F443A /* External */ = {
+		83C8B65118AF57770071B040 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				83D4481B18ACA5AD000F443A /* lazyusf */,
+				83C8B65618AF57770071B040 /* lazyusf.framework */,
 			);
-			name = External;
+			name = Products;
 			sourceTree = "<group>";
 		};
 		83DE0C35180A9BD400269051 /* Products */ = {
@@ -403,6 +412,10 @@
 					ProjectRef = 8343789C17F9658E00584396 /* HighlyTheoretical.xcodeproj */;
 				},
 				{
+					ProductGroup = 83C8B65118AF57770071B040 /* Products */;
+					ProjectRef = 83C8B65018AF57770071B040 /* lazyusf.xcodeproj */;
+				},
+				{
 					ProductGroup = 8343784B17F93CB500584396 /* Products */;
 					ProjectRef = 8343784A17F93CB500584396 /* psflib.xcodeproj */;
 				},
@@ -463,6 +476,13 @@
 			fileType = wrapper.framework;
 			path = SSEQPlayer.framework;
 			remoteRef = 83848FEB1807624000E7332D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83C8B65618AF57770071B040 /* lazyusf.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = lazyusf.framework;
+			remoteRef = 83C8B65518AF57770071B040 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83DE0C3A180A9BD500269051 /* vio2sf.framework */ = {

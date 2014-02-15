@@ -30,6 +30,8 @@
 
 #import <vio2sf/state.h>
 
+#import <lazyusf/usf.h>
+
 #include <zlib.h>
 
 #include <dlfcn.h>
@@ -896,197 +898,10 @@ static int twosf_info(void * context, const char * name, const char * value)
 
 struct usf_loader_state
 {
-#ifdef USF_LOG
-    FILE * log;
-#endif
-    NSTask * task;
-    NSPipe * pipe_stdin;
-    NSPipe * pipe_stdout;
-    NSFileHandle * file_stdin;
-    NSFileHandle * file_stdout;
-    bool donewriting;
     uint32_t enablecompare;
     uint32_t enablefifofull;
-    uint32_t samplerate;
-    uint32_t pairsleft;
-    
-    BOOL error_occurred;
-    
-    usf_loader_state()
-    :
-#ifdef USF_LOG
-    log(NULL),
-#endif
-    task(nil), pipe_stdin(nil), pipe_stdout(nil),
-    enablecompare(0), enablefifofull(0),
-    samplerate(0), pairsleft(0),
-    error_occurred(NO) { }
-    
-    ~usf_loader_state()
-    {
-        close();
-    }
-    
-    void fwrite( const void * buf, ssize_t size, ssize_t count )
-    {
-        if ( error_occurred )
-            return;
-        
-        @try
-        {
-            [file_stdin writeData:[NSData dataWithBytes:buf length:size * count]];
-        }
-        @catch (NSException *)
-        {
-            error_occurred = YES;
-            close();
-            return;
-        }
 
-#ifdef USF_LOG
-        if ( log )
-        {
-            ::fwrite( buf, size, count, log );
-            fflush( log );
-        }
-#endif
-    }
-    
-    ssize_t fread( void * buf, ssize_t size, ssize_t count )
-    {
-        if ( error_occurred )
-            return 0;
-        
-        NSData * data = nil;
-        @try
-        {
-            data = [file_stdout readDataOfLength:size * count];
-        }
-        @catch (NSException *)
-        {
-            error_occurred = YES;
-            close();
-            return 0;
-        }
-        if ( data && [data length] )
-        {
-            memcpy( buf, [data bytes], [data length] );
-            return [data length] / size;
-        }
-        return 0;
-    }
-    
-    void open()
-    {
-        close();
-
-#ifdef USF_LOG
-        log = fopen("/tmp/lazyusf_transaction", "w");
-#endif
-        Dl_info info;
-        dladdr( (void*) &twosf_info, &info );
-        
-        NSString * base_path = [[NSString stringWithUTF8String:info.dli_fname] stringByDeletingLastPathComponent];
-
-        task = [[NSTask alloc] init];
-        [task setLaunchPath:[base_path stringByAppendingPathComponent:@"lazyusf"]];
-        
-        pipe_stdin = [[NSPipe alloc] init];
-        pipe_stdout = [[NSPipe alloc] init];
-        
-        [task setStandardInput:pipe_stdin];
-        [task setStandardOutput:pipe_stdout];
-        
-        file_stdin = [pipe_stdin fileHandleForWriting];
-        file_stdout = [pipe_stdout fileHandleForReading];
-        
-        @try
-        {
-            [task launch];
-        }
-        @catch (NSException *)
-        {
-            error_occurred = YES;
-            close();
-            return;
-        }
-        
-        fwrite( &enablecompare, sizeof(enablecompare), 1 );
-        fwrite( &enablefifofull, sizeof(enablefifofull), 1 );
-        donewriting = false;
-    }
-    
-    void close()
-    {
-        if (task != nil)
-        {
-            if ( !error_occurred )
-            {
-                uint32_t zero = 0;
-                fwrite( &zero, sizeof(uint32_t), 1 );
-            }
-            [task release];
-            task = nil;
-            [pipe_stdin release];
-            pipe_stdin = nil;
-            [pipe_stdout release];
-            pipe_stdout = nil;
-        }
-#ifdef USF_LOG
-        if (log) fclose(log);
-        log = NULL;
-#endif
-    }
-    
-    bool opened()
-    {
-        return task != nil;
-    }
-    
-    void write_reserved( const uint8_t * reserved, uint32_t reserved_size )
-    {
-        fwrite( &reserved_size, sizeof(reserved_size), 1 );
-        if ( reserved_size ) fwrite( reserved, 1, reserved_size );
-    }
-    
-    BOOL read_samples( int16_t * out, ssize_t out_pairs )
-    {
-        if ( !donewriting )
-        {
-            write_reserved( NULL, 0 );
-#ifdef USF_LOG
-            fclose( log ); log = NULL;
-#endif
-            donewriting = true;
-        }
-        while ( out_pairs )
-        {
-            if ( !pairsleft )
-            {
-                if (fread( &samplerate, sizeof(samplerate), 1 ) < 1) return NO;
-                if (fread( &pairsleft, sizeof(pairsleft), 1 ) < 1) return NO;
-                pairsleft >>= 1;
-            }
-            if ( pairsleft )
-            {
-                if ( pairsleft > out_pairs )
-                {
-                    if (fread( out, sizeof(int16_t) * 2, out_pairs ) < out_pairs) return NO;
-                    pairsleft -= out_pairs;
-                    return YES;
-                }
-            
-                if (fread( out, sizeof(int16_t) * 2, pairsleft ) < pairsleft) return NO;
-                out += pairsleft * 2;
-                out_pairs -= pairsleft;
-                pairsleft = 0;
-                
-                uint32_t one = 1;
-                fwrite( &one, sizeof(one), 1 );
-            }
-        }
-        return YES;
-    }
+    void * emu_state;
 };
 
 static int usf_loader(void * context, const uint8_t * exe, size_t exe_size,
@@ -1094,15 +909,8 @@ static int usf_loader(void * context, const uint8_t * exe, size_t exe_size,
 {
     struct usf_loader_state * uUsf = ( struct usf_loader_state * ) context;
     if ( exe && exe_size > 0 ) return -1;
-    
-    if ( !uUsf->opened() ) uUsf->open();
-    
-    uUsf->write_reserved( reserved, (uint32_t) reserved_size );
 
-    if ( uUsf->error_occurred )
-        return -1;
-    
-    return 0;
+    return usf_upload_section( uUsf->emu_state, reserved, reserved_size );
 }
 
 static int usf_info(void * context, const char * name, const char * value)
@@ -1189,12 +997,20 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x21 )
     {
-        struct usf_loader_state * uUsf = new usf_loader_state;
+        struct usf_loader_state state;
+        memset( &state, 0, sizeof(state) );
+
+        state.emu_state = malloc( get_usf_state_size() );
         
-        emulatorCore = (uint8_t *) uUsf;
+        usf_clear( state.emu_state );
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, uUsf, usf_info, uUsf ) <= 0 )
+        emulatorCore = ( uint8_t * ) state.emu_state;
+        
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, &state, usf_info, &state ) <= 0 )
             return NO;
+        
+        usf_set_compare( state.emu_state, state.enablecompare );
+        usf_set_fifo_full( state.emu_state, state.enablefifofull );
     }
     else if ( type == 0x22 )
     {
@@ -1474,12 +1290,11 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x21 )
     {
-        struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
+        int32_t samplerate;
+        
+        usf_render( emulatorCore, (int16_t*) buf, frames, &samplerate );
 
-        if ( !uUsf->read_samples( (int16_t *) buf, frames ) )
-            return 0;
-
-        sampleRate = uUsf->samplerate;
+        sampleRate = samplerate;
     }
     else if ( type == 0x22 )
     {
@@ -1595,8 +1410,8 @@ static int usf_info(void * context, const char * name, const char * value)
 {
     if ( emulatorCore ) {
         if ( type == 0x21 ) {
-            struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
-            delete uUsf;
+            usf_shutdown( emulatorCore );
+            free( emulatorCore );
         } else if ( type == 0x22 ) {
             GBASystem * system = ( GBASystem * ) emulatorCore;
             CPUCleanUp( system );
@@ -1690,13 +1505,12 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x21 )
     {
-        struct usf_loader_state * uUsf = ( struct usf_loader_state * ) emulatorCore;
         int16_t temp[2048];
         do
         {
             ssize_t howmany = frame - framesRead;
             if (howmany > 1024) howmany = 1024;
-            if (!uUsf->read_samples( temp, howmany )) return -1;
+            usf_render(emulatorCore, temp, howmany, NULL);
             framesRead += howmany;
         } while (framesRead < frame);
     }
