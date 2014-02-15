@@ -8,27 +8,27 @@
 
 /* Begin PBXBuildFile section */
 		83C8B6AB18AF58080071B040 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B65918AF58080071B040 /* audio.c */; };
-		83C8B6AC18AF58080071B040 /* audio.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65A18AF58080071B040 /* audio.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		83C8B6AD18AF58080071B040 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65B18AF58080071B040 /* config.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6AC18AF58080071B040 /* audio.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65A18AF58080071B040 /* audio.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83C8B6AD18AF58080071B040 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65B18AF58080071B040 /* config.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6AE18AF58080071B040 /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B65C18AF58080071B040 /* cpu.c */; };
-		83C8B6AF18AF58080071B040 /* cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65D18AF58080071B040 /* cpu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6AF18AF58080071B040 /* cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65D18AF58080071B040 /* cpu.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6B018AF58080071B040 /* dma.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B65E18AF58080071B040 /* dma.c */; };
-		83C8B6B118AF58080071B040 /* dma.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65F18AF58080071B040 /* dma.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6B118AF58080071B040 /* dma.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65F18AF58080071B040 /* dma.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6B218AF58080071B040 /* exception.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B66018AF58080071B040 /* exception.c */; };
-		83C8B6B318AF58080071B040 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66118AF58080071B040 /* exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6B318AF58080071B040 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66118AF58080071B040 /* exception.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6B418AF58080071B040 /* interpreter_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B66218AF58080071B040 /* interpreter_cpu.c */; };
-		83C8B6B518AF58080071B040 /* interpreter_cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66318AF58080071B040 /* interpreter_cpu.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6B518AF58080071B040 /* interpreter_cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66318AF58080071B040 /* interpreter_cpu.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6B618AF58080071B040 /* interpreter_ops.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B66418AF58080071B040 /* interpreter_ops.c */; };
-		83C8B6B718AF58080071B040 /* interpreter_ops.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66518AF58080071B040 /* interpreter_ops.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6B718AF58080071B040 /* interpreter_ops.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66518AF58080071B040 /* interpreter_ops.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6B818AF58080071B040 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B66618AF58080071B040 /* main.c */; };
-		83C8B6B918AF58080071B040 /* main.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66718AF58080071B040 /* main.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6B918AF58080071B040 /* main.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66718AF58080071B040 /* main.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6BA18AF58080071B040 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B66818AF58080071B040 /* memory.c */; };
-		83C8B6BB18AF58080071B040 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66918AF58080071B040 /* memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		83C8B6BC18AF58080071B040 /* opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66A18AF58080071B040 /* opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6BB18AF58080071B040 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66918AF58080071B040 /* memory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83C8B6BC18AF58080071B040 /* opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66A18AF58080071B040 /* opcode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6BD18AF58080071B040 /* pif.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B66B18AF58080071B040 /* pif.c */; };
-		83C8B6BE18AF58080071B040 /* pif.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66C18AF58080071B040 /* pif.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6BE18AF58080071B040 /* pif.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66C18AF58080071B040 /* pif.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6BF18AF58080071B040 /* registers.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B66D18AF58080071B040 /* registers.c */; };
-		83C8B6C018AF58080071B040 /* registers.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66E18AF58080071B040 /* registers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6C018AF58080071B040 /* registers.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B66E18AF58080071B040 /* registers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6C118AF58080071B040 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B67018AF58080071B040 /* config.h */; };
 		83C8B6C218AF58080071B040 /* execute.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B67118AF58080071B040 /* execute.h */; };
 		83C8B6C318AF58080071B040 /* rsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B67218AF58080071B040 /* rsp.c */; };
@@ -80,10 +80,10 @@
 		83C8B6F118AF58090071B040 /* vsubc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A118AF58080071B040 /* vsubc.h */; };
 		83C8B6F218AF58090071B040 /* vu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A218AF58080071B040 /* vu.h */; };
 		83C8B6F318AF58090071B040 /* vxor.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A318AF58080071B040 /* vxor.h */; };
-		83C8B6F418AF58090071B040 /* rsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A418AF58080071B040 /* rsp.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6F418AF58090071B040 /* rsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A418AF58080071B040 /* rsp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6F518AF58090071B040 /* tlb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B6A518AF58080071B040 /* tlb.c */; };
-		83C8B6F618AF58090071B040 /* tlb.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A618AF58080071B040 /* tlb.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		83C8B6F718AF58090071B040 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A718AF58080071B040 /* types.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83C8B6F618AF58090071B040 /* tlb.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A618AF58080071B040 /* tlb.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83C8B6F718AF58090071B040 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A718AF58080071B040 /* types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C8B6F818AF58090071B040 /* usf_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A818AF58080071B040 /* usf_internal.h */; };
 		83C8B6F918AF58090071B040 /* usf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B6A918AF58080071B040 /* usf.c */; };
 		83C8B6FA18AF58090071B040 /* usf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6AA18AF58080071B040 /* usf.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -337,7 +337,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83C8B6FA18AF58090071B040 /* usf.h in Headers */,
 				83C8B6AC18AF58080071B040 /* audio.h in Headers */,
 				83C8B6B118AF58080071B040 /* dma.h in Headers */,
 				83C8B6AD18AF58080071B040 /* config.h in Headers */,
@@ -353,6 +352,7 @@
 				83C8B6B718AF58080071B040 /* interpreter_ops.h in Headers */,
 				83C8B6B318AF58080071B040 /* exception.h in Headers */,
 				83C8B6AF18AF58080071B040 /* cpu.h in Headers */,
+				83C8B6FA18AF58090071B040 /* usf.h in Headers */,
 				83C8B6F118AF58090071B040 /* vsubc.h in Headers */,
 				83C8B6F018AF58090071B040 /* vsub.h in Headers */,
 				83C8B6E018AF58080071B040 /* vmudn.h in Headers */,

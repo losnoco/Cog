@@ -4,7 +4,6 @@
 struct usf_state_helper
 {
     ssize_t offset_to_structure;
-    ssize_t offset_to_memchunk;
 };
 
 typedef uint32_t RCPREG;
@@ -100,6 +99,5 @@ struct usf_state
 #define USF_STATE_HELPER ((usf_state_helper_t *)(state))
 
 #define USF_STATE ((usf_state_t *)(((uint8_t *)(state))+((usf_state_helper_t *)(state))->offset_to_structure))
-#define USF_CHUNK (((uint8_t*)(state))+((usf_state_helper_t *)(state))->offset_to_memchunk)
 
 #endif

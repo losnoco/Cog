@@ -15,18 +15,15 @@
 
 ssize_t get_usf_state_size()
 {
-    return sizeof(usf_state_t) + 8192 + 8192 + 0x100000 * sizeof(uintptr_t) + 0x1D000 + 0x800000;
+    return sizeof(usf_state_t) + 8192;
 }
 
 void usf_clear(void * state)
 {
-    ssize_t offset, offset_memchunk;
+    ssize_t offset;
     memset(state, 0, get_usf_state_size());
     offset = 4096 - (((uintptr_t)state) & 4095);
     USF_STATE_HELPER->offset_to_structure = offset;
-    
-    offset_memchunk = ( offset + sizeof(usf_state_t) + 4095 ) & ~4095;
-    USF_STATE_HELPER->offset_to_memchunk = offset + offset_memchunk;
     
 	//USF_STATE->savestatespace = NULL;
 	//USF_STATE->cpu_running = 0;
