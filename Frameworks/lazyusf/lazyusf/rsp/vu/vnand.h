@@ -25,7 +25,7 @@ INLINE void do_nand(usf_state_t * state, short* VD, short* VS, short* VT)
 
 static void VNAND(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    short ST[N];
+    ALIGNED short ST[N];
 
     SHUFFLE_VECTOR(ST, state->VR[vt], e);
     do_nand(state, state->VR[vd], state->VR[vs], ST);

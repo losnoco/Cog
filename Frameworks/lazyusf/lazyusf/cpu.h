@@ -90,4 +90,6 @@ enum SaveType {
 	FlashRam
 };
 
+void StartEmulationFromSave ( usf_state_t * state, void * savestate );
+
 #endif

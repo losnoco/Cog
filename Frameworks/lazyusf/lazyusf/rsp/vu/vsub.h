@@ -29,7 +29,7 @@ INLINE static void clr_bi(usf_state_t * state, short* VD, short* VS, short* VT)
 
 static void VSUB(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    short ST[N];
+    ALIGNED short ST[N];
 
     SHUFFLE_VECTOR(ST, state->VR[vt], e);
     clr_bi(state, state->VR[vd], state->VR[vs], ST);

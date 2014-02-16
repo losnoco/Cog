@@ -7,7 +7,7 @@
 #include "usf_internal.h"
 
 void AddBuffer(usf_state_t *state, unsigned char *buf, unsigned int length) {
-	int32_t i, do_max;
+	unsigned int i, do_max;
     int16_t * sample_buffer = state->sample_buffer;
 	
 	if(!state->cpu_running)

@@ -15,7 +15,7 @@
 
 INLINE static void do_madm(usf_state_t * state, short* VD, short* VS, short* VT)
 {
-    uint32_t addend[N];
+    ALIGNED uint32_t addend[N];
     register int i;
 
     for (i = 0; i < N; i++)
@@ -36,7 +36,7 @@ INLINE static void do_madm(usf_state_t * state, short* VD, short* VS, short* VT)
 
 static void VMADM(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    short ST[N];
+    ALIGNED short ST[N];
 
     SHUFFLE_VECTOR(ST, state->VR[vt], e);
     do_madm(state, state->VR[vd], state->VR[vs], ST);

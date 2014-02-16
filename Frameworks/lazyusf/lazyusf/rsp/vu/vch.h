@@ -15,10 +15,10 @@
 
 INLINE static void do_ch(usf_state_t * state, short* VD, short* VS, short* VT)
 {
-    short eq[N], ge[N], le[N];
-    short sn[N];
-    short VC[N];
-    short diff[N];
+    ALIGNED short eq[N], ge[N], le[N];
+    ALIGNED short sn[N];
+    ALIGNED short VC[N];
+    ALIGNED short diff[N];
     register int i;
 
     for (i = 0; i < N; i++)
@@ -76,7 +76,7 @@ INLINE static void do_ch(usf_state_t * state, short* VD, short* VS, short* VT)
 
 static void VCH(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    short ST[N];
+    ALIGNED short ST[N];
 
     SHUFFLE_VECTOR(ST, state->VR[vt], e);
     do_ch(state, state->VR[vd], state->VR[vs], ST);

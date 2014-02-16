@@ -16,7 +16,7 @@
 #ifdef VU_EMULATE_SCALAR_ACCUMULATOR_READ
 static void VSAR(int vd, int vs, int vt, int e)
 {
-    short oldval[N];
+    ALIGNED short oldval[N];
     register int i;
 
     for (i = 0; i < N; i++)

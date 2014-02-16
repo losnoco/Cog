@@ -15,9 +15,9 @@
 
 INLINE static void do_cr(usf_state_t * state, short* VD, short* VS, short* VT)
 {
-    short ge[N], le[N], sn[N];
-    short VC[N];
-    short cmp[N];
+    ALIGNED short ge[N], le[N], sn[N];
+    ALIGNED short VC[N];
+    ALIGNED short cmp[N];
     register int i;
 
     for (i = 0; i < N; i++)
@@ -59,7 +59,7 @@ INLINE static void do_cr(usf_state_t * state, short* VD, short* VS, short* VT)
 
 static void VCR(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    short ST[N];
+    ALIGNED short ST[N];
 
     SHUFFLE_VECTOR(ST, state->VR[vt], e);
     do_cr(state, state->VR[vd], state->VR[vs], ST);

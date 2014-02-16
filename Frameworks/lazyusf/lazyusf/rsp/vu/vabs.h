@@ -21,9 +21,9 @@
  */
 INLINE static void do_abs(usf_state_t * state, short* VD, short* VS, short* VT)
 {
-    short neg[N], pos[N];
-    short nez[N], cch[N]; /* corner case hack -- abs(-32768) == +32767 */
-    short res[N];
+    ALIGNED short neg[N], pos[N];
+    ALIGNED short nez[N], cch[N]; /* corner case hack -- abs(-32768) == +32767 */
+    ALIGNED short res[N];
     register int i;
 
     vector_copy(res, VT);
@@ -69,7 +69,7 @@ INLINE static void do_abs(usf_state_t * state, short* VD, short* VS, short* VT)
 
 static void VABS(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    short ST[N];
+    ALIGNED short ST[N];
 
     SHUFFLE_VECTOR(ST, state->VR[vt], e);
     do_abs(state, state->VR[vd], state->VR[vs], ST);

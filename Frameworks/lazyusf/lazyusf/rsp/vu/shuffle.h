@@ -56,7 +56,7 @@ int sub_mask[16] = {
 
 INLINE static void SHUFFLE_VECTOR(short* VD, short* VT, const int e)
 {
-    short SV[8];
+    ALIGNED short SV[8];
     register int i, j;
 #if (0 == 0)
     j = sub_mask[e];

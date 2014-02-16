@@ -21,16 +21,16 @@ typedef struct usf_state_helper usf_state_helper_t;
 extern "C" {
 #endif
 
-ssize_t get_usf_state_size();
+size_t get_usf_state_size();
 
 void usf_clear(void * state);
 
 void usf_set_compare(void * state, int enable);
 void usf_set_fifo_full(void * state, int enable);
 
-int usf_upload_section(void * state, const uint8_t * data, ssize_t size);
+int usf_upload_section(void * state, const uint8_t * data, size_t size);
 
-void usf_render(void * state, int16_t * buffer, ssize_t count, int32_t * sample_rate);
+void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_rate);
 
 void usf_shutdown(void * state);
 

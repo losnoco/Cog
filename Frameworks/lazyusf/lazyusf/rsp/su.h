@@ -219,10 +219,10 @@ static void MT_CMD_CLOCK(usf_state_t * state, int rt)
 }
 static void MT_READ_ONLY(usf_state_t * state, int rt)
 {
-    char text[64];
+    //char text[64];
 
-    sprintf(text, "MTC0\nInvalid write attempt.\nstate->SR[%i] = 0x%08X", rt, state->SR[rt]);
-    message(text, 2);
+    //sprintf(text, "MTC0\nInvalid write attempt.\nstate->SR[%i] = 0x%08X", rt, state->SR[rt]);
+    //message(text, 2);
     return;
 }
 
@@ -1089,11 +1089,11 @@ static void LHV(usf_state_t * state, int vt, int element, int offset, int base)
 }
 NOINLINE static void LFV(usf_state_t * state, int vt, int element, int offset, int base)
 { /* Dummy implementation only:  Do any games execute this? */
-    char debugger[32];
+    /*char debugger[32];
 
     sprintf(debugger, "%s     $v%i[0x%X], 0x%03X($%i)", "LFV",
         vt, element, offset & 0xFFF, base);
-    message(debugger, 3);
+    message(debugger, 3);*/
     return;
 }
 static void SHV(usf_state_t * state, int vt, int element, int offset, int base)
@@ -1308,7 +1308,7 @@ INLINE static void SQV(usf_state_t * state, int vt, int element, int offset, int
     { /* happens with "Mia Hamm Soccer 64" */
         register int i;
 
-        for (i = 0; i < 16 - addr%16; i++)
+        for (i = 0; i < (int)(16 - addr%16); i++)
             state->DMEM[BES((addr + i) & 0xFFF)] = VR_B(vt, (e + i) & 0xF);
         return;
     }
@@ -1455,11 +1455,11 @@ INLINE static void LTV(usf_state_t * state, int vt, int element, int offset, int
 }
 NOINLINE static void SWV(usf_state_t * state, int vt, int element, int offset, int base)
 { /* Dummy implementation only:  Do any games execute this? */
-    char debugger[32];
+    /*char debugger[32];
 
     sprintf(debugger, "%s     $v%i[0x%X], 0x%03X($%i)", "SWV",
         vt, element, offset & 0xFFF, base);
-    message(debugger, 3);
+    message(debugger, 3);*/
     return;
 }
 INLINE static void STV(usf_state_t * state, int vt, int element, int offset, int base)

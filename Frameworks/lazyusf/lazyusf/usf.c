@@ -13,14 +13,14 @@
 
 #include "usf_internal.h"
 
-ssize_t get_usf_state_size()
+size_t get_usf_state_size()
 {
     return sizeof(usf_state_t) + 8192;
 }
 
 void usf_clear(void * state)
 {
-    ssize_t offset;
+    size_t offset;
     memset(state, 0, get_usf_state_size());
     offset = 4096 - (((uintptr_t)state) & 4095);
     USF_STATE_HELPER->offset_to_structure = offset;
@@ -85,7 +85,7 @@ static uint32_t get_le32( const void * _p )
     return p[0] + p[1] * 0x100 + p[2] * 0x10000 + p[3] * 0x1000000;
 }
 
-int usf_upload_section(void * state, const uint8_t * data, ssize_t size)
+int usf_upload_section(void * state, const uint8_t * data, size_t size)
 {
     uint32_t temp;
     
@@ -103,8 +103,8 @@ int usf_upload_section(void * state, const uint8_t * data, ssize_t size)
             start = get_le32( data ); data += 4; size -= 4;
 
 			while(len) {
-				int page = start >> 16;
-				int readLen = ( ((start + len) >> 16) > page) ? (((page + 1) << 16) - start) : len;
+				uint32_t page = start >> 16;
+				uint32_t readLen = ( ((start + len) >> 16) > page) ? (((page + 1) << 16) - start) : len;
 
 				if( USF_STATE->ROMPages[page] == 0 ) {
 					USF_STATE->ROMPages[page] = malloc(0x10000);
@@ -172,14 +172,14 @@ static void usf_startup(void * state)
 	StartEmulationFromSave(USF_STATE, USF_STATE->savestatespace);
 }
 
-void usf_render(void * state, int16_t * buffer, ssize_t count, int32_t * sample_rate)
+void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_rate)
 {
     if ( !USF_STATE->MemoryState )
         usf_startup( USF_STATE );
     
     if ( USF_STATE->samples_in_buffer )
     {
-        ssize_t do_max = USF_STATE->samples_in_buffer;
+        size_t do_max = USF_STATE->samples_in_buffer;
         if ( do_max > count )
             do_max = count;
         

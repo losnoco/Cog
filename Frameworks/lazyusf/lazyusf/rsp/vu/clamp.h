@@ -47,7 +47,7 @@ static INLINE void merge(short* VD, short* cmp, short* pass, short* fail)
     for (i = 0; i < N; i++)
         VD[i] = (cmp[i] != 0) ? pass[i] : fail[i];
 #else
-    short diff[N];
+    ALIGNED short diff[N];
 
     for (i = 0; i < N; i++)
         diff[i] = pass[i] - fail[i];
@@ -73,8 +73,8 @@ static INLINE void vector_copy(short* VD, short* VS)
 
 static INLINE void SIGNED_CLAMP_ADD(usf_state_t * state, short* VD, short* VS, short* VT)
 {
-    int32_t sum[N];
-    short hi[N], lo[N];
+    ALIGNED int32_t sum[N];
+    ALIGNED short hi[N], lo[N];
     register int i;
 
     for (i = 0; i < N; i++)
@@ -94,8 +94,8 @@ static INLINE void SIGNED_CLAMP_ADD(usf_state_t * state, short* VD, short* VS, s
 }
 static INLINE void SIGNED_CLAMP_SUB(usf_state_t * state, short* VD, short* VS, short* VT)
 {
-    int32_t dif[N];
-    short hi[N], lo[N];
+    ALIGNED int32_t dif[N];
+    ALIGNED short hi[N], lo[N];
     register int i;
 
     for (i = 0; i < N; i++)
@@ -115,7 +115,7 @@ static INLINE void SIGNED_CLAMP_SUB(usf_state_t * state, short* VD, short* VS, s
 }
 static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
 { /* typical sign-clamp of accumulator-mid (bits 31:16) */
-    short hi[N], lo[N];
+    ALIGNED short hi[N], lo[N];
     register int i;
 
     for (i = 0; i < N; i++)
@@ -225,8 +225,8 @@ static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
 
 static INLINE void UNSIGNED_CLAMP(usf_state_t * state, short* VD)
 { /* sign-zero hybrid clamp of accumulator-mid (bits 31:16) */
-    short cond[N];
-    short temp[N];
+    ALIGNED short cond[N];
+    ALIGNED short temp[N];
     register int i;
 
     SIGNED_CLAMP_AM(state, temp); /* no direct map in SSE, but closely based on this */
@@ -240,8 +240,8 @@ static INLINE void UNSIGNED_CLAMP(usf_state_t * state, short* VD)
 }
 static INLINE void SIGNED_CLAMP_AL(usf_state_t * state, short* VD)
 { /* sign-clamp accumulator-low (bits 15:0) */
-    short cond[N];
-    short temp[N];
+    ALIGNED short cond[N];
+    ALIGNED short temp[N];
     register int i;
 
     SIGNED_CLAMP_AM(state, temp); /* no direct map in SSE, but closely based on this */

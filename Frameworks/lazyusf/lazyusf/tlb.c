@@ -73,7 +73,7 @@ test=(BYTE *) VirtualAlloc( 0x10, 0x70000, MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 */
 
 void SetupTLB_Entry (usf_state_t * state, int Entry) {
-	uint32_t FastIndx;
+	int32_t FastIndx;
 
 
 	if (!state->tlb[Entry].EntryDefined) { return; }
@@ -157,7 +157,7 @@ uint32_t TranslateVaddr ( usf_state_t * state, uintptr_t * Addr) {
 }
 
 void WriteTLBEntry (usf_state_t * state, int32_t index) {
-	uint32_t FastIndx;
+	int32_t FastIndx;
 
 	FastIndx = index << 1;
 	if ((state->PROGRAM_COUNTER >= state->FastTlb[FastIndx].VSTART &&

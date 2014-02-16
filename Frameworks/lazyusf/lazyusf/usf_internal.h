@@ -3,7 +3,7 @@
 
 struct usf_state_helper
 {
-    ssize_t offset_to_structure;
+    size_t offset_to_structure;
 };
 
 typedef uint32_t RCPREG;
@@ -46,13 +46,13 @@ struct usf_state
     uint32_t enablecompare, enableFIFOfull;
     
     // buffering for rendered sample data
-    ssize_t sample_buffer_count;
+    size_t sample_buffer_count;
     int16_t * sample_buffer;
 
     // audio.c
     int32_t SampleRate;
     int16_t samplebuf[16384];
-    ssize_t samples_in_buffer;
+    size_t samples_in_buffer;
     
     // cpu.c
     uint32_t NextInstruction, JumpToLocation, AudioIntrReg;

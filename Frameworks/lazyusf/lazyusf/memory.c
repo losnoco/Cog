@@ -25,9 +25,7 @@
  */
 #include <stdint.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <sys/mman.h>
 
 #include "usf.h"
 #include "main.h"
@@ -41,6 +39,39 @@ uint8_t * PageROM(usf_state_t * state, uint32_t addr) {
 	return (state->ROMPages[addr/0x10000])?state->ROMPages[addr/0x10000]+(addr%0x10000):&state->EmptySpace;
 }
 
+void * large_alloc(size_t);
+void large_free(void *, size_t);
+
+#ifdef _WIN32
+#include <Windows.h>
+
+void * large_alloc(size_t size)
+{
+	return VirtualAlloc( NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE );
+}
+
+void large_free(void * p, size_t size)
+{
+	VirtualFree( p, size, MEM_RELEASE );
+}
+#else
+#include <sys/mman.h>
+
+#ifdef __APPLE__
+#define MAP_ANONYMOUS MAP_ANON
+#endif
+
+void * large_alloc(size_t size)
+{
+	return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+}
+
+void large_free(void * p, size_t size)
+{
+	munmap( p, size );
+}
+#endif
+
 int32_t Allocate_Memory ( void * state ) {
 	uint32_t i = 0;
 	//RdramSize = 0x800000;
@@ -51,7 +82,7 @@ int32_t Allocate_Memory ( void * state ) {
 
 	// the mmap technique works craptacular when the regions don't overlay
 
-	USF_STATE->MemChunk = mmap(NULL, 0x100000 * sizeof(uintptr_t) + 0x1D000 + USF_STATE->RdramSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, 0, 0);
+	USF_STATE->MemChunk = (uint8_t *) large_alloc( 0x100000 * sizeof(uintptr_t) + 0x1D000 + USF_STATE->RdramSize );
 
 	USF_STATE->TLB_Map = (uintptr_t*)USF_STATE->MemChunk;
 	if (USF_STATE->TLB_Map == NULL) {
@@ -60,7 +91,7 @@ int32_t Allocate_Memory ( void * state ) {
 
 	memset(USF_STATE->TLB_Map, 0, 0x100000 * sizeof(uintptr_t) + 0x10000);
 
-	USF_STATE->N64MEM = mmap((uintptr_t)USF_STATE->MemChunk + 0x100000 * sizeof(uintptr_t) + 0x10000, 0xD000 + USF_STATE->RdramSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | MAP_FIXED, 0, 0);
+	USF_STATE->N64MEM = USF_STATE->MemChunk + 0x100000 * sizeof(uintptr_t) + 0x10000;
 	if(USF_STATE->N64MEM == NULL) {
 		DisplayError("Failed to allocate N64MEM");
 		return 0;
@@ -68,7 +99,7 @@ int32_t Allocate_Memory ( void * state ) {
 	
 	//memset(state->N64MEM, 0, state->RdramSize);
 
-	USF_STATE->NOMEM = mmap((uintptr_t)USF_STATE->N64MEM + USF_STATE->RdramSize, 0xD000, PROT_NONE, MAP_PRIVATE | MAP_ANON | MAP_FIXED, 0, 0);
+	USF_STATE->NOMEM = USF_STATE->N64MEM + USF_STATE->RdramSize;
 	
 	if(USF_STATE->RdramSize == 0x400000)
 	{
@@ -98,7 +129,7 @@ int PreAllocate_Memory(usf_state_t * state) {
 	int i = 0;
 	
 	// Moved the savestate allocation here :)  (for better management later)
-	state->savestatespace = malloc(0x80275C);
+	state->savestatespace = (uint8_t *) malloc(0x80275C);
 	
 	if(state->savestatespace == 0)
 		return 0;
@@ -124,9 +155,7 @@ void Release_Memory ( usf_state_t * state ) {
 
 	state->MemoryState = 0;
 
-    if (state->MemChunk != 0) {munmap(state->MemChunk, 0x100000 * sizeof(uintptr_t) + 0x10000); state->MemChunk=0;}
-    if (state->N64MEM != 0) {munmap(state->N64MEM, state->RdramSize); state->N64MEM=0;}
-    if (state->NOMEM != 0) {munmap(state->NOMEM, 0xD000); state->NOMEM=0;}
+    if (state->MemChunk != 0) { large_free( state->MemChunk, 0x100000 * sizeof(uintptr_t) + 0x1D000 + USF_STATE->RdramSize ); state->MemChunk=0; }
 	
     if(state->savestatespace)
 		free(state->savestatespace);

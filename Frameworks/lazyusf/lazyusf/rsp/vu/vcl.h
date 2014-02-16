@@ -15,11 +15,11 @@
 
 INLINE static void do_cl(usf_state_t * state, short* VD, short* VS, short* VT)
 {
-    short eq[N], ge[N], le[N];
-    short gen[N], len[N], lz[N], uz[N], sn[N];
-    short diff[N];
-    short cmp[N];
-    unsigned short VB[N], VC[N];
+    ALIGNED short eq[N], ge[N], le[N];
+    ALIGNED short gen[N], len[N], lz[N], uz[N], sn[N];
+    ALIGNED short diff[N];
+    ALIGNED short cmp[N];
+    ALIGNED unsigned short VB[N], VC[N];
     register int i;
 
     for (i = 0; i < N; i++)
@@ -92,7 +92,7 @@ INLINE static void do_cl(usf_state_t * state, short* VD, short* VS, short* VT)
 
 static void VCL(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    short ST[N];
+    ALIGNED short ST[N];
 
     SHUFFLE_VECTOR(ST, state->VR[vt], e);
     do_cl(state, state->VR[vd], state->VR[vs], ST);

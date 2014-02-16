@@ -29,7 +29,7 @@ INLINE static void do_mudm(usf_state_t * state, short* VD, short* VS, short* VT)
 
 static void VMUDM(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    short ST[N];
+    ALIGNED short ST[N];
 
     SHUFFLE_VECTOR(ST, state->VR[vt], e);
     do_mudm(state, state->VR[vd], state->VR[vs], ST);
