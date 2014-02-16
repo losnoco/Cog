@@ -192,7 +192,7 @@ void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_r
         
         if ( USF_STATE->samples_in_buffer )
         {
-            memmove( USF_STATE->samplebuf, USF_STATE->samplebuf + do_max, sizeof(int16_t) * 2 * USF_STATE->samples_in_buffer );
+            memmove( USF_STATE->samplebuf, USF_STATE->samplebuf + do_max * 2, sizeof(int16_t) * 2 * USF_STATE->samples_in_buffer );
             return;
         }
         
