@@ -73,7 +73,7 @@ void large_free(void * p, size_t size)
 #endif
 
 int32_t Allocate_Memory ( void * state ) {
-	uint32_t i = 0;
+	//uint32_t i = 0;
 	//RdramSize = 0x800000;
     
 	// Allocate the N64MEM and TLB_Map so that they are in each others 4GB range
@@ -387,7 +387,7 @@ uint32_t r4300i_LW_VAddr ( usf_state_t * state, uint32_t VAddr, uint32_t * Value
 
 	if((address - (uintptr_t)state->RDRAM) > state->RdramSize) {
 		address = address - (uintptr_t)state->RDRAM;
-		return r4300i_LW_NonMemory(state, address, Value);
+		return r4300i_LW_NonMemory(state, (uint32_t) address, Value);
 	}
 	*Value = *(uint32_t *)address;
 	return 1;
@@ -770,7 +770,7 @@ uint32_t r4300i_SW_VAddr ( usf_state_t * state, uint32_t VAddr, uint32_t Value )
 
 	if((address - (uintptr_t)state->RDRAM) > state->RdramSize) {
 		address = address - (uintptr_t)state->RDRAM;
-		return r4300i_SW_NonMemory(state, address, Value);
+		return r4300i_SW_NonMemory(state, (uint32_t) address, Value);
 	}
 	*(uint32_t *)address = Value;
 	return 1;

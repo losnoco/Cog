@@ -15,7 +15,7 @@ void AddBuffer(usf_state_t *state, unsigned char *buf, unsigned int length) {
     
     do_max = length >> 2;
     if ( do_max > state->sample_buffer_count )
-        do_max = state->sample_buffer_count;
+        do_max = (unsigned int) state->sample_buffer_count;
     
     for (i = 0; i < do_max; ++i)
     {

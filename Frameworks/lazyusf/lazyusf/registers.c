@@ -51,7 +51,7 @@ void SetupRegisters(usf_state_t * state, N64_REGISTERS * n64_Registers) {
 	state->RegPI    = n64_Registers->PI;
 	state->RegRI    = n64_Registers->RI;
 	state->RegSI    = n64_Registers->SI;
-	state->PIF_Ram  = n64_Registers->PIF_Ram;
+	state->PIF_Ram  = (uint8_t *) n64_Registers->PIF_Ram;
 }
 
 void ChangeMiIntrMask (usf_state_t * state) {

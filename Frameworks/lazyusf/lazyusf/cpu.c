@@ -441,7 +441,7 @@ void StartEmulationFromSave ( usf_state_t * state, void * savestate ) {
 	memset(state->IMEM, 0, 0x1000);
 	memset(state->TLB_Map, 0, 0x100000 * sizeof(uintptr_t) + 0x10000);
 
-	memset(state->CPU_Action,0,sizeof(state->CPU_Action));
+	memset(state->CPU_Action,0,sizeof(*state->CPU_Action));
 	state->WrittenToRom = 0;
 
 	InitilizeTLB(state);

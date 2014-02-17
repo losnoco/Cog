@@ -6,7 +6,10 @@ struct usf_state_helper
     size_t offset_to_structure;
 };
 
+#ifndef RCPREG_DEFINED
+#define RCPREG_DEFINED
 typedef uint32_t RCPREG;
+#endif
 
 struct usf_state
 {

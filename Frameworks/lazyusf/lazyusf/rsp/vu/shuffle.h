@@ -137,7 +137,7 @@ static const int simm[16] = {
 
 static __m128i shuffle_none(__m128i xmm)
 {/*
-    const int order = simm[0x0];
+    // const int order = simm[0x0];
 
     xmm = _mm_shufflehi_epi16(xmm, order);
     xmm = _mm_shufflelo_epi16(xmm, order);*/
@@ -145,7 +145,7 @@ static __m128i shuffle_none(__m128i xmm)
 }
 static __m128i shuffle_0q(__m128i xmm)
 {
-    const int order = simm[0x2];
+    //const int order = simm[0x2];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(00, 00, 02, 02));
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(00, 00, 02, 02));
@@ -153,7 +153,7 @@ static __m128i shuffle_0q(__m128i xmm)
 }
 static __m128i shuffle_1q(__m128i xmm)
 {
-    const int order = simm[0x3];
+    //const int order = simm[0x3];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(01, 01, 03, 03));
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(01, 01, 03, 03));
@@ -161,7 +161,7 @@ static __m128i shuffle_1q(__m128i xmm)
 }
 static __m128i shuffle_0h(__m128i xmm)
 {
-    const int order = simm[0x4];
+    //const int order = simm[0x4];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(00, 00, 00, 00));
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(00, 00, 00, 00));
@@ -169,7 +169,7 @@ static __m128i shuffle_0h(__m128i xmm)
 }
 static __m128i shuffle_1h(__m128i xmm)
 {
-    const int order = simm[0x5];
+    //const int order = simm[0x5];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(01, 01, 01, 01));
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(01, 01, 01, 01));
@@ -177,7 +177,7 @@ static __m128i shuffle_1h(__m128i xmm)
 }
 static __m128i shuffle_2h(__m128i xmm)
 {
-    const int order = simm[0x6];
+    //const int order = simm[0x6];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(02, 02, 02, 02));
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(02, 02, 02, 02));
@@ -185,7 +185,7 @@ static __m128i shuffle_2h(__m128i xmm)
 }
 static __m128i shuffle_3h(__m128i xmm)
 {
-    const int order = simm[0x7];
+    //const int order = simm[0x7];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(03, 03, 03, 03));
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(03, 03, 03, 03));
@@ -193,7 +193,7 @@ static __m128i shuffle_3h(__m128i xmm)
 }
 static __m128i shuffle_0w(__m128i xmm)
 {
-    const int order = simm[0x8];
+    //const int order = simm[0x8];
 
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(00, 00, 00, 00));
     xmm = _mm_unpacklo_epi16(xmm, xmm);
@@ -201,7 +201,7 @@ static __m128i shuffle_0w(__m128i xmm)
 }
 static __m128i shuffle_1w(__m128i xmm)
 {
-    const int order = simm[0x9];
+    //const int order = simm[0x9];
 
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(01, 01, 01, 01));
     xmm = _mm_unpacklo_epi16(xmm, xmm);
@@ -209,7 +209,7 @@ static __m128i shuffle_1w(__m128i xmm)
 }
 static __m128i shuffle_2w(__m128i xmm)
 {
-    const int order = simm[0xA];
+    //const int order = simm[0xA];
 
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(02, 02, 02, 02));
     xmm = _mm_unpacklo_epi16(xmm, xmm);
@@ -217,7 +217,7 @@ static __m128i shuffle_2w(__m128i xmm)
 }
 static __m128i shuffle_3w(__m128i xmm)
 {
-    const int order = simm[0xB];
+    //const int order = simm[0xB];
 
     xmm = _mm_shufflelo_epi16(xmm, SHUFFLE(03, 03, 03, 03));
     xmm = _mm_unpacklo_epi16(xmm, xmm);
@@ -225,7 +225,7 @@ static __m128i shuffle_3w(__m128i xmm)
 }
 static __m128i shuffle_4w(__m128i xmm)
 {
-    const int order = simm[0xC];
+    //const int order = simm[0xC];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(04, 04, 04, 04));
     xmm = _mm_unpackhi_epi16(xmm, xmm);
@@ -233,7 +233,7 @@ static __m128i shuffle_4w(__m128i xmm)
 }
 static __m128i shuffle_5w(__m128i xmm)
 {
-    const int order = simm[0xD];
+    //const int order = simm[0xD];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(05, 05, 05, 05));
     xmm = _mm_unpackhi_epi16(xmm, xmm);
@@ -241,7 +241,7 @@ static __m128i shuffle_5w(__m128i xmm)
 }
 static __m128i shuffle_6w(__m128i xmm)
 {
-    const int order = simm[0xE];
+    //const int order = simm[0xE];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(06, 06, 06, 06));
     xmm = _mm_unpackhi_epi16(xmm, xmm);
@@ -249,7 +249,7 @@ static __m128i shuffle_6w(__m128i xmm)
 }
 static __m128i shuffle_7w(__m128i xmm)
 {
-    const int order = simm[0xF];
+    //const int order = simm[0xF];
 
     xmm = _mm_shufflehi_epi16(xmm, SHUFFLE(07, 07, 07, 07));
     xmm = _mm_unpackhi_epi16(xmm, xmm);

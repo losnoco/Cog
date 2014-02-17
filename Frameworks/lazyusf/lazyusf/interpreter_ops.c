@@ -32,9 +32,9 @@
 #include "usf.h"
 
 #ifdef _MSC_VER
-#define INLINE      __inline
+#define INLINE      __forceinline
 #else
-#define INLINE      __attribute__((forceinline))
+#define INLINE      __attribute__((always_inline))
 #endif
 
 #include "usf_internal.h"
@@ -503,8 +503,7 @@ void r4300i_LL (usf_state_t * state) {
 	state->LLAddr = Address;
 	ll = state->LLAddr;
 	TranslateVaddr(state, &ll);
-	state->LLAddr = ll;
-
+	state->LLAddr = (uint32_t) ll;
 }
 
 void r4300i_LWC1 (usf_state_t * state) {
