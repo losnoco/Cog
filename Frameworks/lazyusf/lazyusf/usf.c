@@ -182,8 +182,9 @@ void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_r
         size_t do_max = USF_STATE->samples_in_buffer;
         if ( do_max > count )
             do_max = count;
-        
-        memcpy( buffer, USF_STATE->samplebuf, sizeof(int16_t) * 2 * do_max );
+       
+        if ( buffer ) 
+            memcpy( buffer, USF_STATE->samplebuf, sizeof(int16_t) * 2 * do_max );
         
         USF_STATE->samples_in_buffer -= do_max;
         
@@ -196,7 +197,8 @@ void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_r
             return;
         }
         
-        buffer += 2 * do_max;
+        if ( buffer )
+            buffer += 2 * do_max;
         count -= do_max;
     }
 
@@ -210,6 +212,12 @@ void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_r
     
     if ( sample_rate )
         *sample_rate = USF_STATE->SampleRate;
+}
+
+void usf_restart(void * state)
+{
+    if ( USF_STATE->MemoryState )
+        StartEmulationFromSave(USF_STATE, USF_STATE->savestatespace);
 }
 
 void usf_shutdown(void * state)

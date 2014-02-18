@@ -32,6 +32,7 @@
 
 NOINLINE static void res_S(usf_state_t * state)
 {
+    (void)state;
     return;
 }
 
@@ -219,6 +220,8 @@ static void MT_CMD_CLOCK(usf_state_t * state, int rt)
 }
 static void MT_READ_ONLY(usf_state_t * state, int rt)
 {
+    (void)state;
+    (void)rt;
     //char text[64];
 
     //sprintf(text, "MTC0\nInvalid write attempt.\nstate->SR[%i] = 0x%08X", rt, state->SR[rt]);
@@ -1088,7 +1091,13 @@ static void LHV(usf_state_t * state, int vt, int element, int offset, int base)
     return;
 }
 NOINLINE static void LFV(usf_state_t * state, int vt, int element, int offset, int base)
-{ /* Dummy implementation only:  Do any games execute this? */
+{
+    (void)state;
+    (void)vt;
+    (void)element;
+    (void)offset;
+    (void)base;
+    /* Dummy implementation only:  Do any games execute this? */
     /*char debugger[32];
 
     sprintf(debugger, "%s     $v%i[0x%X], 0x%03X($%i)", "LFV",
@@ -1454,7 +1463,13 @@ INLINE static void LTV(usf_state_t * state, int vt, int element, int offset, int
     return;
 }
 NOINLINE static void SWV(usf_state_t * state, int vt, int element, int offset, int base)
-{ /* Dummy implementation only:  Do any games execute this? */
+{
+    (void)state;
+    (void)vt;
+    (void)element;
+    (void)offset;
+    (void)base;
+    /* Dummy implementation only:  Do any games execute this? */
     /*char debugger[32];
 
     sprintf(debugger, "%s     $v%i[0x%X], 0x%03X($%i)", "SWV",

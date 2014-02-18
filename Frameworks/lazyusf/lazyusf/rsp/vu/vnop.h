@@ -17,6 +17,8 @@ static void VNOP(usf_state_t * state, int vd, int vs, int vt, int e)
 {
     const int WB_inhibit = vd = vs = vt = e = 1;
 
+    (void)state;
+
     if (WB_inhibit)
         return; /* message("VNOP", WB_inhibit); */
     return;

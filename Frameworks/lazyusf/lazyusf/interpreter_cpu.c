@@ -89,6 +89,7 @@ void R4300i_opcode_COP1_L (usf_state_t * state) {
 
 
 void BuildInterpreter (usf_state_t * state) {
+    (void)state;
 	R4300i_Opcode[ 0] = R4300i_opcode_SPECIAL;
 	R4300i_Opcode[ 1] = R4300i_opcode_REGIMM;
 	R4300i_Opcode[ 2] = r4300i_J;

@@ -32,6 +32,8 @@ int usf_upload_section(void * state, const uint8_t * data, size_t size);
 
 void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_rate);
 
+void usf_restart(void * state);
+
 void usf_shutdown(void * state);
 
 #ifdef __cplusplus

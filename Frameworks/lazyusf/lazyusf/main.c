@@ -19,6 +19,7 @@ void StopEmulation(usf_state_t * state)
 }
 
 void DisplayError (char * Message, ...) {
+    (void)Message;
 	//char Msg[1000];
 	//va_list ap;
 

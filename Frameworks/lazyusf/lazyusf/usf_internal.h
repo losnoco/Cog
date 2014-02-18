@@ -14,22 +14,34 @@ typedef uint32_t RCPREG;
 struct usf_state
 {
     // RSP vector registers, need to be aligned to 16 bytes
+    // when SSE2 or SSSE3 is enabled, or for any hope of
+    // auto vectorization
+
+    // usf_clear takes care of aligning the structure within
+    // the memory block passed into it, treating the pointer
+    // as usf_state_helper, and storing an offset from the
+    // pointer to the actual usf_state structure. The size
+    // which is indicated for allocation accounts for this
+    // with two pages of padding.
+
     short VR[32][8];
     short VACC[3][8];
     
-    // RSP virtual registers
+    // RSP virtual registers, also needs alignment
     int SR[32];
     
-    // rsp/rsp.c
+    // rsp/rsp.c, not necessarily in need of alignment
     RCPREG* CR[16];
     
-    // rsp/vu/cf.h
+    // rsp/vu/cf.h, all need alignment
     short ne[8]; /* $vco:  high byte "NOTEQUAL" */
     short co[8]; /* $vco:  low byte "carry/borrow in/out" */
     short clip[8]; /* $vcc:  high byte (clip tests:  VCL, VCH, VCR) */
     short comp[8]; /* $vcc:  low byte (VEQ, VNE, VLT, VGE, VCL, VCH, VCR) */
     short vce[8]; /* $vce:  vector compare extension register */
     
+    // All further members of the structure need not be aligned
+
     // rsp/vu/divrom.h
     int DivIn; /* buffered numerator of division read from vector file */
     int DivOut; /* global division result set by VRCP/VRCPL/VRSQ/VRSQH */

@@ -93,5 +93,7 @@ void PifRamWrite (usf_state_t * state) {
 
 // always return failure
 void ProcessControllerCommand ( usf_state_t * state, int32_t Control, uint8_t * Command) {
+    (void)state;
+    (void)Control;
 	Command[1] |= 0x80;
 }

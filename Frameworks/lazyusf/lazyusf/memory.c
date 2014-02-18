@@ -63,7 +63,7 @@ void large_free(void * p, size_t size)
 
 void * large_alloc(size_t size)
 {
-	return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+	return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 }
 
 void large_free(void * p, size_t size)
@@ -204,6 +204,8 @@ uint32_t r4300i_LD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t * Value
 }
 
 int32_t r4300i_LH_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t * Value, int32_t SignExtend ) {
+    (void)state;
+    (void)SignExtend;
 	switch (PAddr & 0xFFF00000) {
 	default:
 		* Value = 0;

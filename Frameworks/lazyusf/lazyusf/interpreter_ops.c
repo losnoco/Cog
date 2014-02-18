@@ -482,6 +482,7 @@ void r4300i_SWR (usf_state_t * state) {
 }
 
 void r4300i_CACHE (usf_state_t * state) {
+    (void)state;
 }
 
 void r4300i_LL (usf_state_t * state) {
@@ -618,6 +619,7 @@ void r4300i_SPECIAL_BREAK (usf_state_t * state) {
 }
 
 void r4300i_SPECIAL_SYNC (usf_state_t * state) {
+    (void)state;
 }
 
 void r4300i_SPECIAL_MFHI (usf_state_t * state) {

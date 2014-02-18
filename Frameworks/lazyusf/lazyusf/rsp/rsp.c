@@ -34,6 +34,8 @@
 
 void real_run_rsp(usf_state_t * state, uint32_t cycles)
 {
+    (void)cycles;
+
     if (SP_STATUS_REG & 0x00000003)
     {
         message("SP_STATUS_HALT", 3);

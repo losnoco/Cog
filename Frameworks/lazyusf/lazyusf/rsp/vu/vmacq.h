@@ -15,6 +15,7 @@
 
 static void VMACQ(usf_state_t * state, int vd, int vs, int vt, int e)
 {
+    (void)state;
     vd &= vs &= vt &= e &= 0; /* unused */
     if (vd != vs || vt != e)
         return;

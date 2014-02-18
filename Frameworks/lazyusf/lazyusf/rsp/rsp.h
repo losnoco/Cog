@@ -44,6 +44,8 @@ typedef uint32_t RCPREG;
 
 NOINLINE void message(const char* body, int priority)
 {
+    (void)body;
+    (void)priority;
 }
 
 /*
@@ -53,6 +55,7 @@ NOINLINE void message(const char* body, int priority)
 /* typical standard DOS text file limit per line */
 NOINLINE void update_conf(const char* source)
 {
+    (void)source;
 }
 
 #include "su.h"
