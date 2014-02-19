@@ -24,6 +24,8 @@
  *
  */
 
+#include <string.h>
+
 #include "main.h"
 #include "cpu.h"
 
@@ -78,21 +80,21 @@ void SetupTLB_Entry (usf_state_t * state, int Entry) {
 
 	if (!state->tlb[Entry].EntryDefined) { return; }
 	FastIndx = Entry << 1;
-	state->FastTlb[FastIndx].VSTART=state->tlb[Entry].EntryHi.VPN2 << 13;
-	state->FastTlb[FastIndx].VEND = state->FastTlb[FastIndx].VSTART + (state->tlb[Entry].PageMask.Mask << 12) + 0xFFF;
-	state->FastTlb[FastIndx].PHYSSTART = state->tlb[Entry].EntryLo0.PFN << 12;
-	state->FastTlb[FastIndx].VALID = state->tlb[Entry].EntryLo0.V;
-	state->FastTlb[FastIndx].DIRTY = state->tlb[Entry].EntryLo0.D;
-	state->FastTlb[FastIndx].GLOBAL = state->tlb[Entry].EntryLo0.GLOBAL & state->tlb[Entry].EntryLo1.GLOBAL;
+	state->FastTlb[FastIndx].VSTART=state->tlb[Entry].EntryHi.b.VPN2 << 13;
+	state->FastTlb[FastIndx].VEND = state->FastTlb[FastIndx].VSTART + (state->tlb[Entry].PageMask.b.Mask << 12) + 0xFFF;
+	state->FastTlb[FastIndx].PHYSSTART = state->tlb[Entry].EntryLo0.b.PFN << 12;
+	state->FastTlb[FastIndx].VALID = state->tlb[Entry].EntryLo0.b.V;
+	state->FastTlb[FastIndx].DIRTY = state->tlb[Entry].EntryLo0.b.D;
+	state->FastTlb[FastIndx].GLOBAL = state->tlb[Entry].EntryLo0.b.GLOBAL & state->tlb[Entry].EntryLo1.b.GLOBAL;
 	state->FastTlb[FastIndx].ValidEntry = 0;
 
 	FastIndx = (Entry << 1) + 1;
-	state->FastTlb[FastIndx].VSTART=(state->tlb[Entry].EntryHi.VPN2 << 13) + ((state->tlb[Entry].PageMask.Mask << 12) + 0xFFF + 1);
-	state->FastTlb[FastIndx].VEND = state->FastTlb[FastIndx].VSTART + (state->tlb[Entry].PageMask.Mask << 12) + 0xFFF;
-	state->FastTlb[FastIndx].PHYSSTART = state->tlb[Entry].EntryLo1.PFN << 12;
-	state->FastTlb[FastIndx].VALID = state->tlb[Entry].EntryLo1.V;
-	state->FastTlb[FastIndx].DIRTY = state->tlb[Entry].EntryLo1.D;
-	state->FastTlb[FastIndx].GLOBAL = state->tlb[Entry].EntryLo0.GLOBAL & state->tlb[Entry].EntryLo1.GLOBAL;
+	state->FastTlb[FastIndx].VSTART=(state->tlb[Entry].EntryHi.b.VPN2 << 13) + ((state->tlb[Entry].PageMask.b.Mask << 12) + 0xFFF + 1);
+	state->FastTlb[FastIndx].VEND = state->FastTlb[FastIndx].VSTART + (state->tlb[Entry].PageMask.b.Mask << 12) + 0xFFF;
+	state->FastTlb[FastIndx].PHYSSTART = state->tlb[Entry].EntryLo1.b.PFN << 12;
+	state->FastTlb[FastIndx].VALID = state->tlb[Entry].EntryLo1.b.V;
+	state->FastTlb[FastIndx].DIRTY = state->tlb[Entry].EntryLo1.b.D;
+	state->FastTlb[FastIndx].GLOBAL = state->tlb[Entry].EntryLo0.b.GLOBAL & state->tlb[Entry].EntryLo1.b.GLOBAL;
 	state->FastTlb[FastIndx].ValidEntry = 0;
 
 	for ( FastIndx = Entry << 1; FastIndx <= (Entry << 1) + 1; FastIndx++) {
@@ -126,8 +128,8 @@ void TLB_Probe (usf_state_t * state) {
 
 	INDEX_REGISTER |= 0x80000000;
 	for (Counter = 0; Counter < 32; Counter ++) {
-		uint32_t TlbValue = state->tlb[Counter].EntryHi.Value & (~state->tlb[Counter].PageMask.Mask << 13);
-		uint32_t EntryHi = ENTRYHI_REGISTER & (~state->tlb[Counter].PageMask.Mask << 13);
+		uint32_t TlbValue = state->tlb[Counter].EntryHi.Value & (~state->tlb[Counter].PageMask.b.Mask << 13);
+		uint32_t EntryHi = ENTRYHI_REGISTER & (~state->tlb[Counter].PageMask.b.Mask << 13);
 
 		if (TlbValue == EntryHi) {
 			uint32_t Global = (state->tlb[Counter].EntryHi.Value & 0x100) != 0;

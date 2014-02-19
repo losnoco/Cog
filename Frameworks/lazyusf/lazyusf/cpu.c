@@ -25,6 +25,8 @@
  */
 
 #include <stdint.h>
+#include <string.h>
+
 #include "main.h"
 #include "cpu.h"
 #include "usf.h"
@@ -111,13 +113,13 @@ void CloseCpu (usf_state_t * state) {
 int32_t DelaySlotEffectsCompare (usf_state_t * state, uint32_t PC, uint32_t Reg1, uint32_t Reg2) {
 	OPCODE Command;
 
-	if (!r4300i_LW_VAddr(state, PC + 4, (uint32_t*)&Command.Hex)) {
+	if (!r4300i_LW_VAddr(state, PC + 4, (uint32_t*)&Command.u.Hex)) {
 		return 1;
 	}
 
-	switch (Command.op) {
+	switch (Command.u.b.op) {
 	case R4300i_SPECIAL:
-		switch (Command.funct) {
+		switch (Command.u.e.funct) {
 		case R4300i_SPECIAL_SLL:
 		case R4300i_SPECIAL_SRL:
 		case R4300i_SPECIAL_SRA:
@@ -151,9 +153,9 @@ int32_t DelaySlotEffectsCompare (usf_state_t * state, uint32_t PC, uint32_t Reg1
 		case R4300i_SPECIAL_DSLL32:
 		case R4300i_SPECIAL_DSRL32:
 		case R4300i_SPECIAL_DSRA32:
-			if (Command.rd == 0) { return 0; }
-			if (Command.rd == Reg1) { return 1; }
-			if (Command.rd == Reg2) { return 1; }
+			if (Command.u.e.rd == 0) { return 0; }
+			if (Command.u.e.rd == Reg1) { return 1; }
+			if (Command.u.e.rd == Reg2) { return 1; }
 			break;
 		case R4300i_SPECIAL_MULT:
 		case R4300i_SPECIAL_MULTU:
@@ -169,16 +171,16 @@ int32_t DelaySlotEffectsCompare (usf_state_t * state, uint32_t PC, uint32_t Reg1
 		}
 		break;
 	case R4300i_CP0:
-		switch (Command.rs) {
+		switch (Command.u.b.rs) {
 		case R4300i_COP0_MT: break;
 		case R4300i_COP0_MF:
-			if (Command.rt == 0) { return 0; }
-			if (Command.rt == Reg1) { return 1; }
-			if (Command.rt == Reg2) { return 1; }
+			if (Command.u.b.rt == 0) { return 0; }
+			if (Command.u.b.rt == Reg1) { return 1; }
+			if (Command.u.b.rt == Reg2) { return 1; }
 			break;
 		default:
-			if ( (Command.rs & 0x10 ) != 0 ) {
-				switch( state->Opcode.funct ) {
+			if ( (Command.u.b.rs & 0x10 ) != 0 ) {
+				switch( state->Opcode.u.e.funct ) {
 				case R4300i_COP0_CO_TLBR: break;
 				case R4300i_COP0_CO_TLBWI: break;
 				case R4300i_COP0_CO_TLBWR: break;
@@ -191,11 +193,11 @@ int32_t DelaySlotEffectsCompare (usf_state_t * state, uint32_t PC, uint32_t Reg1
 		}
 		break;
 	case R4300i_CP1:
-		switch (Command.fmt) {
+		switch (Command.u.f.fmt) {
 		case R4300i_COP1_MF:
-			if (Command.rt == 0) { return 0; }
-			if (Command.rt == Reg1) { return 1; }
-			if (Command.rt == Reg2) { return 1; }
+			if (Command.u.b.rt == 0) { return 0; }
+			if (Command.u.b.rt == Reg1) { return 1; }
+			if (Command.u.b.rt == Reg2) { return 1; }
 			break;
 		case R4300i_COP1_CF: break;
 		case R4300i_COP1_MT: break;
@@ -229,9 +231,9 @@ int32_t DelaySlotEffectsCompare (usf_state_t * state, uint32_t PC, uint32_t Reg1
 	case R4300i_LD:
 	case R4300i_LWC1:
 	case R4300i_LDC1:
-		if (Command.rt == 0) { return 0; }
-		if (Command.rt == Reg1) { return 1; }
-		if (Command.rt == Reg2) { return 1; }
+		if (Command.u.b.rt == 0) { return 0; }
+		if (Command.u.b.rt == Reg1) { return 1; }
+		if (Command.u.b.rt == Reg2) { return 1; }
 		break;
 	case R4300i_CACHE: break;
 	case R4300i_SB: break;
@@ -252,24 +254,24 @@ int32_t DelaySlotEffectsCompare (usf_state_t * state, uint32_t PC, uint32_t Reg1
 int32_t DelaySlotEffectsJump (usf_state_t * state, uint32_t JumpPC) {
 	OPCODE Command;
 
-	if (!r4300i_LW_VAddr(state, JumpPC, &Command.Hex)) { return 1; }
+	if (!r4300i_LW_VAddr(state, JumpPC, &Command.u.Hex)) { return 1; }
 
-	switch (Command.op) {
+	switch (Command.u.b.op) {
 	case R4300i_SPECIAL:
-		switch (Command.funct) {
-		case R4300i_SPECIAL_JR:	return DelaySlotEffectsCompare(state,JumpPC,Command.rs,0);
-		case R4300i_SPECIAL_JALR: return DelaySlotEffectsCompare(state,JumpPC,Command.rs,31);
+		switch (Command.u.e.funct) {
+		case R4300i_SPECIAL_JR:	return DelaySlotEffectsCompare(state,JumpPC,Command.u.b.rs,0);
+		case R4300i_SPECIAL_JALR: return DelaySlotEffectsCompare(state,JumpPC,Command.u.b.rs,31);
 		}
 		break;
 	case R4300i_REGIMM:
-		switch (Command.rt) {
+		switch (Command.u.b.rt) {
 		case R4300i_REGIMM_BLTZ:
 		case R4300i_REGIMM_BGEZ:
 		case R4300i_REGIMM_BLTZL:
 		case R4300i_REGIMM_BGEZL:
 		case R4300i_REGIMM_BLTZAL:
 		case R4300i_REGIMM_BGEZAL:
-			return DelaySlotEffectsCompare(state,JumpPC,Command.rs,0);
+			return DelaySlotEffectsCompare(state,JumpPC,Command.u.b.rs,0);
 		}
 		break;
 	case R4300i_JAL:
@@ -279,11 +281,11 @@ int32_t DelaySlotEffectsJump (usf_state_t * state, uint32_t JumpPC) {
 	case R4300i_BNE:
 	case R4300i_BLEZ:
 	case R4300i_BGTZ:
-		return DelaySlotEffectsCompare(state,JumpPC,Command.rs,Command.rt);
+		return DelaySlotEffectsCompare(state,JumpPC,Command.u.b.rs,Command.u.b.rt);
 	case R4300i_CP1:
-		switch (Command.fmt) {
+		switch (Command.u.f.fmt) {
 		case R4300i_COP1_BC:
-			switch (Command.ft) {
+			switch (Command.u.f.ft) {
 			case R4300i_COP1_BC_BCF:
 			case R4300i_COP1_BC_BCT:
 			case R4300i_COP1_BC_BCFL:
@@ -292,14 +294,14 @@ int32_t DelaySlotEffectsJump (usf_state_t * state, uint32_t JumpPC) {
 					int32_t EffectDelaySlot;
 					OPCODE NewCommand;
 
-					if (!r4300i_LW_VAddr(state, JumpPC + 4, &NewCommand.Hex)) { return 1; }
+					if (!r4300i_LW_VAddr(state, JumpPC + 4, &NewCommand.u.Hex)) { return 1; }
 
 					EffectDelaySlot = 0;
-					if (NewCommand.op == R4300i_CP1) {
-						if (NewCommand.fmt == R4300i_COP1_S && (NewCommand.funct & 0x30) == 0x30 ) {
+					if (NewCommand.u.b.op == R4300i_CP1) {
+						if (NewCommand.u.f.fmt == R4300i_COP1_S && (NewCommand.u.e.funct & 0x30) == 0x30 ) {
 							EffectDelaySlot = 1;
 						}
-						if (NewCommand.fmt == R4300i_COP1_D && (NewCommand.funct & 0x30) == 0x30 ) {
+						if (NewCommand.u.f.fmt == R4300i_COP1_D && (NewCommand.u.e.funct & 0x30) == 0x30 ) {
 							EffectDelaySlot = 1;
 						}
 					}
@@ -314,7 +316,7 @@ int32_t DelaySlotEffectsJump (usf_state_t * state, uint32_t JumpPC) {
 	case R4300i_BNEL:
 	case R4300i_BLEZL:
 	case R4300i_BGTZL:
-		return DelaySlotEffectsCompare(state,JumpPC,Command.rs,Command.rt);
+		return DelaySlotEffectsCompare(state,JumpPC,Command.u.b.rs,Command.u.b.rt);
 	}
 	return 1;
 }

@@ -39,19 +39,19 @@ typedef struct {
 			unsigned rt : 5;
 			unsigned rs : 5;
 			unsigned op : 6;
-		};
+		} b;
 
 		struct {
 			unsigned immediate : 16;
 			unsigned : 5;
 			unsigned base : 5;
 			unsigned : 6;
-		};
+		} c;
 
 		struct {
 			unsigned target : 26;
 			unsigned : 6;
-		};
+		} d;
 
 		struct {
 			unsigned funct : 6;
@@ -60,7 +60,7 @@ typedef struct {
 			unsigned : 5;
 			unsigned : 5;
 			unsigned : 6;
-		};
+		} e;
 
 		struct {
 			unsigned : 6;
@@ -69,8 +69,8 @@ typedef struct {
 			unsigned ft : 5;
 			unsigned fmt : 5;
 			unsigned : 6;
-		};
-	};
+		} f;
+	} u;
 
 } OPCODE;
 

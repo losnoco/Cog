@@ -1,6 +1,8 @@
 #ifndef _USF_INTERNAL_H_
 #define _USF_INTERNAL_H_
 
+#include "cpu.h"
+
 struct usf_state_helper
 {
     size_t offset_to_structure;

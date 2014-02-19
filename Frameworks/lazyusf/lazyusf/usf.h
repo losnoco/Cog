@@ -3,19 +3,12 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct usf_state usf_state_t;
 
 typedef struct usf_state_helper usf_state_helper_t;
-
-#include "usf.h"
-#include "cpu.h"
-#include "memory.h"
 
 #ifdef __cplusplus
 extern "C" {

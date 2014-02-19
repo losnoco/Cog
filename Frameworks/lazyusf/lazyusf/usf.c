@@ -1,5 +1,6 @@
 
 #include <stdint.h>
+#include <string.h>
 
 #include "usf.h"
 #include "cpu.h"
@@ -218,6 +219,8 @@ void usf_restart(void * state)
 {
     if ( USF_STATE->MemoryState )
         StartEmulationFromSave(USF_STATE, USF_STATE->savestatespace);
+    
+    USF_STATE->samples_in_buffer = 0;
 }
 
 void usf_shutdown(void * state)
