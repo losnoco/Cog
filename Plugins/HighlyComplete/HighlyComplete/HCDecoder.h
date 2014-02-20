@@ -36,6 +36,8 @@
 	long totalFrames;
 	long framesRead;
     long framesLength;
+    
+    BOOL usfRemoveSilence;
 }
 
 @end

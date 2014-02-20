@@ -930,6 +930,10 @@ static int usf_info(void * context, const char * name, const char * value)
 
 - (BOOL)initializeDecoder
 {
+    unsigned int silence_seconds = 5;
+    
+    usfRemoveSilence = NO;
+    
     if ( type == 1 )
     {
         emulatorCore = ( uint8_t * ) malloc( psx_get_state_size( 1 ) );
@@ -947,6 +951,8 @@ static int usf_info(void * context, const char * name, const char * value)
         
         if ( state.refresh )
             psx_set_refresh( emulatorCore, state.refresh );
+        
+        silence_seconds = 30;
     }
     else if ( type == 2 )
     {
@@ -967,6 +973,8 @@ static int usf_info(void * context, const char * name, const char * value)
             psx_set_refresh( emulatorCore, state.refresh );
         
         psx_set_readfile( emulatorCore, virtual_readfile, emulatorExtra );
+        
+        silence_seconds = 30;
     }
     else if ( type == 0x11 || type == 0x12 )
     {
@@ -997,6 +1005,8 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x21 )
     {
+        int32_t samplerate;
+        
         struct usf_loader_state state;
         memset( &state, 0, sizeof(state) );
 
@@ -1011,6 +1021,12 @@ static int usf_info(void * context, const char * name, const char * value)
         
         usf_set_compare( state.emu_state, state.enablecompare );
         usf_set_fifo_full( state.emu_state, state.enablefifofull );
+        
+        usf_render( state.emu_state, 0, 0, &samplerate );
+        
+        sampleRate = samplerate;
+        
+        usfRemoveSilence = YES;
     }
     else if ( type == 0x22 )
     {
@@ -1162,7 +1178,7 @@ static int usf_info(void * context, const char * name, const char * value)
     
     framesRead = 0;
     
-    silence_test_buffer.resize( sampleRate * 30 * 2 );
+    silence_test_buffer.resize( sampleRate * silence_seconds * 2 );
 
     if ( type != 0x21 )
     {
@@ -1170,11 +1186,6 @@ static int usf_info(void * context, const char * name, const char * value)
             return NO;
     
         silence_test_buffer.remove_leading_silence();
-    }
-    else
-    {
-        if (![self fillBuffer:YES])
-            return NO;
     }
     
     return YES;
@@ -1247,13 +1258,7 @@ static int usf_info(void * context, const char * name, const char * value)
 
 - (BOOL)fillBuffer
 {
-    return [self fillBuffer:NO];
-}
-
-- (BOOL)fillBuffer:(BOOL)partial
-{
     long frames_left = totalFrames - framesRead - silence_test_buffer.data_available() / 2;
-    if ( partial ) frames_left = 1024;
     long free_space = silence_test_buffer.free_space() / 2;
     if ( IsRepeatOneSet() )
         frames_left = free_space;
@@ -1263,13 +1268,10 @@ static int usf_info(void * context, const char * name, const char * value)
     {
         unsigned long samples_to_write = 0;
         int16_t * buf = silence_test_buffer.get_write_ptr( samples_to_write );
-        if ( partial && samples_to_write > 2048 )
-            samples_to_write = 2048;
         int samples_read = [self readAudioInternal:buf frames:(UInt32)samples_to_write / 2];
         if ( !samples_read ) break;
         silence_test_buffer.samples_written( samples_read * 2 );
         free_space -= samples_read;
-        if ( partial ) break;
     }
     return !silence_test_buffer.test_silence();
 }
@@ -1375,6 +1377,12 @@ static int usf_info(void * context, const char * name, const char * value)
     else if ( ![self fillBuffer] )
         return 0;
     
+    if ( usfRemoveSilence )
+    {
+        silence_test_buffer.remove_leading_silence();
+        usfRemoveSilence = NO;
+    }
+    
     unsigned long written = silence_test_buffer.data_available() / 2;
     if ( written > frames )
         written = frames;
@@ -1467,6 +1475,11 @@ static int usf_info(void * context, const char * name, const char * value)
         [self closeDecoder];
         if (![self initializeDecoder])
             return -1;
+        if (usfRemoveSilence)
+        {
+            silence_test_buffer.remove_leading_silence();
+            usfRemoveSilence = NO;
+        }
     }
     
     unsigned long buffered_samples = silence_test_buffer.data_available() / 2;
