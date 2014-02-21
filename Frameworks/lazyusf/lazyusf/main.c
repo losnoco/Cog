@@ -18,14 +18,21 @@ void StopEmulation(usf_state_t * state)
 	state->cpu_running = 0;
 }
 
-void DisplayError (char * Message, ...) {
+void DisplayError (usf_state_t * state, char * Message, ...) {
     (void)Message;
-	//char Msg[1000];
-	//va_list ap;
+	va_list ap;
+    
+    size_t len = strlen( state->error_message );
+    
+    if ( len )
+        state->error_message[ len++ ] = '\n';
 
-	//va_start( ap, Message );
-	//vsprintf( Msg, Message, ap );
-	//va_end( ap );
+	va_start( ap, Message );
+	vsprintf( state->error_message + len, Message, ap );
+	va_end( ap );
+    
+    state->last_error = state->error_message;
+    StopEmulation( state );
 
 	//printf("Error: %s\n", Msg);
 }

@@ -42,8 +42,9 @@ int usf_upload_section(void * state, const uint8_t * data, size_t size);
    A null pointer is acceptable, in which case samples will be discarded.
    Requesting zero samples with a null pointer is an acceptable way to
    force at least one block of samples to render and return the current
-   sample rate in the variable passed in. */
-void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_rate);
+   sample rate in the variable passed in.
+   Returns 0 on success, or a pointer to the last error message on failure. */
+const char * usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_rate);
 
 /* Reloads the ROM and save state, effectively restarting emulation. Also
    discards any buffered sample data. */

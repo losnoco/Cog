@@ -21,6 +21,7 @@
 NOINLINE void run_task(usf_state_t * state)
 {
     register int PC;
+    int wrap_count = 0;
 
     if (CFG_WAIT_FOR_CPU_HOST != 0)
     {
@@ -37,6 +38,11 @@ NOINLINE void run_task(usf_state_t * state)
         inst = *(uint32_t *)(state->IMEM + FIT_IMEM(PC));
 #ifdef EMULATE_STATIC_PC
         PC = (PC + 0x004);
+        if ( FIT_IMEM(PC) == 0 && ++wrap_count == 32 )
+        {
+            message( state, "RSP execution presumably caught in an infinite loop", 3 );
+            break;
+        }
 EX:
 #endif
 #ifdef SP_EXECUTE_LOG
@@ -445,6 +451,11 @@ EX:
         {
             state->stage = 2*state->stage; /* next IW in branch delay slot? */
             PC = (PC + 0x004) & 0xFFC;
+            if ( FIT_IMEM(PC) == 0 && ++wrap_count == 32 )
+            {
+                message( state, "RSP execution presumably caught in an infinite loop", 3 );
+                break;
+            }
             SP_PC_REG = 0x04001000 + PC;
         }
         continue;
@@ -467,7 +478,7 @@ BRANCH:
         {}
     else /* ??? unknown, possibly external intervention from CPU memory map */
     {
-        message("SP_SET_HALT", 3);
+        message(state, "SP_SET_HALT", 3);
         return;
     }
     SP_STATUS_REG &= ~0x00000001; /* CPU restarts with the correct SIGs. */

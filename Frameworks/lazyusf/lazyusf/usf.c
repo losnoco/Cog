@@ -14,7 +14,7 @@
 
 #include "usf_internal.h"
 
-size_t get_usf_state_size()
+size_t usf_get_state_size()
 {
     return sizeof(usf_state_t) + 8192;
 }
@@ -22,7 +22,7 @@ size_t get_usf_state_size()
 void usf_clear(void * state)
 {
     size_t offset;
-    memset(state, 0, get_usf_state_size());
+    memset(state, 0, usf_get_state_size());
     offset = 4096 - (((uintptr_t)state) & 4095);
     USF_STATE_HELPER->offset_to_structure = offset;
     
@@ -155,7 +155,7 @@ int usf_upload_section(void * state, const uint8_t * data, size_t size)
 	return 0;
 }
 
-static void usf_startup(void * state)
+static int usf_startup(void * state)
 {
     // Detect the Ramsize before the memory allocation
 	
@@ -168,15 +168,24 @@ static void usf_startup(void * state)
 	} else if(*(uint32_t*)(USF_STATE->savestatespace + 4) == 0x800000)
 		USF_STATE->RdramSize = 0x800000;
 
-	Allocate_Memory(state);
+	if ( !Allocate_Memory(state) )
+        return -1;
 
 	StartEmulationFromSave(USF_STATE, USF_STATE->savestatespace);
+    
+    return 0;
 }
 
-void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_rate)
+const char * usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_rate)
 {
+    USF_STATE->last_error = 0;
+    USF_STATE->error_message[0] = '\0';
+    
     if ( !USF_STATE->MemoryState )
-        usf_startup( USF_STATE );
+    {
+        if ( usf_startup( USF_STATE ) < 0 )
+            return USF_STATE->last_error;
+    }
     
     if ( USF_STATE->samples_in_buffer )
     {
@@ -195,7 +204,7 @@ void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_r
         if ( USF_STATE->samples_in_buffer )
         {
             memmove( USF_STATE->samplebuf, USF_STATE->samplebuf + do_max * 2, sizeof(int16_t) * 2 * USF_STATE->samples_in_buffer );
-            return;
+            return 0;
         }
         
         if ( buffer )
@@ -213,6 +222,8 @@ void usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_r
     
     if ( sample_rate )
         *sample_rate = USF_STATE->SampleRate;
+    
+    return USF_STATE->last_error;
 }
 
 void usf_restart(void * state)

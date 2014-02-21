@@ -71,6 +71,9 @@ struct usf_state
     int16_t samplebuf[16384];
     size_t samples_in_buffer;
     
+    const char * last_error;
+    char error_message[1024];
+    
     // cpu.c
     uint32_t NextInstruction, JumpToLocation, AudioIntrReg;
     CPU_ACTION * CPU_Action;

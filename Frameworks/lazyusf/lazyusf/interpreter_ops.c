@@ -258,7 +258,8 @@ void r4300i_LH (usf_state_t * state) {
 	if ((Address & 1) != 0) { ADDRESS_ERROR_EXCEPTION(Address,1); }
 	if (!r4300i_LH_VAddr(state,Address,&state->GPR[state->Opcode.u.b.rt].UHW[0])) {
 		//if (ShowTLBMisses) {
-			DisplayError("LH TLB: %X",Address);
+            // Too spammy
+			//DisplayError(state, "LH TLB: %X",Address);
 		//}
 		TLB_READ_EXCEPTION(Address);
 	} else {
@@ -306,7 +307,8 @@ void r4300i_LBU (usf_state_t * state) {
 	uint32_t Address =  state->GPR[state->Opcode.u.c.base].UW[0] + (int16_t)state->Opcode.u.b.offset;
 	if (!r4300i_LB_VAddr(state,Address,&state->GPR[state->Opcode.u.b.rt].UB[0])) {
 		//if (ShowTLBMisses) {
-			DisplayError("LBU TLB: %X",Address);
+            // Too spammy
+			//DisplayError(state, "LBU TLB: %X",Address);
 		//}
 		TLB_READ_EXCEPTION(Address);
 	} else {
@@ -319,7 +321,8 @@ void r4300i_LHU (usf_state_t * state) {
 	if ((Address & 1) != 0) { ADDRESS_ERROR_EXCEPTION(Address,1); }
 	if (!r4300i_LH_VAddr(state,Address,&state->GPR[state->Opcode.u.b.rt].UHW[0])) {
 		//if (ShowTLBMisses) {
-			DisplayError("LHU TLB: %X",Address);
+            // Too spammy
+			//DisplayError(state, "LHU TLB: %X",Address);
 		//}
 		TLB_READ_EXCEPTION(Address);
 	} else {
@@ -351,7 +354,8 @@ void r4300i_LWU (usf_state_t * state) {
 
 	if (!r4300i_LW_VAddr(state,Address,&state->GPR[state->Opcode.u.b.rt].UW[0])) {
 		//if (ShowTLBMisses) {
-			DisplayError("LWU TLB: %X",Address);
+            // Too spammy
+			//DisplayError(state, "LWU TLB: %X",Address);
 		//}
 		TLB_READ_EXCEPTION(Address);
 	} else {
@@ -494,7 +498,8 @@ void r4300i_LL (usf_state_t * state) {
 
 	if (!r4300i_LW_VAddr(state,Address,&state->GPR[state->Opcode.u.b.rt].UW[0])) {
 		//if (ShowTLBMisses) {
-			DisplayError("LW TLB: %X",Address);
+            // Too spammy
+			//DisplayError(state, "LW TLB: %X",Address);
 		//}
 		TLB_READ_EXCEPTION(Address);
 	} else {
@@ -513,7 +518,8 @@ void r4300i_LWC1 (usf_state_t * state) {
 	if ((Address & 3) != 0) { ADDRESS_ERROR_EXCEPTION(Address,1); }
 	if (!r4300i_LW_VAddr(state,Address,&*(uint32_t *)state->FPRFloatLocation[state->Opcode.u.f.ft])) {
 		//if (ShowTLBMisses) {
-			DisplayError("LWC1 TLB: %X",Address);
+            // Too spammy
+			//DisplayError(state, "LWC1 TLB: %X",Address);
 		//}
 		TLB_READ_EXCEPTION(Address);
 	}
@@ -524,7 +530,7 @@ void r4300i_SC (usf_state_t * state) {
 	if ((Address & 3) != 0) { ADDRESS_ERROR_EXCEPTION(Address,0); }
 	if (state->LLBit == 1) {
 		if (!r4300i_SW_VAddr(state,Address,state->GPR[state->Opcode.u.b.rt].UW[0])) {
-			DisplayError("SW TLB: %X",Address);
+			DisplayError(state, "SW TLB: %X",Address);
 		}
 	}
 	state->GPR[state->Opcode.u.b.rt].UW[0] = state->LLBit;
@@ -1331,6 +1337,6 @@ void r4300i_COP1_L_CVT_D (usf_state_t * state) {
 
 /************************** Other functions **************************/
 void R4300i_UnknownOpcode (usf_state_t * state) {
-	DisplayError("Unknown R4300i Opcode.\tPC:%08x\tOp:%08x\n", state->PROGRAM_COUNTER,state->Opcode.u.Hex);
+	DisplayError(state, "Unknown R4300i Opcode.\tPC:%08x\tOp:%08x\n", state->PROGRAM_COUNTER,state->Opcode.u.Hex);
 	StopEmulation(state);
 }

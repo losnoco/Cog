@@ -74,7 +74,7 @@ void CheckTimer (usf_state_t * state) {
 		state->Timers->CurrentTimerType = count;
 	}
 	if (state->Timers->CurrentTimerType == -1) {
-		DisplayError("No active timers ???\nEmulation Stoped");
+		DisplayError(state, "No active timers ???\nEmulation Stopped");
 		StopEmulation(state);
 	}
 	for (count = 0; count < MaxTimers; count++) {
@@ -363,7 +363,7 @@ void InPermLoop ( usf_state_t * state ) {
 	return;
 
 InterruptsDisabled:
-	DisplayError("Stuck in Permanent Loop");
+	DisplayError(state, "Stuck in Permanent Loop");
 	StopEmulation(state);
 }
 

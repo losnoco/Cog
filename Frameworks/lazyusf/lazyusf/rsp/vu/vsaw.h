@@ -33,7 +33,7 @@ static void VSAR(int vd, int vs, int vt, int e)
  */
     if (e > 2)
     {
-        message("VSAR\nInvalid mask.", 2);
+        message(state, "VSAR\nInvalid mask.", 2);
         for (i = 0; i < N; i++)
             VR[vd][i] = 0x0000; /* override behavior (zilmar) */
     }
@@ -58,7 +58,7 @@ static void VSAW(usf_state_t * state, int vd, int vs, int vt, int e)
 
     if (e > 0x2)
     { /* branch very unlikely...never seen a game do VSAW illegally */
-        message("VSAW\nIllegal mask.", 2);
+        message(state, "VSAW\nIllegal mask.", 2);
         for (i = 0; i < N; i++)
             state->VR[vd][i] = 0x0000; /* override behavior (zilmar) */
         return;

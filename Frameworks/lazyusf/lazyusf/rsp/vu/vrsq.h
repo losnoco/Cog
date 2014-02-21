@@ -16,7 +16,7 @@
 
 static void VRSQ(usf_state_t * state, int vd, int de, int vt, int e)
 {
-    message("VRSQ\nUntested.", 1);
+    message(state, "VRSQ\nUntested.", 1);
     state->DivIn = (int)state->VR[vt][e & 07];
     do_div(state, state->DivIn, SP_DIV_SQRT_YES, SP_DIV_PRECISION_SINGLE);
     SHUFFLE_VECTOR(VACC_L, state->VR[vt], e);

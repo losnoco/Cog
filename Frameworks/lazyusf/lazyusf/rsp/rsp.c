@@ -21,6 +21,7 @@
 
 #include "../dma.h"
 #include "../exception.h"
+#include "../main.h"
 #include "../memory.h"
 #include "../registers.h"
 
@@ -38,7 +39,7 @@ void real_run_rsp(usf_state_t * state, uint32_t cycles)
 
     if (SP_STATUS_REG & 0x00000003)
     {
-        message("SP_STATUS_HALT", 3);
+        message(state, "SP_STATUS_HALT", 3);
         return;
     }
     run_task(state);

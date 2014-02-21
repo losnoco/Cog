@@ -20,6 +20,6 @@ static void VNOP(usf_state_t * state, int vd, int vs, int vt, int e)
     (void)state;
 
     if (WB_inhibit)
-        return; /* message("VNOP", WB_inhibit); */
+        return; /* message(state, "VNOP", WB_inhibit); */
     return;
 }

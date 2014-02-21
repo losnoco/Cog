@@ -93,7 +93,7 @@ int32_t Allocate_Memory ( void * state ) {
 
 	USF_STATE->N64MEM = USF_STATE->MemChunk + 0x100000 * sizeof(uintptr_t) + 0x10000;
 	if(USF_STATE->N64MEM == NULL) {
-		DisplayError("Failed to allocate N64MEM");
+		DisplayError(USF_STATE, "Failed to allocate N64MEM");
 		return 0;
 	}
 	
@@ -695,7 +695,7 @@ int32_t r4300i_SW_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t Valu
 			PI_DMA_WRITE(state);
 			break;
 		case 0x04600010:
-			//if ((Value & PI_SET_RESET) != 0 ) { DisplayError("reset Controller"); }
+			//if ((Value & PI_SET_RESET) != 0 ) { DisplayError(state, "reset Controller"); }
 			if ((Value & PI_CLR_INTR) != 0 ) {
 				MI_INTR_REG &= ~MI_INTR_PI;
 				CheckInterrupts(state);

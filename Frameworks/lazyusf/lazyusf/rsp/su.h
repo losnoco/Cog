@@ -143,7 +143,7 @@ static void MT_DMA_WRITE_LENGTH(usf_state_t * state, int rt)
 static void MT_SP_STATUS(usf_state_t * state, int rt)
 {
     if (state->SR[rt] & 0xFE000040)
-        message("MTC0\nSP_STATUS", 2);
+        message(state, "MTC0\nSP_STATUS", 2);
     SP_STATUS_REG &= ~(!!(state->SR[rt] & 0x00000001) <<  0);
     SP_STATUS_REG |=  (!!(state->SR[rt] & 0x00000002) <<  0);
     SP_STATUS_REG &= ~(!!(state->SR[rt] & 0x00000004) <<  1);
@@ -184,21 +184,21 @@ static void MT_CMD_START(usf_state_t * state, int rt)
     const uint32_t source = state->SR[rt] & 0xFFFFFFF8; /* Funnelcube demo */
 
     if (DPC_BUFBUSY_REG) /* lock hazards not implemented */
-        message("MTC0\nCMD_START", 0);
+        message(state, "MTC0\nCMD_START", 0);
     DPC_END_REG = DPC_CURRENT_REG = DPC_START_REG = source;
     return;
 }
 static void MT_CMD_END(usf_state_t * state, int rt)
 {
     if (DPC_BUFBUSY_REG)
-        message("MTC0\nCMD_END", 0); /* This is just CA-related. */
+        message(state, "MTC0\nCMD_END", 0); /* This is just CA-related. */
     DPC_END_REG = state->SR[rt] & 0xFFFFFFF8;
     return;
 }
 static void MT_CMD_STATUS(usf_state_t * state, int rt)
 {
     if (state->SR[rt] & 0xFFFFFD80) /* unsupported or reserved bits */
-        message("MTC0\nCMD_STATUS", 2);
+        message(state, "MTC0\nCMD_STATUS", 2);
     DPC_STATUS_REG &= ~(!!(state->SR[rt] & 0x00000001) << 0);
     DPC_STATUS_REG |=  (!!(state->SR[rt] & 0x00000002) << 0);
     DPC_STATUS_REG &= ~(!!(state->SR[rt] & 0x00000004) << 1);
@@ -214,7 +214,7 @@ static void MT_CMD_STATUS(usf_state_t * state, int rt)
 }
 static void MT_CMD_CLOCK(usf_state_t * state, int rt)
 {
-    message("MTC0\nCMD_CLOCK", 1); /* read-only?? */
+    message(state, "MTC0\nCMD_CLOCK", 1); /* read-only?? */
     DPC_CLOCK_REG = state->SR[rt];
     return; /* Appendix says this is RW; elsewhere it says R. */
 }
@@ -225,7 +225,7 @@ static void MT_READ_ONLY(usf_state_t * state, int rt)
     //char text[64];
 
     //sprintf(text, "MTC0\nInvalid write attempt.\nstate->SR[%i] = 0x%08X", rt, state->SR[rt]);
-    //message(text, 2);
+    //message(state, text, 2);
     return;
 }
 
@@ -419,14 +419,14 @@ INLINE static void LSV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e & 0x1)
     {
-        message("LSV\nIllegal element.", 3);
+        message(state, "LSV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 2*offset) & 0x00000FFF;
     correction = addr % 0x004;
     if (correction == 0x003)
     {
-        message("LSV\nWeird addr.", 3);
+        message(state, "LSV\nWeird addr.", 3);
         return;
     }
     VR_S(vt, e) = *(short *)(state->DMEM + addr - HES(0x000)*(correction - 1));
@@ -440,13 +440,13 @@ INLINE static void LLV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e & 0x1)
     {
-        message("LLV\nOdd element.", 3);
+        message(state, "LLV\nOdd element.", 3);
         return;
     } /* Illegal (but still even) elements are used by Boss Game Studios. */
     addr = (state->SR[base] + 4*offset) & 0x00000FFF;
     if (addr & 0x00000001)
     {
-        message("LLV\nOdd addr.", 3);
+        message(state, "LLV\nOdd addr.", 3);
         return;
     }
     correction = HES(0x000)*(addr%0x004 - 1);
@@ -462,7 +462,7 @@ INLINE static void LDV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e & 0x1)
     {
-        message("LDV\nOdd element.", 3);
+        message(state, "LDV\nOdd element.", 3);
         return;
     } /* Illegal (but still even) elements are used by Boss Game Studios. */
     addr = (state->SR[base] + 8*offset) & 0x00000FFF;
@@ -568,13 +568,13 @@ INLINE static void SLV(usf_state_t * state, int vt, int element, int offset, int
 
     if ((e & 0x1) || e > 0xC) /* must support illegal even elements in F3DEX2 */
     {
-        message("SLV\nIllegal element.", 3);
+        message(state, "SLV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 4*offset) & 0x00000FFF;
     if (addr & 0x00000001)
     {
-        message("SLV\nOdd addr.", 3);
+        message(state, "SLV\nOdd addr.", 3);
         return;
     }
     correction = HES(0x000)*(addr%0x004 - 1);
@@ -680,7 +680,7 @@ INLINE static void LPV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e != 0x0)
     {
-        message("LPV\nIllegal element.", 3);
+        message(state, "LPV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 8*offset) & 0x00000FFF;
@@ -911,7 +911,7 @@ INLINE static void SPV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e != 0x0)
     {
-        message("SPV\nIllegal element.", 3);
+        message(state, "SPV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 8*offset) & 0x00000FFF;
@@ -1023,7 +1023,7 @@ INLINE static void SUV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e != 0x0)
     {
-        message("SUV\nIllegal element.", 3);
+        message(state, "SUV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 8*offset) & 0x00000FFF;
@@ -1054,7 +1054,7 @@ INLINE static void SUV(usf_state_t * state, int vt, int element, int offset, int
             state->DMEM[addr + BES(0x003)] = (unsigned char)(state->VR[vt][07] >> 7);
             return;
         default: /* Completely legal, just never seen it be done. */
-            message("SUV\nWeird addr.", 3);
+            message(state, "SUV\nWeird addr.", 3);
             return;
     }
 }
@@ -1070,13 +1070,13 @@ static void LHV(usf_state_t * state, int vt, int element, int offset, int base)
 
     if (e != 0x0)
     {
-        message("LHV\nIllegal element.", 3);
+        message(state, "LHV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 16*offset) & 0x00000FFF;
     if (addr & 0x0000000E)
     {
-        message("LHV\nIllegal addr.", 3);
+        message(state, "LHV\nIllegal addr.", 3);
         return;
     }
     addr ^= MES(00);
@@ -1102,7 +1102,7 @@ NOINLINE static void LFV(usf_state_t * state, int vt, int element, int offset, i
 
     sprintf(debugger, "%s     $v%i[0x%X], 0x%03X($%i)", "LFV",
         vt, element, offset & 0xFFF, base);
-    message(debugger, 3);*/
+    message(state, debugger, 3);*/
     return;
 }
 static void SHV(usf_state_t * state, int vt, int element, int offset, int base)
@@ -1112,13 +1112,13 @@ static void SHV(usf_state_t * state, int vt, int element, int offset, int base)
 
     if (e != 0x0)
     {
-        message("SHV\nIllegal element.", 3);
+        message(state, "SHV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 16*offset) & 0x00000FFF;
     if (addr & 0x0000000E)
     {
-        message("SHV\nIllegal addr.", 3);
+        message(state, "SHV\nIllegal addr.", 3);
         return;
     }
     addr ^= MES(00);
@@ -1155,7 +1155,7 @@ static void SFV(usf_state_t * state, int vt, int element, int offset, int base)
             state->DMEM[addr + 0x00C] = (unsigned char)(state->VR[vt][07] >> 7);
             return;
         default:
-            message("SFV\nIllegal element.", 3);
+            message(state, "SFV\nIllegal element.", 3);
             return;
     }
 }
@@ -1172,13 +1172,13 @@ INLINE static void LQV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e & 0x1)
     {
-        message("LQV\nOdd element.", 3);
+        message(state, "LQV\nOdd element.", 3);
         return;
     }
     addr = (state->SR[base] + 16*offset) & 0x00000FFF;
     if (addr & 0x00000001)
     {
-        message("LQV\nOdd addr.", 3);
+        message(state, "LQV\nOdd addr.", 3);
         return;
     }
     b = addr & 0x0000000F;
@@ -1247,13 +1247,13 @@ static void LRV(usf_state_t * state, int vt, int element, int offset, int base)
 
     if (e != 0x0)
     {
-        message("LRV\nIllegal element.", 3);
+        message(state, "LRV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 16*offset) & 0x00000FFF;
     if (addr & 0x00000001)
     {
-        message("LRV\nOdd addr.", 3);
+        message(state, "LRV\nOdd addr.", 3);
         return;
     }
     b = addr & 0x0000000F;
@@ -1360,7 +1360,7 @@ INLINE static void SQV(usf_state_t * state, int vt, int element, int offset, int
             *(short *)(state->DMEM + addr + HES(0x00E)) = state->VR[vt][04];
             return;
         default:
-            message("SQV\nWeird addr.", 3);
+            message(state, "SQV\nWeird addr.", 3);
             return;
     }
 }
@@ -1372,13 +1372,13 @@ static void SRV(usf_state_t * state, int vt, int element, int offset, int base)
 
     if (e != 0x0)
     {
-        message("SRV\nIllegal element.", 3);
+        message(state, "SRV\nIllegal element.", 3);
         return;
     }
     addr = (state->SR[base] + 16*offset) & 0x00000FFF;
     if (addr & 0x00000001)
     {
-        message("SRV\nOdd addr.", 3);
+        message(state, "SRV\nOdd addr.", 3);
         return;
     }
     b = addr & 0x0000000F;
@@ -1444,18 +1444,18 @@ INLINE static void LTV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e & 1)
     {
-        message("LTV\nIllegal element.", 3);
+        message(state, "LTV\nIllegal element.", 3);
         return;
     }
     if (vt & 07)
     {
-        message("LTV\nUncertain case!", 3);
+        message(state, "LTV\nUncertain case!", 3);
         return; /* For LTV I am not sure; for STV I have an idea. */
     }
     addr = (state->SR[base] + 16*offset) & 0x00000FFF;
     if (addr & 0x0000000F)
     {
-        message("LTV\nIllegal addr.", 3);
+        message(state, "LTV\nIllegal addr.", 3);
         return;
     }
     for (i = 0; i < 8; i++) /* SGI screwed LTV up on N64.  See STV instead. */
@@ -1474,7 +1474,7 @@ NOINLINE static void SWV(usf_state_t * state, int vt, int element, int offset, i
 
     sprintf(debugger, "%s     $v%i[0x%X], 0x%03X($%i)", "SWV",
         vt, element, offset & 0xFFF, base);
-    message(debugger, 3);*/
+    message(state, debugger, 3);*/
     return;
 }
 INLINE static void STV(usf_state_t * state, int vt, int element, int offset, int base)
@@ -1485,18 +1485,18 @@ INLINE static void STV(usf_state_t * state, int vt, int element, int offset, int
 
     if (e & 1)
     {
-        message("STV\nIllegal element.", 3);
+        message(state, "STV\nIllegal element.", 3);
         return;
     }
     if (vt & 07)
     {
-        message("STV\nUncertain case!", 2);
+        message(state, "STV\nUncertain case!", 2);
         return; /* vt &= 030; */
     }
     addr = (state->SR[base] + 16*offset) & 0x00000FFF;
     if (addr & 0x0000000F)
     {
-        message("STV\nIllegal addr.", 3);
+        message(state, "STV\nIllegal addr.", 3);
         return;
     }
     for (i = 0; i < 8; i++)

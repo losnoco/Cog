@@ -53,14 +53,14 @@ static void res_V(usf_state_t * state, int vd, int vs, int vt, int e)
     vs = vt = e = 0;
     if (vs != vt || vt != e)
         return;
-    message("C2\nRESERVED", 2); /* uncertain how to handle reserved, untested */
+    message(state, "C2\nRESERVED", 2); /* uncertain how to handle reserved, untested */
     for (i = 0; i < N; i++)
         state->VR[vd][i] = 0x0000; /* override behavior (bpoint) */
     return;
 }
 static void res_M(usf_state_t * state, int vd, int vs, int vt, int e)
 {
-    message("VMUL IQ", 2);
+    message(state, "VMUL IQ", 2);
     res_V(state, vd, vs, vt, e);
     return; /* Ultra64 OS did have these, so one could implement this ext. */
 }

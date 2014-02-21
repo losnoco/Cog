@@ -1010,7 +1010,7 @@ static int usf_info(void * context, const char * name, const char * value)
         struct usf_loader_state state;
         memset( &state, 0, sizeof(state) );
 
-        state.emu_state = malloc( get_usf_state_size() );
+        state.emu_state = malloc( usf_get_state_size() );
         
         usf_clear( state.emu_state );
         
@@ -1022,7 +1022,8 @@ static int usf_info(void * context, const char * name, const char * value)
         usf_set_compare( state.emu_state, state.enablecompare );
         usf_set_fifo_full( state.emu_state, state.enablefifofull );
         
-        usf_render( state.emu_state, 0, 0, &samplerate );
+        if ( usf_render( state.emu_state, 0, 0, &samplerate ) != 0 )
+            return NO;
         
         sampleRate = samplerate;
         
@@ -1294,7 +1295,8 @@ static int usf_info(void * context, const char * name, const char * value)
     {
         int32_t samplerate;
         
-        usf_render( emulatorCore, (int16_t*) buf, frames, &samplerate );
+        if ( usf_render( emulatorCore, (int16_t*) buf, frames, &samplerate ) != 0 )
+            return 0;
 
         sampleRate = samplerate;
     }
@@ -1523,7 +1525,8 @@ static int usf_info(void * context, const char * name, const char * value)
         {
             ssize_t howmany = frame - framesRead;
             if (howmany > 1024) howmany = 1024;
-            usf_render(emulatorCore, temp, howmany, NULL);
+            if ( usf_render(emulatorCore, temp, howmany, NULL) != 0 )
+                return -1;
             framesRead += howmany;
         } while (framesRead < frame);
     }
