@@ -19,7 +19,6 @@ void StopEmulation(usf_state_t * state)
 }
 
 void DisplayError (usf_state_t * state, char * Message, ...) {
-    (void)Message;
 	va_list ap;
     
     size_t len = strlen( state->error_message );
