@@ -36,6 +36,11 @@ void Okim6258_Emu::write( int addr, int data )
 	okim6258_write( chip, addr, data );
 }
 
+int Okim6258_Emu::get_clock()
+{
+    return okim6258_get_vclk( chip );
+}
+
 void Okim6258_Emu::run( int pair_count, sample_t* out )
 {
 	stream_sample_t bufL[ 1024 ];

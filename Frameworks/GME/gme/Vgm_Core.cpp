@@ -197,9 +197,19 @@ int Vgm_Core::run_pwm( int time )
 	return pwm.run_until( time );
 }
 
-int Vgm_Core::run_okim6258( int time )
+int Vgm_Core::run_okim6258( int chip, int time )
 {
-	return okim6258.run_until( time );
+    chip = !!chip;
+    if ( okim6258[chip].enabled() )
+    {
+        int current_clock = okim6258[chip].get_clock();
+        if ( okim6258_hz[chip] != current_clock )
+        {
+            okim6258_hz[chip] = current_clock;
+            okim6258[chip].setup( (double)okim6258_hz[chip] / vgm_rate, 0.85, 1.0 );
+        }
+    }
+	return okim6258[chip].run_until( time );
 }
 
 int Vgm_Core::run_okim6295( int chip, int time )
@@ -703,8 +713,8 @@ void Vgm_Core::chip_reg_write(unsigned Sample, byte ChipType, byte ChipID, byte 
 		break;
 
 	case 0x17:
-		if ( run_okim6258( to_fm_time( Sample ) ) )
-			okim6258.write( Offset, Data );
+		if ( run_okim6258( ChipID, to_fm_time( Sample ) ) )
+			okim6258[ChipID].write( Offset, Data );
 		break;
 
 	case 0x18:
@@ -898,7 +908,8 @@ blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
 	rf5c68.enable( false );
 	rf5c164.enable( false );
 	pwm.enable( false );
-	okim6258.enable( false );
+	okim6258[0].enable( false );
+    okim6258[1].enable( false );
 	okim6295[0].enable( false );
 	okim6295[1].enable( false );
 	k051649.enable( false );
@@ -1234,13 +1245,24 @@ blargg_err_t Vgm_Core::init_chips( double* rate, bool reinit )
 	}
 	if ( okim6258_rate )
 	{
+        bool dual_chip = !!( header().okim6258_rate[3] & 0x40 );
 		if ( !reinit )
 		{
-			okim6258_hz = okim6258.set_rate( okim6258_rate, header().okim6258_flags & 0x03, ( header().okim6258_flags & 0x04 ) >> 2, ( header().okim6258_flags & 0x08 ) >> 3 );
-			CHECK_ALLOC( okim6258_hz );
+			okim6258_hz[0] = okim6258[0].set_rate( okim6258_rate, header().okim6258_flags & 0x03, ( header().okim6258_flags & 0x04 ) >> 2, ( header().okim6258_flags & 0x08 ) >> 3 );
+			CHECK_ALLOC( okim6258_hz[0] );
 		}
-		RETURN_ERR( okim6258.setup( (double)okim6258_hz / vgm_rate, 0.85, 1.0 ) );
-		okim6258.enable();
+		RETURN_ERR( okim6258[0].setup( (double)okim6258_hz[0] / vgm_rate, 0.85, 1.0 ) );
+		okim6258[0].enable();
+        if ( dual_chip )
+        {
+            if ( !reinit )
+            {
+                okim6258_hz[1] = okim6258[1].set_rate( okim6258_rate, header().okim6258_flags & 0x03, ( header().okim6258_flags & 0x04 ) >> 2, ( header().okim6258_flags & 0x08 ) >> 3 );
+                CHECK_ALLOC( okim6258_hz[1] );
+            }
+            RETURN_ERR( okim6258[1].setup( (double)okim6258_hz[1] / vgm_rate, 0.85, 1.0 ) );
+            okim6258[1].enable();
+        }
 	}
 	if ( okim6295_rate )
 	{
@@ -1384,8 +1406,11 @@ void Vgm_Core::start_track()
 		if ( pwm.enabled() )
 			pwm.reset();
 
-		if ( okim6258.enabled() )
-			okim6258.reset();
+		if ( okim6258[0].enabled() )
+			okim6258[0].reset();
+        
+        if ( okim6258[1].enabled() )
+            okim6258[1].reset();
 
 		if ( okim6295[0].enabled() )
 			okim6295[0].reset();
@@ -1757,7 +1782,7 @@ blip_time_t Vgm_Core::run( vgm_time_t end_time )
 			break;
 
 		case cmd_okim6258_write:
-			chip_reg_write( vgm_time, 0x17, 0x00, 0x00, pos [0] & 0x7F, pos [1] );
+			chip_reg_write( vgm_time, 0x17, ChipID, 0x00, pos [0] & 0x7F, pos [1] );
 			pos += 2;
 			break;
 
@@ -2157,9 +2182,13 @@ int Vgm_Core::play_frame( blip_time_t blip_time, int sample_count, blip_sample_t
 	{
 		pwm.begin_frame( out );
 	}
-	if ( okim6258.enabled() )
+	if ( okim6258[0].enabled() )
 	{
-		okim6258.begin_frame( out );
+		okim6258[0].begin_frame( out );
+        if ( okim6258[1].enabled() )
+        {
+            okim6258[1].begin_frame( out );
+        }
 	}
 	if ( okim6295[0].enabled() )
 	{
@@ -2211,7 +2240,7 @@ int Vgm_Core::play_frame( blip_time_t blip_time, int sample_count, blip_sample_t
 	run_rf5c68( pairs );
 	run_rf5c164( pairs );
 	run_pwm( pairs );
-	run_okim6258( pairs );
+	run_okim6258( 0, pairs ); run_okim6258( 1, pairs );
 	run_okim6295( 0, pairs ); run_okim6295( 1, pairs );
 	run_k051649( pairs );
 	run_k053260( pairs );

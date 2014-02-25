@@ -42,10 +42,24 @@ struct _okim6258_state
 
 	UINT8 output_bits;
 
+	// Valley Bell: Added a small queue to prevent race conditions.
+	UINT8 data_buf[2];
+	UINT8 data_buf_pos;
+	// Data Empty Values:
+	//	00 - data written, but not read yet
+	//	01 - read data, waiting for next write
+	//	02 - tried to read, but had no data
+	UINT8 data_empty;
+	// Valley Bell: Added pan
+	UINT8 pan;
+	INT32 last_smpl;
+    
 	INT32 signal;
 	INT32 step;
 	
 	UINT8 clock_buffer[0x04];
+	UINT32 initial_clock;
+	UINT8 initial_div;
 };
 
 /* step size index shift table */
@@ -144,29 +158,68 @@ void okim6258_update(void *_chip, stream_sample_t **outputs, int samples)
 	//stream_sample_t *buffer = outputs[0];
 	stream_sample_t *bufL = outputs[0];
 	stream_sample_t *bufR = outputs[1];
-
+    
 	//memset(outputs[0], 0, samples * sizeof(*outputs[0]));
-
+    
 	if (chip->status & STATUS_PLAYING)
 	{
 		int nibble_shift = chip->nibble_shift;
-
+        
 		while (samples)
 		{
 			/* Compute the new amplitude and update the current step */
-			int nibble = (chip->data_in >> nibble_shift) & 0xf;
-
+			//int nibble = (chip->data_in >> nibble_shift) & 0xf;
+			int nibble;
+			INT16 sample;
+			
+			if (! nibble_shift)
+			{
+				// 1st nibble - get data
+				if (! chip->data_empty)
+				{
+					chip->data_in = chip->data_buf[chip->data_buf_pos >> 4];
+					chip->data_buf_pos ^= 0x10;
+					if ((chip->data_buf_pos >> 4) == (chip->data_buf_pos & 0x0F))
+						chip->data_empty ++;
+				}
+				else
+				{
+					chip->data_in = 0x80;
+					if (chip->data_empty < 0x80)
+						chip->data_empty ++;
+				}
+			}
+			nibble = (chip->data_in >> nibble_shift) & 0xf;
+            
 			/* Output to the buffer */
-			INT16 sample = clock_adpcm(chip, nibble);
-
+			//INT16 sample = clock_adpcm(chip, nibble);
+			if (chip->data_empty < 0x02)
+			{
+				sample = clock_adpcm(chip, nibble);
+				chip->last_smpl = sample;
+			}
+			else
+			{
+				sample = chip->last_smpl;
+				// Valley Bell: data_empty behaviour (loosely) ported from XM6
+				if (chip->data_empty >= 0x12)
+				{
+					chip->data_empty -= 0x10;
+					if (chip->signal < 0)
+						chip->signal ++;
+					else if (chip->signal > 0)
+						chip->signal --;
+				}
+			}
+            
 			nibble_shift ^= 4;
-
+            
 			//*buffer++ = sample;
-			*bufL++ = sample;
-			*bufR++ = sample;
+			*bufL++ = (chip->pan & 0x02) ? 0x00 : sample;
+			*bufR++ = (chip->pan & 0x01) ? 0x00 : sample;
 			samples--;
 		}
-
+        
 		/* Update the parameters */
 		chip->nibble_shift = nibble_shift;
 	}
@@ -220,6 +273,8 @@ void * device_start_okim6258(int clock, int divider, int adpcm_type, int output_
 	compute_tables();
 
 	//info->master_clock = device->clock();
+    info->initial_clock = clock;
+    info->initial_div = divider;
 	info->master_clock = clock;
 	info->adpcm_type = /*intf->*/adpcm_type;
 	info->clock_buffer[0x00] = (clock & 0x000000FF) >>  0;
@@ -263,9 +318,24 @@ void device_reset_okim6258(void *chip)
 
 	//stream_update(info->stream);
 
+	info->master_clock = info->initial_clock;
+	info->clock_buffer[0x00] = (info->initial_clock & 0x000000FF) >>  0;
+	info->clock_buffer[0x01] = (info->initial_clock & 0x0000FF00) >>  8;
+	info->clock_buffer[0x02] = (info->initial_clock & 0x00FF0000) >> 16;
+	info->clock_buffer[0x03] = (info->initial_clock & 0xFF000000) >> 24;
+	info->divider = dividers[info->initial_div];
+
+    
 	info->signal = -2;
 	info->step = 0;
 	info->status = 0;
+
+	// Valley Bell: Added reset of the Data In register.
+	info->data_in = 0x00;
+	info->data_buf[0] = info->data_buf[1] = 0x00;
+	info->data_buf_pos = 0x00;
+	info->data_empty = 0xFF;
+	info->pan = 0x00;
 }
 
 
@@ -357,8 +427,17 @@ void okim6258_data_w(void *chip, offs_t offset, UINT8 data)
 	/* update the stream */
 	//stream_update(info->stream);
 
-	info->data_in = data;
-	info->nibble_shift = 0;
+	//info->data_in = data;
+	//info->nibble_shift = 0;
+
+	if (info->data_empty >= 0x02)
+	{
+		info->data_buf_pos = 0x00;
+		info->data_buf[info->data_buf_pos & 0x0F] = 0x80;
+	}
+	info->data_buf[info->data_buf_pos & 0x0F] = data;
+	info->data_buf_pos ^= 0x01;
+	info->data_empty = 0x00;
 }
 
 
@@ -381,24 +460,27 @@ void okim6258_ctrl_w(void *chip, offs_t offset, UINT8 data)
 		info->status &= ~(STATUS_PLAYING | STATUS_RECORDING);
 		return;
 	}
-
+    
 	if (data & COMMAND_PLAY)
 	{
 		if (!(info->status & STATUS_PLAYING))
 		{
 			info->status |= STATUS_PLAYING;
-
+            
 			/* Also reset the ADPCM parameters */
-			info->signal = -2;
-			info->step = 0;
-			info->nibble_shift = 0;
+			//info->signal = -2;
+			//info->step = 0;
+			//info->nibble_shift = 0;
 		}
+		//info->signal = -2;
+		info->step = 0;
+		info->nibble_shift = 0;
 	}
 	else
 	{
 		info->status &= ~STATUS_PLAYING;
 	}
-
+    
 	if (data & COMMAND_RECORD)
 	{
 		/*logerror("M6258: Record enabled\n");*/
@@ -419,6 +501,16 @@ void okim6258_set_clock_byte(void *chip, UINT8 Byte, UINT8 val)
 	return;
 }
 
+static void okim6258_pan_w(void *chip, UINT8 data)
+{
+	okim6258_state *info = (okim6258_state *) chip;
+	
+	info->pan = data;
+	
+	return;
+}
+
+
 void okim6258_write(void *chip, UINT8 Port, UINT8 Data)
 {
 	switch(Port)
@@ -429,6 +521,9 @@ void okim6258_write(void *chip, UINT8 Port, UINT8 Data)
 	case 0x01:
 		okim6258_data_w(chip, 0x00, Data);
 		break;
+    case 0x02:
+        okim6258_pan_w(chip, Data);
+        break;
 	case 0x08:
 	case 0x09:
 	case 0x0A:

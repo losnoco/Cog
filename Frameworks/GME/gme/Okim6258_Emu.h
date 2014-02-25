@@ -16,6 +16,9 @@ public:
 	
 	// Resets to power-up state
 	void reset();
+    
+    // Returns current sample rate of the chip
+    int get_clock();
 	
 	// Writes data to addr
 	void write( int addr, int data );
