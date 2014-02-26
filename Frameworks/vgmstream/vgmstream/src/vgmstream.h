@@ -12,7 +12,7 @@ enum { PATH_LIMIT = 32768 };
  * If someone wants to do a standalone build, they can do it by simply
  * removing these defines (and the references to the libraries in the
  * Makefile) */
-//#define VGM_USE_VORBIS
+#define VGM_USE_VORBIS
 //#define VGM_USE_MPEG
 /* disabled by default, defined for builds that support it */
 //#define VGM_USE_G7221
@@ -26,6 +26,9 @@ enum { PATH_LIMIT = 32768 };
 #include "g72x_state.h"
 #endif
 #ifdef VGM_USE_VORBIS
+#ifdef __APPLE__
+#define __MACOSX__
+#endif
 #include <vorbis/vorbisfile.h>
 #endif
 #ifdef VGM_USE_MPEG

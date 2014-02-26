@@ -318,7 +318,23 @@
 		836F705718BDC2190095E648 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1B18BDC2190095E648 /* util.h */; };
 		836F705818BDC2190095E648 /* vgmstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F1C18BDC2190095E648 /* vgmstream.c */; };
 		836F705918BDC2190095E648 /* vgmstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1D18BDC2190095E648 /* vgmstream.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83979B0918BDD87A00192D2F /* Vorbis.xcodeproj in Resources */ = {isa = PBXBuildFile; fileRef = 83979B0818BDD87A00192D2F /* Vorbis.xcodeproj */; };
+		83979B0B18BDD89700192D2F /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83979B0A18BDD89700192D2F /* Vorbis.framework */; };
+		83979B0D18BDD93F00192D2F /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83979B0A18BDD89700192D2F /* Vorbis.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		83979B0C18BDD93100192D2F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				83979B0D18BDD93F00192D2F /* Vorbis.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		836F6B3918BDB8880095E648 /* vgmstream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vgmstream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -634,6 +650,8 @@
 		836F6F1B18BDC2190095E648 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		836F6F1C18BDC2190095E648 /* vgmstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vgmstream.c; sourceTree = "<group>"; };
 		836F6F1D18BDC2190095E648 /* vgmstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgmstream.h; sourceTree = "<group>"; };
+		83979B0818BDD87A00192D2F /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = file; name = Vorbis.xcodeproj; path = ../Vorbis/Vorbis.xcodeproj; sourceTree = "<group>"; };
+		83979B0A18BDD89700192D2F /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Cog-egaqitgoybntfwaoqzgiynizucrq/Build/Products/Debug/Vorbis.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -641,6 +659,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83979B0B18BDD89700192D2F /* Vorbis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -667,6 +686,7 @@
 		836F6B3B18BDB8880095E648 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83979B0A18BDD89700192D2F /* Vorbis.framework */,
 				836F6B3E18BDB8880095E648 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -675,6 +695,7 @@
 		836F6B3E18BDB8880095E648 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83979B0818BDD87A00192D2F /* Vorbis.xcodeproj */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -1069,6 +1090,7 @@
 				836F6B3518BDB8880095E648 /* Frameworks */,
 				836F6B3618BDB8880095E648 /* Headers */,
 				836F6B3718BDB8880095E648 /* Resources */,
+				83979B0C18BDD93100192D2F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1114,6 +1136,7 @@
 				836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */,
 				836F6F4E18BDC2190095E648 /* Makefile.unix.am in Resources */,
 				836F6F2B18BDC2190095E648 /* Makefile.unix.am in Resources */,
+				83979B0918BDD87A00192D2F /* Vorbis.xcodeproj in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1518,6 +1541,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Cog-egaqitgoybntfwaoqzgiynizucrq/Build/Products/Debug",
+				);
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1531,6 +1558,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Cog-egaqitgoybntfwaoqzgiynizucrq/Build/Products/Debug",
+				);
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1557,6 +1588,7 @@
 				836F6B6318BDB8880095E648 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
