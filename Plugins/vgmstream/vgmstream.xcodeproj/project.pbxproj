@@ -347,6 +347,7 @@
 				836F6B2418BDB80D0095E648 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

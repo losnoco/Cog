@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8315231E18BDECBB009AE289 /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8315231D18BDECA1009AE289 /* Vorbis.framework */; };
+		8315231F18BDECC9009AE289 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8315231D18BDECA1009AE289 /* Vorbis.framework */; };
 		836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B4518BDB8880095E648 /* InfoPlist.strings */; };
 		836F6F1E18BDC2190095E648 /* acm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE018BDC2180095E648 /* acm_decoder.c */; };
 		836F6F1F18BDC2190095E648 /* acm_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6DE118BDC2180095E648 /* acm_decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -318,21 +320,19 @@
 		836F705718BDC2190095E648 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1B18BDC2190095E648 /* util.h */; };
 		836F705818BDC2190095E648 /* vgmstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F1C18BDC2190095E648 /* vgmstream.c */; };
 		836F705918BDC2190095E648 /* vgmstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1D18BDC2190095E648 /* vgmstream.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		83979B1618BDDBEC00192D2F /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83979B1318BDDBCC00192D2F /* Vorbis.framework */; };
-		83979B1718BDDCB900192D2F /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83979B1318BDDBCC00192D2F /* Vorbis.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		83979B1218BDDBCC00192D2F /* PBXContainerItemProxy */ = {
+		8315231C18BDECA1009AE289 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83979B0E18BDDBCB00192D2F /* Vorbis.xcodeproj */;
+			containerPortal = 8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
 			remoteInfo = "Vorbis Framework";
 		};
-		83979B1418BDDBD400192D2F /* PBXContainerItemProxy */ = {
+		8315232018BDECD3009AE289 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83979B0E18BDDBCB00192D2F /* Vorbis.xcodeproj */;
+			containerPortal = 8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = "Vorbis Framework";
@@ -346,13 +346,14 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				83979B1618BDDBEC00192D2F /* Vorbis.framework in CopyFiles */,
+				8315231E18BDECBB009AE289 /* Vorbis.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VorbisNoDot.xcodeproj; path = ../Vorbis/VorbisNoDot.xcodeproj; sourceTree = "<group>"; };
 		836F6B3918BDB8880095E648 /* vgmstream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vgmstream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F6B4418BDB8880095E648 /* vgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vgmstream-Info.plist"; sourceTree = "<group>"; };
 		836F6B4618BDB8880095E648 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -666,7 +667,6 @@
 		836F6F1B18BDC2190095E648 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		836F6F1C18BDC2190095E648 /* vgmstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vgmstream.c; sourceTree = "<group>"; };
 		836F6F1D18BDC2190095E648 /* vgmstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgmstream.h; sourceTree = "<group>"; };
-		83979B0E18BDDBCB00192D2F /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = ../Vorbis/Vorbis.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -674,13 +674,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83979B1718BDDCB900192D2F /* Vorbis.framework in Frameworks */,
+				8315231F18BDECC9009AE289 /* Vorbis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8315231818BDECA1009AE289 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8315231D18BDECA1009AE289 /* Vorbis.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		836F6B2F18BDB8880095E648 = {
 			isa = PBXGroup;
 			children = (
@@ -709,7 +717,7 @@
 		836F6B3E18BDB8880095E648 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				83979B0E18BDDBCB00192D2F /* Vorbis.xcodeproj */,
+				8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -1073,14 +1081,6 @@
 			path = meta;
 			sourceTree = "<group>";
 		};
-		83979B0F18BDDBCB00192D2F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83979B1318BDDBCC00192D2F /* Vorbis.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1117,7 +1117,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				83979B1518BDDBD400192D2F /* PBXTargetDependency */,
+				8315232118BDECD3009AE289 /* PBXTargetDependency */,
 			);
 			name = vgmstream;
 			productName = vgmstream;
@@ -1145,8 +1145,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 83979B0F18BDDBCB00192D2F /* Products */;
-					ProjectRef = 83979B0E18BDDBCB00192D2F /* Vorbis.xcodeproj */;
+					ProductGroup = 8315231818BDECA1009AE289 /* Products */;
+					ProjectRef = 8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1157,11 +1157,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		83979B1318BDDBCC00192D2F /* Vorbis.framework */ = {
+		8315231D18BDECA1009AE289 /* Vorbis.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Vorbis.framework;
-			remoteRef = 83979B1218BDDBCC00192D2F /* PBXContainerItemProxy */;
+			remoteRef = 8315231C18BDECA1009AE289 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1488,10 +1488,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		83979B1518BDDBD400192D2F /* PBXTargetDependency */ = {
+		8315232118BDECD3009AE289 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Vorbis Framework";
-			targetProxy = 83979B1418BDDBD400192D2F /* PBXContainerItemProxy */;
+			targetProxy = 8315232018BDECD3009AE289 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
