@@ -1,0 +1,354 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		836F6B1418BDB80D0095E648 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F6B1318BDB80D0095E648 /* Cocoa.framework */; };
+		836F6B1E18BDB80D0095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B1C18BDB80D0095E648 /* InfoPlist.strings */; };
+		836F705C18BDC40E0095E648 /* VGMDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 836F705B18BDC40E0095E648 /* VGMDecoder.m */; };
+		836F705D18BDC4580095E648 /* vgmstream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F6B6D18BDB8890095E648 /* vgmstream.framework */; };
+		836F705F18BDC47F0095E648 /* vgmstream.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836F6B6D18BDB8890095E648 /* vgmstream.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		836F6B6C18BDB8890095E648 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 836F6B6718BDB8880095E648 /* vgmstream.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 836F6B3918BDB8880095E648;
+			remoteInfo = vgmstream;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		836F705E18BDC4710095E648 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				836F705F18BDC47F0095E648 /* vgmstream.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		836F6B1018BDB80D0095E648 /* vgmstream.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = vgmstream.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		836F6B1318BDB80D0095E648 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		836F6B1618BDB80D0095E648 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		836F6B1718BDB80D0095E648 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		836F6B1818BDB80D0095E648 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		836F6B1B18BDB80D0095E648 /* vgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vgmstream-Info.plist"; sourceTree = "<group>"; };
+		836F6B1D18BDB80D0095E648 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		836F6B1F18BDB80D0095E648 /* vgmstream-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "vgmstream-Prefix.pch"; sourceTree = "<group>"; };
+		836F6B6718BDB8880095E648 /* vgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vgmstream.xcodeproj; path = ../../Frameworks/vgmstream/vgmstream.xcodeproj; sourceTree = "<group>"; };
+		836F705A18BDC40E0095E648 /* VGMDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMDecoder.h; sourceTree = "<group>"; };
+		836F705B18BDC40E0095E648 /* VGMDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMDecoder.m; sourceTree = "<group>"; };
+		836F706018BDC84D0095E648 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
+		836F706118BDC8650095E648 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		836F6B0D18BDB80D0095E648 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				836F705D18BDC4580095E648 /* vgmstream.framework in Frameworks */,
+				836F6B1418BDB80D0095E648 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		836F6B0718BDB80D0095E648 = {
+			isa = PBXGroup;
+			children = (
+				836F6B1918BDB80D0095E648 /* vgmstream */,
+				836F6B1218BDB80D0095E648 /* Frameworks */,
+				836F6B1118BDB80D0095E648 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		836F6B1118BDB80D0095E648 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				836F6B1018BDB80D0095E648 /* vgmstream.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		836F6B1218BDB80D0095E648 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				836F6B1318BDB80D0095E648 /* Cocoa.framework */,
+				836F6B1518BDB80D0095E648 /* Other Frameworks */,
+				836F6B6718BDB8880095E648 /* vgmstream.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		836F6B1518BDB80D0095E648 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				836F6B1618BDB80D0095E648 /* Foundation.framework */,
+				836F6B1718BDB80D0095E648 /* CoreData.framework */,
+				836F6B1818BDB80D0095E648 /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		836F6B1918BDB80D0095E648 /* vgmstream */ = {
+			isa = PBXGroup;
+			children = (
+				836F706118BDC8650095E648 /* PlaylistController.h */,
+				836F706018BDC84D0095E648 /* Plugin.h */,
+				836F705A18BDC40E0095E648 /* VGMDecoder.h */,
+				836F705B18BDC40E0095E648 /* VGMDecoder.m */,
+				836F6B1A18BDB80D0095E648 /* Supporting Files */,
+			);
+			path = vgmstream;
+			sourceTree = "<group>";
+		};
+		836F6B1A18BDB80D0095E648 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				836F6B1B18BDB80D0095E648 /* vgmstream-Info.plist */,
+				836F6B1C18BDB80D0095E648 /* InfoPlist.strings */,
+				836F6B1F18BDB80D0095E648 /* vgmstream-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		836F6B6818BDB8880095E648 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				836F6B6D18BDB8890095E648 /* vgmstream.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		836F6B0F18BDB80D0095E648 /* vgmstream */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 836F6B2218BDB80D0095E648 /* Build configuration list for PBXNativeTarget "vgmstream" */;
+			buildPhases = (
+				836F6B0C18BDB80D0095E648 /* Sources */,
+				836F6B0D18BDB80D0095E648 /* Frameworks */,
+				836F6B0E18BDB80D0095E648 /* Resources */,
+				836F705E18BDC4710095E648 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = vgmstream;
+			productName = vgmstream;
+			productReference = 836F6B1018BDB80D0095E648 /* vgmstream.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		836F6B0818BDB80D0095E648 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Christopher Snowhill";
+			};
+			buildConfigurationList = 836F6B0B18BDB80D0095E648 /* Build configuration list for PBXProject "vgmstream" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 836F6B0718BDB80D0095E648;
+			productRefGroup = 836F6B1118BDB80D0095E648 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 836F6B6818BDB8880095E648 /* Products */;
+					ProjectRef = 836F6B6718BDB8880095E648 /* vgmstream.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				836F6B0F18BDB80D0095E648 /* vgmstream */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		836F6B6D18BDB8890095E648 /* vgmstream.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = vgmstream.framework;
+			remoteRef = 836F6B6C18BDB8890095E648 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		836F6B0E18BDB80D0095E648 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				836F6B1E18BDB80D0095E648 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		836F6B0C18BDB80D0095E648 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				836F705C18BDC40E0095E648 /* VGMDecoder.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		836F6B1C18BDB80D0095E648 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				836F6B1D18BDB80D0095E648 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		836F6B2018BDB80D0095E648 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		836F6B2118BDB80D0095E648 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		836F6B2318BDB80D0095E648 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
+				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		836F6B2418BDB80D0095E648 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
+				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		836F6B0B18BDB80D0095E648 /* Build configuration list for PBXProject "vgmstream" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				836F6B2018BDB80D0095E648 /* Debug */,
+				836F6B2118BDB80D0095E648 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		836F6B2218BDB80D0095E648 /* Build configuration list for PBXNativeTarget "vgmstream" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				836F6B2318BDB80D0095E648 /* Debug */,
+				836F6B2418BDB80D0095E648 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 836F6B0818BDB80D0095E648 /* Project object */;
+}

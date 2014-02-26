@@ -141,6 +141,7 @@
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
+		836F706218BDD1230095E648 /* vgmstream.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836F6B2E18BDB80E0095E648 /* vgmstream.bundle */; };
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; };
 		8375B36517FFEF130092A79F /* Opus.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B05717FFEA410092A79F /* Opus.bundle */; };
 		83790D501809F4980073CF51 /* NSObject+SPInvocationGrabbing.m in Sources */ = {isa = PBXBuildFile; fileRef = 83790D4D1809F4980073CF51 /* NSObject+SPInvocationGrabbing.m */; };
@@ -434,6 +435,13 @@
 			remoteGlobalIDString = 8360EEE417F92AC8005208A4;
 			remoteInfo = HighlyComplete;
 		};
+		836F6B2D18BDB80E0095E648 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 836F6B1018BDB80D0095E648;
+			remoteInfo = vgmstream;
+		};
 		836FB5461820538800B3AD2D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 836FB5421820538700B3AD2D /* Hively.xcodeproj */;
@@ -620,6 +628,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				836F706218BDD1230095E648 /* vgmstream.bundle in CopyFiles */,
 				836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */,
 				83A0F4E31816DBF900119DB4 /* playptmod.bundle in CopyFiles */,
 				83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */,
@@ -866,6 +875,7 @@
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
+		836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vgmstream.xcodeproj; path = Plugins/vgmstream/vgmstream.xcodeproj; sourceTree = "<group>"; };
 		836FB5421820538700B3AD2D /* Hively.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Hively.xcodeproj; path = Plugins/Hively/Hively.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* Opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Opus.xcodeproj; path = Plugins/Opus/Opus.xcodeproj; sourceTree = "<group>"; };
 		83790D4C1809F4980073CF51 /* NSObject+SPInvocationGrabbing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SPInvocationGrabbing.h"; sourceTree = "<group>"; };
@@ -1221,6 +1231,7 @@
 				83B0669C180D5668008E3612 /* MIDI.xcodeproj */,
 				83A0F4841816CE5E00119DB4 /* playptmod.xcodeproj */,
 				836FB5421820538700B3AD2D /* Hively.xcodeproj */,
+				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
 			);
 			name = PlugIns;
 			sourceTree = "<group>";
@@ -1547,6 +1558,14 @@
 			isa = PBXGroup;
 			children = (
 				8360EF0517F92B24005208A4 /* HighlyComplete.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		836F6B2618BDB80D0095E648 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				836F6B2E18BDB80E0095E648 /* vgmstream.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1909,6 +1928,10 @@
 					ProjectRef = 17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */;
 				},
 				{
+					ProductGroup = 836F6B2618BDB80D0095E648 /* Products */;
+					ProjectRef = 836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */;
+				},
+				{
 					ProductGroup = 17C808B80C3BD1D2005707C4 /* Products */;
 					ProjectRef = 17C808B70C3BD1D2005707C4 /* Vorbis.xcodeproj */;
 				},
@@ -2042,6 +2065,13 @@
 			fileType = wrapper.cfbundle;
 			path = HighlyComplete.bundle;
 			remoteRef = 8360EF0417F92B24005208A4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		836F6B2E18BDB80E0095E648 /* vgmstream.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = vgmstream.bundle;
+			remoteRef = 836F6B2D18BDB80E0095E648 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		836FB5471820538800B3AD2D /* Hively.bundle */ = {
