@@ -62,7 +62,7 @@ typedef int (* psf_info_callback)(void * context, const char * name, const char 
  * Returns negative on error, PSF version on success.
  */
 int psf_load( const char * uri, const psf_file_callbacks * file_callbacks, uint8_t allowed_version,
-              psf_load_callback load_target, void * load_context, psf_info_callback info_target, void * info_context );
+              psf_load_callback load_target, void * load_context, psf_info_callback info_target, void * info_context, int info_want_nested_tags );
 
 #ifdef __cplusplus
 }

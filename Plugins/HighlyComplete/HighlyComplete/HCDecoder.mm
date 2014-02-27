@@ -946,7 +946,7 @@ static int usf_info(void * context, const char * name, const char * value)
         state.first = true;
         state.refresh = 0;
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 1, psf1_loader, &state, psf1_info, &state ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 1, psf1_loader, &state, psf1_info, &state, 0 ) <= 0 )
             return NO;
         
         if ( state.refresh )
@@ -962,7 +962,7 @@ static int usf_info(void * context, const char * name, const char * value)
         
         state.refresh = 0;
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 2, psf2fs_load_callback, emulatorExtra, psf1_info, &state ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 2, psf2fs_load_callback, emulatorExtra, psf1_info, &state, 0 ) <= 0 )
             return NO;
         
         emulatorCore = ( uint8_t * ) malloc( psx_get_state_size( 2 ) );
@@ -981,7 +981,7 @@ static int usf_info(void * context, const char * name, const char * value)
         struct sdsf_loader_state state;
         memset( &state, 0, sizeof(state) );
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, type, sdsf_loader, &state, 0, 0) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, type, sdsf_loader, &state, 0, 0, 0 ) <= 0 )
             return NO;
         
         emulatorCore = ( uint8_t * ) malloc( sega_get_state_size( type - 0x10 ) );
@@ -1016,7 +1016,7 @@ static int usf_info(void * context, const char * name, const char * value)
         
         emulatorCore = ( uint8_t * ) state.emu_state;
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, &state, usf_info, &state ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, &state, usf_info, &state, 1 ) <= 0 )
             return NO;
         
         usf_set_compare( state.emu_state, state.enablecompare );
@@ -1034,7 +1034,7 @@ static int usf_info(void * context, const char * name, const char * value)
         struct gsf_loader_state state;
         memset( &state, 0, sizeof(state) );
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x22, gsf_loader, &state, 0, 0 ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x22, gsf_loader, &state, 0, 0, 0 ) <= 0 )
             return NO;
         
         if ( state.data_size > UINT_MAX )
@@ -1066,7 +1066,7 @@ static int usf_info(void * context, const char * name, const char * value)
         memset( &state, 0, sizeof(state) );
         state.initial_frames = -1;
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x24, twosf_loader, &state, twosf_info, &state) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x24, twosf_loader, &state, twosf_info, &state, 1 ) <= 0 )
         {
             if (state.rom) free(state.rom);
             if (state.state) free(state.state);
@@ -1123,7 +1123,7 @@ static int usf_info(void * context, const char * name, const char * value)
     {
         struct ncsf_loader_state * state = new struct ncsf_loader_state;
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x25, ncsf_loader, state, 0, 0) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x25, ncsf_loader, state, 0, 0, 0 ) <= 0 )
         {
             delete state;
             return NO;
@@ -1155,7 +1155,7 @@ static int usf_info(void * context, const char * name, const char * value)
         
         emulatorExtra = state;
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x41, qsf_loader, state, 0, 0) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x41, qsf_loader, state, 0, 0, 0 ) <= 0 )
             return NO;
         
         emulatorCore = ( uint8_t * ) malloc( qsound_get_state_size() );
@@ -1217,7 +1217,7 @@ static int usf_info(void * context, const char * name, const char * value)
     
     [[psf_file_container instance] add_hint:currentUrl source:currentSource];
     
-    type = psf_load( [currentUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info );
+    type = psf_load( [currentUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info, 0 );
     
     if (type <= 0)
         return NO;
@@ -1643,7 +1643,7 @@ static int usf_info(void * context, const char * name, const char * value)
     
     NSString * decodedUrl = [[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
-    if ( psf_load( [decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info ) <= 0)
+    if ( psf_load( [decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info, 0 ) <= 0)
         return NO;
     
 	return info.info;

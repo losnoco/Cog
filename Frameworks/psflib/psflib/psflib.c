@@ -63,6 +63,7 @@ typedef struct psf_load_state
 
     psf_info_callback          info_target;
     void                     * info_context;
+    int                        info_want_nested_tags;
 
     char                       lib_name_temp[32];
 } psf_load_state;
@@ -70,7 +71,7 @@ typedef struct psf_load_state
 static int psf_load_internal( psf_load_state * state, const char * file_name );
 
 int psf_load( const char * uri, const psf_file_callbacks * file_callbacks, uint8_t allowed_version,
-              psf_load_callback load_target, void * load_context, psf_info_callback info_target, void * info_context )
+              psf_load_callback load_target, void * load_context, psf_info_callback info_target, void * info_context, int info_want_nested_tags )
 {
     int rval;
 
@@ -88,6 +89,7 @@ int psf_load( const char * uri, const psf_file_callbacks * file_callbacks, uint8
     state.load_context = load_context;
     state.info_target = info_target;
     state.info_context = info_context;
+    state.info_want_nested_tags = info_want_nested_tags;
 
     state.base_path = strdup( uri );
     if ( !state.base_path ) return -1;
@@ -426,7 +428,7 @@ static int psf_load_internal( psf_load_state * state, const char * file_name )
         free( tag_buffer );
         tag_buffer = NULL;
 
-        if ( tags && state->info_target && state->depth == 1 )
+        if ( tags && state->info_target && ( state->depth == 1 || state->info_want_nested_tags ) )
         {
             tag = tags;
             while ( tag->next ) tag = tag->next;
