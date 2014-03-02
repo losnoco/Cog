@@ -46,45 +46,45 @@ void (* R4300i_CoP1_W[64])(usf_state_t *);
 void (* R4300i_CoP1_L[64])(usf_state_t *);
 
 void R4300i_opcode_SPECIAL (usf_state_t * state) {
-	((void (*)()) R4300i_Special[ state->Opcode.u.e.funct ])(state);
+	R4300i_Special[ state->Opcode.u.e.funct ](state);
 }
 
 void R4300i_opcode_REGIMM (usf_state_t * state) {
-	((void (*)()) R4300i_Regimm[ state->Opcode.u.b.rt ])(state);
+	R4300i_Regimm[ state->Opcode.u.b.rt ](state);
 }
 
 void R4300i_opcode_COP0 (usf_state_t * state) {
-	((void (*)()) R4300i_CoP0[ state->Opcode.u.b.rs ])(state);
+	R4300i_CoP0[ state->Opcode.u.b.rs ](state);
 }
 
 void R4300i_opcode_COP0_CO (usf_state_t * state) {
-	((void (*)()) R4300i_CoP0_Function[ state->Opcode.u.e.funct ])(state);
+	R4300i_CoP0_Function[ state->Opcode.u.e.funct ](state);
 }
 
 void R4300i_opcode_COP1 (usf_state_t * state) {
-	((void (*)()) R4300i_CoP1[ state->Opcode.u.f.fmt ])(state);
+	R4300i_CoP1[ state->Opcode.u.f.fmt ](state);
 }
 
 void R4300i_opcode_COP1_BC (usf_state_t * state) {
-	((void (*)()) R4300i_CoP1_BC[ state->Opcode.u.f.ft ])(state);
+	R4300i_CoP1_BC[ state->Opcode.u.f.ft ](state);
 }
 
 void R4300i_opcode_COP1_S (usf_state_t * state) {
 	// controlfp(RoundingModel);
-	((void (*)()) R4300i_CoP1_S[ state->Opcode.u.e.funct ])(state);
+	R4300i_CoP1_S[ state->Opcode.u.e.funct ](state);
 }
 
 void R4300i_opcode_COP1_D (usf_state_t * state) {
 	// controlfp(RoundingModel);
-	((void (*)()) R4300i_CoP1_D[ state->Opcode.u.e.funct ])(state);
+	R4300i_CoP1_D[ state->Opcode.u.e.funct ](state);
 }
 
 void R4300i_opcode_COP1_W (usf_state_t * state) {
-	((void (*)()) R4300i_CoP1_W[ state->Opcode.u.e.funct ])(state);
+	R4300i_CoP1_W[ state->Opcode.u.e.funct ](state);
 }
 
 void R4300i_opcode_COP1_L (usf_state_t * state) {
-	((void (*)()) R4300i_CoP1_L[ state->Opcode.u.e.funct ])(state);
+	R4300i_CoP1_L[ state->Opcode.u.e.funct ](state);
 }
 
 

@@ -75,14 +75,6 @@ void set_PC(usf_state_t * state, int address)
 #define SE(x, b)        (-(x & (1 << b)) | (x & ~(~0 << b)))
 #define ZE(x, b)        (+(x & (1 << b)) | (x & ~(~0 << b)))
 
-static union {
-    unsigned char B[4];
-    signed char SB[4];
-    unsigned short H[2];
-    signed short SH[2];
-    unsigned W:  32;
-} SR_temp;
-
 extern void ULW(usf_state_t *, int rd, uint32_t addr);
 extern void USW(usf_state_t *, int rs, uint32_t addr);
 
@@ -1507,6 +1499,13 @@ INLINE static void STV(usf_state_t * state, int vt, int element, int offset, int
 /*** Modern pseudo-operations (not real instructions, but nice shortcuts) ***/
 void ULW(usf_state_t * state, int rd, uint32_t addr)
 { /* "Unaligned Load Word" */
+    union {
+        unsigned char B[4];
+        signed char SB[4];
+        unsigned short H[2];
+        signed short SH[2];
+        unsigned W:  32;
+    } SR_temp;
     if (addr & 0x00000001)
     {
         SR_temp.B[03] = state->DMEM[BES(addr)];
@@ -1529,6 +1528,13 @@ void ULW(usf_state_t * state, int rd, uint32_t addr)
 }
 void USW(usf_state_t * state, int rs, uint32_t addr)
 { /* "Unaligned Store Word" */
+    union {
+        unsigned char B[4];
+        signed char SB[4];
+        unsigned short H[2];
+        signed short SH[2];
+        unsigned W:  32;
+    } SR_temp;
     SR_temp.W = state->SR[rs];
     if (addr & 0x00000001)
     {
