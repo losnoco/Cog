@@ -26,6 +26,7 @@
 #include "internal/it.h"
 #include "internal/lpc.h"
 
+#include "internal/blip_buf.h"
 #include "internal/lanczos_resampler.h"
 
 // #define BIT_ARRAY_BULLSHIT
@@ -38,15 +39,34 @@ static IT_PLAYING *new_playing()
 	IT_PLAYING * r = (IT_PLAYING*) malloc(sizeof(*r));
 	if (r)
 	{
+		r->resampler.blip_buffer[0] = blip_new( 256 );
+		if ( !r->resampler.blip_buffer[0] )
+		{
+			free( r );
+			return NULL;
+		}
+		r->resampler.blip_buffer[1] = blip_new( 256 );
+		if ( !r->resampler.blip_buffer[1] )
+		{
+			free( r->resampler.blip_buffer[0] );
+			free( r );
+			return NULL;
+		}
+		blip_set_rates(r->resampler.blip_buffer[0], 65536, 1);
+		blip_set_rates(r->resampler.blip_buffer[1], 65536, 1);
 		r->resampler.fir_resampler_ratio = 0.0;
 		r->resampler.fir_resampler[0] = lanczos_resampler_create();
 		if ( !r->resampler.fir_resampler[0] ) {
+			free( r->resampler.blip_buffer[1] );
+			free( r->resampler.blip_buffer[0] );
 			free( r );
 			return NULL;
 		}
 		r->resampler.fir_resampler[1] = lanczos_resampler_create();
 		if ( !r->resampler.fir_resampler[1] ) {
 			lanczos_resampler_delete( r->resampler.fir_resampler[0] );
+			free( r->resampler.blip_buffer[1] );
+			free( r->resampler.blip_buffer[0] );
 			free( r );
 			return NULL;
 		}
@@ -58,6 +78,8 @@ static void free_playing(IT_PLAYING * r)
 {
 	lanczos_resampler_delete( r->resampler.fir_resampler[1] );
 	lanczos_resampler_delete( r->resampler.fir_resampler[0] );
+	blip_delete( r->resampler.blip_buffer[1] );
+	blip_delete( r->resampler.blip_buffer[0] );
 	free( r );
 }
 
@@ -150,15 +172,32 @@ static IT_PLAYING *dup_playing(IT_PLAYING *src, IT_CHANNEL *dstchannel, IT_CHANN
 
 	dst->resampler = src->resampler;
 	dst->resampler.pickup_data = dst;
+	dst->resampler.blip_buffer[0] = blip_dup( src->resampler.blip_buffer[0] );
+	if ( !dst->resampler.blip_buffer[0] )
+	{
+		free( dst );
+		return NULL;
+	}
+	dst->resampler.blip_buffer[1] = blip_dup( src->resampler.blip_buffer[1] );
+	if ( !dst->resampler.blip_buffer[1] )
+	{
+		blip_delete( dst->resampler.blip_buffer[0] );
+		free( dst );
+		return NULL;
+	}
 	dst->resampler.fir_resampler_ratio = src->resampler.fir_resampler_ratio;
 	dst->resampler.fir_resampler[0] = lanczos_resampler_dup( src->resampler.fir_resampler[0] );
 	if ( !dst->resampler.fir_resampler[0] ) {
+		blip_delete( dst->resampler.blip_buffer[1] );
+		blip_delete( dst->resampler.blip_buffer[0] );
 		free( dst );
 		return NULL;
 	}
 	dst->resampler.fir_resampler[1] = lanczos_resampler_dup( src->resampler.fir_resampler[1] );
 	if ( !dst->resampler.fir_resampler[1] ) {
 		lanczos_resampler_delete( dst->resampler.fir_resampler[0] );
+		blip_delete( dst->resampler.blip_buffer[1] );
+		blip_delete( dst->resampler.blip_buffer[0] );
 		free( dst );
 		return NULL;
 	}
@@ -2569,8 +2608,11 @@ Yxy             This uses a table 4 times larger (hence 4 times slower) than
 								end = sample->sus_loop_end;
 							else if (sample->flags & IT_SAMPLE_LOOP)
 								end = sample->loop_end;
-							else
+							else {
 								end = sample->length;
+								if ( sigdata->flags & IT_WAS_PROCESSED && end > 64 ) // XXX bah damn LPC and edge case modules
+									end -= 64;
+							}
 							if ((sigdata->flags & IT_WAS_A_PTM) && (sample->flags & IT_SAMPLE_16BIT))
 								offset >>= 1;
 							if (offset < end) {
@@ -3847,14 +3889,14 @@ static int update_it_envelope(IT_PLAYING *playing, IT_ENVELOPE *envelope, IT_PLA
 	if ((envelope->flags & IT_ENVELOPE_SUSTAIN_LOOP) && !(playing->flags & IT_PLAYING_SUSTAINOFF)) {
 		if (pe->tick > envelope->node_t[envelope->sus_loop_end]) {
 			pe->next_node = envelope->sus_loop_start + 1;
-			ASSERT(pe->next_node < envelope->n_nodes);
+			ASSERT(pe->next_node <= envelope->n_nodes);
 			pe->tick = envelope->node_t[envelope->sus_loop_start];
 			return 0;
 		}
 	} else if (envelope->flags & IT_ENVELOPE_LOOP_ON) {
 		if (pe->tick > envelope->node_t[envelope->loop_end]) {
 			pe->next_node = envelope->loop_start + 1;
-			ASSERT(pe->next_node < envelope->n_nodes);
+			ASSERT(pe->next_node <= envelope->n_nodes);
 			pe->tick = envelope->node_t[envelope->loop_start];
 			return 0;
 		}
