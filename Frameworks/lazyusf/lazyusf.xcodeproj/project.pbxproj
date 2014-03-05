@@ -7,6 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8378416A18C6E56B002C4FE5 /* alist.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378415418C6E56B002C4FE5 /* alist.c */; };
+		8378416B18C6E56B002C4FE5 /* alist.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378415518C6E56B002C4FE5 /* alist.h */; };
+		8378416C18C6E56B002C4FE5 /* alist_audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378415618C6E56B002C4FE5 /* alist_audio.c */; };
+		8378416D18C6E56B002C4FE5 /* alist_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378415718C6E56B002C4FE5 /* alist_internal.h */; };
+		8378416E18C6E56B002C4FE5 /* alist_naudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378415818C6E56B002C4FE5 /* alist_naudio.c */; };
+		8378416F18C6E56B002C4FE5 /* alist_nead.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378415918C6E56B002C4FE5 /* alist_nead.c */; };
+		8378417018C6E56B002C4FE5 /* arithmetics.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378415A18C6E56B002C4FE5 /* arithmetics.h */; };
+		8378417118C6E56B002C4FE5 /* audio_hle.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378415B18C6E56B002C4FE5 /* audio_hle.c */; };
+		8378417218C6E56B002C4FE5 /* audio_hle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378415C18C6E56B002C4FE5 /* audio_hle.h */; };
+		8378417318C6E56B002C4FE5 /* cicx105.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378415D18C6E56B002C4FE5 /* cicx105.c */; };
+		8378417418C6E56B002C4FE5 /* cicx105.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378415E18C6E56B002C4FE5 /* cicx105.h */; };
+		8378417518C6E56B002C4FE5 /* jpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378415F18C6E56B002C4FE5 /* jpeg.c */; };
+		8378417618C6E56B002C4FE5 /* jpeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378416018C6E56B002C4FE5 /* jpeg.h */; };
+		8378417718C6E56B002C4FE5 /* main_hle.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378416118C6E56B002C4FE5 /* main_hle.c */; };
+		8378417818C6E56B002C4FE5 /* main_hle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378416218C6E56B002C4FE5 /* main_hle.h */; };
+		8378417918C6E56B002C4FE5 /* memory_hle.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378416318C6E56B002C4FE5 /* memory_hle.c */; };
+		8378417A18C6E56B002C4FE5 /* memory_hle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378416418C6E56B002C4FE5 /* memory_hle.h */; };
+		8378417B18C6E56B002C4FE5 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378416518C6E56B002C4FE5 /* mp3.c */; };
+		8378417C18C6E56B002C4FE5 /* musyx.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378416618C6E56B002C4FE5 /* musyx.c */; };
+		8378417D18C6E56B002C4FE5 /* musyx.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378416718C6E56B002C4FE5 /* musyx.h */; };
+		8378417E18C6E56B002C4FE5 /* plugin_hle.c in Sources */ = {isa = PBXBuildFile; fileRef = 8378416818C6E56B002C4FE5 /* plugin_hle.c */; };
+		8378417F18C6E56B002C4FE5 /* plugin_hle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8378416918C6E56B002C4FE5 /* plugin_hle.h */; };
 		83C8B6AB18AF58080071B040 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B65918AF58080071B040 /* audio.c */; };
 		83C8B6AC18AF58080071B040 /* audio.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65A18AF58080071B040 /* audio.h */; };
 		83C8B6AD18AF58080071B040 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B65B18AF58080071B040 /* config.h */; };
@@ -90,6 +112,28 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8378415418C6E56B002C4FE5 /* alist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alist.c; sourceTree = "<group>"; };
+		8378415518C6E56B002C4FE5 /* alist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alist.h; sourceTree = "<group>"; };
+		8378415618C6E56B002C4FE5 /* alist_audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alist_audio.c; sourceTree = "<group>"; };
+		8378415718C6E56B002C4FE5 /* alist_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alist_internal.h; sourceTree = "<group>"; };
+		8378415818C6E56B002C4FE5 /* alist_naudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alist_naudio.c; sourceTree = "<group>"; };
+		8378415918C6E56B002C4FE5 /* alist_nead.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alist_nead.c; sourceTree = "<group>"; };
+		8378415A18C6E56B002C4FE5 /* arithmetics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arithmetics.h; sourceTree = "<group>"; };
+		8378415B18C6E56B002C4FE5 /* audio_hle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_hle.c; sourceTree = "<group>"; };
+		8378415C18C6E56B002C4FE5 /* audio_hle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_hle.h; sourceTree = "<group>"; };
+		8378415D18C6E56B002C4FE5 /* cicx105.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cicx105.c; sourceTree = "<group>"; };
+		8378415E18C6E56B002C4FE5 /* cicx105.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cicx105.h; sourceTree = "<group>"; };
+		8378415F18C6E56B002C4FE5 /* jpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jpeg.c; sourceTree = "<group>"; };
+		8378416018C6E56B002C4FE5 /* jpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jpeg.h; sourceTree = "<group>"; };
+		8378416118C6E56B002C4FE5 /* main_hle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main_hle.c; sourceTree = "<group>"; };
+		8378416218C6E56B002C4FE5 /* main_hle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main_hle.h; sourceTree = "<group>"; };
+		8378416318C6E56B002C4FE5 /* memory_hle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memory_hle.c; sourceTree = "<group>"; };
+		8378416418C6E56B002C4FE5 /* memory_hle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory_hle.h; sourceTree = "<group>"; };
+		8378416518C6E56B002C4FE5 /* mp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3.c; sourceTree = "<group>"; };
+		8378416618C6E56B002C4FE5 /* musyx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = musyx.c; sourceTree = "<group>"; };
+		8378416718C6E56B002C4FE5 /* musyx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = musyx.h; sourceTree = "<group>"; };
+		8378416818C6E56B002C4FE5 /* plugin_hle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugin_hle.c; sourceTree = "<group>"; };
+		8378416918C6E56B002C4FE5 /* plugin_hle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_hle.h; sourceTree = "<group>"; };
 		83C8B62218AF57770071B040 /* lazyusf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = lazyusf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83C8B65918AF58080071B040 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		83C8B65A18AF58080071B040 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
@@ -185,6 +229,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8378415318C6E56B002C4FE5 /* rsp_hle */ = {
+			isa = PBXGroup;
+			children = (
+				8378415418C6E56B002C4FE5 /* alist.c */,
+				8378415518C6E56B002C4FE5 /* alist.h */,
+				8378415618C6E56B002C4FE5 /* alist_audio.c */,
+				8378415718C6E56B002C4FE5 /* alist_internal.h */,
+				8378415818C6E56B002C4FE5 /* alist_naudio.c */,
+				8378415918C6E56B002C4FE5 /* alist_nead.c */,
+				8378415A18C6E56B002C4FE5 /* arithmetics.h */,
+				8378415B18C6E56B002C4FE5 /* audio_hle.c */,
+				8378415C18C6E56B002C4FE5 /* audio_hle.h */,
+				8378415D18C6E56B002C4FE5 /* cicx105.c */,
+				8378415E18C6E56B002C4FE5 /* cicx105.h */,
+				8378415F18C6E56B002C4FE5 /* jpeg.c */,
+				8378416018C6E56B002C4FE5 /* jpeg.h */,
+				8378416118C6E56B002C4FE5 /* main_hle.c */,
+				8378416218C6E56B002C4FE5 /* main_hle.h */,
+				8378416318C6E56B002C4FE5 /* memory_hle.c */,
+				8378416418C6E56B002C4FE5 /* memory_hle.h */,
+				8378416518C6E56B002C4FE5 /* mp3.c */,
+				8378416618C6E56B002C4FE5 /* musyx.c */,
+				8378416718C6E56B002C4FE5 /* musyx.h */,
+				8378416818C6E56B002C4FE5 /* plugin_hle.c */,
+				8378416918C6E56B002C4FE5 /* plugin_hle.h */,
+			);
+			path = rsp_hle;
+			sourceTree = "<group>";
+		};
 		83C8B61818AF57770071B040 = {
 			isa = PBXGroup;
 			children = (
@@ -220,6 +293,7 @@
 		83C8B62B18AF57770071B040 /* lazyusf */ = {
 			isa = PBXGroup;
 			children = (
+				8378415318C6E56B002C4FE5 /* rsp_hle */,
 				83C8B6FD18AF59E70071B040 /* lazyusf-Info.plist */,
 				83C8B65918AF58080071B040 /* audio.c */,
 				83C8B65A18AF58080071B040 /* audio.h */,
@@ -338,11 +412,15 @@
 			files = (
 				83C8B6FA18AF58090071B040 /* usf.h in Headers */,
 				83C8B6AC18AF58080071B040 /* audio.h in Headers */,
+				8378416D18C6E56B002C4FE5 /* alist_internal.h in Headers */,
+				8378417618C6E56B002C4FE5 /* jpeg.h in Headers */,
 				83C8B6B118AF58080071B040 /* dma.h in Headers */,
 				83C8B6AD18AF58080071B040 /* config.h in Headers */,
+				8378417F18C6E56B002C4FE5 /* plugin_hle.h in Headers */,
 				83C8B6B518AF58080071B040 /* interpreter_cpu.h in Headers */,
 				83C8B6B918AF58080071B040 /* main.h in Headers */,
 				83C8B6F418AF58090071B040 /* rsp.h in Headers */,
+				8378417018C6E56B002C4FE5 /* arithmetics.h in Headers */,
 				83C8B6C018AF58080071B040 /* registers.h in Headers */,
 				83C8B6BE18AF58080071B040 /* pif.h in Headers */,
 				83C8B6F618AF58090071B040 /* tlb.h in Headers */,
@@ -352,13 +430,16 @@
 				83C8B6B718AF58080071B040 /* interpreter_ops.h in Headers */,
 				83C8B6B318AF58080071B040 /* exception.h in Headers */,
 				83C8B6AF18AF58080071B040 /* cpu.h in Headers */,
+				8378417818C6E56B002C4FE5 /* main_hle.h in Headers */,
 				83C8B6F118AF58090071B040 /* vsubc.h in Headers */,
 				83C8B6F018AF58090071B040 /* vsub.h in Headers */,
+				8378417218C6E56B002C4FE5 /* audio_hle.h in Headers */,
 				83C8B6E018AF58080071B040 /* vmudn.h in Headers */,
 				83C8B6EF18AF58090071B040 /* vsaw.h in Headers */,
 				83C8B6C918AF58080071B040 /* shuffle.h in Headers */,
 				83C8B6DD18AF58080071B040 /* vmudh.h in Headers */,
 				83C8B6E118AF58080071B040 /* vmulf.h in Headers */,
+				8378417A18C6E56B002C4FE5 /* memory_hle.h in Headers */,
 				83C8B6CE18AF58080071B040 /* vch.h in Headers */,
 				83C8B6CB18AF58080071B040 /* vadd.h in Headers */,
 				83C8B6D618AF58080071B040 /* vmacu.h in Headers */,
@@ -369,6 +450,7 @@
 				83C8B6D218AF58080071B040 /* vge.h in Headers */,
 				83C8B6C518AF58080071B040 /* su.h in Headers */,
 				83C8B6C218AF58080071B040 /* execute.h in Headers */,
+				8378417418C6E56B002C4FE5 /* cicx105.h in Headers */,
 				83C8B6E518AF58080071B040 /* vnop.h in Headers */,
 				83C8B6E418AF58080071B040 /* vne.h in Headers */,
 				83C8B6D418AF58080071B040 /* vmacf.h in Headers */,
@@ -378,7 +460,9 @@
 				83C8B6F318AF58090071B040 /* vxor.h in Headers */,
 				83C8B6EC18AF58090071B040 /* vrsq.h in Headers */,
 				83C8B6D018AF58080071B040 /* vcr.h in Headers */,
+				8378416B18C6E56B002C4FE5 /* alist.h in Headers */,
 				83C8B6EA18AF58090071B040 /* vrcph.h in Headers */,
+				8378417D18C6E56B002C4FE5 /* musyx.h in Headers */,
 				83C8B6F818AF58090071B040 /* usf_internal.h in Headers */,
 				83C8B6EE18AF58090071B040 /* vrsql.h in Headers */,
 				83C8B6D118AF58080071B040 /* veq.h in Headers */,
@@ -472,14 +556,26 @@
 				83C8B6C318AF58080071B040 /* rsp.c in Sources */,
 				83C8B6BD18AF58080071B040 /* pif.c in Sources */,
 				83C8B6B418AF58080071B040 /* interpreter_cpu.c in Sources */,
+				8378417118C6E56B002C4FE5 /* audio_hle.c in Sources */,
+				8378417518C6E56B002C4FE5 /* jpeg.c in Sources */,
+				8378417C18C6E56B002C4FE5 /* musyx.c in Sources */,
+				8378417B18C6E56B002C4FE5 /* mp3.c in Sources */,
+				8378416F18C6E56B002C4FE5 /* alist_nead.c in Sources */,
 				83C8B6B618AF58080071B040 /* interpreter_ops.c in Sources */,
+				8378416C18C6E56B002C4FE5 /* alist_audio.c in Sources */,
 				83C8B6BA18AF58080071B040 /* memory.c in Sources */,
 				83C8B6B018AF58080071B040 /* dma.c in Sources */,
+				8378417318C6E56B002C4FE5 /* cicx105.c in Sources */,
+				8378416A18C6E56B002C4FE5 /* alist.c in Sources */,
 				83C8B6AE18AF58080071B040 /* cpu.c in Sources */,
 				83C8B6AB18AF58080071B040 /* audio.c in Sources */,
+				8378416E18C6E56B002C4FE5 /* alist_naudio.c in Sources */,
+				8378417718C6E56B002C4FE5 /* main_hle.c in Sources */,
 				83C8B6B218AF58080071B040 /* exception.c in Sources */,
+				8378417918C6E56B002C4FE5 /* memory_hle.c in Sources */,
 				83C8B6BF18AF58080071B040 /* registers.c in Sources */,
 				83C8B6F918AF58090071B040 /* usf.c in Sources */,
+				8378417E18C6E56B002C4FE5 /* plugin_hle.c in Sources */,
 				83C8B6B818AF58080071B040 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

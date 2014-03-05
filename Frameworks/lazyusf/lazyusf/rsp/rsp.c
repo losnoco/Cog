@@ -33,6 +33,8 @@
 
 #include "rsp.h"
 
+#include "../rsp_hle/main_hle.h"
+
 void real_run_rsp(usf_state_t * state, uint32_t cycles)
 {
     (void)cycles;
@@ -41,6 +43,20 @@ void real_run_rsp(usf_state_t * state, uint32_t cycles)
     {
         message(state, "SP_STATUS_HALT", 3);
         return;
+    }
+    switch (*(unsigned int *)(state->DMEM + 0xFC0))
+    { /* Simulation barrier to redirect processing externally. */
+        case 0x00000002: /* OSTask.type == M_AUDTASK */
+            if (state->enable_hle_audio == 0)
+                break;
+            hle_execute(state);
+            SP_STATUS_REG |= 0x00000203;
+            if (SP_STATUS_REG & 0x00000040) /* SP_STATUS_INTR_BREAK */
+            {
+                MI_INTR_REG |= 0x00000001; /* VR4300 SP interrupt */
+                CheckInterrupts(state);
+            }
+            return;
     }
     run_task(state);
     return;

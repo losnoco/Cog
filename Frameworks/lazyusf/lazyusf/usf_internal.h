@@ -13,6 +13,23 @@ struct usf_state_helper
 typedef uint32_t RCPREG;
 #endif
 
+#include <stdio.h>
+
+// rsp_hle/alist_audio.c
+enum { DMEM_BASE = 0x5c0 };
+enum { N_SEGMENTS = 16 };
+
+// rsp_hle/alist_naudio.c
+enum { NAUDIO_COUNT = 0x170 }; /* ie 184 samples */
+enum {
+    NAUDIO_MAIN      = 0x4f0,
+    NAUDIO_MAIN2     = 0x660,
+    NAUDIO_DRY_LEFT  = 0x9d0,
+    NAUDIO_DRY_RIGHT = 0xb40,
+    NAUDIO_WET_LEFT  = 0xcb0,
+    NAUDIO_WET_RIGHT = 0xe20
+};
+
 struct usf_state
 {
     // RSP vector registers, need to be aligned to 16 bytes
@@ -42,6 +59,14 @@ struct usf_state
     short comp[8]; /* $vcc:  low byte (VEQ, VNE, VLT, VGE, VCL, VCH, VCR) */
     short vce[8]; /* $vce:  vector compare extension register */
     
+    // rsp_hle/mp3.c, let's see if aligning this helps anything
+    uint8_t mp3data[0x1000];
+    int32_t mp3_v[32];
+    uint32_t mp3_inPtr, mp3_outPtr;
+    uint32_t mp3_t6;/* = 0x08A0; - I think these are temporary storage buffers */
+    uint32_t mp3_t5;/* = 0x0AC0; */
+    uint32_t mp3_t4;/* = (w1 & 0x1E); */
+    
     // All further members of the structure need not be aligned
 
     // rsp/vu/divrom.h
@@ -54,13 +79,90 @@ struct usf_state
     int DPH;
     
     // rsp/rsp.h
+    int stage; // unused since EMULATE_STATIC_PC is defined by default in rsp/config.h
     int temp_PC;
     short MFC0_count[32];
     
+    // rsp_hle/alist.c
+    uint8_t BufferSpace[0x10000];
+    
+    // rsp_hle/alist_audio.c
+    /* alist audio state */
+    struct {
+        /* segments */
+        uint32_t segments[N_SEGMENTS];
+        
+        /* main buffers */
+        uint16_t in;
+        uint16_t out;
+        uint16_t count;
+        
+        /* auxiliary buffers */
+        uint16_t dry_right;
+        uint16_t wet_left;
+        uint16_t wet_right;
+        
+        /* gains */
+        int16_t dry;
+        int16_t wet;
+        
+        /* envelopes (0:left, 1:right) */
+        int16_t vol[2];
+        int16_t target[2];
+        int32_t rate[2];
+        
+        /* ADPCM loop point address */
+        uint32_t loop;
+        
+        /* storage for ADPCM table and polef coefficients */
+        int16_t table[16 * 8];
+    } l_alist_audio;
+
+    struct {
+        /* gains */
+        int16_t dry;
+        int16_t wet;
+        
+        /* envelopes (0:left, 1:right) */
+        int16_t vol[2];
+        int16_t target[2];
+        int32_t rate[2];
+        
+        /* ADPCM loop point address */
+        uint32_t loop;
+        
+        /* storage for ADPCM table and polef coefficients */
+        int16_t table[16 * 8];
+    } l_alist_naudio;
+    
+    struct {
+        /* main buffers */
+        uint16_t in;
+        uint16_t out;
+        uint16_t count;
+        
+        /* envmixer ramps */
+        uint16_t env_values[3];
+        uint16_t env_steps[3];
+        
+        /* ADPCM loop point address */
+        uint32_t loop;
+        
+        /* storage for ADPCM table and polef coefficients */
+        int16_t table[16 * 8];
+        
+        /* filter audio command state */
+        uint16_t filter_count;
+        uint32_t filter_lut_address[2];
+    } l_alist_nead;
+
     uint32_t cpu_running, cpu_stopped;
     
     // options from file tags
     uint32_t enablecompare, enableFIFOfull;
+    
+    // options for decoding
+    uint32_t enable_hle_audio;
     
     // buffering for rendered sample data
     size_t sample_buffer_count;

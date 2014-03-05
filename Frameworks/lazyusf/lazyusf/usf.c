@@ -33,6 +33,8 @@ void usf_clear(void * state)
     //USF_STATE->enablecompare = 0;
     //USF_STATE->enableFIFOfull = 0;
     
+    //USF_STATE->enable_hle_audio = 0;
+    
     //USF_STATE->NextInstruction = 0;
     //USF_STATE->JumpToLocation = 0;
     //USF_STATE->AudioIntrReg = 0;
@@ -78,6 +80,11 @@ void usf_set_compare(void * state, int enable)
 void usf_set_fifo_full(void * state, int enable)
 {
     USF_STATE->enableFIFOfull = enable;
+}
+
+void usf_set_hle_audio(void * state, int enable)
+{
+    USF_STATE->enable_hle_audio = enable;
 }
 
 static uint32_t get_le32( const void * _p )

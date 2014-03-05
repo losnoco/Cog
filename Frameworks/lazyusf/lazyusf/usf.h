@@ -29,6 +29,10 @@ void usf_clear(void * state);
    _enablecompare or _enablefifofull tags are present in the file. */
 void usf_set_compare(void * state, int enable);
 void usf_set_fifo_full(void * state, int enable);
+    
+/* This option should speed up decoding significantly, at the expense
+   of accuracy, and potentially emulation bugs. */
+void usf_set_hle_audio(void * state, int enable);
 
 /* This processes and uploads the ROM and/or Project 64 save state data
    present in the reserved section of each USF file. They should be
