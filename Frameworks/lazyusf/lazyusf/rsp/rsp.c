@@ -33,7 +33,7 @@
 
 #include "rsp.h"
 
-#include "../rsp_hle/main_hle.h"
+#include "../rsp_hle/main.h"
 
 void real_run_rsp(usf_state_t * state, uint32_t cycles)
 {

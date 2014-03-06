@@ -29,9 +29,9 @@
 
 #include "alist_internal.h"
 #include "arithmetics.h"
-#include "audio_hle.h"
-#include "memory_hle.h"
-#include "plugin_hle.h"
+#include "audio.h"
+#include "memory.h"
+#include "plugin.h"
 
 #include "../usf_internal.h"
 

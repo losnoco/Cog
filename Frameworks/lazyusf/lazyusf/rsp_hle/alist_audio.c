@@ -28,7 +28,7 @@
 #include "../usf.h"
 
 #include "alist_internal.h"
-#include "memory_hle.h"
+#include "memory.h"
 
 #include "../usf_internal.h"
 

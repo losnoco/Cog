@@ -29,7 +29,7 @@
 #include "../usf.h"
 #include "../usf_internal.h"
 
-#include "plugin_hle.h"
+#include "plugin.h"
 
 #ifdef M64P_BIG_ENDIAN
 #define S 0

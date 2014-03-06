@@ -25,7 +25,7 @@
 
 #include "../usf.h"
 
-#include "plugin_hle.h"
+#include "plugin.h"
 #include "cicx105.h"
 
 #include "../usf_internal.h"

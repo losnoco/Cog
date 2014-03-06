@@ -27,8 +27,8 @@
 
 #include "../usf.h"
 
-#include "main_hle.h"
-#include "plugin_hle.h"
+#include "main.h"
+#include "plugin.h"
 
 #include "../main.h"
 

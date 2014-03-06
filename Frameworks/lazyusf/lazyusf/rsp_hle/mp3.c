@@ -25,8 +25,8 @@
 
 #include "../usf.h"
 
-#include "memory_hle.h"
-#include "plugin_hle.h"
+#include "memory.h"
+#include "plugin.h"
 
 #include "../usf_internal.h"
 

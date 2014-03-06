@@ -30,8 +30,8 @@
 
 #include "../usf.h"
 
-#include "memory_hle.h"
-#include "plugin_hle.h"
+#include "memory.h"
+#include "plugin.h"
 
 #include "alist.h"
 #include "cicx105.h"
