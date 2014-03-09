@@ -23,7 +23,8 @@ int playptmod_Load(void *p, const char *filename);
 
 void playptmod_Play(void *p, unsigned int startOrder);
 void playptmod_Stop(void *p);
-void playptmod_Render(void *p, signed short *target, int length);
+void playptmod_Render(void *p, signed int *target, int length);
+void playptmod_Render16(void *p, signed short *target, int length);
 
 void playptmod_Mute(void *p, int channel, int mute);
 

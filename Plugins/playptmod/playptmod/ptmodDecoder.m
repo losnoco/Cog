@@ -10,6 +10,8 @@
 
 #import "Logging.h"
 
+#import "PlaylistController.h"
+
 @implementation ptmodDecoder
 
 BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, int test_vblank, const void * src, unsigned long size, unsigned int subsong )
@@ -135,9 +137,9 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
 		[NSNumber numberWithInt:0], @"bitrate",
 		[NSNumber numberWithFloat:44100], @"sampleRate",
 		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
-		[NSNumber numberWithInt:16], @"bitsPerSample", //Samples are short
-        [NSNumber numberWithBool:NO], @"floatingPoint",
-		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
+		[NSNumber numberWithInt:32], @"bitsPerSample",
+        [NSNumber numberWithBool:YES], @"floatingPoint",
+		[NSNumber numberWithInt:2], @"channels",
 		[NSNumber numberWithBool:YES], @"seekable",
 		@"host", @"endian",
 		nil];
@@ -145,7 +147,9 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-    if ( framesRead >= totalFrames )
+    BOOL repeat_one = IsRepeatOneSet();
+    
+    if ( !repeat_one && framesRead >= totalFrames )
         return 0;
     
     if ( !ptmod )
@@ -158,27 +162,27 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
     while ( total < frames ) {
         int framesToRender = 512;
         if ( framesToRender > totalFrames - framesRead )
-            framesToRender = totalFrames - framesRead;
+            framesToRender = (int)(totalFrames - framesRead);
         if ( framesToRender > frames - total )
             framesToRender = frames - total;
 
-        int16_t * sampleBuf = ( int16_t * ) buf + total * 2;
+        int32_t * sampleBuf = ( int32_t * ) buf + total * 2;
         
         playptmod_Render( ptmod, sampleBuf, framesToRender );
     
-        if ( framesRead + framesToRender > framesLength ) {
+        if ( !repeat_one && framesRead + framesToRender > framesLength ) {
             long fadeStart = ( framesLength > framesRead ) ? framesLength : framesRead;
             long fadeEnd = ( framesRead + framesToRender < totalFrames ) ? framesRead + framesToRender : totalFrames;
             const long fadeTotal = totalFrames - framesLength;
             for ( long fadePos = fadeStart; fadePos < fadeEnd; ++fadePos ) {
                 const long scale = ( fadeTotal - ( fadePos - framesLength ) );
                 const long offset = fadePos - framesRead;
-                int16_t * samples = sampleBuf + offset * 2;
-                samples[ 0 ] = samples[ 0 ] * scale / fadeTotal;
-                samples[ 1 ] = samples[ 1 ] * scale / fadeTotal;
+                int32_t * samples = sampleBuf + offset * 2;
+                samples[ 0 ] = (int32_t)(samples[ 0 ] * scale / fadeTotal);
+                samples[ 1 ] = (int32_t)(samples[ 1 ] * scale / fadeTotal);
             }
             
-            framesToRender = fadeEnd - framesRead;
+            framesToRender = (int)(fadeEnd - framesRead);
         }
 
         if ( !framesToRender )
@@ -186,6 +190,14 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
         
         total += framesToRender;
         framesRead += framesToRender;
+    }
+    
+    for ( int i = 0; i < total; ++i )
+    {
+        int32_t * sampleIn = ( int32_t * ) buf + i * 2;
+        float * sampleOut = ( float * ) buf + i * 2;
+        sampleOut[ 0 ] = sampleIn[ 0 ] * (1.0f / 16777216.0f);
+        sampleOut[ 1 ] = sampleIn[ 1 ] * (1.0f / 16777216.0f);
     }
     
     return total;
@@ -200,7 +212,14 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
             return 0;
     }
 
-    playptmod_Render( ptmod, NULL, frame - framesRead );
+    while ( framesRead < frame )
+    {
+        int frames_todo = INT_MAX;
+        if ( frames_todo > frame - framesRead )
+            frames_todo = (int)( frame - framesRead );
+        playptmod_Render( ptmod, NULL, frames_todo );
+        framesRead += frames_todo;
+    }
     
     framesRead = frame;
     
