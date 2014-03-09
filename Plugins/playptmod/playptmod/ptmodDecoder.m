@@ -161,7 +161,7 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
     int total = 0;
     while ( total < frames ) {
         int framesToRender = 512;
-        if ( framesToRender > totalFrames - framesRead )
+        if ( !repeat_one && framesToRender > totalFrames - framesRead )
             framesToRender = (int)(totalFrames - framesRead);
         if ( framesToRender > frames - total )
             framesToRender = frames - total;
