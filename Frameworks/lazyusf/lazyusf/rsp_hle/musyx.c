@@ -19,19 +19,20 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#ifndef _MSC_VER
 #include <stdbool.h>
+#else
+#include "mystdbool.h"
+#endif
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
 
-#include "../usf.h"
-
 #include "arithmetics.h"
-#include "memory.h"
-#include "plugin.h"
 #include "audio.h"
-
-#include "../usf_internal.h"
+#include "hle_external.h"
+#include "hle_internal.h"
+#include "memory.h"
 
 /* various constants */
 enum { SUBFRAME_SIZE = 192 };
@@ -134,27 +135,28 @@ typedef void (*mix_sfx_with_main_subframes_t)(musyx_t *musyx, const int16_t *sub
                                               const uint16_t* gains);
 
 /* helper functions prototypes */
-static void load_base_vol(usf_state_t* state, int32_t *base_vol, uint32_t address);
-static void save_base_vol(usf_state_t* state, const int32_t *base_vol, uint32_t address);
-static void update_base_vol(usf_state_t* state, int32_t *base_vol,
+static void load_base_vol(struct hle_t* hle, int32_t *base_vol, uint32_t address);
+static void save_base_vol(struct hle_t* hle, const int32_t *base_vol, uint32_t address);
+static void update_base_vol(struct hle_t* hle, int32_t *base_vol,
                             uint32_t voice_mask, uint32_t last_sample_ptr,
                             uint8_t mask_15, uint32_t ptr_24);
 
 static void init_subframes_v1(musyx_t *musyx);
 static void init_subframes_v2(musyx_t *musyx);
 
-static uint32_t voice_stage(usf_state_t* state, musyx_t *musyx, uint32_t voice_ptr,
-                            uint32_t last_sample_ptr);
+static uint32_t voice_stage(struct hle_t* hle, musyx_t *musyx,
+                            uint32_t voice_ptr, uint32_t last_sample_ptr);
 
-static void dma_cat8(usf_state_t* state, uint8_t *dst, uint32_t catsrc_ptr);
-static void dma_cat16(usf_state_t* state, uint16_t *dst, uint32_t catsrc_ptr);
+static void dma_cat8(struct hle_t* hle, uint8_t *dst, uint32_t catsrc_ptr);
+static void dma_cat16(struct hle_t* hle, uint16_t *dst, uint32_t catsrc_ptr);
 
-static void load_samples_PCM16(usf_state_t* state, uint32_t voice_ptr, int16_t *samples,
+static void load_samples_PCM16(struct hle_t* hle, uint32_t voice_ptr, int16_t *samples,
                                unsigned *segbase, unsigned *offset);
-static void load_samples_ADPCM(usf_state_t* state, uint32_t voice_ptr, int16_t *samples,
+static void load_samples_ADPCM(struct hle_t* hle, uint32_t voice_ptr, int16_t *samples,
                                unsigned *segbase, unsigned *offset);
 
-static void adpcm_decode_frames(usf_state_t* state, int16_t *dst, const uint8_t *src,
+static void adpcm_decode_frames(struct hle_t* hle,
+                                int16_t *dst, const uint8_t *src,
                                 const int16_t *table, uint8_t count,
                                 uint8_t skip_samples);
 
@@ -162,11 +164,12 @@ static void adpcm_predict_frame(int16_t *dst, const uint8_t *src,
                                 const uint8_t *nibbles,
                                 unsigned int rshift);
 
-static void mix_voice_samples(usf_state_t* state, musyx_t *musyx, uint32_t voice_ptr,
-                              const int16_t *samples, unsigned segbase,
-                              unsigned offset, uint32_t last_sample_ptr);
+static void mix_voice_samples(struct hle_t* hle, musyx_t *musyx,
+                              uint32_t voice_ptr, const int16_t *samples,
+                              unsigned segbase, unsigned offset, uint32_t last_sample_ptr);
 
-static void sfx_stage(usf_state_t* state, mix_sfx_with_main_subframes_t mix_sfx_with_main_subframes,
+static void sfx_stage(struct hle_t* hle,
+                      mix_sfx_with_main_subframes_t mix_sfx_with_main_subframes,
                       musyx_t *musyx, uint32_t sfx_ptr, uint16_t idx);
 
 static void mix_sfx_with_main_subframes_v1(musyx_t *musyx, const int16_t *subframe,
@@ -179,9 +182,11 @@ static void mix_subframes(int16_t *y, const int16_t *x, int16_t hgain);
 static void mix_fir4(int16_t *y, const int16_t *x, int16_t hgain, const int16_t *hcoeffs);
 
 
-static void interleave_stage_v1(usf_state_t* state, musyx_t *musyx, uint32_t output_ptr);
+static void interleave_stage_v1(struct hle_t* hle, musyx_t *musyx,
+                                uint32_t output_ptr);
 
-static void interleave_stage_v2(usf_state_t* state, musyx_t *musyx, uint16_t mask_16, uint32_t ptr_18,
+static void interleave_stage_v2(struct hle_t* hle, musyx_t *musyx,
+                                uint16_t mask_16, uint32_t ptr_18,
                                 uint32_t ptr_1c, uint32_t output_ptr);
 
 static int32_t dot4(const int16_t *x, const int16_t *y)
@@ -198,129 +203,132 @@ static int32_t dot4(const int16_t *x, const int16_t *y)
 /**************************************************************************
  * MusyX v1 audio ucode
  **************************************************************************/
-void musyx_v1_task(usf_state_t* state)
+void musyx_v1_task(struct hle_t* hle)
 {
-    uint32_t sfd_ptr   = *dmem_u32(state, TASK_DATA_PTR);
-    uint32_t sfd_count = *dmem_u32(state, TASK_DATA_SIZE);
+    uint32_t sfd_ptr   = *dmem_u32(hle, TASK_DATA_PTR);
+    uint32_t sfd_count = *dmem_u32(hle, TASK_DATA_SIZE);
     uint32_t state_ptr;
     musyx_t musyx;
 
-    DebugMessage(state, M64MSG_VERBOSE, "musyx_v1_task: *data=%x, #SF=%d",
-                 sfd_ptr,
-                 sfd_count);
+    HleVerboseMessage(hle->user_defined,
+                      "musyx_v1_task: *data=%x, #SF=%d",
+                      sfd_ptr,
+                      sfd_count);
 
-    state_ptr = *dram_u32(state, sfd_ptr + SFD_STATE_PTR);
+    state_ptr = *dram_u32(hle, sfd_ptr + SFD_STATE_PTR);
 
     /* load initial state */
-    load_base_vol(state, musyx.base_vol, state_ptr + STATE_BASE_VOL);
-    dram_load_u16(state, (uint16_t *)musyx.cc0, state_ptr + STATE_CC0, SUBFRAME_SIZE);
-    dram_load_u16(state, (uint16_t *)musyx.subframe_740_last4, state_ptr + STATE_740_LAST4_V1,
+    load_base_vol(hle, musyx.base_vol, state_ptr + STATE_BASE_VOL);
+    dram_load_u16(hle, (uint16_t *)musyx.cc0, state_ptr + STATE_CC0, SUBFRAME_SIZE);
+    dram_load_u16(hle, (uint16_t *)musyx.subframe_740_last4, state_ptr + STATE_740_LAST4_V1,
              4);
 
     for (;;) {
         /* parse SFD structure */
-        uint16_t sfx_index   = *dram_u16(state, sfd_ptr + SFD_SFX_INDEX);
-        uint32_t voice_mask  = *dram_u32(state, sfd_ptr + SFD_VOICE_BITMASK);
-        uint32_t sfx_ptr     = *dram_u32(state, sfd_ptr + SFD_SFX_PTR);
+        uint16_t sfx_index   = *dram_u16(hle, sfd_ptr + SFD_SFX_INDEX);
+        uint32_t voice_mask  = *dram_u32(hle, sfd_ptr + SFD_VOICE_BITMASK);
+        uint32_t sfx_ptr     = *dram_u32(hle, sfd_ptr + SFD_SFX_PTR);
         uint32_t voice_ptr       = sfd_ptr + SFD_VOICES;
         uint32_t last_sample_ptr = state_ptr + STATE_LAST_SAMPLE;
         uint32_t output_ptr;
 
         /* initialize internal subframes using updated base volumes */
-        update_base_vol(state, musyx.base_vol, voice_mask, last_sample_ptr, 0, 0);
+        update_base_vol(hle, musyx.base_vol, voice_mask, last_sample_ptr, 0, 0);
         init_subframes_v1(&musyx);
 
         /* active voices get mixed into L,R,cc0,e50 subframes (optional) */
-        output_ptr = voice_stage(state, &musyx, voice_ptr, last_sample_ptr);
+        output_ptr = voice_stage(hle, &musyx, voice_ptr, last_sample_ptr);
 
         /* apply delay-based effects (optional) */
-        sfx_stage(state, mix_sfx_with_main_subframes_v1,
+        sfx_stage(hle, mix_sfx_with_main_subframes_v1,
                   &musyx, sfx_ptr, sfx_index);
 
         /* emit interleaved L,R subframes */
-        interleave_stage_v1(state, &musyx, output_ptr);
+        interleave_stage_v1(hle, &musyx, output_ptr);
 
         --sfd_count;
         if (sfd_count == 0)
             break;
 
         sfd_ptr += SFD_VOICES + MAX_VOICES * VOICE_SIZE;
-        state_ptr = *dram_u32(state, sfd_ptr + SFD_STATE_PTR);
+        state_ptr = *dram_u32(hle, sfd_ptr + SFD_STATE_PTR);
     }
 
     /* writeback updated state */
-    save_base_vol(state, musyx.base_vol, state_ptr + STATE_BASE_VOL);
-    dram_store_u16(state, (uint16_t *)musyx.cc0, state_ptr + STATE_CC0, SUBFRAME_SIZE);
-    dram_store_u16(state, (uint16_t *)musyx.subframe_740_last4, state_ptr + STATE_740_LAST4_V1,
+    save_base_vol(hle, musyx.base_vol, state_ptr + STATE_BASE_VOL);
+    dram_store_u16(hle, (uint16_t *)musyx.cc0, state_ptr + STATE_CC0, SUBFRAME_SIZE);
+    dram_store_u16(hle, (uint16_t *)musyx.subframe_740_last4, state_ptr + STATE_740_LAST4_V1,
               4);
 }
 
 /**************************************************************************
  * MusyX v2 audio ucode
  **************************************************************************/
-void musyx_v2_task(usf_state_t* state)
+void musyx_v2_task(struct hle_t* hle)
 {
-    uint32_t sfd_ptr   = *dmem_u32(state, TASK_DATA_PTR);
-    uint32_t sfd_count = *dmem_u32(state, TASK_DATA_SIZE);
+    uint32_t sfd_ptr   = *dmem_u32(hle, TASK_DATA_PTR);
+    uint32_t sfd_count = *dmem_u32(hle, TASK_DATA_SIZE);
     musyx_t musyx;
 
-    DebugMessage(state, M64MSG_VERBOSE, "musyx_v2_task: *data=%x, #SF=%d",
-                 sfd_ptr,
-                 sfd_count);
+    HleVerboseMessage(hle->user_defined,
+                      "musyx_v2_task: *data=%x, #SF=%d",
+                      sfd_ptr,
+                      sfd_count);
 
     for (;;) {
         /* parse SFD structure */
-        uint16_t sfx_index       = *dram_u16(state, sfd_ptr + SFD_SFX_INDEX);
-        uint32_t voice_mask      = *dram_u32(state, sfd_ptr + SFD_VOICE_BITMASK);
-        uint32_t state_ptr       = *dram_u32(state, sfd_ptr + SFD_STATE_PTR);
-        uint32_t sfx_ptr         = *dram_u32(state, sfd_ptr + SFD_SFX_PTR);
+        uint16_t sfx_index       = *dram_u16(hle, sfd_ptr + SFD_SFX_INDEX);
+        uint32_t voice_mask      = *dram_u32(hle, sfd_ptr + SFD_VOICE_BITMASK);
+        uint32_t state_ptr       = *dram_u32(hle, sfd_ptr + SFD_STATE_PTR);
+        uint32_t sfx_ptr         = *dram_u32(hle, sfd_ptr + SFD_SFX_PTR);
         uint32_t voice_ptr       = sfd_ptr + SFD2_VOICES;
 
-        uint32_t ptr_10          = *dram_u32(state, sfd_ptr + SFD2_10_PTR);
-        uint8_t  mask_14         = *dram_u8 (state, sfd_ptr + SFD2_14_BITMASK);
-        uint8_t  mask_15         = *dram_u8 (state, sfd_ptr + SFD2_15_BITMASK);
-        uint16_t mask_16         = *dram_u16(state, sfd_ptr + SFD2_16_BITMASK);
-        uint32_t ptr_18          = *dram_u32(state, sfd_ptr + SFD2_18_PTR);
-        uint32_t ptr_1c          = *dram_u32(state, sfd_ptr + SFD2_1C_PTR);
-        uint32_t ptr_20          = *dram_u32(state, sfd_ptr + SFD2_20_PTR);
-        uint32_t ptr_24          = *dram_u32(state, sfd_ptr + SFD2_24_PTR);
+        uint32_t ptr_10          = *dram_u32(hle, sfd_ptr + SFD2_10_PTR);
+        uint8_t  mask_14         = *dram_u8 (hle, sfd_ptr + SFD2_14_BITMASK);
+        uint8_t  mask_15         = *dram_u8 (hle, sfd_ptr + SFD2_15_BITMASK);
+        uint16_t mask_16         = *dram_u16(hle, sfd_ptr + SFD2_16_BITMASK);
+        uint32_t ptr_18          = *dram_u32(hle, sfd_ptr + SFD2_18_PTR);
+        uint32_t ptr_1c          = *dram_u32(hle, sfd_ptr + SFD2_1C_PTR);
+        uint32_t ptr_20          = *dram_u32(hle, sfd_ptr + SFD2_20_PTR);
+        uint32_t ptr_24          = *dram_u32(hle, sfd_ptr + SFD2_24_PTR);
 
         uint32_t last_sample_ptr = state_ptr + STATE_LAST_SAMPLE;
         uint32_t output_ptr;
 
         /* load state */
-        load_base_vol(state, musyx.base_vol, state_ptr + STATE_BASE_VOL);
-        dram_load_u16(state, (uint16_t *)musyx.subframe_740_last4,
+        load_base_vol(hle, musyx.base_vol, state_ptr + STATE_BASE_VOL);
+        dram_load_u16(hle, (uint16_t *)musyx.subframe_740_last4,
                 state_ptr + STATE_740_LAST4_V2, 4);
 
         /* initialize internal subframes using updated base volumes */
-        update_base_vol(state, musyx.base_vol, voice_mask, last_sample_ptr, mask_15, ptr_24);
+        update_base_vol(hle, musyx.base_vol, voice_mask, last_sample_ptr, mask_15, ptr_24);
         init_subframes_v2(&musyx);
 
         if (ptr_10) {
             /* TODO */
-            DebugMessage(state, M64MSG_WARNING, "ptr_10=%08x mask_14=%02x ptr_24=%08x",
-                    ptr_10, mask_14, ptr_24);
+            HleWarnMessage(hle->user_defined,
+                           "ptr_10=%08x mask_14=%02x ptr_24=%08x",
+                           ptr_10, mask_14, ptr_24);
         }
 
         /* active voices get mixed into L,R,cc0,e50 subframes (optional) */
-        output_ptr = voice_stage(state, &musyx, voice_ptr, last_sample_ptr);
+        output_ptr = voice_stage(hle, &musyx, voice_ptr, last_sample_ptr);
 
         /* apply delay-based effects (optional) */
-        sfx_stage(state, mix_sfx_with_main_subframes_v2,
+        sfx_stage(hle, mix_sfx_with_main_subframes_v2,
                   &musyx, sfx_ptr, sfx_index);
 
-        dram_store_u16(state, (uint16_t*)musyx.left,  output_ptr                  , SUBFRAME_SIZE);
-        dram_store_u16(state, (uint16_t*)musyx.right, output_ptr + 2*SUBFRAME_SIZE, SUBFRAME_SIZE);
-        dram_store_u16(state, (uint16_t*)musyx.cc0,   output_ptr + 4*SUBFRAME_SIZE, SUBFRAME_SIZE);
+        dram_store_u16(hle, (uint16_t*)musyx.left,  output_ptr                  , SUBFRAME_SIZE);
+        dram_store_u16(hle, (uint16_t*)musyx.right, output_ptr + 2*SUBFRAME_SIZE, SUBFRAME_SIZE);
+        dram_store_u16(hle, (uint16_t*)musyx.cc0,   output_ptr + 4*SUBFRAME_SIZE, SUBFRAME_SIZE);
 
         /* store state */
-        save_base_vol(state, musyx.base_vol, state_ptr + STATE_BASE_VOL);
-        dram_store_u16(state, (uint16_t*)musyx.subframe_740_last4,
+        save_base_vol(hle, musyx.base_vol, state_ptr + STATE_BASE_VOL);
+        dram_store_u16(hle, (uint16_t*)musyx.subframe_740_last4,
                 state_ptr + STATE_740_LAST4_V2, 4);
 
         if (mask_16)
-            interleave_stage_v2(state, &musyx, mask_16, ptr_18, ptr_1c, ptr_20);
+            interleave_stage_v2(hle, &musyx, mask_16, ptr_18, ptr_1c, ptr_20);
 
         --sfd_count;
         if (sfd_count == 0)
@@ -334,39 +342,40 @@ void musyx_v2_task(usf_state_t* state)
 
 
 
-static void load_base_vol(usf_state_t* state, int32_t *base_vol, uint32_t address)
+static void load_base_vol(struct hle_t* hle, int32_t *base_vol, uint32_t address)
 {
-    base_vol[0] = ((uint32_t)(*dram_u16(state, address))     << 16) | (*dram_u16(state, address +  8));
-    base_vol[1] = ((uint32_t)(*dram_u16(state, address + 2)) << 16) | (*dram_u16(state, address + 10));
-    base_vol[2] = ((uint32_t)(*dram_u16(state, address + 4)) << 16) | (*dram_u16(state, address + 12));
-    base_vol[3] = ((uint32_t)(*dram_u16(state, address + 6)) << 16) | (*dram_u16(state, address + 14));
+    base_vol[0] = ((uint32_t)(*dram_u16(hle, address))     << 16) | (*dram_u16(hle, address +  8));
+    base_vol[1] = ((uint32_t)(*dram_u16(hle, address + 2)) << 16) | (*dram_u16(hle, address + 10));
+    base_vol[2] = ((uint32_t)(*dram_u16(hle, address + 4)) << 16) | (*dram_u16(hle, address + 12));
+    base_vol[3] = ((uint32_t)(*dram_u16(hle, address + 6)) << 16) | (*dram_u16(hle, address + 14));
 }
 
-static void save_base_vol(usf_state_t* state, const int32_t *base_vol, uint32_t address)
+static void save_base_vol(struct hle_t* hle, const int32_t *base_vol, uint32_t address)
 {
     unsigned k;
 
     for (k = 0; k < 4; ++k) {
-        *dram_u16(state, address) = (uint16_t)(base_vol[k] >> 16);
+        *dram_u16(hle, address) = (uint16_t)(base_vol[k] >> 16);
         address += 2;
     }
 
     for (k = 0; k < 4; ++k) {
-        *dram_u16(state, address) = (uint16_t)(base_vol[k]);
+        *dram_u16(hle, address) = (uint16_t)(base_vol[k]);
         address += 2;
     }
 }
 
-static void update_base_vol(usf_state_t* state, int32_t *base_vol,
+static void update_base_vol(struct hle_t* hle, int32_t *base_vol,
                             uint32_t voice_mask, uint32_t last_sample_ptr,
                             uint8_t mask_15, uint32_t ptr_24)
 {
     unsigned i, k;
     uint32_t mask;
 
-    DebugMessage(state, M64MSG_VERBOSE, "base_vol voice_mask = %08x", voice_mask);
-    DebugMessage(state, M64MSG_VERBOSE, "BEFORE: base_vol = %08x %08x %08x %08x",
-                 base_vol[0], base_vol[1], base_vol[2], base_vol[3]);
+    HleVerboseMessage(hle->user_defined, "base_vol voice_mask = %08x", voice_mask);
+    HleVerboseMessage(hle->user_defined,
+                      "BEFORE: base_vol = %08x %08x %08x %08x",
+                      base_vol[0], base_vol[1], base_vol[2], base_vol[3]);
 
     /* optim: skip voices contributions entirely if voice_mask is empty */
     if (voice_mask != 0) {
@@ -376,7 +385,7 @@ static void update_base_vol(usf_state_t* state, int32_t *base_vol,
                 continue;
 
             for (k = 0; k < 4; ++k)
-                base_vol[k] += (int16_t)*dram_u16(state, last_sample_ptr + k * 2);
+                base_vol[k] += (int16_t)*dram_u16(hle, last_sample_ptr + k * 2);
         }
     }
 
@@ -388,7 +397,7 @@ static void update_base_vol(usf_state_t* state, int32_t *base_vol,
                 continue;
 
             for(k = 0; k < 4; ++k)
-                base_vol[k] += (int16_t)*dram_u16(state, ptr_24 + k * 2);
+                base_vol[k] += (int16_t)*dram_u16(hle, ptr_24 + k * 2);
         }
     }
 
@@ -396,8 +405,9 @@ static void update_base_vol(usf_state_t* state, int32_t *base_vol,
     for (k = 0; k < 4; ++k)
         base_vol[k] = (base_vol[k] * 0x0000f850) >> 16;
 
-    DebugMessage(state, M64MSG_VERBOSE, "AFTER: base_vol = %08x %08x %08x %08x",
-                 base_vol[0], base_vol[1], base_vol[2], base_vol[3]);
+    HleVerboseMessage(hle->user_defined,
+                      "AFTER: base_vol = %08x %08x %08x %08x",
+                      base_vol[0], base_vol[1], base_vol[2], base_vol[3]);
 }
 
 
@@ -449,16 +459,16 @@ static void init_subframes_v2(musyx_t *musyx)
 }
 
 /* Process voices, and returns interleaved subframe destination address */
-static uint32_t voice_stage(usf_state_t* state, musyx_t *musyx, uint32_t voice_ptr,
-                            uint32_t last_sample_ptr)
+static uint32_t voice_stage(struct hle_t* hle, musyx_t *musyx,
+                            uint32_t voice_ptr, uint32_t last_sample_ptr)
 {
     uint32_t output_ptr;
     int i = 0;
 
     /* voice stage can be skipped if first voice has no samples */
-    if (*dram_u16(state, voice_ptr + VOICE_CATSRC_0 + CATSRC_SIZE1) == 0) {
-        DebugMessage(state, M64MSG_VERBOSE, "Skipping Voice stage");
-        output_ptr = *dram_u32(state, voice_ptr + VOICE_INTERLEAVED_PTR);
+    if (*dram_u16(hle, voice_ptr + VOICE_CATSRC_0 + CATSRC_SIZE1) == 0) {
+        HleVerboseMessage(hle->user_defined, "Skipping Voice stage");
+        output_ptr = *dram_u32(hle, voice_ptr + VOICE_INTERLEAVED_PTR);
     } else {
         /* otherwise process voices until a non null output_ptr is encountered */
         for (;;) {
@@ -467,19 +477,19 @@ static uint32_t voice_stage(usf_state_t* state, musyx_t *musyx, uint32_t voice_p
             unsigned segbase;
             unsigned offset;
 
-            DebugMessage(state, M64MSG_VERBOSE, "Processing Voice #%d", i);
+            HleVerboseMessage(hle->user_defined, "Processing Voice #%d", i);
 
-            if (*dram_u8(state, voice_ptr + VOICE_ADPCM_FRAMES) == 0)
-                load_samples_PCM16(state, voice_ptr, samples, &segbase, &offset);
+            if (*dram_u8(hle, voice_ptr + VOICE_ADPCM_FRAMES) == 0)
+                load_samples_PCM16(hle, voice_ptr, samples, &segbase, &offset);
             else
-                load_samples_ADPCM(state, voice_ptr, samples, &segbase, &offset);
+                load_samples_ADPCM(hle, voice_ptr, samples, &segbase, &offset);
 
             /* mix them with each internal subframes */
-            mix_voice_samples(state, musyx, voice_ptr, samples, segbase, offset,
+            mix_voice_samples(hle, musyx, voice_ptr, samples, segbase, offset,
                               last_sample_ptr + i * 8);
 
             /* check break condition */
-            output_ptr = *dram_u32(state, voice_ptr + VOICE_INTERLEAVED_PTR);
+            output_ptr = *dram_u32(hle, voice_ptr + VOICE_INTERLEAVED_PTR);
             if (output_ptr != 0)
                 break;
 
@@ -492,76 +502,78 @@ static uint32_t voice_stage(usf_state_t* state, musyx_t *musyx, uint32_t voice_p
     return output_ptr;
 }
 
-static void dma_cat8(usf_state_t* state, uint8_t *dst, uint32_t catsrc_ptr)
+static void dma_cat8(struct hle_t* hle, uint8_t *dst, uint32_t catsrc_ptr)
 {
-    uint32_t ptr1  = *dram_u32(state, catsrc_ptr + CATSRC_PTR1);
-    uint32_t ptr2  = *dram_u32(state, catsrc_ptr + CATSRC_PTR2);
-    uint16_t size1 = *dram_u16(state, catsrc_ptr + CATSRC_SIZE1);
-    uint16_t size2 = *dram_u16(state, catsrc_ptr + CATSRC_SIZE2);
+    uint32_t ptr1  = *dram_u32(hle, catsrc_ptr + CATSRC_PTR1);
+    uint32_t ptr2  = *dram_u32(hle, catsrc_ptr + CATSRC_PTR2);
+    uint16_t size1 = *dram_u16(hle, catsrc_ptr + CATSRC_SIZE1);
+    uint16_t size2 = *dram_u16(hle, catsrc_ptr + CATSRC_SIZE2);
 
     size_t count1 = size1;
     size_t count2 = size2;
 
-    DebugMessage(state, M64MSG_VERBOSE, "dma_cat: %08x %08x %04x %04x",
-                 ptr1,
-                 ptr2,
-                 size1,
-                 size2);
+    HleVerboseMessage(hle->user_defined,
+                      "dma_cat: %08x %08x %04x %04x",
+                      ptr1,
+                      ptr2,
+                      size1,
+                      size2);
 
-    dram_load_u8(state, dst, ptr1, count1);
+    dram_load_u8(hle, dst, ptr1, count1);
 
     if (size2 == 0)
         return;
 
-    dram_load_u8(state, dst + count1, ptr2, count2);
+    dram_load_u8(hle, dst + count1, ptr2, count2);
 }
 
-static void dma_cat16(usf_state_t* state, uint16_t *dst, uint32_t catsrc_ptr)
+static void dma_cat16(struct hle_t* hle, uint16_t *dst, uint32_t catsrc_ptr)
 {
-    uint32_t ptr1  = *dram_u32(state, catsrc_ptr + CATSRC_PTR1);
-    uint32_t ptr2  = *dram_u32(state, catsrc_ptr + CATSRC_PTR2);
-    uint16_t size1 = *dram_u16(state, catsrc_ptr + CATSRC_SIZE1);
-    uint16_t size2 = *dram_u16(state, catsrc_ptr + CATSRC_SIZE2);
+    uint32_t ptr1  = *dram_u32(hle, catsrc_ptr + CATSRC_PTR1);
+    uint32_t ptr2  = *dram_u32(hle, catsrc_ptr + CATSRC_PTR2);
+    uint16_t size1 = *dram_u16(hle, catsrc_ptr + CATSRC_SIZE1);
+    uint16_t size2 = *dram_u16(hle, catsrc_ptr + CATSRC_SIZE2);
 
     size_t count1 = size1 >> 1;
     size_t count2 = size2 >> 1;
 
-    DebugMessage(state, M64MSG_VERBOSE, "dma_cat: %08x %08x %04x %04x",
-                 ptr1,
-                 ptr2,
-                 size1,
-                 size2);
+    HleVerboseMessage(hle->user_defined,
+                      "dma_cat: %08x %08x %04x %04x",
+                      ptr1,
+                      ptr2,
+                      size1,
+                      size2);
 
-    dram_load_u16(state, dst, ptr1, count1);
+    dram_load_u16(hle, dst, ptr1, count1);
 
     if (size2 == 0)
         return;
 
-    dram_load_u16(state, dst + count1, ptr2, count2);
+    dram_load_u16(hle, dst + count1, ptr2, count2);
 }
 
-static void load_samples_PCM16(usf_state_t* state, uint32_t voice_ptr, int16_t *samples,
+static void load_samples_PCM16(struct hle_t* hle, uint32_t voice_ptr, int16_t *samples,
                                unsigned *segbase, unsigned *offset)
 {
 
-    uint8_t  u8_3e  = *dram_u8(state, voice_ptr + VOICE_SKIP_SAMPLES);
-    uint16_t u16_40 = *dram_u16(state, voice_ptr + VOICE_U16_40);
-    uint16_t u16_42 = *dram_u16(state, voice_ptr + VOICE_U16_42);
+    uint8_t  u8_3e  = *dram_u8(hle, voice_ptr + VOICE_SKIP_SAMPLES);
+    uint16_t u16_40 = *dram_u16(hle, voice_ptr + VOICE_U16_40);
+    uint16_t u16_42 = *dram_u16(hle, voice_ptr + VOICE_U16_42);
 
     unsigned count = align(u16_40 + u8_3e, 4);
 
-    DebugMessage(state, M64MSG_VERBOSE, "Format: PCM16");
+    HleVerboseMessage(hle->user_defined, "Format: PCM16");
 
     *segbase = SAMPLE_BUFFER_SIZE - count;
     *offset  = u8_3e;
 
-    dma_cat16(state, (uint16_t *)samples + *segbase, voice_ptr + VOICE_CATSRC_0);
+    dma_cat16(hle, (uint16_t *)samples + *segbase, voice_ptr + VOICE_CATSRC_0);
 
     if (u16_42 != 0)
-        dma_cat16(state, (uint16_t *)samples, voice_ptr + VOICE_CATSRC_1);
+        dma_cat16(hle, (uint16_t *)samples, voice_ptr + VOICE_CATSRC_1);
 }
 
-static void load_samples_ADPCM(usf_state_t* state, uint32_t voice_ptr, int16_t *samples,
+static void load_samples_ADPCM(struct hle_t* hle, uint32_t voice_ptr, int16_t *samples,
                                unsigned *segbase, unsigned *offset)
 {
     /* decompressed samples cannot exceed 0x400 bytes;
@@ -569,33 +581,34 @@ static void load_samples_ADPCM(usf_state_t* state, uint32_t voice_ptr, int16_t *
     uint8_t buffer[SAMPLE_BUFFER_SIZE * 2 * 5 / 16];
     int16_t adpcm_table[128];
 
-    uint8_t u8_3c = *dram_u8(state, voice_ptr + VOICE_ADPCM_FRAMES    );
-    uint8_t u8_3d = *dram_u8(state, voice_ptr + VOICE_ADPCM_FRAMES + 1);
-    uint8_t u8_3e = *dram_u8(state, voice_ptr + VOICE_SKIP_SAMPLES    );
-    uint8_t u8_3f = *dram_u8(state, voice_ptr + VOICE_SKIP_SAMPLES + 1);
-    uint32_t adpcm_table_ptr = *dram_u32(state, voice_ptr + VOICE_ADPCM_TABLE_PTR);
+    uint8_t u8_3c = *dram_u8(hle, voice_ptr + VOICE_ADPCM_FRAMES    );
+    uint8_t u8_3d = *dram_u8(hle, voice_ptr + VOICE_ADPCM_FRAMES + 1);
+    uint8_t u8_3e = *dram_u8(hle, voice_ptr + VOICE_SKIP_SAMPLES    );
+    uint8_t u8_3f = *dram_u8(hle, voice_ptr + VOICE_SKIP_SAMPLES + 1);
+    uint32_t adpcm_table_ptr = *dram_u32(hle, voice_ptr + VOICE_ADPCM_TABLE_PTR);
     unsigned count;
 
-    DebugMessage(state, M64MSG_VERBOSE, "Format: ADPCM");
+    HleVerboseMessage(hle->user_defined, "Format: ADPCM");
 
-    DebugMessage(state, M64MSG_VERBOSE, "Loading ADPCM table: %08x", adpcm_table_ptr);
-    dram_load_u16(state, (uint16_t *)adpcm_table, adpcm_table_ptr, 128);
+    HleVerboseMessage(hle->user_defined, "Loading ADPCM table: %08x", adpcm_table_ptr);
+    dram_load_u16(hle, (uint16_t *)adpcm_table, adpcm_table_ptr, 128);
 
     count = u8_3c << 5;
 
     *segbase = SAMPLE_BUFFER_SIZE - count;
     *offset  = u8_3e & 0x1f;
 
-    dma_cat8(state, buffer, voice_ptr + VOICE_CATSRC_0);
-    adpcm_decode_frames(state, samples + *segbase, buffer, adpcm_table, u8_3c, u8_3e);
+    dma_cat8(hle, buffer, voice_ptr + VOICE_CATSRC_0);
+    adpcm_decode_frames(hle, samples + *segbase, buffer, adpcm_table, u8_3c, u8_3e);
 
     if (u8_3d != 0) {
-        dma_cat8(state, buffer, voice_ptr + VOICE_CATSRC_1);
-        adpcm_decode_frames(state, samples, buffer, adpcm_table, u8_3d, u8_3f);
+        dma_cat8(hle, buffer, voice_ptr + VOICE_CATSRC_1);
+        adpcm_decode_frames(hle, samples, buffer, adpcm_table, u8_3d, u8_3f);
     }
 }
 
-static void adpcm_decode_frames(usf_state_t* state, int16_t *dst, const uint8_t *src,
+static void adpcm_decode_frames(struct hle_t* hle,
+                                int16_t *dst, const uint8_t *src,
                                 const int16_t *table, uint8_t count,
                                 uint8_t skip_samples)
 {
@@ -604,8 +617,9 @@ static void adpcm_decode_frames(usf_state_t* state, int16_t *dst, const uint8_t 
     unsigned i;
     bool jump_gap = false;
 
-    DebugMessage(state, M64MSG_VERBOSE, "ADPCM decode: count=%d, skip=%d", count,
-                 skip_samples);
+    HleVerboseMessage(hle->user_defined,
+                      "ADPCM decode: count=%d, skip=%d",
+                      count, skip_samples);
 
     if (skip_samples >= 32) {
         jump_gap = true;
@@ -656,20 +670,20 @@ static void adpcm_predict_frame(int16_t *dst, const uint8_t *src,
     }
 }
 
-static void mix_voice_samples(usf_state_t* state, musyx_t *musyx, uint32_t voice_ptr,
-                              const int16_t *samples, unsigned segbase,
-                              unsigned offset, uint32_t last_sample_ptr)
+static void mix_voice_samples(struct hle_t* hle, musyx_t *musyx,
+                              uint32_t voice_ptr, const int16_t *samples,
+                              unsigned segbase, unsigned offset, uint32_t last_sample_ptr)
 {
     int i, k;
 
     /* parse VOICE structure */
-    const uint16_t pitch_q16   = *dram_u16(state, voice_ptr + VOICE_PITCH_Q16);
-    const uint16_t pitch_shift = *dram_u16(state, voice_ptr + VOICE_PITCH_SHIFT); /* Q4.12 */
+    const uint16_t pitch_q16   = *dram_u16(hle, voice_ptr + VOICE_PITCH_Q16);
+    const uint16_t pitch_shift = *dram_u16(hle, voice_ptr + VOICE_PITCH_SHIFT); /* Q4.12 */
 
-    const uint16_t end_point     = *dram_u16(state, voice_ptr + VOICE_END_POINT);
-    const uint16_t restart_point = *dram_u16(state, voice_ptr + VOICE_RESTART_POINT);
+    const uint16_t end_point     = *dram_u16(hle, voice_ptr + VOICE_END_POINT);
+    const uint16_t restart_point = *dram_u16(hle, voice_ptr + VOICE_RESTART_POINT);
 
-    const uint16_t u16_4e = *dram_u16(state, voice_ptr + VOICE_U16_4E);
+    const uint16_t u16_4e = *dram_u16(hle, voice_ptr + VOICE_U16_4E);
 
     /* init values and pointers */
     const int16_t       *sample         = samples + segbase + offset + u16_4e;
@@ -686,27 +700,27 @@ static void mix_voice_samples(usf_state_t* state, musyx_t *musyx, uint32_t voice
     int16_t *v4_dst[4];
     int16_t  v4[4];
 
-    dram_load_u32(state, (uint32_t *)v4_env,      voice_ptr + VOICE_ENV_BEGIN, 4);
-    dram_load_u32(state, (uint32_t *)v4_env_step, voice_ptr + VOICE_ENV_STEP,  4);
+    dram_load_u32(hle, (uint32_t *)v4_env,      voice_ptr + VOICE_ENV_BEGIN, 4);
+    dram_load_u32(hle, (uint32_t *)v4_env_step, voice_ptr + VOICE_ENV_STEP,  4);
 
     v4_dst[0] = musyx->left;
     v4_dst[1] = musyx->right;
     v4_dst[2] = musyx->cc0;
     v4_dst[3] = musyx->e50;
 
-    DebugMessage(state, M64MSG_VERBOSE,
-                 "Voice debug: segbase=%d"
-                 "\tu16_4e=%04x\n"
-                 "\tpitch: frac0=%04x shift=%04x\n"
-                 "\tend_point=%04x restart_point=%04x\n"
-                 "\tenv      = %08x %08x %08x %08x\n"
-                 "\tenv_step = %08x %08x %08x %08x\n",
-                 segbase,
-                 u16_4e,
-                 pitch_q16, pitch_shift,
-                 end_point, restart_point,
-                 v4_env[0],      v4_env[1],      v4_env[2],      v4_env[3],
-                 v4_env_step[0], v4_env_step[1], v4_env_step[2], v4_env_step[3]);
+    HleVerboseMessage(hle->user_defined,
+                      "Voice debug: segbase=%d"
+                      "\tu16_4e=%04x\n"
+                      "\tpitch: frac0=%04x shift=%04x\n"
+                      "\tend_point=%04x restart_point=%04x\n"
+                      "\tenv      = %08x %08x %08x %08x\n"
+                      "\tenv_step = %08x %08x %08x %08x\n",
+                      segbase,
+                      u16_4e,
+                      pitch_q16, pitch_shift,
+                      end_point, restart_point,
+                      v4_env[0],      v4_env[1],      v4_env[2],      v4_env[3],
+                      v4_env_step[0], v4_env_step[1], v4_env_step[2], v4_env_step[3]);
 
     for (i = 0; i < SUBFRAME_SIZE; ++i) {
         /* update sample and lut pointers and then pitch_accu */
@@ -739,14 +753,15 @@ static void mix_voice_samples(usf_state_t* state, musyx_t *musyx, uint32_t voice
     }
 
     /* save last resampled sample */
-    dram_store_u16(state, (uint16_t *)v4, last_sample_ptr, 4);
+    dram_store_u16(hle, (uint16_t *)v4, last_sample_ptr, 4);
 
-    DebugMessage(state, M64MSG_VERBOSE, "last_sample = %04x %04x %04x %04x",
-                 v4[0], v4[1], v4[2], v4[3]);
+    HleVerboseMessage(hle->user_defined,
+                      "last_sample = %04x %04x %04x %04x",
+                      v4[0], v4[1], v4[2], v4[3]);
 }
 
 
-static void sfx_stage(usf_state_t* state, mix_sfx_with_main_subframes_t mix_sfx_with_main_subframes,
+static void sfx_stage(struct hle_t* hle, mix_sfx_with_main_subframes_t mix_sfx_with_main_subframes,
                       musyx_t *musyx, uint32_t sfx_ptr, uint16_t idx)
 {
     unsigned int i;
@@ -769,44 +784,46 @@ static void sfx_stage(usf_state_t* state, mix_sfx_with_main_subframes_t mix_sfx_
     int16_t fir4_hgain;
     uint16_t sfx_gains[2];
 
-    DebugMessage(state, M64MSG_VERBOSE, "SFX: %08x, idx=%d", sfx_ptr, idx);
+    HleVerboseMessage(hle->user_defined, "SFX: %08x, idx=%d", sfx_ptr, idx);
 
     if (sfx_ptr == 0)
         return;
 
     /* load sfx  parameters */
-    cbuffer_ptr    = *dram_u32(state, sfx_ptr + SFX_CBUFFER_PTR);
-    cbuffer_length = *dram_u32(state, sfx_ptr + SFX_CBUFFER_LENGTH);
+    cbuffer_ptr    = *dram_u32(hle, sfx_ptr + SFX_CBUFFER_PTR);
+    cbuffer_length = *dram_u32(hle, sfx_ptr + SFX_CBUFFER_LENGTH);
 
-    tap_count      = *dram_u16(state, sfx_ptr + SFX_TAP_COUNT);
+    tap_count      = *dram_u16(hle, sfx_ptr + SFX_TAP_COUNT);
 
-    dram_load_u32(state, tap_delays, sfx_ptr + SFX_TAP_DELAYS, 8);
-    dram_load_u16(state, (uint16_t *)tap_gains,  sfx_ptr + SFX_TAP_GAINS,  8);
+    dram_load_u32(hle, tap_delays, sfx_ptr + SFX_TAP_DELAYS, 8);
+    dram_load_u16(hle, (uint16_t *)tap_gains,  sfx_ptr + SFX_TAP_GAINS,  8);
 
-    fir4_hgain     = *dram_u16(state, sfx_ptr + SFX_FIR4_HGAIN);
-    dram_load_u16(state, (uint16_t *)fir4_hcoeffs, sfx_ptr + SFX_FIR4_HCOEFFS, 4);
+    fir4_hgain     = *dram_u16(hle, sfx_ptr + SFX_FIR4_HGAIN);
+    dram_load_u16(hle, (uint16_t *)fir4_hcoeffs, sfx_ptr + SFX_FIR4_HCOEFFS, 4);
 
-    sfx_gains[0]   = *dram_u16(state, sfx_ptr + SFX_U16_3C);
-    sfx_gains[1]   = *dram_u16(state, sfx_ptr + SFX_U16_3E);
+    sfx_gains[0]   = *dram_u16(hle, sfx_ptr + SFX_U16_3C);
+    sfx_gains[1]   = *dram_u16(hle, sfx_ptr + SFX_U16_3E);
 
-    DebugMessage(state, M64MSG_VERBOSE, "cbuffer: ptr=%08x length=%x", cbuffer_ptr,
-                 cbuffer_length);
+    HleVerboseMessage(hle->user_defined,
+                      "cbuffer: ptr=%08x length=%x", cbuffer_ptr,
+                      cbuffer_length);
 
-    DebugMessage(state, M64MSG_VERBOSE, "fir4: hgain=%04x hcoeff=%04x %04x %04x %04x",
-                 fir4_hgain, fir4_hcoeffs[0], fir4_hcoeffs[1], fir4_hcoeffs[2],
-                 fir4_hcoeffs[3]);
+    HleVerboseMessage(hle->user_defined,
+                      "fir4: hgain=%04x hcoeff=%04x %04x %04x %04x",
+                      fir4_hgain,
+                      fir4_hcoeffs[0], fir4_hcoeffs[1], fir4_hcoeffs[2], fir4_hcoeffs[3]);
 
-    DebugMessage(state, M64MSG_VERBOSE,
-                 "tap count=%d\n"
-                 "delays: %08x %08x %08x %08x %08x %08x %08x %08x\n"
-                 "gains:  %04x %04x %04x %04x %04x %04x %04x %04x",
-                 tap_count,
-                 tap_delays[0], tap_delays[1], tap_delays[2], tap_delays[3],
-                 tap_delays[4], tap_delays[5], tap_delays[6], tap_delays[7],
-                 tap_gains[0], tap_gains[1], tap_gains[2], tap_gains[3],
-                 tap_gains[4], tap_gains[5], tap_gains[6], tap_gains[7]);
+    HleVerboseMessage(hle->user_defined,
+                      "tap count=%d\n"
+                      "delays: %08x %08x %08x %08x %08x %08x %08x %08x\n"
+                      "gains:  %04x %04x %04x %04x %04x %04x %04x %04x",
+                      tap_count,
+                      tap_delays[0], tap_delays[1], tap_delays[2], tap_delays[3],
+                      tap_delays[4], tap_delays[5], tap_delays[6], tap_delays[7],
+                      tap_gains[0], tap_gains[1], tap_gains[2], tap_gains[3],
+                      tap_gains[4], tap_gains[5], tap_gains[6], tap_gains[7]);
 
-    DebugMessage(state, M64MSG_VERBOSE, "sfx_gains=%04x %04x", sfx_gains[0], sfx_gains[1]);
+    HleVerboseMessage(hle->user_defined, "sfx_gains=%04x %04x", sfx_gains[0], sfx_gains[1]);
 
     /* mix up to 8 delayed subframes */
     memset(subframe, 0, SUBFRAME_SIZE * sizeof(subframe[0]));
@@ -817,12 +834,12 @@ static void sfx_stage(usf_state_t* state, mix_sfx_with_main_subframes_t mix_sfx_
             dpos += cbuffer_length;
         dlength = SUBFRAME_SIZE;
 
-        if (dpos + SUBFRAME_SIZE > cbuffer_length) {
+        if ((uint32_t)(dpos + SUBFRAME_SIZE) > cbuffer_length) {
             dlength = cbuffer_length - dpos;
-            dram_load_u16(state, (uint16_t *)delayed + dlength, cbuffer_ptr, SUBFRAME_SIZE - dlength);
+            dram_load_u16(hle, (uint16_t *)delayed + dlength, cbuffer_ptr, SUBFRAME_SIZE - dlength);
         }
 
-        dram_load_u16(state, (uint16_t *)delayed, cbuffer_ptr + dpos * 2, dlength);
+        dram_load_u16(hle, (uint16_t *)delayed, cbuffer_ptr + dpos * 2, dlength);
 
         mix_subframes(subframe, delayed, tap_gains[i]);
     }
@@ -834,7 +851,7 @@ static void sfx_stage(usf_state_t* state, mix_sfx_with_main_subframes_t mix_sfx_
     memcpy(buffer, musyx->subframe_740_last4, 4 * sizeof(int16_t));
     memcpy(musyx->subframe_740_last4, subframe + SUBFRAME_SIZE - 4, 4 * sizeof(int16_t));
     mix_fir4(musyx->e50, buffer + 1, fir4_hgain, fir4_hcoeffs);
-    dram_store_u16(state, (uint16_t *)musyx->e50, cbuffer_ptr + pos * 2, SUBFRAME_SIZE);
+    dram_store_u16(hle, (uint16_t *)musyx->e50, cbuffer_ptr + pos * 2, SUBFRAME_SIZE);
 }
 
 static void mix_sfx_with_main_subframes_v1(musyx_t *musyx, const int16_t *subframe,
@@ -894,7 +911,7 @@ static void mix_fir4(int16_t *y, const int16_t *x, int16_t hgain, const int16_t 
     }
 }
 
-static void interleave_stage_v1(usf_state_t* state, musyx_t *musyx, uint32_t output_ptr)
+static void interleave_stage_v1(struct hle_t* hle, musyx_t *musyx, uint32_t output_ptr)
 {
     size_t i;
 
@@ -905,14 +922,14 @@ static void interleave_stage_v1(usf_state_t* state, musyx_t *musyx, uint32_t out
     int16_t *right;
     uint32_t *dst;
 
-    DebugMessage(state, M64MSG_VERBOSE, "interleave: %08x", output_ptr);
+    HleVerboseMessage(hle->user_defined, "interleave: %08x", output_ptr);
 
     base_left  = clamp_s16(musyx->base_vol[0]);
     base_right = clamp_s16(musyx->base_vol[1]);
 
     left  = musyx->left;
     right = musyx->right;
-    dst  = dram_u32(state, output_ptr);
+    dst  = dram_u32(hle, output_ptr);
 
     for (i = 0; i < SUBFRAME_SIZE; ++i) {
         uint16_t l = clamp_s16(*(left++)  + base_left);
@@ -922,7 +939,8 @@ static void interleave_stage_v1(usf_state_t* state, musyx_t *musyx, uint32_t out
     }
 }
 
-static void interleave_stage_v2(usf_state_t* state, musyx_t *musyx, uint16_t mask_16, uint32_t ptr_18,
+static void interleave_stage_v2(struct hle_t* hle, musyx_t *musyx,
+                                uint16_t mask_16, uint32_t ptr_18,
                                 uint32_t ptr_1c, uint32_t output_ptr)
 {
     unsigned i, k;
@@ -930,14 +948,15 @@ static void interleave_stage_v2(usf_state_t* state, musyx_t *musyx, uint16_t mas
     uint32_t *dst;
     uint16_t mask;
 
-    DebugMessage(state, M64MSG_VERBOSE, "mask_16=%04x ptr_18=%08x ptr_1c=%08x output_ptr=%08x",
-            mask_16, ptr_18, ptr_1c, output_ptr);
+    HleVerboseMessage(hle->user_defined,
+                      "mask_16=%04x ptr_18=%08x ptr_1c=%08x output_ptr=%08x",
+                      mask_16, ptr_18, ptr_1c, output_ptr);
 
     /* compute L_total, R_total and update subframe @ptr_1c */
     memset(subframe, 0, SUBFRAME_SIZE*sizeof(subframe[0]));
 
     for(i = 0; i < SUBFRAME_SIZE; ++i) {
-        int16_t v = *dram_u16(state, ptr_1c + i*2);
+        int16_t v = *dram_u16(hle, ptr_1c + i*2);
         musyx->left[i] = v;
         musyx->right[i] = clamp_s16(-v);
     }
@@ -949,18 +968,18 @@ static void interleave_stage_v2(usf_state_t* state, musyx_t *musyx, uint16_t mas
         if ((mask_16 & mask) == 0)
             continue;
 
-        address = *dram_u32(state, ptr_18);
-        hgain   = *dram_u16(state, ptr_18 + 4);
+        address = *dram_u32(hle, ptr_18);
+        hgain   = *dram_u16(hle, ptr_18 + 4);
 
         for(i = 0; i < SUBFRAME_SIZE; ++i, address += 2) {
-            mix_samples(&musyx->left[i],  *dram_u16(state, address), hgain);
-            mix_samples(&musyx->right[i], *dram_u16(state, address + 2*SUBFRAME_SIZE), hgain);
-            mix_samples(&subframe[i],     *dram_u16(state, address + 4*SUBFRAME_SIZE), hgain);
+            mix_samples(&musyx->left[i],  *dram_u16(hle, address), hgain);
+            mix_samples(&musyx->right[i], *dram_u16(hle, address + 2*SUBFRAME_SIZE), hgain);
+            mix_samples(&subframe[i],     *dram_u16(hle, address + 4*SUBFRAME_SIZE), hgain);
         }
     }
 
     /* interleave L_total and R_total */
-    dst = dram_u32(state, output_ptr);
+    dst = dram_u32(hle, output_ptr);
     for(i = 0; i < SUBFRAME_SIZE; ++i) {
         uint16_t l = musyx->left[i];
         uint16_t r = musyx->right[i];
@@ -968,5 +987,5 @@ static void interleave_stage_v2(usf_state_t* state, musyx_t *musyx, uint16_t mas
     }
 
     /* writeback subframe @ptr_1c */
-    dram_store_u16(state, (uint16_t*)subframe, ptr_1c, SUBFRAME_SIZE);
+    dram_store_u16(hle, (uint16_t*)subframe, ptr_1c, SUBFRAME_SIZE);
 }

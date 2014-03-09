@@ -22,9 +22,11 @@
 #ifndef JPEG_H
 #define JPEG_H
 
-void jpeg_decode_PS0(usf_state_t* state);
-void jpeg_decode_PS(usf_state_t* state);
-void jpeg_decode_OB(usf_state_t* state);
+struct hle_t;
+
+void jpeg_decode_PS0(struct hle_t* hle);
+void jpeg_decode_PS(struct hle_t* hle);
+void jpeg_decode_OB(struct hle_t* hle);
 
 #endif
 

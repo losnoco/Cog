@@ -26,10 +26,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../usf.h"
-#include "../usf_internal.h"
-
-#include "plugin.h"
+#include "hle_internal.h"
 
 #ifdef M64P_BIG_ENDIAN
 #define S 0
@@ -60,59 +57,65 @@ enum {
     TASK_YIELD_DATA_SIZE    = 0xffc
 };
 
-static inline unsigned int align(unsigned int x, unsigned amount)
+#ifdef _MSC_VER
+#define INLINE      __forceinline
+#else
+#define INLINE      __attribute__((always_inline))
+#endif
+
+INLINE static unsigned int align(unsigned int x, unsigned amount)
 {
     --amount;
     return (x + amount) & ~amount;
 }
 
-static inline uint8_t* const dmem_u8(usf_state_t* state, uint16_t address)
+INLINE static uint8_t* const dmem_u8(struct hle_t* hle, uint16_t address)
 {
-    return (uint8_t*)(&state->DMEM[(address & 0xfff) ^ S8]);
+    return (uint8_t*)(&hle->dmem[(address & 0xfff) ^ S8]);
 }
 
-static inline uint16_t* const dmem_u16(usf_state_t* state, uint16_t address)
-{
-    assert((address & 1) == 0);
-    return (uint16_t*)(&state->DMEM[(address & 0xfff) ^ S16]);
-}
-
-static inline uint32_t* const dmem_u32(usf_state_t* state, uint16_t address)
-{
-    assert((address & 3) == 0);
-    return (uint32_t*)(&state->DMEM[(address & 0xfff)]);
-}
-
-static inline uint8_t* const dram_u8(usf_state_t* state, uint32_t address)
-{
-    return (uint8_t*)&state->N64MEM[(address & 0xffffff) ^ S8];
-}
-
-static inline uint16_t* const dram_u16(usf_state_t* state, uint32_t address)
+INLINE static uint16_t* const dmem_u16(struct hle_t* hle, uint16_t address)
 {
     assert((address & 1) == 0);
-    return (uint16_t*)&state->N64MEM[(address & 0xffffff) ^ S16];
+    return (uint16_t*)(&hle->dmem[(address & 0xfff) ^ S16]);
 }
 
-static inline uint32_t* const dram_u32(usf_state_t* state, uint32_t address)
+INLINE static uint32_t* const dmem_u32(struct hle_t* hle, uint16_t address)
 {
     assert((address & 3) == 0);
-    return (uint32_t*)&state->N64MEM[address & 0xffffff];
+    return (uint32_t*)(&hle->dmem[(address & 0xfff)]);
 }
 
-void dmem_load_u8 (usf_state_t* state, uint8_t*  dst, uint16_t address, size_t count);
-void dmem_load_u16(usf_state_t* state, uint16_t* dst, uint16_t address, size_t count);
-void dmem_load_u32(usf_state_t* state, uint32_t* dst, uint16_t address, size_t count);
-void dmem_store_u8 (usf_state_t* state, const uint8_t*  src, uint16_t address, size_t count);
-void dmem_store_u16(usf_state_t* state, const uint16_t* src, uint16_t address, size_t count);
-void dmem_store_u32(usf_state_t* state, const uint32_t* src, uint16_t address, size_t count);
+INLINE static uint8_t* const dram_u8(struct hle_t* hle, uint32_t address)
+{
+    return (uint8_t*)&hle->dram[(address & 0xffffff) ^ S8];
+}
 
-void dram_load_u8 (usf_state_t* state, uint8_t*  dst, uint32_t address, size_t count);
-void dram_load_u16(usf_state_t* state, uint16_t* dst, uint32_t address, size_t count);
-void dram_load_u32(usf_state_t* state, uint32_t* dst, uint32_t address, size_t count);
-void dram_store_u8 (usf_state_t* state, const uint8_t*  src, uint32_t address, size_t count);
-void dram_store_u16(usf_state_t* state, const uint16_t* src, uint32_t address, size_t count);
-void dram_store_u32(usf_state_t* state, const uint32_t* src, uint32_t address, size_t count);
+INLINE static uint16_t* const dram_u16(struct hle_t* hle, uint32_t address)
+{
+    assert((address & 1) == 0);
+    return (uint16_t*)&hle->dram[(address & 0xffffff) ^ S16];
+}
+
+INLINE static uint32_t* const dram_u32(struct hle_t* hle, uint32_t address)
+{
+    assert((address & 3) == 0);
+    return (uint32_t*)&hle->dram[address & 0xffffff];
+}
+
+void dmem_load_u8 (struct hle_t* hle, uint8_t*  dst, uint16_t address, size_t count);
+void dmem_load_u16(struct hle_t* hle, uint16_t* dst, uint16_t address, size_t count);
+void dmem_load_u32(struct hle_t* hle, uint32_t* dst, uint16_t address, size_t count);
+void dmem_store_u8 (struct hle_t* hle, const uint8_t*  src, uint16_t address, size_t count);
+void dmem_store_u16(struct hle_t* hle, const uint16_t* src, uint16_t address, size_t count);
+void dmem_store_u32(struct hle_t* hle, const uint32_t* src, uint16_t address, size_t count);
+
+void dram_load_u8 (struct hle_t* hle, uint8_t*  dst, uint32_t address, size_t count);
+void dram_load_u16(struct hle_t* hle, uint16_t* dst, uint32_t address, size_t count);
+void dram_load_u32(struct hle_t* hle, uint32_t* dst, uint32_t address, size_t count);
+void dram_store_u8 (struct hle_t* hle, const uint8_t*  src, uint32_t address, size_t count);
+void dram_store_u16(struct hle_t* hle, const uint16_t* src, uint32_t address, size_t count);
+void dram_store_u32(struct hle_t* hle, const uint32_t* src, uint32_t address, size_t count);
 
 #endif
 

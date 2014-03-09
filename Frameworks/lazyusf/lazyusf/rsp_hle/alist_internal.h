@@ -22,26 +22,32 @@
 #ifndef ALIST_INTERNAL_H
 #define ALIST_INTERNAL_H
 
+#ifndef _MSC_VER
 #include <stdbool.h>
+#else
+#include "mystdbool.h"
+#endif
 #include <stdint.h>
 #include <stddef.h>
 
-typedef void (*acmd_callback_t)(usf_state_t* state, uint32_t w1, uint32_t w2);
+struct hle_t;
 
-void alist_process(usf_state_t* state, const acmd_callback_t abi[], unsigned int abi_size);
-uint32_t alist_get_address(usf_state_t* state, uint32_t so, const uint32_t *segments, size_t n);
-void alist_set_address(usf_state_t* state, uint32_t so, uint32_t *segments, size_t n);
-void alist_clear(usf_state_t* state, uint16_t dmem, uint16_t count);
-void alist_load(usf_state_t* state, uint16_t dmem, uint32_t address, uint16_t count);
-void alist_save(usf_state_t* state, uint16_t dmem, uint32_t address, uint16_t count);
-void alist_move(usf_state_t* state, uint16_t dmemo, uint16_t dmemi, uint16_t count);
-void alist_copy_every_other_sample(usf_state_t* state, uint16_t dmemo, uint16_t dmemi, uint16_t count);
-void alist_repeat64(usf_state_t* state, uint16_t dmemo, uint16_t dmemi, uint8_t count);
-void alist_copy_blocks(usf_state_t* state, uint16_t dmemo, uint16_t dmemi, uint16_t block_size, uint8_t count);
-void alist_interleave(usf_state_t* state, uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count);
+typedef void (*acmd_callback_t)(struct hle_t* hle, uint32_t w1, uint32_t w2);
+
+void alist_process(struct hle_t* hle, const acmd_callback_t abi[], unsigned int abi_size);
+uint32_t alist_get_address(struct hle_t* hle, uint32_t so, const uint32_t *segments, size_t n);
+void alist_set_address(struct hle_t* hle, uint32_t so, uint32_t *segments, size_t n);
+void alist_clear(struct hle_t* hle, uint16_t dmem, uint16_t count);
+void alist_load(struct hle_t* hle, uint16_t dmem, uint32_t address, uint16_t count);
+void alist_save(struct hle_t* hle, uint16_t dmem, uint32_t address, uint16_t count);
+void alist_move(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count);
+void alist_copy_every_other_sample(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count);
+void alist_repeat64(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint8_t count);
+void alist_copy_blocks(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t block_size, uint8_t count);
+void alist_interleave(struct hle_t* hle, uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count);
 
 void alist_envmix_exp(
-        usf_state_t* state,
+        struct hle_t* hle,
         bool init,
         bool aux,
         uint16_t dmem_dl, uint16_t dmem_dr,
@@ -54,7 +60,7 @@ void alist_envmix_exp(
         uint32_t address);
 
 void alist_envmix_lin(
-        usf_state_t* state,
+        struct hle_t* hle,
         bool init,
         uint16_t dmem_dl, uint16_t dmem_dr,
         uint16_t dmem_wl, uint16_t dmem_wr,
@@ -66,7 +72,7 @@ void alist_envmix_lin(
         uint32_t address);
 
 void alist_envmix_nead(
-        usf_state_t* state,
+        struct hle_t* hle,
         bool swap_wet_LR,
         uint16_t dmem_dl,
         uint16_t dmem_dr,
@@ -78,12 +84,12 @@ void alist_envmix_nead(
         uint16_t *env_steps,
         const int16_t *xors);
 
-void alist_mix(usf_state_t* state, uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain);
-void alist_multQ44(usf_state_t* state, uint16_t dmem, uint16_t count, int8_t gain);
-void alist_add(usf_state_t* state, uint16_t dmemo, uint16_t dmemi, uint16_t count);
+void alist_mix(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain);
+void alist_multQ44(struct hle_t* hle, uint16_t dmem, uint16_t count, int8_t gain);
+void alist_add(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count);
 
 void alist_adpcm(
-        usf_state_t* state,
+        struct hle_t* hle,
         bool init,
         bool loop,
         bool two_bit_per_sample,
@@ -95,14 +101,14 @@ void alist_adpcm(
         uint32_t last_frame_address);
 
 void alist_resample(
-        usf_state_t* state,
+        struct hle_t* hle, 
         bool init,
         bool flag2,
         uint16_t dmemo, uint16_t dmemi, uint16_t count,
         uint32_t pitch, uint32_t address);
 
 void alist_resample_zoh(
-        usf_state_t* state,
+        struct hle_t* hle,
         uint16_t dmemo,
         uint16_t dmemi,
         uint16_t count,
@@ -110,14 +116,14 @@ void alist_resample_zoh(
         uint32_t pitch_accu);
 
 void alist_filter(
-        usf_state_t* state,
+        struct hle_t* hle,
         uint16_t dmem,
         uint16_t count,
         uint32_t address,
         const uint32_t* lut_address);
 
 void alist_polef(
-        usf_state_t* state,
+        struct hle_t* hle,
         bool init,
         uint16_t dmemo,
         uint16_t dmemi,

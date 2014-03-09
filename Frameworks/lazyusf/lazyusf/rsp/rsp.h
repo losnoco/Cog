@@ -15,7 +15,7 @@
 #define _RSP_H_
 
 #ifdef _MSC_VER
-#define INLINE      __inline
+#define INLINE      __forceinline
 #define NOINLINE    __declspec(noinline)
 #define ALIGNED     _declspec(align(16))
 #else
@@ -42,7 +42,7 @@ typedef unsigned char byte;
 typedef uint32_t RCPREG;
 #endif
 
-NOINLINE void message(usf_state_t * state, const char* body, int priority)
+NOINLINE static void message(usf_state_t * state, const char* body, int priority)
 {
     (void)body;
     (void)priority;
@@ -55,7 +55,7 @@ NOINLINE void message(usf_state_t * state, const char* body, int priority)
  */
 #define CHARACTERS_PER_LINE     (80)
 /* typical standard DOS text file limit per line */
-NOINLINE void update_conf(const char* source)
+NOINLINE static void update_conf(const char* source)
 {
     (void)source;
 }
@@ -68,7 +68,7 @@ extern void step_SP_commands(usf_state_t * state, int PC, uint32_t inst);
 #include "vu/vu.h"
 
 /* Allocate the RSP CPU loop to its own functional space. */
-NOINLINE extern void run_task(usf_state_t * state);
+NOINLINE static void run_task(usf_state_t * state);
 #include "execute.h"
 
 #ifdef SP_EXECUTE_LOG

@@ -44,7 +44,7 @@ NOINLINE static void res_S(usf_state_t * state)
 
 #define SLOT_OFF    (BASE_OFF + 0x000)
 #define LINK_OFF    (BASE_OFF + 0x004)
-void set_PC(usf_state_t * state, int address)
+static void set_PC(usf_state_t * state, int address)
 {
     state->temp_PC = 0x04001000 + (address & 0xFFC);
 #ifndef EMULATE_STATIC_PC
@@ -72,11 +72,11 @@ void set_PC(usf_state_t * state, int address)
 #define WES(address)    ((address) ^ ((ENDIAN) & 00))
 #define SR_B(s, i)      (*(byte *)(((byte *)(state->SR + s)) + BES(i)))
 #define SR_S(s, i)      (*(short *)(((byte *)(state->SR + s)) + HES(i)))
-#define SE(x, b)        (-(x & (1 << b)) | (x & ~(~0 << b)))
+#define SE(x, b)        (-((signed int)x & (1 << b)) | (x & ~(~0 << b)))
 #define ZE(x, b)        (+(x & (1 << b)) | (x & ~(~0 << b)))
 
-extern void ULW(usf_state_t *, int rd, uint32_t addr);
-extern void USW(usf_state_t *, int rs, uint32_t addr);
+static void ULW(usf_state_t *, int rd, uint32_t addr);
+static void USW(usf_state_t *, int rs, uint32_t addr);
 
 /*
  * All other behaviors defined below this point in the file are specific to
@@ -320,21 +320,21 @@ void SP_DMA_WRITE(usf_state_t * state)
  */
 #define VR_S(vt,element)    (*(short *)((byte *)(state->VR[vt]) + element))
 
-extern unsigned short get_VCO(usf_state_t * state);
-extern unsigned short get_VCC(usf_state_t * state);
-extern unsigned char get_VCE(usf_state_t * state);
-extern void set_VCO(usf_state_t * state, unsigned short VCO);
-extern void set_VCC(usf_state_t * state, unsigned short VCC);
-extern void set_VCE(usf_state_t * state, unsigned char VCE);
+static unsigned short get_VCO(usf_state_t * state);
+static unsigned short get_VCC(usf_state_t * state);
+static unsigned char get_VCE(usf_state_t * state);
+static void set_VCO(usf_state_t * state, unsigned short VCO);
+static void set_VCC(usf_state_t * state, unsigned short VCC);
+static void set_VCE(usf_state_t * state, unsigned char VCE);
 
-unsigned short rwR_VCE(usf_state_t * state)
+static unsigned short rwR_VCE(usf_state_t * state)
 { /* never saw a game try to read VCE out to a scalar GPR yet */
     register unsigned short ret_slot;
 
     ret_slot = 0x00 | (unsigned short)get_VCE(state);
     return (ret_slot);
 }
-void rwW_VCE(usf_state_t * state, unsigned short VCE)
+static void rwW_VCE(usf_state_t * state, unsigned short VCE)
 { /* never saw a game try to write VCE using a scalar GPR yet */
     register int i;
 

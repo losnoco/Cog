@@ -1014,6 +1014,8 @@ static int usf_info(void * context, const char * name, const char * value)
         
         usf_clear( state.emu_state );
         
+        //usf_set_hle_audio( state.emu_state, 1 );
+        
         emulatorCore = ( uint8_t * ) state.emu_state;
         
         if ( psf_load( [currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, &state, usf_info, &state, 1 ) <= 0 )

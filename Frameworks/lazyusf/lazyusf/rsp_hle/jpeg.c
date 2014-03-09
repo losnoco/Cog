@@ -25,21 +25,18 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "../usf.h"
-
 #include "arithmetics.h"
+#include "hle_external.h"
+#include "hle_internal.h"
 #include "memory.h"
-#include "plugin.h"
-
-#include "../usf_internal.h"
 
 #define SUBBLOCK_SIZE 64
 
-typedef void (*tile_line_emitter_t)(usf_state_t* state, const int16_t *y, const int16_t *u, uint32_t address);
+typedef void (*tile_line_emitter_t)(struct hle_t* hle, const int16_t *y, const int16_t *u, uint32_t address);
 typedef void (*subblock_transform_t)(int16_t *dst, const int16_t *src);
 
 /* standard jpeg ucode decoder */
-static void jpeg_decode_std(usf_state_t* state,
+static void jpeg_decode_std(struct hle_t* hle,
                             const char *const version,
                             const subblock_transform_t transform_luma,
                             const subblock_transform_t transform_chroma,
@@ -55,8 +52,8 @@ static uint32_t GetUYVY(int16_t y1, int16_t y2, int16_t u, int16_t v);
 static uint16_t GetRGBA(int16_t y, int16_t u, int16_t v);
 
 /* tile line emitters */
-static void EmitYUVTileLine(usf_state_t* state, const int16_t *y, const int16_t *u, uint32_t address);
-static void EmitRGBATileLine(usf_state_t* state, const int16_t *y, const int16_t *u, uint32_t address);
+static void EmitYUVTileLine(struct hle_t* hle, const int16_t *y, const int16_t *u, uint32_t address);
+static void EmitRGBATileLine(struct hle_t* hle, const int16_t *y, const int16_t *u, uint32_t address);
 
 /* macroblocks operations */
 static void decode_macroblock_ob(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc, int32_t *v_dc, const int16_t *qtable);
@@ -65,8 +62,8 @@ static void decode_macroblock_std(const subblock_transform_t transform_luma,
                                   int16_t *macroblock,
                                   unsigned int subblock_count,
                                   const int16_t qtables[3][SUBBLOCK_SIZE]);
-static void EmitTilesMode0(usf_state_t* state, const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
-static void EmitTilesMode2(usf_state_t* state, const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
+static void EmitTilesMode0(struct hle_t* hle, const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
+static void EmitTilesMode2(struct hle_t* hle, const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 
 /* subblocks operations */
 static void TransposeSubBlock(int16_t *dst, const int16_t *src);
@@ -141,24 +138,24 @@ static const float IDCT_K[10] = {
 /***************************************************************************
  * JPEG decoding ucode found in Japanese exclusive version of Pokemon Stadium.
  **************************************************************************/
-void jpeg_decode_PS0(usf_state_t* state)
+void jpeg_decode_PS0(struct hle_t* hle)
 {
-    jpeg_decode_std(state, "PS0", RescaleYSubBlock, RescaleUVSubBlock, EmitYUVTileLine);
+    jpeg_decode_std(hle, "PS0", RescaleYSubBlock, RescaleUVSubBlock, EmitYUVTileLine);
 }
 
 /***************************************************************************
  * JPEG decoding ucode found in Ocarina of Time, Pokemon Stadium 1 and
  * Pokemon Stadium 2.
  **************************************************************************/
-void jpeg_decode_PS(usf_state_t* state)
+void jpeg_decode_PS(struct hle_t* hle)
 {
-    jpeg_decode_std(state, "PS", NULL, NULL, EmitRGBATileLine);
+    jpeg_decode_std(hle, "PS", NULL, NULL, EmitRGBATileLine);
 }
 
 /***************************************************************************
  * JPEG decoding ucode found in Ogre Battle and Bottom of the 9th.
  **************************************************************************/
-void jpeg_decode_OB(usf_state_t* state)
+void jpeg_decode_OB(struct hle_t* hle)
 {
     int16_t qtable[SUBBLOCK_SIZE];
     unsigned int mb;
@@ -167,15 +164,15 @@ void jpeg_decode_OB(usf_state_t* state)
     int32_t u_dc = 0;
     int32_t v_dc = 0;
 
-    uint32_t           address          = *dmem_u32(state, TASK_DATA_PTR);
-    const unsigned int macroblock_count = *dmem_u32(state, TASK_DATA_SIZE);
-    const int          qscale           = *dmem_u32(state, TASK_YIELD_DATA_SIZE);
+    uint32_t           address          = *dmem_u32(hle, TASK_DATA_PTR);
+    const unsigned int macroblock_count = *dmem_u32(hle, TASK_DATA_SIZE);
+    const int          qscale           = *dmem_u32(hle, TASK_YIELD_DATA_SIZE);
 
-    DebugMessage(state,
-                 M64MSG_VERBOSE, "jpeg_decode_OB: *buffer=%x, #MB=%d, qscale=%d",
-                 address,
-                 macroblock_count,
-                 qscale);
+    HleVerboseMessage(hle->user_defined,
+                      "jpeg_decode_OB: *buffer=%x, #MB=%d, qscale=%d",
+                      address,
+                      macroblock_count,
+                      qscale);
 
     if (qscale != 0) {
         if (qscale > 0)
@@ -187,9 +184,9 @@ void jpeg_decode_OB(usf_state_t* state)
     for (mb = 0; mb < macroblock_count; ++mb) {
         int16_t macroblock[6 * SUBBLOCK_SIZE];
 
-        dram_load_u16(state, (uint16_t *)macroblock, address, 6 * SUBBLOCK_SIZE);
+        dram_load_u16(hle, (uint16_t *)macroblock, address, 6 * SUBBLOCK_SIZE);
         decode_macroblock_ob(macroblock, &y_dc, &u_dc, &v_dc, (qscale != 0) ? qtable : NULL);
-        EmitTilesMode2(state, EmitYUVTileLine, macroblock, address);
+        EmitTilesMode2(hle, EmitYUVTileLine, macroblock, address);
 
         address += (2 * 6 * SUBBLOCK_SIZE);
     }
@@ -197,7 +194,7 @@ void jpeg_decode_OB(usf_state_t* state)
 
 
 /* local functions */
-static void jpeg_decode_std(usf_state_t* state,
+static void jpeg_decode_std(struct hle_t* hle,
                             const char *const version,
                             const subblock_transform_t transform_luma,
                             const subblock_transform_t transform_chroma,
@@ -217,49 +214,52 @@ static void jpeg_decode_std(usf_state_t* state,
     int16_t macroblock[6 * SUBBLOCK_SIZE];
     uint32_t data_ptr;
 
-    if (*dmem_u32(state, TASK_FLAGS) & 0x1) {
-        DebugMessage(state, M64MSG_WARNING, "jpeg_decode_%s: task yielding not implemented", version);
+    if (*dmem_u32(hle, TASK_FLAGS) & 0x1) {
+        HleWarnMessage(hle->user_defined,
+                       "jpeg_decode_%s: task yielding not implemented", version);
         return;
     }
 
-    data_ptr = *dmem_u32(state, TASK_DATA_PTR);
-    address          = *dram_u32(state, data_ptr);
-    macroblock_count = *dram_u32(state, data_ptr + 4);
-    mode             = *dram_u32(state, data_ptr + 8);
-    qtableY_ptr      = *dram_u32(state, data_ptr + 12);
-    qtableU_ptr      = *dram_u32(state, data_ptr + 16);
-    qtableV_ptr      = *dram_u32(state, data_ptr + 20);
+    data_ptr = *dmem_u32(hle, TASK_DATA_PTR);
+    address          = *dram_u32(hle, data_ptr);
+    macroblock_count = *dram_u32(hle, data_ptr + 4);
+    mode             = *dram_u32(hle, data_ptr + 8);
+    qtableY_ptr      = *dram_u32(hle, data_ptr + 12);
+    qtableU_ptr      = *dram_u32(hle, data_ptr + 16);
+    qtableV_ptr      = *dram_u32(hle, data_ptr + 20);
 
-    DebugMessage(state, M64MSG_VERBOSE, "jpeg_decode_%s: *buffer=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, *Qv=%x",
-                 version,
-                 address,
-                 macroblock_count,
-                 mode,
-                 qtableY_ptr,
-                 qtableU_ptr,
-                 qtableV_ptr);
+    HleVerboseMessage(hle->user_defined,
+                      "jpeg_decode_%s: *buffer=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, *Qv=%x",
+                      version,
+                      address,
+                      macroblock_count,
+                      mode,
+                      qtableY_ptr,
+                      qtableU_ptr,
+                      qtableV_ptr);
 
     if (mode != 0 && mode != 2) {
-        DebugMessage(state, M64MSG_WARNING, "jpeg_decode_%s: invalid mode %d", version, mode);
+        HleWarnMessage(hle->user_defined,
+                       "jpeg_decode_%s: invalid mode %d", version, mode);
         return;
     }
 
     subblock_count = mode + 4;
     macroblock_size = subblock_count * SUBBLOCK_SIZE;
 
-    dram_load_u16(state, (uint16_t *)qtables[0], qtableY_ptr, SUBBLOCK_SIZE);
-    dram_load_u16(state, (uint16_t *)qtables[1], qtableU_ptr, SUBBLOCK_SIZE);
-    dram_load_u16(state, (uint16_t *)qtables[2], qtableV_ptr, SUBBLOCK_SIZE);
+    dram_load_u16(hle, (uint16_t *)qtables[0], qtableY_ptr, SUBBLOCK_SIZE);
+    dram_load_u16(hle, (uint16_t *)qtables[1], qtableU_ptr, SUBBLOCK_SIZE);
+    dram_load_u16(hle, (uint16_t *)qtables[2], qtableV_ptr, SUBBLOCK_SIZE);
 
     for (mb = 0; mb < macroblock_count; ++mb) {
-        dram_load_u16(state, (uint16_t *)macroblock, address, macroblock_size);
+        dram_load_u16(hle, (uint16_t *)macroblock, address, macroblock_size);
         decode_macroblock_std(transform_luma, transform_chroma,
                               macroblock, subblock_count, (const int16_t (*)[SUBBLOCK_SIZE])qtables);
 
         if (mode == 0)
-            EmitTilesMode0(state, emit_line, macroblock, address);
+            EmitTilesMode0(hle, emit_line, macroblock, address);
         else
-            EmitTilesMode2(state, emit_line, macroblock, address);
+            EmitTilesMode2(hle, emit_line, macroblock, address);
 
         address += 2 * macroblock_size;
     }
@@ -309,7 +309,7 @@ static uint16_t GetRGBA(int16_t y, int16_t u, int16_t v)
     return (r << 4) | (g >> 1) | (b >> 6) | 1;
 }
 
-static void EmitYUVTileLine(usf_state_t* state, const int16_t *y, const int16_t *u, uint32_t address)
+static void EmitYUVTileLine(struct hle_t* hle, const int16_t *y, const int16_t *u, uint32_t address)
 {
     uint32_t uyvy[8];
 
@@ -325,10 +325,10 @@ static void EmitYUVTileLine(usf_state_t* state, const int16_t *y, const int16_t 
     uyvy[6] = GetUYVY(y2[4], y2[5], u[6], v[6]);
     uyvy[7] = GetUYVY(y2[6], y2[7], u[7], v[7]);
 
-    dram_store_u32(state, uyvy, address, 8);
+    dram_store_u32(hle, uyvy, address, 8);
 }
 
-static void EmitRGBATileLine(usf_state_t* state, const int16_t *y, const int16_t *u, uint32_t address)
+static void EmitRGBATileLine(struct hle_t* hle, const int16_t *y, const int16_t *u, uint32_t address)
 {
     uint16_t rgba[16];
 
@@ -352,10 +352,10 @@ static void EmitRGBATileLine(usf_state_t* state, const int16_t *y, const int16_t
     rgba[14] = GetRGBA(y2[6], u[7], v[7]);
     rgba[15] = GetRGBA(y2[7], u[7], v[7]);
 
-    dram_store_u16(state, rgba, address, 16);
+    dram_store_u16(hle, rgba, address, 16);
 }
 
-static void EmitTilesMode0(usf_state_t* state, const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address)
+static void EmitTilesMode0(struct hle_t* hle, const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address)
 {
     unsigned int i;
 
@@ -363,7 +363,7 @@ static void EmitTilesMode0(usf_state_t* state, const tile_line_emitter_t emit_li
     unsigned int u_offset = 2 * SUBBLOCK_SIZE;
 
     for (i = 0; i < 8; ++i) {
-        emit_line(state, &macroblock[y_offset], &macroblock[u_offset], address);
+        emit_line(hle, &macroblock[y_offset], &macroblock[u_offset], address);
 
         y_offset += 8;
         u_offset += 8;
@@ -371,7 +371,7 @@ static void EmitTilesMode0(usf_state_t* state, const tile_line_emitter_t emit_li
     }
 }
 
-static void EmitTilesMode2(usf_state_t* state, const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address)
+static void EmitTilesMode2(struct hle_t* hle, const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address)
 {
     unsigned int i;
 
@@ -379,8 +379,8 @@ static void EmitTilesMode2(usf_state_t* state, const tile_line_emitter_t emit_li
     unsigned int u_offset = 4 * SUBBLOCK_SIZE;
 
     for (i = 0; i < 8; ++i) {
-        emit_line(state, &macroblock[y_offset],     &macroblock[u_offset], address);
-        emit_line(state, &macroblock[y_offset + 8], &macroblock[u_offset], address + 32);
+        emit_line(hle, &macroblock[y_offset],     &macroblock[u_offset], address);
+        emit_line(hle, &macroblock[y_offset + 8], &macroblock[u_offset], address + 32);
 
         y_offset += (i == 3) ? SUBBLOCK_SIZE + 16 : 16;
         u_offset += 8;

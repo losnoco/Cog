@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - arithmetics.h                                   *
+ *   Mupen64plus-rsp-hle - alist_internal.h                                *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
@@ -19,24 +19,21 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef ARITHMETICS_H
-#define ARITHMETICS_H
+#ifndef _MYSTDBOOL_H_
+#define _MYSTDBOOL_H_
 
-#include <stdint.h>
+#pragma once
 
-#ifdef _MSC_VER
-#define INLINE      __forceinline
-#else
-#define INLINE      __attribute__((always_inline))
-#endif
+typedef unsigned char my_bool;
+enum { my_b_false = 0 };
+enum { my_b_true  = 1 };
 
-INLINE static int16_t clamp_s16(int_fast32_t x)
-{
-    x = (x < INT16_MIN) ? INT16_MIN: x;
-    x = (x > INT16_MAX) ? INT16_MAX: x;
+#undef bool
+#undef true
+#undef false
 
-    return x;
-}
+#define bool my_bool
+#define true my_b_true
+#define false my_b_false
 
 #endif
-

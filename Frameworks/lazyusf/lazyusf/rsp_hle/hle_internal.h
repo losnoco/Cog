@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - arithmetics.h                                   *
+ *   Mupen64plus-rsp-hle - hle_internal.h                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
@@ -19,24 +19,66 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef ARITHMETICS_H
-#define ARITHMETICS_H
+#ifndef HLE_INTERNAL_H
+#define HLE_INTERNAL_H
 
 #include <stdint.h>
 
-#ifdef _MSC_VER
-#define INLINE      __forceinline
-#else
-#define INLINE      __attribute__((always_inline))
-#endif
+#include "alist.h"
 
-INLINE static int16_t clamp_s16(int_fast32_t x)
+/* rsp hle internal state - internal usage only */
+struct hle_t
 {
-    x = (x < INT16_MIN) ? INT16_MIN: x;
-    x = (x > INT16_MAX) ? INT16_MAX: x;
+    unsigned char* dram;
+    unsigned char* dmem;
+    unsigned char* imem;
 
-    return x;
-}
+    unsigned int* mi_intr;
+
+    unsigned int* sp_mem_addr;
+    unsigned int* sp_dram_addr;
+    unsigned int* sp_rd_length;
+    unsigned int* sp_wr_length;
+    unsigned int* sp_status;
+    unsigned int* sp_dma_full;
+    unsigned int* sp_dma_busy;
+    unsigned int* sp_pc;
+    unsigned int* sp_semaphore;
+
+    unsigned int* dpc_start;
+    unsigned int* dpc_end;
+    unsigned int* dpc_current;
+    unsigned int* dpc_status;
+    unsigned int* dpc_clock;
+    unsigned int* dpc_bufbusy;
+    unsigned int* dpc_pipebusy;
+    unsigned int* dpc_tmem;
+
+    /* for user convenience, this will be passed to "external" functions */
+    void* user_defined;
+
+
+    /* alist.c */
+    uint8_t alist_buffer[0x1000];
+
+    /* alist_audio.c */
+    struct alist_audio_t alist_audio;
+
+    /* alist_naudio.c */
+    struct alist_naudio_t alist_naudio;
+
+    /* alist_nead.c */
+    struct alist_nead_t alist_nead;
+
+    /* mp3.c */
+    uint8_t  mp3_buffer[0x1000];
+    /* FIXME: rewrite mp3 module to avoid these */
+    uint32_t mp3_inPtr;
+    uint32_t mp3_outPtr;
+    uint32_t mp3_t6;
+    uint32_t mp3_t5;
+    uint32_t mp3_t4;
+};
 
 #endif
 

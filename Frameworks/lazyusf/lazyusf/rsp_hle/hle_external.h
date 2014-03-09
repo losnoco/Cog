@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - main.h                                          *
+ *   Mupen64plus-rsp-hle - hle_external.h                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
@@ -19,10 +19,20 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef HLE_EXTERNAL_H
+#define HLE_EXTERNAL_H
 
-void hle_execute(usf_state_t* state);
+/* users of the hle core are expected to define these functions */
+
+void HleVerboseMessage(void* user_defined, const char *message, ...);
+void HleErrorMessage(void* user_defined, const char *message, ...);
+void HleWarnMessage(void* user_defined, const char *message, ...);
+
+void HleCheckInterrupts(void* user_defined);
+void HleProcessDlistList(void* user_defined);
+void HleProcessAlistList(void* user_defined);
+void HleProcessRdpList(void* user_defined);
+void HleShowCFB(void* user_defined);
 
 #endif
 

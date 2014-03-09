@@ -22,7 +22,9 @@
 #ifndef CICX105_H
 #define CICX105_H
 
-void cicx105_ucode(usf_state_t* state);
+struct hle_t;
+
+void cicx105_ucode(struct hle_t* hle);
 
 #endif
 

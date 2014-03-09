@@ -77,8 +77,6 @@ int32_t rdot(size_t n, const int16_t *x, const int16_t *y)
 void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
         const int16_t* cb_entry, const int16_t* last_samples, size_t count)
 {
-    assert(count <= 8);
-
     const int16_t* const book1 = cb_entry;
     const int16_t* const book2 = cb_entry + 8;
 
@@ -86,6 +84,8 @@ void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
     const int16_t l2 = last_samples[1];
 
     size_t i;
+
+    assert(count <= 8);
 
     for(i = 0; i < count; ++i) {
         int32_t accu = (int32_t)src[i] << 11;

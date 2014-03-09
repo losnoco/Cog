@@ -22,7 +22,9 @@
 #ifndef MUSYX_H
 #define MUSYX_H
 
-void musyx_v1_task(usf_state_t* state);
-void musyx_v2_task(usf_state_t* state);
+struct hle_t;
+
+void musyx_v1_task(struct hle_t* hle);
+void musyx_v2_task(struct hle_t* hle);
 
 #endif

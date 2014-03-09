@@ -26,26 +26,44 @@
 #include <stdio.h>
 
 #include "../usf.h"
-
-#include "main.h"
-#include "plugin.h"
-
 #include "../main.h"
-
 #include "../usf_internal.h"
 
-/* Global functions */
-void DebugMessage(usf_state_t* state, int level, const char *message, ...)
+#include "hle.h"
+
+/* Global functions needed by HLE core */
+void HleVerboseMessage(void* user_defined, const char *message, ...)
 {
-    char msgbuf[1024];
-    va_list args;
+    /* discard verbose message */
+}
+
+void HleErrorMessage(void* user_defined, const char *message, ...)
+{
+    usf_state_t* state;
+    va_list ap;
     size_t len;
 
-    if ( level < M64MSG_WARNING )
-        return;
-    
+    state = (usf_state_t*)user_defined;
+    len = strlen( state->error_message );
+
+    if ( len )
+        state->error_message[ len++ ] = '\n';
+
+    va_start( ap, message );
+    vsprintf( state->error_message + len, message, ap );
+    va_end( ap );
+
+    state->last_error = state->error_message;
+    StopEmulation( state );
+}
+
+void HleWarnMessage(void* user_defined, const char *message, ...)
+{
+    usf_state_t* state;
     va_list ap;
+    size_t len;
     
+    state = (usf_state_t*)user_defined;
     len = strlen( state->error_message );
     
     if ( len )
@@ -57,4 +75,29 @@ void DebugMessage(usf_state_t* state, int level, const char *message, ...)
     
     state->last_error = state->error_message;
     StopEmulation( state );
+}
+
+void HleCheckInterrupts(void* user_defined)
+{
+    CheckInterrupts((usf_state_t*)user_defined);
+}
+
+void HleProcessDlistList(void* user_defined)
+{
+    /* disabled */
+}
+
+void HleProcessAlistList(void* user_defined)
+{
+    /* disabled */
+}
+
+void HleProcessRdpList(void* user_defined)
+{
+    /* disabled */
+}
+
+void HleShowCFB(void* user_defined)
+{
+    /* disabled */
 }
