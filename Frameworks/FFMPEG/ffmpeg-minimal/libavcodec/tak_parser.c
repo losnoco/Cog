@@ -97,7 +97,7 @@ static int tak_parse(AVCodecParserContext *s, AVCodecContext *avctx,
     }
 found:
 
-    if ((consumed && !buf_size && next == END_NOT_FOUND) ||
+    if (consumed && !buf_size && next == END_NOT_FOUND ||
         ff_combine_frame(pc, next, &buf, &buf_size) < 0) {
         *poutbuf      = NULL;
         *poutbuf_size = 0;

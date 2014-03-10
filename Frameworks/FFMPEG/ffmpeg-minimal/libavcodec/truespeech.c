@@ -21,7 +21,6 @@
 
 #include "libavutil/channel_layout.h"
 #include "libavutil/intreadwrite.h"
-#include "libavutil/internal.h"
 #include "avcodec.h"
 #include "dsputil.h"
 #include "get_bits.h"

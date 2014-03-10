@@ -29,7 +29,6 @@
 #include "spdif.h"
 #include "libavcodec/ac3.h"
 #include "libavcodec/aacadtsdec.h"
-#include "libavutil/internal.h"
 
 static int spdif_get_offset_and_codec(AVFormatContext *s,
                                       enum IEC61937DataType data_type,
@@ -57,8 +56,8 @@ static int spdif_get_offset_and_codec(AVFormatContext *s,
         *codec = AV_CODEC_ID_MP3;
         break;
     case IEC61937_MPEG2_AAC:
-        init_get_bits(&gbc, (const uint8_t *) buf, AAC_ADTS_HEADER_SIZE * 8);
-        if (avpriv_aac_parse_header(&gbc, &aac_hdr)) {
+        init_get_bits(&gbc, buf, AAC_ADTS_HEADER_SIZE * 8);
+        if (avpriv_aac_parse_header(&gbc, &aac_hdr) < 0) {
             if (s) /* be silent during a probe */
                 av_log(s, AV_LOG_ERROR, "Invalid AAC packet in IEC 61937\n");
             return AVERROR_INVALIDDATA;
@@ -141,7 +140,7 @@ int ff_spdif_probe(const uint8_t *p_buf, int buf_size, enum AVCodecID *codec)
 
             /* skip directly to the next sync code */
             if (!spdif_get_offset_and_codec(NULL, (buf[2] << 8) | buf[1],
-                                            (const char *) &buf[5], &offset, codec)) {
+                                            &buf[5], &offset, codec)) {
                 if (buf + offset >= p_buf + buf_size)
                     break;
                 expected_code = buf + offset;
@@ -199,7 +198,7 @@ int ff_spdif_read_packet(AVFormatContext *s, AVPacket *pkt)
     }
     ff_spdif_bswap_buf16((uint16_t *)pkt->data, (uint16_t *)pkt->data, pkt->size >> 1);
 
-    ret = spdif_get_offset_and_codec(s, data_type, (const char *) pkt->data,
+    ret = spdif_get_offset_and_codec(s, data_type, pkt->data,
                                      &offset, &codec_id);
     if (ret) {
         av_free_packet(pkt);

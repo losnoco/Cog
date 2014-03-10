@@ -24,7 +24,6 @@
 
 #include "libavutil/attributes.h"
 #include "libavutil/avassert.h"
-#include "libavutil/internal.h"
 
 #include "avcodec.h"
 #include "internal.h"
@@ -128,8 +127,8 @@ typedef struct WmallDecodeCtx {
 
     int8_t  mclms_order;
     int8_t  mclms_scaling;
-    int16_t mclms_coeffs[128];
-    int16_t mclms_coeffs_cur[4];
+    int16_t mclms_coeffs[WMALL_MAX_CHANNELS * WMALL_MAX_CHANNELS * 32];
+    int16_t mclms_coeffs_cur[WMALL_MAX_CHANNELS * WMALL_MAX_CHANNELS];
     int16_t mclms_prevvalues[WMALL_MAX_CHANNELS * 2 * 32];
     int16_t mclms_updates[WMALL_MAX_CHANNELS * 2 * 32];
     int     mclms_recent;
@@ -349,11 +348,11 @@ static int decode_tilehdr(WmallDecodeCtx *s)
             if (num_samples[c] == min_channel_len) {
                 if (fixed_channel_layout || channels_for_cur_subframe == 1 ||
                    (min_channel_len == s->samples_per_frame - s->min_samples_per_subframe)) {
-                    contains_subframe[c] = in_use = 1;
+                    contains_subframe[c] = 1;
                 } else {
-                    if (get_bits1(&s->gb))
-                        contains_subframe[c] = in_use = 1;
+                    contains_subframe[c] = get_bits1(&s->gb);
                 }
+                in_use |= contains_subframe[c];
             } else
                 contains_subframe[c] = 0;
         }
@@ -653,10 +652,10 @@ static void mclms_update(WmallDecodeCtx *s, int icoef, int *pred)
     if (s->mclms_recent == 0) {
         memcpy(&s->mclms_prevvalues[order * num_channels],
                s->mclms_prevvalues,
-               2 * order * num_channels);
+               sizeof(int16_t) * order * num_channels);
         memcpy(&s->mclms_updates[order * num_channels],
                s->mclms_updates,
-               2 * order * num_channels);
+               sizeof(int16_t) * order * num_channels);
         s->mclms_recent = num_channels * order;
     }
 }
@@ -677,7 +676,7 @@ static void mclms_predict(WmallDecodeCtx *s, int icoef, int *pred)
         for (i = 0; i < ich; i++)
             pred[ich] += s->channel_residues[i][icoef] *
                          s->mclms_coeffs_cur[i + num_channels * ich];
-        pred[ich] += 1 << (s->mclms_scaling - 1);
+        pred[ich] += 1 << s->mclms_scaling - 1;
         pred[ich] >>= s->mclms_scaling;
         s->channel_residues[ich][icoef] += pred[ich];
     }
@@ -709,7 +708,7 @@ static void lms_update(WmallDecodeCtx *s, int ich, int ilms,
 {
     int icoef;
     int recent = s->cdlms[ich][ilms].recent;
-    int range  = 1 << (s->bits_per_sample - 1);
+    int range  = 1 << s->bits_per_sample - 1;
 
     if (residue < 0) {
         for (icoef = 0; icoef < s->cdlms[ich][ilms].order; icoef++)
@@ -1039,9 +1038,10 @@ static int decode_frame(WmallDecodeCtx *s)
         len = get_bits(gb, s->log2_frame_size);
 
     /* decode tile information */
-    if (decode_tilehdr(s)) {
+    if ((ret = decode_tilehdr(s))) {
         s->packet_loss = 1;
-        return 0;
+        av_frame_unref(s->frame);
+        return ret;
     }
 
     /* read drc info */
@@ -1076,8 +1076,11 @@ static int decode_frame(WmallDecodeCtx *s)
 
     /* decode all subframes */
     while (!s->parsed_all_subframes) {
+        int decoded_samples = s->channel[0].decoded_samples;
         if (decode_subframe(s) < 0) {
             s->packet_loss = 1;
+            if (s->frame->nb_samples)
+                s->frame->nb_samples = decoded_samples;
             return 0;
         }
     }
@@ -1183,6 +1186,8 @@ static int decode_packet(AVCodecContext *avctx, void *data, int *got_frame_ptr,
     if (s->packet_done || s->packet_loss) {
         s->packet_done = 0;
 
+        if (!buf_size)
+            return 0;
         /* sanity check for the buffer length */
         if (buf_size < avctx->block_align) {
             av_log(avctx, AV_LOG_ERROR, "buf size %d invalid\n", buf_size);
@@ -1305,6 +1310,7 @@ static av_cold int decode_close(AVCodecContext *avctx)
 
 AVCodec ff_wmalossless_decoder = {
     .name           = "wmalossless",
+    .long_name      = NULL_IF_CONFIG_SMALL("Windows Media Audio Lossless"),
     .type           = AVMEDIA_TYPE_AUDIO,
     .id             = AV_CODEC_ID_WMALOSSLESS,
     .priv_data_size = sizeof(WmallDecodeCtx),
@@ -1313,7 +1319,6 @@ AVCodec ff_wmalossless_decoder = {
     .decode         = decode_packet,
     .flush          = flush,
     .capabilities   = CODEC_CAP_SUBFRAMES | CODEC_CAP_DR1 | CODEC_CAP_DELAY,
-    .long_name      = NULL_IF_CONFIG_SMALL("Windows Media Audio Lossless"),
     .sample_fmts    = (const enum AVSampleFormat[]) { AV_SAMPLE_FMT_S16P,
                                                       AV_SAMPLE_FMT_S32P,
                                                       AV_SAMPLE_FMT_NONE },

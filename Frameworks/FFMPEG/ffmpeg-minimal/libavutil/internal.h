@@ -39,6 +39,7 @@
 #include "timer.h"
 #include "cpu.h"
 #include "dict.h"
+#include "version.h"
 
 #if ARCH_X86
 #   include "x86/emms.h"
@@ -63,7 +64,7 @@
 #endif
 
 #if HAVE_PRAGMA_DEPRECATED
-#    if defined(__ICL)
+#    if defined(__ICL) || defined (__INTEL_COMPILER)
 #        define FF_DISABLE_DEPRECATION_WARNINGS __pragma(warning(push)) __pragma(warning(disable:1478))
 #        define FF_ENABLE_DEPRECATION_WARNINGS  __pragma(warning(pop))
 #    elif defined(_MSC_VER)
@@ -211,7 +212,7 @@ void avpriv_report_missing_feature(void *avc,
 void avpriv_request_sample(void *avc,
                            const char *msg, ...) av_printf_format(2, 3);
 
-#if HAVE_MSVCRT
+#if HAVE_LIBC_MSVCRT
 #define avpriv_open ff_open
 #endif
 
@@ -219,5 +220,9 @@ void avpriv_request_sample(void *avc,
  * A wrapper for open() setting O_CLOEXEC.
  */
 int avpriv_open(const char *filename, int flags, ...);
+
+#if FF_API_GET_CHANNEL_LAYOUT_COMPAT
+uint64_t ff_get_channel_layout(const char *name, int compat);
+#endif
 
 #endif /* AVUTIL_INTERNAL_H */

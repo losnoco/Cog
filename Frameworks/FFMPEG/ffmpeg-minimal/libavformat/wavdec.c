@@ -23,6 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <stdint.h>
+
 #include "config.h"
 
 #include "libavutil/avassert.h"
@@ -355,10 +357,7 @@ static int wav_read_header(AVFormatContext *s)
             vst->codec->codec_id = AV_CODEC_ID_SMVJPEG;
             vst->codec->width  = avio_rl24(pb);
             vst->codec->height = avio_rl24(pb);
-            vst->codec->extradata_size = 4;
-            vst->codec->extradata = av_malloc(vst->codec->extradata_size +
-                                              FF_INPUT_BUFFER_PADDING_SIZE);
-            if (!vst->codec->extradata) {
+            if (ff_alloc_extradata(vst->codec, 4)) {
                 av_log(s, AV_LOG_ERROR, "Could not allocate extradata.\n");
                 return AVERROR(ENOMEM);
             }
@@ -405,11 +404,15 @@ break_loop:
 
     avio_seek(pb, data_ofs, SEEK_SET);
 
-    if (!sample_count && st->codec->channels &&
-        av_get_bits_per_sample(st->codec->codec_id) && wav->data_end <= avio_size(pb))
-        sample_count = (data_size << 3) /
-                       (st->codec->channels *
-                        (uint64_t)av_get_bits_per_sample(st->codec->codec_id));
+    if (!sample_count || av_get_exact_bits_per_sample(st->codec->codec_id) > 0)
+        if (   st->codec->channels
+            && data_size
+            && av_get_bits_per_sample(st->codec->codec_id)
+            && wav->data_end <= avio_size(pb))
+            sample_count = (data_size << 3)
+                                  /
+                (st->codec->channels * (uint64_t)av_get_bits_per_sample(st->codec->codec_id));
+
     if (sample_count)
         st->duration = sample_count;
 
@@ -467,8 +470,8 @@ static int wav_read_packet(AVFormatContext *s, AVPacket *pkt)
     if (wav->smv_data_ofs > 0) {
         int64_t audio_dts, video_dts;
 smv_retry:
-        audio_dts = s->streams[0]->cur_dts;
-        video_dts = s->streams[1]->cur_dts;
+        audio_dts = (int32_t)s->streams[0]->cur_dts;
+        video_dts = (int32_t)s->streams[1]->cur_dts;
 
         if (audio_dts != AV_NOPTS_VALUE && video_dts != AV_NOPTS_VALUE) {
             /*We always return a video frame first to get the pixel format first*/

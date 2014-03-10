@@ -201,12 +201,14 @@ int64_t avio_seek(AVIOContext *s, int64_t offset, int whence)
     int64_t offset1;
     int64_t pos;
     int force = whence & AVSEEK_FORCE;
+    int buffer_size;
     whence &= ~AVSEEK_FORCE;
 
     if(!s)
         return AVERROR(EINVAL);
 
-    pos = s->pos - (s->write_flag ? 0 : (s->buf_end - s->buffer));
+    buffer_size = s->buf_end - s->buffer;
+    pos = s->pos - (s->write_flag ? 0 : buffer_size);
 
     if (whence != SEEK_CUR && whence != SEEK_SET)
         return AVERROR(EINVAL);
@@ -219,7 +221,7 @@ int64_t avio_seek(AVIOContext *s, int64_t offset, int whence)
     }
     offset1 = offset - pos;
     if (!s->must_flush && (!s->direct || !s->seek) &&
-        offset1 >= 0 && offset1 <= (s->buf_end - s->buffer)) {
+        offset1 >= 0 && offset1 <= buffer_size) {
         /* can do the seek inside the buffer */
         s->buf_ptr = s->buffer + offset1;
     } else if ((!s->seekable ||
@@ -232,9 +234,20 @@ int64_t avio_seek(AVIOContext *s, int64_t offset, int whence)
         if (s->eof_reached)
             return AVERROR_EOF;
         s->buf_ptr = s->buf_end + offset - s->pos;
-    } else {
+    } else if(!s->write_flag && offset1 < 0 && -offset1 < buffer_size>>1 && s->seek && offset > 0) {
         int64_t res;
 
+        pos -= FFMIN(buffer_size>>1, pos);
+        if ((res = s->seek(s->opaque, pos, SEEK_SET)) < 0)
+            return res;
+        s->buf_end =
+        s->buf_ptr = s->buffer;
+        s->pos = pos;
+        s->eof_reached = 0;
+        fill_buffer(s);
+        return avio_seek(s, offset, SEEK_SET | force);
+    } else {
+        int64_t res;
         if (s->write_flag) {
             flush_buffer(s);
             s->must_flush = 1;
@@ -317,17 +330,24 @@ int avio_put_str(AVIOContext *s, const char *str)
 
 int avio_put_str16le(AVIOContext *s, const char *str)
 {
-    const uint8_t *q = (const uint8_t *) str;
+    const uint8_t *q = str;
     int ret = 0;
+    int err = 0;
 
     while (*q) {
         uint32_t ch;
         uint16_t tmp;
 
-        GET_UTF8(ch, *q++, break;)
+        GET_UTF8(ch, *q++, goto invalid;)
         PUT_UTF16(ch, tmp, avio_wl16(s, tmp); ret += 2;)
+        continue;
+invalid:
+        av_log(s, AV_LOG_ERROR, "Invaid UTF8 sequence in avio_put_str16le\n");
+        err = AVERROR(EINVAL);
     }
     avio_wl16(s, 0);
+    if (err)
+        return err;
     ret += 2;
     return ret;
 }
@@ -891,7 +911,7 @@ int avio_printf(AVIOContext *s, const char *fmt, ...)
     va_start(ap, fmt);
     ret = vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    avio_write(s, (const unsigned char *) buf, strlen(buf));
+    avio_write(s, buf, strlen(buf));
     return ret;
 }
 
@@ -1029,14 +1049,20 @@ int ffio_open_dyn_packet_buf(AVIOContext **s, int max_packet_size)
 
 int avio_close_dyn_buf(AVIOContext *s, uint8_t **pbuffer)
 {
-    DynBuffer *d = s->opaque;
+    DynBuffer *d;
     int size;
     static const char padbuf[FF_INPUT_BUFFER_PADDING_SIZE] = {0};
     int padding = 0;
 
+    if (!s) {
+        *pbuffer = NULL;
+        return 0;
+    }
+    d = s->opaque;
+
     /* don't attempt to pad fixed-size packet buffers */
     if (!s->max_packet_size) {
-        avio_write(s, (const unsigned char *) padbuf, sizeof(padbuf));
+        avio_write(s, padbuf, sizeof(padbuf));
         padding = FF_INPUT_BUFFER_PADDING_SIZE;
     }
 

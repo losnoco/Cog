@@ -76,7 +76,7 @@
 #    define av_cold
 #endif
 
-#if AV_GCC_VERSION_AT_LEAST(4,1)
+#if AV_GCC_VERSION_AT_LEAST(4,1) && !defined(__llvm__)
 #    define av_flatten __attribute__((flatten))
 #else
 #    define av_flatten
@@ -96,7 +96,7 @@
  * scheduled for removal.
  */
 #ifndef AV_NOWARN_DEPRECATED
-#if AV_GCC_VERSION_AT_LEAST(4,6) || defined(__clang__)
+#if AV_GCC_VERSION_AT_LEAST(4,6)
 #    define AV_NOWARN_DEPRECATED(code) \
         _Pragma("GCC diagnostic push") \
         _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"") \

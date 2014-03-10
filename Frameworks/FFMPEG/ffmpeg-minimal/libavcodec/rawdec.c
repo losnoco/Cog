@@ -25,6 +25,7 @@
  */
 
 #include "avcodec.h"
+#include "internal.h"
 #include "raw.h"
 #include "libavutil/avassert.h"
 #include "libavutil/buffer.h"
@@ -40,6 +41,7 @@ typedef struct RawVideoContext {
     int flip;
     int is_2_4_bpp; // 2 or 4 bpp raw in avi/mov
     int is_yuv2;
+    int is_lt_16bpp; // 16bpp pixfmt and bits_per_coded_sample < 16
     int tff;
 } RawVideoContext;
 
@@ -107,7 +109,7 @@ static av_cold int raw_init_decoder(AVCodecContext *avctx)
     if (   avctx->codec_tag == MKTAG('r','a','w',' ')
         || avctx->codec_tag == MKTAG('N','O','1','6'))
         avctx->pix_fmt = avpriv_find_pix_fmt(pix_fmt_bps_mov,
-                                      avctx->bits_per_coded_sample);
+                                      avctx->bits_per_coded_sample & 0x1f);
     else if (avctx->codec_tag == MKTAG('W', 'R', 'A', 'W'))
         avctx->pix_fmt = avpriv_find_pix_fmt(pix_fmt_bps_avi,
                                       avctx->bits_per_coded_sample);
@@ -133,7 +135,7 @@ static av_cold int raw_init_decoder(AVCodecContext *avctx)
             memset(context->palette->data, 0, AVPALETTE_SIZE);
     }
 
-    if ((avctx->bits_per_coded_sample == 4 || avctx->bits_per_coded_sample == 2) &&
+    if (((avctx->bits_per_coded_sample & 0x1f) == 4 || (avctx->bits_per_coded_sample & 0x1f) == 2) &&
         avctx->pix_fmt == AV_PIX_FMT_PAL8 &&
        (!avctx->codec_tag || avctx->codec_tag == MKTAG('r','a','w',' '))) {
         context->is_2_4_bpp = 1;
@@ -141,6 +143,7 @@ static av_cold int raw_init_decoder(AVCodecContext *avctx)
                                                  FFALIGN(avctx->width, 16),
                                                  avctx->height);
     } else {
+        context->is_lt_16bpp = av_get_bits_per_pixel(desc) == 16 && avctx->bits_per_coded_sample && avctx->bits_per_coded_sample < 16;
         context->frame_size = avpicture_get_size(avctx->pix_fmt, avctx->width,
                                                  avctx->height);
     }
@@ -174,7 +177,7 @@ static int raw_decode(AVCodecContext *avctx, void *data, int *got_frame,
     int buf_size                   = avpkt->size;
     int linesize_align             = 4;
     int res, len;
-    int need_copy                  = !avpkt->buf || context->is_2_4_bpp || context->is_yuv2;
+    int need_copy                  = !avpkt->buf || context->is_2_4_bpp || context->is_yuv2 || context->is_lt_16bpp;
 
     AVFrame   *frame   = data;
     AVPicture *picture = data;
@@ -182,9 +185,9 @@ static int raw_decode(AVCodecContext *avctx, void *data, int *got_frame,
     frame->pict_type        = AV_PICTURE_TYPE_I;
     frame->key_frame        = 1;
     frame->reordered_opaque = avctx->reordered_opaque;
-    frame->pkt_pts          = avctx->pkt->pts;
-    av_frame_set_pkt_pos     (frame, avctx->pkt->pos);
-    av_frame_set_pkt_duration(frame, avctx->pkt->duration);
+    frame->pkt_pts          = avctx->internal->pkt->pts;
+    av_frame_set_pkt_pos     (frame, avctx->internal->pkt->pos);
+    av_frame_set_pkt_duration(frame, avctx->internal->pkt->duration);
 
     if (context->tff >= 0) {
         frame->interlaced_frame = 1;
@@ -206,14 +209,14 @@ static int raw_decode(AVCodecContext *avctx, void *data, int *got_frame,
         int i;
         uint8_t *dst = frame->buf[0]->data;
         buf_size = context->frame_size - AVPALETTE_SIZE;
-        if (avctx->bits_per_coded_sample == 4) {
+        if ((avctx->bits_per_coded_sample & 0x1f) == 4) {
             for (i = 0; 2 * i + 1 < buf_size && i<avpkt->size; i++) {
                 dst[2 * i + 0] = buf[i] >> 4;
                 dst[2 * i + 1] = buf[i] & 15;
             }
             linesize_align = 8;
         } else {
-            av_assert0(avctx->bits_per_coded_sample == 2);
+            av_assert0((avctx->bits_per_coded_sample & 0x1f) == 2);
             for (i = 0; 4 * i + 3 < buf_size && i<avpkt->size; i++) {
                 dst[4 * i + 0] = buf[i] >> 6;
                 dst[4 * i + 1] = buf[i] >> 4 & 3;
@@ -221,6 +224,17 @@ static int raw_decode(AVCodecContext *avctx, void *data, int *got_frame,
                 dst[4 * i + 3] = buf[i]      & 3;
             }
             linesize_align = 16;
+        }
+        buf = dst;
+    } else if (context->is_lt_16bpp) {
+        int i;
+        uint8_t *dst = frame->buf[0]->data;
+        if (desc->flags & AV_PIX_FMT_FLAG_BE) {
+            for (i = 0; i + 1 < buf_size; i += 2)
+                AV_WB16(dst + i, AV_RB16(buf + i) << (16 - avctx->bits_per_coded_sample));
+        } else {
+            for (i = 0; i + 1 < buf_size; i += 2)
+                AV_WL16(dst + i, AV_RL16(buf + i) << (16 - avctx->bits_per_coded_sample));
         }
         buf = dst;
     } else if (need_copy) {

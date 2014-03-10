@@ -89,7 +89,6 @@
 #include "libavutil/float_dsp.h"
 #include "libavutil/intfloat.h"
 #include "libavutil/intreadwrite.h"
-#include "libavutil/internal.h"
 #include "avcodec.h"
 #include "internal.h"
 #include "get_bits.h"
@@ -682,7 +681,7 @@ static void decode_decorrelation_matrix(WMAProDecodeCtx *s,
 /**
  *@brief Decode channel transformation parameters
  *@param s codec context
- *@return 0 in case of success, < 0 in case of bitstream errors
+ *@return >= 0 in case of success, < 0 in case of bitstream errors
  */
 static int decode_channel_transform(WMAProDecodeCtx* s)
 {
@@ -1649,6 +1648,7 @@ static void flush(AVCodecContext *avctx)
  */
 AVCodec ff_wmapro_decoder = {
     .name           = "wmapro",
+    .long_name      = NULL_IF_CONFIG_SMALL("Windows Media Audio 9 Professional"),
     .type           = AVMEDIA_TYPE_AUDIO,
     .id             = AV_CODEC_ID_WMAPRO,
     .priv_data_size = sizeof(WMAProDecodeCtx),
@@ -1657,7 +1657,6 @@ AVCodec ff_wmapro_decoder = {
     .decode         = decode_packet,
     .capabilities   = CODEC_CAP_SUBFRAMES | CODEC_CAP_DR1,
     .flush          = flush,
-    .long_name      = NULL_IF_CONFIG_SMALL("Windows Media Audio 9 Professional"),
     .sample_fmts    = (const enum AVSampleFormat[]) { AV_SAMPLE_FMT_FLTP,
                                                       AV_SAMPLE_FMT_NONE },
 };

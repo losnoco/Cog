@@ -115,6 +115,12 @@ static const VideoSizeAbbr video_size_abbrs[] = {
     { "4k",       4096,2160 }, /* Digital Cinema System Specification */
     { "4kflat",   3996,2160 },
     { "4kscope",  4096,1716 },
+    { "nhd",       640,360  },
+    { "hqvga",     240,160  },
+    { "wqvga",     400,240  },
+    { "fwqvga",    432,240  },
+    { "hvga",      480,320  },
+    { "qhd",       960,540  },
 };
 
 static const VideoRateAbbr video_rate_abbrs[]= {
@@ -414,6 +420,20 @@ int av_parse_color(uint8_t *rgba_color, const char *color_string, int slen,
     return 0;
 }
 
+const char *av_get_known_color_name(int color_idx, const uint8_t **rgbp)
+{
+    const ColorEntry *color;
+
+    if ((unsigned)color_idx >= FF_ARRAY_ELEMS(color_table))
+        return NULL;
+
+    color = &color_table[color_idx];
+    if (rgbp)
+        *rgbp = color->rgb_color;
+
+    return color->name;
+}
+
 /* get a positive number between n_min and n_max, for a maximum length
    of len_max. Return -1 if error. */
 static int date_get_num(const char **pp,
@@ -593,12 +613,14 @@ int av_parse_time(int64_t *timeval, const char *timestr, int duration)
             dt.tm_hour = 0;
         }
         if (!q) {
+            char *o;
             /* parse timestr as S+ */
-            dt.tm_sec = strtol(p, (void *)&q, 10);
-            if (q == p) /* the parsing didn't succeed */
+            dt.tm_sec = strtol(p, &o, 10);
+            if (o == p) /* the parsing didn't succeed */
                 return AVERROR(EINVAL);
             dt.tm_min = 0;
             dt.tm_hour = 0;
+            q = o;
         }
     }
 

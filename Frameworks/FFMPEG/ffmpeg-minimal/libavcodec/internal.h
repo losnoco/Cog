@@ -27,6 +27,7 @@
 #include <stdint.h>
 
 #include "libavutil/buffer.h"
+#include "libavutil/channel_layout.h"
 #include "libavutil/mathematics.h"
 #include "libavutil/pixfmt.h"
 #include "avcodec.h"
@@ -91,9 +92,17 @@ typedef struct AVCodecInternal {
      */
     int last_audio_frame;
 
-    AVFrame to_free;
+    AVFrame *to_free;
 
     FramePool *pool;
+
+    void *thread_ctx;
+
+    /**
+     * Current packet as passed into the decoder, to avoid having to pass the
+     * packet into every function.
+     */
+    AVPacket *pkt;
 
     /**
      * temporary buffer used for encoders to store their bitstream
@@ -118,11 +127,10 @@ struct AVCodecDefault {
  * Return the hardware accelerated codec for codec codec_id and
  * pixel format pix_fmt.
  *
- * @param codec_id the codec to match
- * @param pix_fmt the pixel format to match
+ * @param avctx The codec context containing the codec_id and pixel format.
  * @return the hardware accelerated codec, or NULL if none was found.
  */
-AVHWAccel *ff_find_hwaccel(enum AVCodecID codec_id, enum AVPixelFormat pix_fmt);
+AVHWAccel *ff_find_hwaccel(AVCodecContext *avctx);
 
 /**
  * Return the index into tab at which {a,b} match elements {[0],[1]} of tab.
@@ -224,5 +232,17 @@ int avpriv_bprint_to_extradata(AVCodecContext *avctx, struct AVBPrint *buf);
 const uint8_t *avpriv_find_start_code(const uint8_t *p,
                                       const uint8_t *end,
                                       uint32_t *state);
+
+/**
+ * Check that the provided frame dimensions are valid and set them on the codec
+ * context.
+ */
+int ff_set_dimensions(AVCodecContext *s, int width, int height);
+
+/**
+ * Add or update AV_FRAME_DATA_MATRIXENCODING side data.
+ */
+int ff_side_data_update_matrix_encoding(AVFrame *frame,
+                                        enum AVMatrixEncoding matrix_encoding);
 
 #endif /* AVCODEC_INTERNAL_H */

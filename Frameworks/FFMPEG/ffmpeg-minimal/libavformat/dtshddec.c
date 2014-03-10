@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "config.h"
 #include "libavutil/intreadwrite.h"
 #include "libavutil/dict.h"
 #include "avformat.h"
@@ -91,7 +90,7 @@ static int dtshd_read_header(AVFormatContext *s)
             value = av_malloc(chunk_size);
             if (!value)
                 goto skip;
-            avio_read(pb, (unsigned char *) value, chunk_size);
+            avio_read(pb, (unsigned char *)value, chunk_size);
             value[chunk_size - 1] = 0;
             av_dict_set(&s->metadata, "fileinfo", value,
                         AV_DICT_DONT_STRDUP_VAL);
@@ -129,7 +128,7 @@ static int raw_read_packet(AVFormatContext *s, AVPacket *pkt)
 
 AVInputFormat ff_dtshd_demuxer = {
     .name           = "dtshd",
-    .long_name      = NULL_IF_CONFIG_SMALL("raw DTS-HD"),
+    .long_name      = "raw DTS-HD",
     .priv_data_size = sizeof(DTSHDDemuxContext),
     .read_probe     = dtshd_probe,
     .read_header    = dtshd_read_header,

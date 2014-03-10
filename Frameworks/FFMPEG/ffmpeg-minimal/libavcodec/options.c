@@ -53,7 +53,7 @@ static void *codec_child_next(void *obj, void *prev)
 
 static const AVClass *codec_child_class_next(const AVClass *prev)
 {
-    const AVCodec *c = NULL;
+    AVCodec *c = NULL;
 
     /* find the codec that corresponds to prev */
     while (prev && (c = av_codec_next(c)))
@@ -61,7 +61,7 @@ static const AVClass *codec_child_class_next(const AVClass *prev)
             break;
 
     /* find next codec with priv options */
-    while ((c = av_codec_next(c)))
+    while (c = av_codec_next(c))
         if (c->priv_class)
             return c->priv_class;
     return NULL;
@@ -86,14 +86,6 @@ static const AVClass av_codec_context_class = {
     .get_category            = get_category,
 };
 
-#if FF_API_ALLOC_CONTEXT
-void avcodec_get_context_defaults2(AVCodecContext *s, enum AVMediaType codec_type){
-    AVCodec c= {0};
-    c.type= codec_type;
-    avcodec_get_context_defaults3(s, &c);
-}
-#endif
-
 int avcodec_get_context_defaults3(AVCodecContext *s, const AVCodec *codec)
 {
     int flags=0;
@@ -111,9 +103,7 @@ int avcodec_get_context_defaults3(AVCodecContext *s, const AVCodec *codec)
         flags= AV_OPT_FLAG_VIDEO_PARAM;
     else if(s->codec_type == AVMEDIA_TYPE_SUBTITLE)
         flags= AV_OPT_FLAG_SUBTITLE_PARAM;
-    AV_NOWARN_DEPRECATED(
     av_opt_set_defaults2(s, flags, flags);
-    );
 
     s->time_base           = (AVRational){0,1};
     s->get_buffer2         = avcodec_default_get_buffer2;
@@ -142,7 +132,7 @@ int avcodec_get_context_defaults3(AVCodecContext *s, const AVCodec *codec)
         int ret;
         const AVCodecDefault *d = codec->defaults;
         while (d->key) {
-            ret = av_opt_set(s, (const char *) d->key, (const char *) d->value, 0);
+            ret = av_opt_set(s, d->key, d->value, 0);
             av_assert0(ret >= 0);
             d++;
         }
@@ -164,26 +154,6 @@ AVCodecContext *avcodec_alloc_context3(const AVCodec *codec)
     return avctx;
 }
 
-#if FF_API_ALLOC_CONTEXT
-AVCodecContext *avcodec_alloc_context2(enum AVMediaType codec_type){
-    AVCodecContext *avctx= av_malloc(sizeof(AVCodecContext));
-
-    if(avctx==NULL) return NULL;
-
-    avcodec_get_context_defaults2(avctx, codec_type);
-
-    return avctx;
-}
-
-void avcodec_get_context_defaults(AVCodecContext *s){
-    avcodec_get_context_defaults2(s, AVMEDIA_TYPE_UNKNOWN);
-}
-
-AVCodecContext *avcodec_alloc_context(void){
-    return avcodec_alloc_context2(AVMEDIA_TYPE_UNKNOWN);
-}
-#endif
-
 int avcodec_copy_context(AVCodecContext *dest, const AVCodecContext *src)
 {
     if (avcodec_is_open(dest)) { // check that the dest context is uninitialized
@@ -203,7 +173,6 @@ int avcodec_copy_context(AVCodecContext *dest, const AVCodecContext *src)
     dest->codec           = NULL;
     dest->slice_offset    = NULL;
     dest->hwaccel         = NULL;
-    dest->thread_opaque   = NULL;
     dest->internal        = NULL;
 
     /* reallocate values that should be allocated separately */

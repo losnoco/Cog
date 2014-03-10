@@ -62,15 +62,15 @@ static int ape_tag_read_field(AVFormatContext *s)
         if (!st)
             return AVERROR(ENOMEM);
 
-        size -= avio_get_str(pb, size, (char *) filename, sizeof(filename));
+        size -= avio_get_str(pb, size, (char *)filename, sizeof(filename));
         if (size <= 0) {
             av_log(s, AV_LOG_WARNING, "Skipping binary tag '%s'.\n", key);
             return 0;
         }
 
-        av_dict_set(&st->metadata, (const char *) key, (const char *) filename, 0);
+        av_dict_set(&st->metadata, (const char *)key, (const char *)filename, 0);
 
-        if ((id = ff_guess_image2_codec((const char *) filename)) != AV_CODEC_ID_NONE) {
+        if ((id = ff_guess_image2_codec((const char *)filename)) != AV_CODEC_ID_NONE) {
             AVPacket pkt;
             int ret;
 
@@ -88,14 +88,8 @@ static int ape_tag_read_field(AVFormatContext *s)
             st->attached_pic.stream_index = st->index;
             st->attached_pic.flags       |= AV_PKT_FLAG_KEY;
         } else {
-            st->codec->extradata = av_malloc(size + FF_INPUT_BUFFER_PADDING_SIZE);
-            if (!st->codec->extradata)
+            if (ff_get_extradata(st->codec, s->pb, size) < 0)
                 return AVERROR(ENOMEM);
-            if (avio_read(pb, st->codec->extradata, size) != size) {
-                av_freep(&st->codec->extradata);
-                return AVERROR(EIO);
-            }
-            st->codec->extradata_size = size;
             st->codec->codec_type = AVMEDIA_TYPE_ATTACHMENT;
         }
     } else {
@@ -108,7 +102,7 @@ static int ape_tag_read_field(AVFormatContext *s)
             return c;
         }
         value[c] = 0;
-        av_dict_set(&s->metadata, (const char *) key, (const char *) value, AV_DICT_DONT_STRDUP_VAL);
+        av_dict_set(&s->metadata, (const char *)key, (const char *)value, AV_DICT_DONT_STRDUP_VAL);
     }
     return 0;
 }
@@ -128,7 +122,7 @@ int64_t ff_ape_parse_tag(AVFormatContext *s)
     avio_seek(pb, file_size - APE_TAG_FOOTER_BYTES, SEEK_SET);
 
     avio_read(pb, buf, 8);     /* APETAGEX */
-    if (strncmp((const char *) buf, APE_TAG_PREAMBLE, 8)) {
+    if (strncmp((const char *)buf, APE_TAG_PREAMBLE, 8)) {
         return 0;
     }
 
@@ -194,7 +188,7 @@ int ff_ape_write_tag(AVFormatContext *s)
     while ((e = av_dict_get(s->metadata, "", e, AV_DICT_IGNORE_SUFFIX))) {
         int val_len;
 
-        if (!string_is_ascii((const unsigned char *) e->key)) {
+        if (!string_is_ascii((const uint8_t *)e->key)) {
             av_log(s, AV_LOG_WARNING, "Non ASCII keys are not allowed\n");
             continue;
         }
@@ -203,7 +197,7 @@ int ff_ape_write_tag(AVFormatContext *s)
         avio_wl32(dyn_bc, val_len);            // value length
         avio_wl32(dyn_bc, 0);                  // item flags
         avio_put_str(dyn_bc, e->key);          // key
-        avio_write(dyn_bc, (const unsigned char *) e->value, val_len); // value
+        avio_write(dyn_bc, (const unsigned char *)e->value, val_len); // value
         count++;
     }
     if (!count)
@@ -215,7 +209,7 @@ int ff_ape_write_tag(AVFormatContext *s)
     size += 20;
 
     // header
-    avio_write(s->pb, (const unsigned char *) "APETAGEX", 8);   // id
+    avio_write(s->pb, (const unsigned char *)"APETAGEX", 8);   // id
     avio_wl32(s->pb, APE_TAG_VERSION);  // version
     avio_wl32(s->pb, size);
     avio_wl32(s->pb, count);
@@ -223,7 +217,7 @@ int ff_ape_write_tag(AVFormatContext *s)
     avio_write(s->pb, dyn_buf, size - 20);
 
     // footer
-    avio_write(s->pb, (const unsigned char *) "APETAGEX", 8);   // id
+    avio_write(s->pb, (const unsigned char *)"APETAGEX", 8);   // id
     avio_wl32(s->pb, APE_TAG_VERSION);  // version
     avio_wl32(s->pb, size);             // size
     avio_wl32(s->pb, count);            // tag count

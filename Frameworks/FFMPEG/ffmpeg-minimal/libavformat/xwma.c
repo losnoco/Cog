@@ -19,13 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "config.h"
-
 #include <inttypes.h>
+#include <stdint.h>
 
 #include "avformat.h"
-#include "internal.h"
 #include "libavutil/internal.h"
+#include "internal.h"
 #include "riff.h"
 
 /*
@@ -274,7 +273,7 @@ static int xwma_read_packet(AVFormatContext *s, AVPacket *pkt)
 
 AVInputFormat ff_xwma_demuxer = {
     .name           = "xwma",
-    .long_name      = NULL_IF_CONFIG_SMALL("Microsoft xWMA"),
+    .long_name      = "Microsoft xWMA",
     .priv_data_size = sizeof(XWMAContext),
     .read_probe     = xwma_probe,
     .read_header    = xwma_read_header,

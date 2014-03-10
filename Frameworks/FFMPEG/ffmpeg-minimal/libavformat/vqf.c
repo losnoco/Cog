@@ -43,6 +43,9 @@ static int vqf_probe(AVProbeData *probe_packet)
     if (!memcmp(probe_packet->buf + 4, "00052200", 8))
         return AVPROBE_SCORE_MAX;
 
+    if (AV_RL32(probe_packet->buf + 12) > (1<<27))
+        return AVPROBE_SCORE_EXTENSION/2;
+
     return AVPROBE_SCORE_EXTENSION;
 }
 
@@ -220,9 +223,8 @@ static int vqf_read_header(AVFormatContext *s)
     avpriv_set_pts_info(st, 64, size, st->codec->sample_rate);
 
     /* put first 12 bytes of COMM chunk in extradata */
-    if (!(st->codec->extradata = av_malloc(12 + FF_INPUT_BUFFER_PADDING_SIZE)))
+    if (ff_alloc_extradata(st->codec, 12))
         return AVERROR(ENOMEM);
-    st->codec->extradata_size = 12;
     memcpy(st->codec->extradata, comm_chunk, 12);
 
     ff_metadata_conv_ctx(s, NULL, vqf_metadata_conv);
@@ -247,7 +249,7 @@ static int vqf_read_packet(AVFormatContext *s, AVPacket *pkt)
     pkt->data[1] = c->last_frame_bits;
     ret = avio_read(s->pb, pkt->data+2, size);
 
-    if (ret<=0) {
+    if (ret != size) {
         av_free_packet(pkt);
         return AVERROR(EIO);
     }

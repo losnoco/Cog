@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "config.h"
 #include "libavutil/intreadwrite.h"
 #include "avformat.h"
 #include "internal.h"
@@ -91,7 +90,7 @@ static int adts_aac_read_header(AVFormatContext *s)
 
 AVInputFormat ff_aac_demuxer = {
     .name           = "aac",
-    .long_name      = NULL_IF_CONFIG_SMALL("raw ADTS AAC (Advanced Audio Coding)"),
+    .long_name      = "raw ADTS AAC (Advanced Audio Coding)",
     .read_probe     = adts_aac_probe,
     .read_header    = adts_aac_read_header,
     .read_packet    = ff_raw_read_partial_packet,

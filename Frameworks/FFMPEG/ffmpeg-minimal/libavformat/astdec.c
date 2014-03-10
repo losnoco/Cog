@@ -19,23 +19,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "config.h"
-
 #include "libavutil/channel_layout.h"
 #include "libavutil/intreadwrite.h"
-#include "libavutil/internal.h"
 #include "avformat.h"
 #include "internal.h"
 #include "ast.h"
 
 static int ast_probe(AVProbeData *p)
 {
-    if (AV_RL32(p->buf) == MKTAG('S','T','R','M') &&
-        AV_RB16(p->buf + 10) &&
-        AV_RB16(p->buf + 12) &&
-        AV_RB32(p->buf + 16))
-        return AVPROBE_SCORE_MAX / 3 * 2;
-    return 0;
+    if (AV_RL32(p->buf) != MKTAG('S','T','R','M'))
+        return 0;
+
+    if (!AV_RB16(p->buf + 10) ||
+        !AV_RB16(p->buf + 12) || AV_RB16(p->buf + 12) > 256 ||
+        !AV_RB32(p->buf + 16) || AV_RB32(p->buf + 16) > 8*48000)
+        return AVPROBE_SCORE_MAX / 8;
+
+    return AVPROBE_SCORE_MAX / 3 * 2;
 }
 
 static int ast_read_header(AVFormatContext *s)
@@ -112,7 +112,7 @@ static int ast_read_packet(AVFormatContext *s, AVPacket *pkt)
 
 AVInputFormat ff_ast_demuxer = {
     .name           = "ast",
-    .long_name      = NULL_IF_CONFIG_SMALL("AST (Audio Stream)"),
+    .long_name      = "AST (Audio Stream)",
     .read_probe     = ast_probe,
     .read_header    = ast_read_header,
     .read_packet    = ast_read_packet,

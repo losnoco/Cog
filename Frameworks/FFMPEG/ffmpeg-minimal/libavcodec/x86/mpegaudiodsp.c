@@ -30,7 +30,9 @@
 static void imdct36_blocks_ ## CPU(float *out, float *buf, float *in, int count, int switch_point, int block_type);\
 void ff_imdct36_float_ ## CPU(float *out, float *buf, float *in, float *win);
 
+#if ARCH_X86_32
 DECL(sse)
+#endif
 DECL(sse2)
 DECL(sse3)
 DECL(ssse3)
@@ -223,7 +225,9 @@ static void imdct36_blocks_ ## CPU1(float *out, float *buf, float *in,      \
 }
 
 #if HAVE_SSE
+#if ARCH_X86_32
 DECL_IMDCT_BLOCKS(sse,sse)
+#endif
 DECL_IMDCT_BLOCKS(sse2,sse)
 DECL_IMDCT_BLOCKS(sse3,sse)
 DECL_IMDCT_BLOCKS(ssse3,sse)
@@ -235,9 +239,7 @@ DECL_IMDCT_BLOCKS(avx,avx)
 
 av_cold void ff_mpadsp_init_x86(MPADSPContext *s)
 {
-#if HAVE_SSE2_INLINE || HAVE_YASM
     int cpu_flags = av_get_cpu_flags();
-#endif
 
     int i, j;
     for (j = 0; j < 4; j++) {
@@ -254,15 +256,17 @@ av_cold void ff_mpadsp_init_x86(MPADSPContext *s)
     }
 
 #if HAVE_SSE2_INLINE
-    if (cpu_flags & AV_CPU_FLAG_SSE2) {
+    if (INLINE_SSE2(cpu_flags)) {
         s->apply_window_float = apply_window_mp3;
     }
 #endif /* HAVE_SSE2_INLINE */
 
 #if HAVE_YASM
+#if ARCH_X86_32
     if (EXTERNAL_SSE(cpu_flags)) {
         s->imdct36_blocks_float = imdct36_blocks_sse;
     }
+#endif
     if (EXTERNAL_SSE2(cpu_flags)) {
         s->imdct36_blocks_float = imdct36_blocks_sse2;
     }

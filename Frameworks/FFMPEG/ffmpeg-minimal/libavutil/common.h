@@ -26,10 +26,15 @@
 #ifndef AVUTIL_COMMON_H
 #define AVUTIL_COMMON_H
 
+#if defined(__cplusplus) && !defined(__STDC_CONSTANT_MACROS) && !defined(UINT64_C)
+#error missing -D__STDC_CONSTANT_MACROS / #define __STDC_CONSTANT_MACROS
+#endif
+
 #include <errno.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -299,6 +304,11 @@ static av_always_inline av_const int av_popcount64_c(uint64_t x)
  *                 input, this could be *ptr++.
  * @param ERROR    Expression to be evaluated on invalid input,
  *                 typically a goto statement.
+ *
+ * @warning ERROR should not contain a loop control statement which
+ * could interact with the internal while loop, and should force an
+ * exit from the macro code (e.g. through a goto or a return) in order
+ * to prevent undefined results.
  */
 #define GET_UTF8(val, GET_BYTE, ERROR)\
     val= GET_BYTE;\

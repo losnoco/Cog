@@ -109,8 +109,8 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         return NO;
     }
 
-    lastDecodedFrame = avcodec_alloc_frame();
-    avcodec_get_frame_defaults(lastDecodedFrame);
+    lastDecodedFrame = av_frame_alloc();
+    av_frame_unref(lastDecodedFrame);
     lastReadPacket = malloc(sizeof(AVPacket));
     av_new_packet(lastReadPacket, 0);
     readNextPacket = YES;
@@ -201,7 +201,10 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                                               lastDecodedFrame->nb_samples,
                                               codecCtx->sample_fmt, 1);
         
-        if(readNextPacket && !endOfStream)
+        if ( dataSize < 0 )
+            dataSize = 0;
+        
+        while(readNextPacket && !endOfStream)
         {
             // consume next chunk of encoded data from input stream
             av_free_packet(lastReadPacket);
@@ -209,9 +212,10 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             {
                 DLog(@"End of stream");
                 endOfStream = YES;
-                if (dataSize <= bytesConsumedFromDecodedFrame)
-                    break; // end of stream;
             }
+            
+            if (lastReadPacket->stream_index != streamIndex)
+                continue;
             
             readNextPacket = NO;     // we probably won't need to consume another chunk
             bytesReadFromPacket = 0; // until this one is fully decoded
@@ -223,10 +227,25 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                 break;
             
             // consumed all decoded samples - decode more
-            avcodec_get_frame_defaults(lastDecodedFrame);
+            av_frame_unref(lastDecodedFrame);
             bytesConsumedFromDecodedFrame = 0;
-            int len = avcodec_decode_audio4(codecCtx, lastDecodedFrame, &gotFrame, lastReadPacket);
-            if (len < 0 || (!gotFrame))
+            int len;
+            do {
+                len = avcodec_decode_audio4(codecCtx, lastDecodedFrame, &gotFrame, lastReadPacket);
+                if (len > 0)
+                {
+                    if (len >= lastReadPacket->size) {
+                        lastReadPacket->data -= bytesReadFromPacket;
+                        lastReadPacket->size += bytesReadFromPacket;
+                        readNextPacket = YES;
+                        break;
+                    }
+                    bytesReadFromPacket += len;
+                    lastReadPacket->data += len;
+                    lastReadPacket->size -= len;
+                }
+            } while (!gotFrame && len > 0);
+            if (len < 0)
             {
                 char errbuf[4096];
                 av_strerror(len, errbuf, 4096);
@@ -241,18 +260,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                 dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
                                                       lastDecodedFrame->nb_samples,
                                                       codecCtx->sample_fmt, 1);
-                bytesReadFromPacket += len;
-            }
-            
-            if (bytesReadFromPacket >= lastReadPacket->size)
-            {
-                // decoding consumed all the read packet - read another next time
-                readNextPacket = YES;
-            }
-            else
-            {
-                lastReadPacket->data += len;
-                lastReadPacket->size -= len;
+                
+                if ( dataSize < 0 )
+                    dataSize = 0;
             }
         }
 

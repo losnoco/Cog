@@ -53,26 +53,22 @@ int av_frame_set_qp_table(AVFrame *f, AVBufferRef *buf, int stride, int qp_type)
 
     f->qp_table_buf = buf;
 
-AV_NOWARN_DEPRECATED(
-    f->qscale_table = (int8_t *) buf->data;
+    f->qscale_table = buf->data;
     f->qstride      = stride;
     f->qscale_type  = qp_type;
-);
 
     return 0;
 }
 
 int8_t *av_frame_get_qp_table(AVFrame *f, int *stride, int *type)
 {
-AV_NOWARN_DEPRECATED(
     *stride = f->qstride;
     *type   = f->qscale_type;
-);
 
     if (!f->qp_table_buf)
         return NULL;
 
-    return (int8_t *) f->qp_table_buf->data;
+    return f->qp_table_buf->data;
 }
 
 const char *av_get_colorspace_name(enum AVColorSpace val)
@@ -164,7 +160,7 @@ static int get_video_buffer(AVFrame *frame, int align)
         if (i == 1 || i == 2)
             h = FF_CEIL_RSHIFT(h, desc->log2_chroma_h);
 
-        frame->buf[i] = av_buffer_alloc(frame->linesize[i] * h + 16);
+        frame->buf[i] = av_buffer_alloc(frame->linesize[i] * h + 16 + 16/*STRIDE_ALIGN*/ - 1);
         if (!frame->buf[i])
             goto fail;
 
@@ -188,10 +184,16 @@ fail:
 
 static int get_audio_buffer(AVFrame *frame, int align)
 {
-    int channels = frame->channels;
+    int channels;
     int planar   = av_sample_fmt_is_planar(frame->format);
-    int planes   = planar ? channels : 1;
+    int planes;
     int ret, i;
+
+    if (!frame->channels)
+        frame->channels = av_get_channel_layout_nb_channels(frame->channel_layout);
+
+    channels = frame->channels;
+    planes = planar ? channels : 1;
 
     CHECK_CHANNELS_CONSISTENCY(frame);
     if (!frame->linesize[0]) {
@@ -249,7 +251,7 @@ int av_frame_get_buffer(AVFrame *frame, int align)
     return AVERROR(EINVAL);
 }
 
-int av_frame_ref(AVFrame *dst, AVFrame *src)
+int av_frame_ref(AVFrame *dst, const AVFrame *src)
 {
     int i, ret = 0;
 
@@ -270,16 +272,11 @@ int av_frame_ref(AVFrame *dst, AVFrame *src)
         if (ret < 0)
             return ret;
 
-        if (src->nb_samples) {
-            int ch = src->channels;
-            CHECK_CHANNELS_CONSISTENCY(src);
-            av_samples_copy(dst->extended_data, src->extended_data, 0, 0,
-                            dst->nb_samples, ch, dst->format);
-        } else {
-            av_image_copy(dst->data, dst->linesize, (const uint8_t **) src->data, src->linesize,
-                          dst->format, dst->width, dst->height);
-        }
-        return 0;
+        ret = av_frame_copy(dst, src);
+        if (ret < 0)
+            av_frame_unref(dst);
+
+        return ret;
     }
 
     /* ref the buffers */
@@ -340,7 +337,7 @@ fail:
     return ret;
 }
 
-AVFrame *av_frame_clone(AVFrame *src)
+AVFrame *av_frame_clone(const AVFrame *src)
 {
     AVFrame *ret = av_frame_alloc();
 
@@ -423,14 +420,10 @@ int av_frame_make_writable(AVFrame *frame)
     if (ret < 0)
         return ret;
 
-    if (tmp.nb_samples) {
-        int ch = tmp.channels;
-        CHECK_CHANNELS_CONSISTENCY(&tmp);
-        av_samples_copy(tmp.extended_data, frame->extended_data, 0, 0,
-                        frame->nb_samples, ch, frame->format);
-    } else {
-        av_image_copy(tmp.data, tmp.linesize, (const uint8_t **) frame->data, frame->linesize,
-                      frame->format, frame->width, frame->height);
+    ret = av_frame_copy(&tmp, frame);
+    if (ret < 0) {
+        av_frame_unref(&tmp);
+        return ret;
     }
 
     ret = av_frame_copy_props(&tmp, frame);
@@ -452,34 +445,33 @@ int av_frame_copy_props(AVFrame *dst, const AVFrame *src)
 {
     int i;
 
-    dst->key_frame           = src->key_frame;
-    dst->pict_type           = src->pict_type;
-    dst->sample_aspect_ratio = src->sample_aspect_ratio;
-    dst->pts                 = src->pts;
-    dst->repeat_pict         = src->repeat_pict;
-    dst->interlaced_frame    = src->interlaced_frame;
-    dst->top_field_first     = src->top_field_first;
-    dst->palette_has_changed = src->palette_has_changed;
-    dst->sample_rate         = src->sample_rate;
-    dst->opaque              = src->opaque;
+    dst->key_frame              = src->key_frame;
+    dst->pict_type              = src->pict_type;
+    dst->sample_aspect_ratio    = src->sample_aspect_ratio;
+    dst->pts                    = src->pts;
+    dst->repeat_pict            = src->repeat_pict;
+    dst->interlaced_frame       = src->interlaced_frame;
+    dst->top_field_first        = src->top_field_first;
+    dst->palette_has_changed    = src->palette_has_changed;
+    dst->sample_rate            = src->sample_rate;
+    dst->opaque                 = src->opaque;
 #if FF_API_AVFRAME_LAVC
-AV_NOWARN_DEPRECATED(
-    dst->type                = src->type;
-);
+    dst->type                   = src->type;
 #endif
-    dst->pkt_pts             = src->pkt_pts;
-    dst->pkt_dts             = src->pkt_dts;
-    dst->pkt_pos             = src->pkt_pos;
-    dst->pkt_size            = src->pkt_size;
-    dst->pkt_duration        = src->pkt_duration;
-    dst->reordered_opaque    = src->reordered_opaque;
-    dst->quality             = src->quality;
-    dst->best_effort_timestamp = src->best_effort_timestamp;
-    dst->coded_picture_number = src->coded_picture_number;
+    dst->pkt_pts                = src->pkt_pts;
+    dst->pkt_dts                = src->pkt_dts;
+    dst->pkt_pos                = src->pkt_pos;
+    dst->pkt_size               = src->pkt_size;
+    dst->pkt_duration           = src->pkt_duration;
+    dst->reordered_opaque       = src->reordered_opaque;
+    dst->quality                = src->quality;
+    dst->best_effort_timestamp  = src->best_effort_timestamp;
+    dst->coded_picture_number   = src->coded_picture_number;
     dst->display_picture_number = src->display_picture_number;
-    dst->decode_error_flags  = src->decode_error_flags;
-    dst->colorspace          = src->colorspace;
-    dst->color_range         = src->color_range;
+    dst->flags                  = src->flags;
+    dst->decode_error_flags     = src->decode_error_flags;
+    dst->colorspace             = src->colorspace;
+    dst->color_range            = src->color_range;
 
     av_dict_copy(&dst->metadata, src->metadata, 0);
 
@@ -502,19 +494,15 @@ AV_NOWARN_DEPRECATED(
         av_dict_copy(&sd_dst->metadata, sd_src->metadata, 0);
     }
 
-AV_NOWARN_DEPRECATED(
     dst->qscale_table = NULL;
     dst->qstride      = 0;
     dst->qscale_type  = 0;
-);
     if (src->qp_table_buf) {
         dst->qp_table_buf = av_buffer_ref(src->qp_table_buf);
         if (dst->qp_table_buf) {
-AV_NOWARN_DEPRECATED(
-            dst->qscale_table = (int8_t *) dst->qp_table_buf->data;
+            dst->qscale_table = dst->qp_table_buf->data;
             dst->qstride      = src->qstride;
             dst->qscale_type  = src->qscale_type;
-);
         }
     }
 
@@ -595,4 +583,63 @@ AVFrameSideData *av_frame_get_side_data(const AVFrame *frame,
             return frame->side_data[i];
     }
     return NULL;
+}
+
+static int frame_copy_video(AVFrame *dst, const AVFrame *src)
+{
+    const uint8_t *src_data[4];
+    int i, planes;
+
+    if (dst->width  != src->width ||
+        dst->height != src->height)
+        return AVERROR(EINVAL);
+
+    planes = av_pix_fmt_count_planes(dst->format);
+    for (i = 0; i < planes; i++)
+        if (!dst->data[i] || !src->data[i])
+            return AVERROR(EINVAL);
+
+    memcpy(src_data, src->data, sizeof(src_data));
+    av_image_copy(dst->data, dst->linesize,
+                  src_data, src->linesize,
+                  dst->format, dst->width, dst->height);
+
+    return 0;
+}
+
+static int frame_copy_audio(AVFrame *dst, const AVFrame *src)
+{
+    int planar   = av_sample_fmt_is_planar(dst->format);
+    int channels = dst->channels;
+    int planes   = planar ? channels : 1;
+    int i;
+
+    if (dst->nb_samples     != src->nb_samples ||
+        dst->channels       != src->channels ||
+        dst->channel_layout != src->channel_layout)
+        return AVERROR(EINVAL);
+
+    CHECK_CHANNELS_CONSISTENCY(src);
+
+    for (i = 0; i < planes; i++)
+        if (!dst->extended_data[i] || !src->extended_data[i])
+            return AVERROR(EINVAL);
+
+    av_samples_copy(dst->extended_data, src->extended_data, 0, 0,
+                    dst->nb_samples, channels, dst->format);
+
+    return 0;
+}
+
+int av_frame_copy(AVFrame *dst, const AVFrame *src)
+{
+    if (dst->format != src->format || dst->format < 0)
+        return AVERROR(EINVAL);
+
+    if (dst->width > 0 && dst->height > 0)
+        return frame_copy_video(dst, src);
+    else if (dst->nb_samples > 0 && dst->channel_layout)
+        return frame_copy_audio(dst, src);
+
+    return AVERROR(EINVAL);
 }

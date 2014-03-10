@@ -29,8 +29,8 @@
 
 #define BITSTREAM_READER_LE
 #include <limits.h>
-#include "config.h"
 #include "ttadata.h"
+#include "ttadsp.h"
 #include "avcodec.h"
 #include "get_bits.h"
 #include "thread.h"
@@ -39,7 +39,6 @@
 #include "libavutil/crc.h"
 #include "libavutil/intreadwrite.h"
 #include "libavutil/opt.h"
-#include "libavutil/internal.h"
 
 #define FORMAT_SIMPLE    1
 #define FORMAT_ENCRYPTED 2
@@ -58,38 +57,8 @@ typedef struct TTAContext {
     uint8_t crc_pass[8];
     uint8_t *pass;
     TTAChannel *ch_ctx;
+    TTADSPContext dsp;
 } TTAContext;
-
-static inline void ttafilter_process(TTAFilter *c, int32_t *in)
-{
-    register int32_t *dl = c->dl, *qm = c->qm, *dx = c->dx, sum = c->round;
-
-    if (c->error < 0) {
-        qm[0] -= dx[0]; qm[1] -= dx[1]; qm[2] -= dx[2]; qm[3] -= dx[3];
-        qm[4] -= dx[4]; qm[5] -= dx[5]; qm[6] -= dx[6]; qm[7] -= dx[7];
-    } else if (c->error > 0) {
-        qm[0] += dx[0]; qm[1] += dx[1]; qm[2] += dx[2]; qm[3] += dx[3];
-        qm[4] += dx[4]; qm[5] += dx[5]; qm[6] += dx[6]; qm[7] += dx[7];
-    }
-
-    sum += dl[0] * qm[0] + dl[1] * qm[1] + dl[2] * qm[2] + dl[3] * qm[3] +
-           dl[4] * qm[4] + dl[5] * qm[5] + dl[6] * qm[6] + dl[7] * qm[7];
-
-    dx[0] = dx[1]; dx[1] = dx[2]; dx[2] = dx[3]; dx[3] = dx[4];
-    dl[0] = dl[1]; dl[1] = dl[2]; dl[2] = dl[3]; dl[3] = dl[4];
-
-    dx[4] = ((dl[4] >> 30) | 1);
-    dx[5] = ((dl[5] >> 30) | 2) & ~1;
-    dx[6] = ((dl[6] >> 30) | 2) & ~1;
-    dx[7] = ((dl[7] >> 30) | 4) & ~3;
-
-    c->error = *in;
-    *in += (sum >> c->shift);
-
-    dl[4] = -dl[5]; dl[5] = -dl[6];
-    dl[6] = *in - dl[7]; dl[7] = *in;
-    dl[5] += dl[6]; dl[4] += dl[5];
-}
 
 static const int64_t tta_channel_layouts[7] = {
     AV_CH_LAYOUT_STEREO,
@@ -118,7 +87,7 @@ static int tta_check_crc(TTAContext *s, const uint8_t *buf, int buf_size)
 static uint64_t tta_check_crc64(uint8_t *pass)
 {
     uint64_t crc = UINT64_MAX, poly = 0x42F0E1EBA9EA3693U;
-    uint8_t *end = pass + strlen((const char *) pass);
+    uint8_t *end = pass + strlen((const char *)pass);
     int i;
 
     while (pass < end) {
@@ -236,6 +205,8 @@ static av_cold int tta_decode_init(AVCodecContext * avctx)
         return AVERROR_INVALIDDATA;
     }
 
+    ff_ttadsp_init(&s->dsp);
+
     return allocate_buffers(avctx);
 }
 
@@ -253,7 +224,8 @@ static int tta_decode_frame(AVCodecContext *avctx, void *data,
     int32_t *p;
 
     if (avctx->err_recognition & AV_EF_CRCCHECK) {
-        if (buf_size < 4 || tta_check_crc(s, buf, buf_size - 4))
+        if (buf_size < 4 ||
+            (tta_check_crc(s, buf, buf_size - 4) && avctx->err_recognition & AV_EF_EXPLODE))
             return AVERROR_INVALIDDATA;
     }
 
@@ -336,7 +308,8 @@ static int tta_decode_frame(AVCodecContext *avctx, void *data,
         *p = 1 + ((value >> 1) ^ ((value & 1) - 1));
 
         // run hybrid filter
-        ttafilter_process(filter, p);
+        s->dsp.ttafilter_process_dec(filter->qm, filter->dx, filter->dl, &filter->error, p,
+                                     filter->shift, filter->round);
 
         // fixed order prediction
 #define PRED(x, k) (int32_t)((((uint64_t)x << k) - x) >> k)
@@ -451,7 +424,6 @@ AVCodec ff_tta_decoder = {
     .init           = tta_decode_init,
     .close          = tta_decode_close,
     .decode         = tta_decode_frame,
-    .init_thread_copy = ONLY_IF_THREADS_ENABLED(init_thread_copy),
-    .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_FRAME_THREADS,
+    .capabilities   = CODEC_CAP_DR1,
     .priv_class     = &tta_decoder_class,
 };

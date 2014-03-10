@@ -139,7 +139,7 @@ URLProtocol ff_unpack_protocol = {
 
 void registerCogProtocols()
 {
-    ffurl_register_protocol(&ff_file_protocol, sizeof(ff_file_protocol));
-    ffurl_register_protocol(&ff_http_protocol, sizeof(ff_http_protocol));
-    ffurl_register_protocol(&ff_unpack_protocol, sizeof(ff_unpack_protocol));
+    ffurl_register_protocol(&ff_file_protocol);
+    ffurl_register_protocol(&ff_http_protocol);
+    ffurl_register_protocol(&ff_unpack_protocol);
 }
