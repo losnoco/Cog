@@ -1645,8 +1645,7 @@ static int usf_info(void * context, const char * name, const char * value)
     
     NSString * decodedUrl = [[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
-    if ( psf_load( [decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info, 0 ) <= 0)
-        return NO;
+    psf_load( [decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info, 0 );
     
 	return info.info;
 }
