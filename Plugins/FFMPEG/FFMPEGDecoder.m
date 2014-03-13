@@ -179,6 +179,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
+    if ( framesRead >= totalFrames )
+        return 0;
+
     int frameSize = channels * (bitsPerSample / 8);
     int gotFrame = 0;
     int dataSize = 0;
