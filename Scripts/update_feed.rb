@@ -63,20 +63,20 @@ if appcast_revision < latest_revision
     description += line
 end
 
-  filename = "Cog-#{revision_code}.tbz"
+  filename = "Cog-#{revision_code}.zip"
 
   #Sign it!
   %x[codesign -s 'Developer ID Application' --deep --force '#{app_path}/Cog.app']
 
   #Zip the app!
-  %x[rm -f /tmp/#{feed}.tar.bz2]
-  %x[tar -C '#{app_path}' -cjf /tmp/#{feed}.tar.bz2 Cog.app]
+  %x[rm -f /tmp/#{feed}.zip]
+  %x[ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 '#{app_path}/Cog.app' /tmp/#{feed}.zip]
 
-  filesize = File.size("/tmp/#{feed}.tar.bz2")
+  filesize = File.size("/tmp/#{feed}.zip")
 
   #Send the new build to the server
-  %x[scp /tmp/#{feed}.tar.bz2 ec2-user@kode54.net:/usr/share/nginx/html/cog/#{feed}_builds/#{filename}]
-  %x[rm /tmp/#{feed}.tar.bz2]
+  %x[scp /tmp/#{feed}.zip ec2-user@kode54.net:/usr/share/nginx/html/cog/#{feed}_builds/#{filename}]
+  %x[rm /tmp/#{feed}.zip]
 
   #Add new entry to appcast
   new_item = Element.new('item')
