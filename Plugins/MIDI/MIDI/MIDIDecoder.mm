@@ -45,7 +45,7 @@
     file_data.resize( size );
     [s read:&file_data[0] amount:size];
     
-    if ( !midi_processor::process_file(file_data, [[[[s url] absoluteString] lastPathComponent] UTF8String], midi_file) )
+    if ( !midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file) )
         return NO;
     
 	int track_num = [[[s url] fragment] intValue]; //What if theres no fragment? Assuming we get 0.
