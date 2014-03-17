@@ -66,7 +66,7 @@ end
   filename = "Cog-#{revision_code}.zip"
 
   #Sign it!
-  %x[codesign -s 'Developer ID Application' --deep --force '#{app_path}/Cog.app']
+  %x[#{File.expand_path("../fucking_sign_it.sh", __FILE__)} '#{app_path}/Cog.app']
 
   #Zip the app!
   %x[rm -f /tmp/#{feed}.zip]
