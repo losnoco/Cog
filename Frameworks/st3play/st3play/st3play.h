@@ -20,10 +20,12 @@ void st3play_Render16(void *, int16_t *buffer, int32_t count);
     
 typedef struct
 {
-    int16_t order;
-    int16_t pattern;
-    int16_t row;
-    int8_t channels_playing;
+    uint16_t order;
+    uint16_t pattern;
+    uint16_t row;
+    uint8_t speed;
+    uint8_t tempo;
+    uint8_t channels_playing;
 } st3_info;
     
 void st3play_GetInfo(void *, st3_info *);
