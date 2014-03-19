@@ -1,0 +1,236 @@
+//
+//  st3Decoder.m
+//  st3play
+//
+//  Created by Christopher Snowhill on 03/17/14.
+//  Copyright 2014 __NoWork, Inc__. All rights reserved.
+//
+
+#import "st3Decoder.h"
+
+#import "PlaylistController.h"
+
+@implementation st3Decoder
+
+BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, const void * src, unsigned long size, unsigned int subsong )
+{
+    void * st3play = st3play_Alloc( 44100, 1 );
+    if ( !st3play ) return NO;
+    
+    if ( !st3play_LoadModule( st3play, src, size ) )
+    {
+        st3play_Free( st3play );
+        return NO;
+    }
+    
+    st3play_PlaySong( st3play, subsong );
+    
+    unsigned long length_total = 0;
+    unsigned long length_saved;
+    
+    const long length_safety = 44100 * 60 * 30;
+    
+    while ( st3play_GetLoopCount( st3play ) < 1 && length_total < length_safety )
+    {
+        st3play_RenderFixed( st3play, NULL, 512 );
+        length_total += 512;
+    }
+    
+    if ( st3play_GetLoopCount( st3play ) < 1 )
+    {
+        *loop_length = 0;
+        *intro_length = 44100 * 60 * 3;
+        st3play_Free( st3play );
+        return YES;
+    }
+    
+    length_saved = length_total;
+    
+    while ( st3play_GetLoopCount( st3play ) < 2 )
+    {
+        st3play_RenderFixed( st3play, NULL, 512 );
+        length_total += 512;
+    }
+    
+    st3play_Free( st3play );
+    
+    *loop_length = length_total - length_saved;
+    *intro_length = length_saved - *loop_length;
+    
+    return YES;
+}
+
+- (BOOL)open:(id<CogSource>)s
+{
+    [s seek:0 whence:SEEK_END];
+    size = [s tell];
+    [s seek:0 whence:SEEK_SET];
+
+    data = malloc(size);
+    [s read:data amount:size];
+
+	if ([[[s url] fragment] length] == 0)
+		track_num = 0;
+	else
+		track_num = [[[s url] fragment] intValue];
+
+    unsigned long intro_length, loop_length;
+    
+    if ( !probe_length(&intro_length, &loop_length, data, size, track_num) )
+        return NO;
+
+    framesLength = intro_length + loop_length * 2;
+    totalFrames = framesLength + 44100 * 8;
+
+    [self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+    
+	return YES;
+}
+
+- (BOOL)decoderInitialize
+{
+    st3play = st3play_Alloc( 44100, 1 );
+    if ( !st3play )
+        return NO;
+
+    if ( !st3play_LoadModule( st3play, data, size ) )
+        return NO;
+
+    st3play_PlaySong( st3play, track_num );
+
+    framesRead = 0;
+    
+    return YES;
+}
+
+- (void)decoderShutdown
+{
+    if ( st3play )
+    {
+        st3play_Free( st3play );
+        st3play = NULL;
+    }
+}
+
+- (NSDictionary *)properties
+{
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithInt:0], @"bitrate",
+		[NSNumber numberWithFloat:44100], @"sampleRate",
+		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
+		[NSNumber numberWithInt:32], @"bitsPerSample",
+        [NSNumber numberWithBool:YES], @"floatingPoint",
+		[NSNumber numberWithInt:2], @"channels",
+		[NSNumber numberWithBool:YES], @"seekable",
+		@"host", @"endian",
+		nil];
+}
+
+- (int)readAudio:(void *)buf frames:(UInt32)frames
+{
+    BOOL repeat_one = IsRepeatOneSet();
+    
+    if ( !repeat_one && framesRead >= totalFrames )
+        return 0;
+    
+    if ( !st3play )
+    {
+        if ( ![self decoderInitialize] )
+            return 0;
+    }
+    
+    int total = 0;
+    while ( total < frames ) {
+        int framesToRender = 512;
+        if ( !repeat_one && framesToRender > totalFrames - framesRead )
+            framesToRender = (int)(totalFrames - framesRead);
+        if ( framesToRender > frames - total )
+            framesToRender = frames - total;
+
+        int32_t * sampleBuf = ( int32_t * ) buf + total * 2;
+        
+        st3play_RenderFixed( st3play, sampleBuf, framesToRender );
+    
+        if ( !repeat_one && framesRead + framesToRender > framesLength ) {
+            long fadeStart = ( framesLength > framesRead ) ? framesLength : framesRead;
+            long fadeEnd = ( framesRead + framesToRender < totalFrames ) ? framesRead + framesToRender : totalFrames;
+            const long fadeTotal = totalFrames - framesLength;
+            for ( long fadePos = fadeStart; fadePos < fadeEnd; ++fadePos ) {
+                const long scale = ( fadeTotal - ( fadePos - framesLength ) );
+                const long offset = fadePos - framesRead;
+                int32_t * samples = sampleBuf + offset * 2;
+                samples[ 0 ] = (int32_t)(samples[ 0 ] * scale / fadeTotal);
+                samples[ 1 ] = (int32_t)(samples[ 1 ] * scale / fadeTotal);
+            }
+            
+            framesToRender = (int)(fadeEnd - framesRead);
+        }
+
+        if ( !framesToRender )
+            break;
+        
+        total += framesToRender;
+        framesRead += framesToRender;
+    }
+    
+    for ( int i = 0; i < total; ++i )
+    {
+        int32_t * sampleIn = ( int32_t * ) buf + i * 2;
+        float * sampleOut = ( float * ) buf + i * 2;
+        sampleOut[ 0 ] = sampleIn[ 0 ] * (1.0f / 16777216.0f);
+        sampleOut[ 1 ] = sampleIn[ 1 ] * (1.0f / 16777216.0f);
+    }
+    
+    return total;
+}
+
+- (long)seek:(long)frame
+{
+    if ( frame < framesRead || !st3play )
+    {
+        [self decoderShutdown];
+        if ( ![self decoderInitialize] )
+            return 0;
+    }
+
+    while ( framesRead < frame )
+    {
+        int frames_todo = INT_MAX;
+        if ( frames_todo > frame - framesRead )
+            frames_todo = (int)( frame - framesRead );
+        st3play_RenderFixed( st3play, NULL, frames_todo );
+        framesRead += frames_todo;
+    }
+    
+    framesRead = frame;
+    
+    return frame;
+}
+
+- (void)close
+{
+    [self decoderShutdown];
+	
+    if (data) {
+        free( data );
+        data = NULL;
+    }
+}
+
++ (NSArray *)fileTypes
+{	
+	return [NSArray arrayWithObjects:@"s3m", @"s3z", nil];
+}
+
++ (NSArray *)mimeTypes 
+{	
+	return [NSArray arrayWithObjects:@"audio/x-s3m", nil];
+}
+
++ (float)priority
+{
+    return 1.5;
+}
+
+@end

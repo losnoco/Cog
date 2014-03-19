@@ -188,6 +188,7 @@
 		83E5E54D18087CA5001F3284 /* miniModeOnTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */; };
 		83E6B7621816136F00D4576D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83E6B759181612FD00D4576D /* Sparkle.framework */; };
 		83E6B7651816178200D4576D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E6B759181612FD00D4576D /* Sparkle.framework */; };
+		83F4D58318D827BB009B2DE6 /* st3play.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F4D52F18D8206A009B2DE6 /* st3play.bundle */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -575,6 +576,13 @@
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = Sparkle;
 		};
+		83F4D52E18D8206A009B2DE6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83F4D52A18D8206A009B2DE6 /* st3play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83F4D51518D8206A009B2DE6;
+			remoteInfo = st3play;
+		};
 		8E8D40860CBB036600135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
@@ -628,6 +636,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				83F4D58318D827BB009B2DE6 /* st3play.bundle in CopyFiles */,
 				836F706218BDD1230095E648 /* vgmstream.bundle in CopyFiles */,
 				836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */,
 				83A0F4E31816DBF900119DB4 /* playptmod.bundle in CopyFiles */,
@@ -925,6 +934,7 @@
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
 		83E6B750181612FD00D4576D /* Sparkle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sparkle.xcodeproj; path = Frameworks/Sparkle/Sparkle.xcodeproj; sourceTree = "<group>"; };
+		83F4D52A18D8206A009B2DE6 /* st3play.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = st3play.xcodeproj; path = Plugins/st3play/st3play.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
 		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
@@ -1232,6 +1242,7 @@
 				83A0F4841816CE5E00119DB4 /* playptmod.xcodeproj */,
 				836FB5421820538700B3AD2D /* Hively.xcodeproj */,
 				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
+				83F4D52A18D8206A009B2DE6 /* st3play.xcodeproj */,
 			);
 			name = PlugIns;
 			sourceTree = "<group>";
@@ -1641,6 +1652,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83F4D52B18D8206A009B2DE6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83F4D52F18D8206A009B2DE6 /* st3play.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -1924,6 +1943,10 @@
 					ProjectRef = 83E6B750181612FD00D4576D /* Sparkle.xcodeproj */;
 				},
 				{
+					ProductGroup = 83F4D52B18D8206A009B2DE6 /* Products */;
+					ProjectRef = 83F4D52A18D8206A009B2DE6 /* st3play.xcodeproj */;
+				},
+				{
 					ProductGroup = 17C808B10C3BD1C5005707C4 /* Products */;
 					ProjectRef = 17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */;
 				},
@@ -2142,6 +2165,13 @@
 			fileType = wrapper.application;
 			path = finish_installation.app;
 			remoteRef = 83E6B760181612FD00D4576D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83F4D52F18D8206A009B2DE6 /* st3play.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = st3play.bundle;
+			remoteRef = 83F4D52E18D8206A009B2DE6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8E8D40870CBB036600135C1B /* M3u.bundle */ = {
