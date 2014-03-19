@@ -1,6 +1,6 @@
-﻿/*
-** ST3PLAY v0.43a
-** ==============
+/*
+** ST3PLAY v0.45
+** =============
 **
 ** C port of Scream Tracker 3's replayer, by 8bitbubsy (Olav Sørensen)
 ** using the original asm source codes by PSI (Sami Tammilehto) of Future Crew
@@ -1342,7 +1342,11 @@ void st3play_PlaySong(void *_p, int16_t startOrder)
                 pan = (dat & 0x0F) << 4;
         }
 
-        p->chn[i].apanpos = pan;
+        if (stereomode)
+            p->chn[i].apanpos = pan;
+        else
+            p->chn[i].apanpos = 7;
+      
         voiceSetPanning(p, i, pan);
     }
 
@@ -1479,14 +1483,12 @@ static void s_setpanwave(PLAYER *p, chn_t *ch) // NON-ST3
 
 static void s_setpanpos(PLAYER *p, chn_t *ch)
 {
-    if ((ch->info & 0x0F) == 7)
-        ch->apanpos = 128;
-    else if ((ch->info & 0x0F) == 15)
-        ch->apanpos = 256;
-    else
+    if (stereomode)
+    {
         ch->apanpos = (ch->info & 0x0F) << 4;
 
-    setpan(p, ch->channelnum);
+        setpan(p, ch->channelnum);
+    }
 }
 
 static void s_sndcntrl(PLAYER *p, chn_t *ch) // NON-ST3
@@ -1667,7 +1669,7 @@ static void s_slidedown(PLAYER *p, chn_t *ch)
         {
             if (ch->info <= 0xE0) return; // only fine slides here
 
-            if (ch->info >= 0xF0)
+            if (ch->info <= 0xF0)
             {
                 ch->aspd += (ch->info & 0x0F);
                 if (ch->aspd > 32767) ch->aspd = 32767;
@@ -1701,7 +1703,7 @@ static void s_slideup(PLAYER *p, chn_t *ch)
         {
             if (ch->info <= 0xE0) return; // only fine slides here
 
-            if (ch->info >= 0xF0)
+            if (ch->info <= 0xF0)
             {
                 ch->aspd -= (ch->info & 0x0F);
                 if (ch->aspd < 0) ch->aspd = 0;
@@ -2377,7 +2379,11 @@ static void s_globvolslide(PLAYER *p, chn_t *ch) // NON-ST3
 
 static void s_setpan(PLAYER *p, chn_t *ch) // NON-ST3
 {
-    if (p->tracker != SCREAM_TRACKER)
+    // This one should work even in MONO mode
+    // for newer trackers that exports as ST3
+
+    // Yes, I decided to comment this if check.
+    //if (tracker != SCREAM_TRACKER)
     {
         if (ch->info <= 0x80)
         {
@@ -2588,9 +2594,6 @@ void voiceSetSurround(PLAYER *p, uint8_t voiceNumber, int8_t surround)
 void voiceSetPanning(PLAYER *p, uint8_t voiceNumber, uint16_t pan)
 {
     float pf;
-
-    if (!p->stereomode)
-        pan = 128;
 
     pf = (float)(pan) / 256.0f;
 
