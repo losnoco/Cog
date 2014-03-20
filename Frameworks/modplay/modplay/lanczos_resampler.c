@@ -67,9 +67,9 @@ void lanczos_resampler_delete(void * _r)
     free( _r );
 }
 
-void * lanczos_resampler_dup(void * _r)
+void * lanczos_resampler_dup(const void * _r)
 {
-    lanczos_resampler * r_in = ( lanczos_resampler * ) _r;
+    const lanczos_resampler * r_in = ( const lanczos_resampler * ) _r;
     lanczos_resampler * r_out = ( lanczos_resampler * ) malloc( sizeof(lanczos_resampler) );
     if ( !r_out ) return 0;
 
@@ -83,6 +83,21 @@ void * lanczos_resampler_dup(void * _r)
     memcpy( r_out->buffer_out, r_in->buffer_out, sizeof(r_in->buffer_out) );
 
     return r_out;
+}
+
+void lanczos_resampler_dup_inplace(void *_d, const void *_s)
+{
+    const lanczos_resampler * r_in = ( const lanczos_resampler * ) _s;
+    lanczos_resampler * r_out = ( lanczos_resampler * ) _d;
+
+    r_out->write_pos = r_in->write_pos;
+    r_out->write_filled = r_in->write_filled;
+    r_out->read_pos = r_in->read_pos;
+    r_out->read_filled = r_in->read_filled;
+    r_out->phase = r_in->phase;
+    r_out->phase_inc = r_in->phase_inc;
+    memcpy( r_out->buffer_in, r_in->buffer_in, sizeof(r_in->buffer_in) );
+    memcpy( r_out->buffer_out, r_in->buffer_out, sizeof(r_in->buffer_out) );
 }
 
 int lanczos_resampler_get_free_count(void *_r)
@@ -164,7 +179,7 @@ static int lanczos_resampler_run(lanczos_resampler * r, float ** out_, float * o
             }
             for (sample = 0, i = 0; i < LANCZOS_WIDTH * 2; ++i)
                 sample += in[i] * kernel[i];
-            *out++ = (float)(sample / kernel_sum * 256.0);
+            *out++ = (float)(sample / kernel_sum * (1.0 / 32768.0));
 
             phase += phase_inc;
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		835CBC8218DA95AC0087A03E /* ft2play.h in Headers */ = {isa = PBXBuildFile; fileRef = 839CAC3E18DA744700D67EA9 /* ft2play.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		839CAC4018DA746000D67EA9 /* ft2play.c in Sources */ = {isa = PBXBuildFile; fileRef = 839CAC3F18DA746000D67EA9 /* ft2play.c */; };
 		83F4D54818D82105009B2DE6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83F4D54618D82105009B2DE6 /* InfoPlist.strings */; };
 		83F4D57518D821D2009B2DE6 /* lanczos_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F4D57118D821D2009B2DE6 /* lanczos_resampler.c */; };
 		83F4D57618D821D2009B2DE6 /* lanczos_resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F4D57218D821D2009B2DE6 /* lanczos_resampler.h */; };
@@ -15,8 +17,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		83F4D53A18D82105009B2DE6 /* st3play.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = st3play.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		83F4D54518D82105009B2DE6 /* st3play-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "st3play-Info.plist"; sourceTree = "<group>"; };
+		839CAC3E18DA744700D67EA9 /* ft2play.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ft2play.h; sourceTree = "<group>"; };
+		839CAC3F18DA746000D67EA9 /* ft2play.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ft2play.c; sourceTree = "<group>"; };
+		83F4D53A18D82105009B2DE6 /* modplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = modplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		83F4D54518D82105009B2DE6 /* modplay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "modplay-Info.plist"; sourceTree = "<group>"; };
 		83F4D54718D82105009B2DE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83F4D57118D821D2009B2DE6 /* lanczos_resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lanczos_resampler.c; sourceTree = "<group>"; };
 		83F4D57218D821D2009B2DE6 /* lanczos_resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lanczos_resampler.h; sourceTree = "<group>"; };
@@ -38,7 +42,7 @@
 		83F4D53018D82105009B2DE6 = {
 			isa = PBXGroup;
 			children = (
-				83F4D54318D82105009B2DE6 /* st3play */,
+				83F4D54318D82105009B2DE6 /* modplay */,
 				83F4D53C18D82105009B2DE6 /* Frameworks */,
 				83F4D53B18D82105009B2DE6 /* Products */,
 			);
@@ -47,7 +51,7 @@
 		83F4D53B18D82105009B2DE6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				83F4D53A18D82105009B2DE6 /* st3play.framework */,
+				83F4D53A18D82105009B2DE6 /* modplay.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,22 +71,24 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		83F4D54318D82105009B2DE6 /* st3play */ = {
+		83F4D54318D82105009B2DE6 /* modplay */ = {
 			isa = PBXGroup;
 			children = (
 				83F4D57118D821D2009B2DE6 /* lanczos_resampler.c */,
 				83F4D57218D821D2009B2DE6 /* lanczos_resampler.h */,
 				83F4D57318D821D2009B2DE6 /* st3play.c */,
 				83F4D57418D821D2009B2DE6 /* st3play.h */,
+				839CAC3F18DA746000D67EA9 /* ft2play.c */,
+				839CAC3E18DA744700D67EA9 /* ft2play.h */,
 				83F4D54418D82105009B2DE6 /* Supporting Files */,
 			);
-			path = st3play;
+			path = modplay;
 			sourceTree = "<group>";
 		};
 		83F4D54418D82105009B2DE6 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				83F4D54518D82105009B2DE6 /* st3play-Info.plist */,
+				83F4D54518D82105009B2DE6 /* modplay-Info.plist */,
 				83F4D54618D82105009B2DE6 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -95,6 +101,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				835CBC8218DA95AC0087A03E /* ft2play.h in Headers */,
 				83F4D57818D821D2009B2DE6 /* st3play.h in Headers */,
 				83F4D57618D821D2009B2DE6 /* lanczos_resampler.h in Headers */,
 			);
@@ -103,9 +110,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		83F4D53918D82105009B2DE6 /* st3play */ = {
+		83F4D53918D82105009B2DE6 /* modplay */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 83F4D56218D82105009B2DE6 /* Build configuration list for PBXNativeTarget "st3play" */;
+			buildConfigurationList = 83F4D56218D82105009B2DE6 /* Build configuration list for PBXNativeTarget "modplay" */;
 			buildPhases = (
 				83F4D53518D82105009B2DE6 /* Sources */,
 				83F4D53618D82105009B2DE6 /* Frameworks */,
@@ -116,9 +123,9 @@
 			);
 			dependencies = (
 			);
-			name = st3play;
-			productName = st3play;
-			productReference = 83F4D53A18D82105009B2DE6 /* st3play.framework */;
+			name = modplay;
+			productName = modplay;
+			productReference = 83F4D53A18D82105009B2DE6 /* modplay.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -130,7 +137,7 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
-			buildConfigurationList = 83F4D53418D82105009B2DE6 /* Build configuration list for PBXProject "st3play" */;
+			buildConfigurationList = 83F4D53418D82105009B2DE6 /* Build configuration list for PBXProject "modplay" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -142,7 +149,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				83F4D53918D82105009B2DE6 /* st3play */,
+				83F4D53918D82105009B2DE6 /* modplay */,
 			);
 		};
 /* End PBXProject section */
@@ -165,6 +172,7 @@
 			files = (
 				83F4D57718D821D2009B2DE6 /* st3play.c in Sources */,
 				83F4D57518D821D2009B2DE6 /* lanczos_resampler.c in Sources */,
+				839CAC4018DA746000D67EA9 /* ft2play.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,8 +269,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "st3play/st3play-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "modplay/modplay-Info.plist";
+				PRODUCT_NAME = modplay;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -274,8 +282,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "st3play/st3play-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "modplay/modplay-Info.plist";
+				PRODUCT_NAME = modplay;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -283,7 +291,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		83F4D53418D82105009B2DE6 /* Build configuration list for PBXProject "st3play" */ = {
+		83F4D53418D82105009B2DE6 /* Build configuration list for PBXProject "modplay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83F4D56018D82105009B2DE6 /* Debug */,
@@ -292,13 +300,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83F4D56218D82105009B2DE6 /* Build configuration list for PBXNativeTarget "st3play" */ = {
+		83F4D56218D82105009B2DE6 /* Build configuration list for PBXNativeTarget "modplay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83F4D56318D82105009B2DE6 /* Debug */,
 				83F4D56418D82105009B2DE6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -15,8 +15,12 @@ void st3play_PlaySong(void *, int16_t startOrder);
     
 int32_t st3play_GetLoopCount(void *);
 
-void st3play_RenderFixed(void *, int32_t *buffer, int32_t count);
-void st3play_Render16(void *, int16_t *buffer, int32_t count);
+/* Calling this function with a NULL buffer skips mixing altogether */
+void st3play_RenderFloat(void *, float *buffer, int32_t count);
+
+/* These two absolutely require a real buffer */
+void st3play_RenderFixed32(void *, int32_t *buffer, int32_t count, int8_t depth);
+void st3play_RenderFixed16(void *, int16_t *buffer, int32_t count, int8_t depth);
     
 typedef struct
 {

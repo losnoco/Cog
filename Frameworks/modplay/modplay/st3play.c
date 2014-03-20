@@ -56,6 +56,7 @@
 #include <stdint.h>
 #include <limits.h>
 #include <math.h>
+#include <assert.h>
 
 #if defined(_MSC_VER) && !defined(inline)
 #define inline __forceinline
@@ -1342,7 +1343,7 @@ void st3play_PlaySong(void *_p, int16_t startOrder)
                 pan = (dat & 0x0F) << 4;
         }
 
-        if (stereomode)
+        if (p->stereomode)
             p->chn[i].apanpos = pan;
         else
             p->chn[i].apanpos = 7;
@@ -1483,7 +1484,7 @@ static void s_setpanwave(PLAYER *p, chn_t *ch) // NON-ST3
 
 static void s_setpanpos(PLAYER *p, chn_t *ch)
 {
-    if (stereomode)
+    if (p->stereomode)
     {
         ch->apanpos = (ch->info & 0x0F) << 4;
 
@@ -3082,9 +3083,9 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
     }
 }
 
-void mixSampleBlock(PLAYER *p, int32_t *outputStream, uint32_t sampleBlockLength)
+void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockLength)
 {
-    int32_t *streamPointer;
+    float *streamPointer;
     uint8_t i;
     uint32_t j;
 
@@ -3124,21 +3125,16 @@ void mixSampleBlock(PLAYER *p, int32_t *outputStream, uint32_t sampleBlockLength
         outL = p->masterBufferL[j] * p->f_masterVolume;
         outR = p->masterBufferR[j] * p->f_masterVolume;
 
-        if      (outL > INT_MAX) outL = INT_MAX;
-        else if (outL < INT_MIN) outL = INT_MIN;
-        if      (outR > INT_MAX) outR = INT_MAX;
-        else if (outR < INT_MIN) outR = INT_MIN;
-
-        *streamPointer++ = (int32_t)(outL);
-        *streamPointer++ = (int32_t)(outR);
+        *streamPointer++ = outL;
+        *streamPointer++ = outR;
     }
 }
 
-void st3play_RenderFixed(void *_p, int32_t *buffer, int32_t count)
+void st3play_RenderFloat(void *_p, float *buffer, int32_t count)
 {
     PLAYER * p = (PLAYER *)_p;
     int32_t samplesTodo;
-    int32_t *outputStream;
+    float *outputStream;
     
     if (p->isMixing)
     {
@@ -3172,29 +3168,42 @@ void st3play_RenderFixed(void *_p, int32_t *buffer, int32_t count)
     }
 }
 
-void st3play_Render16(void *_p, int16_t *buffer, int32_t count)
+void st3play_RenderFixed32(void *_p, int32_t *buffer, int32_t count, int8_t depth)
 {
-    int32_t bufferFixed[1024];
-    int32_t samplesTodo;
-    int32_t i, sample;
-    int16_t *outputStream;
-    
-    outputStream = buffer;
-    
+    int32_t i;
+    float * fbuffer = (float *)buffer;
+    float scale = (float)(1 << (depth - 1));
+    float sample;
+    assert(sizeof(int32_t) == sizeof(float));
+    st3play_RenderFloat(_p, fbuffer, count);
+    for (i = 0; i < count * 2; ++i)
+    {
+        sample = fbuffer[i] * scale;
+        if (sample > INT_MAX) sample = INT_MAX;
+        else if (sample < INT_MIN) sample = INT_MIN;
+        buffer[i] = (int32_t)sample;
+    }
+}
+
+void st3play_RenderFixed16(void *_p, int16_t *buffer, int32_t count, int8_t depth)
+{
+    int32_t i, SamplesTodo;
+    float scale = (float)(1 << (depth - 1));
+    float sample;
+    float fbuffer[1024];
     while (count)
     {
-        samplesTodo = (count > 512) ? 512 : count;
-        st3play_RenderFixed(_p, bufferFixed, samplesTodo);
-        count -= samplesTodo;
-        samplesTodo <<= 1;
-        for (i = 0; i < samplesTodo; ++i)
+        SamplesTodo = (count < 512) ? count : 512;
+        st3play_RenderFloat(_p, fbuffer, SamplesTodo);
+        for (i = 0; i < SamplesTodo * 2; ++i)
         {
-            sample = bufferFixed[i] >> 8;
+            sample = fbuffer[i] * scale;
             if (sample > 32767) sample = 32767;
             else if (sample < -32768) sample = -32768;
-            outputStream[i] = (int16_t)sample;
+            buffer[i] = (int16_t)sample;
         }
-        outputStream += samplesTodo;
+        buffer += SamplesTodo * 2;
+        count -= SamplesTodo;
     }
 }
 
