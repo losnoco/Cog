@@ -2683,26 +2683,6 @@ static void processTick(player *p)
     }
 }
 
-static int pulsateSamples(player *p, int samples)
-{
-    if (p->sampleCounter == 0)
-    {
-        processTick(p);
-        p->sampleCounter += p->samplesPerTick;
-    }
-
-    p->sampleCounter -= samples;
-    if (p->sampleCounter < 0)
-    {
-        int retSamples = samples + p->sampleCounter;
-        p->sampleCounter = 0;
-
-        return retSamples;
-    }
-
-    return samples;
-}
-
 void playptmod_Render(void *_p, int *target, int length)
 {
     player *p = (player *)_p;
@@ -2714,11 +2694,23 @@ void playptmod_Render(void *_p, int *target, int length)
         while (length)
         {
             int tempSamples = CLAMP(length, 0, soundBufferSamples);
-            tempSamples = pulsateSamples(p, tempSamples);
-            length -= tempSamples;
-
-            outputAudio(p, target, tempSamples);
-            if ( target ) target += (tempSamples * 2);
+            
+            if (p->sampleCounter)
+            {
+                tempSamples = CLAMP(tempSamples, 0, p->sampleCounter);
+                if (target)
+                {
+                    outputAudio(p, target, tempSamples);
+                    target += tempSamples * 2;
+                }
+                p->sampleCounter -= tempSamples;
+                length -= tempSamples;
+            }
+            else
+            {
+                processTick(p);
+                p->sampleCounter = p->samplesPerTick;
+            }
         }
     }
 }
@@ -2730,29 +2722,21 @@ void playptmod_Render16(void *_p, short *target, int length)
 	int tempBuffer[512];
 	int * temp = ( target ) ? tempBuffer : 0;
 
-    if (p->modulePlaying == true)
+    while (length)
     {
-        static const int soundBufferSamples = soundBufferSize / 4;
-
-        while (length)
-        {
-            int i, tempSamples = CLAMP(length, 0, soundBufferSamples);
-			tempSamples = CLAMP(length, 0, 256);
-            tempSamples = pulsateSamples(p, tempSamples);
-            length -= tempSamples;
-
-            outputAudio(p, temp, tempSamples);
-
-			if ( target )
-			for (i = 0; i < tempSamples * 2; ++i)
-			{
-				int s = tempBuffer[ i ] >> 8;
-				s = CLAMP(s, -32768, 32767);
-				target[ i ] = (short)s;
-			}
-
-            if ( target ) target += (tempSamples * 2);
-        }
+        int i, tempSamples = CLAMP(length, 0, 256);
+        playptmod_Render(p, temp, tempSamples);
+        length -= tempSamples;
+        
+        if ( target )
+		for (i = 0; i < tempSamples * 2; ++i)
+		{
+			int s = tempBuffer[ i ] >> 8;
+			s = CLAMP(s, -32768, 32767);
+			target[ i ] = (short)s;
+		}
+        
+        if ( target ) target += (tempSamples * 2);
     }
 }
 
