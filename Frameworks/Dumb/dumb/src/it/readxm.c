@@ -897,6 +897,16 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 	if (sigdata->speed == 0) sigdata->speed = 6; // Should we? What about tempo?
 	sigdata->tempo            = dumbfile_igetw(f);
 
+    // FT2 always clips restart position against the song length
+    if (sigdata->restart_position > sigdata->n_orders)
+        sigdata->restart_position = sigdata->n_orders;
+    // And FT2 starts playback on order 0, regardless of length,
+    // and only checks if the next order is greater than or equal
+    // to this, not the current pattern. Work around this with
+    // DUMB's playback core by overriding a zero length with one.
+    if (sigdata->n_orders == 0)
+        sigdata->n_orders = 1;
+
 	/* sanity checks */
 	// XXX
 	i = header_size - 4 - 2 * 8; /* Maximum number of orders expected */
