@@ -309,6 +309,7 @@ typedef struct
     float targetVolR;
     float volDeltaL;
     float volDeltaR;
+    int8_t rampTerminates;
 #endif
 } VOICE;
 
@@ -338,16 +339,22 @@ typedef struct
     StmTyp    Stm[127];
     SongTyp   Song;
     InstrTyp *Instr[255 + 1];
+#ifdef USE_VOL_RAMP
     VOICE voice[127*2];
     
     void *resampler[127*2*2];
+#else
+    VOICE voice[127];
+    
+    void *resampler[127*2];
+#endif
     
     float *PanningTab;
     float f_outputFreq;
     
 #ifdef USE_VOL_RAMP
     float f_samplesPerFrame;
-    float f_samplesPerFrameInit;
+    float f_samplesPerFrameSharp;
 #endif
     
     // pre-initialized variables
@@ -386,7 +393,7 @@ static void voiceSetSource(PLAYER *, uint8_t i, const int8_t *sampleData,
                            int32_t sampleLoopEnd, int8_t loopEnabled,
                            int8_t sixteenbit, int8_t stereo);
 static void voiceSetSamplePosition(PLAYER *, uint8_t i, uint16_t value);
-static void voiceSetVolume(PLAYER *, uint8_t i, float vol, uint8_t pan, uint8_t init);
+static void voiceSetVolume(PLAYER *, uint8_t i, float vol, uint8_t pan, uint8_t sharp);
 static void voiceSetSamplingFrequency(PLAYER *, uint8_t i, float samplingFrequency);
 
 
@@ -989,8 +996,6 @@ CheckEffects:
                 pl->Song.Speed       = pl->Song.InitSpeed;
                 pl->Song.Tempo       = pl->Song.InitTempo;
                 pl->Song.GlobVol     = 64;
-
-                pl->loopCount++;
             }
             else
             {
@@ -1976,8 +1981,12 @@ static void MainPlayer(PLAYER *p) // periodically called from mixer
     for (i = 0; i < p->Song.AntChn; ++i)
     {
         ch = &p->Stm[i];
-        
+
+#ifdef USE_VOL_RAMP
         if ((ch->Status & (IS_Vol | IS_NyTon)) == IS_Vol)
+#else
+        if (ch->Status & IS_Vol)
+#endif
             voiceSetVolume(p, ch->Nr, ch->FinalVol, ch->FinalPan, 0);
         
         if (ch->Status & IS_Period)
@@ -1985,11 +1994,13 @@ static void MainPlayer(PLAYER *p) // periodically called from mixer
         
         if (ch->Status & IS_NyTon)
         {
+#ifdef USE_VOL_RAMP
             p->voice[ch->Nr + 127] = p->voice[ch->Nr];
             voiceSetVolume(p, ch->Nr, ch->FinalVol, ch->FinalPan, 1);
             voiceSetVolume(p, ch->Nr + 127, 0, ch->FinalPan, 1);
             lanczos_resampler_dup_inplace(p->resampler[ch->Nr + 127], p->resampler[ch->Nr]);
             lanczos_resampler_dup_inplace(p->resampler[ch->Nr + 127 + 254], p->resampler[ch->Nr + 254]);
+#endif
             
             s = ch->InstrOfs;
             
@@ -2666,6 +2677,9 @@ void voiceSetSource(PLAYER *p, uint8_t i, const int8_t *sampleData,
     p->voice[i].stereo           = stereo;
     p->voice[i].interpolating    = 1;
     p->voice[i].oversampleCount  = 0;
+#ifdef USE_VOL_RAMP
+    p->voice[i].rampTerminates   = 0;
+#endif
     
     // for 9xx set offset
     if (p->voice[i].samplePosition >= p->voice[i].sampleLength)
@@ -2675,7 +2689,11 @@ void voiceSetSource(PLAYER *p, uint8_t i, const int8_t *sampleData,
     }
     
     lanczos_resampler_clear(p->resampler[i]);
+#ifdef USE_VOL_RAMP
     lanczos_resampler_clear(p->resampler[i+254]);
+#else
+    lanczos_resampler_clear(p->resampler[i+127]);
+#endif
 }
 
 void voiceSetSamplePosition(PLAYER *p, uint8_t i, uint16_t value)
@@ -2685,17 +2703,26 @@ void voiceSetSamplePosition(PLAYER *p, uint8_t i, uint16_t value)
     p->voice[i].oversampleCount  = 0;
     
     lanczos_resampler_clear(p->resampler[i]);
+#ifdef USE_VOL_RAMP
     lanczos_resampler_clear(p->resampler[i+254]);
+#else
+    lanczos_resampler_clear(p->resampler[i+127]);
+#endif
 }
 
-void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, uint8_t init)
+void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, uint8_t sharp)
 {
 #ifdef USE_VOL_RAMP
-    const float rampRate = init ? p->f_samplesPerFrameInit : p->f_samplesPerFrame;
-    if (init && vol)
+    const float rampRate = sharp ? p->f_samplesPerFrameSharp : p->f_samplesPerFrame;
+    if (sharp)
     {
-        p->voice[i].volumeL = 0.0f;
-        p->voice[i].volumeR = 0.0f;
+        if (vol)
+        {
+            p->voice[i].volumeL = 0.0f;
+            p->voice[i].volumeR = 0.0f;
+        }
+        else
+            p->voice[i].rampTerminates = 1;
     }
     p->voice[i].targetVolL = vol * p->PanningTab[256 - pan];
     p->voice[i].targetVolR = vol * p->PanningTab[      pan];
@@ -2860,6 +2887,13 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
             if (p->voice[ch].volumeR < p->voice[ch].targetVolR)
                 p->voice[ch].volumeR = p->voice[ch].targetVolR;
         }
+        
+        if (p->voice[ch].rampTerminates && !p->voice[ch].volumeL && !p->voice[ch].volumeR)
+        {
+            p->voice[ch].sampleData     = NULL;
+            p->voice[ch].samplePosition = 0;
+            p->voice[ch].busy           = 0;
+        }
 #endif
         
         p->masterBufferL[j] += sampleL;
@@ -2907,7 +2941,11 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
     sampleData = p->voice[ch].sampleData;
     
     resampler[0] = p->resampler[ch];
+#ifdef USE_VOL_RAMP
     resampler[1] = p->resampler[ch+254];
+#else
+    resampler[1] = p->resampler[ch+127];
+#endif
     
     lanczos_resampler_set_rate(resampler[0], p->voice[ch].incRate * (float)samplingInterpolation);
     lanczos_resampler_set_rate(resampler[1], p->voice[ch].incRate * (float)samplingInterpolation);
@@ -3020,6 +3058,13 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         {
             if (p->voice[ch].volumeR < p->voice[ch].targetVolR)
                 p->voice[ch].volumeR = p->voice[ch].targetVolR;
+        }
+        
+        if (p->voice[ch].rampTerminates && !p->voice[ch].volumeL && !p->voice[ch].volumeR)
+        {
+            p->voice[ch].sampleData     = NULL;
+            p->voice[ch].samplePosition = 0;
+            p->voice[ch].busy           = 0;
         }
 #endif
         
@@ -3176,6 +3221,13 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
             if (p->voice[ch].volumeR < p->voice[ch].targetVolR)
                 p->voice[ch].volumeR = p->voice[ch].targetVolR;
         }
+        
+        if (p->voice[ch].rampTerminates && !p->voice[ch].volumeL && !p->voice[ch].volumeR)
+        {
+            p->voice[ch].sampleData     = NULL;
+            p->voice[ch].samplePosition = 0;
+            p->voice[ch].busy           = 0;
+        }
 #endif
         
         p->masterBufferL[j] += sampleL;
@@ -3223,7 +3275,11 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
     sampleData = (const int16_t *)(p->voice[ch].sampleData);
     
     resampler[0] = p->resampler[ch];
+#ifdef USE_VOL_RAMP
     resampler[1] = p->resampler[ch+254];
+#else
+    resampler[1] = p->resampler[ch+127];
+#endif
     
     lanczos_resampler_set_rate(resampler[0], p->voice[ch].incRate * (float)samplingInterpolation);
     lanczos_resampler_set_rate(resampler[1], p->voice[ch].incRate * (float)samplingInterpolation);
@@ -3337,6 +3393,13 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             if (p->voice[ch].volumeR < p->voice[ch].targetVolR)
                 p->voice[ch].volumeR = p->voice[ch].targetVolR;
         }
+        
+        if (p->voice[ch].rampTerminates && !p->voice[ch].volumeL && !p->voice[ch].volumeR)
+        {
+            p->voice[ch].sampleData     = NULL;
+            p->voice[ch].samplePosition = 0;
+            p->voice[ch].busy           = 0;
+        }
 #endif
         
         p->masterBufferL[j] += sampleL;
@@ -3380,7 +3443,9 @@ static void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockL
         if (p->muted[i / 8] & (1 << (i % 8)))
             continue;
         mixChannel(p, i, sampleBlockLength);
+#ifdef USE_VOL_RAMP
         mixChannel(p, i + 127, sampleBlockLength);
+#endif
     }
     
     for (i = 0; i < sampleBlockLength; ++i)
@@ -3756,7 +3821,7 @@ static void setSamplesPerFrame(PLAYER *p, uint32_t val)
     
 #ifdef USE_VOL_RAMP
     p->f_samplesPerFrame = 1.0f / ((float)(val) / 4.0f);
-    p->f_samplesPerFrameInit = 1.0f / (p->f_outputFreq / 1000.0f); // 1ms
+    p->f_samplesPerFrameSharp = 1.0f / (p->f_outputFreq / 1000.0f); // 1ms
 #endif
 }
 
