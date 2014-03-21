@@ -198,7 +198,6 @@ static int lanczos_resampler_run(lanczos_resampler * r, int ** out_, int * out_e
 
         do
         {
-            // accumulate in extended precision
             float kernel[LANCZOS_WIDTH * 2], kernel_sum = 0.0;
             int i = LANCZOS_WIDTH;
             int phase_adj = phase * step / LANCZOS_RESOLUTION;
@@ -254,7 +253,6 @@ static int lanczos_resampler_run_sse(lanczos_resampler * r, int ** out_, int * o
         
         do
         {
-            // accumulate in extended precision
             float kernel_sum = 0.0;
             __m128 kernel[LANCZOS_WIDTH / 2];
             __m128 temp1, temp2;
