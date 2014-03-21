@@ -278,7 +278,7 @@ static int lanczos_resampler_run_sse(lanczos_resampler * r, int ** out_, int * o
                 temp1 = _mm_mul_ps( temp1, temp2 );
                 samplex = _mm_add_ps( samplex, temp1 );
             }
-            kernel_sum = 1.0 / kernel_sum * (1.0 / 32768.0);
+            kernel_sum = 1.0 / kernel_sum * 256.0;
             temp1 = _mm_movehl_ps( temp1, samplex );
             samplex = _mm_add_ps( samplex, temp1 );
             temp1 = samplex;
