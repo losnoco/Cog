@@ -17,6 +17,7 @@
 **   * Middle-C speeds beyond 65535
 **   * Process the last 16 channels as PCM
 **   * Process 8 octaves instead of 7
+**   * Compile-time optional volume ramping
 **
 ** - Effects:
 **   * Command S9x        (sound control - only S91/S90 so far)
@@ -65,6 +66,8 @@
 #include "lanczos_resampler.h"
 
 #include "st3play.h"
+
+#define USE_VOL_RAMP
 
 // TRACKER ID
 enum
@@ -148,6 +151,16 @@ typedef struct
     float panningL;
     float panningR;
     float orgPanR;
+
+#ifdef USE_VOL_RAMP
+    float targetVol;
+    float targetPanL;
+    float targetPanR;
+    float volDelta;
+    float panDeltaL;
+    float panDeltaR;
+    int8_t rampTerminates;
+#endif
 } VOICE;
 
 // VARIABLES / STATE
@@ -177,12 +190,23 @@ typedef struct
     int32_t soundBufferSize;
     uint32_t outputFreq;
     
+#ifdef USE_VOL_RAMP
+    VOICE voice[32*2];
+    
+    void *resampler[64*2];
+#else
     VOICE voice[32];
     
     void *resampler[64];
+#endif
     
     float f_outputFreq;
     float f_masterVolume;
+    
+#ifdef USE_VOL_RAMP
+    float f_samplesPerFrame;
+    float f_samplesPerFrameSharp;
+#endif
     
     // pre-initialized variables
     int8_t samplingInterpolation;//      = 1;
@@ -301,7 +325,7 @@ static void voiceSetSource(PLAYER *, uint8_t voiceNumber, const int8_t *sampleDa
     int32_t sampleLength, int32_t sampleLoopLength, int32_t sampleLoopEnd,
     int8_t loopEnabled, int8_t sixteenbit, int8_t stereo, int8_t adpcm);
 static void voiceSetSamplePosition(PLAYER *, uint8_t voiceNumber, uint16_t value);
-static void voiceSetVolume(PLAYER *, uint8_t voiceNumber, float volume);
+static void voiceSetVolume(PLAYER *, uint8_t voiceNumber, float volume, uint8_t sharp);
 static void voiceSetSurround(PLAYER *, uint8_t voiceNumber, int8_t surround);
 static void voiceSetPanning(PLAYER *, uint8_t voiceNumber, uint16_t pan);
 static void voiceSetSamplingFrequency(PLAYER *, uint8_t voiceNumber, float samplingFrequency);
@@ -463,7 +487,11 @@ void * st3play_Alloc(uint32_t outputFreq, int8_t interpolation)
 
     lanczos_init();
     
+#ifdef USE_VOL_RAMP
+    for (i = 0; i < 64 * 2; ++i)
+#else
     for (i = 0; i < 64; ++i)
+#endif
     {
         p->resampler[i] = lanczos_resampler_create();
         if ( !p->resampler[i] )
@@ -505,7 +533,11 @@ void st3play_Free(void *_p)
 
     FreeSong(p);
     
-    for (i = 0; i < 64; ++i)
+#ifdef USE_VOL_RAMP
+    for (i = 0; i < 64 * 2; ++i)
+#else
+        for (i = 0; i < 64; ++i)
+#endif
     {
         if ( p->resampler[i] )
             lanczos_resampler_delete( p->resampler[i] );
@@ -597,10 +629,14 @@ static inline void setspd(PLAYER *p, uint8_t ch)
         voiceSetSamplingFrequency(p, ch, 14317056.0f / (float)tmpspd);
 }
 
-static inline void setvol(PLAYER *p, uint8_t ch)
+static inline void setvol(PLAYER *p, uint8_t ch, uint8_t sharp)
 {
     p->chn[ch].achannelused |= 0x80;
-    voiceSetVolume(p, ch, ((float)(p->chn[ch].avol) / 63.0f) * ((float)(p->chn[ch].chanvol) / 64.0f) * ((float)(p->globalvol) / 64.0f));
+#ifdef USE_VOL_RAMP
+    voiceSetVolume(p, ch + ((sharp == 2) ? 32 : 0), (sharp == 2) ? 0.0f : ((float)(p->chn[ch].avol) / 63.0f) * ((float)(p->chn[ch].chanvol) / 64.0f) * ((float)(p->globalvol) / 64.0f), sharp);
+#else
+    voiceSetVolume(p, ch, ((float)(p->chn[ch].avol) / 63.0f) * ((float)(p->chn[ch].chanvol) / 64.0f) * ((float)(p->globalvol) / 64.0f), sharp);
+#endif
 }
 
 static inline void setpan(PLAYER *p, uint8_t ch)
@@ -841,6 +877,9 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
     uint32_t insrepbeg;
     uint32_t insrepend;
     int8_t shift;
+#ifdef USE_VOL_RAMP
+    uint8_t volassigned = 0;
+#endif
 
     if (p->chn[ch].ins)
     {
@@ -861,7 +900,6 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                     if (p->chn[ch].avol > 63) p->chn[ch].avol = 63;
 
                     p->chn[ch].aorgvol = p->chn[ch].avol;
-                    setvol(p, ch);
 
                     insoffs = (uint32_t)(((uint32_t)(insdat[0x0D])<<16)|((uint16_t)(insdat[0x0F])<<8)|insdat[0x0E])<<4;
 
@@ -887,6 +925,30 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                     if ((insdat[0x1F] & 1) && inslen && (insrepend > insrepbeg))
                         loop = 1;
 
+#ifdef USE_VOL_RAMP
+                    p->voice[ch + 32] = p->voice[ch];
+                    setvol(p, ch, 2);
+                    lanczos_resampler_dup_inplace(p->resampler[ch + 32], p->resampler[ch]);
+                    lanczos_resampler_dup_inplace(p->resampler[ch + 32 + 64], p->resampler[ch + 64]);
+                    if (p->chn[ch].vol != 255)
+                    {
+                        if (p->chn[ch].vol <= 64)
+                        {
+                            p->chn[ch].avol    = p->chn[ch].vol;
+                            p->chn[ch].aorgvol = p->chn[ch].vol;
+                        }
+                        else
+                        // NON-ST3
+                        if ((p->chn[ch].vol >= 128) && (p->chn[ch].vol <= 192))
+                        {
+                            p->chn[ch].apanpos = (p->chn[ch].vol - 128) << 2;
+                            setpan(p, ch);
+                        }
+                    }
+                    volassigned = 1;
+#endif
+                    setvol(p, ch, 1);
+                    
                     voiceSetSource(p, ch, (const int8_t *)(&p->mseg[insoffs]), inslen,
                         insrepend - insrepbeg, insrepend, loop,
                         insdat[0x1F] & 4, insdat[0x1F] & 2, insdat[0x1E] == 4);
@@ -924,7 +986,7 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
             p->chn[ch].asldspd = 65535;
 
             setspd(p, ch);
-            setvol(p, ch);
+            setvol(p, ch, 0);
 
             // shutdown channel
             voiceSetSource(p, ch, NULL, 0, 0, 0, 0, 0, 0, 0);
@@ -951,14 +1013,18 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
         }
     }
 
+#ifdef USE_VOL_RAMP
+    if (p->chn[ch].vol != 255 && !volassigned)
+#else
     if (p->chn[ch].vol != 255)
+#endif
     {
         if (p->chn[ch].vol <= 64)
         {
             p->chn[ch].avol    = p->chn[ch].vol;
             p->chn[ch].aorgvol = p->chn[ch].vol;
 
-            setvol(p, ch);
+            setvol(p, ch, 0);
 
             return;
         }
@@ -1647,7 +1713,7 @@ static void s_volslide(PLAYER *p, chn_t *ch)
     if (ch->avol <  0) ch->avol =  0;
     if (ch->avol > 63) ch->avol = 63;
 
-    setvol(p, ch->channelnum);
+    setvol(p, ch->channelnum, 0);
 
     if (p->volslidetype == 1)
         s_vibrato(p, ch);
@@ -1890,7 +1956,7 @@ static void s_tremor(PLAYER *p, chn_t *ch)
         ch->atreon = 0;
 
         ch->avol = 0;
-        setvol(p, ch->channelnum);
+        setvol(p, ch->channelnum, 0);
 
         ch->atremor = ch->info & 0x0F;
     }
@@ -1899,7 +1965,7 @@ static void s_tremor(PLAYER *p, chn_t *ch)
         ch->atreon = 1;
 
         ch->avol = ch->aorgvol;
-        setvol(p, ch->channelnum);
+        setvol(p, ch->channelnum, 0);
 
         ch->atremor = ch->info >> 4;
     }
@@ -1988,7 +2054,7 @@ static void s_chanvolslide(PLAYER *p, chn_t *ch) // NON-ST3
         if (ch->chanvol <  0) ch->chanvol =  0;
         if (ch->chanvol > 64) ch->chanvol = 64;
 
-        setvol(p, ch->channelnum);
+        setvol(p, ch->channelnum, 0);
     }
 }
 
@@ -2077,7 +2143,7 @@ static void s_retrig(PLAYER *p, chn_t *ch)
     if (ch->avol > 63) ch->avol = 63;
     if (ch->avol <  0) ch->avol =  0;
 
-    setvol(p, ch->channelnum);
+    setvol(p, ch->channelnum, 0);
 
     ch->atrigcnt++; // probably a mistake? Keep it anyways.
 }
@@ -2172,7 +2238,7 @@ static void s_tremolo(PLAYER *p, chn_t *ch)
         if (dat <  0) dat =  0;
 
         ch->avol = (int8_t)(dat);
-        setvol(p, ch->channelnum);
+        setvol(p, ch->channelnum, 0);
 
         ch->avibcnt = (cnt + ((ch->info >> 4) << 1)) & 0x7E;
     }
@@ -2376,7 +2442,7 @@ static void s_globvolslide(PLAYER *p, chn_t *ch) // NON-ST3
         if (p->globalvol > 64) p->globalvol = 64;
 
         // update all channels now
-        for (i = 0; i < (p->lastachannelused + 1); ++i) setvol(p, i);
+        for (i = 0; i < (p->lastachannelused + 1); ++i) setvol(p, i, 0);
     }
 }
 
@@ -2507,6 +2573,11 @@ static void s_panbrello(PLAYER *p, chn_t *ch) // NON-ST3
 void setSamplesPerFrame(PLAYER *p, uint32_t val)
 {
     p->samplesPerFrame = val;
+    
+#ifdef USE_VOL_RAMP
+    p->f_samplesPerFrame = 1.0f / ((float)(val) / 4.0f);
+    p->f_samplesPerFrameSharp = 1.0f / (p->f_outputFreq / 1000.0f); // 1ms
+#endif
 }
 
 void setSamplingInterpolation(PLAYER *p, int8_t value)
@@ -2550,12 +2621,19 @@ void voiceSetSource(PLAYER *p, uint8_t voiceNumber, const int8_t *sampleData,
     p->voice[voiceNumber].mixing           = 1;
     p->voice[voiceNumber].interpolating    = 1;
     p->voice[voiceNumber].oversampleCount  = 0;
+#ifdef USE_VOL_RAMP
+    p->voice[voiceNumber].rampTerminates   = 0;
+#endif
 
     if (p->voice[voiceNumber].samplePosition >= p->voice[voiceNumber].sampleLength)
         p->voice[voiceNumber].samplePosition = 0;
     
     lanczos_resampler_clear( p->resampler[voiceNumber] );
+#ifdef USE_VOL_RAMP
+    lanczos_resampler_clear( p->resampler[voiceNumber+64] );
+#else
     lanczos_resampler_clear( p->resampler[voiceNumber+32] );
+#endif
 }
 
 void voiceSetSamplePosition(PLAYER *p, uint8_t voiceNumber, uint16_t value)
@@ -2578,30 +2656,67 @@ void voiceSetSamplePosition(PLAYER *p, uint8_t voiceNumber, uint16_t value)
     }
     
     lanczos_resampler_clear( p->resampler[voiceNumber] );
+#ifdef USE_VOL_RAMP
+    lanczos_resampler_clear( p->resampler[voiceNumber+64] );
+#else
     lanczos_resampler_clear( p->resampler[voiceNumber+32] );
+#endif
 }
 
-void voiceSetVolume(PLAYER *p, uint8_t voiceNumber, float volume)
+void voiceSetVolume(PLAYER *p, uint8_t voiceNumber, float volume, uint8_t sharp)
 {
+#ifdef USE_VOL_RAMP
+    const float rampRate = sharp ? p->f_samplesPerFrameSharp : p->f_samplesPerFrame;
+    if (sharp)
+    {
+        if (volume)
+            p->voice[voiceNumber].volume = 0.0f;
+        else
+            p->voice[voiceNumber].rampTerminates = 1;
+    }
+    p->voice[voiceNumber].targetVol = volume;
+    p->voice[voiceNumber].volDelta  = (p->voice[voiceNumber].targetVol - p->voice[voiceNumber].volume) * rampRate;
+#else
     p->voice[voiceNumber].volume = volume;
+#endif
 }
 
 void voiceSetSurround(PLAYER *p, uint8_t voiceNumber, int8_t surround)
 {
+#ifdef USE_VOL_RAMP
+    const float rampRate = p->f_samplesPerFrameSharp;
+    if (surround)
+        p->voice[voiceNumber].targetPanR = -p->voice[voiceNumber].orgPanR;
+    else
+        p->voice[voiceNumber].targetPanR =  p->voice[voiceNumber].orgPanR;
+    p->voice[voiceNumber].panDeltaR  = (p->voice[voiceNumber].targetPanR - p->voice[voiceNumber].panningR) * rampRate;
+#else
     if (surround)
         p->voice[voiceNumber].panningR = -p->voice[voiceNumber].orgPanR;
     else
         p->voice[voiceNumber].panningR =  p->voice[voiceNumber].orgPanR;
+#endif
 }
 
 void voiceSetPanning(PLAYER *p, uint8_t voiceNumber, uint16_t pan)
 {
+#ifdef USE_VOL_RAMP
+    const float rampRate = p->f_samplesPerFrameSharp;
+#endif
+    
     float pf;
 
     pf = (float)(pan) / 256.0f;
 
+#ifdef USE_VOL_RAMP
+    p->voice[voiceNumber].targetPanL = 1.0f - pf;
+    p->voice[voiceNumber].targetPanR = pf;
+    p->voice[voiceNumber].panDeltaL = (p->voice[voiceNumber].targetPanL - p->voice[voiceNumber].panningL) * rampRate;
+    p->voice[voiceNumber].panDeltaR = (p->voice[voiceNumber].targetPanR - p->voice[voiceNumber].panningR) * rampRate;
+#else
     p->voice[voiceNumber].panningL = 1.0f - pf;
     p->voice[voiceNumber].panningR = pf;
+#endif
     p->voice[voiceNumber].orgPanR  = pf;
 }
 
@@ -2692,7 +2807,57 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
 
         p->masterBufferL[j] += (sample * panningL);
         p->masterBufferR[j] += (sample * panningR);
+        
+#ifdef USE_VOL_RAMP
+        volume += p->voice[ch].volDelta;
+        panningL += p->voice[ch].panDeltaL;
+        panningR += p->voice[ch].panDeltaR;
+        
+        if (p->voice[ch].volDelta >= 0.0f)
+        {
+            if (volume > p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        else
+        {
+            if (volume < p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        
+        if (p->voice[ch].panDeltaL >= 0.0f)
+        {
+            if (panningL > p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        else
+        {
+            if (panningL < p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        
+        if (p->voice[ch].panDeltaR >= 0.0f)
+        {
+            if (panningR > p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        else
+        {
+            if (panningR < p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        
+        if (p->voice[ch].rampTerminates && !volume)
+        {
+            p->voice[ch].mixing = 0;
+            break;
+        }
+#endif
     }
+#ifdef USE_VOL_RAMP
+    p->voice[ch].volume   = volume;
+    p->voice[ch].panningL = panningL;
+    p->voice[ch].panningR = panningR;
+#endif
 }
 
 static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
@@ -2728,7 +2893,11 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     samplingInterpolation = p->samplingInterpolation ? 1 : 32;
     
     resampler[0] = p->resampler[ch];
+#ifdef USE_VOL_RAMP
+    resampler[1] = p->resampler[ch+64];
+#else
     resampler[1] = p->resampler[ch+32];
+#endif
     
     lanczos_resampler_set_rate(resampler[0], p->voice[ch].incRate * (float)samplingInterpolation);
     lanczos_resampler_set_rate(resampler[1], p->voice[ch].incRate * (float)samplingInterpolation);
@@ -2786,7 +2955,57 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
 
         p->masterBufferL[j] += (sampleL * panningL);
         p->masterBufferR[j] += (sampleR * panningR);
+        
+#ifdef USE_VOL_RAMP
+        volume += p->voice[ch].volDelta;
+        panningL += p->voice[ch].panDeltaL;
+        panningR += p->voice[ch].panDeltaR;
+        
+        if (p->voice[ch].volDelta >= 0.0f)
+        {
+            if (volume > p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        else
+        {
+            if (volume < p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        
+        if (p->voice[ch].panDeltaL >= 0.0f)
+        {
+            if (panningL > p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        else
+        {
+            if (panningL < p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        
+        if (p->voice[ch].panDeltaR >= 0.0f)
+        {
+            if (panningR > p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        else
+        {
+            if (panningR < p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        
+        if (p->voice[ch].rampTerminates && !volume)
+        {
+            p->voice[ch].mixing = 0;
+            break;
+        }
+#endif
     }
+#ifdef USE_VOL_RAMP
+    p->voice[ch].volume   = volume;
+    p->voice[ch].panningL = panningL;
+    p->voice[ch].panningR = panningR;
+#endif
 }
 
 static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
@@ -2871,7 +3090,57 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
         
         p->masterBufferL[j] += (sample * panningL);
         p->masterBufferR[j] += (sample * panningR);
+        
+#ifdef USE_VOL_RAMP
+        volume += p->voice[ch].volDelta;
+        panningL += p->voice[ch].panDeltaL;
+        panningR += p->voice[ch].panDeltaR;
+        
+        if (p->voice[ch].volDelta >= 0.0f)
+        {
+            if (volume > p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        else
+        {
+            if (volume < p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        
+        if (p->voice[ch].panDeltaL >= 0.0f)
+        {
+            if (panningL > p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        else
+        {
+            if (panningL < p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        
+        if (p->voice[ch].panDeltaR >= 0.0f)
+        {
+            if (panningR > p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        else
+        {
+            if (panningR < p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        
+        if (p->voice[ch].rampTerminates && !volume)
+        {
+            p->voice[ch].mixing = 0;
+            break;
+        }
+#endif
     }
+#ifdef USE_VOL_RAMP
+    p->voice[ch].volume   = volume;
+    p->voice[ch].panningL = panningL;
+    p->voice[ch].panningR = panningR;
+#endif
 }
 
 static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
@@ -2907,7 +3176,11 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     samplingInterpolation = p->samplingInterpolation ? 1 : 32;
     
     resampler[0] = p->resampler[ch];
+#ifdef USE_VOL_RAMP
+    resampler[1] = p->resampler[ch+64];
+#else
     resampler[1] = p->resampler[ch+32];
+#endif
     
     lanczos_resampler_set_rate(resampler[0], p->voice[ch].incRate * (float)samplingInterpolation);
     lanczos_resampler_set_rate(resampler[1], p->voice[ch].incRate * (float)samplingInterpolation);
@@ -2965,7 +3238,57 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
         
         p->masterBufferL[j] += (sampleL * panningL);
         p->masterBufferR[j] += (sampleR * panningR);
+        
+#ifdef USE_VOL_RAMP
+        volume += p->voice[ch].volDelta;
+        panningL += p->voice[ch].panDeltaL;
+        panningR += p->voice[ch].panDeltaR;
+        
+        if (p->voice[ch].volDelta >= 0.0f)
+        {
+            if (volume > p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        else
+        {
+            if (volume < p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        
+        if (p->voice[ch].panDeltaL >= 0.0f)
+        {
+            if (panningL > p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        else
+        {
+            if (panningL < p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        
+        if (p->voice[ch].panDeltaR >= 0.0f)
+        {
+            if (panningR > p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        else
+        {
+            if (panningR < p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        
+        if (p->voice[ch].rampTerminates && !volume)
+        {
+            p->voice[ch].mixing = 0;
+            break;
+        }
+#endif
     }
+#ifdef USE_VOL_RAMP
+    p->voice[ch].volume   = volume;
+    p->voice[ch].panningL = panningL;
+    p->voice[ch].panningR = panningR;
+#endif
 }
 
 static inline int8_t get_adpcm_sample(const int8_t *sampleDictionary, const uint8_t *sampleData, int32_t samplePosition, int8_t *lastDelta)
@@ -3082,6 +3405,79 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
         
         p->masterBufferL[j] += (sample * panningL);
         p->masterBufferR[j] += (sample * panningR);
+
+#ifdef USE_VOL_RAMP
+        volume += p->voice[ch].volDelta;
+        panningL += p->voice[ch].panDeltaL;
+        panningR += p->voice[ch].panDeltaR;
+        
+        if (p->voice[ch].volDelta >= 0.0f)
+        {
+            if (volume > p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        else
+        {
+            if (volume < p->voice[ch].targetVol)
+                volume = p->voice[ch].targetVol;
+        }
+        
+        if (p->voice[ch].panDeltaL >= 0.0f)
+        {
+            if (panningL > p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        else
+        {
+            if (panningL < p->voice[ch].targetPanL)
+                panningL = p->voice[ch].targetPanL;
+        }
+        
+        if (p->voice[ch].panDeltaR >= 0.0f)
+        {
+            if (panningR > p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        else
+        {
+            if (panningR < p->voice[ch].targetPanR)
+                panningR = p->voice[ch].targetPanR;
+        }
+        
+        if (p->voice[ch].rampTerminates && !volume)
+        {
+            p->voice[ch].mixing = 0;
+            break;
+        }
+#endif
+    }
+#ifdef USE_VOL_RAMP
+    p->voice[ch].volume   = volume;
+    p->voice[ch].panningL = panningL;
+    p->voice[ch].panningR = panningR;
+#endif
+}
+
+void mixChannel(PLAYER *p, uint8_t i, uint32_t sampleBlockLength)
+{
+    if (p->voice[i].incRate && p->voice[i].mixing)
+    {
+        if (p->voice[i].stereo)
+        {
+            if (p->voice[i].sixteenBit)
+                mix16bstereo(p, i, sampleBlockLength);
+            else
+                mix8bstereo(p, i, sampleBlockLength);
+        }
+        else
+        {
+            if (p->voice[i].sixteenBit)
+                mix16b(p, i, sampleBlockLength);
+            else if (p->voice[i].adpcm)
+                mixadpcm(p, i, sampleBlockLength);
+            else
+                mix8b(p, i, sampleBlockLength);
+        }
     }
 }
 
@@ -3103,25 +3499,10 @@ void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockLength)
     {
         if (p->muted[i / 8] & (1 << (i % 8)))
             continue;
-        if (p->voice[i].incRate && p->voice[i].mixing)
-        {
-            if (p->voice[i].stereo)
-            {
-                if (p->voice[i].sixteenBit)
-                    mix16bstereo(p, i, sampleBlockLength);
-                else
-                    mix8bstereo(p, i, sampleBlockLength);
-            }
-            else
-            {
-                if (p->voice[i].sixteenBit)
-                    mix16b(p, i, sampleBlockLength);
-                else if (p->voice[i].adpcm)
-                    mixadpcm(p, i, sampleBlockLength);
-                else
-                    mix8b(p, i, sampleBlockLength);
-            }
-        }
+        mixChannel(p, i, sampleBlockLength);
+#ifdef USE_VOL_RAMP
+        mixChannel(p, i + 32, sampleBlockLength);
+#endif
     }
 
     for (j = 0; j < sampleBlockLength; ++j)

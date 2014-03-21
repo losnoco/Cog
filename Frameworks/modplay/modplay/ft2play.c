@@ -3563,7 +3563,11 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation)
     
     lanczos_init();
     
+#ifdef USE_VOL_RAMP
     for ( i = 0; i < 127 * 2 * 2; ++i )
+#else
+    for ( i = 0; i < 127 * 2; ++i )
+#endif
     {
         p->resampler[i] = lanczos_resampler_create();
         if ( !p->resampler[i] )
@@ -3659,7 +3663,11 @@ void ft2play_Free(void *_p)
     if (p->linearPeriods)  free(p->linearPeriods);  p->linearPeriods  = NULL;
     if (p->NilPatternLine) free(p->NilPatternLine); p->NilPatternLine = NULL;
 
+#ifdef USE_VOL_RAMP
     for ( i = 0; i < 127 * 2 * 2; ++i )
+#else
+    for ( i = 0; i < 127 * 2; ++i )
+#endif
     {
         if ( p->resampler[i] )
             lanczos_resampler_delete( p->resampler[i] );
