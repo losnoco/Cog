@@ -21,14 +21,16 @@ void st3play_RenderFloat(void *, float *buffer, int32_t count);
 /* These two absolutely require a real buffer */
 void st3play_RenderFixed32(void *, int32_t *buffer, int32_t count, int8_t depth);
 void st3play_RenderFixed16(void *, int16_t *buffer, int32_t count, int8_t depth);
-    
+
+void st3play_Mute(void *, int8_t channel, int8_t mute);
+
 typedef struct
 {
     uint16_t order;
     uint16_t pattern;
     uint16_t row;
     uint8_t speed;
-    uint8_t tempo;
+    uint16_t tempo;
     uint8_t channels_playing;
 } st3_info;
     

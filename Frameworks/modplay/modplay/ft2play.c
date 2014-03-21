@@ -314,9 +314,9 @@ typedef struct
 
 typedef struct
 {
-    int8_t *_ptr;
+    uint8_t *_ptr;
     uintptr_t _cnt;
-    int8_t *_base;
+    uint8_t *_base;
     uintptr_t _bufsiz;
     int32_t _eof;
 } MEM;
@@ -330,7 +330,7 @@ typedef struct
     int16_t *amigaPeriods;
     uint32_t *LogTab;
     int8_t   LinearFrqTab;
-    uint32_t soundBufferSize;
+    int32_t soundBufferSize;
     uint32_t outputFreq;
     
     TonTyp   *NilPatternLine;
@@ -363,6 +363,8 @@ typedef struct
     int8_t Playing;//      = 0;
     uint8_t numChannels;// = 127;
     
+    uint8_t muted[16];
+    
     uint32_t loopCount;
     uint8_t playedOrder[8192];
 } PLAYER;
@@ -371,7 +373,7 @@ enum { _soundBufferSize = 512 };
 
 // FUNCTION DECLARATIONS
 
-static MEM *mopen(const int8_t *src, uintptr_t length);
+static MEM *mopen(const uint8_t *src, uintptr_t length);
 static void mclose(MEM *buf);
 //static intptr_t mtell(MEM *buf);
 static size_t mread(void *buffer, size_t size, size_t count, MEM *buf);
@@ -2478,7 +2480,7 @@ static void ft2play_FreeSong(void *_p)
     p->ModuleLoaded = 0;
 }
 
-int8_t ft2play_LoadModule(void *_p, const int8_t *buffer, size_t size)
+int8_t ft2play_LoadModule(void *_p, const uint8_t *buffer, size_t size)
 {
     PLAYER *p = (PLAYER *)_p;
     MEM *buf;
@@ -2815,8 +2817,8 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
         
         p->voice[ch].samplePosition  = samplePosition;
         p->voice[ch].loopDir         = loopDir;
-        p->voice[ch].interpolating   = interpolating;
-        p->voice[ch].oversampleCount = oversampleCount;
+        p->voice[ch].interpolating   = (int8_t)interpolating;
+        p->voice[ch].oversampleCount = (int8_t)oversampleCount;
         
         if ( !lanczos_resampler_ready(resampler) )
         {
@@ -2974,8 +2976,8 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         
         p->voice[ch].samplePosition  = samplePosition;
         p->voice[ch].loopDir         = loopDir;
-        p->voice[ch].interpolating   = interpolating;
-        p->voice[ch].oversampleCount = oversampleCount;
+        p->voice[ch].interpolating   = (int8_t)interpolating;
+        p->voice[ch].oversampleCount = (int8_t)oversampleCount;
         
         if ( !lanczos_resampler_ready(resampler[0]) )
         {
@@ -3131,8 +3133,8 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
         
         p->voice[ch].samplePosition  = samplePosition;
         p->voice[ch].loopDir         = loopDir;
-        p->voice[ch].interpolating   = interpolating;
-        p->voice[ch].oversampleCount = oversampleCount;
+        p->voice[ch].interpolating   = (int8_t)interpolating;
+        p->voice[ch].oversampleCount = (int8_t)oversampleCount;
         
         if ( !lanczos_resampler_ready(resampler) )
         {
@@ -3290,8 +3292,8 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         
         p->voice[ch].samplePosition  = samplePosition;
         p->voice[ch].loopDir         = loopDir;
-        p->voice[ch].interpolating   = interpolating;
-        p->voice[ch].oversampleCount = oversampleCount;
+        p->voice[ch].interpolating   = (int8_t)interpolating;
+        p->voice[ch].oversampleCount = (int8_t)oversampleCount;
         
         if ( !lanczos_resampler_ready(resampler[0]) )
         {
@@ -3375,6 +3377,8 @@ static void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockL
     
     for (i = 0; i < p->numChannels; ++i)
     {
+        if (p->muted[i / 8] & (1 << (i % 8)))
+            continue;
         mixChannel(p, i, sampleBlockLength);
         mixChannel(p, i + 127, sampleBlockLength);
     }
@@ -3530,7 +3534,7 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation)
     // generate tables
     
     for (i = 0; i < 768; ++i)
-        p->LogTab[i] = (uint32_t)(floorf(((256.0f * 8363.0f) * expf((float)(i) / 768.0f * logf(2.0f))) + 0.5f));
+        p->LogTab[i] = (uint32_t)(floor(((256.0f * 8363.0f) * exp((float)(i) / 768.0f * logf(2.0f))) + 0.5f));
     
     for (i = 0; i < ((12 * 10 * 16) + 16); ++i)
         p->linearPeriods[i] = (((12 * 10 * 16) + 16) * 4) - (i << 2);
@@ -3615,16 +3619,16 @@ void ft2play_PlaySong(void *_p, int32_t startOrder)
     setSamplesPerFrame(p, ((p->outputFreq * 5UL) / 2 / p->Song.Speed));
     p->isMixing = 1;
     
-    SetPos(p, startOrder, 0);
+    SetPos(p, (int16_t)startOrder, 0);
 
-    p->Song.startOrder = startOrder;
+    p->Song.startOrder = (int16_t)startOrder;
     
     p->loopCount = 0;
     memset(p->playedOrder, 0, sizeof(p->playedOrder));
     p->playedOrder[startOrder / 8] = 1 << (startOrder % 8);
 }
 
-static MEM *mopen(const int8_t *src, uintptr_t length)
+static MEM *mopen(const uint8_t *src, uintptr_t length)
 {
     MEM *b;
     
@@ -3633,8 +3637,8 @@ static MEM *mopen(const int8_t *src, uintptr_t length)
     b = (MEM *)(malloc(sizeof (MEM)));
     if (b == NULL) return (NULL);
     
-    b->_base   = (int8_t *)(src);
-    b->_ptr    = (int8_t *)(src);
+    b->_base   = (uint8_t *)(src);
+    b->_ptr    = (uint8_t *)(src);
     b->_cnt    = length;
     b->_bufsiz = length;
     b->_eof    = 0;
@@ -3754,6 +3758,18 @@ static void setSamplesPerFrame(PLAYER *p, uint32_t val)
     p->f_samplesPerFrame = 1.0f / ((float)(val) / 4.0f);
     p->f_samplesPerFrameInit = 1.0f / (p->f_outputFreq / 1000.0f); // 1ms
 #endif
+}
+
+void ft2play_Mute(void *_p, int8_t channel, int8_t mute)
+{
+    PLAYER * p = (PLAYER *)_p;
+    int8_t mask = 1 << (channel % 8);
+	if (channel > 127)
+		return;
+    if (mute)
+        p->muted[channel / 8] |= mask;
+    else
+		p->muted[channel / 8] &= ~mask;
 }
 
 uint32_t ft2play_GetLoopCount(void *_p)

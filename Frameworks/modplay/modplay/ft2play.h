@@ -10,7 +10,7 @@ extern "C" {
 void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation);
 void ft2play_Free(void *);
 
-int8_t ft2play_LoadModule(void *, const int8_t *buffer, size_t size);
+int8_t ft2play_LoadModule(void *, const uint8_t *buffer, size_t size);
 
 void ft2play_PlaySong(void *, int32_t startOrder);
 
@@ -20,6 +20,8 @@ void ft2play_RenderFloat(void *, float *buffer, int32_t count);
 /* These two absolutely require a real buffer */
 void ft2play_RenderFixed32(void *, int32_t *buffer, int32_t count, int8_t depth);
 void ft2play_RenderFixed16(void *, int16_t *buffer, int32_t count, int8_t depth);
+
+void ft2play_Mute(void *, int8_t channel, int8_t mute);
     
 uint32_t ft2play_GetLoopCount(void *);
 

@@ -141,9 +141,9 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
         }
     }
     
-    if ( memcmp( data + 0x2C, "SCRM", 4 ) == 0 )
+    if ( size >= (0x2C + 4) && memcmp( data + 0x2C, "SCRM", 4 ) == 0 )
         type = TYPE_S3M;
-    else if ( memcmp( data, "Extended Module: ", 17 ) == 0 )
+    else if ( size >= 17 && memcmp( data, "Extended Module: ", 17 ) == 0 )
         type = TYPE_XM;
     else
         return NO;

@@ -214,6 +214,8 @@ typedef struct
     uint8_t mastervol;
     uint32_t mseg_len;
     
+    uint8_t muted[4];
+    
     uint32_t loopCount;
     uint8_t playedOrder[8192];
 } PLAYER;
@@ -3099,6 +3101,8 @@ void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockLength)
 
     for (i = 0; i < 32; ++i)
     {
+        if (p->muted[i / 8] & (1 << (i % 8)))
+            continue;
         if (p->voice[i].incRate && p->voice[i].mixing)
         {
             if (p->voice[i].stereo)
@@ -3220,6 +3224,18 @@ void FreeSong(PLAYER *p)
     }
 
     p->ModuleLoaded = 0;
+}
+
+void st3play_Mute(void *_p, int8_t channel, int8_t mute)
+{
+    PLAYER * p = (PLAYER *)_p;
+    int8_t mask = 1 << (channel % 8);
+	if (channel > 31)
+		return;
+    if (mute)
+        p->muted[channel / 8] |= mask;
+    else
+        p->muted[channel / 8] &= ~mask;
 }
 
 int32_t st3play_GetLoopCount(void *_p)
