@@ -379,8 +379,6 @@ DUH_SIGRENDERER *dumb_it_start_at_order(DUH *duh, int n_channels, int startorder
 
 void dumb_it_set_resampling_quality(DUMB_IT_SIGRENDERER * sigrenderer, int quality);
 
-void dumb_it_set_ramp_style(DUMB_IT_SIGRENDERER * sigrenderer, int ramp_style);
-
 void dumb_it_set_loop_callback(DUMB_IT_SIGRENDERER *sigrenderer, int (*callback)(void *data), void *data);
 void dumb_it_set_xm_speed_zero_callback(DUMB_IT_SIGRENDERER *sigrenderer, int (*callback)(void *data), void *data);
 void dumb_it_set_midi_callback(DUMB_IT_SIGRENDERER *sigrenderer, int (*callback)(void *data, int channel, unsigned char midi_byte), void *data);
@@ -714,6 +712,7 @@ struct DUMB_VOLUME_RAMP_INFO
 	float delta;
 	float target;
 	float mix;
+    unsigned char * declick_stage;
 };
 
 void dumb_reset_resampler(DUMB_RESAMPLER *resampler, sample_t *src, int src_channels, long pos, long start, long end, int quality);

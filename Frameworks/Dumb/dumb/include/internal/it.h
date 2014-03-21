@@ -486,7 +486,6 @@ struct IT_PLAYING
 	unsigned char instnum;
 
 	unsigned char declick_stage;
-	float declick_volume;
 
 	float float_volume[2];
 	float ramp_volume[2];
@@ -743,8 +742,6 @@ struct DUMB_IT_SIGRENDERER
 
 	long gvz_time;
 	int gvz_sub_time;
-
-	int ramp_style;
 
 	//int max_output;
 };
