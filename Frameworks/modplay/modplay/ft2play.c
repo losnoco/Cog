@@ -1,5 +1,5 @@
 /*
- ** FT2PLAY v0.33
+ ** FT2PLAY v0.34
  ** =============
  **
  ** C port of FastTracker II's replayer, by 8bitbubsy (Olav Sørensen)
@@ -2400,7 +2400,7 @@ static int8_t LoadPatterns(PLAYER *p, MEM *buf)
         if (p->Song.Ver == 0x0102)
         {
             mread(&tmpLen, 1, 1, buf);
-            ph.PattLen = (uint16_t)(tmpLen);
+            ph.PattLen = (uint16_t)(tmpLen) + 1; // +1 in v1.02
         }
         else
         {
