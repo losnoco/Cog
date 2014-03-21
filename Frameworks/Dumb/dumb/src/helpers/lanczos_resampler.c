@@ -2,6 +2,10 @@
 #include <string.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#if (defined(_M_IX86) || defined(__i386__) || defined(_M_X64) || defined(__amd64__))
+#include <xmmintrin.h>
+#define LANCZOS_SSE
+#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -10,29 +14,60 @@
 #include "internal/lanczos_resampler.h"
 
 enum { LANCZOS_RESOLUTION = 8192 };
-enum { LANCZOS_WIDTH = 8 };
+enum { LANCZOS_WIDTH = 16 };
 enum { LANCZOS_SAMPLES = LANCZOS_RESOLUTION * LANCZOS_WIDTH };
 
-static double lanczos_lut[LANCZOS_SAMPLES + 1];
+static float lanczos_lut[LANCZOS_SAMPLES + 1];
 
 enum { lanczos_buffer_size = LANCZOS_WIDTH * 4 };
 
-int fEqual(const double b, const double a)
+static int fEqual(const float b, const float a)
 {
     return fabs(a - b) < 1.0e-6;
 }
 
-static double sinc(double x)
+static float sinc(float x)
 {
     return fEqual(x, 0.0) ? 1.0 : sin(x * M_PI) / (x * M_PI);
 }
 
-void lanczos_init()
+#ifdef LANCZOS_SSE
+#ifdef _MSC_VER
+#include <intrin.h>
+#elif defined(__clang__) || defined(__GNUC__)
+static inline void
+__cpuid(int *data, int selector)
+{
+    asm("cpuid"
+        : "=a" (data[0]),
+        "=b" (data[1]),
+        "=c" (data[2]),
+        "=d" (data[3])
+        : "a"(selector));
+}
+#else
+#define __cpuid(a,b) memset((a), 0, sizeof(int) * 4)
+#endif
+
+static int query_cpu_feature_sse() {
+	int buffer[4];
+	__cpuid(buffer,1);
+	if ((buffer[3]&(1<<25)) == 0) return 0;
+	return 1;
+}
+
+static int lanczos_has_sse = 0;
+#endif
+
+void lanczos_init(void)
 {
     unsigned i;
-    double dx = (double)(LANCZOS_WIDTH) / LANCZOS_SAMPLES, x = 0.0;
+    float dx = (float)(LANCZOS_WIDTH) / LANCZOS_SAMPLES, x = 0.0;
     for (i = 0; i < LANCZOS_SAMPLES + 1; ++i, x += dx)
-        lanczos_lut[i] = abs(x) < LANCZOS_WIDTH ? sinc(x) * sinc(x / LANCZOS_WIDTH) : 0.0;
+        lanczos_lut[i] = fabs(x) < LANCZOS_WIDTH ? sinc(x) * sinc(x / LANCZOS_WIDTH) : 0.0;
+#ifdef LANCZOS_SSE
+    lanczos_has_sse = query_cpu_feature_sse();
+#endif
 }
 
 typedef struct lanczos_resampler
@@ -45,7 +80,7 @@ typedef struct lanczos_resampler
     int buffer_out[lanczos_buffer_size];
 } lanczos_resampler;
 
-void * lanczos_resampler_create()
+void * lanczos_resampler_create(void)
 {
     lanczos_resampler * r = ( lanczos_resampler * ) malloc( sizeof(lanczos_resampler) );
     if ( !r ) return 0;
@@ -67,9 +102,9 @@ void lanczos_resampler_delete(void * _r)
     free( _r );
 }
 
-void * lanczos_resampler_dup(void * _r)
+void * lanczos_resampler_dup(const void * _r)
 {
-    lanczos_resampler * r_in = ( lanczos_resampler * ) _r;
+    const lanczos_resampler * r_in = ( const lanczos_resampler * ) _r;
     lanczos_resampler * r_out = ( lanczos_resampler * ) malloc( sizeof(lanczos_resampler) );
     if ( !r_out ) return 0;
 
@@ -83,6 +118,21 @@ void * lanczos_resampler_dup(void * _r)
     memcpy( r_out->buffer_out, r_in->buffer_out, sizeof(r_in->buffer_out) );
 
     return r_out;
+}
+
+void lanczos_resampler_dup_inplace(void *_d, const void *_s)
+{
+    const lanczos_resampler * r_in = ( const lanczos_resampler * ) _s;
+    lanczos_resampler * r_out = ( lanczos_resampler * ) _d;
+
+    r_out->write_pos = r_in->write_pos;
+    r_out->write_filled = r_in->write_filled;
+    r_out->read_pos = r_in->read_pos;
+    r_out->read_filled = r_in->read_filled;
+    r_out->phase = r_in->phase;
+    r_out->phase_inc = r_in->phase_inc;
+    memcpy( r_out->buffer_in, r_in->buffer_in, sizeof(r_in->buffer_in) );
+    memcpy( r_out->buffer_out, r_in->buffer_out, sizeof(r_in->buffer_out) );
 }
 
 int lanczos_resampler_get_free_count(void *_r)
@@ -149,10 +199,10 @@ static int lanczos_resampler_run(lanczos_resampler * r, int ** out_, int * out_e
         do
         {
             // accumulate in extended precision
-            double kernel[LANCZOS_WIDTH * 2], kernel_sum = 0.0;
+            float kernel[LANCZOS_WIDTH * 2], kernel_sum = 0.0;
             int i = LANCZOS_WIDTH;
             int phase_adj = phase * step / LANCZOS_RESOLUTION;
-            double sample;
+            float sample;
 
             if ( out >= out_end )
                 break;
@@ -164,7 +214,7 @@ static int lanczos_resampler_run(lanczos_resampler * r, int ** out_, int * out_e
             }
             for (sample = 0, i = 0; i < LANCZOS_WIDTH * 2; ++i)
                 sample += in[i] * kernel[i];
-            *out++ = (int) (sample / kernel_sum * 256.0);
+            *out++ = (int)(sample / kernel_sum * 256.0);
 
             phase += phase_inc;
 
@@ -174,16 +224,89 @@ static int lanczos_resampler_run(lanczos_resampler * r, int ** out_, int * out_e
         }
         while ( in < in_end );
 
-        r->phase = phase;
+        r->phase = (unsigned short) phase;
         *out_ = out;
 
-        used = in - in_;
+        used = (int)(in - in_);
 
         r->write_filled -= used;
     }
 
     return used;
 }
+
+#ifdef LANCZOS_SSE
+static int lanczos_resampler_run_sse(lanczos_resampler * r, int ** out_, int * out_end)
+{
+    int in_size = r->write_filled;
+    float const* in_ = r->buffer_in + lanczos_buffer_size + r->write_pos - r->write_filled;
+    int used = 0;
+    in_size -= LANCZOS_WIDTH * 2;
+    if ( in_size > 0 )
+    {
+        int* out = *out_;
+        float const* in = in_;
+        float const* const in_end = in + in_size;
+        int phase = r->phase;
+        int phase_inc = r->phase_inc;
+        
+        int step = phase_inc > LANCZOS_RESOLUTION ? LANCZOS_RESOLUTION * LANCZOS_RESOLUTION / phase_inc : LANCZOS_RESOLUTION;
+        
+        do
+        {
+            // accumulate in extended precision
+            float kernel_sum = 0.0;
+            __m128 kernel[LANCZOS_WIDTH / 2];
+            __m128 temp1, temp2;
+            __m128 samplex = _mm_setzero_ps();
+            float *kernelf = (float*)(&kernel);
+            int i = LANCZOS_WIDTH;
+            int phase_adj = phase * step / LANCZOS_RESOLUTION;
+            
+            if ( out >= out_end )
+                break;
+            
+            for (; i >= -LANCZOS_WIDTH + 1; --i)
+            {
+                int pos = i * step;
+                kernel_sum += kernelf[i + LANCZOS_WIDTH - 1] = lanczos_lut[abs(phase_adj - pos)];
+            }
+            for (i = 0; i < LANCZOS_WIDTH / 2; ++i)
+            {
+                temp1 = _mm_loadu_ps( (const float *)( in + i * 4 ) );
+                temp2 = _mm_load_ps( (const float *)( kernel + i ) );
+                temp1 = _mm_mul_ps( temp1, temp2 );
+                samplex = _mm_add_ps( samplex, temp1 );
+            }
+            kernel_sum = 1.0 / kernel_sum * (1.0 / 32768.0);
+            temp1 = _mm_movehl_ps( temp1, samplex );
+            samplex = _mm_add_ps( samplex, temp1 );
+            temp1 = samplex;
+            temp1 = _mm_shuffle_ps( temp1, samplex, _MM_SHUFFLE(0, 0, 0, 1) );
+            samplex = _mm_add_ps( samplex, temp1 );
+            temp1 = _mm_set_ss( kernel_sum );
+            samplex = _mm_mul_ps( samplex, temp1 );
+            *out++ = _mm_cvtss_si32( samplex );
+            
+            phase += phase_inc;
+            
+            in += phase >> 13;
+            
+            phase &= 8191;
+        }
+        while ( in < in_end );
+        
+        r->phase = (unsigned short) phase;
+        *out_ = out;
+        
+        used = (int)(in - in_);
+        
+        r->write_filled -= used;
+    }
+    
+    return used;
+}
+#endif
 
 static void lanczos_resampler_fill(lanczos_resampler * r)
 {
@@ -195,7 +318,12 @@ static void lanczos_resampler_fill(lanczos_resampler * r)
         int * out = r->buffer_out + write_pos;
         if ( write_size > ( lanczos_buffer_size - r->read_filled ) )
             write_size = lanczos_buffer_size - r->read_filled;
-        lanczos_resampler_run( r, &out, out + write_size );
+#ifdef LANCZOS_SSE
+        if ( lanczos_has_sse )
+            lanczos_resampler_run_sse( r, &out, out + write_size );
+        else
+#endif
+            lanczos_resampler_run( r, &out, out + write_size );
         r->read_filled += out - r->buffer_out - write_pos;
     }
 }

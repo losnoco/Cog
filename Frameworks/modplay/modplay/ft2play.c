@@ -1,5 +1,5 @@
 /*
- ** FT2PLAY v0.34
+ ** FT2PLAY v0.35
  ** =============
  **
  ** C port of FastTracker II's replayer, by 8bitbubsy (Olav Sørensen)
@@ -1467,17 +1467,20 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
         outPeriod = (((oldPeriod + addPeriod) >> 1) & 0xFFE0) + fineTune;
         if (outPeriod < fineTune) outPeriod += (1 << 8);
         
-        if (inPeriod >= p->Note2Period[(outPeriod - 16) >> 1]) // 16-bit look-up, shift it down
+        if (((outPeriod - 16) >> 1) < ((12 * 10 * 16) + 16)) // non-FT2 security fix
         {
-            outPeriod -= fineTune;
-            if (outPeriod & 0x00010000) outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
-            addPeriod = (int16_t)(outPeriod);
-        }
-        else
-        {
-            outPeriod -= fineTune;
-            if (outPeriod & 0x00010000) outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
-            oldPeriod = (int16_t)(outPeriod);
+            if (inPeriod >= p->Note2Period[(outPeriod - 16) >> 1]) // 16-bit look-up, shift it down
+            {
+                outPeriod -= fineTune;
+                if (outPeriod & 0x00010000) outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
+                addPeriod = (int16_t)(outPeriod);
+            }
+            else
+            {
+                outPeriod -= fineTune;
+                if (outPeriod & 0x00010000) outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
+                oldPeriod = (int16_t)(outPeriod);
+            }
         }
     }
     
@@ -1486,7 +1489,6 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
     outPeriod += ((int16_t)(addNote) << 5);
     
     if (outPeriod >= ((((8 * 12 * 16) + 15) * 2) - 1)) outPeriod = ((8 * 12 * 16) + 15) * 2;
-    
     return (p->Note2Period[outPeriod >> 1]); // 16-bit look-up, shift it down
 }
 
@@ -2260,6 +2262,10 @@ static int8_t LoadInstrHeader(PLAYER *p, MEM *buf, uint16_t i)
             mread(&ih.Samp[j], 17, 1, buf);
             mseek(buf, 1 + 22, SEEK_CUR); // skip junk + name
             memcpy(&p->Instr[i]->Samp[j], &ih.Samp[j], 17);
+
+            // non-FT2 fix: Force loop flags off if loop length is 0
+            if (p->Instr[i]->Samp[j].RepL == 0)
+                p->Instr[i]->Samp[j].Typ &= 0xFC;
         }
     }
     
@@ -2681,13 +2687,6 @@ void voiceSetSource(PLAYER *p, uint8_t i, const int8_t *sampleData,
     p->voice[i].rampTerminates   = 0;
 #endif
     
-    // for 9xx set offset
-    if (p->voice[i].samplePosition >= p->voice[i].sampleLength)
-    {
-        p->voice[i].sampleData     = NULL;
-        p->voice[i].samplePosition = 0;
-    }
-    
     lanczos_resampler_clear(p->resampler[i]);
 #ifdef USE_VOL_RAMP
     lanczos_resampler_clear(p->resampler[i+254]);
@@ -2699,6 +2698,12 @@ void voiceSetSource(PLAYER *p, uint8_t i, const int8_t *sampleData,
 void voiceSetSamplePosition(PLAYER *p, uint8_t i, uint16_t value)
 {
     p->voice[i].samplePosition   = value;
+    if (p->voice[i].samplePosition >= p->voice[i].sampleLength)
+    {
+        p->voice[i].samplePosition = 0;
+        p->voice[i].sampleData     = NULL;
+    }
+    
     p->voice[i].interpolating    = 1;
     p->voice[i].oversampleCount  = 0;
     
