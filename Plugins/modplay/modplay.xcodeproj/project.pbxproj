@@ -11,6 +11,9 @@
 		835CBC8018DA7A3E0087A03E /* modplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC7C18DA7A090087A03E /* modplay.framework */; };
 		835CBC8518DACAE90087A03E /* libunmo3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 835CBC8318DACAE90087A03E /* libunmo3.dylib */; };
 		835CBC8818DACC2D0087A03E /* libunmo3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC8318DACAE90087A03E /* libunmo3.dylib */; };
+		8360B3FC18DD018B0059272F /* unrealfmt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8360B3F718DD018B0059272F /* unrealfmt.cpp */; };
+		8360B3FD18DD018B0059272F /* umx.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8360B3F918DD018B0059272F /* umx.mm */; };
+		8360B3FE18DD018B0059272F /* unrealfmtdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8360B3FB18DD018B0059272F /* unrealfmtdata.cpp */; };
 		83F4D51918D8206A009B2DE6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F4D51818D8206A009B2DE6 /* Cocoa.framework */; };
 		83F4D52318D8206A009B2DE6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83F4D52118D8206A009B2DE6 /* InfoPlist.strings */; };
 		83F4D58018D8238A009B2DE6 /* modDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F4D57F18D8238A009B2DE6 /* modDecoder.m */; };
@@ -60,6 +63,12 @@
 		835CBC7718DA7A090087A03E /* modplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = modplay.xcodeproj; path = ../../Frameworks/modplay/modplay.xcodeproj; sourceTree = "<group>"; };
 		835CBC8318DACAE90087A03E /* libunmo3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libunmo3.dylib; path = ../../../ThirdParty/BASS/libunmo3.dylib; sourceTree = "<group>"; };
 		835CBC8418DACAE90087A03E /* unmo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unmo3.h; path = ../../../ThirdParty/BASS/unmo3.h; sourceTree = "<group>"; };
+		8360B3F618DD018B0059272F /* umr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = umr.h; path = ../../Dumb/archive/umx/umr.h; sourceTree = "<group>"; };
+		8360B3F718DD018B0059272F /* unrealfmt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unrealfmt.cpp; path = ../../Dumb/archive/umx/unrealfmt.cpp; sourceTree = "<group>"; };
+		8360B3F818DD018B0059272F /* urf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = urf.h; path = ../../Dumb/archive/umx/urf.h; sourceTree = "<group>"; };
+		8360B3F918DD018B0059272F /* umx.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = umx.mm; path = ../../Dumb/archive/umx/umx.mm; sourceTree = "<group>"; };
+		8360B3FA18DD018B0059272F /* umx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = umx.h; path = ../../Dumb/archive/umx/umx.h; sourceTree = "<group>"; };
+		8360B3FB18DD018B0059272F /* unrealfmtdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unrealfmtdata.cpp; path = ../../Dumb/archive/umx/unrealfmtdata.cpp; sourceTree = "<group>"; };
 		83F4D51518D8206A009B2DE6 /* modplay.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = modplay.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83F4D51818D8206A009B2DE6 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83F4D51B18D8206A009B2DE6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -94,6 +103,37 @@
 				835CBC7C18DA7A090087A03E /* modplay.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8360B3FF18DD01910059272F /* unpackers */ = {
+			isa = PBXGroup;
+			children = (
+				8360B40118DD01A30059272F /* umx */,
+				8360B40018DD01970059272F /* mo3 */,
+			);
+			name = unpackers;
+			sourceTree = "<group>";
+		};
+		8360B40018DD01970059272F /* mo3 */ = {
+			isa = PBXGroup;
+			children = (
+				835CBC8318DACAE90087A03E /* libunmo3.dylib */,
+				835CBC8418DACAE90087A03E /* unmo3.h */,
+			);
+			name = mo3;
+			sourceTree = "<group>";
+		};
+		8360B40118DD01A30059272F /* umx */ = {
+			isa = PBXGroup;
+			children = (
+				8360B3F618DD018B0059272F /* umr.h */,
+				8360B3F718DD018B0059272F /* unrealfmt.cpp */,
+				8360B3F818DD018B0059272F /* urf.h */,
+				8360B3F918DD018B0059272F /* umx.mm */,
+				8360B3FA18DD018B0059272F /* umx.h */,
+				8360B3FB18DD018B0059272F /* unrealfmtdata.cpp */,
+			);
+			name = umx;
 			sourceTree = "<group>";
 		};
 		83F4D50C18D8206A009B2DE6 = {
@@ -136,8 +176,7 @@
 		83F4D51E18D8206A009B2DE6 /* modplay */ = {
 			isa = PBXGroup;
 			children = (
-				835CBC8318DACAE90087A03E /* libunmo3.dylib */,
-				835CBC8418DACAE90087A03E /* unmo3.h */,
+				8360B3FF18DD01910059272F /* unpackers */,
 				83F4D58218D823D1009B2DE6 /* PlaylistController.h */,
 				83F4D58118D8239D009B2DE6 /* Plugin.h */,
 				83F4D57E18D8238A009B2DE6 /* modDecoder.h */,
@@ -238,6 +277,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8360B3FC18DD018B0059272F /* unrealfmt.cpp in Sources */,
+				8360B3FD18DD018B0059272F /* umx.mm in Sources */,
+				8360B3FE18DD018B0059272F /* unrealfmtdata.cpp in Sources */,
 				83F4D58018D8238A009B2DE6 /* modDecoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,6 +14,8 @@
 
 #import "unmo3.h"
 
+#import "umx.h"
+
 #import "Plugin.h"
 
 enum

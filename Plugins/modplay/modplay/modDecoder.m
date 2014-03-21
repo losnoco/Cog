@@ -128,7 +128,7 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
     type = TYPE_UNKNOWN;
     
     dataWasMo3 = 0;
-    if ( memcmp( data, "MO3", 3 ) == 0 )
+    if ( size >= 3 && memcmp( data, "MO3", 3 ) == 0 )
     {
         void * in_data = data;
         unsigned usize = (unsigned) size;
@@ -138,6 +138,17 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
             data = in_data;
             size = usize;
             dataWasMo3 = 1;
+        }
+    }
+    else if ( size >= 4 && memcmp( data, "\xC1\x83\x2A\x9E", 4 ) == 0 )
+    {
+        long out_size = size;
+        void * out_data = unpackUmx( data, &out_size );
+        if ( out_data )
+        {
+            free( data );
+            data = out_data;
+            size = out_size;
         }
     }
     
@@ -319,7 +330,7 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
 
 + (NSArray *)fileTypes
 {	
-	return [NSArray arrayWithObjects:@"s3m", @"s3z", @"xm", @"xmz", @"mo3", nil];
+	return [NSArray arrayWithObjects:@"s3m", @"s3z", @"xm", @"xmz", @"mo3", @"umx", nil];
 }
 
 + (NSArray *)mimeTypes 
