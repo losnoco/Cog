@@ -140,78 +140,24 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
 						MIX_ALIAS( todo );
 						done -= check;
 					}
-				} else if (quality <= DUMB_RQ_LINEAR) {
-					/* Linear interpolation, backwards */
-					SRCTYPE xbuf[3*SRC_CHANNELS];
-					SRCTYPE *x = &xbuf[1*SRC_CHANNELS];
-					COPYSRC(xbuf, 0, resampler->X, 1);
-					COPYSRC(xbuf, 1, resampler->X, 2);
-					COPYSRC(xbuf, 2, src, pos);
-					while (todo && x < &xbuf[3*SRC_CHANNELS]) {
-						HEAVYASSERT(pos >= resampler->start);
-						MIX_LINEAR(+=, 1, 0, -1);
-						subpos += dt;
-						pos += subpos >> 16;
-						x -= (subpos >> 16) * SRC_CHANNELS;
-						subpos &= 65535;
-						todo--;
-					}
-					// TODO: use xstart for others too
-					x = &src[pos*SRC_CHANNELS];
-					LOOP4(todo,
-						HEAVYASSERT(pos >= resampler->start);
-						MIX_LINEAR(+=, 1, 1, 2);
-						subpos += dt;
-						pos += subpos >> 16;
-						x += (subpos >> 16) * SRC_CHANNELS;
-						subpos &= 65535;
-					);
-                                } else if (quality <= DUMB_RQ_CUBIC) {
-					/* Cubic interpolation, backwards */
-					SRCTYPE xbuf[6*SRC_CHANNELS];
-					SRCTYPE *x = &xbuf[3*SRC_CHANNELS];
-					COPYSRC(xbuf, 0, resampler->X, 0);
-					COPYSRC(xbuf, 1, resampler->X, 1);
-					COPYSRC(xbuf, 2, resampler->X, 2);
-					COPYSRC(xbuf, 3, src, pos);
-					if (pos-1 >= resampler->start) COPYSRC(xbuf, 4, src, pos-1);
-					if (pos-2 >= resampler->start) COPYSRC(xbuf, 5, src, pos-2);
-					while (todo && x < &xbuf[6*SRC_CHANNELS]) {
-						HEAVYASSERT(pos >= resampler->start);
-						MIX_CUBIC(+=, 1, x, x, 0, -1, -2, -3);
-						subpos += dt;
-						pos += subpos >> 16;
-						x -= (subpos >> 16) * SRC_CHANNELS;
-						subpos &= 65535;
-						todo--;
-					}
-					x = &src[pos*SRC_CHANNELS];
-					LOOP4(todo,
-						HEAVYASSERT(pos >= resampler->start);
-						MIX_CUBIC(+=, 1, x, x, 0, 1, 2, 3);
-						subpos += dt;
-						pos += subpos >> 16;
-						x += (subpos >> 16) * SRC_CHANNELS;
-						subpos &= 65535;
-					);
                                 } else {
                                     /* FIR resampling, backwards */
                                     SRCTYPE *x;
                                     if ( resampler->fir_resampler_ratio != delta ) {
-                                        sinc_resampler_set_rate( resampler->fir_resampler[0], delta );
-                                        sinc_resampler_set_rate( resampler->fir_resampler[1], delta );
+                                        resampler_set_rate( resampler->fir_resampler[0], delta );
+                                        resampler_set_rate( resampler->fir_resampler[1], delta );
                                         resampler->fir_resampler_ratio = delta;
                                     }
                                     x = &src[pos*SRC_CHANNELS];
                                     while ( todo ) {
-                                            while ( sinc_resampler_get_free_count( resampler->fir_resampler[0] ) &&
+                                            while ( resampler_get_free_count( resampler->fir_resampler[0] ) &&
                                                     pos >= resampler->start )
                                             {
                                                     POKE_FIR(0);
                                                     pos--;
                                                     x -= SRC_CHANNELS;
                                             }
-                                            if ( !sinc_resampler_get_sample_count( resampler->fir_resampler[0] ) ) break;
+                                            if ( !resampler_get_sample_count( resampler->fir_resampler[0] ) ) break;
                                             MIX_FIR;
                                             ADVANCE_FIR;
                                             --todo;
@@ -273,77 +219,24 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
 						MIX_ALIAS( todo );
 						done -= check;
 					}
-				} else if (quality <= DUMB_RQ_LINEAR) {
-					/* Linear interpolation, forwards */
-					SRCTYPE xbuf[3*SRC_CHANNELS];
-					SRCTYPE *x = &xbuf[1*SRC_CHANNELS];
-					COPYSRC(xbuf, 0, resampler->X, 1);
-					COPYSRC(xbuf, 1, resampler->X, 2);
-					COPYSRC(xbuf, 2, src, pos);
-					while (todo && x < &xbuf[3*SRC_CHANNELS]) {
-						HEAVYASSERT(pos < resampler->end);
-						MIX_LINEAR(+=, 1, -1, 0);
-						subpos += dt;
-						pos += subpos >> 16;
-						x += (subpos >> 16) * SRC_CHANNELS;
-						subpos &= 65535;
-						todo--;
-					}
-					x = &src[pos*SRC_CHANNELS];
-					LOOP4(todo,
-						HEAVYASSERT(pos < resampler->end);
-						MIX_LINEAR(+=, 1, -2, -1);
-						subpos += dt;
-						pos += subpos >> 16;
-						x += (subpos >> 16) * SRC_CHANNELS;
-						subpos &= 65535;
-					);
-                                } else if (quality <= DUMB_RQ_CUBIC) {
-					/* Cubic interpolation, forwards */
-					SRCTYPE xbuf[6*SRC_CHANNELS];
-					SRCTYPE *x = &xbuf[3*SRC_CHANNELS];
-					COPYSRC(xbuf, 0, resampler->X, 0);
-					COPYSRC(xbuf, 1, resampler->X, 1);
-					COPYSRC(xbuf, 2, resampler->X, 2);
-					COPYSRC(xbuf, 3, src, pos);
-					if (pos+1 < resampler->end) COPYSRC(xbuf, 4, src, pos+1);
-					if (pos+2 < resampler->end) COPYSRC(xbuf, 5, src, pos+2);
-					while (todo && x < &xbuf[6*SRC_CHANNELS]) {
-						HEAVYASSERT(pos < resampler->end);
-						MIX_CUBIC(+=, 1, x, x, -3, -2, -1, 0);
-						subpos += dt;
-						pos += subpos >> 16;
-						x += (subpos >> 16) * SRC_CHANNELS;
-						subpos &= 65535;
-						todo--;
-					}
-					x = &src[pos*SRC_CHANNELS];
-					LOOP4(todo,
-						HEAVYASSERT(pos < resampler->end);
-						MIX_CUBIC(+=, 1, x, x, -3, -2, -1, 0);
-						subpos += dt;
-						pos += subpos >> 16;
-						x += (subpos >> 16) * SRC_CHANNELS;
-						subpos &= 65535;
-					);
                                 } else {
                                     /* FIR resampling, forwards */
                                     SRCTYPE *x;
                                     if ( resampler->fir_resampler_ratio != delta ) {
-                                        sinc_resampler_set_rate( resampler->fir_resampler[0], delta );
-                                        sinc_resampler_set_rate( resampler->fir_resampler[1], delta );
+                                        resampler_set_rate( resampler->fir_resampler[0], delta );
+                                        resampler_set_rate( resampler->fir_resampler[1], delta );
                                         resampler->fir_resampler_ratio = delta;
                                     }
                                     x = &src[pos*SRC_CHANNELS];
                                     while ( todo ) {
-                                            while ( sinc_resampler_get_free_count( resampler->fir_resampler[0] ) &&
+                                            while ( resampler_get_free_count( resampler->fir_resampler[0] ) &&
                                                     pos < resampler->end )
                                             {
                                                     POKE_FIR(0);
                                                     pos++;
                                                     x += SRC_CHANNELS;
                                             }
-                                            if ( !sinc_resampler_get_sample_count( resampler->fir_resampler[0] ) ) break;
+                                            if ( !resampler_get_sample_count( resampler->fir_resampler[0] ) ) break;
                                             MIX_FIR;
                                             ADVANCE_FIR;
                                             --todo;
@@ -409,12 +302,6 @@ void dumb_resample_get_current_sample(DUMB_RESAMPLER *resampler, VOLUME_PARAMETE
 		if (quality <= DUMB_RQ_ALIASING) {
 			/* Aliasing, backwards */
 			PEEK_ALIAS;
-		} else if (quality <= DUMB_RQ_LINEAR) {
-			/* Linear interpolation, backwards */
-			MIX_LINEAR(=, 0, 2, 1);
-                } else if (quality <= DUMB_RQ_CUBIC) {
-			/* Cubic interpolation, backwards */
-			MIX_CUBIC(=, 0, src, x, pos, 2, 1, 0);
                 } else {
                         /* FIR resampling, backwards */
                         PEEK_FIR;
@@ -424,12 +311,6 @@ void dumb_resample_get_current_sample(DUMB_RESAMPLER *resampler, VOLUME_PARAMETE
 		if (quality <= DUMB_RQ_ALIASING) {
 			/* Aliasing */
 			PEEK_ALIAS;
-		} else if (quality <= DUMB_RQ_LINEAR) {
-			/* Linear interpolation, forwards */
-			MIX_LINEAR(=, 0, 1, 2);
-                } else if (quality <= DUMB_RQ_CUBIC) {
-			/* Cubic interpolation, forwards */
-			MIX_CUBIC(=, 0, x, src, 0, 1, 2, pos);
                 } else {
                         /* FIR resampling, forwards */
                         PEEK_FIR;

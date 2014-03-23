@@ -27,7 +27,7 @@
 #include "internal/lpc.h"
 
 #include "internal/blip_buf.h"
-#include "internal/sinc_resampler.h"
+#include "internal/resampler.h"
 
 // #define BIT_ARRAY_BULLSHIT
 
@@ -52,16 +52,16 @@ static IT_PLAYING *new_playing()
 		blip_set_rates(r->resampler.blip_buffer[0], 65536, 1);
 		blip_set_rates(r->resampler.blip_buffer[1], 65536, 1);
 		r->resampler.fir_resampler_ratio = 0.0;
-		r->resampler.fir_resampler[0] = sinc_resampler_create();
+		r->resampler.fir_resampler[0] = resampler_create();
 		if ( !r->resampler.fir_resampler[0] ) {
 			free( r->resampler.blip_buffer[1] );
 			free( r->resampler.blip_buffer[0] );
 			free( r );
 			return NULL;
 		}
-		r->resampler.fir_resampler[1] = sinc_resampler_create();
+		r->resampler.fir_resampler[1] = resampler_create();
 		if ( !r->resampler.fir_resampler[1] ) {
-			sinc_resampler_delete( r->resampler.fir_resampler[0] );
+			resampler_delete( r->resampler.fir_resampler[0] );
 			free( r->resampler.blip_buffer[1] );
 			free( r->resampler.blip_buffer[0] );
 			free( r );
@@ -73,8 +73,8 @@ static IT_PLAYING *new_playing()
 
 static void free_playing(IT_PLAYING * r)
 {
-	sinc_resampler_delete( r->resampler.fir_resampler[1] );
-	sinc_resampler_delete( r->resampler.fir_resampler[0] );
+	resampler_delete( r->resampler.fir_resampler[1] );
+	resampler_delete( r->resampler.fir_resampler[0] );
 	blip_delete( r->resampler.blip_buffer[1] );
 	blip_delete( r->resampler.blip_buffer[0] );
 	free( r );
@@ -180,16 +180,16 @@ static IT_PLAYING *dup_playing(IT_PLAYING *src, IT_CHANNEL *dstchannel, IT_CHANN
 		return NULL;
 	}
 	dst->resampler.fir_resampler_ratio = src->resampler.fir_resampler_ratio;
-	dst->resampler.fir_resampler[0] = sinc_resampler_dup( src->resampler.fir_resampler[0] );
+	dst->resampler.fir_resampler[0] = resampler_dup( src->resampler.fir_resampler[0] );
 	if ( !dst->resampler.fir_resampler[0] ) {
 		blip_delete( dst->resampler.blip_buffer[1] );
 		blip_delete( dst->resampler.blip_buffer[0] );
 		free( dst );
 		return NULL;
 	}
-	dst->resampler.fir_resampler[1] = sinc_resampler_dup( src->resampler.fir_resampler[1] );
+	dst->resampler.fir_resampler[1] = resampler_dup( src->resampler.fir_resampler[1] );
 	if ( !dst->resampler.fir_resampler[1] ) {
-		sinc_resampler_delete( dst->resampler.fir_resampler[0] );
+		resampler_delete( dst->resampler.fir_resampler[0] );
 		blip_delete( dst->resampler.blip_buffer[1] );
 		blip_delete( dst->resampler.blip_buffer[0] );
 		free( dst );
@@ -4660,6 +4660,8 @@ static long render_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playing
 		if (playing->sample->max_resampling_quality >= 0 && quality > playing->sample->max_resampling_quality)
 			quality = playing->sample->max_resampling_quality;
 		playing->resampler.quality = quality;
+                resampler_set_quality(playing->resampler.fir_resampler[0], quality);
+                resampler_set_quality(playing->resampler.fir_resampler[1], quality);
 	}
 
 	bits = playing->sample->flags & IT_SAMPLE_16BIT ? 16 : 8;
@@ -5335,6 +5337,8 @@ void dumb_it_set_resampling_quality(DUMB_IT_SIGRENDERER * sigrenderer, int quali
 				IT_PLAYING * playing = sigrenderer->channel[i].playing;
 				playing->resampling_quality = quality;
 				playing->resampler.quality = quality;
+                                resampler_set_quality(playing->resampler.fir_resampler[0], quality);
+                                resampler_set_quality(playing->resampler.fir_resampler[1], quality);
 			}
 		}
 		for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
@@ -5342,6 +5346,8 @@ void dumb_it_set_resampling_quality(DUMB_IT_SIGRENDERER * sigrenderer, int quali
 				IT_PLAYING * playing = sigrenderer->playing[i];
 				playing->resampling_quality = quality;
 				playing->resampler.quality = quality;
+                                resampler_set_quality(playing->resampler.fir_resampler[0], quality);
+                                resampler_set_quality(playing->resampler.fir_resampler[1], quality);
 			}
 		}
 	}
