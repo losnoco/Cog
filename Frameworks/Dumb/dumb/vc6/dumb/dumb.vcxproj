@@ -112,7 +112,7 @@
     <ClCompile Include="..\..\src\helpers\blip_buf.c" />
     <ClCompile Include="..\..\src\helpers\clickrem.c" />
     <ClCompile Include="..\..\src\helpers\fir_resampler.c" />
-    <ClCompile Include="..\..\src\helpers\lanczos_resampler.c" />
+    <ClCompile Include="..\..\src\helpers\sinc_resampler.c" />
     <ClCompile Include="..\..\src\helpers\lpc.c" />
     <ClCompile Include="..\..\src\helpers\memfile.c" />
     <ClCompile Include="..\..\src\helpers\resample.c" />
@@ -209,7 +209,7 @@
     <ClInclude Include="..\..\include\internal\dumbfile.h" />
     <ClInclude Include="..\..\include\internal\fir_resampler.h" />
     <ClInclude Include="..\..\include\internal\it.h" />
-    <ClInclude Include="..\..\include\internal\lanczos_resampler.h" />
+    <ClInclude Include="..\..\include\internal\sinc_resampler.h" />
     <ClInclude Include="..\..\include\internal\lpc.h" />
     <ClInclude Include="..\..\include\internal\riff.h" />
     <ClInclude Include="..\..\include\internal\stack_alloc.h" />

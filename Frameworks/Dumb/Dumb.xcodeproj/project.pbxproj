@@ -56,7 +56,7 @@
 		8370B62C17F60FE2001A4D7A /* stack_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B62417F60FE2001A4D7A /* stack_alloc.h */; };
 		8370B62D17F60FE2001A4D7A /* tarray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B62517F60FE2001A4D7A /* tarray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8370B63417F61001001A4D7A /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B62E17F61001001A4D7A /* barray.c */; };
-		8370B63617F61001001A4D7A /* lanczos_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B63017F61001001A4D7A /* lanczos_resampler.c */; };
+		8370B63617F61001001A4D7A /* sinc_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B63017F61001001A4D7A /* sinc_resampler.c */; };
 		8370B63717F61001001A4D7A /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B63117F61001001A4D7A /* lpc.c */; };
 		8370B63817F61001001A4D7A /* riff.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B63217F61001001A4D7A /* riff.c */; };
 		8370B63917F61001001A4D7A /* tarray.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B63317F61001001A4D7A /* tarray.c */; };
@@ -101,7 +101,7 @@
 		8370B68917F61038001A4D7A /* readriff.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B66017F61038001A4D7A /* readriff.c */; };
 		8370B68A17F61038001A4D7A /* readstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B66117F61038001A4D7A /* readstm.c */; };
 		8370B68B17F61038001A4D7A /* readstm2.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B66217F61038001A4D7A /* readstm2.c */; };
-		8370B7EA17F62A40001A4D7A /* lanczos_resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B7E817F62A40001A4D7A /* lanczos_resampler.h */; };
+		8370B7EA17F62A40001A4D7A /* sinc_resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B7E817F62A40001A4D7A /* sinc_resampler.h */; };
 		83C8DF1D18C6B31400750AF7 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8DF1C18C6B31400750AF7 /* blip_buf.c */; };
 		83C8DF1F18C6B32100750AF7 /* blip_buf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8DF1E18C6B32100750AF7 /* blip_buf.h */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -165,7 +165,7 @@
 		8370B62417F60FE2001A4D7A /* stack_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack_alloc.h; sourceTree = "<group>"; };
 		8370B62517F60FE2001A4D7A /* tarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tarray.h; sourceTree = "<group>"; };
 		8370B62E17F61001001A4D7A /* barray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = barray.c; sourceTree = "<group>"; };
-		8370B63017F61001001A4D7A /* lanczos_resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lanczos_resampler.c; sourceTree = "<group>"; };
+		8370B63017F61001001A4D7A /* sinc_resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sinc_resampler.c; sourceTree = "<group>"; };
 		8370B63117F61001001A4D7A /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lpc.c; sourceTree = "<group>"; };
 		8370B63217F61001001A4D7A /* riff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = riff.c; sourceTree = "<group>"; };
 		8370B63317F61001001A4D7A /* tarray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tarray.c; sourceTree = "<group>"; };
@@ -210,7 +210,7 @@
 		8370B66017F61038001A4D7A /* readriff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readriff.c; sourceTree = "<group>"; };
 		8370B66117F61038001A4D7A /* readstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readstm.c; sourceTree = "<group>"; };
 		8370B66217F61038001A4D7A /* readstm2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readstm2.c; sourceTree = "<group>"; };
-		8370B7E817F62A40001A4D7A /* lanczos_resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lanczos_resampler.h; sourceTree = "<group>"; };
+		8370B7E817F62A40001A4D7A /* sinc_resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sinc_resampler.h; sourceTree = "<group>"; };
 		83C8DF1C18C6B31400750AF7 /* blip_buf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blip_buf.c; sourceTree = "<group>"; };
 		83C8DF1E18C6B32100750AF7 /* blip_buf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blip_buf.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -308,7 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				83C8DF1E18C6B32100750AF7 /* blip_buf.h */,
-				8370B7E817F62A40001A4D7A /* lanczos_resampler.h */,
+				8370B7E817F62A40001A4D7A /* sinc_resampler.h */,
 				8370B61E17F60FE2001A4D7A /* barray.h */,
 				8370B62017F60FE2001A4D7A /* dumbfile.h */,
 				8370B62217F60FE2001A4D7A /* lpc.h */,
@@ -356,7 +356,7 @@
 			children = (
 				83C8DF1C18C6B31400750AF7 /* blip_buf.c */,
 				8370B62E17F61001001A4D7A /* barray.c */,
-				8370B63017F61001001A4D7A /* lanczos_resampler.c */,
+				8370B63017F61001001A4D7A /* sinc_resampler.c */,
 				8370B63117F61001001A4D7A /* lpc.c */,
 				8370B63217F61001001A4D7A /* riff.c */,
 				8370B63317F61001001A4D7A /* tarray.c */,
@@ -454,7 +454,7 @@
 				8370B62617F60FE2001A4D7A /* barray.h in Headers */,
 				17C8F63E0CBEE797008D969D /* dumb.h in Headers */,
 				17C8F6400CBEE797008D969D /* it.h in Headers */,
-				8370B7EA17F62A40001A4D7A /* lanczos_resampler.h in Headers */,
+				8370B7EA17F62A40001A4D7A /* sinc_resampler.h in Headers */,
 				17C8F63F0CBEE797008D969D /* dumb.h in Headers */,
 				8370B62B17F60FE2001A4D7A /* riff.h in Headers */,
 				8370B62A17F60FE2001A4D7A /* lpc.h in Headers */,
@@ -567,7 +567,7 @@
 				8370B66417F61038001A4D7A /* load6692.c in Sources */,
 				17C8F6560CBEE797008D969D /* itload.c in Sources */,
 				17C8F6570CBEE797008D969D /* itload2.c in Sources */,
-				8370B63617F61001001A4D7A /* lanczos_resampler.c in Sources */,
+				8370B63617F61001001A4D7A /* sinc_resampler.c in Sources */,
 				17C8F6580CBEE797008D969D /* itmisc.c in Sources */,
 				8370B67517F61038001A4D7A /* loadriff.c in Sources */,
 				8370B66917F61038001A4D7A /* loadasy.c in Sources */,

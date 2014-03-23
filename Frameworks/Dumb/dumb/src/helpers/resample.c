@@ -46,7 +46,7 @@
 #include "dumb.h"
 
 #include "internal/blip_buf.h"
-#include "internal/lanczos_resampler.h"
+#include "internal/sinc_resampler.h"
 
 
 
@@ -171,7 +171,7 @@ void _dumb_init_cubic(void)
 		cubicA1[t] =  (int)(3*t*t*t >> 17) - (int)(5*t*t >> 7)                 + (int)(1 << 14);
 	}
 
-    lanczos_init();
+	sinc_init();
 
 	done = 1;
 }
