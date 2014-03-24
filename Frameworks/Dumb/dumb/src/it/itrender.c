@@ -1799,7 +1799,7 @@ static void it_retrigger_note(DUMB_IT_SIGRENDERER *sigrenderer, IT_CHANNEL *chan
 
 		switch (nna) {
 			case NNA_NOTE_CUT:
-				channel->playing->declick_stage = 2;
+				channel->playing->declick_stage = 3;
 				break;
 			case NNA_NOTE_OFF:
 				it_note_off(channel->playing);
@@ -1848,7 +1848,7 @@ static void it_retrigger_note(DUMB_IT_SIGRENDERER *sigrenderer, IT_CHANNEL *chan
 						switch (playing->instrument->dup_check_action)
 						{
 						case DCA_NOTE_CUT:
-							playing->declick_stage = 2;
+							playing->declick_stage = 3;
 							if (channel->playing == playing) channel->playing = NULL;
 							break;
 						case DCA_NOTE_OFF:
@@ -2786,7 +2786,7 @@ Yxy             This uses a table 4 times larger (hence 4 times slower) than
 											IT_PLAYING * playing = sigrenderer->playing[i];
 											if (playing && channel == playing->channel)
 											{
-												playing->declick_stage = 2;
+												playing->declick_stage = 3;
 												if (channel->playing == playing) channel->playing = NULL;
 											}
 										}
@@ -3373,7 +3373,7 @@ static void process_xm_note_data(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *ent
 					int i;
 					for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 						if (!sigrenderer->playing[i]) {
-							channel->playing->declick_stage = 2;
+							channel->playing->declick_stage = 3;
 							sigrenderer->playing[i] = channel->playing;
 							channel->playing = NULL;
 							break;
@@ -3430,7 +3430,7 @@ static void process_xm_note_data(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *ent
 				}
 				for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 					if (!sigrenderer->playing[i]) {
-						channel->playing->declick_stage = 2;
+						channel->playing->declick_stage = 3;
 						sigrenderer->playing[i] = channel->playing;
 						channel->playing = NULL;
 						break;
@@ -3475,7 +3475,7 @@ static void process_xm_note_data(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *ent
 				playing = NULL;
 				for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 					if (!sigrenderer->playing[i]) {
-						ptemp->declick_stage = 2;
+						ptemp->declick_stage = 3;
 						ptemp->flags |= IT_PLAYING_SUSTAINOFF | IT_PLAYING_FADING;
 						sigrenderer->playing[i] = ptemp;
 						ptemp = NULL;
@@ -3699,7 +3699,7 @@ static void update_tick_counts(DUMB_IT_SIGRENDERER *sigrenderer)
 					int i;
 					for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 						if (!sigrenderer->playing[i]) {
-							channel->playing->declick_stage = 2;
+							channel->playing->declick_stage = 3;
 							sigrenderer->playing[i] = channel->playing;
 							channel->playing = NULL;
 							break;
@@ -3949,16 +3949,14 @@ static void playing_volume_setup(DUMB_IT_SIGRENDERER * sigrenderer, IT_PLAYING *
         playing->ramp_volume[0] = 0;
         playing->ramp_volume[1] = 0;
         rampScale = 48;
-    } else if (playing->declick_stage == 2) {
-        playing->ramp_volume[0] = playing->float_volume[0];
-        playing->ramp_volume[1] = playing->float_volume[1];
-        playing->float_volume[0] = 0;
-        playing->float_volume[1] = 0;
         playing->declick_stage++;
+    } else if (playing->declick_stage == 1) {
         rampScale = 48;
     } else if (playing->declick_stage >= 3) {
         playing->float_volume[0] = 0;
         playing->float_volume[1] = 0;
+        if (playing->declick_stage == 3)
+            playing->declick_stage++;
         rampScale = 48;
     }
     playing->ramp_delta[0] = rampScale * invt2g * (playing->float_volume[0] - playing->ramp_volume[0]);
@@ -4175,7 +4173,7 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 				//if ((sigrenderer->channel[i].playing->flags & (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) == (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) {
 				// This change was made so Gxx would work correctly when a note faded out or whatever. Let's hope nothing else was broken by it.
 				if ((sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD) ||
-                    (sigrenderer->channel[i].playing->declick_stage > 3)) {
+                    (sigrenderer->channel[i].playing->declick_stage > 4)) {
 					free_playing(sigrenderer->channel[i].playing);
 					sigrenderer->channel[i].playing = NULL;
 				}
@@ -4187,7 +4185,7 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 		if (sigrenderer->playing[i]) {
 			process_playing(sigrenderer, sigrenderer->playing[i], invt2g);
 			if ((sigrenderer->playing[i]->flags & IT_PLAYING_DEAD) ||
-                (sigrenderer->playing[i]->declick_stage > 3)) {
+                (sigrenderer->playing[i]->declick_stage > 4)) {
 				free_playing(sigrenderer->playing[i]);
 				sigrenderer->playing[i] = NULL;
 			}
@@ -4679,7 +4677,7 @@ static long render_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playing
 		lvol.target = playing->float_volume [0];
 		rvol.target = playing->float_volume [1];
 		rvol.mix = lvol.mix = volume;
-        lvol.declick_stage = rvol.declick_stage = &(playing->declick_stage);
+        lvol.declick_stage = rvol.declick_stage = playing->declick_stage;
 		if (sigrenderer->n_channels >= 2) {
 			if (playing->sample->flags & IT_SAMPLE_STEREO) {
 				if (sigrenderer->click_remover) {
@@ -4755,6 +4753,7 @@ static long render_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playing
 		}
 		playing->ramp_volume [0] = lvol.volume;
 		playing->ramp_volume [1] = rvol.volume;
+        playing->declick_stage = (lvol.declick_stage > rvol.declick_stage) ? lvol.declick_stage : rvol.declick_stage;
 		(*left_to_mix)--;
 	}
 
@@ -4944,10 +4943,7 @@ static void render_normal(DUMB_IT_SIGRENDERER *sigrenderer, float volume, float 
 		if (sigrenderer->channel[i].playing) {
 			//if ((sigrenderer->channel[i].playing->flags & (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) == (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) {
 			// This change was made so Gxx would work correctly when a note faded out or whatever. Let's hope nothing else was broken by it.
-			if (
-#ifdef RAMP_DOWN
-			(sigrenderer->channel[i].playing->declick_stage == 3) || 
-#endif
+			if ((sigrenderer->channel[i].playing->declick_stage > 4) ||
 			(sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD)) {
 				free_playing(sigrenderer->channel[i].playing);
 				sigrenderer->channel[i].playing = NULL;
@@ -4957,10 +4953,7 @@ static void render_normal(DUMB_IT_SIGRENDERER *sigrenderer, float volume, float 
 
 	for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 		if (sigrenderer->playing[i]) {
-			if (
-#ifdef RAMP_DOWN
-				(sigrenderer->playing[i]->declick_stage == 3) ||
-#endif
+			if ((sigrenderer->playing[i]->declick_stage > 4) ||
 				(sigrenderer->playing[i]->flags & IT_PLAYING_DEAD)) {
 				free_playing(sigrenderer->playing[i]);
 				sigrenderer->playing[i] = NULL;
@@ -5105,10 +5098,7 @@ static void render_surround(DUMB_IT_SIGRENDERER *sigrenderer, float volume, floa
 		if (sigrenderer->channel[i].playing) {
 			//if ((sigrenderer->channel[i].playing->flags & (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) == (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) {
 			// This change was made so Gxx would work correctly when a note faded out or whatever. Let's hope nothing else was broken by it.
-			if (
-#ifdef RAMP_DOWN
-			(sigrenderer->channel[i].playing->declick_stage == 3) || 
-#endif
+			if ((sigrenderer->channel[i].playing->declick_stage > 4) ||
 			(sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD)) {
 				free_playing(sigrenderer->channel[i].playing);
 				sigrenderer->channel[i].playing = NULL;
@@ -5118,10 +5108,7 @@ static void render_surround(DUMB_IT_SIGRENDERER *sigrenderer, float volume, floa
 
 	for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 		if (sigrenderer->playing[i]) {
-			if (
-#ifdef RAMP_DOWN
-				(sigrenderer->playing[i]->declick_stage == 3) ||
-#endif
+			if ((sigrenderer->playing[i]->declick_stage > 4) ||
 				(sigrenderer->playing[i]->flags & IT_PLAYING_DEAD)) {
 				free_playing(sigrenderer->playing[i]);
 				sigrenderer->playing[i] = NULL;

@@ -132,44 +132,10 @@ int dumb_resampling_quality = DUMB_RQ_CUBIC;
 
 
 
-/* Cubic resampler: look-up tables
- *
- * a = 1.5*x1 - 1.5*x2 + 0.5*x3 - 0.5*x0
- * b = 2*x2 + x0 - 2.5*x1 - 0.5*x3
- * c = 0.5*x2 - 0.5*x0
- * d = x1
- *
- * x = a*t*t*t + b*t*t + c*t + d
- *   = (-0.5*x0 + 1.5*x1 - 1.5*x2 + 0.5*x3) * t*t*t +
- *     (   1*x0 - 2.5*x1 + 2  *x2 - 0.5*x3) * t*t +
- *     (-0.5*x0          + 0.5*x2         ) * t +
- *     (            1*x1                  )
- *   = (-0.5*t*t*t + 1  *t*t - 0.5*t    ) * x0 +
- *     ( 1.5*t*t*t - 2.5*t*t         + 1) * x1 +
- *     (-1.5*t*t*t + 2  *t*t + 0.5*t    ) * x2 +
- *     ( 0.5*t*t*t - 0.5*t*t            ) * x3
- *   = A0(t) * x0 + A1(t) * x1 + A2(t) * x2 + A3(t) * x3
- *
- * A0, A1, A2 and A3 stay within the range [-1,1].
- * In the tables, they are scaled with 14 fractional bits.
- *
- * Turns out we don't need to store A2 and A3; they are symmetrical to A1 and A0.
- *
- * TODO: A0 and A3 stay very small indeed. Consider different scale/resolution?
- */
-
-static short cubicA0[1025], cubicA1[1025];
-
 void _dumb_init_cubic(void)
 {
-	unsigned int t; /* 3*1024*1024*1024 is within range if it's unsigned */
 	static int done = 0;
 	if (done) return;
-	for (t = 0; t < 1025; t++) {
-		/* int casts to pacify warnings about negating unsigned values */
-		cubicA0[t] = -(int)(  t*t*t >> 17) + (int)(  t*t >> 6) - (int)(t << 3);
-		cubicA1[t] =  (int)(3*t*t*t >> 17) - (int)(5*t*t >> 7)                 + (int)(1 << 14);
-	}
 
 	resampler_init();
 

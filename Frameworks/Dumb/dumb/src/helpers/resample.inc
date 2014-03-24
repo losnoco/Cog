@@ -114,9 +114,9 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
 		if ((vol##d < 0 && vol##r <= vol##t) ||                    \
 			(vol##d > 0 && vol##r >= vol##t)) {                    \
 			pvol->volume = pvol->target;                           \
-            if ( *pvol->declick_stage == 0 ||                      \
-                 *pvol->declick_stage >= 3)                        \
-                 (*pvol->declick_stage)++;                         \
+            if ( pvol->declick_stage == 0 ||                       \
+                 pvol->declick_stage >= 3)                         \
+                 pvol->declick_stage++;                            \
 			pvol = NULL;                                           \
 			vol = MULSCV( vol##t, vol##m );                        \
 		} else {                                                   \

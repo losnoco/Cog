@@ -712,7 +712,7 @@ struct DUMB_VOLUME_RAMP_INFO
 	float delta;
 	float target;
 	float mix;
-    unsigned char * declick_stage;
+    unsigned char declick_stage;
 };
 
 void dumb_reset_resampler(DUMB_RESAMPLER *resampler, sample_t *src, int src_channels, long pos, long start, long end, int quality);
