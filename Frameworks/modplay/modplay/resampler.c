@@ -76,9 +76,12 @@ void resampler_init(void)
     for (i = 0; i < SINC_SAMPLES + 1; ++i, x += dx)
     {
         float y = x / SINC_WIDTH;
-#if 1
+#if 0
         // Blackman
         float window = 0.42659 - 0.49656 * cos(M_PI + M_PI * y) + 0.076849 * cos(2.0 * M_PI * y);
+#elif 1
+        // Nuttal 3 term
+        float window = 0.40897 + 0.5 * cos(M_PI * y) + 0.09103 * cos(2.0 * M_PI * y);
 #elif 0
         // C.R.Helmrich's 2 term window
         float window = 0.79445 * cos(0.5 * M_PI * y) + 0.20555 * cos(1.5 * M_PI * y);
@@ -118,8 +121,8 @@ void * resampler_create(void)
     resampler * r = ( resampler * ) malloc( sizeof(resampler) );
     if ( !r ) return 0;
 
-    r->write_pos = 0;
-    r->write_filled = 0;
+    r->write_pos = SINC_WIDTH - 1;
+    r->write_filled = SINC_WIDTH - 1;
     r->read_pos = 0;
     r->read_filled = 0;
     r->phase = 0;
@@ -215,11 +218,13 @@ int resampler_ready(void *_r)
 void resampler_clear(void *_r)
 {
     resampler * r = ( resampler * ) _r;
-    r->write_pos = 0;
-    r->write_filled = 0;
+    r->write_pos = SINC_WIDTH - 1;
+    r->write_filled = SINC_WIDTH - 1;
     r->read_pos = 0;
     r->read_filled = 0;
     r->phase = 0;
+	memset(r->buffer_in, 0, (SINC_WIDTH - 1) * sizeof(r->buffer_in[0]));
+	memset(r->buffer_in + resampler_buffer_size, 0, (SINC_WIDTH - 1) * sizeof(r->buffer_in[0]));
 }
 
 void resampler_set_rate(void *_r, double new_factor)
