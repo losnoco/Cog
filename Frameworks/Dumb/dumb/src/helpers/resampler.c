@@ -110,7 +110,7 @@ typedef struct resampler
     int write_pos, write_filled;
     int read_pos, read_filled;
     unsigned short phase;
-    unsigned short phase_inc;
+    unsigned int phase_inc;
     unsigned char quality;
     float buffer_in[resampler_buffer_size * 2];
     float buffer_out[resampler_buffer_size + SINC_WIDTH * 2 - 1];
