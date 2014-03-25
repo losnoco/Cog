@@ -946,7 +946,7 @@ static int usf_info(void * context, const char * name, const char * value)
         state.first = true;
         state.refresh = 0;
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 1, psf1_loader, &state, psf1_info, &state, 0 ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 1, psf1_loader, &state, psf1_info, &state, 1 ) <= 0 )
             return NO;
         
         if ( state.refresh )
@@ -962,7 +962,7 @@ static int usf_info(void * context, const char * name, const char * value)
         
         state.refresh = 0;
         
-        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 2, psf2fs_load_callback, emulatorExtra, psf1_info, &state, 0 ) <= 0 )
+        if ( psf_load( [currentUrl UTF8String], &source_callbacks, 2, psf2fs_load_callback, emulatorExtra, psf1_info, &state, 1 ) <= 0 )
             return NO;
         
         emulatorCore = ( uint8_t * ) malloc( psx_get_state_size( 2 ) );
