@@ -627,7 +627,7 @@ int resampler_get_sample(void *_r)
         resampler_fill( r );
     if ( r->read_filled < 1 )
         return 0;
-    return (int)(r->buffer_out[ r->read_pos ] * 16777216.0);
+    return (int)(r->buffer_out[ r->read_pos ] * 8388608.0);
 }
 
 void resampler_remove_sample(void *_r)
