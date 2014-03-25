@@ -7,12 +7,17 @@ include REXML
 
 feed = ARGV[0] || 'mercury'
 
+upload_prefix = "ec2-user@kode54.net:/usr/share/nginx/html/cog/"
+
+signature_file = "#{Dir.home}/.ssh/dsa_priv.pem"
+
 appcast = open("https://kode54.net/cog/#{feed}.xml")
 
 appcastdoc = Document.new(appcast)
 
 #Get the latest revision from the appcast
 appcast_enclosure = REXML::XPath.match(appcastdoc, "//channel/item/enclosure")[0]
+appcast_url = appcast_enclosure.attributes['url'];
 appcast_revision = appcast_enclosure.attributes['sparkle:version'];
 appcast_revision_split = appcast_revision.split( /-/ )
 appcast_revision_code = appcast_revision_split[2]
@@ -64,19 +69,46 @@ if appcast_revision < latest_revision
 end
 
   filename = "Cog-#{revision_code}.zip"
+  filename_delta = "Cog-#{revision_code}.delta"
+  temp_path = "/tmp";
+  %x[rm -rf '#{temp_path}/Cog.app' '#{temp_path}/Cog.old' '#{temp_path}/Cog.zip']
+  
+  #Retrieve the current full package
+  %x[curl -o '#{temp_path}/Cog.zip' #{appcast_url}]
+  
+  #Unpack and rename
+  %x[ditto -kx '#{temp_path}/Cog.zip' '#{temp_path}/']
+  %x[mv '#{temp_path}/Cog.app' '#{temp_path}/Cog.old']
+  
+  #Copy the replacement build
+  %x[cp -R '#{app_path}/Cog.app' '#{temp_path}/Cog.app']
 
   #Sign it!
-  %x[#{File.expand_path("../fucking_sign_it.sh", __FILE__)} '#{app_path}/Cog.app']
+  %x[#{File.expand_path("../fucking_sign_it.sh", __FILE__)} '#{temp_path}/Cog.app']
 
   #Zip the app!
-  %x[rm -f /tmp/#{feed}.zip]
-  %x[ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 '#{app_path}/Cog.app' /tmp/#{feed}.zip]
+  %x[rm -f '#{temp_path}/#{feed}.zip']
+  %x[ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 '#{app_path}/Cog.app' '#{temp_path}/#{feed}.zip']
+  
+  #Generate delta patch
+  %x[BinaryDelta create '#{temp_path}/Cog.old' '#{temp_path}/Cog.app' '#{temp_path}/#{feed}.delta']
 
-  filesize = File.size("/tmp/#{feed}.zip")
+  filesize = File.size("#{temp_path}/#{feed}.zip")
+  filesize_delta = File.size("#{temp_path}/#{feed}.delta")
+
+  openssl = "/usr/bin/openssl"
+  signature_delta = `#{openssl} dgst -sha1 -binary < "#{temp_path}/#{feed}.delta" | #{openssl} dgst -dss1 -sign "#{signature_file}" | #{openssl} enc -base64`
 
   #Send the new build to the server
-  %x[scp /tmp/#{feed}.zip ec2-user@kode54.net:/usr/share/nginx/html/cog/#{feed}_builds/#{filename}]
-  %x[rm /tmp/#{feed}.zip]
+  %x[scp '#{temp_path}/#{feed}.zip' #{upload_prefix}#{feed}_builds/#{filename}]
+  %x[rm '#{temp_path}/#{feed}.zip']
+  
+  #Send the delta
+  %x[scp '#{temp_path}/#{feed}.delta' #{upload_prefix}#{feed}_builds/#{filename_delta}]
+  %x[rm '#{temp_path}/#{feed}.delta']
+  
+  #Clean up
+  %x[rm -rf '#{temp_path}/Cog.old' '#{temp_path}/Cog.app']
 
   #Add new entry to appcast
   new_item = Element.new('item')
@@ -98,6 +130,15 @@ end
   new_item.elements['enclosure'].add_attribute('length', filesize)
   new_item.elements['enclosure'].add_attribute('type', 'application/octet-stream')
   new_item.elements['enclosure'].add_attribute('sparkle:version', "#{latest_revision}")
+  
+  new_item.add_element('sparkle:deltas')
+  new_item.elements['sparkle:deltas'].add_element('enclosure')
+  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('url', "https://kode54.net/cog/#{feed}_builds/#{filename_delta}")
+  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('length', filesize_delta)
+  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('type', 'application/octet-stream')
+  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('sparkle:version', "#{latest_revision}")
+  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('sparkle:deltaFrom', "#{appcast_revision}")
+  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('sparkle:dsaSignature', "#{signature_delta}")
   
   appcastdoc.insert_before('//channel/item', new_item)
   
