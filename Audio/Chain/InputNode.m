@@ -117,6 +117,7 @@
 	void *inputBuffer = malloc(CHUNK_SIZE);
 	
 	BOOL shouldClose = YES;
+    BOOL seekError = NO;
 	
 	while ([self shouldContinue] == YES && [self endOfStream] == NO)
 	{
@@ -126,7 +127,7 @@
             BOOL isPaused = [output isPaused];
             if ( !isPaused ) [output pause];
 			DLog(@"SEEKING!");
-			[decoder seek:seekFrame];
+			seekError = [decoder seek:seekFrame] < 0;
             if ( !isPaused ) [output resume];
 			shouldSeek = NO;
 			DLog(@"Seeked! Resetting Buffer");
@@ -141,7 +142,7 @@
 			int framesToRead = (CHUNK_SIZE - amountInBuffer)/bytesPerFrame;
 			int framesRead = [decoder readAudio:((char *)inputBuffer) + amountInBuffer frames:framesToRead];
 
-            if (framesRead > 0)
+            if (framesRead > 0 && !seekError)
             {
                 amountInBuffer += (framesRead * bytesPerFrame);
                 [self writeData:inputBuffer amount:amountInBuffer];

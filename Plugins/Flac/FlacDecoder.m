@@ -262,7 +262,8 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 - (long)seek:(long)sample
 {
-	FLAC__stream_decoder_seek_absolute(decoder, sample);
+	if (!FLAC__stream_decoder_seek_absolute(decoder, sample))
+        return -1;
 	
 	return sample;
 }
