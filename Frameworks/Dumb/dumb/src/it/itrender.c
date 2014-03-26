@@ -3946,16 +3946,16 @@ static void playing_volume_setup(DUMB_IT_SIGRENDERER * sigrenderer, IT_PLAYING *
 	playing->float_volume[1] *= vol;
 
     if (ramp_style == 0 || (ramp_style < 2 && playing->declick_stage == 2)) {
-		if (playing->declick_stage < 2) {
+		if (playing->declick_stage <= 2) {
 			playing->ramp_volume[0] = playing->float_volume[0];
 			playing->ramp_volume[1] = playing->float_volume[1];
 			playing->declick_stage = 2;
-		} else if (playing->declick_stage > 2) {
+		} else {
 			playing->float_volume[0] = 0;
 			playing->float_volume[1] = 0;
 			playing->ramp_volume[0] = 0;
 			playing->ramp_volume[1] = 0;
-			playing->declick_stage = 4;
+			playing->declick_stage = 5;
 		}
 		playing->ramp_delta[0] = 0;
         playing->ramp_delta[1] = 0;
@@ -4189,8 +4189,7 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 			if (!(sigdata->flags & IT_WAS_AN_XM)) {
 				//if ((sigrenderer->channel[i].playing->flags & (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) == (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) {
 				// This change was made so Gxx would work correctly when a note faded out or whatever. Let's hope nothing else was broken by it.
-				if ((sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD) ||
-                    (sigrenderer->channel[i].playing->declick_stage > 3)) {
+				if (sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD) {
 					free_playing(sigrenderer->channel[i].playing);
 					sigrenderer->channel[i].playing = NULL;
 				}
@@ -4201,8 +4200,7 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 	for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 		if (sigrenderer->playing[i]) {
 			process_playing(sigrenderer, sigrenderer->playing[i], invt2g);
-			if ((sigrenderer->playing[i]->flags & IT_PLAYING_DEAD) ||
-                (sigrenderer->playing[i]->declick_stage > 3)) {
+			if (sigrenderer->playing[i]->flags & IT_PLAYING_DEAD) {
 				free_playing(sigrenderer->playing[i]);
 				sigrenderer->playing[i] = NULL;
 			}
@@ -4771,6 +4769,8 @@ static long render_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playing
 		playing->ramp_volume [0] = lvol.volume;
 		playing->ramp_volume [1] = rvol.volume;
         playing->declick_stage = (lvol.declick_stage > rvol.declick_stage) ? lvol.declick_stage : rvol.declick_stage;
+        if (playing->declick_stage > 4)
+            playing->flags |= IT_PLAYING_DEAD;
 		(*left_to_mix)--;
 	}
 
@@ -4960,8 +4960,7 @@ static void render_normal(DUMB_IT_SIGRENDERER *sigrenderer, float volume, float 
 		if (sigrenderer->channel[i].playing) {
 			//if ((sigrenderer->channel[i].playing->flags & (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) == (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) {
 			// This change was made so Gxx would work correctly when a note faded out or whatever. Let's hope nothing else was broken by it.
-			if ((sigrenderer->channel[i].playing->declick_stage > 3) ||
-			(sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD)) {
+			if (sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD) {
 				free_playing(sigrenderer->channel[i].playing);
 				sigrenderer->channel[i].playing = NULL;
 			}
@@ -4970,8 +4969,7 @@ static void render_normal(DUMB_IT_SIGRENDERER *sigrenderer, float volume, float 
 
 	for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 		if (sigrenderer->playing[i]) {
-			if ((sigrenderer->playing[i]->declick_stage > 3) ||
-				(sigrenderer->playing[i]->flags & IT_PLAYING_DEAD)) {
+			if (sigrenderer->playing[i]->flags & IT_PLAYING_DEAD) {
 				free_playing(sigrenderer->playing[i]);
 				sigrenderer->playing[i] = NULL;
 			}
@@ -5115,8 +5113,7 @@ static void render_surround(DUMB_IT_SIGRENDERER *sigrenderer, float volume, floa
 		if (sigrenderer->channel[i].playing) {
 			//if ((sigrenderer->channel[i].playing->flags & (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) == (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) {
 			// This change was made so Gxx would work correctly when a note faded out or whatever. Let's hope nothing else was broken by it.
-			if ((sigrenderer->channel[i].playing->declick_stage > 3) ||
-			(sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD)) {
+			if (sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD) {
 				free_playing(sigrenderer->channel[i].playing);
 				sigrenderer->channel[i].playing = NULL;
 			}
@@ -5125,8 +5122,7 @@ static void render_surround(DUMB_IT_SIGRENDERER *sigrenderer, float volume, floa
 
 	for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
 		if (sigrenderer->playing[i]) {
-			if ((sigrenderer->playing[i]->declick_stage > 3) ||
-				(sigrenderer->playing[i]->flags & IT_PLAYING_DEAD)) {
+			if (sigrenderer->playing[i]->flags & IT_PLAYING_DEAD) {
 				free_playing(sigrenderer->playing[i]);
 				sigrenderer->playing[i] = NULL;
 			}

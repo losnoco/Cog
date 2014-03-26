@@ -213,7 +213,7 @@ int callbackLoop(void *data)
         if (cpu_freq >= 2200000000)
             dumb_it_set_resampling_quality( itsr, DUMB_RQ_FIR );
     }
-    
+    dumb_it_set_ramp_style(itsr, 2);
     dumb_it_set_loop_callback( itsr, callbackLoop, &loops);
     dumb_it_set_xm_speed_zero_callback( itsr, dumb_it_callback_terminate, 0);
     dumb_it_set_global_volume_zero_callback( itsr, dumb_it_callback_terminate, 0);
