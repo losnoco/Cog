@@ -88,7 +88,7 @@ end
 
   #Zip the app!
   %x[rm -f '#{temp_path}/#{feed}.zip']
-  %x[ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 '#{app_path}/Cog.app' '#{temp_path}/#{feed}.zip']
+  %x[ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 '#{temp_path}/Cog.app' '#{temp_path}/#{feed}.zip']
   
   #Generate delta patch
   %x[BinaryDelta create '#{temp_path}/Cog.old' '#{temp_path}/Cog.app' '#{temp_path}/#{feed}.delta']
