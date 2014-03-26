@@ -303,7 +303,11 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 - (long)seek:(long)frame
 {
-    if (frame >= totalFrames) { return -1; }
+    if (frame >= totalFrames)
+    {
+        framesRead = totalFrames;
+        return -1;
+    }
     int64_t ts = frame * (formatCtx->duration) / totalFrames;
     avformat_seek_file(formatCtx, -1, ts - 1000, ts, ts, AVSEEK_FLAG_ANY);
     avcodec_flush_buffers(codecCtx);
