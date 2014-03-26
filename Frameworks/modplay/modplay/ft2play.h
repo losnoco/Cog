@@ -7,7 +7,22 @@
 extern "C" {
 #endif
     
-void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation);
+enum
+{
+    FT2_RAMP_NONE = 0,
+    FT2_RAMP_ONOFF_ONLY = 1,
+    FT2_RAMP_FULL = 2
+};
+    
+enum
+{
+    FT2_INTERPOLATE_ZOH = 0,
+    FT2_INTERPOLATE_LINEAR = 1,
+    FT2_INTERPOLATE_CUBIC = 2,
+    FT2_INTERPOLATE_SINC = 3
+};
+    
+void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t ramp_style);
 void ft2play_Free(void *);
 
 int8_t ft2play_LoadModule(void *, const uint8_t *buffer, size_t size);

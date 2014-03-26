@@ -7,7 +7,22 @@
 extern "C" {
 #endif
 
-void * st3play_Alloc(uint32_t outputFreq, int8_t interpolation);
+enum
+{
+    ST3_RAMP_NONE = 0,
+    ST3_RAMP_ONOFF_ONLY = 1,
+    ST3_RAMP_FULL = 2
+};
+    
+enum
+{
+    ST3_INTERPOLATE_ZOH = 0,
+    ST3_INTERPOLATE_LINEAR = 1,
+    ST3_INTERPOLATE_CUBIC = 2,
+    ST3_INTERPOLATE_SINC = 3
+};
+    
+void * st3play_Alloc(uint32_t outputFreq, int8_t interpolation, int8_t ramp_style);
 void st3play_Free(void *);
 
 int8_t st3play_LoadModule(void *, const uint8_t *module, size_t size);

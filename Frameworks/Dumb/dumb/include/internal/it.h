@@ -743,6 +743,8 @@ struct DUMB_IT_SIGRENDERER
 	long gvz_time;
 	int gvz_sub_time;
 
+    int ramp_style;
+    
 	//int max_output;
 };
 

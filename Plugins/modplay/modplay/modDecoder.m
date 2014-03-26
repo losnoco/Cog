@@ -14,7 +14,7 @@
 
 BOOL s3m_probe_length( unsigned long * intro_length, unsigned long * loop_length, const void * src, unsigned long size, unsigned int subsong )
 {
-    void * st3play = st3play_Alloc( 44100, 1 );
+    void * st3play = st3play_Alloc( 44100, 1, 2 );
     if ( !st3play ) return NO;
     
     if ( !st3play_LoadModule( st3play, src, size ) )
@@ -66,7 +66,7 @@ BOOL s3m_probe_length( unsigned long * intro_length, unsigned long * loop_length
 
 BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length, const void * src, unsigned long size, unsigned int subsong )
 {
-    void * ft2play = ft2play_Alloc( 44100, 1 );
+    void * ft2play = ft2play_Alloc( 44100, 1, 2 );
     if ( !ft2play ) return NO;
     
     if ( !ft2play_LoadModule( ft2play, src, size ) )
@@ -184,7 +184,7 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
 {
     if ( type == TYPE_S3M )
     {
-        player = st3play_Alloc( 44100, 1 );
+        player = st3play_Alloc( 44100, 1, 2 );
         if ( !player )
             return NO;
 
@@ -195,7 +195,7 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
     }
     else if ( type == TYPE_XM )
     {
-        player = ft2play_Alloc( 44100, 1 );
+        player = ft2play_Alloc( 44100, 1, 2 );
         if ( !player )
             return NO;
         
