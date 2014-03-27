@@ -102,8 +102,6 @@
 		8370B68A17F61038001A4D7A /* readstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B66117F61038001A4D7A /* readstm.c */; };
 		8370B68B17F61038001A4D7A /* readstm2.c in Sources */ = {isa = PBXBuildFile; fileRef = 8370B66217F61038001A4D7A /* readstm2.c */; };
 		8370B7EA17F62A40001A4D7A /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B7E817F62A40001A4D7A /* resampler.h */; };
-		83C8DF1D18C6B31400750AF7 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8DF1C18C6B31400750AF7 /* blip_buf.c */; };
-		83C8DF1F18C6B32100750AF7 /* blip_buf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8DF1E18C6B32100750AF7 /* blip_buf.h */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -211,8 +209,6 @@
 		8370B66117F61038001A4D7A /* readstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readstm.c; sourceTree = "<group>"; };
 		8370B66217F61038001A4D7A /* readstm2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readstm2.c; sourceTree = "<group>"; };
 		8370B7E817F62A40001A4D7A /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
-		83C8DF1C18C6B31400750AF7 /* blip_buf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blip_buf.c; sourceTree = "<group>"; };
-		83C8DF1E18C6B32100750AF7 /* blip_buf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blip_buf.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Dumb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dumb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -307,7 +303,6 @@
 		17C8F60D0CBEE797008D969D /* internal */ = {
 			isa = PBXGroup;
 			children = (
-				83C8DF1E18C6B32100750AF7 /* blip_buf.h */,
 				8370B7E817F62A40001A4D7A /* resampler.h */,
 				8370B61E17F60FE2001A4D7A /* barray.h */,
 				8370B62017F60FE2001A4D7A /* dumbfile.h */,
@@ -354,7 +349,6 @@
 		17C8F61E0CBEE797008D969D /* helpers */ = {
 			isa = PBXGroup;
 			children = (
-				83C8DF1C18C6B31400750AF7 /* blip_buf.c */,
 				8370B62E17F61001001A4D7A /* barray.c */,
 				8370B63017F61001001A4D7A /* resampler.c */,
 				8370B63117F61001001A4D7A /* lpc.c */,
@@ -450,7 +444,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8370B62D17F60FE2001A4D7A /* tarray.h in Headers */,
-				83C8DF1F18C6B32100750AF7 /* blip_buf.h in Headers */,
 				8370B62617F60FE2001A4D7A /* barray.h in Headers */,
 				17C8F63E0CBEE797008D969D /* dumb.h in Headers */,
 				17C8F6400CBEE797008D969D /* it.h in Headers */,
@@ -588,7 +581,6 @@
 				17C8F6620CBEE797008D969D /* loadxm.c in Sources */,
 				17C8F6630CBEE797008D969D /* loadxm2.c in Sources */,
 				8370B67117F61038001A4D7A /* loadpsm.c in Sources */,
-				83C8DF1D18C6B31400750AF7 /* blip_buf.c in Sources */,
 				8370B67617F61038001A4D7A /* loadriff2.c in Sources */,
 				8370B66C17F61038001A4D7A /* loadmtm2.c in Sources */,
 				8370B67A17F61038001A4D7A /* read669.c in Sources */,

@@ -487,6 +487,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[userDefaultsValuesDict setObject:@"enqueue" forKey:@"openingFilesAlteredBehavior"];
     
     [userDefaultsValuesDict setObject:@"albumGainWithPeak" forKey:@"volumeScaling"];
+
+    [userDefaultsValuesDict setObject:@"cubic" forKey:@"resampling"];
     
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:kCogStatusStopped] forKey:@"lastPlaybackStatus"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];

@@ -14,7 +14,7 @@
 
 BOOL s3m_probe_length( unsigned long * intro_length, unsigned long * loop_length, const void * src, unsigned long size, unsigned int subsong )
 {
-    void * st3play = st3play_Alloc( 44100, 1, 2 );
+    void * st3play = st3play_Alloc( 44100, 0, 0 );
     if ( !st3play ) return NO;
     
     if ( !st3play_LoadModule( st3play, src, size ) )
@@ -66,7 +66,7 @@ BOOL s3m_probe_length( unsigned long * intro_length, unsigned long * loop_length
 
 BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length, const void * src, unsigned long size, unsigned int subsong )
 {
-    void * ft2play = ft2play_Alloc( 44100, 1, 2 );
+    void * ft2play = ft2play_Alloc( 44100, 0, 0 );
     if ( !ft2play ) return NO;
     
     if ( !ft2play_LoadModule( ft2play, src, size ) )
@@ -182,9 +182,22 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
 
 - (BOOL)decoderInitialize
 {
+    int resampling_int = -1;
+    NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+    if ([resampling isEqualToString:@"zoh"])
+        resampling_int = 0;
+    else if ([resampling isEqualToString:@"blep"])
+        resampling_int = 1;
+    else if ([resampling isEqualToString:@"linear"])
+        resampling_int = 2;
+    else if ([resampling isEqualToString:@"cubic"])
+        resampling_int = 3;
+    else if ([resampling isEqualToString:@"sinc"])
+        resampling_int = 4;
+    
     if ( type == TYPE_S3M )
     {
-        player = st3play_Alloc( 44100, 1, 2 );
+        player = st3play_Alloc( 44100, resampling_int, 2 );
         if ( !player )
             return NO;
 
@@ -195,7 +208,7 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
     }
     else if ( type == TYPE_XM )
     {
-        player = ft2play_Alloc( 44100, 1, 2 );
+        player = ft2play_Alloc( 44100, resampling_int, 2 );
         if ( !player )
             return NO;
         

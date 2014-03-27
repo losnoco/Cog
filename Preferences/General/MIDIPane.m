@@ -12,7 +12,7 @@
 
 - (NSString *)title
 {
-	return NSLocalizedStringFromTableInBundle(@"MIDI", nil, [NSBundle bundleForClass:[self class]], @"");
+	return NSLocalizedStringFromTableInBundle(@"Synthesis", nil, [NSBundle bundleForClass:[self class]], @"");
 }
 
 - (NSImage *)icon

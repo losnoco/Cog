@@ -114,7 +114,12 @@
     BMPlayer * bmplayer = new BMPlayer;
     player = bmplayer;
     
-    bmplayer->setSincInterpolation( true );
+    bool resampling_sinc = false;
+    NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+    if ([resampling isEqualToString:@"sinc"])
+        resampling_sinc = true;
+
+    bmplayer->setSincInterpolation( resampling_sinc );
     bmplayer->setSampleRate( 44100 );
     
     if ( [soundFontPath length] )

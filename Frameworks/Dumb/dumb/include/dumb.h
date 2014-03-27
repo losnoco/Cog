@@ -377,8 +377,6 @@ int dumb_it_scan_for_playable_orders(DUMB_IT_SIGDATA *sigdata, dumb_scan_callbac
 
 DUH_SIGRENDERER *dumb_it_start_at_order(DUH *duh, int n_channels, int startorder);
 
-void dumb_it_set_resampling_quality(DUMB_IT_SIGRENDERER * sigrenderer, int quality);
-
 enum
 {
     DUMB_IT_RAMP_NONE = 0,
@@ -674,22 +672,20 @@ void dumb_destroy_click_remover_array(int n, DUMB_CLICK_REMOVER **cr);
 /* Resampling Helpers */
 
 #define DUMB_RQ_ALIASING 0
-#define DUMB_RQ_LINEAR   1
-#define DUMB_RQ_CUBIC    2
-#define DUMB_RQ_FIR      3
-#define DUMB_RQ_N_LEVELS 4
-extern int dumb_resampling_quality;
+#define DUMB_RQ_BLEP     1
+#define DUMB_RQ_LINEAR   2
+#define DUMB_RQ_CUBIC    3
+#define DUMB_RQ_FIR      4
+#define DUMB_RQ_N_LEVELS 5
+
+extern int dumb_resampling_quality; /* This specifies the default */
+void dumb_it_set_resampling_quality(DUMB_IT_SIGRENDERER * sigrenderer, int quality); /* This overrides it */
 
 typedef struct DUMB_RESAMPLER DUMB_RESAMPLER;
 
 typedef struct DUMB_VOLUME_RAMP_INFO DUMB_VOLUME_RAMP_INFO;
 
 typedef void (*DUMB_RESAMPLE_PICKUP)(DUMB_RESAMPLER *resampler, void *data);
-
-#ifndef BLIP_T_DEFINED
-#define BLIP_T_DEFINED
-typedef struct blip_t blip_t;
-#endif
 
 struct DUMB_RESAMPLER
 {
@@ -708,9 +704,6 @@ struct DUMB_RESAMPLER
 		signed char x8[3*2];
 	} x;
 	int overshot;
-	int last_clock;
-	int last_amp[2];
-	blip_t* blip_buffer[2];
     double fir_resampler_ratio;
     void* fir_resampler[2];
 };

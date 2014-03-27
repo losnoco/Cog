@@ -26,7 +26,6 @@
 #include "internal/it.h"
 #include "internal/lpc.h"
 
-#include "internal/blip_buf.h"
 #include "internal/resampler.h"
 
 // #define BIT_ARRAY_BULLSHIT
@@ -36,34 +35,15 @@ static IT_PLAYING *new_playing()
 	IT_PLAYING * r = (IT_PLAYING*) malloc(sizeof(*r));
 	if (r)
 	{
-		r->resampler.blip_buffer[0] = blip_new( 256 );
-		if ( !r->resampler.blip_buffer[0] )
-		{
-			free( r );
-			return NULL;
-		}
-		r->resampler.blip_buffer[1] = blip_new( 256 );
-		if ( !r->resampler.blip_buffer[1] )
-		{
-			free( r->resampler.blip_buffer[0] );
-			free( r );
-			return NULL;
-		}
-		blip_set_rates(r->resampler.blip_buffer[0], 65536, 1);
-		blip_set_rates(r->resampler.blip_buffer[1], 65536, 1);
 		r->resampler.fir_resampler_ratio = 0.0;
 		r->resampler.fir_resampler[0] = resampler_create();
 		if ( !r->resampler.fir_resampler[0] ) {
-			free( r->resampler.blip_buffer[1] );
-			free( r->resampler.blip_buffer[0] );
 			free( r );
 			return NULL;
 		}
 		r->resampler.fir_resampler[1] = resampler_create();
 		if ( !r->resampler.fir_resampler[1] ) {
 			resampler_delete( r->resampler.fir_resampler[0] );
-			free( r->resampler.blip_buffer[1] );
-			free( r->resampler.blip_buffer[0] );
 			free( r );
 			return NULL;
 		}
@@ -75,8 +55,6 @@ static void free_playing(IT_PLAYING * r)
 {
 	resampler_delete( r->resampler.fir_resampler[1] );
 	resampler_delete( r->resampler.fir_resampler[0] );
-	blip_delete( r->resampler.blip_buffer[1] );
-	blip_delete( r->resampler.blip_buffer[0] );
 	free( r );
 }
 
@@ -166,32 +144,15 @@ static IT_PLAYING *dup_playing(IT_PLAYING *src, IT_CHANNEL *dstchannel, IT_CHANN
 
 	dst->resampler = src->resampler;
 	dst->resampler.pickup_data = dst;
-	dst->resampler.blip_buffer[0] = blip_dup( src->resampler.blip_buffer[0] );
-	if ( !dst->resampler.blip_buffer[0] )
-	{
-		free( dst );
-		return NULL;
-	}
-	dst->resampler.blip_buffer[1] = blip_dup( src->resampler.blip_buffer[1] );
-	if ( !dst->resampler.blip_buffer[1] )
-	{
-		blip_delete( dst->resampler.blip_buffer[0] );
-		free( dst );
-		return NULL;
-	}
 	dst->resampler.fir_resampler_ratio = src->resampler.fir_resampler_ratio;
 	dst->resampler.fir_resampler[0] = resampler_dup( src->resampler.fir_resampler[0] );
 	if ( !dst->resampler.fir_resampler[0] ) {
-		blip_delete( dst->resampler.blip_buffer[1] );
-		blip_delete( dst->resampler.blip_buffer[0] );
 		free( dst );
 		return NULL;
 	}
 	dst->resampler.fir_resampler[1] = resampler_dup( src->resampler.fir_resampler[1] );
 	if ( !dst->resampler.fir_resampler[1] ) {
 		resampler_delete( dst->resampler.fir_resampler[0] );
-		blip_delete( dst->resampler.blip_buffer[1] );
-		blip_delete( dst->resampler.blip_buffer[0] );
 		free( dst );
 		return NULL;
 	}

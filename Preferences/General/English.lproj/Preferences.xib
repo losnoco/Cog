@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="13D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="GeneralPreferencesPlugin">
@@ -30,7 +30,7 @@
             </connections>
         </customObject>
         <customView id="11" userLabel="HotKeyView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="131"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="131"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="28" customClass="HotKeyControl">
@@ -120,7 +120,7 @@
             </subviews>
         </customView>
         <customView id="43" userLabel="RemoteView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="74"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="74"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="77">
@@ -149,7 +149,7 @@
             </subviews>
         </customView>
         <customView id="50" userLabel="UpdatesView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="82"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="82"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="111">
@@ -203,7 +203,7 @@
             </connections>
         </customObject>
         <customView id="58" userLabel="OutputView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="103"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="103"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="65">
@@ -299,7 +299,7 @@
             </declaredKeys>
         </arrayController>
         <customView id="0nK-XQ-5MY" userLabel="ScrobblerView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="94"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="94"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="3gi-0d-78Z">
@@ -338,7 +338,7 @@
             </subviews>
         </customView>
         <customView id="231" userLabel="PlaylistView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="122"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="122"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button id="310">
@@ -415,7 +415,7 @@
             </subviews>
         </customView>
         <customView id="U4w-jw-ca5" userLabel="GrowlView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="54"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="54"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="njn-Xl-9k9">
@@ -432,7 +432,7 @@
             </subviews>
         </customView>
         <customView id="CgN-sy-RmM" userLabel="AppearanceView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="54"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="54"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="haX-dq-OIe">
@@ -449,11 +449,11 @@
             </subviews>
         </customView>
         <customView id="JXu-ar-J3Y" userLabel="MIDIView">
-            <rect key="frame" x="0.0" y="0.0" width="473" height="54"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="107"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button verticalHuggingPriority="750" id="SBO-WF-DVS" userLabel="Push Button - Select a SoundFont">
-                    <rect key="frame" x="14" y="10" width="160" height="32"/>
+                    <rect key="frame" x="14" y="63" width="160" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Select a SoundFont" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yeL-9c-lFq" userLabel="Button Cell - Select a SoundFont">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -464,7 +464,7 @@
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="FRC-Dh-BS2" userLabel="Text Field - Selected:">
-                    <rect key="frame" x="173" y="19" width="61" height="17"/>
+                    <rect key="frame" x="173" y="72" width="61" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Selected:" id="KJz-qS-IcO" userLabel="Text Field Cell - Selected">
                         <font key="font" metaFont="system"/>
@@ -473,7 +473,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cZr-2d-6cv">
-                    <rect key="frame" x="236" y="19" width="220" height="17"/>
+                    <rect key="frame" x="236" y="72" width="220" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="ECB-P0-pve">
                         <font key="font" metaFont="system"/>
@@ -489,7 +489,44 @@
                         </connections>
                     </textFieldCell>
                 </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="G86-18-hiK">
+                    <rect key="frame" x="32" y="40" width="138" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Resampling quality:" id="eX0-PC-iVo">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="E1D-Bo-ZVf">
+                    <rect key="frame" x="173" y="35" width="164" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="3Gx-cs-3B0" id="5q7-83-7V6">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <menu key="menu" title="OtherViews" id="HKM-FW-dhH">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="3Gx-cs-3B0"/>
+                                <menuItem title="Item 2" id="99B-Tx-dPH"/>
+                                <menuItem title="Item 3" id="WWy-iW-3Ct"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="JB6-r9-XpG" name="content" keyPath="arrangedObjects" id="Je5-Yu-hIz"/>
+                        <binding destination="JB6-r9-XpG" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Je5-Yu-hIz" id="yYR-TY-pXw"/>
+                        <binding destination="JB6-r9-XpG" name="contentValues" keyPath="arrangedObjects.name" previousBinding="yYR-TY-pXw" id="KxI-52-0UK"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.resampling" previousBinding="KxI-52-0UK" id="wsy-tb-NFy"/>
+                    </connections>
+                </popUpButton>
             </subviews>
         </customView>
+        <arrayController objectClassName="NSDictionary" editable="NO" id="JB6-r9-XpG" userLabel="ResamplerBehavior" customClass="ResamplerBehaviorArrayController">
+            <declaredKeys>
+                <string>name</string>
+                <string>slug</string>
+                <string>preference</string>
+            </declaredKeys>
+        </arrayController>
     </objects>
 </document>

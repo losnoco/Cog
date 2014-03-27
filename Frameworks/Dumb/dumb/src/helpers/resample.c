@@ -45,7 +45,6 @@
 #include <math.h>
 #include "dumb.h"
 
-#include "internal/blip_buf.h"
 #include "internal/resampler.h"
 
 
@@ -73,11 +72,12 @@
  * specification doesn't override it. The following values are valid:
  *
  *  0 - DUMB_RQ_ALIASING - fastest
- *  1 - DUMB_RQ_LINEAR
- *  2 - DUMB_RQ_CUBIC
- *  3 - DUMB_RQ_FIR      - nicest
+ *  1 - DUMB_RQ_BLEP     - nicer than aliasing, but slower
+ *  2 - DUMB_RQ_LINEAR
+ *  3 - DUMB_RQ_CUBIC
+ *  4 - DUMB_RQ_FIR      - nicest
  *
- * Values outside the range 0-3 will behave the same as the nearest
+ * Values outside the range 0-4 will behave the same as the nearest
  * value within the range.
  */
 int dumb_resampling_quality = DUMB_RQ_CUBIC;
@@ -157,23 +157,7 @@ void _dumb_init_cubic(void)
 
 #define SRCTYPE sample_t
 #define SRCBITS 24
-#define ALIAS(x) (x >> 8)
 #define FIR(x) (x >> 8)
-#define LINEAR(x0, x1) (x0 + MULSC(x1 - x0, subpos))
-/*
-#define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
-	a = (3 * (x1 - x2) + (x3 - x0)) >> 1; \
-	b = ((x2 << 2) + (x0 << 1) - (5 * x1 + x3)) >> 1; \
-	c = (x2 - x0) >> 1; \
-}
-#define CUBIC(d) MULSC(MULSC(MULSC(MULSC(a, subpos) + b, subpos) + c, subpos) + d, vol)
-*/
-#define CUBIC(x0, x1, x2, x3) ( \
-	MULSC(x0, cubicA0[subpos >> 6] << 2) + \
-	MULSC(x1, cubicA1[subpos >> 6] << 2) + \
-	MULSC(x2, cubicA1[1 + (subpos >> 6 ^ 1023)] << 2) + \
-	MULSC(x3, cubicA0[1 + (subpos >> 6 ^ 1023)] << 2))
-#define CUBICVOL(x, vol) MULSC(x, vol)
 #include "resample.inc"
 
 /* Undefine the simplified macros. */
@@ -194,46 +178,14 @@ void _dumb_init_cubic(void)
 #define SUFFIX _16
 #define SRCTYPE short
 #define SRCBITS 16
-#define ALIAS(x) (x)
 #define FIR(x) (x)
-#define LINEAR(x0, x1) ((x0 << 8) + MULSC16(x1 - x0, subpos))
-/*
-#define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
-	a = (3 * (x1 - x2) + (x3 - x0)) << 7; \
-	b = ((x2 << 2) + (x0 << 1) - (5 * x1 + x3)) << 7; \
-	c = (x2 - x0) << 7; \
-}
-#define CUBIC(d) MULSC(MULSC(MULSC(MULSC(a, subpos) + b, subpos) + c, subpos) + (d << 8), vol)
-*/
-#define CUBIC(x0, x1, x2, x3) ( \
-	x0 * cubicA0[subpos >> 6] + \
-	x1 * cubicA1[subpos >> 6] + \
-	x2 * cubicA1[1 + (subpos >> 6 ^ 1023)] + \
-	x3 * cubicA0[1 + (subpos >> 6 ^ 1023)])
-#define CUBICVOL(x, vol) (int)((LONG_LONG)(x) * (vol << 10) >> 32)
 #include "resample.inc"
 
 /* Create resamplers for 8-bit source samples. */
 #define SUFFIX _8
 #define SRCTYPE signed char
 #define SRCBITS 8
-#define ALIAS(x) (x << 8)
 #define FIR(x) (x << 8)
-#define LINEAR(x0, x1) ((x0 << 16) + (x1 - x0) * subpos)
-/*
-#define SET_CUBIC_COEFFICIENTS(x0, x1, x2, x3) { \
-	a = 3 * (x1 - x2) + (x3 - x0); \
-	b = ((x2 << 2) + (x0 << 1) - (5 * x1 + x3)) << 15; \
-	c = (x2 - x0) << 15; \
-}
-#define CUBIC(d) MULSC(MULSC(MULSC((a * subpos >> 1) + b, subpos) + c, subpos) + (d << 16), vol)
-*/
-#define CUBIC(x0, x1, x2, x3) (( \
-	x0 * cubicA0[subpos >> 6] + \
-	x1 * cubicA1[subpos >> 6] + \
-	x2 * cubicA1[1 + (subpos >> 6 ^ 1023)] + \
-	x3 * cubicA0[1 + (subpos >> 6 ^ 1023)]) << 6)
-#define CUBICVOL(x, vol) (int)((LONG_LONG)(x) * (vol << 12) >> 32)
 #include "resample.inc"
 
 

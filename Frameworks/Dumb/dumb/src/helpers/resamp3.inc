@@ -52,7 +52,6 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
 	long todo;
 	LONG_LONG todo64;
 	int quality;
-	int blip_samples[256*SRC_CHANNELS];
 	int check;
 
 	if (!resampler || resampler->dir == 0) return 0;
@@ -105,41 +104,6 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
 					LONG_LONG new_subpos = subpos + (LONG_LONG)dt * todo;
 					pos += (long)(new_subpos >> 16);
 					subpos = (long)new_subpos & 65535;
-				} else if (quality <= DUMB_RQ_ALIASING) {
-					/* Aliasing, backwards */
-					int todo_clocks = todo << 16, todo_clocks_set = todo_clocks;
-					SRCTYPE xbuf[2*SRC_CHANNELS];
-					SRCTYPE *x = &xbuf[0];
-					check = resampler->start;
-					COPYSRC(xbuf, 0, resampler->X, 1);
-					COPYSRC(xbuf, 1, resampler->X, 2);
-					if ( todo_clocks_set > 256 * 65536 ) todo_clocks_set = 256 * 65536;
-					while (resampler->last_clock < todo_clocks_set && x < &xbuf[2*SRC_CHANNELS]) {
-						// TODO: check what happens when multiple tempo slides occur per row
-						HEAVYASSERT(pos >= resampler->start);
-						POKE_ALIAS(0);
-						pos--;
-						x += SRC_CHANNELS;
-					}
-					x = &src[pos*SRC_CHANNELS];
-					while ( todo_clocks ) {
-						todo_clocks_set = todo_clocks;
-						if ( todo_clocks_set > 256 * 65536 ) todo_clocks_set = 256 * 65536;
-						todo_clocks -= todo_clocks_set;
-						while ( resampler->last_clock < todo_clocks_set && pos >= check ) {
-							POKE_ALIAS(2);
-							pos--;
-							x -= SRC_CHANNELS;
-						}
-						todo = todo_clocks_set >> 16;
-						check = 0;
-						if ( resampler->last_clock < todo_clocks_set ) {
-							check = ( todo_clocks_set - resampler->last_clock + 65535 ) >> 16;
-						}
-						todo -= check;
-						MIX_ALIAS( todo );
-						done -= check;
-					}
                                 } else {
                                     /* FIR resampling, backwards */
                                     SRCTYPE *x;
@@ -185,40 +149,6 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
 					LONG_LONG new_subpos = subpos + (LONG_LONG)dt * todo;
 					pos += (long)(new_subpos >> 16);
 					subpos = (long)new_subpos & 65535;
-				} else if (quality <= DUMB_RQ_ALIASING) {
-					/* Aliasing, forwards */
-					int todo_clocks = todo << 16, todo_clocks_set = todo_clocks;
-					SRCTYPE xbuf[2*SRC_CHANNELS];
-					SRCTYPE *x = &xbuf[0];
-					check = resampler->end;
-					COPYSRC(xbuf, 0, resampler->X, 1);
-					COPYSRC(xbuf, 1, resampler->X, 2);
-					if ( todo_clocks_set > 256 * 65536 ) todo_clocks_set = 256 * 65536;
-					while (resampler->last_clock < todo_clocks_set && x < &xbuf[2*SRC_CHANNELS]) {
-						HEAVYASSERT(pos < resampler->end);
-						POKE_ALIAS(0);
-						pos++;
-						x += SRC_CHANNELS;
-					}
-					x = &src[pos*SRC_CHANNELS];
-					while ( todo_clocks ) {
-						todo_clocks_set = todo_clocks;
-						if ( todo_clocks_set > 256 * 65536 ) todo_clocks_set = 256 * 65536;
-						todo_clocks -= todo_clocks_set;
-						while ( resampler->last_clock < todo_clocks_set && pos < check ) {
-							POKE_ALIAS(-2);
-							pos++;
-							x += SRC_CHANNELS;
-						}
-						todo = todo_clocks_set >> 16;
-						check = 0;
-						if ( resampler->last_clock < todo_clocks_set ) {
-							check = ( todo_clocks_set - resampler->last_clock + 65535 ) >> 16;
-						}
-						todo -= check;
-						MIX_ALIAS( todo );
-						done -= check;
-					}
                                 } else {
                                     /* FIR resampling, forwards */
                                     SRCTYPE *x;
@@ -299,33 +229,19 @@ void dumb_resample_get_current_sample(DUMB_RESAMPLER *resampler, VOLUME_PARAMETE
 
 	if (resampler->dir < 0) {
 		HEAVYASSERT(pos >= resampler->start);
-		if (quality <= DUMB_RQ_ALIASING) {
-			/* Aliasing, backwards */
-			PEEK_ALIAS;
-                } else {
                         /* FIR resampling, backwards */
                         PEEK_FIR;
-                }
 	} else {
 		HEAVYASSERT(pos < resampler->end);
-		if (quality <= DUMB_RQ_ALIASING) {
-			/* Aliasing */
-			PEEK_ALIAS;
-                } else {
                         /* FIR resampling, forwards */
                         PEEK_FIR;
-                }
 	}
 }
 
 
 
 #undef MIX_ZEROS
-#undef MIX_CUBIC
-#undef MIX_LINEAR
-#undef MIX_ALIAS
 #undef MIX_FIR
-#undef PEEK_ALIAS
 #undef PEEK_FIR
 #undef VOLUMES_ARE_ZERO
 #undef SET_VOLUME_VARIABLES

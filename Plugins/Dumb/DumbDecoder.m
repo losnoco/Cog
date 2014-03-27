@@ -16,9 +16,6 @@
 
 #import "Logging.h"
 
-#include <sys/types.h>
-#include <sys/sysctl.h>
-
 #import "PlaylistController.h"
 
 @implementation DumbDecoder
@@ -133,14 +130,6 @@ static unsigned int cpu_freq = 0;
 {
     if (self == [DumbDecoder class])
     {
-        int mib[2];
-        size_t len;
-        
-        mib[0] = CTL_HW;
-        mib[1] = HW_CPU_FREQ;
-        len = sizeof(cpu_freq);
-        sysctl(mib, 2, &cpu_freq, &len, NULL, 0);
-        
         // do this here so we don't have to wait on it later
         _dumb_init_cubic();
         _dumb_init_sse();
@@ -209,10 +198,21 @@ int callbackLoop(void *data)
 	}
 	
     DUMB_IT_SIGRENDERER * itsr = duh_get_it_sigrenderer( dsr );
-    {
-        if (cpu_freq >= 2200000000)
-            dumb_it_set_resampling_quality( itsr, DUMB_RQ_FIR );
-    }
+
+    int resampling_int = -1;
+    NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+    if ([resampling isEqualToString:@"zoh"])
+        resampling_int = 0;
+    else if ([resampling isEqualToString:@"blep"])
+        resampling_int = 1;
+    else if ([resampling isEqualToString:@"linear"])
+        resampling_int = 2;
+    else if ([resampling isEqualToString:@"cubic"])
+        resampling_int = 3;
+    else if ([resampling isEqualToString:@"sinc"])
+        resampling_int = 4;
+
+    dumb_it_set_resampling_quality( itsr, resampling_int );
     dumb_it_set_ramp_style(itsr, 2);
     dumb_it_set_loop_callback( itsr, callbackLoop, &loops);
     dumb_it_set_xm_speed_zero_callback( itsr, dumb_it_callback_terminate, 0);

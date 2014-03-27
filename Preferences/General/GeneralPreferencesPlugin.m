@@ -13,7 +13,7 @@
 
 + (void)initialize
 {
-	NSValueTransformer *pathToFileTransformer = [[[PathToFileTransformer alloc] init]autorelease];
+	NSValueTransformer *pathToFileTransformer = [[[PathToFileTransformer alloc] init] autorelease];
     [NSValueTransformer setValueTransformer:pathToFileTransformer
                                     forName:@"PathToFileTransformer"];
 }
