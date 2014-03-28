@@ -7,7 +7,7 @@ include REXML
 
 feed = ARGV[0] || 'mercury'
 
-upload_prefix = "ec2-user@kode54.net:/usr/share/nginx/html/cog/"
+upload_prefix = "Chris@kode54.net:/usr/share/nginx/html/cog/"
 
 signature_file = "#{Dir.home}/.ssh/dsa_priv.pem"
 
