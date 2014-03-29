@@ -151,5 +151,5 @@ end
   appcast.close()
 
   #Send the updated appcast to the server
-  %x[scp #{new_xml.path} ec2-user@kode54.net:/usr/share/nginx/html/cog/#{feed}.xml]
+  %x[scp #{new_xml.path} #{upload_prefix}#{feed}.xml]
 end
