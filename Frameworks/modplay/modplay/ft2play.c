@@ -81,6 +81,7 @@ typedef struct SampleHeaderTyp_t
     uint8_t Typ;
     uint8_t Pan;
     int8_t RelTon;
+    uint8_t Junk;
 }
 #ifdef __GNUC__
 __attribute__ ((packed))
@@ -171,6 +172,7 @@ typedef struct SampleTyp_t
     uint8_t Typ;
     uint8_t Pan;
     int8_t RelTon;
+    uint8_t Junk;
     int8_t *Pek;
 } SampleTyp;
 
@@ -2251,7 +2253,7 @@ static int8_t LoadInstrHeader(PLAYER *p, MEM *buf, uint16_t i)
     }
     
     if ((ih.SampleSize == 0) || (ih.SampleSize > 40)) ih.SampleSize = 40; // default
-    ih.SampleSize -= (1 + 22); // skip junk + name
+    ih.SampleSize -= (22); // skip name
     
     if (ih.AntSamp > 32) return (0);
     
@@ -2264,9 +2266,9 @@ static int8_t LoadInstrHeader(PLAYER *p, MEM *buf, uint16_t i)
         
         for (j = 0; j < ih.AntSamp; ++j)
         {
-            mread(&ih.Samp[j], 17, 1, buf);
-            mseek(buf, 1 + 22, SEEK_CUR); // skip junk + name
-            memcpy(&p->Instr[i]->Samp[j], &ih.Samp[j], 17);
+            mread(&ih.Samp[j], 18, 1, buf);
+            mseek(buf, 22, SEEK_CUR); // skip junk + name
+            memcpy(&p->Instr[i]->Samp[j], &ih.Samp[j], 18);
 
             // non-FT2 fix: Force loop flags off if loop length is 0
             if (p->Instr[i]->Samp[j].RepL == 0)
@@ -2292,6 +2294,40 @@ static void CheckSampleRepeat(PLAYER *p, uint16_t ins, uint8_t smp)
     }
 }
 
+static inline int8_t get_adpcm_sample(const int8_t *sampleDictionary, const uint8_t *sampleData, int32_t samplePosition, int8_t *lastDelta)
+{
+    uint8_t byte = sampleData[samplePosition / 2];
+    byte = (samplePosition & 1) ? byte >> 4 : byte & 15;
+    return *lastDelta += sampleDictionary[byte];
+}
+
+static void Adpcm2Samp(uint8_t * sample, uint32_t length)
+{
+    const int8_t *sampleDictionary;
+    const uint8_t *sampleData;
+
+    uint32_t samplePosition;
+    int8_t lastDelta;
+    
+    uint8_t * sampleDataOut = (uint8_t *) malloc(length);
+    if (!sampleDataOut)
+        return;
+    
+    sampleDictionary = (const int8_t *)sample;
+    sampleData = (uint8_t*)sampleDictionary + 16;
+    
+    samplePosition = 0;
+    lastDelta = 0;
+    
+    while (samplePosition < length)
+    {
+        sampleDataOut[samplePosition] = get_adpcm_sample(sampleDictionary, sampleData, samplePosition, &lastDelta);
+        samplePosition++;
+    }
+
+    memcpy(sample, sampleDataOut, length);
+}
+
 static int8_t LoadInstrSample(PLAYER *p, MEM *buf, uint16_t i)
 {
     uint16_t j;
@@ -2301,9 +2337,13 @@ static int8_t LoadInstrSample(PLAYER *p, MEM *buf, uint16_t i)
     {
         for (j = 1; j <= p->Instr[i]->AntSamp; ++j)
         {
+            int adpcm = 0;
             p->Instr[i]->Samp[j - 1].Pek = NULL;
 
             l = p->Instr[i]->Samp[j - 1].Len;
+            if (p->Instr[i]->Samp[j - 1].Junk == 0xAD &&
+                !(p->Instr[i]->Samp[j - 1].Typ & (16|32)))
+                adpcm = (((l + 1) / 2) + 16);
             if (l > 0)
             {
                 p->Instr[i]->Samp[j - 1].Pek = (int8_t *)(malloc(l));
@@ -2313,8 +2353,11 @@ static int8_t LoadInstrSample(PLAYER *p, MEM *buf, uint16_t i)
                     return (0);
                 }
                 
-                mread(p->Instr[i]->Samp[j - 1].Pek, l, 1, buf);
-                Delta2Samp(p->Instr[i]->Samp[j - 1].Pek, l, p->Instr[i]->Samp[j - 1].Typ);
+                mread(p->Instr[i]->Samp[j - 1].Pek, adpcm ? adpcm : l, 1, buf);
+                if (!adpcm)
+                    Delta2Samp(p->Instr[i]->Samp[j - 1].Pek, l, p->Instr[i]->Samp[j - 1].Typ);
+                else
+                    Adpcm2Samp(p->Instr[i]->Samp[j - 1].Pek, l);
             }
             
             CheckSampleRepeat(p, i, (uint8_t)(j) - 1);
@@ -2721,6 +2764,11 @@ void voiceSetSamplePosition(PLAYER *p, uint8_t i, uint16_t value)
 void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, uint8_t sharp)
 {
 #ifdef USE_VOL_RAMP
+    if (p->rampStyle > 0 && !sharp)
+    {
+        if ((p->voice[i].volumeL == 0 && p->voice[i].volumeR == 0) || vol == 0)
+            sharp = 3;
+    }
     if (p->rampStyle > 1 || (p->rampStyle > 0 && sharp))
     {
         const float rampRate = sharp ? p->f_samplesPerFrameSharp : p->f_samplesPerFrame;
@@ -2731,7 +2779,7 @@ void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, uint8_t sharp)
                 p->voice[i].volumeL = 0.0f;
                 p->voice[i].volumeR = 0.0f;
             }
-            else
+            else if (sharp != 3)
                 p->voice[i].rampTerminates = 1;
         }
         

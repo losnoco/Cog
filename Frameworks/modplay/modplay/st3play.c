@@ -2683,6 +2683,11 @@ void voiceSetSamplePosition(PLAYER *p, uint8_t voiceNumber, uint16_t value)
 void voiceSetVolume(PLAYER *p, uint8_t voiceNumber, float volume, uint8_t sharp)
 {
 #ifdef USE_VOL_RAMP
+    if (p->rampStyle > 0 && !sharp)
+    {
+        if (p->voice[voiceNumber].volume == 0 || volume == 0)
+            sharp = 3;
+    }
     if (p->rampStyle > 1 || (p->rampStyle > 0 && sharp != 0))
     {
         const float rampRate = sharp ? p->f_samplesPerFrameSharp : p->f_samplesPerFrame;
@@ -2690,7 +2695,7 @@ void voiceSetVolume(PLAYER *p, uint8_t voiceNumber, float volume, uint8_t sharp)
         {
             if (volume)
                 p->voice[voiceNumber].volume = 0.0f;
-            else
+            else if (sharp != 3)
                 p->voice[voiceNumber].rampTerminates = 1;
         }
         p->voice[voiceNumber].targetVol = volume;

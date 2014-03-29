@@ -3905,6 +3905,13 @@ static void playing_volume_setup(DUMB_IT_SIGRENDERER * sigrenderer, IT_PLAYING *
 	vol = calculate_volume(sigrenderer, playing, 1.0f);
 	playing->float_volume[0] *= vol;
 	playing->float_volume[1] *= vol;
+    
+    rampScale = 4;
+
+    if (ramp_style > 0 && playing->declick_stage == 2) {
+        if ((playing->ramp_volume[0] == 0 && playing->ramp_volume[1] == 0) || vol == 0)
+            rampScale = 48;
+    }
 
     if (ramp_style == 0 || (ramp_style < 2 && playing->declick_stage == 2)) {
 		if (playing->declick_stage <= 2) {
@@ -3921,7 +3928,6 @@ static void playing_volume_setup(DUMB_IT_SIGRENDERER * sigrenderer, IT_PLAYING *
 		playing->ramp_delta[0] = 0;
         playing->ramp_delta[1] = 0;
     } else {
-        rampScale = 4;
         if (playing->declick_stage == 0) {
             playing->ramp_volume[0] = 0;
             playing->ramp_volume[1] = 0;
