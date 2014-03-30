@@ -2967,7 +2967,6 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
         
             if (p->voice[ch].panDeltaR >= 0.0f)
             {
-                
                 if (p->voice[ch].panningR > p->voice[ch].targetPanR)
                     p->voice[ch].panningR = p->voice[ch].targetPanR;
             }
@@ -3148,7 +3147,6 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             
             if (p->voice[ch].panDeltaR >= 0.0f)
             {
-                
                 if (p->voice[ch].panningR > p->voice[ch].targetPanR)
                     p->voice[ch].panningR = p->voice[ch].targetPanR;
             }
@@ -3320,7 +3318,6 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
             
             if (p->voice[ch].panDeltaR >= 0.0f)
             {
-                
                 if (p->voice[ch].panningR > p->voice[ch].targetPanR)
                     p->voice[ch].panningR = p->voice[ch].targetPanR;
             }
@@ -3501,7 +3498,6 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             
             if (p->voice[ch].panDeltaR >= 0.0f)
             {
-                
                 if (p->voice[ch].panningR > p->voice[ch].targetPanR)
                     p->voice[ch].panningR = p->voice[ch].targetPanR;
             }
