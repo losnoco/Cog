@@ -9,6 +9,9 @@
  ** It's just an accurate FastTracker II replayer port for people to enjoy.
  **
  **
+ ** non-FT2 effects:
+ ** - E8x - set panning
+ **
  ** (extreme) non-FT2 extensions:
  ** - Max 127 channels (was 32)
  ** - Any amount-of-channels number (FT2 supports *even* numbers only)
@@ -966,7 +969,14 @@ CheckEffects:
         
         // E7x - set tremolo waveform
         else if ((ch->Eff & 0xF0) == 0x70) ch->WaveCtrl = ((ch->Eff & 0x0F) << 4) | (ch->WaveCtrl & 0x0F);
-        
+
+        // E8x - set panning - *non-FT2*
+        else if ((ch->Eff & 0xF0) == 0x80)
+        {
+            ch->OutPan  = (ch->Eff & 0x0F) << 4;
+            ch->Status |= IS_Pan;
+        }
+
         // EAx - fine volume slide up
         else if ((ch->Eff & 0xF0) == 0xA0)
         {
