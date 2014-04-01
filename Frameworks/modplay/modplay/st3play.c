@@ -2922,6 +2922,7 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t sampleLoopLength;
+    int32_t sampleLoopBegin;
     int32_t samplePosition;
     int32_t interpolating;
 #ifdef USE_VOL_RAMP
@@ -2941,6 +2942,7 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
     sampleLength     = p->voice[ch].sampleLength;
     sampleLoopLength = p->voice[ch].sampleLoopLength;
     sampleLoopEnd    = p->voice[ch].sampleLoopEnd;
+    sampleLoopBegin  = sampleLoopEnd - sampleLoopLength;
     loopEnabled      = p->voice[ch].loopEnabled;
     volume           = p->voice[ch].volume;
     panningL         = p->voice[ch].panningL;
@@ -2961,20 +2963,17 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
         {
             resampler_write_sample(resampler, sampleData[samplePosition] * 256);
             
-            samplePosition++;
+            ++samplePosition;
             
             if (loopEnabled)
             {
                 if (samplePosition >= sampleLoopEnd)
-                    samplePosition -= sampleLoopLength;
+                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
             }
             else
             {
                 if (samplePosition >= sampleLength)
-                {
-                    samplePosition = 0;
                     interpolating = 0;
-                }
             }
         }
         
@@ -3057,6 +3056,7 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t sampleLoopLength;
+    int32_t sampleLoopBegin;
     int32_t samplePosition;
     int32_t interpolating;
 #ifdef USE_VOL_RAMP
@@ -3077,6 +3077,7 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     sampleLength     = p->voice[ch].sampleLength;
     sampleLoopLength = p->voice[ch].sampleLoopLength;
     sampleLoopEnd    = p->voice[ch].sampleLoopEnd;
+    sampleLoopBegin  = sampleLoopEnd - sampleLoopLength;
     loopEnabled      = p->voice[ch].loopEnabled;
     volume           = p->voice[ch].volume;
     panningL         = p->voice[ch].panningL;
@@ -3104,20 +3105,17 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             resampler_write_sample(resampler[0], sampleData[samplePosition] * 256);
             resampler_write_sample(resampler[1], sampleData[sampleLength + samplePosition] * 256);
             
-            samplePosition++;
+            ++samplePosition;
             
             if (loopEnabled)
             {
                 if (samplePosition >= sampleLoopEnd)
-                    samplePosition -= sampleLoopLength;
+                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
             }
             else
             {
                 if (samplePosition >= sampleLength)
-                {
-                    samplePosition = 0;
                     interpolating = 0;
-                }
             }
         }
         
@@ -3203,6 +3201,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t sampleLoopLength;
+    int32_t sampleLoopBegin;
     int32_t samplePosition;
     int32_t interpolating;
 #ifdef USE_VOL_RAMP
@@ -3222,6 +3221,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
     sampleLength     = p->voice[ch].sampleLength;
     sampleLoopLength = p->voice[ch].sampleLoopLength;
     sampleLoopEnd    = p->voice[ch].sampleLoopEnd;
+    sampleLoopBegin  = sampleLoopEnd - sampleLoopLength;
     loopEnabled      = p->voice[ch].loopEnabled;
     volume           = p->voice[ch].volume;
     panningL         = p->voice[ch].panningL;
@@ -3242,20 +3242,17 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
         {
             resampler_write_sample(resampler, get_le16(&sampleData[samplePosition]));
             
-            samplePosition++;
+            ++samplePosition;
             
             if (loopEnabled)
             {
                 if (samplePosition >= sampleLoopEnd)
-                    samplePosition -= sampleLoopLength;
+                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
             }
             else
             {
                 if (samplePosition >= sampleLength)
-                {
-                    samplePosition = 0;
                     interpolating = 0;
-                }
             }
         }
         
@@ -3338,6 +3335,7 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t sampleLoopLength;
+    int32_t sampleLoopBegin;
     int32_t samplePosition;
     int32_t interpolating;
 #ifdef USE_VOL_RAMP
@@ -3358,6 +3356,7 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     sampleLength     = p->voice[ch].sampleLength;
     sampleLoopLength = p->voice[ch].sampleLoopLength;
     sampleLoopEnd    = p->voice[ch].sampleLoopEnd;
+    sampleLoopBegin  = sampleLoopEnd - sampleLoopLength;
     loopEnabled      = p->voice[ch].loopEnabled;
     volume           = p->voice[ch].volume;
     panningL         = p->voice[ch].panningL;
@@ -3385,20 +3384,17 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             resampler_write_sample(resampler[0], get_le16(&sampleData[samplePosition]));
             resampler_write_sample(resampler[1], get_le16(&sampleData[sampleLength + samplePosition]));
             
-            samplePosition++;
+            ++samplePosition;
             
             if (loopEnabled)
             {
                 if (samplePosition >= sampleLoopEnd)
-                    samplePosition -= sampleLoopLength;
+                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
             }
             else
             {
                 if (samplePosition >= sampleLength)
-                {
-                    samplePosition = 0;
                     interpolating = 0;
-                }
             }
         }
         
@@ -3492,6 +3488,7 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t sampleLoopLength;
+    int32_t sampleLoopBegin;
     int32_t samplePosition;
 #ifdef USE_VOL_RAMP
     int32_t rampStyle;
@@ -3512,6 +3509,7 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
     sampleLength     = p->voice[ch].sampleLength;
     sampleLoopLength = p->voice[ch].sampleLoopLength;
     sampleLoopEnd    = p->voice[ch].sampleLoopEnd;
+    sampleLoopBegin  = sampleLoopEnd - sampleLoopLength;
     loopEnabled      = p->voice[ch].loopEnabled;
     volume           = p->voice[ch].volume;
     panningL         = p->voice[ch].panningL;
@@ -3547,7 +3545,7 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
             
             lastDelta = nextDelta;
             
-            samplePosition++;
+            ++samplePosition;
             
             if (loopEnabled)
             {
@@ -3556,17 +3554,14 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
                 
                 if (samplePosition >= sampleLoopEnd)
                 {
-                    samplePosition -= sampleLoopLength;
+                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
                     lastDelta = p->voice[ch].loopStartDelta;
                 }
             }
             else
             {
                 if (samplePosition >= sampleLength)
-                {
-                    samplePosition = 0;
                     interpolating = 0;
-                }
             }
         }
         
@@ -3720,7 +3715,7 @@ static void st3play_AdlibMix(PLAYER *p, float *buffer, int32_t count)
         
         if (inbuffer_free)
         {
-            Chip_GenerateBlock2( p->fmChip, inbuffer_free, tempbuffer );
+            Chip_GenerateBlock_Mono( p->fmChip, inbuffer_free, tempbuffer );
             for (i = 0; i < inbuffer_free; ++i)
                 resampler_write_sample_fixed( p->fmResampler, (int)tempbuffer[i], 16);
         }

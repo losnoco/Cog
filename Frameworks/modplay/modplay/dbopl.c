@@ -1512,7 +1512,7 @@ void Chip_WriteReg( void *_chip, Bit32u reg, Bit8u val ) {
 	}
 }
 
-Bit32u Chip_WriteAddr( void *_chip, Bit32u port, Bit8u val ) {
+Bit32u Chip_WriteAddr( struct Chip *_chip, Bit32u port, Bit8u val ) {
     struct Chip *chip = (struct Chip *)_chip;
 	switch ( port & 3 ) {
 	case 0:
@@ -1526,8 +1526,7 @@ Bit32u Chip_WriteAddr( void *_chip, Bit32u port, Bit8u val ) {
 	return 0;
 }
 
-void Chip_GenerateBlock2( void *_chip, Bitu total, Bit32s* output ) {
-    struct Chip *chip = (struct Chip *)_chip;
+static void Chip_GenerateBlock2( struct Chip *chip, Bitu total, Bit32s* output ) {
 	while ( total > 0 ) {
         struct Channel* ch;
         int count;
@@ -1546,8 +1545,7 @@ void Chip_GenerateBlock2( void *_chip, Bitu total, Bit32s* output ) {
 	}
 }
 
-void Chip_GenerateBlock3( void *_chip, Bitu total, Bit32s* output  ) {
-    struct Chip *chip = (struct Chip *)_chip;
+static void Chip_GenerateBlock3( struct Chip *chip, Bitu total, Bit32s* output  ) {
 	while ( total > 0 ) {
         struct Channel* ch;
         int count;
@@ -1565,6 +1563,34 @@ void Chip_GenerateBlock3( void *_chip, Bitu total, Bit32s* output  ) {
 		total -= samples;
 		output += samples * 2;
 	}
+}
+
+void Chip_GenerateBlock_Mono( void *_chip, Bitu total, Bit32s* output ) {
+    struct Chip *chip = (struct Chip *)_chip;
+    if (chip->opl3Active) {
+        while ( total > 0 ) {
+            Bit32s temp[512];
+            Bitu todo = ( total > 256 ) ? 256 : total, i;
+            Chip_GenerateBlock3( chip, todo, temp );
+            total -= todo;
+            todo *= 2;
+            for ( i = 0; i < todo; i += 2 ) {
+                *output++ = (temp[i] + temp[i + 1]) >> 1;
+            }
+        }
+    } else
+        Chip_GenerateBlock2( chip, total, output );
+}
+
+void Chip_GenerateBlock_Stereo( void *_chip, Bitu total, Bit32s* output) {
+    struct Chip *chip = (struct Chip *)_chip;
+    if (!chip->opl3Active) {
+        Chip_GenerateBlock2( chip, total, output );
+        while ( total-- ) {
+            output[total * 2 + 1] = output[total * 2] = output[total];
+        }
+    } else
+        Chip_GenerateBlock3( chip, total, output );
 }
 
 void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {

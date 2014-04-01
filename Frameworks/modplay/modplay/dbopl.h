@@ -65,5 +65,5 @@ void Chip_Setup( void *chip, Bit32u clock, Bit32u rate );
 void Chip_WriteReg( void *chip, Bit32u reg, Bit8u val );
 Bit32u Chip_WriteAddr( void *chip, Bit32u port, Bit8u val );
 
-void Chip_GenerateBlock2( void *chip, Bitu total, Bit32s* output );
-void Chip_GenerateBlock3( void *chip, Bitu total, Bit32s* output );
+void Chip_GenerateBlock_Mono( void *chip, Bitu total, Bit32s* output );
+void Chip_GenerateBlock_Stereo( void *chip, Bitu total, Bit32s* output );
