@@ -1098,7 +1098,20 @@ static int usf_info(void * context, const char * name, const char * value)
             return NO;
         }
         
-        core->dwInterpolation = 2;
+        int resampling_int = -1;
+        NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+        if ([resampling isEqualToString:@"zoh"])
+            resampling_int = 0;
+        else if ([resampling isEqualToString:@"blep"])
+            resampling_int = 1;
+        else if ([resampling isEqualToString:@"linear"])
+            resampling_int = 2;
+        else if ([resampling isEqualToString:@"cubic"])
+            resampling_int = 3;
+        else if ([resampling isEqualToString:@"sinc"])
+            resampling_int = 4;
+
+        core->dwInterpolation = resampling_int;
         core->dwChannelMute = 0;
         
         if (!state.arm7_clockdown_level)
