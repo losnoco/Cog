@@ -283,6 +283,24 @@ void resampler_write_sample(void *_r, short s)
     }
 }
 
+void resampler_write_sample_fixed(void *_r, int s, unsigned char depth)
+{
+    resampler * r = ( resampler * ) _r;
+    
+    if ( r->write_filled < resampler_buffer_size )
+    {
+        float s32 = s;
+        s32 /= (double)(1 << (depth - 1));
+        
+        r->buffer_in[ r->write_pos ] = s32;
+        r->buffer_in[ r->write_pos + resampler_buffer_size ] = s32;
+        
+        ++r->write_filled;
+        
+        r->write_pos = ( r->write_pos + 1 ) % resampler_buffer_size;
+    }
+}
+
 static int resampler_run_zoh(resampler * r, float ** out_, float * out_end)
 {
     int in_size = r->write_filled;

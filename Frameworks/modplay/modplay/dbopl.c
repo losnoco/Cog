@@ -524,18 +524,14 @@ static void Operator_UpdateRates( struct Operator *o, const struct Chip* chip ) 
 }
 
 static INLINE Bit32s Operator_RateForward( struct Operator *o, Bit32u add ) {
+	Bit32s ret;
 	o->rateIndex += add;
-	Bit32s ret = o->rateIndex >> RATE_SH;
+	ret = o->rateIndex >> RATE_SH;
 	o->rateIndex = o->rateIndex & RATE_MASK;
 	return ret;
 }
 
-static const Operator_VolumeHandler VolumeHandlerTable[5];
-
-static INLINE void Operator_SetState( struct Operator *o, Bit8u s ) {
-	o->state = s;
-	o->volHandler = VolumeHandlerTable[ s ];
-}
+static INLINE void Operator_SetState( struct Operator *o, Bit8u s );
 
 static Bits Operator_Volume_Attack( struct Operator *o ) {
 	Bit32s vol = o->volume;
@@ -556,7 +552,6 @@ static Bits Operator_Volume_Attack( struct Operator *o ) {
 
 static Bits Operator_Volume_Decay( struct Operator *o ) {
 	Bit32s vol = o->volume;
-	Bit32s change;
     vol += Operator_RateForward( o, o->decayAdd );
     if ( vol >= o->sustainLevel ) {
         //Check if we didn't overshoot max attenuation, then just go off
@@ -575,7 +570,6 @@ static Bits Operator_Volume_Decay( struct Operator *o ) {
 
 static Bits Operator_Volume_Sustain( struct Operator *o ) {
 	Bit32s vol = o->volume;
-	Bit32s change;
     if ( o->reg20 & MASK_SUSTAIN ) {
         return vol;
     }
@@ -592,7 +586,6 @@ static Bits Operator_Volume_Sustain( struct Operator *o ) {
 
 static Bits Operator_Volume_Release( struct Operator *o ) {
 	Bit32s vol = o->volume;
-	Bit32s change;
     vol += Operator_RateForward( o, o->releaseAdd );;
     if ( vol >= ENV_MAX ) {
         o->volume = ENV_MAX;
@@ -615,6 +608,11 @@ static const Operator_VolumeHandler VolumeHandlerTable[5] = {
 	&Operator_Volume_Decay,
 	&Operator_Volume_Attack
 };
+
+static INLINE void Operator_SetState( struct Operator *o, Bit8u s ) {
+	o->state = s;
+	o->volHandler = VolumeHandlerTable[ s ];
+}
 
 static INLINE Bitu Operator_ForwardVolume(struct Operator *o) {
 	return o->currentLevel + (o->volHandler)(o);
@@ -672,10 +670,11 @@ static void Operator_Write60( struct Operator *o, const struct Chip* chip, Bit8u
 
 static void Operator_Write80( struct Operator *o, const struct Chip* chip, Bit8u val ) {
 	Bit8u change = (o->reg80 ^ val );
+	Bit8u sustain;
 	if ( !change ) 
 		return;
 	o->reg80 = val;
-	Bit8u sustain = val >> 4;
+	sustain = val >> 4;
 	//Turn 0xf into 0x1f
 	sustain |= ( sustain + 1) & 0x10;
 	o->sustainLevel = sustain << ( ENV_BITS - 5 );
@@ -685,10 +684,11 @@ static void Operator_Write80( struct Operator *o, const struct Chip* chip, Bit8u
 }
 
 static void Operator_WriteE0( struct Operator *o, const struct Chip* chip, Bit8u val ) {
+	Bit8u waveForm;
 	if ( !(o->regE0 ^ val) )
 		return;
 	//in opl3 mode you can always selet 7 waveforms regardless of waveformselect
-	Bit8u waveForm = val & ( ( 0x3 & chip->waveFormMask ) | (0x7 & chip->opl3Active ) );
+	waveForm = val & ( ( 0x3 & chip->waveFormMask ) | (0x7 & chip->opl3Active ) );
 	o->regE0 = val;
 #if ( DBOPL_WAVE == WAVE_HANDLER )
 	o->waveHandler = WaveHandlerTable[ waveForm ];
@@ -803,7 +803,9 @@ static INLINE struct Operator* Channel_Op( struct Channel *c, Bitu index ) {
 }
 
 static struct Channel* Channel_Block_sm2AM( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
-    if ( Operator_Silent( Channel_Op(c, 0) ) && Operator_Silent( Channel_Op(c, 1) ) ) {
+	Bitu i;
+
+	if ( Operator_Silent( Channel_Op(c, 0) ) && Operator_Silent( Channel_Op(c, 1) ) ) {
         c->old[0] = c->old[1] = 0;
         return (c + 1);
     }
@@ -811,7 +813,7 @@ static struct Channel* Channel_Block_sm2AM( struct Channel *c, struct Chip* chip
     Operator_Prepare( Channel_Op( c, 0 ), chip );
     Operator_Prepare( Channel_Op( c, 1 ), chip );
 
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
 		//Do unsigned shift so we can shift out all bits but still stay in 10 bit range otherwise
 		Bit32s mod = (Bit32u)((c->old[0] + c->old[1])) >> c->feedback;
         Bit32s sample;
@@ -827,6 +829,8 @@ static struct Channel* Channel_Block_sm2AM( struct Channel *c, struct Chip* chip
 }
 
 static struct Channel* Channel_Block_sm2FM( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
+	Bitu i;
+
     if ( Operator_Silent( Channel_Op(c, 1) ) ) {
         c->old[0] = c->old[1] = 0;
         return (c + 1);
@@ -836,7 +840,7 @@ static struct Channel* Channel_Block_sm2FM( struct Channel *c, struct Chip* chip
 	Operator_Prepare( Channel_Op( c, 0 ), chip );
 	Operator_Prepare( Channel_Op( c, 1 ), chip );
 
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
 		//Do unsigned shift so we can shift out all bits but still stay in 10 bit range otherwise
 		Bit32s mod = (Bit32u)((c->old[0] + c->old[1])) >> c->feedback;
 		Bit32s sample;
@@ -852,7 +856,9 @@ static struct Channel* Channel_Block_sm2FM( struct Channel *c, struct Chip* chip
 }
 
 static struct Channel* Channel_Block_sm3AM( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
-    if ( Operator_Silent( Channel_Op( c, 0 ) ) && Operator_Silent( Channel_Op( c, 1 ) ) ) {
+	Bitu i;
+
+	if ( Operator_Silent( Channel_Op( c, 0 ) ) && Operator_Silent( Channel_Op( c, 1 ) ) ) {
         c->old[0] = c->old[1] = 0;
         return (c + 1);
     }
@@ -861,7 +867,7 @@ static struct Channel* Channel_Block_sm3AM( struct Channel *c, struct Chip* chip
     Operator_Prepare( Channel_Op( c, 0 ), chip );
     Operator_Prepare( Channel_Op( c, 1 ), chip );
 
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
 		//Do unsigned shift so we can shift out all bits but still stay in 10 bit range otherwise
 		Bit32s mod = (Bit32u)((c->old[0] + c->old[1])) >> c->feedback;
 		Bit32s sample;
@@ -878,7 +884,9 @@ static struct Channel* Channel_Block_sm3AM( struct Channel *c, struct Chip* chip
 }
 
 static struct Channel* Channel_Block_sm3FM( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
-    if ( Operator_Silent( Channel_Op( c, 1 ) ) ) {
+	Bitu i;
+
+	if ( Operator_Silent( Channel_Op( c, 1 ) ) ) {
         c->old[0] = c->old[1] = 0;
         return (c + 1);
     }
@@ -887,7 +895,7 @@ static struct Channel* Channel_Block_sm3FM( struct Channel *c, struct Chip* chip
     Operator_Prepare( Channel_Op( c, 0 ), chip );
     Operator_Prepare( Channel_Op( c, 1 ), chip );
 
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
 		//Do unsigned shift so we can shift out all bits but still stay in 10 bit range otherwise
 		Bit32s mod = (Bit32u)((c->old[0] + c->old[1])) >> c->feedback;
 		Bit32s sample;
@@ -904,6 +912,8 @@ static struct Channel* Channel_Block_sm3FM( struct Channel *c, struct Chip* chip
 }
 
 static struct Channel* Channel_Block_sm3FMFM( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
+	Bitu i;
+
     if ( Operator_Silent( Channel_Op( c, 3 ) ) ) {
         c->old[0] = c->old[1] = 0;
         return (c + 2);
@@ -915,7 +925,7 @@ static struct Channel* Channel_Block_sm3FMFM( struct Channel *c, struct Chip* ch
     Operator_Prepare( Channel_Op( c, 2 ), chip );
     Operator_Prepare( Channel_Op( c, 3 ), chip );
 
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
 		//Do unsigned shift so we can shift out all bits but still stay in 10 bit range otherwise
 		Bit32s mod = (Bit32u)((c->old[0] + c->old[1])) >> c->feedback;
 		Bit32s sample;
@@ -935,6 +945,8 @@ static struct Channel* Channel_Block_sm3FMFM( struct Channel *c, struct Chip* ch
 }
 
 static struct Channel* Channel_Block_sm3AMFM( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
+	Bitu i;
+
     if ( Operator_Silent( Channel_Op( c, 0 ) ) && Operator_Silent( Channel_Op( c, 3 ) ) ) {
         c->old[0] = c->old[1] = 0;
         return (c + 2);
@@ -946,7 +958,7 @@ static struct Channel* Channel_Block_sm3AMFM( struct Channel *c, struct Chip* ch
     Operator_Prepare( Channel_Op( c, 2 ), chip );
     Operator_Prepare( Channel_Op( c, 3 ), chip );
     
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
 		//Do unsigned shift so we can shift out all bits but still stay in 10 bit range otherwise
 		Bit32s mod = (Bit32u)((c->old[0] + c->old[1])) >> c->feedback;
 		Bit32s sample;
@@ -967,6 +979,8 @@ static struct Channel* Channel_Block_sm3AMFM( struct Channel *c, struct Chip* ch
 }
 
 static struct Channel* Channel_Block_sm3FMAM( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
+	Bitu i;
+
     if ( Operator_Silent( Channel_Op( c, 1) ) && Operator_Silent( Channel_Op( c, 3 ) ) ) {
         c->old[0] = c->old[1] = 0;
         return (c + 2);
@@ -978,7 +992,7 @@ static struct Channel* Channel_Block_sm3FMAM( struct Channel *c, struct Chip* ch
     Operator_Prepare( Channel_Op( c, 2 ), chip );
     Operator_Prepare( Channel_Op( c, 3 ), chip );
     
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
 		//Do unsigned shift so we can shift out all bits but still stay in 10 bit range otherwise
 		Bit32s mod = (Bit32u)((c->old[0] + c->old[1])) >> c->feedback;
 		Bit32s sample;
@@ -998,6 +1012,8 @@ static struct Channel* Channel_Block_sm3FMAM( struct Channel *c, struct Chip* ch
 }
 
 static struct Channel* Channel_Block_sm3AMAM( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
+	Bitu i;
+
     if ( Operator_Silent( Channel_Op( c, 0 ) ) && Operator_Silent( Channel_Op( c, 2 ) )  && Operator_Silent( Channel_Op( c, 3 ) ) ) {
         c->old[0] = c->old[1] = 0;
         return (c + 2);
@@ -1009,16 +1025,17 @@ static struct Channel* Channel_Block_sm3AMAM( struct Channel *c, struct Chip* ch
     Operator_Prepare( Channel_Op( c, 2 ), chip );
     Operator_Prepare( Channel_Op( c, 3 ), chip );
     
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
 		//Do unsigned shift so we can shift out all bits but still stay in 10 bit range otherwise
 		Bit32s mod = (Bit32u)((c->old[0] + c->old[1])) >> c->feedback;
 		Bit32s sample;
         Bit32s out0;
+		Bits next;
 		c->old[0] = c->old[1];
 		c->old[1] = Operator_GetSample( Channel_Op( c, 0 ), mod );
 		out0 = c->old[0];
         sample = out0;
-        Bits next = Operator_GetSample( Channel_Op( c, 1 ), 0 );
+        next = Operator_GetSample( Channel_Op( c, 1 ), 0 );
         sample += Operator_GetSample( Channel_Op( c, 2 ), next );
         sample += Operator_GetSample( Channel_Op( c, 3 ), 0 );
         output[ i * 2 + 0 ] += sample & c->maskLeft;
@@ -1085,6 +1102,8 @@ static Bit32s Channel_GeneratePercussion( struct Channel *chan, struct Chip* chi
 }
 
 static struct Channel* Channel_Block_sm2Percussion( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
+	Bitu i;
+
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
     Operator_Prepare( Channel_Op( c, 1 ), chip );
@@ -1093,7 +1112,7 @@ static struct Channel* Channel_Block_sm2Percussion( struct Channel *c, struct Ch
     Operator_Prepare( Channel_Op( c, 4 ), chip );
     Operator_Prepare( Channel_Op( c, 5 ), chip );
 
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
         output[i] = Channel_GeneratePercussion( c, chip );
 	}
 
@@ -1101,6 +1120,8 @@ static struct Channel* Channel_Block_sm2Percussion( struct Channel *c, struct Ch
 }
 
 static struct Channel* Channel_Block_sm3Percussion( struct Channel *c, struct Chip* chip, Bit32u samples, Bit32s* output ) {
+	Bitu i;
+
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
     Operator_Prepare( Channel_Op( c, 1 ), chip );
@@ -1109,7 +1130,7 @@ static struct Channel* Channel_Block_sm3Percussion( struct Channel *c, struct Ch
     Operator_Prepare( Channel_Op( c, 4 ), chip );
     Operator_Prepare( Channel_Op( c, 5 ), chip );
     
-	for ( Bitu i = 0; i < samples; i++ ) {
+	for ( i = 0; i < samples; i++ ) {
         output[i * 2] = output[i * 2 + 1] = Channel_GeneratePercussion( c, chip );
 	}
     
@@ -1181,10 +1202,11 @@ static void Channel_WriteA0( struct Channel *c, const struct Chip* chip, Bit8u v
 
 static void Channel_WriteB0( struct Channel *c, const struct Chip* chip, Bit8u val ) {
 	Bit8u fourOp = chip->reg104 & chip->opl3Active & c->fourMask;
+	Bitu change;
 	//Don't handle writes to silent fourop channels
 	if ( fourOp > 0x80 )
 		return;
-	Bitu change = ( c->chanData ^ ( val << 8 ) ) & 0x1f00;
+	change = ( c->chanData ^ ( val << 8 ) ) & 0x1f00;
 	if ( change ) {
 		c->chanData ^= change;
 		Channel_UpdateFrequency( c, chip, fourOp );
@@ -1227,6 +1249,7 @@ static void Channel_WriteC0( struct Channel *c, const struct Chip* chip, Bit8u v
 		//4-op mode enabled for this channel
 		if ( (chip->reg104 & c->fourMask) & 0x3f ) {
 			struct Channel* chan0, *chan1;
+			Bit8u synth;
 			//Check if it's the 2nd channel in a 4-op
 			if ( !(c->fourMask & 0x80 ) ) {
 				chan0 = c;
@@ -1236,7 +1259,7 @@ static void Channel_WriteC0( struct Channel *c, const struct Chip* chip, Bit8u v
 				chan1 = c;
 			}
 
-			Bit8u synth = ( (chan0->regC0 & 1) << 0 )| (( chan1->regC0 & 1) << 1 );
+			synth = ( (chan0->regC0 & 1) << 0 )| (( chan1->regC0 & 1) << 1 );
 			switch ( synth ) {
 			case 0:
 				chan0->synthHandler = &Channel_Block_sm3FMFM;
@@ -1307,8 +1330,9 @@ void Chip_Init(void *_chip) {
 }
 
 static INLINE Bit32u Chip_ForwardNoise(struct Chip *chip) {
+	Bitu count;
 	chip->noiseCounter += chip->noiseAdd;
-	Bitu count = chip->noiseCounter >> LFO_SH;
+	count = chip->noiseCounter >> LFO_SH;
 	chip->noiseCounter &= WAVE_MASK;
 	for ( ; count > 0; --count ) {
 		//Noise calculation from mame
@@ -1437,12 +1461,13 @@ void Chip_WriteReg( void *_chip, Bit32u reg, Bit8u val ) {
 			//Always keep the highest bit enabled, for checking > 0x80
 			chip->reg104 = 0x80 | ( val & 0x3f );
 		} else if ( reg == 0x105 ) {
+			int i;
 			//MAME says the real opl3 doesn't reset anything on opl3 disable/enable till the next write in another register
 			if ( !((chip->opl3Active ^ val) & 1 ) )
 				return;
 			chip->opl3Active = ( val & 1 ) ? 0xff : 0;
 			//Update the 0xc0 register for all channels to signal the switch to mono/stereo handlers
-			for ( int i = 0; i < 18;i++ ) {
+			for ( i = 0; i < 18; i++ ) {
                 Channel_ResetC0( &chip->chan[i], chip );
 			}
 		} else if ( reg == 0x08 ) {
@@ -1507,7 +1532,8 @@ void Chip_GenerateBlock2( void *_chip, Bitu total, Bit32s* output ) {
         struct Channel* ch;
         int count;
 		Bit32u samples = Chip_ForwardLFO( chip, total );
-		for ( Bitu i = 0; i < samples; i++ ) {
+		Bitu i;
+		for ( i = 0; i < samples; i++ ) {
 			output[i] = 0;
 		}
 		count = 0;
@@ -1526,7 +1552,8 @@ void Chip_GenerateBlock3( void *_chip, Bitu total, Bit32s* output  ) {
         struct Channel* ch;
         int count;
 		Bit32u samples = Chip_ForwardLFO( chip, total );
-		for ( Bitu i = 0; i < samples; i++ ) {
+		Bitu i;
+		for ( i = 0; i < samples; i++ ) {
 			output[i * 2 + 0 ] = 0;
 			output[i * 2 + 1 ] = 0;
 		}
@@ -1544,6 +1571,14 @@ void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {
     struct Chip *chip = (struct Chip *)_chip;
 	double original = (double)clock / 288.0;
 	double scale = original / (double)rate;
+#ifdef WAVE_PRECISION
+	double freqScale;
+#else
+	Bit32u freqScale;
+#endif
+	int i;
+	Bit8u j;
+
 	if (fabs(scale - 1.0) < 0.00001)
 		scale = 1.0;
 
@@ -1561,41 +1596,46 @@ void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {
 	//With higher octave this gets shifted up
 	//-1 since the freqCreateTable = *2
 #ifdef WAVE_PRECISION
-	double freqScale = ( 1 << 7 ) * scale * ( 1 << ( WAVE_SH - 1 - 10));
-	for ( int i = 0; i < 16; i++ ) {
+	freqScale = ( 1 << 7 ) * scale * ( 1 << ( WAVE_SH - 1 - 10));
+	for ( i = 0; i < 16; i++ ) {
 		//Use rounding with 0.5
 		chip->freqMul[i] = (Bit32u)( 0.5 + freqScale * FreqCreateTable[ i ] );
 	}
 #else
-	Bit32u freqScale = (Bit32u)( 0.5 + scale * ( 1 << ( WAVE_SH - 1 - 10)));
-	for ( int i = 0; i < 16; i++ ) {
+	freqScale = (Bit32u)( 0.5 + scale * ( 1 << ( WAVE_SH - 1 - 10)));
+	for ( i = 0; i < 16; i++ ) {
 		chip->freqMul[i] = freqScale * FreqCreateTable[ i ];
 	}
 #endif
 
 	//-3 since the real envelope takes 8 steps to reach the single value we supply
-	for ( Bit8u i = 0; i < 76; i++ ) {
+	for ( j = 0; j < 76; j++ ) {
 		Bit8u index, shift;
-		EnvelopeSelect( i, &index, &shift );
-		chip->linearRates[i] = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH + ENV_EXTRA - shift - 3 )));
+		EnvelopeSelect( j, &index, &shift );
+		chip->linearRates[j] = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH + ENV_EXTRA - shift - 3 )));
 	}
 	//Generate the best matching attack rate
-	for ( Bit8u i = 0; i < 62; i++ ) {
+	for ( j = 0; j < 62; j++ ) {
 		Bit8u index, shift;
-		EnvelopeSelect( i, &index, &shift );
+		Bit32s original, guessAdd, bestAdd;
+		Bit32u bestDiff, passes;
+		EnvelopeSelect( j, &index, &shift );
 		//Original amount of samples the attack would take
-		Bit32s original = (Bit32u)( (AttackSamplesTable[ index ] << shift) / scale);
+		original = (Bit32u)( (AttackSamplesTable[ index ] << shift) / scale);
 		 
-		Bit32s guessAdd = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH - shift - 3 )));
-		Bit32s bestAdd = guessAdd;
-		Bit32u bestDiff = 1 << 30;
-		for( Bit32u passes = 0; passes < 16; passes ++ ) {
+		guessAdd = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH - shift - 3 )));
+		bestAdd = guessAdd;
+		bestDiff = 1 << 30;
+		for( passes = 0; passes < 16; passes ++ ) {
 			Bit32s volume = ENV_MAX;
 			Bit32s samples = 0;
 			Bit32u count = 0;
+			Bit32s diff;
+			Bit32u lDiff;
 			while ( volume > 0 && samples < original * 2 ) {
+				Bit32s change;
 				count += guessAdd;
-				Bit32s change = count >> RATE_SH;
+				change = count >> RATE_SH;
 				count &= RATE_MASK;
 				if ( change ) { 
 					volume += ( ~volume * change ) >> 3;
@@ -1603,8 +1643,8 @@ void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {
 				samples++;
 
 			}
-			Bit32s diff = original - samples;
-			Bit32u lDiff = labs( diff );
+			diff = original - samples;
+			lDiff = labs( diff );
 			//Init last on first pass
 			if ( lDiff < bestDiff ) {
 				bestDiff = lDiff;
@@ -1624,11 +1664,11 @@ void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {
 				guessAdd--;
 			}
 		}
-		chip->attackRates[i] = bestAdd;
+		chip->attackRates[j] = bestAdd;
 	}
-	for ( Bit8u i = 62; i < 76; i++ ) {
+	for ( j = 62; j < 76; j++ ) {
 		//This should provide instant volume maximizing
-		chip->attackRates[i] = 8 << RATE_SH;
+		chip->attackRates[j] = 8 << RATE_SH;
 	}
 	//Setup the channels with the correct four op flags
 	//Channels are accessed through a table so they appear linear here
@@ -1653,7 +1693,7 @@ void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {
 
 	//Clear Everything in opl3 mode
 	Chip_WriteReg( chip, 0x105, 0x1 );
-	for ( int i = 0; i < 512; i++ ) {
+	for ( i = 0; i < 512; i++ ) {
 		if ( i == 0x105 )
 			continue;
 		Chip_WriteReg( chip, i, 0xff );
@@ -1661,7 +1701,7 @@ void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {
 	}
 	Chip_WriteReg( chip, 0x105, 0x0 );
 	//Clear everything in opl2 mode
-	for ( int i = 0; i < 256; i++ ) {
+	for ( i = 0; i < 256; i++ ) {
 		Chip_WriteReg( chip, i, 0xff );
 		Chip_WriteReg( chip, i, 0x0 );
 	}
@@ -1669,6 +1709,9 @@ void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {
 
 static unsigned char doneTables = 0;
 static void InitTables( void ) {
+	int i, oct;
+	Bit8u j;
+	Bitu k;
 	if ( doneTables )
 		return;
 #if ( DBOPL_WAVE == WAVE_HANDLER ) || ( DBOPL_WAVE == WAVE_TABLELOG )
@@ -1690,7 +1733,7 @@ static void InitTables( void ) {
 #endif
 #if ( DBOPL_WAVE == WAVE_TABLEMUL )
 	//Multiplication based tables
-	for ( int i = 0; i < 384; i++ ) {
+	for ( i = 0; i < 384; i++ ) {
 		int s = i * 8;
 		//TODO maybe keep some of the precision errors of the original table?
 		double val = ( 0.5 + ( pow(2.0, -1.0 + ( 255 - s) * ( 1.0 /256 ) )) * ( 1 << MUL_SH ));
@@ -1698,24 +1741,24 @@ static void InitTables( void ) {
 	}
 
 	//Sine Wave Base
-	for ( int i = 0; i < 512; i++ ) {
+	for ( i = 0; i < 512; i++ ) {
 		WaveTable[ 0x0200 + i ] = (Bit16s)(sin( (i + 0.5) * (PI / 512.0) ) * 4084);
 		WaveTable[ 0x0000 + i ] = -WaveTable[ 0x200 + i ];
 	}
 	//Exponential wave
-	for ( int i = 0; i < 256; i++ ) {
+	for ( i = 0; i < 256; i++ ) {
 		WaveTable[ 0x700 + i ] = (Bit16s)( 0.5 + ( pow(2.0, -1.0 + ( 255 - i * 8) * ( 1.0 /256 ) ) ) * 4085 );
 		WaveTable[ 0x6ff - i ] = -WaveTable[ 0x700 + i ];
 	}
 #endif
 #if ( DBOPL_WAVE == WAVE_TABLELOG )
 	//Sine Wave Base
-	for ( int i = 0; i < 512; i++ ) {
+	for ( i = 0; i < 512; i++ ) {
 		WaveTable[ 0x0200 + i ] = (Bit16s)( 0.5 - log10( sin( (i + 0.5) * (PI / 512.0) ) ) / log10(2.0)*256 );
 		WaveTable[ 0x0000 + i ] = ((Bit16s)0x8000) | WaveTable[ 0x200 + i];
 	}
 	//Exponential wave
-	for ( int i = 0; i < 256; i++ ) {
+	for ( i = 0; i < 256; i++ ) {
 		WaveTable[ 0x700 + i ] = i * 8;
 		WaveTable[ 0x6ff - i ] = ((Bit16s)0x8000) | i * 8;
 	} 
@@ -1726,7 +1769,7 @@ static void InitTables( void ) {
 	//	|06  |0126|27  |7   |3   |4   |4 5 |5   |
 
 #if (( DBOPL_WAVE == WAVE_TABLELOG ) || ( DBOPL_WAVE == WAVE_TABLEMUL ))
-	for ( int i = 0; i < 256; i++ ) {
+	for ( i = 0; i < 256; i++ ) {
 		//Fill silence gaps
 		WaveTable[ 0x400 + i ] = WaveTable[0];
 		WaveTable[ 0x500 + i ] = WaveTable[0];
@@ -1744,29 +1787,29 @@ static void InitTables( void ) {
 #endif
 
 	//Create the ksl table
-	for ( int oct = 0; oct < 8; oct++ ) {
+	for ( oct = 0; oct < 8; oct++ ) {
 		int base = oct * 8;
-		for ( int i = 0; i < 16; i++ ) {
+		for ( i = 0; i < 16; i++ ) {
 			int val = base - KslCreateTable[i];
 			if ( val < 0 )
 				val = 0;
 			//*4 for the final range to match attenuation range
-			KslTable[ oct * 16 + i ] = val * 4;
+			KslTable[ oct * 16 + i ] = (Bit8u)(val * 4);
 		}
 	}
 	//Create the Tremolo table, just increase and decrease a triangle wave
-	for ( Bit8u i = 0; i < TREMOLO_TABLE / 2; i++ ) {
-		Bit8u val = i << ENV_EXTRA;
-		TremoloTable[i] = val;
-		TremoloTable[TREMOLO_TABLE - 1 - i] = val;
+	for ( j = 0; j < TREMOLO_TABLE / 2; j++ ) {
+		Bit8u val = j << ENV_EXTRA;
+		TremoloTable[j] = val;
+		TremoloTable[TREMOLO_TABLE - 1 - j] = val;
 	}
 	//Create a table with offsets of the channels from the start of the chip
-    struct Chip* chip = 0;
-    for ( Bitu i = 0; i < 32; i++ ) {
-		Bitu index = i & 0xf;
+    for ( k = 0; k < 32; k++ ) {
+		Bitu index = k & 0xf;
         Bitu blah;
+		struct Chip *chip = 0;
 		if ( index >= 9 ) {
-			ChanOffsetTable[i] = 0;
+			ChanOffsetTable[k] = 0;
 			continue;
 		}
 		//Make sure the four op channels follow eachother
@@ -1774,34 +1817,35 @@ static void InitTables( void ) {
 			index = (index % 3) * 2 + ( index / 3 );
 		}
 		//Add back the bits for highest ones
-		if ( i >= 16 )
+		if ( k >= 16 )
 			index += 9;
         blah = (Bitu)( (unsigned long)( &(chip->chan[ index ]) ) );
-		ChanOffsetTable[i] = blah;
+		ChanOffsetTable[k] = (Bit16u)blah;
 	}
 	//Same for operators
-	for ( Bitu i = 0; i < 64; i++ ) {
+	for ( k = 0; k < 64; k++ ) {
         Bitu chNum;
         Bitu opNum;
         Bitu blah;
         struct Channel* chan = 0;
-		if ( i % 8 >= 6 || ( (i / 8) % 4 == 3 ) ) {
-			OpOffsetTable[i] = 0;
+		if ( k % 8 >= 6 || ( (k / 8) % 4 == 3 ) ) {
+			OpOffsetTable[k] = 0;
 			continue;
 		}
-		chNum = (i / 8) * 3 + (i % 8) % 3;
+		chNum = (k / 8) * 3 + (k % 8) % 3;
 		//Make sure we use 16 and up for the 2nd range to match the chanoffset gap
 		if ( chNum >= 12 )
 			chNum += 16 - 12;
-		opNum = ( i % 8 ) / 3;
+		opNum = ( k % 8 ) / 3;
         blah = (Bitu)( (unsigned long) ( &(chan->op[opNum]) ) );
-		OpOffsetTable[i] = ChanOffsetTable[ chNum ] + blah;
+		OpOffsetTable[k] = (Bit16u)(ChanOffsetTable[ chNum ] + blah);
 	}
 #if 0
 	//Stupid checks if table's are correct
-	for ( Bitu i = 0; i < 18; i++ ) {
-        Bit32u find = (Bit16u)( &(chip->chan[ i ]) );
-		for ( Bitu c = 0; c < 32; c++ ) {
+	for ( k = 0; k < 18; k++ ) {
+        Bit32u find = (Bit16u)( &(chip->chan[ k ]) );
+		Bitu c;
+		for ( c = 0; c < 32; c++ ) {
 			if ( ChanOffsetTable[c] == find ) {
 				find = 0;
 				break;
@@ -1811,9 +1855,10 @@ static void InitTables( void ) {
 			find = find;
 		}
 	}
-	for ( Bitu i = 0; i < 36; i++ ) {
-        Bit32u find = (Bit16u)( &(chip->chan[ i / 2 ].op[i % 2]) );
-		for ( Bitu c = 0; c < 64; c++ ) {
+	for ( k = 0; k < 36; k++ ) {
+        Bit32u find = (Bit16u)( &(chip->chan[ k / 2 ].op[k % 2]) );
+		Bitu c;
+		for ( c = 0; c < 64; c++ ) {
 			if ( OpOffsetTable[c] == find ) {
 				find = 0;
 				break;

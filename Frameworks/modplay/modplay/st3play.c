@@ -1,5 +1,5 @@
 /*
-** ST3PLAY v0.45
+** ST3PLAY v0.47
 ** =============
 **
 ** C port of Scream Tracker 3's replayer, by 8bitbubsy (Olav Sørensen)
@@ -62,6 +62,8 @@
 #if defined(_MSC_VER) && !defined(inline)
 #define inline __forceinline
 #endif
+
+#include "dbopl.h"
 
 #include "resampler.h"
 
@@ -199,6 +201,12 @@ typedef struct
     void *resampler[64];
 #endif
     
+    void *fmChip;
+    void *fmResampler;
+    
+    const uint8_t *fmPatchTable[9];
+    uint8_t fmLastB0[9];
+    
     float f_outputFreq;
     float f_masterVolume;
     
@@ -315,6 +323,7 @@ static const int16_t vibramp[64] =
      192,  200, 208, 216, 224, 232, 240, 248
 };
 
+static const char Adlib_PortBases[9] = {0, 1, 2, 8, 9, 10, 16, 17, 18};
 
 // FUNCTION DECLARATIONS
 
@@ -534,6 +543,26 @@ void * st3play_Alloc(uint32_t outputFreq, int8_t interpolation, int8_t ramp_styl
     return p;
 }
 
+static int st3play_AdlibInit(PLAYER *p)
+{
+    p->fmChip = malloc( Chip_GetSize() );
+    if ( !p->fmChip )
+        return -1;
+    
+    Chip_Init( p->fmChip );
+    Chip_Setup( p->fmChip, 3579545 * 4, 49716 );
+    Chip_WriteReg( p->fmChip, 0x01, 0x20 ); // enable wave select, but rather pointless with dbopl
+    
+    p->fmResampler = resampler_create();
+    if ( !p->fmResampler )
+        return -1;
+    
+    resampler_set_quality( p->fmResampler, RESAMPLER_QUALITY_MAX );
+    resampler_set_rate( p->fmResampler, 49716.0 / p->f_outputFreq );
+    
+    return 0;
+}
+
 void st3play_Free(void *_p)
 {
     int i;
@@ -541,6 +570,12 @@ void st3play_Free(void *_p)
     PLAYER * p = (PLAYER *)_p;
 
     FreeSong(p);
+    
+    if ( p->fmResampler )
+        resampler_delete( p->fmResampler );
+    
+    if ( p->fmChip )
+        free( p->fmChip );
     
 #ifdef USE_VOL_RAMP
     for (i = 0; i < 64 * 2; ++i)
@@ -601,9 +636,22 @@ static void settempo(PLAYER *p, uint16_t val)
     }
 }
 
+static void st3play_AdlibHertzTouch(PLAYER *p, uint8_t ch, int Hertz, uint8_t keyoff)
+{
+    int Oct;
+    
+    for (Oct = 0; Hertz > 0x1FF; Oct++)
+        Hertz >>= 1;
+    
+    Chip_WriteReg( p->fmChip, 0xA0 + ch, Hertz & 255 );
+    p->fmLastB0[ch] = (keyoff ? 0 : 0x20) | ((Hertz >> 8) & 3) | ((Oct & 7) << 2);
+    Chip_WriteReg( p->fmChip, 0xB0 + ch, p->fmLastB0[ch]);
+}
+
 static inline void setspd(PLAYER *p, uint8_t ch)
 {
     int32_t tmpspd;
+    uint8_t adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
 
     tmpspd = p->chn[ch].aspd;
 
@@ -636,16 +684,43 @@ static inline void setspd(PLAYER *p, uint8_t ch)
     // 14317056 is used in both the ST3 replayer and the S3M format docs
     if (tmpspd)
         voiceSetSamplingFrequency(p, ch, 14317056.0f / (float)tmpspd);
+    
+    if (adlibChannel < 9)
+        st3play_AdlibHertzTouch(p, adlibChannel, 14317056.0f / (float)tmpspd, 0);
+}
+
+static void st3play_AdlibTouch(PLAYER *p, uint8_t ch, const uint8_t * patch, uint8_t vol)
+{
+    int Operator;
+    
+    if (!patch)
+    {
+        patch = p->fmPatchTable[ch];
+        if (!patch)
+            return;
+    }
+    
+    p->fmPatchTable[ch] = patch;
+    
+    Operator = Adlib_PortBases[ch];
+    
+    Chip_WriteReg( p->fmChip, 0x40 + Operator, (patch[2] & 0xC0) |
+                  (((int)(patch[2] & 63) - 63) * vol + 63 * 64 - 32) / 64 );
+    Chip_WriteReg( p->fmChip, 0x43 + Operator, (patch[3] & 0xC0) |
+                  (((int)(patch[3] & 63) - 63) * vol + 63 * 64 - 32) / 64 );
 }
 
 static inline void setvol(PLAYER *p, uint8_t ch, uint8_t sharp)
 {
+    uint8_t adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
     p->chn[ch].achannelused |= 0x80;
 #ifdef USE_VOL_RAMP
     voiceSetVolume(p, ch + ((sharp == 2) ? 32 : 0), (sharp == 2) ? 0.0f : ((float)(p->chn[ch].avol) / 63.0f) * ((float)(p->chn[ch].chanvol) / 64.0f) * ((float)(p->globalvol) / 64.0f), sharp);
 #else
     voiceSetVolume(p, ch, ((float)(p->chn[ch].avol) / 63.0f) * ((float)(p->chn[ch].chanvol) / 64.0f) * ((float)(p->globalvol) / 64.0f), sharp);
 #endif
+    if (adlibChannel < 9)
+        st3play_AdlibTouch(p, adlibChannel, NULL, p->chn[ch].avol);
 }
 
 static inline void setpan(PLAYER *p, uint8_t ch)
@@ -877,6 +952,30 @@ static inline uint8_t getnote(PLAYER *p)
     return (ch);
 }
 
+static void st3play_AdlibPatch(PLAYER *p, uint8_t ch, const uint8_t *patch)
+{
+    int Operator = Adlib_PortBases[ch];
+    
+    p->fmPatchTable[ch] = patch;
+    
+    Chip_WriteReg( p->fmChip, 0x20 + Operator, patch[0]);
+    Chip_WriteReg( p->fmChip, 0x60 + Operator, patch[4]);
+    Chip_WriteReg( p->fmChip, 0x80 + Operator, patch[6]);
+    Chip_WriteReg( p->fmChip, 0xE0 + Operator, patch[8] & 3);
+
+    Chip_WriteReg( p->fmChip, 0x23 + Operator, patch[1]);
+    Chip_WriteReg( p->fmChip, 0x63 + Operator, patch[5]);
+    Chip_WriteReg( p->fmChip, 0x83 + Operator, patch[7]);
+    Chip_WriteReg( p->fmChip, 0xE3 + Operator, patch[9] & 3);
+    
+    Chip_WriteReg( p->fmChip, 0xC0 + ch, patch[10]);
+}
+
+static void st3play_AdlibNoteOff(PLAYER *p, uint8_t ch)
+{
+    Chip_WriteReg( p->fmChip, 0xB0 + ch, p->fmLastB0[ch] & ~0x20 );
+}
+
 static inline void doamiga(PLAYER *p, uint8_t ch)
 {
     uint8_t *insdat;
@@ -889,6 +988,10 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
 #ifdef USE_VOL_RAMP
     uint8_t volassigned = 0;
 #endif
+    uint8_t adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
+    
+    if (!p->fmChip || !p->fmResampler) // safety check
+        adlibChannel = 255;
 
     if (p->chn[ch].ins)
     {
@@ -900,7 +1003,7 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
             insdat = &p->mseg[(uint32_t)(get_le16(&p->mseg[p->instrumentadd + ((p->chn[ch].ins - 1) << 1)])) << 4];
             if (insdat[0])
             {
-                if (insdat[0] == 1)
+                if (insdat[0] == 1 && adlibChannel >= 9)
                 {
                     p->chn[ch].ac2spd = get_le32(&insdat[0x20]);
 
@@ -965,6 +1068,16 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                         insrepend - insrepbeg, insrepend, loop,
                         insdat[0x1F] & 4, insdat[0x1F] & 2, insdat[0x1E] == 4);
                 }
+                else if (insdat[0] == 2 && adlibChannel < 9 )
+                {
+                    p->chn[ch].ac2spd = 8363 * 164 / 249;
+                    p->chn[ch].avol = (int8_t)(insdat[0x1C]);
+                    p->chn[ch].aorgvol = p->chn[ch].avol;
+                    
+                    st3play_AdlibPatch(p, adlibChannel, &insdat[0x10]);
+                    voiceSetSource(p, ch, NULL, 0, 0, 0, 0, 0, 0, 0);
+                    voiceSetSamplePosition(p, ch, 0);
+                }
                 else
                 {
                     p->chn[ch].lastins = 0;
@@ -997,19 +1110,28 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
             p->chn[ch].avol    = 0;
             p->chn[ch].asldspd = 65535;
 
-            setspd(p, ch);
-            setvol(p, ch, 0);
+            if (adlibChannel >= 9)
+            {
+                setspd(p, ch);
+                setvol(p, ch, 0);
+            }
 
             // shutdown channel
             voiceSetSource(p, ch, NULL, 0, 0, 0, 0, 0, 0, 0);
             voiceSetSamplePosition(p, ch, 0);
+
+            if (adlibChannel < 9)
+                st3play_AdlibNoteOff(p, adlibChannel);
         }
         else
         {
             p->chn[ch].lastnote = p->chn[ch].note;
 
-            if ((p->chn[ch].cmd != ('G' - 64)) && (p->chn[ch].cmd != ('L' - 64)))
-                voiceSetSamplePosition(p, ch, p->chn[ch].astartoffset);
+            if (adlibChannel >= 9)
+            {
+                if ((p->chn[ch].cmd != ('G' - 64)) && (p->chn[ch].cmd != ('L' - 64)))
+                    voiceSetSamplePosition(p, ch, p->chn[ch].astartoffset);
+            }
 
             if (!p->chn[ch].aorgspd || ((p->chn[ch].cmd != ('G' - 64)) && (p->chn[ch].cmd != ('L' - 64))))
             {
@@ -1017,11 +1139,18 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                 p->chn[ch].aorgspd = p->chn[ch].aspd;
                 p->chn[ch].avibcnt = 0;
                 p->chn[ch].apancnt = 0;
-
+                
                 setspd(p, ch);
             }
 
             p->chn[ch].asldspd = scalec2spd(p, ch, stnote2herz(p, p->chn[ch].note));
+            
+            if (adlibChannel < 9)
+            {
+                st3play_AdlibNoteOff(p, adlibChannel);
+                setspd(p, ch);
+                st3play_AdlibTouch(p, adlibChannel, NULL, p->chn[ch].avol);
+            }
         }
     }
 
@@ -1099,7 +1228,7 @@ static inline void donotes(PLAYER *p)
         ch = getnote(p);
         if (ch == 255) break; // end of row/channels
 
-        if ((p->mseg[0x40 + ch] & 0x7F) <= 15) // no adlib channel types yet
+        if ((p->mseg[0x40 + ch] & 0x7F) <= 15 + 9)
             donewnote(p, ch, 0);
     }
 }
@@ -1362,7 +1491,7 @@ static void loadheaderparms(PLAYER *p)
             insdat = &p->mseg[get_le16(&p->mseg[p->instrumentadd + (i << 1)]) << 4];
             insoff = (uint32_t)(((uint32_t)(insdat[0x0D])<<16)|((uint16_t)(insdat[0x0F])<<8)|insdat[0x0E])<<4;
 
-            if (insoff && (insdat[0] == 1))
+            if (insoff && (insdat[0] == 1)) // PCM
             {
                 if (insoff > p->mseg_len)
                     insoff = p->mseg_len;
@@ -1390,6 +1519,11 @@ static void loadheaderparms(PLAYER *p)
                     for (j = 0; j < inslen; ++j)
                         p->mseg[insoff + j] = p->mseg[insoff + j] - 0x80;
                 }
+            }
+            else if (insdat[0] == 2) // AdLib melodic
+            {
+                if (!p->fmChip && st3play_AdlibInit(p) < 0)
+                    break;
             }
         }
     }
@@ -1564,12 +1698,8 @@ static void s_setpanwave(PLAYER *p, chn_t *ch) // NON-ST3
 
 static void s_setpanpos(PLAYER *p, chn_t *ch)
 {
-    if (p->stereomode)
-    {
-        ch->apanpos = (ch->info & 0x0F) << 4;
-
-        setpan(p, ch->channelnum);
-    }
+    ch->apanpos = (ch->info & 0x0F) << 4;
+    setpan(p, ch->channelnum);
 }
 
 static void s_sndcntrl(PLAYER *p, chn_t *ch) // NON-ST3
@@ -1636,7 +1766,12 @@ static void s_notecutb(PLAYER *p, chn_t *ch)
     {
         ch->anotecutcnt--;
         if (!ch->anotecutcnt)
+        {
+            uint8_t adlibChannel = (p->mseg[0x40 + ch->channelnum] & 0x7F) - 16;
             voiceSetSamplingFrequency(p, ch->channelnum, 0); // cut note
+            if (adlibChannel < 9)
+                st3play_AdlibNoteOff(p, adlibChannel);
+        }
     }
 }
 
@@ -3570,6 +3705,45 @@ void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockLength)
     }
 }
 
+static void st3play_AdlibMix(PLAYER *p, float *buffer, int32_t count)
+{
+    Bit32s tempbuffer[256];
+    int inbuffer_free, i;
+    int outbuffer_avail;
+    
+    while (count)
+    {
+        inbuffer_free = resampler_get_free_count( p->fmResampler );
+        
+        if (inbuffer_free > 256)
+            inbuffer_free = 256;
+        
+        if (inbuffer_free)
+        {
+            Chip_GenerateBlock2( p->fmChip, inbuffer_free, tempbuffer );
+            for (i = 0; i < inbuffer_free; ++i)
+                resampler_write_sample_fixed( p->fmResampler, (int)tempbuffer[i], 16);
+        }
+        
+        outbuffer_avail = resampler_get_sample_count( p->fmResampler );
+        
+        if (outbuffer_avail > count)
+            outbuffer_avail = count;
+        
+        for (i = 0; i < outbuffer_avail; ++i)
+        {
+            float sample = resampler_get_sample( p->fmResampler );
+            resampler_remove_sample( p->fmResampler );
+            
+            buffer[i * 2 + 0] += sample;
+            buffer[i * 2 + 1] += sample;
+        }
+        
+        buffer += outbuffer_avail * 2;
+        count -= outbuffer_avail;
+    }
+}
+
 void st3play_RenderFloat(void *_p, float *buffer, int32_t count)
 {
     PLAYER * p = (PLAYER *)_p;
@@ -3591,6 +3765,9 @@ void st3play_RenderFloat(void *_p, float *buffer, int32_t count)
                 {
                     mixSampleBlock(p, outputStream, samplesTodo);
 
+                    if (p->fmChip && p->fmResampler)
+                        st3play_AdlibMix( p, outputStream, samplesTodo );
+                    
                     outputStream   += (samplesTodo << 1);
                 }
                 
