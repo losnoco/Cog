@@ -1512,7 +1512,7 @@ void Chip_WriteReg( void *_chip, Bit32u reg, Bit8u val ) {
 	}
 }
 
-Bit32u Chip_WriteAddr( struct Chip *_chip, Bit32u port, Bit8u val ) {
+Bit32u Chip_WriteAddr( void *_chip, Bit32u port, Bit8u val ) {
     struct Chip *chip = (struct Chip *)_chip;
 	switch ( port & 3 ) {
 	case 0:
