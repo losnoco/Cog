@@ -32,7 +32,7 @@ int32_t rdot(size_t n, const int16_t *x, const int16_t *y);
 #ifdef _MSC_VER
 #define INLINE      __forceinline
 #else
-#define INLINE      __attribute__((always_inline))
+#define INLINE      inline __attribute__((always_inline))
 #endif
 
 INLINE static int16_t adpcm_predict_sample(uint8_t byte, uint8_t mask,

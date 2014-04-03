@@ -413,8 +413,8 @@ void alist_envmix_lin(
 
     *(int16_t *)(save_buffer +  0) = wet;            /* 0-1 */
     *(int16_t *)(save_buffer +  2) = dry;            /* 2-3 */
-    *(int16_t *)(save_buffer +  4) = (int16_t)ramps[0].target >> 16; /* 4-5 */
-    *(int16_t *)(save_buffer +  6) = (int16_t)ramps[1].target >> 16; /* 6-7 */
+    *(int16_t *)(save_buffer +  4) = (int16_t)(ramps[0].target >> 16); /* 4-5 */
+    *(int16_t *)(save_buffer +  6) = (int16_t)(ramps[1].target >> 16); /* 6-7 */
     *(int32_t *)(save_buffer +  8) = (int32_t)ramps[0].step;  /* 8-9 (save_buffer is a 16bit pointer) */
     *(int32_t *)(save_buffer + 10) = (int32_t)ramps[1].step;  /* 10-11 */
     *(int32_t *)(save_buffer + 16) = (int32_t)ramps[0].value; /* 16-17 */
