@@ -551,7 +551,7 @@ static int st3play_AdlibInit(PLAYER *p)
     
     Chip_Init( p->fmChip );
     Chip_Setup( p->fmChip, 3579545 * 4, 49716 );
-    Chip_WriteReg( p->fmChip, 0x01, 0x20 ); // enable wave select, but rather pointless with dbopl
+    Chip_WriteReg( p->fmChip, 0x01, 0x20 ); // enable wave select, necessary in OPL2 mode
     
     p->fmResampler = resampler_create();
     if ( !p->fmResampler )
