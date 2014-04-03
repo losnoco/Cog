@@ -29,7 +29,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "alist_internal.h"
+#include "alist.h"
 #include "hle_internal.h"
 #include "memory.h"
 
@@ -73,6 +73,25 @@ static void ENVMIXER(struct hle_t* hle, uint32_t w1, uint32_t w2)
     uint32_t address = get_address(hle, w2);
 
     alist_envmix_exp(
+            hle,
+            flags & A_INIT,
+            flags & A_AUX,
+            hle->alist_audio.out, hle->alist_audio.dry_right,
+            hle->alist_audio.wet_left, hle->alist_audio.wet_right,
+            hle->alist_audio.in, hle->alist_audio.count,
+            hle->alist_audio.dry, hle->alist_audio.wet,
+            hle->alist_audio.vol,
+            hle->alist_audio.target,
+            hle->alist_audio.rate,
+            address);
+}
+
+static void ENVMIXER_GE(struct hle_t* hle, uint32_t w1, uint32_t w2)
+{
+    uint8_t  flags   = (w1 >> 16);
+    uint32_t address = get_address(hle, w2);
+
+    alist_envmix_ge(
             hle,
             flags & A_INIT,
             flags & A_AUX,
@@ -265,9 +284,8 @@ void alist_process_audio(struct hle_t* hle)
 
 void alist_process_audio_ge(struct hle_t* hle)
 {
-    /* TODO: see what differs from alist_process_audio */
     static const acmd_callback_t ABI[0x10] = {
-        SPNOOP,         ADPCM ,         CLEARBUFF,      ENVMIXER,
+        SPNOOP,         ADPCM ,         CLEARBUFF,      ENVMIXER_GE,
         LOADBUFF,       RESAMPLE,       SAVEBUFF,       SEGMENT,
         SETBUFF,        SETVOL,         DMEMMOVE,       LOADADPCM,
         MIXER,          INTERLEAVE,     POLEF,          SETLOOP
@@ -279,9 +297,8 @@ void alist_process_audio_ge(struct hle_t* hle)
 
 void alist_process_audio_bc(struct hle_t* hle)
 {
-    /* TODO: see what differs from alist_process_audio */
     static const acmd_callback_t ABI[0x10] = {
-        SPNOOP,         ADPCM ,         CLEARBUFF,      ENVMIXER,
+        SPNOOP,         ADPCM ,         CLEARBUFF,      ENVMIXER_GE,
         LOADBUFF,       RESAMPLE,       SAVEBUFF,       SEGMENT,
         SETBUFF,        SETVOL,         DMEMMOVE,       LOADADPCM,
         MIXER,          INTERLEAVE,     POLEF,          SETLOOP

@@ -28,7 +28,7 @@
 #endif
 #include <stdint.h>
 
-#include "alist_internal.h"
+#include "alist.h"
 #include "hle_external.h"
 #include "hle_internal.h"
 #include "memory.h"
@@ -248,6 +248,14 @@ static void INTERLEAVE(struct hle_t* hle, uint32_t w1, uint32_t w2)
 
 static void MP3ADDY(struct hle_t* hle, uint32_t w1, uint32_t w2)
 {
+}
+
+static void MP3(struct hle_t* hle, uint32_t w1, uint32_t w2)
+{
+    unsigned index = (w1 & 0x1e);
+    uint32_t address = (w2 & 0xffffff);
+
+    mp3_task(hle, index, address);
 }
 
 /* global functions */

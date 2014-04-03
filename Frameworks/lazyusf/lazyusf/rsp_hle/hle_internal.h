@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 
-#include "alist.h"
+#include "ucodes.h"
 
 /* rsp hle internal state - internal usage only */
 struct hle_t

@@ -36,10 +36,7 @@
 #include "hle_internal.h"
 #include "memory.h"
 
-#include "alist.h"
-#include "cicx105.h"
-#include "jpeg.h"
-#include "musyx.h"
+#include "ucodes.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 

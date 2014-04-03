@@ -200,7 +200,7 @@ static void MP3AB0(int32_t* v)
 
 static void InnerLoop(struct hle_t* hle);
 
-void MP3(struct hle_t* hle, uint32_t w1, uint32_t w2)
+void mp3_task(struct hle_t* hle, unsigned int index, uint32_t address)
 {
     /* Initialization Code */
     uint32_t readPtr; /* s5 */
@@ -211,10 +211,9 @@ void MP3(struct hle_t* hle, uint32_t w1, uint32_t w2)
     /* I think these are temporary storage buffers */
     hle->mp3_t6 = 0x08A0;
     hle->mp3_t5 = 0x0AC0;
-    hle->mp3_t4 = (w1 & 0x1E);
+    hle->mp3_t4 = index;
 
-    writePtr = w2 & 0xFFFFFF;
-    readPtr  = writePtr;
+    writePtr = readPtr = address;
     /* Just do that for efficiency... may remove and use directly later anyway */
     memcpy(hle->mp3_buffer + 0xCE8, hle->dram + readPtr, 8);
     /* This must be a header byte or whatnot */

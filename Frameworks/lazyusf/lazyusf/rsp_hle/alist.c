@@ -29,7 +29,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "alist_internal.h"
+#include "alist.h"
 #include "arithmetics.h"
 #include "audio.h"
 #include "hle_external.h"
@@ -55,6 +55,17 @@ static int16_t* sample(struct hle_t* hle, unsigned pos)
 {
     return (int16_t*)hle->alist_buffer + (pos ^ S);
 }
+
+static uint8_t* alist_u8(struct hle_t* hle, uint16_t dmem)
+{
+    return u8(hle->alist_buffer, dmem);
+}
+
+static int16_t* alist_s16(struct hle_t* hle, uint16_t dmem)
+{
+    return (int16_t*)u16(hle->alist_buffer, dmem);
+}
+
 
 static void sample_mix(int16_t* dst, int16_t src, int16_t gain)
 {
@@ -139,7 +150,7 @@ void alist_set_address(struct hle_t* hle, uint32_t so, uint32_t *segments, size_
 void alist_clear(struct hle_t* hle, uint16_t dmem, uint16_t count)
 {
     while(count != 0) {
-        hle->alist_buffer[(dmem++)^S8] = 0;
+        *alist_u8(hle, dmem++) = 0;
         --count;
     }
 }
@@ -165,7 +176,7 @@ void alist_save(struct hle_t* hle, uint16_t dmem, uint32_t address, uint16_t cou
 void alist_move(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count)
 {
     while (count != 0) {
-        hle->alist_buffer[(dmemo++)^S8] = hle->alist_buffer[(dmemi++)^S8];
+        *alist_u8(hle, dmemo++) = *alist_u8(hle, dmemi++);
         --count;
     }
 }
@@ -173,7 +184,7 @@ void alist_move(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t coun
 void alist_copy_every_other_sample(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count)
 {
     while (count != 0) {
-        *(uint16_t*)(hle->alist_buffer + (dmemo^S8)) = *(uint16_t*)(hle->alist_buffer + (dmemi^S8));
+        *alist_s16(hle, dmemo) = *alist_s16(hle, dmemi);
         dmemo += 2;
         dmemi += 4;
         --count;
@@ -346,6 +357,85 @@ void alist_envmix_exp(
     *(int32_t *)(save_buffer + 14) = exp_seq[1];        /* 14-15 */
     *(int32_t *)(save_buffer + 16) = (int32_t)ramps[0].value;    /* 12-13 */
     *(int32_t *)(save_buffer + 18) = (int32_t)ramps[1].value;    /* 14-15 */
+    memcpy(hle->dram + address, (uint8_t *)save_buffer, 80);
+}
+
+void alist_envmix_ge(
+        struct hle_t* hle,
+        bool init,
+        bool aux,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address)
+{
+    unsigned k;
+    size_t n = (aux) ? 4 : 2;
+
+    const int16_t* const in = (int16_t*)(hle->alist_buffer + dmemi);
+    int16_t* const dl = (int16_t*)(hle->alist_buffer + dmem_dl);
+    int16_t* const dr = (int16_t*)(hle->alist_buffer + dmem_dr);
+    int16_t* const wl = (int16_t*)(hle->alist_buffer + dmem_wl);
+    int16_t* const wr = (int16_t*)(hle->alist_buffer + dmem_wr);
+
+    struct ramp_t ramps[2];
+    short save_buffer[40];
+
+    if (init) {
+        ramps[0].value  = (vol[0] << 16);
+        ramps[1].value  = (vol[1] << 16);
+        ramps[0].target = (target[0] << 16);
+        ramps[1].target = (target[1] << 16);
+        ramps[0].step   = rate[0];
+        ramps[1].step   = rate[1];
+    } else {
+        memcpy((uint8_t *)save_buffer, (hle->dram + address), 80);
+        wet             = *(int16_t *)(save_buffer +  0);   /* 0-1 */
+        dry             = *(int16_t *)(save_buffer +  2);   /* 2-3 */
+        ramps[0].target = *(int32_t *)(save_buffer +  4);   /* 4-5 */
+        ramps[1].target = *(int32_t *)(save_buffer +  6);   /* 6-7 */
+        ramps[0].step   = *(int32_t *)(save_buffer +  8);   /* 8-9 (save_buffer is a 16bit pointer) */
+        ramps[1].step   = *(int32_t *)(save_buffer + 10);   /* 10-11 */
+        /*                *(int32_t *)(save_buffer + 12);*/ /* 12-13 */
+        /*                *(int32_t *)(save_buffer + 14);*/ /* 14-15 */
+        ramps[0].value  = *(int32_t *)(save_buffer + 16);   /* 12-13 */
+        ramps[1].value  = *(int32_t *)(save_buffer + 18);   /* 14-15 */
+    }
+
+    count >>= 1;
+    for (k = 0; k < count; ++k) {
+        int16_t  gains[4];
+        int16_t* buffers[4];
+        int16_t l_vol = ramp_step(&ramps[0]);
+        int16_t r_vol = ramp_step(&ramps[1]);
+
+        buffers[0] = dl + (k^S);
+        buffers[1] = dr + (k^S);
+        buffers[2] = wl + (k^S);
+        buffers[3] = wr + (k^S);
+
+        gains[0] = clamp_s16((l_vol * dry + 0x4000) >> 15);
+        gains[1] = clamp_s16((r_vol * dry + 0x4000) >> 15);
+        gains[2] = clamp_s16((l_vol * wet + 0x4000) >> 15);
+        gains[3] = clamp_s16((r_vol * wet + 0x4000) >> 15);
+
+        alist_envmix_mix(n, buffers, gains, in[k^S]);
+    }
+
+    *(int16_t *)(save_buffer +  0) = wet;               /* 0-1 */
+    *(int16_t *)(save_buffer +  2) = dry;               /* 2-3 */
+    *(int32_t *)(save_buffer +  4) = ramps[0].target;   /* 4-5 */
+    *(int32_t *)(save_buffer +  6) = ramps[1].target;   /* 6-7 */
+    *(int32_t *)(save_buffer +  8) = ramps[0].step;     /* 8-9 (save_buffer is a 16bit pointer) */
+    *(int32_t *)(save_buffer + 10) = ramps[1].step;     /* 10-11 */
+    /**(int32_t *)(save_buffer + 12);*/                 /* 12-13 */
+    /**(int32_t *)(save_buffer + 14);*/                 /* 14-15 */
+    *(int32_t *)(save_buffer + 16) = ramps[0].value;    /* 12-13 */
+    *(int32_t *)(save_buffer + 18) = ramps[1].value;    /* 14-15 */
     memcpy(hle->dram + address, (uint8_t *)save_buffer, 80);
 }
 
@@ -627,7 +717,7 @@ static unsigned int adpcm_predict_frame_4bits(struct hle_t* hle,
     unsigned int rshift = (scale < 12) ? 12 - scale : 0;
 
     for(i = 0; i < 8; ++i) {
-        uint8_t byte = hle->alist_buffer[(dmemi++)^S8];
+        uint8_t byte = *alist_u8(hle, dmemi++);
 
         *(dst++) = adpcm_predict_sample(byte, 0xf0,  8, rshift);
         *(dst++) = adpcm_predict_sample(byte, 0x0f, 12, rshift);
@@ -643,7 +733,7 @@ static unsigned int adpcm_predict_frame_2bits(struct hle_t* hle,
     unsigned int rshift = (scale < 14) ? 14 - scale : 0;
 
     for(i = 0; i < 4; ++i) {
-        uint8_t byte = hle->alist_buffer[(dmemi++)^S8];
+        uint8_t byte = *alist_u8(hle, dmemi++);
 
         *(dst++) = adpcm_predict_sample(byte, 0xc0,  8, rshift);
         *(dst++) = adpcm_predict_sample(byte, 0x30, 10, rshift);
@@ -681,11 +771,11 @@ void alist_adpcm(
         dram_load_u16(hle, (uint16_t*)last_frame, (loop) ? loop_address : last_frame_address, 16);
 
     for(i = 0; i < 16; ++i, dmemo += 2)
-        *(int16_t*)(hle->alist_buffer + (dmemo ^ S16)) = last_frame[i];
+        *alist_s16(hle, dmemo) = last_frame[i];
 
     while (count != 0) {
         int16_t frame[16];
-        uint8_t code = hle->alist_buffer[(dmemi++)^S8];
+        uint8_t code = *alist_u8(hle, dmemi++);
         unsigned char scale = (code & 0xf0) >> 4;
         const int16_t* const cb_entry = codebook + ((code & 0xf) << 4);
 
@@ -695,7 +785,7 @@ void alist_adpcm(
         adpcm_compute_residuals(last_frame + 8, frame + 8, cb_entry, last_frame + 6 , 8);
 
         for(i = 0; i < 16; ++i, dmemo += 2)
-            *(int16_t*)(hle->alist_buffer + (dmemo ^ S16)) = last_frame[i];
+            *alist_s16(hle, dmemo) = last_frame[i];
 
         count -= 32;
     }
@@ -858,9 +948,8 @@ void alist_polef(
     {
         int16_t frame[8];
 
-        for(i = 0; i < 8; ++i, dmemi += 2) {
-            frame[i] = *(int16_t*)(hle->alist_buffer + (dmemi ^ S16));
-        }
+        for(i = 0; i < 8; ++i, dmemi += 2)
+            frame[i] = *alist_s16(hle, dmemi);
 
         for(i = 0; i < 8; ++i) {
             int32_t accu = frame[i] * gain;

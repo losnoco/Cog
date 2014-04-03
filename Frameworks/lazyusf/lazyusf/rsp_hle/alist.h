@@ -19,107 +19,146 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef ALIST_H
-#define ALIST_H
+#ifndef ALIST_INTERNAL_H
+#define ALIST_INTERNAL_H
 
+#ifndef _MSC_VER
+#include <stdbool.h>
+#else
+#include "mystdbool.h"
+#endif
 #include <stdint.h>
-
-enum { N_SEGMENTS = 16 };
-
-/* alist_audio state */
-struct alist_audio_t {
-    /* segments */
-    uint32_t segments[N_SEGMENTS];
-
-    /* main buffers */
-    uint16_t in;
-    uint16_t out;
-    uint16_t count;
-
-    /* auxiliary buffers */
-    uint16_t dry_right;
-    uint16_t wet_left;
-    uint16_t wet_right;
-
-    /* gains */
-    int16_t dry;
-    int16_t wet;
-
-    /* envelopes (0:left, 1:right) */
-    int16_t vol[2];
-    int16_t target[2];
-    int32_t rate[2];
-
-    /* ADPCM loop point address */
-    uint32_t loop;
-
-    /* storage for ADPCM table and polef coefficients */
-    int16_t table[16 * 8];
-};
-
-/* alist_naudio state */
-struct alist_naudio_t {
-    /* gains */
-    int16_t dry;
-    int16_t wet;
-
-    /* envelopes (0:left, 1:right) */
-    int16_t vol[2];
-    int16_t target[2];
-    int32_t rate[2];
-
-    /* ADPCM loop point address */
-    uint32_t loop;
-
-    /* storage for ADPCM table and polef coefficients */
-    int16_t table[16 * 8];
-};
-
-/* alist_nead state */
-struct alist_nead_t {
-    /* main buffers */
-    uint16_t in;
-    uint16_t out;
-    uint16_t count;
-
-    /* envmixer ramps */
-    uint16_t env_values[3];
-    uint16_t env_steps[3];
-
-    /* ADPCM loop point address */
-    uint32_t loop;
-
-    /* storage for ADPCM table and polef coefficients */
-    int16_t table[16 * 8];
-
-    /* filter audio command state */
-    uint16_t filter_count;
-    uint32_t filter_lut_address[2];
-};
+#include <stddef.h>
 
 struct hle_t;
 
-void alist_process_audio   (struct hle_t* hle);
-void alist_process_audio_ge(struct hle_t* hle);
-void alist_process_audio_bc(struct hle_t* hle);
+typedef void (*acmd_callback_t)(struct hle_t* hle, uint32_t w1, uint32_t w2);
 
-void alist_process_nead_mk  (struct hle_t* hle);
-void alist_process_nead_sfj (struct hle_t* hle);
-void alist_process_nead_sf  (struct hle_t* hle);
-void alist_process_nead_fz  (struct hle_t* hle);
-void alist_process_nead_wrjb(struct hle_t* hle);
-void alist_process_nead_ys  (struct hle_t* hle);
-void alist_process_nead_1080(struct hle_t* hle);
-void alist_process_nead_oot (struct hle_t* hle);
-void alist_process_nead_mm  (struct hle_t* hle);
-void alist_process_nead_mmb (struct hle_t* hle);
-void alist_process_nead_ac  (struct hle_t* hle);
+void alist_process(struct hle_t* hle, const acmd_callback_t abi[], unsigned int abi_size);
+uint32_t alist_get_address(struct hle_t* hle, uint32_t so, const uint32_t *segments, size_t n);
+void alist_set_address(struct hle_t* hle, uint32_t so, uint32_t *segments, size_t n);
+void alist_clear(struct hle_t* hle, uint16_t dmem, uint16_t count);
+void alist_load(struct hle_t* hle, uint16_t dmem, uint32_t address, uint16_t count);
+void alist_save(struct hle_t* hle, uint16_t dmem, uint32_t address, uint16_t count);
+void alist_move(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count);
+void alist_copy_every_other_sample(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count);
+void alist_repeat64(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint8_t count);
+void alist_copy_blocks(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t block_size, uint8_t count);
+void alist_interleave(struct hle_t* hle, uint16_t dmemo, uint16_t left, uint16_t right, uint16_t count);
 
-void alist_process_naudio     (struct hle_t* hle);
-void alist_process_naudio_bk  (struct hle_t* hle);
-void alist_process_naudio_dk  (struct hle_t* hle);
-void alist_process_naudio_mp3 (struct hle_t* hle);
-void alist_process_naudio_cbfd(struct hle_t* hle);
+void alist_envmix_exp(
+        struct hle_t* hle,
+        bool init,
+        bool aux,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address);
+
+void alist_envmix_ge(
+        struct hle_t* hle,
+        bool init,
+        bool aux,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address);
+
+void alist_envmix_lin(
+        struct hle_t* hle,
+        bool init,
+        uint16_t dmem_dl, uint16_t dmem_dr,
+        uint16_t dmem_wl, uint16_t dmem_wr,
+        uint16_t dmemi, uint16_t count,
+        int16_t dry, int16_t wet,
+        const int16_t *vol,
+        const int16_t *target,
+        const int32_t *rate,
+        uint32_t address);
+
+void alist_envmix_nead(
+        struct hle_t* hle,
+        bool swap_wet_LR,
+        uint16_t dmem_dl,
+        uint16_t dmem_dr,
+        uint16_t dmem_wl,
+        uint16_t dmem_wr,
+        uint16_t dmemi,
+        unsigned count,
+        uint16_t *env_values,
+        uint16_t *env_steps,
+        const int16_t *xors);
+
+void alist_mix(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count, int16_t gain);
+void alist_multQ44(struct hle_t* hle, uint16_t dmem, uint16_t count, int8_t gain);
+void alist_add(struct hle_t* hle, uint16_t dmemo, uint16_t dmemi, uint16_t count);
+
+void alist_adpcm(
+        struct hle_t* hle,
+        bool init,
+        bool loop,
+        bool two_bit_per_sample,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        const int16_t* codebook,
+        uint32_t loop_address,
+        uint32_t last_frame_address);
+
+void alist_resample(
+        struct hle_t* hle, 
+        bool init,
+        bool flag2,
+        uint16_t dmemo, uint16_t dmemi, uint16_t count,
+        uint32_t pitch, uint32_t address);
+
+void alist_resample_zoh(
+        struct hle_t* hle,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint32_t pitch,
+        uint32_t pitch_accu);
+
+void alist_filter(
+        struct hle_t* hle,
+        uint16_t dmem,
+        uint16_t count,
+        uint32_t address,
+        const uint32_t* lut_address);
+
+void alist_polef(
+        struct hle_t* hle,
+        bool init,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        uint16_t gain,
+        int16_t* table,
+        uint32_t address);
+/*
+ * Audio flags
+ */
+
+#define A_INIT          0x01
+#define A_CONTINUE      0x00
+#define A_LOOP          0x02
+#define A_OUT           0x02
+#define A_LEFT          0x02
+#define A_RIGHT         0x00
+#define A_VOL           0x04
+#define A_RATE          0x00
+#define A_AUX           0x08
+#define A_NOAUX         0x00
+#define A_MAIN          0x00
+#define A_MIX           0x10
 
 #endif
-
