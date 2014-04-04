@@ -114,6 +114,8 @@ typedef struct resampler
     unsigned int inv_phase;
     unsigned int inv_phase_inc;
     unsigned char quality;
+    signed char delay_added;
+    signed char delay_removed;
     float last_amp;
     float accumulator;
     float buffer_in[resampler_buffer_size * 2];
@@ -126,7 +128,7 @@ void * resampler_create(void)
     if ( !r ) return 0;
 
     r->write_pos = SINC_WIDTH - 1;
-    r->write_filled = SINC_WIDTH - 1;
+    r->write_filled = 0;
     r->read_pos = 0;
     r->read_filled = 0;
     r->phase = 0;
@@ -134,6 +136,8 @@ void * resampler_create(void)
     r->inv_phase = 0;
     r->inv_phase_inc = 0;
     r->quality = RESAMPLER_QUALITY_MAX;
+    r->delay_added = -1;
+    r->delay_removed = -1;
     r->last_amp = 0;
     r->accumulator = 0;
     memset( r->buffer_in, 0, sizeof(r->buffer_in) );
@@ -162,6 +166,8 @@ void * resampler_dup(const void * _r)
     r_out->inv_phase = r_in->inv_phase;
     r_out->inv_phase_inc = r_in->inv_phase_inc;
     r_out->quality = r_in->quality;
+    r_out->delay_added = r_in->delay_added;
+    r_out->delay_removed = r_in->delay_removed;
     r_out->last_amp = r_in->last_amp;
     r_out->accumulator = r_in->accumulator;
     memcpy( r_out->buffer_in, r_in->buffer_in, sizeof(r_in->buffer_in) );
@@ -184,6 +190,8 @@ void resampler_dup_inplace(void *_d, const void *_s)
     r_out->inv_phase = r_in->inv_phase;
     r_out->inv_phase_inc = r_in->inv_phase_inc;
     r_out->quality = r_in->quality;
+    r_out->delay_added = r_in->delay_added;
+    r_out->delay_removed = r_in->delay_removed;
     r_out->last_amp = r_in->last_amp;
     r_out->accumulator = r_in->accumulator;
     memcpy( r_out->buffer_in, r_in->buffer_in, sizeof(r_in->buffer_in) );
@@ -207,6 +215,8 @@ void resampler_set_quality(void *_r, int quality)
             r->accumulator = 0;
             memset( r->buffer_out, 0, sizeof(r->buffer_out) );
         }
+        r->delay_added = -1;
+        r->delay_removed = -1;
     }
     r->quality = (unsigned char)quality;
 }
@@ -237,6 +247,40 @@ static int resampler_min_filled(resampler *r)
     }
 }
 
+static int resampler_input_delay(resampler *r)
+{
+    switch (r->quality)
+    {
+    default:
+    case RESAMPLER_QUALITY_ZOH:
+    case RESAMPLER_QUALITY_BLEP:
+    case RESAMPLER_QUALITY_LINEAR:
+        return 0;
+            
+    case RESAMPLER_QUALITY_CUBIC:
+        return 1;
+            
+    case RESAMPLER_QUALITY_SINC:
+        return SINC_WIDTH - 1;
+    }
+}
+
+static int resampler_output_delay(resampler *r)
+{
+    switch (r->quality)
+    {
+    default:
+    case RESAMPLER_QUALITY_ZOH:
+    case RESAMPLER_QUALITY_LINEAR:
+    case RESAMPLER_QUALITY_CUBIC:
+    case RESAMPLER_QUALITY_SINC:
+        return 0;
+            
+    case RESAMPLER_QUALITY_BLEP:
+        return SINC_WIDTH - 1;
+    }
+}
+
 int resampler_ready(void *_r)
 {
     resampler * r = ( resampler * ) _r;
@@ -247,10 +291,12 @@ void resampler_clear(void *_r)
 {
     resampler * r = ( resampler * ) _r;
     r->write_pos = SINC_WIDTH - 1;
-    r->write_filled = SINC_WIDTH - 1;
+    r->write_filled = 0;
     r->read_pos = 0;
     r->read_filled = 0;
     r->phase = 0;
+    r->delay_added = -1;
+    r->delay_removed = -1;
     memset(r->buffer_in, 0, (SINC_WIDTH - 1) * sizeof(r->buffer_in[0]));
     memset(r->buffer_in + resampler_buffer_size, 0, (SINC_WIDTH - 1) * sizeof(r->buffer_in[0]));
     if (r->quality == RESAMPLER_QUALITY_BLEP)
@@ -269,6 +315,12 @@ void resampler_write_sample(void *_r, short s)
 {
     resampler * r = ( resampler * ) _r;
 
+    if ( r->delay_added < 0 )
+    {
+        r->delay_added = 0;
+        r->write_filled = resampler_input_delay( r );
+    }
+    
     if ( r->write_filled < resampler_buffer_size )
     {
         float s32 = s;
@@ -286,6 +338,12 @@ void resampler_write_sample(void *_r, short s)
 void resampler_write_sample_fixed(void *_r, int s, unsigned char depth)
 {
     resampler * r = ( resampler * ) _r;
+    
+    if ( r->delay_added < 0 )
+    {
+        r->delay_added = 0;
+        r->write_filled = resampler_input_delay( r );
+    }
     
     if ( r->write_filled < resampler_buffer_size )
     {
@@ -809,11 +867,23 @@ static void resampler_fill(resampler * r)
     }
 }
 
+static void resampler_fill_and_remove_delay(resampler * r)
+{
+    resampler_fill( r );
+    if ( r->delay_removed < 0 )
+    {
+        int delay = resampler_output_delay( r );
+        r->delay_removed = 0;
+        while ( delay-- )
+            resampler_remove_sample( r );
+    }
+}
+
 int resampler_get_sample_count(void *_r)
 {
     resampler * r = ( resampler * ) _r;
     if ( r->read_filled < 1 && (r->quality != RESAMPLER_QUALITY_BLEP || r->inv_phase_inc))
-        resampler_fill( r );
+        resampler_fill_and_remove_delay( r );
     return r->read_filled;
 }
 
@@ -821,7 +891,7 @@ float resampler_get_sample(void *_r)
 {
     resampler * r = ( resampler * ) _r;
     if ( r->read_filled < 1 && r->phase_inc)
-        resampler_fill( r );
+        resampler_fill_and_remove_delay( r );
     if ( r->read_filled < 1 )
         return 0;
     if ( r->quality == RESAMPLER_QUALITY_BLEP )
@@ -840,6 +910,8 @@ void resampler_remove_sample(void *_r)
             r->accumulator += r->buffer_out[ r->read_pos ];
             r->buffer_out[ r->read_pos ] = 0;
             r->accumulator -= r->accumulator * (1.0 / 8192.0);
+            if (fabs(r->accumulator) < 1e-20)
+                r->accumulator = 0;
         }
         --r->read_filled;
         r->read_pos = ( r->read_pos + 1 ) % resampler_buffer_size;
