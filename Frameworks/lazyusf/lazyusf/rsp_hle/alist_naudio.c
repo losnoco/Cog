@@ -33,7 +33,7 @@
 #include "hle_internal.h"
 #include "memory.h"
 
-void MP3(struct hle_t* hle, uint32_t w1, uint32_t w2);
+static void MP3(struct hle_t* hle, uint32_t w1, uint32_t w2);
 
 enum { NAUDIO_COUNT = 0x170 }; /* ie 184 samples */
 enum {
