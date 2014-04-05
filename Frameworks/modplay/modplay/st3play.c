@@ -551,7 +551,7 @@ static int st3play_AdlibInit(PLAYER *p)
     
     Chip_Init( p->fmChip );
     Chip_Setup( p->fmChip, 3579545 * 4, 49716 );
-    Chip_WriteReg( p->fmChip, 0x01, 0x20 ); // enable wave select, necessary in OPL2 mode
+    Chip_WriteReg( p->fmChip, 0x01, 0x20 ); // enable wave select, but rather pointless with dbopl
     
     p->fmResampler = resampler_create();
     if ( !p->fmResampler )
@@ -3838,12 +3838,16 @@ void st3play_Mute(void *_p, int8_t channel, int8_t mute)
 {
     PLAYER * p = (PLAYER *)_p;
     int8_t mask = 1 << (channel % 8);
+	uint8_t adlibChannel;
 	if (channel > 31)
 		return;
+	adlibChannel = (p->mseg[0x40 + channel] & 0x7F) - 16;
     if (mute)
         p->muted[channel / 8] |= mask;
     else
         p->muted[channel / 8] &= ~mask;
+	if (adlibChannel < 9)
+		Chip_Mute( p->fmChip, adlibChannel, mute );
 }
 
 int32_t st3play_GetLoopCount(void *_p)
@@ -3869,6 +3873,7 @@ void st3play_GetInfo(void *_p, st3_info *info)
             if (p->voice[i].mixing)
                 ++channels_playing;
         }
+		channels_playing += Chip_GetActiveChannels( p->fmChip );
     }
     info->channels_playing = (int8_t)channels_playing;
 }

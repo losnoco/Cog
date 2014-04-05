@@ -153,6 +153,8 @@ struct Channel {
 	Bit8u fourMask;
 	Bit8s maskLeft;		//Sign extended values for both channel's panning
 	Bit8s maskRight;
+	Bit8s mask;
+	Bit8u chanActive;
 };
 
 struct Chip {
@@ -807,8 +809,11 @@ static struct Channel* Channel_Block_sm2AM( struct Channel *c, struct Chip* chip
 
 	if ( Operator_Silent( Channel_Op(c, 0) ) && Operator_Silent( Channel_Op(c, 1) ) ) {
         c->old[0] = c->old[1] = 0;
+		c->chanActive = 0;
         return (c + 1);
     }
+	c->chanActive = 1;
+
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
     Operator_Prepare( Channel_Op( c, 1 ), chip );
@@ -822,7 +827,7 @@ static struct Channel* Channel_Block_sm2AM( struct Channel *c, struct Chip* chip
 		c->old[1] = Operator_GetSample( Channel_Op( c, 0 ), mod );
 		out0 = c->old[0];
         sample = out0 + Operator_GetSample( Channel_Op( c, 1), 0 );
-        output[ i ] += sample;
+        output[ i ] += sample & c->mask;
 	}
 
     return ( c + 1 );
@@ -833,9 +838,11 @@ static struct Channel* Channel_Block_sm2FM( struct Channel *c, struct Chip* chip
 
     if ( Operator_Silent( Channel_Op(c, 1) ) ) {
         c->old[0] = c->old[1] = 0;
+		c->chanActive = 0;
         return (c + 1);
     }
-
+	c->chanActive = 1;
+	
 	//Init the operators with the the current vibrato and tremolo values
 	Operator_Prepare( Channel_Op( c, 0 ), chip );
 	Operator_Prepare( Channel_Op( c, 1 ), chip );
@@ -849,7 +856,7 @@ static struct Channel* Channel_Block_sm2FM( struct Channel *c, struct Chip* chip
 		c->old[1] = Operator_GetSample( Channel_Op( c, 0 ), mod );
 		out0 = c->old[0];
         sample = Operator_GetSample( Channel_Op( c, 1 ), out0 );
-        output[ i ] += sample;
+        output[ i ] += sample & c->mask;
 	}
 
     return ( c + 1 );
@@ -860,8 +867,10 @@ static struct Channel* Channel_Block_sm3AM( struct Channel *c, struct Chip* chip
 
 	if ( Operator_Silent( Channel_Op( c, 0 ) ) && Operator_Silent( Channel_Op( c, 1 ) ) ) {
         c->old[0] = c->old[1] = 0;
+		c->chanActive = 0;
         return (c + 1);
     }
+	c->chanActive = 1;
 
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
@@ -876,8 +885,8 @@ static struct Channel* Channel_Block_sm3AM( struct Channel *c, struct Chip* chip
 		c->old[1] = Operator_GetSample( Channel_Op( c, 0 ), mod );
 		out0 = c->old[0];
         sample = out0 + Operator_GetSample( Channel_Op( c, 1 ), 0 );
-        output[ i * 2 + 0 ] += sample & c->maskLeft;
-        output[ i * 2 + 1 ] += sample & c->maskRight;
+        output[ i * 2 + 0 ] += sample & c->maskLeft & c->mask;
+        output[ i * 2 + 1 ] += sample & c->maskRight & c->mask;
 	}
 
     return ( c + 1 );
@@ -888,8 +897,10 @@ static struct Channel* Channel_Block_sm3FM( struct Channel *c, struct Chip* chip
 
 	if ( Operator_Silent( Channel_Op( c, 1 ) ) ) {
         c->old[0] = c->old[1] = 0;
+		c->chanActive = 0;
         return (c + 1);
     }
+	c->chanActive = 1;
 
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
@@ -904,8 +915,8 @@ static struct Channel* Channel_Block_sm3FM( struct Channel *c, struct Chip* chip
 		c->old[1] = Operator_GetSample( Channel_Op( c, 0 ), mod );
 		out0 = c->old[0];
         sample = Operator_GetSample( Channel_Op( c, 1 ), out0 );
-        output[ i * 2 + 0 ] += sample & c->maskLeft;
-        output[ i * 2 + 1 ] += sample & c->maskRight;
+        output[ i * 2 + 0 ] += sample & c->maskLeft & c->mask;
+        output[ i * 2 + 1 ] += sample & c->maskRight & c->mask;
 	}
 
     return ( c + 1 );
@@ -916,8 +927,10 @@ static struct Channel* Channel_Block_sm3FMFM( struct Channel *c, struct Chip* ch
 
     if ( Operator_Silent( Channel_Op( c, 3 ) ) ) {
         c->old[0] = c->old[1] = 0;
+		c->chanActive = 0;
         return (c + 2);
     }
+	c->chanActive = 1;
 
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
@@ -937,8 +950,8 @@ static struct Channel* Channel_Block_sm3FMFM( struct Channel *c, struct Chip* ch
         next = Operator_GetSample( Channel_Op( c, 1 ), out0 );
         next = Operator_GetSample( Channel_Op( c, 2 ), next );
         sample = Operator_GetSample( Channel_Op( c, 3 ), next );
-        output[ i * 2 + 0 ] += sample & c->maskLeft;
-        output[ i * 2 + 1 ] += sample & c->maskRight;
+        output[ i * 2 + 0 ] += sample & c->maskLeft & c->mask;
+        output[ i * 2 + 1 ] += sample & c->maskRight & c->mask;
 	}
 
     return( c + 2 );
@@ -949,8 +962,10 @@ static struct Channel* Channel_Block_sm3AMFM( struct Channel *c, struct Chip* ch
 
     if ( Operator_Silent( Channel_Op( c, 0 ) ) && Operator_Silent( Channel_Op( c, 3 ) ) ) {
         c->old[0] = c->old[1] = 0;
+		c->chanActive = 0;
         return (c + 2);
     }
+	c->chanActive = 1;
     
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
@@ -971,8 +986,8 @@ static struct Channel* Channel_Block_sm3AMFM( struct Channel *c, struct Chip* ch
         next = Operator_GetSample( Channel_Op( c, 1 ), 0 );
         next = Operator_GetSample( Channel_Op( c, 2 ), next );
         sample += Operator_GetSample( Channel_Op( c, 3 ), next );
-        output[ i * 2 + 0 ] += sample & c->maskLeft;
-        output[ i * 2 + 1 ] += sample & c->maskRight;
+        output[ i * 2 + 0 ] += sample & c->maskLeft & c->mask;
+        output[ i * 2 + 1 ] += sample & c->maskRight & c->mask;
 	}
 
     return( c + 2 );
@@ -983,8 +998,10 @@ static struct Channel* Channel_Block_sm3FMAM( struct Channel *c, struct Chip* ch
 
     if ( Operator_Silent( Channel_Op( c, 1) ) && Operator_Silent( Channel_Op( c, 3 ) ) ) {
         c->old[0] = c->old[1] = 0;
+		c->chanActive = 0;
         return (c + 2);
     }
+	c->chanActive = 1;
     
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
@@ -1004,8 +1021,8 @@ static struct Channel* Channel_Block_sm3FMAM( struct Channel *c, struct Chip* ch
         sample = Operator_GetSample( Channel_Op( c, 1 ), out0 );
         next = Operator_GetSample( Channel_Op( c, 2 ), 0 );
         sample += Operator_GetSample( Channel_Op( c, 3 ), next );
-        output[ i * 2 + 0 ] += sample & c->maskLeft;
-        output[ i * 2 + 1 ] += sample & c->maskRight;
+        output[ i * 2 + 0 ] += sample & c->maskLeft & c->mask;
+        output[ i * 2 + 1 ] += sample & c->maskRight & c->mask;
 	}
 
     return( c + 2 );
@@ -1016,8 +1033,10 @@ static struct Channel* Channel_Block_sm3AMAM( struct Channel *c, struct Chip* ch
 
     if ( Operator_Silent( Channel_Op( c, 0 ) ) && Operator_Silent( Channel_Op( c, 2 ) )  && Operator_Silent( Channel_Op( c, 3 ) ) ) {
         c->old[0] = c->old[1] = 0;
+		c->chanActive = 0;
         return (c + 2);
     }
+	c->chanActive = 1;
     
 	//Init the operators with the the current vibrato and tremolo values
     Operator_Prepare( Channel_Op( c, 0 ), chip );
@@ -1038,8 +1057,8 @@ static struct Channel* Channel_Block_sm3AMAM( struct Channel *c, struct Chip* ch
         next = Operator_GetSample( Channel_Op( c, 1 ), 0 );
         sample += Operator_GetSample( Channel_Op( c, 2 ), next );
         sample += Operator_GetSample( Channel_Op( c, 3 ), 0 );
-        output[ i * 2 + 0 ] += sample & c->maskLeft;
-        output[ i * 2 + 1 ] += sample & c->maskRight;
+        output[ i * 2 + 0 ] += sample & c->maskLeft & c->mask;
+        output[ i * 2 + 1 ] += sample & c->maskRight & c->mask;
 	}
 
     return( c + 2 );
@@ -1057,6 +1076,13 @@ static Bit32s Channel_GeneratePercussion( struct Channel *chan, struct Chip* chi
     Bit32u hhVol;
     Bit32u sdVol;
     Bit32u tcVol;
+
+	chan->chanActive = 0;
+
+	if ( !Operator_Silent( Channel_Op(chan, 1) ) )
+		chan->chanActive++;
+	if ( !Operator_Silent( Channel_Op(chan, 4) ) )
+		chan->chanActive++;
     
 	chan->old[0] = chan->old[1];
 	chan->old[1] = Operator_GetSample( Channel_Op( chan, 0 ), mod );
@@ -1081,12 +1107,14 @@ static Bit32s Channel_GeneratePercussion( struct Channel *chan, struct Chip* chi
 	if ( !ENV_SILENT( hhVol ) ) {
 		Bit32u hhIndex = (phaseBit<<8) | (0x34 << ( phaseBit ^ (noiseBit << 1 )));
 		sample += Operator_GetWave( Channel_Op( chan, 2 ), hhIndex, hhVol );
+		chan->chanActive++;
 	}
 	//Snare Drum
 	sdVol = Operator_ForwardVolume( Channel_Op( chan, 3 ) );
 	if ( !ENV_SILENT( sdVol ) ) {
 		Bit32u sdIndex = ( 0x100 + (c2 & 0x100) ) ^ ( noiseBit << 8 );
 		sample += Operator_GetWave( Channel_Op( chan, 3 ), sdIndex, sdVol );
+		chan->chanActive++;
 	}
 	//Tom-tom
 	sample += Operator_GetSample( Channel_Op( chan, 4 ), 0 );
@@ -1096,6 +1124,7 @@ static Bit32s Channel_GeneratePercussion( struct Channel *chan, struct Chip* chi
 	if ( !ENV_SILENT( tcVol ) ) {
 		Bit32u tcIndex = (1 + phaseBit) << 8;
 		sample += Operator_GetWave( Channel_Op( chan, 5 ), tcIndex, tcVol );
+		chan->chanActive++;
 	}
 	sample <<= 1;
     return sample;
@@ -1113,7 +1142,7 @@ static struct Channel* Channel_Block_sm2Percussion( struct Channel *c, struct Ch
     Operator_Prepare( Channel_Op( c, 5 ), chip );
 
 	for ( i = 0; i < samples; i++ ) {
-        output[i] = Channel_GeneratePercussion( c, chip );
+        output[i] += Channel_GeneratePercussion( c, chip ) & c->mask;
 	}
 
     return( c + 3 );
@@ -1131,7 +1160,9 @@ static struct Channel* Channel_Block_sm3Percussion( struct Channel *c, struct Ch
     Operator_Prepare( Channel_Op( c, 5 ), chip );
     
 	for ( i = 0; i < samples; i++ ) {
-        output[i * 2] = output[i * 2 + 1] = Channel_GeneratePercussion( c, chip );
+		Bit32s sample = Channel_GeneratePercussion( c, chip ) & c->mask;
+        output[i * 2    ] += sample;
+		output[i * 2 + 1] += sample;
 	}
     
     return( c + 3 );
@@ -1144,8 +1175,10 @@ static void Channel_Init(struct Channel *c) {
 	c->regC0 = 0;
 	c->maskLeft = -1;
 	c->maskRight = -1;
+	c->mask = -1;
 	c->feedback = 31;
 	c->fourMask = 0;
+	c->chanActive = 0;
 	c->synthHandler = &Channel_Block_sm2FM;
     Operator_Init(&c->op[0]);
     Operator_Init(&c->op[1]);
@@ -1591,6 +1624,23 @@ void Chip_GenerateBlock_Stereo( void *_chip, Bitu total, Bit32s* output) {
         }
     } else
         Chip_GenerateBlock3( chip, total, output );
+}
+
+Bitu Chip_GetActiveChannels( void *_chip ) {
+	struct Chip *chip = (struct Chip *)_chip;
+	int totalChannels = (chip->opl3Active) ? 18 : 9;
+	int i;
+	Bitu active = 0;
+	for ( i = 0; i < totalChannels; ++i )
+		active += chip->chan[i].chanActive;
+	return active;
+}
+
+void Chip_Mute( void *_chip, Bit8u channel, Bit8u mute ) {
+	struct Chip *chip = (struct Chip *)_chip;
+	if (channel >= 18)
+		return;
+	chip->chan[channel].mask = mute ? 0 : -1;
 }
 
 void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {

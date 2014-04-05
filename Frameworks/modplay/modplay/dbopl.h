@@ -67,3 +67,7 @@ Bit32u Chip_WriteAddr( void *chip, Bit32u port, Bit8u val );
 
 void Chip_GenerateBlock_Mono( void *chip, Bitu total, Bit32s* output );
 void Chip_GenerateBlock_Stereo( void *chip, Bitu total, Bit32s* output );
+
+Bitu Chip_GetActiveChannels( void *_chip );
+
+void Chip_Mute( void *_chip, Bit8u channel, Bit8u mute );
