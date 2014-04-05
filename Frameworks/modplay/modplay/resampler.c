@@ -49,12 +49,28 @@ static float sinc(float x)
 static inline void
 __cpuid(int *data, int selector)
 {
+#if defined(__PIC__) && defined(__i386__)
+    asm("xchgl %%ebx, %%esi; cpuid; xchgl %%ebx, %%esi"
+        : "=a" (data[0]),
+        "=S" (data[1]),
+        "=c" (data[2]),
+        "=d" (data[3])
+        : "0" (selector));
+#elif defined(__PIC__) && defined(__amd64__)
+    asm("xchg{q} {%%}rbx, %q1; cpuid; xchg{q} {%%}rbx, %q1"
+        : "=a" (data[0]),
+        "=&r" (data[1]),
+        "=c" (data[2]),
+        "=d" (data[3])
+        : "0" (selector));
+#else
     asm("cpuid"
         : "=a" (data[0]),
         "=b" (data[1]),
         "=c" (data[2]),
         "=d" (data[3])
-        : "a"(selector));
+        : "0" (selector));
+#endif
 }
 #else
 #define __cpuid(a,b) memset((a), 0, sizeof(int) * 4)
