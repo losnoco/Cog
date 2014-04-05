@@ -35,6 +35,7 @@
 
 #if defined(_MSC_VER) && !defined(inline)
 #define inline __forceinline
+typedef signed long ssize_t;
 #endif
 
 #define USE_VOL_RAMP
