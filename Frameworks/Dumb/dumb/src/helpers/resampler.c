@@ -17,9 +17,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#include "resampler.h"
+#include "internal/resampler.h"
 
-enum { RESAMPLER_SHIFT = 13 };
+enum { RESAMPLER_SHIFT = 10 };
 enum { RESAMPLER_RESOLUTION = 1 << RESAMPLER_SHIFT };
 enum { SINC_WIDTH = 16 };
 enum { SINC_SAMPLES = RESAMPLER_RESOLUTION * SINC_WIDTH };
@@ -28,6 +28,7 @@ enum { CUBIC_SAMPLES = RESAMPLER_RESOLUTION * 4 };
 ALIGNED static float cubic_lut[CUBIC_SAMPLES];
 
 static float sinc_lut[SINC_SAMPLES + 1];
+static float window_lut[SINC_SAMPLES + 1];
 
 enum { resampler_buffer_size = SINC_WIDTH * 4 };
 
@@ -89,7 +90,8 @@ void resampler_init(void)
         // Lanczos
         float window = sinc(y);
 #endif
-        sinc_lut[i] = fabs(x) < SINC_WIDTH ? sinc(x) * window : 0.0;
+        sinc_lut[i] = fabs(x) < SINC_WIDTH ? sinc(x) : 0.0;
+        window_lut[i] = window;
     }
     dx = 1.0 / (float)(RESAMPLER_RESOLUTION);
     x = 0.0;
@@ -335,6 +337,30 @@ void resampler_write_sample(void *_r, short s)
     }
 }
 
+void resampler_write_sample_fixed(void *_r, int s, unsigned char depth)
+{
+    resampler * r = ( resampler * ) _r;
+    
+    if ( r->delay_added < 0 )
+    {
+        r->delay_added = 0;
+        r->write_filled = resampler_input_delay( r );
+    }
+    
+    if ( r->write_filled < resampler_buffer_size )
+    {
+        float s32 = s;
+        s32 /= (double)(1 << (depth - 1));
+        
+        r->buffer_in[ r->write_pos ] = s32;
+        r->buffer_in[ r->write_pos + resampler_buffer_size ] = s32;
+        
+        ++r->write_filled;
+        
+        r->write_pos = ( r->write_pos + 1 ) % resampler_buffer_size;
+    }
+}
+
 static int resampler_run_zoh(resampler * r, float ** out_, float * out_end)
 {
     int in_size = r->write_filled;
@@ -407,7 +433,8 @@ static int resampler_run_blep(resampler * r, float ** out_, float * out_end)
             for (; i >= -SINC_WIDTH + 1; --i)
             {
                 int pos = i * step;
-                kernel_sum += kernel[i + SINC_WIDTH - 1] = sinc_lut[abs(inv_phase - pos)];
+                int abs_pos = abs(inv_phase - pos);
+                kernel_sum += kernel[i + SINC_WIDTH - 1] = sinc_lut[abs_pos] * window_lut[abs_pos];
             }
             sample = *in++ - last_amp;
             last_amp += sample;
@@ -470,7 +497,8 @@ static int resampler_run_blep_sse(resampler * r, float ** out_, float * out_end)
             for (; i >= -SINC_WIDTH + 1; --i)
             {
                 int pos = i * step;
-                kernel_sum += kernelf[i + SINC_WIDTH - 1] = sinc_lut[abs(inv_phase - pos)];
+                int abs_pos = abs(inv_phase - pos);
+                kernel_sum += kernelf[i + SINC_WIDTH - 1] = sinc_lut[abs_pos] * window_lut[abs_pos];
             }
             sample = *in++ - last_amp;
             last_amp += sample;
@@ -667,6 +695,7 @@ static int resampler_run_sinc(resampler * r, float ** out_, float * out_end)
         int phase_inc = r->phase_inc;
 
         int step = phase_inc > RESAMPLER_RESOLUTION ? RESAMPLER_RESOLUTION * RESAMPLER_RESOLUTION / phase_inc : RESAMPLER_RESOLUTION;
+        int window_step = RESAMPLER_RESOLUTION;
 
         do
         {
@@ -681,7 +710,8 @@ static int resampler_run_sinc(resampler * r, float ** out_, float * out_end)
             for (; i >= -SINC_WIDTH + 1; --i)
             {
                 int pos = i * step;
-                kernel_sum += kernel[i + SINC_WIDTH - 1] = sinc_lut[abs(phase_adj - pos)];
+                int window_pos = i * window_step;
+                kernel_sum += kernel[i + SINC_WIDTH - 1] = sinc_lut[abs(phase_adj - pos)] * window_lut[abs(phase - window_pos)];
             }
             for (sample = 0, i = 0; i < SINC_WIDTH * 2; ++i)
                 sample += in[i] * kernel[i];
@@ -722,6 +752,7 @@ static int resampler_run_sinc_sse(resampler * r, float ** out_, float * out_end)
         int phase_inc = r->phase_inc;
         
         int step = phase_inc > RESAMPLER_RESOLUTION ? RESAMPLER_RESOLUTION * RESAMPLER_RESOLUTION / phase_inc : RESAMPLER_RESOLUTION;
+        int window_step = RESAMPLER_RESOLUTION;
         
         do
         {
@@ -740,7 +771,8 @@ static int resampler_run_sinc_sse(resampler * r, float ** out_, float * out_end)
             for (; i >= -SINC_WIDTH + 1; --i)
             {
                 int pos = i * step;
-                kernel_sum += kernelf[i + SINC_WIDTH - 1] = sinc_lut[abs(phase_adj - pos)];
+                int window_pos = i * window_step;
+                kernel_sum += kernelf[i + SINC_WIDTH - 1] = sinc_lut[abs(phase_adj - pos)] * window_lut[abs(phase - window_pos)];
             }
             for (i = 0; i < SINC_WIDTH / 2; ++i)
             {
