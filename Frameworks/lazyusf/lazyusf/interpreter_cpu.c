@@ -722,10 +722,23 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 }
 
 void StartInterpreterCPU (usf_state_t * state) {
+    const int safety_count_max = 20000000;
+    int safety_count = safety_count_max;
+    size_t last_sample_buffer_count = state->sample_buffer_count;
+    
 	state->NextInstruction = NORMAL;
 
 	while(state->cpu_running) {
 		ExecuteInterpreterOpCode(state);
+        if (!--safety_count) {
+            if (last_sample_buffer_count == state->sample_buffer_count) {
+                DisplayError( state, "Emulator core is not generating any samples after 400 million instructions" );
+                break;
+            } else {
+                safety_count = safety_count_max;
+                last_sample_buffer_count = state->sample_buffer_count;
+            }
+        }
 	}
 
 	state->cpu_stopped = 1;
