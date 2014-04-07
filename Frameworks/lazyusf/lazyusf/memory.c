@@ -191,15 +191,19 @@ int32_t r4300i_LB_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t * Va
 }
 
 uint32_t r4300i_LB_VAddr ( usf_state_t * state, uint32_t VAddr, uint8_t * Value ) {
-	if (state->TLB_Map[VAddr >> 12] == 0) { return 0; }
-	*Value = *(uint8_t *)(state->TLB_Map[VAddr >> 12] + (VAddr ^ 3));
+	uintptr_t address;
+	address = state->TLB_Map[VAddr >> 12];
+	if (address == 0) { return 0; }
+	*Value = *(uint8_t *)(address + (VAddr ^ 3));
 	return 1;
 }
 
 uint32_t r4300i_LD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t * Value ) {
-	if (state->TLB_Map[VAddr >> 12] == 0) { return 0; }
-	*((uint32_t *)(Value) + 1) = *(uint32_t *)(state->TLB_Map[VAddr >> 12] + VAddr);
-	*((uint32_t *)(Value)) = *(uint32_t *)(state->TLB_Map[VAddr >> 12] + VAddr + 4);
+	uintptr_t address;
+	address = state->TLB_Map[VAddr >> 12];
+	if (address == 0) { return 0; }
+	*((uint32_t *)(Value) + 1) = *(uint32_t *)(address + VAddr);
+	*((uint32_t *)(Value)) = *(uint32_t *)(address + VAddr + 4);
 	return 1;
 }
 
@@ -216,8 +220,11 @@ int32_t r4300i_LH_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t * Va
 }
 
 uint32_t r4300i_LH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t * Value ) {
-	if (state->TLB_Map[VAddr >> 12] == 0) { return 0; }
-	*Value = *(uint16_t *)(state->TLB_Map[VAddr >> 12] + (VAddr ^ 2));
+	uintptr_t address;
+	address = state->TLB_Map[VAddr >> 12];
+	if (address == 0)
+		return 0;
+	*Value = *(uint16_t *)(address + (VAddr ^ 2));
 	return 1;
 }
 
@@ -383,9 +390,11 @@ void r4300i_LW_PAddr ( usf_state_t * state, uint32_t PAddr, uint32_t * Value ) {
 }
 
 uint32_t r4300i_LW_VAddr ( usf_state_t * state, uint32_t VAddr, uint32_t * Value ) {
-	uintptr_t address = (state->TLB_Map[VAddr >> 12] + VAddr);
+	uintptr_t address = state->TLB_Map[VAddr >> 12];
+	if (address == 0)
+		return 0;
 
-	if (state->TLB_Map[VAddr >> 12] == 0) { return 0; }
+	address += VAddr;
 
 	if((address - (uintptr_t)state->RDRAM) > state->RdramSize) {
 		address = address - (uintptr_t)state->RDRAM;
@@ -417,8 +426,11 @@ int32_t r4300i_SB_NonMemory ( usf_state_t * state, uint32_t PAddr, uint8_t Value
 }
 
 uint32_t r4300i_SB_VAddr ( usf_state_t * state, uint32_t VAddr, uint8_t Value ) {
-	if (state->TLB_Map[VAddr >> 12] == 0) { return 0; }
-	*(uint8_t *)(state->TLB_Map[VAddr >> 12] + (VAddr ^ 3)) = Value;
+	uintptr_t address;
+	address = state->TLB_Map[VAddr >> 12];
+
+	if (address == 0) { return 0; }
+	*(uint8_t *)(address + (VAddr ^ 3)) = Value;
 
 	return 1;
 }
@@ -445,15 +457,20 @@ int32_t r4300i_SH_NonMemory ( usf_state_t * state, uint32_t PAddr, uint16_t Valu
 }
 
 uint32_t r4300i_SD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t Value ) {
-	if (state->TLB_Map[VAddr >> 12] == 0) { return 0; }
-	*(uint32_t *)(state->TLB_Map[VAddr >> 12] + VAddr) = *((uint32_t *)(&Value) + 1);
-	*(uint32_t *)(state->TLB_Map[VAddr >> 12] + VAddr + 4) = *((uint32_t *)(&Value));
+	uintptr_t address;
+	address = state->TLB_Map[VAddr >> 12];
+	if (address == 0) { return 0; }
+	*(uint32_t *)(address + VAddr) = *((uint32_t *)(&Value) + 1);
+	*(uint32_t *)(address + VAddr + 4) = *((uint32_t *)(&Value));
 	return 1;
 }
 
 uint32_t r4300i_SH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t Value ) {
-	if (state->TLB_Map[VAddr >> 12] == 0) { return 0; }
-	*(uint16_t *)(state->TLB_Map[VAddr >> 12] + (VAddr ^ 2)) = Value;
+	uintptr_t address;
+	address = state->TLB_Map[VAddr >> 12];
+
+	if (address == 0) { return 0; }
+	*(uint16_t *)(address + (VAddr ^ 2)) = Value;
 	return 1;
 }
 
@@ -766,10 +783,13 @@ int32_t r4300i_SW_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t Valu
 }
 
 uint32_t r4300i_SW_VAddr ( usf_state_t * state, uint32_t VAddr, uint32_t Value ) {
-	uintptr_t address = (state->TLB_Map[VAddr >> 12] + VAddr);
 
-	if (state->TLB_Map[VAddr >> 12] == 0) { return 0; }
+	uintptr_t address;
+	address = state->TLB_Map[VAddr >> 12];
 
+	if (address == 0) { return 0; }
+	address = (address + VAddr);
+	
 	if((address - (uintptr_t)state->RDRAM) > state->RdramSize) {
 		address = address - (uintptr_t)state->RDRAM;
 		return r4300i_SW_NonMemory(state, (uint32_t) address, Value);

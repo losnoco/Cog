@@ -53,7 +53,7 @@ static void set_PC(usf_state_t * state, int address)
     return;
 }
 
-#if (0)
+#if ANDROID
 #define MASK_SA(sa) (sa & 31)
 /* Force masking in software. */
 #else
