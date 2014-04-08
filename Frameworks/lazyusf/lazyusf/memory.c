@@ -191,7 +191,7 @@ int32_t r4300i_LB_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t * Va
 }
 
 uint32_t r4300i_LB_VAddr ( usf_state_t * state, uint32_t VAddr, uint8_t * Value ) {
-	uint32_t address;
+	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0) { return 0; }
 	*Value = *(uint8_t *)(address + (VAddr ^ 3));
@@ -199,7 +199,7 @@ uint32_t r4300i_LB_VAddr ( usf_state_t * state, uint32_t VAddr, uint8_t * Value 
 }
 
 uint32_t r4300i_LD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t * Value ) {
-	uint32_t address;
+	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0) { return 0; }
 	*((uint32_t *)(Value) + 1) = *(uint32_t *)(address + VAddr);
@@ -220,7 +220,7 @@ int32_t r4300i_LH_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t * Va
 }
 
 uint32_t r4300i_LH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t * Value ) {
-	uint32_t address;
+	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0)
 		return 0;
@@ -426,7 +426,7 @@ int32_t r4300i_SB_NonMemory ( usf_state_t * state, uint32_t PAddr, uint8_t Value
 }
 
 uint32_t r4300i_SB_VAddr ( usf_state_t * state, uint32_t VAddr, uint8_t Value ) {
-	uint32_t address;
+	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 
 	if (address == 0) { return 0; }
@@ -457,7 +457,7 @@ int32_t r4300i_SH_NonMemory ( usf_state_t * state, uint32_t PAddr, uint16_t Valu
 }
 
 uint32_t r4300i_SD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t Value ) {
-	uint32_t address;
+	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0) { return 0; }
 	*(uint32_t *)(address + VAddr) = *((uint32_t *)(&Value) + 1);
@@ -466,7 +466,7 @@ uint32_t r4300i_SD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t Value )
 }
 
 uint32_t r4300i_SH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t Value ) {
-	uint32_t address;
+	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 
 	if (address == 0) { return 0; }
