@@ -7,11 +7,11 @@ include REXML
 
 feed = ARGV[0] || 'mercury'
 
-upload_prefix = "Chris@kode54.net:/usr/share/nginx/html/cog/"
-
 signature_file = "#{Dir.home}/.ssh/dsa_priv.pem"
 
-appcast = open("https://kode54.net/cog/#{feed}.xml")
+site_dir = "#{Dir.home}/Source/Repos/kode54-net/cog"
+
+appcast = open("#{site_dir}/#{feed}.xml")
 
 appcastdoc = Document.new(appcast)
 
@@ -74,7 +74,8 @@ end
   %x[rm -rf '#{temp_path}/Cog.app' '#{temp_path}/Cog.old' '#{temp_path}/Cog.zip']
   
   #Retrieve the current full package
-  %x[curl -o '#{temp_path}/Cog.zip' #{appcast_url}]
+  local_file = "#{appcast_url}".gsub(_https://kode54.net/cog_, '#{site_dir}')
+  %x[cp '#{local_file}' '#{temp_path}/Cog.zip']
   
   #Unpack and rename
   %x[ditto -kx '#{temp_path}/Cog.zip' '#{temp_path}/']
@@ -100,11 +101,11 @@ end
   signature_delta = `#{openssl} dgst -sha1 -binary < "#{temp_path}/#{feed}.delta" | #{openssl} dgst -dss1 -sign "#{signature_file}" | #{openssl} enc -base64`
 
   #Send the new build to the server
-  %x[scp '#{temp_path}/#{feed}.zip' #{upload_prefix}#{feed}_builds/#{filename}]
+  %x[cp '#{temp_path}/#{feed}.zip' '#{site_dir}/#{feed}_builds/#{filename}']
   %x[rm '#{temp_path}/#{feed}.zip']
   
   #Send the delta
-  %x[scp '#{temp_path}/#{feed}.delta' #{upload_prefix}#{feed}_builds/#{filename_delta}]
+  %x[cp '#{temp_path}/#{feed}.delta' '#{site_dir}/#{feed}_builds/#{filename_delta}']
   %x[rm '#{temp_path}/#{feed}.delta']
   
   #Clean up
@@ -151,5 +152,5 @@ end
   appcast.close()
 
   #Send the updated appcast to the server
-  %x[scp #{new_xml.path} #{upload_prefix}#{feed}.xml]
+  %x[cp '#{new_xml.path}' '#{site_dir}/#{feed}.xml']
 end
