@@ -47,6 +47,12 @@ int usf_upload_section(void * state, const uint8_t * data, size_t size);
    Requesting zero samples with a null pointer is an acceptable way to
    force at least one block of samples to render and return the current
    sample rate in the variable passed in.
+   Requesting a non-zero number of samples with a null buffer pointer will
+   result in exactly count samples being rendered and discarded.
+   Emulation runs in whole blocks until there have been exactly enough
+   Audio Interface DMA transfers to at least fill count samples, at which
+   point the remainder is buffered in the emulator state until the next
+   usf_render() call.
    Returns 0 on success, or a pointer to the last error message on failure. */
 const char * usf_render(void * state, int16_t * buffer, size_t count, int32_t * sample_rate);
 

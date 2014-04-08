@@ -27,6 +27,30 @@ INLINE static void do_abs(usf_state_t * state, short* VD, short* VS, short* VT)
     register int i;
 
     vector_copy(res, VT);
+
+#ifdef ARCH_MIN_ARM_NEON
+	
+	int16x8_t vs = vld1q_s16((const int16_t*)VS);
+    int16x8_t resi = vld1q_s16((const int16_t*)VT);
+    int16x8_t zero = vdupq_n_s16(0);
+    int16x8_t eightk = vdupq_n_s16(0x8000);
+    int16x8_t one = vdupq_n_s16(1);
+
+    uint16x8_t negi = vcltq_s16(vs,zero);
+    int16x8_t posi = vaddq_s16((int16x8_t)negi,one);
+    posi = vorrq_s16(posi,(int16x8_t)negi);
+    resi = veorq_s16(resi,posi);
+    uint16x8_t ccch = vcgeq_s16(resi,eightk);
+    int16x8_t ch = vnegq_s16((int16x8_t)ccch);
+    resi = vaddq_s16(resi, (int16x8_t)ch);
+	
+	vst1q_s16(VACC_L, resi);	
+    vector_copy(VD, VACC_L);
+	return;
+	
+#else
+	
+	
 #ifndef ARCH_MIN_SSE2
 #define MASK_XOR
 #endif
@@ -65,6 +89,7 @@ INLINE static void do_abs(usf_state_t * state, short* VD, short* VS, short* VT)
     vector_copy(VACC_L, res);
     vector_copy(VD, VACC_L);
     return;
+#endif
 }
 
 static void VABS(usf_state_t * state, int vd, int vs, int vt, int e)

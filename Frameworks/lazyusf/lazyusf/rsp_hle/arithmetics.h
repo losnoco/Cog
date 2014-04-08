@@ -24,13 +24,7 @@
 
 #include <stdint.h>
 
-#ifdef _MSC_VER
-#define INLINE      __forceinline
-#else
-#define INLINE      inline __attribute__((always_inline))
-#endif
-
-INLINE static int16_t clamp_s16(int_fast32_t x)
+static inline int16_t clamp_s16(int_fast32_t x)
 {
     x = (x < INT16_MIN) ? INT16_MIN: x;
     x = (x > INT16_MAX) ? INT16_MAX: x;

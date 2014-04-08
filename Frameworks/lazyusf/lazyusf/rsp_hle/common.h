@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - memory.c                                        *
+ *   Mupen64plus-rsp-hle - common.h                                        *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
@@ -19,58 +19,21 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
+#ifndef COMMON_H
+#define COMMON_H
 
-#include "common.h"
+/* macro for unused variable warning suppression */
+#ifdef __GNUC__
+#  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#  define UNUSED(x) UNUSED_ ## x
+#endif
 
-#include "memory.h"
+#ifdef _MSC_VER
+#  define inline __forceinline
+#elif defined __GNUC__
+#  define inline inline __attribute__((always_inline))
+#endif
 
-/* Global functions */
-void load_u8(uint8_t* dst, const unsigned char* buffer, unsigned address, size_t count)
-{
-    while (count != 0) {
-        *(dst++) = *u8(buffer, address);
-        address += 1;
-        --count;
-    }
-}
-
-void load_u16(uint16_t* dst, const unsigned char* buffer, unsigned address, size_t count)
-{
-    while (count != 0) {
-        *(dst++) = *u16(buffer, address);
-        address += 2;
-        --count;
-    }
-}
-
-void load_u32(uint32_t* dst, const unsigned char* buffer, unsigned address, size_t count)
-{
-    /* Optimization for uint32_t */
-    memcpy(dst, u32(buffer, address), count * sizeof(uint32_t));
-}
-
-void store_u8(unsigned char* buffer, unsigned address, const uint8_t* src, size_t count)
-{
-    while (count != 0) {
-        *u8(buffer, address) = *(src++);
-        address += 1;
-        --count;
-    }
-}
-
-void store_u16(unsigned char* buffer, unsigned address, const uint16_t* src, size_t count)
-{
-    while (count != 0) {
-        *u16(buffer, address) = *(src++);
-        address += 2;
-        --count;
-    }
-}
-
-void store_u32(unsigned char* buffer, unsigned address, const uint32_t* src, size_t count)
-{
-    /* Optimization for uint32_t */
-    memcpy(u32(buffer, address), src, count * sizeof(uint32_t));
-}
+#endif
 

@@ -28,12 +28,13 @@
 #endif
 #include <stdint.h>
 
+#include "common.h"
+
 #include "alist.h"
 #include "hle_external.h"
 #include "hle_internal.h"
 #include "memory.h"
-
-static void MP3(struct hle_t* hle, uint32_t w1, uint32_t w2);
+#include "ucodes.h"
 
 enum { NAUDIO_COUNT = 0x170 }; /* ie 184 samples */
 enum {
@@ -57,7 +58,7 @@ static void UNKNOWN(struct hle_t* hle, uint32_t w1, uint32_t w2)
 }
 
 
-static void SPNOOP(struct hle_t* hle, uint32_t w1, uint32_t w2)
+static void SPNOOP(struct hle_t* UNUSED(hle), uint32_t UNUSED(w1), uint32_t UNUSED(w2))
 {
 }
 
@@ -67,10 +68,11 @@ static void NAUDIO_0000(struct hle_t* hle, uint32_t w1, uint32_t w2)
     UNKNOWN(hle, w1, w2);
 }
 
-static void NAUDIO_02B0(struct hle_t* hle, uint32_t w1, uint32_t w2)
+static void NAUDIO_02B0(struct hle_t* hle, uint32_t UNUSED(w1), uint32_t w2)
 {
-    uint32_t rate = (hle->alist_naudio.rate[1] & 0xffff0000) | (w2 & 0xffff);
-    hle->alist_naudio.rate[1] = rate;
+    /* emulate code at 0x12b0 (inside SETVOL), because PC always execute in IMEM */
+    hle->alist_naudio.rate[1] &= ~0xffff;
+    hle->alist_naudio.rate[1] |= (w2 & 0xffff);
 }
 
 static void NAUDIO_14(struct hle_t* hle, uint32_t w1, uint32_t w2)
@@ -196,7 +198,7 @@ static void DMEMMOVE(struct hle_t* hle, uint32_t w1, uint32_t w2)
     alist_move(hle, dmemo, dmemi, (count + 3) & ~3);
 }
 
-static void SETLOOP(struct hle_t* hle, uint32_t w1, uint32_t w2)
+static void SETLOOP(struct hle_t* hle, uint32_t UNUSED(w1), uint32_t w2)
 {
     hle->alist_naudio.loop = (w2 & 0xffffff);
 }
@@ -241,12 +243,12 @@ static void RESAMPLE(struct hle_t* hle, uint32_t w1, uint32_t w2)
             address);
 }
 
-static void INTERLEAVE(struct hle_t* hle, uint32_t w1, uint32_t w2)
+static void INTERLEAVE(struct hle_t* hle, uint32_t UNUSED(w1), uint32_t UNUSED(w2))
 {
     alist_interleave(hle, NAUDIO_MAIN, NAUDIO_DRY_LEFT, NAUDIO_DRY_RIGHT, NAUDIO_COUNT);
 }
 
-static void MP3ADDY(struct hle_t* hle, uint32_t w1, uint32_t w2)
+static void MP3ADDY(struct hle_t* UNUSED(hle), uint32_t UNUSED(w1), uint32_t UNUSED(w2))
 {
 }
 

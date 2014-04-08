@@ -17,6 +17,30 @@ INLINE static void do_eq(usf_state_t * state, short* VD, short* VS, short* VT)
 {
     register int i;
 
+#ifdef ARCH_MIN_ARM_NEON
+
+	int16x8_t one = vdupq_n_s16(1);
+	int16x8_t zero = vdupq_n_s16(0);
+	int16x8_t vs = vld1q_s16((const int16_t *)VS);
+    int16x8_t vt = vld1q_s16((const int16_t *)VT);
+	int16x8_t v_ne = vld1q_s16((const int16_t *)state->ne);
+
+	uint16x8_t v_comp = vceqq_s16(vs, vt);
+	int16x8_t v_comp_ = vnegq_s16((int16x8_t)v_comp);
+	v_ne = veorq_s16(v_ne, one);
+	v_comp_ = vandq_s16(v_comp_, v_ne);
+
+    vector_copy(VACC_L, VT);
+    vector_copy(VD, VACC_L);
+	
+	vst1q_s16(state->comp,v_comp_);
+	vst1q_s16(state->ne,zero);
+	vst1q_s16(state->co,zero);
+
+	return;
+
+#else
+	
     for (i = 0; i < N; i++)
         state->clip[i] = 0;
     for (i = 0; i < N; i++)
@@ -35,6 +59,7 @@ INLINE static void do_eq(usf_state_t * state, short* VD, short* VS, short* VT)
     for (i = 0; i < N; i++)
         state->co[i] = 0;
     return;
+#endif
 }
 
 static void VEQ(usf_state_t * state, int vd, int vs, int vt, int e)

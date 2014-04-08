@@ -22,6 +22,9 @@ NOINLINE void run_task(usf_state_t * state)
 {
     register int PC;
     int wrap_count = 0;
+#ifdef SP_EXECUTE_LOG
+    int last_PC;
+#endif
 
     if (CFG_WAIT_FOR_CPU_HOST != 0)
     {
@@ -36,6 +39,9 @@ NOINLINE void run_task(usf_state_t * state)
         register uint32_t inst;
 
         inst = *(uint32_t *)(state->IMEM + FIT_IMEM(PC));
+#ifdef SP_EXECUTE_LOG
+        last_PC = PC;
+#endif
 #ifdef EMULATE_STATIC_PC
         PC = (PC + 0x004);
         if ( FIT_IMEM(PC) == 0 && ++wrap_count == 32 )
@@ -46,7 +52,7 @@ NOINLINE void run_task(usf_state_t * state)
 EX:
 #endif
 #ifdef SP_EXECUTE_LOG
-        step_SP_commands(inst);
+        step_SP_commands(state, last_PC, inst);
 #endif
         if (inst >> 25 == 0x25) /* is a VU instruction */
         {
@@ -463,6 +469,9 @@ EX:
         continue;
 BRANCH:
         inst = *(uint32_t *)(state->IMEM + FIT_IMEM(PC));
+#ifdef SP_EXECUTE_LOG
+        last_PC = PC;
+#endif
         PC = state->temp_PC & 0x00000FFC;
         goto EX;
 #endif

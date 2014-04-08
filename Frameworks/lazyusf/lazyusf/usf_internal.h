@@ -77,10 +77,20 @@ struct usf_state
     int16_t * sample_buffer;
 
     // audio.c
+    // SampleRate is usually guaranteed to stay the same for the duration
+    // of a given track, and depends on the game.
     int32_t SampleRate;
+    // Audio is rendered in whole Audio Interface DMA transfers, which are
+    // then copied directly to the caller's buffer. Any left over samples
+    // from the last DMA transfer that fills the caller's buffer will be
+    // stored here until the next call to usf_render()
     int16_t samplebuf[16384];
     size_t samples_in_buffer;
     
+    // This buffer does not really need to be that large, as it is likely
+    // to only accumulate a handlful of error messages, at which point
+    // emulation is immediately halted and the messages are returned to
+    // the caller.
     const char * last_error;
     char error_message[1024];
     

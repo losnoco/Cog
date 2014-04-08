@@ -180,7 +180,6 @@ void set_VCC(usf_state_t * state, unsigned short VCC)
         state->clip[i] = (VCC >> (i + 0x8)) & 1;
     return; /* Little endian becomes big. */
 }
-#if 0
 void set_VCE(usf_state_t * state, unsigned char VCE)
 {
     register int i;
@@ -189,5 +188,4 @@ void set_VCE(usf_state_t * state, unsigned char VCE)
         state->vce[i] = (VCE >> i) & 1;
     return; /* Little endian becomes big. */
 }
-#endif
 #endif

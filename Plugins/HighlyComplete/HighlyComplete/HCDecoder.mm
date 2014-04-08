@@ -1030,6 +1030,8 @@ static int usf_info(void * context, const char * name, const char * value)
         sampleRate = samplerate;
         
         usfRemoveSilence = YES;
+        
+        silence_seconds = 10;
     }
     else if ( type == 0x22 )
     {

@@ -15,6 +15,30 @@
 
 INLINE static void set_co(usf_state_t * state, short* VD, short* VS, short* VT)
 { /* set CARRY and carry out from sum */
+
+#ifdef ARCH_MIN_ARM_NEON
+
+	uint16x4_t vs_low = vld1_u16((const uint16_t*)VS);
+    uint16x4_t vs_high = vld1_u16((const uint16_t*)VS+4);
+    uint16x4_t vt_low = vld1_u16((const uint16_t*)VT);
+    uint16x4_t vt_high = vld1_u16((const uint16_t*)VT+4);
+    uint32x4_t zero = vdupq_n_u32(0);
+
+    uint32x4_t v_l = vaddl_u16(vs_low, vt_low);
+    uint32x4_t v_h = vaddl_u16(vs_high, vt_high);
+    uint16x4_t vl16 = vaddhn_u32(v_l,zero);
+    uint16x4_t vh16 = vaddhn_u32(v_h,zero);
+    uint16x8_t vaccl = vcombine_u16(vmovn_u32(v_l),vmovn_u32(v_h));
+    uint16x8_t co = vcombine_u16(vl16,vh16);
+	
+	vst1q_u16(VACC_L, vaccl);
+	vector_copy(VD, VACC_L);
+	vst1q_u16(state->ne, (uint16x8_t)zero);
+	vst1q_u16(state->co, co);
+	
+	return;
+#else
+
     ALIGNED int32_t sum[N];
     register int i;
 
@@ -28,6 +52,8 @@ INLINE static void set_co(usf_state_t * state, short* VD, short* VS, short* VT)
     for (i = 0; i < N; i++)
         state->co[i] = sum[i] >> 16; /* native:  (sum[i] > +65535) */
     return;
+
+#endif
 }
 
 static void VADDC(usf_state_t * state, int vd, int vs, int vt, int e)

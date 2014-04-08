@@ -72,12 +72,6 @@ struct hle_t
 
     /* mp3.c */
     uint8_t  mp3_buffer[0x1000];
-    /* FIXME: rewrite mp3 module to avoid these */
-    uint32_t mp3_inPtr;
-    uint32_t mp3_outPtr;
-    uint32_t mp3_t6;
-    uint32_t mp3_t5;
-    uint32_t mp3_t4;
 };
 
 #endif

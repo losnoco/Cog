@@ -15,6 +15,56 @@
 
 INLINE static void do_madl(usf_state_t * state, short* VD, short* VS, short* VT)
 {
+
+#ifdef ARCH_MIN_ARM_NEON
+
+	uint16x8_t vs = vld1q_u16((const uint16_t*)VS);
+	uint16x8_t vt = vld1q_u16((const uint16_t*)VT);
+	uint16x8_t v_vaccl = vld1q_u16((const uint16_t*)VACC_L);
+	uint16x8_t v_vaccm = vld1q_u16((const uint16_t*)VACC_M);
+	uint16x8_t v_vacch = vld1q_u16((const uint16_t*)VACC_H);
+
+	uint32x4_t zero = vdupq_n_u32(0);
+	uint16x4_t vs_low =  vget_low_u16(vs);
+    uint16x4_t vs_high = vget_high_u16(vs);
+    uint16x4_t vt_low =  vget_low_u16(vt);
+    uint16x4_t vt_high = vget_high_u16(vt);
+	
+	uint32x4_t product_L = vmulq_u32( vmovl_u16(vs_low), vmovl_u16(vt_low) );
+	uint32x4_t product_H = vmulq_u32( vmovl_u16(vs_high), vmovl_u16(vt_high) );
+
+	uint16x4_t addend_L = vaddhn_u32(product_L, zero);
+	uint16x4_t addend_H = vaddhn_u32(product_H, zero);
+	
+	uint32x4_t exceed1 = vaddl_u16(addend_L, vget_low_u16(v_vaccl));
+	uint32x4_t exceed2 = vaddl_u16(addend_H, vget_high_u16(v_vaccl));
+	
+	v_vaccl = vcombine_u16(vmovn_u32(exceed1), vmovn_u32(exceed2));
+	
+	addend_L = vaddhn_u32(exceed1, zero);
+	addend_H = vaddhn_u32(exceed2, zero);
+	
+	exceed1 = vaddl_u16(addend_L, vget_low_u16(v_vaccm));
+	exceed2 = vaddl_u16(addend_H, vget_high_u16(v_vaccm));
+	
+	v_vaccm = vcombine_u16(vmovn_u32(exceed1), vmovn_u32(exceed2));
+
+	addend_L = vaddhn_u32(exceed1, zero);
+	addend_H = vaddhn_u32(exceed2, zero);
+	
+	uint16x8_t v_vacch2 = vcombine_u16(addend_L, addend_H);
+	v_vacch = vaddq_u16(v_vacch, v_vacch2);
+
+	vst1q_s16(VACC_L, (int16x8_t)v_vaccl);
+	vst1q_s16(VACC_M, (int16x8_t)v_vaccm);
+	vst1q_s16(VACC_H, (int16x8_t)v_vacch);
+	
+	SIGNED_CLAMP_AL(state, VD);
+	return;
+	
+#else
+
+
     ALIGNED int32_t product[N];
     ALIGNED uint32_t addend[N];
     register int i;
@@ -37,6 +87,7 @@ INLINE static void do_madl(usf_state_t * state, short* VD, short* VS, short* VT)
         VACC_H[i] += addend[i] >> 16;
     SIGNED_CLAMP_AL(state, VD);
     return;
+#endif
 }
 
 static void VMADL(usf_state_t * state, int vd, int vs, int vt, int e)

@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "common.h"
+
 #include "arithmetics.h"
 #include "hle_external.h"
 #include "hle_internal.h"

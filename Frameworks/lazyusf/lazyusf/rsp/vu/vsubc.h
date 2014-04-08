@@ -15,6 +15,36 @@
 
 INLINE static void set_bo(usf_state_t * state, short* VD, short* VS, short* VT)
 { /* set CARRY and borrow out from difference */
+
+#ifdef ARCH_MIN_ARM_NEON
+
+	int16x8_t vs, vt,vaccl,ne, co2;
+	uint16x8_t cond;
+	
+	int16x8_t zero = vdupq_n_s16(0);
+	int16x8_t one = vdupq_n_s16(1);
+	vs = vld1q_s16((const int16_t*)VS);
+	vt = vld1q_s16((const int16_t*)VT);
+	
+	vaccl = vsubq_s16(vs, vt);
+	uint16x8_t vdif = vqsubq_u16((uint16x8_t)vs, (uint16x8_t)vt);
+	
+	vst1q_s16(VACC_L, vaccl);
+	vector_copy(VD, VACC_L);
+	
+	cond = vceqq_s16(vs, vt);
+	ne = vaddq_s16((int16x8_t)cond, one);
+
+	vdif = vorrq_u16(vdif,cond);
+	cond = vceqq_u16(vdif, (uint16x8_t)zero);
+	co2 = vnegq_s16((int16x8_t)cond);
+	
+	vst1q_s16(state->ne, ne);
+	vst1q_s16(state->co, co2);
+	return;
+
+#else
+
     ALIGNED int32_t dif[N];
     register int i;
 
@@ -28,6 +58,7 @@ INLINE static void set_bo(usf_state_t * state, short* VD, short* VS, short* VT)
     for (i = 0; i < N; i++)
         state->co[i] = (dif[i] < 0);
     return;
+#endif
 }
 
 static void VSUBC(usf_state_t * state, int vd, int vs, int vt, int e)

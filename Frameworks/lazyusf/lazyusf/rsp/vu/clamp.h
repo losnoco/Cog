@@ -42,6 +42,22 @@
 static INLINE void merge(short* VD, short* cmp, short* pass, short* fail)
 {
     register int i;
+
+#ifdef ARCH_MIN_ARM_NEON
+
+	int16x8_t p,f,d,c,vd,temp;
+
+	p = vld1q_s16((const int16_t*)pass);
+	f = vld1q_s16((const int16_t*)fail);
+	c = vld1q_s16((const int16_t*)cmp);
+	
+	d = vsubq_s16(p,f);
+	vd = vmlaq_s16(f, c, d); //vd = f + (cmp * d)
+	vst1q_s16(VD, vd);
+	return;
+	
+#else
+
 #if (0)
 /* Do not use this version yet, as it still does not vectorize to SSE2. */
     for (i = 0; i < N; i++)
@@ -55,9 +71,92 @@ static INLINE void merge(short* VD, short* cmp, short* pass, short* fail)
         VD[i] = fail[i] + cmp[i]*diff[i]; /* actually `(cmp[i] != 0)*diff[i]` */
 #endif
     return;
+
+#endif
 }
 
-#ifndef ARCH_MIN_SSE2
+#ifdef ARCH_MIN_ARM_NEON
+static INLINE void vector_copy(short * VD, short * VS)
+{
+    int16x8_t xmm;
+    xmm = vld1q_s16((const int16_t*)VS);
+    vst1q_s16(VD, xmm);
+
+    return;
+}
+
+static INLINE void SIGNED_CLAMP_ADD(usf_state_t * state, short* VD, short* VS, short* VT)
+{
+    int16x8_t dst, src, vco, max, min;
+
+    src = vld1q_s16((const int16_t*)VS);
+    dst = vld1q_s16((const int16_t*)VT);
+    vco = vld1q_s16((const int16_t*)state->co);
+
+    max = vmaxq_s16(dst, src);
+    min = vminq_s16(dst, src);
+
+    min = vqaddq_s16(min, vco);
+    max = vqaddq_s16(max, min);
+
+    vst1q_s16(VD, max);
+    return;
+
+}
+
+static INLINE void SIGNED_CLAMP_SUB(usf_state_t * state, short* VD, short* VS, short* VT)
+{
+	int16x8_t dst, src, vco, dif, res, xmm,vd;
+	
+    src = vld1q_s16((const int16_t*)VS);
+	vd = vld1q_s16((const int16_t*)VD);
+    dst = vld1q_s16((const int16_t*)VT);
+    vco = vld1q_s16((const int16_t*)state->co);
+
+    res = vqsubq_s16(src, dst);
+
+    dif = vaddq_s16(res, vco);
+    dif = veorq_s16(dif, res);
+    dif = vandq_s16(dif, dst);
+    xmm = vsubq_s16(src, dst); 
+	src = vbicq_s16(dif, src); 
+    xmm = vandq_s16(xmm, src);
+    xmm = vshrq_n_s16(xmm, 15);
+
+	xmm = vbicq_s16(vco, xmm);
+    res = vqsubq_s16(res, xmm);
+    vst1q_s16(VD, res);
+
+    return;
+	
+}
+
+static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
+{
+	int16x8_t pvs, pvd;
+	int16x8x2_t packed;
+	int16x8_t result;
+	int16x4_t low, high;
+	
+	pvs = vld1q_s16((const int16_t*)VACC_H);
+	pvd = vld1q_s16((const int16_t*)VACC_M);
+		
+	packed = vzipq_s16(pvd,pvs);
+		
+	low = vqmovn_s32((int32x4_t)packed.val[0]);
+	high = vqmovn_s32((int32x4_t)packed.val[1]);
+	
+	result = vcombine_s16(low,high);
+		
+	vst1q_s16(VD,result);
+
+	return;
+}
+
+#endif
+
+#if !defined ARCH_MIN_SSE2 && !defined ARCH_MIN_ARM_NEON
+
 static INLINE void vector_copy(short* VD, short* VS)
 {
 #if (0)
@@ -92,6 +191,8 @@ static INLINE void SIGNED_CLAMP_ADD(usf_state_t * state, short* VD, short* VS, s
         VD[i] ^= 0x8000 & (hi[i] | lo[i]);
     return;
 }
+
+
 static INLINE void SIGNED_CLAMP_SUB(usf_state_t * state, short* VD, short* VS, short* VT)
 {
     ALIGNED int32_t dif[N];
@@ -113,8 +214,9 @@ static INLINE void SIGNED_CLAMP_SUB(usf_state_t * state, short* VD, short* VS, s
         VD[i] ^= 0x8000 & (hi[i] | lo[i]);
     return;
 }
+
 static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
-{ /* typical sign-clamp of accumulator-mid (bits 31:16) */
+{ 
     ALIGNED short hi[N], lo[N];
     register int i;
 
@@ -135,7 +237,9 @@ static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
         VD[i] ^= 0x8000 * (hi[i] | lo[i]);
     return;
 }
-#else
+#endif
+
+#ifdef ARCH_MIN_SSE2
 /*
  * We actually need to write explicit SSE2 code for this because GCC 4.8.1
  * (and possibly later versions) has a code generation bug with vectorizing
@@ -225,9 +329,28 @@ static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
 
 static INLINE void UNSIGNED_CLAMP(usf_state_t * state, short* VD)
 { /* sign-zero hybrid clamp of accumulator-mid (bits 31:16) */
+
     ALIGNED short cond[N];
     ALIGNED short temp[N];
     register int i;
+
+#ifdef ARCH_MIN_ARM_NEON
+	
+	uint16x8_t c;
+	int16x8_t t = vld1q_s16((const int16_t*)temp);
+	int16x8_t vaccm = vld1q_s16((const int16_t*)VACC_M);
+
+    SIGNED_CLAMP_AM(state, temp);
+
+	c = vcgtq_s16(t,vaccm);
+	int16x8_t t_ = vshrq_n_s16(t,15);
+	int16x8_t vd = vbicq_s16(t,t_);
+	vd = vorrq_s16(vd,(int16x8_t)c);
+	vst1q_s16(VD, vd);
+	
+	return;
+
+#else
 
     SIGNED_CLAMP_AM(state, temp); /* no direct map in SSE, but closely based on this */
     for (i = 0; i < N; i++)
@@ -237,12 +360,36 @@ static INLINE void UNSIGNED_CLAMP(usf_state_t * state, short* VD)
     for (i = 0; i < N; i++)
         VD[i] = VD[i] | cond[i];
     return;
+#endif
 }
+
 static INLINE void SIGNED_CLAMP_AL(usf_state_t * state, short* VD)
 { /* sign-clamp accumulator-low (bits 15:0) */
+
     ALIGNED short cond[N];
     ALIGNED short temp[N];
     register int i;
+	
+	
+#ifdef ARCH_MIN_ARM_NEON
+	
+	SIGNED_CLAMP_AM(state, temp); 
+	
+	uint16x8_t c;
+	int16x8_t eightk = vdupq_n_s16(0x8000);
+	uint16x8_t one = vdupq_n_u16(1);
+	int16x8_t t = vld1q_s16((const int16_t*)temp);
+	int16x8_t vaccm = vld1q_s16((const int16_t*)VACC_M);
+
+	c = vceqq_s16(t,vaccm);
+	c = vaddq_u16(c, one); 
+	t = veorq_s16(t, eightk);
+	vst1q_u16(cond,c);
+	vst1q_s16(temp,t);	
+	merge(VD, cond, temp, VACC_L);
+	
+	return;
+#else
 
     SIGNED_CLAMP_AM(state, temp); /* no direct map in SSE, but closely based on this */
     for (i = 0; i < N; i++)
@@ -251,5 +398,6 @@ static INLINE void SIGNED_CLAMP_AL(usf_state_t * state, short* VD)
         temp[i] ^= 0x8000; /* half-assed unsigned saturation mix in the clamp */
     merge(VD, cond, temp, VACC_L);
     return;
+#endif
 }
 #endif

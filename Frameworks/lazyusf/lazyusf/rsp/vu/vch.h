@@ -19,6 +19,58 @@ INLINE static void do_ch(usf_state_t * state, short* VD, short* VS, short* VT)
     ALIGNED short sn[N];
     ALIGNED short VC[N];
     ALIGNED short diff[N];
+
+#ifdef ARCH_MIN_ARM_NEON
+
+	int16x8_t v_vc,neg_sn,vce,v_eq;
+	int16x8_t zero = vdupq_n_s16(0);
+	int16x8_t one = vdupq_n_s16(1);
+
+	int16x8_t vs = vld1q_s16((const int16_t *)VS);
+    int16x8_t vt = vld1q_s16((const int16_t *)VT);
+	v_vc = vt;
+	int16x8_t v_sn = veorq_s16(vs,v_vc);
+	uint16x8_t sn_u = vcltq_s16(v_sn,zero);
+	v_vc = veorq_s16(v_vc, (int16x8_t)sn_u);
+	neg_sn = vnegq_s16((int16x8_t)sn_u);
+	
+	uint16x8_t vs_vc_eq = vceqq_s16(vs,v_vc);
+	vce = vandq_s16((int16x8_t)vs_vc_eq,v_sn);
+	
+	v_vc = vaddq_s16(v_vc,v_sn);
+	v_eq = vorrq_s16(vce,(int16x8_t)vs_vc_eq);
+	v_eq = vnegq_s16(v_eq);
+
+	int16x8_t not_sn = vsubq_s16(neg_sn, one);
+	int16x8_t neg_vs = vmvnq_s16(vs);
+	int16x8_t v_diff = vorrq_s16(neg_vs, not_sn);
+	uint16x8_t ule = vcleq_s16(vt,v_diff);
+	int16x8_t v_le = vnegq_s16((int16x8_t)ule);
+
+	v_diff = vorrq_s16(vs, (int16x8_t)sn_u);
+	uint16x8_t uge = vcgeq_s16(v_diff,vt);
+	int16x8_t v_ge = vnegq_s16((int16x8_t)uge);
+
+	vst1q_s16(ge, v_ge);
+	vst1q_s16(le, v_le);
+	vst1q_s16(sn, v_sn);
+	vst1q_s16(VC, v_vc);
+	
+	merge(state->comp, sn, le, ge);
+    merge(VACC_L, state->comp, VC, VS);
+    vector_copy(VD, VACC_L);
+
+	v_eq = veorq_s16(v_eq, one);
+	
+	vst1q_s16(state->clip, v_ge);
+	vst1q_s16(state->comp, v_le);
+	vst1q_s16(state->ne, v_eq);
+	vst1q_s16(state->co, v_sn);
+	   
+	return;
+	
+#else
+   
     register int i;
 
     for (i = 0; i < N; i++)
@@ -72,6 +124,7 @@ INLINE static void do_ch(usf_state_t * state, short* VD, short* VS, short* VT)
     for (i = 0; i < N; i++)
         state->co[i] = sn[i];
     return;
+#endif
 }
 
 static void VCH(usf_state_t * state, int vd, int vs, int vt, int e)

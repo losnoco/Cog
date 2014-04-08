@@ -15,6 +15,50 @@
 
 INLINE static void clr_ci(usf_state_t * state, short* VD, short* VS, short* VT)
 { /* clear CARRY and carry in to accumulators */
+#ifdef ARCH_MIN_SSE2
+	
+	__m128i xmm,vs,vt,co; /*,ne;*/
+	
+	xmm = _mm_setzero_si128();
+	vs = _mm_load_si128((const __m128i*)VS);
+	vt = _mm_load_si128((const __m128i*)VT);
+	co = _mm_load_si128((const __m128i*)state->co);
+	
+	vs = _mm_add_epi16(vs,vt);
+	vs = _mm_add_epi16(vs,co);
+	
+	_mm_store_si128((__m128i*)VACC_L, vs);
+	
+	SIGNED_CLAMP_ADD(state, VD, VS, VT);
+	
+	_mm_storeu_si128((__m128i*)state->ne, xmm);
+	_mm_storeu_si128((__m128i*)state->co, xmm);	
+
+	return;
+#endif
+
+#ifdef ARCH_MIN_ARM_NEON
+
+	int16x8_t vs, vt, zero1,co;
+			
+	zero1 = vdupq_n_s16(0);
+	vs = vld1q_s16((const int16_t*)VS);
+	vt = vld1q_s16((const int16_t*)VT);
+	co = vld1q_s16((const int16_t*)state->co);
+
+	vs = vaddq_s16(vs,vt);
+	vs = vaddq_s16(vs,co);
+	
+	vst1q_s16(VACC_L, vs);
+	
+	SIGNED_CLAMP_ADD(state, VD, VS, VT);
+	vst1q_s16(state->ne, zero1);
+	vst1q_s16(state->co, zero1);
+	
+	return;
+#endif
+
+#if !defined ARCH_MIN_ARM_NEON && !defined ARCH_MIN_SSE2
     register int i;
 
     for (i = 0; i < N; i++)
@@ -24,7 +68,10 @@ INLINE static void clr_ci(usf_state_t * state, short* VD, short* VS, short* VT)
         state->ne[i] = 0;
     for (i = 0; i < N; i++)
         state->co[i] = 0;
+		
     return;
+#endif
+
 }
 
 static void VADD(usf_state_t * state, int vd, int vs, int vt, int e)

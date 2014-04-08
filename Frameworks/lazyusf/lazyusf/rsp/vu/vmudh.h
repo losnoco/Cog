@@ -15,6 +15,37 @@
 
 INLINE static void do_mudh(usf_state_t * state, short* VD, short* VS, short* VT)
 {
+
+#ifdef ARCH_MIN_ARM_NEON
+
+	int16x8_t zero16 = vdupq_n_s16(0);
+	int32x4_t zero32 = vdupq_n_s32(0);
+
+	int16x4_t vs_low =  vld1_s16((const int16_t *)VS);
+	int16x4_t vs_high = vld1_s16((const int16_t *)VS+4);
+	int16x4_t vt_low =  vld1_s16((const int16_t *)VT);
+	int16x4_t vt_high = vld1_s16((const int16_t *)VT+4);
+	 
+    int32x4_t l1 = vmovl_s16(vs_low);
+	int32x4_t h1 = vmovl_s16(vs_high);
+	int32x4_t l2 = vmovl_s16(vt_low);
+	int32x4_t h2 = vmovl_s16(vt_high);
+	
+    int32x4_t l = vmulq_s32(l1,l2);
+	int32x4_t h = vmulq_s32(h1,h2);
+    
+	int16x8_t vaccm = vcombine_s16(vmovn_s32(l),vmovn_s32(h));
+	int16x8_t vacch = vcombine_s16(vaddhn_s32(l,zero32),vaddhn_s32(h,zero32));
+
+	vst1q_s16(VACC_L, zero16);
+	vst1q_s16(VACC_M, vaccm);
+	vst1q_s16(VACC_H, vacch);
+	
+	SIGNED_CLAMP_AM(state, VD);
+	return;
+	
+#else
+
     register int i;
 
     for (i = 0; i < N; i++)
@@ -25,6 +56,7 @@ INLINE static void do_mudh(usf_state_t * state, short* VD, short* VS, short* VT)
         VACC_H[i] = (short)(VS[i]*VT[i] >> 16);
     SIGNED_CLAMP_AM(state, VD);
     return;
+#endif
 }
 
 static void VMUDH(usf_state_t * state, int vd, int vs, int vt, int e)

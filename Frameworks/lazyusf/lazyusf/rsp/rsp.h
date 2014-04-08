@@ -58,12 +58,10 @@ NOINLINE static void message(usf_state_t * state, const char* body, int priority
  */
 #define CHARACTERS_PER_LINE     (80)
 /* typical standard DOS text file limit per line */
-#if 0
 NOINLINE static void update_conf(const char* source)
 {
     (void)source;
 }
-#endif
 
 #ifdef SP_EXECUTE_LOG
 extern void step_SP_commands(usf_state_t * state, int PC, uint32_t inst);

@@ -20,6 +20,48 @@ INLINE static void do_cr(usf_state_t * state, short* VD, short* VS, short* VT)
     ALIGNED short cmp[N];
     register int i;
 
+#ifdef ARCH_MIN_ARM_NEON
+
+	int16x8_t v_sn, v_cmp, v_vc;
+
+	int16x8_t zero = vdupq_n_s16(0);
+	
+	int16x8_t vs = vld1q_s16((const int16_t *)VS);
+    int16x8_t vt = vld1q_s16((const int16_t *)VT);
+
+	v_vc = vt;
+	v_sn = veorq_s16(vs,vt);
+	v_sn = vshrq_n_s16(v_sn,15);
+
+	v_cmp = vandq_s16(vs, v_sn);
+	v_cmp = vmvnq_s16(v_cmp);
+	uint16x8_t v_le = vcleq_s16(vt,v_cmp);
+	int16x8_t v_le_ = vnegq_s16((int16x8_t)v_le);
+
+	v_cmp = vorrq_s16(vs, v_sn);
+	uint16x8_t v_ge = vcgeq_s16(v_cmp, vt);
+	int16x8_t v_ge_ = vnegq_s16((int16x8_t)v_ge);
+
+	v_vc = veorq_s16(v_vc,v_sn);
+
+	vst1q_s16(VC, v_vc);
+	vst1q_s16(le, v_le_);
+	vst1q_s16(ge, v_ge_);
+
+	merge(VACC_L, le, VC, VS);
+    vector_copy(VD, VACC_L);
+
+	vst1q_s16(state->clip, v_ge_);
+	vst1q_s16(state->comp, v_le_);
+	vst1q_s16(state->ne,zero);
+	vst1q_s16(state->co,zero);
+	vst1q_s16(state->vce,zero);
+	
+	return;
+	
+#else
+	
+	
     for (i = 0; i < N; i++)
         VC[i] = VT[i];
     for (i = 0; i < N; i++)
@@ -55,6 +97,7 @@ INLINE static void do_cr(usf_state_t * state, short* VD, short* VS, short* VT)
     for (i = 0; i < N; i++)
         state->vce[i] = 0;
     return;
+#endif
 }
 
 static void VCR(usf_state_t * state, int vd, int vs, int vt, int e)
