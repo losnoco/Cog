@@ -74,7 +74,7 @@ end
   %x[rm -rf '#{temp_path}/Cog.app' '#{temp_path}/Cog.old' '#{temp_path}/Cog.zip']
   
   #Retrieve the current full package
-  local_file = appcast_url.gsub(/https:\/\/kode54.net\/cog/, "#{site_dir}")
+  local_file = appcast_url.gsub(/https:\/\/www\.kode54\.net\/cog/, "#{site_dir}")
   %x[cp '#{local_file}' '#{temp_path}/Cog.zip']
   
   #Unpack and rename
@@ -127,14 +127,14 @@ end
   new_item.elements['sparkle:minimumSystemVersion'].text =  '10.7.0'
 
   new_item.add_element('enclosure')
-  new_item.elements['enclosure'].add_attribute('url', "https://kode54.net/cog/#{feed}_builds/#{filename}")
+  new_item.elements['enclosure'].add_attribute('url', "https://www.kode54.net/cog/#{feed}_builds/#{filename}")
   new_item.elements['enclosure'].add_attribute('length', filesize)
   new_item.elements['enclosure'].add_attribute('type', 'application/octet-stream')
   new_item.elements['enclosure'].add_attribute('sparkle:version', "#{latest_revision}")
   
   new_item.add_element('sparkle:deltas')
   new_item.elements['sparkle:deltas'].add_element('enclosure')
-  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('url', "https://kode54.net/cog/#{feed}_builds/#{filename_delta}")
+  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('url', "https://www.kode54.net/cog/#{feed}_builds/#{filename_delta}")
   new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('length', filesize_delta)
   new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('type', 'application/octet-stream')
   new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('sparkle:version', "#{latest_revision}")
