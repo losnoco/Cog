@@ -2830,7 +2830,7 @@ void voiceSetVolume(PLAYER *p, uint8_t voiceNumber, float volume, uint8_t sharp)
         {
             if (volume)
                 p->voice[voiceNumber].volume = 0.0f;
-            else if (sharp != 3)
+            else if (voiceNumber > 31)
                 p->voice[voiceNumber].rampTerminates = 1;
         }
         p->voice[voiceNumber].targetVol = volume;

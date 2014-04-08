@@ -2800,7 +2800,7 @@ static void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t sharp)
         {
             if (vol)
                 p->voice[i].volume = 0;
-            else if (sharp != 3)
+            else if (i > 127)
                 p->voice[i].rampTerminates = 1;
         }
     
