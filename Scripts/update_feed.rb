@@ -74,7 +74,7 @@ end
   %x[rm -rf '#{temp_path}/Cog.app' '#{temp_path}/Cog.old' '#{temp_path}/Cog.zip']
   
   #Retrieve the current full package
-  local_file = "#{appcast_url}".gsub(_https://kode54.net/cog_, '#{site_dir}')
+  local_file = "#{appcast_url}".gsub(/https:\/\/kode54.net\/cog/, '#{site_dir}')
   %x[cp '#{local_file}' '#{temp_path}/Cog.zip']
   
   #Unpack and rename
