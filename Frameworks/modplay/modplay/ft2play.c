@@ -38,6 +38,9 @@
 typedef signed long ssize_t;
 #endif
 
+#undef min
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+
 #define USE_VOL_RAMP
 
 enum { _soundBufferSize = 512 };
@@ -409,6 +412,7 @@ typedef struct
 static MEM *mopen(const uint8_t *src, size_t length);
 static void mclose(MEM *buf);
 static size_t mread(void *buffer, size_t size, size_t count, MEM *buf);
+static size_t mread_swap(void *buffer, size_t size, size_t count, MEM *buf, uint8_t le_xor, uint8_t be_xor);
 static int32_t meof(MEM *buf);
 static void mseek(MEM *buf, ssize_t offset, int32_t whence);
 static void setSamplesPerFrame(PLAYER *, uint32_t val);
@@ -2319,17 +2323,31 @@ static int8_t AllocateInstr(PLAYER *pl, uint16_t i)
 static int8_t LoadInstrHeader(PLAYER *p, MEM *f, uint16_t i)
 {
     uint8_t j;
+    uint16_t k;
 
     InstrHeaderTyp ih;
-
+    size_t size;
+    
     memset(&ih, 0, InstrHeaderSize);
 
-    mread(&ih.InstrSize, 4, 1, f);
+    mread_swap(&ih.InstrSize, 4, 1, f, 0, 3);
 
     if ((ih.InstrSize <= 0) || (ih.InstrSize > InstrHeaderSize))
         ih.InstrSize = InstrHeaderSize;
 
-    mread(ih.Name, ih.InstrSize - 4, 1, f);
+    size = ih.InstrSize - 4;
+    
+    mread(ih.Name, min(size, 22), 1, f);
+    if (size > 22)  mread(&ih.Typ, min(size - 22, 1), 1, f);
+    if (size > 23)  mread_swap(&ih.AntSamp, min(size - 23, 2), 1, f, 0, 1);
+    if (size > 25)  mread_swap(&ih.SampleSize, min(size - 25, 4), 1, f, 0, 3);
+    if (size > 29)  mread(&ih.TA, min(size - 29, 96), 1, f);
+    if (size > 125) mread_swap(&ih.EnvVP, min(size - 125, 96), 1, f, 0, 1);
+    if (size > 221) mread(&ih.EnvVPAnt, min(size - 221, 14), 1, f);
+    if (size > 235) mread_swap(&ih.FadeOut, min(size - 235, 2), 1, f, 0, 1);
+    if (size > 237) mread(&ih.MIDIOn, min(size - 237, 2), 1, f);
+    if (size > 239) mread_swap(&ih.MIDIProgram, min(size - 239, 4), 1, f, 0, 1);
+    if (size > 243) mread(&ih.Mute, min(size - 243, 16), 1, f);
 
     if (meof(f) || (ih.AntSamp > 32)) return (0);
 
@@ -2340,7 +2358,11 @@ static int8_t LoadInstrHeader(PLAYER *p, MEM *f, uint16_t i)
         memcpy(p->Instr[i]->TA, ih.TA, ih.InstrSize);
         p->Instr[i]->AntSamp = ih.AntSamp;
 
-        mread(ih.Samp, ih.AntSamp * sizeof (SampleHeaderTyp), 1, f);
+        for (k = 0; k < ih.AntSamp; k++)
+        {
+            mread_swap(&ih.Samp[k].Len, 4, 3, f, 0, 3);
+            mread(&ih.Samp[k].vol, 28, 1, f);
+        }
         if (meof(f)) return (0);
 
         for (j = 0; j < ih.AntSamp; ++j)
@@ -2488,7 +2510,7 @@ static int8_t LoadPatterns(PLAYER *p, MEM *f)
 
     for (i = 0; i < p->Song.AntPtn; ++i)
     {
-        mread(&ph.PatternHeaderSize, 4, 1, f);
+        mread_swap(&ph.PatternHeaderSize, 4, 1, f, 0, 3);
         mread(&ph.Typ, 1, 1, f);
 
         ph.PattLen = 0;
@@ -2499,10 +2521,10 @@ static int8_t LoadPatterns(PLAYER *p, MEM *f)
         }
         else
         {
-            mread(&ph.PattLen, 2, 1, f);
+            mread_swap(&ph.PattLen, 2, 1, f, 0, 1);
         }
 
-        mread(&ph.DataLen, 2, 1, f);
+        mread_swap(&ph.DataLen, 2, 1, f, 0, 1);
 
         if (p->Song.Ver == 0x0102)
             mseek(f, ph.PatternHeaderSize - 8, SEEK_CUR);
@@ -2589,7 +2611,11 @@ int8_t ft2play_LoadModule(void *_p, const uint8_t *buffer, size_t size)
     if (f == NULL) return (0);
 
     // start loading
-    mread(&h, sizeof (h), 1, f);
+    mread(&h.Sig, 58, 1, f);
+    mread_swap(&h.Ver, 2, 1, f, 0, 1);
+    mread_swap(&h.HeaderSize, 4, 1, f, 0, 3);
+    mread_swap(&h.Len, 2, 8, f, 0, 1);
+    mread(&h.SongTab, 256, 1, f);
 
     if ((memcmp(h.Sig, "Extended Module: ", 17) != 0) || (h.Ver < 0x0102) || (h.Ver > 0x104))
     {
@@ -3789,14 +3815,25 @@ void ft2play_PlaySong(void *_p, int32_t startOrder)
     p->playedOrder[startOrder / 8] = 1 << (startOrder % 8);
 }
 
+static int mopen_is_big_endian;
+
 static MEM *mopen(const uint8_t *src, size_t length)
 {
     MEM *b;
 
+    union
+    {
+        uint32_t a;
+        uint8_t b[4];
+    } endian_test;
+    
     if ((src == NULL) || (length <= 0)) return (NULL);
 
     b = (MEM *)(malloc(sizeof (MEM)));
     if (b == NULL) return (NULL);
+    
+    endian_test.a = 1;
+    mopen_is_big_endian = endian_test.b[3];
 
     b->_base   = (uint8_t *)(src);
     b->_ptr    = (uint8_t *)(src);
@@ -3837,6 +3874,45 @@ static size_t mread(void *buffer, size_t size, size_t count, MEM *buf)
         buf->_eof = 1;
     }
 
+    return (pcnt / size);
+}
+
+static size_t mread_swap(void *buffer, size_t size, size_t count, MEM *buf, uint8_t le_xor, uint8_t be_xor)
+{
+    size_t wrcnt;
+    ssize_t pcnt;
+    uint8_t xor;
+    
+    if (buf       == NULL) return (0);
+    if (buf->_ptr == NULL) return (0);
+    
+    wrcnt = size * count;
+    if ((size == 0) || buf->_eof) return (0);
+    
+    xor = mopen_is_big_endian ? be_xor : le_xor;
+    
+    pcnt = (buf->_cnt > wrcnt) ? wrcnt : buf->_cnt;
+    
+    if ( !xor )
+        memcpy(buffer, buf->_ptr, pcnt);
+    else
+    {
+        size_t i;
+        uint8_t * bbuffer = (uint8_t *) buffer;
+        for (i = 0; i < pcnt; i++)
+            bbuffer[i ^ xor] = buf->_ptr[i];
+    }
+    
+    buf->_cnt -= pcnt;
+    buf->_ptr += pcnt;
+    
+    if (buf->_cnt <= 0)
+    {
+        buf->_ptr = buf->_base + buf->_bufsiz;
+        buf->_cnt = 0;
+        buf->_eof = 1;
+    }
+    
     return (pcnt / size);
 }
 
