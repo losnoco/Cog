@@ -1,5 +1,5 @@
 /*
-** FT2PLAY v0.42a
+** FT2PLAY v0.43a
 ** ==============
 **
 ** C port of FastTracker II's replayer, by 8bitbubsy (Olav Sørensen)
@@ -973,13 +973,13 @@ CheckEffects:
         // E7x - set tremolo waveform
         else if ((ch->Eff & 0xF0) == 0x70) ch->WaveCtrl = ((ch->Eff & 0x0F) << 4) | (ch->WaveCtrl & 0x0F);
 
-        // E8x - set panning *non-FT2*
+        // E8x - set 4-bit panning (NON-FT2)
         else if ((ch->Eff & 0xF0) == 0x80)
         {
             ch->OutPan  = (ch->Eff & 0x0F) << 4;
             ch->Status |= IS_Pan;
         }
-        
+
         // EAx - fine volume slide up
         else if ((ch->Eff & 0xF0) == 0xA0)
         {
@@ -1520,44 +1520,31 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
     int8_t i;
     int8_t fineTune;
 
-    int32_t outPeriod; // is 32-bit for testing bit 17, for carry (adc/sbb)
-    int32_t lookUp;
-    int16_t oldPeriod;
-    int16_t addPeriod;
+    uint16_t lower;
+    uint16_t middle;
+    uint16_t upper;
 
-    oldPeriod = 0;
-    addPeriod = (8 * 12 * 16) * 2;             // *2, make 16-bit look-up
-    fineTune  = ((ch->FineTune / 8) + 16) * 2; // *2, make 16-bit look-up
+    fineTune = ch->FineTune / 8; // -16..15
+    lower = 0;
+    upper = 8 * 12 * 16;
 
     for (i = 0; i < 8; ++i)
     {
-        outPeriod = (((oldPeriod + addPeriod) >> 1) & 0xFFE0) + fineTune;
-        if (outPeriod < fineTune) outPeriod += (1 << 8);
+        middle = ((lower + upper) >> 1) & 0xFFF0;
 
-        lookUp = (outPeriod - 16) >> 1; // 16-bit look-up, shift it down
-        if (lookUp < ((12 * 10 * 16) + 16)) // non-FT2 security fix, may or may not happen
-        {
-            if (inPeriod >= p->Note2Period[lookUp])
-            {
-                outPeriod -= fineTune;
-                if (outPeriod & 0x00010000) outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
-                addPeriod = (int16_t)(outPeriod);
-            }
-            else
-            {
-                outPeriod -= fineTune;
-                if (outPeriod & 0x00010000) outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
-                oldPeriod = (int16_t)(outPeriod);
-            }
-        }
+        if (inPeriod >= p->Note2Period[middle + fineTune])
+            upper = middle;
+        else
+            lower = middle;
     }
 
-    outPeriod = oldPeriod + fineTune;
-    if (outPeriod < fineTune) outPeriod += (1 << 8);
-    outPeriod += ((int16_t)(addNote) << 5);
+    fineTune += 16; // make unsigned (0..31)
+    middle = lower + fineTune + (addNote << 4);
 
-    if (outPeriod >= ((((8 * 12 * 16) + 15) * 2) - 1)) outPeriod = ((8 * 12 * 16) + 15) * 2;
-    return (p->Note2Period[outPeriod >> 1]); // 16-bit look-up, shift it down
+    if (middle >= ((8 * 12 * 16) + 15) - 1)
+        middle = (8 * 12 * 16) + 15;
+
+    return (p->Note2Period[middle]);
 }
 
 static void TonePorta(PLAYER *p, StmTyp *ch)
