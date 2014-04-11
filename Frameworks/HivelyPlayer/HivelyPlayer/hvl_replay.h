@@ -7,6 +7,8 @@ extern "C" {
 
 #include <stdint.h>
     
+// #define USE_HVL_FILTER_FOR_HVL
+    
 typedef int8_t int8;
 typedef uint8_t uint8;
 typedef int16_t int16;
@@ -15,7 +17,11 @@ typedef int32_t int32;
 typedef uint32_t uint32;
 typedef double float64;
 typedef char TEXT;
+#ifdef _WIN32
+typedef int BOOL;
+#else
 typedef signed char BOOL;
+#endif
 
 #define TRUE 1
 #define FALSE 0
@@ -224,6 +230,9 @@ struct hvl_tune
   int32                  ht_defpanright;
   int32                  ht_mixgain;
   uint8                  ht_Version;
+#ifdef USE_HVL_FILTER_FOR_HVL
+  uint8                  ht_IsHt;
+#endif
 };
 
 void hvl_DecodeFrame( struct hvl_tune *ht, int8 *buf1, int8 *buf2, int32 bufmod );
