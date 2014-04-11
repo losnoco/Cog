@@ -4024,7 +4024,7 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 	DUMB_IT_SIGDATA *sigdata = sigrenderer->sigdata;
 	int i;
 
-	float invt2g = 1.0f / ((float)TICK_TIME_DIVIDEND / (float)sigrenderer->tempo);
+	float invt2g = 1.0f / ((float)TICK_TIME_DIVIDEND / (float)sigrenderer->tempo / 256.0f);
 
 	for (i = 0; i < DUMB_IT_N_CHANNELS; i++) {
 		IT_CHANNEL *channel = &sigrenderer->channel[i];
@@ -4431,7 +4431,7 @@ static int process_tick(DUMB_IT_SIGRENDERER *sigrenderer)
 
 	if (sigrenderer->globalvolume == 0) {
 		if (sigrenderer->callbacks->global_volume_zero) {
-			LONG_LONG t = sigrenderer->gvz_sub_time + ((LONG_LONG)TICK_TIME_DIVIDEND << 16) / sigrenderer->tempo;
+			LONG_LONG t = sigrenderer->gvz_sub_time + ((TICK_TIME_DIVIDEND / (sigrenderer->tempo << 8)) << 16);
 			sigrenderer->gvz_time += (int)(t >> 16);
 			sigrenderer->gvz_sub_time = (int)t & 65535;
 			if (sigrenderer->gvz_time >= 65536 * 12) {
@@ -4452,7 +4452,7 @@ static int process_tick(DUMB_IT_SIGRENDERER *sigrenderer)
 	process_all_playing(sigrenderer);
 
 	{
-		LONG_LONG t = ((LONG_LONG)TICK_TIME_DIVIDEND << 16) / sigrenderer->tempo;
+		LONG_LONG t = (TICK_TIME_DIVIDEND / (sigrenderer->tempo << 8)) << 16;
 		if ( sigrenderer->sigdata->flags & IT_WAS_AN_STM ) {
 			t /= 16;
 		}
@@ -4468,6 +4468,7 @@ static int process_tick(DUMB_IT_SIGRENDERER *sigrenderer)
 
 int dumb_it_max_to_mix = 64;
 
+#if 0
 static const int aiMODVol[] =
 {
 	0,
@@ -4480,6 +4481,7 @@ static const int aiMODVol[] =
 		785, 801, 817, 833, 849, 865, 881, 897,
 		913, 929, 945, 961, 977, 993, 1009, 1024
 };
+#endif
 
 static const int aiPTMVolScaled[] =
 {

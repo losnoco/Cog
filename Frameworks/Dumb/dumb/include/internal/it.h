@@ -73,10 +73,9 @@ sigdata->flags & IT_COMPATIBLE_GXX
 #define IT_INSM_SIGNATURE       DUMB_ID('M', 'S', 'N', 'I')
 
 
-/* 1 minute per 4 rows, each row 6 ticks; this is divided by the tempo to get
- * the interval between ticks.
+/* This is divided by the tempo times 256 to get the interval between ticks.
  */
-#define TICK_TIME_DIVIDEND ((65536 * 60) / (4 * 6))
+#define TICK_TIME_DIVIDEND (65536 * 5 * 128)
 
 
 
