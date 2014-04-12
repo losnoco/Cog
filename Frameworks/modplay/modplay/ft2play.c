@@ -1,6 +1,6 @@
 /*
-** FT2PLAY v0.43a
-** ==============
+** FT2PLAY v0.45
+** =============
 **
 ** C port of FastTracker II's replayer, by 8bitbubsy (Olav Sørensen)
 ** using the original pascal+asm source codes by Mr.H (Fredrik Huss) of Triton
@@ -3730,15 +3730,27 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
     {
         for (j = 0; j < ((i == 9) ? (96 + 8) : 96); ++j)
         {
-            noteVal = ((AmigaFinePeriod[j] << 6) + (-1 + (1 << i))) >> (i + 1);
-            
+            noteVal = ((AmigaFinePeriod[j % 96] << 6) + (-1 + (1 << i))) >> (i + 1);
+            // NON-FT2: j % 96. Added for safety. We're patching the values later anyways.
+
             p->amigaPeriods[noteIndex++] = noteVal;
             p->amigaPeriods[noteIndex++] = noteVal;
         }
     }
     
-    for (i = 0; i < (((12 * 10 * 16) + 16) / 2); ++i)
+    for (i = 0; i < (12 * 10 * 8) + 7; ++i)
         p->amigaPeriods[(i << 1) + 1] = (p->amigaPeriods[i << 1] + p->amigaPeriods[(i << 1) + 2]) >> 1;
+    
+    // The amiga linear period table has its 17 last entries generated wrongly.
+    // The content seem to be garbage because of an "out of boundaries" read from AmigaFinePeriods.
+    // These 17 values were taken from a memdump of FT2 in DOSBox.
+    // They might change depending on what you ran before FT2, but let's not make it too complicated.
+    p->amigaPeriods[1919] = 22; p->amigaPeriods[1920] = 16; p->amigaPeriods[1921] =  8;
+    p->amigaPeriods[1922] =  0; p->amigaPeriods[1923] = 16; p->amigaPeriods[1924] = 32;
+    p->amigaPeriods[1925] = 24; p->amigaPeriods[1926] = 16; p->amigaPeriods[1927] =  8;
+    p->amigaPeriods[1928] =  0; p->amigaPeriods[1929] = 16; p->amigaPeriods[1930] = 32;
+    p->amigaPeriods[1931] = 24; p->amigaPeriods[1932] = 16; p->amigaPeriods[1933] =  8;
+    p->amigaPeriods[1934] =  0; p->amigaPeriods[1935] = 0;
     
     // generate auto-vibrato table (value-exact to its original table)
     for (i = 0; i < 256; ++i)
