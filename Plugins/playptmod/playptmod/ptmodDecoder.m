@@ -14,19 +14,9 @@
 
 @implementation ptmodDecoder
 
-BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, int test_vblank, const void * src, unsigned long size, unsigned int subsong )
+BOOL probe_length( void * ptmod, unsigned long * intro_length, unsigned long * loop_length, int test_vblank, const void * src, unsigned long size, unsigned int subsong )
 {
-    void * ptmod = playptmod_Create( 44100 );
-    if ( !ptmod ) return NO;
-    
-    playptmod_Config( ptmod, PTMOD_OPTION_CLAMP_PERIODS, 0 );
     playptmod_Config( ptmod, PTMOD_OPTION_VSYNC_TIMING, test_vblank );
-    
-    if ( !playptmod_LoadMem( ptmod, src, size ) )
-    {
-        playptmod_Free( ptmod );
-        return NO;
-    }
     
     playptmod_Play( ptmod, subsong );
     
@@ -45,8 +35,7 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
     {
         *loop_length = 0;
         *intro_length = 44100 * 60 * 3;
-        playptmod_Stop( ptmod );
-        playptmod_Free( ptmod );
+        playptmod_Stop(ptmod);
         return YES;
     }
     
@@ -58,8 +47,7 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
         length_total += 512;
     }
     
-    playptmod_Stop( ptmod );
-    playptmod_Free( ptmod );
+    playptmod_Stop(ptmod);
     
     *loop_length = length_total - length_saved;
     *intro_length = length_saved - *loop_length;
@@ -80,15 +68,30 @@ BOOL probe_length( unsigned long * intro_length, unsigned long * loop_length, in
 		track_num = 0;
 	else
 		track_num = [[[s url] fragment] intValue];
-
+    
+    void * mod = playptmod_Create( 44100 );
+    if ( !mod ) return NO;
+    
+    if ( !playptmod_LoadMem(mod, data, size) )
+    {
+        playptmod_Free(mod);
+        return NO;
+    }
+    
+    int format = playptmod_GetFormat(mod);
+    BOOL can_be_vblank = (format <= FORMAT_MK2);
+    
     unsigned long normal_intro_length, normal_loop_length, vblank_intro_length, vblank_loop_length;
     
-    if ( !probe_length(&normal_intro_length, &normal_loop_length, 0, data, size, track_num) )
+    if ( !probe_length(mod, &normal_intro_length, &normal_loop_length, 0, data, size, track_num) )
         return NO;
-    if ( !probe_length(&vblank_intro_length, &vblank_loop_length, 1, data, size, track_num) )
+    if ( can_be_vblank && !probe_length(mod, &vblank_intro_length, &vblank_loop_length, 1, data, size, track_num) )
         return NO;
+    else vblank_intro_length = 0, vblank_loop_length = 0;
+    
+    playptmod_Free(mod);
 
-    isVblank = ( vblank_intro_length + vblank_loop_length ) < ( normal_intro_length + normal_loop_length );
+    isVblank = can_be_vblank && (( vblank_intro_length + vblank_loop_length ) < ( normal_intro_length + normal_loop_length ));
 
     unsigned long intro_length = isVblank ? vblank_intro_length : normal_intro_length;
     unsigned long loop_length = isVblank ? vblank_loop_length : normal_loop_length;
