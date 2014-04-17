@@ -1348,8 +1348,8 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
                             s->length -= s->iffSize;
                             
                             // Relocate loopStart
-                            if (s->loopStart >= ((int32_t)(((j) + 8) & 0xFFFFFFFE))) // even'ify unit
-                                s->loopStart -= ((int32_t)(((j) + 8) & 0xFFFFFFFE));
+                            if (s->loopStart >= ((int)(((j) + 8) & 0xFFFFFFFE))) // even'ify unit
+                                s->loopStart -= ((int)(((j) + 8) & 0xFFFFFFFE));
                             
                             // Fix loopStart+loopLength > sampleLength
                             while ((s->loopStart + s->loopLength) > s->length)
