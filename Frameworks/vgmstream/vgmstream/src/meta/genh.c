@@ -4,7 +4,7 @@
 #include "../layout/layout.h"
 #include "../util.h"
 #ifdef VGM_USE_MPEG
-#include <mpg123.h>
+#include <mpg123/mpg123.h>
 #endif
 
 /* GENH is an artificial "generic" header for headerless streams */

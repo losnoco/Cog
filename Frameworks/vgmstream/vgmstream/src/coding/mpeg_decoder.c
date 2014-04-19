@@ -2,7 +2,7 @@
 
 #ifdef VGM_USE_MPEG
 #include <string.h>
-#include <mpg123.h>
+#include <mpg123/mpg123.h>
 #include "coding.h"
 #include "../util.h"
 
