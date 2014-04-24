@@ -107,15 +107,15 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
 
 VGMSTREAM * init_vgmstream_sli_ogg(STREAMFILE * streamFile);
 
-VGMSTREAM * init_vgmstream_sfl(STREAMFILE * streamFile);
-#endif
-
 #if defined(VGM_USE_MP4V2) && defined(VGM_USE_FDKAAC)
 VGMSTREAM * init_vgmstream_mp4_aac(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_mp4_aac_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size);
 
 VGMSTREAM * init_vgmstream_akb(STREAMFILE *streamFile);
+#endif
+
+VGMSTREAM * init_vgmstream_sfl(STREAMFILE * streamFile);
 #endif
 
 VGMSTREAM * init_vgmstream_sadb(STREAMFILE *streamFile);
@@ -167,6 +167,8 @@ VGMSTREAM * init_vgmstream_fsb3(STREAMFILE * streamFile);
 VGMSTREAM * init_vgmstream_fsb4(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_fsb4_wav(STREAMFILE * streamFile);
+
+VGMSTREAM * init_vgmstream_fsb5(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_fsb_mpeg(STREAMFILE * streamFile);
 

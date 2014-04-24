@@ -322,6 +322,7 @@
 		836F705718BDC2190095E648 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1B18BDC2190095E648 /* util.h */; };
 		836F705818BDC2190095E648 /* vgmstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F1C18BDC2190095E648 /* vgmstream.c */; };
 		836F705918BDC2190095E648 /* vgmstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1D18BDC2190095E648 /* vgmstream.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -685,6 +686,7 @@
 		836F6F1B18BDC2190095E648 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		836F6F1C18BDC2190095E648 /* vgmstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vgmstream.c; sourceTree = "<group>"; };
 		836F6F1D18BDC2190095E648 /* vgmstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgmstream.h; sourceTree = "<group>"; };
+		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -867,6 +869,7 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				83F5F8821908D0A400C8E65F /* fsb5.c */,
 				836F6E2918BDC2180095E648 /* 2dx9.c */,
 				836F6E2A18BDC2180095E648 /* aax.c */,
 				836F6E2B18BDC2180095E648 /* acm.c */,
@@ -1234,6 +1237,7 @@
 				836F6F5C18BDC2190095E648 /* wsi_blocked.c in Sources */,
 				836F6F7418BDC2190095E648 /* bgw.c in Sources */,
 				836F6F7218BDC2190095E648 /* baf.c in Sources */,
+				83F5F8831908D0A400C8E65F /* fsb5.c in Sources */,
 				836F6F4B18BDC2190095E648 /* interleave_byte.c in Sources */,
 				836F6FD418BDC2190095E648 /* ps2_dxh.c in Sources */,
 				836F700C18BDC2190095E648 /* ps2_wb.c in Sources */,
