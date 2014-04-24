@@ -388,7 +388,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Volumes/UserData/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
+					/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
 				);
 				PRODUCT_NAME = modplay;
 				WRAPPER_EXTENSION = bundle;
@@ -405,7 +405,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Volumes/UserData/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
+					/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
 				);
 				PRODUCT_NAME = modplay;
 				WRAPPER_EXTENSION = bundle;
