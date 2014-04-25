@@ -85,9 +85,16 @@ BOOL probe_length( void * ptmod, unsigned long * intro_length, unsigned long * l
     
     if ( !probe_length(mod, &normal_intro_length, &normal_loop_length, 0, data, size, track_num) )
         return NO;
-    if ( can_be_vblank && !probe_length(mod, &vblank_intro_length, &vblank_loop_length, 1, data, size, track_num) )
-        return NO;
-    else vblank_intro_length = 0, vblank_loop_length = 0;
+    if ( can_be_vblank )
+    {
+        if ( !probe_length(mod, &vblank_intro_length, &vblank_loop_length, 1, data, size, track_num) )
+            return NO;
+    }
+    else
+    {
+        vblank_intro_length = 0;
+        vblank_loop_length = 0;
+    }
     
     playptmod_Free(mod);
 

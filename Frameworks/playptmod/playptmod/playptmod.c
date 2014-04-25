@@ -2844,6 +2844,7 @@ void playptmod_Play(void *_p, unsigned int startOrder)
         memcpy(p->source->sampleData, p->source->originalSampleData, p->source->head.totalSampleSize);
         memset(p->orderPlayed, 0, sizeof(p->orderPlayed));
 
+        p->loopCounter = 0;
         p->orderPlayed[startOrder] = 1;
         p->modulePlaying = true;
     }
