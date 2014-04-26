@@ -155,6 +155,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
     bitrate = (codecCtx->bit_rate) / 1000;
     framesRead = 0;
+    endOfStream = NO;
     
     seekable = [s seekable];
 	
@@ -188,8 +189,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     
     int bytesToRead = frames * frameSize;
     int bytesRead = 0;
-    
-    BOOL endOfStream = NO;
     
     int8_t* targetBuf = (int8_t*) buf;
     memset(buf, 0, bytesToRead);
@@ -306,6 +305,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     if (frame >= totalFrames)
     {
         framesRead = totalFrames;
+        endOfStream = YES;
         return -1;
     }
     int64_t ts = frame * (formatCtx->duration) / totalFrames;
@@ -314,6 +314,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     readNextPacket = YES; // so we immediately read next packet
     bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
     framesRead = frame;
+    endOfStream = NO;
 	
     return frame;
 }

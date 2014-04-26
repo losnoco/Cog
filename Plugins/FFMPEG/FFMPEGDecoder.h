@@ -34,6 +34,7 @@
     int bytesConsumedFromDecodedFrame;
     int bytesReadFromPacket;
     BOOL readNextPacket;
+    BOOL endOfStream;
 }
 
 @end
