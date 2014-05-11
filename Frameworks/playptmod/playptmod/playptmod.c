@@ -87,10 +87,6 @@
 #define false 0
 #endif
 
-#ifdef _MSC_VER
-#define inline __forceinline
-#endif
-
 enum
 {
     FLAG_NOTE = 1,
@@ -206,14 +202,16 @@ typedef struct voice_data
 {
     const char *newData;
     const char *data;
-    int index;
+    char swapSampleFlag;
+    char loopFlag;
     int length;
-    int loopLength;
+    int loopBegin;
     int loopEnd;
+    char newLoopFlag;
     int newLength;
-    int newLoopLength;
+    int newLoopBegin;
     int newLoopEnd;
-    int swapSampleFlag;
+    int index;
     int vol;
     int panL;
     int panR;
@@ -342,7 +340,7 @@ static short extendedRawPeriods[16 * 85 + 14];
 
 static const short npertab[84] =
 {
-    /* Octaves 6 -> 0 */
+    /* Octaves 0 -> 6 */
     /* C    C#     D    D#     E     F    F#     G    G#     A    A#     B */
     0x6b0,0x650,0x5f4,0x5a0,0x54c,0x500,0x4b8,0x474,0x434,0x3f8,0x3c0,0x38a,
     0x358,0x328,0x2fa,0x2d0,0x2a6,0x280,0x25c,0x23a,0x21a,0x1fc,0x1e0,0x1c5,
@@ -451,36 +449,37 @@ static inline int periodToNote(player *p, char finetune, short period)
 
 static void mixerSwapChSource(player *p, int ch, const char *src, int length, int loopStart, int loopLength, int step)
 {
-    p->v[ch].swapSampleFlag = true;
-    p->v[ch].newData = src;
-    p->v[ch].newLength = length;
-    p->v[ch].newLoopLength = loopLength;
-    p->v[ch].newLoopEnd = loopStart + loopLength;
-    p->v[ch].newStep = step;
+    p->v[ch].swapSampleFlag  = true;
+    p->v[ch].newData         = src;
+    p->v[ch].newLoopFlag     = loopLength > (2 * step);
+    p->v[ch].newLength       = length;
+    p->v[ch].newLoopBegin    = loopStart;
+    p->v[ch].newLoopEnd      = loopStart + loopLength;
+    p->v[ch].newStep         = step;
 }
 
 static void mixerSetChSource(player *p, int ch, const char *src, int length, int loopStart, int loopLength, int offset, int step)
 {
     p->v[ch].swapSampleFlag = false;
-    p->v[ch].data = src;
-    p->v[ch].length = length;
-    p->v[ch].index = offset;
-    p->v[ch].frac = 0.0f;
-    p->v[ch].loopEnd = loopStart + loopLength;
-    p->v[ch].loopLength = loopLength;
-    p->v[ch].step = step;
-
-    if (offset > 0)
+    p->v[ch].data           = src;
+    p->v[ch].index          = offset;
+    p->v[ch].frac           = 0.0f;
+    p->v[ch].length         = length;
+    p->v[ch].loopFlag       = loopLength > (2 * step);
+    p->v[ch].loopBegin      = loopStart;
+    p->v[ch].loopEnd        = loopStart + loopLength;
+    p->v[ch].step           = step;
+    
+    // Check external 9xx usage (Set Sample Offset)
+    if (p->v[ch].loopFlag)
     {
-        if (loopLength > (2 * step))
-        {
-            if (offset >= p->v[ch].loopEnd)
-                p->v[ch].index = 0;
-        }
-        else if (offset >= length)
-        {
+        if (offset >= p->v[ch].loopEnd)
+            p->v[ch].index = p->v[ch].loopBegin;
+    }
+    else
+    {
+        if (offset >= p->v[ch].length)
             p->v[ch].data = NULL;
-        }
     }
 }
 
@@ -605,14 +604,14 @@ static void outputAudio(player *p, int *target, int numSamples)
 
                 if (tempSample != p->blep[i].last_value)
                 {
-                    float delta = (float)(tempSample - p->blep[i].last_value);
+                    int delta = tempSample - p->blep[i].last_value;
                     p->blep[i].last_value = tempSample;
                     ptm_blip_add_delta(&p->blep[i], p->v[i].frac, delta);
                 }
 
                 if (tempVolume != p->blepVol[i].last_value)
                 {
-                    float delta = (float)(tempVolume - p->blepVol[i].last_value);
+                    int delta = tempVolume - p->blepVol[i].last_value;
                     p->blepVol[i].last_value = tempVolume;
                     ptm_blip_add_delta(&p->blepVol[i], 0, delta);
                 }
@@ -622,7 +621,7 @@ static void outputAudio(player *p, int *target, int numSamples)
                     p->v[i].index += step;
                     p->v[i].frac += p->v[i].rate;
 
-                    if (p->v[i].loopLength > (2 * step))
+                    if (p->v[i].loopFlag)
                     {
                         if (p->v[i].index >= p->v[i].loopEnd)
                         {
@@ -630,25 +629,27 @@ static void outputAudio(player *p, int *target, int numSamples)
                             {
                                 p->v[i].swapSampleFlag = false;
 
-                                if (p->v[i].newLoopLength <= (2 * step))
+                                if (p->v[i].newLoopFlag == false)
                                 {
                                     p->v[i].data = NULL;
                                     continue;
                                 }
+
+                                p->v[i].loopBegin    = p->v[i].newLoopBegin;
+                                p->v[i].loopEnd      = p->v[i].newLoopEnd;
+                                p->v[i].loopFlag     = p->v[i].newLoopFlag;
+                                p->v[i].data         = p->v[i].newData;
+                                p->v[i].length       = p->v[i].newLength;
+                                p->v[i].frac         = 0.0f;
+                                p->v[i].step         = p->v[i].newStep;
                                 
-                                p->v[i].index = p->v[i].loopEnd - p->v[i].loopLength;
-                                
-                                p->v[i].data = p->v[i].newData;
-                                p->v[i].length = p->v[i].newLength;
-                                p->v[i].loopEnd = p->v[i].newLoopEnd;
-                                p->v[i].loopLength = p->v[i].newLoopLength;
-                                p->v[i].frac = 0.0f;
-                                
-                                step = p->v[i].step = p->v[i].newStep;
+                                while (p->v[i].index >= p->v[i].loopEnd)
+                                    p->v[i].index = p->v[i].loopBegin + (p->v[i].index - p->v[i].loopEnd);
                             }
                             else
                             {
-                                p->v[i].index -= p->v[i].loopLength;
+                                while (p->v[i].index >= p->v[i].loopEnd)
+                                    p->v[i].index = p->v[i].loopBegin + (p->v[i].index - p->v[i].loopEnd);
                             }
                         }
                     }
@@ -658,21 +659,22 @@ static void outputAudio(player *p, int *target, int numSamples)
                         {
                             p->v[i].swapSampleFlag = false;
                             
-                            if (p->v[i].newLoopLength <= 2)
+                            if (p->v[i].newLoopFlag == false)
                             {
                                 p->v[i].data = NULL;
                                 continue;
                             }
-                            
-                            p->v[i].index = 0;
-                            
-                            p->v[i].data = p->v[i].newData;
-                            p->v[i].length = p->v[i].newLength;
-                            p->v[i].loopEnd = p->v[i].newLoopEnd;
-                            p->v[i].loopLength = p->v[i].newLoopLength;
-                            p->v[i].frac = 0.0f;
-    
-                            step = p->v[i].step = p->v[i].newStep;
+
+                            p->v[i].loopBegin    = p->v[i].newLoopBegin;
+                            p->v[i].loopEnd      = p->v[i].newLoopEnd;
+                            p->v[i].loopFlag     = p->v[i].newLoopFlag;
+                            p->v[i].data         = p->v[i].newData;
+                            p->v[i].length       = p->v[i].newLength;
+                            p->v[i].frac         = 0.0f;
+                            p->v[i].step         = p->v[i].newStep;
+
+                            while (p->v[i].index >= p->v[i].loopEnd)
+                                p->v[i].index = p->v[i].loopBegin + (p->v[i].index - p->v[i].loopEnd);
                         }
                         else
                         {
@@ -689,8 +691,8 @@ static void outputAudio(player *p, int *target, int numSamples)
             {
                 int i_smp;
 
-                tempVolume = (float)p->blepVol[i].last_value;
-                tempSample = (float)p->blep[i].last_value;
+                tempVolume = p->blepVol[i].last_value;
+                tempSample = p->blep[i].last_value;
 
                 tempVolume += ptm_blip_read_sample(&p->blepVol[i]);
                 tempSample += ptm_blip_read_sample(&p->blep[i]);
@@ -1145,14 +1147,17 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     }
 
     bufread(&p->source->head.orderCount, 1, 1, fmodule);
-    if ((p->source->head.orderCount == 0) || (p->source->head.orderCount > 128))
+    if (p->source->head.orderCount == 0)
     {
         free(p->source);
         bufclose(fmodule);
 
         return (false);
     }
-
+    
+    if (p->source->head.orderCount > 128)
+        p->source->head.orderCount = 128;
+        
     bufread(&p->source->head.restartPos, 1, 1, fmodule);
     if ((mightBeSTK == true) && ((p->source->head.restartPos == 0)
         || (p->source->head.restartPos > 220)))
@@ -2247,7 +2252,9 @@ static void fxSampleOffset(player *p, mod_channel *ch)
             ch->offsetTemp = ch->param * 256;
 
         ch->offset += ch->offsetTemp;
-        ch->offsetBugNotAdded = false;
+        
+        if (!ch->noNote)
+            ch->offsetBugNotAdded = false;
     }
 }
 
@@ -2416,7 +2423,7 @@ void playptmod_Stop(void *_p)
         p->source->channels[i].invertLoopSpeed = 0;
         p->source->channels[i].period = 0;
         p->source->channels[i].tempPeriod = 0;
-        p->source->channels[i].offsetBugNotAdded = false;
+        p->source->channels[i].offsetBugNotAdded = true;
     }
 
     p->tempFlags = 0;
@@ -2522,7 +2529,7 @@ static void processChannel(player *p, mod_channel *ch)
                 if ((ch->command != 0x03) && (ch->command != 0x05))
                 {
                     ch->offset = 0;
-                    ch->offsetBugNotAdded = false;
+                    ch->offsetBugNotAdded = true;
                 }
 
                 if (ch->flags & FLAG_NEWSAMPLE)
@@ -2553,7 +2560,7 @@ static void processChannel(player *p, mod_channel *ch)
                 s = &p->source->samples[ch->sample - 1];
 
                 if (s->length > 0)
-                    mixerSwapChSource(p, ch->chanIndex, p->source->sampleData + s->offset, s->length, s->loopStart, s->loopLength, s->attribute & 1 ? 2 : 1);
+                    mixerSwapChSource(p, ch->chanIndex, p->source->sampleData + s->offset, s->length, s->loopStart, s->loopLength, (s->attribute & 1) ? 2 : 1);
                 else
                     mixerSetChSource(p, ch->chanIndex, NULL, 0, 0, 0, 0, 0);
             }
@@ -2568,7 +2575,7 @@ static void processChannel(player *p, mod_channel *ch)
                 {
                     if (ch->offset > 0)
                     {
-                        mixerSetChSource(p, ch->chanIndex, p->source->sampleData + s->offset, s->length, s->loopStart, s->loopLength, ch->offset, s->attribute & 1 ? 2 : 1);
+                        mixerSetChSource(p, ch->chanIndex, p->source->sampleData + s->offset, s->length, s->loopStart, s->loopLength, ch->offset, (s->attribute & 1) ? 2 : 1);
 
                         if (p->minPeriod == PT_MIN_PERIOD) // PT/NT/STK/UST bug only
                         {
@@ -2581,7 +2588,7 @@ static void processChannel(player *p, mod_channel *ch)
                     }
                     else
                     {
-                        mixerSetChSource(p, ch->chanIndex, p->source->sampleData + s->offset, s->length, s->loopStart, s->loopLength, 0, s->attribute & 1 ? 2 : 1);
+                        mixerSetChSource(p, ch->chanIndex, p->source->sampleData + s->offset, s->length, s->loopStart, s->loopLength, 0, (s->attribute & 1) ? 2 : 1);
                     }
                 }
                 else
@@ -2596,7 +2603,7 @@ static void processChannel(player *p, mod_channel *ch)
         if ((p->tempPeriod >= p->minPeriod) && (p->tempPeriod <= p->maxPeriod))
             mixerSetChRate(p, ch->chanIndex, (p->minPeriod == PT_MIN_PERIOD) ? p->frequencyTable[(int)p->tempPeriod] : p->extendedFrequencyTable[(int)p->tempPeriod]);
         else
-            mixerSetChVol(p, ch->chanIndex, 0.0f); // arp override bugfix
+            mixerSetChVol(p, ch->chanIndex, 0); // arp override bugfix
     }
 }
 
@@ -2816,7 +2823,7 @@ void playptmod_Play(void *_p, unsigned int startOrder)
             p->source->channels[i].tremoloControl = 0;
             p->source->channels[i].tremoloPos = 0;
             p->source->channels[i].fineTune = 0;
-            p->source->channels[i].offsetBugNotAdded = false;
+            p->source->channels[i].offsetBugNotAdded = true;
         }
 
         p->sampleCounter = 0;
