@@ -930,8 +930,10 @@ static DUMB_IT_SIGDATA *it_psm_load_sigdata(DUMBFILE *f, int * ver, int subsong)
 
 	sigdata->sample = malloc(sigdata->n_samples * sizeof(*sigdata->sample));
 	if (!sigdata->sample) goto error_ev;
-	for (n = 0; n < sigdata->n_samples; n++)
+	for (n = 0; n < sigdata->n_samples; n++) {
 		sigdata->sample[n].data = NULL;
+		sigdata->sample[n].flags = 0;
+	}
 
 	o = 0;
 	for (n = 0; n < n_chunks; n++) {

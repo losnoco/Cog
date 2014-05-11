@@ -328,6 +328,8 @@ static DUMB_IT_SIGRENDERER *dup_sigrenderer(DUMB_IT_SIGRENDERER *src, int n_chan
 	dst->time_left = src->time_left;
 	dst->sub_time_left = src->sub_time_left;
 
+	dst->ramp_style = src->ramp_style;
+
 	dst->click_remover = NULL;
 
 	dst->callbacks = callbacks;
