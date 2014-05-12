@@ -17,6 +17,7 @@
     midi_container midi_file;
     
     BOOL soundFontsAssigned;
+    BOOL isLooped;
     
     long totalFrames;
     long framesLength;

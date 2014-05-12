@@ -65,11 +65,13 @@
         // two loops and a fade
         framesLength = loopStart + ( loopEnd - loopStart ) * 2;
         framesFade = 8000;
+        isLooped = YES;
     }
     else
     {
         framesLength += 1000;
         framesFade = 0;
+        isLooped = NO;
     }
     
     framesLength = framesLength * 441 / 10;
@@ -156,8 +158,17 @@
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
     BOOL repeatone = IsRepeatOneSet();
+    long localFramesLength = framesLength;
+    long localTotalFrames = totalFrames;
     
-    if ( !repeatone && framesRead >= totalFrames )
+    if ( repeatone && !isLooped )
+    {
+        localFramesLength -= 44100;
+        localTotalFrames -= 44100;
+        repeatone = NO;
+    }
+    
+    if ( !repeatone && framesRead >= localTotalFrames )
         return 0;
     
     if ( !soundFontsAssigned ) {
@@ -172,15 +183,15 @@
     
     player->Play( (float *) buf, frames );
     
-    if ( !repeatone && framesRead + frames > framesLength ) {
+    if ( !repeatone && framesRead + frames > localFramesLength ) {
         if ( framesFade ) {
-            long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
-            long fadeEnd = (framesRead + frames > totalFrames) ? totalFrames : (framesRead + frames);
+            long fadeStart = (localFramesLength > framesRead) ? localFramesLength : framesRead;
+            long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
             long fadePos;
         
             float * buff = ( float * ) buf;
         
-            float fadeScale = (float)(framesFade - (fadeStart - framesLength)) / framesFade;
+            float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
             float fadeStep = 1.0 / (float)framesFade;
             for (fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
                 buff[ 0 ] *= fadeScale;
@@ -196,7 +207,7 @@
             frames = (int)(fadeEnd - framesRead);
         }
         else {
-            frames = (int)(totalFrames - framesRead);
+            frames = (int)(localTotalFrames - framesRead);
         }
     }
     
