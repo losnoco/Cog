@@ -2402,7 +2402,10 @@ static int8_t LoadInstrSample(PLAYER *p, MEM *f, uint16_t i)
                     return (0);
                 }
 
-                mread(s->Pek, adpcm ? adpcm : l, 1, f);
+                if (s->Typ & 16)
+                    mread_swap(s->Pek, l, 1, f, 0, 1); // byte swap 16 bit sample on big endian system, which by definition cannot be an adpcm sample
+                else
+                    mread(s->Pek, adpcm ? adpcm : l, 1, f);
                 if (!adpcm)
                     Delta2Samp(s->Pek, l, s->Typ);
                 else
@@ -2911,7 +2914,7 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
 
         while (interpolating && resampler_get_free_count(resampler))
         {
-            resampler_write_sample(resampler, sampleData[samplePosition] * 256);
+            resampler_write_sample_fixed(resampler, sampleData[samplePosition], 8);
 
             if (loopDir == 1)
                 --samplePosition;
@@ -2962,7 +2965,7 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
             break;
         }
 
-        sample = resampler_get_sample(resampler);
+        sample = resampler_get_sample_float(resampler);
         resampler_remove_sample(resampler);
         
         sample *= p->voice[ch].volume;
@@ -3075,8 +3078,8 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         
         while (interpolating && resampler_get_free_count(resampler[0]))
         {
-            resampler_write_sample(resampler[0], sampleData[samplePosition] * 256);
-            resampler_write_sample(resampler[1], sampleData[sampleLength + samplePosition] * 256);
+            resampler_write_sample_fixed(resampler[0], sampleData[samplePosition], 8);
+            resampler_write_sample_fixed(resampler[1], sampleData[sampleLength + samplePosition], 8);
             
             if (loopDir == 1)
                 --samplePosition;
@@ -3127,8 +3130,8 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             break;
         }
         
-        sampleL = resampler_get_sample(resampler[0]);
-        sampleR = resampler_get_sample(resampler[1]);
+        sampleL = resampler_get_sample_float(resampler[0]);
+        sampleR = resampler_get_sample_float(resampler[1]);
         resampler_remove_sample(resampler[0]);
         resampler_remove_sample(resampler[1]);
         
@@ -3238,7 +3241,7 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
         
         while (interpolating && resampler_get_free_count(resampler))
         {
-            resampler_write_sample(resampler, sampleData[samplePosition]);
+            resampler_write_sample_fixed(resampler, sampleData[samplePosition], 16);
             
             if (loopDir == 1)
                 --samplePosition;
@@ -3289,7 +3292,7 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
             break;
         }
         
-        sample = resampler_get_sample(resampler);
+        sample = resampler_get_sample_float(resampler);
         resampler_remove_sample(resampler);
         
         sample *= p->voice[ch].volume;
@@ -3402,8 +3405,8 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         
         while (interpolating && resampler_get_free_count(resampler[0]))
         {
-            resampler_write_sample(resampler[0], sampleData[samplePosition]);
-            resampler_write_sample(resampler[1], sampleData[sampleLength + samplePosition]);
+            resampler_write_sample_fixed(resampler[0], sampleData[samplePosition], 16);
+            resampler_write_sample_fixed(resampler[1], sampleData[sampleLength + samplePosition], 16);
             
             if (loopDir == 1)
                 --samplePosition;
@@ -3454,8 +3457,8 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             break;
         }
         
-        sampleL = resampler_get_sample(resampler[0]);
-        sampleR = resampler_get_sample(resampler[1]);
+        sampleL = resampler_get_sample_float(resampler[0]);
+        sampleR = resampler_get_sample_float(resampler[1]);
         resampler_remove_sample(resampler[0]);
         resampler_remove_sample(resampler[1]);
         

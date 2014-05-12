@@ -2961,7 +2961,7 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
 
         while (interpolating && resampler_get_free_count(resampler))
         {
-            resampler_write_sample(resampler, sampleData[samplePosition] * 256);
+            resampler_write_sample_fixed(resampler, sampleData[samplePosition], 8);
             
             ++samplePosition;
             
@@ -2986,7 +2986,7 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
             break;
         }
         
-        sample = resampler_get_sample(resampler);
+        sample = resampler_get_sample_float(resampler);
         resampler_remove_sample(resampler);
         
         sample *= volume;
@@ -3102,8 +3102,8 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
         
         while (interpolating && resampler_get_free_count(resampler[0]))
         {
-            resampler_write_sample(resampler[0], sampleData[samplePosition] * 256);
-            resampler_write_sample(resampler[1], sampleData[sampleLength + samplePosition] * 256);
+            resampler_write_sample_fixed(resampler[0], sampleData[samplePosition], 8);
+            resampler_write_sample_fixed(resampler[1], sampleData[sampleLength + samplePosition], 8);
             
             ++samplePosition;
             
@@ -3128,8 +3128,8 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             break;
         }
         
-        sampleL = resampler_get_sample(resampler[0]);
-        sampleR = resampler_get_sample(resampler[1]);
+        sampleL = resampler_get_sample_float(resampler[0]);
+        sampleR = resampler_get_sample_float(resampler[1]);
         resampler_remove_sample(resampler[0]);
         resampler_remove_sample(resampler[1]);
 
@@ -3240,7 +3240,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
         
         while (interpolating && resampler_get_free_count(resampler))
         {
-            resampler_write_sample(resampler, get_le16(&sampleData[samplePosition]));
+            resampler_write_sample_fixed(resampler, get_le16(&sampleData[samplePosition]), 16);
             
             ++samplePosition;
             
@@ -3265,7 +3265,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
             break;
         }
         
-        sample = resampler_get_sample(resampler);
+        sample = resampler_get_sample_float(resampler);
         resampler_remove_sample(resampler);
         
         sample *= volume;
@@ -3381,8 +3381,8 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
         
         while (interpolating && resampler_get_free_count(resampler[0]))
         {
-            resampler_write_sample(resampler[0], get_le16(&sampleData[samplePosition]));
-            resampler_write_sample(resampler[1], get_le16(&sampleData[sampleLength + samplePosition]));
+            resampler_write_sample_fixed(resampler[0], get_le16(&sampleData[samplePosition]), 16);
+            resampler_write_sample_fixed(resampler[1], get_le16(&sampleData[sampleLength + samplePosition]), 16);
             
             ++samplePosition;
             
@@ -3407,8 +3407,8 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             break;
         }
         
-        sampleL = resampler_get_sample(resampler[0]);
-        sampleR = resampler_get_sample(resampler[1]);
+        sampleL = resampler_get_sample_float(resampler[0]);
+        sampleR = resampler_get_sample_float(resampler[1]);
         resampler_remove_sample(resampler[0]);
         resampler_remove_sample(resampler[1]);
         
@@ -3539,9 +3539,9 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
         while (interpolating && resampler_get_free_count(resampler))
         {
             int8_t nextDelta = lastDelta;
-            int16_t sample = get_adpcm_sample(sampleDictionary, sampleData, samplePosition, &nextDelta) * 256;
+            int16_t sample = get_adpcm_sample(sampleDictionary, sampleData, samplePosition, &nextDelta);
             
-            resampler_write_sample(resampler, sample);
+            resampler_write_sample_fixed(resampler, sample, 8);
             
             lastDelta = nextDelta;
             
@@ -3576,7 +3576,7 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
             break;
         }
         
-        sample = resampler_get_sample(resampler);
+        sample = resampler_get_sample_float(resampler);
         resampler_remove_sample(resampler);
         
         sample *= volume;
@@ -3727,7 +3727,7 @@ static void st3play_AdlibMix(PLAYER *p, float *buffer, int32_t count)
         
         for (i = 0; i < outbuffer_avail; ++i)
         {
-            float sample = resampler_get_sample( p->fmResampler );
+            float sample = resampler_get_sample_float( p->fmResampler );
             resampler_remove_sample( p->fmResampler );
             
             buffer[i * 2 + 0] += sample;

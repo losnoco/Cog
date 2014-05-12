@@ -19,6 +19,7 @@
 #define resampler_clear EVALUATE(RESAMPLER_DECORATE,_resampler_clear)
 #define resampler_get_sample_count EVALUATE(RESAMPLER_DECORATE,_resampler_get_sample_count)
 #define resampler_get_sample EVALUATE(RESAMPLER_DECORATE,_resampler_get_sample)
+#define resampler_get_sample_float EVALUATE(RESAMPLER_DECORATE,_resampler_get_sample_float)
 #define resampler_remove_sample EVALUATE(RESAMPLER_DECORATE,_resampler_remove_sample)
 #endif
 
@@ -49,7 +50,8 @@ void resampler_set_rate( void *, double new_factor );
 int resampler_ready(void *);
 void resampler_clear(void *);
 int resampler_get_sample_count(void *);
-float resampler_get_sample(void *);
+int resampler_get_sample(void *);
+float resampler_get_sample_float(void *);
 void resampler_remove_sample(void *);
 
 #endif
