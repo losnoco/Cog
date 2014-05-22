@@ -3240,7 +3240,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
         
         while (interpolating && resampler_get_free_count(resampler))
         {
-            resampler_write_sample_fixed(resampler, get_le16(&sampleData[samplePosition]), 16);
+            resampler_write_sample_fixed(resampler, (int16_t)get_le16(&sampleData[samplePosition]), 16);
             
             ++samplePosition;
             
@@ -3381,8 +3381,8 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
         
         while (interpolating && resampler_get_free_count(resampler[0]))
         {
-            resampler_write_sample_fixed(resampler[0], get_le16(&sampleData[samplePosition]), 16);
-            resampler_write_sample_fixed(resampler[1], get_le16(&sampleData[sampleLength + samplePosition]), 16);
+            resampler_write_sample_fixed(resampler[0], (int16_t)get_le16(&sampleData[samplePosition]), 16);
+            resampler_write_sample_fixed(resampler[1], (int16_t)get_le16(&sampleData[sampleLength + samplePosition]), 16);
             
             ++samplePosition;
             
