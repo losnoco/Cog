@@ -2616,7 +2616,7 @@ static void nextPosition(player *p)
 
     p->modOrder++;
     if (p->modOrder >= p->source->head.orderCount)
-        p->modOrder = 0;
+        p->modOrder = (p->source->head.format == FORMAT_STK) ? 0 : p->source->head.restartPos;
 
     p->modPattern = p->source->head.order[p->modOrder];
 
@@ -2905,7 +2905,7 @@ void playptmod_GetInfo(void *_p, playptmod_info *i)
     {
         order++;
         if (order >= p->source->head.orderCount)
-            order = p->source->head.restartPos;
+            order = (p->source->head.format == FORMAT_STK) ? 0 : p->source->head.restartPos;
 
         row = p->PBreakPosition;
         pattern = p->source->head.order[order];
