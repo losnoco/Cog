@@ -1560,7 +1560,7 @@ void st3play_PlaySong(void *_p, int16_t startOrder)
         if (p->stereomode)
             p->chn[i].apanpos = pan;
         else
-            p->chn[i].apanpos = 7;
+            p->chn[i].apanpos = 128;
       
         voiceSetPanning(p, i, pan);
     }
@@ -3873,7 +3873,8 @@ void st3play_GetInfo(void *_p, st3_info *info)
             if (p->voice[i].mixing)
                 ++channels_playing;
         }
-		channels_playing += Chip_GetActiveChannels( p->fmChip );
+		if ( p->fmChip )
+			channels_playing += Chip_GetActiveChannels( p->fmChip );
     }
     info->channels_playing = (int8_t)channels_playing;
 }
