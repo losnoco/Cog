@@ -4740,7 +4740,7 @@ static long render_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playing
 		playing->ramp_volume [0] = lvol.volume;
 		playing->ramp_volume [1] = rvol.volume;
         playing->declick_stage = (lvol.declick_stage > rvol.declick_stage) ? lvol.declick_stage : rvol.declick_stage;
-        if (playing->declick_stage > 4)
+        if (playing->declick_stage >= 4)
             playing->flags |= IT_PLAYING_DEAD;
 		(*left_to_mix)--;
 	}
