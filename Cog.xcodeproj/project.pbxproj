@@ -182,6 +182,7 @@
 		838491871808591F00E7332D /* NDHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8384917E1808585D00E7332D /* NDHotKey.framework */; };
 		838491881808593200E7332D /* NDHotKey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8384917E1808585D00E7332D /* NDHotKey.framework */; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
+		839BD010196521E600947767 /* BASSMODS.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 839BCFEC1965133F00947767 /* BASSMODS.bundle */; };
 		83A0F4E31816DBF900119DB4 /* playptmod.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83A0F4891816CE5E00119DB4 /* playptmod.bundle */; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; };
@@ -499,6 +500,20 @@
 			remoteGlobalIDString = 32F1615514E6BB3B00D6AB2F;
 			remoteInfo = NDHotKey;
 		};
+		839BCFEB1965133F00947767 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 839BCFE71965133E00947767 /* BASSMODS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 839BCFD21965133E00947767;
+			remoteInfo = BASSMODS;
+		};
+		839BD011196521FD00947767 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 839BCFE71965133E00947767 /* BASSMODS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 839BCFD11965133E00947767;
+			remoteInfo = BASSMODS;
+		};
 		83A0F4881816CE5E00119DB4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83A0F4841816CE5E00119DB4 /* playptmod.xcodeproj */;
@@ -636,6 +651,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				839BD010196521E600947767 /* BASSMODS.bundle in CopyFiles */,
 				835CBC8118DA7A520087A03E /* modplay.bundle in CopyFiles */,
 				836F706218BDD1230095E648 /* vgmstream.bundle in CopyFiles */,
 				836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */,
@@ -930,6 +946,7 @@
 		838491791808585C00E7332D /* NDHotKey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NDHotKey.xcodeproj; path = Frameworks/NDHotKey/NDHotKey.xcodeproj; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
+		839BCFE71965133E00947767 /* BASSMODS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BASSMODS.xcodeproj; path = Plugins/BASSMODS/BASSMODS.xcodeproj; sourceTree = "<group>"; };
 		83A0F4841816CE5E00119DB4 /* playptmod.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = playptmod.xcodeproj; path = Plugins/playptmod/playptmod.xcodeproj; sourceTree = "<group>"; };
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
@@ -1243,6 +1260,7 @@
 				83A0F4841816CE5E00119DB4 /* playptmod.xcodeproj */,
 				836FB5421820538700B3AD2D /* Hively.xcodeproj */,
 				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
+				839BCFE71965133E00947767 /* BASSMODS.xcodeproj */,
 			);
 			name = PlugIns;
 			sourceTree = "<group>";
@@ -1632,6 +1650,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		839BCFE81965133E00947767 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				839BCFEC1965133F00947767 /* BASSMODS.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		83A0F4851816CE5E00119DB4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1792,6 +1818,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				839BD012196521FD00947767 /* PBXTargetDependency */,
 				836FB5A618206F1500B3AD2D /* PBXTargetDependency */,
 				83A0F4E21816DBE800119DB4 /* PBXTargetDependency */,
 				83E6B7641816138800D4576D /* PBXTargetDependency */,
@@ -1857,6 +1884,10 @@
 				{
 					ProductGroup = 8359FF2D17FEF35C0060F3ED /* Products */;
 					ProjectRef = 8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */;
+				},
+				{
+					ProductGroup = 839BCFE81965133E00947767 /* Products */;
+					ProjectRef = 839BCFE71965133E00947767 /* BASSMODS.xcodeproj */;
 				},
 				{
 					ProductGroup = 17F5612B0C3BD4DC0019975C /* Products */;
@@ -2123,6 +2154,13 @@
 			fileType = wrapper.framework;
 			path = NDHotKey.framework;
 			remoteRef = 8384917D1808585D00E7332D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		839BCFEC1965133F00947767 /* BASSMODS.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = BASSMODS.bundle;
+			remoteRef = 839BCFEB1965133F00947767 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83A0F4891816CE5E00119DB4 /* playptmod.bundle */ = {
@@ -2491,6 +2529,11 @@
 			isa = PBXTargetDependency;
 			name = NDHotKey;
 			targetProxy = 838491851808591400E7332D /* PBXContainerItemProxy */;
+		};
+		839BD012196521FD00947767 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BASSMODS;
+			targetProxy = 839BD011196521FD00947767 /* PBXContainerItemProxy */;
 		};
 		83A0F4E21816DBE800119DB4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
