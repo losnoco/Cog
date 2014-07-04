@@ -157,6 +157,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     framesRead = 0;
     endOfStream = NO;
     
+    if ( totalFrames < 0 )
+        totalFrames = 0;
+    
     seekable = [s seekable];
 	
 	return YES;
@@ -180,7 +183,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-    if ( framesRead >= totalFrames )
+    if ( totalFrames && framesRead >= totalFrames )
         return 0;
 
     int frameSize = channels * (bitsPerSample / 8);
@@ -292,7 +295,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     }
     
     int framesReadNow = bytesRead / frameSize;
-    if ( framesRead + framesReadNow > totalFrames )
+    if ( totalFrames && ( framesRead + framesReadNow > totalFrames ) )
         framesReadNow = totalFrames - framesRead;
     
     framesRead += framesReadNow;
@@ -302,6 +305,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 - (long)seek:(long)frame
 {
+    if ( !totalFrames )
+        return -1;
+    
     if (frame >= totalFrames)
     {
         framesRead = totalFrames;

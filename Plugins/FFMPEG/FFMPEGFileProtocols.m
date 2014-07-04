@@ -90,11 +90,23 @@ static int file_open(URLContext *h, const char *filename, int flags)
     return 0;
 }
 
+static int http_open(URLContext *h, const char *filename, int flags)
+{
+    int rval = file_open( h, filename, flags );
+    h->is_streamed = 1;
+    return rval;
+}
+
 /* XXX: use llseek */
 static int64_t file_seek(URLContext *h, int64_t pos, int whence)
 {
     FileContext *c = h->priv_data;
     return [c->fd seek:pos whence:whence] ? [c->fd tell] : -1;
+}
+
+static int64_t http_seek(URLContext *h, int64_t pos, int whence)
+{
+    return -1;
 }
 
 static int file_close(URLContext *h)
@@ -117,9 +129,9 @@ URLProtocol ff_file_protocol = {
 
 URLProtocol ff_http_protocol = {
     .name                = "http",
-    .url_open            = file_open,
+    .url_open            = http_open,
     .url_read            = file_read,
-    .url_seek            = file_seek,
+    .url_seek            = http_seek,
     .url_close           = file_close,
     .url_check           = file_check,
     .priv_data_size      = sizeof(FileContext),
