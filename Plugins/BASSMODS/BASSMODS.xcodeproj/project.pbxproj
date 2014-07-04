@@ -313,6 +313,7 @@
 					/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -331,6 +332,7 @@
 					/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
