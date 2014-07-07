@@ -210,9 +210,9 @@ static void SyncProc( HSYNC handle, DWORD channel, DWORD data, void *user )
 		pos = 0;
 	}
 
-    BASS_ChannelSetPosition( music, (frame - pos) * (sizeof(float) * 2), BASS_POS_BYTE | BASS_POS_DECODETO );
+    BASS_ChannelSetPosition( music, frame * (sizeof(float) * 2), BASS_POS_BYTE | BASS_POS_DECODETO );
     
-   return frame;
+    return frame;
 }
 
 - (void)cleanUp
