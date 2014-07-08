@@ -111,7 +111,7 @@ static void SyncProc( HSYNC handle, DWORD channel, DWORD data, void *user )
     else if ([resampling isEqualToString:@"sinc"])
         resampling_int = 2;
     
-    music = BASS_MusicLoad( 1, data, 0, size, BASS_SAMPLE_FLOAT | BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP | BASS_MUSIC_PRESCAN | BASS_MUSIC_DECODE | (resampling_int == 0 ? BASS_MUSIC_NONINTER : ((resampling_int == 2) ? BASS_MUSIC_SINCINTER : 0)), 44100 );
+    music = BASS_MusicLoad( 1, data, 0, size, BASS_SAMPLE_FLOAT | BASS_SAMPLE_LOOP | BASS_MUSIC_STOPBACK | BASS_MUSIC_RAMP | BASS_MUSIC_PRESCAN | BASS_MUSIC_DECODE | (resampling_int == 0 ? BASS_MUSIC_NONINTER : ((resampling_int == 2) ? BASS_MUSIC_SINCINTER : 0)), 44100 );
     
     if ( !music )
     {
