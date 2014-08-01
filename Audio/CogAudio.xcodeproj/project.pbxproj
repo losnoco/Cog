@@ -363,6 +363,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					8DC2EF4F0486A6940098B216 = {
+						DevelopmentTeam = N6E749HJ2X;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "CogAudio" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -441,6 +446,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = CogAudio;
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
@@ -464,6 +470,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = CogAudio;
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
