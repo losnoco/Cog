@@ -1038,7 +1038,7 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                         loop = 1;
 
 #ifdef USE_VOL_RAMP
-                    if (p->rampStyle > 0)
+                    if (p->rampStyle > 0 && p->chn[ch].cmd != 7)
                     {
                         p->voice[ch + 32] = p->voice[ch];
                         setvol(p, ch, 2);
@@ -1059,11 +1059,13 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                                 setpan(p, ch);
                             }
                         }
+                        setvol(p, ch, 1);
                         volassigned = 1;
                     }
+                    else
 #endif
-                    setvol(p, ch, 1);
-                    
+                    setvol(p, ch, 0);
+
                     voiceSetSource(p, ch, (const int8_t *)(&p->mseg[insoffs]), inslen,
                         insrepend - insrepbeg, insrepend, loop,
                         insdat[0x1F] & 4, insdat[0x1F] & 2, insdat[0x1E] == 4);
@@ -2780,13 +2782,6 @@ void voiceSetSource(PLAYER *p, uint8_t voiceNumber, const int8_t *sampleData,
 
     if (p->voice[voiceNumber].samplePosition >= p->voice[voiceNumber].sampleLength)
         p->voice[voiceNumber].samplePosition = 0;
-    
-    resampler_clear( p->resampler[voiceNumber] );
-#ifdef USE_VOL_RAMP
-    resampler_clear( p->resampler[voiceNumber+64] );
-#else
-    resampler_clear( p->resampler[voiceNumber+32] );
-#endif
 }
 
 void voiceSetSamplePosition(PLAYER *p, uint8_t voiceNumber, uint16_t value)
@@ -2806,13 +2801,6 @@ void voiceSetSamplePosition(PLAYER *p, uint8_t voiceNumber, uint16_t value)
         p->voice[voiceNumber].interpolating  = 0;
         p->voice[voiceNumber].samplePosition = 0;
     }
-    
-    resampler_clear( p->resampler[voiceNumber] );
-#ifdef USE_VOL_RAMP
-    resampler_clear( p->resampler[voiceNumber+64] );
-#else
-    resampler_clear( p->resampler[voiceNumber+32] );
-#endif
 }
 
 void voiceSetVolume(PLAYER *p, uint8_t voiceNumber, float volume, uint8_t sharp)
@@ -2982,6 +2970,7 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
 
         if ( !resampler_ready(resampler) )
         {
+            resampler_clear(resampler);
             p->voice[ch].mixing = 0;
             break;
         }
@@ -3036,6 +3025,7 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
         
             if (p->voice[ch].rampTerminates && !volume)
             {
+                resampler_clear(resampler);
                 p->voice[ch].mixing = 0;
                 break;
             }
@@ -3124,6 +3114,8 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
         
         if ( !resampler_ready(resampler[0]) )
         {
+            resampler_clear(resampler[0]);
+            resampler_clear(resampler[1]);
             p->voice[ch].mixing = 0;
             break;
         }
@@ -3181,6 +3173,8 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             
             if (p->voice[ch].rampTerminates && !volume)
             {
+                resampler_clear(resampler[0]);
+                resampler_clear(resampler[1]);
                 p->voice[ch].mixing = 0;
                 break;
             }
@@ -3261,6 +3255,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
         
         if ( !resampler_ready(resampler) )
         {
+            resampler_clear(resampler);
             p->voice[ch].mixing = 0;
             break;
         }
@@ -3315,6 +3310,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
             
             if (p->voice[ch].rampTerminates && !volume)
             {
+                resampler_clear(resampler);
                 p->voice[ch].mixing = 0;
                 break;
             }
@@ -3403,6 +3399,8 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
         
         if ( !resampler_ready(resampler[0]) )
         {
+            resampler_clear(resampler[0]);
+            resampler_clear(resampler[1]);
             p->voice[ch].mixing = 0;
             break;
         }
@@ -3460,6 +3458,8 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             
             if (p->voice[ch].rampTerminates && !volume)
             {
+                resampler_clear(resampler[0]);
+                resampler_clear(resampler[1]);
                 p->voice[ch].mixing = 0;
                 break;
             }
@@ -3572,6 +3572,7 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
         
         if ( !resampler_ready(resampler) )
         {
+            resampler_clear(resampler);
             p->voice[ch].mixing = 0;
             break;
         }
@@ -3626,6 +3627,7 @@ static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
             
             if (p->voice[ch].rampTerminates && !volume)
             {
+                resampler_clear(resampler);
                 p->voice[ch].mixing = 0;
                 break;
             }
