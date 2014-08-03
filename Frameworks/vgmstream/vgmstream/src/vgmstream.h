@@ -16,23 +16,14 @@ enum { PATH_LIMIT = 32768 };
 #define VGM_USE_MPEG
 /* disabled by default, defined for builds that support it */
 //#define VGM_USE_G7221
-//#define VGM_USE_MP4V2
-//#define VGM_USE_FDKAAC
 
 #include "streamfile.h"
-#ifdef BUILD_VGMSTREAM
 #include "coding/g72x_state.h"
-#else
-#include "g72x_state.h"
-#endif
 #ifdef VGM_USE_VORBIS
-#ifdef __APPLE__
-#define __MACOSX__
-#endif
 #include <vorbis/vorbisfile.h>
 #endif
 #ifdef VGM_USE_MPEG
-#include <mpg123/mpg123.h>
+#include <mpg123.h>
 #endif
 #ifdef VGM_USE_G7221
 #include "g7221.h"
@@ -51,13 +42,8 @@ enum { PATH_LIMIT = 32768 };
 #include <maiatrac3plus.h>
 #endif
 
-#ifdef BUILD_VGMSTREAM
 #include "coding/acm_decoder.h"
 #include "coding/nwa_decoder.h"
-#else
-#include "acm_decoder.h"
-#include "nwa_decoder.h"
-#endif
 
 /* The encoding type specifies the format the sound data itself takes */
 typedef enum {
@@ -254,7 +240,8 @@ typedef enum {
     meta_RWSD,              /* single-stream RWSD */
     meta_RWAR,              /* single-stream RWAR */
     meta_RWAV,              /* contents of RWAR */
-    meta_CWAV,              /* */
+    meta_CWAV,              /* contents of CWAR */
+	meta_FWAV,				/* contents of FWAR */
     meta_RSTM_SPM,          /* RSTM with 44->22khz hack */
     meta_THP,
     meta_RSTM_shrunken,     /* Atlus' mutant shortened RSTM */

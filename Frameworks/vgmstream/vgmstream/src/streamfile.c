@@ -1,6 +1,7 @@
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
+#include "vgmstream.h"
 #include "streamfile.h"
 #include "util.h"
 
@@ -11,7 +12,7 @@ typedef struct {
     size_t validsize;
     uint8_t * buffer;
     size_t buffersize;
-    char name[260];
+    char name[PATH_LIMIT];
 #ifdef PROFILE_STREAMFILE
     size_t bytes_read;
     int error_count;
