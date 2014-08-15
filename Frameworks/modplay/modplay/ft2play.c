@@ -1,6 +1,6 @@
 /*
-** FT2PLAY v0.64
-** =============
+** FT2PLAY v0.65 - 15th of August 2014
+** ===================================
 **
 ** C port of FastTracker II's replayer, by 8bitbubsy (Olav Sorensen)
 ** using the original pascal+asm source codes by Mr.H (Fredrik Huss)
@@ -632,7 +632,7 @@ static void StartTone(PLAYER *p, uint8_t Ton, uint8_t EffTyp, uint8_t Eff, StmTy
 
     if (Ton)
     {
-        tmpTon = (((Ton - 1) & 0x00FF) << 4) + (((ch->FineTune / 8) + 16) & 0x00FF);
+        tmpTon = (((Ton - 1) & 0x00FF) << 4) + (((ch->FineTune >> 3) + 16) & 0x00FF);
 
         if (tmpTon < ((12 * 10 * 16) + 16)) /* should never happen, but FT2 does this check */
         {
@@ -1178,7 +1178,7 @@ static void fixTonePorta(PLAYER *pl, StmTyp *ch, TonTyp *p, uint8_t inst)
         }
         else
         {
-            portaTmp = ((((p->Ton - 1) + ch->RelTonNr) & 0x00FF) << 4) + (((ch->FineTune / 8) + 16) & 0x00FF);
+            portaTmp = ((((p->Ton - 1) + ch->RelTonNr) & 0x00FF) << 4) + (((ch->FineTune >> 3) + 16) & 0x00FF);
             
             if (portaTmp < ((12 * 10 * 16) + 16))
             {
@@ -1553,7 +1553,7 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
     uint16_t middle;
     uint16_t upper;
 
-    fineTune = ch->FineTune / 8; // -16..15
+    fineTune = ch->FineTune >> 3; // -16..15
     lower = 0;
     upper = 8 * 12 * 16;
 
