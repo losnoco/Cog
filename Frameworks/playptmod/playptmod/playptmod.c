@@ -1515,6 +1515,7 @@ static void fxVibratoVolumeSlide(player *p, mod_channel *ch);
 static void fxTremolo(player *p, mod_channel *ch);
 static void fxNotInUse(player *p, mod_channel *ch);
 static void fxSampleOffset(player *p, mod_channel *ch);
+static void fxSampleOffset_FT2(player *p, mod_channel *ch);
 static void fxVolumeSlide(player *p, mod_channel *ch);
 static void fxPositionJump(player *p, mod_channel *ch);
 static void fxSetVolume(player *p, mod_channel *ch);
@@ -1575,7 +1576,7 @@ static effect_routine fxRoutines_FT2[16] =
     fxVibratoVolumeSlide,
     fxTremolo,
     fxPan,
-    fxSampleOffset,
+    fxSampleOffset_FT2,
     fxVolumeSlide,
     fxPositionJump,
     fxSetVolume,
@@ -2249,12 +2250,23 @@ static void fxSampleOffset(player *p, mod_channel *ch)
     if (p->modTick == 0)
     {
         if (ch->param > 0)
-            ch->offsetTemp = ch->param * 256;
+            ch->offsetTemp = (uint16_t)(ch->param) * 256;
 
         ch->offset += ch->offsetTemp;
         
         if (!ch->noNote)
             ch->offsetBugNotAdded = false;
+    }
+}
+
+static void fxSampleOffset_FT2(player *p, mod_channel *ch)
+{
+    if (p->modTick == 0)
+    {
+        if (ch->param > 0)
+            ch->offset = (uint16_t)(ch->param) * 256;
+
+        ch->offsetBugNotAdded = true;
     }
 }
 
