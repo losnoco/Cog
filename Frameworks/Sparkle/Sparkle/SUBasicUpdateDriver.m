@@ -21,15 +21,6 @@
 #import "SUCodeSigningVerifier.h"
 #import "SUUpdater_Private.h"
 
-#ifdef FINISH_INSTALL_TOOL_NAME
-// FINISH_INSTALL_TOOL_NAME expands to unquoted Autoupdate
-#define QUOTE_NS_STRING2(str) @"" #str
-#define QUOTE_NS_STRING1(str) QUOTE_NS_STRING2(str)
-#define FINISH_INSTALL_TOOL_NAME_STRING QUOTE_NS_STRING1(FINISH_INSTALL_TOOL_NAME)
-#else
-#error FINISH_INSTALL_TOOL_NAME not defined
-#endif
-
 @interface SUBasicUpdateDriver ()
 
 @property (strong) SUAppcastItem *updateItem;
@@ -360,11 +351,11 @@
         [updaterDelegate updater:self.updater willInstallUpdate:self.updateItem];
     }
 
-    NSString *const finishInstallToolName = FINISH_INSTALL_TOOL_NAME_STRING;
+    NSBundle *sparkleBundle = [NSBundle bundleWithIdentifier:SUBundleIdentifier];
 
     // Copy the relauncher into a temporary directory so we can get to it after the new version's installed.
     // Only the paranoid survive: if there's already a stray copy of relaunch there, we would have problems.
-    NSString *relaunchPathToCopy = [SPARKLE_BUNDLE pathForResource:finishInstallToolName ofType:@"app"];
+    NSString *const relaunchPathToCopy = [sparkleBundle pathForResource:[[sparkleBundle infoDictionary] objectForKey:SURelaunchToolNameKey] ofType:@"app"];
 	if (relaunchPathToCopy != nil)
 	{
         NSString *targetPath = [[self.host appSupportPath] stringByAppendingPathComponent:[relaunchPathToCopy lastPathComponent]];
@@ -394,7 +385,7 @@
     if ([updaterDelegate respondsToSelector:@selector(pathToRelaunchForUpdater:)]) {
         pathToRelaunch = [updaterDelegate pathToRelaunchForUpdater:self.updater];
     }
-    NSString *relaunchToolPath = [[self.relaunchPath stringByAppendingPathComponent:@"/Contents/MacOS"] stringByAppendingPathComponent:finishInstallToolName];
+    NSString *relaunchToolPath = [[NSBundle bundleWithPath:self.relaunchPath] executablePath];
     [NSTask launchedTaskWithLaunchPath:relaunchToolPath arguments:@[[self.host bundlePath],
                                                                     pathToRelaunch,
                                                                     [NSString stringWithFormat:@"%d", [[NSProcessInfo processInfo] processIdentifier]],

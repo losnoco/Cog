@@ -90,7 +90,7 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
     // Let's try to read the version number so the filename will be more meaningful.
     NSString *postFix;
     NSString *version;
-	if ((version = [[NSBundle bundleWithPath:path] objectForInfoDictionaryKey:@"CFBundleVersion"]) && ![version isEqualToString:@""])
+	if ((version = [[NSBundle bundleWithPath:path] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey]) && ![version isEqualToString:@""])
 	{
         NSMutableCharacterSet *validCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
         [validCharacters formUnionWithCharacterSet:[NSCharacterSet characterSetWithCharactersInString:@".-()"]];
@@ -138,23 +138,24 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
     if (!tempDir)
         tempDir = [path stringByDeletingLastPathComponent];
 
-// Let's try to read the version number so the filename will be more meaningful.
-#if TRY_TO_APPEND_VERSION_NUMBER
-    NSString *postFix = nil;
-    NSString *version = nil;
-	if ((version = [[NSBundle bundleWithPath: path] objectForInfoDictionaryKey:@"CFBundleVersion"]) && ![version isEqualToString:@""])
-	{
-        NSMutableCharacterSet *validCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
-        [validCharacters formUnionWithCharacterSet:[NSCharacterSet characterSetWithCharactersInString:@".-()"]];
-        postFix = [version stringByTrimmingCharactersInSet:[validCharacters invertedSet]];
-	}
-	else {
-        postFix = @"old";
+    // Let's try to read the version number so the filename will be more meaningful
+    NSString *prefix;
+    if ([[[NSBundle bundleWithIdentifier:SUBundleIdentifier] infoDictionary][SUAppendVersionNumberKey] boolValue]) {
+        NSString *postFix = nil;
+        NSString *version = nil;
+        if ((version = [[NSBundle bundleWithPath: path] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey]) && ![version isEqualToString:@""])
+        {
+            NSMutableCharacterSet *validCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
+            [validCharacters formUnionWithCharacterSet:[NSCharacterSet characterSetWithCharactersInString:@".-()"]];
+            postFix = [version stringByTrimmingCharactersInSet:[validCharacters invertedSet]];
+        }
+        else {
+            postFix = @"old";
+        }
+        prefix = [NSString stringWithFormat:@"%@ (%@)", [[path lastPathComponent] stringByDeletingPathExtension], postFix];
+    } else {
+        prefix = [[path lastPathComponent] stringByDeletingPathExtension];
     }
-    NSString *prefix = [NSString stringWithFormat:@"%@ (%@)", [[path lastPathComponent] stringByDeletingPathExtension], postFix];
-#else
-    NSString *prefix = [[path lastPathComponent] stringByDeletingPathExtension];
-#endif
     NSString *tempName = [prefix stringByAppendingPathExtension:[path pathExtension]];
     tempDir = [tempDir stringByAppendingPathComponent:tempName];
 

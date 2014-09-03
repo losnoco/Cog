@@ -121,9 +121,12 @@
         return cleanup();
     }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdirect-ivar-access"
     dataVerifyTransform = SecVerifyTransformCreate(_secKey, (__bridge CFDataRef)signature, &error);
+#pragma clang diagnostic pop
     if (!dataVerifyTransform || error) {
-        SULog(@"Could not understand format of the sugnature: %@; Signature data: %@", error, signature);
+        SULog(@"Could not understand format of the signature: %@; Signature data: %@", error, signature);
         return cleanup();
     }
 
