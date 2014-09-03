@@ -1732,6 +1732,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941CF0D94A70100DD942E /* ConfigCommonDebug.xcconfig */;
 			buildSettings = {
+				INSTALL_PATH = "@loader_path/../Frameworks";
 			};
 			name = Debug;
 		};
@@ -1739,6 +1740,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941CC0D94A70100DD942E /* ConfigCommonRelease.xcconfig */;
 			buildSettings = {
+				INSTALL_PATH = "@loader_path/../Frameworks";
 			};
 			name = Release;
 		};
