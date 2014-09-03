@@ -1588,7 +1588,7 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
         if (outPeriod < 16)
             outPeriod = 16;
         
-        if (inPeriod >= Note2Period[(outPeriod - 16) >> 1])
+        if (inPeriod >= p->Note2Period[(outPeriod - 16) >> 1])
         {
             outPeriod -= fineTune;
             if (outPeriod & 0x00010000)
@@ -1617,7 +1617,7 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
     if (outPeriod >= ((((8 * 12 * 16) + 15) * 2) - 1))
         outPeriod  =   ((8 * 12 * 16) + 15) * 2;
     
-    return (Note2Period[outPeriod >> 1]); // 16-bit look-up, shift it down
+    return (p->Note2Period[outPeriod >> 1]); // 16-bit look-up, shift it down
 }
 
 static void TonePorta(PLAYER *p, StmTyp *ch)
