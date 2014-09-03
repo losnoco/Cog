@@ -1,6 +1,14 @@
 /*
-** FT2PLAY v0.65 - 15th of August 2014
-** ===================================
+** FT2PLAY v0.66 - 3rd of September 2014
+** =====================================
+**
+** Changelog from v0.65:
+** - RelocateTon() was less accurate, changed back to the older one
+**    and made it a little bit safer. This one is slower tho' :o(
+** - Forgot to zero out the internal Stm channels in StopVoices().
+**
+** Changelog from v0.64:
+** - Fixed a critical bug in the finetune calculation.
 **
 ** C port of FastTracker II's replayer, by 8bitbubsy (Olav Sorensen)
 ** using the original pascal+asm source codes by Mr.H (Fredrik Huss)
@@ -578,6 +586,7 @@ static void StartTone(PLAYER *p, uint8_t Ton, uint8_t EffTyp, uint8_t Eff, StmTy
     uint16_t tmpTon;
     uint8_t samp;
     uint8_t tonLookUp;
+    uint8_t tmpFTune;
 
     /* if we came from Rxy (retrig), we didn't check note (Ton) yet */
     if (Ton == 97)
@@ -632,7 +641,9 @@ static void StartTone(PLAYER *p, uint8_t Ton, uint8_t EffTyp, uint8_t Eff, StmTy
 
     if (Ton)
     {
-        tmpTon = (((Ton - 1) & 0x00FF) << 4) + (((ch->FineTune >> 3) + 16) & 0x00FF);
+        // signed 8-bit >>3 without rounding or undefined behavior (FT2 exact)
+        tmpFTune = (ch->FineTune >= 0) ? (ch->FineTune >> 3) : (0xE0 | ((uint8_t)(ch->FineTune) >> 3));
+        tmpTon = (((Ton - 1) & 0x00FF) << 4) + ((tmpFTune + 16) & 0x00FF);
 
         if (tmpTon < ((12 * 10 * 16) + 16)) /* should never happen, but FT2 does this check */
         {
@@ -1169,6 +1180,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
 static void fixTonePorta(PLAYER *pl, StmTyp *ch, TonTyp *p, uint8_t inst)
 {
     uint16_t portaTmp;
+    uint8_t tmpFTune;
     
     if (p->Ton)
     {
@@ -1178,7 +1190,9 @@ static void fixTonePorta(PLAYER *pl, StmTyp *ch, TonTyp *p, uint8_t inst)
         }
         else
         {
-            portaTmp = ((((p->Ton - 1) + ch->RelTonNr) & 0x00FF) << 4) + (((ch->FineTune >> 3) + 16) & 0x00FF);
+            // signed 8-bit >>3 without rounding or undefined behavior (FT2 exact)
+            tmpFTune = (ch->FineTune >= 0) ? (ch->FineTune >> 3) : (0xE0 | ((uint8_t)(ch->FineTune) >> 3));
+            portaTmp = ((((p->Ton - 1) + ch->RelTonNr) & 0x00FF) << 4) + ((tmpFTune + 16) & 0x00FF);
             
             if (portaTmp < ((12 * 10 * 16) + 16))
             {
@@ -1546,35 +1560,64 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
 
 static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *ch)
 {
+    // This *should* be more accurate now, but slower. Stupid routine!
+
     int8_t i;
     int8_t fineTune;
 
-    uint16_t lower;
-    uint16_t middle;
-    uint16_t upper;
-
-    fineTune = ch->FineTune >> 3; // -16..15
-    lower = 0;
-    upper = 8 * 12 * 16;
-
+    int16_t oldPeriod;
+    int16_t addPeriod;
+    
+    int32_t outPeriod;
+    
+    oldPeriod = 0;
+    addPeriod = (8 * 12 * 16) * 2;
+    
+    // safe signed 8-bit >>3 (FT2 exact even on non-x86 platforms)
+    if (ch->FineTune >= 0)
+        fineTune = ch->FineTune >> 2;
+    else
+        fineTune = (int8_t)(0xE0 | ((uint8_t)(ch->FineTune) >> 3)) * 2;
+    
     for (i = 0; i < 8; ++i)
     {
-        middle = ((lower + upper) >> 1) & 0xFFF0;
-
-        if (inPeriod >= p->Note2Period[middle + fineTune])
-            upper = middle;
+        outPeriod = (((oldPeriod + addPeriod) >> 1) & 0xFFE0) + fineTune;
+        if (outPeriod < fineTune)
+            outPeriod += (1 << 8);
+        
+        if (outPeriod < 16)
+            outPeriod = 16;
+        
+        if (inPeriod >= Note2Period[(outPeriod - 16) >> 1])
+        {
+            outPeriod -= fineTune;
+            if (outPeriod & 0x00010000)
+                outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
+            
+            addPeriod = (int16_t)(outPeriod);
+        }
         else
-            lower = middle;
+        {
+            outPeriod -= fineTune;
+            if (outPeriod & 0x00010000)
+                outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
+            
+            oldPeriod = (int16_t)(outPeriod);
+        }
     }
-
-    fineTune += 16; /* make unsigned (0..31) */
-
-    middle = lower + fineTune + (addNote << 4);
-
-    if (middle >= ((8 * 12 * 16) + 15) - 1)
-        middle = (8 * 12 * 16) + 15;
-
-    return (p->Note2Period[middle]);
+    
+    outPeriod = oldPeriod + fineTune;
+    if (outPeriod < fineTune)
+        outPeriod += (1 << 8);
+    
+    if (outPeriod < 0)
+        outPeriod = 0;
+    
+    outPeriod += ((int16_t)(addNote) << 5);
+    if (outPeriod >= ((((8 * 12 * 16) + 15) * 2) - 1))
+        outPeriod  =   ((8 * 12 * 16) + 15) * 2;
+    
+    return (Note2Period[outPeriod >> 1]); // 16-bit look-up, shift it down
 }
 
 static void TonePorta(PLAYER *p, StmTyp *ch)
@@ -2163,6 +2206,7 @@ static void StopVoices(PLAYER *p)
     uint8_t a;
 
     memset(p->voice, 0, sizeof (p->voice));
+    memset(p->Stm,   0, sizeof (p->Stm));
 
     for (a = 0; a < MAX_VOICES; ++a)
     {
