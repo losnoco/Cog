@@ -394,25 +394,19 @@ typedef struct
     
     TonTyp   *NilPatternLine;
     TonTyp   *Patt[256];
-    StmTyp    Stm[127];
+    StmTyp    Stm[MAX_VOICES];
     SongTyp   Song;
     InstrTyp *Instr[255 + 1];
-#ifdef USE_VOL_RAMP
-    VOICE voice[127*2];
+    VOICE voice[TOTAL_VOICES];
     
-    void *resampler[127*2*2];
-#else
-    VOICE voice[127];
-    
-    void *resampler[127*2];
-#endif
+    void *resampler[TOTAL_VOICES*2];
     
     float *PanningTab;
     float f_outputFreq;
     
 #ifdef USE_VOL_RAMP
-    float f_samplesPerFrame;
-    float f_samplesPerFrameSharp;
+    float f_samplesPerFrame005;
+    float f_samplesPerFrame010;
 #endif
     
     /* pre-initialized variables */
@@ -449,7 +443,7 @@ static void voiceSetSource(PLAYER *, uint8_t i, const int8_t *sampleData,
     int32_t sampleLoopEnd, int8_t loopEnabled,
     int8_t sixteenbit, int8_t stereo);
 static void voiceSetSamplePosition(PLAYER *, uint8_t i, uint16_t value);
-static void voiceSetVolume(PLAYER *, uint8_t i, float vol, uint8_t pan);
+static void voiceSetVolume(PLAYER *, uint8_t i, float vol, uint8_t pan, uint8_t note_on);
 static void voiceSetSamplingFrequency(PLAYER *, uint8_t i, uint32_t samplingFrequency);
 static void ft2play_FreeSong(PLAYER *);
 
@@ -2064,6 +2058,10 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
 
     uint8_t i;
     int8_t tickzero;
+    
+#ifdef USE_VOL_RAMP
+    int32_t rampStyle = p->rampStyle;
+#endif
 
     if (p->Playing)
     {
@@ -2082,9 +2080,9 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
                 for (i = 0; i < p->Song.AntChn; ++i)
                 {
                     if (p->Patt[p->Song.PattNr] != NULL)
-                        GetNewNote(p, &p->Stm[i], &p->Patt[p->Song.PattNr][(p->Song.PattPos * 127) + i]);
+                        GetNewNote(p, &p->Stm[i], &p->Patt[p->Song.PattNr][(p->Song.PattPos * MAX_VOICES) + i]);
                     else
-                        GetNewNote(p, &p->Stm[i], &p->NilPatternLine[(p->Song.PattPos * 127) + i]);
+                        GetNewNote(p, &p->Stm[i], &p->NilPatternLine[(p->Song.PattPos * MAX_VOICES) + i]);
 
                     FixaEnvelopeVibrato(p, &p->Stm[i]);
                 }
@@ -2166,24 +2164,22 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
     {
         ch = &p->Stm[i];
 
-        if (ch->Status & IS_Vol)
-            voiceSetVolume(p, ch->Nr, ch->FinalVol, ch->FinalPan);
-
-        if (ch->Status & IS_Period)
-            voiceSetSamplingFrequency(p, ch->Nr, GetFrequenceValue(p, ch->FinalPeriod));
-
         if (ch->Status & IS_NyTon)
         {
             s = ch->InstrOfs;
 
 #ifdef USE_VOL_RAMP
-            if (voiceIsActive(p, ch->Nr))
+            if (rampStyle > 0 && voiceIsActive(p, ch->Nr))
             {
-                memcpy(p->voice + SPARE_OFFSET + ch->Nr, p->voice + ch->Nr, sizeof (VOICE));
+                int32_t ChNr = ch->Nr;
+                memcpy(p->voice + SPARE_OFFSET + ChNr, p->voice + ChNr, sizeof (VOICE));
                 
-                p->voice[SPARE_OFFSET + ch->Nr].faderDest  = 0.0f;
-                p->voice[SPARE_OFFSET + ch->Nr].faderDelta =
-                (p->voice[SPARE_OFFSET + ch->Nr].faderDest - p->voice[SPARE_OFFSET + ch->Nr].fader) / (p->f_outputFreq * 0.010f);
+                p->voice[SPARE_OFFSET + ChNr].faderDest  = 0.0f;
+                p->voice[SPARE_OFFSET + ChNr].faderDelta =
+                (p->voice[SPARE_OFFSET + ChNr].faderDest - p->voice[SPARE_OFFSET + ChNr].fader) * p->f_samplesPerFrame010;
+
+                resampler_dup_inplace(p->resampler[SPARE_OFFSET + ChNr], p->resampler[ChNr]);
+                resampler_dup_inplace(p->resampler[TOTAL_VOICES + SPARE_OFFSET + ChNr], p->resampler[TOTAL_VOICES + ChNr]);
             }
 #endif
             
@@ -2191,12 +2187,21 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
             voiceSetSamplePosition(p, ch->Nr, ch->SmpStartPos);
             
 #ifdef USE_VOL_RAMP
-            p->voice[ch->Nr].fader      = 0.0f;
-            p->voice[ch->Nr].faderDest  = 1.0f;
-            p->voice[ch->Nr].faderDelta = (p->voice[ch->Nr].faderDest - p->voice[ch->Nr].fader) / (p->f_outputFreq * 0.005f);
+            if (rampStyle > 0)
+            {
+                p->voice[ch->Nr].fader      = 0.0f;
+                p->voice[ch->Nr].faderDest  = 1.0f;
+                p->voice[ch->Nr].faderDelta = (p->voice[ch->Nr].faderDest - p->voice[ch->Nr].fader) * p->f_samplesPerFrame005;
+            }
 #endif
         }
 
+        if (ch->Status & IS_Vol)
+            voiceSetVolume(p, ch->Nr, ch->FinalVol, ch->FinalPan, ch->Status & IS_NyTon);
+        
+        if (ch->Status & IS_Period)
+            voiceSetSamplingFrequency(p, ch->Nr, GetFrequenceValue(p, ch->FinalPeriod));
+        
         ch->Status = 0;
     }
 }
@@ -2226,7 +2231,7 @@ static void StopVoices(PLAYER *p)
         ch->FinalPan = 128;
         ch->VibDepth = 0;
 
-        voiceSetVolume(p, a, ch->FinalVol, ch->FinalPan);
+        voiceSetVolume(p, a, ch->FinalVol, ch->FinalPan, 1);
     }
 }
 
@@ -2856,11 +2861,6 @@ int8_t ft2play_LoadModule(void *_p, const uint8_t *buffer, size_t size)
 static void setSamplesPerFrame(PLAYER *p, uint32_t val)
 {
     p->samplesPerFrame = val;
-
-#ifdef USE_VOL_RAMP
-    p->f_samplesPerFrame = 1.0f / ((float)(val) / 4.0f);
-    p->f_samplesPerFrameSharp = 1.0f / (p->f_outputFreq / 1000.0f); /* 1ms */
-#endif
 }
 
 static void setSamplingInterpolation(PLAYER *p, int8_t value)
@@ -2901,9 +2901,6 @@ static inline void voiceSetSource(PLAYER *p, uint8_t i, const int8_t *sampleData
     v->loopingForward   = 1;
     v->stereo           = stereo;
     v->interpolating    = 1;
-    
-    resampler_clear(p->resampler[i]);
-    resampler_clear(p->resampler[i+TOTAL_VOICES]);
 }
 
 static inline void voiceSetSamplePosition(PLAYER *p, uint8_t i, uint16_t value)
@@ -2919,21 +2916,28 @@ static inline void voiceSetSamplePosition(PLAYER *p, uint8_t i, uint16_t value)
     }
     
     v->interpolating = 1;
-
-    resampler_clear(p->resampler[i]);
-    resampler_clear(p->resampler[i+TOTAL_VOICES]);
 }
 
-static inline void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan)
+static inline void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, uint8_t note_on)
 {
     VOICE *v;
     v = &p->voice[i];
     
 #ifdef USE_VOL_RAMP
-    v->targetVolL = vol * p->PanningTab[256 - pan];
-    v->targetVolR = vol * p->PanningTab[pan];
-    v->volDeltaL  = (v->targetVolL - v->volumeL) / (p->f_outputFreq * 0.005f);
-    v->volDeltaR  = (v->targetVolR - v->volumeR) / (p->f_outputFreq * 0.005f);
+    if (!note_on && p->rampStyle > 1)
+    {
+        v->targetVolL = vol * p->PanningTab[256 - pan];
+        v->targetVolR = vol * p->PanningTab[pan];
+        v->volDeltaL  = (v->targetVolL - v->volumeL) * p->f_samplesPerFrame005;
+        v->volDeltaR  = (v->targetVolR - v->volumeR) * p->f_samplesPerFrame005;
+    }
+    else
+    {
+        v->targetVolL = v->volumeL = vol * p->PanningTab[256 - pan];
+        v->targetVolR = v->volumeR = vol * p->PanningTab[pan];
+        v->volDeltaL = 0.0f;
+        v->volDeltaR = 0.0f;
+    }
 #else
     v->volumeL = vol * p->PanningTab[256 - pan];
     v->volumeR = vol * p->PanningTab[pan];
@@ -3043,8 +3047,9 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
         v->loopingForward = loopingForward;
         v->interpolating  = (int8_t)interpolating;
         
-        if ( !resampler_ready(resampler) )
+        if ( !resampler_get_sample_count(resampler) )
         {
+            resampler_clear(resampler);
             v->sampleData = NULL;
             break;
         }
@@ -3053,50 +3058,50 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
         resampler_remove_sample(resampler);
         
 #ifdef USE_VOL_RAMP
-        v->fader += v->faderDelta;
-        
-        if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
+        if (rampStyle > 0)
         {
-            v->fader = v->faderDest;
-        }
-        else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
-        {
-            v->fader = v->faderDest;
-            v->sampleData = NULL;
-        }
+            v->fader += v->faderDelta;
         
-        sample *= v->fader;
+            if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
+            {
+                v->fader = v->faderDest;
+            }
+            else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
+            {
+                v->fader = v->faderDest;
+                resampler_clear(resampler);
+                v->sampleData = NULL;
+            }
+        
+            sample *= v->fader;
+        }
 #endif
         
         sampleL = sample * v->volumeL;
         sampleR = sample * v->volumeR;
         
 #ifdef USE_VOL_RAMP
-        if (rampStyle > 0)
+        if (rampStyle > 1)
         {
             v->volumeL += v->volDeltaL;
             v->volumeR += v->volDeltaR;
             
-            if (v->volDeltaL >= 0.0f)
+            if ((v->volDeltaL > 0.0f) && (v->volumeL > v->targetVolL))
             {
-                if (v->volumeL > v->targetVolL)
-                    v->volumeL = v->targetVolL;
+                v->volumeL = v->targetVolL;
             }
-            else
+            else if ((v->volDeltaL < 0.0f) && (v->volumeL < v->targetVolL))
             {
-                if (v->volumeL < v->targetVolL)
-                    v->volumeL = v->targetVolL;
+                v->volumeL = v->targetVolL;
             }
             
-            if (v->volDeltaR >= 0.0f)
+            if ((v->volDeltaR > 0.0f) && (v->volumeR > v->targetVolR))
             {
-                if (v->volumeR > v->targetVolR)
-                    v->volumeR = v->targetVolR;
+                v->volumeR = v->targetVolR;
             }
-            else
+            else if ((v->volDeltaR < 0.0f) && (v->volumeR < v->targetVolR))
             {
-                if (v->volumeR < v->targetVolR)
-                    v->volumeR = v->targetVolR;
+                v->volumeR = v->targetVolR;
             }
         }
 #endif
@@ -3206,8 +3211,9 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         v->loopingForward = loopingForward;
         v->interpolating  = (int8_t)interpolating;
         
-        if ( !resampler_ready(resampler[0]) )
+        if ( !resampler_get_sample_count(resampler[0]) )
         {
+            resampler_clear(resampler);
             v->sampleData = NULL;
             break;
         }
@@ -3218,51 +3224,51 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         resampler_remove_sample(resampler[1]);
         
 #ifdef USE_VOL_RAMP
-        v->fader += v->faderDelta;
-        
-        if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
+        if (rampStyle > 0)
         {
-            v->fader = v->faderDest;
-        }
-        else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
-        {
-            v->fader = v->faderDest;
-            v->sampleData = NULL;
-        }
+            v->fader += v->faderDelta;
         
-        sampleL *= v->fader;
-        sampleR *= v->fader;
+            if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
+            {
+                v->fader = v->faderDest;
+            }
+            else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
+            {
+                v->fader = v->faderDest;
+                resampler_clear(resampler);
+                v->sampleData = NULL;
+            }
+        
+            sampleL *= v->fader;
+            sampleR *= v->fader;
+        }
 #endif
         
         sampleL *= v->volumeL;
         sampleR *= v->volumeR;
         
 #ifdef USE_VOL_RAMP
-        if (rampStyle > 0)
+        if (rampStyle > 1)
         {
             v->volumeL += v->volDeltaL;
             v->volumeR += v->volDeltaR;
             
-            if (v->volDeltaL >= 0.0f)
+            if ((v->volDeltaL > 0.0f) && (v->volumeL > v->targetVolL))
             {
-                if (v->volumeL > v->targetVolL)
-                    v->volumeL = v->targetVolL;
+                v->volumeL = v->targetVolL;
             }
-            else
+            else if ((v->volDeltaL < 0.0f) && (v->volumeL < v->targetVolL))
             {
-                if (v->volumeL < v->targetVolL)
-                    v->volumeL = v->targetVolL;
+                v->volumeL = v->targetVolL;
             }
             
-            if (v->volDeltaR >= 0.0f)
+            if ((v->volDeltaR > 0.0f) && (v->volumeR > v->targetVolR))
             {
-                if (v->volumeR > v->targetVolR)
-                    v->volumeR = v->targetVolR;
+                v->volumeR = v->targetVolR;
             }
-            else
+            else if ((v->volDeltaR < 0.0f) && (v->volumeR < v->targetVolR))
             {
-                if (v->volumeR < v->targetVolR)
-                    v->volumeR = v->targetVolR;
+                v->volumeR = v->targetVolR;
             }
         }
 #endif
@@ -3370,8 +3376,9 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
         v->loopingForward = loopingForward;
         v->interpolating  = (int8_t)interpolating;
         
-        if ( !resampler_ready(resampler) )
+        if ( !resampler_get_sample_count(resampler) )
         {
+            resampler_clear(resampler);
             v->sampleData = NULL;
             break;
         }
@@ -3380,50 +3387,50 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
         resampler_remove_sample(resampler);
         
 #ifdef USE_VOL_RAMP
-        v->fader += v->faderDelta;
-        
-        if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
+        if (rampStyle > 0)
         {
-            v->fader = v->faderDest;
-        }
-        else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
-        {
-            v->fader = v->faderDest;
-            v->sampleData = NULL;
-        }
+            v->fader += v->faderDelta;
         
-        sample *= v->fader;
+            if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
+            {
+                v->fader = v->faderDest;
+            }
+            else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
+            {
+                v->fader = v->faderDest;
+                resampler_clear(resampler);
+                v->sampleData = NULL;
+            }
+        
+            sample *= v->fader;
+        }
 #endif
         
         sampleL = sample * v->volumeL;
         sampleR = sample * v->volumeR;
         
 #ifdef USE_VOL_RAMP
-        if (rampStyle > 0)
+        if (rampStyle > 1)
         {
             v->volumeL += v->volDeltaL;
             v->volumeR += v->volDeltaR;
             
-            if (v->volDeltaL >= 0.0f)
+            if ((v->volDeltaL > 0.0f) && (v->volumeL > v->targetVolL))
             {
-                if (v->volumeL > v->targetVolL)
-                    v->volumeL = v->targetVolL;
+                v->volumeL = v->targetVolL;
             }
-            else
+            else if ((v->volDeltaL < 0.0f) && (v->volumeL < v->targetVolL))
             {
-                if (v->volumeL < v->targetVolL)
-                    v->volumeL = v->targetVolL;
+                v->volumeL = v->targetVolL;
             }
             
-            if (v->volDeltaR >= 0.0f)
+            if ((v->volDeltaR > 0.0f) && (v->volumeR > v->targetVolR))
             {
-                if (v->volumeR > v->targetVolR)
-                    v->volumeR = v->targetVolR;
+                v->volumeR = v->targetVolR;
             }
-            else
+            else if ((v->volDeltaR < 0.0f) && (v->volumeR < v->targetVolR))
             {
-                if (v->volumeR < v->targetVolR)
-                    v->volumeR = v->targetVolR;
+                v->volumeR = v->targetVolR;
             }
         }
 #endif
@@ -3533,8 +3540,9 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         v->loopingForward = loopingForward;
         v->interpolating  = (int8_t)interpolating;
         
-        if ( !resampler_ready(resampler[0]) )
+        if ( !resampler_get_sample_count(resampler[0]) )
         {
+            resampler_clear(resampler);
             v->sampleData = NULL;
             break;
         }
@@ -3545,51 +3553,51 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         resampler_remove_sample(resampler[1]);
         
 #ifdef USE_VOL_RAMP
-        v->fader += v->faderDelta;
-        
-        if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
+        if (rampStyle > 0)
         {
-            v->fader = v->faderDest;
-        }
-        else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
-        {
-            v->fader = v->faderDest;
-            v->sampleData = NULL;
-        }
+            v->fader += v->faderDelta;
         
-        sampleL *= v->fader;
-        sampleR *= v->fader;
+            if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
+            {
+                v->fader = v->faderDest;
+            }
+            else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
+            {
+                v->fader = v->faderDest;
+                resampler_clear(resampler);
+                v->sampleData = NULL;
+            }
+        
+            sampleL *= v->fader;
+            sampleR *= v->fader;
+        }
 #endif
         
         sampleL *= v->volumeL;
         sampleR *= v->volumeR;
         
 #ifdef USE_VOL_RAMP
-        if (rampStyle > 0)
+        if (rampStyle > 1)
         {
             v->volumeL += v->volDeltaL;
             v->volumeR += v->volDeltaR;
             
-            if (v->volDeltaL >= 0.0f)
+            if ((v->volDeltaL > 0.0f) && (v->volumeL > v->targetVolL))
             {
-                if (v->volumeL > v->targetVolL)
-                    v->volumeL = v->targetVolL;
+                v->volumeL = v->targetVolL;
             }
-            else
+            else if ((v->volDeltaL < 0.0f) && (v->volumeL < v->targetVolL))
             {
-                if (v->volumeL < v->targetVolL)
-                    v->volumeL = v->targetVolL;
+                v->volumeL = v->targetVolL;
             }
             
-            if (v->volDeltaR >= 0.0f)
+            if ((v->volDeltaR > 0.0f) && (v->volumeR > v->targetVolR))
             {
-                if (v->volumeR > v->targetVolR)
-                    v->volumeR = v->targetVolR;
+                v->volumeR = v->targetVolR;
             }
-            else
+            else if ((v->volDeltaR < 0.0f) && (v->volumeR < v->targetVolR))
             {
-                if (v->volumeR < v->targetVolR)
-                    v->volumeR = v->targetVolR;
+                v->volumeR = v->targetVolR;
             }
         }
 #endif
@@ -3748,6 +3756,10 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
     
     p->outputFreq          = _samplingFrequency;
     p->f_outputFreq        = (float)(p->outputFreq);
+#ifdef USE_VOL_RAMP
+    p->f_samplesPerFrame010= 1.0f / (p->f_outputFreq * 0.010f);
+    p->f_samplesPerFrame005= 1.0f / (p->f_outputFreq * 0.005f);
+#endif
     p->soundBufferSize     = _soundBufferSize;
 
     p->masterBufferL       = (float *)(malloc(p->soundBufferSize * sizeof (float)));
@@ -3874,11 +3886,7 @@ void ft2play_Free(void *_p)
     if (p->linearPeriods)  free(p->linearPeriods);  p->linearPeriods  = NULL;
     if (p->NilPatternLine) free(p->NilPatternLine); p->NilPatternLine = NULL;
     
-#ifdef USE_VOL_RAMP
-    for ( i = 0; i < 127 * 2 * 2; ++i )
-#else
-    for ( i = 0; i < 127 * 2; ++i )
-#endif
+    for ( i = 0; i < TOTAL_VOICES * 2; ++i )
     {
         if ( p->resampler[i] )
             resampler_delete( p->resampler[i] );
@@ -4049,7 +4057,7 @@ void ft2play_Mute(void *_p, int8_t channel, int8_t mute)
 {
     PLAYER * p = (PLAYER *)_p;
     int8_t mask = 1 << (channel % 8);
-    if (channel > 127)
+    if (channel > MAX_VOICES)
         return;
     if (mute)
         p->muted[channel / 8] |= mask;
