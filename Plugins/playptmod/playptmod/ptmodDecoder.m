@@ -89,6 +89,8 @@ BOOL probe_length( void * ptmod, unsigned long * intro_length, unsigned long * l
     {
         if ( !probe_length(mod, &vblank_intro_length, &vblank_loop_length, 1, data, size, track_num) )
             return NO;
+        if (vblank_loop_length == 0)
+            can_be_vblank = NO;
     }
     else
     {
