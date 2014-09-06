@@ -478,8 +478,9 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteEnabled"];
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteOnlyOnActive"];
 
-    NSString * feedURLdefault = @"https://kode54.net/cog/mercury.xml";
+    NSString * feedURLdefault = @"https://www.kode54.net/cog/mercury.xml";
     NSString * feedURLbroken = @"https://kode54.net/cog/stable.xml";
+    NSString * feedURLbroken2 = @"https://kode54.net/cog/mercury.xml";
 	[userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
 
 
@@ -499,7 +500,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[[NSUserDefaults standardUserDefaults] synchronize];
     
     //And if the existing feed URL is broken due to my ineptitude with the above defaults, fix it
-    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"] isEqualToString:feedURLbroken])
+    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"] isEqualToString:feedURLbroken] ||
+        [[[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"] isEqualToString:feedURLbroken2])
         [[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
 	
 	//Add observers

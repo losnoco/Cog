@@ -29,7 +29,7 @@
 
     [self addObject:
      [NSDictionary dictionaryWithObjectsAndKeys:
-      NSLocalizedStringFromTableInBundle(@"kode54.net wheneverly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://kode54.net/cog/mercury.xml", @"url",nil]];
+      NSLocalizedStringFromTableInBundle(@"kode54.net wheneverly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"https://www.kode54.net/cog/mercury.xml", @"url",nil]];
 }
 
 @end
