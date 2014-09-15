@@ -42,6 +42,8 @@
 
 #include "resampler.h"
 
+#include "barray.h"
+
 #include "ft2play.h"
 
 #if defined(_MSC_VER) && !defined(inline)
@@ -425,7 +427,7 @@ typedef struct
     uint8_t muted[16];
     
     uint32_t loopCount;
-    uint8_t playedOrder[8192];
+    void * playedRows;
 } PLAYER;
 
 /* FUNCTION DECLARATIONS */
@@ -879,11 +881,9 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
                         p->Song.PBreakFlag = 1;
                     }
                 }
-                if (p->Song.PBreakFlag == 1 && p->Song.PBreakPos == 0)
+                if (p->Song.PBreakFlag == 1)
                 {
-                    int32_t offset = p->Song.SongPos / 8;
-                    int32_t bit = 1 << (p->Song.SongPos % 8);
-                    p->playedOrder[offset] &= ~bit;
+                    bit_array_clear_range(p->playedRows, p->Song.SongPos * 1024 + ch->PattPos, (p->Song.PattPos & 0x00FF) - ch->PattPos + 1);
                 }
             }
         }
@@ -2118,7 +2118,11 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
             if (p->Song.PattDelTime2)
             {
                 p->Song.PattDelTime2--;
-                if (p->Song.PattDelTime2) p->Song.PattPos--;
+                if (p->Song.PattDelTime2)
+                {
+                    p->Song.PattPos--;
+                    bit_array_clear(p->playedRows, p->Song.SongPos * 1024 + p->Song.PattPos);
+                }
             }
             
             if (p->Song.PBreakFlag)
@@ -2140,17 +2144,12 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
                 p->Song.PattLen = p->PattLens[p->Song.PattNr];
             }
 
-            if (p->Song.PattPos == 0)
+            if (bit_array_test(p->playedRows, p->Song.SongPos * 1024 + p->Song.PattPos))
             {
-                int32_t offset = p->Song.SongPos / 8;
-                int32_t bit = 1 << (p->Song.SongPos % 8);
-                if (p->playedOrder[offset] & bit)
-                {
-                    p->loopCount++;
-                    memset(p->playedOrder, 0, sizeof(p->playedOrder));
-                }
-                p->playedOrder[offset] |= bit;
+                p->loopCount++;
+                bit_array_reset(p->playedRows);
             }
+            bit_array_set(p->playedRows, p->Song.SongPos * 1024 + p->Song.PattPos);
         }
     }
     else
@@ -3855,6 +3854,8 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
     /* generate FT2's pan table [round(65536*sqrt(n/256)) for n = 0...256] */
     for (i = 0; i < 257; ++i)
         p->PanningTab[i] = sqrtf((float)(i) / 256.0f);
+
+    p->playedRows = NULL;
     
     return p;
     
@@ -3871,6 +3872,8 @@ void ft2play_Free(void *_p)
     
     if (p->Playing)
     {
+        if (p->playedRows) bit_array_destroy(p->playedRows); p->playedRows = NULL;
+
         if (p->masterBufferL) free(p->masterBufferL); p->masterBufferL = NULL;
         if (p->masterBufferR) free(p->masterBufferR); p->masterBufferR = NULL;
     }
@@ -3915,8 +3918,10 @@ void ft2play_PlaySong(void *_p, int32_t startOrder)
     p->Song.startOrder = (int16_t)startOrder;
     
     p->loopCount = 0;
-    memset(p->playedOrder, 0, sizeof(p->playedOrder));
-    p->playedOrder[startOrder / 8] = 1 << (startOrder % 8);
+    
+    if (p->playedRows) bit_array_destroy(p->playedRows);
+    p->playedRows = bit_array_create(1024 * (p->Song.Len ?: 1));
+    bit_array_set(p->playedRows, startOrder * 1024);
 }
 
 static int mopen_is_big_endian;
