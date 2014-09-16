@@ -17,6 +17,7 @@
 VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_adx,
     init_vgmstream_brstm,
+	init_vgmstream_bfwav,
     init_vgmstream_nds_strm,
     init_vgmstream_agsc,
     init_vgmstream_ngc_adpdtk,
@@ -26,6 +27,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_halpst,
     init_vgmstream_rs03,
     init_vgmstream_ngc_dsp_std,
+	 init_vgmstream_ngc_dsp_csmp,
     init_vgmstream_Cstr,
     init_vgmstream_gcsw,
     init_vgmstream_ps2_ads,
@@ -331,6 +333,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
 	init_vgmstream_ps2_vbk,
 	init_vgmstream_otm,
 	init_vgmstream_bcstm,
+  init_vgmstream_3ds_idsp,
 };
 
 #define INIT_VGMSTREAM_FCNS (sizeof(init_vgmstream_fcns)/sizeof(init_vgmstream_fcns[0]))
@@ -2142,6 +2145,9 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
         case meta_DSP_AGSC:
             snprintf(temp,TEMPSIZE,"Retro Studios AGSC header");
             break;
+        case meta_DSP_CSMP:
+            snprintf(temp,TEMPSIZE,"Retro Studios CSMP header");
+            break;
         case meta_NGC_ADPDTK:
             snprintf(temp,TEMPSIZE,"assumed Nintendo ADP by .adp extension and valid first frame");
             break;
@@ -3066,6 +3072,9 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
 		case meta_CSTM:
             snprintf(temp,TEMPSIZE,"Nintendo 3DS CSTM Header");
             break;
+    case meta_3DS_IDSP:
+            snprintf(temp,TEMPSIZE,"Nintendo 3DS IDSP Header");
+            break;
 		default:
            snprintf(temp,TEMPSIZE,"THEY SHOULD HAVE SENT A POET");
     }
@@ -3084,7 +3093,7 @@ const char * const dfs_pairs[][2] = {
 
 void try_dual_file_stereo(VGMSTREAM * opened_stream, STREAMFILE *streamFile) {
     char filename[PATH_LIMIT];
-    char filename2[260];
+    char filename2[PATH_LIMIT];
     char * ext;
     int dfs_name= -1; /*-1=no stereo, 0=opened_stream is left, 1=opened_stream is right */
     VGMSTREAM * new_stream = NULL;

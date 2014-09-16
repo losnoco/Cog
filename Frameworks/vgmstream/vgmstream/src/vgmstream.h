@@ -16,23 +16,14 @@ enum { PATH_LIMIT = 32768 };
 #define VGM_USE_MPEG
 /* disabled by default, defined for builds that support it */
 //#define VGM_USE_G7221
-//#define VGM_USE_MP4V2
-//#define VGM_USE_FDKAAC
 
 #include "streamfile.h"
-#ifdef BUILD_VGMSTREAM
 #include "coding/g72x_state.h"
-#else
-#include "g72x_state.h"
-#endif
 #ifdef VGM_USE_VORBIS
-#ifdef __APPLE__
-#define __MACOSX__
-#endif
 #include <vorbis/vorbisfile.h>
 #endif
 #ifdef VGM_USE_MPEG
-#include <mpg123/mpg123.h>
+#include <mpg123.h>
 #endif
 #ifdef VGM_USE_G7221
 #include "g7221.h"
@@ -51,13 +42,8 @@ enum { PATH_LIMIT = 32768 };
 #include <maiatrac3plus.h>
 #endif
 
-#ifdef BUILD_VGMSTREAM
 #include "coding/acm_decoder.h"
 #include "coding/nwa_decoder.h"
-#else
-#include "acm_decoder.h"
-#include "nwa_decoder.h"
-#endif
 
 /* The encoding type specifies the format the sound data itself takes */
 typedef enum {
@@ -227,6 +213,7 @@ typedef enum {
 typedef enum {
     /* DSP-specific */
     meta_DSP_STD,           /* standard GC ADPCM (DSP) header */
+    meta_DSP_CSMP,          /* Metroid Prime 3, Donkey Kong Country Returns */
     meta_DSP_CSTR,          /* Star Fox Assault "Cstr" */
     meta_DSP_RS03,          /* Metroid Prime 2 "RS03" */
     meta_DSP_STM,           /* Paper Mario 2 STM */
@@ -581,6 +568,7 @@ typedef enum {
 	meta_PS2_VBK,
    meta_OTM,                 // Otomedius (Arcade)
    meta_CSTM,                // Nintendo 3DS CSTM
+   meta_3DS_IDSP,           // Nintendo 3DS IDSP
 #ifdef VGM_USE_MP4V2
 	meta_MP4,
 #endif

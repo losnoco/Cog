@@ -3,6 +3,8 @@
 
 #include "../vgmstream.h"
 
+VGMSTREAM * init_vgmstream_3ds_idsp(STREAMFILE *streamFile);
+
 VGMSTREAM * init_vgmstream_adx(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_afc(STREAMFILE *streamFile);
@@ -30,6 +32,8 @@ VGMSTREAM * init_vgmstream_ngc_dsp_stm(STREAMFILE *streamFile);
 VGMSTREAM * init_vgmstream_ngc_mpdsp(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_ngc_dsp_std_int(STREAMFILE *streamFile);
+
+VGMSTREAM * init_vgmstream_ngc_dsp_csmp(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_ps2_ads(STREAMFILE *streamFile);
 
@@ -631,5 +635,7 @@ VGMSTREAM * init_vgmstream_ps2_vbk(STREAMFILE* streamFile);
 VGMSTREAM * init_vgmstream_otm(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_bcstm(STREAMFILE* streamFile);
+
+VGMSTREAM * init_vgmstream_bfwav(STREAMFILE* streamFile);
 
 #endif
