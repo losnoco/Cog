@@ -813,7 +813,6 @@
 				OTHER_CFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-ffast-math",
-					"-falign-loops=16",
 				);
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
