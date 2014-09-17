@@ -187,6 +187,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         
         free(properties);
         
+        if (count) break;
+        
         class = [class superclass];
     } while (class);
     
