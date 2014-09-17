@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		830F884C19C9107E00420FB0 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8375B07017FFEABB0092A79F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8375B06E17FFEABB0092A79F /* InfoPlist.strings */; };
 		8375B20B17FFEB2C0092A79F /* _kiss_fft_guts.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B0A317FFEB2C0092A79F /* _kiss_fft_guts.h */; };
 		8375B20C17FFEB2C0092A79F /* arch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B0A417FFEB2C0092A79F /* arch.h */; };
@@ -199,27 +200,32 @@
 		8375B35317FFEB2C0092A79F /* opusfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375B1FB17FFEB2C0092A79F /* opusfile.c */; };
 		8375B35417FFEB2C0092A79F /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375B1FC17FFEB2C0092A79F /* stream.c */; };
 		8375B35517FFEB2C0092A79F /* wincerts.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375B1FD17FFEB2C0092A79F /* wincerts.c */; };
-		8375B36017FFEDE30092A79F /* ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8375B09E17FFEAF00092A79F /* ogg.framework */; };
 		8375B36817FFEFFF0092A79F /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B36617FFEFFF0092A79F /* config.h */; };
 		8375B36917FFEFFF0092A79F /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B36717FFEFFF0092A79F /* version.h */; };
-		8375B36F17FFF73C0092A79F /* ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B09E17FFEAF00092A79F /* ogg.framework */; };
 		8375B37617FFF8FE0092A79F /* opus_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375B37517FFF8FE0092A79F /* opus_encoder.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8375B09D17FFEAF00092A79F /* PBXContainerItemProxy */ = {
+		830F884619C9105E00420FB0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8375B09917FFEAF00092A79F /* ogg.xcodeproj */;
+			containerPortal = 830F884119C9105E00420FB0 /* Ogg.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = "ogg Framework";
+			remoteGlobalIDString = 8D07F2C80486CC7A007CD1D0;
+			remoteInfo = Ogg;
 		};
-		8375B35E17FFEDDC0092A79F /* PBXContainerItemProxy */ = {
+		830F884819C9105E00420FB0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8375B09917FFEAF00092A79F /* ogg.xcodeproj */;
+			containerPortal = 830F884119C9105E00420FB0 /* Ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 734FB2E50B18B33E00D561D7;
+			remoteInfo = "libogg (static)";
+		};
+		830F884A19C9107300420FB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 830F884119C9105E00420FB0 /* Ogg.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = "ogg Framework";
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = Ogg;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -230,17 +236,17 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8375B36F17FFF73C0092A79F /* ogg.framework in CopyFiles */,
+				830F884C19C9107E00420FB0 /* Ogg.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		830F884119C9105E00420FB0 /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = ../Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
 		8375B06217FFEABB0092A79F /* Opus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Opus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8375B06D17FFEABB0092A79F /* Opus-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Opus-Info.plist"; sourceTree = "<group>"; };
 		8375B06F17FFEABB0092A79F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		8375B09917FFEAF00092A79F /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../Ogg/ogg.xcodeproj; sourceTree = "<group>"; };
 		8375B0A317FFEB2C0092A79F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		8375B0A417FFEB2C0092A79F /* arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arch.h; sourceTree = "<group>"; };
 		8375B0A517FFEB2C0092A79F /* bands.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bands.c; sourceTree = "<group>"; };
@@ -442,13 +448,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8375B36017FFEDE30092A79F /* ogg.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		830F884219C9105E00420FB0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				830F884719C9105E00420FB0 /* Ogg.framework */,
+				830F884919C9105E00420FB0 /* libogg.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8375B05817FFEABB0092A79F = {
 			isa = PBXGroup;
 			children = (
@@ -469,7 +483,7 @@
 		8375B06417FFEABB0092A79F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8375B09917FFEAF00092A79F /* ogg.xcodeproj */,
+				830F884119C9105E00420FB0 /* Ogg.xcodeproj */,
 				8375B06717FFEABB0092A79F /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -499,14 +513,6 @@
 				8375B06E17FFEABB0092A79F /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		8375B09A17FFEAF00092A79F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8375B09E17FFEAF00092A79F /* ogg.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		8375B09F17FFEB2C0092A79F /* opus */ = {
@@ -859,7 +865,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				8375B35F17FFEDDC0092A79F /* PBXTargetDependency */,
+				830F884B19C9107300420FB0 /* PBXTargetDependency */,
 			);
 			name = Opus;
 			productName = Opus;
@@ -887,8 +893,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 8375B09A17FFEAF00092A79F /* Products */;
-					ProjectRef = 8375B09917FFEAF00092A79F /* ogg.xcodeproj */;
+					ProductGroup = 830F884219C9105E00420FB0 /* Products */;
+					ProjectRef = 830F884119C9105E00420FB0 /* Ogg.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -899,11 +905,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		8375B09E17FFEAF00092A79F /* ogg.framework */ = {
+		830F884719C9105E00420FB0 /* Ogg.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = ogg.framework;
-			remoteRef = 8375B09D17FFEAF00092A79F /* PBXContainerItemProxy */;
+			path = Ogg.framework;
+			remoteRef = 830F884619C9105E00420FB0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		830F884919C9105E00420FB0 /* libogg.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libogg.a;
+			remoteRef = 830F884819C9105E00420FB0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1064,10 +1077,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8375B35F17FFEDDC0092A79F /* PBXTargetDependency */ = {
+		830F884B19C9107300420FB0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "ogg Framework";
-			targetProxy = 8375B35E17FFEDDC0092A79F /* PBXContainerItemProxy */;
+			name = Ogg;
+			targetProxy = 830F884A19C9107300420FB0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
