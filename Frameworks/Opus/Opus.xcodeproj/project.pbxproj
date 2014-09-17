@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		830F884C19C9107E00420FB0 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		830F885F19C9145E00420FB0 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; };
 		8375B07017FFEABB0092A79F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8375B06E17FFEABB0092A79F /* InfoPlist.strings */; };
 		8375B20B17FFEB2C0092A79F /* _kiss_fft_guts.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B0A317FFEB2C0092A79F /* _kiss_fft_guts.h */; };
 		8375B20C17FFEB2C0092A79F /* arch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B0A417FFEB2C0092A79F /* arch.h */; };
@@ -448,6 +449,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				830F885F19C9145E00420FB0 /* Ogg.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
