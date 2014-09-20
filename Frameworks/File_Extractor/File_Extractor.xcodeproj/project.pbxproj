@@ -111,7 +111,6 @@
 		8359007517FEF40E0060F3ED /* getbits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFE917FEF40E0060F3ED /* getbits.cpp */; };
 		8359007617FEF40E0060F3ED /* getbits.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFEA17FEF40E0060F3ED /* getbits.hpp */; };
 		8359007717FEF40E0060F3ED /* headers.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFEB17FEF40E0060F3ED /* headers.hpp */; };
-		8359007917FEF40E0060F3ED /* model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFED17FEF40E0060F3ED /* model.cpp */; };
 		8359007A17FEF40E0060F3ED /* model.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFEE17FEF40E0060F3ED /* model.hpp */; };
 		8359007B17FEF40E0060F3ED /* rar.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFEF17FEF40E0060F3ED /* rar.hpp */; };
 		8359007C17FEF40E0060F3ED /* rarvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF017FEF40E0060F3ED /* rarvm.cpp */; };
@@ -119,20 +118,29 @@
 		8359007E17FEF40E0060F3ED /* rarvmtbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF217FEF40E0060F3ED /* rarvmtbl.cpp */; };
 		8359007F17FEF40E0060F3ED /* rawread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF317FEF40E0060F3ED /* rawread.cpp */; };
 		8359008017FEF40E0060F3ED /* rawread.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFF417FEF40E0060F3ED /* rawread.hpp */; };
-		8359008217FEF40E0060F3ED /* suballoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF617FEF40E0060F3ED /* suballoc.cpp */; };
 		8359008317FEF40E0060F3ED /* suballoc.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFF717FEF40E0060F3ED /* suballoc.hpp */; };
 		8359008517FEF40E0060F3ED /* unicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF917FEF40E0060F3ED /* unicode.cpp */; };
 		8359008617FEF40E0060F3ED /* unicode.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFFA17FEF40E0060F3ED /* unicode.hpp */; };
 		8359008717FEF40E0060F3ED /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFB17FEF40E0060F3ED /* unpack.cpp */; };
 		8359008817FEF40E0060F3ED /* unpack.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFFC17FEF40E0060F3ED /* unpack.hpp */; };
-		8359008917FEF40E0060F3ED /* unpack15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFD17FEF40E0060F3ED /* unpack15.cpp */; };
-		8359008A17FEF40E0060F3ED /* unpack20.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFE17FEF40E0060F3ED /* unpack20.cpp */; };
 		8359008B17FEF40E0060F3ED /* unrar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFF17FEF40E0060F3ED /* unrar.cpp */; };
 		8359008C17FEF40E0060F3ED /* unrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359000017FEF40E0060F3ED /* unrar.h */; };
 		8359008D17FEF40E0060F3ED /* unrar_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359000117FEF40E0060F3ED /* unrar_misc.cpp */; };
 		8359009117FEF5830060F3ED /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359009017FEF5830060F3ED /* libz.dylib */; };
 		8359009F17FF073E0060F3ED /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359009E17FF073E0060F3ED /* 7zStream.c */; };
 		8359FF4A17FEF39F0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF4817FEF39F0060F3ED /* InfoPlist.strings */; };
+		83C2109719CD81F50093C461 /* headers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2108E19CD81F50093C461 /* headers.cpp */; };
+		83C2109819CD81F50093C461 /* headers5.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83C2108F19CD81F50093C461 /* headers5.hpp */; };
+		83C2109B19CD88A30093C461 /* secpassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2109A19CD88A30093C461 /* secpassword.cpp */; };
+		83C210A219CD89C70093C461 /* hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2109C19CD89C70093C461 /* hash.cpp */; };
+		83C210A419CD89C70093C461 /* blake2s.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2109E19CD89C70093C461 /* blake2s.cpp */; };
+		83C210A519CD89C70093C461 /* blake2s.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83C2109F19CD89C70093C461 /* blake2s.hpp */; };
+		83C210A719CD89C70093C461 /* hash.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83C210A119CD89C70093C461 /* hash.hpp */; };
+		83C210AA19CD8F8F0093C461 /* strfn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C210A819CD8F8F0093C461 /* strfn.cpp */; };
+		83C210AB19CD8F8F0093C461 /* strfn.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83C210A919CD8F8F0093C461 /* strfn.hpp */; };
+		83C210AD19CD92960093C461 /* pathfn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C210AC19CD92960093C461 /* pathfn.cpp */; };
+		83C210B019CD97DB0093C461 /* timefn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C210AE19CD97DB0093C461 /* timefn.cpp */; };
+		83C210B119CD97DB0093C461 /* timefn.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83C210AF19CD97DB0093C461 /* timefn.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -247,7 +255,6 @@
 		8359FFE917FEF40E0060F3ED /* getbits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = getbits.cpp; sourceTree = "<group>"; };
 		8359FFEA17FEF40E0060F3ED /* getbits.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = getbits.hpp; sourceTree = "<group>"; };
 		8359FFEB17FEF40E0060F3ED /* headers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = headers.hpp; sourceTree = "<group>"; };
-		8359FFED17FEF40E0060F3ED /* model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = model.cpp; sourceTree = "<group>"; };
 		8359FFEE17FEF40E0060F3ED /* model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = model.hpp; sourceTree = "<group>"; };
 		8359FFEF17FEF40E0060F3ED /* rar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rar.hpp; sourceTree = "<group>"; };
 		8359FFF017FEF40E0060F3ED /* rarvm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rarvm.cpp; sourceTree = "<group>"; };
@@ -255,15 +262,24 @@
 		8359FFF217FEF40E0060F3ED /* rarvmtbl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rarvmtbl.cpp; sourceTree = "<group>"; };
 		8359FFF317FEF40E0060F3ED /* rawread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rawread.cpp; sourceTree = "<group>"; };
 		8359FFF417FEF40E0060F3ED /* rawread.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rawread.hpp; sourceTree = "<group>"; };
-		8359FFF617FEF40E0060F3ED /* suballoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = suballoc.cpp; sourceTree = "<group>"; };
 		8359FFF717FEF40E0060F3ED /* suballoc.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = suballoc.hpp; sourceTree = "<group>"; };
 		8359FFF917FEF40E0060F3ED /* unicode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode.cpp; sourceTree = "<group>"; };
 		8359FFFA17FEF40E0060F3ED /* unicode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unicode.hpp; sourceTree = "<group>"; };
 		8359FFFB17FEF40E0060F3ED /* unpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack.cpp; sourceTree = "<group>"; };
 		8359FFFC17FEF40E0060F3ED /* unpack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unpack.hpp; sourceTree = "<group>"; };
-		8359FFFD17FEF40E0060F3ED /* unpack15.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack15.cpp; sourceTree = "<group>"; };
-		8359FFFE17FEF40E0060F3ED /* unpack20.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack20.cpp; sourceTree = "<group>"; };
 		8359FFFF17FEF40E0060F3ED /* unrar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unrar.cpp; sourceTree = "<group>"; };
+		83C2108E19CD81F50093C461 /* headers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = headers.cpp; sourceTree = "<group>"; };
+		83C2108F19CD81F50093C461 /* headers5.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = headers5.hpp; sourceTree = "<group>"; };
+		83C2109A19CD88A30093C461 /* secpassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = secpassword.cpp; sourceTree = "<group>"; };
+		83C2109C19CD89C70093C461 /* hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hash.cpp; sourceTree = "<group>"; };
+		83C2109E19CD89C70093C461 /* blake2s.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = blake2s.cpp; sourceTree = "<group>"; };
+		83C2109F19CD89C70093C461 /* blake2s.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = blake2s.hpp; sourceTree = "<group>"; };
+		83C210A119CD89C70093C461 /* hash.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = hash.hpp; sourceTree = "<group>"; };
+		83C210A819CD8F8F0093C461 /* strfn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strfn.cpp; sourceTree = "<group>"; };
+		83C210A919CD8F8F0093C461 /* strfn.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = strfn.hpp; sourceTree = "<group>"; };
+		83C210AC19CD92960093C461 /* pathfn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pathfn.cpp; sourceTree = "<group>"; };
+		83C210AE19CD97DB0093C461 /* timefn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timefn.cpp; sourceTree = "<group>"; };
+		83C210AF19CD97DB0093C461 /* timefn.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = timefn.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -447,6 +463,18 @@
 		8359FFDC17FEF40E0060F3ED /* unrar */ = {
 			isa = PBXGroup;
 			children = (
+				83C210AE19CD97DB0093C461 /* timefn.cpp */,
+				83C210AF19CD97DB0093C461 /* timefn.hpp */,
+				83C210AC19CD92960093C461 /* pathfn.cpp */,
+				83C210A819CD8F8F0093C461 /* strfn.cpp */,
+				83C210A919CD8F8F0093C461 /* strfn.hpp */,
+				83C2109C19CD89C70093C461 /* hash.cpp */,
+				83C2109E19CD89C70093C461 /* blake2s.cpp */,
+				83C2109F19CD89C70093C461 /* blake2s.hpp */,
+				83C210A119CD89C70093C461 /* hash.hpp */,
+				83C2109A19CD88A30093C461 /* secpassword.cpp */,
+				83C2108E19CD81F50093C461 /* headers.cpp */,
+				83C2108F19CD81F50093C461 /* headers5.hpp */,
 				8359FFDD17FEF40E0060F3ED /* archive.cpp */,
 				8359FFDE17FEF40E0060F3ED /* archive.hpp */,
 				8359FFDF17FEF40E0060F3ED /* arcread.cpp */,
@@ -461,7 +489,6 @@
 				8359FFE917FEF40E0060F3ED /* getbits.cpp */,
 				8359FFEA17FEF40E0060F3ED /* getbits.hpp */,
 				8359FFEB17FEF40E0060F3ED /* headers.hpp */,
-				8359FFED17FEF40E0060F3ED /* model.cpp */,
 				8359FFEE17FEF40E0060F3ED /* model.hpp */,
 				8359FFEF17FEF40E0060F3ED /* rar.hpp */,
 				8359FFF017FEF40E0060F3ED /* rarvm.cpp */,
@@ -469,14 +496,11 @@
 				8359FFF217FEF40E0060F3ED /* rarvmtbl.cpp */,
 				8359FFF317FEF40E0060F3ED /* rawread.cpp */,
 				8359FFF417FEF40E0060F3ED /* rawread.hpp */,
-				8359FFF617FEF40E0060F3ED /* suballoc.cpp */,
 				8359FFF717FEF40E0060F3ED /* suballoc.hpp */,
 				8359FFF917FEF40E0060F3ED /* unicode.cpp */,
 				8359FFFA17FEF40E0060F3ED /* unicode.hpp */,
 				8359FFFB17FEF40E0060F3ED /* unpack.cpp */,
 				8359FFFC17FEF40E0060F3ED /* unpack.hpp */,
-				8359FFFD17FEF40E0060F3ED /* unpack15.cpp */,
-				8359FFFE17FEF40E0060F3ED /* unpack20.cpp */,
 				8359FFFF17FEF40E0060F3ED /* unrar.cpp */,
 				8359000017FEF40E0060F3ED /* unrar.h */,
 				8359000117FEF40E0060F3ED /* unrar_misc.cpp */,
@@ -495,6 +519,8 @@
 				8359005517FEF40E0060F3ED /* blargg_errors.h in Headers */,
 				8359003417FEF40E0060F3ED /* Lzma2Enc.h in Headers */,
 				8359008817FEF40E0060F3ED /* unpack.hpp in Headers */,
+				83C210AB19CD8F8F0093C461 /* strfn.hpp in Headers */,
+				83C210A719CD89C70093C461 /* hash.hpp in Headers */,
 				8359001817FEF40E0060F3ED /* 7zIn.h in Headers */,
 				8359003D17FEF40E0060F3ED /* LzmaLib.h in Headers */,
 				8359001417FEF40E0060F3ED /* 7zFile.h in Headers */,
@@ -524,7 +550,9 @@
 				8359007617FEF40E0060F3ED /* getbits.hpp in Headers */,
 				8359001A17FEF40E0060F3ED /* 7zItem.h in Headers */,
 				8359007B17FEF40E0060F3ED /* rar.hpp in Headers */,
+				83C210B119CD97DB0093C461 /* timefn.hpp in Headers */,
 				8359004917FEF40E0060F3ED /* RotateDefs.h in Headers */,
+				83C2109819CD81F50093C461 /* headers5.hpp in Headers */,
 				8359000417FEF40E0060F3ED /* 7z.h in Headers */,
 				8359004A17FEF40E0060F3ED /* Threads.h in Headers */,
 				8359006417FEF40E0060F3ED /* Zip7_Extractor.h in Headers */,
@@ -539,6 +567,7 @@
 				8359008017FEF40E0060F3ED /* rawread.hpp in Headers */,
 				8359008317FEF40E0060F3ED /* suballoc.hpp in Headers */,
 				8359005817FEF40E0060F3ED /* Data_Reader.h in Headers */,
+				83C210A519CD89C70093C461 /* blake2s.hpp in Headers */,
 				8359007D17FEF40E0060F3ED /* rarvm.hpp in Headers */,
 				8359005217FEF40E0060F3ED /* blargg_config.h in Headers */,
 				8359006017FEF40E0060F3ED /* Gzip_Reader.h in Headers */,
@@ -636,7 +665,6 @@
 				8359003A17FEF40E0060F3ED /* LzmaEnc.c in Sources */,
 				8359001E17FEF40E0060F3ED /* Alloc.c in Sources */,
 				8359008D17FEF40E0060F3ED /* unrar_misc.cpp in Sources */,
-				8359007917FEF40E0060F3ED /* model.cpp in Sources */,
 				8359007117FEF40E0060F3ED /* crc.cpp in Sources */,
 				8359003717FEF40E0060F3ED /* Lzma86Enc.c in Sources */,
 				8359006917FEF40E0060F3ED /* archive.cpp in Sources */,
@@ -645,11 +673,12 @@
 				8359007F17FEF40E0060F3ED /* rawread.cpp in Sources */,
 				8359000717FEF40E0060F3ED /* 7zBuf.c in Sources */,
 				8359002917FEF40E0060F3ED /* Delta.c in Sources */,
+				83C2109719CD81F50093C461 /* headers.cpp in Sources */,
 				8359005017FEF40E0060F3ED /* blargg_common.cpp in Sources */,
 				8359005F17FEF40E0060F3ED /* Gzip_Reader.cpp in Sources */,
+				83C210AD19CD92960093C461 /* pathfn.cpp in Sources */,
 				8359002D17FEF40E0060F3ED /* LzFindMt.c in Sources */,
 				8359000B17FEF40E0060F3ED /* 7zCrc.c in Sources */,
-				8359008917FEF40E0060F3ED /* unpack15.cpp in Sources */,
 				8359009F17FF073E0060F3ED /* 7zStream.c in Sources */,
 				8359000917FEF40E0060F3ED /* 7zBuf2.c in Sources */,
 				8359002517FEF40E0060F3ED /* BraIA64.c in Sources */,
@@ -661,7 +690,7 @@
 				8359006117FEF40E0060F3ED /* Rar_Extractor.cpp in Sources */,
 				8359003F17FEF40E0060F3ED /* MtCoder.c in Sources */,
 				8359003317FEF40E0060F3ED /* Lzma2Enc.c in Sources */,
-				8359008217FEF40E0060F3ED /* suballoc.cpp in Sources */,
+				83C210AA19CD8F8F0093C461 /* strfn.cpp in Sources */,
 				8359003617FEF40E0060F3ED /* Lzma86Dec.c in Sources */,
 				8359002217FEF40E0060F3ED /* Bra.c in Sources */,
 				8359000517FEF40E0060F3ED /* 7zAlloc.c in Sources */,
@@ -672,15 +701,18 @@
 				8359003117FEF40E0060F3ED /* Lzma2Dec.c in Sources */,
 				8359007217FEF40E0060F3ED /* encname.cpp in Sources */,
 				8359004117FEF40E0060F3ED /* Threads.c in Sources */,
+				83C210B019CD97DB0093C461 /* timefn.cpp in Sources */,
 				8359008717FEF40E0060F3ED /* unpack.cpp in Sources */,
 				8359003C17FEF40E0060F3ED /* LzmaLib.c in Sources */,
 				8359005917FEF40E0060F3ED /* fex.cpp in Sources */,
+				83C2109B19CD88A30093C461 /* secpassword.cpp in Sources */,
+				83C210A219CD89C70093C461 /* hash.cpp in Sources */,
 				8359004717FEF40E0060F3ED /* Ppmd7Enc.c in Sources */,
-				8359008A17FEF40E0060F3ED /* unpack20.cpp in Sources */,
 				8359004E17FEF40E0060F3ED /* Binary_Extractor.cpp in Sources */,
 				8359007417FEF40E0060F3ED /* extract.cpp in Sources */,
 				8359006517FEF40E0060F3ED /* Zip_Extractor.cpp in Sources */,
 				8359002717FEF40E0060F3ED /* CpuArch.c in Sources */,
+				83C210A419CD89C70093C461 /* blake2s.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,6 +753,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					_UNIX,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -754,6 +787,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = _UNIX;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

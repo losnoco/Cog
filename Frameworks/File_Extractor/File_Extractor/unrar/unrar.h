@@ -11,8 +11,10 @@
 
 #if !defined (UNRAR_NO_LONG_LONG) && defined (LLONG_MAX)
 	typedef long long unrar_long_long;
+    typedef unsigned long long unrar_ulong_long;
 #else
 	typedef long unrar_long_long;
+    typedef unsigned long unrar_ulong_long;
 #endif
 
 #ifdef __cplusplus
@@ -91,7 +93,7 @@ unrar_err_t unrar_seek( unrar_t*, unrar_pos_t );
 typedef struct unrar_info_t
 {
 	unrar_pos_t     size;       /**< Uncompressed size */
-	const char*     name;       /**< Name, in Unicode if is_unicode is true */
+	char     name[32767];       /**< Name, in Unicode if is_unicode is true */
     const blargg_wchar_t*  name_w;     /**< Name in Unicode, "" if unavailable */
 	unrar_bool      is_unicode; /**< True if name is Unicode (UTF-8) */
 	unsigned int    dos_date;   /**< Date in DOS-style format, 0 if unavailable */

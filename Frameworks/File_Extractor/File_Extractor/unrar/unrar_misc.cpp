@@ -11,8 +11,8 @@
 
 void unrar_init()
 {
-	if (CRCTab[1]==0)
-		InitCRC();
+	if (crc_tables[0][1]==0)
+		InitCRCTables();
 	
 	Unpack::init_tables();
 }
@@ -55,7 +55,7 @@ unrar_err_t unrar_extract( unrar_t* p, void* out, unrar_pos_t size )
 inline
 static bool is_entire_file( const unrar_t* p, const void* in, int count )
 {
-	return (count == p->Arc.NewLhd.UnpSize && p->Unp && in == p->Unp->window_wrptr());
+	return (count == p->Arc.SubHead.UnpSize && p->Unp && in == p->Unp->window_wrptr());
 }
 	
 extern "C" {
@@ -149,10 +149,7 @@ void ComprDataIO::UnpWrite( byte* out, uint count )
 		if ( write_error == unrar_ok )
 			write_error = user_write( user_write_data, out, count );
 
-		if ( OldFormat )
-			UnpFileCRC = OldCRC( (ushort) UnpFileCRC, out, count );
-		else
-			UnpFileCRC = CRC( UnpFileCRC, out, count );
+        UnpHash.Update(out,count);
 	}
 }
 
@@ -162,7 +159,7 @@ int ComprDataIO::UnpRead( byte* out, uint count )
 		return 0;
 
 	if ( count > (uint) UnpPackedSize )
-		count = (uint) UnpPackedSize;
+		count = UnpPackedSize;
 
 	int result = Read( out, count );
 	UnpPackedSize -= result;
