@@ -33,7 +33,7 @@ unrar_err_t Archive::ReadHeader(size_t * ReadSize_)
     if (Error!=unrar_ok)
         return Error;
     
-    if (ReadSize>0 & NextBlockPos<=CurBlockPos)
+    if (ReadSize>0 && NextBlockPos<=CurBlockPos)
         return unrar_err_corrupt;
 
     *ReadSize_ = ReadSize;

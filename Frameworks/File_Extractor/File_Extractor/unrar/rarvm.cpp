@@ -403,7 +403,7 @@ bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode,uint CodeSize)
 				break;
 			case VM_CALL:
 				R[7]-=4;
-				SET_VALUE(false,(uint *)&Mem[R[7]&VM_MEMMASK],Cmd-PreparedCode+1);
+				SET_VALUE(false,(uint *)&Mem[R[7]&VM_MEMMASK],(uint)(Cmd-PreparedCode+1));
 				SET_IP(GET_VALUE(false,Op1));
 				continue;
 			case VM_NOT:
@@ -512,7 +512,7 @@ bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode,uint CodeSize)
 					uint Result=GET_UINT32(Value1+GET_VALUE(Cmd->ByteMode,Op2)+FC);
 					if (Cmd->ByteMode)
 						Result&=0xff;
-					Flags=(Result<Value1 || Result==Value1 && FC)|(Result==0 ? VM_FZ:(Result&VM_FS));
+					Flags=(Result<Value1 || (Result==Value1 && FC))|(Result==0 ? VM_FZ:(Result&VM_FS));
 					SET_VALUE(Cmd->ByteMode,Op1,Result);
 				}
 				break;
@@ -523,7 +523,7 @@ bool RarVM::ExecuteCode(VM_PreparedCommand *PreparedCode,uint CodeSize)
 					uint Result=GET_UINT32(Value1-GET_VALUE(Cmd->ByteMode,Op2)-FC);
 					if (Cmd->ByteMode)
 						Result&=0xff;
-					Flags=(Result>Value1 || Result==Value1 && FC)|(Result==0 ? VM_FZ:(Result&VM_FS));
+					Flags=(Result>Value1 || (Result==Value1 && FC))|(Result==0 ? VM_FZ:(Result&VM_FS));
 					SET_VALUE(Cmd->ByteMode,Op1,Result);
 				}
 				break;
@@ -807,6 +807,8 @@ void RarVM::Optimize(VM_PreparedProgram *Prg)
 			case VM_CMP:
 				Cmd->OpCode=Cmd->ByteMode ? VM_CMPB:VM_CMPD;
 				continue;
+                
+            default: break;
 		}
 		if ((VM_CmdFlags[Cmd->OpCode] & VMCF_CHFLAGS)==0)
 			continue;
@@ -850,6 +852,8 @@ void RarVM::Optimize(VM_PreparedProgram *Prg)
 			case VM_NEG:
 				Cmd->OpCode=Cmd->ByteMode ? VM_NEGB:VM_NEGD;
 				continue;
+                
+            default: break;
 		}
 	}
 }

@@ -1,3 +1,5 @@
+#ifdef RAR_COMMON_HPP
+
 void Unpack::Unpack5(bool Solid)
 {
   FileExtracted=true;
@@ -646,3 +648,5 @@ void Unpack::InitFilters()
 {
   Filters.Reset();
 }
+
+#endif

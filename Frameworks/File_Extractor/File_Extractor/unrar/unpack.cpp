@@ -1,5 +1,7 @@
 #include "rar.hpp"
 
+#define _RAR_UNPACK_CPP_
+
 #include "coder.cpp"
 #include "suballoc.cpp"
 #include "model.cpp"

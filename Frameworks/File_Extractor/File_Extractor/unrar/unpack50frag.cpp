@@ -1,3 +1,5 @@
+#ifdef RAR_COMMON_HPP
+
 FragmentedWindow::FragmentedWindow()
 {
   memset(Mem,0,sizeof(Mem));
@@ -101,3 +103,5 @@ size_t FragmentedWindow::GetBlockSize(size_t StartPos,size_t RequiredSize)
       return Min(MemSize[I]-StartPos,RequiredSize);
   return 0; // Must never be here.
 }
+
+#endif

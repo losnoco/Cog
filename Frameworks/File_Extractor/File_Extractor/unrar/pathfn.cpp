@@ -19,3 +19,38 @@ wchar* GetWideName(const char *Name,const wchar *NameW,wchar *DestW,size_t DestS
     
     return(DestW);
 }
+
+void UnixSlashToDos(const char *SrcName, char *DestName, size_t MaxLength)
+{
+	size_t Copied = 0;
+	for (; Copied<MaxLength - 1 && SrcName[Copied] != 0; Copied++)
+		DestName[Copied] = SrcName[Copied] == '/' ? '\\' : SrcName[Copied];
+	DestName[Copied] = 0;
+}
+
+
+void DosSlashToUnix(const char *SrcName, char *DestName, size_t MaxLength)
+{
+	size_t Copied = 0;
+	for (; Copied<MaxLength - 1 && SrcName[Copied] != 0; Copied++)
+		DestName[Copied] = SrcName[Copied] == '\\' ? '/' : SrcName[Copied];
+	DestName[Copied] = 0;
+}
+
+
+void UnixSlashToDos(const wchar *SrcName, wchar *DestName, size_t MaxLength)
+{
+	size_t Copied = 0;
+	for (; Copied<MaxLength - 1 && SrcName[Copied] != 0; Copied++)
+		DestName[Copied] = SrcName[Copied] == '/' ? '\\' : SrcName[Copied];
+	DestName[Copied] = 0;
+}
+
+
+void DosSlashToUnix(const wchar *SrcName, wchar *DestName, size_t MaxLength)
+{
+	size_t Copied = 0;
+	for (; Copied<MaxLength - 1 && SrcName[Copied] != 0; Copied++)
+		DestName[Copied] = SrcName[Copied] == '\\' ? '/' : SrcName[Copied];
+	DestName[Copied] = 0;
+}

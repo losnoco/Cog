@@ -2,6 +2,9 @@
 #define _RAR_TIMEFN_
 
 #include <time.h>
+#ifdef _WIN_ALL
+#include <Windows.h>
+#endif
 
 struct RarLocalTime
 {

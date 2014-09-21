@@ -105,9 +105,9 @@ void SubAllocator::InitSubAllocator()
 	int i, k;
 	memset(FreeList,0,sizeof(FreeList));
 	pText=HeapStart;
-	uint Size2=FIXED_UNIT_SIZE*(SubAllocatorSize/8/FIXED_UNIT_SIZE*7);
+	uint Size2=(uint)(FIXED_UNIT_SIZE*(SubAllocatorSize/8/FIXED_UNIT_SIZE*7));
 	uint RealSize2=Size2/FIXED_UNIT_SIZE*UNIT_SIZE;
-	uint Size1=SubAllocatorSize-Size2;
+	uint Size1=(uint)(SubAllocatorSize-Size2);
 	uint RealSize1=Size1/FIXED_UNIT_SIZE*UNIT_SIZE+Size1%FIXED_UNIT_SIZE;
 #ifdef STRICT_ALIGNMENT_REQUIRED
 	if (Size1%FIXED_UNIT_SIZE!=0)

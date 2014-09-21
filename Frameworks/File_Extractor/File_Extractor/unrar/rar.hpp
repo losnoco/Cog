@@ -174,6 +174,10 @@ void cleandata(void *data,size_t size);
 
 //// pathfn.hpp
 wchar* GetWideName(const char *Name,const wchar *NameW,wchar *DestW,size_t DestSize);
+void UnixSlashToDos(const char *SrcName, char *DestName, size_t MaxLength);
+void DosSlashToUnix(const char *SrcName, char *DestName, size_t MaxLength);
+void UnixSlashToDos(const wchar *SrcName, wchar *DestName, size_t MaxLength);
+void DosSlashToUnix(const wchar *SrcName, wchar *DestName, size_t MaxLength);
 
 //// rar.hpp
 class Unpack;

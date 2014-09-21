@@ -1,3 +1,5 @@
+#ifdef RAR_COMMON_HPP
+
 inline void Unpack::InsertOldDist(uint Distance)
 {
   OldDist[3]=OldDist[2];
@@ -140,3 +142,5 @@ inline uint Unpack::SlotToLength(BitInput &Inp,uint Slot)
   }
   return Length;
 }
+
+#endif

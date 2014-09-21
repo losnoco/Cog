@@ -1,4 +1,4 @@
-#include "rar.hpp"
+#ifdef RAR_COMMON_HPP
 
 void Unpack::CopyString20(uint Length,uint Distance)
 {
@@ -368,3 +368,5 @@ byte Unpack::DecodeAudio(int Delta)
   }
   return((byte)Ch);
 }
+
+#endif
