@@ -1,64 +1,25 @@
 /*
-** - --=playptmod v1.10d - 8bitbubsy 2010-2014=-- -
-** This is the native Win32 API version, no DLL needed in you
-** production zip/rar whatever.
+** - playptmod v1.15 - 29th of September 2014 -
+** This is the foobar2000 version, with code by kode54
 **
-** Thanks to mukunda for learning me how to code a .MOD player
-** some years back!
+** Changelog from 1.10d:
+** - Removed obsolete IFF sample handling (FT2/PT didn't have it)
+** - Added two Ultimate Soundtracker sample loading hacks
+** - The Invert Loop (EFx) table had a wrong value
+** - Invert Loop (EFx) routines changed to be 100% accurate
+** - Fixed a sample swap bug ("MOD.Ecstatic Guidance" by emax)
+** - Proper zero'ing+init of channels on stop/play
+** - Code cleanup (+ possible mixer speedup)
+** - Much more that was changed long ago, without incrementing
+**   the version number. Let's do that from now on!
 **
-** Thanks to ad_/aciddose/adejr for the BLEP and LED filter
-** routines.
+** Thanks to aciddose/adejr for the LED filter routines.
 **
-** Note: There's a lot of weird behavior in the coding to
+** Note: There's a lot of weird behavior in the code to
 ** "emulate" the weird stuff ProTracker on the Amiga does.
 ** If you see something fishy in the code, it's probably
 ** supposed to be like that. Please don't change it, you're
-** literally asking for hours of hard debugging if you do.
-**
-** HOW DO I USE THIS FILE?
-** Make a new file called main.c, and put this on top:
-**
-** #include <stdio.h>
-**
-** void * playptmod_Create(int soundFrequency);
-** int playptmod_Load(void *, const char *filename);
-** void playptmod_Play(void *);
-** void playptmod_Render(void *, signed short *, int);
-** void playptmod_Free(void *);
-**
-** void main(void)
-** {
-**		int app_running = 1;
-**
-**		void *p = playptmod_Create(44100);
-**		playptmod_Load(p, "hello.mod");
-**		playptmod_Play(p);
-**
-**		while (app_running)
-**		{
-**          signed short samples[1024];
-**
-**			if (someone_pressed_a_key())
-**			{
-**				app_running = 0;
-**			}
-**
-**          playptmod_Render(p, samples, 512);
-**          // output samples to system here
-**
-**			// Make sure to delay a bit here
-**		}
-**
-**		playptmod_Free(p);
-**
-**		return 0;
-** }
-**
-**
-** You can also integrate it as a resource in the EXE,
-** and use some Win32 API functions to copy the MOD
-** to memory and get a pointer to it. Then you call
-** playptmod_LoadMem instead.
+** literally asking for hours of hard debugging.
 **
 */
 
@@ -117,7 +78,6 @@ typedef struct
     unsigned char rowCount;
     unsigned char restartPos;
     unsigned char order[128];
-    unsigned char volume[MAX_CHANNELS];
     unsigned char pan[MAX_CHANNELS];
     unsigned char ticks;
     unsigned char format;
@@ -132,7 +92,6 @@ typedef struct
 {
     unsigned char fineTune;
     unsigned char volume;
-    int iffSize;
     int loopStart;
     int loopLength;
     int length;
@@ -174,6 +133,10 @@ typedef struct
     int offset;
     int offsetTemp;
     int offsetBugNotAdded;
+    
+    signed char *invertLoopPtr;
+    signed char *invertLoopStart;
+    int invertLoopLength;
 } mod_channel;
 
 typedef struct
@@ -280,7 +243,8 @@ typedef struct
 
 static const unsigned char invertLoopSpeeds[16] =
 {
-    0x00, 0x05, 0x06, 0x07, 0x08, 0x0A, 0x0B, 0x0D, 0x0F, 0x13, 0x16, 0x1A, 0x20, 0x2B, 0x40, 0x80
+    0x00, 0x05, 0x06, 0x07, 0x08, 0x0A, 0x0B, 0x0D,
+    0x10, 0x13, 0x16, 0x1A, 0x20, 0x2B, 0x40, 0x80
 };
 
 static const short rawAmigaPeriods[606] =
@@ -449,37 +413,68 @@ static inline int periodToNote(player *p, char finetune, short period)
 
 static void mixerSwapChSource(player *p, int ch, const char *src, int length, int loopStart, int loopLength, int step)
 {
-    p->v[ch].swapSampleFlag  = true;
-    p->v[ch].newData         = src;
-    p->v[ch].newLoopFlag     = loopLength > (2 * step);
-    p->v[ch].newLength       = length;
-    p->v[ch].newLoopBegin    = loopStart;
-    p->v[ch].newLoopEnd      = loopStart + loopLength;
-    p->v[ch].newStep         = step;
+    Voice *v;
+    
+    // If you swap sample in-realtime in PT
+    // without putting a period, the current
+    // sample will play through first (either
+    // >len or >loop_len), then when that is
+    // reached you change to the new sample you
+    // put earlier.
+        
+    v = &p->v[ch];
+    
+    v->swapSampleFlag  = true;
+    v->newData         = src;
+    v->newLoopFlag     = loopLength > (2 * step);
+    v->newLength       = length;
+    v->newLoopBegin    = loopStart;
+    v->newLoopEnd      = loopStart + loopLength;
+    v->newStep         = step;
+    
+    // if the mixer was already shut down because of a short non-loop sample, force swap
+    if (v->data == NULL)
+    {
+        v->loopBegin    = v->newLoopBegin;
+        v->loopEnd      = v->newLoopEnd;
+        v->loopFlag     = v->newLoopFlag;
+        v->data         = v->newData;
+        v->length       = v->newLength;
+        v->frac         = 0.0f;
+        v->step         = v->newStep;
+
+        // for safety, shut down voice if the sample position is overriding the length
+        if (v->index >= v->length)
+            v->data = NULL;
+    }
 }
 
 static void mixerSetChSource(player *p, int ch, const char *src, int length, int loopStart, int loopLength, int offset, int step)
 {
-    p->v[ch].swapSampleFlag = false;
-    p->v[ch].data           = src;
-    p->v[ch].index          = offset;
-    p->v[ch].frac           = 0.0f;
-    p->v[ch].length         = length;
-    p->v[ch].loopFlag       = loopLength > (2 * step);
-    p->v[ch].loopBegin      = loopStart;
-    p->v[ch].loopEnd        = loopStart + loopLength;
-    p->v[ch].step           = step;
+    Voice *v;
+    
+    v = &p->v[ch];
+
+    v->swapSampleFlag = false;
+    v->data           = src;
+    v->index          = offset;
+    v->frac           = 0.0f;
+    v->length         = length;
+    v->loopFlag       = loopLength > (2 * step);
+    v->loopBegin      = loopStart;
+    v->loopEnd        = loopStart + loopLength;
+    v->step           = step;
     
     // Check external 9xx usage (Set Sample Offset)
-    if (p->v[ch].loopFlag)
+    if (v->loopFlag)
     {
-        if (offset >= p->v[ch].loopEnd)
-            p->v[ch].index = p->v[ch].loopBegin;
+        if (offset >= v->loopEnd)
+            v->index = v->loopBegin;
     }
     else
     {
-        if (offset >= p->v[ch].length)
-            p->v[ch].data = NULL;
+        if (offset >= v->length)
+            v->data = NULL;
     }
 }
 
@@ -522,7 +517,7 @@ static void mixerCutChannels(player *p)
     int i;
 
     memset(p->v, 0, sizeof (p->v));
-    for (i = 0; i < MAX_CHANNELS; i++)
+    for (i = 0; i < MAX_CHANNELS; ++i)
     {
         ptm_blip_clear(&p->blep[i]);
         ptm_blip_clear(&p->blepVol[i]);
@@ -532,19 +527,13 @@ static void mixerCutChannels(player *p)
 
     if (p->source)
     {
-        for (i = 0; i < MAX_CHANNELS; i++)
-        {
-            mixerSetChVol(p, i, p->source->head.volume[i]);
+        for (i = 0; i < MAX_CHANNELS; ++i)
             mixerSetChPan(p, i, p->source->head.pan[i]);
-        }
     }
     else
     {
-        for (i = 0; i < MAX_CHANNELS; i++)
-        {
-            mixerSetChVol(p, i, 64);
+        for (i = 0; i < MAX_CHANNELS; ++i)
             mixerSetChPan(p, i, (i + 1) & 2 ? 160 : 96);
-        }
     }
 }
 
@@ -555,14 +544,23 @@ static void mixerSetChRate(player *p, int ch, float rate)
 
 static void outputAudio(player *p, int *target, int numSamples)
 {
+    signed short tempSample;
+    signed int i_smp;
     int *out;
-    int i;
-    int j;
     int step;
-    short tempSample;
     int tempVolume;
+    int delta;
+    unsigned int i;
+    unsigned int j;
     float L;
     float R;
+    float t_vol;
+    float t_smp;
+    float downscale;
+    
+    Voice *v;
+    blip_t *bSmp;
+    blip_t *bVol;
 
     memset(p->mixBufferL, 0, numSamples * sizeof (float));
     memset(p->mixBufferR, 0, numSamples * sizeof (float));
@@ -570,181 +568,179 @@ static void outputAudio(player *p, int *target, int numSamples)
     for (i = 0; i < p->source->head.channelCount; ++i)
     {
         j = 0;
-
-        if (p->v[i].data && p->v[i].rate)
+        
+        v = &p->v[i];
+        bSmp = &p->blep[i];
+        bVol = &p->blepVol[i];
+        
+        if (v->data && v->rate)
         {
-            step = p->v[i].step;
+            step = v->step;
             for (j = 0; j < numSamples;)
             {
-                tempSample = (p->v[i].data ? (step == 2 ? (p->v[i].data[p->v[i].index] + p->v[i].data[p->v[i].index + 1] * 0x100) : p->v[i].data[p->v[i].index] * 0x100) : 0);
-                tempVolume = (p->v[i].data && !p->v[i].mute ? p->v[i].vol : 0);
+                tempSample = (v->data ? (step == 2 ? (v->data[v->index] + v->data[v->index + 1] * 0x100) : v->data[v->index] * 0x100) : 0);
+                tempVolume = (v->data && !v->mute ? v->vol : 0);
 
-                while (j < numSamples && (!p->v[i].data || p->v[i].frac >= 1.0f))
+                while (j < numSamples && (!v->data || v->frac >= 1.0f))
                 {
-                    float t_vol = 0.0f;
-                    float t_smp = 0.0f;
-                    signed int i_smp;
+                    t_vol = 0.0f;
+                    t_smp = 0.0f;
 
-                    if (p->v[i].data)
-                        p->v[i].frac -= 1.0f;
+                    if (v->data)
+                        v->frac -= 1.0f;
 
-                    t_vol += ptm_blip_read_sample(&p->blepVol[i]);
-                    t_smp += ptm_blip_read_sample(&p->blep[i]);
+                    t_vol += ptm_blip_read_sample(bVol);
+                    t_smp += ptm_blip_read_sample(bSmp);
 
                     t_smp *= t_vol;
                     i_smp = (signed int)t_smp;
 
-                    p->mixBufferL[j] += i_smp * p->v[i].panL;
-                    p->mixBufferR[j] += i_smp * p->v[i].panR;
+                    p->mixBufferL[j] += i_smp * v->panL;
+                    p->mixBufferR[j] += i_smp * v->panR;
 
                     j++;
                 }
 
-                if (j >= numSamples) break;
+                if (j >= numSamples)
+                    break;
 
-                if (tempSample != p->blep[i].last_value)
+                if (tempSample != bSmp->last_value)
                 {
-                    int delta = tempSample - p->blep[i].last_value;
-                    p->blep[i].last_value = tempSample;
-                    ptm_blip_add_delta(&p->blep[i], p->v[i].frac, delta);
+                    delta = tempSample - bSmp->last_value;
+                    bSmp->last_value = tempSample;
+                    ptm_blip_add_delta(bSmp, v->frac, delta);
                 }
 
-                if (tempVolume != p->blepVol[i].last_value)
+                if (tempVolume != bVol->last_value)
                 {
-                    int delta = tempVolume - p->blepVol[i].last_value;
-                    p->blepVol[i].last_value = tempVolume;
-                    ptm_blip_add_delta(&p->blepVol[i], 0, delta);
+                    delta = tempVolume - bVol->last_value;
+                    bVol->last_value = tempVolume;
+                    ptm_blip_add_delta(bVol, 0, delta);
                 }
 
-                if (p->v[i].data)
+                if (v->data)
                 {
-                    p->v[i].index += step;
-                    p->v[i].frac += p->v[i].rate;
+                    v->index += step;
+                    v->frac += v->rate;
 
-                    if (p->v[i].loopFlag)
+                    if (v->loopFlag)
                     {
-                        if (p->v[i].index >= p->v[i].loopEnd)
+                        if (v->index >= v->loopEnd)
                         {
-                            if (p->v[i].swapSampleFlag == true)
+                            if (v->swapSampleFlag)
                             {
-                                p->v[i].swapSampleFlag = false;
+                                v->swapSampleFlag = false;
 
-                                if (p->v[i].newLoopFlag == false)
+                                if (!v->newLoopFlag)
                                 {
-                                    p->v[i].data = NULL;
+                                    v->data = NULL;
                                     continue;
                                 }
 
-                                p->v[i].loopBegin    = p->v[i].newLoopBegin;
-                                p->v[i].loopEnd      = p->v[i].newLoopEnd;
-                                p->v[i].loopFlag     = p->v[i].newLoopFlag;
-                                p->v[i].data         = p->v[i].newData;
-                                p->v[i].length       = p->v[i].newLength;
-                                p->v[i].frac         = 0.0f;
-                                p->v[i].step         = p->v[i].newStep;
+                                v->loopBegin    = v->newLoopBegin;
+                                v->loopEnd      = v->newLoopEnd;
+                                v->loopFlag     = v->newLoopFlag;
+                                v->data         = v->newData;
+                                v->length       = v->newLength;
+                                v->frac         = 0.0f;
+                                v->step         = v->newStep;
                                 
-                                while (p->v[i].index >= p->v[i].loopEnd)
-                                    p->v[i].index = p->v[i].loopBegin + (p->v[i].index - p->v[i].loopEnd);
+                                while (v->index >= v->loopEnd)
+                                    v->index = v->loopBegin + (v->index - v->loopEnd);
                             }
                             else
                             {
-                                while (p->v[i].index >= p->v[i].loopEnd)
-                                    p->v[i].index = p->v[i].loopBegin + (p->v[i].index - p->v[i].loopEnd);
+                                while (v->index >= v->loopEnd)
+                                    v->index = v->loopBegin + (v->index - v->loopEnd);
                             }
                         }
                     }
-                    else if (p->v[i].index >= p->v[i].length)
+                    else if (v->index >= v->length)
                     {
-                        if (p->v[i].swapSampleFlag == true)
+                        if (v->swapSampleFlag)
                         {
-                            p->v[i].swapSampleFlag = false;
+                            v->swapSampleFlag = false;
                             
-                            if (p->v[i].newLoopFlag == false)
+                            if (!v->newLoopFlag)
                             {
-                                p->v[i].data = NULL;
+                                v->data = NULL;
                                 continue;
                             }
 
-                            p->v[i].loopBegin    = p->v[i].newLoopBegin;
-                            p->v[i].loopEnd      = p->v[i].newLoopEnd;
-                            p->v[i].loopFlag     = p->v[i].newLoopFlag;
-                            p->v[i].data         = p->v[i].newData;
-                            p->v[i].length       = p->v[i].newLength;
-                            p->v[i].frac         = 0.0f;
-                            p->v[i].step         = p->v[i].newStep;
+                            v->loopBegin    = v->newLoopBegin;
+                            v->loopEnd      = v->newLoopEnd;
+                            v->loopFlag     = v->newLoopFlag;
+                            v->data         = v->newData;
+                            v->length       = v->newLength;
+                            v->frac         = 0.0f;
+                            v->step         = v->newStep;
 
-                            while (p->v[i].index >= p->v[i].loopEnd)
-                                p->v[i].index = p->v[i].loopBegin + (p->v[i].index - p->v[i].loopEnd);
+                            while (v->index >= v->loopEnd)
+                                v->index = v->loopBegin + (v->index - v->loopEnd);
                         }
                         else
                         {
-                            p->v[i].data = NULL;
+                            v->data = NULL;
                         }
                     }
                 }
             }
         }
 
-        if ((j < numSamples) && (p->v[i].data == NULL))
+        if ((j < numSamples) && (v->data == NULL))
         {
             for (; j < numSamples; ++j)
             {
-                int i_smp;
+                tempVolume = bVol->last_value;
+                tempSample = bSmp->last_value;
 
-                tempVolume = p->blepVol[i].last_value;
-                tempSample = p->blep[i].last_value;
-
-                tempVolume += ptm_blip_read_sample(&p->blepVol[i]);
-                tempSample += ptm_blip_read_sample(&p->blep[i]);
+                tempVolume += ptm_blip_read_sample(bVol);
+                tempSample += ptm_blip_read_sample(bSmp);
 
                 tempSample *= tempVolume;
                 i_smp = (signed int)tempSample;
 
-                p->mixBufferL[j] += i_smp * p->v[i].panL;
-                p->mixBufferR[j] += i_smp * p->v[i].panR;
+                p->mixBufferL[j] += i_smp * v->panL;
+                p->mixBufferR[j] += i_smp * v->panR;
             }
         }
     }
 
-    out = target;
-
-    {
-        float downscale;
+    if (p->numChans <= 4)    
+        downscale = 1.0f / 172.0f;
+    else
+        downscale = 1.0f / 208.0f;
         
-        if (p->numChans <= 4)    
-            downscale = 1.0f / 172.0f;
-        else
-            downscale = 1.0f / 208.0f;
-            
-        for (i = 0; i < numSamples; ++i)
+    out = target;
+    
+    for (i = 0; i < numSamples; ++i)
+    {
+        L = p->mixBufferL[i];
+        R = p->mixBufferR[i];
+
+        if (p->useLEDFilter)
         {
-            L = p->mixBufferL[i];
-            R = p->mixBufferR[i];
+            p->filter.LED[0] += (p->filterC.LED * (L - p->filter.LED[0])
+                + p->filterC.LEDFb * (p->filter.LED[0] - p->filter.LED[1]) + DENORMAL_OFFSET);
+            p->filter.LED[1] += (p->filterC.LED * (p->filter.LED[0] - p->filter.LED[1]) + DENORMAL_OFFSET);
+            p->filter.LED[2] += (p->filterC.LED * (R - p->filter.LED[2])
+                + p->filterC.LEDFb * (p->filter.LED[2] - p->filter.LED[3]) + DENORMAL_OFFSET);
+            p->filter.LED[3] += (p->filterC.LED * (p->filter.LED[2] - p->filter.LED[3]) + DENORMAL_OFFSET);
 
-            if (p->useLEDFilter == true)
-            {
-                p->filter.LED[0] += (p->filterC.LED * (L - p->filter.LED[0])
-                    + p->filterC.LEDFb * (p->filter.LED[0] - p->filter.LED[1]) + DENORMAL_OFFSET);
-                p->filter.LED[1] += (p->filterC.LED * (p->filter.LED[0] - p->filter.LED[1]) + DENORMAL_OFFSET);
-                p->filter.LED[2] += (p->filterC.LED * (R - p->filter.LED[2])
-                    + p->filterC.LEDFb * (p->filter.LED[2] - p->filter.LED[3]) + DENORMAL_OFFSET);
-                p->filter.LED[3] += (p->filterC.LED * (p->filter.LED[2] - p->filter.LED[3]) + DENORMAL_OFFSET);
+            L = p->filter.LED[1];
+            R = p->filter.LED[3];
+        }
 
-                L = p->filter.LED[1];
-                R = p->filter.LED[3];
-            }
+        L *= downscale;
+        R *= downscale;
 
-            L *= downscale;
-            R *= downscale;
+        L = CLAMP(L, INT_MIN, INT_MAX);
+        R = CLAMP(R, INT_MIN, INT_MAX);
 
-			L = CLAMP(L, INT_MIN, INT_MAX);
-			R = CLAMP(R, INT_MIN, INT_MAX);
-
-            if ( out )
-            {
-                *out++ = (int)(L);
-                *out++ = (int)(R);
-            }
+        if (out)
+        {
+            *out++ = (signed int)(L);
+            *out++ = (signed int)(R);
         }
     }
 }
@@ -801,19 +797,9 @@ static int playptmod_LoadMTM(player *p, BUF *fmodule)
     for (i = 0; i < 32; ++i)
     {
         if (p->source->head.pan[i] <= 15)
-        {
-            // 8bitbubsy: WTF no, just do << 4 then if (p == 255) p = 256 in mixer
-            //p->source->head.pan[i] -= (p->source->head.pan[i] & 8) / 8;
-            //p->source->head.pan[i] = (((int)p->source->head.pan[i]) * 255) / 14;
-            
             p->source->head.pan[i] <<= 4;
-            p->source->head.volume[i] = 64;
-        }
         else
-        {
             p->source->head.pan[i] = 128;
-            p->source->head.volume[i] = 0;
-        }
     }
 
     for (i = 0; i < sampleCount; ++i)
@@ -1044,7 +1030,6 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     char modSig[4];
     char *smpDat8;
     char tempSample[131070];
-    char iffHdrFound;
     int i;
     int j;
     int pattern;
@@ -1105,7 +1090,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     {
         s = &p->source->samples[i];
 
-        if ((mightBeSTK == true) && (i > 14))
+        if (mightBeSTK && (i > 14))
         {
             s->loopLength = 2;
         }
@@ -1115,7 +1100,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
 
             s->length = bufGetWordBigEndian(fmodule) * 2;
             if (s->length > 9999)
-                lateVerSTKFlag = true;
+                lateVerSTKFlag = true; // Only used if mightBeSTK is set
 
             bufread(&s->fineTune, 1, 1, fmodule);
             s->fineTune = s->fineTune & 0x0F;
@@ -1124,19 +1109,22 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
             if (s->volume > 64)
                 s->volume = 64;
 
-            if (mightBeSTK == true)
+            if (mightBeSTK)
                 s->loopStart = bufGetWordBigEndian(fmodule);
             else
                 s->loopStart = bufGetWordBigEndian(fmodule) * 2;
 
             s->loopLength = bufGetWordBigEndian(fmodule) * 2;
+            
+            if (s->loopLength < 2)
+                s->loopLength = 2;
 
             // fix for poorly converted STK->PTMOD modules.
             if (!mightBeSTK && ((s->loopStart + s->loopLength) > s->length))
             {
-                if (((s->loopStart >> 1) + s->loopLength) <= s->length)
+                if (((s->loopStart / 2) + s->loopLength) <= s->length)
                 {
-                    s->loopStart >>= 1;
+                    s->loopStart /= 2;
                 }
                 else
                 {
@@ -1145,23 +1133,36 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
                 }
             }
 
-            if (s->loopLength < 2)
-                s->loopLength = 2;
-
-            if (mightBeSTK == true)
+            if (mightBeSTK)
             {
                 if (s->loopLength > 2)
                 {
                     tmp = s->loopStart;
+                    
                     s->length -= s->loopStart;
                     s->loopStart = 0;
                     s->tmpLoopStart = tmp;
                 }
-
+                
+                // No finetune in STK/UST
                 s->fineTune = 0;
             }
 
             s->attribute = 0;
+        }
+    }
+    
+    // STK 2.5 had loopStart in words, not bytes. Convert if late version STK.
+    for (i = 0; i < 15; ++i)
+    {
+        if (mightBeSTK && lateVerSTKFlag)
+        {
+            s = &p->source->samples[i];
+            if (s->loopStart > 2)
+            {
+                s->length -= s->tmpLoopStart;
+                s->tmpLoopStart *= 2;
+            }
         }
     }
 
@@ -1174,14 +1175,13 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
         return (false);
     }
     
+    // this fixes MOD.beatwave and others
     if (p->source->head.orderCount > 128)
         p->source->head.orderCount = 128;
         
     bufread(&p->source->head.restartPos, 1, 1, fmodule);
-    if ((mightBeSTK == true) && ((p->source->head.restartPos == 0)
-        || (p->source->head.restartPos > 220)))
+    if (mightBeSTK && ((p->source->head.restartPos == 0) || (p->source->head.restartPos > 220)))
     {
-
         free(p->source);
         bufclose(fmodule);
 
@@ -1190,7 +1190,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
 
     p->source->head.initBPM = 125;
 
-    if (mightBeSTK == true)
+    if (mightBeSTK)
     {
         p->source->head.format = FORMAT_STK;
 
@@ -1293,14 +1293,22 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
                     note->command = LO_NYBBLE(bytes[2]);
                     note->param = bytes[3];
 
-                    if (mightBeSTK == true)
+                    if (mightBeSTK)
                     {
-                        if (lateVerSTKFlag == false)
+                        // Convert STK effects to PT effects
+                        // TODO: Add tracker checking, as there
+                        // are many more trackers with different
+                        // effect/param designs :(
+
+                        if (!lateVerSTKFlag)
                         {
+                            // Arpeggio
                             if (note->command == 0x01)
                             {
                                 note->command = 0x00;
                             }
+
+                            // Pitch slide
                             else if (note->command == 0x02)
                             {
                                 if (note->param & 0xF0)
@@ -1315,6 +1323,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
                             }
                         }
 
+                        // Volume slide/pattern break
                         if (note->command == 0x0D)
                         {
                             if (note->param == 0)
@@ -1337,56 +1346,20 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     numSamples = (p->source->head.format == FORMAT_STK) ? 15 : 31;   
     for (i = 0; i < numSamples; ++i)
     {
-        iffHdrFound = 0;
-
         s = &p->source->samples[i];
         s->offset = sampleOffset;
         
         j = (s->length + 1) / 2 + 5 + 16;
-        if ( j > s->length ) j = s->length;
+        if (j > s->length)
+            j = s->length;
         
         bufread(tempSample, 1, j, fmodule);
-
         smpDat8 = tempSample;
-        
+          
         if (j > 5 + 16 && memcmp(smpDat8, "ADPCM", 5) == 0)
-        {
             s->reallength = j;
-        }
         else
-        {
             s->reallength = s->length;
-            bufread(tempSample + j, 1, s->length - j, fmodule);
-            if (s->length > 8)
-            {
-                for (j = 0; j < (s->length - 8); ++j)
-                {
-                    if (memcmp(smpDat8, "8SVXVHDR", 8) == 0)
-                        iffHdrFound = 1;
-                    
-                    if (iffHdrFound)
-                    {
-                        if (memcmp(smpDat8, "BODY", 4) == 0)
-                        {
-                            s->iffSize = j + 8;
-                            s->length -= s->iffSize;
-                            
-                            // Relocate loopStart
-                            if (s->loopStart >= ((int)(((j) + 8) & 0xFFFFFFFE))) // even'ify unit
-                                s->loopStart -= ((int)(((j) + 8) & 0xFFFFFFFE));
-                            
-                            // Fix loopStart+loopLength > sampleLength
-                            while ((s->loopStart + s->loopLength) > s->length)
-                                s->loopLength--;
-                            
-                            break;
-                        }
-                    }
-                    
-                    ++smpDat8;
-                }
-            }
-        }
         
         sampleOffset += s->length;
         p->source->head.totalSampleSize += s->length;
@@ -1415,9 +1388,6 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     for (i = 0; i < numSamples; ++i)
     {
         s = &p->source->samples[i];
-
-        if (s->iffSize > 0)
-            bufseek(fmodule, s->iffSize, SEEK_CUR);
         
         if (s->reallength < s->length)
         {
@@ -1435,7 +1405,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
                 ++adpcmData;
             }
         }
-        else if ((mightBeSTK == true) && (s->loopLength > 2))
+        else if (mightBeSTK && (s->loopLength > 2))
         {
             for (j = 0; j < s->tmpLoopStart; ++j)
                 bufseek(fmodule, 1, SEEK_CUR);
@@ -1471,7 +1441,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     bufclose(fmodule);
 
     p->source->head.rowCount = MOD_ROWS;
-    memset(p->source->head.volume, 64, MAX_CHANNELS);
+
     for (i = 0; i < MAX_CHANNELS; ++i)
         p->source->head.pan[i] = ((i + 1) & 2) ? 160 : 96;
 
@@ -1649,27 +1619,21 @@ static void processInvertLoop(player *p, mod_channel *ch)
     char invertLoopTemp;
     char *invertLoopData;
     MODULE_SAMPLE *s;
-
+    
     if (ch->invertLoopSpeed > 0)
     {
         ch->invertLoopDelay += invertLoopSpeeds[ch->invertLoopSpeed];
-        if (ch->invertLoopDelay >= 128)
+        if (ch->invertLoopDelay & 128)
         {
             ch->invertLoopDelay = 0;
 
-            if (ch->sample != 0)
+            if (ch->invertLoopPtr != NULL) // PT doesn't do this, but we're more sane than that.
             {
-                s = &p->source->samples[ch->sample - 1];
-                if (s->loopLength > 2)
-                {
-                    ch->invertLoopOffset++;
-                    if (ch->invertLoopOffset >= (s->loopStart + s->loopLength))
-                        ch->invertLoopOffset = s->loopStart;
+                ch->invertLoopPtr++;
+                if (ch->invertLoopPtr >= (ch->invertLoopStart + ch->invertLoopLength))
+                    ch->invertLoopPtr  =  ch->invertLoopStart;
 
-                    invertLoopData = &p->source->sampleData[s->offset + ch->invertLoopOffset];
-                    invertLoopTemp = -1 - *invertLoopData;
-                    *invertLoopData = invertLoopTemp;
-                }
+                *ch->invertLoopPtr = -1 - *ch->invertLoopPtr;
             }
         }
     }
@@ -1790,7 +1754,6 @@ static void efxKarplusStrong(player *p, mod_channel *ch)
     // used E8x for other effects instead.
 
     (void)ch;
-
 }
 
 static void efxRetrigNote(player *p, mod_channel *ch)
@@ -2443,17 +2406,12 @@ void playptmod_Stop(void *_p)
     mixerCutChannels(p);
 
     p->modulePlaying = false;
-
-    for (i = 0; i < p->source->head.channelCount; ++i)
+    
+    memset(p->source->channels, 0, sizeof (mod_channel) * MAX_CHANNELS);
+    for (i = 0; i < MAX_CHANNELS; ++i)
     {
-        p->source->channels[i].patternLoopCounter = 0;
-        p->source->channels[i].glissandoControl = 0;
-        p->source->channels[i].vibratoControl = 0;
-        p->source->channels[i].tremoloControl = 0;
-        p->source->channels[i].fineTune = 0;
-        p->source->channels[i].invertLoopSpeed = 0;
-        p->source->channels[i].period = 0;
-        p->source->channels[i].tempPeriod = 0;
+        p->source->channels[i].chanIndex = (char)i;
+        p->source->channels[i].noNote = true;
         p->source->channels[i].offsetBugNotAdded = true;
     }
 
@@ -2555,8 +2513,10 @@ static void processChannel(player *p, mod_channel *ch)
                 s = &p->source->samples[ch->sample - 1];
 
                 ch->volume = s->volume;
-                ch->invertLoopOffset = s->loopStart;
-
+                ch->invertLoopPtr = &p->source->sampleData[s->offset + s->loopStart];
+                ch->invertLoopStart = ch->invertLoopPtr;
+                ch->invertLoopLength = s->loopLength;
+                
                 if ((ch->command != 0x03) && (ch->command != 0x05))
                 {
                     ch->offset = 0;
@@ -2567,9 +2527,7 @@ static void processChannel(player *p, mod_channel *ch)
                 {
                     ch->flags &= ~FLAG_NEWSAMPLE;
 
-                    if ((ch->period > 0) && ((ch->noNote ==  true)
-                        || (ch->command == 0x03)
-                        || (ch->command == 0x05)))
+                    if (((ch->period > 0) && ch->noNote) || (ch->command == 0x03) || (ch->command == 0x05))
                         p->tempFlags |= TEMPFLAG_NEW_SAMPLE;
                 }
             }
@@ -2579,7 +2537,7 @@ static void processChannel(player *p, mod_channel *ch)
     p->tempPeriod = ch->period;
     p->tempVolume = ch->volume;
 
-    if (p->forceEffectsOff == false)
+    if (!p->forceEffectsOff)
         processEffects(p, ch);
 
     if (!(p->tempFlags & TEMPFLAG_DELAY))
@@ -2610,9 +2568,12 @@ static void processChannel(player *p, mod_channel *ch)
 
                         if (p->minPeriod == PT_MIN_PERIOD) // PT/NT/STK/UST bug only
                         {
-                            if (ch->offsetBugNotAdded == false)
+                            if (!ch->offsetBugNotAdded)
                             {
-                                ch->offset += ch->offsetTemp;
+                                ch->offset += ch->offsetTemp; // emulates add sample offset bug (fixes some quirky MODs)
+                                if (ch->offset > 0xFFFF)
+                                    ch->offset = 0xFFFF;
+                                    
                                 ch->offsetBugNotAdded = true;
                             }
                         }
@@ -2663,7 +2624,7 @@ static void processTick(player *p)
     {
         if (p->modTick == 0)
         {
-            if (p->forceEffectsOff == true)
+            if (p->forceEffectsOff)
             {
                 if (p->modRow != p->pattBreakBugPos)
                 {
@@ -2681,7 +2642,7 @@ static void processTick(player *p)
     {
         if (p->modTick == 0)
         {
-            if ((p->pattBreakFlag == true) && (p->pattDelayFlag == true))
+            if (p->pattBreakFlag && p->pattDelayFlag)
                 p->forceEffectsOff = true;
         }
     }
@@ -2709,14 +2670,14 @@ static void processTick(player *p)
                 p->modRow--;
         }
 
-        if (p->PBreakFlag == true)
+        if (p->PBreakFlag)
         {
             p->PBreakFlag = false;
             p->modRow = p->PBreakPosition;
             p->PBreakPosition = 0;
         }
 
-        if ((p->modRow == p->source->head.rowCount) || (p->PosJumpAssert == true))
+        if ((p->modRow == p->source->head.rowCount) || p->PosJumpAssert)
             nextPosition(p);
     }
 }
@@ -2725,7 +2686,7 @@ void playptmod_Render(void *_p, int *target, int length)
 {
     player *p = (player *)_p;
 
-    if (p->modulePlaying == true)
+    if (p->modulePlaying)
     {
         static const int soundBufferSamples = soundBufferSize / 4;
 
@@ -2758,29 +2719,30 @@ void playptmod_Render16(void *_p, short *target, int length)
     player *p = (player *)_p;
 
 	int tempBuffer[512];
-	int * temp = ( target ) ? tempBuffer : 0;
-
+	int *temp;
+    unsigned int i;
+    
+    temp = target ? tempBuffer : NULL;
     while (length)
     {
-        int i, tempSamples = CLAMP(length, 0, 256);
+        tempSamples = CLAMP(length, 0, 256);
         playptmod_Render(p, temp, tempSamples);
+        
         length -= tempSamples;
         
-        if ( target )
-		for (i = 0; i < tempSamples * 2; ++i)
-		{
-			int s = tempBuffer[ i ] >> 8;
-			s = CLAMP(s, -32768, 32767);
-			target[ i ] = (short)s;
-		}
-        
-        if ( target ) target += (tempSamples * 2);
+        if (target)
+        {
+            for (i = 0; i < tempSamples * 2; ++i)
+                target[i] = (short)CLAMP(tempBuffer[i] >> 8, -32768, 32767);
+            
+            target += (tempSamples * 2);
+        }  
     }
 }
 
 void *playptmod_Create(int samplingFrequency)
 {
-    player *p = (player *) calloc(1, sizeof(player));
+    player *p = (player *) calloc(1, sizeof (player));
     
     int i, j;
 
@@ -2792,9 +2754,8 @@ void *playptmod_Create(int samplingFrequency)
 
     p->frequencyTable = (float *)malloc(sizeof (float) * 938);
     
-    p->frequencyTable[0] = (float)samplingFrequency / 7093790.0f;
-    for (i = 1; i <= 937; ++i)
-        p->frequencyTable[i] = (float)samplingFrequency / (7093790.0f / (2.0f * (float)i));
+    for (i = 14; i < 938; ++i) // 0..14 will never be looked up, junk is OK
+        p->frequencyTable[i] = (float)samplingFrequency / (3546895.0f / (float)i);
 
     for (j = 0; j < 16; ++j)
         for (i = 0; i < 85; ++i)
@@ -2806,8 +2767,8 @@ void *playptmod_Create(int samplingFrequency)
     p->soundFrequency = samplingFrequency;
 
     p->extendedFrequencyTable = (float *)malloc(sizeof (float) * 1713);
-    for (i = 14; i <= 1712; ++i) // 0..14 will never be looked up, junk is OK
-        p->extendedFrequencyTable[i] = (float)samplingFrequency / (7093790.0f / (2.0f * (float)i));
+    for (i = 14; i < 1713; ++i) // 0..14 will never be looked up, junk is OK
+        p->extendedFrequencyTable[i] = (float)samplingFrequency / (3546895.0f / (float)i);
     
     p->mixBufferL = (float *)malloc(soundBufferSize * sizeof (float));
     p->mixBufferR = (float *)malloc(soundBufferSize * sizeof (float));
@@ -2842,18 +2803,11 @@ void playptmod_Play(void *_p, unsigned int startOrder)
     {
         mixerCutChannels(p);
 
-        for (i = 0; i < p->source->head.channelCount; ++i)
+        memset(p->source->channels, 0, sizeof (mod_channel) * MAX_CHANNELS);
+        for (i = 0; i < MAX_CHANNELS; ++i)
         {
-            p->source->channels[i].volume = 64;
             p->source->channels[i].chanIndex = (char)i;
-            p->source->channels[i].patternLoopRow = 0;
-            p->source->channels[i].patternLoopCounter = 0;
-            p->source->channels[i].glissandoControl = 0;
-            p->source->channels[i].vibratoControl = 0;
-            p->source->channels[i].vibratoPos = 0;
-            p->source->channels[i].tremoloControl = 0;
-            p->source->channels[i].tremoloPos = 0;
-            p->source->channels[i].fineTune = 0;
+            p->source->channels[i].noNote = true;
             p->source->channels[i].offsetBugNotAdded = true;
         }
 
@@ -2880,7 +2834,7 @@ void playptmod_Play(void *_p, unsigned int startOrder)
         p->PBreakFlag = false;
 
         memcpy(p->source->sampleData, p->source->originalSampleData, p->source->head.totalSampleSize);
-        memset(p->orderPlayed, 0, sizeof(p->orderPlayed));
+        memset(p->orderPlayed, 0, sizeof (p->orderPlayed));
 
         p->loopCounter = 0;
         p->orderPlayed[startOrder] = 1;
@@ -2893,28 +2847,70 @@ void playptmod_Free(void *_p)
     player *p = (player *)_p;
     int i;
 
-    if (p->moduleLoaded == true)
+    if (p->moduleLoaded)
     {
         p->modulePlaying = false;
 
-        for (i = 0; i < 256; ++i)
+        if (p->source != NULL)
         {
-            if (p->source->patterns[i] != NULL)
-                free(p->source->patterns[i]);
+            for (i = 0; i < 256; ++i)
+            {
+                if (p->source->patterns[i] != NULL)
+                {
+                    free(p->source->patterns[i]);
+                    p->source->patterns[i] = NULL;
+                }
+            }
+
+            if (p->source->originalSampleData != NULL)
+            {
+                free(p->source->originalSampleData);
+                p->source->originalSampleData = NULL;
+            }
+            
+            if (p->source->sampleData != NULL)
+            {
+                free(p->source->sampleData);
+                p->source->sampleData = NULL;
+            }
+            
+            free(p->source);
+            p->source = NULL;
         }
-
-        free(p->source->originalSampleData);
-        free(p->source->sampleData);
-        free(p->source);
-
+        
         p->moduleLoaded = false;
     }
 
-    free(p->mixBufferL);
-    free(p->mixBufferR);;
-    free(p->sinusTable);
-    free(p->frequencyTable);
-    free(p->extendedFrequencyTable);
+    if (p->mixBufferL != NULL)
+    {
+        free(p->mixBufferL);
+        p->mixBufferL = NULL;
+    }
+    
+    if (p->mixBufferR != NULL)
+    {
+        free(p->mixBufferR);
+        p->mixBufferR = NULL;
+    }
+    
+    if (p->sinusTable != NULL)
+    {
+        free(p->sinusTable);
+        p->sinusTable = NULL;
+    }
+    
+    if (p->frequencyTable != NULL)
+    {
+        free(p->frequencyTable);
+        p->frequencyTable = NULL;
+    }
+    
+    if (p->extendedFrequencyTable != NULL)
+    {
+        free(p->extendedFrequencyTable);
+        p->extendedFrequencyTable = NULL;
+    }
+    
     free(p);
 }
 
@@ -2950,7 +2946,8 @@ void playptmod_GetInfo(void *_p, playptmod_info *i)
 
     for (c = 0, n = 0; n < p->source->head.channelCount; ++n)
     {
-        if (p->v[n].data) c++;
+        if (p->v[n].data)
+            c++;
     }
 
     i->channelsPlaying = c;
