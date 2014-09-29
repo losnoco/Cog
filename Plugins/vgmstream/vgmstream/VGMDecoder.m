@@ -167,11 +167,12 @@ err1:
         long fadeEnd = (framesRead + frames) > totalFrames ? totalFrames : (framesRead + frames);
         long fadePos;
         
-        int fadeScale = (int)((float)(totalFrames - fadeStart) / (float)framesFade * 65536.0f);
-        float fadeStep = (int)(1.0f / (float)framesFade * 65536.0f);
+        int64_t fadeScale = (int64_t)(totalFrames - fadeStart) * INT_MAX / framesFade;
+        int64_t fadeStep = INT_MAX / framesFade;
+        sbuf += (fadeStart - framesRead) * 2;
         for (fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
-            sbuf[ 0 ] = sbuf[ 0 ] * fadeScale / 65536;
-            sbuf[ 1 ] = sbuf[ 1 ] * fadeScale / 65536;
+            sbuf[ 0 ] = (int16_t)((int64_t)(sbuf[ 0 ]) * fadeScale / INT_MAX);
+            sbuf[ 1 ] = (int16_t)((int64_t)(sbuf[ 1 ]) * fadeScale / INT_MAX);
             sbuf += 2;
             fadeScale -= fadeStep;
             if (fadeScale <= 0) break;
