@@ -1126,6 +1126,20 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
 
             p->source->samples[i].loopLength = bufGetWordBigEndian(fmodule) * 2;
 
+            // fix for poorly converted STK->PTMOD modules.
+            if (!mightBeSTK && ((s->loopStart + s->loopLength) > s->length))
+            {
+                if (((s->loopStart >> 1) + s->loopLength) <= s->length)
+                {
+                    s->loopStart >>= 1;
+                }
+                else
+                {
+                    s->loopStart  = 0;
+                    s->loopLength = 2;
+                }
+            }
+
             if (p->source->samples[i].loopLength < 2)
                 p->source->samples[i].loopLength = 2;
 
@@ -2250,7 +2264,7 @@ static void fxSampleOffset(player *p, mod_channel *ch)
     if (p->modTick == 0)
     {
         if (ch->param > 0)
-            ch->offsetTemp = (uint16_t)(ch->param) * 256;
+            ch->offsetTemp = (unsigned short)(ch->param) * 256;
 
         ch->offset += ch->offsetTemp;
         
@@ -2264,7 +2278,7 @@ static void fxSampleOffset_FT2(player *p, mod_channel *ch)
     if (p->modTick == 0)
     {
         if (ch->param > 0)
-            ch->offset = (uint16_t)(ch->param) * 256;
+            ch->offset = (unsigned short)(ch->param) * 256;
 
         ch->offsetBugNotAdded = true;
     }
