@@ -818,21 +818,23 @@ static int playptmod_LoadMTM(player *p, BUF *fmodule)
 
     for (i = 0; i < sampleCount; ++i)
     {
+        MODULE_SAMPLE * s = &p->source->samples[i];
+
         bufseek(fmodule, 22, SEEK_CUR);
 
-        p->source->samples[i].length = bufGetDwordLittleEndian(fmodule);
-        p->source->samples[i].loopStart = bufGetDwordLittleEndian(fmodule);
-        p->source->samples[i].loopLength = bufGetDwordLittleEndian(fmodule) - p->source->samples[i].loopStart;
-        if (p->source->samples[i].loopLength < 2)
-            p->source->samples[i].loopLength = 2;
+        s->length = bufGetDwordLittleEndian(fmodule);
+        s->loopStart = bufGetDwordLittleEndian(fmodule);
+        s->loopLength = bufGetDwordLittleEndian(fmodule) - s->loopStart;
+        if (s->loopLength < 2)
+            s->loopLength = 2;
 
-        bufread(&p->source->samples[i].fineTune, 1, 1, fmodule);
-        p->source->samples[i].fineTune = p->source->samples[i].fineTune & 0x0F;
+        bufread(&s->fineTune, 1, 1, fmodule);
+        s->fineTune = s->fineTune & 0x0F;
 
-        bufread(&p->source->samples[i].volume, 1, 1, fmodule);
-        bufread(&p->source->samples[i].attribute, 1, 1, fmodule);
+        bufread(&s->volume, 1, 1, fmodule);
+        bufread(&s->attribute, 1, 1, fmodule);
 
-        totalSampleSize += p->source->samples[i].length;
+        totalSampleSize += s->length;
     }
 
     bufread(&p->source->head.order, 1, 128, fmodule);
@@ -902,16 +904,17 @@ static int playptmod_LoadMTM(player *p, BUF *fmodule)
 
     for (i = 0; i < sampleCount; ++i)
     {
-        p->source->samples[i].offset = sampleOffset;
-        bufread(&p->source->sampleData[sampleOffset], 1, p->source->samples[i].length, fmodule);
+        MODULE_SAMPLE * s = &p->source->samples[i];
+        s->offset = sampleOffset;
+        bufread(&p->source->sampleData[sampleOffset], 1, s->length, fmodule);
         
-        if (!(p->source->samples[i].attribute & 1))
+        if (!(s->attribute & 1))
         {
-            for (j = (int)sampleOffset; (unsigned int)j < sampleOffset + p->source->samples[i].length; ++j)
+            for (j = (int)sampleOffset; (unsigned int)j < sampleOffset + s->length; ++j)
                 p->source->sampleData[(unsigned int)j] ^= 0x80;
         }
                 
-        sampleOffset += p->source->samples[i].length;
+        sampleOffset += s->length;
     }
 
     p->source->originalSampleData = (char *)malloc(totalSampleSize);
@@ -1100,31 +1103,33 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
 
     for (i = 0; i < MOD_SAMPLES; ++i)
     {
+        s = &p->source->samples[i];
+
         if ((mightBeSTK == true) && (i > 14))
         {
-            p->source->samples[i].loopLength = 2;
+            s->loopLength = 2;
         }
         else
         {
             bufseek(fmodule, 22, SEEK_CUR);
 
-            p->source->samples[i].length = bufGetWordBigEndian(fmodule) * 2;
-            if (p->source->samples[i].length > 9999)
+            s->length = bufGetWordBigEndian(fmodule) * 2;
+            if (s->length > 9999)
                 lateVerSTKFlag = true;
 
-            bufread(&p->source->samples[i].fineTune, 1, 1, fmodule);
-            p->source->samples[i].fineTune = p->source->samples[i].fineTune & 0x0F;
+            bufread(&s->fineTune, 1, 1, fmodule);
+            s->fineTune = s->fineTune & 0x0F;
 
-            bufread(&p->source->samples[i].volume, 1, 1, fmodule);
-            if (p->source->samples[i].volume > 64)
-                p->source->samples[i].volume = 64;
+            bufread(&s->volume, 1, 1, fmodule);
+            if (s->volume > 64)
+                s->volume = 64;
 
             if (mightBeSTK == true)
-                p->source->samples[i].loopStart = bufGetWordBigEndian(fmodule);
+                s->loopStart = bufGetWordBigEndian(fmodule);
             else
-                p->source->samples[i].loopStart = bufGetWordBigEndian(fmodule) * 2;
+                s->loopStart = bufGetWordBigEndian(fmodule) * 2;
 
-            p->source->samples[i].loopLength = bufGetWordBigEndian(fmodule) * 2;
+            s->loopLength = bufGetWordBigEndian(fmodule) * 2;
 
             // fix for poorly converted STK->PTMOD modules.
             if (!mightBeSTK && ((s->loopStart + s->loopLength) > s->length))
@@ -1140,23 +1145,23 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
                 }
             }
 
-            if (p->source->samples[i].loopLength < 2)
-                p->source->samples[i].loopLength = 2;
+            if (s->loopLength < 2)
+                s->loopLength = 2;
 
             if (mightBeSTK == true)
             {
-                if (p->source->samples[i].loopLength > 2)
+                if (s->loopLength > 2)
                 {
-                    tmp = p->source->samples[i].loopStart;
-                    p->source->samples[i].length -= p->source->samples[i].loopStart;
-                    p->source->samples[i].loopStart = 0;
-                    p->source->samples[i].tmpLoopStart = tmp;
+                    tmp = s->loopStart;
+                    s->length -= s->loopStart;
+                    s->loopStart = 0;
+                    s->tmpLoopStart = tmp;
                 }
 
-                p->source->samples[i].fineTune = 0;
+                s->fineTune = 0;
             }
 
-            p->source->samples[i].attribute = 0;
+            s->attribute = 0;
         }
     }
 
@@ -1430,16 +1435,16 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
                 ++adpcmData;
             }
         }
-        else if ((mightBeSTK == true) && (p->source->samples[i].loopLength > 2))
+        else if ((mightBeSTK == true) && (s->loopLength > 2))
         {
-            for (j = 0; j < p->source->samples[i].tmpLoopStart; ++j)
+            for (j = 0; j < s->tmpLoopStart; ++j)
                 bufseek(fmodule, 1, SEEK_CUR);
 
-            bufread(&p->source->sampleData[s->offset], 1, p->source->samples[i].length - p->source->samples[i].loopStart, fmodule);
+            bufread(&p->source->sampleData[s->offset], 1, s->length - s->loopStart, fmodule);
         }
         else
         {
-            bufread(&p->source->sampleData[s->offset], 1, p->source->samples[i].length, fmodule);
+            bufread(&p->source->sampleData[s->offset], 1, s->length, fmodule);
         }
     }
 

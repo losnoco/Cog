@@ -3920,7 +3920,7 @@ void ft2play_PlaySong(void *_p, int32_t startOrder)
     p->loopCount = 0;
     
     if (p->playedRows) bit_array_destroy(p->playedRows);
-    p->playedRows = bit_array_create(1024 * (p->Song.Len ?: 1));
+	p->playedRows = bit_array_create(1024 * (p->Song.Len ? p->Song.Len : 1));
     bit_array_set(p->playedRows, startOrder * 1024);
 }
 
