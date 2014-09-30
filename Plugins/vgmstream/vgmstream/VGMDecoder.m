@@ -177,10 +177,10 @@ err1:
             fadeScale -= fadeStep;
             if (fadeScale <= 0) break;
         }
-        frames = (UInt32)(fadePos - fadeStart);
+        frames = (UInt32)(fadePos - framesRead);
     }
     
-	framesRead += frames;
+    framesRead += frames;
     
     return frames;
 }
