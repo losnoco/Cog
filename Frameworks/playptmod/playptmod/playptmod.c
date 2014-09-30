@@ -1,6 +1,9 @@
 /*
-** - playptmod v1.15 - 29th of September 2014 -
+** - playptmod v1.15b - 29th of September 2014 -
 ** This is the foobar2000 version, with code by kode54
+**
+** Changelog from 1.15a:
+** - Added a hack to find out what 8xx pan is used (7-bit/8-bit)
 **
 ** Changelog from 1.10d:
 ** - Removed obsolete IFF sample handling (FT2/PT didn't have it)
@@ -142,8 +145,8 @@ typedef struct
 typedef struct
 {
     char moduleLoaded;
-    char *sampleData;
-    char *originalSampleData;
+    signed char *sampleData;
+    signed char *originalSampleData;
     MODULE_HEADER head;
     MODULE_SAMPLE samples[31];
     modnote_t *patterns[256];
@@ -163,8 +166,8 @@ typedef struct paula_filter_coefficients
 
 typedef struct voice_data
 {
-    const char *newData;
-    const char *data;
+    const signed char *newData;
+    const signed char *data;
     char swapSampleFlag;
     char loopFlag;
     int length;
@@ -230,6 +233,7 @@ typedef struct
     int sampleCounter;
     int samplesPerTick;
     int vBlankTiming;
+    int sevenBitPanning;
     Voice v[MAX_CHANNELS];
     Filter filter;
     FilterC filterC;
@@ -411,7 +415,7 @@ static inline int periodToNote(player *p, char finetune, short period)
     return i;
 }
 
-static void mixerSwapChSource(player *p, int ch, const char *src, int length, int loopStart, int loopLength, int step)
+static void mixerSwapChSource(player *p, int ch, const signed char *src, int length, int loopStart, int loopLength, int step)
 {
     Voice *v;
     
@@ -449,7 +453,7 @@ static void mixerSwapChSource(player *p, int ch, const char *src, int length, in
     }
 }
 
-static void mixerSetChSource(player *p, int ch, const char *src, int length, int loopStart, int loopLength, int offset, int step)
+static void mixerSetChSource(player *p, int ch, const signed char *src, int length, int loopStart, int loopLength, int offset, int step)
 {
     Voice *v;
     
@@ -871,7 +875,7 @@ static int playptmod_LoadMTM(player *p, BUF *fmodule)
         }
     }
 
-    p->source->sampleData = (char *)malloc(totalSampleSize);
+    p->source->sampleData = (signed char *)malloc(totalSampleSize);
     if (!p->source->sampleData)
     {
         for (i = 0; i < 256; ++i)
@@ -903,7 +907,7 @@ static int playptmod_LoadMTM(player *p, BUF *fmodule)
         sampleOffset += s->length;
     }
 
-    p->source->originalSampleData = (char *)malloc(totalSampleSize);
+    p->source->originalSampleData = (signed char *)malloc(totalSampleSize);
     if (p->source->originalSampleData == NULL)
     {
         free(p->source->sampleData);
@@ -932,6 +936,8 @@ static int playptmod_LoadMTM(player *p, BUF *fmodule)
 
     p->source->head.format = FORMAT_MTM;
     p->source->head.initBPM = 125;
+    
+    p->sevenBitPanning = false;
 
     return (true);
 }
@@ -1040,6 +1046,8 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     int lateVerSTKFlag;
     int numSamples;
     int tmp;
+    int leftPanning;
+    int extendedPanning;
     unsigned long tempOffset;
     modnote_t *note;
     MODULE_SAMPLE *s;
@@ -1240,6 +1248,9 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
             return (false);
         }
     }
+    
+    leftPanning = false;
+    extendedPanning = false;
 
     for (pattern = 0; pattern < p->source->head.patternCount; ++pattern)
     {
@@ -1292,6 +1303,19 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
                     note->sample = (bytes[0] & 0xF0) | HI_NYBBLE(bytes[2]);
                     note->command = LO_NYBBLE(bytes[2]);
                     note->param = bytes[3];
+                    
+                    // 7-bit/8-bit styled pan hack, from OpenMPT
+                    if (note->command == 0x08)
+                    {
+                        if (note->param < 0x80)
+                            leftPanning = true;
+                        
+                        // Saga_Musix says: 8F instead of 80 is not a typo but
+                        // required for a few mods which have 7-bit panning
+                        // with slightly too big values
+                        if ((note->param > 0x8F) && (note->param != 0xA4))
+                            extendedPanning = true;
+                    }
 
                     if (mightBeSTK)
                     {
@@ -1338,6 +1362,10 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
             }
         }
     }
+    
+    p->sevenBitPanning = false;
+    if (leftPanning && !extendedPanning)
+        p->sevenBitPanning = true;   
 
     tempOffset = buftell(fmodule);
 
@@ -1365,7 +1393,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
         p->source->head.totalSampleSize += s->length;
     }
 
-    p->source->sampleData = (char *)malloc(p->source->head.totalSampleSize);
+    p->source->sampleData = (signed char *)malloc(p->source->head.totalSampleSize);
     if (p->source->sampleData == NULL)
     {
         bufclose(fmodule);
@@ -1418,7 +1446,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
         }
     }
 
-    p->source->originalSampleData = (char *) malloc(p->source->head.totalSampleSize);
+    p->source->originalSampleData = (signed char *) malloc(p->source->head.totalSampleSize);
     if (p->source->originalSampleData == NULL)
     {
         bufclose(fmodule);
@@ -1616,10 +1644,6 @@ static effect_routine efxRoutines_FT2[16] =
 
 static void processInvertLoop(player *p, mod_channel *ch)
 {
-    char invertLoopTemp;
-    char *invertLoopData;
-    MODULE_SAMPLE *s;
-    
     if (ch->invertLoopSpeed > 0)
     {
         ch->invertLoopDelay += invertLoopSpeeds[ch->invertLoopSpeed];
@@ -2389,7 +2413,17 @@ static void processEffects(player *p, mod_channel *ch)
 static void fxPan(player *p, mod_channel *ch)
 {
     if (p->modTick == 0)
-        mixerSetChPan(p, ch->chanIndex, ch->param <= 128 ? ch->param * 2 : 128);
+    {
+        if (p->sevenBitPanning)
+        {
+            if (ch->param != 0xA4) // don't do 0xA4 surround yet
+                mixerSetChPan(p, ch->chanIndex, ch->param * 2); // 7-bit .MOD pan
+        }
+        else
+        {
+            mixerSetChPan(p, ch->chanIndex, ch->param); // 8-bit .MOD pan
+        }
+    }
 }
 
 static void efxPan(player *p, mod_channel *ch)
@@ -2725,7 +2759,7 @@ void playptmod_Render16(void *_p, short *target, int length)
     temp = target ? tempBuffer : NULL;
     while (length)
     {
-        tempSamples = CLAMP(length, 0, 256);
+        int tempSamples = CLAMP(length, 0, 256);
         playptmod_Render(p, temp, tempSamples);
         
         length -= tempSamples;
