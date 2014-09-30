@@ -1546,7 +1546,7 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
             autoVibTmp = (((0 - ((ch->EVibPos >> 1) & 0x00FF)) + 64) & 127) - 64;
 
         else // sine
-            autoVibTmp = VibSineTab[ch->EVibPos];
+            autoVibTmp = p->VibSineTab[ch->EVibPos];
 
         ch->FinalPeriod = ch->OutPeriod + ((autoVibTmp * ch->EVibAmp) / 16384);
         if (ch->FinalPeriod > (32000 - 1)) ch->FinalPeriod = 0; // Yes, FT2 zeroes it out
