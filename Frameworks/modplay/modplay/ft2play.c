@@ -1,6 +1,9 @@
 /*
-** FT2PLAY v0.66 - 3rd of September 2014
-** =====================================
+** FT2PLAY v0.67 - 30th of September 2014
+** ======================================
+**
+** Changelog from v0.66:
+** - Auto-vibrato was wrong on every type except for sine
 **
 ** Changelog from v0.65:
 ** - RelocateTon() was less accurate, changed back to the older one
@@ -17,8 +20,8 @@
 ** This is by no means a piece of beautiful code, nor is it meant to be...
 ** It's just an accurate FastTracker II replayer port for people to enjoy.
 **
-** Thanks to kode54 for making the loader work on big- and little endian!
 ** Also thanks to aciddose (and kode54) for coding the vol/sample ramp.
+** The volume ramp is tune to that of FT2 (5ms).
 **
 ** (extreme) non-FT2 extensions:
 ** - Max 127 channels (was 32)
@@ -28,8 +31,7 @@
 ** - Max 1024 rows per pattern (was 256)
 ** - Stereo samples
 **
-** These additions shouldn't break FT2 accuracy, unless the XM is malicious.
-** 
+** These additions shouldn't break FT2 accuracy unless I'm wrong.
 */
 
 #include <stdio.h>
@@ -1330,7 +1332,7 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
     uint8_t envPos;
     int8_t envInterpolateFlag;
     int8_t envDidInterpolate;
-    uint8_t autoVibTmp;
+    int16_t autoVibTmp;
 
     // *** FADEOUT ***
     if (!ch->EnvSustainActive)
@@ -1534,13 +1536,19 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
             }
         }
 
-        autoVibTmp = ch->EVibPos;
+        if (ch->InstrSeg.VibTyp == 1) // square
+            autoVibTmp = (ch->EVibPos > 127) ? 64 : -64;
 
-        if      (ch->InstrSeg.VibTyp == 1) autoVibTmp = (autoVibTmp > 127) ? 192 : 64;
-        else if (ch->InstrSeg.VibTyp == 2) autoVibTmp = (((((autoVibTmp >> 1) & 0x00FF) + 64) & 127) - 64) ^ -1;
-        else if (ch->InstrSeg.VibTyp == 3) autoVibTmp = (((((autoVibTmp >> 1) & 0x00FF) + 64) & 127) - 64);
+        else if (ch->InstrSeg.VibTyp == 2) // ramp up
+            autoVibTmp = ((((ch->EVibPos >> 1) & 0x00FF) + 64) & 127) - 64;
 
-        ch->FinalPeriod = ((p->VibSineTab[autoVibTmp] * ch->EVibAmp) >> 14) + ch->OutPeriod;
+        else if (ch->InstrSeg.VibTyp == 3) // ramp down
+            autoVibTmp = (((0 - ((ch->EVibPos >> 1) & 0x00FF)) + 64) & 127) - 64;
+
+        else // sine
+            autoVibTmp = VibSineTab[ch->EVibPos];
+
+        ch->FinalPeriod = ch->OutPeriod + ((autoVibTmp * ch->EVibAmp) / 16384);
         if (ch->FinalPeriod > (32000 - 1)) ch->FinalPeriod = 0; // Yes, FT2 zeroes it out
 
         ch->Status  |= IS_Period;
