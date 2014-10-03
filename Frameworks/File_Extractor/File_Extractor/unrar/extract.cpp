@@ -62,17 +62,16 @@ unrar_err_t CmdExtract::ExtractCurrentFile( bool SkipSolid, bool check_compatibi
 			Unp = new Unpack( &Arc );
 			if ( !Unp )
 				return unrar_err_memory;
-			
-            Unp->Init(Arc.FileHead.WinSize,Arc.FileHead.Solid);
 		}
 		
+        Unp->Init(Arc.FileHead.WinSize,Arc.FileHead.Solid);
         Unp->SetDestSize(Arc.FileHead.UnpSize);
 #ifndef SFX_MODULE
-		if (Arc.FileHead.UnpVer>=13 && Arc.FileHead.UnpVer<=15)
+		if (Arc.Format!=RARFMT50 && Arc.FileHead.UnpVer<=15)
 			Unp->DoUnpack(15,FileCount>1 && Arc.Solid);
 		else
 #endif
-			Unp->DoUnpack(Arc.FileHead.UnpVer,!!(Arc.FileHead.Flags & LHD_SOLID));
+			Unp->DoUnpack(Arc.FileHead.UnpVer,Arc.FileHead.Solid);
 	}
 	
 	// (no need to seek to next file)
