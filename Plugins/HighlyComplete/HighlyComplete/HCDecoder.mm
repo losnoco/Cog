@@ -175,17 +175,13 @@ static psf_file_callbacks source_callbacks =
 
 + (void)initialize
 {
-    bios_set_image(hebios, HEBIOS_SIZE);
-    psx_init();
-    sega_init();
-    qsound_init();
-    
-    // BAH
-    struct sigaction sa;
-    sa.sa_handler = SIG_IGN;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    sigaction(SIGPIPE, &sa, NULL);
+    if (self == [HCDecoder class])
+    {
+        bios_set_image(hebios, HEBIOS_SIZE);
+        psx_init();
+        sega_init();
+        qsound_init();
+    }
 }
 
 - (NSDictionary *)metadata
@@ -1014,7 +1010,7 @@ static int usf_info(void * context, const char * name, const char * value)
         
         usf_clear( state.emu_state );
         
-        //usf_set_hle_audio( state.emu_state, 1 );
+        usf_set_hle_audio( state.emu_state, 1 );
         
         emulatorCore = ( uint8_t * ) state.emu_state;
         
