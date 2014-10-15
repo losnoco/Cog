@@ -114,7 +114,7 @@ void alist_adpcm(
         uint32_t last_frame_address);
 
 void alist_resample(
-        struct hle_t* hle, 
+        struct hle_t* hle,
         bool init,
         bool flag2,
         uint16_t dmemo, uint16_t dmemi, uint16_t count,
@@ -144,6 +144,16 @@ void alist_polef(
         uint16_t gain,
         int16_t* table,
         uint32_t address);
+
+void alist_iirf(
+        struct hle_t* hle,
+        bool init,
+        uint16_t dmemo,
+        uint16_t dmemi,
+        uint16_t count,
+        int16_t* table,
+        uint32_t address);
+
 /*
  * Audio flags
  */

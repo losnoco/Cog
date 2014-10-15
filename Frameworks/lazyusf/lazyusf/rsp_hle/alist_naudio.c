@@ -77,15 +77,14 @@ static void NAUDIO_02B0(struct hle_t* hle, uint32_t UNUSED(w1), uint32_t w2)
 
 static void NAUDIO_14(struct hle_t* hle, uint32_t w1, uint32_t w2)
 {
+    uint8_t  flags       = (w1 >> 16);
+    uint16_t gain        = w1;
+    uint8_t  select_main = (w2 >> 24);
+    uint32_t address     = (w2 & 0xffffff);
+
+    uint16_t dmem = (select_main == 0) ? NAUDIO_MAIN : NAUDIO_MAIN2;
+
     if (hle->alist_naudio.table[0] == 0 && hle->alist_naudio.table[1] == 0) {
-
-        uint8_t  flags       = (w1 >> 16);
-        uint16_t gain        = w1;
-        uint8_t  select_main = (w2 >> 24);
-        uint32_t address     = (w2 & 0xffffff);
-
-        uint16_t dmem = (select_main == 0) ? NAUDIO_MAIN : NAUDIO_MAIN2;
-
         alist_polef(
                 hle,
                 flags & A_INIT,
@@ -97,8 +96,17 @@ static void NAUDIO_14(struct hle_t* hle, uint32_t w1, uint32_t w2)
                 address);
     }
     else
-        HleWarnMessage(hle->user_defined,
-                       "NAUDIO_14: non null codebook[0-3] case not implemented.");
+    {
+        alist_iirf(
+                hle,
+                flags & A_INIT,
+                dmem,
+                dmem,
+                NAUDIO_COUNT,
+                hle->alist_naudio.table,
+                address);
+    }
+
 }
 
 static void SETVOL(struct hle_t* hle, uint32_t w1, uint32_t w2)
