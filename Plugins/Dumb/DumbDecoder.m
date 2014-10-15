@@ -124,8 +124,6 @@ DUMBFILE *dumbfile_open_memory_and_free(char *data, long size)
 	return dumbfile_open_ex(m, &maffile_dfs);
 }
 
-static unsigned int cpu_freq = 0;
-
 + (void)initialize
 {
     if (self == [DumbDecoder class])
