@@ -323,6 +323,7 @@
 		836F705818BDC2190095E648 /* vgmstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F1C18BDC2190095E648 /* vgmstream.c */; };
 		836F705918BDC2190095E648 /* vgmstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1D18BDC2190095E648 /* vgmstream.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83A5F75F198DF021009AF94C /* bfwav.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A5F75E198DF021009AF94C /* bfwav.c */; };
+		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
 /* End PBXBuildFile section */
 
@@ -709,6 +710,7 @@
 		836F6F1C18BDC2190095E648 /* vgmstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vgmstream.c; sourceTree = "<group>"; };
 		836F6F1D18BDC2190095E648 /* vgmstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgmstream.h; sourceTree = "<group>"; };
 		83A5F75E198DF021009AF94C /* bfwav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfwav.c; sourceTree = "<group>"; };
+		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -895,6 +897,7 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				83BAFB6B19F45EB3005DAB60 /* bfstm.c */,
 				83A5F75E198DF021009AF94C /* bfwav.c */,
 				83F5F8821908D0A400C8E65F /* fsb5.c */,
 				836F6E2918BDC2180095E648 /* 2dx9.c */,
@@ -1420,6 +1423,7 @@
 				836F6F4018BDC2190095E648 /* bdsp_blocked.c in Sources */,
 				836F700418BDC2190095E648 /* ps2_vas.c in Sources */,
 				836F6F9818BDC2190095E648 /* mattel_hyperscan.c in Sources */,
+				83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */,
 				836F704418BDC2190095E648 /* ws_aud.c in Sources */,
 				836F6FBC18BDC2190095E648 /* nub.c in Sources */,
 				836F6F6D18BDC2190095E648 /* aifc.c in Sources */,
