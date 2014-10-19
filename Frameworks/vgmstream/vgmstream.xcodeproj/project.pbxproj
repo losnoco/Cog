@@ -11,6 +11,7 @@
 		830F885C19C9124C00420FB0 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F883919C9101900420FB0 /* Vorbis.framework */; };
 		8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
 		8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
+		834D3A6E19F47C98001C54F6 /* g1l.c in Sources */ = {isa = PBXBuildFile; fileRef = 834D3A6D19F47C98001C54F6 /* g1l.c */; };
 		836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B4518BDB8880095E648 /* InfoPlist.strings */; };
 		836F6F1E18BDC2190095E648 /* acm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE018BDC2180095E648 /* acm_decoder.c */; };
 		836F6F1F18BDC2190095E648 /* acm_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6DE118BDC2180095E648 /* acm_decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -396,6 +397,7 @@
 /* Begin PBXFileReference section */
 		8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mpg123.xcodeproj; path = ../mpg123/mpg123.xcodeproj; sourceTree = "<group>"; };
 		8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VorbisNoDot.xcodeproj; path = ../Vorbis/macosx/VorbisNoDot.xcodeproj; sourceTree = "<group>"; };
+		834D3A6D19F47C98001C54F6 /* g1l.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g1l.c; sourceTree = "<group>"; };
 		836F6B3918BDB8880095E648 /* vgmstream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vgmstream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F6B4418BDB8880095E648 /* vgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vgmstream-Info.plist"; sourceTree = "<group>"; };
 		836F6B4618BDB8880095E648 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -897,6 +899,7 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				834D3A6D19F47C98001C54F6 /* g1l.c */,
 				83BAFB6B19F45EB3005DAB60 /* bfstm.c */,
 				83A5F75E198DF021009AF94C /* bfwav.c */,
 				83F5F8821908D0A400C8E65F /* fsb5.c */,
@@ -1475,6 +1478,7 @@
 				836F704618BDC2190095E648 /* x360_tra.c in Sources */,
 				836F6FFA18BDC2190095E648 /* ps2_spm.c in Sources */,
 				836F701918BDC2190095E648 /* psx_cdxa.c in Sources */,
+				834D3A6E19F47C98001C54F6 /* g1l.c in Sources */,
 				836F6FC318BDC2190095E648 /* pc_smp.c in Sources */,
 				836F6FCE18BDC2190095E648 /* ps2_ast.c in Sources */,
 				836F6FEB18BDC2190095E648 /* ps2_mss.c in Sources */,
