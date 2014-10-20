@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2005, The Musepack Development Team
+  Copyright (c) 2005-2009, The Musepack Development Team
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -31,19 +31,18 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 /// \file synth_filter.c
 /// Synthesis functions.
 /// \todo document me
-
+#include <string.h>
 #include <mpcdec/mpcdec.h>
-#include <mpcdec/internal.h>
+#include "decoder.h"
+#include "mpcdec_math.h"
 
 /* C O N S T A N T S */
-#undef _
-
 #define MPC_FIXED_POINT_SYNTH_FIX 2
 
+#undef _
 #ifdef MPC_FIXED_POINT
 #define _(value)  MPC_MAKE_FRACT_CONST((double)value/(double)(0x40000))
 #else
@@ -88,31 +87,32 @@ static const MPC_SAMPLE_FORMAT  Di_opt [32] [16] = {
 
 #undef  _
 
-static void Calculate_New_V ( const MPC_SAMPLE_FORMAT * Sample, MPC_SAMPLE_FORMAT * V )
+static void
+mpc_compute_new_V(const MPC_SAMPLE_FORMAT* p_sample, MPC_SAMPLE_FORMAT* pV)
 {
     // Calculating new V-buffer values for left channel
     // calculate new V-values (ISO-11172-3, p. 39)
     // based upon fast-MDCT algorithm by Byeong Gi Lee
-    /*static*/ MPC_SAMPLE_FORMAT A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15;
-    /*static*/ MPC_SAMPLE_FORMAT B00, B01, B02, B03, B04, B05, B06, B07, B08, B09, B10, B11, B12, B13, B14, B15;
+    MPC_SAMPLE_FORMAT A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15;
+    MPC_SAMPLE_FORMAT B00, B01, B02, B03, B04, B05, B06, B07, B08, B09, B10, B11, B12, B13, B14, B15;
     MPC_SAMPLE_FORMAT tmp;
 
-    A00 = Sample[ 0] + Sample[31];
-    A01 = Sample[ 1] + Sample[30];
-    A02 = Sample[ 2] + Sample[29];
-    A03 = Sample[ 3] + Sample[28];
-    A04 = Sample[ 4] + Sample[27];
-    A05 = Sample[ 5] + Sample[26];
-    A06 = Sample[ 6] + Sample[25];
-    A07 = Sample[ 7] + Sample[24];
-    A08 = Sample[ 8] + Sample[23];
-    A09 = Sample[ 9] + Sample[22];
-    A10 = Sample[10] + Sample[21];
-    A11 = Sample[11] + Sample[20];
-    A12 = Sample[12] + Sample[19];
-    A13 = Sample[13] + Sample[18];
-    A14 = Sample[14] + Sample[17];
-    A15 = Sample[15] + Sample[16];
+    A00 = p_sample[ 0] + p_sample[31];
+    A01 = p_sample[ 1] + p_sample[30];
+    A02 = p_sample[ 2] + p_sample[29];
+    A03 = p_sample[ 3] + p_sample[28];
+    A04 = p_sample[ 4] + p_sample[27];
+    A05 = p_sample[ 5] + p_sample[26];
+    A06 = p_sample[ 6] + p_sample[25];
+    A07 = p_sample[ 7] + p_sample[24];
+    A08 = p_sample[ 8] + p_sample[23];
+    A09 = p_sample[ 9] + p_sample[22];
+    A10 = p_sample[10] + p_sample[21];
+    A11 = p_sample[11] + p_sample[20];
+    A12 = p_sample[12] + p_sample[19];
+    A13 = p_sample[13] + p_sample[18];
+    A14 = p_sample[14] + p_sample[17];
+    A15 = p_sample[15] + p_sample[16];
 
     B00 = A00 + A15;
     B01 = A01 + A14;
@@ -182,37 +182,37 @@ static void Calculate_New_V ( const MPC_SAMPLE_FORMAT * Sample, MPC_SAMPLE_FORMA
     A14 =  B14 + B15;
     A15 = MPC_MULTIPLY_FRACT_CONST_FIX((B14 - B15) , 0.7071067691f , 1);
 
-    V[48] = -A00;
-    V[ 0] =  A01;
-    V[40] = -A02 - (V[ 8] = A03);
-    V[36] = -((V[ 4] = A05 + (V[12] = A07)) + A06);
-    V[44] = - A04 - A06 - A07;
-    V[ 6] = (V[10] = A11 + (V[14] = A15)) + A13;
-    V[38] = (V[34] = -(V[ 2] = A09 + A13 + A15) - A14) + A09 - A10 - A11;
-    V[46] = (tmp = -(A12 + A14 + A15)) - A08;
-    V[42] = tmp - A10 - A11;
+    pV[48] = -A00;
+    pV[ 0] =  A01;
+    pV[40] = -A02 - (pV[ 8] = A03);
+    pV[36] = -((pV[ 4] = A05 + (pV[12] = A07)) + A06);
+    pV[44] = - A04 - A06 - A07;
+    pV[ 6] = (pV[10] = A11 + (pV[14] = A15)) + A13;
+    pV[38] = (pV[34] = -(pV[ 2] = A09 + A13 + A15) - A14) + A09 - A10 - A11;
+    pV[46] = (tmp = -(A12 + A14 + A15)) - A08;
+    pV[42] = tmp - A10 - A11;
 
-    A00 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 0] - Sample[31]) , 0.5006030202f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A01 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 1] - Sample[30]) , 0.5054709315f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A02 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 2] - Sample[29]) , 0.5154473186f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A03 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 3] - Sample[28]) , 0.5310425758f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A04 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 4] - Sample[27]) , 0.5531039238f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A05 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 5] - Sample[26]) , 0.5829349756f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A06 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 6] - Sample[25]) , 0.6225041151f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A07 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 7] - Sample[24]) , 0.6748083234f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A08 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 8] - Sample[23]) , 0.7445362806f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A09 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[ 9] - Sample[22]) , 0.8393496275f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A10 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[10] - Sample[21]) , 0.9725682139f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A00 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 0] - p_sample[31]) , 0.5006030202f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A01 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 1] - p_sample[30]) , 0.5054709315f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A02 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 2] - p_sample[29]) , 0.5154473186f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A03 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 3] - p_sample[28]) , 0.5310425758f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A04 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 4] - p_sample[27]) , 0.5531039238f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A05 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 5] - p_sample[26]) , 0.5829349756f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A06 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 6] - p_sample[25]) , 0.6225041151f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A07 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 7] - p_sample[24]) , 0.6748083234f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A08 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 8] - p_sample[23]) , 0.7445362806f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A09 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[ 9] - p_sample[22]) , 0.8393496275f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A10 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[10] - p_sample[21]) , 0.9725682139f ,     MPC_FIXED_POINT_SYNTH_FIX);
 #if MPC_FIXED_POINT_SYNTH_FIX>=2
-    A11 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[11] - Sample[20]) , 1.1694399118f ,     MPC_FIXED_POINT_SYNTH_FIX);
-    A12 = MPC_MULTIPLY_FRACT_CONST_SHR((Sample[12] - Sample[19]) , 1.4841645956f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A11 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[11] - p_sample[20]) , 1.1694399118f ,     MPC_FIXED_POINT_SYNTH_FIX);
+    A12 = MPC_MULTIPLY_FRACT_CONST_SHR((p_sample[12] - p_sample[19]) , 1.4841645956f ,     MPC_FIXED_POINT_SYNTH_FIX);
 #else
-    A11 = MPC_SCALE_CONST_SHR         ((Sample[11] - Sample[20]) , 1.1694399118f , 30, MPC_FIXED_POINT_SYNTH_FIX);
-    A12 = MPC_SCALE_CONST_SHR         ((Sample[12] - Sample[19]) , 1.4841645956f , 30, MPC_FIXED_POINT_SYNTH_FIX);
+    A11 = MPC_SCALE_CONST_SHR         ((p_sample[11] - p_sample[20]) , 1.1694399118f , 30, MPC_FIXED_POINT_SYNTH_FIX);
+    A12 = MPC_SCALE_CONST_SHR         ((p_sample[12] - p_sample[19]) , 1.4841645956f , 30, MPC_FIXED_POINT_SYNTH_FIX);
 #endif
-    A13 = MPC_SCALE_CONST_SHR         ((Sample[13] - Sample[18]) , 2.0577809811f , 29, MPC_FIXED_POINT_SYNTH_FIX);
-    A14 = MPC_SCALE_CONST_SHR         ((Sample[14] - Sample[17]) , 3.4076085091f , 29, MPC_FIXED_POINT_SYNTH_FIX);
-    A15 = MPC_SCALE_CONST_SHR         ((Sample[15] - Sample[16]) , 10.1900081635f, 27 ,MPC_FIXED_POINT_SYNTH_FIX);
+    A13 = MPC_SCALE_CONST_SHR         ((p_sample[13] - p_sample[18]) , 2.0577809811f , 29, MPC_FIXED_POINT_SYNTH_FIX);
+    A14 = MPC_SCALE_CONST_SHR         ((p_sample[14] - p_sample[17]) , 3.4076085091f , 29, MPC_FIXED_POINT_SYNTH_FIX);
+    A15 = MPC_SCALE_CONST_SHR         ((p_sample[15] - p_sample[16]) , 10.1900081635f, 27 ,MPC_FIXED_POINT_SYNTH_FIX);
 
     B00 =  A00 + A15;
     B01 =  A01 + A14;
@@ -282,100 +282,90 @@ static void Calculate_New_V ( const MPC_SAMPLE_FORMAT * Sample, MPC_SAMPLE_FORMA
     A14 = MPC_SHL(B14 + B15, MPC_FIXED_POINT_SYNTH_FIX);
     A15 = MPC_SCALE_CONST_SHL((B14 - B15) , 0.7071067691f , 31, MPC_FIXED_POINT_SYNTH_FIX);
 
-    // mehrfach verwendete Ausdrücke: A04+A06+A07, A09+A13+A15
-    V[ 5] = (V[11] = (V[13] = A07 + (V[15] = A15)) + A11) + A05 + A13;
-    V[ 7] = (V[ 9] = A03 + A11 + A15) + A13;
-    V[33] = -(V[ 1] = A01 + A09 + A13 + A15) - A14;
-    V[35] = -(V[ 3] = A05 + A07 + A09 + A13 + A15) - A06 - A14;
-    V[37] = (tmp = -(A10 + A11 + A13 + A14 + A15)) - A05 - A06 - A07;
-    V[39] = tmp - A02 - A03;                      // abhängig vom Befehl drüber
-    V[41] = (tmp += A13 - A12) - A02 - A03;       // abhängig vom Befehl 2 drüber
-    V[43] = tmp - A04 - A06 - A07;                // abhängig von Befehlen 1 und 3 drüber
-    V[47] = (tmp = -(A08 + A12 + A14 + A15)) - A00;
-    V[45] = tmp - A04 - A06 - A07;                // abhängig vom Befehl drüber
+    // mehrfach verwendete Ausdrcke: A04+A06+A07, A09+A13+A15
+    pV[ 5] = (pV[11] = (pV[13] = A07 + (pV[15] = A15)) + A11) + A05 + A13;
+    pV[ 7] = (pV[ 9] = A03 + A11 + A15) + A13;
+    pV[33] = -(pV[ 1] = A01 + A09 + A13 + A15) - A14;
+    pV[35] = -(pV[ 3] = A05 + A07 + A09 + A13 + A15) - A06 - A14;
+    pV[37] = (tmp = -(A10 + A11 + A13 + A14 + A15)) - A05 - A06 - A07;
+    pV[39] = tmp - A02 - A03;                      // abhï¿½gig vom Befehl drber
+    pV[41] = (tmp += A13 - A12) - A02 - A03;       // abhï¿½gig vom Befehl 2 drber
+    pV[43] = tmp - A04 - A06 - A07;                // abhï¿½gig von Befehlen 1 und 3 drber
+    pV[47] = (tmp = -(A08 + A12 + A14 + A15)) - A00;
+    pV[45] = tmp - A04 - A06 - A07;                // abhï¿½gig vom Befehl drber
 
-    V[32] = -V[ 0];
-    V[31] = -V[ 1];
-    V[30] = -V[ 2];
-    V[29] = -V[ 3];
-    V[28] = -V[ 4];
-    V[27] = -V[ 5];
-    V[26] = -V[ 6];
-    V[25] = -V[ 7];
-    V[24] = -V[ 8];
-    V[23] = -V[ 9];
-    V[22] = -V[10];
-    V[21] = -V[11];
-    V[20] = -V[12];
-    V[19] = -V[13];
-    V[18] = -V[14];
-    V[17] = -V[15];
+    pV[32] = -pV[ 0];
+    pV[31] = -pV[ 1];
+    pV[30] = -pV[ 2];
+    pV[29] = -pV[ 3];
+    pV[28] = -pV[ 4];
+    pV[27] = -pV[ 5];
+    pV[26] = -pV[ 6];
+    pV[25] = -pV[ 7];
+    pV[24] = -pV[ 8];
+    pV[23] = -pV[ 9];
+    pV[22] = -pV[10];
+    pV[21] = -pV[11];
+    pV[20] = -pV[12];
+    pV[19] = -pV[13];
+    pV[18] = -pV[14];
+    pV[17] = -pV[15];
 
-    V[63] =  V[33];
-    V[62] =  V[34];
-    V[61] =  V[35];
-    V[60] =  V[36];
-    V[59] =  V[37];
-    V[58] =  V[38];
-    V[57] =  V[39];
-    V[56] =  V[40];
-    V[55] =  V[41];
-    V[54] =  V[42];
-    V[53] =  V[43];
-    V[52] =  V[44];
-    V[51] =  V[45];
-    V[50] =  V[46];
-    V[49] =  V[47];
+    pV[63] =  pV[33];
+    pV[62] =  pV[34];
+    pV[61] =  pV[35];
+    pV[60] =  pV[36];
+    pV[59] =  pV[37];
+    pV[58] =  pV[38];
+    pV[57] =  pV[39];
+    pV[56] =  pV[40];
+    pV[55] =  pV[41];
+    pV[54] =  pV[42];
+    pV[53] =  pV[43];
+    pV[52] =  pV[44];
+    pV[51] =  pV[45];
+    pV[50] =  pV[46];
+    pV[49] =  pV[47];
 }
 
-static void Synthese_Filter_float_internal(MPC_SAMPLE_FORMAT * OutData,MPC_SAMPLE_FORMAT * V,const MPC_SAMPLE_FORMAT * Y)
+static void
+mpc_synthese_filter_float_internal(MPC_SAMPLE_FORMAT* p_out, MPC_SAMPLE_FORMAT* pV, const MPC_SAMPLE_FORMAT* pY, mpc_int_t channels)
 {
     mpc_uint32_t n;
-    for ( n = 0; n < 36; n++, Y += 32 ) {
-        V -= 64;
-        Calculate_New_V ( Y, V );
+    for ( n = 0; n < 36; n++, pY += 32 )
+    {
+        MPC_SAMPLE_FORMAT*       pData = p_out;
+        const MPC_SAMPLE_FORMAT* pD    = (const MPC_SAMPLE_FORMAT*) &Di_opt;
+        mpc_int32_t k;
+        pV -= 64;
+        mpc_compute_new_V( pY, pV );
+        for ( k = 0; k < 32; k++, pD += 16, pV++ )
         {
-            MPC_SAMPLE_FORMAT * Data = OutData;
-            const MPC_SAMPLE_FORMAT *  D = (const MPC_SAMPLE_FORMAT *) &Di_opt;
-            mpc_int32_t           k;
-            //mpc_int32_t           tmp;
-
-            
-            
-            for ( k = 0; k < 32; k++, D += 16, V++ ) {
-                *Data = MPC_SHL(
-                    MPC_MULTIPLY_FRACT(V[  0],D[ 0]) + MPC_MULTIPLY_FRACT(V[ 96],D[ 1]) + MPC_MULTIPLY_FRACT(V[128],D[ 2]) + MPC_MULTIPLY_FRACT(V[224],D[ 3])
-                    + MPC_MULTIPLY_FRACT(V[256],D[ 4]) + MPC_MULTIPLY_FRACT(V[352],D[ 5]) + MPC_MULTIPLY_FRACT(V[384],D[ 6]) + MPC_MULTIPLY_FRACT(V[480],D[ 7])
-                    + MPC_MULTIPLY_FRACT(V[512],D[ 8]) + MPC_MULTIPLY_FRACT(V[608],D[ 9]) + MPC_MULTIPLY_FRACT(V[640],D[10]) + MPC_MULTIPLY_FRACT(V[736],D[11])
-                    + MPC_MULTIPLY_FRACT(V[768],D[12]) + MPC_MULTIPLY_FRACT(V[864],D[13]) + MPC_MULTIPLY_FRACT(V[896],D[14]) + MPC_MULTIPLY_FRACT(V[992],D[15])
-                    , 2);
-                
-                Data += 2;
-            }
-            V -= 32;//bleh
-            OutData+=64;
+            *pData = MPC_SHL(
+                     MPC_MULTIPLY_FRACT(pV[  0], pD[ 0]) + MPC_MULTIPLY_FRACT(pV[ 96], pD[ 1]) + MPC_MULTIPLY_FRACT(pV[128], pD[ 2]) + MPC_MULTIPLY_FRACT(pV[224], pD[ 3])
+                   + MPC_MULTIPLY_FRACT(pV[256], pD[ 4]) + MPC_MULTIPLY_FRACT(pV[352], pD[ 5]) + MPC_MULTIPLY_FRACT(pV[384], pD[ 6]) + MPC_MULTIPLY_FRACT(pV[480], pD[ 7])
+                   + MPC_MULTIPLY_FRACT(pV[512], pD[ 8]) + MPC_MULTIPLY_FRACT(pV[608], pD[ 9]) + MPC_MULTIPLY_FRACT(pV[640], pD[10]) + MPC_MULTIPLY_FRACT(pV[736], pD[11])
+                   + MPC_MULTIPLY_FRACT(pV[768], pD[12]) + MPC_MULTIPLY_FRACT(pV[864], pD[13]) + MPC_MULTIPLY_FRACT(pV[896], pD[14]) + MPC_MULTIPLY_FRACT(pV[992], pD[15])
+                   , 2);
+            pData += channels;
         }
+        pV    -= 32; //bleh
+        p_out += 32 * channels;
     }
 }
 
 void
-mpc_decoder_synthese_filter_float(mpc_decoder *d, MPC_SAMPLE_FORMAT* OutData) 
+mpc_decoder_synthese_filter_float(mpc_decoder* p_dec, MPC_SAMPLE_FORMAT* p_out, mpc_int_t channels)
 {
     /********* left channel ********/
-    memmove(d->V_L + MPC_V_MEM, d->V_L, 960 * sizeof(MPC_SAMPLE_FORMAT) );
-
-    Synthese_Filter_float_internal(
-        OutData,
-        (MPC_SAMPLE_FORMAT *)(d->V_L + MPC_V_MEM),
-        (MPC_SAMPLE_FORMAT *)(d->Y_L [0]));
+    memmove(&p_dec->V_L[MPC_V_MEM], p_dec->V_L, 960 * sizeof *p_dec->V_L);
+	mpc_synthese_filter_float_internal(p_out, &p_dec->V_L[MPC_V_MEM], p_dec->Y_L[0], channels);
 
     /******** right channel ********/
-    memmove(d->V_R + MPC_V_MEM, d->V_R, 960 * sizeof(MPC_SAMPLE_FORMAT) );
-
-    Synthese_Filter_float_internal(
-        OutData + 1,
-        (MPC_SAMPLE_FORMAT *)(d->V_R + MPC_V_MEM),
-        (MPC_SAMPLE_FORMAT *)(d->Y_R [0]));
+	if (channels > 1) {
+		memmove(&p_dec->V_R[MPC_V_MEM], p_dec->V_R, 960 * sizeof *p_dec->V_R);
+		mpc_synthese_filter_float_internal(p_out + 1, &p_dec->V_R[MPC_V_MEM], p_dec->Y_R[0], channels);
+	}
 }
 
 /*******************************************/
@@ -384,7 +374,7 @@ mpc_decoder_synthese_filter_float(mpc_decoder *d, MPC_SAMPLE_FORMAT* OutData)
 /*                                         */
 /*******************************************/
 
-static const unsigned char    Parity [256] = {  // parity
+static const mpc_uint8_t Parity [256] = {  // parity
     0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,1,0,0,1,0,1,1,0,0,1,1,0,1,0,0,1,
     1,0,0,1,0,1,1,0,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,
     1,0,0,1,0,1,1,0,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,
@@ -422,19 +412,19 @@ static const unsigned char    Parity [256] = {  // parity
  *  XORed values of both generators.
  */
 mpc_uint32_t
-mpc_random_int(mpc_decoder *d) 
+mpc_random_int(mpc_decoder* p_dec)
 {
 #if 1
     mpc_uint32_t  t1, t2, t3, t4;
 
-    t3   = t1 = d->__r1;   t4   = t2 = d->__r2;  // Parity calculation is done via table lookup, this is also available
-    t1  &= 0xF5;        t2 >>= 25;               // on CPUs without parity, can be implemented in C and avoid unpredictable
-    t1   = Parity [t1]; t2  &= 0x63;             // jumps and slow rotate through the carry flag operations.
-    t1 <<= 31;          t2   = Parity [t2];
+    t3   = t1 = p_dec->__r1; t4   = t2 = p_dec->__r2; // Parity calculation is done via table lookup, this is also available
+    t1  &= 0xF5;             t2 >>= 25;               // on CPUs without parity, can be implemented in C and avoid unpredictable
+    t1   = Parity[t1];       t2  &= 0x63;             // jumps and slow rotate through the carry flag operations.
+    t1 <<= 31;               t2   = Parity[t2];
 
-    return (d->__r1 = (t3 >> 1) | t1 ) ^ (d->__r2 = (t4 + t4) | t2 );
+    return (p_dec->__r1 = (t3 >> 1) | t1 ) ^ (p_dec->__r2 = (t4 + t4) | t2 );
 #else
-    return (d->__r1 = (d->__r1 >> 1) | ((mpc_uint32_t)Parity [d->__r1 & 0xF5] << 31) ) ^
-        (d->__r2 = (d->__r2 << 1) |  (mpc_uint32_t)Parity [(d->__r2 >> 25) & 0x63] );
+    return (p_dec->__r1 = (p_dec->__r1 >> 1) | ((mpc_uint32_t) Parity[ p_dec->__r1 & 0xF5] << 31))
+         ^ (p_dec->__r2 = (p_dec->__r2 << 1) |  (mpc_uint32_t) Parity[(p_dec->__r2 >> 25) & 0x63]);
 #endif
 }

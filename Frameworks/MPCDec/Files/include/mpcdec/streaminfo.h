@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2005, The Musepack Development Team
+  Copyright (c) 2005-2009, The Musepack Development Team
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,19 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 /// \file streaminfo.h
+#ifndef _MPCDEC_STREAMINFO_H_
+#define _MPCDEC_STREAMINFO_H_
+#ifdef WIN32
+#pragma once
+#endif
 
-#ifndef _mpcdec_streaminfo_h_
-#define _mpcdec_streaminfo_h_
+#include <mpcdec/mpc_types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 typedef mpc_int32_t mpc_streaminfo_off_t;
 
@@ -44,48 +52,58 @@ typedef mpc_int32_t mpc_streaminfo_off_t;
 /// Structure containing all the properties of an mpc stream.  Populated
 /// by the streaminfo_read function.
 typedef struct mpc_streaminfo {
-    /// @name core mpc stream properties
+    /// @name Core mpc stream properties
     //@{
-    mpc_uint32_t         sample_freq;        ///< sample frequency of stream
-    mpc_uint32_t         channels;           ///< number of channels in stream
-    mpc_streaminfo_off_t header_position;    ///< byte offset of position of header in stream
-    mpc_uint32_t         stream_version;     ///< streamversion of stream
-    mpc_uint32_t         bitrate;            ///< bitrate of stream file (in bps)
-    double               average_bitrate;    ///< average bitrate of stream (in bits/sec)
-    mpc_uint32_t         frames;             ///< number of frames in stream
-    mpc_int64_t          pcm_samples;
-    mpc_uint32_t         max_band;           ///< maximum band-index used in stream (0...31)
-    mpc_uint32_t         is;                 ///< intensity stereo (0: off, 1: on)
-    mpc_uint32_t         ms;                 ///< mid/side stereo (0: off, 1: on)
-    mpc_uint32_t         block_size;         ///< only needed for SV4...SV6 -> not supported
-    mpc_uint32_t         profile;            ///< quality profile of stream
-    const char*          profile_name;       ///< name of profile used by stream
+    mpc_uint32_t         sample_freq;        ///< Sample frequency of stream
+    mpc_uint32_t         channels;           ///< Number of channels in stream
+    mpc_uint32_t         stream_version;     ///< Streamversion of stream
+    mpc_uint32_t         bitrate;            ///< Bitrate of stream file (in bps)
+    double               average_bitrate;    ///< Average bitrate of stream (in bits/sec)
+    mpc_uint32_t         max_band;           ///< Maximum band-index used in stream (0...31)
+    mpc_uint32_t         ms;                 ///< Mid/side stereo (0: off, 1: on)
+	mpc_uint32_t         fast_seek;          ///< True if stream supports fast-seeking (sv7)
+	mpc_uint32_t         block_pwr;          ///< Number of frames in a block = 2^block_pwr (sv8)
     //@}
 
-    /// @name replaygain related fields
+    /// @name Replaygain properties
     //@{
-    mpc_int16_t         gain_title;          ///< replaygain title value 
-    mpc_int16_t         gain_album;          ///< replaygain album value
-    mpc_uint16_t        peak_album;          ///< peak album loudness level
-    mpc_uint16_t        peak_title;          ///< peak title loudness level
+    mpc_uint16_t         gain_title;         ///< Replaygain title value
+    mpc_uint16_t         gain_album;         ///< Replaygain album value
+    mpc_uint16_t         peak_album;         ///< Peak album loudness level
+    mpc_uint16_t         peak_title;         ///< Peak title loudness level
     //@}
 
-    /// @name true gapless support data
+    /// @name True gapless properties
     //@{
-    mpc_uint32_t        is_true_gapless;     ///< true gapless? (0: no, 1: yes)
-    mpc_uint32_t        last_frame_samples;  ///< number of valid samples within last frame
-
-    mpc_uint32_t        encoder_version;     ///< version of encoder used
-    char                encoder[256];        ///< encoder name
-
-    mpc_streaminfo_off_t tag_offset;         ///< offset to file tags
-    mpc_streaminfo_off_t total_file_length;  ///< total length of underlying file
+    mpc_uint32_t         is_true_gapless;    ///< True gapless? (0: no, 1: yes)
+	mpc_uint64_t         samples;            ///< Number of samples in the stream
+	mpc_uint64_t         beg_silence;        ///< Number of samples that must not be played at the beginning of the stream
     //@}
 
-    /// @name fast seeking support
+	/// @name Encoder informations
     //@{
-    mpc_uint32_t        fast_seek;           ///< support fast seeking ? (0: no, 1: yes)
-    //@}
+    mpc_uint32_t         encoder_version;    ///< Version of encoder used
+    char                 encoder[256];       ///< Encoder name
+	mpc_bool_t           pns;                ///< pns used
+	float                profile;            ///< Quality profile of stream
+	const char*          profile_name;       ///< Name of profile used by stream
+	//@}
+
+
+	mpc_streaminfo_off_t header_position;    ///< Byte offset of position of header in stream
+    mpc_streaminfo_off_t tag_offset;         ///< Offset to file tags
+    mpc_streaminfo_off_t total_file_length;  ///< Total length of underlying file
 } mpc_streaminfo;
 
-#endif // _mpcdec_streaminfo_h_
+/// Gets length of stream si, in seconds.
+/// \return length of stream in seconds
+MPC_API double mpc_streaminfo_get_length(mpc_streaminfo *si);
+
+/// Returns length of stream si, in samples.
+/// \return length of stream in samples
+MPC_API mpc_int64_t mpc_streaminfo_get_length_samples(mpc_streaminfo *si);
+
+#ifdef __cplusplus
+}
+#endif
+#endif

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2005, The Musepack Development Team
+  Copyright (c) 2005-2009, The Musepack Development Team
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -31,37 +31,28 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+/// \file mpcdec_math.h
+/// Libmpcdec internal math routines.
+#ifndef _MPCDEC_MATH_H_
+#define _MPCDEC_MATH_H_
+#ifdef WIN32
+#pragma once
+#endif
 
-/// \file math.h
-/// Libmpcdec internal math routines.  
+#include <mpcdec/mpc_types.h>
 
-#ifndef _mpcdec_math_h_
-#define _mpcdec_math_h_
-
-//#define MPC_FIXED_POINT
-
-#define MPC_FIXED_POINT_SHIFT 16
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef MPC_FIXED_POINT
 
-
 #ifdef _WIN32_WCE
-
 #include <cmnintrin.h>
-
 #define MPC_HAVE_MULHIGH
-
 #endif
 
-
-#define MPC_FIXED_POINT_SCALE_SHIFT (MPC_FIXED_POINT_SHIFT + MPC_FIXED_POINT_FRACTPART)
-#define MPC_FIXED_POINT_SCALE (1 << (MPC_FIXED_POINT_SCALE_SHIFT - 1))
-
-
 //in fixedpoint mode, results in decode output buffer are in -MPC_FIXED_POINT_SCALE ... MPC_FIXED_POINT_SCALE range
-
-#define MPC_FIXED_POINT_FRACTPART 14
-typedef mpc_int32_t MPC_SAMPLE_FORMAT;
 
 typedef mpc_int64_t MPC_SAMPLE_FORMAT_MULTIPLY;
 
@@ -69,24 +60,24 @@ typedef mpc_int64_t MPC_SAMPLE_FORMAT_MULTIPLY;
 #define MAKE_MPC_SAMPLE_EX(X,Y) (MPC_SAMPLE_FORMAT)((double)(X) * (double)(((mpc_int64_t)1)<<(Y)))
 
 #define MPC_MULTIPLY_NOTRUNCATE(X,Y) \
-	(((MPC_SAMPLE_FORMAT_MULTIPLY)(X) * (MPC_SAMPLE_FORMAT_MULTIPLY)(Y)) >> MPC_FIXED_POINT_FRACTPART)
+    (((MPC_SAMPLE_FORMAT_MULTIPLY)(X) * (MPC_SAMPLE_FORMAT_MULTIPLY)(Y)) >> MPC_FIXED_POINT_FRACTPART)
 
 #define MPC_MULTIPLY_EX_NOTRUNCATE(X,Y,Z) \
-	(((MPC_SAMPLE_FORMAT_MULTIPLY)(X) * (MPC_SAMPLE_FORMAT_MULTIPLY)(Y)) >> (Z))
+    (((MPC_SAMPLE_FORMAT_MULTIPLY)(X) * (MPC_SAMPLE_FORMAT_MULTIPLY)(Y)) >> (Z))
 
 #ifdef _DEBUG
-static inline MPC_SAMPLE_FORMAT MPC_MULTIPLY(MPC_SAMPLE_FORMAT item1,MPC_SAMPLE_FORMAT item2)
+static mpc_inline MPC_SAMPLE_FORMAT MPC_MULTIPLY(MPC_SAMPLE_FORMAT item1,MPC_SAMPLE_FORMAT item2)
 {
-	MPC_SAMPLE_FORMAT_MULTIPLY temp = MPC_MULTIPLY_NOTRUNCATE(item1,item2);
-	assert(temp == (MPC_SAMPLE_FORMAT_MULTIPLY)(MPC_SAMPLE_FORMAT)temp);
-	return (MPC_SAMPLE_FORMAT)temp;
+    MPC_SAMPLE_FORMAT_MULTIPLY temp = MPC_MULTIPLY_NOTRUNCATE(item1,item2);
+    assert(temp == (MPC_SAMPLE_FORMAT_MULTIPLY)(MPC_SAMPLE_FORMAT)temp);
+    return (MPC_SAMPLE_FORMAT)temp;
 }
 
-static inline MPC_SAMPLE_FORMAT MPC_MULTIPLY_EX(MPC_SAMPLE_FORMAT item1,MPC_SAMPLE_FORMAT item2,unsigned shift)
+static mpc_inline MPC_SAMPLE_FORMAT MPC_MULTIPLY_EX(MPC_SAMPLE_FORMAT item1,MPC_SAMPLE_FORMAT item2,unsigned shift)
 {
-	MPC_SAMPLE_FORMAT_MULTIPLY temp = MPC_MULTIPLY_EX_NOTRUNCATE(item1,item2,shift);
-	assert(temp == (MPC_SAMPLE_FORMAT_MULTIPLY)(MPC_SAMPLE_FORMAT)temp);
-	return (MPC_SAMPLE_FORMAT)temp;
+    MPC_SAMPLE_FORMAT_MULTIPLY temp = MPC_MULTIPLY_EX_NOTRUNCATE(item1,item2,shift);
+    assert(temp == (MPC_SAMPLE_FORMAT_MULTIPLY)(MPC_SAMPLE_FORMAT)temp);
+    return (MPC_SAMPLE_FORMAT)temp;
 }
 
 #else
@@ -118,8 +109,6 @@ static inline MPC_SAMPLE_FORMAT MPC_MULTIPLY_EX(MPC_SAMPLE_FORMAT item1,MPC_SAMP
 
 //in floating-point mode, decoded samples are in -1...1 range
 
-typedef float MPC_SAMPLE_FORMAT;
-
 #define MAKE_MPC_SAMPLE(X) ((MPC_SAMPLE_FORMAT)(X))
 #define MAKE_MPC_SAMPLE_EX(X,Y) ((MPC_SAMPLE_FORMAT)(X))
 
@@ -140,5 +129,7 @@ typedef float MPC_SAMPLE_FORMAT;
 
 #endif
 
-#endif // _mpcdec_math_h_
-
+#ifdef __cplusplus
+}
+#endif
+#endif

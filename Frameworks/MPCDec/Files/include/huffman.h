@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2005, The Musepack Development Team
+  Copyright (c) 2005-2009, The Musepack Development Team
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -31,53 +31,53 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+/// \file huffman.h
+/// Data structures and functions for huffman coding.
 
-/// \file idtag.c
-/// Rudimentary id3tag handling routines, just enough to skip id3v2 tags,
-/// if present.
+#ifndef _MPCDEC_HUFFMAN_H_
+#define _MPCDEC_HUFFMAN_H_
+#ifdef WIN32
+#pragma once
+#endif
 
-#include <mpcdec/mpcdec.h>
-#include <mpcdec/internal.h>
+#include <mpcdec/mpc_types.h>
 
-mpc_int32_t
-JumpID3v2 (mpc_reader* r) {
-    unsigned char  tmp [10];
-    mpc_uint32_t   Unsynchronisation;   // ID3v2.4-flag
-    mpc_uint32_t   ExtHeaderPresent;    // ID3v2.4-flag
-    mpc_uint32_t   ExperimentalFlag;    // ID3v2.4-flag
-    mpc_uint32_t   FooterPresent;       // ID3v2.4-flag
-    mpc_int32_t    ret;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    // seek to first byte of mpc data
-    if (!r->seek (r->data, 0)) {
-        return 0;  
-    }
-    
-    r->read(r->data, tmp, sizeof(tmp));
+// LUT size parameter, LUT size is 1 << LUT_DEPTH
+#define LUT_DEPTH 6
 
-    // check id3-tag
-    if ( 0 != memcmp ( tmp, "ID3", 3) )
-        return 0;
+/// Huffman table entry.
+typedef struct mpc_huffman_t {
+    mpc_uint16_t  Code;
+    mpc_uint8_t  Length;
+    mpc_int8_t   Value;
+} mpc_huffman;
 
-    // read flags
-    Unsynchronisation = tmp[5] & 0x80;
-    ExtHeaderPresent  = tmp[5] & 0x40;
-    ExperimentalFlag  = tmp[5] & 0x20;
-    FooterPresent     = tmp[5] & 0x10;
+/// Huffman LUT entry.
+typedef struct mpc_huff_lut_t {
+	mpc_uint8_t  Length;
+	mpc_int8_t   Value;
+} mpc_huff_lut;
 
-    if ( tmp[5] & 0x0F )
-        return -1;              // not (yet???) allowed
-    if ( (tmp[6] | tmp[7] | tmp[8] | tmp[9]) & 0x80 )
-        return -1;              // not allowed
+/// Type used for huffman LUT decoding
+typedef struct mpc_lut_data_t {
+	mpc_huffman const * const table;
+	mpc_huff_lut lut[1 << LUT_DEPTH];
+} mpc_lut_data;
 
-    // read HeaderSize (syncsave: 4 * $0xxxxxxx = 28 significant bits)
-    ret  = tmp[6] << 21;
-    ret += tmp[7] << 14;
-    ret += tmp[8] <<  7;
-    ret += tmp[9]      ;
-    ret += 10;
-    if ( FooterPresent )
-        ret += 10;
+/// Type used for canonical huffman decoding
+typedef struct mpc_can_data_t {
+	mpc_huffman const * const table;
+	mpc_int8_t const * const sym;
+	mpc_huff_lut lut[1 << LUT_DEPTH];
+} mpc_can_data;
 
-    return ret;
+void huff_init_lut(const int bits);
+
+#ifdef __cplusplus
 }
+#endif
+#endif

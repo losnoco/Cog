@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2005, The Musepack Development Team
+  Copyright (c) 2005-2009, The Musepack Development Team
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -31,35 +31,31 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+/// \file requant.h
+/// Requantization function definitions.
+#ifndef _MPCDEC_REQUANT_H_
+#define _MPCDEC_REQUANT_H_
+#ifdef WIN32
+#pragma once
+#endif
 
-/// \file internal.h
-/// Definitions and structures used only internally by the libmpcdec.
+#include <mpcdec/mpc_types.h>
 
-#ifndef _mpcdec_internal_h
-#define _mpcdec_internal_h
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
-enum {
-    MPC_DECODER_SYNTH_DELAY = 481
-};
+/* C O N S T A N T S */
+const mpc_uint8_t      Res_bit [18];     ///< Bits per sample for chosen quantizer
+const MPC_SAMPLE_FORMAT __Cc    [1 + 18]; ///< Requantization coefficients
+const mpc_int16_t       __Dc    [1 + 18]; ///< Requantization offset
 
-/// Big/little endian 32 bit byte swapping routine.
-static __inline
-mpc_uint32_t mpc_swap32(mpc_uint32_t val) {
-    return (((val & 0xff000000) >> 24) | ((val & 0x00ff0000) >> 8) |
-            ((val & 0x0000ff00) <<  8) | ((val & 0x000000ff) << 24));
+#define Cc (__Cc + 1)
+#define Dc (__Dc + 1)
+
+
+#ifdef __cplusplus
 }
-
-/// Searches for a ID3v2-tag and reads the length (in bytes) of it.
-/// \param reader supplying raw stream data
-/// \return size of tag, in bytes
-/// \return -1 on errors of any kind
-mpc_int32_t JumpID3v2(mpc_reader* fp);
-
-/// helper functions used by multiple files
-mpc_uint32_t mpc_random_int(mpc_decoder *d); // in synth_filter.c
-void mpc_decoder_initialisiere_quantisierungstabellen(mpc_decoder *d, double scale_factor);
-void mpc_decoder_synthese_filter_float(mpc_decoder *d, MPC_SAMPLE_FORMAT* OutData);
-
-#endif // _mpcdec_internal_h
-
+#endif
+#endif

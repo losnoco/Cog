@@ -8,14 +8,16 @@
 
 #import <Cocoa/Cocoa.h>
 #import <mpcdec/mpcdec.h>
+#import <mpcdec/decoder.h>
+#import <mpcdec/internal.h>
 #import "Plugin.h"
 
 @interface MusepackDecoder : NSObject <CogDecoder>
 {
 	id<CogSource> source;
-	mpc_decoder decoder;
+    mpc_reader reader;
+    mpc_demux* demux;
 	mpc_streaminfo info;
-	mpc_reader reader;
 	
 	char buffer[MPC_FRAME_LENGTH*4];
 	int bufferFrames;

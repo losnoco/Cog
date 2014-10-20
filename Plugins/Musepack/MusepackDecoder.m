@@ -12,30 +12,30 @@
 
 @implementation MusepackDecoder
 
-mpc_int32_t ReadProc(void *data, void *ptr, mpc_int32_t size)
+mpc_int32_t ReadProc(mpc_reader *p_reader, void *ptr, mpc_int32_t size)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) data;
+    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
 	
 	return [[decoder source] read:ptr amount:size];
 }
 
-mpc_bool_t SeekProc(void *data, mpc_int32_t offset)
+mpc_bool_t SeekProc(mpc_reader *p_reader, mpc_int32_t offset)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) data;
+    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
 
     return [[decoder source] seek:offset whence:SEEK_SET];
 }
 
-mpc_int32_t TellProc(void *data)
+mpc_int32_t TellProc(mpc_reader *p_reader)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) data;
+    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
 	
     return [[decoder source] tell];
 }
 
-mpc_int32_t GetSizeProc(void *data)
+mpc_int32_t GetSizeProc(mpc_reader *p_reader)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) data;
+    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
 	
 	if ([[decoder source] seekable]) {
 		long currentPos = [[decoder source] tell];
@@ -52,9 +52,9 @@ mpc_int32_t GetSizeProc(void *data)
 	}
 }
 
-mpc_bool_t CanSeekProc(void *data)
+mpc_bool_t CanSeekProc(mpc_reader *p_reader)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) data;
+    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
 	
 	return [[decoder source] seekable];
 }
@@ -70,24 +70,14 @@ mpc_bool_t CanSeekProc(void *data)
 	reader.canseek = CanSeekProc;
 	reader.data = self;
 	
-    mpc_streaminfo_init(&info);
-    if (mpc_streaminfo_read(&info, &reader) != ERROR_CODE_OK)
-	{
-        DLog(@"Not a valid musepack file.");
-        return NO;
-    }
-	
-	/* instantiate a decoder with our reader */
-	mpc_decoder_setup(&decoder, &reader);
-	if (!mpc_decoder_initialize(&decoder, &info))
+	/* instantiate a demuxer with our reader */
+    demux = mpc_demux_init(&reader);
+    if (!demux)
 	{
 		DLog(@"Error initializing decoder.");
 		return NO;
 	}
-
-    /* Only use fast seeking if format supports it */
-    mpc_decoder_set_seeking(&decoder, &info, FALSE);
-	
+    mpc_demux_get_info(demux, &info);
 
 	bitrate = (int)(info.average_bitrate/1000.0);
 	frequency = info.sample_freq;
@@ -139,22 +129,21 @@ mpc_bool_t CanSeekProc(void *data)
 		if (bufferFrames == 0)
 		{
 			/* returns the length of the samples*/
-			unsigned status = mpc_decoder_decode(&decoder, sampleBuffer, 0, 0);
-			if (status == (unsigned)( -1))
+            mpc_frame_info frame;
+            frame.buffer = sampleBuffer;
+            mpc_status err = mpc_demux_decode(demux, &frame);
+			if (frame.bits == -1)
 			{
 				//decode error
-				DLog(@"Decode error");
-				return 0;
-			}
-			else if (status == 0) //EOF
-			{
+                if (err != MPC_STATUS_OK)
+                    DLog(@"Decode error");
 				return 0;
 			}
 			else //status>0 /* status == MPC_FRAME_LENGTH */
 			{
 			}
 		
-			bufferFrames = status;
+			bufferFrames = frame.samples;
 		}
 
 		int framesToRead = bufferFrames;
@@ -163,7 +152,7 @@ mpc_bool_t CanSeekProc(void *data)
 			framesToRead = frames;
 		}
 
-		[self writeToBuffer:((float*)(buf + (framesRead*bytesPerFrame)))  fromBuffer:sampleBuffer frames: framesToRead];
+		[self writeToBuffer:((float*)(buf + (framesRead	*bytesPerFrame)))  fromBuffer:sampleBuffer frames: framesToRead];
 
 		frames -= framesToRead;
 		framesRead += framesToRead;
@@ -180,12 +169,17 @@ mpc_bool_t CanSeekProc(void *data)
 
 - (void)close
 {
+    if (demux)
+    {
+        mpc_demux_exit(demux);
+        demux = NULL;
+    }
 	[source close];
 }
 
 - (long)seek:(long)sample
 {
-	mpc_decoder_seek_sample(&decoder, sample);
+	mpc_demux_seek_sample(&demux, sample);
 	
 	return sample;
 }
