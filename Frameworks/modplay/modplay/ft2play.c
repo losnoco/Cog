@@ -963,16 +963,16 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
         {
             // F00 makes sense for stopping the song in tracker,
             // but in a replayer let's make the song start over instead.
+            // We make this a pattern jump now, so the player doesn't start
+            // pulling effects from the wrong row, and so the first row of
+            // the first order isn't skipped.
             if (ch->Eff == 0)
             {
                 memset(p->voice, 0, sizeof (p->voice));
 
-                p->Song.PattPos     = 0;
                 p->Song.PBreakPos   = 0;
-                p->Song.PosJumpFlag = 0;
-                p->Song.SongPos     = 0;
-                p->Song.PattNr      = p->Song.SongTab[p->Song.SongPos];
-                p->Song.PattLen     = p->PattLens[p->Song.PattNr];
+                p->Song.PosJumpFlag = 1;
+                p->Song.SongPos     = p->Song.startOrder-1;
                 p->Song.Timer       = 1;
                 p->Song.Speed       = p->Song.InitSpeed;
                 p->Song.Tempo       = p->Song.InitTempo;
