@@ -97,14 +97,14 @@ int32_t Allocate_Memory ( void * state ) {
 		return 0;
 	}
 	
-	//memset(state->N64MEM, 0, state->RdramSize);
+	//memset(state->N64MEM, 0, USF_STATE->RdramSize);
 
 	USF_STATE->NOMEM = USF_STATE->N64MEM + USF_STATE->RdramSize;
 	
-	if(USF_STATE->RdramSize == 0x400000)
-	{
+	//if(USF_STATE->RdramSize == 0x400000)
+	//{
 	//	munmap(N64MEM + 0x400000, 0x400000);
-	}
+	//}
 
 	USF_STATE->Registers = (N64_REGISTERS *)((uintptr_t)USF_STATE->MemChunk + 0x100000 * sizeof(uintptr_t));
 	//USF_STATE->TLBLoadAddress = (uint32_t *)((uintptr_t)USF_STATE->Registers + 0x500);
@@ -155,7 +155,7 @@ void Release_Memory ( usf_state_t * state ) {
 
 	state->MemoryState = 0;
 
-    if (state->MemChunk != 0) { large_free( state->MemChunk, 0x100000 * sizeof(uintptr_t) + 0x1D000 + USF_STATE->RdramSize ); state->MemChunk=0; }
+    if (state->MemChunk != 0) { large_free( state->MemChunk, 0x100000 * sizeof(uintptr_t) + 0x1D000 + state->RdramSize ); state->MemChunk=0; }
 	
     if(state->savestatespace)
 		free(state->savestatespace);
@@ -202,6 +202,12 @@ uint32_t r4300i_LD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t * Value
 	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0) { return 0; }
+    if (address + VAddr + 7 - (uintptr_t)state->N64MEM >= state->RdramSize)
+    {
+        *((uint32_t *)(Value) + 1) = 0;
+        *((uint32_t *)(Value)) = 0;
+        return 1;
+    }
 	*((uint32_t *)(Value) + 1) = *(uint32_t *)(address + VAddr);
 	*((uint32_t *)(Value)) = *(uint32_t *)(address + VAddr + 4);
 	return 1;
@@ -224,6 +230,11 @@ uint32_t r4300i_LH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t * Value
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0)
 		return 0;
+    if (address + (VAddr ^ 2) + 1 - (uintptr_t)state->N64MEM >= state->RdramSize)
+    {
+        *Value = 0;
+        return 1;
+    }
 	*Value = *(uint16_t *)(address + (VAddr ^ 2));
 	return 1;
 }
@@ -430,7 +441,8 @@ uint32_t r4300i_SB_VAddr ( usf_state_t * state, uint32_t VAddr, uint8_t Value ) 
 	address = state->TLB_Map[VAddr >> 12];
 
 	if (address == 0) { return 0; }
-	*(uint8_t *)(address + (VAddr ^ 3)) = Value;
+    if (address + (VAddr ^ 3) - (uintptr_t)state->N64MEM < state->RdramSize)
+        *(uint8_t *)(address + (VAddr ^ 3)) = Value;
 
 	return 1;
 }
@@ -460,8 +472,11 @@ uint32_t r4300i_SD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t Value )
 	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0) { return 0; }
-	*(uint32_t *)(address + VAddr) = *((uint32_t *)(&Value) + 1);
-	*(uint32_t *)(address + VAddr + 4) = *((uint32_t *)(&Value));
+    if (address + VAddr + 7 - (uintptr_t)state->N64MEM < state->RdramSize)
+    {
+        *(uint32_t *)(address + VAddr) = *((uint32_t *)(&Value) + 1);
+        *(uint32_t *)(address + VAddr + 4) = *((uint32_t *)(&Value));
+    }
 	return 1;
 }
 
@@ -470,7 +485,8 @@ uint32_t r4300i_SH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t Value )
 	address = state->TLB_Map[VAddr >> 12];
 
 	if (address == 0) { return 0; }
-	*(uint16_t *)(address + (VAddr ^ 2)) = Value;
+    if (address + 1 + (VAddr ^ 2) - (uintptr_t)state->N64MEM < state->RdramSize)
+        *(uint16_t *)(address + (VAddr ^ 2)) = Value;
 	return 1;
 }
 
