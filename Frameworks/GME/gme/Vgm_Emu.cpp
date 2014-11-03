@@ -319,7 +319,8 @@ blargg_err_t Vgm_Emu::set_sample_rate_( int sample_rate )
 	RETURN_ERR( core.stereo_buf[0].set_sample_rate( sample_rate, 1000 / 30 ) );
 	RETURN_ERR( core.stereo_buf[1].set_sample_rate( sample_rate, 1000 / 30 ) );
     RETURN_ERR( core.stereo_buf[2].set_sample_rate( sample_rate, 1000 / 30 ) );
-	core.set_sample_rate( sample_rate );
+	RETURN_ERR( core.stereo_buf[3].set_sample_rate( sample_rate, 1000 / 30 ) );
+	core.set_sample_rate(sample_rate);
 	return Classic_Emu::set_sample_rate_( sample_rate );
 }
 
@@ -331,6 +332,8 @@ void Vgm_Emu::update_eq( blip_eq_t const& eq )
 	core.ay[1].treble_eq( eq );
     core.huc6280[0].treble_eq( eq );
     core.huc6280[1].treble_eq( eq );
+	core.gbdmg[0].treble_eq( eq );
+	core.gbdmg[1].treble_eq( eq );
 	core.pcm.treble_eq( eq );
 }
 
@@ -367,7 +370,15 @@ void Vgm_Emu::mute_voices_( int mask )
             core.huc6280[0].set_output( i, center, left, right );
             core.huc6280[1].set_output( i, center, left, right );
         }
-		if ( core.ym2612[0].enabled() )
+		for (unsigned i = 0, j = 1; i < core.gbdmg[0].osc_count; i++, j <<= 1)
+		{
+			Blip_Buffer * center = (mask & j) ? 0 : core.stereo_buf[3].center();
+			Blip_Buffer * left   = (mask & j) ? 0 : core.stereo_buf[3].left();
+			Blip_Buffer * right  = (mask & j) ? 0 : core.stereo_buf[3].right();
+			core.gbdmg[0].set_output(i, center, left, right);
+			core.gbdmg[1].set_output(i, center, left, right);
+		}
+		if (core.ym2612[0].enabled())
 		{
 			core.pcm.volume( (mask & 0x40) ? 0.0 : 0.1115 / 256 * fm_gain * gain() );
 			core.ym2612[0].mute_voices( mask );
@@ -441,6 +452,8 @@ blargg_err_t Vgm_Emu::load_mem_( byte const data [], int size )
 		core.ay[1].volume( 0.135 * fm_gain * gain() );
         core.huc6280[0].volume( 0.135 * fm_gain * gain() );
         core.huc6280[1].volume( 0.135 * fm_gain * gain() );
+		core.gbdmg[0].volume( 0.135 * fm_gain * gain() );
+		core.gbdmg[1].volume( 0.135 * fm_gain * gain() );
 	}
 	else
 	{
@@ -518,8 +531,8 @@ blargg_err_t Vgm_Emu::play_( int count, sample_t out [] )
 	if ( !core.uses_fm() )
 		return Classic_Emu::play_( count, out );
 
-    Stereo_Buffer * secondaries[] = { &core.stereo_buf[1], &core.stereo_buf[2] };
-    resampler.dual_play( count, out, core.stereo_buf[0], secondaries, 2 );
+    Stereo_Buffer * secondaries[] = { &core.stereo_buf[1], &core.stereo_buf[2], &core.stereo_buf[3] };
+    resampler.dual_play( count, out, core.stereo_buf[0], secondaries, 3 );
 	return blargg_ok;
 }
 

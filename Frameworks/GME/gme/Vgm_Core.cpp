@@ -76,6 +76,7 @@ enum {
 	cmd_rf5c68          = 0xB0,
 	cmd_rf5c164         = 0xB1,
 	cmd_pwm             = 0xB2,
+	cmd_gbdmg_write     = 0xB3,
 	cmd_okim6258_write  = 0xB7,
 	cmd_okim6295_write  = 0xB8,
     cmd_huc6280_write   = 0xB9,
@@ -712,6 +713,10 @@ void Vgm_Core::chip_reg_write(unsigned Sample, byte ChipType, byte ChipID, byte 
 		ay[ChipID].write_data( to_ay_time( Sample ), Data );
 		break;
 
+	case 0x13:
+		gbdmg[ChipID].write_register( to_gbdmg_time( Sample ), 0xFF10 + Offset, Data );
+		break;
+
 	case 0x17:
 		if ( run_okim6258( ChipID, to_fm_time( Sample ) ) )
 			okim6258[ChipID].write( Offset, Data );
@@ -759,6 +764,8 @@ void Vgm_Core::set_tempo( double t )
 			(1 << blip_time_bits) / vgm_rate * stereo_buf[1].center()->clock_rate() + 0.5);
         blip_huc6280_time_factor = (int) ((double)
             (1 << blip_time_bits) / vgm_rate * stereo_buf[2].center()->clock_rate() + 0.5);
+		blip_gbdmg_time_factor = (int)((double)
+			(1 << blip_time_bits) / vgm_rate * stereo_buf[3].center()->clock_rate() + 0.5);
 		//dprintf( "blip_time_factor: %ld\n", blip_time_factor );
 		//dprintf( "vgm_rate: %ld\n", vgm_rate );
 		// TODO: remove? calculates vgm_rate more accurately (above differs at most by one Hz only)
@@ -883,7 +890,15 @@ blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
     if ( !huc6280_rate )
         huc6280_rate = 3579545;
     stereo_buf[2].clock_rate( huc6280_rate * 2 );
-	
+
+	int gbdmg_rate = get_le32( h.gbdmg_rate ) & 0xBFFFFFFF;
+	if ( !gbdmg_rate )
+		gbdmg_rate = Gb_Apu::clock_rate;
+	stereo_buf[3].clock_rate( gbdmg_rate );
+	const int gbdmg_hacks = 3;
+	gbdmg[0].set_hacks( gbdmg_hacks );
+	gbdmg[1].set_hacks( gbdmg_hacks );
+
 	// Disable FM
 	fm_rate = 0;
 	ymz280b.enable( false );
@@ -1376,6 +1391,8 @@ void Vgm_Core::start_track()
 	ay[1].reset();
     huc6280[0].reset();
     huc6280[1].reset();
+	gbdmg[0].reset();
+	gbdmg[1].reset();
 	
 	blip_buf[0] = stereo_buf[0].center();
 	blip_buf[1] = blip_buf[0];
@@ -1490,6 +1507,7 @@ void Vgm_Core::start_track()
 		stereo_buf[0].clear();
 		stereo_buf[1].clear();
         stereo_buf[2].clear();
+		stereo_buf[3].clear();
 	}
 
 	for ( unsigned i = 0; i < DacCtrlUsed; i++ )
@@ -1510,6 +1528,7 @@ void Vgm_Core::start_track()
 	fm_time_offset = 0;
 	ay_time_offset = 0;
     huc6280_time_offset = 0;
+	gbdmg_time_offset = 0;
 
     dac_control_recursion = 0;
 }
@@ -1532,6 +1551,11 @@ inline blip_time_t Vgm_Core::to_ay_time( vgm_time_t t ) const
 inline blip_time_t Vgm_Core::to_huc6280_time( vgm_time_t t ) const
 {
     return (t * blip_huc6280_time_factor) >> blip_time_bits;
+}
+
+inline blip_time_t Vgm_Core::to_gbdmg_time( vgm_time_t t ) const
+{
+	return (t * blip_gbdmg_time_factor) >> blip_time_bits;
 }
 
 void Vgm_Core::write_pcm( vgm_time_t vgm_time, int chip, int amp )
@@ -1797,6 +1821,12 @@ blip_time_t Vgm_Core::run( vgm_time_t end_time )
             chip_reg_write( vgm_time, 0x1B, ChipID, 0x00, pos [0] & 0x7F, pos [1] );
             pos += 2;
             break;
+
+		case cmd_gbdmg_write:
+			ChipID = (pos [0] & 0x80) ? 1 : 0;
+			chip_reg_write( vgm_time, 0x13, ChipID, 0x00, pos [0] & 0x7F, pos [1] );
+			pos += 2;
+			break;
 
 		case cmd_k051649_write:
 			chip_reg_write( vgm_time, 0x19, 0x00, pos [0] & 0x7F, pos [1], pos [2] );
@@ -2264,6 +2294,12 @@ int Vgm_Core::play_frame( blip_time_t blip_time, int sample_count, blip_sample_t
     blip_time_t huc6280_end_time = to_huc6280_time( vgm_time );
     huc6280[0].end_frame( huc6280_end_time );
     huc6280[1].end_frame( huc6280_end_time );
+
+	gbdmg_time_offset = (vgm_time * blip_gbdmg_time_factor + gbdmg_time_offset) - (pairs << blip_time_bits);
+
+	blip_time_t gbdmg_end_time = to_gbdmg_time( vgm_time );
+	gbdmg[0].end_frame( gbdmg_end_time );
+	gbdmg[1].end_frame( gbdmg_end_time );
 
 	memset( DacCtrlTime, 0, sizeof(DacCtrlTime) );
 	

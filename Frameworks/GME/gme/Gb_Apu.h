@@ -84,6 +84,11 @@ public:
 	// Loads state. You should call reset() BEFORE this.
 	blargg_err_t load_state( gb_apu_state_t const& in );
 
+	// Enable hacks (bitmask):
+	// 0x01 = Double wave channel volume
+	// 0x02 = Low noise channel volume (disable doubling it)
+	void set_hacks( unsigned int mask );
+
 private:
 	// noncopyable
 	Gb_Apu( const Gb_Apu& );

@@ -571,6 +571,7 @@ void Gb_Noise::run( blip_time_t time, blip_time_t end_time )
 			Blip_Synth_Fast const* const synth = fast_synth; // cache
 			
 			// Output amplitude transitions
+			if (volume_hack) vol <<= 1;
 			int delta = -vol;
 			do
 			{
@@ -603,11 +604,11 @@ void Gb_Wave::run( blip_time_t time, blip_time_t end_time )
 #if GB_APU_NO_AGB
 	static byte const shifts [4] = { 4+4, 0+4, 1+4, 2+4 };
 	int const volume_idx = regs [2] >> 5 & 3;
-	int const volume_shift = shifts [volume_idx];
+	int const volume_shift = shifts [volume_idx] - (volume_hack ? 1 : 0);
 	int const volume_mul = 1;
 #else
 	static byte const volumes [8] = { 0, 4, 2, 1, 3, 3, 3, 3 };
-	int const volume_shift = 2 + 4;
+	int const volume_shift = 2 + 4 - (volume_hack ? 1 : 0);
 	int const volume_idx = regs [2] >> 5 & (agb_mask | 3); // 2 bits on DMG/CGB, 3 on AGB
 	int const volume_mul = volumes [volume_idx];
 #endif

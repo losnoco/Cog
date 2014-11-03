@@ -114,6 +114,8 @@ class Gb_Noise : public Gb_Env {
 public:
 	
 	int divider; // noise has more complex frequency divider setup
+
+	bool volume_hack;
 	
 	void run( blip_time_t, blip_time_t );
 	void write_register( int frame_phase, int reg, int old_data, int data );
@@ -123,7 +125,11 @@ public:
 		divider = 0;
 		Gb_Env::reset();
 		delay = 4 * clk_mul; // TODO: remove?
+		volume_hack = true;
 	}
+
+	void set_volume_hack( bool enable );
+
 private:
 	enum { period2_mask = 0x1FFFF };
 	
@@ -132,9 +138,13 @@ private:
 	unsigned lfsr_mask() const { return (regs [3] & 0x08) ? ~0x4040 : ~0x4000; }
 };
 
+inline void Gb_Noise::set_volume_hack( bool enable ) { volume_hack = enable; }
+
 class Gb_Wave : public Gb_Osc {
 public:
 	int sample_buf; // last wave RAM byte read (hardware has this as well)
+
+	bool volume_hack;
 	
 	void write_register( int frame_phase, int reg, int old_data, int data );
 	void run( blip_time_t, blip_time_t );
@@ -147,6 +157,7 @@ public:
 	{
 		sample_buf = 0;
 		Gb_Osc::reset();
+		volume_hack = false;
 	}
 	
 private:
@@ -165,12 +176,16 @@ private:
 	int dac_enabled() const { return regs [0] & 0x80; }
 	
 	void corrupt_wave();
+
+	void set_volume_hack( bool enable );
 	
 	BOOST::uint8_t* wave_bank() const { return &wave_ram [(~regs [0] & bank40_mask) >> 2 & agb_mask]; }
 	
 	// Wave index that would be accessed, or -1 if no access would occur
 	int access( int addr ) const;
 };
+
+inline void Gb_Wave::set_volume_hack( bool enable ) { volume_hack = enable; }
 
 inline int Gb_Wave::read( int addr ) const
 {

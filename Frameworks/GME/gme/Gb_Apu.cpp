@@ -161,6 +161,12 @@ void Gb_Apu::set_tempo( double t )
 		frame_period = t ? blip_time_t (frame_period / t) : blip_time_t(0);
 }
 
+void Gb_Apu::set_hacks( unsigned int mask )
+{
+	wave.set_volume_hack((mask & 1) != 0);
+	noise.set_volume_hack((mask & 2) == 0);
+}
+
 Gb_Apu::Gb_Apu()
 {
 	wave.wave_ram = &regs [wave_ram - io_addr];
@@ -187,6 +193,7 @@ Gb_Apu::Gb_Apu()
 	set_tempo( 1.0 );
 	volume_ = 1.0;
 	reset();
+	set_hacks(4);
 }
 
 void Gb_Apu::run_until_( blip_time_t end_time )
