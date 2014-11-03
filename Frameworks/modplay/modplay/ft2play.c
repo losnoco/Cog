@@ -430,6 +430,7 @@ typedef struct
     
     uint32_t loopCount;
     void * playedRows;
+    uint16_t playedRowsPatLoop[1024];
 } PLAYER;
 
 /* FUNCTION DECLARATIONS */
@@ -885,7 +886,11 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
                 }
                 if (p->Song.PBreakFlag == 1)
                 {
-                    bit_array_clear_range(p->playedRows, p->Song.SongPos * 1024 + ch->PattPos, (p->Song.PattPos & 0x00FF) - ch->PattPos + 1);
+                    size_t i, j;
+                    for (i = 0; i < 1024 && p->playedRowsPatLoop[i] != 0xFFFF && p->playedRowsPatLoop[i] != ch->PattPos; ++i);
+                    for (j = i; i < 1024 && p->playedRowsPatLoop[i] != 0xFFFF; ++i)
+                        bit_array_clear(p->playedRows, p->Song.SongPos * 1024 + p->playedRowsPatLoop[i]);
+                    memset(p->playedRowsPatLoop + j, 0xFF, (i - j) * 2);
                 }
             }
         }
@@ -2115,6 +2120,8 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
 
         if (p->Song.Timer == 1)
         {
+            size_t playedRowsCount;
+            
             p->Song.PattPos++;
             
             if (p->Song.PattDelTime)
@@ -2139,8 +2146,12 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
                 p->Song.PattPos    = p->Song.PBreakPos;
             }
             
+            for (playedRowsCount = 0; playedRowsCount < 1024 && p->playedRowsPatLoop[playedRowsCount] != 0xFFFF; ++playedRowsCount);
+            
             if ((p->Song.PattPos >= p->Song.PattLen) || p->Song.PosJumpFlag)
             {
+                int16_t oldSongPos = p->Song.SongPos;
+                
                 p->Song.PattPos     = p->Song.PBreakPos;
                 p->Song.PBreakPos   = 0;
                 p->Song.PosJumpFlag = 0;
@@ -2150,6 +2161,14 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
                 
                 p->Song.PattNr  = p->Song.SongTab[p->Song.SongPos];
                 p->Song.PattLen = p->PattLens[p->Song.PattNr];
+                
+                if (oldSongPos != p->Song.SongPos)
+                {
+                    for (size_t i = 0; i < playedRowsCount; ++i)
+                        bit_array_set(p->playedRows, oldSongPos * 1024 + p->playedRowsPatLoop[i]);
+                    memset(p->playedRowsPatLoop, 0xFF, playedRowsCount * 2);
+                    playedRowsCount = 0;
+                }
             }
 
             if (bit_array_test(p->playedRows, p->Song.SongPos * 1024 + p->Song.PattPos))
@@ -2158,6 +2177,7 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
                 bit_array_reset(p->playedRows);
             }
             bit_array_set(p->playedRows, p->Song.SongPos * 1024 + p->Song.PattPos);
+            p->playedRowsPatLoop[playedRowsCount] = p->Song.PattPos;
         }
     }
     else
@@ -3930,6 +3950,9 @@ void ft2play_PlaySong(void *_p, int32_t startOrder)
     if (p->playedRows) bit_array_destroy(p->playedRows);
 	p->playedRows = bit_array_create(1024 * (p->Song.Len ? p->Song.Len : 1));
     bit_array_set(p->playedRows, startOrder * 1024);
+    
+    p->playedRowsPatLoop[0] = 0;
+    memset(p->playedRowsPatLoop + 1, 0xFF, 1023 * 2);
 }
 
 static int mopen_is_big_endian;
