@@ -52,6 +52,27 @@ double Channel::window_lut[Channel::SINC_SAMPLES + 1];
 static const double M_PI = 3.14159265358979323846;
 #endif
 
+// Code from http://hbfs.wordpress.com/2008/08/05/branchless-equivalents-of-simple-functions/
+inline int32_t sex(int32_t x)
+{
+    union
+    {
+        // let us suppose long is twice as wide as int
+        int64_t w;
+        
+        // should be hi,lo on a big endian machine
+        struct { int32_t lo, hi; } s;
+    } z;
+    z.w = x;
+    
+    return z.s.hi;
+}
+
+inline uint32_t abs(int32_t x)
+{
+    return (x ^ sex(x)) - sex(x);
+}
+
 // Code from http://learningcppisfun.blogspot.com/2010/04/comparing-floating-point-numbers.html
 template<typename T> inline bool fEqual(T x, T y, int N = 1)
 {
@@ -142,7 +163,7 @@ void Channel::UpdatePorta(const Track &trk)
 	else
 	{
 		int sq_time = static_cast<uint32_t>(trk.portaTime) * static_cast<uint32_t>(trk.portaTime);
-		int abs_sp = std::abs(this->sweepPitch);
+        int abs_sp = ::abs(this->sweepPitch);
 		this->sweepLen = (abs_sp * sq_time) >> 11;
 	}
 }
@@ -643,7 +664,7 @@ int32_t Channel::Interpolate()
 		{
 			int pos = i * step;
 			int window_pos = i * window_step;
-			kernel_sum += kernel[i + SINC_WIDTH - 1] = this->sinc_lut[std::abs(shift_adj - pos)] * this->window_lut[std::abs(shift - window_pos)];
+			kernel_sum += kernel[i + SINC_WIDTH - 1] = this->sinc_lut[::abs(shift_adj - pos)] * this->window_lut[::abs(shift - window_pos)];
 		}
 		double sum = 0.0;
 		for (i = 0; i < static_cast<int>(SINC_WIDTH * 2); ++i)
