@@ -1144,7 +1144,7 @@ static int usf_info(void * context, const char * name, const char * value)
         
         Player * player = new Player;
         
-        player->interpolation = INTERPOLATION_LANCZOS;
+        player->interpolation = INTERPOLATION_SINC;
         
         PseudoFile file;
         file.data = &state->sdatData;
