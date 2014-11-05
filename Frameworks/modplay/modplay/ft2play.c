@@ -1636,7 +1636,7 @@ static void TonePorta(PLAYER *p, StmTyp *ch)
             ch->RealPeriod -= ch->PortaSpeed;
             if (ch->RealPeriod <= ch->WantPeriod)
             {
-                ch->PortaDir   = 1;
+                ch->PortaDir   = 0;
                 ch->RealPeriod = ch->WantPeriod;
             }
         }
@@ -1645,7 +1645,7 @@ static void TonePorta(PLAYER *p, StmTyp *ch)
             ch->RealPeriod += ch->PortaSpeed;
             if (ch->RealPeriod >= ch->WantPeriod)
             {
-                ch->PortaDir   = 1;
+                ch->PortaDir   = 0;
                 ch->RealPeriod = ch->WantPeriod;
             }
         }
