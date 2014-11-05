@@ -7,16 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		830109F91A09BC0A0004F8D8 /* codecvt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F71A09BC0A0004F8D8 /* codecvt.h */; };
+		830109FA1A09BC0A0004F8D8 /* wstring_convert.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F81A09BC0A0004F8D8 /* wstring_convert.h */; };
 		83848FBC1807623F00E7332D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FBB1807623F00E7332D /* Cocoa.framework */; };
 		83848FC61807623F00E7332D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83848FC41807623F00E7332D /* InfoPlist.strings */; };
-		838490241807649A00E7332D /* BigSString.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490001807649A00E7332D /* BigSString.h */; };
 		838490251807649A00E7332D /* Channel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490011807649A00E7332D /* Channel.cpp */; };
 		838490261807649A00E7332D /* Channel.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490021807649A00E7332D /* Channel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		838490271807649A00E7332D /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490031807649A00E7332D /* common.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		838490281807649A00E7332D /* consts.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490041807649A00E7332D /* consts.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		838490291807649A00E7332D /* convert.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490051807649A00E7332D /* convert.h */; };
-		8384902A1807649A00E7332D /* ConvertUTF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490061807649A00E7332D /* ConvertUTF.cpp */; };
-		8384902B1807649A00E7332D /* ConvertUTF.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490071807649A00E7332D /* ConvertUTF.h */; };
 		8384902C1807649A00E7332D /* FATSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490081807649A00E7332D /* FATSection.cpp */; };
 		8384902D1807649A00E7332D /* FATSection.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490091807649A00E7332D /* FATSection.h */; };
 		8384902E1807649A00E7332D /* INFOEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8384900A1807649A00E7332D /* INFOEntry.cpp */; };
@@ -41,13 +40,11 @@
 		838490411807649A00E7332D /* SYMBSection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384901D1807649A00E7332D /* SYMBSection.h */; };
 		838490421807649A00E7332D /* Track.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8384901E1807649A00E7332D /* Track.cpp */; };
 		838490431807649A00E7332D /* Track.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384901F1807649A00E7332D /* Track.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		838490441807649A00E7332D /* UtfConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490201807649A00E7332D /* UtfConverter.cpp */; };
-		838490451807649A00E7332D /* UtfConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490211807649A00E7332D /* UtfConverter.h */; };
-		838490461807649A00E7332D /* UTFEncodeDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490221807649A00E7332D /* UTFEncodeDecode.cpp */; };
-		838490471807649A00E7332D /* UTFEncodeDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490231807649A00E7332D /* UTFEncodeDecode.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		830109F71A09BC0A0004F8D8 /* codecvt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codecvt.h; sourceTree = "<group>"; };
+		830109F81A09BC0A0004F8D8 /* wstring_convert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wstring_convert.h; sourceTree = "<group>"; };
 		83848FB81807623F00E7332D /* SSEQPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SSEQPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83848FBB1807623F00E7332D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83848FBE1807623F00E7332D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -56,14 +53,11 @@
 		83848FC31807623F00E7332D /* SSEQPlayer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SSEQPlayer-Info.plist"; sourceTree = "<group>"; };
 		83848FC51807623F00E7332D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83848FD01807623F00E7332D /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		838490001807649A00E7332D /* BigSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigSString.h; sourceTree = "<group>"; };
 		838490011807649A00E7332D /* Channel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Channel.cpp; sourceTree = "<group>"; };
 		838490021807649A00E7332D /* Channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Channel.h; sourceTree = "<group>"; };
 		838490031807649A00E7332D /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		838490041807649A00E7332D /* consts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = consts.h; sourceTree = "<group>"; };
 		838490051807649A00E7332D /* convert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = convert.h; sourceTree = "<group>"; };
-		838490061807649A00E7332D /* ConvertUTF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvertUTF.cpp; sourceTree = "<group>"; };
-		838490071807649A00E7332D /* ConvertUTF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvertUTF.h; sourceTree = "<group>"; };
 		838490081807649A00E7332D /* FATSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FATSection.cpp; sourceTree = "<group>"; };
 		838490091807649A00E7332D /* FATSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FATSection.h; sourceTree = "<group>"; };
 		8384900A1807649A00E7332D /* INFOEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = INFOEntry.cpp; sourceTree = "<group>"; };
@@ -88,10 +82,6 @@
 		8384901D1807649A00E7332D /* SYMBSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SYMBSection.h; sourceTree = "<group>"; };
 		8384901E1807649A00E7332D /* Track.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Track.cpp; sourceTree = "<group>"; };
 		8384901F1807649A00E7332D /* Track.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Track.h; sourceTree = "<group>"; };
-		838490201807649A00E7332D /* UtfConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UtfConverter.cpp; sourceTree = "<group>"; };
-		838490211807649A00E7332D /* UtfConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtfConverter.h; sourceTree = "<group>"; };
-		838490221807649A00E7332D /* UTFEncodeDecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UTFEncodeDecode.cpp; sourceTree = "<group>"; };
-		838490231807649A00E7332D /* UTFEncodeDecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTFEncodeDecode.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,14 +136,13 @@
 		83848FC11807623F00E7332D /* SSEQPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				838490001807649A00E7332D /* BigSString.h */,
+				830109F71A09BC0A0004F8D8 /* codecvt.h */,
+				830109F81A09BC0A0004F8D8 /* wstring_convert.h */,
 				838490011807649A00E7332D /* Channel.cpp */,
 				838490021807649A00E7332D /* Channel.h */,
 				838490031807649A00E7332D /* common.h */,
 				838490041807649A00E7332D /* consts.h */,
 				838490051807649A00E7332D /* convert.h */,
-				838490061807649A00E7332D /* ConvertUTF.cpp */,
-				838490071807649A00E7332D /* ConvertUTF.h */,
 				838490081807649A00E7332D /* FATSection.cpp */,
 				838490091807649A00E7332D /* FATSection.h */,
 				8384900A1807649A00E7332D /* INFOEntry.cpp */,
@@ -178,10 +167,6 @@
 				8384901D1807649A00E7332D /* SYMBSection.h */,
 				8384901E1807649A00E7332D /* Track.cpp */,
 				8384901F1807649A00E7332D /* Track.h */,
-				838490201807649A00E7332D /* UtfConverter.cpp */,
-				838490211807649A00E7332D /* UtfConverter.h */,
-				838490221807649A00E7332D /* UTFEncodeDecode.cpp */,
-				838490231807649A00E7332D /* UTFEncodeDecode.h */,
 				83848FC21807623F00E7332D /* Supporting Files */,
 			);
 			path = SSEQPlayer;
@@ -207,22 +192,20 @@
 				838490281807649A00E7332D /* consts.h in Headers */,
 				838490261807649A00E7332D /* Channel.h in Headers */,
 				838490431807649A00E7332D /* Track.h in Headers */,
+				830109F91A09BC0A0004F8D8 /* codecvt.h in Headers */,
 				8384903B1807649A00E7332D /* SSEQ.h in Headers */,
 				838490371807649A00E7332D /* SBNK.h in Headers */,
+				830109FA1A09BC0A0004F8D8 /* wstring_convert.h in Headers */,
 				8384903D1807649A00E7332D /* SWAR.h in Headers */,
 				8384903F1807649A00E7332D /* SWAV.h in Headers */,
 				838490271807649A00E7332D /* common.h in Headers */,
 				838490391807649A00E7332D /* SDAT.h in Headers */,
 				838490351807649A00E7332D /* Player.h in Headers */,
-				838490471807649A00E7332D /* UTFEncodeDecode.h in Headers */,
 				838490311807649A00E7332D /* INFOSection.h in Headers */,
-				8384902B1807649A00E7332D /* ConvertUTF.h in Headers */,
-				838490451807649A00E7332D /* UtfConverter.h in Headers */,
 				8384902D1807649A00E7332D /* FATSection.h in Headers */,
 				838490331807649A00E7332D /* NDSStdHeader.h in Headers */,
 				838490291807649A00E7332D /* convert.h in Headers */,
 				838490411807649A00E7332D /* SYMBSection.h in Headers */,
-				838490241807649A00E7332D /* BigSString.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,19 +272,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				838490441807649A00E7332D /* UtfConverter.cpp in Sources */,
 				838490381807649A00E7332D /* SDAT.cpp in Sources */,
 				8384902E1807649A00E7332D /* INFOEntry.cpp in Sources */,
 				838490341807649A00E7332D /* Player.cpp in Sources */,
 				838490301807649A00E7332D /* INFOSection.cpp in Sources */,
-				838490461807649A00E7332D /* UTFEncodeDecode.cpp in Sources */,
 				838490251807649A00E7332D /* Channel.cpp in Sources */,
 				8384903C1807649A00E7332D /* SWAR.cpp in Sources */,
 				8384903E1807649A00E7332D /* SWAV.cpp in Sources */,
 				838490421807649A00E7332D /* Track.cpp in Sources */,
 				8384902C1807649A00E7332D /* FATSection.cpp in Sources */,
 				838490321807649A00E7332D /* NDSStdHeader.cpp in Sources */,
-				8384902A1807649A00E7332D /* ConvertUTF.cpp in Sources */,
 				838490401807649A00E7332D /* SYMBSection.cpp in Sources */,
 				838490361807649A00E7332D /* SBNK.cpp in Sources */,
 				8384903A1807649A00E7332D /* SSEQ.cpp in Sources */,
