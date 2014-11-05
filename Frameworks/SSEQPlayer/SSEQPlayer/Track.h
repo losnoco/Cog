@@ -1,20 +1,54 @@
 /*
  * SSEQ Player - Track structure
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-04-01
+ * Last modification on 2014-10-13
  *
  * Adapted from source code of FeOS Sound System
  * By fincs
  * https://github.com/fincs/FSS
  */
 
-#ifndef SSEQPLAYER_TRACK_H
-#define SSEQPLAYER_TRACK_H
+#pragma once
 
+#include <functional>
 #include <bitset>
 #include "consts.h"
 
 struct Player;
+
+enum StackType
+{
+	STACKTYPE_CALL,
+	STACKTYPE_LOOP
+};
+
+struct StackValue
+{
+	StackType type;
+	const uint8_t *dest;
+
+	StackValue() : type(STACKTYPE_CALL), dest(nullptr) { }
+	StackValue(StackType newType, const uint8_t *newDest) : type(newType), dest(newDest) { }
+};
+
+struct Override
+{
+	bool overriding;
+	int cmd;
+	int value;
+	int extraValue;
+
+	Override() : overriding(false) { }
+	bool operator()() const { return this->overriding; }
+	bool &operator()() { return this->overriding; }
+	int val(const uint8_t **pData, std::function<int (const uint8_t **)> reader, bool returnExtra = false)
+	{
+		if (this->overriding)
+			return returnExtra ? this->extraValue : this->value;
+		else
+			return reader(pData);
+	}
+};
 
 struct Track
 {
@@ -26,9 +60,11 @@ struct Track
 
 	const uint8_t *startPos;
 	const uint8_t *pos;
-	const uint8_t *stack[FSS_TRACKSTACKSIZE];
+	StackValue stack[FSS_TRACKSTACKSIZE];
 	uint8_t stackPos;
 	uint8_t loopCount[FSS_TRACKSTACKSIZE];
+	Override overriding;
+	bool lastComparisonResult;
 
 	int wait;
 	uint16_t patch;
@@ -58,5 +94,3 @@ struct Track
 	void ReleaseAllNotes();
 	void Run();
 };
-
-#endif

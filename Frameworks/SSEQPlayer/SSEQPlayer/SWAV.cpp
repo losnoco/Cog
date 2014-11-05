@@ -1,7 +1,7 @@
 /*
  * SSEQ Player - SDAT SWAV (Waveform/Sample) structure
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-04-10
+ * Last modification on 2013-04-12
  *
  * Nintendo DS Nitro Composer (SDAT) Specification document found at
  * http://www.feshrine.net/hacking/doc/nds-sdat.html
@@ -62,20 +62,21 @@ static inline void DecodeADPCMNibble(int32_t nibble, int32_t &stepIndex, int32_t
 		predictedValue = 0x7FFF;
 }
 
-void SWAV::DecodeADPCM(const std::vector<uint8_t> &origData)
+void SWAV::DecodeADPCM(const uint8_t *origData, uint32_t len)
 {
 	int32_t predictedValue = origData[0] | (origData[1] << 8);
 	int32_t stepIndex = origData[2] | (origData[3] << 8);
+	auto finalData = &this->data[0];
 
-	for (long i = 0, len = origData.size() - 4; i < len; ++i)
+	for (uint32_t i = 0; i < len; ++i)
 	{
 		int32_t nibble = origData[i + 4] & 0x0F;
 		DecodeADPCMNibble(nibble, stepIndex, predictedValue);
-		this->data[2 * i] = predictedValue;
+		finalData[2 * i] = predictedValue;
 
 		nibble = (origData[i + 4] >> 4) & 0x0F;
 		DecodeADPCMNibble(nibble, stepIndex, predictedValue);
-		this->data[2 * i + 1] = predictedValue;
+		finalData[2 * i + 1] = predictedValue;
 	}
 }
 
@@ -114,7 +115,7 @@ void SWAV::Read(PseudoFile &file)
 	{
 		// IMA ADPCM -> PCM signed 16-bit
 		this->data.resize((origData.size() - 4) * 2, 0);
-		this->DecodeADPCM(origData);
+		this->DecodeADPCM(&origData[0], origData.size() - 4);
 		--this->loopOffset;
 		this->loopOffset *= 8;
 		this->nonLoopLength *= 8;

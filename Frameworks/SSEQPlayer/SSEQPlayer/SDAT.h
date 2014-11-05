@@ -1,14 +1,13 @@
 /*
  * SSEQ Player - SDAT structure
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-03-30
+ * Last modification on 2014-09-08
  *
  * Nintendo DS Nitro Composer (SDAT) Specification document found at
  * http://www.feshrine.net/hacking/doc/nds-sdat.html
  */
 
-#ifndef SSEQPLAYER_SDAT_H
-#define SSEQPLAYER_SDAT_H
+#pragma once
 
 #include <memory>
 #include "SSEQ.h"
@@ -27,5 +26,3 @@ private:
 	SDAT(const SDAT &);
 	SDAT &operator=(const SDAT &);
 };
-
-#endif

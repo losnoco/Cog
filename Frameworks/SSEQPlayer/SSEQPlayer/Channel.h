@@ -1,7 +1,7 @@
 /*
  * SSEQ Player - Channel structures
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-04-02
+ * Last modification on 2014-09-17
  *
  * Adapted from source code of FeOS Sound System
  * By fincs
@@ -11,8 +11,7 @@
  * http://desmume.org/
  */
 
-#ifndef SSEQPLAYER_CHANNEL_H
-#define SSEQPLAYER_CHANNEL_H
+#pragma once
 
 #include <bitset>
 #include <tuple>
@@ -136,18 +135,17 @@ struct Channel
 	int16_t sampleHistory[64];
 
 	/*
-	 * Lookup tables for the cosine and Lanczos Sinc interpolations, to
+	 * Lookup tables for the Sinc interpolation, to
 	 * avoid the need to call the sin/cos functions all the time.
 	 * These are static as they will not change between channels or runs
 	 * of the program.
 	 */
 	static bool initializedLUTs;
-	static const unsigned COSINE_RESOLUTION = 8192;
-	static const unsigned LANCZOS_RESOLUTION = 8192;
-	static const unsigned LANCZOS_WIDTH = 8;
-	static const unsigned LANCZOS_SAMPLES = LANCZOS_RESOLUTION * LANCZOS_WIDTH;
-	static double cosine_lut[COSINE_RESOLUTION];
-	static double lanczos_lut[LANCZOS_SAMPLES + 1];
+	static const unsigned SINC_RESOLUTION = 8192;
+	static const unsigned SINC_WIDTH = 8;
+	static const unsigned SINC_SAMPLES = SINC_RESOLUTION * SINC_WIDTH;
+	static double sinc_lut[SINC_SAMPLES + 1];
+	static double window_lut[SINC_SAMPLES + 1];
 
 	Channel();
 
@@ -165,5 +163,3 @@ struct Channel
 	void IncrementSample();
 	void clearHistory();
 };
-
-#endif

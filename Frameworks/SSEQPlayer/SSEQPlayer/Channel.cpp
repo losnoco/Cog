@@ -1,7 +1,7 @@
 /*
  * SSEQ Player - Channel structures
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-04-23
+ * Last modification on 2014-10-23
  *
  * Adapted from source code of FeOS Sound System
  * By fincs
@@ -12,7 +12,6 @@
  */
 
 #define _USE_MATH_DEFINES
-#include <cstdlib>
 #include <cmath>
 #include <limits>
 #include "Channel.h"
@@ -46,8 +45,8 @@ TempSndReg::TempSndReg() : CR(0), SOURCE(nullptr), TIMER(0), REPEAT_POINT(0), LE
 }
 
 bool Channel::initializedLUTs = false;
-double Channel::cosine_lut[Channel::COSINE_RESOLUTION];
-double Channel::lanczos_lut[Channel::LANCZOS_SAMPLES + 1];
+double Channel::sinc_lut[Channel::SINC_SAMPLES + 1];
+double Channel::window_lut[Channel::SINC_SAMPLES + 1];
 
 #ifndef M_PI
 static const double M_PI = 3.14159265358979323846;
@@ -73,18 +72,22 @@ Channel::Channel() : chnId(-1), tempReg(), state(CS_NONE), trackId(-1), prio(0),
 	this->clearHistory();
 	if (!this->initializedLUTs)
 	{
-		for (unsigned i = 0; i < COSINE_RESOLUTION; ++i)
-			this->cosine_lut[i] = (1.0 - std::cos((static_cast<double>(i) / COSINE_RESOLUTION) * M_PI)) * 0.5;
-		double dx = static_cast<double>(LANCZOS_WIDTH) / LANCZOS_SAMPLES, x = 0.0;
-		for (unsigned i = 0; i <= LANCZOS_SAMPLES; ++i, x += dx)
-			this->lanczos_lut[i] = std::abs(x) < LANCZOS_WIDTH ? sinc(x) * sinc(x / LANCZOS_WIDTH) : 0.0;
+		double dx = static_cast<double>(SINC_WIDTH) / SINC_SAMPLES, x = 0.0;
+		for (unsigned i = 0; i <= SINC_SAMPLES; ++i, x += dx)
+		{
+			double y = x / SINC_WIDTH;
+			this->sinc_lut[i] = std::abs(x) < SINC_WIDTH ? sinc(x) : 0.0;
+			this->window_lut[i] = (0.40897 + 0.5 * std::cos(M_PI * y) + 0.09103 * std::cos(2 * M_PI * y));
+		}
 		this->initializedLUTs = true;
 	}
 }
 
+// Original FSS Function: Chn_UpdateVol
 void Channel::UpdateVol(const Track &trk)
 {
 	int finalVol = trk.ply->masterVol;
+	finalVol += trk.ply->sseqVol;
 	finalVol += Cnv_Sust(trk.vol);
 	finalVol += Cnv_Sust(trk.expr);
 	if (finalVol < -AMPL_K)
@@ -92,11 +95,13 @@ void Channel::UpdateVol(const Track &trk)
 	this->extAmpl = finalVol;
 }
 
+// Original FSS Function: Chn_UpdatePan
 void Channel::UpdatePan(const Track &trk)
 {
 	this->extPan = trk.pan;
 }
 
+// Original FSS Function: Chn_UpdateTune
 void Channel::UpdateTune(const Track &trk)
 {
 	int tune = (static_cast<int>(this->key) - static_cast<int>(this->orgKey)) * 64;
@@ -104,6 +109,7 @@ void Channel::UpdateTune(const Track &trk)
 	this->extTune = tune;
 }
 
+// Original FSS Function: Chn_UpdateMod
 void Channel::UpdateMod(const Track &trk)
 {
 	this->modType = trk.modType;
@@ -113,6 +119,7 @@ void Channel::UpdateMod(const Track &trk)
 	this->modDelay = trk.modDelay;
 }
 
+// Original FSS Function: Chn_UpdatePorta
 void Channel::UpdatePorta(const Track &trk)
 {
 	this->manualSweep = false;
@@ -135,11 +142,12 @@ void Channel::UpdatePorta(const Track &trk)
 	else
 	{
 		int sq_time = static_cast<uint32_t>(trk.portaTime) * static_cast<uint32_t>(trk.portaTime);
-		long abs_sp = std::abs((long)this->sweepPitch);
-		this->sweepLen = (uint32_t)((abs_sp * sq_time) >> 11);
+		int abs_sp = std::abs(this->sweepPitch);
+		this->sweepLen = (abs_sp * sq_time) >> 11;
 	}
 }
 
+// Original FSS Function: Chn_Release
 void Channel::Release()
 {
 	this->noteLength = -1;
@@ -147,6 +155,7 @@ void Channel::Release()
 	this->state = CS_RELEASE;
 }
 
+// Original FSS Function: Chn_Kill
 void Channel::Kill()
 {
 	this->state = CS_NONE;
@@ -173,6 +182,7 @@ static inline int getModFlag(int type)
 	}
 }
 
+// Original FSS Function: Chn_UpdateTracks
 void Channel::UpdateTrack()
 {
 	if (!this->ply)
@@ -182,11 +192,11 @@ void Channel::UpdateTrack()
 	if (trkn == -1)
 		return;
 
-	auto &trackFlags = this->ply->tracks[trkn].updateFlags;
+	auto &trk = this->ply->tracks[trkn];
+	auto &trackFlags = trk.updateFlags;
 	if (trackFlags.none())
 		return;
 
-	auto &trk = this->ply->tracks[trkn];
 	if (trackFlags[TUF_LEN])
 	{
 		int st = this->state;
@@ -405,7 +415,7 @@ static inline uint16_t Timer_Adjust(uint16_t basetmr, int pitch)
 		tmr <<= shift;
 	}
 	else
-		return 0x10;
+		return 0xFFFF;
 
 	if (tmr < 0x10)
 		return 0x10;
@@ -425,6 +435,7 @@ static inline int calcVolDivShift(int x)
 	return 4;
 }
 
+// Original FSS Function: Snd_UpdChannel
 void Channel::Update()
 {
 	// Kill active channels that aren't physically active
@@ -457,10 +468,17 @@ void Channel::Update()
 			this->state = CS_ATTACK;
 			// Fall down
 		case CS_ATTACK:
-			this->ampl = (static_cast<int>(this->ampl) * static_cast<int>(this->attackLvl)) / 255;
+		{
+			int newAmpl = this->ampl;
+			int oldAmpl = this->ampl >> 7;
+			do
+				newAmpl = (newAmpl * static_cast<int>(this->attackLvl)) / 256;
+			while ((newAmpl >> 7) == oldAmpl);
+			this->ampl = newAmpl;
 			if (!this->ampl)
 				this->state = CS_DECAY;
 			break;
+		}
 		case CS_DECAY:
 		{
 			this->ampl -= static_cast<int>(this->decayRate);
@@ -474,10 +492,11 @@ void Channel::Update()
 		}
 		case CS_RELEASE:
 			this->ampl -= static_cast<int>(this->releaseRate);
-			if (this->ampl > AMPL_THRESHOLD)
-				break;
-			this->Kill();
-			return;
+			if (this->ampl <= AMPL_THRESHOLD)
+			{
+				this->Kill();
+				return;
+			}
 	}
 
 	if (bModulation && this->modDelayCnt < this->modDelay)
@@ -504,7 +523,7 @@ void Channel::Update()
 		modParam = Cnv_Sine(this->modCounter >> 8) * this->modRange * this->modDepth;
 
 		if (!this->modType)
-			modParam = static_cast<int>(static_cast<int64_t>(modParam * 60) >> 14);
+			modParam = static_cast<int64_t>(modParam * 60) >> 14;
 		else
 			// This ugly formula whose exact meaning and workings I cannot figure out is used for volume/pan modulation.
 			modParam = ((modParam & ~0xFC000000) >> 8) | ((((modParam < 0 ? -1 : 0) << 6) | (static_cast<uint32_t>(modParam) >> 26)) << 18);
@@ -555,8 +574,7 @@ void Channel::Update()
 			if (bModulation && this->modType == 1)
 				totalVol += modParam;
 			totalVol += AMPL_K;
-			if (totalVol < 0)
-				totalVol = 0;
+			clamp(totalVol, 0, AMPL_K);
 
 			cr &= ~(SOUND_VOL(0x7F) | SOUND_VOLDIV(3));
 			cr |= SOUND_VOL(static_cast<int>(getvoltbl[totalVol]));
@@ -580,10 +598,7 @@ void Channel::Update()
 			if (bModulation && this->modType == 2)
 				realPan += modParam;
 			realPan += 64;
-			if (realPan < 0)
-				realPan = 0;
-			else if (realPan > 127)
-				realPan = 127;
+			clamp(realPan, 0, 127);
 
 			cr &= ~SOUND_PAN(0x7F);
 			cr |= SOUND_PAN(realPan);
@@ -607,8 +622,8 @@ static const int16_t wavedutytbl[8][8] =
 	{ -0x7FFF, -0x7FFF, -0x7FFF, -0x7FFF, -0x7FFF, -0x7FFF, -0x7FFF, -0x7FFF }
 };
 
-// Linear and Cosine interpolation code originally from DeSmuME
-// B-spline and Osculating come from Olli Niemitalo:
+// Linear interpolation code originally from DeSmuME
+// Legrange comes from Olli Niemitalo:
 // http://www.student.oulu.fi/~oniemita/dsp/deip.pdf
 int32_t Channel::Interpolate()
 {
@@ -617,68 +632,51 @@ int32_t Channel::Interpolate()
 
 	const auto &data = &this->sampleHistory[this->sampleHistoryPtr + 16];
 
-	if (this->ply->interpolation == INTERPOLATION_LANCZOS)
+	if (this->ply->interpolation == INTERPOLATION_SINC)
 	{
-		double kernel[LANCZOS_WIDTH * 2], kernel_sum = 0.0;
-		int i = LANCZOS_WIDTH, shift = static_cast<int>(std::floor(ratio * LANCZOS_RESOLUTION));
-		int step = this->reg.sampleIncrease > 1.0 ? static_cast<int>((1.0 / this->reg.sampleIncrease) * LANCZOS_RESOLUTION) : LANCZOS_RESOLUTION;
-		long shift_adj = shift * step / LANCZOS_RESOLUTION;
-		for (; i >= -static_cast<int>(LANCZOS_WIDTH - 1); --i)
+		double kernel[SINC_WIDTH * 2], kernel_sum = 0.0;
+		int i = SINC_WIDTH, shift = static_cast<int>(std::floor(ratio * SINC_RESOLUTION));
+		int step = this->reg.sampleIncrease > 1.0 ? static_cast<int>(SINC_RESOLUTION / this->reg.sampleIncrease) : SINC_RESOLUTION;
+		int shift_adj = shift * step / SINC_RESOLUTION;
+		const int window_step = SINC_RESOLUTION;
+		for (; i >= -static_cast<int>(SINC_WIDTH - 1); --i)
 		{
-			long pos = i * step;
-			kernel_sum += kernel[i + LANCZOS_WIDTH - 1] = this->lanczos_lut[std::abs(shift_adj - pos)];
+			int pos = i * step;
+			int window_pos = i * window_step;
+			kernel_sum += kernel[i + SINC_WIDTH - 1] = this->sinc_lut[std::abs(shift_adj - pos)] * this->window_lut[std::abs(shift - window_pos)];
 		}
 		double sum = 0.0;
-		for (i = 0; i < static_cast<int>(LANCZOS_WIDTH * 2); ++i)
-			sum += data[i - static_cast<int>(LANCZOS_WIDTH) + 1] * kernel[i];
+		for (i = 0; i < static_cast<int>(SINC_WIDTH * 2); ++i)
+			sum += data[i - static_cast<int>(SINC_WIDTH) + 1] * kernel[i];
 		return static_cast<int32_t>(sum / kernel_sum);
 	}
-	else if (this->ply->interpolation > INTERPOLATION_COSINE)
+	else if (this->ply->interpolation > INTERPOLATION_LINEAR)
 	{
 		double c0, c1, c2, c3, c4, c5;
 
-		if (this->ply->interpolation > INTERPOLATION_4POINTBSPLINE)
+		if (this->ply->interpolation == INTERPOLATION_6POINTLEGRANGE)
 		{
-			if (this->ply->interpolation == INTERPOLATION_6POINTBSPLINE)
-			{
-				double ym2py2 = data[-2] + data[2], ym1py1 = data[-1] + data[1];
-				double y2mym2 = data[2] - data[-2], y1mym1 = data[1] - data[-1];
-				double sixthym1py1 = 1 / 6.0 * ym1py1;
-				c0 = 1 / 120.0 * ym2py2 + 13 / 60.0 * ym1py1 + 0.55 * data[0];
-				c1 = 1 / 24.0 * y2mym2 + 5 / 12.0 * y1mym1;
-				c2 = 1 / 12.0 * ym2py2 + sixthym1py1 - 0.5 * data[0];
-				c3 = 1 / 12.0 * y2mym2 - 1 / 6.0 * y1mym1;
-				c4 = 1 / 24.0 * ym2py2 - sixthym1py1 + 0.25 * data[0];
-				c5 = 1 / 120.0 * (data[3] - data[-2]) + 1 / 24.0 * (data[-1] - data[2]) + 1 / 12.0 * (data[1] - data[0]);
-				return static_cast<int32_t>(((((c5 * ratio + c4) * ratio + c3) * ratio + c2) * ratio + c1) * ratio + c0);
-			}
-			else // INTERPOLATION_6POINTOSCULATING
-			{
-				ratio -= 0.5;
-				double even1 = data[-2] + data[3], odd1 = data[-2] - data[3];
-				double even2 = data[-1] + data[2], odd2 = data[-1] - data[2];
-				double even3 = data[0] + data[1], odd3 = data[0] - data[1];
-				c0 = 0.01171875 * even1 - 0.09765625 * even2 + 0.5859375 * even3;
-				c1 = 0.2109375 * odd2 - 281 / 192.0 * odd3 - 13 / 384.0 * odd1;
-				c2 = 0.40625 * even2 - 17 / 48.0 * even3 - 5 / 96.0 * even1;
-				c3 = 0.1875 * odd1 - 53 / 48.0 * odd2 + 2.375 * odd3;
-				c4 = 1 / 48.0 * even1 - 0.0625 * even2 + 1 / 24.0 * even3;
-				c5 = 25 / 24.0 * odd2 - 25 / 12.0 * odd3 - 5 / 24.0 * odd1;
-				return static_cast<int32_t>(((((c5 * ratio + c4) * ratio + c3) * ratio + c2) * ratio + c1) * ratio + c0);
-			}
+			ratio -= 0.5;
+			double even1 = data[-2] + data[3], odd1 = data[-2] - data[3];
+			double even2 = data[-1] + data[2], odd2 = data[-1] - data[2];
+			double even3 = data[0] + data[1], odd3 = data[0] - data[1];
+			c0 = 0.01171875 * even1 - 0.09765625 * even2 + 0.5859375 * even3;
+			c1 = 25 / 384.0 * odd2 - 1.171875 * odd3 - 0.0046875 * odd1;
+			c2 = 0.40625 * even2 - 17 / 48.0 * even3 - 5 / 96.0 * even1;
+			c3 = 1 / 48.0 * odd1 - 13 / 48.0 * odd2 + 17 / 24.0 * odd3;
+			c4 = 1 / 48.0 * even1 - 0.0625 * even2 + 1 / 24.0 * even3;
+			c5 = 1 / 24.0 * odd2 - 1 / 12.0 * odd3 - 1 / 120.0 * odd1;
+			return static_cast<int32_t>(((((c5 * ratio + c4) * ratio + c3) * ratio + c2) * ratio + c1) * ratio + c0);
 		}
-		else // INTERPOLATION_4POINTBSPLINE
+		else // INTERPOLATION_4POINTLEAGRANGE
 		{
-			double ym1py1 = data[-1] + data[1];
-			c0 = 1 / 6.0 * ym1py1 + 2 / 3.0 * data[0];
-			c1 = 0.5 * (data[1] - data[-1]);
-			c2 = 0.5 * ym1py1 - data[0];
-			c3 = 0.5 * (data[0] - data[1]) + 1 / 6.0 * (data[2] - data[-1]);
+			c0 = data[0];
+			c1 = data[1] - 1 / 3.0 * data[-1] - 0.5 * data[0] - 1 / 6.0 * data[2];
+			c2 = 0.5 * (data[-1] + data[1]) - data[0];
+			c3 = 1 / 6.0 * (data[2] - data[-1]) + 0.5 * (data[0] - data[1]);
 			return static_cast<int32_t>(((c3 * ratio + c2) * ratio + c1) * ratio + c0);
 		}
 	}
-	else if (this->ply->interpolation == INTERPOLATION_COSINE)
-		return static_cast<int32_t>(data[0] + this->cosine_lut[static_cast<unsigned>(ratio * COSINE_RESOLUTION)] * (data[1] - data[0]));
 	else // INTERPOLATION_LINEAR
 		return static_cast<int32_t>(data[0] + ratio * (data[1] - data[0]));
 }

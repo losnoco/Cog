@@ -1,14 +1,13 @@
 /*
  * SSEQ Player - SDAT SWAV (Waveform/Sample) structure
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-04-10
+ * Last modification on 2014-09-08
  *
  * Nintendo DS Nitro Composer (SDAT) Specification document found at
  * http://www.feshrine.net/hacking/doc/nds-sdat.html
  */
 
-#ifndef SSEQPLAYER_SWAV_H
-#define SSEQPLAYER_SWAV_H
+#pragma once
 
 #include "common.h"
 
@@ -26,7 +25,5 @@ struct SWAV
 	SWAV();
 
 	void Read(PseudoFile &file);
-	void DecodeADPCM(const std::vector<uint8_t> &data);
+	void DecodeADPCM(const uint8_t *origData, uint32_t len);
 };
-
-#endif

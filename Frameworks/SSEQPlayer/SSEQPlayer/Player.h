@@ -1,15 +1,14 @@
 /*
  * SSEQ Player - Player structure
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-04-01
+ * Last modification on 2014-10-18
  *
  * Adapted from source code of FeOS Sound System
  * By fincs
  * https://github.com/fincs/FSS
  */
 
-#ifndef SSEQPLAYER_PLAYER_H
-#define SSEQPLAYER_PLAYER_H
+#pragma once
 
 #include <memory>
 #include <bitset>
@@ -22,13 +21,14 @@ struct Player
 {
 	uint8_t prio, nTracks;
 	uint16_t tempo, tempoCount, tempoRate /* 8.8 fixed point */;
-	int16_t masterVol;
+	int16_t masterVol, sseqVol;
 
 	const SSEQ *sseq;
 
 	uint8_t trackIds[FSS_TRACKCOUNT];
 	Track tracks[FSS_MAXTRACKS];
 	Channel channels[16];
+	int16_t variables[32];
 
 	uint32_t sampleRate;
 	Interpolation interpolation;
@@ -50,5 +50,3 @@ struct Player
 	std::bitset<16> mutes;
 	void GenerateSamples(std::vector<uint8_t> &buf, unsigned offset, unsigned samples);
 };
-
-#endif

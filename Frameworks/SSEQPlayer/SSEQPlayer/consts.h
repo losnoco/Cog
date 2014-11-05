@@ -1,7 +1,7 @@
 /*
  * SSEQ Player - Constants/Macros
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-04-12
+ * Last modification on 2014-09-08
  *
  * Adapted from source code of FeOS Sound System
  * By fincs
@@ -11,8 +11,7 @@
  * http://devkitpro.org/
  */
 
-#ifndef SSEQPLAYER_CONSTS_H
-#define SSEQPLAYER_CONSTS_H
+#pragma once
 
 #include <cstdint>
 
@@ -55,11 +54,7 @@ enum Interpolation
 {
 	INTERPOLATION_NONE,
 	INTERPOLATION_LINEAR,
-	INTERPOLATION_COSINE,
-	INTERPOLATION_4POINTBSPLINE,
-	INTERPOLATION_6POINTOSCULATING,
-	INTERPOLATION_6POINTBSPLINE,
-	INTERPOLATION_LANCZOS
+	INTERPOLATION_4POINTLEGRANGE,
+	INTERPOLATION_6POINTLEGRANGE,
+	INTERPOLATION_SINC
 };
-
-#endif

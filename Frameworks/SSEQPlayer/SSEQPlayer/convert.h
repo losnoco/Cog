@@ -1,20 +1,24 @@
 /*
  * Common conversion functions
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-03-30
+ * Last modification on 2014-09-24
  */
 
-#ifndef _CONVERT_H_
-#define _CONVERT_H_
+#pragma once
 
 #include <stdexcept>
 #include <string>
 #include <sstream>
 #include <typeinfo>
 #include <locale>
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(_LIBCPP_VERSION)
+# include "wstring_convert.h"
+# include "codecvt.h"
+#else
+# include <codecvt>
+#endif
 #include <vector>
 #include <cmath>
-#include "BigSString.h"
 
 /*
  * The following exception class and the *stringify and convert* functions are
@@ -130,7 +134,7 @@ public:
 
 	static unsigned long StringToMS(const std::wstring &time)
 	{
-		return ConvertFuncs::StringToMS(String(time).GetAnsi());
+		return ConvertFuncs::StringToMS(ConvertFuncs::WStringToString(time));
 	}
 
 	static std::string MSToString(unsigned long time)
@@ -149,8 +153,18 @@ public:
 
 	static std::wstring MSToWString(unsigned long time)
 	{
-		return String(ConvertFuncs::MSToString(time)).GetWStr();
+		return ConvertFuncs::StringToWString(ConvertFuncs::MSToString(time));
+	}
+
+	static std::wstring StringToWString(const std::string &str)
+	{
+		static std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+		return conv.from_bytes(str);
+	}
+
+	static std::string WStringToString(const std::wstring &wstr)
+	{
+		static std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+		return conv.to_bytes(wstr);
 	}
 };
-
-#endif

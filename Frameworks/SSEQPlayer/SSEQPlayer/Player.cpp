@@ -1,7 +1,7 @@
 /*
  * SSEQ Player - Player structure
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-04-01
+ * Last modification on 2014-10-23
  *
  * Adapted from source code of FeOS Sound System
  * By fincs
@@ -11,13 +11,23 @@
 #include "Player.h"
 #include "common.h"
 
-Player::Player() : prio(0), nTracks(0), tempo(0), tempoCount(0), tempoRate(0), masterVol(0), sseq(nullptr), sampleRate(0), interpolation(INTERPOLATION_NONE)
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(_LIBCPP_VERSION)
+std::locale::id std::codecvt<char16_t, char, mbstate_t>::id;
+std::locale::id std::codecvt<char32_t, char, mbstate_t>::id;
+#endif
+
+Player::Player() : prio(0), nTracks(0), tempo(0), tempoCount(0), tempoRate(0), masterVol(0), sseqVol(0), sseq(nullptr), sampleRate(0), interpolation(INTERPOLATION_NONE)
 {
 	memset(this->trackIds, 0, sizeof(this->trackIds));
 	for (size_t i = 0; i < 16; ++i)
+	{
 		this->channels[i].chnId = i;
+		this->channels[i].ply = this;
+	}
+	memset(this->variables, -1, sizeof(this->variables));
 }
 
+// Original FSS Function: Player_Setup
 bool Player::Setup(const SSEQ *sseqToPlay)
 {
 	this->sseq = sseqToPlay;
@@ -30,21 +40,7 @@ bool Player::Setup(const SSEQ *sseqToPlay)
 	this->nTracks = 1;
 	this->trackIds[0] = firstTrack;
 
-	auto pData = &this->sseq->data[0];
-	if (*pData == 0xFE)
-		for (pData += 3; *pData == 0x93; ) // Prepare extra tracks
-		{
-			++pData;
-			int tNum = read8(&pData);
-			auto pos = &this->sseq->data[read24(&pData)];
-			int newTrack = this->TrackAlloc();
-			if (newTrack == -1)
-				continue;
-			this->tracks[newTrack].Init(newTrack, this, pos, tNum);
-			this->trackIds[this->nTracks++] = newTrack;
-		}
-
-	this->tracks[firstTrack].startPos = this->tracks[firstTrack].pos = pData;
+	this->tracks[firstTrack].startPos = this->tracks[firstTrack].pos = &this->sseq->data[0];
 
 	this->secondsPerSample = 1.0 / this->sampleRate;
 
@@ -53,16 +49,19 @@ bool Player::Setup(const SSEQ *sseqToPlay)
 	return true;
 }
 
+// Original FSS Function: Player_ClearState
 void Player::ClearState()
 {
 	this->tempo = 120;
 	this->tempoCount = 0;
 	this->tempoRate = 0x100;
 	this->masterVol = 0; // this is actually the highest level
+	memset(this->variables, -1, sizeof(this->variables));
 	this->secondsIntoPlayback = 0;
 	this->secondsUntilNextClock = SecondsPerClockCycle;
 }
 
+// Original FSS Function: Player_FreeTracks
 void Player::FreeTracks()
 {
 	for (uint8_t i = 0; i < this->nTracks; ++i)
@@ -70,6 +69,7 @@ void Player::FreeTracks()
 	this->nTracks = 0;
 }
 
+// Original FSS Function: Player_Stop
 void Player::Stop(bool bKillSound)
 {
 	this->ClearState();
@@ -92,11 +92,12 @@ void Player::Stop(bool bKillSound)
 	this->FreeTracks();
 }
 
+// Original FSS Function: Chn_Alloc
 int Player::ChannelAlloc(int type, int priority)
 {
 	static const uint8_t pcmChnArray[] = { 4, 5, 6, 7, 2, 0, 3, 1, 8, 9, 10, 11, 14, 12, 15, 13 };
-	static const uint8_t psgChnArray[] = { 13, 12, 11, 10, 9, 8 };
-	static const uint8_t noiseChnArray[] = { 15, 14 };
+	static const uint8_t psgChnArray[] = { 8, 9, 10, 11, 12, 13 };
+	static const uint8_t noiseChnArray[] = { 14, 15 };
 	static const uint8_t arraySizes[] = { sizeof(pcmChnArray), sizeof(psgChnArray), sizeof(noiseChnArray) };
 	static const uint8_t *const arrayArray[] = { pcmChnArray, psgChnArray, noiseChnArray };
 
@@ -121,13 +122,13 @@ int Player::ChannelAlloc(int type, int priority)
 
 	if (curChnNo == -1 || priority < this->channels[curChnNo].prio)
 		return -1;
-	this->channels[curChnNo].ply = this;
 	this->channels[curChnNo].noteLength = -1;
-	this->channels[curChnNo].vol = 0;
+	this->channels[curChnNo].vol = 0x7FF;
 	this->channels[curChnNo].clearHistory();
 	return curChnNo;
 }
 
+// Original FSS Function: Track_Alloc
 int Player::TrackAlloc()
 {
 	for (int i = 0; i < FSS_MAXTRACKS; ++i)
@@ -144,6 +145,7 @@ int Player::TrackAlloc()
 	return -1;
 }
 
+// Original FSS Function: Player_Run
 void Player::Run()
 {
 	while (this->tempoCount > 240)
@@ -163,6 +165,7 @@ void Player::UpdateTracks()
 		this->tracks[i].updateFlags.reset();
 }
 
+// Original FSS Function: Snd_Timer
 void Player::Timer()
 {
 	this->UpdateTracks();
@@ -171,14 +174,6 @@ void Player::Timer()
 		this->channels[i].Update();
 
 	this->Run();
-}
-
-template<typename T1, typename T2> static inline void clamp(T1 &valueToClamp, const T2 &minValue, const T2 &maxValue)
-{
-	if (valueToClamp < minValue)
-		valueToClamp = minValue;
-	else if (valueToClamp > maxValue)
-		valueToClamp = maxValue;
 }
 
 static inline int32_t muldiv7(int32_t val, uint8_t mul)
@@ -218,9 +213,6 @@ void Player::GenerateSamples(std::vector<uint8_t> &buf, unsigned offset, unsigne
 				rightChannel += muldiv7(sample, chn.reg.panning);
 			}
 		}
-
-		leftChannel = muldiv7(leftChannel, 127 - this->masterVol);
-		rightChannel = muldiv7(rightChannel, 127 - this->masterVol);
 
 		clamp(leftChannel, -0x8000, 0x7FFF);
 		clamp(rightChannel, -0x8000, 0x7FFF);

@@ -1,14 +1,13 @@
 /*
  * SSEQ Player - SDAT SYMB (Symbol/Filename) Section structures
  * By Naram Qashat (CyberBotX) [cyberbotx@cyberbotx.com]
- * Last modification on 2013-03-21
+ * Last modification on 2014-09-08
  *
  * Nintendo DS Nitro Composer (SDAT) Specification document found at
  * http://www.feshrine.net/hacking/doc/nds-sdat.html
  */
 
-#ifndef SSEQPLAYER_SYMBSECTION_H
-#define SSEQPLAYER_SYMBSECTION_H
+#pragma once
 
 #include <map>
 #include "common.h"
@@ -35,5 +34,3 @@ struct SYMBSection
 
 	void Read(PseudoFile &file);
 };
-
-#endif
