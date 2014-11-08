@@ -1,6 +1,9 @@
 /*
-** FT2PLAY v0.67 - 30th of September 2014
-** ======================================
+** FT2PLAY v0.68 - 7th of November 2014
+** ====================================
+**
+** Changelog from v0.67:
+** - Bug in GetNewNote() (cmd 390 would fail - "unreal2 scirreal mix.xm" fix)
 **
 ** Changelog from v0.66:
 ** - Auto-vibrato was wrong on every type except for sine
@@ -1267,7 +1270,7 @@ static inline void GetNewNote(PLAYER *pl, StmTyp *ch, TonTyp *p)
             return; /* we have a note delay (ED1..EDF) */
     }
     
-    if (p->Eff != 0x90) /* E90 is 'retrig' speed 0 */
+    if (!((p->EffTyp == 0x0E) && (p->Eff == 0x90))) /* E90 is 'retrig' speed 0 */
     {
         if ((ch->VolKolVol & 0xF0) == 0xF0) /* gxx */
         {
@@ -1634,18 +1637,18 @@ static void TonePorta(PLAYER *p, StmTyp *ch)
         if (ch->PortaDir > 1)
         {
             ch->RealPeriod -= ch->PortaSpeed;
-            if (ch->RealPeriod <= ch->WantPeriod)
+            if (ch->RealPeriod <= (int16_t)ch->WantPeriod)
             {
-                ch->PortaDir   = 0;
+                ch->PortaDir   = 1;
                 ch->RealPeriod = ch->WantPeriod;
             }
         }
         else
         {
             ch->RealPeriod += ch->PortaSpeed;
-            if (ch->RealPeriod >= ch->WantPeriod)
+            if ((uint16_t)ch->RealPeriod >= ch->WantPeriod)
             {
-                ch->PortaDir   = 0;
+                ch->PortaDir   = 1;
                 ch->RealPeriod = ch->WantPeriod;
             }
         }
@@ -1840,7 +1843,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
         ch->Status   |= IS_Period;
     }
 
-    /* 2xx - period slide up */
+    /* 2xx - period slide down */
     else if (ch->EffTyp == 2)
     {
         tmpEff = ch->Eff;
