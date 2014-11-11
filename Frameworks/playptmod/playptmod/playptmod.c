@@ -80,6 +80,7 @@ typedef struct
     unsigned char patternCount;
     unsigned char rowCount;
     unsigned char restartPos;
+    unsigned char clippedRestartPos;
     unsigned char order[128];
     unsigned char pan[MAX_CHANNELS];
     unsigned char ticks;
@@ -1201,6 +1202,8 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
     if (mightBeSTK)
     {
         p->source->head.format = FORMAT_STK;
+        
+        p->source->head.clippedRestartPos = 0;
 
         if (p->source->head.restartPos == 120)
         {
@@ -1214,6 +1217,10 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
             p->source->head.initBPM = (short)(1773447 / ((240 - p->source->head.restartPos) * 122));
         }
     }
+    else if (p->source->head.restartPos >= p->source->head.orderCount)
+        p->source->head.clippedRestartPos = 0;
+    else
+        p->source->head.clippedRestartPos = p->source->head.restartPos;
 
     for (i = 0; i < 128; ++i)
     {
@@ -2381,7 +2388,7 @@ static void fxSetTempo(player *p, mod_channel *ch)
         else
         {
             /* Bit of a hack, will alert caller that song has restarted */
-            p->modOrder = p->source->head.restartPos;
+            p->modOrder = p->source->head.clippedRestartPos;
             p->PBreakPosition = 0;
             p->PosJumpAssert = true;
         }
@@ -2642,7 +2649,7 @@ static void nextPosition(player *p)
 
     p->modOrder++;
     if (p->modOrder >= p->source->head.orderCount)
-        p->modOrder = (p->source->head.format == FORMAT_STK) ? 0 : p->source->head.restartPos;
+        p->modOrder = p->source->head.clippedRestartPos;
 
     p->modPattern = p->source->head.order[p->modOrder];
 
@@ -2966,7 +2973,7 @@ void playptmod_GetInfo(void *_p, playptmod_info *i)
     {
         order++;
         if (order >= p->source->head.orderCount)
-            order = (p->source->head.format == FORMAT_STK) ? 0 : p->source->head.restartPos;
+            order = p->source->head.clippedRestartPos;
 
         row = p->PBreakPosition;
         pattern = p->source->head.order[order];
