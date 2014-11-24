@@ -165,8 +165,8 @@ int osVirtualToPhysical(usf_state_t * state, int paddr) {
 
 int osAiSetNextBuffer(usf_state_t * state, int paddr) {
 	uint32_t var = 0, var2 = 0;
-	var = ((*(short*)PageRAM2(paddr + 0x4)) & 0xFFFF) << 16;
-	var += *(short*)PageRAM2(paddr + 0x8);
+	var = ((*(int16_t*)PageRAM2(paddr + 0x4)) & 0xFFFF) << 16;
+	var += *(int16_t*)PageRAM2(paddr + 0x8);
 
 	var2 = N64WORD(var);
 	if(AI_CONTROL_REG & 0x80000000)
@@ -183,8 +183,8 @@ int saveThreadContext(usf_state_t * state, int paddr) {
 #if 0
 	uint32_t OSThreadContextAddr = 0;
 
-	OSThreadContextAddr = ((*(short*)PageRAM2(paddr)) & 0xFFFF) << 16;
-	OSThreadContextAddr += *(short*)PageRAM2(paddr + 0x4);
+	OSThreadContextAddr = ((*(int16_t*)PageRAM2(paddr)) & 0xFFFF) << 16;
+	OSThreadContextAddr += *(int16_t*)PageRAM2(paddr + 0x4);
 
 	OSThreadContextAddr = N64WORD(OSThreadContextAddr);
 
@@ -201,18 +201,18 @@ int loadThreadContext(usf_state_t * state, int paddr) {
     uint32_t i = 0, OSThreadContextAddr = 0, T9 = 0, osOSThread = 0, Addr2 = 0, GlobalBitMask = 0, Tmp = 0;
 	uint32_t K0 = 0, K1 = 0, T0 = 0, R1 = 0, RCP = 0, intrList = 0;
 	OSThread t;
-	OSThreadContextAddr = ((*(short*)PageRAM2(paddr)) & 0xFFFF) << 16;
-	OSThreadContextAddr += *(short*)PageRAM2(paddr + 0x8);
+	OSThreadContextAddr = ((*(int16_t*)PageRAM2(paddr)) & 0xFFFF) << 16;
+	OSThreadContextAddr += *(int16_t*)PageRAM2(paddr + 0x8);
 
-	Addr2 = ((*(short*)PageRAM2(paddr + 0xC)) & 0xFFFF) << 16;
-	Addr2 += *(short*)PageRAM2(paddr + 0x10);
+	Addr2 = ((*(int16_t*)PageRAM2(paddr + 0xC)) & 0xFFFF) << 16;
+	Addr2 += *(int16_t*)PageRAM2(paddr + 0x10);
 
-	GlobalBitMask = ((*(short*)PageRAM2(paddr + 0x20)) & 0xFFFF) << 16;
-	GlobalBitMask += *(short*)PageRAM2(paddr + 0x28);
+	GlobalBitMask = ((*(int16_t*)PageRAM2(paddr + 0x20)) & 0xFFFF) << 16;
+	GlobalBitMask += *(int16_t*)PageRAM2(paddr + 0x28);
 	GlobalBitMask = N64WORD(GlobalBitMask);
 
-	intrList = ((*(short*)PageRAM2(paddr + 0x14C + 0x0)) & 0xFFFF) << 16;
-	intrList += *(short*)PageRAM2(paddr + 0x150 + 0x0);
+	intrList = ((*(int16_t*)PageRAM2(paddr + 0x14C + 0x0)) & 0xFFFF) << 16;
+	intrList += *(int16_t*)PageRAM2(paddr + 0x150 + 0x0);
 
 	return 0;
 

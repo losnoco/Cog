@@ -142,7 +142,7 @@ int alEvtqPostEvent_Alt(usf_state_t * state, int paddr) {
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #endif
 
-int32_t __nextSampleTime(usf_state_t * state, int32_t driver, int32_t *client) {
+uint32_t __nextSampleTime(usf_state_t * state, uint32_t driver, uint32_t *client) {
 
 	uint32_t c = 0;
 	int32_t deltaTime = 0x7FFFFFFF;
@@ -169,8 +169,8 @@ int32_t _timeToSamplesNoRound(usf_state_t * state, long synth, long micros)
     return (int32_t)tmp;
 }
 
-int32_t byteswap(char b[4] ) {
-	int32_t out = 0;
+uint32_t byteswap(char b[4] ) {
+	uint32_t out = 0;
 	out += b[3];
 	out += b[2] << 8;
 	out += b[1] << 16;
@@ -180,10 +180,8 @@ int32_t byteswap(char b[4] ) {
 
 int alAudioFrame(usf_state_t * state, int paddr) {
 
-	ALPlayer *cl;
 	uint32_t alGlobals = 0;
-	uint32_t driver = 0, head = 0, deltaTime = 0, c = 0, *paramSamples, *curSamples, handler = 0, dl = 0;
-    int32_t client = 0;
+	uint32_t driver = 0, *paramSamples, *curSamples, client = 0, dl = 0;
 	uint32_t A0 = state->GPR[4].UW[0];
 	uint32_t A1 = state->GPR[5].UW[0];
 	uint32_t A2 = state->GPR[6].UW[0];
@@ -223,7 +221,7 @@ int alAudioFrame(usf_state_t * state, int paddr) {
 
 	while (outLen > 0) {
 
-		int32_t maxOutSamples = 0, nOut = 0, cmdPtr = 0, output = 0, setParam = 0, handler = 0, tmp = 0x700000;
+		uint32_t maxOutSamples = 0, nOut = 0, cmdPtr = 0, output = 0, setParam = 0, handler = 0;
 
 		maxOutSamples = N64WORD(driver + 0x48);
 		nOut = MIN(maxOutSamples, outLen);
