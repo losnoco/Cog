@@ -489,6 +489,7 @@ void StartEmulationFromSave ( usf_state_t * state, void * savestate ) {
 void RefreshScreen (usf_state_t * state){
     if (state->OLD_VI_V_SYNC_REG != VI_V_SYNC_REG)
     {
+        state->OLD_VI_V_SYNC_REG = VI_V_SYNC_REG;
         if (VI_V_SYNC_REG == 0)
         {
             state->VI_INTR_TIME = 500000;
@@ -496,7 +497,7 @@ void RefreshScreen (usf_state_t * state){
         else
         {
             state->VI_INTR_TIME = (VI_V_SYNC_REG + 1) * 1500;
-            if ((VI_V_SYNC_REG % 1) != 0)
+            if ((VI_V_SYNC_REG & 1) != 0)
             {
                 state->VI_INTR_TIME -= 38;
             }
