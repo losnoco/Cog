@@ -31,6 +31,10 @@
 
 #define ROM_IN_MAPSPACE
 
+#define PageRAM2(x)     (state->N64MEM+(x))
+#define PageVRAM(x)     (state->TLB_Map[((x)&0xFFFFFFFF)>>12]+(x))
+#define PageVRAM2(x)    (uint32_t)(PageVRAM(x)-(uintptr_t)state->N64MEM)
+
 /* Memory Control */
 int  Allocate_Memory             ( void * );
 void Release_Memory              ( usf_state_t * );
@@ -56,3 +60,5 @@ int32_t  r4300i_SW_NonMemory         ( usf_state_t *, uint32_t PAddr, uint32_t V
 uint32_t r4300i_SW_VAddr             ( usf_state_t *, uint32_t VAddr, uint32_t Value );
 
 uint8_t * PageROM(usf_state_t *, uint32_t addr);
+
+void memcpyn642n64(usf_state_t *, uint32_t dest, uint32_t src, uint32_t len);

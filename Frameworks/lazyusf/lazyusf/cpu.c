@@ -33,6 +33,7 @@
 #include "audio.h"
 #include "registers.h"
 #include "rsp.h"
+#include "cpu_hle.h"
 
 #include "usf_internal.h"
 
@@ -478,12 +479,47 @@ void StartEmulationFromSave ( usf_state_t * state, void * savestate ) {
 		ChangeTimer(state,AiTimer,IntScheduled);
 		AI_STATUS_REG|=0x40000000;
 	}
+    
+    state->OLD_VI_V_SYNC_REG = ~VI_V_SYNC_REG;
+    
+    CPUHLE_Scan(state);
 }
 
 
 void RefreshScreen (usf_state_t * state){
-	ChangeTimer(state, ViTimer, 300000);
-
+    if (state->OLD_VI_V_SYNC_REG != VI_V_SYNC_REG)
+    {
+        if (VI_V_SYNC_REG == 0)
+        {
+            state->VI_INTR_TIME = 500000;
+        }
+        else
+        {
+            state->VI_INTR_TIME = (VI_V_SYNC_REG + 1) * 1500;
+            if ((VI_V_SYNC_REG % 1) != 0)
+            {
+                state->VI_INTR_TIME -= 38;
+            }
+        }
+    }
+    
+    ChangeTimer(state,ViTimer,state->Timers->Timer + state->Timers->NextTimer[ViTimer] + state->VI_INTR_TIME);
+    
+    if ((VI_STATUS_REG & 0x10) != 0)
+    {
+        if (state->ViFieldNumber == 0)
+        {
+            state->ViFieldNumber = 1;
+        }
+        else
+        {
+            state->ViFieldNumber = 0;
+        }
+    }
+    else
+    {
+        state->ViFieldNumber = 0;
+    }
 }
 
 void RunRsp (usf_state_t * state) {
@@ -533,7 +569,7 @@ void TimerDone (usf_state_t * state) {
 	case CompareTimer:
 		if(state->enablecompare)
 			FAKE_CAUSE_REGISTER |= CAUSE_IP7;
-		//CheckInterrupts();
+		CheckInterrupts(state);
 		ChangeCompareTimer(state);
 		break;
 	case ViTimer:

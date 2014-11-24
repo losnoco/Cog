@@ -3,6 +3,7 @@
 
 #include "cpu.h"
 #include "rsp_hle/hle.h"
+#include "cpu_hle.h"
 
 struct usf_state_helper
 {
@@ -29,37 +30,37 @@ struct usf_state
     // which is indicated for allocation accounts for this
     // with two pages of padding.
 
-    short VR[32][8];
-    short VACC[3][8];
+    int16_t VR[32][8];
+    int16_t VACC[3][8];
     
     // RSP virtual registers, also needs alignment
-    int SR[32];
+    int32_t SR[32];
     
     // rsp/rsp.c, not necessarily in need of alignment
     RCPREG* CR[16];
     
     // rsp/vu/cf.h, all need alignment
-    short ne[8]; /* $vco:  high byte "NOTEQUAL" */
-    short co[8]; /* $vco:  low byte "carry/borrow in/out" */
-    short clip[8]; /* $vcc:  high byte (clip tests:  VCL, VCH, VCR) */
-    short comp[8]; /* $vcc:  low byte (VEQ, VNE, VLT, VGE, VCL, VCH, VCR) */
-    short vce[8]; /* $vce:  vector compare extension register */
+    int16_t ne[8]; /* $vco:  high byte "NOTEQUAL" */
+    int16_t co[8]; /* $vco:  low byte "carry/borrow in/out" */
+    int16_t clip[8]; /* $vcc:  high byte (clip tests:  VCL, VCH, VCR) */
+    int16_t comp[8]; /* $vcc:  low byte (VEQ, VNE, VLT, VGE, VCL, VCH, VCR) */
+    int16_t vce[8]; /* $vce:  vector compare extension register */
     
     // All further members of the structure need not be aligned
 
     // rsp/vu/divrom.h
-    int DivIn; /* buffered numerator of division read from vector file */
-    int DivOut; /* global division result set by VRCP/VRCPL/VRSQ/VRSQH */
+    int32_t DivIn; /* buffered numerator of division read from vector file */
+    int32_t DivOut; /* global division result set by VRCP/VRCPL/VRSQ/VRSQH */
 #if (0)
-    int MovIn; /* We do not emulate this register (obsolete, for VMOV). */
+    int32_t MovIn; /* We do not emulate this register (obsolete, for VMOV). */
 #endif
     
-    int DPH;
+    int32_t DPH;
     
     // rsp/rsp.h
-    int stage; // unused since EMULATE_STATIC_PC is defined by default in rsp/config.h
-    int temp_PC;
-    short MFC0_count[32];
+    int32_t stage; // unused since EMULATE_STATIC_PC is defined by default in rsp/config.h
+    int32_t temp_PC;
+    int16_t MFC0_count[32];
     
     // rsp_hle
     struct hle_t hle;
@@ -134,6 +135,10 @@ struct usf_state
     // tlb.c
     FASTTLB FastTlb[64];
     TLB tlb[32];
+    
+    uint32_t OLD_VI_V_SYNC_REG/* = 0*/, VI_INTR_TIME/* = 500000*/;
+    
+    _HLE_Entry * cpu_hle_entries;
 };
 
 #define USF_STATE_HELPER ((usf_state_helper_t *)(state))

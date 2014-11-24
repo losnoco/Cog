@@ -157,6 +157,10 @@ void Release_Memory ( usf_state_t * state ) {
 
     if (state->MemChunk != 0) { large_free( state->MemChunk, 0x100000 * sizeof(uintptr_t) + 0x1D000 + state->RdramSize ); state->MemChunk=0; }
 	
+    if(state->cpu_hle_entries)
+        free(state->cpu_hle_entries);
+    state->cpu_hle_entries = NULL;
+    
     if(state->savestatespace)
 		free(state->savestatespace);
 	state->savestatespace = NULL;
@@ -812,4 +816,24 @@ uint32_t r4300i_SW_VAddr ( usf_state_t * state, uint32_t VAddr, uint32_t Value )
 	}
 	*(uint32_t *)address = Value;
 	return 1;
+}
+
+void memcpyn642n64(usf_state_t * state, uint32_t dest, uint32_t src, uint32_t len)
+{
+    uint32_t i;
+    uint32_t temp;
+    
+    for (i = 0; i < len; i += 4)
+    {
+        uintptr_t dstAddr = state->TLB_Map[(dest + i) >> 12];
+        uintptr_t srcAddr = state->TLB_Map[(src + i) >> 12];
+        
+        if (srcAddr)
+            temp = *(uint32_t*)(srcAddr + src + i);
+        else
+            temp = 0;
+        
+        if (dstAddr)
+            *(uint32_t*)(dstAddr + dest + i) = temp;
+    }
 }

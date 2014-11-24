@@ -28,6 +28,7 @@
 #include "cpu.h"
 #include "usf.h"
 #include "memory.h"
+#include "cpu_hle.h"
 
 #include "usf_internal.h"
 
@@ -679,6 +680,29 @@ void BuildInterpreter (usf_state_t * state) {
 }
 
 
+void RunFunction(usf_state_t * state, uint32_t address) {
+    uint32_t oldPC = state->PROGRAM_COUNTER, oldRA = state->GPR[31].UW[0], la = state->NextInstruction;
+    int callStack = 0;
+    
+    state->NextInstruction = NORMAL;
+    state->PROGRAM_COUNTER = address;
+    
+    while( (state->PROGRAM_COUNTER != oldRA) || callStack) {
+        
+       	if(state->PROGRAM_COUNTER == address)
+            callStack++;
+        
+        ExecuteInterpreterOpCode(state);
+        
+        if(state->PROGRAM_COUNTER == oldRA)
+            callStack--;
+    }
+    
+    state->PROGRAM_COUNTER = oldPC;
+    state->GPR[31].UW[0] = oldRA;
+    state->NextInstruction = la;
+}
+
 void ExecuteInterpreterOpCode (usf_state_t * state) {
 
 
@@ -713,8 +737,13 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 		state->PROGRAM_COUNTER += 4;
 		break;
 	case JUMP:
-		state->PROGRAM_COUNTER  = state->JumpToLocation;
-		state->NextInstruction = NORMAL;
+        if(!DoCPUHLE(state, state->JumpToLocation)) {
+            state->PROGRAM_COUNTER  = state->JumpToLocation;
+            state->NextInstruction = NORMAL;
+        } else {
+            state->PROGRAM_COUNTER = state->GPR[31].UW[0];
+            state->NextInstruction = NORMAL;
+        }
 		if ((int32_t)state->Timers->Timer < 0) {  TimerDone(state); }
 		if (state->CPU_Action->DoSomething) { DoSomething(state); }
 

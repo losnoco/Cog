@@ -30,7 +30,7 @@ void ExecuteInterpreterOpCode ( usf_state_t * );
 void StartInterpreterCPU      ( usf_state_t * );
 void TestInterpreterJump      ( usf_state_t *, uint32_t PC, uint32_t TargetPC, int32_t Reg1, int32_t Reg2 );
 
-
+void RunFunction( usf_state_t *, uint32_t address );
 
 
 
