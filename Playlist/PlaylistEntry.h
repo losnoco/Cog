@@ -73,6 +73,10 @@
 
 @property(readonly) NSString *spam;
 
+@property(readonly) NSString *positionText;
+
+@property(readonly) NSString *lengthText;
+
 @property int index;
 @property int shuffleIndex;
 

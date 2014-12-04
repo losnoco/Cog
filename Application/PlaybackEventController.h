@@ -10,10 +10,13 @@
 #import <Growl/GrowlApplicationBridge.h>
 
 #import "PlaybackController.h"
+#import "PlaylistEntry.h"
 
 @class AudioScrobbler;
 @interface PlaybackEventController : NSObject <NSUserNotificationCenterDelegate, GrowlApplicationBridgeDelegate> {
 	NSOperationQueue *queue;
+    
+    PlaylistEntry *entry;
 	
 	AudioScrobbler *scrobbler;
     

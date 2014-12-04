@@ -92,6 +92,16 @@
     return [NSSet setWithObjects:@"artist", @"title", @"album", @"track", @"totalFrames", @"currentPosition", @"bitrate", nil];
 }
 
++ (NSSet *)keyPathsForValuesAffectingPositionText
+{
+    return [NSSet setWithObject:@"currentPosition"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingLengthText
+{
+    return [NSSet setWithObject:@"length"];
+}
+
 + (NSSet *)keyPathsForValuesAffectingAlbumArt
 {
     return [NSSet setWithObject:@"albumArtInternal"];
@@ -232,6 +242,24 @@
     }
     
     return [elements componentsJoinedByString:@""];
+}
+
+@dynamic positionText;
+- (NSString *)positionText
+{
+    SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+    NSString *time = [secondsFormatter stringForObjectValue:[NSNumber numberWithFloat:currentPosition]];
+    [secondsFormatter release];
+    return time;
+}
+
+@dynamic lengthText;
+- (NSString *)lengthText
+{
+    SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+    NSString *time = [secondsFormatter stringForObjectValue:[self length]];
+    [secondsFormatter release];
+    return time;
 }
 
 @synthesize albumArtInternal;

@@ -11,7 +11,19 @@
 #import "PlaybackEventController.h"
 
 #import "AudioScrobbler.h"
-#import "PlaylistEntry.h"
+
+NSString *TrackPlaying = @"org.cogx.Cog-Track-Playing";
+NSString *TrackStopped = @"org.cogx.Cog-Track-Stopped";
+NSString *TrackPaused = @"org.cogx.Cog-Track-Paused";
+
+NSString *TrackArtist = @"artist";
+NSString *TrackAlbum = @"album";
+NSString *TrackTitle = @"title";
+NSString *TrackGenre = @"genre";
+NSString *TrackComposer = @"composer";
+NSString *TrackNumber = @"trackNumber";
+NSString *TrackLength = @"length";
+NSString *TrackCurrentTime = @"currentTime";
 
 @implementation PlaybackEventController
 
@@ -42,6 +54,8 @@
 		scrobbler = [[AudioScrobbler alloc] init];
         [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
 		[GrowlApplicationBridge setGrowlDelegate:self];
+        
+        entry = nil;
 	}
 	
 	return self;
@@ -50,13 +64,35 @@
 - (void)dealloc
 {
 	[queue release];
+    
+    [entry release];
 	
 	[super dealloc];
+}
+
+- (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe
+{
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    
+    if ([pe title]) [dict setObject:[pe title] forKey:TrackTitle];
+    if ([pe artist]) [dict setObject:[pe artist] forKey:TrackArtist];
+    if ([pe album]) [dict setObject:[pe album] forKey:TrackAlbum];
+    if ([pe genre]) [dict setObject:[pe genre] forKey:TrackGenre];
+    if ([pe track]) [dict setObject:[pe track] forKey:TrackNumber];
+    if ([pe lengthText]) [dict setObject:[pe lengthText] forKey:TrackLength];
+    if ([pe positionText]) [dict setObject:[pe positionText] forKey:TrackCurrentTime];
+    
+    return dict;
 }
 
 - (void)performPlaybackDidBeginActions:(PlaylistEntry *)pe
 {
     if (NO == [pe error]) {
+        [entry release];
+        entry = [pe retain];
+        
+        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackPlaying object:nil userInfo:[self fillNotificationDictionary:pe]];
+        
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
         if ([defaults boolForKey:@"notifications.enable"]) {
@@ -110,6 +146,7 @@
 
 - (void)performPlaybackDidPauseActions
 {
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackPaused object:nil userInfo:[self fillNotificationDictionary:entry]];
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler pause];
 	}
@@ -117,6 +154,7 @@
 
 - (void)performPlaybackDidResumeActions
 {
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackPlaying object:nil userInfo:[self fillNotificationDictionary:entry]];
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler resume];
 	}
@@ -124,6 +162,9 @@
 
 - (void)performPlaybackDidStopActions
 {
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackStopped object:nil userInfo:[self fillNotificationDictionary:entry]];
+    [entry release];
+    entry = nil;
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler stop];
 	}
