@@ -12,9 +12,9 @@
 
 #import "AudioScrobbler.h"
 
-NSString *TrackPlaying = @"org.cogx.Cog-Track-Playing";
-NSString *TrackStopped = @"org.cogx.Cog-Track-Stopped";
-NSString *TrackPaused = @"org.cogx.Cog-Track-Paused";
+NSString *TrackPlaying = @"com.swinsian.Swinsian-Track-Playing";
+NSString *TrackStopped = @"com.swinsian.Swinsian-Track-Stopped";
+NSString *TrackPaused = @"com.swinsian.Swinsian-Track-Paused";
 
 NSString *TrackArtist = @"artist";
 NSString *TrackAlbum = @"album";
@@ -78,9 +78,9 @@ NSString *TrackCurrentTime = @"currentTime";
     if ([pe artist]) [dict setObject:[pe artist] forKey:TrackArtist];
     if ([pe album]) [dict setObject:[pe album] forKey:TrackAlbum];
     if ([pe genre]) [dict setObject:[pe genre] forKey:TrackGenre];
-    if ([pe track]) [dict setObject:[pe track] forKey:TrackNumber];
-    if ([pe lengthText]) [dict setObject:[pe lengthText] forKey:TrackLength];
-    if ([pe positionText]) [dict setObject:[pe positionText] forKey:TrackCurrentTime];
+    if ([pe track]) [dict setObject:[NSString stringWithFormat:@"%@",[pe track]] forKey:TrackNumber];
+    if ([pe length]) [dict setObject:[pe length] forKey:TrackLength];
+    if ([pe currentPosition]) [dict setObject:[NSNumber numberWithDouble:[pe currentPosition]] forKey:TrackCurrentTime];
     
     return dict;
 }
