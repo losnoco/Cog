@@ -138,6 +138,7 @@ struct usf_state
     
     uint32_t OLD_VI_V_SYNC_REG/* = 0*/, VI_INTR_TIME/* = 500000*/;
     
+	uint32_t cpu_hle_entry_count;
     _HLE_Entry * cpu_hle_entries;
 };
 

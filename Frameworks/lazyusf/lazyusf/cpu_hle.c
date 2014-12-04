@@ -55,6 +55,13 @@ _HLE_Entry entrys[] = {
 
 //char foundlist[2048];
 
+int sort_entrys(void * a, void * b)
+{
+	_HLE_Entry * _a = (_HLE_Entry *)a;
+	_HLE_Entry * _b = (_HLE_Entry *)b;
+	return _b->used - _a->used;
+}
+
 int CPUHLE_Scan(usf_state_t * state)
 {
 	int i = 0, j = 0;
@@ -65,6 +72,7 @@ int CPUHLE_Scan(usf_state_t * state)
 	void * address = 0;
     int good = 1; //, needcomma = 0;
     _HLE_Entry * entries;
+	unsigned entries_used = 0;
 
 	numEntries = sizeof(entrys) / sizeof(_HLE_Entry);
     
@@ -111,11 +119,15 @@ int CPUHLE_Scan(usf_state_t * state)
 
                 entries[entry].used = 1;
                 entries[entry].phys = i;
+				++entries_used;
                 break;
 			}
 		}
 
 	}
+
+	qsort(entries, numEntries, sizeof(*entries), sort_entrys);
+	state->cpu_hle_entry_count = entries_used;
 
 	//printf("<--------------HLE Functions Found--------------->\n%s<------------------------------------------------>\n", foundlist);
 	//printf("HLE Functions found: %s\n", foundlist);
@@ -128,10 +140,11 @@ int DoCPUHLE(usf_state_t * state, unsigned long loc)
 	int i = 0;
     uintptr_t real_addr = PageVRAM2(loc);
     _HLE_Entry * entries = state->cpu_hle_entries;
+	unsigned numEntries = state->cpu_hle_entry_count;
 
 	for(i = 0; i < numEntries; i++) {
 
-		if(entries[i].used && (entries[i].phys == real_addr)) {
+		if(entries[i].phys == real_addr) {
 			//printf("CPU HLEing using %d at %08x (phys: %08x) \"%s\"\n", entries[i].name, loc, entries[i].phys, entries[i].name);
 
 			if(entries[i].location(state, entries[i].phys)) {

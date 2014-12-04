@@ -737,16 +737,17 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 		state->PROGRAM_COUNTER += 4;
 		break;
 	case JUMP:
-        if(!DoCPUHLE(state, state->JumpToLocation)) {
-            state->PROGRAM_COUNTER  = state->JumpToLocation;
-            state->NextInstruction = NORMAL;
-        } else {
+		if (state->cpu_hle_entry_count &&
+			DoCPUHLE(state, state->JumpToLocation)) {
             state->PROGRAM_COUNTER = state->GPR[31].UW[0];
             state->NextInstruction = NORMAL;
         }
-		if ((int32_t)state->Timers->Timer < 0) {  TimerDone(state); }
+		else {
+			state->PROGRAM_COUNTER = state->JumpToLocation;
+			state->NextInstruction = NORMAL;
+		}
+		if ((int32_t)state->Timers->Timer < 0) { TimerDone(state); }
 		if (state->CPU_Action->DoSomething) { DoSomething(state); }
-
 	}
 }
 

@@ -31,8 +31,8 @@
 
 #define ROM_IN_MAPSPACE
 
-#define PageRAM2(x)     (state->N64MEM+(x))
-#define PageVRAM(x)     (state->TLB_Map[((x)&0xFFFFFFFF)>>12]+(x))
+#define PageRAM2(x)     (state->N64MEM+(uint32_t)(x))
+#define PageVRAM(x)     (state->TLB_Map[((uint32_t)(x))>>12]+(uint32_t)(x))
 #define PageVRAM2(x)    (uint32_t)(PageVRAM(x)-(uintptr_t)state->N64MEM)
 
 /* Memory Control */
