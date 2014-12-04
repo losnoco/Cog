@@ -9,11 +9,18 @@
 #import <Cocoa/Cocoa.h>
 #import <Growl/GrowlApplicationBridge.h>
 
+#import "PlaybackController.h"
+
 @class AudioScrobbler;
-@interface PlaybackEventController : NSObject <GrowlApplicationBridgeDelegate> {
+@interface PlaybackEventController : NSObject <NSUserNotificationCenterDelegate, GrowlApplicationBridgeDelegate> {
 	NSOperationQueue *queue;
 	
 	AudioScrobbler *scrobbler;
+    
+    IBOutlet PlaybackController *playbackController;
+    
+    IBOutlet NSWindow *mainWindow;
+    IBOutlet NSWindow *miniWindow;
 }
 
 @end

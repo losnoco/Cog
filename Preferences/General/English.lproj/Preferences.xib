@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="13D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" defaultVersion="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
+        <deployment version="1050" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="GeneralPreferencesPlugin">
@@ -19,7 +19,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="6" userLabel="HotKeyPane" customClass="HotKeyPane">
             <connections>
                 <outlet property="nextHotKeyControl" destination="28" id="36"/>
@@ -415,21 +415,55 @@
             </subviews>
         </customView>
         <customView id="U4w-jw-ca5" userLabel="GrowlView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="54"/>
+            <rect key="frame" x="0.0" y="-5" width="500" height="114"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button id="njn-Xl-9k9">
-                    <rect key="frame" x="18" y="18" width="329" height="18"/>
+                    <rect key="frame" x="18" y="78" width="158" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Enable notifications if Growl isn't installed" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="hqT-nY-NoU">
+                    <buttonCell key="cell" type="check" title="Enable notifications" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="hqT-nY-NoU">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="52" name="value" keyPath="values.enableGrowlMist" id="bFi-IF-5sw"/>
+                        <binding destination="52" name="value" keyPath="values.notifications.enable" id="toQ-Hx-kYp"/>
+                    </connections>
+                </button>
+                <button id="AIz-WH-Wqk">
+                    <rect key="frame" x="18" y="38" width="131" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Use iTunes style" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="cOb-hQ-7K8">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.notifications.itunes-style" id="jmN-ov-rRF"/>
+                    </connections>
+                </button>
+                <button id="LLn-jv-hmj">
+                    <rect key="frame" x="18" y="18" width="131" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Show album art" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="RGf-4D-3NW">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.notifications.show-album-art" id="nrZ-bM-zQX"/>
+                    </connections>
+                </button>
+                <button id="iyk-MU-PT8">
+                    <rect key="frame" x="18" y="58" width="150" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Use Growl" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GbM-Kf-xzx">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.notifications.use-growl" id="ihr-Z4-e0x"/>
                     </connections>
                 </button>
             </subviews>
+            <point key="canvasLocation" x="348" y="132"/>
         </customView>
         <customView id="CgN-sy-RmM" userLabel="AppearanceView">
             <rect key="frame" x="0.0" y="0.0" width="500" height="54"/>
@@ -503,7 +537,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="3Gx-cs-3B0" id="5q7-83-7V6">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="HKM-FW-dhH">
                             <items>
                                 <menuItem title="Item 1" state="on" id="3Gx-cs-3B0"/>
@@ -514,8 +548,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="JB6-r9-XpG" name="content" keyPath="arrangedObjects" id="Je5-Yu-hIz"/>
-                        <binding destination="JB6-r9-XpG" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Je5-Yu-hIz" id="yYR-TY-pXw"/>
                         <binding destination="JB6-r9-XpG" name="contentValues" keyPath="arrangedObjects.name" previousBinding="yYR-TY-pXw" id="KxI-52-0UK"/>
+                        <binding destination="JB6-r9-XpG" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Je5-Yu-hIz" id="yYR-TY-pXw"/>
                         <binding destination="52" name="selectedObject" keyPath="values.resampling" previousBinding="KxI-52-0UK" id="wsy-tb-NFy"/>
                     </connections>
                 </popUpButton>

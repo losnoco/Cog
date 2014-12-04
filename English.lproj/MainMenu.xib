@@ -1459,7 +1459,9 @@ Gw
         </customObject>
         <customObject id="2405" customClass="PlaybackEventController">
             <connections>
-                <outlet property="playlistLoader" destination="1319" id="2407"/>
+                <outlet property="mainWindow" destination="21" id="xhc-8E-Ogp"/>
+                <outlet property="miniWindow" destination="2234" id="iPi-Vv-Mjn"/>
+                <outlet property="playbackController" destination="705" id="A0d-y8-cA6"/>
             </connections>
         </customObject>
         <customObject id="226" userLabel="AppController" customClass="AppController">

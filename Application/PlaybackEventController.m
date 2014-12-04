@@ -5,11 +5,12 @@
 //  Created by Vincent Spader on 3/5/09.
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
+//  New Notification Center code shamelessly based off this:
+//  https://github.com/kbhomes/radiant-player-mac/tree/master/radiant-player-mac/Notifications
 
 #import "PlaybackEventController.h"
 
 #import "AudioScrobbler.h"
-#import "PlaybackController.h"
 #import "PlaylistEntry.h"
 
 @implementation PlaybackEventController
@@ -19,6 +20,10 @@
 	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
 										[NSNumber numberWithBool:YES], @"enableAudioScrobbler",
 										[NSNumber numberWithBool:NO],  @"automaticallyLaunchLastFM",
+                                        [NSNumber numberWithBool:YES], @"notifications.enable",
+                                        [NSNumber numberWithBool:NO], @"notifications.use-growl",
+                                        [NSNumber numberWithBool:YES], @"notifications.itunes-style",
+                                        [NSNumber numberWithBool:YES], @"notifications.show-album-art",
 										nil];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
@@ -35,6 +40,7 @@
 		[queue setMaxConcurrentOperationCount:1];
 		
 		scrobbler = [[AudioScrobbler alloc] init];
+        [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
 		[GrowlApplicationBridge setGrowlDelegate:self];
 	}
 	
@@ -50,20 +56,55 @@
 
 - (void)performPlaybackDidBeginActions:(PlaylistEntry *)pe
 {
-	if (NO == [pe error]) {
-		if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-			[scrobbler start:pe];
-            if ([AudioScrobbler isRunning]) return;
-		}
-		
-		// Note: We don't want to send a growl notification on resume.
-		[GrowlApplicationBridge notifyWithTitle:[pe title]
-									description:[pe artist]
-							   notificationName:@"Stream Changed"
-									   iconData:[pe albumArtInternal]
-									   priority:0 
-									   isSticky:NO 
-								   clickContext:nil];
+    if (NO == [pe error]) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+        if ([defaults boolForKey:@"notifications.enable"]) {
+            if([defaults boolForKey:@"enableAudioScrobbler"]) {
+                [scrobbler start:pe];
+                if ([AudioScrobbler isRunning]) return;
+            }
+
+            if ([defaults boolForKey:@"notifications.use-growl"]) {
+                // Note: We don't want to send a growl notification on resume.
+                [GrowlApplicationBridge notifyWithTitle:[pe title]
+                                            description:[pe artist]
+                                       notificationName:@"Stream Changed"
+                                               iconData:[pe albumArtInternal]
+                                               priority:0
+                                               isSticky:NO
+                                           clickContext:nil];
+            }
+            else {
+                NSUserNotification *notif = [[NSUserNotification alloc] init];
+                notif.title = [pe title];
+                
+                if ([defaults boolForKey:@"notifications.itunes-style"]) {
+                    notif.subtitle = [NSString stringWithFormat:@"%@ - %@", [pe artist], [pe album]];
+                    [notif setValue:@YES forKey:@"_showsButtons"];
+                }
+                else {
+                    notif.informativeText = [NSString stringWithFormat:@"%@ - %@", [pe artist], [pe album]];
+                }
+                
+                if ([notif respondsToSelector:@selector(setContentImage:)]) {
+                    if ([defaults boolForKey:@"notifications.show-album-art"] && [pe albumArtInternal]) {
+                        NSImage *image = [pe albumArt];
+                        
+                        if ([defaults boolForKey:@"notifications.itunes-style"]) {
+                            [notif setValue:image forKey:@"_identityImage"];
+                        }
+                        else {
+                            notif.contentImage = image;
+                        }
+                    }
+                }
+                
+                notif.actionButtonTitle = @"Skip";
+                
+                [[NSUserNotificationCenter defaultUserNotificationCenter] scheduleNotification:notif];
+            }
+        }
 	}
 }
 
@@ -154,6 +195,28 @@
 			notifications, GROWL_NOTIFICATIONS_ALL, 
 			notifications, GROWL_NOTIFICATIONS_DEFAULT,
 			nil];
+}
+
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
+{
+    switch (notification.activationType)
+    {
+        case NSUserNotificationActivationTypeActionButtonClicked:
+            [playbackController next:self];
+            break;
+            
+        case NSUserNotificationActivationTypeContentsClicked:
+        {
+            NSWindow *window = [[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"] ? miniWindow : mainWindow;
+            
+            [NSApp activateIgnoringOtherApps:YES];
+            [window makeKeyAndOrderFront:self];
+        };
+            break;
+            
+        default:
+            break;
+    }
 }
 
 @end
