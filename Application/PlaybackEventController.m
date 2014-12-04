@@ -12,18 +12,23 @@
 
 #import "AudioScrobbler.h"
 
-NSString *TrackPlaying = @"com.swinsian.Swinsian-Track-Playing";
-NSString *TrackStopped = @"com.swinsian.Swinsian-Track-Stopped";
-NSString *TrackPaused = @"com.swinsian.Swinsian-Track-Paused";
+NSString *TrackNotification = @"com.apple.iTunes.playerInfo";
 
-NSString *TrackArtist = @"artist";
-NSString *TrackAlbum = @"album";
-NSString *TrackTitle = @"title";
-NSString *TrackGenre = @"genre";
-NSString *TrackComposer = @"composer";
-NSString *TrackNumber = @"trackNumber";
-NSString *TrackLength = @"length";
-NSString *TrackCurrentTime = @"currentTime";
+NSString *TrackArtist = @"Artist";
+NSString *TrackAlbum = @"Album";
+NSString *TrackTitle = @"Name";
+NSString *TrackGenre = @"Genre";
+NSString *TrackNumber = @"Track Number";
+NSString *TrackLength = @"Total Time";
+NSString *TrackPath = @"Location";
+NSString *TrackState = @"Player State";
+
+typedef enum
+{
+    TrackPlaying,
+    TrackPaused,
+    TrackStopped
+} TrackStatus;
 
 @implementation PlaybackEventController
 
@@ -70,17 +75,29 @@ NSString *TrackCurrentTime = @"currentTime";
 	[super dealloc];
 }
 
-- (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe
+- (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe status:(TrackStatus)status
 {
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
+    [dict setObject:[[pe URL] absoluteString] forKey:TrackPath];
     if ([pe title]) [dict setObject:[pe title] forKey:TrackTitle];
     if ([pe artist]) [dict setObject:[pe artist] forKey:TrackArtist];
     if ([pe album]) [dict setObject:[pe album] forKey:TrackAlbum];
     if ([pe genre]) [dict setObject:[pe genre] forKey:TrackGenre];
     if ([pe track]) [dict setObject:[NSString stringWithFormat:@"%@",[pe track]] forKey:TrackNumber];
-    if ([pe length]) [dict setObject:[pe length] forKey:TrackLength];
-    if ([pe currentPosition]) [dict setObject:[NSNumber numberWithDouble:[pe currentPosition]] forKey:TrackCurrentTime];
+    if ([pe length]) [dict setObject:[NSNumber numberWithInteger:(NSInteger)([[pe length] doubleValue] * 1000.0)] forKey:TrackLength];
+    
+    NSString * state = nil;
+    
+    switch (status)
+    {
+        case TrackPlaying: state = @"Playing"; break;
+        case TrackPaused:  state = @"Paused"; break;
+        case TrackStopped: state = @"Stopped"; break;
+        default: break;
+    }
+    
+    [dict setObject:state forKey:TrackState];
     
     return dict;
 }
@@ -91,7 +108,7 @@ NSString *TrackCurrentTime = @"currentTime";
         [entry release];
         entry = [pe retain];
         
-        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackPlaying object:nil userInfo:[self fillNotificationDictionary:pe]];
+        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackNotification object:nil userInfo:[self fillNotificationDictionary:pe status:TrackPlaying] deliverImmediately:YES];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
@@ -146,7 +163,7 @@ NSString *TrackCurrentTime = @"currentTime";
 
 - (void)performPlaybackDidPauseActions
 {
-    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackPaused object:nil userInfo:[self fillNotificationDictionary:entry]];
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackNotification object:nil userInfo:[self fillNotificationDictionary:entry status:TrackPaused] deliverImmediately:YES];
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler pause];
 	}
@@ -154,7 +171,7 @@ NSString *TrackCurrentTime = @"currentTime";
 
 - (void)performPlaybackDidResumeActions
 {
-    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackPlaying object:nil userInfo:[self fillNotificationDictionary:entry]];
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackNotification object:nil userInfo:[self fillNotificationDictionary:entry status:TrackPlaying] deliverImmediately:YES];
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler resume];
 	}
@@ -162,7 +179,7 @@ NSString *TrackCurrentTime = @"currentTime";
 
 - (void)performPlaybackDidStopActions
 {
-    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackStopped object:nil userInfo:[self fillNotificationDictionary:entry]];
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackNotification object:nil userInfo:[self fillNotificationDictionary:entry status:TrackStopped] deliverImmediately:YES];
     [entry release];
     entry = nil;
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
