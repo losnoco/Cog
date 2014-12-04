@@ -59,7 +59,7 @@
 + (NSDictionary *)entriesForContainerURL:(NSURL *)url
 {
 	if (![url isFileURL]) 
-		return [NSArray array];
+		return [NSDictionary dictionary];
 
     NSError *nserr;
     
