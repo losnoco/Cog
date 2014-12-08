@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libstilview
+Description: STILview library.
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -lstilview
+Cflags: -I${includedir}

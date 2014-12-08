@@ -142,6 +142,7 @@
 		835CBC8118DA7A520087A03E /* modplay.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC7618DA79F80087A03E /* modplay.bundle */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
+		836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8314D6411A354DFF00EEE8E6 /* sidplay.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836F706218BDD1230095E648 /* vgmstream.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836F6B2E18BDB80E0095E648 /* vgmstream.bundle */; };
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; };
 		8375B36517FFEF130092A79F /* Opus.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B05717FFEA410092A79F /* Opus.bundle */; };
@@ -423,6 +424,13 @@
 			remoteGlobalIDString = 99B989F40CC7E10400C256E9;
 			remoteInfo = "APL Plugin";
 		};
+		8314D6401A354DFF00EEE8E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8314D6311A354DFE00EEE8E6;
+			remoteInfo = sidplay;
+		};
 		8359FF3017FEF35D0060F3ED /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */;
@@ -443,6 +451,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8360EEE417F92AC8005208A4;
 			remoteInfo = HighlyComplete;
+		};
+		836F5BED1A3579F5002730CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8314D6301A354DFE00EEE8E6;
+			remoteInfo = sidplay;
 		};
 		836F6B2D18BDB80E0095E648 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -651,6 +666,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */,
 				839BD010196521E600947767 /* BASSMODS.bundle in CopyFiles */,
 				835CBC8118DA7A520087A03E /* modplay.bundle in CopyFiles */,
 				836F706218BDD1230095E648 /* vgmstream.bundle in CopyFiles */,
@@ -892,6 +908,7 @@
 		56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNumber+CogSort.m"; path = "Spotlight/NSNumber+CogSort.m"; sourceTree = "<group>"; };
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
+		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
@@ -1261,6 +1278,7 @@
 				836FB5421820538700B3AD2D /* Hively.xcodeproj */,
 				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
 				839BCFE71965133E00947767 /* BASSMODS.xcodeproj */,
+				8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */,
 			);
 			name = PlugIns;
 			sourceTree = "<group>";
@@ -1575,6 +1593,14 @@
 			name = Categories;
 			sourceTree = "<group>";
 		};
+		8314D63C1A354DFE00EEE8E6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8314D6411A354DFF00EEE8E6 /* sidplay.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8359FF2D17FEF35C0060F3ED /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1679,9 +1705,9 @@
 			children = (
 				83E6B759181612FD00D4576D /* Sparkle.framework */,
 				83E6B75B181612FD00D4576D /* Sparkle Test App.app */,
-				83E6B75D181612FD00D4576D /* Sparkle Unit Tests.octest */,
+				83E6B75D181612FD00D4576D /* Sparkle Unit Tests.xctest */,
 				83E6B75F181612FD00D4576D /* BinaryDelta */,
-				83E6B761181612FD00D4576D /* finish_installation.app */,
+				83E6B761181612FD00D4576D /* Autoupdate.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1818,6 +1844,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				836F5BEE1A3579F5002730CC /* PBXTargetDependency */,
 				839BD012196521FD00947767 /* PBXTargetDependency */,
 				836FB5A618206F1500B3AD2D /* PBXTargetDependency */,
 				83A0F4E21816DBE800119DB4 /* PBXTargetDependency */,
@@ -1974,6 +2001,10 @@
 					ProjectRef = 17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */;
 				},
 				{
+					ProductGroup = 8314D63C1A354DFE00EEE8E6 /* Products */;
+					ProjectRef = 8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */;
+				},
+				{
 					ProductGroup = 83E6B751181612FD00D4576D /* Products */;
 					ProjectRef = 83E6B750181612FD00D4576D /* Sparkle.xcodeproj */;
 				},
@@ -2107,6 +2138,13 @@
 			remoteRef = 566D321A0D538550004466A5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		8314D6411A354DFF00EEE8E6 /* sidplay.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = sidplay.bundle;
+			remoteRef = 8314D6401A354DFF00EEE8E6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -2191,10 +2229,10 @@
 			remoteRef = 83E6B75A181612FD00D4576D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		83E6B75D181612FD00D4576D /* Sparkle Unit Tests.octest */ = {
+		83E6B75D181612FD00D4576D /* Sparkle Unit Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = "Sparkle Unit Tests.octest";
+			path = "Sparkle Unit Tests.xctest";
 			remoteRef = 83E6B75C181612FD00D4576D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2205,10 +2243,10 @@
 			remoteRef = 83E6B75E181612FD00D4576D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		83E6B761181612FD00D4576D /* finish_installation.app */ = {
+		83E6B761181612FD00D4576D /* Autoupdate.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
-			path = finish_installation.app;
+			path = Autoupdate.app;
 			remoteRef = 83E6B760181612FD00D4576D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2509,6 +2547,11 @@
 			isa = PBXTargetDependency;
 			name = General;
 			targetProxy = 17F5623A0C3BD9280019975C /* PBXContainerItemProxy */;
+		};
+		836F5BEE1A3579F5002730CC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = sidplay;
+			targetProxy = 836F5BED1A3579F5002730CC /* PBXContainerItemProxy */;
 		};
 		836FB5A618206F1500B3AD2D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

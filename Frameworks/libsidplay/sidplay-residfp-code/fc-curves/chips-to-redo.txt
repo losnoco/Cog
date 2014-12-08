@@ -1,0 +1,23 @@
+todo:
+
+alankila r3 1/2
+ln r3 4285
+ln r3 4485
+trurl r2 0784
+trurl r2 3384
+trurl r3 0486s
+trurl r4ar 3789
+trurl r4ar 4486
+zrx r2 0384
+zrx r2 3684
+zrx r3 3985
+zrx r4ar 2886
+
+done:
+
+alankila r4ar
+ln r4 1986s
+nata r2 2083
+trurl r3 4885
+trurl r5 1489/3691
+zrx r2 1984

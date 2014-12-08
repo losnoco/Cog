@@ -1,0 +1,14 @@
+#ifndef LIBSIDPLAYFP_VERSION_H
+#define LIBSIDPLAYFP_VERSION_H
+
+#ifndef SIDPLAYFP_H
+#  error Do not include directly.
+#endif
+
+
+
+#define LIBSIDPLAYFP_VERSION_MAJ @LIB_MAJOR@
+#define LIBSIDPLAYFP_VERSION_MIN @LIB_MINOR@
+#define LIBSIDPLAYFP_VERSION_LEV @LIB_LEVEL@
+
+#endif

@@ -1,0 +1,1536 @@
+	.word $f000
+	* = $f000
+
+lf000 	lf001 = * + 1
+	lf002 = * + 2
+	.byt $00,$00,$00
+	lf005 = * + 2
+	.byt $00,$00,$00
+	lf008 = * + 2
+	.byt $00,$00,$00
+	lf00b = * + 2
+	.byt $00,$00,$00
+	lf00e = * + 2
+	.byt $00,$00,$00
+	lf011 = * + 2
+	.byt $00,$00,$00
+	lf014 = * + 2
+	.byt $00,$00,$00
+	lf017 = * + 2
+	.byt $00,$00,$00
+	lf01a = * + 2
+	.byt $00,$00,$00
+lf01b 	lf01c = * + 1
+	lf01d = * + 2
+	.byt $00,$00,$00
+	lf020 = * + 2
+	.byt $00,$00,$00
+	lf023 = * + 2
+	.byt $00,$00,$00
+lf024 	lf025 = * + 1
+	lf026 = * + 2
+	.byt $00,$00,$00
+lf027 	lf028 = * + 1
+	lf029 = * + 2
+	.byt $00,$00,$00
+lf02a 	.byt $00,$00,$00
+lf02d 	lf02e = * + 1
+	lf02f = * + 2
+	.byt $00,$00,$00
+lf030 	.byt $00,$00,$00
+lf033 	.byt $00,$00,$00
+lf036 	.byt $00,$00,$00
+lf039 	.byt $00,$00,$00
+lf03c 	.byt $00,$00,$00
+lf03f 	.byt $00,$00,$00
+lf042 	.byt $00,$00,$00
+lf045 	.byt $00,$00,$00
+lf048 	.byt $00,$00,$00
+lf04b 	.byt $00,$00,$00
+lf04e 	.byt $00,$00,$00
+lf051 	.byt $00,$00,$00
+lf054 	.byt $00,$00,$00
+lf057 	.byt $00,$00,$00
+lf05a 	.byt $00,$00,$00
+lf05d 	.byt $00,$00,$00
+lf060 	.byt $00,$00,$00
+lf063 	.byt $00,$00,$00
+lf066 	.byt $00,$00,$00
+lf069 	.byt $00,$00,$00
+lf06c 	.byt $00,$00,$00
+lf06f 	.byt $00,$00,$00
+lf072 	.byt $00,$00,$00
+lf075 	.byt $00,$00,$00
+lf078 	.byt $00,$00,$00
+lf07b 	.byt $00,$00,$00
+lf07e 	.byt $00,$00,$00
+lf081 	.byt $00,$00,$00
+lf084 	.byt $00,$00,$00
+lf087 	.byt $00,$00,$00
+lf08a 	.byt $00,$00,$00
+lf08d 	.byt $00,$00,$00
+lf090 	.byt $00,$00,$00
+lf093 	.byt $00,$00,$00
+lf096 	.byt $00,$00,$00
+lf099 	.byt $00,$00,$00
+lf09c 	.byt $00,$00,$00
+lf09f 	.byt $00,$00,$00
+lf0a2 	.byt $00,$00,$00
+lf0a5 	.byt $00,$00,$00
+lf0a8 	.byt $00,$00,$00
+lf0ab 	.byt $00,$00,$00
+lf0ae 	.byt $00,$00,$00
+lf0b1 	.byt $00,$00,$00
+lf0b4 	.byt $00,$00,$00
+lf0b7 	.byt $00,$00,$00
+lf0ba 	lf0bc = * + 2
+	.byt $00,$00,$00
+lf0bd 	lf0be = * + 1
+	lf0bf = * + 2
+	.byt $00,$00,$00
+lf0c0 	.byt $00,$00,$00
+lf0c3 	.byt $00,$00,$00
+lf0c6 	.byt $00,$00,$00
+lf0c9 	lf0ca = * + 1
+	lf0cb = * + 2
+	.byt $00,$00,$00
+lf0cc 	lf0cd = * + 1
+	.byt $00,$00,$00
+	lf0d0 = * + 1
+	.byt $00,$00,$00
+	lf0d3 = * + 1
+	.byt $00,$00,$00
+	lf0d6 = * + 1
+	.byt $00,$00,$00
+	lf0d9 = * + 1
+	.byt $00,$00,$00
+	lf0dc = * + 1
+	.byt $00,$00,$00
+	lf0df = * + 1
+	lf0e0 = * + 2
+	.byt $00,$00,$00
+lf0e1 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+lf0f0 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+lf0ff 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+lf117 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+lf12f 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+lf13e 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+lf156 	lf157 = * + 1
+	lf158 = * + 2
+	.byt $00,$00,$00
+lf159 	lf15a = * + 1
+	lf15b = * + 2
+	.byt $00,$00,$00
+lf15c 	lf15d = * + 1
+	lf15e = * + 2
+	.byt $00,$00,$00
+lf15f	lf160 = * + 1
+; Instruction opcode accessed.
+; Instruction parameter accessed.
+	adc ($f1,x)
+	rts
+lf162 	.byt $01,$02,$04
+lf165 	lf167 = * + 2
+	.byt $00,$07,$0e
+	.byt $02,$02,$fe
+	.byt $02,$02,$fe
+	lf16f = * + 1
+	.byt $fe,$00,$01
+	lf172 = * + 1
+	.byt $00,$ff,$00
+	.byt $02,$04,$05
+	.byt $07,$09,$0b
+lf17a 	.byt $1e,$18,$8b
+	.byt $7e,$fa,$06
+	.byt $ac,$f3,$e6
+	.byt $8f,$f8,$2e
+lf186 	.byt $86,$8e,$96
+	.byt $9f,$a8,$b3
+	.byt $bd,$c8,$d4
+	.byt $e1,$ee,$fd
+lf192	sty $6478
+	bvc lf1d3
+	.byt $28,$14,$00
+lf19a 	.byt $00,$02,$03
+	.byt $05,$07,$08
+	.byt $0a,$0c,$0d
+	.byt $0f,$11,$12
+lf1a6 	lf1a8 = * + 2
+	.byt $00,$e0,$00
+lf1a9 	.byt $05,$0a,$0f
+lf1ac 	lf1ad = * + 1
+	.byt $f9,$00,$f5
+lf1af 	.byt $00,$00,$00
+lf1b2	bpl lf1b4
+lf1b4 	.byt $00
+lf1b5	jsr $0000
+	bmi lf1ba
+lf1ba 	.byt $00,$40,$00
+	.byt $00
+lf1be	bvc lf1c0
+lf1c0 	.byt $00,$60,$00
+	.byt $00
+lf1c4	bvs lf1c6
+lf1c6 	.byt $00,$80,$00
+	.byt $00
+lf1ca	bcc lf1cc
+lf1cc 	.byt $00
+lf1cd	ldy #$00
+lf1cf	lda #$00
+	lf1d3 = * + 2
+	sta lf000
+	ldx #$95
+	ldy #$42
+	lda $02a6
+	beq lf1e1
+lf1dd	ldx #$25
+	ldy #$40
+lf1e1	stx lf15b
+	sty lf15c
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	rts
+lf200	lda #$00
+	sta lf000
+	stx $61
+	sty $62
+	ldy #$bc
+lf20b	sta lf000,y
+	dey
+	bne lf20b
+lf211	ldy #$72
+lf213	sta lf0bc,y
+	dey
+	bne lf213
+lf219	sta $d515
+	sta $d516
+	lda #$08
+	sta lf025
+	sta $d517
+	sta lf026
+	sta $d518
+	lda #$90
+	sta lf027
+	lda #$60
+	sta lf028
+	lda #$0c
+	sta lf029
+	lda lf15b
+	sta lf02d
+	lda lf15c
+	sta lf02e
+	lda #$ff
+	sta lf0cc
+	lda #$d5
+	sta $64
+	ldx #$02
+lf253	lda #$ff
+	sta lf00b,x
+	lda #$01
+	sta lf030,x
+	sta lf02a,x
+	txa
+	sta lf033,x
+	sta lf0ae,x
+	lda #$04
+	sta lf039,x
+	lda lf1a8,x
+	sta lf0ba,x
+	lda #$5b
+	sta lf07e,x
+	lda lf165,x
+	sta $63
+	lda #$00
+	tay
+	sta ($63),y
+	iny
+	sta ($63),y
+	iny
+	sta ($63),y
+	lda #$08
+	sta lf017,x
+	sta lf09c,x
+	iny
+	sta ($63),y
+	iny
+	sta ($63),y
+	lda #$40
+	sta lf01a,x
+	sta ($63),y
+	lda #$20
+	sta lf01d,x
+	iny
+	sta ($63),y
+	lda #$f5
+	sta lf020,x
+	iny
+	sta ($63),y
+	dex
+	bpl lf253
+lf2af	txa
+	ldx #$17
+lf2b2	sta lf13e,x
+	dex
+	bpl lf2b2
+lf2b8	lda $61
+	clc
+	adc #$06
+	sta $63
+	lda #$00
+	tax
+	tay
+	adc $62
+lf2c5	sta $64
+	sta lf0ab,x
+	sta lf0b4,x
+	lda $63
+	sta lf0a8,x
+	sta lf0b1,x
+	clc
+	adc ($61),y
+	sta $63
+	lda $64
+	iny
+	adc ($61),y
+	iny
+	inx
+	cpx #$03
+	bne lf2c5
+lf2e5	ldx $63
+	tay
+	rts
+lf2e9	lda #$00
+	sta $d504
+	sta $d50b
+	sta $d512
+	sta $d501
+	sta $d508
+	sta $d50f
+	lda #$08
+	sta $d517
+	lda lf15b
+	sta $dc04
+	lda lf15c
+	sta $dc05
+	rts
+lf30f	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	rts
+lf31e	lda #$08
+	sta lf000
+lf323	jmp (lf15d)
+lf326	nop
+	nop
+	nop
+lf329	lda lf000
+	bmi lf31e
+lf32e	ora #$80
+	tay
+	and #$07
+	beq lf323
+lf335	cld
+	sty lf000
+	nop
+	lda $fb
+	sta lf156
+	lda $fc
+	sta lf157
+	lda $fd
+	sta lf158
+	lda $fe
+	sta lf159
+	lda $ff
+	sta lf15a
+	lda lf023
+	clc
+	adc lf0d9
+	pha
+	and #$07
+	tay
+	lda lf0dc
+	adc #$00
+	sta $ff
+	pla
+	lsr $ff
+	ror
+	lsr $ff
+	ror
+	lsr $ff
+	ror
+	clc
+	adc lf024
+	sty $d515
+	sta $d516
+	lda lf025
+	sta $d517
+	lda lf026
+	sta $d518
+	lda #$d5
+	sta $fc
+	ldx #$00
+lf38b	lda lf000
+	and lf162,x
+	beq lf3e4
+lf393	lda lf165,x
+	sta $fb
+	lda lf00e,x
+	clc
+	adc lf051,x
+	tay
+	lda lf011,x
+	adc lf054,x
+	pha
+	tya
+	clc
+	adc lf0cd,x
+	ldy #$00
+	sta ($fb),y
+	pla
+	adc lf0d0,x
+	iny
+	sta ($fb),y
+	lda lf014,x
+	clc
+	adc lf069,x
+	sta $ff
+	lda lf017,x
+	adc lf06c,x
+	pha
+	lda $ff
+	clc
+	adc lf0d3,x
+	iny
+	sta ($fb),y
+	pla
+	adc lf0d6,x
+	iny
+	sta ($fb),y
+	lda lf01d,x
+	iny
+	iny
+	sta ($fb),y
+	lda lf020,x
+	iny
+	sta ($fb),y
+lf3e4	inx
+	cpx #$03
+	bne lf38b
+lf3e9	ldy lf01a
+	ldx lf01b
+	lda lf01c
+	sty $d504
+	stx $d50b
+	sta $d512
+	ldx lf02d
+	ldy lf02e
+	stx $dc04
+	sty $dc05
+	lda $d51b
+	sta lf0be
+	lda $d51c
+	sta lf0bf
+	ldx #$00
+lf415	lda lf000
+	and lf162,x
+	beq lf42d
+lf41d	stx lf02f
+	jsr lf536
+	lda lf000
+	and #$78
+	beq lf42d
+lf42a	jmp lf50c
+lf42d	inx
+	cpx #$03
+	bne lf415
+lf432	lda lf0c9
+	bne lf489
+lf437	lda lf0ca
+	ora lf0cb
+	beq lf4b7
+lf43f	lda lf0df
+	bne lf46c
+lf444	lda lf0ca
+	beq lf471
+lf449	clc
+	adc lf0bd
+	bcs lf456
+lf44f	cmp lf0cc
+	bcc lf4b4
+lf454	beq lf4b4
+lf456	lda #$00
+	sta lf0df
+	lda lf0cb
+	beq lf4b4
+lf460	inc lf0df
+	lda lf0bd
+	sbc lf0cb
+	jmp lf4b4
+lf46c	lda lf0cb
+	beq lf444
+lf471	lda lf0bd
+	sec
+	sbc lf0cb
+	bcs lf4b4
+lf47a	lda #$00
+	sta lf0df
+	lda lf0ca
+	bne lf4b4
+lf484	inc lf0df
+	bne lf4b1
+lf489	dec lf0e0
+	bne lf4b7
+lf48e	lda lf0df
+	bne lf4a4
+lf493	inc lf0df
+	lda lf0cb
+	bne lf49d
+lf49b	lda #$20
+lf49d	sta lf0e0
+	lda #$00
+	beq lf4b4
+lf4a4	dec lf0df
+	lda lf0ca
+	bne lf4ae
+lf4ac	lda #$20
+lf4ae	sta lf0e0
+lf4b1	lda lf0cc
+lf4b4	sta lf0bd
+lf4b7	ldx #$00
+lf4b9	lda lf0c3,x
+	beq lf502
+lf4be	lda #$00
+	sta $ff
+	ldy lf0c0,x
+	lda lf0bd,y
+	ldy lf0c6,x
+	beq lf4db
+lf4cd	bmi lf4d7
+lf4cf	asl
+	rol $ff
+	dey
+	bne lf4cf
+lf4d5	beq lf4db
+lf4d7	lsr
+	iny
+	bne lf4d7
+lf4db	ldy lf0c3,x
+	dey
+	bne lf4ec
+lf4e1	sta lf0cd,x
+	lda $ff
+	sta lf0d0,x
+	jmp lf502
+lf4ec	dey
+	bne lf4fa
+lf4ef	sta lf0d3,x
+	lda $ff
+	sta lf0d6,x
+	jmp lf502
+lf4fa	sta lf0d9
+	lda $ff
+	sta lf0dc
+lf502	inx
+	cpx #$03
+	bne lf4b9
+lf507	lda lf000
+	and #$7f
+lf50c	sta lf000
+	lda lf156
+	sta $fb
+	lda lf157
+	sta $fc
+	lda lf158
+	sta $fd
+	lda lf159
+	sta $fe
+	lda lf15a
+	sta $ff
+	jmp (lf15d)
+lf52b	lda lf060,x
+	bne lf533
+lf530	jmp lf69f
+lf533	jmp lf5ba
+lf536	dec lf030,x
+	bne lf53e
+lf53b	jmp lf6a0
+lf53e	lda lf036,x
+	bmi lf52b
+lf543	bne lf55f
+lf545	lda lf03f,x
+	beq lf54f
+lf54a	dec lf03f,x
+	bne lf55f
+lf54f	lda lf039,x
+	cmp lf030,x
+	bcc lf55f
+lf557	lda lf01a,x
+	and #$fe
+	sta lf01a,x
+lf55f	lda lf042,x
+	beq lf5ba
+lf564	asl
+	lda lf00e,x
+	bcs lf587
+lf56a	adc lf045,x
+	sta lf00e,x
+	tay
+	lda lf011,x
+	adc lf048,x
+	sta lf011,x
+	pha
+	tya
+	cmp lf08d,x
+	pla
+	sbc lf090,x
+	bcs lf5a4
+lf585	bcc lf5b5
+lf587	sbc lf045,x
+	sta lf00e,x
+	lda lf011,x
+	sbc lf048,x
+	sta lf011,x
+	lda lf08d,x
+	cmp lf00e,x
+	lda lf090,x
+	sbc lf011,x
+	bcc lf5b5
+lf5a4	lda lf08d,x
+	sta lf00e,x
+	lda lf090,x
+	sta lf011,x
+	lda #$00
+	sta lf042,x
+lf5b5	lda lf060,x
+	beq lf60f
+lf5ba	lda lf04b,x
+	beq lf60a
+lf5bf	ldy #$00
+	dec lf04e,x
+	bne lf5f7
+lf5c6	lda lf051,x
+	ora lf054,x
+	bne lf5e9
+lf5ce	lda lf05d,x
+	sta lf057,x
+	sta lf04e,x
+	lda lf04b,x
+	asl
+	lda lf05a,x
+	bcc lf5e4
+lf5e0	eor #$ff
+	adc #$00
+lf5e4	sta lf04b,x
+	bne lf5f9
+lf5e9	lda lf057,x
+	sta lf04e,x
+	tya
+	sec
+	sbc lf04b,x
+	sta lf04b,x
+lf5f7	cmp #$00
+lf5f9	bpl lf5fc
+lf5fb	dey
+lf5fc	clc
+	adc lf051,x
+	sta lf051,x
+	tya
+	adc lf054,x
+	sta lf054,x
+lf60a	lda lf036,x
+	bmi lf624
+lf60f	lda lf093,x
+	beq lf624
+lf614	clc
+	adc lf014,x
+	sta lf014,x
+	lda lf096,x
+	adc lf017,x
+	sta lf017,x
+lf624	lda lf063,x
+	beq lf674
+lf629	ldy #$00
+	dec lf066,x
+	bne lf661
+lf630	lda lf069,x
+	ora lf06c,x
+	bne lf653
+lf638	lda lf072,x
+	sta lf06f,x
+	sta lf066,x
+	lda lf063,x
+	asl
+	lda lf075,x
+	bcc lf64e
+lf64a	eor #$ff
+	adc #$00
+lf64e	sta lf063,x
+	bne lf663
+lf653	lda lf06f,x
+	sta lf066,x
+	tya
+	sec
+	sbc lf063,x
+	sta lf063,x
+lf661	cmp #$00
+lf663	bpl lf666
+lf665	dey
+lf666	clc
+	adc lf069,x
+	sta lf069,x
+	tya
+	adc lf06c,x
+	sta lf06c,x
+lf674	lda lf036,x
+	bpl lf67c
+lf679	jmp lf69f
+lf67c	ldy #$00
+	lda lf0a2,x
+	beq lf69f
+lf683	bpl lf686
+lf685	iny
+lf686	clc
+	adc lf023
+	pha
+	and #$07
+	sta lf023
+	pla
+	ror
+	lsr
+	lsr
+	clc
+	adc lf1a6,y
+	clc
+	adc lf024
+	sta lf024
+lf69f	rts
+lf6a0	lda lf0a8,x
+	sta $fd
+	lda lf0ab,x
+	sta $fe
+	bne lf6b0
+lf6ac	rts
+lf6ad	jsr lf898
+lf6b0	lda lf000
+	and lf162,x
+	beq lf6ac
+lf6b8	ldy #$00
+	lda ($fd),y
+	sta $ff
+	iny
+	lda ($fd),y
+	tay
+	lda $fd
+	clc
+	adc #$02
+	sta $fd
+	sta lf0a8,x
+	lda $fe
+	adc #$00
+	sta $fe
+	sta lf0ab,x
+	lda $ff
+	and #$03
+	bne lf6ad
+lf6db	lda lf08d,x
+	sta lf00e,x
+	lda lf090,x
+	sta lf011,x
+	lda $ff
+	sta lf005,x
+	tya
+	sta lf002,x
+	and #$07
+	tay
+	lda lf167,y
+	sta lf16f
+	lda lf002,x
+	and #$38
+	lsr
+	lsr
+	lsr
+	adc lf081,x
+	sta $fd
+	lda lf002,x
+	and #$c0
+	asl
+	rol
+	rol
+	tay
+	lda lf16f,y
+	sta $fe
+	lda lf002,x
+	and #$07
+	beq lf77d
+lf71b	tay
+	lda lf172,y
+	adc $fe
+	clc
+	adc lf084,x
+	bpl lf72c
+lf727	clc
+	adc #$0c
+	inc $fd
+lf72c	cmp #$0c
+	bcc lf734
+lf730	sbc #$0c
+	dec $fd
+lf734	sta $fe
+	tay
+	lda lf186,y
+	sta $ff
+	lda lf17a,y
+	ldy $fd
+	dey
+	bmi lf74a
+lf744	lsr $ff
+	ror
+	dey
+	bpl lf744
+lf74a	clc
+	adc lf087,x
+	sta lf08d,x
+	lda $ff
+	adc lf08a,x
+	sta lf090,x
+	lda lf005,x
+	bne lf761
+lf75e	jmp lf6a0
+lf761	lda lf045,x
+	ora lf048,x
+	beq lf77f
+lf769	lda lf00e,x
+	cmp lf08d,x
+	lda lf011,x
+	sbc lf090,x
+	lda #$fe
+	ror
+	sta lf042,x
+	bcc lf78e
+lf77d	beq lf7c9
+lf77f	sta lf042,x
+	lda lf08d,x
+	sta lf00e,x
+	lda lf090,x
+	sta lf011,x
+lf78e	lda lf036,x
+	asl
+	bne lf7c9
+lf794	lda lf093,x
+	beq lf7a5
+lf799	lda lf099,x
+	sta lf014,x
+	lda lf09c,x
+	sta lf017,x
+lf7a5	lda lf09f,x
+	beq lf7b9
+lf7aa	ldy $fd
+	clc
+	adc lf192,y
+	ldy $fe
+	clc
+	adc lf19a,y
+	clc
+	bcc lf7c1
+lf7b9	lda lf0a2,x
+	beq lf7c9
+lf7be	lda lf0a5,x
+lf7c1	sta lf024
+	lda #$00
+	sta lf023
+lf7c9	lda lf03c,x
+	sta lf03f,x
+	lda lf005,x
+	and #$40
+	sta lf036,x
+	lda lf005,x
+	lsr
+	lsr
+	and #$07
+	bne lf810
+lf7e0	lda lf005,x
+	bmi lf7f9
+lf7e5	lda lf027
+	and #$3c
+	bne lf80a
+lf7ec	lda lf027
+	asl
+	rol
+	rol
+	bne lf7f6
+lf7f4	lda #$04
+lf7f6	jmp lf870
+lf7f9	lda lf028
+	beq lf80a
+lf7fe	and #$3f
+	bne lf80a
+lf802	lda lf028
+	asl
+	rol
+	rol
+	bne lf870
+lf80a	lda #$10
+	sta lf000
+	rts
+lf810	cmp #$01
+	bne lf827
+lf814	lda lf005,x
+	and #$20
+	bne lf821
+lf81b	lda lf029
+	jmp lf870
+lf821	lda lf02a,x
+	jmp lf870
+lf827	tay
+	lda lf005,x
+	and #$a0
+	cmp #$80
+	beq lf861
+lf831	sta $ff
+	clc
+	lda lf027
+	bne lf83a
+lf839	sec
+lf83a	dey
+	dey
+	beq lf844
+lf83e	ror
+	bcs lf88f
+lf841	dey
+	bne lf83e
+lf844	ldy $ff
+	sta $ff
+	beq lf870
+lf84a	lsr $ff
+	bcs lf88f
+lf84e	beq lf892
+lf850	adc $ff
+	bcs lf892
+lf854	iny
+	bpl lf870
+lf857	lsr $ff
+	bcs lf88f
+lf85b	adc $ff
+	bcc lf870
+lf85f	bcs lf892
+lf861	lda lf028
+	beq lf88f
+lf866	dey
+	dey
+	beq lf870
+lf86a	lsr
+	bcs lf88f
+lf86d	dey
+	bne lf86a
+lf870	sta lf030,x
+	lda lf01a,x
+	and #$f6
+	sta lf01a,x
+	sec
+	lda lf002,x
+	and #$07
+	bne lf886
+lf883	ror lf036,x
+lf886	lda lf01a,x
+	adc #$00
+	sta lf01a,x
+	rts
+lf88f	lda #$10
+	lf892 = * + 1
+; Instruction parameter jumped to.
+	bit $18a9
+	sta lf000
+	rts
+lf898	tya
+	pha
+	lda $ff
+	lsr
+	bcc lf8a2
+lf89f	jmp lfa42
+lf8a2	lsr
+	lsr
+	bcs lf8c4
+lf8a6	lsr
+	bcs lf8b7
+lf8a9	sta lf09c,x
+	sta lf017,x
+	pla
+	sta lf099,x
+	sta lf014,x
+	rts
+lf8b7	lsr
+	bcc lf8bc
+lf8ba	ora #$f8
+lf8bc	sta lf08a,x
+	pla
+	sta lf087,x
+	rts
+lf8c4	lsr
+	bcs lf8ca
+lf8c7	jmp lf94a
+lf8ca	lsr
+	bcs lf92e
+lf8cd	lsr
+	bcs lf8df
+lf8d0	bne lf8da
+lf8d2	pla
+	sta lf0a5,x
+	sta lf024
+	rts
+lf8da	pla
+	sta lf03c,x
+	rts
+lf8df	bne lf929
+lf8e1	pla
+	sta lf07e,x
+	cmp #$5b
+	beq lf91c
+lf8e9	tay
+	lsr
+	lsr
+	lsr
+	sec
+	sbc #$0b
+	clc
+	adc lf084,x
+	bmi lf902
+lf8f6	cmp #$0c
+	bcc lf90b
+lf8fa	sbc #$0c
+	dec lf081,x
+	jmp lf90b
+lf902	cmp #$f5
+	bcs lf90b
+lf906	adc #$0c
+	inc lf081,x
+lf90b	sta lf084,x
+	tya
+	and #$07
+	sec
+	sbc #$03
+	clc
+	adc lf081,x
+	sta lf081,x
+	rts
+lf91c	lda lf078,x
+	sta lf081,x
+	lda lf07b,x
+	sta lf084,x
+	rts
+lf929	pla
+	sta lf0c6,x
+	rts
+lf92e	lsr
+	bcs lf939
+lf931	sta lf00b,x
+	pla
+	sta lf008,x
+	rts
+lf939	lsr
+	ror
+	ror
+	adc lf15b
+	sta lf02d
+	pla
+	adc lf15c
+	sta lf02e
+	rts
+lf94a	lsr
+	bcc lf950
+lf94d	jmp lf9d3
+lf950	lsr
+	bcs lf993
+lf953	lsr
+	bcs lf96d
+lf956	lsr
+	bcs lf968
+lf959	pla
+	sta lf027
+	lsr
+	lsr
+	lsr
+	tay
+	lda lf1af,y
+	sta lf028
+	rts
+lf968	pla
+	sta lf05d,x
+	rts
+lf96d	lsr
+	bcs lf975
+lf970	pla
+	sta lf001
+	rts
+lf975	pla
+	beq lf989
+lf978	sta lf075,x
+	ldy lf063,x
+	bne lf988
+lf980	sta lf063,x
+	lda #$01
+	sta lf066,x
+lf988	rts
+lf989	sta lf063,x
+	sta lf069,x
+	sta lf06c,x
+	rts
+lf993	lsr
+	bcs lf9c6
+lf996	lsr
+	bcs lf99e
+lf999	pla
+	sta lf039,x
+	rts
+lf99e	pla
+	ldy #$00
+	lsr
+	bcc lf9a6
+lf9a4	iny
+	clc
+lf9a6	pha
+	and #$07
+	adc lf1ac,y
+	sta lf078,x
+	sta lf081,x
+	pla
+	lsr
+	lsr
+	lsr
+	clc
+	adc lf1ad,y
+	sta lf07b,x
+	sta lf084,x
+	lda #$5b
+	sta lf07e,x
+	rts
+lf9c6	lsr
+	bcs lf9ce
+lf9c9	pla
+	sta lf0a2,x
+	rts
+lf9ce	pla
+	sta lf0cc
+	rts
+lf9d3	lsr
+	bcs lf9fd
+lf9d6	lsr
+	bcs lf9e6
+lf9d9	lsr
+	bcs lf9e1
+lf9dc	pla
+	sta lf029
+	rts
+lf9e1	pla
+	sta lf09f,x
+	rts
+lf9e6	lsr
+	bcs lf9f8
+lf9e9	pla
+	sta lf093,x
+	ldy #$00
+	asl
+	bcc lf9f3
+lf9f2	dey
+lf9f3	tya
+	sta lf096,x
+	rts
+lf9f8	pla
+	sta lf072,x
+	rts
+lf9fd	lsr
+	bcs lfa1c
+lfa00	lsr
+	bcs lfa18
+lfa03	pla
+	sta lf0b7,x
+	lda $fd
+	sta lf0b1,x
+	lda $fe
+	sta lf0b4,x
+	lda lf033,x
+	sta lf0ae,x
+	rts
+lfa18	pla
+	jmp (lf15f)
+lfa1c	lsr
+	bcs lfa3d
+lfa1f	pla
+	bne lfa2c
+lfa22	sta lf04b,x
+	sta lf051,x
+	sta lf054,x
+	rts
+lfa2c	sta lf05a,x
+	ldy lf04b,x
+	bne lfa3c
+lfa34	sta lf04b,x
+	lda #$01
+	sta lf04e,x
+lfa3c	rts
+lfa3d	pla
+	sta lf02a,x
+	rts
+lfa42	lsr
+	bcc lfa4d
+lfa45	sta lf048,x
+	pla
+	sta lf045,x
+	rts
+lfa4d	pla
+	lsr
+	bcs lfab2
+lfa51	lsr
+	bcs lfa79
+lfa54	lsr
+	bcs lfa5c
+lfa57	lsr
+	ldy #$f0
+	bne lfa62
+lfa5c	asl
+	asl
+	asl
+	asl
+	ldy #$0f
+lfa62	sta $ff
+	tya
+	bcs lfa70
+lfa67	and lf01d,x
+	ora $ff
+	sta lf01d,x
+	rts
+lfa70	and lf020,x
+	ora $ff
+	sta lf020,x
+	rts
+lfa79	lsr
+	bcs lfab4
+lfa7c	lsr
+	bcs lfae3
+lfa7f	sta $ff
+	lda lf0ba,x
+	cmp lf1a9,x
+	beq lfadd
+lfa89	inc lf0ba,x
+	tay
+	lda $fd
+	sta lf0e1,y
+	lda $fe
+	sta lf0f0,y
+	lda lf033,x
+	sta lf12f,y
+	ldy $ff
+	lda lf117,y
+	beq lfada
+lfaa4	sta $fe
+	lda lf0ff,y
+	sta $fd
+	lda lf13e,y
+	sta lf033,x
+	rts
+lfab2	bcs lfaff
+lfab4	lsr
+	bcs lfaf3
+lfab7	tay
+	lda $fd
+	sta lf0ff,y
+	lda $fe
+	sta lf117,y
+	lda lf033,x
+	sta lf13e,y
+	lda lf0ba,x
+	cmp lf1a9,x
+	beq lfadd
+lfad0	inc lf0ba,x
+	tay
+	lda #$00
+	sta lf0f0,y
+	rts
+lfada	lda #$30
+	lfadd = * + 1
+; Instruction parameter jumped to.
+	bit $28a9
+	sta lf000
+	rts
+lfae3	asl
+	asl
+	asl
+	asl
+	eor lf025
+	and #$f0
+	eor lf025
+	sta lf025
+	rts
+lfaf3	eor lf026
+	and #$0f
+	eor lf026
+	sta lf026
+	rts
+lfaff	lsr
+	bcs lfb0d
+lfb02	lsr
+	bcs lfb09
+lfb05	sta lf0ca
+	rts
+lfb09	sta lf0cb
+	rts
+lfb0d	lsr
+	bcc lfb13
+lfb10	jmp lfba5
+lfb13	lsr
+	tay
+	beq lfb38
+lfb17	dey
+	beq lfb4e
+lfb1a	dey
+	beq lfb5f
+lfb1d	dey
+	beq lfb6a
+lfb20	dey
+	beq lfb75
+lfb23	dey
+	beq lfb82
+lfb26	dey
+	beq lfb8f
+lfb29	dey
+	beq lfb9f
+lfb2c	and #$07
+	ora #$10
+	bcs lfb35
+lfb32	jmp lfab7
+lfb35	jmp lfa7f
+lfb38	ldy lf026
+	bcs lfb44
+lfb3d	iny
+	tya
+	and #$0f
+	bne lfb4a
+lfb43	rts
+lfb44	tya
+	and #$0f
+	beq lfb4d
+lfb49	dey
+lfb4a	sty lf026
+lfb4d	rts
+lfb4e	lda lf162,x
+	eor #$ff
+	and lf025
+	bcc lfb5b
+lfb58	ora lf162,x
+lfb5b	sta lf025
+	rts
+lfb5f	lda lf01a,x
+	and #$fb
+	bcc lfbbb
+lfb66	ora #$04
+	bcs lfbbb
+lfb6a	lda lf01a,x
+	and #$fd
+	bcc lfbbb
+lfb71	ora #$02
+	bcs lfbbb
+lfb75	lda lf025
+	and #$f7
+	bcc lfb7e
+lfb7c	ora #$08
+lfb7e	sta lf025
+	rts
+lfb82	lda lf026
+	and #$7f
+	bcc lfb8b
+lfb89	ora #$80
+lfb8b	sta lf026
+	rts
+lfb8f	tya
+	sta lf0bd
+	sta lf0df
+	iny
+	sty lf0e0
+	rol
+	sta lf0c9
+	rts
+lfb9f	tya
+	rol
+	sta lf060,x
+	rts
+lfba5	lsr
+	bcs lfbcf
+lfba8	lsr
+	bcs lfbbf
+lfbab	bne lfbaf
+lfbad	lda #$08
+lfbaf	asl
+	asl
+	asl
+	asl
+	eor lf01a,x
+	and #$f0
+	eor lf01a,x
+lfbbb	sta lf01a,x
+	rts
+lfbbf	asl
+	asl
+	asl
+	asl
+	eor lf026
+	and #$70
+	eor lf026
+	sta lf026
+	rts
+lfbcf	lsr
+	bcc lfbd6
+lfbd2	sta lf0c0,x
+	rts
+lfbd6	tay
+	beq lfbf9
+lfbd9	dey
+	beq lfc1c
+lfbdc	dey
+	beq lfc42
+lfbdf	and #$03
+	sta lf0c3,x
+	lda #$00
+	sta lf0cd,x
+	sta lf0d0,x
+	sta lf0d3,x
+	sta lf0d6,x
+	sta lf0d9
+	sta lf0dc
+	rts
+lfbf9	lda lf0b7,x
+	beq lfc03
+lfbfe	dec lf0b7,x
+	beq lfc15
+lfc03	lda lf033,x
+	cmp lf0ae,x
+	bne lfc16
+lfc0b	lda lf0b1,x
+	sta $fd
+	lda lf0b4,x
+	sta $fe
+lfc15	rts
+lfc16	lda #$38
+	sta lf000
+	rts
+lfc1c	lda lf0ba,x
+	cmp lf1a8,x
+	beq lfc3c
+lfc24	dec lf0ba,x
+	tay
+	dey
+	lda lf0f0,y
+	beq lfc3b
+lfc2e	sta $fe
+	lda lf0e1,y
+	sta $fd
+	lda lf12f,y
+	sta lf033,x
+lfc3b	rts
+lfc3c	lda #$20
+	sta lf000
+	rts
+lfc42	lda lf000
+	eor lf162,x
+	sta lf000
+	lda #$01
+	sta lf030,x
+	rts
+lfc51	lda lf000
+	and #$07
+	sta lfc81
+	bne lfc5e
+lfc5b	jsr lf2e9
+lfc5e	rts
+	.byt $00
+lfc60	ldx #$51
+	ldy #$fc
+	stx lf15d
+	sty lf15e
+	jsr lf1cf
+	ldx #$00
+	ldy #$09
+	jsr lf200
+	lda #$07
+	sta lf000
+	sta lfc81
+lfc7c	rts
+	.byt $00,$00,$00
+lfc80	lfc81 = * + 1
+; Instruction parameter accessed.
+	lda #$00
+	and #$ff
+	beq lfc7c
+lfc86	jmp lf329
+lfc89	lda #$07
+	sta lf000
+	rts
+	.byt $00
+lfc90	jsr $ec60
+	jmp lfc60
+lfc96	jsr $ec80
+	jmp lfc80

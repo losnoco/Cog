@@ -1,0 +1,9 @@
+[Filter]
+DistortionAttenuation=0.50
+DistortionNonlinearity=3.3e6
+VoiceNonlinearity        =1.80
+Type3BaseResistance      =1585454.0607309118
+Type3Offset              =97702791.79673694
+Type3Steepness           =1.0053036856077033
+Type3MinimumFETResistance=14497.859765307807
+

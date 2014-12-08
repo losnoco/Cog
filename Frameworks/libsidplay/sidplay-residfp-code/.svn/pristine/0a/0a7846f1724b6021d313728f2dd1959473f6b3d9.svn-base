@@ -1,0 +1,1534 @@
+	.word $e000
+	* = $e000
+
+le000 	le001 = * + 1
+	le002 = * + 2
+	.byt $00,$00,$00
+	le005 = * + 2
+	.byt $00,$00,$00
+	le008 = * + 2
+	.byt $00,$00,$00
+	le00b = * + 2
+	.byt $00,$00,$00
+	le00e = * + 2
+	.byt $00,$00,$00
+	le011 = * + 2
+	.byt $00,$00,$00
+	le014 = * + 2
+	.byt $00,$00,$00
+	le017 = * + 2
+	.byt $00,$00,$00
+	le01a = * + 2
+	.byt $00,$00,$00
+le01b 	le01c = * + 1
+	le01d = * + 2
+	.byt $00,$00,$00
+	le020 = * + 2
+	.byt $00,$00,$00
+	le023 = * + 2
+	.byt $00,$00,$00
+le024 	le025 = * + 1
+	le026 = * + 2
+	.byt $00,$00,$00
+le027 	le028 = * + 1
+	le029 = * + 2
+	.byt $00,$00,$00
+le02a 	.byt $00,$00,$00
+le02d 	le02e = * + 1
+	le02f = * + 2
+	.byt $00,$00,$00
+le030 	.byt $00,$00,$00
+le033 	.byt $00,$00,$00
+le036 	.byt $00,$00,$00
+le039 	.byt $00,$00,$00
+le03c 	.byt $00,$00,$00
+le03f 	.byt $00,$00,$00
+le042 	.byt $00,$00,$00
+le045 	.byt $00,$00,$00
+le048 	.byt $00,$00,$00
+le04b 	.byt $00,$00,$00
+le04e 	.byt $00,$00,$00
+le051 	.byt $00,$00,$00
+le054 	.byt $00,$00,$00
+le057 	.byt $00,$00,$00
+le05a 	.byt $00,$00,$00
+le05d 	.byt $00,$00,$00
+le060 	.byt $00,$00,$00
+le063 	.byt $00,$00,$00
+le066 	.byt $00,$00,$00
+le069 	.byt $00,$00,$00
+le06c 	.byt $00,$00,$00
+le06f 	.byt $00,$00,$00
+le072 	.byt $00,$00,$00
+le075 	.byt $00,$00,$00
+le078 	.byt $00,$00,$00
+le07b 	.byt $00,$00,$00
+le07e 	.byt $00,$00,$00
+le081 	.byt $00,$00,$00
+le084 	.byt $00,$00,$00
+le087 	.byt $00,$00,$00
+le08a 	.byt $00,$00,$00
+le08d 	.byt $00,$00,$00
+le090 	.byt $00,$00,$00
+le093 	.byt $00,$00,$00
+le096 	.byt $00,$00,$00
+le099 	.byt $00,$00,$00
+le09c 	.byt $00,$00,$00
+le09f 	.byt $00,$00,$00
+le0a2 	.byt $00,$00,$00
+le0a5 	.byt $00,$00,$00
+le0a8 	.byt $00,$00,$00
+le0ab 	.byt $00,$00,$00
+le0ae 	.byt $00,$00,$00
+le0b1 	.byt $00,$00,$00
+le0b4 	.byt $00,$00,$00
+le0b7 	.byt $00,$00,$00
+le0ba 	le0bc = * + 2
+	.byt $00,$00,$00
+le0bd 	le0be = * + 1
+	le0bf = * + 2
+	.byt $00,$00,$00
+le0c0 	.byt $00,$00,$00
+le0c3 	.byt $00,$00,$00
+le0c6 	.byt $00,$00,$00
+le0c9 	le0ca = * + 1
+	le0cb = * + 2
+	.byt $00,$00,$00
+le0cc 	le0cd = * + 1
+	.byt $00,$00,$00
+	le0d0 = * + 1
+	.byt $00,$00,$00
+	le0d3 = * + 1
+	.byt $00,$00,$00
+	le0d6 = * + 1
+	.byt $00,$00,$00
+	le0d9 = * + 1
+	.byt $00,$00,$00
+	le0dc = * + 1
+	.byt $00,$00,$00
+	le0df = * + 1
+	le0e0 = * + 2
+	.byt $00,$00,$00
+le0e1 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+le0f0 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+le0ff 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+le117 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+le12f 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+le13e 	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+	.byt $00,$00,$00
+le156 	le157 = * + 1
+	le158 = * + 2
+	.byt $00,$00,$00
+le159 	le15a = * + 1
+	le15b = * + 2
+	.byt $00,$00,$00
+le15c 	le15d = * + 1
+	le15e = * + 2
+	.byt $00,$00,$00
+le15f	le160 = * + 1
+; Instruction opcode accessed.
+; Instruction parameter accessed.
+	adc ($e1,x)
+	rts
+le162 	.byt $01,$02,$04
+le165 	le167 = * + 2
+	.byt $00,$07,$0e
+	.byt $02,$02,$fe
+	.byt $02,$02,$fe
+	le16f = * + 1
+	.byt $fe,$00,$01
+	le172 = * + 1
+	.byt $00,$ff,$00
+	.byt $02,$04,$05
+	.byt $07,$09,$0b
+le17a 	.byt $1e,$18,$8b
+	.byt $7e,$fa,$06
+	.byt $ac,$f3,$e6
+	.byt $8f,$f8,$2e
+le186 	.byt $86,$8e,$96
+	.byt $9f,$a8,$b3
+	.byt $bd,$c8,$d4
+	.byt $e1,$ee,$fd
+le192	sty $6478
+	bvc le1d3
+	.byt $28,$14,$00
+le19a 	.byt $00,$02,$03
+	.byt $05,$07,$08
+	.byt $0a,$0c,$0d
+	.byt $0f,$11,$12
+le1a6 	le1a8 = * + 2
+	.byt $00,$e0,$00
+le1a9 	.byt $05,$0a,$0f
+le1ac 	le1ad = * + 1
+	.byt $f9,$00,$f5
+le1af 	.byt $00,$00,$00
+le1b2	bpl le1b4
+le1b4 	.byt $00
+le1b5	jsr $0000
+	bmi le1ba
+le1ba 	.byt $00,$40,$00
+	.byt $00
+le1be	bvc le1c0
+le1c0 	.byt $00,$60,$00
+	.byt $00
+le1c4	bvs le1c6
+le1c6 	.byt $00,$80,$00
+	.byt $00
+le1ca	bcc le1cc
+le1cc 	.byt $00
+le1cd	ldy #$00
+le1cf	lda #$00
+	le1d3 = * + 2
+; Instruction parameter jumped to.
+	sta le000
+le1d4	le1d5 = * + 1
+; Instruction parameter jumped to.
+	ldx #$95
+le1d6	ldy #$42
+	lda $02a6
+	beq le1e1
+le1dd	ldx #$25
+	ldy #$40
+le1e1	stx le15b
+	sty le15c
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	rts
+le200	lda #$00
+	sta le000
+	stx $61
+	sty $62
+	ldy #$bc
+le20b	sta le000,y
+	dey
+	bne le20b
+le211	ldy #$72
+le213	sta le0bc,y
+	dey
+	bne le213
+le219	sta $d415
+	sta $d416
+	lda #$08
+	sta le025
+	sta $d417
+	sta le026
+	sta $d418
+	lda #$90
+	sta le027
+	lda #$60
+	sta le028
+	lda #$0c
+	sta le029
+	lda le15b
+	sta le02d
+	lda le15c
+	sta le02e
+	lda #$ff
+	sta le0cc
+	lda #$d4
+	sta $64
+	ldx #$02
+le253	lda #$ff
+	sta le00b,x
+	lda #$01
+	sta le030,x
+	sta le02a,x
+	txa
+	sta le033,x
+	sta le0ae,x
+	lda #$04
+	sta le039,x
+	lda le1a8,x
+	sta le0ba,x
+	lda #$5b
+	sta le07e,x
+	lda le165,x
+	sta $63
+	lda #$00
+	tay
+	sta ($63),y
+	iny
+	sta ($63),y
+	iny
+	sta ($63),y
+	lda #$08
+	sta le017,x
+	sta le09c,x
+	iny
+	sta ($63),y
+	iny
+	sta ($63),y
+	lda #$40
+	sta le01a,x
+	sta ($63),y
+	lda #$20
+	sta le01d,x
+	iny
+	sta ($63),y
+	lda #$f5
+	sta le020,x
+	iny
+	sta ($63),y
+	dex
+	bpl le253
+le2af	txa
+	ldx #$17
+le2b2	sta le13e,x
+	dex
+	bpl le2b2
+le2b8	lda $61
+	clc
+	adc #$06
+	sta $63
+	lda #$00
+	tax
+	tay
+	adc $62
+le2c5	sta $64
+	sta le0ab,x
+	sta le0b4,x
+	lda $63
+	sta le0a8,x
+	sta le0b1,x
+	clc
+	adc ($61),y
+	sta $63
+	lda $64
+	iny
+	adc ($61),y
+	iny
+	inx
+	cpx #$03
+	bne le2c5
+le2e5	ldx $63
+	tay
+	rts
+le2e9	lda #$00
+	sta $d404
+	sta $d40b
+	sta $d412
+	sta $d401
+	sta $d408
+	sta $d40f
+	lda #$08
+	sta $d417
+	lda le15b
+	sta $dc04
+	lda le15c
+	sta $dc05
+	rts
+le30f	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	rts
+le31e	lda #$08
+	sta le000
+le323	jmp (le15d)
+le326	nop
+	nop
+	nop
+le329	lda le000
+	bmi le31e
+le32e	ora #$80
+	tay
+	and #$07
+	beq le323
+le335	cld
+	sty le000
+	nop
+	lda $fb
+	sta le156
+	lda $fc
+	sta le157
+	lda $fd
+	sta le158
+	lda $fe
+	sta le159
+	lda $ff
+	sta le15a
+	lda le023
+	clc
+	adc le0d9
+	pha
+	and #$07
+	tay
+	lda le0dc
+	adc #$00
+	sta $ff
+	pla
+	lsr $ff
+	ror
+	lsr $ff
+	ror
+	lsr $ff
+	ror
+	clc
+	adc le024
+	sty $d415
+	sta $d416
+	lda le025
+	sta $d417
+	lda le026
+	sta $d418
+	lda #$d4
+	sta $fc
+	ldx #$00
+le38b	lda le000
+	and le162,x
+	beq le3e4
+le393	lda le165,x
+	sta $fb
+	lda le00e,x
+	clc
+	adc le051,x
+	tay
+	lda le011,x
+	adc le054,x
+	pha
+	tya
+	clc
+	adc le0cd,x
+	ldy #$00
+	sta ($fb),y
+	pla
+	adc le0d0,x
+	iny
+	sta ($fb),y
+	lda le014,x
+	clc
+	adc le069,x
+	sta $ff
+	lda le017,x
+	adc le06c,x
+	pha
+	lda $ff
+	clc
+	adc le0d3,x
+	iny
+	sta ($fb),y
+	pla
+	adc le0d6,x
+	iny
+	sta ($fb),y
+	lda le01d,x
+	iny
+	iny
+	sta ($fb),y
+	lda le020,x
+	iny
+	sta ($fb),y
+le3e4	inx
+	cpx #$03
+	bne le38b
+le3e9	ldy le01a
+	ldx le01b
+	lda le01c
+	sty $d404
+	stx $d40b
+	sta $d412
+	ldx le02d
+	ldy le02e
+	stx $dc04
+	sty $dc05
+	lda $d41b
+	sta le0be
+	lda $d41c
+	sta le0bf
+	ldx #$00
+le415	lda le000
+	and le162,x
+	beq le42d
+le41d	stx le02f
+	jsr le536
+	lda le000
+	and #$78
+	beq le42d
+le42a	jmp le50c
+le42d	inx
+	cpx #$03
+	bne le415
+le432	lda le0c9
+	bne le489
+le437	lda le0ca
+	ora le0cb
+	beq le4b7
+le43f	lda le0df
+	bne le46c
+le444	lda le0ca
+	beq le471
+le449	clc
+	adc le0bd
+	bcs le456
+le44f	cmp le0cc
+	bcc le4b4
+le454	beq le4b4
+le456	lda #$00
+	sta le0df
+	lda le0cb
+	beq le4b4
+le460	inc le0df
+	lda le0bd
+	sbc le0cb
+	jmp le4b4
+le46c	lda le0cb
+	beq le444
+le471	lda le0bd
+	sec
+	sbc le0cb
+	bcs le4b4
+le47a	lda #$00
+	sta le0df
+	lda le0ca
+	bne le4b4
+le484	inc le0df
+	bne le4b1
+le489	dec le0e0
+	bne le4b7
+le48e	lda le0df
+	bne le4a4
+le493	inc le0df
+	lda le0cb
+	bne le49d
+le49b	lda #$20
+le49d	sta le0e0
+	lda #$00
+	beq le4b4
+le4a4	dec le0df
+	lda le0ca
+	bne le4ae
+le4ac	lda #$20
+le4ae	sta le0e0
+le4b1	lda le0cc
+le4b4	sta le0bd
+le4b7	ldx #$00
+le4b9	lda le0c3,x
+	beq le502
+le4be	lda #$00
+	sta $ff
+	ldy le0c0,x
+	lda le0bd,y
+	ldy le0c6,x
+	beq le4db
+le4cd	bmi le4d7
+le4cf	asl
+	rol $ff
+	dey
+	bne le4cf
+le4d5	beq le4db
+le4d7	lsr
+	iny
+	bne le4d7
+le4db	ldy le0c3,x
+	dey
+	bne le4ec
+le4e1	sta le0cd,x
+	lda $ff
+	sta le0d0,x
+	jmp le502
+le4ec	dey
+	bne le4fa
+le4ef	sta le0d3,x
+	lda $ff
+	sta le0d6,x
+	jmp le502
+le4fa	sta le0d9
+	lda $ff
+	sta le0dc
+le502	inx
+	cpx #$03
+	bne le4b9
+le507	lda le000
+	and #$7f
+le50c	sta le000
+	lda le156
+	sta $fb
+	lda le157
+	sta $fc
+	lda le158
+	sta $fd
+	lda le159
+	sta $fe
+	lda le15a
+	sta $ff
+	jmp (le15d)
+le52b	lda le060,x
+	bne le533
+le530	jmp le69f
+le533	jmp le5ba
+le536	dec le030,x
+	bne le53e
+le53b	jmp le6a0
+le53e	lda le036,x
+	bmi le52b
+le543	bne le55f
+le545	lda le03f,x
+	beq le54f
+le54a	dec le03f,x
+	bne le55f
+le54f	lda le039,x
+	cmp le030,x
+	bcc le55f
+le557	lda le01a,x
+	and #$fe
+	sta le01a,x
+le55f	lda le042,x
+	beq le5ba
+le564	asl
+	lda le00e,x
+	bcs le587
+le56a	adc le045,x
+	sta le00e,x
+	tay
+	lda le011,x
+	adc le048,x
+	sta le011,x
+	pha
+	tya
+	cmp le08d,x
+	pla
+	sbc le090,x
+	bcs le5a4
+le585	bcc le5b5
+le587	sbc le045,x
+	sta le00e,x
+	lda le011,x
+	sbc le048,x
+	sta le011,x
+	lda le08d,x
+	cmp le00e,x
+	lda le090,x
+	sbc le011,x
+	bcc le5b5
+le5a4	lda le08d,x
+	sta le00e,x
+	lda le090,x
+	sta le011,x
+	lda #$00
+	sta le042,x
+le5b5	lda le060,x
+	beq le60f
+le5ba	lda le04b,x
+	beq le60a
+le5bf	ldy #$00
+	dec le04e,x
+	bne le5f7
+le5c6	lda le051,x
+	ora le054,x
+	bne le5e9
+le5ce	lda le05d,x
+	sta le057,x
+	sta le04e,x
+	lda le04b,x
+	asl
+	lda le05a,x
+	bcc le5e4
+le5e0	eor #$ff
+	adc #$00
+le5e4	sta le04b,x
+	bne le5f9
+le5e9	lda le057,x
+	sta le04e,x
+	tya
+	sec
+	sbc le04b,x
+	sta le04b,x
+le5f7	cmp #$00
+le5f9	bpl le5fc
+le5fb	dey
+le5fc	clc
+	adc le051,x
+	sta le051,x
+	tya
+	adc le054,x
+	sta le054,x
+le60a	lda le036,x
+	bmi le624
+le60f	lda le093,x
+	beq le624
+le614	clc
+	adc le014,x
+	sta le014,x
+	lda le096,x
+	adc le017,x
+	sta le017,x
+le624	lda le063,x
+	beq le674
+le629	ldy #$00
+	dec le066,x
+	bne le661
+le630	lda le069,x
+	ora le06c,x
+	bne le653
+le638	lda le072,x
+	sta le06f,x
+	sta le066,x
+	lda le063,x
+	asl
+	lda le075,x
+	bcc le64e
+le64a	eor #$ff
+	adc #$00
+le64e	sta le063,x
+	bne le663
+le653	lda le06f,x
+	sta le066,x
+	tya
+	sec
+	sbc le063,x
+	sta le063,x
+le661	cmp #$00
+le663	bpl le666
+le665	dey
+le666	clc
+	adc le069,x
+	sta le069,x
+	tya
+	adc le06c,x
+	sta le06c,x
+le674	lda le036,x
+	bpl le67c
+le679	jmp le69f
+le67c	ldy #$00
+	lda le0a2,x
+	beq le69f
+le683	bpl le686
+le685	iny
+le686	clc
+	adc le023
+	pha
+	and #$07
+	sta le023
+	pla
+	ror
+	lsr
+	lsr
+	clc
+	adc le1a6,y
+	clc
+	adc le024
+	sta le024
+le69f	rts
+le6a0	lda le0a8,x
+	sta $fd
+	lda le0ab,x
+	sta $fe
+	bne le6b0
+le6ac	rts
+le6ad	jsr le898
+le6b0	lda le000
+	and le162,x
+	beq le6ac
+le6b8	ldy #$00
+	lda ($fd),y
+	sta $ff
+	iny
+	lda ($fd),y
+	tay
+	lda $fd
+	clc
+	adc #$02
+	sta $fd
+	sta le0a8,x
+	lda $fe
+	adc #$00
+	sta $fe
+	sta le0ab,x
+	lda $ff
+	and #$03
+	bne le6ad
+le6db	lda le08d,x
+	sta le00e,x
+	lda le090,x
+	sta le011,x
+	lda $ff
+	sta le005,x
+	tya
+	sta le002,x
+	and #$07
+	tay
+	lda le167,y
+	sta le16f
+	lda le002,x
+	and #$38
+	lsr
+	lsr
+	lsr
+	adc le081,x
+	sta $fd
+	lda le002,x
+	and #$c0
+	asl
+	rol
+	rol
+	tay
+	lda le16f,y
+	sta $fe
+	lda le002,x
+	and #$07
+	beq le77d
+le71b	tay
+	lda le172,y
+	adc $fe
+	clc
+	adc le084,x
+	bpl le72c
+le727	clc
+	adc #$0c
+	inc $fd
+le72c	cmp #$0c
+	bcc le734
+le730	sbc #$0c
+	dec $fd
+le734	sta $fe
+	tay
+	lda le186,y
+	sta $ff
+	lda le17a,y
+	ldy $fd
+	dey
+	bmi le74a
+le744	lsr $ff
+	ror
+	dey
+	bpl le744
+le74a	clc
+	adc le087,x
+	sta le08d,x
+	lda $ff
+	adc le08a,x
+	sta le090,x
+	lda le005,x
+	bne le761
+le75e	jmp le6a0
+le761	lda le045,x
+	ora le048,x
+	beq le77f
+le769	lda le00e,x
+	cmp le08d,x
+	lda le011,x
+	sbc le090,x
+	lda #$fe
+	ror
+	sta le042,x
+	bcc le78e
+le77d	beq le7c9
+le77f	sta le042,x
+	lda le08d,x
+	sta le00e,x
+	lda le090,x
+	sta le011,x
+le78e	lda le036,x
+	asl
+	bne le7c9
+le794	lda le093,x
+	beq le7a5
+le799	lda le099,x
+	sta le014,x
+	lda le09c,x
+	sta le017,x
+le7a5	lda le09f,x
+	beq le7b9
+le7aa	ldy $fd
+	clc
+	adc le192,y
+	ldy $fe
+	clc
+	adc le19a,y
+	clc
+	bcc le7c1
+le7b9	lda le0a2,x
+	beq le7c9
+le7be	lda le0a5,x
+le7c1	sta le024
+	lda #$00
+	sta le023
+le7c9	lda le03c,x
+	sta le03f,x
+	lda le005,x
+	and #$40
+	sta le036,x
+	lda le005,x
+	lsr
+	lsr
+	and #$07
+	bne le810
+le7e0	lda le005,x
+	bmi le7f9
+le7e5	lda le027
+	and #$3c
+	bne le80a
+le7ec	lda le027
+	asl
+	rol
+	rol
+	bne le7f6
+le7f4	lda #$04
+le7f6	jmp le870
+le7f9	lda le028
+	beq le80a
+le7fe	and #$3f
+	bne le80a
+le802	lda le028
+	asl
+	rol
+	rol
+	bne le870
+le80a	lda #$10
+	sta le000
+	rts
+le810	cmp #$01
+	bne le827
+le814	lda le005,x
+	and #$20
+	bne le821
+le81b	lda le029
+	jmp le870
+le821	lda le02a,x
+	jmp le870
+le827	tay
+	lda le005,x
+	and #$a0
+	cmp #$80
+	beq le861
+le831	sta $ff
+	clc
+	lda le027
+	bne le83a
+le839	sec
+le83a	dey
+	dey
+	beq le844
+le83e	ror
+	bcs le88f
+le841	dey
+	bne le83e
+le844	ldy $ff
+	sta $ff
+	beq le870
+le84a	lsr $ff
+	bcs le88f
+le84e	beq le892
+le850	adc $ff
+	bcs le892
+le854	iny
+	bpl le870
+le857	lsr $ff
+	bcs le88f
+le85b	adc $ff
+	bcc le870
+le85f	bcs le892
+le861	lda le028
+	beq le88f
+le866	dey
+	dey
+	beq le870
+le86a	lsr
+	bcs le88f
+le86d	dey
+	bne le86a
+le870	sta le030,x
+	lda le01a,x
+	and #$f6
+	sta le01a,x
+	sec
+	lda le002,x
+	and #$07
+	bne le886
+le883	ror le036,x
+le886	lda le01a,x
+	adc #$00
+	sta le01a,x
+	rts
+le88f	lda #$10
+	le892 = * + 1
+; Instruction parameter jumped to.
+	bit $18a9
+	sta le000
+	rts
+le898	tya
+	pha
+	lda $ff
+	lsr
+	bcc le8a2
+le89f	jmp lea42
+le8a2	lsr
+	lsr
+	bcs le8c4
+le8a6	lsr
+	bcs le8b7
+le8a9	sta le09c,x
+	sta le017,x
+	pla
+	sta le099,x
+	sta le014,x
+	rts
+le8b7	lsr
+	bcc le8bc
+le8ba	ora #$f8
+le8bc	sta le08a,x
+	pla
+	sta le087,x
+	rts
+le8c4	lsr
+	bcs le8ca
+le8c7	jmp le94a
+le8ca	lsr
+	bcs le92e
+le8cd	lsr
+	bcs le8df
+le8d0	bne le8da
+le8d2	pla
+	sta le0a5,x
+	sta le024
+	rts
+le8da	pla
+	sta le03c,x
+	rts
+le8df	bne le929
+le8e1	pla
+	sta le07e,x
+	cmp #$5b
+	beq le91c
+le8e9	tay
+	lsr
+	lsr
+	lsr
+	sec
+	sbc #$0b
+	clc
+	adc le084,x
+	bmi le902
+le8f6	cmp #$0c
+	bcc le90b
+le8fa	sbc #$0c
+	dec le081,x
+	jmp le90b
+le902	cmp #$f5
+	bcs le90b
+le906	adc #$0c
+	inc le081,x
+le90b	sta le084,x
+	tya
+	and #$07
+	sec
+	sbc #$03
+	clc
+	adc le081,x
+	sta le081,x
+	rts
+le91c	lda le078,x
+	sta le081,x
+	lda le07b,x
+	sta le084,x
+	rts
+le929	pla
+	sta le0c6,x
+	rts
+le92e	lsr
+	bcs le939
+le931	sta le00b,x
+	pla
+	sta le008,x
+	rts
+le939	lsr
+	ror
+	ror
+	adc le15b
+	sta le02d
+	pla
+	adc le15c
+	sta le02e
+	rts
+le94a	lsr
+	bcc le950
+le94d	jmp le9d3
+le950	lsr
+	bcs le993
+le953	lsr
+	bcs le96d
+le956	lsr
+	bcs le968
+le959	pla
+	sta le027
+	lsr
+	lsr
+	lsr
+	tay
+	lda le1af,y
+	sta le028
+	rts
+le968	pla
+	sta le05d,x
+	rts
+le96d	lsr
+	bcs le975
+le970	pla
+	sta le001
+	rts
+le975	pla
+	beq le989
+le978	sta le075,x
+	ldy le063,x
+	bne le988
+le980	sta le063,x
+	lda #$01
+	sta le066,x
+le988	rts
+le989	sta le063,x
+	sta le069,x
+	sta le06c,x
+	rts
+le993	lsr
+	bcs le9c6
+le996	lsr
+	bcs le99e
+le999	pla
+	sta le039,x
+	rts
+le99e	pla
+	ldy #$00
+	lsr
+	bcc le9a6
+le9a4	iny
+	clc
+le9a6	pha
+	and #$07
+	adc le1ac,y
+	sta le078,x
+	sta le081,x
+	pla
+	lsr
+	lsr
+	lsr
+	clc
+	adc le1ad,y
+	sta le07b,x
+	sta le084,x
+	lda #$5b
+	sta le07e,x
+	rts
+le9c6	lsr
+	bcs le9ce
+le9c9	pla
+	sta le0a2,x
+	rts
+le9ce	pla
+	sta le0cc
+	rts
+le9d3	lsr
+	bcs le9fd
+le9d6	lsr
+	bcs le9e6
+le9d9	lsr
+	bcs le9e1
+le9dc	pla
+	sta le029
+	rts
+le9e1	pla
+	sta le09f,x
+	rts
+le9e6	lsr
+	bcs le9f8
+le9e9	pla
+	sta le093,x
+	ldy #$00
+	asl
+	bcc le9f3
+le9f2	dey
+le9f3	tya
+	sta le096,x
+	rts
+le9f8	pla
+	sta le072,x
+	rts
+le9fd	lsr
+	bcs lea1c
+lea00	lsr
+	bcs lea18
+lea03	pla
+	sta le0b7,x
+	lda $fd
+	sta le0b1,x
+	lda $fe
+	sta le0b4,x
+	lda le033,x
+	sta le0ae,x
+	rts
+lea18	pla
+	jmp (le15f)
+lea1c	lsr
+	bcs lea3d
+lea1f	pla
+	bne lea2c
+lea22	sta le04b,x
+	sta le051,x
+	sta le054,x
+	rts
+lea2c	sta le05a,x
+	ldy le04b,x
+	bne lea3c
+lea34	sta le04b,x
+	lda #$01
+	sta le04e,x
+lea3c	rts
+lea3d	pla
+	sta le02a,x
+	rts
+lea42	lsr
+	bcc lea4d
+lea45	sta le048,x
+	pla
+	sta le045,x
+	rts
+lea4d	pla
+	lsr
+	bcs leab2
+lea51	lsr
+	bcs lea79
+lea54	lsr
+	bcs lea5c
+lea57	lsr
+	ldy #$f0
+	bne lea62
+lea5c	asl
+	asl
+	asl
+	asl
+	ldy #$0f
+lea62	sta $ff
+	tya
+	bcs lea70
+lea67	and le01d,x
+	ora $ff
+	sta le01d,x
+	rts
+lea70	and le020,x
+	ora $ff
+	sta le020,x
+	rts
+lea79	lsr
+	bcs leab4
+lea7c	lsr
+	bcs leae3
+lea7f	sta $ff
+	lda le0ba,x
+	cmp le1a9,x
+	beq leadd
+lea89	inc le0ba,x
+	tay
+	lda $fd
+	sta le0e1,y
+	lda $fe
+	sta le0f0,y
+	lda le033,x
+	sta le12f,y
+	ldy $ff
+	lda le117,y
+	beq leada
+leaa4	sta $fe
+	lda le0ff,y
+	sta $fd
+	lda le13e,y
+	sta le033,x
+	rts
+leab2	bcs leaff
+leab4	lsr
+	bcs leaf3
+leab7	tay
+	lda $fd
+	sta le0ff,y
+	lda $fe
+	sta le117,y
+	lda le033,x
+	sta le13e,y
+	lda le0ba,x
+	cmp le1a9,x
+	beq leadd
+lead0	inc le0ba,x
+	tay
+	lda #$00
+	sta le0f0,y
+	rts
+leada	lda #$30
+	leadd = * + 1
+; Instruction parameter jumped to.
+	bit $28a9
+	sta le000
+	rts
+leae3	asl
+	asl
+	asl
+	asl
+	eor le025
+	and #$f0
+	eor le025
+	sta le025
+	rts
+leaf3	eor le026
+	and #$0f
+	eor le026
+	sta le026
+	rts
+leaff	lsr
+	bcs leb0d
+leb02	lsr
+	bcs leb09
+leb05	sta le0ca
+	rts
+leb09	sta le0cb
+	rts
+leb0d	lsr
+	bcc leb13
+leb10	jmp leba5
+leb13	lsr
+	tay
+	beq leb38
+leb17	dey
+	beq leb4e
+leb1a	dey
+	beq leb5f
+leb1d	dey
+	beq leb6a
+leb20	dey
+	beq leb75
+leb23	dey
+	beq leb82
+leb26	dey
+	beq leb8f
+leb29	dey
+	beq leb9f
+leb2c	and #$07
+	ora #$10
+	bcs leb35
+leb32	jmp leab7
+leb35	jmp lea7f
+leb38	ldy le026
+	bcs leb44
+leb3d	iny
+	tya
+	and #$0f
+	bne leb4a
+leb43	rts
+leb44	tya
+	and #$0f
+	beq leb4d
+leb49	dey
+leb4a	sty le026
+leb4d	rts
+leb4e	lda le162,x
+	eor #$ff
+	and le025
+	bcc leb5b
+leb58	ora le162,x
+leb5b	sta le025
+	rts
+leb5f	lda le01a,x
+	and #$fb
+	bcc lebbb
+leb66	ora #$04
+	bcs lebbb
+leb6a	lda le01a,x
+	and #$fd
+	bcc lebbb
+leb71	ora #$02
+	bcs lebbb
+leb75	lda le025
+	and #$f7
+	bcc leb7e
+leb7c	ora #$08
+leb7e	sta le025
+	rts
+leb82	lda le026
+	and #$7f
+	bcc leb8b
+leb89	ora #$80
+leb8b	sta le026
+	rts
+leb8f	tya
+	sta le0bd
+	sta le0df
+	iny
+	sty le0e0
+	rol
+	sta le0c9
+	rts
+leb9f	tya
+	rol
+	sta le060,x
+	rts
+leba5	lsr
+	bcs lebcf
+leba8	lsr
+	bcs lebbf
+lebab	bne lebaf
+lebad	lda #$08
+lebaf	asl
+	asl
+	asl
+	asl
+	eor le01a,x
+	and #$f0
+	eor le01a,x
+lebbb	sta le01a,x
+	rts
+lebbf	asl
+	asl
+	asl
+	asl
+	eor le026
+	and #$70
+	eor le026
+	sta le026
+	rts
+lebcf	lsr
+	bcc lebd6
+lebd2	sta le0c0,x
+	rts
+lebd6	tay
+	beq lebf9
+lebd9	dey
+	beq lec1c
+lebdc	dey
+	beq lec42
+lebdf	and #$03
+	sta le0c3,x
+	lda #$00
+	sta le0cd,x
+	sta le0d0,x
+	sta le0d3,x
+	sta le0d6,x
+	sta le0d9
+	sta le0dc
+	rts
+lebf9	lda le0b7,x
+	beq lec03
+lebfe	dec le0b7,x
+	beq lec15
+lec03	lda le033,x
+	cmp le0ae,x
+	bne lec16
+lec0b	lda le0b1,x
+	sta $fd
+	lda le0b4,x
+	sta $fe
+lec15	rts
+lec16	lda #$38
+	sta le000
+	rts
+lec1c	lda le0ba,x
+	cmp le1a8,x
+	beq lec3c
+lec24	dec le0ba,x
+	tay
+	dey
+	lda le0f0,y
+	beq lec3b
+lec2e	sta $fe
+	lda le0e1,y
+	sta $fd
+	lda le12f,y
+	sta le033,x
+lec3b	rts
+lec3c	lda #$20
+	sta le000
+	rts
+lec42	lda le000
+	eor le162,x
+	sta le000
+	lda #$01
+	sta le030,x
+	rts
+lec51	lda le000
+	and #$07
+	sta lec81
+	bne lec5e
+lec5b	jsr le2e9
+lec5e	rts
+	.byt $00
+lec60	ldx #$51
+	ldy #$ec
+	stx le15d
+	sty le15e
+	jsr le1cf
+	ldx #$00
+	ldy #$09
+	jsr le200
+	lda #$07
+	sta le000
+	sta lec81
+lec7c	rts
+	.byt $00,$00,$00
+lec80	lec81 = * + 1
+; Instruction parameter accessed.
+	lda #$00
+	and #$ff
+	beq lec7c
+lec86	jmp le329
+lec89	lda #$07
+	sta le000
+	rts
