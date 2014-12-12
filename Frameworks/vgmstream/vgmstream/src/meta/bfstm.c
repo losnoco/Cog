@@ -15,6 +15,8 @@ VGMSTREAM * init_vgmstream_bfstm(STREAMFILE *streamFile) {
 	int loop_flag;
 	int ima = 0;
 	off_t start_offset;
+	int founddata;
+	off_t tempoffset1;
 
 	/* check extension, case insensitive */
 	streamFile->get_name(streamFile, filename, sizeof(filename));
@@ -25,11 +27,11 @@ VGMSTREAM * init_vgmstream_bfstm(STREAMFILE *streamFile) {
 	/* check header */
 	if ((uint32_t)read_32bitBE(0, streamFile) != 0x4653544D) /* "FSTM" */
 		goto fail;
-	if ((uint32_t)read_32bitBE(4, streamFile) != 0xFEFF0040)
+	if ((uint32_t)read_16bitBE(4, streamFile) != 0xFEFF)
 		goto fail;
 
-	int founddata = 0;
-	off_t tempoffset1 = 0x8;
+	founddata = 0;
+	tempoffset1 = 0x8;
 	
 	while (!(founddata))
 	{
