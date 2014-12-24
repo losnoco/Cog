@@ -1,6 +1,6 @@
 /*
 	BASSMIDI 2.4 C/C++ header file
-	Copyright (c) 2006-2013 Un4seen Developments Ltd.
+	Copyright (c) 2006-2014 Un4seen Developments Ltd.
 
 	See the BASSMIDI.CHM file for more detailed documentation
 */
@@ -28,6 +28,7 @@ typedef DWORD HSOUNDFONT;	// soundfont handle
 #define BASS_CONFIG_MIDI_COMPACT	0x10400
 #define BASS_CONFIG_MIDI_VOICES		0x10401
 #define BASS_CONFIG_MIDI_AUTOFONT	0x10402
+#define BASS_CONFIG_MIDI_IN_PORTS	0x10404
 
 // Additional BASS_SetConfigPtr options
 #define BASS_CONFIG_MIDI_DEFFONT	0x10403
@@ -44,15 +45,18 @@ typedef DWORD HSOUNDFONT;	// soundfont handle
 #define BASS_SYNC_MIDI_KEYSIG	0x10007
 
 // Additional BASS_MIDI_StreamCreateFile/etc flags
+#define BASS_MIDI_NOSYSRESET	0x800
 #define BASS_MIDI_DECAYEND		0x1000
 #define BASS_MIDI_NOFX			0x2000
 #define BASS_MIDI_DECAYSEEK		0x4000
 #define BASS_MIDI_NOCROP		0x8000
+#define BASS_MIDI_NOTEOFF1		0x10000
 #define BASS_MIDI_SINCINTER		0x800000
 
 // BASS_MIDI_FontInit flags
 #define BASS_MIDI_FONT_MEM		0x10000
 #define BASS_MIDI_FONT_MMAP		0x20000
+#define BASS_MIDI_FONT_XGDRUMS	0x40000
 
 typedef struct {
 	HSOUNDFONT font;	// soundfont
@@ -129,6 +133,7 @@ typedef struct {
 #define MIDI_EVENT_RESONANCE		26
 #define MIDI_EVENT_RELEASE			27
 #define MIDI_EVENT_ATTACK			28
+#define MIDI_EVENT_DECAY			29
 #define MIDI_EVENT_REVERB_MACRO		30
 #define MIDI_EVENT_CHORUS_MACRO		31
 #define MIDI_EVENT_REVERB_TIME		32
@@ -142,6 +147,10 @@ typedef struct {
 #define MIDI_EVENT_CHORUS_FEEDBACK	40
 #define MIDI_EVENT_CHORUS_LEVEL		41
 #define MIDI_EVENT_CHORUS_REVERB	42
+#define MIDI_EVENT_USERFX			43
+#define MIDI_EVENT_USERFX_LEVEL		44
+#define MIDI_EVENT_USERFX_REVERB	45
+#define MIDI_EVENT_USERFX_CHORUS	46
 #define MIDI_EVENT_DRUM_FINETUNE	50
 #define MIDI_EVENT_DRUM_COARSETUNE	51
 #define MIDI_EVENT_DRUM_PAN			52
@@ -150,6 +159,7 @@ typedef struct {
 #define MIDI_EVENT_DRUM_CUTOFF		55
 #define MIDI_EVENT_DRUM_RESONANCE	56
 #define MIDI_EVENT_DRUM_LEVEL		57
+#define MIDI_EVENT_DRUM_USERFX		58
 #define MIDI_EVENT_SOFT				60
 #define MIDI_EVENT_SYSTEM			61
 #define MIDI_EVENT_TEMPO			62
@@ -161,6 +171,11 @@ typedef struct {
 #define MIDI_EVENT_CHANPRES_VOLUME	68
 #define MIDI_EVENT_MODRANGE			69
 #define MIDI_EVENT_BANK_LSB			70
+#define MIDI_EVENT_KEYPRES			71
+#define MIDI_EVENT_KEYPRES_VIBRATO	72
+#define MIDI_EVENT_KEYPRES_PITCH	73
+#define MIDI_EVENT_KEYPRES_FILTER	74
+#define MIDI_EVENT_KEYPRES_VOLUME	75
 #define MIDI_EVENT_MIXLEVEL			0x10000
 #define MIDI_EVENT_TRANSPOSE		0x10001
 #define MIDI_EVENT_SYSTEMEX			0x10002
@@ -183,9 +198,15 @@ typedef struct {
 } BASS_MIDI_EVENT;
 
 // BASS_MIDI_StreamEvents modes
-#define BASS_MIDI_EVENTS_STRUCT	0 // BASS_MIDI_EVENT structures
-#define BASS_MIDI_EVENTS_RAW	0x10000 // raw MIDI event data
-#define BASS_MIDI_EVENTS_SYNC	0x1000000 // FLAG: trigger event syncs
+#define BASS_MIDI_EVENTS_STRUCT		0 // BASS_MIDI_EVENT structures
+#define BASS_MIDI_EVENTS_RAW		0x10000 // raw MIDI event data
+#define BASS_MIDI_EVENTS_SYNC		0x1000000 // FLAG: trigger event syncs
+#define BASS_MIDI_EVENTS_NORSTATUS	0x2000000 // FLAG: no running status
+
+// BASS_MIDI_StreamGetChannel special channels
+#define BASS_MIDI_CHAN_CHORUS		(DWORD)-1
+#define BASS_MIDI_CHAN_REVERB		(DWORD)-2
+#define BASS_MIDI_CHAN_USERFX		(DWORD)-3
 
 // BASS_CHANNELINFO type
 #define BASS_CTYPE_STREAM_MIDI	0x10d00
@@ -206,6 +227,7 @@ typedef struct {
 
 // BASS_MIDI_FontPack flags
 #define BASS_MIDI_PACK_NOHEAD		1	// don't send a WAV header to the encoder
+#define BASS_MIDI_PACK_16BIT		2	// discard low 8 bits of 24-bit sample data
 
 typedef struct {
 	const char *name;	// description
@@ -213,7 +235,7 @@ typedef struct {
 	DWORD flags;
 } BASS_MIDI_DEVICEINFO;
 
-typedef void (CALLBACK MIDIINPROC)(DWORD device, double time, const void *buffer, DWORD length, void *user);
+typedef void (CALLBACK MIDIINPROC)(DWORD device, double time, const BYTE *buffer, DWORD length, void *user);
 /* User MIDI input callback function.
 device : MIDI input device
 time   : Timestamp
