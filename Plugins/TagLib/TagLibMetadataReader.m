@@ -7,12 +7,12 @@
 //
 
 #import "TagLibMetadataReader.h"
-#import <TagLib/fileref.h>
-#import <TagLib/tag.h>
-#import <Taglib/mpegfile.h>
-#import <TagLib/mp4file.h>
-#import <Taglib/id3v2tag.h>
-#import <Taglib/attachedpictureframe.h>
+#import <taglib/fileref.h>
+#import <taglib/tag.h>
+#import <taglib/mpeg/mpegfile.h>
+#import <taglib/mp4/mp4file.h>
+#import <taglib/mpeg/id3v2/id3v2tag.h>
+#import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
 
 @implementation TagLibMetadataReader
 
