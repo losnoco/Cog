@@ -500,19 +500,14 @@
 {
 	RepeatMode repeat = [self repeat];
 	
-	if (i < 0)
-	{
-		if (repeat != RepeatNone)
+	if (i < 0 || i >= [[self arrangedObjects] count] ) {
+		if ( repeat != RepeatNone )
+			return nil;
+		
+		while ( i < 0 )
 			i += [[self arrangedObjects] count];
-		else
-			return nil;
-	}
-	else if (i >= [[self arrangedObjects] count])
-	{
-		if (repeat != RepeatNone)
-			i -= [[self arrangedObjects] count];
-		else
-			return nil;
+		if ( i >= [[self arrangedObjects] count])
+			i %= [[self arrangedObjects] count];
 	}
 	
 	return [[self arrangedObjects] objectAtIndex:i];
