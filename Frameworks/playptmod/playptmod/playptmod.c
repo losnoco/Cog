@@ -29,11 +29,12 @@
 #define _USE_MATH_DEFINES // visual studio
 
 #include "playptmod.h"
-#include "blip_buf.h"
+#include "pt_blep.h"
 
 #include <stdio.h>
 #include <string.h> // memcpy()
 #include <stdlib.h> // malloc(), calloc(), free()
+#include <limits.h> // INT_MAX, INT_MIN
 #include <math.h> // floorf(), sinf()
 
 #define HI_NYBBLE(x) ((x) >> 4)
@@ -240,8 +241,8 @@ typedef struct
     FilterC filterC;
     float *mixBufferL;
     float *mixBufferR;
-    blip_t blep[MAX_CHANNELS];
-    blip_t blepVol[MAX_CHANNELS];
+    BLEP blep[MAX_CHANNELS];
+    BLEP blepVol[MAX_CHANNELS];
     unsigned int orderPlayed[256];
     MODULE *source;
 } player;
@@ -524,8 +525,8 @@ static void mixerCutChannels(player *p)
     memset(p->v, 0, sizeof (p->v));
     for (i = 0; i < MAX_CHANNELS; ++i)
     {
-        ptm_blip_clear(&p->blep[i]);
-        ptm_blip_clear(&p->blepVol[i]);
+        memset(&p->blep[i], 0, sizeof(BLEP));
+        memset(&p->blepVol[i], 0, sizeof(BLEP));
     }
 
     memset(&p->filter, 0, sizeof (p->filter));
@@ -564,8 +565,8 @@ static void outputAudio(player *p, int *target, int numSamples)
     float downscale;
     
     Voice *v;
-    blip_t *bSmp;
-    blip_t *bVol;
+    BLEP *bSmp;
+    BLEP *bVol;
 
     memset(p->mixBufferL, 0, numSamples * sizeof (float));
     memset(p->mixBufferR, 0, numSamples * sizeof (float));
@@ -594,8 +595,8 @@ static void outputAudio(player *p, int *target, int numSamples)
                     if (v->data)
                         v->frac -= 1.0f;
 
-                    t_vol += ptm_blip_read_sample(bVol);
-                    t_smp += ptm_blip_read_sample(bSmp);
+                    t_vol += blepRun(bVol);
+                    t_smp += blepRun(bSmp);
 
                     t_smp *= t_vol;
                     i_smp = (signed int)t_smp;
@@ -609,18 +610,18 @@ static void outputAudio(player *p, int *target, int numSamples)
                 if (j >= numSamples)
                     break;
 
-                if (tempSample != bSmp->last_value)
+                if (tempSample != bSmp->lastInput && v->frac >= 0.0f && v->frac < 1.0f)
                 {
-                    delta = tempSample - bSmp->last_value;
-                    bSmp->last_value = tempSample;
-                    ptm_blip_add_delta(bSmp, v->frac, delta);
+                    delta = tempSample - bSmp->lastInput;
+                    bSmp->lastInput = tempSample;
+                    blepAdd(bSmp, v->frac, delta);
                 }
 
-                if (tempVolume != bVol->last_value)
+                if (tempVolume != bVol->lastInput)
                 {
-                    delta = tempVolume - bVol->last_value;
-                    bVol->last_value = tempVolume;
-                    ptm_blip_add_delta(bVol, 0, delta);
+                    delta = tempVolume - bVol->lastInput;
+                    bVol->lastInput = tempVolume;
+                    blepAdd(bVol, 0, delta);
                 }
 
                 if (v->data)
@@ -696,11 +697,11 @@ static void outputAudio(player *p, int *target, int numSamples)
         {
             for (; j < numSamples; ++j)
             {
-                tempVolume = bVol->last_value;
-                tempSample = bSmp->last_value;
+                tempVolume = 0.0f;
+                tempSample = 0.0f;
 
-                tempVolume += ptm_blip_read_sample(bVol);
-                tempSample += ptm_blip_read_sample(bSmp);
+                tempVolume += blepRun(bVol);
+                tempSample += blepRun(bSmp);
 
                 tempSample *= tempVolume;
                 i_smp = (signed int)tempSample;

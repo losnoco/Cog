@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83304C9B1A5F9A1C0066CDDA /* pt_blep.c in Sources */ = {isa = PBXBuildFile; fileRef = 83304C991A5F9A1C0066CDDA /* pt_blep.c */; };
+		83304C9C1A5F9A1C0066CDDA /* pt_blep.h in Headers */ = {isa = PBXBuildFile; fileRef = 83304C9A1A5F9A1C0066CDDA /* pt_blep.h */; };
 		83A0F4A61816CEAD00119DB4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83A0F4A41816CEAD00119DB4 /* InfoPlist.strings */; };
-		83A0F4D31816CF9500119DB4 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A0F4CF1816CF9500119DB4 /* blip_buf.c */; };
-		83A0F4D41816CF9500119DB4 /* blip_buf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A0F4D01816CF9500119DB4 /* blip_buf.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83A0F4D51816CF9500119DB4 /* playptmod.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A0F4D11816CF9500119DB4 /* playptmod.c */; };
 		83A0F4D61816CF9500119DB4 /* playptmod.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A0F4D21816CF9500119DB4 /* playptmod.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		83304C991A5F9A1C0066CDDA /* pt_blep.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pt_blep.c; sourceTree = "<group>"; };
+		83304C9A1A5F9A1C0066CDDA /* pt_blep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pt_blep.h; sourceTree = "<group>"; };
 		83A0F4981816CEAD00119DB4 /* playptmod.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = playptmod.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83A0F4A31816CEAD00119DB4 /* playptmod-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "playptmod-Info.plist"; sourceTree = "<group>"; };
 		83A0F4A51816CEAD00119DB4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		83A0F4CF1816CF9500119DB4 /* blip_buf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blip_buf.c; sourceTree = "<group>"; };
-		83A0F4D01816CF9500119DB4 /* blip_buf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blip_buf.h; sourceTree = "<group>"; };
 		83A0F4D11816CF9500119DB4 /* playptmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playptmod.c; sourceTree = "<group>"; };
 		83A0F4D21816CF9500119DB4 /* playptmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playptmod.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,8 +70,8 @@
 		83A0F4A11816CEAD00119DB4 /* playptmod */ = {
 			isa = PBXGroup;
 			children = (
-				83A0F4CF1816CF9500119DB4 /* blip_buf.c */,
-				83A0F4D01816CF9500119DB4 /* blip_buf.h */,
+				83304C991A5F9A1C0066CDDA /* pt_blep.c */,
+				83304C9A1A5F9A1C0066CDDA /* pt_blep.h */,
 				83A0F4D11816CF9500119DB4 /* playptmod.c */,
 				83A0F4D21816CF9500119DB4 /* playptmod.h */,
 				83A0F4A21816CEAD00119DB4 /* Supporting Files */,
@@ -95,8 +95,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83A0F4D41816CF9500119DB4 /* blip_buf.h in Headers */,
 				83A0F4D61816CF9500119DB4 /* playptmod.h in Headers */,
+				83304C9C1A5F9A1C0066CDDA /* pt_blep.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,8 +163,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83304C9B1A5F9A1C0066CDDA /* pt_blep.c in Sources */,
 				83A0F4D51816CF9500119DB4 /* playptmod.c in Sources */,
-				83A0F4D31816CF9500119DB4 /* blip_buf.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
