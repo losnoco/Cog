@@ -471,6 +471,9 @@ static void mixerSetChSource(player *p, int ch, const signed char *src, int leng
     v->step           = step;
     v->interpolating  = 1;
     
+    resampler_clear(p->blep[ch]);
+    resampler_clear(p->blepVol[ch]);
+    
     // Check external 9xx usage (Set Sample Offset)
     if (v->loopFlag)
     {
