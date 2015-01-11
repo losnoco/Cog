@@ -413,8 +413,9 @@ static DUMB_IT_SIGDATA *it_669_load_sigdata(DUMBFILE *f, int * ext)
 	memset(sigdata->channel_volume, 64, DUMB_IT_N_CHANNELS);
 
 	for (i = 0; i < DUMB_IT_N_CHANNELS; i += 2) {
-		sigdata->channel_pan[i+0] = 48;
-		sigdata->channel_pan[i+1] = 16;
+		int sep = 32 * dumb_it_default_panning_separation / 100;
+		sigdata->channel_pan[i+0] = 32 + sep;
+		sigdata->channel_pan[i+1] = 32 - sep;
 	}
 
 	_dumb_it_fix_invalid_orders(sigdata);

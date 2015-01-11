@@ -29,7 +29,7 @@
 #define _USE_MATH_DEFINES // visual studio
 
 #include "playptmod.h"
-#include "pt_blep.h"
+#include "resampler.h"
 
 #include <stdio.h>
 #include <string.h> // memcpy()
@@ -185,8 +185,8 @@ typedef struct voice_data
     int panR;
     int step;
     int newStep;
-    float frac;
     float rate;
+    int interpolating;
     int mute;
 } Voice;
 
@@ -241,8 +241,8 @@ typedef struct
     FilterC filterC;
     float *mixBufferL;
     float *mixBufferR;
-    BLEP blep[MAX_CHANNELS];
-    BLEP blepVol[MAX_CHANNELS];
+    void * blep[MAX_CHANNELS];
+    void * blepVol[MAX_CHANNELS];
     unsigned int orderPlayed[256];
     MODULE *source;
 } player;
@@ -437,6 +437,7 @@ static void mixerSwapChSource(player *p, int ch, const signed char *src, int len
     v->newLoopBegin    = loopStart;
     v->newLoopEnd      = loopStart + loopLength;
     v->newStep         = step;
+    v->interpolating   = 1;
     
     // if the mixer was already shut down because of a short non-loop sample, force swap
     if (v->data == NULL)
@@ -446,7 +447,6 @@ static void mixerSwapChSource(player *p, int ch, const signed char *src, int len
         v->loopFlag     = v->newLoopFlag;
         v->data         = v->newData;
         v->length       = v->newLength;
-        v->frac         = 0.0f;
         v->step         = v->newStep;
 
         // for safety, shut down voice if the sample position is overriding the length
@@ -464,12 +464,12 @@ static void mixerSetChSource(player *p, int ch, const signed char *src, int leng
     v->swapSampleFlag = false;
     v->data           = src;
     v->index          = offset;
-    v->frac           = 0.0f;
     v->length         = length;
     v->loopFlag       = loopLength > (2 * step);
     v->loopBegin      = loopStart;
     v->loopEnd        = loopStart + loopLength;
     v->step           = step;
+    v->interpolating  = 1;
     
     // Check external 9xx usage (Set Sample Offset)
     if (v->loopFlag)
@@ -525,8 +525,8 @@ static void mixerCutChannels(player *p)
     memset(p->v, 0, sizeof (p->v));
     for (i = 0; i < MAX_CHANNELS; ++i)
     {
-        memset(&p->blep[i], 0, sizeof(BLEP));
-        memset(&p->blepVol[i], 0, sizeof(BLEP));
+        resampler_clear(p->blep[i]);
+        resampler_clear(p->blepVol[i]);
     }
 
     memset(&p->filter, 0, sizeof (p->filter));
@@ -545,7 +545,7 @@ static void mixerCutChannels(player *p)
 
 static void mixerSetChRate(player *p, int ch, float rate)
 {
-    p->v[ch].rate = rate;
+    p->v[ch].rate = 1.0f / rate;
 }
 
 static void outputAudio(player *p, int *target, int numSamples)
@@ -556,6 +556,7 @@ static void outputAudio(player *p, int *target, int numSamples)
     int step;
     int tempVolume;
     int delta;
+    int interpolating;
     unsigned int i;
     unsigned int j;
     float L;
@@ -565,8 +566,8 @@ static void outputAudio(player *p, int *target, int numSamples)
     float downscale;
     
     Voice *v;
-    BLEP *bSmp;
-    BLEP *bVol;
+    void *bSmp;
+    void *bVol;
 
     memset(p->mixBufferL, 0, numSamples * sizeof (float));
     memset(p->mixBufferR, 0, numSamples * sizeof (float));
@@ -576,27 +577,99 @@ static void outputAudio(player *p, int *target, int numSamples)
         j = 0;
         
         v = &p->v[i];
-        bSmp = &p->blep[i];
-        bVol = &p->blepVol[i];
+        bSmp = p->blep[i];
+        bVol = p->blepVol[i];
         
         if (v->data && v->rate)
         {
             step = v->step;
+            interpolating = v->interpolating;
+            resampler_set_rate(bSmp, v->rate);
+            resampler_set_rate(bVol, v->rate);
+            
             for (j = 0; j < numSamples;)
             {
-                tempSample = (v->data ? (step == 2 ? (v->data[v->index] + v->data[v->index + 1] * 0x100) : v->data[v->index] * 0x100) : 0);
                 tempVolume = (v->data && !v->mute ? v->vol : 0);
 
-                while (j < numSamples && (!v->data || v->frac >= 1.0f))
+                while (interpolating && (resampler_get_free_count(bSmp) ||
+                                         !resampler_get_sample_count(bSmp)))
                 {
-                    t_vol = 0.0f;
-                    t_smp = 0.0f;
+                    tempSample = (v->data ? (step == 2 ? (v->data[v->index] + v->data[v->index + 1] * 0x100) : v->data[v->index] * 0x100) : 0);
+                    
+                    resampler_write_sample_fixed(bSmp, tempSample, 1);
+                    resampler_write_sample_fixed(bVol, tempVolume, 1);
 
                     if (v->data)
-                        v->frac -= 1.0f;
-
-                    t_vol += blepRun(bVol);
-                    t_smp += blepRun(bSmp);
+                    {
+                        v->index += step;
+                        
+                        if (v->loopFlag)
+                        {
+                            if (v->index >= v->loopEnd)
+                            {
+                                if (v->swapSampleFlag)
+                                {
+                                    v->swapSampleFlag = false;
+                                    
+                                    if (!v->newLoopFlag)
+                                    {
+                                        interpolating = 0;
+                                        break;
+                                    }
+                                    
+                                    v->loopBegin    = v->newLoopBegin;
+                                    v->loopEnd      = v->newLoopEnd;
+                                    v->loopFlag     = v->newLoopFlag;
+                                    v->data         = v->newData;
+                                    v->length       = v->newLength;
+                                    v->step         = v->newStep;
+                                    
+                                    v->index = v->loopBegin;
+                                }
+                                else
+                                {
+                                    v->index = v->loopBegin;
+                                }
+                            }
+                        }
+                        else if (v->index >= v->length)
+                        {
+                            if (v->swapSampleFlag)
+                            {
+                                v->swapSampleFlag = false;
+                                
+                                if (!v->newLoopFlag)
+                                {
+                                    interpolating = 0;
+                                    break;
+                                }
+                                
+                                v->loopBegin    = v->newLoopBegin;
+                                v->loopEnd      = v->newLoopEnd;
+                                v->loopFlag     = v->newLoopFlag;
+                                v->data         = v->newData;
+                                v->length       = v->newLength;
+                                v->step         = v->newStep;
+                                
+                                v->index = v->loopBegin;
+                            }
+                            else
+                            {
+                                interpolating = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                v->interpolating = interpolating;
+                
+                while (j < numSamples && resampler_get_sample_count(bSmp))
+                {
+                    t_vol = resampler_get_sample_float(bVol);
+                    t_smp = resampler_get_sample_float(bSmp);
+                    resampler_remove_sample(bVol, 0);
+                    resampler_remove_sample(bSmp, 1);
 
                     t_smp *= t_vol;
                     i_smp = (signed int)t_smp;
@@ -606,108 +679,12 @@ static void outputAudio(player *p, int *target, int numSamples)
 
                     j++;
                 }
-
-                if (j >= numSamples)
+                
+                if (!interpolating && j < numSamples)
+                {
+                    v->data = NULL;
                     break;
-
-                if (tempSample != bSmp->lastInput && v->frac >= 0.0f && v->frac < 1.0f)
-                {
-                    delta = tempSample - bSmp->lastInput;
-                    bSmp->lastInput = tempSample;
-                    blepAdd(bSmp, v->frac, delta);
                 }
-
-                if (tempVolume != bVol->lastInput)
-                {
-                    delta = tempVolume - bVol->lastInput;
-                    bVol->lastInput = tempVolume;
-                    blepAdd(bVol, 0, delta);
-                }
-
-                if (v->data)
-                {
-                    v->index += step;
-                    v->frac += v->rate;
-
-                    if (v->loopFlag)
-                    {
-                        if (v->index >= v->loopEnd)
-                        {
-                            if (v->swapSampleFlag)
-                            {
-                                v->swapSampleFlag = false;
-
-                                if (!v->newLoopFlag)
-                                {
-                                    v->data = NULL;
-                                    continue;
-                                }
-
-                                v->loopBegin    = v->newLoopBegin;
-                                v->loopEnd      = v->newLoopEnd;
-                                v->loopFlag     = v->newLoopFlag;
-                                v->data         = v->newData;
-                                v->length       = v->newLength;
-                                v->frac         = 0.0f;
-                                v->step         = v->newStep;
-                                
-                                while (v->index >= v->loopEnd)
-                                    v->index = v->loopBegin + (v->index - v->loopEnd);
-                            }
-                            else
-                            {
-                                while (v->index >= v->loopEnd)
-                                    v->index = v->loopBegin + (v->index - v->loopEnd);
-                            }
-                        }
-                    }
-                    else if (v->index >= v->length)
-                    {
-                        if (v->swapSampleFlag)
-                        {
-                            v->swapSampleFlag = false;
-                            
-                            if (!v->newLoopFlag)
-                            {
-                                v->data = NULL;
-                                continue;
-                            }
-
-                            v->loopBegin    = v->newLoopBegin;
-                            v->loopEnd      = v->newLoopEnd;
-                            v->loopFlag     = v->newLoopFlag;
-                            v->data         = v->newData;
-                            v->length       = v->newLength;
-                            v->frac         = 0.0f;
-                            v->step         = v->newStep;
-
-                            while (v->index >= v->loopEnd)
-                                v->index = v->loopBegin + (v->index - v->loopEnd);
-                        }
-                        else
-                        {
-                            v->data = NULL;
-                        }
-                    }
-                }
-            }
-        }
-
-        if ((j < numSamples) && (v->data == NULL))
-        {
-            for (; j < numSamples; ++j)
-            {
-                tempVolume = 0.0f;
-                tempSample = 0.0f;
-
-                tempVolume += blepRun(bVol);
-                tempSample += blepRun(bSmp);
-
-                tempSample *= tempVolume;
-                i_smp = (signed int)tempSample;
-
-                p->mixBufferL[j] += i_smp * v->panL;
-                p->mixBufferR[j] += i_smp * v->panR;
             }
         }
     }
@@ -2787,6 +2764,8 @@ void *playptmod_Create(int samplingFrequency)
     player *p = (player *) calloc(1, sizeof (player));
     
     int i, j;
+    
+    resampler_init();
 
     p->tempoTimerVal = (samplingFrequency * 125) / 50;
 
@@ -2820,8 +2799,20 @@ void *playptmod_Create(int samplingFrequency)
 
     p->useLEDFilter = false;
 
+    for (i = 0; i < MAX_CHANNELS; ++i)
+    {
+        p->blep[i] = resampler_create();
+        resampler_set_quality(p->blep[i], RESAMPLER_QUALITY_BLEP);
+    }
+    
+    for (i = 0; i < MAX_CHANNELS; ++i)
+    {
+        p->blepVol[i] = resampler_create();
+        resampler_set_quality(p->blepVol[i], RESAMPLER_QUALITY_BLEP);
+    }
+    
     mixerCutChannels(p);
-
+    
     return p;
 }
 
@@ -2951,6 +2942,12 @@ void playptmod_Free(void *_p)
     {
         free(p->extendedFrequencyTable);
         p->extendedFrequencyTable = NULL;
+    }
+    
+    for (i = 0; i < MAX_CHANNELS; ++i)
+    {
+        resampler_delete(p->blep[i]);
+        resampler_delete(p->blepVol[i]);
     }
     
     free(p);

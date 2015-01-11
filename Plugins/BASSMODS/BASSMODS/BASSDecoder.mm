@@ -106,6 +106,8 @@ static void SyncProc( HSYNC handle, DWORD channel, DWORD data, void *user )
         resampling_int = 0;
     else if ([resampling isEqualToString:@"linear"])
         resampling_int = 1;
+    else if ([resampling isEqualToString:@"blam"])
+        resampling_int = 1;
     else if ([resampling isEqualToString:@"cubic"])
         resampling_int = 1;
     else if ([resampling isEqualToString:@"sinc"])

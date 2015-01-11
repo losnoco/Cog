@@ -141,7 +141,7 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
         *dst++ += MULSC( resampler_get_sample( resampler->fir_resampler[0] ), vol ); \
         UPDATE_VOLUME( volume, vol ); \
 }
-#define ADVANCE_FIR resampler_remove_sample( resampler->fir_resampler[0] )
+#define ADVANCE_FIR resampler_remove_sample( resampler->fir_resampler[0], 1 )
 #define STEREO_DEST_PEEK_FIR { \
         int sample = resampler_get_sample( resampler->fir_resampler[0] ); \
         *dst++ = MULSC( sample, lvol ); \
@@ -225,8 +225,8 @@ DUMB_RESAMPLER *dumb_start_resampler(SRCTYPE *src, int src_channels, long pos, l
         UPDATE_VOLUME( volume_right, rvol ); \
 }
 #define ADVANCE_FIR { \
-        resampler_remove_sample( resampler->fir_resampler[0] ); \
-        resampler_remove_sample( resampler->fir_resampler[1] ); \
+        resampler_remove_sample( resampler->fir_resampler[0], 1 ); \
+        resampler_remove_sample( resampler->fir_resampler[1], 1 ); \
 }
 #define STEREO_DEST_PEEK_FIR { \
         *dst++ = MULSC( resampler_get_sample( resampler->fir_resampler[0] ), lvol ); \

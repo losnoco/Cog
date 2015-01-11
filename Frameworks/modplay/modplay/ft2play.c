@@ -3030,7 +3030,8 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
     {
         samplePosition = v->samplePosition;
 
-        while (interpolating && resampler_get_free_count(resampler))
+        while (interpolating && (resampler_get_free_count(resampler) ||
+               !resampler_get_sample_count(resampler)))
         {
             resampler_write_sample_fixed(resampler, sampleData[samplePosition], 8);
 
@@ -3085,7 +3086,7 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
         }
 
         sample = resampler_get_sample_float(resampler);
-        resampler_remove_sample(resampler);
+        resampler_remove_sample(resampler, 1);
         
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)
@@ -3193,7 +3194,9 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
     {
         samplePosition = v->samplePosition;
         
-        while (interpolating && resampler_get_free_count(resampler[0]))
+        while (interpolating && (resampler_get_free_count(resampler[0]) ||
+               (!resampler_get_sample_count(resampler[0]) &&
+               !resampler_get_sample_count(resampler[1]))))
         {
             resampler_write_sample_fixed(resampler[0], sampleData[samplePosition], 8);
             resampler_write_sample_fixed(resampler[1], sampleData[sampleLength + samplePosition], 8);
@@ -3250,8 +3253,8 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         
         sampleL = resampler_get_sample_float(resampler[0]);
         sampleR = resampler_get_sample_float(resampler[1]);
-        resampler_remove_sample(resampler[0]);
-        resampler_remove_sample(resampler[1]);
+        resampler_remove_sample(resampler[0], 1);
+        resampler_remove_sample(resampler[1], 1);
         
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)
@@ -3359,7 +3362,8 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
     {
         samplePosition = v->samplePosition;
         
-        while (interpolating && resampler_get_free_count(resampler))
+        while (interpolating && (resampler_get_free_count(resampler) ||
+              !resampler_get_sample_count(resampler)))
         {
             resampler_write_sample_fixed(resampler, sampleData[samplePosition], 16);
             
@@ -3414,7 +3418,7 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
         }
         
         sample = resampler_get_sample_float(resampler);
-        resampler_remove_sample(resampler);
+        resampler_remove_sample(resampler, 1);
         
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)
@@ -3522,7 +3526,9 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
     {
         samplePosition = v->samplePosition;
         
-        while (interpolating && resampler_get_free_count(resampler[0]))
+        while (interpolating && (resampler_get_free_count(resampler[0]) ||
+                                 (!resampler_get_sample_count(resampler[0]) &&
+                                  !resampler_get_sample_count(resampler[1]))))
         {
             resampler_write_sample_fixed(resampler[0], sampleData[samplePosition], 16);
             resampler_write_sample_fixed(resampler[1], sampleData[sampleLength + samplePosition], 16);
@@ -3579,8 +3585,8 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         
         sampleL = resampler_get_sample_float(resampler[0]);
         sampleR = resampler_get_sample_float(resampler[1]);
-        resampler_remove_sample(resampler[0]);
-        resampler_remove_sample(resampler[1]);
+        resampler_remove_sample(resampler[0], 1);
+        resampler_remove_sample(resampler[1], 1);
         
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)

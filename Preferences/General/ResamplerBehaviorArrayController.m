@@ -28,6 +28,11 @@
       NSLocalizedStringFromTableInBundle(@"Linear Interpolation", nil, [NSBundle bundleForClass:[self class]], @"") , @"name",
       @"linear", @"preference",nil]];
     
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      NSLocalizedStringFromTableInBundle(@"Blam Synthesis", nil, [NSBundle bundleForClass:[self class]], @"") , @"name",
+      @"blam", @"preference",nil]];
+    
 	[self addObject:
      [NSDictionary dictionaryWithObjectsAndKeys:
       NSLocalizedStringFromTableInBundle(@"Cubic Interpolation", nil, [NSBundle bundleForClass:[self class]], @"") , @"name",

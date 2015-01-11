@@ -61,6 +61,7 @@ static int it_stm_read_sample_header( IT_SAMPLE *sample, DUMBFILE *f, unsigned s
 		/* Looks like no-existy. */
 		sample->flags &= ~IT_SAMPLE_EXISTS;
 		sample->length = 0;
+		*offset = 0;
 		return dumbfile_error( f );
 	}
 
@@ -278,10 +279,11 @@ static DUMB_IT_SIGDATA *it_stm_load_sigdata(DUMBFILE *f, int * version)
 	}
 
 	memset( sigdata->channel_volume, 64, 4 );
-	sigdata->channel_pan[ 0 ] = 48;
-	sigdata->channel_pan[ 1 ] = 16;
-	sigdata->channel_pan[ 2 ] = 48;
-	sigdata->channel_pan[ 3 ] = 16;
+	n = 32 * dumb_it_default_panning_separation / 100;
+	sigdata->channel_pan[ 0 ] = 32 + n;
+	sigdata->channel_pan[ 1 ] = 32 - n;
+	sigdata->channel_pan[ 2 ] = 32 + n;
+	sigdata->channel_pan[ 3 ] = 32 - n;
 
 	for ( n = 0; n < sigdata->n_samples; ++n ) {
 		if ( it_stm_read_sample_header( &sigdata->sample[ n ], f, &sample_offset[ n ] ) ) {

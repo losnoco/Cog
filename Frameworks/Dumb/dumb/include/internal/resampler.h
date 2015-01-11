@@ -36,9 +36,10 @@ enum
     RESAMPLER_QUALITY_ZOH = 0,
     RESAMPLER_QUALITY_BLEP = 1,
     RESAMPLER_QUALITY_LINEAR = 2,
-    RESAMPLER_QUALITY_CUBIC = 3,
-    RESAMPLER_QUALITY_SINC = 4,
-    RESAMPLER_QUALITY_MAX = 4
+    RESAMPLER_QUALITY_BLAM = 3,
+    RESAMPLER_QUALITY_CUBIC = 4,
+    RESAMPLER_QUALITY_SINC = 5,
+    RESAMPLER_QUALITY_MAX = 5
 };
 
 void resampler_set_quality(void *, int quality);
@@ -52,6 +53,6 @@ void resampler_clear(void *);
 int resampler_get_sample_count(void *);
 int resampler_get_sample(void *);
 float resampler_get_sample_float(void *);
-void resampler_remove_sample(void *);
+void resampler_remove_sample(void *, int decay);
 
 #endif

@@ -676,9 +676,10 @@ void dumb_destroy_click_remover_array(int n, DUMB_CLICK_REMOVER **cr);
 #define DUMB_RQ_ALIASING 0
 #define DUMB_RQ_BLEP     1
 #define DUMB_RQ_LINEAR   2
-#define DUMB_RQ_CUBIC    3
-#define DUMB_RQ_FIR      4
-#define DUMB_RQ_N_LEVELS 5
+#define DUMB_RQ_BLAM     3
+#define DUMB_RQ_CUBIC    4
+#define DUMB_RQ_FIR      5
+#define DUMB_RQ_N_LEVELS 6
 
 extern int dumb_resampling_quality; /* This specifies the default */
 void dumb_it_set_resampling_quality(DUMB_IT_SIGRENDERER * sigrenderer, int quality); /* This overrides it */
@@ -767,6 +768,11 @@ void dumb_resample_get_current_sample_n_2_1(int n, DUMB_RESAMPLER *resampler, DU
 void dumb_resample_get_current_sample_n_2_2(int n, DUMB_RESAMPLER *resampler, DUMB_VOLUME_RAMP_INFO * volume_left, DUMB_VOLUME_RAMP_INFO * volume_right, sample_t *dst);
 void dumb_end_resampler_n(int n, DUMB_RESAMPLER *resampler);
 
+/* This sets the default panning separation for hard panned formats,
+   or for formats with default panning information. This must be set
+   before using any readers or loaders, and is not really thread safe. */
+
+extern int dumb_it_default_panning_separation; /* in percent, default 25 */
 
 /* DUH Construction */
 

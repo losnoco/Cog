@@ -334,8 +334,9 @@ static DUMB_IT_SIGDATA *it_amf_load_sigdata(DUMBFILE *f, int * version)
 		}
 	}
 	else {
+		int sep = 32 * dumb_it_default_panning_separation / 100;
 		for ( i = 0; i < 16; i++ ) {
-			sigdata->channel_pan[ i ] = ( dumbfile_getc( f ) & 1 ) ? 16 : 48;
+			sigdata->channel_pan[ i ] = ( dumbfile_getc( f ) & 1 ) ? 32 - sep : 32 + sep;
 		}
 	}
 

@@ -190,10 +190,12 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
         resampling_int = 1;
     else if ([resampling isEqualToString:@"linear"])
         resampling_int = 2;
-    else if ([resampling isEqualToString:@"cubic"])
+    else if ([resampling isEqualToString:@"blam"])
         resampling_int = 3;
-    else if ([resampling isEqualToString:@"sinc"])
+    else if ([resampling isEqualToString:@"cubic"])
         resampling_int = 4;
+    else if ([resampling isEqualToString:@"sinc"])
+        resampling_int = 5;
     
     if ( type == TYPE_S3M )
     {

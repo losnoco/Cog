@@ -347,10 +347,11 @@ static DUMB_IT_SIGDATA *it_riff_amff_load_sigdata( DUMBFILE * f, struct riff * s
 	memset(sigdata->channel_volume, 64, DUMB_IT_N_CHANNELS);
 
 	for (n = 0; n < DUMB_IT_N_CHANNELS; n += 4) {
-		sigdata->channel_pan[n  ] = 16;
-		sigdata->channel_pan[n+1] = 48;
-		sigdata->channel_pan[n+2] = 48;
-		sigdata->channel_pan[n+3] = 16;
+		int sep = 32 * dumb_it_default_panning_separation / 100;
+		sigdata->channel_pan[n  ] = 32 - sep;
+		sigdata->channel_pan[n+1] = 32 + sep;
+		sigdata->channel_pan[n+2] = 32 + sep;
+		sigdata->channel_pan[n+3] = 32 - sep;
 	}
 
     for ( n = 0; (unsigned)n < stream->chunk_count; ++n )
@@ -578,10 +579,11 @@ static DUMB_IT_SIGDATA *it_riff_am_load_sigdata( DUMBFILE * f, struct riff * str
 	memset(sigdata->channel_volume, 64, DUMB_IT_N_CHANNELS);
 
 	for (n = 0; n < DUMB_IT_N_CHANNELS; n += 4) {
-		sigdata->channel_pan[n  ] = 16;
-		sigdata->channel_pan[n+1] = 48;
-		sigdata->channel_pan[n+2] = 48;
-		sigdata->channel_pan[n+3] = 16;
+		int sep = 32 * dumb_it_default_panning_separation / 100;
+		sigdata->channel_pan[n  ] = 32 - sep;
+		sigdata->channel_pan[n+1] = 32 + sep;
+		sigdata->channel_pan[n+2] = 32 + sep;
+		sigdata->channel_pan[n+3] = 32 - sep;
 	}
 
     for ( n = 0; (unsigned)n < stream->chunk_count; ++n )

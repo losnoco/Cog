@@ -557,12 +557,13 @@ static DUMB_IT_SIGDATA *it_s3m_load_sigdata(DUMBFILE *f, int * cwtv)
 	/* Channel settings for 32 channels, 255=unused, +128=disabled */
 	{
 		int i;
+		int sep = (7 * dumb_it_default_panning_separation + 50) / 100;
 		for (i = 0; i < 32; i++) {
 			int c = dumbfile_getc(f);
 			if (!(c & (128 | 16))) { /* +128=disabled, +16=Adlib */
 				if (sigdata->n_pchannels < i + 1) sigdata->n_pchannels = i + 1;
 				sigdata->channel_volume[i] = 64;
-				sigdata->channel_pan[i] = c & 8 ? 12 : 3;
+				sigdata->channel_pan[i] = c & 8 ? 7 + sep : 7 - sep;
 				/** WARNING: ah, but it should be 7 for mono... */
 			} else {
 				/** WARNING: this could be improved if we support channel muting... */

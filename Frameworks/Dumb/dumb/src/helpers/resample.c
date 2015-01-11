@@ -74,13 +74,14 @@
  *  0 - DUMB_RQ_ALIASING - fastest
  *  1 - DUMB_RQ_BLEP     - nicer than aliasing, but slower
  *  2 - DUMB_RQ_LINEAR
- *  3 - DUMB_RQ_CUBIC
- *  4 - DUMB_RQ_FIR      - nicest
+ *  3 - DUMB_RQ_BLAM     - band-limited linear interpolation, nice but slower
+ *  4 - DUMB_RQ_CUBIC
+ *  5 - DUMB_RQ_FIR      - nicest
  *
  * Values outside the range 0-4 will behave the same as the nearest
  * value within the range.
  */
-int dumb_resampling_quality = DUMB_RQ_CUBIC;
+int dumb_resampling_quality = DUMB_RQ_BLAM;
 
 
 

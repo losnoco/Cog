@@ -114,8 +114,12 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
                                     }
                                     x = &src[pos*SRC_CHANNELS];
                                     while ( todo ) {
-                                            while ( resampler_get_free_count( resampler->fir_resampler[0] ) &&
-                                                    pos >= resampler->start )
+                                            while ( ( resampler_get_free_count( resampler->fir_resampler[0] ) ||
+                                            (!resampler_get_sample_count( resampler->fir_resampler[0] )
+#if SRC_CHANNELS == 2
+                                            && !resampler_get_sample_count( resampler->fir_resampler[1] )
+#endif
+                                            ) ) && pos >= resampler->start )
                                             {
                                                     POKE_FIR(0);
                                                     pos--;
@@ -159,8 +163,12 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
                                     }
                                     x = &src[pos*SRC_CHANNELS];
                                     while ( todo ) {
-                                            while ( resampler_get_free_count( resampler->fir_resampler[0] ) &&
-                                                    pos < resampler->end )
+                                            while ( ( resampler_get_free_count( resampler->fir_resampler[0] ) ||
+                                            (!resampler_get_sample_count( resampler->fir_resampler[0] )
+#if SRC_CHANNELS == 2
+                                            && !resampler_get_sample_count( resampler->fir_resampler[1] )
+#endif
+                                            ) ) && pos < resampler->end )
                                             {
                                                     POKE_FIR(0);
                                                     pos++;

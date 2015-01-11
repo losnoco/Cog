@@ -205,10 +205,12 @@ int callbackLoop(void *data)
         resampling_int = 1;
     else if ([resampling isEqualToString:@"linear"])
         resampling_int = 2;
-    else if ([resampling isEqualToString:@"cubic"])
+    else if ([resampling isEqualToString:@"blam"])
         resampling_int = 3;
-    else if ([resampling isEqualToString:@"sinc"])
+    else if ([resampling isEqualToString:@"cubic"])
         resampling_int = 4;
+    else if ([resampling isEqualToString:@"sinc"])
+        resampling_int = 5;
 
     dumb_it_set_resampling_quality( itsr, resampling_int );
     dumb_it_set_ramp_style(itsr, 2);
