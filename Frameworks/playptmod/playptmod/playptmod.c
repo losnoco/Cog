@@ -242,6 +242,7 @@ typedef struct
     float *mixBufferL;
     float *mixBufferR;
     void * blep[MAX_CHANNELS];
+    void * blepVol[MAX_CHANNELS];
     unsigned int orderPlayed[256];
     MODULE *source;
 } player;
@@ -471,6 +472,7 @@ static void mixerSetChSource(player *p, int ch, const signed char *src, int leng
     v->interpolating  = 1;
     
     resampler_clear(p->blep[ch]);
+    resampler_clear(p->blepVol[ch]);
     
     // Check external 9xx usage (Set Sample Offset)
     if (v->loopFlag)
@@ -527,6 +529,7 @@ static void mixerCutChannels(player *p)
     for (i = 0; i < MAX_CHANNELS; ++i)
     {
         resampler_clear(p->blep[i]);
+        resampler_clear(p->blepVol[i]);
     }
 
     memset(&p->filter, 0, sizeof (p->filter));
@@ -567,6 +570,7 @@ static void outputAudio(player *p, int *target, int numSamples)
     
     Voice *v;
     void *bSmp;
+    void *bVol;
 
     memset(p->mixBufferL, 0, numSamples * sizeof (float));
     memset(p->mixBufferR, 0, numSamples * sizeof (float));
@@ -577,21 +581,27 @@ static void outputAudio(player *p, int *target, int numSamples)
         
         v = &p->v[i];
         bSmp = p->blep[i];
+        bVol = p->blepVol[i];
         
         if (v->data && v->rate)
         {
             step = v->step;
             interpolating = v->interpolating;
             resampler_set_rate(bSmp, v->rate);
+            resampler_set_rate(bVol, v->rate);
             
             for (j = 0; j < numSamples;)
             {
+                tempVolume = (v->data && !v->mute ? v->vol : 0);
+                
                 while (interpolating && (resampler_get_free_count(bSmp) ||
-                                         !resampler_get_sample_count(bSmp)))
+                                         (!resampler_get_sample_count(bSmp) &&
+                                          !resampler_get_sample_count(bVol))))
                 {
                     tempSample = (v->data ? (step == 2 ? (v->data[v->index] + v->data[v->index + 1] * 0x100) : v->data[v->index] * 0x100) : 0);
                     
                     resampler_write_sample_fixed(bSmp, tempSample, 1);
+                    resampler_write_sample_fixed(bVol, tempVolume, 1);
 
                     if (v->data)
                     {
@@ -658,12 +668,11 @@ static void outputAudio(player *p, int *target, int numSamples)
                 
                 v->interpolating = interpolating;
                 
-                tempVolume = (v->data && !v->mute ? v->vol : 0);
-                
                 while (j < numSamples && resampler_get_sample_count(bSmp))
                 {
-                    t_vol = tempVolume;
+                    t_vol = resampler_get_sample_float(bVol);
                     t_smp = resampler_get_sample_float(bSmp);
+                    resampler_remove_sample(bVol, 0);
                     resampler_remove_sample(bSmp, 1);
 
                     t_smp *= t_vol;
@@ -2797,7 +2806,9 @@ void *playptmod_Create(int samplingFrequency)
     for (i = 0; i < MAX_CHANNELS; ++i)
     {
         p->blep[i] = resampler_create();
+        p->blepVol[i] = resampler_create();
         resampler_set_quality(p->blep[i], RESAMPLER_QUALITY_BLEP);
+        resampler_set_quality(p->blepVol[i], RESAMPLER_QUALITY_BLEP);
     }
     
     mixerCutChannels(p);
@@ -2936,6 +2947,7 @@ void playptmod_Free(void *_p)
     for (i = 0; i < MAX_CHANNELS; ++i)
     {
         resampler_delete(p->blep[i]);
+        resampler_delete(p->blepVol[i]);
     }
     
     free(p);

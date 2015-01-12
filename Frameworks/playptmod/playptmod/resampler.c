@@ -322,6 +322,8 @@ void resampler_clear(void *_r)
     if (r->quality == RESAMPLER_QUALITY_BLEP || r->quality == RESAMPLER_QUALITY_BLAM)
     {
         r->inv_phase = 0;
+        r->last_amp = 0;
+        r->accumulator = 0;
         memset(r->buffer_out, 0, sizeof(r->buffer_out));
     }
 }
