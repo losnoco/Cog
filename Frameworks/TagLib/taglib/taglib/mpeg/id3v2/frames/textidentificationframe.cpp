@@ -105,7 +105,7 @@ void TextIdentificationFrame::parseFields(const ByteVector &data)
 
   // read the string data type (the first byte of the field data)
 
-  d->textEncoding = String::Type(data[0]);
+  d->textEncoding = String::Type(data[0]&3);
 
   // split the byte array into chunks based on the string type (two byte delimiter
   // for unicode encodings)
