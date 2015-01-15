@@ -11,6 +11,7 @@
 		17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D340B8FDA66008627D6 /* VorbisDecoder.m */; };
 		17F563820C3BDB670019975C /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562F70C3BDAAC0019975C /* Vorbis.framework */; };
 		17F563850C3BDB6C0019975C /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F562F70C3BDAAC0019975C /* Vorbis.framework */; };
+		48D2EEA31A51E5C8007D6D07 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48D2EEA21A51E5C8007D6D07 /* Ogg.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,8 +27,29 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteGlobalIDString = 730F23A1091827B100AB638C;
 			remoteInfo = Vorbis;
+		};
+		48D2EE9C1A51E4D4007D6D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 738835E40B18F870005C7A69;
+			remoteInfo = "libvorbis (static)";
+		};
+		48D2EE9E1A51E4D4007D6D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 738836130B190488005C7A69;
+			remoteInfo = "libvorbisenc (static)";
+		};
+		48D2EEA01A51E4D4007D6D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 738836220B1905E5005C7A69;
+			remoteInfo = "libvorbisfile (static)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -54,6 +76,7 @@
 		17C93D340B8FDA66008627D6 /* VorbisDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisDecoder.m; sourceTree = "<group>"; };
 		17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = ../../Frameworks/Vorbis/macosx/Vorbis.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* Vorbis_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vorbis_Prefix.pch; sourceTree = "<group>"; };
+		48D2EEA21A51E5C8007D6D07 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Cog-aktkhaftjdfmnlcckzpefotmcrlq/Build/Products/Debug/Ogg.framework"; sourceTree = "<group>"; };
 		8384913418081A3900E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Vorbis.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Vorbis.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -65,6 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48D2EEA31A51E5C8007D6D07 /* Ogg.framework in Frameworks */,
 				17F563820C3BDB670019975C /* Vorbis.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
@@ -76,6 +100,7 @@
 		089C166AFE841209C02AAC07 /* Vorbis */ = {
 			isa = PBXGroup;
 			children = (
+				48D2EEA21A51E5C8007D6D07 /* Ogg.framework */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -136,6 +161,9 @@
 			isa = PBXGroup;
 			children = (
 				17F562F70C3BDAAC0019975C /* Vorbis.framework */,
+				48D2EE9D1A51E4D4007D6D07 /* libvorbis.a */,
+				48D2EE9F1A51E4D4007D6D07 /* libvorbisenc.a */,
+				48D2EEA11A51E4D4007D6D07 /* libvorbisfile.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -185,7 +213,7 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Vorbis" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -215,6 +243,27 @@
 			fileType = wrapper.framework;
 			path = Vorbis.framework;
 			remoteRef = 17F562F60C3BDAAC0019975C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		48D2EE9D1A51E4D4007D6D07 /* libvorbis.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvorbis.a;
+			remoteRef = 48D2EE9C1A51E4D4007D6D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		48D2EE9F1A51E4D4007D6D07 /* libvorbisenc.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvorbisenc.a;
+			remoteRef = 48D2EE9E1A51E4D4007D6D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		48D2EEA11A51E4D4007D6D07 /* libvorbisfile.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvorbisfile.a;
+			remoteRef = 48D2EEA01A51E4D4007D6D07 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -259,6 +308,7 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Cog-aktkhaftjdfmnlcckzpefotmcrlq/Build/Products/Debug",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -266,13 +316,16 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Vorbis_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../../Frameworks/Ogg/include,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					Vorbis,
-					"-weak_framework",
-					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
 				SKIP_INSTALL = YES;
@@ -290,17 +343,21 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Cog-aktkhaftjdfmnlcckzpefotmcrlq/Build/Products/Debug",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Vorbis_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../../Frameworks/Ogg/include,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					Vorbis,
-					"-weak_framework",
-					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
 				SKIP_INSTALL = YES;

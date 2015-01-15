@@ -310,7 +310,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
+					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -329,7 +329,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/Chris/Source/Repos/cog/ThirdParty/BASS,
+					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -356,6 +356,7 @@
 				839BCFE61965133E00947767 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

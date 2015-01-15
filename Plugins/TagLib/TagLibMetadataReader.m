@@ -7,12 +7,12 @@
 //
 
 #import "TagLibMetadataReader.h"
-#import <TagLib/fileref.h>
-#import <TagLib/tag.h>
-#import <Taglib/mpegfile.h>
-#import <TagLib/mp4file.h>
-#import <Taglib/id3v2tag.h>
-#import <Taglib/attachedpictureframe.h>
+#import <taglib/fileref.h>
+#import <taglib/tag.h>
+#import <taglib/mpeg/mpegfile.h>
+#import <taglib/mp4/mp4file.h>
+#import <taglib/mpeg/id3v2/id3v2tag.h>
+#import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
 
 @implementation TagLibMetadataReader
 
@@ -23,6 +23,41 @@
 	}
 	
 	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+	
+	if ( !*TagLib::ascii_encoding ) {
+		NSStringEncoding enc = [NSString defaultCStringEncoding];
+		CFStringEncoding cfenc = CFStringConvertNSStringEncodingToEncoding(enc);
+		NSString *ref = (NSString *)CFStringConvertEncodingToIANACharSetName(cfenc);
+		UInt32 cp = CFStringConvertEncodingToWindowsCodepage(cfenc);
+		
+		// Most tags are using windows codepage, so remap OS X codepage to Windows one.
+		
+		static struct {
+			UInt32 from, to;
+		} codepage_remaps[] = {
+			{ 10001, 932 },		// Japanese Shift-JIS
+			{ 10002, 950 },		// Traditional Chinese
+			{ 10003, 949 },		// Korean
+			{ 10004, 1256 },	// Arabic
+			{ 10005, 1255 },	// Hebrew
+			{ 10006, 1253 },	// Greek
+			{ 10007, 1251 },	// Cyrillic
+			{ 10008, 936 },		// Simplified Chinese
+			{ 10029, 1250 },	// Central European (latin2)
+		};
+		
+		int i;
+		int max = sizeof(codepage_remaps)/sizeof(codepage_remaps[0]);
+		for ( i=0; i<max; i++ )
+			if ( codepage_remaps[i].from == cp )
+				break;
+		if ( i < max )
+			sprintf(TagLib::ascii_encoding, "windows-%d", codepage_remaps[i].to);
+		else
+			strcpy(TagLib::ascii_encoding, [ref UTF8String]);
+	
+	}
+	
 	
 	TagLib::FileRef f((const char *)[[url path] UTF8String], false);
 	if (!f.isNull())

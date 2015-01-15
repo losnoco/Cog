@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 48C2650E1A5D420800A0A3D6 /* vorbisfile.h */; };
 		830F884019C9102F00420FB0 /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830F883919C9101900420FB0 /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		830F885C19C9124C00420FB0 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F883919C9101900420FB0 /* Vorbis.framework */; };
 		8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
@@ -328,6 +329,18 @@
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		48C265101A5D424500A0A3D6 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = sourcecode.swift;
+			isEditable = 1;
+			outputFiles = (
+			);
+			script = "# $(SWIFT_EXEC)\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXContainerItemProxy section */
 		830F883219C9101900420FB0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -395,6 +408,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		48C2650E1A5D420800A0A3D6 /* vorbisfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vorbisfile.h; path = ../Vorbis/include/vorbis/vorbisfile.h; sourceTree = "<group>"; };
 		8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mpg123.xcodeproj; path = ../mpg123/mpg123.xcodeproj; sourceTree = "<group>"; };
 		8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VorbisNoDot.xcodeproj; path = ../Vorbis/macosx/VorbisNoDot.xcodeproj; sourceTree = "<group>"; };
 		834D3A6D19F47C98001C54F6 /* g1l.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g1l.c; sourceTree = "<group>"; };
@@ -751,6 +765,7 @@
 		836F6B2F18BDB8880095E648 = {
 			isa = PBXGroup;
 			children = (
+				48C2650E1A5D420800A0A3D6 /* vorbisfile.h */,
 				836F6B4218BDB8880095E648 /* vgmstream */,
 				836F6B3B18BDB8880095E648 /* Frameworks */,
 				836F6B3A18BDB8880095E648 /* Products */,
@@ -1158,6 +1173,7 @@
 				836F6F2718BDC2190095E648 /* g72x_state.h in Headers */,
 				836F705418BDC2190095E648 /* streamfile.h in Headers */,
 				836F705918BDC2190095E648 /* vgmstream.h in Headers */,
+				48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */,
 				836F705718BDC2190095E648 /* util.h in Headers */,
 				836F6F9A18BDC2190095E648 /* meta.h in Headers */,
 				836F6F4D18BDC2190095E648 /* layout.h in Headers */,
@@ -1179,6 +1195,7 @@
 				83979B0C18BDD93100192D2F /* CopyFiles */,
 			);
 			buildRules = (
+				48C265101A5D424500A0A3D6 /* PBXBuildRule */,
 			);
 			dependencies = (
 				830F883319C9101900420FB0 /* PBXTargetDependency */,
@@ -1696,8 +1713,15 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Cog-egaqitgoybntfwaoqzgiynizucrq/Build/Products/Debug",
+					../mpg123,
 				);
 				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../Vorbis/include,
+					../Ogg/include,
+				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -1713,8 +1737,15 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Cog-egaqitgoybntfwaoqzgiynizucrq/Build/Products/Debug",
+					../mpg123,
 				);
 				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../Vorbis/include,
+					../Ogg/include,
+				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;

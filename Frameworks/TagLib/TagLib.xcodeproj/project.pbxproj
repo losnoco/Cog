@@ -174,6 +174,7 @@
 		32AE5AFF14E70ED700420CA0 /* taglib_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AE5A5914E70ED600420CA0 /* taglib_config.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		32AE5B0014E70F4700420CA0 /* tlist.tcc in Headers */ = {isa = PBXBuildFile; fileRef = 32AE5A4614E70ED600420CA0 /* tlist.tcc */; settings = {ATTRIBUTES = (Public, ); }; };
 		32AE5B0114E70F4A00420CA0 /* tmap.tcc in Headers */ = {isa = PBXBuildFile; fileRef = 32AE5A4814E70ED600420CA0 /* tmap.tcc */; settings = {ATTRIBUTES = (Public, ); }; };
+		4872B8881A675CCB00674347 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4872B8871A675CCB00674347 /* libiconv.dylib */; };
 		83790D241809E8CA0073CF51 /* opusfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83790D201809E8CA0073CF51 /* opusfile.cpp */; };
 		83790D251809E8CA0073CF51 /* opusfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83790D211809E8CA0073CF51 /* opusfile.h */; };
 		83790D261809E8CA0073CF51 /* opusproperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83790D221809E8CA0073CF51 /* opusproperties.cpp */; };
@@ -350,6 +351,7 @@
 		32AE5A5714E70ED600420CA0 /* wavpackproperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wavpackproperties.cpp; sourceTree = "<group>"; };
 		32AE5A5814E70ED600420CA0 /* wavpackproperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpackproperties.h; sourceTree = "<group>"; };
 		32AE5A5914E70ED600420CA0 /* taglib_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = taglib_config.h; path = taglib/taglib_config.h; sourceTree = "<group>"; };
+		4872B8871A675CCB00674347 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		83790D201809E8CA0073CF51 /* opusfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opusfile.cpp; sourceTree = "<group>"; };
 		83790D211809E8CA0073CF51 /* opusfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opusfile.h; sourceTree = "<group>"; };
 		83790D221809E8CA0073CF51 /* opusproperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opusproperties.cpp; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4872B8881A675CCB00674347 /* libiconv.dylib in Frameworks */,
 				174C7A370F4FD43100E18B0F /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -381,6 +384,7 @@
 		0867D691FE84028FC02AAC07 /* TagLib */ = {
 			isa = PBXGroup;
 			children = (
+				4872B8871A675CCB00674347 /* libiconv.dylib */,
 				8E75700C09F318D70080F1EE /* Source */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,

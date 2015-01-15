@@ -32,7 +32,12 @@
 #include <string.h>
 #include <math.h>
 
+#include <iconv.h>
+
+
 namespace TagLib {
+	char default_ascii_encoding[] = "latin1";
+	char ascii_encoding[256] = "";
 
   inline unsigned short byteSwap(unsigned short x)
   {
@@ -161,17 +166,61 @@ String::String(char c, Type t)
   prepare(t);
 }
 
+
 String::String(const ByteVector &v, Type t)
 {
   d = new StringPrivate;
 
   if(v.isEmpty())
     return;
-
-  if(t == Latin1 || t == UTF8) {
-
-    int length = 0;
-    d->data.resize(v.size());
+	
+	iconv_t encoder = (iconv_t)-1;
+	if ( t == Latin1 ) {
+		encoder = iconv_open("utf-8",(*ascii_encoding)?ascii_encoding:default_ascii_encoding);
+		if ( encoder == (iconv_t)-1 )
+			encoder = iconv_open("utf-8",default_ascii_encoding);
+	}
+	
+	if ( t == Latin1 && encoder != (iconv_t)-1 ) {
+		size_t srclen = v.size();
+		char *src = new char[srclen+1];
+		size_t dstlen = v.size()*6;
+		char *dst = new char[dstlen+1];
+		int n=0;
+		
+		char *src_param = src;
+		char *dst_param = dst;
+		size_t src_remaining = srclen;
+		size_t dst_remaining = dstlen;
+		
+		for(ByteVector::ConstIterator it = v.begin(); it != v.end() && (*it); ++it)
+			src[n++] = *it;
+		src[n++] = 0;
+		
+		iconv(encoder, &src_param, &src_remaining, &dst_param, &dst_remaining);
+		t = UTF8;
+		
+		int length = 0;
+		
+		d->data.resize(dstlen);
+		wstring::iterator targetIt = d->data.begin();
+		for ( int i=0; i<dstlen-dst_remaining; i++ ) {
+			*targetIt = dst[i];
+			++targetIt;
+			++length;
+		}
+		
+		d->data.resize(length);
+		
+		delete[] src;
+		delete[] dst;
+		
+		iconv_close(encoder);
+		
+		t = UTF8;
+  } else if ( t == UTF8 || ( t == Latin1 && encoder == (iconv_t)-1) ) {	// UTF8 string or encoder failed to start
+	int length = 0;
+    d->data.resize(v.size()*2);
     wstring::iterator targetIt = d->data.begin();
     for(ByteVector::ConstIterator it = v.begin(); it != v.end() && (*it); ++it) {
       *targetIt = uchar(*it);
@@ -183,7 +232,19 @@ String::String(const ByteVector &v, Type t)
   else  {
     d->data.resize(v.size() / 2);
     wstring::iterator targetIt = d->data.begin();
-
+	  
+	  // Cure some faulty UTF16 headers without endianness: insert endianness byte into the beginning of the dst string.
+	  if ( v.size() > 1 ) {
+		  wchar w = combine(v.data()[0], v.data()[1]);
+		  if ( w != 0xfeff && w != 0xfffe ) {
+			  d->data.resize(v.size()/2 + 1);
+			  targetIt = d->data.begin();
+			  *targetIt = 0xfffe;
+			  ++targetIt;
+			  // String append will continue in the loop below.
+		  }
+	  }
+	  
     for(ByteVector::ConstIterator it = v.begin();
         it != v.end() && it + 1 != v.end() && combine(*it, *(it + 1));
         it += 2)

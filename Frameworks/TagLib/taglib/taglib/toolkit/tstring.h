@@ -55,6 +55,7 @@
 #define TStringToQString(s) QString::fromUtf8(s.toCString(true))
 
 namespace TagLib {
+	extern char ascii_encoding[];
 
   //! A \e wide string class suitable for unicode.
 
