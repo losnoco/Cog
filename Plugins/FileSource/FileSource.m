@@ -90,7 +90,13 @@
         
         return (position >= 0) && (position < size);
     }
-    
+	
+	if ( _fd == NULL ) {
+		offset = 0;
+		size = 0;
+		return NO;
+	}
+	
 	return (fseek(_fd, position, whence) == 0);
 }
 
