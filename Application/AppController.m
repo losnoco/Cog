@@ -401,7 +401,11 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
 {
 	if (flag == NO)
-		[mainWindow makeKeyAndOrderFront:self];
+		[mainWindow makeKeyAndOrderFront:self];	// TODO: do we really need this? We never close the main window.
+
+	for(NSWindow* win in [NSApp windows])	// Maximizing all windows
+		if([win isMiniaturized])
+			[win deminiaturize:self];
 	
 	return NO;
 }
