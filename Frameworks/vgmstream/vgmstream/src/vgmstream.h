@@ -18,12 +18,19 @@ enum { PATH_LIMIT = 32768 };
 //#define VGM_USE_G7221
 
 #include "streamfile.h"
+#ifdef BUILD_VGMSTREAM
 #include "coding/g72x_state.h"
+#else
+#include "g72x_state.h"
+#endif
 #ifdef VGM_USE_VORBIS
+#ifdef __APPLE__
+#define __MACOSX__
+#endif
 #include <vorbis/vorbisfile.h>
 #endif
 #ifdef VGM_USE_MPEG
-#include <mpg123.h>
+#include <mpg123/mpg123.h>
 #endif
 #ifdef VGM_USE_G7221
 #include "g7221.h"
