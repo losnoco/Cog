@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #define inline __inline
 
-#define USE_ALLOCA            1
+#define VAR_ARRAYS            1
 
 /* Comment out the next line for floating-point code */
 /*#define FIXED_POINT           1 */

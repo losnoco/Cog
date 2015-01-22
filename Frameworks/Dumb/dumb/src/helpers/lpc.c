@@ -56,8 +56,10 @@ Carsten Bormann
    Output: m lpc coefficients, excitation energy */
 
 float vorbis_lpc_from_data(float *data,float *lpci,int n,int m){
-  double *aut=alloca(sizeof(*aut)*(m+1));
-  double *lpc=alloca(sizeof(*lpc)*(m));
+  VARDECL(double, aut);
+  VARDECL(double, lpc);
+  ALLOC(aut, m+1, double);
+  ALLOC(lpc, m, double);
   double error;
   double epsilon;
   int i,j;
