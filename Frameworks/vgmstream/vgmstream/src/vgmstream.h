@@ -49,8 +49,13 @@ enum { PATH_LIMIT = 32768 };
 #include "maiatrac3plus.h"
 #endif
 
+#ifdef BUILD_VGMSTREAM
 #include "coding/acm_decoder.h"
 #include "coding/nwa_decoder.h"
+#else
+#include "acm_decoder.h"
+#include "nwa_decoder.h"
+#endif
 
 /* The encoding type specifies the format the sound data itself takes */
 typedef enum {
