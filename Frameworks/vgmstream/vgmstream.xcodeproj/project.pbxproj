@@ -326,6 +326,8 @@
 		836F705918BDC2190095E648 /* vgmstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1D18BDC2190095E648 /* vgmstream.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83A5F75F198DF021009AF94C /* bfwav.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A5F75E198DF021009AF94C /* bfwav.c */; };
 		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
+		83EDE5D81A70951A005F5D84 /* mca.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EDE5D61A70951A005F5D84 /* mca.c */; };
+		83EDE5D91A70951A005F5D84 /* btsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EDE5D71A70951A005F5D84 /* btsnd.c */; };
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
 /* End PBXBuildFile section */
 
@@ -727,6 +729,8 @@
 		836F6F1D18BDC2190095E648 /* vgmstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgmstream.h; sourceTree = "<group>"; };
 		83A5F75E198DF021009AF94C /* bfwav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfwav.c; sourceTree = "<group>"; };
 		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
+		83EDE5D61A70951A005F5D84 /* mca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mca.c; sourceTree = "<group>"; };
+		83EDE5D71A70951A005F5D84 /* btsnd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btsnd.c; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -914,6 +918,8 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				83EDE5D61A70951A005F5D84 /* mca.c */,
+				83EDE5D71A70951A005F5D84 /* btsnd.c */,
 				834D3A6D19F47C98001C54F6 /* g1l.c */,
 				83BAFB6B19F45EB3005DAB60 /* bfstm.c */,
 				83A5F75E198DF021009AF94C /* bfwav.c */,
@@ -1341,6 +1347,7 @@
 				836F6F8D18BDC2190095E648 /* gsp_gsb.c in Sources */,
 				836F704518BDC2190095E648 /* wvs.c in Sources */,
 				836F6F2218BDC2190095E648 /* at3_decoder.c in Sources */,
+				83EDE5D91A70951A005F5D84 /* btsnd.c in Sources */,
 				836F6FFC18BDC2190095E648 /* ps2_ster.c in Sources */,
 				836F701E18BDC2190095E648 /* redspark.c in Sources */,
 				836F6FA018BDC2190095E648 /* musx.c in Sources */,
@@ -1490,6 +1497,7 @@
 				836F6FFE18BDC2190095E648 /* ps2_str.c in Sources */,
 				836F6F4A18BDC2190095E648 /* interleave.c in Sources */,
 				836F6FFD18BDC2190095E648 /* ps2_stm.c in Sources */,
+				83EDE5D81A70951A005F5D84 /* mca.c in Sources */,
 				836F6FA518BDC2190095E648 /* nds_rrds.c in Sources */,
 				836F702F18BDC2190095E648 /* spt_spd.c in Sources */,
 				836F704618BDC2190095E648 /* x360_tra.c in Sources */,
