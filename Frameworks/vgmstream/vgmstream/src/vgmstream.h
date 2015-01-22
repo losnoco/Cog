@@ -18,19 +18,12 @@ enum { PATH_LIMIT = 32768 };
 //#define VGM_USE_G7221
 
 #include "streamfile.h"
-#ifdef BUILD_VGMSTREAM
 #include "coding/g72x_state.h"
-#else
-#include "g72x_state.h"
-#endif
 #ifdef VGM_USE_VORBIS
-#ifdef __APPLE__
-#define __MACOSX__
-#endif
 #include <vorbis/vorbisfile.h>
 #endif
 #ifdef VGM_USE_MPEG
-#include <mpg123/mpg123.h>
+#include <mpg123.h>
 #endif
 #ifdef VGM_USE_G7221
 #include "g7221.h"
@@ -46,16 +39,11 @@ enum { PATH_LIMIT = 32768 };
 #endif
 
 #ifdef VGM_USE_MAIATRAC3PLUS
-#include <maiatrac3plus.h>
+#include "maiatrac3plus.h"
 #endif
 
-#ifdef BUILD_VGMSTREAM
 #include "coding/acm_decoder.h"
 #include "coding/nwa_decoder.h"
-#else
-#include "acm_decoder.h"
-#include "nwa_decoder.h"
-#endif
 
 /* The encoding type specifies the format the sound data itself takes */
 typedef enum {
@@ -262,6 +250,7 @@ typedef enum {
 	meta_NDS_RRDS,		    /* Ridge Racer DS */
     meta_WII_BNS,           /* Wii BNS Banner Sound (similar to RSTM) */
     meta_STX,               /* Pikmin .stx */
+	meta_WIIU_BTSND,		/* Wii U Boot Sound */
 
     /* CRI ADX */
     meta_ADX_03,            /* ADX "type 03" */
@@ -583,6 +572,7 @@ typedef enum {
    meta_FSTM,                // Nintendo Wii U FSTM
    meta_3DS_IDSP,           // Nintendo 3DS IDSP
    meta_G1L,           		// Tecmo Koei G1L
+   meta_MCA,			// Capcom MCA "MADP"
 #ifdef VGM_USE_MP4V2
 	meta_MP4,
 #endif
