@@ -1048,6 +1048,8 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                         setvol(p, ch, 32, 0);
                         resampler_dup_inplace(p->resampler[ch + 32], p->resampler[ch]);
                         resampler_dup_inplace(p->resampler[ch + 32 + 64], p->resampler[ch + 64]);
+                        resampler_clear(p->resampler[ch]);
+                        resampler_clear(p->resampler[ch + 64]);
                         if (p->chn[ch].vol != 255)
                         {
                             if (p->chn[ch].vol <= 64)
@@ -3845,6 +3847,7 @@ void st3play_RenderFixed32(void *_p, int32_t *buffer, int32_t count, int8_t dept
     float sample;
     assert(sizeof(int32_t) == sizeof(float));
     st3play_RenderFloat(_p, fbuffer, count);
+    if (buffer)
     for (i = 0; i < count * 2; ++i)
     {
         sample = fbuffer[i] * scale;
@@ -3860,6 +3863,9 @@ void st3play_RenderFixed16(void *_p, int16_t *buffer, int32_t count, int8_t dept
     float scale = (float)(1 << (depth - 1));
     float sample;
     float fbuffer[1024];
+    if (!buffer)
+        st3play_RenderFloat(_p, 0, count);
+    else
     while (count)
     {
         SamplesTodo = (count < 512) ? count : 512;

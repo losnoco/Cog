@@ -2210,6 +2210,8 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
 
                 resampler_dup_inplace(p->resampler[SPARE_OFFSET + ChNr], p->resampler[ChNr]);
                 resampler_dup_inplace(p->resampler[TOTAL_VOICES + SPARE_OFFSET + ChNr], p->resampler[TOTAL_VOICES + ChNr]);
+                resampler_clear(p->resampler[ChNr]);
+                resampler_clear(p->resampler[TOTAL_VOICES + ChNr]);
             }
 #endif
             
@@ -3744,6 +3746,7 @@ void ft2play_RenderFixed32(void *_p, int32_t *buffer, int32_t count, int8_t dept
     float sample;
     assert(sizeof(int32_t) == sizeof(float));
     ft2play_RenderFloat(_p, fbuffer, count);
+    if (buffer)
     for (i = 0; i < count * 2; ++i)
     {
         sample = fbuffer[i] * scale;
@@ -3759,6 +3762,9 @@ void ft2play_RenderFixed16(void *_p, int16_t *buffer, int32_t count, int8_t dept
     float scale = (float)(1 << (depth - 1));
     float sample;
     float fbuffer[1024];
+    if (!buffer)
+        ft2play_RenderFloat(_p, 0, count);
+    else
     while (count)
     {
         SamplesTodo = (count < 512) ? count : 512;

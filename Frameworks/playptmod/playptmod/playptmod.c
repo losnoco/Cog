@@ -1,6 +1,10 @@
 /*
-** - playptmod v1.15b - 29th of September 2014 -
-** This is the foobar2000 version, with code by kode54
+** - playptmod v1.16 - 23rd of January 2015 -
+** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from 1.15b:
+** - Glissando (3xx/5xy) should not continue after its slide was done,
+**   but this only applies to MODs playing in ProTracker mode.
 **
 ** Changelog from 1.15a:
 ** - Added a hack to find out what 8xx pan is used (7-bit/8-bit)
@@ -131,6 +135,7 @@ typedef struct
     unsigned char invertLoopDelay;
     unsigned char invertLoopSpeed;
     unsigned char chanIndex;
+    unsigned char doGlissando;
     short period;
     short tempPeriod;
     int noNote;
@@ -1861,22 +1866,30 @@ static void handleGlissando(player *p, mod_channel *ch)
     char h;
     
     short *tablePointer;
+    
+    // quirk for glissando in PT mode
+    if ((p->minPeriod == PT_MIN_PERIOD) && !ch->doGlissando)
+        return;
 
     if (p->tempPeriod > 0)
     {
         if (ch->period < ch->tempPeriod)
         {
             ch->period += ch->glissandoSpeed;
-
-            if (ch->period > ch->tempPeriod)
+            if (ch->period >= ch->tempPeriod)
+            {
                 ch->period = ch->tempPeriod;
+                ch->doGlissando = false;
+            }
         }
         else
         {
             ch->period -= ch->glissandoSpeed;
-
-            if (ch->period < ch->tempPeriod)
+            if (ch->period <= ch->tempPeriod)
+            {
                 ch->period = ch->tempPeriod;
+                ch->doGlissando = false;
+            }
         }
 
         if (ch->glissandoControl != 0)
@@ -2487,6 +2500,17 @@ static void fetchPatternData(player *p, mod_channel *ch)
             ch->noNote = false;
             ch->tempPeriod = (p->minPeriod == PT_MIN_PERIOD) ? rawAmigaPeriods[(ch->fineTune * 37) + tempNote] : extendedRawPeriods[(ch->fineTune * 85) + tempNote];
             ch->flags |= FLAG_NOTE;
+        }
+        
+        // 3xx/5xy quirk for PT MODs
+        if (p->minPeriod == PT_MIN_PERIOD)
+        {
+            if ((ch->command == 0x03) || (ch->command == 0x05))
+            {
+                ch->doGlissando = true;
+                if (!ch->period || (ch->period == ch->tempPeriod))
+                    ch->doGlissando = false;
+            }
         }
     }
     else
