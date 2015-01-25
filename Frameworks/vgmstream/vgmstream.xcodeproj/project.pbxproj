@@ -326,6 +326,11 @@
 		836F705918BDC2190095E648 /* vgmstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6F1D18BDC2190095E648 /* vgmstream.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83A5F75F198DF021009AF94C /* bfwav.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A5F75E198DF021009AF94C /* bfwav.c */; };
 		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
+		83D731101A7394BF00CA1366 /* g7221.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; };
+		83D731111A7394D300CA1366 /* g7221.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83D731891A749D1500CA1366 /* g719.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; };
+		83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83D7318C1A749EEE00CA1366 /* g719_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D7318B1A749EEE00CA1366 /* g719_decoder.c */; };
 		83EDE5D81A70951A005F5D84 /* mca.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EDE5D61A70951A005F5D84 /* mca.c */; };
 		83EDE5D91A70951A005F5D84 /* btsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EDE5D71A70951A005F5D84 /* btsnd.c */; };
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
@@ -393,6 +398,34 @@
 			remoteGlobalIDString = 8313E30E1901FBDC00B4B6F1;
 			remoteInfo = mpg123;
 		};
+		83D730EA1A738EB300CA1366 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D730E51A738EB200CA1366 /* g7221.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83D730C91A738EB200CA1366;
+			remoteInfo = g7221;
+		};
+		83D7310E1A7394B500CA1366 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D730E51A738EB200CA1366 /* g7221.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83D730C81A738EB200CA1366;
+			remoteInfo = g7221;
+		};
+		83D7313D1A74968A00CA1366 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D731381A74968900CA1366 /* g719.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83D7311C1A74968900CA1366;
+			remoteInfo = g719;
+		};
+		83D731871A749D0D00CA1366 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D731381A74968900CA1366 /* g719.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83D7311B1A74968900CA1366;
+			remoteInfo = g719;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -402,6 +435,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */,
+				83D731111A7394D300CA1366 /* g7221.framework in CopyFiles */,
 				830F884019C9102F00420FB0 /* Vorbis.framework in CopyFiles */,
 				8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */,
 			);
@@ -729,6 +764,9 @@
 		836F6F1D18BDC2190095E648 /* vgmstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgmstream.h; sourceTree = "<group>"; };
 		83A5F75E198DF021009AF94C /* bfwav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfwav.c; sourceTree = "<group>"; };
 		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
+		83D730E51A738EB200CA1366 /* g7221.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g7221.xcodeproj; path = ../g7221/g7221.xcodeproj; sourceTree = "<group>"; };
+		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
+		83D7318B1A749EEE00CA1366 /* g719_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g719_decoder.c; sourceTree = "<group>"; };
 		83EDE5D61A70951A005F5D84 /* mca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mca.c; sourceTree = "<group>"; };
 		83EDE5D71A70951A005F5D84 /* btsnd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btsnd.c; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
@@ -739,6 +777,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83D731891A749D1500CA1366 /* g719.framework in Frameworks */,
+				83D731101A7394BF00CA1366 /* g7221.framework in Frameworks */,
 				8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */,
 				830F885C19C9124C00420FB0 /* Vorbis.framework in Frameworks */,
 			);
@@ -797,6 +837,8 @@
 			children = (
 				8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */,
 				8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */,
+				83D730E51A738EB200CA1366 /* g7221.xcodeproj */,
+				83D731381A74968900CA1366 /* g719.xcodeproj */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -839,6 +881,7 @@
 		836F6DDF18BDC2180095E648 /* coding */ = {
 			isa = PBXGroup;
 			children = (
+				83D7318B1A749EEE00CA1366 /* g719_decoder.c */,
 				836F6DE018BDC2180095E648 /* acm_decoder.c */,
 				836F6DE118BDC2180095E648 /* acm_decoder.h */,
 				836F6DE218BDC2180095E648 /* adx_decoder.c */,
@@ -1166,6 +1209,22 @@
 			path = meta;
 			sourceTree = "<group>";
 		};
+		83D730E61A738EB200CA1366 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83D730EB1A738EB300CA1366 /* g7221.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83D731391A74968900CA1366 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83D7313E1A74968A00CA1366 /* g719.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1204,6 +1263,8 @@
 				48C265101A5D424500A0A3D6 /* PBXBuildRule */,
 			);
 			dependencies = (
+				83D731881A749D0D00CA1366 /* PBXTargetDependency */,
+				83D7310F1A7394B500CA1366 /* PBXTargetDependency */,
 				830F883319C9101900420FB0 /* PBXTargetDependency */,
 				8313E3E91902021F00B4B6F1 /* PBXTargetDependency */,
 			);
@@ -1232,6 +1293,14 @@
 			productRefGroup = 836F6B3A18BDB8880095E648 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 83D731391A74968900CA1366 /* Products */;
+					ProjectRef = 83D731381A74968900CA1366 /* g719.xcodeproj */;
+				},
+				{
+					ProductGroup = 83D730E61A738EB200CA1366 /* Products */;
+					ProjectRef = 83D730E51A738EB200CA1366 /* g7221.xcodeproj */;
+				},
 				{
 					ProductGroup = 8313E33E1901FBDC00B4B6F1 /* Products */;
 					ProjectRef = 8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */;
@@ -1282,6 +1351,20 @@
 			fileType = wrapper.framework;
 			path = mpg123.framework;
 			remoteRef = 8313E3421901FBDD00B4B6F1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83D730EB1A738EB300CA1366 /* g7221.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = g7221.framework;
+			remoteRef = 83D730EA1A738EB300CA1366 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83D7313E1A74968A00CA1366 /* g719.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = g719.framework;
+			remoteRef = 83D7313D1A74968A00CA1366 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1381,6 +1464,7 @@
 				836F6F6C18BDC2190095E648 /* ahx.c in Sources */,
 				836F702D18BDC2190095E648 /* sfl.c in Sources */,
 				836F6FEC18BDC2190095E648 /* ps2_mtaf.c in Sources */,
+				83D7318C1A749EEE00CA1366 /* g719_decoder.c in Sources */,
 				836F701118BDC2190095E648 /* ps3_cps.c in Sources */,
 				836F701418BDC2190095E648 /* ps3_msf.c in Sources */,
 				836F6F6518BDC2190095E648 /* 2dx9.c in Sources */,
@@ -1623,6 +1707,16 @@
 			isa = PBXTargetDependency;
 			name = mpg123;
 			targetProxy = 8313E3E81902021F00B4B6F1 /* PBXContainerItemProxy */;
+		};
+		83D7310F1A7394B500CA1366 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = g7221;
+			targetProxy = 83D7310E1A7394B500CA1366 /* PBXContainerItemProxy */;
+		};
+		83D731881A749D0D00CA1366 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = g719;
+			targetProxy = 83D731871A749D0D00CA1366 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

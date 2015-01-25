@@ -98,6 +98,11 @@ void decode_g7221(VGMSTREAM *vgmstream,
         sample * outbuf, int channelspacing, int32_t samples_to_do, int channel);
 #endif
 
+#ifdef VGM_USE_G719
+void decode_g719(VGMSTREAM *vgmstream,
+        sample * outbuf, int channelspacing, int32_t samples_to_do, int channel);
+#endif
+
 #ifdef VGM_USE_MAIATRAC3PLUS
 void decode_at3plus(VGMSTREAM *vgmstream,
         sample * outbuf, int channelspacing, int32_t samples_to_do, int channel);
