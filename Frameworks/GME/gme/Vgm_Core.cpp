@@ -895,9 +895,6 @@ blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
 	if ( !gbdmg_rate )
 		gbdmg_rate = Gb_Apu::clock_rate;
 	stereo_buf[3].clock_rate( gbdmg_rate );
-	const int gbdmg_hacks = 3;
-	gbdmg[0].set_hacks( gbdmg_hacks );
-	gbdmg[1].set_hacks( gbdmg_hacks );
 
 	// Disable FM
 	fm_rate = 0;
