@@ -11,7 +11,6 @@
 		17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D340B8FDA66008627D6 /* VorbisDecoder.m */; };
 		17F563820C3BDB670019975C /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562F70C3BDAAC0019975C /* Vorbis.framework */; };
 		17F563850C3BDB6C0019975C /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F562F70C3BDAAC0019975C /* Vorbis.framework */; };
-		48D2EEA31A51E5C8007D6D07 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48D2EEA21A51E5C8007D6D07 /* Ogg.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,27 +28,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 730F23A1091827B100AB638C;
 			remoteInfo = Vorbis;
-		};
-		48D2EE9C1A51E4D4007D6D07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 738835E40B18F870005C7A69;
-			remoteInfo = "libvorbis (static)";
-		};
-		48D2EE9E1A51E4D4007D6D07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 738836130B190488005C7A69;
-			remoteInfo = "libvorbisenc (static)";
-		};
-		48D2EEA01A51E4D4007D6D07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 738836220B1905E5005C7A69;
-			remoteInfo = "libvorbisfile (static)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -76,7 +54,6 @@
 		17C93D340B8FDA66008627D6 /* VorbisDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisDecoder.m; sourceTree = "<group>"; };
 		17F562EF0C3BDAAC0019975C /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = ../../Frameworks/Vorbis/macosx/Vorbis.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* Vorbis_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vorbis_Prefix.pch; sourceTree = "<group>"; };
-		48D2EEA21A51E5C8007D6D07 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Cog-aktkhaftjdfmnlcckzpefotmcrlq/Build/Products/Debug/Ogg.framework"; sourceTree = "<group>"; };
 		8384913418081A3900E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Vorbis.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Vorbis.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -88,7 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				48D2EEA31A51E5C8007D6D07 /* Ogg.framework in Frameworks */,
 				17F563820C3BDB670019975C /* Vorbis.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
@@ -100,7 +76,6 @@
 		089C166AFE841209C02AAC07 /* Vorbis */ = {
 			isa = PBXGroup;
 			children = (
-				48D2EEA21A51E5C8007D6D07 /* Ogg.framework */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -326,6 +301,8 @@
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					Vorbis,
+					"-weak_framework",
+					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
 				SKIP_INSTALL = YES;
@@ -358,6 +335,8 @@
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					Vorbis,
+					"-weak_framework",
+					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
 				SKIP_INSTALL = YES;
