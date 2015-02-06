@@ -1,6 +1,10 @@
 /*
-** - playptmod v1.16 - 23rd of January 2015 -
+** - playptmod v1.2 - 3rd of February 2015 -
 ** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from 1.16:
+** - The sample swap quirk had a bug (discovered by Wasp of PowerLine)
+** - 3xx/5xy was still wrong in PT mode (fixes "MOD.lite teknalogy" by tEiS)
 **
 ** Changelog from 1.15b:
 ** - Glissando (3xx/5xy) should not continue after its slide was done,
@@ -44,7 +48,7 @@
 #define HI_NYBBLE(x) ((x) >> 4)
 #define LO_NYBBLE(x) ((x) & 0x0F)
 #define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
-#define DENORMAL_OFFSET 1E-10f
+#define DENORMAL_OFFSET 1e-10f
 #define PT_MIN_PERIOD 78
 #define PT_MAX_PERIOD 937
 #define MAX_CHANNELS 32
@@ -135,9 +139,10 @@ typedef struct
     unsigned char invertLoopDelay;
     unsigned char invertLoopSpeed;
     unsigned char chanIndex;
-    unsigned char doGlissando;
+    unsigned char toneportdirec;
     short period;
     short tempPeriod;
+    short wantedperiod;
     int noNote;
     int invertLoopOffset;
     int offset;
@@ -431,8 +436,8 @@ static void mixerSwapChSource(player *p, int ch, const signed char *src, int len
     // sample will play through first (either
     // >len or >loop_len), then when that is
     // reached you change to the new sample you
-    // put earlier.
-        
+    // put earlier (if new sample is looped)
+          
     v = &p->v[ch];
     
     v->swapSampleFlag  = true;
@@ -444,8 +449,9 @@ static void mixerSwapChSource(player *p, int ch, const signed char *src, int len
     v->newStep         = step;
     v->interpolating   = 1;
     
-    // if the mixer was already shut down because of a short non-loop sample, force swap
-    if (v->data == NULL)
+    // if the mixer was already shut down earlier after a non-loop swap,
+    // force swap again, but only if the new sample has loop enabled (ONLY!)
+    if ((v->data == NULL) && v->newLoopFlag)
     {
         v->loopBegin    = v->newLoopBegin;
         v->loopEnd      = v->newLoopEnd;
@@ -454,9 +460,9 @@ static void mixerSwapChSource(player *p, int ch, const signed char *src, int len
         v->length       = v->newLength;
         v->step         = v->newStep;
 
-        // for safety, shut down voice if the sample position is overriding the length
-        if (v->index >= v->length)
-            v->data = NULL;
+        // we need to wrap here for safety reasons
+        while (v->index >= v->loopEnd)
+            v->index = v->loopBegin + (v->index - v->loopEnd);
     }
 }
 
@@ -1859,72 +1865,126 @@ static void efxInvertLoop(player *p, mod_channel *ch)
     }
 }
 
+// -- this is only for PT mode ----------------------------
+static void setupGlissando(mod_channel *ch, short period)
+{
+    unsigned char i;
+    const short *tablePointer;
+
+    tablePointer = &rawAmigaPeriods[37 * ch->fineTune];
+
+    i = 0;
+    while (true)
+    {
+        if (period >= tablePointer[i])
+            break;
+
+        if (++i >= 37)
+        {
+            i = 35;
+            break;
+        }
+    }
+
+    if ((ch->fineTune & 8) && i) i--; // yes, PT does this
+
+    ch->wantedperiod  = tablePointer[i];
+    ch->toneportdirec = 0;
+
+    if (ch->period == ch->wantedperiod)
+        ch->wantedperiod = 0; // don't do any more slides
+    else if (ch->period > ch->wantedperiod)
+        ch->toneportdirec = 1;
+}
+// --------------------------------------------------------
+
 static void handleGlissando(player *p, mod_channel *ch)
 {
+    unsigned char i;
     char l;
     char m;
     char h;
     
-    short *tablePointer;
+    const short *tablePointer;
     
-    // quirk for glissando in PT mode
-    if ((p->minPeriod == PT_MIN_PERIOD) && !ch->doGlissando)
-        return;
-
-    if (p->tempPeriod > 0)
+    // different routine for PT mode
+    if (p->minPeriod == PT_MIN_PERIOD)
     {
-        if (ch->period < ch->tempPeriod)
+        if (ch->wantedperiod != 0)
         {
-            ch->period += ch->glissandoSpeed;
-            if (ch->period >= ch->tempPeriod)
+            if (ch->toneportdirec == 0)
             {
-                ch->period = ch->tempPeriod;
-                ch->doGlissando = false;
-            }
-        }
-        else
-        {
-            ch->period -= ch->glissandoSpeed;
-            if (ch->period <= ch->tempPeriod)
-            {
-                ch->period = ch->tempPeriod;
-                ch->doGlissando = false;
-            }
-        }
-
-        if (ch->glissandoControl != 0)
-        {
-            if (p->minPeriod == PT_MIN_PERIOD)
-            {
-                l = 0;
-                h = 35;
-
-                tablePointer = (short *)&rawAmigaPeriods[ch->fineTune * 37];
-                while (h >= l)
+                // downwards
+                ch->period += ch->glissandoSpeed;
+                if (ch->period >= ch->wantedperiod)
                 {
-                    m = (h + l) / 2;
+                    ch->period = ch->wantedperiod;
+                    ch->wantedperiod = 0;
+                }
+            }
+            else
+            {
+                // upwards
+                ch->period -= ch->glissandoSpeed;
+                if (ch->period <= ch->wantedperiod)
+                {
+                    ch->period = ch->wantedperiod;
+                    ch->wantedperiod = 0;
+                }
+            }
 
-                    if (tablePointer[m] == ch->period)
+            if (ch->glissandoControl == 0)
+            {
+                 p->tempPeriod = ch->period;
+            }
+            else
+            {
+                tablePointer = &rawAmigaPeriods[37 * ch->fineTune];
+
+                i = 0;
+                while (true)
+                {
+                    if (ch->period >= tablePointer[i])
+                        break;
+
+                    if (++i >= 37)
                     {
-                        p->tempPeriod = tablePointer[m];
+                        i = 35;
                         break;
                     }
-                    else if (tablePointer[m] > ch->period)
-                    {
-                        l = m + 1;
-                    }
-                    else
-                    {
-                        h = m - 1;
-                    }
                 }
+
+                 p->tempPeriod = tablePointer[i];
+            }
+        }
+    }
+    else
+    {
+        if (p->tempPeriod > 0)
+        {
+            if (ch->period < ch->tempPeriod)
+            {
+                ch->period += ch->glissandoSpeed;
+                if (ch->period > ch->tempPeriod)
+                    ch->period = ch->tempPeriod;
+            }
+            else
+            {
+                ch->period -= ch->glissandoSpeed;
+                if (ch->period < ch->tempPeriod)
+                    ch->period = ch->tempPeriod;
+            }
+
+            if (ch->glissandoControl == 0)
+            {
+                p->tempPeriod = ch->period;
             }
             else
             {
                 l = 0;
                 h = 83;
 
-                tablePointer = (short *)&extendedRawPeriods[ch->fineTune * 85];
+                tablePointer = (short *)&extendedRawPeriods[85 * ch->fineTune];
                 while (h >= l)
                 {
                     m = (h + l) / 2;
@@ -1944,10 +2004,6 @@ static void handleGlissando(player *p, mod_channel *ch)
                     }
                 }
             }
-        }
-        else
-        {
-            p->tempPeriod = ch->period;
         }
     }
 }
@@ -2502,15 +2558,11 @@ static void fetchPatternData(player *p, mod_channel *ch)
             ch->flags |= FLAG_NOTE;
         }
         
-        // 3xx/5xy quirk for PT MODs
+        // do a slightly different path for 3xx/5xy in PT mode
         if (p->minPeriod == PT_MIN_PERIOD)
         {
             if ((ch->command == 0x03) || (ch->command == 0x05))
-            {
-                ch->doGlissando = true;
-                if (!ch->period || (ch->period == ch->tempPeriod))
-                    ch->doGlissando = false;
-            }
+                setupGlissando(ch, note->period);
         }
     }
     else
