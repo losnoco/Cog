@@ -501,7 +501,7 @@
 	RepeatMode repeat = [self repeat];
 	
 	if (i < 0 || i >= [[self arrangedObjects] count] ) {
-		if ( repeat == RepeatNone )
+		if ( repeat != RepeatAll )
 			return nil;
 		
 		while ( i < 0 )
