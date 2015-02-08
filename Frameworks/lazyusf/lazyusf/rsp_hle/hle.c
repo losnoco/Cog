@@ -21,11 +21,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _MSC_VER
 #include <stdbool.h>
-#else
-#include "mystdbool.h"
-#endif
 #include <stdint.h>
 
 #ifdef ENABLE_TASK_DUMP

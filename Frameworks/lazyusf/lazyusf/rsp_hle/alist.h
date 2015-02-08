@@ -22,11 +22,7 @@
 #ifndef ALIST_INTERNAL_H
 #define ALIST_INTERNAL_H
 
-#ifndef _MSC_VER
 #include <stdbool.h>
-#else
-#include "mystdbool.h"
-#endif
 #include <stdint.h>
 #include <stddef.h>
 
