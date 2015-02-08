@@ -179,7 +179,7 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader)
 
 - (long)seek:(long)sample
 {
-	mpc_demux_seek_sample(&demux, sample);
+	mpc_demux_seek_sample(demux, sample);
 	
 	return sample;
 }
