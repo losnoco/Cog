@@ -54,7 +54,10 @@
 	if (![source open:url])
 	{
 		DLog(@"Couldn't open source...");
-		return NO;
+        url = [NSURL URLWithString:@"silence://1"];
+        source = [AudioSource audioSourceForURL:url];
+        if (![source open:url])
+            return NO;
 	}
 
 	if (![inputNode openWithSource:source])

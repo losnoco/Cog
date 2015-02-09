@@ -191,6 +191,7 @@
 		83E5E54D18087CA5001F3284 /* miniModeOnTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */; };
 		83E6B7621816136F00D4576D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83E6B759181612FD00D4576D /* Sparkle.framework */; };
 		83E6B7651816178200D4576D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E6B759181612FD00D4576D /* Sparkle.framework */; };
+		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -613,6 +614,20 @@
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = Sparkle;
 		};
+		83F9D7F51A884B46007ABEC2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83F9D7E71A884B44007ABEC2;
+			remoteInfo = SilenceDecoder;
+		};
+		83F9D8051A884C33007ABEC2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83F9D7E61A884B44007ABEC2;
+			remoteInfo = SilenceDecoder;
+		};
 		8E8D40860CBB036600135C1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
@@ -666,6 +681,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */,
 				836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */,
 				839BD010196521E600947767 /* BASSMODS.bundle in CopyFiles */,
 				835CBC8118DA7A520087A03E /* modplay.bundle in CopyFiles */,
@@ -969,6 +985,7 @@
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
 		83E6B750181612FD00D4576D /* Sparkle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sparkle.xcodeproj; path = Frameworks/Sparkle/Sparkle.xcodeproj; sourceTree = "<group>"; };
+		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
 		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
@@ -1279,6 +1296,7 @@
 				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
 				839BCFE71965133E00947767 /* BASSMODS.xcodeproj */,
 				8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */,
+				83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */,
 			);
 			name = PlugIns;
 			sourceTree = "<group>";
@@ -1712,6 +1730,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83F9D7F21A884B44007ABEC2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -1844,6 +1870,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				83F9D8061A884C33007ABEC2 /* PBXTargetDependency */,
 				836F5BEE1A3579F5002730CC /* PBXTargetDependency */,
 				839BD012196521FD00947767 /* PBXTargetDependency */,
 				836FB5A618206F1500B3AD2D /* PBXTargetDependency */,
@@ -2003,6 +2030,10 @@
 				{
 					ProductGroup = 8314D63C1A354DFE00EEE8E6 /* Products */;
 					ProjectRef = 8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */;
+				},
+				{
+					ProductGroup = 83F9D7F21A884B44007ABEC2 /* Products */;
+					ProjectRef = 83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */;
 				},
 				{
 					ProductGroup = 83E6B751181612FD00D4576D /* Products */;
@@ -2248,6 +2279,13 @@
 			fileType = wrapper.application;
 			path = Autoupdate.app;
 			remoteRef = 83E6B760181612FD00D4576D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SilenceDecoder.bundle;
+			remoteRef = 83F9D7F51A884B46007ABEC2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8E8D40870CBB036600135C1B /* M3u.bundle */ = {
@@ -2602,6 +2640,11 @@
 			isa = PBXTargetDependency;
 			name = Sparkle;
 			targetProxy = 83E6B7631816138800D4576D /* PBXContainerItemProxy */;
+		};
+		83F9D8061A884C33007ABEC2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SilenceDecoder;
+			targetProxy = 83F9D8051A884C33007ABEC2 /* PBXContainerItemProxy */;
 		};
 		8E8D40930CBB03AF00135C1B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
