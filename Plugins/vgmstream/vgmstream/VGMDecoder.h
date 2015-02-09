@@ -18,6 +18,7 @@
 
     int sampleRate;
     int channels;
+    int bitrate;
 	long totalFrames;
     long framesLength;
     long framesFade;

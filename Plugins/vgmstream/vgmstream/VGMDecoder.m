@@ -131,6 +131,8 @@ err1:
     
     framesRead = 0;
     
+    bitrate = get_vgmstream_average_bitrate(stream);
+    
     [self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
     
@@ -140,7 +142,7 @@ err1:
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:0], @"bitrate",
+            [NSNumber numberWithInt:bitrate / 1000], @"bitrate",
             [NSNumber numberWithInt:sampleRate], @"sampleRate",
             [NSNumber numberWithDouble:totalFrames], @"totalFrames",
             [NSNumber numberWithInt:16], @"bitsPerSample",
