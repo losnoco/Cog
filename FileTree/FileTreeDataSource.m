@@ -70,6 +70,9 @@
 
 - (void)setRootURL: (NSURL *)rootURL
 {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:[rootURL path]])
+        rootURL = [NSURL fileURLWithPath:[@"~/Music" stringByExpandingTildeInPath]];
+    
 	[rootNode release];
 	rootNode = [[DirectoryNode alloc] initWithDataSource:self url:rootURL];
 
