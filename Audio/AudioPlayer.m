@@ -267,6 +267,10 @@
         [nextStreamRGInfo retain];
         
 		[self requestNextStream: nextStreamUserInfo];
+        
+        if (!nextStream)
+            return YES;
+        
 		newChain = [[BufferChain alloc] initWithController:self];
 	
 		endOfInputReached = YES;

@@ -478,12 +478,15 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	else
     {
 		pe = [playlistController getNextEntry:curEntry];
-        if ([pe metadataLoaded] != YES) {
+        if (pe && [pe metadataLoaded] != YES) {
             [pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
         }
     }
 
-	[player setNextStream:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe)];
+    if (pe)
+        [player setNextStream:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe)];
+    else
+        [player setNextStream:nil];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo
