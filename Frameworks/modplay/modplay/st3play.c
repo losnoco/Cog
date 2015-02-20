@@ -653,12 +653,21 @@ static void st3play_AdlibHertzTouch(PLAYER *p, uint8_t ch, int Hertz, uint8_t ke
 static inline void setspd(PLAYER *p, uint8_t ch)
 {
     int32_t tmpspd;
+
     uint8_t adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
 
+    p->chn[ch].achannelused |= 0x80;
+    
     tmpspd = p->chn[ch].aspd;
-
-    if (tmpspd && (tmpspd < p->aspdmin))
-        tmpspd = p->aspdmin;
+    
+    if (p->amigalimits)
+    {
+        if (p->chn[ch].aorgspd > p->aspdmax) p->chn[ch].aorgspd = p->aspdmax;
+        if (p->chn[ch].aorgspd < p->aspdmin) p->chn[ch].aorgspd = p->aspdmin;
+        
+        if (p->chn[ch].aspd > p->aspdmax)
+            p->chn[ch].aspd = p->aspdmax;
+    }
     
     if (p->tracker == SCREAM_TRACKER)
     {
@@ -667,26 +676,30 @@ static inline void setspd(PLAYER *p, uint8_t ch)
     }
     else
     {
-        // *ABSOLUTE* max!
+        /* *ABSOLUTE* max! */
         if (tmpspd > 14317056)
             tmpspd = 14317056;
     }
-
-    if (p->amigalimits)
-    {
-        if (p->chn[ch].aorgspd > p->aspdmax) p->chn[ch].aorgspd = p->aspdmax;
-        if (p->chn[ch].aorgspd < p->aspdmin) p->chn[ch].aorgspd = p->aspdmin;
-
-        p->chn[ch].aspd = tmpspd;
-    }
-
-    p->chn[ch].achannelused |= 0x80;
-
-    // ST3 actually uses 14317056/per instead of 14317456 (8363*1712).
-    // 14317056 is used in both the ST3 replayer and the S3M format docs
-    if (tmpspd)
-        voiceSetSamplingFrequency(p, ch, 14317056.0f / (float)tmpspd);
     
+    if (tmpspd == 0)
+    {
+        // cut channel
+        voiceSetSamplingFrequency(p, ch, 0);
+        return;
+    }
+    
+    if (tmpspd < p->aspdmin)
+    {
+        tmpspd = p->aspdmin;
+        
+        if (p->amigalimits && (p->chn[ch].aspd < p->aspdmin))
+            p->chn[ch].aspd = p->aspdmin;
+    }
+    
+    // ST3 actually uses 14317056 (3.579264MHz * 4) instead of 14317456 (8363*1712)
+    if (tmpspd > 0)
+        voiceSetSamplingFrequency(p, ch, 14317056 / tmpspd);
+
     if (adlibChannel < 9)
         st3play_AdlibHertzTouch(p, adlibChannel, 14317056.0f / (float)tmpspd, 0);
 }

@@ -3248,7 +3248,8 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         
         if ( !resampler_get_sample_count(resampler[0]) )
         {
-            resampler_clear(resampler);
+            resampler_clear(resampler[0]);
+            resampler_clear(resampler[1]);
             v->sampleData = NULL;
             break;
         }
@@ -3270,7 +3271,8 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
             {
                 v->fader = v->faderDest;
-                resampler_clear(resampler);
+                resampler_clear(resampler[0]);
+                resampler_clear(resampler[1]);
                 v->sampleData = NULL;
             }
         
@@ -3580,7 +3582,8 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
         
         if ( !resampler_get_sample_count(resampler[0]) )
         {
-            resampler_clear(resampler);
+            resampler_clear(resampler[0]);
+            resampler_clear(resampler[1]);
             v->sampleData = NULL;
             break;
         }
@@ -3602,7 +3605,8 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
             {
                 v->fader = v->faderDest;
-                resampler_clear(resampler);
+                resampler_clear(resampler[0]);
+                resampler_clear(resampler[1]);
                 v->sampleData = NULL;
             }
         
@@ -3647,6 +3651,8 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
 
 static inline void mixChannel(PLAYER *p, uint32_t i, uint32_t sampleBlockLength)
 {
+    if (!p->voice[i].incRate)
+        return;
     if (p->voice[i].stereo)
     {
         if (p->voice[i].sixteenBit)
