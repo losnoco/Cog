@@ -570,11 +570,11 @@ void RunRsp (usf_state_t * state) {
 				MI_INTR_REG |= 1;
 				CheckInterrupts(state);
 			}
-#ifdef DEBUG_INFO
-            fprintf(stderr, "\n");
-#endif
 		}
 	}
+#ifdef DEBUG_INFO
+    fprintf(stderr, "\n");
+#endif
 }
 
 void TimerDone (usf_state_t * state) {
