@@ -524,6 +524,9 @@ void RefreshScreen (usf_state_t * state){
 }
 
 void RunRsp (usf_state_t * state) {
+#ifdef DEBUG_INFO
+    fprintf(stderr, "RSP Task:");
+#endif
 	if ( ( SP_STATUS_REG & SP_STATUS_HALT ) == 0) {
 		if ( ( SP_STATUS_REG & SP_STATUS_BROKE ) == 0 ) {
 
@@ -536,6 +539,10 @@ void RunRsp (usf_state_t * state) {
 					SP_STATUS_REG |= (0x0203 );
 					if ((SP_STATUS_REG & SP_STATUS_INTR_BREAK) != 0 )
 						MI_INTR_REG |= 1;
+                
+#ifdef DEBUG_INFO
+                    fprintf(stderr, " DList - interrupts %d\n", MI_INTR_REG);
+#endif
 
 					CheckInterrupts(state);
 
@@ -545,7 +552,7 @@ void RunRsp (usf_state_t * state) {
 				}
 				break;
 			case 2: {
-
+                fprintf(stderr, " AList");
 					break;
 				}
 				break;
@@ -557,10 +564,15 @@ void RunRsp (usf_state_t * state) {
 			real_run_rsp(state, 100);
 			SP_STATUS_REG |= (0x0203 );
 			if ((SP_STATUS_REG & SP_STATUS_INTR_BREAK) != 0 ) {
+#ifdef DEBUG_INFO
+                fprintf(stderr, " - interrupt");
+#endif
 				MI_INTR_REG |= 1;
 				CheckInterrupts(state);
 			}
-
+#ifdef DEBUG_INFO
+            fprintf(stderr, "\n");
+#endif
 		}
 	}
 }

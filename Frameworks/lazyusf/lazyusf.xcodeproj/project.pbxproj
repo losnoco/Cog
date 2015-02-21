@@ -112,6 +112,11 @@
 		83C8B6F818AF58090071B040 /* usf_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6A818AF58080071B040 /* usf_internal.h */; };
 		83C8B6F918AF58090071B040 /* usf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C8B6A918AF58080071B040 /* usf.c */; };
 		83C8B6FA18AF58090071B040 /* usf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C8B6AA18AF58080071B040 /* usf.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83CA14741A987E91005E7ED4 /* preproc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA146E1A987E91005E7ED4 /* preproc.h */; };
+		83CA14751A987E91005E7ED4 /* dbg_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA14701A987E91005E7ED4 /* dbg_decoder.c */; };
+		83CA14761A987E91005E7ED4 /* dbg_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14711A987E91005E7ED4 /* dbg_decoder.h */; };
+		83CA14771A987E91005E7ED4 /* dbg_decoder_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14721A987E91005E7ED4 /* dbg_decoder_local.h */; };
+		83CA14781A987E91005E7ED4 /* dbg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14731A987E91005E7ED4 /* dbg_types.h */; };
 		83FBECBA18ECE86B00311448 /* ucodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FBECB918ECE86B00311448 /* ucodes.h */; };
 /* End PBXBuildFile section */
 
@@ -223,6 +228,11 @@
 		83C8B6A918AF58080071B040 /* usf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = usf.c; sourceTree = "<group>"; };
 		83C8B6AA18AF58080071B040 /* usf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usf.h; sourceTree = "<group>"; };
 		83C8B6FD18AF59E70071B040 /* lazyusf-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "lazyusf-Info.plist"; sourceTree = "<group>"; };
+		83CA146E1A987E91005E7ED4 /* preproc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = preproc.h; sourceTree = "<group>"; };
+		83CA14701A987E91005E7ED4 /* dbg_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dbg_decoder.c; sourceTree = "<group>"; };
+		83CA14711A987E91005E7ED4 /* dbg_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbg_decoder.h; sourceTree = "<group>"; };
+		83CA14721A987E91005E7ED4 /* dbg_decoder_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbg_decoder_local.h; sourceTree = "<group>"; };
+		83CA14731A987E91005E7ED4 /* dbg_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbg_types.h; sourceTree = "<group>"; };
 		83FBECB918ECE86B00311448 /* ucodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ucodes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -299,6 +309,8 @@
 		83C8B62B18AF57770071B040 /* lazyusf */ = {
 			isa = PBXGroup;
 			children = (
+				83CA146D1A987E91005E7ED4 /* osal */,
+				83CA146F1A987E91005E7ED4 /* debugger */,
 				8319EF1F1A219BE7009DD5C4 /* audiolib.c */,
 				8319EF201A219BE7009DD5C4 /* audiolib.h */,
 				8319EF1B1A2198B9009DD5C4 /* os.c */,
@@ -415,6 +427,25 @@
 			path = vu;
 			sourceTree = "<group>";
 		};
+		83CA146D1A987E91005E7ED4 /* osal */ = {
+			isa = PBXGroup;
+			children = (
+				83CA146E1A987E91005E7ED4 /* preproc.h */,
+			);
+			path = osal;
+			sourceTree = "<group>";
+		};
+		83CA146F1A987E91005E7ED4 /* debugger */ = {
+			isa = PBXGroup;
+			children = (
+				83CA14701A987E91005E7ED4 /* dbg_decoder.c */,
+				83CA14711A987E91005E7ED4 /* dbg_decoder.h */,
+				83CA14721A987E91005E7ED4 /* dbg_decoder_local.h */,
+				83CA14731A987E91005E7ED4 /* dbg_types.h */,
+			);
+			path = debugger;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -426,6 +457,7 @@
 				83C8B6AC18AF58080071B040 /* audio.h in Headers */,
 				837841C118C847B2002C4FE5 /* audio.h in Headers */,
 				83C8B6B118AF58080071B040 /* dma.h in Headers */,
+				83CA14781A987E91005E7ED4 /* dbg_types.h in Headers */,
 				83A2249518CAC28500FE4173 /* hle.h in Headers */,
 				83C8B6AD18AF58080071B040 /* config.h in Headers */,
 				83A2249318CAC28500FE4173 /* hle_internal.h in Headers */,
@@ -435,6 +467,7 @@
 				8378417018C6E56B002C4FE5 /* arithmetics.h in Headers */,
 				8319EF221A219BE7009DD5C4 /* audiolib.h in Headers */,
 				83C8B6C018AF58080071B040 /* registers.h in Headers */,
+				83CA14741A987E91005E7ED4 /* preproc.h in Headers */,
 				83C8B6BE18AF58080071B040 /* pif.h in Headers */,
 				83C8B6F618AF58090071B040 /* tlb.h in Headers */,
 				83C8B6F718AF58090071B040 /* types.h in Headers */,
@@ -442,6 +475,7 @@
 				8319EF1E1A2198B9009DD5C4 /* os.h in Headers */,
 				83C8B6BC18AF58080071B040 /* opcode.h in Headers */,
 				83C8B6B718AF58080071B040 /* interpreter_ops.h in Headers */,
+				83CA14761A987E91005E7ED4 /* dbg_decoder.h in Headers */,
 				83C8B6B318AF58080071B040 /* exception.h in Headers */,
 				83C8B6AF18AF58080071B040 /* cpu.h in Headers */,
 				83C8B6F118AF58090071B040 /* vsubc.h in Headers */,
@@ -461,6 +495,7 @@
 				83C8B6D218AF58080071B040 /* vge.h in Headers */,
 				83C8B6C518AF58080071B040 /* su.h in Headers */,
 				83C8B6C218AF58080071B040 /* execute.h in Headers */,
+				83CA14771A987E91005E7ED4 /* dbg_decoder_local.h in Headers */,
 				83C8B6E518AF58080071B040 /* vnop.h in Headers */,
 				83C8B6E418AF58080071B040 /* vne.h in Headers */,
 				83C8B6D418AF58080071B040 /* vmacf.h in Headers */,
@@ -584,6 +619,7 @@
 				8378416A18C6E56B002C4FE5 /* alist.c in Sources */,
 				83C8B6AE18AF58080071B040 /* cpu.c in Sources */,
 				83C8B6AB18AF58080071B040 /* audio.c in Sources */,
+				83CA14751A987E91005E7ED4 /* dbg_decoder.c in Sources */,
 				83A2249418CAC28500FE4173 /* hle.c in Sources */,
 				8319EF191A219846009DD5C4 /* cpu_hle.c in Sources */,
 				8319EF1D1A2198B9009DD5C4 /* os.c in Sources */,
@@ -676,6 +712,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					DEBUG_INFO,
 					ARCH_MIN_SSE2,
 				);
 				GCC_WARN_PEDANTIC = YES;
@@ -683,6 +720,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = lazyusf;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -704,6 +742,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = lazyusf;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

@@ -703,6 +703,10 @@ void RunFunction(usf_state_t * state, uint32_t address) {
     state->NextInstruction = la;
 }
 
+#ifdef DEBUG_INFO
+#include "debugger/dbg_decoder.h"
+#endif
+
 void ExecuteInterpreterOpCode (usf_state_t * state) {
 
 
@@ -713,6 +717,18 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 		state->NextInstruction = NORMAL;
 		return;
 	}
+    
+#ifdef DEBUG_INFO
+    {
+        static const char filler[] = "                ";
+        char opcode[256];
+        char arguments[256];
+        r4300_decode_op(state->Opcode.u.Hex, opcode, arguments, state->PROGRAM_COUNTER);
+        strcat(opcode, filler);
+        opcode[16] = '\0';
+        fprintf(stderr, "%08x: %s %s\n", state->PROGRAM_COUNTER, opcode, arguments);
+    }
+#endif
 
 	COUNT_REGISTER += 2;
 	state->Timers->Timer -= 2;
@@ -737,7 +753,7 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 		state->PROGRAM_COUNTER += 4;
 		break;
 	case JUMP:
-		if (state->cpu_hle_entry_count &&
+		if (0 && state->cpu_hle_entry_count &&
 			DoCPUHLE(state, state->JumpToLocation)) {
             state->PROGRAM_COUNTER = state->GPR[31].UW[0];
             state->NextInstruction = NORMAL;

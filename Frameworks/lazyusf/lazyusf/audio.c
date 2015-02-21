@@ -53,6 +53,10 @@ void AiLenChanged(usf_state_t * state) {
 	uint32_t address = (AI_DRAM_ADDR_REG & 0x00FFFFF8);
 
 	length = AI_LEN_REG & 0x3FFF8;
+    
+#ifdef DEBUG_INFO
+    fprintf(stderr, "Audio buffer queued from %08x for %d bytes\n", AI_DRAM_ADDR_REG, length);
+#endif
 
 	AddBuffer(state, state->RDRAM+address, length);
 
