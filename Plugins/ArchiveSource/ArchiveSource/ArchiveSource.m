@@ -144,6 +144,8 @@ static BOOL g_parse_unpack_path(NSString * src, NSString ** archive, NSString **
 
 - (long)read:(void *)buffer amount:(long)amount
 {
+    if ( offset >= size )
+        return 0;
 	if ( size - offset < amount )
         amount = size - offset;
     memcpy( buffer, (const uint8_t *)data + offset, amount );
