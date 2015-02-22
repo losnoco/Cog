@@ -5,6 +5,12 @@
 #include <string>
 #include <vector>
 
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+#define snprintf sprintf_s
+#endif
+
 struct midi_event
 {
 	enum
@@ -182,7 +188,7 @@ private:
                 return;
             }
         }
-        m_port_numbers.push_back( number );
+        m_port_numbers.push_back( (const uint8_t) number );
         number = m_port_numbers.size() - 1;
     }
 

@@ -116,8 +116,8 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
 
 		unsigned current_timestamp = 0;
 
-        std::vector<uint8_t> buffer;
-        buffer.resize( 3 );
+        std::vector<uint8_t> _buffer;
+        _buffer.resize( 3 );
 
         std::vector<uint8_t>::const_iterator track_end = it + track_size_32;
 
@@ -126,33 +126,33 @@ bool midi_processor::process_hmp( std::vector<uint8_t> const& p_file, midi_conta
             unsigned delta = decode_hmp_delta( it, track_end );
 			current_timestamp += delta;
 			if ( it == track_end ) return false;
-            buffer[ 0 ] = *it++;
-			if ( buffer[ 0 ] == 0xFF )
+            _buffer[ 0 ] = *it++;
+			if ( _buffer[ 0 ] == 0xFF )
 			{
 				if ( it == track_end ) return false;
-                buffer[ 1 ] = *it++;
+                _buffer[ 1 ] = *it++;
                 int meta_count = decode_delta( it, track_end );
                 if ( meta_count < 0 ) return false; /*throw exception_io_data( "Invalid HMP meta message" );*/
 				if ( track_end - it < meta_count ) return false;
-                buffer.resize( meta_count + 2 );
-                std::copy( it, it + meta_count, buffer.begin() + 2 );
+                _buffer.resize( meta_count + 2 );
+                std::copy( it, it + meta_count, _buffer.begin() + 2 );
                 it += meta_count;
-                track.add_event( midi_event( current_timestamp, midi_event::extended, 0, &buffer[0], meta_count + 2 ) );
-				if ( buffer[ 1 ] == 0x2F ) break;
+                track.add_event( midi_event( current_timestamp, midi_event::extended, 0, &_buffer[0], meta_count + 2 ) );
+				if ( _buffer[ 1 ] == 0x2F ) break;
 			}
-			else if ( buffer[ 0 ] >= 0x80 && buffer[ 0 ] <= 0xEF )
+			else if ( _buffer[ 0 ] >= 0x80 && _buffer[ 0 ] <= 0xEF )
 			{
 				unsigned bytes_read = 2;
-				switch ( buffer[ 0 ] & 0xF0 )
+				switch ( _buffer[ 0 ] & 0xF0 )
 				{
 				case 0xC0:
 				case 0xD0:
 					bytes_read = 1;
                 }
 				if ( (unsigned long)(track_end - it) < bytes_read ) return false;
-                std::copy( it, it + bytes_read, buffer.begin() + 1 );
+                std::copy( it, it + bytes_read, _buffer.begin() + 1 );
                 it += bytes_read;
-                track.add_event( midi_event( current_timestamp, (midi_event::event_type)( ( buffer[ 0 ] >> 4 ) - 8 ), buffer[ 0 ] & 0x0F, &buffer[1], bytes_read ) );
+                track.add_event( midi_event( current_timestamp, (midi_event::event_type)( ( _buffer[ 0 ] >> 4 ) - 8 ), _buffer[ 0 ] & 0x0F, &_buffer[1], bytes_read ) );
 			}
             else return false; /*throw exception_io_data( "Unexpected status code in HMP track" );*/
 		}

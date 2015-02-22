@@ -93,9 +93,11 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
                 break;
             }
         }
-        else if ( event_code == 0xFB || event_code == 0xFC )
+        else if ( event_code >= 0xF8 && event_code <= 0xFE )
         {
-            /*console::formatter() << "MIDI " << ( ( event_code == 0xFC ) ? "stop" : "start" ) << " status code ignored";*/
+			/* Sequencer specific events, single byte */
+			buffer[ 0 ] = event_code;
+			track.add_event( midi_event( current_timestamp, midi_event::extended, 0, &buffer[0], 1 ) );
         }
         else return false; /*throw exception_io_data("Unhandled MIDI status code");*/
     }

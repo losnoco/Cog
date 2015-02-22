@@ -11,7 +11,7 @@ bool midi_processor::is_mus( std::vector<uint8_t> const& p_file )
     uint16_t length = p_file[ 4 ] | ( p_file[ 5 ] << 8 );
     uint16_t offset = p_file[ 6 ] | ( p_file[ 7 ] << 8 );
     uint16_t instrument_count = p_file[ 12 ] | ( p_file[ 13 ] << 8 );
-    if ( offset >= 16 + instrument_count * 2 && offset < 16 + instrument_count * 4 && offset + length <= p_file.size() ) return true;
+    if ( offset >= 16 + instrument_count * 2 && offset < 16 + instrument_count * 4 && (size_t)(offset + length) <= p_file.size() ) return true;
     return false;
 }
 
@@ -35,7 +35,7 @@ bool midi_processor::process_mus( std::vector<uint8_t> const& p_file, midi_conta
 
     uint8_t velocity_levels[ 16 ] = { 0 };
 
-	if ( offset >= p_file.size() || offset + length > p_file.size() )
+	if ( (size_t)offset >= p_file.size() || (size_t)(offset + length) > p_file.size() )
 		return false;
 
     std::vector<uint8_t>::const_iterator it = p_file.begin() + offset, end = p_file.begin() + offset + length;

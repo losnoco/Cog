@@ -351,6 +351,7 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 
 	if ( end - it < 2 ) return false;
     patch_count = it[ 0 ] | ( it[ 1 ] << 8 );
+	if ( !patch_count ) return false;
     it += 2;
     patches.resize( patch_count );
 	if ( end - it < 46 * patch_count ) return false;
@@ -404,6 +405,7 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 
 	if ( end - it < 2 ) return false;
     position_count = it[ 0 ] | ( it[ 1 ] << 8 );
+	if ( !position_count ) return false;
     it += 2;
     positions.resize( 9 * position_count );
 	if ( end - it < 3 * position_count ) return false;
@@ -573,16 +575,16 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 		// handle channel delay
 		for(chan = 0; chan < 9; ++chan)
 		{
-			channel_state * c = &channel[chan];
-			if(c->chancheat.chandelay)
+			channel_state * _c = &channel[chan];
+			if(_c->chancheat.chandelay)
 			{
-				if(!(--c->chancheat.chandelay))
+				if(!(--_c->chancheat.chandelay))
 				{
 					playsound( current_instrument, patches, last_note, last_channel, last_instrument, last_volume, last_sent_volume,
 #ifdef ENABLE_WHEEL
 						last_pitch_wheel,
 #endif
-						c, allvolume, current_timestamp, c->chancheat.sound, chan, c->chancheat.high, tracks[ chan ] );
+						_c, allvolume, current_timestamp, _c->chancheat.sound, chan, _c->chancheat.high, tracks[ chan ] );
 					ticks_without_notes[ last_channel[ chan ] ] = 0;
 				}
 			}
@@ -597,24 +599,24 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 			}
 
 			vbreak = false;
-			for(unsigned chan = 0; chan < 9; chan++)
+			for(unsigned _chan = 0; _chan < 9; _chan++)
 			{
-				channel_state * c = &channel[chan];
-				if(!c->packwait)
+				channel_state * _c = &channel[_chan];
+				if(!_c->packwait)
 				{
-					unsigned short	patnum = positions[posplay * 9 + chan].pattern_number;
-					unsigned char	transpose = positions[posplay * 9 + chan].transpose;
+					unsigned short	patnum = positions[posplay * 9 + _chan].pattern_number;
+					unsigned char	transpose = positions[posplay * 9 + _chan].transpose;
 
-                    if ( (unsigned long)(patnum + c->packpos) >= patterns.size() ) return false; /*throw exception_io_data( "Invalid LDS pattern number" );*/
+                    if ( (unsigned long)(patnum + _c->packpos) >= patterns.size() ) return false; /*throw exception_io_data( "Invalid LDS pattern number" );*/
 
-					unsigned comword = patterns[patnum + c->packpos];
+					unsigned comword = patterns[patnum + _c->packpos];
 					unsigned comhi = comword >> 8;
 					unsigned comlo = comword & 0xff;
 					if(comword)
 					{
 						if(comhi == 0x80)
 						{
-							c->packwait = comlo;
+							_c->packwait = comlo;
 						}
 						else if(comhi >= 0x80)
 						{
@@ -622,13 +624,13 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 							case 0xff:
 								{
 									unsigned volume = ( comlo & 0x3F ) * 127 / 63;
-									last_volume[ chan ] = volume;
-									if ( volume != last_sent_volume[ last_channel[ chan ] ] )
+									last_volume[ _chan ] = volume;
+									if ( volume != last_sent_volume[ last_channel[ _chan ] ] )
 									{
 										buffer[ 0 ] = 7;
 										buffer[ 1 ] = volume;
-										tracks[ chan ].add_event( midi_event( current_timestamp, midi_event::control_change, last_channel[ chan ], buffer, 2 ) );
-										last_sent_volume[ last_channel [ chan ] ] = volume;
+										tracks[ _chan ].add_event( midi_event( current_timestamp, midi_event::control_change, last_channel[ _chan ], buffer, 2 ) );
+										last_sent_volume[ last_channel [ _chan ] ] = volume;
 									}
 								}
 								break;
@@ -636,14 +638,14 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 								tempo = comword & 0x3f;
 								break;
 							case 0xfd:
-								c->nextvol = comlo;
+								_c->nextvol = comlo;
 								break;
 							case 0xfc:
 								playing = false;
 								// in real player there's also full keyoff here, but we don't need it
 								break;
 							case 0xfb:
-								c->keycount = 1;
+								_c->keycount = 1;
 								break;
 							case 0xfa:
 								vbreak = true;
@@ -662,24 +664,24 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 								break;
 							case 0xf8:
 #ifdef ENABLE_WHEEL
-								c->lasttune = 0;
+								_c->lasttune = 0;
 #endif
 								break;
 							case 0xf7:
 #ifdef ENABLE_VIB
-								c->vibwait = 0;
-								// PASCAL: c->vibspeed = ((comlo >> 4) & 15) + 2;
-								c->vibspeed = (comlo >> 4) + 2;
-								c->vibrate = (comlo & 15) + 1;
+								_c->vibwait = 0;
+								// PASCAL: _c->vibspeed = ((comlo >> 4) & 15) + 2;
+								_c->vibspeed = (comlo >> 4) + 2;
+								_c->vibrate = (comlo & 15) + 1;
 #endif
 								break;
 							case 0xf6:
 #ifdef ENABLE_WHEEL
-								c->glideto = comlo;
+								_c->glideto = comlo;
 #endif
 								break;
 							case 0xf5:
-								c->finetune = comlo;
+								_c->finetune = comlo;
 								break;
 							case 0xf4:
 								if(!hardfade) {
@@ -692,22 +694,22 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 								break;
 							case 0xf2:
 #ifdef ENABLE_TREM
-								c->trmstay = comlo;
+								_c->trmstay = comlo;
 #endif
 								break;
 							case 0xf1:
 								buffer[ 0 ] = 10;
 								buffer[ 1 ] = ( comlo & 0x3F ) * 127 / 63;
-								tracks[ chan ].add_event( midi_event( current_timestamp, midi_event::control_change, last_channel[ chan ], buffer, 2 ) );
+								tracks[ _chan ].add_event( midi_event( current_timestamp, midi_event::control_change, last_channel[ _chan ], buffer, 2 ) );
 								break;
 							case 0xf0:
 								buffer[ 0 ] = comlo & 0x7F;
-								tracks[ chan ].add_event( midi_event( current_timestamp, midi_event::program_change, last_channel[ chan ], buffer, 1 ) );
+								tracks[ _chan ].add_event( midi_event( current_timestamp, midi_event::program_change, last_channel[ _chan ], buffer, 1 ) );
 								break;
 							default:
 #ifdef ENABLE_WHEEL
 								if(comhi < 0xa0)
-									c->glideto = comhi & 0x1f;
+									_c->glideto = comhi & 0x1f;
 #endif
 								break;
 							}
@@ -733,28 +735,28 @@ bool midi_processor::process_lds( std::vector<uint8_t> const& p_file, midi_conta
 							high = (comhi + (((transpose + 0x24) & 0xff) - 0x24)) << 4;
 							*/
 
-							if( !channel_delay[ chan ] )
+							if( !channel_delay[ _chan ] )
 							{
 								playsound( current_instrument, patches, last_note, last_channel, last_instrument, last_volume, last_sent_volume,
 #ifdef ENABLE_WHEEL
 									last_pitch_wheel,
 #endif
-									c, allvolume, current_timestamp, sound, chan, high, tracks[ chan ] );
-								ticks_without_notes[ last_channel[ chan ] ] = 0;
+									_c, allvolume, current_timestamp, sound, _chan, high, tracks[ _chan ] );
+								ticks_without_notes[ last_channel[ _chan ] ] = 0;
 							}
 							else
 							{
-								c->chancheat.chandelay = channel_delay[chan];
-								c->chancheat.sound = sound;
-								c->chancheat.high = high;
+								_c->chancheat.chandelay = channel_delay[_chan];
+								_c->chancheat.sound = sound;
+								_c->chancheat.high = high;
 							}
 						}
 					}
-					c->packpos++;
+					_c->packpos++;
 				}
 				else
 				{
-					c->packwait--;
+					_c->packwait--;
 				}
 			}
 
