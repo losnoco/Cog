@@ -198,7 +198,7 @@ public:
 
 BMPlayer::BMPlayer() : MIDIPlayer()
 {
-	_stream = 0;
+	memset(_stream, 0, sizeof(_stream));
 	bSincInterpolation = false;
 
 	if ( !g_initializer.initialize() ) throw std::runtime_error( "Unable to initialize BASS" );
@@ -228,10 +228,9 @@ void BMPlayer::send_event(uint32_t b)
 		unsigned channel = b & 0x0F;
 		unsigned command = b & 0xF0;
 		unsigned event_length = ( command == 0xC0 || command == 0xD0 ) ? 2 : 3;
-		channel += 16 * port;
-        channel %= 48;
+        if ( port > 2 ) port = 2;
         if ( bank_lsb_overridden && command == 0xB0 && event[ 1 ] == 0x20 ) return;
-		BASS_MIDI_StreamEvents( _stream, BASS_MIDI_EVENTS_RAW + 1 + channel, event, event_length );
+		BASS_MIDI_StreamEvents( _stream[port], BASS_MIDI_EVENTS_RAW + 1 + channel, event, event_length );
 	}
 	else
 	{
@@ -240,13 +239,35 @@ void BMPlayer::send_event(uint32_t b)
         std::size_t size, port;
 		mSysexMap.get_entry( n, data, size, port );
 		if ( port > 2 ) port = 2;
-		BASS_MIDI_StreamEvents( _stream, BASS_MIDI_EVENTS_RAW, data, (unsigned int) size );
+		BASS_MIDI_StreamEvents( _stream[port], BASS_MIDI_EVENTS_RAW, data, (unsigned int) size );
+        if ( port == 0 )
+        {
+            BASS_MIDI_StreamEvents( _stream[1], BASS_MIDI_EVENTS_RAW, data, (unsigned int) size );
+            BASS_MIDI_StreamEvents( _stream[2], BASS_MIDI_EVENTS_RAW, data, (unsigned int) size );
+        }
 	}
 }
 
 void BMPlayer::render(float * out, unsigned long count)
 {
-	BASS_ChannelGetData( _stream, out, BASS_DATA_FLOAT | (unsigned int) ( count * sizeof( float ) * 2 ) );
+    float buffer[1024];
+    while (count)
+    {
+        unsigned long todo = count;
+        if ( todo > 512 )
+            todo = 512;
+        memset(out, 0, todo * sizeof(float) * 2);
+        for (unsigned long i = 0; i < 3; ++i)
+        {
+            BASS_ChannelGetData( _stream[i], buffer, BASS_DATA_FLOAT | (unsigned int) ( todo * sizeof( float ) * 2 ) );
+            for (unsigned long j = 0; j < todo * 2; ++j)
+            {
+                out[j] += buffer[j];
+            }
+        }
+        out += todo * 2;
+        count -= todo;
+    }
 }
 
 void BMPlayer::setSoundFont( const char * in )
@@ -263,8 +284,10 @@ void BMPlayer::setFileSoundFont( const char * in )
 
 void BMPlayer::shutdown()
 {
-	if ( _stream ) BASS_StreamFree( _stream );
-	_stream = NULL;
+	if ( _stream[2] ) BASS_StreamFree( _stream[2] );
+    if ( _stream[1] ) BASS_StreamFree( _stream[1] );
+    if ( _stream[0] ) BASS_StreamFree( _stream[0] );
+    memset(_stream, 0, sizeof(_stream));
 	for ( unsigned long i = 0; i < _soundFonts.size(); ++i )
 	{
 		cache_close( _soundFonts[i] );
@@ -301,10 +324,12 @@ void BMPlayer::compound_presets( std::vector<BASS_MIDI_FONTEX> & out, std::vecto
 
 bool BMPlayer::startup()
 {
-	if ( _stream ) return true;
+	if ( _stream[0] && _stream[1] && _stream[2] ) return true;
 
-	_stream = BASS_MIDI_StreamCreate( 48, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | ( bSincInterpolation ? BASS_MIDI_SINCINTER : 0 ), (unsigned int) uSampleRate );
-	if (!_stream)
+	_stream[0] = BASS_MIDI_StreamCreate( 16, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | ( bSincInterpolation ? BASS_MIDI_SINCINTER : 0 ), (unsigned int) uSampleRate );
+    _stream[1] = BASS_MIDI_StreamCreate( 16, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | ( bSincInterpolation ? BASS_MIDI_SINCINTER : 0 ), (unsigned int) uSampleRate );
+    _stream[2] = BASS_MIDI_StreamCreate( 16, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | ( bSincInterpolation ? BASS_MIDI_SINCINTER : 0 ), (unsigned int) uSampleRate );
+	if (!_stream[0] || !_stream[1] || !_stream[2])
 	{
 		return false;
 	}
@@ -554,7 +579,9 @@ bool BMPlayer::startup()
 	{
         fonts.push_back( presetList[j - i - 1] );
 	}
-	BASS_MIDI_StreamSetFonts( _stream, &fonts[0], (unsigned int) fonts.size() | BASS_MIDI_FONT_EX );
+	BASS_MIDI_StreamSetFonts( _stream[0], &fonts[0], (unsigned int) fonts.size() | BASS_MIDI_FONT_EX );
+    BASS_MIDI_StreamSetFonts( _stream[1], &fonts[0], (unsigned int) fonts.size() | BASS_MIDI_FONT_EX );
+    BASS_MIDI_StreamSetFonts( _stream[2], &fonts[0], (unsigned int) fonts.size() | BASS_MIDI_FONT_EX );
 
 	reset_parameters();
 
@@ -568,6 +595,6 @@ void BMPlayer::reset_parameters()
     {
         if (bank_lsb_override[i])
             bank_lsb_overridden = true;
-        BASS_MIDI_StreamEvent( _stream, i, MIDI_EVENT_BANK_LSB, bank_lsb_override[i] );
+        BASS_MIDI_StreamEvent( _stream[i/16], i%16, MIDI_EVENT_BANK_LSB, bank_lsb_override[i] );
     }
 }

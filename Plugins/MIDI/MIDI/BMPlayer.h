@@ -34,7 +34,7 @@ private:
     std::string        sSoundFontName;
     std::string        sFileSoundFontName;
 
-	HSTREAM            _stream;
+	HSTREAM            _stream[3];
 
 	bool               bSincInterpolation;
 
