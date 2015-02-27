@@ -720,13 +720,10 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
     
 #ifdef DEBUG_INFO
     {
-        static const char filler[] = "                ";
         char opcode[256];
         char arguments[256];
         r4300_decode_op(state->Opcode.u.Hex, opcode, arguments, state->PROGRAM_COUNTER);
-        strcat(opcode, filler);
-        opcode[16] = '\0';
-        fprintf(stderr, "%08x: %s %s\n", state->PROGRAM_COUNTER, opcode, arguments);
+        fprintf(state->debug_log, "%08x: %-16s %s\n", state->PROGRAM_COUNTER, opcode, arguments);
     }
 #endif
 
@@ -753,7 +750,11 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 		state->PROGRAM_COUNTER += 4;
 		break;
 	case JUMP:
-		if (0 && state->cpu_hle_entry_count &&
+		if (
+#ifdef DEBUG_INFO
+            0 &&
+#endif
+            state->cpu_hle_entry_count &&
 			DoCPUHLE(state, state->JumpToLocation)) {
             state->PROGRAM_COUNTER = state->GPR[31].UW[0];
             state->NextInstruction = NORMAL;

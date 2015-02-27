@@ -15,7 +15,9 @@ struct usf_state_helper
 typedef uint32_t RCPREG;
 #endif
 
+#ifdef DEBUG_INFO
 #include <stdio.h>
+#endif
 
 struct usf_state
 {
@@ -140,6 +142,10 @@ struct usf_state
     
 	uint32_t cpu_hle_entry_count;
     _HLE_Entry * cpu_hle_entries;
+    
+#ifdef DEBUG_INFO
+    FILE * debug_log;
+#endif
 };
 
 #define USF_STATE_HELPER ((usf_state_helper_t *)(state))

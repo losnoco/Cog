@@ -70,6 +70,10 @@ void usf_clear(void * state)
     //USF_STATE->PIF_Ram = 0;
 
 	PreAllocate_Memory(USF_STATE);
+    
+#ifdef DEBUG_INFO
+    USF_STATE->debug_log = fopen("/tmp/lazyusf.log", "w");
+#endif
 }
 
 void usf_set_compare(void * state, int enable)
@@ -162,23 +166,23 @@ int usf_upload_section(void * state, const uint8_t * data, size_t size)
 	return 0;
 }
 
-static int usf_startup(void * state)
+static int usf_startup(usf_state_t * state)
 {
     // Detect the Ramsize before the memory allocation
 	
-	if(*(uint32_t*)(USF_STATE->savestatespace + 4) == 0x400000) {
+	if(get_le32(state->savestatespace + 4) == 0x400000) {
         void * savestate;
-		USF_STATE->RdramSize = 0x400000;
-		savestate = realloc(USF_STATE->savestatespace, 0x40275c);
+		state->RdramSize = 0x400000;
+		savestate = realloc(state->savestatespace, 0x40275c);
         if ( savestate )
-            USF_STATE->savestatespace = savestate;
-	} else if(*(uint32_t*)(USF_STATE->savestatespace + 4) == 0x800000)
-		USF_STATE->RdramSize = 0x800000;
+            state->savestatespace = savestate;
+	} else if(get_le32(USF_STATE->savestatespace + 4) == 0x800000)
+		state->RdramSize = 0x800000;
 
 	if ( !Allocate_Memory(state) )
         return -1;
 
-	StartEmulationFromSave(USF_STATE, USF_STATE->savestatespace);
+	StartEmulationFromSave(state, USF_STATE->savestatespace);
     
     return 0;
 }
@@ -244,4 +248,7 @@ void usf_restart(void * state)
 void usf_shutdown(void * state)
 {
 	Release_Memory(USF_STATE);
+#ifdef DEBUG_INFO
+    fclose(USF_STATE->debug_log);
+#endif
 }

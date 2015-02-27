@@ -35,17 +35,17 @@ void CheckInterrupts ( usf_state_t * state ) {
 	MI_INTR_REG |= (state->AudioIntrReg & MI_INTR_AI);
 #ifdef DEBUG_INFO
     if (MI_INTR_REG)
-        fprintf(stderr, "Interrupt %d - ", MI_INTR_REG);
+        fprintf(state->debug_log, "Interrupt %d - ", MI_INTR_REG);
 #endif
 	if ((MI_INTR_MASK_REG & MI_INTR_REG) != 0) {
 #ifdef DEBUG_INFO
-        fprintf(stderr, "triggered\n");
+        fprintf(state->debug_log, "triggered\n");
 #endif
 		FAKE_CAUSE_REGISTER |= CAUSE_IP2;
 	} else  {
 #ifdef DEBUG_INFO
         if (MI_INTR_REG)
-            fprintf(stderr, "masked\n");
+            fprintf(state->debug_log, "masked\n");
 #endif
 		FAKE_CAUSE_REGISTER &= ~CAUSE_IP2;
 	}
