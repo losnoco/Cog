@@ -42,6 +42,9 @@ void PI_DMA_READ (usf_state_t * state) {
 
 void PI_DMA_WRITE (usf_state_t * state) {
 	uint32_t i;
+#ifdef DEBUG_INFO
+    fprintf(state->debug_log, "PI DMA WRITE: %08x to %08x for %08x bytes\n", PI_CART_ADDR_REG, PI_DRAM_ADDR_REG, PI_WR_LEN_REG + 1);
+#endif
 	PI_STATUS_REG |= PI_STATUS_DMA_BUSY;
 	if ( PI_DRAM_ADDR_REG + PI_WR_LEN_REG + 1 > state->RdramSize) {
 		PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
