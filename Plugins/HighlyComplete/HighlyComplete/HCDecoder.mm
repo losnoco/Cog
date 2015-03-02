@@ -1001,8 +1001,6 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x21 )
     {
-        int32_t samplerate;
-        
         struct usf_loader_state state;
         memset( &state, 0, sizeof(state) );
 
@@ -1022,15 +1020,6 @@ static int usf_info(void * context, const char * name, const char * value)
         usf_set_compare( state.emu_state, state.enablecompare );
         usf_set_fifo_full( state.emu_state, state.enablefifofull );
 
-        const char * err;
-        if ( (err = usf_render( state.emu_state, 0, 0, &samplerate ) ) != 0 )
-        {
-            fprintf(stderr, "%s\n", err);
-            return NO;
-        }
-        
-        sampleRate = samplerate;
-        
         usfRemoveSilence = YES;
         
         silence_seconds = 10;
@@ -1200,13 +1189,10 @@ static int usf_info(void * context, const char * name, const char * value)
     
     silence_test_buffer.resize( sampleRate * silence_seconds * 2 );
 
-    if ( type != 0x21 )
-    {
-        if (![self fillBuffer])
-            return NO;
+    if (![self fillBuffer])
+        return NO;
     
-        silence_test_buffer.remove_leading_silence();
-    }
+    silence_test_buffer.remove_leading_silence();
     
     return YES;
 }
@@ -1248,8 +1234,6 @@ static int usf_info(void * context, const char * name, const char * value)
 
     if ( type == 2 )
         sampleRate = 48000;
-    else if ( type == 0x21 )
-        [self initializeDecoder];
     
     tagLengthMs = info.tag_length_ms;
     tagFadeMs = info.tag_fade_ms;
@@ -1312,16 +1296,12 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x21 )
     {
-        int32_t samplerate;
-        
         const char * err;
-        if ( (err = usf_render( emulatorCore, (int16_t*) buf, frames, &samplerate )) != 0 )
+        if ( (err = usf_render_resampled( emulatorCore, (int16_t*) buf, frames, sampleRate )) != 0 )
         {
             fprintf(stderr, "%s\n", err);
             return 0;
         }
-
-        sampleRate = samplerate;
     }
     else if ( type == 0x22 )
     {
@@ -1543,12 +1523,11 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x21 )
     {
-        int16_t temp[2048];
         do
         {
             ssize_t howmany = frame - framesRead;
             if (howmany > 1024) howmany = 1024;
-            if ( usf_render(emulatorCore, temp, howmany, NULL) != 0 )
+            if ( usf_render_resampled(emulatorCore, NULL, howmany, sampleRate) != 0 )
                 return -1;
             framesRead += howmany;
         } while (framesRead < frame);

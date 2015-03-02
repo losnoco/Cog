@@ -108,7 +108,7 @@ int write_rdram_dram_tracked(void* opaque, uint32_t address, uint32_t value, uin
     struct ri_controller* ri = &state->g_ri;
     uint32_t addr = rdram_dram_address(address);
     
-    if (mask && !bit_array_test(state->barray_ram_read, addr / 4))
+    if (mask == 0xFFFFFFFFU && !bit_array_test(state->barray_ram_read, addr / 4))
         bit_array_set(state->barray_ram_written_first, addr / 4);
     
     masked_write(&ri->rdram.dram[addr], value, mask);

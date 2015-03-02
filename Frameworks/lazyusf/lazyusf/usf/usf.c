@@ -55,8 +55,6 @@ void usf_clear(void * state)
         USF_STATE->EmptySpace[offset / 4] = (uint32_t)((offset << 16) | offset);
     }
     
-    resampler_init();
-    
     USF_STATE->resampler = resampler_create();
     
 #ifdef DEBUG_INFO

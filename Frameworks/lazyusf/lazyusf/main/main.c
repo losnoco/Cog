@@ -176,6 +176,15 @@ m64p_error main_start(usf_state_t * state)
         state->g_ai.regs[AI_STATUS_REG] |= 0x40000000;
     }
     
+    // We want to leave in all the necessary code so that these can one day be enabled for the trimmed sets
+    if (state->enable_trimming_mode)
+    {
+        state->g_delay_si = 1;
+        state->g_delay_ai = 1;
+        state->g_delay_pi = 1;
+        state->g_delay_dp = 1;
+    }
+    
     return M64ERR_SUCCESS;
 }
 

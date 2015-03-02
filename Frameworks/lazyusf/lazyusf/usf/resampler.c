@@ -9,65 +9,23 @@
 
 #include "resampler.h"
 
-enum { RESAMPLER_SHIFT = 10 };
+#include "rsp_hle/audio.h"
+
+enum { RESAMPLER_SHIFT = 16 };
 enum { RESAMPLER_RESOLUTION = 1 << RESAMPLER_SHIFT };
-enum { SINC_WIDTH = 16 };
-enum { SINC_SAMPLES = RESAMPLER_RESOLUTION * SINC_WIDTH };
 
-static const float RESAMPLER_BLEP_CUTOFF = 0.90f;
-static const float RESAMPLER_BLAM_CUTOFF = 0.93f;
-static const float RESAMPLER_SINC_CUTOFF = 0.999f;
-
-static float sinc_lut[SINC_SAMPLES + 1];
-static float window_lut[SINC_SAMPLES + 1];
-
-enum { resampler_buffer_size = SINC_WIDTH * 4 };
-
-static int fEqual(const float b, const float a)
-{
-    return fabs(a - b) < 1.0e-6;
-}
-
-static float sinc(float x)
-{
-    return fEqual(x, 0.0) ? 1.0 : sin(x * M_PI) / (x * M_PI);
-}
-
-void resampler_init(void)
-{
-    unsigned i;
-    double dx = (float)(SINC_WIDTH) / SINC_SAMPLES, x = 0.0;
-    for (i = 0; i < SINC_SAMPLES + 1; ++i, x += dx)
-    {
-        float y = x / SINC_WIDTH;
-#if 0
-        // Blackman
-        float window = 0.42659 - 0.49656 * cos(M_PI + M_PI * y) + 0.076849 * cos(2.0 * M_PI * y);
-#elif 1
-        // Nuttal 3 term
-        float window = 0.40897 + 0.5 * cos(M_PI * y) + 0.09103 * cos(2.0 * M_PI * y);
-#elif 0
-        // C.R.Helmrich's 2 term window
-        float window = 0.79445 * cos(0.5 * M_PI * y) + 0.20555 * cos(1.5 * M_PI * y);
-#elif 0
-        // Lanczos
-        float window = sinc(y);
-#endif
-        sinc_lut[i] = fabs(x) < SINC_WIDTH ? sinc(x) : 0.0;
-        window_lut[i] = window;
-    }
-}
+enum { resampler_buffer_size = 64 * 4 };
 
 typedef struct resampler
 {
     int write_pos, write_filled;
     int read_pos, read_filled;
-    float phase;
-    float phase_inc;
+    int phase;
+    int phase_inc;
     signed char delay_added;
     signed char delay_removed;
-    float buffer_in[2][resampler_buffer_size * 2];
-    float buffer_out[resampler_buffer_size * 2];
+    short buffer_in[2][resampler_buffer_size * 2];
+    short buffer_out[resampler_buffer_size * 2];
 } resampler;
 
 void * resampler_create(void)
@@ -75,7 +33,7 @@ void * resampler_create(void)
     resampler * r = ( resampler * ) malloc( sizeof(resampler) );
     if ( !r ) return 0;
 
-    r->write_pos = SINC_WIDTH - 1;
+    r->write_pos = 1;
     r->write_filled = 0;
     r->read_pos = 0;
     r->read_filled = 0;
@@ -129,12 +87,12 @@ int resampler_get_free_count(void *_r)
 
 static int resampler_min_filled(resampler *r)
 {
-    return SINC_WIDTH * 2;
+    return 4;
 }
 
 static int resampler_input_delay(resampler *r)
 {
-    return SINC_WIDTH - 1;
+    return 1;
 }
 
 static int resampler_output_delay(resampler *r)
@@ -151,7 +109,7 @@ int resampler_ready(void *_r)
 void resampler_clear(void *_r)
 {
     resampler * r = ( resampler * ) _r;
-    r->write_pos = SINC_WIDTH - 1;
+    r->write_pos = 1;
     r->write_filled = 0;
     r->read_pos = 0;
     r->read_filled = 0;
@@ -163,7 +121,7 @@ void resampler_clear(void *_r)
 void resampler_set_rate(void *_r, double new_factor)
 {
     resampler * r = ( resampler * ) _r;
-    r->phase_inc = new_factor;
+    r->phase_inc = new_factor * RESAMPLER_RESOLUTION;
 }
 
 void resampler_write_sample(void *_r, short ls, short rs)
@@ -178,15 +136,11 @@ void resampler_write_sample(void *_r, short ls, short rs)
     
     if ( r->write_filled < resampler_buffer_size )
     {
-        float s32 = ls;
+        r->buffer_in[ 0 ][ r->write_pos ] = ls;
+        r->buffer_in[ 0 ][ r->write_pos + resampler_buffer_size ] = ls;
 
-        r->buffer_in[ 0 ][ r->write_pos ] = s32;
-        r->buffer_in[ 0 ][ r->write_pos + resampler_buffer_size ] = s32;
-
-        s32 = rs;
-        
-        r->buffer_in[ 1 ][ r->write_pos ] = s32;
-        r->buffer_in[ 1 ][ r->write_pos + resampler_buffer_size ] = s32;
+        r->buffer_in[ 1 ][ r->write_pos ] = rs;
+        r->buffer_in[ 1 ][ r->write_pos + resampler_buffer_size ] = rs;
         
         ++r->write_filled;
 
@@ -194,58 +148,49 @@ void resampler_write_sample(void *_r, short ls, short rs)
     }
 }
 
-static int resampler_run_sinc(resampler * r, float ** out_, float * out_end)
+static int resampler_run_cubic(resampler * r, short ** out_, short * out_end)
 {
     int in_size = r->write_filled;
     int in_offset = resampler_buffer_size + r->write_pos - r->write_filled;
-    float const* inl_ = r->buffer_in[0] + in_offset;
-    float const* inr_ = r->buffer_in[1] + in_offset;
+    short const* inl_ = r->buffer_in[0] + in_offset;
+    short const* inr_ = r->buffer_in[1] + in_offset;
     int used = 0;
-    in_size -= SINC_WIDTH * 2;
+    in_size -= 4;
     if ( in_size > 0 )
     {
-        float* out = *out_;
-        float const* inl = inl_;
-        float const* inr = inr_;
-        float const* const in_end = inl + in_size;
-        float phase = r->phase;
-        float phase_inc = r->phase_inc;
-
-        int step = phase_inc > 1.0f ? (int)(RESAMPLER_RESOLUTION / phase_inc * RESAMPLER_SINC_CUTOFF) : (int)(RESAMPLER_RESOLUTION * RESAMPLER_SINC_CUTOFF);
-        int window_step = RESAMPLER_RESOLUTION;
+        short* out = *out_;
+        short const* inl = inl_;
+        short const* inr = inr_;
+        short const* const in_end = inl + in_size;
+        int phase = r->phase;
+        int phase_inc = r->phase_inc;
 
         do
         {
-            float kernel[SINC_WIDTH * 2], kernel_sum = 0.0;
-            int i = SINC_WIDTH;
-            int phase_reduced = (int)(phase * RESAMPLER_RESOLUTION);
-            int phase_adj = phase_reduced * step / RESAMPLER_RESOLUTION;
-            float samplel, sampler;
-
+            int samplel, sampler;
+            
             if ( out >= out_end )
                 break;
 
-            for (; i >= -SINC_WIDTH + 1; --i)
-            {
-                int pos = i * step;
-                int window_pos = i * window_step;
-                kernel_sum += kernel[i + SINC_WIDTH - 1] = sinc_lut[abs(phase_adj - pos)] * window_lut[abs(phase_reduced - window_pos)];
-            }
-            for (samplel = 0, sampler = 0, i = 0; i < SINC_WIDTH * 2; ++i)
-            {
-                samplel += inl[i] * kernel[i];
-                sampler += inr[i] * kernel[i];
-            }
-            kernel_sum = 1.0f / kernel_sum;
-            *out++ = (float)(samplel * kernel_sum);
-            *out++ = (float)(sampler * kernel_sum);
+            const int16_t* lut = RESAMPLE_LUT + ((phase & 0xfc00) >> 8);
+            
+            samplel = ((inl[0] * lut[0]) >> 15) + ((inl[1] * lut[1]) >> 15)
+                    + ((inl[2] * lut[2]) >> 15) + ((inl[3] * lut[3]) >> 15);
+            sampler = ((inr[0] * lut[0]) >> 15) + ((inr[1] * lut[1]) >> 15)
+                    + ((inr[2] * lut[2]) >> 15) + ((inr[3] * lut[3]) >> 15);
+            
+            if ((samplel + 0x8000) & 0xffff0000) samplel = 0x7fff ^ (samplel >> 31);
+            if ((sampler + 0x8000) & 0xffff0000) sampler = 0x7fff ^ (sampler >> 31);
+            
+            *out++ = (short)samplel;
+            *out++ = (short)sampler;
 
             phase += phase_inc;
 
-            inl += (int)phase;
-            inr += (int)phase;
+            inl += (phase >> 16);
+            inr += (phase >> 16);
 
-            phase = fmod(phase, 1.0f);
+            phase &= 0xFFFF;
         }
         while ( inl < in_end );
 
@@ -268,10 +213,10 @@ static void resampler_fill(resampler * r)
     {
         int write_pos = ( r->read_pos + r->read_filled ) % resampler_buffer_size;
         int write_size = resampler_buffer_size - write_pos;
-        float * out = r->buffer_out + write_pos * 2;
+        short * out = r->buffer_out + write_pos * 2;
         if ( write_size > ( resampler_buffer_size - r->read_filled ) )
             write_size = resampler_buffer_size - r->read_filled;
-        resampler_run_sinc( r, &out, out + write_size * 2 );
+        resampler_run_cubic( r, &out, out + write_size * 2 );
         r->read_filled += ( out - r->buffer_out - write_pos * 2 ) / 2;
     }
 }
@@ -299,7 +244,7 @@ int resampler_get_sample_count(void *_r)
 void resampler_get_sample(void *_r, short * ls, short * rs)
 {
     resampler * r = ( resampler * ) _r;
-    if ( r->read_filled < 1 && r->phase_inc)
+    if ( r->read_filled < 1 && r->phase_inc )
         resampler_fill_and_remove_delay( r );
     if ( r->read_filled < 1 )
     {
@@ -308,12 +253,8 @@ void resampler_get_sample(void *_r, short * ls, short * rs)
     }
     else
     {
-        int samplel = (int)r->buffer_out[ r->read_pos * 2 + 0 ];
-        int sampler = (int)r->buffer_out[ r->read_pos * 2 + 1 ];
-        if ( ( samplel + 0x8000 ) & 0xffff0000 ) samplel = ( samplel >> 31 ) ^ 0x7fff;
-        if ( ( sampler + 0x8000 ) & 0xffff0000 ) sampler = ( sampler >> 31 ) ^ 0x7fff;
-        *ls = (short)samplel;
-        *rs = (short)sampler;
+        *ls = r->buffer_out[ r->read_pos * 2 + 0 ];
+        *rs = r->buffer_out[ r->read_pos * 2 + 1 ];
     }
 }
 

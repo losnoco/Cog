@@ -1,11 +1,9 @@
 #ifndef _RESAMPLER_H_
 #define _RESAMPLER_H_
 
-// Ugglay
 #ifdef RESAMPLER_DECORATE
 #define PASTE(a,b) a ## b
 #define EVALUATE(a,b) PASTE(a,b)
-#define resampler_init EVALUATE(RESAMPLER_DECORATE,_resampler_init)
 #define resampler_create EVALUATE(RESAMPLER_DECORATE,_resampler_create)
 #define resampler_delete EVALUATE(RESAMPLER_DECORATE,_resampler_delete)
 #define resampler_dup EVALUATE(RESAMPLER_DECORATE,_resampler_dup)
@@ -22,8 +20,6 @@
 #define resampler_get_sample_float EVALUATE(RESAMPLER_DECORATE,_resampler_get_sample_float)
 #define resampler_remove_sample EVALUATE(RESAMPLER_DECORATE,_resampler_remove_sample)
 #endif
-
-void resampler_init(void);
 
 void * resampler_create(void);
 void resampler_delete(void *);
