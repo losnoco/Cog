@@ -1007,6 +1007,8 @@ static int usf_info(void * context, const char * name, const char * value)
         memset( &state, 0, sizeof(state) );
 
         state.emu_state = malloc( usf_get_state_size() );
+        if ( !state.emu_state )
+            return NO;
         
         usf_clear( state.emu_state );
         
@@ -1019,9 +1021,13 @@ static int usf_info(void * context, const char * name, const char * value)
         
         usf_set_compare( state.emu_state, state.enablecompare );
         usf_set_fifo_full( state.emu_state, state.enablefifofull );
-        
-        if ( usf_render( state.emu_state, 0, 0, &samplerate ) != 0 )
+
+        const char * err;
+        if ( (err = usf_render( state.emu_state, 0, 0, &samplerate ) ) != 0 )
+        {
+            fprintf(stderr, "%s\n", err);
             return NO;
+        }
         
         sampleRate = samplerate;
         
@@ -1308,8 +1314,12 @@ static int usf_info(void * context, const char * name, const char * value)
     {
         int32_t samplerate;
         
-        if ( usf_render( emulatorCore, (int16_t*) buf, frames, &samplerate ) != 0 )
+        const char * err;
+        if ( (err = usf_render( emulatorCore, (int16_t*) buf, frames, &samplerate )) != 0 )
+        {
+            fprintf(stderr, "%s\n", err);
             return 0;
+        }
 
         sampleRate = samplerate;
     }

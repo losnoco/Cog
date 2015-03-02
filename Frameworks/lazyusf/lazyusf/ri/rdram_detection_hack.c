@@ -1,14 +1,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-core - osal/preproc.h                                     *
+ *   Mupen64plus - rdram_detection_hack.c                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard Goedeken                                   *
+ *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       * 
+ *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
@@ -18,46 +18,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-                       
-/* this header file is for system-dependent #defines, #includes, and typedefs */
 
-#if !defined (OSAL_PREPROC_H)
-#define OSAL_PREPROC_H
+#include "usf/usf.h"
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#include "usf/usf_internal.h"
 
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm{ int 3 };
-  #define ALIGN(BYTES,DATA) __declspec(align(BYTES)) DATA
-  #define osal_inline __inline
-  #define osal_fastcall __fastcall
+#include "rdram_detection_hack.h"
+#include "ri_controller.h"
 
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) _stricmp(x, y)
-  #define snprintf _snprintf
-  #define strdup _strdup
+#include "main/main.h"
+#include "si/si_controller.h"
 
-  /* for isnan() */
-  #include <float.h>
-  #define isnan _isnan
+#include <stdint.h>
 
-#else  /* Not WIN32 */
+/* HACK: force detected RDRAM size
+ * This hack is triggered just before initial ROM loading (see pi_controller.c)
+ *
+ * Proper emulation of RI/RDRAM subsystem is required to avoid this hack.
+ */
+void force_detected_rdram_size_hack(usf_state_t * state)
+{
+    uint32_t address = (state->g_si.pif.cic.version != CIC_X105)
+        ? 0x318
+        : 0x3f0;
 
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm__(" int $3; ");
-  #define ALIGN(BYTES,DATA) DATA __attribute__((aligned(BYTES)))
-  #define osal_inline inline
-  #ifdef __i386__
-    #define osal_fastcall __attribute__((fastcall))
-  #else
-    #define osal_fastcall
-  #endif
-
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
-
-#endif
-
-
-#endif /* OSAL_PREPROC_H */
+    state->g_ri.rdram.dram[address/4] = state->g_ri.rdram.dram_size;
+}
 

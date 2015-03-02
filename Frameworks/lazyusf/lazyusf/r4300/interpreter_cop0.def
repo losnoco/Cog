@@ -1,0 +1,137 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *   Mupen64plus - interpreter_cop0.def                                    *
+ *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2002 Hacktarux                                          *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+DECLARE_INSTRUCTION(MFC0)
+{
+   switch(rfs)
+   {
+      case CP0_RANDOM_REG:
+        DebugMessage(state, M64MSG_ERROR, "MFC0 instruction reading un-implemented Random register");
+        state->stop=1;
+      case CP0_COUNT_REG:
+        update_count(state);
+      default:
+        rrt32 = state->g_cp0_regs[rfs];
+        sign_extended(rrt);
+   }
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(MTC0)
+{
+  switch(rfs)
+  {
+    case CP0_INDEX_REG:
+      state->g_cp0_regs[CP0_INDEX_REG] = (unsigned int) rrt & 0x8000003F;
+      if ((state->g_cp0_regs[CP0_INDEX_REG] & 0x3F) > 31)
+      {
+        DebugMessage(state, M64MSG_ERROR, "MTC0 instruction writing Index register with TLB index > 31");
+        state->stop=1;
+      }
+      break;
+    case CP0_RANDOM_REG:
+      break;
+    case CP0_ENTRYLO0_REG:
+      state->g_cp0_regs[CP0_ENTRYLO0_REG] = (unsigned int) rrt & 0x3FFFFFFF;
+      break;
+    case CP0_ENTRYLO1_REG:
+      state->g_cp0_regs[CP0_ENTRYLO1_REG] = (unsigned int) rrt & 0x3FFFFFFF;
+      break;
+    case CP0_CONTEXT_REG:
+      state->g_cp0_regs[CP0_CONTEXT_REG] = ((unsigned int) rrt & 0xFF800000)
+                                  | (state->g_cp0_regs[CP0_CONTEXT_REG] & 0x007FFFF0);
+      break;
+    case CP0_PAGEMASK_REG:
+      state->g_cp0_regs[CP0_PAGEMASK_REG] = (unsigned int) rrt & 0x01FFE000;
+      break;
+    case CP0_WIRED_REG:
+      state->g_cp0_regs[CP0_WIRED_REG] = (unsigned int) rrt;
+      state->g_cp0_regs[CP0_RANDOM_REG] = 31;
+      break;
+    case CP0_BADVADDR_REG:
+      break;
+    case CP0_COUNT_REG:
+      update_count(state);
+      state->interupt_unsafe_state = 1;
+      if (state->next_interupt <= state->g_cp0_regs[CP0_COUNT_REG]) gen_interupt(state);
+      state->interupt_unsafe_state = 0;
+      translate_event_queue(state, (unsigned int) rrt & 0xFFFFFFFF);
+      state->g_cp0_regs[CP0_COUNT_REG] = (unsigned int) rrt & 0xFFFFFFFF;
+      break;
+    case CP0_ENTRYHI_REG:
+      state->g_cp0_regs[CP0_ENTRYHI_REG] = (unsigned int) rrt & 0xFFFFE0FF;
+      break;
+    case CP0_COMPARE_REG:
+      update_count(state);
+      remove_event(state, COMPARE_INT);
+      add_interupt_event_count(state, COMPARE_INT, (unsigned int)rrt);
+      state->g_cp0_regs[CP0_COMPARE_REG] = (unsigned int) rrt;
+      state->g_cp0_regs[CP0_CAUSE_REG] &= 0xFFFF7FFF; //Timer interupt is clear
+      break;
+    case CP0_STATUS_REG:
+      if((rrt & 0x04000000) != (state->g_cp0_regs[CP0_STATUS_REG] & 0x04000000))
+      {
+          shuffle_fpr_data(state, state->g_cp0_regs[CP0_STATUS_REG], (unsigned int) rrt);
+          set_fpr_pointers(state, (unsigned int) rrt);
+      }
+      state->g_cp0_regs[CP0_STATUS_REG] = (unsigned int) rrt;
+      update_count(state);
+      ADD_TO_PC(1);
+      check_interupt(state);
+      state->interupt_unsafe_state = 1;
+      if (state->next_interupt <= state->g_cp0_regs[CP0_COUNT_REG]) gen_interupt(state);
+      state->interupt_unsafe_state = 0;
+      ADD_TO_PC(-1);
+      break;
+    case CP0_CAUSE_REG:
+      if (rrt!=0)
+      {
+         DebugMessage(state, M64MSG_ERROR, "MTC0 instruction trying to write Cause register with non-0 value");
+         state->stop = 1;
+      }
+      else state->g_cp0_regs[CP0_CAUSE_REG] = (unsigned int) rrt;
+      break;
+    case CP0_EPC_REG:
+      state->g_cp0_regs[CP0_EPC_REG] = (unsigned int) rrt;
+      break;
+    case CP0_PREVID_REG:
+      break;
+    case CP0_CONFIG_REG:
+      state->g_cp0_regs[CP0_CONFIG_REG] = (unsigned int) rrt;
+      break;
+    case CP0_WATCHLO_REG:
+      state->g_cp0_regs[CP0_WATCHLO_REG] = (unsigned int) rrt & 0xFFFFFFFF;
+      break;
+    case CP0_WATCHHI_REG:
+      state->g_cp0_regs[CP0_WATCHHI_REG] = (unsigned int) rrt & 0xFFFFFFFF;
+      break;
+    case CP0_TAGLO_REG:
+      state->g_cp0_regs[CP0_TAGLO_REG] = (unsigned int) rrt & 0x0FFFFFC0;
+      break;
+    case CP0_TAGHI_REG:
+      state->g_cp0_regs[CP0_TAGHI_REG] =0;
+      break;
+    default:
+      DebugMessage(state, M64MSG_ERROR, "Unknown MTC0 write: %d", rfs);
+      state->stop=1;
+  }
+  ADD_TO_PC(1);
+}

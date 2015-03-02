@@ -1,14 +1,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-core - osal/preproc.h                                     *
+ *   Mupen64plus - ri_controller.c                                         *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard Goedeken                                   *
+ *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       * 
+ *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
@@ -18,46 +18,47 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-                       
-/* this header file is for system-dependent #defines, #includes, and typedefs */
 
-#if !defined (OSAL_PREPROC_H)
-#define OSAL_PREPROC_H
+#include "usf/usf.h"
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#include "ri_controller.h"
 
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm{ int 3 };
-  #define ALIGN(BYTES,DATA) __declspec(align(BYTES)) DATA
-  #define osal_inline __inline
-  #define osal_fastcall __fastcall
+#include "memory/memory.h"
 
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) _stricmp(x, y)
-  #define snprintf _snprintf
-  #define strdup _strdup
+#include <string.h>
 
-  /* for isnan() */
-  #include <float.h>
-  #define isnan _isnan
+void connect_ri(struct ri_controller* ri,
+                uint32_t* dram,
+                size_t dram_size)
+{
+    connect_rdram(&ri->rdram, dram, dram_size);
+}
 
-#else  /* Not WIN32 */
+void init_ri(struct ri_controller* ri)
+{
+    memset(ri->regs, 0, RI_REGS_COUNT*sizeof(uint32_t));
 
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm__(" int $3; ");
-  #define ALIGN(BYTES,DATA) DATA __attribute__((aligned(BYTES)))
-  #define osal_inline inline
-  #ifdef __i386__
-    #define osal_fastcall __attribute__((fastcall))
-  #else
-    #define osal_fastcall
-  #endif
-
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
-
-#endif
+    init_rdram(&ri->rdram);
+}
 
 
-#endif /* OSAL_PREPROC_H */
+int read_ri_regs(void* opaque, uint32_t address, uint32_t* value)
+{
+    struct ri_controller* ri = (struct ri_controller*)opaque;
+    uint32_t reg = ri_reg(address);
+
+    *value = ri->regs[reg];
+
+    return 0;
+}
+
+int write_ri_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
+{
+    struct ri_controller* ri = (struct ri_controller*)opaque;
+    uint32_t reg = ri_reg(address);
+
+    masked_write(&ri->regs[reg], value, mask);
+
+    return 0;
+}
 

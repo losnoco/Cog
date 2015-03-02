@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-core - osal/preproc.h                                     *
+ *   Mupen64plus-core - api/callbacks.h                                    *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
@@ -8,7 +8,7 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       * 
+ *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
@@ -18,46 +18,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-                       
-/* this header file is for system-dependent #defines, #includes, and typedefs */
 
-#if !defined (OSAL_PREPROC_H)
-#define OSAL_PREPROC_H
+/* This file contains the definitions for callback functions which will be
+ * called from the other Core modules
+ */
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#if !defined(API_CALLBACKS_H)
+#define API_CALLBACKS_H
 
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm{ int 3 };
-  #define ALIGN(BYTES,DATA) __declspec(align(BYTES)) DATA
-  #define osal_inline __inline
-  #define osal_fastcall __fastcall
+#include "usf/usf.h"
 
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) _stricmp(x, y)
-  #define snprintf _snprintf
-  #define strdup _strdup
+#include "m64p_types.h"
+#include "m64p_frontend.h"
 
-  /* for isnan() */
-  #include <float.h>
-  #define isnan _isnan
+/* Functions for use by the Core, to send information back to the front-end app */
+extern m64p_error SetDebugCallback(usf_state_t *, ptr_DebugCallback pFunc, void *Context);
+extern m64p_error SetStateCallback(usf_state_t *, ptr_StateCallback pFunc, void *Context);
+extern void       DebugMessage(usf_state_t *, int level, const char *message, ...);
+extern void       StateChanged(usf_state_t *, m64p_core_param param_type, int new_value);
 
-#else  /* Not WIN32 */
-
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm__(" int $3; ");
-  #define ALIGN(BYTES,DATA) DATA __attribute__((aligned(BYTES)))
-  #define osal_inline inline
-  #ifdef __i386__
-    #define osal_fastcall __attribute__((fastcall))
-  #else
-    #define osal_fastcall
-  #endif
-
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
-
-#endif
-
-
-#endif /* OSAL_PREPROC_H */
+#endif /* API_CALLBACKS_H */
 

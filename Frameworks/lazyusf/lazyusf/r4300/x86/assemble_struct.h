@@ -1,14 +1,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-core - osal/preproc.h                                     *
+ *   Mupen64plus - assemble_struct.h                                       *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard Goedeken                                   *
+ *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       * 
+ *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
@@ -18,46 +18,16 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-                       
-/* this header file is for system-dependent #defines, #includes, and typedefs */
 
-#if !defined (OSAL_PREPROC_H)
-#define OSAL_PREPROC_H
+#ifndef M64P_R4300_ASSEMBLE_STRUCT_H
+#define M64P_R4300_ASSEMBLE_STRUCT_H
 
-#if defined(WIN32) && !defined(__MINGW32__)
+typedef struct _reg_cache_struct
+{
+   int need_map;
+   void *needed_registers[8];
+   unsigned char jump_wrapper[62];
+   int need_cop1_check;
+} reg_cache_struct;
 
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm{ int 3 };
-  #define ALIGN(BYTES,DATA) __declspec(align(BYTES)) DATA
-  #define osal_inline __inline
-  #define osal_fastcall __fastcall
-
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) _stricmp(x, y)
-  #define snprintf _snprintf
-  #define strdup _strdup
-
-  /* for isnan() */
-  #include <float.h>
-  #define isnan _isnan
-
-#else  /* Not WIN32 */
-
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm__(" int $3; ");
-  #define ALIGN(BYTES,DATA) DATA __attribute__((aligned(BYTES)))
-  #define osal_inline inline
-  #ifdef __i386__
-    #define osal_fastcall __attribute__((fastcall))
-  #else
-    #define osal_fastcall
-  #endif
-
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
-
-#endif
-
-
-#endif /* OSAL_PREPROC_H */
-
+#endif /* M64P_R4300_ASSEMBLE_STRUCT_H */

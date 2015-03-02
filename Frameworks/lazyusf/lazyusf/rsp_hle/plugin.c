@@ -25,9 +25,10 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../usf.h"
-#include "../main.h"
-#include "../usf_internal.h"
+#include "usf/usf.h"
+#include "usf/usf_internal.h"
+
+#include "r4300/interupt.h"
 
 #include "hle.h"
 
@@ -54,7 +55,7 @@ void HleErrorMessage(void* user_defined, const char *message, ...)
     va_end( ap );
 
     state->last_error = state->error_message;
-    StopEmulation( state );
+    state->stop = 1;
 }
 
 void HleWarnMessage(void* user_defined, const char *message, ...)
@@ -74,17 +75,18 @@ void HleWarnMessage(void* user_defined, const char *message, ...)
     va_end( ap );
     
     state->last_error = state->error_message;
-    StopEmulation( state );
+    state->stop = 1;
 }
 
 void HleCheckInterrupts(void* user_defined)
 {
-    CheckInterrupts((usf_state_t*)user_defined);
+    //check_interupt((usf_state_t*)user_defined);
 }
 
 void HleProcessDlistList(void* user_defined)
 {
-    /* disabled */
+    usf_state_t * state = (usf_state_t *) user_defined;
+    state->g_r4300.mi.regs[MI_INTR_REG] |= MI_INTR_DP;
 }
 
 void HleProcessAlistList(void* user_defined)

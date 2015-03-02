@@ -1,0 +1,708 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *   Mupen64plus - interpreter_cop1.def                                    *
+ *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2002 Hacktarux                                          *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#include "fpu.h"
+
+DECLARE_JUMP(BC1F,  PCADDR + (iimmediate+1)*4, (state->FCR31 & 0x800000)==0, &state->reg[0], 0, 1)
+DECLARE_JUMP(BC1T,  PCADDR + (iimmediate+1)*4, (state->FCR31 & 0x800000)!=0, &state->reg[0], 0, 1)
+DECLARE_JUMP(BC1FL, PCADDR + (iimmediate+1)*4, (state->FCR31 & 0x800000)==0, &state->reg[0], 1, 1)
+DECLARE_JUMP(BC1TL, PCADDR + (iimmediate+1)*4, (state->FCR31 & 0x800000)!=0, &state->reg[0], 1, 1)
+
+DECLARE_INSTRUCTION(MFC1)
+{
+   if (check_cop1_unusable(state)) return;
+   rrt32 = *((int*)state->reg_cop1_simple[rfs]);
+   sign_extended(rrt);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(DMFC1)
+{
+   if (check_cop1_unusable(state)) return;
+   rrt = *((long long*)state->reg_cop1_double[rfs]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CFC1)
+{  
+   if (check_cop1_unusable(state)) return;
+   if (rfs==31)
+   {
+      rrt32 = state->FCR31;
+      sign_extended(rrt);
+   }
+   if (rfs==0)
+   {
+      rrt32 = state->FCR0;
+      sign_extended(rrt);
+   }
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(MTC1)
+{
+   if (check_cop1_unusable(state)) return;
+   *((int*)state->reg_cop1_simple[rfs]) = rrt32;
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(DMTC1)
+{
+   if (check_cop1_unusable(state)) return;
+   *((long long*)state->reg_cop1_double[rfs]) = rrt;
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CTC1)
+{
+   if (check_cop1_unusable(state)) return;
+   if (rfs==31)
+      state->FCR31 = rrt32;
+   switch((state->FCR31 & 3))
+   {
+   case 0:
+      state->rounding_mode = 0x33F; // Round to nearest, or to even if equidistant
+      break;
+    case 1:
+      state->rounding_mode = 0xF3F; // Truncate (toward 0)
+      break;
+    case 2:
+      state->rounding_mode = 0xB3F; // Round up (toward +infinity)
+      break;
+    case 3:
+      state->rounding_mode = 0x73F; // Round down (toward -infinity)
+      break;
+   }
+   //if ((state->FCR31 >> 7) & 0x1F) printf("FPU Exception enabled : %x\n",
+   //                 (int)((state->FCR31 >> 7) & 0x1F));
+   ADD_TO_PC(1);
+}
+
+// COP1_D
+DECLARE_INSTRUCTION(ADD_D)
+{
+   if (check_cop1_unusable(state)) return;
+   add_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(SUB_D)
+{
+   if (check_cop1_unusable(state)) return;
+   sub_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(MUL_D)
+{
+   if (check_cop1_unusable(state)) return;
+   mul_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(DIV_D)
+{
+   if (check_cop1_unusable(state)) return;
+   if((state->FCR31 & 0x400) && *state->reg_cop1_double[cfft] == 0)
+   {
+      //state->FCR31 |= 0x8020;
+      /*state->FCR31 |= 0x8000;
+      state->Cause = 15 << 2;
+      exception_general(state);*/
+      DebugMessage(state, M64MSG_ERROR, "DIV_D by 0");
+      //return;
+   }
+   div_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(SQRT_D)
+{
+   if (check_cop1_unusable(state)) return;
+   sqrt_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ABS_D)
+{
+   if (check_cop1_unusable(state)) return;
+   abs_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(MOV_D)
+{
+   if (check_cop1_unusable(state)) return;
+   mov_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(NEG_D)
+{
+   if (check_cop1_unusable(state)) return;
+   neg_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ROUND_L_D)
+{
+   if (check_cop1_unusable(state)) return;
+   round_l_d(state->reg_cop1_double[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(TRUNC_L_D)
+{
+   if (check_cop1_unusable(state)) return;
+   trunc_l_d(state->reg_cop1_double[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CEIL_L_D)
+{
+   if (check_cop1_unusable(state)) return;
+   ceil_l_d(state->reg_cop1_double[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(FLOOR_L_D)
+{
+   if (check_cop1_unusable(state)) return;
+   floor_l_d(state->reg_cop1_double[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ROUND_W_D)
+{
+   if (check_cop1_unusable(state)) return;
+   round_w_d(state->reg_cop1_double[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(TRUNC_W_D)
+{
+   if (check_cop1_unusable(state)) return;
+   trunc_w_d(state->reg_cop1_double[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CEIL_W_D)
+{
+   if (check_cop1_unusable(state)) return;
+   ceil_w_d(state->reg_cop1_double[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(FLOOR_W_D)
+{
+   if (check_cop1_unusable(state)) return;
+   floor_w_d(state->reg_cop1_double[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CVT_S_D)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_s_d(state, state->reg_cop1_double[cffs], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CVT_W_D)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_w_d(state, state->reg_cop1_double[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CVT_L_D)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_l_d(state, state->reg_cop1_double[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_F_D)
+{
+   if (check_cop1_unusable(state)) return;
+   c_f_d(state);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_UN_D)
+{
+   if (check_cop1_unusable(state)) return;
+   c_un_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_EQ_D)
+{
+   if (check_cop1_unusable(state)) return;
+   c_eq_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_UEQ_D)
+{
+   if (check_cop1_unusable(state)) return;
+   c_ueq_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_OLT_D)
+{
+   if (check_cop1_unusable(state)) return;
+   c_olt_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_ULT_D)
+{
+   if (check_cop1_unusable(state)) return;
+   c_ult_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_OLE_D)
+{
+   if (check_cop1_unusable(state)) return;
+   c_ole_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_ULE_D)
+{
+   if (check_cop1_unusable(state)) return;
+   c_ule_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_SF_D)
+{
+   if (isnan(*state->reg_cop1_double[cffs]) || isnan(*state->reg_cop1_double[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_sf_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_NGLE_D)
+{
+   if (isnan(*state->reg_cop1_double[cffs]) || isnan(*state->reg_cop1_double[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_ngle_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_SEQ_D)
+{
+   if (isnan(*state->reg_cop1_double[cffs]) || isnan(*state->reg_cop1_double[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_seq_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_NGL_D)
+{
+   if (isnan(*state->reg_cop1_double[cffs]) || isnan(*state->reg_cop1_double[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_ngl_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_LT_D)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_double[cffs]) || isnan(*state->reg_cop1_double[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_lt_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_NGE_D)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_double[cffs]) || isnan(*state->reg_cop1_double[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_nge_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_LE_D)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_double[cffs]) || isnan(*state->reg_cop1_double[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_le_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_NGT_D)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_double[cffs]) || isnan(*state->reg_cop1_double[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_ngt_d(state, state->reg_cop1_double[cffs], state->reg_cop1_double[cfft]);
+   ADD_TO_PC(1);
+}
+
+// COP1_L
+DECLARE_INSTRUCTION(CVT_S_L)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_s_l(state, (long long*)(state->reg_cop1_double[cffs]), state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CVT_D_L)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_d_l(state, (long long*)(state->reg_cop1_double[cffs]), state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+// COP1_S
+DECLARE_INSTRUCTION(ADD_S)
+{
+   if (check_cop1_unusable(state)) return;
+   add_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(SUB_S)
+{
+   if (check_cop1_unusable(state)) return;
+   sub_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(MUL_S)
+{
+   if (check_cop1_unusable(state)) return;
+   mul_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(DIV_S)
+{  
+   if (check_cop1_unusable(state)) return;
+   if((state->FCR31 & 0x400) && *state->reg_cop1_simple[cfft] == 0)
+   {
+     DebugMessage(state, M64MSG_ERROR, "DIV_S by 0");
+   }
+   div_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(SQRT_S)
+{
+   if (check_cop1_unusable(state)) return;
+   sqrt_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ABS_S)
+{
+   if (check_cop1_unusable(state)) return;
+   abs_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(MOV_S)
+{
+   if (check_cop1_unusable(state)) return;
+   mov_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(NEG_S)
+{
+   if (check_cop1_unusable(state)) return;
+   neg_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ROUND_L_S)
+{
+   if (check_cop1_unusable(state)) return;
+   round_l_s(state->reg_cop1_simple[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(TRUNC_L_S)
+{
+   if (check_cop1_unusable(state)) return;
+   trunc_l_s(state->reg_cop1_simple[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CEIL_L_S)
+{
+   if (check_cop1_unusable(state)) return;
+   ceil_l_s(state->reg_cop1_simple[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(FLOOR_L_S)
+{
+   if (check_cop1_unusable(state)) return;
+   floor_l_s(state->reg_cop1_simple[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ROUND_W_S)
+{
+   if (check_cop1_unusable(state)) return;
+   round_w_s(state->reg_cop1_simple[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(TRUNC_W_S)
+{
+   if (check_cop1_unusable(state)) return;
+   trunc_w_s(state->reg_cop1_simple[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CEIL_W_S)
+{
+   if (check_cop1_unusable(state)) return;
+   ceil_w_s(state->reg_cop1_simple[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(FLOOR_W_S)
+{
+   if (check_cop1_unusable(state)) return;
+   floor_w_s(state->reg_cop1_simple[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CVT_D_S)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_d_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CVT_W_S)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_w_s(state, state->reg_cop1_simple[cffs], (int*)state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CVT_L_S)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_l_s(state, state->reg_cop1_simple[cffs], (long long*)(state->reg_cop1_double[cffd]));
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_F_S)
+{
+   if (check_cop1_unusable(state)) return;
+   c_f_s(state);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_UN_S)
+{
+   if (check_cop1_unusable(state)) return;
+   c_un_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_EQ_S)
+{
+   if (check_cop1_unusable(state)) return;
+   c_eq_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_UEQ_S)
+{
+   if (check_cop1_unusable(state)) return;
+   c_ueq_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_OLT_S)
+{
+   if (check_cop1_unusable(state)) return;
+   c_olt_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_ULT_S)
+{
+   if (check_cop1_unusable(state)) return;
+   c_ult_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_OLE_S)
+{
+   if (check_cop1_unusable(state)) return;
+   c_ole_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_ULE_S)
+{
+   if (check_cop1_unusable(state)) return;
+   c_ule_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_SF_S)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_simple[cffs]) || isnan(*state->reg_cop1_simple[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_sf_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_NGLE_S)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_simple[cffs]) || isnan(*state->reg_cop1_simple[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_ngle_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_SEQ_S)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_simple[cffs]) || isnan(*state->reg_cop1_simple[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_seq_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_NGL_S)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_simple[cffs]) || isnan(*state->reg_cop1_simple[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_ngl_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_LT_S)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_simple[cffs]) || isnan(*state->reg_cop1_simple[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_lt_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_NGE_S)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_simple[cffs]) || isnan(*state->reg_cop1_simple[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_nge_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_LE_S)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_simple[cffs]) || isnan(*state->reg_cop1_simple[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_le_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(C_NGT_S)
+{
+   if (check_cop1_unusable(state)) return;
+   if (isnan(*state->reg_cop1_simple[cffs]) || isnan(*state->reg_cop1_simple[cfft]))
+   {
+     DebugMessage(state, M64MSG_ERROR, "Invalid operation exception in C opcode");
+     state->stop=1;
+   }
+   c_ngt_s(state, state->reg_cop1_simple[cffs], state->reg_cop1_simple[cfft]);
+   ADD_TO_PC(1);
+}
+
+// COP1_W
+DECLARE_INSTRUCTION(CVT_S_W)
+{  
+   if (check_cop1_unusable(state)) return;
+   cvt_s_w(state, (int*)state->reg_cop1_simple[cffs], state->reg_cop1_simple[cffd]);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(CVT_D_W)
+{
+   if (check_cop1_unusable(state)) return;
+   cvt_d_w(state, (int*)state->reg_cop1_simple[cffs], state->reg_cop1_double[cffd]);
+   ADD_TO_PC(1);
+}

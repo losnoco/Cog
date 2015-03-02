@@ -1,14 +1,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-core - osal/preproc.h                                     *
+ *   Mupen64plus - mi_controller.h                                         *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard Goedeken                                   *
+ *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       * 
+ *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
@@ -18,46 +18,54 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-                       
-/* this header file is for system-dependent #defines, #includes, and typedefs */
 
-#if !defined (OSAL_PREPROC_H)
-#define OSAL_PREPROC_H
+#ifndef M64P_R4300_MI_CONTROLLER_H
+#define M64P_R4300_MI_CONTROLLER_H
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#include <stdint.h>
 
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm{ int 3 };
-  #define ALIGN(BYTES,DATA) __declspec(align(BYTES)) DATA
-  #define osal_inline __inline
-  #define osal_fastcall __fastcall
+struct r4300_core;
 
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) _stricmp(x, y)
-  #define snprintf _snprintf
-  #define strdup _strdup
+enum mi_registers
+{
+    MI_INIT_MODE_REG,
+    MI_VERSION_REG,
+    MI_INTR_REG,
+    MI_INTR_MASK_REG,
+    MI_REGS_COUNT
+};
 
-  /* for isnan() */
-  #include <float.h>
-  #define isnan _isnan
 
-#else  /* Not WIN32 */
+enum mi_intr
+{
+    MI_INTR_SP = 0x01,
+    MI_INTR_SI = 0x02,
+    MI_INTR_AI = 0x04,
+    MI_INTR_VI = 0x08,
+    MI_INTR_PI = 0x10,
+    MI_INTR_DP = 0x20
+};
 
-  /* macros */
-  #define OSAL_BREAKPOINT_INTERRUPT __asm__(" int $3; ");
-  #define ALIGN(BYTES,DATA) DATA __attribute__((aligned(BYTES)))
-  #define osal_inline inline
-  #ifdef __i386__
-    #define osal_fastcall __attribute__((fastcall))
-  #else
-    #define osal_fastcall
-  #endif
+struct mi_controller
+{
+    uint32_t regs[MI_REGS_COUNT];
+    uint32_t AudioIntrReg;
+};
 
-  /* string functions */
-  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
+#include "osal/preproc.h"
+
+static osal_inline uint32_t mi_reg(uint32_t address)
+{
+    return (address & 0xffff) >> 2;
+}
+
+void init_mi(struct mi_controller* mi);
+
+int read_mi_regs(void* opaque, uint32_t address, uint32_t* value);
+int write_mi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask);
+
+void raise_rcp_interrupt(struct r4300_core* r4300, uint32_t mi_intr);
+void signal_rcp_interrupt(struct r4300_core* r4300, uint32_t mi_intr);
+void clear_rcp_interrupt(struct r4300_core* r4300, uint32_t mi_intr);
 
 #endif
-
-
-#endif /* OSAL_PREPROC_H */
-
