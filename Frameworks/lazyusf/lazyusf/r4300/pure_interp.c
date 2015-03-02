@@ -179,7 +179,6 @@ void InterpretOpcode(usf_state_t * state)
 {
 	uint32_t op = *fast_mem_access(state, state->PC->addr);
 #ifdef DEBUG_INFO
-    if (0)
     {
         char instr[256];
         char arguments[256];
