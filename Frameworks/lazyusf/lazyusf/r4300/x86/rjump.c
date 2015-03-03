@@ -90,7 +90,7 @@ void dyna_start(usf_state_t * state, void *code)
      pop ebp
    }
 #elif defined(__GNUC__) && defined(__i386__)
-  #if defined(__PIC__)
+  #if defined(__PIC__) && !defined(__APPLE__)
     /* for -fPIC (shared libraries) */
     #ifndef __GNUC_PREREQ
     #  if defined __GNUC__ && defined __GNUC_MINOR__
@@ -142,7 +142,7 @@ void dyna_start(usf_state_t * state, void *code)
      " popl %%ebp \n"
      :
      : [save_esp]"i"(offsetof(usf_state_t,save_esp)), [save_eip]"i"(offsetof(usf_state_t,save_eip)), [return_address]"i"(offsetof(usf_state_t,return_address)), [codeptr]"r"(code), [state]"r"(state)
-     : "eax", "ecx", "edx", "memory"
+     : "eax", "ecx", "edx", "esi", "memory"
      );
 #endif
 

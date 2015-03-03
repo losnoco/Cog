@@ -55,6 +55,13 @@
 #define DH 6
 #define BH 7
 
+// osal_fastcall parameter
+#ifdef _MSC_VER
+#define RP0 ECX // fastcall
+#else
+#define RP0 EAX // regparm(1)
+#endif
+
 void jump_start_rel8(usf_state_t *);
 void jump_end_rel8(usf_state_t *);
 void jump_start_rel32(usf_state_t *);
