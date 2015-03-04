@@ -144,6 +144,7 @@ m64p_error main_start(usf_state_t * state)
     state->no_compiled_jump = 0;
     //state->g_delay_si = 1;
     state->g_delay_sp = 1;
+    state->g_disable_tlb_write_exception = 1;
     disable_extra_mem = RDRAMSize == 0x400000;
     state->count_per_op = COUNT_PER_OP_DEFAULT;
     if (state->count_per_op <= 0)

@@ -302,6 +302,9 @@ struct usf_state
     int g_delay_sp/* = 0*/;
     int g_delay_dp/* = 0*/;
     
+    // XXX enable this for some USF sets, safe to enable always
+    int g_disable_tlb_write_exception;
+    
     int g_gs_vi_counter/* = 0*/;
     
     unsigned int g_timer_checkpoint;

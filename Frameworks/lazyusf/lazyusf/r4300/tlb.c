@@ -90,6 +90,8 @@ unsigned int virtual_to_physical_address(usf_state_t * state, unsigned int addre
     {
         if (state->tlb_LUT_w[addresse>>12])
             return (state->tlb_LUT_w[addresse>>12]&0xFFFFF000)|(addresse&0xFFF);
+        else if (state->g_disable_tlb_write_exception)
+            return 0;
     }
     else
     {
@@ -104,6 +106,5 @@ unsigned int virtual_to_physical_address(usf_state_t * state, unsigned int addre
 #endif
     TLB_refill_exception(state,addresse,w);
     //return 0x80000000;
-    //return 0x00000000;
-    return state->PC->addr;
+    return 0x00000000;
 }
