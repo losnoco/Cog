@@ -1,6 +1,9 @@
 /*
-** - playptmod v1.2 - 3rd of February 2015 -
+** - playptmod v1.21 - 10th of March 2015 -
 ** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from 1.20:
+** - The EEx+Dxx quirk should also be handled for EEx+Bxx
 **
 ** Changelog from 1.16:
 ** - The sample swap quirk had a bug (discovered by Wasp of PowerLine)
@@ -2370,6 +2373,8 @@ static void fxPositionJump(player *p, mod_channel *ch)
         p->modOrder = ch->param - 1;
         p->PBreakPosition = 0;
         p->PosJumpAssert = true;
+        p->pattBreakBugPos = 0;
+        p->pattBreakFlag = true;
     }
 }
 
@@ -2636,7 +2641,7 @@ static void processChannel(player *p, mod_channel *ch)
     p->tempPeriod = ch->period;
     p->tempVolume = ch->volume;
 
-    if (!p->forceEffectsOff)
+    if (!p->forceEffectsOff) // EEx + Dxx/Bxx quirk simulation (FT2 had this bug too)
         processEffects(p, ch);
 
     if (!(p->tempFlags & TEMPFLAG_DELAY))
@@ -2719,17 +2724,15 @@ static void processTick(player *p)
 {
     int i;
 
-    if (p->minPeriod == PT_MIN_PERIOD) // PT/NT/STK/UST bug only
+    // EEx + Dxx/Bxx quirk simulation (FT2 had this bug too)
+    if (p->modTick == 0)
     {
-        if (p->modTick == 0)
+        if (p->forceEffectsOff)
         {
-            if (p->forceEffectsOff)
+            if (p->modRow != p->pattBreakBugPos)
             {
-                if (p->modRow != p->pattBreakBugPos)
-                {
-                    p->forceEffectsOff = false;
-                    p->pattBreakBugPos = -1;
-                }
+                p->forceEffectsOff = false;
+                p->pattBreakBugPos = -1;
             }
         }
     }
@@ -2737,13 +2740,11 @@ static void processTick(player *p)
     for (i = 0; i < p->source->head.channelCount; ++i)
         processChannel(p, p->source->channels + i);
 
-    if (p->minPeriod == PT_MIN_PERIOD) // PT/NT/STK/UST bug only
+    // EEx + Dxx/Bxx quirk simulation (FT2 had this bug too)
+    if (p->modTick == 0)
     {
-        if (p->modTick == 0)
-        {
-            if (p->pattBreakFlag && p->pattDelayFlag)
-                p->forceEffectsOff = true;
-        }
+        if (p->pattBreakFlag && p->pattDelayFlag)
+            p->forceEffectsOff = true;
     }
 
     p->modTick++;
