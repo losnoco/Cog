@@ -137,7 +137,7 @@ m64p_error main_start(usf_state_t * state)
 #ifdef DEBUG_INFO
     state->r4300emu = 0;
 #else
-    state->r4300emu = state->enable_trimming_mode ? 1 : 2;
+    state->r4300emu = state->enable_trimming_mode ? 0 : 2;
 #endif
 
     /* set some other core parameters based on the config file values */

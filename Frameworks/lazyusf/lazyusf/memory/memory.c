@@ -23,6 +23,8 @@
 
 #include "usf/usf_internal.h"
 
+#include "usf/barray.h"
+
 #include "memory.h"
 
 #include "api/m64p_types.h"
@@ -1166,7 +1168,7 @@ int init_memory(usf_state_t * state, uint32_t rdram_size)
         map_region(state, 0xb000+i, M64P_MEM_NOTHING, RW(nothing));
     }
 
-    state->fast_memory = 1;
+    state->fast_memory = state->enable_trimming_mode ? 0 : 1;
 
     if (state->g_rom && state->g_rom_size >= 0xfc0)
         init_cic_using_ipl3(state, &state->g_si.pif.cic, state->g_rom + 0x40);
@@ -1240,6 +1242,24 @@ unsigned int * osal_fastcall fast_mem_access(usf_state_t * state, unsigned int a
         address = virtual_to_physical_address(state, address, 2);
 
     address &= 0x1ffffffc;
+
+    /* XXX this method is only valid for single 32 bit word fetches,
+     * as used by the pure interpreter CPU. The cached interpreter
+     * and the recompiler, on the other hand, fetch the start of a
+     * block and use the pointer for the entire block. */
+
+    if (state->enable_trimming_mode)
+    {
+        if (address < RDRAM_MAX_SIZE)
+        {
+            if (!bit_array_test(state->barray_ram_written_first, address / 4))
+                bit_array_set(state->barray_ram_read, address / 4);
+        }
+        else if ((address - 0x10000000) < state->g_rom_size)
+        {
+            bit_array_set(state->barray_rom, address / 4);
+        }
+    }
 
     if (address < RDRAM_MAX_SIZE)
         return (unsigned int*)((unsigned char*)state->g_rdram + address);
