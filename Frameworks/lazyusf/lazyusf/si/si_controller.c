@@ -23,6 +23,8 @@
 
 #include "usf/usf_internal.h"
 
+#include "usf/barray.h"
+
 #include "si_controller.h"
 
 #include "api/m64p_types.h"
@@ -52,6 +54,16 @@ static void dma_si_write(struct si_controller* si)
     {
         *((uint32_t*)(&si->pif.ram[i])) = sl(si->ri->rdram.dram[(si->regs[SI_DRAM_ADDR_REG]+i)/4]);
     }
+    
+    if (si->r4300->state->enable_trimming_mode)
+    {
+        for (i = 0; i < PIF_RAM_SIZE; i += 4)
+        {
+            unsigned int ram_address = si->regs[SI_DRAM_ADDR_REG] + i;
+            if (!bit_array_test(si->r4300->state->barray_ram_written_first, ram_address / 4))
+                bit_array_set(si->r4300->state->barray_ram_read, ram_address / 4);
+        }
+    }
 
     update_pif_write(si);
     update_count(si->r4300->state);
@@ -79,6 +91,16 @@ static void dma_si_read(struct si_controller* si)
     for (i = 0; i < PIF_RAM_SIZE; i += 4)
     {
         si->ri->rdram.dram[(si->regs[SI_DRAM_ADDR_REG]+i)/4] = sl(*(uint32_t*)(&si->pif.ram[i]));
+    }
+
+    if (si->r4300->state->enable_trimming_mode)
+    {
+        for (i = 0; i < PIF_RAM_SIZE; i += 4)
+        {
+            unsigned int ram_address = si->regs[SI_DRAM_ADDR_REG] + i;
+            if (!bit_array_test(si->r4300->state->barray_ram_read, ram_address / 4))
+                bit_array_set(si->r4300->state->barray_ram_written_first, ram_address / 4);
+        }
     }
 
     update_count(si->r4300->state);

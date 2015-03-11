@@ -184,6 +184,7 @@ m64p_error main_start(usf_state_t * state)
         state->g_delay_ai = 1;
         state->g_delay_pi = 1;
         state->g_delay_dp = 1;
+        state->enable_hle_audio = 0;
     }
     
     return M64ERR_SUCCESS;

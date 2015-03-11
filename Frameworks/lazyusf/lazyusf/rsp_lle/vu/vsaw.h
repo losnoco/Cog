@@ -14,13 +14,13 @@
 #include "vu.h"
 
 #ifdef VU_EMULATE_SCALAR_ACCUMULATOR_READ
-static void VSAR(int vd, int vs, int vt, int e)
+static void VSAR(usf_state_t * state, int vd, int vs, int vt, int e)
 {
     ALIGNED short oldval[N];
     register int i;
 
     for (i = 0; i < N; i++)
-        oldval[i] = VR[vs][i];
+        oldval[i] = state->VR[vs][i];
     vt = 0;
 /* Even though VT is ignored in VSAR, according to official sources as well
  * as reversing, lots of games seem to specify it as non-zero, possibly to
@@ -39,7 +39,7 @@ static void VSAR(int vd, int vs, int vt, int e)
 		vst1q_s16(VR[vd], zero);
 		#else
         for (i = 0; i < N; i++)
-            VR[vd][i] = 0x0000; /* override behavior (zilmar) */
+            state->VR[vd][i] = 0x0000; /* override behavior (zilmar) */
 		#endif
     }
     else
@@ -48,12 +48,12 @@ static void VSAR(int vd, int vs, int vt, int e)
 		vector_copy(VR[vd], VACC[e]);
 		#else
         for (i = 0; i < N; i++)
-            VR[vd][i] = VACC[e][i];
+            state->VR[vd][i] = state->VACC[e][i];
 		#endif
 	}
 	
 	for (i = 0; i < N; i++)
-        VACC[e][i] = oldval[i]; /* ... = VS */
+        state->VACC[e][i] = oldval[i]; /* ... = VS */
     return;
 }
 #endif
