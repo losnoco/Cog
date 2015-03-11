@@ -294,9 +294,28 @@ struct Sap_File : Gme_Info_
 		return blargg_ok;
 	}
 	
-	blargg_err_t track_info_( track_info_t* out, int ) const
+	blargg_err_t track_info_( track_info_t* out, int track ) const
 	{
 		copy_sap_fields( info, out );
+
+		if (track < Sap_Emu::max_tracks)
+		{
+			int time = info.track_times[track];
+			if (time)
+			{
+				if (time > 0)
+				{
+					out->loop_length = 0;
+				}
+				else
+				{
+					time = -time;
+					out->loop_length = time;
+				}
+				out->length = time;
+			}
+		}
+
 		return blargg_ok;
 	}
 
