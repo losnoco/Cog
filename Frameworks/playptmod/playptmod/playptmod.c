@@ -1,6 +1,9 @@
 /*
-** - playptmod v1.21 - 10th of March 2015 -
+** - playptmod v1.22 - 14th of March 2015 -
 ** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from 1.21:
+** - Only do portamentos if the voice has a period set (fixes first row of "MOD.cry of doom 3")
 **
 ** Changelog from 1.20:
 ** - The EEx+Dxx quirk should also be handled for EEx+Bxx
@@ -1901,7 +1904,7 @@ static void setupGlissando(mod_channel *ch, short period)
 }
 // --------------------------------------------------------
 
-static void handleGlissando(player *p, mod_channel *ch)
+static void processGlissando(player *p, mod_channel *ch)
 {
     unsigned char i;
     char l;
@@ -1913,7 +1916,7 @@ static void handleGlissando(player *p, mod_channel *ch)
     // different routine for PT mode
     if (p->minPeriod == PT_MIN_PERIOD)
     {
-        if (ch->wantedperiod != 0)
+        if ((ch->wantedperiod > 0) && (p->tempPeriod > 0))
         {
             if (ch->toneportdirec == 0)
             {
@@ -2237,14 +2240,15 @@ static void fxPortamentoSlideDown(player *p, mod_channel *ch)
 
 static void fxGlissando(player *p, mod_channel *ch)
 {
-    if (p->modTick == 0)
+    if (p->modTick > 0)
     {
         if (ch->param != 0)
+        {
             ch->glissandoSpeed = ch->param;
-    }
-    else
-    {
-        handleGlissando(p, ch);
+            ch->param = 0;
+        }
+
+        processGlissando(p, ch);
     }
 }
 
@@ -2272,7 +2276,7 @@ static void fxGlissandoVolumeSlide(player *p, mod_channel *ch)
 {
     if (p->modTick > 0)
     {
-        handleGlissando(p, ch);
+        processGlissando(p, ch);
         fxVolumeSlide(p, ch);
     }
 }
@@ -2931,6 +2935,7 @@ void playptmod_Play(void *_p, unsigned int startOrder)
         p->modRow = 0;
         p->modTick = 0;
         p->tempFlags = 0;
+        p->tempPeriod = 0;
         p->modTick = 0;
 
         p->PBreakPosition = 0;
