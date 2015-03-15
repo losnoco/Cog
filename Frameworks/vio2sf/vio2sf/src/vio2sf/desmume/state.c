@@ -16,6 +16,7 @@
 #include "armcpu.h"
 #include "cp15.h"
 #include "spu_exports.h"
+#include "barray.h"
 
 #include "state.h"
 
@@ -279,12 +280,16 @@ void state_deinit(struct NDS_state *state)
     state->MainScreen = NULL;
     if (state->SubScreen) free(state->SubScreen);
     state->SubScreen = NULL;
+    if (state->array_rom_coverage) bit_array_destroy(state->array_rom_coverage);
+    state->array_rom_coverage = NULL;
 }
 
-void state_setrom(struct NDS_state *state, u8 * rom, u32 rom_size)
+void state_setrom(struct NDS_state *state, u8 * rom, u32 rom_size, unsigned int enable_coverage_checking)
 {
     assert(!(rom_size & (rom_size - 1)));
     NDS_SetROM(state, rom, rom_size - 1);
+    if (enable_coverage_checking)
+        state->array_rom_coverage = bit_array_create(rom_size / 4);
     NDS_Reset(state);
     state->execute = TRUE;
 }

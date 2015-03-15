@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		833B1A3E180BAD0200414852 /* isqrt.c in Sources */ = {isa = PBXBuildFile; fileRef = 833B1A3A180BAD0200414852 /* isqrt.c */; };
 		833B1A3F180BAD0200414852 /* isqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B1A3B180BAD0200414852 /* isqrt.h */; };
+		83699ABA1AB3D8EB00F5A6E3 /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 83699AB81AB3D8EB00F5A6E3 /* barray.c */; };
+		83699ABB1AB3D8EB00F5A6E3 /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 83699AB91AB3D8EB00F5A6E3 /* barray.h */; };
 		83DD1A0318EA634F00DADA1A /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DD1A0118EA634F00DADA1A /* resampler.c */; };
 		83DD1A0418EA634F00DADA1A /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1A0218EA634F00DADA1A /* resampler.h */; };
 		83DE0C14180A9BD400269051 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83DE0C12180A9BD400269051 /* InfoPlist.strings */; };
@@ -55,6 +57,8 @@
 /* Begin PBXFileReference section */
 		833B1A3A180BAD0200414852 /* isqrt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = isqrt.c; sourceTree = "<group>"; };
 		833B1A3B180BAD0200414852 /* isqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = isqrt.h; sourceTree = "<group>"; };
+		83699AB81AB3D8EB00F5A6E3 /* barray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = barray.c; sourceTree = "<group>"; };
+		83699AB91AB3D8EB00F5A6E3 /* barray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = barray.h; sourceTree = "<group>"; };
 		83DD1A0118EA634F00DADA1A /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		83DD1A0218EA634F00DADA1A /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		83DE0C06180A9BD400269051 /* vio2sf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vio2sf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -173,6 +177,8 @@
 		83DE0C45180A9CA400269051 /* desmume */ = {
 			isa = PBXGroup;
 			children = (
+				83699AB81AB3D8EB00F5A6E3 /* barray.c */,
+				83699AB91AB3D8EB00F5A6E3 /* barray.h */,
 				83DD1A0118EA634F00DADA1A /* resampler.c */,
 				83DD1A0218EA634F00DADA1A /* resampler.h */,
 				833B1A3A180BAD0200414852 /* isqrt.c */,
@@ -241,6 +247,7 @@
 				83DD1A0418EA634F00DADA1A /* resampler.h in Headers */,
 				83DE0C89180A9CA400269051 /* config.h in Headers */,
 				83DE0C8D180A9CA400269051 /* debug.h in Headers */,
+				83699ABB1AB3D8EB00F5A6E3 /* barray.h in Headers */,
 				83DE0C98180A9CA400269051 /* mem.h in Headers */,
 				83DE0C90180A9CA400269051 /* FIFO.h in Headers */,
 				83DE0C92180A9CA400269051 /* GPU.h in Headers */,
@@ -325,6 +332,7 @@
 				83DE0CA6180A9CA400269051 /* thumb_tabdef.inc in Sources */,
 				83DE0C96180A9CA400269051 /* mc.c in Sources */,
 				83DE0C91180A9CA400269051 /* GPU.c in Sources */,
+				83699ABA1AB3D8EB00F5A6E3 /* barray.c in Sources */,
 				83DE0CA4180A9CA400269051 /* thumb_instructions.c in Sources */,
 				83DE0C84180A9CA400269051 /* armcpu.c in Sources */,
 				83DE0C94180A9CA400269051 /* matrix.c in Sources */,

@@ -1099,10 +1099,12 @@ static int usf_info(void * context, const char * name, const char * value)
             resampling_int = 1;
         else if ([resampling isEqualToString:@"linear"])
             resampling_int = 2;
-        else if ([resampling isEqualToString:@"cubic"])
+        else if ([resampling isEqualToString:@"blam"])
             resampling_int = 3;
-        else if ([resampling isEqualToString:@"sinc"])
+        else if ([resampling isEqualToString:@"cubic"])
             resampling_int = 4;
+        else if ([resampling isEqualToString:@"sinc"])
+            resampling_int = 5;
 
         core->dwInterpolation = resampling_int;
         core->dwChannelMute = 0;
@@ -1121,7 +1123,7 @@ static int usf_info(void * context, const char * name, const char * value)
         emulatorExtra = state.rom;
         
         if ( state.rom )
-            state_setrom(core, state.rom, (u32) state.rom_size );
+            state_setrom(core, state.rom, (u32) state.rom_size, 0 );
         
         state_loadstate(core, state.state, (u32) state.state_size);
         

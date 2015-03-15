@@ -44,6 +44,8 @@
 #include "registers.h"
 #include "isqrt.h"
 
+#include "barray.h"
+
 #if VIO2SF_GPU_ENABLE
 #include "render3D.h"
 #else
@@ -543,6 +545,14 @@ u8 FASTCALL MMU_read8(NDS_state *state, u32 proc, u32 adr)
 			return WIFI_read16(&state->wifiMac,adr) & 0xFF;
 	}
 #endif
+    
+    if (state->array_rom_coverage)
+    {
+        if (state->MMU->MMU_MEM[proc][(adr>>20)&0xFF] == state->MMU->CART_ROM)
+        {
+            bit_array_set(state->array_rom_coverage, (adr & state->MMU->MMU_MASK[proc][(adr>>20)&0xFF]) / 4);
+        }
+    }
 
         return state->MMU->MMU_MEM[proc][(adr>>20)&0xFF][adr&state->MMU->MMU_MASK[proc][(adr>>20)&0xFF]];
 }
@@ -618,7 +628,15 @@ u16 FASTCALL MMU_read16(NDS_state *state, u32 proc, u32 adr)
 		}
 	}
 	
-	/* Returns data from memory */
+    if (state->array_rom_coverage)
+    {
+        if (state->MMU->MMU_MEM[proc][(adr>>20)&0xFF] == state->MMU->CART_ROM)
+        {
+            bit_array_set(state->array_rom_coverage, (adr & state->MMU->MMU_MASK[proc][(adr>>20)&0xFF]) / 4);
+        }
+    }
+
+    /* Returns data from memory */
 	return T1ReadWord(state->MMU->MMU_MEM[proc][(adr >> 20) & 0xFF], adr & state->MMU->MMU_MASK[proc][(adr >> 20) & 0xFF]);
 }
 	 
@@ -792,6 +810,14 @@ u32 FASTCALL MMU_read32(NDS_state *state, u32 proc, u32 adr)
 		}
 	}
 	
+    if (state->array_rom_coverage)
+    {
+        if (state->MMU->MMU_MEM[proc][(adr>>20)&0xFF] == state->MMU->CART_ROM)
+        {
+            bit_array_set(state->array_rom_coverage, (adr & state->MMU->MMU_MASK[proc][(adr>>20)&0xFF]) / 4);
+        }
+    }
+    
 	/* Returns data from memory */
 	return T1ReadLong(state->MMU->MMU_MEM[proc][(adr >> 20) & 0xFF], adr & state->MMU->MMU_MASK[proc][(adr >> 20) & 0xFF]);
 }

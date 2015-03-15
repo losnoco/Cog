@@ -29,6 +29,8 @@
 //#include "cflash.h"
 #include "spu_exports.h"
 
+#include "barray.h"
+
 //#include "ROMReader.h"
 
 /* the count of bytes copied from the firmware into memory */
@@ -245,6 +247,13 @@ NDS_header * NDS_getROMHeader(NDS_state *state)
 	header->logoCRC16 = T1ReadWord(state->MMU->CART_ROM, 348);
 	header->headerCRC16 = T1ReadWord(state->MMU->CART_ROM, 350);
 	memcpy(header->reserved, state->MMU->CART_ROM + 352, 160);
+    
+    if (state->array_rom_coverage)
+    {
+        int i;
+        for (i = 0; i < 0x200 / 4; ++i)
+            bit_array_set(state->array_rom_coverage, i);
+    }
 
 	return header;
 
@@ -284,6 +293,8 @@ void NDS_Reset( NDS_state *state)
 
    for(i = 0; i < (header->ARM9binSize>>2); ++i)
    {
+      if (state->array_rom_coverage)
+         bit_array_set(state->array_rom_coverage, src/4);
       MMU_write32(state, 0, dst, T1ReadLong(state->MMU->CART_ROM, src));
       dst += 4;
       src += 4;
@@ -294,6 +305,8 @@ void NDS_Reset( NDS_state *state)
      
    for(i = 0; i < (header->ARM7binSize>>2); ++i)
    {
+      if (state->array_rom_coverage)
+         bit_array_set(state->array_rom_coverage, src/4);
       MMU_write32(state, 1, dst, T1ReadLong(state->MMU->CART_ROM, src));
       dst += 4;
       src += 4;

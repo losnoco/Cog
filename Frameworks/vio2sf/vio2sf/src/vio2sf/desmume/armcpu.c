@@ -78,8 +78,8 @@ const unsigned char arm_cond_table[16*16] = {
     0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x20,
 };
 
-armcpu_t NDS_ARM7;
-armcpu_t NDS_ARM9;
+/*armcpu_t NDS_ARM7;
+armcpu_t NDS_ARM9;*/
 
 #define SWAP(a, b, c) do      \
 	              {       \

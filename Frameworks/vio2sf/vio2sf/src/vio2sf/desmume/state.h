@@ -77,13 +77,15 @@ typedef struct NDS_state
     s16 *sample_buffer;
     unsigned long sample_pointer;
     unsigned long sample_size;
+    
+    void * array_rom_coverage;
 } NDS_state;
 
 int state_init(NDS_state *state);
 
 void state_deinit(NDS_state *state);
 
-void state_setrom(NDS_state *state, u8 * rom, u32 rom_size);
+void state_setrom(NDS_state *state, u8 * rom, u32 rom_size, unsigned int enable_coverage_checking);
 
 void state_loadstate(NDS_state *state, const u8 * ss, u32 ss_size);
     
