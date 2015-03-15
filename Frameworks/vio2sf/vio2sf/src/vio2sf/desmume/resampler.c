@@ -349,7 +349,6 @@ void resampler_write_sample(void *_r, short s)
     if ( r->write_filled < resampler_buffer_size )
     {
         float s32 = s;
-        s32 *= 256.0;
 
         r->buffer_in[ r->write_pos ] = s32;
         r->buffer_in[ r->write_pos + resampler_buffer_size ] = s32;

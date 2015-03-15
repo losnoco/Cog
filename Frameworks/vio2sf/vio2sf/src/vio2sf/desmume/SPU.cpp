@@ -717,7 +717,7 @@ static FORCEINLINE void Fetch8BitData(SPUInterpolationMode INTERPOLATE_MODE, NDS
 	}
 
 	*data = resampler_get_sample(chan->resampler);
-	resampler_remove_sample(chan->resampler);
+	resampler_remove_sample(chan->resampler, 1);
 }
 
 static FORCEINLINE void Fetch16BitData(SPUInterpolationMode INTERPOLATE_MODE, NDS_state *state, SPU_struct* const SPU, channel_struct *chan, s32 *data)
@@ -746,7 +746,7 @@ static FORCEINLINE void Fetch16BitData(SPUInterpolationMode INTERPOLATE_MODE, ND
 	}
 
 	*data = resampler_get_sample(chan->resampler);
-	resampler_remove_sample(chan->resampler);
+	resampler_remove_sample(chan->resampler, 1);
 }
 
 static FORCEINLINE void FetchADPCMData(SPUInterpolationMode INTERPOLATE_MODE, NDS_state *state, SPU_struct* const SPU, channel_struct *chan, s32 *data)
@@ -775,7 +775,7 @@ static FORCEINLINE void FetchADPCMData(SPUInterpolationMode INTERPOLATE_MODE, ND
 	}
 
 	*data = resampler_get_sample(chan->resampler);
-	resampler_remove_sample(chan->resampler);
+	resampler_remove_sample(chan->resampler, 1);
 }
 
 static FORCEINLINE void FetchPSGData(SPUInterpolationMode INTERPOLATE_MODE, channel_struct *chan, s32 *data)
@@ -795,7 +795,7 @@ static FORCEINLINE void FetchPSGData(SPUInterpolationMode INTERPOLATE_MODE, chan
      */
     
 	*data = resampler_get_sample(chan->resampler);
-	resampler_remove_sample(chan->resampler);
+	resampler_remove_sample(chan->resampler, 1);
 }
 
 FORCEINLINE static void SPU_Mix(int CHANNELS, SPU_struct* SPU, channel_struct *chan, s32 data)

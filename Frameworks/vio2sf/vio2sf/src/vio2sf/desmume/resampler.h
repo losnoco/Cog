@@ -23,6 +23,10 @@
 #define resampler_remove_sample EVALUATE(RESAMPLER_DECORATE,_resampler_remove_sample)
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 void resampler_init(void);
 
 void * resampler_create(void);
@@ -54,5 +58,9 @@ int resampler_get_sample_count(void *);
 int resampler_get_sample(void *);
 float resampler_get_sample_float(void *);
 void resampler_remove_sample(void *, int decay);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
