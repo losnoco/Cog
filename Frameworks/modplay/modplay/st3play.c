@@ -1,6 +1,15 @@
 /*
-** ST3PLAY v0.47
-** =============
+** ST3PLAY v0.70 - 18th of March 2015
+** ==================================
+**
+** Changelog from v0.60:
+** - Added S2x (non-ST3, set middle-C finetune)
+** - Added S6x (non-ST3, tick delay)
+** - Added S9E/S9F (non-ST3, play sample backwards/forwards)
+** - Fixed a bug in setspd() in Amiga limit mode
+** - Proper tracker handling for non-ST3 effects
+** - Panbrello (Yxy) didn't set the panning at all (heh)
+** - Decodes ADPCM samples at load time instead of play time
 **
 ** C port of Scream Tracker 3's replayer, by 8bitbubsy (Olav Sørensen)
 ** using the original asm source codes by PSI (Sami Tammilehto) of Future Crew
@@ -18,16 +27,19 @@
 **   * Process the last 16 channels as PCM
 **   * Process 8 octaves instead of 7
 **   * Compile-time optional volume ramping
+**   * The ability to play samples backwards
 **
 ** - Effects:
-**   * Command S9x        (sound control - only S91/S90 so far)
+**   * Command S2x        (set middle-C finetune)
 **   * Command S5x        (panbrello type)
+**   * Command S6x        (tick delay)
+**   * Command S9x        (sound control - only S90/S91/S9E/S9F)
 **   * Command Mxx        (set channel volume)
 **   * Command Nxy        (channel volume slide)
 **   * Command Pxy        (panning slide)
 **   * Command Txx<0x20   (tempo slide)
 **   * Command Wxy        (global volume slide)
-**   * Command Xxx        (7+1-bit pan) + XA4 for "surround"
+**   * Command Xxx        (7+1-bit pan) + XA4 for 'surround'
 **   * Command Yxy        (panbrello)
 **   * Volume Command Pxx (set 4+1-bit panning)
 **
@@ -42,14 +54,6 @@
 ** - Other changes:
 **   * Added tracker identification to make sure Scream Tracker 3.xx
 **     modules are still played exactly like they should. :-)
-**
-**
-** TODO:
-** - Check SBx (pattern loop) differences between ST3 trackers
-** - More testing on the newly implemented non-ST3 stuff
-** - Make S2x (set finetune) work for non ST3 S3Ms
-**
-**
 */
 
 #include <stdlib.h>
@@ -80,7 +84,7 @@ enum
     SCHISM_TRACKER  = 4,
     OPENMPT         = 5,
     BEROTRACKER     = 6,
-    CREAMTRACKER    = 7
+    // there is also CREAMTRACKER (7), but let's ignore that weird thing
 };
 
 
@@ -135,18 +139,14 @@ typedef struct
     int8_t loopEnabled;
     int8_t sixteenBit;
     int8_t stereo;
-    int8_t adpcm;
     int8_t mixing;
     int8_t interpolating;
+    int8_t playBackwards;
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t samplePosition;
     int32_t sampleLoopLength;
     
-    int32_t lastSamplePosition;
-    int8_t lastDelta;
-    int8_t loopStartDelta;
-
     float incRate;
     float volume;
     float panningL;
@@ -169,6 +169,7 @@ typedef struct
 // VARIABLES / STATE
 typedef struct
 {
+    int8_t tickdelay;
     int8_t volslidetype;
     int8_t patterndelay;
     int8_t patloopcount;
@@ -209,6 +210,8 @@ typedef struct
     const uint8_t *fmPatchTable[9];
     uint8_t fmLastB0[9];
     
+    int8_t ** adpcmSamples;
+    
     float f_outputFreq;
     float f_masterVolume;
     
@@ -217,23 +220,22 @@ typedef struct
     float f_samplesPerFrameSharp;
 #endif
     
-    // pre-initialized variables
-    int8_t samplingInterpolation;//      = 1;
+    int8_t samplingInterpolation;
 #ifdef USE_VOL_RAMP
     int8_t rampStyle;
 #endif
-    float *masterBufferL;//              = NULL;
-    float *masterBufferR;//              = NULL;
-    int32_t samplesLeft;//               = 0; // must be signed
-    int8_t isMixing;//          = 0;
-    uint32_t samplesPerFrame;// = 882;
+    float *masterBufferL;
+    float *masterBufferR;
+    int32_t samplesLeft;// must be signed
+    int8_t isMixing;
+    uint32_t samplesPerFrame;
     
     // GLOBAL VARIABLES
-    int8_t ModuleLoaded;// = 0;
-    int8_t MusicPaused;// = 0;
-    int8_t Playing;// = 0;
+    int8_t ModuleLoaded;
+    int8_t MusicPaused;
+    int8_t Playing;
     
-    uint8_t *mseg;// = NULL;
+    uint8_t *mseg;
     int8_t lastachannelused;
     int8_t tracker;
     int8_t oldstvib;
@@ -264,6 +266,11 @@ enum { _soundBufferSize = 512 };
 
 // TABLES
 
+static const int16_t xfinetune_amiga[16] =
+{
+    7895, 7941, 7985, 8046, 8107, 8169, 8232, 8280,
+    8363, 8413, 8463, 8529, 8581, 8651, 8723, 8757
+};
 
 static const int8_t retrigvoladd[32] =
 {
@@ -272,14 +279,6 @@ static const int8_t retrigvoladd[32] =
     0,  0,  0,  0,  0,  0, 10,  8,
     0,  0,  0,  0,  0,  0, 24, 32
 };
-
-#if 0
-static const uint16_t xfinetune_amiga[16] =
-{
-    8363, 8413, 8463, 8529, 8581, 8651, 8723, 8757,
-    7895, 7941, 7985, 8046, 8107, 8169, 8232, 8280
-};
-#endif
 
 static const uint16_t notespd[12] =
 {
@@ -339,21 +338,24 @@ static void setStereoMode(PLAYER *, int8_t value);
 static void setMasterVolume(PLAYER *, uint8_t value);
 static void voiceSetSource(PLAYER *, uint8_t voiceNumber, const int8_t *sampleData,
     int32_t sampleLength, int32_t sampleLoopLength, int32_t sampleLoopEnd,
-    int8_t loopEnabled, int8_t sixteenbit, int8_t stereo, int8_t adpcm);
+    int8_t loopEnabled, int8_t sixteenbit, int8_t stereo);
 static void voiceSetSamplePosition(PLAYER *, uint8_t voiceNumber, uint16_t value);
 static void voiceSetVolume(PLAYER *, uint8_t voiceNumber, float volume, uint8_t note_on);
 static void voiceSetSurround(PLAYER *, uint8_t voiceNumber, int8_t surround);
 static void voiceSetPanning(PLAYER *, uint8_t voiceNumber, uint16_t pan);
 static void voiceSetSamplingFrequency(PLAYER *, uint8_t voiceNumber, float samplingFrequency);
+static void voiceSetPlayBackwards(PLAYER *, uint8_t voiceNumber, int8_t playBackwards);
+static void voiceSetReadPosToEnd(PLAYER *, uint8_t voiceNumber);
 
 static void FreeSong(PLAYER *);
 
 static void s_ret(PLAYER *, chn_t *ch);
 static void s_setgliss(PLAYER *, chn_t *ch);
-static void s_setfinetune(PLAYER *, chn_t *ch);
+static void s_setfinetune(PLAYER *, chn_t *ch); // NON-ST3
 static void s_setvibwave(PLAYER *, chn_t *ch);
 static void s_settrewave(PLAYER *, chn_t *ch);
 static void s_setpanwave(PLAYER *, chn_t *ch); // NON-ST3
+static void s_tickdelay(PLAYER *, chn_t *ch); // NON-ST3
 static void s_setpanpos(PLAYER *, chn_t *ch);
 static void s_sndcntrl(PLAYER *, chn_t *ch); // NON-ST3
 static void s_patloop(PLAYER *, chn_t *ch);
@@ -392,11 +394,11 @@ static effect_routine ssoncejmp[16] =
 {
     s_ret,
     s_setgliss,
-    s_setfinetune,
+    s_setfinetune, // NON-ST3
     s_setvibwave,
     s_settrewave,
     s_setpanwave, // NON-ST3
-    s_ret,
+    s_tickdelay, // NON-ST3
     s_ret,
     s_setpanpos,
     s_sndcntrl, // NON-ST3
@@ -518,9 +520,9 @@ void * st3play_Alloc(uint32_t outputFreq, int8_t interpolation, int8_t ramp_styl
         resampler_set_quality(p->resampler[i], interpolation);
     }
     
-    p->soundBufferSize     = _soundBufferSize;
-    p->masterBufferL       = (float *)(malloc(p->soundBufferSize * sizeof (float)));
-    p->masterBufferR       = (float *)(malloc(p->soundBufferSize * sizeof (float)));
+    p->soundBufferSize = _soundBufferSize;
+    p->masterBufferL   = (float *)(malloc(p->soundBufferSize * sizeof (float)));
+    p->masterBufferR   = (float *)(malloc(p->soundBufferSize * sizeof (float)));
     
     if ( !p->masterBufferL || !p->masterBufferR )
     {
@@ -669,14 +671,14 @@ static inline void setspd(PLAYER *p, uint8_t ch)
             p->chn[ch].aspd = p->aspdmax;
     }
     
-    if (p->tracker == SCREAM_TRACKER)
+    if ((p->tracker == SCREAM_TRACKER) || p->amigalimits)
     {
         if (tmpspd > p->aspdmax)
             tmpspd = p->aspdmax;
     }
     else
     {
-        /* *ABSOLUTE* max! */
+        // *ABSOLUTE* max!
         if (tmpspd > 14317056)
             tmpspd = 14317056;
     }
@@ -821,7 +823,7 @@ static inline int32_t roundspd(PLAYER *p, uint8_t ch, int32_t spd)
     if (p->tracker == SCREAM_TRACKER)
         lastspd = 32767;
     else
-        lastspd = 65535; // TODO
+        lastspd = 32767 * 2; // Might be wrong? Probably not
 
     while (newnote < 11)
     {
@@ -863,13 +865,13 @@ skip:
     if (p->mseg[0x60 + (p->np_ord - 1)] == 254) // skip
         goto skip; // avoid recursive calling
 
-    p->np_pat        = (int16_t)(p->mseg[0x60 + (p->np_ord - 1)]);
-    p->np_patoff     = -1; // force reseek
-    p->np_row        = p->startrow;
-    p->startrow      = 0;
-    p->patmusicrand  = 0;
-    p->patloopstart  = -1;
-    p->jumptorow     = -1;
+    p->np_pat       = (int16_t)(p->mseg[0x60 + (p->np_ord - 1)]);
+    p->np_patoff    = -1; // force reseek
+    p->np_row       = p->startrow;
+    p->startrow     = 0;
+    p->patmusicrand = 0;
+    p->patloopstart = -1;
+    p->jumptorow    = -1;
 
     return (p->np_row);
 }
@@ -1021,6 +1023,12 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                 if (insdat[0] == 1 && adlibChannel >= 9)
                 {
                     p->chn[ch].ac2spd = get_le32(&insdat[0x20]);
+                    
+                    if ((p->tracker == OPENMPT) || (p->tracker == BEROTRACKER))
+                    {
+                        if ((p->chn[ch].cmd == ('S' - 64)) && ((p->chn[ch].info & 0xF0) == 0x20))
+                            p->chn[ch].ac2spd = xfinetune_amiga[p->chn[ch].info & 0x0F];
+                    }
 
                     p->chn[ch].avol = (int8_t)(insdat[0x1C]);
                     if (p->chn[ch].avol <  0) p->chn[ch].avol =  0;
@@ -1033,7 +1041,7 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                     if (insoffs > p->mseg_len)
                         insoffs = p->mseg_len;
 
-                    inslen    = get_le32(&insdat[0x10]);
+                    inslen = get_le32(&insdat[0x10]);
 
                     shift = 0;
                     if (insdat[0x1F] & 2) shift++;
@@ -1084,10 +1092,20 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                     else
 #endif
                     setvol(p, ch, 0, 0);
-
-                    voiceSetSource(p, ch, (const int8_t *)(&p->mseg[insoffs]), inslen,
-                        insrepend - insrepbeg, insrepend, loop,
-                        insdat[0x1F] & 4, insdat[0x1F] & 2, insdat[0x1E] == 4);
+                    
+                    // This specific phase differs from what sound card driver you use in ST3...
+                    // GUS: Don't set new voice sample. SB: Set new voice sample.
+                    // Let's use the GUS model here.
+                    if ((p->chn[ch].cmd != ('G' - 64)) && (p->chn[ch].cmd != ('L' - 64)))
+                    {
+                        if (insdat[0x1E] == 4)
+                            voiceSetSource(p, ch, p->adpcmSamples[p->chn[ch].ins - 1], inslen,
+                                           insrepend - insrepbeg, insrepend, loop, 0, 0);
+                        else
+                            voiceSetSource(p, ch, (const int8_t *)(&p->mseg[insoffs]), inslen,
+                                           insrepend - insrepbeg, insrepend, loop,
+                                           insdat[0x1F] & 4, insdat[0x1F] & 2);
+                    }
                     
 #ifdef USE_VOL_RAMP
                     if (p->rampStyle > 0)
@@ -1105,7 +1123,7 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                     p->chn[ch].aorgvol = p->chn[ch].avol;
                     
                     st3play_AdlibPatch(p, adlibChannel, &insdat[0x10]);
-                    voiceSetSource(p, ch, NULL, 0, 0, 0, 0, 0, 0, 0);
+                    voiceSetSource(p, ch, NULL, 0, 0, 0, 0, 0, 0);
                     voiceSetSamplePosition(p, ch, 0);
                 }
                 else
@@ -1147,7 +1165,7 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
             }
 
             // shutdown channel
-            voiceSetSource(p, ch, NULL, 0, 0, 0, 0, 0, 0, 0);
+            voiceSetSource(p, ch, NULL, 0, 0, 0, 0, 0, 0);
             voiceSetSamplePosition(p, ch, 0);
 
             if (adlibChannel < 9)
@@ -1161,8 +1179,15 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
             {
                 if ((p->chn[ch].cmd != ('G' - 64)) && (p->chn[ch].cmd != ('L' - 64)))
                     voiceSetSamplePosition(p, ch, p->chn[ch].astartoffset);
+                    
+                if ((p->tracker == OPENMPT) || (p->tracker == BEROTRACKER))
+                {
+                    voiceSetPlayBackwards(p, ch, 0);
+                    if ((p->chn[ch].cmd == ('S' - 64)) && (p->chn[ch].info == 0x9F))
+                        voiceSetReadPosToEnd(p, ch);
+                }
             }
-
+            
             if (!p->chn[ch].aorgspd || ((p->chn[ch].cmd != ('G' - 64)) && (p->chn[ch].cmd != ('L' - 64))))
             {
                 p->chn[ch].aspd    = scalec2spd(p, ch, stnote2herz(p, p->chn[ch].note));
@@ -1200,7 +1225,7 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
             return;
         }
 
-        // NON-ST3
+        // NON-ST3, but let's handle it no matter what tracker
         if ((p->chn[ch].vol >= 128) && (p->chn[ch].vol <= 192))
         {
             p->chn[ch].apanpos = (p->chn[ch].vol - 128) << 2;
@@ -1311,7 +1336,7 @@ static inline void docmd1(PLAYER *p)
                     }
 
                     // NON-ST3
-                    if (p->tracker != SCREAM_TRACKER)
+                    if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
                     {
                         if (p->chn[i].cmd != ('Y' - 64))
                             p->chn[i].apancnt |= 0x80;
@@ -1397,8 +1422,9 @@ void dorow(PLAYER *p) // periodically called from mixer
     }
 
     p->musiccount++;
-    if (p->musiccount >= p->musicmax)
+    if (p->musiccount >= (p->musicmax + p->tickdelay))
     {
+        p->tickdelay = 0;
         p->np_row++;
 
         if (p->jumptorow != -1)
@@ -1440,6 +1466,29 @@ void dorow(PLAYER *p) // periodically called from mixer
         }
 
         p->musiccount = 0;
+    }
+}
+
+static inline int8_t get_adpcm_sample(const int8_t *sampleDictionary, const uint8_t *sampleData, int32_t samplePosition, int8_t *lastDelta)
+{
+    uint8_t byte = sampleData[samplePosition >> 1];
+    byte = (samplePosition & 1) ? byte >> 4 : byte & 15;
+    return *lastDelta += sampleDictionary[byte];
+}
+
+static inline void decode_adpcm(const uint8_t * sampleData, int8_t * decodedSampleData, int32_t sampleLength)
+{
+    int i;
+    int8_t lastDelta = 0, nextDelta;
+    
+    const int8_t * sampleDictionary = sampleData;
+    sampleData += 16;
+    
+    for (i = 0; i < sampleLength; ++i)
+    {
+        int8_t sample = get_adpcm_sample(sampleDictionary, sampleData, i, &nextDelta);
+        
+        *decodedSampleData++ = sample;
     }
 }
 
@@ -1529,7 +1578,22 @@ static void loadheaderparms(PLAYER *p)
                 inslen = get_le32(&insdat[0x10]);
                 
                 if (insdat[0x1E] == 4) // modplug packed
+                {
+                    if (!p->adpcmSamples)
+                        p->adpcmSamples = (int8_t **) calloc(sizeof(int8_t *), insnum);
+                    if (p->adpcmSamples)
+                    {
+                        p->adpcmSamples[i] = (int8_t *) calloc(1, inslen);
+                        if (p->adpcmSamples[i])
+                        {
+                            if ((insoff + (16 + (inslen + 1) / 2)) > p->mseg_len)
+                                inslen = ((p->mseg_len - insoff) - 16) * 2;
+                            if (inslen >= 1)
+                                decode_adpcm(&p->mseg[insoff], p->adpcmSamples[i], inslen);
+                        }
+                    }
                     continue;
+                }
 
                 if (insdat[0x1F] & 2) inslen <<= 1; // stereo
 
@@ -1642,25 +1706,25 @@ int8_t st3play_LoadModule(void *_p, const uint8_t *module, size_t size)
 
     p->mseg_len = (uint32_t) size;
 
-    p->instrumentadd    = 0x60          +  p->mseg[0x20];
-    p->patternadd       = p->instrumentadd + (p->mseg[0x22] << 1);
-
-    p->musiccount       = 0;
-    p->patterndelay     = 0;
-    p->patloopstart     = 0;
-    p->patloopcount     = 0;
-    p->np_row           = 0;
-    p->np_pat           = 0;
-    p->x_np_row         = 0;
-    p->x_np_pat         = 0;
-    p->x_np_ord         = 0;
-    p->startrow         = 0;
-    p->np_patseg        = 0;
-    p->np_patoff        = 0;
-    p->breakpat         = 0;
-    p->patmusicrand     = 0;
-    p->volslidetype     = 0;
-    p->jumptorow        = 0;
+    p->instrumentadd = 0x60             +  p->mseg[0x20];
+    p->patternadd    = p->instrumentadd + (p->mseg[0x22] << 1);
+    p->tickdelay     = 0;
+    p->musiccount    = 0;
+    p->patterndelay  = 0;
+    p->patloopstart  = 0;
+    p->patloopcount  = 0;
+    p->np_row        = 0;
+    p->np_pat        = 0;
+    p->x_np_row      = 0;
+    p->x_np_pat      = 0;
+    p->x_np_ord      = 0;
+    p->startrow      = 0;
+    p->np_patseg     = 0;
+    p->np_patoff     = 0;
+    p->breakpat      = 0;
+    p->patmusicrand  = 0;
+    p->volslidetype  = 0;
+    p->jumptorow     = 0;
 
     // zero all channel vars
     memset(p->chn, 0, sizeof (p->chn));
@@ -1698,8 +1762,7 @@ int8_t st3play_LoadModule(void *_p, const uint8_t *module, size_t size)
 // EFFECTS
 
 // non-used effects
-static void s_ret(PLAYER *p, chn_t *ch)         { (void)p; (void)ch; }
-static void s_setfinetune(PLAYER *p, chn_t *ch) { (void)p; (void)ch; } // this function is 100% broken in ST3
+static void s_ret(PLAYER *p, chn_t *ch) { (void)p; (void)ch; }
 // ----------------
 
 static void s_setgliss(PLAYER *p, chn_t *ch)
@@ -1707,6 +1770,13 @@ static void s_setgliss(PLAYER *p, chn_t *ch)
     (void)p;
     ch->aglis = ch->info & 0x0F;
 }
+
+static void s_setfinetune(PLAYER *p, chn_t *ch)
+{
+    // this function does nothing in ST3 and many other trackers
+    if ((p->tracker == OPENMPT) || (p->tracker == BEROTRACKER))
+        ch->ac2spd = xfinetune_amiga[ch->info & 0x0F];
+} 
 
 static void s_setvibwave(PLAYER *p, chn_t *ch)
 {
@@ -1722,8 +1792,19 @@ static void s_settrewave(PLAYER *p, chn_t *ch)
 
 static void s_setpanwave(PLAYER *p, chn_t *ch) // NON-ST3
 {
-    if (p->tracker != SCREAM_TRACKER)
+    if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
         ch->apantype = ch->info & 0x0F;
+}
+
+static void s_tickdelay(PLAYER *p, chn_t *ch) // NON-ST3
+{
+    if (   (p->tracker == OPENMPT)
+        || (p->tracker == BEROTRACKER)
+        || (p->tracker == IMPULSE_TRACKER)
+        || (p->tracker == SCHISM_TRACKER))
+    {
+        p->tickdelay += (ch->info & 0x0F);
+    }
 }
 
 static void s_setpanpos(PLAYER *p, chn_t *ch)
@@ -1734,18 +1815,31 @@ static void s_setpanpos(PLAYER *p, chn_t *ch)
 
 static void s_sndcntrl(PLAYER *p, chn_t *ch) // NON-ST3
 {
-    if (p->tracker != SCREAM_TRACKER)
+    if ((ch->info & 0x0F) == 0x0)
     {
-        if ((ch->info & 0x0F) == 0)
+        if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
         {
             ch->surround = 0;
             voiceSetSurround(p, ch->channelnum, 0);
         }
-        else if ((ch->info & 0x0F) == 1)
+    }
+    else if ((ch->info & 0x0F) == 0x1)
+    {
+        if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
         {
             ch->surround = 1;
             voiceSetSurround(p, ch->channelnum, 1);
         }
+    }
+    else if ((ch->info & 0x0F) == 0xE)
+    {
+        if ((p->tracker == OPENMPT) || (p->tracker == BEROTRACKER))
+            voiceSetPlayBackwards(p, ch->channelnum, 0);
+    }
+    else if ((ch->info & 0x0F) == 0xF)
+    {
+        if ((p->tracker == OPENMPT) || (p->tracker == BEROTRACKER))
+            voiceSetPlayBackwards(p, ch->channelnum, 1);
     }
 }
 
@@ -2103,7 +2197,7 @@ static void s_vibrato(PLAYER *p, chn_t *ch)
         // warning C4701: potentially uninitialized
         else
         {
-            dat  = 0;
+            dat = 0;
         }
 
         if (p->oldstvib)
@@ -2180,7 +2274,7 @@ static void s_arp(PLAYER *p, chn_t *ch)
 
 static void s_chanvol(PLAYER *p, chn_t *ch) // NON-ST3
 {
-    if (p->tracker != SCREAM_TRACKER)
+    if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
     {
         if (ch->info <= 0x40)
             ch->chanvol = ch->info;
@@ -2192,12 +2286,12 @@ static void s_chanvolslide(PLAYER *p, chn_t *ch) // NON-ST3
     uint8_t infohi;
     uint8_t infolo;
 
-    if (p->tracker != SCREAM_TRACKER)
+    if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
     {
         if (ch->info)
             ch->nxymem = ch->info;
         else
-            ch->info   = ch->nxymem;
+            ch->info = ch->nxymem;
 
         infohi = ch->nxymem >> 0x04;
         infolo = ch->nxymem  & 0x0F;
@@ -2252,7 +2346,7 @@ static void s_panslide(PLAYER *p, chn_t *ch) // NON-ST3
     uint8_t infohi;
     uint8_t infolo;
 
-    if (p->tracker != SCREAM_TRACKER)
+    if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
     {
         if (ch->info)
             ch->pxymem = ch->info;
@@ -2310,6 +2404,7 @@ static void s_retrig(PLAYER *p, chn_t *ch)
 
     ch->atrigcnt = 0;
 
+    voiceSetPlayBackwards(p, ch->channelnum, 0);
     voiceSetSamplePosition(p, ch->channelnum, 0);
 
     if (!retrigvoladd[16 + infohi])
@@ -2407,7 +2502,7 @@ static void s_tremolo(PLAYER *p, chn_t *ch)
         // warning C4701: potentially uninitialized
         else
         {
-            dat  = 0;
+            dat = 0;
         }
 
         dat = ((dat * (ch->info & 0x0F)) >> 7) + ch->aorgvol;
@@ -2439,7 +2534,7 @@ static void s_settempo(PLAYER *p, chn_t *ch)
         p->tempo = ch->info;
 
     // NON-ST3 tempo slide
-    if (p->tracker != SCREAM_TRACKER)
+    if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
     {
         if (!p->musiccount)
         {
@@ -2552,7 +2647,7 @@ static void s_finevibrato(PLAYER *p, chn_t *ch)
         // warning C4701: potentially uninitialized
         else
         {
-            dat  = 0;
+            dat = 0;
         }
 
         if (p->oldstvib)
@@ -2579,7 +2674,7 @@ static void s_globvolslide(PLAYER *p, chn_t *ch) // NON-ST3
     uint8_t infohi;
     uint8_t infolo;
 
-    if (p->tracker != SCREAM_TRACKER)
+    if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
     {
         if (ch->info)
             ch->wxymem = ch->info;
@@ -2628,15 +2723,14 @@ static void s_setpan(PLAYER *p, chn_t *ch) // NON-ST3
     // This one should work even in MONO mode
     // for newer trackers that exports as ST3
 
-    // Yes, I decided to comment this if check.
-    //if (tracker != SCREAM_TRACKER)
+    if (ch->info <= 0x80)
     {
-        if (ch->info <= 0x80)
-        {
-            ch->apanpos = (int16_t)(ch->info) << 1;
-            setpan(p, ch->channelnum);
-        }
-        else if (ch->info == 0xA4) // surround
+        ch->apanpos = (int16_t)(ch->info) << 1;
+        setpan(p, ch->channelnum);
+    }
+    else if (ch->info == 0xA4) // surround
+    {
+        if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
         {
             ch->surround = 1;
             voiceSetSurround(p, ch->channelnum, 1);
@@ -2650,7 +2744,7 @@ static void s_panbrello(PLAYER *p, chn_t *ch) // NON-ST3
     int16_t cnt;
     int16_t dat;
 
-    if (p->tracker != SCREAM_TRACKER)
+    if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
     {
         if (!p->musiccount)
         {
@@ -2733,7 +2827,7 @@ static void s_panbrello(PLAYER *p, chn_t *ch) // NON-ST3
         // warning C4701: potentially uninitialized
         else
         {
-            dat  = 0;
+            dat = 0;
         }
 
         dat = ((dat * (ch->info & 0x0F)) >> 4) + ch->apanpos;
@@ -2782,28 +2876,19 @@ void setMasterVolume(PLAYER *p, uint8_t value)
 
 void voiceSetSource(PLAYER *p, uint8_t voiceNumber, const int8_t *sampleData,
     int32_t sampleLength, int32_t sampleLoopLength, int32_t sampleLoopEnd,
-    int8_t loopEnabled, int8_t sixteenbit, int8_t stereo, int8_t adpcm)
+    int8_t loopEnabled, int8_t sixteenbit, int8_t stereo)
 {
     p->voice[voiceNumber].sampleData       = sampleData;
     p->voice[voiceNumber].sampleLength     = sampleLength;
     p->voice[voiceNumber].sampleLoopEnd    = sampleLoopEnd;
     p->voice[voiceNumber].sampleLoopLength = sampleLoopLength;
     p->voice[voiceNumber].loopEnabled      = loopEnabled;
-    if (adpcm)
-    {
-        p->voice[voiceNumber].sixteenBit   = 0;
-        p->voice[voiceNumber].stereo       = 0;
-        p->voice[voiceNumber].lastDelta    = 0;
-        p->voice[voiceNumber].lastSamplePosition = 0;
-    }
-    else
-    {
-        p->voice[voiceNumber].sixteenBit   = sixteenbit;
-        p->voice[voiceNumber].stereo       = stereo;
-    }
-    p->voice[voiceNumber].adpcm            = adpcm;
-    p->voice[voiceNumber].mixing           = 1;
-    p->voice[voiceNumber].interpolating    = 1;
+    
+    p->voice[voiceNumber].sixteenBit = sixteenbit;
+    p->voice[voiceNumber].stereo     = stereo;
+    
+    p->voice[voiceNumber].mixing        = 1;
+    p->voice[voiceNumber].interpolating = 1;
 
     if (p->voice[voiceNumber].samplePosition >= p->voice[voiceNumber].sampleLength)
         p->voice[voiceNumber].samplePosition = 0;
@@ -2858,7 +2943,7 @@ void voiceSetSurround(PLAYER *p, uint8_t voiceNumber, int8_t surround)
             p->voice[voiceNumber].targetPanR = -p->voice[voiceNumber].orgPanR;
         else
             p->voice[voiceNumber].targetPanR =  p->voice[voiceNumber].orgPanR;
-        p->voice[voiceNumber].panDeltaR  = (p->voice[voiceNumber].targetPanR - p->voice[voiceNumber].panningR) * rampRate;
+        p->voice[voiceNumber].panDeltaR = (p->voice[voiceNumber].targetPanR - p->voice[voiceNumber].panningR) * rampRate;
     }
     else
     {
@@ -2908,12 +2993,22 @@ void voiceSetPanning(PLAYER *p, uint8_t voiceNumber, uint16_t pan)
     p->voice[voiceNumber].panningL = 1.0f - pf;
     p->voice[voiceNumber].panningR = pf;
 #endif
-    p->voice[voiceNumber].orgPanR  = pf;
+    p->voice[voiceNumber].orgPanR = pf;
 }
 
 void voiceSetSamplingFrequency(PLAYER *p, uint8_t voiceNumber, float samplingFrequency)
 {
     p->voice[voiceNumber].incRate = samplingFrequency / p->f_outputFreq;
+}
+
+void voiceSetPlayBackwards(PLAYER *p, uint8_t voiceNumber, int8_t playBackwards)
+{
+    p->voice[voiceNumber].playBackwards = playBackwards;
+}
+
+void voiceSetReadPosToEnd(PLAYER *p, uint8_t voiceNumber)
+{
+    p->voice[voiceNumber].samplePosition = p->voice[voiceNumber].sampleLength - 1;
 }
 
 static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
@@ -2967,22 +3062,43 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
         {
             resampler_write_sample_fixed(resampler, sampleData[samplePosition], 8);
             
-            ++samplePosition;
-            
-            if (loopEnabled)
+            if (v->playBackwards)
             {
-                if (samplePosition >= sampleLoopEnd)
-                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
+                --samplePosition;
+                
+                if (loopEnabled)
+                {
+                    if (samplePosition < sampleLoopBegin)
+                        samplePosition = sampleLoopEnd - (sampleLoopBegin - samplePosition);
+                }
+                else
+                {
+                    if (samplePosition < 0)
+                    {
+                        samplePosition = 0;
+                        interpolating = 0;
+                    }
+                }
             }
             else
             {
-                if (samplePosition >= sampleLength)
-                    interpolating = 0;
+                ++samplePosition;
+                
+                if (loopEnabled)
+                {
+                    if (samplePosition >= sampleLoopEnd)
+                        samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
+                }
+                else
+                {
+                    if (samplePosition >= sampleLength)
+                        interpolating = 0;
+                }
             }
         }
         
-        v->samplePosition  = samplePosition;
-        v->interpolating   = (int8_t)interpolating;
+        v->samplePosition = samplePosition;
+        v->interpolating  = (int8_t)interpolating;
 
         if ( !resampler_get_sample_count(resampler) )
         {
@@ -3123,22 +3239,43 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             resampler_write_sample_fixed(resampler[0], sampleData[samplePosition], 8);
             resampler_write_sample_fixed(resampler[1], sampleData[sampleLength + samplePosition], 8);
             
-            ++samplePosition;
-            
-            if (loopEnabled)
+            if (v->playBackwards)
             {
-                if (samplePosition >= sampleLoopEnd)
-                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
+                --samplePosition;
+                
+                if (loopEnabled)
+                {
+                    if (samplePosition <= sampleLoopBegin)
+                        samplePosition = sampleLoopEnd - (sampleLoopBegin - samplePosition);
+                }
+                else
+                {
+                    if (samplePosition < 0)
+                    {
+                        samplePosition = 0;
+                        interpolating = 0;
+                    }
+                }
             }
             else
             {
-                if (samplePosition >= sampleLength)
-                    interpolating = 0;
+                ++samplePosition;
+                
+                if (loopEnabled)
+                {
+                    if (samplePosition >= sampleLoopEnd)
+                        samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
+                }
+                else
+                {
+                    if (samplePosition >= sampleLength)
+                        interpolating = 0;
+                }
             }
         }
         
-        v->samplePosition  = samplePosition;
-        v->interpolating   = (int8_t)interpolating;
+        v->samplePosition = samplePosition;
+        v->interpolating  = (int8_t)interpolating;
         
         if ( !resampler_get_sample_count(resampler[0]) )
         {
@@ -3275,22 +3412,43 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
         {
             resampler_write_sample_fixed(resampler, (int16_t)get_le16(&sampleData[samplePosition]), 16);
             
-            ++samplePosition;
-            
-            if (loopEnabled)
+            if (v->playBackwards)
             {
-                if (samplePosition >= sampleLoopEnd)
-                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
+                --samplePosition;
+                
+                if (loopEnabled)
+                {
+                    if (samplePosition <= sampleLoopBegin)
+                        samplePosition = sampleLoopEnd - (sampleLoopBegin - samplePosition);
+                }
+                else
+                {
+                    if (samplePosition < 0)
+                    {
+                        samplePosition = 0;
+                        interpolating = 0;
+                    }
+                }
             }
             else
             {
-                if (samplePosition >= sampleLength)
-                    interpolating = 0;
+                ++samplePosition;
+                
+                if (loopEnabled)
+                {
+                    if (samplePosition >= sampleLoopEnd)
+                        samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
+                }
+                else
+                {
+                    if (samplePosition >= sampleLength)
+                        interpolating = 0;
+                }
             }
         }
         
-        v->samplePosition  = samplePosition;
-        v->interpolating   = (int8_t)interpolating;
+        v->samplePosition = samplePosition;
+        v->interpolating  = (int8_t)interpolating;
         
         if ( !resampler_get_sample_count(resampler) )
         {
@@ -3431,22 +3589,43 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             resampler_write_sample_fixed(resampler[0], (int16_t)get_le16(&sampleData[samplePosition]), 16);
             resampler_write_sample_fixed(resampler[1], (int16_t)get_le16(&sampleData[sampleLength + samplePosition]), 16);
             
-            ++samplePosition;
-            
-            if (loopEnabled)
+            if (v->playBackwards)
             {
-                if (samplePosition >= sampleLoopEnd)
-                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
+                --samplePosition;
+                
+                if (loopEnabled)
+                {
+                    if (samplePosition <= sampleLoopBegin)
+                        samplePosition = sampleLoopEnd - (sampleLoopBegin - samplePosition);
+                }
+                else
+                {
+                    if (samplePosition < 0)
+                    {
+                        samplePosition = 0;
+                        interpolating = 0;
+                    }
+                }
             }
             else
             {
-                if (samplePosition >= sampleLength)
-                    interpolating = 0;
+                ++samplePosition;
+                
+                if (loopEnabled)
+                {
+                    if (samplePosition >= sampleLoopEnd)
+                        samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
+                }
+                else
+                {
+                    if (samplePosition >= sampleLength)
+                        interpolating = 0;
+                }
             }
         }
         
-        v->samplePosition  = samplePosition;
-        v->interpolating   = (int8_t)interpolating;
+        v->samplePosition = samplePosition;
+        v->interpolating  = (int8_t)interpolating;
         
         if ( !resampler_get_sample_count(resampler[0]) )
         {
@@ -3532,185 +3711,6 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
 #endif
 }
 
-static inline int8_t get_adpcm_sample(const int8_t *sampleDictionary, const uint8_t *sampleData, int32_t samplePosition, int8_t *lastDelta)
-{
-    uint8_t byte = sampleData[samplePosition / 2];
-    byte = (samplePosition & 1) ? byte >> 4 : byte & 15;
-    return *lastDelta += sampleDictionary[byte];
-}
-
-static inline void mixadpcm(PLAYER *p, uint8_t ch, uint32_t samples)
-{
-    const int8_t *sampleDictionary;
-    const uint8_t *sampleData;
-    int8_t loopEnabled;
-    int32_t sampleLength;
-    int32_t sampleLoopEnd;
-    int32_t sampleLoopLength;
-    int32_t sampleLoopBegin;
-    int32_t samplePosition;
-#ifdef USE_VOL_RAMP
-    int32_t rampStyle;
-#endif
-    int8_t lastDelta;
-    int32_t interpolating;
-    uint32_t j;
-    float volume;
-    float sample;
-    float panningL;
-    float panningR;
-    void *resampler;
-    
-    VOICE *v = &p->voice[ch];
-    
-#ifdef USE_VOL_RAMP
-    rampStyle = p->rampStyle;
-#endif
-    
-    sampleLength     = v->sampleLength;
-    sampleLoopLength = v->sampleLoopLength;
-    sampleLoopEnd    = v->sampleLoopEnd;
-    sampleLoopBegin  = sampleLoopEnd - sampleLoopLength;
-    loopEnabled      = v->loopEnabled;
-    volume           = v->volume;
-    panningL         = v->panningL;
-    panningR         = v->panningR;
-    interpolating    = v->interpolating;
-    lastDelta        = v->lastDelta;
-    
-    sampleDictionary = v->sampleData;
-    sampleData = (uint8_t*)sampleDictionary + 16;
-    
-    while (v->lastSamplePosition < v->samplePosition)
-    {
-        get_adpcm_sample(sampleDictionary, sampleData, v->lastSamplePosition, &lastDelta);
-        v->lastSamplePosition++;
-        if (v->lastSamplePosition == sampleLoopEnd - sampleLoopLength)
-            v->loopStartDelta = lastDelta;
-    }
-    
-    resampler = p->resampler[ch];
-    
-    resampler_set_rate( resampler, v->incRate );
-    
-    for (j = 0; (j < samples) && sampleData; ++j)
-    {
-        samplePosition = v->samplePosition;
-        
-        while (interpolating && (resampler_get_free_count(resampler) ||
-               !resampler_get_sample_count(resampler)))
-        {
-            int8_t nextDelta = lastDelta;
-            int16_t sample = get_adpcm_sample(sampleDictionary, sampleData, samplePosition, &nextDelta);
-            
-            resampler_write_sample_fixed(resampler, sample, 8);
-            
-            lastDelta = nextDelta;
-            
-            ++samplePosition;
-            
-            if (loopEnabled)
-            {
-                if (samplePosition == sampleLoopEnd - sampleLoopLength)
-                    v->loopStartDelta = lastDelta;
-                
-                if (samplePosition >= sampleLoopEnd)
-                {
-                    samplePosition = sampleLoopBegin + (samplePosition - sampleLoopEnd);
-                    lastDelta = v->loopStartDelta;
-                }
-            }
-            else
-            {
-                if (samplePosition >= sampleLength)
-                    interpolating = 0;
-            }
-        }
-        
-        v->samplePosition  = samplePosition;
-        v->lastSamplePosition = samplePosition;
-        v->interpolating   = (int8_t)interpolating;
-        v->lastDelta       = lastDelta;
-        
-        if ( !resampler_get_sample_count(resampler) )
-        {
-            resampler_clear(resampler);
-            v->mixing = 0;
-            break;
-        }
-        
-        sample = resampler_get_sample_float(resampler);
-        resampler_remove_sample(resampler, 1);
-        
-#ifdef USE_VOL_RAMP
-        if (rampStyle > 0)
-        {
-            v->fader += v->faderDelta;
-            
-            if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
-            {
-                v->fader = v->faderDest;
-            }
-            else if ((v->faderDelta < 0.0f) && (v->fader < v->faderDest))
-            {
-                v->fader = v->faderDest;
-                resampler_clear(resampler);
-                v->mixing = 0;
-                sampleData = 0;
-            }
-            
-            sample *= v->fader;
-        }
-#endif
-        
-        sample *= volume;
-        
-        p->masterBufferL[j] += (sample * panningL);
-        p->masterBufferR[j] += (sample * panningR);
-
-#ifdef USE_VOL_RAMP
-        if (rampStyle > 1)
-        {
-            volume += v->volDelta;
-            panningL += v->panDeltaL;
-            panningR += v->panDeltaR;
-            
-            if ((v->volDelta > 0.0f) && (volume > v->targetVol))
-            {
-                volume = v->targetVol;
-            }
-            else if ((v->volDelta < 0.0f) && (volume < v->targetVol))
-            {
-                volume = v->targetVol;
-            }
-            
-            if ((v->panDeltaL > 0.0f) && (panningL > v->targetPanL))
-            {
-                panningL = v->targetPanL;
-            }
-            else if ((v->panDeltaL < 0.0f) && (panningL < v->targetPanL))
-            {
-                panningL = v->targetPanL;
-            }
-            
-            if ((v->panDeltaR > 0.0f) && (panningR > v->targetPanR))
-            {
-                panningR = v->targetPanR;
-            }
-            else if ((v->panDeltaR < 0.0f) && (panningR < v->targetPanR))
-            {
-                panningR = v->targetPanR;
-            }
-        }
-#endif
-    }
-#ifdef USE_VOL_RAMP
-    v->volume   = volume;
-    v->panningL = panningL;
-    v->panningR = panningR;
-#endif
-}
-
 void mixChannel(PLAYER *p, uint8_t i, uint32_t sampleBlockLength)
 {
     if (p->voice[i].incRate && p->voice[i].mixing)
@@ -3726,8 +3726,6 @@ void mixChannel(PLAYER *p, uint8_t i, uint32_t sampleBlockLength)
         {
             if (p->voice[i].sixteenBit)
                 mix16b(p, i, sampleBlockLength);
-            else if (p->voice[i].adpcm)
-                mixadpcm(p, i, sampleBlockLength);
             else
                 mix8b(p, i, sampleBlockLength);
         }
@@ -3897,16 +3895,28 @@ void st3play_RenderFixed16(void *_p, int16_t *buffer, int32_t count, int8_t dept
 
 void FreeSong(PLAYER *p)
 {
-    p->Playing          = 0;
+    p->Playing = 0;
 
     memset(p->voice, 0, sizeof (p->voice));
 
+    if (p->adpcmSamples)
+    {
+        int i, j;;
+        for (i = 0, j = get_le16(&p->mseg[0x22]); i < j; i++)
+        {
+            if (p->adpcmSamples[i])
+                free(p->adpcmSamples[i]);
+        }
+        free(p->adpcmSamples);
+        p->adpcmSamples = 0;
+    }
+    
     if (p->mseg)
     {
         free(p->mseg);
         p->mseg = NULL;
     }
-
+    
     p->ModuleLoaded = 0;
 }
 
