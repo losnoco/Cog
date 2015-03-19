@@ -779,7 +779,10 @@ u32 FASTCALL MMU_read32(NDS_state *state, u32 proc, u32 adr)
                                 u32 val;
 
                                 if(!state->MMU->dscard[proc].adress) return 0;
-				
+
+                                if (state->array_rom_coverage)
+                                    bit_array_set(state->array_rom_coverage, state->MMU->dscard[proc].adress / 4);
+                
                                 val = T1ReadLong(state->MMU->CART_ROM, state->MMU->dscard[proc].adress);
 
 				state->MMU->dscard[proc].adress += 4;	/* increment adress */
