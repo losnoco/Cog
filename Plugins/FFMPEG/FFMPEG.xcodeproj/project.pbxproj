@@ -12,7 +12,6 @@
 		B09E942F0D747F410064F138 /* FFMPEGDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = B09E942E0D747F410064F138 /* FFMPEGDecoder.m */; };
 		B09E95560D749A780064F138 /* FFMPEG.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B09E95080D748F9B0064F138 /* FFMPEG.framework */; };
 		B09E95E50D74A3000064F138 /* FFMPEG.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E95080D748F9B0064F138 /* FFMPEG.framework */; };
-		B09E95E60D74A30E0064F138 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94370D747FAD0064F138 /* Plugin.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +38,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B09E95E60D74A30E0064F138 /* Plugin.h in CopyFiles */,
 				B09E95E50D74A3000064F138 /* FFMPEG.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,6 +323,7 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

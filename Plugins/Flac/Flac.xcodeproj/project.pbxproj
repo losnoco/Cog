@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		177FCFC20B90C9960011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFC10B90C9960011C3B5 /* Plugin.h */; };
 		17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93F040B8FF67A008627D6 /* FlacDecoder.m */; };
 		17F5643C0C3BDC820019975C /* FLAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; };
 		17F5643F0C3BDC840019975C /* FLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; };
@@ -39,7 +38,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				17F5643F0C3BDC840019975C /* FLAC.framework in CopyFiles */,
-				177FCFC20B90C9960011C3B5 /* Plugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +309,7 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

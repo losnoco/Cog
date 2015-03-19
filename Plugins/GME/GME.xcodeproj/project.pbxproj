@@ -8,13 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		17C8F33A0CBED3B0008D969D /* GME.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; };
-		17C8F3410CBED3BE008D969D /* GameContainer.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F33B0CBED3BE008D969D /* GameContainer.h */; };
 		17C8F3420CBED3BE008D969D /* GameContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F33C0CBED3BE008D969D /* GameContainer.m */; };
-		17C8F3430CBED3BE008D969D /* GameDecoder.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F33D0CBED3BE008D969D /* GameDecoder.h */; };
 		17C8F3440CBED3BE008D969D /* GameDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F33E0CBED3BE008D969D /* GameDecoder.m */; };
-		17C8F3480CBED3C7008D969D /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3470CBED3C7008D969D /* Plugin.h */; };
 		17C8F3C30CBED649008D969D /* GME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; };
-		17DA34BA0CC052030003F6B2 /* GameMetadataReader.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17DA34B80CC052030003F6B2 /* GameMetadataReader.h */; };
 		17DA34BB0CC052030003F6B2 /* GameMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA34B90CC052030003F6B2 /* GameMetadataReader.m */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -45,10 +41,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				17C8F33A0CBED3B0008D969D /* GME.framework in CopyFiles */,
-				17C8F3410CBED3BE008D969D /* GameContainer.h in CopyFiles */,
-				17C8F3430CBED3BE008D969D /* GameDecoder.h in CopyFiles */,
-				17C8F3480CBED3C7008D969D /* Plugin.h in CopyFiles */,
-				17DA34BA0CC052030003F6B2 /* GameMetadataReader.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,6 +331,7 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

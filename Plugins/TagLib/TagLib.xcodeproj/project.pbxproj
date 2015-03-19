@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		07CACE8B0ED1AD1000C0F1E8 /* TagLibMetadataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 07CACE8A0ED1AD1000C0F1E8 /* TagLibMetadataWriter.m */; };
-		177FCFA50B90C9600011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFA40B90C9600011C3B5 /* Plugin.h */; };
 		17C93FC30B90056C008627D6 /* TagLibMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93FC20B90056C008627D6 /* TagLibMetadataReader.m */; };
 		17F563B40C3BDBB30019975C /* TagLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563A60C3BDB8F0019975C /* TagLib.framework */; };
 		17F563B60C3BDBB50019975C /* TagLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563A60C3BDB8F0019975C /* TagLib.framework */; };
@@ -41,7 +40,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				17F563B60C3BDBB50019975C /* TagLib.framework in CopyFiles */,
-				177FCFA50B90C9600011C3B5 /* Plugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +330,7 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

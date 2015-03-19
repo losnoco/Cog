@@ -85,7 +85,7 @@ end
   %x[cp -R '#{app_path}/Cog.app' '#{temp_path}/Cog.app']
 
   #Sign it!
-  %x[#{File.expand_path("../fucking_sign_it.sh", __FILE__)} '#{temp_path}/Cog.app']
+  %x[codesign -s 'Developer ID Application' -f '#{temp_path}/Cog.app']
 
   #Zip the app!
   %x[rm -f '#{temp_path}/#{feed}.zip']

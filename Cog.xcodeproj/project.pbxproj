@@ -2774,6 +2774,7 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					ThirdParty/Frameworks/,
@@ -2792,6 +2793,7 @@
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
 				);
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,

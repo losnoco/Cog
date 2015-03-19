@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1745C4300B90C1DC00A6768C /* ShortenDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C42C0B90C1DC00A6768C /* ShortenDecoder.mm */; };
-		177FCFAD0B90C96B0011C3B5 /* Plugin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 177FCFAC0B90C96B0011C3B5 /* Plugin.h */; };
 		17F564EE0C3BDE010019975C /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; };
 		17F564EF0C3BDE030019975C /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -39,7 +38,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				17F564EF0C3BDE030019975C /* Shorten.framework in CopyFiles */,
-				177FCFAD0B90C96B0011C3B5 /* Plugin.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,6 +307,7 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
