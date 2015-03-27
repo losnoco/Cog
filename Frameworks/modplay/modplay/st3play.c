@@ -10,6 +10,7 @@
 ** - Proper tracker handling for non-ST3 effects
 ** - Panbrello (Yxy) didn't set the panning at all (heh)
 ** - Decodes ADPCM samples at load time instead of play time
+** - Mxx (set cannel volume) didn't work correctly
 **
 ** C port of Scream Tracker 3's replayer, by 8bitbubsy (Olav Sørensen)
 ** using the original asm source codes by PSI (Sami Tammilehto) of Future Crew
@@ -2278,6 +2279,8 @@ static void s_chanvol(PLAYER *p, chn_t *ch) // NON-ST3
     {
         if (ch->info <= 0x40)
             ch->chanvol = ch->info;
+        
+        setvol(p, ch->channelnum, 0, 0);
     }
 }
 

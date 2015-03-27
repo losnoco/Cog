@@ -1,6 +1,9 @@
 /*
-** - playptmod v1.22 - 14th of March 2015 -
+** - playptmod v1.23 - 23rd of March 2015 -
 ** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from 1.22:
+** - Do sample swaps even if the new sample has a length of 0 (fixes "MOD.lsd ninja")
 **
 ** Changelog from 1.21:
 ** - Only do portamentos if the voice has a period set (fixes first row of "MOD.cry of doom 3")
@@ -2656,10 +2659,7 @@ static void processChannel(player *p, mod_channel *ch)
             {
                 s = &p->source->samples[ch->sample - 1];
 
-                if (s->length > 0)
-                    mixerSwapChSource(p, ch->chanIndex, p->source->sampleData + s->offset, s->length, s->loopStart, s->loopLength, (s->attribute & 1) ? 2 : 1);
-                else
-                    mixerSetChSource(p, ch->chanIndex, NULL, 0, 0, 0, 0, 0);
+                mixerSwapChSource(p, ch->chanIndex, p->source->sampleData + s->offset, s->length, s->loopStart, s->loopLength, (s->attribute & 1) ? 2 : 1);
             }
         }
         else if (p->tempFlags & TEMPFLAG_START)
