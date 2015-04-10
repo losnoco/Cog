@@ -28,6 +28,16 @@
 
 #include "internal/resampler.h"
 
+// Keep this disabled, as it's actually slower than the original C/integer version
+//
+//#ifdef __APPLE__
+//#include <TargetConditionals.h>
+//#if TARGET_CPU_ARM || TARGET_CPU_ARM64
+//#include <arm_neon.h>
+//#define FILTER_NEON
+//#endif
+//#endif
+
 // #define BIT_ARRAY_BULLSHIT
 
 static IT_PLAYING *new_playing()
@@ -742,6 +752,91 @@ static void it_filter_sse(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample
 }
 #endif
 
+#ifdef FILTER_NEON
+static void it_filter_neon(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample_t *dst, long pos, sample_t *src, long size, int step, int sampfreq, int cutoff, int resonance)
+{
+    float32x4_t data, impulse;
+    float32x4_t temp1;
+    float32x2_t temp2;
+    float32_t temp3;
+    
+    sample_t currsample = state->currsample;
+    sample_t prevsample = state->prevsample;
+    
+    float imp[4];
+    
+    //profiler( filter_sse ); On ClawHammer Athlon64 3200+, ~12000 cycles, ~500 for that x87 setup code (as opposed to ~25500 for the original integer code)
+    
+    long datasize;
+    
+    {
+        float inv_angle = (float)(sampfreq * pow(0.5, 0.25 + cutoff*(1.0/(24<<IT_ENVELOPE_SHIFT))) * (1.0/(2*3.14159265358979323846*110.0)));
+        float loss = (float)exp(resonance*(-LOG10*1.2/128.0));
+        float d, e;
+#if 0
+        loss *= 2; // This is the mistake most players seem to make!
+#endif
+        
+#if 1
+        d = (1.0f - loss) / inv_angle;
+        if (d > 2.0f) d = 2.0f;
+        d = (loss - d) * inv_angle;
+        e = inv_angle * inv_angle;
+        imp[0] = 1.0f / (1.0f + d + e);
+        imp[2] = -e * imp[0];
+        imp[1] = 1.0f - imp[0] - imp[2];
+#else
+        imp[0] = 1.0f / (inv_angle*inv_angle + inv_angle*loss + loss);
+        imp[2] = -(inv_angle*inv_angle) * imp[0];
+        imp[1] = 1.0f - imp[0] - imp[2];
+#endif
+        imp[3] = 0.0f;
+    }
+    
+    dst += pos * step;
+    datasize = size * step;
+    
+    {
+        int ai, bi, ci, i;
+        
+        if (cr) {
+            sample_t startstep;
+            ai = (int)(imp[0] * (1 << (16+SCALEB)));
+            bi = (int)(imp[1] * (1 << (16+SCALEB)));
+            ci = (int)(imp[2] * (1 << (16+SCALEB)));
+            startstep = MULSCA(src[0], ai) + MULSCA(currsample, bi) + MULSCA(prevsample, ci);
+            dumb_record_click(cr, pos, startstep);
+        }
+        
+        data = vdupq_n_f32(0.0f);
+        data = vsetq_lane_f32( currsample, data, 1 );
+        data = vsetq_lane_f32( prevsample, data, 2 );
+        impulse = vld1q_f32( (const float32_t *) &imp );
+        
+        for (i = 0; i < datasize; i += step) {
+            data = vsetq_lane_f32( src [i], data, 0 );
+            temp1 = vmulq_f32(data, impulse);
+            temp2 = vadd_f32(vget_high_f32(temp1), vget_low_f32(temp1));
+            temp3 = vget_lane_f32(vpadd_f32(temp2, temp2), 0);
+            data = vextq_f32(data, data, 3);
+            data = vsetq_lane_f32(temp3, data, 1);
+            dst [i] += temp3;
+        }
+        
+        currsample = temp3;
+        prevsample = vgetq_lane_f32(data, 2);
+        
+        if (cr) {
+            sample_t endstep = MULSCA(src[datasize], ai) + MULSCA(currsample, bi) + MULSCA(prevsample, ci);
+            dumb_record_click(cr, pos + size, -endstep);
+        }
+    }
+    
+    state->currsample = currsample;
+    state->prevsample = prevsample;
+}
+#endif
+
 #undef LOG10
 
 #ifdef _USE_SSE
@@ -821,7 +916,11 @@ static void it_filter(DUMB_CLICK_REMOVER *cr, IT_FILTER_STATE *state, sample_t *
 	if ( _dumb_it_use_sse ) it_filter_sse( cr, state, dst, pos, src, size, step, sampfreq, cutoff, resonance );
 	else
 #endif
+#ifdef FILTER_NEON
+    it_filter_neon( cr, state, dst, pos, src, size, step, sampfreq, cutoff, resonance );
+#else
 	it_filter_int( cr, state, dst, pos, src, size, step, sampfreq, cutoff, resonance );
+#endif
 }
 
 
@@ -2076,7 +2175,7 @@ static void post_process_it_volpan(DUMB_IT_SIGRENDERER *sigrenderer, IT_ENTRY *e
 static void it_send_midi(DUMB_IT_SIGRENDERER *sigrenderer, IT_CHANNEL *channel, unsigned char midi_byte)
 {
 	if (sigrenderer->callbacks->midi)
-		if ((*sigrenderer->callbacks->midi)(sigrenderer->callbacks->midi_data, channel - sigrenderer->channel, midi_byte))
+		if ((*sigrenderer->callbacks->midi)(sigrenderer->callbacks->midi_data, (int)(channel - sigrenderer->channel), midi_byte))
 			return;
 
 	switch (channel->midi_state) {
@@ -2555,11 +2654,11 @@ Yxy             This uses a table 4 times larger (hence 4 times slower) than
 							IT_SAMPLE *sample = playing->sample;
 							int end;
 							if ((sample->flags & IT_SAMPLE_SUS_LOOP) && !(playing->flags & IT_PLAYING_SUSTAINOFF))
-								end = sample->sus_loop_end;
+								end = (int)sample->sus_loop_end;
 							else if (sample->flags & IT_SAMPLE_LOOP)
-								end = sample->loop_end;
+								end = (int)sample->loop_end;
 							else {
-								end = sample->length;
+								end = (int)sample->length;
 								if ( sigdata->flags & IT_WAS_PROCESSED && end > 64 ) // XXX bah damn LPC and edge case modules
 									end -= 64;
 							}
@@ -3992,7 +4091,7 @@ static void process_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playin
 	playing->sample_vibrato_time += playing->sample->vibrato_speed;
 }
 
-#if defined(_MSC_VER) && _MSC_VER < 1800
+#if (defined(_MSC_VER) && _MSC_VER < 1800) || defined(__ANDROID__)
 static float log2(float x) {return (float)log(x)/(float)log(2.0f);}
 #endif
 
@@ -4006,6 +4105,7 @@ static int delta_to_note(float delta, int base)
 }
 
 // Period table for Protracker octaves 0-5:
+#if 0
 static const unsigned short ProTrackerPeriodTable[6*12] =
 {
 	1712,1616,1524,1440,1356,1280,1208,1140,1076,1016,960,907,
@@ -4036,6 +4136,7 @@ static const unsigned short ProTrackerTunedPeriods[16*12] =
 	1736,1640,1548,1460,1378,1302,1228,1160,1094,1032,974,920,
 	1724,1628,1536,1450,1368,1292,1220,1150,1086,1026,968,914 
 };
+#endif
 
 static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 {
@@ -4137,7 +4238,7 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 			}
 
 			if (playing->channel->glissando && playing->channel->toneporta && playing->channel->destnote < 120) {
-				playing->delta = (float)pow(DUMB_SEMITONE_BASE, delta_to_note(playing->delta, playing->sample->C5_speed) - 60)
+				playing->delta = (float)pow(DUMB_SEMITONE_BASE, delta_to_note(playing->delta, (int)playing->sample->C5_speed) - 60)
 					* playing->sample->C5_speed * (1.f / 65536.f);
 			}
 
@@ -5613,9 +5714,9 @@ void _dumb_it_end_sigrenderer(sigrenderer_t *vsigrenderer)
 #ifdef BIT_ARRAY_BULLSHIT
 static long it_sigrenderer_get_position(sigrenderer_t *vsigrenderer)
 {
-	DUMB_IT_SIGRENDERER *sigrenderer = vsigrenderer;
+	DUMB_IT_SIGRENDERER *sigrenderer = (DUMB_IT_SIGRENDERER *) vsigrenderer;
 
-	return sigrenderer->time_played >> 16;
+	return (long)(sigrenderer->time_played >> 16);
 }
 #endif
 
@@ -5671,7 +5772,7 @@ void dumb_it_sr_get_channel_state(DUMB_IT_SIGRENDERER *sr, int channel, DUMB_IT_
 
 	if (playing->flags & IT_PLAYING_DEAD) { state->sample = 0; return; }
 
-	state->channel = playing->channel - sr->channel;
+	state->channel = (int)(playing->channel - sr->channel);
 	state->sample = playing->sampnum;
 	state->volume = calculate_volume(sr, playing, 1.0f);
 

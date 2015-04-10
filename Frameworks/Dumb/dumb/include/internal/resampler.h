@@ -3,6 +3,8 @@
 
 // Ugglay
 #ifdef RESAMPLER_DECORATE
+#undef PASTE
+#undef EVALUATE
 #define PASTE(a,b) a ## b
 #define EVALUATE(a,b) PASTE(a,b)
 #define resampler_init EVALUATE(RESAMPLER_DECORATE,_resampler_init)

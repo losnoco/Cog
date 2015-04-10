@@ -169,8 +169,8 @@ static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num)
 			} else {
 				if (flags & 4) {
 					for (o = 0; o < s->length; o++) {
-						delta += (short)(sdata[o * 2] | (sdata[(o * 2) + 1] << 8));
-						((short *)s->data)[o] = delta;
+						delta += (signed short)(sdata[o * 2] | (sdata[(o * 2) + 1] << 8));
+						((signed short *)s->data)[o] = delta;
 					}
 				} else {
 					for (o = 0; o < s->length; o++) {
@@ -464,7 +464,7 @@ static int it_old_psm_read_patterns(IT_PATTERN * pattern, DUMBFILE * f, int num,
 			}
 		}
 
-		p->n_entries = entry - p->entry;
+		p->n_entries = (int)(entry - p->entry);
 		offset += psize;
 	}
 
@@ -493,8 +493,8 @@ PSM_COMPONENT;
 
 static int psm_component_compare(const void *e1, const void *e2)
 {
-	return ((const PSM_COMPONENT *)e1)->offset -
-	       ((const PSM_COMPONENT *)e2)->offset;
+	return (int)(((const PSM_COMPONENT *)e1)->offset -
+	             ((const PSM_COMPONENT *)e2)->offset);
 }
 
 static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
@@ -590,7 +590,7 @@ static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f)
 
 	if (!n_components) goto error_fc;
 
-	total_pattern_size = dumbfile_igetl(f);
+	total_pattern_size = (int)dumbfile_igetl(f);
 	if (!total_pattern_size) goto error_fc;
 
 	qsort(component, n_components, sizeof(PSM_COMPONENT), &psm_component_compare);

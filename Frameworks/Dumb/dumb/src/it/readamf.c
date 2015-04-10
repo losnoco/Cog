@@ -210,7 +210,7 @@ static int it_amf_read_sample_header( IT_SAMPLE *sample, DUMBFILE *f, int * offs
     dumbfile_getnc( (char *) sample->filename, 13, f );
 	sample->filename[13] = 0;
 
-	*offset = dumbfile_igetl( f );
+	*offset = (int)dumbfile_igetl( f );
 	sample->length = dumbfile_igetl( f );
 	sample->C5_speed = dumbfile_igetw( f );
 	sample->default_volume = dumbfile_getc( f );
@@ -259,14 +259,14 @@ static int it_amf_read_sample_data( IT_SAMPLE *sample, DUMBFILE *f )
 		return -1;
 
 	if ( sample->length )
-		read_length = dumbfile_getnc( sample->data, sample->length, f );
+		read_length = (int)dumbfile_getnc( sample->data, sample->length, f );
 
 	for ( i = 0; i < read_length; i++ ) {
-		( ( char * ) sample->data )[ i ] ^= 0x80;
+		( ( signed char * ) sample->data )[ i ] ^= 0x80;
 	}
 
 	for ( i = read_length; i < sample->length; i++ ) {
-		( ( char * ) sample->data )[ i ] = 0;
+		( ( signed char * ) sample->data )[ i ] = 0;
 	}
 
 	return 0; /* Sometimes the last sample is truncated :( */
