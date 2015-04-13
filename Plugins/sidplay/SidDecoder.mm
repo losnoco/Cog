@@ -243,7 +243,7 @@
 
 + (float)priority
 {
-    return 1.0;
+    return 0.5;
 }
 
 @end
