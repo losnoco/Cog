@@ -31,6 +31,9 @@
 	
     tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
     
+    if (!tune->getStatus())
+        return NO;
+    
     NSURL * url = [s url];
 	int track_num;
 	if ([[url fragment] length] == 0)
@@ -50,7 +53,7 @@
     
     engine->setRoms( kernel, basic, chargen );
     
-    if ( engine->load( tune ) < 0 )
+    if ( !engine->load( tune ) )
         return NO;
     
     ReSIDfpBuilder * _builder = new ReSIDfpBuilder("ReSIDfp");

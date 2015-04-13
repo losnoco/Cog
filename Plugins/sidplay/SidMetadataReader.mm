@@ -47,6 +47,10 @@
     [source read:data amount:size];
 
     SidTune * tune = new SidTune( (const uint_least8_t *)data, (uint_least32_t)size );
+
+    if (!tune->getStatus())
+        return 0;
+    
     const SidTuneInfo * info = tune->getInfo();
 
     unsigned int count = info->numberOfInfoStrings();

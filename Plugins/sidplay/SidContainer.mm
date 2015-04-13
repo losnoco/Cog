@@ -53,6 +53,9 @@
 
     SidTune * tune = new SidTune( (const uint_least8_t*)data, size );
     
+    if (!tune->getStatus())
+        return 0;
+    
     const SidTuneInfo * info = tune->getInfo();
     
     unsigned int subsongs = info->songs();
