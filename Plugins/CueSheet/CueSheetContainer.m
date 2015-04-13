@@ -23,6 +23,11 @@
 	return [NSArray arrayWithObjects:@"application/x-cue", nil]; //This is basically useless
 }
 
++ (float)priority
+{
+    return 1.0f;
+}
+
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
 	if (![url isFileURL]) {

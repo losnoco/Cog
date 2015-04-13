@@ -16,7 +16,7 @@
 
 	NSMutableDictionary *decodersByExtension;
 	NSMutableDictionary *decodersByMimeType;
-	
+    
 	BOOL configured;
 }
 

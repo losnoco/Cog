@@ -1,6 +1,6 @@
 #import "PluginController.h"
 #import "Plugin.h"
-#import "CogDecoderMulti.h"
+#import "CogPluginMulti.h"
 
 #import "Logging.h"
 
@@ -45,7 +45,7 @@ static PluginController *sharedPluginController = nil;
  
         self.decodersByExtension = [[[NSMutableDictionary alloc] init] autorelease];
         self.decodersByMimeType = [[[NSMutableDictionary alloc] init] autorelease];
-
+        
         [self setup];
 	}
 	
@@ -119,7 +119,16 @@ static PluginController *sharedPluginController = nil;
 	if (container && [container respondsToSelector:@selector(fileTypes)]) {
 		for (id fileType in [container fileTypes])
 		{
-			[containers setObject:className forKey:[fileType lowercaseString]];
+            NSString *ext = [fileType lowercaseString];
+            NSMutableArray *containerSet;
+            if (![containers objectForKey:ext])
+            {
+                containerSet = [[[NSMutableArray alloc] init] autorelease];
+                [containers setObject:containerSet forKey:ext];
+            }
+            else
+                containerSet = [containers objectForKey:ext];
+            [containerSet addObject:className];
 		}
 	}
 }
@@ -157,7 +166,16 @@ static PluginController *sharedPluginController = nil;
 	if (metadataReader && [metadataReader respondsToSelector:@selector(fileTypes)]) {
 		for (id fileType in [metadataReader fileTypes])
 		{
-			[metadataReaders setObject:className forKey:[fileType lowercaseString]];
+            NSString *ext = [fileType lowercaseString];
+            NSMutableArray *readers;
+            if (![metadataReaders objectForKey:ext])
+            {
+                readers = [[[NSMutableArray alloc] init] autorelease];
+                [metadataReaders setObject:readers forKey:ext];
+            }
+            else
+                readers = [metadataReaders objectForKey:ext];
+            [readers addObject:className];
 		}
 	}
 }
@@ -168,14 +186,23 @@ static PluginController *sharedPluginController = nil;
 	if (propertiesReader && [propertiesReader respondsToSelector:@selector(fileTypes)]) {
 		for (id fileType in [propertiesReader fileTypes])
 		{
-			[propertiesReadersByExtension setObject:className forKey:[fileType lowercaseString]];
+            NSString *ext = [fileType lowercaseString];
+            NSMutableArray *readers;
+            if (![propertiesReadersByExtension objectForKey:ext])
+            {
+                readers = [[[NSMutableArray alloc] init] autorelease];
+                [propertiesReadersByExtension setObject:readers forKey:ext];
+            }
+            else
+                readers = [propertiesReadersByExtension objectForKey:ext];
+            [readers addObject:className];
 		}
 	}
 
 	if (propertiesReader && [propertiesReader respondsToSelector:@selector(mimeTypes)]) {
 		for (id mimeType in [propertiesReader mimeTypes])
 		{
-			[propertiesReadersByMimeType setObject:className forKey:[mimeType lowercaseString]];
+            [propertiesReadersByMimeType setObject:className forKey:[mimeType lowercaseString]];
 		}
 	}
 }
@@ -216,8 +243,21 @@ static PluginController *sharedPluginController = nil;
 - (NSArray *) urlsForContainerURL:(NSURL *)url
 {
 	NSString *ext = [[url path] pathExtension];
+    NSArray *containerSet = [containers objectForKey:[ext lowercaseString]];
+    NSString *classString;
+    if (containerSet) {
+        if ( [containerSet count] > 1 ) {
+            return [CogContainerMulti urlsForContainerURL:url containers:containerSet];
+        }
+        else {
+            classString = [containerSet objectAtIndex:0];
+        }
+    }
+    else {
+        return nil;
+    }
 	
-	Class container = NSClassFromString([containers objectForKey:[ext lowercaseString]]);
+	Class container = NSClassFromString(classString);
 	
 	return [container urlsForContainerURL:url];
 }
@@ -248,11 +288,23 @@ static PluginController *sharedPluginController = nil;
 - (NSDictionary *)metadataForURL:(NSURL *)url
 {
 	NSString *ext = [[url path] pathExtension];
+    NSArray *readers = [metadataReaders objectForKey:[ext lowercaseString]];
+    NSString *classString;
+    if (readers) {
+        if ( [readers count] > 1 ) {
+            return [CogMetadataReaderMulti metadataForURL:url readers:readers];
+        }
+        else {
+            classString = [readers objectAtIndex:0];
+        }
+    }
+    else {
+        return nil;
+    }
 	
-	Class metadataReader = NSClassFromString([metadataReaders objectForKey:[ext lowercaseString]]);
+	Class metadataReader = NSClassFromString(classString);
 	
 	return [metadataReader metadataForURL:url];
-	
 }
 
 
@@ -264,11 +316,21 @@ static PluginController *sharedPluginController = nil;
 	id<CogSource> source = [self audioSourceForURL:url];
 	if (![source open:url])
 		return nil;
-
-	NSString *classString = [propertiesReadersByExtension objectForKey:[ext lowercaseString]];
-	if (!classString) {
-		classString = [propertiesReadersByMimeType objectForKey:[[source mimeType] lowercaseString]];
-	}
+    
+    NSArray *readers = [propertiesReadersByExtension objectForKey:[ext lowercaseString]];
+    NSString *classString;
+    if (readers)
+    {
+        if ( [readers count] > 1 ) {
+            return [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
+        }
+        else {
+            classString = [readers objectAtIndex:0];
+        }
+    }
+    else {
+        classString = [propertiesReadersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+    }
 
 	if (classString)
 	{

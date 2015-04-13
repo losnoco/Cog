@@ -25,6 +25,11 @@
 	return nil;
 }
 
++ (float)priority
+{
+    return 1.0f;
+}
+
 struct callbackData
 {
     NSString * baseUrl;

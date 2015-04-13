@@ -23,6 +23,11 @@
 	return [SidDecoder mimeTypes];
 }
 
++ (float)priority
+{
+    return 0.5f;
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
     id audioSourceClass = NSClassFromString(@"AudioSource");

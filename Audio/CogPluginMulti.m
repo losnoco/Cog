@@ -1,12 +1,34 @@
 //
-//  CogDecoderMulti.m
+//  CogPluginMulti.m
 //  CogAudio
 //
 //  Created by Christopher Snowhill on 10/21/13.
 //
 //
 
-#import "CogDecoderMulti.h"
+#import "CogPluginMulti.h"
+
+NSArray * sortClassesByPriority(NSArray * theClasses)
+{
+    NSMutableArray *sortedClasses = [NSMutableArray arrayWithArray:theClasses];
+    [sortedClasses sortUsingComparator:
+     ^NSComparisonResult(id obj1, id obj2)
+     {
+         NSString *classString1 = (NSString *)obj1;
+         NSString *classString2 = (NSString *)obj2;
+         
+         Class class1 = NSClassFromString(classString1);
+         Class class2 = NSClassFromString(classString2);
+         
+         float priority1 = [class1 priority];
+         float priority2 = [class2 priority];
+         
+         if (priority1 == priority2) return NSOrderedSame;
+         else if (priority1 > priority2) return NSOrderedAscending;
+         else return NSOrderedDescending;
+     }];
+    return sortedClasses;
+}
 
 @implementation CogDecoderMulti
 
@@ -30,24 +52,7 @@
     self = [super init];
     if ( self )
     {
-        NSMutableArray *sortedDecoders = [NSMutableArray arrayWithArray:decoders];
-        [sortedDecoders sortUsingComparator:
-         ^NSComparisonResult(id obj1, id obj2)
-         {
-             NSString *classString1 = (NSString *)obj1;
-             NSString *classString2 = (NSString *)obj2;
-             
-             Class decoder1 = NSClassFromString(classString1);
-             Class decoder2 = NSClassFromString(classString2);
-             
-             float priority1 = [decoder1 priority];
-             float priority2 = [decoder2 priority];
-             
-             if (priority1 == priority2) return NSOrderedSame;
-             else if (priority1 > priority2) return NSOrderedAscending;
-             else return NSOrderedDescending;
-         }];
-        theDecoders = sortedDecoders;
+        theDecoders = sortClassesByPriority(decoders);
         theDecoder = nil;
         cachedObservers = [[NSMutableArray alloc] init];
     }
@@ -133,6 +138,57 @@
             break;
         }
     }
+}
+
+@end
+
+@implementation CogContainerMulti
+
++ (NSArray *)urlsForContainerURL:(NSURL *)url containers:(NSArray *)containers
+{
+    NSArray * sortedContainers = sortClassesByPriority(containers);
+    for (NSString *classString in sortedContainers)
+    {
+        Class container = NSClassFromString(classString);
+        NSArray * urls = [container urlsForContainerURL:url];
+        if ([urls count])
+            return urls;
+    }
+    return nil;
+}
+
+@end
+
+@implementation CogMetadataReaderMulti
+
++ (NSDictionary *)metadataForURL:(NSURL *)url readers:(NSArray *)readers
+{
+    NSArray * sortedReaders = sortClassesByPriority(readers);
+    for (NSString *classString in sortedReaders)
+    {
+        Class reader = NSClassFromString(classString);
+        NSDictionary * data = [reader metadataForURL:url];
+        if ([data count])
+            return data;
+    }
+    return nil;
+}
+
+@end
+
+@implementation CogPropertiesReaderMulti
+
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source readers:(NSArray *)readers
+{
+    NSArray * sortedReaders = sortClassesByPriority(readers);
+    for (NSString *classString in sortedReaders)
+    {
+        Class reader = NSClassFromString(classString);
+        NSDictionary * data = [reader propertiesForSource:source];
+        if ([data count])
+            return data;
+    }
+    return nil;
 }
 
 @end

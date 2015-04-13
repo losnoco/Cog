@@ -34,6 +34,11 @@ static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSStri
 	return [NSArray arrayWithObjects:@"application/zip", @"application/x-gzip", @"application/x-rar-compressed", @"application/x-7z-compressed", nil];
 }
 
++ (float)priority
+{
+    return 1.0f;
+}
+
 + (void)initialize
 {
     fex_init();

@@ -193,4 +193,9 @@
 	return [NSArray arrayWithObjects:@"audio/x-ape", @"audio/x-ms-wma", @"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg", @"audio/x-musepack", @"audio/x-flac", @"audio/x-m4a", @"audio/mpeg", @"audio/x-mp3", @"audio/x-tak", @"audio/x-ac3", @"audio/x-apl", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-tta", @"audio/wav", @"audio/aiff", nil];
 }
 
++ (float)priority
+{
+    return 1.0f;
+}
+
 @end

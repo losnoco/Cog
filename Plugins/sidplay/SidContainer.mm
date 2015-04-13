@@ -23,6 +23,11 @@
 	return nil;
 }
 
++ (float)priority
+{
+    return 0.5f;
+}
+
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
     if ([url fragment]) {

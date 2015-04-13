@@ -26,6 +26,11 @@
 	return nil;
 }
 
++ (float)priority
+{
+    return 1.0f;
+}
+
 //This really should be source...
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {

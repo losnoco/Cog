@@ -25,6 +25,11 @@
 	return [DumbDecoder mimeTypes];
 }
 
++ (float)priority
+{
+    return 1.0f;
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
     id audioSourceClass = NSClassFromString(@"AudioSource");

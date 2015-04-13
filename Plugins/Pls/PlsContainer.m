@@ -22,6 +22,11 @@
 	return [NSArray arrayWithObjects:@"audio/x-scpls", @"application/pls", nil];
 }
 
++ (float)priority
+{
+    return 1.0f;
+}
+
 + (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
 {
 	NSRange protocolRange = [path rangeOfString:@"://"];

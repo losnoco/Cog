@@ -24,6 +24,11 @@
 	return [CueSheetDecoder mimeTypes];
 }
 
++ (float)priority
+{
+    return 1.0f;
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
 	if (![url isFileURL]) {
