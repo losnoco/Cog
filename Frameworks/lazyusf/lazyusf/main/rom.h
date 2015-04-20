@@ -37,6 +37,7 @@
 /* ROM Loading and Saving functions */
 
 m64p_error open_rom(usf_state_t *);
+m64p_error open_rom_header(usf_state_t *, unsigned char * header, int header_size);
 m64p_error close_rom(usf_state_t *);
 
 typedef struct _rom_params

@@ -49,16 +49,71 @@ static m64p_system_type rom_country_code_to_system_type(unsigned short country_c
 static int rom_system_type_to_ai_dac_rate(m64p_system_type system_type);
 static int rom_system_type_to_vi_limit(m64p_system_type system_type);
 
+static int is_valid_rom(const unsigned char *buffer)
+{
+    /* Test if rom is a native .z64 image with header 0x80371240. [ABCD] */
+    if((buffer[0]==0x80)&&(buffer[1]==0x37)&&(buffer[2]==0x12)&&(buffer[3]==0x40))
+        return 1;
+    /* Test if rom is a byteswapped .v64 image with header 0x37804012. [BADC] */
+    else if((buffer[0]==0x37)&&(buffer[1]==0x80)&&(buffer[2]==0x40)&&(buffer[3]==0x12))
+        return 1;
+    /* Test if rom is a wordswapped .n64 image with header  0x40123780. [DCBA] */
+    else if((buffer[0]==0x40)&&(buffer[1]==0x12)&&(buffer[2]==0x37)&&(buffer[3]==0x80))
+        return 1;
+    else
+        return 0;
+}
+
+static void swap_rom(const unsigned char* signature, unsigned char* localrom, int loadlength)
+{
+    unsigned char temp;
+    int i;
+    
+    /* Btyeswap if .v64 image. */
+    if(signature[0]==0x37)
+    {
+        for (i = 0; i < loadlength; i+=2)
+        {
+            temp=localrom[i];
+            localrom[i]=localrom[i+1];
+            localrom[i+1]=temp;
+        }
+    }
+    /* Wordswap if .n64 image. */
+    else if(signature[0]==0x40)
+    {
+        for (i = 0; i < loadlength; i+=4)
+        {
+            temp=localrom[i];
+            localrom[i]=localrom[i+3];
+            localrom[i+3]=temp;
+            temp=localrom[i+1];
+            localrom[i+1]=localrom[i+2];
+            localrom[i+2]=temp;
+        }
+    }
+}
+
 m64p_error open_rom(usf_state_t * state)
 {
-    if (state->g_rom_size >= sizeof(m64p_rom_header))
-        memcpy(&state->ROM_HEADER, state->g_rom, sizeof(m64p_rom_header));
+    return open_rom_header(state, state->g_rom, state->g_rom_size);
+}
+
+m64p_error open_rom_header(usf_state_t * state, unsigned char * header, int header_size)
+{
+    if (header_size >= sizeof(m64p_rom_header))
+        memcpy(&state->ROM_HEADER, header, sizeof(m64p_rom_header));
+    
+    if (is_valid_rom((const unsigned char *)&state->ROM_HEADER))
+        swap_rom((const unsigned char *)&state->ROM_HEADER, (unsigned char *)&state->ROM_HEADER, sizeof(m64p_rom_header));
 
     /* add some useful properties to ROM_PARAMS */
-    state->ROM_PARAMS.systemtype = SYSTEM_NTSC /*rom_country_code_to_system_type(ROM_HEADER.Country_code)*/;
+    state->ROM_PARAMS.systemtype = rom_country_code_to_system_type(state->ROM_HEADER.Country_code);
     state->ROM_PARAMS.vilimit = rom_system_type_to_vi_limit(state->ROM_PARAMS.systemtype);
     state->ROM_PARAMS.aidacrate = rom_system_type_to_ai_dac_rate(state->ROM_PARAMS.systemtype);
     state->ROM_PARAMS.countperop = COUNT_PER_OP_DEFAULT;
+    
+    state->g_rdram[0x300/4] = state->ROM_PARAMS.systemtype;
 
     return M64ERR_SUCCESS;
 }

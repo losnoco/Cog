@@ -596,6 +596,8 @@ static int savestates_load_pj64(usf_state_t * state, unsigned char * ptr, unsign
     // No flashram info in pj64 savestate.
     //init_flashram(&state->g_pi.flashram);
 
+    open_rom_header(state, savestateData, sizeof(m64p_rom_header));
+    
 #ifdef NEW_DYNAREC
     if (state->r4300emu == CORE_DYNAREC) {
         state->pcaddr = state->last_addr;
