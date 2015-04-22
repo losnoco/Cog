@@ -150,9 +150,15 @@ static bool read_iff_stream( std::vector<uint8_t> const& p_file, iff_stream & p_
     while ( it != end )
 	{
 		iff_chunk chunk;
-        if ( !read_iff_chunk( it, end, chunk, first_chunk ) ) return false;
-        p_out.m_chunks.push_back( chunk );
-		first_chunk = false;
+        if ( read_iff_chunk( it, end, chunk, first_chunk ) )
+        {
+            p_out.m_chunks.push_back( chunk );
+            first_chunk = false;
+        }
+        else if ( first_chunk )
+            return false;
+        else
+            break;
 	}
     return true;
 }
