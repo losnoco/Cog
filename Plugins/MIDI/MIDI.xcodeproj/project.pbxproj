@@ -24,8 +24,6 @@
 		83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06721180D70FE008E3612 /* MIDIDecoder.mm */; };
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
 		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
-		83D68C3C1AEF147600C407FC /* munt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D68BD41AEF0E4700C407FC /* munt.framework */; };
-		83D68C401AEF154E00C407FC /* MT32Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D68C3E1AEF154E00C407FC /* MT32Player.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,13 +40,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 83B066AB180D56B9008E3612;
 			remoteInfo = midi_processing;
-		};
-		83D68BD31AEF0E4700C407FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83D68BCE1AEF0E4500C407FC /* munt.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 83D68BB21AEF0E4500C407FC;
-			remoteInfo = munt;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -108,9 +99,6 @@
 		83C35701180EDB74007E9DF0 /* MIDIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIContainer.h; sourceTree = "<group>"; };
 		83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIMetadataReader.mm; sourceTree = "<group>"; };
 		83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIMetadataReader.h; sourceTree = "<group>"; };
-		83D68BCE1AEF0E4500C407FC /* munt.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = munt.xcodeproj; path = ../../Frameworks/munt/munt.xcodeproj; sourceTree = "<group>"; };
-		83D68C3E1AEF154E00C407FC /* MT32Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MT32Player.cpp; sourceTree = "<group>"; };
-		83D68C3F1AEF154E00C407FC /* MT32Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MT32Player.h; sourceTree = "<group>"; };
 		83FAF8A618ADD60100057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -119,7 +107,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83D68C3C1AEF147600C407FC /* munt.framework in Frameworks */,
 				83B0670F180D6F7F008E3612 /* libbass.dylib in Frameworks */,
 				83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */,
 				83B06710180D6F7F008E3612 /* libbassmidi.dylib in Frameworks */,
@@ -159,7 +146,6 @@
 				83B0668A180D5668008E3612 /* Cocoa.framework */,
 				83B0668C180D5668008E3612 /* Other Frameworks */,
 				83B066DA180D56B9008E3612 /* midi_processing.xcodeproj */,
-				83D68BCE1AEF0E4500C407FC /* munt.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -177,8 +163,6 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
-				83D68C3E1AEF154E00C407FC /* MT32Player.cpp */,
-				83D68C3F1AEF154E00C407FC /* MT32Player.h */,
 				83FAF8A618ADD60100057CAF /* PlaylistController.h */,
 				83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */,
 				83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */,
@@ -211,14 +195,6 @@
 			isa = PBXGroup;
 			children = (
 				83B066E0180D56BA008E3612 /* midi_processing.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		83D68BCF1AEF0E4500C407FC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83D68BD41AEF0E4700C407FC /* munt.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -270,10 +246,6 @@
 					ProductGroup = 83B066DB180D56B9008E3612 /* Products */;
 					ProjectRef = 83B066DA180D56B9008E3612 /* midi_processing.xcodeproj */;
 				},
-				{
-					ProductGroup = 83D68BCF1AEF0E4500C407FC /* Products */;
-					ProjectRef = 83D68BCE1AEF0E4500C407FC /* munt.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -288,13 +260,6 @@
 			fileType = wrapper.framework;
 			path = midi_processing.framework;
 			remoteRef = 83B066DF180D56BA008E3612 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		83D68BD41AEF0E4700C407FC /* munt.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = munt.framework;
-			remoteRef = 83D68BD31AEF0E4700C407FC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -319,7 +284,6 @@
 				83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */,
 				83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */,
 				83B0670C180D6665008E3612 /* BMPlayer.cpp in Sources */,
-				83D68C401AEF154E00C407FC /* MT32Player.cpp in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
