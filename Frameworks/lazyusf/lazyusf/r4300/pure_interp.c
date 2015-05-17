@@ -738,8 +738,5 @@ void pure_interpreter(usf_state_t * state)
    state->PC = &state->interp_PC;
 
    while (!state->stop)
-   {
-     r4300_checkpoint(state);
      InterpretOpcode(state);
-   }
 }

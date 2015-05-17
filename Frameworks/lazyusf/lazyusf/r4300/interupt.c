@@ -305,8 +305,6 @@ void translate_event_queue(usf_state_t * state, unsigned int base)
     }
     add_interupt_event_count(state, COMPARE_INT, state->g_cp0_regs[CP0_COMPARE_REG]);
     add_interupt_event_count(state, SPECIAL_INT, 0);
-
-    r4300_reset_checkpoint(state, base);
 }
 
 int save_eventqueue_infos(usf_state_t * state, char *buf)
@@ -505,8 +503,6 @@ static void nmi_int_handler(usf_state_t * state)
 
 void osal_fastcall gen_interupt(usf_state_t * state)
 {
-    r4300_checkpoint(state);
-    
     if (state->stop == 1)
     {
         state->g_gs_vi_counter = 0; // debug

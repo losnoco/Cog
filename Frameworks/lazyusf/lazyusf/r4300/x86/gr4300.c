@@ -631,10 +631,10 @@ void gentest_idle(usf_state_t * state)
    
    mov_reg32_m32(state, reg, (unsigned int *)(&state->next_interupt));
    sub_reg32_m32(state, reg, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]));
-   cmp_reg32_imm8(state, reg, 5);
-   jbe_rj(state, 18);
+   cmp_reg32_imm8(state, reg, 3);
+   jbe_rj(state, 12);
    
-   sub_reg32_imm32(state, reg, 2); // 6
+   //sub_reg32_imm32(state, reg, 2); // 6
    and_reg32_imm32(state, reg, 0xFFFFFFFC); // 6
    add_m32_reg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), reg); // 6
    
