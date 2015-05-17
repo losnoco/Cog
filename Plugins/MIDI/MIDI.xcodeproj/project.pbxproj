@@ -25,7 +25,6 @@
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
 		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
 		83D68C3C1AEF147600C407FC /* munt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D68BD41AEF0E4700C407FC /* munt.framework */; };
-		83D68C3D1AEF148400C407FC /* munt.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D68BD41AEF0E4700C407FC /* munt.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D68C401AEF154E00C407FC /* MT32Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D68C3E1AEF154E00C407FC /* MT32Player.cpp */; };
 /* End PBXBuildFile section */
 
@@ -51,13 +50,6 @@
 			remoteGlobalIDString = 83D68BB21AEF0E4500C407FC;
 			remoteInfo = munt;
 		};
-		83D68C3A1AEF146C00C407FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83D68BCE1AEF0E4500C407FC /* munt.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 83D68BB11AEF0E4500C407FC;
-			remoteInfo = munt;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -67,7 +59,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				83D68C3D1AEF148400C407FC /* munt.framework in CopyFiles */,
 				839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -248,7 +239,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				83D68C3B1AEF146C00C407FC /* PBXTargetDependency */,
 				83B06700180D573D008E3612 /* PBXTargetDependency */,
 			);
 			name = MIDI;
@@ -341,11 +331,6 @@
 			isa = PBXTargetDependency;
 			name = midi_processing;
 			targetProxy = 83B066FF180D573D008E3612 /* PBXContainerItemProxy */;
-		};
-		83D68C3B1AEF146C00C407FC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = munt;
-			targetProxy = 83D68C3A1AEF146C00C407FC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
