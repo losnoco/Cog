@@ -1,7 +1,8 @@
-# Sparkle <img src="Resources/Sparkle.png" width=48 height=48 alt=""/>
-is an easy-to-use software update framework for Cocoa developers.
+# Sparkle [![Build Status](https://travis-ci.org/sparkle-project/Sparkle.svg?branch=master)](https://travis-ci.org/sparkle-project/Sparkle)
 
-[![Build Status](https://travis-ci.org/sparkle-project/Sparkle.svg?branch=master)](https://travis-ci.org/sparkle-project/Sparkle)
+An easy-to-use software update framework for Cocoa developers.
+
+<img src="Resources/Screenshot.png" width="715" alt="Sparkle shows familiar update window with release notes">
 
 ## Changes since 1.5b
 

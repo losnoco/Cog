@@ -1,3 +1,42 @@
+# 1.10.0
+
+* Massive improvements to the BinaryDelta tool (Zorg)
+  - Ability to track file permissions (Zorg)
+  - Nicely formatted log output (Zorg)
+  - Numerous bug fixes in handling of symlinks, empty directories, case-insensitive names, etc. (Zorg)
+  - Refactored and modernized code (Zorg)
+  - libxar is no longer weak-linked (C.W. Betts)
+* Double-check the code signature of the the app after installation (Isaac Wankerl)
+* Added headless guided package installation (Graham Miln)
+* Added ability to inject custom HTTP headers in appcast request (Mattias Gunneras)
+* Changes to make unarching more reliable (Zorg, Kornel Lesiński)
+* Have Sparkle build a framework module (C.W. Betts)
+* Stdout used for non error outputs (JDuquennoy)
+* French locale update (Kent Sutherland)
+
+# 1.9.0
+
+* Added SUUpdater delegate method for failures. (Benjamin Gordon)
+* Make the error definitions public (C.W. Betts)
+* Add support for lzma compressed tarballs (Kyle Fuller)
+* Back to SKIP_INSTALL=YES by default (Tony Arnold)
+* Properly set install names and rpaths for targets (Jake Petroules)
+* Use Library/Caches rather than app support directory (Kornel Lesiński)
+* Check for a modal window being onscreen before trying to put up the Sparkle prompt (Alf Watt)
+* Fixed crashes on 10.7 (Chris Campbell, Ger Teunis)
+* Fixed Sparkle tags parsing (Tamás Lustyik)
+* SULog code cleanups (Kevin Wojniak)
+* Make sure CFBundleVersion is a semantic version number. (Jake Petroules)
+* Replace typedef enums with typedef NS_ENUM to make Swift happier (C.W. Betts)
+* Fix warnings under Xcode 6.1 relating the SUUpdateAlert XIB (Tony Arnold)
+* Prefer string constants to strings (Jake Petroules)
+* Use Info.plist keys instead of macros (Jake Petroules)
+* Only export public symbols. (Jake Petroules)
+* BinaryDelta: avoid crash with bad paths (Jake Petroules)
+* Fixing Swedish translations (Erik Vikström)
+* Turkish localization fixes (Emir)
+* Proofing of Ukrainian localization (Vera Tkachenko)
+
 # 1.8.0
 
 * New SUDSAVerifier based on up-to-date OS X APIs (Zachary Waldowski)

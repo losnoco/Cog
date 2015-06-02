@@ -33,6 +33,7 @@
 @end
 
 @interface SUAppcast () <NSURLDownloadDelegate>
+@property (strong) void (^completionBlock)(NSError *);
 @property (copy) NSString *downloadFilename;
 @property (strong) NSURLDownload *download;
 @property (copy) NSArray *items;
@@ -43,16 +44,26 @@
 @implementation SUAppcast
 
 @synthesize downloadFilename;
-@synthesize delegate;
+@synthesize completionBlock;
 @synthesize userAgentString;
+@synthesize httpHeaders;
 @synthesize download;
 @synthesize items;
 
-- (void)fetchAppcastFromURL:(NSURL *)url
+- (void)fetchAppcastFromURL:(NSURL *)url completionBlock:(void (^)(NSError *))block
 {
+    self.completionBlock = block;
+
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:30.0];
     if (self.userAgentString) {
         [request setValue:self.userAgentString forHTTPHeaderField:@"User-Agent"];
+    }
+
+    if (self.httpHeaders) {
+        for (NSString *key in self.httpHeaders) {
+            id value = [self.httpHeaders objectForKey:key];
+            [request setValue:value forHTTPHeaderField:key];
+        }
     }
 
     [request setValue:@"application/rss+xml,*/*;q=0.1" forHTTPHeaderField:@"Accept"];
@@ -202,31 +213,23 @@
         }
     }
 
-	if ([appcastItems count])
-    {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
-        // @selector(date) is from SUAppcastItem
-        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:NSStringFromSelector(@selector(date)) ascending:NO];
-#pragma clang diagnostic pop
+    if ([appcastItems count]) {
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:NO];
         [appcastItems sortUsingDescriptors:@[sort]];
         self.items = appcastItems;
     }
 
-	if (failed)
-    {
+    if (failed) {
         [self reportError:[NSError errorWithDomain:SUSparkleErrorDomain code:SUAppcastParseError userInfo:@{ NSLocalizedDescriptionKey: SULocalizedString(@"An error occurred while parsing the update feed.", nil) }]];
-	}
-    else if ([self.delegate respondsToSelector:@selector(appcastDidFinishLoading:)])
-    {
-        [self.delegate appcastDidFinishLoading:self];
+    } else {
+        self.completionBlock(nil);
+        self.completionBlock = nil;
     }
 }
 
 - (void)download:(NSURLDownload *)__unused aDownload didFailWithError:(NSError *)error
 {
-	if (self.downloadFilename)
-	{
+    if (self.downloadFilename) {
         [[NSFileManager defaultManager] removeItemAtPath:self.downloadFilename error:nil];
     }
     self.downloadFilename = nil;
@@ -241,10 +244,15 @@
 
 - (void)reportError:(NSError *)error
 {
-	if ([self.delegate respondsToSelector:@selector(appcast:failedToLoadWithError:)])
-	{
-		[self.delegate appcast:self failedToLoadWithError:[NSError errorWithDomain:SUSparkleErrorDomain code:SUAppcastError userInfo:@{NSLocalizedDescriptionKey: SULocalizedString(@"An error occurred in retrieving update information. Please try again later.", nil), NSLocalizedFailureReasonErrorKey: [error localizedDescription]}]];
-    }
+    NSURL *failingUrl = error.userInfo[NSURLErrorFailingURLErrorKey];
+
+    self.completionBlock([NSError errorWithDomain:SUSparkleErrorDomain code:SUAppcastError userInfo:@{
+        NSLocalizedDescriptionKey: SULocalizedString(@"An error occurred in retrieving update information. Please try again later.", nil),
+        NSLocalizedFailureReasonErrorKey: [error localizedDescription],
+        NSUnderlyingErrorKey: error,
+        NSURLErrorFailingURLErrorKey: failingUrl ? failingUrl : [NSNull null],
+    }]);
+    self.completionBlock = nil;
 }
 
 - (NSXMLNode *)bestNodeInNodes:(NSArray *)nodes

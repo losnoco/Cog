@@ -8,20 +8,22 @@
 
 #import "SUPlainInstaller.h"
 #import "SUPlainInstallerInternals.h"
+#import "SUCodeSigningVerifier.h"
 #import "SUConstants.h"
 #import "SUHost.h"
 
 @implementation SUPlainInstaller
 
-+ (void)performInstallationToPath:(NSString *)installationPath fromPath:(NSString *)path host:(SUHost *)host delegate:(id<SUInstallerDelegate>)delegate versionComparator:(id<SUVersionComparison>)comparator
++ (void)performInstallationToPath:(NSString *)installationPath fromPath:(NSString *)path host:(SUHost *)host versionComparator:(id<SUVersionComparison>)comparator completionHandler:(void (^)(NSError *))completionHandler
 {
+    NSParameterAssert(host);
+
     // Prevent malicious downgrades
     if (![[[NSBundle bundleWithIdentifier:SUBundleIdentifier] infoDictionary][SUEnableAutomatedDowngradesKey] boolValue]) {
-        if ([comparator compareVersion:[host version] toVersion:[[NSBundle bundleWithPath:path] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey]] == NSOrderedDescending)
-        {
+        if ([comparator compareVersion:[host version] toVersion:[[NSBundle bundleWithPath:path] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey]] == NSOrderedDescending) {
             NSString *errorMessage = [NSString stringWithFormat:@"Sparkle Updater: Possible attack in progress! Attempting to \"upgrade\" from %@ to %@. Aborting update.", [host version], [[NSBundle bundleWithPath:path] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey]];
             NSError *error = [NSError errorWithDomain:SUSparkleErrorDomain code:SUDowngradeError userInfo:@{ NSLocalizedDescriptionKey: errorMessage }];
-            [self finishInstallationToPath:installationPath withResult:NO host:host error:error delegate:delegate];
+            [self finishInstallationToPath:installationPath withResult:NO error:error completionHandler:completionHandler];
             return;
         }
     }
@@ -30,8 +32,17 @@
         NSError *error = nil;
         NSString *oldPath = [host bundlePath];
         NSString *tempName = [self temporaryNameForPath:[host installationPath]];
+        BOOL hostIsCodeSigned = [SUCodeSigningVerifier applicationAtPathIsCodeSigned:oldPath];
 
         BOOL result = [self copyPathWithAuthentication:path overPath:installationPath temporaryName:tempName error:&error];
+        
+        if (result) {
+            // If the host is code signed, then the replacement should be be too (and the signature should be valid).
+            BOOL needToCheckCodeSignature = (hostIsCodeSigned || [SUCodeSigningVerifier applicationAtPathIsCodeSigned:installationPath]);
+            if (needToCheckCodeSignature) {
+                result = [SUCodeSigningVerifier codeSignatureIsValidAtPath:installationPath error:&error];
+            }
+        }
 
         if (result) {
             BOOL haveOld = [[NSFileManager defaultManager] fileExistsAtPath:oldPath];
@@ -42,7 +53,7 @@
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self finishInstallationToPath:installationPath withResult:result host:host error:error delegate:delegate];
+            [self finishInstallationToPath:installationPath withResult:result error:error completionHandler:completionHandler];
         });
     });
 }

@@ -42,13 +42,14 @@ static const NSTimeInterval SUAutomaticUpdatePromptImpatienceTimer = 60 * 60 * 2
 - (void)showUpdateAlert
 {
     self.interruptible = NO;
-    self.alert = [[SUAutomaticUpdateAlert alloc] initWithAppcastItem:self.updateItem host:self.host delegate:self];
+    self.alert = [[SUAutomaticUpdateAlert alloc] initWithAppcastItem:self.updateItem host:self.host completionBlock:^(SUAutomaticInstallationChoice choice) {
+        [self automaticUpdateAlertFinishedWithChoice:choice];
+    }];
 
     // If the app is a menubar app or the like, we need to focus it first and alter the
     // update prompt to behave like a normal window. Otherwise if the window were hidden
     // there may be no way for the application to be activated to make it visible again.
-    if ([self.host isBackgroundApplication])
-	{
+    if ([self.host isBackgroundApplication]) {
         [[self.alert window] setHidesOnDeactivate:NO];
         [NSApp activateIgnoringOtherApps:YES];
     }
@@ -138,7 +139,7 @@ static const NSTimeInterval SUAutomaticUpdatePromptImpatienceTimer = 60 * 60 * 2
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidBecomeActiveNotification object:NSApp];
 }
 
-- (void)automaticUpdateAlert:(SUAutomaticUpdateAlert *)__unused aua finishedWithChoice:(SUAutomaticInstallationChoice)choice
+- (void)automaticUpdateAlertFinishedWithChoice:(SUAutomaticInstallationChoice)choice
 {
 	switch (choice)
 	{
@@ -161,8 +162,6 @@ static const NSTimeInterval SUAutomaticUpdatePromptImpatienceTimer = 60 * 60 * 2
     }
 }
 
-- (BOOL)shouldInstallSynchronously { return self.postponingInstallation; }
-
 - (void)installWithToolAndRelaunch:(BOOL)relaunch displayingUserInterface:(BOOL)showUI
 {
     if (relaunch) {
@@ -180,10 +179,18 @@ static const NSTimeInterval SUAutomaticUpdatePromptImpatienceTimer = 60 * 60 * 2
 
 - (void)abortUpdateWithError:(NSError *)error
 {
-    if (self.showErrors)
+    if (self.showErrors) {
         [super abortUpdateWithError:error];
-    else
+    } else {
+        // Call delegate separately here because otherwise it won't know we stopped.
+        // Normally this gets called by the superclass
+        id<SUUpdaterDelegate> updaterDelegate = [self.updater delegate];
+        if ([updaterDelegate respondsToSelector:@selector(updater:didAbortWithError:)]) {
+            [updaterDelegate updater:self.updater didAbortWithError:error];
+        }
+
         [self abortUpdate];
+    }
 }
 
 @end
