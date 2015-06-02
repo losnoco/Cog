@@ -1,6 +1,10 @@
 /*
-** ST3PLAY v0.70 - 18th of March 2015
-** ==================================
+** ST3PLAY v0.71 - 28th of May 2015 - http://16-bits.org
+** =====================================================
+** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from v0.70:
+** - Any pan commands except Lxy/Yxy/XA4 should disable channel surround
 **
 ** Changelog from v0.60:
 ** - Added S2x (non-ST3, set middle-C finetune)
@@ -25,7 +29,7 @@
 **   * Stereo sample support
 **   * 2^32 sample length support
 **   * Middle-C speeds beyond 65535
-**   * Process the last 16 channels as PCM
+**   * Process the last 16 channels as PCM (if not AdLib)
 **   * Process 8 octaves instead of 7
 **   * Compile-time optional volume ramping
 **   * The ability to play samples backwards
@@ -69,9 +73,7 @@
 #endif
 
 #include "dbopl.h"
-
 #include "resampler.h"
-
 #include "st3play.h"
 
 #define USE_VOL_RAMP
@@ -196,9 +198,9 @@ typedef struct
     uint32_t outputFreq;
     
 #ifdef USE_VOL_RAMP
-    VOICE voice[32*2];
+    VOICE voice[32 * 2];
     
-    void *resampler[64*2];
+    void *resampler[64 * 2];
 #else
     VOICE voice[32];
     
@@ -227,7 +229,7 @@ typedef struct
 #endif
     float *masterBufferL;
     float *masterBufferR;
-    int32_t samplesLeft;// must be signed
+    int32_t samplesLeft;
     int8_t isMixing;
     uint32_t samplesPerFrame;
     
@@ -497,27 +499,28 @@ static effect_routine sotherjmp[27] =
 // CODE START
 void * st3play_Alloc(uint32_t outputFreq, int8_t interpolation, int8_t ramp_style)
 {
-    int i;
+    int32_t i;
+    PLAYER *p;
     
-    PLAYER * p = (PLAYER *) calloc(1, sizeof(PLAYER));
-    
-    if ( !p )
-        return 0;
+    p = (PLAYER *)(calloc(sizeof (PLAYER), 1));
+    if (p == NULL)
+        return (0);
 
     resampler_init();
     
 #ifdef USE_VOL_RAMP
-    for (i = 0; i < 64 * 2; ++i)
+    for (i = 0; i < (64 * 2); ++i)
 #else
     for (i = 0; i < 64; ++i)
 #endif
     {
         p->resampler[i] = resampler_create();
-        if ( !p->resampler[i] )
+        if (p->resampler[i] == NULL)
         {
-            st3play_Free( p );
-            return 0;
+            st3play_Free(p);
+            return (0);
         }
+        
         resampler_set_quality(p->resampler[i], interpolation);
     }
     
@@ -525,19 +528,19 @@ void * st3play_Alloc(uint32_t outputFreq, int8_t interpolation, int8_t ramp_styl
     p->masterBufferL   = (float *)(malloc(p->soundBufferSize * sizeof (float)));
     p->masterBufferR   = (float *)(malloc(p->soundBufferSize * sizeof (float)));
     
-    if ( !p->masterBufferL || !p->masterBufferR )
+    if ((p->masterBufferL == NULL) || (p->masterBufferR == NULL))
     {
-        st3play_Free( p );
-        return 0;
+        st3play_Free(p);
+        return (0);
     }
-
+    
+    p->stereomode  = 1;
     p->numChannels = 32;
-    p->stereomode = 1;
-    p->globalvol = 64;
-    p->mastervol = 48;
+    p->globalvol   = 64;
+    p->mastervol   = 48;
 
     p->outputFreq = outputFreq;
-    p->f_outputFreq = (float)outputFreq;
+    p->f_outputFreq = (float)(outputFreq);
 
     setSamplingInterpolation(p, interpolation);
 #ifdef USE_VOL_RAMP
@@ -545,83 +548,88 @@ void * st3play_Alloc(uint32_t outputFreq, int8_t interpolation, int8_t ramp_styl
 #endif
     setSamplesPerFrame(p, ((outputFreq * 5UL) / 2 / 125));
         
-    return p;
+    return (p);
 }
 
 static int st3play_AdlibInit(PLAYER *p)
 {
-    p->fmChip = malloc( Chip_GetSize() );
-    if ( !p->fmChip )
-        return -1;
+    p->fmChip = malloc(Chip_GetSize());
+    if (p->fmChip == NULL)
+        return (-1);
     
-    Chip_Init( p->fmChip );
-    Chip_Setup( p->fmChip, 3579545 * 4, 49716 );
-    Chip_WriteReg( p->fmChip, 0x01, 0x20 ); // enable wave select, but rather pointless with dbopl
+    Chip_Init(p->fmChip);
+    Chip_Setup(p->fmChip, 3579545 * 4, 49716);
+    Chip_WriteReg(p->fmChip, 0x01, 0x20); // enable wave select, but rather pointless with dbopl
     
     p->fmResampler = resampler_create();
-    if ( !p->fmResampler )
-        return -1;
+    if (p->fmResampler == NULL)
+        return (-1);
     
-    resampler_set_quality( p->fmResampler, RESAMPLER_QUALITY_MAX );
-    resampler_set_rate( p->fmResampler, 49716.0 / p->f_outputFreq );
+    resampler_set_quality(p->fmResampler, RESAMPLER_QUALITY_MAX);
+    resampler_set_rate(p->fmResampler, 49716.0f / p->f_outputFreq);
     
-    return 0;
+    return (0);
 }
 
 void st3play_Free(void *_p)
 {
-    int i;
-    
-    PLAYER * p = (PLAYER *)_p;
+    int32_t i;
+    PLAYER *p;
 
+    p = (PLAYER *)(_p);
     FreeSong(p);
     
-    if ( p->fmResampler )
-        resampler_delete( p->fmResampler );
-    
-    if ( p->fmChip )
-        free( p->fmChip );
+    if (p->fmResampler)
+        resampler_delete(p->fmResampler);
+        
+    if (p->fmChip)
+        free(p->fmChip);
     
 #ifdef USE_VOL_RAMP
-    for (i = 0; i < 64 * 2; ++i)
+    for (i = 0; i < (64 * 2); ++i)
 #else
         for (i = 0; i < 64; ++i)
 #endif
     {
-        if ( p->resampler[i] )
-            resampler_delete( p->resampler[i] );
+        if (p->resampler[i])
+            resampler_delete(p->resampler[i]);
     }
     
-    if ( p->masterBufferL )
-        free( p->masterBufferL );
-    if ( p->masterBufferR )
-        free( p->masterBufferR );
+    if (p->masterBufferL) free(p->masterBufferL);
+    if (p->masterBufferR) free(p->masterBufferR);
 
     free(p);
 }
 
 static inline uint16_t get_le16(const void *_p)
 {
-    const uint8_t * p = (const uint8_t *)_p;
-    return p[0] | (p[1] << 8);
+    const uint8_t *p;
+    
+    p = (const uint8_t *)(_p);
+    return (p[0] | (p[1] << 8));
 }
 
 static inline void set_le16(void *_p, uint16_t v)
 {
-    uint8_t * p = (uint8_t *)_p;
-    p[0] = (uint8_t)v;
+    uint8_t *p;
+    
+    p = (uint8_t *)(_p);
+    p[0] = (uint8_t)(v);
     p[1] = v >> 8;
 }
 
 static inline uint32_t get_le32(const void *_p)
 {
-    const uint8_t * p = (const uint8_t *)_p;
-    return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
+    const uint8_t *p;
+    
+    p = (const uint8_t *)(_p);
+    return (p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24));
 }
 
 static inline void getlastnfo(PLAYER *p, chn_t *ch)
 {
-    (void)p;
+    (void)(p);
+    
     if (!ch->info)
         ch->info = ch->alastnfo;
 }
@@ -641,24 +649,25 @@ static void settempo(PLAYER *p, uint16_t val)
     }
 }
 
-static void st3play_AdlibHertzTouch(PLAYER *p, uint8_t ch, int Hertz, uint8_t keyoff)
+static void st3play_AdlibHertzTouch(PLAYER *p, uint8_t ch, int32_t Hertz, uint8_t keyoff)
 {
-    int Oct;
+    int32_t Oct;
     
     for (Oct = 0; Hertz > 0x1FF; Oct++)
         Hertz >>= 1;
     
-    Chip_WriteReg( p->fmChip, 0xA0 + ch, Hertz & 255 );
+    Chip_WriteReg(p->fmChip, 0xA0 + ch, Hertz & 0xFF);
+    
     p->fmLastB0[ch] = (keyoff ? 0 : 0x20) | ((Hertz >> 8) & 3) | ((Oct & 7) << 2);
-    Chip_WriteReg( p->fmChip, 0xB0 + ch, p->fmLastB0[ch]);
+    Chip_WriteReg(p->fmChip, 0xB0 + ch, p->fmLastB0[ch]);
 }
 
 static inline void setspd(PLAYER *p, uint8_t ch)
 {
+    uint8_t adlibChannel;
     int32_t tmpspd;
-
-    uint8_t adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
-
+   
+    adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
     p->chn[ch].achannelused |= 0x80;
     
     tmpspd = p->chn[ch].aspd;
@@ -704,12 +713,12 @@ static inline void setspd(PLAYER *p, uint8_t ch)
         voiceSetSamplingFrequency(p, ch, 14317056 / tmpspd);
 
     if (adlibChannel < 9)
-        st3play_AdlibHertzTouch(p, adlibChannel, 14317056.0f / (float)tmpspd, 0);
+        st3play_AdlibHertzTouch(p, adlibChannel, 14317056.0f / (float)(tmpspd), 0);
 }
 
 static void st3play_AdlibTouch(PLAYER *p, uint8_t ch, const uint8_t * patch, uint8_t vol)
 {
-    int Operator;
+    int32_t Operator;
     
     if (!patch)
     {
@@ -719,24 +728,25 @@ static void st3play_AdlibTouch(PLAYER *p, uint8_t ch, const uint8_t * patch, uin
     }
     
     p->fmPatchTable[ch] = patch;
-    
     Operator = Adlib_PortBases[ch];
     
-    Chip_WriteReg( p->fmChip, 0x40 + Operator, (patch[2] & 0xC0) |
-                  (((int)(patch[2] & 63) - 63) * vol + 63 * 64 - 32) / 64 );
-    Chip_WriteReg( p->fmChip, 0x43 + Operator, (patch[3] & 0xC0) |
-                  (((int)(patch[3] & 63) - 63) * vol + 63 * 64 - 32) / 64 );
+    Chip_WriteReg(p->fmChip, 0x40 + Operator, (patch[2] & 0xC0) | (((int32_t)(patch[2] & 63) - 63) * vol + 63 * 64 - 32) / 64);
+    Chip_WriteReg(p->fmChip, 0x43 + Operator, (patch[3] & 0xC0) | (((int32_t)(patch[3] & 63) - 63) * vol + 63 * 64 - 32) / 64);
 }
 
 static inline void setvol(PLAYER *p, uint8_t ch, uint8_t offset, uint8_t note_on)
 {
-    uint8_t adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
+    uint8_t adlibChannel;
+    
+    adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
     p->chn[ch].achannelused |= 0x80;
+    
 #ifdef USE_VOL_RAMP
     voiceSetVolume(p, ch + offset, ((float)(p->chn[ch].avol) / 63.0f) * ((float)(p->chn[ch].chanvol) / 64.0f) * ((float)(p->globalvol) / 64.0f), note_on);
 #else
     voiceSetVolume(p, ch, ((float)(p->chn[ch].avol) / 63.0f) * ((float)(p->chn[ch].chanvol) / 64.0f) * ((float)(p->globalvol) / 64.0f), note_on);
 #endif
+
     if (adlibChannel < 9)
         st3play_AdlibTouch(p, adlibChannel, NULL, p->chn[ch].avol);
 }
@@ -972,48 +982,51 @@ static inline uint8_t getnote(PLAYER *p)
 
 static void st3play_AdlibPatch(PLAYER *p, uint8_t ch, const uint8_t *patch)
 {
-    int Operator = Adlib_PortBases[ch];
+    int32_t Operator;
     
+    Operator = Adlib_PortBases[ch];
     p->fmPatchTable[ch] = patch;
     
-    Chip_WriteReg( p->fmChip, 0x20 + Operator, patch[0]);
-    Chip_WriteReg( p->fmChip, 0x60 + Operator, patch[4]);
-    Chip_WriteReg( p->fmChip, 0x80 + Operator, patch[6]);
-    Chip_WriteReg( p->fmChip, 0xE0 + Operator, patch[8] & 3);
-
-    Chip_WriteReg( p->fmChip, 0x23 + Operator, patch[1]);
-    Chip_WriteReg( p->fmChip, 0x63 + Operator, patch[5]);
-    Chip_WriteReg( p->fmChip, 0x83 + Operator, patch[7]);
-    Chip_WriteReg( p->fmChip, 0xE3 + Operator, patch[9] & 3);
-    
-    Chip_WriteReg( p->fmChip, 0xC0 + ch, patch[10]);
+    Chip_WriteReg(p->fmChip, 0x20 + Operator, patch[0]);
+    Chip_WriteReg(p->fmChip, 0x60 + Operator, patch[4]);
+    Chip_WriteReg(p->fmChip, 0x80 + Operator, patch[6]);
+    Chip_WriteReg(p->fmChip, 0xE0 + Operator, patch[8] & 3);
+    Chip_WriteReg(p->fmChip, 0x23 + Operator, patch[1]);
+    Chip_WriteReg(p->fmChip, 0x63 + Operator, patch[5]);
+    Chip_WriteReg(p->fmChip, 0x83 + Operator, patch[7]);
+    Chip_WriteReg(p->fmChip, 0xE3 + Operator, patch[9] & 3);
+    Chip_WriteReg(p->fmChip, 0xC0 + ch, patch[10]);
 }
 
 static void st3play_AdlibNoteOff(PLAYER *p, uint8_t ch)
 {
-    Chip_WriteReg( p->fmChip, 0xB0 + ch, p->fmLastB0[ch] & ~0x20 );
+    Chip_WriteReg(p->fmChip, 0xB0 + ch, p->fmLastB0[ch] & ~0x20);
 }
 
 static inline void doamiga(PLAYER *p, uint8_t ch)
 {
     uint8_t *insdat;
     int8_t loop;
+    int8_t shift;
+    uint8_t adlibChannel;
     uint32_t insoffs;
     uint32_t inslen;
     uint32_t insrepbeg;
     uint32_t insrepend;
-    int8_t shift;
-#ifdef USE_VOL_RAMP
-    uint8_t volassigned = 0;
-#endif
-    uint8_t adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
     
-    if (!p->fmChip || !p->fmResampler) // safety check
+#ifdef USE_VOL_RAMP
+    uint8_t volassigned;
+#endif
+      
+    volassigned  = 0;
+    adlibChannel = (p->mseg[0x40 + ch] & 0x7F) - 16;
+    
+    if ((p->fmChip == NULL) || (p->fmResampler == NULL)) // safety check
         adlibChannel = 255;
 
     if (p->chn[ch].ins)
     {
-        p->chn[ch].lastins      = p->chn[ch].ins;
+        p->chn[ch].lastins = p->chn[ch].ins;
         p->chn[ch].astartoffset = 0;
 
         if (p->chn[ch].ins <= get_le16(&p->mseg[0x22])) // added for safety reasons
@@ -1062,16 +1075,19 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                         loop = 1;
 
 #ifdef USE_VOL_RAMP
-                    if (p->rampStyle > 0 && p->chn[ch].cmd != 7 && p->voice[ch].mixing)
+                    if (p->rampStyle > 0 && (p->chn[ch].cmd != 7) && p->voice[ch].mixing)
                     {
-                        memcpy(p->voice + 32 + (int32_t)ch, p->voice + (int32_t)ch, sizeof(VOICE));
+                        memcpy(p->voice + 32 + (int32_t)(ch), p->voice + (int32_t)(ch), sizeof (VOICE));
                         p->voice[ch + 32].faderDest = 0.0f;
                         p->voice[ch + 32].faderDelta = (p->voice[ch + 32].faderDest - p->voice[ch + 32].fader) * p->f_samplesPerFrameSharp;
+                        
                         setvol(p, ch, 32, 0);
+                        
                         resampler_dup_inplace(p->resampler[ch + 32], p->resampler[ch]);
                         resampler_dup_inplace(p->resampler[ch + 32 + 64], p->resampler[ch + 64]);
                         resampler_clear(p->resampler[ch]);
                         resampler_clear(p->resampler[ch + 64]);
+                        
                         if (p->chn[ch].vol != 255)
                         {
                             if (p->chn[ch].vol <= 64)
@@ -1079,14 +1095,16 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
                                 p->chn[ch].avol    = p->chn[ch].vol;
                                 p->chn[ch].aorgvol = p->chn[ch].vol;
                             }
-                            else
-                            // NON-ST3
-                            if ((p->chn[ch].vol >= 128) && (p->chn[ch].vol <= 192))
+                            else if ((p->chn[ch].vol >= 128) && (p->chn[ch].vol <= 192))// NON-ST3
                             {
+                                p->chn[ch].surround = 0;
+                                voiceSetSurround(p, ch, 0);
+            
                                 p->chn[ch].apanpos = (p->chn[ch].vol - 128) << 2;
                                 setpan(p, ch);
                             }
                         }
+                        
                         setvol(p, ch, 0, 1);
                         volassigned = 1;
                     }
@@ -1111,16 +1129,16 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
 #ifdef USE_VOL_RAMP
                     if (p->rampStyle > 0)
                     {
-                        p->voice[ch].fader = 0.0f;
-                        p->voice[ch].faderDest = 1.0f;
+                        p->voice[ch].fader      = 0.0f;
+                        p->voice[ch].faderDest  = 1.0f;
                         p->voice[ch].faderDelta = (p->voice[ch].faderDest - p->voice[ch].fader) * p->f_samplesPerFrameSharp;
                     }
 #endif
                 }
                 else if (insdat[0] == 2 && adlibChannel < 9)
                 {
-                    p->chn[ch].ac2spd = 8363 * 164 / 249;
-                    p->chn[ch].avol = (int8_t)(insdat[0x1C]);
+                    p->chn[ch].ac2spd  = 8363 * 164 / 249;
+                    p->chn[ch].avol    = (int8_t)(insdat[0x1C]);
                     p->chn[ch].aorgvol = p->chn[ch].avol;
                     
                     st3play_AdlibPatch(p, adlibChannel, &insdat[0x10]);
@@ -1229,6 +1247,9 @@ static inline void doamiga(PLAYER *p, uint8_t ch)
         // NON-ST3, but let's handle it no matter what tracker
         if ((p->chn[ch].vol >= 128) && (p->chn[ch].vol <= 192))
         {
+            p->chn[ch].surround = 0;
+            voiceSetSurround(p, ch, 0);
+            
             p->chn[ch].apanpos = (p->chn[ch].vol - 128) << 2;
             setpan(p, ch);
         }
@@ -1243,9 +1264,9 @@ static inline void donewnote(PLAYER *p, uint8_t ch, int8_t notedelayflag)
     }
     else
     {
-        if (p->chn[ch].channelnum > p->lastachannelused)
+        if (ch > p->lastachannelused)
         {
-            p->lastachannelused = p->chn[ch].channelnum + 1;
+            p->lastachannelused = ch + 1;
 
             // hackish fix, fixes call_me_an_angel.s3m crash
             if (p->lastachannelused > 31) p->lastachannelused = 31;
@@ -1458,11 +1479,13 @@ void dorow(PLAYER *p) // periodically called from mixer
         {
             offset = (p->np_ord - 1) / 8;
             bit = 1 << ((p->np_ord - 1) % 8);
+            
             if (p->playedOrder[offset] & bit)
             {
                 p->loopCount++;
-                memset(p->playedOrder, 0, sizeof(p->playedOrder));
+                memset(p->playedOrder, 0, sizeof (p->playedOrder));
             }
+            
             p->playedOrder[offset] |= bit;
         }
 
@@ -1472,22 +1495,27 @@ void dorow(PLAYER *p) // periodically called from mixer
 
 static inline int8_t get_adpcm_sample(const int8_t *sampleDictionary, const uint8_t *sampleData, int32_t samplePosition, int8_t *lastDelta)
 {
-    uint8_t byte = sampleData[samplePosition >> 1];
+    uint8_t byte;
+    
+    byte = sampleData[samplePosition >> 1];
     byte = (samplePosition & 1) ? byte >> 4 : byte & 15;
     return *lastDelta += sampleDictionary[byte];
 }
-
+                   
 static inline void decode_adpcm(const uint8_t * sampleData, int8_t * decodedSampleData, int32_t sampleLength)
 {
     int i;
-    int8_t lastDelta = 0, nextDelta;
+    int8_t lastDelta, sample;
+    const int8_t * sampleDictionary;
     
-    const int8_t * sampleDictionary = sampleData;
+    sampleDictionary = (const int8_t *)(sampleData);
     sampleData += 16;
+    
+    lastDelta = 0;
     
     for (i = 0; i < sampleLength; ++i)
     {
-        int8_t sample = get_adpcm_sample(sampleDictionary, sampleData, i, &nextDelta);
+        sample = get_adpcm_sample(sampleDictionary, sampleData, i, &lastDelta);
         
         *decodedSampleData++ = sample;
     }
@@ -1580,11 +1608,11 @@ static void loadheaderparms(PLAYER *p)
                 
                 if (insdat[0x1E] == 4) // modplug packed
                 {
-                    if (!p->adpcmSamples)
-                        p->adpcmSamples = (int8_t **) calloc(sizeof(int8_t *), insnum);
+                    if (p->adpcmSamples == NULL)
+                        p->adpcmSamples = (int8_t **)(calloc(sizeof(int8_t *), insnum));
                     if (p->adpcmSamples)
                     {
-                        p->adpcmSamples[i] = (int8_t *) calloc(1, inslen);
+                        p->adpcmSamples[i] = (int8_t *)(calloc(1, inslen));
                         if (p->adpcmSamples[i])
                         {
                             if ((insoff + (16 + (inslen + 1) / 2)) > p->mseg_len)
@@ -1626,11 +1654,12 @@ static void loadheaderparms(PLAYER *p)
 
 void st3play_PlaySong(void *_p, int16_t startOrder)
 {
-    PLAYER * p = (PLAYER *)_p;
     uint8_t i;
     uint8_t dat;
     int16_t pan;
+    PLAYER *p;
 
+    p = (PLAYER *)(_p);
     if (!p->ModuleLoaded) return;
 
     memset(p->voice, 0, sizeof (p->voice));
@@ -1665,16 +1694,17 @@ void st3play_PlaySong(void *_p, int16_t startOrder)
     p->isMixing = 1;
     
     p->loopCount = 0;
-    memset(p->playedOrder, 0, sizeof(p->playedOrder));
+    memset(p->playedOrder, 0, sizeof (p->playedOrder));
     p->playedOrder[startOrder / 8] = 1 << (startOrder % 8);
 }
 
 int8_t st3play_LoadModule(void *_p, const uint8_t *module, size_t size)
 {
-    PLAYER * p = (PLAYER *)_p;
     char SCRM[4];
     uint16_t i;
-
+    PLAYER *p;
+    
+    p = (PLAYER *)(_p);
     if (p->ModuleLoaded)
         FreeSong(p);
 
@@ -1705,7 +1735,7 @@ int8_t st3play_LoadModule(void *_p, const uint8_t *module, size_t size)
 
     memcpy(p->mseg, module, size);
 
-    p->mseg_len = (uint32_t) size;
+    p->mseg_len = (uint32_t)(size);
 
     p->instrumentadd = 0x60             +  p->mseg[0x20];
     p->patternadd    = p->instrumentadd + (p->mseg[0x22] << 1);
@@ -1763,12 +1793,12 @@ int8_t st3play_LoadModule(void *_p, const uint8_t *module, size_t size)
 // EFFECTS
 
 // non-used effects
-static void s_ret(PLAYER *p, chn_t *ch) { (void)p; (void)ch; }
+static void s_ret(PLAYER *p, chn_t *ch) { (void)(p); (void)(ch); }
 // ----------------
 
 static void s_setgliss(PLAYER *p, chn_t *ch)
 {
-    (void)p;
+    (void)(p);
     ch->aglis = ch->info & 0x0F;
 }
 
@@ -1781,13 +1811,13 @@ static void s_setfinetune(PLAYER *p, chn_t *ch)
 
 static void s_setvibwave(PLAYER *p, chn_t *ch)
 {
-    (void)p;
+    (void)(p);
     ch->avibtretype = (ch->avibtretype & 0xF0) | ((ch->info << 1) & 0x0F);
 }
 
 static void s_settrewave(PLAYER *p, chn_t *ch)
 {
-    (void)p;
+    (void)(p);
     ch->avibtretype = ((ch->info << 5) & 0xF0) | (ch->avibtretype & 0x0F);
 }
 
@@ -1810,13 +1840,16 @@ static void s_tickdelay(PLAYER *p, chn_t *ch) // NON-ST3
 
 static void s_setpanpos(PLAYER *p, chn_t *ch)
 {
+    ch->surround = 0;
+    voiceSetSurround(p, ch->channelnum, 0);
+    
     ch->apanpos = (ch->info & 0x0F) << 4;
     setpan(p, ch->channelnum);
 }
 
 static void s_sndcntrl(PLAYER *p, chn_t *ch) // NON-ST3
 {
-    if ((ch->info & 0x0F) == 0x0)
+    if ((ch->info & 0x0F) == 0x00)
     {
         if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
         {
@@ -1824,7 +1857,7 @@ static void s_sndcntrl(PLAYER *p, chn_t *ch) // NON-ST3
             voiceSetSurround(p, ch->channelnum, 0);
         }
     }
-    else if ((ch->info & 0x0F) == 0x1)
+    else if ((ch->info & 0x0F) == 0x01)
     {
         if ((p->tracker != SCREAM_TRACKER) && (p->tracker != IMAGO_ORPHEUS))
         {
@@ -1832,12 +1865,12 @@ static void s_sndcntrl(PLAYER *p, chn_t *ch) // NON-ST3
             voiceSetSurround(p, ch->channelnum, 1);
         }
     }
-    else if ((ch->info & 0x0F) == 0xE)
+    else if ((ch->info & 0x0F) == 0x0E)
     {
         if ((p->tracker == OPENMPT) || (p->tracker == BEROTRACKER))
             voiceSetPlayBackwards(p, ch->channelnum, 0);
     }
-    else if ((ch->info & 0x0F) == 0xF)
+    else if ((ch->info & 0x0F) == 0x0F)
     {
         if ((p->tracker == OPENMPT) || (p->tracker == BEROTRACKER))
             voiceSetPlayBackwards(p, ch->channelnum, 1);
@@ -1865,12 +1898,9 @@ static void s_patloop(PLAYER *p, chn_t *ch)
         p->patloopcount--;
         p->jumptorow = p->patloopstart;
         p->np_patoff = -1; // force reseek
-        if (p->patloopstart == 0)
-        {
-            int32_t offset = (p->np_ord - 1) / 8;
-            int32_t bit = 1 << ((p->np_ord - 1) % 8);
-            p->playedOrder[offset] &= ~bit;
-        }
+        
+        if (p->patloopstart == 0) 
+            p->playedOrder[(p->np_ord - 1) / 8] &= ~(1 << ((p->np_ord - 1) % 8));
     }
     else
     {
@@ -1881,19 +1911,23 @@ static void s_patloop(PLAYER *p, chn_t *ch)
 
 static void s_notecut(PLAYER *p, chn_t *ch)
 {
-    (void)p;
+    (void)(p);
     ch->anotecutcnt = ch->info & 0x0F;
 }
 
 static void s_notecutb(PLAYER *p, chn_t *ch)
 {
+    uint8_t adlibChannel;
+
     if (ch->anotecutcnt)
     {
         ch->anotecutcnt--;
         if (!ch->anotecutcnt)
         {
-            uint8_t adlibChannel = (p->mseg[0x40 + ch->channelnum] & 0x7F) - 16;
+            adlibChannel = (p->mseg[0x40 + ch->channelnum] & 0x7F) - 16;
+            
             voiceSetSamplingFrequency(p, ch->channelnum, 0); // cut note
+            
             if (adlibChannel < 9)
                 st3play_AdlibNoteOff(p, adlibChannel);
         }
@@ -1902,7 +1936,7 @@ static void s_notecutb(PLAYER *p, chn_t *ch)
 
 static void s_notedelay(PLAYER *p, chn_t *ch)
 {
-    (void)p;
+    (void)(p);
     ch->anotedelaycnt = ch->info & 0x0F;
 }
 
@@ -2279,7 +2313,7 @@ static void s_chanvol(PLAYER *p, chn_t *ch) // NON-ST3
     {
         if (ch->info <= 0x40)
             ch->chanvol = ch->info;
-        
+            
         setvol(p, ch->channelnum, 0, 0);
     }
 }
@@ -2728,6 +2762,9 @@ static void s_setpan(PLAYER *p, chn_t *ch) // NON-ST3
 
     if (ch->info <= 0x80)
     {
+        ch->surround = 0;
+        voiceSetSurround(p, ch->channelnum, 0);
+        
         ch->apanpos = (int16_t)(ch->info) << 1;
         setpan(p, ch->channelnum);
     }
@@ -2849,7 +2886,7 @@ void setSamplesPerFrame(PLAYER *p, uint32_t val)
     p->samplesPerFrame = val;
     
 #ifdef USE_VOL_RAMP
-    p->f_samplesPerFrame = 1.0f / ((float)(val) / 4.0f);
+    p->f_samplesPerFrame      = 1.0f / ((float)(val) / 4.0f);
     p->f_samplesPerFrameSharp = 1.0f / (p->f_outputFreq / 1000.0f); // 1ms
 #endif
 }
@@ -2906,7 +2943,7 @@ void voiceSetSamplePosition(PLAYER *p, uint8_t voiceNumber, uint16_t value)
     if (p->voice[voiceNumber].loopEnabled)
     {
         while (p->voice[voiceNumber].samplePosition >= p->voice[voiceNumber].sampleLoopEnd)
-            p->voice[voiceNumber].samplePosition -= p->voice[voiceNumber].sampleLoopLength;
+               p->voice[voiceNumber].samplePosition -= p->voice[voiceNumber].sampleLoopLength;
     }
     else if (p->voice[voiceNumber].samplePosition >= p->voice[voiceNumber].sampleLength)
     {
@@ -2918,10 +2955,12 @@ void voiceSetSamplePosition(PLAYER *p, uint8_t voiceNumber, uint16_t value)
 
 void voiceSetVolume(PLAYER *p, uint8_t voiceNumber, float volume, uint8_t note_on)
 {
+    float rampRate;
+
 #ifdef USE_VOL_RAMP
+    rampRate = p->f_samplesPerFrame;
     if (p->rampStyle > 1 && !note_on)
     {
-        const float rampRate = p->f_samplesPerFrame;
         p->voice[voiceNumber].targetVol = volume;
         p->voice[voiceNumber].volDelta  = (p->voice[voiceNumber].targetVol - p->voice[voiceNumber].volume) * rampRate;
     }
@@ -2938,14 +2977,23 @@ void voiceSetVolume(PLAYER *p, uint8_t voiceNumber, float volume, uint8_t note_o
 
 void voiceSetSurround(PLAYER *p, uint8_t voiceNumber, int8_t surround)
 {
+    float rampRate;
+
+    if (surround)
+    {
+        p->chn[voiceNumber].apanpos = 128;
+        setpan(p, voiceNumber);
+    }
+    
 #ifdef USE_VOL_RAMP
+    rampRate = p->f_samplesPerFrameSharp;
     if (p->rampStyle > 1)
     {
-        const float rampRate = p->f_samplesPerFrameSharp;
         if (surround)
             p->voice[voiceNumber].targetPanR = -p->voice[voiceNumber].orgPanR;
         else
             p->voice[voiceNumber].targetPanR =  p->voice[voiceNumber].orgPanR;
+            
         p->voice[voiceNumber].panDeltaR = (p->voice[voiceNumber].targetPanR - p->voice[voiceNumber].panningR) * rampRate;
     }
     else
@@ -2954,8 +3002,9 @@ void voiceSetSurround(PLAYER *p, uint8_t voiceNumber, int8_t surround)
             p->voice[voiceNumber].panningR = -p->voice[voiceNumber].orgPanR;
         else
             p->voice[voiceNumber].panningR =  p->voice[voiceNumber].orgPanR;
+        
         p->voice[voiceNumber].targetPanR = p->voice[voiceNumber].panningR;
-        p->voice[voiceNumber].panDeltaR = 0;
+        p->voice[voiceNumber].panDeltaR  = 0;
     }
 #else
     if (surround)
@@ -2967,15 +3016,13 @@ void voiceSetSurround(PLAYER *p, uint8_t voiceNumber, int8_t surround)
 
 void voiceSetPanning(PLAYER *p, uint8_t voiceNumber, uint16_t pan)
 {
-#ifdef USE_VOL_RAMP
-    const float rampRate = p->f_samplesPerFrameSharp;
-#endif
-    
     float pf;
-
+    float rampRate;
+    
     pf = (float)(pan) / 256.0f;
 
 #ifdef USE_VOL_RAMP
+    rampRate = p->f_samplesPerFrameSharp;
     if (p->rampStyle > 1)
     {
         p->voice[voiceNumber].targetPanL = 1.0f - pf;
@@ -3033,8 +3080,9 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
     float panningL;
     float panningR;
     void *resampler;
+    VOICE *v;
     
-    VOICE *v = &p->voice[ch];
+    v = &p->voice[ch];
 
 #ifdef USE_VOL_RAMP
     rampStyle = p->rampStyle;
@@ -3049,19 +3097,16 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
     panningL         = v->panningL;
     panningR         = v->panningR;
     interpolating    = v->interpolating;
-
-    sampleData = v->sampleData;
+    sampleData       = v->sampleData;   
+    resampler        = p->resampler[ch];
     
-    resampler = p->resampler[ch];
-    
-    resampler_set_rate( resampler, v->incRate );
+    resampler_set_rate(resampler, v->incRate);
     
     for (j = 0; (j < samples) && sampleData; ++j)
     {
         samplePosition = v->samplePosition;
 
-        while (interpolating && (resampler_get_free_count(resampler) ||
-               !resampler_get_sample_count(resampler)))
+        while (interpolating && (resampler_get_free_count(resampler) || !resampler_get_sample_count(resampler)))
         {
             resampler_write_sample_fixed(resampler, sampleData[samplePosition], 8);
             
@@ -3079,7 +3124,7 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
                     if (samplePosition < 0)
                     {
                         samplePosition = 0;
-                        interpolating = 0;
+                        interpolating  = 0;
                     }
                 }
             }
@@ -3101,11 +3146,12 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
         }
         
         v->samplePosition = samplePosition;
-        v->interpolating  = (int8_t)interpolating;
+        v->interpolating  = (int8_t)(interpolating);
 
-        if ( !resampler_get_sample_count(resampler) )
+        if (!resampler_get_sample_count(resampler))
         {
             resampler_clear(resampler);
+            
             v->mixing = 0;
             break;
         }
@@ -3126,7 +3172,8 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
             {
                 v->fader = v->faderDest;
                 resampler_clear(resampler);
-                v->mixing = 0;
+                
+                v->mixing  = 0;
                 sampleData = 0;
             }
             
@@ -3142,36 +3189,24 @@ static inline void mix8b(PLAYER *p, uint8_t ch, uint32_t samples)
 #ifdef USE_VOL_RAMP
         if (rampStyle > 1)
         {
-            volume += v->volDelta;
+            volume   += v->volDelta;
             panningL += v->panDeltaL;
             panningR += v->panDeltaR;
         
             if ((v->volDelta > 0.0f) && (volume > v->targetVol))
-            {
                 volume = v->targetVol;
-            }
             else if ((v->volDelta < 0.0f) && (volume < v->targetVol))
-            {
                 volume = v->targetVol;
-            }
         
             if ((v->panDeltaL > 0.0f) && (panningL > v->targetPanL))
-            {
                 panningL = v->targetPanL;
-            }
             else if ((v->panDeltaL < 0.0f) && (panningL < v->targetPanL))
-            {
                 panningL = v->targetPanL;
-            }
         
             if ((v->panDeltaR > 0.0f) && (panningR > v->targetPanR))
-            {
                 panningR = v->targetPanR;
-            }
             else if ((v->panDeltaR < 0.0f) && (panningR < v->targetPanR))
-            {
                 panningR = v->targetPanR;
-            }
         }
 #endif
     }
@@ -3201,10 +3236,10 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     float sampleR;
     float panningL;
     float panningR;
-    void *resampler[2];
+    void *resampler[2];  
+    VOICE *v;
     
-    VOICE *v = &p->voice[ch];
-    
+    v = &p->voice[ch];
 #ifdef USE_VOL_RAMP
     rampStyle = p->rampStyle;
 #endif
@@ -3218,14 +3253,13 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     panningL         = v->panningL;
     panningR         = v->panningR;
     interpolating    = v->interpolating;
-
-    sampleData = v->sampleData;
+    sampleData       = v->sampleData;
     
     resampler[0] = p->resampler[ch];
 #ifdef USE_VOL_RAMP
-    resampler[1] = p->resampler[ch+64];
+    resampler[1] = p->resampler[ch + 64];
 #else
-    resampler[1] = p->resampler[ch+32];
+    resampler[1] = p->resampler[ch + 32];
 #endif
     
     resampler_set_rate(resampler[0], v->incRate );
@@ -3248,7 +3282,7 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
                 
                 if (loopEnabled)
                 {
-                    if (samplePosition <= sampleLoopBegin)
+                    if (samplePosition < sampleLoopBegin)
                         samplePosition = sampleLoopEnd - (sampleLoopBegin - samplePosition);
                 }
                 else
@@ -3256,7 +3290,7 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
                     if (samplePosition < 0)
                     {
                         samplePosition = 0;
-                        interpolating = 0;
+                        interpolating  = 0;
                     }
                 }
             }
@@ -3278,12 +3312,13 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
         }
         
         v->samplePosition = samplePosition;
-        v->interpolating  = (int8_t)interpolating;
+        v->interpolating  = (int8_t)(interpolating);
         
-        if ( !resampler_get_sample_count(resampler[0]) )
+        if (!resampler_get_sample_count(resampler[0]))
         {
             resampler_clear(resampler[0]);
             resampler_clear(resampler[1]);
+            
             v->mixing = 0;
             break;
         }
@@ -3306,7 +3341,8 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             {
                 v->fader = v->faderDest;
                 resampler_clear(resampler);
-                v->mixing = 0;
+                
+                v->mixing  = 0;
                 sampleData = 0;
             }
             
@@ -3324,36 +3360,24 @@ static inline void mix8bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
 #ifdef USE_VOL_RAMP
         if (rampStyle > 1)
         {
-            volume += v->volDelta;
+            volume   += v->volDelta;
             panningL += v->panDeltaL;
             panningR += v->panDeltaR;
             
             if ((v->volDelta > 0.0f) && (volume > v->targetVol))
-            {
                 volume = v->targetVol;
-            }
             else if ((v->volDelta < 0.0f) && (volume < v->targetVol))
-            {
                 volume = v->targetVol;
-            }
             
             if ((v->panDeltaL > 0.0f) && (panningL > v->targetPanL))
-            {
                 panningL = v->targetPanL;
-            }
             else if ((v->panDeltaL < 0.0f) && (panningL < v->targetPanL))
-            {
                 panningL = v->targetPanL;
-            }
             
             if ((v->panDeltaR > 0.0f) && (panningR > v->targetPanR))
-            {
                 panningR = v->targetPanR;
-            }
             else if ((v->panDeltaR < 0.0f) && (panningR < v->targetPanR))
-            {
                 panningR = v->targetPanR;
-            }
         }
 #endif
     }
@@ -3383,9 +3407,9 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
     float panningL;
     float panningR;
     void *resampler;
+    VOICE *v;
     
-    VOICE *v = &p->voice[ch];
-    
+    v = &p->voice[ch];
 #ifdef USE_VOL_RAMP
     rampStyle = p->rampStyle;
 #endif
@@ -3399,21 +3423,18 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
     panningL         = v->panningL;
     panningR         = v->panningR;
     interpolating    = v->interpolating;
+    sampleData       = (const int16_t *)(v->sampleData);
+    resampler        = p->resampler[ch];
     
-    sampleData = (const int16_t*)(v->sampleData);
-    
-    resampler = p->resampler[ch];
-    
-    resampler_set_rate( resampler, v->incRate );
+    resampler_set_rate(resampler, v->incRate);
     
     for (j = 0; (j < samples) && sampleData; ++j)
     {
         samplePosition = v->samplePosition;
         
-        while (interpolating && (resampler_get_free_count(resampler) ||
-               !resampler_get_sample_count(resampler)))
+        while (interpolating && (resampler_get_free_count(resampler) || !resampler_get_sample_count(resampler)))
         {
-            resampler_write_sample_fixed(resampler, (int16_t)get_le16(&sampleData[samplePosition]), 16);
+            resampler_write_sample_fixed(resampler, (int16_t)(get_le16(&sampleData[samplePosition])), 16);
             
             if (v->playBackwards)
             {
@@ -3421,7 +3442,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
                 
                 if (loopEnabled)
                 {
-                    if (samplePosition <= sampleLoopBegin)
+                    if (samplePosition < sampleLoopBegin)
                         samplePosition = sampleLoopEnd - (sampleLoopBegin - samplePosition);
                 }
                 else
@@ -3429,7 +3450,7 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
                     if (samplePosition < 0)
                     {
                         samplePosition = 0;
-                        interpolating = 0;
+                        interpolating  = 0;
                     }
                 }
             }
@@ -3451,11 +3472,12 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
         }
         
         v->samplePosition = samplePosition;
-        v->interpolating  = (int8_t)interpolating;
+        v->interpolating  = (int8_t)(interpolating);
         
-        if ( !resampler_get_sample_count(resampler) )
+        if (!resampler_get_sample_count(resampler))
         {
             resampler_clear(resampler);
+            
             v->mixing = 0;
             break;
         }
@@ -3476,7 +3498,8 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
             {
                 v->fader = v->faderDest;
                 resampler_clear(resampler);
-                v->mixing = 0;
+                
+                v->mixing  = 0;
                 sampleData = 0;
             }
             
@@ -3492,36 +3515,24 @@ static inline void mix16b(PLAYER *p, uint8_t ch, uint32_t samples)
 #ifdef USE_VOL_RAMP
         if (rampStyle > 1)
         {
-            volume += v->volDelta;
+            volume   += v->volDelta;
             panningL += v->panDeltaL;
             panningR += v->panDeltaR;
             
             if ((v->volDelta > 0.0f) && (volume > v->targetVol))
-            {
                 volume = v->targetVol;
-            }
             else if ((v->volDelta < 0.0f) && (volume < v->targetVol))
-            {
                 volume = v->targetVol;
-            }
             
             if ((v->panDeltaL > 0.0f) && (panningL > v->targetPanL))
-            {
                 panningL = v->targetPanL;
-            }
             else if ((v->panDeltaL < 0.0f) && (panningL < v->targetPanL))
-            {
                 panningL = v->targetPanL;
-            }
             
             if ((v->panDeltaR > 0.0f) && (panningR > v->targetPanR))
-            {
                 panningR = v->targetPanR;
-            }
             else if ((v->panDeltaR < 0.0f) && (panningR < v->targetPanR))
-            {
                 panningR = v->targetPanR;
-            }
         }
 #endif
     }
@@ -3552,9 +3563,9 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     float panningL;
     float panningR;
     void *resampler[2];
+    VOICE *v;
     
-    VOICE *v = &p->voice[ch];
-    
+    v = &p->voice[ch];
 #ifdef USE_VOL_RAMP
     rampStyle = p->rampStyle;
 #endif
@@ -3568,8 +3579,7 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     panningL         = v->panningL;
     panningR         = v->panningR;
     interpolating    = v->interpolating;
-    
-    sampleData = (const int16_t*)(v->sampleData);
+    sampleData       = (const int16_t *)(v->sampleData);
     
     resampler[0] = p->resampler[ch];
 #ifdef USE_VOL_RAMP
@@ -3578,8 +3588,8 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
     resampler[1] = p->resampler[ch+32];
 #endif
     
-    resampler_set_rate(resampler[0], v->incRate );
-    resampler_set_rate(resampler[1], v->incRate );
+    resampler_set_rate(resampler[0], v->incRate);
+    resampler_set_rate(resampler[1], v->incRate);
     
     for (j = 0; (j < samples) && sampleData; ++j)
     {
@@ -3589,8 +3599,8 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
                (!resampler_get_sample_count(resampler[0]) &&
                !resampler_get_sample_count(resampler[1]))))
         {
-            resampler_write_sample_fixed(resampler[0], (int16_t)get_le16(&sampleData[samplePosition]), 16);
-            resampler_write_sample_fixed(resampler[1], (int16_t)get_le16(&sampleData[sampleLength + samplePosition]), 16);
+            resampler_write_sample_fixed(resampler[0], (int16_t)(get_le16(&sampleData[samplePosition])), 16);
+            resampler_write_sample_fixed(resampler[1], (int16_t)(get_le16(&sampleData[sampleLength + samplePosition])), 16);
             
             if (v->playBackwards)
             {
@@ -3598,7 +3608,7 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
                 
                 if (loopEnabled)
                 {
-                    if (samplePosition <= sampleLoopBegin)
+                    if (samplePosition < sampleLoopBegin)
                         samplePosition = sampleLoopEnd - (sampleLoopBegin - samplePosition);
                 }
                 else
@@ -3606,7 +3616,7 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
                     if (samplePosition < 0)
                     {
                         samplePosition = 0;
-                        interpolating = 0;
+                        interpolating  = 0;
                     }
                 }
             }
@@ -3628,13 +3638,14 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
         }
         
         v->samplePosition = samplePosition;
-        v->interpolating  = (int8_t)interpolating;
+        v->interpolating  = (int8_t)(interpolating);
         
-        if ( !resampler_get_sample_count(resampler[0]) )
+        if (!resampler_get_sample_count(resampler[0]))
         {
             resampler_clear(resampler[0]);
             resampler_clear(resampler[1]);
-            v->mixing = 0;
+            
+            v->mixing = 0;        
             break;
         }
         
@@ -3656,7 +3667,8 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
             {
                 v->fader = v->faderDest;
                 resampler_clear(resampler);
-                v->mixing = 0;
+                
+                v->mixing  = 0;
                 sampleData = 0;
             }
             
@@ -3674,36 +3686,24 @@ static inline void mix16bstereo(PLAYER *p, uint8_t ch, uint32_t samples)
 #ifdef USE_VOL_RAMP
         if (rampStyle > 1)
         {
-            volume += v->volDelta;
+            volume   += v->volDelta;
             panningL += v->panDeltaL;
             panningR += v->panDeltaR;
             
             if ((v->volDelta > 0.0f) && (volume > v->targetVol))
-            {
                 volume = v->targetVol;
-            }
             else if ((v->volDelta < 0.0f) && (volume < v->targetVol))
-            {
                 volume = v->targetVol;
-            }
             
             if ((v->panDeltaL > 0.0f) && (panningL > v->targetPanL))
-            {
                 panningL = v->targetPanL;
-            }
             else if ((v->panDeltaL < 0.0f) && (panningL < v->targetPanL))
-            {
                 panningL = v->targetPanL;
-            }
             
             if ((v->panDeltaR > 0.0f) && (panningR > v->targetPanR))
-            {
                 panningR = v->targetPanR;
-            }
             else if ((v->panDeltaR < 0.0f) && (panningR < v->targetPanR))
-            {
                 panningR = v->targetPanR;
-            }
         }
 #endif
     }
@@ -3740,12 +3740,12 @@ void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockLength)
     float *streamPointer;
     uint8_t i;
     uint32_t j;
+    float outL;
+    float outR;
+    
 #ifdef USE_VOL_RAMP
     int32_t rampStyle = p->rampStyle;
 #endif
-    
-    float outL;
-    float outR;
 
     streamPointer = outputStream;
 
@@ -3756,7 +3756,9 @@ void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockLength)
     {
         if (p->muted[i / 8] & (1 << (i % 8)))
             continue;
+            
         mixChannel(p, i, sampleBlockLength);
+        
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)
             mixChannel(p, i + 32, sampleBlockLength);
@@ -3775,49 +3777,51 @@ void mixSampleBlock(PLAYER *p, float *outputStream, uint32_t sampleBlockLength)
 
 static void st3play_AdlibMix(PLAYER *p, float *buffer, int32_t count)
 {
-    Bit32s tempbuffer[256];
-    int inbuffer_free, i;
-    int outbuffer_avail;
+    int32_t tempbuffer[256];
+    int32_t inbuffer_free;
+    int32_t outbuffer_avail;
+    int32_t i;
+    float sample;
     
     while (count)
     {
-        inbuffer_free = resampler_get_free_count( p->fmResampler );
-        
+        inbuffer_free = resampler_get_free_count(p->fmResampler);  
         if (inbuffer_free > 256)
             inbuffer_free = 256;
         
         if (inbuffer_free)
         {
-            Chip_GenerateBlock_Mono( p->fmChip, inbuffer_free, tempbuffer );
+            Chip_GenerateBlock_Mono(p->fmChip, inbuffer_free, tempbuffer);
+            
             for (i = 0; i < inbuffer_free; ++i)
-                resampler_write_sample_fixed( p->fmResampler, (int)tempbuffer[i], 16);
+                resampler_write_sample_fixed( p->fmResampler, (int32_t)(tempbuffer[i]), 16);
         }
         
-        outbuffer_avail = resampler_get_sample_count( p->fmResampler );
-        
+        outbuffer_avail = resampler_get_sample_count(p->fmResampler);      
         if (outbuffer_avail > count)
             outbuffer_avail = count;
         
         for (i = 0; i < outbuffer_avail; ++i)
         {
-            float sample = resampler_get_sample_float( p->fmResampler );
-            resampler_remove_sample( p->fmResampler, 1 );
+            sample = resampler_get_sample_float(p->fmResampler);
+            resampler_remove_sample(p->fmResampler, 1);
             
-            buffer[i * 2 + 0] += sample;
-            buffer[i * 2 + 1] += sample;
+            buffer[(i * 2) + 0] += sample;
+            buffer[(i * 2) + 1] += sample;
         }
         
-        buffer += outbuffer_avail * 2;
-        count -= outbuffer_avail;
+        buffer += (outbuffer_avail * 2);
+        count  -=  outbuffer_avail;
     }
 }
 
 void st3play_RenderFloat(void *_p, float *buffer, int32_t count)
 {
-    PLAYER * p = (PLAYER *)_p;
+    PLAYER *p;
     int32_t samplesTodo;
     float *outputStream;
     
+    p = (PLAYER *)(_p);
     if (p->isMixing)
     {
         outputStream = buffer;
@@ -3834,13 +3838,13 @@ void st3play_RenderFloat(void *_p, float *buffer, int32_t count)
                     mixSampleBlock(p, outputStream, samplesTodo);
 
                     if (p->fmChip && p->fmResampler)
-                        st3play_AdlibMix( p, outputStream, samplesTodo );
+                        st3play_AdlibMix(p, outputStream, samplesTodo);
                     
-                    outputStream   += (samplesTodo << 1);
+                    outputStream += (samplesTodo << 1);
                 }
                 
                 p->samplesLeft -= samplesTodo;
-                count -= samplesTodo;
+                count          -= samplesTodo;
             }
             else
             {
@@ -3856,43 +3860,64 @@ void st3play_RenderFloat(void *_p, float *buffer, int32_t count)
 void st3play_RenderFixed32(void *_p, int32_t *buffer, int32_t count, int8_t depth)
 {
     int32_t i;
-    float * fbuffer = (float *)buffer;
-    float scale = (float)(1 << (depth - 1));
+    float *fbuffer;
+    float scale;
     float sample;
-    assert(sizeof(int32_t) == sizeof(float));
-    st3play_RenderFloat(_p, fbuffer, count);
+    
+    assert(sizeof (int32_t) == sizeof (float));
+    
+    fbuffer = (float *)(buffer);
+    st3play_RenderFloat(_p, fbuffer, count);  
+     
     if (buffer)
-    for (i = 0; i < count * 2; ++i)
     {
-        sample = fbuffer[i] * scale;
-        if (sample > INT_MAX) sample = INT_MAX;
-        else if (sample < INT_MIN) sample = INT_MIN;
-        buffer[i] = (int32_t)sample;
+        scale = (float)(1 << (depth - 1));
+        for (i = 0; i < (count * 2); ++i)
+        {
+            sample = fbuffer[i] * scale;
+            
+                 if (sample > INT_MAX) sample = INT_MAX;  
+            else if (sample < INT_MIN) sample = INT_MIN;
+            
+            buffer[i] = (int32_t)(sample);
+        }
     }
 }
 
 void st3play_RenderFixed16(void *_p, int16_t *buffer, int32_t count, int8_t depth)
 {
-    int32_t i, SamplesTodo;
-    float scale = (float)(1 << (depth - 1));
+    int32_t i;
+    int32_t SamplesTodo;
+    float scale;
     float sample;
     float fbuffer[1024];
-    if (!buffer)
-        st3play_RenderFloat(_p, 0, count);
-    else
-    while (count)
+    
+    if (buffer == NULL)
     {
-        SamplesTodo = (count < 512) ? count : 512;
-        st3play_RenderFloat(_p, fbuffer, SamplesTodo);
-        for (i = 0; i < SamplesTodo * 2; ++i)
+        st3play_RenderFloat(_p, 0, count);
+    }   
+    else
+    {
+        scale = (float)(1 << (depth - 1));
+        
+        while (count)
         {
-            sample = fbuffer[i] * scale;
-            if (sample > 32767) sample = 32767;
-            else if (sample < -32768) sample = -32768;
-            buffer[i] = (int16_t)sample;
+            SamplesTodo = (count < 512) ? count : 512;
+            
+            st3play_RenderFloat(_p, fbuffer, SamplesTodo);
+            for (i = 0; i < (SamplesTodo * 2); ++i)
+            {
+                sample = fbuffer[i] * scale;
+                
+                     if (sample >  32767) sample =  32767;
+                else if (sample < -32768) sample = -32768;
+                
+                buffer[i] = (int16_t)(sample);
+            }
+            
+            buffer += (SamplesTodo * 2);
+            count  -=  SamplesTodo;
         }
-        buffer += SamplesTodo * 2;
-        count -= SamplesTodo;
     }
 }
 
@@ -3900,61 +3925,74 @@ void FreeSong(PLAYER *p)
 {
     p->Playing = 0;
 
-    memset(p->voice, 0, sizeof (p->voice));
-
     if (p->adpcmSamples)
     {
-        int i, j;;
+        int i, j;
         for (i = 0, j = get_le16(&p->mseg[0x22]); i < j; i++)
         {
             if (p->adpcmSamples[i])
                 free(p->adpcmSamples[i]);
         }
         free(p->adpcmSamples);
-        p->adpcmSamples = 0;
+        p->adpcmSamples = NULL;
     }
     
+    memset(p->voice, 0, sizeof (p->voice));
+
     if (p->mseg)
     {
         free(p->mseg);
         p->mseg = NULL;
     }
-    
+
     p->ModuleLoaded = 0;
 }
 
 void st3play_Mute(void *_p, int8_t channel, int8_t mute)
 {
-    PLAYER * p = (PLAYER *)_p;
-    int8_t mask = 1 << (channel % 8);
-	uint8_t adlibChannel;
-	if (channel > 31)
-		return;
-	adlibChannel = (p->mseg[0x40 + channel] & 0x7F) - 16;
+    PLAYER *p;
+    int8_t mask;
+    uint8_t adlibChannel;
+    
+    if (channel > 31)
+        return;
+    
+    p = (PLAYER *)(_p);
+    
+    adlibChannel = (p->mseg[0x40 + channel] & 0x7F) - 16;
+    mask = 1 << (channel % 8);
+    
     if (mute)
         p->muted[channel / 8] |= mask;
     else
         p->muted[channel / 8] &= ~mask;
-	if (adlibChannel < 9)
-		Chip_Mute( p->fmChip, adlibChannel, mute );
+    
+    if (adlibChannel < 9)
+        Chip_Mute(p->fmChip, adlibChannel, mute);
 }
 
 int32_t st3play_GetLoopCount(void *_p)
 {
-    PLAYER * p = (PLAYER *)_p;
-    return p->loopCount;
+    PLAYER *p = (PLAYER *)(_p);
+    return (p->loopCount);
 }
 
 void st3play_GetInfo(void *_p, st3_info *info)
 {
-    int32_t i, channels_playing;
-    PLAYER * p = (PLAYER *)_p;
-    info->order = p->x_np_ord - 1;
+    int32_t i;
+    int32_t channels_playing;
+    PLAYER *p;
+    
+    p = (PLAYER *)(_p);
+    
+    info->order   = p->x_np_ord - 1;
     info->pattern = p->x_np_pat;
-    info->row = p->x_np_row;
-    info->speed = p->musicmax;
-    info->tempo = p->tempo;
+    info->row     = p->x_np_row;
+    info->speed   = p->musicmax;
+    info->tempo   = p->tempo;
+    
     channels_playing = 0;
+    
     if (p->isMixing)
     {
         for (i = 0; i < 32; ++i)
@@ -3962,10 +4000,12 @@ void st3play_GetInfo(void *_p, st3_info *info)
             if (p->voice[i].mixing)
                 ++channels_playing;
         }
-		if ( p->fmChip )
-			channels_playing += Chip_GetActiveChannels( p->fmChip );
+        
+        if (p->fmChip)
+            channels_playing += Chip_GetActiveChannels(p->fmChip);
     }
-    info->channels_playing = (int8_t)channels_playing;
+    
+    info->channels_playing = (int8_t)(channels_playing);
 }
 
 // EOF

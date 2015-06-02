@@ -1,6 +1,8 @@
 #ifndef _RESAMPLER_H_
 #define _RESAMPLER_H_
 
+#define RESAMPLER_DECORATE modplay
+
 // Ugglay
 #ifdef RESAMPLER_DECORATE
 #define PASTE(a,b) a ## b

@@ -1,6 +1,8 @@
 #ifndef _B_ARRAY_H_
 #define _B_ARRAY_H_
 
+#define BARRAY_DECORATE modplay
+
 #include <stdlib.h>
 
 #ifdef BARRAY_DECORATE
