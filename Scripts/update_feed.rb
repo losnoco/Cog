@@ -21,6 +21,8 @@ appcast_url = appcast_enclosure.attributes['url'];
 appcast_revision = appcast_enclosure.attributes['sparkle:version'];
 appcast_revision_split = appcast_revision.split( /-/ )
 appcast_revision_code = appcast_revision_split[2]
+appcast_revision_split = appcast_revision_code.split( /g/ )
+appcast_revision_code = appcast_revision_split[1]
 
 #Remove modified files that may cause conflicts.
 #%x[hg revert --all]
@@ -47,26 +49,14 @@ appcast_revision_code = appcast_revision_split[2]
 #latest_revision = %x[/usr/local/bin/hg log -r . --template '{latesttag}-{latesttagdistance}-{node|short}']
 revision_split = latest_revision.split( /-/ )
 revision_code = revision_split[2]
+revision_split = revision_code.split( /g/ )
+revision_code = revision_split[1]
 
 if appcast_revision < latest_revision
   #Get the changelog
-  changelog = %x[/usr/local/bin/hg log --template '{desc}\\n' -r #{revision_code}:children\\(#{appcast_revision_code}\\)]
+  changelog = %x[/usr/bin/git shortlog #{appcast_revision_code}..#{revision_code}]
 
-  description = ''
-  ignore_next = false
-  changelog.each_line do |line|
-    if (ignore_next)
-      ignore_next = false
-      next
-    end
-    if Regexp.new('^-+$').match(line)
-      ignore_next = true
-      next
-    elsif Regexp.new('^\s*$').match(line)
-      next
-    end
-    description += line
-end
+  description = changelog
 
   filename = "Cog-#{revision_code}.zip"
   filename_delta = "Cog-#{revision_code}.delta"
