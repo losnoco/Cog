@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17B5E1980CC074D3004E2AF4 /* all.h in Headers */ = {isa = PBXBuildFile; fileRef = 17B5E1460CC074D3004E2AF4 /* all.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17B5E1990CC074D3004E2AF4 /* assert.h in Headers */ = {isa = PBXBuildFile; fileRef = 17B5E1470CC074D3004E2AF4 /* assert.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17B5E1990CC074D3004E2AF4 /* FLAC_assert.h in Headers */ = {isa = PBXBuildFile; fileRef = 17B5E1470CC074D3004E2AF4 /* FLAC_assert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17B5E19A0CC074D3004E2AF4 /* callback.h in Headers */ = {isa = PBXBuildFile; fileRef = 17B5E1480CC074D3004E2AF4 /* callback.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17B5E19B0CC074D3004E2AF4 /* export.h in Headers */ = {isa = PBXBuildFile; fileRef = 17B5E1490CC074D3004E2AF4 /* export.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17B5E19C0CC074D3004E2AF4 /* format.h in Headers */ = {isa = PBXBuildFile; fileRef = 17B5E14A0CC074D3004E2AF4 /* format.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -73,7 +73,7 @@
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		17B5E1460CC074D3004E2AF4 /* all.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = all.h; sourceTree = "<group>"; };
-		17B5E1470CC074D3004E2AF4 /* assert.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = assert.h; sourceTree = "<group>"; };
+		17B5E1470CC074D3004E2AF4 /* FLAC_assert.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FLAC_assert.h; sourceTree = "<group>"; };
 		17B5E1480CC074D3004E2AF4 /* callback.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = callback.h; sourceTree = "<group>"; };
 		17B5E1490CC074D3004E2AF4 /* export.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = export.h; sourceTree = "<group>"; };
 		17B5E14A0CC074D3004E2AF4 /* format.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = format.h; sourceTree = "<group>"; };
@@ -220,7 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				17B5E1460CC074D3004E2AF4 /* all.h */,
-				17B5E1470CC074D3004E2AF4 /* assert.h */,
+				17B5E1470CC074D3004E2AF4 /* FLAC_assert.h */,
 				17B5E1480CC074D3004E2AF4 /* callback.h */,
 				17B5E1490CC074D3004E2AF4 /* export.h */,
 				17B5E14A0CC074D3004E2AF4 /* format.h */,
@@ -349,7 +349,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17B5E1980CC074D3004E2AF4 /* all.h in Headers */,
-				17B5E1990CC074D3004E2AF4 /* assert.h in Headers */,
+				17B5E1990CC074D3004E2AF4 /* FLAC_assert.h in Headers */,
 				17B5E19A0CC074D3004E2AF4 /* callback.h in Headers */,
 				17B5E19B0CC074D3004E2AF4 /* export.h in Headers */,
 				17B5E19C0CC074D3004E2AF4 /* format.h in Headers */,
@@ -559,7 +559,6 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -575,7 +574,6 @@
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

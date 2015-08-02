@@ -34,7 +34,7 @@
 
 #include "export.h"
 
-#include "assert.h"
+#include "FLAC_assert.h"
 #include "callback.h"
 #include "format.h"
 #include "metadata.h"

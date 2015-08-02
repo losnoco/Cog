@@ -35,7 +35,7 @@
 
 #include <stdlib.h> /* for malloc() */
 #include <string.h> /* for memcmp(), memcpy() */
-#include "FLAC/assert.h"
+#include "FLAC/FLAC_assert.h"
 #include "share/alloc.h"
 #include "private/ogg_helper.h"
 #include "protected/stream_encoder.h"

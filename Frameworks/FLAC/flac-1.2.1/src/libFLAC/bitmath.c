@@ -34,7 +34,7 @@
 #endif
 
 #include "private/bitmath.h"
-#include "FLAC/assert.h"
+#include "FLAC/FLAC_assert.h"
 
 /* An example of what FLAC__bitmath_ilog2() computes:
  *

@@ -33,7 +33,7 @@
 #  include <config.h>
 #endif
 
-#include "FLAC/assert.h"
+#include "FLAC/FLAC_assert.h"
 
 #include "private/float.h"
 

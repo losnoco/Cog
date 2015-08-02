@@ -34,7 +34,7 @@
 #endif
 
 #include <math.h>
-#include "FLAC/assert.h"
+#include "FLAC/FLAC_assert.h"
 #include "FLAC/format.h"
 #include "private/window.h"
 

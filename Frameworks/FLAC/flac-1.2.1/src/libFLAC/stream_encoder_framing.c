@@ -37,7 +37,7 @@
 #include <string.h> /* for strlen() */
 #include "private/stream_encoder_framing.h"
 #include "private/crc.h"
-#include "FLAC/assert.h"
+#include "FLAC/FLAC_assert.h"
 
 #ifdef max
 #undef max

@@ -49,7 +49,7 @@
 #endif
 #include "private/bitwriter.h"
 #include "private/crc.h"
-#include "FLAC/assert.h"
+#include "FLAC/FLAC_assert.h"
 #include "share/alloc.h"
 
 /* Things should be fastest when this matches the machine word size */

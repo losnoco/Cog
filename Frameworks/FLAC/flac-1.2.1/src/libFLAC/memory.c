@@ -34,7 +34,7 @@
 #endif
 
 #include "private/memory.h"
-#include "FLAC/assert.h"
+#include "FLAC/FLAC_assert.h"
 #include "share/alloc.h"
 
 void *FLAC__memory_alloc_aligned(size_t bytes, void **aligned_address)

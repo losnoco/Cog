@@ -47,7 +47,7 @@
 #include "private/bitmath.h"
 #include "private/bitreader.h"
 #include "private/crc.h"
-#include "FLAC/assert.h"
+#include "FLAC/FLAC_assert.h"
 
 /* Things should be fastest when this matches the machine word size */
 /* WATCHOUT: if you change this you must also change the following #defines down to COUNT_ZERO_MSBS below to match */
