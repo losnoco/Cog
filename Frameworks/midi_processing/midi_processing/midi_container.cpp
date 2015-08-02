@@ -1085,24 +1085,15 @@ void midi_container::scan_for_loops( bool p_xmi_loops, bool p_marker_loops, bool
 				if ( event.m_type == midi_event::control_change &&
 					( event.m_data[ 0 ] == 110 || event.m_data[ 0 ] == 111 ) )
 				{
-                    if ( event.m_data[ 0 ] == 110 ||
-                        ( event.m_data[ 0 ] == 111 && event.m_data[ 1 ] > 1 ) )
+                    if ( event.m_data[ 0 ] == 110 )
                     {
                         emidi_commands_found = true;
                         break;
                     }
-					if ( event.m_data[ 1 ] == 0 )
 					{
                         if ( m_timestamp_loop_start[ subsong ] == ~0UL || m_timestamp_loop_start[ subsong ] > event.m_timestamp )
 						{
 							m_timestamp_loop_start[ subsong ] = event.m_timestamp;
-						}
-					}
-					else
-					{
-                        if ( m_timestamp_loop_end[ subsong ] == ~0UL || m_timestamp_loop_end[ subsong ] < event.m_timestamp )
-						{
-							m_timestamp_loop_end[ subsong ] = event.m_timestamp;
 						}
 					}
 				}
