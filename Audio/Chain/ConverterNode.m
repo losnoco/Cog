@@ -212,6 +212,7 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
             ioData.mBuffers[0].mData = floatBuffer + amountRead;
             ioNumberFrames = ( amount / outputFormat.mBytesPerFrame ) - ( amountRead / floatFormat.mBytesPerFrame );
             ioData.mBuffers[0].mDataByteSize = ioNumberFrames * floatFormat.mBytesPerFrame;
+            usleep(10000);
             goto tryagain;
         }
         else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
