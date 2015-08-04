@@ -219,8 +219,8 @@
 		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */,
 				17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */,
+				17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */,
 				17D21DAB0B8BE76800D1EBDE /* CoreAudio.framework */,
 				17D21DAC0B8BE76800D1EBDE /* CoreAudioKit.framework */,
 				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
