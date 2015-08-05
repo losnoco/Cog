@@ -1,3 +1,3 @@
 [submodule "Frameworks/Sparkle"]
 	path = Frameworks/Sparkle
-	url = ssh://git@kode54.net:2264/kode54/Sparkle.git
+	url = https://gitlab.kode54.net/kode54/Sparkle.git
