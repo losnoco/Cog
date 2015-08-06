@@ -391,6 +391,7 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				PRODUCT_NAME = modplay;
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -409,6 +410,7 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				PRODUCT_NAME = modplay;
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;

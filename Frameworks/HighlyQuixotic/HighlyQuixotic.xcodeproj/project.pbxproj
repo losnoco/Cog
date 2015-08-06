@@ -291,7 +291,7 @@
 				INFOPLIST_FILE = "HighlyQuixotic/HighlyQuixotic-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -307,7 +307,7 @@
 				INFOPLIST_FILE = "HighlyQuixotic/HighlyQuixotic-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

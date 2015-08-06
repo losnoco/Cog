@@ -649,6 +649,7 @@
 				);
 				INFOPLIST_FILE = "HighlyComplete/HighlyComplete-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -667,6 +668,7 @@
 				);
 				INFOPLIST_FILE = "HighlyComplete/HighlyComplete-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};

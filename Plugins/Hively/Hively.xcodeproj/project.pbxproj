@@ -337,6 +337,7 @@
 				INFOPLIST_FILE = "Hively/Hively-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -351,6 +352,7 @@
 				INFOPLIST_FILE = "Hively/Hively-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;

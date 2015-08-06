@@ -392,6 +392,7 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -410,6 +411,7 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};

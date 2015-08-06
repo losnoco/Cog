@@ -1196,6 +1196,7 @@
 					Ogg,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -1229,6 +1230,7 @@
 					Ogg,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};

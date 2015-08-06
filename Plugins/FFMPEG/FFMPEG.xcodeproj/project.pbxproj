@@ -279,6 +279,7 @@
 					"\"$(SRCROOT)/../../Frameworks/FFMPEG/build/Debug/FFMPEG.framework\"",
 				);
 				PRODUCT_NAME = FFMPEG;
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
@@ -301,6 +302,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = FFMPEG;
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;

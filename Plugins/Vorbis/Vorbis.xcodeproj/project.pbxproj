@@ -324,6 +324,7 @@
 					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
@@ -359,6 +360,7 @@
 					ogg,
 				);
 				PRODUCT_NAME = Vorbis;
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};

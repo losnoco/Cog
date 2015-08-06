@@ -287,6 +287,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "modplay/modplay-Info.plist";
 				PRODUCT_NAME = modplay;
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -301,6 +302,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "modplay/modplay-Info.plist";
 				PRODUCT_NAME = modplay;
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

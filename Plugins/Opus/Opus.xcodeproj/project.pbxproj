@@ -331,6 +331,7 @@
 				INFOPLIST_FILE = "Opus/Opus-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -352,6 +353,7 @@
 				INFOPLIST_FILE = "Opus/Opus-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};

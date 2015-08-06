@@ -477,6 +477,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "mpg123/mpg123-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -491,6 +492,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "mpg123/mpg123-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
