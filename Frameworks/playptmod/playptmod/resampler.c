@@ -8,10 +8,12 @@
 #endif
 #ifdef __APPLE__
 #include <TargetConditionals.h>
-#if TARGET_CPU_ARM
-#include <arm_neon.h>
+#if TARGET_CPU_ARM || TARGET_CPU_ARM64
 #define RESAMPLER_NEON
 #endif
+#endif
+#ifdef RESAMPLER_NEON
+#include <arm_neon.h>
 #endif
 
 #ifdef _MSC_VER
@@ -301,6 +303,11 @@ static int resampler_output_delay(resampler *r)
     }
 }
 
+int resampler_get_padding_size()
+{
+    return SINC_WIDTH - 1;
+}
+
 int resampler_ready(void *_r)
 {
     resampler * r = ( resampler * ) _r;
@@ -470,7 +477,7 @@ static int resampler_run_blep(resampler * r, float ** out_, float * out_end)
                 }
                 last_amp += sample;
                 sample /= kernel_sum;
-                for (sample = 0, i = 0; i < SINC_WIDTH * 2; ++i)
+                for (i = 0; i < SINC_WIDTH * 2; ++i)
                     out[i] += sample * kernel[i];
             }
             
@@ -626,8 +633,8 @@ static int resampler_run_blep(resampler * r, float ** out_, float * out_end)
                 {
                     temp1 = vld1q_f32( (const float32_t *)( kernel + i ) );
                     temp2 = vld1q_f32( (const float32_t *) out + i * 4 );
-                    temp1 = vmlaq_f32( temp2, temp1, samplex );
-                    vst1q_f32( (float32_t *) out + i * 4, temp1 );
+                    temp2 = vmlaq_f32( temp2, temp1, samplex );
+                    vst1q_f32( (float32_t *) out + i * 4, temp2 );
                 }
             }
             
@@ -743,7 +750,7 @@ static int resampler_run_blam(resampler * r, float ** out_, float * out_end)
                 }
                 last_amp += sample;
                 sample /= kernel_sum;
-                for (sample = 0, i = 0; i < SINC_WIDTH * 2; ++i)
+                for (i = 0; i < SINC_WIDTH * 2; ++i)
                     out[i] += sample * kernel[i];
             }
             
@@ -908,7 +915,7 @@ static int resampler_run_blam(resampler * r, float ** out_, float * out_end)
             
             sample = in[0];
             if (phase_inc < 1.0f)
-                sample += (in[1] - in[0]) * fphase;
+                sample += (in[1] - in[0]) * phase;
             sample -= last_amp;
             
             if (sample)
@@ -935,8 +942,8 @@ static int resampler_run_blam(resampler * r, float ** out_, float * out_end)
                 {
                     temp1 = vld1q_f32( (const float32_t *)( kernel + i ) );
                     temp2 = vld1q_f32( (const float32_t *) out + i * 4 );
-                    temp1 = vmlaq_f32( temp2, temp1, samplex );
-                    vst1q_f32( (float32_t *) out + i * 4, temp1 );
+                    temp2 = vmlaq_f32( temp2, temp1, samplex );
+                    vst1q_f32( (float32_t *) out + i * 4, temp2 );
                 }
             }
 

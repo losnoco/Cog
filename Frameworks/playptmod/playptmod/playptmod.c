@@ -1,7 +1,13 @@
 /*
-** PLAYPTMOD v1.25 - 20th of April 2015 - http://16-bits.org
-** =========================================================
+** PLAYPTMOD v1.27 - 8th of October 2015 - http://16-bits.org
+** ==========================================================
 ** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from 1.26:
+** - Only loop module if speed is zero after fully processing an entire row
+**
+** Changelog from 1.25:
+** - Invert Loop (EFx) was inaccurate
 **
 ** Changelog from 1.24:
 ** - Sample swaps are now only handled for PT MODs
@@ -623,7 +629,7 @@ static void outputAudio(player *p, int *target, int numSamples)
             {
                 tempVolume = (v->data && !v->mute ? v->vol : 0);
 
-                while (interpolating && (resampler_get_free_count(bSmp) ||
+                while (interpolating > 0 && (resampler_get_free_count(bSmp) ||
                                          (!resampler_get_sample_count(bSmp) &&
                                           !resampler_get_sample_count(bVol))))
                 {
@@ -646,7 +652,7 @@ static void outputAudio(player *p, int *target, int numSamples)
 
                                     if (!v->newLoopFlag)
                                     {
-                                        interpolating = 0;
+                                        interpolating = -resampler_get_padding_size();
                                         break;
                                     }
 
@@ -673,7 +679,7 @@ static void outputAudio(player *p, int *target, int numSamples)
 
                                 if (!v->newLoopFlag)
                                 {
-                                    interpolating = 0;
+                                    interpolating = -resampler_get_padding_size();
                                     break;
                                 }
 
@@ -688,11 +694,20 @@ static void outputAudio(player *p, int *target, int numSamples)
                             }
                             else
                             {
-                                interpolating = 0;
+                                interpolating = -resampler_get_padding_size();
                                 break;
                             }
                         }
                     }
+                }
+
+                while (interpolating < 0 && (resampler_get_free_count(bSmp) ||
+                                         (!resampler_get_sample_count(bSmp) &&
+                                          !resampler_get_sample_count(bVol))))
+                {
+                    resampler_write_sample_fixed(bSmp, 0, 1);
+                    resampler_write_sample_fixed(bVol, 0, 1);
+                    ++interpolating;
                 }
 
                 v->interpolating = interpolating;
@@ -713,7 +728,7 @@ static void outputAudio(player *p, int *target, int numSamples)
                     j++;
                 }
 
-                if (!interpolating)
+                if (!interpolating && !resampler_get_sample_count(bSmp))
                 {
                     v->data = NULL;
                     break;
@@ -941,7 +956,7 @@ static int playptmod_LoadMTM(player *p, BUF *fmodule)
 
     p->useLEDFilter = false;
     p->moduleLoaded = true;
-    
+
     p->minPeriod = 14;
     p->maxPeriod = 1712;
 
@@ -1199,7 +1214,7 @@ int playptmod_LoadMem(void *_p, const unsigned char *buf, unsigned long bufLengt
             s->attribute = 0;
         }
     }
-    
+
     /* STK 2.5 had loopStart in words, not bytes. Convert if late version STK */
     for (i = 0; i < 15; ++i)
     {
@@ -1705,15 +1720,14 @@ static void processInvertLoop(player *p, mod_channel *ch)
     if (ch->invertLoopSpeed > 0)
     {
         ch->invertLoopDelay += invertLoopSpeeds[ch->invertLoopSpeed];
-        if (ch->invertLoopDelay & 128)
+        if (ch->invertLoopDelay >= 128)
         {
             ch->invertLoopDelay = 0;
 
-            if (ch->invertLoopPtr != NULL) /* PT doesn't do this, but we're more sane than that */
+            if (ch->invertLoopPtr != NULL) /* SAFETY BUG FIX */
             {
-                ch->invertLoopPtr++;
-                if (ch->invertLoopPtr >= (ch->invertLoopStart + ch->invertLoopLength))
-                    ch->invertLoopPtr  =  ch->invertLoopStart;
+                if (++ch->invertLoopPtr >= (ch->invertLoopStart + ch->invertLoopLength))
+                      ch->invertLoopPtr  =  ch->invertLoopStart;
 
                 *ch->invertLoopPtr = -1 - *ch->invertLoopPtr;
             }
@@ -2362,7 +2376,7 @@ static void fxTremolo(player *p, mod_channel *ch)
         if (loNybble > 0)
             ch->tremoloDepth = loNybble;
     }
-    
+
     processTremolo(p, ch);
 }
 
@@ -2494,26 +2508,17 @@ static void fxSetTempo(player *p, mod_channel *ch)
 {
     if (p->modTick == 0)
     {
-        if (ch->param > 0)
-        {
-            if ((ch->param < 32) || p->vBlankTiming)
-                modSetSpeed(p, ch->param);
-            else
-                modSetTempo(p, ch->param);
-        }
+        if ((ch->param < 32) || p->vBlankTiming)
+            modSetSpeed(p, ch->param);
         else
-        {
-            /* Bit of a hack, will alert caller that song has restarted */
-            p->modOrder = p->source->head.clippedRestartPos;
-            p->PBreakPosition = 0;
-            p->PosJumpAssert = true;
-        }
+            modSetTempo(p, ch->param);
     }
 }
 
 static void processEffects(player *p, mod_channel *ch)
 {
-    processInvertLoop(p, ch);
+	if (p->modTick > 0)
+		processInvertLoop(p, ch);
 
     if ((!ch->command && !ch->param) == 0)
     {
@@ -2622,7 +2627,7 @@ static void fetchPatternData(player *p, mod_channel *ch)
             ch->tempPeriod = (p->minPeriod == PT_MIN_PERIOD) ? rawAmigaPeriods[(ch->fineTune * ((12 * 3) + 1)) + tempNote] : extendedRawPeriods[(ch->fineTune * ((12 * 7) + 1)) + tempNote];
             ch->flags |= FLAG_NOTE;
         }
-        
+
         /* do a slightly different path for 3xx/5xy in PT mode */
         if (p->minPeriod == PT_MIN_PERIOD)
         {
@@ -2680,7 +2685,7 @@ static void processChannel(player *p, mod_channel *ch)
                 ch->invertLoopPtr = &p->source->sampleData[s->offset + s->loopStart];
                 ch->invertLoopStart = ch->invertLoopPtr;
                 ch->invertLoopLength = s->loopLength;
-                
+
                 if ((ch->command != 0x03) && (ch->command != 0x05))
                 {
                     ch->offset = 0;
@@ -2804,6 +2809,18 @@ static void processTick(player *p)
         if (p->pattBreakFlag && p->pattDelayFlag)
             p->forceEffectsOff = true;
     }
+
+    /* Only process speed 0 effect after processing entire row */
+    if (p->modSpeed == 0)
+    {
+        /* Bit of a hack, will alert code below of a full repeat */
+        p->modOrder = p->source->head.clippedRestartPos;
+        modSetSpeed(p, 6);
+        p->modTick = 6; /* cause instant repeat */
+        p->PBreakPosition = 0;
+        p->PosJumpAssert = true;
+    }
+
 
     p->modTick++;
     if (p->modTick >= p->modSpeed)
@@ -3046,7 +3063,7 @@ void playptmod_Free(void *_p)
             free(p->source);
             p->source = NULL;
         }
-        
+
         p->moduleLoaded = false;
     }
 
@@ -3085,7 +3102,7 @@ void playptmod_Free(void *_p)
         resampler_delete(p->blep[i]);
         resampler_delete(p->blepVol[i]);
     }
-    
+
     free(p);
 }
 
