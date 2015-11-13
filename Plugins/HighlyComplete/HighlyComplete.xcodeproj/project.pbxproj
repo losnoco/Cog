@@ -25,6 +25,8 @@
 		83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
 		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
 		83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0CBF180B27C200269051 /* libz.dylib */; };
+		83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83FC325E1BF5AB9000962B36 /* HighlyExperimental.framework */; };
+		83FC32C61BF5AF0600962B36 /* HighlyExperimental.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83FC325E1BF5AB9000962B36 /* HighlyExperimental.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +128,13 @@
 			remoteGlobalIDString = 8360EF1017F92C91005208A4;
 			remoteInfo = HighlyExperimental;
 		};
+		83FC32C11BF5AEF300962B36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8360EF0F17F92C91005208A4;
+			remoteInfo = HighlyExperimental;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -144,6 +153,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83FC32C61BF5AF0600962B36 /* HighlyExperimental.framework in CopyFiles */,
 				83C8B6FC18AF59080071B040 /* lazyusf.framework in CopyFiles */,
 				83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */,
 				8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */,
@@ -186,6 +196,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */,
 				83C8B6FB18AF58FA0071B040 /* lazyusf.framework in Frameworks */,
 				83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */,
 				83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */,
@@ -349,6 +360,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				83FC32C21BF5AEF300962B36 /* PBXTargetDependency */,
 				83DE0CBB180B02C500269051 /* PBXTargetDependency */,
 				83849049180764AC00E7332D /* PBXTargetDependency */,
 				834379A417F97E9C00584396 /* PBXTargetDependency */,
@@ -532,6 +544,11 @@
 			isa = PBXTargetDependency;
 			name = vio2sf;
 			targetProxy = 83DE0CBA180B02C500269051 /* PBXContainerItemProxy */;
+		};
+		83FC32C21BF5AEF300962B36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = HighlyExperimental;
+			targetProxy = 83FC32C11BF5AEF300962B36 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
