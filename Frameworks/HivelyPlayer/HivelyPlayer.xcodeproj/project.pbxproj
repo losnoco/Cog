@@ -262,6 +262,7 @@
 				INFOPLIST_FILE = "HivelyPlayer/HivelyPlayer-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -277,6 +278,7 @@
 				INFOPLIST_FILE = "HivelyPlayer/HivelyPlayer-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

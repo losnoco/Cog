@@ -398,24 +398,24 @@ typedef struct
     int8_t   LinearFrqTab;
     uint32_t soundBufferSize;
     uint32_t outputFreq;
-    
+
     TonTyp   *NilPatternLine;
     TonTyp   *Patt[256];
     StmTyp    Stm[MAX_VOICES];
     SongTyp   Song;
     InstrTyp *Instr[255 + 1];
     VOICE voice[TOTAL_VOICES];
-    
+
     void *resampler[TOTAL_VOICES*2];
-    
+
     float *PanningTab;
     float f_outputFreq;
-    
+
 #ifdef USE_VOL_RAMP
     float f_samplesPerFrame005;
     float f_samplesPerFrame010;
 #endif
-    
+
     /* pre-initialized variables */
     int8_t samplingInterpolation;/*      = 1; */
     int8_t rampStyle;
@@ -423,14 +423,14 @@ typedef struct
     float *masterBufferR;/*              = NULL; */
     int32_t samplesLeft;/*               = 0;  must be signed */
     uint32_t samplesPerFrame;/* = 882; */
-    
+
     /* globally accessed */
     int8_t ModuleLoaded;/*  = 0; */
     int8_t Playing;/*       = 0; */
     uint16_t numChannels;/* = 127; */
-    
+
     uint8_t muted[16];
-    
+
     uint32_t loopCount;
     void * playedRows;
     uint16_t playedRowsPatLoop[1024];
@@ -628,7 +628,7 @@ static void StartTone(PLAYER *p, uint8_t Ton, uint8_t EffTyp, uint8_t Eff, StmTy
 
     ch->OldVol = s->Vol;
 
-    /* 
+    /*
     ** FT2 doesn't do this, but we don't want to blow our eardrums
     ** on malicious XMs...
     */
@@ -829,7 +829,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
             tmpEff = ch->Eff & 0x0F;
             if (!tmpEff)
                 tmpEff = ch->FPortaUpSpeed;
-            
+
             ch->FPortaUpSpeed = tmpEff;
 
             ch->RealPeriod -= ((int16_t)(tmpEff) << 2);
@@ -845,7 +845,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
             tmpEff = ch->Eff & 0x0F;
             if (!tmpEff)
                 tmpEff = ch->FPortaDownSpeed;
-            
+
             ch->FPortaDownSpeed = tmpEff;
 
             ch->RealPeriod += ((int16_t)(tmpEff) << 2);
@@ -914,7 +914,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
             tmpEff = ch->Eff & 0x0F;
             if (!tmpEff)
                 tmpEff = ch->FVolSlideUpSpeed;
-            
+
             ch->FVolSlideUpSpeed = tmpEff;
 
             ch->RealVol += tmpEff;
@@ -930,7 +930,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
             tmpEff = ch->Eff & 0x0F;
             if (!tmpEff)
                 tmpEff = ch->FVolSlideDownSpeed;
-            
+
             ch->FVolSlideDownSpeed = tmpEff;
 
             ch->RealVol -= tmpEff;
@@ -1063,7 +1063,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
 
             if (envPos >= ch->InstrSeg.EnvVPAnt)
                 envPos = (int16_t)(ch->InstrSeg.EnvVPAnt) - 1;
-            
+
             ch->EnvVPos = (envPos < 0) ? 0 : (uint8_t)(envPos);
         }
 
@@ -1124,7 +1124,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
 
             if (envPos >= ch->InstrSeg.EnvPPAnt)
                 envPos = (int16_t)(ch->InstrSeg.EnvPPAnt) - 1;
-            
+
             ch->EnvPPos = (envPos < 0) ? 0 : (uint8_t)(envPos);
         }
     }
@@ -1135,13 +1135,13 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
         tmpEff = ch->Eff & 0x0F;
         if (!tmpEff)
             tmpEff = ch->RetrigSpeed;
-        
+
         ch->RetrigSpeed = tmpEff;
 
         tmpEffHi = ch->Eff >> 4;
         if (!tmpEffHi)
             tmpEffHi = ch->RetrigVol;
-        
+
         ch->RetrigVol = tmpEffHi;
 
         if (!ch->VolKolVol) MultiRetrig(p, ch);
@@ -1153,7 +1153,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
         tmpEff = ch->Eff & 0x0F;
         if (!tmpEff)
             tmpEff = ch->EPortaUpSpeed;
-        
+
         ch->EPortaUpSpeed = tmpEff;
 
         ch->RealPeriod -= tmpEff;
@@ -1169,7 +1169,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
         tmpEff = ch->Eff & 0x0F;
         if (!tmpEff)
             tmpEff = ch->EPortaDownSpeed;
-        
+
         ch->EPortaDownSpeed = tmpEff;
 
         ch->RealPeriod += tmpEff;
@@ -1185,7 +1185,7 @@ static void fixTonePorta(PLAYER *pl, StmTyp *ch, TonTyp *p, uint8_t inst)
 {
     uint16_t portaTmp;
     uint8_t tmpFTune;
-    
+
     if (p->Ton)
     {
         if (p->Ton == 97)
@@ -1197,11 +1197,11 @@ static void fixTonePorta(PLAYER *pl, StmTyp *ch, TonTyp *p, uint8_t inst)
             // signed 8-bit >>3 without rounding or undefined behavior (FT2 exact)
             tmpFTune = (ch->FineTune >= 0) ? (ch->FineTune >> 3) : (0xE0 | ((uint8_t)(ch->FineTune) >> 3));
             portaTmp = ((((p->Ton - 1) + ch->RelTonNr) & 0x00FF) << 4) + ((tmpFTune + 16) & 0x00FF);
-            
+
             if (portaTmp < ((12 * 10 * 16) + 16))
             {
                 ch->WantPeriod = pl->Note2Period[portaTmp];
-                
+
                 if (ch->WantPeriod == ch->RealPeriod)
                     ch->PortaDir = 0;
                 else if (ch->WantPeriod > ch->RealPeriod)
@@ -1211,11 +1211,11 @@ static void fixTonePorta(PLAYER *pl, StmTyp *ch, TonTyp *p, uint8_t inst)
             }
         }
     }
-    
+
     if (inst)
     {
         RetrigVolume(ch);
-        
+
         if (p->Ton != 97)
             RetrigEnvelopeVibrato(ch);
     }
@@ -1224,9 +1224,9 @@ static void fixTonePorta(PLAYER *pl, StmTyp *ch, TonTyp *p, uint8_t inst)
 static inline void GetNewNote(PLAYER *pl, StmTyp *ch, TonTyp *p)
 {
     uint8_t inst;
-    
+
     ch->VolKolVol = p->Vol;
-    
+
     if (!ch->EffTyp)
     {
         if (ch->Eff)
@@ -1249,11 +1249,11 @@ static inline void GetNewNote(PLAYER *pl, StmTyp *ch, TonTyp *p)
             }
         }
     }
-    
+
     ch->EffTyp = p->EffTyp;
     ch->Eff    = p->Eff;
     ch->TonTyp = (p->Instr << 8) | p->Ton;
-    
+
     /* 'inst' var is used for later if checks... */
     inst = p->Instr;
     if (inst)
@@ -1263,48 +1263,48 @@ static inline void GetNewNote(PLAYER *pl, StmTyp *ch, TonTyp *p)
         else
             inst = 0;
     }
-    
+
     if (p->EffTyp == 0x0E)
     {
         if ((p->Eff >= 0xD1) && (p->Eff <= 0xDF))
             return; /* we have a note delay (ED1..EDF) */
     }
-    
+
     if (!((p->EffTyp == 0x0E) && (p->Eff == 0x90))) /* E90 is 'retrig' speed 0 */
     {
         if ((ch->VolKolVol & 0xF0) == 0xF0) /* gxx */
         {
             if (ch->VolKolVol & 0x0F)
                 ch->PortaSpeed = (int16_t)(ch->VolKolVol & 0x0F) << 6;
-            
+
             fixTonePorta(pl, ch, p, inst);
-            
+
             CheckEffects(pl, ch);
             return;
         }
-        
+
         if ((p->EffTyp == 3) || (p->EffTyp == 5)) /* 3xx or 5xx */
         {
             if ((p->EffTyp != 5) && p->Eff)
                 ch->PortaSpeed = (int16_t)(p->Eff) << 2;
-            
+
             fixTonePorta(pl, ch, p, inst);
-            
+
             CheckEffects(pl, ch);
             return;
         }
-        
+
         if ((p->EffTyp == 0x14) && !p->Eff) /* K00 (KeyOff) */
         {
             KeyOff(ch);
-            
+
             if (inst)
                 RetrigVolume(ch);
-            
+
             CheckEffects(pl, ch);
             return;
         }
-        
+
         if (!p->Ton)
         {
             if (inst)
@@ -1312,25 +1312,25 @@ static inline void GetNewNote(PLAYER *pl, StmTyp *ch, TonTyp *p)
                 RetrigVolume(ch);
                 RetrigEnvelopeVibrato(ch);
             }
-            
+
             CheckEffects(pl, ch);
             return;
         }
     }
-    
+
     if (p->Ton == 97)
         KeyOff(ch);
     else
         StartTone(pl, p->Ton, p->EffTyp, p->Eff, ch);
-    
+
     if (inst)
     {
         RetrigVolume(ch);
-        
+
         if (p->Ton != 97)
             RetrigEnvelopeVibrato(ch);
     }
-    
+
     CheckEffects(pl, ch);
 }
 
@@ -1577,33 +1577,33 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
 
     int16_t oldPeriod;
     int16_t addPeriod;
-    
+
     int32_t outPeriod;
-    
+
     oldPeriod = 0;
     addPeriod = (8 * 12 * 16) * 2;
-    
+
     // safe signed 8-bit >>3 (FT2 exact even on non-x86 platforms)
     if (ch->FineTune >= 0)
         fineTune = ch->FineTune >> 2;
     else
         fineTune = (int8_t)(0xE0 | ((uint8_t)(ch->FineTune) >> 3)) * 2;
-    
+
     for (i = 0; i < 8; ++i)
     {
         outPeriod = (((oldPeriod + addPeriod) >> 1) & 0xFFE0) + fineTune;
         if (outPeriod < fineTune)
             outPeriod += (1 << 8);
-        
+
         if (outPeriod < 16)
             outPeriod = 16;
-        
+
         if (inPeriod >= p->Note2Period[(outPeriod - 16) >> 1])
         {
             outPeriod -= fineTune;
             if (outPeriod & 0x00010000)
                 outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
-            
+
             addPeriod = (int16_t)(outPeriod);
         }
         else
@@ -1611,22 +1611,22 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
             outPeriod -= fineTune;
             if (outPeriod & 0x00010000)
                 outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
-            
+
             oldPeriod = (int16_t)(outPeriod);
         }
     }
-    
+
     outPeriod = oldPeriod + fineTune;
     if (outPeriod < fineTune)
         outPeriod += (1 << 8);
-    
+
     if (outPeriod < 0)
         outPeriod = 0;
-    
+
     outPeriod += ((int16_t)(addNote) << 5);
     if (outPeriod >= ((((8 * 12 * 16) + 15) * 2) - 1))
         outPeriod  =   ((8 * 12 * 16) + 15) * 2;
-    
+
     return (p->Note2Period[outPeriod >> 1]); // 16-bit look-up, shift it down
 }
 
@@ -1669,7 +1669,7 @@ static void Volume(StmTyp *ch) /* actually volume slide */
     tmpEff = ch->Eff;
     if (!tmpEff)
         tmpEff = ch->VolSlideSpeed;
-    
+
     ch->VolSlideSpeed = tmpEff;
 
     if (!(tmpEff & 0xF0))
@@ -1833,7 +1833,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
         tmpEff = ch->Eff;
         if (!tmpEff)
             tmpEff = ch->PortaUpSpeed;
-        
+
         ch->PortaUpSpeed = tmpEff;
 
         ch->RealPeriod -= ((int16_t)(tmpEff) << 2);
@@ -1849,7 +1849,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
         tmpEff = ch->Eff;
         if (!tmpEff)
             tmpEff = ch->PortaUpSpeed;
-        
+
         ch->PortaUpSpeed = tmpEff;
 
         ch->RealPeriod += ((int16_t)(tmpEff) << 2);
@@ -1963,7 +1963,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
 
                 if (ch->TonTyp & 0xFF00)
                     RetrigVolume(ch);
-                
+
                 RetrigEnvelopeVibrato(ch);
 
                 if ((ch->VolKolVol >= 0x10) && (ch->VolKolVol <= 0x50))
@@ -2014,7 +2014,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
         tmpEff = ch->Eff;
         if (!tmpEff)
             tmpEff = ch->PanningSlideSpeed;
-        
+
         ch->PanningSlideSpeed = tmpEff;
 
         if (!(ch->Eff & 0xF0))
@@ -2040,7 +2040,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
         tmpEff = ch->Eff;
         if (!tmpEff)
             tmpEff = ch->TremorSave;
-        
+
         ch->TremorSave = tmpEff;
 
         tremorSign = ch->TremorPos & 0x80;
@@ -2074,7 +2074,7 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
 
     uint8_t i;
     int8_t tickzero;
-    
+
 #ifdef USE_VOL_RAMP
     int32_t rampStyle = p->rampStyle;
 #endif
@@ -2124,15 +2124,15 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
         if (p->Song.Timer == 1)
         {
             size_t playedRowsCount;
-            
+
             p->Song.PattPos++;
-            
+
             if (p->Song.PattDelTime)
             {
                 p->Song.PattDelTime2 = p->Song.PattDelTime;
                 p->Song.PattDelTime  = 0;
             }
-            
+
             if (p->Song.PattDelTime2)
             {
                 p->Song.PattDelTime2--;
@@ -2142,32 +2142,33 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
                     bit_array_clear(p->playedRows, p->Song.SongPos * 1024 + p->Song.PattPos);
                 }
             }
-            
+
             if (p->Song.PBreakFlag)
             {
                 p->Song.PBreakFlag = 0;
                 p->Song.PattPos    = p->Song.PBreakPos;
             }
-            
+
             for (playedRowsCount = 0; playedRowsCount < 1024 && p->playedRowsPatLoop[playedRowsCount] != 0xFFFF; ++playedRowsCount);
-            
+
             if ((p->Song.PattPos >= p->Song.PattLen) || p->Song.PosJumpFlag)
             {
                 int16_t oldSongPos = p->Song.SongPos;
-                
+
                 p->Song.PattPos     = p->Song.PBreakPos;
                 p->Song.PBreakPos   = 0;
                 p->Song.PosJumpFlag = 0;
-                
+
                 p->Song.SongPos++;
                 if (p->Song.SongPos >= p->Song.Len) p->Song.SongPos = p->Song.RepS;
-                
+
                 p->Song.PattNr  = p->Song.SongTab[p->Song.SongPos];
                 p->Song.PattLen = p->PattLens[p->Song.PattNr];
-                
+
                 if (oldSongPos != p->Song.SongPos)
                 {
-                    for (size_t i = 0; i < playedRowsCount; ++i)
+					size_t i;
+                    for (i = 0; i < playedRowsCount; ++i)
                         bit_array_set(p->playedRows, oldSongPos * 1024 + p->playedRowsPatLoop[i]);
                     memset(p->playedRowsPatLoop, 0xFF, playedRowsCount * 2);
                     playedRowsCount = 0;
@@ -2203,7 +2204,7 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
             {
                 int32_t ChNr = ch->Nr;
                 memcpy(p->voice + SPARE_OFFSET + ChNr, p->voice + ChNr, sizeof (VOICE));
-                
+
                 p->voice[SPARE_OFFSET + ChNr].faderDest  = 0.0f;
                 p->voice[SPARE_OFFSET + ChNr].faderDelta =
                 (p->voice[SPARE_OFFSET + ChNr].faderDest - p->voice[SPARE_OFFSET + ChNr].fader) * p->f_samplesPerFrame010;
@@ -2214,10 +2215,10 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
                 resampler_clear(p->resampler[TOTAL_VOICES + ChNr]);
             }
 #endif
-            
+
             voiceSetSource(p, ch->Nr, s.Pek, s.Len, s.RepL, s.RepS + s.RepL, s.Typ & 3, s.Typ & 16, s.Typ & 32);
             voiceSetSamplePosition(p, ch->Nr, ch->SmpStartPos);
-            
+
 #ifdef USE_VOL_RAMP
             if (rampStyle > 0)
             {
@@ -2230,10 +2231,10 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
 
         if (ch->Status & IS_Vol)
             voiceSetVolume(p, ch->Nr, ch->FinalVol, ch->FinalPan, ch->Status & IS_NyTon);
-        
+
         if (ch->Status & IS_Period)
             voiceSetSamplingFrequency(p, ch->Nr, GetFrequenceValue(p, ch->FinalPeriod));
-        
+
         ch->Status = 0;
     }
 }
@@ -2429,20 +2430,20 @@ static void Adpcm2Samp(uint8_t * sample, uint32_t length)
 {
     const int8_t *sampleDictionary;
     const uint8_t *sampleData;
-    
+
     uint32_t samplePosition;
     int8_t lastDelta;
-    
+
     uint8_t * sampleDataOut = (uint8_t *) malloc(length);
     if (!sampleDataOut)
         return;
-    
+
     sampleDictionary = (const int8_t *)sample;
     sampleData = (uint8_t*)sampleDictionary + 16;
-    
+
     samplePosition = 0;
     lastDelta = 0;
-    
+
     while (samplePosition < length)
     {
         sampleDataOut[samplePosition] = GetAdpcmSample(sampleDictionary, sampleData, samplePosition, &lastDelta);
@@ -2490,7 +2491,7 @@ static int8_t LoadInstrHeader(PLAYER *p, MEM *f, uint16_t i)
 
     InstrHeaderTyp ih;
     size_t size;
-    
+
     memset(&ih, 0, InstrHeaderSize);
 
     mread_swap(&ih.InstrSize, 4, 1, f, 0, 3);
@@ -2499,7 +2500,7 @@ static int8_t LoadInstrHeader(PLAYER *p, MEM *f, uint16_t i)
         ih.InstrSize = InstrHeaderSize;
 
     size = ih.InstrSize - 4;
-    
+
     mread(ih.Name, min(size, 22), 1, f);
     if (size > 22)  mread(&ih.Typ, min(size - 22, 1), 1, f);
     if (size > 23)  mread_swap(&ih.AntSamp, min(size - 23, 2), 1, f, 0, 1);
@@ -2743,18 +2744,18 @@ static int8_t LoadPatterns(PLAYER *p, MEM *f)
 static void ft2play_FreeSong(PLAYER *p)
 {
     p->Playing          = 0;
-    
+
     memset(p->voice, 0, sizeof (p->voice));
-    
+
     FreeMusic(p);
-    
+
     p->ModuleLoaded = 0;
 }
 
 int8_t ft2play_LoadModule(void *_p, const uint8_t *buffer, size_t size)
 {
     uint16_t i;
-    
+
     PLAYER *p = (PLAYER *)_p;
 
     MEM *f;
@@ -2946,7 +2947,7 @@ static inline void voiceSetSamplePosition(PLAYER *p, uint8_t i, uint16_t value)
         v->samplePosition = 0;
         v->sampleData     = NULL;
     }
-    
+
     v->interpolating = 1;
 }
 
@@ -2954,7 +2955,7 @@ static inline void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, 
 {
     VOICE *v;
     v = &p->voice[i];
-    
+
 #ifdef USE_VOL_RAMP
     if (!note_on && p->rampStyle > 1)
     {
@@ -2986,7 +2987,7 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
     uint32_t j;
 
     const int8_t *sampleData;
-    
+
     VOICE *v;
 
     float sample;
@@ -3002,17 +3003,17 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
     int8_t loopEnabled;
     int8_t loopBidi;
     int8_t loopingForward;
-    
+
     int32_t interpolating;
-    
+
 #ifdef USE_VOL_RAMP
     int32_t rampStyle = p->rampStyle;
 #endif
-    
+
     void * resampler;
 
     v = &p->voice[ch];
-    
+
     sampleLength     = v->sampleLength;
     sampleLoopLength = v->sampleLoopLength;
     sampleLoopEnd    = v->sampleLoopEnd;
@@ -3023,16 +3024,16 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
     interpolating    = v->interpolating;
 
     sampleData = v->sampleData;
-    
+
     resampler = p->resampler[ch];
-    
+
     resampler_set_rate(resampler, v->incRate);
 
     for (j = 0; (j < samples) && (v->sampleData != NULL); ++j)
     {
         samplePosition = v->samplePosition;
 
-        while (interpolating && (resampler_get_free_count(resampler) ||
+        while (interpolating > 0 && (resampler_get_free_count(resampler) ||
                !resampler_get_sample_count(resampler)))
         {
             resampler_write_sample_fixed(resampler, sampleData[samplePosition], 8);
@@ -3041,7 +3042,7 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
                 ++samplePosition;
             else
                 --samplePosition;
-            
+
             if (loopEnabled)
             {
                 if (loopBidi)
@@ -3071,15 +3072,22 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
             }
             else if ((samplePosition < 0) || (samplePosition >= sampleLength))
             {
-                interpolating = 0;
+                interpolating = -resampler_get_padding_size();
                 break;
             }
         }
-        
+
+        while (interpolating < 0 && (resampler_get_free_count(resampler) ||
+               !resampler_get_sample_count(resampler)))
+        {
+            resampler_write_sample_fixed(resampler, 0, 8);
+            ++interpolating;
+        }
+
         v->samplePosition = samplePosition;
         v->loopingForward = loopingForward;
         v->interpolating  = (int8_t)interpolating;
-        
+
         if ( !resampler_get_sample_count(resampler) )
         {
             resampler_clear(resampler);
@@ -3089,12 +3097,12 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
 
         sample = resampler_get_sample_float(resampler);
         resampler_remove_sample(resampler, 1);
-        
+
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)
         {
             v->fader += v->faderDelta;
-        
+
             if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
             {
                 v->fader = v->faderDest;
@@ -3105,20 +3113,20 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
                 resampler_clear(resampler);
                 v->sampleData = NULL;
             }
-        
+
             sample *= v->fader;
         }
 #endif
-        
+
         sampleL = sample * v->volumeL;
         sampleR = sample * v->volumeR;
-        
+
 #ifdef USE_VOL_RAMP
         if (rampStyle > 1)
         {
             v->volumeL += v->volDeltaL;
             v->volumeR += v->volDeltaR;
-            
+
             if ((v->volDeltaL > 0.0f) && (v->volumeL > v->targetVolL))
             {
                 v->volumeL = v->targetVolL;
@@ -3127,7 +3135,7 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
             {
                 v->volumeL = v->targetVolL;
             }
-            
+
             if ((v->volDeltaR > 0.0f) && (v->volumeR > v->targetVolR))
             {
                 v->volumeR = v->targetVolR;
@@ -3138,7 +3146,7 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
             }
         }
 #endif
-        
+
         p->masterBufferL[j] += sampleL;
         p->masterBufferR[j] += sampleR;
     }
@@ -3147,34 +3155,34 @@ static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
 static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
 {
     uint32_t j;
-    
+
     const int8_t *sampleData;
-    
+
     VOICE *v;
-    
+
     float sampleL;
     float sampleR;
-    
+
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t sampleLoopLength;
     int32_t sampleLoopBegin;
     int32_t samplePosition;
-    
+
     int8_t loopEnabled;
     int8_t loopBidi;
     int8_t loopingForward;
-    
+
     int32_t interpolating;
-    
+
 #ifdef USE_VOL_RAMP
     int32_t rampStyle = p->rampStyle;
 #endif
-    
+
     void * resampler[2];
-    
+
     v = &p->voice[ch];
-    
+
     sampleLength     = v->sampleLength;
     sampleLoopLength = v->sampleLoopLength;
     sampleLoopEnd    = v->sampleLoopEnd;
@@ -3183,31 +3191,31 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
     loopBidi         = v->loopBidi;
     loopingForward   = v->loopingForward;
     interpolating    = v->interpolating;
-    
+
     sampleData = v->sampleData;
-    
+
     resampler[0] = p->resampler[ch];
     resampler[1] = p->resampler[ch+TOTAL_VOICES];
-    
+
     resampler_set_rate(resampler[0], v->incRate);
     resampler_set_rate(resampler[1], v->incRate);
-    
+
     for (j = 0; (j < samples) && (v->sampleData != NULL); ++j)
     {
         samplePosition = v->samplePosition;
-        
-        while (interpolating && (resampler_get_free_count(resampler[0]) ||
+
+        while (interpolating > 0 && (resampler_get_free_count(resampler[0]) ||
                (!resampler_get_sample_count(resampler[0]) &&
                !resampler_get_sample_count(resampler[1]))))
         {
             resampler_write_sample_fixed(resampler[0], sampleData[samplePosition], 8);
             resampler_write_sample_fixed(resampler[1], sampleData[sampleLength + samplePosition], 8);
-            
+
             if (loopingForward)
                 ++samplePosition;
             else
                 --samplePosition;
-            
+
             if (loopEnabled)
             {
                 if (loopBidi)
@@ -3237,15 +3245,24 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             }
             else if ((samplePosition < 0) || (samplePosition >= sampleLength))
             {
-                interpolating = 0;
+                interpolating = -resampler_get_padding_size();
                 break;
             }
         }
-        
+
+        while (interpolating < 0 && (resampler_get_free_count(resampler[0]) ||
+               (!resampler_get_sample_count(resampler[0]) &&
+               !resampler_get_sample_count(resampler[1]))))
+        {
+            resampler_write_sample_fixed(resampler[0], 0, 8);
+            resampler_write_sample_fixed(resampler[1], 0, 8);
+            ++interpolating;
+        }
+
         v->samplePosition = samplePosition;
         v->loopingForward = loopingForward;
         v->interpolating  = (int8_t)interpolating;
-        
+
         if ( !resampler_get_sample_count(resampler[0]) )
         {
             resampler_clear(resampler[0]);
@@ -3253,17 +3270,17 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             v->sampleData = NULL;
             break;
         }
-        
+
         sampleL = resampler_get_sample_float(resampler[0]);
         sampleR = resampler_get_sample_float(resampler[1]);
         resampler_remove_sample(resampler[0], 1);
         resampler_remove_sample(resampler[1], 1);
-        
+
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)
         {
             v->fader += v->faderDelta;
-        
+
             if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
             {
                 v->fader = v->faderDest;
@@ -3275,21 +3292,21 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
                 resampler_clear(resampler[1]);
                 v->sampleData = NULL;
             }
-        
+
             sampleL *= v->fader;
             sampleR *= v->fader;
         }
 #endif
-        
+
         sampleL *= v->volumeL;
         sampleR *= v->volumeR;
-        
+
 #ifdef USE_VOL_RAMP
         if (rampStyle > 1)
         {
             v->volumeL += v->volDeltaL;
             v->volumeR += v->volDeltaR;
-            
+
             if ((v->volDeltaL > 0.0f) && (v->volumeL > v->targetVolL))
             {
                 v->volumeL = v->targetVolL;
@@ -3298,7 +3315,7 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             {
                 v->volumeL = v->targetVolL;
             }
-            
+
             if ((v->volDeltaR > 0.0f) && (v->volumeR > v->targetVolR))
             {
                 v->volumeR = v->targetVolR;
@@ -3309,7 +3326,7 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             }
         }
 #endif
-        
+
         p->masterBufferL[j] += sampleL;
         p->masterBufferR[j] += sampleR;
     }
@@ -3318,35 +3335,35 @@ static inline void mix8bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
 static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
 {
     uint32_t j;
-    
+
     const int16_t *sampleData;
-    
+
     VOICE *v;
-    
+
     float sample;
     float sampleL;
     float sampleR;
-    
+
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t sampleLoopLength;
     int32_t sampleLoopBegin;
     int32_t samplePosition;
-    
+
     int8_t loopEnabled;
     int8_t loopBidi;
     int8_t loopingForward;
-    
+
     int32_t interpolating;
-    
+
 #ifdef USE_VOL_RAMP
     int32_t rampStyle = p->rampStyle;
 #endif
-    
+
     void * resampler;
-    
+
     v = &p->voice[ch];
-    
+
     sampleLength     = v->sampleLength;
     sampleLoopLength = v->sampleLoopLength;
     sampleLoopEnd    = v->sampleLoopEnd;
@@ -3355,27 +3372,27 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
     loopBidi         = v->loopBidi;
     loopingForward   = v->loopingForward;
     interpolating    = v->interpolating;
-    
+
     sampleData = (const int16_t *) v->sampleData;
-    
+
     resampler = p->resampler[ch];
-    
+
     resampler_set_rate(resampler, v->incRate);
-    
+
     for (j = 0; (j < samples) && (v->sampleData != NULL); ++j)
     {
         samplePosition = v->samplePosition;
-        
-        while (interpolating && (resampler_get_free_count(resampler) ||
+
+        while (interpolating > 0 && (resampler_get_free_count(resampler) ||
               !resampler_get_sample_count(resampler)))
         {
             resampler_write_sample_fixed(resampler, sampleData[samplePosition], 16);
-            
+
             if (loopingForward)
                 ++samplePosition;
             else
                 --samplePosition;
-            
+
             if (loopEnabled)
             {
                 if (loopBidi)
@@ -3405,30 +3422,37 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
             }
             else if ((samplePosition < 0) || (samplePosition >= sampleLength))
             {
-                interpolating = 0;
+                interpolating = -resampler_get_padding_size();
                 break;
             }
         }
-        
+
+        while (interpolating < 0 && (resampler_get_free_count(resampler) ||
+               !resampler_get_sample_count(resampler)))
+        {
+            resampler_write_sample_fixed(resampler, 0, 16);
+            ++interpolating;
+        }
+
         v->samplePosition = samplePosition;
         v->loopingForward = loopingForward;
         v->interpolating  = (int8_t)interpolating;
-        
+
         if ( !resampler_get_sample_count(resampler) )
         {
             resampler_clear(resampler);
             v->sampleData = NULL;
             break;
         }
-        
+
         sample = resampler_get_sample_float(resampler);
         resampler_remove_sample(resampler, 1);
-        
+
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)
         {
             v->fader += v->faderDelta;
-        
+
             if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
             {
                 v->fader = v->faderDest;
@@ -3439,20 +3463,20 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
                 resampler_clear(resampler);
                 v->sampleData = NULL;
             }
-        
+
             sample *= v->fader;
         }
 #endif
-        
+
         sampleL = sample * v->volumeL;
         sampleR = sample * v->volumeR;
-        
+
 #ifdef USE_VOL_RAMP
         if (rampStyle > 1)
         {
             v->volumeL += v->volDeltaL;
             v->volumeR += v->volDeltaR;
-            
+
             if ((v->volDeltaL > 0.0f) && (v->volumeL > v->targetVolL))
             {
                 v->volumeL = v->targetVolL;
@@ -3461,7 +3485,7 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
             {
                 v->volumeL = v->targetVolL;
             }
-            
+
             if ((v->volDeltaR > 0.0f) && (v->volumeR > v->targetVolR))
             {
                 v->volumeR = v->targetVolR;
@@ -3472,7 +3496,7 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
             }
         }
 #endif
-        
+
         p->masterBufferL[j] += sampleL;
         p->masterBufferR[j] += sampleR;
     }
@@ -3481,34 +3505,34 @@ static inline void mix16b(PLAYER *p, uint32_t ch, uint32_t samples)
 static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
 {
     uint32_t j;
-    
+
     const int16_t *sampleData;
-    
+
     VOICE *v;
-    
+
     float sampleL;
     float sampleR;
-    
+
     int32_t sampleLength;
     int32_t sampleLoopEnd;
     int32_t sampleLoopLength;
     int32_t sampleLoopBegin;
     int32_t samplePosition;
-    
+
     int8_t loopEnabled;
     int8_t loopBidi;
     int8_t loopingForward;
-    
+
     int32_t interpolating;
-    
+
 #ifdef USE_VOL_RAMP
     int32_t rampStyle = p->rampStyle;
 #endif
-    
+
     void * resampler[2];
-    
+
     v = &p->voice[ch];
-    
+
     sampleLength     = v->sampleLength;
     sampleLoopLength = v->sampleLoopLength;
     sampleLoopEnd    = v->sampleLoopEnd;
@@ -3517,31 +3541,31 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
     loopBidi         = v->loopBidi;
     loopingForward   = v->loopingForward;
     interpolating    = v->interpolating;
-    
+
     sampleData = (const int16_t *) v->sampleData;
-    
+
     resampler[0] = p->resampler[ch];
     resampler[1] = p->resampler[ch+TOTAL_VOICES];
-    
+
     resampler_set_rate(resampler[0], v->incRate);
     resampler_set_rate(resampler[1], v->incRate);
-    
+
     for (j = 0; (j < samples) && (v->sampleData != NULL); ++j)
     {
         samplePosition = v->samplePosition;
-        
-        while (interpolating && (resampler_get_free_count(resampler[0]) ||
+
+        while (interpolating > 0 && (resampler_get_free_count(resampler[0]) ||
                                  (!resampler_get_sample_count(resampler[0]) &&
                                   !resampler_get_sample_count(resampler[1]))))
         {
             resampler_write_sample_fixed(resampler[0], sampleData[samplePosition], 16);
             resampler_write_sample_fixed(resampler[1], sampleData[sampleLength + samplePosition], 16);
-            
+
             if (loopingForward)
                 ++samplePosition;
             else
                 --samplePosition;
-            
+
             if (loopEnabled)
             {
                 if (loopBidi)
@@ -3571,15 +3595,24 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             }
             else if ((samplePosition < 0) || (samplePosition >= sampleLength))
             {
-                interpolating = 0;
+                interpolating = -resampler_get_padding_size();
                 break;
             }
         }
-        
+
+        while (interpolating < 0 && (resampler_get_free_count(resampler[0]) ||
+               (!resampler_get_sample_count(resampler[0]) &&
+               !resampler_get_sample_count(resampler[1]))))
+        {
+            resampler_write_sample_fixed(resampler[0], 0, 16);
+            resampler_write_sample_fixed(resampler[1], 0, 16);
+            ++interpolating;
+        }
+
         v->samplePosition = samplePosition;
         v->loopingForward = loopingForward;
         v->interpolating  = (int8_t)interpolating;
-        
+
         if ( !resampler_get_sample_count(resampler[0]) )
         {
             resampler_clear(resampler[0]);
@@ -3587,17 +3620,17 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             v->sampleData = NULL;
             break;
         }
-        
+
         sampleL = resampler_get_sample_float(resampler[0]);
         sampleR = resampler_get_sample_float(resampler[1]);
         resampler_remove_sample(resampler[0], 1);
         resampler_remove_sample(resampler[1], 1);
-        
+
 #ifdef USE_VOL_RAMP
         if (rampStyle > 0)
         {
             v->fader += v->faderDelta;
-        
+
             if ((v->faderDelta > 0.0f) && (v->fader > v->faderDest))
             {
                 v->fader = v->faderDest;
@@ -3609,21 +3642,21 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
                 resampler_clear(resampler[1]);
                 v->sampleData = NULL;
             }
-        
+
             sampleL *= v->fader;
             sampleR *= v->fader;
         }
 #endif
-        
+
         sampleL *= v->volumeL;
         sampleR *= v->volumeR;
-        
+
 #ifdef USE_VOL_RAMP
         if (rampStyle > 1)
         {
             v->volumeL += v->volDeltaL;
             v->volumeR += v->volDeltaR;
-            
+
             if ((v->volDeltaL > 0.0f) && (v->volumeL > v->targetVolL))
             {
                 v->volumeL = v->targetVolL;
@@ -3632,7 +3665,7 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             {
                 v->volumeL = v->targetVolL;
             }
-            
+
             if ((v->volDeltaR > 0.0f) && (v->volumeR > v->targetVolR))
             {
                 v->volumeR = v->targetVolR;
@@ -3643,7 +3676,7 @@ static inline void mix16bstereo(PLAYER *p, uint32_t ch, uint32_t samples)
             }
         }
 #endif
-        
+
         p->masterBufferL[j] += sampleL;
         p->masterBufferR[j] += sampleR;
     }
@@ -3711,25 +3744,25 @@ void ft2play_RenderFloat(void *_p, float *buffer, int32_t count)
     PLAYER * p = (PLAYER *)_p;
     int32_t samplesTodo;
     float * outputStream;
-    
+
     if (p->Playing)
     {
         outputStream = buffer;
-        
+
         while (count)
         {
             if (p->samplesLeft)
             {
                 samplesTodo = (count < p->samplesLeft) ? count : p->samplesLeft;
                 samplesTodo = (samplesTodo < p->soundBufferSize) ? samplesTodo : p->soundBufferSize;
-                
+
                 if (outputStream)
                 {
                     mixSampleBlock(p, outputStream, samplesTodo);
-                    
+
                     outputStream  += (samplesTodo << 1);
                 }
-                
+
                 p->samplesLeft   -= samplesTodo;
                 count -= samplesTodo;
             }
@@ -3737,7 +3770,7 @@ void ft2play_RenderFloat(void *_p, float *buffer, int32_t count)
             {
                 if (p->Playing)
                     MainPlayer(p);
-                
+
                 p->samplesLeft = p->samplesPerFrame;
             }
         }
@@ -3793,15 +3826,15 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
     uint16_t i;
     int16_t noteVal;
     uint16_t noteIndex;
-    
+
     PLAYER * p = (PLAYER *) calloc(1, sizeof(PLAYER));
-    
+
     if ( !p )
         return NULL;
-    
+
     p->samplesPerFrame = 882;
     p->numChannels = MAX_VOICES;
-    
+
     p->outputFreq          = _samplingFrequency;
     p->f_outputFreq        = (float)(p->outputFreq);
 #ifdef USE_VOL_RAMP
@@ -3814,7 +3847,7 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
     p->masterBufferR       = (float *)(malloc(p->soundBufferSize * sizeof (float)));
     if ( !p->masterBufferL || !p->masterBufferR )
         goto error;
-    
+
     setSamplingInterpolation(p, interpolation);
 
 #ifdef USE_VOL_RAMP
@@ -3829,43 +3862,43 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
             goto error;
         resampler_set_quality(p->resampler[i], interpolation);
     }
-    
+
     /* allocate memory for pointers */
-    
+
     p->NilPatternLine = (TonTyp *)(calloc(sizeof (TonTyp), 256 * MAX_VOICES));
     if (p->NilPatternLine == NULL)
         goto error;
-    
+
     p->linearPeriods = (int16_t *)(malloc(sizeof (int16_t) * ((12 * 10 * 16) + 16)));
     if (p->linearPeriods == NULL)
         goto error;
-    
+
     p->amigaPeriods = (int16_t *)(malloc(sizeof (int16_t) * ((12 * 10 * 16) + 16)));
     if (p->amigaPeriods == NULL)
         goto error;
-    
+
     p->VibSineTab = (int8_t *)(malloc(256));
     if (p->VibSineTab == NULL)
         goto error;
-    
+
     p->PanningTab = (float *)(malloc(sizeof (float) * 257));
     if (p->PanningTab == NULL)
         goto error;
-    
+
     p->LogTab = (uint32_t *)(malloc(sizeof (uint32_t) * 768));
     if (p->LogTab == NULL)
         goto error;
-    
+
     /* generate tables */
-    
+
     /* generate log table (value-exact to its original table) */
     for (i = 0; i < 768; ++i)
         p->LogTab[i] = (uint32_t)(floor(((256.0f * 8363.0f) * exp((float)(i) / 768.0f * logf(2.0f))) + 0.5f));
-    
+
     /* generate linear table (value-exact to its original table) */
     for (i = 0; i < ((12 * 10 * 16) + 16); ++i)
         p->linearPeriods[i] = (((12 * 10 * 16) + 16) * 4) - (i << 2);
-    
+
     /* generate amiga period table (value-exact to its original table, except for last 17 entries) */
     noteIndex = 0;
     for (i = 0; i < 10; ++i)
@@ -3879,7 +3912,7 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
             p->amigaPeriods[noteIndex++] = noteVal;
         }
     }
-    
+
     /* interpolate between points (end-result is exact to FT2's end-result, except for last 17 entries) */
     for (i = 0; i < (12 * 10 * 8) + 7; ++i)
         p->amigaPeriods[(i << 1) + 1] = (p->amigaPeriods[i << 1] + p->amigaPeriods[(i << 1) + 2]) >> 1;
@@ -3895,19 +3928,19 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
     p->amigaPeriods[1928] =  0; p->amigaPeriods[1929] = 16; p->amigaPeriods[1930] = 32;
     p->amigaPeriods[1931] = 24; p->amigaPeriods[1932] = 16; p->amigaPeriods[1933] =  8;
     p->amigaPeriods[1934] =  0; p->amigaPeriods[1935] = 0;
-    
+
     /* generate auto-vibrato table (value-exact to its original table) */
     for (i = 0; i < 256; ++i)
         p->VibSineTab[i] = (int8_t)floorf((64.0f * sinf(((float)(-i) * (2.0f * 3.1415927f)) / 256.0f)) + 0.5f);
-    
+
     /* generate FT2's pan table [round(65536*sqrt(n/256)) for n = 0...256] */
     for (i = 0; i < 257; ++i)
         p->PanningTab[i] = sqrtf((float)(i) / 256.0f);
 
     p->playedRows = NULL;
-    
+
     return p;
-    
+
 error:
     ft2play_Free( p );
     return NULL;
@@ -3916,9 +3949,9 @@ error:
 void ft2play_Free(void *_p)
 {
     uint32_t i;
-    
+
     PLAYER * p = (PLAYER *)_p;
-    
+
     if (p->Playing)
     {
         if (p->playedRows) bit_array_destroy(p->playedRows); p->playedRows = NULL;
@@ -3926,32 +3959,32 @@ void ft2play_Free(void *_p)
         if (p->masterBufferL) free(p->masterBufferL); p->masterBufferL = NULL;
         if (p->masterBufferR) free(p->masterBufferR); p->masterBufferR = NULL;
     }
-    
+
     p->Playing          = 0;
-    
+
     ft2play_FreeSong(p);
-    
+
     if (p->LogTab)         free(p->LogTab);         p->LogTab         = NULL;
     if (p->PanningTab)     free(p->PanningTab);     p->PanningTab     = NULL;
     if (p->VibSineTab)     free(p->VibSineTab);     p->VibSineTab     = NULL;
     if (p->amigaPeriods)   free(p->amigaPeriods);   p->amigaPeriods   = NULL;
     if (p->linearPeriods)  free(p->linearPeriods);  p->linearPeriods  = NULL;
     if (p->NilPatternLine) free(p->NilPatternLine); p->NilPatternLine = NULL;
-    
+
     for ( i = 0; i < TOTAL_VOICES * 2; ++i )
     {
         if ( p->resampler[i] )
             resampler_delete( p->resampler[i] );
         p->resampler[i] = NULL;
     }
-    
+
     free (p);
 }
 
 void ft2play_PlaySong(void *_p, int32_t startOrder)
 {
     PLAYER * p = (PLAYER *)_p;
-    
+
     if (!p->ModuleLoaded) return;
 
     StopVoices(p);
@@ -3961,17 +3994,17 @@ void ft2play_PlaySong(void *_p, int32_t startOrder)
     p->Playing      = 1;
 
     setSamplesPerFrame(p, ((p->outputFreq * 5UL) / 2 / p->Song.Speed));
-    
+
     SetPos(p, (int16_t)startOrder, 0);
-    
+
     p->Song.startOrder = (int16_t)startOrder;
-    
+
     p->loopCount = 0;
-    
+
     if (p->playedRows) bit_array_destroy(p->playedRows);
 	p->playedRows = bit_array_create(1024 * (p->Song.Len ? p->Song.Len : 1));
     bit_array_set(p->playedRows, startOrder * 1024);
-    
+
     p->playedRowsPatLoop[0] = 0;
     memset(p->playedRowsPatLoop + 1, 0xFF, 1023 * 2);
 }
@@ -3987,12 +4020,12 @@ static MEM *mopen(const uint8_t *src, size_t length)
         uint32_t a;
         uint8_t b[4];
     } endian_test;
-    
+
     if ((src == NULL) || (length <= 0)) return (NULL);
 
     b = (MEM *)(malloc(sizeof (MEM)));
     if (b == NULL) return (NULL);
-    
+
     endian_test.a = 1;
     mopen_is_big_endian = endian_test.b[3];
 
@@ -4044,17 +4077,17 @@ static size_t mread_swap(void *buffer, size_t size, size_t count, MEM *buf, uint
     size_t wrcnt;
     ssize_t pcnt;
     uint8_t xor;
-    
+
     if (buf       == NULL) return (0);
     if (buf->_ptr == NULL) return (0);
-    
+
     wrcnt = size * count;
     if ((size == 0) || buf->_eof) return (0);
-    
+
     xor = mopen_is_big_endian ? be_xor : le_xor;
-    
+
     pcnt = (buf->_cnt > wrcnt) ? wrcnt : buf->_cnt;
-    
+
     if ( !xor )
         memcpy(buffer, buf->_ptr, pcnt);
     else
@@ -4064,17 +4097,17 @@ static size_t mread_swap(void *buffer, size_t size, size_t count, MEM *buf, uint
         for (i = 0; i < pcnt; i++)
             bbuffer[i ^ xor] = buf->_ptr[i];
     }
-    
+
     buf->_cnt -= pcnt;
     buf->_ptr += pcnt;
-    
+
     if (buf->_cnt <= 0)
     {
         buf->_ptr = buf->_base + buf->_bufsiz;
         buf->_cnt = 0;
         buf->_eof = 1;
     }
-    
+
     return (pcnt / size);
 }
 

@@ -2062,6 +2062,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = FFMPEG;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = framework;
@@ -2086,6 +2087,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = FFMPEG;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = framework;

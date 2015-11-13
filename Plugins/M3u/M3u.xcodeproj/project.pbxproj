@@ -208,6 +208,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				OBJROOT = ../../build;
 				PRODUCT_NAME = M3u;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
@@ -226,6 +227,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				OBJROOT = ../../build;
 				PRODUCT_NAME = M3u;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;

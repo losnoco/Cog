@@ -1099,6 +1099,7 @@
 				INFOPLIST_FILE = libsidplay/Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = sidplayfp;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1115,6 +1116,7 @@
 				INFOPLIST_FILE = libsidplay/Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = sidplayfp;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

@@ -301,6 +301,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = WavPack;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -334,6 +335,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = WavPack;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};

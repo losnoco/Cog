@@ -303,6 +303,11 @@ static int resampler_output_delay(resampler *r)
     }
 }
 
+int resampler_get_padding_size()
+{
+    return SINC_WIDTH - 1;
+}
+
 int resampler_ready(void *_r)
 {
     resampler * r = ( resampler * ) _r;

@@ -447,6 +447,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = CogAudio;
 				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
@@ -471,6 +472,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = CogAudio;
 				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;

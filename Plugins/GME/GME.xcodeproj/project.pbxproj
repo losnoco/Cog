@@ -290,6 +290,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_NAME = GME;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
@@ -307,6 +308,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_NAME = GME;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;

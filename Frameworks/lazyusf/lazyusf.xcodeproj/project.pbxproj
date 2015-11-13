@@ -1159,6 +1159,7 @@
 				INFOPLIST_FILE = "lazyusf/lazyusf-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = lazyusf;
 				WRAPPER_EXTENSION = framework;
@@ -1183,6 +1184,7 @@
 				INFOPLIST_FILE = "lazyusf/lazyusf-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = lazyusf;
 				WRAPPER_EXTENSION = framework;
