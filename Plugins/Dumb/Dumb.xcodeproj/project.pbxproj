@@ -383,7 +383,7 @@
 				);
 				OBJROOT = ../../build;
 				PRODUCT_NAME = Dumb;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
@@ -411,7 +411,7 @@
 				);
 				OBJROOT = ../../build;
 				PRODUCT_NAME = Dumb;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;

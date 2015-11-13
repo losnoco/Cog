@@ -340,7 +340,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -373,7 +372,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -391,7 +389,6 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				PRODUCT_NAME = modplay;
-				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -410,7 +407,6 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				PRODUCT_NAME = modplay;
-				SDKROOT = macosx10.10;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;

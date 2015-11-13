@@ -2766,7 +2766,7 @@
 					dynamic_lookup,
 				);
 				PRODUCT_NAME = Cog;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -2802,7 +2802,7 @@
 					dynamic_lookup,
 				);
 				PRODUCT_NAME = Cog;
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
