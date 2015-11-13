@@ -3,7 +3,6 @@
 
 #define RESAMPLER_DECORATE modplay
 
-// Ugglay
 #ifdef RESAMPLER_DECORATE
 #define PASTE(a,b) a ## b
 #define EVALUATE(a,b) PASTE(a,b)
@@ -14,6 +13,7 @@
 #define resampler_dup_inplace EVALUATE(RESAMPLER_DECORATE,_resampler_dup_inplace)
 #define resampler_set_quality EVALUATE(RESAMPLER_DECORATE,_resampler_set_quality)
 #define resampler_get_free_count EVALUATE(RESAMPLER_DECORATE,_resampler_get_free_count)
+#define resampler_get_padding_size EVALUATE(RESAMPLER_DECORATE,_resampler_get_padding_size)
 #define resampler_write_sample EVALUATE(RESAMPLER_DECORATE,_resampler_write_sample)
 #define resampler_write_sample_fixed EVALUATE(RESAMPLER_DECORATE,_resampler_write_sample_fixed)
 #define resampler_set_rate EVALUATE(RESAMPLER_DECORATE,_resampler_set_rate)
@@ -47,6 +47,7 @@ enum
 void resampler_set_quality(void *, int quality);
 
 int resampler_get_free_count(void *);
+int resampler_get_padding_size();
 void resampler_write_sample(void *, short sample);
 void resampler_write_sample_fixed(void *, int sample, unsigned char depth);
 void resampler_set_rate( void *, double new_factor );
