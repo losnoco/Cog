@@ -136,7 +136,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 	}
     
     if ( IsRepeatOneSet() )
-        gme_set_fade( emu, INT_MAX, 0 );
+        gme_set_fade( emu, -1, 0 );
     else
         gme_set_fade( emu, length - 8000, 8000 );
 	
