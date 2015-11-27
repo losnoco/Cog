@@ -12,17 +12,9 @@
 Supports custom sound buffer and frequency equalization when VGM uses just the PSG. FM
 sound chips can be run at their proper rates, or slightly higher to reduce aliasing on
 high notes. A YM2413 is supported but not provided separately from the library. */
-class Vgm_Emu : public Classic_Emu {
+class Vgm_Emu : public Music_Emu {
 public:
 
-	// True if custom buffer and custom equalization are supported
-	// TODO: move into Music_Emu and rename to something like supports_custom_buffer()
-	bool is_classic_emu() const                         { return !core.uses_fm(); }
-	
-	// Disables running FM chips at higher than normal rate. Will result in slightly
-	// more aliasing of high notes.
-	void disable_oversampling( bool disable = true )    { disable_oversampling_ = disable; }
-	
 	// VGM file header (see Vgm_Core.h)
 	typedef Vgm_Core::header_t header_t;
 	
@@ -43,27 +35,27 @@ public:
 	
 protected:
 	blargg_err_t track_info_( track_info_t*, int track ) const;
+    blargg_err_t set_track_info_( const track_info_t*, int track );
 	blargg_err_t load_mem_( byte const [], int );
 	blargg_err_t set_sample_rate_( int sample_rate );
 	blargg_err_t start_track_( int );
 	blargg_err_t play_( int count, sample_t  []);
-	blargg_err_t run_clocks( blip_time_t&, int );
+	blargg_err_t skip_( int count );
+    blargg_err_t save_( gme_writer_t, void* );
 	virtual void set_tempo_( double );
 	virtual void mute_voices_( int mask );
-	virtual void set_voice( int, Blip_Buffer*, Blip_Buffer*, Blip_Buffer* );
-	virtual void update_eq( blip_eq_t const& );
 	virtual void unload();
 	
 private:
-	bool disable_oversampling_;
 	unsigned muted_voices;
-	Dual_Resampler resampler;
 	Vgm_Core core;
+    
+    blargg_vector<byte> original_header;
+    blargg_vector<byte> data;
+    track_info_t metadata;
+    track_info_t metadata_j;
 	
 	void check_end();
-	void check_warning();
-	int play_frame( blip_time_t blip_time, int sample_count, sample_t buf [] );
-	static int play_frame_( void*, blip_time_t, int, sample_t [] );
 };
 
 #endif

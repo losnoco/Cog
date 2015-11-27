@@ -1,7 +1,13 @@
 // Game_Music_Emu $vers. http://www.slack.net/~ant/
 
+#ifdef YM2612_EMU_CPP
+
 #include "Ym2612_Emu.h"
-#include "fm.h"
+
+extern "C" {
+#include "../vgmplay/chips/mamedef.h"
+#include "../vgmplay/chips/fm.h"
+}
 
 #include "blargg_errors.h"
 
@@ -12,6 +18,8 @@ Ym2612_Emu::~Ym2612_Emu()
 	if ( impl )
 		ym2612_shutdown( impl );
 }
+
+static BOOST::uint8_t dummy = 0;
 
 const char* Ym2612_Emu::set_rate( double sample_rate, double clock_rate )
 {
@@ -24,10 +32,10 @@ const char* Ym2612_Emu::set_rate( double sample_rate, double clock_rate )
 	if ( !clock_rate )
 		clock_rate = sample_rate * 144.;
 
-	impl = ym2612_init( (long) (clock_rate + 0.5), (long) (sample_rate + 0.5) );
+    impl = ym2612_init( 0, (int) (clock_rate + 0.5), (int) (sample_rate + 0.5), 0, 0, &dummy, 0 );
 	if ( !impl )
 		return blargg_err_memory;
-	
+
 	return 0;
 }
 
@@ -85,3 +93,5 @@ void Ym2612_Emu::run( int pair_count, sample_t* out )
 		pair_count -= todo;
 	}
 }
+
+#endif

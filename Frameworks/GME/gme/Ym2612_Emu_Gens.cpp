@@ -2,6 +2,8 @@
 
 // Based on Gens 2.10 ym2612.c
 
+#ifdef YM2612_EMU_CPP
+
 #include "Ym2612_Emu.h"
 
 #include <assert.h>
@@ -1297,3 +1299,5 @@ void Ym2612_Impl::run( int pair_count, Ym2612_Emu::sample_t out [] )
 }
 
 void Ym2612_Emu::run( int pair_count, sample_t out [] ) { impl->run( pair_count, out ); }
+
+#endif
