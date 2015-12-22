@@ -45,8 +45,8 @@ CMD_PATH=$1
 VECTOR_PATH=$2
 RATE=$3
 
-OPUS_DEMO=$CMD_PATH/opus_demo
-OPUS_COMPARE=$CMD_PATH/opus_compare
+: ${OPUS_DEMO:=$CMD_PATH/opus_demo}
+: ${OPUS_COMPARE:=$CMD_PATH/opus_compare}
 
 if [ -d $VECTOR_PATH ]; then
     echo Test vectors found in $VECTOR_PATH
@@ -55,6 +55,11 @@ else
     #Don't make the test fail here because the test vectors
     #will be distributed separately
     exit 0
+fi
+
+if [ ! -x $OPUS_COMPARE ]; then
+    echo ERROR: Compare program not found: $OPUS_COMPARE
+    exit 1
 fi
 
 if [ -x $OPUS_DEMO ]; then

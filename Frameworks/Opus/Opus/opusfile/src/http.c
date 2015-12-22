@@ -18,7 +18,6 @@
 #include <errno.h>
 #include <limits.h>
 #include <string.h>
-#include <stddef.h>
 
 /*RFCs referenced in this file:
   RFC  761: DOD Standard Transmission Control Protocol
@@ -45,7 +44,8 @@
   RFC 6066: Transport Layer Security (TLS) Extensions: Extension Definitions
   RFC 6125: Representation and Verification of Domain-Based Application Service
    Identity within Internet Public Key Infrastructure Using X.509 (PKIX)
-   Certificates in the Context of Transport Layer Security (TLS)*/
+   Certificates in the Context of Transport Layer Security (TLS)
+  RFC 6555: Happy Eyeballs: Success with Dual-Stack Hosts*/
 
 typedef struct OpusParsedURL   OpusParsedURL;
 typedef struct OpusStringBuf   OpusStringBuf;
@@ -61,7 +61,7 @@ static char *op_string_range_dup(const char *_start,const char *_end){
   if(OP_UNLIKELY(len>=INT_MAX))return NULL;
   ret=(char *)_ogg_malloc(sizeof(*ret)*(len+1));
   if(OP_LIKELY(ret!=NULL)){
-    memcpy(ret,_start,sizeof(*ret)*(len));
+    ret=(char *)memcpy(ret,_start,sizeof(*ret)*(len));
     ret[len]='\0';
   }
   return ret;
@@ -359,6 +359,11 @@ typedef int op_sock;
    when seeking, and time out rapidly.*/
 # define OP_NCONNS_MAX (4)
 
+/*The amount of time before we attempt to re-resolve the host.
+  This is 10 minutes, as recommended in RFC 6555 for expiring cached connection
+   results for dual-stack hosts.*/
+# define OP_RESOLVE_CACHE_TIMEOUT_MS (10*60*(opus_int32)1000)
+
 /*The number of redirections at which we give up.
   The value here is the current default in Firefox.
   RFC 2068 mandated a maximum of 5, but RFC 2616 relaxed that to "a client
@@ -617,6 +622,8 @@ static void op_sb_clear(OpusStringBuf *_sb){
   _ogg_free(_sb->buf);
 }
 
+/*Make sure we have room for at least _capacity characters (plus 1 more for the
+   terminating NUL).*/
 static int op_sb_ensure_capacity(OpusStringBuf *_sb,int _capacity){
   char *buf;
   int   cbuf;
@@ -634,6 +641,8 @@ static int op_sb_ensure_capacity(OpusStringBuf *_sb,int _capacity){
   return 0;
 }
 
+/*Increase the capacity of the buffer, but not to more than _max_size
+   characters (plus 1 more for the terminating NUL).*/
 static int op_sb_grow(OpusStringBuf *_sb,int _max_size){
   char *buf;
   int   cbuf;
@@ -828,6 +837,8 @@ struct OpusHTTPStream{
     struct sockaddr_in  v4;
     struct sockaddr_in6 v6;
   }                addr;
+  /*The last time we re-resolved the host.*/
+  struct timeb     resolve_time;
   /*A buffer used to build HTTP requests.*/
   OpusStringBuf    request;
   /*A buffer used to build proxy CONNECT requests.*/
@@ -839,6 +850,10 @@ struct OpusHTTPStream{
   opus_int64       content_length;
   /*The position indicator used when no connection is active.*/
   opus_int64       pos;
+  /*The host we actually connected to.*/
+  char            *connect_host;
+  /*The port we actually connected to.*/
+  unsigned         connect_port;
   /*The connection we're currently reading from.
     This can be -1 if no connection is active.*/
   int              cur_conni;
@@ -872,6 +887,7 @@ static void op_http_stream_init(OpusHTTPStream *_stream){
   op_sb_init(&_stream->request);
   op_sb_init(&_stream->proxy_connect);
   op_sb_init(&_stream->response);
+  _stream->connect_host=NULL;
   _stream->seekable=0;
 }
 
@@ -911,6 +927,7 @@ static void op_http_stream_clear(OpusHTTPStream *_stream){
   op_sb_clear(&_stream->response);
   op_sb_clear(&_stream->proxy_connect);
   op_sb_clear(&_stream->request);
+  if(_stream->connect_host!=_stream->url.host)_ogg_free(_stream->connect_host);
   op_parsed_url_clear(&_stream->url);
 }
 
@@ -978,11 +995,11 @@ static int op_http_conn_estimate_available(OpusHTTPConn *_conn){
 static opus_int32 op_time_diff_ms(const struct timeb *_end,
  const struct timeb *_start){
   opus_int64 dtime;
-  dtime=_end->time-_start->time;
+  dtime=_end->time-(opus_int64)_start->time;
   OP_ASSERT(_end->millitm<1000);
   OP_ASSERT(_start->millitm<1000);
-  if(OP_UNLIKELY(dtime>(0x7FFFFFFF-1000)/1000))return 0x7FFFFFFF;
-  if(OP_UNLIKELY(dtime<(-0x7FFFFFFF+999)/1000))return -0x7FFFFFFF-1;
+  if(OP_UNLIKELY(dtime>(OP_INT32_MAX-1000)/1000))return OP_INT32_MAX;
+  if(OP_UNLIKELY(dtime<(OP_INT32_MIN+1000)/1000))return OP_INT32_MIN;
   return (opus_int32)dtime*1000+_end->millitm-_start->millitm;
 }
 
@@ -1528,7 +1545,7 @@ static BIO_METHOD op_bio_retry_method={
 
 /*Establish a CONNECT tunnel and pipeline the start of the TLS handshake for
    proxying https URL requests.*/
-int op_http_conn_establish_tunnel(OpusHTTPStream *_stream,
+static int op_http_conn_establish_tunnel(OpusHTTPStream *_stream,
  OpusHTTPConn *_conn,op_sock _fd,SSL *_ssl_conn,BIO *_ssl_bio){
   BIO  *retry_bio;
   char *status_code;
@@ -1797,7 +1814,7 @@ static int op_http_verify_hostname(OpusHTTPStream *_stream,SSL *_ssl_conn){
 }
 
 /*Perform the TLS handshake on a new connection.*/
-int op_http_conn_start_tls(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
+static int op_http_conn_start_tls(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
  op_sock _fd,SSL *_ssl_conn){
   SSL_SESSION *ssl_session;
   BIO         *ssl_bio;
@@ -1863,9 +1880,9 @@ int op_http_conn_start_tls(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
                     left to try.
                     *_addr will be set to NULL in this case.*/
 static int op_sock_connect_next(op_sock _fd,
- struct addrinfo **_addr,int _ai_family){
-  struct addrinfo *addr;
-  int err;
+ const struct addrinfo **_addr,int _ai_family){
+  const struct addrinfo *addr;
+  int                    err;
   addr=*_addr;
   for(;;){
     /*Move to the next address of the requested type.*/
@@ -1884,36 +1901,30 @@ static int op_sock_connect_next(op_sock _fd,
 /*The number of address families to try connecting to simultaneously.*/
 # define OP_NPROTOS (2)
 
-static int op_http_connect(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
- struct addrinfo *_addrs,struct timeb *_start_time){
-  struct addrinfo *addr;
-  struct addrinfo *addrs[OP_NPROTOS];
-  struct pollfd    fds[OP_NPROTOS];
-  int              ai_family;
-  int              nprotos;
-  int              ret;
-  int              pi;
-  int              pj;
+static int op_http_connect_impl(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
+ const struct addrinfo *_addrs,struct timeb *_start_time){
+  const struct addrinfo *addr;
+  const struct addrinfo *addrs[OP_NPROTOS];
+  struct pollfd          fds[OP_NPROTOS];
+  int                    ai_family;
+  int                    nprotos;
+  int                    ret;
+  int                    pi;
+  int                    pj;
   for(pi=0;pi<OP_NPROTOS;pi++)addrs[pi]=NULL;
-  addr=_addrs;
   /*Try connecting via both IPv4 and IPv6 simultaneously, and keep the first
-     one that succeeds.*/
-  for(;addr!=NULL;addr=addr->ai_next){
-    /*Give IPv6 a slight edge by putting it first in the list.*/
-    if(addr->ai_family==AF_INET6){
+     one that succeeds.
+    Start by finding the first address from each family.
+    We order the first connection attempts in the same order the address
+     families were returned in the DNS records in accordance with RFC 6555.*/
+  for(addr=_addrs,nprotos=0;addr!=NULL&&nprotos<OP_NPROTOS;addr=addr->ai_next){
+    if(addr->ai_family==AF_INET6||addr->ai_family==AF_INET){
       OP_ASSERT(addr->ai_addrlen<=sizeof(struct sockaddr_in6));
-      if(addrs[0]==NULL)addrs[0]=addr;
-    }
-    else if(addr->ai_family==AF_INET){
       OP_ASSERT(addr->ai_addrlen<=sizeof(struct sockaddr_in));
-      if(addrs[1]==NULL)addrs[1]=addr;
-    }
-  }
-  /*Consolidate the list of addresses.*/
-  for(pi=nprotos=0;pi<OP_NPROTOS;pi++){
-    if(addrs[pi]!=NULL){
-      addrs[nprotos]=addrs[pi];
-      nprotos++;
+      /*If we've seen this address family before, skip this address for now.*/
+      for(pi=0;pi<nprotos;pi++)if(addrs[pi]->ai_family==addr->ai_family)break;
+      if(pi<nprotos)continue;
+      addrs[nprotos++]=addr;
     }
   }
   /*Pop the connection off the free list and put it on the LRU list.*/
@@ -1925,7 +1936,12 @@ static int op_http_connect(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
   *&_conn->read_time=*_start_time;
   _conn->read_bytes=0;
   _conn->read_rate=0;
-  /*Try to start a connection to each protocol.*/
+  /*Try to start a connection to each protocol.
+    RFC 6555 says it is RECOMMENDED that connection attempts be paced
+     150...250 ms apart "to balance human factors against network load", but
+     that "stateful algorithms" (that's us) "are expected to be more
+     aggressive".
+    We are definitely more aggressive: we don't pace at all.*/
   for(pi=0;pi<nprotos;pi++){
     ai_family=addrs[pi]->ai_family;
     fds[pi].fd=socket(ai_family,SOCK_STREAM,addrs[pi]->ai_protocol);
@@ -2015,6 +2031,29 @@ static int op_http_connect(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
      before sending another one.*/
   op_sock_set_tcp_nodelay(fds[pi].fd,1);
   return 0;
+}
+
+static int op_http_connect(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
+ const struct addrinfo *_addrs,struct timeb *_start_time){
+  struct timeb     resolve_time;
+  struct addrinfo *new_addrs;
+  int              ret;
+  /*Re-resolve the host if we need to (RFC 6555 says we MUST do so
+     occasionally).*/
+  new_addrs=NULL;
+  ftime(&resolve_time);
+  if(_addrs!=&_stream->addr_info||op_time_diff_ms(&resolve_time,
+   &_stream->resolve_time)>=OP_RESOLVE_CACHE_TIMEOUT_MS){
+    new_addrs=op_resolve(_stream->connect_host,_stream->connect_port);
+    if(OP_LIKELY(new_addrs!=NULL)){
+      _addrs=new_addrs;
+      *&_stream->resolve_time=*&resolve_time;
+    }
+    else if(OP_LIKELY(_addrs==NULL))return OP_FALSE;
+  }
+  ret=op_http_connect_impl(_stream,_conn,_addrs,_start_time);
+  if(new_addrs!=NULL)freeaddrinfo(new_addrs);
+  return ret;
 }
 
 # define OP_BASE64_LENGTH(_len) (((_len)+2)/3*4)
@@ -2131,53 +2170,33 @@ static int op_http_allow_pipelining(const char *_server){
 
 static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
  int _skip_certificate_check,const char *_proxy_host,unsigned _proxy_port,
- const char *_proxy_user,const char *_proxy_pass){
+ const char *_proxy_user,const char *_proxy_pass,OpusServerInfo *_info){
   struct addrinfo *addrs;
-  const char      *last_host;
-  unsigned         last_port;
   int              nredirs;
   int              ret;
-  if(_proxy_host!=NULL&&OP_UNLIKELY(_proxy_port>65535U))return OP_EINVAL;
-  last_host=NULL;
-  /*We shouldn't have to initialize last_port, but gcc is too dumb to figure
-     out that last_host!=NULL implies we've already taken one trip through the
-     loop.*/
-  last_port=0;
 #if defined(_WIN32)
   op_init_winsock();
 #endif
   ret=op_parse_url(&_stream->url,_url);
   if(OP_UNLIKELY(ret<0))return ret;
+  if(_proxy_host!=NULL){
+    if(OP_UNLIKELY(_proxy_port>65535U))return OP_EINVAL;
+    _stream->connect_host=op_string_dup(_proxy_host);
+    _stream->connect_port=_proxy_port;
+  }
+  else{
+    _stream->connect_host=_stream->url.host;
+    _stream->connect_port=_stream->url.port;
+  }
+  addrs=NULL;
   for(nredirs=0;nredirs<OP_REDIRECT_LIMIT;nredirs++){
-    struct timeb  start_time;
-    struct timeb  end_time;
-    char         *next;
-    char         *status_code;
-    const char   *host;
-    unsigned      port;
-    int           minor_version_pos;
-    int           v1_1_compat;
-    if(_proxy_host==NULL){
-      host=_stream->url.host;
-      port=_stream->url.port;
-    }
-    else{
-      host=_proxy_host;
-      port=_proxy_port;
-    }
-    /*If connecting to the same place as last time, don't re-resolve it.*/
-    addrs=NULL;
-    if(last_host!=NULL){
-      if(strcmp(last_host,host)==0&&last_port==port)addrs=&_stream->addr_info;
-      else if(_stream->ssl_session!=NULL){
-        /*Forget any cached SSL session from the last host.*/
-        SSL_SESSION_free(_stream->ssl_session);
-        _stream->ssl_session=NULL;
-      }
-      if(last_host!=_proxy_host)_ogg_free((void *)last_host);
-    }
-    last_host=host;
-    last_port=port;
+    OpusParsedURL  next_url;
+    struct timeb   start_time;
+    struct timeb   end_time;
+    char          *next;
+    char          *status_code;
+    int            minor_version_pos;
+    int            v1_1_compat;
     /*Initialize the SSL library if necessary.*/
     if(OP_URL_IS_SSL(&_stream->url)&&_stream->ssl_ctx==NULL){
       SSL_CTX *ssl_ctx;
@@ -2213,6 +2232,7 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
       if(_proxy_host!=NULL){
         /*We need to establish a CONNECT tunnel to handle https proxying.
           Build the request we'll send to do so.*/
+        _stream->proxy_connect.nbuf=0;
         ret=op_sb_append(&_stream->proxy_connect,"CONNECT ",8);
         ret|=op_sb_append_string(&_stream->proxy_connect,_stream->url.host);
         ret|=op_sb_append_port(&_stream->proxy_connect,_stream->url.port);
@@ -2240,12 +2260,7 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
       }
     }
     /*Actually make the connection.*/
-    if(addrs!=&_stream->addr_info){
-      addrs=op_resolve(host,port);
-      if(OP_UNLIKELY(addrs==NULL))return OP_FALSE;
-    }
     ret=op_http_connect(_stream,_stream->conns+0,addrs,&start_time);
-    if(addrs!=&_stream->addr_info)freeaddrinfo(addrs);
     if(OP_UNLIKELY(ret<0))return ret;
     /*Build the request to send.*/
     _stream->request.nbuf=0;
@@ -2313,13 +2328,15 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
     if(status_code[0]=='2'){
       opus_int64 content_length;
       opus_int64 range_length;
-      int        pipeline;
+      int        pipeline_supported;
+      int        pipeline_disabled;
       /*We only understand 20x codes.*/
       if(status_code[1]!='0')return OP_FALSE;
       content_length=-1;
       range_length=-1;
-      /*Pipelining is disabled by default.*/
-      pipeline=0;
+      /*Pipelining must be explicitly enabled.*/
+      pipeline_supported=0;
+      pipeline_disabled=0;
       for(;;){
         char *header;
         char *cdr;
@@ -2377,9 +2394,9 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
              error out and reconnect, adding lots of latency.*/
           ret=op_http_parse_connection(cdr);
           if(OP_UNLIKELY(ret<0))return ret;
-          pipeline-=ret;
+          pipeline_disabled|=ret;
         }
-        else if(strcmp(header,"server")){
+        else if(strcmp(header,"server")==0){
           /*If we got a Server response header, and it wasn't from a known-bad
              server, enable pipelining, as long as it's at least HTTP/1.1.
             According to RFC 2145, the server is supposed to respond with the
@@ -2387,7 +2404,51 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
              suspected that we incorrectly implement the HTTP specification.
             So it should send back at least HTTP/1.1, despite our HTTP/1.0
              request.*/
-          pipeline+=v1_1_compat&&op_http_allow_pipelining(cdr);
+          pipeline_supported=v1_1_compat;
+          if(v1_1_compat)pipeline_disabled|=!op_http_allow_pipelining(cdr);
+          if(_info!=NULL&&_info->server==NULL)_info->server=op_string_dup(cdr);
+        }
+        /*Collect station information headers if the caller requested it.
+          If there's more than one copy of a header, the first one wins.*/
+        else if(_info!=NULL){
+          if(strcmp(header,"content-type")==0){
+            if(_info->content_type==NULL){
+              _info->content_type=op_string_dup(cdr);
+            }
+          }
+          else if(header[0]=='i'&&header[1]=='c'
+           &&(header[2]=='e'||header[2]=='y')&&header[3]=='-'){
+            if(strcmp(header+4,"name")==0){
+              if(_info->name==NULL)_info->name=op_string_dup(cdr);
+            }
+            else if(strcmp(header+4,"description")==0){
+              if(_info->description==NULL)_info->description=op_string_dup(cdr);
+            }
+            else if(strcmp(header+4,"genre")==0){
+              if(_info->genre==NULL)_info->genre=op_string_dup(cdr);
+            }
+            else if(strcmp(header+4,"url")==0){
+              if(_info->url==NULL)_info->url=op_string_dup(cdr);
+            }
+            else if(strcmp(header,"icy-br")==0
+             ||strcmp(header,"ice-bitrate")==0){
+              if(_info->bitrate_kbps<0){
+                opus_int64 bitrate_kbps;
+                /*Just re-using this function to parse a random unsigned
+                   integer field.*/
+                bitrate_kbps=op_http_parse_content_length(cdr);
+                if(bitrate_kbps>=0&&bitrate_kbps<=OP_INT32_MAX){
+                  _info->bitrate_kbps=(opus_int32)bitrate_kbps;
+                }
+              }
+            }
+            else if(strcmp(header,"icy-pub")==0
+             ||strcmp(header,"ice-public")==0){
+              if(_info->is_public<0&&(cdr[0]=='0'||cdr[0]=='1')&&cdr[1]=='\0'){
+                _info->is_public=cdr[0]-'0';
+              }
+            }
+          }
         }
       }
       switch(status_code[2]){
@@ -2422,15 +2483,16 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
         default:return OP_FALSE;
       }
       _stream->content_length=content_length;
-      _stream->pipeline=pipeline>0;
+      _stream->pipeline=pipeline_supported&&!pipeline_disabled;
       /*Pipelining requires HTTP/1.1 persistent connections.*/
-      if(pipeline)_stream->request.buf[minor_version_pos]='1';
+      if(_stream->pipeline)_stream->request.buf[minor_version_pos]='1';
       _stream->conns[0].pos=0;
       _stream->conns[0].end_pos=_stream->seekable?content_length:-1;
       _stream->conns[0].chunk_size=-1;
       _stream->cur_conni=0;
       _stream->connect_rate=op_time_diff_ms(&end_time,&start_time);
       _stream->connect_rate=OP_MAX(_stream->connect_rate,1);
+      if(_info!=NULL)_info->is_ssl=OP_URL_IS_SSL(&_stream->url);
       /*The URL has been successfully opened.*/
       return 0;
     }
@@ -2473,15 +2535,33 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
       if(strcmp(header,"location")==0&&OP_LIKELY(_url==NULL))_url=cdr;
     }
     if(OP_UNLIKELY(_url==NULL))return OP_FALSE;
-    /*Don't free last_host if it came from the last URL.*/
-    if(last_host!=_proxy_host)_stream->url.host=NULL;
-    op_parsed_url_clear(&_stream->url);
-    ret=op_parse_url(&_stream->url,_url);
-    if(OP_UNLIKELY(ret<0)){
-      if(ret==OP_EINVAL)ret=OP_FALSE;
-      if(last_host!=_proxy_host)_ogg_free((void *)last_host);
-      return ret;
+    ret=op_parse_url(&next_url,_url);
+    if(OP_UNLIKELY(ret<0))return ret;
+    if(_proxy_host==NULL||_stream->ssl_session!=NULL){
+      if(strcmp(_stream->url.host,next_url.host)==0
+       &&_stream->url.port==next_url.port){
+        /*Try to skip re-resolve when connecting to the same host.*/
+        addrs=&_stream->addr_info;
+      }
+      else{
+        if(_stream->ssl_session!=NULL){
+          /*Forget any cached SSL session from the last host.*/
+          SSL_SESSION_free(_stream->ssl_session);
+          _stream->ssl_session=NULL;
+        }
+      }
     }
+    if(_proxy_host==NULL){
+      OP_ASSERT(_stream->connect_host==_stream->url.host);
+      _stream->connect_host=next_url.host;
+      _stream->connect_port=next_url.port;
+    }
+    /*Always try to skip re-resolve for proxy connections.*/
+    else addrs=&_stream->addr_info;
+    op_parsed_url_clear(&_stream->url);
+    *&_stream->url=*&next_url;
+    /*TODO: On servers/proxies that support pipelining, we might be able to
+       re-use this connection.*/
     op_http_conn_close(_stream,_stream->conns+0,&_stream->lru_head,1);
   }
   /*Redirection limit reached.*/
@@ -2757,7 +2837,7 @@ static int op_http_conn_read_body(OpusHTTPStream *_stream,
           /*Unless there's a bug, we should be able to convert
              (next_pos,next_end) into valid (_pos,_chunk_size) parameters.*/
           OP_ASSERT(next_end<0
-           ||next_end-next_pos>=0&&next_end-next_pos<=0x7FFFFFFF);
+           ||next_end-next_pos>=0&&next_end-next_pos<=OP_INT32_MAX);
           ret=op_http_conn_open_pos(_stream,_conn,next_pos,
            next_end<0?-1:(opus_int32)(next_end-next_pos));
           if(OP_UNLIKELY(ret<0))return OP_EREAD;
@@ -3125,12 +3205,33 @@ static const OpusFileCallbacks OP_HTTP_CALLBACKS={
 };
 #endif
 
+void opus_server_info_init(OpusServerInfo *_info){
+  _info->name=NULL;
+  _info->description=NULL;
+  _info->genre=NULL;
+  _info->url=NULL;
+  _info->server=NULL;
+  _info->content_type=NULL;
+  _info->bitrate_kbps=-1;
+  _info->is_public=-1;
+  _info->is_ssl=0;
+}
+
+void opus_server_info_clear(OpusServerInfo *_info){
+  _ogg_free(_info->content_type);
+  _ogg_free(_info->server);
+  _ogg_free(_info->url);
+  _ogg_free(_info->genre);
+  _ogg_free(_info->description);
+  _ogg_free(_info->name);
+}
+
 /*The actual URL stream creation function.
   This one isn't extensible like the application-level interface, but because
    it isn't public, we're free to change it in the future.*/
 static void *op_url_stream_create_impl(OpusFileCallbacks *_cb,const char *_url,
  int _skip_certificate_check,const char *_proxy_host,unsigned _proxy_port,
- const char *_proxy_user,const char *_proxy_pass){
+ const char *_proxy_user,const char *_proxy_pass,OpusServerInfo *_info){
   const char *path;
   /*Check to see if this is a valid file: URL.*/
   path=op_parse_file_url(_url);
@@ -3152,7 +3253,7 @@ static void *op_url_stream_create_impl(OpusFileCallbacks *_cb,const char *_url,
     if(OP_UNLIKELY(stream==NULL))return NULL;
     op_http_stream_init(stream);
     ret=op_http_stream_open(stream,_url,_skip_certificate_check,
-     _proxy_host,_proxy_port,_proxy_user,_proxy_pass);
+     _proxy_host,_proxy_port,_proxy_user,_proxy_pass,_info);
     if(OP_UNLIKELY(ret<0)){
       op_http_stream_clear(stream);
       _ogg_free(stream);
@@ -3167,22 +3268,25 @@ static void *op_url_stream_create_impl(OpusFileCallbacks *_cb,const char *_url,
   (void)_proxy_port;
   (void)_proxy_user;
   (void)_proxy_pass;
+  (void)_info;
   return NULL;
 #endif
 }
 
 void *op_url_stream_vcreate(OpusFileCallbacks *_cb,
  const char *_url,va_list _ap){
-  int         skip_certificate_check;
-  const char *proxy_host;
-  opus_int32  proxy_port;
-  const char *proxy_user;
-  const char *proxy_pass;
+  int             skip_certificate_check;
+  const char     *proxy_host;
+  opus_int32      proxy_port;
+  const char     *proxy_user;
+  const char     *proxy_pass;
+  OpusServerInfo *pinfo;
   skip_certificate_check=0;
   proxy_host=NULL;
   proxy_port=8080;
   proxy_user=NULL;
   proxy_pass=NULL;
+  pinfo=NULL;
   for(;;){
     ptrdiff_t request;
     request=va_arg(_ap,char *)-(char *)NULL;
@@ -3205,12 +3309,27 @@ void *op_url_stream_vcreate(OpusFileCallbacks *_cb,
       case OP_HTTP_PROXY_PASS_REQUEST:{
         proxy_pass=va_arg(_ap,const char *);
       }break;
+      case OP_GET_SERVER_INFO_REQUEST:{
+        pinfo=va_arg(_ap,OpusServerInfo *);
+      }break;
       /*Some unknown option.*/
       default:return NULL;
     }
   }
+  /*If the caller has requested server information, proxy it to a local copy to
+     simplify error handling.*/
+  if(pinfo!=NULL){
+    OpusServerInfo  info;
+    void           *ret;
+    opus_server_info_init(&info);
+    ret=op_url_stream_create_impl(_cb,_url,skip_certificate_check,
+     proxy_host,proxy_port,proxy_user,proxy_pass,&info);
+    if(ret!=NULL)*pinfo=*&info;
+    else opus_server_info_clear(&info);
+    return ret;
+  }
   return op_url_stream_create_impl(_cb,_url,skip_certificate_check,
-   proxy_host,proxy_port,proxy_user,proxy_pass);
+   proxy_host,proxy_port,proxy_user,proxy_pass,NULL);
 }
 
 void *op_url_stream_create(OpusFileCallbacks *_cb,

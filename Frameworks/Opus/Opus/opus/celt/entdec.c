@@ -85,7 +85,7 @@
    number=3,
    pages="256--294",
    month=Jul,
-   URL="http://www.stanford.edu/class/ee398/handouts/papers/Moffat98ArithmCoding.pdf"
+   URL="http://www.stanford.edu/class/ee398a/handouts/papers/Moffat98ArithmCoding.pdf"
   }*/
 
 static int ec_read_byte(ec_dec *_this){
@@ -138,7 +138,7 @@ void ec_dec_init(ec_dec *_this,unsigned char *_buf,opus_uint32 _storage){
 
 unsigned ec_decode(ec_dec *_this,unsigned _ft){
   unsigned s;
-  _this->ext=_this->rng/_ft;
+  _this->ext=celt_udiv(_this->rng,_ft);
   s=(unsigned)(_this->val/_this->ext);
   return _ft-EC_MINI(s+1,_ft);
 }

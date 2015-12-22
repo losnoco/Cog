@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <stddef.h>
 #if defined(_WIN32)
 # include <io.h>
 #endif
@@ -142,7 +141,7 @@ static wchar_t *op_utf8_to_utf16(const char *_src){
   size_t   len;
   len=strlen(_src);
   /*Worst-case output is 1 wide character per 1 input character.*/
-  dst=(wchar_t *)malloc(sizeof(*dst)*(len+1));
+  dst=(wchar_t *)_ogg_malloc(sizeof(*dst)*(len+1));
   if(dst!=NULL){
     size_t si;
     size_t di;
@@ -163,7 +162,7 @@ static wchar_t *op_utf8_to_utf16(const char *_src){
           if((c0&0xE0)==0xC0){
             wchar_t w;
             /*Start byte says this is a 2-byte sequence.*/
-            w=c0&0x1F<<6|c1&0x3F;
+            w=(c0&0x1F)<<6|c1&0x3F;
             if(w>=0x80U){
               /*This is a 2-byte sequence that is not overlong.*/
               dst[di++]=w;
@@ -219,7 +218,7 @@ static wchar_t *op_utf8_to_utf16(const char *_src){
         }
       }
       /*If we got here, we encountered an illegal UTF-8 sequence.*/
-      free(dst);
+      _ogg_free(dst);
       return NULL;
     }
     OP_ASSERT(di<=len);
@@ -245,8 +244,8 @@ void *op_fopen(OpusFileCallbacks *_cb,const char *_path,const char *_mode){
     if(wmode==NULL)errno=EINVAL;
     else if(wpath==NULL)errno=ENOENT;
     else fp=_wfopen(wpath,wmode);
-    free(wmode);
-    free(wpath);
+    _ogg_free(wmode);
+    _ogg_free(wpath);
   }
 #endif
   if(fp!=NULL)*_cb=*&OP_FILE_CALLBACKS;
@@ -276,8 +275,8 @@ void *op_freopen(OpusFileCallbacks *_cb,const char *_path,const char *_mode,
     if(wmode==NULL)errno=EINVAL;
     else if(wpath==NULL)errno=ENOENT;
     else fp=_wfreopen(wpath,wmode,(FILE *)_stream);
-    free(wmode);
-    free(wpath);
+    _ogg_free(wmode);
+    _ogg_free(wpath);
   }
 #endif
   if(fp!=NULL)*_cb=*&OP_FILE_CALLBACKS;

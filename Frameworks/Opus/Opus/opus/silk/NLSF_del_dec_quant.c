@@ -8,11 +8,11 @@ this list of conditions and the following disclaimer.
 - Redistributions in binary form must reproduce the above copyright
 notice, this list of conditions and the following disclaimer in the
 documentation and/or other materials provided with the distribution.
-- Neither the name of Internet Society, IETF or IETF Trust, nor the 
+- Neither the name of Internet Society, IETF or IETF Trust, nor the
 names of specific contributors, may be used to endorse or promote
 products derived from this software without specific prior written
 permission.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS”
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
@@ -56,6 +56,28 @@ opus_int32 silk_NLSF_del_dec_quant(                             /* O    Returns 
     opus_int32       RD_max_Q25[       NLSF_QUANT_DEL_DEC_STATES ];
     const opus_uint8 *rates_Q5;
 
+    opus_int out0_Q10_table[2 * NLSF_QUANT_MAX_AMPLITUDE_EXT];
+    opus_int out1_Q10_table[2 * NLSF_QUANT_MAX_AMPLITUDE_EXT];
+
+    for (i = -NLSF_QUANT_MAX_AMPLITUDE_EXT; i <= NLSF_QUANT_MAX_AMPLITUDE_EXT-1; i++)
+    {
+        out0_Q10 = silk_LSHIFT( i, 10 );
+        out1_Q10 = silk_ADD16( out0_Q10, 1024 );
+        if( i > 0 ) {
+            out0_Q10 = silk_SUB16( out0_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
+            out1_Q10 = silk_SUB16( out1_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
+        } else if( i == 0 ) {
+            out1_Q10 = silk_SUB16( out1_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
+        } else if( i == -1 ) {
+            out0_Q10 = silk_ADD16( out0_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
+        } else {
+            out0_Q10 = silk_ADD16( out0_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
+            out1_Q10 = silk_ADD16( out1_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
+        }
+        out0_Q10_table[ i + NLSF_QUANT_MAX_AMPLITUDE_EXT ] = silk_SMULWB( (opus_int32)out0_Q10, quant_step_size_Q16 );
+        out1_Q10_table[ i + NLSF_QUANT_MAX_AMPLITUDE_EXT ] = silk_SMULWB( (opus_int32)out1_Q10, quant_step_size_Q16 );
+    }
+
     silk_assert( (NLSF_QUANT_DEL_DEC_STATES & (NLSF_QUANT_DEL_DEC_STATES-1)) == 0 );     /* must be power of two */
 
     nStates = 1;
@@ -73,21 +95,9 @@ opus_int32 silk_NLSF_del_dec_quant(                             /* O    Returns 
             ind[ j ][ i ] = (opus_int8)ind_tmp;
 
             /* compute outputs for ind_tmp and ind_tmp + 1 */
-            out0_Q10 = silk_LSHIFT( ind_tmp, 10 );
-            out1_Q10 = silk_ADD16( out0_Q10, 1024 );
-            if( ind_tmp > 0 ) {
-                out0_Q10 = silk_SUB16( out0_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
-                out1_Q10 = silk_SUB16( out1_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
-            } else if( ind_tmp == 0 ) {
-                out1_Q10 = silk_SUB16( out1_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
-            } else if( ind_tmp == -1 ) {
-                out0_Q10 = silk_ADD16( out0_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
-            } else {
-                out0_Q10 = silk_ADD16( out0_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
-                out1_Q10 = silk_ADD16( out1_Q10, SILK_FIX_CONST( NLSF_QUANT_LEVEL_ADJ, 10 ) );
-            }
-            out0_Q10  = silk_SMULWB( (opus_int32)out0_Q10, quant_step_size_Q16 );
-            out1_Q10  = silk_SMULWB( (opus_int32)out1_Q10, quant_step_size_Q16 );
+            out0_Q10 = out0_Q10_table[ ind_tmp + NLSF_QUANT_MAX_AMPLITUDE_EXT ];
+            out1_Q10 = out1_Q10_table[ ind_tmp + NLSF_QUANT_MAX_AMPLITUDE_EXT ];
+
             out0_Q10  = silk_ADD16( out0_Q10, pred_Q10 );
             out1_Q10  = silk_ADD16( out1_Q10, pred_Q10 );
             prev_out_Q10[ j           ] = out0_Q10;
@@ -121,7 +131,7 @@ opus_int32 silk_NLSF_del_dec_quant(                             /* O    Returns 
             RD_Q25[ j + nStates ] = silk_SMLABB( silk_MLA( RD_tmp_Q25, silk_SMULBB( diff_Q10, diff_Q10 ), w_Q5[ i ] ), mu_Q20, rate1_Q5 );
         }
 
-        if( nStates < NLSF_QUANT_DEL_DEC_STATES ) {
+        if( nStates <= ( NLSF_QUANT_DEL_DEC_STATES >> 1 ) ) {
             /* double number of states and copy */
             for( j = 0; j < nStates; j++ ) {
                 ind[ j + nStates ][ i ] = ind[ j ][ i ] + 1;

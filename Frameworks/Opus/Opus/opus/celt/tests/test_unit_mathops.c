@@ -36,15 +36,46 @@
 
 #define CELT_C
 
+#include <stdio.h>
+#include <math.h>
 #include "mathops.c"
 #include "entenc.c"
 #include "entdec.c"
 #include "entcode.c"
 #include "bands.c"
+#include "quant_bands.c"
+#include "laplace.c"
 #include "vq.c"
 #include "cwrs.c"
-#include <stdio.h>
-#include <math.h>
+#include "pitch.c"
+#include "celt_lpc.c"
+#include "celt.c"
+
+#if defined(OPUS_X86_MAY_HAVE_SSE) || defined(OPUS_X86_MAY_HAVE_SSE2) || defined(OPUS_X86_MAY_HAVE_SSE4_1)
+# if defined(OPUS_X86_MAY_HAVE_SSE)
+#  include "x86/pitch_sse.c"
+# endif
+# if defined(OPUS_X86_MAY_HAVE_SSE2)
+#  include "x86/pitch_sse2.c"
+# endif
+# if defined(OPUS_X86_MAY_HAVE_SSE4_1)
+#  include "x86/pitch_sse4_1.c"
+#  include "x86/celt_lpc_sse.c"
+# endif
+# include "x86/x86_celt_map.c"
+#elif defined(OPUS_ARM_ASM) || defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
+# include "arm/armcpu.c"
+# if defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
+#  include "arm/celt_neon_intr.c"
+#  if defined(HAVE_ARM_NE10)
+#   include "kiss_fft.c"
+#   include "mdct.c"
+#   include "arm/celt_ne10_fft.c"
+#   include "arm/celt_ne10_mdct.c"
+#  endif
+# endif
+# include "arm/arm_celt_map.c"
+#endif
 
 #ifdef FIXED_POINT
 #define WORD "%d"
@@ -212,7 +243,7 @@ void testexp2(void)
       float error2 = fabs(exp(0.6931471805599453094*x/1024.0)-celt_exp2(x)/65536.0);
       if (error1>0.0002&&error2>0.00004)
       {
-    	 fprintf (stderr, "celt_exp2 failed: x = "WORD", error1 = %f, error2 = %f\n", x,error1,error2);
+         fprintf (stderr, "celt_exp2 failed: x = "WORD", error1 = %f, error2 = %f\n", x,error1,error2);
          ret = 1;
       }
    }

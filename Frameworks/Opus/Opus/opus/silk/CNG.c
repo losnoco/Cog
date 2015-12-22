@@ -8,11 +8,11 @@ this list of conditions and the following disclaimer.
 - Redistributions in binary form must reproduce the above copyright
 notice, this list of conditions and the following disclaimer in the
 documentation and/or other materials provided with the distribution.
-- Neither the name of Internet Society, IETF or IETF Trust, nor the 
+- Neither the name of Internet Society, IETF or IETF Trust, nor the
 names of specific contributors, may be used to endorse or promote
 products derived from this software without specific prior written
 permission.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS”
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
@@ -30,10 +30,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #include "main.h"
+#include "stack_alloc.h"
 
 /* Generates excitation for CNG LPC synthesis */
-static inline void silk_CNG_exc(
-    opus_int32                       residual_Q10[],     /* O    CNG residual signal Q10                     */
+static OPUS_INLINE void silk_CNG_exc(
+    opus_int32                       exc_Q10[],          /* O    CNG excitation signal Q10                   */
     opus_int32                       exc_buf_Q14[],      /* I    Random samples buffer Q10                   */
     opus_int32                       Gain_Q16,           /* I    Gain to apply                               */
     opus_int                         length,             /* I    Length                                      */
@@ -54,7 +55,7 @@ static inline void silk_CNG_exc(
         idx = (opus_int)( silk_RSHIFT( seed, 24 ) & exc_mask );
         silk_assert( idx >= 0 );
         silk_assert( idx <= CNG_BUF_MASK_MAX );
-        residual_Q10[ i ] = (opus_int16)silk_SAT16( silk_SMULWW( exc_buf_Q14[ idx ], Gain_Q16 >> 4 ) );
+        exc_Q10[ i ] = (opus_int16)silk_SAT16( silk_SMULWW( exc_buf_Q14[ idx ], Gain_Q16 >> 4 ) );
     }
     *rand_seed = seed;
 }
@@ -84,10 +85,10 @@ void silk_CNG(
 )
 {
     opus_int   i, subfr;
-    opus_int32 sum_Q6, max_Gain_Q16;
+    opus_int32 sum_Q6, max_Gain_Q16, gain_Q16;
     opus_int16 A_Q12[ MAX_LPC_ORDER ];
-    opus_int32 CNG_sig_Q10[ MAX_FRAME_LENGTH + MAX_LPC_ORDER ];
     silk_CNG_struct *psCNG = &psDec->sCNG;
+    SAVE_STACK;
 
     if( psDec->fs_kHz != psCNG->fs_kHz ) {
         /* Reset state */
@@ -123,9 +124,21 @@ void silk_CNG(
 
     /* Add CNG when packet is lost or during DTX */
     if( psDec->lossCnt ) {
+        VARDECL( opus_int32, CNG_sig_Q10 );
+        ALLOC( CNG_sig_Q10, length + MAX_LPC_ORDER, opus_int32 );
 
         /* Generate CNG excitation */
-        silk_CNG_exc( CNG_sig_Q10 + MAX_LPC_ORDER, psCNG->CNG_exc_buf_Q14, psCNG->CNG_smth_Gain_Q16, length, &psCNG->rand_seed );
+        gain_Q16 = silk_SMULWW( psDec->sPLC.randScale_Q14, psDec->sPLC.prevGain_Q16[1] );
+        if( gain_Q16 >= (1 << 21) || psCNG->CNG_smth_Gain_Q16 > (1 << 23) ) {
+            gain_Q16 = silk_SMULTT( gain_Q16, gain_Q16 );
+            gain_Q16 = silk_SUB_LSHIFT32(silk_SMULTT( psCNG->CNG_smth_Gain_Q16, psCNG->CNG_smth_Gain_Q16 ), gain_Q16, 5 );
+            gain_Q16 = silk_LSHIFT32( silk_SQRT_APPROX( gain_Q16 ), 16 );
+        } else {
+            gain_Q16 = silk_SMULWW( gain_Q16, gain_Q16 );
+            gain_Q16 = silk_SUB_LSHIFT32(silk_SMULWW( psCNG->CNG_smth_Gain_Q16, psCNG->CNG_smth_Gain_Q16 ), gain_Q16, 5 );
+            gain_Q16 = silk_LSHIFT32( silk_SQRT_APPROX( gain_Q16 ), 8 );
+        }
+        silk_CNG_exc( CNG_sig_Q10 + MAX_LPC_ORDER, psCNG->CNG_exc_buf_Q14, gain_Q16, length, &psCNG->rand_seed );
 
         /* Convert CNG NLSF to filter representation */
         silk_NLSF2A( A_Q12, psCNG->CNG_smth_NLSF_Q15, psDec->LPC_order );
@@ -158,10 +171,11 @@ void silk_CNG(
             /* Update states */
             CNG_sig_Q10[ MAX_LPC_ORDER + i ] = silk_ADD_LSHIFT( CNG_sig_Q10[ MAX_LPC_ORDER + i ], sum_Q6, 4 );
 
-            frame[ i ] = silk_ADD_SAT16( frame[ i ], silk_RSHIFT_ROUND( sum_Q6, 6 ) );
+            frame[ i ] = silk_ADD_SAT16( frame[ i ], silk_RSHIFT_ROUND( CNG_sig_Q10[ MAX_LPC_ORDER + i ], 10 ) );
         }
         silk_memcpy( psCNG->CNG_synth_state, &CNG_sig_Q10[ length ], MAX_LPC_ORDER * sizeof( opus_int32 ) );
     } else {
         silk_memset( psCNG->CNG_synth_state, 0, psDec->LPC_order *  sizeof( opus_int32 ) );
     }
+    RESTORE_STACK;
 }

@@ -1,7 +1,16 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Get CPU Info by asm method */
+#undef CPU_INFO_BY_ASM
+
+/* Get CPU Info by c method */
+#undef CPU_INFO_BY_C
+
 /* Custom modes */
 #undef CUSTOM_MODES
+
+/* Do not build the float API */
+#undef DISABLE_FLOAT_API
 
 /* Assertions */
 #undef ENABLE_ASSERTIONS
@@ -21,11 +30,11 @@
 /* Define to 1 if you have the <alloca.h> header file. */
 #undef HAVE_ALLOCA_H
 
+/* NE10 library is installed on host. Make sure it is on target! */
+#undef HAVE_ARM_NE10
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
-
-/* Define to 1 if you have the <getopt.h> header file. */
-#undef HAVE_GETOPT_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -67,11 +76,68 @@
    */
 #undef LT_OBJDIR
 
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-#undef NO_MINUS_C_MINUS_O
+/* Make use of ARM asm optimization */
+#undef OPUS_ARM_ASM
+
+/* Use generic ARMv4 inline asm optimizations */
+#undef OPUS_ARM_INLINE_ASM
+
+/* Use ARMv5E inline asm optimizations */
+#undef OPUS_ARM_INLINE_EDSP
+
+/* Use ARMv6 inline asm optimizations */
+#undef OPUS_ARM_INLINE_MEDIA
+
+/* Use ARM NEON inline asm optimizations */
+#undef OPUS_ARM_INLINE_NEON
+
+/* Define if assembler supports EDSP instructions */
+#undef OPUS_ARM_MAY_HAVE_EDSP
+
+/* Define if assembler supports ARMv6 media instructions */
+#undef OPUS_ARM_MAY_HAVE_MEDIA
+
+/* Define if compiler supports NEON instructions */
+#undef OPUS_ARM_MAY_HAVE_NEON
+
+/* Compiler supports ARMv7 Neon Intrinsics */
+#undef OPUS_ARM_MAY_HAVE_NEON_INTR
+
+/* Define if binary requires EDSP instruction support */
+#undef OPUS_ARM_PRESUME_EDSP
+
+/* Define if binary requires ARMv6 media instruction support */
+#undef OPUS_ARM_PRESUME_MEDIA
+
+/* Define if binary requires NEON instruction support */
+#undef OPUS_ARM_PRESUME_NEON
+
+/* Define if binary requires NEON intrinsics support */
+#undef OPUS_ARM_PRESUME_NEON_INTR
 
 /* This is a build of OPUS */
 #undef OPUS_BUILD
+
+/* Use run-time CPU capabilities detection */
+#undef OPUS_HAVE_RTCD
+
+/* Compiler supports X86 SSE Intrinsics */
+#undef OPUS_X86_MAY_HAVE_SSE
+
+/* Compiler supports X86 SSE2 Intrinsics */
+#undef OPUS_X86_MAY_HAVE_SSE2
+
+/* Compiler supports X86 SSE4.1 Intrinsics */
+#undef OPUS_X86_MAY_HAVE_SSE4_1
+
+/* Define if binary requires SSE intrinsics support */
+#undef OPUS_X86_PRESUME_SSE
+
+/* Define if binary requires SSE2 intrinsics support */
+#undef OPUS_X86_PRESUME_SSE2
+
+/* Define if binary requires SSE4.1 intrinsics support */
+#undef OPUS_X86_PRESUME_SSE4_1
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -90,18 +156,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* The size of `int', as computed by sizeof. */
-#undef SIZEOF_INT
-
-/* The size of `long', as computed by sizeof. */
-#undef SIZEOF_LONG
-
-/* The size of `long long', as computed by sizeof. */
-#undef SIZEOF_LONG_LONG
-
-/* The size of `short', as computed by sizeof. */
-#undef SIZEOF_SHORT
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

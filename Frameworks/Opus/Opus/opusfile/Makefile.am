@@ -30,7 +30,7 @@ examples_seeking_example_LDADD = libopusurl.la libopusfile.la
 
 if OP_WIN32
 if OP_ENABLE_HTTP
-libopusurl_la_SOURCES += src/wincerts.c
+libopusurl_la_SOURCES += src/wincerts.c src/winerrno.h
 libopusurl_la_LIBADD += -lws2_32 -lcrypt32
 endif
 examples_opusfile_example_SOURCES += examples/win32utf8.c examples/win32utf8.h

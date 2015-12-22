@@ -93,24 +93,6 @@ static void print_size(FILE *_fp,opus_int64 _nbytes,int _metric,
   else fprintf(_fp,"%li%s%c",(long)val,_spacer,SUFFIXES[shift]);
 }
 
-/*A version of strncasecmp() that is guaranteed to only ignore the case of
-   ASCII characters.*/
-static int local_strncasecmp(const char *_a,const char *_b,int _n){
-  int i;
-  for(i=0;i<_n;i++){
-    int a;
-    int b;
-    int d;
-    a=_a[i];
-    b=_b[i];
-    if(a>='a'&&a<='z')a-='a'-'A';
-    if(b>='a'&&b<='z')b-='a'-'A';
-    d=a-b;
-    if(d)return d;
-  }
-  return 0;
-}
-
 static void put_le32(unsigned char *_dst,opus_uint32 _x){
   _dst[0]=(unsigned char)(_x&0xFF);
   _dst[1]=(unsigned char)(_x>>8&0xFF);
@@ -168,8 +150,9 @@ int main(int _argc,const char **_argv){
     of=op_open_callbacks(op_fdopen(&cb,fileno(stdin),"rb"),&cb,NULL,0,&ret);
   }
   else{
+    OpusServerInfo info;
     /*Try to treat the argument as a URL.*/
-    of=op_open_url(_argv[1],&ret,NULL);
+    of=op_open_url(_argv[1],&ret,OP_GET_SERVER_INFO(&info),NULL);
 #if 0
     if(of==NULL){
       OpusFileCallbacks  cb={NULL,NULL,NULL,NULL};
@@ -182,10 +165,37 @@ int main(int _argc,const char **_argv){
     }
 #else
     if(of==NULL)of=op_open_file(_argv[1],&ret);
-    /*This is not a very good check, but at least it won't give false
-       positives.*/
-    else is_ssl=strncmp(_argv[1],"https:",6)==0;
 #endif
+    else{
+      if(info.name!=NULL){
+        fprintf(stderr,"Station name: %s\n",info.name);
+      }
+      if(info.description!=NULL){
+        fprintf(stderr,"Station description: %s\n",info.description);
+      }
+      if(info.genre!=NULL){
+        fprintf(stderr,"Station genre: %s\n",info.genre);
+      }
+      if(info.url!=NULL){
+        fprintf(stderr,"Station homepage: %s\n",info.url);
+      }
+      if(info.bitrate_kbps>=0){
+        fprintf(stderr,"Station bitrate: %u kbps\n",
+         (unsigned)info.bitrate_kbps);
+      }
+      if(info.is_public>=0){
+        fprintf(stderr,"%s\n",
+         info.is_public?"Station is public.":"Station is private.");
+      }
+      if(info.server!=NULL){
+        fprintf(stderr,"Server software: %s\n",info.server);
+      }
+      if(info.content_type!=NULL){
+        fprintf(stderr,"Content-Type: %s\n",info.content_type);
+      }
+      is_ssl=info.is_ssl;
+      opus_server_info_clear(&info);
+    }
   }
   if(of==NULL){
     fprintf(stderr,"Failed to open file '%s': %i\n",_argv[1],ret);
@@ -276,7 +286,7 @@ int main(int _argc,const char **_argv){
         for(ci=0;ci<tags->comments;ci++){
           const char *comment;
           comment=tags->user_comments[ci];
-          if(local_strncasecmp(comment,"METADATA_BLOCK_PICTURE=",23)==0){
+          if(opus_tagncompare("METADATA_BLOCK_PICTURE",22,comment)==0){
             OpusPictureTag pic;
             int            err;
             err=opus_picture_tag_parse(&pic,comment);

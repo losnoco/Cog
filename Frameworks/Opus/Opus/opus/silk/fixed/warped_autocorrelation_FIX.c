@@ -8,11 +8,11 @@ this list of conditions and the following disclaimer.
 - Redistributions in binary form must reproduce the above copyright
 notice, this list of conditions and the following disclaimer in the
 documentation and/or other materials provided with the distribution.
-- Neither the name of Internet Society, IETF or IETF Trust, nor the 
+- Neither the name of Internet Society, IETF or IETF Trust, nor the
 names of specific contributors, may be used to endorse or promote
 products derived from this software without specific prior written
 permission.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS”
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
@@ -34,6 +34,12 @@ POSSIBILITY OF SUCH DAMAGE.
 #define QC  10
 #define QS  14
 
+#if defined(MIPSr1_ASM)
+#include "mips/warped_autocorrelation_FIX_mipsr1.h"
+#endif
+
+
+#ifndef OVERRIDE_silk_warped_autocorrelation_FIX
 /* Autocorrelations for a warped frequency axis */
 void silk_warped_autocorrelation_FIX(
           opus_int32                *corr,                                  /* O    Result [order + 1]                                                          */
@@ -86,3 +92,4 @@ void silk_warped_autocorrelation_FIX(
     }
     silk_assert( corr_QC[ 0 ] >= 0 ); /* If breaking, decrease QC*/
 }
+#endif /* OVERRIDE_silk_warped_autocorrelation_FIX */

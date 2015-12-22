@@ -8,11 +8,11 @@ this list of conditions and the following disclaimer.
 - Redistributions in binary form must reproduce the above copyright
 notice, this list of conditions and the following disclaimer in the
 documentation and/or other materials provided with the distribution.
-- Neither the name of Internet Society, IETF or IETF Trust, nor the 
+- Neither the name of Internet Society, IETF or IETF Trust, nor the
 names of specific contributors, may be used to endorse or promote
 products derived from this software without specific prior written
 permission.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS”
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
@@ -161,10 +161,10 @@ void silk_NSQ_wrapper_FLP(
     /* Call NSQ */
     if( psEnc->sCmn.nStatesDelayedDecision > 1 || psEnc->sCmn.warping_Q16 > 0 ) {
         silk_NSQ_del_dec( &psEnc->sCmn, psNSQ, psIndices, x_Q3, pulses, PredCoef_Q12[ 0 ], LTPCoef_Q14,
-            AR2_Q13, HarmShapeGain_Q14, Tilt_Q14, LF_shp_Q14, Gains_Q16, psEncCtrl->pitchL, Lambda_Q10, LTP_scale_Q14 );
+            AR2_Q13, HarmShapeGain_Q14, Tilt_Q14, LF_shp_Q14, Gains_Q16, psEncCtrl->pitchL, Lambda_Q10, LTP_scale_Q14, psEnc->sCmn.arch );
     } else {
         silk_NSQ( &psEnc->sCmn, psNSQ, psIndices, x_Q3, pulses, PredCoef_Q12[ 0 ], LTPCoef_Q14,
-            AR2_Q13, HarmShapeGain_Q14, Tilt_Q14, LF_shp_Q14, Gains_Q16, psEncCtrl->pitchL, Lambda_Q10, LTP_scale_Q14 );
+            AR2_Q13, HarmShapeGain_Q14, Tilt_Q14, LF_shp_Q14, Gains_Q16, psEncCtrl->pitchL, Lambda_Q10, LTP_scale_Q14, psEnc->sCmn.arch );
     }
 }
 
@@ -175,10 +175,12 @@ void silk_quant_LTP_gains_FLP(
     silk_float                      B[ MAX_NB_SUBFR * LTP_ORDER ],      /* I/O  (Un-)quantized LTP gains                    */
     opus_int8                       cbk_index[ MAX_NB_SUBFR ],          /* O    Codebook index                              */
     opus_int8                       *periodicity_index,                 /* O    Periodicity index                           */
+    opus_int32                      *sum_log_gain_Q7,                   /* I/O  Cumulative max prediction gain  */
     const silk_float                W[ MAX_NB_SUBFR * LTP_ORDER * LTP_ORDER ], /* I    Error weights                        */
     const opus_int                  mu_Q10,                             /* I    Mu value (R/D tradeoff)                     */
     const opus_int                  lowComplexity,                      /* I    Flag for low complexity                     */
-    const opus_int                  nb_subfr                            /* I    number of subframes                         */
+    const opus_int                  nb_subfr,                           /* I    number of subframes                         */
+    int                             arch                                /* I    Run-time architecture                       */
 )
 {
     opus_int   i;
@@ -192,7 +194,7 @@ void silk_quant_LTP_gains_FLP(
         W_Q18[ i ] = (opus_int32)silk_float2int( W[ i ] * 262144.0f );
     }
 
-    silk_quant_LTP_gains( B_Q14, cbk_index, periodicity_index, W_Q18, mu_Q10, lowComplexity, nb_subfr );
+    silk_quant_LTP_gains( B_Q14, cbk_index, periodicity_index, sum_log_gain_Q7, W_Q18, mu_Q10, lowComplexity, nb_subfr, arch );
 
     for( i = 0; i < nb_subfr * LTP_ORDER; i++ ) {
         B[ i ] = (silk_float)B_Q14[ i ] * ( 1.0f / 16384.0f );

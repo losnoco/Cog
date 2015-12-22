@@ -28,11 +28,13 @@ static int op_parse_int16le(const unsigned char *_data){
 }
 
 static opus_uint32 op_parse_uint32le(const unsigned char *_data){
-  return _data[0]|_data[1]<<8|_data[2]<<16|_data[3]<<24;
+  return _data[0]|(opus_uint32)_data[1]<<8|
+   (opus_uint32)_data[2]<<16|(opus_uint32)_data[3]<<24;
 }
 
 static opus_uint32 op_parse_uint32be(const unsigned char *_data){
-  return _data[3]|_data[2]<<8|_data[1]<<16|_data[0]<<24;
+  return _data[3]|(opus_uint32)_data[2]<<8|
+   (opus_uint32)_data[1]<<16|(opus_uint32)_data[0]<<24;
 }
 
 int opus_head_parse(OpusHead *_head,const unsigned char *_data,size_t _len){
@@ -90,24 +92,58 @@ void opus_tags_init(OpusTags *_tags){
 }
 
 void opus_tags_clear(OpusTags *_tags){
-  int i;
-  for(i=_tags->comments;i-->0;)_ogg_free(_tags->user_comments[i]);
+  int ci;
+  for(ci=_tags->comments;ci-->0;)_ogg_free(_tags->user_comments[ci]);
   _ogg_free(_tags->user_comments);
   _ogg_free(_tags->comment_lengths);
   _ogg_free(_tags->vendor);
+}
+
+/*Ensure there's room for up to _ncomments comments.*/
+static int op_tags_ensure_capacity(OpusTags *_tags,size_t _ncomments){
+  char   **user_comments;
+  int     *comment_lengths;
+  size_t   size;
+  if(OP_UNLIKELY(_ncomments>=(size_t)INT_MAX))return OP_EFAULT;
+  size=sizeof(*_tags->comment_lengths)*(_ncomments+1);
+  if(size/sizeof(*_tags->comment_lengths)!=_ncomments+1)return OP_EFAULT;
+  comment_lengths=(int *)_ogg_realloc(_tags->comment_lengths,size);
+  if(OP_UNLIKELY(comment_lengths==NULL))return OP_EFAULT;
+  comment_lengths[_ncomments]=0;
+  _tags->comment_lengths=comment_lengths;
+  size=sizeof(*_tags->user_comments)*(_ncomments+1);
+  if(size/sizeof(*_tags->user_comments)!=_ncomments+1)return OP_EFAULT;
+  user_comments=(char **)_ogg_realloc(_tags->user_comments,size);
+  if(OP_UNLIKELY(user_comments==NULL))return OP_EFAULT;
+  user_comments[_ncomments]=NULL;
+  _tags->user_comments=user_comments;
+  return 0;
+}
+
+/*Duplicate a (possibly non-NUL terminated) string with a known length.*/
+static char *op_strdup_with_len(const char *_s,size_t _len){
+  size_t  size;
+  char   *ret;
+  size=sizeof(*ret)*(_len+1);
+  if(OP_UNLIKELY(size<_len))return NULL;
+  ret=(char *)_ogg_malloc(size);
+  if(OP_LIKELY(ret!=NULL)){
+    ret=(char *)memcpy(ret,_s,sizeof(*ret)*_len);
+    ret[_len]='\0';
+  }
+  return ret;
 }
 
 /*The actual implementation of opus_tags_parse().
   Unlike the public API, this function requires _tags to already be
    initialized, modifies its contents before success is guaranteed, and assumes
    the caller will clear it on error.*/
-int opus_tags_parse_impl(OpusTags *_tags,
+static int opus_tags_parse_impl(OpusTags *_tags,
  const unsigned char *_data,size_t _len){
   opus_uint32 count;
-  size_t      size;
   size_t      len;
   int         ncomments;
-  int         i;
+  int         ci;
   len=_len;
   if(len<8)return OP_ENOTFORMAT;
   if(memcmp(_data,"OpusTags",8)!=0)return OP_ENOTFORMAT;
@@ -119,14 +155,8 @@ int opus_tags_parse_impl(OpusTags *_tags,
   len-=4;
   if(count>len)return OP_EBADHEADER;
   if(_tags!=NULL){
-    char *vendor;
-    size=count+1;
-    if(size<count)return OP_EFAULT;
-    vendor=(char *)_ogg_malloc(size);
-    if(vendor==NULL)return OP_EFAULT;
-    memcpy(vendor,_data,count);
-    vendor[count]='\0';
-    _tags->vendor=vendor;
+    _tags->vendor=op_strdup_with_len((char *)_data,count);
+    if(_tags->vendor==NULL)return OP_EFAULT;
   }
   _data+=count;
   len-=count;
@@ -139,20 +169,14 @@ int opus_tags_parse_impl(OpusTags *_tags,
   /*Check for overflow (the API limits this to an int).*/
   if(count>(opus_uint32)INT_MAX-1)return OP_EFAULT;
   if(_tags!=NULL){
-    size=sizeof(*_tags->comment_lengths)*(count+1);
-    if(size/sizeof(*_tags->comment_lengths)!=count+1)return OP_EFAULT;
-    _tags->comment_lengths=(int *)_ogg_malloc(size);
-    size=sizeof(*_tags->user_comments)*(count+1);
-    if(size/sizeof(*_tags->user_comments)!=count+1)return OP_EFAULT;
-    _tags->user_comments=(char **)_ogg_malloc(size);
-    if(_tags->comment_lengths==NULL||_tags->user_comments==NULL){
-      return OP_EFAULT;
-    }
+    int ret;
+    ret=op_tags_ensure_capacity(_tags,count);
+    if(ret<0)return ret;
   }
   ncomments=(int)count;
-  for(i=0;i<ncomments;i++){
+  for(ci=0;ci<ncomments;ci++){
     /*Check to make sure there's minimally sufficient data left in the packet.*/
-    if((size_t)(ncomments-i)>len>>2)return OP_EBADHEADER;
+    if((size_t)(ncomments-ci)>len>>2)return OP_EBADHEADER;
     count=op_parse_uint32le(_data);
     _data+=4;
     len-=4;
@@ -160,21 +184,13 @@ int opus_tags_parse_impl(OpusTags *_tags,
     /*Check for overflow (the API limits this to an int).*/
     if(count>(opus_uint32)INT_MAX)return OP_EFAULT;
     if(_tags!=NULL){
-      _tags->comment_lengths[i]=(int)count;
-      size=count+1;
-      if(size<count)return OP_EFAULT;
-      _tags->user_comments[i]=(char *)_ogg_malloc(size);
-      if(_tags->user_comments[i]==NULL)return OP_EFAULT;
-      _tags->comments=i+1;
-      memcpy(_tags->user_comments[i],_data,count);
-      _tags->user_comments[i][count]='\0';
+      _tags->user_comments[ci]=op_strdup_with_len((char *)_data,count);
+      if(_tags->user_comments[ci]==NULL)return OP_EFAULT;
+      _tags->comment_lengths[ci]=(int)count;
+      _tags->comments=ci+1;
     }
     _data+=count;
     len-=count;
-  }
-  if(_tags!=NULL){
-    _tags->user_comments[ncomments]=NULL;
-    _tags->comment_lengths[ncomments]=0;
   }
   return 0;
 }
@@ -192,23 +208,40 @@ int opus_tags_parse(OpusTags *_tags,const unsigned char *_data,size_t _len){
   else return opus_tags_parse_impl(NULL,_data,_len);
 }
 
-/*Add room for a new comment.*/
-static int op_tags_add_prepare(OpusTags *_tags){
-  char **user_comments;
-  int   *comment_lengths;
-  int    ncomments;
-  ncomments=_tags->comments;
-  user_comments=(char **)_ogg_realloc(_tags->user_comments,
-   sizeof(*_tags->user_comments)*(ncomments+2));
-  if(OP_UNLIKELY(user_comments==NULL))return OP_EFAULT;
-  _tags->user_comments=user_comments;
-  comment_lengths=(int *)_ogg_realloc(_tags->comment_lengths,
-   sizeof(*_tags->comment_lengths)*(ncomments+2));
-  if(OP_UNLIKELY(comment_lengths==NULL))return OP_EFAULT;
-  _tags->comment_lengths=comment_lengths;
-  comment_lengths[ncomments]=comment_lengths[ncomments+1]=0;
-  /*Our caller will always set user_comments[ncomments].*/
-  user_comments[ncomments+1]=NULL;
+/*The actual implementation of opus_tags_copy().
+  Unlike the public API, this function requires _dst to already be
+   initialized, modifies its contents before success is guaranteed, and assumes
+   the caller will clear it on error.*/
+static int opus_tags_copy_impl(OpusTags *_dst,const OpusTags *_src){
+  char *vendor;
+  int   ncomments;
+  int   ret;
+  int   ci;
+  vendor=_src->vendor;
+  _dst->vendor=op_strdup_with_len(vendor,strlen(vendor));
+  if(OP_UNLIKELY(_dst->vendor==NULL))return OP_EFAULT;
+  ncomments=_src->comments;
+  ret=op_tags_ensure_capacity(_dst,ncomments);
+  if(OP_UNLIKELY(ret<0))return ret;
+  for(ci=0;ci<ncomments;ci++){
+    int len;
+    len=_src->comment_lengths[ci];
+    OP_ASSERT(len>=0);
+    _dst->user_comments[ci]=op_strdup_with_len(_src->user_comments[ci],len);
+    if(OP_UNLIKELY(_dst->user_comments[ci]==NULL))return OP_EFAULT;
+    _dst->comment_lengths[ci]=len;
+    _dst->comments=ci+1;
+  }
+  return 0;
+}
+
+int opus_tags_copy(OpusTags *_dst,const OpusTags *_src){
+  OpusTags dst;
+  int      ret;
+  opus_tags_init(&dst);
+  ret=opus_tags_copy_impl(&dst,_src);
+  if(OP_UNLIKELY(ret<0))opus_tags_clear(&dst);
+  else *_dst=*&dst;
   return 0;
 }
 
@@ -218,43 +251,49 @@ int opus_tags_add(OpusTags *_tags,const char *_tag,const char *_value){
   int   value_len;
   int   ncomments;
   int   ret;
-  ret=op_tags_add_prepare(_tags);
+  ncomments=_tags->comments;
+  ret=op_tags_ensure_capacity(_tags,ncomments+1);
   if(OP_UNLIKELY(ret<0))return ret;
   tag_len=strlen(_tag);
   value_len=strlen(_value);
-  ncomments=_tags->comments;
   /*+2 for '=' and '\0'.*/
+  _tags->comment_lengths[ncomments]=0;
   _tags->user_comments[ncomments]=comment=
    (char *)_ogg_malloc(sizeof(*comment)*(tag_len+value_len+2));
   if(OP_UNLIKELY(comment==NULL))return OP_EFAULT;
-  _tags->comment_lengths[ncomments]=tag_len+value_len+1;
   memcpy(comment,_tag,sizeof(*comment)*tag_len);
   comment[tag_len]='=';
   memcpy(comment+tag_len+1,_value,sizeof(*comment)*(value_len+1));
+  _tags->comment_lengths[ncomments]=tag_len+value_len+1;
+  _tags->comments=ncomments+1;
   return 0;
 }
 
 int opus_tags_add_comment(OpusTags *_tags,const char *_comment){
-  char *comment;
-  int   ncomments;
-  int   comment_len;
-  int   ret;
-  ret=op_tags_add_prepare(_tags);
-  if(OP_UNLIKELY(ret<0))return ret;
-  comment_len=strlen(_comment);
+  int comment_len;
+  int ncomments;
+  int ret;
   ncomments=_tags->comments;
-  _tags->user_comments[ncomments]=comment=(char *)
-   _ogg_malloc(sizeof(*_tags->user_comments[ncomments])*(comment_len+1));
-  if(OP_UNLIKELY(comment==NULL))return OP_EFAULT;
+  ret=op_tags_ensure_capacity(_tags,ncomments+1);
+  if(OP_UNLIKELY(ret<0))return ret;
+  comment_len=(int)strlen(_comment);
+  _tags->comment_lengths[ncomments]=0;
+  _tags->user_comments[ncomments]=op_strdup_with_len(_comment,comment_len);
+  if(OP_UNLIKELY(_tags->user_comments[ncomments]==NULL))return OP_EFAULT;
   _tags->comment_lengths[ncomments]=comment_len;
-  memcpy(comment,_comment,sizeof(*comment)*(comment_len+1));
+  _tags->comments=ncomments+1;
   return 0;
 }
 
-/*Is _a a "tag=value" comment whose tag matches _b?
-  0 if it is, a non-zero value otherwise.*/
-static int op_tagcompare(const char *_a,const char *_b,int _n){
-  return op_strncasecmp(_a,_b,_n)||_a[_n]!='=';
+int opus_tagcompare(const char *_tag_name,const char *_comment){
+  return opus_tagncompare(_tag_name,strlen(_tag_name),_comment);
+}
+
+int opus_tagncompare(const char *_tag_name,int _tag_len,const char *_comment){
+  int ret;
+  OP_ASSERT(_tag_len>=0);
+  ret=op_strncasecmp(_tag_name,_comment,_tag_len);
+  return ret?ret:'='-_comment[_tag_len];
 }
 
 const char *opus_tags_query(const OpusTags *_tags,const char *_tag,int _count){
@@ -268,7 +307,7 @@ const char *opus_tags_query(const OpusTags *_tags,const char *_tag,int _count){
   user_comments=_tags->user_comments;
   found=0;
   for(ci=0;ci<ncomments;ci++){
-    if(!op_tagcompare(user_comments[ci],_tag,tag_len)){
+    if(!opus_tagncompare(_tag,tag_len,user_comments[ci])){
       /*We return a pointer to the data, not a copy.*/
       if(_count==found++)return user_comments[ci]+tag_len+1;
     }
@@ -288,23 +327,20 @@ int opus_tags_query_count(const OpusTags *_tags,const char *_tag){
   user_comments=_tags->user_comments;
   found=0;
   for(ci=0;ci<ncomments;ci++){
-    if(!op_tagcompare(user_comments[ci],_tag,tag_len))found++;
+    if(!opus_tagncompare(_tag,tag_len,user_comments[ci]))found++;
   }
   return found;
 }
 
 int opus_tags_get_track_gain(const OpusTags *_tags,int *_gain_q8){
   char **comments;
-  int   *comment_lengths;
   int    ncomments;
   int    ci;
   comments=_tags->user_comments;
-  comment_lengths=_tags->comment_lengths;
   ncomments=_tags->comments;
   /*Look for the first valid R128_TRACK_GAIN tag and use that.*/
   for(ci=0;ci<ncomments;ci++){
-    if(comment_lengths[ci]>16
-     &&op_strncasecmp(comments[ci],"R128_TRACK_GAIN=",16)==0){
+    if(opus_tagncompare("R128_TRACK_GAIN",15,comments[ci])==0){
       char       *p;
       opus_int32  gain_q8;
       int         negative;
@@ -528,7 +564,7 @@ static int opus_picture_tag_parse_impl(OpusPictureTag *_pic,const char *_tag,
   i+=4;
   /*If one of these is set, they all must be, but colors==0 is a valid value.*/
   colors_set=width!=0||height!=0||depth!=0||colors!=0;
-  if(width==0||height==0||depth==0&&colors_set)return OP_ENOTFORMAT;
+  if((width==0||height==0||depth==0)&&colors_set)return OP_ENOTFORMAT;
   data_length=op_parse_uint32be(_buf+i);
   i+=4;
   if(data_length>_buf_sz-i)return OP_ENOTFORMAT;
@@ -617,7 +653,7 @@ int opus_picture_tag_parse(OpusPictureTag *_pic,const char *_tag){
   size_t          buf_sz;
   size_t          tag_length;
   int             ret;
-  if(op_strncasecmp(_tag,"METADATA_BLOCK_PICTURE=",23)==0)_tag+=23;
+  if(opus_tagncompare("METADATA_BLOCK_PICTURE",22,_tag)==0)_tag+=23;
   /*Figure out how much BASE64-encoded data we have.*/
   tag_length=strlen(_tag);
   if(tag_length&3)return OP_ENOTFORMAT;

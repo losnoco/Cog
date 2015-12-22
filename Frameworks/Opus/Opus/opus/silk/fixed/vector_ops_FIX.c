@@ -8,11 +8,11 @@ this list of conditions and the following disclaimer.
 - Redistributions in binary form must reproduce the above copyright
 notice, this list of conditions and the following disclaimer in the
 documentation and/or other materials provided with the distribution.
-- Neither the name of Internet Society, IETF or IETF Trust, nor the 
+- Neither the name of Internet Society, IETF or IETF Trust, nor the
 names of specific contributors, may be used to endorse or promote
 products derived from this software without specific prior written
 permission.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS”
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
@@ -30,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #include "SigProc_FIX.h"
+#include "pitch.h"
 
 /* Copy and multiply a vector by a constant */
 void silk_scale_copy_vector16(
@@ -70,18 +71,23 @@ void silk_scale_vector32_Q26_lshift_18(
 opus_int32 silk_inner_prod_aligned(
     const opus_int16 *const     inVec1,             /*    I input vector 1                                              */
     const opus_int16 *const     inVec2,             /*    I input vector 2                                              */
-    const opus_int              len                 /*    I vector lengths                                              */
+    const opus_int              len,                /*    I vector lengths                                              */
+    int                         arch                /*    I Run-time architecture                                       */
 )
 {
+#ifdef FIXED_POINT
+   return celt_inner_prod(inVec1, inVec2, len, arch);
+#else
     opus_int   i;
     opus_int32 sum = 0;
     for( i = 0; i < len; i++ ) {
         sum = silk_SMLABB( sum, inVec1[ i ], inVec2[ i ] );
     }
     return sum;
+#endif
 }
 
-opus_int64 silk_inner_prod16_aligned_64(
+opus_int64 silk_inner_prod16_aligned_64_c(
     const opus_int16            *inVec1,            /*    I input vector 1                                              */
     const opus_int16            *inVec2,            /*    I input vector 2                                              */
     const opus_int              len                 /*    I vector lengths                                              */
@@ -93,35 +99,4 @@ opus_int64 silk_inner_prod16_aligned_64(
         sum = silk_SMLALBB( sum, inVec1[ i ], inVec2[ i ] );
     }
     return sum;
-}
-
-/* Function that returns the maximum absolut value of the input vector */
-opus_int16 silk_int16_array_maxabs(                 /* O   Maximum absolute value, max: 2^15-1                          */
-    const opus_int16            *vec,               /* I   Input vector  [len]                                          */
-    const opus_int32            len                 /* I   Length of input vector                                       */
-)
-{
-    opus_int32 max = 0, i, lvl = 0, ind;
-    if( len == 0 ) return 0;
-
-    ind = len - 1;
-    max = silk_SMULBB( vec[ ind ], vec[ ind ] );
-    for( i = len - 2; i >= 0; i-- ) {
-        lvl = silk_SMULBB( vec[ i ], vec[ i ] );
-        if( lvl > max ) {
-            max = lvl;
-            ind = i;
-        }
-    }
-
-    /* Do not return 32768, as it will not fit in an int16 so may lead to problems later on */
-    if( max >= 1073676289 ) {           /* (2^15-1)^2 = 1073676289 */
-        return( silk_int16_MAX );
-    } else {
-        if( vec[ ind ] < 0 ) {
-            return( -vec[ ind ] );
-        } else {
-            return(  vec[ ind ] );
-        }
-    }
 }

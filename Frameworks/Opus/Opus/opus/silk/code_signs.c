@@ -8,11 +8,11 @@ this list of conditions and the following disclaimer.
 - Redistributions in binary form must reproduce the above copyright
 notice, this list of conditions and the following disclaimer in the
 documentation and/or other materials provided with the distribution.
-- Neither the name of Internet Society, IETF or IETF Trust, nor the 
+- Neither the name of Internet Society, IETF or IETF Trust, nor the
 names of specific contributors, may be used to endorse or promote
 products derived from this software without specific prior written
 permission.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS”
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
@@ -74,7 +74,7 @@ void silk_encode_signs(
 /* Decodes signs of excitation */
 void silk_decode_signs(
     ec_dec                      *psRangeDec,                        /* I/O  Compressor data structure                   */
-    opus_int                    pulses[],                           /* I/O  pulse signal                                */
+    opus_int16                  pulses[],                           /* I/O  pulse signal                                */
     opus_int                    length,                             /* I    length of input                             */
     const opus_int              signalType,                         /* I    Signal type                                 */
     const opus_int              quantOffsetType,                    /* I    Quantization offset type                    */
@@ -83,7 +83,7 @@ void silk_decode_signs(
 {
     opus_int         i, j, p;
     opus_uint8       icdf[ 2 ];
-    opus_int         *q_ptr;
+    opus_int16       *q_ptr;
     const opus_uint8 *icdf_ptr;
 
     icdf[ 1 ] = 0;

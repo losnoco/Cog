@@ -156,8 +156,8 @@ static int op_get_data(OggOpusFile *_of,int _nbytes){
 /*Save a tiny smidge of verbosity to make the code more readable.*/
 static int op_seek_helper(OggOpusFile *_of,opus_int64 _offset){
   if(_offset==_of->offset)return 0;
-  if(_of->callbacks.seek==NULL||
-   (*_of->callbacks.seek)(_of->source,_offset,SEEK_SET)){
+  if(_of->callbacks.seek==NULL
+   ||(*_of->callbacks.seek)(_of->source,_offset,SEEK_SET)){
     return OP_EREAD;
   }
   _of->offset=_offset;
@@ -167,7 +167,7 @@ static int op_seek_helper(OggOpusFile *_of,opus_int64 _offset){
 
 /*Get the current position indicator of the underlying source.
   This should be the same as the value reported by tell().*/
-static opus_int64 op_position(OggOpusFile *_of){
+static opus_int64 op_position(const OggOpusFile *_of){
   /*The current position indicator is _not_ simply offset.
     We may also have unprocessed, buffered data in the sync state.*/
   return _of->offset+_of->oy.fill-_of->oy.returned;
@@ -226,7 +226,7 @@ static opus_int64 op_get_next_page(OggOpusFile *_of,ogg_page *_og,
   return OP_FALSE;
 }
 
-static int op_add_serialno(ogg_page *_og,
+static int op_add_serialno(const ogg_page *_og,
  ogg_uint32_t **_serialnos,int *_nserialnos,int *_cserialnos){
   ogg_uint32_t *serialnos;
   int           nserialnos;
@@ -259,7 +259,7 @@ static int op_lookup_serialno(ogg_uint32_t _s,
   return i<_nserialnos;
 }
 
-static int op_lookup_page_serialno(ogg_page *_og,
+static int op_lookup_page_serialno(const ogg_page *_og,
  const ogg_uint32_t *_serialnos,int _nserialnos){
   return op_lookup_serialno(ogg_page_serialno(_og),_serialnos,_nserialnos);
 }
@@ -496,30 +496,25 @@ static int op_fetch_headers_impl(OggOpusFile *_of,OpusHead *_head,
       ogg_stream_pagein(&_of->os,_og);
       if(OP_LIKELY(ogg_stream_packetout(&_of->os,&op)>0)){
         ret=opus_head_parse(_head,op.packet,op.bytes);
-        /*If it's just a stream type we don't recognize, ignore it.*/
-        if(ret==OP_ENOTFORMAT)continue;
-        /*Everything else is fatal.*/
-        if(OP_UNLIKELY(ret<0))return ret;
         /*Found a valid Opus header.
           Continue setup.*/
-        _of->ready_state=OP_STREAMSET;
+        if(OP_LIKELY(ret>=0))_of->ready_state=OP_STREAMSET;
+        /*If it's just a stream type we don't recognize, ignore it.
+          Everything else is fatal.*/
+        else if(ret!=OP_ENOTFORMAT)return ret;
       }
     }
     /*Get the next page.
       No need to clamp the boundary offset against _of->end, as all errors
-       become OP_ENOTFORMAT.*/
+       become OP_ENOTFORMAT or OP_EBADHEADER.*/
     if(OP_UNLIKELY(op_get_next_page(_of,_og,
      OP_ADV_OFFSET(_of->offset,OP_CHUNK_SIZE))<0)){
-      return OP_ENOTFORMAT;
-    }
-    /*If this page also belongs to our Opus stream, submit it and break.*/
-    if(_of->ready_state==OP_STREAMSET
-     &&_of->os.serialno==ogg_page_serialno(_og)){
-      ogg_stream_pagein(&_of->os,_og);
-      break;
+      return _of->ready_state<OP_STREAMSET?OP_ENOTFORMAT:OP_EBADHEADER;
     }
   }
   if(OP_UNLIKELY(_of->ready_state!=OP_STREAMSET))return OP_ENOTFORMAT;
+  /*If the first non-header page belonged to our Opus stream, submit it.*/
+  if(_of->os.serialno==ogg_page_serialno(_og))ogg_stream_pagein(&_of->os,_og);
   /*Loop getting packets.*/
   for(;;){
     switch(ogg_stream_packetout(&_of->os,&op)){
@@ -1003,7 +998,7 @@ static int op_find_final_pcm_offset(OggOpusFile *_of,
 
 /*Rescale the number _x from the range [0,_from] to [0,_to].
   _from and _to must be positive.*/
-opus_int64 op_rescale64(opus_int64 _x,opus_int64 _from,opus_int64 _to){
+static opus_int64 op_rescale64(opus_int64 _x,opus_int64 _from,opus_int64 _to){
   opus_int64 frac;
   opus_int64 ret;
   int        i;
@@ -1147,7 +1142,7 @@ static int op_bisect_forward_serialno(OggOpusFile *_of,
        (potentially not a page we care about).*/
     /*Scan the seek records we already have to save us some bisection.*/
     for(sri=0;sri<nsr;sri++){
-      if(op_lookup_serialno(_sr[sri].serialno,*_serialnos,*_nserialnos))break;
+      if(op_lookup_serialno(_sr[sri].serialno,serialnos,nserialnos))break;
     }
     /*Is the last page in our current list of serial numbers?*/
     if(sri<=0)break;
@@ -1333,11 +1328,11 @@ static void op_update_gain(OggOpusFile *_of){
 }
 
 static int op_make_decode_ready(OggOpusFile *_of){
-  OpusHead *head;
-  int       li;
-  int       stream_count;
-  int       coupled_count;
-  int       channel_count;
+  const OpusHead *head;
+  int             li;
+  int             stream_count;
+  int             coupled_count;
+  int             channel_count;
   if(_of->ready_state>OP_STREAMSET)return 0;
   if(OP_UNLIKELY(_of->ready_state<OP_STREAMSET))return OP_EFAULT;
   li=_of->seekable?_of->cur_link:0;
@@ -1519,14 +1514,12 @@ static int op_open1(OggOpusFile *_of,
   seekable=_cb->seek!=NULL&&(*_cb->seek)(_source,0,SEEK_CUR)!=-1;
   /*If seek is implemented, tell must also be implemented.*/
   if(seekable){
+    opus_int64 pos;
     if(OP_UNLIKELY(_of->callbacks.tell==NULL))return OP_EINVAL;
-    else{
-      opus_int64 pos;
-      pos=(*_of->callbacks.tell)(_of->source);
-      /*If the current position is not equal to the initial bytes consumed,
-         absolute seeking will not work.*/
-      if(OP_UNLIKELY(pos!=(opus_int64)_initial_bytes))return OP_EINVAL;
-    }
+    pos=(*_of->callbacks.tell)(_of->source);
+    /*If the current position is not equal to the initial bytes consumed,
+       absolute seeking will not work.*/
+    if(OP_UNLIKELY(pos!=(opus_int64)_initial_bytes))return OP_EINVAL;
   }
   _of->seekable=seekable;
   /*Don't seek yet.
@@ -1686,25 +1679,25 @@ void op_free(OggOpusFile *_of){
   }
 }
 
-int op_seekable(OggOpusFile *_of){
+int op_seekable(const OggOpusFile *_of){
   return _of->seekable;
 }
 
-int op_link_count(OggOpusFile *_of){
+int op_link_count(const OggOpusFile *_of){
   return _of->nlinks;
 }
 
-ogg_uint32_t op_serialno(OggOpusFile *_of,int _li){
+ogg_uint32_t op_serialno(const OggOpusFile *_of,int _li){
   if(OP_UNLIKELY(_li>=_of->nlinks))_li=_of->nlinks-1;
   if(!_of->seekable)_li=0;
   return _of->links[_li<0?_of->cur_link:_li].serialno;
 }
 
-int op_channel_count(OggOpusFile *_of,int _li){
+int op_channel_count(const OggOpusFile *_of,int _li){
   return op_head(_of,_li)->channel_count;
 }
 
-opus_int64 op_raw_total(OggOpusFile *_of,int _li){
+opus_int64 op_raw_total(const OggOpusFile *_of,int _li){
   if(OP_UNLIKELY(_of->ready_state<OP_OPENED)
    ||OP_UNLIKELY(!_of->seekable)
    ||OP_UNLIKELY(_li>=_of->nlinks)){
@@ -1715,7 +1708,7 @@ opus_int64 op_raw_total(OggOpusFile *_of,int _li){
    -_of->links[_li].offset;
 }
 
-ogg_int64_t op_pcm_total(OggOpusFile *_of,int _li){
+ogg_int64_t op_pcm_total(const OggOpusFile *_of,int _li){
   OggOpusLink *links;
   ogg_int64_t  diff;
   int          nlinks;
@@ -1745,13 +1738,13 @@ ogg_int64_t op_pcm_total(OggOpusFile *_of,int _li){
   return diff-links[_li].head.pre_skip;
 }
 
-const OpusHead *op_head(OggOpusFile *_of,int _li){
+const OpusHead *op_head(const OggOpusFile *_of,int _li){
   if(OP_UNLIKELY(_li>=_of->nlinks))_li=_of->nlinks-1;
   if(!_of->seekable)_li=0;
   return &_of->links[_li<0?_of->cur_link:_li].head;
 }
 
-const OpusTags *op_tags(OggOpusFile *_of,int _li){
+const OpusTags *op_tags(const OggOpusFile *_of,int _li){
   if(OP_UNLIKELY(_li>=_of->nlinks))_li=_of->nlinks-1;
   if(!_of->seekable){
     if(_of->ready_state<OP_STREAMSET&&_of->ready_state!=OP_PARTOPEN){
@@ -1763,7 +1756,7 @@ const OpusTags *op_tags(OggOpusFile *_of,int _li){
   return &_of->links[_li].tags;
 }
 
-int op_current_link(OggOpusFile *_of){
+int op_current_link(const OggOpusFile *_of){
   if(OP_UNLIKELY(_of->ready_state<OP_OPENED))return OP_EINVAL;
   return _of->cur_link;
 }
@@ -1774,11 +1767,13 @@ static opus_int32 op_calc_bitrate(opus_int64 _bytes,ogg_int64_t _samples){
   /*These rates are absurd, but let's handle them anyway.*/
   if(OP_UNLIKELY(_bytes>(OP_INT64_MAX-(_samples>>1))/(48000*8))){
     ogg_int64_t den;
-    if(OP_UNLIKELY(_bytes/(0x7FFFFFFFF/(48000*8))>=_samples))return 0x7FFFFFFF;
+    if(OP_UNLIKELY(_bytes/(OP_INT32_MAX/(48000*8))>=_samples)){
+      return OP_INT32_MAX;
+    }
     den=_samples/(48000*8);
     return (opus_int32)((_bytes+(den>>1))/den);
   }
-  if(OP_UNLIKELY(_samples<=0))return 0x7FFFFFFF;
+  if(OP_UNLIKELY(_samples<=0))return OP_INT32_MAX;
   /*This can't actually overflow in normal operation: even with a pre-skip of
      545 2.5 ms frames with 8 streams running at 1282*8+1 bytes per packet
      (1275 byte frames + Opus framing overhead + Ogg lacing values), that all
@@ -1786,10 +1781,11 @@ static opus_int32 op_calc_bitrate(opus_int64 _bytes,ogg_int64_t _samples){
     The only way to get bitrates larger than that is with excessive Opus
      padding, more encoded streams than output channels, or lots and lots of
      Ogg pages with no packets on them.*/
-  return (opus_int32)OP_MIN((_bytes*48000*8+(_samples>>1))/_samples,0x7FFFFFFF);
+  return (opus_int32)OP_MIN((_bytes*48000*8+(_samples>>1))/_samples,
+   OP_INT32_MAX);
 }
 
-opus_int32 op_bitrate(OggOpusFile *_of,int _li){
+opus_int32 op_bitrate(const OggOpusFile *_of,int _li){
   if(OP_UNLIKELY(_of->ready_state<OP_OPENED)||OP_UNLIKELY(!_of->seekable)
    ||OP_UNLIKELY(_li>=_of->nlinks)){
     return OP_EINVAL;
@@ -1825,11 +1821,8 @@ static int op_fetch_and_process_page(OggOpusFile *_of,
   int           seekable;
   int           cur_link;
   int           ret;
-  if(OP_LIKELY(_of->ready_state>=OP_INITSET)
-   &&OP_LIKELY(_of->op_pos<_of->op_count)){
-    /*We're ready to decode and have at least one packet available already.*/
-    return 1;
-  }
+  /*We shouldn't get here if we have unprocessed packets.*/
+  OP_ASSERT(_of->ready_state<OP_INITSET||_of->op_pos>=_of->op_count);
   if(!_readp)return 0;
   seekable=_of->seekable;
   links=_of->links;
@@ -2084,7 +2077,7 @@ static int op_fetch_and_process_page(OggOpusFile *_of,
 }
 
 int op_raw_seek(OggOpusFile *_of,opus_int64 _pos){
-  int          ret;
+  int ret;
   if(OP_UNLIKELY(_of->ready_state<OP_OPENED))return OP_EINVAL;
   /*Don't dump the decoder state if we can't seek.*/
   if(OP_UNLIKELY(!_of->seekable))return OP_ENOSEEK;
@@ -2115,10 +2108,10 @@ int op_raw_seek(OggOpusFile *_of,opus_int64 _pos){
    position in an individual link.*/
 static ogg_int64_t op_get_granulepos(const OggOpusFile *_of,
  ogg_int64_t _pcm_offset,int *_li){
-  OggOpusLink *links;
-  ogg_int64_t  duration;
-  int          nlinks;
-  int          li;
+  const OggOpusLink *links;
+  ogg_int64_t        duration;
+  int                nlinks;
+  int                li;
   OP_ASSERT(_pcm_offset>=0);
   nlinks=_of->nlinks;
   links=_of->links;
@@ -2166,25 +2159,25 @@ static ogg_int64_t op_get_granulepos(const OggOpusFile *_of,
   Account for that (and report it as an error condition).*/
 static int op_pcm_seek_page(OggOpusFile *_of,
  ogg_int64_t _target_gp,int _li){
-  OggOpusLink  *link;
-  ogg_page      og;
-  ogg_int64_t   pcm_pre_skip;
-  ogg_int64_t   pcm_start;
-  ogg_int64_t   pcm_end;
-  ogg_int64_t   best_gp;
-  ogg_int64_t   diff;
-  ogg_uint32_t  serialno;
-  opus_int32    pre_skip;
-  opus_int64    begin;
-  opus_int64    end;
-  opus_int64    boundary;
-  opus_int64    best;
-  opus_int64    page_offset;
-  opus_int64    d0;
-  opus_int64    d1;
-  opus_int64    d2;
-  int           force_bisect;
-  int           ret;
+  const OggOpusLink *link;
+  ogg_page           og;
+  ogg_int64_t        pcm_pre_skip;
+  ogg_int64_t        pcm_start;
+  ogg_int64_t        pcm_end;
+  ogg_int64_t        best_gp;
+  ogg_int64_t        diff;
+  ogg_uint32_t       serialno;
+  opus_int32         pre_skip;
+  opus_int64         begin;
+  opus_int64         end;
+  opus_int64         boundary;
+  opus_int64         best;
+  opus_int64         page_offset;
+  opus_int64         d0;
+  opus_int64         d1;
+  opus_int64         d2;
+  int                force_bisect;
+  int                ret;
   _of->bytes_tracked=0;
   _of->samples_tracked=0;
   link=_of->links+_li;
@@ -2405,16 +2398,16 @@ static int op_pcm_seek_page(OggOpusFile *_of,
 }
 
 int op_pcm_seek(OggOpusFile *_of,ogg_int64_t _pcm_offset){
-  OggOpusLink *link;
-  ogg_int64_t  pcm_start;
-  ogg_int64_t  target_gp;
-  ogg_int64_t  prev_packet_gp;
-  ogg_int64_t  skip;
-  ogg_int64_t  diff;
-  int          op_count;
-  int          op_pos;
-  int          ret;
-  int          li;
+  const OggOpusLink *link;
+  ogg_int64_t        pcm_start;
+  ogg_int64_t        target_gp;
+  ogg_int64_t        prev_packet_gp;
+  ogg_int64_t        skip;
+  ogg_int64_t        diff;
+  int                op_count;
+  int                op_pos;
+  int                ret;
+  int                li;
   if(OP_UNLIKELY(_of->ready_state<OP_OPENED))return OP_EINVAL;
   if(OP_UNLIKELY(!_of->seekable))return OP_ENOSEEK;
   if(OP_UNLIKELY(_pcm_offset<0))return OP_EINVAL;
@@ -2458,7 +2451,7 @@ int op_pcm_seek(OggOpusFile *_of,ogg_int64_t _pcm_offset){
   if(_pcm_offset<=link->head.pre_skip)skip=0;
   else skip=OP_MAX(_pcm_offset-80*48,0);
   OP_ASSERT(_pcm_offset-skip>=0);
-  OP_ASSERT(_pcm_offset-skip<0x7FFFFFFF-120*48);
+  OP_ASSERT(_pcm_offset-skip<OP_INT32_MAX-120*48);
   /*Skip packets until we find one with samples past our skip target.*/
   for(;;){
     op_count=_of->op_count;
@@ -2484,7 +2477,7 @@ int op_pcm_seek(OggOpusFile *_of,ogg_int64_t _pcm_offset){
   /*We skipped too far.
     Either the timestamps were illegal or there was a hole in the data.*/
   if(diff>skip)return OP_EBADLINK;
-  OP_ASSERT(_pcm_offset-diff<0x7FFFFFFF);
+  OP_ASSERT(_pcm_offset-diff<OP_INT32_MAX);
   /*TODO: If there are further holes/illegal timestamps, we still won't decode
      to the correct sample.
     However, at least op_pcm_tell() will report the correct value immediately
@@ -2493,7 +2486,7 @@ int op_pcm_seek(OggOpusFile *_of,ogg_int64_t _pcm_offset){
   return 0;
 }
 
-opus_int64 op_raw_tell(OggOpusFile *_of){
+opus_int64 op_raw_tell(const OggOpusFile *_of){
   if(OP_UNLIKELY(_of->ready_state<OP_OPENED))return OP_EINVAL;
   return _of->offset;
 }
@@ -2503,10 +2496,10 @@ opus_int64 op_raw_tell(OggOpusFile *_of){
   For unseekable sources, this gets reset to 0 at the beginning of each link.*/
 static ogg_int64_t op_get_pcm_offset(const OggOpusFile *_of,
  ogg_int64_t _gp,int _li){
-  OggOpusLink *links;
-  ogg_int64_t  pcm_offset;
-  ogg_int64_t  delta;
-  int          li;
+  const OggOpusLink *links;
+  ogg_int64_t        pcm_offset;
+  ogg_int64_t        delta;
+  int                li;
   links=_of->links;
   pcm_offset=0;
   OP_ASSERT(_li<_of->nlinks);
@@ -2521,15 +2514,23 @@ static ogg_int64_t op_get_pcm_offset(const OggOpusFile *_of,
     _gp=links[_li].pcm_end;
   }
   if(OP_LIKELY(op_granpos_cmp(_gp,links[_li].pcm_start)>0)){
-    OP_ALWAYS_TRUE(!op_granpos_diff(&delta,_gp,links[_li].pcm_start));
+    if(OP_UNLIKELY(op_granpos_diff(&delta,_gp,links[_li].pcm_start)<0)){
+      /*This means an unseekable stream claimed to have a page from more than
+         2 billion days after we joined.*/
+      OP_ASSERT(!_of->seekable);
+      return OP_INT64_MAX;
+    }
     if(delta<links[_li].head.pre_skip)delta=0;
     else delta-=links[_li].head.pre_skip;
+    /*In the seekable case, _gp was limited by pcm_end.
+      In the unseekable case, pcm_offset should be 0.*/
+    OP_ASSERT(pcm_offset<=OP_INT64_MAX-delta);
     pcm_offset+=delta;
   }
   return pcm_offset;
 }
 
-ogg_int64_t op_pcm_tell(OggOpusFile *_of){
+ogg_int64_t op_pcm_tell(const OggOpusFile *_of){
   ogg_int64_t gp;
   int         nbuffered;
   int         li;
@@ -2543,6 +2544,12 @@ ogg_int64_t op_pcm_tell(OggOpusFile *_of){
     gp=_of->links[li].pcm_end;
   }
   return op_get_pcm_offset(_of,gp,li);
+}
+
+void op_set_decode_callback(OggOpusFile *_of,
+ op_decode_cb_func _decode_cb,void *_ctx){
+  _of->decode_cb=_decode_cb;
+  _of->decode_cb_ctx=_ctx;
 }
 
 int op_set_gain_offset(OggOpusFile *_of,
@@ -2560,15 +2567,22 @@ int op_set_gain_offset(OggOpusFile *_of,
   return 0;
 }
 
+void op_set_dither_enabled(OggOpusFile *_of,int _enabled){
+#if !defined(OP_FIXED_POINT)
+  _of->dither_disabled=!_enabled;
+  if(!_enabled)_of->dither_mute=65;
+#endif
+}
+
 /*Allocate the decoder scratch buffer.
   This is done lazily, since if the user provides large enough buffers, we'll
    never need it.*/
 static int op_init_buffer(OggOpusFile *_of){
   int nchannels_max;
   if(_of->seekable){
-    OggOpusLink *links;
-    int          nlinks;
-    int          li;
+    const OggOpusLink *links;
+    int                nlinks;
+    int                li;
     links=_of->links;
     nlinks=_of->nlinks;
     nchannels_max=1;
@@ -2581,6 +2595,39 @@ static int op_init_buffer(OggOpusFile *_of){
    sizeof(*_of->od_buffer)*nchannels_max*120*48);
   if(_of->od_buffer==NULL)return OP_EFAULT;
   return 0;
+}
+
+/*Decode a single packet into the target buffer.*/
+static int op_decode(OggOpusFile *_of,op_sample *_pcm,
+ const ogg_packet *_op,int _nsamples,int _nchannels){
+  int ret;
+  /*First we try using the application-provided decode callback.*/
+  if(_of->decode_cb!=NULL){
+#if defined(OP_FIXED_POINT)
+    ret=(*_of->decode_cb)(_of->decode_cb_ctx,_of->od,_pcm,_op,
+     _nsamples,_nchannels,OP_DEC_FORMAT_SHORT,_of->cur_link);
+#else
+    ret=(*_of->decode_cb)(_of->decode_cb_ctx,_of->od,_pcm,_op,
+     _nsamples,_nchannels,OP_DEC_FORMAT_FLOAT,_of->cur_link);
+#endif
+  }
+  else ret=OP_DEC_USE_DEFAULT;
+  /*If the application didn't want to handle decoding, do it ourselves.*/
+  if(ret==OP_DEC_USE_DEFAULT){
+#if defined(OP_FIXED_POINT)
+    ret=opus_multistream_decode(_of->od,
+     _op->packet,_op->bytes,_pcm,_nsamples,0);
+#else
+    ret=opus_multistream_decode_float(_of->od,
+     _op->packet,_op->bytes,_pcm,_nsamples,0);
+#endif
+    OP_ASSERT(ret<0||ret==_nsamples);
+  }
+  /*If the application returned a positive value other than 0 or
+     OP_DEC_USE_DEFAULT, fail.*/
+  else if(OP_UNLIKELY(ret>0))return OP_EBADPACKET;
+  if(OP_UNLIKELY(ret<0))return OP_EBADPACKET;
+  return ret;
 }
 
 /*Read more samples from the stream, using the same API as op_read() or
@@ -2599,10 +2646,8 @@ static int op_read_native(OggOpusFile *_of,
       od_buffer_pos=_of->od_buffer_pos;
       nsamples=_of->od_buffer_size-od_buffer_pos;
       /*If we have buffered samples, return them.*/
-      if(OP_UNLIKELY(nsamples>0)){
-        if(OP_UNLIKELY(nsamples*nchannels>_buf_size)){
-          nsamples=_buf_size/nchannels;
-        }
+      if(nsamples>0){
+        if(nsamples*nchannels>_buf_size)nsamples=_buf_size/nchannels;
         memcpy(_pcm,_of->od_buffer+nchannels*od_buffer_pos,
          sizeof(*_pcm)*nchannels*nsamples);
         od_buffer_pos+=nsamples;
@@ -2613,11 +2658,11 @@ static int op_read_native(OggOpusFile *_of,
       /*If we have buffered packets, decode one.*/
       op_pos=_of->op_pos;
       if(OP_LIKELY(op_pos<_of->op_count)){
-        ogg_packet  *pop;
-        ogg_int64_t  diff;
-        opus_int32   cur_discard_count;
-        int          duration;
-        int          trimmed_duration;
+        const ogg_packet *pop;
+        ogg_int64_t       diff;
+        opus_int32        cur_discard_count;
+        int               duration;
+        int               trimmed_duration;
         pop=_of->op+op_pos++;
         _of->op_pos=op_pos;
         cur_discard_count=_of->cur_discard_count;
@@ -2646,15 +2691,8 @@ static int op_read_native(OggOpusFile *_of,
             if(OP_UNLIKELY(ret<0))return ret;
             buf=_of->od_buffer;
           }
-#if defined(OP_FIXED_POINT)
-          ret=opus_multistream_decode(_of->od,
-           pop->packet,pop->bytes,buf,120*48,0);
-#else
-          ret=opus_multistream_decode_float(_of->od,
-           pop->packet,pop->bytes,buf,120*48,0);
-#endif
-          if(OP_UNLIKELY(ret<0))return OP_EBADPACKET;
-          OP_ASSERT(ret==duration);
+          ret=op_decode(_of,buf,pop,duration,nchannels);
+          if(OP_UNLIKELY(ret<0))return ret;
           /*Perform pre-skip/pre-roll.*/
           od_buffer_pos=(int)OP_MIN(trimmed_duration,cur_discard_count);
           cur_discard_count-=od_buffer_pos;
@@ -2665,31 +2703,22 @@ static int op_read_native(OggOpusFile *_of,
              what was decoded.*/
           _of->bytes_tracked+=pop->bytes;
           _of->samples_tracked+=trimmed_duration-od_buffer_pos;
-          /*Don't grab another page yet.*/
-          if(OP_LIKELY(od_buffer_pos<trimmed_duration))continue;
         }
         else{
           /*Otherwise decode directly into the user's buffer.*/
-#if defined(OP_FIXED_POINT)
-          ret=opus_multistream_decode(_of->od,pop->packet,pop->bytes,
-           _pcm,_buf_size/nchannels,0);
-#else
-          ret=opus_multistream_decode_float(_of->od,pop->packet,pop->bytes,
-           _pcm,_buf_size/nchannels,0);
-#endif
-          if(OP_UNLIKELY(ret<0))return OP_EBADPACKET;
-          OP_ASSERT(ret==duration);
+          ret=op_decode(_of,_pcm,pop,duration,nchannels);
+          if(OP_UNLIKELY(ret<0))return ret;
           if(OP_LIKELY(trimmed_duration>0)){
             /*Perform pre-skip/pre-roll.*/
             od_buffer_pos=(int)OP_MIN(trimmed_duration,cur_discard_count);
             cur_discard_count-=od_buffer_pos;
             _of->cur_discard_count=cur_discard_count;
-            if(OP_UNLIKELY(od_buffer_pos>0)
-             &&OP_LIKELY(od_buffer_pos<trimmed_duration)){
-              memmove(_pcm,_pcm+od_buffer_pos*nchannels,
-               sizeof(*_pcm)*(trimmed_duration-od_buffer_pos)*nchannels);
-            }
             trimmed_duration-=od_buffer_pos;
+            if(OP_LIKELY(trimmed_duration>0)
+             &&OP_UNLIKELY(od_buffer_pos>0)){
+              memmove(_pcm,_pcm+od_buffer_pos*nchannels,
+               sizeof(*_pcm)*trimmed_duration*nchannels);
+            }
             /*Update bitrate tracking based on the actual samples we used from
                what was decoded.*/
             _of->bytes_tracked+=pop->bytes;
@@ -2700,6 +2729,9 @@ static int op_read_native(OggOpusFile *_of,
             }
           }
         }
+        /*Don't grab another page yet.
+          This one might have more packets, or might have buffered data now.*/
+        continue;
       }
     }
     /*Suck in another page.*/
@@ -2712,12 +2744,15 @@ static int op_read_native(OggOpusFile *_of,
   }
 }
 
+/*A generic filter to apply to the decoded audio data.
+  _src is non-const because we will destructively modify the contents of the
+   source buffer that we consume in some cases.*/
 typedef int (*op_read_filter_func)(OggOpusFile *_of,void *_dst,int _dst_sz,
  op_sample *_src,int _nsamples,int _nchannels);
 
 /*Decode some samples and then apply a custom filter to them.
   This is used to convert to different output formats.*/
-static int op_read_native_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
+static int op_filter_read_native(OggOpusFile *_of,void *_dst,int _dst_sz,
  op_read_filter_func _filter,int *_li){
   int ret;
   /*Ensure we have some decoded samples in our buffer.*/
@@ -2741,11 +2776,46 @@ static int op_read_native_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
   return ret;
 }
 
-#if defined(OP_FIXED_POINT)
+#if !defined(OP_FIXED_POINT)||!defined(OP_DISABLE_FLOAT_API)
 
-int op_read(OggOpusFile *_of,opus_int16 *_pcm,int _buf_size,int *_li){
-  return op_read_native(_of,_pcm,_buf_size,_li);
-}
+/*Matrices for downmixing from the supported channel counts to stereo.
+  The matrices with 5 or more channels are normalized to a total volume of 2.0,
+   since most mixes sound too quiet if normalized to 1.0 (as there is generally
+   little volume in the side/rear channels).*/
+static const float OP_STEREO_DOWNMIX[OP_NCHANNELS_MAX-2][OP_NCHANNELS_MAX][2]={
+  /*3.0*/
+  {
+    {0.5858F,0.0F},{0.4142F,0.4142F},{0.0F,0.5858F}
+  },
+  /*quadrophonic*/
+  {
+    {0.4226F,0.0F},{0.0F,0.4226F},{0.366F,0.2114F},{0.2114F,0.336F}
+  },
+  /*5.0*/
+  {
+    {0.651F,0.0F},{0.46F,0.46F},{0.0F,0.651F},{0.5636F,0.3254F},
+    {0.3254F,0.5636F}
+  },
+  /*5.1*/
+  {
+    {0.529F,0.0F},{0.3741F,0.3741F},{0.0F,0.529F},{0.4582F,0.2645F},
+    {0.2645F,0.4582F},{0.3741F,0.3741F}
+  },
+  /*6.1*/
+  {
+    {0.4553F,0.0F},{0.322F,0.322F},{0.0F,0.4553F},{0.3943F,0.2277F},
+    {0.2277F,0.3943F},{0.2788F,0.2788F},{0.322F,0.322F}
+  },
+  /*7.1*/
+  {
+    {0.3886F,0.0F},{0.2748F,0.2748F},{0.0F,0.3886F},{0.3366F,0.1943F},
+    {0.1943F,0.3366F},{0.3366F,0.1943F},{0.1943F,0.3366F},{0.2748F,0.2748F}
+  }
+};
+
+#endif
+
+#if defined(OP_FIXED_POINT)
 
 /*Matrices for downmixing from the supported channel counts to stereo.
   The matrices with 5 or more channels are normalized to a total volume of 2.0,
@@ -2783,6 +2853,10 @@ static const opus_int16 OP_STEREO_DOWNMIX_Q14
   }
 };
 
+int op_read(OggOpusFile *_of,opus_int16 *_pcm,int _buf_size,int *_li){
+  return op_read_native(_of,_pcm,_buf_size,_li);
+}
+
 static int op_stereo_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
  op_sample *_src,int _nsamples,int _nchannels){
   (void)_of;
@@ -2807,6 +2881,7 @@ static int op_stereo_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
           l+=OP_STEREO_DOWNMIX_Q14[_nchannels-3][ci][0]*s;
           r+=OP_STEREO_DOWNMIX_Q14[_nchannels-3][ci][1]*s;
         }
+        /*TODO: For 5 or more channels, we should do soft clipping here.*/
         dst[2*i+0]=(opus_int16)OP_CLAMP(-32768,l+8192>>14,32767);
         dst[2*i+1]=(opus_int16)OP_CLAMP(-32768,r+8192>>14,32767);
       }
@@ -2816,7 +2891,7 @@ static int op_stereo_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
 }
 
 int op_read_stereo(OggOpusFile *_of,opus_int16 *_pcm,int _buf_size){
-  return op_read_native_filter(_of,_pcm,_buf_size,op_stereo_filter,NULL);
+  return op_filter_read_native(_of,_pcm,_buf_size,op_stereo_filter,NULL);
 }
 
 # if !defined(OP_DISABLE_FLOAT_API)
@@ -2834,33 +2909,51 @@ static int op_short2float_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
 }
 
 int op_read_float(OggOpusFile *_of,float *_pcm,int _buf_size,int *_li){
-  return op_read_native_filter(_of,_pcm,_buf_size,op_short2float_filter,_li);
+  return op_filter_read_native(_of,_pcm,_buf_size,op_short2float_filter,_li);
 }
 
 static int op_short2float_stereo_filter(OggOpusFile *_of,
  void *_dst,int _dst_sz,op_sample *_src,int _nsamples,int _nchannels){
   float *dst;
+  int    i;
   dst=(float *)_dst;
   _nsamples=OP_MIN(_nsamples,_dst_sz>>1);
   if(_nchannels==1){
-    int i;
     _nsamples=op_short2float_filter(_of,dst,_nsamples,_src,_nsamples,1);
     for(i=_nsamples;i-->0;)dst[2*i+0]=dst[2*i+1]=dst[i];
-    return _nsamples;
   }
-  /*It would be better to convert to floats and then downmix (so that we don't
-     risk clipping with more than 5 channels), but that would require a large
-     stack buffer, which is probably not a good idea if you're using the
-     fixed-point build.*/
-  if(_nchannels>2){
-    _nsamples=op_stereo_filter(_of,_src,_nsamples*2,
-     _src,_nsamples,_nchannels);
+  else if(_nchannels<5){
+    /*For 3 or 4 channels, we can downmix in fixed point without risk of
+       clipping.*/
+    if(_nchannels>2){
+      _nsamples=op_stereo_filter(_of,_src,_nsamples*2,
+       _src,_nsamples,_nchannels);
+    }
+    return op_short2float_filter(_of,dst,_dst_sz,_src,_nsamples,2);
   }
-  return op_short2float_filter(_of,dst,_dst_sz,_src,_nsamples,2);
+  else{
+    /*For 5 or more channels, we convert to floats and then downmix (so that we
+       don't risk clipping).*/
+    for(i=0;i<_nsamples;i++){
+      float l;
+      float r;
+      int   ci;
+      l=r=0;
+      for(ci=0;ci<_nchannels;ci++){
+        float s;
+        s=(1.0F/32768)*_src[_nchannels*i+ci];
+        l+=OP_STEREO_DOWNMIX[_nchannels-3][ci][0]*s;
+        r+=OP_STEREO_DOWNMIX[_nchannels-3][ci][1]*s;
+      }
+      dst[2*i+0]=l;
+      dst[2*i+1]=r;
+    }
+  }
+  return _nsamples;
 }
 
 int op_read_float_stereo(OggOpusFile *_of,float *_pcm,int _buf_size){
-  return op_read_native_filter(_of,_pcm,_buf_size,
+  return op_filter_read_native(_of,_pcm,_buf_size,
    op_short2float_stereo_filter,NULL);
 }
 
@@ -2916,126 +3009,91 @@ static const float OP_FCOEF_A[4]={
   0.9030F,0.0116F,-0.5853F,-0.2571F
 };
 
-static void op_shaped_dither16(OggOpusFile *_of,opus_int16 *_dst,
+static int op_float2short_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
  float *_src,int _nsamples,int _nchannels){
-  opus_uint32 seed;
-  int         mute;
+  opus_int16 *dst;
   int         ci;
   int         i;
-  mute=_of->dither_mute;
-  seed=_of->dither_seed;
-  if(_of->state_channel_count!=_nchannels){
-    mute=65;
-# if defined(OP_SOFT_CLIP)
-    for(ci=0;ci<_nchannels;ci++)_of->clip_state[ci]=0;
-# endif
-  }
-# if defined(OP_SOFT_CLIP)
-  opus_pcm_soft_clip(_src,_nsamples,_nchannels,_of->clip_state);
-# endif
-  /*In order to avoid replacing digital silence with quiet dither noise, we
-     mute if the output has been silent for a while.*/
-  if(mute>64)memset(_of->dither_a,0,sizeof(*_of->dither_a)*4*_nchannels);
-  for(i=0;i<_nsamples;i++){
-    int silent;
-    silent=1;
-    for(ci=0;ci<_nchannels;ci++){
-      float r;
-      float s;
-      float err;
-      int   si;
-      int   j;
-      s=_src[_nchannels*i+ci];
-      silent&=s==0;
-      s*=OP_GAIN;
-      err=0;
-      for(j=0;j<4;j++){
-        err+=OP_FCOEF_B[j]*_of->dither_b[ci*4+j]
-         -OP_FCOEF_A[j]*_of->dither_a[ci*4+j];
-      }
-      for(j=3;j-->0;)_of->dither_a[ci*4+j+1]=_of->dither_a[ci*4+j];
-      for(j=3;j-->0;)_of->dither_b[ci*4+j+1]=_of->dither_b[ci*4+j];
-      _of->dither_a[ci*4]=err;
-      s-=err;
-      if(mute>16)r=0;
-      else{
-        seed=op_rand(seed);
-        r=seed*OP_PRNG_GAIN;
-        seed=op_rand(seed);
-        r-=seed*OP_PRNG_GAIN;
-      }
-      /*Clamp in float out of paranoia that the input will be > 96 dBFS and
-         wrap if the integer is clamped.*/
-      si=op_float2int(OP_CLAMP(-32768,s+r,32767));
-      _dst[_nchannels*i+ci]=(opus_int16)si;
-      /*Including clipping in the noise shaping is generally disastrous: the
-         futile effort to restore the clipped energy results in more clipping.
-        However, small amounts---at the level which could normally be created
-         by dither and rounding---are harmless and can even reduce clipping
-         somewhat due to the clipping sometimes reducing the dither + rounding
-         error.*/
-      _of->dither_b[ci*4]=mute>16?0:OP_CLAMP(-1.5F,si-s,1.5F);
-    }
-    mute++;
-    if(!silent)mute=0;
-  }
-  _of->dither_mute=OP_MIN(mute,65);
-  _of->dither_seed=seed;
-  _of->state_channel_count=_nchannels;
-}
-
-static int op_float2short_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
- op_sample *_src,int _nsamples,int _nchannels){
-  opus_int16 *dst;
   dst=(opus_int16 *)_dst;
   if(OP_UNLIKELY(_nsamples*_nchannels>_dst_sz))_nsamples=_dst_sz/_nchannels;
-  op_shaped_dither16(_of,dst,_src,_nsamples,_nchannels);
+# if defined(OP_SOFT_CLIP)
+  if(_of->state_channel_count!=_nchannels){
+    for(ci=0;ci<_nchannels;ci++)_of->clip_state[ci]=0;
+  }
+  opus_pcm_soft_clip(_src,_nsamples,_nchannels,_of->clip_state);
+# endif
+  if(_of->dither_disabled){
+    for(i=0;i<_nchannels*_nsamples;i++){
+      dst[i]=op_float2int(OP_CLAMP(-32768,32768.0F*_src[i],32767));
+    }
+  }
+  else{
+    opus_uint32 seed;
+    int         mute;
+    seed=_of->dither_seed;
+    mute=_of->dither_mute;
+    if(_of->state_channel_count!=_nchannels)mute=65;
+    /*In order to avoid replacing digital silence with quiet dither noise, we
+       mute if the output has been silent for a while.*/
+    if(mute>64)memset(_of->dither_a,0,sizeof(*_of->dither_a)*4*_nchannels);
+    for(i=0;i<_nsamples;i++){
+      int silent;
+      silent=1;
+      for(ci=0;ci<_nchannels;ci++){
+        float r;
+        float s;
+        float err;
+        int   si;
+        int   j;
+        s=_src[_nchannels*i+ci];
+        silent&=s==0;
+        s*=OP_GAIN;
+        err=0;
+        for(j=0;j<4;j++){
+          err+=OP_FCOEF_B[j]*_of->dither_b[ci*4+j]
+           -OP_FCOEF_A[j]*_of->dither_a[ci*4+j];
+        }
+        for(j=3;j-->0;)_of->dither_a[ci*4+j+1]=_of->dither_a[ci*4+j];
+        for(j=3;j-->0;)_of->dither_b[ci*4+j+1]=_of->dither_b[ci*4+j];
+        _of->dither_a[ci*4]=err;
+        s-=err;
+        if(mute>16)r=0;
+        else{
+          seed=op_rand(seed);
+          r=seed*OP_PRNG_GAIN;
+          seed=op_rand(seed);
+          r-=seed*OP_PRNG_GAIN;
+        }
+        /*Clamp in float out of paranoia that the input will be > 96 dBFS and
+           wrap if the integer is clamped.*/
+        si=op_float2int(OP_CLAMP(-32768,s+r,32767));
+        dst[_nchannels*i+ci]=(opus_int16)si;
+        /*Including clipping in the noise shaping is generally disastrous: the
+           futile effort to restore the clipped energy results in more clipping.
+          However, small amounts---at the level which could normally be created
+           by dither and rounding---are harmless and can even reduce clipping
+           somewhat due to the clipping sometimes reducing the dither + rounding
+           error.*/
+        _of->dither_b[ci*4]=mute>16?0:OP_CLAMP(-1.5F,si-s,1.5F);
+      }
+      mute++;
+      if(!silent)mute=0;
+    }
+    _of->dither_mute=OP_MIN(mute,65);
+    _of->dither_seed=seed;
+  }
+  _of->state_channel_count=_nchannels;
   return _nsamples;
 }
 
 int op_read(OggOpusFile *_of,opus_int16 *_pcm,int _buf_size,int *_li){
-  return op_read_native_filter(_of,_pcm,_buf_size,op_float2short_filter,_li);
+  return op_filter_read_native(_of,_pcm,_buf_size,op_float2short_filter,_li);
 }
 
 int op_read_float(OggOpusFile *_of,float *_pcm,int _buf_size,int *_li){
   _of->state_channel_count=0;
   return op_read_native(_of,_pcm,_buf_size,_li);
 }
-
-/*Matrices for downmixing from the supported channel counts to stereo.
-  The matrices with 5 or more channels are normalized to a total volume of 2.0,
-   since most mixes sound too quiet if normalized to 1.0 (as there is generally
-   little volume in the side/rear channels).*/
-static const float OP_STEREO_DOWNMIX[OP_NCHANNELS_MAX-2][OP_NCHANNELS_MAX][2]={
-  /*3.0*/
-  {
-    {0.5858F,0.0F},{0.4142F,0.4142F},{0.0F,0.5858F}
-  },
-  /*quadrophonic*/
-  {
-    {0.4226F,0.0F},{0.0F,0.4226F},{0.366F,0.2114F},{0.2114F,0.336F}
-  },
-  /*5.0*/
-  {
-    {0.651F,0.0F},{0.46F,0.46F},{0.0F,0.651F},{0.5636F,0.3254F},
-    {0.3254F,0.5636F}
-  },
-  /*5.1*/
-  {
-    {0.529F,0.0F},{0.3741F,0.3741F},{0.0F,0.529F},{0.4582F,0.2645F},
-    {0.2645F,0.4582F},{0.3741F,0.3741F}
-  },
-  /*6.1*/
-  {
-    {0.4553F,0.0F},{0.322F,0.322F},{0.0F,0.4553F},{0.3943F,0.2277F},
-    {0.2277F,0.3943F},{0.2788F,0.2788F},{0.322F,0.322F}
-  },
-  /*7.1*/
-  {
-    {0.3886F,0.0F},{0.2748F,0.2748F},{0.0F,0.3886F},{0.3366F,0.1943F},
-    {0.1943F,0.3366F},{0.3366F,0.1943F},{0.1943F,0.3366F},{0.2748F,0.2748F}
-  }
-};
 
 static int op_stereo_filter(OggOpusFile *_of,void *_dst,int _dst_sz,
  op_sample *_src,int _nsamples,int _nchannels){
@@ -3071,30 +3129,30 @@ static int op_float2short_stereo_filter(OggOpusFile *_of,
  void *_dst,int _dst_sz,op_sample *_src,int _nsamples,int _nchannels){
   opus_int16 *dst;
   dst=(opus_int16 *)_dst;
-  _nsamples=OP_MIN(_nsamples,_dst_sz>>1);
   if(_nchannels==1){
     int i;
-    op_shaped_dither16(_of,dst,_src,_nsamples,1);
+    _nsamples=op_float2short_filter(_of,dst,_dst_sz>>1,_src,_nsamples,1);
     for(i=_nsamples;i-->0;)dst[2*i+0]=dst[2*i+1]=dst[i];
   }
   else{
     if(_nchannels>2){
+      _nsamples=OP_MIN(_nsamples,_dst_sz>>1);
       _nsamples=op_stereo_filter(_of,_src,_nsamples*2,
        _src,_nsamples,_nchannels);
     }
-    op_shaped_dither16(_of,dst,_src,_nsamples,2);
+    _nsamples=op_float2short_filter(_of,dst,_dst_sz,_src,_nsamples,2);
   }
   return _nsamples;
 }
 
 int op_read_stereo(OggOpusFile *_of,opus_int16 *_pcm,int _buf_size){
-  return op_read_native_filter(_of,_pcm,_buf_size,
+  return op_filter_read_native(_of,_pcm,_buf_size,
    op_float2short_stereo_filter,NULL);
 }
 
 int op_read_float_stereo(OggOpusFile *_of,float *_pcm,int _buf_size){
   _of->state_channel_count=0;
-  return op_read_native_filter(_of,_pcm,_buf_size,op_stereo_filter,NULL);
+  return op_filter_read_native(_of,_pcm,_buf_size,op_stereo_filter,NULL);
 }
 
 #endif
