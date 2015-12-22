@@ -104,7 +104,7 @@ opus_int64 sourceTell(void *_stream)
     
     do {
 		lastSection = currentSection;
-        numread = op_read_float_stereo( opusRef, &((float *)buf)[total], size - total);
+        numread = op_read_float( opusRef, &((float *)buf)[total], size - total, NULL );
         currentSection = op_current_link( opusRef );
 		if (numread > 0) {
 			total += numread * channels;
