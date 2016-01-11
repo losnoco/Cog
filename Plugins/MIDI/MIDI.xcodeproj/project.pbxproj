@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
 		839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
 		83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B0668A180D5668008E3612 /* Cocoa.framework */; };
 		83B06695180D5668008E3612 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83B06693180D5668008E3612 /* InfoPlist.strings */; };
@@ -24,6 +25,7 @@
 		83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06721180D70FE008E3612 /* MIDIDecoder.mm */; };
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
 		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
+		83E973471C4378880007F413 /* AUPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E973451C4378880007F413 /* AUPlayer.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		83B06687180D5668008E3612 /* MIDI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MIDI.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B0668A180D5668008E3612 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83B0668D180D5668008E3612 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -99,6 +102,8 @@
 		83C35701180EDB74007E9DF0 /* MIDIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIContainer.h; sourceTree = "<group>"; };
 		83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIMetadataReader.mm; sourceTree = "<group>"; };
 		83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIMetadataReader.h; sourceTree = "<group>"; };
+		83E973451C4378880007F413 /* AUPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayer.mm; sourceTree = "<group>"; };
+		83E973461C4378880007F413 /* AUPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayer.h; sourceTree = "<group>"; };
 		83FAF8A618ADD60100057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -107,6 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
 				83B0670F180D6F7F008E3612 /* libbass.dylib in Frameworks */,
 				83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */,
 				83B06710180D6F7F008E3612 /* libbassmidi.dylib in Frameworks */,
@@ -137,6 +143,7 @@
 		83B06689180D5668008E3612 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */,
 				83B06714180D6FC8008E3612 /* libbass_mpc.dylib */,
 				83B06715180D6FC8008E3612 /* libbassflac.dylib */,
 				83B06716180D6FC8008E3612 /* libbassopus.dylib */,
@@ -163,6 +170,8 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				83E973451C4378880007F413 /* AUPlayer.mm */,
+				83E973461C4378880007F413 /* AUPlayer.h */,
 				83FAF8A618ADD60100057CAF /* PlaylistController.h */,
 				83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */,
 				83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */,
@@ -280,6 +289,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83E973471C4378880007F413 /* AUPlayer.mm in Sources */,
 				83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */,
 				83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */,
 				83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */,
