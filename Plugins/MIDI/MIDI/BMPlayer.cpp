@@ -248,6 +248,11 @@ void BMPlayer::send_event(uint32_t b)
 	}
 }
 
+void BMPlayer::send_event(uint32_t b, uint32_t sample_offset)
+{
+    _eventQueue.push_back(BASS_event(b, sample_offset));
+}
+
 void BMPlayer::render(float * out, unsigned long count)
 {
     float buffer[1024];
@@ -268,6 +273,44 @@ void BMPlayer::render(float * out, unsigned long count)
         out += todo * 2;
         count -= todo;
     }
+}
+
+void BMPlayer::render_512(float *out)
+{
+    unsigned long queue_index = 0;
+    unsigned long queue_count = _eventQueue.size();
+    uint32_t current = 0;
+    uint32_t next = 512;
+    if (queue_count)
+        next = _eventQueue[0].sample_offset;
+    do
+    {
+        if (next > 512)
+            next = 512;
+        
+        if (next > current)
+            render(out + current * 2, next - current);
+        
+        current = next;
+        
+        while (queue_index < queue_count && _eventQueue[queue_index].sample_offset <= next)
+        {
+            send_event(_eventQueue[queue_index].b);
+            queue_index++;
+        }
+        if (queue_index < queue_count)
+            next = _eventQueue[queue_index].sample_offset;
+        else
+            next = 512;
+    } while (current < 512);
+    
+    if (queue_index < queue_count)
+    {
+        memmove(&_eventQueue[0], &_eventQueue[queue_index], sizeof(BASS_event) * (queue_count - queue_index));
+        _eventQueue.resize(queue_count - queue_index);
+    }
+    else
+        _eventQueue.resize(0);
 }
 
 void BMPlayer::setSoundFont( const char * in )

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="GeneralPreferencesPlugin">
@@ -483,11 +483,11 @@
             </subviews>
         </customView>
         <customView id="JXu-ar-J3Y" userLabel="MIDIView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="107"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="111"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button verticalHuggingPriority="750" id="SBO-WF-DVS" userLabel="Push Button - Select a SoundFont">
-                    <rect key="frame" x="14" y="63" width="160" height="32"/>
+                    <rect key="frame" x="14" y="67" width="160" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Select a SoundFont" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yeL-9c-lFq" userLabel="Button Cell - Select a SoundFont">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -498,7 +498,7 @@
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="FRC-Dh-BS2" userLabel="Text Field - Selected:">
-                    <rect key="frame" x="173" y="72" width="61" height="17"/>
+                    <rect key="frame" x="173" y="76" width="61" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Selected:" id="KJz-qS-IcO" userLabel="Text Field Cell - Selected">
                         <font key="font" metaFont="system"/>
@@ -507,7 +507,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cZr-2d-6cv">
-                    <rect key="frame" x="236" y="72" width="220" height="17"/>
+                    <rect key="frame" x="236" y="76" width="220" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="ECB-P0-pve">
                         <font key="font" metaFont="system"/>
@@ -524,7 +524,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="G86-18-hiK">
-                    <rect key="frame" x="32" y="40" width="138" height="17"/>
+                    <rect key="frame" x="32" y="22" width="138" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Resampling quality:" id="eX0-PC-iVo">
                         <font key="font" metaFont="system"/>
@@ -532,8 +532,38 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="4uG-vW-B64">
+                    <rect key="frame" x="79" y="49" width="91" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="MIDI Plugin:" id="n5F-dq-NZh">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="8Nj-G4-5ag">
+                    <rect key="frame" x="173" y="44" width="164" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="vaQ-pZ-jXy" id="xcv-1b-kTI">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="pRc-b6-sMR">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="vaQ-pZ-jXy"/>
+                                <menuItem title="Item 2" id="YLi-QX-EgD"/>
+                                <menuItem title="Item 3" id="1Cb-TU-E0q"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="czk-eG-6QG" name="content" keyPath="arrangedObjects" id="Mzg-yr-6mv"/>
+                        <binding destination="czk-eG-6QG" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Mzg-yr-6mv" id="NFp-di-hMf"/>
+                        <binding destination="czk-eG-6QG" name="contentValues" keyPath="arrangedObjects.name" previousBinding="NFp-di-hMf" id="6JE-ba-47Z"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.midi.plugin" previousBinding="6JE-ba-47Z" id="n1u-ie-870"/>
+                    </connections>
+                </popUpButton>
                 <popUpButton verticalHuggingPriority="750" id="E1D-Bo-ZVf">
-                    <rect key="frame" x="173" y="35" width="164" height="26"/>
+                    <rect key="frame" x="173" y="17" width="164" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="3Gx-cs-3B0" id="5q7-83-7V6">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -554,8 +584,16 @@
                     </connections>
                 </popUpButton>
             </subviews>
+            <point key="canvasLocation" x="340" y="554.5"/>
         </customView>
         <arrayController objectClassName="NSDictionary" editable="NO" id="JB6-r9-XpG" userLabel="ResamplerBehavior" customClass="ResamplerBehaviorArrayController">
+            <declaredKeys>
+                <string>name</string>
+                <string>slug</string>
+                <string>preference</string>
+            </declaredKeys>
+        </arrayController>
+        <arrayController objectClassName="NSDictionary" editable="NO" id="czk-eG-6QG" userLabel="MIDIPluginBehavior" customClass="MIDIPluginBehaviorArrayController">
             <declaredKeys>
                 <string>name</string>
                 <string>slug</string>

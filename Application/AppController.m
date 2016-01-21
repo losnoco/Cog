@@ -499,6 +499,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];
     
+    [userDefaultsValuesDict setObject:@"dls appl" forKey:@"midi.plugin"];
+    
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];

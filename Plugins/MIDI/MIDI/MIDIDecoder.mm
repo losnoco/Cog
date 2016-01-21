@@ -8,6 +8,7 @@
 
 #import "MIDIDecoder.h"
 
+#import "AUPlayer.h"
 #import "BMPlayer.h"
 
 #import "Logging.h"
@@ -15,6 +16,13 @@
 #import <midi_processing/midi_processor.h>
 
 #import "PlaylistController.h"
+
+static OSType getOSType(const char * in_)
+{
+    const unsigned char * in = (const unsigned char *) in_;
+    OSType v = (in[0] << 24) + (in[1] << 16) + (in[2] << 8) + in[3];
+    return v;
+}
 
 @implementation MIDIDecoder
 
@@ -113,24 +121,47 @@
 	
 	DLog(@"Track num: %i", track_num);
 
-    BMPlayer * bmplayer = new BMPlayer;
-    player = bmplayer;
-    
-    bool resampling_sinc = false;
-    NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
-    if ([resampling isEqualToString:@"sinc"])
-        resampling_sinc = true;
+    AUPlayer * auplayer = NULL;
 
-    bmplayer->setSincInterpolation( resampling_sinc );
-    bmplayer->setSampleRate( 44100 );
+    NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
+    if (!plugin || [plugin isEqualToString:@"BASSMIDI"])
+    {
+        bmplayer = new BMPlayer;
     
-    if ( [soundFontPath length] )
-        bmplayer->setFileSoundFont( [soundFontPath UTF8String] );
+        bool resampling_sinc = false;
+        NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+        if ([resampling isEqualToString:@"sinc"])
+            resampling_sinc = true;
+
+        bmplayer->setSincInterpolation( resampling_sinc );
+        bmplayer->setSampleRate( 44100 );
+
+        if ( [soundFontPath length] )
+            bmplayer->setFileSoundFont( [soundFontPath UTF8String] );
+        
+        player = bmplayer;
+    }
+    else
+    {
+        const char * cplugin = [plugin UTF8String];
+        OSType componentSubType;
+        OSType componentManufacturer;
+        
+        componentSubType = getOSType(cplugin);
+        componentManufacturer = getOSType(cplugin + 4);
+        
+        auplayer = new AUPlayer;
+        
+        auplayer->setComponent(componentSubType, componentManufacturer);
+        auplayer->setSampleRate( 44100 );
+        
+        player = auplayer;
+    }
     
     unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
     unsigned int clean_flags = midi_container::clean_flag_emidi;
     
-    if ( !bmplayer->Load( midi_file, track_num, loop_mode, clean_flags) )
+    if ( !player->Load( midi_file, track_num, loop_mode, clean_flags) )
         return NO;
     
     framesRead = 0;
@@ -161,22 +192,17 @@
     long localFramesLength = framesLength;
     long localTotalFrames = totalFrames;
     
-    if ( repeatone && !isLooped )
-    {
-        localFramesLength -= 44100;
-        localTotalFrames -= 44100;
-        repeatone = NO;
-    }
+    player->SetLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
     
     if ( !repeatone && framesRead >= localTotalFrames )
         return 0;
     
-    if ( !soundFontsAssigned ) {
+    if ( bmplayer && !soundFontsAssigned ) {
         NSString * soundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
         if (soundFontPath == nil)
             return 0;
         
-        ((BMPlayer *)player)->setSoundFont( [soundFontPath UTF8String] );
+        bmplayer->setSoundFont( [soundFontPath UTF8String] );
         
         soundFontsAssigned = YES;
     }
