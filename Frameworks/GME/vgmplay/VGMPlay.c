@@ -2159,7 +2159,7 @@ static void Chips_GeneralActions(VGM_PLAYER* p, UINT8 Mode)
 				CAA->Paired = &p->CA_Paired[CurChip][0x01];
 				CAA->Paired->ChipType = 0x80 | CAA->ChipType;
 
-				ChipClk = GetChipClock(&p->VGMHead, (CurChip << 7) | CAA->ChipType, NULL);
+				ChipClk = GetChipClock(p, (CurChip << 7) | CAA->ChipType, NULL);
 				CAA->SmpRate = device_start_ym2608(&p->ym2608[CurChip], COpt->EmuCore,
                                                     ChipClk, COpt->SpecialFlags & 0x01,
 													p->VGMHead.bytAYFlagYM2608,
