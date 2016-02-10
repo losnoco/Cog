@@ -149,11 +149,11 @@ static int check_gd3_header( byte const h [], int remain )
 
 static void get_vgm_length( Vgm_Emu::header_t const& h, track_info_t* out )
 {
-	int length = get_le32( &h.lngTotalSamples ) * 10 / 441; // 1000 / 44100
+	int length = h.lngTotalSamples * 10 / 441; // 1000 / 44100
 	if ( length > 0 )
 	{
-		int loop = get_le32( &h.lngLoopSamples );
-		if ( loop > 0 && get_le32( &h.lngLoopOffset ) )
+		int loop = h.lngLoopSamples;
+		if ( loop > 0 && h.lngLoopOffset )
 		{
 			out->loop_length  = loop * 10 / 441;
 			out->intro_length = length - out->loop_length;
@@ -171,6 +171,7 @@ static void get_vgm_length( Vgm_Emu::header_t const& h, track_info_t* out )
 
 blargg_err_t Vgm_Emu::track_info_( track_info_t* out, int ) const
 {
+	*out = metadata;
 	
 	return blargg_ok;
 }
