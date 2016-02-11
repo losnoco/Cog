@@ -1479,7 +1479,6 @@ const char* GetChipName(UINT8 ChipID)
 const char* GetAccurateChipName(UINT8 ChipID, UINT8 SubType)
 {
 	const char* RetStr;
-	static char TempStr[0x10];
 
 	if ((ChipID & 0x7F) >= CHIP_COUNT)
 		return NULL;

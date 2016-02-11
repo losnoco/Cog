@@ -155,6 +155,7 @@ static void get_vgm_length( Vgm_Emu::header_t const& h, track_info_t* out )
 		int loop = h.lngLoopSamples;
 		if ( loop > 0 && h.lngLoopOffset )
 		{
+			out->length = 0;
 			out->loop_length  = loop * 10 / 441;
 			out->intro_length = length - out->loop_length;
 			check( out->loop_length <= length );
