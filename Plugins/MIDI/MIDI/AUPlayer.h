@@ -9,6 +9,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
+class AUPluginUI;
+
 class AUPlayer : public MIDIPlayer
 {
 public:
@@ -19,8 +21,8 @@ public:
 	virtual ~AUPlayer();
 
 	// configuration
-    /*void setSoundFont( const char * in );
-    void setFileSoundFont( const char * in );*/
+    void setSoundFont( const char * in );
+    /*void setFileSoundFont( const char * in );*/
     //void showDialog();
     
     typedef void (*callback)(OSType uSubType, OSType uManufacturer, const char * name);
@@ -36,14 +38,17 @@ protected:
 	virtual bool startup();
     
 private:
-    /*void loadSoundFont(const char * name);
+    void loadSoundFont(const char * name);
     
     std::string        sSoundFontName;
-    std::string        sFileSoundFontName;*/
+    /*std::string        sFileSoundFontName;*/
 
     AudioTimeStamp mTimeStamp;
 
     AudioUnit samplerUnit[3];
+    
+    bool samplerUIinitialized[3];
+    AUPluginUI * samplerUI[3];
     
     AudioBufferList *bufferList;
     

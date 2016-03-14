@@ -12,10 +12,12 @@
 
 #import "Plugin.h"
 
+class AUPlayer;
 class BMPlayer;
 
 @interface MIDIDecoder : NSObject <CogDecoder> {
     BMPlayer* bmplayer;
+    AUPlayer* auplayer;
 	MIDIPlayer* player;
     midi_container midi_file;
     

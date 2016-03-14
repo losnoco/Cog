@@ -121,8 +121,6 @@ static OSType getOSType(const char * in_)
 	
 	DLog(@"Track num: %i", track_num);
 
-    AUPlayer * auplayer = NULL;
-
     NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
     if (!plugin || [plugin isEqualToString:@"BASSMIDI"])
     {
@@ -149,11 +147,17 @@ static OSType getOSType(const char * in_)
         
         componentSubType = getOSType(cplugin);
         componentManufacturer = getOSType(cplugin + 4);
-        
+
         auplayer = new AUPlayer;
         
         auplayer->setComponent(componentSubType, componentManufacturer);
         auplayer->setSampleRate( 44100 );
+        
+        if ( [soundFontPath length] )
+        {
+            auplayer->setSoundFont( [soundFontPath UTF8String] );
+            soundFontsAssigned = YES;
+        }
         
         player = auplayer;
     }
@@ -197,12 +201,15 @@ static OSType getOSType(const char * in_)
     if ( !repeatone && framesRead >= localTotalFrames )
         return 0;
     
-    if ( bmplayer && !soundFontsAssigned ) {
+    if ( (bmplayer||auplayer) && !soundFontsAssigned ) {
         NSString * soundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
         if (soundFontPath == nil)
             return 0;
         
-        bmplayer->setSoundFont( [soundFontPath UTF8String] );
+        if (bmplayer)
+            bmplayer->setSoundFont( [soundFontPath UTF8String] );
+        else if (auplayer)
+            auplayer->setSoundFont( [soundFontPath UTF8String] );
         
         soundFontsAssigned = YES;
     }
