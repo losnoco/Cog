@@ -2,15 +2,13 @@
 #define SYNTRAX_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 //----------------------------typedefs-------------------------
 #ifndef NULL
 #define NULL 0
 #endif
 typedef unsigned uint;
-#ifndef __cplusplus
-typedef enum { false, true } bool;
-#endif
 
 //----------------------------defines--------------------------
 #define SE_NROFEFFECTS          18
