@@ -3206,8 +3206,8 @@ static void Chips_GeneralActions(VGM_PLAYER* p, UINT8 Mode)
 				ymz280b_set_mute_mask(p->ymz280b[CurCSet], p->ChipOpts[CurCSet].YMZ280B.ChnMute1);
 			else if (CAA->ChipType == 0x10 && CurCSet == 0x00)
 				rf5c164_set_mute_mask(p->rf5c164, p->ChipOpts[CurCSet].RF5C164.ChnMute1);
-			else if (CAA->ChipType == 0x11)
-				;	// PWM - nothing to mute
+            else if (CAA->ChipType == 0x11 && CurCSet == 0x00)
+                pwm_mute(p->pwm, p->ChipOpts[CurCSet].PWM.ChnMute1);
 			else if (CAA->ChipType == 0x12)
 				ayxx_set_mute_mask(p->ay8910[CurCSet], p->ChipOpts[CurCSet].AY8910.ChnMute1);
 			else if (CAA->ChipType == 0x13)
@@ -3217,9 +3217,9 @@ static void Chips_GeneralActions(VGM_PLAYER* p, UINT8 Mode)
 			else if (CAA->ChipType == 0x15)
 				multipcm_set_mute_mask(p->multipcm[CurCSet], p->ChipOpts[CurCSet].MultiPCM.ChnMute1);
 			else if (CAA->ChipType == 0x16)
-				;	// UPD7759 - nothing to mute
+                upd7759_mute(p->upd7759[CurCSet], p->ChipOpts[CurCSet].UPD7759.ChnMute1);
 			else if (CAA->ChipType == 0x17)
-				;	// OKIM6258 - nothing to mute
+                okim6258_mute(p->okim6258[CurCSet], p->ChipOpts[CurCSet].OKIM6258.ChnMute1);
 			else if (CAA->ChipType == 0x18)
 				okim6295_set_mute_mask(p->okim6295[CurCSet], p->ChipOpts[CurCSet].OKIM6295.ChnMute1);
 			else if (CAA->ChipType == 0x19)
@@ -5146,4 +5146,1246 @@ UINT32 FillBuffer(void *_p, WAVE_16BS* Buffer, UINT32 BufferSize)
 	}
 
 	return CurSmpl;
+}
+
+// ChanCount is an array of 3, for the 3 mute masks per chip
+static void GetChipByChannel(void* vgmp, UINT32 channel, UINT8 *ChipID, UINT8 *ChipType, UINT8 *Channel, UINT8 *ChanCount)
+{
+    VGM_PLAYER* p = (VGM_PLAYER *)vgmp;
+    
+    *ChipType = 0xFF;
+
+    if (p->VGMHead.lngHzPSG)
+    {
+        if (channel < 4)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x00;
+            *Channel = channel;
+            ChanCount[0] = 4;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 4;
+        
+        if (p->VGMHead.lngHzPSG & 0x40000000)
+        {
+            if (channel < 4)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x00;
+                *Channel = channel;
+                ChanCount[0] = 4;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 4;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYM2413)
+    {
+        if (channel < 14)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x01;
+            *Channel = channel;
+            ChanCount[0] = 14;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 14;
+        
+        if (p->VGMHead.lngHzYM2413 & 0x40000000)
+        {
+            if (channel < 14)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x01;
+                *Channel = channel;
+                ChanCount[0] = 14;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 14;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYM2612)
+    {
+        if (channel < 7)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x02;
+            *Channel = channel;
+            ChanCount[0] = 7;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 7;
+        
+        if (p->VGMHead.lngHzYM2612 & 0x40000000)
+        {
+            if (channel < 7)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x02;
+                *Channel = channel;
+                ChanCount[0] = 7;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 7;
+        }
+    }
+
+    if (p->VGMHead.lngHzYM2151)
+    {
+        if (channel < 8)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x03;
+            *Channel = channel;
+            ChanCount[0] = 8;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 8;
+        
+        if (p->VGMHead.lngHzYM2151 & 0x40000000)
+        {
+            if (channel < 8)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x03;
+                *Channel = channel;
+                ChanCount[0] = 8;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 8;
+        }
+    }
+    
+    if (p->VGMHead.lngHzSPCM)
+    {
+        if (channel < 16)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x04;
+            *Channel = channel;
+            ChanCount[0] = 16;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 16;
+        
+        if (p->VGMHead.lngHzSPCM & 0x40000000)
+        {
+            if (channel < 16)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x04;
+                *Channel = channel;
+                ChanCount[0] = 16;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 16;
+        }
+    }
+
+    if (p->VGMHead.lngHzRF5C68)
+    {
+        if (channel < 8)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x05;
+            *Channel = channel;
+            ChanCount[0] = 8;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 8;
+    }
+
+    if (p->VGMHead.lngHzYM2203)
+    {
+        if (channel < 6)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x06;
+            *Channel = channel;
+            ChanCount[0] = 3;
+            ChanCount[1] = 0;
+            ChanCount[2] = 3;
+        }
+        
+        channel -= 6;
+        
+        if (p->VGMHead.lngHzYM2203 & 0x40000000)
+        {
+            if (channel < 6)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x06;
+                *Channel = channel;
+                ChanCount[0] = 3;
+                ChanCount[1] = 0;
+                ChanCount[2] = 3;
+            }
+            
+            channel -= 6;
+        }
+    }
+
+    if (p->VGMHead.lngHzYM2608)
+    {
+        if (channel < 16)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x07;
+            *Channel = channel;
+            ChanCount[0] = 6;
+            ChanCount[1] = 7;
+            ChanCount[2] = 3;
+        }
+        
+        channel -= 16;
+        
+        if (p->VGMHead.lngHzYM2608 & 0x40000000)
+        {
+            if (channel < 16)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x07;
+                *Channel = channel;
+                ChanCount[0] = 6;
+                ChanCount[1] = 7;
+                ChanCount[2] = 3;
+            }
+            
+            channel -= 16;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYM2610)
+    {
+        if (channel < 16)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x08;
+            *Channel = channel;
+            ChanCount[0] = 6;
+            ChanCount[1] = 7;
+            ChanCount[2] = 3;
+        }
+        
+        channel -= 16;
+        
+        if (p->VGMHead.lngHzYM2610 & 0x40000000)
+        {
+            if (channel < 16)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x08;
+                *Channel = channel;
+                ChanCount[0] = 6;
+                ChanCount[1] = 7;
+                ChanCount[2] = 3;
+            }
+            
+            channel -= 16;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYM3812)
+    {
+        if (channel < 14)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x09;
+            *Channel = channel;
+            ChanCount[0] = 14;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 14;
+        
+        if (p->VGMHead.lngHzYM3812 & 0x40000000)
+        {
+            if (channel < 14)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x09;
+                *Channel = channel;
+                ChanCount[0] = 14;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 14;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYM3526)
+    {
+        if (channel < 15)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x0A;
+            *Channel = channel;
+            ChanCount[0] = 15;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 15;
+        
+        if (p->VGMHead.lngHzYM3526 & 0x40000000)
+        {
+            if (channel < 15)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x0B;
+                *Channel = channel;
+                ChanCount[0] = 15;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 15;
+        }
+    }
+    
+    if (p->VGMHead.lngHzY8950)
+    {
+        if (channel < 15)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x0B;
+            *Channel = channel;
+            ChanCount[0] = 15;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 15;
+        
+        if (p->VGMHead.lngHzY8950 & 0x40000000)
+        {
+            if (channel < 15)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x0B;
+                *Channel = channel;
+                ChanCount[0] = 15;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 15;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYMF262)
+    {
+        if (channel < 23)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x0C;
+            *Channel = channel;
+            ChanCount[0] = 23;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 23;
+        
+        if (p->VGMHead.lngHzYMF262 & 0x40000000)
+        {
+            if (channel < 23)
+            {
+                *ChipID = 0x00;
+                *ChipType = 0x0C;
+                *Channel = channel;
+                ChanCount[0] = 23;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 23;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYMF278B)
+    {
+        if (channel < 47)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x0D;
+            *Channel = channel;
+            ChanCount[0] = 23;
+            ChanCount[1] = 24;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 47;
+        
+        if (p->VGMHead.lngHzYMF278B & 0x40000000)
+        {
+            if (channel < 47)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x0D;
+                *Channel = channel;
+                ChanCount[0] = 23;
+                ChanCount[1] = 24;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 47;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYMF271)
+    {
+        if (channel < 12)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x0E;
+            *Channel = channel;
+            ChanCount[0] = 12;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 12;
+        
+        if (p->VGMHead.lngHzYMF271 & 0x40000000)
+        {
+            if (channel < 12)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x0E;
+                *Channel = channel;
+                ChanCount[0] = 12;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 12;
+        }
+    }
+    
+    if (p->VGMHead.lngHzYMZ280B)
+    {
+        if (channel < 8)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x0F;
+            *Channel = channel;
+            ChanCount[0] = 8;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 8;
+        
+        if (p->VGMHead.lngHzYMZ280B & 0x40000000)
+        {
+            if (channel < 8)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x0F;
+                *Channel = channel;
+                ChanCount[0] = 8;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 8;
+        }
+    }
+    
+    if (p->VGMHead.lngHzRF5C164)
+    {
+        if (channel < 8)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x10;
+            *Channel = channel;
+            ChanCount[0] = 8;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 8;
+    }
+    
+    if (p->VGMHead.lngHzPWM)
+    {
+        if (channel < 1)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x11;
+            *Channel = channel;
+            ChanCount[0] = 1;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel--;
+    }
+
+    if (p->VGMHead.lngHzAY8910)
+    {
+        if (channel < 3)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x12;
+            *Channel = channel;
+            ChanCount[0] = 3;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 3;
+        
+        if (p->VGMHead.lngHzAY8910 & 0x40000000)
+        {
+            if (channel < 3)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x12;
+                *Channel = channel;
+                ChanCount[0] = 3;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 3;
+        }
+    }
+
+    if (p->VGMHead.lngHzGBDMG)
+    {
+        if (channel < 4)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x13;
+            *Channel = channel;
+            ChanCount[0] = 4;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 4;
+        
+        if (p->VGMHead.lngHzGBDMG & 0x40000000)
+        {
+            if (channel < 4)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x13;
+                *Channel = channel;
+                ChanCount[0] = 4;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 4;
+        }
+    }
+    
+    if (p->VGMHead.lngHzNESAPU)
+    {
+        if (channel < 6)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x14;
+            *Channel = channel;
+            ChanCount[0] = 6;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 6;
+        
+        if (p->VGMHead.lngHzNESAPU & 0x40000000)
+        {
+            if (channel < 6)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x14;
+                *Channel = channel;
+                ChanCount[0] = 6;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 6;
+        }
+    }
+
+    if (p->VGMHead.lngHzMultiPCM)
+    {
+        if (channel < 28)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x15;
+            *Channel = channel;
+            ChanCount[0] = 28;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 28;
+        
+        if (p->VGMHead.lngHzMultiPCM & 0x40000000)
+        {
+            if (channel < 28)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x15;
+                *Channel = channel;
+                ChanCount[0] = 28;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 28;
+        }
+    }
+    
+    if (p->VGMHead.lngHzUPD7759)
+    {
+        if (channel < 1)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x16;
+            *Channel = channel;
+            ChanCount[0] = 1;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel--;
+        
+        if (p->VGMHead.lngHzUPD7759 & 0x40000000)
+        {
+            if (channel < 1)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x16;
+                *Channel = channel;
+                ChanCount[0] = 1;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel--;
+        }
+    }
+    
+    if (p->VGMHead.lngHzOKIM6258)
+    {
+        if (channel < 1)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x17;
+            *Channel = channel;
+            ChanCount[0] = 1;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel--;
+        
+        if (p->VGMHead.lngHzOKIM6258 & 0x40000000)
+        {
+            if (channel < 1)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x17;
+                *Channel = channel;
+                ChanCount[0] = 1;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel--;
+        }
+    }
+    
+    if (p->VGMHead.lngHzOKIM6295)
+    {
+        if (channel < 4)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x18;
+            *Channel = channel;
+            ChanCount[0] = 4;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 4;
+        
+        if (p->VGMHead.lngHzOKIM6295 & 0x40000000)
+        {
+            if (channel < 4)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x18;
+                *Channel = channel;
+                ChanCount[0] = 4;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 4;
+        }
+    }
+    
+    if (p->VGMHead.lngHzK051649)
+    {
+        if (channel < 5)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x19;
+            *Channel = channel;
+            ChanCount[0] = 5;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 5;
+        
+        if (p->VGMHead.lngHzK051649 & 0x40000000)
+        {
+            if (channel < 5)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x19;
+                *Channel = channel;
+                ChanCount[0] = 5;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 5;
+        }
+    }
+
+    if (p->VGMHead.lngHzK054539)
+    {
+        if (channel < 8)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x1A;
+            *Channel = channel;
+            ChanCount[0] = 8;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 8;
+        
+        if (p->VGMHead.lngHzK054539 & 0x40000000)
+        {
+            if (channel < 8)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x1A;
+                *Channel = channel;
+                ChanCount[0] = 8;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 8;
+        }
+    }
+    
+    if (p->VGMHead.lngHzHuC6280)
+    {
+        if (channel < 6)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x1B;
+            *Channel = channel;
+            ChanCount[0] = 6;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 6;
+        
+        if (p->VGMHead.lngHzHuC6280 & 0x40000000)
+        {
+            if (channel < 6)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x1B;
+                *Channel = channel;
+                ChanCount[0] = 6;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 6;
+        }
+    }
+    
+    if (p->VGMHead.lngHzC140)
+    {
+        if (channel < 24)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x1C;
+            *Channel = channel;
+            ChanCount[0] = 24;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 24;
+        
+        if (p->VGMHead.lngHzC140 & 0x40000000)
+        {
+            if (channel < 24)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x1C;
+                *Channel = channel;
+                ChanCount[0] = 24;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 24;
+        }
+    }
+
+    if (p->VGMHead.lngHzK053260)
+    {
+        if (channel < 4)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x1D;
+            *Channel = channel;
+            ChanCount[0] = 4;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 4;
+        
+        if (p->VGMHead.lngHzK053260 & 0x40000000)
+        {
+            if (channel < 4)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x1D;
+                *Channel = channel;
+                ChanCount[0] = 4;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 4;
+        }
+    }
+    
+    if (p->VGMHead.lngHzPokey)
+    {
+        if (channel < 4)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x1E;
+            *Channel = channel;
+            ChanCount[0] = 4;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 4;
+        
+        if (p->VGMHead.lngHzPokey & 0x40000000)
+        {
+            if (channel < 4)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x1E;
+                *Channel = channel;
+                ChanCount[0] = 4;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 4;
+        }
+    }
+    
+    if (p->VGMHead.lngHzQSound)
+    {
+        if (channel < 16)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x1F;
+            *Channel = channel;
+            ChanCount[0] = 16;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 16;
+        
+        if (p->VGMHead.lngHzQSound & 0x40000000)
+        {
+            if (channel < 16)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x1F;
+                *Channel = channel;
+                ChanCount[0] = 16;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 16;
+        }
+    }
+    
+    if (p->VGMHead.lngHzSCSP)
+    {
+        if (channel < 32)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x20;
+            *Channel = channel;
+            ChanCount[0] = 32;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 32;
+        
+        if (p->VGMHead.lngHzSCSP & 0x40000000)
+        {
+            if (channel < 32)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x20;
+                *Channel = channel;
+                ChanCount[0] = 32;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 32;
+        }
+    }
+    
+    if (p->VGMHead.lngHzWSwan)
+    {
+        if (channel < 4)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x21;
+            *Channel = channel;
+            ChanCount[0] = 4;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 4;
+        
+        if (p->VGMHead.lngHzWSwan & 0x40000000)
+        {
+            if (channel < 4)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x21;
+                *Channel = channel;
+                ChanCount[0] = 4;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 4;
+        }
+    }
+    
+    if (p->VGMHead.lngHzVSU)
+    {
+        if (channel < 6)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x22;
+            *Channel = channel;
+            ChanCount[0] = 6;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 6;
+        
+        if (p->VGMHead.lngHzVSU & 0x40000000)
+        {
+            if (channel < 6)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x22;
+                *Channel = channel;
+                ChanCount[0] = 6;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 6;
+        }
+    }
+    
+    if (p->VGMHead.lngHzSAA1099)
+    {
+        if (channel < 6)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x23;
+            *Channel = channel;
+            ChanCount[0] = 6;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 6;
+        
+        if (p->VGMHead.lngHzSAA1099 & 0x40000000)
+        {
+            if (channel < 6)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x23;
+                *Channel = channel;
+                ChanCount[0] = 6;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 6;
+        }
+    }
+    
+    if (p->VGMHead.lngHzES5503)
+    {
+        if (channel < 32)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x24;
+            *Channel = channel;
+            ChanCount[0] = 32;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 32;
+        
+        if (p->VGMHead.lngHzES5503 & 0x40000000)
+        {
+            if (channel < 32)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x24;
+                *Channel = channel;
+                ChanCount[0] = 32;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 32;
+        }
+    }
+    
+    if (p->VGMHead.lngHzES5506)
+    {
+        if (channel < 32)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x25;
+            *Channel = channel;
+            ChanCount[0] = 32;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 32;
+        
+        if (p->VGMHead.lngHzES5506 & 0x40000000)
+        {
+            if (channel < 32)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x25;
+                *Channel = channel;
+                ChanCount[0] = 32;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 32;
+        }
+    }
+
+    if (p->VGMHead.lngHzX1_010)
+    {
+        if (channel < 16)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x26;
+            *Channel = channel;
+            ChanCount[0] = 16;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 16;
+        
+        if (p->VGMHead.lngHzX1_010 & 0x40000000)
+        {
+            if (channel < 16)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x26;
+                *Channel = channel;
+                ChanCount[0] = 16;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 16;
+        }
+    }
+    
+    if (p->VGMHead.lngHzC352)
+    {
+        if (channel < 32)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x27;
+            *Channel = channel;
+            ChanCount[0] = 32;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 32;
+        
+        if (p->VGMHead.lngHzC352 & 0x40000000)
+        {
+            if (channel < 32)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x27;
+                *Channel = channel;
+                ChanCount[0] = 32;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 32;
+        }
+    }
+    
+    if (p->VGMHead.lngHzGA20)
+    {
+        if (channel < 4)
+        {
+            *ChipID = 0x00;
+            *ChipType = 0x28;
+            *Channel = channel;
+            ChanCount[0] = 4;
+            ChanCount[1] = 0;
+            ChanCount[2] = 0;
+        }
+        
+        channel -= 4;
+        
+        if (p->VGMHead.lngHzGA20 & 0x40000000)
+        {
+            if (channel < 4)
+            {
+                *ChipID = 0x01;
+                *ChipType = 0x28;
+                *Channel = channel;
+                ChanCount[0] = 4;
+                ChanCount[1] = 0;
+                ChanCount[2] = 0;
+            }
+            
+            channel -= 4;
+        }
+    }
+}
+
+const char* GetAccurateChipNameByChannel(void* vgmp, UINT32 channel, UINT32 *realChannel)
+{
+    UINT8 ChipID, ChipType, SubType, Channel, ChanCount[3];
+    GetChipByChannel(vgmp, channel, &ChipID, &ChipType, &Channel, ChanCount);
+    if (ChipType == 0xFF)
+        return NULL;
+    *realChannel = Channel;
+    GetChipClock(vgmp, ChipType, &SubType);
+    return GetAccurateChipName(ChipType, SubType);
+}
+
+void SetChannelMute(void* vgmp, UINT32 channel, UINT8 mute)
+{
+    VGM_PLAYER *p = (VGM_PLAYER *)vgmp;
+    
+    UINT8 ChipID, ChipType, Channel, ChanCount[3];
+    
+    CHIP_OPTS *opts;
+    
+    UINT8 FieldNumber;
+    
+    UINT32 *ChnMutes;
+    
+    GetChipByChannel(vgmp, channel, &ChipID, &ChipType, &Channel, ChanCount);
+    
+    if (ChipType == 0xFF)
+        return;
+
+    opts = (CHIP_OPTS *)(&p->ChipOpts[ChipID]) + ChipType;
+    
+    ChnMutes = (UINT32 *)(&opts->ChnMute1);
+    
+    for (FieldNumber = 0; FieldNumber < 3; FieldNumber++)
+    {
+        if (Channel < ChanCount[FieldNumber])
+        {
+            if (mute)
+                ChnMutes[FieldNumber] |= 1 << Channel;
+            else
+                ChnMutes[FieldNumber] &= ~(1 << Channel);
+            break;
+        }
+        
+        Channel -= ChanCount[FieldNumber];
+    }
+    
+    Chips_GeneralActions(p, 0x10);
 }

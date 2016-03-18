@@ -31,7 +31,21 @@ Vgm_Emu::Vgm_Emu()
 	set_silence_lookahead( 1 ); // tracks should already be trimmed
 }
 
-Vgm_Emu::~Vgm_Emu() { }
+Vgm_Emu::~Vgm_Emu()
+{
+    // XXX ugly use of deprecated functions to free allocated voice names
+    const char ** voice_names_ = voice_names();
+    if (voice_names_)
+    {
+        for (int i = 0; i < 32; ++i)
+        {
+            if (voice_names_[i])
+                core.free_voice_name((char*)voice_names_[i]);
+            else break;
+        }
+        free((void *)voice_names_);
+    }
+}
 
 void Vgm_Emu::unload()
 {
@@ -431,6 +445,7 @@ blargg_err_t Vgm_Emu::set_sample_rate_( int sample_rate )
 void Vgm_Emu::mute_voices_( int mask )
 {
 	muted_voices = mask;
+    core.set_mute(mask);
 }
 
 // Emulation
@@ -474,6 +489,33 @@ blargg_err_t Vgm_Emu::hash_( Hash_Function& out ) const
 blargg_err_t Vgm_Emu::load_mem_( const byte* in, int file_size )
 {
     RETURN_ERR( core.load_mem(in, file_size) );
+    
+    int voice_count = core.get_channel_count();
+    
+    set_voice_count( voice_count );
+    
+    char ** voice_names = (char **) calloc( sizeof(char *), voice_count + 1 );
+    if (voice_names)
+    {
+        int i;
+        for (i = 0; i < voice_count; i++)
+        {
+            voice_names[i] = core.get_voice_name(i);
+            if (!voice_names[i])
+                break;
+        }
+        if (i == voice_count)
+            set_voice_names(voice_names);
+        else
+        {
+            for (i = 0; i < voice_count; i++)
+            {
+                if (voice_names[i])
+                    free(voice_names[i]);
+            }
+            free(voice_names);
+        }
+    }
 
     get_vgm_length( header(), &metadata );
     

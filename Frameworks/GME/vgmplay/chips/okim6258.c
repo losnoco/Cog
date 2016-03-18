@@ -72,6 +72,8 @@ struct _okim6258_state
 
 	UINT8 Iternal10Bit;
 	UINT8 DCRemoval;
+    
+    UINT8 mute;
 };
 
 /* step size index shift table */
@@ -171,6 +173,7 @@ void okim6258_update(void *param, stream_sample_t **outputs, int samples)
 	//stream_sample_t *buffer = outputs[0];
 	stream_sample_t *bufL = outputs[0];
 	stream_sample_t *bufR = outputs[1];
+    int mute = chip->mute;
 
 	//memset(outputs[0], 0, samples * sizeof(*outputs[0]));
 
@@ -231,8 +234,16 @@ void okim6258_update(void *param, stream_sample_t **outputs, int samples)
 			nibble_shift ^= 4;
 
 			//*buffer++ = sample;
-			*bufL++ = (chip->pan & 0x02) ? 0x00 : sample;
-			*bufR++ = (chip->pan & 0x01) ? 0x00 : sample;
+            if (mute)
+            {
+                *bufL++ = 0;
+                *bufR++ = 0;
+            }
+            else
+            {
+                *bufL++ = (chip->pan & 0x02) ? 0x00 : sample;
+                *bufR++ = (chip->pan & 0x01) ? 0x00 : sample;
+            }
 			samples--;
 		}
 
@@ -251,6 +262,12 @@ void okim6258_update(void *param, stream_sample_t **outputs, int samples)
 	}
 }
 
+
+void okim6258_mute(void *ptr, int mute)
+{
+    okim6258_state *chip = (okim6258_state *)ptr;
+    chip->mute = mute;
+}
 
 
 /**********************************************************************************************

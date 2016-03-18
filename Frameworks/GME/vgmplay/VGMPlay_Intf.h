@@ -49,6 +49,10 @@ UINT32 CalcSampleMSecExt(void* vgmp, UINT64 Value, UINT8 Mode, VGM_HEADER* FileH
 const char* GetChipName(UINT8 ChipID);
 const char* GetAccurateChipName(UINT8 ChipID, UINT8 SubType);
 UINT32 GetChipClock(void* vgmp, UINT8 ChipID, UINT8* RetSubType);
+    
+const char* GetAccurateChipNameByChannel(void* vgmp, UINT32 channel, UINT32 *realChannel);
+    
+void SetChannelMute(void* vgmp, UINT32 channel, UINT8 mute);
 
 #ifndef NO_WCHAR_FILENAMES
 UINT32 GetGZFileLengthW(const wchar_t* FileName);

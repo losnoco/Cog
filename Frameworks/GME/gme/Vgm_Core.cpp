@@ -28,6 +28,7 @@ Vgm_Core::Vgm_Core()
 Vgm_Core::~Vgm_Core()
 {
 	StopVGM(vgmp);
+	CloseVGMFile(vgmp);
 	VGMPlay_Deinit(vgmp);
 }
 
@@ -160,8 +161,45 @@ blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
         vgmp->VGMMaxLoop = 1;
 
 	set_tempo( 1 );
-
+    
 	return blargg_ok;
+}
+
+int Vgm_Core::get_channel_count()
+{
+    // XXX may support more than this, but 32 bit masks and all...
+    unsigned i;
+    UINT32 j;
+    for (i = 0; i < 32; i++)
+    {
+        if (!GetAccurateChipNameByChannel(vgmp, i, &j))
+            break;
+    }
+    return i;
+}
+
+char* Vgm_Core::get_voice_name(int channel)
+{
+    UINT32 realChannel;
+    const char * name = GetAccurateChipNameByChannel(vgmp, channel, &realChannel);
+    size_t length = strlen(name) + 16;
+    char * finalName = (char *) malloc(length);
+    if (finalName)
+        sprintf(finalName, "%s #%u", name, realChannel);
+    return finalName;
+}
+
+void Vgm_Core::free_voice_name(char *name)
+{
+    free(name);
+}
+
+void Vgm_Core::set_mute(int mask)
+{
+    for (int i = 0; i < 32; i++)
+    {
+        SetChannelMute(vgmp, i, (mask >> i) & 1);
+    }
 }
 
 void Vgm_Core::start_track()

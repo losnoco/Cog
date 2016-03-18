@@ -204,6 +204,8 @@ struct _upd7759_state
 	UINT8 data_buf[0x40];
 	UINT8 dbuf_pos_read;
 	UINT8 dbuf_pos_write;
+    
+    UINT8 mute;
 };
 
 
@@ -511,14 +513,23 @@ void upd7759_update(void *param, stream_sample_t **outputs, int samples)
 	UINT32 pos = chip->pos;
 	stream_sample_t *buffer = outputs[0];
 	stream_sample_t *buffer2 = outputs[1];
+    int mute = chip->mute;
 
 	/* loop until done */
 	if (chip->state != STATE_IDLE)
 		while (samples != 0)
 		{
 			/* store the current sample */
-			*buffer++ = sample << 7;
-			*buffer2++ = sample << 7;
+            if (mute)
+            {
+                *buffer++ = 0;
+                *buffer2++ = 0;
+            }
+            else
+            {
+                *buffer++ = sample << 7;
+                *buffer2++ = sample << 7;
+            }
 			samples--;
 
 			/* advance by the number of clocks/output sample */
@@ -586,6 +597,11 @@ void upd7759_update(void *param, stream_sample_t **outputs, int samples)
 	chip->pos = pos;
 }
 
+void upd7759_mute(void *ptr, int mute)
+{
+    upd7759_state *chip = (upd7759_state *)ptr;
+    chip->mute = mute;
+}
 
 
 /************************************************************
