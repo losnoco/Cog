@@ -153,6 +153,7 @@ void SCPlayer::reset(uint32_t port)
 			case sc_sc88:
 			case sc_sc88pro:
 			case sc_sc8850:
+                sampler[port].TG_LongMidiIn( syx_reset_gs, 0 );
 				reset_sc(port);
 				break;
 				
