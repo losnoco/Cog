@@ -10,6 +10,12 @@
 
 @implementation MIDIPane
 
+- (void)awakeFromNib
+{
+    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"] isEqualToString:@"Sc55rolD"])
+        [midiFlavorControl setEnabled:YES];
+}
+
 - (NSString *)title
 {
 	return NSLocalizedStringFromTableInBundle(@"Synthesis", nil, [NSBundle bundleForClass:[self class]], @"");
@@ -37,6 +43,14 @@
     {
         [[NSUserDefaults standardUserDefaults] setValue:[[panel URL] path] forKey:@"soundFontPath"];
     }
+}
+
+- (IBAction)setMidiPlugin:(id)sender
+{
+    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"] isEqualToString:@"Sc55rolD"])
+        [midiFlavorControl setEnabled:YES];
+    else
+        [midiFlavorControl setEnabled:NO];
 }
 
 @end

@@ -501,6 +501,8 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     
     [userDefaultsValuesDict setObject:@"dls appl" forKey:@"midi.plugin"];
     
+    [userDefaultsValuesDict setObject:@"sc55" forKey:@"midi.flavor"];
+    
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];

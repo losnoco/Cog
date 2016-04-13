@@ -31,8 +31,8 @@ public:
     void setComponent(OSType uSubType, OSType uManufacturer);
 
 protected:
-	virtual void send_event(uint32_t b, uint32_t sample_offset);
-	virtual void render_512(float * out);
+	virtual void send_event(uint32_t b);
+	virtual void render(float * out, unsigned long count);
 
 	virtual void shutdown();
 	virtual bool startup();

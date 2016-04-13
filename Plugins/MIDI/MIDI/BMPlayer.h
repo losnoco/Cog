@@ -20,11 +20,8 @@ public:
 	void setSincInterpolation(bool enable = true);
 
 private:
-	void send_event(uint32_t b);
-    void render(float * out, unsigned long count);
-    
-    virtual void send_event(uint32_t b, uint32_t sample_offset);
-	virtual void render_512(float * out);
+	virtual void send_event(uint32_t b);
+    virtual void render(float * out, unsigned long count);
 
 	virtual void shutdown();
 	virtual bool startup();
@@ -37,15 +34,6 @@ private:
     std::string        sSoundFontName;
     std::string        sFileSoundFontName;
     
-    typedef struct BASS_event
-    {
-        uint32_t b;
-        uint32_t sample_offset;
-        BASS_event() : b(0), sample_offset(0) { }
-        BASS_event(uint32_t _b, uint32_t _sample_offset) : b(_b), sample_offset(_sample_offset) { }
-    } BASS_event;
-    std::vector<BASS_event> _eventQueue;
-
 	HSTREAM            _stream[3];
 
 	bool               bSincInterpolation;

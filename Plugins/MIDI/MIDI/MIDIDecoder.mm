@@ -10,6 +10,7 @@
 
 #import "AUPlayer.h"
 #import "BMPlayer.h"
+#import "SCPlayer.h"
 
 #import "Logging.h"
 
@@ -147,19 +148,49 @@ static OSType getOSType(const char * in_)
         
         componentSubType = getOSType(cplugin);
         componentManufacturer = getOSType(cplugin + 4);
-
-        auplayer = new AUPlayer;
         
-        auplayer->setComponent(componentSubType, componentManufacturer);
-        auplayer->setSampleRate( 44100 );
-        
-        if ( [soundFontPath length] )
+        if (componentManufacturer == 'rolD' && componentSubType == 'Sc55')
         {
-            auplayer->setSoundFont( [soundFontPath UTF8String] );
-            soundFontsAssigned = YES;
+            SCPlayer * scplayer = new SCPlayer;
+
+            SCPlayer::sc_mode mode = SCPlayer::sc_sc55;
+            NSString * flavor = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.flavor"];
+            if ([flavor isEqualToString:@"gm"])
+                mode = SCPlayer::sc_gm;
+            else if ([flavor isEqualToString:@"gm2"])
+                mode = SCPlayer::sc_gm2;
+            else if ([flavor isEqualToString:@"sc55"])
+                mode = SCPlayer::sc_sc55;
+            else if ([flavor isEqualToString:@"sc88"])
+                mode = SCPlayer::sc_sc88;
+            else if ([flavor isEqualToString:@"sc88pro"])
+                mode = SCPlayer::sc_sc88pro;
+            else if ([flavor isEqualToString:@"sc8850"])
+                mode = SCPlayer::sc_sc8850;
+            else if ([flavor isEqualToString:@"xg"])
+                mode = SCPlayer::sc_xg;
+            
+            scplayer->set_sccore_path("/Library/Audio/Plug-Ins/Components/SOUND Canvas VA.component/Contents/Resources/SCCore00.dylib");
+            scplayer->set_mode( mode );
+            scplayer->setSampleRate( 44100 );
+            
+            player = scplayer;
         }
+        else
+        {
+            auplayer = new AUPlayer;
         
-        player = auplayer;
+            auplayer->setComponent(componentSubType, componentManufacturer);
+            auplayer->setSampleRate( 44100 );
+        
+            if ( [soundFontPath length] )
+            {
+                auplayer->setSoundFont( [soundFontPath UTF8String] );
+                soundFontsAssigned = YES;
+            }
+
+            player = auplayer;
+        }
     }
     
     unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;

@@ -26,6 +26,7 @@
 		8384918C1808596A00E7332D /* NDHotKey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838491841808588D00E7332D /* NDHotKey.framework */; };
 		83B06729180D85B8008E3612 /* MIDIPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.m */; };
 		83B0672B180D8B39008E3612 /* midi.png in Resources */ = {isa = PBXBuildFile; fileRef = 83B0672A180D8B39008E3612 /* midi.png */; };
+		83DFEA0B1CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83DFEA0A1CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.m */; };
 		83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */; };
 		83F27E6B1810DD3A00CEF538 /* appearance@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E651810DD3A00CEF538 /* appearance@2x.png */; };
 		83F27E6C1810DD3A00CEF538 /* growl@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E661810DD3A00CEF538 /* growl@2x.png */; };
@@ -107,6 +108,8 @@
 		83B06727180D85B8008E3612 /* MIDIPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIPane.h; sourceTree = "<group>"; };
 		83B06728180D85B8008E3612 /* MIDIPane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIPane.m; sourceTree = "<group>"; };
 		83B0672A180D8B39008E3612 /* midi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi.png; path = Icons/midi.png; sourceTree = "<group>"; };
+		83DFEA091CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIFlavorBehaviorArrayController.h; sourceTree = "<group>"; };
+		83DFEA0A1CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIFlavorBehaviorArrayController.m; sourceTree = "<group>"; };
 		83EF495D17FBC96A00642E3C /* VolumeBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeBehaviorArrayController.h; sourceTree = "<group>"; };
 		83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeBehaviorArrayController.m; sourceTree = "<group>"; };
 		83F27E651810DD3A00CEF538 /* appearance@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "appearance@2x.png"; path = "Icons/appearance@2x.png"; sourceTree = "<group>"; };
@@ -233,6 +236,8 @@
 		17D503410ABDB1660022D1E8 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				83DFEA091CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.h */,
+				83DFEA0A1CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.m */,
 				837C0D3E1C50954000CAE18F /* MIDIPluginBehaviorArrayController.h */,
 				837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */,
 				8372053518E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.h */,
@@ -417,6 +422,7 @@
 				8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */,
 				8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */,
 				8E6C13A00AACBAB500819171 /* HotKeyControl.m in Sources */,
+				83DFEA0B1CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.m in Sources */,
 				83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */,
 				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
 				837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */,

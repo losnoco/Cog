@@ -10,8 +10,10 @@
 #import "GeneralPreferencePane.h"
 
 @interface MIDIPane : GeneralPreferencePane {
+    IBOutlet NSPopUpButton *midiFlavorControl;
 }
 
 - (IBAction)setSoundFont:(id)sender;
+- (IBAction)setMidiPlugin:(id)sender;
 
 @end

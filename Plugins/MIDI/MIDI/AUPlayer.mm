@@ -37,7 +37,7 @@ AUPlayer::~AUPlayer()
 	shutdown();
 }
 
-void AUPlayer::send_event(uint32_t b, uint32_t sample_offset)
+void AUPlayer::send_event(uint32_t b)
 {
 #ifdef AUPLAYERVIEW
     int _port = -1;
@@ -53,7 +53,7 @@ void AUPlayer::send_event(uint32_t b, uint32_t sample_offset)
 #ifdef AUPLAYERVIEW
         _port = (int)port;
 #endif
-        MusicDeviceMIDIEvent(samplerUnit[port], event[0], event[1], event[2], sample_offset);
+        MusicDeviceMIDIEvent(samplerUnit[port], event[0], event[1], event[2], 0);
     }
     else
 	{
@@ -83,35 +83,42 @@ void AUPlayer::send_event(uint32_t b, uint32_t sample_offset)
 #endif
 }
 
-void AUPlayer::render_512(float * out)
+void AUPlayer::render(float * out, unsigned long count)
 {
     float *ptrL, *ptrR;
-    memset(out, 0, 512 * sizeof(float) * 2);
-	for (unsigned long i = 0; i < 3; ++i)
-	{
-		AudioUnitRenderActionFlags ioActionFlags = 0;
-		UInt32 numberFrames = 512;
-            
-        for (unsigned long j = 0; j < 2; j++)
+    memset(out, 0, count * sizeof(float) * 2);
+    while (count)
+    {
+        UInt32 numberFrames = count > 512 ? 512 : count;
+        
+        for (unsigned long i = 0; i < 3; ++i)
         {
-            bufferList->mBuffers[j].mNumberChannels = 1;
-            bufferList->mBuffers[j].mDataByteSize = (UInt32) (512 * sizeof(float));
-            bufferList->mBuffers[j].mData = audioBuffer + j * 512;
-            memset(bufferList->mBuffers[j].mData, 0, 512 * sizeof(float));
-        }
+            AudioUnitRenderActionFlags ioActionFlags = 0;
             
-        AudioUnitRender(samplerUnit[i], &ioActionFlags, &mTimeStamp, 0, numberFrames, bufferList);
+            for (unsigned long j = 0; j < 2; j++)
+            {
+                bufferList->mBuffers[j].mNumberChannels = 1;
+                bufferList->mBuffers[j].mDataByteSize = (UInt32) (numberFrames * sizeof(float));
+                bufferList->mBuffers[j].mData = audioBuffer + j * 512;
+                memset(bufferList->mBuffers[j].mData, 0, numberFrames * sizeof(float));
+            }
             
-        ptrL = (float *) bufferList->mBuffers[0].mData;
-        ptrR = (float *) bufferList->mBuffers[1].mData;
-        for (unsigned long j = 0; j < 512; ++j)
-        {
-            out[j * 2 + 0] += ptrL[j];
-            out[j * 2 + 1] += ptrR[j];
+            AudioUnitRender(samplerUnit[i], &ioActionFlags, &mTimeStamp, 0, numberFrames, bufferList);
+            
+            ptrL = (float *) bufferList->mBuffers[0].mData;
+            ptrR = (float *) bufferList->mBuffers[1].mData;
+            for (unsigned long j = 0; j < numberFrames; ++j)
+            {
+                out[j * 2 + 0] += ptrL[j];
+                out[j * 2 + 1] += ptrR[j];
+            }
         }
+        
+        out += numberFrames * 2;
+        count -= numberFrames;
+ 
+        mTimeStamp.mSampleTime += (double)numberFrames;
     }
-
-	mTimeStamp.mSampleTime += 512.0;
 }
 
 void AUPlayer::shutdown()
