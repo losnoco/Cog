@@ -356,7 +356,7 @@ u32 armcpu_switchMode(armcpu_t *armcpu, u8 mode)
 	return oldmode;
 }
 
-static u32
+u32
 armcpu_prefetch(armcpu_t *armcpu)
 {
 #ifdef GDB_STUB

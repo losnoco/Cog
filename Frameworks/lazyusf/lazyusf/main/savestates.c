@@ -58,7 +58,7 @@
 #include "vi/vi_controller.h"
 
 static const char* savestate_magic = "M64+SAVE";
-static const int savestate_latest_version = 0x00010000;  /* 1.0 */
+/*static const int savestate_latest_version = 0x00010000; */ /* 1.0 */
 static const unsigned char pj64_magic[4] = { 0xC8, 0xA6, 0xD8, 0x23 };
 
 #define GETARRAY(buff, type, count) \

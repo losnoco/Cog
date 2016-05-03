@@ -35,7 +35,7 @@ const int FSS_MAXTRACKS = 32;
 const int FSS_TRACKSTACKSIZE = 3;
 const int AMPL_K = 723;
 const int AMPL_MIN = -AMPL_K;
-const int AMPL_THRESHOLD = AMPL_MIN << 7;
+const int AMPL_THRESHOLD = AMPL_MIN * 128;
 
 inline int SOUND_FREQ(int n) { return -0x1000000 / n; }
 

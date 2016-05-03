@@ -32,7 +32,6 @@
 		83DE0C90180A9CA400269051 /* FIFO.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C55180A9CA400269051 /* FIFO.h */; };
 		83DE0C91180A9CA400269051 /* GPU.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C56180A9CA400269051 /* GPU.c */; };
 		83DE0C92180A9CA400269051 /* GPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C57180A9CA400269051 /* GPU.h */; };
-		83DE0C93180A9CA400269051 /* instruction_tabdef.inc in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C58180A9CA400269051 /* instruction_tabdef.inc */; };
 		83DE0C94180A9CA400269051 /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C59180A9CA400269051 /* matrix.c */; };
 		83DE0C95180A9CA400269051 /* matrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C5A180A9CA400269051 /* matrix.h */; };
 		83DE0C96180A9CA400269051 /* mc.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C5B180A9CA400269051 /* mc.c */; };
@@ -48,7 +47,6 @@
 		83DE0CA3180A9CA400269051 /* spu_exports.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C68180A9CA400269051 /* spu_exports.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83DE0CA4180A9CA400269051 /* thumb_instructions.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C69180A9CA400269051 /* thumb_instructions.c */; };
 		83DE0CA5180A9CA400269051 /* thumb_instructions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C6A180A9CA400269051 /* thumb_instructions.h */; };
-		83DE0CA6180A9CA400269051 /* thumb_tabdef.inc in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C6B180A9CA400269051 /* thumb_tabdef.inc */; };
 		83DE0CA7180A9CA400269051 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C6C180A9CA400269051 /* types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83DE0CB8180A9FD000269051 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0CB7180A9FD000269051 /* state.c */; };
 		83DE0CBE180B21DD00269051 /* state.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0CB9180A9FE300269051 /* state.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,7 +80,6 @@
 		83DE0C55180A9CA400269051 /* FIFO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FIFO.h; sourceTree = "<group>"; };
 		83DE0C56180A9CA400269051 /* GPU.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GPU.c; sourceTree = "<group>"; };
 		83DE0C57180A9CA400269051 /* GPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPU.h; sourceTree = "<group>"; };
-		83DE0C58180A9CA400269051 /* instruction_tabdef.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = instruction_tabdef.inc; sourceTree = "<group>"; };
 		83DE0C59180A9CA400269051 /* matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = matrix.c; sourceTree = "<group>"; };
 		83DE0C5A180A9CA400269051 /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = matrix.h; sourceTree = "<group>"; };
 		83DE0C5B180A9CA400269051 /* mc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc.c; sourceTree = "<group>"; };
@@ -98,7 +95,6 @@
 		83DE0C68180A9CA400269051 /* spu_exports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spu_exports.h; sourceTree = "<group>"; };
 		83DE0C69180A9CA400269051 /* thumb_instructions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thumb_instructions.c; sourceTree = "<group>"; };
 		83DE0C6A180A9CA400269051 /* thumb_instructions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thumb_instructions.h; sourceTree = "<group>"; };
-		83DE0C6B180A9CA400269051 /* thumb_tabdef.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = thumb_tabdef.inc; sourceTree = "<group>"; };
 		83DE0C6C180A9CA400269051 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		83DE0CB7180A9FD000269051 /* state.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = state.c; sourceTree = "<group>"; };
 		83DE0CB9180A9FE300269051 /* state.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
@@ -201,7 +197,6 @@
 				83DE0C55180A9CA400269051 /* FIFO.h */,
 				83DE0C56180A9CA400269051 /* GPU.c */,
 				83DE0C57180A9CA400269051 /* GPU.h */,
-				83DE0C58180A9CA400269051 /* instruction_tabdef.inc */,
 				83DE0C59180A9CA400269051 /* matrix.c */,
 				83DE0C5A180A9CA400269051 /* matrix.h */,
 				83DE0C5B180A9CA400269051 /* mc.c */,
@@ -217,7 +212,6 @@
 				83DE0C68180A9CA400269051 /* spu_exports.h */,
 				83DE0C69180A9CA400269051 /* thumb_instructions.c */,
 				83DE0C6A180A9CA400269051 /* thumb_instructions.h */,
-				83DE0C6B180A9CA400269051 /* thumb_tabdef.inc */,
 				83DE0C6C180A9CA400269051 /* types.h */,
 				83DE0CB7180A9FD000269051 /* state.c */,
 				83DE0CB9180A9FE300269051 /* state.h */,
@@ -329,7 +323,6 @@
 				83DE0C8F180A9CA400269051 /* FIFO.c in Sources */,
 				83DE0CA1180A9CA400269051 /* SPU.cpp in Sources */,
 				83DE0C86180A9CA400269051 /* bios.c in Sources */,
-				83DE0CA6180A9CA400269051 /* thumb_tabdef.inc in Sources */,
 				83DE0C96180A9CA400269051 /* mc.c in Sources */,
 				83DE0C91180A9CA400269051 /* GPU.c in Sources */,
 				83699ABA1AB3D8EB00F5A6E3 /* barray.c in Sources */,
@@ -337,7 +330,6 @@
 				83DE0C84180A9CA400269051 /* armcpu.c in Sources */,
 				83DE0C94180A9CA400269051 /* matrix.c in Sources */,
 				833B1A3E180BAD0200414852 /* isqrt.c in Sources */,
-				83DE0C93180A9CA400269051 /* instruction_tabdef.inc in Sources */,
 				83DE0C9B180A9CA400269051 /* NDSSystem.c in Sources */,
 				83DE0CB8180A9FD000269051 /* state.c in Sources */,
 				83DD1A0318EA634F00DADA1A /* resampler.c in Sources */,
@@ -434,6 +426,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				INFOPLIST_FILE = "vio2sf/vio2sf-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -451,6 +444,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				INFOPLIST_FILE = "vio2sf/vio2sf-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

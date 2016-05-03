@@ -349,6 +349,7 @@ static EMU_INLINE uint32 lb(struct ARM_STATE *state, uint32 a) {
   }
 }
 
+#if 0
 static EMU_INLINE uint32 lh(struct ARM_STATE *state, uint32 a) {
   struct ARM_MEMORY_TYPE *t;
   uint32 sh;
@@ -366,6 +367,7 @@ static EMU_INLINE uint32 lh(struct ARM_STATE *state, uint32 a) {
 //armsubtimeoff();
   return a & 0xFFFF;
 }
+#endif
 
 static EMU_INLINE uint32 lw(struct ARM_STATE *state, uint32 a) {
   struct ARM_MEMORY_TYPE *t;
@@ -401,6 +403,7 @@ static EMU_INLINE void sb(struct ARM_STATE *state, uint32 a, uint32 d) {
 //armsubtimeoff();
 }
 
+#if 0
 static EMU_INLINE void sh(struct ARM_STATE *state, uint32 a, uint32 d) {
   struct ARM_MEMORY_TYPE *t;
   uint32 sh;
@@ -418,6 +421,7 @@ static EMU_INLINE void sh(struct ARM_STATE *state, uint32 a, uint32 d) {
   }
 //armsubtimeoff();
 }
+#endif
 
 static EMU_INLINE void sw(struct ARM_STATE *state, uint32 a, uint32 d) {
   struct ARM_MEMORY_TYPE *t;

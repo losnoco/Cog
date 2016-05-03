@@ -251,7 +251,7 @@ static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
  * just one extra scalar x86 instruction for every RSP vector op-code when we
  * use SSE2 explicitly for this particular goal instead of letting GCC do it.
  */
-static INLINE void vector_copy(short* VD, short* VS)
+INLINE void vector_copy(short* VD, short* VS)
 {
     __m128i xmm;
 

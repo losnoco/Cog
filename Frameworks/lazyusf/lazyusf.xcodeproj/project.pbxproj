@@ -53,7 +53,6 @@
 		83CA15861A988138005E7ED4 /* exception.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA14A31A988138005E7ED4 /* exception.c */; };
 		83CA15871A988138005E7ED4 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14A41A988138005E7ED4 /* exception.h */; };
 		83CA15881A988138005E7ED4 /* fpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14A51A988138005E7ED4 /* fpu.h */; };
-		83CA15891A988138005E7ED4 /* instr_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA14A61A988138005E7ED4 /* instr_counters.c */; };
 		83CA158A1A988138005E7ED4 /* instr_counters.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14A71A988138005E7ED4 /* instr_counters.h */; };
 		83CA158B1A988138005E7ED4 /* interpreter.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14A81A988138005E7ED4 /* interpreter.def */; };
 		83CA158C1A988138005E7ED4 /* interpreter_cop0.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14A91A988138005E7ED4 /* interpreter_cop0.def */; };
@@ -250,7 +249,6 @@
 		83CA14A31A988138005E7ED4 /* exception.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = exception.c; sourceTree = "<group>"; };
 		83CA14A41A988138005E7ED4 /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exception.h; sourceTree = "<group>"; };
 		83CA14A51A988138005E7ED4 /* fpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fpu.h; sourceTree = "<group>"; };
-		83CA14A61A988138005E7ED4 /* instr_counters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = instr_counters.c; sourceTree = "<group>"; };
 		83CA14A71A988138005E7ED4 /* instr_counters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = instr_counters.h; sourceTree = "<group>"; };
 		83CA14A81A988138005E7ED4 /* interpreter.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = interpreter.def; sourceTree = "<group>"; };
 		83CA14A91A988138005E7ED4 /* interpreter_cop0.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = interpreter_cop0.def; sourceTree = "<group>"; };
@@ -570,7 +568,6 @@
 				83CA14A31A988138005E7ED4 /* exception.c */,
 				83CA14A41A988138005E7ED4 /* exception.h */,
 				83CA14A51A988138005E7ED4 /* fpu.h */,
-				83CA14A61A988138005E7ED4 /* instr_counters.c */,
 				83CA14A71A988138005E7ED4 /* instr_counters.h */,
 				83CA14A81A988138005E7ED4 /* interpreter.def */,
 				83CA14A91A988138005E7ED4 /* interpreter_cop0.def */,
@@ -1024,7 +1021,6 @@
 				83CA15DE1A988138005E7ED4 /* alist_audio.c in Sources */,
 				83CA15D81A988138005E7ED4 /* ri_controller.c in Sources */,
 				83CA15861A988138005E7ED4 /* exception.c in Sources */,
-				83CA15891A988138005E7ED4 /* instr_counters.c in Sources */,
 				83CA15C61A988138005E7ED4 /* gcop1_d.c in Sources */,
 				83CA16291A988138005E7ED4 /* cic.c in Sources */,
 				83CA15A11A988138005E7ED4 /* pure_interp.c in Sources */,

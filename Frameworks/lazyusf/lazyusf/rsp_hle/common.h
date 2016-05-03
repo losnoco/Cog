@@ -30,9 +30,9 @@
 #endif
 
 #ifdef _MSC_VER
-#  define inline __forceinline
+#  define INLINE __forceinline
 #elif defined __GNUC__
-#  define inline inline __attribute__((always_inline))
+#  define INLINE inline __attribute__((always_inline))
 #endif
 
 #endif

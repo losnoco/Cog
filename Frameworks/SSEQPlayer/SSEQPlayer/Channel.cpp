@@ -544,7 +544,7 @@ void Channel::Update()
 		modParam = Cnv_Sine(this->modCounter >> 8) * this->modRange * this->modDepth;
 
 		if (!this->modType)
-			modParam = static_cast<int64_t>(modParam * 60) >> 14;
+			modParam = static_cast<int>(static_cast<int64_t>(modParam * 60) >> 14);
 		else
 			// This ugly formula whose exact meaning and workings I cannot figure out is used for volume/pan modulation.
 			modParam = ((modParam & ~0xFC000000) >> 8) | ((((modParam < 0 ? -1 : 0) << 6) | (static_cast<uint32_t>(modParam) >> 26)) << 18);

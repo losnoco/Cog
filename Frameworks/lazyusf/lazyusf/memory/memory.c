@@ -142,8 +142,8 @@ static int writew(writefn write_word, void* opaque, uint32_t address, uint32_t v
 static int writed(writefn write_word, void* opaque, uint32_t address, uint64_t value)
 {
     int result =
-    write_word(opaque, address    , value >> 32, ~0U);
-    write_word(opaque, address + 4, value      , ~0U);
+    write_word(opaque, address    , (uint32_t)(value >> 32), ~0U);
+    write_word(opaque, address + 4, (uint32_t) value       , ~0U);
 
     return result;
 }

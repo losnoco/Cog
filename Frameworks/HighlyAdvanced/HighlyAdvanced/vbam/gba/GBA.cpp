@@ -252,9 +252,9 @@ const u8 gamepakWaitState[4] =  { 4, 3, 2, 8 };
 const u8 gamepakWaitState0[2] = { 2, 1 };
 const u8 gamepakWaitState1[2] = { 4, 1 };
 const u8 gamepakWaitState2[2] = { 8, 1 };
-const bool isInRom [16]=
+/*const bool isInRom [16]=
   { false, false, false, false, false, false, false, false,
-    true, true, true, true, true, true, false, false };
+    true, true, true, true, true, true, false, false };*/
 
 const u32 myROM[] = {
 0xEA000006,

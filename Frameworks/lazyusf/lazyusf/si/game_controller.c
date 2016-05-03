@@ -33,7 +33,7 @@
 
 #include <string.h>
 
-
+#if 0
 static uint8_t pak_data_crc(const uint8_t* data)
 {
     size_t i;
@@ -52,7 +52,7 @@ static uint8_t pak_data_crc(const uint8_t* data)
     }
     return crc;
 }
-
+#endif
 
 static void read_controller_read_buttons(struct game_controller* cont, uint8_t* cmd)
 {
@@ -75,7 +75,7 @@ static void controller_status_command(struct game_controller* cont, uint8_t* cmd
 
 static void controller_read_buttons_command(struct game_controller* cont, uint8_t* cmd)
 {
-    enum pak_type pak;
+    /*enum pak_type pak;*/
     int connected = 0;
 
     if (!connected)

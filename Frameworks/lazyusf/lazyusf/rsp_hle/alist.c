@@ -312,13 +312,13 @@ void alist_envmix_exp(
 
         if (ramps[0].step != 0)
         {
-            exp_seq[0] = ((int64_t)exp_seq[0]*(int64_t)exp_rates[0]) >> 16;
+            exp_seq[0] = (int32_t)(((int64_t)exp_seq[0]*(int64_t)exp_rates[0]) >> 16);
             ramps[0].step = (exp_seq[0] - ramps[0].value) >> 3;
         }
 
         if (ramps[1].step != 0)
         {
-            exp_seq[1] = ((int64_t)exp_seq[1]*(int64_t)exp_rates[1]) >> 16;
+            exp_seq[1] = (int32_t)(((int64_t)exp_seq[1]*(int64_t)exp_rates[1]) >> 16);
             ramps[1].step = (exp_seq[1] - ramps[1].value) >> 3;
         }
 

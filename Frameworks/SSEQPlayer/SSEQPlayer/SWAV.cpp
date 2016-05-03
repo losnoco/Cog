@@ -115,7 +115,7 @@ void SWAV::Read(PseudoFile &file)
 	{
 		// IMA ADPCM -> PCM signed 16-bit
 		this->data.resize((origData.size() - 4) * 2, 0);
-		this->DecodeADPCM(&origData[0], origData.size() - 4);
+		this->DecodeADPCM(&origData[0], (uint32_t)(origData.size() - 4));
 		--this->loopOffset;
 		this->loopOffset *= 8;
 		this->nonLoopLength *= 8;

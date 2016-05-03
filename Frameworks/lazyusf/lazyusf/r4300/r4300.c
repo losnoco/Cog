@@ -216,7 +216,7 @@ static void dynarec_setup_code()
 	   mov state, esi
    }
 #else
-   asm volatile
+   __asm __volatile
 #ifdef __x86_64__
     (" mov %%r15, (%[state])       \n"
 #else

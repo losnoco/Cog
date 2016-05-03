@@ -727,7 +727,7 @@ static void mix_voice_samples(struct hle_t* hle, musyx_t *musyx,
         pitch_accu += pitch_step;
 
         /* handle end/restart points */
-        dist = sample - sample_end;
+        dist = (int)(sample - sample_end);
         if (dist >= 0)
             sample = sample_restart + dist;
 

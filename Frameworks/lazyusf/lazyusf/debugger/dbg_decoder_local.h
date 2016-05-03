@@ -600,8 +600,10 @@
 /*
  * The floating point version and status registers.
  */
+#if 0
 #define	MIPS_FPU_ID	$0
 #define	MIPS_FPU_CSR	$31
+#endif
 
 /*
  * The floating point coprocessor status register bits.

@@ -63,21 +63,21 @@ static inline void
 __cpuid(int *data, int selector)
 {
 #if defined(__PIC__) && defined(__i386__)
-    asm("xchgl %%ebx, %%esi; cpuid; xchgl %%ebx, %%esi"
+    __asm("xchgl %%ebx, %%esi; cpuid; xchgl %%ebx, %%esi"
         : "=a" (data[0]),
         "=S" (data[1]),
         "=c" (data[2]),
         "=d" (data[3])
         : "0" (selector));
 #elif defined(__PIC__) && defined(__amd64__)
-    asm("xchg{q} {%%}rbx, %q1; cpuid; xchg{q} {%%}rbx, %q1"
+    __asm("xchg{q} {%%}rbx, %q1; cpuid; xchg{q} {%%}rbx, %q1"
         : "=a" (data[0]),
         "=&r" (data[1]),
         "=c" (data[2]),
         "=d" (data[3])
         : "0" (selector));
 #else
-    asm("cpuid"
+    __asm("cpuid"
         : "=a" (data[0]),
         "=b" (data[1]),
         "=c" (data[2]),

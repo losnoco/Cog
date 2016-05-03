@@ -192,8 +192,8 @@ void genjr(usf_state_t * state)
    gencallinterp(state, (unsigned long long)state->current_instruction_table.JR, 1);
 #else
    unsigned int diff = (unsigned int) offsetof(precomp_instr, local_addr);
-   unsigned int diff_need = (unsigned int) offsetof(precomp_instr, reg_cache_infos.need_map);
-   unsigned int diff_wrap = (unsigned int) offsetof(precomp_instr, reg_cache_infos.jump_wrapper);
+   unsigned int diff_need = (unsigned int) (offsetof(precomp_instr, reg_cache_infos) + offsetof(reg_cache_struct, need_map));
+   unsigned int diff_wrap = (unsigned int) (offsetof(precomp_instr, reg_cache_infos) + offsetof(reg_cache_struct, jump_wrapper));
    
    if (((state->dst->addr & 0xFFF) == 0xFFC &&
        (state->dst->addr < 0x80000000 || state->dst->addr >= 0xC0000000))||state->no_compiled_jump)
@@ -261,8 +261,8 @@ void genjalr(usf_state_t * state)
    gencallinterp(state, (unsigned long long)state->current_instruction_table.JALR, 0);
 #else
    unsigned int diff = (unsigned int) offsetof(precomp_instr, local_addr);
-   unsigned int diff_need = (unsigned int) offsetof(precomp_instr, reg_cache_infos.need_map);
-   unsigned int diff_wrap = (unsigned int) offsetof(precomp_instr, reg_cache_infos.jump_wrapper);
+   unsigned int diff_need = (unsigned int) (offsetof(precomp_instr, reg_cache_infos) + offsetof(reg_cache_struct, need_map));
+   unsigned int diff_wrap = (unsigned int) (offsetof(precomp_instr, reg_cache_infos) + offsetof(reg_cache_struct, jump_wrapper));
    
    if (((state->dst->addr & 0xFFF) == 0xFFC &&
        (state->dst->addr < 0x80000000 || state->dst->addr >= 0xC0000000))||state->no_compiled_jump)

@@ -42,6 +42,6 @@ void force_detected_rdram_size_hack(usf_state_t * state)
         ? 0x318
         : 0x3f0;
 
-    state->g_ri.rdram.dram[address/4] = state->g_ri.rdram.dram_size;
+    state->g_ri.rdram.dram[address/4] = (uint32_t) state->g_ri.rdram.dram_size;
 }
 

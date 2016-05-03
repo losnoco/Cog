@@ -60,7 +60,7 @@ static void TLBWrite(usf_state_t * state, unsigned int idx)
                 md5_finish(&state, digest);
                 for (j=0; j<16; j++) state->blocks[i]->md5[j] = digest[j];*/
                 
-                state->blocks[i]->adler32 = adler32(0, (const unsigned char *)&state->g_rdram[(state->tlb_LUT_r[i]&0x7FF000)/4], 0x1000);
+                state->blocks[i]->adler32 = (unsigned int) adler32(0, (const unsigned char *)&state->g_rdram[(state->tlb_LUT_r[i]&0x7FF000)/4], 0x1000);
                 
                 state->invalid_code[i] = 1;
             }
@@ -91,7 +91,7 @@ static void TLBWrite(usf_state_t * state, unsigned int idx)
                md5_finish(&state, digest);
                for (j=0; j<16; j++) state->blocks[i]->md5[j] = digest[j];*/
                 
-               state->blocks[i]->adler32 = adler32(0, (const unsigned char *)&state->g_rdram[(state->tlb_LUT_r[i]&0x7FF000)/4], 0x1000);
+               state->blocks[i]->adler32 = (unsigned int) adler32(0, (const unsigned char *)&state->g_rdram[(state->tlb_LUT_r[i]&0x7FF000)/4], 0x1000);
                 
                state->invalid_code[i] = 1;
             }
