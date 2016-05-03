@@ -73,12 +73,6 @@
     }
     return self;
 }
-- (void)dealloc
-{
-    [list release];
-    [lock release];
-    [super dealloc];
-}
 - (void)add_hint:(NSString *)path source:(id)source
 {
     [lock lock];
@@ -127,35 +121,36 @@ void * source_fopen(const char * path)
             return 0;
     }
     
-    return [source retain];
+    return (void*)CFBridgingRetain(source);
 }
 
 size_t source_fread(void * buffer, size_t size, size_t count, void * handle)
 {
-    id source = (id)handle;
+    NSObject* _handle = (__bridge NSObject *)(handle);
+    id<CogSource> __unsafe_unretained source = (id) _handle;
     
     return [source read:buffer amount:(size * count)] / size;
 }
 
 int source_fseek(void * handle, int64_t offset, int whence)
 {
-    id source = (id)handle;
+    NSObject* _handle = (__bridge NSObject *)(handle);
+    id<CogSource> __unsafe_unretained source = (id) _handle;
     
     return [source seek:(long)offset whence:whence] ? 0 : -1;
 }
 
 int source_fclose(void * handle)
 {
-    id source = (id)handle;
-    
-    [source release];
+    CFBridgingRelease(handle);
     
     return 0;
 }
 
 long source_ftell(void * handle)
 {
-    id source = (id)handle;
+    NSObject* _handle = (__bridge NSObject *)(handle);
+    id<CogSource> __unsafe_unretained source = (id) _handle;
     
     return [source tell];
 }
@@ -1205,7 +1200,7 @@ static int usf_info(void * context, const char * name, const char * value)
 		return NO;
 	}
     
-    currentSource = [source retain];
+    currentSource = source;
 	
     struct psf_info_meta_state info;
     
@@ -1220,7 +1215,7 @@ static int usf_info(void * context, const char * name, const char * value)
     info.trackPeak = 0;
     info.volume = 1;
     
-    currentUrl = [[[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] retain];
+    currentUrl = [[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     [[psf_file_container instance] add_hint:currentUrl source:currentSource];
     
@@ -1471,9 +1466,9 @@ static int usf_info(void * context, const char * name, const char * value)
 - (void)close
 {
     [self closeDecoder];
-    [currentSource release];
+    currentSource = nil;
     [[psf_file_container instance] remove_hint:currentUrl];
-    [currentUrl release];
+    currentUrl = nil;
 }
 
 - (long)seek:(long)frame

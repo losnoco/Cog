@@ -8,22 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		8343785F17F93DAB00584396 /* psflib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343785017F93CB600584396 /* psflib.framework */; };
-		8343786017F93DBB00584396 /* psflib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343785017F93CB600584396 /* psflib.framework */; };
+		8343786017F93DBB00584396 /* psflib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343785017F93CB600584396 /* psflib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		834378D217F9676600584396 /* HighlyTheoretical.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834378A217F9658F00584396 /* HighlyTheoretical.framework */; };
-		834378D317F9677300584396 /* HighlyTheoretical.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 834378A217F9658F00584396 /* HighlyTheoretical.framework */; };
+		834378D317F9677300584396 /* HighlyTheoretical.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 834378A217F9658F00584396 /* HighlyTheoretical.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8343792917F96F1D00584396 /* HighlyQuixotic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; };
-		8343792A17F96F2600584396 /* HighlyQuixotic.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; };
+		8343792A17F96F2600584396 /* HighlyQuixotic.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		834379A517F97EA100584396 /* HighlyAdvanced.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343796917F97BDB00584396 /* HighlyAdvanced.framework */; };
-		834379A617F97EB000584396 /* HighlyAdvanced.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343796917F97BDB00584396 /* HighlyAdvanced.framework */; };
+		834379A617F97EB000584396 /* HighlyAdvanced.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343796917F97BDB00584396 /* HighlyAdvanced.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		834379A817F9818400584396 /* HCDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 834379A717F9818400584396 /* HCDecoder.mm */; };
 		8360EEE817F92AC8005208A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EEE717F92AC8005208A4 /* Cocoa.framework */; };
 		8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8360EEF017F92AC8005208A4 /* InfoPlist.strings */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
-		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
+		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83C8B6FB18AF58FA0071B040 /* lazyusf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C8B65618AF57770071B040 /* lazyusf.framework */; };
-		83C8B6FC18AF59080071B040 /* lazyusf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83C8B65618AF57770071B040 /* lazyusf.framework */; };
+		83C8B6FC18AF59080071B040 /* lazyusf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83C8B65618AF57770071B040 /* lazyusf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
-		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
+		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0CBF180B27C200269051 /* libz.dylib */; };
 		83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83FC325E1BF5AB9000962B36 /* HighlyExperimental.framework */; };
 		83FC32C61BF5AF0600962B36 /* HighlyExperimental.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83FC325E1BF5AB9000962B36 /* HighlyExperimental.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -379,7 +379,7 @@
 		8360EEDC17F92AC8005208A4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 8360EEDF17F92AC8005208A4 /* Build configuration list for PBXProject "HighlyComplete" */;
@@ -570,7 +570,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -580,6 +580,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -607,7 +608,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -636,7 +637,6 @@
 		8360EEF717F92AC8005208A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HighlyComplete/HighlyComplete-Prefix.pch";
@@ -646,6 +646,7 @@
 					HAVE_STDINT_H,
 				);
 				INFOPLIST_FILE = "HighlyComplete/HighlyComplete-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.highlycomplete;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -656,7 +657,6 @@
 		8360EEF817F92AC8005208A4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HighlyComplete/HighlyComplete-Prefix.pch";
@@ -665,6 +665,7 @@
 					EMU_LITTLE_ENDIAN,
 				);
 				INFOPLIST_FILE = "HighlyComplete/HighlyComplete-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.highlycomplete;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
