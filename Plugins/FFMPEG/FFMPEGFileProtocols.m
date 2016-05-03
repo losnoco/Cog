@@ -18,7 +18,7 @@
 
 typedef struct FileContext {
     const AVClass *class;
-    id<CogSource> fd;
+    void *fd;
 } FileContext;
 
 static const AVOption file_options[] = {
@@ -59,7 +59,9 @@ static const AVClass unpack_class = {
 static int file_read(URLContext *h, unsigned char *buf, int size)
 {
     FileContext *c = h->priv_data;
-    return [c->fd read:buf amount:size];
+    NSObject* _fd = (__bridge NSObject *)(c->fd);
+    id<CogSource> __unsafe_unretained fd = (id) _fd;
+    return [fd read:buf amount:size];
 }
 
 static int file_check(URLContext *h, int mask)
@@ -85,7 +87,7 @@ static int file_open(URLContext *h, const char *filename, int flags)
     if (![fd open:url])
         return -1;
     
-    c->fd = [fd retain];
+    c->fd = (void*)CFBridgingRetain(fd);
     
     return 0;
 }
@@ -101,7 +103,9 @@ static int http_open(URLContext *h, const char *filename, int flags)
 static int64_t file_seek(URLContext *h, int64_t pos, int whence)
 {
     FileContext *c = h->priv_data;
-    return [c->fd seek:pos whence:whence] ? [c->fd tell] : -1;
+    NSObject* _fd = (__bridge NSObject *)(c->fd);
+    id<CogSource> __unsafe_unretained fd = (id) _fd;
+    return [fd seek:pos whence:whence] ? [fd tell] : -1;
 }
 
 static int64_t http_seek(URLContext *h, int64_t pos, int whence)
@@ -112,7 +116,7 @@ static int64_t http_seek(URLContext *h, int64_t pos, int whence)
 static int file_close(URLContext *h)
 {
     FileContext *c = h->priv_data;
-    [c->fd release];
+    CFBridgingRelease(c->fd);
     return 0;
 }
 
