@@ -341,8 +341,6 @@ int callbackLoop(void *data)
 
 - (void)setSource:(id<CogSource>)s
 {
-	[s retain];
-	[source release];
 	source = s;
 }
 

@@ -13,6 +13,16 @@
 
 #import "Logging.h"
 
+@interface DumbCallbackData : NSObject
+{
+    @public NSString * baseUrl;
+    @public NSMutableArray * tracks;
+}
+@end
+
+@implementation DumbCallbackData
+@end
+
 @implementation DumbContainer
 
 + (NSArray *)fileTypes
@@ -30,15 +40,10 @@
     return 1.0f;
 }
 
-struct callbackData
-{
-    NSString * baseUrl;
-    NSMutableArray * tracks;
-};
-
 int scanCallback(void *data, int startOrder, long length)
 {
-    struct callbackData * cbData = ( struct callbackData * ) data;
+    NSObject* _cbData = (__bridge NSObject *)(data);
+    DumbCallbackData * cbData = (id) _cbData;
     
     [cbData->tracks addObject:[NSURL URLWithString:[cbData->baseUrl stringByAppendingFormat:@"#%i", startOrder]]];
     
@@ -95,9 +100,11 @@ int scanCallback(void *data, int startOrder, long length)
         dumbfile_close(df);
 
         if ( duh ) {
-            struct callbackData data = { [url absoluteString], tracks };
+            DumbCallbackData * data = [[DumbCallbackData alloc] init];
+            data->baseUrl = [url absoluteString];
+            data->tracks = tracks;
             
-            dumb_it_scan_for_playable_orders( duh_get_it_sigdata( duh ), scanCallback, &data );
+            dumb_it_scan_for_playable_orders( duh_get_it_sigdata( duh ), scanCallback, (__bridge void *)data );
         }
     }
     
