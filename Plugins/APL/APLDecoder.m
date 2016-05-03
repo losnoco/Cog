@@ -22,7 +22,7 @@
 	
 	//Need to alter length
 	[properties setObject:[NSNumber numberWithLong:trackLength] forKey:@"totalFrames"];
-	return [properties autorelease];
+	return properties;
 }
 
 - (BOOL)open:(id<CogSource>)s
@@ -35,18 +35,15 @@
 	[s close];
 	
 	apl = [APLFile createWithFile:[url path]];
-	[apl retain];
 	
 	//Kind of a hackish way of accessing outside classes.
 	source = [NSClassFromString(@"AudioSource") audioSourceForURL:[apl file]];
-	[source retain];
 	
 	if (![source open:[apl file]]) {
 		ALog(@"Could not open source for file '%@' referenced in apl", [apl file]);
 		return NO;
 	}
 	decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source];
-	[decoder retain];
 	
 	if (![decoder open:source]) {
 		ALog(@"Could not open decoder for source for apl");
@@ -80,18 +77,11 @@
 - (void)close {
 	if (decoder) {
 		[decoder close];
-		[decoder release];
 		decoder = nil;
 	}
 	
-	if (source) {
-		[source release];
-		source = nil;
-	}
-	if (apl) {
-		[apl release];
-		apl = nil;
-	}
+    source = nil;
+    apl = nil;
 }
 
 

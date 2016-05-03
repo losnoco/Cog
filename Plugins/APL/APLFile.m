@@ -39,7 +39,6 @@
 		[unixPath insertString:basePath atIndex:0];
 		}
 	NSURL *url = [NSURL URLWithString:[[NSURL fileURLWithPath:unixPath] absoluteString]];
-	[unixPath release];
 	return url;
 }
 
@@ -59,7 +58,7 @@
 			ALog(@"Cannot read header");
 			return nil;
 		}
-		NSString* str = [[[NSString alloc] autorelease] initWithData:da encoding: NSASCIIStringEncoding];	
+		NSString* str = [[NSString alloc] initWithData:da encoding: NSASCIIStringEncoding];
 		if([str compare:header options:NSCaseInsensitiveSearch]) {
 			ALog(@"APL header mismatch");
 			return nil;
@@ -71,7 +70,6 @@
 		while((line = [self readline:f])) {
 			if (![line compare:@"----- APE TAG (DO NOT TOUCH!!!) -----\r\n" options:NSCaseInsensitiveSearch]) break;
 			if([line characterAtIndex:0] == '-') break;
-			[scanner release];
 			scanner = [[NSScanner alloc] initWithString:line];
 			NSString* field = nil, *value = nil;
 			if (![scanner scanUpToString:@"=" intoString:&field]) continue;
@@ -79,7 +77,6 @@
 			if (![scanner scanUpToString:@"\r\n" intoString:&value]) continue;
 			if (![field compare:@"Image File" options:NSCaseInsensitiveSearch])
 			{
-				[file release];
 				file = [self urlForPath:value relativeTo:filename];
 				DLog(@"APL refers to file '%@' read '%@'", file, value);
 				continue;
@@ -97,7 +94,6 @@
 				continue;
 			}
 		}
-		[scanner release];
 		//check here for EOF? cocoa does not have this functionality :(
 		[f closeFile];
 		}
