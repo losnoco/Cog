@@ -55,7 +55,7 @@ opus_int32 silk_stereo_find_predictor(                          /* O    Returns 
     corr = silk_inner_prod_aligned_scale( x, y, scale, length );
     pred_Q13 = silk_DIV32_varQ( corr, nrgx, 13 );
     pred_Q13 = silk_LIMIT( pred_Q13, -(1 << 14), 1 << 14 );
-    pred2_Q10 = silk_SMULWB( pred_Q13, pred_Q13 );
+    pred2_Q10 = (opus_int32) silk_SMULWB( pred_Q13, pred_Q13 );
 
     /* Faster update for signals with large prediction parameters */
     smooth_coef_Q16 = (opus_int)silk_max_int( smooth_coef_Q16, silk_abs( pred2_Q10 ) );
@@ -63,12 +63,12 @@ opus_int32 silk_stereo_find_predictor(                          /* O    Returns 
     /* Smoothed mid and residual norms */
     silk_assert( smooth_coef_Q16 < 32768 );
     scale = silk_RSHIFT( scale, 1 );
-    mid_res_amp_Q0[ 0 ] = silk_SMLAWB( mid_res_amp_Q0[ 0 ], silk_LSHIFT( silk_SQRT_APPROX( nrgx ), scale ) - mid_res_amp_Q0[ 0 ],
+    mid_res_amp_Q0[ 0 ] = (opus_int32) silk_SMLAWB( mid_res_amp_Q0[ 0 ], silk_LSHIFT( silk_SQRT_APPROX( nrgx ), scale ) - mid_res_amp_Q0[ 0 ],
         smooth_coef_Q16 );
     /* Residual energy = nrgy - 2 * pred * corr + pred^2 * nrgx */
     nrgy = silk_SUB_LSHIFT32( nrgy, silk_SMULWB( corr, pred_Q13 ), 3 + 1 );
     nrgy = silk_ADD_LSHIFT32( nrgy, silk_SMULWB( nrgx, pred2_Q10 ), 6 );
-    mid_res_amp_Q0[ 1 ] = silk_SMLAWB( mid_res_amp_Q0[ 1 ], silk_LSHIFT( silk_SQRT_APPROX( nrgy ), scale ) - mid_res_amp_Q0[ 1 ],
+    mid_res_amp_Q0[ 1 ] = (opus_int32) silk_SMLAWB( mid_res_amp_Q0[ 1 ], silk_LSHIFT( silk_SQRT_APPROX( nrgy ), scale ) - mid_res_amp_Q0[ 1 ],
         smooth_coef_Q16 );
 
     /* Ratio of smoothed residual and mid norms */

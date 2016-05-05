@@ -99,33 +99,33 @@ void silk_VQ_WMat_EC_sse4_1(
         C_tmp5 = _mm_add_epi32( C_tmp5, _mm_shuffle_epi32( C_tmp5, _MM_SHUFFLE( 0, 0, 0, 2 ) ) );
         sum2_Q16 = _mm_cvtsi128_si32( C_tmp5 );
 
-        sum2_Q16 = silk_SMLAWB( sum2_Q16, W_Q18[  0 ], diff_Q14[ 0 ] );
-        sum1_Q14 = silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 0 ] );
+        sum2_Q16 = (opus_int32) silk_SMLAWB( sum2_Q16, W_Q18[  0 ], diff_Q14[ 0 ] );
+        sum1_Q14 = (opus_int32) silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 0 ] );
 
         /* second row of W_Q18 */
-        sum2_Q16 = silk_SMULWB(           W_Q18[  7 ], diff_Q14[ 2 ] );
-        sum2_Q16 = silk_SMLAWB( sum2_Q16, W_Q18[  8 ], diff_Q14[ 3 ] );
-        sum2_Q16 = silk_SMLAWB( sum2_Q16, W_Q18[  9 ], diff_Q14[ 4 ] );
+        sum2_Q16 = (opus_int32) silk_SMULWB(           W_Q18[  7 ], diff_Q14[ 2 ] );
+        sum2_Q16 = (opus_int32) silk_SMLAWB( sum2_Q16, W_Q18[  8 ], diff_Q14[ 3 ] );
+        sum2_Q16 = (opus_int32) silk_SMLAWB( sum2_Q16, W_Q18[  9 ], diff_Q14[ 4 ] );
         sum2_Q16 = silk_LSHIFT( sum2_Q16, 1 );
-        sum2_Q16 = silk_SMLAWB( sum2_Q16, W_Q18[  6 ], diff_Q14[ 1 ] );
-        sum1_Q14 = silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 1 ] );
+        sum2_Q16 = (opus_int32) silk_SMLAWB( sum2_Q16, W_Q18[  6 ], diff_Q14[ 1 ] );
+        sum1_Q14 = (opus_int32) silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 1 ] );
 
         /* third row of W_Q18 */
-        sum2_Q16 = silk_SMULWB(           W_Q18[ 13 ], diff_Q14[ 3 ] );
-        sum2_Q16 = silk_SMLAWB( sum2_Q16, W_Q18[ 14 ], diff_Q14[ 4 ] );
+        sum2_Q16 = (opus_int32) silk_SMULWB(           W_Q18[ 13 ], diff_Q14[ 3 ] );
+        sum2_Q16 = (opus_int32) silk_SMLAWB( sum2_Q16, W_Q18[ 14 ], diff_Q14[ 4 ] );
         sum2_Q16 = silk_LSHIFT( sum2_Q16, 1 );
-        sum2_Q16 = silk_SMLAWB( sum2_Q16, W_Q18[ 12 ], diff_Q14[ 2 ] );
-        sum1_Q14 = silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 2 ] );
+        sum2_Q16 = (opus_int32) silk_SMLAWB( sum2_Q16, W_Q18[ 12 ], diff_Q14[ 2 ] );
+        sum1_Q14 = (opus_int32) silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 2 ] );
 
         /* fourth row of W_Q18 */
-        sum2_Q16 = silk_SMULWB(           W_Q18[ 19 ], diff_Q14[ 4 ] );
+        sum2_Q16 = (opus_int32) silk_SMULWB(           W_Q18[ 19 ], diff_Q14[ 4 ] );
         sum2_Q16 = silk_LSHIFT( sum2_Q16, 1 );
-        sum2_Q16 = silk_SMLAWB( sum2_Q16, W_Q18[ 18 ], diff_Q14[ 3 ] );
-        sum1_Q14 = silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 3 ] );
+        sum2_Q16 = (opus_int32) silk_SMLAWB( sum2_Q16, W_Q18[ 18 ], diff_Q14[ 3 ] );
+        sum1_Q14 = (opus_int32) silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 3 ] );
 
         /* last row of W_Q18 */
-        sum2_Q16 = silk_SMULWB(           W_Q18[ 24 ], diff_Q14[ 4 ] );
-        sum1_Q14 = silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 4 ] );
+        sum2_Q16 = (opus_int32) silk_SMULWB(           W_Q18[ 24 ], diff_Q14[ 4 ] );
+        sum1_Q14 = (opus_int32) silk_SMLAWB( sum1_Q14, sum2_Q16,    diff_Q14[ 4 ] );
 
         silk_assert( sum1_Q14 >= 0 );
 

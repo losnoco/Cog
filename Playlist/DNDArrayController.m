@@ -106,10 +106,8 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
 		
 		object = [objects objectAtIndex:removeIndex];
 
-		[object retain];
 		[self removeObjectAtArrangedObjectIndex:removeIndex];
 		[self insertObject:object atArrangedObjectIndex:insertIndex];
-		[object release];
 		
 		index = [indexSet indexLessThanIndex:index];
     }

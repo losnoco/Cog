@@ -19,8 +19,8 @@
 	NSLock *readLock;
 	NSLock *writeLock;
 	
-	id previousNode;
-	id controller;
+	id __weak previousNode;
+	id __weak controller;
 	
 	BOOL shouldReset;
 	

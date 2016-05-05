@@ -18,7 +18,7 @@
 
 - (NSImage *)icon
 {
-	return [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"output"]] autorelease];
+	return [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"output"]];
 }
 
 

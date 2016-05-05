@@ -10,7 +10,7 @@
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
-		839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
+		839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B0668A180D5668008E3612 /* Cocoa.framework */; };
 		83B06695180D5668008E3612 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83B06693180D5668008E3612 /* InfoPlist.strings */; };
 		83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
@@ -18,12 +18,12 @@
 		83B0670C180D6665008E3612 /* BMPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B0670A180D6665008E3612 /* BMPlayer.cpp */; };
 		83B0670F180D6F7F008E3612 /* libbass.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B0670D180D6F7F008E3612 /* libbass.dylib */; };
 		83B06710180D6F7F008E3612 /* libbassmidi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B0670E180D6F7F008E3612 /* libbassmidi.dylib */; };
-		83B06712180D6FAA008E3612 /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B0670D180D6F7F008E3612 /* libbass.dylib */; };
-		83B06713180D6FAA008E3612 /* libbassmidi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B0670E180D6F7F008E3612 /* libbassmidi.dylib */; };
-		83B0671C180D6FD8008E3612 /* libbass_mpc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06714180D6FC8008E3612 /* libbass_mpc.dylib */; };
-		83B0671D180D6FD8008E3612 /* libbassflac.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06715180D6FC8008E3612 /* libbassflac.dylib */; };
-		83B0671E180D6FD8008E3612 /* libbassopus.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06716180D6FC8008E3612 /* libbassopus.dylib */; };
-		83B0671F180D6FD8008E3612 /* libbasswv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06717180D6FC8008E3612 /* libbasswv.dylib */; };
+		83B06712180D6FAA008E3612 /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B0670D180D6F7F008E3612 /* libbass.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83B06713180D6FAA008E3612 /* libbassmidi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B0670E180D6F7F008E3612 /* libbassmidi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83B0671C180D6FD8008E3612 /* libbass_mpc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06714180D6FC8008E3612 /* libbass_mpc.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83B0671D180D6FD8008E3612 /* libbassflac.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06715180D6FC8008E3612 /* libbassflac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83B0671E180D6FD8008E3612 /* libbassopus.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06716180D6FC8008E3612 /* libbassopus.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83B0671F180D6FD8008E3612 /* libbasswv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B06717180D6FC8008E3612 /* libbasswv.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06721180D70FE008E3612 /* MIDIDecoder.mm */; };
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
 		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
@@ -78,6 +78,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		833F68431CDBCABE00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83686AAB1C5C69D400671C7A /* AUPlayerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayerView.mm; sourceTree = "<group>"; };
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -258,7 +259,7 @@
 		83B0667F180D5668008E3612 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 83B06682180D5668008E3612 /* Build configuration list for PBXProject "MIDI" */;
@@ -267,6 +268,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 83B0667E180D5668008E3612;
 			productRefGroup = 83B06688180D5668008E3612 /* Products */;
@@ -337,6 +339,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				83B06694180D5668008E3612 /* en */,
+				833F68431CDBCABE00AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -425,6 +429,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.midi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -444,6 +449,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.midi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

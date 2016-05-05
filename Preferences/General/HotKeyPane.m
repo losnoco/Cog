@@ -36,7 +36,7 @@ static void setControlText(HotKeyControl* control, NSString* kcprop, NSString* m
 
 - (NSImage *)icon
 {
-    return [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"hot_keys"]] autorelease];
+    return [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"hot_keys"]];
 }
 
 - (IBAction) hotKeyChanged:(id)sender

@@ -1,0 +1,1896 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+    <dependencies>
+        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
+            <connections>
+                <outlet property="delegate" destination="226" id="354"/>
+                <outlet property="dockMenu" destination="513" id="525"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" oneShot="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" frameAutosaveName="Cog" animationBehavior="default" id="21" userLabel="Window" customClass="MainWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
+            <windowPositionMask key="initialPositionMask" topStrut="YES"/>
+            <rect key="contentRect" x="331" y="367" width="800" height="400"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <value key="minSize" type="size" width="400" height="400"/>
+            <view key="contentView" id="2">
+                <rect key="frame" x="0.0" y="0.0" width="800" height="400"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField verticalHuggingPriority="750" id="778">
+                        <rect key="frame" x="17" y="4" width="758" height="15"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="218" name="displayPatternValue1" keyPath="totalTime" id="1891">
+                                <dictionary key="options">
+                                    <string key="NSDisplayPattern">Total Duration: %{value1}@</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </textField>
+                    <splitView dividerStyle="thin" vertical="YES" id="2123">
+                        <rect key="frame" x="0.0" y="24" width="800" height="377"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
+                                <rect key="frame" x="0.0" y="0.0" width="800" height="377"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
+                                    <rect key="frame" x="0.0" y="17" width="800" height="360"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" id="207" customClass="PlaylistView">
+                                            <rect key="frame" x="0.0" y="0.0" width="800" height="360"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <size key="intercellSpacing" width="3" height="6"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                            <tableColumns>
+                                                <tableColumn identifier="index" editable="NO" width="41" minWidth="28" maxWidth="64" id="209">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="#">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="right" title="Text Cell" id="1507">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.index" id="1356">
+                                                            <dictionary key="options">
+                                                                <integer key="NSConditionallySetsEditable" value="1"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1913"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="status" editable="NO" width="20" minWidth="20" maxWidth="20" id="1798">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <imageCell key="dataCell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="B847B194-BBAF-4B8C-B139-D0EA4FFCEBAA" id="1801">
+                                                        <font key="font" metaFont="system"/>
+                                                    </imageCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.status" id="1805">
+                                                            <dictionary key="options">
+                                                                <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                                <string key="NSValueTransformerName">StatusImageTransformer</string>
+                                                            </dictionary>
+                                                        </binding>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="title" editable="NO" width="126" minWidth="96" maxWidth="1024" id="208">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="1506">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="title"/>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.title" id="814">
+                                                            <dictionary key="options">
+                                                                <integer key="NSConditionallySetsEditable" value="1"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1914"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="artist" editable="NO" width="125" minWidth="96" maxWidth="1024" id="391">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Artist">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="1508">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="artist"/>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.artist" id="815">
+                                                            <dictionary key="options">
+                                                                <integer key="NSConditionallySetsEditable" value="1"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1916"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="album" editable="NO" width="125" minWidth="96" maxWidth="1024" id="806">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Album">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="1509">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="album"/>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.album" id="816">
+                                                            <dictionary key="options">
+                                                                <integer key="NSConditionallySetsEditable" value="1"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1917"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="length" editable="NO" width="71" minWidth="43.62012" maxWidth="96" id="807">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Length">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="right" title="Text Cell" id="1510">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.length" id="1658">
+                                                            <dictionary key="options">
+                                                                <integer key="NSConditionallySetsEditable" value="1"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1919"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="year" editable="NO" width="71" minWidth="42" maxWidth="96" id="848">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Year">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="right" title="Text Cell" id="1511">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.year" id="851"/>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1921"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="genre" editable="NO" width="123" minWidth="96" maxWidth="512" id="849">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Genre">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="1512">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="genre"/>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.genre" id="852"/>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1922"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="track" editable="NO" width="71" minWidth="24" maxWidth="72" id="850">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="№">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="right" title="Text Cell" id="1513">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.track" id="853"/>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1923"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="path" editable="NO" width="64" minWidth="32" maxWidth="2048" hidden="YES" id="1712">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Path">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="1713">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.path" id="1788">
+                                                            <dictionary key="options">
+                                                                <integer key="NSConditionallySetsEditable" value="1"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1924"/>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="filename" editable="NO" width="64" minWidth="32" maxWidth="1024" hidden="YES" id="1736">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Filename">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="1737">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.filename" id="1787">
+                                                            <dictionary key="options">
+                                                                <integer key="NSConditionallySetsEditable" value="1"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1925"/>
+                                                    </connections>
+                                                </tableColumn>
+                                            </tableColumns>
+                                            <connections>
+                                                <binding destination="1689" name="rowHeight" keyPath="values.fontSize" id="1927">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">FontSizetoLineHeightTransformer</string>
+                                                    </dictionary>
+                                                </binding>
+                                                <outlet property="dataSource" destination="218" id="843"/>
+                                                <outlet property="delegate" destination="218" id="845"/>
+                                                <outlet property="menu" destination="1063" id="1065"/>
+                                                <outlet property="playbackController" destination="705" id="719"/>
+                                                <outlet property="playlistController" destination="218" id="261"/>
+                                                <outlet property="playlistLoader" destination="1319" id="Euf-Ks-f21"/>
+                                            </connections>
+                                        </tableView>
+                                    </subviews>
+                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" id="1516">
+                                    <rect key="frame" x="-100" y="-100" width="683" height="15"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" id="1515">
+                                    <rect key="frame" x="85" y="17" width="15" height="68"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <tableHeaderView key="headerView" id="1517" customClass="PlaylistHeaderView">
+                                    <rect key="frame" x="0.0" y="0.0" width="800" height="17"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableHeaderView>
+                            </scrollView>
+                        </subviews>
+                        <holdingPriorities>
+                            <real value="250"/>
+                        </holdingPriorities>
+                        <connections>
+                            <outlet property="delegate" destination="2172" id="2182"/>
+                        </connections>
+                    </splitView>
+                </subviews>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="B4998081-90DD-45DD-8243-0F7039C7DEA2" displayMode="iconOnly" sizeMode="regular" id="1523">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="1552"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1529"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="1673"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="1645"/>
+                    <toolbarItem implicitItemIdentifier="A06F7688-72A2-4AAD-B9E1-C66720B2B0D3" label="Playback Control" paletteLabel="Playback Control" id="1539">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="120" height="25"/>
+                        <size key="maxSize" width="130" height="25"/>
+                        <segmentedControl key="view" verticalHuggingPriority="750" id="1537" customClass="PlaybackButtons">
+                            <rect key="frame" x="0.0" y="14" width="121" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <segmentedCell key="cell" state="on" alignment="left" style="automatic" trackingMode="momentary" id="1538">
+                                <font key="font" metaFont="system"/>
+                                <segments>
+                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28" tag="1"/>
+                                    <segment toolTip="Next" image="stopTemplate" imageScaling="none" width="28"/>
+                                    <segment image="nextTemplate" imageScaling="none" width="28">
+                                        <nil key="label"/>
+                                    </segment>
+                                </segments>
+                            </segmentedCell>
+                            <connections>
+                                <outlet property="playbackController" destination="705" id="2401"/>
+                            </connections>
+                        </segmentedControl>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="0D05748D-3258-44F5-9D1C-CBF211C15E2D" label="Search" paletteLabel="Search" id="1533">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="64" height="22"/>
+                        <size key="maxSize" width="96" height="22"/>
+                        <searchField key="view" verticalHuggingPriority="750" id="1531">
+                            <rect key="frame" x="0.0" y="14" width="96" height="22"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="All" bezelStyle="round" recentsAutosaveName="CogFilter" id="1532">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <connections>
+                                    <binding destination="218" name="predicate" keyPath="filterPredicate" id="1576">
+                                        <dictionary key="options">
+                                            <string key="NSDisplayName">All</string>
+                                            <string key="NSPredicateFormat">(title contains[cd] $value) OR (artist contains[cd] $value) OR (album contains[cd] $value) OR (genre contains[cd] $value)</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="218" name="predicate2" keyPath="filterPredicate" previousBinding="1576" id="1578">
+                                        <dictionary key="options">
+                                            <string key="NSDisplayName">Title</string>
+                                            <string key="NSPredicateFormat">title contains[cd] $value</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="218" name="predicate3" keyPath="filterPredicate" previousBinding="1578" id="1580">
+                                        <dictionary key="options">
+                                            <string key="NSDisplayName">Artist</string>
+                                            <string key="NSPredicateFormat">artist contains[cd] $value</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="218" name="predicate4" keyPath="filterPredicate" previousBinding="1580" id="1582">
+                                        <dictionary key="options">
+                                            <integer key="NSValidatesImmediately" value="0"/>
+                                            <string key="NSDisplayName">Album</string>
+                                            <string key="NSPredicateFormat">artist contains[cd] $value</string>
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                            <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="218" name="predicate5" keyPath="filterPredicate" previousBinding="1582" id="1583">
+                                        <dictionary key="options">
+                                            <integer key="NSValidatesImmediately" value="0"/>
+                                            <string key="NSDisplayName">Genre</string>
+                                            <string key="NSPredicateFormat">genre contains[cd] $value</string>
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                            <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </searchFieldCell>
+                        </searchField>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="2CDD90B4-2355-4E8A-AE42-A6C872DF700A" label="Position" paletteLabel="Position" id="1551">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="96" height="21"/>
+                        <size key="maxSize" width="1024" height="21"/>
+                        <slider key="view" verticalHuggingPriority="750" id="1549" customClass="PositionSlider">
+                            <rect key="frame" x="0.0" y="14" width="96" height="21"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <sliderCell key="cell" enabled="NO" alignment="left" maxValue="10000" tickMarkPosition="above" sliderType="linear" id="1550" customClass="TrackingCell"/>
+                            <connections>
+                                <action selector="seek:" target="705" id="1597"/>
+                                <binding destination="1897" name="maxValue" keyPath="content.length" id="YY5-Mn-b4V"/>
+                                <binding destination="705" name="value" keyPath="position" previousBinding="YY5-Mn-b4V" id="grQ-AV-5xH"/>
+                                <binding destination="705" name="enabled" keyPath="seekable" id="2376"/>
+                                <outlet property="positionTextField" destination="1566" id="2385"/>
+                            </connections>
+                        </slider>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="B042D8A5-AFF4-43B2-9DFB-E87A09B7F861" label="Current Time" paletteLabel="Current Time" id="1568">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="46" height="15"/>
+                        <size key="maxSize" width="58" height="15"/>
+                        <textField key="view" verticalHuggingPriority="750" id="1566" customClass="TimeField">
+                            <rect key="frame" x="16" y="14" width="46" height="15"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" usesSingleLineMode="YES" bezelStyle="round" id="1567">
+                                <font key="font" metaFont="smallSystem"/>
+                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume3Template" id="1610">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="1608" customClass="VolumeButton">
+                            <rect key="frame" x="10" y="14" width="28" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="1609">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <outlet property="_popView" destination="1612" id="2220"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" id="1629">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="1627">
+                            <rect key="frame" x="27" y="14" width="28" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="infoTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1628">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleWindow:" target="2422" id="2428"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="6EE50288-54ED-448F-BB25-347479AE119F" label="File Tree" paletteLabel="File Tree" image="navigatorTemplate" id="1630">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="1631">
+                            <rect key="frame" x="13" y="14" width="28" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="navigatorTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1632">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleSideView:" target="2172" id="2427"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="972E4070-D310-48FE-BA9B-C06B248FF020" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" id="2466">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2467">
+                            <rect key="frame" x="20" y="14" width="28" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2468">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="randomizeList:" target="218" id="UOc-Uq-LR7"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="384C0EB5-D1D6-4D39-8113-03FB4958D7ED" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" id="1636">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="1637">
+                            <rect key="frame" x="8" y="14" width="28" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1638">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleShuffle:" target="218" id="2393"/>
+                                <binding destination="218" name="image" keyPath="shuffle" id="2392">
+                                    <dictionary key="options">
+                                        <string key="NSValueTransformerName">ShuffleImageTransformer</string>
+                                    </dictionary>
+                                </binding>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="F3591DBA-E0EC-4564-896A-C6EFFABC7873" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" id="1639">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="1640">
+                            <rect key="frame" x="8" y="14" width="28" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1641">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleRepeat:" target="218" id="1756"/>
+                                <binding destination="218" name="image" keyPath="repeat" id="1769">
+                                    <dictionary key="options">
+                                        <string key="NSValueTransformerName">RepeatModeImageTransformer</string>
+                                    </dictionary>
+                                </binding>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="F636F7BD-E049-4DF5-B758-35DF87C40AA0" label="Mini Mode" paletteLabel="Mini Mode" image="miniModeOnTemplate" id="2532">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2533">
+                            <rect key="frame" x="18" y="14" width="28" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOnTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2534">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleMiniMode:" target="226" id="2536"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="1539"/>
+                    <toolbarItem reference="1552"/>
+                    <toolbarItem reference="1636"/>
+                    <toolbarItem reference="1639"/>
+                    <toolbarItem reference="2466"/>
+                    <toolbarItem reference="1552"/>
+                    <toolbarItem reference="1629"/>
+                    <toolbarItem reference="1630"/>
+                    <toolbarItem reference="1529"/>
+                    <toolbarItem reference="1568"/>
+                    <toolbarItem reference="1551"/>
+                    <toolbarItem reference="1610"/>
+                    <toolbarItem reference="1552"/>
+                    <toolbarItem reference="1533"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <connections>
+                <binding destination="1897" name="title" keyPath="content.display" id="1903">
+                    <dictionary key="options">
+                        <string key="NSNotApplicablePlaceholder">Cog</string>
+                        <string key="NSNoSelectionPlaceholder">Cog</string>
+                        <string key="NSNullPlaceholder">Cog</string>
+                    </dictionary>
+                </binding>
+                <outlet property="delegate" destination="226" id="481"/>
+                <outlet property="initialFirstResponder" destination="207" id="720"/>
+                <outlet property="itemLionFullscreenToggle" destination="2456" id="5yZ-Jj-awr"/>
+                <outlet property="itemLionSeparator" destination="2455" id="0p5-i7-wLz"/>
+                <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
+            </connections>
+        </window>
+        <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES" unifiedTitleAndToolbar="YES"/>
+            <rect key="contentRect" x="192" y="547" width="480" height="0.0"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <value key="minSize" type="size" width="400" height="1"/>
+            <value key="maxSize" type="size" width="600" height="1"/>
+            <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="0.0"/>
+                <autoresizingMask key="autoresizingMask"/>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="35998ECE-5AD8-429E-8479-657249B22C9C" displayMode="iconOnly" sizeMode="regular" id="2222" userLabel="Mini Toolbar">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="2227"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="2228"/>
+                    <toolbarItem implicitItemIdentifier="6F5A6C43-A09C-462A-AEE2-C86DC3C55128" label="Playback Buttons" paletteLabel="Playback Buttons" id="2272">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="121" height="25"/>
+                        <size key="maxSize" width="121" height="25"/>
+                        <segmentedControl key="view" verticalHuggingPriority="750" id="2295" customClass="PlaybackButtons">
+                            <rect key="frame" x="0.0" y="14" width="121" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <segmentedCell key="cell" state="on" alignment="left" style="automatic" trackingMode="momentary" id="2296">
+                                <font key="font" metaFont="system"/>
+                                <segments>
+                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28" tag="1"/>
+                                    <segment toolTip="Stop" image="stopTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28">
+                                        <nil key="label"/>
+                                    </segment>
+                                </segments>
+                            </segmentedCell>
+                            <connections>
+                                <outlet property="playbackController" destination="705" id="2402"/>
+                            </connections>
+                        </segmentedControl>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="C10E329B-9AB7-47DB-B3BA-7C40B57792E8" label="Position" paletteLabel="Position" id="2273">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="96" height="15"/>
+                        <size key="maxSize" width="2048" height="15"/>
+                        <slider key="view" verticalHuggingPriority="750" id="2293" customClass="PositionSlider">
+                            <rect key="frame" x="0.0" y="14" width="96" height="15"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" maxValue="10000" tickMarkPosition="above" sliderType="linear" id="2294" customClass="TrackingCell">
+                                <font key="font" metaFont="smallSystem"/>
+                            </sliderCell>
+                            <connections>
+                                <action selector="seek:" target="705" id="2387"/>
+                                <binding destination="1897" name="maxValue" keyPath="content.length" id="2381"/>
+                                <binding destination="705" name="value" keyPath="position" previousBinding="2381" id="2382"/>
+                                <binding destination="705" name="enabled" keyPath="seekable" id="2384"/>
+                                <outlet property="positionTextField" destination="2291" id="2386"/>
+                            </connections>
+                        </slider>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="C0FF70A3-EE67-43F6-9956-95B89425CF0E" label="Current Time" paletteLabel="Current Time" id="2274">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="38" height="15"/>
+                        <size key="maxSize" width="56" height="15"/>
+                        <textField key="view" verticalHuggingPriority="750" id="2291" customClass="TimeField">
+                            <rect key="frame" x="20" y="14" width="38" height="15"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" bezelStyle="round" id="2292">
+                                <font key="font" metaFont="smallSystem"/>
+                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="volume3Template" id="2275">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2289" customClass="VolumeButton">
+                            <rect key="frame" x="11" y="14" width="26" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="2290">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <outlet property="_popView" destination="1612" id="2388"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="EE7CA50B-9B79-414A-A257-7AC385032675" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" id="2278">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2283">
+                            <rect key="frame" x="9" y="14" width="26" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2284">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleShuffle:" target="218" id="2394"/>
+                                <binding destination="218" name="image" keyPath="shuffle" id="2399">
+                                    <dictionary key="options">
+                                        <string key="NSValueTransformerName">ShuffleImageTransformer</string>
+                                    </dictionary>
+                                </binding>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="9A52F396-9BBC-4791-AC12-664859F26F89" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" id="2279">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2281">
+                            <rect key="frame" x="9" y="14" width="26" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2282">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleRepeat:" target="218" id="2395"/>
+                                <binding destination="218" name="image" keyPath="repeat" id="2400">
+                                    <dictionary key="options">
+                                        <string key="NSValueTransformerName">RepeatModeImageTransformer</string>
+                                    </dictionary>
+                                </binding>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="2064CD41-7C2B-4EE0-BCE9-8E18E09F02EF" label="Normal Mode" paletteLabel="Normal Mode" image="miniModeOffTemplate" id="2526">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2527">
+                            <rect key="frame" x="27" y="14" width="26" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2528">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleMiniMode:" target="226" id="2537"/>
+                            </connections>
+                        </button>
+                        <connections>
+                            <action selector="toggleMiniMode:" target="226" id="2531"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" id="2429">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="26" height="25"/>
+                        <size key="maxSize" width="28" height="25"/>
+                        <button key="view" verticalHuggingPriority="750" id="2430">
+                            <rect key="frame" x="28" y="14" width="26" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="infoTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2431">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </button>
+                        <connections>
+                            <action selector="toggleWindow:" target="2422" id="2433"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="2225"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="2229"/>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="2272"/>
+                    <toolbarItem reference="2228"/>
+                    <toolbarItem reference="2278"/>
+                    <toolbarItem reference="2279"/>
+                    <toolbarItem reference="2228"/>
+                    <toolbarItem reference="2274"/>
+                    <toolbarItem reference="2273"/>
+                    <toolbarItem reference="2275"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <connections>
+                <binding destination="1897" name="title" keyPath="content.display" id="2374">
+                    <dictionary key="options">
+                        <string key="NSNotApplicablePlaceholder">Cog</string>
+                        <string key="NSNoSelectionPlaceholder">Cog</string>
+                        <string key="NSNullPlaceholder">Cog</string>
+                    </dictionary>
+                </binding>
+            </connections>
+        </window>
+        <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
+            <items>
+                <menuItem title="Cog" id="56">
+                    <menu key="submenu" title="Cog" systemMenu="apple" id="57">
+                        <items>
+                            <menuItem title="About Cog" id="58">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="orderFrontStandardAboutPanel:" target="-2" id="142"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Check for Updates..." id="302">
+                                <connections>
+                                    <action selector="checkForUpdates:" target="1303" id="1304"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1100">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Support Cog..." id="751">
+                                <connections>
+                                    <action selector="donate:" target="226" id="752"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Send Feedback..." id="303">
+                                <connections>
+                                    <action selector="showWindow:" target="2434" id="2436"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="196">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Preferences…" keyEquivalent="," id="129">
+                                <connections>
+                                    <action selector="showPreferences:" target="1217" id="2437"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="143">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Services" id="131">
+                                <menu key="submenu" title="Services" systemMenu="services" id="130"/>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="144">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Hide Cog" keyEquivalent="h" id="134">
+                                <connections>
+                                    <action selector="hide:" target="-2" id="152"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Hide Others" keyEquivalent="h" id="145">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="hideOtherApplications:" target="-2" id="146"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show All" id="150">
+                                <connections>
+                                    <action selector="unhideAllApplications:" target="-2" id="153"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="149">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Quit Cog" keyEquivalent="q" id="136">
+                                <connections>
+                                    <action selector="terminate:" target="-2" id="139"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="File" id="83">
+                    <menu key="submenu" title="File" id="81">
+                        <items>
+                            <menuItem title="Add File..." keyEquivalent="o" id="72">
+                                <connections>
+                                    <action selector="openFiles:" target="226" id="1405"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Add URL..." keyEquivalent="O" id="1403">
+                                <connections>
+                                    <action selector="openURL:" target="226" id="1440"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="79">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Save As..." keyEquivalent="s" id="75">
+                                <connections>
+                                    <action selector="savePlaylist:" target="226" id="360"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1149">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Close Window" keyEquivalent="w" id="73">
+                                <connections>
+                                    <action selector="performClose:" target="-1" id="193"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Edit" id="163">
+                    <menu key="submenu" title="Edit" id="169">
+                        <items>
+                            <menuItem title="Undo" keyEquivalent="z" id="158">
+                                <connections>
+                                    <action selector="undo:" target="-1" id="1682"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Redo" keyEquivalent="Z" id="173">
+                                <connections>
+                                    <action selector="redo:" target="-1" id="1681"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="156">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Cut" keyEquivalent="x" id="160">
+                                <connections>
+                                    <action selector="cut:" target="-1" id="1881"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Copy" keyEquivalent="c" id="157">
+                                <connections>
+                                    <action selector="copy:" target="-1" id="1882"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Paste" keyEquivalent="v" id="171">
+                                <connections>
+                                    <action selector="paste:" target="-1" id="1883"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Delete" id="164">
+                                <connections>
+                                    <action selector="delete:" target="-1" id="1884"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1862">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Select All" keyEquivalent="a" id="172">
+                                <connections>
+                                    <action selector="selectAll:" target="-1" id="179"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Select Currently Playing" keyEquivalent="l" id="1823">
+                                <connections>
+                                    <action selector="scrollToCurrentEntry:" target="207" id="1888"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="View" id="1848">
+                    <menu key="submenu" title="View" id="1849">
+                        <items>
+                            <menuItem title="Show Info Inspector" keyEquivalent="i" id="2453">
+                                <connections>
+                                    <action selector="toggleWindow:" target="2422" id="2454"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show Spotlight Panel" keyEquivalent="F" id="1853">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleWindow:" target="1675" id="1880"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show File Tree" keyEquivalent="d" id="2417">
+                                <connections>
+                                    <action selector="toggleSideView:" target="2172" id="2419"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1854">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Toggle File Tree Orientation" id="2160">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleVertical:" target="2172" id="2176"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="2155"/>
+                            <menuItem title="Customize Toolbar..." id="1856">
+                                <connections>
+                                    <action selector="runToolbarCustomizationPalette:" target="-1" id="1873"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1857">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Increase Font Size" keyEquivalent="+" id="1858">
+                                <connections>
+                                    <action selector="increaseFontSize:" target="226" id="1871"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Decrease Font Size" keyEquivalent="-" id="1859">
+                                <connections>
+                                    <action selector="decreaseFontSize:" target="226" id="1872"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" hidden="YES" id="2455">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Enter Full Screen" hidden="YES" keyEquivalent="f" id="2456">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleFullScreen:" target="-1" id="2457"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Control" id="418">
+                    <menu key="submenu" title="Control" id="419">
+                        <items>
+                            <menuItem title="Play/Pause" keyEquivalent="p" id="420">
+                                <connections>
+                                    <action selector="playPauseResume:" target="705" id="1667"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Stop" keyEquivalent="." id="1362">
+                                <connections>
+                                    <action selector="stop:" target="705" id="1363"/>
+                                    <binding destination="1897" name="enabled" keyPath="content" id="2099">
+                                        <dictionary key="options">
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="426">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Seek Forward" keyEquivalent="" id="1685">
+                                <attributedString key="attributedTitle"/>
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                <connections>
+                                    <action selector="eventSeekForward:" target="705" id="1698"/>
+                                    <binding destination="1897" name="enabled" keyPath="content" id="2104">
+                                        <dictionary key="options">
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Seek Backward" keyEquivalent="" id="1683">
+                                <attributedString key="attributedTitle"/>
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                <connections>
+                                    <action selector="eventSeekBackward:" target="705" id="1697"/>
+                                    <binding destination="1897" name="enabled" keyPath="content" id="2107">
+                                        <dictionary key="options">
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1860">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Next Song" keyEquivalent="" id="422">
+                                <connections>
+                                    <action selector="next:" target="705" id="724"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Previous Song" keyEquivalent="" id="423">
+                                <connections>
+                                    <action selector="prev:" target="705" id="723"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1861">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Next Album" keyEquivalent="" id="1701">
+                                <attributedString key="attributedTitle"/>
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="skipToNextAlbum:" target="705" id="1702"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Previous Album" keyEquivalent="" id="1699">
+                                <attributedString key="attributedTitle"/>
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="skipToPreviousAlbum:" target="705" id="1700"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="424">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Volume Up" keyEquivalent="" id="1136">
+                                <connections>
+                                    <action selector="volumeUp:" target="705" id="1719"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Volume Down" keyEquivalent="" id="1137">
+                                <connections>
+                                    <action selector="volumeDown:" target="705" id="1720"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1886">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Fade In/Out" keyEquivalent="P" id="1885">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                <connections>
+                                    <action selector="fade:" target="705" id="1887"/>
+                                    <binding destination="1897" name="enabled" keyPath="content" id="2105">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Stop After Current" keyEquivalent="." id="1895">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="stopAfterCurrent:" target="218" id="1896"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Playlist" id="881">
+                    <menu key="submenu" title="Playlist" id="882">
+                        <items>
+                            <menuItem title="Remove All" id="1402">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                <connections>
+                                    <action selector="clear:" target="218" id="1431"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Remove All from Queue" id="1791">
+                                <connections>
+                                    <action selector="emptyQueueList:" target="218" id="1817"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1116">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Remove" id="1408">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="remove:" target="218" id="1409"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show in Finder" keyEquivalent="r" id="1135">
+                                <connections>
+                                    <action selector="showEntryInFinder:" target="218" id="1346"/>
+                                    <binding destination="218" name="enabled" keyPath="selection.index" id="1449">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1863">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Remove Duplicate Items" id="2qB-Bq-t2u" userLabel="Menu Item - Remove Duplicate Items">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="removeDuplicates:" target="218" id="bS3-zS-wcJ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Remove Dead Items" id="Ajn-k4-afd" userLabel="Menu Item - Remove Dead Items">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="removeDeadItems:" target="218" id="vGZ-l5-tlE"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="dfu-5S-1BE"/>
+                            <menuItem title="Add to Queue" id="1864"/>
+                            <menuItem title="Remove from Queue" id="1865"/>
+                            <menuItem isSeparatorItem="YES" id="1866">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Search for Songs by Artist" id="1867">
+                                <connections>
+                                    <action selector="searchByArtist:" target="218" id="1877"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Search for Songs from Album" id="1868">
+                                <connections>
+                                    <action selector="searchByAlbum:" target="218" id="1878"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1869">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Repeat" id="1740">
+                                <menu key="submenu" title="Repeat" id="1741">
+                                    <items>
+                                        <menuItem title="All" keyEquivalent="r" id="1742">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <binding destination="218" name="value" keyPath="repeat" id="1760">
+                                                    <dictionary key="options">
+                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
+                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <string key="NSValueTransformerName">RepeatAllTransformer</string>
+                                                        <integer key="NSConditionallySetsHidden" value="0"/>
+                                                        <integer key="NSValidatesImmediately" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Album" id="1892">
+                                            <connections>
+                                                <binding destination="218" name="value" keyPath="repeat" id="2412">
+                                                    <dictionary key="options">
+                                                        <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                        <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                                        <string key="NSValueTransformerName">RepeatAlbumTransformer</string>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="One" id="1746">
+                                            <connections>
+                                                <binding destination="218" name="value" keyPath="repeat" id="1763">
+                                                    <dictionary key="options">
+                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
+                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <string key="NSValueTransformerName">RepeatOneTransformer</string>
+                                                        <integer key="NSConditionallySetsHidden" value="0"/>
+                                                        <integer key="NSValidatesImmediately" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="None" id="1749">
+                                            <connections>
+                                                <binding destination="218" name="value" keyPath="repeat" id="1767">
+                                                    <dictionary key="options">
+                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
+                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
+                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
+                                                        <string key="NSValueTransformerName">RepeatNoneTransformer</string>
+                                                        <integer key="NSConditionallySetsHidden" value="0"/>
+                                                        <integer key="NSValidatesImmediately" value="0"/>
+                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2471">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Toggle" keyEquivalent="R" id="2472">
+                                            <connections>
+                                                <action selector="toggleRepeat:" target="218" id="2474"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Shuffle" id="2438">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Shuffle" id="2439">
+                                    <items>
+                                        <menuItem title="All" keyEquivalent="s" id="2443">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <binding destination="218" name="value" keyPath="shuffle" id="2445">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">ShuffleAllTransformer</string>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Albums" id="2442">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <binding destination="218" name="value" keyPath="shuffle" id="2448">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">ShuffleAlbumsTransformer</string>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Off" id="2440">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <binding destination="218" name="value" keyPath="shuffle" id="2451">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">ShuffleOffTransformer</string>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2475"/>
+                                        <menuItem title="Toggle" keyEquivalent="S" id="2476">
+                                            <connections>
+                                                <action selector="toggleShuffle:" target="218" id="2478"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Randomize" id="2545">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="randomizeList:" target="218" id="2550"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1079">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Filter Playlist" keyEquivalent="f" id="1824">
+                                <attributedString key="attributedTitle">
+                                    <fragment content="Filter Playlist">
+                                        <attributes>
+                                            <font key="NSFont" size="14" name="LucidaGrande"/>
+                                            <font key="NSOriginalFont" size="14" name="LucidaGrande"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <connections>
+                                    <action selector="selectText:" target="1531" id="1876"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show All Songs" id="1132">
+                                <attributedString key="attributedTitle">
+                                    <fragment content="Show All Songs">
+                                        <attributes>
+                                            <font key="NSFont" size="14" name="LucidaGrande"/>
+                                            <font key="NSOriginalFont" size="14" name="LucidaGrande"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="clearFilterPredicate:" target="218" id="1430"/>
+                                    <binding destination="218" name="enabled" keyPath="filterPredicate" id="1434">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Window" id="19">
+                    <menu key="submenu" title="Window" systemMenu="window" id="24">
+                        <items>
+                            <menuItem title="Minimize" keyEquivalent="m" id="23">
+                                <connections>
+                                    <action selector="performMiniaturize:" target="-1" id="37"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Zoom" id="197">
+                                <connections>
+                                    <action selector="performZoom:" target="-1" id="198"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="2496">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Toggle Mini Mode" keyEquivalent="M" id="2493">
+                                <connections>
+                                    <action selector="toggleMiniMode:" target="226" id="2516"/>
+                                    <binding destination="226" name="title" keyPath="miniMode" id="2519">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">MiniModeMenuTitleTransformer</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1642">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Cog" keyEquivalent="1" id="702">
+                                <connections>
+                                    <action selector="makeKeyAndOrderFront:" target="21" id="704"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="92">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Bring All to Front" id="5">
+                                <connections>
+                                    <action selector="arrangeInFront:" target="-1" id="39"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Help" id="103">
+                    <menu key="submenu" title="Help" id="106">
+                        <items>
+                            <menuItem title="Cog Help" keyEquivalent="?" id="111">
+                                <connections>
+                                    <action selector="showHelp:" target="-1" id="122"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+            </items>
+        </menu>
+        <arrayController objectClassName="PlaylistEntry" editable="NO" id="218" userLabel="PlaylistController" customClass="PlaylistController">
+            <declaredKeys>
+                <string>current</string>
+                <string>index</string>
+                <string>artist</string>
+                <string>album</string>
+                <string>title</string>
+                <string>genre</string>
+                <string>track</string>
+                <string>year</string>
+                <string>length</string>
+                <string>channels</string>
+                <string>bitsPerSample</string>
+                <string>bitrate</string>
+                <string>url</string>
+                <string>sampleRate</string>
+                <string>seekable</string>
+                <string>artists</string>
+                <string>display</string>
+                <string>self</string>
+                <string>relativePath</string>
+                <string>base</string>
+                <string>URL.lastPathComponent</string>
+                <string>URL.path.lastPathComponent</string>
+                <string>filename</string>
+                <string>path</string>
+                <string>status</string>
+                <mutableString>queued</mutableString>
+            </declaredKeys>
+            <connections>
+                <outlet property="playbackController" destination="705" id="2121"/>
+                <outlet property="playlistLoader" destination="1319" id="1321"/>
+                <outlet property="spotlightWindowController" destination="1675" id="1709"/>
+                <outlet property="tableView" destination="207" id="262"/>
+            </connections>
+        </arrayController>
+        <customObject id="2403" customClass="DockIconController">
+            <connections>
+                <outlet property="playbackController" destination="705" id="2404"/>
+            </connections>
+        </customObject>
+        <customObject id="2405" customClass="PlaybackEventController">
+            <connections>
+                <outlet property="mainWindow" destination="21" id="xhc-8E-Ogp"/>
+                <outlet property="miniWindow" destination="2234" id="iPi-Vv-Mjn"/>
+                <outlet property="playbackController" destination="705" id="A0d-y8-cA6"/>
+            </connections>
+        </customObject>
+        <customObject id="226" userLabel="AppController" customClass="AppController">
+            <connections>
+                <outlet property="currentEntryController" destination="1897" id="2459"/>
+                <outlet property="fileButton" destination="1631" id="1661"/>
+                <outlet property="fileTreeViewController" destination="2172" id="2460"/>
+                <outlet property="infoButton" destination="1627" id="1663"/>
+                <outlet property="mainView" destination="2123" id="2458"/>
+                <outlet property="mainWindow" destination="21" id="359"/>
+                <outlet property="miniWindow" destination="2234" id="2517"/>
+                <outlet property="playbackController" destination="705" id="1300"/>
+                <outlet property="playlistController" destination="218" id="236"/>
+                <outlet property="playlistLoader" destination="1319" id="1322"/>
+                <outlet property="playlistView" destination="207" id="1257"/>
+                <outlet property="randomizeButton" destination="2467" id="swo-wn-Yr8"/>
+                <outlet property="repeatButton" destination="1640" id="twI-AO-RJG"/>
+                <outlet property="showAlbumColumn" destination="1340" id="1350"/>
+                <outlet property="showArtistColumn" destination="1339" id="1349"/>
+                <outlet property="showGenreColumn" destination="1341" id="1351"/>
+                <outlet property="showIndexColumn" destination="1337" id="1347"/>
+                <outlet property="showLengthColumn" destination="1342" id="1352"/>
+                <outlet property="showTitleColumn" destination="1338" id="1348"/>
+                <outlet property="showTrackColumn" destination="1343" id="1353"/>
+                <outlet property="showYearColumn" destination="1344" id="1354"/>
+                <outlet property="shuffleButton" destination="1637" id="Nzr-Mw-z9P"/>
+                <outlet property="spotlightWindowController" destination="1675" id="1677"/>
+                <outlet property="totalTimeField" destination="778" id="1659"/>
+            </connections>
+        </customObject>
+        <menu title="Menu" autoenablesItems="NO" id="513" userLabel="DockMenu">
+            <items>
+                <menuItem title="Current Artist" enabled="NO" id="1454">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <binding destination="1897" name="title" keyPath="content.artist" id="2085">
+                            <dictionary key="options">
+                                <string key="NSNullPlaceholder">Not Playing</string>
+                                <string key="NSNotApplicablePlaceholder"></string>
+                                <string key="NSNoSelectionPlaceholder"></string>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSMultipleValuesPlaceholder"></string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem title="Current Song" enabled="NO" id="791">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <binding destination="1897" name="title" keyPath="content.title" id="2083">
+                            <dictionary key="options">
+                                <string key="NSNullPlaceholder">Not Playing</string>
+                                <string key="NSNotApplicablePlaceholder"></string>
+                                <string key="NSNoSelectionPlaceholder"></string>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSMultipleValuesPlaceholder"></string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="792">
+                    <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                    <connections>
+                        <binding destination="1897" name="hidden" keyPath="content" id="2079">
+                            <dictionary key="options">
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSValueTransformerName">NSIsNil</string>
+                                <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                <integer key="NSNullPlaceholder" value="1"/>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem title="Play/Pause" id="520">
+                    <connections>
+                        <action selector="playPauseResume:" target="705" id="725"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Stop" id="517">
+                    <connections>
+                        <action selector="stop:" target="705" id="726"/>
+                        <binding destination="1897" name="enabled" keyPath="content" id="2096">
+                            <dictionary key="options">
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem title="Stop After Current" id="2483">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="stopAfterCurrent:" target="218" id="2484"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="1453">
+                    <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                </menuItem>
+                <menuItem title="Previous Track" id="519">
+                    <connections>
+                        <action selector="prev:" target="705" id="728"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Next Track" id="518">
+                    <connections>
+                        <action selector="next:" target="705" id="727"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="2489">
+                    <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                </menuItem>
+                <menuItem title="Previous Album" id="2487">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="skipToPreviousAlbum:" target="705" id="2488"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Next Album" id="2485">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="skipToNextAlbum:" target="705" id="2486"/>
+                    </connections>
+                </menuItem>
+            </items>
+        </menu>
+        <customObject id="705" userLabel="PlaybackController" customClass="PlaybackController">
+            <connections>
+                <outlet property="playlistController" destination="218" id="706"/>
+                <outlet property="playlistLoader" destination="1319" id="ghZ-65-60L"/>
+                <outlet property="playlistView" destination="207" id="717"/>
+                <outlet property="volumeSlider" destination="1612" id="1615"/>
+            </connections>
+        </customObject>
+        <menu title="Menu" id="1063" userLabel="ContextualMenu">
+            <items>
+                <menuItem title="Add to Queue" id="1893">
+                    <connections>
+                        <action selector="toggleQueued:" target="218" id="1934"/>
+                        <binding destination="2020" name="enabled" keyPath="selection" id="2068">
+                            <dictionary key="options">
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                            </dictionary>
+                        </binding>
+                        <binding destination="2020" name="title" keyPath="selection.queued" id="2042">
+                            <dictionary key="options">
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSValueTransformerName">ToggleQueueTitleTransformer</string>
+                                <string key="NSNotApplicablePlaceholder">Toggle Queued</string>
+                                <string key="NSNoSelectionPlaceholder">Toggle Queued</string>
+                                <string key="NSMultipleValuesPlaceholder">Toggle Queued</string>
+                                <string key="NSNullPlaceholder">Toggle Queued</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="2047"/>
+                <menuItem title="Search for Artist" id="2045">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="searchByArtist:" target="218" id="2118"/>
+                        <binding destination="2020" name="enabled" keyPath="selection.artist" id="2066">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem title="Search for Album" id="2046">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="searchByAlbum:" target="218" id="2119"/>
+                        <binding destination="2020" name="enabled" keyPath="selection.album" id="2067">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="2048"/>
+                <menuItem title="Information" hidden="YES" id="2212">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Show in Finder" id="1064">
+                    <connections>
+                        <action selector="showEntryInFinder:" target="218" id="1345"/>
+                        <binding destination="2020" name="enabled" keyPath="selection" id="2069">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="2049"/>
+                <menuItem title="Remove" id="1360">
+                    <connections>
+                        <action selector="remove:" target="218" id="1361"/>
+                        <binding destination="2020" name="enabled" keyPath="selection" id="2070">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="qqX-IU-KHm"/>
+                <menuItem title="Properties" id="Eds-my-DQr" userLabel="Menu Item - Properties">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="showWindow:" target="2422" id="lET-Cq-KED"/>
+                        <binding destination="2020" name="enabled" keyPath="selection" id="Ff1-eV-AGk">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+            </items>
+        </menu>
+        <customObject id="1217" userLabel="PreferencesController" customClass="PreferencesController"/>
+        <customObject id="1303" userLabel="SUUpdater" customClass="SUUpdater"/>
+        <customObject id="1319" userLabel="PlaylistLoader" customClass="PlaylistLoader">
+            <connections>
+                <outlet property="playlistController" destination="218" id="1320"/>
+            </connections>
+        </customObject>
+        <menu title="Menu" id="1324" userLabel="TableMenu">
+            <items>
+                <menuItem title="Index" state="on" keyEquivalent="I" id="1337"/>
+                <menuItem title="Title" state="on" keyEquivalent="T" id="1338"/>
+                <menuItem title="Artist" state="on" keyEquivalent="A" id="1339"/>
+                <menuItem title="Album" state="on" keyEquivalent="L" id="1340"/>
+                <menuItem title="Genre" state="on" keyEquivalent="G" id="1341"/>
+                <menuItem title="Length" state="on" keyEquivalent="L" id="1342"/>
+                <menuItem title="Track" state="on" keyEquivalent="R" id="1343"/>
+                <menuItem title="Year" state="on" keyEquivalent="Y" id="1344"/>
+            </items>
+        </menu>
+        <customView id="1611" userLabel="Volume View">
+            <rect key="frame" x="0.0" y="0.0" width="26" height="168"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <slider horizontalHuggingPriority="750" id="1612" customClass="VolumeSlider">
+                    <rect key="frame" x="6" y="19" width="15" height="129"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="left" sliderType="linear" id="1613"/>
+                    <connections>
+                        <action selector="changeVolume:" target="705" id="1614"/>
+                    </connections>
+                </slider>
+            </subviews>
+        </customView>
+        <customObject id="1675" customClass="SpotlightWindowController">
+            <connections>
+                <outlet property="playlistLoader" destination="1319" id="1694"/>
+            </connections>
+        </customObject>
+        <userDefaultsController representsSharedInstance="YES" id="1689"/>
+        <objectController objectClassName="PlaylistEntry" id="1897" userLabel="Current Entry Controller">
+            <declaredKeys>
+                <mutableString>display</mutableString>
+                <mutableString>length</mutableString>
+                <mutableString>seekable</mutableString>
+                <string>queued</string>
+                <mutableString>title</mutableString>
+                <mutableString>artist</mutableString>
+            </declaredKeys>
+            <connections>
+                <binding destination="218" name="contentObject" keyPath="currentEntry" id="1902"/>
+            </connections>
+        </objectController>
+        <arrayController objectClassName="PlaylistEntry" editable="NO" preservesSelection="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" id="2020" userLabel="Playlist Selection Controller">
+            <declaredKeys>
+                <mutableString>queued</mutableString>
+                <string>title</string>
+                <string>artist</string>
+                <string>album</string>
+            </declaredKeys>
+            <connections>
+                <binding destination="218" name="contentArray" keyPath="arrangedObjects" id="2039"/>
+                <binding destination="218" name="selectionIndexes" keyPath="selectionIndexes" id="2041"/>
+            </connections>
+        </arrayController>
+        <customObject id="2172" customClass="FileTreeViewController">
+            <connections>
+                <outlet property="mainView" destination="206" id="2421"/>
+                <outlet property="playbackController" destination="705" id="2452"/>
+                <outlet property="playlistLoader" destination="1319" id="2179"/>
+                <outlet property="splitView" destination="2123" id="2181"/>
+            </connections>
+        </customObject>
+        <customObject id="2422" customClass="InfoWindowController">
+            <connections>
+                <outlet property="appController" destination="226" id="2538"/>
+                <outlet property="currentEntryController" destination="1897" id="2539"/>
+                <outlet property="playlistSelectionController" destination="2020" id="2540"/>
+            </connections>
+        </customObject>
+        <customObject id="2434" customClass="FeedbackController"/>
+    </objects>
+    <resources>
+        <image name="B847B194-BBAF-4B8C-B139-D0EA4FFCEBAA" width="17" height="17">
+            <mutableData key="keyedArchiveRepresentation">
+YnBsaXN0MDDUAQIDBAUGRkdYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
+ExQZHh8qKyw0NzpAQ1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5T
+UmVwc1dOU0NvbG9ygAKADhIgwAAAgAOADFh7MTcsIDE3fdIVChYYWk5TLm9iamVjdHOhF4AEgAvSFQoa
+HaIbHIAFgAaAChAA1iAhCiIjJCUmJygpHl8QEE5TQ2FjaGVXaW5kb3dCUFNfEBdOU0NhY2hlV2luZG93
+Q29sb3JTcGFjZV8QFE5TVElGRlJlcHJlc2VudGF0aW9uXxAQTlNDYWNoZVdpbmRvd0JQUF8QFU5TQ2Fj
+aGVXaW5kb3dJc1BsYW5hchAIgAiACYAHEBhPERAuTU0AKgAAA/iAACBQOCQWDQeEQmBAaBgmBvGFRGJR
+OFB8LgcqCYGgYertuPM3xSRQoFwMIQMGwMJAcHhIRoYujo7g11tcNJZwBZiNBksc+QNpQQBUMMgQCAUQ
+AsHg4RBenB8KBQLhwHg8GhgMBwPBsRiIPhUMhMPBIMBsKg16vh7AIaPldgAAuJtgBkh4zAAumAwG58vR
+3JOCCMSCtIHI7nQ2j0cjcBA0HA4AA4GSkGAwFAABgQBgB0ORygAJhYLAB7vl9ABzNtigAPvFPgB8tpxg
+BsiE9Xg4HxNN5sNAzwQDggFGJUKlTpYmkslgd4c24Q0FZcE9MAM5hsQAPV0ugABwbjqBOZTgALPxcAB9
+N15AByheQmZFKdhsdfLQiwN8wMZIVGJBcDsN42Aqe8CAAA0DwMA6GHadp4AAchkGQAB6HGcMJgGfgACA
+H0LH8eJqgAfhznYABzn8KgAEKXZzHIUZLkgHqBnAgYOjSN45F6RpDkKEp+x8ADgsuf5/n6ABmmcZIAGA
+YEkh2HQfAAARvlcAAaBkbzSHA7kMHuAB2nuGQAFEcQSn4QA8DmICBtWgQGCYKgsl0UpPk4HJznMcwAG8
+bRoQmeB5gADQHRAc50MgeB6NOKAhgCAAEHmaYAGUZJ/AAGwXHeAB5HUB4AF6fwvgALwwC8NIAH8fBMIG
+AIeh6I5XFYV5UCgfx+H2ABwmmYNHADPJ7HfSJ/gS+4C16AAYBidoAG4YkQGGaIKAALQgtmfJy2UZ4HDu
+AAsjcO5MHYcZu1MgYUhgGRMlkVxYDMCwKgk6pmqCAh4FMAAGAiHIAAUDQeAABZ9F08gFGxXBsAwABxHY
+hgZAeWSBHbQBvAsNoAC+QZPGAahkF+IyCAsDAOj8WBYlkQIchsGAAGeaBnAAb5kk4AAYiIOrSHo7gSg7
+Pp7G6bQAHYAgrrgBAJgABJnjhfZ/xIdIERQPJaG8cRXFATE1IGBetDCUpUlgTwnCUIkjGWZYAHgd9MhC
+E4WswehgAADwOnXB5jm69AHhoAACHzZQIHeXtTnMdQAGkc+EEqcIKn6VhSE7saDCKTROlKXIyjELQAns
+ex8PQfp/2Wa2XBaCkJAEAj1n6eZ6gAfp6xIf6/dadx7VOd1AF2Yx3AALhSnGQR9n6fNVIMGg0DaOhiBs
+GgZgOa5sm2d3oGyfI2iqGIMh+HbN1RW5/84AB9nWiB2nTQBxnIdB8m2bxvHaZZonSa5OmMdYx1vXCDgn
+rQFicer/0HECHAAoAQAAdCXEIGAPimxyDwGyNYcQ6RwDrHkOUbw5R3DaHMOsfY2h4pDHM6AADdCBDkIG
+oAgUIiRkFNGQID5A0SEChIaQgaRYVkGICAAADwEAAAMAAAABABEAAAEBAAMAAAABABEAAAECAAMAAAAE
+AAAEsgEDAAMAAAABAAUAAAEGAAMAAAABAAIAAAERAAQAAAABAAAACAESAAMAAAABAAEAAAEVAAMAAAAB
+AAQAAAEWAAMAAAABABEAAAEXAAQAAAABAAAD7wEcAAMAAAABAAEAAAE9AAMAAAABAAIAAAFSAAMAAAAB
+AAEAAAFTAAMAAAAEAAAEuodzAAcAAAtsAAAEwgAAAAAACAAIAAgACAABAAEAAQABAAALbGFwcGwCEAAA
+bW50clJHQiBYWVogB90ACQAGABAAHwAoYWNzcEFQUEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPbW
+AAEAAAAA0y1hcHBsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
+ZGVzYwAAAVAAAABwZHNjbQAAAcAAAABGY3BydAAAAggAAAAkd3RwdAAAAiwAAAAUclhZWgAAAkAAAAAU
+Z1hZWgAAAlQAAAAUYlhZWgAAAmgAAAAUclRSQwAAAnwAAAgMYWFyZwAACogAAAAgdmNndAAACqgAAAAw
+bmRpbgAACtgAAAA+Y2hhZAAACxgAAAAsbW1vZAAAC0QAAAAoYlRSQwAAAnwAAAgMZ1RSQwAAAnwAAAgM
+YWFiZwAACogAAAAgYWFnZwAACogAAAAgZGVzYwAAAAAAAAAWZWxlY3RyMTliMyBDYWxpYnJhdGVkAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAG1sdWMAAAAAAAAAAQAAAAxlblVTAAAAKgAAABwAZQBsAGUAYwB0AHIAMQA5
+AGIAMwAgAEMAYQBsAGkAYgByAGEAdABlAGQAAHRleHQAAAAAQ29weXJpZ2h0IEFwcGxlLCBJbmMuLCAy
+MDEzAFhZWiAAAAAAAAD0NgABAAAAAWobWFlaIAAAAAAAAHMAAAA8xwAAAyFYWVogAAAAAAAAW0IAAKv3
+AAAW9lhZWiAAAAAAAAAolAAAF0IAALkWY3VydgAAAAAAAAQAAAAABQAKAA8AFAAZAB4AIwAoAC0AMgA2
+ADsAQABFAEoATwBUAFkAXgBjAGgAbQByAHcAfACBAIYAiwCQAJUAmgCfAKMAqACtALIAtwC8AMEAxgDL
+ANAA1QDbAOAA5QDrAPAA9gD7AQEBBwENARMBGQEfASUBKwEyATgBPgFFAUwBUgFZAWABZwFuAXUBfAGD
+AYsBkgGaAaEBqQGxAbkBwQHJAdEB2QHhAekB8gH6AgMCDAIUAh0CJgIvAjgCQQJLAlQCXQJnAnECegKE
+Ao4CmAKiAqwCtgLBAssC1QLgAusC9QMAAwsDFgMhAy0DOANDA08DWgNmA3IDfgOKA5YDogOuA7oDxwPT
+A+AD7AP5BAYEEwQgBC0EOwRIBFUEYwRxBH4EjASaBKgEtgTEBNME4QTwBP4FDQUcBSsFOgVJBVgFZwV3
+BYYFlgWmBbUFxQXVBeUF9gYGBhYGJwY3BkgGWQZqBnsGjAadBq8GwAbRBuMG9QcHBxkHKwc9B08HYQd0
+B4YHmQesB78H0gflB/gICwgfCDIIRghaCG4IggiWCKoIvgjSCOcI+wkQCSUJOglPCWQJeQmPCaQJugnP
+CeUJ+woRCicKPQpUCmoKgQqYCq4KxQrcCvMLCwsiCzkLUQtpC4ALmAuwC8gL4Qv5DBIMKgxDDFwMdQyO
+DKcMwAzZDPMNDQ0mDUANWg10DY4NqQ3DDd4N+A4TDi4OSQ5kDn8Omw62DtIO7g8JDyUPQQ9eD3oPlg+z
+D88P7BAJECYQQxBhEH4QmxC5ENcQ9RETETERTxFtEYwRqhHJEegSBxImEkUSZBKEEqMSwxLjEwMTIxND
+E2MTgxOkE8UT5RQGFCcUSRRqFIsUrRTOFPAVEhU0FVYVeBWbFb0V4BYDFiYWSRZsFo8WshbWFvoXHRdB
+F2UXiReuF9IX9xgbGEAYZRiKGK8Y1Rj6GSAZRRlrGZEZtxndGgQaKhpRGncanhrFGuwbFBs7G2Mbihuy
+G9ocAhwqHFIcexyjHMwc9R0eHUcdcB2ZHcMd7B4WHkAeah6UHr4e6R8THz4faR+UH78f6iAVIEEgbCCY
+IMQg8CEcIUghdSGhIc4h+yInIlUigiKvIt0jCiM4I2YjlCPCI/AkHyRNJHwkqyTaJQklOCVoJZclxyX3
+JicmVyaHJrcm6CcYJ0kneierJ9woDSg/KHEooijUKQYpOClrKZ0p0CoCKjUqaCqbKs8rAis2K2krnSvR
+LAUsOSxuLKIs1y0MLUEtdi2rLeEuFi5MLoIuty7uLyQvWi+RL8cv/jA1MGwwpDDbMRIxSjGCMbox8jIq
+MmMymzLUMw0zRjN/M7gz8TQrNGU0njTYNRM1TTWHNcI1/TY3NnI2rjbpNyQ3YDecN9c4FDhQOIw4yDkF
+OUI5fzm8Ofk6Njp0OrI67zstO2s7qjvoPCc8ZTykPOM9Ij1hPaE94D4gPmA+oD7gPyE/YT+iP+JAI0Bk
+QKZA50EpQWpBrEHuQjBCckK1QvdDOkN9Q8BEA0RHRIpEzkUSRVVFmkXeRiJGZ0arRvBHNUd7R8BIBUhL
+SJFI10kdSWNJqUnwSjdKfUrESwxLU0uaS+JMKkxyTLpNAk1KTZNN3E4lTm5Ot08AT0lPk0/dUCdQcVC7
+UQZRUFGbUeZSMVJ8UsdTE1NfU6pT9lRCVI9U21UoVXVVwlYPVlxWqVb3V0RXklfgWC9YfVjLWRpZaVm4
+WgdaVlqmWvVbRVuVW+VcNVyGXNZdJ114XcleGl5sXr1fD19hX7NgBWBXYKpg/GFPYaJh9WJJYpxi8GND
+Y5dj62RAZJRk6WU9ZZJl52Y9ZpJm6Gc9Z5Nn6Wg/aJZo7GlDaZpp8WpIap9q92tPa6dr/2xXbK9tCG1g
+bbluEm5rbsRvHm94b9FwK3CGcOBxOnGVcfByS3KmcwFzXXO4dBR0cHTMdSh1hXXhdj52m3b4d1Z3s3gR
+eG54zHkqeYl553pGeqV7BHtje8J8IXyBfOF9QX2hfgF+Yn7CfyN/hH/lgEeAqIEKgWuBzYIwgpKC9INX
+g7qEHYSAhOOFR4Wrhg6GcobXhzuHn4gEiGmIzokziZmJ/opkisqLMIuWi/yMY4zKjTGNmI3/jmaOzo82
+j56QBpBukNaRP5GokhGSepLjk02TtpQglIqU9JVflcmWNJaflwqXdZfgmEyYuJkkmZCZ/JpomtWbQpuv
+nByciZz3nWSd0p5Anq6fHZ+Ln/qgaaDYoUehtqImopajBqN2o+akVqTHpTilqaYapoum/adup+CoUqjE
+qTepqaocqo+rAqt1q+msXKzQrUStuK4trqGvFq+LsACwdbDqsWCx1rJLssKzOLOutCW0nLUTtYq2AbZ5
+tvC3aLfguFm40blKucK6O7q1uy67p7whvJu9Fb2Pvgq+hL7/v3q/9cBwwOzBZ8Hjwl/C28NYw9TEUcTO
+xUvFyMZGxsPHQce/yD3IvMk6ybnKOMq3yzbLtsw1zLXNNc21zjbOts83z7jQOdC60TzRvtI/0sHTRNPG
+1EnUy9VO1dHWVdbY11zX4Nhk2OjZbNnx2nba+9uA3AXcit0Q3ZbeHN6i3ynfr+A24L3hROHM4lPi2+Nj
+4+vkc+T85YTmDeaW5x/nqegy6LzpRunQ6lvq5etw6/vshu0R7ZzuKO6070DvzPBY8OXxcvH/8ozzGfOn
+9DT0wvVQ9d72bfb794r4Gfio+Tj5x/pX+uf7d/wH/Jj9Kf26/kv+3P9t//9wYXJhAAAAAAADAAAAAmZm
+AADypwAADVkAABPQAAAKDnZjZ3QAAAAAAAAAAQAA/PAAAAAAAAEAAAAA/PAAAAAAAAEAAAAA/PAAAAAA
+AAEAAG5kaW4AAAAAAAAANgAAoEAAAFbAAABHgAAAmYAAACZAAAASgAAASIAAAEwAAAI6BQACOgUAAjoF
+AAAAAAAAAABzZjMyAAAAAAABGP0AAArf///pUwAADikAAP13///4P///++IAAAasAACTW21tb2QAAAAA
+AAAwIwAAGbMAACjot/kSAAAAAAAAAAAAAAAAAAAAAABfEBlOU0NhbGlicmF0ZWRSR0JDb2xvclNwYWNl
+0i0uLzBaJGNsYXNzbmFtZVgkY2xhc3Nlc18QEE5TQ2FjaGVkSW1hZ2VSZXCjMTIzXxAQTlNDYWNoZWRJ
+bWFnZVJlcFpOU0ltYWdlUmVwWE5TT2JqZWN00i0uNTZXTlNBcnJheaI1M9ItLjg5Xk5TTXV0YWJsZUFy
+cmF5ozg1M9M7PAo9Pj9XTlNXaGl0ZVxOU0NvbG9yU3BhY2VEMCAwABADgA3SLS5BQldOU0NvbG9yokEz
+0i0uREVXTlNJbWFnZaJEM18QD05TS2V5ZWRBcmNoaXZlctFISVRyb290gAEACAARABoAIwAtADIANwBJ
+AE8AWgBhAGgAdQB8AIQAhgCIAI0AjwCRAJoAnwCqAKwArgCwALUAuAC6ALwAvgDAAM0A4AD6AREBJAE8
+AT4BQAFCAUQBRhF4EZQRmRGkEa0RwBHEEdcR4hHrEfAR+BH7EgASDxITEhoSIhIvEjQSNhI4Ej0SRRJI
+Ek0SVRJYEmoSbRJyAAAAAAAAAgEAAAAAAAAASgAAAAAAAAAAAAAAAAAAEnQ
+</mutableData>
+        </image>
+        <image name="infoTemplate" width="16" height="16"/>
+        <image name="miniModeOffTemplate" width="16" height="16"/>
+        <image name="miniModeOnTemplate" width="16" height="16"/>
+        <image name="navigatorTemplate" width="16" height="16"/>
+        <image name="nextTemplate" width="20" height="19"/>
+        <image name="playTemplate" width="16" height="16"/>
+        <image name="previousTemplate" width="20" height="19"/>
+        <image name="randomizeTemplate" width="17" height="16"/>
+        <image name="repeatModeOffTemplate" width="20" height="19"/>
+        <image name="shuffleOffTemplate" width="20" height="19"/>
+        <image name="stopTemplate" width="16" height="16"/>
+        <image name="volume3Template" width="17" height="16"/>
+    </resources>
+</document>

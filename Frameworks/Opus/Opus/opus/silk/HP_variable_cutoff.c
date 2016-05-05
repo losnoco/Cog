@@ -52,7 +52,7 @@ void silk_HP_variable_cutoff(
 
       /* adjustment based on quality */
       quality_Q15 = psEncC1->input_quality_bands_Q15[ 0 ];
-      pitch_freq_log_Q7 = silk_SMLAWB( pitch_freq_log_Q7, silk_SMULWB( silk_LSHIFT( -quality_Q15, 2 ), quality_Q15 ),
+      pitch_freq_log_Q7 = (opus_int32) silk_SMLAWB( pitch_freq_log_Q7, silk_SMULWB( silk_LSHIFT( -quality_Q15, 2 ), quality_Q15 ),
             pitch_freq_log_Q7 - ( silk_lin2log( SILK_FIX_CONST( VARIABLE_HP_MIN_CUTOFF_HZ, 16 ) ) - ( 16 << 7 ) ) );
 
       /* delta_freq = pitch_freq_log - psEnc->variable_HP_smth1; */

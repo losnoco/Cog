@@ -13,20 +13,19 @@
 
 + (void)initialize
 {
-	NSValueTransformer *pathToFileTransformer = [[[PathToFileTransformer alloc] init] autorelease];
+	NSValueTransformer *pathToFileTransformer = [[PathToFileTransformer alloc] init];
     [NSValueTransformer setValueTransformer:pathToFileTransformer
                                     forName:@"PathToFileTransformer"];
 }
 
 + (NSArray *)preferencePanes
 {
-	GeneralPreferencesPlugin *plugin = [[[GeneralPreferencesPlugin alloc] init] autorelease];
+	GeneralPreferencesPlugin *plugin = [[GeneralPreferencesPlugin alloc] init];
 	[NSBundle loadNibNamed:@"Preferences" owner:plugin];
 	
 	return [NSArray arrayWithObjects:
 			[plugin playlistPane],
 			[plugin hotKeyPane],
-			[plugin remotePane],
 			[plugin updatesPane],
 			[plugin outputPane],
 			[plugin scrobblerPane],
@@ -49,11 +48,6 @@
 - (MIDIPane *)midiPane
 {
     return midiPane;
-}
-
-- (GeneralPreferencePane *)remotePane
-{
-	return [GeneralPreferencePane preferencePaneWithView:remoteView title:NSLocalizedStringFromTableInBundle(@"Remote", nil, [NSBundle bundleForClass:[self class]],  @"")  iconNamed:@"apple_remote"];
 }
 
 - (GeneralPreferencePane *)updatesPane

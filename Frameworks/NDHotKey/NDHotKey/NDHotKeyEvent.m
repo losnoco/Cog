@@ -89,17 +89,21 @@ static NSString * describeHashFunction( NSHashTable * aTable, const void * aHotK
 
 static UInt32 _idForCharacterAndModifer( unichar aCharacter, NSUInteger aModFlags ) { return (UInt32)aCharacter | (UInt32)(aModFlags<<16); }
 
+#if 0
 static void _getCharacterAndModiferForId( UInt32 anId, unichar *aCharacter, NSUInteger *aModFlags )
 {
 	*aModFlags = anId>>16;
 	*aCharacter = anId&0xFFFF;
 }
+#endif
 
+#ifndef NDMapTableClassDefined
 struct HotKeyMappingEntry
 {
 	UInt32				hotKeyId;
 	NDHotKeyEvent		* hotKeyEvent;
 };
+#endif
 
 + (BOOL)install
 {
@@ -115,7 +119,7 @@ struct HotKeyMappingEntry
 		NDHotKeyEventLock;
 		if( theHotKeyEvents != nil && hotKeysEventHandler == NULL )
 		{
-			if( InstallEventHandler( GetEventDispatcherTarget(), NewEventHandlerUPP((EventHandlerProcPtr)eventHandlerCallback), 2, theTypeSpec, theHotKeyEvents, &hotKeysEventHandler ) != noErr )
+			if( InstallEventHandler( GetEventDispatcherTarget(), NewEventHandlerUPP((EventHandlerProcPtr)eventHandlerCallback), 2, theTypeSpec, (__bridge void *)(theHotKeyEvents), &hotKeysEventHandler ) != noErr )
 				NSLog(@"Could not install Event handler");
 		}
 		NDHotKeyEventUnlock;
@@ -268,37 +272,37 @@ struct HotKeyMappingEntry
 
 + (id)hotKeyWithEvent:(NSEvent *)anEvent
 {
-	return [[[self alloc] initWithEvent:anEvent] autorelease];
+	return [[self alloc] initWithEvent:anEvent];
 }
 
 + (id)hotKeyWithEvent:(NSEvent *)anEvent target:(id)aTarget selector:(SEL)aSelector
 {
-	return [[[self alloc] initWithEvent:anEvent target:aTarget selector:aSelector] autorelease];
+	return [[self alloc] initWithEvent:anEvent target:aTarget selector:aSelector];
 }
 
 + (id)hotKeyWithKeyCharacter:(unichar)aKeyCharacter modifierFlags:(NSUInteger)aModifierFlags
 {
-	return [[[self alloc] initWithKeyCharacter:aKeyCharacter modifierFlags:aModifierFlags target:nil selector:(SEL)0] autorelease];
+	return [[self alloc] initWithKeyCharacter:aKeyCharacter modifierFlags:aModifierFlags target:nil selector:(SEL)0];
 }
 
 + (id)hotKeyWithKeyCode:(UInt16)aKeyCode modifierFlags:(NSUInteger)aModifierFlags
 {
-	return [[[self alloc] initWithKeyCode:aKeyCode modifierFlags:aModifierFlags target:nil selector:(SEL)0] autorelease];
+	return [[self alloc] initWithKeyCode:aKeyCode modifierFlags:aModifierFlags target:nil selector:(SEL)0];
 }
 
 + (id)hotKeyWithKeyCharacter:(unichar)aKeyCharacter modifierFlags:(NSUInteger)aModifierFlags target:(id)aTarget selector:(SEL)aSelector
 {
-	return [[[self alloc] initWithKeyCharacter:aKeyCharacter modifierFlags:aModifierFlags target:aTarget selector:aSelector] autorelease];
+	return [[self alloc] initWithKeyCharacter:aKeyCharacter modifierFlags:aModifierFlags target:aTarget selector:aSelector];
 }
 
 + (id)hotKeyWithKeyCode:(UInt16)aKeyCode modifierFlags:(NSUInteger)aModifierFlags target:(id)aTarget selector:(SEL)aSelector
 {
-	return [[[self alloc] initWithKeyCode:aKeyCode modifierFlags:aModifierFlags target:aTarget selector:aSelector] autorelease];
+	return [[self alloc] initWithKeyCode:aKeyCode modifierFlags:aModifierFlags target:aTarget selector:aSelector];
 }
 
 + (id)hotKeyWithWithPropertyList:(id)aPropertyList
 {
-	return [[[self alloc] initWithPropertyList:aPropertyList] autorelease];
+	return [[self alloc] initWithPropertyList:aPropertyList];
 }
 
 + (NSString *)description
@@ -325,7 +329,7 @@ struct HotKeyMappingEntry
 #pragma mark - creation and destruction
 - (id)init
 {
-	[self release];
+    self = nil;
 	NSAssert( NO, @"You can not initialize a Hot Key with the init method" );
 	return nil;
 }
@@ -373,7 +377,7 @@ struct HotKeyMappingEntry
 		[self addHotKey];
 	}
 	else
-		[self release], self = nil;
+		self = nil;
 
 	return self;
 }
@@ -456,7 +460,7 @@ struct HotKeyMappingEntry
 		}
 	}
 	else
-		[self release], self = nil;
+		self = nil;
 
 	return self;
 }
@@ -471,52 +475,30 @@ struct HotKeyMappingEntry
 		nil];
 }
 
-- (oneway void)release
-{
-	/*
-	 *	We need to remove the hot key from the hash table before it's retain count reaches zero
-	 */
-	if( [self retainCount] == 1 )
-	{
-#ifdef NDMapTableClassDefined
-		NSMapTable		* theAllHotKeyEvents = [NDHotKeyEvent allHotKeyEvents];
-#else
-		NSHashTable		* theAllHotKeyEvents = [NDHotKeyEvent allHotKeyEvents];
-#endif
-		if( theAllHotKeyEvents )
-		{
-#ifndef NDMapTableClassDefined
-			struct HotKeyMappingEntry		theDummyEntry = {[self hotKeyId],nil};
-#endif
-			NDHotKeyEventLock;
-				if( [self retainCount] == 1 )		// check again because it might have changed
-				{
-					switchHotKey( self, NO );
-#ifdef NDMapTableClassDefined
-					[theAllHotKeyEvents removeObjectForKey:[NSNumber numberWithUnsignedInt:[self hotKeyId]]];
-#else
-					id		theHotKeyEvent = NSHashGet( theAllHotKeyEvents, (void*)&theDummyEntry );
-					if( theHotKeyEvent )
-						NSHashRemove( theAllHotKeyEvents, theHotKeyEvent );
-#endif
-				}
-			NDHotKeyEventUnlock;
-		}
-	}
-	[super release];
-}
-
-#if 0
 - (void)dealloc
 {
-	if( reference )
-	{
-		if( UnregisterEventHotKey( reference ) != noErr )	// in lock from release
-			NSLog( @"Failed to unregister hot key %@", self );
-	}
-	[super dealloc];
-}
+#ifdef NDMapTableClassDefined
+    NSMapTable		* theAllHotKeyEvents = [NDHotKeyEvent allHotKeyEvents];
+#else
+    NSHashTable		* theAllHotKeyEvents = [NDHotKeyEvent allHotKeyEvents];
 #endif
+    if( theAllHotKeyEvents )
+    {
+#ifndef NDMapTableClassDefined
+        struct HotKeyMappingEntry		theDummyEntry = {[self hotKeyId],nil};
+#endif
+        NDHotKeyEventLock;
+        switchHotKey( self, NO );
+#ifdef NDMapTableClassDefined
+        [theAllHotKeyEvents removeObjectForKey:[NSNumber numberWithUnsignedInt:[self hotKeyId]]];
+#else
+        id		theHotKeyEvent = NSHashGet( theAllHotKeyEvents, (void*)&theDummyEntry );
+        if( theHotKeyEvent )
+            NSHashRemove( theAllHotKeyEvents, theHotKeyEvent );
+#endif
+        NDHotKeyEventUnlock;
+    }
+}
 
 - (BOOL)setEnabled:(BOOL)aFlag
 {
@@ -581,8 +563,8 @@ struct HotKeyMappingEntry
 	selectorPressed = aSelectorPressed;
 
 #ifdef NS_BLOCKS_AVAILABLE
-	[releasedBlock release], releasedBlock = nil;
-	[pressedBlock release], pressedBlock = nil;
+	releasedBlock = nil;
+	pressedBlock = nil;
 #endif
 
 	return theResult;		// was change succesful
@@ -596,10 +578,10 @@ struct HotKeyMappingEntry
 	if( ![target respondsToSelector:@selector(targetWillChangeToObject:forHotKeyEvent:)] || [target targetWillChangeToObject:nil forHotKeyEvent:self] )
 	{
 		if( releasedBlock != aReleasedBlock )
-			[releasedBlock release], releasedBlock = [aReleasedBlock copy];
+			releasedBlock = [aReleasedBlock copy];
 
 		if( pressedBlock != aPressedBlock )
-			[pressedBlock release], pressedBlock = [aPressedBlock copy];
+			pressedBlock = [aPressedBlock copy];
 
 		selectorReleased = (SEL)0;
 		selectorPressed = (SEL)0;
@@ -902,7 +884,7 @@ static OSStatus switchHotKey( NDHotKeyEvent * self, BOOL aFlag )
  */
 + (id)hotKeyWithKeyCode:(UInt16)aKeyCode character:(unichar)aChar modifierFlags:(NSUInteger)aModifierFlags target:(id)aTarget selector:(SEL)aSelector
 {
-	return [[[self alloc] initWithKeyCode:aKeyCode modifierFlags:aModifierFlags target:aTarget selector:aSelector] autorelease];
+	return [[self alloc] initWithKeyCode:aKeyCode modifierFlags:aModifierFlags target:aTarget selector:aSelector];
 }
 
 /*

@@ -65,7 +65,6 @@
 	
 	//Append the fragment
 	NSURL *url = [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
-	[unixPath release];
 	return url;
 }
 
@@ -103,13 +102,13 @@
 	
     for (NSString *entry in [contents componentsSeparatedByString:@"\n"])
     {
-        entry = [entry stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString *_entry = [entry stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-		if ([entry hasPrefix:@"#"] || [entry isEqualToString:@""]) //Ignore extra info
+		if ([_entry hasPrefix:@"#"] || [_entry isEqualToString:@""]) //Ignore extra info
 			continue;
 		
 		//Need to add basePath, and convert to URL
-		[entries addObject:[self urlForPath:entry relativeTo:filename]];		
+		[entries addObject:[self urlForPath:_entry relativeTo:filename]];
 	}
 	
 	return entries;

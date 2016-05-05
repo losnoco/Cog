@@ -19,7 +19,6 @@
     NSFont *font = [NSFont systemFontOfSize:[(NSNumber *)value floatValue]];
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc]init];
     float fRowSize = [layoutManager defaultLineHeightForFont:font];
-    [layoutManager release];
     return [NSNumber numberWithFloat: fRowSize];
 }
 

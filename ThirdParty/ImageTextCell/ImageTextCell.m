@@ -3,22 +3,17 @@
 @implementation ImageTextCell
 
 - (void)dealloc {
-    [image release];
     image = nil;
-    [super dealloc];
 }
 
 - copyWithZone:(NSZone *)zone {
     ImageTextCell *cell = (ImageTextCell *)[super copyWithZone:zone];
-    cell->image = [image retain];
+    cell->image = image;
     return cell;
 }
 
 - (void)setImage:(NSImage *)anImage {
-    if (anImage != image) {
-        [image release];
-        image = [anImage retain];
-    }
+    image = anImage;
 }
 
 - (NSImage *)image {

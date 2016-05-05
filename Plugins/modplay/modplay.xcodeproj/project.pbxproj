@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		835CBC7D18DA7A260087A03E /* modplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 835CBC7C18DA7A090087A03E /* modplay.framework */; };
-		835CBC8018DA7A3E0087A03E /* modplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC7C18DA7A090087A03E /* modplay.framework */; };
+		835CBC8018DA7A3E0087A03E /* modplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC7C18DA7A090087A03E /* modplay.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		835CBC8518DACAE90087A03E /* libunmo3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 835CBC8318DACAE90087A03E /* libunmo3.dylib */; };
-		835CBC8818DACC2D0087A03E /* libunmo3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC8318DACAE90087A03E /* libunmo3.dylib */; };
+		835CBC8818DACC2D0087A03E /* libunmo3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC8318DACAE90087A03E /* libunmo3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8360B3FC18DD018B0059272F /* unrealfmt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8360B3F718DD018B0059272F /* unrealfmt.cpp */; };
 		8360B3FD18DD018B0059272F /* umx.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8360B3F918DD018B0059272F /* umx.mm */; };
 		8360B3FE18DD018B0059272F /* unrealfmtdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8360B3FB18DD018B0059272F /* unrealfmtdata.cpp */; };
@@ -60,6 +60,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		833F68291CDBCAA900AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835CBC7718DA7A090087A03E /* modplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = modplay.xcodeproj; path = ../../Frameworks/modplay/modplay.xcodeproj; sourceTree = "<group>"; };
 		835CBC8318DACAE90087A03E /* libunmo3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libunmo3.dylib; path = ../../../ThirdParty/BASS/libunmo3.dylib; sourceTree = "<group>"; };
 		835CBC8418DACAE90087A03E /* unmo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unmo3.h; path = ../../../ThirdParty/BASS/unmo3.h; sourceTree = "<group>"; };
@@ -225,7 +226,7 @@
 		83F4D50D18D8206A009B2DE6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 83F4D51018D8206A009B2DE6 /* Build configuration list for PBXProject "modplay" */;
@@ -234,6 +235,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 83F4D50C18D8206A009B2DE6;
 			productRefGroup = 83F4D51618D8206A009B2DE6 /* Products */;
@@ -299,6 +301,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				83F4D52218D8206A009B2DE6 /* en */,
+				833F68291CDBCAA900AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -323,6 +326,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -388,6 +392,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = modplay;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -406,6 +411,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = modplay;
 				WRAPPER_EXTENSION = bundle;
 			};

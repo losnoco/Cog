@@ -38,16 +38,13 @@
 	//Set up formatters
 	NSFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
 	[[[self tableColumnWithIdentifier:@"length"] dataCell] setFormatter:secondsFormatter];
-	[secondsFormatter release];
 	
 	NSFormatter *indexFormatter = [[IndexFormatter alloc] init];
 	[[[self tableColumnWithIdentifier:@"index"] dataCell] setFormatter:indexFormatter];
-	[indexFormatter release];
 	
 	NSFormatter *blankZeroFormatter = [[BlankZeroFormatter alloc] init];
 	[[[self tableColumnWithIdentifier:@"track"] dataCell] setFormatter:blankZeroFormatter];
 	[[[self tableColumnWithIdentifier:@"year"] dataCell] setFormatter:blankZeroFormatter];
-	[blankZeroFormatter release];
 	//end setting up formatters
 
 	[self setVerticalMotionCanBeginDrag:YES];
@@ -57,7 +54,6 @@
 	
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"identifier" ascending:YES];
 	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-	[sortDescriptor release];
 	
 	int visibleTableColumns = 0;
 	int menuIndex = 0;
@@ -258,8 +254,6 @@
     
     [pboard setPropertyList:itunesPlist forType:iTunesDropType];
     
-    [tracks release];
-    
     NSMutableArray *filePaths = [[NSMutableArray alloc] init];
     
     for (NSURL *url in selectedURLs)
@@ -270,10 +264,6 @@
     
     if ([filePaths count])
         [pboard setPropertyList:filePaths forType:NSFilenamesPboardType];
-    
-    [filePaths release];
-    
-    [selectedURLs release];
 }
 
 - (IBAction)cut:(id)sender
@@ -314,7 +304,6 @@
 		
 		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
 		[acceptedURLs addObjectsFromArray:urls];
-		[urls release];
 	}
 	
 	// Get files from an iTunes drop
@@ -331,7 +320,6 @@
 		
 		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
 		[acceptedURLs addObjectsFromArray:urls];
-		[urls release];
 	}
 	
 	if ([acceptedURLs count])
@@ -346,8 +334,6 @@
         if ([playlistController shuffle] != ShuffleOff)
             [playlistController resetShuffleList];
 	}
-	
-	[acceptedURLs release];
 }
 
 - (IBAction)delete:(id)sender

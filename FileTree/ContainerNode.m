@@ -30,12 +30,9 @@
 		ContainedNode *node = [[ContainedNode alloc] initWithDataSource:dataSource url:u];
 		DLog(@"Node: %@", u);
 		[paths addObject:node];
-		[node release];
-	}	
+	}
 	
 	[self setSubpaths:paths];
-	
-	[paths release];
 }
 
 @end

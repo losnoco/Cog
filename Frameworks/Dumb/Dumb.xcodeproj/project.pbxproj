@@ -156,6 +156,7 @@
 		17C8F63B0CBEE797008D969D /* readxm.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = readxm.c; sourceTree = "<group>"; };
 		17C8F63C0CBEE797008D969D /* readxm2.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = readxm2.c; sourceTree = "<group>"; };
 		17C8F63D0CBEE797008D969D /* xmeffect.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = xmeffect.c; sourceTree = "<group>"; };
+		833F68341CDBCAB100AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8370B61E17F60FE2001A4D7A /* barray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = barray.h; sourceTree = "<group>"; };
 		8370B62017F60FE2001A4D7A /* dumbfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dumbfile.h; sourceTree = "<group>"; };
 		8370B62217F60FE2001A4D7A /* lpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lpc.h; sourceTree = "<group>"; };
@@ -484,7 +485,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Dumb" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -492,6 +493,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* Dumb */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -614,6 +616,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C1667FE841158C02AAC07 /* English */,
+				833F68341CDBCAB100AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -640,6 +643,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				OBJROOT = ../../build;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.dumb;
 				PRODUCT_NAME = Dumb;
 				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "";
@@ -665,6 +669,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				OBJROOT = ../../build;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.dumb;
 				PRODUCT_NAME = Dumb;
 				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "";
@@ -677,6 +682,7 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"VAR_ARRAYS=1",

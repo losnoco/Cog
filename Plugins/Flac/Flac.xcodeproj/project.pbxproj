@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93F040B8FF67A008627D6 /* FlacDecoder.m */; };
 		17F5643C0C3BDC820019975C /* FLAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; };
-		17F5643F0C3BDC840019975C /* FLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; };
+		17F5643F0C3BDC840019975C /* FLAC.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F564220C3BDC460019975C /* FLAC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -183,7 +183,7 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Flac" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -265,6 +265,7 @@
 				GCC_PREFIX_HEADER = Flac_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.flac;
 				PRODUCT_NAME = Flac;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -287,6 +288,7 @@
 				GCC_PREFIX_HEADER = Flac_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.flac;
 				PRODUCT_NAME = Flac;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -297,6 +299,8 @@
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -311,6 +315,7 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

@@ -54,7 +54,7 @@ void silk_process_NLSFs(
     /* Calculate mu values */
     /***********************/
     /* NLSF_mu  = 0.003 - 0.0015 * psEnc->speech_activity; */
-    NLSF_mu_Q20 = silk_SMLAWB( SILK_FIX_CONST( 0.003, 20 ), SILK_FIX_CONST( -0.001, 28 ), psEncC->speech_activity_Q8 );
+    NLSF_mu_Q20 = (opus_int) silk_SMLAWB( SILK_FIX_CONST( 0.003, 20 ), SILK_FIX_CONST( -0.001, 28 ), psEncC->speech_activity_Q8 );
     if( psEncC->nb_subfr == 2 ) {
         /* Multiply by 1.5 for 10 ms packets */
         NLSF_mu_Q20 = silk_ADD_RSHIFT( NLSF_mu_Q20, NLSF_mu_Q20, 1 );

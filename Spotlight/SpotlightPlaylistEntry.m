@@ -29,7 +29,7 @@ static NSDictionary *importKeys;
     NSArray *trackTransform = 
         [NSArray arrayWithObjects:@"spotlightTrack", @"NumberToStringTransformer", nil];
     
-    importKeys = [[NSDictionary dictionaryWithObjectsAndKeys:
+    importKeys = [NSDictionary dictionaryWithObjectsAndKeys:
         @"title",                   @"kMDItemTitle",
         @"album",                   @"kMDItemAlbum",
         trackTransform,             @"kMDItemAudioTrackNumber",
@@ -38,12 +38,12 @@ static NSDictionary *importKeys;
         @"length",                  @"kMDItemDurationSeconds",
         URLTransform,               @"kMDItemPath",
         artistTransform,            @"kMDItemAuthors",
-        nil]retain];
+        nil];
 }
 
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem
 {
-    SpotlightPlaylistEntry *entry = [[[SpotlightPlaylistEntry alloc]init]autorelease];
+    SpotlightPlaylistEntry *entry = [[SpotlightPlaylistEntry alloc]init];
     
     // loop through the keys we want to extract
     for (NSString *mdKey in importKeys) {
@@ -85,8 +85,6 @@ static NSDictionary *importKeys;
 {
 	self.length = nil;
 	self.spotlightTrack = nil;
-
-	[super dealloc];
 }
 
 

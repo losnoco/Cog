@@ -81,9 +81,9 @@
 	if ( menu == nil )
 		menu = [GCWindowMenu windowMenu];
 	
-	[menu retain];
-	
-	loc = [[event window] convertBaseToScreen:loc];
+    NSRect rect = NSMakeRect(loc.x, loc.y, 0.0, 0.0);
+	rect = [[event window] convertRectToScreen:rect];
+    loc = NSMakePoint(rect.origin.x, rect.origin.y);
 	[menu setFrameTopLeftPoint:loc];
 	[[event window] addChildWindow:menu ordered:NSWindowAbove];
 	
@@ -98,7 +98,6 @@
 	// all done, tear down - remove with a fade effect
 	
 	[GCOneShotEffectTimer oneShotWithTime:0.15 forDelegate:menu];
-	[menu release];
 }
 
 
@@ -130,7 +129,7 @@
 	// will cause a crash due to the stale reference
 
 	[fi setReleasedWhenClosed:NO];	// **** important!! ****
-	return [fi autorelease];
+	return fi;
 }
 
 
@@ -381,10 +380,16 @@
 {
 	if(([event window] != self) && [event isMouseEventType])
 	{
-		NSPoint glob = [[event window] convertBaseToScreen:[event locationInWindow]];
+        NSPoint pt = [event locationInWindow];
+        NSRect rect = NSMakeRect(pt.x, pt.y, 0.0, 0.0);
+		rect = [[event window] convertRectToScreen:rect];
+        NSPoint glob = NSMakePoint(rect.origin.x, rect.origin.y);
+        rect = NSMakeRect(glob.x, glob.y, 0.0, 0.0);
+        rect = [self convertRectFromScreen:rect];
+        pt = NSMakePoint(rect.origin.x, rect.origin.y);
 
 		return [NSEvent mouseEventWithType:	[event type]
-						location:			[self convertScreenToBase:glob]
+						location:			pt
 						modifierFlags:		[event modifierFlags]
 						timestamp:			[event timestamp]
 						windowNumber:		[self windowNumber]
@@ -435,8 +440,6 @@
 
 - (void)			setMainView:(NSView*) aView sizeToFit:(BOOL) stf
 {
-	[aView retain];
-	[_mainView release];
 	_mainView = aView;
 	
 	// add as a subview which retains it as well

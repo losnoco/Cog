@@ -28,50 +28,50 @@
 @synthesize totalTime;
 
 + (void)initialize {
-	NSValueTransformer *repeatNoneTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatNone] autorelease];
+	NSValueTransformer *repeatNoneTransformer = [[RepeatModeTransformer alloc] initWithMode:RepeatNone];
     [NSValueTransformer setValueTransformer:repeatNoneTransformer
                                     forName:@"RepeatNoneTransformer"];
 
-	NSValueTransformer *repeatOneTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatOne] autorelease];
+	NSValueTransformer *repeatOneTransformer = [[RepeatModeTransformer alloc] initWithMode:RepeatOne];
     [NSValueTransformer setValueTransformer:repeatOneTransformer
                                     forName:@"RepeatOneTransformer"];
 
-	NSValueTransformer *repeatAlbumTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatAlbum] autorelease];
+	NSValueTransformer *repeatAlbumTransformer = [[RepeatModeTransformer alloc] initWithMode:RepeatAlbum];
     [NSValueTransformer setValueTransformer:repeatAlbumTransformer
                                     forName:@"RepeatAlbumTransformer"];
 
-	NSValueTransformer *repeatAllTransformer = [[[RepeatModeTransformer alloc] initWithMode:RepeatAll] autorelease];
+	NSValueTransformer *repeatAllTransformer = [[RepeatModeTransformer alloc] initWithMode:RepeatAll];
     [NSValueTransformer setValueTransformer:repeatAllTransformer
                                     forName:@"RepeatAllTransformer"];
 
-	NSValueTransformer *repeatModeImageTransformer = [[[RepeatModeImageTransformer alloc] init] autorelease];
+	NSValueTransformer *repeatModeImageTransformer = [[RepeatModeImageTransformer alloc] init];
     [NSValueTransformer setValueTransformer:repeatModeImageTransformer
                                     forName:@"RepeatModeImageTransformer"];
 	
 
-	NSValueTransformer *shuffleOffTransformer = [[[ShuffleModeTransformer alloc] initWithMode:ShuffleOff] autorelease];
+	NSValueTransformer *shuffleOffTransformer = [[ShuffleModeTransformer alloc] initWithMode:ShuffleOff];
     [NSValueTransformer setValueTransformer:shuffleOffTransformer
                                     forName:@"ShuffleOffTransformer"];
 	
-	NSValueTransformer *shuffleAlbumsTransformer = [[[ShuffleModeTransformer alloc] initWithMode:ShuffleAlbums] autorelease];
+	NSValueTransformer *shuffleAlbumsTransformer = [[ShuffleModeTransformer alloc] initWithMode:ShuffleAlbums];
     [NSValueTransformer setValueTransformer:shuffleAlbumsTransformer
                                     forName:@"ShuffleAlbumsTransformer"];
 	
-	NSValueTransformer *shuffleAllTransformer = [[[ShuffleModeTransformer alloc] initWithMode:ShuffleAll] autorelease];
+	NSValueTransformer *shuffleAllTransformer = [[ShuffleModeTransformer alloc] initWithMode:ShuffleAll];
     [NSValueTransformer setValueTransformer:shuffleAllTransformer
                                     forName:@"ShuffleAllTransformer"];
 
-	NSValueTransformer *shuffleImageTransformer = [[[ShuffleImageTransformer alloc] init] autorelease];
+	NSValueTransformer *shuffleImageTransformer = [[ShuffleImageTransformer alloc] init];
     [NSValueTransformer setValueTransformer:shuffleImageTransformer
                                     forName:@"ShuffleImageTransformer"];
 	
 	
 	
-	NSValueTransformer *statusImageTransformer = [[[StatusImageTransformer alloc] init] autorelease];
+	NSValueTransformer *statusImageTransformer = [[StatusImageTransformer alloc] init];
     [NSValueTransformer setValueTransformer:statusImageTransformer
                                     forName:@"StatusImageTransformer"];
 									
-	NSValueTransformer *toggleQueueTitleTransformer = [[[ToggleQueueTitleTransformer alloc] init] autorelease];
+	NSValueTransformer *toggleQueueTitleTransformer = [[ToggleQueueTitleTransformer alloc] init];
     [NSValueTransformer setValueTransformer:toggleQueueTitleTransformer
                                     forName:@"ToggleQueueTitleTransformer"];
 }
@@ -107,16 +107,6 @@
 	return self;
 }
 
-
-- (void)dealloc
-{
-	[shuffleList release];
-	[queueList release];
-    
-    [undoManager release];
-	
-	[super dealloc];
-}
 
 - (void)awakeFromNib
 {
@@ -259,7 +249,6 @@
 		
 		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
 		[acceptedURLs addObjectsFromArray:urls];
-		[urls release];
 	}
 	
 	// Get files from an iTunes drop
@@ -276,7 +265,6 @@
 		
 		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
 		[acceptedURLs addObjectsFromArray:urls];
-		[urls release];
 	}
 	
 	if ([acceptedURLs count])
@@ -290,8 +278,6 @@
 		NSArray* entries = [playlistLoader insertURLs:acceptedURLs atIndex:row sort:YES];
 		[self didInsertURLs:entries origin:URLOriginInternal];
 	}
-	
-	[acceptedURLs release];
 	
 	if ([self shuffle] != ShuffleOff)
 		[self resetShuffleList];
@@ -309,7 +295,7 @@
     if ([[self arrangedObjects] count] <= [indexes lastIndex])
         return indexes;
     
-    NSMutableIndexSet *disarrangedIndexes = [[[NSMutableIndexSet alloc] init] autorelease];
+    NSMutableIndexSet *disarrangedIndexes = [[NSMutableIndexSet alloc] init];
     
     NSUInteger index = [indexes firstIndex];
     while (index != NSNotFound)
@@ -323,7 +309,7 @@
 
 - (NSArray *)disarrangeObjects:(NSArray *)objects
 {
-    NSMutableArray *disarrangedObjects = [[[NSMutableArray alloc] init] autorelease];
+    NSMutableArray *disarrangedObjects = [[NSMutableArray alloc] init];
     
     for (PlaylistEntry *pe in [self content])
     {
@@ -339,7 +325,7 @@
     if ([[self content] count] <= [indexes lastIndex])
         return indexes;
     
-    NSMutableIndexSet *rearrangedIndexes = [[[NSMutableIndexSet alloc] init] autorelease];
+    NSMutableIndexSet *rearrangedIndexes = [[NSMutableIndexSet alloc] init];
     
     NSUInteger index = [indexes firstIndex];
     while (index != NSNotFound)
@@ -412,8 +398,6 @@
 
     }
     
-    [unarrangedIndexes release];
-
     [super removeObjectsAtArrangedObjectIndexes:indexes];
 
     if ([self shuffle] != ShuffleOff)
@@ -549,11 +533,7 @@
             [duplicatesIndex addIndex:[arrangedContent indexOfObject:pe]];
         }
         [self removeObjectsAtArrangedObjectIndexes:duplicatesIndex];
-        [duplicatesIndex release];
     }
-    
-    [duplicates release];
-    [originals release];
 }
 
 - (IBAction)removeDeadItems:(id)sender {
@@ -576,11 +556,7 @@
             [deadItemsIndex addIndex:[arrangedContent indexOfObject:pe]];
         }
         [self removeObjectsAtArrangedObjectIndexes:deadItemsIndex];
-        [deadItemsIndex release];
     }
-    
-    
-    [deadItems release];
 }
 
 - (PlaylistEntry *)shuffledEntryAtIndex:(int)i
@@ -799,9 +775,6 @@
 	
 	if (pe != nil)
 		[tableView scrollRowToVisible:pe.index];
-	
-	[pe retain];
-	[currentEntry release];
 	
 	currentEntry = pe;
 }

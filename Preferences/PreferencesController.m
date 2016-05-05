@@ -26,19 +26,10 @@
 		
         // Set which panes are included, and their order.
         //[prefs setPanesOrder:[NSArray arrayWithObjects:@"General", @"Updating", @"A Non-Existent Preference Pane", nil]];
-		[pluginController release];
     }
     
     // Show the preferences window.
     [window show];
-}
-
-
-- (void)dealloc
-{
-    [window release];
-	
-	[super dealloc];
 }
 
 @end

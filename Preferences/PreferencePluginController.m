@@ -16,20 +16,12 @@
 	self = [super init];
 	if (self)
 	{
-		_plugins = [plugins retain];
+		_plugins = plugins;
 		_preferencePanes = [[NSMutableArray alloc] init];
 		
 	}
 	
 	return self;
-}
-
-- (void)dealloc
-{
-	[_plugins release];
-	[_preferencePanes release];
-	
-	[super dealloc];
 }
 
 - (void)_searchForPlugins

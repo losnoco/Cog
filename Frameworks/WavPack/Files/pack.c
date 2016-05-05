@@ -1103,7 +1103,7 @@ void pack_init (WavpackContext *wpc)
 
     if (wpc->config.flags & CONFIG_AUTO_SHAPING) {
         if (wpc->config.flags & CONFIG_OPTIMIZE_WVC)
-            wps->dc.shaping_acc [0] = wps->dc.shaping_acc [1] = -512L << 16;
+            wps->dc.shaping_acc [0] = wps->dc.shaping_acc [1] = -512L * 65536;
         else if (wpc->config.sample_rate >= 64000)
             wps->dc.shaping_acc [0] = wps->dc.shaping_acc [1] = 1024L << 16;
         else

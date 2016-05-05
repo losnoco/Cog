@@ -74,13 +74,14 @@ static OpenURLPanel *openURLPanel = nil;
 
 - (id)init
 {
-	[super init];
+    if ((self = [super init]))
+    {
+        // init
+        [self setURLArray:[NSMutableArray arrayWithCapacity:10]];
 
-	// init
-	[self setURLArray:[NSMutableArray arrayWithCapacity:10]];
-
-	// listen for app termination notifications
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeURLs:) name:NSApplicationWillTerminateNotification object:NSApp];
+        // listen for app termination notifications
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(writeURLs:) name:NSApplicationWillTerminateNotification object:NSApp];
+    }
 
 	return self;
 }
@@ -89,7 +90,6 @@ static OpenURLPanel *openURLPanel = nil;
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[self setURLArray:nil];
-	[super dealloc];
 }
 
 // getters
@@ -126,8 +126,6 @@ static OpenURLPanel *openURLPanel = nil;
 // setters
 - (void)setURLArray:(NSMutableArray *)urlLArray
 {
-	[urlLArray retain];
-	[mUrlArray retain];
 	mUrlArray = urlLArray;
 }
 

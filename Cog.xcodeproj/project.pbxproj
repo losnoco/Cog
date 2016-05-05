@@ -42,7 +42,6 @@
 		1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1770429A0B8BC53600B86321 /* PlaybackController.m */; };
 		1778D3B00F645A190037E7A0 /* missingArt.png in Resources */ = {isa = PBXBuildFile; fileRef = 1778D3AF0F645A190037E7A0 /* missingArt.png */; };
 		1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1778D3C90F645BF00037E7A0 /* MissingAlbumArtTransformer.m */; };
-		177EBFA20B8BC2A70000BC8C /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */; };
 		177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF870B8BC2A70000BC8C /* ImageTextCell.m */; };
 		177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */; };
 		177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */; };
@@ -798,7 +797,6 @@
 		1778D3AF0F645A190037E7A0 /* missingArt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = missingArt.png; path = Images/missingArt.png; sourceTree = "<group>"; };
 		1778D3C80F645BF00037E7A0 /* MissingAlbumArtTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MissingAlbumArtTransformer.h; path = InfoInspector/MissingAlbumArtTransformer.h; sourceTree = "<group>"; };
 		1778D3C90F645BF00037E7A0 /* MissingAlbumArtTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MissingAlbumArtTransformer.m; path = InfoInspector/MissingAlbumArtTransformer.m; sourceTree = "<group>"; };
-		177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppleRemote.m; sourceTree = "<group>"; };
 		177EBF860B8BC2A70000BC8C /* ImageTextCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageTextCell.h; sourceTree = "<group>"; };
 		177EBF870B8BC2A70000BC8C /* ImageTextCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ImageTextCell.m; sourceTree = "<group>"; };
 		177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TrackingCell.h; sourceTree = "<group>"; };
@@ -913,7 +911,6 @@
 		17E0D6190F520F9F005B6FED /* VolumeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VolumeButton.m; path = Window/VolumeButton.m; sourceTree = "<group>"; };
 		17E0D61A0F520F9F005B6FED /* VolumeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeSlider.h; path = Window/VolumeSlider.h; sourceTree = "<group>"; };
 		17E0D61B0F520F9F005B6FED /* VolumeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VolumeSlider.m; path = Window/VolumeSlider.m; sourceTree = "<group>"; };
-		17E0D6370F522324005B6FED /* AppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleRemote.h; sourceTree = "<group>"; };
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
 		17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = Audio/CogAudio.xcodeproj; sourceTree = "<group>"; };
 		17F562260C3BD8FB0019975C /* General.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = General.xcodeproj; path = Preferences/General/General.xcodeproj; sourceTree = "<group>"; };
@@ -942,6 +939,15 @@
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
+		833F681E1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		833F681F1CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		833F68201CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/InfoInspector.xib; sourceTree = "<group>"; };
+		833F68211CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		833F68221CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/OpenURLPanel.xib; sourceTree = "<group>"; };
+		833F68231CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/FileTree.xib; sourceTree = "<group>"; };
+		833F68241CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/SpotlightPanel.xib; sourceTree = "<group>"; };
+		833F68251CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = es; path = es.lproj/Credits.html; sourceTree = "<group>"; };
+		833F68261CDBCAA900AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/Feedback.xib; sourceTree = "<group>"; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -1157,20 +1163,10 @@
 				83790D4A1809F4980073CF51 /* SPMediaKeyTap */,
 				173A439D0F3FD25500676A7B /* ToolTip */,
 				178BAB920CD4E1B700B33D47 /* GCWindowMenu */,
-				177EBF7D0B8BC2A70000BC8C /* AppleRemote */,
 				177EBF850B8BC2A70000BC8C /* ImageTextCell */,
 				179790DD0C087AB7001D6996 /* OpenURLPanel */,
 			);
 			path = ThirdParty;
-			sourceTree = "<group>";
-		};
-		177EBF7D0B8BC2A70000BC8C /* AppleRemote */ = {
-			isa = PBXGroup;
-			children = (
-				17E0D6370F522324005B6FED /* AppleRemote.h */,
-				177EBF7F0B8BC2A70000BC8C /* AppleRemote.m */,
-			);
-			path = AppleRemote;
 			sourceTree = "<group>";
 		};
 		177EBF850B8BC2A70000BC8C /* ImageTextCell */ = {
@@ -1954,6 +1950,7 @@
 				Hebrew,
 				Greek,
 				zh_CN,
+				es,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			projectDirPath = "";
@@ -2473,7 +2470,6 @@
 				8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */,
 				8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
-				177EBFA20B8BC2A70000BC8C /* AppleRemote.m in Sources */,
 				177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */,
 				177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */,
 				177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */,
@@ -2706,6 +2702,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C165DFE840E0CC02AAC07 /* English */,
+				833F681E1CDBCAA700AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2714,6 +2711,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				17211A7D0D68B7C500911CA9 /* English */,
+				833F68231CDBCAA800AFB9F0 /* es */,
 			);
 			name = FileTree.xib;
 			sourceTree = "<group>";
@@ -2722,6 +2720,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				17342A990D5FD20B00E8D854 /* English */,
+				833F68211CDBCAA800AFB9F0 /* es */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -2730,6 +2729,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				17342ABE0D5FD36400E8D854 /* English */,
+				833F68221CDBCAA800AFB9F0 /* es */,
 			);
 			name = OpenURLPanel.xib;
 			sourceTree = "<group>";
@@ -2738,6 +2738,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				178456C10F6320B5007E8021 /* English */,
+				833F68241CDBCAA800AFB9F0 /* es */,
 			);
 			name = SpotlightPanel.xib;
 			sourceTree = "<group>";
@@ -2746,6 +2747,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				17D1B0D10F6320EA00694C57 /* English */,
+				833F68201CDBCAA800AFB9F0 /* es */,
 			);
 			name = InfoInspector.xib;
 			sourceTree = "<group>";
@@ -2754,6 +2756,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				17D1B1DB0F6330D400694C57 /* English */,
+				833F68261CDBCAA900AFB9F0 /* es */,
 			);
 			name = Feedback.xib;
 			sourceTree = "<group>";
@@ -2762,6 +2765,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8E7575C809F31DCA0080F1EE /* English */,
+				833F68251CDBCAA800AFB9F0 /* es */,
 			);
 			name = Credits.html;
 			sourceTree = "<group>";
@@ -2770,6 +2774,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8E7575DA09F31E930080F1EE /* English */,
+				833F681F1CDBCAA800AFB9F0 /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -2853,6 +2858,7 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -2866,6 +2872,7 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

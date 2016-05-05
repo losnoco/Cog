@@ -14,35 +14,35 @@
 
 int32_t ReadBytesProc(void *ds, void *data, int32_t bcount)
 {
-	WavPackDecoder *decoder = (WavPackDecoder *)ds;
+	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 	
 	return [[decoder source] read:data amount:bcount];
 }
 
 uint32_t GetPosProc(void *ds)
 {
-	WavPackDecoder *decoder = (WavPackDecoder *)ds;
+	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 	
 	return [[decoder source] tell];
 }
 
 int SetPosAbsProc(void *ds, uint32_t pos)
 {
-	WavPackDecoder *decoder = (WavPackDecoder *)ds;
+	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 	
 	return ([[decoder source] seek:pos whence:SEEK_SET] ? 0: -1);
 }
 
 int SetPosRelProc(void *ds, int32_t delta, int mode)
 {
-	WavPackDecoder *decoder = (WavPackDecoder *)ds;
+	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 
 	return ([[decoder source] seek:delta whence:mode] ? 0: -1);
 }
 
 int PushBackByteProc(void *ds, int c)
 {
-	WavPackDecoder *decoder = (WavPackDecoder *)ds;
+	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 
 	if ([[decoder source] seekable]) {
 		[[decoder source] seek:-1 whence:SEEK_CUR];
@@ -56,7 +56,7 @@ int PushBackByteProc(void *ds, int c)
 
 uint32_t GetLengthProc(void *ds)
 {
-	WavPackDecoder *decoder = (WavPackDecoder *)ds;
+	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 	
 	if ([[decoder source] seekable]) {
 		long currentPos = [[decoder source] tell];
@@ -75,7 +75,7 @@ uint32_t GetLengthProc(void *ds)
 
 int CanSeekProc(void *ds)
 {
-	WavPackDecoder *decoder = (WavPackDecoder *)ds;
+	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 	
 	return [[decoder source] seekable];
 }
@@ -103,7 +103,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	reader.write_bytes = WriteBytesProc;
 
 	//No corrections file (WVC) support at the moment.
-	wpc = WavpackOpenFileInputEx(&reader, self, NULL, error, open_flags, 0);
+	wpc = WavpackOpenFileInputEx(&reader, (__bridge void *)(self), NULL, error, open_flags, 0);
 	if (!wpc) {
 		DLog(@"Unable to open file..");
 		return NO;
@@ -225,14 +225,12 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 
 - (void)close
 {
-	[source release];
 	WavpackCloseFile(wpc);
+    source = nil;
 }
 
 - (void)setSource:(id<CogSource>)s
 {
-	[s retain];
-	[source release];
 	source = s;
 }
 

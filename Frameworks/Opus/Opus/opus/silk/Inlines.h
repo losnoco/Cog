@@ -88,7 +88,7 @@ static OPUS_INLINE opus_int32 silk_SQRT_APPROX( opus_int32 x )
     y >>= silk_RSHIFT(lz, 1);
 
     /* increment using fractional part of input */
-    y = silk_SMLAWB(y, y, silk_SMULBB(213, frac_Q7));
+    y = (opus_int32) silk_SMLAWB(y, y, silk_SMULBB(213, frac_Q7));
 
     return y;
 }
@@ -116,14 +116,14 @@ static OPUS_INLINE opus_int32 silk_DIV32_varQ(   /* O    returns a good approxim
     b32_inv = silk_DIV32_16( silk_int32_MAX >> 2, silk_RSHIFT(b32_nrm, 16) );   /* Q: 29 + 16 - b_headrm        */
 
     /* First approximation */
-    result = silk_SMULWB(a32_nrm, b32_inv);                                     /* Q: 29 + a_headrm - b_headrm  */
+    result = (opus_int32) silk_SMULWB(a32_nrm, b32_inv);                                     /* Q: 29 + a_headrm - b_headrm  */
 
     /* Compute residual by subtracting product of denominator and first approximation */
     /* It's OK to overflow because the final value of a32_nrm should always be small */
     a32_nrm = silk_SUB32_ovflw(a32_nrm, silk_LSHIFT_ovflw( silk_SMMUL(b32_nrm, result), 3 ));  /* Q: a_headrm   */
 
     /* Refinement */
-    result = silk_SMLAWB(result, a32_nrm, b32_inv);                             /* Q: 29 + a_headrm - b_headrm  */
+    result = (opus_int32) silk_SMLAWB(result, a32_nrm, b32_inv);                             /* Q: 29 + a_headrm - b_headrm  */
 
     /* Convert to Qres domain */
     lshift = 29 + a_headrm - b_headrm - Qres;
@@ -165,7 +165,7 @@ static OPUS_INLINE opus_int32 silk_INVERSE32_varQ(   /* O    returns a good appr
     err_Q32 = silk_LSHIFT( ((opus_int32)1<<29) - silk_SMULWB(b32_nrm, b32_inv), 3 );        /* Q32                        */
 
     /* Refinement */
-    result = silk_SMLAWW(result, err_Q32, b32_inv);                             /* Q: 61 - b_headrm            */
+    result = (opus_int32) silk_SMLAWW(result, err_Q32, b32_inv);                             /* Q: 61 - b_headrm            */
 
     /* Convert to Qres domain */
     lshift = 61 - b_headrm - Qres;

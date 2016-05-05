@@ -53,7 +53,7 @@ static void copyOSType(char * out, OSType in)
 
 static void enumCallback(void *context, OSType uSubType, OSType uManufacturer, const char * name)
 {
-    id pself = (id) context;
+    id pself = (__bridge id) context;
     
     char pref[9];
     
@@ -76,7 +76,7 @@ static void enumCallback(void *context, OSType uSubType, OSType uManufacturer, c
      [NSDictionary dictionaryWithObjectsAndKeys:
       @"BASSMIDI", @"name", @"BASSMIDI", @"preference", nil]];
     
-    enumComponents(enumCallback, self);
+    enumComponents(enumCallback, (__bridge void *)(self));
 }
 
 @end

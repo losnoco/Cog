@@ -1,4 +1,4 @@
-//
+    //
 //  OutputCoreAudio.m
 //  Cog
 //
@@ -29,7 +29,7 @@
 
 static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp  *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList  *ioData)
 {
-	OutputCoreAudio *output = (OutputCoreAudio *)inRefCon;
+	OutputCoreAudio *output = (__bridge OutputCoreAudio *)inRefCon;
 	OSStatus err = noErr;
 	void *readPointer = ioData->mBuffers[0].mData;
 	
@@ -286,7 +286,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	//setup render callbacks
 	renderCallback.inputProc = Sound_Renderer;
-	renderCallback.inputProcRefCon = self;
+	renderCallback.inputProcRefCon = (__bridge void * _Nullable)(self);
 	
 	AudioUnitSetProperty(outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &renderCallback, sizeof(AURenderCallbackStruct));	
 	
@@ -326,8 +326,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	[self stop];
 	
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
-
-	[super dealloc];
 }
 
 - (void)pause

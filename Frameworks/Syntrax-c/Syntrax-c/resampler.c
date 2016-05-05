@@ -315,9 +315,9 @@ static int resampler_wrapper( resampler *r, sample_t out [], int* out_size,
 		sample_t const in [], int in_size )
 {
 	sample_t* out_ = out;
-	int result = resampler_inner_loop( r, &out_, out + *out_size, in, in_size ) - in;
+	int result = (int)(resampler_inner_loop( r, &out_, out + *out_size, in, in_size ) - in);
 
-	*out_size = out_ - out;
+	*out_size = (int)(out_ - out);
 	return result;
 }
 

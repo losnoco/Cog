@@ -16,7 +16,7 @@
 
 gme_err_t readCallback( void* data, void* out, long count )
 {
-    id source = (id)data;
+    id source = (__bridge id)data;
 	DLog(@"Amount: %li", count);
 	int n = [source read:out amount:count];
 	DLog(@"Read: %i", n);
@@ -62,7 +62,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 	
 	DLog(@"Size: %li", size);
 	
-	error = gme_load_custom(emu, readCallback, size, s);
+	error = gme_load_custom(emu, readCallback, size, (__bridge void *)(s));
 	if (error) 
 	{
 		ALog(@"GME: ERROR Loding custom!");
@@ -187,8 +187,6 @@ gme_err_t readCallback( void* data, void* out, long count )
 
 - (void)setSource:(id<CogSource>)s
 {
-	[s retain];
-	[source release];
 	source = s;
 }
 

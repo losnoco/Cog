@@ -23,7 +23,7 @@
 
 - (NSImage *)icon
 {
-	return [[[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"midi"]] autorelease];
+	return [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"midi"]];
 }
 
 - (IBAction)setSoundFont:(id)sender

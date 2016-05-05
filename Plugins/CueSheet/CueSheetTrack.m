@@ -13,7 +13,7 @@
 
 + (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y
 {
-	return [[[CueSheetTrack alloc] initWithURL:u track:t time:s artist:a album:b title:l genre:g year:y] autorelease];
+	return [[CueSheetTrack alloc] initWithURL:u track:t time:s artist:a album:b title:l genre:g year:y];
 }
 
 - (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y
@@ -33,19 +33,6 @@
 	}
 	
 	return self;
-}
-
-- (void)dealloc
-{
-	[track release];
-	[url release];
-	[artist release];
-	[album release];
-	[title release];
-	[genre release];
-	[year release];
-	
-	[super dealloc];
 }
 
 - (NSString *)track

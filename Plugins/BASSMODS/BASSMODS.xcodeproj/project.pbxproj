@@ -14,7 +14,7 @@
 		839BD004196513FF00947767 /* BASSDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 839BD003196513FF00947767 /* BASSDecoder.mm */; };
 		839BD0091965147000947767 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 839BD0081965147000947767 /* libz.dylib */; };
 		839BD00D196514B800947767 /* libbass.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 839BD00C196514B800947767 /* libbass.dylib */; };
-		839BD00E196514C000947767 /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 839BD00C196514B800947767 /* libbass.dylib */; };
+		839BD00E196514C000947767 /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 839BD00C196514B800947767 /* libbass.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		833F684B1CDBCAC600AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		839BCFD21965133E00947767 /* BASSMODS.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BASSMODS.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		839BCFDD1965133E00947767 /* BASSMODS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BASSMODS-Info.plist"; sourceTree = "<group>"; };
 		839BCFDF1965133E00947767 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -172,7 +173,7 @@
 		839BCFCA1965133E00947767 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 839BCFCD1965133E00947767 /* Build configuration list for PBXProject "BASSMODS" */;
@@ -181,6 +182,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 839BCFC91965133E00947767;
 			productRefGroup = 839BCFD31965133E00947767 /* Products */;
@@ -222,6 +224,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				839BCFDF1965133E00947767 /* en */,
+				833F684B1CDBCAC600AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -246,6 +249,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -312,6 +316,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -334,6 +339,7 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				OTHER_CODE_SIGN_FLAGS = "--deep";
+				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

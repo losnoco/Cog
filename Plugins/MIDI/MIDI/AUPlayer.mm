@@ -89,7 +89,7 @@ void AUPlayer::render(float * out, unsigned long count)
     memset(out, 0, count * sizeof(float) * 2);
     while (count)
     {
-        UInt32 numberFrames = count > 512 ? 512 : count;
+        UInt32 numberFrames = count > 512 ? 512 : (UInt32) count;
         
         for (unsigned long i = 0; i < 3; ++i)
         {

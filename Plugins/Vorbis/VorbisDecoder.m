@@ -14,20 +14,20 @@
 
 size_t sourceRead(void *buf, size_t size, size_t nmemb, void *datasource)
 {
-	id source = (id)datasource;
+	id source = (__bridge id)datasource;
 
 	return [source read:buf amount:(size*nmemb)];
 }
 
 int sourceSeek(void *datasource, ogg_int64_t offset, int whence)
 {
-	id source = (id)datasource;
+	id source = (__bridge id)datasource;
 	return ([source seek:offset whence:whence] ? 0 : -1);
 }
 
 int sourceClose(void *datasource)
 {
-	id source = (id)datasource;
+	id source = (__bridge id)datasource;
 	[source close];
 
 	return 0;
@@ -35,14 +35,14 @@ int sourceClose(void *datasource)
 
 long sourceTell(void *datasource)
 {
-	id source = (id)datasource;
+	id source = (__bridge id)datasource;
 
 	return [source tell];
 }
 
 - (BOOL)open:(id<CogSource>)s
 {
-	source = [s retain];
+	source = s;
 	
 	ov_callbacks callbacks = {
 		.read_func =  sourceRead,
@@ -51,7 +51,7 @@ long sourceTell(void *datasource)
 		.tell_func =  sourceTell
 	};
 	
-	if (ov_open_callbacks(source, &vorbisRef, NULL, 0, callbacks) != 0)
+	if (ov_open_callbacks((__bridge void *)(source), &vorbisRef, NULL, 0, callbacks) != 0)
 	{
 		DLog(@"FAILED TO OPEN VORBIS FILE");
 		return NO;
@@ -119,7 +119,7 @@ long sourceTell(void *datasource)
 	ov_clear(&vorbisRef);
 	
 	[source close];
-	[source release];
+    source = nil;
 }
 
 - (long)seek:(long)frame

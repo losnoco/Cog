@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "PlaylistController.h"
 
 @interface SideViewController : NSViewController {
 	IBOutlet NSSplitView *splitView;
@@ -23,5 +24,11 @@
 
 - (void)setDividerPosition:(float)position;
 - (float)dividerPosition;
+
+- (void)doAddToPlaylist:(NSArray *)urls origin:(URLOrigin)origin;
+
+- (void)clear:(id)sender;
+
+- (void)playPauseResume:(id)sender;
 
 @end

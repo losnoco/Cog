@@ -1,7 +1,7 @@
  /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright 2012-2014 Leandro Nini <drfiemost@users.sourceforge.net>
+ * Copyright 2012-2015 Leandro Nini <drfiemost@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,29 +102,37 @@ void SidTune::read(const uint_least8_t* sourceBuffer, uint_least32_t bufferLen)
 
 unsigned int SidTune::selectSong(unsigned int songNum)
 {
-    return tune.get() ? tune->selectSong(songNum) : 0;
+    return tune.get() != nullptr ? tune->selectSong(songNum) : 0;
 }
 
 const SidTuneInfo* SidTune::getInfo() const
 {
-    return tune.get() ? tune->getInfo() : nullptr;
+    return tune.get() != nullptr ? tune->getInfo() : nullptr;
 }
 
 const SidTuneInfo* SidTune::getInfo(unsigned int songNum)
 {
-    return tune.get() ? tune->getInfo(songNum) : nullptr;
+    return tune.get() != nullptr ? tune->getInfo(songNum) : nullptr;
 }
 
 bool SidTune::getStatus() const { return m_status; }
 
 const char* SidTune::statusString() const { return m_statusString; }
 
-bool SidTune::placeSidTuneInC64mem(sidmemory* mem)
+bool SidTune::placeSidTuneInC64mem(sidmemory& mem)
 {
-    return tune.get() ? tune->placeSidTuneInC64mem(mem) : false;
+    if (tune.get() == nullptr)
+        return false;
+
+    tune->placeSidTuneInC64mem(mem);
+    return true;
 }
 
 const char* SidTune::createMD5(char *md5)
 {
-    return tune.get() ? tune->createMD5(md5) : nullptr;
+    return tune.get() != nullptr ? tune->createMD5(md5) : nullptr;
+}
+const uint_least8_t* SidTune::c64Data() const
+{
+    return tune.get() != nullptr ? tune->c64Data() : nullptr;
 }

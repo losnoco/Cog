@@ -46,8 +46,6 @@
 	
 	[toolTip setToolTip:text];
 	[toolTip setFrame:NSMakeRect(mouseLocation.x, mouseLocation.y, size.width, size.height) display:YES];
-	
-	[text release];
 }
 
 - (void)showToolTip

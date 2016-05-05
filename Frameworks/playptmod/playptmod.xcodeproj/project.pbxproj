@@ -17,6 +17,7 @@
 /* Begin PBXFileReference section */
 		832127D51A622EEC00979C39 /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		832127D61A622EEC00979C39 /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
+		833F68461CDBCABF00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83A0F4981816CEAD00119DB4 /* playptmod.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = playptmod.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83A0F4A31816CEAD00119DB4 /* playptmod-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "playptmod-Info.plist"; sourceTree = "<group>"; };
 		83A0F4A51816CEAD00119DB4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -127,7 +128,7 @@
 		83A0F48F1816CEAD00119DB4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 83A0F4921816CEAD00119DB4 /* Build configuration list for PBXProject "playptmod" */;
@@ -136,6 +137,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 83A0F48E1816CEAD00119DB4;
 			productRefGroup = 83A0F4991816CEAD00119DB4 /* Products */;
@@ -175,6 +177,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				83A0F4A51816CEAD00119DB4 /* en */,
+				833F68461CDBCABF00AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -198,6 +201,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -260,6 +264,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "playptmod/playptmod-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.lib.playptmod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -276,6 +281,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "playptmod/playptmod-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.lib.playptmod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

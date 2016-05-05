@@ -50,14 +50,6 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	[preferencePanes release];
-	[toolbarItems release];
-	
-	[super dealloc];
-}
-
 - (NSString *)lastPaneDefaultsKey
 {
 	return @"LastPreferencePane";
@@ -77,7 +69,6 @@
     if (animate) {
         NSView *tempView = [[NSView alloc] initWithFrame:[[self contentView] frame]];
         [self setContentView:tempView];
-        [tempView release]; 
     }
 	
 	NSRect newFrame = [self newFrameForNewContentView:view];
@@ -128,8 +119,6 @@
 		[item setAction:@selector(toolbarItemClicked:)]; // action called when item is clicked
 		
 		[toolbarItems setObject:item forKey:name];
-		
-		[item release];
 	}
 	
 	NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
@@ -142,7 +131,6 @@
 	[toolbar setSizeMode:NSToolbarSizeModeDefault];
 	
 	[self setToolbar:toolbar];
-	[toolbar release];
 }
 
 

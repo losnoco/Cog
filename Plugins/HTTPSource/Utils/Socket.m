@@ -15,7 +15,7 @@
 
 + (id)socketWithHost:(NSString *)host port:(int)port
 {
-	return [[[Socket alloc] initWithHost:host port:port] autorelease];
+	return [[Socket alloc] initWithHost:host port:port];
 }
 
 - (id)initWithHost:(NSString *)host port:(int) port
@@ -71,8 +71,6 @@
 - (void)dealloc
 {
 	[self close];
-	
-	[super dealloc];
 }
 
 @end

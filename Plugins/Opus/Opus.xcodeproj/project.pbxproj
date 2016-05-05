@@ -11,7 +11,7 @@
 		8375B04A17FFEA400092A79F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8375B04817FFEA400092A79F /* InfoPlist.strings */; };
 		8375B36C17FFF1CB0092A79F /* OpusDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8375B36B17FFF1CB0092A79F /* OpusDecoder.m */; };
 		8375B37217FFF7770092A79F /* Opus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8375B09617FFEABC0092A79F /* Opus.framework */; };
-		8375B37417FFF7950092A79F /* Opus.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B09617FFEABC0092A79F /* Opus.framework */; };
+		8375B37417FFF7950092A79F /* Opus.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8375B09617FFEABC0092A79F /* Opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		833F68411CDBCABC00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8375B03C17FFEA400092A79F /* Opus.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Opus.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8375B03F17FFEA400092A79F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8375B04217FFEA400092A79F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -168,7 +169,7 @@
 		8375B03417FFEA400092A79F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 8375B03717FFEA400092A79F /* Build configuration list for PBXProject "Opus" */;
@@ -177,6 +178,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 8375B03317FFEA400092A79F;
 			productRefGroup = 8375B03D17FFEA400092A79F /* Products */;
@@ -239,6 +241,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8375B04917FFEA400092A79F /* en */,
+				833F68411CDBCABC00AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -330,6 +334,7 @@
 				);
 				INFOPLIST_FILE = "Opus/Opus-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.opus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -352,6 +357,7 @@
 				);
 				INFOPLIST_FILE = "Opus/Opus-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.opus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

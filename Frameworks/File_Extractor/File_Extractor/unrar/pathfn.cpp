@@ -9,7 +9,7 @@ wchar* GetWideName(const char *Name,const wchar *NameW,wchar *DestW,size_t DestS
     }
     else
         if (Name!=NULL)
-            CharToWide(Name,DestW,DestSize);
+            CharToWide(Name,DestW,(int)DestSize);
         else
             *DestW=0;
     

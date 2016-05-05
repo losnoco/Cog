@@ -35,16 +35,16 @@ static PluginController *sharedPluginController = nil;
 - (id)init {
 	self = [super init];
 	if (self) {
-        self.sources = [[[NSMutableDictionary alloc] init] autorelease];
-        self.containers = [[[NSMutableDictionary alloc] init] autorelease];
+        self.sources = [[NSMutableDictionary alloc] init];
+        self.containers = [[NSMutableDictionary alloc] init];
  
-        self.metadataReaders = [[[NSMutableDictionary alloc] init] autorelease];
+        self.metadataReaders = [[NSMutableDictionary alloc] init];
  
-        self.propertiesReadersByExtension = [[[NSMutableDictionary alloc] init] autorelease];
-        self.propertiesReadersByMimeType = [[[NSMutableDictionary alloc] init] autorelease];
+        self.propertiesReadersByExtension = [[NSMutableDictionary alloc] init];
+        self.propertiesReadersByMimeType = [[NSMutableDictionary alloc] init];
  
-        self.decodersByExtension = [[[NSMutableDictionary alloc] init] autorelease];
-        self.decodersByMimeType = [[[NSMutableDictionary alloc] init] autorelease];
+        self.decodersByExtension = [[NSMutableDictionary alloc] init];
+        self.decodersByMimeType = [[NSMutableDictionary alloc] init];
         
         [self setup];
 	}
@@ -123,7 +123,7 @@ static PluginController *sharedPluginController = nil;
             NSMutableArray *containerSet;
             if (![containers objectForKey:ext])
             {
-                containerSet = [[[NSMutableArray alloc] init] autorelease];
+                containerSet = [[NSMutableArray alloc] init];
                 [containers setObject:containerSet forKey:ext];
             }
             else
@@ -143,7 +143,7 @@ static PluginController *sharedPluginController = nil;
             NSMutableArray *decoders;
             if (![decodersByExtension objectForKey:ext])
             {
-                decoders = [[[NSMutableArray alloc] init] autorelease];
+                decoders = [[NSMutableArray alloc] init];
                 [decodersByExtension setObject:decoders forKey:ext];
             }
             else
@@ -170,7 +170,7 @@ static PluginController *sharedPluginController = nil;
             NSMutableArray *readers;
             if (![metadataReaders objectForKey:ext])
             {
-                readers = [[[NSMutableArray alloc] init] autorelease];
+                readers = [[NSMutableArray alloc] init];
                 [metadataReaders setObject:readers forKey:ext];
             }
             else
@@ -190,7 +190,7 @@ static PluginController *sharedPluginController = nil;
             NSMutableArray *readers;
             if (![propertiesReadersByExtension objectForKey:ext])
             {
-                readers = [[[NSMutableArray alloc] init] autorelease];
+                readers = [[NSMutableArray alloc] init];
                 [propertiesReadersByExtension setObject:readers forKey:ext];
             }
             else
@@ -237,7 +237,7 @@ static PluginController *sharedPluginController = nil;
 	
 	Class source = NSClassFromString([sources objectForKey:scheme]);
 	
-	return [[[source alloc] init] autorelease];
+	return [[source alloc] init];
 }
 
 - (NSArray *) urlsForContainerURL:(NSURL *)url
@@ -270,7 +270,7 @@ static PluginController *sharedPluginController = nil;
     NSString *classString;
     if (decoders) {
         if ( [decoders count] > 1 ) {
-            return [[[CogDecoderMulti alloc] initWithDecoders:decoders] autorelease];
+            return [[CogDecoderMulti alloc] initWithDecoders:decoders];
         }
         else {
             classString = [decoders objectAtIndex:0];
@@ -282,7 +282,7 @@ static PluginController *sharedPluginController = nil;
 
 	Class decoder = NSClassFromString(classString);
 	
-	return [[[decoder alloc] init] autorelease];
+	return [[decoder alloc] init];
 }
 
 - (NSDictionary *)metadataForURL:(NSURL *)url

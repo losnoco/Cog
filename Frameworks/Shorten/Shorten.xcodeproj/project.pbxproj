@@ -36,6 +36,7 @@
 		59FDCD690A2922E1006C1800 /* shn_reader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = shn_reader.cpp; path = Files/shorten/src/shn_reader.cpp; sourceTree = "<group>"; };
 		59FDCD6A0A2922E1006C1800 /* sulawalaw.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = sulawalaw.c; path = Files/shorten/src/sulawalaw.c; sourceTree = "<group>"; };
 		59FDCD6B0A2922E1006C1800 /* vario.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = vario.cpp; path = Files/shorten/src/vario.cpp; sourceTree = "<group>"; };
+		833F683E1CDBCAB300AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Shorten.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Shorten.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -172,7 +173,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Shorten" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -180,6 +181,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* Shorten */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -224,6 +226,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C1667FE841158C02AAC07 /* English */,
+				833F683E1CDBCAB300AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.shorten;
 				PRODUCT_NAME = Shorten;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -271,6 +275,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.shorten;
 				PRODUCT_NAME = Shorten;
 				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "$(CACHE_ROOT)/SharedPrecompiledHeaders";
@@ -283,6 +288,7 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

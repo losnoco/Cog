@@ -10,7 +10,7 @@
 #import "PluginController.h"
 
 @implementation AudioMetadataWriter
-+ (NSDictionary *)putMetadataInURL:(NSURL *)url
++ (int)putMetadataInURL:(NSURL *)url
 {
 	return [[PluginController sharedPluginController] putMetadataInURL:url];
 }

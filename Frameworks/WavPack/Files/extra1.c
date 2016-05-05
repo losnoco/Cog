@@ -571,7 +571,7 @@ void execute_mono (WavpackContext *wpc, int32_t *samples, int no_history, int do
         }
 
         wpds = &wps->decorr_specs [c];
-        nterms = (int) strlen (wpds->terms);
+        nterms = (int) strlen ((const char *)wpds->terms);
 
         while (1) {
         memcpy (temp_buffer [0], noisy_buffer ? noisy_buffer : samples, buf_size);

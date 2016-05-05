@@ -36,7 +36,7 @@ NSURL *resolveAliases(NSURL *url)
 			if (resolvedUrl != NULL)
 			{
 				//DLog(@"Resolved...");
-				return [(NSURL *)resolvedUrl autorelease];
+				return (NSURL *)CFBridgingRelease(resolvedUrl);
 			}
 		}
 	}
@@ -60,19 +60,11 @@ NSURL *resolveAliases(NSURL *url)
 
 - (void)setURL:(NSURL *)u
 {
-	[u retain];
-	
-	[url release];
-
 	url = u;
 
-	[display release];
 	display = [[NSFileManager defaultManager] displayNameAtPath:[u path]];
-	[display retain];
 	
-	[icon release];
 	icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
-	[icon retain];
 	
 	[icon setSize: NSMakeSize(16.0, 16.0)];
 }
@@ -144,15 +136,10 @@ NSURL *resolveAliases(NSURL *url)
             [newSubpathsDirs addObject:newNode];
         else
             [newSubpaths addObject:newNode];
-
-		[newNode release];
 	}
 	
     [newSubpathsDirs addObjectsFromArray:newSubpaths];
 	[self setSubpaths:newSubpathsDirs];
-	
-    [newSubpathsDirs release];
-	[newSubpaths release];
 }
 
 - (NSArray *)subpaths
@@ -167,8 +154,6 @@ NSURL *resolveAliases(NSURL *url)
 
 - (void)setSubpaths:(NSArray *)s
 {
-	[s retain];
-	[subpaths release];
 	subpaths = s;
 }
 
@@ -180,9 +165,7 @@ NSURL *resolveAliases(NSURL *url)
 
 - (void)setDisplay:(NSString *)s
 {
-	[display release];
 	display = s;
-	[display retain];
 }
 
 - (NSString *)display
@@ -193,16 +176,6 @@ NSURL *resolveAliases(NSURL *url)
 - (NSImage *)icon
 {
 	return icon;
-}
-
-- (void)dealloc
-{
-	[url release];
-	[icon release];
-
-	[subpaths release];
-		
-	[super dealloc];
 }
 
 @end

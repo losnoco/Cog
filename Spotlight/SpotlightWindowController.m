@@ -27,20 +27,20 @@ static NSPredicate * musicOnlyPredicate = nil;
 
 + (void)initialize
 {
-	musicOnlyPredicate = [[NSPredicate predicateWithFormat:
-                        @"kMDItemContentTypeTree==\'public.audio\'"] retain];
+	musicOnlyPredicate = [NSPredicate predicateWithFormat:
+                        @"kMDItemContentTypeTree==\'public.audio\'"];
                                                     
     // Register value transformers
-    NSValueTransformer *pausingQueryTransformer = [[[PausingQueryTransformer alloc]init]autorelease];
+    NSValueTransformer *pausingQueryTransformer = [[PausingQueryTransformer alloc]init];
     [NSValueTransformer setValueTransformer:pausingQueryTransformer forName:@"PausingQueryTransformer"];
     
-    NSValueTransformer *authorToArtistTransformer = [[[AuthorToArtistTransformer alloc]init]autorelease];
+    NSValueTransformer *authorToArtistTransformer = [[AuthorToArtistTransformer alloc]init];
     [NSValueTransformer setValueTransformer:authorToArtistTransformer forName:@"AuthorToArtistTransformer"];
     
-    NSValueTransformer *pathToURLTransformer = [[[PathToURLTransformer alloc]init]autorelease];
+    NSValueTransformer *pathToURLTransformer = [[PathToURLTransformer alloc]init];
     [NSValueTransformer setValueTransformer:pathToURLTransformer forName:@"PathToURLTransformers"];
     
-    NSValueTransformer *stringToSearchScopeTransformer = [[[StringToSearchScopeTransformer alloc]init]autorelease];
+    NSValueTransformer *stringToSearchScopeTransformer = [[StringToSearchScopeTransformer alloc]init];
     [NSValueTransformer setValueTransformer:stringToSearchScopeTransformer forName:@"StringToSearchScopeTransformer"];
 }
 
@@ -60,18 +60,18 @@ static NSPredicate * musicOnlyPredicate = nil;
 - (id)init
 {
 	if (self = [super initWithWindowNibName:@"SpotlightPanel"]) {
-        self.query = [[[NSMetadataQuery alloc]init]autorelease];
+        self.query = [[NSMetadataQuery alloc]init];
         [self.query setDelegate:self];
         self.query.sortDescriptors = [NSArray arrayWithObjects:
-									  [[[NSSortDescriptor alloc]initWithKey:@"kMDItemAuthors"
+									  [[NSSortDescriptor alloc]initWithKey:@"kMDItemAuthors"
 																 ascending:YES
-																   selector:@selector(compareFirstString:)] autorelease],
-									  [[[NSSortDescriptor alloc]initWithKey:@"kMDItemAlbum"
+																   selector:@selector(compareFirstString:)],
+									  [[NSSortDescriptor alloc]initWithKey:@"kMDItemAlbum"
 																 ascending:YES
-																  selector:@selector(caseInsensitiveCompare:)] autorelease],
-									  [[[NSSortDescriptor alloc]initWithKey:@"kMDItemAudioTrackNumber"
+																  selector:@selector(caseInsensitiveCompare:)],
+									  [[NSSortDescriptor alloc]initWithKey:@"kMDItemAudioTrackNumber"
 																 ascending:YES
-																  selector:@selector(compareTrackNumbers:)] autorelease],
+																  selector:@selector(compareTrackNumbers:)],
 									  nil];
         
         // hook my query transformer up to me
@@ -267,7 +267,6 @@ static NSPredicate * musicOnlyPredicate = nil;
 {
 	self.query = nil;
 	self.searchString = nil;
-	[super dealloc];
 }
 
 - (IBAction)addToPlaylist:(id)sender

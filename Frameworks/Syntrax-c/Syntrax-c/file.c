@@ -259,12 +259,12 @@ static long File_readInstrument(Instrument *instr, const uint8_t *buffer, size_t
 
 Song* File_loadSongMem(const uint8_t *buffer, size_t size)
 {
-    int i, j, k;
+    int i, j/*, k*/;
     int songVer;
-    Subsong *subs;
+    /*Subsong *subs;
     Order *orderCol;
     Order *order;
-    Row *row;
+    Row *row;*/
     Instrument *instr;
     Song *synSong;
     long sizeRead;

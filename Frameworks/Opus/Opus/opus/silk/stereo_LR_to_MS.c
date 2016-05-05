@@ -96,7 +96,7 @@ void silk_stereo_LR_to_MS(
     smooth_coef_Q16 = is10msFrame ?
         SILK_FIX_CONST( STEREO_RATIO_SMOOTH_COEF / 2, 16 ) :
         SILK_FIX_CONST( STEREO_RATIO_SMOOTH_COEF,     16 );
-    smooth_coef_Q16 = silk_SMULWB( silk_SMULBB( prev_speech_act_Q8, prev_speech_act_Q8 ), smooth_coef_Q16 );
+    smooth_coef_Q16 = (opus_int32) silk_SMULWB( silk_SMULBB( prev_speech_act_Q8, prev_speech_act_Q8 ), smooth_coef_Q16 );
 
     pred_Q13[ 0 ] = silk_stereo_find_predictor( &LP_ratio_Q14, LP_mid, LP_side, &state->mid_side_amp_Q0[ 0 ], frame_length, smooth_coef_Q16 );
     pred_Q13[ 1 ] = silk_stereo_find_predictor( &HP_ratio_Q14, HP_mid, HP_side, &state->mid_side_amp_Q0[ 2 ], frame_length, smooth_coef_Q16 );
@@ -120,7 +120,7 @@ void silk_stereo_LR_to_MS(
         mid_side_rates_bps[ 1 ] = total_rate_bps - mid_side_rates_bps[ 0 ];
         /* width = 4 * ( 2 * side_rate - min_rate ) / ( ( 1 + 3 * frac ) * min_rate ) */
         width_Q14 = silk_DIV32_varQ( silk_LSHIFT( mid_side_rates_bps[ 1 ], 1 ) - min_mid_rate_bps,
-            silk_SMULWB( SILK_FIX_CONST( 1, 16 ) + frac_3_Q16, min_mid_rate_bps ), 14+2 );
+            (opus_int32) silk_SMULWB( SILK_FIX_CONST( 1, 16 ) + frac_3_Q16, min_mid_rate_bps ), 14+2 );
         width_Q14 = silk_LIMIT( width_Q14, 0, SILK_FIX_CONST( 1, 14 ) );
     } else {
         mid_side_rates_bps[ 1 ] = total_rate_bps - mid_side_rates_bps[ 0 ];
@@ -208,8 +208,8 @@ void silk_stereo_LR_to_MS(
         pred1_Q13 += delta1_Q13;
         w_Q24   += deltaw_Q24;
         sum = silk_LSHIFT( silk_ADD_LSHIFT( mid[ n ] + mid[ n + 2 ], mid[ n + 1 ], 1 ), 9 );    /* Q11 */
-        sum = silk_SMLAWB( silk_SMULWB( w_Q24, side[ n + 1 ] ), sum, pred0_Q13 );               /* Q8  */
-        sum = silk_SMLAWB( sum, silk_LSHIFT( (opus_int32)mid[ n + 1 ], 11 ), pred1_Q13 );       /* Q8  */
+        sum = (opus_int32) silk_SMLAWB( silk_SMULWB( w_Q24, side[ n + 1 ] ), sum, pred0_Q13 );               /* Q8  */
+        sum = (opus_int32) silk_SMLAWB( sum, silk_LSHIFT( (opus_int32)mid[ n + 1 ], 11 ), pred1_Q13 );       /* Q8  */
         x2[ n - 1 ] = (opus_int16)silk_SAT16( silk_RSHIFT_ROUND( sum, 8 ) );
     }
 
@@ -218,8 +218,8 @@ void silk_stereo_LR_to_MS(
     w_Q24     =  silk_LSHIFT( width_Q14, 10 );
     for( n = STEREO_INTERP_LEN_MS * fs_kHz; n < frame_length; n++ ) {
         sum = silk_LSHIFT( silk_ADD_LSHIFT( mid[ n ] + mid[ n + 2 ], mid[ n + 1 ], 1 ), 9 );    /* Q11 */
-        sum = silk_SMLAWB( silk_SMULWB( w_Q24, side[ n + 1 ] ), sum, pred0_Q13 );               /* Q8  */
-        sum = silk_SMLAWB( sum, silk_LSHIFT( (opus_int32)mid[ n + 1 ], 11 ), pred1_Q13 );       /* Q8  */
+        sum = (opus_int32) silk_SMLAWB( silk_SMULWB( w_Q24, side[ n + 1 ] ), sum, pred0_Q13 );               /* Q8  */
+        sum = (opus_int32) silk_SMLAWB( sum, silk_LSHIFT( (opus_int32)mid[ n + 1 ], 11 ), pred1_Q13 );       /* Q8  */
         x2[ n - 1 ] = (opus_int16)silk_SAT16( silk_RSHIFT_ROUND( sum, 8 ) );
     }
     state->pred_prev_Q13[ 0 ] = (opus_int16)pred_Q13[ 0 ];

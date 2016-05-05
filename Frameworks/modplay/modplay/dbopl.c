@@ -1720,7 +1720,7 @@ void Chip_Setup( void *_chip, Bit32u clock, Bit32u rate ) {
 
 			}
 			diff = original - samples;
-			lDiff = labs( diff );
+			lDiff = (Bit32u) labs( diff );
 			//Init last on first pass
 			if ( lDiff < bestDiff ) {
 				bestDiff = lDiff;

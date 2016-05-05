@@ -85,15 +85,9 @@
 
 - (void)threadEntry:(id)arg
 {
-	[self retain];
-
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-
-	[self process];
-
-	[pool release];
-
-	[self release];
+    @autoreleasepool {
+        [self process];
+    }
 }
 
 - (int)readData:(void *)ptr amount:(int)amount
@@ -158,8 +152,6 @@
 
 - (void)setPreviousNode:(id)p
 {
-	[p retain];
-	[previousNode release];
 	previousNode = p;
 }
 
@@ -227,17 +219,5 @@
 	return shouldReset;
 }
 
-
-- (void)dealloc
-{
-	[previousNode release];
-	
-	[buffer release];
-	[semaphore release];
-	[readLock release];
-	[writeLock release];
-
-	[super dealloc];
-}
 
 @end

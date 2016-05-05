@@ -38,7 +38,7 @@
 	//Need to alter length
 	[properties setObject:[NSNumber numberWithLong:(trackEnd - trackStart)] forKey:@"totalFrames"];
 
-	return [properties autorelease];
+	return properties;
 }
 
 - (BOOL)open:(id<CogSource>)s
@@ -51,7 +51,6 @@
 	[s close];
 
 	cuesheet = [CueSheet cueSheetWithFile:[url path]];
-	[cuesheet retain];
 	
 	NSArray *tracks = [cuesheet tracks];
 	int i;
@@ -59,11 +58,9 @@
 	{
 		if ([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]){
 			track = [tracks objectAtIndex:i];
-			[track retain];
 
 			//Kind of a hackish way of accessing outside classes.
 			source = [NSClassFromString(@"AudioSource") audioSourceForURL:[track url]];
-			[source retain];
 
 			if (![source open:[track url]]) {
 				ALog(@"Could not open cuesheet source");
@@ -71,7 +68,6 @@
 			}
 
 			decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source];
-			[decoder retain];
 
 			if (![decoder open:source]) {
 				ALog(@"Could not open cuesheet decoder");
@@ -115,22 +111,12 @@
 - (void)close {
 	if (decoder) {
 		[decoder close];
-		[decoder release];
 		decoder = nil;
 	}
 
-	if (source) {
-		[source release];
-		source = nil;
-	}
-	if (cuesheet) {
-		[cuesheet release];
-		cuesheet = nil;
-	}
-	if (track) {
-		[track release];
-		track = nil;
-	}
+    source = nil;
+    cuesheet = nil;
+    track = nil;
 }
 
 - (BOOL)setTrack:(NSURL *)url
@@ -142,9 +128,7 @@
 		int i;
 		for (i = 0; i < [tracks count]; i++) {
 			if ([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]){
-				[track release];
 				track = [tracks objectAtIndex:i];
-				[track retain];
 				
 				float sampleRate = [[[decoder properties] objectForKey:@"sampleRate"] floatValue];
 				

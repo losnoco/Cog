@@ -896,6 +896,8 @@ void RarVM::ExecuteStandardFilter(VM_StandardFilters FilterType)
 {
 	switch(FilterType)
 	{
+        default: break;
+            
 		case VMSF_E8:
 		case VMSF_E8E9:
 			{

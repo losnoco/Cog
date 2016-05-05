@@ -219,9 +219,9 @@ opus_int silk_VAD_GetSA_Q8_c(                                   /* O    Return v
             /* Tilt measure */
             if( speech_nrg < ( (opus_int32)1 << 20 ) ) {
                 /* Scale down SNR value for small subband speech energies */
-                SNR_Q7 = silk_SMULWB( silk_LSHIFT( silk_SQRT_APPROX( speech_nrg ), 6 ), SNR_Q7 );
+                SNR_Q7 = (opus_int) silk_SMULWB( silk_LSHIFT( silk_SQRT_APPROX( speech_nrg ), 6 ), SNR_Q7 );
             }
-            input_tilt = silk_SMLAWB( input_tilt, tiltWeights[ b ], SNR_Q7 );
+            input_tilt = (opus_int) silk_SMLAWB( input_tilt, tiltWeights[ b ], SNR_Q7 );
         } else {
             NrgToNoiseRatio_Q8[ b ] = 256;
         }
@@ -236,7 +236,7 @@ opus_int silk_VAD_GetSA_Q8_c(                                   /* O    Return v
     /*********************************/
     /* Speech Probability Estimation */
     /*********************************/
-    SA_Q15 = silk_sigm_Q15( silk_SMULWB( VAD_SNR_FACTOR_Q16, pSNR_dB_Q7 ) - VAD_NEGATIVE_OFFSET_Q5 );
+    SA_Q15 = silk_sigm_Q15( (opus_int) (silk_SMULWB( VAD_SNR_FACTOR_Q16, pSNR_dB_Q7 ) - VAD_NEGATIVE_OFFSET_Q5) );
 
     /**************************/
     /* Frequency Tilt Measure */
@@ -264,7 +264,7 @@ opus_int silk_VAD_GetSA_Q8_c(                                   /* O    Return v
 
         /* square-root */
         speech_nrg = silk_SQRT_APPROX( speech_nrg );
-        SA_Q15 = silk_SMULWB( 32768 + speech_nrg, SA_Q15 );
+        SA_Q15 = (opus_int) silk_SMULWB( 32768 + speech_nrg, SA_Q15 );
     }
 
     /* Copy the resulting speech activity in Q8 */
@@ -274,7 +274,7 @@ opus_int silk_VAD_GetSA_Q8_c(                                   /* O    Return v
     /* Energy Level and SNR estimation */
     /***********************************/
     /* Smoothing coefficient */
-    smooth_coef_Q16 = silk_SMULWB( VAD_SNR_SMOOTH_COEF_Q18, silk_SMULWB( (opus_int32)SA_Q15, SA_Q15 ) );
+    smooth_coef_Q16 = (opus_int32) silk_SMULWB( VAD_SNR_SMOOTH_COEF_Q18, silk_SMULWB( (opus_int32)SA_Q15, SA_Q15 ) );
 
     if( psEncC->frame_length == 10 * psEncC->fs_kHz ) {
         smooth_coef_Q16 >>= 1;
@@ -282,7 +282,7 @@ opus_int silk_VAD_GetSA_Q8_c(                                   /* O    Return v
 
     for( b = 0; b < VAD_N_BANDS; b++ ) {
         /* compute smoothed energy-to-noise ratio per band */
-        psSilk_VAD->NrgRatioSmth_Q8[ b ] = silk_SMLAWB( psSilk_VAD->NrgRatioSmth_Q8[ b ],
+        psSilk_VAD->NrgRatioSmth_Q8[ b ] = (opus_int32) silk_SMLAWB( psSilk_VAD->NrgRatioSmth_Q8[ b ],
             NrgToNoiseRatio_Q8[ b ] - psSilk_VAD->NrgRatioSmth_Q8[ b ], smooth_coef_Q16 );
 
         /* signal to noise ratio in dB per band */
@@ -343,7 +343,7 @@ void silk_VAD_GetNoiseLevels(
         coef = silk_max_int( coef, min_coef );
 
         /* Smooth inverse energies */
-        psSilk_VAD->inv_NL[ k ] = silk_SMLAWB( psSilk_VAD->inv_NL[ k ], inv_nrg - psSilk_VAD->inv_NL[ k ], coef );
+        psSilk_VAD->inv_NL[ k ] = (opus_int32) silk_SMLAWB( psSilk_VAD->inv_NL[ k ], inv_nrg - psSilk_VAD->inv_NL[ k ], coef );
         silk_assert( psSilk_VAD->inv_NL[ k ] >= 0 );
 
         /* Compute noise level by inverting again */

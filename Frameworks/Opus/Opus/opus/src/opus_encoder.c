@@ -337,8 +337,8 @@ static void hp_cutoff(const opus_val16 *in, opus_int32 cutoff_Hz, opus_val16 *ou
 
    /* -r * ( 2 - Fc * Fc ); */
    r_Q22  = silk_RSHIFT( r_Q28, 6 );
-   A_Q28[ 0 ] = silk_SMULWW( r_Q22, silk_SMULWW( Fc_Q19, Fc_Q19 ) - SILK_FIX_CONST( 2.0,  22 ) );
-   A_Q28[ 1 ] = silk_SMULWW( r_Q22, r_Q22 );
+   A_Q28[ 0 ] = (opus_int32) silk_SMULWW( r_Q22, silk_SMULWW( Fc_Q19, Fc_Q19 ) - SILK_FIX_CONST( 2.0,  22 ) );
+   A_Q28[ 1 ] = (opus_int32) silk_SMULWW( r_Q22, r_Q22 );
 
 #ifdef FIXED_POINT
    silk_biquad_alt( in, B_Q28, A_Q28, hp_mem, out, len, channels );

@@ -24,7 +24,7 @@
 	if (self)
 	{
 		output = NULL;
-		bufferChain = NULL;
+		bufferChain = nil;
 		outputLaunched = NO;
 		endOfInputReached = NO;
 		
@@ -55,10 +55,6 @@
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused
 {
-	if (output)
-	{
-		[output release];
-	}
 	output = [[OutputNode alloc] initWithController:self previous:nil];
 	[output setup];
 	[output setVolume: volume];
@@ -73,7 +69,7 @@
 		{
 			[bufferChain setShouldContinue:NO];
 
-			[bufferChain release];
+            bufferChain = nil;
 		}
 	}
 
@@ -82,7 +78,6 @@
 	
 	while (![bufferChain open:url withOutputFormat:[output format] withRGInfo:rgi])
 	{
-		[bufferChain release];
 		bufferChain = nil;
 		
 		[self requestNextStream: userInfo];
@@ -173,16 +168,10 @@
 
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi
 {
-	[url retain];
-	[nextStream release];
 	nextStream = url;
 	
-	[userInfo retain];
-	[nextStreamUserInfo release];
 	nextStreamUserInfo = userInfo;
 
-	[rgi retain];
-    [nextStreamRGInfo release];
     nextStreamRGInfo = rgi;
 }
 
@@ -261,10 +250,8 @@
 		BufferChain *newChain = nil;
 		
 		nextStreamUserInfo = [sender userInfo];
-		[nextStreamUserInfo retain]; //Retained because when setNextStream is called, it will be released!!!
 		
         nextStreamRGInfo = [sender rgInfo];
-        [nextStreamRGInfo retain];
         
 		[self requestNextStream: nextStreamUserInfo];
         
@@ -293,29 +280,31 @@
 				[self addChainToQueue:newChain];
 				DLog(@"TRACK SET!!! %@", newChain);
 				//Keep on-playin
-				[newChain release];
+                newChain = nil;
 				
 				return NO;
 			}
 		}
+        
+        lastChain = nil;
 		
 		while (![newChain open:nextStream withOutputFormat:[output format] withRGInfo:nextStreamRGInfo])
 		{
 			if (nextStream == nil)
 			{
-				[newChain release];
+                newChain = nil;
 				return YES;
 			}
 			
-			[newChain release];
+            newChain = nil;
 			[self requestNextStream: nextStreamUserInfo];
 
 			newChain = [[BufferChain alloc] initWithController:self];
 		}
 		
 		[self addChainToQueue:newChain];
-
-		[newChain release];
+        
+        newChain = nil;
 
         // I'm stupid and can't hold too much stuff in my head all at once, so writing it here.
         //
@@ -347,17 +336,13 @@
 			//End of playlist
 			[self stop];
 			
-			[bufferChain release];
 			bufferChain = nil;
 			
 			return;
 		}
 		
-
-        BufferChain *oldChain = bufferChain;
+        bufferChain = nil;
         bufferChain = [chainQueue objectAtIndex:0];
-		[oldChain release];
-		[bufferChain retain];
 
         [chainQueue removeObjectAtIndex:0];
 		DLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
@@ -370,29 +355,28 @@
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait
 {
 	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:selector]];
+    [invocation setTarget:delegate];
 	[invocation setSelector:selector];
-	[invocation setArgument:&self	atIndex:2]; //Indexes start at 2, the first being self, the second being command.
+    [invocation setArgument:&self   atIndex:2];
 	[invocation setArgument:&obj	atIndex:3];
+    [invocation retainArguments];
 	
-	[self performSelectorOnMainThread:@selector(sendDelegateMethodMainThread:) withObject:invocation waitUntilDone:wait];
+	[invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:wait];
 }
 
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait
 {
 	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:selector]];
-	[invocation setSelector:selector];
-	[invocation setArgument:&self	atIndex:2]; //Indexes start at 2, the first being self, the second being command.
+    [invocation setTarget:delegate];
+    [invocation setSelector:selector];
+    [invocation setArgument:&self   atIndex:2];
 	[invocation setArgument:&obj	atIndex:3];
 	[invocation setArgument:&obj2	atIndex:4];
+    [invocation retainArguments];
 	
-	[self performSelectorOnMainThread:@selector(sendDelegateMethodMainThread:) withObject:invocation waitUntilDone:wait];
+	[invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:wait];
 }
 
-
-- (void)sendDelegateMethodMainThread:(id)invocation
-{
-	[invocation invokeWithTarget:delegate];
-}
 
 - (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait
 {	

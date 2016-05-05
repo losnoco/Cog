@@ -43,7 +43,7 @@ escapeForLastFM(NSString *string)
 							   options:NSLiteralSearch 
 								 range:NSMakeRange(0, [result length])];
 	
-	return (nil == result ? @"" : [result autorelease]);
+	return (nil == result ? @"" : result);
 }
 
 @interface AudioScrobbler (Private)
@@ -101,7 +101,7 @@ escapeForLastFM(NSString *string)
 		if(KERN_SUCCESS != result) {
 			ALog(@"Couldn't create semaphore (%s).", mach_error_type(result));
 
-			[self release];
+            self = nil;
 			return nil;
 		}
 		
@@ -115,11 +115,9 @@ escapeForLastFM(NSString *string)
 	if([self keepProcessingAudioScrobblerCommands] || NO == [self audioScrobblerThreadCompleted])
 		[self shutdown];
 	
-	[_queue release], _queue = nil;
+	_queue = nil;
 	
 	semaphore_destroy(mach_task_self(), _semaphore), _semaphore = 0;
-
-	[super dealloc];
 }
 
 - (void) start:(PlaylistEntry *)pe
@@ -212,76 +210,71 @@ escapeForLastFM(NSString *string)
 
 - (void) processAudioScrobblerCommands:(id)unused
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	AudioScrobblerClient	*client				= [[AudioScrobblerClient alloc] init];
-	mach_timespec_t			timeout				= { 5, 0 };
-	NSString				*command			= nil;
-	NSString				*response			= nil;
-	in_port_t				port				= 33367;
+    @autoreleasepool {
+        AudioScrobblerClient	*client				= [[AudioScrobblerClient alloc] init];
+        mach_timespec_t			timeout				= { 5, 0 };
+        NSString				*command			= nil;
+        NSString				*response			= nil;
+        in_port_t				port				= 33367;
 	
-	while([self keepProcessingAudioScrobblerCommands]) {
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        while([self keepProcessingAudioScrobblerCommands]) {
+            @autoreleasepool {
 
-		// Get the first command to be sent
-		@synchronized([self queue]) {
-            if ([[self queue] count]) {
-                command     = [[[self queue] objectAtIndex:0] retain];
-                [[self queue] removeObjectAtIndex:0];
-            }
-		}
+                // Get the first command to be sent
+                @synchronized([self queue]) {
+                    if ([[self queue] count]) {
+                        command     = [[self queue] objectAtIndex:0];
+                        [[self queue] removeObjectAtIndex:0];
+                    }
+                }
 
-		if(nil != command) { 
-			@try {
-				if([client connectToHost:@"localhost" port:port]) {
-					port = [client connectedPort];
-					[client send:command];
-					[command release];
-                    command = nil;
+                if(nil != command) { 
+                    @try {
+                        if([client connectToHost:@"localhost" port:port]) {
+                            port = [client connectedPort];
+                            [client send:command];
+                            command = nil;
 					
-					response = [client receive];
-					if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
-						ALog(@"AudioScrobbler error: %@", response);
+                            response = [client receive];
+                            if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
+                                ALog(@"AudioScrobbler error: %@", response);
 					
-					[client shutdown];
-				}
-			}
+                            [client shutdown];
+                        }
+                    }
 			
-			@catch(NSException *exception) {
-                [command release];
-                command = nil;
+                    @catch(NSException *exception) {
+                        command = nil;
                 
-				[client shutdown];
-//				ALog(@"Exception: %@",exception);
-				[pool release];
-				continue;
-			}
-		}
+                        [client shutdown];
+//                      ALog(@"Exception: %@",exception);
+                        continue;
+                    }
+                }
 		
-		semaphore_timedwait([self semaphore], timeout);
-		[pool release];
-	}
+                semaphore_timedwait([self semaphore], timeout);
+            }
+        }
 	
-	// Send a final stop command to cleanup
-	@try {
-		if([client connectToHost:@"localhost" port:port]) {
-			[client send:[NSString stringWithFormat:@"STOP c=%@\n", [self pluginID]]];
+        // Send a final stop command to cleanup
+        @try {
+            if([client connectToHost:@"localhost" port:port]) {
+                [client send:[NSString stringWithFormat:@"STOP c=%@\n", [self pluginID]]];
 			
-			response = [client receive];
-			if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
-				ALog(@"AudioScrobbler error: %@", response);
+                response = [client receive];
+                if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
+                    ALog(@"AudioScrobbler error: %@", response);
 			
-			[client shutdown];
-		}
-	}
+                [client shutdown];
+            }
+        }
 	
-	@catch(NSException *exception) {
-		[client shutdown];
-	}
+        @catch(NSException *exception) {
+            [client shutdown];
+        }
 	
-	[client release];
-	[self setAudioScrobblerThreadCompleted:YES];
-
-	[pool release];
+        [self setAudioScrobblerThreadCompleted:YES];
+    }
 }
 
 @end

@@ -32,7 +32,7 @@ namespace libsidplayfp
 {
 
 /**
- * Utility class to identify known ROMs through their md5 checksum.
+ * Utility class to identify known ROM images through their md5 checksum.
  */
 class romCheck
 {
@@ -103,7 +103,7 @@ public:
     const char* info() const
     {
         md5map::const_iterator res = m_checksums.find(checksum());
-        return (res != m_checksums.end())?res->second:"Unknown Rom";
+        return (res != m_checksums.end()) ? res->second : "Unknown Rom";
     }
 };
 

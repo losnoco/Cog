@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17C8F6950CBEE846008D969D /* DumbDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F68F0CBEE846008D969D /* DumbDecoder.m */; };
-		17C8F69F0CBEE85F008D969D /* Dumb.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; };
+		17C8F69F0CBEE85F008D969D /* Dumb.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17C8F7B90CBEF380008D969D /* Dumb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; };
 		17DA363E0CC0600E0003F6B2 /* DumbMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA363C0CC0600E0003F6B2 /* DumbMetadataReader.m */; };
 		8335FF6717FF6FD9002D8DD2 /* DumbContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8335FF6617FF6FD9002D8DD2 /* DumbContainer.m */; };
@@ -19,7 +19,7 @@
 		8337AAF317FFA7640081AFF8 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8337AAF217FFA7640081AFF8 /* libz.dylib */; };
 		83527EE818242FD5002F170E /* libunmo3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83527EE618242FD5002F170E /* libunmo3.dylib */; };
 		83527EEB18243069002F170E /* mo3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83527EEA18243069002F170E /* mo3.c */; };
-		83527EED182432CA002F170E /* libunmo3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83527EE618242FD5002F170E /* libunmo3.dylib */; };
+		83527EED182432CA002F170E /* libunmo3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83527EE618242FD5002F170E /* libunmo3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -87,6 +87,7 @@
 		8337AAEF17FFA2D30081AFF8 /* j2b.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = j2b.c; sourceTree = "<group>"; };
 		8337AAF017FFA2D30081AFF8 /* j2b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = j2b.h; sourceTree = "<group>"; };
 		8337AAF217FFA7640081AFF8 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		833F68331CDBCAB100AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83527EE618242FD5002F170E /* libunmo3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libunmo3.dylib; path = ../../../ThirdParty/BASS/libunmo3.dylib; sourceTree = "<group>"; };
 		83527EE718242FD5002F170E /* unmo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unmo3.h; path = ../../../ThirdParty/BASS/unmo3.h; sourceTree = "<group>"; };
 		83527EE918243029002F170E /* mo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mo3.h; path = mo3/mo3.h; sourceTree = "<group>"; };
@@ -277,7 +278,7 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Dumb" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -285,6 +286,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Dumb */;
 			projectDirPath = "";
@@ -353,6 +355,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C167EFE841241C02AAC07 /* English */,
+				833F68331CDBCAB100AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -382,6 +385,7 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				OBJROOT = ../../build;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.dumb;
 				PRODUCT_NAME = Dumb;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -410,6 +414,7 @@
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
 				OBJROOT = ../../build;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.dumb;
 				PRODUCT_NAME = Dumb;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -422,6 +427,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

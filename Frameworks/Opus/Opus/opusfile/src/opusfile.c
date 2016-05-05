@@ -188,7 +188,7 @@ static opus_int64 op_get_next_page(OggOpusFile *_of,ogg_page *_og,
  opus_int64 _boundary){
   while(_boundary<=0||_of->offset<_boundary){
     int more;
-    more=ogg_sync_pageseek(&_of->oy,_og);
+    more=(int)ogg_sync_pageseek(&_of->oy,_og);
     /*Skipped (-more) bytes.*/
     if(OP_UNLIKELY(more<0))_of->offset-=more;
     else if(more==0){
@@ -678,8 +678,8 @@ static int op_granpos_diff(ogg_int64_t *_delta,
      should ever be called with these values, so make sure we aren't.*/
   OP_ASSERT(_gp_a!=-1);
   OP_ASSERT(_gp_b!=-1);
-  gp_a_negative=OP_UNLIKELY(_gp_a<0);
-  gp_b_negative=OP_UNLIKELY(_gp_b<0);
+  gp_a_negative=(int) OP_UNLIKELY(_gp_a<0);
+  gp_b_negative=(int) OP_UNLIKELY(_gp_b<0);
   if(OP_UNLIKELY(gp_a_negative^gp_b_negative)){
     ogg_int64_t da;
     ogg_int64_t db;
@@ -788,7 +788,7 @@ static opus_int32 op_collect_audio_packets(OggOpusFile *_of,
        single page.*/
     OP_ASSERT(op_count<255);
     _durations[op_count]=op_get_packet_duration(_of->op[op_count].packet,
-     _of->op[op_count].bytes);
+     (int) _of->op[op_count].bytes);
     if(OP_LIKELY(_durations[op_count]>0)){
       /*With at most 255 packets on a page, this can't overflow.*/
       total_duration+=_durations[op_count++];
@@ -835,7 +835,7 @@ static int op_find_initial_pcm_offset(OggOpusFile *_of,
   int          op_count;
   int          pi;
   if(_og==NULL)_og=&og;
-  serialno=_of->os.serialno;
+  serialno=(ogg_uint32_t) _of->os.serialno;
   op_count=0;
   /*We shouldn't have to initialize total_duration, but gcc is too dumb to
      figure out that op_count>0 implies we've been through the whole loop at
@@ -896,7 +896,7 @@ static int op_find_initial_pcm_offset(OggOpusFile *_of,
   /*But getting a packet without a valid granule position on the page is not
      okay.*/
   if(cur_page_gp==-1)return OP_EBADTIMESTAMP;
-  cur_page_eos=_of->op[op_count-1].e_o_s;
+  cur_page_eos=(int) _of->op[op_count-1].e_o_s;
   if(OP_LIKELY(!cur_page_eos)){
     /*The EOS flag wasn't set.
       Work backwards from the provided granule position to get the starting PCM
@@ -1261,7 +1261,7 @@ static int op_bisect_forward_serialno(OggOpusFile *_of,
     if(OP_UNLIKELY(ret<0))return ret;
     links[nlinks].offset=next;
     links[nlinks].data_offset=_of->offset;
-    links[nlinks].serialno=_of->os.serialno;
+    links[nlinks].serialno=(ogg_uint32_t) _of->os.serialno;
     links[nlinks].pcm_end=-1;
     /*This might consume a page from the next link, however the next bisection
        always starts with a seek.*/
@@ -1538,7 +1538,7 @@ static int op_open1(OggOpusFile *_of,
     _of->links[0].offset=0;
     _of->links[0].data_offset=_of->offset;
     _of->links[0].pcm_end=-1;
-    _of->links[0].serialno=_of->os.serialno;
+    _of->links[0].serialno=(ogg_uint32_t) _of->os.serialno;
     /*Fetch the initial PCM offset.*/
     ret=op_find_initial_pcm_offset(_of,_of->links,&og);
     if(seekable||OP_LIKELY(ret<=0))break;
@@ -1909,7 +1909,7 @@ static int op_fetch_and_process_page(OggOpusFile *_of,
              so no need to set _ignore_holes.*/
           ret=op_find_initial_pcm_offset(_of,links,&og);
           if(OP_UNLIKELY(ret<0))return ret;
-          _of->links[0].serialno=cur_serialno=_of->os.serialno;
+          _of->links[0].serialno=cur_serialno=(ogg_uint32_t) _of->os.serialno;
           _of->cur_link++;
         }
         /*If the link was empty, keep going, because we already have the
@@ -1955,7 +1955,7 @@ static int op_fetch_and_process_page(OggOpusFile *_of,
         int         cur_page_eos;
         int         pi;
         cur_page_gp=_of->op[op_count-1].granulepos;
-        cur_page_eos=_of->op[op_count-1].e_o_s;
+        cur_page_eos=(int) _of->op[op_count-1].e_o_s;
         prev_packet_gp=_of->prev_packet_gp;
         if(OP_UNLIKELY(prev_packet_gp==-1)){
           opus_int32 cur_discard_count;
@@ -2242,7 +2242,7 @@ static int op_pcm_seek_page(OggOpusFile *_of,
                generally 1 second or less), we can loop them continuously
                without seeking at all.*/
             OP_ALWAYS_TRUE(!op_granpos_add(&prev_page_gp,_of->op[0].granulepos,
-             op_get_packet_duration(_of->op[0].packet,_of->op[0].bytes)));
+             op_get_packet_duration(_of->op[0].packet,(int) _of->op[0].bytes)));
             if(op_granpos_cmp(prev_page_gp,_target_gp)<=0){
               /*Don't call op_decode_clear(), because it will dump our
                  packets.*/
@@ -2619,7 +2619,7 @@ static int op_decode(OggOpusFile *_of,op_sample *_pcm,
      _op->packet,_op->bytes,_pcm,_nsamples,0);
 #else
     ret=opus_multistream_decode_float(_of->od,
-     _op->packet,_op->bytes,_pcm,_nsamples,0);
+     _op->packet,(opus_int32) _op->bytes,_pcm,_nsamples,0);
 #endif
     OP_ASSERT(ret<0||ret==_nsamples);
   }
@@ -2666,7 +2666,7 @@ static int op_read_native(OggOpusFile *_of,
         pop=_of->op+op_pos++;
         _of->op_pos=op_pos;
         cur_discard_count=_of->cur_discard_count;
-        duration=op_get_packet_duration(pop->packet,pop->bytes);
+        duration=op_get_packet_duration(pop->packet,(int) pop->bytes);
         /*We don't buffer packets with an invalid TOC sequence.*/
         OP_ASSERT(duration>0);
         trimmed_duration=duration;

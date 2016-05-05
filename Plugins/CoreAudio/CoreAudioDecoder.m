@@ -47,7 +47,7 @@
 	NSURL *url = [source url];
 	[source close]; //There's no room for your kind around here!
 	
-	err = ExtAudioFileOpenURL((CFURLRef)url, &_in);
+	err = ExtAudioFileOpenURL((__bridge CFURLRef)url, &_in);
 	if(noErr != err) {
 		ALog(@"Error opening file: %d", err);
 		return NO;
@@ -173,7 +173,7 @@
 		return nil;
 	}
 	
-	return [sAudioExtensions autorelease];
+	return sAudioExtensions;
 }
 
 + (NSArray *)mimeTypes

@@ -59,12 +59,6 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
     return self;
 }
 
-- (void)dealloc
-{
-    [cachedObservers release];
-    [super dealloc];
-}
-
 - (NSDictionary *)properties
 {
     if ( theDecoder != nil ) return [theDecoder properties];
@@ -84,14 +78,13 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
         Class decoder = NSClassFromString(classString);
         theDecoder = [[decoder alloc] init];
         for (NSDictionary *obsItem in cachedObservers) {
-            [theDecoder addObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"] options:[obsItem objectForKey:@"options"] context:[obsItem objectForKey:@"context"]];
+            [theDecoder addObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"] options:[obsItem objectForKey:@"options"] context:(__bridge void *)([obsItem objectForKey:@"context"])];
         }
         if ([theDecoder open:source])
             return YES;
         for (NSDictionary *obsItem in cachedObservers) {
             [theDecoder removeObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"]];
         }
-        [theDecoder release];
         [source seek:0 whence:SEEK_SET];
     }
     theDecoder = nil;
@@ -111,7 +104,6 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
         for (NSDictionary *obsItem in cachedObservers) {
             [theDecoder removeObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"]];
         }
-        [theDecoder release];
         theDecoder = nil;
     }
 }

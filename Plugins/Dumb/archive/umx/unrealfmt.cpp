@@ -102,7 +102,7 @@ char * upkg::get_string(char *addr, int count)
 
 	strncpy(buf, addr, count);	// the string stops at count chars, or is ASCIIZ
 
-	data_size = strlen(buf) + 1;
+	data_size = (unsigned int)(strlen(buf) + 1);
 
 	return buf;
 }
@@ -238,12 +238,12 @@ void upkg::get_names(void)
 {
 	int i, j, index;
 
-	index = get_u32(&hdr->name_offset);
+	index = (int) get_u32(&hdr->name_offset);
 
-	for (i = 0, j = get_u32(&hdr->name_count); i < j; i++) {
+	for (i = 0, j = (int) get_u32(&hdr->name_count); i < j; i++) {
 		if (get_u32(&hdr->file_version) >= 64) {
 			get_string(&header[index + 1],
-				   get_s8(&header[index]));
+				   (int) get_s8(&header[index]));
 			index++;
 		} else {
 			get_string(&header[index], UPKG_NAME_NOCOUNT);
@@ -252,7 +252,7 @@ void upkg::get_names(void)
 
 		strncpy(names[i].name, buf, UPKG_MAX_NAME_SIZE);
 
-		names[i].flags = get_s32(&header[index]);
+		names[i].flags = (int32_t) get_s32(&header[index]);
 		index += data_size;
 	}
 	
@@ -268,7 +268,7 @@ void upkg::get_exports_cpnames(int idx) {
     if (idx < 0 || idx >= get_u32(&hdr->export_count))
 	return;
     
-    x = get_u32(&exports[idx].class_index);
+    x = (int) get_u32(&exports[idx].class_index);
     
     x = set_classname(idx, x);
     
@@ -285,28 +285,28 @@ void upkg::get_exports(void)
 
 	index = 0;
 
-	for (i = 0, j = get_u32(&hdr->export_count); i < j; i++) {
-		exports[i].class_index = get_fci(&readbuf[index]);
+	for (i = 0, j = (int) get_u32(&hdr->export_count); i < j; i++) {
+		exports[i].class_index = (int32_t) get_fci(&readbuf[index]);
 		index += data_size;
 
-		exports[i].package_index = get_s32(&readbuf[index]);
+		exports[i].package_index = (int32_t) get_s32(&readbuf[index]);
 		index += data_size;
 
-		exports[i].super_index = get_fci(&readbuf[index]);
+		exports[i].super_index = (int32_t) get_fci(&readbuf[index]);
 		index += data_size;
 
-		exports[i].object_name = get_fci(&readbuf[index]);
+		exports[i].object_name = (int32_t) get_fci(&readbuf[index]);
 		index += data_size;
 
-		exports[i].object_flags = get_s32(&readbuf[index]);
+		exports[i].object_flags = (int32_t) get_s32(&readbuf[index]);
 		index += data_size;
 
-		exports[i].serial_size = get_fci(&readbuf[index]);
+		exports[i].serial_size = (int32_t) get_fci(&readbuf[index]);
 		index += data_size;
 
 		if (exports[i].serial_size > 0) {
 			exports[i].serial_offset =
-			    get_fci(&readbuf[index]);
+			    (int32_t) get_fci(&readbuf[index]);
 			index += data_size;
 		} else {
 			exports[i].serial_offset = -1;
@@ -327,17 +327,17 @@ void upkg::get_imports(void)
 
 	index = 0;
 
-	for (i = 0, j = get_u32(&hdr->import_count); i < j; i++) {
-		imports[i].class_package = get_fci(&readbuf[index]);
+	for (i = 0, j = (int) get_u32(&hdr->import_count); i < j; i++) {
+		imports[i].class_package = (int32_t) get_fci(&readbuf[index]);
 		index += data_size;
 
-		imports[i].class_name = get_fci(&readbuf[index]);
+		imports[i].class_name = (int32_t) get_fci(&readbuf[index]);
 		index += data_size;
 
-		imports[i].package_index = get_s32(&readbuf[index]);
+		imports[i].package_index = (int32_t) get_s32(&readbuf[index]);
 		index += data_size;
 
-		imports[i].object_name = get_fci(&readbuf[index]);
+		imports[i].object_name = (int32_t) get_fci(&readbuf[index]);
 		index += data_size;
 	}
 }	
@@ -346,12 +346,12 @@ void upkg::get_imports(void)
 void upkg::get_type(char *buf, int e, int d)
 {
 	int i, j, index;
-	signed long tmp;
+	signed long tmp = 0;
 	char *chtmp;
 
 	index = 0;
 
-	for (i = 0, j = strlen(export_desc[d].order); i < j; i++) {
+	for (i = 0, j = (int) strlen(export_desc[d].order); i < j; i++) {
 		switch (export_desc[d].order[i]) {
 		case UPKG_DATA_FCI:
 			tmp = get_fci(&buf[index]);
@@ -372,7 +372,7 @@ void upkg::get_type(char *buf, int e, int d)
 		case UPKG_DATA_ASCIC:
 			chtmp =
 			    get_string(&buf[index + 1],
-				       get_s8(&buf[index]));
+				       (int) get_s8(&buf[index]));
 			index += data_size + 1;
 			break;
 		case UPKG_DATA_ASCIZ:
@@ -382,12 +382,12 @@ void upkg::get_type(char *buf, int e, int d)
 		case UPKG_OBJ_JUNK:	// do nothing!!!
 			break;
 		case UPKG_OBJ_NAME:
-			exports[e].type_name = tmp;
+			exports[e].type_name = (int32_t) tmp;
 			break;
 		case UPKG_EXP_SIZE:	// maybe we'll do something later on
 			break;
 		case UPKG_OBJ_SIZE:
-			exports[e].object_size = tmp;
+			exports[e].object_size = (int32_t) tmp;
 			break;
 		default:
 			exports[e].type_name = -1;
@@ -446,7 +446,7 @@ void upkg::get_types(void)
 	int i, j, k;
 	char readbuf[UPKG_MAX_ORDERS * 4];
 
-	for (i = 0, k = get_u32(&hdr->export_count); i < k; i++) {
+	for (i = 0, k = (int) get_u32(&hdr->export_count); i < k; i++) {
 		if ((j = get_types_isgood(i)) != -1) {
 			reader->seek(exports[i].serial_offset);
 			reader->read(readbuf, 4 * UPKG_MAX_ORDERS);
@@ -600,7 +600,7 @@ int upkg::read(void *readbuf, signed int bytes, signed int offset)
 
 	reader->seek(offset);
 
-	return reader->read(readbuf, bytes);
+	return (int) reader->read(readbuf, bytes);
 }
 
 int upkg::export_dump(file_writer * writer, signed int idx)
@@ -622,7 +622,7 @@ int upkg::export_dump(file_writer * writer, signed int idx)
 
 	do {
 		diff =
-			reader->read(buffer, ((count > 4096) ? 4096 : count));
+			(int) reader->read(buffer, ((count > 4096) ? 4096 : count));
 		writer->write(buffer, diff);
 		count -= diff;
 	} while (count > 0);
@@ -651,7 +651,7 @@ int upkg::object_dump(file_writer * writer, signed int idx)
 
 	do {
 		diff =
-			reader->read(buffer, ((count > 4096) ? 4096 : count));
+			(int) reader->read(buffer, ((count > 4096) ? 4096 : count));
 		writer->write(buffer, diff);
 		count -= diff;
 	} while (count > 0);

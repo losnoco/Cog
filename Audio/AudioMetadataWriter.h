@@ -13,6 +13,6 @@
 
 }
 
-+ (NSDictionary *)putMetadataInURL:(NSURL *)url;
++ (int)putMetadataInURL:(NSURL *)url;
 
 @end

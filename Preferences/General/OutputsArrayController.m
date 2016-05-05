@@ -49,7 +49,7 @@
         if (!bufferCount) continue;
 
 		NSDictionary *deviceInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSString stringWithString:(NSString*)name], @"name",
+            [NSString stringWithString:(__bridge NSString*)name], @"name",
 			[NSNumber numberWithLong:devids[i]], @"deviceID",
 			nil];
 		[self addObject:deviceInfo];
@@ -66,8 +66,6 @@
                 [self setSelectedObjects:[NSArray arrayWithObject:deviceInfo]];
             }
         }
-
-		[deviceInfo release];
 	}
 	free(devids);
 	

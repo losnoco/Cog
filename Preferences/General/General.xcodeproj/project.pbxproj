@@ -23,7 +23,7 @@
 		837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */; };
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
 		8384917818084D9F00E7332D /* growl.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917618084D9F00E7332D /* growl.png */; };
-		8384918C1808596A00E7332D /* NDHotKey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838491841808588D00E7332D /* NDHotKey.framework */; };
+		8384918C1808596A00E7332D /* NDHotKey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838491841808588D00E7332D /* NDHotKey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B06729180D85B8008E3612 /* MIDIPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.m */; };
 		83B0672B180D8B39008E3612 /* midi.png in Resources */ = {isa = PBXBuildFile; fileRef = 83B0672A180D8B39008E3612 /* midi.png */; };
 		83DFEA0B1CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83DFEA0A1CBC94DE00BCC565 /* MIDIFlavorBehaviorArrayController.m */; };
@@ -97,6 +97,9 @@
 		17E78A7D0D68BE3C005C5A59 /* file_tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_tree.png; path = Icons/file_tree.png; sourceTree = "<group>"; };
 		17E78B690D68C1E3005C5A59 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* General_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = General_Prefix.pch; sourceTree = "<group>"; };
+		833F681A1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/Preferences.xib; sourceTree = "<group>"; };
+		833F681B1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		833F681C1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8372053518E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResamplerBehaviorArrayController.h; sourceTree = "<group>"; };
 		8372053618E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResamplerBehaviorArrayController.m; sourceTree = "<group>"; };
 		837C0D3E1C50954000CAE18F /* MIDIPluginBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIPluginBehaviorArrayController.h; sourceTree = "<group>"; };
@@ -341,7 +344,7 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "General" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -356,6 +359,7 @@
 				Hebrew,
 				Greek,
 				zh_CN,
+				es,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* General */;
 			projectDirPath = "";
@@ -448,6 +452,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C167EFE841241C02AAC07 /* English */,
+				833F681B1CDBCAA700AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -456,6 +461,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				17E41DB50C130A9D00AC744D /* English */,
+				833F681C1CDBCAA700AFB9F0 /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -464,6 +470,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				17E78B690D68C1E3005C5A59 /* English */,
+				833F681A1CDBCAA700AFB9F0 /* es */,
 			);
 			name = Preferences.xib;
 			sourceTree = "<group>";
@@ -484,6 +491,7 @@
 				GCC_PREFIX_HEADER = General_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.preferences;
 				PRODUCT_NAME = General;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = preferencePane;
@@ -500,6 +508,7 @@
 				GCC_PREFIX_HEADER = General_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.preferences;
 				PRODUCT_NAME = General;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = preferencePane;
@@ -509,6 +518,8 @@
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -527,6 +538,7 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

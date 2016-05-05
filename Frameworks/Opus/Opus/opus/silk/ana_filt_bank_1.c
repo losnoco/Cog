@@ -54,7 +54,7 @@ void silk_ana_filt_bank_1(
 
         /* All-pass section for even input sample */
         Y      = silk_SUB32( in32, S[ 0 ] );
-        X      = silk_SMLAWB( Y, Y, A_fb1_21 );
+        X      = (opus_int32) silk_SMLAWB( Y, Y, A_fb1_21 );
         out_1  = silk_ADD32( S[ 0 ], X );
         S[ 0 ] = silk_ADD32( in32, X );
 
@@ -63,7 +63,7 @@ void silk_ana_filt_bank_1(
 
         /* All-pass section for odd input sample, and add to output of previous section */
         Y      = silk_SUB32( in32, S[ 1 ] );
-        X      = silk_SMULWB( Y, A_fb1_20 );
+        X      = (opus_int32) silk_SMULWB( Y, A_fb1_20 );
         out_2  = silk_ADD32( S[ 1 ], X );
         S[ 1 ] = silk_ADD32( in32, X );
 

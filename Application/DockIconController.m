@@ -8,6 +8,7 @@
 
 #import "DockIconController.h"
 #import <CogAudio/Status.h>
+#import "PlaybackController.h"
 
 @implementation DockIconController
 
@@ -15,8 +16,8 @@ static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackSt
 
 - (void)startObserving
 {
-	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:DockIconPlaybackStatusObservationContext];
-    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.colorfulDockIcons"		options:0 context:DockIconPlaybackStatusObservationContext];
+	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void * _Nullable)(DockIconPlaybackStatusObservationContext)];
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.colorfulDockIcons"		options:0 context:(__bridge void * _Nullable)(DockIconPlaybackStatusObservationContext)];
 }
 
 - (void)stopObserving
@@ -69,12 +70,11 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons)
     
     [newDockImage unlockFocus];
     [NSApp setApplicationIconImage:newDockImage];
-    [newDockImage release];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([DockIconPlaybackStatusObservationContext isEqual:context])
+	if ([DockIconPlaybackStatusObservationContext isEqual:(__bridge id)(context)])
 	{
         if ([keyPath isEqualToString:@"playbackStatus"])
         {
@@ -102,9 +102,6 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons)
 - (void)dealloc
 {
 	[self stopObserving];
-	[dockImage release];
-	
-	[super dealloc];
 }
 
 @end

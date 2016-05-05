@@ -14,28 +14,28 @@
 
 mpc_int32_t ReadProc(mpc_reader *p_reader, void *ptr, mpc_int32_t size)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
+    MusepackDecoder *decoder = (__bridge MusepackDecoder *) p_reader->data;
 	
 	return [[decoder source] read:ptr amount:size];
 }
 
 mpc_bool_t SeekProc(mpc_reader *p_reader, mpc_int32_t offset)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
+    MusepackDecoder *decoder = (__bridge MusepackDecoder *) p_reader->data;
 
     return [[decoder source] seek:offset whence:SEEK_SET];
 }
 
 mpc_int32_t TellProc(mpc_reader *p_reader)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
+    MusepackDecoder *decoder = (__bridge MusepackDecoder *) p_reader->data;
 	
     return [[decoder source] tell];
 }
 
 mpc_int32_t GetSizeProc(mpc_reader *p_reader)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
+    MusepackDecoder *decoder = (__bridge MusepackDecoder *) p_reader->data;
 	
 	if ([[decoder source] seekable]) {
 		long currentPos = [[decoder source] tell];
@@ -54,7 +54,7 @@ mpc_int32_t GetSizeProc(mpc_reader *p_reader)
 
 mpc_bool_t CanSeekProc(mpc_reader *p_reader)
 {
-    MusepackDecoder *decoder = (MusepackDecoder *) p_reader->data;
+    MusepackDecoder *decoder = (__bridge MusepackDecoder *) p_reader->data;
 	
 	return [[decoder source] seekable];
 }
@@ -68,7 +68,7 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader)
 	reader.tell = TellProc;
 	reader.get_size = GetSizeProc;
 	reader.canseek = CanSeekProc;
-	reader.data = self;
+	reader.data = (__bridge void *)(self);
 	
 	/* instantiate a demuxer with our reader */
     demux = mpc_demux_init(&reader);
@@ -186,8 +186,6 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader)
 
 - (void)setSource:(id<CogSource>)s
 {
-	[s retain];
-	[source release];
 	source = s;
 }
 

@@ -141,7 +141,7 @@ addressForHost(NSString *hostname)
 		}
 
 		buffer[bytesRead]	= '\0';
-		result				= [[[NSString alloc] initWithUTF8String:buffer] autorelease];
+		result				= [[NSString alloc] initWithUTF8String:buffer];
 		
 	} while(keepGoing);
 	
@@ -170,7 +170,6 @@ addressForHost(NSString *hostname)
 		if(0 != bytesRead) {
 			NSString *received = [[NSString alloc] initWithBytes:buffer length:bytesRead encoding:NSUTF8StringEncoding];
 			ALog(@"Received unexpected bytes during shutdown: %@", received);
-			[received release];
 		}
 		else
 			break;

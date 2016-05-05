@@ -28,11 +28,12 @@
 	
 	// Ugh, Carbon from now on...
 	MDQueryRef query = MDQueryCreate(kCFAllocatorDefault, (CFStringRef)rawQuery, NULL, NULL);
+    _query = query;
 	
 	MDQuerySetSearchScope(query, (CFArrayRef)searchPaths, 0);
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString*)kMDQueryDidFinishNotification object:(id)query];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(id)query];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString*)kMDQueryDidFinishNotification object:(__bridge id)query];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(__bridge id)query];
 
 	DLog(@"Making query!");
 	MDQueryExecute(query, kMDQueryWantsUpdates);
@@ -42,8 +43,6 @@
 
 - (void)setSubpaths:(id)s
 {
-	[s retain];
-	[subpaths release];
 	subpaths = s;
 }
 
@@ -60,7 +59,7 @@
 - (void)queryFinished:(NSNotification *)notification
 {
 	DLog(@"Query finished!");
-	MDQueryRef query = (MDQueryRef)[notification object];
+	MDQueryRef query = (__bridge MDQueryRef)[notification object];
 
 	NSMutableArray *results = [NSMutableArray array];
 
@@ -72,11 +71,9 @@
 	{
 		MDItemRef  item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
 		
-		NSString *itemPath = (NSString*)MDItemCopyAttribute(item, kMDItemPath);
+		NSString *itemPath = (NSString *) CFBridgingRelease(MDItemCopyAttribute(item, kMDItemPath));
 
 		[results addObject:itemPath];
-		
-		[itemPath release];
 	}
 
 	MDQueryEnableUpdates(query);
@@ -92,6 +89,11 @@
 {
 	DLog(@"Query update!");
 	[self queryFinished: notification];
+}
+
+- (void)dealloc
+{
+    CFRelease(_query);
 }
 
 

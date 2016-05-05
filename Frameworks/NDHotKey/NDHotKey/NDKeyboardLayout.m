@@ -318,8 +318,8 @@ static volatile NDKeyboardLayout		* kCurrentKeyboardLayout = nil;
 static void NDKeyboardLayoutNotificationCallback( CFNotificationCenterRef aCenter, void * self, CFStringRef aName, const void * anObj, CFDictionaryRef aUserInfo )
 {
 	NSDictionary		* theUserInfo = [NSDictionary dictionaryWithObject:kCurrentKeyboardLayout forKey:NDKeyboardLayoutPreviousKeyboardLayoutUserInfoKey];
-	@synchronized(self) { [kCurrentKeyboardLayout release], kCurrentKeyboardLayout = nil; }
-	[[NSNotificationCenter defaultCenter] postNotificationName:NDKeyboardLayoutSelectedKeyboardInputSourceChangedNotification object:self userInfo:theUserInfo];
+	@synchronized(self) { kCurrentKeyboardLayout = nil; }
+	[[NSNotificationCenter defaultCenter] postNotificationName:NDKeyboardLayoutSelectedKeyboardInputSourceChangedNotification object:(__bridge id _Nullable)(self) userInfo:theUserInfo];
 }
 
 + (void)initialize
@@ -364,22 +364,21 @@ static void NDKeyboardLayoutNotificationCallback( CFNotificationCenterRef aCente
 
 - (id)init
 {
-	[self release];
-	return [[NDKeyboardLayout keyboardLayout] retain];
+	return [NDKeyboardLayout keyboardLayout];
 }
 
-- (id)initWithLanguage:(NSString *)aLangauge { return [self initWithInputSource:TISCopyInputSourceForLanguage((CFStringRef)aLangauge)]; }
+- (id)initWithLanguage:(NSString *)aLangauge { return [self initWithInputSource:TISCopyInputSourceForLanguage((__bridge CFStringRef)aLangauge)]; }
 
 - (id)initWithInputSource:(TISInputSourceRef)aSource
 {
 	if( (self = [super init]) != nil )
 	{
-		if( aSource != NULL && (keyboardLayoutData = (CFDataRef)CFMakeCollectable(TISGetInputSourceProperty(aSource, kTISPropertyUnicodeKeyLayoutData))) != nil )
+		if( aSource != NULL && (keyboardLayoutData = (CFDataRef)TISGetInputSourceProperty(aSource, kTISPropertyUnicodeKeyLayoutData)) != nil )
 		{
 			CFRetain( keyboardLayoutData );
 		}
 		else
-			self = nil, [self release];
+			self = nil;
 	}
 	return self;
 }
@@ -390,7 +389,6 @@ static void NDKeyboardLayoutNotificationCallback( CFNotificationCenterRef aCente
 		free( (void*)mappings );
 	if( keyboardLayoutData != NULL )
 		CFRelease( keyboardLayoutData );
-	[super dealloc];
 }
 
 - (NSString*)stringForCharacter:(unichar)aCharacter modifierFlags:(UInt32)aModifierFlags

@@ -31,8 +31,6 @@
 	}
 
 	[self processPaths: [fullPaths sortedArrayUsingSelector:@selector(finderCompare:)]];
-
-	[fullPaths release];
 }
 
 @end

@@ -128,6 +128,7 @@
 		8313E3D91902003100B4B6F1 /* synth_real.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = synth_real.c; sourceTree = "<group>"; };
 		8313E3DA1902003100B4B6F1 /* synth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = synth.c; sourceTree = "<group>"; };
 		8313E3E4190200D000B4B6F1 /* synth_s32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = synth_s32.c; sourceTree = "<group>"; };
+		833F684A1CDBCAC600AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -326,6 +327,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 8313E3051901FBDC00B4B6F1;
 			productRefGroup = 8313E3101901FBDC00B4B6F1 /* Products */;
@@ -387,6 +389,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8313E31C1901FBDC00B4B6F1 /* en */,
+				833F684A1CDBCAC600AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

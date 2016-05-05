@@ -40,8 +40,8 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     if (buffer) {
         bufferEnd = buffer + bufferLength;
     } else {
-        [self release];
-        return nil;        
+        self = nil;
+        return nil;
     }
 
     readPointer = NULL;
@@ -54,8 +54,6 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 {
     if (buffer)
         deallocateVirtualBuffer(buffer, bufferLength);
-
-    [super dealloc];
 }
 
 - (void)empty

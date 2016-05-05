@@ -13,7 +13,7 @@
 
 + (GeneralPreferencePane *)preferencePaneWithView:(NSView *)v title:(NSString *)t iconNamed:(NSString *)n
 {
-	GeneralPreferencePane *pane = [[[GeneralPreferencePane alloc] init] autorelease];
+	GeneralPreferencePane *pane = [[GeneralPreferencePane alloc] init];
 	if (pane)
 	{
 		[pane setView:v];
@@ -21,7 +21,6 @@
 
 		NSImage *i = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:n]];
 		[pane setIcon:i];
-		[i release];
 	}
 	
 	return pane;
@@ -44,22 +43,16 @@
 
 - (void)setView:(NSView *)v
 {
-	[v retain];
-	[view release];
 	view = v;
 }
 
 - (void)setTitle:(NSString *)t
 {
-	[t retain];
-	[title release];
 	title = t;
 }
 
 - (void)setIcon:(NSImage *)i
 {
-	[i retain];
-	[icon release];
     icon = i;
 }
 

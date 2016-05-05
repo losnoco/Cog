@@ -35,7 +35,6 @@ static SpotlightWindowController * searchController;
 - (void)dealloc
 {
     self.oldResults = nil;
-    [super dealloc];
 }
 
 @synthesize oldResults;

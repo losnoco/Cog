@@ -1,7 +1,7 @@
 /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright (C) 2013-2014 Leandro Nini
+ * Copyright (C) 2013-2016 Leandro Nini
  * Copyright (C) 2001 Dag Lem
  * Copyright (C) 1989-1997 André Fachat (a.fachat@physik.tu-chemnitz.de)
  *
@@ -33,11 +33,35 @@ const int HEADER_SIZE = (8 + 9 * 2);
 const unsigned char o65hdr[] = {1, 0, 'o', '6', '5'};
 
 /**
+ * Read a 16 bit word from a buffer at specific location.
+ *
+ * @param buffer
+ * @param idx
+ */
+inline int getWord(unsigned char *buffer, int idx)
+{
+    return buffer[idx] | (buffer[idx+1] << 8);
+}
+
+/**
+ * Write a 16 bit word into a buffer at specific location.
+ *
+ * @param buffer
+ * @param idx
+ * @param value
+ */
+inline void setWord(unsigned char *buffer, int idx, int value)
+{
+    buffer[idx] = value & 0xff;
+    buffer[idx+1] = (value >> 8) & 0xff;
+}
+
+/**
  * Get the size of header options section.
  *
  * @param buf
  */
-int read_options(unsigned char *buf)
+inline int read_options(unsigned char *buf)
 {
     int l = 0;
 
@@ -55,11 +79,11 @@ int read_options(unsigned char *buf)
  *
  * @param buf
  */
-int read_undef(unsigned char *buf)
+inline int read_undef(unsigned char *buf)
 {
     int l = 2;
 
-    int n = buf[0] + 256 * buf[1];
+    int n = getWord(buf, 0);
     while (n)
     {
         n--;
@@ -118,7 +142,7 @@ bool reloc65::reloc(unsigned char **buf, int *fsize)
         return false;
     }
 
-    const int mode = tmpBuf[6] + 256 * tmpBuf[7];
+    const int mode = getWord(tmpBuf, 6);
     if ((mode & 0x2000)     // 32 bit size not supported
         || (mode & 0x4000)) // pagewise relocation not supported
     {
@@ -127,17 +151,20 @@ bool reloc65::reloc(unsigned char **buf, int *fsize)
 
     const int hlen = HEADER_SIZE + read_options(tmpBuf + HEADER_SIZE);
 
-    const int tbase = tmpBuf[ 8] + 256 * tmpBuf[ 9];
-    const int tlen  = tmpBuf[10] + 256 * tmpBuf[11];
+    const int tbase = getWord(tmpBuf, 8);
+    const int tlen  = getWord(tmpBuf, 10);
     m_tdiff = m_tflag ? m_tbase - tbase : 0;
-    const int dbase = tmpBuf[12] + 256 * tmpBuf[13];
-    const int dlen  = tmpBuf[14] + 256 * tmpBuf[15];
+
+    const int dbase = getWord(tmpBuf, 12);
+    const int dlen  = getWord(tmpBuf, 14);
     m_ddiff = m_dflag ? m_dbase - dbase : 0;
-    const int bbase = tmpBuf[16] + 256 * tmpBuf[17];
-    const int blen SID_UNUSED = tmpBuf[18] + 256 * tmpBuf[19];
+
+    const int bbase = getWord(tmpBuf, 16);
+    const int blen SID_UNUSED = getWord(tmpBuf, 18);
     m_bdiff = m_bflag ? m_bbase - bbase : 0;
-    const int zbase = tmpBuf[20] + 256 * tmpBuf[21];
-    const int zlen SID_UNUSED = tmpBuf[21] + 256 * tmpBuf[23];
+
+    const int zbase = getWord(tmpBuf, 20);
+    const int zlen SID_UNUSED = getWord(tmpBuf, 21);
     m_zdiff = m_zflag ? m_zbase - zbase : 0;
 
     unsigned char *segt = tmpBuf + hlen;                    // Text segment
@@ -153,23 +180,19 @@ bool reloc65::reloc(unsigned char **buf, int *fsize)
 
     if (m_tflag)
     {
-        tmpBuf[ 8] = m_tbase & 255;
-        tmpBuf[ 9] = (m_tbase >> 8) & 255;
+        setWord(tmpBuf, 8, m_tbase);
     }
     if (m_dflag)
     {
-        tmpBuf[12] = m_dbase & 255;
-        tmpBuf[13] = (m_dbase >> 8) & 255;
+        setWord(tmpBuf, 12, m_dbase);
     }
     if (m_bflag)
     {
-        tmpBuf[16] = m_bbase & 255;
-        tmpBuf[17] = (m_bbase >> 8) & 255;
+        setWord(tmpBuf, 16, m_bbase);
     }
     if (m_zflag)
     {
-        tmpBuf[20] = m_zbase & 255;
-        tmpBuf[21] = (m_zbase >> 8) & 255;
+        setWord(tmpBuf, 20, m_zbase);
     }
 
     switch (m_extract)
@@ -221,10 +244,9 @@ unsigned char* reloc65::reloc_seg(unsigned char *buf, int len, unsigned char *rt
             switch(type)
             {
             case 0x80: {
-                const int oldVal = buf[adr] + 256 * buf[adr+1];
+                const int oldVal = getWord(buf, adr);
                 const int newVal = oldVal + reldiff(seg);
-                buf[adr] = newVal & 255;
-                buf[adr + 1] = (newVal >> 8) & 255;
+                setWord(buf, adr, newVal);
                 break; }
             case 0x40: {
                 const int oldVal = buf[adr] * 256 + *rtab;
@@ -247,27 +269,28 @@ unsigned char* reloc65::reloc_seg(unsigned char *buf, int len, unsigned char *rt
 
         if (adr > len)
         {
-                // Warning: relocation table entries past segment end!
+            // Warning: relocation table entries past segment end!
         }
     }
+
     return ++rtab;
 }
 
 unsigned char *reloc65::reloc_globals(unsigned char *buf)
 {
-    int n = buf[0] + 256 * buf[1];
+    int n = getWord(buf, 0);
     buf +=2;
 
     while (n)
     {
         while (*(buf++)) {}
         unsigned char seg = *buf;
-        const int oldVal = buf[1] + 256 * buf[2];
+        const int oldVal = getWord(buf, 1);
         const int newVal = oldVal + reldiff(seg);
-        buf[1] = newVal & 255;
-        buf[2] = (newVal >> 8) & 255;
+        setWord(buf, 1, newVal);
         buf +=3;
         n--;
     }
+
     return buf;
 }

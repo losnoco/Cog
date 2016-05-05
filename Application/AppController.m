@@ -1,11 +1,12 @@
 #import "AppController.h"
+#import "FileTreeController.h"
 #import "FileTreeViewController.h"
+#import "FileTreeOutlineView.h"
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 #import "PlaylistView.h"
 #import "PlaylistEntry.h"
 #import <NDHotKey/NDHotKeyEvent.h>
-#import "AppleRemote.h"
 #import "PlaylistLoader.h"
 #import "OpenURLPanel.h"
 #import "SpotlightWindowController.h"
@@ -23,16 +24,16 @@
 + (void)initialize
 {
     // Register transformers
-	NSValueTransformer *stringToURLTransformer = [[[StringToURLTransformer alloc] init]autorelease];
+	NSValueTransformer *stringToURLTransformer = [[StringToURLTransformer alloc] init];
     [NSValueTransformer setValueTransformer:stringToURLTransformer
                                     forName:@"StringToURLTransformer"];
                                 
     NSValueTransformer *fontSizetoLineHeightTransformer = 
-        [[[FontSizetoLineHeightTransformer alloc] init]autorelease];
+        [[FontSizetoLineHeightTransformer alloc] init];
     [NSValueTransformer setValueTransformer:fontSizetoLineHeightTransformer
                                     forName:@"FontSizetoLineHeightTransformer"];
 
-    NSValueTransformer *miniModeMenuTitleTransformer = [[[MiniModeMenuTitleTransformer alloc] init] autorelease];
+    NSValueTransformer *miniModeMenuTitleTransformer = [[MiniModeMenuTitleTransformer alloc] init];
     [NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
                                     forName:@"MiniModeMenuTitleTransformer"];
 }
@@ -45,132 +46,11 @@
 	{
 		[self initDefaults];
 				
-		remote = [[AppleRemote alloc] init];
-		[remote setDelegate: self];
-		
         queue = [[NSOperationQueue alloc]init];
 	}
 	
 	return self; 
 }
-
-- (void)dealloc
-{
-    [queue release];
-    [expandedNodes release];
-    [super dealloc];
-}
-
-// Listen to the remote in exclusive mode, only when Cog is the active application
-- (void)applicationDidBecomeActive:(NSNotification *)notification
-{
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"]) {
-		[remote startListening: self];
-	}
-}
-- (void)applicationDidResignActive:(NSNotification *)notification
-{
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"]) {
-		[remote stopListening: self];
-	}
-}
-
-/* Helper method for the remote control interface in order to trigger forward/backward and volume
-increase/decrease as long as the user holds the left/right, plus/minus button */
-- (void) executeHoldActionForRemoteButton: (NSNumber*) buttonIdentifierNumber 
-{
-	static int incrementalSearch = 1;
-	
-    if (remoteButtonHeld) 
-    {
-        switch([buttonIdentifierNumber intValue]) 
-        {
-            case kRemoteButtonRight_Hold:       
-				[playbackController seekForward:incrementalSearch];
-				break;
-            case kRemoteButtonLeft_Hold:
-				[playbackController seekBackward:incrementalSearch];
-				break;
-            case kRemoteButtonVolume_Plus_Hold:
-                //Volume Up
-				[playbackController volumeUp:self];
-				break;
-            case kRemoteButtonVolume_Minus_Hold:
-                //Volume Down
-				[playbackController volumeDown:self];
-				break;              
-        }
-        if (remoteButtonHeld) 
-        {
-			/* there should perhaps be a max amount that incrementalSearch can
-			   be, so as to not start skipping ahead unreasonable amounts, even
-			   in very long files. */
-			if ((incrementalSearch % 3) == 0)
-				incrementalSearch += incrementalSearch/3;
-			else
-				incrementalSearch++;
-
-            /* trigger event */
-            [self performSelector:@selector(executeHoldActionForRemoteButton:) 
-					   withObject:buttonIdentifierNumber
-					   afterDelay:0.25];         
-        }
-    }
-	else
-		// if we're not holding the search button, reset the incremental search
-		// variable, making it ready for another search
-		incrementalSearch = 1;
-}
-
-/* Apple Remote callback */
-- (void) appleRemoteButton: (AppleRemoteEventIdentifier)buttonIdentifier 
-               pressedDown: (BOOL) pressedDown 
-                clickCount: (unsigned int) count 
-{
-    switch( buttonIdentifier )
-    {
-        case k2009RemoteButtonPlay:
-        case kRemoteButtonPlay:
-			[self clickPlay];
-
-            break;
-        case kRemoteButtonVolume_Plus:
-			[playbackController volumeUp:self];
-            break;
-        case kRemoteButtonVolume_Minus:
-			[playbackController volumeDown:self];
-            break;
-        case kRemoteButtonRight:
-            [self clickNext];
-            break;
-        case kRemoteButtonLeft:
-            [self clickPrev];
-            break;
-        case kRemoteButtonRight_Hold:
-        case kRemoteButtonLeft_Hold:
-        case kRemoteButtonVolume_Plus_Hold:
-        case kRemoteButtonVolume_Minus_Hold:
-            /* simulate an event as long as the user holds the button */
-            remoteButtonHeld = pressedDown;
-            if( pressedDown )
-            {                
-                NSNumber* buttonIdentifierNumber = [NSNumber numberWithInt: buttonIdentifier];  
-                [self performSelector:@selector(executeHoldActionForRemoteButton:) 
-                           withObject:buttonIdentifierNumber];
-            }
-				break;
-        case kRemoteButtonMenu:
-            break;
-        case k2009RemoteButtonFullscreen:
-            [mainWindow toggleFullScreen:nil];
-            break;
-        default:
-            /* Add here whatever you want other buttons to do */
-            break;
-    }
-}
-
-
 
 - (IBAction)openFiles:(id)sender
 {
@@ -256,12 +136,7 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	
 	[self registerHotKeys];
 	
-    [spotlightWindowController init];
-	
-	//Init Remote
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"] && ![[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"]) {
-		[remote startListening:self];
-	}
+    (void) [spotlightWindowController init];
 	
 	[[playlistController undoManager] disableUndoRegistration];
 	NSString *basePath = [@"~/Library/Application Support/Cog/" stringByExpandingTildeInPath];
@@ -479,9 +354,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     [userDefaultsValuesDict setObject:[NSNumber numberWithInt:8] forKey:@"hotKeySpamKeyCode"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeySpamModifiers"];
 
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteEnabled"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"remoteOnlyOnActive"];
-
     NSString * feedURLdefault = @"https://www.kode54.net/cog/mercury.xml";
     NSString * feedURLbroken = @"https://kode54.net/cog/stable.xml";
     NSString * feedURLbroken2 = @"https://kode54.net/cog/mercury.xml";
@@ -518,9 +390,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyNextKeyCode"		options:0 context:nil];
     [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self
         forKeyPath:@"values.hotKeySpamKeyCode"      options:0 context:nil];
-
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.remoteEnabled"			options:0 context:nil];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.remoteOnlyOnActive"		options:0 context:nil];
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath
@@ -540,25 +409,10 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     else if ([keyPath isEqualToString:@"values.hotKeySpamKeyCode"]) {
         [self registerHotKeys];
     }
-	else if ([keyPath isEqualToString:@"values.remoteEnabled"] || [keyPath isEqualToString:@"values.remoteOnlyOnActive"]) {
-		if([[NSUserDefaults standardUserDefaults] boolForKey:@"remoteEnabled"]) {
-			BOOL onlyOnActive = [[NSUserDefaults standardUserDefaults] boolForKey:@"remoteOnlyOnActive"];
-			if (!onlyOnActive || [NSApp isActive]) {
-				[remote startListening: self];
-			}
-			if (onlyOnActive && ![NSApp isActive]) { //Setting a preference without being active? *shrugs*
-				[remote stopListening: self]; 
-			}
-		}
-		else {
-			[remote stopListening: self]; 
-		}
-	}
 }
 
 - (void)registerHotKeys
 {
-	[playHotKey release];
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]) {
 	playHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
@@ -568,7 +422,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         [playHotKey setEnabled:YES];
     }
 	
-	[prevHotKey release];
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPreviousKeyCode"] intValue]) {
 	prevHotKey = [[NDHotKeyEvent alloc]
 		  initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
@@ -578,7 +431,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         [prevHotKey setEnabled:YES];
     }
 	
-	[nextHotKey release];
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyNextKeyCode"] intValue]) {
 	nextHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextKeyCode"]
@@ -588,7 +440,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         [nextHotKey setEnabled:YES];
     }
 
-	[spamHotKey release];
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeySpamKeyCode"] intValue]) {
         spamHotKey = [[NDHotKeyEvent alloc]
                       initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamKeyCode"]
@@ -605,7 +456,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
     if (nil == nowPlaying)
     {
         nowPlaying = [[NowPlayingBarController alloc] init];
-        [nowPlaying retain];
         
         NSView *contentView = [mainWindow contentView];
         NSRect contentRect = [contentView frame];
@@ -638,7 +488,6 @@ increase/decrease as long as the user holds the left/right, plus/minus button */
         //        [mainView setFrameOrigin:NSMakePoint(0.0, 0.0)];
         
         [[nowPlaying view] removeFromSuperview];
-        [nowPlaying release];
         nowPlaying = nil;
     }
 }

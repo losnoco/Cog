@@ -223,23 +223,23 @@ void silk_noise_shape_quantizer(
         silk_assert( predictLPCOrder == 10 || predictLPCOrder == 16 );
         /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
         LPC_pred_Q10 = silk_RSHIFT( predictLPCOrder, 1 );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[  0 ], a_Q12[ 0 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -1 ], a_Q12[ 1 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -2 ], a_Q12[ 2 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -3 ], a_Q12[ 3 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -4 ], a_Q12[ 4 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -5 ], a_Q12[ 5 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -6 ], a_Q12[ 6 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -7 ], a_Q12[ 7 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -8 ], a_Q12[ 8 ] );
-        LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -9 ], a_Q12[ 9 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[  0 ], a_Q12[ 0 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -1 ], a_Q12[ 1 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -2 ], a_Q12[ 2 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -3 ], a_Q12[ 3 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -4 ], a_Q12[ 4 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -5 ], a_Q12[ 5 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -6 ], a_Q12[ 6 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -7 ], a_Q12[ 7 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -8 ], a_Q12[ 8 ] );
+        LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -9 ], a_Q12[ 9 ] );
         if( predictLPCOrder == 16 ) {
-            LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -10 ], a_Q12[ 10 ] );
-            LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -11 ], a_Q12[ 11 ] );
-            LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -12 ], a_Q12[ 12 ] );
-            LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -13 ], a_Q12[ 13 ] );
-            LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -14 ], a_Q12[ 14 ] );
-            LPC_pred_Q10 = silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -15 ], a_Q12[ 15 ] );
+            LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -10 ], a_Q12[ 10 ] );
+            LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -11 ], a_Q12[ 11 ] );
+            LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -12 ], a_Q12[ 12 ] );
+            LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -13 ], a_Q12[ 13 ] );
+            LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -14 ], a_Q12[ 14 ] );
+            LPC_pred_Q10 = (opus_int32) silk_SMLAWB( LPC_pred_Q10, psLPC_Q14[ -15 ], a_Q12[ 15 ] );
         }
 
         /* Long-term prediction */
@@ -247,11 +247,11 @@ void silk_noise_shape_quantizer(
             /* Unrolled loop */
             /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
             LTP_pred_Q13 = 2;
-            LTP_pred_Q13 = silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[  0 ], b_Q14[ 0 ] );
-            LTP_pred_Q13 = silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -1 ], b_Q14[ 1 ] );
-            LTP_pred_Q13 = silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -2 ], b_Q14[ 2 ] );
-            LTP_pred_Q13 = silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -3 ], b_Q14[ 3 ] );
-            LTP_pred_Q13 = silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -4 ], b_Q14[ 4 ] );
+            LTP_pred_Q13 = (opus_int32) silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[  0 ], b_Q14[ 0 ] );
+            LTP_pred_Q13 = (opus_int32) silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -1 ], b_Q14[ 1 ] );
+            LTP_pred_Q13 = (opus_int32) silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -2 ], b_Q14[ 2 ] );
+            LTP_pred_Q13 = (opus_int32) silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -3 ], b_Q14[ 3 ] );
+            LTP_pred_Q13 = (opus_int32) silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -4 ], b_Q14[ 4 ] );
             pred_lag_ptr++;
         } else {
             LTP_pred_Q13 = 0;
@@ -263,22 +263,22 @@ void silk_noise_shape_quantizer(
         tmp1 = NSQ->sAR2_Q14[ 0 ];
         NSQ->sAR2_Q14[ 0 ] = tmp2;
         n_AR_Q12 = silk_RSHIFT( shapingLPCOrder, 1 );
-        n_AR_Q12 = silk_SMLAWB( n_AR_Q12, tmp2, AR_shp_Q13[ 0 ] );
+        n_AR_Q12 = (opus_int32) silk_SMLAWB( n_AR_Q12, tmp2, AR_shp_Q13[ 0 ] );
         for( j = 2; j < shapingLPCOrder; j += 2 ) {
             tmp2 = NSQ->sAR2_Q14[ j - 1 ];
             NSQ->sAR2_Q14[ j - 1 ] = tmp1;
-            n_AR_Q12 = silk_SMLAWB( n_AR_Q12, tmp1, AR_shp_Q13[ j - 1 ] );
+            n_AR_Q12 = (opus_int32) silk_SMLAWB( n_AR_Q12, tmp1, AR_shp_Q13[ j - 1 ] );
             tmp1 = NSQ->sAR2_Q14[ j + 0 ];
             NSQ->sAR2_Q14[ j + 0 ] = tmp2;
-            n_AR_Q12 = silk_SMLAWB( n_AR_Q12, tmp2, AR_shp_Q13[ j ] );
+            n_AR_Q12 = (opus_int32) silk_SMLAWB( n_AR_Q12, tmp2, AR_shp_Q13[ j ] );
         }
         NSQ->sAR2_Q14[ shapingLPCOrder - 1 ] = tmp1;
-        n_AR_Q12 = silk_SMLAWB( n_AR_Q12, tmp1, AR_shp_Q13[ shapingLPCOrder - 1 ] );
+        n_AR_Q12 = (opus_int32) silk_SMLAWB( n_AR_Q12, tmp1, AR_shp_Q13[ shapingLPCOrder - 1 ] );
 
         n_AR_Q12 = silk_LSHIFT32( n_AR_Q12, 1 );                                /* Q11 -> Q12 */
-        n_AR_Q12 = silk_SMLAWB( n_AR_Q12, NSQ->sLF_AR_shp_Q14, Tilt_Q14 );
+        n_AR_Q12 = (opus_int32) silk_SMLAWB( n_AR_Q12, NSQ->sLF_AR_shp_Q14, Tilt_Q14 );
 
-        n_LF_Q12 = silk_SMULWB( NSQ->sLTP_shp_Q14[ NSQ->sLTP_shp_buf_idx - 1 ], LF_shp_Q14 );
+        n_LF_Q12 = (opus_int32) silk_SMULWB( NSQ->sLTP_shp_Q14[ NSQ->sLTP_shp_buf_idx - 1 ], LF_shp_Q14 );
         n_LF_Q12 = silk_SMLAWT( n_LF_Q12, NSQ->sLF_AR_shp_Q14, LF_shp_Q14 );
 
         silk_assert( lag > 0 || signalType != TYPE_VOICED );
@@ -288,7 +288,7 @@ void silk_noise_shape_quantizer(
         tmp1 = silk_SUB32( tmp1, n_LF_Q12 );                                    /* Q12 */
         if( lag > 0 ) {
             /* Symmetric, packed FIR coefficients */
-            n_LTP_Q13 = silk_SMULWB( silk_ADD32( shp_lag_ptr[ 0 ], shp_lag_ptr[ -2 ] ), HarmShapeFIRPacked_Q14 );
+            n_LTP_Q13 = (opus_int32) silk_SMULWB( silk_ADD32( shp_lag_ptr[ 0 ], shp_lag_ptr[ -2 ] ), HarmShapeFIRPacked_Q14 );
             n_LTP_Q13 = silk_SMLAWT( n_LTP_Q13, shp_lag_ptr[ -1 ],                      HarmShapeFIRPacked_Q14 );
             n_LTP_Q13 = silk_LSHIFT( n_LTP_Q13, 1 );
             shp_lag_ptr++;
@@ -408,7 +408,7 @@ static OPUS_INLINE void silk_nsq_scale_states(
     /* Scale input */
     inv_gain_Q23 = silk_RSHIFT_ROUND( inv_gain_Q31, 8 );
     for( i = 0; i < psEncC->subfr_length; i++ ) {
-        x_sc_Q10[ i ] = silk_SMULWW( x_Q3[ i ], inv_gain_Q23 );
+        x_sc_Q10[ i ] = (opus_int32) silk_SMULWW( x_Q3[ i ], inv_gain_Q23 );
     }
 
     /* Save inverse gain */
@@ -422,7 +422,7 @@ static OPUS_INLINE void silk_nsq_scale_states(
         }
         for( i = NSQ->sLTP_buf_idx - lag - LTP_ORDER / 2; i < NSQ->sLTP_buf_idx; i++ ) {
             silk_assert( i < MAX_FRAME_LENGTH );
-            sLTP_Q15[ i ] = silk_SMULWB( inv_gain_Q31, sLTP[ i ] );
+            sLTP_Q15[ i ] = (opus_int32) silk_SMULWB( inv_gain_Q31, sLTP[ i ] );
         }
     }
 
@@ -430,24 +430,24 @@ static OPUS_INLINE void silk_nsq_scale_states(
     if( gain_adj_Q16 != (opus_int32)1 << 16 ) {
         /* Scale long-term shaping state */
         for( i = NSQ->sLTP_shp_buf_idx - psEncC->ltp_mem_length; i < NSQ->sLTP_shp_buf_idx; i++ ) {
-            NSQ->sLTP_shp_Q14[ i ] = silk_SMULWW( gain_adj_Q16, NSQ->sLTP_shp_Q14[ i ] );
+            NSQ->sLTP_shp_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sLTP_shp_Q14[ i ] );
         }
 
         /* Scale long-term prediction state */
         if( signal_type == TYPE_VOICED && NSQ->rewhite_flag == 0 ) {
             for( i = NSQ->sLTP_buf_idx - lag - LTP_ORDER / 2; i < NSQ->sLTP_buf_idx; i++ ) {
-                sLTP_Q15[ i ] = silk_SMULWW( gain_adj_Q16, sLTP_Q15[ i ] );
+                sLTP_Q15[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, sLTP_Q15[ i ] );
             }
         }
 
-        NSQ->sLF_AR_shp_Q14 = silk_SMULWW( gain_adj_Q16, NSQ->sLF_AR_shp_Q14 );
+        NSQ->sLF_AR_shp_Q14 = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sLF_AR_shp_Q14 );
 
         /* Scale short-term prediction and shaping states */
         for( i = 0; i < NSQ_LPC_BUF_LENGTH; i++ ) {
-            NSQ->sLPC_Q14[ i ] = silk_SMULWW( gain_adj_Q16, NSQ->sLPC_Q14[ i ] );
+            NSQ->sLPC_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sLPC_Q14[ i ] );
         }
         for( i = 0; i < MAX_SHAPE_LPC_ORDER; i++ ) {
-            NSQ->sAR2_Q14[ i ] = silk_SMULWW( gain_adj_Q16, NSQ->sAR2_Q14[ i ] );
+            NSQ->sAR2_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sAR2_Q14[ i ] );
         }
     }
 }

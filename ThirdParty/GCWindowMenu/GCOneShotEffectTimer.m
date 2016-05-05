@@ -41,12 +41,14 @@
 
 - (id)		initWithTimeInterval:(NSTimeInterval) t forDelegate:(id) del
 {
-	[super init];
-	[self setDelegate:del];
+	if ((self = [super init]))
+    {
+        [self setDelegate:del];
 	
-	_total = t;
-	_timer = [NSTimer scheduledTimerWithTimeInterval:1/60.0f target:self selector:@selector(osfx_callback:) userInfo:nil repeats:YES];
-	_start = [NSDate timeIntervalSinceReferenceDate];
+        _total = t;
+        _timer = [NSTimer scheduledTimerWithTimeInterval:1/60.0f target:self selector:@selector(osfx_callback:) userInfo:nil repeats:YES];
+        _start = [NSDate timeIntervalSinceReferenceDate];
+    }
 
 	return self;
 }
@@ -55,8 +57,6 @@
 - (void)	dealloc
 {
 	[_timer invalidate];
-	[_delegate release];
-	[super dealloc];
 }
 
 
@@ -65,8 +65,6 @@
 	// delegate is retained and released when one-shot completes. This allows some effects to work even
 	// though the original delegate might be released by the caller.
 	
-	[del retain];
-	[_delegate release];
 	_delegate = del;
 }
 
@@ -91,8 +89,6 @@
 
 		if ( _delegate && [_delegate respondsToSelector:@selector(oneShotComplete)])
 			[_delegate oneShotComplete];
-		
-		[self release];
 	}
 	else
 	{

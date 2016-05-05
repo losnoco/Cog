@@ -75,10 +75,8 @@
 - (void)close
 {
 	[_connection close];
-	[_connection release];
 	_connection = nil;
 	
-	[_mimeType release];
 	_mimeType = nil;
 }
 
@@ -86,8 +84,6 @@
 - (void)dealloc
 {
 	[self close];
-	
-	[super dealloc];
 }
 
 - (NSURL *)url

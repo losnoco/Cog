@@ -419,7 +419,7 @@ static OPUS_INLINE void silk_noise_shape_quantizer_10_16_sse4_1(
 
                 LTP_pred_Q13 += _mm_cvtsi128_si32( xmm_tempa );
 
-                LTP_pred_Q13 = silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -4 ], b_Q14[ 4 ] );
+                LTP_pred_Q13 = (opus_int32) silk_SMLAWB( LTP_pred_Q13, pred_lag_ptr[ -4 ], b_Q14[ 4 ] );
                 pred_lag_ptr++;
             }
         }
@@ -454,13 +454,13 @@ static OPUS_INLINE void silk_noise_shape_quantizer_10_16_sse4_1(
 
         n_AR_Q12 = 5 + _mm_cvtsi128_si32( xmm_hi_07 );
 
-        n_AR_Q12 = silk_SMLAWB( n_AR_Q12, NSQ->sAR2_Q14[ 8 ], AR_shp_Q13[ 8 ] );
-        n_AR_Q12 = silk_SMLAWB( n_AR_Q12, NSQ->sAR2_Q14[ 9 ], AR_shp_Q13[ 9 ] );
+        n_AR_Q12 = (opus_int32) silk_SMLAWB( n_AR_Q12, NSQ->sAR2_Q14[ 8 ], AR_shp_Q13[ 8 ] );
+        n_AR_Q12 = (opus_int32) silk_SMLAWB( n_AR_Q12, NSQ->sAR2_Q14[ 9 ], AR_shp_Q13[ 9 ] );
 
         n_AR_Q12 = silk_LSHIFT32( n_AR_Q12, 1 );                                /* Q11 -> Q12 */
-        n_AR_Q12 = silk_SMLAWB( n_AR_Q12, sLF_AR_shp_Q14, Tilt_Q14 );
+        n_AR_Q12 = (opus_int32) silk_SMLAWB( n_AR_Q12, sLF_AR_shp_Q14, Tilt_Q14 );
 
-        n_LF_Q12 = silk_SMULWB( NSQ->sLTP_shp_Q14[ NSQ->sLTP_shp_buf_idx - 1 ], LF_shp_Q14 );
+        n_LF_Q12 = (opus_int32) silk_SMULWB( NSQ->sLTP_shp_Q14[ NSQ->sLTP_shp_buf_idx - 1 ], LF_shp_Q14 );
         n_LF_Q12 = silk_SMLAWT( n_LF_Q12, sLF_AR_shp_Q14, LF_shp_Q14 );
 
         silk_assert( lag > 0 || signalType != TYPE_VOICED );
@@ -470,7 +470,7 @@ static OPUS_INLINE void silk_noise_shape_quantizer_10_16_sse4_1(
         tmp1 = silk_SUB32( tmp1, n_LF_Q12 );                                    /* Q12 */
         if( lag > 0 ) {
             /* Symmetric, packed FIR coefficients */
-            n_LTP_Q13 = silk_SMULWB( silk_ADD32( shp_lag_ptr[ 0 ], shp_lag_ptr[ -2 ] ), HarmShapeFIRPacked_Q14 );
+            n_LTP_Q13 = (opus_int32) silk_SMULWB( silk_ADD32( shp_lag_ptr[ 0 ], shp_lag_ptr[ -2 ] ), HarmShapeFIRPacked_Q14 );
             n_LTP_Q13 = silk_SMLAWT( n_LTP_Q13, shp_lag_ptr[ -1 ],                      HarmShapeFIRPacked_Q14 );
             n_LTP_Q13 = silk_LSHIFT( n_LTP_Q13, 1 );
             shp_lag_ptr++;
@@ -653,7 +653,7 @@ static OPUS_INLINE void silk_nsq_scale_states_sse4_1(
     }
 
     for( ; i < psEncC->subfr_length; i++ ) {
-        x_sc_Q10[ i ] = silk_SMULWW( x_Q3[ i ], inv_gain_Q23 );
+        x_sc_Q10[ i ] = (opus_int32) silk_SMULWW( x_Q3[ i ], inv_gain_Q23 );
     }
 
     /* Save inverse gain */
@@ -667,7 +667,7 @@ static OPUS_INLINE void silk_nsq_scale_states_sse4_1(
         }
         for( i = NSQ->sLTP_buf_idx - lag - LTP_ORDER / 2; i < NSQ->sLTP_buf_idx; i++ ) {
             silk_assert( i < MAX_FRAME_LENGTH );
-            sLTP_Q15[ i ] = silk_SMULWB( inv_gain_Q31, sLTP[ i ] );
+            sLTP_Q15[ i ] = (opus_int32) silk_SMULWB( inv_gain_Q31, sLTP[ i ] );
         }
     }
 
@@ -697,24 +697,24 @@ static OPUS_INLINE void silk_nsq_scale_states_sse4_1(
         }
 
         for( ; i < NSQ->sLTP_shp_buf_idx; i++ ) {
-            NSQ->sLTP_shp_Q14[ i ] = silk_SMULWW( gain_adj_Q16, NSQ->sLTP_shp_Q14[ i ] );
+            NSQ->sLTP_shp_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sLTP_shp_Q14[ i ] );
         }
 
         /* Scale long-term prediction state */
         if( signal_type == TYPE_VOICED && NSQ->rewhite_flag == 0 ) {
             for( i = NSQ->sLTP_buf_idx - lag - LTP_ORDER / 2; i < NSQ->sLTP_buf_idx; i++ ) {
-                sLTP_Q15[ i ] = silk_SMULWW( gain_adj_Q16, sLTP_Q15[ i ] );
+                sLTP_Q15[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, sLTP_Q15[ i ] );
             }
         }
 
-        NSQ->sLF_AR_shp_Q14 = silk_SMULWW( gain_adj_Q16, NSQ->sLF_AR_shp_Q14 );
+        NSQ->sLF_AR_shp_Q14 = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sLF_AR_shp_Q14 );
 
         /* Scale short-term prediction and shaping states */
         for( i = 0; i < NSQ_LPC_BUF_LENGTH; i++ ) {
-            NSQ->sLPC_Q14[ i ] = silk_SMULWW( gain_adj_Q16, NSQ->sLPC_Q14[ i ] );
+            NSQ->sLPC_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sLPC_Q14[ i ] );
         }
         for( i = 0; i < MAX_SHAPE_LPC_ORDER; i++ ) {
-            NSQ->sAR2_Q14[ i ] = silk_SMULWW( gain_adj_Q16, NSQ->sAR2_Q14[ i ] );
+            NSQ->sAR2_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sAR2_Q14[ i ] );
         }
     }
 }

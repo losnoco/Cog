@@ -163,7 +163,7 @@
 		}
 	}
 
-	return [dict autorelease];
+	return dict;
 }
 
 + (BOOL)isCoverFile:(NSString *)fileName

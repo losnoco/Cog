@@ -1,7 +1,7 @@
 /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright 2011-2014 Leandro Nini <drfiemost@users.sourceforge.net>
+ * Copyright 2011-2015 Leandro Nini <drfiemost@users.sourceforge.net>
  * Copyright 2007-2010 Antti Lankila
  * Copyright 2000 Simon White
  *
@@ -30,11 +30,11 @@
 #include "sidplayfp/siddefs.h"
 
 class SidTuneInfo;
-class sidmemory;
 
 namespace libsidplayfp
 {
 class SidTuneBase;
+class sidmemory;
 }
 
 /**
@@ -80,7 +80,7 @@ public:  // ----------------------------------------------------------------
 
     /**
      * Load a single-file sidtune from a memory buffer.
-     * Currently supported: PSID format.
+     * Currently supported: PSID and MUS formats.
      *
      * @param oneFileFormatSidtune the buffer that contains song data
      * @param sidtuneLength length of the buffer
@@ -155,7 +155,7 @@ public:  // ----------------------------------------------------------------
     /**
      * Copy sidtune into C64 memory (64 KB).
      */
-    bool placeSidTuneInC64mem(sidmemory* mem);
+    bool placeSidTuneInC64mem(libsidplayfp::sidmemory& mem);
 
     /**
      * Calculates the MD5 hash of the tune.
@@ -165,6 +165,8 @@ public:  // ----------------------------------------------------------------
      * @return a pointer to the buffer containing the md5 string, 0 if no tune is loaded.
      */
     const char *createMD5(char *md5 = 0);
+
+    const uint_least8_t* c64Data() const;
 
 private:    // prevent copying
     SidTune(const SidTune&);

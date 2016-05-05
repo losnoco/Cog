@@ -61,11 +61,5 @@
     NSRectFillListWithColors(gridRects, colorRects, count);
 }
 
-- (void)dealloc
-{
-    [gradient release];
-    [super dealloc];
-}
-
 @end
 

@@ -85,7 +85,7 @@ void silk_gains_quant(
         }
 
         /* Scale and convert to linear scale */
-        gain_Q16[ k ] = silk_log2lin( silk_min_32( silk_SMULWB( INV_SCALE_Q16, *prev_ind ) + OFFSET, 3967 ) ); /* 3967 = 31 in Q7 */
+        gain_Q16[ k ] = silk_log2lin( silk_min_32( (opus_int32) silk_SMULWB( INV_SCALE_Q16, *prev_ind ) + OFFSET, 3967 ) ); /* 3967 = 31 in Q7 */
     }
 }
 
@@ -119,7 +119,7 @@ void silk_gains_dequant(
         *prev_ind = silk_LIMIT_int( *prev_ind, 0, N_LEVELS_QGAIN - 1 );
 
         /* Scale and convert to linear scale */
-        gain_Q16[ k ] = silk_log2lin( silk_min_32( silk_SMULWB( INV_SCALE_Q16, *prev_ind ) + OFFSET, 3967 ) ); /* 3967 = 31 in Q7 */
+        gain_Q16[ k ] = silk_log2lin( silk_min_32( (opus_int32) silk_SMULWB( INV_SCALE_Q16, *prev_ind ) + OFFSET, 3967 ) ); /* 3967 = 31 in Q7 */
     }
 }
 

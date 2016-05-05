@@ -1084,6 +1084,7 @@ CopyTags_APE ( FILE* fp )
 
 */
 
+#if 0
 static const char* const  parser_strings [] = {
     "/A_Tx",
     "/A/Tx",
@@ -1098,6 +1099,7 @@ static const char* const  parser_strings [] = {
     "/A/C N_0x",
     "/A/C_0x",
 };
+#endif
 
 /*
  *    dst[0] = Artist

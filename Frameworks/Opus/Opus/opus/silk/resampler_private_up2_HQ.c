@@ -59,19 +59,19 @@ void silk_resampler_private_up2_HQ(
 
         /* First all-pass section for even output sample */
         Y       = silk_SUB32( in32, S[ 0 ] );
-        X       = silk_SMULWB( Y, silk_resampler_up2_hq_0[ 0 ] );
+        X       = (opus_int32) silk_SMULWB( Y, silk_resampler_up2_hq_0[ 0 ] );
         out32_1 = silk_ADD32( S[ 0 ], X );
         S[ 0 ]  = silk_ADD32( in32, X );
 
         /* Second all-pass section for even output sample */
         Y       = silk_SUB32( out32_1, S[ 1 ] );
-        X       = silk_SMULWB( Y, silk_resampler_up2_hq_0[ 1 ] );
+        X       = (opus_int32) silk_SMULWB( Y, silk_resampler_up2_hq_0[ 1 ] );
         out32_2 = silk_ADD32( S[ 1 ], X );
         S[ 1 ]  = silk_ADD32( out32_1, X );
 
         /* Third all-pass section for even output sample */
         Y       = silk_SUB32( out32_2, S[ 2 ] );
-        X       = silk_SMLAWB( Y, Y, silk_resampler_up2_hq_0[ 2 ] );
+        X       = (opus_int32) silk_SMLAWB( Y, Y, silk_resampler_up2_hq_0[ 2 ] );
         out32_1 = silk_ADD32( S[ 2 ], X );
         S[ 2 ]  = silk_ADD32( out32_2, X );
 
@@ -80,19 +80,19 @@ void silk_resampler_private_up2_HQ(
 
         /* First all-pass section for odd output sample */
         Y       = silk_SUB32( in32, S[ 3 ] );
-        X       = silk_SMULWB( Y, silk_resampler_up2_hq_1[ 0 ] );
+        X       = (opus_int32) silk_SMULWB( Y, silk_resampler_up2_hq_1[ 0 ] );
         out32_1 = silk_ADD32( S[ 3 ], X );
         S[ 3 ]  = silk_ADD32( in32, X );
 
         /* Second all-pass section for odd output sample */
         Y       = silk_SUB32( out32_1, S[ 4 ] );
-        X       = silk_SMULWB( Y, silk_resampler_up2_hq_1[ 1 ] );
+        X       = (opus_int32) silk_SMULWB( Y, silk_resampler_up2_hq_1[ 1 ] );
         out32_2 = silk_ADD32( S[ 4 ], X );
         S[ 4 ]  = silk_ADD32( out32_1, X );
 
         /* Third all-pass section for odd output sample */
         Y       = silk_SUB32( out32_2, S[ 5 ] );
-        X       = silk_SMLAWB( Y, Y, silk_resampler_up2_hq_1[ 2 ] );
+        X       = (opus_int32) silk_SMLAWB( Y, Y, silk_resampler_up2_hq_1[ 2 ] );
         out32_1 = silk_ADD32( S[ 5 ], X );
         S[ 5 ]  = silk_ADD32( out32_2, X );
 

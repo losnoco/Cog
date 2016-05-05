@@ -4,8 +4,7 @@
 
 - (void)setBackgroundColor:(NSColor *)bgColor
 {
-	[backgroundColor release];
-    backgroundColor = [bgColor retain];
+    backgroundColor = bgColor;
 }
 - (NSColor *)backgroundColor
 {
@@ -62,9 +61,7 @@
 		[self setFrame:[self frameRectForContentRect:[field frame]] display:NO];
 		
 		[field setStringValue:@" "]; // Just having at least 1 char to allow the next message...
-		textAttributes = [[[field attributedStringValue] attributesAtIndex:0 effectiveRange:nil] retain];
-		
-		[field release];
+		textAttributes = [[field attributedStringValue] attributesAtIndex:0 effectiveRange:nil];
 	}
 	
     return self;
@@ -75,10 +72,7 @@
 {
 	if (closeTimer) {
 		[closeTimer invalidate];
-		[closeTimer release];
 	}
-    [tooltipObject release];
-    [super dealloc];
 }
 
 - (id)toolTip { return tooltipObject; }
@@ -87,8 +81,7 @@
 {
     id contentView = [self contentView];
     
-    [tooltipObject release];
-    tooltipObject = [tip retain];
+    tooltipObject = tip;
     
     if ([contentView isKindOfClass:[NSTextField class]]) {
         if ([tip isKindOfClass:[NSString class]]) [contentView setStringValue:tip];
@@ -101,15 +94,15 @@
 {
 	[self orderFront:nil];
 
-    if (closeTimer) { [closeTimer invalidate]; [closeTimer release]; }
+    if (closeTimer) { [closeTimer invalidate]; }
 	
-    closeTimer = [[NSTimer timerWithTimeInterval:duration target:self selector:@selector(close) userInfo:nil repeats:NO] retain];
+    closeTimer = [NSTimer timerWithTimeInterval:duration target:self selector:@selector(close) userInfo:nil repeats:NO];
 	[[NSRunLoop currentRunLoop] addTimer:closeTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void)orderFront
 {
-    if (closeTimer) { [closeTimer invalidate]; [closeTimer release]; closeTimer = nil; }
+    if (closeTimer) { [closeTimer invalidate]; closeTimer = nil; }
 	
     [super orderFront:nil];
 }

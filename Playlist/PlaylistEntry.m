@@ -139,8 +139,6 @@
 	self.albumArtInternal = nil;
 	
 	self.endian = nil;
-	
-	[super dealloc];
 }
 
 // Get the URL if the title is blank
@@ -238,7 +236,6 @@
             [elements addObject:[secondsFormatter stringForObjectValue:[self length]]];
         }
         [elements addObject:@")"];
-        [secondsFormatter release];
     }
     
     return [elements componentsJoinedByString:@""];
@@ -249,7 +246,6 @@
 {
     SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
     NSString *time = [secondsFormatter stringForObjectValue:[NSNumber numberWithFloat:currentPosition]];
-    [secondsFormatter release];
     return time;
 }
 
@@ -258,7 +254,6 @@
 {
     SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
     NSString *time = [secondsFormatter stringForObjectValue:[self length]];
-    [secondsFormatter release];
     return time;
 }
 
@@ -274,7 +269,7 @@
     
     if (image == nil)
     {
-        image = [[[NSImage alloc] initWithData:albumArtInternal] autorelease];
+        image = [[NSImage alloc] initWithData:albumArtInternal];
         [image setName:imageCacheTag];
     }
     

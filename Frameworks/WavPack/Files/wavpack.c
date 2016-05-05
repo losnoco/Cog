@@ -2269,7 +2269,7 @@ static int repack_file (char *infilename, char *outfilename, char *out2filename,
     int use_tempfiles = (out2filename != NULL), input_mode;
     unsigned char md5_verify [16], md5_display [16];
     char *outfilename_temp, *out2filename_temp;
-    uint32_t total_samples = 0, bcount;
+    uint32_t total_samples = 0/*, bcount*/;
     WavpackConfig loc_config = *config;
     WavpackContext *infile, *outfile;
     write_id wv_file, wvc_file;
@@ -2825,7 +2825,7 @@ static unsigned char *format_samples (int bps, unsigned char *dst, int32_t *src,
 static int repack_audio (WavpackContext *outfile, WavpackContext *infile, unsigned char *md5_digest_source)
 {
     int bps = WavpackGetBytesPerSample (infile), num_channels = WavpackGetNumChannels (infile);
-    uint32_t input_samples = INPUT_SAMPLES, samples_read = 0;
+    uint32_t input_samples = INPUT_SAMPLES/*, samples_read = 0*/;
     unsigned char *format_buffer;
     int32_t *sample_buffer;
     double progress = -1.0;

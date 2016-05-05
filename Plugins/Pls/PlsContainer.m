@@ -65,7 +65,6 @@
 	
 	//Append the fragment
 	NSURL *url = [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
-	[unixPath release];
 	return url;
 }
 
@@ -105,9 +104,9 @@
 	
     for (NSString *entry in [contents componentsSeparatedByString:@"\n"])
     {
-        entry = [entry stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString *_entry = [entry stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-		NSScanner *scanner = [[NSScanner alloc] initWithString:entry];
+		NSScanner *scanner = [[NSScanner alloc] initWithString:_entry];
 		NSString *lhs = nil;
 		NSString *rhs = nil;
 
@@ -116,14 +115,11 @@
 			![scanner scanUpToString:@"" intoString:&rhs]	|| // get RHS
 			[lhs rangeOfString:@"File" options:NSCaseInsensitiveSearch|NSAnchoredSearch].location == NSNotFound) // We only want file entries
 		{
-			[scanner release];
 			continue;
 		}
 		
 		//need to add basepath if its a file, and convert to URL
 		[entries addObject:[self urlForPath:rhs relativeTo:filename]];
-		
-		[scanner release];
 	}
 	
 	return entries;

@@ -64,7 +64,7 @@
 	[source seek:0 whence:SEEK_SET];
 
 	gme_err_t error;
-	error = gme_load_custom(emu, readCallback, size, source);
+	error = gme_load_custom(emu, readCallback, size, (__bridge void *)(source));
 	if (error)
 	{
 		ALog(@"GME: ERROR Loding file!");

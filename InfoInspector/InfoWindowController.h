@@ -16,7 +16,7 @@
     IBOutlet id currentEntryController;
     IBOutlet AppController *appController;
 
-    id valueToDisplay;
+    id __unsafe_unretained valueToDisplay;
 }
 
 @property(assign) id valueToDisplay;

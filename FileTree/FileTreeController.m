@@ -8,6 +8,7 @@
 
 #import "PlaylistController.h"
 #import "FileTreeController.h"
+#import "SideViewController.h"
 
 
 @implementation FileTreeController
@@ -30,7 +31,6 @@
     }
     
     [controller doAddToPlaylist:urls origin:origin];
-    [urls release];
 }
 
 - (void)addToPlaylistExternal:(id)sender

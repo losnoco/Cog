@@ -361,6 +361,8 @@ unrar_err_t Archive::ReadHeader50(size_t *ReadSize)
     
     switch(ShortBlock.HeaderType)
     {
+        default: break;
+            
         case HEAD_CRYPT:
             return unrar_err_encrypted;
         case HEAD_MAIN:
@@ -720,10 +722,12 @@ void Archive::ConvertFileHeader(FileHeader *hd)
     if (Format==RARFMT15 && hd->UnpVer<20 && (hd->FileAttr & 0x10))
         hd->Dir=true;
     if (hd->HSType==HSYS_UNKNOWN)
+    {
         if (hd->Dir)
             hd->FileAttr=0x10;
         else
             hd->FileAttr=0x20;
+    }
 }
 
 

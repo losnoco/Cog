@@ -52,13 +52,6 @@
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
 
-- (void)dealloc
-{
-	[queue release];
-	
-	[super dealloc];
-}
-
 - (BOOL)save:(NSString *)filename
 {
 	NSString *ext = [filename pathExtension];
@@ -96,7 +89,7 @@
 
 	if ([entryURL isFileURL]) {
 		//We want relative paths.
-		NSMutableString *entryPath = [[[[entryURL path] stringByStandardizingPath] mutableCopy] autorelease];
+		NSMutableString *entryPath = [[[entryURL path] stringByStandardizingPath] mutableCopy];
 
 		[entryPath replaceOccurrencesOfString:basePath withString:@"" options:(NSAnchoredSearch | NSLiteralSearch | NSCaseInsensitiveSearch) range:NSMakeRange(0, [entryPath length])];
 		if ([entryURL fragment])
@@ -232,8 +225,6 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
             [dict removeObjectForKey:@"metadataLoaded"];
         
         [topLevel addObject:dict];
-        
-        [dict release];
 	}
     
     NSMutableArray * queueList = [[NSMutableArray alloc] init];
@@ -247,12 +238,6 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
     NSData * data = [NSPropertyListSerialization dataWithPropertyList:dictionary format:NSPropertyListXMLFormat_v1_0 options:0 error:0];
 
-    [albumArtSet release];
-    
-    [topLevel release];
-
-    [queueList release];
-    
     [fileHandle writeData:data];
     
     [fileHandle closeFile];
@@ -414,8 +399,6 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		pe.queuePosition = -1;
 		[entries addObject:pe];
 
-		[pe release];
-        
         ++i;
 	}
 
@@ -435,8 +418,6 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
             pe.index = index+i;
             pe.queuePosition = -1;
             [entries addObject:pe];
-            
-            [pe release];
             
             ++i;
         }
@@ -475,24 +456,20 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     for (PlaylistEntry *pe in entries)
     {
         if ([pe metadataLoaded]) continue;
-        
-		NSAutoreleasePool *pool =[[NSAutoreleasePool alloc] init];
 
-        NSInvocationOperation *readEntryInfoOperation;
-        readEntryInfoOperation = [[NSInvocationOperation alloc]
-                                    initWithTarget:self
-                                          selector:@selector(readEntryInfo:)
-                                            object:pe];
+        @autoreleasepool {
+            NSInvocationOperation *readEntryInfoOperation;
+            readEntryInfoOperation = [[NSInvocationOperation alloc]
+                                        initWithTarget:self
+                                              selector:@selector(readEntryInfo:)
+                                                object:pe];
 
-        [readEntryInfoOperation addObserver:self
-                                 forKeyPath:@"isFinished"
-                                    options:NSKeyValueObservingOptionNew
-                                    context:NULL];
-        [queue addOperation:readEntryInfoOperation];
-
-		[readEntryInfoOperation release];
-
-		[pool release];
+            [readEntryInfoOperation addObserver:self
+                                     forKeyPath:@"isFinished"
+                                        options:NSKeyValueObservingOptionNew
+                                        context:NULL];
+            [queue addOperation:readEntryInfoOperation];
+        }
     }
 
 	[queue waitUntilAllOperationsAreFinished];

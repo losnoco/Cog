@@ -76,7 +76,7 @@ static AppleRemote *_o_sharedInstance = nil;
 - (id)init
 {
     if (_o_sharedInstance) {
-        [self dealloc];
+        self = nil;
     } else {
         _o_sharedInstance = [super init];
         _openInExclusiveMode = YES;
@@ -105,7 +105,6 @@ static AppleRemote *_o_sharedInstance = nil;
             [mutableCookieToButtonMapping setObject:@(kRemoteControl_Switched)     forKey:@"42_33_23_21_20_2_33_23_21_20_2_"];
 
         _cookieToButtonMapping = [[NSDictionary alloc] initWithDictionary: mutableCookieToButtonMapping];
-        [mutableCookieToButtonMapping release];
 
         /* defaults */
         _simulatePlusMinusHold = YES;
@@ -117,8 +116,6 @@ static AppleRemote *_o_sharedInstance = nil;
 
 - (void) dealloc {
     [self stopListening:self];
-    [_cookieToButtonMapping release];
-    [super dealloc];
 }
 
 - (int) remoteId {
@@ -187,7 +184,6 @@ static AppleRemote *_o_sharedInstance = nil;
         AppleRemoteApplicationDelegate* appDelegate = (AppleRemoteApplicationDelegate*)[NSApp delegate];
         id previousAppDelegate = [appDelegate applicationDelegate];
         [NSApp setDelegate: previousAppDelegate];
-        [appDelegate release];
     }
 }
 
@@ -235,10 +231,7 @@ static AppleRemote *_o_sharedInstance = nil;
         queue = NULL;
     }
 
-    if (_allCookies != nil) {
-        [_allCookies autorelease];
-        _allCookies = nil;
-    }
+    _allCookies = nil;
 
     if (hidDeviceInterface != NULL) {
         //close the device
@@ -274,18 +267,6 @@ static AppleRemote* sharedInstance=nil;
     return sharedInstance;
 }
 - (id)copyWithZone:(NSZone *)zone {
-    return self;
-}
-- (id)retain {
-    return self;
-}
-- (NSUInteger)retainCount {
-    return UINT_MAX;  //denotes an object that cannot be released
-}
-- (void)release {
-    //do nothing
-}
-- (id)autorelease {
     return self;
 }
 
@@ -448,7 +429,7 @@ static AppleRemote* sharedInstance=nil;
 Will be called for any event of any type (cookie) to which we subscribe
 */
 static void QueueCallbackFunction(void* target,  IOReturn result, void* refcon, void* sender) {
-    AppleRemote* remote = (AppleRemote*)target;
+    AppleRemote* remote = (__bridge AppleRemote*)target;
 
     IOHIDEventStruct event;
     AbsoluteTime     zeroTime = {0,0};

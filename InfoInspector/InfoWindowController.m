@@ -17,7 +17,7 @@
 
 + (void)initialize
 {
-	NSValueTransformer *missingAlbumArtTransformer = [[[MissingAlbumArtTransformer alloc] init] autorelease];
+	NSValueTransformer *missingAlbumArtTransformer = [[MissingAlbumArtTransformer alloc] init];
     [NSValueTransformer setValueTransformer:missingAlbumArtTransformer
                                     forName:@"MissingAlbumArtTransformer"];
 }

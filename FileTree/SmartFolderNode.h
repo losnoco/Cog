@@ -11,6 +11,7 @@
 #import "PathNode.h"
 
 @interface SmartFolderNode : PathNode {
+    MDQueryRef _query;
 }
 
 @end

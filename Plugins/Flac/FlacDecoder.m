@@ -14,7 +14,7 @@
 
 FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte blockBuffer[], size_t *bytes, void *client_data)
 {
-	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
     long bytesRead = [[flacDecoder source] read:blockBuffer amount:*bytes];
 	
 	if(bytesRead < 0) {
@@ -34,7 +34,7 @@ FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, F
 
 FLAC__StreamDecoderSeekStatus SeekCallback(const FLAC__StreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data)
 {
-	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 	
 	if(![[flacDecoder source] seek:absolute_byte_offset whence:SEEK_SET])
 		return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
@@ -44,7 +44,7 @@ FLAC__StreamDecoderSeekStatus SeekCallback(const FLAC__StreamDecoder *decoder, F
 
 FLAC__StreamDecoderTellStatus TellCallback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data)
 {
-	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 
 	off_t pos;
 	if((pos = [[flacDecoder source] tell]) < 0)
@@ -57,14 +57,14 @@ FLAC__StreamDecoderTellStatus TellCallback(const FLAC__StreamDecoder *decoder, F
 
 FLAC__bool EOFCallback(const FLAC__StreamDecoder *decoder, void *client_data)
 {
-	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 	
 	return (FLAC__bool)[flacDecoder endOfStream];
 }
 
 FLAC__StreamDecoderLengthStatus LengthCallback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data)
 {
-	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 	
 	if ([[flacDecoder source] seekable]) {
 		long currentPos = [[flacDecoder source] tell];
@@ -84,7 +84,7 @@ FLAC__StreamDecoderLengthStatus LengthCallback(const FLAC__StreamDecoder *decode
 
 FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const sampleblockBuffer[], void *client_data)
 {
-	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 	
 	void *blockBuffer = [flacDecoder blockBuffer];
 
@@ -154,7 +154,7 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
     // Some flacs observed in the wild have multiple STREAMINFO metadata blocks,
     // of which only first one has sane values, so only use values from the first STREAMINFO
     // to determine stream format (this seems to be consistent with flac spec: http://flac.sourceforge.net/format.html)
-	FlacDecoder *flacDecoder = (FlacDecoder *)client_data;
+	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 
     if (!flacDecoder->hasStreamInfo) {
         flacDecoder->channels = metadata->data.stream_info.channels;
@@ -192,7 +192,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 										 WriteCallback,
 										 MetadataCallback,
 										 ErrorCallback,
-										 self
+										 (__bridge void *)(self)
 										 ) != FLAC__STREAM_DECODER_INIT_STATUS_OK)
 	{
 		return NO;
@@ -289,8 +289,6 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 - (void)setSource:(id<CogSource>)s
 {
-	[s retain];
-	[source release];
 	source = s;
 }
 - (id<CogSource>)source

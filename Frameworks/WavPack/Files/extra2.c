@@ -1216,7 +1216,7 @@ void execute_stereo (WavpackContext *wpc, int32_t *samples, int no_history, int 
         }
 
         wpds = &wps->decorr_specs [c];
-        nterms = (int) strlen (wpds->terms);
+        nterms = (int) strlen ((const char *)wpds->terms);
 
         while (1) {
             if (force_js || (wpds->joint_stereo && !force_ts)) {

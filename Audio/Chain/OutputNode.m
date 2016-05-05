@@ -53,27 +53,26 @@
 
 - (int)readData:(void *)ptr amount:(int)amount
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-	int n;
-	[self setPreviousNode:[[controller bufferChain] finalNode]];
+    @autoreleasepool {
+        int n;
+        [self setPreviousNode:[[controller bufferChain] finalNode]];
 	
-	n = [super readData:ptr amount:amount];
-	amountPlayed += n;
+        n = [super readData:ptr amount:amount];
+        amountPlayed += n;
     
-	if (endOfStream == YES)
-	{
-		amountPlayed = 0;
-		[controller endOfInputPlayed]; //Updates shouldContinue appropriately?
-	}
+        if (endOfStream == YES)
+        {
+            amountPlayed = 0;
+            [controller endOfInputPlayed]; //Updates shouldContinue appropriately?
+        }
 
 /*	if (n == 0) {
 		DLog(@"Output Buffer dry!");
 	}
 */	
-	[pool release];
 	
-	return n;
+        return n;
+    }
 }
 
 
@@ -95,13 +94,6 @@
 - (void)close
 {
 	[output stop];
-}
-
-- (void)dealloc
-{
-	[output release];
-
-	[super dealloc];
 }
 
 - (void)setVolume:(double) v

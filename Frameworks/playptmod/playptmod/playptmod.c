@@ -593,7 +593,7 @@ static void outputAudio(player *p, int *target, int numSamples)
     int *out;
     int step;
     int tempVolume;
-    int delta;
+    /*int delta;*/
     int interpolating;
     unsigned int i;
     unsigned int j;

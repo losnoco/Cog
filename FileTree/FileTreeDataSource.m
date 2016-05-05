@@ -73,7 +73,6 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:[rootURL path]])
         rootURL = [NSURL fileURLWithPath:[@"~/Music" stringByExpandingTildeInPath]];
     
-	[rootNode release];
 	rootNode = [[DirectoryNode alloc] initWithDataSource:self url:rootURL];
 
 	[watcher setPath:[rootURL path]];
@@ -179,13 +178,6 @@
 	{
 		[outlineView reloadItem:item reloadChildren:YES];
 	}
-}
-
-- (void)dealloc
-{
-	[rootNode release];
-	
-	[super dealloc];
 }
 
 @end

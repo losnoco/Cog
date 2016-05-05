@@ -52,7 +52,6 @@
 	
 	//Append the fragment
 	NSURL *url = [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
-	[unixPath release];
 	return url;
 }
 
@@ -75,7 +74,6 @@
     id plist = [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:NSPropertyListImmutable format:&format errorDescription:&error];
     if(!plist){
         ALog(@"Error: %@",error);
-        [error release];
         return nil;
     }
     

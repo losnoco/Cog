@@ -20,8 +20,6 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 - (void)dealloc
 {
 	[self stopObserving];
-	
-	[super dealloc];
 }
 
 - (void)awakeFromNib
@@ -31,7 +29,7 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 
 - (void)startObserving
 {
-	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:PlaybackButtonsPlaybackStatusObservationContext];
+	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void * _Nullable)(PlaybackButtonsPlaybackStatusObservationContext)];
 }
 
 - (void)stopObserving
@@ -41,7 +39,7 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([PlaybackButtonsPlaybackStatusObservationContext isEqual:context])
+	if ([PlaybackButtonsPlaybackStatusObservationContext isEqual:(__bridge id)(context)])
 	{
 		NSInteger playbackStatus = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
 

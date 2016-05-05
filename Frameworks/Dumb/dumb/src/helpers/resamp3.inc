@@ -52,7 +52,7 @@ long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLU
 	long todo;
 	LONG_LONG todo64;
 	int quality;
-	int check;
+	/*int check;*/
 
 	if (!resampler || resampler->dir == 0) return 0;
 	ASSERT(resampler->dir == -1 || resampler->dir == 1);

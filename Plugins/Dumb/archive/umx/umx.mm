@@ -38,7 +38,7 @@ public:
 
 void * unpackUmx( const void * in, long * size )
 {
-    umr_mem_reader memreader(in, *size);
+    umr_mem_reader memreader(in, (unsigned int) *size);
     umr::upkg pkg;
     if (pkg.open(&memreader))
     {

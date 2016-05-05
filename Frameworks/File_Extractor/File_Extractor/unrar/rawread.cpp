@@ -20,7 +20,7 @@ size_t RawRead::Read(size_t Size)
     if (Size!=0)
     {
         Data.Add(Size);
-        ReadSize=SrcFile->Read(&Data[DataSize],Size);
+        ReadSize=SrcFile->Read(&Data[DataSize],(int)Size);
         DataSize+=ReadSize;
     }
     return ReadSize;

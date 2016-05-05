@@ -109,7 +109,7 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter,
                             AudioStreamPacketDescription** outDataPacketDescription,
                             void* inUserData)
 {
-	ConverterNode *converter = (ConverterNode *)inUserData;
+	ConverterNode *converter = (__bridge ConverterNode *)inUserData;
 	OSStatus err = noErr;
 	int amountToWrite;
 	int amountRead;
@@ -149,7 +149,7 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
                             AudioStreamPacketDescription** outDataPacketDescription,
                             void* inUserData)
 {
-	ConverterNode *converter = (ConverterNode *)inUserData;
+	ConverterNode *converter = (__bridge ConverterNode *)inUserData;
 	OSStatus err = noErr;
 	int amountToWrite;
 	
@@ -204,7 +204,7 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
         ioData.mNumberBuffers = 1;
             
     tryagain:
-        err = AudioConverterFillComplexBuffer(converterFloat, ACInputProc, self, &ioNumberFrames, &ioData, NULL);
+        err = AudioConverterFillComplexBuffer(converterFloat, ACInputProc, (__bridge void * _Nullable)(self), &ioNumberFrames, &ioData, NULL);
         amountRead += ioData.mBuffers[0].mDataByteSize;
         if (err == 100)
         {
@@ -239,7 +239,7 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
     amountRead = 0;
         
 tryagain2:
-    err = AudioConverterFillComplexBuffer(converter, ACFloatProc, self, &ioNumberFrames, &ioData, NULL);
+    err = AudioConverterFillComplexBuffer(converter, ACFloatProc, (__bridge void *)(self), &ioNumberFrames, &ioData, NULL);
     amountRead += ioData.mBuffers[0].mDataByteSize;
     if (err == 100)
     {
@@ -387,7 +387,6 @@ static float db_to_scale(float db)
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
     
 	[self cleanUp];
-	[super dealloc];
 }
 
 
@@ -407,15 +406,12 @@ static float db_to_scale(float db)
 - (void)setRGInfo:(NSDictionary *)rgi
 {
     DLog(@"Setting ReplayGain info");
-    [rgInfo release];
-    [rgi retain];
     rgInfo = rgi;
     [self refreshVolumeScaling];
 }
 
 - (void)cleanUp
 {
-    [rgInfo release];
     rgInfo = nil;
     if (converterFloat)
     {

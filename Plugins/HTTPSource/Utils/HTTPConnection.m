@@ -34,12 +34,7 @@
 
 - (void)dealloc
 {
-	[_requestHeaders release];
-	[_responseHeaders release];
-	
 	[self setURL:nil];
-	
-	[super dealloc];
 }
 
 - (void)setValue:(NSString *)value forRequestHeader:(NSString *)header
@@ -96,13 +91,12 @@
 
 	_bufferSize -= (lineLength + 2); // +2 since we also skipped the newline
 	
-	return [line autorelease];
+	return line;
 }
 
 - (BOOL)_readResponse
 {
 	// Clear out any old response headers
-	[_responseHeaders release];
 	_responseHeaders = nil;
 	
 	// Fetch the first line so we can parse the status code
@@ -117,7 +111,6 @@
 	
 	// Scan up to the space and the number afterwards
 	BOOL success = ([scanner scanUpToString:@" " intoString:nil] && [scanner scanInteger:&statusCode]);
-	[scanner release];
 	if (NO == success) {
 		// Failed to retrieve status code.
 		return NO;
@@ -149,7 +142,6 @@
 
 		NSScanner *scanner = [[NSScanner alloc] initWithString:line];
 		BOOL success = ([scanner scanUpToString:@":" intoString:&key] && [scanner scanString:@":" intoString:nil] && [scanner scanUpToString:@"" intoString:&value]);
-		[scanner release];
 		
 		if (NO == success) {
 			DLog(@"Could not scan header: %@", line);
@@ -210,11 +202,9 @@
 	// Send it off!
 	NSInteger sent = [_socket send:requestBytes amount:requestLength];
 	if (sent != requestLength) {
-		[requestString release];
 		return NO;
 	}
 	DLog(@"Sent:\n%@\n", requestString);
-	[requestString release];
 	
 	return YES;
 }
@@ -253,7 +243,6 @@
 - (void)close
 {
 	[_socket close];
-	[_socket release];
 	_socket = nil;
 	
 	if (NULL != _buffer) {

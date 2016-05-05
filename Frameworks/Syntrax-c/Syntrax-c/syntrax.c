@@ -134,11 +134,11 @@ void playerDestroy(Player *p)
 
 Player * playerCreate(int SAMPLEFREQUENCY)
 {
-    int i, j;
+    int i/*, j*/;
     
     Player* p;
     
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     
     p = (Player *) calloc(1, sizeof(Player));
     if (!p) return NULL;
@@ -241,7 +241,7 @@ static void instrEffect(Player *p, int chanNum)
     int _local38;
     int _local39;
     int _local40;
-    int _local43;
+    /*int _local43;*/
 	int butt, ron, pat, buf2, buf1;
 
     TuneChannel *tc        = &p->tuneChannels[chanNum];
@@ -1666,7 +1666,7 @@ static void ABH(Player *p)
                     _local4 = 0;
                 }
                 _local2 = _local3[_local4].patLen;
-                if ((((tc->LJHG == _local2)) || ((tc->EQMIWERPIF == -1)))){
+                if ((((tc->LJHG == _local2)) || ((tc->EQMIWERPIF == 0xFF)))){
                     tc->LJHG = 0;
                     tc->EQMIWERPIF++;
                     p->curSubsong.mutedChans[i] = p->mutedChans[i];
@@ -1744,10 +1744,10 @@ void mixChunk(Player *p, int16_t *outBuff, uint playbackBufferSize)
 {
     int i, j;
     uint sampleNum;
-    int amp, smp, pos;
+    int amp, smp/*, pos*/;
     int32_t audioMainR, audioMainL;
     int32_t audioDelayR, audioDelayL;
-    uint otherDelayTime;
+    uint otherDelayTime = 1;
     Voice *v;
     TuneChannel *tc;
 	int insNum;
@@ -1850,6 +1850,8 @@ void mixChunk(Player *p, int16_t *outBuff, uint playbackBufferSize)
             {
                 //amp = word_6632B964;
                 //otherDelayTime = word_6632BB24;
+                amp = 0;
+                otherDelayTime = 1;
             }
             else
             {
@@ -2201,6 +2203,7 @@ static void AAUCAPQW(Player *p)
     }
 }
 
+#if 0
 static void IMXFLSSMB(Player *p, int _arg1)
 {
     p->PQV = 1;
@@ -2210,6 +2213,7 @@ static void IMXFLSSMB(Player *p, int _arg1)
     p->sePmSong = SE_PM_PATTERN;
     p->WDTECTE = p->subsongs[0].tempo - p->subsongs[0].groove;
 }
+#endif
 
 void initSubsong(Player *p, int num)
 {

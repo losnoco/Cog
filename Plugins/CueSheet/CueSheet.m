@@ -17,7 +17,7 @@
 
 + (id)cueSheetWithFile:(NSString *)filename
 {
-	return [[[CueSheet alloc] initWithFile:filename] autorelease];
+	return [[CueSheet alloc] initWithFile:filename];
 }
 
 - (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
@@ -57,7 +57,6 @@
 	
 	//Append the fragment
 	NSURL *url = [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString: fragment]];
-	[unixPath release];
 	return url;
 }
 
@@ -103,7 +102,6 @@
 	NSScanner *scanner = nil;
     for (NSString *line in [contents componentsSeparatedByString:@"\n"])
 	{
-		[scanner release];
 		scanner = [[NSScanner alloc] initWithString:line];
 
 		NSString *command;
@@ -197,20 +195,21 @@
 		}
 		else if ([command isEqualToString:@"TITLE"])
 		{
-			NSString **titleDest;
-			if (!path) //Have not come across a file yet.
-				titleDest = &album;
-			else
-				titleDest = &title;
-			
+            NSString *titleDest;
+            
 			if (![scanner scanString:@"\"" intoString:nil]) {
 				continue;
 			}
 
 			//Read in the path
-			if (![scanner scanUpToString:@"\"" intoString:titleDest]) {
+			if (![scanner scanUpToString:@"\"" intoString:&titleDest]) {
 				continue;
 			}
+            
+            if (!path) //Have not come across a file yet.
+                album = titleDest;
+            else
+                title = titleDest;
 		}
 		else if ([command isEqualToString:@"REM"]) //Additional metadata sometimes stored in comments
 		{
@@ -245,12 +244,8 @@
 			}
 		}
 	}
-
-	[scanner release];
 	
 	tracks = [entries copy];
-
-	[entries release];
 }
 
 - (id)initWithFile:(NSString *)filename
@@ -261,13 +256,6 @@
 	}
 	
 	return self;
-}
-
-- (void)dealloc
-{
-	[tracks release];
-	
-	[super dealloc];
 }
 
 - (NSArray *)tracks

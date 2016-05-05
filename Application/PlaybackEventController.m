@@ -66,15 +66,6 @@ typedef enum
 	return self;
 }
 
-- (void)dealloc
-{
-	[queue release];
-    
-    [entry release];
-	
-	[super dealloc];
-}
-
 - (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe status:(TrackStatus)status
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -105,8 +96,7 @@ typedef enum
 - (void)performPlaybackDidBeginActions:(PlaylistEntry *)pe
 {
     if (NO == [pe error]) {
-        [entry release];
-        entry = [pe retain];
+        entry = pe;
         
         [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackNotification object:nil userInfo:[self fillNotificationDictionary:pe status:TrackPlaying] deliverImmediately:YES];
         
@@ -180,7 +170,6 @@ typedef enum
 - (void)performPlaybackDidStopActions
 {
     [[NSDistributedNotificationCenter defaultCenter] postNotificationName:TrackNotification object:nil userInfo:[self fillNotificationDictionary:entry status:TrackStopped] deliverImmediately:YES];
-    [entry release];
     entry = nil;
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
 		[scrobbler stop];
@@ -220,28 +209,24 @@ typedef enum
 {
 	NSOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(performPlaybackDidBeginActions:) object:[notification object]];
 	[queue addOperation:op];
-	[op release];
 }
 
 - (void)playbackDidPause:(NSNotification *)notification
 {
 	NSOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(performPlaybackDidPauseActions) object:nil];
 	[queue addOperation:op];
-	[op release];
 }
 
 - (void)playbackDidResume:(NSNotification *)notification
 {
 	NSOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(performPlaybackDidResumeActions) object:nil];
 	[queue addOperation:op];
-	[op release];
 }
 
 - (void)playbackDidStop:(NSNotification *)notification
 {
 	NSOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(performPlaybackDidStopActions) object:nil];
 	[queue addOperation:op];
-	[op release];
 }
 
 - (NSDictionary *) registrationDictionaryForGrowl

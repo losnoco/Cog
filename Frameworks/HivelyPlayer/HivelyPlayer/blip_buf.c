@@ -170,7 +170,7 @@ int hvl_blip_clocks_needed( const hvl_blip_t* m, int samples )
 	if ( needed < m->offset )
 		return 0;
 	
-	return (needed - m->offset + m->factor - 1) / m->factor;
+	return (int)((needed - m->offset + m->factor - 1) / m->factor);
 }
 
 void hvl_blip_end_frame( hvl_blip_t* m, unsigned t )
@@ -213,7 +213,7 @@ int hvl_blip_read_samples( hvl_blip_t* m, int out [], int count, int gain )
 		do
 		{
 			/* Eliminate fraction */
-			int s = ARITH_SHIFT( sum, delta_bits );
+			int s = (int) ARITH_SHIFT( sum, delta_bits );
 			
 			sum += *in++;
 			

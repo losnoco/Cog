@@ -1,7 +1,7 @@
 /*
  * This file is part of libsidplayfp, a SID player engine.
  *
- * Copyright 2011-2014 Leandro Nini <drfiemost@users.sourceforge.net>
+ * Copyright 2011-2015 Leandro Nini <drfiemost@users.sourceforge.net>
  * Copyright 2007-2010 Antti Lankila
  * Copyright 2000 Simon White
  *
@@ -37,8 +37,6 @@
 #include "sidmemory.h"
 #include "stringutils.h"
 
-#include "sidcxx11.h"
-
 #include "MUS.h"
 #include "p00.h"
 #include "prg.h"
@@ -63,13 +61,11 @@ const char SidTuneBase::ERR_TRUNCATED[] = "SIDTUNE ERROR: File is most likely tr
 const char SidTuneBase::ERR_INVALID[]   = "SIDTUNE ERROR: File contains invalid data";
 
 /**
- * Petscii to Ascii conversion table.
- *
- * CHR$ conversion table (0x01 = no output)
+ * Petscii to Ascii conversion table (0x01 = no output).
  */
-static const char CHR_tab[256] =
+const char CHR_tab[256] =
 {
-  0x00,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, 0xd,0x01,0x01,
+  0x00,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x0d,0x01,0x01,
   0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,
   0x20,0x21,0x01,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f,
   0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x3a,0x3b,0x3c,0x3d,0x3e,0x3f,
@@ -89,15 +85,19 @@ static const char CHR_tab[256] =
   0x2f,0x2d,0x2d,0x7c,0x7c,0x7c,0x7c,0x2d,0x2d,0x2d,0x2f,0x5c,0x5c,0x2f,0x2f,0x23
 };
 
-/// C64KB + LOAD + PSID
-const uint_least32_t MAX_FILELEN = 65536 + 2 + 0x7C;
-
+/// The Commodore 64 memory size
 const uint_least32_t MAX_MEMORY = 65536;
+
+/// C64KB + LOAD + PSID
+const uint_least32_t MAX_FILELEN = MAX_MEMORY + 2 + 0x7C;
+
+/// Minimum load address for real c64 only tunes
+const uint_least16_t SIDTUNE_R64_MIN_LOAD_ADDR = 0x07e8;
     
 SidTuneBase* SidTuneBase::load(const char* fileName, const char **fileNameExt,
                  bool separatorIsSlash, SidTuneLoaderFunc loaderFunc)
 {
-    if (!fileName)
+    if (fileName == nullptr)
         return nullptr;
 
 #if !defined(SIDTUNE_NO_STDIN_LOADER)
@@ -151,40 +151,34 @@ unsigned int SidTuneBase::selectSong(unsigned int selectedSong)
         // sidtunes, which have been converted from .SID format and vice versa.
         // The .SID format does the bit-wise/song-wise evaluation of the SPEED
         // value correctly, like it is described in the PlaySID documentation.
-        info->m_songSpeed = songSpeed[(song-1)&31];
+        info->m_songSpeed = songSpeed[(song - 1) & 31];
         break;
     default:
-        info->m_songSpeed = songSpeed[song-1];
+        info->m_songSpeed = songSpeed[song - 1];
         break;
     }
 
-    info->m_clockSpeed = clockSpeed[song-1];
+    info->m_clockSpeed = clockSpeed[song - 1];
 
     return info->m_currentSong;
 }
 
 // ------------------------------------------------- private member functions
 
-bool SidTuneBase::placeSidTuneInC64mem(sidmemory* mem)
+void SidTuneBase::placeSidTuneInC64mem(sidmemory& mem)
 {
-    if (mem != nullptr)
-    {
-        // The Basic ROM sets these values on loading a file.
-        // Program end address
-        const uint_least16_t start = info->m_loadAddr;
-        const uint_least16_t end   = start + info->m_c64dataLen;
-        mem->writeMemWord(0x2d, end); // Variables start
-        mem->writeMemWord(0x2f, end); // Arrays start
-        mem->writeMemWord(0x31, end); // Strings start
-        mem->writeMemWord(0xac, start);
-        mem->writeMemWord(0xae, end);
+    // The Basic ROM sets these values on loading a file.
+    // Program end address
+    const uint_least16_t start = info->m_loadAddr;
+    const uint_least16_t end   = start + info->m_c64dataLen;
+    mem.writeMemWord(0x2d, end); // Variables start
+    mem.writeMemWord(0x2f, end); // Arrays start
+    mem.writeMemWord(0x31, end); // Strings start
+    mem.writeMemWord(0xac, start);
+    mem.writeMemWord(0xae, end);
 
-        // Copy data from cache to the correct destination.
-        mem->fillRam(info->m_loadAddr, &cache[fileOffset], info->m_c64dataLen);
-
-        return true;
-    }
-    return false;
+    // Copy data from cache to the correct destination.
+    mem.fillRam(info->m_loadAddr, &cache[fileOffset], info->m_c64dataLen);
 }
 
 void SidTuneBase::loadFile(const char* fileName, buffer_t& bufferRef)
@@ -271,7 +265,7 @@ SidTuneBase* SidTuneBase::getFromBuffer(const uint_least8_t* const buffer, uint_
         throw loadError(ERR_FILE_TOO_LONG);
     }
 
-    buffer_t buf1(buffer, buffer+bufferLen);
+    buffer_t buf1(buffer, buffer + bufferLen);
 
     // Here test for the possible single file formats.
     std::unique_ptr<SidTuneBase> s(PSID::load(buf1));
@@ -320,16 +314,13 @@ void SidTuneBase::acceptSidTune(const char* dataFileName, const char* infoFileNa
     }
     else if (info->m_songs == 0)
     {
-        info->m_songs++;
+        info->m_songs = 1;
     }
 
-    if (info->m_startSong > info->m_songs)
+    if (info->m_startSong == 0
+        || info->m_startSong > info->m_songs)
     {
         info->m_startSong = 1;
-    }
-    else if (info->m_startSong == 0)
-    {
-        info->m_startSong++;
     }
 
     info->m_dataFileLen = buf.size();
@@ -417,7 +408,7 @@ SidTuneBase* SidTuneBase::getFromFiles(const char* fileName, const char **fileNa
                         if (stringutils::equal(fileNameExtensions[n], ".mus"))
                         {
                             std::unique_ptr<SidTuneBase> s2(MUS::load(fileBuf2, fileBuf1, 0, true));
-                            if (s2.get())
+                            if (s2.get() != nullptr)
                             {
                                 s2->acceptSidTune(fileName2.c_str(), fileName, fileBuf2, separatorIsSlash);
                                 return s2.release();
@@ -440,7 +431,7 @@ SidTuneBase* SidTuneBase::getFromFiles(const char* fileName, const char **fileNa
                 n++;
             }
 
-            s->acceptSidTune(fileName, 0, fileBuf1, separatorIsSlash);
+            s->acceptSidTune(fileName, nullptr, fileBuf1, separatorIsSlash);
             return s.release();
         }
     }
@@ -449,7 +440,7 @@ SidTuneBase* SidTuneBase::getFromFiles(const char* fileName, const char **fileNa
 
     if (s.get() != nullptr)
     {
-        s->acceptSidTune(fileName, 0, fileBuf1, separatorIsSlash);
+        s->acceptSidTune(fileName, nullptr, fileBuf1, separatorIsSlash);
         return s.release();
     }
 
@@ -460,9 +451,11 @@ void SidTuneBase::convertOldStyleSpeedToTables(uint_least32_t speed, SidTuneInfo
 {
     // Create the speed/clock setting tables.
     //
-    // This routine implements the PSIDv2NG compliant speed conversion.  All tunes
+    // This routine implements the PSIDv2NG compliant speed conversion. All tunes
     // above 32 use the same song speed as tune 32
-    const unsigned int toDo = std::min(info->m_songs, (unsigned int)MAX_SONGS);
+    // NOTE: The cast here is used to avoid undefined references
+    // as the std::min function takes its parameters by reference
+    const unsigned int toDo = std::min(info->m_songs, static_cast<unsigned int>(MAX_SONGS));
     for (unsigned int s = 0; s < toDo; s++)
     {
         clockSpeed[s] = clock;
@@ -559,16 +552,16 @@ void SidTuneBase::resolveAddrs(const uint_least8_t *c64data)
 
 bool SidTuneBase::checkCompatibility()
 {
-    if  (info->m_compatibility == SidTuneInfo::COMPATIBILITY_R64)
+    if (info->m_compatibility == SidTuneInfo::COMPATIBILITY_R64)
     {
         // Check valid init address
         switch (info->m_initAddr >> 12)
         {
-        case 0x0F:
-        case 0x0E:
-        case 0x0D:
-        case 0x0B:
         case 0x0A:
+        case 0x0B:
+        case 0x0D:
+        case 0x0E:
+        case 0x0F:
             return false;
         default:
             if ((info->m_initAddr < info->m_loadAddr)
@@ -588,8 +581,10 @@ bool SidTuneBase::checkCompatibility()
     return true;
 }
 
-const char* SidTuneBase::PetsciiToAscii::convert(SmartPtr_sidtt<const uint8_t>& spPet)
+std::string SidTuneBase::petsciiToAscii(SmartPtr_sidtt<const uint8_t>& spPet)
 {
+    std::string buffer;
+
     char c;
     do
     {
@@ -607,7 +602,7 @@ const char* SidTuneBase::PetsciiToAscii::convert(SmartPtr_sidtt<const uint8_t>& 
     }
     while (!((c == 0x0D) || (c == 0x00) || spPet.fail()));
 
-    return buffer.c_str();
+    return buffer;
 }
 
 }

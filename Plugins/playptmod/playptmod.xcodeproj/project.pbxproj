@@ -10,7 +10,7 @@
 		83A0F4731816CE5E00119DB4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0F4721816CE5E00119DB4 /* Cocoa.framework */; };
 		83A0F47D1816CE5E00119DB4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83A0F47B1816CE5E00119DB4 /* InfoPlist.strings */; };
 		83A0F4D91816D03C00119DB4 /* playptmod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0F4CC1816CEAE00119DB4 /* playptmod.framework */; };
-		83A0F4DB1816D04E00119DB4 /* playptmod.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83A0F4CC1816CEAE00119DB4 /* playptmod.framework */; };
+		83A0F4DB1816D04E00119DB4 /* playptmod.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83A0F4CC1816CEAE00119DB4 /* playptmod.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83A0F4DE1816D09000119DB4 /* ptmodDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A0F4DD1816D09000119DB4 /* ptmodDecoder.m */; };
 /* End PBXBuildFile section */
 
@@ -45,6 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		833F68451CDBCABF00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83A0F46F1816CE5E00119DB4 /* playptmod.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = playptmod.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83A0F4721816CE5E00119DB4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83A0F4751816CE5E00119DB4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -170,7 +171,7 @@
 		83A0F4671816CE5E00119DB4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 83A0F46A1816CE5E00119DB4 /* Build configuration list for PBXProject "playptmod" */;
@@ -179,6 +180,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 83A0F4661816CE5E00119DB4;
 			productRefGroup = 83A0F4701816CE5E00119DB4 /* Products */;
@@ -241,6 +243,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				83A0F47C1816CE5E00119DB4 /* en */,
+				833F68451CDBCABF00AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -327,6 +331,7 @@
 				GCC_PREFIX_HEADER = "playptmod/playptmod-Prefix.pch";
 				INFOPLIST_FILE = "playptmod/playptmod-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.playptmod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = bundle;
@@ -341,6 +346,7 @@
 				GCC_PREFIX_HEADER = "playptmod/playptmod-Prefix.pch";
 				INFOPLIST_FILE = "playptmod/playptmod-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.playptmod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = bundle;

@@ -23,7 +23,6 @@
 	
 	if ([u fragment])
 	{
-		[display release];
         NSDictionary *metadata = [AudioMetadataReader metadataForURL:u];
         NSString *title = nil;
         NSString *artist = nil;
@@ -37,11 +36,10 @@
         {
             if (artist && [artist length]) { display = [[u fragment] stringByAppendingFormat:@": %@ - %@", artist, title];}
             else { display = [[u fragment] stringByAppendingFormat:@": %@", title]; }
-            [display retain];
         }
         else
         {
-            display = [[u fragment] retain];
+            display = [u fragment];
         }
 	}
 }

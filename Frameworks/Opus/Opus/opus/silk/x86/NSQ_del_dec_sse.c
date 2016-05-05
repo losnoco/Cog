@@ -395,7 +395,7 @@ static OPUS_INLINE void silk_noise_shape_quantizer_del_dec_sse4_1(
                 pred_lag_ptr_tmp    = _mm_add_epi32( pred_lag_ptr_tmp, tmpb );
                 LTP_pred_Q14        += _mm_cvtsi128_si32( pred_lag_ptr_tmp );
 
-                LTP_pred_Q14 = silk_SMLAWB( LTP_pred_Q14, pred_lag_ptr[ -4 ], b_Q14[ 4 ] );
+                LTP_pred_Q14 = (opus_int32) silk_SMLAWB( LTP_pred_Q14, pred_lag_ptr[ -4 ], b_Q14[ 4 ] );
                 LTP_pred_Q14 = silk_LSHIFT( LTP_pred_Q14, 1 );                          /* Q13 -> Q14 */
                 pred_lag_ptr++;
             }
@@ -406,7 +406,7 @@ static OPUS_INLINE void silk_noise_shape_quantizer_del_dec_sse4_1(
         /* Long-term shaping */
         if( lag > 0 ) {
             /* Symmetric, packed FIR coefficients */
-            n_LTP_Q14 = silk_SMULWB( silk_ADD32( shp_lag_ptr[ 0 ], shp_lag_ptr[ -2 ] ), HarmShapeFIRPacked_Q14 );
+            n_LTP_Q14 = (opus_int32) silk_SMULWB( silk_ADD32( shp_lag_ptr[ 0 ], shp_lag_ptr[ -2 ] ), HarmShapeFIRPacked_Q14 );
             n_LTP_Q14 = silk_SMLAWT( n_LTP_Q14, shp_lag_ptr[ -1 ],                      HarmShapeFIRPacked_Q14 );
             n_LTP_Q14 = silk_SUB_LSHIFT32( LTP_pred_Q14, n_LTP_Q14, 2 );            /* Q12 -> Q14 */
             shp_lag_ptr++;
@@ -503,8 +503,8 @@ static OPUS_INLINE void silk_noise_shape_quantizer_del_dec_sse4_1(
                     tmpb            = _mm_add_epi32( tmpb, tmpa );
                     LPC_pred_Q14    += _mm_cvtsi128_si32( tmpb );
 
-                    LPC_pred_Q14 = silk_SMLAWB( LPC_pred_Q14, psLPC_Q14[ -8 ], a_Q12[ 8 ] );
-                    LPC_pred_Q14 = silk_SMLAWB( LPC_pred_Q14, psLPC_Q14[ -9 ], a_Q12[ 9 ] );
+                    LPC_pred_Q14 = (opus_int32) silk_SMLAWB( LPC_pred_Q14, psLPC_Q14[ -8 ], a_Q12[ 8 ] );
+                    LPC_pred_Q14 = (opus_int32) silk_SMLAWB( LPC_pred_Q14, psLPC_Q14[ -9 ], a_Q12[ 9 ] );
                 }
 
                 LPC_pred_Q14 = silk_LSHIFT( LPC_pred_Q14, 4 ); /* Q10 -> Q14 */
@@ -512,31 +512,31 @@ static OPUS_INLINE void silk_noise_shape_quantizer_del_dec_sse4_1(
                 /* Noise shape feedback */
                 silk_assert( ( shapingLPCOrder & 1 ) == 0 );   /* check that order is even */
                 /* Output of lowpass section */
-                tmp2 = silk_SMLAWB( psLPC_Q14[ 0 ], psDD->sAR2_Q14[ 0 ], warping_Q16 );
+                tmp2 = (opus_int32) silk_SMLAWB( psLPC_Q14[ 0 ], psDD->sAR2_Q14[ 0 ], warping_Q16 );
                 /* Output of allpass section */
-                tmp1 = silk_SMLAWB( psDD->sAR2_Q14[ 0 ], psDD->sAR2_Q14[ 1 ] - tmp2, warping_Q16 );
+                tmp1 = (opus_int32) silk_SMLAWB( psDD->sAR2_Q14[ 0 ], psDD->sAR2_Q14[ 1 ] - tmp2, warping_Q16 );
                 psDD->sAR2_Q14[ 0 ] = tmp2;
                 n_AR_Q14 = silk_RSHIFT( shapingLPCOrder, 1 );
-                n_AR_Q14 = silk_SMLAWB( n_AR_Q14, tmp2, AR_shp_Q13[ 0 ] );
+                n_AR_Q14 = (opus_int32) silk_SMLAWB( n_AR_Q14, tmp2, AR_shp_Q13[ 0 ] );
                 /* Loop over allpass sections */
                 for( j = 2; j < shapingLPCOrder; j += 2 ) {
                     /* Output of allpass section */
-                    tmp2 = silk_SMLAWB( psDD->sAR2_Q14[ j - 1 ], psDD->sAR2_Q14[ j + 0 ] - tmp1, warping_Q16 );
+                    tmp2 = (opus_int32) silk_SMLAWB( psDD->sAR2_Q14[ j - 1 ], psDD->sAR2_Q14[ j + 0 ] - tmp1, warping_Q16 );
                     psDD->sAR2_Q14[ j - 1 ] = tmp1;
-                    n_AR_Q14 = silk_SMLAWB( n_AR_Q14, tmp1, AR_shp_Q13[ j - 1 ] );
+                    n_AR_Q14 = (opus_int32) silk_SMLAWB( n_AR_Q14, tmp1, AR_shp_Q13[ j - 1 ] );
                     /* Output of allpass section */
-                    tmp1 = silk_SMLAWB( psDD->sAR2_Q14[ j + 0 ], psDD->sAR2_Q14[ j + 1 ] - tmp2, warping_Q16 );
+                    tmp1 = (opus_int32) silk_SMLAWB( psDD->sAR2_Q14[ j + 0 ], psDD->sAR2_Q14[ j + 1 ] - tmp2, warping_Q16 );
                     psDD->sAR2_Q14[ j + 0 ] = tmp2;
-                    n_AR_Q14 = silk_SMLAWB( n_AR_Q14, tmp2, AR_shp_Q13[ j ] );
+                    n_AR_Q14 = (opus_int32) silk_SMLAWB( n_AR_Q14, tmp2, AR_shp_Q13[ j ] );
                 }
                 psDD->sAR2_Q14[ shapingLPCOrder - 1 ] = tmp1;
-                n_AR_Q14 = silk_SMLAWB( n_AR_Q14, tmp1, AR_shp_Q13[ shapingLPCOrder - 1 ] );
+                n_AR_Q14 = (opus_int32) silk_SMLAWB( n_AR_Q14, tmp1, AR_shp_Q13[ shapingLPCOrder - 1 ] );
 
                 n_AR_Q14 = silk_LSHIFT( n_AR_Q14, 1 );                                      /* Q11 -> Q12 */
-                n_AR_Q14 = silk_SMLAWB( n_AR_Q14, psDD->LF_AR_Q14, Tilt_Q14 );              /* Q12 */
+                n_AR_Q14 = (opus_int32) silk_SMLAWB( n_AR_Q14, psDD->LF_AR_Q14, Tilt_Q14 );              /* Q12 */
                 n_AR_Q14 = silk_LSHIFT( n_AR_Q14, 2 );                                      /* Q12 -> Q14 */
 
-                n_LF_Q14 = silk_SMULWB( psDD->Shape_Q14[ *smpl_buf_idx ], LF_shp_Q14 );     /* Q12 */
+                n_LF_Q14 = (opus_int32) silk_SMULWB( psDD->Shape_Q14[ *smpl_buf_idx ], LF_shp_Q14 );     /* Q12 */
                 n_LF_Q14 = silk_SMLAWT( n_LF_Q14, psDD->LF_AR_Q14, LF_shp_Q14 );            /* Q12 */
                 n_LF_Q14 = silk_LSHIFT( n_LF_Q14, 2 );                                      /* Q12 -> Q14 */
 
@@ -779,7 +779,7 @@ static OPUS_INLINE void silk_nsq_del_dec_scale_states_sse4_1(
     }
 
     for( ; i < psEncC->subfr_length; i++ ) {
-        x_sc_Q10[ i ] = silk_SMULWW( x_Q3[ i ], inv_gain_Q23 );
+        x_sc_Q10[ i ] = (opus_int32) silk_SMULWW( x_Q3[ i ], inv_gain_Q23 );
     }
 
     /* Save inverse gain */
@@ -793,7 +793,7 @@ static OPUS_INLINE void silk_nsq_del_dec_scale_states_sse4_1(
         }
         for( i = NSQ->sLTP_buf_idx - lag - LTP_ORDER / 2; i < NSQ->sLTP_buf_idx; i++ ) {
             silk_assert( i < MAX_FRAME_LENGTH );
-            sLTP_Q15[ i ] = silk_SMULWB( inv_gain_Q31, sLTP[ i ] );
+            sLTP_Q15[ i ] = (opus_int32) silk_SMULWB( inv_gain_Q31, sLTP[ i ] );
         }
     }
 
@@ -824,13 +824,13 @@ static OPUS_INLINE void silk_nsq_del_dec_scale_states_sse4_1(
             }
 
             for( ; i < NSQ->sLTP_shp_buf_idx; i++ ) {
-                NSQ->sLTP_shp_Q14[ i ] = silk_SMULWW( gain_adj_Q16, NSQ->sLTP_shp_Q14[ i ] );
+                NSQ->sLTP_shp_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, NSQ->sLTP_shp_Q14[ i ] );
             }
 
             /* Scale long-term prediction state */
             if( signal_type == TYPE_VOICED && NSQ->rewhite_flag == 0 ) {
                 for( i = NSQ->sLTP_buf_idx - lag - LTP_ORDER / 2; i < NSQ->sLTP_buf_idx - decisionDelay; i++ ) {
-                    sLTP_Q15[ i ] = silk_SMULWW( gain_adj_Q16, sLTP_Q15[ i ] );
+                    sLTP_Q15[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, sLTP_Q15[ i ] );
                 }
             }
 
@@ -838,18 +838,18 @@ static OPUS_INLINE void silk_nsq_del_dec_scale_states_sse4_1(
                 psDD = &psDelDec[ k ];
 
                 /* Scale scalar states */
-                psDD->LF_AR_Q14 = silk_SMULWW( gain_adj_Q16, psDD->LF_AR_Q14 );
+                psDD->LF_AR_Q14 = (opus_int32) silk_SMULWW( gain_adj_Q16, psDD->LF_AR_Q14 );
 
                 /* Scale short-term prediction and shaping states */
                 for( i = 0; i < NSQ_LPC_BUF_LENGTH; i++ ) {
-                    psDD->sLPC_Q14[ i ] = silk_SMULWW( gain_adj_Q16, psDD->sLPC_Q14[ i ] );
+                    psDD->sLPC_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, psDD->sLPC_Q14[ i ] );
                 }
                 for( i = 0; i < MAX_SHAPE_LPC_ORDER; i++ ) {
-                    psDD->sAR2_Q14[ i ] = silk_SMULWW( gain_adj_Q16, psDD->sAR2_Q14[ i ] );
+                    psDD->sAR2_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, psDD->sAR2_Q14[ i ] );
                 }
                 for( i = 0; i < DECISION_DELAY; i++ ) {
-                    psDD->Pred_Q15[  i ] = silk_SMULWW( gain_adj_Q16, psDD->Pred_Q15[  i ] );
-                    psDD->Shape_Q14[ i ] = silk_SMULWW( gain_adj_Q16, psDD->Shape_Q14[ i ] );
+                    psDD->Pred_Q15[  i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, psDD->Pred_Q15[  i ] );
+                    psDD->Shape_Q14[ i ] = (opus_int32) silk_SMULWW( gain_adj_Q16, psDD->Shape_Q14[ i ] );
                 }
             }
         }

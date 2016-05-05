@@ -48,8 +48,8 @@ void silk_resampler_private_AR2(
         out32       = silk_ADD_LSHIFT32( S[ 0 ], (opus_int32)in[ k ], 8 );
         out_Q8[ k ] = out32;
         out32       = silk_LSHIFT( out32, 2 );
-        S[ 0 ]      = silk_SMLAWB( S[ 1 ], out32, A_Q14[ 0 ] );
-        S[ 1 ]      = silk_SMULWB( out32, A_Q14[ 1 ] );
+        S[ 0 ]      = (opus_int32) silk_SMLAWB( S[ 1 ], out32, A_Q14[ 0 ] );
+        S[ 1 ]      = (opus_int32) silk_SMULWB( out32, A_Q14[ 1 ] );
     }
 }
 

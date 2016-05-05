@@ -19,16 +19,16 @@ typedef uint32_t DWORD;
 void * unpackMo3( const void * in, long * size )
 {
     void * data;
-    int len;
+    unsigned int len;
     
-    if ( *size > INT_MAX )
+    if ( *size < 3 || *size > UINT_MAX )
         return 0;
     
     if ( memcmp( in, "MO3", 3 ) != 0 )
         return 0;
     
     data = (void *) in;
-    len = (int) *size;
+    len = (unsigned int) *size;
     
     if ( UNMO3_Decode( &data, &len, 0 ) != 0 )
         return 0;

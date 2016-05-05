@@ -121,7 +121,7 @@ static int32 clipshifted8(int32 in)
 {
   int16 top = (int16)(in >> 16);
   if (top > 127) in = 127 << 16;
-  else if (top < -128) in = -128 << 16;
+  else if (top < -128) in = -128 * (1 << 16);
   return in;
 }
 
@@ -314,10 +314,10 @@ void hvl_InitReplayer( void )
   hvl_GenFilterWaves( &waves[WO_TRIANGLE_04], &waves[WO_LOWPASSES], &waves[WO_HIGHPASSES] );
 }
 
-struct hvl_tune *hvl_load_ahx( uint8 *buf, uint32 buflen, uint32 defstereo, uint32 freq )
+struct hvl_tune *hvl_load_ahx( const uint8 *buf, uint32 buflen, uint32 defstereo, uint32 freq )
 {
-  uint8  *bptr;
-  TEXT   *nptr;
+  const uint8  *bptr;
+  const TEXT   *nptr;
   uint32  i, j, k, l, posn, insn, ssn, hs, trkn, trkl;
   struct hvl_tune *ht;
   struct  hvl_plsentry *ple;
@@ -406,12 +406,12 @@ struct hvl_tune *hvl_load_ahx( uint8 *buf, uint32 buflen, uint32 defstereo, uint
   }
 
   bptr = &buf[(buf[4]<<8)|buf[5]];
-  i = min( 128, buf + buflen - bptr );
+  i = min( 128, (uint32) (buf + buflen - bptr) );
 
   strncpy( ht->ht_Name, (TEXT *)bptr, i );
   if ( i < 128 ) ht->ht_Name[ i ] = 0;
   nptr = (TEXT *)bptr+strlen( ht->ht_Name )+1;
-  if ( nptr > buf + buflen )
+  if ( (uint8*) nptr > buf + buflen )
   {
     free( ht );
     return NULL;
@@ -541,10 +541,9 @@ struct hvl_tune *hvl_load_ahx( uint8 *buf, uint32 buflen, uint32 defstereo, uint
 struct hvl_tune *hvl_LoadTune( const uint8 *buf, uint32 buflen, uint32 freq, uint32 defstereo )
 {
   struct hvl_tune *ht;
-  uint8  *bptr;
-  TEXT   *nptr;
+  const uint8  *bptr;
+  const TEXT   *nptr;
   uint32  i, j, posn, insn, ssn, chnn, hs, trkl, trkn;
-  FILE *fh;
   struct  hvl_plsentry *ple;
 
   if ( !buf || buflen < 4 )
@@ -670,12 +669,12 @@ struct hvl_tune *hvl_LoadTune( const uint8 *buf, uint32 buflen, uint32 freq, uin
     free( ht );
     return NULL;
   }
-  i = min( 128, buf + buflen - bptr );
+  i = min( 128, (uint32) (buf + buflen - bptr) );
 
   strncpy( ht->ht_Name, (TEXT *)bptr, i );
   if ( i < 128 ) ht->ht_Name[ i ] = 0;
   nptr = (TEXT *)bptr+strlen( ht->ht_Name )+1;
-  if ( nptr > buf + buflen )
+  if ( (uint8 *)nptr > buf + buflen )
   {
     free( ht );
     return NULL;
@@ -1884,7 +1883,7 @@ void hvl_mixchunk( struct hvl_tune *ht, uint32 samples, int8 *buf1, int8 *buf2, 
   int32   vol[MAX_CHANNELS];
   uint32  pos[MAX_CHANNELS];
   uint32  rpos[MAX_CHANNELS];
-  uint32  cnt;
+  // uint32  cnt;
   int32   panl[MAX_CHANNELS];
   int32   panr[MAX_CHANNELS];
 //  uint32  vu[MAX_CHANNELS];

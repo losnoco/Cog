@@ -15,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		833F68481CDBCABF00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		836FB556182053D700B3AD2D /* HivelyPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HivelyPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836FB561182053D700B3AD2D /* HivelyPlayer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HivelyPlayer-Info.plist"; sourceTree = "<group>"; };
 		836FB563182053D700B3AD2D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -127,7 +128,7 @@
 		836FB54D182053D700B3AD2D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 836FB550182053D700B3AD2D /* Build configuration list for PBXProject "HivelyPlayer" */;
@@ -136,6 +137,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 836FB54C182053D700B3AD2D;
 			productRefGroup = 836FB557182053D700B3AD2D /* Products */;
@@ -175,6 +177,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				836FB563182053D700B3AD2D /* en */,
+				833F68481CDBCABF00AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -198,6 +201,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -261,6 +265,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "HivelyPlayer/HivelyPlayer-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.hivelyplayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
@@ -277,6 +282,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "HivelyPlayer/HivelyPlayer-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.hivelyplayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;

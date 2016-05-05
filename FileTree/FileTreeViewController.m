@@ -8,6 +8,7 @@
 
 #import "FileTreeViewController.h"
 #import "PlaylistLoader.h"
+#import "PlaybackController.h"
 
 @implementation FileTreeViewController
 

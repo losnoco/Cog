@@ -295,6 +295,7 @@ void Unpack::LongLZ()
 
   OldAvr3=AvrLn3;
   if (Length!=1 && Length!=4)
+  {
     if (Length==0 && Distance <= MaxDist3)
     {
       AvrLn3++;
@@ -303,6 +304,7 @@ void Unpack::LongLZ()
     else
       if (AvrLn3 > 0)
         AvrLn3--;
+  }
   Length+=3;
   if (Distance >= MaxDist3)
     Length++;

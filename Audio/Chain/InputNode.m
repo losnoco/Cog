@@ -33,7 +33,6 @@
 - (BOOL)openWithSource:(id<CogSource>)source
 {
 	decoder = [AudioDecoder audioDecoderForSource:source];
-	[decoder retain];
 
 	if (decoder == nil)
 		return NO;
@@ -62,7 +61,6 @@
 {
 	DLog(@"Opening with old decoder: %@", d);
 	decoder = d;
-	[decoder retain];
 
 	NSDictionary *properties = [decoder properties];
 	int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
@@ -218,11 +216,6 @@
 	DLog(@"Input Node dealloc");
 	[decoder removeObserver:self forKeyPath:@"properties"];
 	[decoder removeObserver:self forKeyPath:@"metadata"];
-
-	[decoder release];
-
-    [exitAtTheEndOfTheStream release];
-    [super dealloc];
 }
 
 - (NSDictionary *) properties

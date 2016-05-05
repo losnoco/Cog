@@ -34,9 +34,9 @@
 
 - (void)buildChain
 {
-	[inputNode release];
-	[converterNode release];
-	
+    inputNode = nil;
+    converterNode = nil;
+    
 	inputNode = [[InputNode alloc] initWithController:self previous:nil];
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
 	
@@ -100,8 +100,6 @@
 
 - (void)setUserInfo:(id)i
 {
-	[i retain];
-	[userInfo release];
 	userInfo = i;
 }
 
@@ -112,8 +110,6 @@
 
 - (void)setRGInfo:(NSDictionary *)rgi
 {
-    [rgi retain];
-    [rgInfo release];
     rgInfo = rgi;
     [converterNode setRGInfo:rgi];
 }
@@ -130,16 +126,7 @@
     [[inputNode semaphore] signal];
     [[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
 
-    [rgInfo release];
-	[userInfo release];
-	[streamURL release];
-
-	[inputNode release];
-	[converterNode release];
-
 	DLog(@"Bufferchain dealloc");
-	
-	[super dealloc];
 }
 
 - (void)seek:(double)time
@@ -188,9 +175,6 @@
 
 - (void)setStreamURL:(NSURL *)url
 {
-	[url retain];
-	[streamURL release];
-
 	streamURL = url;
 }
 

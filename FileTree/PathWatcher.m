@@ -18,13 +18,12 @@ static void myFSEventCallback(
 {
 	int i;
 	char **paths = eventPaths;
-	PathWatcher *pathWatcher = (PathWatcher *)clientCallBackInfo;
+	PathWatcher *pathWatcher = (__bridge PathWatcher *)clientCallBackInfo;
  
 	printf("Callback called\n");
     for (i=0; i<numEvents; i++) {
 		NSString *pathString = [[NSString alloc] initWithUTF8String:paths[i]];
 		[[pathWatcher delegate] pathDidChange:pathString];
-		[pathString release];
    }
 }
 
@@ -49,11 +48,11 @@ static void myFSEventCallback(
 	[self cleanUp];
 	
 	//Create FSEvent stream
-    CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&path, 1, NULL);
+    NSArray *pathsToWatch = [NSArray arrayWithObject:path];
 
     context = (FSEventStreamContext*)malloc(sizeof(FSEventStreamContext));
     context->version = 0;
-    context->info = (void *)self; 
+    context->info = (__bridge void *)self;
     context->retain = NULL;
     context->release = NULL;
 
@@ -61,13 +60,11 @@ static void myFSEventCallback(
     stream = FSEventStreamCreate(NULL,
         &myFSEventCallback,
 		context,
-        pathsToWatch,
+        (__bridge CFArrayRef)pathsToWatch,
         kFSEventStreamEventIdSinceNow, // Or a previous event ID
         1.0, //latency in seconds
         kFSEventStreamCreateFlagNone // Watch this and all its subdirectories
     );
-	
-	CFRelease(pathsToWatch);
 	
     FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);	
 	
@@ -76,8 +73,6 @@ static void myFSEventCallback(
 
 - (void)setDelegate:(id)d
 {
-	[d retain];
-	[delegate release];
 	delegate = d;
 }
 - (id)delegate
@@ -88,8 +83,6 @@ static void myFSEventCallback(
 - (void) dealloc
 {
 	[self cleanUp];
-	
-	[super dealloc];
 }
 
 

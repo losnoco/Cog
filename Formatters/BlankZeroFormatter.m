@@ -46,7 +46,7 @@
 	NSAttributedString		*result		= nil;
 	
 	result = [[NSAttributedString alloc] initWithString:[self stringForObjectValue:object] attributes:attributes];
-	return [result autorelease];
+	return result;
 }
 
 @end

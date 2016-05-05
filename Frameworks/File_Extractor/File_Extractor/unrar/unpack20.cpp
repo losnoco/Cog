@@ -154,11 +154,11 @@ void Unpack::UnpWriteBuf20()
   if (UnpPtr<WrPtr)
   {
     UnpIO->UnpWrite(&Window[WrPtr],-(int)WrPtr & MaxWinMask);
-    UnpIO->UnpWrite(Window,UnpPtr);
+    UnpIO->UnpWrite(Window,(int)UnpPtr);
     UnpAllBuf=true;
   }
   else
-    UnpIO->UnpWrite(&Window[WrPtr],UnpPtr-WrPtr);
+    UnpIO->UnpWrite(&Window[WrPtr],(int)(UnpPtr-WrPtr));
   WrPtr=UnpPtr;
 }
 
@@ -254,6 +254,7 @@ bool Unpack::ReadTables20()
 void Unpack::ReadLastTables()
 {
   if (ReadTop>=Inp.InAddr+5)
+  {
     if (UnpAudioBlock)
     {
       if (DecodeNumber(Inp,&MD[UnpCurChannel])==256)
@@ -262,6 +263,7 @@ void Unpack::ReadLastTables()
     else
       if (DecodeNumber(Inp,&BlockTables.LD)==269)
         ReadTables20();
+  }
 }
 
 

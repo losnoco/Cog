@@ -786,6 +786,7 @@
 		833E5F9E18A31EC4006A85F9 /* twinvq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = twinvq.c; sourceTree = "<group>"; };
 		833E5F9F18A31EC4006A85F9 /* twinvq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twinvq.h; sourceTree = "<group>"; };
 		833E5FA018A31EC4006A85F9 /* twinvqdec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = twinvqdec.c; sourceTree = "<group>"; };
+		833F68321CDBCAB100AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8384904C1807898200E7332D /* apedec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = apedec.c; sourceTree = "<group>"; };
 		8384904E1807898A00E7332D /* ape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ape.c; sourceTree = "<group>"; };
 		838490501807AF0100E7332D /* ac3_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ac3_parser.c; sourceTree = "<group>"; };
@@ -1761,7 +1762,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0730;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "FFMPEG" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1769,6 +1770,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				es,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* FFMPEG */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -2034,6 +2036,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C1667FE841158C02AAC07 /* English */,
+				833F68321CDBCAB100AFB9F0 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2061,6 +2064,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.ffmpeg;
 				PRODUCT_NAME = FFMPEG;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2086,6 +2090,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.ffmpeg;
 				PRODUCT_NAME = FFMPEG;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2098,6 +2103,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

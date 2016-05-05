@@ -254,8 +254,8 @@ int opus_tags_add(OpusTags *_tags,const char *_tag,const char *_value){
   ncomments=_tags->comments;
   ret=op_tags_ensure_capacity(_tags,ncomments+1);
   if(OP_UNLIKELY(ret<0))return ret;
-  tag_len=strlen(_tag);
-  value_len=strlen(_value);
+  tag_len=(int) strlen(_tag);
+  value_len=(int) strlen(_value);
   /*+2 for '=' and '\0'.*/
   _tags->comment_lengths[ncomments]=0;
   _tags->user_comments[ncomments]=comment=
@@ -286,7 +286,7 @@ int opus_tags_add_comment(OpusTags *_tags,const char *_comment){
 }
 
 int opus_tagcompare(const char *_tag_name,const char *_comment){
-  return opus_tagncompare(_tag_name,strlen(_tag_name),_comment);
+  return opus_tagncompare(_tag_name,(int) strlen(_tag_name),_comment);
 }
 
 int opus_tagncompare(const char *_tag_name,int _tag_len,const char *_comment){
@@ -302,7 +302,7 @@ const char *opus_tags_query(const OpusTags *_tags,const char *_tag,int _count){
   int    found;
   int    ncomments;
   int    ci;
-  tag_len=strlen(_tag);
+  tag_len=(int) strlen(_tag);
   ncomments=_tags->comments;
   user_comments=_tags->user_comments;
   found=0;
@@ -322,7 +322,7 @@ int opus_tags_query_count(const OpusTags *_tags,const char *_tag){
   int    found;
   int    ncomments;
   int    ci;
-  tag_len=strlen(_tag);
+  tag_len=(int) strlen(_tag);
   ncomments=_tags->comments;
   user_comments=_tags->user_comments;
   found=0;

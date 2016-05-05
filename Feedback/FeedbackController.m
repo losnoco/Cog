@@ -28,7 +28,7 @@
 
 - (void)alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	if ([(NSNumber *)contextInfo boolValue]== YES)
+	if ([(NSNumber *)CFBridgingRelease(contextInfo) boolValue]== YES)
 	{
 		[[self window] close];
 	}
@@ -40,22 +40,22 @@
 	
 	[sendingIndicator stopAnimation:self];
 
-	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+	NSAlert *alert = [[NSAlert alloc] init];
 	[alert setMessageText:NSLocalizedString(@"FeedbackFailedMessageText", @"")];
 	[alert setInformativeText:NSLocalizedString(@"FeedbackFailedInformativeText", @"")];
 	
-	[alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:[NSNumber numberWithBool:NO]];
+	[alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:(void *)CFBridgingRetain([NSNumber numberWithBool:NO])];
 }
 
 - (void)feedbackDidSend:(FeedbackSocket *)feedback
 {
 	[sendingIndicator stopAnimation:self];
 
-	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+	NSAlert *alert = [[NSAlert alloc] init];
 	[alert setMessageText:NSLocalizedString(@"FeedbackSuccessMessageText", @"")];
 	[alert setInformativeText:NSLocalizedString(@"FeedbackSuccessInformativeText", @"")];
 
-	[alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:[NSNumber numberWithBool:YES]];
+	[alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:(void *)CFBridgingRetain([NSNumber numberWithBool:YES])];
 }
 
 
