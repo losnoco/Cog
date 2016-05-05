@@ -54,8 +54,8 @@ static void setControlText(HotKeyControl* control, NSString* kcprop, NSString* m
         [[NSUserDefaults standardUserDefaults] setInteger:[nextHotKeyControl keyCode] forKey:@"hotKeyNextKeyCode"];
     }
     else if (sender == spamHotKeyControl) {
-        [[NSUserDefaults standardUserDefaults] setInteger:[nextHotKeyControl modifierFlags] forKey:@"hotKeySpamModifiers"];
-        [[NSUserDefaults standardUserDefaults] setInteger:[nextHotKeyControl keyCode] forKey:@"hotKeySpamKeyCode"];
+        [[NSUserDefaults standardUserDefaults] setInteger:[spamHotKeyControl modifierFlags] forKey:@"hotKeySpamModifiers"];
+        [[NSUserDefaults standardUserDefaults] setInteger:[spamHotKeyControl keyCode] forKey:@"hotKeySpamKeyCode"];
     }
 }
 
