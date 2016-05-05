@@ -79,7 +79,7 @@ static NSHashTable		* allHotKeyEvents = NULL;
 static EventHandlerRef	hotKeysEventHandler = NULL;
 static OSType			signature = 0;
 
-static pascal OSErr eventHandlerCallback( EventHandlerCallRef anInHandlerCallRef, EventRef anInEvent, void * self );
+static OSStatus eventHandlerCallback( EventHandlerCallRef anInHandlerCallRef, EventRef anInEvent, void * self );
 
 #ifndef NDMapTableClassDefined
 static NSUInteger hashValueHashFunction( NSHashTable * aTable, const void * aHotKeyEvent );
@@ -119,7 +119,7 @@ struct HotKeyMappingEntry
 		NDHotKeyEventLock;
 		if( theHotKeyEvents != nil && hotKeysEventHandler == NULL )
 		{
-			if( InstallEventHandler( GetEventDispatcherTarget(), NewEventHandlerUPP((EventHandlerProcPtr)eventHandlerCallback), 2, theTypeSpec, (__bridge void *)(theHotKeyEvents), &hotKeysEventHandler ) != noErr )
+			if( InstallEventHandler( GetEventDispatcherTarget(), (EventHandlerProcPtr)eventHandlerCallback, 2, theTypeSpec, (__bridge void *)(theHotKeyEvents), &hotKeysEventHandler ) != noErr )
 				NSLog(@"Could not install Event handler");
 		}
 		NDHotKeyEventUnlock;
@@ -654,7 +654,7 @@ struct HotKeyMappingEntry
 					NSStringFromSelector([self selectorReleased])];
 }
 
-pascal OSErr eventHandlerCallback( EventHandlerCallRef anInHandlerCallRef, EventRef anInEvent, void * anInUserData )
+OSStatus eventHandlerCallback( EventHandlerCallRef anInHandlerCallRef, EventRef anInEvent, void * anInUserData )
 {
 //	NSHashTable			* allHotKeyEvents = (NSHashTable *)anInUserData;
 	EventHotKeyID		theHotKeyID;
