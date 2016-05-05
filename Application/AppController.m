@@ -413,7 +413,7 @@
 
 - (void)registerHotKeys
 {
-    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]) {
+    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]) {
 	playHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
 		  modifierFlags: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]
@@ -422,7 +422,7 @@
         [playHotKey setEnabled:YES];
     }
 	
-    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPreviousKeyCode"] intValue]) {
+    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPreviousModifiers"] intValue]) {
 	prevHotKey = [[NDHotKeyEvent alloc]
 		  initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
 			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousModifiers"]
@@ -431,7 +431,7 @@
         [prevHotKey setEnabled:YES];
     }
 	
-    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyNextKeyCode"] intValue]) {
+    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyNextModifiers"] intValue]) {
 	nextHotKey = [[NDHotKeyEvent alloc]
 		initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextKeyCode"]
 			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextModifiers"]
@@ -440,7 +440,7 @@
         [nextHotKey setEnabled:YES];
     }
 
-    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeySpamKeyCode"] intValue]) {
+    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeySpamModifiers"] intValue]) {
         spamHotKey = [[NDHotKeyEvent alloc]
                       initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamKeyCode"]
                       modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamModifiers"]
