@@ -8,11 +8,9 @@
 
 #include "Plugin.h"
 
-#define __FRAMEWORK__
-#import <FFMPEG/avformat.h>
-#import <FFMPEG/url.h>
-#import <FFMPEG/opt.h>
-#undef __FRAMEWORK__
+#include <libavformat/avformat.h>
+#include <libavformat/url.h> // INTERNAL
+#include <libavutil/opt.h>
 
 /* standard file protocol */
 
@@ -24,16 +22,6 @@ typedef struct FileContext {
 static const AVOption file_options[] = {
     { NULL }
 };
-
-#define LIBAVUTIL_VERSION_MAJOR  52
-#define LIBAVUTIL_VERSION_MINOR  46
-#define LIBAVUTIL_VERSION_MICRO 100
-
-#define AV_VERSION_INT(a, b, c) (a<<16 | b<<8 | c)
-
-#define LIBAVUTIL_VERSION_INT   AV_VERSION_INT(LIBAVUTIL_VERSION_MAJOR, \
-LIBAVUTIL_VERSION_MINOR, \
-LIBAVUTIL_VERSION_MICRO)
 
 static const AVClass file_class = {
     .class_name = "file",

@@ -9,10 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import "Plugin.h"
 
-#define __FRAMEWORK__
-#import <FFMPEG/avcodec.h>
-#import <FFMPEG/avformat.h>
-#undef __FRAMEWORK__
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
 
 @interface FFMPEGDecoder : NSObject <CogDecoder>
 {

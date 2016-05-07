@@ -52,6 +52,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         av_log_set_flags(AV_LOG_SKIP_REPEATED);
         av_log_set_level(AV_LOG_ERROR);
         av_register_all();
+        registerCogProtocols();
         av_lockmgr_register(lockmgr_callback);
     }
 }
@@ -168,7 +169,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 {
     if (lastReadPacket)
     {
-        av_free_packet(lastReadPacket);
+        av_packet_unref(lastReadPacket);
         free(lastReadPacket);
         lastReadPacket = NULL;
     }
@@ -211,7 +212,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         while(readNextPacket && !endOfStream)
         {
             // consume next chunk of encoded data from input stream
-            av_free_packet(lastReadPacket);
+            av_packet_unref(lastReadPacket);
             if(av_read_frame(formatCtx, lastReadPacket) < 0)
             {
                 DLog(@"End of stream");

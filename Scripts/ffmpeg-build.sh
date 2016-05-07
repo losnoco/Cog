@@ -21,13 +21,11 @@
     --enable-decoder=dsd_msbf --enable-decoder=dsd_msbf_planar\
     --enable-demuxer=dsf\
     --enable-demuxer=aac --enable-decoder=aac\
-    --enable-decoder=g722dsp\
     --enable-decoder=atrac3 --enable-decoder=atrac3p\
 	--enable-libdcadec --enable-demuxer=dts --enable-demuxer=dtshd\
 	--enable-demuxer=mp3 --enable-decoder=mp3float\
     --disable-libopencore-amrnb --disable-libopencore-amrwb\
     --disable-version3 --disable-mmx\
-    --disable-yasm\
-    --enable-protocol=file --enable-protocol=http
+    --disable-yasm
 
 make -j8

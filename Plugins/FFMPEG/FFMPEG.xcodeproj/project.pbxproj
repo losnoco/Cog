@@ -19,6 +19,7 @@
 		8352D49B1CDDB8B2009D16AA /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49A1CDDB8B2009D16AA /* VideoToolbox.framework */; };
 		8352D49D1CDDB8C0009D16AA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49C1CDDB8C0009D16AA /* CoreMedia.framework */; };
 		8352D49F1CDDB8D7009D16AA /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49E1CDDB8D7009D16AA /* CoreVideo.framework */; };
+		8352D4A21CDDC0BC009D16AA /* FFMPEGFileProtocols.m in Sources */ = {isa = PBXBuildFile; fileRef = 8352D4A11CDDC0BC009D16AA /* FFMPEGFileProtocols.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		B09E942F0D747F410064F138 /* FFMPEGDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = B09E942E0D747F410064F138 /* FFMPEGDecoder.m */; };
 /* End PBXBuildFile section */
@@ -40,6 +41,8 @@
 		8352D49A1CDDB8B2009D16AA /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		8352D49C1CDDB8C0009D16AA /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		8352D49E1CDDB8D7009D16AA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		8352D4A01CDDC0BC009D16AA /* FFMPEGFileProtocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FFMPEGFileProtocols.h; sourceTree = "<group>"; };
+		8352D4A11CDDC0BC009D16AA /* FFMPEGFileProtocols.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFMPEGFileProtocols.m; sourceTree = "<group>"; };
 		8384913818081F6C00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* FFMPEG.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FFMPEG.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -116,6 +119,8 @@
 				B09E94370D747FAD0064F138 /* Plugin.h */,
 				B09E942D0D747F410064F138 /* FFMPEGDecoder.h */,
 				B09E942E0D747F410064F138 /* FFMPEGDecoder.m */,
+				8352D4A01CDDC0BC009D16AA /* FFMPEGFileProtocols.h */,
+				8352D4A11CDDC0BC009D16AA /* FFMPEGFileProtocols.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -221,6 +226,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8352D4A21CDDC0BC009D16AA /* FFMPEGFileProtocols.m in Sources */,
 				B09E942F0D747F410064F138 /* FFMPEGDecoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
