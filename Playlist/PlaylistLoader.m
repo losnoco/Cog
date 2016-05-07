@@ -456,65 +456,29 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     for (PlaylistEntry *pe in entries)
     {
         if ([pe metadataLoaded]) continue;
+        
+        __block PlaylistEntry *weakPe = pe;
+        __block NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
 
-        @autoreleasepool {
-            NSInvocationOperation *readEntryInfoOperation;
-            readEntryInfoOperation = [[NSInvocationOperation alloc]
-                                        initWithTarget:self
-                                              selector:@selector(readEntryInfo:)
-                                                object:pe];
-
-            [readEntryInfoOperation addObserver:self
-                                     forKeyPath:@"isFinished"
-                                        options:NSKeyValueObservingOptionNew
-                                        context:NULL];
-            [queue addOperation:readEntryInfoOperation];
-        }
+        NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+            NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
+            if (entryProperties == nil)
+                return;
+            
+            [entryInfo addEntriesFromDictionary:entryProperties];
+            [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:weakPe.URL]];
+        }];
+        
+        [op setCompletionBlock:^{
+            [weakPe performSelectorOnMainThread:@selector(setMetadata:) withObject:entryInfo waitUntilDone:NO];
+        }];
+        
+        [queue addOperation:op];
     }
 
 	[queue waitUntilAllOperationsAreFinished];
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-}
-
-- (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe
-{
-    // Just setting this to 20 for now...
-    NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
-    NSDictionary *entryProperties;
-    entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
-    if (entryProperties == nil)
-        return nil;
-        
-    [entryInfo addEntriesFromDictionary:entryProperties];
-    [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
-    return entryInfo;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
-{
-    // We finished reading the info for a playlist entry
-    if ([keyPath isEqualToString:@"isFinished"] && [object isFinished])
-    {
-        // stop observing
-        [object removeObserver:self forKeyPath:keyPath];
-
-		// get the playlist entry that the operation read for
-		PlaylistEntry *pe = nil;
-		[[object invocation] getArgument:&pe atIndex:2];
-        [pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[object result] waitUntilDone:NO];  
-		
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath
-                             ofObject:object
-                               change:change
-                              context:context];
-    }
 }
 
 - (void)clear:(id)sender
