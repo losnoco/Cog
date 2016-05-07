@@ -248,7 +248,6 @@
 				GCC_PREFIX_HEADER = FFMPEG_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.ffmpeg;
 				PRODUCT_NAME = FFMPEG;
 				SDKROOT = macosx;
@@ -269,7 +268,6 @@
 				GCC_PREFIX_HEADER = FFMPEG_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.ffmpeg;
 				PRODUCT_NAME = FFMPEG;
 				SDKROOT = macosx;
