@@ -219,9 +219,7 @@ static CGEventRef tapEventCallback2(CGEventTapProxy proxy, CGEventType type, CGE
 
 static CGEventRef tapEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon)
 {
-    @autoreleasepool {
-        return tapEventCallback2(proxy, type, event, refcon);
-    }
+    return tapEventCallback2(proxy, type, event, refcon);
 }
 
 
