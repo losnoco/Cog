@@ -120,7 +120,7 @@ static int file_close(URLContext *h)
     return 0;
 }
 
-URLProtocol ff_file_protocol = {
+static URLProtocol ff_file_protocol = {
     .name                = "file",
     .url_open            = file_open,
     .url_read            = file_read,
@@ -131,7 +131,7 @@ URLProtocol ff_file_protocol = {
     .priv_data_class     = &file_class,
 };
 
-URLProtocol ff_http_protocol = {
+static URLProtocol ff_http_protocol = {
     .name                = "http",
     .url_open            = http_open,
     .url_read            = file_read,
@@ -139,10 +139,11 @@ URLProtocol ff_http_protocol = {
     .url_close           = file_close,
     .url_check           = file_check,
     .priv_data_size      = sizeof(FileContext),
-    .priv_data_class     = &file_class,
+    .flags               = URL_PROTOCOL_FLAG_NETWORK,
+    .priv_data_class     = &http_class,
 };
 
-URLProtocol ff_unpack_protocol = {
+static URLProtocol ff_unpack_protocol = {
     .name                = "unpack",
     .url_open            = file_open,
     .url_read            = file_read,
@@ -150,7 +151,7 @@ URLProtocol ff_unpack_protocol = {
     .url_close           = file_close,
     .url_check           = file_check,
     .priv_data_size      = sizeof(FileContext),
-    .priv_data_class     = &file_class,
+    .priv_data_class     = &unpack_class,
 };
 
 void registerCogProtocols()

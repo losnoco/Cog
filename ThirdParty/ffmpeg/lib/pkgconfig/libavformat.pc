@@ -1,0 +1,14 @@
+prefix=/Users/Chris/Source/Repos/cog/ThirdParty/ffmpeg
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 57.25.100
+Requires: libavcodec >= 57.24.102, libavutil >= 55.17.103
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavformat -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework QuartzCore -framework CoreVideo -framework CoreFoundation -framework VideoDecodeAcceleration -framework QuartzCore -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -L/usr/local/lib -lSDLmain -lSDL -Wl,-framework,Cocoa -L/usr/local/Cellar/dcadec/0.2.0/lib -ldcadec -lm -lz -pthread -framework CoreServices
+Libs.private: 
+Cflags: -I${includedir}
