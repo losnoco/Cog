@@ -159,10 +159,18 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	if (pe == nil)
 		return;
 	
+#if 0
 	// Race here, but the worst that could happen is we re-read the data
-	if ([pe metadataLoaded] != YES) {
+    if ([pe metadataLoaded] != YES) {
 		[pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
 	}
+#else
+    // Racing with this version is less likely to jam up the main thread
+    if ([pe metadataLoaded] != YES) {
+        NSArray * entries = [NSArray arrayWithObject:pe];
+        [playlistLoader loadInfoForEntries:entries];
+    }
+#endif
 	
 	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused];
 }
@@ -479,7 +487,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     {
 		pe = [playlistController getNextEntry:curEntry];
         if (pe && [pe metadataLoaded] != YES) {
-            [pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
+            NSArray * entries = [NSArray arrayWithObject:pe];
+            [playlistLoader loadInfoForEntries:entries];
         }
     }
 
