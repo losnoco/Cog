@@ -245,7 +245,8 @@ static OSType getOSType(const char * in_)
         soundFontsAssigned = YES;
     }
     
-    player->Play( (float *) buf, frames );
+    if ( player->Play( (float *) buf, frames ) < frames )
+        return -1;
     
     if ( !repeatone && framesRead + frames > localFramesLength ) {
         if ( framesFade ) {
