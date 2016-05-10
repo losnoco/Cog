@@ -330,7 +330,7 @@
 
 - (IBAction)donate:(id)sender
 {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://sourceforge.net/project/project_donations.php?group_id=140003"]];
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://pledgie.com/campaigns/31642"]];
 }
 
 - (void)initDefaults
