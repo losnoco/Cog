@@ -24,6 +24,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <mutex>
 
 #include "Integrator.h"
 #include "OpAmp.h"
@@ -90,9 +91,11 @@ const Spline::Point opamp_voltage[OPAMP_SIZE] =
 };
 
 std::unique_ptr<FilterModelConfig> FilterModelConfig::instance(nullptr);
+static std::mutex g_FilterModelConfig_mutex;
 
 FilterModelConfig* FilterModelConfig::getInstance()
 {
+	std::lock_guard<std::mutex> guard(g_FilterModelConfig_mutex);
     if (!instance.get())
     {
         instance.reset(new FilterModelConfig());

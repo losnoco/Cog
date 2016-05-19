@@ -93,6 +93,9 @@ typedef struct
 class WaveformCalculator
 {
 private:
+	static std::unique_ptr<WaveformCalculator> instance;
+
+private:
     typedef std::map<const CombinedWaveformConfig*, matrix_t> cw_cache_t;
 
 private:

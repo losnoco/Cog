@@ -92,7 +92,7 @@ WaveformGenerator::WaveformGenerator()
       // MOS 8580: 2R/R ~ 2.00, correct termination.
       build_dac_table(model_dac[1], 12, 2.00, true);
 
-      class_init = true;
+      g_class_init = true;
     }
   }
 
