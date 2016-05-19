@@ -17,6 +17,8 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //  ---------------------------------------------------------------------------
 
+#include <mutex>
+
 #define RESID_WAVE_CC
 
 #include "wave.h"
@@ -60,34 +62,38 @@ unsigned short WaveformGenerator::model_dac[2][1 << 12] = {
 // ----------------------------------------------------------------------------
 // Constructor.
 // ----------------------------------------------------------------------------
+static std::mutex g_class_init_mutex;
+static bool g_class_init = false;
+
 WaveformGenerator::WaveformGenerator()
 {
-  static bool class_init;
+  {
+    std::lock_guard<std::mutex> guard(g_class_init_mutex);
+    if (!g_class_init) {
+      // Calculate tables for normal waveforms.
+      accumulator = 0;
+      for (int i = 0; i < (1 << 12); i++) {
+	reg24 msb = accumulator & 0x800000;
 
-  if (!class_init) {
-    // Calculate tables for normal waveforms.
-    accumulator = 0;
-    for (int i = 0; i < (1 << 12); i++) {
-      reg24 msb = accumulator & 0x800000;
+	// Noise mask, triangle, sawtooth, pulse mask.
+	// The triangle calculation is made branch-free, just for the hell of it.
+	model_wave[0][0][i] = model_wave[1][0][i] = 0xfff;
+	model_wave[0][1][i] = model_wave[1][1][i] =
+	  ((accumulator ^ -!!msb) >> 11) & 0xffe;
+	model_wave[0][2][i] = model_wave[1][2][i] = accumulator >> 12;
+	model_wave[0][4][i] = model_wave[1][4][i] = 0xfff;
 
-      // Noise mask, triangle, sawtooth, pulse mask.
-      // The triangle calculation is made branch-free, just for the hell of it.
-      model_wave[0][0][i] = model_wave[1][0][i] = 0xfff;
-      model_wave[0][1][i] = model_wave[1][1][i] =
-	((accumulator ^ -!!msb) >> 11) & 0xffe;
-      model_wave[0][2][i] = model_wave[1][2][i] = accumulator >> 12;
-      model_wave[0][4][i] = model_wave[1][4][i] = 0xfff;
+	accumulator += 0x1000;
+      }
 
-      accumulator += 0x1000;
+      // Build DAC lookup tables for 12-bit DACs.
+      // MOS 6581: 2R/R ~ 2.20, missing termination resistor.
+      build_dac_table(model_dac[0], 12, 2.20, false);
+      // MOS 8580: 2R/R ~ 2.00, correct termination.
+      build_dac_table(model_dac[1], 12, 2.00, true);
+
+      class_init = true;
     }
-
-    // Build DAC lookup tables for 12-bit DACs.
-    // MOS 6581: 2R/R ~ 2.20, missing termination resistor.
-    build_dac_table(model_dac[0], 12, 2.20, false);
-    // MOS 8580: 2R/R ~ 2.00, correct termination.
-    build_dac_table(model_dac[1], 12, 2.00, true);
-
-    class_init = true;
   }
 
   sync_source = this;

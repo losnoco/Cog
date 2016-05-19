@@ -172,6 +172,8 @@ short calculateCombinedWaveform(CombinedWaveformConfig config, int waveform, int
 
 matrix_t* WaveformCalculator::buildTable(ChipModel model)
 {
+    std::lock_guard<std::mutex> guard(CACHE_LOCK);
+
     const CombinedWaveformConfig* cfgArray = config[model == MOS6581 ? 0 : 1];
 
     cw_cache_t::iterator lb = CACHE.lower_bound(cfgArray);

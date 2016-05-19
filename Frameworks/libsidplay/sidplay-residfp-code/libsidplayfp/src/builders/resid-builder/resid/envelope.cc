@@ -17,6 +17,8 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //  ---------------------------------------------------------------------------
 
+#include <mutex>
+
 #define RESID_ENVELOPE_CC
 
 #include "envelope.h"
@@ -156,18 +158,22 @@ unsigned short EnvelopeGenerator::model_dac[2][1 << 8] = {
 // ----------------------------------------------------------------------------
 // Constructor.
 // ----------------------------------------------------------------------------
+static std::mutex g_class_init_mutex;
+static bool g_class_init = false;
+
 EnvelopeGenerator::EnvelopeGenerator()
 {
-  static bool class_init;
+  {
+    std::lock_guard<std::mutex> guard(g_class_init_mutex);
+    if (!g_class_init) {
+      // Build DAC lookup tables for 8-bit DACs.
+      // MOS 6581: 2R/R ~ 2.20, missing termination resistor.
+      build_dac_table(model_dac[0], 8, 2.20, false);
+      // MOS 8580: 2R/R ~ 2.00, correct termination.
+      build_dac_table(model_dac[1], 8, 2.00, true);
 
-  if (!class_init) {
-    // Build DAC lookup tables for 8-bit DACs.
-    // MOS 6581: 2R/R ~ 2.20, missing termination resistor.
-    build_dac_table(model_dac[0], 8, 2.20, false);
-    // MOS 8580: 2R/R ~ 2.00, correct termination.
-    build_dac_table(model_dac[1], 8, 2.00, true);
-
-    class_init = true;
+      g_class_init = true;
+    }
   }
 
   set_chip_model(MOS6581);

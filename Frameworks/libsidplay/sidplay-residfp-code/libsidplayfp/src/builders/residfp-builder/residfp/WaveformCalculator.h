@@ -23,6 +23,7 @@
 #define WAVEFORMCALCULATOR_h
 
 #include <map>
+#include <mutex>
 
 #include "siddefs-fp.h"
 #include "array.h"
@@ -95,6 +96,7 @@ private:
     typedef std::map<const CombinedWaveformConfig*, matrix_t> cw_cache_t;
 
 private:
+    std::mutex CACHE_LOCK;
     cw_cache_t CACHE;
 
     WaveformCalculator() {}
