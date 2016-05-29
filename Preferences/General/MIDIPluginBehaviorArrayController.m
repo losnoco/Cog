@@ -76,6 +76,26 @@ static void enumCallback(void *context, OSType uSubType, OSType uManufacturer, c
      [NSDictionary dictionaryWithObjectsAndKeys:
       @"BASSMIDI", @"name", @"BASSMIDI", @"preference", nil]];
     
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"DMX Generic", @"name", @"DOOM0000", @"preference", nil]];
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"DMX Doom 1", @"name", @"DOOM0001", @"preference", nil]];
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"DMX Doom 2", @"name", @"DOOM0002", @"preference", nil]];
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"DMX Raptor", @"name", @"DOOM0003", @"preference", nil]];
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"DMX Strife", @"name", @"DOOM0004", @"preference", nil]];
+
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"OPL3Windows", @"name", @"OPL3W000", @"preference", nil]];
+
     enumComponents(enumCallback, (__bridge void *)(self));
 }
 

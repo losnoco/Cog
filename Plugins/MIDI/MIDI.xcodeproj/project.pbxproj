@@ -11,6 +11,11 @@
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
 		839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F561CFA83F2001E7D2D /* i_oplmusic.cpp */; };
+		83A09F631CFA83F2001E7D2D /* opl3midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F5A1CFA83F2001E7D2D /* opl3midi.cpp */; };
+		83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F5E1CFA83F2001E7D2D /* opl3.cpp */; };
+		83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F601CFA83F2001E7D2D /* opl3class.cpp */; };
+		83A09F6F1CFA8D6B001E7D2D /* MSPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F6E1CFA8D6B001E7D2D /* MSPlayer.cpp */; };
 		83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B0668A180D5668008E3612 /* Cocoa.framework */; };
 		83B06695180D5668008E3612 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83B06693180D5668008E3612 /* InfoPlist.strings */; };
 		83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
@@ -84,6 +89,24 @@
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		83686AB01C5C783000671C7A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		83A09F561CFA83F2001E7D2D /* i_oplmusic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i_oplmusic.cpp; sourceTree = "<group>"; };
+		83A09F571CFA83F2001E7D2D /* i_oplmusic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i_oplmusic.h; sourceTree = "<group>"; };
+		83A09F591CFA83F2001E7D2D /* gmtimbre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmtimbre.h; sourceTree = "<group>"; };
+		83A09F5A1CFA83F2001E7D2D /* opl3midi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opl3midi.cpp; sourceTree = "<group>"; };
+		83A09F5B1CFA83F2001E7D2D /* opl3midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3midi.h; sourceTree = "<group>"; };
+		83A09F5C1CFA83F2001E7D2D /* opl3type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3type.h; sourceTree = "<group>"; };
+		83A09F5E1CFA83F2001E7D2D /* opl3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opl3.cpp; sourceTree = "<group>"; };
+		83A09F5F1CFA83F2001E7D2D /* opl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3.h; sourceTree = "<group>"; };
+		83A09F601CFA83F2001E7D2D /* opl3class.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opl3class.cpp; sourceTree = "<group>"; };
+		83A09F611CFA83F2001E7D2D /* opl3class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3class.h; sourceTree = "<group>"; };
+		83A09F661CFA883D001E7D2D /* interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interface.h; sourceTree = "<group>"; };
+		83A09F681CFA89E7001E7D2D /* dmx_dmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmx_dmx.h; sourceTree = "<group>"; };
+		83A09F691CFA89E7001E7D2D /* dmx_doom1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmx_doom1.h; sourceTree = "<group>"; };
+		83A09F6A1CFA89E7001E7D2D /* dmx_doom2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmx_doom2.h; sourceTree = "<group>"; };
+		83A09F6B1CFA89E7001E7D2D /* dmx_raptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmx_raptor.h; sourceTree = "<group>"; };
+		83A09F6C1CFA89E7001E7D2D /* dmx_strife.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmx_strife.h; sourceTree = "<group>"; };
+		83A09F6D1CFA8D6B001E7D2D /* MSPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSPlayer.h; sourceTree = "<group>"; };
+		83A09F6E1CFA8D6B001E7D2D /* MSPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSPlayer.cpp; sourceTree = "<group>"; };
 		83B06687180D5668008E3612 /* MIDI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MIDI.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B0668A180D5668008E3612 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83B0668D180D5668008E3612 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -137,6 +160,50 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83A09F551CFA83F2001E7D2D /* synthlib_doom */ = {
+			isa = PBXGroup;
+			children = (
+				83A09F671CFA89E7001E7D2D /* inst */,
+				83A09F561CFA83F2001E7D2D /* i_oplmusic.cpp */,
+				83A09F571CFA83F2001E7D2D /* i_oplmusic.h */,
+			);
+			path = synthlib_doom;
+			sourceTree = "<group>";
+		};
+		83A09F581CFA83F2001E7D2D /* synthlib_opl3w */ = {
+			isa = PBXGroup;
+			children = (
+				83A09F591CFA83F2001E7D2D /* gmtimbre.h */,
+				83A09F5A1CFA83F2001E7D2D /* opl3midi.cpp */,
+				83A09F5B1CFA83F2001E7D2D /* opl3midi.h */,
+				83A09F5C1CFA83F2001E7D2D /* opl3type.h */,
+			);
+			path = synthlib_opl3w;
+			sourceTree = "<group>";
+		};
+		83A09F5D1CFA83F2001E7D2D /* fmopl3lib */ = {
+			isa = PBXGroup;
+			children = (
+				83A09F5E1CFA83F2001E7D2D /* opl3.cpp */,
+				83A09F5F1CFA83F2001E7D2D /* opl3.h */,
+				83A09F601CFA83F2001E7D2D /* opl3class.cpp */,
+				83A09F611CFA83F2001E7D2D /* opl3class.h */,
+			);
+			path = fmopl3lib;
+			sourceTree = "<group>";
+		};
+		83A09F671CFA89E7001E7D2D /* inst */ = {
+			isa = PBXGroup;
+			children = (
+				83A09F681CFA89E7001E7D2D /* dmx_dmx.h */,
+				83A09F691CFA89E7001E7D2D /* dmx_doom1.h */,
+				83A09F6A1CFA89E7001E7D2D /* dmx_doom2.h */,
+				83A09F6B1CFA89E7001E7D2D /* dmx_raptor.h */,
+				83A09F6C1CFA89E7001E7D2D /* dmx_strife.h */,
+			);
+			path = inst;
+			sourceTree = "<group>";
+		};
 		83B0667E180D5668008E3612 = {
 			isa = PBXGroup;
 			children = (
@@ -186,6 +253,12 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				83A09F6E1CFA8D6B001E7D2D /* MSPlayer.cpp */,
+				83A09F6D1CFA8D6B001E7D2D /* MSPlayer.h */,
+				83A09F661CFA883D001E7D2D /* interface.h */,
+				83A09F551CFA83F2001E7D2D /* synthlib_doom */,
+				83A09F581CFA83F2001E7D2D /* synthlib_opl3w */,
+				83A09F5D1CFA83F2001E7D2D /* fmopl3lib */,
 				83DFEA031CBC87BB00BCC565 /* SCCore.cpp */,
 				83DFEA041CBC87BB00BCC565 /* SCCore.h */,
 				83DFEA051CBC87BB00BCC565 /* SCPlayer.cpp */,
@@ -315,12 +388,17 @@
 				83E973471C4378880007F413 /* AUPlayer.mm in Sources */,
 				83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */,
 				83DFEA071CBC87BB00BCC565 /* SCCore.cpp in Sources */,
+				83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */,
 				83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */,
 				83DFEA081CBC87BB00BCC565 /* SCPlayer.cpp in Sources */,
+				83A09F631CFA83F2001E7D2D /* opl3midi.cpp in Sources */,
 				83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */,
+				83A09F6F1CFA8D6B001E7D2D /* MSPlayer.cpp in Sources */,
 				83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */,
 				83B0670C180D6665008E3612 /* BMPlayer.cpp in Sources */,
+				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
+				83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

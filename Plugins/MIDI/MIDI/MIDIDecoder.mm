@@ -11,6 +11,7 @@
 #import "AUPlayer.h"
 #import "BMPlayer.h"
 #import "SCPlayer.h"
+#import "MSPlayer.h"
 
 #import "Logging.h"
 
@@ -139,6 +140,28 @@ static OSType getOSType(const char * in_)
             bmplayer->setFileSoundFont( [soundFontPath UTF8String] );
         
         player = bmplayer;
+    }
+    else if ([[plugin substringToIndex:4] isEqualToString:@"DOOM"])
+    {
+        MSPlayer * msplayer = new MSPlayer;
+        player = msplayer;
+        
+        msplayer->set_synth(0);
+        
+        msplayer->set_bank([[plugin substringFromIndex:4] intValue]);
+
+        msplayer->setSampleRate( 44100 );
+    }
+    else if ([[plugin substringToIndex:5] isEqualToString:@"OPL3W"])
+    {
+        MSPlayer * msplayer = new MSPlayer;
+        player = msplayer;
+        
+        msplayer->set_synth(1);
+        
+        msplayer->set_bank([[plugin substringFromIndex:5] intValue]);
+        
+        msplayer->setSampleRate( 44100 );
     }
     else
     {
