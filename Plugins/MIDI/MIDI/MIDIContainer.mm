@@ -40,10 +40,10 @@
     id<CogSource> source = [audioSourceClass audioSourceForURL:url];
     
     if (![source open:url])
-        return 0;
+        return [NSArray array];
     
     if (![source seekable])
-        return 0;
+        return [NSArray array];
 	
     [source seek:0 whence:SEEK_END];
     long size = [source tell];
@@ -53,18 +53,16 @@
     data.resize( size );
     [source read:&data[0] amount:size];
     
-    midi_container midi_file;
+    size_t track_count = 0;
     
-    if ( !midi_processor::process_file( data, [[url pathExtension] UTF8String], midi_file) )
-        return 0;
+    if ( !midi_processor::process_track_count( data, [[url pathExtension] UTF8String], track_count) )
+        return [NSArray array];
 
-	long track_count = midi_file.get_subsong_count();
-	
 	NSMutableArray *tracks = [NSMutableArray array];
 	
 	long i;
 	for (i = 0; i < track_count; i++) {
-		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%li", midi_file.get_subsong( i )]]];
+		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%li", i]]];
 	}
 	
 	return tracks;

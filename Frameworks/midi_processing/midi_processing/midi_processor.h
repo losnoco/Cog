@@ -51,8 +51,14 @@ class midi_processor
     static bool process_lds( std::vector<uint8_t> const& p_file, midi_container & p_out );
     static bool process_gmf( std::vector<uint8_t> const& p_file, midi_container & p_out );
     static bool process_syx( std::vector<uint8_t> const& p_file, midi_container & p_out );
+    
+    static bool process_standard_midi_count( std::vector<uint8_t> const& p_file, size_t & track_count );
+    static bool process_riff_midi_count( std::vector<uint8_t> const& p_file, size_t & track_count );
+    static bool process_xmi_count( std::vector<uint8_t> const& p_file, size_t & track_count );
 
 public:
+    static bool process_track_count( std::vector<uint8_t> const& p_file, const char * p_extension, size_t & track_count );
+    
     static bool process_file( std::vector<uint8_t> const& p_file, const char * p_extension, midi_container & p_out );
 
     static bool process_syx_file( std::vector<uint8_t> const& p_file, midi_container & p_out );

@@ -67,3 +67,52 @@ bool midi_processor::process_syx_file( std::vector<uint8_t> const& p_file, midi_
     }
     else return false;
 }
+
+bool midi_processor::process_track_count( std::vector<uint8_t> const& p_file, const char * p_extension, size_t & track_count )
+{
+    track_count = 0;
+    
+    if ( is_standard_midi( p_file ) )
+    {
+        return process_standard_midi_count( p_file, track_count );
+    }
+    else if ( is_riff_midi( p_file ) )
+    {
+        return process_riff_midi_count( p_file, track_count );
+    }
+    else if ( is_hmp( p_file ) )
+    {
+        track_count = 1;
+        return true;
+    }
+    else if ( is_hmi( p_file ) )
+    {
+        track_count = 1;
+        return true;
+    }
+    else if ( is_xmi( p_file ) )
+    {
+        return process_xmi_count( p_file, track_count );
+    }
+    else if ( is_mus( p_file ) )
+    {
+        track_count = 1;
+        return true;
+    }
+    else if ( is_mids( p_file ) )
+    {
+        track_count = 1;
+        return true;
+    }
+    else if ( is_lds( p_file, p_extension ) )
+    {
+        track_count = 1;
+        return true;
+    }
+    else if ( is_gmf( p_file ) )
+    {
+        track_count = 1;
+        return true;
+    }
+    else return false;
+}

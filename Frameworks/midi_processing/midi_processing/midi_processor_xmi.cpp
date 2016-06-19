@@ -163,9 +163,29 @@ static bool read_iff_stream( std::vector<uint8_t> const& p_file, iff_stream & p_
     return true;
 }
 
+bool midi_processor::process_xmi_count( std::vector<uint8_t> const& p_file, size_t & track_count )
+{
+    track_count = 0;
+    
+    iff_stream xmi_file;
+    if ( !read_iff_stream( p_file, xmi_file ) ) return false;
+    
+    const iff_chunk & form_chunk = xmi_file.find_chunk( "FORM" );
+    if ( memcmp( form_chunk.m_type, "XDIR", 4 ) ) return false; /*throw exception_io_data( "XMI IFF not XDIR type" );*/
+    
+    const iff_chunk & cat_chunk = xmi_file.find_chunk( "CAT " );
+    if ( memcmp( cat_chunk.m_type, "XMID", 4 ) ) return false; /*throw exception_io_data( "XMI CAT chunk not XMID type" );*/
+    
+    unsigned _track_count = cat_chunk.get_chunk_count( "FORM" );
+    
+    track_count = _track_count;
+    
+    return true;
+}
+
 bool midi_processor::process_xmi( std::vector<uint8_t> const& p_file, midi_container & p_out )
 {
-	iff_stream xmi_file;
+    iff_stream xmi_file;
     if ( !read_iff_stream( p_file, xmi_file ) ) return false;
 
 	const iff_chunk & form_chunk = xmi_file.find_chunk( "FORM" );

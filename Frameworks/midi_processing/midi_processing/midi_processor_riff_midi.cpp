@@ -17,10 +17,43 @@ bool midi_processor::is_riff_midi( std::vector<uint8_t> const& p_file )
     return is_standard_midi( test );
 }
 
+bool midi_processor::process_riff_midi_count( std::vector<uint8_t> const& p_file, size_t & track_count )
+{
+    track_count = 0;
+    
+    uint32_t file_size = p_file[ 4 ] | ( p_file[ 5 ] << 8 ) | ( p_file[ 6 ] << 16 ) | ( p_file[ 7 ] << 24 );
+    
+    std::vector<uint8_t>::const_iterator it = p_file.begin() + 12;
+    
+    std::vector<uint8_t>::const_iterator body_end = p_file.begin() + 8 + file_size;
+    
+    std::vector<uint8_t> extra_buffer;
+    
+    while ( it != body_end )
+    {
+        if ( body_end - it < 8 ) return false;
+        uint32_t chunk_size = it[ 4 ] | ( it[ 5 ] << 8 ) | ( it[ 6 ] << 16 ) | ( it[ 7 ] << 24 );
+        if ( (unsigned long)(body_end - it) < chunk_size ) return false;
+        if ( it[ 0 ] == 'd' && it[ 1 ] == 'a' && it[ 2 ] == 't' && it[ 3 ] == 'a' )
+        {
+            std::vector<uint8_t> midi_file;
+            midi_file.assign( it + 8, it + 8 + chunk_size );
+            return process_standard_midi_count( midi_file, track_count );
+        }
+        else
+        {
+            it += chunk_size;
+            if ( chunk_size & 1 && it != body_end ) ++it;
+        }
+    }
+    
+    return false;
+}
+
 static const char * riff_tag_mappings[][2] = 
 {
-	{ "IALB", "album" },
-	{ "IARL", "archival_location" },
+    { "IALB", "album" },
+    { "IARL", "archival_location" },
 	{ "IART", "artist" },
 	{ "ITRK", "tracknumber" },
 	{ "ICMS", "commissioned" },

@@ -9,6 +9,26 @@ bool midi_processor::is_standard_midi( std::vector<uint8_t> const& p_file )
     return true;
 }
 
+bool midi_processor::process_standard_midi_count( std::vector<uint8_t> const& p_file, size_t & track_count )
+{
+    track_count = 0;
+    
+    if ( p_file[ 0 ] != 'M' || p_file[ 1 ] != 'T' || p_file[ 2 ] != 'h' || p_file[ 3 ] != 'd' ) return false;
+    if ( p_file[ 4 ] != 0 || p_file[ 5 ] != 0 || p_file[ 6 ] != 0 || p_file[ 7 ] != 6 ) return false; /*throw exception_io_data("Bad MIDI header size");*/
+
+    std::vector<uint8_t>::const_iterator it = p_file.begin() + 8;
+    
+    uint16_t form = ( it[0] << 8 ) | it[1];
+    if ( form > 2 ) return false;
+    
+    uint16_t track_count_16 = ( it[2] << 8 ) | it[3];
+    
+    if ( form == 2 ) track_count = track_count_16;
+    else track_count = 1;
+    
+    return true;
+}
+
 bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end, midi_container & p_out, bool needs_end_marker )
 {
 	midi_track track;
