@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		830C94D11D171B65000E404F /* sflist.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C94CB1D171B65000E404F /* sflist.c */; };
+		830C94D21D171B65000E404F /* json-builder.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C94CD1D171B65000E404F /* json-builder.c */; };
+		830C94D31D171B65000E404F /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C94CF1D171B65000E404F /* json.c */; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
@@ -83,6 +86,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		830C94CB1D171B65000E404F /* sflist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sflist.c; path = ../../../ThirdParty/BASS/sflist.c; sourceTree = "<group>"; };
+		830C94CC1D171B65000E404F /* sflist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sflist.h; path = ../../../ThirdParty/BASS/sflist.h; sourceTree = "<group>"; };
+		830C94CD1D171B65000E404F /* json-builder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "json-builder.c"; path = "../../../ThirdParty/json/json-builder.c"; sourceTree = "<group>"; };
+		830C94CE1D171B65000E404F /* json-builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "json-builder.h"; path = "../../../ThirdParty/json/json-builder.h"; sourceTree = "<group>"; };
+		830C94CF1D171B65000E404F /* json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = json.c; path = ../../../ThirdParty/json/json.c; sourceTree = "<group>"; };
+		830C94D01D171B65000E404F /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json.h; path = ../../../ThirdParty/json/json.h; sourceTree = "<group>"; };
 		833F68431CDBCABE00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83686AAB1C5C69D400671C7A /* AUPlayerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayerView.mm; sourceTree = "<group>"; };
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
@@ -160,6 +169,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		830C94CA1D171B30000E404F /* sflist */ = {
+			isa = PBXGroup;
+			children = (
+				830C94CB1D171B65000E404F /* sflist.c */,
+				830C94CC1D171B65000E404F /* sflist.h */,
+				830C94CD1D171B65000E404F /* json-builder.c */,
+				830C94CE1D171B65000E404F /* json-builder.h */,
+				830C94CF1D171B65000E404F /* json.c */,
+				830C94D01D171B65000E404F /* json.h */,
+			);
+			name = sflist;
+			sourceTree = "<group>";
+		};
 		83A09F551CFA83F2001E7D2D /* synthlib_doom */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,6 +275,7 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				830C94CA1D171B30000E404F /* sflist */,
 				83A09F6E1CFA8D6B001E7D2D /* MSPlayer.cpp */,
 				83A09F6D1CFA8D6B001E7D2D /* MSPlayer.h */,
 				83A09F661CFA883D001E7D2D /* interface.h */,
@@ -387,6 +410,7 @@
 			files = (
 				83E973471C4378880007F413 /* AUPlayer.mm in Sources */,
 				83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */,
+				830C94D31D171B65000E404F /* json.c in Sources */,
 				83DFEA071CBC87BB00BCC565 /* SCCore.cpp in Sources */,
 				83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */,
 				83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */,
@@ -398,6 +422,8 @@
 				83B0670C180D6665008E3612 /* BMPlayer.cpp in Sources */,
 				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
+				830C94D21D171B65000E404F /* json-builder.c in Sources */,
+				830C94D11D171B65000E404F /* sflist.c in Sources */,
 				83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -501,6 +527,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MIDI/MIDI-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../ThirdParty/BASS",
+					"$(SRCROOT)/../../ThirdParty/json",
+				);
 				INFOPLIST_FILE = "MIDI/MIDI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
@@ -521,6 +551,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MIDI/MIDI-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../ThirdParty/BASS",
+					"$(SRCROOT)/../../ThirdParty/json",
+				);
 				INFOPLIST_FILE = "MIDI/MIDI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (

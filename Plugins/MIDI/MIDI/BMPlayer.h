@@ -3,7 +3,9 @@
 
 #include "MIDIPlayer.h"
 
-#include "../../../ThirdParty/BASS/bassmidi.h"
+#include <bassmidi.h>
+
+typedef struct sflist_presets sflist_presets;
 
 class BMPlayer : public MIDIPlayer
 {
@@ -31,6 +33,7 @@ private:
 	void reset_parameters();
 
     std::vector<HSOUNDFONT> _soundFonts;
+    sflist_presets   * _presetList;
     std::string        sSoundFontName;
     std::string        sFileSoundFontName;
     
