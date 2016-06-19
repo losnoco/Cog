@@ -119,6 +119,10 @@
     track = nil;
 }
 
+- (void)dealloc {
+    [self close];
+}
+
 - (BOOL)setTrack:(NSURL *)url
 {
 	//Same file, just next track...this may be unnecessary since frame-based decoding is done now...

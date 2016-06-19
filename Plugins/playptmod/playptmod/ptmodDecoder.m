@@ -248,6 +248,11 @@ BOOL probe_length( void * ptmod, unsigned long * intro_length, unsigned long * l
     }
 }
 
+- (void)dealloc
+{
+    [self close];
+}
+
 + (NSArray *)fileTypes
 {	
 	return [NSArray arrayWithObjects:@"mod", @"mdz", @"stk", @"m15", @"fst", nil];

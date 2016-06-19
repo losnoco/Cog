@@ -328,13 +328,13 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	for (url in sortedURLs)
 	{
 		//Container vs non-container url
-		if ([[self acceptableContainerTypes] containsObject:[[[url path] pathExtension] lowercaseString]]) {
+		if ([[self acceptableContainerTypes] containsObject:[[url pathExtension] lowercaseString]]) {
 			[containedURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
 
 			//Make sure the container isn't added twice.
-			[uniqueURLs addObjectsFromArray:containedURLs];
+			[uniqueURLs addObject:url];
 		}
-        else if ([[[[url path] pathExtension] lowercaseString] isEqualToString:@"xml"])
+        else if ([[[url pathExtension] lowercaseString] isEqualToString:@"xml"])
         {
             xmlData = [XmlContainer entriesForContainerURL:url];
         }
@@ -352,9 +352,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	{
 		if (![[AudioPlayer schemes] containsObject:[url scheme]])
 			continue;
+        
+        NSString *ext = [[url pathExtension] lowercaseString];
 
 		//Need a better way to determine acceptable file types than basing it on extensions.
-		if ([url isFileURL] && ![[AudioPlayer fileTypes] containsObject:[[[url path] pathExtension] lowercaseString]])
+		if ([url isFileURL] && ![[AudioPlayer fileTypes] containsObject:ext])
 			continue;
 		
 		if (![uniqueURLs containsObject:url])
@@ -373,7 +375,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 			continue;
 
 		//Need a better way to determine acceptable file types than basing it on extensions.
-		if ([url isFileURL] && ![[AudioPlayer fileTypes] containsObject:[[[url path] pathExtension] lowercaseString]])
+		if ([url isFileURL] && ![[AudioPlayer fileTypes] containsObject:[[url pathExtension] lowercaseString]])
 			continue;
 
 		[validURLs addObject:url];

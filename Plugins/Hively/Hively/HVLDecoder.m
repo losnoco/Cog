@@ -184,6 +184,11 @@ void oneTimeInit()
     }
 }
 
+- (void)dealloc
+{
+    [self close];
+}
+
 + (NSArray *)fileTypes 
 {	
 	return [NSArray arrayWithObjects:@"hvl", @"ahx", nil];

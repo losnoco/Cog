@@ -81,6 +81,11 @@
 		shn_unload(handle);*/
 }
 
+- (void)dealloc
+{
+    [self close];
+}
+
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:

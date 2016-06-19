@@ -116,6 +116,16 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
     return YES;
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        player = NULL;
+        data = NULL;
+    }
+    return self;
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
     [s seek:0 whence:SEEK_END];
@@ -341,6 +351,11 @@ BOOL xm_probe_length( unsigned long * intro_length, unsigned long * loop_length,
             free( data );
         data = NULL;
     }
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 + (NSArray *)fileTypes

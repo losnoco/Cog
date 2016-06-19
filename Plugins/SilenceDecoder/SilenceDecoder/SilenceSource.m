@@ -55,8 +55,6 @@
 
 - (void)setURL:(NSURL *)url
 {
-	[url retain];
-	[_url release];
 	_url = url;
 }
 
@@ -69,8 +67,6 @@
 - (void)dealloc {
 	[self close];
 	[self setURL:nil];
-	
-	[super dealloc];
 }
 
 @end

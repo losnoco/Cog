@@ -29,6 +29,15 @@ gme_err_t readCallback( void* data, void* out, long count )
 	return 0;  //Return 0 for no error
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        emu = NULL;
+    }
+    return self;
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
 	[self setSource:s];
@@ -40,7 +49,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 	
 	gme_err_t error;
 	
-	NSString *ext = [[[[source url] path] pathExtension] lowercaseString];
+	NSString *ext = [[[source url] pathExtension] lowercaseString];
 	
 	gme_type_t type = gme_identify_extension([ext UTF8String]);
 	if (!type) 
@@ -168,6 +177,11 @@ gme_err_t readCallback( void* data, void* out, long count )
 		[source close];
 		[self setSource:nil];
 	}
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 + (NSArray *)fileTypes 

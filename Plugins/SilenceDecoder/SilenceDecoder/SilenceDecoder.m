@@ -79,8 +79,6 @@ enum { channels = 2 };
 
 - (void)setSource:(id<CogSource>)s
 {
-	[s retain];
-	[source release];
 	source = s;
 }
 

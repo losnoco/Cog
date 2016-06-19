@@ -84,6 +84,10 @@
     apl = nil;
 }
 
+- (void)dealloc {
+    [self close];
+}
+
 
 - (long)seek:(long)frame
 {

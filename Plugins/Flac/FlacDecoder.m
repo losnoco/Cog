@@ -260,6 +260,11 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	blockBuffer = NULL;
 }
 
+- (void)dealloc
+{
+    [self close];
+}
+
 - (long)seek:(long)sample
 {
 	if (!FLAC__stream_decoder_seek_absolute(decoder, sample))

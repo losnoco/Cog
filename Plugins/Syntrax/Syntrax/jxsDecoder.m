@@ -58,6 +58,16 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
     return YES;
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        synSong = NULL;
+        synPlayer = NULL;
+    }
+    return self;
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
     [s seek:0 whence:SEEK_END];
@@ -219,6 +229,11 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
         File_freeSong(synSong);
         synSong = NULL;
     }
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 + (NSArray *)fileTypes

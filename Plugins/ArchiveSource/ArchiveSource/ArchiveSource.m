@@ -173,8 +173,6 @@ static BOOL g_parse_unpack_path(NSString * src, NSString ** archive, NSString **
 
 - (void)setURL:(NSURL *)url
 {
-	[url retain];
-	[_url release];
 	_url = url;
 }
 
@@ -187,8 +185,6 @@ static BOOL g_parse_unpack_path(NSString * src, NSString ** archive, NSString **
 - (void)dealloc {
 	[self close];
 	[self setURL:nil];
-	
-	[super dealloc];
 }
 
 @end

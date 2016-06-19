@@ -122,6 +122,11 @@ long sourceTell(void *datasource)
     source = nil;
 }
 
+- (void)dealloc
+{
+    [self close];
+}
+
 - (long)seek:(long)frame
 {
 	ov_pcm_seek(&vorbisRef, frame);

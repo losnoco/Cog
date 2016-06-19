@@ -50,7 +50,7 @@
     
     midi_container midi_file;
     
-    if ( !midi_processor::process_file( data, [[[url absoluteString] pathExtension] UTF8String], midi_file) )
+    if ( !midi_processor::process_file( data, [[url pathExtension] UTF8String], midi_file) )
         return 0;
     
 	int track_num;

@@ -43,7 +43,7 @@
 
     const SidTuneInfo * info = tune->getInfo();
     
-    n_channels = info->isStereo() ? 2 : 1;
+    n_channels = info->sidChips();
     
     length = 3 * 60 * 44100;
 
@@ -74,9 +74,9 @@
     
     SidConfig conf = engine->config();
     conf.frequency = 44100;
-    conf.playback = info->isStereo() ? SidConfig::STEREO : SidConfig::MONO;
+    conf.playback = (info->sidChips() > 1) ? SidConfig::STEREO : SidConfig::MONO;
     conf.sidEmulation = builder;
-    if (engine->config(conf) < 0)
+    if (!engine->config(conf))
         return NO;
 
     renderedTotal = 0;
@@ -222,10 +222,13 @@
 	}
 }
 
+- (void)dealloc
+{
+    [self close];
+}
+
 - (void)setSource:(id<CogSource>)s
 {
-	[s retain];
-	[source release];
 	source = s;
 }
 

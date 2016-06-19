@@ -57,6 +57,18 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     }
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        lastReadPacket = NULL;
+        lastDecodedFrame = NULL;
+        codecCtx = NULL;
+        formatCtx = NULL;
+    }
+    return self;
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
 	int errcode, i;
@@ -179,6 +191,11 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     if (codecCtx) { avcodec_close(codecCtx); codecCtx = NULL; }
     
     if (formatCtx) { avformat_close_input(&(formatCtx)); formatCtx = NULL; }
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames

@@ -42,7 +42,7 @@
     if (![source seekable])
         return 0;
 
-	NSString *ext = [[[url path] pathExtension] lowercaseString];
+	NSString *ext = [[url pathExtension] lowercaseString];
 	
 	gme_type_t type = gme_identify_extension([ext UTF8String]);
 	if (!type) 

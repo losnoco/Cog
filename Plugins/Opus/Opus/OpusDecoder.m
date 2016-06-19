@@ -16,20 +16,20 @@
 
 int sourceRead(void *_stream, unsigned char *_ptr, int _nbytes)
 {
-	id source = (id)_stream;
+	id source = (__bridge id)_stream;
 
 	return (int) [source read:_ptr amount:_nbytes];
 }
 
 int sourceSeek(void *_stream, opus_int64 _offset, int _whence)
 {
-	id source = (id)_stream;
+	id source = (__bridge id)_stream;
 	return ([source seek:_offset whence:_whence] ? 0 : -1);
 }
 
 int sourceClose(void *_stream)
 {
-	id source = (id)_stream;
+	id source = (__bridge id)_stream;
 	[source close];
 
 	return 0;
@@ -37,7 +37,7 @@ int sourceClose(void *_stream)
 
 opus_int64 sourceTell(void *_stream)
 {
-	id source = (id)_stream;
+	id source = (__bridge id)_stream;
 
 	return [source tell];
 }
@@ -54,7 +54,7 @@ opus_int64 sourceTell(void *_stream)
 
 - (BOOL)open:(id<CogSource>)s
 {
-	source = [s retain];
+	source = s;
 	
 	OpusFileCallbacks callbacks = {
 		.read =  sourceRead,
@@ -64,7 +64,7 @@ opus_int64 sourceTell(void *_stream)
 	};
     
     int error;
-    opusRef = op_open_callbacks(source, &callbacks, NULL, 0, &error);
+    opusRef = op_open_callbacks((__bridge void *)source, &callbacks, NULL, 0, &error);
 	
 	if (!opusRef)
 	{
@@ -125,7 +125,12 @@ opus_int64 sourceTell(void *_stream)
     opusRef = NULL;
 	
 	[source close];
-	[source release];
+    source = nil;
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 - (long)seek:(long)frame

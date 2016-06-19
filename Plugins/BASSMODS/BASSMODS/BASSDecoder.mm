@@ -235,10 +235,13 @@ static void SyncProc( HSYNC handle, DWORD channel, DWORD data, void *user )
 	}
 }
 
+- (void)dealloc
+{
+    [self close];
+}
+
 - (void)setSource:(id<CogSource>)s
 {
-	[s retain];
-	[source release];
 	source = s;
 }
 

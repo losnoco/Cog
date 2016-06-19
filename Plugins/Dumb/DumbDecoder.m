@@ -134,6 +134,17 @@ DUMBFILE *dumbfile_open_memory_and_free(char *data, long size)
     }
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        sampptr = NULL;
+        dsr = NULL;
+        duh = NULL;
+    }
+    return self;
+}
+
 int callbackLoop(void *data)
 {
     long * loops = (long *) data;
@@ -176,7 +187,7 @@ int callbackLoop(void *data)
     
     dumbfile_seek( df, 0, SEEK_SET );
 	
-	NSString *ext = [[[[s url] path] pathExtension] lowercaseString];
+	NSString *ext = [[[s url] pathExtension] lowercaseString];
     duh = dumb_read_any(df, [ext isEqualToString:@"mod"] ? 0 : 1, subsong);
 	if (!duh)
 	{
@@ -337,6 +348,11 @@ int callbackLoop(void *data)
 		[source close];
 		[self setSource:nil];
 	}
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 - (void)setSource:(id<CogSource>)s

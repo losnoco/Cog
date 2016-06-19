@@ -175,6 +175,12 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader)
         demux = NULL;
     }
 	[source close];
+    source = nil;
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 - (long)seek:(long)sample

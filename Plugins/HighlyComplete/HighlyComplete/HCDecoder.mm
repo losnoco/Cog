@@ -179,6 +179,17 @@ static psf_file_callbacks source_callbacks =
     }
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        type = 0;
+        emulatorCore = NULL;
+        emulatorExtra = NULL;
+    }
+    return self;
+}
+
 - (NSDictionary *)metadata
 {
     return metadataList;
@@ -1469,6 +1480,11 @@ static int usf_info(void * context, const char * name, const char * value)
     currentSource = nil;
     [[psf_file_container instance] remove_hint:currentUrl];
     currentUrl = nil;
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 - (long)seek:(long)frame

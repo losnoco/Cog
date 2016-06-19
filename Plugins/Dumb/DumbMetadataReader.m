@@ -56,7 +56,7 @@
 	}
     
 	DUH *duh;
-	NSString *ext = [[[url path] pathExtension] lowercaseString];
+	NSString *ext = [[url pathExtension] lowercaseString];
     duh = dumb_read_any_quick(df, [ext isEqualToString:@"mod"] ? 0 : 1, 0);
     
     dumbfile_close(df);

@@ -40,6 +40,11 @@
 	}
 }
 
+- (void) dealloc
+{
+    [self close];
+}
+
 - (BOOL)open:(id<CogSource>)source;
 {
 	OSStatus						err;

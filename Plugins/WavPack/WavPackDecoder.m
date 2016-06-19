@@ -85,6 +85,15 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	return -1;
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        wpc = NULL;
+    }
+    return self;
+}
 
 - (BOOL)open:(id<CogSource>)s
 {
@@ -225,8 +234,16 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 
 - (void)close
 {
-	WavpackCloseFile(wpc);
+    if (wpc) {
+        WavpackCloseFile(wpc);
+        wpc = NULL;
+    }
     source = nil;
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 - (void)setSource:(id<CogSource>)s

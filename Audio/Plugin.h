@@ -12,6 +12,7 @@
 - (long)tell;
 - (long)read:(void *)buffer amount:(long)amount; //reads UP TO amount, returns amount read.
 - (void)close;
+- (void)dealloc;
 @end
 
 @protocol CogContainer <NSObject> 
@@ -39,6 +40,8 @@
 - (void)close;
 
 @optional
+- (void)dealloc;
+
 - (BOOL)setTrack:(NSURL *)track;
 
 //These are in NSObject, so as long as you are a subclass of that, you are ok.

@@ -111,7 +111,7 @@ NSURL *resolveAliases(NSURL *url)
 		{
 			[[NSFileManager defaultManager] fileExistsAtPath:[u path] isDirectory:&isDir];
 
-			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[[[u path] pathExtension] lowercaseString]])
+			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[[u pathExtension] lowercaseString]])
 			{
 				continue;
 			}
@@ -120,7 +120,7 @@ NSURL *resolveAliases(NSURL *url)
 			{
 				newNode = [[DirectoryNode alloc] initWithDataSource:dataSource url:u];
 			}
-			else if ([[AudioPlayer containerTypes] containsObject:[[[u path] pathExtension] lowercaseString]])
+			else if ([[AudioPlayer containerTypes] containsObject:[[u pathExtension] lowercaseString]])
 			{
 				newNode = [[ContainerNode alloc] initWithDataSource:dataSource url:u];
 			}

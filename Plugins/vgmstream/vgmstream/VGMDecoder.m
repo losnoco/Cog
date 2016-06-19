@@ -12,23 +12,27 @@
 
 typedef struct _COGSTREAMFILE {
 	STREAMFILE sf;
-    id file;
+    void *file;
 	off_t offset;
 	char name[PATH_LIMIT];
 } COGSTREAMFILE;
 
 static void cogsf_seek(COGSTREAMFILE *this, off_t offset) {
-	if ([this->file seek:offset whence:SEEK_SET] != 0)
+    NSObject* _file = (__bridge NSObject *)(this->file);
+    id<CogSource> __unsafe_unretained file = (id) _file;
+	if ([file seek:offset whence:SEEK_SET] != 0)
 		this->offset = offset;
 	else
-		this->offset = [this->file tell];
+		this->offset = [file tell];
 }
 
 static off_t cogsf_get_size(COGSTREAMFILE *this) {
-    off_t offset = [this->file tell];
-    [this->file seek:0 whence:SEEK_END];
-    off_t size = [this->file tell];
-    [this->file seek:offset whence:SEEK_SET];
+    NSObject* _file = (__bridge NSObject *)(this->file);
+    id<CogSource> __unsafe_unretained file = (id) _file;
+    off_t offset = [file tell];
+    [file seek:0 whence:SEEK_END];
+    off_t size = [file tell];
+    [file seek:offset whence:SEEK_SET];
     return size;
 }
 
@@ -42,17 +46,19 @@ static void cogsf_get_name(COGSTREAMFILE *this, char *buffer, size_t length) {
 }
 
 static size_t cogsf_read(COGSTREAMFILE *this, uint8_t *dest, off_t offset, size_t length) {
+    NSObject* _file = (__bridge NSObject *)(this->file);
+    id<CogSource> __unsafe_unretained file = (id) _file;
 	size_t read;
 	if (this->offset != offset)
 		cogsf_seek(this, offset);
-	read = [this->file read:dest amount:length];
+	read = [file read:dest amount:length];
 	if (read > 0)
 		this->offset += read;
 	return read;
 }
 
 static void cogsf_close(COGSTREAMFILE *this) {
-    [this->file release];
+    CFBridgingRelease(this->file);
 	free(this);
 }
 
@@ -75,7 +81,7 @@ static STREAMFILE *cogsf_create(id file, const char *path) {
 	streamfile->sf.get_realname = (void*)cogsf_get_name;
 	streamfile->sf.open = (void*)cogsf_open;
 	streamfile->sf.close = (void*)cogsf_close;
-	streamfile->file = [file retain];
+	streamfile->file = (void*)CFBridgingRetain(file);
 	streamfile->offset = 0;
 	strncpy(streamfile->name, path, sizeof(streamfile->name));
     
@@ -210,6 +216,12 @@ err1:
 - (void)close
 {
     close_vgmstream( stream );
+    stream = NULL;
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 + (NSArray *)fileTypes 

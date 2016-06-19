@@ -242,7 +242,7 @@ static PluginController *sharedPluginController = nil;
 
 - (NSArray *) urlsForContainerURL:(NSURL *)url
 {
-	NSString *ext = [[url path] pathExtension];
+	NSString *ext = [url pathExtension];
     NSArray *containerSet = [containers objectForKey:[ext lowercaseString]];
     NSString *classString;
     if (containerSet) {
@@ -265,7 +265,7 @@ static PluginController *sharedPluginController = nil;
 //Note: Source is assumed to already be opened.
 - (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source
 {
-	NSString *ext = [[[source url] path] pathExtension];
+	NSString *ext = [[source url] pathExtension];
 	NSArray *decoders = [decodersByExtension objectForKey:[ext lowercaseString]];
     NSString *classString;
     if (decoders) {
@@ -287,7 +287,7 @@ static PluginController *sharedPluginController = nil;
 
 - (NSDictionary *)metadataForURL:(NSURL *)url
 {
-	NSString *ext = [[url path] pathExtension];
+	NSString *ext = [url pathExtension];
     NSArray *readers = [metadataReaders objectForKey:[ext lowercaseString]];
     NSString *classString;
     if (readers) {
@@ -311,7 +311,7 @@ static PluginController *sharedPluginController = nil;
 //If no properties reader is defined, use the decoder's properties.
 - (NSDictionary *)propertiesForURL:(NSURL *)url
 {
-	NSString *ext = [[url path] pathExtension];
+	NSString *ext = [url pathExtension];
 	
 	id<CogSource> source = [self audioSourceForURL:url];
 	if (![source open:url])
