@@ -223,6 +223,12 @@ void OPL3MIDI::opl_midikeyon(opl_channel *channel, byte note, opl_timbre *timbre
     opl_writereg(OPL_FNUM + voice->num, freqpitched & 0xff);
     opl_writereg(OPL_FEEDBACK + voice->num, fb);
     opl_writereg(OPL_BLOCK + voice->num, (freqpitched >> 8) | 0x20);
+    
+    if (opl_extp)
+    {
+        opl_writereg(0x107, (voice->num & 0xFF) + ((voice->num / 256) * 9));
+        opl_writereg(0x108, channel->panex * 2);
+    }
 
     voice->freq = freq;
     voice->freqpitched = freqpitched;
@@ -305,6 +311,12 @@ void OPL3MIDI::opl_updatevolpan(opl_channel *channel)
             opl_writereg(OPL_TL + opl_voices[i].car, carvol);
 
             opl_writereg(OPL_FEEDBACK + opl_voices[i].num, opl_voices[i].timbre->fb & channel->pan);
+            
+            if (opl_extp)
+            {
+                opl_writereg(0x107, (opl_voices[i].num & 0xFF) + ((opl_voices[i].num & 0x100) * 9 / 256));
+                opl_writereg(0x108, channel->panex * 2);
+            }
         }
     }
 }
@@ -317,17 +329,24 @@ void OPL3MIDI::opl_updatevol(opl_channel *channel, byte vol)
 
 void OPL3MIDI::opl_updatepan(opl_channel *channel, byte pan)
 {
-    if (pan < 48)
+    if (opl_extp)
     {
-        channel->pan = 0xdf;
-    }
-    else if(pan > 80)
-    {
-        channel->pan = 0xef;
+        channel->panex = pan;
     }
     else
     {
-        channel->pan = 0xff;
+        if (pan < 48)
+        {
+            channel->pan = 0xdf;
+        }
+        else if(pan > 80)
+        {
+            channel->pan = 0xef;
+        }
+        else
+        {
+            channel->pan = 0xff;
+        }
     }
     opl_updatevolpan(channel);
 }
@@ -414,7 +433,7 @@ void OPL3MIDI::opl_midipitchbend(opl_channel *channel, byte parm1, byte parm2)
 }
 
 
-int OPL3MIDI::midi_init(unsigned int rate, unsigned int bank)
+int OPL3MIDI::midi_init(unsigned int rate, unsigned int bank, unsigned int extp)
 {
     uint32_t i;
 
@@ -425,6 +444,11 @@ int OPL3MIDI::midi_init(unsigned int rate, unsigned int bank)
     }
 
     opl_opl3mode = true;
+    
+    opl_extp = !!extp;
+    
+    if (opl_extp)
+        opl_writereg(0x106, 0x17);
 
     opl_writereg(OPL_LSI, 0x00);
     opl_writereg(OPL_TIMER, 0x60);
@@ -489,6 +513,7 @@ int OPL3MIDI::midi_init(unsigned int rate, unsigned int bank)
         opl_channels[i].pitch = 0;
         opl_channels[i].volume = 0;
         opl_channels[i].pan = 0xff;
+        opl_channels[i].panex = 64;
         opl_channels[i].sustained = false;
     }
 

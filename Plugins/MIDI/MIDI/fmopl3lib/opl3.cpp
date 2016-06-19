@@ -29,6 +29,10 @@
 #include <string.h>
 #include "opl3.h"
 
+// Extended panning mode
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #define RSM_FRAC    10
 
 // Channel types
@@ -933,7 +937,10 @@ static void OPL3_ChannelWriteC0(opl3_channel *channel, Bit8u data)
     {
         OPL3_ChannelSetupAlg(channel);
     }
-    if (channel->chip->newm)
+    if (channel->chip->extp)
+    {
+    }
+    else if (channel->chip->newm)
     {
         channel->cha = ((data >> 4) & 0x01) ? ~0 : 0;
         channel->chb = ((data >> 5) & 0x01) ? ~0 : 0;
@@ -1120,6 +1127,17 @@ void OPL3_Generate(opl3_chip *chip, Bit16s *buf)
     }
 
     chip->mixbuff[0] = 0;
+    if (chip->extp)
+    for (ii = 0; ii < 18; ii++)
+    {
+        accm = 0;
+        for (jj = 0; jj < 4; jj++)
+        {
+            accm += *chip->channel[ii].out[jj];
+        }
+        chip->mixbuff[0] += (Bit16s)(accm * chip->channel[ii].cha / 65535);
+    }
+    else
     for (ii = 0; ii < 18; ii++)
     {
         accm = 0;
@@ -1159,6 +1177,17 @@ void OPL3_Generate(opl3_chip *chip, Bit16s *buf)
     }
 
     chip->mixbuff[1] = 0;
+    if (chip->extp)
+    for (ii = 0; ii < 18; ii++)
+    {
+        accm = 0;
+        for (jj = 0; jj < 4; jj++)
+        {
+            accm += *chip->channel[ii].out[jj];
+        }
+        chip->mixbuff[1] += (Bit16s)(accm * chip->channel[ii].chb / 65535);
+    }
+    else
     for (ii = 0; ii < 18; ii++)
     {
         accm = 0;
@@ -1275,6 +1304,21 @@ void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v)
                 break;
             case 0x05:
                 chip->newm = v & 0x01;
+                break;
+
+            case 0x06:
+                chip->extp = v == 0x17;
+                break;
+            case 0x07:
+                if (chip->extp)
+                    chip->panch = v;
+                break;
+            case 0x08:
+                if (chip->extp && chip->panch < 18)
+                {
+                    chip->channel[chip->panch].cha = (Bit16u)(cos((float)v * (M_PI / 2.0f / 255.0f)) * 65535.0f);
+                    chip->channel[chip->panch].chb = (Bit16u)(sin((float)v * (M_PI / 2.0f / 255.0f)) * 65535.0f);
+                }
                 break;
             }
         }

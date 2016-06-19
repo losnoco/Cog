@@ -89,6 +89,8 @@ struct _opl3_chip {
     opl3_slot slot[36];
     Bit16u timer;
     Bit8u newm;
+    Bit8u extp;
+    Bit8u panch;
     Bit8u nts;
     Bit8u rhy;
     Bit8u vibpos;

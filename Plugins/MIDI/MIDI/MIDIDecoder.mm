@@ -149,6 +149,8 @@ static OSType getOSType(const char * in_)
         msplayer->set_synth(0);
         
         msplayer->set_bank([[plugin substringFromIndex:4] intValue]);
+        
+        msplayer->set_extp(1);
 
         msplayer->setSampleRate( 44100 );
     }
@@ -160,7 +162,9 @@ static OSType getOSType(const char * in_)
         msplayer->set_synth(1);
         
         msplayer->set_bank([[plugin substringFromIndex:5] intValue]);
-        
+
+        msplayer->set_extp(1);
+
         msplayer->setSampleRate( 44100 );
     }
     else
@@ -316,6 +320,11 @@ static OSType getOSType(const char * in_)
 {
     delete player;
     player = NULL;
+}
+
+- (void)dealloc
+{
+    [self close];
 }
 
 + (NSArray *)fileTypes 

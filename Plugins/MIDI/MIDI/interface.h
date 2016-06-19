@@ -25,7 +25,7 @@ public:
     virtual const char * midi_synth_name(void) = 0;
     virtual unsigned int midi_bank_count(void) = 0;
     virtual const char * midi_bank_name(unsigned int bank) = 0;
-	virtual int midi_init(unsigned int rate, unsigned int bank) = 0;
+	virtual int midi_init(unsigned int rate, unsigned int bank, unsigned int extp) = 0;
 	virtual void midi_write(unsigned int data) = 0;
 	virtual void midi_generate(signed short *buffer, unsigned int length) = 0;
 };

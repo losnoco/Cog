@@ -93,6 +93,11 @@ void DoomOPL::OPL_InitRegisters(bool opl_new)
 	{
 		OPL_WriteRegister(OPL_REG_NEW_MODE, 0x01);
 	}
+
+    if (opl_extp)
+    {
+        OPL_WriteRegister(0x106, 0x17);
+    }
 }
 
 // Load instrument table from GENMIDI lump:
@@ -305,6 +310,16 @@ void DoomOPL::SetVoicePan(opl_voice_t *voice, unsigned int pan)
 
     OPL_WriteRegister((OPL_REGS_FEEDBACK + voice->index) | voice->array,
                       opl_voice->feedback | pan);
+}
+
+void DoomOPL::SetVoicePanEx(opl_voice_t *voice, unsigned int pan)
+{
+    const genmidi_voice_t *opl_voice;
+    
+    opl_voice = &voice->current_instr->voices[voice->current_instr_voice];
+    
+    OPL_WriteRegister(0x107, voice->index + (voice->array * 9 / 256));
+    OPL_WriteRegister(0x108, pan * 2);
 }
 
 // Initialize the voice table and freelist
@@ -583,6 +598,11 @@ void DoomOPL::VoiceKeyOn(opl_channel_data_t *channel,
     // Set the volume level.
 
     SetVoiceVolume(voice, volume);
+    
+    // Set the extended panning, if necessary
+    
+    if (opl_extp)
+        SetVoicePanEx(voice, channel->panex);
 
     // Write the frequency value to turn the note on.
 
@@ -712,26 +732,43 @@ void DoomOPL::SetChannelPan(opl_channel_data_t *channel, unsigned int pan)
 
     if (opl_new)
     {
-        if (pan >= 96)
+        if (opl_extp)
         {
-            reg_pan = 0x10;
-        }
-        else if (pan <= 48)
-        {
-            reg_pan = 0x20;
+            if (channel->panex != pan)
+            {
+                channel->panex = pan;
+                for (i = 0; i < voice_alloced_num; i++)
+                {
+                    if (voice_alloced_list[i]->channel == channel)
+                    {
+                        SetVoicePanEx(voice_alloced_list[i], pan);
+                    }
+                }
+            }
         }
         else
         {
-            reg_pan = 0x30;
-        }
-        if (channel->pan != reg_pan)
-        {
-            channel->pan = reg_pan;
-            for (i = 0; i < voice_alloced_num; i++)
+            if (pan >= 96)
             {
-                if (voice_alloced_list[i]->channel == channel)
+                reg_pan = 0x10;
+            }
+            else if (pan <= 48)
+            {
+                reg_pan = 0x20;
+            }
+            else
+            {
+                reg_pan = 0x30;
+            }
+            if (channel->pan != reg_pan)
+            {
+                channel->pan = reg_pan;
+                for (i = 0; i < voice_alloced_num; i++)
                 {
-                    SetVoicePan(voice_alloced_list[i], reg_pan);
+                    if (voice_alloced_list[i]->channel == channel)
+                    {
+                        SetVoicePan(voice_alloced_list[i], reg_pan);
+                    }
                 }
             }
         }
@@ -881,10 +918,11 @@ void DoomOPL::InitChannel(opl_channel_data_t *channel)
     channel->instrument = &main_instrs[0];
 	channel->volume = 127;
 	channel->pan = 0x30;
+    channel->panex = 64;
     channel->bend = 0;
 }
 
-int DoomOPL::midi_init(unsigned int rate, unsigned int bank)
+int DoomOPL::midi_init(unsigned int rate, unsigned int bank, unsigned int extp)
 {
 	/*char *env;*/
 	unsigned int i;
@@ -894,7 +932,9 @@ int DoomOPL::midi_init(unsigned int rate, unsigned int bank)
 	{
 		return 0;
 	}
-
+    
+    opl_extp = !!extp;
+    
 	memset(channels, 0, sizeof(channels));
 	main_instrs = NULL;
 	percussion_instrs = NULL;

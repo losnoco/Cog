@@ -25,6 +25,12 @@ void MSPlayer::set_bank(unsigned int bank_id)
     this->bank_id = bank_id;
 }
 
+void MSPlayer::set_extp(unsigned int extp)
+{
+    shutdown();
+    this->extp = extp;
+}
+
 void MSPlayer::send_event(uint32_t b)
 {
 	if (!(b & 0x80000000))
@@ -74,7 +80,7 @@ bool MSPlayer::startup()
     
     if (!synth) return false;
     
-    if (!synth->midi_init((unsigned int)uSampleRate, bank_id))
+    if (!synth->midi_init((unsigned int)uSampleRate, bank_id, extp))
         return false;
     
 	return true;

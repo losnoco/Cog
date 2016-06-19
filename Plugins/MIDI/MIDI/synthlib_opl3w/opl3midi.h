@@ -68,7 +68,7 @@ typedef struct
     opl_timbre *timbre;
     int32_t pitch;
     uint32_t volume;
-    uint32_t pan;
+    uint32_t pan, panex;
     bool sustained;
 } opl_channel;
 
@@ -91,6 +91,7 @@ class OPL3MIDI : public midisynth {
 private:
     fm_chip *opl_chip;
     bool opl_opl3mode;
+    bool opl_extp;
 
     uint32_t opl_voice_num;
 
@@ -125,7 +126,7 @@ public:
     const char *midi_synth_name(void);
     unsigned int midi_bank_count(void);
     const char * midi_bank_name(unsigned int bank);
-    int midi_init(unsigned int rate, unsigned int bank);
+    int midi_init(unsigned int rate, unsigned int bank, unsigned int extp);
     void midi_write(unsigned int data);
     void midi_generate(signed short *buffer, unsigned int length);
 };

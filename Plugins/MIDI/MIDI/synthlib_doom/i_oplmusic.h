@@ -116,7 +116,7 @@ typedef struct
 
     // Pan value
 
-    int pan;
+    int pan, panex;
 
     // Pitch bend value:
 
@@ -347,6 +347,7 @@ private:
     unsigned int voice_alloced_num = 0;
 
     bool opl_new;
+    bool opl_extp;
     unsigned int opl_voices;
 
     void OPL_WriteRegister(unsigned int reg, unsigned char data);
@@ -357,6 +358,7 @@ private:
     void SetVoiceInstrument(opl_voice_t *voice, const genmidi_instr_t *instr, unsigned int instr_voice);
     void SetVoiceVolume(opl_voice_t *voice, unsigned int volume);
     void SetVoicePan(opl_voice_t *voice, unsigned int pan);
+    void SetVoicePanEx(opl_voice_t *voice, unsigned int pan);
     void InitVoices(void);
     void VoiceKeyOff(opl_voice_t *voice);
     opl_channel_data_t *TrackChannelForEvent(unsigned char channel_num);
@@ -379,7 +381,7 @@ public:
     const char * midi_synth_name(void);
     unsigned int midi_bank_count(void);
     const char * midi_bank_name(unsigned int bank);
-    int midi_init(unsigned int rate, unsigned int bank);
+    int midi_init(unsigned int rate, unsigned int bank, unsigned int extp);
     void midi_write(unsigned int data);
     void midi_generate(signed short *buffer, unsigned int length);
 };

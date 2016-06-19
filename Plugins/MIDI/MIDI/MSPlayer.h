@@ -18,6 +18,7 @@ public:
 
     void set_synth(unsigned int synth);
     void set_bank(unsigned int bank);
+    void set_extp(unsigned int extp);
     
     typedef void (*enum_callback)(unsigned int synth, unsigned int bank, const char * name);
     
@@ -33,6 +34,7 @@ protected:
 private:
     unsigned int synth_id;
     unsigned int bank_id;
+    unsigned int extp;
     midisynth * synth;
 };
 
