@@ -1,7 +1,10 @@
 /*
-** FT2PLAY v0.68 - 7th of November 2014
-** ====================================
+** FT2PLAY v0.77- 26th of June 2016
+** ================================
 **
+** Changelog from v0.68 (later changelogs missing):
+** - Bug fix for Lxx (Set Envelope Position)
+** 
 ** Changelog from v0.67:
 ** - Bug in GetNewNote() (cmd 390 would fail - "unreal2 scirreal mix.xm" fix)
 **
@@ -1017,7 +1020,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
             if (ch->InstrSeg.EnvVPAnt > 1)
             {
                 envPos++;
-                for (i = 0; i < ch->InstrSeg.EnvVPAnt; ++i)
+                for (i = 0; i < ch->InstrSeg.EnvVPAnt - 1; ++i)
                 {
                     if (newEnvPos < ch->InstrSeg.EnvVP[envPos][0])
                     {
@@ -1078,7 +1081,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
             if (ch->InstrSeg.EnvPPAnt > 1)
             {
                 envPos++;
-                for (i = 0; i < ch->InstrSeg.EnvPPAnt; ++i)
+                for (i = 0; i < ch->InstrSeg.EnvPPAnt - 1; ++i)
                 {
                     if (newEnvPos < ch->InstrSeg.EnvPP[envPos][0])
                     {
@@ -1340,7 +1343,9 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
     uint8_t envPos;
     int8_t envInterpolateFlag;
     int8_t envDidInterpolate;
-    int16_t autoVibTmp;
+    int16_t autoVibVal;
+    int16_t autoVibAmp;
+    int16_t tmpPeriod;
 
     // *** FADEOUT ***
     if (!ch->EnvSustainActive)
@@ -1528,39 +1533,54 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
         ch->FinalPan = (uint8_t)(ch->OutPan);
     }
 
-    // *** AUTO VIBRATO ***
+    /* *** AUTO VIBRATO *** */
     if (ch->InstrSeg.VibDepth)
     {
         if (ch->EVibSweep)
         {
+            autoVibAmp = ch->EVibSweep;
             if (ch->EnvSustainActive)
             {
-                ch->EVibAmp += ch->EVibSweep;
-                if ((ch->EVibAmp >> 8) > ch->InstrSeg.VibDepth)
+                autoVibAmp += ch->EVibAmp;
+                if ((autoVibAmp >> 8) > ch->InstrSeg.VibDepth)
                 {
-                    ch->EVibAmp   = (uint16_t)(ch->InstrSeg.VibDepth) << 8;
+                    ch->EVibAmp   = ch->InstrSeg.VibDepth << 8;
                     ch->EVibSweep = 0;
                 }
+
+                ch->EVibAmp = autoVibAmp;
             }
         }
+        else
+        {
+            autoVibAmp = ch->EVibAmp;
+        }
 
-        if (ch->InstrSeg.VibTyp == 1) // square
-            autoVibTmp = (ch->EVibPos > 127) ? 64 : -64;
-
-        else if (ch->InstrSeg.VibTyp == 2) // ramp up
-            autoVibTmp = ((((ch->EVibPos >> 1) & 0x00FF) + 64) & 127) - 64;
-
-        else if (ch->InstrSeg.VibTyp == 3) // ramp down
-            autoVibTmp = (((0 - ((ch->EVibPos >> 1) & 0x00FF)) + 64) & 127) - 64;
-
-        else // sine
-            autoVibTmp = p->VibSineTab[ch->EVibPos];
-
-        ch->FinalPeriod = ch->OutPeriod + ((autoVibTmp * ch->EVibAmp) / 16384);
-        if (ch->FinalPeriod > (32000 - 1)) ch->FinalPeriod = 0; // Yes, FT2 zeroes it out
-
-        ch->Status  |= IS_Period;
         ch->EVibPos += ch->InstrSeg.VibRate;
+
+        /* square */
+        if (ch->InstrSeg.VibTyp == 1)
+            autoVibVal = (ch->EVibPos > 127) ? 64 : -64;
+
+        /* ramp up */
+        else if (ch->InstrSeg.VibTyp == 2)
+            autoVibVal = (((ch->EVibPos >> 1) + 64) & 127) - 64;
+
+        /* ramp down */
+        else if (ch->InstrSeg.VibTyp == 3)
+            autoVibVal = (((0 - (ch->EVibPos >> 1)) + 64) & 127) - 64;
+
+        /* sine */
+        else
+            autoVibVal = p->VibSineTab[ch->EVibPos];
+
+        autoVibVal <<= 2;
+
+        tmpPeriod = ch->OutPeriod + ((autoVibVal * autoVibAmp) >> 16);
+        if (tmpPeriod > (32000 - 1)) tmpPeriod = 0; /* yes, FT2 zeroes it out */
+
+        ch->FinalPeriod = tmpPeriod;
+        ch->Status  |= IS_Period;
     }
     else
     {
@@ -1579,15 +1599,18 @@ static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *
     int16_t addPeriod;
 
     int32_t outPeriod;
-
+   
     oldPeriod = 0;
     addPeriod = (8 * 12 * 16) * 2;
 
     // safe signed 8-bit >>3 (FT2 exact even on non-x86 platforms)
     if (ch->FineTune >= 0)
-        fineTune = ch->FineTune >> 2;
+        fineTune = ch->FineTune / (1 << 3);
     else
-        fineTune = (int8_t)(0xE0 | ((uint8_t)(ch->FineTune) >> 3)) * 2;
+        fineTune = 0xE0 | ((uint8_t)(ch->FineTune) >> 3); /* 0xE0 = 2^8 - 2^(8-3) */
+
+    fineTune += 16;
+    fineTune += fineTune;
 
     for (i = 0; i < 8; ++i)
     {
@@ -1805,7 +1828,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
 
         /* FT2 "out of boundary" arp LUT simulation */
         if      (tick  > 16) tick  = 2;
-        else if (tick == 15) tick  = 0;
+        else if (tick == 16) tick  = 0;
         else                 tick %= 3;
 
         /*
@@ -2167,7 +2190,7 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
 
                 if (oldSongPos != p->Song.SongPos)
                 {
-					size_t i;
+                    size_t i;
                     for (i = 0; i < playedRowsCount; ++i)
                         bit_array_set(p->playedRows, oldSongPos * 1024 + p->playedRowsPatLoop[i]);
                     memset(p->playedRowsPatLoop, 0xFF, playedRowsCount * 2);
@@ -2229,7 +2252,7 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
 #endif
         }
 
-        if (ch->Status & IS_Vol)
+        if (ch->Status & (IS_Vol|IS_Pan))
             voiceSetVolume(p, ch->Nr, ch->FinalVol, ch->FinalPan, ch->Status & IS_NyTon);
 
         if (ch->Status & IS_Period)
@@ -4002,7 +4025,7 @@ void ft2play_PlaySong(void *_p, int32_t startOrder)
     p->loopCount = 0;
 
     if (p->playedRows) bit_array_destroy(p->playedRows);
-	p->playedRows = bit_array_create(1024 * (p->Song.Len ? p->Song.Len : 1));
+    p->playedRows = bit_array_create(1024 * (p->Song.Len ? p->Song.Len : 1));
     bit_array_set(p->playedRows, startOrder * 1024);
 
     p->playedRowsPatLoop[0] = 0;
