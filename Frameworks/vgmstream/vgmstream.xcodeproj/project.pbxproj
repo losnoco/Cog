@@ -12,6 +12,10 @@
 		830F885C19C9124C00420FB0 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F883919C9101900420FB0 /* Vorbis.framework */; };
 		8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
 		8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
+		8323894A1D22419B00482226 /* clHCA.c in Sources */ = {isa = PBXBuildFile; fileRef = 832389481D22419B00482226 /* clHCA.c */; };
+		8323894B1D22419B00482226 /* clHCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 832389491D22419B00482226 /* clHCA.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		832389501D2246C300482226 /* hca.c in Sources */ = {isa = PBXBuildFile; fileRef = 8323894F1D2246C300482226 /* hca.c */; };
+		832389521D224C0800482226 /* hca_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 832389511D224C0800482226 /* hca_decoder.c */; };
 		834D3A6E19F47C98001C54F6 /* g1l.c in Sources */ = {isa = PBXBuildFile; fileRef = 834D3A6D19F47C98001C54F6 /* g1l.c */; };
 		836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B4518BDB8880095E648 /* InfoPlist.strings */; };
 		836F6F1E18BDC2190095E648 /* acm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE018BDC2180095E648 /* acm_decoder.c */; };
@@ -448,6 +452,10 @@
 		48C2650E1A5D420800A0A3D6 /* vorbisfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vorbisfile.h; path = ../Vorbis/include/vorbis/vorbisfile.h; sourceTree = "<group>"; };
 		8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mpg123.xcodeproj; path = ../mpg123/mpg123.xcodeproj; sourceTree = "<group>"; };
 		8315231718BDECA1009AE289 /* VorbisNoDot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VorbisNoDot.xcodeproj; path = ../Vorbis/macosx/VorbisNoDot.xcodeproj; sourceTree = "<group>"; };
+		832389481D22419B00482226 /* clHCA.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = clHCA.c; sourceTree = "<group>"; };
+		832389491D22419B00482226 /* clHCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clHCA.h; sourceTree = "<group>"; };
+		8323894F1D2246C300482226 /* hca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca.c; sourceTree = "<group>"; };
+		832389511D224C0800482226 /* hca_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca_decoder.c; sourceTree = "<group>"; };
 		834D3A6D19F47C98001C54F6 /* g1l.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g1l.c; sourceTree = "<group>"; };
 		836F6B3918BDB8880095E648 /* vgmstream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vgmstream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F6B4418BDB8880095E648 /* vgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vgmstream-Info.plist"; sourceTree = "<group>"; };
@@ -806,6 +814,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		832389471D22419B00482226 /* ext_libs */ = {
+			isa = PBXGroup;
+			children = (
+				832389481D22419B00482226 /* clHCA.c */,
+				832389491D22419B00482226 /* clHCA.h */,
+			);
+			path = ext_libs;
+			sourceTree = "<group>";
+		};
 		836F6B2F18BDB8880095E648 = {
 			isa = PBXGroup;
 			children = (
@@ -846,6 +863,7 @@
 		836F6B4218BDB8880095E648 /* vgmstream */ = {
 			isa = PBXGroup;
 			children = (
+				832389471D22419B00482226 /* ext_libs */,
 				836F6DDE18BDC2180095E648 /* src */,
 				836F6B4318BDB8880095E648 /* Supporting Files */,
 			);
@@ -881,6 +899,7 @@
 		836F6DDF18BDC2180095E648 /* coding */ = {
 			isa = PBXGroup;
 			children = (
+				832389511D224C0800482226 /* hca_decoder.c */,
 				83D7318B1A749EEE00CA1366 /* g719_decoder.c */,
 				836F6DE018BDC2180095E648 /* acm_decoder.c */,
 				836F6DE118BDC2180095E648 /* acm_decoder.h */,
@@ -961,6 +980,7 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				8323894F1D2246C300482226 /* hca.c */,
 				83EDE5D61A70951A005F5D84 /* mca.c */,
 				83EDE5D71A70951A005F5D84 /* btsnd.c */,
 				834D3A6D19F47C98001C54F6 /* g1l.c */,
@@ -1237,6 +1257,7 @@
 				836F6F3518BDC2190095E648 /* nwa_decoder.h in Headers */,
 				836F6F2718BDC2190095E648 /* g72x_state.h in Headers */,
 				836F705418BDC2190095E648 /* streamfile.h in Headers */,
+				8323894B1D22419B00482226 /* clHCA.h in Headers */,
 				836F705918BDC2190095E648 /* vgmstream.h in Headers */,
 				48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */,
 				836F705718BDC2190095E648 /* util.h in Headers */,
@@ -1426,6 +1447,7 @@
 				836F6F3318BDC2190095E648 /* ngc_dtk_decoder.c in Sources */,
 				836F6FBB18BDC2190095E648 /* ngca.c in Sources */,
 				836F6F5218BDC2190095E648 /* ps2_adm_blocked.c in Sources */,
+				832389521D224C0800482226 /* hca_decoder.c in Sources */,
 				836F6F9418BDC2190095E648 /* ivb.c in Sources */,
 				836F6FF118BDC2190095E648 /* ps2_psw.c in Sources */,
 				836F6F8D18BDC2190095E648 /* gsp_gsb.c in Sources */,
@@ -1643,6 +1665,7 @@
 				836F6FBE18BDC2190095E648 /* ogg_vorbis_file.c in Sources */,
 				836F702618BDC2190095E648 /* s14_sss.c in Sources */,
 				836F6F4818BDC2190095E648 /* halpst_blocked.c in Sources */,
+				8323894A1D22419B00482226 /* clHCA.c in Sources */,
 				836F702E18BDC2190095E648 /* sli.c in Sources */,
 				836F701D18BDC2190095E648 /* raw.c in Sources */,
 				836F6FDE18BDC2190095E648 /* ps2_ild.c in Sources */,
@@ -1688,6 +1711,7 @@
 				836F702718BDC2190095E648 /* sat_baka.c in Sources */,
 				836F6F8C18BDC2190095E648 /* gh3_bar.c in Sources */,
 				836F704B18BDC2190095E648 /* xbox_xmu.c in Sources */,
+				832389501D2246C300482226 /* hca.c in Sources */,
 				836F701B18BDC2190095E648 /* psx_gms.c in Sources */,
 				836F700518BDC2190095E648 /* ps2_vbk.c in Sources */,
 				836F6FDF18BDC2190095E648 /* ps2_int.c in Sources */,
@@ -1766,6 +1790,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/vgmstream/ext_libs";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1805,6 +1830,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/vgmstream/ext_libs";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
