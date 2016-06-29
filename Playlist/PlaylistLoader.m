@@ -448,31 +448,58 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     }
     
 	//Clear the selection
-	[playlistController setSelectionIndexes:nil];
+    [playlistController setSelectionIndexes:[NSIndexSet indexSet]];
 	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
 	return entries;
 }
 
 - (void)loadInfoForEntries:(NSArray *)entries
 {
+    int processorCount = (int) [[NSProcessInfo processInfo] processorCount];
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    int i;
+    
+    for (i = 0; i < processorCount; ++i)
+    {
+        [array addObject:[[NSMutableArray alloc] init]];
+    }
+    
+    i = 0;
     for (PlaylistEntry *pe in entries)
     {
         if ([pe metadataLoaded]) continue;
         
-        __block PlaylistEntry *weakPe = pe;
-        __block NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
-
-        NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
-            NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
-            if (entryProperties == nil)
-                return;
-            
-            [entryInfo addEntriesFromDictionary:entryProperties];
-            [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:weakPe.URL]];
-        }];
+        int processor = i % processorCount;
+        ++i;
         
-        [op setCompletionBlock:^{
-            [weakPe performSelectorOnMainThread:@selector(setMetadata:) withObject:entryInfo waitUntilDone:NO];
+        [[array objectAtIndex:processor] addObject:pe];
+    }
+    
+    if (!i) return;
+    
+    for (NSArray *a in array)
+    {
+        if (![a count]) continue;
+        
+        __block NSArray *weakA = a;
+        
+        NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+            for (PlaylistEntry *pe in weakA)
+            {
+                __block PlaylistEntry *weakPe = pe;
+                __block NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
+            
+                NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
+                if (entryProperties == nil)
+                    continue;
+            
+                [entryInfo addEntriesFromDictionary:entryProperties];
+                [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakPe setMetadata:entryInfo];
+                });
+            }
         }];
         
         [queue addOperation:op];
