@@ -43,7 +43,7 @@ typedef enum {
 - (BOOL)saveXml:(NSString *)filename;
 
 // Read info for a playlist entry
-- (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe;
+//- (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe;
 
 - (void)loadInfoForEntries:(NSArray *)entries;
 
