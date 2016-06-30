@@ -455,11 +455,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 
 - (void)loadInfoForEntries:(NSArray *)entries
 {
-    int processorCount = (int) [[NSProcessInfo processInfo] processorCount];
+    long batchCount = ([entries count] / 16) + ([entries count] % 16 ? 1 : 0);
     NSMutableArray *array = [[NSMutableArray alloc] init];
-    int i;
+    long i;
     
-    for (i = 0; i < processorCount; ++i)
+    for (i = 0; i < batchCount; ++i)
     {
         [array addObject:[[NSMutableArray alloc] init]];
     }
@@ -469,10 +469,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     {
         if ([pe metadataLoaded]) continue;
         
-        int processor = i % processorCount;
+        [[array objectAtIndex:i / 16] addObject:pe];
         ++i;
-        
-        [[array objectAtIndex:processor] addObject:pe];
     }
     
     if (!i) return;
