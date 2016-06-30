@@ -7,7 +7,13 @@
 #include "../Types.h"
 
 #include <pthread.h>
+
+#ifdef __APPLE__
+#include <dispatch/dispatch.h>
+#include <CoreServices/CoreServices.h>
+#else
 #include <semaphore.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,14 +61,23 @@ WRes AutoResetEvent_CreateNotSignaled(CAutoResetEvent *p);
 
 typedef struct
 {
+#ifdef __APPLE__
+    dispatch_semaphore_t sem;
+    SInt32 count;
+#else
     sem_t sem;
+#endif
     UInt32 maxCount;
 }
 CSemaphore;
 
 #define Semaphore_Construct(p)
 #define Semaphore_Close(p)
+#ifdef __APPLE__
+#define Semaphore_Wait(p) { DecrementAtomic(&((p)->count)); dispatch_semaphore_wait((p)->sem, DISPATCH_TIME_FOREVER); }
+#else
 #define Semaphore_Wait(p) { sem_wait(&((p)->sem)); }
+#endif
 WRes Semaphore_Create(CSemaphore *p, UInt32 initCount, UInt32 maxCount);
 WRes Semaphore_ReleaseN(CSemaphore *p, UInt32 num);
 WRes Semaphore_Release1(CSemaphore *p);

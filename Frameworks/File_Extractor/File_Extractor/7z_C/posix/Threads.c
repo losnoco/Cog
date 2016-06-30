@@ -61,7 +61,29 @@ WRes AutoResetEvent_Create(CAutoResetEvent *p, int signaled) { return Event_Crea
 WRes ManualResetEvent_CreateNotSignaled(CManualResetEvent *p) { return ManualResetEvent_Create(p, 0); }
 WRes AutoResetEvent_CreateNotSignaled(CAutoResetEvent *p) { return AutoResetEvent_Create(p, 0); }
 
+#ifdef __APPLE__
+WRes Semaphore_Create(CSemaphore *p, UInt32 initCount, UInt32 maxCount)
+{
+    p->sem = dispatch_semaphore_create( initCount );
+    p->count = initCount;
+    p->maxCount = maxCount;
+    return 0;
+}
 
+static WRes Semaphore_Release(CSemaphore *p, LONG releaseCount, LONG *previousCount)
+{
+    if (previousCount)
+    {
+        *previousCount = p->count;
+    }
+    while (releaseCount--)
+    {
+        dispatch_semaphore_signal(p->sem);
+        IncrementAtomic(&p->count);
+    }
+    return 0;
+}
+#else
 WRes Semaphore_Create(CSemaphore *p, UInt32 initCount, UInt32 maxCount)
 {
     sem_init( &p->sem, 0, initCount );
@@ -81,6 +103,8 @@ static WRes Semaphore_Release(CSemaphore *p, LONG releaseCount, LONG *previousCo
         sem_post( &p->sem );
     return 0;
 }
+#endif
+
 WRes Semaphore_ReleaseN(CSemaphore *p, UInt32 num)
   { return Semaphore_Release(p, (LONG)num, NULL); }
 WRes Semaphore_Release1(CSemaphore *p) { return Semaphore_ReleaseN(p, 1); }
