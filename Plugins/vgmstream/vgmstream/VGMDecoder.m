@@ -110,15 +110,13 @@ VGMSTREAM *init_vgmstream_from_cogfile(const char *path) {
 	VGMSTREAM *vgm;
     
 	sf = cogsf_create_from_path(path);
-	if (!sf) return NULL;
     
-	vgm = init_vgmstream_from_STREAMFILE(sf);
-	if (!vgm) goto err1;
+    if (sf) {
+        vgm = init_vgmstream_from_STREAMFILE(sf);
+        cogsf_close((COGSTREAMFILE *)sf);
+    }
     
 	return vgm;
-err1:
-	cogsf_close((COGSTREAMFILE *)sf);
-	return NULL;
 }
 
 @implementation VGMDecoder
@@ -195,6 +193,13 @@ err1:
 
 - (long)seek:(long)frame
 {
+    // Constrain the seek offset to within the loop, if any
+    if(stream->loop_flag && (stream->loop_end_sample - stream->loop_start_sample) && frame >= stream->loop_end_sample) {
+        frame -= stream->loop_start_sample;
+        frame %= (stream->loop_end_sample - stream->loop_start_sample);
+        frame += stream->loop_start_sample;
+    }
+    
     if (frame < framesRead) {
         reset_vgmstream( stream );
         framesRead = 0;
