@@ -16,6 +16,9 @@ class AUPlayer;
 class BMPlayer;
 
 @interface MIDIDecoder : NSObject <CogDecoder> {
+    id<CogSource> source;
+    int track_num;
+
     BMPlayer* bmplayer;
     AUPlayer* auplayer;
 	MIDIPlayer* player;

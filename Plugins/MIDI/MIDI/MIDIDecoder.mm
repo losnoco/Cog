@@ -47,6 +47,8 @@ static OSType getOSType(const char * in_)
 		return NO;
 	}
     
+    source = s;
+    
     std::vector<uint8_t> file_data;
     
     [s seek:0 whence:SEEK_END];
@@ -58,7 +60,7 @@ static OSType getOSType(const char * in_)
     if ( !midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file) )
         return NO;
     
-	int track_num = [[[s url] fragment] intValue]; //What if theres no fragment? Assuming we get 0.
+	track_num = [[[s url] fragment] intValue]; //What if theres no fragment? Assuming we get 0.
     
     midi_file.scan_for_loops( true, true, true );
 
@@ -89,13 +91,37 @@ static OSType getOSType(const char * in_)
     
     totalFrames = framesLength + framesFade;
     
+    framesRead = 0;
+    
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+	
+	return YES;
+}
+
+- (NSDictionary *)properties
+{
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithInt:0], @"bitrate",
+		[NSNumber numberWithFloat:44100], @"sampleRate",
+		[NSNumber numberWithLong:totalFrames], @"totalFrames",
+		[NSNumber numberWithInt:32], @"bitsPerSample",
+        [NSNumber numberWithBool:YES], @"floatingPoint",
+		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
+		[NSNumber numberWithBool:YES], @"seekable",
+		@"host", @"endian",
+		nil];
+}
+
+- (BOOL)initDecoder
+{
     NSString * soundFontPath = @"";
     
-    if ( [[s url] isFileURL] )
+    if ( [[source url] isFileURL] )
     {
         // Let's check for a SoundFont
         NSArray * extensions = [NSArray arrayWithObjects:@"sflist", @"sf2pack", @"sf2", nil];
-        NSString * filePath = [[s url] path];
+        NSString * filePath = [[source url] path];
         NSString * fileNameBase = [filePath lastPathComponent];
         filePath = [filePath stringByDeletingLastPathComponent];
         soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
@@ -118,24 +144,24 @@ static OSType getOSType(const char * in_)
         else
             soundFontPath = @"";
     }
-	
-	DLog(@"Length: %li", totalFrames);
-	
-	DLog(@"Track num: %i", track_num);
-
+    
+    DLog(@"Length: %li", totalFrames);
+    
+    DLog(@"Track num: %i", track_num);
+    
     NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
     if (!plugin || [plugin isEqualToString:@"BASSMIDI"])
     {
         bmplayer = new BMPlayer;
-    
+        
         bool resampling_sinc = false;
         NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
         if ([resampling isEqualToString:@"sinc"])
             resampling_sinc = true;
-
+        
         bmplayer->setSincInterpolation( resampling_sinc );
         bmplayer->setSampleRate( 44100 );
-
+        
         if ( [soundFontPath length] )
             bmplayer->setFileSoundFont( [soundFontPath UTF8String] );
         
@@ -151,7 +177,7 @@ static OSType getOSType(const char * in_)
         msplayer->set_bank([[plugin substringFromIndex:4] intValue]);
         
         msplayer->set_extp(1);
-
+        
         msplayer->setSampleRate( 44100 );
     }
     else if ([[plugin substringToIndex:5] isEqualToString:@"OPL3W"])
@@ -162,9 +188,9 @@ static OSType getOSType(const char * in_)
         msplayer->set_synth(1);
         
         msplayer->set_bank([[plugin substringFromIndex:5] intValue]);
-
+        
         msplayer->set_extp(1);
-
+        
         msplayer->setSampleRate( 44100 );
     }
     else
@@ -179,7 +205,7 @@ static OSType getOSType(const char * in_)
         if (componentManufacturer == 'rolD' && componentSubType == 'Sc55')
         {
             SCPlayer * scplayer = new SCPlayer;
-
+            
             SCPlayer::sc_mode mode = SCPlayer::sc_sc55;
             NSString * flavor = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.flavor"];
             if ([flavor isEqualToString:@"gm"])
@@ -206,16 +232,16 @@ static OSType getOSType(const char * in_)
         else
         {
             auplayer = new AUPlayer;
-        
+            
             auplayer->setComponent(componentSubType, componentManufacturer);
             auplayer->setSampleRate( 44100 );
-        
+            
             if ( [soundFontPath length] )
             {
                 auplayer->setSoundFont( [soundFontPath UTF8String] );
                 soundFontsAssigned = YES;
             }
-
+            
             player = auplayer;
         }
     }
@@ -226,26 +252,7 @@ static OSType getOSType(const char * in_)
     if ( !player->Load( midi_file, track_num, loop_mode, clean_flags) )
         return NO;
     
-    framesRead = 0;
-    
-	[self willChangeValueForKey:@"properties"];
-	[self didChangeValueForKey:@"properties"];
-	
-	return YES;
-}
-
-- (NSDictionary *)properties
-{
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSNumber numberWithInt:0], @"bitrate",
-		[NSNumber numberWithFloat:44100], @"sampleRate",
-		[NSNumber numberWithLong:totalFrames], @"totalFrames",
-		[NSNumber numberWithInt:32], @"bitsPerSample",
-        [NSNumber numberWithBool:YES], @"floatingPoint",
-		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
-		[NSNumber numberWithBool:YES], @"seekable",
-		@"host", @"endian",
-		nil];
+    return YES;
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
@@ -253,6 +260,12 @@ static OSType getOSType(const char * in_)
     BOOL repeatone = IsRepeatOneSet();
     long localFramesLength = framesLength;
     long localTotalFrames = totalFrames;
+    
+    if (!player)
+    {
+        if (![self initDecoder])
+            return -1;
+    }
     
     player->SetLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
     
@@ -320,6 +333,8 @@ static OSType getOSType(const char * in_)
 {
     delete player;
     player = NULL;
+    [source close];
+    source = nil;
 }
 
 - (void)dealloc
