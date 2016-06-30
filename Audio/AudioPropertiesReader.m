@@ -15,7 +15,9 @@
 
 + (NSDictionary *)propertiesForURL:(NSURL *)url
 {
-	return [[PluginController sharedPluginController] propertiesForURL:url];
+    @autoreleasepool {
+        return [[PluginController sharedPluginController] propertiesForURL:url];
+    }
 }
 
 @end

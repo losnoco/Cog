@@ -14,7 +14,9 @@
 
 + (NSArray *) urlsForContainerURL:(NSURL *)url
 {
-	return [[PluginController sharedPluginController] urlsForContainerURL:url];
+    @autoreleasepool {
+        return [[PluginController sharedPluginController] urlsForContainerURL:url];
+    }
 }
 
 @end

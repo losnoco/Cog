@@ -13,7 +13,9 @@
 
 + (NSDictionary *)metadataForURL:(NSURL *)url
 {
-	return [[PluginController sharedPluginController] metadataForURL:url];
+    @autoreleasepool {
+        return [[PluginController sharedPluginController] metadataForURL:url];
+    }
 }
 
 @end
