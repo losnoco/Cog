@@ -16,6 +16,8 @@
 
 */
 
+#include <stdlib.h>
+
 #include "mamedef.h"
 #include "dac_control.h"
 

@@ -159,12 +159,14 @@ static OpenURLPanel *openURLPanel = nil;
 }
 
 // actions
+typedef id (*myIMP)(id, SEL, ...);
+
 - (IBAction)doOpenURL:(id)sender
 {
 	NSString	*urlString;
 	NSURL		*url;
 	BOOL		informDelegate = YES;
-	IMP			callback;
+	myIMP		callback;
 
 	if ([sender tag] == NSOKButton)
 	{
@@ -213,7 +215,7 @@ static OpenURLPanel *openURLPanel = nil;
 	// inform the delegate
 	if (informDelegate && mDelegate && mDidEndSelector)
 	{
-		callback = [mDelegate methodForSelector:mDidEndSelector];
+		callback = (myIMP) [mDelegate methodForSelector:mDidEndSelector];
 		callback(mDelegate, mDidEndSelector, self, [sender tag], mContextInfo);
 		
 		[self close];

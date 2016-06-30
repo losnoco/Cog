@@ -123,7 +123,7 @@ static int json_compare (const json_value * a, const json_value * b)
       return 0;
 
    case json_integer:
-      return a->u.integer - b->u.integer;
+      return (int)(a->u.integer - b->u.integer);
 
    case json_double:
       return json_signum(a->u.dbl - b->u.dbl);
@@ -414,7 +414,7 @@ static json_value * sflist_load_v1(const char * sflist, size_t size, char * erro
          }
       }
       obj = json_object_new(0);
-      json_object_push(obj, "fileName", json_string_new_length(lend - path, path));
+      json_object_push(obj, "fileName", json_string_new_length((unsigned int)(lend - path), path));
       if (gain != 0.0) {
          json_object_push(obj, "gain", json_double_new(gain));
          gain = 0.0;
@@ -485,10 +485,10 @@ static void sflist_process_patchmappings(BASS_MIDI_FONTEX * out, BASS_MIDI_FONTE
       const json_value * destination_program = json_object_item(destination, "program");
       const json_value * source_bank = json_object_item(source, "bank");
       const json_value * source_program = json_object_item(source, "program");
-      fontex->spreset = (source_program->type == json_none) ? -1 : source_program->u.integer;
-      fontex->sbank = (source_bank->type == json_none) ? -1 : source_bank->u.integer;
-      fontex->dpreset = (destination_program->type == json_none) ? -1 : destination_program->u.integer;
-      fontex->dbank = (destination_bank->type == json_none) ? 0 : destination_bank->u.integer;
+      fontex->spreset = (source_program->type == json_none) ? -1 : (int)source_program->u.integer;
+      fontex->sbank = (source_bank->type == json_none) ? -1 : (int)source_bank->u.integer;
+      fontex->dpreset = (destination_program->type == json_none) ? -1 : (int)destination_program->u.integer;
+      fontex->dbank = (destination_bank->type == json_none) ? 0 : (int)destination_bank->u.integer;
       fontex->dbanklsb = channel;
       *out++ = *fontex;
    }
@@ -620,7 +620,7 @@ static sflist_presets * sflist_process(const json_value * sflist, const char * b
                      sprintf(error_buf, "soundFont item #%u 'patchMappings' #%u '%s' contains an invalid '%s' field", i + 1, k + 1, name, name2);
                      goto error;
                   }
-                  if (item->type != json_integer) {
+                  if (item2->type != json_integer) {
                      sprintf(error_buf, "soundFont item #%u 'patchMappings' #%u '%s' '%s' is not an integer", i + 1, k + 1, name, name2);
                   }
                   if (!strcmp(name2, "program")) {
@@ -629,8 +629,8 @@ static sflist_presets * sflist_process(const json_value * sflist, const char * b
                      else
                         range_max = 127;
                   }
-                  if (item->u.integer < range_min || item->u.integer > range_max) {
-                     sprintf(error_buf, "soundFont item #%u 'patchMappings' #%u '%s' '%s' is out of range (expected %d-%d, got %" PRId64 ")", i + 1, k + 1, name, name2, range_min, range_max, item->u.integer);
+                  if (item2->u.integer < range_min || item2->u.integer > range_max) {
+                     sprintf(error_buf, "soundFont item #%u 'patchMappings' #%u '%s' '%s' is out of range (expected %d-%d, got %" PRId64 ")", i + 1, k + 1, name, name2, range_min, range_max, item2->u.integer);
                      goto error;
                   }
                   if (!strcmp(name2, "bank"))
@@ -756,7 +756,7 @@ static sflist_presets * sflist_process(const json_value * sflist, const char * b
       }
       else if (patchMappings->type == json_none) {
          for (k = 0, l = channels->u.array.length; k < l; ++k) {
-            fontex.dbanklsb = channels->u.array.values[k]->u.integer;
+            fontex.dbanklsb = (int)channels->u.array.values[k]->u.integer;
             rval->presets[preset_number++] = fontex;
          }
       }
@@ -766,7 +766,7 @@ static sflist_presets * sflist_process(const json_value * sflist, const char * b
       }
       else {
          for (k = 0, l = channels->u.array.length; k < l; ++k) {
-            sflist_process_patchmappings(rval->presets + preset_number, &fontex, patchMappings, channels->u.array.values[k]->u.integer);
+            sflist_process_patchmappings(rval->presets + preset_number, &fontex, patchMappings, (int)channels->u.array.values[k]->u.integer);
             preset_number += patchMappings->u.array.length;
          }
       }

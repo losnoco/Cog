@@ -18,7 +18,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 {
     id source = (__bridge id)data;
 	DLog(@"Amount: %li", count);
-	int n = [source read:out amount:count];
+	int n = (int) [source read:out amount:count];
 	DLog(@"Read: %i", n);
 	if (n <= 0) {
 		
@@ -147,7 +147,7 @@ gme_err_t readCallback( void* data, void* out, long count )
     if ( IsRepeatOneSet() )
         gme_set_fade( emu, -1, 0 );
     else
-        gme_set_fade( emu, length - 8000, 8000 );
+        gme_set_fade( emu, (int)(length - 8000), 8000 );
 	
 	gme_play(emu, numSamples, (short int *)buf);
 	

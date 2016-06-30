@@ -34,7 +34,7 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
         return nil;
 
     // We need to allocate entire VM pages, so round the specified length up to the next page if necessary.
-    bufferLength = round_page(length);
+    bufferLength = (UInt32) round_page(length);
 
     buffer = allocateVirtualBuffer(bufferLength);
     if (buffer) {
@@ -106,10 +106,10 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
         length = 0;
     } else if (localWritePointer > readPointer) {
         // Write is ahead of read in the buffer
-        length = localWritePointer - readPointer;
+        length = (UInt32)(localWritePointer - readPointer);
     } else {
         // Write has wrapped around past read, OR write == read (the buffer is full)
-        length = bufferLength - (readPointer - localWritePointer);
+        length = (UInt32)(bufferLength - (readPointer - localWritePointer));
     }
 
     *returnedReadPointer = readPointer;
@@ -165,10 +165,10 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
         length = bufferLength;
     } else if (writePointer <= localReadPointer) {
         // Write is before read in the buffer, OR write == read (meaning that the buffer is full).
-        length = localReadPointer - writePointer;
+        length = (UInt32)(localReadPointer - writePointer);
     } else {
         // Write is behind read in the buffer. The available space wraps around.
-        length = (bufferEnd - writePointer) + (localReadPointer - buffer);
+        length = (UInt32)((bufferEnd - writePointer) + (localReadPointer - buffer));
     }
 
     *returnedWritePointer = writePointer;

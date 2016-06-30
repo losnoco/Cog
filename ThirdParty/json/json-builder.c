@@ -205,7 +205,7 @@ json_value * json_object_push (json_value * object,
                                const json_char * name,
                                json_value * value)
 {
-   return json_object_push_length (object, strlen (name), name, value);
+   return json_object_push_length (object, (unsigned int) strlen (name), name, value);
 }
 
 json_value * json_object_push_length (json_value * object,
@@ -273,7 +273,7 @@ json_value * json_object_push_nocopy (json_value * object,
 
 json_value * json_string_new (const json_char * buf)
 {
-   return json_string_new_length (strlen (buf), buf);
+   return json_string_new_length ((unsigned int) strlen (buf), buf);
 }
 
 json_value * json_string_new_length (unsigned int length, const json_char * buf)
@@ -425,10 +425,10 @@ json_value * json_object_merge (json_value * objectA, json_value * objectB)
    {
       json_object_entry * values_new;
 
-      unsigned int alloc =
-          objectA->u.object.length
+      unsigned int alloc = (unsigned int)
+          (objectA->u.object.length
               + ((json_builder_value *) objectA)->additional_length_allocated
-              + objectB->u.object.length;
+              + objectB->u.object.length);
 
       if (! (values_new = (json_object_entry *)
             realloc (objectA->u.object.values, sizeof (json_object_entry) * alloc)))

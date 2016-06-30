@@ -31,7 +31,7 @@
 	free(lhsBuf);
 	free(rhsBuf);
 	
-	return (CFComparisonResult) compareResult;
+	return (NSComparisonResult) compareResult;
 }
 
 @end

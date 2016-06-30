@@ -191,7 +191,7 @@ void SidTuneBase::loadFile(const char* fileName, buffer_t& bufferRef)
     }
 
     inFile.seekg(0, inFile.end);
-    const int fileLen = inFile.tellg();
+    const int fileLen = (const int) inFile.tellg();
 
     if (fileLen <= 0)
     {
@@ -248,7 +248,7 @@ SidTuneBase* SidTuneBase::getFromStdIn()
         fileBuf.push_back((uint_least8_t)datb);
     }
 
-    return getFromBuffer(&fileBuf.front(), fileBuf.size());
+    return getFromBuffer(&fileBuf.front(), (uint_least32_t) fileBuf.size());
 }
 
 #endif
@@ -323,8 +323,8 @@ void SidTuneBase::acceptSidTune(const char* dataFileName, const char* infoFileNa
         info->m_startSong = 1;
     }
 
-    info->m_dataFileLen = buf.size();
-    info->m_c64dataLen = buf.size() - fileOffset;
+    info->m_dataFileLen = (uint_least32_t )buf.size();
+    info->m_c64dataLen = (uint_least32_t)(buf.size() - fileOffset);
 
     // Calculate any remaining addresses and then
     // confirm all the file details are correct

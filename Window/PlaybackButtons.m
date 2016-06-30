@@ -64,7 +64,7 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 {
 	DLog(@"Mouse down!");
 	
-	int clickedSegment = [self selectedSegment];
+	int clickedSegment = (int) [self selectedSegment];
 	if (clickedSegment == 0) //Previous
 	{
 		[playbackController prev:self];

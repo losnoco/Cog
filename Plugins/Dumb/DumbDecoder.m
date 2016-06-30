@@ -262,7 +262,7 @@ int callbackLoop(void *data)
         if ( framesToRender > frames )
             framesToRender = frames;
         dumb_silence( sampptr[0], framesToRender * 2 );
-        int rendered = duh_sigrenderer_generate_samples( dsr, 1.0, 65536.0f / 44100.0f, framesToRender, sampptr );
+        int rendered = (int) duh_sigrenderer_generate_samples( dsr, 1.0, 65536.0f / 44100.0f, framesToRender, sampptr );
         
         if (rendered <= 0)
             break;
@@ -288,7 +288,7 @@ int callbackLoop(void *data)
                 sampleBuf[ offset + 0 ] = sampleLeft;
                 sampleBuf[ offset + 1 ] = sampleRight;
             }
-            rendered = fadeRemain - fadeEnd;
+            rendered = (int)(fadeRemain - fadeEnd);
             fadeRemain = fadeEnd;
         }
         

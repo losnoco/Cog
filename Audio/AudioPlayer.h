@@ -80,7 +80,7 @@
 
 - (BOOL)endOfInputReached:(BufferChain *)sender;
 - (void)setShouldContinue:(BOOL)s;
-- (BufferChain *)bufferChain;
+//- (BufferChain *)bufferChain;
 - (void)launchOutputThread;
 - (void)endOfInputPlayed;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;

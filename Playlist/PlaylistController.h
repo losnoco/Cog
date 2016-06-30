@@ -22,7 +22,7 @@ typedef enum {
 	RepeatAll
 } RepeatMode;
 
-static BOOL IsRepeatOneSet()
+static inline BOOL IsRepeatOneSet()
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatOne;
 }

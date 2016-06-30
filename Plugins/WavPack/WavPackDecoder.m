@@ -16,14 +16,14 @@ int32_t ReadBytesProc(void *ds, void *data, int32_t bcount)
 {
 	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 	
-	return [[decoder source] read:data amount:bcount];
+	return (int32_t) [[decoder source] read:data amount:bcount];
 }
 
 uint32_t GetPosProc(void *ds)
 {
 	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
 	
-	return [[decoder source] tell];
+	return (uint32_t) [[decoder source] tell];
 }
 
 int SetPosAbsProc(void *ds, uint32_t pos)
@@ -66,7 +66,7 @@ uint32_t GetLengthProc(void *ds)
 		
 		[[decoder source] seek:currentPos whence:SEEK_SET];
 
-		return size;
+		return (uint32_t) size;
 	}
 	else {
 		return 0;
@@ -227,7 +227,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 
 - (long)seek:(long)frame
 {
-	WavpackSeekSample(wpc, frame);
+	WavpackSeekSample(wpc, (uint32_t) frame);
 	
 	return frame;
 }

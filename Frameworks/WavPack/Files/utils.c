@@ -716,7 +716,7 @@ int64_t DoGetFileSize (FILE *hFile)
 
 uint32_t DoGetFilePosition (FILE *hFile)
 {
-    return ftell (hFile);
+    return (uint32_t) ftell (hFile);
 }
 
 int DoSetFilePositionAbsolute (FILE *hFile, uint32_t pos)

@@ -87,7 +87,7 @@ static int it_mtm_assemble_pattern(IT_PATTERN *pattern, const unsigned char * tr
 		entry++;
 	}
 
-	pattern->n_entries = entry - pattern->entry;
+	pattern->n_entries = (int)(entry - pattern->entry);
 
 	return 0;
 }
@@ -330,7 +330,7 @@ static DUMB_IT_SIGDATA *it_mtm_load_sigdata(DUMBFILE *f, int * version)
 			if (!sigdata->song_message) goto error_fc;
 
 			for (m = 0, n = 0; n <= o; n += 40) {
-				int p = strlen_max(&comment[n], 40);
+				int p = (int) strlen_max(&comment[n], 40);
 				if (p) {
 					memcpy(sigdata->song_message + m, &comment[n], p);
 					m += p;

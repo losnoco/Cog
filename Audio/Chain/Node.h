@@ -55,7 +55,7 @@
 
 - (Semaphore *)semaphore;
 
--(void)resetBuffer;
+//-(void)resetBuffer;
 
 - (BOOL)endOfStream;
 - (void)setEndOfStream:(BOOL)e;

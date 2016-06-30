@@ -95,7 +95,7 @@ addressForHost(NSString *hostname)
 - (void) send:(NSString *)data
 {	
 	const char		*utf8data		= [data UTF8String];
-	unsigned		len				= strlen(utf8data);	
+	unsigned		len				= (unsigned int) strlen(utf8data);
 	unsigned		bytesToSend		= len;
 	unsigned		totalBytesSent	= 0;
 	ssize_t			bytesSent		= 0;

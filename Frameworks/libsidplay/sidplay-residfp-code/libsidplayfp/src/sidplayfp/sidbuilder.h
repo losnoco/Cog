@@ -82,7 +82,7 @@ public:
      *
      * @return number of used sids, 0 if none.
      */
-    unsigned int usedDevices() const { return sidobjs.size(); }
+    unsigned int usedDevices() const { return (unsigned int) sidobjs.size(); }
 
     /**
      * Available devices.

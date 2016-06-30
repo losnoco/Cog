@@ -328,7 +328,7 @@
         
         [playlistController willInsertURLs:acceptedURLs origin:URLOriginInternal];
 		
-		NSArray* entries = [playlistLoader insertURLs:acceptedURLs atIndex:row sort:NO];
+		NSArray* entries = [playlistLoader insertURLs:acceptedURLs atIndex:(int)row sort:NO];
 		[playlistLoader didInsertURLs:entries origin:URLOriginInternal];
 
         if ([playlistController shuffle] != ShuffleOff)

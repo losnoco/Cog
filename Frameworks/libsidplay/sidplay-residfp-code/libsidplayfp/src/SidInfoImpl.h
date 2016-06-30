@@ -93,7 +93,7 @@ public:
     const char *getName() const override { return m_name.c_str(); }
     const char *getVersion() const override { return m_version.c_str(); }
 
-    unsigned int getNumberOfCredits() const override { return m_credits.size(); }
+    unsigned int getNumberOfCredits() const override { return (unsigned int) m_credits.size(); }
     const char *getCredits(unsigned int i) const override { return i<m_credits.size()?m_credits[i].c_str():""; }
 
     unsigned int getMaxsids() const override { return m_maxsids; }

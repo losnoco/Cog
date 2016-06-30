@@ -823,7 +823,7 @@ cmpfn2 ( const void* p1, const void* p2 )
     const TagItem_t*  q1 = (TagItem_t*) p1;
     const TagItem_t*  q2 = (TagItem_t*) p2;
 
-    return q1 -> valuelen - q2 -> valuelen;
+    return (int)(q1 -> valuelen - q2 -> valuelen);
 }
 
 #define TAG_NO_HEADER 1

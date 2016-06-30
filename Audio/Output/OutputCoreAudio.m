@@ -68,7 +68,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 		NSNumber *deviceID = [device objectForKey:@"deviceID"];
 		
-		[self setOutputDevice:[deviceID longValue]];
+		[self setOutputDevice:(AudioDeviceID)[deviceID longValue]];
 	}
 }
 
@@ -151,7 +151,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	// Setup the output device before mucking with settings
 	NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 	if (device) {
-		BOOL ok = [self setOutputDevice:[[device objectForKey:@"deviceID"] longValue]];
+		BOOL ok = [self setOutputDevice:(AudioDeviceID)[[device objectForKey:@"deviceID"] longValue]];
 		if (!ok) {
 			//Ruh roh.
 			[self setOutputDevice: -1];
@@ -276,7 +276,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 								&deviceFormat,
 								size);
     
-    size = sizeof(deviceChannelMap);
+    size = (unsigned int) sizeof(deviceChannelMap);
     err = AudioUnitSetProperty(outputUnit,
                                kAudioOutputUnitProperty_ChannelMap,
                                kAudioUnitScope_Output,

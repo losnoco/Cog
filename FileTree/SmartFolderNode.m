@@ -48,7 +48,7 @@
 
 - (unsigned int)countOfSubpaths
 {
-	return [[self subpaths] count];
+	return (unsigned int) [[self subpaths] count];
 }
 
 - (PathNode *)objectInSubpathsAtIndex:(unsigned int)index
@@ -64,7 +64,7 @@
 	NSMutableArray *results = [NSMutableArray array];
 
 	MDQueryDisableUpdates(query);
-	int c = MDQueryGetResultCount(query);
+	int c = (int) MDQueryGetResultCount(query);
 	
 	int i;
 	for (i = 0; i < c; i++)

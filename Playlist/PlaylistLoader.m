@@ -382,7 +382,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	}
 	
 	//Create actual entries
-    int count = [validURLs count];
+    int count = (int) [validURLs count];
     if (xmlData) count += [[xmlData objectForKey:@"entries"] count];
     
 	int i = 0;
@@ -517,12 +517,12 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 
 - (NSArray*)addURLs:(NSArray *)urls sort:(BOOL)sort
 {
-	return [self insertURLs:urls atIndex:[[playlistController content] count] sort:sort];
+	return [self insertURLs:urls atIndex:(int)[[playlistController content] count] sort:sort];
 }
 
 - (NSArray*)addURL:(NSURL *)url
 {
-	return [self insertURLs:[NSArray arrayWithObject:url] atIndex:[[playlistController content] count] sort:NO];
+	return [self insertURLs:[NSArray arrayWithObject:url] atIndex:(int)[[playlistController content] count] sort:NO];
 }
 
 - (NSArray *)acceptableFileTypes

@@ -95,12 +95,12 @@ NSString *iTunesDropType = @"CorePasteboardFlavorType 0x6974756E";
     while (NSNotFound != index)
 	{
 		if (index >= insertIndex) {
-			removeIndex = index + aboveInsertIndexCount;
+			removeIndex = (int)(index + aboveInsertIndexCount);
 			aboveInsertIndexCount += 1;
 		}
 		else
 		{
-			removeIndex = index;
+			removeIndex = (int)index;
 			insertIndex -= 1;
 		}
 		

@@ -192,7 +192,7 @@ inline ulong uchar_to_ulong_le(uchar *buf)
 inline slong uchar_to_slong_le(uchar *buf)
 /* converts 4 bytes stored in little-endian format to an slong */
 {
-	return (long)uchar_to_ulong_le(buf);
+	return (slong)uchar_to_ulong_le(buf);
 }
 
 inline ushort uchar_to_ushort_le(uchar *buf)

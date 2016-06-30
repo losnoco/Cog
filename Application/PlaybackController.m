@@ -122,7 +122,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 		[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 
 	if ([playlistView selectedRow] > -1)
-		[self playEntryAtIndex:[playlistView selectedRow]];
+		[self playEntryAtIndex:(int)[playlistView selectedRow]];
 }
 
 NSDictionary * makeRGInfo(PlaylistEntry *pe)

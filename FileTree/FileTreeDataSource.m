@@ -124,7 +124,7 @@
 {
 	PathNode *n = (item == nil ? rootNode : item);
 
-    return [[n subpaths] count];
+    return (int) [[n subpaths] count];
 }
 
  

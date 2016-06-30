@@ -491,7 +491,7 @@ void Player::sidCreate(sidbuilder *builder, SidConfig::sid_model_t defaultModel,
             // model as the first SID.
             defaultModel = userModel;
 
-            const unsigned int extraSidChips = extraSidAddresses.size();
+            const unsigned int extraSidChips = (const unsigned int) extraSidAddresses.size();
 
             for (unsigned int i = 0; i < extraSidChips; i++)
             {

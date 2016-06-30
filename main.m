@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[])
 {
-	srandom(time(NULL));
+	srandom((unsigned int)time(NULL));
 	
     return NSApplicationMain(argc,  (const char **) argv);
 }

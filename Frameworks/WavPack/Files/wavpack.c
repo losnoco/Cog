@@ -333,7 +333,7 @@ int main (argc, argv) int argc; char **argv;
 
                 for (pi = 0; *long_param && pi < 3; ++pi) {
                     if (isdigit (*long_param))
-                        params [pi] = strtol (long_param, &long_param, 10);
+                        params [pi] = (int) strtol (long_param, &long_param, 10);
 
                     if ((*long_param == 'f' || *long_param == 'F') && pi == 1) {
                         long_param++;
@@ -374,7 +374,7 @@ int main (argc, argv) int argc; char **argv;
                 }
             }
             else if (!strncmp (long_option, "blocksize", 9)) {          // --blocksize
-                config.block_samples = strtol (long_param, NULL, 10);
+                config.block_samples = (int) strtol (long_param, NULL, 10);
 
                 if (config.block_samples < 16 || config.block_samples > 131072) {
                     error_line ("invalid blocksize!");
@@ -475,7 +475,7 @@ int main (argc, argv) int argc; char **argv;
                         break;
 
                     case 'X': case 'x':
-                        config.xmode = strtol (++*argv, argv, 10);
+                        config.xmode = (int) strtol (++*argv, argv, 10);
 
                         if (config.xmode < 0 || config.xmode > 6) {
                             error_line ("extra mode only goes from 1 to 6!");
@@ -3186,7 +3186,7 @@ static void TextToUTF8 (void *string, int len)
     }
 
     if (converter != (iconv_t) -1) {
-        err = iconv (converter, &inp, &insize, &outp, &outsize);
+        err = (int) iconv (converter, &inp, &insize, &outp, &outsize);
         iconv_close (converter);
     }
     else

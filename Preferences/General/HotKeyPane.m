@@ -17,7 +17,7 @@ static void setControlText(HotKeyControl* control, NSString* kcprop, NSString* m
 {
     UInt16 keyCode = [[NSUserDefaults standardUserDefaults] integerForKey:kcprop];
     NSUInteger modifiers = [[NSUserDefaults standardUserDefaults] integerForKey:mprop];
-    NSString *str = [[NDKeyboardLayout keyboardLayout] stringForKeyCode:keyCode modifierFlags:modifiers];
+    NSString *str = [[NDKeyboardLayout keyboardLayout] stringForKeyCode:keyCode modifierFlags:(UInt32)modifiers];
     [control setStringValue:str];
 }
 

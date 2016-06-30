@@ -33,7 +33,7 @@
 	
     if (value == nil) return nil;
 	
-	RepeatMode mode = [value integerValue];
+	RepeatMode mode = (RepeatMode) [value integerValue];
 	
 	if (repeatMode == mode) {
 		return [NSNumber numberWithBool:YES];

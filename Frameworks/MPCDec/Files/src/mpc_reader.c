@@ -67,7 +67,7 @@ tell_stdio(mpc_reader *p_reader)
 {
     mpc_reader_stdio *p_stdio = (mpc_reader_stdio*) p_reader->data;
     if(p_stdio->magic != STDIO_MAGIC) return MPC_STATUS_FAIL;
-    return ftell(p_stdio->p_file);
+    return (mpc_int32_t) ftell(p_stdio->p_file);
 }
 
 static mpc_int32_t
@@ -102,7 +102,7 @@ mpc_reader_init_stdio_stream(mpc_reader * p_reader, FILE * p_file)
     p_stdio->is_seekable = MPC_TRUE;
     err = fseek(p_stdio->p_file, 0, SEEK_END);
     if(err < 0) goto clean;
-    err = ftell(p_stdio->p_file);
+    err = (int) ftell(p_stdio->p_file);
     if(err < 0) goto clean;
     p_stdio->file_size = err;
     err = fseek(p_stdio->p_file, 0, SEEK_SET);

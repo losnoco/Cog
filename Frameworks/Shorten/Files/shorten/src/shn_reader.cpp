@@ -356,7 +356,7 @@ int shn_reader::get_wave_header()
       return 0;
 
     /* get the internal file type */
-    internal_ftype = UINT_GET(TYPESIZE);
+    internal_ftype = (int)UINT_GET(TYPESIZE);
 
     /* has the user requested a change in file type? */
     if(internal_ftype != ftype) {
@@ -377,22 +377,22 @@ int shn_reader::get_wave_header()
       UINT_GET((int) (log((double) DEFAULT_BLOCK_SIZE) / M_LN2));
       UINT_GET(LPCQSIZE);
       UINT_GET(0);
-      nskip = UINT_GET(NSKIPSIZE);
+      nskip = (int)UINT_GET(NSKIPSIZE);
       for(int i = 0; i < nskip; i++)
       {
-		byte = uvar_get(XBYTESIZE);
+		byte = (int)uvar_get(XBYTESIZE);
       }
     }
 
     /* find verbatim command */
     while(1)
     {
-        int cmd = uvar_get(FNSIZE);
+        int cmd = (int)uvar_get(FNSIZE);
         switch(cmd)
         {
 			case FN_VERBATIM:
 			{
-				int cklen = uvar_get(VERBATIM_CKSIZE_SIZE);
+				int cklen = (int)uvar_get(VERBATIM_CKSIZE_SIZE);
 				
 				while (cklen--)
 				{
@@ -639,7 +639,7 @@ restart:
     fwrite_type_init();
 
     /* get the internal file type */
-    internal_ftype = UINT_GET(TYPESIZE);
+    internal_ftype = (int)UINT_GET(TYPESIZE);
 
     /* has the user requested a change in file type? */
     if(internal_ftype != ftype) {
@@ -653,19 +653,19 @@ restart:
         }
     }
 
-    nchan = UINT_GET(CHANSIZE);
+    nchan = (int)UINT_GET(CHANSIZE);
 
     /* get blocksize if version > 0 */
     if(version > 0)
     {
       int byte;
-      blocksize = UINT_GET((int) (log((double) DEFAULT_BLOCK_SIZE) / M_LN2));
-      maxnlpc = UINT_GET(LPCQSIZE);
-      nmean = UINT_GET(0);
-      nskip = UINT_GET(NSKIPSIZE);
+      blocksize = (int)UINT_GET((int) (log((double) DEFAULT_BLOCK_SIZE) / M_LN2));
+      maxnlpc = (int)UINT_GET(LPCQSIZE);
+      nmean = (int)UINT_GET(0);
+      nskip = (int)UINT_GET(NSKIPSIZE);
       for(i = 0; i < nskip; i++)
       {
-	byte = uvar_get(XBYTESIZE);
+	byte = (int)uvar_get(XBYTESIZE);
       }
     }
     else
@@ -717,7 +717,7 @@ restart:
     chan = 0;
     while(1)
     {
-        cmd = uvar_get(FNSIZE);
+        cmd = (int)uvar_get(FNSIZE);
         if (mFatalError)
           goto cleanup;
 
@@ -735,7 +735,7 @@ restart:
 
             if(cmd != FN_ZERO)
             {
-              resn = uvar_get(ENERGYSIZE);
+              resn = (int)uvar_get(ENERGYSIZE);
               if (mFatalError)
                 goto cleanup;
               /* this is a hack as version 0 differed in definition of var_get */
@@ -765,39 +765,39 @@ restart:
                 break;
               case FN_DIFF0:
                 for(i = 0; i < blocksize; i++) {
-                  cbuffer[i] = var_get(resn) + coffset;
+                  cbuffer[i] = (int)var_get(resn) + coffset;
                   if (mFatalError)
                     goto cleanup;
                 }
                 break;
               case FN_DIFF1:
                 for(i = 0; i < blocksize; i++) {
-                  cbuffer[i] = var_get(resn) + cbuffer[i - 1];
+                  cbuffer[i] = (int)(var_get(resn) + cbuffer[i - 1]);
                   if (mFatalError)
                     goto cleanup;
                 }
                 break;
               case FN_DIFF2:
                 for(i = 0; i < blocksize; i++) {
-                  cbuffer[i] = var_get(resn) + (2 * cbuffer[i - 1] -	cbuffer[i - 2]);
+                  cbuffer[i] = (int)(var_get(resn) + (2 * cbuffer[i - 1] -	cbuffer[i - 2]));
                   if (mFatalError)
                     goto cleanup;
                 }
                 break;
               case FN_DIFF3:
                 for(i = 0; i < blocksize; i++) {
-                  cbuffer[i] = var_get(resn) + 3 * (cbuffer[i - 1] -  cbuffer[i - 2]) + cbuffer[i - 3];
+                  cbuffer[i] = (int)(var_get(resn) + 3 * (cbuffer[i - 1] -  cbuffer[i - 2]) + cbuffer[i - 3]);
                   if (mFatalError)
                     goto cleanup;
                 }
                 break;
               case FN_QLPC:
-                nlpc = uvar_get(LPCQSIZE);
+                nlpc = (int)uvar_get(LPCQSIZE);
                 if (mFatalError)
                   goto cleanup;
 
                 for(i = 0; i < nlpc; i++) {
-                  qlpc[i] = var_get(LPCQUANT);
+                  qlpc[i] = (int)var_get(LPCQUANT);
                   if (mFatalError)
                     goto cleanup;
                 }
@@ -809,7 +809,7 @@ restart:
 
                   for(j = 0; j < nlpc; j++)
                     sum += qlpc[j] * cbuffer[i - j - 1];
-                  cbuffer[i] = var_get(resn) + (sum >> LPCQUANT);
+                  cbuffer[i] = (int)(var_get(resn) + (sum >> LPCQUANT));
                   if (mFatalError)
                     goto cleanup;
                 }
@@ -926,17 +926,17 @@ restart:
             break;
 
           case FN_BLOCKSIZE:
-            blocksize = UINT_GET((int) (log((double) blocksize) / M_LN2));
+            blocksize = (int)UINT_GET((int) (log((double) blocksize) / M_LN2));
             if (mFatalError)
               goto cleanup;
             break;
           case FN_BITSHIFT:
-            bitshift = uvar_get(BITSHIFTSIZE);
+            bitshift = (int)uvar_get(BITSHIFTSIZE);
             if (mFatalError)
               goto cleanup;
             break;
           case FN_VERBATIM:
-            cklen = uvar_get(VERBATIM_CKSIZE_SIZE);
+            cklen = (int)uvar_get(VERBATIM_CKSIZE_SIZE);
             if (mFatalError)
               goto cleanup;
 

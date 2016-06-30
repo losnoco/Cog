@@ -29,70 +29,70 @@
 				<string>vqe</string>
 				<string>vql</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeName</key>
 			<string>VQF File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>mo3</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MO3 Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>ahx</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Abyss Highest Experience Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>hvl</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Hively Tracker Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>sfm</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>SFM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -109,14 +109,14 @@
 				<string>midi</string>
 				<string>mid</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MIDI Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -124,14 +124,14 @@
 				<string>amr-wb</string>
 				<string>amr</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>AMR Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -139,28 +139,28 @@
 				<string>2sf</string>
 				<string>mini2sf</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Nintendo DS Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>at3</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>ATRAC3 Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -168,42 +168,42 @@
 				<string>dtshd</string>
 				<string>dts</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>DTS Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>ac3</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeName</key>
 			<string>AC3 Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>tta</string>
 			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>TrueAudio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -649,7 +649,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ape.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Monkey&apos;s Audio File</string>
+			<string>Monkey's Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -1005,7 +1005,7 @@
 	<key>CFBundleIconFile</key>
 	<string>icon_main</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.cogx.cog</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

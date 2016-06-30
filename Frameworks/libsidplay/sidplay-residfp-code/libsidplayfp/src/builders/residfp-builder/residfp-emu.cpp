@@ -104,7 +104,7 @@ void ReSIDfp::clock()
 {
     const event_clock_t cycles = eventScheduler->getTime(m_accessClk, EVENT_CLOCK_PHI1);
     m_accessClk += cycles;
-    m_bufferpos += m_sid.clock(cycles, m_buffer+m_bufferpos);
+    m_bufferpos += m_sid.clock((unsigned int)cycles, m_buffer+m_bufferpos);
 }
 
 void ReSIDfp::filter(bool enable)

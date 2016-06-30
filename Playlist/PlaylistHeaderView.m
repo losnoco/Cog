@@ -16,7 +16,7 @@
 	NSPoint event_location = [theEvent locationInWindow];
 	NSPoint local_point = [self convertPoint:event_location fromView:nil];
 	
-	int column = [self columnAtPoint:local_point];
+	int column = (int) [self columnAtPoint:local_point];
 
 	if ([theEvent clickCount] == 2 && column != -1) {
 
@@ -24,12 +24,12 @@
 		BOOL clickedSeperator = NO;
 		// handle a click one pixel away at right
 		NSRect rect = [self headerRectOfColumn:column];
-		if (abs(rect.origin.x - local_point.x) <= 1 && column > 0) {
+		if (fabs(rect.origin.x - local_point.x) <= 1.0 && column > 0) {
 			--column;
 			clickedSeperator = YES;
 		}
 		// handle a click 3 pixels away at left
-		else if (abs(rect.origin.x + rect.size.width - local_point.x) <= 3)
+		else if (fabs(rect.origin.x + rect.size.width - local_point.x) <= 3.0)
 			clickedSeperator = YES;
 		
 		if (clickedSeperator) {

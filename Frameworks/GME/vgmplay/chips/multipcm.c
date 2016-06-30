@@ -760,7 +760,7 @@ void multipcm_write_rom(void *_info, offs_t ROMSize, offs_t DataStart, offs_t Da
 	
 	if (ptChip->ROMSize != ROMSize)
 	{
-		ptChip->ROM = (UINT8*)realloc(ptChip->ROM, ROMSize);
+		ptChip->ROM = (INT8*)realloc(ptChip->ROM, ROMSize);
 		ptChip->ROMSize = ROMSize;
 		
 		for (ptChip->ROMMask = 1; ptChip->ROMMask < ROMSize; ptChip->ROMMask <<= 1)

@@ -491,7 +491,7 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
 {
     WavpackStream *wps = wpc->streams [wpc->current_stream];
     uint32_t flags = wps->wphdr.flags, crc = wps->crc, i;
-    int32_t mute_limit = (1L << ((flags & MAG_MASK) >> MAG_LSB)) + 2;
+    int32_t mute_limit = (int32_t)((1L << ((flags & MAG_MASK) >> MAG_LSB)) + 2);
     int32_t correction [2], read_word, *bptr;
     struct decorr_pass *dpp;
     int tcount, m = 0;

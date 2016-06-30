@@ -13,14 +13,14 @@ struct riff * riff_parse( DUMBFILE * f, long offset, long size, unsigned proper 
     if ( dumbfile_seek(f, offset, DFS_SEEK_SET) ) return 0;
     if ( dumbfile_mgetl(f) != DUMB_ID('R','I','F','F') ) return 0;
 
-    stream_size = dumbfile_igetl(f);
+    stream_size = (int) dumbfile_igetl(f);
     if ( stream_size + 8 > size ) return 0;
 	if ( stream_size < 4 ) return 0;
 
     stream = (struct riff *) malloc( sizeof( struct riff ) );
 	if ( ! stream ) return 0;
 
-    stream->type = dumbfile_mgetl(f);
+    stream->type = (int) dumbfile_mgetl(f);
 	stream->chunk_count = 0;
 	stream->chunks = 0;
 
@@ -33,8 +33,8 @@ struct riff * riff_parse( DUMBFILE * f, long offset, long size, unsigned proper 
         stream->chunks = ( struct riff_chunk * ) realloc( stream->chunks, ( stream->chunk_count + 1 ) * sizeof( struct riff_chunk ) );
 		if ( ! stream->chunks ) break;
 		chunk = stream->chunks + stream->chunk_count;
-        chunk->type = dumbfile_mgetl(f);
-        chunk->size = dumbfile_igetl(f);
+        chunk->type = (int) dumbfile_mgetl(f);
+        chunk->size = (int) dumbfile_igetl(f);
         chunk->offset = dumbfile_pos(f);
 		stream_size -= 8;
 		if ( stream_size < chunk->size ) break;

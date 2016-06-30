@@ -894,7 +894,7 @@ void scan_word (WavpackStream *wps, int32_t *samples, uint32_t num_samples, int 
 
     while (num_samples--) {
 
-        value = labs (samples [chan = 0]);
+        value = (uint32_t) labs (samples [chan = 0]);
 
         if (flags & HYBRID_BITRATE) {
             wps->w.c [0].slow_level -= (wps->w.c [0].slow_level + SLO) >> SLS;
@@ -925,7 +925,7 @@ void scan_word (WavpackStream *wps, int32_t *samples, uint32_t num_samples, int 
         }
 
         if (!(flags & MONO_DATA)) {
-            value = labs (samples [chan = 1]);
+            value = (uint32_t) labs (samples [chan = 1]);
             c++;
 
             if (wps->wphdr.flags & HYBRID_BITRATE) {

@@ -129,6 +129,7 @@
 		8359009117FEF5830060F3ED /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359009017FEF5830060F3ED /* libz.dylib */; };
 		8359009F17FF073E0060F3ED /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359009E17FF073E0060F3ED /* 7zStream.c */; };
 		8359FF4A17FEF39F0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF4817FEF39F0060F3ED /* InfoPlist.strings */; };
+		83756F621D23A95B003A7676 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83756F611D23A95B003A7676 /* CoreServices.framework */; };
 		83C2109719CD81F50093C461 /* headers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2108E19CD81F50093C461 /* headers.cpp */; };
 		83C2109819CD81F50093C461 /* headers5.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83C2108F19CD81F50093C461 /* headers5.hpp */; };
 		83C2109B19CD88A30093C461 /* secpassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2109A19CD88A30093C461 /* secpassword.cpp */; };
@@ -269,6 +270,7 @@
 		8359FFFB17FEF40E0060F3ED /* unpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack.cpp; sourceTree = "<group>"; };
 		8359FFFC17FEF40E0060F3ED /* unpack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unpack.hpp; sourceTree = "<group>"; };
 		8359FFFF17FEF40E0060F3ED /* unrar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unrar.cpp; sourceTree = "<group>"; };
+		83756F611D23A95B003A7676 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		83C2108E19CD81F50093C461 /* headers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = headers.cpp; sourceTree = "<group>"; };
 		83C2108F19CD81F50093C461 /* headers5.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = headers5.hpp; sourceTree = "<group>"; };
 		83C2109A19CD88A30093C461 /* secpassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = secpassword.cpp; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83756F621D23A95B003A7676 /* CoreServices.framework in Frameworks */,
 				8359009117FEF5830060F3ED /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -315,6 +318,7 @@
 		8359FF3E17FEF39F0060F3ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83756F611D23A95B003A7676 /* CoreServices.framework */,
 				8359009017FEF5830060F3ED /* libz.dylib */,
 				8359FF4117FEF39F0060F3ED /* Other Frameworks */,
 			);
@@ -615,7 +619,7 @@
 		8359FF3317FEF39F0060F3ED /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 			};
 			buildConfigurationList = 8359FF3617FEF39F0060F3ED /* Build configuration list for PBXProject "File_Extractor" */;
@@ -737,6 +741,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -747,12 +752,15 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -776,6 +784,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -786,12 +795,15 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = _UNIX;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

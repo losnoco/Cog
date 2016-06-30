@@ -112,7 +112,7 @@ long RingBuffer::WriteData(char *data, long len)
 			return written;
 		} else
 		{
-			before = mBufSize - mBufWxIdx;
+			before = (int)(mBufSize - mBufWxIdx);
 			::memcpy(&mBuffer[mBufWxIdx], &data[written], (size_t) before);
 			written    += before;
 			len        -= before;
@@ -166,7 +166,7 @@ long RingBuffer::ReadData(char *data, long len)
 			return read;
 		} else
 		{
-			before = mBufSize - mBufRdIdx;
+			before = (int)(mBufSize - mBufRdIdx);
 			if (data) {
 				::memcpy(&data[read], &mBuffer[mBufRdIdx], (size_t) before);		
 			}

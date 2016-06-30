@@ -88,7 +88,7 @@ static int it_asy_read_pattern( IT_PATTERN *pattern, DUMBFILE *f, unsigned char 
 		++entry;
 	}
 
-	pattern->n_entries = entry - pattern->entry;
+	pattern->n_entries = (int)(entry - pattern->entry);
 
 	return 0;
 }

@@ -1107,10 +1107,10 @@ int32_t unpack_samples3 (WavpackContext *wpc, int32_t *buffer, uint32_t sample_c
                         diff = left - right;
                     }
 
-                    sum_level = sum_level - (sum_level >> 8) + labs (sum >> 1);
-                    left_level = left_level - (left_level >> 8) + labs (left);
-                    right_level = right_level - (right_level >> 8) + labs (right);
-                    diff_level = diff_level - (diff_level >> 8) + labs (diff);
+                    sum_level = (int32_t)(sum_level - (sum_level >> 8) + labs (sum >> 1));
+                    left_level = (int32_t)(left_level - (left_level >> 8) + labs (left));
+                    right_level = (int32_t)(right_level - (right_level >> 8) + labs (right));
+                    diff_level = (int32_t)(diff_level - (diff_level >> 8) + labs (diff));
 
                     if (flags & JOINT_STEREO) {
                         left = diff;
@@ -1236,9 +1236,9 @@ int32_t unpack_samples3 (WavpackContext *wpc, int32_t *buffer, uint32_t sample_c
                     sum = right + left;
                 }
 
-                sum_level = sum_level - (sum_level >> 8) + labs (sum >> 1);
-                left_level = left_level - (left_level >> 8) + labs (left);
-                right_level = right_level - (right_level >> 8) + labs (right);
+                sum_level = (int32_t)(sum_level - (sum_level >> 8) + labs (sum >> 1));
+                left_level = (int32_t)(left_level - (left_level >> 8) + labs (left));
+                right_level = (int32_t)(right_level - (right_level >> 8) + labs (right));
 
                 left2 = sample [0] [0] + ((sample [0] [1] * weight [0] [0] + 128) >> 8) + left;
                 right2 = sample [1] [0] + ((sample [1] [1] * weight [1] [0] + 128) >> 8) + right;
@@ -1974,12 +1974,12 @@ static int32_t FASTCALL get_word2 (WavpackStream3 *wps, int chan)
         return 0L;
 
     if (wps->wphdr.bits) {
-        for (value = 1L << (dbits - 1); --dbits; mask <<= 1)
+        for (value = (int32_t)(1L << (dbits - 1)); --dbits; mask <<= 1)
             if (dbits < wps->wphdr.bits && getbit (&wps->wvbits))
                 value |= mask;
     }
     else
-        for (value = 1L << (dbits - 1); --dbits; mask <<= 1)
+        for (value = (int32_t)(1L << (dbits - 1)); --dbits; mask <<= 1)
             if (getbit (&wps->wvbits))
                 value |= mask;
 
@@ -2140,7 +2140,7 @@ static int32_t FASTCALL get_word4 (WavpackStream3 *wps, int chan, int32_t *corre
     }
 
     wps->w4.fast_level [chan] -= ((wps->w4.fast_level [chan] + 0x10) >> 5);
-    wps->w4.fast_level [chan] += (avalue = labs (mid));
+    wps->w4.fast_level [chan] += (avalue = (int32_t) labs (mid));
     wps->w4.slow_level [chan] -= ((wps->w4.slow_level [chan] + 0x80) >> 8);
     wps->w4.slow_level [chan] += avalue;
 
@@ -2149,7 +2149,7 @@ static int32_t FASTCALL get_word4 (WavpackStream3 *wps, int chan, int32_t *corre
         if (high != low) {
             uint32_t maxcode = high - low;
             int bitcount = count_bits (maxcode);
-            uint32_t extras = (1L << bitcount) - maxcode - 1;
+            uint32_t extras = (uint32_t)((1L << bitcount) - maxcode - 1);
 
             getbits (&avalue, bitcount - 1, &wps->wvcbits);
             avalue &= bitmask [bitcount - 1];

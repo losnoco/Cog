@@ -154,8 +154,8 @@
     
 	[[playlistController undoManager] enableUndoRegistration];
     
-    int lastStatus = [[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
-    int lastIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
+    int lastStatus = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
+    int lastIndex = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
     
     if (lastStatus != kCogStatusStopped && lastIndex >= 0)
     {
