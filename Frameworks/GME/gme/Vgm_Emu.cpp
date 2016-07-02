@@ -315,6 +315,12 @@ static UINT32 VGMF_mem_GetSize(VGM_FILE* f)
     return mf->size;
 }
 
+static UINT32 VGMF_mem_Tell(VGM_FILE* f)
+{
+    VGM_FILE_mem* mf = (VGM_FILE_mem *) f;
+    return mf->ptr;
+}
+
 struct Vgm_File : Gme_Info_
 {
 	Vgm_Emu::header_t h;
@@ -334,6 +340,7 @@ struct Vgm_File : Gme_Info_
         memFile.vf.Read = &VGMF_mem_Read;
         memFile.vf.Seek = &VGMF_mem_Seek;
         memFile.vf.GetSize = &VGMF_mem_GetSize;
+        memFile.vf.Tell = &VGMF_mem_Tell;
         memFile.buffer = in;
         memFile.ptr = 0;
         memFile.size = file_size;

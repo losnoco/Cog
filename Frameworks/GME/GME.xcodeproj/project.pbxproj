@@ -90,6 +90,11 @@
 		17C8F2560CBED286008D969D /* Ym2413_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1ED0CBED286008D969D /* Ym2413_Emu.h */; };
 		17C8F2570CBED286008D969D /* Ym2612_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1EE0CBED286008D969D /* Ym2612_Emu.cpp */; };
 		17C8F2580CBED286008D969D /* Ym2612_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1EF0CBED286008D969D /* Ym2612_Emu.h */; };
+		8342DC841D27A171007FB1C1 /* yam.h in Headers */ = {isa = PBXBuildFile; fileRef = 8342DC811D27A171007FB1C1 /* yam.h */; };
+		8342DC851D27A171007FB1C1 /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 8342DC821D27A171007FB1C1 /* scsp.c */; };
+		8342DC861D27A171007FB1C1 /* scsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 8342DC831D27A171007FB1C1 /* scsp.h */; };
+		8342DCCB1D27C0E9007FB1C1 /* yam.c in Sources */ = {isa = PBXBuildFile; fileRef = 8342DCC91D27C0E9007FB1C1 /* yam.c */; };
+		8342DCCC1D27C0E9007FB1C1 /* emuconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 8342DCCA1D27C0E9007FB1C1 /* emuconfig.h */; };
 		8370B73017F615FE001A4D7A /* Ay_Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8370B68D17F615FD001A4D7A /* Ay_Core.cpp */; };
 		8370B73117F615FE001A4D7A /* Ay_Core.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B68E17F615FD001A4D7A /* Ay_Core.h */; };
 		8370B73217F615FE001A4D7A /* blargg_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8370B68F17F615FD001A4D7A /* blargg_common.cpp */; };
@@ -254,10 +259,6 @@
 		83BB5EA31C0842A600734457 /* saa1099.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BB5E0F1C0842A600734457 /* saa1099.h */; };
 		83BB5EA41C0842A600734457 /* scd_pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BB5E101C0842A600734457 /* scd_pcm.c */; };
 		83BB5EA51C0842A600734457 /* scd_pcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BB5E111C0842A600734457 /* scd_pcm.h */; };
-		83BB5EA61C0842A600734457 /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BB5E121C0842A600734457 /* scsp.c */; };
-		83BB5EA71C0842A600734457 /* scsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BB5E131C0842A600734457 /* scsp.h */; };
-		83BB5EA81C0842A600734457 /* scspdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BB5E141C0842A600734457 /* scspdsp.c */; };
-		83BB5EA91C0842A600734457 /* scspdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BB5E151C0842A600734457 /* scspdsp.h */; };
 		83BB5EAB1C0842A600734457 /* segapcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BB5E171C0842A600734457 /* segapcm.c */; };
 		83BB5EAC1C0842A600734457 /* segapcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BB5E181C0842A600734457 /* segapcm.h */; };
 		83BB5EAD1C0842A600734457 /* sn76489.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BB5E191C0842A600734457 /* sn76489.c */; };
@@ -402,6 +403,11 @@
 		17C8F1EE0CBED286008D969D /* Ym2612_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Ym2612_Emu.cpp; path = gme/Ym2612_Emu.cpp; sourceTree = "<group>"; };
 		17C8F1EF0CBED286008D969D /* Ym2612_Emu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Ym2612_Emu.h; path = gme/Ym2612_Emu.h; sourceTree = "<group>"; };
 		833F68361CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8342DC811D27A171007FB1C1 /* yam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yam.h; sourceTree = "<group>"; };
+		8342DC821D27A171007FB1C1 /* scsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scsp.c; sourceTree = "<group>"; };
+		8342DC831D27A171007FB1C1 /* scsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scsp.h; sourceTree = "<group>"; };
+		8342DCC91D27C0E9007FB1C1 /* yam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yam.c; sourceTree = "<group>"; };
+		8342DCCA1D27C0E9007FB1C1 /* emuconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emuconfig.h; sourceTree = "<group>"; };
 		8370B68D17F615FD001A4D7A /* Ay_Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ay_Core.cpp; path = gme/Ay_Core.cpp; sourceTree = "<group>"; };
 		8370B68E17F615FD001A4D7A /* Ay_Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ay_Core.h; path = gme/Ay_Core.h; sourceTree = "<group>"; };
 		8370B68F17F615FD001A4D7A /* blargg_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = blargg_common.cpp; path = gme/blargg_common.cpp; sourceTree = "<group>"; };
@@ -566,10 +572,6 @@
 		83BB5E0F1C0842A600734457 /* saa1099.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saa1099.h; sourceTree = "<group>"; };
 		83BB5E101C0842A600734457 /* scd_pcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scd_pcm.c; sourceTree = "<group>"; };
 		83BB5E111C0842A600734457 /* scd_pcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scd_pcm.h; sourceTree = "<group>"; };
-		83BB5E121C0842A600734457 /* scsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scsp.c; sourceTree = "<group>"; };
-		83BB5E131C0842A600734457 /* scsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scsp.h; sourceTree = "<group>"; };
-		83BB5E141C0842A600734457 /* scspdsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scspdsp.c; sourceTree = "<group>"; };
-		83BB5E151C0842A600734457 /* scspdsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scspdsp.h; sourceTree = "<group>"; };
 		83BB5E171C0842A600734457 /* segapcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = segapcm.c; sourceTree = "<group>"; };
 		83BB5E181C0842A600734457 /* segapcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = segapcm.h; sourceTree = "<group>"; };
 		83BB5E191C0842A600734457 /* sn76489.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sn76489.c; sourceTree = "<group>"; };
@@ -882,6 +884,11 @@
 		83BB5DAC1C0842A600734457 /* chips */ = {
 			isa = PBXGroup;
 			children = (
+				8342DCC91D27C0E9007FB1C1 /* yam.c */,
+				8342DCCA1D27C0E9007FB1C1 /* emuconfig.h */,
+				8342DC811D27A171007FB1C1 /* yam.h */,
+				8342DC821D27A171007FB1C1 /* scsp.c */,
+				8342DC831D27A171007FB1C1 /* scsp.h */,
 				83BB5DAD1C0842A600734457 /* 2151intf.c */,
 				83BB5DAE1C0842A600734457 /* 2151intf.h */,
 				83BB5DAF1C0842A600734457 /* 2203intf.c */,
@@ -981,10 +988,6 @@
 				83BB5E0F1C0842A600734457 /* saa1099.h */,
 				83BB5E101C0842A600734457 /* scd_pcm.c */,
 				83BB5E111C0842A600734457 /* scd_pcm.h */,
-				83BB5E121C0842A600734457 /* scsp.c */,
-				83BB5E131C0842A600734457 /* scsp.h */,
-				83BB5E141C0842A600734457 /* scspdsp.c */,
-				83BB5E151C0842A600734457 /* scspdsp.h */,
 				83BB5E171C0842A600734457 /* segapcm.c */,
 				83BB5E181C0842A600734457 /* segapcm.h */,
 				83BB5E191C0842A600734457 /* sn76489.c */,
@@ -1087,6 +1090,7 @@
 			files = (
 				83BB5ECF1C0842A600734457 /* ChipMapper.h in Headers */,
 				83BB5E861C0842A600734457 /* nes_apu.h in Headers */,
+				8342DC861D27A171007FB1C1 /* scsp.h in Headers */,
 				8370B76C17F615FE001A4D7A /* Nes_Cpu_run.h in Headers */,
 				83BB5EBC1C0842A600734457 /* x1_010.h in Headers */,
 				8370B7B017F615FE001A4D7A /* Spc_Sfm.h in Headers */,
@@ -1108,7 +1112,6 @@
 				83BB5E631C0842A600734457 /* c6280.h in Headers */,
 				83BB5ED21C0842A600734457 /* VGMPlay.h in Headers */,
 				83BB5E8D1C0842A600734457 /* np_nes_dmc.h in Headers */,
-				83BB5EA91C0842A600734457 /* scspdsp.h in Headers */,
 				17C8F1FC0CBED286008D969D /* blargg_endian.h in Headers */,
 				83FC5D5F181B47FB00B917E5 /* dsp.hpp in Headers */,
 				17C8F1FD0CBED286008D969D /* blargg_source.h in Headers */,
@@ -1119,7 +1122,6 @@
 				83FC5D79181B47FB00B917E5 /* smp.hpp in Headers */,
 				8370B73617F615FE001A4D7A /* Blip_Buffer_impl2.h in Headers */,
 				83BB5E6A1C0842A600734457 /* emu2149.h in Headers */,
-				83BB5EA71C0842A600734457 /* scsp.h in Headers */,
 				8370B78117F615FE001A4D7A /* Opl_Apu.h in Headers */,
 				83BB5EC61C0842A600734457 /* ymf262.h in Headers */,
 				83BB5E721C0842A600734457 /* es5506.h in Headers */,
@@ -1140,6 +1142,7 @@
 				83BB5E821C0842A600734457 /* mamedef.h in Headers */,
 				83BB5E501C0842A600734457 /* 281btone.h in Headers */,
 				83BB5EB91C0842A600734457 /* ws_audio.h in Headers */,
+				8342DCCC1D27C0E9007FB1C1 /* emuconfig.h in Headers */,
 				83BB5E611C0842A600734457 /* c352.h in Headers */,
 				83BB5E6E1C0842A600734457 /* emutypes.h in Headers */,
 				8370B79317F615FE001A4D7A /* Rom_Data.h in Headers */,
@@ -1225,6 +1228,7 @@
 				83BB5E561C0842A600734457 /* 8950intf.h in Headers */,
 				17C8F2470CBED286008D969D /* Sms_Apu.h in Headers */,
 				83BB5E931C0842A600734457 /* okim6295.h in Headers */,
+				8342DC841D27A171007FB1C1 /* yam.h in Headers */,
 				8370B7AE17F615FE001A4D7A /* Spc_Filter.h in Headers */,
 				8370B7AA17F615FE001A4D7A /* Sgc_Impl.h in Headers */,
 				8370B79D17F615FE001A4D7A /* Sap_Core.h in Headers */,
@@ -1355,6 +1359,7 @@
 				8370B7A917F615FE001A4D7A /* Sgc_Impl.cpp in Sources */,
 				17C8F20F0CBED286008D969D /* Gb_Oscs.cpp in Sources */,
 				8370B74317F615FE001A4D7A /* Downsampler.cpp in Sources */,
+				8342DCCB1D27C0E9007FB1C1 /* yam.c in Sources */,
 				17C8F2110CBED286008D969D /* Gbs_Emu.cpp in Sources */,
 				83BB5E831C0842A600734457 /* multipcm.c in Sources */,
 				8370B73317F615FE001A4D7A /* blargg_errors.cpp in Sources */,
@@ -1386,7 +1391,6 @@
 				83BB5E731C0842A600734457 /* fm.c in Sources */,
 				17C8F2330CBED286008D969D /* Nes_Fme7_Apu.cpp in Sources */,
 				8370B7B517F615FE001A4D7A /* Vgm_Core.cpp in Sources */,
-				83BB5EA61C0842A600734457 /* scsp.c in Sources */,
 				17C8F2350CBED286008D969D /* Nes_Namco_Apu.cpp in Sources */,
 				8370B7A617F615FE001A4D7A /* Sgc_Cpu.cpp in Sources */,
 				83BB5E431C0842A600734457 /* 2203intf.c in Sources */,
@@ -1418,11 +1422,11 @@
 				83BB5EB11C0842A600734457 /* sn764intf.c in Sources */,
 				8370B76817F615FE001A4D7A /* Kss_Core.cpp in Sources */,
 				17C8F23D0CBED286008D969D /* Nsfe_Emu.cpp in Sources */,
+				8342DC851D27A171007FB1C1 /* scsp.c in Sources */,
 				8370B7A717F615FE001A4D7A /* Sgc_Emu.cpp in Sources */,
 				83BB5E881C0842A600734457 /* nes_intf.c in Sources */,
 				17C8F23F0CBED286008D969D /* Sap_Apu.cpp in Sources */,
 				8370B75117F615FE001A4D7A /* Gme_Loader.cpp in Sources */,
-				83BB5EA81C0842A600734457 /* scspdsp.c in Sources */,
 				83BB5E781C0842A600734457 /* gb.c in Sources */,
 				17C8F2420CBED286008D969D /* Sap_Cpu.cpp in Sources */,
 				8370B73717F615FE001A4D7A /* Bml_Parser.cpp in Sources */,

@@ -109,7 +109,7 @@ INLINE INT32 SampleVGM2Pbk_I(VGM_PLAYER*, INT32 SampleVal);	// inline functions
 INLINE INT32 SamplePbk2VGM_I(VGM_PLAYER*, INT32 SampleVal);
 //INT32 SampleVGM2Playback(void*, INT32 SampleVal);		// non-inline functions
 //INT32 SamplePlayback2VGM(void*, INT32 SampleVal);
-static bool SetMuteControl(VGM_PLAYER*, bool mute);
+//static bool SetMuteControl(VGM_PLAYER*, bool mute);
 
 static void InterpretFile(VGM_PLAYER*, UINT32 SampleCount);
 static void AddPCMData(VGM_PLAYER*, UINT8 Type, UINT32 DataSize, const UINT8* Data);
@@ -156,6 +156,7 @@ void * VGMPlay_Init(void)
 	p->SampleRate = 44100;
 	p->FadeTime = 5000;
 
+	p->HardStopOldVGMs = 0x00;
 	p->FadeRAWLog = false;
 	p->VolumeLevel = 1.0f;
 	//p->FullBufFill = false;
@@ -381,8 +382,8 @@ static UINT32 gcd(UINT32 x, UINT32 y)
 
 void PlayVGM(void *_p)
 {
-	UINT8 CurChip;
-	UINT8 FMVal;
+	/*UINT8 CurChip;*/
+	/*UINT8 FMVal;*/
 	INT32 TempSLng;
 
     VGM_PLAYER* p = (VGM_PLAYER*)_p;
@@ -659,6 +660,12 @@ static UINT32 VGMF_gzgetsize(VGM_FILE* hFile)
 	VGM_FILE_gz* File = (VGM_FILE_gz *)hFile;
 	return File->Size;
 }
+
+static UINT32 VGMF_gztell(VGM_FILE* hFile)
+{
+	VGM_FILE_gz* File = (VGM_FILE_gz *)hFile;
+	return gztell(File->hFile);
+}
 #endif
 
 bool OpenVGMFile(void *_p, const char* FileName)
@@ -683,6 +690,7 @@ bool OpenVGMFile(void *_p, const char* FileName)
 	vgmFile.vf.Read = VGMF_gzread;
 	vgmFile.vf.Seek = VGMF_gzseek;
 	vgmFile.vf.GetSize = VGMF_gzgetsize;
+	vgmFile.vf.Tell = VGMF_gztell;
 	vgmFile.hFile = hFile;
 	vgmFile.Size = FileSize;
 
@@ -729,6 +737,7 @@ bool OpenVGMFileW(void *_p, const wchar_t* FileName)
 	vgmFile.vf.Read = VGMF_gzread;
 	vgmFile.vf.Seek = VGMF_gzseek;
 	vgmFile.vf.GetSize = VGMF_gzgetsize;
+	vgmFile.vf.Tell = VGMF_gztell;
 	vgmFile.hFile = hFile;
 	vgmFile.Size = FileSize;
 
@@ -765,6 +774,12 @@ static bool OpenVGMFile_Internal(VGM_PLAYER* p, VGM_FILE* hFile, UINT32 FileSize
 
 	hFile->Seek(hFile, 0x00);
 	ReadVGMHeader(hFile, &p->VGMHead);
+	if (p->VGMHead.fccVGM != FCC_VGM)
+	{
+		printf("VGM signature matched on the first read, but not on the second one!\n");
+		printf("This is a known zlib bug where gzseek fails. Please install a fixed zlib.\n");
+		return false;
+	}
 
 	p->VGMSampleRate = 44100;
 	if (! p->VGMDataLen)
@@ -1172,7 +1187,8 @@ static wchar_t* ReadWStrFromFile(VGM_FILE* hFile, UINT32* FilePos, UINT32 EOFPos
 	if (TextStr == NULL)
 		return NULL;
 
-	hFile->Seek(hFile, CurPos);
+	if (hFile->Tell(hFile) != CurPos)
+		hFile->Seek(hFile, CurPos);
 	TempStr = TextStr - 1;
 	StrLen = 0x00;
 	do
@@ -1294,6 +1310,12 @@ static UINT32 GetVGMFileInfo_Internal(VGM_FILE* hFile, UINT32 FileSize,
 
 	hFile->Seek(hFile, 0x00);
 	ReadVGMHeader(hFile, &TempHead);
+	if (TempHead.fccVGM != FCC_VGM)
+	{
+		printf("VGM signature matched on the first read, but not on the second one!\n");
+		printf("This is a known zlib bug where gzseek fails. Please install a fixed zlib.\n");
+		return 0x00;
+	}
 
 	if (! TempHead.lngEOFOffset || TempHead.lngEOFOffset > FileSize)
 		TempHead.lngEOFOffset = FileSize;
@@ -1416,7 +1438,7 @@ UINT32 CalcSampleMSecExt(void *_p, UINT64 Value, UINT8 Mode, VGM_HEADER* FileHea
 	return RetVal;
 }
 
-static UINT32 EncryptChipName(void* DstBuf, const void* SrcBuf, UINT32 Length)
+/*static UINT32 EncryptChipName(void* DstBuf, const void* SrcBuf, UINT32 Length)
 {
 	// using nineko's awesome encryption algorithm
 	// http://forums.sonicretro.org/index.php?showtopic=25300
@@ -1446,7 +1468,7 @@ static UINT32 EncryptChipName(void* DstBuf, const void* SrcBuf, UINT32 Length)
 	}
 
 	return Length;
-}
+}*/
 
 const char* GetChipName(UINT8 ChipID)
 {
@@ -1575,6 +1597,12 @@ const char* GetAccurateChipName(UINT8 ChipID, UINT8 SubType)
 			RetStr = "NES APU";
 		else
 			RetStr = "NES APU + FDS";
+		break;
+	case 0x19:
+		if (! (ChipID & 0x80))
+			RetStr = "K051649";
+		else
+			RetStr = "K052539";
 		break;
 	case 0x1C:
 		switch(SubType)
@@ -1756,6 +1784,7 @@ UINT32 GetChipClock(void* _p, UINT8 ChipID, UINT8* RetSubType)
 		break;
 	case 0x19:
 		Clock = FileHead->lngHzK051649;
+		AllowBit31 = 0x01;	// SCC/SCC+ Bit
 		break;
 	case 0x1A:
 		Clock = FileHead->lngHzK054539;
@@ -1802,6 +1831,7 @@ UINT32 GetChipClock(void* _p, UINT8 ChipID, UINT8* RetSubType)
 		break;
 	case 0x27:
 		Clock = FileHead->lngHzC352;
+		AllowBit31 = 0x01;	// disable rear channels
 		break;
 	case 0x28:
 		Clock = FileHead->lngHzGA20;
@@ -1848,14 +1878,14 @@ static UINT16 GetChipVolume(VGM_PLAYER* p, UINT8 ChipID, UINT8 ChipNum, UINT8 Ch
 		0x80, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x98,			// 08-0F
 		0x80, 0xE0/*0xCD*/, 0x100, 0xC0, 0x100, 0x40, 0x11E, 0x1C0,		// 10-17
 		0x100/*110*/, 0xA0, 0x100, 0x100, 0x100, 0xB3, 0x100, 0x100,	// 18-1F
-		0x100, 0x100, 0x100, 0x100, 0x40, 0x20, 0x100, 0x40,			// 20-27
+		0x20, 0x100, 0x100, 0x100, 0x40, 0x20, 0x100, 0x40,			// 20-27
 		0x280};
 	UINT16 Volume;
 	UINT8 CurChp;
 	VGMX_CHP_EXTRA16* TempCX;
 	VGMX_CHIP_DATA16* TempCD;
 
-    VGM_HEADER* FileHead = &p->VGMHead;
+    /*VGM_HEADER* FileHead = &p->VGMHead;*/
 
 	Volume = CHIP_VOLS[ChipID & 0x7F];
 	switch(ChipID)
@@ -2695,7 +2725,7 @@ static void Chips_GeneralActions(VGM_PLAYER* p, UINT8 Mode)
 		{
 			p->ChipOpts[0x01].SCSP.SpecialFlags = p->ChipOpts[0x00].SCSP.SpecialFlags;
 
-			//ChipVol = 0x100;
+			//ChipVol = 0x20;
 			ChipCnt = (p->VGMHead.lngHzSCSP & 0x40000000) ? 0x02 : 0x01;
 			for (CurChip = 0x00; CurChip < ChipCnt; CurChip ++)
 			{
@@ -2708,7 +2738,7 @@ static void Chips_GeneralActions(VGM_PLAYER* p, UINT8 Mode)
                 CAA->StreamUpdateParam = p->scsp[CurChip];
 
 				CAA->Volume = GetChipVolume(p, CAA->ChipType, CurChip, ChipCnt);
-				AbsVol += CAA->Volume;
+				AbsVol += CAA->Volume * 8;
 			}
 		}
 		if (p->VGMHead.lngHzWSwan)
@@ -3305,7 +3335,7 @@ INT32 SamplePlayback2VGM(void* _p, INT32 SampleVal)
 
 static void InterpretFile(VGM_PLAYER* p, UINT32 SampleCount)
 {
-	UINT32 TempLng;
+	/*UINT32 TempLng;*/
 	UINT8 CurChip;
 
 	if (p->DacCtrlUsed && SampleCount > 1)	// handle skipping
@@ -4007,6 +4037,14 @@ static void InterpretVGM(VGM_PLAYER* p, UINT32 SampleCount)
 #endif
 						p->VGMHead.lngTotalSamples = p->VGMSmplPos;
 					}
+					
+					if (p->HardStopOldVGMs)
+					{
+						if (p->VGMHead.lngVersion < 0x150 ||
+							(p->VGMHead.lngVersion == 0x150 && p->HardStopOldVGMs == 0x02))
+						Chips_GeneralActions(p, 0x01); // reset all chips, for instant silence
+					}
+
 					p->VGMEnd = true;
 					break;
 				}
@@ -4803,7 +4841,7 @@ static void GeneralChipLists(VGM_PLAYER* p)
 	UINT16 CurBufIdx;
 	CA_LIST* CLstOld;
 	CA_LIST* CLst;
-	CA_LIST* CurLst;
+	/*CA_LIST* CurLst;*/
 	UINT8 CurChip;
 	UINT8 CurCSet;
 	CAUD_ATTR* CAA;

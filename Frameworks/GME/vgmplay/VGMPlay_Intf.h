@@ -25,6 +25,7 @@ struct vgm_file
   int (*Read)(VGM_FILE*, void*, UINT32);
 	int (*Seek)(VGM_FILE*, UINT32);
 	UINT32 (*GetSize)(VGM_FILE*);
+	UINT32 (*Tell)(VGM_FILE*);
 };
 
 #ifdef __cplusplus

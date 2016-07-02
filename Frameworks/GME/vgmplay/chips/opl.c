@@ -29,7 +29,7 @@
 
 #include <math.h>
 #include <stdlib.h> // rand()
-#include <memory.h>	// for memset()
+#include <string.h>	// for memset()
 //#include "dosbox.h"
 #include "../stdbool.h"
 #include "opl.h"
@@ -1158,7 +1158,7 @@ static void adlib_write(void *chip, Bitu idx, Bit8u val)
 }
 
 
-UINT32 ADLIBEMU(reg_read)(void *chip, UINT32 port)
+Bitu ADLIBEMU(reg_read)(void *chip, UINT32 port)
 {
 	OPL_DATA* OPL = (OPL_DATA*)chip;
 	

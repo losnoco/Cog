@@ -30,6 +30,7 @@
 /*
 	define Bits, Bitu, Bit32s, Bit32u, Bit16s, Bit16u, Bit8s, Bit8u here
 */
+/*
 #include <stdint.h>
 typedef uintptr_t	Bitu;
 typedef intptr_t	Bits;
@@ -39,6 +40,16 @@ typedef uint16_t	Bit16u;
 typedef int16_t		Bit16s;
 typedef uint8_t		Bit8u;
 typedef int8_t		Bit8s;
+*/
+
+typedef UINT32		Bitu;
+typedef INT32		Bits;
+typedef UINT32		Bit32u;
+typedef INT32		Bit32s;
+typedef UINT16		Bit16u;
+typedef INT16		Bit16s;
+typedef UINT8		Bit8u;
+typedef INT8		Bit8s;
 
 /*
 	define attribution that inlines/forces inlining of a function (optional)

@@ -19,7 +19,9 @@
 #include <math.h>
 #include "okim6258.h"
 
+#ifndef NULL
 #define NULL	((void *)0)
+#endif
 
 #define COMMAND_STOP		(1 << 0)
 #define COMMAND_PLAY		(1 << 1)
@@ -403,7 +405,7 @@ void okim6258_set_divider(void *_info, int val)
 {
 	//okim6258_state *info = get_safe_token(device);
 	okim6258_state *info = (okim6258_state *)_info;
-	int divider = dividers[val];
+	//int divider = dividers[val];
 
 	info->divider = dividers[val];
 	//stream_set_sample_rate(info->stream, info->master_clock / divider);
@@ -500,7 +502,9 @@ static void okim6258_data_w(void *_info, /*offs_t offset, */UINT8 data)
 	info->data_buf_pos &= 0xF3;
 	if ((info->data_buf_pos >> 4) == (info->data_buf_pos & 0x0F))
 	{
+#ifdef _DEBUG
 		logerror("Warning: FIFO full!\n");
+#endif
 		info->data_buf_pos = (info->data_buf_pos & 0xF0) | ((info->data_buf_pos-1) & 0x03);
 	}
 	info->data_empty = 0x00;
@@ -556,7 +560,9 @@ static void okim6258_ctrl_w(void *_info, /*offs_t offset, */UINT8 data)
 
 	if (data & COMMAND_RECORD)
 	{
+#ifdef _DEBUG
 		logerror("M6258: Record enabled\n");
+#endif
 		info->status |= STATUS_RECORDING;
 	}
 	else

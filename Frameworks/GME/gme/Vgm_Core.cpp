@@ -139,6 +139,12 @@ static UINT32 VGMF_mem_GetSize(VGM_FILE* f)
 	return mf->size;
 }
 
+static UINT32 VGMF_mem_Tell(VGM_FILE* f)
+{
+	VGM_FILE_mem* mf = (VGM_FILE_mem *) f;
+	return mf->ptr;
+}
+
 blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
 {
 	VGM_FILE_mem memFile;
@@ -146,6 +152,7 @@ blargg_err_t Vgm_Core::load_mem_( byte const data [], int size )
 	memFile.vf.Read = &VGMF_mem_Read;
 	memFile.vf.Seek = &VGMF_mem_Seek;
 	memFile.vf.GetSize = &VGMF_mem_GetSize;
+	memFile.vf.Tell = &VGMF_mem_Tell;
 	memFile.buffer = data;
 	memFile.ptr = 0;
 	memFile.size = size;
@@ -186,7 +193,11 @@ char* Vgm_Core::get_voice_name(int channel)
     size_t length = strlen(name) + 16;
     char * finalName = (char *) malloc(length);
     if (finalName)
+#ifdef _MSC_VER
+        sprintf_s(finalName, length, "%s #%u", name, realChannel);
+#else
         sprintf(finalName, "%s #%u", name, realChannel);
+#endif
     return finalName;
 }
 
