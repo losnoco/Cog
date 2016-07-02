@@ -481,7 +481,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         
         __block NSArray *weakA = a;
         
-        NSBlockOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+        NSBlockOperation *op = [[NSBlockOperation alloc] init];
+        [op addExecutionBlock:^{
             for (PlaylistEntry *pe in weakA)
             {
                 __block PlaylistEntry *weakPe = pe;
