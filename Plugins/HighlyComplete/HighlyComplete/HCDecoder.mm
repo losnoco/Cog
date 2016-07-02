@@ -183,6 +183,7 @@ static psf_file_callbacks source_callbacks =
 {
     self = [super init];
     if (self) {
+        hintAdded = NO;
         type = 0;
         emulatorCore = NULL;
         emulatorExtra = NULL;
@@ -1229,6 +1230,7 @@ static int usf_info(void * context, const char * name, const char * value)
     currentUrl = [[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     [[psf_file_container instance] add_hint:currentUrl source:currentSource];
+    hintAdded = YES;
     
     type = psf_load( [currentUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info, 0 );
     
@@ -1478,7 +1480,10 @@ static int usf_info(void * context, const char * name, const char * value)
 {
     [self closeDecoder];
     currentSource = nil;
-    [[psf_file_container instance] remove_hint:currentUrl];
+    if (hintAdded) {
+        [[psf_file_container instance] remove_hint:currentUrl];
+        hintAdded = NO;
+    }
     currentUrl = nil;
 }
 

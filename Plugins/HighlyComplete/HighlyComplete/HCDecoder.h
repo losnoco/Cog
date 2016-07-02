@@ -12,6 +12,7 @@
 
 @interface HCDecoder : NSObject<CogDecoder,CogMetadataReader> {
     id<CogSource> currentSource;
+    BOOL hintAdded;
 	NSString *currentUrl;
     uint8_t *emulatorCore;
     void *emulatorExtra;
