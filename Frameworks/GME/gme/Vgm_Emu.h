@@ -54,6 +54,8 @@ private:
     blargg_vector<byte> data;
     track_info_t metadata;
     track_info_t metadata_j;
+    
+    bool voice_names_assigned_;
 	
 	void check_end();
 };

@@ -29,13 +29,14 @@ Vgm_Emu::Vgm_Emu()
 	set_type( gme_vgm_type );
 	set_max_initial_silence( 1 );
 	set_silence_lookahead( 1 ); // tracks should already be trimmed
+	voice_names_assigned_ = false;
 }
 
 Vgm_Emu::~Vgm_Emu()
 {
     // XXX ugly use of deprecated functions to free allocated voice names
     const char ** voice_names_ = voice_names();
-    if (voice_names_)
+    if (voice_names_assigned_ && voice_names_)
     {
         for (int i = 0; i < 32; ++i)
         {
@@ -512,7 +513,10 @@ blargg_err_t Vgm_Emu::load_mem_( const byte* in, int file_size )
                 break;
         }
         if (i == voice_count)
+        {
             set_voice_names(voice_names);
+            voice_names_assigned_ = true;
+        }
         else
         {
             for (i = 0; i < voice_count; i++)
