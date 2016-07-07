@@ -97,9 +97,12 @@ static const uint8 envdecayvalue[0x3D][4] = {
 /* 38-3C */ {4,4,4,4},{8,4,4,4},{8,4,8,4},{8,8,8,4},{8,8,8,8}
 };
 
-static const float adpcmscale[8] = {
-    0.8984375f, 0.8984375f, 0.8984375f, 0.8984375f,
-    1.1992188f, 1.5976563f, 2.0000000f, 2.3984375f
+static const int adpcmscale[8] = {
+    0xE6, 0xE6, 0xE6, 0xE6, 0x133, 0x199, 0x200, 0x266
+};
+
+static const int adpcmdiff[8] = {
+    1, 3, 5, 7, 9, 11, 13, 15
 };
 
 static const sint32 qtable[32] = {
@@ -1994,20 +1997,16 @@ static void readnextsample(
     s = *(uint8*)(((uint8*)(state->ram_ptr)) + (((chan->sampleaddr + (chan->playpos >> 1)) ^ (state->mem_byte_address_xor)) & (state->ram_mask)));
     s >>= 4 * ((chan->playpos & 1) ^ 0);
     s &= 0xF;
-    { sint32 sign = 1 - ((s >> 2) & 2);
-      float step = (float)(chan->adpcmstep);
-      float s1 = (float)((s >> 2) & 1);
-      float s2 = (float)((s >> 1) & 1);
-      float s4 = (float)(s & 1);
-      sint32 out = (int)((step * s1) + ((step * s2) / 2.0f) + ((step * s4) / 4.0f) + (step / 8.0f));
-      if(out >  0x7FFF) { out =  0x7FFF; }
-      out*=sign;
+    { sint32 out = (chan->adpcmstep * adpcmdiff[s & 7]) / 8;
+      if(out > ( 0x7FFF)) { out =  0x7FFF; }
+      out*=1-((s >> 2) & 2);
       out+=chan->adpcmprev;
-      if(out >  0x7FFF) { out =  0x7FFF; }
-      if(out < -0x8000) { out = -0x8000; }
-      chan->adpcmstep = (int)((float)chan->adpcmstep * adpcmscale[s&7]);
+      if(out > ( 0x7FFF)) { out = ( 0x7FFF); /* logf("<adpcmoverflow>"); */ }
+      if(out < (-0x8000)) { out = (-0x8000); /* logf("<adpcmunderflow>"); */ }
+      chan->adpcmstep = (chan->adpcmstep * adpcmscale[s & 7]) >> 8;
       if(chan->adpcmstep > 0x6000) { chan->adpcmstep = 0x6000; }
-      if(chan->adpcmstep < 0x7F) { chan->adpcmstep = 0x7F; }
+      if(chan->adpcmstep < 0x007F) { chan->adpcmstep = 0x007F; }
+      chan->adpcmprev = out;
       s = out;
     }
     break;
