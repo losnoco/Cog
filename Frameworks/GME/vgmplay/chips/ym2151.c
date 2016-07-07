@@ -34,6 +34,7 @@
 
 
 /* struct describing a single operator */
+typedef struct YM2151 YM2151;
 typedef struct{
 	UINT32		phase;					/* accumulated operator phase */
 	UINT32		freq;					/* operator frequency count */
@@ -83,10 +84,11 @@ typedef struct{
 	UINT32		reserved0;				/**/
 	UINT32		reserved1;				/**/
 
+	YM2151		* PSG;
 } YM2151Operator;
 
 
-typedef struct
+struct YM2151
 {
 	YM2151Operator	oper[32];			/* the 32 operators */
 
@@ -123,6 +125,10 @@ typedef struct
 	UINT32		irq_enable;				/* IRQ enable for timer B (bit 3) and timer A (bit 2); bit 7 - CSM mode (keyon to all slots, everytime timer A overflows) */
 	UINT32		status;					/* chip status (BUSY, IRQ Flags) */
 	UINT8		connect[8];				/* channels connections */
+
+	signed int	chanout[8];
+	signed int	m2,c1,c2; /* Phase Modulation input for operators 2,3,4 */
+	signed int	mem;		/* one sample delay memory */
 
 #ifdef USE_MAME_TIMERS
 /* ASG 980324 -- added for tracking timers */
@@ -175,7 +181,7 @@ typedef struct
 	//const device_config *device;
 	unsigned int clock;					/* chip clock in Hz (passed from 2151intf.c) */
 	unsigned int sampfreq;				/* sampling frequency in Hz (passed from 2151intf.c) */
-} YM2151;
+};
 
 
 #define FREQ_SH			16  /* 16.16 fixed point (frequency calculations) */
@@ -487,13 +493,6 @@ static const UINT8 lfo_noise_waveform[256] = {
 
 
 
-/* these variables stay here for speedup purposes only */
-static YM2151 * PSG;
-static signed int chanout[8];
-static signed int m2,c1,c2; /* Phase Modulation input for operators 2,3,4 */
-static signed int mem;		/* one sample delay memory */
-
-
 /* save output as raw 16-bit sample */
 // #define SAVE_SAMPLE
 // #define SAVE_SEPARATE_CHANNELS
@@ -747,7 +746,7 @@ static void init_chip_tables(YM2151 *chip)
 			(op)->phase = 0;			/* clear phase */		\
 			(op)->state = EG_ATT;		/* KEY ON = attack */	\
 			(op)->volume += (~(op)->volume *					\
-                           (eg_inc[(op)->eg_sel_ar + ((PSG->eg_cnt>>(op)->eg_sh_ar)&7)])	\
+                           (eg_inc[(op)->eg_sel_ar + (((op)->PSG->eg_cnt>>(op)->eg_sh_ar)&7)])	\
                           ) >>4;								\
 			if ((op)->volume <= MIN_ATT_INDEX)					\
 			{													\
@@ -876,6 +875,7 @@ static TIMER_CALLBACK( timer_callback_chip_busy )
 
 INLINE void set_connect( YM2151Operator *om1, int cha, int v)
 {
+	YM2151 *PSG = om1->PSG;
 	YM2151Operator *om2 = om1+1;
 	YM2151Operator *oc1 = om1+2;
 
@@ -887,47 +887,47 @@ INLINE void set_connect( YM2151Operator *om1, int cha, int v)
 	{
 	case 0:
 		/* M1---C1---MEM---M2---C2---OUT */
-		om1->connect = &c1;
-		oc1->connect = &mem;
-		om2->connect = &c2;
-		om1->mem_connect = &m2;
+		om1->connect = &PSG->c1;
+		oc1->connect = &PSG->mem;
+		om2->connect = &PSG->c2;
+		om1->mem_connect = &PSG->m2;
 		break;
 
 	case 1:
 		/* M1------+-MEM---M2---C2---OUT */
 		/*      C1-+                     */
-		om1->connect = &mem;
-		oc1->connect = &mem;
-		om2->connect = &c2;
-		om1->mem_connect = &m2;
+		om1->connect = &PSG->mem;
+		oc1->connect = &PSG->mem;
+		om2->connect = &PSG->c2;
+		om1->mem_connect = &PSG->m2;
 		break;
 
 	case 2:
 		/* M1-----------------+-C2---OUT */
 		/*      C1---MEM---M2-+          */
-		om1->connect = &c2;
-		oc1->connect = &mem;
-		om2->connect = &c2;
-		om1->mem_connect = &m2;
+		om1->connect = &PSG->c2;
+		oc1->connect = &PSG->mem;
+		om2->connect = &PSG->c2;
+		om1->mem_connect = &PSG->m2;
 		break;
 
 	case 3:
 		/* M1---C1---MEM------+-C2---OUT */
 		/*                 M2-+          */
-		om1->connect = &c1;
-		oc1->connect = &mem;
-		om2->connect = &c2;
-		om1->mem_connect = &c2;
+		om1->connect = &PSG->c1;
+		oc1->connect = &PSG->mem;
+		om2->connect = &PSG->c2;
+		om1->mem_connect = &PSG->c2;
 		break;
 
 	case 4:
 		/* M1---C1-+-OUT */
 		/* M2---C2-+     */
 		/* MEM: not used */
-		om1->connect = &c1;
-		oc1->connect = &chanout[cha];
-		om2->connect = &c2;
-		om1->mem_connect = &mem;	/* store it anywhere where it will not be used */
+		om1->connect = &PSG->c1;
+		oc1->connect = &PSG->chanout[cha];
+		om2->connect = &PSG->c2;
+		om1->mem_connect = &PSG->mem;	/* store it anywhere where it will not be used */
 		break;
 
 	case 5:
@@ -935,9 +935,9 @@ INLINE void set_connect( YM2151Operator *om1, int cha, int v)
 		/* M1-+-MEM---M2-+-OUT */
 		/*    +----C2----+     */
 		om1->connect = 0;	/* special mark */
-		oc1->connect = &chanout[cha];
-		om2->connect = &chanout[cha];
-		om1->mem_connect = &m2;
+		oc1->connect = &PSG->chanout[cha];
+		om2->connect = &PSG->chanout[cha];
+		om1->mem_connect = &PSG->m2;
 		break;
 
 	case 6:
@@ -945,10 +945,10 @@ INLINE void set_connect( YM2151Operator *om1, int cha, int v)
 		/*      M2-+-OUT */
 		/*      C2-+     */
 		/* MEM: not used */
-		om1->connect = &c1;
-		oc1->connect = &chanout[cha];
-		om2->connect = &chanout[cha];
-		om1->mem_connect = &mem;	/* store it anywhere where it will not be used */
+		om1->connect = &PSG->c1;
+		oc1->connect = &PSG->chanout[cha];
+		om2->connect = &PSG->chanout[cha];
+		om1->mem_connect = &PSG->mem;	/* store it anywhere where it will not be used */
 		break;
 
 	case 7:
@@ -957,10 +957,10 @@ INLINE void set_connect( YM2151Operator *om1, int cha, int v)
 		/* M2-+     */
 		/* C2-+     */
 		/* MEM: not used*/
-		om1->connect = &chanout[cha];
-		oc1->connect = &chanout[cha];
-		om2->connect = &chanout[cha];
-		om1->mem_connect = &mem;	/* store it anywhere where it will not be used */
+		om1->connect = &PSG->chanout[cha];
+		oc1->connect = &PSG->chanout[cha];
+		om2->connect = &PSG->chanout[cha];
+		om1->mem_connect = &PSG->mem;	/* store it anywhere where it will not be used */
 		break;
 	}
 }
@@ -1089,7 +1089,6 @@ void ym2151_write_reg(void *_chip, int r, int v)
 			break;
 
 		case 0x08:
-			PSG = chip; /* PSG is used in KEY_ON macro */
 			envelope_KONKOFF(&chip->oper[ (v&7)*4 ], v );
 			break;
 
@@ -1573,6 +1572,9 @@ void * ym2151_init(int clock, int rate)
 			logerror("Could not create file 2151_.cym\n");
 	}*/
 
+	for (chn = 0; chn < 32; chn ++)
+		PSG->oper[chn].PSG = PSG;
+
 	return PSG;
 }
 
@@ -1707,7 +1709,7 @@ INLINE signed int op_calc1(YM2151Operator * OP, unsigned int env, signed int pm)
 
 #define volume_calc(OP) ((OP)->tl + ((UINT32)(OP)->volume) + (AM & (OP)->AMmask))
 
-INLINE void chan_calc(unsigned int chan)
+INLINE void chan_calc(YM2151 *PSG, unsigned int chan)
 {
 	YM2151Operator *op;
 	unsigned int env;
@@ -1716,7 +1718,7 @@ INLINE void chan_calc(unsigned int chan)
 	if (PSG->Muted[chan])
 		return;
 	
-	m2 = c1 = c2 = mem = 0;
+	PSG->m2 = PSG->c1 = PSG->c2 = PSG->mem = 0;
 	op = &PSG->oper[chan*4];	/* M1 */
 
 	*op->mem_connect = op->mem_value;	/* restore delayed sample (MEM) value to m2 or c2 */
@@ -1730,7 +1732,7 @@ INLINE void chan_calc(unsigned int chan)
 
 		if (!op->connect)
 			/* algorithm 5 */
-			mem = c1 = c2 = op->fb_out_prev;
+			PSG->mem = PSG->c1 = PSG->c2 = op->fb_out_prev;
 		else
 			/* other algorithms */
 			*op->connect = op->fb_out_prev;
@@ -1746,22 +1748,22 @@ INLINE void chan_calc(unsigned int chan)
 
 	env = volume_calc(op+1);	/* M2 */
 	if (env < ENV_QUIET)
-		*(op+1)->connect += op_calc(op+1, env, m2);
+		*(op+1)->connect += op_calc(op+1, env, PSG->m2);
 
 	env = volume_calc(op+2);	/* C1 */
 	if (env < ENV_QUIET)
-		*(op+2)->connect += op_calc(op+2, env, c1);
+		*(op+2)->connect += op_calc(op+2, env, PSG->c1);
 
 	env = volume_calc(op+3);	/* C2 */
 	if (env < ENV_QUIET)
-		chanout[chan]    += op_calc(op+3, env, c2);
-	if (chanout[chan] > +8192)		chanout[chan] = +8192;
-	else if (chanout[chan] < -8192)	chanout[chan] = -8192;
+		PSG->chanout[chan]    += op_calc(op+3, env, PSG->c2);
+	if (PSG->chanout[chan] > +8192)		PSG->chanout[chan] = +8192;
+	else if (PSG->chanout[chan] < -8192)	PSG->chanout[chan] = -8192;
 
 	/* M1 */
-	op->mem_value = mem;
+	op->mem_value = PSG->mem;
 }
-INLINE void chan7_calc(void)
+INLINE void chan7_calc(YM2151 *PSG)
 {
 	YM2151Operator *op;
 	unsigned int env;
@@ -1770,7 +1772,7 @@ INLINE void chan7_calc(void)
 	if (PSG->Muted[7])
 		return;
 	
-	m2 = c1 = c2 = mem = 0;
+	PSG->m2 = PSG->c1 = PSG->c2 = PSG->mem = 0;
 	op = &PSG->oper[7*4];		/* M1 */
 
 	*op->mem_connect = op->mem_value;	/* restore delayed sample (MEM) value to m2 or c2 */
@@ -1784,7 +1786,7 @@ INLINE void chan7_calc(void)
 
 		if (!op->connect)
 			/* algorithm 5 */
-			mem = c1 = c2 = op->fb_out_prev;
+			PSG->mem = PSG->c1 = PSG->c2 = op->fb_out_prev;
 		else
 			/* other algorithms */
 			*op->connect = op->fb_out_prev;
@@ -1800,11 +1802,11 @@ INLINE void chan7_calc(void)
 
 	env = volume_calc(op+1);	/* M2 */
 	if (env < ENV_QUIET)
-		*(op+1)->connect += op_calc(op+1, env, m2);
+		*(op+1)->connect += op_calc(op+1, env, PSG->m2);
 
 	env = volume_calc(op+2);	/* C1 */
 	if (env < ENV_QUIET)
-		*(op+2)->connect += op_calc(op+2, env, c1);
+		*(op+2)->connect += op_calc(op+2, env, PSG->c1);
 
 	env = volume_calc(op+3);	/* C2 */
 	if (PSG->noise & 0x80)
@@ -1814,17 +1816,17 @@ INLINE void chan7_calc(void)
 		noiseout = 0;
 		if (env < 0x3ff)
 			noiseout = (env ^ 0x3ff) * 2;	/* range of the YM2151 noise output is -2044 to 2040 */
-		chanout[7] += ((PSG->noise_rng&0x10000) ? noiseout: -noiseout); /* bit 16 -> output */
+		PSG->chanout[7] += ((PSG->noise_rng&0x10000) ? noiseout: -noiseout); /* bit 16 -> output */
 	}
 	else
 	{
 		if (env < ENV_QUIET)
-			chanout[7] += op_calc(op+3, env, c2);
+			PSG->chanout[7] += op_calc(op+3, env, PSG->c2);
 	}
-	if (chanout[7] > +8192)			chanout[7] = +8192;
-	else if (chanout[7] < -8192)	chanout[7] = -8192;
+	if (PSG->chanout[7] > +8192)			PSG->chanout[7] = +8192;
+	else if (PSG->chanout[7] < -8192)	PSG->chanout[7] = -8192;
 	/* M1 */
-	op->mem_value = mem;
+	op->mem_value = PSG->mem;
 }
 
 
@@ -2036,7 +2038,7 @@ rate 11 1         |
                                  --
 */
 
-INLINE void advance_eg(void)
+INLINE void advance_eg(YM2151 *PSG)
 {
 	YM2151Operator *op;
 	unsigned int i;
@@ -2120,7 +2122,7 @@ INLINE void advance_eg(void)
 }
 
 
-INLINE void advance(void)
+INLINE void advance(YM2151 *PSG)
 {
 	YM2151Operator *op;
 	unsigned int i;
@@ -2352,11 +2354,11 @@ INLINE signed int acc_calc(signed int value)
 #else	/*STEREO*/
 	#ifdef SAVE_SEPARATE_CHANNELS
 	  #define SAVE_SINGLE_CHANNEL(j) \
-	  {	signed int pom = -(chanout[j] & PSG->pan[j*2]); \
+	  {	signed int pom = -(PSG->chanout[j] & PSG->pan[j*2]); \
 		if (pom > 32767) pom = 32767; else if (pom < -32768) pom = -32768; \
 		fputc((unsigned short)pom&0xff,sample[j]); \
 		fputc(((unsigned short)pom>>8)&0xff,sample[j]); \
-		pom = -(chanout[j] & PSG->pan[j*2+1]); \
+		pom = -(PSG->chanout[j] & PSG->pan[j*2+1]); \
 		if (pom > 32767) pom = 32767; else if (pom < -32768) pom = -32768; \
 		fputc((unsigned short)pom&0xff,sample[j]); \
 		fputc(((unsigned short)pom>>8)&0xff,sample[j]); \
@@ -2407,6 +2409,7 @@ void ym2151_update_one(void *chip, SAMP **buffers, int length)
 	int i; // , chn;
 	signed int outl,outr;
 	SAMP *bufL, *bufR;
+	YM2151 *PSG;
 
 	bufL = buffers[0];
 	bufR = buffers[1];
@@ -2434,50 +2437,50 @@ void ym2151_update_one(void *chip, SAMP **buffers, int length)
 
 	for (i=0; i<length; i++)
 	{
-		advance_eg();
+		advance_eg(PSG);
 
-		chanout[0] = 0;
-		chanout[1] = 0;
-		chanout[2] = 0;
-		chanout[3] = 0;
-		chanout[4] = 0;
-		chanout[5] = 0;
-		chanout[6] = 0;
-		chanout[7] = 0;
+		PSG->chanout[0] = 0;
+		PSG->chanout[1] = 0;
+		PSG->chanout[2] = 0;
+		PSG->chanout[3] = 0;
+		PSG->chanout[4] = 0;
+		PSG->chanout[5] = 0;
+		PSG->chanout[6] = 0;
+		PSG->chanout[7] = 0;
 
-		chan_calc(0);
+		chan_calc(PSG, 0);
 		SAVE_SINGLE_CHANNEL(0)
-		chan_calc(1);
+		chan_calc(PSG, 1);
 		SAVE_SINGLE_CHANNEL(1)
-		chan_calc(2);
+		chan_calc(PSG, 2);
 		SAVE_SINGLE_CHANNEL(2)
-		chan_calc(3);
+		chan_calc(PSG, 3);
 		SAVE_SINGLE_CHANNEL(3)
-		chan_calc(4);
+		chan_calc(PSG, 4);
 		SAVE_SINGLE_CHANNEL(4)
-		chan_calc(5);
+		chan_calc(PSG, 5);
 		SAVE_SINGLE_CHANNEL(5)
-		chan_calc(6);
+		chan_calc(PSG, 6);
 		SAVE_SINGLE_CHANNEL(6)
-		chan7_calc();
+		chan7_calc(PSG);
 		SAVE_SINGLE_CHANNEL(7)
 
-		outl = chanout[0] & PSG->pan[0];
-		outr = chanout[0] & PSG->pan[1];
-		outl += (chanout[1] & PSG->pan[2]);
-		outr += (chanout[1] & PSG->pan[3]);
-		outl += (chanout[2] & PSG->pan[4]);
-		outr += (chanout[2] & PSG->pan[5]);
-		outl += (chanout[3] & PSG->pan[6]);
-		outr += (chanout[3] & PSG->pan[7]);
-		outl += (chanout[4] & PSG->pan[8]);
-		outr += (chanout[4] & PSG->pan[9]);
-		outl += (chanout[5] & PSG->pan[10]);
-		outr += (chanout[5] & PSG->pan[11]);
-		outl += (chanout[6] & PSG->pan[12]);
-		outr += (chanout[6] & PSG->pan[13]);
-		outl += (chanout[7] & PSG->pan[14]);
-		outr += (chanout[7] & PSG->pan[15]);
+		outl = PSG->chanout[0] & PSG->pan[0];
+		outr = PSG->chanout[0] & PSG->pan[1];
+		outl += (PSG->chanout[1] & PSG->pan[2]);
+		outr += (PSG->chanout[1] & PSG->pan[3]);
+		outl += (PSG->chanout[2] & PSG->pan[4]);
+		outr += (PSG->chanout[2] & PSG->pan[5]);
+		outl += (PSG->chanout[3] & PSG->pan[6]);
+		outr += (PSG->chanout[3] & PSG->pan[7]);
+		outl += (PSG->chanout[4] & PSG->pan[8]);
+		outr += (PSG->chanout[4] & PSG->pan[9]);
+		outl += (PSG->chanout[5] & PSG->pan[10]);
+		outr += (PSG->chanout[5] & PSG->pan[11]);
+		outl += (PSG->chanout[6] & PSG->pan[12]);
+		outr += (PSG->chanout[6] & PSG->pan[13]);
+		outl += (PSG->chanout[7] & PSG->pan[14]);
+		outr += (PSG->chanout[7] & PSG->pan[15]);
 
 		outl >>= FINAL_SH;
 		outr >>= FINAL_SH;
@@ -2511,7 +2514,7 @@ void ym2151_update_one(void *chip, SAMP **buffers, int length)
 			}
 		}
 #endif
-		advance();
+		advance(PSG);
 	}
 }
 
