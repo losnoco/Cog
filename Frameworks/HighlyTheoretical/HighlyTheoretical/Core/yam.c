@@ -598,8 +598,8 @@ void EMU_CALL yam_enable_dsp(void *state, uint8 enable) {
 }
 
 void EMU_CALL yam_enable_dsp_dynarec(void *state, uint8 enable) {
-  YAMSTATE->dsp_dyna_enabled = (enable != 0);
 #ifdef ENABLE_DYNAREC
+  YAMSTATE->dsp_dyna_enabled = (enable != 0);
   if(enable == 0) { YAMSTATE->dsp_dyna_valid = 0; }
 #endif
 }
