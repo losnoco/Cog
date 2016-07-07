@@ -64,7 +64,7 @@
 
 #define MAKELFOPHASEINC(x) (((uint64)(0x100000000)) / ((uint64)(x)))
 
-static uint32 lfophaseinctable[0x20] = {
+static const uint32 lfophaseinctable[0x20] = {
 MAKELFOPHASEINC(0x3FC00),MAKELFOPHASEINC(0x37C00),MAKELFOPHASEINC(0x2FC00),MAKELFOPHASEINC(0x27C00),
 MAKELFOPHASEINC(0x1FC00),MAKELFOPHASEINC(0x1BC00),MAKELFOPHASEINC(0x17C00),MAKELFOPHASEINC(0x13C00),
 MAKELFOPHASEINC(0x0FC00),MAKELFOPHASEINC(0x0BC00),MAKELFOPHASEINC(0x0DC00),MAKELFOPHASEINC(0x09C00),
@@ -75,7 +75,7 @@ MAKELFOPHASEINC(0x00C00),MAKELFOPHASEINC(0x00A00),MAKELFOPHASEINC(0x00800),MAKEL
 MAKELFOPHASEINC(0x00400),MAKELFOPHASEINC(0x00300),MAKELFOPHASEINC(0x00200),MAKELFOPHASEINC(0x00100)
 };
 
-static uint8 envattackshift[0x3D][4] = {
+static const uint8 envattackshift[0x3D][4] = {
 /* 00-07 */ {4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},
 /* 08-0F */ {4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},
 /* 10-17 */ {4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},{4,4,4,4},
@@ -86,7 +86,7 @@ static uint8 envattackshift[0x3D][4] = {
 /* 38-3C */ {2,2,2,2},{1,2,2,2},{1,2,1,2},{1,1,1,2},{1,1,1,1}
 };
 
-static uint8 envdecayvalue[0x3D][4] = {
+static const uint8 envdecayvalue[0x3D][4] = {
 /* 00-07 */ {1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},
 /* 08-0F */ {1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},
 /* 10-17 */ {1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},
@@ -97,16 +97,12 @@ static uint8 envdecayvalue[0x3D][4] = {
 /* 38-3C */ {4,4,4,4},{8,4,4,4},{8,4,8,4},{8,8,8,4},{8,8,8,8}
 };
 
-static sint32 adpcmscale[8] = {
-  0x0E6, 0x0E6, 0x0E6, 0x0E6, 0x133, 0x199, 0x200, 0x266
+static const float adpcmscale[8] = {
+    0.8984375f, 0.8984375f, 0.8984375f, 0.8984375f,
+    1.1992188f, 1.5976563f, 2.0000000f, 2.3984375f
 };
 
-static sint32 adpcmdiff[16] = {
- 1, 3, 5, 7, 9, 11, 13, 15,
--1,-3,-5,-7,-9,-11,-13,-15
-};
-
-static sint32 qtable[32] = {
+static const sint32 qtable[32] = {
 0x0E00,0x0E80,0x0F00,0x0F80,
 0x1000,0x1080,0x1100,0x1180,
 0x1200,0x1280,0x1300,0x1280,
@@ -117,8 +113,8 @@ static sint32 qtable[32] = {
 0x1C00,0x1D00,0x1E00,0x1F00
 };
 
-static uint8 pan_att_l[32] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-static uint8 pan_att_r[32] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,32 };
+static const uint8 pan_att_l[32] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+static const uint8 pan_att_r[32] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,32 };
 
 static void convert_stereo_send_level(
   uint8 sdl, uint8 pan,
@@ -152,6 +148,7 @@ static void convert_stereo_send_level(
 sint32 EMU_CALL yam_init(void) {
   return 0;
 }
+
 
 /////////////////////////////////////////////////////////////////////////////
 /*
@@ -545,6 +542,7 @@ static void dumpch(struct YAM_STATE *state, struct YAM_CHAN *chan) {
   logf("  rbp=%X rbl=%X\n",state->rbp,state->rbl);
 }
 */
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Set RAM pointer and size (must be a power of 2)
@@ -891,7 +889,7 @@ static void chan_scsp_store_reg(struct YAM_STATE *state, uint8 ch, uint8 a, uint
           if(state->chan[ch].kyonb) {
 //printf("*");
             keyon(state->chan + ch);
-          } else { 
+          } else {
 //printf(".");
             keyoff(state->chan + ch);
           }
@@ -1996,14 +1994,20 @@ static void readnextsample(
     s = *(uint8*)(((uint8*)(state->ram_ptr)) + (((chan->sampleaddr + (chan->playpos >> 1)) ^ (state->mem_byte_address_xor)) & (state->ram_mask)));
     s >>= 4 * ((chan->playpos & 1) ^ 0);
     s &= 0xF;
-    { sint32 out = chan->adpcmprev;
-      out += (chan->adpcmstep * adpcmdiff[s]) / 8;
-      if(out > ( 0x7FFF)) { out = ( 0x7FFF); /* logf("<adpcmoverflow>"); */ }
-      if(out < (-0x8000)) { out = (-0x8000); /* logf("<adpcmunderflow>"); */ }
-      chan->adpcmstep = (chan->adpcmstep * adpcmscale[s & 7]) >> 8;
+    { sint32 sign = 1 - ((s >> 2) & 2);
+      float step = (float)(chan->adpcmstep);
+      float s1 = (float)((s >> 2) & 1);
+      float s2 = (float)((s >> 1) & 1);
+      float s4 = (float)(s & 1);
+      sint32 out = (int)((step * s1) + ((step * s2) / 2.0f) + ((step * s4) / 4.0f) + (step / 8.0f));
+      if(out >  0x7FFF) { out =  0x7FFF; }
+      out*=sign;
+      out+=chan->adpcmprev;
+      if(out >  0x7FFF) { out =  0x7FFF; }
+      if(out < -0x8000) { out = -0x8000; }
+      chan->adpcmstep = (int)((float)chan->adpcmstep * adpcmscale[s&7]);
       if(chan->adpcmstep > 0x6000) { chan->adpcmstep = 0x6000; }
-      if(chan->adpcmstep < 0x007F) { chan->adpcmstep = 0x007F; }
-      chan->adpcmprev = out;
+      if(chan->adpcmstep < 0x7F) { chan->adpcmstep = 0x7F; }
       s = out;
     }
     break;
