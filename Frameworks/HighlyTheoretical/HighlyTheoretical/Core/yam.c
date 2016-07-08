@@ -1246,7 +1246,9 @@ static void chan_aica_store_reg(struct YAM_STATE *state, uint8 ch, uint8 a, uint
 // DSP registers
 //
 static void coef_write(struct YAM_STATE *state, uint32 n, uint32 d, uint32 mask) {
+#ifdef ENABLE_DYNAREC
   sint16 old = state->coef[n];
+#endif
   yam_flush(state);
   n &= 0x7F;
   state->coef[n] <<= 3;
@@ -1259,7 +1261,9 @@ static void coef_write(struct YAM_STATE *state, uint32 n, uint32 d, uint32 mask)
 }
 
 static void madrs_write(struct YAM_STATE *state, uint32 n, uint32 d, uint32 mask) {
+#ifdef ENABLE_DYNAREC
   uint16 old = state->madrs[n];
+#endif
   yam_flush(state);
   n &= 0x3F;
   state->madrs[n] &= ~mask;
@@ -2029,7 +2033,8 @@ static void readnextsample(
       if(out < (-0x8000)) { out = (-0x8000); /* logf("<adpcmunderflow>"); */ }
       chan->adpcmstep = (chan->adpcmstep * adpcmscale[s & 7]) >> 8;
       if(chan->adpcmstep > 0x6000) { chan->adpcmstep = 0x6000; }
-      if(chan->adpcmstep < 0x7F) { chan->adpcmstep = 0x7F; }
+      if(chan->adpcmstep < 0x007F) { chan->adpcmstep = 0x007F; }
+      chan->adpcmprev = out;
       s = out;
     }
     break;
@@ -2867,10 +2872,10 @@ static void render_effects(
       dynacompile(state);
     }
     samplefunc = (dsp_sample_t)(((uint8*)(state->dynacode)) + DYNACODE_SLOP_SIZE);
-#else
-  if (0) {
-#endif
   } else {
+#else
+  {
+#endif
     samplefunc = dsp_sample_interpret;
   }
 

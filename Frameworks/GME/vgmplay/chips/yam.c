@@ -2040,7 +2040,8 @@ static void readnextsample(
       if(out < (-0x8000)) { out = (-0x8000); /* logf("<adpcmunderflow>"); */ }
       chan->adpcmstep = (chan->adpcmstep * adpcmscale[s & 7]) >> 8;
       if(chan->adpcmstep > 0x6000) { chan->adpcmstep = 0x6000; }
-      if(chan->adpcmstep < 0x7F) { chan->adpcmstep = 0x7F; }
+      if(chan->adpcmstep < 0x007F) { chan->adpcmstep = 0x007F; }
+      chan->adpcmprev = out;
       s = out;
     }
     break;
