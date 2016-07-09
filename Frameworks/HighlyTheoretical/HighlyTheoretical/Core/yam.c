@@ -1739,6 +1739,7 @@ uint32 EMU_CALL yam_aica_load_reg(void *state, uint32 a, uint32 mask) {
     if(YAMSTATE->out_pending > 0) yam_flush(YAMSTATE);
     { int c = (YAMSTATE->mslc) & 0x3F;
       d  = (((uint32)(YAMSTATE->chan[c].lp      )) & 1) << 15;
+      if(mask & 0xFF00) { YAMSTATE->chan[c].lp = 0; }
       if(YAMSTATE->afsel == 0) {
         d |= (((uint32)(YAMSTATE->chan[c].envstate)) & 3) << 13;
         d |= (YAMSTATE->chan[c].envlevel) & 0x1FFF;
