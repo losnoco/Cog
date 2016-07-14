@@ -1,6 +1,8 @@
 /*
-** FT2PLAY v0.77- 26th of June 2016
+** FT2PLAY v0.77- 29th of June 2016
 ** ================================
+**
+** modplay version for foo_dumb.dll (foobar2000)
 **
 ** Changelog from v0.68 (later changelogs missing):
 ** - Bug fix for Lxx (Set Envelope Position)
@@ -523,8 +525,8 @@ static void RetrigEnvelopeVibrato(StmTyp *ch)
     }
 
     /* FT2 doesn't check if fadeout is more than 32768 */
-    ch->FadeOutSpeed = (int32_t)(ch->InstrSeg.FadeOut) << 1;
-    ch->FadeOutAmp   = 65536;
+    ch->FadeOutSpeed = ch->InstrSeg.FadeOut;
+    ch->FadeOutAmp   = 32768;
 
     if (ch->InstrSeg.VibDepth)
     {
@@ -734,7 +736,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
     uint8_t tmpEff;
     uint8_t tmpEffHi;
     int16_t newEnvPos;
-    int16_t envPos;
+    int8_t envPos;
     uint16_t i;
 
     /* *** VOLUME COLUMN EFFECTS (TICK 0) *** */
@@ -1009,13 +1011,14 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
     // Lxx - set vol and pan envelope position
     else if (ch->EffTyp == 21)
     {
-        // *** VOLUME ENVELOPE ***
+        /* *** VOLUME ENVELOPE *** */
         if (ch->InstrSeg.EnvVTyp & 1)
         {
             ch->EnvVCnt = ch->Eff - 1;
-            envPos      = 0;
-            envUpdate   = 1;
-            newEnvPos   = ch->Eff;
+
+            envPos = 0;
+            envUpdate = 1;
+            newEnvPos = ch->Eff;
 
             if (ch->InstrSeg.EnvVPAnt > 1)
             {
@@ -1025,8 +1028,8 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
                     if (newEnvPos < ch->InstrSeg.EnvVP[envPos][0])
                     {
                         envPos--;
-                        newEnvPos -= ch->InstrSeg.EnvVP[envPos][0];
 
+                        newEnvPos -= ch->InstrSeg.EnvVP[envPos][0];
                         if (newEnvPos == 0)
                         {
                             envUpdate = 0;
@@ -1039,12 +1042,10 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
                             break;
                         }
 
-                        ch->EnvVIPValue  = ch->InstrSeg.EnvVP[envPos + 1][1];
-                        ch->EnvVIPValue -= ch->InstrSeg.EnvVP[envPos    ][1];
-                        ch->EnvVIPValue  = (ch->EnvVIPValue & 0x00FF) << 8;
+                        ch->EnvVIPValue = ((ch->InstrSeg.EnvVP[envPos + 1][1] - ch->InstrSeg.EnvVP[envPos][1]) & 0x00FF) << 8;
+                        ch->EnvVIPValue /= (ch->InstrSeg.EnvVP[envPos + 1][0] - ch->InstrSeg.EnvVP[envPos][0]);
 
-                        ch->EnvVIPValue/=(ch->InstrSeg.EnvVP[envPos+1][0]-ch->InstrSeg.EnvVP[envPos][0]);
-                        ch->EnvVAmp=(ch->EnvVIPValue*(newEnvPos-1))+((ch->InstrSeg.EnvVP[envPos][1] & 0x00FF)<<8);
+                        ch->EnvVAmp = (ch->EnvVIPValue * (newEnvPos - 1)) + ((ch->InstrSeg.EnvVP[envPos][1] & 0x00FF) << 8);
 
                         envPos++;
 
@@ -1061,22 +1062,27 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
             if (envUpdate)
             {
                 ch->EnvVIPValue = 0;
-                ch->EnvVAmp     = (ch->InstrSeg.EnvVP[envPos][1] & 0x00FF) << 8;
+                ch->EnvVAmp = (ch->InstrSeg.EnvVP[envPos][1] & 0x00FF) << 8;
             }
 
             if (envPos >= ch->InstrSeg.EnvVPAnt)
-                envPos = (int16_t)(ch->InstrSeg.EnvVPAnt) - 1;
+            {
+                envPos = ch->InstrSeg.EnvVPAnt - 1;
+                if (envPos < 0)
+                    envPos = 0;
+            }
 
-            ch->EnvVPos = (envPos < 0) ? 0 : (uint8_t)(envPos);
+            ch->EnvVPos = envPos;
         }
 
-        // *** PANNING ENVELOPE ***
-        if (ch->InstrSeg.EnvVTyp & 2) // probably an FT2 bug
+        /* *** PANNING ENVELOPE *** */
+        if (ch->InstrSeg.EnvVTyp & 2) /* probably an FT2 bug */
         {
             ch->EnvPCnt = ch->Eff - 1;
-            envPos      = 0;
-            envUpdate   = 1;
-            newEnvPos   = ch->Eff;
+
+            envPos = 0;
+            envUpdate = 1;
+            newEnvPos = ch->Eff;
 
             if (ch->InstrSeg.EnvPPAnt > 1)
             {
@@ -1086,8 +1092,8 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
                     if (newEnvPos < ch->InstrSeg.EnvPP[envPos][0])
                     {
                         envPos--;
-                        newEnvPos -= ch->InstrSeg.EnvPP[envPos][0];
 
+                        newEnvPos -= ch->InstrSeg.EnvPP[envPos][0];
                         if (newEnvPos == 0)
                         {
                             envUpdate = 0;
@@ -1100,12 +1106,10 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
                             break;
                         }
 
-                        ch->EnvPIPValue  = ch->InstrSeg.EnvPP[envPos + 1][1];
-                        ch->EnvPIPValue -= ch->InstrSeg.EnvPP[envPos    ][1];
-                        ch->EnvPIPValue  = (ch->EnvPIPValue & 0x00FF) << 8;
+                        ch->EnvPIPValue = ((ch->InstrSeg.EnvPP[envPos + 1][1] - ch->InstrSeg.EnvPP[envPos][1]) & 0x00FF) << 8;
+                        ch->EnvPIPValue /= (ch->InstrSeg.EnvPP[envPos + 1][0] - ch->InstrSeg.EnvPP[envPos][0]);
 
-                        ch->EnvPIPValue/=(ch->InstrSeg.EnvPP[envPos+1][0]-ch->InstrSeg.EnvPP[envPos][0]);
-                        ch->EnvPAmp=(ch->EnvPIPValue*(newEnvPos-1))+((ch->InstrSeg.EnvPP[envPos][1]&0x00FF)<<8);
+                        ch->EnvPAmp = (ch->EnvPIPValue * (newEnvPos - 1)) + ((ch->InstrSeg.EnvPP[envPos][1] & 0x00FF) << 8);
 
                         envPos++;
 
@@ -1122,13 +1126,17 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
             if (envUpdate)
             {
                 ch->EnvPIPValue = 0;
-                ch->EnvPAmp     = (ch->InstrSeg.EnvPP[envPos][1] & 0x00FF) << 8;
+                ch->EnvPAmp = (ch->InstrSeg.EnvPP[envPos][1] & 0x00FF) << 8;
             }
 
             if (envPos >= ch->InstrSeg.EnvPPAnt)
-                envPos = (int16_t)(ch->InstrSeg.EnvPPAnt) - 1;
+            {
+                envPos = ch->InstrSeg.EnvPPAnt - 1;
+                if (envPos < 0)
+                    envPos = 0;
+            }
 
-            ch->EnvPPos = (envPos < 0) ? 0 : (uint8_t)(envPos);
+            ch->EnvPPos = envPos;
         }
     }
 
@@ -1347,28 +1355,29 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
     int16_t autoVibAmp;
     int16_t tmpPeriod;
 
-    // *** FADEOUT ***
+    /* *** FADEOUT *** */
     if (!ch->EnvSustainActive)
     {
         ch->Status |= IS_Vol;
 
-        ch->FadeOutAmp -= ch->FadeOutSpeed;
-        if (ch->FadeOutAmp <= 0)
+        if (ch->FadeOutSpeed > 0)
         {
-            ch->FadeOutAmp   = 0;
-            ch->FadeOutSpeed = 0;
+            ch->FadeOutAmp -= ch->FadeOutSpeed;
+            if (ch->FadeOutAmp <= 0)
+            {
+                ch->FadeOutAmp   = 0;
+                ch->FadeOutSpeed = 0;
+            }
         }
     }
 
     if (!ch->Mute)
     {
-        // *** VOLUME ENVELOPE ***
-        envInterpolateFlag = 1;
-        envDidInterpolate  = 0;
-        envVal             = 0;
-
+        /* *** VOLUME ENVELOPE *** */
+        envVal = 0;
         if (ch->InstrSeg.EnvVTyp & 1)
         {
+            envDidInterpolate = 0;
             envPos = ch->EnvVPos;
 
             ch->EnvVCnt++;
@@ -1380,45 +1389,51 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
                 if (ch->InstrSeg.EnvVTyp & 4)
                 {
                     envPos--;
+
                     if (envPos == ch->InstrSeg.EnvVRepE)
                     {
-                        if (!(ch->InstrSeg.EnvVTyp&2)||(envPos!=ch->InstrSeg.EnvVSust)||ch->EnvSustainActive)
+                        if (!(ch->InstrSeg.EnvVTyp & 2) || (envPos != ch->InstrSeg.EnvVSust) || ch->EnvSustainActive)
                         {
-                            envPos      = ch->InstrSeg.EnvVRepS;
-                            ch->EnvVCnt = ch->InstrSeg.EnvVP[envPos][0];
+                            envPos = ch->InstrSeg.EnvVRepS;
+
+                            ch->EnvVCnt =  ch->InstrSeg.EnvVP[envPos][0];
                             ch->EnvVAmp = (ch->InstrSeg.EnvVP[envPos][1] & 0x00FF) << 8;
                         }
                     }
+
                     envPos++;
                 }
 
-                ch->EnvVIPValue = 0;
-
                 if (envPos < ch->InstrSeg.EnvVPAnt)
                 {
+                    envInterpolateFlag = 1;
                     if ((ch->InstrSeg.EnvVTyp & 2) && ch->EnvSustainActive)
                     {
-                        envPos--;
-                        if (envPos == ch->InstrSeg.EnvVSust)
+                        if ((envPos - 1) == ch->InstrSeg.EnvVSust)
+                        {
+                            envPos--;
+                            ch->EnvVIPValue = 0;
                             envInterpolateFlag = 0;
-                        else
-                            envPos++;
+                        }
                     }
 
                     if (envInterpolateFlag)
                     {
                         ch->EnvVPos = envPos;
-                        if (ch->InstrSeg.EnvVP[envPos - 0][0] > ch->InstrSeg.EnvVP[envPos - 1][0])
+
+                        if (ch->InstrSeg.EnvVP[envPos][0] > ch->InstrSeg.EnvVP[envPos - 1][0])
                         {
-                            ch->EnvVIPValue  = ch->InstrSeg.EnvVP[envPos - 0][1];
-                            ch->EnvVIPValue -= ch->InstrSeg.EnvVP[envPos - 1][1];
-                            ch->EnvVIPValue  = (ch->EnvVIPValue & 0x00FF) << 8;
+                            ch->EnvVIPValue = ((ch->InstrSeg.EnvVP[envPos][1] - ch->InstrSeg.EnvVP[envPos - 1][1]) & 0x00FF) << 8;
                             ch->EnvVIPValue /= (ch->InstrSeg.EnvVP[envPos][0] - ch->InstrSeg.EnvVP[envPos - 1][0]);
 
                             envVal = ch->EnvVAmp;
                             envDidInterpolate = 1;
                         }
                     }
+                }
+                else
+                {
+                    ch->EnvVIPValue = 0;
                 }
             }
 
@@ -1427,10 +1442,14 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
                 ch->EnvVAmp += ch->EnvVIPValue;
 
                 envVal = ch->EnvVAmp;
-                if ((envVal & 0xFF00) > 0x4000)
+                if ((envVal >> 8) > 0x40)
                 {
+                    if ((envVal >> 8) > ((0x40 + 0xC0) / 2))
+                        envVal = 16384;
+                    else
+                        envVal = 0;
+
                     ch->EnvVIPValue = 0;
-                    envVal = ((envVal & 0xFF00) > 0x8000) ? 0x0000 : 0x4000;
                 }
             }
 
@@ -1452,13 +1471,11 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
         ch->FinalVol = 0;
     }
 
-    // *** PANNING ENVELOPE ***
-    envInterpolateFlag = 1;
-    envDidInterpolate  = 0;
-    envVal             = 0;
-
+    /* *** PANNING ENVELOPE *** */
+    envVal = 0;
     if (ch->InstrSeg.EnvPTyp & 1)
     {
+        envDidInterpolate = 0;
         envPos = ch->EnvPPos;
 
         ch->EnvPCnt++;
@@ -1470,45 +1487,51 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
             if (ch->InstrSeg.EnvPTyp & 4)
             {
                 envPos--;
+
                 if (envPos == ch->InstrSeg.EnvPRepE)
                 {
-                    if (!(ch->InstrSeg.EnvPTyp&2)||(envPos!=ch->InstrSeg.EnvPSust)||ch->EnvSustainActive)
+                    if (!(ch->InstrSeg.EnvPTyp & 2) || (envPos != ch->InstrSeg.EnvPSust) || ch->EnvSustainActive)
                     {
-                        envPos      = ch->InstrSeg.EnvPRepS;
-                        ch->EnvPCnt = ch->InstrSeg.EnvPP[envPos][0];
+                        envPos = ch->InstrSeg.EnvPRepS;
+
+                        ch->EnvPCnt =  ch->InstrSeg.EnvPP[envPos][0];
                         ch->EnvPAmp = (ch->InstrSeg.EnvPP[envPos][1] & 0x00FF) << 8;
                     }
                 }
+
                 envPos++;
             }
 
-            ch->EnvPIPValue = 0;
-
             if (envPos < ch->InstrSeg.EnvPPAnt)
             {
+                envInterpolateFlag = 1;
                 if ((ch->InstrSeg.EnvPTyp & 2) && ch->EnvSustainActive)
                 {
-                    envPos--;
-                    if (envPos == ch->InstrSeg.EnvPSust)
+                    if ((envPos - 1) == ch->InstrSeg.EnvPSust)
+                    {
+                        envPos--;
+                        ch->EnvPIPValue = 0;
                         envInterpolateFlag = 0;
-                    else
-                        envPos++;
+                    }
                 }
 
                 if (envInterpolateFlag)
                 {
                     ch->EnvPPos = envPos;
-                    if (ch->InstrSeg.EnvPP[envPos - 0][0] > ch->InstrSeg.EnvPP[envPos - 1][0])
+
+                    if (ch->InstrSeg.EnvPP[envPos][0] > ch->InstrSeg.EnvPP[envPos - 1][0])
                     {
-                        ch->EnvPIPValue  = ch->InstrSeg.EnvPP[envPos - 0][1];
-                        ch->EnvPIPValue -= ch->InstrSeg.EnvPP[envPos - 1][1];
-                        ch->EnvPIPValue  = (ch->EnvPIPValue & 0x00FF) << 8;
+                        ch->EnvPIPValue = ((ch->InstrSeg.EnvPP[envPos][1] - ch->InstrSeg.EnvPP[envPos - 1][1]) & 0x00FF) << 8;
                         ch->EnvPIPValue /= (ch->InstrSeg.EnvPP[envPos][0] - ch->InstrSeg.EnvPP[envPos - 1][0]);
 
                         envVal = ch->EnvPAmp;
                         envDidInterpolate = 1;
                     }
                 }
+            }
+            else
+            {
+                ch->EnvPIPValue = 0;
             }
         }
 
@@ -1517,10 +1540,14 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
             ch->EnvPAmp += ch->EnvPIPValue;
 
             envVal = ch->EnvPAmp;
-            if ((envVal & 0xFF00) > 0x4000)
+            if ((envVal >> 8) > 0x40)
             {
+                if ((envVal >> 8) > ((0x40 + 0xC0) / 2))
+                    envVal = 16384;
+                else
+                    envVal = 0;
+
                 ch->EnvPIPValue = 0;
-                envVal = ((envVal & 0xFF00) > 0x8000) ? 0x0000 : 0x4000;
             }
         }
 
