@@ -14,6 +14,7 @@
 
 @interface FFMPEGDecoder : NSObject <CogDecoder>
 {
+    id<CogSource> source;
     BOOL seekable;
     int channels;
     int bitsPerSample;
@@ -24,6 +25,8 @@
     int bitrate;
     
 @private
+    unsigned char *buffer;
+    AVIOContext *ioCtx;
     int streamIndex;
     AVFormatContext *formatCtx;
     AVCodecContext *codecCtx;

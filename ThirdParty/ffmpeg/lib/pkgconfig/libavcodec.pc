@@ -5,10 +5,10 @@ includedir=${prefix}/include
 
 Name: libavcodec
 Description: FFmpeg codec library
-Version: 57.24.102
-Requires: libavutil >= 55.17.103
+Version: 57.48.101
+Requires: libavutil >= 55.28.100
 Requires.private: 
 Conflicts:
-Libs: -L${libdir}  -lavcodec -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework QuartzCore -framework CoreVideo -framework CoreFoundation -framework VideoDecodeAcceleration -framework QuartzCore -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -L/usr/local/lib -lSDLmain -lSDL -Wl,-framework,Cocoa -L/usr/local/Cellar/dcadec/0.2.0/lib -ldcadec -lm -lz -pthread -framework CoreServices
+Libs: -L${libdir}  -lavcodec -framework QuartzCore -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -framework CoreFoundation -framework AudioToolbox -framework CoreMedia -framework VideoDecodeAcceleration -framework CoreFoundation -framework QuartzCore -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -L/usr/local/lib -lSDLmain -lSDL -Wl,-framework,Cocoa -lm -lz -pthread -framework CoreServices
 Libs.private: 
 Cflags: -I${includedir}

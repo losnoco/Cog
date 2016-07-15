@@ -8,13 +8,29 @@
 
 // test
 #import "FFMPEGDecoder.h"
-#import "FFMPEGFileProtocols.h"
 
 #include <pthread.h>
 
 #import "Logging.h"
 
 #define ST_BUFF 2048
+
+int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size)
+{
+    id source = (__bridge id) opaque;
+    return (int) [source read:buf amount:buf_size];
+}
+
+int ffmpeg_write(void *opaque, uint8_t *buf, int buf_size)
+{
+    return -1;
+}
+
+int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
+{
+    id source = (__bridge id) opaque;
+    return [source seek:offset whence:whence] ? [source tell] : -1;
+}
 
 @implementation FFMPEGDecoder
 
@@ -52,7 +68,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         av_log_set_flags(AV_LOG_SKIP_REPEATED);
         av_log_set_level(AV_LOG_ERROR);
         av_register_all();
-        registerCogProtocols();
         av_lockmgr_register(lockmgr_callback);
     }
 }
@@ -65,6 +80,8 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         lastDecodedFrame = NULL;
         codecCtx = NULL;
         formatCtx = NULL;
+        ioCtx = NULL;
+        buffer = NULL;
     }
     return self;
 }
@@ -72,32 +89,60 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 - (BOOL)open:(id<CogSource>)s
 {
 	int errcode, i;
-	const char *filename = [[[[s url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String];
+    
+    source = s;
 	
 	formatCtx = NULL;
 	totalFrames = 0;
 	framesRead = 0;
 
 	// register all available codecs
+    
+    buffer = av_malloc(128 * 1024);
+    if (!buffer)
+    {
+        ALog(@"Out of memory!");
+        return NO;
+    }
+    
+    ioCtx = avio_alloc_context(buffer, 128 * 1024, 0, (__bridge void *)source, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
+    if (!ioCtx)
+    {
+        ALog(@"Unable to create AVIO context");
+        return NO;
+    }
+    
+    formatCtx = avformat_alloc_context();
+    if (!formatCtx)
+    {
+        ALog(@"Unable to allocate AVFormat context");
+        return NO;
+    }
+    
+    formatCtx->pb = ioCtx;
 	
-	if ((errcode = avformat_open_input(&formatCtx, filename, NULL, NULL)) < 0)
+	if ((errcode = avformat_open_input(&formatCtx, "", NULL, NULL)) < 0)
 	{
         char errDescr[4096];
         av_strerror(errcode, errDescr, 4096);
-        ALog(@"ERROR OPENING FILE, errcode = %d, error = %s", errcode, errDescr);
+        ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 		return NO;
 	}
 	
-    if(avformat_find_stream_info(formatCtx, NULL) < 0)
+    if((errcode = avformat_find_stream_info(formatCtx, NULL)) < 0)
     {
-        ALog(@"CAN'T FIND STREAM INFO!");
+        char errDescr[4096];
+        av_strerror(errcode, errDescr, 4096);
+        ALog(@"Can't find stream info, errcode = %d, error = %s", errcode, errDescr);
         return NO;
     }
     
     streamIndex = -1;
+    AVCodecParameters *codecPar;
+    
 	for(i = 0; i < formatCtx->nb_streams; i++) {
-        codecCtx = formatCtx->streams[i]->codec;
-        if(codecCtx->codec_type == AVMEDIA_TYPE_AUDIO)
+        codecPar = formatCtx->streams[i]->codecpar;
+        if(codecPar->codec_type == AVMEDIA_TYPE_AUDIO)
 		{
 			DLog(@"audio codec found");
             streamIndex = i;
@@ -109,6 +154,23 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         ALog(@"no audio codec found");
         return NO;
     }
+    
+    codecCtx = avcodec_alloc_context3(NULL);
+    if (!codecCtx)
+    {
+        ALog(@"could not allocate codec context");
+        return NO;
+    }
+    
+    if ( (errcode = avcodec_parameters_to_context(codecCtx, codecPar)) < 0 )
+    {
+        char errDescr[4096];
+        av_strerror(errcode, errDescr, 4096);
+        ALog(@"Can't copy codec parameters to context, errcode = %d, error = %s", errcode, errDescr);
+        return NO;
+    }
+    
+    av_codec_set_pkt_timebase(codecCtx, formatCtx->streams[streamIndex]->time_base);
 
     AVCodec * codec = avcodec_find_decoder(codecCtx->codec_id);
     if (!codec) {
@@ -116,8 +178,10 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 		return NO;
     }
     
-    if (avcodec_open2(codecCtx, codec, NULL) < 0) {
-        ALog(@"could not open codec");
+    if ( (errcode = avcodec_open2(codecCtx, codec, NULL)) < 0) {
+        char errDescr[4096];
+        av_strerror(errcode, errDescr, 4096);
+        ALog(@"could not open codec, errcode = %d, error = %s", errcode, errDescr);
         return NO;
     }
 
@@ -165,7 +229,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     }
     
 	totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
-    bitrate = (codecCtx->bit_rate) / 1000;
+    bitrate = (int)((codecCtx->bit_rate) / 1000);
     framesRead = 0;
     endOfStream = NO;
     
@@ -188,9 +252,13 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     
     if (lastDecodedFrame) { av_free(lastDecodedFrame); lastDecodedFrame = NULL; }
     
-    if (codecCtx) { avcodec_close(codecCtx); codecCtx = NULL; }
+    if (codecCtx) { avcodec_close(codecCtx); avcodec_free_context(&codecCtx); codecCtx = NULL; }
     
     if (formatCtx) { avformat_close_input(&(formatCtx)); formatCtx = NULL; }
+    
+    if (ioCtx) { av_free(ioCtx); ioCtx = NULL; buffer = NULL; }
+    
+    if (buffer) { av_free(buffer); buffer = NULL; }
 }
 
 - (void)dealloc
@@ -209,6 +277,8 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     
     int bytesToRead = frames * frameSize;
     int bytesRead = 0;
+    
+    int errcode;
     
     int8_t* targetBuf = (int8_t*) buf;
     memset(buf, 0, bytesToRead);
@@ -230,10 +300,14 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         {
             // consume next chunk of encoded data from input stream
             av_packet_unref(lastReadPacket);
-            if(av_read_frame(formatCtx, lastReadPacket) < 0)
+            if((errcode = av_read_frame(formatCtx, lastReadPacket)) < 0)
             {
-                DLog(@"End of stream");
-                endOfStream = YES;
+                if (errcode == AVERROR_EOF)
+                {
+                    DLog(@"End of stream");
+                    endOfStream = YES;
+                }
+                if (formatCtx->pb && formatCtx->pb->error) break;
             }
             
             if (lastReadPacket->stream_index != streamIndex)
@@ -269,10 +343,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             } while (!gotFrame && len > 0);
             if (len < 0)
             {
-                char errbuf[4096];
-                av_strerror(len, errbuf, 4096);
-                ALog(@"Error decoding: len = %d, gotFrame = %d, strerr = %s", len, gotFrame, errbuf);
-                
+                char errDescr[4096];
+                av_strerror(len, errDescr, 4096);
+                ALog(@"Error decoding packet, gotFrame = %d, errcode = %d, error = %s", gotFrame, len, errDescr);
                 dataSize = 0;
                 readNextPacket = YES;
             }
@@ -313,7 +386,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     
     int framesReadNow = bytesRead / frameSize;
     if ( totalFrames && ( framesRead + framesReadNow > totalFrames ) )
-        framesReadNow = totalFrames - framesRead;
+        framesReadNow = (int)(totalFrames - framesRead);
     
     framesRead += framesReadNow;
     
@@ -361,7 +434,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"wma", @"asf", @"xwma", @"tak", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"at3", @"wav", @"tta", @"vqf", @"vqe", @"vql", nil];
+	return [NSArray arrayWithObjects:@"wma", @"asf", @"xwma", @"xma", @"tak", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"at3", @"wav", @"tta", @"vqf", @"vqe", @"vql", nil];
 }
 
 + (NSArray *)mimeTypes

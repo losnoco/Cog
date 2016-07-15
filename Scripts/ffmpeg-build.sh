@@ -8,13 +8,14 @@
     --disable-dxva2 --enable-hwaccels\
     --disable-encoders --disable-muxers --disable-indevs --disable-outdevs\
     --disable-devices --disable-filters --disable-parsers --enable-parser=ac3\
+    --enable-parser=mpegaudio\
     --enable-demuxer=ac3 --disable-bsfs --disable-bzlib --disable-protocols\
     --disable-decoders --disable-decoder=libopus --disable-libopus\
     --enable-decoder=wmapro --enable-decoder=wmav1 --enable-decoder=wmav2\
     --enable-decoder=wmavoice --enable-decoder=wmalossless --enable-decoder=xma1\
     --enable-decoder=xma2 --enable-decoder=dca --enable-decoder=ac3\
     --disable-decoder=amrnb\
-    --disable-demuxers --enable-demuxer=asf\
+    --disable-demuxers --enable-demuxer=asf --enable-demuxer=xwma\
     --enable-demuxer=mov --enable-demuxer=oma --enable-demuxer=ac3\
     --disable-demuxer=amr --enable-demuxer=ogg\
     --enable-demuxer=tak --enable-decoder=tak\
@@ -26,7 +27,6 @@
     --enable-demuxer=dts --enable-demuxer=dtshd\
     --enable-demuxer=mp3 --enable-decoder=mp3float\
     --disable-libopencore-amrnb --disable-libopencore-amrwb\
-    --disable-version3 --disable-mmx\
-    --disable-yasm
+    --disable-version3
 
 make -j8
