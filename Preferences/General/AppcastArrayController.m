@@ -29,7 +29,7 @@
 
     [self addObject:
      [NSDictionary dictionaryWithObjectsAndKeys:
-      NSLocalizedStringFromTableInBundle(@"losnoco.net wheneverly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"https://f.losno.co/cog/mercury.xml", @"url",nil]];
+      NSLocalizedStringFromTableInBundle(@"losno.co wheneverly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"https://f.losno.co/cog/mercury.xml", @"url",nil]];
 }
 
 @end
