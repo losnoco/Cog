@@ -33,9 +33,9 @@
     AVFrame *lastDecodedFrame;
     AVPacket *lastReadPacket;
     int bytesConsumedFromDecodedFrame;
-    int bytesReadFromPacket;
     BOOL readNextPacket;
     BOOL endOfStream;
+    BOOL endOfAudio;
 }
 
 @end

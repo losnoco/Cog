@@ -29,7 +29,7 @@ int ffmpeg_write(void *opaque, uint8_t *buf, int buf_size)
 int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 {
     id source = (__bridge id) opaque;
-    return [source seek:offset whence:whence] ? [source tell] : -1;
+    return [source seekable] ? ([source seek:offset whence:whence] ? [source tell] : -1) : -1;
 }
 
 @implementation FFMPEGDecoder
@@ -228,10 +228,13 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             return NO;
     }
     
-	totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
+	//totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
+    AVRational tb = (AVRational) { 1, codecCtx->sample_rate };
+    totalFrames = av_rescale_q(formatCtx->streams[streamIndex]->duration, formatCtx->streams[streamIndex]->time_base, tb);
     bitrate = (int)((codecCtx->bit_rate) / 1000);
     framesRead = 0;
     endOfStream = NO;
+    endOfAudio = NO;
     
     if ( totalFrames < 0 )
         totalFrames = 0;
@@ -256,7 +259,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     
     if (formatCtx) { avformat_close_input(&(formatCtx)); formatCtx = NULL; }
     
-    if (ioCtx) { av_free(ioCtx); ioCtx = NULL; buffer = NULL; }
+    if (ioCtx) { buffer = ioCtx->buffer; av_free(ioCtx); ioCtx = NULL; }
     
     if (buffer) { av_free(buffer); buffer = NULL; }
 }
@@ -272,7 +275,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         return 0;
 
     int frameSize = channels * (bitsPerSample / 8);
-    int gotFrame = 0;
     int dataSize = 0;
     
     int bytesToRead = frames * frameSize;
@@ -296,69 +298,75 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         if ( dataSize < 0 )
             dataSize = 0;
         
-        while(readNextPacket && !endOfStream)
+        while(readNextPacket && !endOfAudio)
         {
             // consume next chunk of encoded data from input stream
-            av_packet_unref(lastReadPacket);
-            if((errcode = av_read_frame(formatCtx, lastReadPacket)) < 0)
+            if (!endOfStream)
+            {
+                av_packet_unref(lastReadPacket);
+                if((errcode = av_read_frame(formatCtx, lastReadPacket)) < 0)
+                {
+                    if (errcode == AVERROR_EOF)
+                    {
+                        DLog(@"End of stream");
+                        endOfStream = YES;
+                    }
+                    if (formatCtx->pb && formatCtx->pb->error) break;
+                }
+                if (lastReadPacket->stream_index != streamIndex)
+                    continue;
+            }
+            
+            if ((errcode = avcodec_send_packet(codecCtx, endOfStream ? NULL : lastReadPacket)) < 0)
+            {
+                if (errcode != AVERROR(EAGAIN))
+                {
+                    char errDescr[4096];
+                    av_strerror(errcode, errDescr, 4096);
+                    ALog(@"Error sending packet to codec, errcode = %d, error = %s", errcode, errDescr);
+                    return 0;
+                }
+            }
+            
+            readNextPacket = NO;     // we probably won't need to consume another chunk
+        }
+
+        if (dataSize <= bytesConsumedFromDecodedFrame)
+        {
+            if (endOfStream && endOfAudio)
+                break;
+            
+            bytesConsumedFromDecodedFrame = 0;
+
+            if ((errcode = avcodec_receive_frame(codecCtx, lastDecodedFrame)) < 0)
             {
                 if (errcode == AVERROR_EOF)
                 {
-                    DLog(@"End of stream");
-                    endOfStream = YES;
+                    endOfAudio = YES;
+                    break;
                 }
-                if (formatCtx->pb && formatCtx->pb->error) break;
-            }
-            
-            if (lastReadPacket->stream_index != streamIndex)
-                continue;
-            
-            readNextPacket = NO;     // we probably won't need to consume another chunk
-            bytesReadFromPacket = 0; // until this one is fully decoded
-        }
-        
-        if (dataSize <= bytesConsumedFromDecodedFrame)
-        {
-            if (endOfStream)
-                break;
-            
-            // consumed all decoded samples - decode more
-            av_frame_unref(lastDecodedFrame);
-            bytesConsumedFromDecodedFrame = 0;
-            int len;
-            do {
-                len = avcodec_decode_audio4(codecCtx, lastDecodedFrame, &gotFrame, lastReadPacket);
-                if (len > 0)
+                else if (errcode == AVERROR(EAGAIN))
                 {
-                    if (len >= lastReadPacket->size) {
-                        lastReadPacket->data -= bytesReadFromPacket;
-                        lastReadPacket->size += bytesReadFromPacket;
-                        readNextPacket = YES;
-                        break;
-                    }
-                    bytesReadFromPacket += len;
-                    lastReadPacket->data += len;
-                    lastReadPacket->size -= len;
+                   // Read another packet
+                    readNextPacket = YES;
+                    continue;
                 }
-            } while (!gotFrame && len > 0);
-            if (len < 0)
-            {
-                char errDescr[4096];
-                av_strerror(len, errDescr, 4096);
-                ALog(@"Error decoding packet, gotFrame = %d, errcode = %d, error = %s", gotFrame, len, errDescr);
-                dataSize = 0;
-                readNextPacket = YES;
+                else
+                {
+                    char errDescr[4096];
+                    av_strerror(errcode, errDescr, 4096);
+                    ALog(@"Error receiving frame, errcode = %d, error = %s", errcode, errDescr);
+                    return 0;
+                }
             }
-            else
-            {
-                // Something has been successfully decoded
-                dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
-                                                      lastDecodedFrame->nb_samples,
-                                                      codecCtx->sample_fmt, 1);
+
+            // Something has been successfully decoded
+            dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
+                                                  lastDecodedFrame->nb_samples,
+                                                  codecCtx->sample_fmt, 1);
                 
-                if ( dataSize < 0 )
-                    dataSize = 0;
-            }
+            if ( dataSize < 0 )
+                dataSize = 0;
         }
 
         int toConsume = FFMIN((dataSize - bytesConsumedFromDecodedFrame), (bytesToRead - bytesRead));
@@ -402,6 +410,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     {
         framesRead = totalFrames;
         endOfStream = YES;
+        endOfAudio = YES;
         return -1;
     }
     int64_t ts = frame * (formatCtx->duration) / totalFrames;
@@ -411,6 +420,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
     framesRead = frame;
     endOfStream = NO;
+    endOfAudio = NO;
 	
     return frame;
 }
