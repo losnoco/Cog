@@ -21,7 +21,7 @@
     --enable-demuxer=tak --enable-decoder=tak\
     --enable-decoder=dsd_lsbf --enable-decoder=dsd_lsbf_planar\
     --enable-decoder=dsd_msbf --enable-decoder=dsd_msbf_planar\
-    --enable-demuxer=dsf\
+    --enable-demuxer=dsf --enable-demuxer=wav\
     --enable-demuxer=aac --enable-decoder=aac\
     --enable-decoder=atrac3 --enable-decoder=atrac3p\
     --enable-demuxer=dts --enable-demuxer=dtshd\
