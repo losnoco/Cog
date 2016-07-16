@@ -354,9 +354,10 @@
     [userDefaultsValuesDict setObject:[NSNumber numberWithInt:8] forKey:@"hotKeySpamKeyCode"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeySpamModifiers"];
 
-    NSString * feedURLdefault = @"https://www.kode54.net/cog/mercury.xml";
+    NSString * feedURLdefault = @"https://f.losno.co/cog/mercury.xml";
     NSString * feedURLbroken = @"https://kode54.net/cog/stable.xml";
     NSString * feedURLbroken2 = @"https://kode54.net/cog/mercury.xml";
+    NSString * feedURLbroken3 = @"https://www.kode54.net/cog/mercury.xml";
 	[userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
 
 
@@ -381,7 +382,8 @@
     
     //And if the existing feed URL is broken due to my ineptitude with the above defaults, fix it
     if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"] isEqualToString:feedURLbroken] ||
-        [[[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"] isEqualToString:feedURLbroken2])
+        [[[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"] isEqualToString:feedURLbroken2] ||
+        [[[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"] isEqualToString:feedURLbroken3])
         [[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
 	
 	//Add observers
