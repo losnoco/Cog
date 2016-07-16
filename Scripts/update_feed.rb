@@ -64,7 +64,7 @@ if appcast_revision < latest_revision
   %x[rm -rf '#{temp_path}/Cog.app' '#{temp_path}/Cog.old' '#{temp_path}/Cog.zip']
   
   #Retrieve the current full package
-  local_file = appcast_url.gsub(/https:\/\/www\.kode54\.net\/cog/, "#{site_dir}")
+  local_file = appcast_url.gsub(/https:\/\/f\.losno\.co\/cog/, "#{site_dir}/#{feed}_builds")
   %x[cp '#{local_file}' '#{temp_path}/Cog.zip']
   
   #Unpack and rename
@@ -97,7 +97,10 @@ if appcast_revision < latest_revision
   #Send the delta
   %x[cp '#{temp_path}/#{feed}.delta' '#{site_dir}/#{feed}_builds/#{filename_delta}']
   %x[rm '#{temp_path}/#{feed}.delta']
-  
+ 
+  #Upload them to S3
+  %x[s3cmd put -P '#{site_dir}/#{feed}_builds/#{filename}' '#{site_dir}/#{feed}_builds}/#{filename_delta}' s3://balde.losno.co/cog/ --signature-v2]
+ 
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.old' '#{temp_path}/Cog.app']
 
@@ -117,14 +120,14 @@ if appcast_revision < latest_revision
   new_item.elements['sparkle:minimumSystemVersion'].text =  '10.7.0'
 
   new_item.add_element('enclosure')
-  new_item.elements['enclosure'].add_attribute('url', "https://www.kode54.net/cog/#{feed}_builds/#{filename}")
+  new_item.elements['enclosure'].add_attribute('url', "https://f.losno.co/cog/#{filename}")
   new_item.elements['enclosure'].add_attribute('length', filesize)
   new_item.elements['enclosure'].add_attribute('type', 'application/octet-stream')
   new_item.elements['enclosure'].add_attribute('sparkle:version', "#{latest_revision}")
   
   new_item.add_element('sparkle:deltas')
   new_item.elements['sparkle:deltas'].add_element('enclosure')
-  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('url', "https://www.kode54.net/cog/#{feed}_builds/#{filename_delta}")
+  new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('url', "https://f.losno.co/cog/#{filename_delta}")
   new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('length', filesize_delta)
   new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('type', 'application/octet-stream')
   new_item.elements['sparkle:deltas'].elements['enclosure'].add_attribute('sparkle:version', "#{latest_revision}")
@@ -143,4 +146,7 @@ if appcast_revision < latest_revision
 
   #Send the updated appcast to the server
   %x[cp '#{new_xml.path}' '#{site_dir}/#{feed}.xml']
+
+  #Upload to S3
+  %x[s3cmd put -P '#{site_dir}/#{feed}.xml' s3://balde.losno.co/cog/ --signature-v2]
 end
