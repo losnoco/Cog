@@ -29,6 +29,19 @@ int ffmpeg_write(void *opaque, uint8_t *buf, int buf_size)
 int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 {
     id source = (__bridge id) opaque;
+    if (whence & AVSEEK_SIZE)
+    {
+        if ([source seekable])
+        {
+            int64_t curOffset = [source tell];
+            [source seek:0 whence:SEEK_END];
+            int64_t size = [source tell];
+            [source seek:curOffset whence:SEEK_SET];
+            return size;
+        }
+        return -1;
+    }
+    whence &= ~(AVSEEK_SIZE | AVSEEK_FORCE);
     return [source seekable] ? ([source seek:offset whence:whence] ? [source tell] : -1) : -1;
 }
 
@@ -444,7 +457,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"wma", @"asf", @"xwma", @"xma", @"tak", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"at3", @"wav", @"tta", @"vqf", @"vqe", @"vql", nil];
+	return [NSArray arrayWithObjects:@"wma", @"asf", @"tak", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", nil];
 }
 
 + (NSArray *)mimeTypes

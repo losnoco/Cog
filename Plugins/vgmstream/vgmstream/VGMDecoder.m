@@ -130,7 +130,7 @@ VGMSTREAM *init_vgmstream_from_cogfile(const char *path) {
     sampleRate = stream->sample_rate;
     channels = stream->channels;
     totalFrames = get_vgmstream_play_samples( 2.0, 10.0, 10.0, stream );
-    framesFade = sampleRate * 10;
+    framesFade = stream->loop_flag ? sampleRate * 10 : 0;
     framesLength = totalFrames - framesFade;
     
     framesRead = 0;
@@ -161,14 +161,17 @@ VGMSTREAM *init_vgmstream_from_cogfile(const char *path) {
 {
     BOOL repeatone = IsRepeatOneSet();
     
-    if (!repeatone && framesRead >= totalFrames)
-        return 0;
+    if (!repeatone) {
+        if (framesRead >= totalFrames) return 0;
+        else if (framesRead + frames > totalFrames)
+            frames = totalFrames - framesRead;
+    }
 
     sample * sbuf = (sample *) buf;
     
     render_vgmstream( sbuf, frames, stream );
     
-    if ( !repeatone && framesRead + frames > framesLength ) {
+    if ( !repeatone && framesFade && framesRead + frames > framesLength ) {
         long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
         long fadeEnd = (framesRead + frames) > totalFrames ? totalFrames : (framesRead + frames);
         long fadePos;
@@ -231,7 +234,7 @@ VGMSTREAM *init_vgmstream_from_cogfile(const char *path) {
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"2dx9", @"aaap", @"aax", @"acm", @"adp", @"adpcm", @"ads", @"adx", @"afc", @"agsc", @"ahx",@"aifc", @"aiff", @"aix", @"amts", @"as4", @"asd", @"asf", @"asr", @"ass", @"ast", @"aud", @"aus", @"baf", @"baka", @"bar", @"bcstm", @"bcwav", @"bfstm", @"bfwav", @"bfwavnsmbu", @"bg00", @"bgw", @"bh2pcm", @"bmdx", @"bns", @"bnsf", @"bo2", @"brstm", @"caf", @"capdsp", @"ccc", @"cfn", @"cnk", @"dcs", @"dcsw", @"ddsp", @"de2", @"dmsg", @"dsp", @"dvi", @"dxh", @"eam", @"emff", @"enth", @"fag", @"filp", @"fsb", @"fwav", @"gca", @"gcm", @"gcsw", @"gcw", @"genh", @"gms", @"gsp", @"hca", @"hgc1", @"his", @"hps", @"hwas", @"idsp", @"idvi", @"ikm", @"ild", @"int", @"isd", @"ish", @"ivaud", @"ivb", @"joe", @"kces", @"kcey", @"khv", @"kraw", @"leg", @"logg", @"lps", @"lsf", @"lwav", @"matx", @"mcg", @"mi4", @"mib", @"mic", @"mihb", @"mpdsp", @"msa", @"mss", @"msvp", @"mus", @"musc", @"musx", @"mwv", @"myspd", @"ndp", @"npsf", @"nus3bank", @"nwa", @"omu", @"otm", @"p3d", @"pcm", @"pdt", @"pnb", @"pos", @"psh", @"psw", @"raw", @"rkv", @"rnd", @"rrds", @"rsd", @"rsf", @"rstm", @"rwar", @"rwav", @"rws", @"rwsd", @"rwx", @"rxw", @"s14", @"sab", @"sad", @"sap", @"sc", @"scd", @"sd9", @"sdt", @"seg", @"sfl", @"sfs", @"sl3", @"sli", @"smp", @"smpl", @"snd", @"sng", @"sns", @"spd", @"sps", @"spsd", @"spt", @"spw", @"ss2", @"ss7", @"ssm", @"sss", @"ster", @"sth", @"stm", @"stma", @"str", @"strm", @"sts", @"stx", @"svag", @"svs", @"swav", @"swd", @"tec", @"thp", @"tk5", @"tydsp", @"um3", @"vag", @"vas", @"vgs", @"vig", @"vjdsp", @"voi", @"vpk", @"vs", @"vsf", @"waa", @"wac", @"wad", @"wam", @"was", @"wavm", @"wb", @"wii", @"wp2", @"wsd", @"wsi", @"wvs", @"xa", @"xa2", @"xa30", @"xmu", @"xss", @"xvas", @"xwav", @"xwb", @"ydsp", @"ymf", @"zsd", @"zwdsp", nil];
+	return [NSArray arrayWithObjects:@"2dx9", @"aaap", @"aax", @"acm", @"adp", @"adpcm", @"ads", @"adx", @"afc", @"agsc", @"ahx",@"aifc", @"aiff", @"aix", @"amts", @"as4", @"asd", @"asf", @"asr", @"ass", @"ast", @"at3", @"aud", @"aus", @"baf", @"baka", @"bar", @"bcstm", @"bcwav", @"bfstm", @"bfwav", @"bfwavnsmbu", @"bg00", @"bgw", @"bh2pcm", @"bmdx", @"bns", @"bnsf", @"bo2", @"brstm", @"caf", @"capdsp", @"ccc", @"cfn", @"cnk", @"dcs", @"dcsw", @"ddsp", @"de2", @"dmsg", @"dsp", @"dvi", @"dxh", @"eam", @"emff", @"enth", @"fag", @"filp", @"fsb", @"fwav", @"gca", @"gcm", @"gcsw", @"gcw", @"genh", @"gms", @"gsp", @"hca", @"hgc1", @"his", @"hps", @"hwas", @"idsp", @"idvi", @"ikm", @"ild", @"int", @"isd", @"ish", @"ivaud", @"ivb", @"joe", @"kces", @"kcey", @"khv", @"kraw", @"leg", @"logg", @"lps", @"lsf", @"lwav", @"matx", @"mcg", @"mi4", @"mib", @"mic", @"mihb", @"mpdsp", @"msa", @"mss", @"msvp", @"mus", @"musc", @"musx", @"mwv", @"myspd", @"ndp", @"npsf", @"nus3bank", @"nwa", @"omu", @"otm", @"p3d", @"pcm", @"pdt", @"pnb", @"pos", @"psh", @"psw", @"raw", @"rkv", @"rnd", @"rrds", @"rsd", @"rsf", @"rstm", @"rwar", @"rwav", @"rws", @"rwsd", @"rwx", @"rxw", @"s14", @"sab", @"sad", @"sap", @"sc", @"scd", @"sd9", @"sdt", @"seg", @"sfl", @"sfs", @"sl3", @"sli", @"smp", @"smpl", @"snd", @"sng", @"sns", @"spd", @"sps", @"spsd", @"spt", @"spw", @"ss2", @"ss7", @"ssm", @"sss", @"ster", @"sth", @"stm", @"stma", @"str", @"strm", @"sts", @"stx", @"svag", @"svs", @"swav", @"swd", @"tec", @"thp", @"tk5", @"tydsp", @"um3", @"vag", @"vas", @"vgs", @"vig", @"vjdsp", @"voi", @"vpk", @"vs", @"vsf", @"waa", @"wac", @"wad", @"wam", @"was", @"wavm", @"wb", @"wii", @"wp2", @"wsd", @"wsi", @"wvs", @"xa", @"xa2", @"xa30", @"xma", @"xmu", @"xss", @"xvas", @"xwav", @"xwb", @"xwma", @"ydsp", @"ymf", @"zsd", @"zwdsp", nil];
 }
 
 + (NSArray *)mimeTypes 

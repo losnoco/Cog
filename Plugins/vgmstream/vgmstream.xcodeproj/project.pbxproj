@@ -320,6 +320,7 @@
 				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					../../ThirdParty/ffmpeg/include,
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../../Frameworks/Vorbis/include,
 					../../Frameworks/Ogg/include,
@@ -343,6 +344,7 @@
 				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					../../ThirdParty/ffmpeg/include,
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../../Frameworks/Vorbis/include,
 					../../Frameworks/Ogg/include,
