@@ -99,7 +99,8 @@ if appcast_revision < latest_revision
   %x[rm '#{temp_path}/#{feed}.delta']
  
   #Upload them to S3
-  %x[s3cmd put -P -m application/octet-stream '#{site_dir}/#{feed}_builds/#{filename}' -P '#{site_dir}/#{feed}_builds}/#{filename_delta}' s3://balde.losno.co/cog/ --signature-v2]
+  %x[s3cmd put -P -m application/octet-stream '#{site_dir}/#{feed}_builds}/#{filename_delta}' s3://balde.losno.co/cog/ --signature-v2]
+  %x[s3cmd put -P -m application/octet-stream '#{site_dir}/#{feed}_builds/#{filename}' s3://balde.losno.co/cog/ --signature-v2]
  
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.old' '#{temp_path}/Cog.app']
@@ -148,7 +149,7 @@ if appcast_revision < latest_revision
   %x[cp '#{new_xml.path}' '#{site_dir}/#{feed}.xml']
 
   #Upload to S3
-  %x[s3cmd put -P '#{site_dir}/#{feed}.xml' s3://balde.losno.co/cog/ --signature-v2]
+  %x[s3cmd put -P -m application/xml '#{site_dir}/#{feed}.xml' s3://balde.losno.co/cog/ --signature-v2]
 
   #Invalidate CDN
   %x[aws cloudfront create-invalidation --distribution-id E1WUF11KRNP2VH --paths /cog/mercury.xml]
