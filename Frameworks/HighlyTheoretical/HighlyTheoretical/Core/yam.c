@@ -706,6 +706,7 @@ static void keyon(struct YAM_CHAN *chan) {
   chan->adpcminloop = 0;
   chan->samplebufcur = 0;
   chan->samplebufnext = 0;
+  chan->lp = 0;
 //printf("keyon %08X passed\n",chan);
 }
 
@@ -1739,8 +1740,8 @@ uint32 EMU_CALL yam_aica_load_reg(void *state, uint32 a, uint32 mask) {
     if(YAMSTATE->out_pending > 0) yam_flush(YAMSTATE);
     { int c = (YAMSTATE->mslc) & 0x3F;
       d  = (((uint32)(YAMSTATE->chan[c].lp      )) & 1) << 15;
-      if(mask & 0xFF00) { YAMSTATE->chan[c].lp = 0; }
       if(YAMSTATE->afsel == 0) {
+        YAMSTATE->chan[c].lp = 0;
         d |= (((uint32)(YAMSTATE->chan[c].envstate)) & 3) << 13;
         d |= (YAMSTATE->chan[c].envlevel) & 0x1FFF;
       } else {
@@ -2057,6 +2058,7 @@ static void readnextsample(
       case LOOP_NONE:
         chan->sampler_dir = 0;
         chan->playpos = 0;
+        chan->lp = 1;
         goto done;
       case LOOP_FORWARDS:
         chan->playpos = chan->loopstart;
@@ -2310,7 +2312,8 @@ static void render_and_add_channel(
   uint32 rendersamples;
 
   // Channel does nothing if attenuation >= 0x3C0
-  if(chan->envlevel >= 0x3C0) { chan->envlevel = 0x1FFF; return; }
+  if(chan->envlevel == 0x1FFF) { return; }
+  if(chan->envlevel >= 0x3C0) { chan->envlevel = 0x1FFF; chan->lp = 1; return; }
 
   if(!chan->disdl) { directout = NULL; }
   if(!chan->dsplevel) { fxout = NULL; }
