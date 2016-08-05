@@ -63,6 +63,27 @@
 		ALog(@"GME: Error loading file: %@ %s", [url path], error);
 		return [NSArray arrayWithObject:url];
 	}
+    
+    NSURL *m3uurl = [url URLByDeletingPathExtension];
+    m3uurl = [m3uurl URLByAppendingPathExtension:@"m3u"];
+    if ([source open:m3uurl])
+    {
+        if ([source seekable])
+        {
+            [source seek:0 whence:SEEK_END];
+            size = [source tell];
+            [source seek:0 whence:SEEK_SET];
+            
+            data = malloc(size);
+            [source read:data amount:size];
+            
+            error = gme_load_m3u_data(emu, data, size);
+            free(data);
+            
+            ALog(@"M3U loaded: %s", error ? error : "no error");
+        }
+    }
+    
 	int track_count = gme_track_count(emu);
 	
 	NSMutableArray *tracks = [NSMutableArray array];

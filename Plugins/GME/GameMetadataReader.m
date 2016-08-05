@@ -71,6 +71,24 @@
 		return NO;
 	}
     
+    NSURL *m3uurl = [url URLByDeletingPathExtension];
+    m3uurl = [m3uurl URLByAppendingPathExtension:@"m3u"];
+    if ([source open:m3uurl])
+    {
+        if ([source seekable])
+        {
+            [source seek:0 whence:SEEK_END];
+            long size = [source tell];
+            [source seek:0 whence:SEEK_SET];
+            
+            void *data = malloc(size);
+            [source read:data amount:size];
+            
+            gme_load_m3u_data(emu, data, size);
+            free(data);
+        }
+    }
+    
 	int track_num;
 	if ([[url fragment] length] == 0)
 		track_num = 0;

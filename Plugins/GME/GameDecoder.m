@@ -78,6 +78,26 @@ gme_err_t readCallback( void* data, void* out, long count )
 		return NO;
 	}
 	
+    NSURL *m3uurl = [[source url] URLByDeletingPathExtension];
+    m3uurl = [m3uurl URLByAppendingPathExtension:@"m3u"];
+    id audioSourceClass = NSClassFromString(@"AudioSource");
+    id<CogSource> m3usrc = [audioSourceClass audioSourceForURL:m3uurl];
+    if ([m3usrc open:m3uurl])
+    {
+        if ([m3usrc seekable])
+        {
+            [source seek:0 whence:SEEK_END];
+            long size = [source tell];
+            [source seek:0 whence:SEEK_SET];
+            
+            void *data = malloc(size);
+            [source read:data amount:size];
+            
+            gme_load_m3u_data(emu, data, size);
+            free(data);
+        }
+    }
+    
 	int track_num = [[[source url] fragment] intValue]; //What if theres no fragment? Assuming we get 0.
 	
 	gme_info_t * info;
