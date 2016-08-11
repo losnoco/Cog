@@ -8,12 +8,12 @@
     --disable-dxva2 --disable-everything --enable-hwaccels\
     --enable-parser=ac3 --enable-demuxer=ac3 --enable-decoder=ac3\
     --enable-parser=mpegaudio --enable-decoder=wmapro --enable-decoder=wmav1\
-    --enable-decoder=wmav2 --enable-decoder=wmavoice --enable-decoder=wmalossless
-    --enable-decoder=xma1 --enable-decoder=xma2 --enable-demuxer=asf
+    --enable-decoder=wmav2 --enable-decoder=wmavoice --enable-decoder=wmalossless\
+    --enable-decoder=xma1 --enable-decoder=xma2 --enable-demuxer=asf\
     --enable-demuxer=xwma --enable-decoder=dca --enable-demuxer=mov\
     --enable-demuxer=oma --enable-demuxer=ogg --enable-demuxer=tak\
-    --enable-decoder=tak --enable-decoder=dsd_lsbf
-    --enable-decoder=dsd_lsbf_planar --enable-decoder=dsd_msbf
+    --enable-decoder=tak --enable-decoder=dsd_lsbf\
+    --enable-decoder=dsd_lsbf_planar --enable-decoder=dsd_msbf\
     --enable-decoder=dsd_msbf_planar --enable-demuxer=dsf --enable-demuxer=wav\
     --enable-demuxer=aac --enable-decoder=aac\
     --enable-decoder=atrac3 --enable-decoder=atrac3p\
