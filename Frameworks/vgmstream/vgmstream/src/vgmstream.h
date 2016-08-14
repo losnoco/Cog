@@ -897,6 +897,9 @@ typedef struct {
     int readNextPacket;
     int endOfStream;
     int endOfAudio;
+    
+    // Seeking is not ideal, so rollback is necessary
+    int samplesToDiscard;
 } ffmpeg_codec_data;
 #endif
 
