@@ -21,14 +21,14 @@
 #endif
 #endif
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #undef VERSION_OS
 #ifdef _WIN64
 #define VERSION_OS "Win64"
 #else
 #define VERSION_OS "Win32"
 #endif
-#define PACKAGE_VERSION "4.70.0"
+#define PACKAGE_VERSION "5.0.0-alpha4"
 #endif
 
 #define FALSE 0
@@ -47,9 +47,9 @@ char yna (void);
 int DoReadFile (FILE *hFile, void *lpBuffer, uint32_t nNumberOfBytesToRead, uint32_t *lpNumberOfBytesRead);
 int DoWriteFile (FILE *hFile, void *lpBuffer, uint32_t nNumberOfBytesToWrite, uint32_t *lpNumberOfBytesWritten);
 int64_t DoGetFileSize (FILE *hFile);
-uint32_t DoGetFilePosition (FILE *hFile);
-int DoSetFilePositionAbsolute (FILE *hFile, uint32_t pos);
-int DoSetFilePositionRelative (FILE *hFile, int32_t pos, int mode);
+int64_t DoGetFilePosition (FILE *hFile);
+int DoSetFilePositionAbsolute (FILE *hFile, int64_t pos);
+int DoSetFilePositionRelative (FILE *hFile, int64_t pos, int mode);
 int DoUngetc (int c, FILE *hFile);
 int DoCloseHandle (FILE *hFile);
 int DoTruncateFile (FILE *hFile);

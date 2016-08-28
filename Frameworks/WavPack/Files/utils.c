@@ -11,7 +11,7 @@
 // This module provides general purpose utilities for the WavPack command-line
 // utilities and the self-extraction module.
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <io.h>
@@ -31,16 +31,19 @@
 #include "wavpack.h"
 #include "utils.h"
 
-#ifdef WIN32
-#define fileno _fileno
-#define stat64 __stat64
-#define fstat64 _fstat64
+#ifdef _WIN32
+#include "win32_unicode_support.h"
+#define fprintf fprintf_utf8
+#define fputs fputs_utf8
+#define remove(f) unlink_utf8(f)
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 
 int copy_timestamp (const char *src_filename, const char *dst_filename)
 {
+    wchar_t *src_filename_utf16 = utf8_to_utf16(src_filename);
+    wchar_t *dst_filename_utf16 = utf8_to_utf16(dst_filename);
     FILETIME last_modified;
     HANDLE src, dst;
     int res = TRUE;
@@ -48,10 +51,13 @@ int copy_timestamp (const char *src_filename, const char *dst_filename)
     if (*src_filename == '-' || *dst_filename == '-')
         return res;
 
-    src = CreateFile (src_filename, GENERIC_READ, FILE_SHARE_READ, NULL,
+    if (!src_filename_utf16 || !dst_filename_utf16)
+        return FALSE;
+
+    src = CreateFileW (src_filename_utf16, GENERIC_READ, FILE_SHARE_READ, NULL,
          OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
-    dst = CreateFile (dst_filename, GENERIC_WRITE, FILE_SHARE_WRITE, NULL,
+    dst = CreateFileW (dst_filename_utf16, GENERIC_WRITE, FILE_SHARE_WRITE, NULL,
          OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
     if (src == INVALID_HANDLE_VALUE || dst == INVALID_HANDLE_VALUE ||
@@ -64,6 +70,9 @@ int copy_timestamp (const char *src_filename, const char *dst_filename)
 
     if (dst != INVALID_HANDLE_VALUE)
         CloseHandle (dst);
+
+    free (src_filename_utf16);
+    free (dst_filename_utf16);
 
     return res;
 }
@@ -101,28 +110,22 @@ int copy_timestamp(const char *src_filename, const char *dst_filename)
 //////////////////////////////////////////////////////////////////////////////
 // This function parses a filename (with or without full path) and returns  //
 // a pointer to the extension (including the "."). If no extension is found //
-// then NULL is returned. Extensions with more than 3 letters don't count.  //
+// then NULL is returned. Extensions with more than 4 letters don't count.  //
 //////////////////////////////////////////////////////////////////////////////
 
-#if defined(WIN32)
-
-static int is_second_byte (char *filespec, char *pos);
+#if defined(_WIN32)
 
 char *filespec_ext (char *filespec)
 {
     char *cp = filespec + strlen (filespec);
-    LANGID langid = GetSystemDefaultLangID ();
 
     while (--cp >= filespec) {
-
-        if (langid == 0x411 && is_second_byte (filespec, cp))
-            --cp;
 
         if (*cp == '\\' || *cp == ':')
             return NULL;
 
         if (*cp == '.') {
-            if (strlen (cp) > 1 && strlen (cp) <= 4)
+            if (strlen (cp+1) && strlen (cp+1) <= 4)
                 return cp;
             else
                 return NULL;
@@ -144,7 +147,7 @@ char *filespec_ext (char *filespec)
             return NULL;
 
         if (*cp == '.') {
-            if (strlen (cp) > 1 && strlen (cp) <= 4)
+            if (strlen (cp+1) && strlen (cp+1) <= 4)
                 return cp;
             else
                 return NULL;
@@ -165,7 +168,7 @@ char *filespec_ext (char *filespec)
 // returned.                                                                //
 //////////////////////////////////////////////////////////////////////////////
 
-#if (defined(__GNUC__) || defined(__sun)) && !defined(WIN32)
+#if (defined(__GNUC__) || defined(__sun)) && !defined(_WIN32)
 
 char *filespec_path (char *filespec)
 {
@@ -203,8 +206,8 @@ char *filespec_path (char *filespec)
 char *filespec_path (char *filespec)
 {
     char *cp = filespec + strlen (filespec);
-    LANGID langid = GetSystemDefaultLangID ();
-    struct _finddata_t finddata;
+    struct _wfinddata_t wfinddata;
+    wchar_t *filespec_utf16;
     intptr_t file;
 
     if (cp == filespec || filespec_wild (filespec))
@@ -212,23 +215,28 @@ char *filespec_path (char *filespec)
 
     --cp;
 
-    if (langid == 0x411 && is_second_byte (filespec, cp))
-        --cp;
-
     if (*cp == '\\' || *cp == ':')
         return filespec;
 
     if (*cp == '.' && cp == filespec)
         return strcat (filespec, "\\");
 
-    if ((file = _findfirst (filespec, &finddata)) != (intptr_t) -1 &&
-        (finddata.attrib & _A_SUBDIR)) {
+    filespec_utf16 = utf8_to_utf16(filespec);
+
+    if (!filespec_utf16)
+        return NULL;
+
+    if ((file = _wfindfirst (filespec_utf16, &wfinddata)) != (intptr_t) -1 &&
+        (wfinddata.attrib & _A_SUBDIR)) {
             _findclose (file);
+            free (filespec_utf16);
             return strcat (filespec, "\\");
     }
-    if (file != -1L)
-            _findclose(file);
 
+    if (file != -1L)
+        _findclose(file);
+
+    free (filespec_utf16);
     return NULL;
 }
 
@@ -249,16 +257,13 @@ char *filespec_wild (char *filespec)
 // a pointer to the actual filename, or NULL if no filename can be found.   //
 //////////////////////////////////////////////////////////////////////////////
 
-#if defined(WIN32)
+#if defined(_WIN32)
 
 char *filespec_name (char *filespec)
 {
     char *cp = filespec + strlen (filespec);
-    LANGID langid = GetSystemDefaultLangID ();
 
     while (--cp >= filespec) {
-        if (langid == 0x411 && is_second_byte (filespec, cp))
-            --cp;
 
         if (*cp == '\\' || *cp == ':')
             break;
@@ -289,27 +294,6 @@ char *filespec_name (char *filespec)
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
-// This function returns TRUE if "pos" is pointing to the second byte of a  //
-// double-byte character in the string "filespec" which is assumed to be    //
-// shift-JIS.                                                               //
-//////////////////////////////////////////////////////////////////////////////
-
-#if defined(WIN32)
-
-static int is_second_byte (char *filespec, char *pos)
-{
-    unsigned char *cp = pos;
-
-    while (cp > filespec && ((cp [-1] >= 0x81 && cp [-1] <= 0x9f) ||
-                             (cp [-1] >= 0xe0 && cp [-1] <= 0xfc)))
-        cp--;
-
-    return (int)((unsigned char *)pos - cp) & 1;
-}
-
-#endif
-
-//////////////////////////////////////////////////////////////////////////////
 // This function allows the user to type 'y', 'n', or 'a' (with Enter) in   //
 // response to a system query. The return value is the key typed as         //
 // lowercase (regardless of the typed case).                                //
@@ -325,7 +309,7 @@ char yna (void)
     waiting_input = 1;
 
     while (1) {
-#if defined(WIN32)
+#if defined(_WIN32)
         key = _getch ();
 #else
         key = fgetc(stdin);
@@ -341,31 +325,39 @@ char yna (void)
         else if (key == '\r' || key == '\n') {
             if (choice) {
                 fprintf (stderr, "\r\n");
+                fflush (stderr);
                 break;
             }
-            else
+            else {
                 fprintf (stderr, "%c", 7);
+                fflush (stderr);
+            }
         }
         else if (key == 'Y' || key == 'y') {
-#ifdef WIN32
+#ifdef _WIN32
             fprintf (stderr, "%c\b", key);
+            fflush (stderr);
 #endif
             choice = 'y';
         }
         else if (key == 'N' || key == 'n') {
-#ifdef WIN32
+#ifdef _WIN32
             fprintf (stderr, "%c\b", key);
+            fflush (stderr);
 #endif
             choice = 'n';
         }
         else if (key == 'A' || key == 'a') {
-#ifdef WIN32
+#ifdef _WIN32
             fprintf (stderr, "%c\b", key);
+            fflush (stderr);
 #endif
             choice = 'a';
         }
-        else
+        else {
             fprintf (stderr, "%c", 7);
+            fflush (stderr);
+        }
     }
 
     waiting_input = 0;
@@ -382,7 +374,7 @@ char yna (void)
 
 extern int debug_logging_mode;
 
-#ifdef WIN32
+#ifdef _WIN32
 
 int get_app_path (char *app_path)
 {
@@ -495,36 +487,10 @@ void error_line (char *error, ...)
 
 #endif
 
-void debug_line (char *error, ...)
-{
-    char error_msg [512];
-    va_list argptr;
-
-    if (!debug_logging_mode)
-        return;
-
-    error_msg [0] = '\r';
-    va_start (argptr, error);
-    vsprintf (error_msg + 1, error, argptr);
-    va_end (argptr);
-    fputs (error_msg, stderr);
-    finish_line ();
-
-    if (debug_logging_mode) {
-        FILE *error_log = fopen ("c:\\wavpack.log", "a+");
-
-        if (error_log) {
-            fputs (error_msg + 1, error_log);
-            fputc ('\n', error_log);
-            fclose (error_log);
-        }
-    }
-}
-
 //////////////////////////////////////////////////////////////////////////////
 // Function to intercept ^C or ^Break typed at the console.                 //
 //////////////////////////////////////////////////////////////////////////////
-#if defined(WIN32)
+#if defined(_WIN32)
 static int break_flag;
 
 BOOL WINAPI ctrl_handler (DWORD ctrl)
@@ -581,14 +547,17 @@ void finish_line (void)
     HANDLE hConIn = GetStdHandle (STD_ERROR_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO coninfo;
 
-    if (hConIn && GetConsoleScreenBufferInfo (hConIn, &coninfo)) {
-        unsigned char spaces = coninfo.dwSize.X - coninfo.dwCursorPosition.X;
+    if (hConIn && GetConsoleScreenBufferInfo (hConIn, &coninfo) &&
+        (coninfo.dwCursorPosition.X || coninfo.dwCursorPosition.Y)) {
+            unsigned char spaces = coninfo.dwSize.X - coninfo.dwCursorPosition.X;
 
-        while (spaces--)
-            fputc (' ', stderr);
+            while (spaces--)
+                fputc (' ', stderr);
     }
     else
-        fputc ('\n', stderr);
+        fprintf (stderr, "                                \n");
+
+    fflush (stderr);
 }
 #else
 //////////////////////////////////////////////////////////////////////////////
@@ -598,7 +567,8 @@ void finish_line (void)
 
 void finish_line (void)
 {
-    fprintf (stderr, "        \n");
+    fprintf (stderr, "                                \n");
+    fflush (stderr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -678,7 +648,7 @@ int DoWriteFile (FILE *hFile, void *lpBuffer, uint32_t nNumberOfBytesToWrite, ui
     return !ferror (hFile);
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 int64_t DoGetFileSize (FILE *hFile)
 {
@@ -700,6 +670,21 @@ int64_t DoGetFileSize (FILE *hFile)
     return (int64_t)Size.QuadPart;
 }
 
+int64_t DoGetFilePosition (FILE *hFile)
+{
+    return _ftelli64 (hFile);
+}
+
+int DoSetFilePositionAbsolute (FILE *hFile, int64_t pos)
+{
+    return _fseeki64 (hFile, pos, SEEK_SET);
+}
+
+int DoSetFilePositionRelative (FILE *hFile, int64_t pos, int mode)
+{
+    return _fseeki64 (hFile, pos, mode);
+}
+
 #else
 
 int64_t DoGetFileSize (FILE *hFile)
@@ -712,22 +697,22 @@ int64_t DoGetFileSize (FILE *hFile)
     return (int64_t) statbuf.st_size;
 }
 
-#endif
-
-uint32_t DoGetFilePosition (FILE *hFile)
+int64_t DoGetFilePosition (FILE *hFile)
 {
-    return (uint32_t) ftell (hFile);
+    return ftell (hFile);
 }
 
-int DoSetFilePositionAbsolute (FILE *hFile, uint32_t pos)
+int DoSetFilePositionAbsolute (FILE *hFile, int64_t pos)
 {
     return fseek (hFile, pos, SEEK_SET);
 }
 
-int DoSetFilePositionRelative (FILE *hFile, int32_t pos, int mode)
+int DoSetFilePositionRelative (FILE *hFile, int64_t pos, int mode)
 {
     return fseek (hFile, pos, mode);
 }
+
+#endif
 
 // if ungetc() is not available, a seek of -1 is fine also because we do not
 // change the byte read.
@@ -746,7 +731,7 @@ int DoTruncateFile (FILE *hFile)
 {
     if (hFile) {
         fflush (hFile);
-#if defined(WIN32)
+#if defined(_WIN32)
         return !_chsize (_fileno (hFile), 0);
 #else
         return !ftruncate(fileno (hFile), 0);
@@ -766,7 +751,7 @@ int DoDeleteFile (char *filename)
 // displaying progress of batch operations with the console window minimized.  //
 /////////////////////////////////////////////////////////////////////////////////
 
-#ifdef WIN32
+#ifdef _WIN32
 
 void DoSetConsoleTitle (char *text)
 {
@@ -778,6 +763,7 @@ void DoSetConsoleTitle (char *text)
 void DoSetConsoleTitle (char *text)
 {
     fprintf (stderr, "\033]0;%s\007", text);
+    fflush (stderr);
 }
 
 #endif

@@ -110,6 +110,8 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	reader.get_length = GetLengthProc;
 	reader.can_seek = CanSeekProc;
 	reader.write_bytes = WriteBytesProc;
+    
+    open_flags |= OPEN_DSD_AS_PCM | OPEN_ALT_TYPES;
 
 	//No corrections file (WVC) support at the moment.
 	wpc = WavpackOpenFileInputEx(&reader, (__bridge void *)(self), NULL, error, open_flags, 0);
@@ -126,6 +128,8 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	totalFrames = WavpackGetNumSamples(wpc);
 	
 	bitrate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
+    
+    floatingPoint = MODE_FLOAT & WavpackGetMode(wpc) && 127 == WavpackGetFloatNormExp(wpc);
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -169,21 +173,6 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	// Wavpack uses "complete" samples (one sample across all channels), i.e. a Core Audio frame
 	samplesRead	= WavpackUnpackSamples(wpc, inputBuffer, frames/channels);
 	
-	// Handle floating point files
-	// Perform hard clipping and convert to integers
-	if(MODE_FLOAT & WavpackGetMode(wpc) && 127 == WavpackGetFloatNormExp(wpc)) {
-		float f;
-		alias32 = inputBuffer;
-		for(sample = 0; sample < samplesRead * channels; ++sample) {
-			f =  * ((float *) alias32);
-			
-			if(f > 1.0)		{ f = 1.0; }
-			if(f < -1.0)	{ f = -1.0; }
-			
-			*alias32++ = (int32_t) (f * 2147483647.0);
-		}
-	}
-
 	switch(bitsPerSample) {
 		case 8:
 			// No need for byte swapping
@@ -263,6 +252,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 		[NSNumber numberWithInt:bitsPerSample],@"bitsPerSample",
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
+        [NSNumber numberWithBool:floatingPoint],@"floatingPoint",
 		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"little",@"endian",

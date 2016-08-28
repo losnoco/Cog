@@ -1,467 +1,55 @@
 ////////////////////////////////////////////////////////////////////////////
 //                           **** WAVPACK ****                            //
 //                  Hybrid Lossless Wavefile Compressor                   //
-//              Copyright (c) 1998 - 2006 Conifer Software.               //
+//              Copyright (c) 1998 - 2013 Conifer Software.               //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
 
 // unpack.c
 
-// This module actually handles the decompression of the audio data, except
-// for the entropy decoding which is handled by the words? modules. For
-// maximum efficiency, the conversion is isolated to tight loops that handle
-// an entire buffer.
+// This module actually handles the decompression of the audio data, except for
+// the entropy decoding which is handled by the read_words.c module. For better
+// efficiency, the conversion is isolated to tight loops that handle an entire
+// buffer.
+
+#include <stdlib.h>
+#include <string.h>
 
 #include "wavpack_local.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
+#ifdef OPT_ASM_X86
+    #define DECORR_STEREO_PASS_CONT unpack_decorr_stereo_pass_cont_x86
+    #define DECORR_STEREO_PASS_CONT_AVAILABLE unpack_cpu_has_feature_x86(CPU_FEATURE_MMX)
+    #define DECORR_MONO_PASS_CONT unpack_decorr_mono_pass_cont_x86
+#elif defined(OPT_ASM_X64) && (defined (_WIN64) || defined(__CYGWIN__) || defined(__MINGW64__))
+    #define DECORR_STEREO_PASS_CONT unpack_decorr_stereo_pass_cont_x64win
+    #define DECORR_STEREO_PASS_CONT_AVAILABLE 1
+    #define DECORR_MONO_PASS_CONT unpack_decorr_mono_pass_cont_x64win
+#elif defined(OPT_ASM_X64)
+    #define DECORR_STEREO_PASS_CONT unpack_decorr_stereo_pass_cont_x64
+    #define DECORR_STEREO_PASS_CONT_AVAILABLE 1
+    #define DECORR_MONO_PASS_CONT unpack_decorr_mono_pass_cont_x64
+#elif defined(OPT_ASM_ARM)
+    #define DECORR_STEREO_PASS_CONT unpack_decorr_stereo_pass_cont_armv7
+    #define DECORR_STEREO_PASS_CONT_AVAILABLE 1
+    #define DECORR_MONO_PASS_CONT unpack_decorr_mono_pass_cont_armv7
+#endif
 
-// This flag provides faster decoding speed at the expense of more code. The
-// improvement applies to 16-bit stereo lossless only.
+#ifdef DECORR_STEREO_PASS_CONT
+extern void DECORR_STEREO_PASS_CONT (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count, int32_t long_math);
+extern void DECORR_MONO_PASS_CONT (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count, int32_t long_math);
+#endif
 
-#define FAST_DECODE
+// This flag provides the functionality of terminating the decoding and muting
+// the output when a lossy sample appears to be corrupt. This is automatic
+// for lossless files because a corrupt sample is unambigious, but for lossy
+// data it might be possible for this to falsely trigger (although I have never
+// seen it).
 
 #define LOSSY_MUTE
 
-#ifdef DEBUG_ALLOC
-#define malloc malloc_db
-#define realloc realloc_db
-#define free free_db
-void *malloc_db (uint32_t size);
-void *realloc_db (void *ptr, uint32_t size);
-void free_db (void *ptr);
-int32_t dump_alloc (void);
-#endif
-
 ///////////////////////////// executable code ////////////////////////////////
-
-// This function initializes everything required to unpack a WavPack block
-// and must be called before unpack_samples() is called to obtain audio data.
-// It is assumed that the WavpackHeader has been read into the wps->wphdr
-// (in the current WavpackStream) and that the entire block has been read at
-// wps->blockbuff. If a correction file is available (wpc->wvc_flag = TRUE)
-// then the corresponding correction block must be read into wps->block2buff
-// and its WavpackHeader has overwritten the header at wps->wphdr. This is
-// where all the metadata blocks are scanned including those that contain
-// bitstream data.
-
-int unpack_init (WavpackContext *wpc)
-{
-    WavpackStream *wps = wpc->streams [wpc->current_stream];
-    unsigned char *blockptr, *block2ptr;
-    WavpackMetadata wpmd;
-
-    wps->mute_error = FALSE;
-    wps->crc = wps->crc_x = 0xffffffff;
-    CLEAR (wps->wvbits);
-    CLEAR (wps->wvcbits);
-    CLEAR (wps->wvxbits);
-    CLEAR (wps->decorr_passes);
-    CLEAR (wps->dc);
-    CLEAR (wps->w);
-
-    if (!(wps->wphdr.flags & MONO_FLAG) && wpc->config.num_channels && wps->wphdr.block_samples &&
-        (wpc->reduced_channels == 1 || wpc->config.num_channels == 1)) {
-            wps->mute_error = TRUE;
-            return FALSE;
-    }
-
-    if ((wps->wphdr.flags & UNKNOWN_FLAGS) || (wps->wphdr.flags & MONO_DATA) == MONO_DATA) {
-        wps->mute_error = TRUE;
-        return FALSE;
-    }
-
-    blockptr = wps->blockbuff + sizeof (WavpackHeader);
-
-    while (read_metadata_buff (&wpmd, wps->blockbuff, &blockptr))
-        if (!process_metadata (wpc, &wpmd)) {
-            wps->mute_error = TRUE;
-            return FALSE;
-        }
-
-    if (wps->wphdr.block_samples && wpc->wvc_flag && wps->block2buff) {
-        block2ptr = wps->block2buff + sizeof (WavpackHeader);
-
-        while (read_metadata_buff (&wpmd, wps->block2buff, &block2ptr))
-            if (!process_metadata (wpc, &wpmd)) {
-                wps->mute_error = TRUE;
-                return FALSE;
-            }
-    }
-
-    if (wps->wphdr.block_samples && !bs_is_open (&wps->wvbits)) {
-        if (bs_is_open (&wps->wvcbits))
-            strcpy (wpc->error_message, "can't unpack correction files alone!");
-
-        wps->mute_error = TRUE;
-        return FALSE;
-    }
-
-    if (wps->wphdr.block_samples && !bs_is_open (&wps->wvxbits)) {
-        if ((wps->wphdr.flags & INT32_DATA) && wps->int32_sent_bits)
-            wpc->lossy_blocks = TRUE;
-
-        if ((wps->wphdr.flags & FLOAT_DATA) &&
-            wps->float_flags & (FLOAT_EXCEPTIONS | FLOAT_ZEROS_SENT | FLOAT_SHIFT_SENT | FLOAT_SHIFT_SAME))
-                wpc->lossy_blocks = TRUE;
-    }
-
-    if (wps->wphdr.block_samples)
-        wps->sample_index = wps->wphdr.block_index;
-
-    return TRUE;
-}
-
-// This function initialzes the main bitstream for audio samples, which must
-// be in the "wv" file.
-
-int init_wv_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
-{
-    if (!wpmd->byte_length)
-        return FALSE;
-
-    bs_open_read (&wps->wvbits, wpmd->data, (unsigned char *) wpmd->data + wpmd->byte_length);
-    return TRUE;
-}
-
-// This function initialzes the "correction" bitstream for audio samples,
-// which currently must be in the "wvc" file.
-
-int init_wvc_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
-{
-    if (!wpmd->byte_length)
-        return FALSE;
-
-    bs_open_read (&wps->wvcbits, wpmd->data, (unsigned char *) wpmd->data + wpmd->byte_length);
-    return TRUE;
-}
-
-// This function initialzes the "extra" bitstream for audio samples which
-// contains the information required to losslessly decompress 32-bit float data
-// or integer data that exceeds 24 bits. This bitstream is in the "wv" file
-// for pure lossless data or the "wvc" file for hybrid lossless. This data
-// would not be used for hybrid lossy mode. There is also a 32-bit CRC stored
-// in the first 4 bytes of these blocks.
-
-int init_wvx_bitstream (WavpackStream *wps, WavpackMetadata *wpmd)
-{
-    unsigned char *cp = wpmd->data;
-
-    if (wpmd->byte_length <= 4)
-        return FALSE;
-
-    wps->crc_wvx = *cp++;
-    wps->crc_wvx |= (int32_t) *cp++ << 8;
-    wps->crc_wvx |= (int32_t) *cp++ << 16;
-    wps->crc_wvx |= (int32_t) *cp++ << 24;
-
-    bs_open_read (&wps->wvxbits, cp, (unsigned char *) wpmd->data + wpmd->byte_length);
-    return TRUE;
-}
-
-// Read decorrelation terms from specified metadata block into the
-// decorr_passes array. The terms range from -3 to 8, plus 17 & 18;
-// other values are reserved and generate errors for now. The delta
-// ranges from 0 to 7 with all values valid. Note that the terms are
-// stored in the opposite order in the decorr_passes array compared
-// to packing.
-
-int read_decorr_terms (WavpackStream *wps, WavpackMetadata *wpmd)
-{
-    int termcnt = wpmd->byte_length;
-    unsigned char *byteptr = wpmd->data;
-    struct decorr_pass *dpp;
-
-    if (termcnt > MAX_NTERMS)
-        return FALSE;
-
-    wps->num_terms = termcnt;
-
-    for (dpp = wps->decorr_passes + termcnt - 1; termcnt--; dpp--) {
-        dpp->term = (int)(*byteptr & 0x1f) - 5;
-        dpp->delta = (*byteptr++ >> 5) & 0x7;
-
-        if (!dpp->term || dpp->term < -3 || (dpp->term > MAX_TERM && dpp->term < 17) || dpp->term > 18)
-            return FALSE;
-    }
-
-    return TRUE;
-}
-
-// Read decorrelation weights from specified metadata block into the
-// decorr_passes array. The weights range +/-1024, but are rounded and
-// truncated to fit in signed chars for metadata storage. Weights are
-// separate for the two channels and are specified from the "last" term
-// (first during encode). Unspecified weights are set to zero.
-
-int read_decorr_weights (WavpackStream *wps, WavpackMetadata *wpmd)
-{
-    int termcnt = wpmd->byte_length, tcount;
-    char *byteptr = wpmd->data;
-    struct decorr_pass *dpp;
-
-    if (!(wps->wphdr.flags & MONO_DATA))
-        termcnt /= 2;
-
-    if (termcnt > wps->num_terms)
-        return FALSE;
-
-    for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-        dpp->weight_A = dpp->weight_B = 0;
-
-    while (--dpp >= wps->decorr_passes && termcnt--) {
-        dpp->weight_A = restore_weight (*byteptr++);
-
-        if (!(wps->wphdr.flags & MONO_DATA))
-            dpp->weight_B = restore_weight (*byteptr++);
-    }
-
-    return TRUE;
-}
-
-// Read decorrelation samples from specified metadata block into the
-// decorr_passes array. The samples are signed 32-bit values, but are
-// converted to signed log2 values for storage in metadata. Values are
-// stored for both channels and are specified from the "last" term
-// (first during encode) with unspecified samples set to zero. The
-// number of samples stored varies with the actual term value, so
-// those must obviously come first in the metadata.
-
-int read_decorr_samples (WavpackStream *wps, WavpackMetadata *wpmd)
-{
-    unsigned char *byteptr = wpmd->data;
-    unsigned char *endptr = byteptr + wpmd->byte_length;
-    struct decorr_pass *dpp;
-    int tcount;
-
-    for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
-        CLEAR (dpp->samples_A);
-        CLEAR (dpp->samples_B);
-    }
-
-    if (wps->wphdr.version == 0x402 && (wps->wphdr.flags & HYBRID_FLAG)) {
-        if (byteptr + (wps->wphdr.flags & MONO_DATA ? 2 : 4) > endptr)
-            return FALSE;
-
-        wps->dc.error [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-        byteptr += 2;
-
-        if (!(wps->wphdr.flags & MONO_DATA)) {
-            wps->dc.error [1] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-            byteptr += 2;
-        }
-    }
-
-    while (dpp-- > wps->decorr_passes && byteptr < endptr)
-        if (dpp->term > MAX_TERM) {
-            if (byteptr + (wps->wphdr.flags & MONO_DATA ? 4 : 8) > endptr)
-                return FALSE;
-
-            dpp->samples_A [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-            dpp->samples_A [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-            byteptr += 4;
-
-            if (!(wps->wphdr.flags & MONO_DATA)) {
-                dpp->samples_B [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-                dpp->samples_B [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-                byteptr += 4;
-            }
-        }
-        else if (dpp->term < 0) {
-            if (byteptr + 4 > endptr)
-                return FALSE;
-
-            dpp->samples_A [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-            dpp->samples_B [0] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-            byteptr += 4;
-        }
-        else {
-            int m = 0, cnt = dpp->term;
-
-            while (cnt--) {
-                if (byteptr + (wps->wphdr.flags & MONO_DATA ? 2 : 4) > endptr)
-                    return FALSE;
-
-                dpp->samples_A [m] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-                byteptr += 2;
-
-                if (!(wps->wphdr.flags & MONO_DATA)) {
-                    dpp->samples_B [m] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-                    byteptr += 2;
-                }
-
-                m++;
-            }
-        }
-
-    return byteptr == endptr;
-}
-
-// Read the shaping weights from specified metadata block into the
-// WavpackStream structure. Note that there must be two values (even
-// for mono streams) and that the values are stored in the same
-// manner as decorrelation weights. These would normally be read from
-// the "correction" file and are used for lossless reconstruction of
-// hybrid data.
-
-int read_shaping_info (WavpackStream *wps, WavpackMetadata *wpmd)
-{
-    if (wpmd->byte_length == 2) {
-        char *byteptr = wpmd->data;
-
-        wps->dc.shaping_acc [0] = (int32_t) restore_weight (*byteptr++) << 16;
-        wps->dc.shaping_acc [1] = (int32_t) restore_weight (*byteptr++) << 16;
-        return TRUE;
-    }
-    else if (wpmd->byte_length >= (wps->wphdr.flags & MONO_DATA ? 4 : 8)) {
-        unsigned char *byteptr = wpmd->data;
-
-        wps->dc.error [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-        wps->dc.shaping_acc [0] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-        byteptr += 4;
-
-        if (!(wps->wphdr.flags & MONO_DATA)) {
-            wps->dc.error [1] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-            wps->dc.shaping_acc [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-            byteptr += 4;
-        }
-
-        if (wpmd->byte_length == (wps->wphdr.flags & MONO_DATA ? 6 : 12)) {
-            wps->dc.shaping_delta [0] = exp2s ((short)(byteptr [0] + (byteptr [1] << 8)));
-
-            if (!(wps->wphdr.flags & MONO_DATA))
-                wps->dc.shaping_delta [1] = exp2s ((short)(byteptr [2] + (byteptr [3] << 8)));
-        }
-
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-// Read the int32 data from the specified metadata into the specified stream.
-// This data is used for integer data that has more than 24 bits of magnitude
-// or, in some cases, used to eliminate redundant bits from any audio stream.
-
-int read_int32_info (WavpackStream *wps, WavpackMetadata *wpmd)
-{
-    int bytecnt = wpmd->byte_length;
-    char *byteptr = wpmd->data;
-
-    if (bytecnt != 4)
-        return FALSE;
-
-    wps->int32_sent_bits = *byteptr++;
-    wps->int32_zeros = *byteptr++;
-    wps->int32_ones = *byteptr++;
-    wps->int32_dups = *byteptr;
-
-    return TRUE;
-}
-
-// Read multichannel information from metadata. The first byte is the total
-// number of channels and the following bytes represent the channel_mask
-// as described for Microsoft WAVEFORMATEX.
-
-int read_channel_info (WavpackContext *wpc, WavpackMetadata *wpmd)
-{
-    int bytecnt = wpmd->byte_length, shift = 0;
-    unsigned char *byteptr = wpmd->data;
-    uint32_t mask = 0;
-
-    if (!bytecnt || bytecnt > 6)
-        return FALSE;
-
-    if (!wpc->config.num_channels) {
-
-        if (bytecnt == 6) {
-            wpc->config.num_channels = (byteptr [0] | ((byteptr [2] & 0xf) << 8)) + 1;
-            wpc->max_streams = (byteptr [1] | ((byteptr [2] & 0xf0) << 4)) + 1;
-
-            if (wpc->config.num_channels < wpc->max_streams)
-                return FALSE;
-    
-            byteptr += 3;
-            mask = *byteptr++;
-            mask |= (uint32_t) *byteptr++ << 8;
-            mask |= (uint32_t) *byteptr << 16;
-        }
-        else {
-            wpc->config.num_channels = *byteptr++;
-
-            while (--bytecnt) {
-                mask |= (uint32_t) *byteptr++ << shift;
-                shift += 8;
-            }
-        }
-
-        if (wpc->config.num_channels > wpc->max_streams * 2)
-            return FALSE;
-
-        wpc->config.channel_mask = mask;
-    }
-
-    return TRUE;
-}
-
-// Read configuration information from metadata.
-
-int read_config_info (WavpackContext *wpc, WavpackMetadata *wpmd)
-{
-    int bytecnt = wpmd->byte_length;
-    unsigned char *byteptr = wpmd->data;
-
-    if (bytecnt >= 3) {
-        wpc->config.flags &= 0xff;
-        wpc->config.flags |= (int32_t) *byteptr++ << 8;
-        wpc->config.flags |= (int32_t) *byteptr++ << 16;
-        wpc->config.flags |= (int32_t) *byteptr++ << 24;
-
-        if (bytecnt >= 4 && (wpc->config.flags & CONFIG_EXTRA_MODE))
-            wpc->config.xmode = *byteptr;
-    }
-
-    return TRUE;
-}
-
-// Read non-standard sampling rate from metadata.
-
-int read_sample_rate (WavpackContext *wpc, WavpackMetadata *wpmd)
-{
-    int bytecnt = wpmd->byte_length;
-    unsigned char *byteptr = wpmd->data;
-
-    if (bytecnt == 3) {
-        wpc->config.sample_rate = (int32_t) *byteptr++;
-        wpc->config.sample_rate |= (int32_t) *byteptr++ << 8;
-        wpc->config.sample_rate |= (int32_t) *byteptr++ << 16;
-    }
-
-    return TRUE;
-}
-
-// Read wrapper data from metadata. Currently, this consists of the RIFF
-// header and trailer that wav files contain around the audio data but could
-// be used for other formats as well. Because WavPack files contain all the
-// information required for decoding and playback, this data can probably
-// be ignored except when an exact wavefile restoration is needed.
-
-int read_wrapper_data (WavpackContext *wpc, WavpackMetadata *wpmd)
-{
-    if ((wpc->open_flags & OPEN_WRAPPER) && wpc->wrapper_bytes < MAX_WRAPPER_BYTES) {
-        wpc->wrapper_data = realloc (wpc->wrapper_data, wpc->wrapper_bytes + wpmd->byte_length);
-        memcpy (wpc->wrapper_data + wpc->wrapper_bytes, wpmd->data, wpmd->byte_length);
-        wpc->wrapper_bytes += wpmd->byte_length;
-    }
-
-    return TRUE;
-}
-
-#ifndef NO_UNPACK
 
 // This monster actually unpacks the WavPack bitstream(s) into the specified
 // buffer as 32-bit integers or floats (depending on orignal data). Lossy
@@ -480,24 +68,26 @@ int read_wrapper_data (WavpackContext *wpc, WavpackMetadata *wpmd)
 // occurs or the end of the block is reached.
 
 static void decorr_stereo_pass (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-static void decorr_stereo_pass_i (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-static void decorr_stereo_pass_1717 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-static void decorr_stereo_pass_1718 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-static void decorr_stereo_pass_1818 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
-static void decorr_stereo_pass_nn (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
+static void decorr_mono_pass (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count);
 static void fixup_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_count);
 
 int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_count)
 {
     WavpackStream *wps = wpc->streams [wpc->current_stream];
     uint32_t flags = wps->wphdr.flags, crc = wps->crc, i;
-    int32_t mute_limit = (int32_t)((1L << ((flags & MAG_MASK) >> MAG_LSB)) + 2);
+    int32_t mute_limit = (1L << ((flags & MAG_MASK) >> MAG_LSB)) + 2;
     int32_t correction [2], read_word, *bptr;
     struct decorr_pass *dpp;
     int tcount, m = 0;
 
-    if (wps->sample_index + sample_count > wps->wphdr.block_index + wps->wphdr.block_samples)
-        sample_count = wps->wphdr.block_index + wps->wphdr.block_samples - wps->sample_index;
+    // don't attempt to decode past the end of the block, but watch out for overflow!
+
+    if (wps->sample_index + sample_count > GET_BLOCK_INDEX (wps->wphdr) + wps->wphdr.block_samples &&
+        GET_BLOCK_INDEX (wps->wphdr) + wps->wphdr.block_samples - wps->sample_index < sample_count)
+            sample_count = (uint32_t) (GET_BLOCK_INDEX (wps->wphdr) + wps->wphdr.block_samples - wps->sample_index);
+
+    if (GET_BLOCK_INDEX (wps->wphdr) > wps->sample_index || wps->wphdr.block_samples < sample_count)
+        wps->mute_error = TRUE;
 
     if (wps->mute_error) {
         if (wpc->reduced_channels == 1 || wpc->config.num_channels == 1 || (flags & MONO_FLAG))
@@ -510,7 +100,7 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
     }
 
     if ((flags & HYBRID_FLAG) && !wps->block2buff)
-        mute_limit *= 2;
+        mute_limit = (mute_limit * 2) + 128;
 
     //////////////// handle lossless or hybrid lossy mono data /////////////////
 
@@ -529,39 +119,34 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
         else
             i = get_words_lossless (wps, buffer, sample_count);
 
-        for (bptr = buffer; bptr < eptr;) {
-            read_word = *bptr;
-
+#ifdef DECORR_MONO_PASS_CONT
+        if (sample_count < 16)
+            for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
+                decorr_mono_pass (dpp, buffer, sample_count);
+        else
             for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
-                int32_t sam, temp;
-                int k;
+                int pre_samples = (dpp->term > MAX_TERM) ? 2 : dpp->term;
 
-                if (dpp->term > MAX_TERM) {
-                    if (dpp->term & 1)
-                        sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-                    else
-                        sam = dpp->samples_A [0] + ((dpp->samples_A [0] - dpp->samples_A [1]) >> 1);
+                decorr_mono_pass (dpp, buffer, pre_samples);
 
-                    dpp->samples_A [1] = dpp->samples_A [0];
-                    k = 0;
-                }
-                else {
-                    sam = dpp->samples_A [m];
-                    k = (m + dpp->term) & (MAX_TERM - 1);
-                }
-
-                temp = apply_weight (dpp->weight_A, sam) + read_word;
-                update_weight (dpp->weight_A, dpp->delta, sam, read_word);
-                dpp->samples_A [k] = read_word = temp;
+                DECORR_MONO_PASS_CONT (dpp, buffer + pre_samples, sample_count - pre_samples,
+                    ((flags & MAG_MASK) >> MAG_LSB) > 15);
             }
+#else
+        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
+            decorr_mono_pass (dpp, buffer, sample_count);
+#endif
 
-            if (labs (read_word) > mute_limit) {
+#ifndef LOSSY_MUTE
+        if (!(flags & HYBRID_FLAG))
+#endif
+        for (bptr = buffer; bptr < eptr; ++bptr) {
+            if (labs (bptr [0]) > mute_limit) {
                 i = (uint32_t)(bptr - buffer);
                 break;
             }
 
-            m = (m + 1) & (MAX_TERM - 1);
-            crc += (crc << 1) + (*bptr++ = read_word);
+            crc = crc * 3 + bptr [0];
         }
     }
 
@@ -583,36 +168,27 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
         else
             i = get_words_lossless (wps, buffer, sample_count);
 
-#ifdef FAST_DECODE
-        for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
-            if (((flags & MAG_MASK) >> MAG_LSB) >= 16)
+#ifdef DECORR_STEREO_PASS_CONT
+        if (sample_count < 16 || !DECORR_STEREO_PASS_CONT_AVAILABLE) {
+            for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
                 decorr_stereo_pass (dpp, buffer, sample_count);
-            else if (tcount && dpp [0].term == 17 && dpp [1].term == 17) {
-                decorr_stereo_pass_1717 (dpp, buffer, sample_count);
-                tcount--;
-                dpp++;
+
+            m = sample_count & (MAX_TERM - 1);
+        }
+        else
+            for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++) {
+                int pre_samples = (dpp->term < 0 || dpp->term > MAX_TERM) ? 2 : dpp->term;
+
+                decorr_stereo_pass (dpp, buffer, pre_samples);
+
+                DECORR_STEREO_PASS_CONT (dpp, buffer + pre_samples * 2, sample_count - pre_samples,
+                    ((flags & MAG_MASK) >> MAG_LSB) >= 16);
             }
-            else if (tcount && dpp [0].term == 17 && dpp [1].term == 18) {
-                decorr_stereo_pass_1718 (dpp, buffer, sample_count);
-                tcount--;
-                dpp++;
-            }
-            else if (tcount && dpp [0].term == 18 && dpp [1].term == 18) {
-                decorr_stereo_pass_1818 (dpp, buffer, sample_count);
-                tcount--;
-                dpp++;
-            }
-            else if (tcount && dpp [0].term >= 1 && dpp [0].term <= 7 &&
-                               dpp [1].term >= 1 && dpp [1].term <= 7) {
-                decorr_stereo_pass_nn (dpp, buffer, sample_count);
-                tcount--;
-                dpp++;
-            }
-            else
-                decorr_stereo_pass_i (dpp, buffer, sample_count);
 #else
         for (tcount = wps->num_terms, dpp = wps->decorr_passes; tcount--; dpp++)
             decorr_stereo_pass (dpp, buffer, sample_count);
+
+        m = sample_count & (MAX_TERM - 1);
 #endif
 
         if (flags & JOINT_STEREO)
@@ -624,13 +200,14 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
             for (bptr = buffer; bptr < eptr; bptr += 2)
                 crc += (crc << 3) + (bptr [0] << 1) + bptr [0] + bptr [1];
 
+#ifndef LOSSY_MUTE
+        if (!(flags & HYBRID_FLAG))
+#endif
         for (bptr = buffer; bptr < eptr; bptr += 16)
             if (labs (bptr [0]) > mute_limit || labs (bptr [1]) > mute_limit) {
                 i = (uint32_t)(bptr - buffer) / 2;
                 break;
             }
-
-        m = sample_count & (MAX_TERM - 1);
     }
 
     /////////////////// handle hybrid lossless mono data ////////////////////
@@ -686,10 +263,9 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
 
             crc += (crc << 1) + read_word;
 
-#ifdef LOSSY_MUTE
             if (labs (read_word) > mute_limit)
                 break;
-#endif
+
             *bptr++ = read_word;
         }
 
@@ -858,10 +434,9 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
                 right = right_c;
             }
 
-#ifdef LOSSY_MUTE
             if (labs (left) > mute_limit || labs (right) > mute_limit)
                 break;
-#endif
+
             crc += (crc << 3) + (left << 1) + left + right;
             *bptr++ = left;
             *bptr++ = right;
@@ -915,6 +490,67 @@ int32_t unpack_samples (WavpackContext *wpc, int32_t *buffer, uint32_t sample_co
     wps->crc = crc;
 
     return i;
+}
+
+// General function to perform mono decorrelation pass on specified buffer
+// (although since this is the reverse function it might technically be called
+// "correlation" instead). This version handles all sample resolutions and
+// weight deltas. The dpp->samples_X[] data is returned normalized for term
+// values 1-8.
+
+static void decorr_mono_pass (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
+{
+    int32_t delta = dpp->delta, weight_A = dpp->weight_A;
+    int32_t *bptr, *eptr = buffer + sample_count, sam_A;
+    int m, k;
+
+    switch (dpp->term) {
+
+        case 17:
+            for (bptr = buffer; bptr < eptr; bptr++) {
+                sam_A = 2 * dpp->samples_A [0] - dpp->samples_A [1];
+                dpp->samples_A [1] = dpp->samples_A [0];
+                dpp->samples_A [0] = apply_weight (weight_A, sam_A) + bptr [0];
+                update_weight (weight_A, delta, sam_A, bptr [0]);
+                bptr [0] = dpp->samples_A [0];
+            }
+
+            break;
+
+        case 18:
+            for (bptr = buffer; bptr < eptr; bptr++) {
+                sam_A = (3 * dpp->samples_A [0] - dpp->samples_A [1]) >> 1;
+                dpp->samples_A [1] = dpp->samples_A [0];
+                dpp->samples_A [0] = apply_weight (weight_A, sam_A) + bptr [0];
+                update_weight (weight_A, delta, sam_A, bptr [0]);
+                bptr [0] = dpp->samples_A [0];
+            }
+
+            break;
+
+        default:
+            for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr++) {
+                sam_A = dpp->samples_A [m];
+                dpp->samples_A [k] = apply_weight (weight_A, sam_A) + bptr [0];
+                update_weight (weight_A, delta, sam_A, bptr [0]);
+                bptr [0] = dpp->samples_A [k];
+                m = (m + 1) & (MAX_TERM - 1);
+                k = (k + 1) & (MAX_TERM - 1);
+            }
+
+            if (m) {
+                int32_t temp_samples [MAX_TERM];
+
+                memcpy (temp_samples, dpp->samples_A, sizeof (dpp->samples_A));
+
+                for (k = 0; k < MAX_TERM; k++, m++)
+                    dpp->samples_A [k] = temp_samples [m & (MAX_TERM - 1)];
+            }
+
+            break;
+    }
+
+    dpp->weight_A = weight_A;
 }
 
 // General function to perform stereo decorrelation pass on specified buffer
@@ -1027,245 +663,6 @@ static void decorr_stereo_pass (struct decorr_pass *dpp, int32_t *buffer, int32_
             break;
     }
 }
-
-#ifdef FAST_DECODE
-
-// This function is a specialized version of decorr_stereo_pass() that works
-// only with lower resolution data (<= 16-bit), but is otherwise identical.
-
-static void decorr_stereo_pass_i (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
-{
-    int32_t *bptr, *eptr = buffer + (sample_count * 2);
-    int m, k;
-
-    switch (dpp->term) {
-        case 17:
-            for (bptr = buffer; bptr < eptr; bptr += 2) {
-                int32_t sam, tmp;
-
-                sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-                dpp->samples_A [1] = dpp->samples_A [0];
-                bptr [0] = dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + (tmp = bptr [0]);
-                update_weight (dpp->weight_A, dpp->delta, sam, tmp);
-
-                sam = 2 * dpp->samples_B [0] - dpp->samples_B [1];
-                dpp->samples_B [1] = dpp->samples_B [0];
-                bptr [1] = dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + (tmp = bptr [1]);
-                update_weight (dpp->weight_B, dpp->delta, sam, tmp);
-            }
-
-            break;
-
-        case 18:
-            for (bptr = buffer; bptr < eptr; bptr += 2) {
-                int32_t sam, tmp;
-
-                sam = dpp->samples_A [0] + ((dpp->samples_A [0] - dpp->samples_A [1]) >> 1);
-                dpp->samples_A [1] = dpp->samples_A [0];
-                bptr [0] = dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + (tmp = bptr [0]);
-                update_weight (dpp->weight_A, dpp->delta, sam, tmp);
-
-                sam = dpp->samples_B [0] + ((dpp->samples_B [0] - dpp->samples_B [1]) >> 1);
-                dpp->samples_B [1] = dpp->samples_B [0];
-                bptr [1] = dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + (tmp = bptr [1]);
-                update_weight (dpp->weight_B, dpp->delta, sam, tmp);
-            }
-
-            break;
-
-        default:
-            for (m = 0, k = dpp->term & (MAX_TERM - 1), bptr = buffer; bptr < eptr; bptr += 2) {
-                int32_t sam;
-
-                sam = dpp->samples_A [m];
-                dpp->samples_A [k] = apply_weight_i (dpp->weight_A, sam) + bptr [0];
-                update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
-                bptr [0] = dpp->samples_A [k];
-
-                sam = dpp->samples_B [m];
-                dpp->samples_B [k] = apply_weight_i (dpp->weight_B, sam) + bptr [1];
-                update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
-                bptr [1] = dpp->samples_B [k];
-
-                m = (m + 1) & (MAX_TERM - 1);
-                k = (k + 1) & (MAX_TERM - 1);
-            }
-
-            break;
-
-        case -1:
-            for (bptr = buffer; bptr < eptr; bptr += 2) {
-                int32_t sam;
-
-                sam = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-                update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-                bptr [0] = sam;
-                dpp->samples_A [0] = bptr [1] + apply_weight_i (dpp->weight_B, sam);
-                update_weight_clip (dpp->weight_B, dpp->delta, sam, bptr [1]);
-                bptr [1] = dpp->samples_A [0];
-            }
-
-            break;
-
-        case -2:
-            for (bptr = buffer; bptr < eptr; bptr += 2) {
-                int32_t sam;
-
-                sam = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-                update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-                bptr [1] = sam;
-                dpp->samples_B [0] = bptr [0] + apply_weight_i (dpp->weight_A, sam);
-                update_weight_clip (dpp->weight_A, dpp->delta, sam, bptr [0]);
-                bptr [0] = dpp->samples_B [0];
-            }
-
-            break;
-
-        case -3:
-            for (bptr = buffer; bptr < eptr; bptr += 2) {
-                int32_t sam_A, sam_B;
-
-                sam_A = bptr [0] + apply_weight_i (dpp->weight_A, dpp->samples_A [0]);
-                update_weight_clip (dpp->weight_A, dpp->delta, dpp->samples_A [0], bptr [0]);
-                sam_B = bptr [1] + apply_weight_i (dpp->weight_B, dpp->samples_B [0]);
-                update_weight_clip (dpp->weight_B, dpp->delta, dpp->samples_B [0], bptr [1]);
-                bptr [0] = dpp->samples_B [0] = sam_A;
-                bptr [1] = dpp->samples_A [0] = sam_B;
-            }
-
-            break;
-    }
-}
-
-// These functions are specialized versions of decorr_stereo_pass() that work
-// only with lower resolution data (<= 16-bit) and handle the equivalent of
-// *two* decorrelation passes. By combining two passes we save a read and write
-// of the sample data and some overhead dealing with buffer pointers and looping.
-//
-// The cases handled are:
-//     17,17 -- standard "fast" mode before version 4.40
-//     17,18 -- standard "fast" mode starting with 4.40
-//     18,18 -- used in the default and higher modes
-//     [1-7],[1-7] -- common in "high" and "very high" modes
-
-static void decorr_stereo_pass_1718 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
-{
-    int32_t *bptr, *eptr = buffer + (sample_count * 2);
-
-    for (bptr = buffer; bptr < eptr; bptr += 2) {
-        int32_t sam;
-
-        sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-        dpp->samples_A [1] = dpp->samples_A [0];
-        dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + bptr [0];
-        update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
-
-        sam = (dpp+1)->samples_A [0] + (((dpp+1)->samples_A [0] - (dpp+1)->samples_A [1]) >> 1);
-        (dpp+1)->samples_A [1] = (dpp+1)->samples_A [0];
-        bptr [0] = (dpp+1)->samples_A [0] = apply_weight_i ((dpp+1)->weight_A, sam) + dpp->samples_A [0];
-        update_weight ((dpp+1)->weight_A, (dpp+1)->delta, sam, dpp->samples_A [0]);
-
-        sam = 2 * dpp->samples_B [0] - dpp->samples_B [1];
-        dpp->samples_B [1] = dpp->samples_B [0];
-        dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + bptr [1];
-        update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
-
-        sam = (dpp+1)->samples_B [0] + (((dpp+1)->samples_B [0] - (dpp+1)->samples_B [1]) >> 1);
-        (dpp+1)->samples_B [1] = (dpp+1)->samples_B [0];
-        bptr [1] = (dpp+1)->samples_B [0] = apply_weight_i ((dpp+1)->weight_B, sam) + dpp->samples_B [0];
-        update_weight ((dpp+1)->weight_B, (dpp+1)->delta, sam, dpp->samples_B [0]);
-    }
-}
-
-static void decorr_stereo_pass_1717 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
-{
-    int32_t *bptr, *eptr = buffer + (sample_count * 2);
-
-    for (bptr = buffer; bptr < eptr; bptr += 2) {
-        int32_t sam;
-
-        sam = 2 * dpp->samples_A [0] - dpp->samples_A [1];
-        dpp->samples_A [1] = dpp->samples_A [0];
-        dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + bptr [0];
-        update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
-
-        sam = 2 * (dpp+1)->samples_A [0] - (dpp+1)->samples_A [1];
-        (dpp+1)->samples_A [1] = (dpp+1)->samples_A [0];
-        bptr [0] = (dpp+1)->samples_A [0] = apply_weight_i ((dpp+1)->weight_A, sam) + dpp->samples_A [0];
-        update_weight ((dpp+1)->weight_A, (dpp+1)->delta, sam, dpp->samples_A [0]);
-
-        sam = 2 * dpp->samples_B [0] - dpp->samples_B [1];
-        dpp->samples_B [1] = dpp->samples_B [0];
-        dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + bptr [1];
-        update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
-
-        sam = 2 * (dpp+1)->samples_B [0] - (dpp+1)->samples_B [1];
-        (dpp+1)->samples_B [1] = (dpp+1)->samples_B [0];
-        bptr [1] = (dpp+1)->samples_B [0] = apply_weight_i ((dpp+1)->weight_B, sam) + dpp->samples_B [0];
-        update_weight ((dpp+1)->weight_B, (dpp+1)->delta, sam, dpp->samples_B [0]);
-    }
-}
-
-static void decorr_stereo_pass_1818 (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
-{
-    int32_t *bptr, *eptr = buffer + (sample_count * 2);
-
-    for (bptr = buffer; bptr < eptr; bptr += 2) {
-        int32_t sam;
-
-        sam = dpp->samples_A [0] + ((dpp->samples_A [0] - dpp->samples_A [1]) >> 1);
-        dpp->samples_A [1] = dpp->samples_A [0];
-        dpp->samples_A [0] = apply_weight_i (dpp->weight_A, sam) + bptr [0];
-        update_weight (dpp->weight_A, dpp->delta, sam, bptr [0]);
-
-        sam = (dpp+1)->samples_A [0] + (((dpp+1)->samples_A [0] - (dpp+1)->samples_A [1]) >> 1);
-        (dpp+1)->samples_A [1] = (dpp+1)->samples_A [0];
-        bptr [0] = (dpp+1)->samples_A [0] = apply_weight_i ((dpp+1)->weight_A, sam) + dpp->samples_A [0];
-        update_weight ((dpp+1)->weight_A, (dpp+1)->delta, sam, dpp->samples_A [0]);
-
-        sam = dpp->samples_B [0] + ((dpp->samples_B [0] - dpp->samples_B [1]) >> 1);
-        dpp->samples_B [1] = dpp->samples_B [0];
-        dpp->samples_B [0] = apply_weight_i (dpp->weight_B, sam) + bptr [1];
-        update_weight (dpp->weight_B, dpp->delta, sam, bptr [1]);
-
-        sam = (dpp+1)->samples_B [0] + (((dpp+1)->samples_B [0] - (dpp+1)->samples_B [1]) >> 1);
-        (dpp+1)->samples_B [1] = (dpp+1)->samples_B [0];
-        bptr [1] = (dpp+1)->samples_B [0] = apply_weight_i ((dpp+1)->weight_B, sam) + dpp->samples_B [0];
-        update_weight ((dpp+1)->weight_B, (dpp+1)->delta, sam, dpp->samples_B [0]);
-    }
-}
-
-static void decorr_stereo_pass_nn (struct decorr_pass *dpp, int32_t *buffer, int32_t sample_count)
-{
-    int32_t *bptr, *eptr = buffer + (sample_count * 2);
-    int m, k, j;
-
-    m = 0;
-    k = dpp->term & (MAX_TERM - 1);
-    j = (dpp+1)->term & (MAX_TERM - 1);
-
-    for (bptr = buffer; bptr < eptr; bptr += 2) {
-        int32_t tmp;
-
-        dpp->samples_A [k] = apply_weight_i (dpp->weight_A, dpp->samples_A [m]) + (tmp = bptr [0]);
-        update_weight (dpp->weight_A, dpp->delta, dpp->samples_A [m], tmp);
-
-        bptr [0] = (dpp+1)->samples_A [j] = apply_weight_i ((dpp+1)->weight_A, (dpp+1)->samples_A [m]) + (tmp = dpp->samples_A [k]);
-        update_weight ((dpp+1)->weight_A, (dpp+1)->delta, (dpp+1)->samples_A [m], tmp);
-
-        dpp->samples_B [k] = apply_weight_i (dpp->weight_B, dpp->samples_B [m]) + (tmp = bptr [1]);
-        update_weight (dpp->weight_B, dpp->delta, dpp->samples_B [m], tmp);
-
-        bptr [1] = (dpp+1)->samples_B [j] = apply_weight_i ((dpp+1)->weight_B, (dpp+1)->samples_B [m]) + (tmp = dpp->samples_B [k]);
-        update_weight ((dpp+1)->weight_B, (dpp+1)->delta, (dpp+1)->samples_B [m], tmp);
-
-        m = (m + 1) & (MAX_TERM - 1);
-        k = (k + 1) & (MAX_TERM - 1);
-        j = (j + 1) & (MAX_TERM - 1);
-    }
-}
-
-#endif
 
 // This is a helper function for unpack_samples() that applies several final
 // operations. First, if the data is 32-bit float data, then that conversion
@@ -1413,5 +810,3 @@ int check_crc_error (WavpackContext *wpc)
 
     return result;
 }
-
-#endif

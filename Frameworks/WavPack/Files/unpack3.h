@@ -12,9 +12,9 @@
 // decoding old (versions 1, 2 & 3) WavPack files.
 
 typedef struct {
-    unsigned short FormatTag, NumChannels;
+    uint16_t FormatTag, NumChannels;
     uint32_t SampleRate, BytesPerSecond;
-    unsigned short BlockAlign, BitsPerSample;
+    uint16_t BlockAlign, BitsPerSample;
 } WaveHeader3;
 
 #define WaveHeader3Format "SSLLSS"
@@ -22,9 +22,9 @@ typedef struct {
 typedef struct {
     char ckID [4];
     int32_t ckSize;
-    short version;
-    short bits;                 // added for version 2.00
-    short flags, shift;         // added for version 3.00
+    int16_t version;
+    int16_t bits;                 // added for version 2.00
+    int16_t flags, shift;         // added for version 3.00
     int32_t total_samples, crc, crc2;
     char extension [4], extra_bc, extras [3];
 } WavpackHeader3;
@@ -62,8 +62,9 @@ typedef struct {
 typedef struct bs3 {
     void (*wrap)(struct bs3 *bs);
     unsigned char *buf, *end, *ptr;
-    uint32_t bufsiz, fpos, sr;
-    WavpackStreamReader *reader;
+    uint32_t bufsiz, sr;
+    int64_t fpos;
+    WavpackStreamReader64 *reader;
     int error, bc;
     void *id;
 } Bitstream3;
@@ -111,3 +112,8 @@ typedef struct {
         int bits_acc [2], bitrate;
     } w4;
 } WavpackStream3;
+
+#define SAVE(destin, item) { memcpy (destin, &item, sizeof (item)); destin = (char *) destin + sizeof (item); }
+#define RESTORE(item, source) { memcpy (&item, source, sizeof (item)); source = (char *) source + sizeof (item); }
+
+void unpack_init3 (WavpackStream3 *wps);

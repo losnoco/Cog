@@ -1,3 +1,104 @@
+                      -------------------------------
+                      Release 4.80.0 - March 28, 2016
+                      -------------------------------
+
+ WavPack Library Source Code - 4.80.0
+ wavpack.exe (command-line encoder) - 4.80.0
+ wvunpack.exe (command-line decoder) - 4.80.0
+ wvgain.exe (command-line ReplayGain scanner) - 4.80.0
+ -----------------------------------------------------
+  added: full Unicode support on Windows platform
+  added: new option --pre-quantize to truncate high-resolution files
+         to a reasonable depth (e.g., 20-bit) for better compression
+  fixed: Debian bug #793320 (executable stack)
+  fixed: LargeAddressAware problem reported on HA
+  fixed: several "fuzz test" failures reported on GitHub
+  fixed: repack blocks after possible arithmetic overflows
+  improved: faster assembly code for mono packing
+  improved: portability for various platforms
+
+ wvtest.exe (command-line libwavpack test suite) - 4.80.0
+ --------------------------------------------------------
+  added: exhaustive test for WavpackSeekSample() API
+
+ in_wv.dll (winamp plugin) - 2.8.0.1
+ CoreWavPack DirectShow Filters - 1.3.0.0
+ AmioWavpack.amio (Adobe Audition Plugins) - 1.5
+ cool_wv4.flt (CoolEdit / Audition filter) - 2.14
+ ------------------------------------------------
+  updated: see 4.80.0 library changes
+
+
+                      --------------------------------
+                      Release 4.75.2 - October 1, 2015
+                      --------------------------------
+
+ WavPack Library Source Code - 4.75.2
+ ------------------------------------
+  fixed: corrupt mono or multichannel files created with assembly code (rare)
+  fixed: building on Clang systems like Darwin and FreeBSD (req. Clang 3.5+)
+  fixed: explicitly sign-extend audio data (< 4-byte) to avoid corrupt files
+  fixed: rare decoding errors due to integer overflow (ARM assembly code)
+  added: assembly optimizations for "extra" mode on mono or multichannel
+
+ wvtest.exe (command-line libwavpack test suite) - 4.75.2
+ --------------------------------------------------------
+  all new program to stress-test libwavpack (requires Pthreads)
+
+ wavpack.exe (command-line encoder) - 4.75.2
+ wvunpack.exe (command-line decoder) - 4.75.2
+ wvgain.exe (command-line ReplayGain scanner) - 4.75.2
+ -----------------------------------------------------
+  fixed: corrupt mono or multichannel files created with assembly code (rare)
+  added: assembly optimizations for "extra" mode on mono or multichannel
+  improved: flush stderr after all writes
+
+ cool_wv4.flt (CoolEdit / Audition filter) - 2.13
+ AmioWavpack.amio (Adobe Audition Plugins) - 1.4
+ ------------------------------------------------
+  fixed: corrupt mono or multichannel files (rare)
+
+
+                      -----------------------------
+                      Release 4.75.0 - May 25, 2015
+                      -----------------------------
+
+ WavPack Library Source Code - 4.75.0
+ ------------------------------------
+  improved: reorganization for modularity and to improve linking
+  added: assembly optimizations for encode/decode on x86 and x64
+  added: assembly optimizations for decoding on ARMv7 (Linux)
+  improved: several minor speed optimizations using intrinsics
+  fixed: wavpack.pc.in not working correctly on some Linux distros
+  fixed: memcpy() issue causing abort() on OpenBSD
+
+ wavpack.exe (command-line encoder) - 4.75.0
+ wvunpack.exe (command-line decoder) - 4.75.0
+ wvgain.exe (command-line ReplayGain scanner) - 4.75.0
+ -----------------------------------------------------
+  changed: writing to console title default is off (Linux only, -z1 to enable)
+  fixed: wvgain crashes on bad file arguments (Debian bug #716478)
+
+ cool_wv4.flt (CoolEdit / Audition filter) - 2.12
+ ------------------------------------------------
+  improved: performance (from assembly optimizations)
+
+
+                          -------------------------
+                          Update - December 7, 2013
+                          -------------------------
+
+ CoreWavPack DirectShow Filters - 1.2.0.2
+ ----------------------------------------
+  imported: latest filter sources from Christophe Paris and CoreCodec
+  updated: port to VS 2008 and add 64-bit build platform with installer
+  added: decode streams with full headers (tested with LAV splitter)
+  fixed: issues with 7.1 and non-standard channel configurations
+  fixed: problems with 12-bit, 20-bit, and 32-bit integer audio
+  fixed: crashing bug related to hybrid files with DNS
+  fixed: custom sampling rates being ignored
+
+  
                       ---------------------------------
                       Release 4.70.0 - October 19, 2013
                       ---------------------------------
@@ -40,6 +141,10 @@
   fixed: settings could not be saved on newer Windows versions (7 & 8)
   fixed: installation issue caused by including manifest in build
   added: dialog to installer suggesting "Winamp Essentials Pack"
+
+ AmioWavpack.amio (Adobe Audition Plugin) - 1.0
+ ----------------------------------------------
+  all new plugin for Audition 4.0 (CS5.5) and later (including Audition CC)
 
 
                           --------------------------
