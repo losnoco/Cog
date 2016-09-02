@@ -16,10 +16,10 @@
 		8337AAED17FFA0000081AFF8 /* unrealfmt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAE917FFA0000081AFF8 /* unrealfmt.cpp */; };
 		8337AAEE17FFA0000081AFF8 /* unrealfmtdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAEA17FFA0000081AFF8 /* unrealfmtdata.cpp */; };
 		8337AAF117FFA2D30081AFF8 /* j2b.c in Sources */ = {isa = PBXBuildFile; fileRef = 8337AAEF17FFA2D30081AFF8 /* j2b.c */; };
-		8337AAF317FFA7640081AFF8 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8337AAF217FFA7640081AFF8 /* libz.dylib */; };
 		83527EE818242FD5002F170E /* libunmo3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83527EE618242FD5002F170E /* libunmo3.dylib */; };
 		83527EEB18243069002F170E /* mo3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83527EEA18243069002F170E /* mo3.c */; };
 		83527EED182432CA002F170E /* libunmo3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83527EE618242FD5002F170E /* libunmo3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83B820D41D790C3800B6FC6D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B820D31D790C3800B6FC6D /* libz.tbd */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -86,13 +86,13 @@
 		8337AAEB17FFA0000081AFF8 /* urf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = urf.h; sourceTree = "<group>"; };
 		8337AAEF17FFA2D30081AFF8 /* j2b.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = j2b.c; sourceTree = "<group>"; };
 		8337AAF017FFA2D30081AFF8 /* j2b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = j2b.h; sourceTree = "<group>"; };
-		8337AAF217FFA7640081AFF8 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		833F68331CDBCAB100AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83527EE618242FD5002F170E /* libunmo3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libunmo3.dylib; path = ../../../ThirdParty/BASS/libunmo3.dylib; sourceTree = "<group>"; };
 		83527EE718242FD5002F170E /* unmo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unmo3.h; path = ../../../ThirdParty/BASS/unmo3.h; sourceTree = "<group>"; };
 		83527EE918243029002F170E /* mo3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mo3.h; path = mo3/mo3.h; sourceTree = "<group>"; };
 		83527EEA18243069002F170E /* mo3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mo3.c; path = mo3/mo3.c; sourceTree = "<group>"; };
 		8384912B1808155E00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
+		83B820D31D790C3800B6FC6D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		83FAF8A418ADD45600057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Dumb.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dumb.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -104,7 +104,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8337AAF317FFA7640081AFF8 /* libz.dylib in Frameworks */,
+				83B820D41D790C3800B6FC6D /* libz.tbd in Frameworks */,
 				83527EE818242FD5002F170E /* libunmo3.dylib in Frameworks */,
 				17C8F7B90CBEF380008D969D /* Dumb.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
@@ -117,12 +117,12 @@
 		089C166AFE841209C02AAC07 /* Dumb */ = {
 			isa = PBXGroup;
 			children = (
-				8337AAF217FFA7640081AFF8 /* libz.dylib */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				83B820D21D790C3700B6FC6D /* Frameworks */,
 			);
 			name = Dumb;
 			sourceTree = "<group>";
@@ -248,6 +248,14 @@
 			name = mo3;
 			sourceTree = "<group>";
 		};
+		83B820D21D790C3700B6FC6D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				83B820D31D790C3800B6FC6D /* libz.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -279,6 +287,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0800;
+				TargetAttributes = {
+					8D5B49AC048680CD000E48DA = {
+						DevelopmentTeam = N6E749HJ2X;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Dumb" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -398,7 +411,6 @@
 		1DEB913C08733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -436,7 +448,9 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -450,6 +464,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OBJROOT = ../../build;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PREBINDING = NO;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
@@ -469,7 +484,9 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -480,6 +497,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OBJROOT = ../../build;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PREBINDING = NO;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;

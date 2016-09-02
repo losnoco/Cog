@@ -173,6 +173,11 @@
 			attributes = {
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Christopher Snowhill";
+				TargetAttributes = {
+					83A0F46E1816CE5E00119DB4 = {
+						DevelopmentTeam = N6E749HJ2X;
+					};
+				};
 			};
 			buildConfigurationList = 83A0F46A1816CE5E00119DB4 /* Build configuration list for PBXProject "playptmod" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -312,7 +317,6 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)/bundle/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -336,7 +340,9 @@
 		83A0F4821816CE5E00119DB4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "playptmod/playptmod-Prefix.pch";
 				INFOPLIST_FILE = "playptmod/playptmod-Info.plist";
@@ -351,7 +357,9 @@
 		83A0F4831816CE5E00119DB4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "playptmod/playptmod-Prefix.pch";
 				INFOPLIST_FILE = "playptmod/playptmod-Info.plist";

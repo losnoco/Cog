@@ -57,7 +57,6 @@
 			files = (
 				8352D4991CDDB06A009D16AA /* libz.tbd in Frameworks */,
 				8352D4971CDDB05E009D16AA /* Security.framework in Frameworks */,
-				8352D4951CDDB03E009D16AA /* libiconv.tbd in Frameworks */,
 				8352D4911CDDB02A009D16AA /* VideoDecodeAcceleration.framework in Frameworks */,
 				8352D49F1CDDB8D7009D16AA /* CoreVideo.framework in Frameworks */,
 				8352D4931CDDB034009D16AA /* QuartzCore.framework in Frameworks */,
@@ -68,6 +67,7 @@
 				8352D48C1CDDAEDD009D16AA /* libavformat.a in Frameworks */,
 				8352D48D1CDDAEDD009D16AA /* libavutil.a in Frameworks */,
 				8352D48B1CDDAEDD009D16AA /* libavcodec.a in Frameworks */,
+				8352D4951CDDB03E009D16AA /* libiconv.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +189,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0800;
+				TargetAttributes = {
+					8D5B49AC048680CD000E48DA = {
+						DevelopmentTeam = N6E749HJ2X;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "FFMPEG" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -282,7 +287,9 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -297,6 +304,7 @@
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/ffmpeg/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PREBINDING = NO;
 				SDKROOT = macosx;
 			};
@@ -315,6 +323,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -326,6 +335,7 @@
 				HEADER_SEARCH_PATHS = ../../ThirdParty/ffmpeg/include;
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/ffmpeg/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PREBINDING = NO;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;

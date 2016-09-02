@@ -175,6 +175,11 @@
 			attributes = {
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Christopher Snowhill";
+				TargetAttributes = {
+					839BCFD11965133E00947767 = {
+						DevelopmentTeam = N6E749HJ2X;
+					};
+				};
 			};
 			buildConfigurationList = 839BCFCD1965133E00947767 /* Build configuration list for PBXProject "BASSMODS" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -314,7 +319,9 @@
 		839BCFE51965133E00947767 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BASSMODS/BASSMODS-Prefix.pch";
 				INFOPLIST_FILE = "BASSMODS/BASSMODS-Info.plist";
@@ -323,6 +330,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -336,6 +344,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BASSMODS/BASSMODS-Prefix.pch";
 				INFOPLIST_FILE = "BASSMODS/BASSMODS-Info.plist";

@@ -181,6 +181,11 @@
 			attributes = {
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Christopher Snowhill";
+				TargetAttributes = {
+					836FB52C1820538700B3AD2D = {
+						DevelopmentTeam = N6E749HJ2X;
+					};
+				};
 			};
 			buildConfigurationList = 836FB5281820538700B3AD2D /* Build configuration list for PBXProject "Hively" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -343,7 +348,9 @@
 		836FB5401820538700B3AD2D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Hively/Hively-Prefix.pch";
 				INFOPLIST_FILE = "Hively/Hively-Info.plist";
@@ -360,6 +367,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Hively/Hively-Prefix.pch";
 				INFOPLIST_FILE = "Hively/Hively-Info.plist";

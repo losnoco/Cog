@@ -163,6 +163,11 @@
 			attributes = {
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Christopher Snowhill";
+				TargetAttributes = {
+					836F6B0F18BDB80D0095E648 = {
+						DevelopmentTeam = N6E749HJ2X;
+					};
+				};
 			};
 			buildConfigurationList = 836F6B0B18BDB80D0095E648 /* Build configuration list for PBXProject "vgmstream" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -317,7 +322,9 @@
 		836F6B2318BDB80D0095E648 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -342,6 +349,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
