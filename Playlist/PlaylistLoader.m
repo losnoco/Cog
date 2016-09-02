@@ -8,6 +8,8 @@
 
 #include <objc/runtime.h>
 
+#include <mach/semaphore.h>
+
 #import "PlaylistLoader.h"
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
@@ -475,6 +477,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
     if (!i) return;
     
+    semaphore_t info_sem;
+    semaphore_create( mach_task_self(), &info_sem, SYNC_POLICY_FIFO, (int) -i + 1 );
+
+    __block semaphore_t weak_sem = info_sem;
+    
     for (NSArray *a in array)
     {
         if (![a count]) continue;
@@ -497,6 +504,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [weakPe setMetadata:entryInfo];
+                    semaphore_signal(weak_sem);
                 });
             }
         }];
@@ -505,6 +513,9 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     }
 
 	[queue waitUntilAllOperationsAreFinished];
+    
+    semaphore_wait(info_sem);
+    semaphore_destroy(mach_task_self(), info_sem);
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
 }
