@@ -105,6 +105,7 @@
 					83F9D7E61A884B44007ABEC2 = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = N6E749HJ2X;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -233,6 +234,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				INFOPLIST_FILE = SilenceDecoder/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
@@ -247,6 +249,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				INFOPLIST_FILE = SilenceDecoder/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";

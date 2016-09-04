@@ -178,6 +178,7 @@
 				TargetAttributes = {
 					8359FF1617FEF35C0060F3ED = {
 						DevelopmentTeam = N6E749HJ2X;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -343,6 +344,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArchiveSource/ArchiveSource-Prefix.pch";
 				INFOPLIST_FILE = "ArchiveSource/ArchiveSource-Info.plist";
@@ -359,6 +361,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArchiveSource/ArchiveSource-Prefix.pch";
 				INFOPLIST_FILE = "ArchiveSource/ArchiveSource-Info.plist";

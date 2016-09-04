@@ -185,6 +185,7 @@
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
 						DevelopmentTeam = N6E749HJ2X;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -254,6 +255,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -274,6 +276,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = FileSource_Prefix.pch;

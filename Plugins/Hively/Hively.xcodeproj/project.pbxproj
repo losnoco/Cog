@@ -184,6 +184,7 @@
 				TargetAttributes = {
 					836FB52C1820538700B3AD2D = {
 						DevelopmentTeam = N6E749HJ2X;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};

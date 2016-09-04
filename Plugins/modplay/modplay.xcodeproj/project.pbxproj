@@ -231,6 +231,7 @@
 				TargetAttributes = {
 					83F4D51418D8206A009B2DE6 = {
 						DevelopmentTeam = N6E749HJ2X;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -396,6 +397,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "modplay/modplay-Prefix.pch";
 				INFOPLIST_FILE = "modplay/modplay-Info.plist";
@@ -414,6 +416,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "modplay/modplay-Prefix.pch";
 				INFOPLIST_FILE = "modplay/modplay-Info.plist";

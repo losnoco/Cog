@@ -1,3 +1,6 @@
 [submodule "Frameworks/Sparkle"]
 	path = Frameworks/Sparkle
 	url = https://gitlab.kode54.net/kode54/Sparkle.git
+[submodule "Frameworks/mGBA/mGBA/mgba"]
+	path = Frameworks/mGBA/mGBA/mgba
+	url = https://github.com/mgba-emu/mgba.git

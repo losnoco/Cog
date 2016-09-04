@@ -22,7 +22,12 @@
 
 #import <HighlyQuixotic/qsound.h>
 
-#import <HighlyAdvanced/GBA.h>
+extern "C" {
+#import <mGBA/core.h>
+#import <mGBA/blip_buf.h>
+#import <mGBA/vfs.h>
+extern struct mCore* GBACoreCreate(void);
+}
 
 #include <vector>
 #import <SSEQPlayer/SDAT.h>
@@ -176,6 +181,7 @@ static psf_file_callbacks source_callbacks =
         psx_init();
         sega_init();
         qsound_init();
+        mLogSetDefaultLogger(&gsf_logger);
     }
 }
 
@@ -621,25 +627,33 @@ static int gsf_loader(void * context, const uint8_t * exe, size_t exe_size,
     return 0;
 }
 
-struct gsf_sound_out : public GBASoundOut
+struct gsf_running_state
 {
-    uint8_t * buffer;
-    size_t samples_written;
-    size_t buffer_size;
-    gsf_sound_out() : buffer( nil ), samples_written( 0 ), buffer_size( 0 ) { }
-    virtual ~gsf_sound_out() { if ( buffer ) free( buffer ); }
-    // Receives signed 16-bit stereo audio and a byte count
-    virtual void write(const void * samples, unsigned long bytes)
-    {
-        if ( bytes + samples_written > buffer_size )
-        {
-            size_t new_buffer_size = ( buffer_size + bytes + 2047 ) & ~2047;
-            buffer = ( uint8_t * ) realloc( buffer, new_buffer_size );
-            buffer_size = new_buffer_size;
-        }
-        memcpy( buffer + samples_written, samples, bytes );
-        samples_written += bytes;
-    }
+    struct mAVStream stream;
+    void * rom;
+    int16_t samples[2048 * 2];
+    int buffered;
+};
+
+static void _gsf_postAudioBuffer(struct mAVStream * stream, blip_t * left, blip_t * right)
+{
+    struct gsf_running_state * state = ( struct gsf_running_state * ) stream;
+    blip_read_samples(left, state->samples, 2048, true);
+    blip_read_samples(right, state->samples + 1, 2048, true);
+    state->buffered = 2048;
+}
+
+void GSFLogger(struct mLogger* logger, int category, enum mLogLevel level, const char* format, va_list args)
+{
+    (void)logger;
+    (void)category;
+    (void)level;
+    (void)format;
+    (void)args;
+}
+
+static struct mLogger gsf_logger = {
+    .log = GSFLogger,
 };
 
 struct ncsf_loader_state
@@ -1042,25 +1056,60 @@ static int usf_info(void * context, const char * name, const char * value)
         if ( state.data_size > UINT_MAX )
             return NO;
         
-        GBASystem * system = new GBASystem;
+        /*FILE * f = fopen("/tmp/rom.gba", "wb");
+        fwrite(state.data, 1, state.data_size, f);
+        fclose(f);*/
+
+        struct mCore * core = GBACoreCreate();
+        if ( !core )
+        {
+            free(state.data);
+            return NO;
+        }
         
-        emulatorCore = ( uint8_t * ) system;
+        struct gsf_running_state * rstate = (struct gsf_running_state *) calloc(1, sizeof(*rstate));
+        if ( !rstate )
+        {
+            core->deinit(core);
+            free(state.data);
+            return NO;
+        }
         
-        system->cpuIsMultiBoot = ((state.entry >> 24) == 2);
+        rstate->rom = state.data;
+        rstate->stream.postAudioBuffer = _gsf_postAudioBuffer;
         
-        CPULoadRom( system, state.data, (uint32_t)state.data_size );
+        core->init(core);
+        core->setAVStream(core, &rstate->stream);
+        mCoreInitConfig(core, NULL);
+
+        core->setAudioBufferSize(core, 2048);
         
-        free( state.data );
+        struct VFile * rom = VFileFromConstMemory(state.data, state.data_size);
+        if ( !rom )
+        {
+            free(rstate);
+            core->deinit(core);
+            free(state.data);
+            return NO;
+        }
+
+        blip_set_rates(core->getAudioChannel(core, 0), core->frequency(core), 44100);
+        blip_set_rates(core->getAudioChannel(core, 1), core->frequency(core), 44100);
         
-        struct gsf_sound_out * sound_out = new gsf_sound_out;
+        struct mCoreOptions opts = {
+            .useBios = false,
+            .skipBios = true,
+            .volume = 0x100,
+            .sampleRate = 44100,
+        };
         
-        emulatorExtra = sound_out;
+        mCoreConfigLoadDefaults(&core->config, &opts);
+
+        core->loadROM(core, rom);
+        core->reset(core);
         
-        soundInit( system, sound_out );
-        soundReset( system );
-        
-        CPUInit( system );
-        CPUReset( system );
+        emulatorCore = ( uint8_t * ) core;
+        emulatorExtra = rstate;
     }
     else if ( type == 0x24 )
     {
@@ -1315,40 +1364,39 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x22 )
     {
-        GBASystem * system = ( GBASystem * ) emulatorCore;
-        struct gsf_sound_out * sound_out = ( struct gsf_sound_out * ) emulatorExtra;
+        struct mCore * core = ( struct mCore * ) emulatorCore;
+        struct gsf_running_state * rstate = ( struct gsf_running_state * ) emulatorExtra;
 
         unsigned long frames_to_render = frames;
         
         do
         {
-            unsigned long frames_rendered = sound_out->samples_written / 4;
-        
+            unsigned long frames_rendered = rstate->buffered;
+            
             if ( frames_rendered >= frames_to_render )
             {
-                memcpy( buf, sound_out->buffer, frames_to_render * 4 );
+                memcpy( buf, rstate->samples, frames_to_render * 4 );
                 frames_rendered -= frames_to_render;
-                memcpy( sound_out->buffer, sound_out->buffer + frames_to_render * 4, frames_rendered * 4 );
+                memcpy( rstate->samples, rstate->samples + frames_to_render * 2, frames_rendered * 4 );
                 frames_to_render = 0;
             }
             else
             {
-                memcpy( buf, sound_out->buffer, frames_rendered * 4 );
+                memcpy( buf, rstate->samples, frames_rendered * 4 );
                 buf = ((uint8_t *) buf) + frames_rendered * 4;
                 frames_to_render -= frames_rendered;
                 frames_rendered = 0;
             }
-            sound_out->samples_written = frames_rendered * 4;
-    
+            
+            rstate->buffered = (int) frames_rendered;
+            
             if ( frames_to_render )
             {
-                CPULoop( system, 250000 );
-                if ( !sound_out->samples_written )
-                    break;
+                while ( !rstate->buffered )
+                    core->runFrame(core);
             }
         }
         while ( frames_to_render );
-        frames -= (UInt32) frames_to_render;
     }
     else if ( type == 0x24 )
     {
@@ -1436,10 +1484,8 @@ static int usf_info(void * context, const char * name, const char * value)
             usf_shutdown( emulatorCore );
             free( emulatorCore );
         } else if ( type == 0x22 ) {
-            GBASystem * system = ( GBASystem * ) emulatorCore;
-            CPUCleanUp( system );
-            soundShutdown( system );
-            delete system;
+            struct mCore * core = ( struct mCore * ) emulatorCore;
+            core->deinit(core);
         } else if ( type == 0x24 ) {
             NDS_state * state = ( NDS_state * ) emulatorCore;
             state_deinit(state);
@@ -1457,7 +1503,9 @@ static int usf_info(void * context, const char * name, const char * value)
         psf2fs_delete( emulatorExtra );
         emulatorExtra = nil;
     } else if ( type == 0x22 && emulatorExtra ) {
-        delete ( gsf_sound_out * ) emulatorExtra;
+        struct gsf_running_state * rstate = ( struct gsf_running_state * ) emulatorExtra;
+        free( rstate->rom );
+        free( rstate );
         emulatorExtra = nil;
     } else if ( type == 0x24 && emulatorExtra ) {
         free( emulatorExtra );
@@ -1552,29 +1600,29 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else if ( type == 0x22 )
     {
-        GBASystem * system = ( GBASystem * ) emulatorCore;
-        struct gsf_sound_out * sound_out = ( struct gsf_sound_out * ) emulatorExtra;
+        struct mCore * core = ( struct mCore * ) emulatorCore;
+        struct gsf_running_state * rstate = ( struct gsf_running_state * ) emulatorExtra;
 
         long frames_to_run = frame - framesRead;
 
         do
         {
-            if ( frames_to_run * 4 >= sound_out->samples_written )
+            if ( frames_to_run >= rstate->buffered )
             {
-                frames_to_run -= sound_out->samples_written / 4;
-                sound_out->samples_written = 0;
+                frames_to_run -= rstate->buffered;
+                rstate->buffered = 0;
             }
             else
             {
-                sound_out->samples_written -= frames_to_run * 4;
-                memcpy( sound_out->buffer, sound_out->buffer + frames_to_run * 4, sound_out->samples_written );
+                rstate->buffered -= frames_to_run;
+                memcpy( rstate->samples, rstate->samples + frames_to_run * 4, rstate->buffered * 4 );
                 frames_to_run = 0;
             }
             
             if ( frames_to_run )
             {
-                CPULoop( system, 250000 );
-                if ( !sound_out->samples_written ) break;
+                while ( !rstate->buffered )
+                    core->runFrame( core );
             }
         } while ( frames_to_run );
         
