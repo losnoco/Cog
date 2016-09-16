@@ -76,7 +76,7 @@ Opl_Apu::~Opl_Apu()
 
 		case type_msxaudio:
 			y8950_shutdown( opl );
-			free( opl_memory );
+			//free( opl_memory ); // y8950_shutdown frees deltat->memory
 			//fclose( logfile );
 			break;
 
