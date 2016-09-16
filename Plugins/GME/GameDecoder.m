@@ -86,12 +86,12 @@ gme_err_t readCallback( void* data, void* out, long count )
     {
         if ([m3usrc seekable])
         {
-            [source seek:0 whence:SEEK_END];
-            long size = [source tell];
-            [source seek:0 whence:SEEK_SET];
+            [m3usrc seek:0 whence:SEEK_END];
+            long size = [m3usrc tell];
+            [m3usrc seek:0 whence:SEEK_SET];
             
             void *data = malloc(size);
-            [source read:data amount:size];
+            [m3usrc read:data amount:size];
             
             gme_load_m3u_data(emu, data, size);
             free(data);

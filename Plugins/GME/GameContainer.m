@@ -66,16 +66,17 @@
     
     NSURL *m3uurl = [url URLByDeletingPathExtension];
     m3uurl = [m3uurl URLByAppendingPathExtension:@"m3u"];
-    if ([source open:m3uurl])
+    id<CogSource> m3usrc = [audioSourceClass audioSourceForURL:m3uurl];
+    if ([m3usrc open:m3uurl])
     {
-        if ([source seekable])
+        if ([m3usrc seekable])
         {
-            [source seek:0 whence:SEEK_END];
-            size = [source tell];
-            [source seek:0 whence:SEEK_SET];
+            [m3usrc seek:0 whence:SEEK_END];
+            size = [m3usrc tell];
+            [m3usrc seek:0 whence:SEEK_SET];
             
             data = malloc(size);
-            [source read:data amount:size];
+            [m3usrc read:data amount:size];
             
             error = gme_load_m3u_data(emu, data, size);
             free(data);
