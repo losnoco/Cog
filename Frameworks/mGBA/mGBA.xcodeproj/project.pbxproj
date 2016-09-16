@@ -38,8 +38,6 @@
 		83CA29A21D7BC4EE00F2EA53 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA24CF1D7BC4ED00F2EA53 /* core.h */; };
 		83CA29A31D7BC4EE00F2EA53 /* cli.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA24D11D7BC4ED00F2EA53 /* cli.c */; };
 		83CA29A41D7BC4EE00F2EA53 /* cli.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA24D21D7BC4ED00F2EA53 /* cli.h */; };
-		83CA29A51D7BC4EE00F2EA53 /* export.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA24D31D7BC4ED00F2EA53 /* export.c */; };
-		83CA29A61D7BC4EE00F2EA53 /* export.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA24D41D7BC4ED00F2EA53 /* export.h */; };
 		83CA29A71D7BC4EE00F2EA53 /* sharkport.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA24D51D7BC4ED00F2EA53 /* sharkport.c */; };
 		83CA29A81D7BC4EE00F2EA53 /* sharkport.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA24D61D7BC4ED00F2EA53 /* sharkport.h */; };
 		83CA29A91D7BC4EE00F2EA53 /* gba.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA24D71D7BC4ED00F2EA53 /* gba.c */; };
@@ -200,8 +198,6 @@
 		83CA24CF1D7BC4ED00F2EA53 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		83CA24D11D7BC4ED00F2EA53 /* cli.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cli.c; sourceTree = "<group>"; };
 		83CA24D21D7BC4ED00F2EA53 /* cli.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cli.h; sourceTree = "<group>"; };
-		83CA24D31D7BC4ED00F2EA53 /* export.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = export.c; sourceTree = "<group>"; };
-		83CA24D41D7BC4ED00F2EA53 /* export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = export.h; sourceTree = "<group>"; };
 		83CA24D51D7BC4ED00F2EA53 /* sharkport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sharkport.c; sourceTree = "<group>"; };
 		83CA24D61D7BC4ED00F2EA53 /* sharkport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sharkport.h; sourceTree = "<group>"; };
 		83CA24D71D7BC4ED00F2EA53 /* gba.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gba.c; sourceTree = "<group>"; };
@@ -473,8 +469,6 @@
 			children = (
 				83CA24D11D7BC4ED00F2EA53 /* cli.c */,
 				83CA24D21D7BC4ED00F2EA53 /* cli.h */,
-				83CA24D31D7BC4ED00F2EA53 /* export.c */,
-				83CA24D41D7BC4ED00F2EA53 /* export.h */,
 				83CA24D51D7BC4ED00F2EA53 /* sharkport.c */,
 				83CA24D61D7BC4ED00F2EA53 /* sharkport.h */,
 			);
@@ -723,7 +717,6 @@
 				83CA29441D7BC4EE00F2EA53 /* decoder.h in Headers */,
 				83CA2E281D7BCB2E00F2EA53 /* patch-ups.h in Headers */,
 				83CA2D961D7BC83E00F2EA53 /* cheats.h in Headers */,
-				83CA29A61D7BC4EE00F2EA53 /* export.h in Headers */,
 				83CA2E2A1D7BCB2E00F2EA53 /* patch.h in Headers */,
 				83CA29AA1D7BC4EE00F2EA53 /* gba.h in Headers */,
 				83CA2D391D7BC4F000F2EA53 /* formatting.h in Headers */,
@@ -878,7 +871,6 @@
 				83CA29381D7BC4EE00F2EA53 /* arm.c in Sources */,
 				83CA2D441D7BC4F000F2EA53 /* hash.c in Sources */,
 				83CA2D621D7BC4F000F2EA53 /* vfs-mem.c in Sources */,
-				83CA29A51D7BC4EE00F2EA53 /* export.c in Sources */,
 				83CA2DDF1D7BCA2C00F2EA53 /* cli-debugger.c in Sources */,
 				83CA2D9E1D7BC83E00F2EA53 /* input.c in Sources */,
 				83CA2A9F1D7BC4EF00F2EA53 /* blip_buf.c in Sources */,
@@ -1081,6 +1073,7 @@
 				83CA241D1D7BC47C00F2EA53 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
