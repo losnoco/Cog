@@ -246,6 +246,11 @@
                 return YES;
             }
         }
+        
+        if ([chainQueue count] >= 5)
+        {
+            return YES;
+        }
 
 		BufferChain *newChain = nil;
 		
