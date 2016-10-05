@@ -1,7 +1,11 @@
 /*
-** ST3PLAY v0.71 - 28th of May 2015 - http://16-bits.org
-** =====================================================
+** ST3PLAY v0.75a - 5th of October 2016 - http://16-bits.org
+** =========================================================
 ** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from v0.71:
+** - Initial pans should be 128 since we simulate GUS mode.
+**   Pans are still changed if custom pans follow.
 **
 ** Changelog from v0.70:
 ** - Any pan commands except Lxy/Yxy/XA4 should disable channel surround
@@ -1678,8 +1682,7 @@ void st3play_PlaySong(void *_p, int16_t startOrder)
     // setup pans
     for (i = 0; i < 32; ++i)
     {
-        pan = (p->mseg[0x33] & 0x80) ? ((p->mseg[0x40 + i] & 0x08) ? 192 : 64) : 128;
-
+        pan = 128;
         if (p->mseg[0x35] == 0xFC) // non-default pannings follow
         {
             dat = p->mseg[(p->patternadd + (get_le16(&p->mseg[0x24]) * 2)) + i];
