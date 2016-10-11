@@ -413,36 +413,41 @@
     }
 }
 
+/* Unassign previous handler first, so dealloc can unregister it from the global map before the new instances are assigned */
 - (void)registerHotKeys
 {
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]) {
-	playHotKey = [[NDHotKeyEvent alloc]
-		initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
-		  modifierFlags: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]
-		];
+        playHotKey = nil;
+        playHotKey = [[NDHotKeyEvent alloc]
+                      initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
+                      modifierFlags: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]
+                      ];
         [playHotKey setTarget:self selector:@selector(clickPlay)];
         [playHotKey setEnabled:YES];
     }
 	
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPreviousModifiers"] intValue]) {
-	prevHotKey = [[NDHotKeyEvent alloc]
-		  initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
-			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousModifiers"]
-		];
+        prevHotKey = nil;
+        prevHotKey = [[NDHotKeyEvent alloc]
+                      initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
+                      modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousModifiers"]
+                      ];
         [prevHotKey setTarget:self selector:@selector(clickPrev)];
         [prevHotKey setEnabled:YES];
     }
 	
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyNextModifiers"] intValue]) {
-	nextHotKey = [[NDHotKeyEvent alloc]
-		initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextKeyCode"]
-			modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextModifiers"]
-		];
+        nextHotKey = nil;
+        nextHotKey = [[NDHotKeyEvent alloc]
+                      initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextKeyCode"]
+                      modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextModifiers"]
+                      ];
         [nextHotKey setTarget:self selector:@selector(clickNext)];
         [nextHotKey setEnabled:YES];
     }
 
     if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeySpamModifiers"] intValue]) {
+        spamHotKey = nil;
         spamHotKey = [[NDHotKeyEvent alloc]
                       initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamKeyCode"]
                       modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamModifiers"]
