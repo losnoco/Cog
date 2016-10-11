@@ -87,7 +87,7 @@ static BOOL isEqualHashFunction( NSHashTable * aTable, const void * aFirstHotKey
 static NSString * describeHashFunction( NSHashTable * aTable, const void * aHotKeyEvent );
 #endif
 
-static UInt32 _idForCharacterAndModifer( unichar aCharacter, NSUInteger aModFlags ) { return (UInt32)aCharacter | (UInt32)(aModFlags<<16); }
+static UInt32 _idForCharacterAndModifer( unichar aCharacter, NSUInteger aModFlags ) { return (UInt32)aCharacter | (UInt32)(aModFlags); }
 
 #if 0
 static void _getCharacterAndModiferForId( UInt32 anId, unichar *aCharacter, NSUInteger *aModFlags )
@@ -643,7 +643,7 @@ struct HotKeyMappingEntry
 	return [super isEqual:anObject] || ([anObject isKindOfClass:[self class]] == YES && [self keyCode] == [(NDHotKeyEvent*)anObject keyCode] && [self modifierFlags] == [anObject modifierFlags]);
 }
 
-- (NSUInteger)hash { return (NSUInteger)self.keyCharacter | (self.modifierFlags<<16); }
+- (NSUInteger)hash { return (NSUInteger)self.keyCharacter | (self.modifierFlags); }
 
 - (NSString *)description
 {
