@@ -343,16 +343,16 @@
     [userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
 	
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:35] forKey:@"hotKeyPlayKeyCode"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyPlayModifiers"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSEventModifierFlagControl|NSEventModifierFlagCommand)] forKey:@"hotKeyPlayModifiers"];
 	
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:45] forKey:@"hotKeyNextKeyCode"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyNextModifiers"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSEventModifierFlagControl|NSEventModifierFlagCommand)] forKey:@"hotKeyNextModifiers"];
 	
 	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:15] forKey:@"hotKeyPreviousKeyCode"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeyPreviousModifiers"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSEventModifierFlagControl|NSEventModifierFlagCommand)] forKey:@"hotKeyPreviousModifiers"];
     
     [userDefaultsValuesDict setObject:[NSNumber numberWithInt:8] forKey:@"hotKeySpamKeyCode"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSControlKeyMask|NSCommandKeyMask)] forKey:@"hotKeySpamModifiers"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSEventModifierFlagControl|NSEventModifierFlagCommand)] forKey:@"hotKeySpamModifiers"];
 
     NSString * feedURLdefault = @"https://f.losno.co/cog/mercury.xml";
     NSString * feedURLbroken = @"https://kode54.net/cog/stable.xml";

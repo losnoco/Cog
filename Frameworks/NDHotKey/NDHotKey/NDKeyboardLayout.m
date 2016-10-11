@@ -179,16 +179,16 @@ static NSUInteger _characterForModifierFlags( unichar aBuff[kBufferSize], UInt32
 {
 	NSUInteger		thePos = 0;
 	memset( aBuff, 0, kBufferSize );
-	if(aModifierFlags & NSControlKeyMask)
+	if(aModifierFlags & NSEventModifierFlagControl)
 		aBuff[thePos++] = kControlUnicode;
 	
-	if(aModifierFlags & NSAlternateKeyMask)
+	if(aModifierFlags & NSEventModifierFlagOption)
 		aBuff[thePos++] = kOptionUnicode;
 	
-	if(aModifierFlags & NSShiftKeyMask)
+	if(aModifierFlags & NSEventModifierFlagShift)
 		aBuff[thePos++] = kShiftUnicode;
 	
-	if(aModifierFlags & NSCommandKeyMask)
+	if(aModifierFlags & NSEventModifierFlagCommand)
 		aBuff[thePos++] = kCommandUnicode;
 	return thePos;
 }
@@ -201,16 +201,16 @@ NSUInteger NDCocoaModifierFlagsForCarbonModifierFlags( NSUInteger aModifierFlags
 	NSUInteger	theCocoaModifierFlags = 0;
 	
 	if(aModifierFlags & shiftKey)
-		theCocoaModifierFlags |= NSShiftKeyMask;
+		theCocoaModifierFlags |= NSEventModifierFlagShift;
 	
 	if(aModifierFlags & controlKey)
-		theCocoaModifierFlags |= NSControlKeyMask;
+		theCocoaModifierFlags |= NSEventModifierFlagControl;
 	
 	if(aModifierFlags & optionKey)
-		theCocoaModifierFlags |= NSAlternateKeyMask;
+		theCocoaModifierFlags |= NSEventModifierFlagOption;
 	
 	if(aModifierFlags & cmdKey)
-		theCocoaModifierFlags |= NSCommandKeyMask;
+		theCocoaModifierFlags |= NSEventModifierFlagCommand;
 	
 	return theCocoaModifierFlags;
 }
