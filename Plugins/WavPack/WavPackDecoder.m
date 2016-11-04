@@ -10,42 +10,64 @@
 
 #import "Logging.h"
 
+@implementation WavPackReader
+- (id)initWithSource:(id<CogSource>)s
+{
+    self = [super init];
+    if (self)
+    {
+        source = s;
+    }
+    return self;
+}
+
+- (void)setSource:(id<CogSource>)s
+{
+    source = s;
+}
+
+- (id<CogSource>)source
+{
+    return source;
+}
+@end
+
 @implementation WavPackDecoder
 
 int32_t ReadBytesProc(void *ds, void *data, int32_t bcount)
 {
-	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
+	WavPackReader *wv = (__bridge WavPackReader *)ds;
 	
-	return (int32_t) [[decoder source] read:data amount:bcount];
+	return (int32_t) [[wv source] read:data amount:bcount];
 }
 
 uint32_t GetPosProc(void *ds)
 {
-	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
+	WavPackReader *wv = (__bridge WavPackReader *)ds;
 	
-	return (uint32_t) [[decoder source] tell];
+	return (uint32_t) [[wv source] tell];
 }
 
 int SetPosAbsProc(void *ds, uint32_t pos)
 {
-	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
+	WavPackReader *wv = (__bridge WavPackReader *)ds;
 	
-	return ([[decoder source] seek:pos whence:SEEK_SET] ? 0: -1);
+	return ([[wv source] seek:pos whence:SEEK_SET] ? 0: -1);
 }
 
 int SetPosRelProc(void *ds, int32_t delta, int mode)
 {
-	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
+	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
-	return ([[decoder source] seek:delta whence:mode] ? 0: -1);
+	return ([[wv source] seek:delta whence:mode] ? 0: -1);
 }
 
 int PushBackByteProc(void *ds, int c)
 {
-	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
+	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
-	if ([[decoder source] seekable]) {
-		[[decoder source] seek:-1 whence:SEEK_CUR];
+	if ([[wv source] seekable]) {
+		[[wv source] seek:-1 whence:SEEK_CUR];
 		
 		return c;
 	}
@@ -56,15 +78,15 @@ int PushBackByteProc(void *ds, int c)
 
 uint32_t GetLengthProc(void *ds)
 {
-	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
+	WavPackReader *wv = (__bridge WavPackReader *)ds;
 	
-	if ([[decoder source] seekable]) {
-		long currentPos = [[decoder source] tell];
+	if ([[wv source] seekable]) {
+		long currentPos = [[wv source] tell];
 		
-		[[decoder source] seek:0 whence:SEEK_END];
-		long size = [[decoder source] tell];
+		[[wv source] seek:0 whence:SEEK_END];
+		long size = [[wv source] tell];
 		
-		[[decoder source] seek:currentPos whence:SEEK_SET];
+		[[wv source] seek:currentPos whence:SEEK_SET];
 
 		return (uint32_t) size;
 	}
@@ -75,9 +97,9 @@ uint32_t GetLengthProc(void *ds)
 
 int CanSeekProc(void *ds)
 {
-	WavPackDecoder *decoder = (__bridge WavPackDecoder *)ds;
+	WavPackReader *wv = (__bridge WavPackReader *)ds;
 	
-	return [[decoder source] seekable];
+	return [[wv source] seekable];
 }
 
 int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
@@ -99,9 +121,22 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 {
 	int open_flags = 0;
 	char error[80];
-	
-	[self setSource:s];
 
+    wv = [[WavPackReader alloc] initWithSource:s];
+    
+    id audioSourceClass = NSClassFromString(@"AudioSource");
+    NSURL *wvcurl = [[s url] URLByDeletingPathExtension];
+    wvcurl = [wvcurl URLByAppendingPathExtension:@"wvc"];
+    id<CogSource> wvcsrc = [audioSourceClass audioSourceForURL:wvcurl];
+    if ([wvcsrc open:wvcurl])
+    {
+        wvc = [[WavPackReader alloc] initWithSource:wvcsrc];
+    }
+    else
+    {
+        wvc = nil;
+    }
+    
 	reader.read_bytes = ReadBytesProc;
 	reader.get_pos = GetPosProc;
 	reader.set_pos_abs = SetPosAbsProc;
@@ -113,8 +148,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
     
     open_flags |= OPEN_DSD_AS_PCM | OPEN_ALT_TYPES;
 
-	//No corrections file (WVC) support at the moment.
-	wpc = WavpackOpenFileInputEx(&reader, (__bridge void *)(self), NULL, error, open_flags, 0);
+	wpc = WavpackOpenFileInputEx(&reader, (__bridge void *)(wv), (__bridge void *)(wvc), error, open_flags, 0);
 	if (!wpc) {
 		DLog(@"Unable to open file..");
 		return NO;
@@ -227,22 +261,13 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
         WavpackCloseFile(wpc);
         wpc = NULL;
     }
-    source = nil;
+    wvc = nil;
+    wv = nil;
 }
 
 - (void)dealloc
 {
     [self close];
-}
-
-- (void)setSource:(id<CogSource>)s
-{
-	source = s;
-}
-
-- (id<CogSource>)source
-{
-	return source;
 }
 
 - (NSDictionary *)properties
@@ -254,7 +279,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
         [NSNumber numberWithBool:floatingPoint],@"floatingPoint",
 		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
-		[NSNumber numberWithBool:[source seekable]], @"seekable",
+		[NSNumber numberWithBool:[[wv source] seekable]], @"seekable",
 		@"little",@"endian",
 		nil];
 }

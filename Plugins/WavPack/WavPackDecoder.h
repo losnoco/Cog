@@ -13,12 +13,25 @@
 
 #import <WavPack/wavpack.h>
 
+@interface WavPackReader : NSObject
+{
+    id<CogSource> source;
+}
+
+- (id)initWithSource:(id<CogSource>)s;
+
+- (void)setSource:(id<CogSource>)s;
+- (id<CogSource>)source;
+
+@end
+
 @interface WavPackDecoder : NSObject <CogDecoder>
 {
 	WavpackContext *wpc;
 	WavpackStreamReader reader;
 	
-	id<CogSource> source;
+    WavPackReader *wv;
+    WavPackReader *wvc;
 	
 	int bitsPerSample;
 	int channels;
@@ -27,8 +40,5 @@
 	float frequency;
 	long totalFrames;
 }
-
-- (void)setSource:(id<CogSource>)s;
-- (id<CogSource>)source;
 
 @end
