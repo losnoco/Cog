@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8333B6741DCC4999004C140D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8333B6731DCC4999004C140D /* libz.tbd */; };
 		8343785F17F93DAB00584396 /* psflib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343785017F93CB600584396 /* psflib.framework */; };
 		8343786017F93DBB00584396 /* psflib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343785017F93CB600584396 /* psflib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		834378D217F9676600584396 /* HighlyTheoretical.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834378A217F9658F00584396 /* HighlyTheoretical.framework */; };
@@ -24,7 +25,6 @@
 		83CA2E4D1D7BE41300F2EA53 /* mGBA.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83CA24241D7BC47E00F2EA53 /* mGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
 		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0CBF180B27C200269051 /* libz.dylib */; };
 		83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83FC325E1BF5AB9000962B36 /* HighlyExperimental.framework */; };
 		83FC32C61BF5AF0600962B36 /* HighlyExperimental.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83FC325E1BF5AB9000962B36 /* HighlyExperimental.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -182,6 +182,7 @@
 
 /* Begin PBXFileReference section */
 		8324C584181513A10046F78F /* circular_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = circular_buffer.h; sourceTree = "<group>"; };
+		8333B6731DCC4999004C140D /* libz.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		8343780B17F932B600584396 /* HCDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HCDecoder.h; sourceTree = "<group>"; };
 		8343780E17F932C900584396 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		8343784A17F93CB500584396 /* psflib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = psflib.xcodeproj; path = ../../Frameworks/psflib/psflib.xcodeproj; sourceTree = "<group>"; };
@@ -201,7 +202,6 @@
 		83C8B65018AF57770071B040 /* lazyusf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lazyusf.xcodeproj; path = ../../Frameworks/lazyusf/lazyusf.xcodeproj; sourceTree = "<group>"; };
 		83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mGBA.xcodeproj; path = ../../Frameworks/mGBA/mGBA.xcodeproj; sourceTree = "<group>"; };
 		83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = "<group>"; };
-		83DE0CBF180B27C200269051 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		83FAF8A318ADD27F00057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyExperimental.xcodeproj; path = ../../Frameworks/HighlyExperimental/HighlyExperimental.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -214,13 +214,13 @@
 				83CA2E3D1D7BCF9B00F2EA53 /* mGBA.framework in Frameworks */,
 				83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */,
 				83C8B6FB18AF58FA0071B040 /* lazyusf.framework in Frameworks */,
-				83DE0CC0180B27C200269051 /* libz.dylib in Frameworks */,
 				83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */,
 				8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */,
 				8343792917F96F1D00584396 /* HighlyQuixotic.framework in Frameworks */,
 				834378D217F9676600584396 /* HighlyTheoretical.framework in Frameworks */,
 				8343785F17F93DAB00584396 /* psflib.framework in Frameworks */,
 				8360EEE817F92AC8005208A4 /* Cocoa.framework in Frameworks */,
+				8333B6741DCC4999004C140D /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,9 +279,9 @@
 		8360EEE617F92AC8005208A4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8333B6731DCC4999004C140D /* libz.tbd */,
 				83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */,
 				83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */,
-				83DE0CBF180B27C200269051 /* libz.dylib */,
 				8360EEE717F92AC8005208A4 /* Cocoa.framework */,
 				8360EEE917F92AC8005208A4 /* Other Frameworks */,
 				8343784A17F93CB500584396 /* psflib.xcodeproj */,
@@ -404,7 +404,7 @@
 		8360EEDC17F92AC8005208A4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8360EEE317F92AC8005208A4 = {
@@ -625,13 +625,13 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -669,13 +669,13 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -695,9 +695,7 @@
 		8360EEF717F92AC8005208A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HighlyComplete/HighlyComplete-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -719,7 +717,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HighlyComplete/HighlyComplete-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (

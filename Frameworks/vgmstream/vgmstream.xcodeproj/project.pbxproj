@@ -1362,7 +1362,6 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					836F6B3818BDB8880095E648 = {
-						DevelopmentTeam = N6E749HJ2X;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -1915,9 +1914,7 @@
 		836F6B6218BDB8880095E648 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1933,7 +1930,6 @@
 					../Ogg/include,
 				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
-				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
@@ -1943,9 +1939,7 @@
 		836F6B6318BDB8880095E648 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1961,7 +1955,6 @@
 					../Ogg/include,
 				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
-				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;

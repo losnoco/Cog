@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8333B6701DCC46BA004C140D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8333B66F1DCC46BA004C140D /* libz.tbd */; };
 		8359000417FEF40E0060F3ED /* 7z.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF7417FEF40E0060F3ED /* 7z.h */; };
 		8359000517FEF40E0060F3ED /* 7zAlloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7517FEF40E0060F3ED /* 7zAlloc.c */; };
 		8359000617FEF40E0060F3ED /* 7zAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF7617FEF40E0060F3ED /* 7zAlloc.h */; };
@@ -126,7 +127,6 @@
 		8359008B17FEF40E0060F3ED /* unrar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFF17FEF40E0060F3ED /* unrar.cpp */; };
 		8359008C17FEF40E0060F3ED /* unrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359000017FEF40E0060F3ED /* unrar.h */; };
 		8359008D17FEF40E0060F3ED /* unrar_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359000117FEF40E0060F3ED /* unrar_misc.cpp */; };
-		8359009117FEF5830060F3ED /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359009017FEF5830060F3ED /* libz.dylib */; };
 		8359009F17FF073E0060F3ED /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359009E17FF073E0060F3ED /* 7zStream.c */; };
 		8359FF4A17FEF39F0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF4817FEF39F0060F3ED /* InfoPlist.strings */; };
 		83756F621D23A95B003A7676 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83756F611D23A95B003A7676 /* CoreServices.framework */; };
@@ -145,10 +145,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8333B66F1DCC46BA004C140D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		833F68401CDBCAB300AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8359000017FEF40E0060F3ED /* unrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unrar.h; sourceTree = "<group>"; };
 		8359000117FEF40E0060F3ED /* unrar_misc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unrar_misc.cpp; sourceTree = "<group>"; };
-		8359009017FEF5830060F3ED /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		8359009E17FF073E0060F3ED /* 7zStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zStream.c; sourceTree = "<group>"; };
 		8359FF3C17FEF39F0060F3ED /* File_Extractor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = File_Extractor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8359FF4717FEF39F0060F3ED /* File_Extractor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "File_Extractor-Info.plist"; sourceTree = "<group>"; };
@@ -290,8 +290,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8333B6701DCC46BA004C140D /* libz.tbd in Frameworks */,
 				83756F621D23A95B003A7676 /* CoreServices.framework in Frameworks */,
-				8359009117FEF5830060F3ED /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,8 +318,8 @@
 		8359FF3E17FEF39F0060F3ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8333B66F1DCC46BA004C140D /* libz.tbd */,
 				83756F611D23A95B003A7676 /* CoreServices.framework */,
-				8359009017FEF5830060F3ED /* libz.dylib */,
 				8359FF4117FEF39F0060F3ED /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -619,7 +619,7 @@
 		8359FF3317FEF39F0060F3ED /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8359FF3B17FEF39F0060F3ED = {
@@ -756,13 +756,13 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -801,13 +801,13 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -828,9 +828,7 @@
 		8359FF6517FEF39F0060F3ED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -853,9 +851,7 @@
 		8359FF6617FEF39F0060F3ED /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;

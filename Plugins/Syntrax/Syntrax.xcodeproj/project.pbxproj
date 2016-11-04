@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8333B6751DCC49FF004C140D /* Syntrax_c.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EEAB171C96537A002761C5 /* Syntrax_c.framework */; };
 		83EEAB0F1C965324002761C5 /* jxsDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB0E1C965324002761C5 /* jxsDecoder.m */; };
-		83EEAB111C965348002761C5 /* Syntrax_c.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EEAB101C965348002761C5 /* Syntrax_c.framework */; };
 		83EEAB1E1C965835002761C5 /* jxsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB1D1C965835002761C5 /* jxsContainer.m */; };
 		83EEAB211C965A4F002761C5 /* jxsMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB201C965A4F002761C5 /* jxsMetadataReader.m */; };
 		83EEAB231C965C32002761C5 /* Syntrax_c.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EEAB171C96537A002761C5 /* Syntrax_c.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -49,7 +49,6 @@
 		832FF2FB1C96508E0076D662 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83EEAB0D1C965324002761C5 /* jxsDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jxsDecoder.h; sourceTree = "<group>"; };
 		83EEAB0E1C965324002761C5 /* jxsDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jxsDecoder.m; sourceTree = "<group>"; };
-		83EEAB101C965348002761C5 /* Syntrax_c.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Syntrax_c.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Cog-gnnabzpuhvwhikcgqtwgtiebzjli/Build/Products/Debug/Syntrax_c.framework"; sourceTree = "<group>"; };
 		83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax_c.xcodeproj; path = "../../Frameworks/Syntrax-c/Syntrax_c.xcodeproj"; sourceTree = "<group>"; };
 		83EEAB1A1C9653AA002761C5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		83EEAB1B1C9653C3002761C5 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
@@ -65,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83EEAB111C965348002761C5 /* Syntrax_c.framework in Frameworks */,
+				8333B6751DCC49FF004C140D /* Syntrax_c.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,7 +109,6 @@
 			isa = PBXGroup;
 			children = (
 				83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */,
-				83EEAB101C965348002761C5 /* Syntrax_c.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -245,9 +243,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -290,9 +286,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -313,7 +307,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				INFOPLIST_FILE = Syntrax/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.Syntrax;
@@ -326,9 +319,7 @@
 		832FF3001C96508E0076D662 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				INFOPLIST_FILE = Syntrax/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.Syntrax;

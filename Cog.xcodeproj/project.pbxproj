@@ -432,6 +432,20 @@
 			remoteGlobalIDString = 8314D6311A354DFE00EEE8E6;
 			remoteInfo = sidplay;
 		};
+		8333B6581DCC4290004C140D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83E6B750181612FD00D4576D /* Sparkle.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 726B2B5D1C645FC900388755;
+			remoteInfo = "UI Tests";
+		};
+		8333B65A1DCC4290004C140D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83E6B750181612FD00D4576D /* Sparkle.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 722954B41D04ADAF00ECF9CA;
+			remoteInfo = fileop;
+		};
 		8359FF3017FEF35D0060F3ED /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */;
@@ -1740,6 +1754,8 @@
 				83E6B75D181612FD00D4576D /* Sparkle Unit Tests.xctest */,
 				83E6B75F181612FD00D4576D /* BinaryDelta */,
 				83E6B761181612FD00D4576D /* Autoupdate.app */,
+				8333B6591DCC4290004C140D /* UI Tests.xctest */,
+				8333B65B1DCC4290004C140D /* fileop */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1935,7 +1951,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
 						DevelopmentTeam = N6E749HJ2X;
@@ -2210,6 +2226,20 @@
 			remoteRef = 8314D6401A354DFF00EEE8E6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		8333B6591DCC4290004C140D /* UI Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "UI Tests.xctest";
+			remoteRef = 8333B6581DCC4290004C140D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8333B65B1DCC4290004C140D /* fileop */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = fileop;
+			remoteRef = 8333B65A1DCC4290004C140D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -2456,7 +2486,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${PROJECT_DIR}/Scripts/genversion.sh";
+			shellScript = "${PROJECT_DIR}/Scripts/genversion.sh\ncodesign -f -s \"${CODE_SIGN_IDENTITY}\" --deep \"${CONFIGURATION_BUILD_DIR}/${PRODUCT_NAME}.app\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2807,6 +2837,7 @@
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
 				);
+				OTHER_CODE_SIGN_FLAGS = "--deep -f";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,
@@ -2835,7 +2866,7 @@
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
 				);
-				OTHER_CODE_SIGN_FLAGS = "";
+				OTHER_CODE_SIGN_FLAGS = "--deep -f";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,
@@ -2844,7 +2875,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog;
 				PRODUCT_NAME = Cog;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
@@ -2859,7 +2889,9 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
@@ -2889,7 +2921,9 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

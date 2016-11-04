@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8333B6721DCC498B004C140D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8333B6711DCC498B004C140D /* libz.tbd */; };
 		8379B58A1AA4237E00F28A95 /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 8379B5881AA4237E00F28A95 /* barray.c */; };
 		8379B58B1AA4237E00F28A95 /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8379B5891AA4237E00F28A95 /* barray.h */; };
 		83C0787C1A9B544300ABBB67 /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C0787A1A9B544300ABBB67 /* resampler.c */; };
@@ -198,10 +199,10 @@
 		83CA16351A988138005E7ED4 /* usf_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA155E1A988138005E7ED4 /* usf_internal.h */; };
 		83CA16361A988138005E7ED4 /* vi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA15601A988138005E7ED4 /* vi_controller.c */; };
 		83CA16371A988138005E7ED4 /* vi_controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA15611A988138005E7ED4 /* vi_controller.h */; };
-		83CA16391A988191005E7ED4 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CA16381A988191005E7ED4 /* libz.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8333B6711DCC498B004C140D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		8379B5881AA4237E00F28A95 /* barray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = barray.c; sourceTree = "<group>"; };
 		8379B5891AA4237E00F28A95 /* barray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = barray.h; sourceTree = "<group>"; };
 		83C0787A1A9B544300ABBB67 /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
@@ -403,7 +404,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83CA16391A988191005E7ED4 /* libz.dylib in Frameworks */,
+				8333B6721DCC498B004C140D /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,6 +431,7 @@
 		83C8B62418AF57770071B040 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8333B6711DCC498B004C140D /* libz.tbd */,
 				83CA16381A988191005E7ED4 /* libz.dylib */,
 				83C8B62718AF57770071B040 /* Other Frameworks */,
 			);
@@ -958,7 +960,7 @@
 		83C8B61918AF57770071B040 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83C8B62118AF57770071B040 = {
@@ -1095,9 +1097,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1140,9 +1140,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1162,9 +1160,7 @@
 		83C8B64B18AF57770071B040 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -1188,9 +1184,7 @@
 		83C8B64C18AF57770071B040 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;

@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8333B66B1DCC45DB004C140D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8333B66A1DCC45DB004C140D /* libz.tbd */; };
 		839BCFE01965133E00947767 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 839BCFDE1965133E00947767 /* InfoPlist.strings */; };
 		839BCFFE196513D800947767 /* umx.mm in Sources */ = {isa = PBXBuildFile; fileRef = 839BCFF9196513D800947767 /* umx.mm */; };
 		839BCFFF196513D800947767 /* unrealfmt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839BCFFA196513D800947767 /* unrealfmt.cpp */; };
 		839BD000196513D800947767 /* unrealfmtdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839BCFFB196513D800947767 /* unrealfmtdata.cpp */; };
 		839BD004196513FF00947767 /* BASSDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 839BD003196513FF00947767 /* BASSDecoder.mm */; };
-		839BD0091965147000947767 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 839BD0081965147000947767 /* libz.dylib */; };
 		839BD00D196514B800947767 /* libbass.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 839BD00C196514B800947767 /* libbass.dylib */; };
 		839BD00E196514C000947767 /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 839BD00C196514B800947767 /* libbass.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -31,6 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8333B66A1DCC45DB004C140D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		833F684B1CDBCAC600AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		839BCFD21965133E00947767 /* BASSMODS.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BASSMODS.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		839BCFDD1965133E00947767 /* BASSMODS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BASSMODS-Info.plist"; sourceTree = "<group>"; };
@@ -44,7 +45,6 @@
 		839BCFFC196513D800947767 /* urf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = urf.h; sourceTree = "<group>"; };
 		839BD002196513FF00947767 /* BASSDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BASSDecoder.h; sourceTree = "<group>"; };
 		839BD003196513FF00947767 /* BASSDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BASSDecoder.mm; sourceTree = "<group>"; };
-		839BD0081965147000947767 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		839BD00C196514B800947767 /* libbass.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbass.dylib; path = ../../ThirdParty/BASS/libbass.dylib; sourceTree = "<group>"; };
 		839BD00F196514E600947767 /* bass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bass.h; path = ../../../ThirdParty/BASS/bass.h; sourceTree = "<group>"; };
 		839BD0131965222D00947767 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
@@ -57,8 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8333B66B1DCC45DB004C140D /* libz.tbd in Frameworks */,
 				839BD00D196514B800947767 /* libbass.dylib in Frameworks */,
-				839BD0091965147000947767 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,8 +85,8 @@
 		839BCFD41965133E00947767 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8333B66A1DCC45DB004C140D /* libz.tbd */,
 				839BD00C196514B800947767 /* libbass.dylib */,
-				839BD0081965147000947767 /* libz.dylib */,
 				839BCFD71965133E00947767 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -173,7 +173,7 @@
 		839BCFCA1965133E00947767 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					839BCFD11965133E00947767 = {
@@ -252,8 +252,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
@@ -295,8 +297,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -320,9 +324,7 @@
 		839BCFE51965133E00947767 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BASSMODS/BASSMODS-Prefix.pch";
 				INFOPLIST_FILE = "BASSMODS/BASSMODS-Info.plist";
@@ -331,7 +333,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
-				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -343,9 +344,7 @@
 		839BCFE61965133E00947767 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BASSMODS/BASSMODS-Prefix.pch";
 				INFOPLIST_FILE = "BASSMODS/BASSMODS-Info.plist";
@@ -354,7 +353,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
 				);
-				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
