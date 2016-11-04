@@ -26,7 +26,7 @@ extern "C" {
 #import <mGBA/core.h>
 #import <mGBA/blip_buf.h>
 #import <mGBA/vfs.h>
-extern struct mCore* GBACoreCreate(void);
+#import <mGBA/log.h>
 }
 
 #include <vector>
@@ -1060,7 +1060,14 @@ static int usf_info(void * context, const char * name, const char * value)
         fwrite(state.data, 1, state.data_size, f);
         fclose(f);*/
 
-        struct mCore * core = GBACoreCreate();
+        struct VFile * rom = VFileFromConstMemory(state.data, state.data_size);
+        if ( !rom )
+        {
+            free(state.data);
+            return NO;
+        }
+        
+        struct mCore * core = mCoreFindVF(rom);
         if ( !core )
         {
             free(state.data);
@@ -1084,15 +1091,6 @@ static int usf_info(void * context, const char * name, const char * value)
 
         core->setAudioBufferSize(core, 2048);
         
-        struct VFile * rom = VFileFromConstMemory(state.data, state.data_size);
-        if ( !rom )
-        {
-            free(rstate);
-            core->deinit(core);
-            free(state.data);
-            return NO;
-        }
-
         blip_set_rates(core->getAudioChannel(core, 0), core->frequency(core), 44100);
         blip_set_rates(core->getAudioChannel(core, 1), core->frequency(core), 44100);
         
