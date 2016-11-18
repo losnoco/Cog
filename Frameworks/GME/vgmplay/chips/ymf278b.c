@@ -144,6 +144,7 @@ typedef struct
 	UINT32 RAMSize;
 	UINT8 *ram;
 	int clock;
+    int rom_allocated;
 
 	INT32 volume[256*4];			// precalculated attenuation values with some marging for enveloppe and pan levels
 
@@ -540,7 +541,7 @@ INLINE UINT8 ymf278b_readMem(YMF278BChip* chip, offs_t address)
 	if (address < chip->ROMSize)
 		return chip->rom[address&0x3fffff];
 	else if (address < chip->ROMSize + chip->RAMSize)
-		return chip->ram[address - chip->ROMSize&0x3fffff];
+		return chip->ram[address - (chip->ROMSize&0x3fffff)];
 	else
 		return 255; // TODO check
 }
@@ -550,7 +551,7 @@ INLINE UINT8* ymf278b_readMemAddr(YMF278BChip* chip, offs_t address)
 	if (address < chip->ROMSize)
 		return &chip->rom[address&0x3fffff];
 	else if (address < chip->ROMSize + chip->RAMSize)
-		return &chip->ram[address - chip->ROMSize&0x3fffff];
+		return &chip->ram[address - (chip->ROMSize&0x3fffff)];
 	else
 		return NULL; // TODO check
 }
@@ -698,12 +699,11 @@ void ymf278b_pcm_update(void *_info, stream_sample_t** outputs, int samples)
 			{
 				sl->stepptr -= 0x10000;
 				sl->sample1 = sl->sample2;
-				
+
+				if (sl->pos > sl->endaddr)
+					sl->pos = sl->pos - (sl->endaddr+1) + sl->loopaddr;
 				sl->sample2 = ymf278b_getSample(chip, sl);
-				if (sl->pos == sl->endaddr)
-					sl->pos = sl->pos - sl->endaddr + sl->loopaddr;
-				else
-					sl->pos ++;
+				sl->pos++;	
 			}
 		}
 		ymf278b_advance(chip);
@@ -1089,11 +1089,13 @@ void ymf278b_clearRam(YMF278BChip* chip)
 	memset(chip->ram, 0, chip->RAMSize);
 }
 
+#include "../../yrw801.h"
+
 static void ymf278b_load_rom(YMF278BChip *chip)
 {
 	chip->ROMSize = 0x00200000;
-	chip->rom = (UINT8*)malloc(chip->ROMSize);
-	memset(chip->rom, 0xFF, chip->ROMSize);
+    chip->rom_allocated = 0;
+	chip->rom = (UINT8*) yrw801_rom; /* Make Chip Music Great Again *barf* */
 	
 	return;
 }
@@ -1110,6 +1112,7 @@ static int ymf278b_init(YMF278BChip *chip, int clock, void (*cb)(int))
 	chip->FMEnabled = 0x00;
 	
 	chip->rom = NULL;
+    chip->rom_allocated = 1;
 	chip->irq_callback = cb;
 	//chip->timer_a = timer_alloc(device->machine, ymf278b_timer_a_tick, chip);
 	//chip->timer_b = timer_alloc(device->machine, ymf278b_timer_b_tick, chip);
@@ -1161,6 +1164,7 @@ void device_stop_ymf278b(void *_info)
 	YMF278BChip* chip = (YMF278BChip *)_info;
 	
 	ymf262_shutdown(chip->fmchip);
+    if (chip->rom_allocated)
 	free(chip->rom);	chip->rom = NULL;
 
 	free(chip);	
@@ -1193,6 +1197,10 @@ void ymf278b_write_rom(void *_info, offs_t ROMSize, offs_t DataStart, offs_t Dat
 					  const UINT8* ROMData)
 {
 	YMF278BChip *chip = (YMF278BChip *)_info;
+    
+    if (!chip->rom_allocated)
+        chip->rom = NULL;
+    chip->rom_allocated = 1;
 	
 	if (chip->ROMSize != ROMSize)
 	{

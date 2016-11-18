@@ -301,6 +301,7 @@
 		83BB5ED21C0842A600734457 /* VGMPlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BB5E3E1C0842A600734457 /* VGMPlay.h */; };
 		83BB5ED31C0842A600734457 /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BB5E3F1C0842A600734457 /* resampler.c */; };
 		83BB5ED41C0842A600734457 /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BB5E401C0842A600734457 /* resampler.h */; };
+		83EE0C8C1DDECB0C00534509 /* yrw801.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE0C8B1DDECB0C00534509 /* yrw801.h */; };
 		83FC5D5E181B47FB00B917E5 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83FC5D3B181B47FB00B917E5 /* dsp.cpp */; };
 		83FC5D5F181B47FB00B917E5 /* dsp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83FC5D3C181B47FB00B917E5 /* dsp.hpp */; };
 		83FC5D78181B47FB00B917E5 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83FC5D57181B47FB00B917E5 /* smp.cpp */; };
@@ -614,6 +615,7 @@
 		83BB5E3E1C0842A600734457 /* VGMPlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VGMPlay.h; path = vgmplay/VGMPlay.h; sourceTree = "<group>"; };
 		83BB5E3F1C0842A600734457 /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = resampler.c; path = vgmplay/resampler.c; sourceTree = "<group>"; };
 		83BB5E401C0842A600734457 /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = resampler.h; path = vgmplay/resampler.h; sourceTree = "<group>"; };
+		83EE0C8B1DDECB0C00534509 /* yrw801.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yrw801.h; sourceTree = "<group>"; };
 		83FC5D3B181B47FB00B917E5 /* dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dsp.cpp; sourceTree = "<group>"; };
 		83FC5D3C181B47FB00B917E5 /* dsp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dsp.hpp; sourceTree = "<group>"; };
 		83FC5D57181B47FB00B917E5 /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smp.cpp; sourceTree = "<group>"; };
@@ -712,6 +714,7 @@
 		17C8F1860CBED26C008D969D /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				83EE0C8B1DDECB0C00534509 /* yrw801.h */,
 				83BB5DAB1C08427700734457 /* vgmplay */,
 				83FC5D35181B47FB00B917E5 /* higan */,
 				8370B68D17F615FD001A4D7A /* Ay_Core.cpp */,
@@ -1120,6 +1123,7 @@
 				8370B75617F615FE001A4D7A /* Hes_Core.h in Headers */,
 				83BB5EA51C0842A600734457 /* scd_pcm.h in Headers */,
 				83FC5D79181B47FB00B917E5 /* smp.hpp in Headers */,
+				83EE0C8C1DDECB0C00534509 /* yrw801.h in Headers */,
 				8370B73617F615FE001A4D7A /* Blip_Buffer_impl2.h in Headers */,
 				83BB5E6A1C0842A600734457 /* emu2149.h in Headers */,
 				8370B78117F615FE001A4D7A /* Opl_Apu.h in Headers */,
