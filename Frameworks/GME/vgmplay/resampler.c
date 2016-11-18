@@ -59,7 +59,7 @@ static void gen_sinc( double rolloff, int width, double offset, double spacing, 
 	}
 }
 
-enum { width = 32 };
+enum { width = 64 };
 enum { stereo = 2 };
 enum { max_res = 512 };
 enum { min_width = (width < 4 ? 4 : width) };
