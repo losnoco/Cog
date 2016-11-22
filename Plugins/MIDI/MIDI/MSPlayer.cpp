@@ -41,7 +41,7 @@ void MSPlayer::send_event(uint32_t b)
 
 void MSPlayer::render(float * out, unsigned long count)
 {
-    float const scaler = 1.0f / 32768.0f;
+    float const scaler = 1.0f / 8192.0f;
     short buffer[512];
     while (count)
     {
