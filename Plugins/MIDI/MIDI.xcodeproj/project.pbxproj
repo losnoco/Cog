@@ -10,6 +10,7 @@
 		830C94D11D171B65000E404F /* sflist.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C94CB1D171B65000E404F /* sflist.c */; };
 		830C94D21D171B65000E404F /* json-builder.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C94CD1D171B65000E404F /* json-builder.c */; };
 		830C94D31D171B65000E404F /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C94CF1D171B65000E404F /* json.c */; };
+		834BE91B1DE407CB00A07DCD /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 834BE9191DE407CB00A07DCD /* resampler.c */; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
@@ -93,6 +94,8 @@
 		830C94CF1D171B65000E404F /* json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = json.c; path = ../../../ThirdParty/json/json.c; sourceTree = "<group>"; };
 		830C94D01D171B65000E404F /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json.h; path = ../../../ThirdParty/json/json.h; sourceTree = "<group>"; };
 		833F68431CDBCABE00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		834BE9191DE407CB00A07DCD /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
+		834BE91A1DE407CB00A07DCD /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		83686AAB1C5C69D400671C7A /* AUPlayerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayerView.mm; sourceTree = "<group>"; };
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -282,6 +285,8 @@
 				83A09F551CFA83F2001E7D2D /* synthlib_doom */,
 				83A09F581CFA83F2001E7D2D /* synthlib_opl3w */,
 				83A09F5D1CFA83F2001E7D2D /* fmopl3lib */,
+				834BE9191DE407CB00A07DCD /* resampler.c */,
+				834BE91A1DE407CB00A07DCD /* resampler.h */,
 				83DFEA031CBC87BB00BCC565 /* SCCore.cpp */,
 				83DFEA041CBC87BB00BCC565 /* SCCore.h */,
 				83DFEA051CBC87BB00BCC565 /* SCPlayer.cpp */,
@@ -429,6 +434,7 @@
 				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
 				830C94D21D171B65000E404F /* json-builder.c in Sources */,
+				834BE91B1DE407CB00A07DCD /* resampler.c in Sources */,
 				830C94D11D171B65000E404F /* sflist.c in Sources */,
 				83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */,
 			);

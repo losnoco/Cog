@@ -15,23 +15,23 @@
 #include <string.h>
 #include "opl3class.h"
 
-const Bit64u lat = (50 * 49716) / 1000;
+#include "../resampler.h"
 
-#define RSM_FRAC 10
+const Bit64u lat = (50 * 49716) / 1000;
 
 int opl3class::fm_init(unsigned int rate) {
     OPL3_Reset(&chip, rate);
 
     memset(command,0,sizeof(command));
     memset(time, 0, sizeof(time));
-    memset(oldsamples, 0, sizeof(oldsamples));
     memset(samples, 0, sizeof(samples));
     counter = 0;
     lastwrite = 0;
     strpos = 0;
     endpos = 0;
-    samplecnt = 0;
-    rateratio = (rate << RSM_FRAC) / 49716;
+	resampler = resampler_create();
+	if (!resampler) return 0;
+	resampler_set_rate(resampler, 49716.0 / (double)rate);
     
 	return 1;
 }
@@ -66,20 +66,20 @@ void opl3class::fm_generate_one(signed short *buffer) {
 void opl3class::fm_generate(signed short *buffer, unsigned int length) {
     for (; length--;)
     {
-        while (samplecnt >= rateratio)
-        {
-            oldsamples[0] = samples[0];
-            oldsamples[1] = samples[1];
-            fm_generate_one(samples);
-            samplecnt -= rateratio;
-        }
-        buffer[0] = (Bit16s)((oldsamples[0] * (rateratio - samplecnt)
-                            + samples[0] * samplecnt) / rateratio);
-        buffer[1] = (Bit16s)((oldsamples[1] * (rateratio - samplecnt)
-                            + samples[1] * samplecnt) / rateratio);
-        samplecnt += 1 << RSM_FRAC;
-        
-        buffer += 2;
+		sample_t ls, rs;
+		unsigned int to_write = resampler_get_min_fill(resampler);
+		while (to_write)
+		{
+			fm_generate_one(samples);
+			resampler_write_pair(resampler, samples[0], samples[1]);
+			--to_write;
+		}
+		resampler_read_pair(resampler, &ls, &rs);
+		if ((ls + 0x8000) & 0xFFFF0000) ls = (ls >> 31) ^ 0x7FFF;
+		if ((rs + 0x8000) & 0xFFFF0000) rs = (rs >> 31) ^ 0x7FFF;
+		buffer[0] = (short)ls;
+		buffer[1] = (short)rs;
+		buffer += 2;
     }
 }
 

@@ -25,9 +25,7 @@ private:
     Bit64u time[8192];
     Bit16u strpos;
     Bit16s endpos;
-    Bit32s rateratio;
-    Bit32s samplecnt;
-    Bit16s oldsamples[2];
+	void *resampler;
     Bit16s samples[2];
     void fm_generate_one(signed short *buffer);
 public:
