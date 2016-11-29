@@ -74,7 +74,7 @@ static bool syx_is_reset(const uint8_t * data)
 void SCPlayer::send_sysex(uint32_t port, const uint8_t * data)
 {
 	sampler[port].TG_LongMidiIn( data, 0 );
-	if (syx_is_reset(data))
+	if (syx_is_reset(data) && mode != sc_default)
 	{
 		reset(port);
 	}
@@ -117,6 +117,7 @@ void SCPlayer::reset_sc(uint32_t port)
 			break;
 			
 		case sc_sc8850:
+        case sc_default:
 			message[8] = 4;
 			break;
 	}
@@ -153,6 +154,7 @@ void SCPlayer::reset(uint32_t port)
 			case sc_sc88:
 			case sc_sc88pro:
 			case sc_sc8850:
+            case sc_default:
                 sampler[port].TG_LongMidiIn( syx_reset_gs, 0 );
 				reset_sc(port);
 				break;
@@ -162,6 +164,26 @@ void SCPlayer::reset(uint32_t port)
                 sampler[port].TG_ShortMidiIn( 0x7F00B9, 0 ); // fix drum channel
 				break;
 		}
+        
+        {
+            unsigned int i;
+            for (i = 0; i < 16; ++i)
+            {
+                sampler[port].TG_ShortMidiIn( 0x78B0 + i, 0 );
+                sampler[port].TG_ShortMidiIn( 0x79B0 + i, 0 );
+            }
+        }
+        
+        {
+            float temp[1024];
+            unsigned long i, j;
+            for (i = 0, j = (uSampleRate / 1536 + 1); i < j; ++i)
+            {
+                memset(temp, 0, sizeof(temp));
+                sampler[port].TG_setInterruptThreadIdAtThisTime();
+                sampler[port].TG_Process(temp, temp, 1024);
+            }
+        }
 	}
 }
 

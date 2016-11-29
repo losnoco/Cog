@@ -14,6 +14,5 @@
 }
 
 - (IBAction)setSoundFont:(id)sender;
-- (IBAction)setMidiPlugin:(id)sender;
 
 @end

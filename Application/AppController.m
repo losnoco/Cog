@@ -374,7 +374,7 @@
     
     [userDefaultsValuesDict setObject:@"dls appl" forKey:@"midi.plugin"];
     
-    [userDefaultsValuesDict setObject:@"sc55" forKey:@"midi.flavor"];
+    [userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
     
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];

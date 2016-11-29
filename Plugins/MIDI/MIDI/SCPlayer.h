@@ -18,20 +18,20 @@ public:
 
 	typedef enum
 	{
-		sc_gm = 0,
+        sc_default = 0,
+        sc_gm,
 		sc_gm2,
 		sc_sc55,
 		sc_sc88,
 		sc_sc88pro,
 		sc_sc8850,
-		sc_xg,
-		sc_default = sc_sc55
+		sc_xg
 	}
 	sc_mode;
 	
 	void set_mode(sc_mode m);
     
-    void set_sccore_path(const char * path);
+void set_sccore_path(const char * path);
 
 protected:
 	virtual void send_event(uint32_t b);

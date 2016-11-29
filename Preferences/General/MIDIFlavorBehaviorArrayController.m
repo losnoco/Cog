@@ -15,6 +15,10 @@
 
     [self addObject:
      [NSDictionary dictionaryWithObjectsAndKeys:
+      @"Default (auto)", @"name", @"default", @"preference", nil]];
+    
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
       @"General MIDI", @"name", @"gm", @"preference", nil]];
     
     [self addObject:

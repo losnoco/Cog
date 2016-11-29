@@ -208,7 +208,9 @@ static OSType getOSType(const char * in_)
             
             SCPlayer::sc_mode mode = SCPlayer::sc_sc55;
             NSString * flavor = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.flavor"];
-            if ([flavor isEqualToString:@"gm"])
+            if ([flavor isEqualToString:@"default"])
+                mode = SCPlayer::sc_default;
+            else if ([flavor isEqualToString:@"gm"])
                 mode = SCPlayer::sc_gm;
             else if ([flavor isEqualToString:@"gm2"])
                 mode = SCPlayer::sc_gm2;

@@ -10,12 +10,6 @@
 
 @implementation MIDIPane
 
-- (void)awakeFromNib
-{
-    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"] isEqualToString:@"Sc55rolD"])
-        [midiFlavorControl setEnabled:YES];
-}
-
 - (NSString *)title
 {
 	return NSLocalizedStringFromTableInBundle(@"Synthesis", nil, [NSBundle bundleForClass:[self class]], @"");
