@@ -324,6 +324,12 @@ static OSType getOSType(const char * in_)
 
 - (long)seek:(long)frame
 {
+    if (!player) {
+        float temp[2];
+        if ([self readAudio:temp frames:1] < 1)
+            return -1;
+    }
+    
     player->Seek( frame );
 	
     framesRead = frame;
