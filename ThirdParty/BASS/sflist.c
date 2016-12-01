@@ -2,6 +2,7 @@
  *
  * Copyright (C) 2016 Christopher Snowhill.  All rights reserved.
  * https://github.com/kode54/sflist
+ * https://gist.github.com/kode54/a7bb01a0db3f2e996145b77f0ca510d5
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +37,14 @@
 #include <json-builder.h>
 
 #include "sflist.h"
+
+#ifndef PRId64
+#ifdef _MSC_VER
+#define PRId64 "I64d"
+#else
+#define PRId64 "lld"
+#endif
+#endif
 
 /* Extras needed */
 
@@ -630,7 +639,7 @@ static sflist_presets * sflist_process(const json_value * sflist, const char * b
                         range_max = 127;
                   }
                   if (item2->u.integer < range_min || item2->u.integer > range_max) {
-                     sprintf(error_buf, "soundFont item #%u 'patchMappings' #%u '%s' '%s' is out of range (expected %d-%d, got %" PRId64 ")", i + 1, k + 1, name, name2, range_min, range_max, item2->u.integer);
+                     sprintf(error_buf, "soundFont item #%u 'patchMappings' #%u '%s' '%s' is out of range (expected %d-%d, got %" PRId64 ")", i + 1, k + 1, name, name2, range_min, range_max, item->u.integer);
                      goto error;
                   }
                   if (!strcmp(name2, "bank"))
@@ -688,7 +697,7 @@ static sflist_presets * sflist_process(const json_value * sflist, const char * b
       const char * path_ptr = path->u.string.ptr;
       unsigned int bass_flags = 0;
 #ifdef _WIN32
-      if (!isletter(*path_ptr) || path_ptr[1] != ':') {
+      if (!(isalpha(*path_ptr) && path_ptr[1] == ':')) {
          if (strlen(path_ptr) + (base_path_end - base_path + 2) > 32767) {
             strcpy(error_buf, "Base path plus SoundFont relative path is longer than 32767 characters");
             goto error;
@@ -801,6 +810,20 @@ sflist_presets * sflist_load(const char * sflist, size_t size, const char * base
    sflist_presets * rval;
 
    json_value * list = 0;
+   
+   /* Handle Unicode byte order markers */
+   if (size >= 2) {
+      if ((sflist[0] == 0xFF && sflist[1] == 0xFE) ||
+          (sflist[0] == 0xFE && sflist[1] == 0xFF)) {
+         strcpy(error, "UTF-16 encoding is not supported at this time");
+         return 0;
+      }
+      if (size >= 3 && sflist[0] == 0xEF &&
+          sflist[1] == 0xBB && sflist[2] == 0xBF) {
+         sflist += 3;
+         size -= 3;
+      }
+   }
 
    list = sflist_load_v2(sflist, size, error);
 
