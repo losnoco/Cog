@@ -140,7 +140,11 @@ void SCPlayer::reset(uint32_t port)
 {
 	if (initialized)
 	{
-		switch (mode)
+        sampler[port].TG_LongMidiIn(syx_reset_xg, 0); junk(port, 1024);
+        sampler[port].TG_LongMidiIn(syx_reset_gm2, 0); junk(port, 1024);
+        sampler[port].TG_LongMidiIn(syx_reset_gm, 0); junk(port, 1024);
+        
+        switch (mode)
 		{
 			case sc_gm:
 				sampler[port].TG_LongMidiIn( syx_reset_gm, 0 );
@@ -165,26 +169,41 @@ void SCPlayer::reset(uint32_t port)
 				break;
 		}
         
+        junk(port, 1024);
+        
         {
             unsigned int i;
             for (i = 0; i < 16; ++i)
             {
-                sampler[port].TG_ShortMidiIn( 0x78B0 + i, 0 );
-                sampler[port].TG_ShortMidiIn( 0x79B0 + i, 0 );
+                sampler[port].TG_ShortMidiIn(0x78B0 + i, 0);
+                sampler[port].TG_ShortMidiIn(0x79B0 + i, 0);
+                sampler[port].TG_ShortMidiIn(0x20B0 + i, 0);
+                sampler[port].TG_ShortMidiIn(0x00B0 + i, 0);
+                sampler[port].TG_ShortMidiIn(0xC0 + i, 0);
             }
         }
         
-        {
-            float temp[1024];
-            unsigned long i, j;
-            for (i = 0, j = (uSampleRate / 1536 + 1); i < j; ++i)
-            {
-                memset(temp, 0, sizeof(temp));
-                sampler[port].TG_setInterruptThreadIdAtThisTime();
-                sampler[port].TG_Process(temp, temp, 1024);
-            }
-        }
+        junk(port, uSampleRate * 2 / 3);
 	}
+}
+
+void SCPlayer::junk(uint32_t port, unsigned long count)
+{
+    float temp[2][1024];
+    unsigned long i, j;
+    for (i = 0, j = count / 1024; i < j; ++i)
+    {
+        memset(temp, 0, sizeof(temp));
+        sampler[port].TG_setInterruptThreadIdAtThisTime();
+        sampler[port].TG_Process(temp[0], temp[1], 1024);
+    }
+    count %= 1024;
+    if (count)
+    {
+        memset(temp, 0, sizeof(temp));
+        sampler[port].TG_setInterruptThreadIdAtThisTime();
+        sampler[port].TG_Process(temp[0], temp[1], (unsigned int) count);
+    }
 }
 
 void SCPlayer::set_mode(sc_mode m)
@@ -299,7 +318,6 @@ bool SCPlayer::startup()
     for (int i = 0; i < 3; i++)
     {
         reset(i);
-        sampler[i].TG_flushMidi();
     }
     
 	return true;

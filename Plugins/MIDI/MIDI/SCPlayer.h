@@ -47,6 +47,8 @@ private:
 
 	void reset(uint32_t port);
 
+    void junk(uint32_t port, unsigned long count);
+    
     unsigned int instance_id;
 	bool initialized;
     SCCore * sampler;
