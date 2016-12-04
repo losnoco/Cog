@@ -102,6 +102,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 - (BOOL)open:(id<CogSource>)s
 {
 	int errcode, i;
+    AVStream *stream;
     
     source = s;
 	
@@ -154,19 +155,25 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     AVCodecParameters *codecPar;
     
 	for(i = 0; i < formatCtx->nb_streams; i++) {
-        codecPar = formatCtx->streams[i]->codecpar;
-        if(codecPar->codec_type == AVMEDIA_TYPE_AUDIO)
+        stream = formatCtx->streams[i];
+        codecPar = stream->codecpar;
+        if(streamIndex < 0 && codecPar->codec_type == AVMEDIA_TYPE_AUDIO)
 		{
 			DLog(@"audio codec found");
             streamIndex = i;
-            break;
 		}
+        else
+        {
+            stream->discard = AVDISCARD_ALL;
+        }
     }
     
     if ( streamIndex < 0 ) {
         ALog(@"no audio codec found");
         return NO;
     }
+    
+    stream = formatCtx->streams[streamIndex];
     
     codecCtx = avcodec_alloc_context3(NULL);
     if (!codecCtx)
@@ -183,7 +190,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         return NO;
     }
     
-    av_codec_set_pkt_timebase(codecCtx, formatCtx->streams[streamIndex]->time_base);
+    av_codec_set_pkt_timebase(codecCtx, stream->time_base);
 
     AVCodec * codec = avcodec_find_decoder(codecCtx->codec_id);
     if (!codec) {
@@ -243,7 +250,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     
 	//totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
     AVRational tb = (AVRational) { 1, codecCtx->sample_rate };
-    totalFrames = av_rescale_q(formatCtx->streams[streamIndex]->duration, formatCtx->streams[streamIndex]->time_base, tb);
+    totalFrames = av_rescale_q(stream->duration, stream->time_base, tb);
     bitrate = (int)((codecCtx->bit_rate) / 1000);
     framesRead = 0;
     endOfStream = NO;
