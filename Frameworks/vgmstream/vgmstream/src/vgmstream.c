@@ -303,7 +303,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_fsb_mpeg,
 	init_vgmstream_nub_vag,
 	init_vgmstream_ps3_past,
-    init_vgmstream_ps3_sgh_sgb,
+    init_vgmstream_ps3_sgdx,
 	init_vgmstream_ngca,
 	init_vgmstream_wii_ras,
 	init_vgmstream_ps2_spm,
@@ -320,11 +320,9 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_eb_sfx,
     init_vgmstream_eb_sf0,
 	init_vgmstream_ps3_klbs,
-	init_vgmstream_ps3_sgx,
     init_vgmstream_ps2_mtaf,
 	init_vgmstream_tun,
 	init_vgmstream_wpd,
-	init_vgmstream_ps3_sgd,
 	init_vgmstream_mn_str,
 	init_vgmstream_ps2_mss,
 	init_vgmstream_ps2_hsf,
@@ -340,6 +338,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
 	init_vgmstream_g1l,
     init_vgmstream_hca,
 #ifdef VGM_USE_FFMPEG
+    init_vgmstream_mp4_aac_ffmpeg,
     init_vgmstream_ffmpeg,
 #endif
 };
@@ -361,7 +360,7 @@ VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile, int do_dfs) {
 
             /* fail if there is nothing to play
              *  (without this check vgmstream can generate empty files) */
-            if ( vgmstream->num_samples==0 ) {
+            if (vgmstream->num_samples <= 0) {
                 close_vgmstream(vgmstream);
                 continue;
             }
@@ -514,20 +513,7 @@ void reset_vgmstream(VGMSTREAM * vgmstream) {
     
 #ifdef VGM_USE_FFMPEG
     if (vgmstream->coding_type==coding_FFmpeg) {
-        ffmpeg_codec_data *data = (ffmpeg_codec_data *) vgmstream->codec_data;
-        
-        if (data->formatCtx) {
-            avformat_seek_file(data->formatCtx, -1, 0, 0, 0, AVSEEK_FLAG_ANY);
-        }
-        if (data->codecCtx) {
-            avcodec_flush_buffers(data->codecCtx);
-        }
-        data->readNextPacket = 1;
-        data->bytesConsumedFromDecodedFrame = INT_MAX;
-        data->framesRead = 0;
-        data->endOfStream = 0;
-        data->endOfAudio = 0;
-        data->samplesToDiscard = 0;
+        reset_ffmpeg(vgmstream);
     }
 #endif
 
@@ -1083,9 +1069,9 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_FFmpeg:
         {
             ffmpeg_codec_data *data = (ffmpeg_codec_data *) vgmstream->codec_data;
-            if (vgmstream->codec_data) {
-                int64_t samplesRemain = data->totalFrames - data->framesRead;
-                return samplesRemain > 2048 ? 2048 : samplesRemain;
+            if (data) { 
+	            /* must know the full block size for edge loops */
+                return data->samplesPerBlock;
             }
             return 0;
         }
@@ -1788,41 +1774,7 @@ int vgmstream_do_loop(VGMSTREAM * vgmstream) {
             }
 #ifdef VGM_USE_FFMPEG
             if (vgmstream->coding_type==coding_FFmpeg) {
-                ffmpeg_codec_data *data = (ffmpeg_codec_data *)(vgmstream->codec_data);
-                int64_t ts;
-
-                /* Seek to loop start by timestamp (closest frame) + adjust skipping some samples */
-                /* FFmpeg seeks by ts by design (since not all containers can accurately skip to a frame). */
-                /* TODO: this seems to be off by +-1 frames in some cases */
-                ts = vgmstream->loop_start_sample;
-                if (ts >= data->sampleRate * 2) {
-                    data->samplesToDiscard = data->sampleRate * 2;
-                    ts -= data->samplesToDiscard;
-                }
-                else {
-                    data->samplesToDiscard = (int)ts;
-                    ts = 0;
-                }
-                data->framesRead = (int)ts;
-                ts = data->framesRead * (data->formatCtx->duration) / data->totalFrames;
-
-
-#ifdef VGM_USE_FFMPEG_ACCURATE_LOOPING
-                /* Start from 0 and discard samples until loop_start for accurate looping (slower but not too noticeable) */
-                /* We could also seek by offset (AVSEEK_FLAG_BYTE) to the frame closest to the loop then discard
-                 *  some samples, which is fast but would need calculations per format / when frame size is not constant */
-                data->samplesToDiscard = vgmstream->loop_start_sample;
-                data->framesRead = 0;
-                ts = 0;
-#endif /* VGM_USE_FFMPEG_ACCURATE_LOOPING */
-
-                avformat_seek_file(data->formatCtx, -1, ts - 1000, ts, ts, AVSEEK_FLAG_ANY);
-                avcodec_flush_buffers(data->codecCtx);
-
-                data->readNextPacket = 1;
-                data->bytesConsumedFromDecodedFrame = INT_MAX;
-                data->endOfStream = 0;
-                data->endOfAudio = 0;
+                seek_ffmpeg(vgmstream, vgmstream->loop_start_sample);
             }
 #endif /* VGM_USE_FFMPEG */
 #if defined(VGM_USE_MP4V2) && defined(VGM_USE_FDKAAC)
@@ -1909,7 +1861,7 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
         return;
     }
 
-    snprintf(temp,TEMPSIZE,"sample rate %d Hz\n"
+    snprintf(temp,TEMPSIZE,"sample rate: %d Hz\n"
             "channels: %d\n",
             vgmstream->sample_rate,vgmstream->channels);
     concatn(length,desc,temp);
@@ -2125,11 +2077,14 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
             {
                 ffmpeg_codec_data *data = (ffmpeg_codec_data *) vgmstream->codec_data;
                 if (vgmstream->codec_data) {
-                    if (data->codec) {
+                    if (data->codec && data->codec->long_name) {
                         snprintf(temp,TEMPSIZE,data->codec->long_name);
                     }
+                    else if (data->codec && data->codec->name) {
+                        snprintf(temp,TEMPSIZE,data->codec->name);
+                    }
                     else {
-                        snprintf(temp,TEMPSIZE,"FFmpeg");
+                        snprintf(temp,TEMPSIZE,"FFmpeg (unknown codec)");
                     }
                 }
                 else {
@@ -3190,8 +3145,8 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
 		case meta_PS3_PAST:
             snprintf(temp,TEMPSIZE,"SNDP header");
             break;
-	    case meta_PS3_SGH_SGB:
-            snprintf(temp,TEMPSIZE,"SGH+SGB SGXD header");
+	    case meta_PS3_SGDX:
+            snprintf(temp,TEMPSIZE,"SGXD header");
             break;
 	    case meta_NGCA:
             snprintf(temp,TEMPSIZE,"NGCA header");
@@ -3243,9 +3198,6 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
             break;
         case meta_PS3_KLBS:
             snprintf(temp,TEMPSIZE,"klBS Header");
-            break;
-        case meta_PS3_SGX:
-            snprintf(temp,TEMPSIZE,"PS3 SGXD/WAVE header");
             break;
         case meta_PS2_MTAF:
             snprintf(temp,TEMPSIZE,"Konami MTAF header");

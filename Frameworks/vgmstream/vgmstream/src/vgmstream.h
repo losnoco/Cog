@@ -13,7 +13,12 @@ enum { PATH_LIMIT = 32768 };
  * removing these defines (and the references to the libraries in the
  * Makefile) */
 #define VGM_USE_VORBIS
+
+/* can be disabled to decode with FFmpeg instead */
+#ifndef VGM_DISABLE_MPEG
 #define VGM_USE_MPEG
+#endif
+
 /* disabled by default, defined for builds that support it */
 #define VGM_USE_G7221
 #define VGM_USE_G719
@@ -570,7 +575,7 @@ typedef enum {
     meta_PS3_MSF,           /* MSF header */
 	meta_NUB_VAG,           /* VAG from Nub archives */
 	meta_PS3_PAST,          /* Bakugan Battle Brawlers (PS3) */
-	meta_PS3_SGH_SGB,       /* Folklore (PS3) */
+    meta_PS3_SGDX,          /* Folklore, Genji, Tokyo Jungle (PS3), Brave Story, Kurohyo (PSP)  */
 	meta_NGCA,              /* GoldenEye 007 (Wii) */
 	meta_WII_RAS,           /* Donkey Kong Country Returns (Wii) */
 	meta_PS2_SPM,            /* Lethal Skies Elite Pilot: Team SW */
@@ -588,7 +593,6 @@ typedef enum {
     meta_EB_SFX,            // Excitebots .sfx
     meta_EB_SF0,            // Excitebots .sf0
 	meta_PS3_KLBS,          // L@VE ONCE (PS3)
-	meta_PS3_SGX,           // Boku no Natsuyasumi 3 (PS3)
     meta_PS2_MTAF,          // Metal Gear Solid 3 MTAF
     meta_PS2_VAG1,          // Metal Gear Solid 3 VAG1
     meta_PS2_VAG2,          // Metal Gear Solid 3 VAG2
@@ -868,6 +872,7 @@ typedef struct {
     
     // inserted header, ie. fake RIFF header
     uint8_t *header_insert_block;
+    // header/fake RIFF over the real (parseable by FFmpeg) file start
     uint64_t header_size;
     
     // stream info
@@ -875,12 +880,13 @@ typedef struct {
     int bitsPerSample;
     int floatingPoint;
     int sampleRate;
-    int64_t totalFrames;
-    int64_t framesRead;
+    int64_t totalFrames; // sample count, or 0 if unknown
     int bitrate;
     
     // Intermediate buffer
     uint8_t *sampleBuffer;
+    // max samples a block can held (can be less or more than samples per decoded frame)
+    size_t samplesPerBlock;
     
     // FFmpeg context used for metadata
     AVCodec *codec;
