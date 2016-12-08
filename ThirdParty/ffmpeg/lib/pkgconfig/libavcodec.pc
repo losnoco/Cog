@@ -1,14 +1,14 @@
-prefix=/Users/Chris/Source/Repos/cog/ThirdParty/ffmpeg
+prefix=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include
 
 Name: libavcodec
 Description: FFmpeg codec library
-Version: 57.48.101
-Requires: libavutil >= 55.28.100
+Version: 57.64.101
+Requires: libavutil >= 55.34.100
 Requires.private: 
 Conflicts:
-Libs: -L${libdir}  -lavcodec -framework QuartzCore -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -framework CoreFoundation -framework AudioToolbox -framework CoreMedia -framework VideoDecodeAcceleration -framework CoreFoundation -framework QuartzCore -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -L/usr/local/lib -lSDLmain -lSDL -Wl,-framework,Cocoa -lm -lbz2 -lz -pthread -framework CoreServices
+Libs: -L${libdir}  -lavcodec -framework QuartzCore -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -framework CoreFoundation -framework AudioToolbox -framework CoreMedia -framework VideoDecodeAcceleration -framework CoreFoundation -framework QuartzCore -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -L/usr/local/lib -lSDL2 -lm -lbz2 -lz -pthread -framework CoreServices
 Libs.private: 
 Cflags: -I${includedir}
