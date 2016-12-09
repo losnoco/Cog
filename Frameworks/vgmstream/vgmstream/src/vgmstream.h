@@ -23,6 +23,7 @@ enum { PATH_LIMIT = 32768 };
 #define VGM_USE_G7221
 #define VGM_USE_G719
 #define VGM_USE_FFMPEG
+#define VGM_USE_FFMPEG_ACCURATE_LOOPING
 
 #include "streamfile.h"
 #ifdef BUILD_VGMSTREAM
