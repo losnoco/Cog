@@ -5,7 +5,7 @@
 #ifdef VGM_USE_FFMPEG
 
 /* internal sizes, can be any value */
-#define FFMPEG_DEFAULT_BLOCK_SIZE 2048
+#define FFMPEG_DEFAULT_BUFFER_SIZE 2048
 #define FFMPEG_DEFAULT_IO_BUFFER_SIZE 128 * 1024
 
 static int init_seek(ffmpeg_codec_data * data);
@@ -43,23 +43,52 @@ VGMSTREAM * init_vgmstream_ffmpeg(STREAMFILE *streamFile) {
 
 VGMSTREAM * init_vgmstream_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size) {
     VGMSTREAM *vgmstream = NULL;
+    int loop_flag = 0;
+    int32_t loop_start = 0, loop_end = 0, num_samples = 0;
 
+    /* init ffmpeg */
     ffmpeg_codec_data *data = init_ffmpeg_offset(streamFile, start, size);
     if (!data) return NULL;
-    
-    vgmstream = allocate_vgmstream(data->channels, 0);
+
+
+    /* try to get .pos data */
+    {
+        uint8_t posbuf[4+4+4];
+
+        if ( read_pos_file(posbuf, 4+4+4, streamFile) ) {
+            loop_start = get_32bitLE(posbuf+0);
+            loop_end = get_32bitLE(posbuf+4);
+            loop_flag = 1; /* incorrect looping will be validated outside */
+            /* FFmpeg can't always determine totalSamples correctly so optionally load it (can be 0/NULL)
+             * won't crash and will output silence if no loop points and bigger than actual stream's samples */
+            num_samples = get_32bitLE(posbuf+8);
+        }
+    }
+
+
+    /* build VGMSTREAM */
+    vgmstream = allocate_vgmstream(data->channels, loop_flag);
     if (!vgmstream) goto fail;
     
-    vgmstream->loop_flag = 0;
+    vgmstream->loop_flag = loop_flag;
     vgmstream->codec_data = data;
     vgmstream->channels = data->channels;
     vgmstream->sample_rate = data->sampleRate;
-    vgmstream->num_samples = data->totalFrames;
     vgmstream->coding_type = coding_FFmpeg;
     vgmstream->layout_type = layout_none;
     vgmstream->meta_type = meta_FFmpeg;
 
-    /* this may happen for some streams */
+    if (!num_samples) {
+        num_samples = data->totalSamples;
+    }
+    vgmstream->num_samples = num_samples;
+
+    if (loop_flag) {
+        vgmstream->loop_start_sample = loop_start;
+        vgmstream->loop_end_sample = loop_end;
+    }
+
+    /* this may happen for some streams if FFmpeg can't determine it */
     if (vgmstream->num_samples <= 0)
         goto fail;
 
@@ -157,18 +186,73 @@ static int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 
 
 /**
- * Manually init FFmpeg only, from an offset.
+ * Manually init FFmpeg, from an offset.
  * Can be used if the stream has an extra header over data recognized by FFmpeg.
  */
 ffmpeg_codec_data * init_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size) {
-    return init_ffmpeg_faux_riff(streamFile, -1, start, size, 0);
+    return init_ffmpeg_header_offset(streamFile, NULL, 0, start, size);
+}
+
+
+/**
+ * Manually init FFmpeg, from an offset and creating a fake RIFF from a streamfile.
+ */
+ffmpeg_codec_data * init_ffmpeg_faux_riff(STREAMFILE *streamFile, int64_t fmt_offset, uint64_t start, uint64_t size, int big_endian) {
+    if (fmt_offset > 0) {
+        size_t header_size = 0;
+        int max_header_size = (int)(start - fmt_offset);
+        uint8_t p[100];
+        if (max_header_size < 18 || max_header_size > 100)
+            goto fail;
+        //p = av_malloc(max_header_size + 8 + 4 + 8 + 8);
+        //if (!p) goto fail;
+        if (read_streamfile(p + 8 + 4 + 8, fmt_offset, max_header_size, streamFile) != max_header_size)
+            goto fail;
+
+        if (big_endian) {
+            int shift = 8 + 4 + 8;
+            put_16bitLE(p+shift, get_16bitBE(p));
+            put_16bitLE(p+shift + 2, get_16bitBE(p + 2));
+            put_32bitLE(p+shift + 4, get_32bitBE(p + 4));
+            put_32bitLE(p+shift + 8, get_32bitBE(p + 8));
+            put_16bitLE(p+shift + 12, get_16bitBE(p + 12));
+            put_16bitLE(p+shift + 14, get_16bitBE(p + 14));
+            put_16bitLE(p+shift + 16, get_16bitBE(p + 16));
+        }
+        header_size = 8 + 4 + 8 + 8 + 18 + get_16bitLE(p + 8 + 4 + 8 + 16);
+        // Meh, dunno how to handle swapping the extra data
+        // FFmpeg doesn't need most of this data anyway
+        if ((unsigned)(get_16bitLE(p + 8 + 4 + 8) - 0x165) < 2)
+            memset(p + 8 + 4 + 8 + 18, 0, 34);
+
+        // Fill out the RIFF structure
+        memcpy(p, "RIFF", 4);
+        put_32bitLE(p + 4, header_size + size - 8);
+        memcpy(p + 8, "WAVE", 4);
+        memcpy(p + 12, "fmt ", 4);
+        put_32bitLE(p + 16, 18 + get_16bitLE(p + 8 + 4 + 8 + 16));
+        memcpy(p + header_size - 8, "data", 4);
+        put_32bitLE(p + header_size - 4, size);
+
+
+        return init_ffmpeg_header_offset(streamFile, p, header_size, start, size);
+    }
+    else {
+        return init_ffmpeg_header_offset(streamFile, NULL, 0, start, size);
+    }
+
+fail:
+    return NULL;
 }
 
 /**
- * Manually init FFmpeg only, from an offset / fake RIFF.
- * Can insert a fake RIFF header, to trick FFmpeg into demuxing/decoding the stream.
+ * Manually init FFmpeg, from a fake header / offset.
+ *
+ * Can take a fake header, to trick FFmpeg into demuxing/decoding the stream.
+ * This header will be seamlessly inserted before 'start' offset, and total filesize will be 'header_size' + 'size'.
+ * The header buffer will be copied and memory-managed internally.
  */
-ffmpeg_codec_data * init_ffmpeg_faux_riff(STREAMFILE *streamFile, int64_t fmt_offset, uint64_t start, uint64_t size, int big_endian) {
+ffmpeg_codec_data * init_ffmpeg_header_offset(STREAMFILE *streamFile, uint8_t * header, uint64_t header_size, uint64_t start, uint64_t size) {
 	char filename[PATH_LIMIT];
     
     ffmpeg_codec_data * data;
@@ -197,42 +281,13 @@ ffmpeg_codec_data * init_ffmpeg_faux_riff(STREAMFILE *streamFile, int64_t fmt_of
     data->size = size;
 
 
-    /* insert fake RIFF header to trick FFmpeg into demuxing/decoding the stream */
-    if (fmt_offset > 0) {
-        int max_header_size = (int)(start - fmt_offset);
-        uint8_t *p;
-        if (max_header_size < 18) goto fail;
-        data->header_insert_block = p = av_malloc(max_header_size + 8 + 4 + 8 + 8);
+    /* insert fake header to trick FFmpeg into demuxing/decoding the stream */
+    if (header_size > 0) {
+        data->header_size = header_size;
+        data->header_insert_block = av_memdup(header, header_size);
         if (!data->header_insert_block) goto fail;
-        if (read_streamfile(p + 8 + 4 + 8, fmt_offset, max_header_size, streamFile) != max_header_size) goto fail;
-        if (big_endian) {
-            p += 8 + 4 + 8;
-            put_16bitLE(p, get_16bitBE(p));
-            put_16bitLE(p + 2, get_16bitBE(p + 2));
-            put_32bitLE(p + 4, get_32bitBE(p + 4));
-            put_32bitLE(p + 8, get_32bitBE(p + 8));
-            put_16bitLE(p + 12, get_16bitBE(p + 12));
-            put_16bitLE(p + 14, get_16bitBE(p + 14));
-            put_16bitLE(p + 16, get_16bitBE(p + 16));
-            p -= 8 + 4 + 8;
-        }
-        data->header_size = 8 + 4 + 8 + 8 + 18 + get_16bitLE(p + 8 + 4 + 8 + 16);
-        // Meh, dunno how to handle swapping the extra data
-        // FFmpeg doesn't need most of this data anyway
-        if ((unsigned)(get_16bitLE(p + 8 + 4 + 8) - 0x165) < 2)
-            memset(p + 8 + 4 + 8 + 18, 0, 34);
-        
-        // Fill out the RIFF structure
-        memcpy(p, "RIFF", 4);
-        put_32bitLE(p + 4, data->header_size + size - 8);
-        memcpy(p + 8, "WAVE", 4);
-        memcpy(p + 12, "fmt ", 4);
-        put_32bitLE(p + 16, 18 + get_16bitLE(p + 8 + 4 + 8 + 16));
-        memcpy(p + data->header_size - 8, "data", 4);
-        put_32bitLE(p + data->header_size - 4, size);
     }
     
-
     /* setup IO, attempt to autodetect format and gather some info */
     data->buffer = av_malloc(FFMPEG_DEFAULT_IO_BUFFER_SIZE);
     if (!data->buffer) goto fail;
@@ -337,13 +392,18 @@ ffmpeg_codec_data * init_ffmpeg_faux_riff(STREAMFILE *streamFile, int64_t fmt_of
 
     /* try to guess frames/samples (duration isn't always set) */
     tb.num = 1; tb.den = data->codecCtx->sample_rate;
-    data->totalFrames = av_rescale_q(stream->duration, stream->time_base, tb);
-    if (data->totalFrames < 0)
-        data->totalFrames = 0; /* caller must consider this */
+    data->totalSamples = av_rescale_q(stream->duration, stream->time_base, tb);
+    if (data->totalSamples < 0)
+        data->totalSamples = 0; /* caller must consider this */
 
+    data->blockAlign = data->codecCtx->block_align;
+    data->frameSize = data->codecCtx->frame_size;
+    if(data->frameSize == 0) /* some formats don't set frame_size but can get on request, and vice versa */
+        data->frameSize = av_get_audio_frame_duration(data->codecCtx,0);
+    
     /* setup decode buffer */
-    data->samplesPerBlock = FFMPEG_DEFAULT_BLOCK_SIZE;
-    data->sampleBuffer = av_malloc( data->samplesPerBlock * (data->bitsPerSample / 8) * data->channels );
+    data->sampleBufferBlock = FFMPEG_DEFAULT_BUFFER_SIZE;
+    data->sampleBuffer = av_malloc( data->sampleBufferBlock * (data->bitsPerSample / 8) * data->channels );
     if (!data->sampleBuffer)
         goto fail;
     
@@ -377,8 +437,8 @@ fail:
 static int init_seek(ffmpeg_codec_data * data) {
     int ret, ts_index, found_first = 0;
     int64_t ts = 0;
-    int64_t pos; /* offset */
-    int size; /* coded size */
+    int64_t pos = 0; /* offset */
+    int size = 0; /* coded size */
     int distance = 0; /* always? */
 
     AVStream * stream;
@@ -402,19 +462,34 @@ static int init_seek(ffmpeg_codec_data * data) {
         av_packet_unref(pkt);
         ret = av_read_frame(data->formatCtx, pkt);
         if (ret < 0)
-            goto fail;
+            break;
         if (pkt->stream_index != data->streamIndex)
             continue; /* ignore non-selected streams */
 
         if (!found_first) { /* first found */
             found_first = 1;
             pos = pkt->pos;
+            ts = pkt->dts;
             continue;
         } else { /* second found */
             size = pkt->pos - pos; /* coded, pkt->size is decoded size */
             break;
         }
     }
+    if (!found_first)
+        goto fail;
+
+    /* in rare cases there is only one packet */
+    /* if (size == 0) { size = data_end - pos; } */ /* no easy way to know, ignore (most formats don's need size) */
+
+    /* some formats (XMA1) don't seem to have packet.dts, pretend it's 0 */
+    if (ts == INT64_MIN)
+        ts = 0;
+
+    /* apparently some (non-audio?) streams start with a DTS before 0, but some read_seeks expect 0, which would disrupt the index
+     *  we may need to keep start_ts around, since avstream/codec/format isn't always set */
+    if (ts != 0)
+        goto fail;
 
     /* add index 0 */
     ret = av_add_index_entry(stream, pos, ts, size, distance, AVINDEX_KEYFRAME);

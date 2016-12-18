@@ -17,6 +17,8 @@
 		832389501D2246C300482226 /* hca.c in Sources */ = {isa = PBXBuildFile; fileRef = 8323894F1D2246C300482226 /* hca.c */; };
 		832389521D224C0800482226 /* hca_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 832389511D224C0800482226 /* hca_decoder.c */; };
 		834D3A6E19F47C98001C54F6 /* g1l.c in Sources */ = {isa = PBXBuildFile; fileRef = 834D3A6D19F47C98001C54F6 /* g1l.c */; };
+		8350C0551E071881009E0A93 /* xma.c in Sources */ = {isa = PBXBuildFile; fileRef = 8350C0541E071881009E0A93 /* xma.c */; };
+		8350C05A1E071990009E0A93 /* ps2_svag_snk.c in Sources */ = {isa = PBXBuildFile; fileRef = 8350C0591E071990009E0A93 /* ps2_svag_snk.c */; };
 		836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B4518BDB8880095E648 /* InfoPlist.strings */; };
 		836F6F1E18BDC2190095E648 /* acm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE018BDC2180095E648 /* acm_decoder.c */; };
 		836F6F1F18BDC2190095E648 /* acm_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6DE118BDC2180095E648 /* acm_decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -472,6 +474,8 @@
 		8323894F1D2246C300482226 /* hca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca.c; sourceTree = "<group>"; };
 		832389511D224C0800482226 /* hca_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca_decoder.c; sourceTree = "<group>"; };
 		834D3A6D19F47C98001C54F6 /* g1l.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g1l.c; sourceTree = "<group>"; };
+		8350C0541E071881009E0A93 /* xma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xma.c; sourceTree = "<group>"; };
+		8350C0591E071990009E0A93 /* ps2_svag_snk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_svag_snk.c; sourceTree = "<group>"; };
 		836F6B3918BDB8880095E648 /* vgmstream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vgmstream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F6B4418BDB8880095E648 /* vgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vgmstream-Info.plist"; sourceTree = "<group>"; };
 		836F6B4618BDB8880095E648 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1037,6 +1041,8 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				8350C0591E071990009E0A93 /* ps2_svag_snk.c */,
+				8350C0541E071881009E0A93 /* xma.c */,
 				838BDB6D1D3B043C0022CA6F /* ffmpeg.c */,
 				8323894F1D2246C300482226 /* hca.c */,
 				83EDE5D61A70951A005F5D84 /* mca.c */,
@@ -1591,6 +1597,7 @@
 				836F700A18BDC2190095E648 /* ps2_vpk.c in Sources */,
 				836F6F7318BDC2190095E648 /* bcstm.c in Sources */,
 				836F704018BDC2190095E648 /* wii_sng.c in Sources */,
+				8350C0551E071881009E0A93 /* xma.c in Sources */,
 				836F6F3218BDC2190095E648 /* ngc_dsp_decoder.c in Sources */,
 				836F704218BDC2190095E648 /* wii_sts.c in Sources */,
 				836F703918BDC2190095E648 /* vgs.c in Sources */,
@@ -1684,6 +1691,7 @@
 				836F6F8018BDC2190095E648 /* dsp_bdsp.c in Sources */,
 				836F6F9618BDC2190095E648 /* lsf.c in Sources */,
 				836F6FC818BDC2190095E648 /* pos.c in Sources */,
+				8350C05A1E071990009E0A93 /* ps2_svag_snk.c in Sources */,
 				836F6F8918BDC2190095E648 /* gca.c in Sources */,
 				836F6F5718BDC2190095E648 /* str_snds_blocked.c in Sources */,
 				836F6FA418BDC2190095E648 /* nds_hwas.c in Sources */,
