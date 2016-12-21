@@ -27,6 +27,7 @@ public:
 	void Seek(unsigned long sample);
 
 protected:
+    virtual bool send_event_needs_time() { return false; }
 	virtual void send_event(uint32_t b) {}
 	virtual void render(float * out, unsigned long count) {}
 

@@ -291,11 +291,18 @@ void MIDIPlayer::Seek(unsigned long sample)
 				}
 			}
 		}
+        
+        float temp[32];
+        bool needs_time = send_event_needs_time();
 
 		for (i = 0; i < stream_start; i++)
 		{
 			if (me[i].m_event)
+            {
 				send_event(me[i].m_event);
+                if (needs_time)
+                    render(temp, 16);
+            }
 		}
 	}
 }

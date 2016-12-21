@@ -34,6 +34,7 @@ public:
 void set_sccore_path(const char * path);
 
 protected:
+    virtual bool send_event_needs_time();
 	virtual void send_event(uint32_t b);
 	virtual void render(float * out, unsigned long count);
 

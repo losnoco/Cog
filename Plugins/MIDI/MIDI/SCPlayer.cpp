@@ -336,3 +336,8 @@ unsigned int SCPlayer::get_playing_note_count()
 
 	return total;
 }
+
+bool SCPlayer::send_event_needs_time()
+{
+    return true;
+}
