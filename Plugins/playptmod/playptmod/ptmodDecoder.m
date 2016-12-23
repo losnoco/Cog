@@ -8,6 +8,9 @@
 
 #import "ptmodDecoder.h"
 
+#import "umx.h"
+#import "mo3.h"
+
 #import "Logging.h"
 
 #import "PlaylistController.h"
@@ -64,6 +67,21 @@ BOOL probe_length( void * ptmod, unsigned long * intro_length, unsigned long * l
     data = malloc(size);
     [s read:data amount:size];
 
+    isMo3 = 0;
+    char * try_data = unpackMo3( data, &size );
+    if ( try_data ) {
+        free( data );
+        data = try_data;
+        isMo3 = 1;
+    }
+    else {
+        try_data = unpackUmx( data, &size );
+        if ( try_data ) {
+            free( data );
+            data = try_data;
+        }
+    }
+    
 	if ([[[s url] fragment] length] == 0)
 		track_num = 0;
 	else
@@ -243,7 +261,8 @@ BOOL probe_length( void * ptmod, unsigned long * intro_length, unsigned long * l
     [self decoderShutdown];
 	
     if (data) {
-        free( data );
+        if (isMo3) freeMo3( data );
+        else free( data );
         data = NULL;
     }
 }
@@ -255,7 +274,7 @@ BOOL probe_length( void * ptmod, unsigned long * intro_length, unsigned long * l
 
 + (NSArray *)fileTypes
 {	
-	return [NSArray arrayWithObjects:@"mod", @"mdz", @"stk", @"m15", @"fst", nil];
+	return [NSArray arrayWithObjects:@"mod", @"mdz", @"stk", @"m15", @"fst", @"mo3", @"umx", nil];
 }
 
 + (NSArray *)mimeTypes 

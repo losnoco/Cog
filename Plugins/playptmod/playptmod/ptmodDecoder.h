@@ -18,6 +18,7 @@
     long size;
     int track_num;
     
+    int isMo3;
     int isVblank;
     
 	long framesLength;
