@@ -76,8 +76,6 @@ static void SyncProc( HSYNC handle, DWORD channel, DWORD data, void *user )
 
 - (BOOL)open:(id<CogSource>)s
 {
-	[self setSource:s];
-	
     [source seek:0 whence:SEEK_END];
     long size = [source tell];
     [source seek:0 whence:SEEK_SET];
@@ -90,7 +88,15 @@ static void SyncProc( HSYNC handle, DWORD channel, DWORD data, void *user )
         free( data );
         data = try_data;
     }
+    
+    if (memcmp(data, "IMPM", 4) != 0) {
+        ALog(@"BASS was passed a non-IT module");
+        free(data);
+        return NO;
+    }
 	
+    [self setSource:s];
+    
     NSURL * url = [s url];
 	int track_num;
 	if ([[url fragment] length] == 0)
