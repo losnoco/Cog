@@ -48,8 +48,7 @@ void * unpackUmx( const void * in, long * size )
             if (classname && !strcmp(pkg.oclassname(i), "Music"))
             {
                 char * type = pkg.otype(i);
-                if (!type) continue;
-                if (!strcasecmp(type, "it") || !strcasecmp(type, "s3m") || !strcasecmp(type, "xm"))
+                if (!type || !strcasecmp(type, "it") || !strcasecmp(type, "s3m") || !strcasecmp(type, "xm"))
                 {
                     *size = pkg.object_size(i);
                     void * ret = malloc( *size );
