@@ -17,6 +17,7 @@ enum
     FORMAT_32CN,   // FastTracker II (32 channel MODs)
     FORMAT_STK,    // The Ultimate SoundTracker (15 samples)
     FORMAT_NT,     // NoiseTracker 1.0
+    FORMAT_FEST,   // NoiseTracker (special ones)
     
     FORMAT_MTM,    // MultiTracker
     
