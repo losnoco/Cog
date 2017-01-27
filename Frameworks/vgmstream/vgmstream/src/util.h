@@ -62,14 +62,28 @@ static inline int clamp16(int32_t val) {
                 return val;
 }
 
-/* make a header for PCM .wav */
-/* buffer must be 0x2c bytes */
-void make_wav_header(uint8_t * buf, int32_t sample_count, int32_t sample_rate, int channels);
-void make_smpl_chunk(uint8_t * buf, int32_t loop_start, int32_t loop_end);
 void swap_samples_le(sample *buf, int count);
 
 void concatn(int length, char * dst, const char * src);
-void concatn_doublenull(int length, char * dst, const char * src);
-void concatn_fitting_doublenull(int length, char * dst, const char * src);
+
+
+/* Simple stdout logging for debugging and regression testing purposes.
+ * Needs C99 variadic macros. */
+#ifdef VGM_DEBUG_OUTPUT
+
+#define VGM_ASSERT(condition, ...) \
+    do { if (condition) printf(__VA_ARGS__); } while (0)
+#define VGM_LOG(...) \
+    do { printf(__VA_ARGS__); } while (0)
+#define VGM_LOGF() \
+    do { printf("%s:%i '%s'\n",  __FILE__, __LINE__, __func__); } while (0)
+
+#else
+
+#define VGM_ASSERT(condition,fmt, ...) /* nothing */
+#define VGM_LOG(...) /* nothing */
+#define VGM_LOGF(...) /* nothing */
+
+#endif
 
 #endif

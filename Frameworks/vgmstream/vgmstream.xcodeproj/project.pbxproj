@@ -345,6 +345,11 @@
 		838BDB7B1D3B1FC20022CA6F /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */; };
 		838BDB7D1D3B1FCC0022CA6F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */; };
 		838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */; };
+		83A3F0741E3AD8B900D6A794 /* formats.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A3F0711E3AD8B900D6A794 /* formats.c */; };
+		83A3F0751E3AD8B900D6A794 /* formats.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3F0721E3AD8B900D6A794 /* formats.h */; };
+		83A3F0761E3AD8B900D6A794 /* stack_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3F0731E3AD8B900D6A794 /* stack_alloc.h */; };
+		83A3F07C1E3AD92400D6A794 /* ps2.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A3F07A1E3AD92400D6A794 /* ps2.c */; };
+		83A3F07D1E3AD92400D6A794 /* x360.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A3F07B1E3AD92400D6A794 /* x360.c */; };
 		83A5F75F198DF021009AF94C /* bfwav.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A5F75E198DF021009AF94C /* bfwav.c */; };
 		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
 		83D731101A7394BF00CA1366 /* g7221.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; };
@@ -804,6 +809,11 @@
 		838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		83A3F0711E3AD8B900D6A794 /* formats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = formats.c; sourceTree = "<group>"; };
+		83A3F0721E3AD8B900D6A794 /* formats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = formats.h; sourceTree = "<group>"; };
+		83A3F0731E3AD8B900D6A794 /* stack_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack_alloc.h; sourceTree = "<group>"; };
+		83A3F07A1E3AD92400D6A794 /* ps2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2.c; sourceTree = "<group>"; };
+		83A3F07B1E3AD92400D6A794 /* x360.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x360.c; sourceTree = "<group>"; };
 		83A5F75E198DF021009AF94C /* bfwav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfwav.c; sourceTree = "<group>"; };
 		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
 		83D730E51A738EB200CA1366 /* g7221.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g7221.xcodeproj; path = ../g7221/g7221.xcodeproj; sourceTree = "<group>"; };
@@ -945,6 +955,9 @@
 				836F6DDF18BDC2180095E648 /* coding */,
 				836F6DFF18BDC2180095E648 /* layout */,
 				836F6E2718BDC2180095E648 /* meta */,
+				83A3F0711E3AD8B900D6A794 /* formats.c */,
+				83A3F0721E3AD8B900D6A794 /* formats.h */,
+				83A3F0731E3AD8B900D6A794 /* stack_alloc.h */,
 				836F6F1718BDC2190095E648 /* streamfile.c */,
 				836F6F1818BDC2190095E648 /* streamfile.h */,
 				836F6F1918BDC2190095E648 /* streamtypes.h */,
@@ -1041,6 +1054,8 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				83A3F07A1E3AD92400D6A794 /* ps2.c */,
+				83A3F07B1E3AD92400D6A794 /* x360.c */,
 				8350C0591E071990009E0A93 /* ps2_svag_snk.c */,
 				8350C0541E071881009E0A93 /* xma.c */,
 				838BDB6D1D3B043C0022CA6F /* ffmpeg.c */,
@@ -1321,7 +1336,9 @@
 				836F6F3518BDC2190095E648 /* nwa_decoder.h in Headers */,
 				836F6F2718BDC2190095E648 /* g72x_state.h in Headers */,
 				836F705418BDC2190095E648 /* streamfile.h in Headers */,
+				83A3F0761E3AD8B900D6A794 /* stack_alloc.h in Headers */,
 				8323894B1D22419B00482226 /* clHCA.h in Headers */,
+				83A3F0751E3AD8B900D6A794 /* formats.h in Headers */,
 				836F705918BDC2190095E648 /* vgmstream.h in Headers */,
 				48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */,
 				836F705718BDC2190095E648 /* util.h in Headers */,
@@ -1533,6 +1550,7 @@
 				836F6FD218BDC2190095E648 /* ps2_bmdx.c in Sources */,
 				836F703C18BDC2190095E648 /* wii_bns.c in Sources */,
 				836F6FA718BDC2190095E648 /* nds_strm.c in Sources */,
+				83A3F0741E3AD8B900D6A794 /* formats.c in Sources */,
 				836F6F6E18BDC2190095E648 /* aix.c in Sources */,
 				836F703118BDC2190095E648 /* ss_stream.c in Sources */,
 				836F701018BDC2190095E648 /* ps2_xau.c in Sources */,
@@ -1596,6 +1614,7 @@
 				836F6F8218BDC2190095E648 /* ea_header.c in Sources */,
 				836F700A18BDC2190095E648 /* ps2_vpk.c in Sources */,
 				836F6F7318BDC2190095E648 /* bcstm.c in Sources */,
+				83A3F07D1E3AD92400D6A794 /* x360.c in Sources */,
 				836F704018BDC2190095E648 /* wii_sng.c in Sources */,
 				8350C0551E071881009E0A93 /* xma.c in Sources */,
 				836F6F3218BDC2190095E648 /* ngc_dsp_decoder.c in Sources */,
@@ -1647,6 +1666,7 @@
 				836F6F3118BDC2190095E648 /* ngc_afc_decoder.c in Sources */,
 				836F6FE718BDC2190095E648 /* ps2_mib.c in Sources */,
 				836F6FAB18BDC2190095E648 /* ngc_bo2.c in Sources */,
+				83A3F07C1E3AD92400D6A794 /* ps2.c in Sources */,
 				836F6F9918BDC2190095E648 /* maxis_xa.c in Sources */,
 				836F702118BDC2190095E648 /* rs03.c in Sources */,
 				836F6F8418BDC2190095E648 /* emff.c in Sources */,

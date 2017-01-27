@@ -399,14 +399,14 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
 #ifdef VGM_USE_FFMPEG
         case coding_FFmpeg:
             {
-                 ffmpeg_data = init_ffmpeg_offset(streamFile, 0, streamFile->get_size(streamFile) );
-                 if ( !ffmpeg_data ) goto fail;
- 
-                 sample_count = ffmpeg_data->totalSamples; /* fact_sample_count */
-                 /* the encoder introduces some garbage (usually silent) samples to skip before the stream
-                  *  loop values include the skip samples but fact_sample_count doesn't; add them back to fix some edge loops */
-                 if (fact_sample_skip > 0)
-                     sample_count += fact_sample_skip;
+                ffmpeg_data = init_ffmpeg_offset(streamFile, 0, streamFile->get_size(streamFile) );
+                if ( !ffmpeg_data ) goto fail;
+
+                sample_count = ffmpeg_data->totalSamples; /* fact_sample_count */
+                /* the encoder introduces some garbage (usually silent) samples to skip before the stream
+                 *  loop values include the skip samples but fact_sample_count doesn't; add them back to fix some edge loops */
+                if (fact_sample_skip > 0)
+                    sample_count += fact_sample_skip;
             }
             break;
 #endif
@@ -503,7 +503,7 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
                 (long long)loop_start_ms*fmt.sample_rate/1000;
             vgmstream->loop_end_sample =
                 (long long)loop_end_ms*fmt.sample_rate/1000;
-            vgmstream->meta_type = meta_RIFF_WAVE_labl_Marker;
+            vgmstream->meta_type = meta_RIFF_WAVE_labl;
         }
         else if (loop_start_offset >= 0)
         {

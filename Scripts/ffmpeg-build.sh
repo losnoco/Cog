@@ -6,7 +6,7 @@
     --disable-postproc --disable-swresample --disable-avfilter\
     --disable-swscale --disable-network --disable-swscale-alpha --disable-vdpau\
     --disable-dxva2 --disable-everything --enable-hwaccels\
-    --enable-parser=ac3,mpegaudio\
+    --enable-parser=ac3,mpegaudio,xma\
     --enable-demuxer=ac3,asf,xwma,mov,oma,ogg,tak,dsf,wav,aac,dts,dtshd,mp3\
     --enable-demuxer=bink,flac,msf,xmv\
     --enable-decoder=ac3,wmapro,wmav1,wmav2,wmavoice,wmalossless,xma1,xma2\

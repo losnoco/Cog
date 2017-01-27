@@ -91,6 +91,8 @@ VGMSTREAM * init_vgmstream_ps2_mib(STREAMFILE *streamFile) {
 	fileLength = get_streamfile_size(streamFile);
 	
 	readOffset+=(off_t)read_streamfile(mibBuffer,0,0x10,streamFile); 
+	readOffset=0;
+	mibBuffer[0]=0;
 
 	do {
 		readOffset+=(off_t)read_streamfile(testBuffer,readOffset,0x10,streamFile); 
@@ -106,6 +108,7 @@ VGMSTREAM * init_vgmstream_ps2_mib(STREAMFILE *streamFile) {
 					bDoUpdateInterleave=1;
 			}
 
+			testBuffer[0]=0;
 			if(!memcmp(testBuffer,mibBuffer,0x10)) {
 
 				gotEmptyLine=1;
