@@ -62,11 +62,10 @@ static void gen_sinc( double rolloff, int width, double offset, double spacing, 
 }
 
 enum { width = 32 };
-enum { stereo = 2 };
 enum { max_res = 512 };
 enum { min_width = (width < 4 ? 4 : width) };
 enum { adj_width = min_width / 4 * 4 + 2 };
-enum { write_offset = adj_width * stereo };
+enum { write_offset = adj_width };
 
 enum { buffer_size = 128 };
 
@@ -83,8 +82,8 @@ typedef struct _resampler
 
 	imp_t const* imp;
 	imp_t impulses [max_res * (adj_width + 2 * (sizeof(imp_off_t) / sizeof(imp_t)))];
-	sample_t buffer_in[buffer_size * stereo * 2];
-	sample_t buffer_out[buffer_size * stereo];
+	sample_t buffer_in[buffer_size * 2];
+	sample_t buffer_out[buffer_size];
 } resampler;
 
 void * resampler_create()
@@ -172,7 +171,7 @@ void resampler_set_rate( void *_r, double new_factor )
 	rs->rate_ = ratio_;
 
 	/* how much of input is used for each output sample */
-	step = stereo * (int) floor( ratio_ );
+	step = (int) floor( ratio_ );
 	fraction = fmod( ratio_, 1.0 );
 
 	filter = (ratio_ < 1.0) ? 1.0 : 1.0 / ratio_;
@@ -193,10 +192,10 @@ void resampler_set_rate( void *_r, double new_factor )
 		if ( pos >= 0.9999999 )
 		{
 			pos -= 1.0;
-			cur_step += stereo;
+			cur_step += 1;
 		}
 
-		((imp_off_t*)out)[0] = (cur_step - rs->width_ * 2 + 4) * sizeof (sample_t);
+		((imp_off_t*)out)[0] = (cur_step - rs->width_ + 2) * sizeof (sample_t);
 		((imp_off_t*)out)[1] = 2 * sizeof (imp_t) + 2 * sizeof (imp_off_t);
 		out += 2 * (sizeof(imp_off_t) / sizeof(imp_t));
 		/*input_per_cycle += cur_step;*/
@@ -210,19 +209,19 @@ void resampler_set_rate( void *_r, double new_factor )
 int resampler_get_free(void *_r)
 {
 	resampler *r = (resampler *)_r;
-	return buffer_size * stereo - r->infilled;
+	return buffer_size - r->infilled;
 }
 
 int resampler_get_min_fill(void *_r)
 {
 	resampler *r = (resampler *)_r;
-	const int min_needed = write_offset + stereo;
+	const int min_needed = write_offset + 1;
 	const int latency = r->latency ? 0 : adj_width;
 	int min_free = min_needed - r->infilled - latency;
 	return min_free < 0 ? 0 : min_free;
 }
 
-void resampler_write_pair(void *_r, sample_t ls, sample_t rs)
+void resampler_write_sample(void *_r, sample_t s)
 {
 	resampler *r = (resampler *)_r;
 
@@ -231,24 +230,20 @@ void resampler_write_pair(void *_r, sample_t ls, sample_t rs)
 	    int i;
 		for ( i = 0; i < adj_width / 2; ++i)
 		{
-			r->buffer_in[r->inptr + 0] = 0;
-			r->buffer_in[r->inptr + 1] = 0;
-			r->buffer_in[buffer_size * stereo + r->inptr + 0] = 0;
-			r->buffer_in[buffer_size * stereo + r->inptr + 1] = 0;
-			r->inptr = (r->inptr + stereo) % (buffer_size * stereo);
-			r->infilled += stereo;
+			r->buffer_in[r->inptr] = 0;
+			r->buffer_in[buffer_size + r->inptr] = 0;
+			r->inptr = (r->inptr + 1) % (buffer_size);
+			r->infilled += 1;
 		}
 		r->latency = 1;
 	}
 
-	if (r->infilled < buffer_size * stereo)
+	if (r->infilled < buffer_size)
 	{
-		r->buffer_in[r->inptr + 0] = ls;
-		r->buffer_in[r->inptr + 1] = rs;
-		r->buffer_in[buffer_size * stereo + r->inptr + 0] = ls;
-		r->buffer_in[buffer_size * stereo + r->inptr + 1] = rs;
-		r->inptr = (r->inptr + stereo) % (buffer_size * stereo);
-		r->infilled += stereo;
+		r->buffer_in[r->inptr] = s;
+		r->buffer_in[buffer_size + r->inptr + 0] = s;
+		r->inptr = (r->inptr + 1) % (buffer_size);
+		r->infilled += 1;
 	}
 }
 
@@ -271,35 +266,30 @@ static const sample_t * resampler_inner_loop( resampler *r, sample_t** out_,
 			int n;
 			/* accumulate in extended precision*/
 			int pt = imp [0];
-			intermediate_t l = (intermediate_t)pt * (intermediate_t)(in [0]);
-			intermediate_t r = (intermediate_t)pt * (intermediate_t)(in [1]);
+			intermediate_t s = (intermediate_t)pt * (intermediate_t)(in [0]);
 			if ( out >= out_end )
 				break;
 			for ( n = (adj_width - 2) / 2; n; --n )
 			{
 				pt = imp [1];
-				l += (intermediate_t)pt * (intermediate_t)(in [2]);
-				r += (intermediate_t)pt * (intermediate_t)(in [3]);
+				s += (intermediate_t)pt * (intermediate_t)(in [1]);
 
 				/* pre-increment more efficient on some RISC processors*/
 				imp += 2;
 				pt = imp [0];
-				r += (intermediate_t)pt * (intermediate_t)(in [5]);
-				in += 4;
-				l += (intermediate_t)pt * (intermediate_t)(in [0]);
+				s += (intermediate_t)pt * (intermediate_t)(in [2]);
+				in += 2;
 			}
 			pt = imp [1];
-			l += (intermediate_t)pt * (intermediate_t)(in [2]);
-			r += (intermediate_t)pt * (intermediate_t)(in [3]);
+			s += (intermediate_t)pt * (intermediate_t)(in [1]);
 
 			/* these two "samples" after the end of the impulse give the
 			 * proper offsets to the next input sample and next impulse */
 			in  = (sample_t const*) ((char const*) in  + ((imp_off_t*)(&imp [2]))[0]); /* some negative value */
 			imp = (imp_t const*) ((char const*) imp + ((imp_off_t*)(&imp [2]))[1]); /* small positive or large negative */
 
-			out [0] = (sample_t) (l >> 15);
-			out [1] = (sample_t) (r >> 15);
-			out += 2;
+			out [0] = (sample_t) (s >> 15);
+			out += 1;
 		}
 		while ( in < in_end );
 
@@ -315,9 +305,9 @@ static int resampler_wrapper( resampler *r, sample_t out [], int* out_size,
 		sample_t const in [], int in_size )
 {
 	sample_t* out_ = out;
-	int result = (int)(resampler_inner_loop( r, &out_, out + *out_size, in, in_size ) - in);
+	int result = resampler_inner_loop( r, &out_, out + *out_size, in, in_size ) - in;
 
-	*out_size = (int)(out_ - out);
+	*out_size = out_ - out;
 	return result;
 }
 
@@ -327,11 +317,11 @@ static void resampler_fill( resampler *r )
 	{
 		int inread;
 
-		int writepos = ( r->outptr + r->outfilled ) % (buffer_size * stereo);
-		int writesize = (buffer_size * stereo) - writepos;
-		if ( writesize > ( buffer_size * stereo - r->outfilled ) )
-				writesize = buffer_size * stereo - r->outfilled;
-		inread = resampler_wrapper(r, &r->buffer_out[writepos], &writesize, &r->buffer_in[buffer_size * stereo + r->inptr - r->infilled], r->infilled);
+		int writepos = ( r->outptr + r->outfilled ) % (buffer_size);
+		int writesize = (buffer_size) - writepos;
+		if ( writesize > ( buffer_size - r->outfilled ) )
+				writesize = buffer_size - r->outfilled;
+		inread = resampler_wrapper(r, &r->buffer_out[writepos], &writesize, &r->buffer_in[buffer_size + r->inptr - r->infilled], r->infilled);
 		r->infilled -= inread;
 		r->outfilled += writesize;
 		if (!inread)
@@ -342,38 +332,36 @@ static void resampler_fill( resampler *r )
 int resampler_get_avail(void *_r)
 {
 	resampler *r = (resampler *)_r;
-	if (r->outfilled < stereo && r->infilled >= r->width_)
+	if (r->outfilled < 1 && r->infilled >= r->width_)
 	  resampler_fill( r );
 	return r->outfilled;
 }
 
-static void resampler_read_pair_internal( resampler *r, sample_t *ls, sample_t *rs, int advance )
+static void resampler_read_sample_internal( resampler *r, sample_t *s, int advance )
 {
-	if (r->outfilled < stereo)
+	if (r->outfilled < 1)
 	  resampler_fill( r );
-	if (r->outfilled < stereo)
+	if (r->outfilled < 1)
 	{
-		*ls = 0;
-		*rs = 0;
+		*s = 0;
 		return;
 	}
-	*ls = r->buffer_out[r->outptr + 0];
-	*rs = r->buffer_out[r->outptr + 1];
+	*s = r->buffer_out[r->outptr];
 	if (advance)
 	{
-		r->outptr = (r->outptr + 2) % (buffer_size * stereo);
-		r->outfilled -= stereo;
+		r->outptr = (r->outptr + 1) % (buffer_size);
+		r->outfilled -= 1;
 	}
 }
 
-void resampler_read_pair( void *_r, sample_t *ls, sample_t *rs )
+void resampler_read_sample( void *_r, sample_t *s )
 {
 	resampler *r = (resampler *)_r;
-	resampler_read_pair_internal(r, ls, rs, 1);
+	resampler_read_sample_internal(r, s, 1);
 }
 
-void resampler_peek_pair( void *_r, sample_t *ls, sample_t *rs )
+void resampler_peek_sample( void *_r, sample_t *s )
 {
 	resampler *r = (resampler *)_r;
-	resampler_read_pair_internal(r, ls, rs, 0);
+	resampler_read_sample_internal(r, s, 0);
 }

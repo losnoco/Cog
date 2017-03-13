@@ -61,12 +61,12 @@ void resampler_set_rate( void *, double new_factor );
 int resampler_get_free(void *);
 int resampler_get_min_fill(void *);
 
-void resampler_write_pair(void *, sample_t ls, sample_t rs);
+void resampler_write_sample(void *, sample_t s);
 
 int resampler_get_avail(void *);
 
-void resampler_read_pair( void *, sample_t *ls, sample_t *rs );
-void resampler_peek_pair( void *, sample_t *ls, sample_t *rs );
+void resampler_read_sample( void *, sample_t *s );
+void resampler_peek_sample( void *, sample_t *s );
 
 #ifdef __cplusplus
 }
