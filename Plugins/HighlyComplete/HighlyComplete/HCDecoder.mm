@@ -22,12 +22,10 @@
 
 #import <HighlyQuixotic/qsound.h>
 
-extern "C" {
-#import <mGBA/core.h>
-#import <mGBA/blip_buf.h>
-#import <mGBA/vfs.h>
-#import <mGBA/log.h>
-}
+#import <mgba/core/core.h>
+#import <mgba/core/blip_buf.h>
+#import <mgba-util/vfs.h>
+#import <mgba/core/log.h>
 
 #include <vector>
 #import <SSEQPlayer/SDAT.h>
