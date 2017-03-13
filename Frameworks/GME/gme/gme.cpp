@@ -257,8 +257,8 @@ gme_err_t gme_track_info( Music_Emu const* me, gme_info_t** out, int track )
 	COPY( length );
 	COPY( intro_length );
 	COPY( loop_length );
+	COPY( fade_length );
 	
-	info->i4  = -1;
 	info->i5  = -1;
 	info->i6  = -1;
 	info->i7  = -1;
@@ -360,6 +360,7 @@ void      gme_set_equalizer  ( Music_Emu* gme, gme_equalizer_t const* eq ) { gme
 void      gme_equalizer      ( Music_Emu const* gme, gme_equalizer_t* o )  { *o = gme->equalizer(); }
 const char* gme_voice_name   ( Music_Emu const* gme, int i )            { return gme->voice_name( i ); }
 gme_err_t gme_save           ( Music_Emu const* gme, gme_writer_t writer, void* your_data ) { return gme->save( writer, your_data ); }
+void      gme_mute_effects   ( Music_Emu* gme, gme_bool disable )       { gme->mute_effects(disable); }
 
 void gme_effects( Music_Emu const* gme, gme_effects_t* out )
 {

@@ -18,6 +18,7 @@ extern gme_err_t readCallback( void* data, void* out, long count );
 	Music_Emu* emu;
 	id<CogSource> source;
 	long length;
+	long fade;
 }
 
 - (void)setSource:(id<CogSource>)s;

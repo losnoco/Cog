@@ -70,17 +70,16 @@ static BOOST::uint8_t const initial_regs [SPC_DSP::register_count] =
 
 #define WRITE_SAMPLES( l, r, out ) \
 {\
+	if ( out >= m.out_end )\
+	{\
+		int count = sample_count();\
+		m.out_begin = (SPC_DSP::sample_t *) realloc( m.out_begin, (count ? count * 2 : 8192) * sizeof(SPC_DSP::sample_t) );\
+		out = m.out_begin + count;\
+		m.out_end = m.out_begin + count * 2;\
+	}\
 	out [0] = l;\
 	out [1] = r;\
 	out += 2;\
-	if ( out >= m.out_end )\
-	{\
-		check( out == m.out_end );\
-		check( m.out_end != &m.extra [extra_size] || \
-			(m.extra <= m.out_begin && m.extra < &m.extra [extra_size]) );\
-		out       = m.extra;\
-		m.out_end = &m.extra [extra_size];\
-	}\
 }\
 
 void SPC_DSP::set_output( sample_t* out, int size )
@@ -88,8 +87,7 @@ void SPC_DSP::set_output( sample_t* out, int size )
 	require( (size & 1) == 0 ); // must be even
 	if ( !out )
 	{
-		out  = m.extra;
-		size = extra_size;
+		size = 0;
 	}
 	m.out_begin = out;
 	m.out       = out;
@@ -739,7 +737,7 @@ MISC_CLOCK( 30 )
 	if ( m.every_other_sample )
 	{
 		m.kon    = m.new_kon;
-		m.t_koff = REG(koff) | m.mute_mask; 
+		m.t_koff = REG(koff);
 	}
 	
 	run_counters();
@@ -892,6 +890,10 @@ inline void SPC_DSP::voice_output( voice_t const* v, int ch )
 	int abs_amp = abs( amp );
 	if ( abs_amp > m.max_level[v - (const SPC_DSP::voice_t *)&m.voices][ch] )
 		m.max_level[v - (const SPC_DSP::voice_t *)&m.voices][ch] = abs_amp;
+
+	// FIX: audibly mute, rather than do it in a way the SPC code can easily detect
+	if ( m.mute_mask & ( 1 << ( v - m.voices ) ) )
+		amp = 0;
 
 	// Add to output total
 	m.t_main_out [ch] += amp;
@@ -1067,7 +1069,7 @@ inline int SPC_DSP::echo_output( int ch )
         vol ^= vol >> 7;
 	
     int out = (int16_t) ((m.t_main_out [ch] * vol) >> 7) +
-			(int16_t) ((m.t_echo_in [ch] * (int8_t) REG(evoll + ch * 0x10)) >> 7);
+		(int16_t) ((m.t_echo_in [ch] * (int8_t) REG(evoll + ch * 0x10)) >> 7) * m.enable_echo;
 	CLAMP16( out );
 	return out;
 }

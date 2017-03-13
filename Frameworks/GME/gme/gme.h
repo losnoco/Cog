@@ -96,8 +96,11 @@ struct gme_info_t
 	/* Length if available, otherwise intro_length+loop_length*2 if available,
 	otherwise a default of 150000 (2.5 minutes). */
 	int play_length;
+
+	/* Fade duration, in milliseconds, if the file specifies it */
+	int fade_length;
 	
-	int i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15; /* reserved */
+	int i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15; /* reserved */
 	
 	/* empty string ("") if not available */
 	const char* system;
@@ -134,6 +137,9 @@ void gme_mute_voice( gme_t*, int index, gme_bool mute );
 /* Sets muting state of ALL voices at once using a bit mask, where -1 mutes all
 voices, 0 unmutes them all, 0x01 mutes just the first voice, etc. */
 void gme_mute_voices( gme_t*, int muting_mask );
+
+/* Disables native effects, and possibly others. */
+void gme_mute_effects( gme_t*, gme_bool mute );
 
 /* Frequency equalizer parameters (see gme.txt) */
 typedef struct gme_equalizer_t

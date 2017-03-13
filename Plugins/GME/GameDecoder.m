@@ -121,6 +121,13 @@ gme_err_t readCallback( void* data, void* out, long count )
 		length = 150000; 
 		DLog(@"Setting default: %li", length);
 	}
+
+	if (info->fade_length >= 0) {
+		fade = info->fade_length;
+	}
+	else {
+		fade = 8000;
+	}
     
     gme_free_info( info );
 
@@ -134,7 +141,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 		return NO;
 	}
     
-    length += 8000;
+    length += fade;
     
 
 	[self willChangeValueForKey:@"properties"];
@@ -167,7 +174,7 @@ gme_err_t readCallback( void* data, void* out, long count )
     if ( IsRepeatOneSet() )
         gme_set_fade( emu, -1, 0 );
     else
-        gme_set_fade( emu, (int)(length - 8000), 8000 );
+        gme_set_fade( emu, (int)(length - fade), fade );
 	
 	gme_play(emu, numSamples, (short int *)buf);
 	

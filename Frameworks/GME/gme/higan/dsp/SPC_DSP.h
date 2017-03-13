@@ -22,6 +22,7 @@ public:
 	// doesn't generate any.
 	typedef short sample_t;
 	void set_output( sample_t* out, int out_size );
+	sample_t* get_output();
 
 	// Number of samples written to output since it was last set, always
 	// a multiple of 2. Undefined if more samples were generated than
@@ -91,11 +92,10 @@ public:
 	};
 
 public:
-	enum { extra_size = 16 };
-	sample_t* extra()               { return m.extra; }
 	sample_t const* out_pos() const { return m.out; }
 	void disable_surround( bool disable = true );
 	void interpolation_level( int level = 0 ) { m.interpolation_level = level; }
+	void enable_echo( bool enable = true ) { m.enable_echo = enable ? 1 : 0; }
 public:
 	BLARGG_DISABLE_NOTHROW
 	
@@ -184,10 +184,10 @@ public:
 		int mute_mask;
         int surround_threshold;
 		int interpolation_level;
+		int enable_echo;
 		sample_t* out;
 		sample_t* out_end;
 		sample_t* out_begin;
-		sample_t extra [extra_size];
 
 		int max_level[voice_count][2];
 	};
@@ -297,6 +297,11 @@ inline bool SPC_DSP::check_kon()
 	bool old = m.kon_check;
 	m.kon_check = 0;
 	return old;
+}
+
+inline SPC_DSP::sample_t* SPC_DSP::get_output()
+{
+	return m.out_begin;
 }
 
 #if !SPC_NO_COPY_STATE_FUNCS

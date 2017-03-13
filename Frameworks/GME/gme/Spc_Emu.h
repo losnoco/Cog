@@ -28,6 +28,13 @@ public:
 	// Enables gaussian, cubic or sinc interpolation
 	void interpolation_level( int level = 0 )   { smp.dsp.spc_dsp.interpolation_level( level ); }
 
+	// Enables an analog signal simulation filter
+	void enable_filter( bool enable = true ) { _enable_filter = enable; if (enable) filter.clear(); }
+
+	// Enables native echo
+	void enable_echo( bool enable = true ) { smp.dsp.spc_dsp.enable_echo( enable ); }
+	virtual void mute_effects( bool mute ) { enable_echo(!mute); }
+
     SuperFamicom::SMP const* get_smp() const;
     SuperFamicom::SMP * get_smp();
 	
@@ -81,6 +88,8 @@ private:
 	Spc_Emu_Resampler resampler;
 	Spc_Filter filter;
     SuperFamicom::SMP smp;
+
+	bool _enable_filter;
 	
 	byte const* trailer_() const;
 	int trailer_size_() const;
