@@ -146,6 +146,10 @@ typedef unsigned char blargg_byte;
 #undef  byte
 #define byte blargg_byte
 
+#ifndef _countof
+#define _countof(x) (sizeof((x))/sizeof((x)[0]))
+#endif
+
 #ifndef BLARGG_EXPORT
 	#if defined (_WIN32) && BLARGG_BUILD_DLL
 		#define BLARGG_EXPORT __declspec(dllexport)
