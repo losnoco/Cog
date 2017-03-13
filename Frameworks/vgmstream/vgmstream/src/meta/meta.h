@@ -117,13 +117,11 @@ VGMSTREAM * init_vgmstream_sli_ogg(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_hca(STREAMFILE *streamFile);
 
-VGMSTREAM * init_vgmstream_hca_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size);
-
 #ifdef VGM_USE_FFMPEG
 ffmpeg_codec_data * init_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size);
 ffmpeg_codec_data * init_ffmpeg_header_offset(STREAMFILE *streamFile, uint8_t * header, uint64_t header_size, uint64_t start, uint64_t size);
 
-void free_ffmpeg(ffmpeg_codec_data *);
+void free_ffmpeg(ffmpeg_codec_data *data);
 
 VGMSTREAM * init_vgmstream_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size);
 
@@ -193,8 +191,6 @@ VGMSTREAM * init_vgmstream_fsb5(STREAMFILE * streamFile);
 VGMSTREAM * init_vgmstream_rwx(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_xwb(STREAMFILE * streamFile);
-
-VGMSTREAM * init_vgmstream_xwb2(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_xa30(STREAMFILE * streamFile);
 
@@ -612,7 +608,8 @@ VGMSTREAM * init_vgmstream_hyperscan_kvag(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_ios_psnd(STREAMFILE* streamFile);
 
-VGMSTREAM * init_vgmstream_bos_adp(STREAMFILE* streamFile);
+VGMSTREAM * init_vgmstream_pc_adp_bos(STREAMFILE* streamFile);
+VGMSTREAM * init_vgmstream_pc_adp_otns(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_eb_sfx(STREAMFILE* streamFile);
 
@@ -661,10 +658,18 @@ VGMSTREAM * init_vgmstream_ps2_svag_snk(STREAMFILE* streamFile);
 
 #ifdef VGM_USE_FFMPEG
 VGMSTREAM * init_vgmstream_xma(STREAMFILE* streamFile);
+
+VGMSTREAM * init_vgmstream_bik(STREAMFILE* streamFile);
 #endif
 
 VGMSTREAM * init_vgmstream_ps2_vds_vdm(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_x360_cxs(STREAMFILE* streamFile);
+
+VGMSTREAM * init_vgmstream_dsp_adx(STREAMFILE *streamFile);
+
+VGMSTREAM * init_vgmstream_akb_multi(STREAMFILE *streamFile);
+
+VGMSTREAM * init_vgmstream_akb2_multi(STREAMFILE *streamFile);
 
 #endif /*_META_H*/

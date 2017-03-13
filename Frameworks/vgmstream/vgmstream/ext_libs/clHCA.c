@@ -14,6 +14,7 @@
 //--------------------------------------------------
 // インライン関数
 //--------------------------------------------------
+#if 0
 static inline unsigned short get_le16(unsigned short v_){const unsigned char *v=(const unsigned char *)&v_;unsigned short r=v[1];r<<=8;r|=v[0];return r;}
 static inline unsigned short get_be16(unsigned short v_){const unsigned char *v=(const unsigned char *)&v_;unsigned short r=v[0];r<<=8;r|=v[1];return r;}
 static inline unsigned int get_be24(unsigned int v_){const unsigned char *v=(const unsigned char *)&v_;unsigned int r=v[0];r<<=8;r|=v[1];r<<=8;r|=v[2];return r;};
@@ -21,7 +22,6 @@ static inline unsigned int get_le32(unsigned int v_){const unsigned char *v=(con
 static inline unsigned int get_be32(unsigned int v_){const unsigned char *v=(const unsigned char *)&v_;unsigned int r=v[0];r<<=8;r|=v[1];r<<=8;r|=v[2];r<<=8;r|=v[3];return r;}
 static inline float get_bef32(float v_){union{float f;unsigned int i;}v;v.f=v_;v.i=get_be32(v.i);return v.f;}
 
-#if 0
 static union { unsigned int i; unsigned char c[4]; } g_is_le = {1};
 static inline unsigned short swap_u16(unsigned short v){unsigned short r=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;return r;}
 static inline unsigned short swap_u32(unsigned int v){unsigned int r=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;return r;}
@@ -191,9 +191,11 @@ static void clHCA_destructor(clHCA *hca)
 //--------------------------------------------------
 // HCAチェック
 //--------------------------------------------------
+#if 0
 static int clHCA_CheckFile(void *data,unsigned int size){
-	return (data&&size>=4&&(get_le32(*(unsigned int *)data)&0x7F7F7F7F)==0x00414348);
+	return (data&&size>=4&&(get_be32(*(unsigned int *)data)&0x7F7F7F7F)==0x48434100);/*'HCA\0'*/
 }
+#endif
 
 //--------------------------------------------------
 // チェックサム
@@ -366,7 +368,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// HCA
-	if(size>=sizeof(stHeader) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='HCA\0'){
+	if(size>=sizeof(stHeader) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x48434100){/*'HCA\0'*/
 		clData_AddBit(&d,32);
 		_version=clData_GetBit(&d,16);
 		_dataOffset=clData_GetBit(&d,16);
@@ -380,7 +382,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// fmt
-	if(size>=sizeof(stFormat) && (clData_CheckBit(&d, 32)&0x7F7F7F7F)=='fmt\0'){
+	if(size>=sizeof(stFormat) && (clData_CheckBit(&d, 32)&0x7F7F7F7F)==0x666D7400){/*'fmt\0'*/
 		clData_AddBit(&d,32);
 		_channelCount=clData_GetBit(&d,8);
 		_samplingRate=clData_GetBit(&d,24);
@@ -408,7 +410,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// comp
-	if(size>=sizeof(stCompress) && (clData_CheckBit(&d, 32)&0x7F7F7F7F)=='comp'){
+	if(size>=sizeof(stCompress) && (clData_CheckBit(&d, 32)&0x7F7F7F7F)==0x636F6D70){/*'comp'*/
 		clData_AddBit(&d,32);
 		_blockSize=clData_GetBit(&d,16);
 		_comp_r01=clData_GetBit(&d,8);
@@ -443,7 +445,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// dec
-	else if(size>=sizeof(stDecode) && (clData_CheckBit(&d, 32)&0x7F7F7F7F)=='dec\0'){
+	else if(size>=sizeof(stDecode) && (clData_CheckBit(&d, 32)&0x7F7F7F7F)==0x64656300){/*'dec\0'*/
 		unsigned char count1,count2,enableCount2;
 		clData_AddBit(&d, 32);
 		_blockSize=clData_GetBit(&d,16);
@@ -482,7 +484,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// vbr
-	if(size>=sizeof(stVBR) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='vbr\0'){
+	if(size>=sizeof(stVBR) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x76627200){/*'vbr\0'*/
 		clData_AddBit(&d, 32);
 		_vbr_r01=clData_GetBit(&d,16);
 		_vbr_r02=clData_GetBit(&d,16);
@@ -502,7 +504,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// ath
-	if(size>=6 && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='ath\0'){
+	if(size>=6 && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x61746800){/*'ath\0'*/
 		clData_AddBit(&d,32);
 		_ath_type=clData_GetBit(&d,16);
 		printf("ATHタイプ:%d ※v2.0から廃止されています。\n",_ath_type);
@@ -514,7 +516,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// loop
-	if(size>=sizeof(stLoop) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='loop'){
+	if(size>=sizeof(stLoop) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x6C6F6F70){/*'loop'*/
 		clData_AddBit(&d, 32);
 		_loopStart=clData_GetBit(&d,32);
 		_loopEnd=clData_GetBit(&d,32);
@@ -531,7 +533,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// ciph
-	if(size>=6 && (clData_CheckBit(&d, 32)&0x7F7F7F7F)=='ciph'){
+	if(size>=6 && (clData_CheckBit(&d, 32)&0x7F7F7F7F)==0x63697068){/*'ciph'*/
 		clData_AddBit(&d,32);
 		_ciph_type=clData_GetBit(&d,16);
 		switch(_ciph_type){
@@ -547,7 +549,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// rva
-	if(size>=sizeof(stRVA) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='rva\0'){
+	if(size>=sizeof(stRVA) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x72766100){/*'rva\0'*/
 		union { unsigned int i; float f; } v;
 		clData_AddBit(&d,32);
 		v.i=clData_GetBit(&d,32);
@@ -557,7 +559,7 @@ static int clHCA_PrintInfo(const char *filenameHCA){
 	}
 
 	// comm
-	if(size>=5 && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='comm'){
+	if(size>=5 && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x636F6D6D){/*'comm'*/
 		int i;
 		clData_AddBit(&d,32);
 		_comm_len=clData_GetBit(&d,8);
@@ -758,7 +760,7 @@ int clHCA_DecodeToWavefile_Decode(clHCA *hca,void *fp1,void *fp2,unsigned int ad
 int clHCA_isOurFile0(const void *data){
 	clData d;
 	clData_constructor(&d, data, 8);
-	if((clData_CheckBit(&d,32)&0x7F7F7F7F)=='HCA\0'){
+	if((clData_CheckBit(&d,32)&0x7F7F7F7F)==0x48434100){/*'HCA\0'*/
 		clData_AddBit(&d,32+16);
 		return clData_CheckBit(&d,16);
 	}
@@ -769,7 +771,7 @@ int clHCA_isOurFile1(const void *data, unsigned int size){
 	int minsize;
 	if (size<8)return -1;
 	minsize = clHCA_isOurFile0(data);
-	if (minsize < 0 || minsize > size)return -1;
+	if (minsize < 0 || (unsigned int)minsize > size)return -1;
 	if (clHCA_CheckSum(data, minsize, 0))return -1;
 	return 0;
 }
@@ -793,10 +795,12 @@ void clHCA_DecodeSamples16(clHCA *hca,signed short *samples){
 	const float scale = 32768.0f;
 	float f;
 	signed int s;
+	int i, j;
+	unsigned int k, l;
 	//const float _rva_volume=hca->_rva_volume;
-	for(int i=0;i<8;i++){
-		for(int j=0;j<0x80;j++){
-			for(unsigned int k=0,l=hca->_channelCount;k<l;k++){
+	for(i=0;i<8;i++){
+		for(j=0;j<0x80;j++){
+			for(k=0,l=hca->_channelCount;k<l;k++){
 				f=hca->_channel[k].wave[i][j]/**_rva_volume*/;
 				if(f>1){f=1;}else if(f<-1){f=-1;}
 				s=(signed int)(f*scale);
@@ -981,7 +985,7 @@ void clCipher_Init56(clCipher *cipher,unsigned int key1,unsigned int key2){
 	unsigned char t2[0x10];
 	unsigned char t3[0x100],t31[0x10],t32[0x10],*t;
 
-	int i, v;
+	int i, j, v;
 
 	if(!key1)key2--;
 	key1--;
@@ -1004,10 +1008,11 @@ void clCipher_Init56(clCipher *cipher,unsigned int key1,unsigned int key2){
 	// テーブル3
 	t=t3;
 	clCipher_Init56_CreateTable(t31,t1[0]);
-	for(int i=0;i<0x10;i++){
+	for(i=0;i<0x10;i++){
+		unsigned char v;
 		clCipher_Init56_CreateTable(t32,t2[i]);
-		unsigned char v=t31[i]<<4;
-		for(int j=0;j<0x10;j++){
+		v=t31[i]<<4;
+		for(j=0;j<0x10;j++){
 			*(t++)=v|t32[j];
 		}
 	}
@@ -1028,8 +1033,9 @@ void clCipher_Init56(clCipher *cipher,unsigned int key1,unsigned int key2){
 void clCipher_Init56_CreateTable(unsigned char *r,unsigned char key){
 	int mul=((key&1)<<3)|5;
 	int add=(key&0xE)|1;
+	int i;
 	key>>=4;
-	for(int i=0;i<0x10;i++){
+	for(i=0;i<0x10;i++){
 		key=(key*mul+add)&0xF;
 		*(r++)=key;
 	}
@@ -1063,7 +1069,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		if(size<sizeof(stHeader))return -1;
 
 		// HCA
-		if((clData_CheckBit(&d,32)&0x7F7F7F7F)=='HCA\0'){
+		if((clData_CheckBit(&d,32)&0x7F7F7F7F)==0x48434100){/*'HCA\0'*/
 			clData_AddBit(&d,32);
 			hca->_version=clData_GetBit(&d,16);
 			hca->_dataOffset=clData_GetBit(&d,16);
@@ -1076,7 +1082,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// fmt
-		if(size>=sizeof(stFormat) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='fmt\0'){
+		if(size>=sizeof(stFormat) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x666D7400){/*'fmt\0'*/
 			clData_AddBit(&d,32);
 			hca->_channelCount=clData_GetBit(&d,8);
 			hca->_samplingRate=clData_GetBit(&d,24);
@@ -1091,7 +1097,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// comp
-		if(size>=sizeof(stCompress) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='comp'){
+		if(size>=sizeof(stCompress) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x636F6D70){/*'comp'*/
 			clData_AddBit(&d,32);
 			hca->_blockSize=clData_GetBit(&d,16);
 			hca->_comp_r01=clData_GetBit(&d,8);
@@ -1109,7 +1115,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// dec
-		else if(size>=sizeof(stDecode) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='dec\0'){
+		else if(size>=sizeof(stDecode) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x64656300){/*'dec\0'*/
 			unsigned char count1,count2,enableCount2;
 			clData_AddBit(&d,32);
 			hca->_blockSize=clData_GetBit(&d,16);
@@ -1133,7 +1139,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// vbr
-		if(size>=sizeof(stVBR) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='vbr\0'){
+		if(size>=sizeof(stVBR) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x76627200){/*'vbr\0'*/
 			clData_AddBit(&d,32);
 			hca->_vbr_r01=clData_GetBit(&d,16);
 			hca->_vbr_r02=clData_GetBit(&d,16);
@@ -1144,7 +1150,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// ath
-		if(size>=6 && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='ath\0'){
+		if(size>=6 && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x61746800){/*'ath\0'*/
 			clData_AddBit(&d,32);
 			hca->_ath_type=clData_GetBit(&d,16);
 		}else{
@@ -1152,7 +1158,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// loop
-		if(size>=sizeof(stLoop) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='loop'){
+		if(size>=sizeof(stLoop) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x6C6F6F70){/*'loop'*/
 			clData_AddBit(&d,32);
 			hca->_loopStart=clData_GetBit(&d,32);
 			hca->_loopEnd=clData_GetBit(&d,32);
@@ -1170,7 +1176,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// ciph
-		if(size>=6 && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='ciph'){
+		if(size>=6 && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x63697068){/*'ciph'*/
 			clData_AddBit(&d,32);
 			hca->_ciph_type=clData_GetBit(&d,16);
 			if(!(hca->_ciph_type==0||hca->_ciph_type==1||hca->_ciph_type==0x38))return -1;
@@ -1180,7 +1186,7 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// rva
-		if(size>=sizeof(stRVA) && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='rva\0'){
+		if(size>=sizeof(stRVA) && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x72766100){/*'rva\0'*/
 			union { unsigned int i; float f; } v;
 			clData_AddBit(&d,32);
 			v.i=clData_GetBit(&d,32);
@@ -1191,9 +1197,9 @@ int clHCA_Decode(clHCA *hca,void *data,unsigned int size,unsigned int address){
 		}
 
 		// comm
-		if(size>=5 && (clData_CheckBit(&d,32)&0x7F7F7F7F)=='comm'){
+		if(size>=5 && (clData_CheckBit(&d,32)&0x7F7F7F7F)==0x636F6D6D){/*'comm'*/
 			void * newmem;
-			int i;
+			unsigned int i;
 			clData_AddBit(&d,32);
 			hca->_comm_len=clData_GetBit(&d,8);
 			if(hca->_comm_len>size)return -1;
@@ -1673,11 +1679,11 @@ void stChannel_Decode5(stChannel *ch,int index){
 	for(i=0,count1=0x40,count2=1;i<7;i++,count1>>=1,count2<<=1){
 		const float *list1Float=(const float *)stChannel_Decode5_list1Int[i];
 		const float *list2Float=(const float *)stChannel_Decode5_list2Int[i];
+		float *d1, *d2, *w;
 		s1=s;
 		s2=&s1[count2];
-		float *d1=d;
-		float *d2=&d1[count2*2-1];
-		float *w;
+		d1=d;
+		d2=&d1[count2*2-1];
 		for(j=0;j<count1;j++){
 			for(k=0;k<count2;k++){
 				float a=*(s1++);
@@ -1698,10 +1704,9 @@ void stChannel_Decode5(stChannel *ch,int index){
 	for(i=0;i<0x80;i++)*(d++)=*(s++);
 	s=(const float *)stChannel_Decode5_list3Int;d=ch->wave[index];
 	s1=&ch->wav2[0x40];s2=ch->wav3;
-	for(int i=0;i<0x40;i++)*(d++)=*(s1++)**(s++)+*(s2++);
-	for(int i=0;i<0x40;i++)*(d++)=*(s++)**(--s1)-*(s2++);
+	for(i=0;i<0x40;i++)*(d++)=*(s1++)**(s++)+*(s2++);
+	for(i=0;i<0x40;i++)*(d++)=*(s++)**(--s1)-*(s2++);
 	s1=&ch->wav2[0x40-1];d=ch->wav3;
-	for(int i=0;i<0x40;i++)*(d++)=*(s1--)**(--s);
-	for(int i=0;i<0x40;i++)*(d++)=*(--s)**(++s1);
+	for(i=0;i<0x40;i++)*(d++)=*(s1--)**(--s);
+	for(i=0;i<0x40;i++)*(d++)=*(--s)**(++s1);
 }
-

@@ -457,7 +457,7 @@ int check_extensions(STREAMFILE *streamFile, const char * cmp_exts) {
     char filename[PATH_LIMIT];
     const char * ext = NULL;
     const char * cmp_ext = NULL;
-    size_t ext_len;
+    int ext_len, cmp_len;
 
     streamFile->get_name(streamFile,filename,sizeof(filename));
     ext = filename_extension(filename);
@@ -465,11 +465,17 @@ int check_extensions(STREAMFILE *streamFile, const char * cmp_exts) {
 
     cmp_ext = cmp_exts;
     do {
-        if (strncasecmp(ext,cmp_ext, ext_len)==0 )
+        cmp_len = strstr(cmp_ext, ",") - cmp_ext; /* find next ext; becomes negative if not found */
+        if (cmp_len < 0)
+            cmp_len = strlen(cmp_ext); /* total length if more not found */
+
+        if (strncasecmp(ext,cmp_ext, ext_len) == 0 && ext_len == cmp_len)
             return 1;
+
         cmp_ext = strstr(cmp_ext, ",");
         if (cmp_ext != NULL)
             cmp_ext = cmp_ext + 1; /* skip comma */
+
     } while (cmp_ext != NULL);
 
     return 0;
@@ -484,14 +490,13 @@ int check_extensions(STREAMFILE *streamFile, const char * cmp_exts) {
  *
  * returns 0 on failure
  */
-static int find_chunk(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, int size_big_endian, off_t *out_chunk_offset, size_t *out_chunk_size);
 int find_chunk_be(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size) {
-    return find_chunk(streamFile, chunk_id, start_offset, full_chunk_size, 1, out_chunk_offset, out_chunk_size);
+    return find_chunk(streamFile, chunk_id, start_offset, full_chunk_size, out_chunk_offset, out_chunk_size, 1);
 }
 int find_chunk_le(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size) {
-    return find_chunk(streamFile, chunk_id, start_offset, full_chunk_size, 0, out_chunk_offset, out_chunk_size);
+    return find_chunk(streamFile, chunk_id, start_offset, full_chunk_size, out_chunk_offset, out_chunk_size, 0);
 }
-int find_chunk(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, int size_big_endian, off_t *out_chunk_offset, size_t *out_chunk_size) {
+int find_chunk(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size, int size_big_endian) {
     size_t filesize;
     off_t current_chunk = start_offset;
 
@@ -508,6 +513,10 @@ int find_chunk(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, in
             if (out_chunk_size) *out_chunk_size = chunk_size;
             return 1;
         }
+
+        /* end chunk with 0 size, seen in some custom formats */
+        if (chunk_size == 0)
+            return 0;
 
         current_chunk += full_chunk_size ? chunk_size : 4+4+chunk_size;
     }

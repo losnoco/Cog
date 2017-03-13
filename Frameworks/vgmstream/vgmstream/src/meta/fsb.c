@@ -113,17 +113,16 @@ VGMSTREAM * init_vgmstream_fsb4_wav(STREAMFILE *streamFile) {
 
 VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
     VGMSTREAM * vgmstream = NULL;
-    off_t start_offset,  h_off, s_off;
+    off_t start_offset;
     size_t custom_data_offset;
     int loop_flag = 0;
+    int target_stream = 0;
 
     FSB_HEADER fsbh;
 
     /* check extensions */
     if ( !check_extensions(streamFile, "fsb,wii") )
         goto fail;
-
-    h_off = offset;
 
     /* check header */
     fsbh.id = read_32bitBE(offset+0x00,streamFile);
@@ -133,26 +132,34 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
         fsbh.shdrsize_min = 0x40;
 
         /* main header */
-        fsbh.numsamples = read_32bitLE(h_off+0x04,streamFile);
-        fsbh.datasize   = read_32bitLE(h_off+0x08,streamFile);
+        fsbh.numsamples = read_32bitLE(offset+0x04,streamFile);
+        fsbh.datasize   = read_32bitLE(offset+0x08,streamFile);
         fsbh.shdrsize   = 0x40;
         fsbh.version    = 0;
         fsbh.flags      = 0;
 
-        s_off = offset+fsbh.hdrsize;
-        /* sample header */
-        /* 0x00:name(len=0x20) */
-        fsbh.lengthsamples = read_32bitLE(s_off+0x20,streamFile);
-        fsbh.lengthcompressedbytes = read_32bitLE(s_off+0x24,streamFile);
-        fsbh.deffreq   = read_32bitLE(s_off+0x28,streamFile);
-        /* 0x2c:?  0x2e:?  0x30:?  0x32:? */
-        fsbh.mode     = read_32bitLE(s_off+0x34,streamFile);
-        fsbh.loopstart = read_32bitLE(s_off+0x38,streamFile);
-        fsbh.loopend   = read_32bitLE(s_off+0x3c,streamFile);
+        if (fsbh.numsamples > 1) goto fail;
 
-        fsbh.numchannels = (fsbh.mode & FSOUND_STEREO) ? 2 : 1;
-        if (fsbh.loopend > fsbh.lengthsamples) /* this seems common... */
-            fsbh.lengthsamples = fsbh.loopend;
+        /* sample header (first stream only, not sure if there are multi-FSB1) */
+        {
+            off_t s_off = offset+fsbh.hdrsize;
+
+            /* 0x00:name(len=0x20) */
+            fsbh.lengthsamples = read_32bitLE(s_off+0x20,streamFile);
+            fsbh.lengthcompressedbytes = read_32bitLE(s_off+0x24,streamFile);
+            fsbh.deffreq   = read_32bitLE(s_off+0x28,streamFile);
+            /* 0x2c:?  0x2e:?  0x30:?  0x32:? */
+            fsbh.mode     = read_32bitLE(s_off+0x34,streamFile);
+            fsbh.loopstart = read_32bitLE(s_off+0x38,streamFile);
+            fsbh.loopend   = read_32bitLE(s_off+0x3c,streamFile);
+
+            fsbh.numchannels = (fsbh.mode & FSOUND_STEREO) ? 2 : 1;
+            if (fsbh.loopend > fsbh.lengthsamples) /* this seems common... */
+                fsbh.lengthsamples = fsbh.loopend;
+            
+            start_offset = offset + fsbh.hdrsize + fsbh.shdrsize;
+            custom_data_offset = offset + fsbh.hdrsize + fsbh.shdrsize_min; /* DSP coefs, seek tables, etc */
+        }
     }
     else { /* other FSBs (common/extended format) */
         if (fsbh.id == 0x46534232) { /* "FSB2" */
@@ -172,12 +179,12 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
         }
 
         /* main header */
-        fsbh.numsamples = read_32bitLE(h_off+0x04,streamFile);
-        fsbh.shdrsize   = read_32bitLE(h_off+0x08,streamFile);
-        fsbh.datasize   = read_32bitLE(h_off+0x0c,streamFile);
+        fsbh.numsamples = read_32bitLE(offset+0x04,streamFile);
+        fsbh.shdrsize   = read_32bitLE(offset+0x08,streamFile);
+        fsbh.datasize   = read_32bitLE(offset+0x0c,streamFile);
         if (fsbh.hdrsize > 0x10) {
-            fsbh.version = read_32bitLE(h_off+0x10,streamFile);
-            fsbh.flags   = read_32bitLE(h_off+0x14,streamFile);
+            fsbh.version = read_32bitLE(offset+0x10,streamFile);
+            fsbh.flags   = read_32bitLE(offset+0x14,streamFile);
             /* FSB4: 0x18:hash  0x20:guid */
         } else {
             fsbh.version = 0;
@@ -193,42 +200,61 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
         }
 
         if (fsbh.shdrsize < fsbh.shdrsize_min) goto fail;
+        if (target_stream > fsbh.numsamples || target_stream < 0) goto fail;
+        if (target_stream == 0) target_stream = 1;
 
-        s_off = offset+fsbh.hdrsize;
-        /* sample header */
-        /* 0x00:size  0x02:name(len=size) */
-        fsbh.lengthsamples = read_32bitLE(s_off+0x20,streamFile);
-        fsbh.lengthcompressedbytes = read_32bitLE(s_off+0x24,streamFile);
-        fsbh.loopstart = read_32bitLE(s_off+0x28,streamFile);
-        fsbh.loopend   = read_32bitLE(s_off+0x2c,streamFile);
-        fsbh.mode      = read_32bitLE(s_off+0x30,streamFile);
-        fsbh.deffreq   = read_32bitLE(s_off+0x34,streamFile);
-        /* 0x38:defvol  0x3a:defpan  0x3c:defpri */
-        fsbh.numchannels = read_16bitLE(s_off+0x3e,streamFile);
-        /* FSB3.1/4: 0x40:mindistance  0x44:maxdistance  0x48:varfreq/size_32bits  0x4c:varvol  0x4e:fsbh.varpan */
-        /* 0x50:extended_data (of size_32bits, when fsbh.shdrsize > 0x50) */
+        /* sample header (N-stream) */
+        {
+            int i;
+            off_t s_off = offset + fsbh.hdrsize;
+            off_t d_off = offset + fsbh.hdrsize + fsbh.shdrsize;
+
+            /* find target_stream data offset, reading each header */
+            for(i=1; i <= fsbh.numsamples; i++) {
+                /* 0x00:size  0x02:name(len=size) */
+                fsbh.lengthsamples = read_32bitLE(s_off+0x20,streamFile);
+                fsbh.lengthcompressedbytes = read_32bitLE(s_off+0x24,streamFile);
+                fsbh.loopstart = read_32bitLE(s_off+0x28,streamFile);
+                fsbh.loopend   = read_32bitLE(s_off+0x2c,streamFile);
+                fsbh.mode      = read_32bitLE(s_off+0x30,streamFile);
+                fsbh.deffreq   = read_32bitLE(s_off+0x34,streamFile);
+                /* 0x38:defvol  0x3a:defpan  0x3c:defpri */
+                fsbh.numchannels = read_16bitLE(s_off+0x3e,streamFile);
+                /* FSB3.1/4: 0x40:mindistance  0x44:maxdistance  0x48:varfreq/size_32bits  0x4c:varvol  0x4e:fsbh.varpan */
+
+                if (target_stream == i) /* d_off found */
+                    break;
+
+                s_off += fsbh.shdrsize_min; /* default size */
+                if (fsbh.version == FMOD_FSB_VERSION_4_0) {
+                    uint32_t extended_data = read_32bitLE(s_off+0x48,streamFile); /* +0x50:extended_data of size_32bits */
+                    if (extended_data > fsbh.shdrsize_min)
+                        s_off += extended_data;
+                }
+
+               
+                d_off += fsbh.lengthcompressedbytes; /* there is no offset so manually count */
+                //d_off += d_off % 0x30; /*todo some formats need padding, not sure when/how */
+            }
+            if (i > fsbh.numsamples) goto fail; /* not found */
+
+            start_offset = d_off;
+            custom_data_offset = s_off + fsbh.shdrsize_min; /* DSP coefs, seek tables, etc */
+        }
     }
 
-    /* FSB header ok, check other stuff */
-    if (fsbh.numsamples != 1) { /* multistream */
-        VGM_LOG("FSB numsamples > 1 found\n");
-        goto fail;
-    }
     /* XOR encryption for some FSB4 */
     if (fsbh.flags & FMOD_FSB_SOURCE_ENCRYPTED) {
         VGM_LOG("FSB ENCRYPTED found\n");
         goto fail;
     }
 #if 0
-    /* sometimes there is garbage at the end or missing bytes? (Guitar Hero Wii) */
+    /* sometimes there is garbage at the end or missing bytes due to improper demuxing */
     if (fsbh.hdrsize + fsbh.shdrsize + fsbh.datasize != streamFile->get_size(streamFile) - offset) {
         VGM_LOG("FSB wrong head/datasize found\n");
         goto fail;
     }
 #endif
-
-    start_offset = offset + fsbh.hdrsize + fsbh.shdrsize;
-    custom_data_offset = offset + fsbh.hdrsize + fsbh.shdrsize_min; /* DSP coefs, seek tables, etc */
 
     /* Loops by default unless disabled (sometimes may add FSOUND_LOOP_NORMAL). Often streams
      * repeat over and over (some tracks that shouldn't do this based on the flags, no real way to identify them). */
@@ -244,6 +270,7 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
     vgmstream->num_samples = fsbh.lengthsamples;
     vgmstream->loop_start_sample = fsbh.loopstart;
     vgmstream->loop_end_sample = fsbh.loopend;
+    vgmstream->num_streams = fsbh.numsamples;
     vgmstream->meta_type = fsbh.meta_type;
 
     /* parse format */
@@ -253,61 +280,52 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
         mpeg_codec_data *mpeg_data = NULL;
         coding_t mpeg_coding_type;
 
-        mpeg_data = init_mpeg_codec_data(streamFile, start_offset, vgmstream->sample_rate, vgmstream->channels, &mpeg_coding_type, NULL, NULL);
+#if 0
+        int fsb_padding = 0;
+        if (fsbh.flags & FMOD_FSB_SOURCE_MPEG_PADDED)
+            fsb_padding = fsbh.numchannels > 2 ? 16 : 2;
+        else if (fsbh.flags & FMOD_FSB_SOURCE_MPEG_PADDED4)
+            fsb_padding = fsbh.numchannels > 2 ? 16 : 4;
+        else /* seems to be needed with no flag */
+            fsb_padding = fsbh.numchannels > 2 ? 16 : 0;
+
+        mpeg_data = init_mpeg_codec_data_interleaved(streamFile, start_offset, &mpeg_coding_type, vgmstream->channels, 0, fsb_padding);
+        if (!mpeg_data) goto fail;
+
+        vgmstream->interleave_block_size = mpeg_data->current_frame_size + mpeg_data->current_padding;
+        if (vgmstream->channels > 2) vgmstream->loop_flag = 0;//todo not implemented yet
+#endif
+
+        VGM_ASSERT(fsbh.mode & FSOUND_MPEG_LAYER2, "FSB FSOUND_MPEG_LAYER2 found\n");
+        VGM_ASSERT(fsbh.mode & FSOUND_IGNORETAGS, "FSB FSOUND_IGNORETAGS found\n");
+
+        mpeg_data = init_mpeg_codec_data(streamFile, start_offset, &mpeg_coding_type, vgmstream->channels);
         if (!mpeg_data) goto fail;
 
         vgmstream->codec_data = mpeg_data;
         vgmstream->coding_type = mpeg_coding_type;
         vgmstream->layout_type = layout_mpeg;
 
-        /* struct mpg123_frameinfo mpeg_info; */
-        /* if (MPG123_OK != mpg123_info(mpeg_data->m, &mpeg_info)) goto fail; */
-        VGM_ASSERT(fsbh.mode & FSOUND_MPEG_LAYER2, "FSB FSOUND_MPEG_LAYER2 found\n");
-        VGM_ASSERT(fsbh.mode & FSOUND_IGNORETAGS, "FSB FSOUND_IGNORETAGS found\n");
-
-        /* when these flags are set each MPEG frame is 0-padded at the end, and mpg123 will complain to stderr (but ignore them)
-         * no way to easily skip the padding so for now we'll just disable stderr output */
-        if ((fsbh.flags & FMOD_FSB_SOURCE_MPEG_PADDED) || (fsbh.flags & FMOD_FSB_SOURCE_MPEG_PADDED4)) {
-            mpeg_set_error_logging(mpeg_data, 0);
-        }
+        mpeg_set_error_logging(mpeg_data, 0);
 
 #elif defined(VGM_USE_FFMPEG)
-        /* FFmpeg can't properly read FSB4 or FMOD's 0-padded MPEG data @ start_offset, this won't work */
-        ffmpeg_codec_data *ffmpeg_data = NULL;
-
-        ffmpeg_data = init_ffmpeg_offset(streamFile, 0, streamFile->get_size(streamFile));
-        if ( !ffmpeg_data ) goto fail;
-        vgmstream->codec_data = ffmpeg_data;
-        vgmstream->coding_type = coding_FFmpeg;
-        vgmstream->layout_type = layout_none;
-
+        /* FFmpeg can't properly read FSB4 or FMOD's 0-padded MPEG data @ start_offset */
+        goto fail;
 #else
-        VGM_LOG("FSB4 MPEG found\n");
         goto fail;
 #endif
     }
     else if (fsbh.mode & FSOUND_IMAADPCM) { /* (codec 0x69, Voxware Byte Aligned) */
-        if (fsbh.mode & FSOUND_IMAADPCMSTEREO) { /* noninterleaved, true stereo IMA */
-            /* FSB4: Shatter, Blade Kitten (PC), Hard Corps: Uprising (PS3) */
-            vgmstream->coding_type = coding_MS_IMA; /* todo not always working in Hard Corps, interleave problem? */
-            vgmstream->layout_type = layout_none;
-            vgmstream->interleave_block_size = 0x24*vgmstream->channels;
-            //VGM_LOG("FSB FSOUND_IMAADPCMSTEREO found\n");
-        } else {
-            /* FSB3: Bioshock (PC); FSB4: Blade Kitten (PC) */
-            vgmstream->coding_type = coding_MS_IMA;
-            vgmstream->layout_type = layout_none;
-            vgmstream->interleave_block_size = 0x24*vgmstream->channels;
-            //VGM_LOG("FSB FSOUND_IMAADPCM found\n");
-#if 0
-            if (fsbh.numchannels > 2) { /* Blade Kitten 5.1 */
-                vgmstream->coding_type = coding_XBOX;
-                vgmstream->layout_type = layout_interleave;
-                vgmstream->interleave_block_size = 0x12 * vgmstream->channels;
-            }
-#endif
+        //VGM_ASSERT(fsbh.mode & FSOUND_IMAADPCMSTEREO, "FSB FSOUND_IMAADPCMSTEREO found\n");
+        /* FSOUND_IMAADPCMSTEREO is "noninterleaved, true stereo IMA", but doesn't seem to be any different
+         * (found in FSB4: Shatter, Blade Kitten (PC), Hard Corps: Uprising (PS3)) */
 
-        }
+        /* FSB3: Bioshock (PC); FSB4: Blade Kitten (PC) */
+        vgmstream->coding_type = coding_XBOX;
+        vgmstream->layout_type = layout_none;
+        /* "interleaved header" IMA, which seems only used with >2ch (ex. Blade Kitten 5.1) */
+        if (vgmstream->channels > 2)
+            vgmstream->coding_type = coding_FSB_IMA;
     }
     else if (fsbh.mode & FSOUND_VAG) {
         /* FSB1: Jurassic Park Operation Genesis
@@ -339,7 +357,6 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
         vgmstream->layout_type = layout_none;
 
 #else
-        VGM_LOG("FSB XMA found\n");
         goto fail;
 #endif
     }

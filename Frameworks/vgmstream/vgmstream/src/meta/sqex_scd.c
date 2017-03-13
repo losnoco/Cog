@@ -54,17 +54,16 @@ VGMSTREAM * init_vgmstream_sqex_scd(STREAMFILE *streamFile) {
     int32_t loop_start, loop_end;
 
     int target_stream = 1; /* N=Nth stream, 0=auto (first) */
-    int loop_flag = 0;
-	int channel_count;
-    int codec_id;
+    int loop_flag = 0, channel_count, codec_id;
     int aux_chunk_count;
 
     int32_t (*read_32bit)(off_t,STREAMFILE*) = NULL;
     int16_t (*read_16bit)(off_t,STREAMFILE*) = NULL;
 
     /* check extension, case insensitive */
+    if ( !check_extensions(streamFile, "scd") ) goto fail;
+
     streamFile->get_name(streamFile,filename,sizeof(filename));
-    if (strcasecmp("scd",filename_extension(filename))) goto fail;
 
     /* SEDB */
     if (read_32bitBE(0,streamFile) != 0x53454442) goto fail;
@@ -109,9 +108,8 @@ VGMSTREAM * init_vgmstream_sqex_scd(STREAMFILE *streamFile) {
     /* 0x18: unknown offset */
     /* 0x1c: unknown (0x0)  */
     headers_entries = read_16bit(tables_offset+0x04,streamFile);
-    VGM_ASSERT(headers_entries > 1, "SCD: multiple streams found (%i entries)\n", headers_entries);
     if (target_stream == 0) target_stream = 1; /* auto: default to 1 */
-    if (target_stream > headers_entries) goto fail;
+    if (headers_entries <= 0 || target_stream > headers_entries) goto fail;
     headers_offset = read_32bit(tables_offset+0x0c,streamFile);
 
     /** header table entries (each is an uint32_t offset to stream header) **/
@@ -220,6 +218,8 @@ VGMSTREAM * init_vgmstream_sqex_scd(STREAMFILE *streamFile) {
 	/* fill in the vital statistics */
 	vgmstream->channels = channel_count;
     vgmstream->sample_rate = read_32bit(meta_offset+8,streamFile);
+    vgmstream->num_streams = headers_entries;
+    vgmstream->meta_type = meta_SQEX_SCD;
 
     switch (codec_id) {
         case 0x1:
@@ -238,7 +238,6 @@ VGMSTREAM * init_vgmstream_sqex_scd(STREAMFILE *streamFile) {
             /* MPEG */
             {
                 mpeg_codec_data *mpeg_data = NULL;
-                struct mpg123_frameinfo mi;
                 coding_t ct;
 
                 /* Drakengard 3, some Kingdom Hearts */
@@ -247,21 +246,18 @@ VGMSTREAM * init_vgmstream_sqex_scd(STREAMFILE *streamFile) {
                 if (vgmstream->sample_rate == 44099)
                     vgmstream->sample_rate = 44100;
 
-                mpeg_data = init_mpeg_codec_data(streamFile, start_offset, vgmstream->sample_rate, vgmstream->channels, &ct, NULL, NULL);
+                mpeg_data = init_mpeg_codec_data(streamFile, start_offset, &ct, vgmstream->channels);
                 if (!mpeg_data) goto fail;
                 vgmstream->codec_data = mpeg_data;
 
-                if (MPG123_OK != mpg123_info(mpeg_data->m, &mi)) goto fail;
-
                 vgmstream->coding_type = ct;
                 vgmstream->layout_type = layout_mpeg;
-                if (mi.vbr != MPG123_CBR) goto fail;
-                vgmstream->num_samples = mpeg_bytes_to_samples(stream_size, &mi);
+                vgmstream->num_samples = mpeg_bytes_to_samples(stream_size, mpeg_data);
                 vgmstream->num_samples -= vgmstream->num_samples%576;
                 if (loop_flag) {
-                    vgmstream->loop_start_sample = mpeg_bytes_to_samples(loop_start, &mi);
+                    vgmstream->loop_start_sample = mpeg_bytes_to_samples(loop_start, mpeg_data);
                     vgmstream->loop_start_sample -= vgmstream->loop_start_sample%576;
-                    vgmstream->loop_end_sample = mpeg_bytes_to_samples(loop_end, &mi);
+                    vgmstream->loop_end_sample = mpeg_bytes_to_samples(loop_end, mpeg_data);
                     vgmstream->loop_end_sample -= vgmstream->loop_end_sample%576;
                 }
                 vgmstream->interleave_block_size = 0;
@@ -413,33 +409,14 @@ VGMSTREAM * init_vgmstream_sqex_scd(STREAMFILE *streamFile) {
             goto fail;
     }
 
-    vgmstream->meta_type = meta_SQEX_SCD;
 
-    /* open the file for reading */
-    if (vgmstream->layout_type != layout_scd_int
-#ifdef VGM_USE_FFMPEG
-        && vgmstream->coding_type != coding_FFmpeg
-#endif
-        )
-    {
-        int i;
-        STREAMFILE * file;
-        file = streamFile->open(streamFile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
-        if (!file) goto fail;
-        for (i=0;i<channel_count;i++) {
-            vgmstream->ch[i].streamfile = file;
-
-            vgmstream->ch[i].channel_start_offset=
-                vgmstream->ch[i].offset=start_offset;
-
-        }
-    }
+    if ( !vgmstream_open_stream(vgmstream, streamFile, start_offset) )
+        goto fail;
 
     return vgmstream;
 
-    /* clean up anything we may have opened */
 fail:
-    if (vgmstream) close_vgmstream(vgmstream);
+    close_vgmstream(vgmstream);
     return NULL;
 }
 

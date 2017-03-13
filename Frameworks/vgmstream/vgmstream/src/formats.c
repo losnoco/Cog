@@ -28,7 +28,7 @@ static const char* extension_list[] = {
     "aifcl",
     //"aiff", //common
     "aix",
-    "akb", //AAC
+    "akb",
     "amts",
     "as4",
     "asd",
@@ -53,6 +53,12 @@ static const char* extension_list[] = {
     "bg00",
     "bgw",
     "bh2pcm",
+    "bik",
+    "bika",
+    "bik2",
+    "bik2a",
+    "bk2",
+    "bk2a",
     "bmdx",
     "bms",
     "bnk",
@@ -135,20 +141,23 @@ static const char* extension_list[] = {
     "kraw",
 
     "leg",
-    "logg",
+    "lmp4", //fake extension, for looping
+    "logg", //fake extension, for looping
     "lpcm",
     "lps",
     "lsf",
-    "lwav",
+    "lwav", //fake extension, for looping
 
     "matx",
     "mca",
     "mcg",
+    "mds",
     "mi4",
     "mib",
     "mic",
     "mihb",
     "mnstr",
+    //"mp4", //common
     "mpdsp",
     "mpds",
     "msa",
@@ -167,9 +176,10 @@ static const char* extension_list[] = {
     "ngca",
     "nps",
     "npsf",
-    "nus3bank", //todo not existing?
+    "nus3bank",
     "nwa",
 
+    //"ogg", //common
     "oma", //FFmpeg, not parsed (ATRAC3/ATRAC3PLUS/MP3/LPCM/WMA)
     "omu",
     "otm",
@@ -285,6 +295,7 @@ static const char* extension_list[] = {
     "wad",
     "wam",
     "was",
+    //"wav", //common
     "wavm",
     "wb",
     "wii",
@@ -405,6 +416,8 @@ static const coding_info coding_info_list[] = {
         {coding_RAD_IMA_mono,       "'Radical' 4-bit IMA ADPCM (mono)"},
         {coding_APPLE_IMA4,         "Apple Quicktime 4-bit IMA ADPCM"},
         {coding_SNDS_IMA,           "Heavy Iron .snds 4-bit IMA ADPCM"},
+        {coding_OTNS_IMA,           "Omikron: The Nomad Soul 4-bit IMA ADPCM"},
+        {coding_FSB_IMA,            "FSB multichannel 4-bit IMA ADPCM"},
         {coding_WS,                 "Westwood Studios ADPCM"},
         {coding_ACM,                "InterPlay ACM"},
         {coding_NWA0,               "NWA DPCM Level 0"},
@@ -590,7 +603,7 @@ static const meta_info meta_info_list[] = {
         {meta_FSB4,                 "FMOD Sample Bank (FSB4) Header"},
         {meta_FSB5,                 "FMOD Sample Bank (FSB5) Header"},
         {meta_RWX,                  "RWX Header"},
-        {meta_XWB,                  "XWB WBND Header"},
+        {meta_XWB,                  "Microsoft XWB Header"},
         {meta_XA30,                 "XA30 Header"},
         {meta_MUSC,                 "MUSC Header"},
         {meta_MUSX_V004,            "MUSX / Version 004 Header"},
@@ -787,6 +800,7 @@ static const meta_info meta_info_list[] = {
         {meta_HYPERSCAN_KVAG,       "Mattel Hyperscan KVAG"},
         {meta_IOS_PSND,             "PSND Header"},
         {meta_BOS_ADP,              "ADP! header"},
+        {meta_OTNS_ADP,             "Omikron: The Nomad Soul ADP header"},
         {meta_EB_SFX,               "Excitebots .sfx header"},
         {meta_EB_SF0,               "assumed Excitebots .sf0 by extension"},
         {meta_PS3_KLBS,             "klBS Header"},
@@ -815,6 +829,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_SVAG_SNK,         "SNK SVAG header"},
         {meta_PS2_VDS_VDM,          "Graffiti Kingdom VDS/VDM Header"},
         {meta_X360_CXS,             "CXS Header"},
+        {meta_AKB,                  "Square Enix AKB Header"},
 #ifdef VGM_USE_VORBIS
         {meta_OGG_VORBIS,           "Ogg Vorbis"},
         {meta_OGG_SLI,              "Ogg Vorbis with .sli (start,length) for looping"},

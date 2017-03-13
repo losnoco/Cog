@@ -98,7 +98,6 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_fsb5,
     init_vgmstream_rwx,
     init_vgmstream_xwb,
-    init_vgmstream_xwb2,
     init_vgmstream_xa30,
     init_vgmstream_musc,
     init_vgmstream_musx_v004,
@@ -312,7 +311,8 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
 	init_vgmstream_ps2_wmus,
 	init_vgmstream_hyperscan_kvag,
 	init_vgmstream_ios_psnd,
-    init_vgmstream_bos_adp,
+	init_vgmstream_pc_adp_bos,
+	init_vgmstream_pc_adp_otns,
     init_vgmstream_eb_sfx,
     init_vgmstream_eb_sf0,
 	init_vgmstream_ps3_klbs,
@@ -337,9 +337,14 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_ps2_svag_snk,
     init_vgmstream_ps2_vds_vdm,
     init_vgmstream_x360_cxs,
+    init_vgmstream_dsp_adx,
+    init_vgmstream_akb_multi,
+    init_vgmstream_akb2_multi,
+
 #ifdef VGM_USE_FFMPEG
     init_vgmstream_xma,
     init_vgmstream_mp4_aac_ffmpeg,
+    init_vgmstream_bik,
 
     init_vgmstream_ffmpeg, /* should go at the end */
 #endif
@@ -402,6 +407,16 @@ VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile, int do_dfs) {
                         ) && vgmstream->channels == 1) {
                 try_dual_file_stereo(vgmstream, streamFile);
             }
+
+#ifdef VGM_USE_FFMPEG
+            /* check FFmpeg streams here, for lack of a better place */
+            if (vgmstream->coding_type == coding_FFmpeg) {
+                ffmpeg_codec_data *data = (ffmpeg_codec_data *) vgmstream->codec_data;
+                if (data->streamCount && !vgmstream->num_streams) {
+                    vgmstream->num_streams = data->streamCount;
+                }
+            }
+#endif
 
             /* save start things so we can restart for seeking */
             /* copy the channels */
@@ -472,13 +487,7 @@ void reset_vgmstream(VGMSTREAM * vgmstream) {
 #ifdef VGM_USE_MPEG
     if (vgmstream->layout_type==layout_mpeg ||
         vgmstream->layout_type==layout_fake_mpeg) {
-        off_t input_offset;
-        mpeg_codec_data *data = vgmstream->codec_data;
-
-        /* input_offset is ignored as we can assume it will be 0 for a seek
-         * to sample 0 */
-        mpg123_feedseek(data->m,0,SEEK_SET,&input_offset);
-        data->buffer_full = data->buffer_used = 0;
+        reset_mpeg(vgmstream);
     }
 #endif
 #ifdef VGM_USE_G7221
@@ -696,18 +705,8 @@ void close_vgmstream(VGMSTREAM * vgmstream) {
 #ifdef VGM_USE_MPEG
     if (vgmstream->layout_type==layout_fake_mpeg||
         vgmstream->layout_type==layout_mpeg) {
-        mpeg_codec_data *data = (mpeg_codec_data *) vgmstream->codec_data;
-
-        if (data) {
-            mpg123_delete(data->m);
-            free(vgmstream->codec_data);
-            vgmstream->codec_data = NULL;
-            /* The astute reader will note that a call to mpg123_exit is never
-             * made. While is is evilly breaking our contract with mpg123, it
-             * doesn't actually do anything except set the "initialized" flag
-             * to 0. And if we exit we run the risk of turning it off when
-             * someone else in another thread is using it. */
-        }
+        free_mpeg((mpeg_codec_data *)vgmstream->codec_data);
+        vgmstream->codec_data = NULL;
     }
 #endif
 
@@ -1022,6 +1021,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_EACS_IMA:
         case coding_SNDS_IMA:
         case coding_IMA:
+        case coding_OTNS_IMA:
             return 1;
         case coding_INT_IMA:
         case coding_INT_DVI_IMA:
@@ -1039,6 +1039,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
             return (vgmstream->interleave_block_size - 1) * 2; /* decodes 1 byte into 2 bytes */
         case coding_XBOX:
 		case coding_INT_XBOX:
+        case coding_FSB_IMA:
             return 64;
         case coding_EA_XA:
             return 28;
@@ -1155,6 +1156,7 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_IMA:
         case coding_G721:
         case coding_SNDS_IMA:
+        case coding_OTNS_IMA:
             return 0;
         case coding_NGC_AFC:
             return 9;
@@ -1170,6 +1172,7 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
             return 14*vgmstream->channels;
         case coding_XBOX:
 		case coding_INT_XBOX:
+        case coding_FSB_IMA:
             return 36;
 		case coding_MAXIS_ADPCM:
 			return 15*vgmstream->channels;
@@ -1547,6 +1550,21 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         samples_to_do,chan);
             }
             break;
+        case coding_OTNS_IMA:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_otns_ima(vgmstream, &vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do,chan);
+            }
+            break;
+        case coding_FSB_IMA:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_fsb_ima(vgmstream, &vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do,chan);
+            }
+            break;
+
         case coding_WS:
             for (chan=0;chan<vgmstream->channels;chan++) {
                 decode_ws(vgmstream,chan,buffer+samples_written*vgmstream->channels+chan,
@@ -1572,9 +1590,9 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
         case coding_MPEG25_L2:
         case coding_MPEG25_L3:
             decode_mpeg(
-                    &vgmstream->ch[0],
-                    vgmstream->codec_data,
-                    buffer+samples_written*vgmstream->channels,samples_to_do,
+                    vgmstream,
+                    buffer+samples_written*vgmstream->channels,
+                    samples_to_do,
                     vgmstream->channels);
             break;
 #endif
@@ -1788,14 +1806,7 @@ int vgmstream_do_loop(VGMSTREAM * vgmstream) {
 #ifdef VGM_USE_MPEG
             /* won't work for fake MPEG */
             if (vgmstream->layout_type==layout_mpeg) {
-                off_t input_offset;
-                mpeg_codec_data *data = vgmstream->codec_data;
-
-                mpg123_feedseek(data->m,vgmstream->loop_sample,
-                        SEEK_SET,&input_offset);
-                vgmstream->loop_ch[0].offset =
-                    vgmstream->loop_ch[0].channel_start_offset + input_offset;
-                data->buffer_full = data->buffer_used = 0;
+                seek_mpeg(vgmstream, vgmstream->loop_sample);
             }
 #endif
 
@@ -1941,6 +1952,12 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
             break;
     }
     concatn(length,desc,temp);
+
+    /* only interesting if more than one */
+    if (vgmstream->num_streams > 1) {
+        snprintf(temp,TEMPSIZE,"\nnumber of streams: %d",vgmstream->num_streams);
+        concatn(length,desc,temp);
+    }
 }
 
 /* filename search pairs for dual file stereo */
@@ -2240,6 +2257,12 @@ int get_vgmstream_average_bitrate(VGMSTREAM * vgmstream)
 }
 
 
+/**
+ * Inits vgmstreams' channels doing two things:
+ * - sets the starting offset per channel (depending on the layout)
+ * - opens its own streamfile from on a base one. One streamfile per channel may be open (to improve read/seeks).
+ * Should be called in metas before returning the VGMSTREAM..
+ */
 int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t start_offset) {
     STREAMFILE * file;
     char filename[PATH_LIMIT];
@@ -2247,8 +2270,14 @@ int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t s
     int use_streamfile_per_channel = 0;
     int use_same_offset_per_channel = 0;
 
+
+    /* stream/offsets not needed, scd manages itself */
+    if (vgmstream->layout_type == layout_scd_int)
+        return 1;
+
 #ifdef VGM_USE_FFMPEG
-    if (vgmstream->coding_type == coding_FFmpeg) /* stream not needed, FFmpeg manages itself */
+    /* stream/offsets not needed, FFmpeg manages itself */
+    if (vgmstream->coding_type == coding_FFmpeg)
         return 1;
 #endif
 
@@ -2257,10 +2286,8 @@ int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t s
         use_streamfile_per_channel = 1;
     }
 
-    if (vgmstream->layout_type == layout_none
-            //#ifdef VGM_USE_MPEG || (vgmstream->layout_type == layout_mpeg)  #endif //no appreciable difference
-        ) {
-        /* for some codecs like IMA where channels work with the same bytes *///todo which ones?
+    /* for mono or codecs like IMA (XBOX, MS IMA, MS ADPCM) where channels work with the same bytes */
+    if (vgmstream->layout_type == layout_none) {
         use_same_offset_per_channel = 1;
     }
 
@@ -2296,14 +2323,6 @@ int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t s
     return 1;
 
 fail:
-    if (!use_streamfile_per_channel) {
-        streamFile->close(file); /* only one file was ever open */
-    } else {
-        for (ch=0; ch < vgmstream->channels; ch++) {
-            if (vgmstream->ch[ch].streamfile)
-                streamFile->close(vgmstream->ch[ch].streamfile); /* close all open files */
-        }
-    }
-
+    /* open streams will be closed in close_vgmstream(), hopefully called by the meta */
     return 0;
 }

@@ -112,8 +112,13 @@ VGMSTREAM * init_vgmstream_ngc_dsp_std(STREAMFILE *streamFile) {
         off_t loop_off;
         /* check loop predictor/scale */
         loop_off = header.loop_start_offset/16*8;
-        if (header.loop_ps != (uint8_t)read_8bit(start_offset+loop_off,streamFile))
-            goto fail;
+        if (header.loop_ps != (uint8_t)read_8bit(start_offset+loop_off,streamFile)) {
+            /* rarely won't match (ex ESPN 2002), not sure if header or calc problem,  but doesn't seem to matter
+             *  (there may be a "click" when looping, or loop values may be too big and loop disabled anyway) */
+            VGM_LOG("DSP (std): bad loop_predictor\n");
+            //header.loop_flag = 0;
+            //goto fail;
+        }
     }
 
     /* compare num_samples with nibble count */
@@ -611,7 +616,7 @@ VGMSTREAM * init_vgmstream_3ds_idsp(STREAMFILE *streamFile) {
     int channel_count;
 
     /* check extension, case insensitive */
-    //if (check_extensions(streamFile,"idsp")) goto fail;
+    //if (check_extensions(streamFile,"idsp,nus3bank")) goto fail;
 
     /* check header magic */
     if( read_32bitBE(0x0,streamFile) != 0x49445350 ) /* "IDSP" */
@@ -666,7 +671,6 @@ VGMSTREAM * init_vgmstream_3ds_idsp(STREAMFILE *streamFile) {
             off_t loop_off;
             loop_off = ch_headers[ch].loop_start_offset / 8 / channel_count * 8;
             loop_off = (loop_off / interleave * interleave * channel_count) + (loop_off%interleave);
-            VGM_LOG("loop_ps=%lx, loop_off=%lx\n", ch_headers[ch].loop_ps, loop_off);
             if (ch_headers[ch].loop_ps != (uint8_t)read_8bit(start_offset + loop_off + interleave*ch, streamFile)) goto fail;
         }
 #endif
@@ -685,6 +689,10 @@ VGMSTREAM * init_vgmstream_3ds_idsp(STREAMFILE *streamFile) {
     /* TODO: adjust for interleave? */
     vgmstream->loop_start_sample = dsp_nibbles_to_samples(ch_headers[0].loop_start_offset);
     vgmstream->loop_end_sample =  dsp_nibbles_to_samples(ch_headers[0].loop_end_offset) + 1;
+    /* games will ignore loop_end and use num_samples if going over it
+     *  only needed for user-created IDSPs, but it's possible loop_end_sample shouldn't add +1 above */
+    if (vgmstream->loop_end_sample > vgmstream->num_samples)
+        vgmstream->loop_end_sample = vgmstream->num_samples;
 
     vgmstream->coding_type = coding_NGC_DSP;
     vgmstream->layout_type = channel_count > 1 ? layout_interleave : layout_none;

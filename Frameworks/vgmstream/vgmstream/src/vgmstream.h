@@ -128,6 +128,8 @@ typedef enum {
     coding_APPLE_IMA4,      /* Apple Quicktime IMA4 */
     coding_DAT4_IMA,        /* Eurocom 'DAT4' IMA ADPCM */
     coding_SNDS_IMA,        /* Heavy Iron Studios .snds IMA ADPCM */
+    coding_OTNS_IMA,        /* Omikron The Nomad Soul IMA ADPCM */
+    coding_FSB_IMA,         /* FMOD's FSB multichannel IMA ADPCM */
 
     coding_WS,              /* Westwood Studios VBR ADPCM */
     coding_MSADPCM,         /* Microsoft ADPCM */
@@ -573,6 +575,7 @@ typedef enum {
     meta_HYPERSCAN_KVAG,	// Hyperscan KVAG/BVG 
     meta_IOS_PSND,          // Crash Bandicoot Nitro Kart 2 (iOS)
     meta_BOS_ADP,           // ADP! (Balls of Steel, PC)
+    meta_OTNS_ADP,          // Omikron: The Nomad Soul .adp (PC/DC)
     meta_EB_SFX,            // Excitebots .sfx
     meta_EB_SF0,            // Excitebots .sf0
 	meta_PS3_KLBS,          // L@VE ONCE (PS3)
@@ -598,6 +601,7 @@ typedef enum {
     meta_PS2_SVAG_SNK,      /* SNK PS2 SVAG */
     meta_PS2_VDS_VDM,       /* Graffiti Kingdom */
     meta_X360_CXS,          /* Eternal Sonata (Xbox 360) */
+    meta_AKB,               /* SQEX iOS */
 
 #ifdef VGM_USE_VORBIS
     meta_OGG_VORBIS,        /* Ogg Vorbis */
@@ -683,6 +687,7 @@ typedef struct {
     coding_t coding_type;   /* type of encoding */
     layout_t layout_type;   /* type of layout for data */
     meta_t meta_type;       /* how we know the metadata */
+    int num_streams;        /* info only, for a few multi-stream formats (0=not set/one, 1=one stream) */
 
     /* looping */
     int loop_flag;          /* is this stream looped? */
@@ -766,16 +771,38 @@ typedef struct {
 #endif
 
 #ifdef VGM_USE_MPEG
-#define AHX_EXPECTED_FRAME_SIZE 0x414
-/* MPEG_BUFFER_SIZE should be >= AHX_EXPECTED_FRAME_SIZE */
-#define MPEG_BUFFER_SIZE 0x1000
-
 typedef struct {
-    uint8_t buffer[MPEG_BUFFER_SIZE];
-    int buffer_used;
-    int buffer_full;
+    uint8_t *buffer; /* raw (coded) data buffer */
+    size_t buffer_size;
     size_t bytes_in_buffer;
-    mpg123_handle *m;
+    int buffer_full; /* raw buffer has been filled */
+    int buffer_used; /* raw buffer has been fed to the decoder */
+
+    mpg123_handle *m; /* "base" MPEG stream */
+
+    /* base values, assumed to be constant in the file */
+    int sample_rate_per_frame;
+    int channels_per_frame;
+    size_t samples_per_frame;
+
+    /* interleaved MPEG internals */
+    int interleaved; /* flag */
+    mpg123_handle **ms; /* array of MPEG streams */
+    size_t ms_size;
+    uint8_t *frame_buffer; /* temp buffer with samples from a single decoded frame */
+    size_t frame_buffer_size;
+    uint8_t *interleave_buffer; /* intermediate buffer with samples from all channels */
+    size_t interleave_buffer_size;
+    size_t bytes_in_interleave_buffer;
+    size_t bytes_used_in_interleave_buffer;
+
+    /* messy stuff for padded FSB frames */
+    size_t fixed_frame_size; /* when given a fixed size (XVAG) */
+    size_t base_frame_size; /* without header padding byte */
+    size_t current_frame_size; /* with padding byte applied if needed */
+    int fsb_padding; /* for FSBs that have extra garbage between frames */
+    size_t current_padding; /* padding needed for current frame size */
+
 } mpeg_codec_data;
 #endif
 
@@ -865,6 +892,7 @@ typedef struct {
 
 #ifdef VGM_USE_FFMPEG
 typedef struct {
+    /*** init data ***/
     STREAMFILE *streamfile;
     
     // offset and total size of raw stream data
@@ -879,6 +907,7 @@ typedef struct {
     // header/fake RIFF over the real (parseable by FFmpeg) file start
     uint64_t header_size;
     
+    /*** "public" API (read-only) ***/
     // stream info
     int channels;
     int bitsPerSample;
@@ -889,7 +918,10 @@ typedef struct {
     int64_t totalSamples; // estimated count (may not be accurate for some demuxers)
     int64_t blockAlign; // coded block of bytes, counting channels (the block can be joint stereo)
     int64_t frameSize; // decoded samples per block
+    int64_t skipSamples; // number of start samples that will be skipped (encoder delay), for looping adjustments
+    int streamCount; // number of FFmpeg audio streams
     
+    /*** internal state ***/
     // Intermediate byte buffer
     uint8_t *sampleBuffer;
     // max samples we can held (can be less or more than frameSize)
@@ -910,6 +942,7 @@ typedef struct {
     int readNextPacket;
     int endOfStream;
     int endOfAudio;
+    int skipSamplesSet; // flag to know skip samples were manually added from vgmstream
     
     // Seeking is not ideal, so rollback is necessary
     int samplesToDiscard;

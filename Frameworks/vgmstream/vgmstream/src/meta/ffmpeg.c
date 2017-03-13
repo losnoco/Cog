@@ -115,6 +115,7 @@ static int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size)
     uint64_t offset = data->offset;
     int max_to_copy = 0;
     int ret;
+
     if (data->header_insert_block) {
         if (offset < data->header_size) {
             max_to_copy = (int)(data->header_size - offset);
@@ -132,6 +133,13 @@ static int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size)
         }
         offset -= data->header_size;
     }
+
+    /* when "fake" size is smaller than "real" size we need to make sure bytes_read (ret) is clamped;
+     * it confuses FFmpeg in rare cases (STREAMFILE may have valid data after size) */
+    if (offset + buf_size > data->size + data->header_size) {
+        buf_size = data->size - offset; /* header "read" is manually inserted later */
+    }
+
     ret = read_streamfile(buf, offset + data->start, buf_size, data->streamfile);
     if (ret > 0) {
         offset += ret;
@@ -139,9 +147,11 @@ static int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size)
             ret += max_to_copy;
         }
     }
+
     if (data->header_insert_block) {
         offset += data->header_size;
     }
+
     data->offset = offset;
     return ret;
 }
@@ -160,6 +170,8 @@ static int ffmpeg_write(void *opaque, uint8_t *buf, int buf_size)
 static int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 {
     ffmpeg_codec_data *data = (ffmpeg_codec_data *) opaque;
+    int ret = 0;
+
     if (whence & AVSEEK_SIZE) {
         return data->size + data->header_size;
     }
@@ -179,9 +191,14 @@ static int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
                 offset += data->header_size;
             break;
     }
-    if (offset > data->size + data->header_size)
+
+    /* clamp offset; fseek returns 0 when offset > size, too */
+    if (offset > data->size + data->header_size) {
         offset = data->size + data->header_size;
-    return data->offset = offset;
+    }
+
+    data->offset = offset;
+    return ret;
 }
 
 
@@ -208,7 +225,7 @@ ffmpeg_codec_data * init_ffmpeg_header_offset(STREAMFILE *streamFile, uint8_t * 
     
     int errcode, i;
     
-    int streamIndex;
+    int streamIndex, streamCount;
     AVStream *stream;
     AVCodecParameters *codecPar;
     
@@ -256,6 +273,7 @@ ffmpeg_codec_data * init_ffmpeg_header_offset(STREAMFILE *streamFile, uint8_t * 
 
     /* find valid audio stream inside */
     streamIndex = -1;
+    streamCount = 0; /* audio streams only */
     
     for (i = 0; i < data->formatCtx->nb_streams; ++i) {
         stream = data->formatCtx->streams[i];
@@ -265,12 +283,15 @@ ffmpeg_codec_data * init_ffmpeg_header_offset(STREAMFILE *streamFile, uint8_t * 
         } else {
             stream->discard = AVDISCARD_ALL; /* disable demuxing unneded streams */
         }
+        if (codecPar->codec_type == AVMEDIA_TYPE_AUDIO)
+            streamCount++;
     }
     
     if (streamIndex < 0) goto fail;
-    
+
     data->streamIndex = streamIndex;
     stream = data->formatCtx->streams[streamIndex];
+    data->streamCount = streamCount;
     
 
     /* prepare codec and frame/packet buffers */
@@ -361,6 +382,12 @@ ffmpeg_codec_data * init_ffmpeg_header_offset(STREAMFILE *streamFile, uint8_t * 
     errcode = init_seek(data);
     if (errcode < 0) goto fail;
 
+    /* expose start samples to be skipped (encoder delay, usually added by MDCT-based encoders like AAC/MP3/ATRAC3/XMA/etc)
+     * get after init_seek because some demuxers like AAC only fill skip_samples for the first packet */
+    if (stream->start_skip_samples) /* samples to skip in the first packet */
+        data->skipSamples = stream->start_skip_samples;
+    else if (stream->skip_samples) /* samples to skip in any packet (first in this case), used sometimes instead (ex. AAC) */
+        data->skipSamples = stream->skip_samples;
 
     return data;
     
@@ -435,10 +462,11 @@ static int init_seek(ffmpeg_codec_data * data) {
     if (ts == INT64_MIN)
         ts = 0;
 
-    /* apparently some (non-audio?) streams start with a DTS before 0, but some read_seeks expect 0, which would disrupt the index
-     *  we may need to keep start_ts around, since avstream/codec/format isn't always set */
+    /* Some streams start with negative DTS (observed in Ogg). For Ogg seeking to negative or 0 doesn't alter the output.
+     *  It does seem seeking before decoding alters a bunch of (inaudible) +-1 lower bytes though. */
+    VGM_ASSERT(ts != 0, "FFMPEG: negative start_ts (%li)\n", (long)ts);
     if (ts != 0)
-        goto fail;
+        ts = 0;
 
     /* add index 0 */
     ret = av_add_index_entry(stream, pos, ts, size, distance, AVINDEX_KEYFRAME);
@@ -463,6 +491,9 @@ fail:
 
 
 void free_ffmpeg(ffmpeg_codec_data *data) {
+    if (data == NULL)
+        return;
+
     if (data->lastReadPacket) {
         av_packet_unref(data->lastReadPacket);
         free(data->lastReadPacket);
