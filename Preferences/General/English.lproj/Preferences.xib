@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -309,12 +309,12 @@
                 </button>
             </subviews>
         </customView>
-        <customView id="231" userLabel="PlaylistView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="122"/>
+        <customView misplaced="YES" id="231" userLabel="PlaylistView">
+            <rect key="frame" x="0.0" y="0.0" width="500" height="139"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button id="310">
-                    <rect key="frame" x="18" y="18" width="395" height="18"/>
+                    <rect key="frame" x="18" y="35" width="395" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Read CUE sheets when adding folders to playlist" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="311">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -325,7 +325,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="261">
-                    <rect key="frame" x="17" y="42" width="138" height="35"/>
+                    <rect key="frame" x="17" y="59" width="138" height="35"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When opening file with ⇧ or ⌃⌘ held:" id="262">
                         <font key="font" metaFont="system"/>
@@ -334,7 +334,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="259">
-                    <rect key="frame" x="17" y="85" width="129" height="17"/>
+                    <rect key="frame" x="17" y="102" width="129" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="When opening files:" id="260">
                         <font key="font" metaFont="system"/>
@@ -343,7 +343,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" id="253">
-                    <rect key="frame" x="157" y="46" width="257" height="26"/>
+                    <rect key="frame" x="157" y="63" width="257" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" id="254">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -364,7 +364,7 @@
                     </connections>
                 </popUpButton>
                 <popUpButton verticalHuggingPriority="750" id="247">
-                    <rect key="frame" x="157" y="78" width="257" height="26"/>
+                    <rect key="frame" x="157" y="95" width="257" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" selectedItem="250" id="248">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -384,7 +384,19 @@
                         <binding destination="52" name="selectedObject" keyPath="values.openingFilesBehavior" previousBinding="305" id="306"/>
                     </connections>
                 </popUpButton>
+                <button misplaced="YES" id="6QS-GF-Vnc">
+                    <rect key="frame" x="18" y="15" width="388" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Resume playback on startup" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fUg-Cg-gXa">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.resumePlaybackOnStartup" id="8OB-tj-Hd0"/>
+                    </connections>
+                </button>
             </subviews>
+            <point key="canvasLocation" x="-78" y="-31.5"/>
         </customView>
         <customView id="U4w-jw-ca5" userLabel="GrowlView">
             <rect key="frame" x="0.0" y="-5" width="500" height="114"/>
@@ -561,12 +573,12 @@
                         <binding destination="KAn-H1-QH6" name="content" keyPath="arrangedObjects" id="Zvj-Wf-Bum"/>
                         <binding destination="KAn-H1-QH6" name="contentValues" keyPath="arrangedObjects.name" previousBinding="WGj-w1-erz" id="Rvq-46-YeR"/>
                         <binding destination="KAn-H1-QH6" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Zvj-Wf-Bum" id="WGj-w1-erz"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.midi.flavor" previousBinding="Rvq-46-YeR" id="zC1-3J-frL"/>
                         <binding destination="52" name="enabled" keyPath="values.midi.plugin" id="GlZ-Ch-oua">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">MIDIPluginFlavorTransformer</string>
                             </dictionary>
                         </binding>
-                        <binding destination="52" name="selectedObject" keyPath="values.midi.flavor" previousBinding="Rvq-46-YeR" id="zC1-3J-frL"/>
                     </connections>
                 </popUpButton>
                 <popUpButton verticalHuggingPriority="750" id="E1D-Bo-ZVf">

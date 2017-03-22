@@ -154,15 +154,17 @@
     
 	[[playlistController undoManager] enableUndoRegistration];
     
-    int lastStatus = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
-    int lastIndex = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
-    
-    if (lastStatus != kCogStatusStopped && lastIndex >= 0)
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"])
     {
-        [playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == kCogStatusPaused)];
-        [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
-    }
+        int lastStatus = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
+        int lastIndex = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
     
+        if (lastStatus != kCogStatusStopped && lastIndex >= 0)
+        {
+            [playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == kCogStatusPaused)];
+            [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
+        }
+    }
 
     // Restore mini mode
     [self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
@@ -375,6 +377,8 @@
     [userDefaultsValuesDict setObject:@"dls appl" forKey:@"midi.plugin"];
     
     [userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
+    
+    [userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"resumePlaybackOnStartup"];
     
 	//Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
