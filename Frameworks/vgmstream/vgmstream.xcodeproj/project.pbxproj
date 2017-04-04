@@ -368,6 +368,7 @@
 		83EDE5D81A70951A005F5D84 /* mca.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EDE5D61A70951A005F5D84 /* mca.c */; };
 		83EDE5D91A70951A005F5D84 /* btsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EDE5D71A70951A005F5D84 /* btsnd.c */; };
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
+		83FF0EBC1E93282100C58054 /* wwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FF0EBB1E93282100C58054 /* wwise.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -838,6 +839,7 @@
 		83EDE5D61A70951A005F5D84 /* mca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mca.c; sourceTree = "<group>"; };
 		83EDE5D71A70951A005F5D84 /* btsnd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btsnd.c; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
+		83FF0EBB1E93282100C58054 /* wwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wwise.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1075,6 +1077,7 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				83FF0EBB1E93282100C58054 /* wwise.c */,
 				83AB8C731E8072A100086084 /* nub_vag.c */,
 				83AB8C741E8072A100086084 /* x360_ast.c */,
 				83299FCE1E7660C7003A3242 /* bik.c */,
@@ -1552,6 +1555,7 @@
 				836F6FA118BDC2190095E648 /* myspd.c in Sources */,
 				836F6FD718BDC2190095E648 /* ps2_filp.c in Sources */,
 				836F703418BDC2190095E648 /* stx.c in Sources */,
+				83FF0EBC1E93282100C58054 /* wwise.c in Sources */,
 				836F6F7018BDC2190095E648 /* apple_caff.c in Sources */,
 				836F700018BDC2190095E648 /* ps2_svag.c in Sources */,
 				836F6FB618BDC2190095E648 /* ngc_sck_dsp.c in Sources */,
