@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D340B8FDA66008627D6 /* VorbisDecoder.m */; };
-		17F563820C3BDB670019975C /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562F70C3BDAAC0019975C /* Vorbis.framework */; };
 		17F563850C3BDB6C0019975C /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F562F70C3BDAAC0019975C /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83E301AD1E932D4B009E2655 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562F70C3BDAAC0019975C /* Vorbis.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -84,7 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F563820C3BDB670019975C /* Vorbis.framework in Frameworks */,
+				83E301AD1E932D4B009E2655 /* Vorbis.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,6 +189,7 @@
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
 				17C93D770B8FDCA5008627D6 /* CopyFiles */,
+				83F4129B1E93305F002E37D0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -277,6 +278,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		83F4129B1E93305F002E37D0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+				"$(CONFIGURATION_BUILD_DIR)/Vorbis.bundle/Contents/MacOS/Vorbis",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "install_name_tool -change @loader_path/Frameworks/Vorbis.framework/Versions/A/Vorbis @loader_path/../Frameworks/Vorbis.framework/Versions/A/Vorbis \"${CONFIGURATION_BUILD_DIR}/Vorbis.bundle/Contents/MacOS/Vorbis\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D5B49B1048680CD000E48DA /* Sources */ = {
