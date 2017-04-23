@@ -11,6 +11,12 @@
 #include "layout/layout.h"
 #include "coding/coding.h"
 
+/* See if there is a second file which may be the second channel, given
+ * already opened mono opened_stream which was opened from filename.
+ * If a suitable file is found, open it and change opened_stream to a stereo stream. */
+static void try_dual_file_stereo(VGMSTREAM * opened_stream, STREAMFILE *streamFile);
+
+
 /*
  * List of functions that will recognize files. These should correspond pretty
  * directly to the metadata types
@@ -342,9 +348,14 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_akb2_multi,
     init_vgmstream_x360_ast,
     init_vgmstream_wwise,
+    init_vgmstream_ubi_raki,
+    init_vgmstream_x360_pasx,
+    init_vgmstream_x360_nub,
+    init_vgmstream_xma,
+    init_vgmstream_sxd,
+    init_vgmstream_ogl,
 
 #ifdef VGM_USE_FFMPEG
-    init_vgmstream_xma,
     init_vgmstream_mp4_aac_ffmpeg,
     init_vgmstream_bik,
 
@@ -371,6 +382,7 @@ VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile, int do_dfs) {
             /* fail if there is nothing to play
              *  (without this check vgmstream can generate empty files) */
             if (vgmstream->num_samples <= 0) {
+                VGM_LOG("VGMSTREAM: wrong num_samples (ns=%i)\n", vgmstream->num_samples);
                 close_vgmstream(vgmstream);
                 continue;
             }
@@ -378,6 +390,7 @@ VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile, int do_dfs) {
             /* everything should have a reasonable sample rate
              * (a verification of the metadata) */
             if (!check_sample_rate(vgmstream->sample_rate)) {
+                VGM_LOG("VGMSTREAM: wrong sample rate (sr=%i)\n", vgmstream->sample_rate);
                 close_vgmstream(vgmstream);
                 continue;
             }
@@ -388,7 +401,7 @@ VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile, int do_dfs) {
                         || (vgmstream->loop_end_sample > vgmstream->num_samples)
                         || (vgmstream->loop_start_sample < 0) ) {
                     vgmstream->loop_flag = 0;
-                    VGM_LOG("VGMSTREAM: wrong loops ignored (lss==%i, lse=%i, ns=%i)\n", vgmstream->loop_start_sample, vgmstream->loop_end_sample, vgmstream->num_samples);
+                    VGM_LOG("VGMSTREAM: wrong loops ignored (lss=%i, lse=%i, ns=%i)\n", vgmstream->loop_start_sample, vgmstream->loop_end_sample, vgmstream->num_samples);
                 }
             }
 
@@ -475,6 +488,14 @@ void reset_vgmstream(VGMSTREAM * vgmstream) {
 
     if (vgmstream->coding_type==coding_fsb_vorbis) {
         reset_fsb_vorbis(vgmstream);
+    }
+
+    if (vgmstream->coding_type==coding_wwise_vorbis) {
+        reset_wwise_vorbis(vgmstream);
+    }
+
+    if (vgmstream->coding_type==coding_ogl_vorbis) {
+        reset_ogl_vorbis(vgmstream);
     }
 #endif
     if (vgmstream->coding_type==coding_CRI_HCA) {
@@ -677,6 +698,16 @@ void close_vgmstream(VGMSTREAM * vgmstream) {
 
     if (vgmstream->coding_type==coding_fsb_vorbis) {
         free_fsb_vorbis(vgmstream->codec_data);
+        vgmstream->codec_data = NULL;
+    }
+
+    if (vgmstream->coding_type==coding_wwise_vorbis) {
+        free_wwise_vorbis(vgmstream->codec_data);
+        vgmstream->codec_data = NULL;
+    }
+
+    if (vgmstream->coding_type==coding_ogl_vorbis) {
+        free_ogl_vorbis(vgmstream->codec_data);
         vgmstream->codec_data = NULL;
     }
 #endif
@@ -1000,6 +1031,8 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
 #ifdef VGM_USE_VORBIS
         case coding_ogg_vorbis:
         case coding_fsb_vorbis:
+        case coding_wwise_vorbis:
+        case coding_ogl_vorbis:
 #endif
 #ifdef VGM_USE_MPEG
         case coding_fake_MPEG2_L2:
@@ -1070,6 +1103,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
             return 64;
         case coding_MS_IMA:
         case coding_RAD_IMA:
+        case coding_WWISE_IMA:
             return (vgmstream->interleave_block_size-4*vgmstream->channels)*2/vgmstream->channels;
         case coding_RAD_IMA_mono:
             return 32;
@@ -1159,6 +1193,7 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_RAD_IMA:
         case coding_NDS_IMA:
         case coding_DAT4_IMA:
+        case coding_WWISE_IMA:
             return vgmstream->interleave_block_size;
         case coding_RAD_IMA_mono:
             return 0x14;
@@ -1484,6 +1519,18 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                     buffer+samples_written*vgmstream->channels,samples_to_do,
                     vgmstream->channels);
             break;
+
+        case coding_wwise_vorbis:
+            decode_wwise_vorbis(vgmstream,
+                    buffer+samples_written*vgmstream->channels,samples_to_do,
+                    vgmstream->channels);
+            break;
+
+        case coding_ogl_vorbis:
+            decode_ogl_vorbis(vgmstream,
+                    buffer+samples_written*vgmstream->channels,samples_to_do,
+                    vgmstream->channels);
+            break;
 #endif
         case coding_CRI_HCA:
             decode_hca(vgmstream->codec_data,
@@ -1580,6 +1627,13 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
         case coding_FSB_IMA:
             for (chan=0;chan<vgmstream->channels;chan++) {
                 decode_fsb_ima(vgmstream, &vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do,chan);
+            }
+            break;
+        case coding_WWISE_IMA:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_wwise_ima(vgmstream,&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
                         vgmstream->channels,vgmstream->samples_into_block,
                         samples_to_do,chan);
             }
@@ -1798,6 +1852,14 @@ int vgmstream_do_loop(VGMSTREAM * vgmstream) {
             if (vgmstream->coding_type==coding_fsb_vorbis) {
                 seek_fsb_vorbis(vgmstream, vgmstream->loop_start_sample);
             }
+
+            if (vgmstream->coding_type==coding_wwise_vorbis) {
+                seek_wwise_vorbis(vgmstream, vgmstream->loop_start_sample);
+            }
+
+            if (vgmstream->coding_type==coding_ogl_vorbis) {
+                seek_ogl_vorbis(vgmstream, vgmstream->loop_start_sample);
+            }
 #endif
 
 #ifdef VGM_USE_FFMPEG
@@ -1994,7 +2056,7 @@ const char * const dfs_pairs[][2] = {
 };
 #define DFS_PAIR_COUNT (sizeof(dfs_pairs)/sizeof(dfs_pairs[0]))
 
-void try_dual_file_stereo(VGMSTREAM * opened_stream, STREAMFILE *streamFile) {
+static void try_dual_file_stereo(VGMSTREAM * opened_stream, STREAMFILE *streamFile) {
     char filename[PATH_LIMIT];
     char filename2[PATH_LIMIT];
     char * ext;
