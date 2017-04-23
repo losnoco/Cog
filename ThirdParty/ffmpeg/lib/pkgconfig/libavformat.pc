@@ -5,10 +5,10 @@ includedir=${prefix}/include
 
 Name: libavformat
 Description: FFmpeg container format library
-Version: 57.68.100
-Requires: libavcodec >= 57.86.103, libavutil >= 55.52.100
+Version: 57.72.101
+Requires: libavcodec >= 57.93.100, libavutil >= 55.61.100
 Requires.private: 
 Conflicts:
-Libs: -L${libdir}  -lavformat -framework QuartzCore -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -framework CoreFoundation -framework AudioToolbox -framework CoreMedia -framework VideoDecodeAcceleration -framework CoreFoundation -framework QuartzCore -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -lm -lbz2 -lz -pthread -framework CoreServices
+Libs: -L${libdir}  -lavformat -framework QuartzCore -framework VideoDecodeAcceleration -framework CoreFoundation -framework QuartzCore -framework CoreFoundation -framework AudioToolbox -framework CoreMedia -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -lm -lbz2 -lz -pthread -framework CoreServices
 Libs.private: 
 Cflags: -I${includedir}
