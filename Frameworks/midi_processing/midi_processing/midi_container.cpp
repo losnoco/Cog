@@ -1120,9 +1120,9 @@ void midi_container::scan_for_loops( bool p_xmi_loops, bool p_marker_loops, bool
 			{
 				const midi_event & event = track[ j ];
 				if ( event.m_type == midi_event::control_change &&
-					( event.m_data[ 0 ] == 0x74 || event.m_data[ 0 ] == 0x75 ) )
+					( event.m_data[ 0 ] >= 0x74 && event.m_data[ 0 ] <= 0x77 ) )
 				{
-					if ( event.m_data[ 0 ] == 0x74 )
+					if ( event.m_data[ 0 ] == 0x74 || event.m_data[ 0 ] == 0x76 )
 					{
                         if ( m_timestamp_loop_start[ subsong ] == ~0UL || m_timestamp_loop_start[ subsong ] > event.m_timestamp )
 						{
