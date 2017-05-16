@@ -13,9 +13,10 @@ enum { PATH_LIMIT = 32768 };
  * done by external libraries.
  * If someone wants to do a standalone build, they can do it by simply
  * removing these defines (and the references to the libraries in the Makefile) */
+#ifndef VGM_DISABLE_VORBIS
 #define VGM_USE_VORBIS
+#endif
 
-/* can be disabled to decode with FFmpeg instead */
 #ifndef VGM_DISABLE_MPEG
 #define VGM_USE_MPEG
 #endif
@@ -56,13 +57,15 @@ enum { PATH_LIMIT = 32768 };
 #endif
 
 #ifdef VGM_USE_MAIATRAC3PLUS
-#include "maiatrac3plus.h"
+#include <maiatrac3plus.h>
 #endif
 
 #ifdef VGM_USE_FFMPEG
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #endif
+
+#include "clHCA.h"
 
 #ifdef BUILD_VGMSTREAM
 #include "coding/g72x_state.h"
@@ -73,8 +76,6 @@ enum { PATH_LIMIT = 32768 };
 #include "acm_decoder.h"
 #include "nwa_decoder.h"
 #endif
-#include "clHCA.h"
-
 
 /* The encoding type specifies the format the sound data itself takes */
 typedef enum {
@@ -93,6 +94,8 @@ typedef enum {
 
     /* 4-bit ADPCM */
     coding_CRI_ADX,         /* CRI ADX */
+    coding_CRI_ADX_fixed,   /* CRI ADX, encoding type 2 with fixed coefficients */
+    coding_CRI_ADX_exp,     /* CRI ADX, encoding type 4 with exponential scale */
     coding_CRI_ADX_enc_8,   /* CRI ADX, type 8 encryption (God Hand) */
     coding_CRI_ADX_enc_9,   /* CRI ADX, type 9 encryption (PSO2) */
 
@@ -115,16 +118,16 @@ typedef enum {
 	coding_NDS_PROCYON,     /* Procyon Studio ADPCM */
 
     coding_XBOX,            /* XBOX IMA ADPCM */
-    coding_INT_XBOX,        /* XBOX IMA ADPCM (interleaved) */
+    coding_XBOX_int,        /* XBOX IMA ADPCM (interleaved) */
     coding_IMA,             /* IMA ADPCM (low nibble first) */
-    coding_INT_IMA,         /* IMA ADPCM (interleaved) */
+    coding_IMA_int,         /* IMA ADPCM (interleaved) */
     coding_DVI_IMA,         /* DVI IMA ADPCM (high nibble first), aka ADP4 */
-    coding_INT_DVI_IMA,		/* DVI IMA ADPCM (Interleaved) */
+    coding_DVI_IMA_int,		/* DVI IMA ADPCM (Interleaved) */
     coding_NDS_IMA,         /* IMA ADPCM w/ NDS layout */
     coding_EACS_IMA,
     coding_MS_IMA,          /* Microsoft IMA */
-    coding_RAD_IMA,         /* "Radical ADPCM" IMA */
-    coding_RAD_IMA_mono,    /* "Radical ADPCM" IMA, mono (for interleave) */
+    coding_RAD_IMA,         /* Radical IMA ADPCM */
+    coding_RAD_IMA_mono,    /* Radical IMA ADPCM, mono (for interleave) */
     coding_APPLE_IMA4,      /* Apple Quicktime IMA4 */
     coding_DAT4_IMA,        /* Eurocom 'DAT4' IMA ADPCM */
     coding_SNDS_IMA,        /* Heavy Iron Studios .snds IMA ADPCM */
@@ -139,6 +142,7 @@ typedef enum {
     coding_SASSC,           /* Activision EXAKT SASSC DPCM */
     coding_LSF,             /* lsf ADPCM (Fastlane Street Racing iPhone)*/
     coding_MTAF,            /* Konami MTAF ADPCM (IMA-derived) */
+    coding_MC3,             /* Paradigm MC3 3-bit ADPCM */
 
     /* others */
     coding_SDX2,            /* SDX2 2:1 Squareroot-Delta-Exact compression DPCM */
@@ -317,7 +321,7 @@ typedef enum {
     meta_PSX_XA,            /* CD-ROM XA with RIFF header */
     meta_PS2_SShd,			/* .ADS with SShd header */
     meta_PS2_NPSF,			/* Namco Production Sound File */
-    meta_PS2_RXW,			/* Sony Arc The Lad Sound File */
+    meta_PS2_RXWS,          /* Sony games (Genji, Okage Shadow King, Arc The Lad Twilight of Spirits) */
     meta_PS2_RAW,			/* RAW Interleaved Format */
     meta_PS2_EXST,			/* Shadow of Colossus EXST */
     meta_PS2_SVAG,			/* Konami SVAG */
@@ -423,6 +427,7 @@ typedef enum {
     meta_RSD6XADP,			/* RSD6XADP */
     meta_RSD6RADP,			/* RSD6RADP */
 	meta_RSD6OOGV,          /* RSD6OOGV */
+    meta_RSD6XMA,           /* RSD6XMA */
 
     meta_PS2_ASS,			/* ASS */
     meta_PS2_SEG,			/* Eragon */
@@ -589,7 +594,7 @@ typedef enum {
 	meta_TUN,               // LEGO Racers (PC)
 	meta_WPD,               // Shuffle! (PC)
 	meta_MN_STR,            // Mini Ninjas (PC/PS3/WII)
-	meta_PS2_MSS,			// Guerilla: ShellShock Nam '67, Killzone (PS2)
+	meta_MSS,               // Guerilla: ShellShock Nam '67 (PS2/Xbox), Killzone (PS2)
 	meta_PS2_HSF,			// Lowrider (PS2)
 	meta_PS3_IVAG,			// Interleaved VAG files (PS3)
 	meta_PS2_2PFS,			// Konami: Mahoromatic: Moetto - KiraKira Maid-San, GANTZ (PS2)
@@ -614,6 +619,10 @@ typedef enum {
     meta_UBI_RAKI,          /* Ubisoft RAKI header (Rayman Legends, Just Dance 2017) */
     meta_SXD,               /* Sony SXD (Gravity Rush, Freedom Wars PSV) */
     meta_OGL,               /* Shin'en Wii/WiiU (Jett Rocket (Wii), FAST Racing NEO (WiiU)) */
+    meta_MC3,               /* Paradigm games (T3 PS2, MX Rider PS2, MI: Operation Surma PS2) */
+    meta_GTD,               /* Knights Contract (X360/PS3), Valhalla Knights 3 (PSV) */
+    meta_TA_AAC_X360,       /* tri-ace AAC (Star Ocean 4, End of Eternity, Infinite Undiscovery) */
+    meta_TA_AAC_PS3,        /* tri-ace AAC (Star Ocean International, Resonance of Fate) */
 
 #ifdef VGM_USE_VORBIS
     meta_OGG_VORBIS,        /* Ogg Vorbis */

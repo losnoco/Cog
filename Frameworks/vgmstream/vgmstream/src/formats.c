@@ -11,10 +11,12 @@ static const char* extension_list[] = {
     "2dx9",
     "2pfs",
 
+    //"aac", //common, also tri-Ace's
     "aa3", //FFmpeg, not parsed (ATRAC3/ATRAC3PLUS/MP3/LPCM/WMA)
     "aaap",
     "aax",
     //"ac3", //FFmpeg, not parsed //common?
+    "ace", //fake, for tri-Ace's formats
     "acm",
     "adm",
     "adp",
@@ -109,6 +111,7 @@ static const char* extension_list[] = {
     "genh",
     "gms",
     "gsb",
+    "gtd",
 
     "hca",
     "hgc1",
@@ -149,6 +152,7 @@ static const char* extension_list[] = {
     "lwav", //fake extension, for looping
 
     "matx",
+    "mc3",
     "mca",
     "mcg",
     "mds",
@@ -328,6 +332,7 @@ static const char* extension_list[] = {
     "xwb",
     "xwm", //FFmpeg, not parsed (XWMA)
     "xwma", //FFmpeg, not parsed (XWMA)
+    "xws",
     "xwv",
 
     "ydsp",
@@ -387,6 +392,8 @@ static const coding_info coding_info_list[] = {
         {coding_PCM8_int,           "8-bit PCM with 1 byte interleave"},
         {coding_PCM8_SB_int,        "8-bit PCM with sign bit, 1 byte interleave"},
         {coding_CRI_ADX,            "CRI ADX 4-bit ADPCM"},
+        {coding_CRI_ADX_exp,        "CRI ADX 4-bit ADPCM with exponential scale"},
+        {coding_CRI_ADX_fixed,      "CRI ADX 4-bit ADPCM with fixed coefficients"},
         {coding_CRI_ADX_enc_8,      "CRI ADX 4-bit ADPCM (type 8 encryption)"},
         {coding_CRI_ADX_enc_9,      "CRI ADX 4-bit ADPCM (type 8 encryption)"},
         {coding_NGC_DSP,            "Nintendo DSP 4-bit ADPCM"},
@@ -403,7 +410,7 @@ static const coding_info coding_info_list[] = {
         {coding_HEVAG,              "Playstation Vita HEVAG 4-bit ADPCM"},
         {coding_XA,                 "CD-ROM XA 4-bit ADPCM"},
         {coding_XBOX,               "XBOX 4-bit IMA ADPCM"},
-        {coding_INT_XBOX,           "XBOX 4-bit IMA ADPCM (interleaved)"},
+        {coding_XBOX_int,           "XBOX 4-bit IMA ADPCM (interleaved)"},
         {coding_EA_XA,              "Electronic Arts 4-bit ADPCM (XA based)"},
         {coding_EA_ADPCM,           "Electronic Arts R1 4-bit ADPCM (XA based)"},
         {coding_SDX2,               "Squareroot-delta-exact (SDX2) 8-bit DPCM"},
@@ -411,20 +418,20 @@ static const coding_info coding_info_list[] = {
         {coding_CBD2,               "Cuberoot-delta-exact (CBD2) 8-bit DPCM"},
         {coding_CBD2_int,           "Cuberoot-delta-exact (CBD2) 8-bit DPCM with 1 byte interleave"},
         {coding_DVI_IMA,            "Intel DVI 4-bit IMA ADPCM"},
-        {coding_INT_DVI_IMA,        "Interleaved Intel DVI 4-bit IMA ADPCM"},
+        {coding_DVI_IMA_int,        "Intel DVI 4-bit IMA ADPCM (interleaved)"},
         {coding_EACS_IMA,           "EACS 4-bit IMA ADPCM"},
         {coding_MAXIS_ADPCM,        "Maxis XA (EA ADPCM Variant)"},
-        {coding_INT_IMA,            "Interleaved 4-bit IMA ADPCM"},
-        {coding_IMA,                "4-bit IMA ADPCM"},
+        {coding_IMA_int,            "IMA 4-bit ADPCM (interleaved)"},
+        {coding_IMA,                "IMA 4-bit ADPCM"},
         {coding_MS_IMA,             "Microsoft 4-bit IMA ADPCM"},
-        {coding_RAD_IMA,            "'Radical' 4-bit IMA ADPCM"},
-        {coding_RAD_IMA_mono,       "'Radical' 4-bit IMA ADPCM (mono)"},
+        {coding_RAD_IMA,            "Radical 4-bit IMA ADPCM"},
+        {coding_RAD_IMA_mono,       "Radical 4-bit IMA ADPCM (mono)"},
         {coding_APPLE_IMA4,         "Apple Quicktime 4-bit IMA ADPCM"},
         {coding_SNDS_IMA,           "Heavy Iron .snds 4-bit IMA ADPCM"},
         {coding_OTNS_IMA,           "Omikron: The Nomad Soul 4-bit IMA ADPCM"},
         {coding_FSB_IMA,            "FSB multichannel 4-bit IMA ADPCM"},
         {coding_WWISE_IMA,          "Audiokinetic Wwise 4-bit IMA ADPCM"},
-        {coding_WS,                 "Westwood Studios ADPCM"},
+        {coding_WS,                 "Westwood Studios VBR ADPCM"},
         {coding_ACM,                "InterPlay ACM"},
         {coding_NWA0,               "NWA DPCM Level 0"},
         {coding_NWA1,               "NWA DPCM Level 1"},
@@ -439,6 +446,8 @@ static const coding_info coding_info_list[] = {
         {coding_SASSC,              "Activision / EXAKT SASSC 8-bit DPCM"},
         {coding_LSF,                "lsf 4-bit ADPCM"},
         {coding_MTAF,               "Konami MTAF 4-bit ADPCM"},
+        {coding_MC3,                "Paradigm MC3 3-bit ADPCM"},
+        
 #ifdef VGM_USE_VORBIS
         {coding_ogg_vorbis,         "Ogg Vorbis"},
         {coding_fsb_vorbis,         "FSB Vorbis"},
@@ -545,7 +554,7 @@ static const meta_info meta_info_list[] = {
         {meta_CWAV,                 "Nintendo CWAV header"},
         {meta_FWAV,                 "Nintendo FWAV header"},
         {meta_PSX_XA,               "RIFF/CDXA header"},
-        {meta_PS2_RXW,              "RXWS header)"},
+        {meta_PS2_RXWS,             "Sony RXWS header"},
         {meta_PS2_RAW,              "assumed RAW Interleaved PCM by .int extension"},
         {meta_PS2_OMU,              "Alter Echo OMU Header"},
         {meta_DSP_STM,              "Nintendo STM header"},
@@ -677,6 +686,7 @@ static const meta_info meta_info_list[] = {
         {meta_RSD6VAG,              "RSD6/VAG Header"},
         {meta_RSD6WADP,             "RSD6/WADP Header"},
         {meta_RSD6RADP,             "RSD6/RADP Header"},
+        {meta_RSD6XMA,              "RSD6/XMA Header"},
         {meta_DC_ASD,               "ASD Header"},
         {meta_NAOMI_SPSD,           "SPSD Header"},
         {meta_FFXI_BGW,             "BGW BGMStream header"},
@@ -819,7 +829,7 @@ static const meta_info meta_info_list[] = {
         {meta_TUN,                  "TUN 'ALP' header"},
         {meta_WPD,                  "WPD 'DPW' header"},
         {meta_MN_STR,               "Mini Ninjas 'STR' header"},
-        {meta_PS2_MSS,              "Guerilla MSCC header"},
+        {meta_MSS,                  "Guerilla MCSS header"},
         {meta_PS2_HSF,              "Lowrider 'HSF' header"},
         {meta_PS3_IVAG,             "PS3 'IVAG' Header"},
         {meta_PS2_2PFS,             "Konami 2PFS header"},
@@ -847,6 +857,10 @@ static const meta_info meta_info_list[] = {
         {meta_UBI_RAKI,             "Ubisoft RAKI header"},
         {meta_SXD,                  "Sony SXD header"},
         {meta_OGL,                  "Shin'en OGL header"},
+        {meta_MC3,                  "Paradigm MC3 header"},
+        {meta_GTD,                  "GTD/GHS header"},
+        {meta_TA_AAC_X360,          "tri-Ace AAC (X360) header"},
+        {meta_TA_AAC_PS3,           "tri-Ace AAC (PS3) header"},
 
 #ifdef VGM_USE_VORBIS
         {meta_OGG_VORBIS,           "Ogg Vorbis"},
