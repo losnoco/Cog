@@ -147,7 +147,7 @@ void SCPlayer::reset(uint32_t port)
         switch (mode)
 		{
 			case sc_gm:
-				sampler[port].TG_LongMidiIn( syx_reset_gm, 0 );
+				/*sampler[port].TG_LongMidiIn( syx_reset_gm, 0 );*/
 				break;
 				
 			case sc_gm2:
@@ -159,13 +159,12 @@ void SCPlayer::reset(uint32_t port)
 			case sc_sc88pro:
 			case sc_sc8850:
             case sc_default:
-                sampler[port].TG_LongMidiIn( syx_reset_gs, 0 );
+                sampler[port].TG_LongMidiIn( syx_reset_gs, 0 ); junk(port, 1024);
 				reset_sc(port);
 				break;
 				
 			case sc_xg:
 				sampler[port].TG_LongMidiIn( syx_reset_xg, 0 );
-                sampler[port].TG_ShortMidiIn( 0x7F00B9, 0 ); // fix drum channel
 				break;
 		}
         
@@ -177,10 +176,20 @@ void SCPlayer::reset(uint32_t port)
             {
                 sampler[port].TG_ShortMidiIn(0x78B0 + i, 0);
                 sampler[port].TG_ShortMidiIn(0x79B0 + i, 0);
-                sampler[port].TG_ShortMidiIn(0x20B0 + i, 0);
-                sampler[port].TG_ShortMidiIn(0x00B0 + i, 0);
-                sampler[port].TG_ShortMidiIn(0xC0 + i, 0);
+                if (mode != sc_xg || i != 9)
+                {
+                    sampler[port].TG_ShortMidiIn(0x20B0 + i, 0);
+                    sampler[port].TG_ShortMidiIn(0x00B0 + i, 0);
+                    sampler[port].TG_ShortMidiIn(0xC0 + i, 0);
+                }
             }
+        }
+        
+        if (mode == sc_xg)
+        {
+            sampler[port].TG_ShortMidiIn(0x20B9, 0);
+            sampler[port].TG_ShortMidiIn(0x7F00B9, 0);
+            sampler[port].TG_ShortMidiIn(0xC9, 0);
         }
         
         junk(port, uSampleRate * 2 / 3);
