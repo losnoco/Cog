@@ -174,6 +174,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     }
     
     stream = formatCtx->streams[streamIndex];
+    codecPar = stream->codecpar;
     
     codecCtx = avcodec_alloc_context3(NULL);
     if (!codecCtx)
