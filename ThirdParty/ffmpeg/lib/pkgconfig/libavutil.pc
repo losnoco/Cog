@@ -1,11 +1,11 @@
 prefix=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg
 exec_prefix=${prefix}
-libdir=${prefix}/lib
-includedir=${prefix}/include
+libdir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/lib
+includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/include
 
 Name: libavutil
 Description: FFmpeg utility library
-Version: 55.61.100
+Version: 55.63.100
 Requires: 
 Requires.private: 
 Conflicts:
