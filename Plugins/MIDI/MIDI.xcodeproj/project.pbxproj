@@ -96,6 +96,7 @@
 		833F68431CDBCABE00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		834BE9191DE407CB00A07DCD /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		834BE91A1DE407CB00A07DCD /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
+		835F91BA1EE211820003E186 /* dmxopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmxopl.h; sourceTree = "<group>"; };
 		83686AAB1C5C69D400671C7A /* AUPlayerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayerView.mm; sourceTree = "<group>"; };
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -220,6 +221,7 @@
 		83A09F671CFA89E7001E7D2D /* inst */ = {
 			isa = PBXGroup;
 			children = (
+				835F91BA1EE211820003E186 /* dmxopl.h */,
 				83A09F681CFA89E7001E7D2D /* dmx_dmx.h */,
 				83A09F691CFA89E7001E7D2D /* dmx_doom1.h */,
 				83A09F6A1CFA89E7001E7D2D /* dmx_doom2.h */,

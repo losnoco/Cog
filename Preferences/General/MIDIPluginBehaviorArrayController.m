@@ -91,6 +91,9 @@ static void enumCallback(void *context, OSType uSubType, OSType uManufacturer, c
     [self addObject:
      [NSDictionary dictionaryWithObjectsAndKeys:
       @"DMX Strife", @"name", @"DOOM0004", @"preference", nil]];
+    [self addObject:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      @"DMXOPL", @"name", @"DOOM0005", @"preference", nil]];
 
     [self addObject:
      [NSDictionary dictionaryWithObjectsAndKeys:

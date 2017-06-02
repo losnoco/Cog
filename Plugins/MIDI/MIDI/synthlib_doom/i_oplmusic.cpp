@@ -109,6 +109,7 @@ namespace DoomOPL_inst
 #include "inst/dmx_doom2.h"
 #include "inst/dmx_raptor.h"
 #include "inst/dmx_strife.h"
+#include "inst/dmxopl.h"
 }
 
 bool DoomOPL::LoadInstrumentTable(unsigned int bank)
@@ -136,6 +137,10 @@ bool DoomOPL::LoadInstrumentTable(unsigned int bank)
             
         case 4:
             lump = DoomOPL_inst::dmx_strife;
+            break;
+
+        case 5:
+            lump = DoomOPL_inst::dmxopl;
             break;
     }
 
@@ -988,7 +993,7 @@ const char * DoomOPL::midi_synth_name(void)
 
 unsigned int DoomOPL::midi_bank_count(void)
 {
-    return 5;
+    return 6;
 }
 
 const char * DoomOPL::midi_bank_name(unsigned int bank)
@@ -1010,6 +1015,9 @@ const char * DoomOPL::midi_bank_name(unsigned int bank)
             
         case 4:
             return "DMX Strife";
+
+        case 5:
+            return "DMXOPL";
     }
 }
 
