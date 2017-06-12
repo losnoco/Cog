@@ -1,7 +1,13 @@
 /*
-** PLAYPTMOD v1.31 - 23rd of December 2016 - http://16-bits.org
-** ==============================================================
+** PLAYPTMOD v1.35 - 7th of June 2017 - http://16-bits.org
+** =========================================================
 ** This is the foobar2000 version, with added code by kode54
+**
+** Changelog from 1.31:
+** - Make period variables unsigned, to simulate a period overflow quirk
+** - Properly clamp periods<113 to 113 in PT mode
+** - Removed a deprecated arpeggio volume quirk
+** - Rewrote the mixer rate function to not use LUTs (WTF was I thinking?)
 **
 ** Changelog from 1.3:
 ** - Fixed an unchecked memcpy when testing for ADPCM samples in possible STK files
@@ -115,7 +121,7 @@ typedef struct modnote
     unsigned char sample;
     unsigned char command;
     unsigned char param;
-    short period;
+    unsigned short period;
 } modnote_t;
 
 typedef struct
@@ -175,9 +181,9 @@ typedef struct
     unsigned char invertLoopSpeed;
     unsigned char chanIndex;
     unsigned char toneportdirec;
-    short period;
-    short tempPeriod;
-    short wantedperiod;
+    unsigned short period;
+    unsigned short tempPeriod;
+    unsigned short wantedperiod;
     int noNote;
     int invertLoopOffset;
     int offset;
@@ -263,7 +269,7 @@ typedef struct
     unsigned char PattDelayTime2;
     unsigned char PosJumpAssert;
     unsigned char PBreakFlag;
-    short tempPeriod;
+    unsigned short tempPeriod;
     int tempoTimerVal;
     char moduleLoaded;
     char modulePlaying;
@@ -271,8 +277,6 @@ typedef struct
     unsigned short soundBufferSize;
     unsigned int soundFrequency;
     char soundBuffers;
-    float *frequencyTable;
-    float *extendedFrequencyTable;
     unsigned char *sinusTable;
     int minPeriod;
     int maxPeriod;
@@ -299,7 +303,7 @@ static const unsigned char invertLoopSpeeds[16] =
 };
 
 /* 16 fintunes, 3 octaves, 1 pad each octave, 14 paddings on end */
-static const short rawAmigaPeriods[(16 * ((12 * 3) + 1)) + 14] =
+static const unsigned short rawAmigaPeriods[(16 * ((12 * 3) + 1)) + 14] =
 {
     856,808,762,720,678,640,604,570,538,508,480,453,
     428,404,381,360,339,320,302,285,269,254,240,226,
@@ -353,9 +357,9 @@ static const short rawAmigaPeriods[(16 * ((12 * 3) + 1)) + 14] =
 };
 
 /* 16 fintunes, 7 octaves, 1 pad each octave, 14 paddings on end */
-static short extendedRawPeriods[(16 * ((12 * 7) + 1)) + 14];
+static unsigned short extendedRawPeriods[(16 * ((12 * 7) + 1)) + 14];
 
-static const short npertab[12 * 7] = /* 7 octaves, C-3 .. B-9 */
+static const unsigned short npertab[12 * 7] = /* 7 octaves, C-3 .. B-9 */
 {
     0x06B0,0x0650,0x05F4,0x05A0,0x054C,0x0500,0x04B8,0x0474,0x0434,0x03F8,0x03C0,0x038A,
     0x0358,0x0328,0x02FA,0x02D0,0x02A6,0x0280,0x025C,0x023A,0x021A,0x01FC,0x01E0,0x01C5,
@@ -436,7 +440,7 @@ static void bufseek(BUF *_SrcBuf, long _Offset, int _Origin)
     }
 }
 
-static inline int periodToNote(player *p, char finetune, short period)
+static inline int periodToNote(player *p, char finetune, unsigned short period)
 {
     unsigned char i;
     unsigned char maxNotes;
@@ -445,12 +449,12 @@ static inline int periodToNote(player *p, char finetune, short period)
     if (p->minPeriod == PT_MIN_PERIOD)
     {
         maxNotes = 12 * 3;
-        tablePointer = (short *)&rawAmigaPeriods[finetune * ((12 * 3) + 1)];
+        tablePointer = (unsigned short *)&rawAmigaPeriods[finetune * ((12 * 3) + 1)];
     }
     else
     {
         maxNotes = 12 * 7;
-        tablePointer = (short *)&extendedRawPeriods[finetune * ((12 * 7) + 1)];
+        tablePointer = (unsigned short *)&extendedRawPeriods[finetune * ((12 * 7) + 1)];
     }
 
     for (i = 0; i < maxNotes; ++i)
@@ -611,9 +615,22 @@ static void mixerCutChannels(player *p)
     }
 }
 
-static void mixerSetChRate(player *p, int ch, float rate)
+static void mixerSetChRate(player *p, int ch, unsigned short period)
 {
-    p->v[ch].rate = 1.0f / rate;
+    if (period == 0)
+    {
+        p->v[ch].rate = 0.0f;
+        return;
+    }
+    
+    if (p->minPeriod == PT_MIN_PERIOD)
+    {
+        /* in PT mode, wrap period around 113 (Paula behavior) */
+        if (period < 113)
+            period = 113;
+    }
+        
+    p->v[ch].rate = (3546895.0f / period) / p->soundFrequency;
 }
 
 static void outputAudio(player *p, int *target, int numSamples)
@@ -1825,16 +1842,21 @@ static void efxFinePortamentoSlideUp(player *p, mod_channel *ch)
 
             if (p->minPeriod == PT_MIN_PERIOD)
             {
-                if (ch->period < 113)
-                    ch->period = 113;
+                if ((ch->period & 0x0FFF) < 113)
+                {
+                    ch->period &= 0xF000;
+                    ch->period |= 113;
+                }
+
+                p->tempPeriod = ch->period & 0x0FFF;
             }
             else
             {
                 if (ch->period < p->minPeriod)
                     ch->period = p->minPeriod;
-           }
-
-            p->tempPeriod = ch->period;
+                    
+                p->tempPeriod = ch->period;
+           }         
         }
     }
 }
@@ -1849,16 +1871,21 @@ static void efxFinePortamentoSlideDown(player *p, mod_channel *ch)
 
             if (p->minPeriod == PT_MIN_PERIOD)
             {
-                if (ch->period > 856)
-                    ch->period = 856;
+                if ((ch->period & 0x0FFF) > 856)
+                {
+                    ch->period &= 0xF000;
+                    ch->period |= 856;
+                }
+
+                p->tempPeriod = ch->period & 0x0FFF;
             }
             else
             {
                 if (ch->period > p->maxPeriod)
                     ch->period = p->maxPeriod;
-            }
-
-            p->tempPeriod = ch->period;
+                    
+                p->tempPeriod = ch->period;
+            }         
         }
     }
 }
@@ -2012,10 +2039,10 @@ static void efxInvertLoop(player *p, mod_channel *ch)
 }
 
 /* -- this is only for PT mode ---------------------------- */
-static void setupGlissando(mod_channel *ch, short period)
+static void setupGlissando(mod_channel *ch, unsigned short period)
 {
     unsigned char i;
-    const short *tablePointer;
+    const unsigned short *tablePointer;
 
     tablePointer = &rawAmigaPeriods[ch->fineTune * ((12 * 3) + 1)];
 
@@ -2051,18 +2078,24 @@ static void processGlissando(player *p, mod_channel *ch)
     signed char m;
     signed char h;
 
-    const short *tablePointer;
+    const unsigned short *tablePointer;
+    
+	if (p->tempPeriod == 0)
+    {
+        ch->wantedperiod = 0; /* don't do any more sliding */
+        return;
+    }
 
     /* different routine for PT mode */
     if (p->minPeriod == PT_MIN_PERIOD)
     {
-        if ((ch->wantedperiod > 0) && (p->tempPeriod > 0))
+        if (ch->wantedperiod > 0)
         {
             if (ch->toneportdirec == 0)
             {
                 /* downwards */
                 ch->period += ch->glissandoSpeed;
-                if (ch->period >= ch->wantedperiod)
+                if ((signed short)ch->period >= ch->wantedperiod)
                 {
                     ch->period = ch->wantedperiod;
                     ch->wantedperiod = 0;
@@ -2072,7 +2105,7 @@ static void processGlissando(player *p, mod_channel *ch)
             {
                 /* upwards */
                 ch->period -= ch->glissandoSpeed;
-                if (ch->period <= ch->wantedperiod)
+                if ((signed short)ch->period <= ch->wantedperiod)
                 {
                     ch->period = ch->wantedperiod;
                     ch->wantedperiod = 0;
@@ -2106,51 +2139,48 @@ static void processGlissando(player *p, mod_channel *ch)
     }
     else
     {
-        if (p->tempPeriod > 0)
-        {
-            if (ch->period < ch->tempPeriod)
-            {
-                ch->period += ch->glissandoSpeed;
-                if (ch->period > ch->tempPeriod)
-                    ch->period = ch->tempPeriod;
-            }
-            else
-            {
-                ch->period -= ch->glissandoSpeed;
-                if (ch->period < ch->tempPeriod)
-                    ch->period = ch->tempPeriod;
-            }
+		if (ch->period < ch->tempPeriod)
+		{
+			ch->period += ch->glissandoSpeed;
+			if ((signed short)ch->period > ch->tempPeriod)
+				ch->period = ch->tempPeriod;
+		}
+		else
+		{
+			ch->period -= ch->glissandoSpeed;
+			if ((signed short)ch->period < ch->tempPeriod)
+				ch->period = ch->tempPeriod;
+		}
 
-            if (ch->glissandoControl == 0)
-            {
-                p->tempPeriod = ch->period;
-            }
-            else
-            {
-                l = 0;
-                h = 83;
+		if (ch->glissandoControl == 0)
+		{
+			p->tempPeriod = ch->period;
+		}
+		else
+		{
+			l = 0;
+			h = 83;
 
-                tablePointer = (short *)&extendedRawPeriods[ch->fineTune * ((12 * 7) + 1)];
-                while (h >= l)
-                {
-                    m = (h + l) / 2;
+			tablePointer = (unsigned short *)&extendedRawPeriods[ch->fineTune * ((12 * 7) + 1)];
+			while (h >= l)
+			{
+				m = (h + l) / 2;
 
-                    if (tablePointer[m] == ch->period)
-                    {
-                        p->tempPeriod = tablePointer[m];
-                        break;
-                    }
-                    else if (tablePointer[m] > ch->period)
-                    {
-                        l = m + 1;
-                    }
-                    else
-                    {
-                        h = m - 1;
-                    }
-                }
-            }
-        }
+				if (tablePointer[m] == ch->period)
+				{
+					p->tempPeriod = tablePointer[m];
+					break;
+				}
+				else if (tablePointer[m] > ch->period)
+				{
+					l = m + 1;
+				}
+				else
+				{
+					h = m - 1;
+				}
+			}
+		}
     }
 }
 
@@ -2276,7 +2306,7 @@ static void fxArpeggio(player *p, mod_channel *ch)
     signed char noteToAdd;
     signed char arpeggioTick;
     unsigned char i;
-    short *tablePointer;
+    unsigned short *tablePointer;
 
     noteToAdd = 0;
 
@@ -2297,7 +2327,7 @@ static void fxArpeggio(player *p, mod_channel *ch)
 
     if (p->minPeriod == PT_MIN_PERIOD) /* PT/NT/UST/STK */
     {
-        tablePointer = (short *)&rawAmigaPeriods[ch->fineTune * ((12 * 3) + 1)];
+        tablePointer = (unsigned short *)&rawAmigaPeriods[ch->fineTune * ((12 * 3) + 1)];
         for (i = 0; i < (12 * 3); ++i)
         {
             if (ch->period >= tablePointer[i])
@@ -2312,7 +2342,7 @@ static void fxArpeggio(player *p, mod_channel *ch)
         l = 0;
         h = (12 * 7) - 1;
 
-        tablePointer = (short *)&extendedRawPeriods[ch->fineTune * ((12 * 7) + 1)];
+        tablePointer = (unsigned short *)&extendedRawPeriods[ch->fineTune * ((12 * 7) + 1)];
         while (h >= l)
         {
             m = (h + l) / 2;
@@ -2344,16 +2374,21 @@ static void fxPortamentoSlideUp(player *p, mod_channel *ch)
 
             if (p->minPeriod == PT_MIN_PERIOD)
             {
-                if (ch->period < 113)
-                    ch->period = 113;
+                if ((ch->period & 0x0FFF) < 113)
+                {
+                    ch->period &= 0xF000;
+                    ch->period |= 113;
+                }
+
+                p->tempPeriod = ch->period & 0x0FFF;
             }
             else
             {
                 if (ch->period < p->minPeriod)
                     ch->period = p->minPeriod;
-            }
-
-            p->tempPeriod = ch->period;
+                    
+                p->tempPeriod = ch->period;
+            }       
         }
     }
 }
@@ -2368,16 +2403,21 @@ static void fxPortamentoSlideDown(player *p, mod_channel *ch)
 
             if (p->minPeriod == PT_MIN_PERIOD)
             {
-                if (ch->period > 856)
-                    ch->period = 856;
+                if ((ch->period & 0x0FFF) > 856)
+                {
+                    ch->period &= 0xF000;
+                    ch->period |= 856;
+                }
+
+                p->tempPeriod = ch->period & 0x0FFF;
             }
             else
             {
                 if (ch->period > p->maxPeriod)
                     ch->period = p->maxPeriod;
-            }
-
-            p->tempPeriod = ch->period;
+                    
+                p->tempPeriod = ch->period;
+            }           
         }
     }
 }
@@ -2681,7 +2721,7 @@ static void fetchPatternData(player *p, mod_channel *ch)
     ch->command = note->command;
     ch->param = note->param;
 
-    if (note->period > 0)
+    if ((note->period & 0x0FFF) > 0)
     {
         if (ch->command == 0x0E)
         {
@@ -2689,7 +2729,7 @@ static void fetchPatternData(player *p, mod_channel *ch)
                 ch->fineTune = ch->param & 0x0F;
         }
 
-        tempNote = periodToNote(p, 0, note->period);
+        tempNote = periodToNote(p, 0, note->period & 0x0FFF);
         if ((p->minPeriod == PT_MIN_PERIOD) && (tempNote == (12 * 3))) /* PT/NT/STK/UST only */
         {
             ch->noNote = true;
@@ -2833,10 +2873,7 @@ static void processChannel(player *p, mod_channel *ch)
         if (p->minPeriod != PT_MIN_PERIOD)
             mixerSetChVol(p, ch->chanIndex, p->tempVolume);
 
-        if ((p->tempPeriod >= p->minPeriod) && (p->tempPeriod <= p->maxPeriod))
-            mixerSetChRate(p, ch->chanIndex, (p->minPeriod == PT_MIN_PERIOD) ? p->frequencyTable[(int)p->tempPeriod] : p->extendedFrequencyTable[(int)p->tempPeriod]);
-        else
-            mixerSetChVol(p, ch->chanIndex, 0); /* arpeggio override hack */
+        mixerSetChRate(p, ch->chanIndex, p->tempPeriod);
     }
 }
 
@@ -3002,14 +3039,6 @@ void *playptmod_Create(int samplingFrequency)
     for (i = 0; i < 32; ++i)
         p->sinusTable[i] = (unsigned char)floorf(255.0f * sinf(((float)i * 3.141592f) / 32.0f));
 
-    p->frequencyTable = (float *)malloc(sizeof (float) * (937 + 1));
-    for (i = 14; i <= 937; ++i) /* 0..13 will never be looked up, junk is OK */
-        p->frequencyTable[i] = (float)samplingFrequency / (3546895.0f / (float)i);
-
-    p->extendedFrequencyTable = (float *)malloc(sizeof (float) * (1712 + 1));
-    for (i = 14; i <= 1712; ++i) /* 0..13 will never be looked up, junk is OK */
-        p->extendedFrequencyTable[i] = (float)samplingFrequency / (3546895.0f / (float)i);
-
     /* generate extended period table */
     for (j = 0; j < 16; ++j)
         for (i = 0; i < ((12 * 7) + 1); ++i)
@@ -3157,18 +3186,6 @@ void playptmod_Free(void *_p)
     {
         free(p->sinusTable);
         p->sinusTable = NULL;
-    }
-
-    if (p->frequencyTable != NULL)
-    {
-        free(p->frequencyTable);
-        p->frequencyTable = NULL;
-    }
-
-    if (p->extendedFrequencyTable != NULL)
-    {
-        free(p->extendedFrequencyTable);
-        p->extendedFrequencyTable = NULL;
     }
 
     for (i = 0; i < MAX_CHANNELS; ++i)
