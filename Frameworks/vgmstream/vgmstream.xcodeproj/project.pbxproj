@@ -366,6 +366,8 @@
 		838BDB7B1D3B1FC20022CA6F /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */; };
 		838BDB7D1D3B1FCC0022CA6F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */; };
 		838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */; };
+		839B54521EEE1D9600048A2D /* ngc_ulw.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BD11F1EEE1CF200198540 /* ngc_ulw.c */; };
+		839B54571EEE1DA000048A2D /* rws_blocked.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BD1201EEE1D2A00198540 /* rws_blocked.c */; };
 		83A3F0741E3AD8B900D6A794 /* formats.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A3F0711E3AD8B900D6A794 /* formats.c */; };
 		83A3F0751E3AD8B900D6A794 /* formats.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3F0721E3AD8B900D6A794 /* formats.h */; };
 		83A3F0761E3AD8B900D6A794 /* stack_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3F0731E3AD8B900D6A794 /* stack_alloc.h */; };
@@ -505,6 +507,8 @@
 		831BA6251EAC61CB00CF89B0 /* wwise_vorbis_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wwise_vorbis_decoder.c; sourceTree = "<group>"; };
 		831BA6261EAC61CB00CF89B0 /* wwise_vorbis_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wwise_vorbis_utils.c; sourceTree = "<group>"; };
 		831BA6271EAC61CB00CF89B0 /* wwise_vorbis_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wwise_vorbis_utils.h; sourceTree = "<group>"; };
+		831BD11F1EEE1CF200198540 /* ngc_ulw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ngc_ulw.c; sourceTree = "<group>"; };
+		831BD1201EEE1D2A00198540 /* rws_blocked.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rws_blocked.c; sourceTree = "<group>"; };
 		832140591E8758D7001A8A5E /* fsb_vorbis_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb_vorbis_decoder.c; sourceTree = "<group>"; };
 		832389481D22419B00482226 /* clHCA.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = clHCA.c; sourceTree = "<group>"; };
 		832389491D22419B00482226 /* clHCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clHCA.h; sourceTree = "<group>"; };
@@ -1053,6 +1057,7 @@
 		836F6DFF18BDC2180095E648 /* layout */ = {
 			isa = PBXGroup;
 			children = (
+				831BD1201EEE1D2A00198540 /* rws_blocked.c */,
 				836F6E0018BDC2180095E648 /* aax_layout.c */,
 				836F6E0118BDC2180095E648 /* aix_layout.c */,
 				836F6E0218BDC2180095E648 /* ast_blocked.c */,
@@ -1093,6 +1098,7 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				831BD11F1EEE1CF200198540 /* ngc_ulw.c */,
 				8350270C1ED119D200C25929 /* ps3_mta2.c */,
 				833A7A2D1ED11961003EC53E /* xau.c */,
 				83709DFF1ECBC1A4005C03D3 /* gtd.c */,
@@ -1558,6 +1564,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				839B54571EEE1DA000048A2D /* rws_blocked.c in Sources */,
+				839B54521EEE1D9600048A2D /* ngc_ulw.c in Sources */,
 				836F6FAD18BDC2190095E648 /* ngc_dsp_konami.c in Sources */,
 				836F6FF818BDC2190095E648 /* ps2_smpl.c in Sources */,
 				836F6F8118BDC2190095E648 /* dsp_sth_str.c in Sources */,
