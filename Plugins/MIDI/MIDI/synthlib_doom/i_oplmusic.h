@@ -163,7 +163,8 @@ struct opl_voice_s
     unsigned int note_volume;
 
     // The current volume (register value) that has been set for this channel.
-    unsigned int reg_volume;
+    unsigned int car_volume;
+    unsigned int mod_volume;
 
     // The current pan.
     unsigned int reg_pan;
@@ -173,8 +174,9 @@ struct opl_voice_s
 };
 
 typedef enum {
-    opl_v_old, // hexen heretic
-    opl_v_new // doom strife
+    opl_doom1_1_666,    // Doom 1 v1.666
+    opl_doom2_1_666,    // Doom 2 v1.666, Hexen, Heretic
+    opl_doom_1_9        // Doom v1.9, Strife
 } opl_driver_ver_t;
 
 // Operators used by the different voices.
@@ -331,7 +333,7 @@ class DoomOPL : public midisynth {
 private:
     fm_chip *opl;
     opl_channel_data_t channels[MIDI_CHANNELS_PER_TRACK];
-    opl_driver_ver_t opl_drv_ver = opl_v_new;
+    opl_driver_ver_t opl_drv_ver = opl_doom_1_9;
 
     // GENMIDI lump instrument data:
 
@@ -354,7 +356,7 @@ private:
     void OPL_InitRegisters(bool opl_new);
     bool LoadInstrumentTable(unsigned int bank);
     void ReleaseVoice(unsigned int id);
-    void LoadOperatorData(int slot, const genmidi_op_t *data, bool max_level);
+    void LoadOperatorData(int slot, const genmidi_op_t *data, bool max_level, unsigned int *volume);
     void SetVoiceInstrument(opl_voice_t *voice, const genmidi_instr_t *instr, unsigned int instr_voice);
     void SetVoiceVolume(opl_voice_t *voice, unsigned int volume);
     void SetVoicePan(opl_voice_t *voice, unsigned int pan);
@@ -364,7 +366,8 @@ private:
     opl_channel_data_t *TrackChannelForEvent(unsigned char channel_num);
     void KeyOffEvent(unsigned char channel_num, unsigned char key);
     void ReplaceExistingVoice();
-    void ReplaceExistingVoiceOld(opl_channel_data_t *channel);
+    void ReplaceExistingVoiceDoom1();
+    void ReplaceExistingVoiceDoom2(opl_channel_data_t *channel);
     unsigned int FrequencyForVoice(opl_voice_t *voice);
     void UpdateVoiceFrequency(opl_voice_t *voice);
     void VoiceKeyOn(opl_channel_data_t *channel, const genmidi_instr_t *instrument, unsigned int instrument_voice,
