@@ -108,15 +108,14 @@ typedef enum {
 
     coding_XA,              /* CD-ROM XA */
     coding_PSX,				/* Sony PS ADPCM (VAG) */
-    coding_PSX_badflags,    /* Sony PS ADPCM with garbage in the flag byte */
+    coding_PSX_badflags,    /* Sony PS ADPCM with custom flag byte */
     coding_PSX_bmdx,        /* Sony PS ADPCM with BMDX encryption */
     coding_PSX_cfg,         /* Sony PS ADPCM with configurable frame size (FF XI, SGXD type 5, Bizarre Creations) */
     coding_HEVAG,           /* Sony PSVita ADPCM */
 
-    coding_EA_XA,			/* Electronic Arts XA ADPCM */
-    coding_EA_ADPCM,		/* Electronic Arts R1 ADPCM */
+    coding_EA_MT10,         /* Electronic Arts MicroTalk (10:1) ADPCM ('EA ADPCM')*/
+    coding_EA_XA,			/* Electronic Arts EA-XA ADPCM */
 	coding_MAXIS_ADPCM,		/* Maxis ADPCM */
-	coding_NDS_PROCYON,     /* Procyon Studio ADPCM */
 
     coding_XBOX,            /* XBOX IMA ADPCM */
     coding_XBOX_int,        /* XBOX IMA ADPCM (interleaved) */
@@ -125,8 +124,8 @@ typedef enum {
     coding_DVI_IMA,         /* DVI IMA ADPCM (high nibble first), aka ADP4 */
     coding_DVI_IMA_int,		/* DVI IMA ADPCM (Interleaved) */
     coding_NDS_IMA,         /* IMA ADPCM w/ NDS layout */
-    coding_EACS_IMA,
-    coding_MS_IMA,          /* Microsoft IMA */
+    coding_EACS_IMA,        /* Electronic Arts IMA ADPCM */
+    coding_MS_IMA,          /* Microsoft IMA ADPCM */
     coding_RAD_IMA,         /* Radical IMA ADPCM */
     coding_RAD_IMA_mono,    /* Radical IMA ADPCM, mono (for interleave) */
     coding_APPLE_IMA4,      /* Apple Quicktime IMA4 */
@@ -135,10 +134,12 @@ typedef enum {
     coding_OTNS_IMA,        /* Omikron The Nomad Soul IMA ADPCM */
     coding_FSB_IMA,         /* FMOD's FSB multichannel IMA ADPCM */
     coding_WWISE_IMA,       /* Audiokinetic Wwise IMA ADPCM */
+    coding_REF_IMA,         /* Reflections IMA ADPCM */
 
     coding_MSADPCM,         /* Microsoft ADPCM */
     coding_WS,              /* Westwood Studios VBR ADPCM */
     coding_AICA,            /* Yamaha AICA ADPCM */
+    coding_NDS_PROCYON,     /* Procyon Studio ADPCM */
     coding_L5_555,          /* Level-5 0x555 ADPCM */
     coding_SASSC,           /* Activision EXAKT SASSC DPCM */
     coding_LSF,             /* lsf ADPCM (Fastlane Street Racing iPhone)*/
@@ -172,9 +173,9 @@ typedef enum {
 
 #ifdef VGM_USE_MPEG
     coding_fake_MPEG2_L2,   /* MPEG-2 Layer 2 (AHX), with lying headers */
-    /* I don't even know offhand if all these combinations exist... */
-    coding_MPEG1_L1,
-    coding_MPEG1_L2,
+    /* MPEG audio variations (depending on sample rate and other config) */
+    coding_MPEG1_L1,        /* MP1 */
+    coding_MPEG1_L2,        /* MP2 */
     coding_MPEG1_L3,        /* good ol' MPEG-1 Layer 3 (MP3) */
     coding_MPEG2_L1,
     coding_MPEG2_L2,
@@ -357,7 +358,7 @@ typedef enum {
     meta_FSB5,              /* FMOD Sample Bank, version 5 */
     meta_RWX,				/* Air Force Delta Storm (XBOX) */
     meta_XWB,				/* Microsoft XACT framework (Xbox, X360, Windows) */
-    meta_XA30,				/* Driver - Parallel Lines (PS2) */
+    meta_PS2_XA30,          /* Driver - Parallel Lines (PS2) */
     meta_MUSC,				/* Spyro Games, possibly more */
     meta_MUSX_V004,			/* Spyro Games, possibly more */
     meta_MUSX_V005,			/* Spyro Games, possibly more */
@@ -463,15 +464,10 @@ typedef enum {
     meta_XBOX_XMU,			/* XBOX XMU */
     meta_XBOX_XVAS,			/* XBOX VAS */
     
-    meta_EAXA_R2,			/* EA XA Release 2 */
-    meta_EAXA_R3,			/* EA XA Release 3 */
-    meta_EAXA_PSX,			/* EA with PSX ADPCM */
-    meta_EACS_PC,			/* EACS PC */
-    meta_EACS_PSX,			/* EACS PSX */
-    meta_EACS_SAT,			/* EACS SATURN */
-    meta_EA_ADPCM,			/* EA header using XA ADPCM */
-    meta_EA_IMA,			/* EA header using IMA */
-    meta_EA_PCM,			/* EA header using PCM */
+    meta_EA_SCHL,			/* Electronic Arts SCHl */
+    meta_EACS_PC,			/* Electronic Arts EACS PC */
+    meta_EACS_PSX,			/* Electronic Arts EACS PSX */
+    meta_EACS_SAT,			/* Electronic Arts EACS SATURN */
 
     meta_RAW,				/* RAW PCM file */
 
@@ -628,6 +624,8 @@ typedef enum {
     meta_TA_AAC_PS3,        /* tri-ace AAC (Star Ocean International, Resonance of Fate) */
     meta_PS3_MTA2,          /* Metal Gear Solid 4 MTA2 */
     meta_NGC_ULW,           /* Burnout 1 (GC only) */
+    meta_PC_XA30,           /* Driver - Parallel Lines (PC) */
+    meta_WII_04SW,          /* Driver - Parallel Lines (Wii) */
 
 #ifdef VGM_USE_VORBIS
     meta_OGG_VORBIS,        /* Ogg Vorbis */
@@ -735,7 +733,8 @@ typedef struct {
     size_t interleave_smallblock_size;  /* smaller interleave for last block */
     /* headered blocks */
     off_t current_block_offset;     /* start of this block (offset of block header) */
-    size_t current_block_size;      /* size of the block we're in now (usable data) */
+    size_t current_block_size;      /* size in usable bytes of the block we're in now (used to calculate num_samples per block) */
+    size_t current_block_samples;   /* size in samples of the block we're in now (used over current_block_size if possible) */
     size_t full_block_size;         /* size including padding and other unusable data */
     off_t next_block_offset;        /* offset of header of the next block */
     int block_count;                /* count of "semi" block in total block */
@@ -756,6 +755,7 @@ typedef struct {
 
     /* decoder specific */
     int codec_endian;               /* little/big endian marker; name is left vague but usually means big endian */
+    int codec_version;              /* flag for codecs with minor variations */
 
     uint8_t xa_channel;				/* XA ADPCM: selected channel */
     int32_t xa_sector_length;		/* XA ADPCM: XA block */
@@ -764,8 +764,6 @@ typedef struct {
     int8_t get_high_nibble;         /* ADPCM: which nibble (XA, IMA, EA) */
 
     uint8_t	ea_big_endian;          /* EA ADPCM stuff */
-    uint8_t	ea_compression_type;
-    uint8_t	ea_compression_version;
     uint8_t	ea_platform;
 
     int32_t ws_output_size;         /* WS ADPCM: output bytes for this block */
@@ -835,6 +833,7 @@ typedef struct {
 #endif
 
 #ifdef VGM_USE_MPEG
+typedef enum { /*MPEG_NONE,*/ MPEG_FIXED, MPEG_FSB, MPEG_P3D, MPEG_EA } mpeg_interleave_type;
 typedef struct {
     uint8_t *buffer; /* raw (coded) data buffer */
     size_t buffer_size;
@@ -852,7 +851,10 @@ typedef struct {
     size_t samples_to_discard; /* for interleaved looping */
 
     /* interleaved MPEG internals */
-    int interleaved; /* flag */
+    int interleaved;
+    mpeg_interleave_type interleave_type; /* flag */
+    uint32_t interleave_value; /* varies with type */
+
     mpg123_handle **ms; /* array of MPEG streams */
     size_t ms_size;
     uint8_t *frame_buffer; /* temp buffer with samples from a single decoded frame */
@@ -862,11 +864,8 @@ typedef struct {
     size_t bytes_in_interleave_buffer;
     size_t bytes_used_in_interleave_buffer;
 
-    /* messy stuff for padded FSB frames */
-    size_t fixed_frame_size; /* when given a fixed size (XVAG) */
     size_t current_frame_size;
-    int fsb_padding; /* for FSBs that have extra garbage between frames */
-    size_t current_padding; /* padding needed for current frame size */
+    size_t current_padding; /* FSB padding between frames */
 
 } mpeg_codec_data;
 #endif

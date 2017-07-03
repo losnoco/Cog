@@ -63,7 +63,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_xbox_wavm,
     init_vgmstream_xbox_xwav,
     init_vgmstream_ngc_str,
-    init_vgmstream_ea,
+    init_vgmstream_ea_schl,
     init_vgmstream_caf,
     init_vgmstream_ps2_vpk,
     init_vgmstream_genh,
@@ -105,7 +105,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_fsb5,
     init_vgmstream_rwx,
     init_vgmstream_xwb,
-    init_vgmstream_xa30,
+    init_vgmstream_ps2_xa30,
     init_vgmstream_musc,
     init_vgmstream_musx_v004,
     init_vgmstream_musx_v005,
@@ -362,6 +362,8 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_ta_aac_ps3,
     init_vgmstream_ps3_mta2,
     init_vgmstream_ngc_ulw,
+    init_vgmstream_pc_xa30,
+    init_vgmstream_wii_04sw,
 
 #ifdef VGM_USE_FFMPEG
     init_vgmstream_mp4_aac_ffmpeg,
@@ -1045,7 +1047,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_EA_XA:
             return 28;
 		case coding_MAXIS_ADPCM:
-        case coding_EA_ADPCM:
+        case coding_EA_MT10:
 			return 14*vgmstream->channels;
         case coding_WS:
             /* only works if output sample size is 8 bit, which always is for WS ADPCM */
@@ -1057,6 +1059,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_MS_IMA:
         case coding_RAD_IMA:
         case coding_WWISE_IMA:
+        case coding_REF_IMA:
             return (vgmstream->interleave_block_size-4*vgmstream->channels)*2/vgmstream->channels;
         case coding_RAD_IMA_mono:
             return 32;
@@ -1156,6 +1159,7 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_NDS_IMA:
         case coding_DAT4_IMA:
         case coding_WWISE_IMA:
+        case coding_REF_IMA:
             return vgmstream->interleave_block_size;
         case coding_RAD_IMA_mono:
             return 0x14;
@@ -1187,7 +1191,7 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
             return 36;
 		case coding_MAXIS_ADPCM:
 			return 15*vgmstream->channels;
-        case coding_EA_ADPCM:
+        case coding_EA_MT10:
             return 30;
         case coding_EA_XA:
             return 1; // the frame is variant in size
@@ -1486,9 +1490,9 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         samples_to_do,chan);
             }
             break;
-        case coding_EA_ADPCM:
+        case coding_EA_MT10:
             for (chan=0;chan<vgmstream->channels;chan++) {
-                decode_ea_adpcm(vgmstream,buffer+samples_written*vgmstream->channels+chan,
+                decode_ea_mt10(vgmstream,buffer+samples_written*vgmstream->channels+chan,
                         vgmstream->channels,vgmstream->samples_into_block,
                         samples_to_do,chan);
             }
@@ -1627,6 +1631,13 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
         case coding_WWISE_IMA:
             for (chan=0;chan<vgmstream->channels;chan++) {
                 decode_wwise_ima(vgmstream,&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do,chan);
+            }
+            break;
+        case coding_REF_IMA:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_ref_ima(vgmstream,&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
                         vgmstream->channels,vgmstream->samples_into_block,
                         samples_to_do,chan);
             }
@@ -2045,6 +2056,7 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
             case coding_MS_IMA:
             case coding_MC3:
             case coding_WWISE_IMA:
+            case coding_REF_IMA:
                 snprintf(temp,TEMPSIZE,
                         "block size: %#x bytes\n",
                         (int32_t)vgmstream->interleave_block_size);
@@ -2399,7 +2411,7 @@ int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t s
 #endif
 
     /* if interleave is big enough keep a buffer per channel */
-    if (vgmstream->interleave_block_size >= STREAMFILE_DEFAULT_BUFFER_SIZE) {
+    if (vgmstream->interleave_block_size * vgmstream->channels >= STREAMFILE_DEFAULT_BUFFER_SIZE) {
         use_streamfile_per_channel = 1;
     }
 
