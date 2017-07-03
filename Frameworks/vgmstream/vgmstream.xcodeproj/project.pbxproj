@@ -375,6 +375,8 @@
 		83AB8C751E8072A100086084 /* nub_vag.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AB8C731E8072A100086084 /* nub_vag.c */; };
 		83AB8C761E8072A100086084 /* x360_ast.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AB8C741E8072A100086084 /* x360_ast.c */; };
 		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
+		83CAB8E21F0B0752001BC993 /* wii_04sw.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CAB8E11F0B0745001BC993 /* wii_04sw.c */; };
+		83CAB8E31F0B0755001BC993 /* pc_xa30.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CAB8DC1F0B0744001BC993 /* pc_xa30.c */; };
 		83D731101A7394BF00CA1366 /* g7221.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; };
 		83D731111A7394D300CA1366 /* g7221.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D731891A749D1500CA1366 /* g719.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; };
@@ -857,6 +859,8 @@
 		83AB8C731E8072A100086084 /* nub_vag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nub_vag.c; sourceTree = "<group>"; };
 		83AB8C741E8072A100086084 /* x360_ast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x360_ast.c; sourceTree = "<group>"; };
 		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
+		83CAB8DC1F0B0744001BC993 /* pc_xa30.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pc_xa30.c; sourceTree = "<group>"; };
+		83CAB8E11F0B0745001BC993 /* wii_04sw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = wii_04sw.c; sourceTree = "<group>"; };
 		83D730E51A738EB200CA1366 /* g7221.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g7221.xcodeproj; path = ../g7221/g7221.xcodeproj; sourceTree = "<group>"; };
 		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
 		83D7318B1A749EEE00CA1366 /* g719_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g719_decoder.c; sourceTree = "<group>"; };
@@ -1098,6 +1102,8 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				83CAB8DC1F0B0744001BC993 /* pc_xa30.c */,
+				83CAB8E11F0B0745001BC993 /* wii_04sw.c */,
 				831BD11F1EEE1CF200198540 /* ngc_ulw.c */,
 				8350270C1ED119D200C25929 /* ps3_mta2.c */,
 				833A7A2D1ED11961003EC53E /* xau.c */,
@@ -1564,6 +1570,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83CAB8E31F0B0755001BC993 /* pc_xa30.c in Sources */,
+				83CAB8E21F0B0752001BC993 /* wii_04sw.c in Sources */,
 				839B54571EEE1DA000048A2D /* rws_blocked.c in Sources */,
 				839B54521EEE1D9600048A2D /* ngc_ulw.c in Sources */,
 				836F6FAD18BDC2190095E648 /* ngc_dsp_konami.c in Sources */,
