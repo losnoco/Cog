@@ -158,6 +158,13 @@ void DoomOPL::ReleaseVoice(unsigned int id)
     unsigned int i;
 	bool doublev;
 
+    // Doom 2 1.666 OPL crash emulation.
+    if (id >= voice_alloced_num)
+    {
+        voice_alloced_num = 0;
+        voice_free_num = 0;
+        return;
+    }
     voice = voice_alloced_list[id];
 
     VoiceKeyOff(voice);
@@ -180,7 +187,7 @@ void DoomOPL::ReleaseVoice(unsigned int id)
 
     voice_free_list[voice_free_num++] = voice;
 
-	if (doublev && opl_drv_ver == opl_v_old)
+	if (doublev && opl_drv_ver < opl_doom_1_9)
 	{
 		ReleaseVoice(id);
 	}
@@ -189,7 +196,7 @@ void DoomOPL::ReleaseVoice(unsigned int id)
 // Load data to the specified operator
 
 void DoomOPL::LoadOperatorData(int slot, const genmidi_op_t *data,
-                             bool max_level)
+                             bool max_level, unsigned int *volume)
 {
     int level;
 
@@ -202,6 +209,12 @@ void DoomOPL::LoadOperatorData(int slot, const genmidi_op_t *data,
     {
         level |= 0x3f;
     }
+    else
+    {
+        level |= data->level;
+    }
+
+    *volume = level;
 
     OPL_WriteRegister(OPL_REGS_LEVEL + slot, level);
 	OPL_WriteRegister(OPL_REGS_TREMOLO + slot, data->tremolo);
@@ -241,8 +254,8 @@ void DoomOPL::SetVoiceInstrument(opl_voice_t *voice,
     // is set in SetVoiceVolume (below).  If we are not using
     // modulating mode, we must set both to minimum volume.
 
-    LoadOperatorData(voice->op2 | voice->array, &data->carrier, true);
-	LoadOperatorData(voice->op1 | voice->array, &data->modulator, !modulating);
+    LoadOperatorData(voice->op2 | voice->array, &data->carrier, true, &voice->car_volume);
+	LoadOperatorData(voice->op1 | voice->array, &data->modulator, !modulating, &voice->mod_volume);
 
     // Set feedback register that control the connection between the
     // two operators.  Turn on bits in the upper nybble; I think this
@@ -250,10 +263,6 @@ void DoomOPL::SetVoiceInstrument(opl_voice_t *voice,
 
 	OPL_WriteRegister((OPL_REGS_FEEDBACK + voice->index) | voice->array,
                       data->feedback | voice->reg_pan);
-
-    // Hack to force a volume update.
-
-	voice->reg_volume = 999;
 	
 	// Calculate voice priority.
 
@@ -284,24 +293,31 @@ void DoomOPL::SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
 
     // Update the volume register(s) if necessary.
 
-    if (car_volume != voice->reg_volume)
+    if (car_volume != (voice->car_volume & 0x3f))
     {
-        voice->reg_volume = car_volume | (opl_voice->carrier.scale & 0xc0);
+        voice->car_volume = car_volume | (voice->car_volume & 0xc0);
 
-        OPL_WriteRegister((OPL_REGS_LEVEL + voice->op2) | voice->array, voice->reg_volume);
+        OPL_WriteRegister((OPL_REGS_LEVEL + voice->op2) | voice->array, voice->car_volume);
 
         // If we are using non-modulated feedback mode, we must set the
         // volume for both voices.
 
         if ((opl_voice->feedback & 0x01) != 0 && opl_voice->modulator.level != 0x3f)
         {
-            mod_volume = 0x3f - opl_voice->modulator.level;
-            if (mod_volume >= car_volume)
+            mod_volume = opl_voice->modulator.level;
+            if (mod_volume < car_volume)
             {
                 mod_volume = car_volume;
             }
-			OPL_WriteRegister((OPL_REGS_LEVEL + voice->op1) | voice->array,
-                              mod_volume | (opl_voice->modulator.scale & 0xc0));
+
+            mod_volume |= voice->mod_volume & 0xc0;
+
+            if (mod_volume != voice->mod_volume)
+            {
+                voice->mod_volume = mod_volume;
+                OPL_WriteRegister((OPL_REGS_LEVEL + voice->op1) | voice->array,
+                                  voice->mod_volume);
+            }
         }
     }
 }
@@ -427,7 +443,29 @@ void DoomOPL::ReplaceExistingVoice()
     ReleaseVoice(result);
 }
 
-void DoomOPL::ReplaceExistingVoiceOld(opl_channel_data_t *channel)
+// Alternate versions of ReplaceExistingVoice() used when emulating old
+// versions of the DMX library used in Doom 1.666, Heretic and Hexen.
+
+void DoomOPL::ReplaceExistingVoiceDoom1(void)
+{
+    int i;
+    int result;
+
+    result = 0;
+
+    for (i = 0; i < voice_alloced_num; i++)
+    {
+        if (voice_alloced_list[i]->channel
+          > voice_alloced_list[result]->channel)
+        {
+            result = i;
+        }
+    }
+
+    ReleaseVoice(result);
+}
+
+void DoomOPL::ReplaceExistingVoiceDoom2(opl_channel_data_t *channel)
 {
     unsigned int i;
     unsigned int result;
@@ -579,6 +617,11 @@ void DoomOPL::VoiceKeyOn(opl_channel_data_t *channel,
 
     voice_alloced_list[voice_alloced_num++] = voice;
 
+    if (!opl_new && opl_drv_ver == opl_doom1_1_666)
+    {
+        instrument_voice = 0;
+    }
+
     voice->channel = channel;
     voice->key = key;
 
@@ -619,7 +662,7 @@ void DoomOPL::KeyOnEvent(unsigned char channel_num, unsigned char key, unsigned 
 {
     const genmidi_instr_t *instrument;
     opl_channel_data_t *channel;
-	unsigned int note;
+	unsigned int note, voicenum;
 	bool doublev;
 
 /*
@@ -661,43 +704,67 @@ void DoomOPL::KeyOnEvent(unsigned char channel_num, unsigned char key, unsigned 
 
 	doublev = ((short)(instrument->flags) & GENMIDI_FLAG_2VOICE) != 0;
 
-	if (opl_drv_ver == opl_v_old)
-	{
-		if (voice_alloced_num == opl_voices)
-		{
-			ReplaceExistingVoiceOld(channel);
-		}
-		if (voice_alloced_num == opl_voices - 1 && doublev)
-		{
-			ReplaceExistingVoiceOld(channel);
-		}
+    switch (opl_drv_ver)
+    {
+        case opl_doom1_1_666:
+            voicenum = doublev + 1;
+            if (!opl_new)
+            {
+                voicenum = 1;
+            }
+            while (voice_alloced_num > opl_voices - voicenum)
+            {
+                ReplaceExistingVoiceDoom1();
+            }
 
-		// Find and program a voice for this instrument.  If this
-		// is a double voice instrument, we must do this twice.
-		if (doublev)
-		{
-			VoiceKeyOn(channel, instrument, 1, note, key, volume);
-		}
+            // Find and program a voice for this instrument.  If this
+            // is a double voice instrument, we must do this twice.
 
-		VoiceKeyOn(channel, instrument, 0, note, key, volume);
+            if (doublev)
+            {
+                VoiceKeyOn(channel, instrument, 1, note, key, volume);
+            }
+
+            VoiceKeyOn(channel, instrument, 0, note, key, volume);
+            break;
+        case opl_doom2_1_666:
+            if (voice_alloced_num == opl_voices)
+            {
+                ReplaceExistingVoiceDoom2(channel);
+            }
+            if (voice_alloced_num == opl_voices - 1 && doublev)
+            {
+                ReplaceExistingVoiceDoom2(channel);
+            }
+
+            // Find and program a voice for this instrument.  If this
+            // is a double voice instrument, we must do this twice.
+
+            if (doublev)
+            {
+                VoiceKeyOn(channel, instrument, 1, note, key, volume);
+            }
+
+            VoiceKeyOn(channel, instrument, 0, note, key, volume);
+            break;
+        default:
+        case opl_doom_1_9:
+            if (voice_free_num == 0)
+            {
+                ReplaceExistingVoice();
+            }
+
+            // Find and program a voice for this instrument.  If this
+            // is a double voice instrument, we must do this twice.
+
+            VoiceKeyOn(channel, instrument, 0, note, key, volume);
+
+            if (doublev)
+            {
+                VoiceKeyOn(channel, instrument, 1, note, key, volume);
+            }
+            break;
     }
-	else
-	{
-		if (voice_free_num == 0)
-		{
-			ReplaceExistingVoice();
-		}
-
-		// Find and program a voice for this instrument.  If this
-		// is a double voice instrument, we must do this twice.
-
-		VoiceKeyOn(channel, instrument, 0, note, key, volume);
-
-		if (doublev)
-		{
-			VoiceKeyOn(channel, instrument, 1, note, key, volume);
-		}
-	}
 }
 
 void DoomOPL::ProgramChangeEvent(unsigned char channel_num, unsigned char instrument)
@@ -948,7 +1015,7 @@ int DoomOPL::midi_init(unsigned int rate, unsigned int bank, unsigned int extp)
     voice_free_num = 0;
 	opl_new = 0;
 	opl_voices = OPL_NUM_VOICES;
-	opl_drv_ver = opl_v_new;
+	opl_drv_ver = opl_doom_1_9;
 
 	/*env = getenv("DMXOPTION");
 	if (env)
@@ -958,10 +1025,14 @@ int DoomOPL::midi_init(unsigned int rate, unsigned int bank, unsigned int extp)
 			opl_new = 1;
 			opl_voices = OPL_NUM_VOICES * 2;
 		}/*
-		if (strstr(env, "-oldalg"))
+		if (strstr(env, "-doom1"))
 		{
-			opl_drv_ver = opl_v_old;
+			opl_drv_ver = opl_doom1_1_666;
 		}
+	if (strstr(env, "-doom2"))
+	{
+		opl_drv_ver = opl_doom2_1_666;
+	}
 	}*/
 
 	OPL_InitRegisters(opl_new);
