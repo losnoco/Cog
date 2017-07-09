@@ -308,6 +308,35 @@ ptr##op:\
 case op + 0x04: /* imm */\
 imm##op:
 
+#define ARITH_ADDR_MODES_PTR( op )      \
+case op - 0x04: /* (ind,x) */           \
+IND_X( data );                               \
+goto imm##op;                       \
+case op + 0x0C:                         \
+IND_Y(NO_PAGE_PENALTY,data);                  \
+goto imm##op;                       \
+case op + 0x10: /* zp,X */              \
+data = uint8_t (data + x);          \
+goto imm##op;                       \
+case op + 0x14: /* abs,Y */             \
+data += y;                          \
+goto ind##op;                       \
+case op + 0x18: /* abs,X */             \
+data += x;                          \
+ind##op: {                              \
+    int temp = data;                    \
+    PAGE_PENALTY(data);\
+    ADD_PAGE( data );                            \
+    FLUSH_TIME(); \
+    data = READ_MEM( data - ( temp & 0x100 ) );    \
+    CACHE_TIME();\
+    goto imm##op;                       \
+}                                       \
+case op + 0x08: /* abs */               \
+ADD_PAGE( data );                            \
+case op + 0x00: /* zp */                \
+imm##op:                                \
+
 // TODO: more efficient way to handle negative branch that wraps PC around
 #define BRANCH( cond )\
 {\
@@ -701,6 +730,7 @@ imm##op:
 // Shift/rotate
 
 	case 0x4A: // LSR A
+    lsr_a:
 		c = 0;
 	case 0x6A: // ROR A
 		nz = c >> 1 & 0x80;
@@ -995,8 +1025,14 @@ imm##op:
 // Unofficial
 	
 	// SKW - skip word
-	case 0x1C: case 0x3C: case 0x5C: case 0x7C: case 0xDC: case 0xFC:
-		PAGE_PENALTY( data + x );
+    case 0x1C: case 0x3C: case 0x5C: case 0x7C: case 0xDC: case 0xFC: {
+        data += x;
+		PAGE_PENALTY( data );
+        int addr = GET_ADDR();
+        if ( data & 0x100 )
+            DUMMY_READ( addr, x );
+        DUMMY_READ( addr + 0x100, x );
+    }
 	case 0x0C:
 		pc++;
 	// SKB - skip byte
@@ -1009,6 +1045,210 @@ imm##op:
 	case 0xEA: case 0x1A: case 0x3A: case 0x5A: case 0x7A: case 0xDA: case 0xFA:
 		goto loop;
 	
+    ARITH_ADDR_MODES_PTR( 0xC7 ) // DCP
+    WRITE_MEM( data, nz = READ_MEM( data ) );
+        nz = uint8_t( nz - 1 );
+        WRITE_MEM( data, nz );
+        pc++;
+        nz = a - nz;
+        c = ~nz;
+        nz &= 0xFF;
+        goto loop;
+        
+        ARITH_ADDR_MODES_PTR( 0xE7 ) // ISC
+        WRITE_MEM( data, nz = READ_MEM( data ) );
+        nz = uint8_t( nz + 1 );
+        WRITE_MEM( data, nz );
+        data = nz ^ 0xFF;
+        goto adc_imm;
+        
+        ARITH_ADDR_MODES_PTR( 0x27 ) { // RLA
+            WRITE_MEM( data, nz = READ_MEM( data ) );
+            int temp = c;
+            c = nz << 1;
+            nz = uint8_t( c ) | ( ( temp >> 8 ) & 0x01 );
+            WRITE_MEM( data, nz );
+            pc++;
+            nz = a &= nz;
+            goto loop;
+        }
+        
+        ARITH_ADDR_MODES_PTR( 0x67 ) { // RRA
+            int temp;
+            WRITE_MEM( data, temp = READ_MEM( data ) );
+            nz = ((c >> 1) & 0x80) | (temp >> 1);
+            WRITE_MEM( data, nz );
+            data = nz;
+            c = temp << 8;
+            goto adc_imm;
+        }
+        
+        ARITH_ADDR_MODES_PTR( 0x07 ) // SLO
+        WRITE_MEM( data, nz = READ_MEM( data ) );
+        c = nz << 1;
+        nz = uint8_t( c );
+        WRITE_MEM( data, nz );
+        nz = (a |= nz);
+        pc++;
+        goto loop;
+        
+        ARITH_ADDR_MODES_PTR( 0x47 ) // SRE
+        WRITE_MEM( data, nz = READ_MEM( data ) );
+        c = nz << 8;
+        nz >>= 1;
+        WRITE_MEM( data, nz );
+        nz = a ^= nz;
+        pc++;
+        goto loop;
+        
+    case 0x4B: // ALR
+        nz = (a &= data);
+        pc++;
+        goto lsr_a;
+        
+    case 0x0B: // ANC
+    case 0x2B:
+        nz = a &= data;
+        c = a << 1;
+        pc++;
+        goto loop;
+        
+    case 0x6B: // ARR
+        nz = a = uint8_t( ( ( data & a ) >> 1 ) | ( ( c >> 1 ) & 0x80 ) );
+        c = a << 2;
+        flags = ( flags & ~v40 ) | ( ( a ^ a << 1 ) & v40 );
+        pc++;
+        goto loop;
+        
+    case 0xAB: // LXA
+        a = data;
+        x = data;
+        nz = data;
+        pc++;
+        goto loop;
+        
+    case 0xA3: // LAX
+        IND_X( data );
+        goto lax_ptr;
+        
+    case 0xB3:
+        IND_Y(PAGE_PENALTY,data);
+        goto lax_ptr;
+        
+    case 0xB7:
+        data = uint8_t (data + y);
+        
+    case 0xA7:
+        data = READ_LOW( data );
+        goto lax_imm;
+        
+    case 0xBF: {
+        data += y;
+        PAGE_PENALTY( data );
+        int temp = data;
+        ADD_PAGE( data );
+        if ( temp & 0x100 )
+            READ_MEM( data - 0x100 );
+            goto lax_ptr;
+    }
+        
+    case 0xAF:
+        ADD_PAGE( data );
+        
+    lax_ptr:
+        data = READ_MEM( data );
+    lax_imm:
+        nz = x = a = data;
+        pc++;
+        goto loop;
+        
+    case 0x83: // SAX
+        IND_X( data );
+        goto sax_imm;
+        
+    case 0x97:
+        data = uint8_t (data + y);
+        goto sax_imm;
+        
+    case 0x8F:
+        ADD_PAGE( data );
+        
+    case 0x87:
+    sax_imm:
+        WRITE_MEM( data, a & x );
+        pc++;
+        goto loop;
+        
+    case 0xCB: // SBX
+        data = ( a & x ) - data;
+        c = ( data <= 0xFF ) ? 0x100 : 0;
+        nz = x = uint8_t( data );
+        pc++;
+        goto loop;
+        
+    case 0x93: // SHA (ind),Y
+        IND_Y(NO_PAGE_PENALTY,data);
+        pc++;
+        WRITE_MEM( data, uint8_t( a & x & ( ( data >> 8 ) + 1 ) ) );
+        goto loop;
+        
+    case 0x9F: { // SHA abs,Y
+        data += y;
+        int temp = data;
+        ADD_PAGE( data );
+        READ_MEM( data - ( temp & 0x100 ) );
+        pc++;
+        WRITE_MEM( data, uint8_t( a & x & ( ( data >> 8 ) + 1 ) ) );
+        goto loop;
+    }
+        
+    case 0x9E: { // SHX abs,Y
+        data += y;
+        int temp = data;
+        ADD_PAGE( data );
+        READ_MEM( data - ( temp & 0x100 ) );
+        pc++;
+        if ( !( temp & 0x100 ) )
+            WRITE_MEM( data, uint8_t( x & ( ( data >> 8 ) + 1 ) ) );
+            goto loop;
+    }
+        
+    case 0x9C: { // SHY abs,X
+        data += x;
+        int temp = data;
+        ADD_PAGE( data );
+        READ_MEM( data - ( temp & 0x100 ) );
+        pc++;
+        if ( !( temp & 0x100) )
+            WRITE_MEM( data, uint8_t( y & ( ( data >> 8 ) + 1 ) ) );
+            goto loop;
+    }
+        
+    case 0x9B: { // SHS abs,Y
+        data += y;
+        int temp = data;
+        ADD_PAGE( data );
+        READ_MEM( data - ( temp & 0x100 ) );
+        pc++;
+        SET_SP( a & x );
+        WRITE_MEM( data, uint8_t( a & x & ( ( data >> 8 ) + 1 ) ) );
+        goto loop;
+    }
+        
+    case 0xBB: { // LAS abs,Y
+        data += y;
+        PAGE_PENALTY( data );
+        int temp = data;
+        ADD_PAGE( data );
+        if ( temp & 0x100 )
+            READ_MEM( data - 0x100 );
+            pc++;
+        a = GET_SP();
+        x = a &= READ_MEM( data );
+        SET_SP( a );
+        goto loop;
+    }
+        
 	case Nes_Cpu::halt_opcode: // HLT - halt processor
 		if ( pc-- > 0x10000 )
 		{
@@ -1022,8 +1262,9 @@ imm##op:
 	
 // Unimplemented
 	
-	case 0xFF:  // force 256-entry jump table for optimization purposes
+/*	case 0xFF:  // force 256-entry jump table for optimization purposes
 		c |= 1; // compiler doesn't know that this won't affect anything
+                // Now actually an implemented opcode */
 	default:
 		check( (unsigned) opcode < 0x100 );
 		
