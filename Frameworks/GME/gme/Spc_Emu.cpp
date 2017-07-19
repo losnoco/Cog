@@ -23,6 +23,8 @@ Spc_Emu::Spc_Emu()
 {
 	set_type( gme_spc_type );
 	set_gain( 1.4 );
+	enable_filter( false );
+	enable_echo( true );
 }
 
 Spc_Emu::~Spc_Emu() { }
