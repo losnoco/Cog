@@ -678,4 +678,10 @@ VGMSTREAM * init_vgmstream_pc_xa30(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_wii_04sw(STREAMFILE * streamFile);
 
+VGMSTREAM * init_vgmstream_txth(STREAMFILE * streamFile);
+
+VGMSTREAM * init_vgmstream_ea_bnk(STREAMFILE * streamFile);
+
+VGMSTREAM * init_vgmstream_ea_schl_fixed(STREAMFILE * streamFile);
+
 #endif /*_META_H*/

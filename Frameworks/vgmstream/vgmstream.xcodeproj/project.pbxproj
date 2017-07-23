@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 48C2650E1A5D420800A0A3D6 /* vorbisfile.h */; };
+		8301659A1F256BD000CA0941 /* txth.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165971F256BD000CA0941 /* txth.c */; };
+		8301659B1F256BD000CA0941 /* ea_schl_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165981F256BD000CA0941 /* ea_schl_fixed.c */; };
+		8301659C1F256BD000CA0941 /* nds_strm_ffta2.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165991F256BD000CA0941 /* nds_strm_ffta2.c */; };
+		830165A21F256BF400CA0941 /* hwas_blocked.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165A11F256BF400CA0941 /* hwas_blocked.c */; };
 		8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
 		8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
 		831BA6181EAC61A500CF89B0 /* adx.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA60E1EAC61A500CF89B0 /* adx.c */; };
@@ -492,6 +496,10 @@
 
 /* Begin PBXFileReference section */
 		48C2650E1A5D420800A0A3D6 /* vorbisfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vorbisfile.h; path = ../Vorbis/include/vorbis/vorbisfile.h; sourceTree = "<group>"; };
+		830165971F256BD000CA0941 /* txth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = txth.c; sourceTree = "<group>"; };
+		830165981F256BD000CA0941 /* ea_schl_fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ea_schl_fixed.c; sourceTree = "<group>"; };
+		830165991F256BD000CA0941 /* nds_strm_ffta2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nds_strm_ffta2.c; sourceTree = "<group>"; };
+		830165A11F256BF400CA0941 /* hwas_blocked.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hwas_blocked.c; sourceTree = "<group>"; };
 		8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mpg123.xcodeproj; path = ../mpg123/mpg123.xcodeproj; sourceTree = "<group>"; };
 		831BA60E1EAC61A500CF89B0 /* adx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adx.c; sourceTree = "<group>"; };
 		831BA60F1EAC61A500CF89B0 /* ogl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogl.c; sourceTree = "<group>"; };
@@ -1061,6 +1069,7 @@
 		836F6DFF18BDC2180095E648 /* layout */ = {
 			isa = PBXGroup;
 			children = (
+				830165A11F256BF400CA0941 /* hwas_blocked.c */,
 				831BD1201EEE1D2A00198540 /* rws_blocked.c */,
 				836F6E0018BDC2180095E648 /* aax_layout.c */,
 				836F6E0118BDC2180095E648 /* aix_layout.c */,
@@ -1102,6 +1111,9 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				830165971F256BD000CA0941 /* txth.c */,
+				830165981F256BD000CA0941 /* ea_schl_fixed.c */,
+				830165991F256BD000CA0941 /* nds_strm_ffta2.c */,
 				83CAB8DC1F0B0744001BC993 /* pc_xa30.c */,
 				83CAB8E11F0B0745001BC993 /* wii_04sw.c */,
 				831BD11F1EEE1CF200198540 /* ngc_ulw.c */,
@@ -1570,6 +1582,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8301659A1F256BD000CA0941 /* txth.c in Sources */,
+				8301659B1F256BD000CA0941 /* ea_schl_fixed.c in Sources */,
+				8301659C1F256BD000CA0941 /* nds_strm_ffta2.c in Sources */,
 				83CAB8E31F0B0755001BC993 /* pc_xa30.c in Sources */,
 				83CAB8E21F0B0752001BC993 /* wii_04sw.c in Sources */,
 				839B54571EEE1DA000048A2D /* rws_blocked.c in Sources */,
@@ -1708,6 +1723,7 @@
 				836F6F3218BDC2190095E648 /* ngc_dsp_decoder.c in Sources */,
 				836F704218BDC2190095E648 /* wii_sts.c in Sources */,
 				836F703918BDC2190095E648 /* vgs.c in Sources */,
+				830165A21F256BF400CA0941 /* hwas_blocked.c in Sources */,
 				836F6F2C18BDC2190095E648 /* mp4_aac_decoder.c in Sources */,
 				836F701F18BDC2190095E648 /* riff.c in Sources */,
 				836F6F9318BDC2190095E648 /* ivaud.c in Sources */,

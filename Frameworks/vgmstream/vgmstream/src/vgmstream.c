@@ -347,6 +347,10 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_dsp_adx,
     init_vgmstream_akb_multi,
     init_vgmstream_akb2_multi,
+#ifdef VGM_USE_FFMPEG
+    init_vgmstream_mp4_aac_ffmpeg,
+    init_vgmstream_bik,
+#endif
     init_vgmstream_x360_ast,
     init_vgmstream_wwise,
     init_vgmstream_ubi_raki,
@@ -364,11 +368,11 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_ngc_ulw,
     init_vgmstream_pc_xa30,
     init_vgmstream_wii_04sw,
+    init_vgmstream_ea_bnk,
+    init_vgmstream_ea_schl_fixed,
 
+    init_vgmstream_txth,  /* should go at the end (lower priority) */
 #ifdef VGM_USE_FFMPEG
-    init_vgmstream_mp4_aac_ffmpeg,
-    init_vgmstream_bik,
-
     init_vgmstream_ffmpeg, /* should go at the end */
 #endif
 };
@@ -940,6 +944,7 @@ void render_vgmstream(sample * buffer, int32_t sample_count, VGMSTREAM * vgmstre
 		case layout_ps2_iab_blocked:
         case layout_ps2_strlr_blocked:
         case layout_rws_blocked:
+        case layout_hwas_blocked:
             render_vgmstream_blocked(buffer,sample_count,vgmstream);
             break;
         case layout_interleave_byte:
@@ -1045,9 +1050,10 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_FSB_IMA:
             return 64;
         case coding_EA_XA:
+        case coding_EA_XA_int:
+        case coding_EA_XA_V2:
             return 28;
-		case coding_MAXIS_ADPCM:
-        case coding_EA_MT10:
+		case coding_MAXIS_XA:
 			return 14*vgmstream->channels;
         case coding_WS:
             /* only works if output sample size is 8 bit, which always is for WS ADPCM */
@@ -1189,12 +1195,14 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
 		case coding_XBOX_int:
         case coding_FSB_IMA:
             return 36;
-		case coding_MAXIS_ADPCM:
-			return 15*vgmstream->channels;
-        case coding_EA_MT10:
-            return 30;
         case coding_EA_XA:
-            return 1; // the frame is variant in size
+            return 0x1E;
+        case coding_EA_XA_int:
+            return 0x0F;
+        case coding_MAXIS_XA:
+            return 0x0F*vgmstream->channels;
+        case coding_EA_XA_V2:
+            return 1; /* the frame is variant in size (ADPCM frames of 0x0F or PCM frames) */
         case coding_WS:
             return vgmstream->current_block_size;
         case coding_IMA_int:
@@ -1394,7 +1402,7 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
             break;
         case coding_XBOX_int:
             for (chan=0;chan<vgmstream->channels;chan++) {
-                decode_int_xbox_ima(vgmstream,&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                decode_xbox_ima_int(vgmstream,&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
                         vgmstream->channels,vgmstream->samples_into_block,
                         samples_to_do,chan);
             }
@@ -1490,16 +1498,23 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         samples_to_do,chan);
             }
             break;
-        case coding_EA_MT10:
+        case coding_EA_XA_int:
             for (chan=0;chan<vgmstream->channels;chan++) {
-                decode_ea_mt10(vgmstream,buffer+samples_written*vgmstream->channels+chan,
+                decode_ea_xa_int(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
                         vgmstream->channels,vgmstream->samples_into_block,
                         samples_to_do,chan);
             }
             break;
-        case coding_MAXIS_ADPCM:
+        case coding_EA_XA_V2:
             for (chan=0;chan<vgmstream->channels;chan++) {
-                decode_maxis_adpcm(vgmstream,buffer+samples_written*vgmstream->channels+chan,
+                decode_ea_xa_v2(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do,chan);
+            }
+            break;
+        case coding_MAXIS_XA:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_maxis_xa(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
                         vgmstream->channels,vgmstream->samples_into_block,
                         samples_to_do,chan);
             }
@@ -1849,6 +1864,7 @@ int vgmstream_do_loop(VGMSTREAM * vgmstream) {
         if (vgmstream->meta_type == meta_DSP_STD ||
             vgmstream->meta_type == meta_DSP_RS03 ||
             vgmstream->meta_type == meta_DSP_CSTR ||
+            vgmstream->meta_type == meta_NDS_STRM_FFTA2 || /* clicks in some files otherwise */
             vgmstream->coding_type == coding_PSX ||
             vgmstream->coding_type == coding_PSX_bmdx ||
             vgmstream->coding_type == coding_PSX_badflags) {
