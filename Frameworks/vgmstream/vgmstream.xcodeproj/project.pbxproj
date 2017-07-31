@@ -30,8 +30,6 @@
 		8323894B1D22419B00482226 /* clHCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 832389491D22419B00482226 /* clHCA.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		832389501D2246C300482226 /* hca.c in Sources */ = {isa = PBXBuildFile; fileRef = 8323894F1D2246C300482226 /* hca.c */; };
 		832389521D224C0800482226 /* hca_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 832389511D224C0800482226 /* hca_decoder.c */; };
-		83299FCC1E76607A003A3242 /* header.c in Sources */ = {isa = PBXBuildFile; fileRef = 83299FCA1E76607A003A3242 /* header.c */; };
-		83299FCD1E76607A003A3242 /* header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83299FCB1E76607A003A3242 /* header.h */; };
 		83299FD01E7660C7003A3242 /* bik.c in Sources */ = {isa = PBXBuildFile; fileRef = 83299FCE1E7660C7003A3242 /* bik.c */; };
 		83299FD11E7660C7003A3242 /* dsp_adx.c in Sources */ = {isa = PBXBuildFile; fileRef = 83299FCF1E7660C7003A3242 /* dsp_adx.c */; };
 		832C70BF1E9335E400BD7B4E /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F4128F1E932F9A002E37D0 /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -524,8 +522,6 @@
 		832389491D22419B00482226 /* clHCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clHCA.h; sourceTree = "<group>"; };
 		8323894F1D2246C300482226 /* hca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca.c; sourceTree = "<group>"; };
 		832389511D224C0800482226 /* hca_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca_decoder.c; sourceTree = "<group>"; };
-		83299FCA1E76607A003A3242 /* header.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = header.c; sourceTree = "<group>"; };
-		83299FCB1E76607A003A3242 /* header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = header.h; sourceTree = "<group>"; };
 		83299FCE1E7660C7003A3242 /* bik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bik.c; sourceTree = "<group>"; };
 		83299FCF1E7660C7003A3242 /* dsp_adx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp_adx.c; sourceTree = "<group>"; };
 		833A7A2D1ED11961003EC53E /* xau.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xau.c; sourceTree = "<group>"; };
@@ -1011,8 +1007,6 @@
 				836F6E2718BDC2180095E648 /* meta */,
 				83A3F0711E3AD8B900D6A794 /* formats.c */,
 				83A3F0721E3AD8B900D6A794 /* formats.h */,
-				83299FCA1E76607A003A3242 /* header.c */,
-				83299FCB1E76607A003A3242 /* header.h */,
 				83A3F0731E3AD8B900D6A794 /* stack_alloc.h */,
 				836F6F1718BDC2190095E648 /* streamfile.c */,
 				836F6F1818BDC2190095E648 /* streamfile.h */,
@@ -1443,7 +1437,6 @@
 				8323894B1D22419B00482226 /* clHCA.h in Headers */,
 				831BA62D1EAC61CB00CF89B0 /* wwise_vorbis_utils.h in Headers */,
 				839E21E81F2EDAF100EE54D7 /* mpeg_decoder.h in Headers */,
-				83299FCD1E76607A003A3242 /* header.h in Headers */,
 				839E21E51F2EDAF100EE54D7 /* vorbis_custom_decoder.h in Headers */,
 				836F705918BDC2190095E648 /* vgmstream.h in Headers */,
 				839E21E61F2EDAF100EE54D7 /* vorbis_custom_data_wwise.h in Headers */,
@@ -1730,7 +1723,6 @@
 				836F6F2918BDC2190095E648 /* l5_555_decoder.c in Sources */,
 				836F6FF318BDC2190095E648 /* ps2_rstm.c in Sources */,
 				836F6FCC18BDC2190095E648 /* ps2_adsc.c in Sources */,
-				83299FCC1E76607A003A3242 /* header.c in Sources */,
 				836F6F7918BDC2190095E648 /* dc_asd.c in Sources */,
 				836F6FC118BDC2190095E648 /* pc_adp.c in Sources */,
 				836F6F8318BDC2190095E648 /* ea_old.c in Sources */,
