@@ -25,12 +25,7 @@
 		831BA6201EAC61A500CF89B0 /* x360_nub.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6161EAC61A500CF89B0 /* x360_nub.c */; };
 		831BA6211EAC61A500CF89B0 /* x360_pasx.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6171EAC61A500CF89B0 /* x360_pasx.c */; };
 		831BA6281EAC61CB00CF89B0 /* coding_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6221EAC61CB00CF89B0 /* coding_utils.c */; };
-		831BA6291EAC61CB00CF89B0 /* ogl_vorbis_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6231EAC61CB00CF89B0 /* ogl_vorbis_decoder.c */; };
-		831BA62A1EAC61CB00CF89B0 /* wwise_vorbis_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 831BA6241EAC61CB00CF89B0 /* wwise_vorbis_data.h */; };
-		831BA62B1EAC61CB00CF89B0 /* wwise_vorbis_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6251EAC61CB00CF89B0 /* wwise_vorbis_decoder.c */; };
-		831BA62C1EAC61CB00CF89B0 /* wwise_vorbis_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6261EAC61CB00CF89B0 /* wwise_vorbis_utils.c */; };
 		831BA62D1EAC61CB00CF89B0 /* wwise_vorbis_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 831BA6271EAC61CB00CF89B0 /* wwise_vorbis_utils.h */; };
-		8321405A1E8758D7001A8A5E /* fsb_vorbis_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 832140591E8758D7001A8A5E /* fsb_vorbis_decoder.c */; };
 		8323894A1D22419B00482226 /* clHCA.c in Sources */ = {isa = PBXBuildFile; fileRef = 832389481D22419B00482226 /* clHCA.c */; };
 		8323894B1D22419B00482226 /* clHCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 832389491D22419B00482226 /* clHCA.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		832389501D2246C300482226 /* hca.c in Sources */ = {isa = PBXBuildFile; fileRef = 8323894F1D2246C300482226 /* hca.c */; };
@@ -46,7 +41,6 @@
 		835027131ED119E000C25929 /* mta2_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 835027121ED119E000C25929 /* mta2_decoder.c */; };
 		8350C0551E071881009E0A93 /* xma.c in Sources */ = {isa = PBXBuildFile; fileRef = 8350C0541E071881009E0A93 /* xma.c */; };
 		8350C05A1E071990009E0A93 /* ps2_svag_snk.c in Sources */ = {isa = PBXBuildFile; fileRef = 8350C0591E071990009E0A93 /* ps2_svag_snk.c */; };
-		836E15DE1E88A3380029F8AD /* fsb_vorbis_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 836E15DD1E88A3380029F8AD /* fsb_vorbis_data.h */; };
 		836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B4518BDB8880095E648 /* InfoPlist.strings */; };
 		836F6F1E18BDC2190095E648 /* acm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE018BDC2180095E648 /* acm_decoder.c */; };
 		836F6F1F18BDC2190095E648 /* acm_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 836F6DE118BDC2180095E648 /* acm_decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -372,6 +366,17 @@
 		838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */; };
 		839B54521EEE1D9600048A2D /* ngc_ulw.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BD11F1EEE1CF200198540 /* ngc_ulw.c */; };
 		839B54571EEE1DA000048A2D /* rws_blocked.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BD1201EEE1D2A00198540 /* rws_blocked.c */; };
+		839E21E01F2EDAF100EE54D7 /* vorbis_custom_data_fsb.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E21D61F2EDAF000EE54D7 /* vorbis_custom_data_fsb.h */; };
+		839E21E11F2EDAF100EE54D7 /* vorbis_custom_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21D71F2EDAF000EE54D7 /* vorbis_custom_decoder.c */; };
+		839E21E21F2EDAF100EE54D7 /* vorbis_custom_utils_wwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21D81F2EDAF000EE54D7 /* vorbis_custom_utils_wwise.c */; };
+		839E21E31F2EDAF100EE54D7 /* mpeg_custom_utils_ahx.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21D91F2EDAF000EE54D7 /* mpeg_custom_utils_ahx.c */; };
+		839E21E41F2EDAF100EE54D7 /* vorbis_custom_utils_fsb.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21DA1F2EDAF000EE54D7 /* vorbis_custom_utils_fsb.c */; };
+		839E21E51F2EDAF100EE54D7 /* vorbis_custom_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E21DB1F2EDAF000EE54D7 /* vorbis_custom_decoder.h */; };
+		839E21E61F2EDAF100EE54D7 /* vorbis_custom_data_wwise.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E21DC1F2EDAF000EE54D7 /* vorbis_custom_data_wwise.h */; };
+		839E21E71F2EDAF100EE54D7 /* mpeg_custom_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21DD1F2EDAF000EE54D7 /* mpeg_custom_utils.c */; };
+		839E21E81F2EDAF100EE54D7 /* mpeg_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E21DE1F2EDAF000EE54D7 /* mpeg_decoder.h */; };
+		839E21E91F2EDAF100EE54D7 /* vorbis_custom_utils_sk.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21DF1F2EDAF000EE54D7 /* vorbis_custom_utils_sk.c */; };
+		839E21EB1F2EDB0600EE54D7 /* sk_aud.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21EA1F2EDB0500EE54D7 /* sk_aud.c */; };
 		83A3F0741E3AD8B900D6A794 /* formats.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A3F0711E3AD8B900D6A794 /* formats.c */; };
 		83A3F0751E3AD8B900D6A794 /* formats.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3F0721E3AD8B900D6A794 /* formats.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83A3F0761E3AD8B900D6A794 /* stack_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3F0731E3AD8B900D6A794 /* stack_alloc.h */; };
@@ -512,14 +517,9 @@
 		831BA6161EAC61A500CF89B0 /* x360_nub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x360_nub.c; sourceTree = "<group>"; };
 		831BA6171EAC61A500CF89B0 /* x360_pasx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x360_pasx.c; sourceTree = "<group>"; };
 		831BA6221EAC61CB00CF89B0 /* coding_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coding_utils.c; sourceTree = "<group>"; };
-		831BA6231EAC61CB00CF89B0 /* ogl_vorbis_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogl_vorbis_decoder.c; sourceTree = "<group>"; };
-		831BA6241EAC61CB00CF89B0 /* wwise_vorbis_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wwise_vorbis_data.h; sourceTree = "<group>"; };
-		831BA6251EAC61CB00CF89B0 /* wwise_vorbis_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wwise_vorbis_decoder.c; sourceTree = "<group>"; };
-		831BA6261EAC61CB00CF89B0 /* wwise_vorbis_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wwise_vorbis_utils.c; sourceTree = "<group>"; };
 		831BA6271EAC61CB00CF89B0 /* wwise_vorbis_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wwise_vorbis_utils.h; sourceTree = "<group>"; };
 		831BD11F1EEE1CF200198540 /* ngc_ulw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ngc_ulw.c; sourceTree = "<group>"; };
 		831BD1201EEE1D2A00198540 /* rws_blocked.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rws_blocked.c; sourceTree = "<group>"; };
-		832140591E8758D7001A8A5E /* fsb_vorbis_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb_vorbis_decoder.c; sourceTree = "<group>"; };
 		832389481D22419B00482226 /* clHCA.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = clHCA.c; sourceTree = "<group>"; };
 		832389491D22419B00482226 /* clHCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clHCA.h; sourceTree = "<group>"; };
 		8323894F1D2246C300482226 /* hca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca.c; sourceTree = "<group>"; };
@@ -534,7 +534,6 @@
 		835027121ED119E000C25929 /* mta2_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mta2_decoder.c; sourceTree = "<group>"; };
 		8350C0541E071881009E0A93 /* xma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xma.c; sourceTree = "<group>"; };
 		8350C0591E071990009E0A93 /* ps2_svag_snk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_svag_snk.c; sourceTree = "<group>"; };
-		836E15DD1E88A3380029F8AD /* fsb_vorbis_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsb_vorbis_data.h; sourceTree = "<group>"; };
 		836F6B3918BDB8880095E648 /* vgmstream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vgmstream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F6B4418BDB8880095E648 /* vgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vgmstream-Info.plist"; sourceTree = "<group>"; };
 		836F6B4618BDB8880095E648 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -860,6 +859,17 @@
 		838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		839E21D61F2EDAF000EE54D7 /* vorbis_custom_data_fsb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vorbis_custom_data_fsb.h; sourceTree = "<group>"; };
+		839E21D71F2EDAF000EE54D7 /* vorbis_custom_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_decoder.c; sourceTree = "<group>"; };
+		839E21D81F2EDAF000EE54D7 /* vorbis_custom_utils_wwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_wwise.c; sourceTree = "<group>"; };
+		839E21D91F2EDAF000EE54D7 /* mpeg_custom_utils_ahx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpeg_custom_utils_ahx.c; sourceTree = "<group>"; };
+		839E21DA1F2EDAF000EE54D7 /* vorbis_custom_utils_fsb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_fsb.c; sourceTree = "<group>"; };
+		839E21DB1F2EDAF000EE54D7 /* vorbis_custom_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vorbis_custom_decoder.h; sourceTree = "<group>"; };
+		839E21DC1F2EDAF000EE54D7 /* vorbis_custom_data_wwise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vorbis_custom_data_wwise.h; sourceTree = "<group>"; };
+		839E21DD1F2EDAF000EE54D7 /* mpeg_custom_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpeg_custom_utils.c; sourceTree = "<group>"; };
+		839E21DE1F2EDAF000EE54D7 /* mpeg_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeg_decoder.h; sourceTree = "<group>"; };
+		839E21DF1F2EDAF000EE54D7 /* vorbis_custom_utils_sk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_sk.c; sourceTree = "<group>"; };
+		839E21EA1F2EDB0500EE54D7 /* sk_aud.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sk_aud.c; sourceTree = "<group>"; };
 		83A3F0711E3AD8B900D6A794 /* formats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = formats.c; sourceTree = "<group>"; };
 		83A3F0721E3AD8B900D6A794 /* formats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = formats.h; sourceTree = "<group>"; };
 		83A3F0731E3AD8B900D6A794 /* stack_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack_alloc.h; sourceTree = "<group>"; };
@@ -1018,17 +1028,21 @@
 		836F6DDF18BDC2180095E648 /* coding */ = {
 			isa = PBXGroup;
 			children = (
+				839E21D91F2EDAF000EE54D7 /* mpeg_custom_utils_ahx.c */,
+				839E21DD1F2EDAF000EE54D7 /* mpeg_custom_utils.c */,
+				839E21DE1F2EDAF000EE54D7 /* mpeg_decoder.h */,
+				839E21D61F2EDAF000EE54D7 /* vorbis_custom_data_fsb.h */,
+				839E21DC1F2EDAF000EE54D7 /* vorbis_custom_data_wwise.h */,
+				839E21D71F2EDAF000EE54D7 /* vorbis_custom_decoder.c */,
+				839E21DB1F2EDAF000EE54D7 /* vorbis_custom_decoder.h */,
+				839E21DA1F2EDAF000EE54D7 /* vorbis_custom_utils_fsb.c */,
+				839E21DF1F2EDAF000EE54D7 /* vorbis_custom_utils_sk.c */,
+				839E21D81F2EDAF000EE54D7 /* vorbis_custom_utils_wwise.c */,
 				835027121ED119E000C25929 /* mta2_decoder.c */,
 				83709E0B1ECBC1C3005C03D3 /* mc3_decoder.c */,
 				83709E0C1ECBC1C3005C03D3 /* psv_decoder.c */,
 				831BA6221EAC61CB00CF89B0 /* coding_utils.c */,
-				831BA6231EAC61CB00CF89B0 /* ogl_vorbis_decoder.c */,
-				831BA6241EAC61CB00CF89B0 /* wwise_vorbis_data.h */,
-				831BA6251EAC61CB00CF89B0 /* wwise_vorbis_decoder.c */,
-				831BA6261EAC61CB00CF89B0 /* wwise_vorbis_utils.c */,
 				831BA6271EAC61CB00CF89B0 /* wwise_vorbis_utils.h */,
-				836E15DD1E88A3380029F8AD /* fsb_vorbis_data.h */,
-				832140591E8758D7001A8A5E /* fsb_vorbis_decoder.c */,
 				838BDB6B1D3AFAB10022CA6F /* ffmpeg_decoder.c */,
 				832389511D224C0800482226 /* hca_decoder.c */,
 				83D7318B1A749EEE00CA1366 /* g719_decoder.c */,
@@ -1111,6 +1125,7 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				839E21EA1F2EDB0500EE54D7 /* sk_aud.c */,
 				830165971F256BD000CA0941 /* txth.c */,
 				830165981F256BD000CA0941 /* ea_schl_fixed.c */,
 				830165991F256BD000CA0941 /* nds_strm_ffta2.c */,
@@ -1419,22 +1434,24 @@
 			files = (
 				836F705518BDC2190095E648 /* streamtypes.h in Headers */,
 				836F6F1F18BDC2190095E648 /* acm_decoder.h in Headers */,
-				831BA62A1EAC61CB00CF89B0 /* wwise_vorbis_data.h in Headers */,
 				836F6F3518BDC2190095E648 /* nwa_decoder.h in Headers */,
 				836F6F2718BDC2190095E648 /* g72x_state.h in Headers */,
+				839E21E01F2EDAF100EE54D7 /* vorbis_custom_data_fsb.h in Headers */,
 				836F705418BDC2190095E648 /* streamfile.h in Headers */,
 				83A3F0761E3AD8B900D6A794 /* stack_alloc.h in Headers */,
 				83A3F0751E3AD8B900D6A794 /* formats.h in Headers */,
 				8323894B1D22419B00482226 /* clHCA.h in Headers */,
 				831BA62D1EAC61CB00CF89B0 /* wwise_vorbis_utils.h in Headers */,
+				839E21E81F2EDAF100EE54D7 /* mpeg_decoder.h in Headers */,
 				83299FCD1E76607A003A3242 /* header.h in Headers */,
+				839E21E51F2EDAF100EE54D7 /* vorbis_custom_decoder.h in Headers */,
 				836F705918BDC2190095E648 /* vgmstream.h in Headers */,
+				839E21E61F2EDAF100EE54D7 /* vorbis_custom_data_wwise.h in Headers */,
 				48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */,
 				836F705718BDC2190095E648 /* util.h in Headers */,
 				836F6F9A18BDC2190095E648 /* meta.h in Headers */,
 				836F6F4D18BDC2190095E648 /* layout.h in Headers */,
 				836F6F2318BDC2190095E648 /* coding.h in Headers */,
-				836E15DE1E88A3380029F8AD /* fsb_vorbis_data.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1582,6 +1599,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				839E21E21F2EDAF100EE54D7 /* vorbis_custom_utils_wwise.c in Sources */,
+				839E21E91F2EDAF100EE54D7 /* vorbis_custom_utils_sk.c in Sources */,
+				839E21E41F2EDAF100EE54D7 /* vorbis_custom_utils_fsb.c in Sources */,
+				839E21E11F2EDAF100EE54D7 /* vorbis_custom_decoder.c in Sources */,
+				839E21E71F2EDAF100EE54D7 /* mpeg_custom_utils.c in Sources */,
+				839E21E31F2EDAF100EE54D7 /* mpeg_custom_utils_ahx.c in Sources */,
+				839E21EB1F2EDB0600EE54D7 /* sk_aud.c in Sources */,
 				8301659A1F256BD000CA0941 /* txth.c in Sources */,
 				8301659B1F256BD000CA0941 /* ea_schl_fixed.c in Sources */,
 				8301659C1F256BD000CA0941 /* nds_strm_ffta2.c in Sources */,
@@ -1598,7 +1622,6 @@
 				836F6F5C18BDC2190095E648 /* wsi_blocked.c in Sources */,
 				836F6F7418BDC2190095E648 /* bgw.c in Sources */,
 				836F6F7218BDC2190095E648 /* baf.c in Sources */,
-				8321405A1E8758D7001A8A5E /* fsb_vorbis_decoder.c in Sources */,
 				83F5F8831908D0A400C8E65F /* fsb5.c in Sources */,
 				836F6F4B18BDC2190095E648 /* interleave_byte.c in Sources */,
 				836F6FD418BDC2190095E648 /* ps2_dxh.c in Sources */,
@@ -1860,7 +1883,6 @@
 				836F6F5A18BDC2190095E648 /* vs_blocked.c in Sources */,
 				836F6FB118BDC2190095E648 /* ngc_ffcc_str.c in Sources */,
 				836F6FC218BDC2190095E648 /* pc_mxst.c in Sources */,
-				831BA62B1EAC61CB00CF89B0 /* wwise_vorbis_decoder.c in Sources */,
 				836F6FC918BDC2190095E648 /* ps2_2pfs.c in Sources */,
 				836F704818BDC2190095E648 /* xbox_ims.c in Sources */,
 				836F6F4918BDC2190095E648 /* ims_block.c in Sources */,
@@ -1894,12 +1916,10 @@
 				836F6F3818BDC2190095E648 /* psx_decoder.c in Sources */,
 				836F6F2D18BDC2190095E648 /* mpeg_decoder.c in Sources */,
 				836F6F2618BDC2190095E648 /* g7221_decoder.c in Sources */,
-				831BA6291EAC61CB00CF89B0 /* ogl_vorbis_decoder.c in Sources */,
 				836F6FA218BDC2190095E648 /* naomi_adpcm.c in Sources */,
 				836F6FBF18BDC2190095E648 /* otm.c in Sources */,
 				836F6FDD18BDC2190095E648 /* ps2_ikm.c in Sources */,
 				836F6FBD18BDC2190095E648 /* nwa.c in Sources */,
-				831BA62C1EAC61CB00CF89B0 /* wwise_vorbis_utils.c in Sources */,
 				836F6FC418BDC2190095E648 /* pc_snds.c in Sources */,
 				836F704E18BDC2190095E648 /* xss.c in Sources */,
 				836F6FD118BDC2190095E648 /* ps2_bg00.c in Sources */,
