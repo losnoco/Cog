@@ -52,7 +52,6 @@ double Channel::window_lut[Channel::SINC_SAMPLES + 1];
 static const double M_PI = 3.14159265358979323846;
 #endif
 
-#if !defined(MAC_OS_X_VERSION_10_13) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_13)
 // Code from http://hbfs.wordpress.com/2008/08/05/branchless-equivalents-of-simple-functions/
 inline int32_t sex(int32_t x)
 {
@@ -69,11 +68,10 @@ inline int32_t sex(int32_t x)
     return z.s.hi;
 }
 
-inline uint32_t abs(int32_t x)
+inline int32_t abs(int32_t x)
 {
     return (x ^ sex(x)) - sex(x);
 }
-#endif
 
 // Code from http://learningcppisfun.blogspot.com/2010/04/comparing-floating-point-numbers.html
 template<typename T> inline bool fEqual(T x, T y, int N = 1)
