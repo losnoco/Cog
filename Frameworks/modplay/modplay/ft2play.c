@@ -1,8 +1,11 @@
 /*
-** FT2PLAY v0.77- 29th of June 2016
-** ================================
+** FT2PLAY v0.78 - 29th of July 2017
+** =================================
 **
 ** modplay version for foo_dumb.dll (foobar2000)
+**
+** Changelog from v0.77
+** - Instr. mute flag should be tested as !=1, not !mute (fixed malicious xm)
 **
 ** Changelog from v0.68 (later changelogs missing):
 ** - Bug fix for Lxx (Set Envelope Position)
@@ -25,10 +28,7 @@
 ** using the original pascal+asm source codes by Mr.H (Fredrik Huss)
 ** of Triton.
 **
-** This is by no means a piece of beautiful code, nor is it meant to be...
-** It's just an accurate FastTracker II replayer port for people to enjoy.
-**
-** Also thanks to aciddose (and kode54) for coding the vol/sample ramp.
+** Thanks to aciddose (and kode54) for coding the vol/sample ramp.
 ** The volume ramp is tune to that of FT2 (5ms).
 **
 ** (extreme) non-FT2 extensions:
@@ -1371,7 +1371,7 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
         }
     }
 
-    if (!ch->Mute)
+    if (ch->Mute != 1)
     {
         /* *** VOLUME ENVELOPE *** */
         envVal = 0;
