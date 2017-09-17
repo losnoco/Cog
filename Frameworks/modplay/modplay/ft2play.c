@@ -1,8 +1,15 @@
 /*
-** FT2PLAY v0.78 - 29th of July 2017
-** =================================
+** FT2PLAY v0.79 - 14th of September 2017
+** =====================================
 **
 ** modplay version for foo_dumb.dll (foobar2000)
+**
+** Changelog from v0.78:
+** - RelocateTon() had unneeded logic in it
+** - Fixed behavior of quirky vol/pan envelopes (like FT2 now)
+** - Volume ramp is now changed to behave like in FT2
+** - Added a quirk simulation on <0 (pan slide left 0)
+** - Fixed Pxy (panning slide) bug
 **
 ** Changelog from v0.77
 ** - Instr. mute flag should be tested as !=1, not !mute (fixed malicious xm)
@@ -29,7 +36,7 @@
 ** of Triton.
 **
 ** Thanks to aciddose (and kode54) for coding the vol/sample ramp.
-** The volume ramp is tune to that of FT2 (5ms).
+** The volume ramp is tune to that of FT2.
 **
 ** (extreme) non-FT2 extensions:
 ** - Max 127 channels (was 32)
@@ -49,11 +56,8 @@
 #include <math.h>
 #include <assert.h>
 #include <limits.h>
-
 #include "resampler.h"
-
 #include "barray.h"
-
 #include "ft2play.h"
 
 #if defined(_MSC_VER) && !defined(inline)
@@ -67,15 +71,15 @@ typedef signed long ssize_t;
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
 #define USE_VOL_RAMP
-
-enum { _soundBufferSize = 512 };
+#define _soundBufferSize 512
 
 enum
 {
     IS_Vol            = 1,
     IS_Period         = 2,
     IS_NyTon          = 4,
-    IS_Pan            = 8
+    IS_Pan            = 8,
+    IS_QuickVol       = 16
 };
 
 
@@ -263,13 +267,13 @@ typedef struct StmTyp_t
     int8_t RealVol;      /* must be signed */
     int8_t RelTonNr;     /* must be signed */
     int8_t FineTune;     /* must be signed */
-    int16_t OutPan;      /* must be signed */
     int16_t RealPeriod;  /* must be signed */
     int32_t FadeOutAmp;  /* must be signed */
     int16_t EnvVIPValue; /* must be signed */
     int16_t EnvPIPValue; /* must be signed */
     uint8_t OldVol;
     uint8_t OldPan;
+    uint8_t OutPan;
     uint16_t OutPeriod;
     uint8_t FinalPan;
     uint16_t FinalPeriod;
@@ -353,7 +357,6 @@ typedef struct
     float incRate;
     float volumeL;
     float volumeR;
-
 #ifdef USE_VOL_RAMP
     float targetVolL;
     float targetVolR;
@@ -417,17 +420,16 @@ typedef struct
     float f_outputFreq;
 
 #ifdef USE_VOL_RAMP
-    float f_samplesPerFrame005;
-    float f_samplesPerFrame010;
+    float quickVolRampMul_f;
+    float tickVolRampMul_f;
 #endif
 
-    /* pre-initialized variables */
-    int8_t samplingInterpolation;/*      = 1; */
+    int8_t samplingInterpolation;
     int8_t rampStyle;
-    float *masterBufferL;/*              = NULL; */
-    float *masterBufferR;/*              = NULL; */
-    int32_t samplesLeft;/*               = 0;  must be signed */
-    uint32_t samplesPerFrame;/* = 882; */
+    float *masterBufferL;
+    float *masterBufferR;
+    int32_t samplesLeft;
+    uint32_t samplesPerFrame;
 
     /* globally accessed */
     int8_t ModuleLoaded;/*  = 0; */
@@ -456,7 +458,7 @@ static void voiceSetSource(PLAYER *, uint8_t i, const int8_t *sampleData,
     int32_t sampleLoopEnd, int8_t loopEnabled,
     int8_t sixteenbit, int8_t stereo);
 static void voiceSetSamplePosition(PLAYER *, uint8_t i, uint16_t value);
-static void voiceSetVolume(PLAYER *, uint8_t i, float vol, uint8_t pan, uint8_t note_on);
+static void voiceSetVolume(PLAYER *, uint8_t i, float vol, uint8_t pan, uint8_t status);
 static void voiceSetSamplingFrequency(PLAYER *, uint8_t i, uint32_t samplingFrequency);
 static void ft2play_FreeSong(PLAYER *);
 
@@ -499,7 +501,7 @@ static inline void RetrigVolume(StmTyp *ch)
     ch->RealVol = ch->OldVol;
     ch->OutVol  = ch->OldVol;
     ch->OutPan  = ch->OldPan;
-    ch->Status |= (IS_Vol + IS_Pan);
+    ch->Status |= (IS_Vol + IS_Pan + IS_QuickVol);
 }
 
 static void RetrigEnvelopeVibrato(StmTyp *ch)
@@ -514,25 +516,24 @@ static void RetrigEnvelopeVibrato(StmTyp *ch)
 
     if (ch->InstrSeg.EnvVTyp & 1)
     {
-        ch->EnvVCnt = 0xFFFF;
+        ch->EnvVCnt = 65535;
         ch->EnvVPos = 0;
     }
 
     if (ch->InstrSeg.EnvPTyp & 1)
     {
-        ch->EnvPCnt = 0xFFFF;
+        ch->EnvPCnt = 65535;
         ch->EnvPPos = 0;
     }
 
-    /* FT2 doesn't check if fadeout is more than 32768 */
-    ch->FadeOutSpeed = ch->InstrSeg.FadeOut;
+    ch->FadeOutSpeed = ch->InstrSeg.FadeOut; /* FT2 doesn't check if fadeout is more than 4095 */
     ch->FadeOutAmp   = 32768;
 
-    if (ch->InstrSeg.VibDepth)
+    if (ch->InstrSeg.VibDepth != 0)
     {
         ch->EVibPos = 0;
 
-        if (ch->InstrSeg.VibSweep)
+        if (ch->InstrSeg.VibSweep != 0)
         {
             ch->EVibAmp   = 0;
             ch->EVibSweep = ((uint16_t)(ch->InstrSeg.VibDepth) << 8) / ch->InstrSeg.VibSweep;
@@ -564,7 +565,7 @@ static void KeyOff(StmTyp *ch)
     {
         ch->RealVol = 0;
         ch->OutVol  = 0;
-        ch->Status |= IS_Vol;
+        ch->Status |= (IS_Vol + IS_QuickVol);
     }
 }
 
@@ -659,7 +660,7 @@ static void StartTone(PLAYER *p, uint8_t Ton, uint8_t EffTyp, uint8_t Eff, StmTy
         }
     }
 
-    ch->Status |= (IS_Period + IS_Vol + IS_Pan + IS_NyTon);
+    ch->Status |= (IS_Period + IS_Vol + IS_Pan + IS_NyTon + IS_QuickVol);
 
     if (EffTyp == 9)
     {
@@ -747,7 +748,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
         ch->OutVol  = ch->VolKolVol - 0x10;
         ch->RealVol = ch->OutVol;
 
-        ch->Status |= IS_Vol;
+        ch->Status |= (IS_Vol + IS_QuickVol);
     }
 
     /* fine volume slide down */
@@ -810,7 +811,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
         if (ch->RealVol > 64) ch->RealVol = 64;
 
         ch->OutVol  = ch->RealVol;
-        ch->Status |= IS_Vol;
+        ch->Status |= (IS_Vol + IS_QuickVol);
     }
 
     // Dxx - pattern break
@@ -970,7 +971,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
         if (ch->Eff >= 32)
         {
             p->Song.Speed = ch->Eff;
-            setSamplesPerFrame(p, (p->outputFreq * 5UL) / 2 / p->Song.Speed);
+            setSamplesPerFrame(p, ((p->outputFreq * 5) / 2) / p->Song.Speed);
         }
         else
         {
@@ -985,7 +986,7 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
 
                 p->Song.PBreakPos   = 0;
                 p->Song.PosJumpFlag = 1;
-                p->Song.SongPos     = p->Song.startOrder-1;
+                p->Song.SongPos     = p->Song.startOrder - 1;
                 p->Song.Timer       = 1;
                 p->Song.Speed       = p->Song.InitSpeed;
                 p->Song.Tempo       = p->Song.InitTempo;
@@ -1191,7 +1192,6 @@ static void CheckEffects(PLAYER *p, StmTyp *ch)
     }
 }
 
-/* don't inline this */
 static void fixTonePorta(PLAYER *pl, StmTyp *ch, TonTyp *p, uint8_t inst)
 {
     uint16_t portaTmp;
@@ -1346,28 +1346,26 @@ static inline void GetNewNote(PLAYER *pl, StmTyp *ch, TonTyp *p)
 }
 
 static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
-{
-    uint16_t envVal;
+{  
+    int8_t envInterpolateFlag, envDidInterpolate;
     uint8_t envPos;
-    int8_t envInterpolateFlag;
-    int8_t envDidInterpolate;
-    int16_t autoVibVal;
-    int16_t autoVibAmp;
-    int16_t tmpPeriod;
+    int16_t autoVibVal, autoVibAmp, tmpPeriod, panTmp;
+    uint16_t envVal;
 
     /* *** FADEOUT *** */
     if (!ch->EnvSustainActive)
     {
         ch->Status |= IS_Vol;
 
-        if (ch->FadeOutSpeed > 0)
+        /* unsigned clamp + reset */
+        if (ch->FadeOutAmp >= ch->FadeOutSpeed)
         {
             ch->FadeOutAmp -= ch->FadeOutSpeed;
-            if (ch->FadeOutAmp <= 0)
-            {
-                ch->FadeOutAmp   = 0;
-                ch->FadeOutSpeed = 0;
-            }
+        }
+        else
+        {
+            ch->FadeOutAmp   = 0;
+            ch->FadeOutSpeed = 0;
         }
     }
 
@@ -1421,6 +1419,7 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
                     {
                         ch->EnvVPos = envPos;
 
+                        ch->EnvVIPValue = 0;
                         if (ch->InstrSeg.EnvVP[envPos][0] > ch->InstrSeg.EnvVP[envPos - 1][0])
                         {
                             ch->EnvVIPValue = ((ch->InstrSeg.EnvVP[envPos][1] - ch->InstrSeg.EnvVP[envPos - 1][1]) & 0x00FF) << 8;
@@ -1452,23 +1451,20 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
                     ch->EnvVIPValue = 0;
                 }
             }
-
-            ch->FinalVol  = (float)(ch->OutVol)      / 64.0f;
-            ch->FinalVol *= (float)(ch->FadeOutAmp)  / 65536.0f;
-            ch->FinalVol *= (float)(envVal >> 8)     / 64.0f;
-            ch->FinalVol *= (float)(p->Song.GlobVol) / 64.0f;
+            
+            envVal >>= 8;
+            
+            ch->FinalVol = (p->Song.GlobVol * (1.0f / 64.0f)) * (envVal * (1.0f / 64.0f)) * (ch->OutVol * (1.0f / 64.0f)) * (ch->FadeOutAmp * (1.0f / 32768.0f));
             ch->Status   |= IS_Vol;
         }
         else
         {
-            ch->FinalVol  = (float)(ch->OutVol)      / 64.0f;
-            ch->FinalVol *= (float)(ch->FadeOutAmp)  / 65536.0f;
-            ch->FinalVol *= (float)(p->Song.GlobVol) / 64.0f;
+            ch->FinalVol = (p->Song.GlobVol * (1.0f / 64.0f)) * (ch->OutVol * (1.0f / 64.0f)) * (ch->FadeOutAmp * (1.0f / 32768.0f));
         }
     }
     else
     {
-        ch->FinalVol = 0;
+        ch->FinalVol = 0.0f;
     }
 
     /* *** PANNING ENVELOPE *** */
@@ -1518,7 +1514,8 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
                 if (envInterpolateFlag)
                 {
                     ch->EnvPPos = envPos;
-
+                    
+                    ch->EnvPIPValue = 0;
                     if (ch->InstrSeg.EnvPP[envPos][0] > ch->InstrSeg.EnvPP[envPos - 1][0])
                     {
                         ch->EnvPIPValue = ((ch->InstrSeg.EnvPP[envPos][1] - ch->InstrSeg.EnvPP[envPos - 1][1]) & 0x00FF) << 8;
@@ -1551,19 +1548,27 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
             }
         }
 
-        ch->FinalPan  = (uint8_t)(ch->OutPan);
-        ch->FinalPan += (uint8_t)((((envVal >> 8) - 32) * (128 - abs(ch->OutPan - 128)) / 32));
-        ch->Status   |= IS_Pan;
+        /* panning calculated exactly like FT2 */
+        panTmp = ch->OutPan - 128;
+        if (panTmp > 0)
+            panTmp = 0 - panTmp;
+        panTmp += 128;
+
+        envVal -= (32 * 256);
+        
+        ch->FinalPan = ch->OutPan + (int8_t)((((int16_t)(envVal) * (panTmp << 3)) >> 16) & 0xFF);
+        
+        ch->Status  |= IS_Pan;
     }
     else
     {
-        ch->FinalPan = (uint8_t)(ch->OutPan);
+        ch->FinalPan = ch->OutPan;
     }
 
     /* *** AUTO VIBRATO *** */
-    if (ch->InstrSeg.VibDepth)
+    if (ch->InstrSeg.VibDepth != 0)
     {
-        if (ch->EVibSweep)
+        if (ch->EVibSweep != 0)
         {
             autoVibAmp = ch->EVibSweep;
             if (ch->EnvSustainActive)
@@ -1615,69 +1620,37 @@ static void FixaEnvelopeVibrato(PLAYER *p, StmTyp *ch)
     }
 }
 
-static int16_t RelocateTon(PLAYER *p, int16_t inPeriod, int8_t addNote, StmTyp *ch)
+static int16_t RelocateTon(PLAYER *p, int16_t period, int8_t relativeNote, StmTyp *ch)
 {
-    // This *should* be more accurate now, but slower. Stupid routine!
+    int8_t i, fineTune;
+    int32_t loPeriod, hiPeriod, tmpPeriod, tableIndex;
 
-    int8_t i;
-    int8_t fineTune;
-
-    int16_t oldPeriod;
-    int16_t addPeriod;
-
-    int32_t outPeriod;
-   
-    oldPeriod = 0;
-    addPeriod = (8 * 12 * 16) * 2;
-
-    // safe signed 8-bit >>3 (FT2 exact even on non-x86 platforms)
-    if (ch->FineTune >= 0)
-        fineTune = ch->FineTune / (1 << 3);
-    else
-        fineTune = 0xE0 | ((uint8_t)(ch->FineTune) >> 3); /* 0xE0 = 2^8 - 2^(8-3) */
-
-    fineTune += 16;
-    fineTune += fineTune;
+    fineTune = (ch->FineTune >> 3) + 16; /* MUST use >> 3 here (sar cl,3) - safe for x86/x86_64 */
+    hiPeriod = 8 * 12 * 16;
+    loPeriod = 0;
 
     for (i = 0; i < 8; ++i)
     {
-        outPeriod = (((oldPeriod + addPeriod) >> 1) & 0xFFE0) + fineTune;
-        if (outPeriod < fineTune)
-            outPeriod += (1 << 8);
+        tmpPeriod = (((loPeriod + hiPeriod) / 2) & ~15) + fineTune;
 
-        if (outPeriod < 16)
-            outPeriod = 16;
+        tableIndex = tmpPeriod - 8;
+        if (tableIndex < 0) /* added security check */
+            tableIndex = 0;
 
-        if (inPeriod >= p->Note2Period[(outPeriod - 16) >> 1])
-        {
-            outPeriod -= fineTune;
-            if (outPeriod & 0x00010000)
-                outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
-
-            addPeriod = (int16_t)(outPeriod);
-        }
+        if (period >= p->Note2Period[tableIndex])
+            hiPeriod = tmpPeriod - fineTune;
         else
-        {
-            outPeriod -= fineTune;
-            if (outPeriod & 0x00010000)
-                outPeriod = (outPeriod - (1 << 8)) & 0x0000FFE0;
-
-            oldPeriod = (int16_t)(outPeriod);
-        }
+            loPeriod = tmpPeriod - fineTune;
     }
 
-    outPeriod = oldPeriod + fineTune;
-    if (outPeriod < fineTune)
-        outPeriod += (1 << 8);
+    tmpPeriod = loPeriod + fineTune + (relativeNote * 16);
+    if (tmpPeriod < 0) /* added security check */
+        tmpPeriod = 0;
 
-    if (outPeriod < 0)
-        outPeriod = 0;
+    if (tmpPeriod >= ((8 * 12 * 16) + 15) - 1) /* FT2 bug: stupid off-by-one edge case */
+        tmpPeriod  =  (8 * 12 * 16) + 15;
 
-    outPeriod += ((int16_t)(addNote) << 5);
-    if (outPeriod >= ((((8 * 12 * 16) + 15) * 2) - 1))
-        outPeriod  =   ((8 * 12 * 16) + 15) * 2;
-
-    return (p->Note2Period[outPeriod >> 1]); // 16-bit look-up, shift it down
+    return (p->Note2Period[tmpPeriod]);
 }
 
 static void TonePorta(PLAYER *p, StmTyp *ch)
@@ -1825,9 +1798,12 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
     /* pan slide left */
     else if ((ch->VolKolVol & 0xF0) == 0xD0)
     {
-        ch->OutPan -= (ch->VolKolVol & 0x0F);
-        if (ch->OutPan < 0) ch->OutPan = 0;
-
+        /* unsigned clamp + a bug when the parameter is 0  */
+        if (((ch->VolKolVol & 0x0F) == 0) || (ch->OutPan < (ch->VolKolVol & 0x0F)))
+            ch->OutPan = 0;
+        else
+            ch->OutPan -= (ch->VolKolVol & 0x0F);
+ 
         ch->Status |= IS_Pan;
     }
 
@@ -2000,7 +1976,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
             {
                 ch->OutVol  = 0;
                 ch->RealVol = 0;
-                ch->Status |= IS_Vol;
+                ch->Status |= (IS_Vol + IS_QuickVol);
             }
         }
 
@@ -2067,15 +2043,23 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
 
         ch->PanningSlideSpeed = tmpEff;
 
-        if (!(ch->Eff & 0xF0))
+        if ((tmpEff & 0xF0) == 0)
         {
-            ch->OutPan += (ch->Eff >> 4);
-            if (ch->OutPan > 255) ch->OutPan = 255;
+            /* unsigned clamp */
+            if (ch->OutPan >= tmpEff)
+                ch->OutPan -= tmpEff;
+            else
+                ch->OutPan = 0;
         }
         else
         {
-            ch->OutPan -= (ch->Eff & 0x0F);
-            if (ch->OutPan < 0) ch->OutPan = 0;
+            tmpEff >>= 4;
+
+            /* unsigned clamp */
+            if (ch->OutPan <= (255 - tmpEff))
+                ch->OutPan += tmpEff;
+            else
+                ch->OutPan = 255;
         }
 
         ch->Status |= IS_Pan;
@@ -2113,7 +2097,7 @@ static inline void DoEffects(PLAYER *p, StmTyp *ch)
         ch->TremorPos = tremorData | tremorSign;
 
         ch->OutVol  = tremorSign ? ch->RealVol : 0;
-        ch->Status |= IS_Vol;
+        ch->Status |= (IS_Vol + IS_QuickVol);
     }
 }
 
@@ -2257,7 +2241,7 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
 
                 p->voice[SPARE_OFFSET + ChNr].faderDest  = 0.0f;
                 p->voice[SPARE_OFFSET + ChNr].faderDelta =
-                (p->voice[SPARE_OFFSET + ChNr].faderDest - p->voice[SPARE_OFFSET + ChNr].fader) * p->f_samplesPerFrame010;
+                (p->voice[SPARE_OFFSET + ChNr].faderDest - p->voice[SPARE_OFFSET + ChNr].fader) * p->quickVolRampMul_f;
 
                 resampler_dup_inplace(p->resampler[SPARE_OFFSET + ChNr], p->resampler[ChNr]);
                 resampler_dup_inplace(p->resampler[TOTAL_VOICES + SPARE_OFFSET + ChNr], p->resampler[TOTAL_VOICES + ChNr]);
@@ -2274,13 +2258,13 @@ static void MainPlayer(PLAYER *p) /* periodically called from mixer */
             {
                 p->voice[ch->Nr].fader      = 0.0f;
                 p->voice[ch->Nr].faderDest  = 1.0f;
-                p->voice[ch->Nr].faderDelta = (p->voice[ch->Nr].faderDest - p->voice[ch->Nr].fader) * p->f_samplesPerFrame005;
+                p->voice[ch->Nr].faderDelta = (p->voice[ch->Nr].faderDest - p->voice[ch->Nr].fader) * p->quickVolRampMul_f;
             }
 #endif
         }
 
-        if (ch->Status & (IS_Vol|IS_Pan))
-            voiceSetVolume(p, ch->Nr, ch->FinalVol, ch->FinalPan, ch->Status & IS_NyTon);
+        if (ch->Status & (IS_Vol | IS_Pan))
+            voiceSetVolume(p, ch->Nr, ch->FinalVol, ch->FinalPan, ch->Status);
 
         if (ch->Status & IS_Period)
             voiceSetSamplingFrequency(p, ch->Nr, GetFrequenceValue(p, ch->FinalPeriod));
@@ -2943,7 +2927,8 @@ int8_t ft2play_LoadModule(void *_p, const uint8_t *buffer, size_t size)
 
 static void setSamplesPerFrame(PLAYER *p, uint32_t val)
 {
-    p->samplesPerFrame = val;
+    p->samplesPerFrame  = val;
+    p->tickVolRampMul_f = 1.0f / val;
 }
 
 static void setSamplingInterpolation(PLAYER *p, int8_t value)
@@ -3001,18 +2986,23 @@ static inline void voiceSetSamplePosition(PLAYER *p, uint8_t i, uint16_t value)
     v->interpolating = 1;
 }
 
-static inline void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, uint8_t note_on)
+static inline void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, uint8_t status)
 {
+    float deltaMul_f;
     VOICE *v;
+    
     v = &p->voice[i];
 
 #ifdef USE_VOL_RAMP
-    if (!note_on && p->rampStyle > 1)
+    if (!(status & IS_NyTon) && (p->rampStyle > 1))
     {
         v->targetVolL = vol * p->PanningTab[256 - pan];
         v->targetVolR = vol * p->PanningTab[pan];
-        v->volDeltaL  = (v->targetVolL - v->volumeL) * p->f_samplesPerFrame005;
-        v->volDeltaR  = (v->targetVolR - v->volumeR) * p->f_samplesPerFrame005;
+        
+        deltaMul_f = (status & IS_QuickVol) ? p->quickVolRampMul_f : p->tickVolRampMul_f;
+        
+        v->volDeltaL  = (v->targetVolL - v->volumeL) * deltaMul_f;
+        v->volDeltaR  = (v->targetVolR - v->volumeR) * deltaMul_f;
     }
     else
     {
@@ -3029,7 +3019,8 @@ static inline void voiceSetVolume(PLAYER *p, uint8_t i, float vol, uint8_t pan, 
 
 static inline void voiceSetSamplingFrequency(PLAYER *p, uint8_t i, uint32_t samplingFrequency)
 {
-    p->voice[i].incRate = (float)(samplingFrequency) / p->f_outputFreq;
+    if (p->f_outputFreq > 0.0f)
+        p->voice[i].incRate = (float)(samplingFrequency) / p->f_outputFreq;
 }
 
 static inline void mix8b(PLAYER *p, uint32_t ch, uint32_t samples)
@@ -3881,15 +3872,14 @@ void * ft2play_Alloc(uint32_t _samplingFrequency, int8_t interpolation, int8_t r
 
     if ( !p )
         return NULL;
-
-    p->samplesPerFrame = 882;
-    p->numChannels = MAX_VOICES;
-
+   
+    p->numChannels         = MAX_VOICES;
     p->outputFreq          = _samplingFrequency;
     p->f_outputFreq        = (float)(p->outputFreq);
+    p->samplesPerFrame     = ((p->outputFreq * 5) / 2) / 125;
 #ifdef USE_VOL_RAMP
-    p->f_samplesPerFrame010= 1.0f / (p->f_outputFreq * 0.010f);
-    p->f_samplesPerFrame005= 1.0f / (p->f_outputFreq * 0.005f);
+    p->tickVolRampMul_f    = 1.0f / p->samplesPerFrame;
+    p->quickVolRampMul_f   = 1.0f / (p->outputFreq / 200); // yes, truncate here
 #endif
     p->soundBufferSize     = _soundBufferSize;
 
@@ -4043,7 +4033,7 @@ void ft2play_PlaySong(void *_p, int32_t startOrder)
     p->numChannels  = p->Song.AntChn;
     p->Playing      = 1;
 
-    setSamplesPerFrame(p, ((p->outputFreq * 5UL) / 2 / p->Song.Speed));
+    setSamplesPerFrame(p, (((p->outputFreq * 5) / 2) / p->Song.Speed));
 
     SetPos(p, (int16_t)startOrder, 0);
 
