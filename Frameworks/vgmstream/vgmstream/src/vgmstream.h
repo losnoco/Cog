@@ -6,6 +6,7 @@
 #define _VGMSTREAM_H
 
 enum { PATH_LIMIT = 32768 };
+enum { STREAM_NAME_SIZE = 255 }; /* reasonable max */
 
 #include "streamfile.h"
 
@@ -77,23 +78,26 @@ enum { PATH_LIMIT = 32768 };
 #include "nwa_decoder.h"
 #endif
 
+
 /* The encoding type specifies the format the sound data itself takes */
 typedef enum {
-    /* 16-bit PCM */
+    /* PCM */
     coding_PCM16LE,         /* little endian 16-bit PCM */
-    coding_PCM16LE_int,		/* little endian 16-bit PCM with sample-level interleave */
     coding_PCM16LE_XOR_int, /* little endian 16-bit PCM with sample-level xor */
     coding_PCM16BE,         /* big endian 16-bit PCM */
+    coding_PCM16_int,       /* 16-bit PCM with sample-level interleave */
 
-    /* 8-bit PCM */
     coding_PCM8,            /* 8-bit PCM */
     coding_PCM8_int,        /* 8-Bit PCM with sample-level interleave */
     coding_PCM8_U,          /* 8-bit PCM, unsigned (0x80 = 0) */
     coding_PCM8_U_int,      /* 8-bit PCM, unsigned (0x80 = 0) with sample-level interleave */
     coding_PCM8_SB_int,     /* 8-bit PCM, sign bit (others are 2's complement) with sample-level interleave */
+
     coding_ULAW,            /* 8-bit u-Law (non-linear PCM) */
 
-    /* 4-bit ADPCM */
+    coding_PCMFLOAT,        /* 32 bit float PCM */
+
+    /* ADPCM */
     coding_CRI_ADX,         /* CRI ADX */
     coding_CRI_ADX_fixed,   /* CRI ADX, encoding type 2 with fixed coefficients */
     coding_CRI_ADX_exp,     /* CRI ADX, encoding type 4 with exponential scale */
@@ -117,6 +121,7 @@ typedef enum {
     coding_EA_XA_int,       /* Electronic Arts EA-XA ADPCM v1 (mono/interleave) */
     coding_EA_XA_V2,        /* Electronic Arts EA-XA ADPCM v2 */
     coding_MAXIS_XA,        /* Maxis EA-XA ADPCM */
+    coding_EA_XAS,          /* Electronic Arts EA-XAS ADPCM */
 
     coding_XBOX,            /* XBOX IMA ADPCM */
     coding_XBOX_int,        /* XBOX IMA ADPCM (interleaved) */
@@ -136,6 +141,7 @@ typedef enum {
     coding_FSB_IMA,         /* FMOD's FSB multichannel IMA ADPCM */
     coding_WWISE_IMA,       /* Audiokinetic Wwise IMA ADPCM */
     coding_REF_IMA,         /* Reflections IMA ADPCM */
+    coding_AWC_IMA,         /* Rockstar AWC IMA ADPCM */
 
     coding_MSADPCM,         /* Microsoft ADPCM */
     coding_WS,              /* Westwood Studios VBR ADPCM */
@@ -172,6 +178,7 @@ typedef enum {
 
 #ifdef VGM_USE_MPEG
     coding_MPEG_custom,     /* MPEG audio with custom features (MDCT-based) */
+    coding_MPEG_ealayer3,   /* EALayer3, custom MPEG frames */
     coding_MPEG_layer1,     /* MP1 MPEG audio (MDCT-based) */
     coding_MPEG_layer2,     /* MP2 MPEG audio (MDCT-based) */
     coding_MPEG_layer3,     /* MP3 MPEG audio (MDCT-based) */
@@ -238,6 +245,9 @@ typedef enum {
     layout_ps2_strlr_blocked,
     layout_rws_blocked,
     layout_hwas_blocked,
+    layout_ea_sns_blocked,  /* newest Electronic Arts blocks, found in SNS/SNU/SPS/etc formats */
+    layout_blocked_awc,     /* Rockstar AWC */
+    layout_blocked_vgs,     /* Guitar Hero II */
 
     /* otherwise odd */
     layout_acm,             /* libacm layout */
@@ -271,7 +281,6 @@ typedef enum {
     meta_DSP_STR,			/* Conan .str files */
     meta_DSP_SADB,          /* .sad */
     meta_DSP_WSI,           /* .wsi */
-    meta_DSP_AMTS,			/* .amts */
     meta_DSP_WII_IDSP,		/* .gcm with IDSP header */
     meta_DSP_WII_MUS,       /* .mus */
     meta_DSP_WII_WSD,		/* Phantom Brave (WII) */
@@ -443,7 +452,6 @@ typedef enum {
 	meta_ADS,               /* Gauntlet Dark Legends (GC) */
 	meta_PS2_SPS,           /* Ape Escape 2 */
     meta_PS2_XA2_RRP,       /* RC Revenge Pro */
-    meta_PS2_STM,           /* Red Dead Revolver .stm, renamed .ps2stm */
     meta_NGC_DSP_KONAMI,    /* Konami DSP header, found in various games */
 	meta_UBI_CKD,           /* Ubisoft CKD RIFF header (Rayman Origins Wii) */
 
@@ -451,7 +459,6 @@ typedef enum {
     meta_XBOX_RIFF,			/* XBOX RIFF/WAVE File */
     meta_XBOX_WVS,			/* XBOX WVS */
     meta_NGC_WVS,			/* Metal Arms - Glitch in the System */
-    meta_XBOX_STMA,			/* XBOX STMA */
     meta_XBOX_MATX,			/* XBOX MATX */
     meta_XBOX_XMU,			/* XBOX XMU */
     meta_XBOX_XVAS,			/* XBOX VAS */
@@ -623,6 +630,10 @@ typedef enum {
     meta_TXTH,              /* generic text header */
     meta_SK_AUD,            /* Silicon Knights .AUD (Eternal Darkness GC) */
     meta_AHX,               /* CRI AHX header */
+    meta_STM,               /* Angel Studios/Rockstar San Diego Games */
+    meta_BINK,              /* RAD Game Tools BINK audio/video */
+    meta_EA_SNU,            /* Electronic Arts SNU (Dead Space) */
+    meta_AWC,               /* Rockstar AWC (GTA5, RDR) */
 
 #ifdef VGM_USE_VORBIS
     meta_OGG_VORBIS,        /* Ogg Vorbis */
@@ -705,7 +716,11 @@ typedef struct {
     coding_t coding_type;   /* type of encoding */
     layout_t layout_type;   /* type of layout for data */
     meta_t meta_type;       /* how we know the metadata */
-    int num_streams;        /* info only, for a few multi-stream formats (0=not set/one, 1=one stream) */
+
+    /* streams (info only) */
+    int num_streams;        /* for multi-stream formats (0=not set/one, 1=one stream) */
+    int stream_index;       /* current stream */
+    char stream_name[STREAM_NAME_SIZE]; /* name of the current stream, if the file stores it and it's filled */
 
     /* looping */
     int loop_flag;          /* is this stream looped? */
@@ -803,6 +818,7 @@ typedef enum {
     VORBIS_WWISE,       /* many variations (custom setup, headers and data) */
     VORBIS_OGL,         /* custom packet headers */
     VORBIS_SK           /* "OggS" replaced by "SK" */
+  //VORBIS_LYN          /* two interleaved Ogg (including setup, duplicated) */
 } vorbis_custom_t;
 
 /* config for Wwise Vorbis (3 types for flexibility though not all combinations exist) */
@@ -840,6 +856,7 @@ typedef struct {
 
     uint8_t * buffer;           /* internal raw data buffer */
     size_t buffer_size;
+
     size_t samples_to_discard;  /* for looping purposes */
     int samples_full;           /* flag, samples available in vorbis buffers */
 
@@ -856,8 +873,8 @@ typedef struct {
 } vorbis_custom_codec_data;
 #endif
 
-#ifdef VGM_USE_MPEG
 
+#ifdef VGM_USE_MPEG
 /* Custom MPEG modes, mostly differing in the data layout */
 typedef enum {
     MPEG_STANDARD,          /* 1 stream */
@@ -866,20 +883,42 @@ typedef enum {
     MPEG_FSB,               /* N streams of 1 data-frame+padding (=interleave) */
     MPEG_P3D,               /* N streams of fixed interleave (not frame-aligned) */
     MPEG_EA,                /* 1 stream (maybe N streams in absolute offsets?) */
-    MPEG_EAL31,             /* EALayer3 v1, custom frames */
-    MPEG_EAL32P,            /* EALayer3 v2 "P" (PCM?), altered custom frames */
-    MPEG_EAL32S,            /* EALayer3 v2 "S" (Spike?), altered custom frames */
+    MPEG_EAL31,             /* EALayer3 v1, custom frames with v1 header */
+    MPEG_EAL32P,            /* EALayer3 v2 "P" (PCM?), custom frames with v2 header */
+    MPEG_EAL32S,            /* EALayer3 v2 "S" (Spike?), custom frames with v2 header */
     MPEG_LYN,               /* N streams of fixed interleave */
-    MPEG_AWC                /* N streams in absolute offsets (consecutive) */
+    MPEG_AWC                /* N streams in block layout (music) or absolute offsets (sfx) */
 } mpeg_custom_t;
 
+/* config for the above modes */
 typedef struct {
     int channels; /* max channels */
     int fsb_padding; /* fsb padding mode */
     int chunk_size; /* size of a data portion */
     int interleave; /* size of stream interleave */
     int encryption; /* encryption mode */
+    int big_endian;
+    /* for AHX */
+    int cri_type;
+    uint16_t cri_key1;
+    uint16_t cri_key2;
+    uint16_t cri_key3;
 } mpeg_custom_config;
+
+/* represents a single MPEG stream */
+typedef struct {
+    mpg123_handle *m; /* MPEG decoder */
+
+    uint8_t *output_buffer; /* decoded samples from this stream (in bytes for mpg123) */
+    size_t output_buffer_size;
+    size_t samples_filled; /* data in the buffer (in samples) */
+    size_t samples_used; /* data extracted from the buffer */
+
+    size_t current_size_count; /* data read (if the parser needs to know) */
+    size_t current_size_target; /* max data, until something happens */
+    size_t decode_to_discard;  /* discard from this stream only (for EALayer3 or AWC) */
+
+} mpeg_custom_stream;
 
 typedef struct {
     uint8_t *buffer; /* internal raw data buffer */
@@ -899,19 +938,11 @@ typedef struct {
     mpeg_custom_t type; /* mpeg subtype */
     mpeg_custom_config config; /* config depending on the mode */
 
-    mpg123_handle **ms; /* custom MPEG decoder array */
-    size_t ms_size;
+    mpeg_custom_stream **streams; /* array of MPEG streams (ex. 2ch+2ch) */
+    size_t streams_size;
 
-    uint8_t *stream_buffer; /* contains samples from N frames of one stream */
-    size_t stream_buffer_size;
-    uint8_t *sample_buffer; /* contains samples from N frames of all streams/channels */
-    size_t sample_buffer_size;
-    size_t bytes_in_sample_buffer;
-    size_t bytes_used_in_sample_buffer;
-
-
-    size_t samples_to_discard; /* for custom mpeg looping */
     size_t skip_samples; /* base encoder delay */
+    size_t samples_to_discard; /* for custom mpeg looping */
 
 } mpeg_codec_data;
 #endif
@@ -992,12 +1023,13 @@ typedef struct {
 typedef struct {
     STREAMFILE *streamfile;
     uint64_t start;
-    uint64_t size;
+    //uint64_t size;
     clHCA_stInfo info;
     unsigned int curblock;
-    unsigned int sample_ptr, samples_discard;
+    unsigned int sample_ptr;
+    unsigned int samples_discard;
     signed short sample_buffer[clHCA_samplesPerBlock * 16];
-    // clHCA exists here
+    //clHCA * hca exists here (pre-alloc'ed)
 } hca_codec_data;
 
 #ifdef VGM_USE_FFMPEG

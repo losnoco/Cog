@@ -12,6 +12,8 @@
 		836F705C18BDC40E0095E648 /* VGMDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 836F705B18BDC40E0095E648 /* VGMDecoder.m */; };
 		836F705D18BDC4580095E648 /* vgmstream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F6B6D18BDB8890095E648 /* vgmstream.framework */; };
 		836F705F18BDC47F0095E648 /* vgmstream.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836F6B6D18BDB8890095E648 /* vgmstream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83AA5D2D1F6E30080020821C /* VGMInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D281F6E30080020821C /* VGMInterface.m */; };
+		83AA5D2E1F6E30080020821C /* VGMContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D2A1F6E30080020821C /* VGMContainer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +54,11 @@
 		836F705B18BDC40E0095E648 /* VGMDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMDecoder.m; sourceTree = "<group>"; };
 		836F706018BDC84D0095E648 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		836F706118BDC8650095E648 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83AA5D281F6E30080020821C /* VGMInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMInterface.m; sourceTree = "<group>"; };
+		83AA5D2A1F6E30080020821C /* VGMContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMContainer.m; sourceTree = "<group>"; };
+		83AA5D2B1F6E30080020821C /* VGMInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMInterface.h; sourceTree = "<group>"; };
+		83AA5D2C1F6E30080020821C /* VGMContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMContainer.h; sourceTree = "<group>"; };
+		83AA5D2F1F6E301B0020821C /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +114,11 @@
 		836F6B1918BDB80D0095E648 /* vgmstream */ = {
 			isa = PBXGroup;
 			children = (
+				83AA5D2F1F6E301B0020821C /* Logging.h */,
+				83AA5D2C1F6E30080020821C /* VGMContainer.h */,
+				83AA5D2A1F6E30080020821C /* VGMContainer.m */,
+				83AA5D2B1F6E30080020821C /* VGMInterface.h */,
+				83AA5D281F6E30080020821C /* VGMInterface.m */,
 				836F706118BDC8650095E648 /* PlaylistController.h */,
 				836F706018BDC84D0095E648 /* Plugin.h */,
 				836F705A18BDC40E0095E648 /* VGMDecoder.h */,
@@ -219,6 +231,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83AA5D2D1F6E30080020821C /* VGMInterface.m in Sources */,
+				83AA5D2E1F6E30080020821C /* VGMContainer.m in Sources */,
 				836F705C18BDC40E0095E648 /* VGMDecoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

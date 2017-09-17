@@ -86,7 +86,6 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_ws_aud,
     init_vgmstream_ahx,
     init_vgmstream_ivb,
-    init_vgmstream_amts,
     init_vgmstream_svs,
     init_vgmstream_riff,
     init_vgmstream_rifx,
@@ -139,7 +138,6 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_ngc_wvs,
     init_vgmstream_dc_str,
     init_vgmstream_dc_str_v2,
-    init_vgmstream_xbox_stma,
     init_vgmstream_xbox_matx,
     init_vgmstream_de2,
     init_vgmstream_vs,
@@ -252,7 +250,6 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_pona_psx,
     init_vgmstream_xbox_hlwav,
     init_vgmstream_stx,
-    init_vgmstream_ps2_stm,
     init_vgmstream_myspd,
     init_vgmstream_his,
 	init_vgmstream_ps2_ast,
@@ -347,8 +344,8 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_akb2_multi,
 #ifdef VGM_USE_FFMPEG
     init_vgmstream_mp4_aac_ffmpeg,
-    init_vgmstream_bik,
 #endif
+    init_vgmstream_bik,
     init_vgmstream_x360_ast,
     init_vgmstream_wwise,
     init_vgmstream_ubi_raki,
@@ -369,6 +366,9 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_ea_bnk,
     init_vgmstream_ea_schl_fixed,
     init_vgmstream_sk_aud,
+    init_vgmstream_stm,
+    init_vgmstream_ea_snu,
+    init_vgmstream_awc,
 
     init_vgmstream_txth,  /* should go at the end (lower priority) */
 #ifdef VGM_USE_FFMPEG
@@ -378,7 +378,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
 
 
 /* internal version with all parameters */
-VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile, int do_dfs) {
+static VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile, int do_dfs) {
     int i, fcns_size;
     
     if (!streamFile)
@@ -446,6 +446,9 @@ VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile, int do_dfs) {
             }
 #endif
 
+            /* save info */
+            vgmstream->stream_index = streamFile->stream_index;
+
             /* save start things so we can restart for seeking */
             /* copy the channels */
             memcpy(vgmstream->start_ch,vgmstream->ch,sizeof(VGMSTREAMCHANNEL)*vgmstream->channels);
@@ -510,6 +513,7 @@ void reset_vgmstream(VGMSTREAM * vgmstream) {
 
 #ifdef VGM_USE_MPEG
     if (vgmstream->coding_type==coding_MPEG_custom ||
+        vgmstream->coding_type==coding_MPEG_ealayer3 ||
         vgmstream->coding_type==coding_MPEG_layer1 ||
         vgmstream->coding_type==coding_MPEG_layer2 ||
         vgmstream->coding_type==coding_MPEG_layer3) {
@@ -698,6 +702,7 @@ void close_vgmstream(VGMSTREAM * vgmstream) {
 
 #ifdef VGM_USE_MPEG
     if (vgmstream->coding_type==coding_MPEG_custom ||
+        vgmstream->coding_type==coding_MPEG_ealayer3 ||
         vgmstream->coding_type==coding_MPEG_layer1 ||
         vgmstream->coding_type==coding_MPEG_layer2 ||
         vgmstream->coding_type==coding_MPEG_layer3) {
@@ -869,7 +874,7 @@ int32_t get_vgmstream_play_samples(double looptimes, double fadeseconds, double 
              * Most files cut abruply after the loop, but some do have proper endings.
              * With looptimes = 1 this option should give the same output vs loop disabled */
             int loop_count = (int)looptimes; /* no half loops allowed */
-            vgmstream->loop_target = loop_count;
+            //vgmstream->loop_target = loop_count; /* handled externally, as this is into-only */
             return vgmstream->loop_start_sample
                 + (vgmstream->loop_end_sample - vgmstream->loop_start_sample) * loop_count
                 + (vgmstream->num_samples - vgmstream->loop_end_sample);
@@ -929,6 +934,9 @@ void render_vgmstream(sample * buffer, int32_t sample_count, VGMSTREAM * vgmstre
         case layout_ps2_strlr_blocked:
         case layout_rws_blocked:
         case layout_hwas_blocked:
+        case layout_ea_sns_blocked:
+        case layout_blocked_awc:
+        case layout_blocked_vgs:
             render_vgmstream_blocked(buffer,sample_count,vgmstream);
             break;
         case layout_interleave_byte:
@@ -964,21 +972,24 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_NGC_DSP:
             return 14;
         case coding_PCM16LE:
-        case coding_PCM16LE_int:
         case coding_PCM16LE_XOR_int:
         case coding_PCM16BE:
+        case coding_PCM16_int:
         case coding_PCM8:
         case coding_PCM8_U:
         case coding_PCM8_int:
         case coding_PCM8_SB_int:
         case coding_PCM8_U_int:
         case coding_ULAW:
+        case coding_PCMFLOAT:
+            return 1;
 #ifdef VGM_USE_VORBIS
         case coding_ogg_vorbis:
         case coding_VORBIS_custom:
 #endif
 #ifdef VGM_USE_MPEG
         case coding_MPEG_custom:
+        case coding_MPEG_ealayer3:
         case coding_MPEG_layer1:
         case coding_MPEG_layer2:
         case coding_MPEG_layer3:
@@ -1031,6 +1042,8 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
             return 28;
 		case coding_MAXIS_XA:
 			return 14*vgmstream->channels;
+        case coding_EA_XAS:
+            return 128;
         case coding_WS:
             /* only works if output sample size is 8 bit, which always is for WS ADPCM */
             return vgmstream->ws_output_size;
@@ -1043,6 +1056,8 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_WWISE_IMA:
         case coding_REF_IMA:
             return (vgmstream->interleave_block_size-4*vgmstream->channels)*2/vgmstream->channels;
+        case coding_AWC_IMA:
+            return (0x800-4)*2;
         case coding_RAD_IMA_mono:
             return 32;
         case coding_NDS_PROCYON:
@@ -1115,9 +1130,9 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_NGC_DSP:
             return 8;
         case coding_PCM16LE:
-        case coding_PCM16LE_int:
         case coding_PCM16LE_XOR_int:
         case coding_PCM16BE:
+        case coding_PCM16_int:
             return 2;
         case coding_PCM8:
         case coding_PCM8_U:
@@ -1125,6 +1140,9 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_PCM8_SB_int:
         case coding_PCM8_U_int:
         case coding_ULAW:
+            return 1;
+        case coding_PCMFLOAT:
+            return 4;
         case coding_SDX2:
         case coding_SDX2_int:
         case coding_CBD2:
@@ -1143,6 +1161,8 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_WWISE_IMA:
         case coding_REF_IMA:
             return vgmstream->interleave_block_size;
+        case coding_AWC_IMA:
+            return 0x800;
         case coding_RAD_IMA_mono:
             return 0x14;
         case coding_NGC_DTK:
@@ -1179,6 +1199,8 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
             return 0x0F*vgmstream->channels;
         case coding_EA_XA_V2:
             return 1; /* the frame is variant in size (ADPCM frames of 0x0F or PCM frames) */
+        case coding_EA_XAS:
+            return 0x4c*vgmstream->channels;
         case coding_WS:
             return vgmstream->current_block_size;
         case coding_IMA_int:
@@ -1292,13 +1314,6 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         samples_to_do);
             }
             break;
-        case coding_PCM16LE_int:
-            for (chan=0;chan<vgmstream->channels;chan++) {
-                decode_pcm16LE_int(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
-                        vgmstream->channels,vgmstream->samples_into_block,
-                        samples_to_do);
-            }
-            break;
         case coding_PCM16LE_XOR_int:
             for (chan=0;chan<vgmstream->channels;chan++) {
                 decode_pcm16LE_XOR_int(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
@@ -1311,6 +1326,14 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                 decode_pcm16BE(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
                         vgmstream->channels,vgmstream->samples_into_block,
                         samples_to_do);
+            }
+            break;
+        case coding_PCM16_int:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_pcm16_int(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do,
+                        vgmstream->codec_endian);
             }
             break;
         case coding_PCM8:
@@ -1355,6 +1378,15 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         samples_to_do);
             }
             break;
+        case coding_PCMFLOAT:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_pcmfloat(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do,
+                        vgmstream->codec_endian);
+            }
+            break;
+
         case coding_NDS_IMA:
             for (chan=0;chan<vgmstream->channels;chan++) {
                 decode_nds_ima(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
@@ -1495,6 +1527,13 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         samples_to_do,chan);
             }
             break;
+        case coding_EA_XAS:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_ea_xas(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do,chan);
+            }
+            break;
 #ifdef VGM_USE_VORBIS
         case coding_ogg_vorbis:
             decode_ogg_vorbis(vgmstream->codec_data,
@@ -1621,6 +1660,13 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         samples_to_do,chan);
             }
             break;
+        case coding_AWC_IMA:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_awc_ima(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do);
+            }
+            break;
 
         case coding_WS:
             for (chan=0;chan<vgmstream->channels;chan++) {
@@ -1632,6 +1678,7 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
 
 #ifdef VGM_USE_MPEG
         case coding_MPEG_custom:
+        case coding_MPEG_ealayer3:
         case coding_MPEG_layer1:
         case coding_MPEG_layer2:
         case coding_MPEG_layer3:
@@ -1867,6 +1914,7 @@ int vgmstream_do_loop(VGMSTREAM * vgmstream) {
 
 #ifdef VGM_USE_MPEG
         if (vgmstream->coding_type==coding_MPEG_custom ||
+            vgmstream->coding_type==coding_MPEG_ealayer3 ||
             vgmstream->coding_type==coding_MPEG_layer1 ||
             vgmstream->coding_type==coding_MPEG_layer2 ||
             vgmstream->coding_type==coding_MPEG_layer3) {
@@ -2047,8 +2095,21 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
     /* only interesting if more than one */
     if (vgmstream->num_streams > 1) {
         snprintf(temp,TEMPSIZE,
-                "\nnumber of streams: %d",
+                "\nstream count: %d",
                 vgmstream->num_streams);
+        concatn(length,desc,temp);
+    }
+
+    if (vgmstream->num_streams > 1 && vgmstream->stream_index > 0) {
+        snprintf(temp,TEMPSIZE,
+                "\nstream index: %d",
+                vgmstream->stream_index);
+        concatn(length,desc,temp);
+    }
+    if (vgmstream->stream_name[0] != '\0') {
+        snprintf(temp,TEMPSIZE,
+                "\nstream name: %s",
+                vgmstream->stream_name);
         concatn(length,desc,temp);
     }
 }

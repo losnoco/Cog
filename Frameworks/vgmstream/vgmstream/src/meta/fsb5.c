@@ -5,16 +5,15 @@
 /* FSB5 - FMOD Studio multiplatform format */
 VGMSTREAM * init_vgmstream_fsb5(STREAMFILE *streamFile) {
     VGMSTREAM * vgmstream = NULL;
-    off_t StartOffset = 0;
+    off_t StartOffset = 0, NameOffset = 0;
     off_t SampleHeaderStart = 0, DSPInfoStart = 0;
     size_t SampleHeaderLength, NameTableLength, SampleDataLength, BaseHeaderLength, StreamSize = 0;
 
     uint32_t NumSamples = 0, LoopStart = 0, LoopEnd = 0;
     int LoopFlag = 0, ChannelCount = 0, SampleRate = 0, CodingID;
-    int TotalStreams, TargetStream = 0;
+    int TotalStreams, TargetStream = streamFile->stream_index;
     uint32_t VorbisSetupId = 0;
     int i;
-
 
     /* check extension, case insensitive */
     if (!check_extensions(streamFile,"fsb")) goto fail;
@@ -43,23 +42,23 @@ VGMSTREAM * init_vgmstream_fsb5(STREAMFILE *streamFile) {
     for (i = 1; i <= TotalStreams; i++) {
         off_t  DataStart = 0;
         size_t StreamHeaderLength = 0;
-        uint32_t SampleMode, SampleMode2;
+        uint32_t SampleMode1, SampleMode2;
 
 
         /* seems ok but could use some testing against FMOD's SDK */
-        SampleMode  = (uint32_t)read_32bitLE(SampleHeaderStart+0x00,streamFile);
+        SampleMode1 = (uint32_t)read_32bitLE(SampleHeaderStart+0x00,streamFile);
         SampleMode2 = (uint32_t)read_32bitLE(SampleHeaderStart+0x04,streamFile);
         StreamHeaderLength += 0x08;
 
         /* get samples */
         NumSamples  = ((SampleMode2 >> 2) & 0x3FFFFFFF); /* bits 31..2 (30) */
-        // bits 1..0 part of DataStart?
 
         /* get offset inside data section */
-        DataStart   = ((SampleMode >> 7) & 0x0FFFFFF) << 5; /* bits 31..8 (24) * 0x20 */
+        DataStart   = ((SampleMode1 >> 7) & 0x1FFFFFF) << 5; /* bits 31..8 (25) * 0x20 */
+        //SampleMode2 bits 1..0 part of DataStart for files larger than 0x3FFFFFE0?
 
         /* get channels (from tests seems correct, but multichannel isn't very common, ex. no 4ch mode?) */
-        switch ((SampleMode >> 5) & 0x03) { /* bits 7..6 (2) */
+        switch ((SampleMode1 >> 5) & 0x03) { /* bits 7..6 (2) */
             case 0:  ChannelCount = 1; break;
             case 1:  ChannelCount = 2; break;
             case 2:  ChannelCount = 6; break;/* some Dark Souls 2 MPEG; some IMA ADPCM */
@@ -69,7 +68,7 @@ VGMSTREAM * init_vgmstream_fsb5(STREAMFILE *streamFile) {
         }
 
         /* get sample rate  */
-        switch ((SampleMode >> 1) & 0x0f) { /* bits 5..1 (4) */
+        switch ((SampleMode1 >> 1) & 0x0f) { /* bits 5..1 (4) */
             case 0:  SampleRate = 4000;  break; //???
             case 1:  SampleRate = 8000;  break;
             case 2:  SampleRate = 11000; break;
@@ -87,7 +86,7 @@ VGMSTREAM * init_vgmstream_fsb5(STREAMFILE *streamFile) {
         }
 
         /* get extra flags */
-        if (SampleMode & 0x01) { /* bit 0 (1) */
+        if (SampleMode1 & 0x01) { /* bit 0 (1) */
             uint32_t ExtraFlag, ExtraFlagStart, ExtraFlagType, ExtraFlagSize, ExtraFlagEnd;
 
             ExtraFlagStart = SampleHeaderStart+0x08;
@@ -163,16 +162,19 @@ VGMSTREAM * init_vgmstream_fsb5(STREAMFILE *streamFile) {
         /* continue searching */
         SampleHeaderStart += StreamHeaderLength;
     }
-
     /* target stream not found*/
     if (!StartOffset || !StreamSize) goto fail;
+
+    /* get stream name */
+    if (NameTableLength) {
+        NameOffset = BaseHeaderLength + SampleHeaderLength + read_32bitLE(BaseHeaderLength + SampleHeaderLength + 0x04*(TargetStream-1),streamFile);
+    }
 
 
     /* build the VGMSTREAM */
     vgmstream = allocate_vgmstream(ChannelCount,LoopFlag);
     if (!vgmstream) goto fail;
 
-    /* fill in the vital statistics */
     vgmstream->sample_rate = SampleRate;
     vgmstream->num_streams = TotalStreams;
     vgmstream->num_samples = NumSamples;
@@ -181,13 +183,20 @@ VGMSTREAM * init_vgmstream_fsb5(STREAMFILE *streamFile) {
         vgmstream->loop_end_sample = LoopEnd;
     }
     vgmstream->meta_type = meta_FSB5;
+    if (NameOffset)
+        read_string(vgmstream->stream_name,STREAM_NAME_SIZE, NameOffset,streamFile);
 
+
+    /* parse codec */
     switch (CodingID) {
         case 0x00:  /* FMOD_SOUND_FORMAT_NONE */
             goto fail;
 
-        case 0x01:  /* FMOD_SOUND_FORMAT_PCM8 */
-            goto fail;
+        case 0x01:  /* FMOD_SOUND_FORMAT_PCM8  [Anima - Gate of Memories (PC)] */
+            vgmstream->layout_type = ChannelCount == 1 ? layout_none : layout_interleave;
+            vgmstream->interleave_block_size = 0x01;
+            vgmstream->coding_type = coding_PCM8_U;
+            break;
 
         case 0x02:  /* FMOD_SOUND_FORMAT_PCM16 */
             if (ChannelCount == 1) {
@@ -206,10 +215,13 @@ VGMSTREAM * init_vgmstream_fsb5(STREAMFILE *streamFile) {
         case 0x04:  /* FMOD_SOUND_FORMAT_PCM32 */
             goto fail;
 
-        case 0x05:  /* FMOD_SOUND_FORMAT_PCMFLOAT */
-            goto fail;
+        case 0x05:  /* FMOD_SOUND_FORMAT_PCMFLOAT  [Anima - Gate of Memories (PC)] */
+            vgmstream->coding_type = coding_PCMFLOAT;
+            vgmstream->layout_type = (ChannelCount == 1) ? layout_none : layout_interleave;
+            vgmstream->interleave_block_size = 0x04;
+            break;
 
-        case 0x06:  /* FMOD_SOUND_FORMAT_GCADPCM */
+        case 0x06:  /* FMOD_SOUND_FORMAT_GCADPCM  [Sonic Boom - Fire and Ice (3DS)] */
             if (ChannelCount == 1) {
                 vgmstream->layout_type = layout_none;
             } else {
@@ -305,7 +317,6 @@ VGMSTREAM * init_vgmstream_fsb5(STREAMFILE *streamFile) {
         default:
             goto fail;
     }
-
 
     if (!vgmstream_open_stream(vgmstream,streamFile,StartOffset))
         goto fail;

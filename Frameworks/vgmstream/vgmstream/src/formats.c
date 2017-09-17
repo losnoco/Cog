@@ -32,7 +32,7 @@ static const char* extension_list[] = {
     //"aiff", //common
     "aix",
     "akb",
-    "amts",
+    "amts", //fake extension (to be removed)
     "as4",
     "asd",
     "asf",
@@ -42,6 +42,7 @@ static const char* extension_list[] = {
     "at3",
     "aud",
     "aus",
+    "awc",
 
     "b1s",
     "baf",
@@ -147,14 +148,15 @@ static const char* extension_list[] = {
     "kovs",
     "kraw",
 
-    "laac", //fake extension, for tri-Ace/FFmpeg
+    "laac", //fake extension, for AAC (tri-Ace/FFmpeg)
     "leg",
-    "lmp4", //fake extension, for looping
-    "logg", //fake extension, for looping
+    "lmp4", //fake extension, for MP4s
+    "logg", //fake extension, for OGGs
     "lpcm",
     "lps",
     "lsf",
-    "lwav", //fake extension, for looping
+    "lstm", //fake extension, for STMs
+    "lwav", //fake extension, for WAVs
 
     "matx",
     "mc3",
@@ -187,7 +189,7 @@ static const char* extension_list[] = {
     "ndp",
     "ngca",
     "nps",
-    "npsf",
+    "npsf", //fake extension (to be removed)
     "nus3bank",
     "nwa",
 
@@ -206,7 +208,7 @@ static const char* extension_list[] = {
     "pnb",
     "pona",
     "pos",
-    "ps2stm",
+    "ps2stm", //fake extension (to be removed)
     "psh",
     "psnd",
     "psw",
@@ -253,6 +255,7 @@ static const char* extension_list[] = {
     "snds",
     "sng",
     "sns",
+    "snu",
     "spd",
     "spm",
     "sps",
@@ -266,7 +269,7 @@ static const char* extension_list[] = {
     "ster",
     "sth",
     //"stm", //common
-    "stma",
+    "stma", //fake extension (to be removed)
     "str",
     "strm",
     "sts",
@@ -393,16 +396,17 @@ typedef struct {
 
 
 static const coding_info coding_info_list[] = {
-        {coding_PCM16BE,            "Big Endian 16-bit PCM"},
         {coding_PCM16LE,            "Little Endian 16-bit PCM"},
-        {coding_PCM16LE_int,        "Little Endian 16-bit PCM with 2 byte interleave"},
         {coding_PCM16LE_XOR_int,    "Little Endian 16-bit PCM with 2 byte interleave and XOR obfuscation"},
+        {coding_PCM16BE,            "Big Endian 16-bit PCM"},
+        {coding_PCM16_int,          "16-bit PCM with 2 byte interleave"},
         {coding_PCM8,               "8-bit PCM"},
         {coding_PCM8_U,             "8-bit unsigned PCM"},
         {coding_PCM8_U_int,         "8-bit unsigned PCM with 1 byte interleave"},
         {coding_PCM8_int,           "8-bit PCM with 1 byte interleave"},
         {coding_PCM8_SB_int,        "8-bit PCM with sign bit, 1 byte interleave"},
         {coding_ULAW,               "8-bit u-Law"},
+        {coding_PCMFLOAT,           "32-bit float PCM"},
         {coding_CRI_ADX,            "CRI ADX 4-bit ADPCM"},
         {coding_CRI_ADX_exp,        "CRI ADX 4-bit ADPCM with exponential scale"},
         {coding_CRI_ADX_fixed,      "CRI ADX 4-bit ADPCM with fixed coefficients"},
@@ -445,6 +449,7 @@ static const coding_info coding_info_list[] = {
         {coding_FSB_IMA,            "FSB multichannel 4-bit IMA ADPCM"},
         {coding_WWISE_IMA,          "Audiokinetic Wwise 4-bit IMA ADPCM"},
         {coding_REF_IMA,            "Reflections 4-bit IMA ADPCM"},
+        {coding_AWC_IMA,            "Rockstar AWC 4-bit IMA ADPCM"},
         {coding_WS,                 "Westwood Studios VBR ADPCM"},
         {coding_ACM,                "InterPlay ACM"},
         {coding_NWA0,               "NWA DPCM Level 0"},
@@ -462,6 +467,7 @@ static const coding_info coding_info_list[] = {
         {coding_MTAF,               "Konami MTAF 4-bit ADPCM"},
         {coding_MTA2,               "Konami MTA2 4-bit ADPCM"},
         {coding_MC3,                "Paradigm MC3 3-bit ADPCM"},
+        {coding_EA_XAS,             "Electronic Arts EA-XAS 4-bit ADPCM"},
         
 #ifdef VGM_USE_VORBIS
         {coding_ogg_vorbis,         "Ogg Vorbis"},
@@ -469,6 +475,7 @@ static const coding_info coding_info_list[] = {
 #endif
 #ifdef VGM_USE_MPEG
         {coding_MPEG_custom,        "Custom MPEG Audio"},
+        {coding_MPEG_ealayer3,      "EALayer3"},
         {coding_MPEG_layer1,        "MPEG Layer I Audio (MP1)"},
         {coding_MPEG_layer2,        "MPEG Layer II Audio (MP2)"},
         {coding_MPEG_layer3,        "MPEG Layer III Audio (MP3)"},
@@ -497,8 +504,8 @@ static const layout_info layout_info_list[] = {
         {layout_ast_blocked,            "AST blocked"},
         {layout_halpst_blocked,         "HALPST blocked"},
         {layout_xa_blocked,             "CD-ROM XA"},
-        {layout_ea_blocked,             "Electronic Arts Audio Blocks"},
-        {layout_eacs_blocked,           "Electronic Arts (Old Version) Audio Blocks"},
+        {layout_ea_blocked,             "Electronic Arts SCxx blocked"},
+        {layout_eacs_blocked,           "Electronic Arts EACS blocked"},
         {layout_caf_blocked,            "CAF blocked"},
         {layout_wsi_blocked,            ".wsi blocked"},
         {layout_xvas_blocked,           ".xvas blocked"},
@@ -526,6 +533,9 @@ static const layout_info layout_info_list[] = {
         {layout_aix,                    "AIX interleave, internally 18-byte interleaved"},
         {layout_aax,                    "AAX blocked, 18-byte interleaved"},
         {layout_scd_int,                "SCD multistream interleave"},
+        {layout_ea_sns_blocked,         "Electronic Arts SNS blocked"},
+        {layout_blocked_awc,            "blocked (AWC)"},
+        {layout_blocked_vgs,            "blocked (VGS)"},
 #ifdef VGM_USE_VORBIS
         {layout_ogg_vorbis,             "Ogg"},
 #endif
@@ -659,7 +669,6 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_TEC,              "assumed TECMO badflagged stream by .tec extension"},
         {meta_XBOX_WVS,             "Metal Arms WVS Header (XBOX)"},
         {meta_NGC_WVS,              "Metal Arms WVS Header (GameCube)"},
-        {meta_XBOX_STMA,            "Midnight Club 2 STMA Header"},
         {meta_XBOX_MATX,            "assumed Matrix file by .matx extension"},
         {meta_DE2,                  "gurumin .de2 with embedded funky RIFF"},
         {meta_VS,                   "Men in Black VS Header"},
@@ -711,7 +720,7 @@ static const meta_info meta_info_list[] = {
         {meta_MSVP,                 "MSVP Header"},
         {meta_NGC_SSM,              "SSM DSP Header"},
         {meta_PS2_JOE,              "Disney/Pixar JOE Header"},
-        {meta_VGS,                  "Guitar Hero Encore Rocks the 80's Header"},
+        {meta_VGS,                  "Guitar Hero VGS Header"},
         {meta_DC_DCSW_DCS,          "Evil Twin DCS file with helper"},
         {meta_WII_SMP,              "SMP DSP Header"},
         {meta_EMFF_PS2,             "Eidos Music File Format Header"},
@@ -761,7 +770,6 @@ static const meta_info meta_info_list[] = {
         {meta_WII_WAS,              "WAS (iSWS) DSP header"},
         {meta_XBOX_HLWAV,           "Half Life 2 bgm header"},
         {meta_STX,                  "Nintendo .stx header"},
-        {meta_PS2_STM,              "Red Dead Revolver .stm (.ps2stm)"},
         {meta_MYSPD,                "U-Sing .myspd header"},
         {meta_HIS,                  "Her Interactive Sound header"},
         {meta_PS2_AST,              "KOEI AST header"},
@@ -873,6 +881,10 @@ static const meta_info meta_info_list[] = {
         {meta_EA_BNK,               "Electronic Arts BNK header"},
         {meta_SK_AUD,               "Silicon Knights AUD header"},
         {meta_AHX,                  "CRI AHX header"},
+        {meta_STM,                  "Angel Studios/Rockstar San Diego STMA header"},
+        {meta_BINK,                 "RAD Game Tools Bink header"},
+        {meta_EA_SNU,               "Electronic Arts SNU header"},
+        {meta_AWC,                  "Rockstar AWC header"},
 
 #ifdef VGM_USE_VORBIS
         {meta_OGG_VORBIS,           "Ogg Vorbis"},

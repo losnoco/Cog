@@ -92,8 +92,11 @@ typedef struct {
     /* extra */
     uint32_t hdrsize;
     uint32_t shdrsize_min;
+
     meta_t meta_type;
-} FSB_HEADER;
+    off_t name_offset;
+    size_t name_size;
+} fsb_header;
 
 /* ********************************************************************************** */
 
@@ -116,12 +119,12 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
     off_t start_offset;
     size_t custom_data_offset;
     int loop_flag = 0;
-    int target_stream = 0;
+    int target_stream = streamFile->stream_index;
 
-    FSB_HEADER fsbh;
+    fsb_header fsbh;
 
-    /* check extensions */
-    if ( !check_extensions(streamFile, "fsb,wii") )
+    /* check extensions (.bnk = Hard Corps Uprising PS3) */
+    if ( !check_extensions(streamFile, "fsb,wii,bnk") )
         goto fail;
 
     /* check header */
@@ -144,7 +147,8 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
         {
             off_t s_off = offset+fsbh.hdrsize;
 
-            /* 0x00:name(len=0x20) */
+            fsbh.name_offset = s_off;
+            fsbh.name_size = 0x20;
             fsbh.lengthsamples = read_32bitLE(s_off+0x20,streamFile);
             fsbh.lengthcompressedbytes = read_32bitLE(s_off+0x24,streamFile);
             fsbh.deffreq   = read_32bitLE(s_off+0x28,streamFile);
@@ -209,9 +213,11 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
             off_t s_off = offset + fsbh.hdrsize;
             off_t d_off = offset + fsbh.hdrsize + fsbh.shdrsize;
 
-            /* find target_stream data offset, reading each header */
-            for(i=1; i <= fsbh.numsamples; i++) {
-                /* 0x00:size  0x02:name(len=size) */
+            /* find target_stream header (variable sized) */
+            for(i = 0; i < fsbh.numsamples; i++) {
+                size_t stream_header_size = (uint16_t)read_16bitLE(s_off+0x00,streamFile);
+                fsbh.name_offset = s_off+0x02;
+                fsbh.name_size = 0x20-0x02;
                 fsbh.lengthsamples = read_32bitLE(s_off+0x20,streamFile);
                 fsbh.lengthcompressedbytes = read_32bitLE(s_off+0x24,streamFile);
                 fsbh.loopstart = read_32bitLE(s_off+0x28,streamFile);
@@ -221,20 +227,19 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
                 /* 0x38:defvol  0x3a:defpan  0x3c:defpri */
                 fsbh.numchannels = read_16bitLE(s_off+0x3e,streamFile);
                 /* FSB3.1/4: 0x40:mindistance  0x44:maxdistance  0x48:varfreq/size_32bits  0x4c:varvol  0x4e:fsbh.varpan */
+                /* FSB3/4: 0x50:extended_data size_32bits (not always given) */
 
-                if (target_stream == i) /* d_off found */
+                if (i+1 == target_stream) /* d_off found */
                     break;
 
-                s_off += fsbh.shdrsize_min; /* default size */
-                if (fsbh.version == FMOD_FSB_VERSION_4_0) {
-                    uint32_t extended_data = read_32bitLE(s_off+0x48,streamFile); /* +0x50:extended_data of size_32bits */
-                    if (extended_data > fsbh.shdrsize_min)
-                        s_off += extended_data;
-                }
-
-               
+                s_off += stream_header_size;
                 d_off += fsbh.lengthcompressedbytes; /* there is no offset so manually count */
-                //d_off += d_off % 0x30; /*todo some formats need padding, not sure when/how */
+
+                /* IMAs streams have weird end padding (maybe: FSB3=no padding, FSB4=always padding) */
+                if ((fsbh.mode & FSOUND_IMAADPCM) && (fsbh.flags & FMOD_FSB_SOURCE_MPEG_PADDED4)) {
+                    if (d_off % 0x20)
+                        d_off += 0x20 - (d_off % 0x20);
+                }
             }
             if (i > fsbh.numsamples) goto fail; /* not found */
 
@@ -243,25 +248,25 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
         }
     }
 
-#if 0
+
     /* XOR encryption for some FSB4, though the flag is only seen after decrypting */
-    if (fsbh.flags & FMOD_FSB_SOURCE_ENCRYPTED) {
-        VGM_LOG("FSB ENCRYPTED found\n");
-        goto fail;
-    }
+    //VGM_ASSERT(fsbh.flags & FMOD_FSB_SOURCE_ENCRYPTED, "FSB ENCRYPTED found\n");
 
     /* sometimes there is garbage at the end or missing bytes due to improper demuxing */
-    if (fsbh.hdrsize + fsbh.shdrsize + fsbh.datasize != streamFile->get_size(streamFile) - offset) {
-        VGM_LOG("FSB wrong head/datasize found\n");
-        goto fail;
-    }
-#endif
+    VGM_ASSERT(fsbh.hdrsize + fsbh.shdrsize + fsbh.datasize != streamFile->get_size(streamFile) - offset,
+               "FSB wrong head/datasize found\n");
 
-    /* Loops by default unless disabled (sometimes may add FSOUND_LOOP_NORMAL). Often streams
-     * repeat over and over (some tracks that shouldn't do this based on the flags, no real way to identify them). */
-    loop_flag = !(fsbh.mode & FSOUND_LOOP_OFF); /* (fsbh.mode & FSOUND_LOOP_NORMAL) */
+    /* Loops unless disabled. FMOD default seems full loops (0/num_samples-1) without flags, for repeating tracks
+     * that should loop and jingles/sfx that shouldn't. We'll try to disable looping is it looks jingly enough. */
+    loop_flag = !(fsbh.mode & FSOUND_LOOP_OFF);
+    if(!(fsbh.mode & FSOUND_LOOP_NORMAL)                            /* rarely set */
+            && fsbh.loopstart+fsbh.loopend+1 == fsbh.lengthsamples  /* full loop */
+            && fsbh.lengthsamples < 20*fsbh.deffreq)                /* seconds, lame but no other way to know */
+        loop_flag = 0;
+
     /* ping-pong looping = no looping? (forward > reverse > forward) */
     VGM_ASSERT(fsbh.mode & FSOUND_LOOP_BIDI, "FSB BIDI looping found\n");
+
 
     /* build the VGMSTREAM */
     vgmstream = allocate_vgmstream(fsbh.numchannels,loop_flag);
@@ -273,6 +278,9 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
     vgmstream->loop_end_sample = fsbh.loopend;
     vgmstream->num_streams = fsbh.numsamples;
     vgmstream->meta_type = fsbh.meta_type;
+    if (fsbh.name_offset)
+        read_string(vgmstream->stream_name,fsbh.name_size+1, fsbh.name_offset,streamFile);
+
 
     /* parse format */
     if (fsbh.mode & FSOUND_MPEG) {
@@ -300,7 +308,6 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
 #endif
     }
     else if (fsbh.mode & FSOUND_IMAADPCM) { /* (codec 0x69, Voxware Byte Aligned) */
-        //VGM_ASSERT(fsbh.mode & FSOUND_IMAADPCMSTEREO, "FSB FSOUND_IMAADPCMSTEREO found\n");
         /* FSOUND_IMAADPCMSTEREO is "noninterleaved, true stereo IMA", but doesn't seem to be any different
          * (found in FSB4: Shatter, Blade Kitten (PC), Hard Corps: Uprising (PS3)) */
 
@@ -314,14 +321,13 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
     else if (fsbh.mode & FSOUND_VAG) {
         /* FSB1: Jurassic Park Operation Genesis
          * FSB3: ?; FSB4: Spider Man Web of Shadows, Speed Racer, Silent Hill: Shattered Memories (PS2) */
-
         vgmstream->coding_type = coding_PSX;
         vgmstream->layout_type = layout_interleave;
         vgmstream->interleave_block_size = 0x10;
     }
     else if (fsbh.mode & FSOUND_XMA) {
-        /* FSB4: Xbox360 Armored Core V, Hard Corps, Halo Anniversary */
 #if defined(VGM_USE_FFMPEG)
+        /* FSB4: Xbox360 Armored Core V, Hard Corps, Halo Anniversary */
         ffmpeg_codec_data *ffmpeg_data = NULL;
         uint8_t buf[FAKE_RIFF_BUFFER_SIZE];
         size_t bytes, block_size, block_count;
@@ -346,36 +352,26 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
     }
     else if (fsbh.mode & FSOUND_GCADPCM) {
         /* FSB3: ?; FSB4: de Blob (Wii), Night at the Museum, M. Night Shyamalan Avatar: The Last Airbender */
-
         vgmstream->coding_type = coding_NGC_DSP;
         vgmstream->layout_type = layout_interleave_byte;
         vgmstream->interleave_block_size = 0x2;
         dsp_read_coefs_be(vgmstream, streamFile, custom_data_offset, 0x2e);
     }
-    else if (fsbh.mode & FSOUND_CELT) { /* || fsbh.mode & FSOUND_OGG (same flag) */
+    else if (fsbh.mode & FSOUND_CELT) { /* || fsbh.mode & FSOUND_OGG (same flag, unused) */
         /* FSB4: War Thunder (PC), The Witcher 2 (PC) */
-
         VGM_LOG("FSB4 FSOUND_CELT found\n");
         goto fail;
     }
     else { /* PCM */
         if (fsbh.mode & FSOUND_8BITS) {
-            VGM_LOG("FSB FSOUND_8BITS found\n");
-            if (fsbh.mode & FSOUND_UNSIGNED) {
-                vgmstream->coding_type = coding_PCM8_U; /* ? coding_PCM8_U_int */
-            } else { /* FSOUND_SIGNED */
-                vgmstream->coding_type = coding_PCM8; /* ? coding_PCM8_int / coding_PCM8_SB_int */
-            }
+            vgmstream->coding_type = (fsbh.mode & FSOUND_UNSIGNED) ? coding_PCM8_U : coding_PCM8;
             vgmstream->layout_type = layout_interleave;
             vgmstream->interleave_block_size = 0x1;
-        } else {  /* Rocket Knight (PC), Another Century's Episode R (PS3), Toy Story 3 (Wii)  */
+        }
+        else {  /* Rocket Knight (PC), Another Century's Episode R (PS3), Toy Story 3 (Wii)  */
             /* sometimes FSOUND_STEREO/FSOUND_MONO is not set (ex. Dead Space iOS),
              * or only STEREO/MONO but not FSOUND_8BITS/FSOUND_16BITS is set */
-            if (fsbh.flags & FMOD_FSB_SOURCE_BIGENDIANPCM) {
-                vgmstream->coding_type = coding_PCM16BE;
-            } else {
-                vgmstream->coding_type = coding_PCM16LE; /* ? coding_PCM16LE_int ? */
-            }
+            vgmstream->coding_type = (fsbh.flags & FMOD_FSB_SOURCE_BIGENDIANPCM) ? coding_PCM16BE : coding_PCM16LE;
             vgmstream->layout_type = layout_interleave;
             vgmstream->interleave_block_size = 0x2;
         }
