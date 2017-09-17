@@ -36,6 +36,11 @@ static void *dumb_stdfile_open(const char *filename)
     dumb_stdfile * file = ( dumb_stdfile * ) malloc( sizeof(dumb_stdfile) );
     if ( !file ) return 0;
     file->file = fopen(filename, "rb");
+    if ( !file->file )
+    {
+        free( file );
+        return 0;
+    }
     fseek(file->file, 0, SEEK_END);
     file->size = ftell(file->file);
     fseek(file->file, 0, SEEK_SET);

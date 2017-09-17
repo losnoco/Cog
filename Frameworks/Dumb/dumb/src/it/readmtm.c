@@ -30,7 +30,7 @@ size_t strlen_max(const char * ptr, size_t max)
 	if (ptr==0) return 0;
 	start = ptr;
 	end = ptr + max;
-	while(*ptr && ptr < end) ptr++;
+	while(ptr < end && *ptr) ptr++;
 	return ptr - start;
 }
 
@@ -92,7 +92,7 @@ static int it_mtm_assemble_pattern(IT_PATTERN *pattern, const unsigned char * tr
 	return 0;
 }
 
-static int it_mtm_read_sample_header(IT_SAMPLE *sample, DUMBFILE *f)
+static int it_mtm_read_sample_header(IT_SAMPLE *sample, DUMBFILE *f, int * skip_bytes)
 {
 	int finetune, flags;
 
@@ -117,7 +117,9 @@ static int it_mtm_read_sample_header(IT_SAMPLE *sample, DUMBFILE *f)
 
 	sample->flags = IT_SAMPLE_EXISTS;
 
+	*skip_bytes = 0;
 	if (flags & 1) {
+		*skip_bytes = sample->length & 1;
 		sample->flags |= IT_SAMPLE_16BIT;
 		sample->length >>= 1;
 		sample->loop_start >>= 1;
@@ -144,10 +146,11 @@ static int it_mtm_read_sample_header(IT_SAMPLE *sample, DUMBFILE *f)
 	return dumbfile_error(f);
 }
 
-static int it_mtm_read_sample_data(IT_SAMPLE *sample, DUMBFILE *f)
+static int it_mtm_read_sample_data(IT_SAMPLE *sample, DUMBFILE *f, int skip_bytes)
 {
 	long i;
 	long truncated_size;
+	long bytes_per_sample;
 
 	/* let's get rid of the sample data coming after the end of the loop */
 	if ((sample->flags & IT_SAMPLE_LOOP) && sample->loop_end < sample->length) {
@@ -156,20 +159,24 @@ static int it_mtm_read_sample_data(IT_SAMPLE *sample, DUMBFILE *f)
 	} else {
 		truncated_size = 0;
 	}
+	
+	bytes_per_sample = (sample->flags & IT_SAMPLE_16BIT) ? 2 : 1;
 
-	sample->data = malloc(sample->length);
+	sample->data = malloc(sample->length * bytes_per_sample);
 
 	if (!sample->data)
 		return -1;
 
-	dumbfile_getnc((char *)sample->data, sample->length, f);
-	dumbfile_skip(f, truncated_size);
+	dumbfile_getnc((char *)sample->data, sample->length * bytes_per_sample, f);
+	dumbfile_skip(f, truncated_size * bytes_per_sample);
+	dumbfile_skip(f, skip_bytes);
 
 	if (dumbfile_error(f))
 		return -1;
 
-	for (i = 0; i < sample->length; i++)
-		((signed char *)sample->data)[i] ^= 0x80;
+	if (bytes_per_sample == 1)
+		for (i = 0; i < sample->length; i++)
+			((signed char *)sample->data)[i] ^= 0x80;
 
 	return 0;
 }
@@ -185,6 +192,8 @@ static DUMB_IT_SIGDATA *it_mtm_load_sigdata(DUMBFILE *f, int * version)
 	unsigned short * sequence;
 
 	char * comment;
+	
+	int * skip_bytes;
 
 	if (dumbfile_getc(f) != 'M' ||
 		dumbfile_getc(f) != 'T' ||
@@ -258,23 +267,26 @@ static DUMB_IT_SIGDATA *it_mtm_load_sigdata(DUMBFILE *f, int * version)
 
 	sigdata->restart_position = 0;
 	sigdata->n_pchannels = n_channels;
-
+	
 	for (n = 0; n < sigdata->n_samples; n++)
 		sigdata->sample[n].data = NULL;
 
+	skip_bytes = calloc(sizeof(int), sigdata->n_samples);
+	if (!skip_bytes) goto error_usd;
+	
 	for (n = 0; n < sigdata->n_samples; n++) {
-		if (it_mtm_read_sample_header(&sigdata->sample[n], f)) goto error_usd;
+		if (it_mtm_read_sample_header(&sigdata->sample[n], f, skip_bytes + n)) goto error_sb;
 	}
 
 	sigdata->order = malloc(sigdata->n_orders);
-	if (!sigdata->order) goto error_usd;
+	if (!sigdata->order) goto error_sb;
 
-    if (dumbfile_getnc((char *)sigdata->order, sigdata->n_orders, f) < sigdata->n_orders) goto error_usd;
+    if (dumbfile_getnc((char *)sigdata->order, sigdata->n_orders, f) < sigdata->n_orders) goto error_sb;
 	if (sigdata->n_orders < 128)
-		if (dumbfile_skip(f, 128 - sigdata->n_orders)) goto error_usd;
+		if (dumbfile_skip(f, 128 - sigdata->n_orders)) goto error_sb;
 
 	track = malloc(192 * n_tracks);
-	if (!track) goto error_usd;
+	if (!track) goto error_sb;
 
     if (dumbfile_getnc((char *)track, 192 * n_tracks, f) < 192 * n_tracks) goto error_ft;
 
@@ -321,7 +333,8 @@ static DUMB_IT_SIGDATA *it_mtm_load_sigdata(DUMBFILE *f, int * version)
 			int l, m;
 
 			for (l = 0, n = 0; n <= o; n += 40) {
-				l += strlen_max(&comment[n], 40) + 2;
+				int maxlen = l_comment - n;
+				l += strlen_max(&comment[n], maxlen > 40 ? 40 : maxlen) + 2;
 			}
 
 			l -= 1;
@@ -330,7 +343,8 @@ static DUMB_IT_SIGDATA *it_mtm_load_sigdata(DUMBFILE *f, int * version)
 			if (!sigdata->song_message) goto error_fc;
 
 			for (m = 0, n = 0; n <= o; n += 40) {
-				int p = (int) strlen_max(&comment[n], 40);
+				int maxlen = l_comment - n;
+				int p = (int) strlen_max(&comment[n], maxlen > 40 ? 40 : maxlen);
 				if (p) {
 					memcpy(sigdata->song_message + m, &comment[n], p);
 					m += p;
@@ -348,13 +362,14 @@ static DUMB_IT_SIGDATA *it_mtm_load_sigdata(DUMBFILE *f, int * version)
 	}
 
 	for (n = 0; n < sigdata->n_samples; n++) {
-		if (it_mtm_read_sample_data(&sigdata->sample[n], f)) goto error_fs;
+		if (it_mtm_read_sample_data(&sigdata->sample[n], f, skip_bytes[n])) goto error_fs;
 	}
-
+	
 	_dumb_it_fix_invalid_orders(sigdata);
 
 	free(sequence);
 	free(track);
+	free(skip_bytes);
 
 	return sigdata;
 
@@ -364,6 +379,8 @@ error_fs:
 	free(sequence);
 error_ft:
 	free(track);
+error_sb:
+	free(skip_bytes);
 error_usd:
 	_dumb_it_unload_sigdata(sigdata);
 	return NULL;

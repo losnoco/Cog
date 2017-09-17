@@ -118,7 +118,7 @@ static int it_mod_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, int n_channels,
 
 
 
-static int it_mod_read_sample_header(IT_SAMPLE *sample, DUMBFILE *f, int stk)
+static int it_mod_read_sample_header(IT_SAMPLE *sample, DUMBFILE *f, unsigned long fft, int stk)
 {
 	int finetune, loop_start, loop_length;
 
@@ -137,7 +137,10 @@ assumed not to be an instrument name, and is probably a message.
 	sample->filename[0] = 0;
 
 	sample->length = dumbfile_mgetw(f) << 1;
-	finetune = (signed char)(dumbfile_getc(f) << 4) >> 4; /* signed nibble */
+	if (fft == DUMB_ID('F','E','S','T'))
+		finetune = (signed char)((-dumbfile_getc(f) & 0x1F) << 3) >> 3;
+	else
+		finetune = (signed char)(dumbfile_getc(f) << 4) >> 4; /* signed nibble */
 /** Each  finetune step changes  the note 1/8th  of  a  semitone. */
 	sample->global_volume = 64;
 	sample->default_volume = dumbfile_getc(f); // Should we be setting global_volume to this instead?
@@ -166,7 +169,7 @@ told to stop.
 
 	sample->default_pan = 0;
 	sample->C5_speed = (int)( AMIGA_CLOCK / 214.0 ); //(long)(16726.0*pow(DUMB_PITCH_BASE, finetune*32));
-	sample->finetune = finetune * 32;
+	sample->finetune = finetune * ((fft == DUMB_ID('F','E','S','T')) ? 16 : 32);
 	// the above line might be wrong
 
 	if (sample->loop_end > sample->length)
@@ -280,15 +283,15 @@ static DUMB_IT_SIGDATA *it_mod_load_sigdata(DUMBFILE *f, int restrict_)
 	int i;
 	unsigned long fft;
 
-    if ( dumbfile_seek(f, MOD_FFT_OFFSET, DFS_SEEK_SET) )
-        return NULL;
+	if ( dumbfile_seek(f, MOD_FFT_OFFSET, DFS_SEEK_SET) )
+		return NULL;
 
-    fft = dumbfile_mgetl(f);
-    if (dumbfile_error(f))
-        return NULL;
+	fft = dumbfile_mgetl(f);
+	if (dumbfile_error(f))
+		return NULL;
 
-    if ( dumbfile_seek(f, 0, DFS_SEEK_SET) )
-        return NULL;
+	if ( dumbfile_seek(f, 0, DFS_SEEK_SET) )
+		return NULL;
 
 	sigdata = malloc(sizeof(*sigdata));
 	if (!sigdata) {
@@ -317,6 +320,7 @@ static DUMB_IT_SIGDATA *it_mod_load_sigdata(DUMBFILE *f, int restrict_)
 		case DUMB_ID('F','L','T','4'):
 		case DUMB_ID('M',0,0,0):
 		case DUMB_ID('8',0,0,0):
+		case DUMB_ID('F','E','S','T'):
 			n_channels = 4;
 			break;
 		case DUMB_ID('F','L','T','8'):
@@ -381,6 +385,7 @@ static DUMB_IT_SIGDATA *it_mod_load_sigdata(DUMBFILE *f, int restrict_)
 			} else {
 				n_channels = 4;
 				sigdata->n_samples = 15;
+				fft = 0;
 			}
 	}
 
@@ -412,7 +417,7 @@ static DUMB_IT_SIGDATA *it_mod_load_sigdata(DUMBFILE *f, int restrict_)
 		sigdata->sample[i].data = NULL;
 
 	for (i = 0; i < sigdata->n_samples; i++) {
-		if (it_mod_read_sample_header(&sigdata->sample[i], f, sigdata->n_samples == 15)) {
+		if (it_mod_read_sample_header(&sigdata->sample[i], f, fft, sigdata->n_samples == 15)) {
 			_dumb_it_unload_sigdata(sigdata);
             return NULL;
 		}

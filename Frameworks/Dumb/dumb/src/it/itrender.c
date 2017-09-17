@@ -3789,7 +3789,7 @@ static void update_tick_counts(DUMB_IT_SIGRENDERER *sigrenderer)
 					}
 				}
 			}
-		} else if (channel->note_delay_count) {
+		} else if (channel->note_delay_count && channel->note_delay_entry) {
 			channel->note_delay_count--;
 			if (channel->note_delay_count == 0)
 				process_note_data(sigrenderer, channel->note_delay_entry, 0);
@@ -4259,6 +4259,8 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 						tick = 0;
 					else
 						++tick;
+					if (sigrenderer->sigdata->flags & IT_WAS_AN_STM)
+						tick /= 16;
 					playing->delta *= (float)pow(DUMB_SEMITONE_BASE, channel->arpeggio_offsets[channel->arpeggio_table[tick&31]]);
 				}
 			/*
@@ -4299,6 +4301,9 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer)
 static int process_tick(DUMB_IT_SIGRENDERER *sigrenderer)
 {
 	DUMB_IT_SIGDATA *sigdata = sigrenderer->sigdata;
+	
+	if ( sigrenderer->tempo < 32 || sigrenderer->tempo > 255 ) // problematic
+		return 1;
 
 	// Set note vol/freq to vol/freq set for each channel
 
@@ -4440,8 +4445,13 @@ static int process_tick(DUMB_IT_SIGRENDERER *sigrenderer)
 
 /** WARNING - everything pertaining to a new pattern initialised? */
 
-				sigrenderer->entry = sigrenderer->entry_start = pattern->entry;
-				sigrenderer->entry_end = sigrenderer->entry + pattern->n_entries;
+				if ( pattern->entry ) {
+					sigrenderer->entry = sigrenderer->entry_start = pattern->entry;
+					sigrenderer->entry_end = sigrenderer->entry + pattern->n_entries;
+				} else {
+					sigrenderer->entry = sigrenderer->entry_start = 0;
+					sigrenderer->entry_end = 0;
+				}
 
 				/* If n_rows was 0, we're only just starting. Don't do anything weird here. */
 				/* added: process row check, for break to row spooniness */
@@ -4506,6 +4516,7 @@ static int process_tick(DUMB_IT_SIGRENDERER *sigrenderer)
 			if (!(sigdata->flags & IT_WAS_A_669))
 				reset_effects(sigrenderer);
 
+			if ( sigrenderer->entry )
 			{
 				IT_ENTRY *entry = sigrenderer->entry;
 				int ignore_cxx = 0;
@@ -4525,6 +4536,7 @@ static int process_tick(DUMB_IT_SIGRENDERER *sigrenderer)
 			else if (!(sigdata->flags & IT_OLD_EFFECTS))
 				update_smooth_effects(sigrenderer);
 		} else {
+			if ( sigrenderer->entry )
 			{
 				IT_ENTRY *entry = sigrenderer->entry;
 
@@ -5320,6 +5332,10 @@ static DUMB_IT_SIGRENDERER *init_sigrenderer(DUMB_IT_SIGDATA *sigdata, int n_cha
 		channel->inv_loop_speed = 0;
 		channel->inv_loop_offset = 0;
 		channel->playing = NULL;
+		channel->key_off_count = 0;
+		channel->note_cut_count = 0;
+		channel->note_delay_count = 0;
+		channel->note_delay_entry = 0;
 #ifdef BIT_ARRAY_BULLSHIT
 		channel->played_patjump = NULL;
 		channel->played_patjump_order = 0xFFFE;
@@ -5405,7 +5421,10 @@ static DUMB_IT_SIGRENDERER *init_sigrenderer(DUMB_IT_SIGDATA *sigdata, int n_cha
 	//sigrenderer->max_output = 0;
 
 	if ( !(sigdata->flags & IT_WAS_PROCESSED) ) {
-		dumb_it_add_lpc( sigdata );
+		if ( dumb_it_add_lpc( sigdata ) < 0 ) {
+			_dumb_it_end_sigrenderer( sigrenderer );
+			return NULL;
+		}
 
 		sigdata->flags |= IT_WAS_PROCESSED;
 	}
@@ -5596,6 +5615,8 @@ static long it_sigrenderer_get_samples(
 	LONG_LONG t;
 
 	if (sigrenderer->order < 0) return 0; // problematic
+	
+	if (!sigrenderer->tempo) return 0; // also problematic
 
 	pos = 0;
 	dt = (int)(delta * 65536.0f + 0.5f);

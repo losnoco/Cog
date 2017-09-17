@@ -260,6 +260,9 @@ static int it_amf_read_sample_data( IT_SAMPLE *sample, DUMBFILE *f )
 
 	if ( sample->length )
 		read_length = (int)dumbfile_getnc( sample->data, sample->length, f );
+	
+	if ( read_length < 0 )
+		read_length = 0;
 
 	for ( i = 0; i < read_length; i++ ) {
 		( ( signed char * ) sample->data )[ i ] ^= 0x80;
@@ -320,6 +323,8 @@ static DUMB_IT_SIGDATA *it_amf_load_sigdata(DUMBFILE *f, int * version)
 		free( sigdata );
 		return NULL;
 	}
+    
+    sigdata->n_pchannels = nchannels;
 
 	memset( sigdata->channel_volume, 64, DUMB_IT_N_CHANNELS );
 

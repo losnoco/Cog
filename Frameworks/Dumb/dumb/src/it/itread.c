@@ -28,7 +28,7 @@
 #endif
 
 
-#define INVESTIGATE_OLD_INSTRUMENTS
+//#define INVESTIGATE_OLD_INSTRUMENTS
 
 
 
@@ -290,12 +290,15 @@ static int it_read_envelope(IT_ENVELOPE *envelope, DUMBFILE *f)
 
 	envelope->flags = dumbfile_getc(f);
 	envelope->n_nodes = dumbfile_getc(f);
+	if(envelope->n_nodes > 25) {
+		TRACE("IT error: wrong number of envelope nodes (%d)\n", envelope->n_nodes);
+		envelope->n_nodes = 0;
+		return -1;
+	}
 	envelope->loop_start = dumbfile_getc(f);
 	envelope->loop_end = dumbfile_getc(f);
 	envelope->sus_loop_start = dumbfile_getc(f);
 	envelope->sus_loop_end = dumbfile_getc(f);
-	if (envelope->n_nodes > 25)
-		envelope->n_nodes = 25;
 	for (n = 0; n < envelope->n_nodes; n++) {
 		envelope->node_y[n] = dumbfile_getc(f);
 		envelope->node_t[n] = dumbfile_igetw(f);
@@ -620,8 +623,8 @@ long _dumb_it_read_sample_data_adpcm4(IT_SAMPLE *sample, DUMBFILE *f)
 	long n, len, delta;
 	signed char * ptr, * end;
 	signed char compression_table[16];
-    if (dumbfile_getnc((char *)compression_table, 16, f) != 16)
-        return -1;
+	if (dumbfile_getnc((char *)compression_table, 16, f) != 16)
+		return -1;
 	ptr = (signed char *) sample->data;
 	delta = 0;
 
@@ -822,7 +825,7 @@ static int it_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, unsigned char *buff
 
 	while (bufpos < buflen) {
 		unsigned char b = buffer[bufpos++];
-
+		
 		if (b == 0) {
 			/* End of row */
 			IT_SET_END_ROW(entry);
@@ -838,31 +841,46 @@ static int it_read_pattern(IT_PATTERN *pattern, DUMBFILE *f, unsigned char *buff
 
 		channel = (b - 1) & 63;
 
-		if (b & 128)
+		if (b & 128) {
+			if (bufpos >= buflen)
+				return -1;
+			
 			cmask[channel] = mask = buffer[bufpos++];
-		else
+		} else
 			mask = cmask[channel];
 
 		if (mask) {
 			entry->mask = (mask & 15) | (mask >> 4);
 			entry->channel = channel;
 
-			if (mask & IT_ENTRY_NOTE)
+			if (mask & IT_ENTRY_NOTE) {
+				if (bufpos >= buflen)
+					return -1;
+				
 				cnote[channel] = entry->note = buffer[bufpos++];
-			else if (mask & (IT_ENTRY_NOTE << 4))
+			} else if (mask & (IT_ENTRY_NOTE << 4))
 				entry->note = cnote[channel];
 
-			if (mask & IT_ENTRY_INSTRUMENT)
+			if (mask & IT_ENTRY_INSTRUMENT) {
+				if (bufpos >= buflen)
+					return -1;
+				
 				cinstrument[channel] = entry->instrument = buffer[bufpos++];
-			else if (mask & (IT_ENTRY_INSTRUMENT << 4))
+			} else if (mask & (IT_ENTRY_INSTRUMENT << 4))
 				entry->instrument = cinstrument[channel];
 
-			if (mask & IT_ENTRY_VOLPAN)
+			if (mask & IT_ENTRY_VOLPAN) {
+				if (bufpos >= buflen)
+					return -1;
+				
 				cvolpan[channel] = entry->volpan = buffer[bufpos++];
-			else if (mask & (IT_ENTRY_VOLPAN << 4))
+			} else if (mask & (IT_ENTRY_VOLPAN << 4))
 				entry->volpan = cvolpan[channel];
 
 			if (mask & IT_ENTRY_EFFECT) {
+				if (bufpos + 1 >= buflen)
+					return -1;
+				
 				ceffect[channel] = entry->effect = buffer[bufpos++];
 				ceffectvalue[channel] = entry->effectvalue = buffer[bufpos++];
 			} else {
@@ -940,6 +958,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 	int message_length, message_offset;
 
 	IT_COMPONENT *component;
+	int min_components;
 	int n_components = 0;
 
 	unsigned char sample_convert[4096];
@@ -1044,10 +1063,15 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 			sigdata->pattern[n].entry = NULL;
 	}
 
-    dumbfile_getnc((char *)sigdata->order, sigdata->n_orders, f);
+	if ( dumbfile_getnc((char *)sigdata->order, sigdata->n_orders, f) < sigdata->n_orders ) {
+		_dumb_it_unload_sigdata(sigdata);
+		return NULL;
+	}
 	sigdata->restart_position = 0;
+    
+	min_components = (special & 1) + sigdata->n_instruments + sigdata->n_samples + sigdata->n_patterns;
 
-	component = malloc(769 * sizeof(*component));
+	component = malloc(min_components * sizeof(*component));
 	if (!component) {
 		_dumb_it_unload_sigdata(sigdata);
 		return NULL;
@@ -1236,7 +1260,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f)
 		switch (component[n].type) {
 
 			case IT_COMPONENT_SONG_MESSAGE:
-				if ( n < n_components ) {
+				if ( n+1 < n_components ) {
 					message_length = min( message_length, (int)(component[n+1].offset - component[n].offset) );
 				}
 				sigdata->song_message = malloc(message_length + 1);

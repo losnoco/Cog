@@ -18,13 +18,7 @@
 #ifndef _V_LPC_H_
 #define _V_LPC_H_
 
-/* simple linear scale LPC code */
-extern float vorbis_lpc_from_data(float *data,float *lpc,int n,int m);
-
-extern void vorbis_lpc_predict(float *coeff,float *prime,int m,
-                               float *data,long n);
-
 struct DUMB_IT_SIGDATA;
-extern void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata);
+extern int dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata);
 
 #endif

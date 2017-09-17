@@ -66,89 +66,88 @@ static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num)
 
 	qsort(buffer, count, 64, &psm_sample_compare);
 
-	for (n = 0; n < true_num; n++) {
+	for (n = 0; n < *num; n++) {
 		(*sample)[n].flags = 0;
 	}
 
 	for (n = 0; n < count; n++) {
+		IT_SAMPLE smp;
 		IT_SAMPLE * s;
 		snum = buffer[(n * 64) + 45] | (buffer[(n * 64) + 46] << 8);
 		s = &((*sample)[snum - 1]);
-		memcpy(s->filename, buffer + (n * 64), 13);
-		s->filename[13] = 0;
-		memcpy(s->name, buffer + (n * 64) + 13, 24);
-		s->name[24] = 0;
+		memcpy(smp.filename, buffer + (n * 64), 13);
+		smp.filename[13] = 0;
+		memcpy(smp.name, buffer + (n * 64) + 13, 24);
+		smp.name[24] = 0;
 		offset = buffer[(n * 64) + 37] | (buffer[(n * 64) + 38] << 8) |
 				 (buffer[(n * 64) + 39] << 16) | (buffer[(n * 64) + 40] << 24);
 		flags = buffer[(n * 64) + 47];
-		s->length = buffer[(n * 64) + 48] | (buffer[(n * 64) + 49] << 8) |
+		smp.length = buffer[(n * 64) + 48] | (buffer[(n * 64) + 49] << 8) |
 					(buffer[(n * 64) + 50] << 16) | (buffer[(n * 64) + 51] << 24);
-		s->loop_start = buffer[(n * 64) + 52] | (buffer[(n * 64) + 53] << 8) |
+		smp.loop_start = buffer[(n * 64) + 52] | (buffer[(n * 64) + 53] << 8) |
 						(buffer[(n * 64) + 54] << 16) | (buffer[(n * 64) + 55] << 24);
-		s->loop_end = buffer[(n * 64) + 56] | (buffer[(n * 64) + 57] << 8) |
+		smp.loop_end = buffer[(n * 64) + 56] | (buffer[(n * 64) + 57] << 8) |
 					  (buffer[(n * 64) + 58] << 16) | (buffer[(n * 64) + 59] << 24);
 
-		if (s->length <= 0) continue;
+		if (smp.length <= 0) continue;
 
 		finetune = buffer[(n * 64) + 60];
-		s->default_volume = buffer[(n * 64) + 61];
-		s->C5_speed = buffer[(n * 64) + 62] | (buffer[(n * 64) + 63] << 8);
+		smp.default_volume = buffer[(n * 64) + 61];
+		smp.C5_speed = buffer[(n * 64) + 62] | (buffer[(n * 64) + 63] << 8);
 		if (finetune & 15) {
 			finetune &= 15;
 			if (finetune >= 8) finetune -= 16;
 			//s->C5_speed = (long)((double)s->C5_speed * pow(DUMB_PITCH_BASE, finetune*32));
-			s->finetune = finetune * 32;
+			smp.finetune = finetune * 32;
 		}
-		else s->finetune = 0;
+		else smp.finetune = 0;
 
-		s->flags |= IT_SAMPLE_EXISTS;
-		if (flags & 0x41) {
-			s->flags &= ~IT_SAMPLE_EXISTS;
+		smp.flags |= IT_SAMPLE_EXISTS;
+		if (flags & 0x41)
 			continue;
-		}
-		if (flags & 0x20) s->flags |= IT_SAMPLE_PINGPONG_LOOP;
-		if (flags & 4) s->flags |= IT_SAMPLE_16BIT;
+		if (flags & 0x20) smp.flags |= IT_SAMPLE_PINGPONG_LOOP;
+		if (flags & 4) smp.flags |= IT_SAMPLE_16BIT;
 
 		if (flags & 0x80) {
-			s->flags |= IT_SAMPLE_LOOP;
-			if ((unsigned int)s->loop_end > (unsigned int)s->length)
-				s->loop_end = s->length;
-			else if ((unsigned int)s->loop_start >= (unsigned int)s->loop_end)
-				s->flags &= ~IT_SAMPLE_LOOP;
+			smp.flags |= IT_SAMPLE_LOOP;
+			if ((unsigned int)smp.loop_end > (unsigned int)smp.length)
+				smp.loop_end = smp.length;
+			else if ((unsigned int)smp.loop_start >= (unsigned int)smp.loop_end)
+				smp.flags &= ~IT_SAMPLE_LOOP;
 			else
-				s->length = s->loop_end;
+				smp.length = smp.loop_end;
 		}
 
-		s->global_volume = 64;
+		smp.global_volume = 64;
 
-		s->vibrato_speed = 0;
-		s->vibrato_depth = 0;
-		s->vibrato_rate = 0;
-		s->vibrato_waveform = IT_VIBRATO_SINE;
-		s->max_resampling_quality = -1;
+		smp.vibrato_speed = 0;
+		smp.vibrato_depth = 0;
+		smp.vibrato_rate = 0;
+		smp.vibrato_waveform = IT_VIBRATO_SINE;
+		smp.max_resampling_quality = -1;
 
-        sample_bytes = s->length * ((flags & 4) ? 2 : 1);
-        s->data = malloc(sample_bytes);
-		if (!s->data) goto error_fb;
+        sample_bytes = smp.length * ((flags & 4) ? 2 : 1);
+        smp.data = malloc(sample_bytes);
+		if (!smp.data) goto error_fb;
+		sdata = (const unsigned char *) smp.data;
 
-        if (dumbfile_seek(f, offset, DFS_SEEK_SET) || dumbfile_getnc(s->data, sample_bytes, f) < sample_bytes) goto error_fb;
-        sdata = ( const unsigned char * ) s->data;
+        if (dumbfile_seek(f, offset, DFS_SEEK_SET) || dumbfile_getnc(smp.data, sample_bytes, f) < sample_bytes) goto error_fd;
 
 		if (flags & 0x10) {
 			if (flags & 8) {
 				if (flags & 4) {
-					for (o = 0; o < s->length; o++)
-						((short *)s->data)[o] = (sdata[o * 2] | (sdata[(o * 2) + 1] << 8)) ^ 0x8000;
+					for (o = 0; o < smp.length; o++)
+						((short *)smp.data)[o] = (sdata[o * 2] | (sdata[(o * 2) + 1] << 8)) ^ 0x8000;
 				} else {
-					for (o = 0; o < s->length; o++)
-						((signed char *)s->data)[o] = sdata[o] ^ 0x80;
+					for (o = 0; o < smp.length; o++)
+						((signed char *)smp.data)[o] = sdata[o] ^ 0x80;
 				}
 			} else {
 				if (flags & 4) {
-					for (o = 0; o < s->length; o++)
-						((short *)s->data)[o] = sdata[o * 2] | (sdata[(o * 2) + 1] << 8);
+					for (o = 0; o < smp.length; o++)
+						((short *)smp.data)[o] = sdata[o * 2] | (sdata[(o * 2) + 1] << 8);
 				} else {
-					memcpy(s->data, sdata, s->length);
+					memcpy(smp.data, sdata, smp.length);
 				}
 			}
 		} else {
@@ -156,36 +155,41 @@ static int it_old_psm_read_samples(IT_SAMPLE ** sample, DUMBFILE * f, int * num)
 			if (flags & 8) {
 				/* unsigned delta? mehhh, does anything even use this? */
 				if (flags & 4) {
-					for (o = 0; o < s->length; o++) {
+					for (o = 0; o < smp.length; o++) {
 						delta += (short)(sdata[o * 2] | (sdata[(o * 2) + 1] << 8));
-						((short *)s->data)[o] = delta ^ 0x8000;
+						((short *)smp.data)[o] = delta ^ 0x8000;
 					}
 				} else {
-					for (o = 0; o < s->length; o++) {
+					for (o = 0; o < smp.length; o++) {
 						delta += (signed char)sdata[o];
-						((signed char *)s->data)[o] = delta ^ 0x80;
+						((signed char *)smp.data)[o] = delta ^ 0x80;
 					}
 				}
 			} else {
 				if (flags & 4) {
-					for (o = 0; o < s->length; o++) {
+					for (o = 0; o < smp.length; o++) {
 						delta += (signed short)(sdata[o * 2] | (sdata[(o * 2) + 1] << 8));
-						((signed short *)s->data)[o] = delta;
+						((signed short *)smp.data)[o] = delta;
 					}
 				} else {
-					for (o = 0; o < s->length; o++) {
+					for (o = 0; o < smp.length; o++) {
 						delta += (signed char)sdata[o];
-						((signed char *)s->data)[o] = delta;
+						((signed char *)smp.data)[o] = delta;
 					}
 				}
 			}
 		}
+		
+		if (s->data) free(s->data);
+		*s = smp;
 	}
 
 	free(buffer);
 
 	return 0;
 
+error_fd:
+	free((void *)sdata);
 error_fb:
 	free(buffer);
 error:
@@ -224,6 +228,8 @@ static int it_old_psm_read_patterns(IT_PATTERN * pattern, DUMBFILE * f, int num,
 		}
 
 		psize = (psize + 15) & ~15;
+		
+		if (offset + psize > size) goto error_fb;
 
 		end = ptr + psize;
 		ptr += 4;
@@ -243,9 +249,8 @@ static int it_old_psm_read_patterns(IT_PATTERN * pattern, DUMBFILE * f, int num,
 				if (flags & 0x80) ptr += 2;
 				if (flags & 0x40) ptr++;
 				if (flags & 0x20) {
-					ptr++;
-					if (*ptr == 40) ptr += 3;
-					else ptr++;
+					if (*ptr == 40) ptr += 4;
+					else ptr += 2;
 				}
 			}
 		}

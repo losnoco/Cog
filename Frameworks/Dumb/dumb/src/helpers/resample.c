@@ -81,7 +81,7 @@
  * Values outside the range 0-4 will behave the same as the nearest
  * value within the range.
  */
-int dumb_resampling_quality = DUMB_RQ_BLAM;
+int dumb_resampling_quality = DUMB_RQ_CUBIC;
 
 
 
@@ -179,14 +179,14 @@ void _dumb_init_cubic(void)
 #define SUFFIX _16
 #define SRCTYPE short
 #define SRCBITS 16
-#define FIR(x) (x)
+#define FIR(x) (x * (1.0f / 32768.0f))
 #include "resample.inc"
 
 /* Create resamplers for 8-bit source samples. */
 #define SUFFIX _8
 #define SRCTYPE signed char
 #define SRCBITS 8
-#define FIR(x) (x << 8)
+#define FIR(x) (x * (1.0f / 256.0f))
 #include "resample.inc"
 
 

@@ -96,7 +96,7 @@ static int it_psm_process_sample(IT_SAMPLE * sample, const unsigned char * data,
 
 	if (insno != id) return -1;
 
-	if (!length) {
+	if (length <= 0) {
 		sample->flags &= ~IT_SAMPLE_EXISTS;
 		return 0;
 	}
@@ -162,7 +162,12 @@ static int it_psm_process_pattern(IT_PATTERN * pattern, const unsigned char * da
 
 	nrows = data[0] | (data[1] << 8);
 
-	if (!nrows) return 0;
+	if (!nrows) {
+		pattern->n_rows = 0;
+		pattern->n_entries = 0;
+		pattern->entry = NULL;
+		return 0;
+	}
 
 	pattern->n_rows = nrows;
 
@@ -461,7 +466,7 @@ static DUMB_IT_SIGDATA *it_psm_load_sigdata(DUMBFILE *f, int * ver, int subsong)
 	PSMCHUNK *chunk;
 	int n_chunks = 0;
 
-	PSMCHUNK *songchunk;
+	PSMCHUNK *songchunk = 0;
 	int n_song_chunks = 0;
 
 	PSMEVENT *event = 0;
@@ -491,6 +496,7 @@ static DUMB_IT_SIGDATA *it_psm_load_sigdata(DUMBFILE *f, int * ver, int subsong)
 	chunk = calloc(768, sizeof(*chunk));
 
 	while (length >= 8) {
+		if (n_chunks >= 768) goto error_fc;
 		chunk[n_chunks].id = dumbfile_mgetl(f);
 		n = dumbfile_igetl(f);
 		length -= 8;
@@ -584,13 +590,14 @@ static DUMB_IT_SIGDATA *it_psm_load_sigdata(DUMBFILE *f, int * ver, int subsong)
 			ptr += 11;
 			songchunk = 0;
 			if (length >= 8) {
-				songchunk = malloc(128 * sizeof(*songchunk));
+				songchunk = malloc(256 * sizeof(*songchunk));
 				if (!songchunk) goto error_usd;
 				while (length >= 8) {
+					if (n_song_chunks >= 256) goto error_sc;
 					songchunk[n_song_chunks].id = DUMB_ID(ptr[0], ptr[1], ptr[2], ptr[3]);
 					n = ptr[4] | (ptr[5] << 8) | (ptr[6] << 16) | (ptr[7] << 24);
 					length -= 8;
-					if (n > length) goto error_sc;
+					if (n < 0 || n > length) goto error_sc;
 					songchunk[n_song_chunks].len = n;
 					songchunk[n_song_chunks].data = ptr + 8;
 					n_song_chunks++;
@@ -1246,7 +1253,7 @@ int pattcmp( const unsigned char * a, const unsigned char * b, size_t l )
 	}
 
 	if ( i < j ) return -1;
-	else if ( j > i ) return 1;
+	else if ( i > j ) return 1;
 
 	i = memcmp( a, b, j );
 	if ( i ) return i;
@@ -1279,7 +1286,7 @@ DUH *dumb_read_psm_quick(DUMBFILE *f, int subsong)
 		if ( ver )
 		{
 			tag[2][0] = "FORMATVERSION";
-            snprintf( version, 15, "%u", ver );
+            snprintf( version, 15, "%d", ver );
             version[15] = 0;
 			tag[2][1] = (const char *) &version;
 			++n_tags;

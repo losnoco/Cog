@@ -55,14 +55,12 @@ Carsten Bormann
 /* Input : n elements of time doamin data
    Output: m lpc coefficients, excitation energy */
 
-float vorbis_lpc_from_data(float *data,float *lpci,int n,int m){
-  VARDECL(double, aut);
-  VARDECL(double, lpc);
-  ALLOC(aut, m+1, double);
-  ALLOC(lpc, m, double);
+static float vorbis_lpc_from_data(float *data,float *lpci,long n,long m){
+  double *aut=alloca(sizeof(*aut)*(m+1));
+  double *lpc=alloca(sizeof(*lpc)*(m));
   double error;
   double epsilon;
-  int i,j;
+  long i,j;
 
   /* autocorrelation, p+1 lag coefficients */
   j=m+1;
@@ -129,7 +127,7 @@ float vorbis_lpc_from_data(float *data,float *lpci,int n,int m){
   return error;
 }
 
-void vorbis_lpc_predict(float *coeff,float *prime,int m,
+static void vorbis_lpc_predict(float *coeff,float *prime,long m,
                      float *data,long n){
 
   /* in: coeff[0...m-1] LPC coefficients
@@ -169,7 +167,7 @@ enum { lpc_extra = 64  }; /* How many samples of padding to predict or silence *
 
 /* This extra sample padding is really only needed by the FIR resampler, but it helps the other resamplers as well. */
 
-void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
+int dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
     float lpc[lpc_order * 2];
     float lpc_input[lpc_max * 2];
     float lpc_output[lpc_extra * 2];
@@ -177,11 +175,12 @@ void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
     signed char * s8;
     signed short * s16;
 
-    int n, o, offset, lpc_samples;
+    long n, o, offset, lpc_samples;
 
     for ( n = 0; n < sigdata->n_samples; n++ ) {
         IT_SAMPLE * sample = sigdata->sample + n;
-        if ( ( sample->flags & ( IT_SAMPLE_EXISTS | IT_SAMPLE_LOOP) ) == IT_SAMPLE_EXISTS ) {
+        if ( ( sample->flags & ( IT_SAMPLE_EXISTS | IT_SAMPLE_LOOP) ) == IT_SAMPLE_EXISTS &&
+			 sample->data != NULL ) {
             /* If we have enough sample data to train the filter, use the filter to generate the padding */
             if ( sample->length >= lpc_order ) {
                 lpc_samples = sample->length;
@@ -220,6 +219,9 @@ void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
                     if ( sample->flags & IT_SAMPLE_16BIT )
                     {
                         s16 = ( signed short * ) realloc( sample->data, ( sample->length + lpc_extra ) * 2 * sizeof(short) );
+						if ( !s16 )
+							return -1;
+						
                         sample->data = s16;
 
                         s16 += sample->length * 2;
@@ -234,6 +236,9 @@ void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
                     else
                     {
                         s8 = ( signed char * ) realloc( sample->data, ( sample->length + lpc_extra ) * 2 );
+						if ( !s8 )
+							return -1;
+						
                         sample->data = s8;
 
                         s8 += sample->length * 2;
@@ -274,6 +279,9 @@ void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
                     if ( sample->flags & IT_SAMPLE_16BIT )
                     {
                         s16 = ( signed short * ) realloc( sample->data, ( sample->length + lpc_extra ) * sizeof(short) );
+						if (!s16)
+							return -1;
+						
                         sample->data = s16;
 
                         s16 += sample->length;
@@ -287,6 +295,9 @@ void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
                     else
                     {
                         s8 = ( signed char * ) realloc( sample->data, sample->length + lpc_extra );
+						if ( !s8 )
+							return -1;
+						
                         sample->data = s8;
 
                         s8 += sample->length;
@@ -302,6 +313,7 @@ void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
             else
             /* Otherwise, pad with silence. */
             {
+				void *data;
                 offset = sample->length;
                 lpc_samples = lpc_extra;
 
@@ -314,9 +326,15 @@ void dumb_it_add_lpc(struct DUMB_IT_SIGDATA *sigdata){
                 offset *= n;
                 lpc_samples *= n;
 
-                sample->data = realloc( sample->data, offset + lpc_samples );
-                memset( (char*)sample->data + offset, 0, lpc_samples );
+                data = realloc( sample->data, offset + lpc_samples );
+				if (!data)
+					return -1;
+				sample->data = data;
+				
+                memset( (char*)data + offset, 0, lpc_samples );
             }
         }
     }
+	
+	return 0;
 }

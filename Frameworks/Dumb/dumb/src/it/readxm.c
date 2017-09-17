@@ -371,6 +371,8 @@ static int limit_xm_resize(void *f, long n)
 {
 	DUMBFILE *df = f;
 	LIMITED_XM *lx = df->file;
+	if (n < 0)
+		return -1;
 	if (lx->buffered || n) {
 		if (n > lx->allocated) {
 			unsigned char *buffered = realloc( lx->buffered, n );
@@ -897,20 +899,20 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 	if (sigdata->speed == 0) sigdata->speed = 6; // Should we? What about tempo?
 	sigdata->tempo            = dumbfile_igetw(f);
 
-    // FT2 always clips restart position against the song length
-    if (sigdata->restart_position > sigdata->n_orders)
-        sigdata->restart_position = sigdata->n_orders;
-    // And FT2 starts playback on order 0, regardless of length,
-    // and only checks if the next order is greater than or equal
-    // to this, not the current pattern. Work around this with
-    // DUMB's playback core by overriding a zero length with one.
-    if (sigdata->n_orders == 0)
-        sigdata->n_orders = 1;
+	// FT2 always clips restart position against the song length
+	if (sigdata->restart_position > sigdata->n_orders)
+		sigdata->restart_position = sigdata->n_orders;
+	// And FT2 starts playback on order 0, regardless of length,
+	// and only checks if the next order is greater than or equal
+	// to this, not the current pattern. Work around this with
+	// DUMB's playback core by overriding a zero length with one.
+	if (sigdata->n_orders == 0)
+		sigdata->n_orders = 1;
 
 	/* sanity checks */
 	// XXX
 	i = header_size - 4 - 2 * 8; /* Maximum number of orders expected */
-	if (dumbfile_error(f) || sigdata->n_orders <= 0 || sigdata->n_orders > i || sigdata->n_patterns > 256 || sigdata->n_instruments > 256 || n_channels > DUMB_IT_N_CHANNELS) {
+	if (dumbfile_error(f) || sigdata->n_orders <= 0 || sigdata->n_orders > i || !sigdata->n_patterns || sigdata->n_patterns > 256 || !sigdata->n_instruments || sigdata->n_instruments > 256 || n_channels > DUMB_IT_N_CHANNELS) {
 		_dumb_it_unload_sigdata(sigdata);
 		return NULL;
 	}
@@ -1095,6 +1097,7 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int * version)
 
 		sigdata->instrument = malloc(sigdata->n_instruments * sizeof(*sigdata->instrument));
 		if (!sigdata->instrument) {
+			free(roguebytes);
 			_dumb_it_unload_sigdata(sigdata);
 			return NULL;
 		}

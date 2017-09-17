@@ -70,6 +70,21 @@
 
 #endif
 
+#define CONVERT24(src, pos) {                         \
+	signed int f = src;			                      \
+	f = MID(-8388608, f, 8388607);				      \
+	((unsigned char*)sptr)[pos  ] = (f)       & 0xFF; \
+	((unsigned char*)sptr)[pos+1] = (f >> 8)  & 0xFF; \
+	((unsigned char*)sptr)[pos+2] = (f >> 16) & 0xFF; \
+}
+
+#define CONVERT32F(src, pos) {                                     \
+	((float*)sptr)[pos] = (float)((signed int)src) * (1.0f/(float)(0xffffff/2+1)); \
+}
+
+#define CONVERT64F(src, pos) {                                     \
+	((double*)sptr)[pos] = (double)((signed int)src) * (1.0/(double)(0xffffff/2+1)); \
+}
 
 
 /* DEPRECATED */
@@ -79,7 +94,7 @@ DUH_SIGRENDERER *duh_start_renderer(DUH *duh, int n_channels, long pos)
 }
 
 
-
+/* DEPRECATED */
 long duh_render(
 	DUH_SIGRENDERER *sigrenderer,
 	int bits, int unsign,
@@ -135,6 +150,138 @@ long duh_render(
 	return size;
 }
 
+
+long duh_render_int(
+	DUH_SIGRENDERER *sigrenderer,
+	sample_t ***sig_samples,
+	long *sig_samples_size,
+	int bits, int unsign,
+	float volume, float delta,
+	long size, void *sptr
+)
+{
+	long n;
+
+	sample_t **sampptr;
+
+	int n_channels;
+
+	ASSERT(bits == 8 || bits == 16 || bits == 24);
+	ASSERT(sptr);
+	ASSERT(sig_samples);
+	ASSERT(sig_samples_size);
+
+	if (!sigrenderer)
+		return 0;
+
+	n_channels = duh_sigrenderer_get_n_channels(sigrenderer);
+
+	ASSERT(n_channels > 0);
+	/* This restriction will be removed when need be. At the moment, tightly
+	 * optimised loops exist for exactly one or two channels.
+	 */
+	ASSERT(n_channels <= 2);
+
+	if ((*sig_samples == NULL) || (*sig_samples_size != size))
+	{
+		destroy_sample_buffer(*sig_samples);
+		*sig_samples = allocate_sample_buffer(n_channels, size);
+		*sig_samples_size = size;
+	}
+	sampptr = *sig_samples;
+
+	if (!sampptr)
+		return 0;
+
+	dumb_silence(sampptr[0], n_channels * size);
+
+	size = duh_sigrenderer_generate_samples(sigrenderer, volume, delta, size, sampptr);
+
+	if (bits == 24) {
+		long i = 0;
+		ASSERT(unsign == 0);
+		
+		for (n = 0; n < size * n_channels; n++, i += 3) {
+			CONVERT24(sampptr[0][n], i);
+		}
+	} else
+	if (bits == 16) {
+		int signconv = unsign ? 0x8000 : 0x0000;
+
+		for (n = 0; n < size * n_channels; n++) {
+			CONVERT16(sampptr[0][n], n, signconv);
+		}
+	} else {
+		char signconv = unsign ? 0x80 : 0x00;
+
+		for (n = 0; n < size * n_channels; n++) {
+			CONVERT8(sampptr[0][n], n, signconv);
+		}
+	}
+
+	return size;
+}
+
+
+long duh_render_float(
+	DUH_SIGRENDERER *sigrenderer,
+	sample_t ***sig_samples,
+	long *sig_samples_size,
+	int bits,
+	float volume, float delta,
+	long size, void *sptr
+)
+{
+	long n;
+
+	sample_t **sampptr;
+
+	int n_channels;
+
+	ASSERT(bits == 32 || bits == 64);
+	ASSERT(sptr);
+	ASSERT(sig_samples);
+	ASSERT(sig_samples_size);
+
+	if (!sigrenderer)
+		return 0;
+
+	n_channels = duh_sigrenderer_get_n_channels(sigrenderer);
+
+	ASSERT(n_channels > 0);
+	/* This restriction will be removed when need be. At the moment, tightly
+	 * optimised loops exist for exactly one or two channels.
+	 */
+	ASSERT(n_channels <= 2);
+
+	if ((*sig_samples == NULL) || (*sig_samples_size != size))
+	{
+		destroy_sample_buffer(*sig_samples);
+		*sig_samples = allocate_sample_buffer(n_channels, size);
+		*sig_samples_size = size;
+	}
+	sampptr = *sig_samples;
+
+	if (!sampptr)
+		return 0;
+
+	dumb_silence(sampptr[0], n_channels * size);
+
+	size = duh_sigrenderer_generate_samples(sigrenderer, volume, delta, size, sampptr);
+
+	if (bits == 64) {
+		for (n = 0; n < size * n_channels; n++) {
+			CONVERT64F(sampptr[0][n], n);
+		}
+	} else
+	if (bits == 32) {
+		for (n = 0; n < size * n_channels; n++) {
+			CONVERT32F(sampptr[0][n], n);
+		}
+	} 
+
+	return size;
+}
 
 
 /* DEPRECATED */

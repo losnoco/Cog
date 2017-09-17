@@ -39,7 +39,7 @@ DUH *dumb_read_any_quick(DUMBFILE *f, int restrict_, int subsong)
     unsigned long signature_size;
     DUH * duh = NULL;
 
-    signature_size = dumbfile_get_size(f);
+    /* signature_size = dumbfile_get_size(f); */
 
     signature_size = dumbfile_getnc( (char *)signature, maximum_signature_size, f );
     dumbfile_seek( f, 0, DFS_SEEK_SET );
