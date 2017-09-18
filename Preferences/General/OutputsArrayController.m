@@ -14,16 +14,16 @@
         .mScope = kAudioObjectPropertyScopeGlobal,
         .mElement = kAudioObjectPropertyElementMaster
     };
-    verify_noerr(AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize));
+    __Verify_noErr(AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize));
 	int nDevices = propsize / sizeof(AudioDeviceID);
 	AudioDeviceID *devids = malloc(propsize);
-    verify_noerr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, devids));
+    __Verify_noErr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, devids));
 	int i;
     
     theAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
     AudioDeviceID systemDefault;
     propsize = sizeof(systemDefault);
-    verify_noerr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, &systemDefault));
+    __Verify_noErr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, &systemDefault));
 	
 	NSDictionary *defaultDevice = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 	
@@ -33,16 +33,16 @@
         CFStringRef name = NULL;
         propsize = sizeof(name);
         theAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
-		verify_noerr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &name));
+		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &name));
 		
         propsize = 0;
         theAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
-        verify_noerr(AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize));
+        __Verify_noErr(AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize));
         
         if (propsize < sizeof(UInt32)) continue;
         
         AudioBufferList * bufferList = (AudioBufferList *) malloc(propsize);
-        verify_noerr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, bufferList));
+        __Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, bufferList));
         UInt32 bufferCount = bufferList->mNumberBuffers;
         free(bufferList);
         
