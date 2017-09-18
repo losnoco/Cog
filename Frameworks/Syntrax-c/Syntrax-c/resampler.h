@@ -29,10 +29,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #define resampler_set_rate EVALUATE(RESAMPLER_DECORATE,_resampler_set_rate)
 #define resampler_get_free EVALUATE(RESAMPLER_DECORATE,_resampler_get_free)
 #define resampler_get_min_fill EVALUATE(RESAMPLER_DECORATE,_resampler_get_min_fill)
-#define resampler_write_pair EVALUATE(RESAMPLER_DECORATE,_resampler_write_pair)
+#define resampler_write_sample EVALUATE(RESAMPLER_DECORATE,_resampler_write_sample)
 #define resampler_get_avail EVALUATE(RESAMPLER_DECORATE,_resampler_get_avail)
-#define resampler_read_pair EVALUATE(RESAMPLER_DECORATE,_resampler_read_pair)
-#define resampler_peek_pair EVALUATE(RESAMPLER_DECORATE,_resampler_peek_pair)
+#define resampler_read_sample EVALUATE(RESAMPLER_DECORATE,_resampler_read_sample)
+#define resampler_peek_sample EVALUATE(RESAMPLER_DECORATE,_resampler_peek_sample)
 #endif
 
 #include <stdint.h>
