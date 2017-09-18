@@ -51,7 +51,7 @@
 
     return [NSDictionary dictionaryWithObjectsAndKeys:
             title, @"title",
-            track_num, @"track",
+            [NSNumber numberWithInt:track_num], @"track",
             nil];
 }
 
