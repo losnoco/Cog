@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8340888E1F6F604C00DCD404 /* VGMMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8340888B1F6F604A00DCD404 /* VGMMetadataReader.m */; };
 		836F6B1418BDB80D0095E648 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F6B1318BDB80D0095E648 /* Cocoa.framework */; };
 		836F6B1E18BDB80D0095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B1C18BDB80D0095E648 /* InfoPlist.strings */; };
 		836F705C18BDC40E0095E648 /* VGMDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 836F705B18BDC40E0095E648 /* VGMDecoder.m */; };
@@ -41,6 +42,8 @@
 
 /* Begin PBXFileReference section */
 		833F68491CDBCAC000AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8340888B1F6F604A00DCD404 /* VGMMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMMetadataReader.m; sourceTree = "<group>"; };
+		8340888D1F6F604B00DCD404 /* VGMMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMMetadataReader.h; sourceTree = "<group>"; };
 		836F6B1018BDB80D0095E648 /* vgmstream.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = vgmstream.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F6B1318BDB80D0095E648 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		836F6B1618BDB80D0095E648 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -114,15 +117,17 @@
 		836F6B1918BDB80D0095E648 /* vgmstream */ = {
 			isa = PBXGroup;
 			children = (
-				83AA5D2F1F6E301B0020821C /* Logging.h */,
+				8340888D1F6F604B00DCD404 /* VGMMetadataReader.h */,
+				8340888B1F6F604A00DCD404 /* VGMMetadataReader.m */,
 				83AA5D2C1F6E30080020821C /* VGMContainer.h */,
 				83AA5D2A1F6E30080020821C /* VGMContainer.m */,
 				83AA5D2B1F6E30080020821C /* VGMInterface.h */,
 				83AA5D281F6E30080020821C /* VGMInterface.m */,
 				836F706118BDC8650095E648 /* PlaylistController.h */,
-				836F706018BDC84D0095E648 /* Plugin.h */,
 				836F705A18BDC40E0095E648 /* VGMDecoder.h */,
 				836F705B18BDC40E0095E648 /* VGMDecoder.m */,
+				83AA5D2F1F6E301B0020821C /* Logging.h */,
+				836F706018BDC84D0095E648 /* Plugin.h */,
 				836F6B1A18BDB80D0095E648 /* Supporting Files */,
 			);
 			path = vgmstream;
@@ -231,6 +236,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8340888E1F6F604C00DCD404 /* VGMMetadataReader.m in Sources */,
 				83AA5D2D1F6E30080020821C /* VGMInterface.m in Sources */,
 				83AA5D2E1F6E30080020821C /* VGMContainer.m in Sources */,
 				836F705C18BDC40E0095E648 /* VGMDecoder.m in Sources */,

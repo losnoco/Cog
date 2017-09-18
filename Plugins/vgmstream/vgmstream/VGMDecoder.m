@@ -16,8 +16,14 @@
 - (BOOL)open:(id<CogSource>)s
 {
     int track_num = [[[s url] fragment] intValue];
+    
+    NSString * path = [[s url] absoluteString];
+    NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
+    if (fragmentRange.location != NSNotFound) {
+        path = [path substringToIndex:fragmentRange.location];
+    }
 
-    stream = init_vgmstream_from_cogfile([[[[s url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String], track_num);
+    stream = init_vgmstream_from_cogfile([[path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String], track_num);
     if ( !stream )
         return NO;
     
@@ -31,12 +37,6 @@
     
     bitrate = get_vgmstream_average_bitrate(stream);
 
-    if (stream->num_streams > 1) {
-        title = [NSString stringWithFormat:@"%@ - %@", [[[s url] URLByDeletingPathExtension] lastPathComponent], stream->stream_name];
-    } else {
-        title = [[[s url] URLByDeletingPathExtension] lastPathComponent];
-    }
-    
     [self willChangeValueForKey:@"properties"];
     [self didChangeValueForKey:@"properties"];
     
@@ -53,7 +53,6 @@
             [NSNumber numberWithBool:NO], @"floatingPoint",
             [NSNumber numberWithInt:channels], @"channels",
             [NSNumber numberWithBool:YES], @"seekable",
-            title, @"title",
             @"host", @"endian",
             nil];
 }
@@ -65,7 +64,7 @@
     if (!repeatone) {
         if (framesRead >= totalFrames) return 0;
         else if (framesRead + frames > totalFrames)
-            frames = totalFrames - framesRead;
+            frames = (UInt32)(totalFrames - framesRead);
     }
 
     sample * sbuf = (sample *) buf;
