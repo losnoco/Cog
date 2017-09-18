@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8D1107260486CEB800E47090"
-               BuildableName = "Cog.app"
-               BlueprintName = "Cog"
-               ReferencedContainer = "container:Cog.xcodeproj">
+               BlueprintIdentifier = "83DE0C05180A9BD400269051"
+               BuildableName = "vio2sf.framework"
+               BlueprintName = "vio2sf"
+               ReferencedContainer = "container:vio2sf.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,15 +30,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D1107260486CEB800E47090"
-            BuildableName = "Cog.app"
-            BlueprintName = "Cog"
-            ReferencedContainer = "container:Cog.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -53,16 +44,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D1107260486CEB800E47090"
-            BuildableName = "Cog.app"
-            BlueprintName = "Cog"
-            ReferencedContainer = "container:Cog.xcodeproj">
+            BlueprintIdentifier = "83DE0C05180A9BD400269051"
+            BuildableName = "vio2sf.framework"
+            BlueprintName = "vio2sf"
+            ReferencedContainer = "container:vio2sf.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -72,16 +62,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D1107260486CEB800E47090"
-            BuildableName = "Cog.app"
-            BlueprintName = "Cog"
-            ReferencedContainer = "container:Cog.xcodeproj">
+            BlueprintIdentifier = "83DE0C05180A9BD400269051"
+            BuildableName = "vio2sf.framework"
+            BlueprintName = "vio2sf"
+            ReferencedContainer = "container:vio2sf.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
