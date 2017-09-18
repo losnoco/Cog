@@ -30,9 +30,15 @@
     framesRead = 0;
     
     bitrate = get_vgmstream_average_bitrate(stream);
+
+    if (stream->num_streams > 1) {
+        title = [NSString stringWithFormat:@"%@ - %@", [[[s url] URLByDeletingPathExtension] lastPathComponent], stream->stream_name];
+    } else {
+        title = [[[s url] URLByDeletingPathExtension] lastPathComponent];
+    }
     
     [self willChangeValueForKey:@"properties"];
-	[self didChangeValueForKey:@"properties"];
+    [self didChangeValueForKey:@"properties"];
     
 	return YES;
 }
@@ -47,6 +53,7 @@
             [NSNumber numberWithBool:NO], @"floatingPoint",
             [NSNumber numberWithInt:channels], @"channels",
             [NSNumber numberWithBool:YES], @"seekable",
+            title, @"title",
             @"host", @"endian",
             nil];
 }
