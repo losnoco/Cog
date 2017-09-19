@@ -27,6 +27,17 @@
 #define INTERNAL_DUMB_H
 
 
+#undef MIN
+#undef MAX
+#undef MID
+
+#define MIN(x,y)   (((x) < (y)) ? (x) : (y))
+#define MAX(x,y)   (((x) > (y)) ? (x) : (y))
+#define MID(x,y,z) MAX((x), MIN((y), (z)))
+
+#undef ABS
+#define ABS(x) (((x) >= 0) ? (x) : (-(x)))
+
 typedef struct DUH_SIGTYPE_DESC_LINK
 {
 	struct DUH_SIGTYPE_DESC_LINK *next;

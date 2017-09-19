@@ -22,6 +22,7 @@
 #include <math.h>
 
 #include "dumb.h"
+#include "internal/dumb.h"
 #include "internal/it.h"
 
 

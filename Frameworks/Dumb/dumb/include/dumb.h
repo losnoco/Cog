@@ -77,18 +77,6 @@
 #define DUMB_DATE_STR DUMB_DAY_STR1 "." DUMB_MONTH_STR1 "." DUMB_YEAR_STR4
 
 
-#undef MIN
-#undef MAX
-#undef MID
-
-#define MIN(x,y)   (((x) < (y)) ? (x) : (y))
-#define MAX(x,y)   (((x) > (y)) ? (x) : (y))
-#define MID(x,y,z) MAX((x), MIN((y), (z)))
-
-#undef ABS
-#define ABS(x) (((x) >= 0) ? (x) : (-(x)))
-
-
 #ifdef DEBUGMODE
 
 #ifndef ASSERT
