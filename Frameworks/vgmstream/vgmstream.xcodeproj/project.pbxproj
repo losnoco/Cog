@@ -391,6 +391,7 @@
 		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
 		83CAB8E21F0B0752001BC993 /* wii_04sw.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CAB8E11F0B0745001BC993 /* wii_04sw.c */; };
 		83CAB8E31F0B0755001BC993 /* pc_xa30.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CAB8DC1F0B0744001BC993 /* pc_xa30.c */; };
+		83CD428A1F787879000F77BE /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CD42851F787878000F77BE /* libswresample.a */; };
 		83D731101A7394BF00CA1366 /* g7221.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; };
 		83D731111A7394D300CA1366 /* g7221.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D731891A749D1500CA1366 /* g719.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; };
@@ -890,6 +891,7 @@
 		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
 		83CAB8DC1F0B0744001BC993 /* pc_xa30.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pc_xa30.c; sourceTree = "<group>"; };
 		83CAB8E11F0B0745001BC993 /* wii_04sw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = wii_04sw.c; sourceTree = "<group>"; };
+		83CD42851F787878000F77BE /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswresample.a; path = ../../ThirdParty/ffmpeg/lib/libswresample.a; sourceTree = "<group>"; };
 		83D730E51A738EB200CA1366 /* g7221.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g7221.xcodeproj; path = ../g7221/g7221.xcodeproj; sourceTree = "<group>"; };
 		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
 		83D7318B1A749EEE00CA1366 /* g719_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g719_decoder.c; sourceTree = "<group>"; };
@@ -916,6 +918,7 @@
 				838BDB711D3B1F990022CA6F /* CoreFoundation.framework in Frameworks */,
 				838BDB6A1D3AF7140022CA6F /* libiconv.tbd in Frameworks */,
 				838BDB681D3AF70D0022CA6F /* libz.tbd in Frameworks */,
+				83CD428A1F787879000F77BE /* libswresample.a in Frameworks */,
 				83D731891A749D1500CA1366 /* g719.framework in Frameworks */,
 				83D731101A7394BF00CA1366 /* g7221.framework in Frameworks */,
 				838BDB641D3AF08C0022CA6F /* libavcodec.a in Frameworks */,
@@ -988,6 +991,7 @@
 				838BDB611D3AF08C0022CA6F /* libavcodec.a */,
 				838BDB621D3AF08C0022CA6F /* libavformat.a */,
 				838BDB631D3AF08C0022CA6F /* libavutil.a */,
+				83CD42851F787878000F77BE /* libswresample.a */,
 				8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */,
 				83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */,
 				83D730E51A738EB200CA1366 /* g7221.xcodeproj */,

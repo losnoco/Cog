@@ -1,14 +1,14 @@
-prefix=/usr/local
+prefix=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg
 exec_prefix=${prefix}
-libdir=/usr/local/lib
-includedir=/usr/local/include
+libdir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/lib
+includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/include
 
 Name: libavformat
 Description: FFmpeg container format library
-Version: 57.82.100
-Requires: libavcodec >= 57.105.100, libswresample >= 2.8.100, libavutil >= 55.74.100
+Version: 57.82.101
+Requires: libavcodec >= 57.106.101, libswresample >= 2.8.100, libavutil >= 55.76.100
 Requires.private: 
 Conflicts:
-Libs: -L${libdir}  -lavformat -framework OpenGL -framework AppKit -framework OpenGL -framework AppKit -framework Foundation -framework CoreVideo -framework CoreMedia -L/usr/local/lib -lSDL2 -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -L/usr/local/lib -lSDL2 -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -L/usr/local/lib -lSDL2 -lm -llzma -lbz2 -lz -pthread -pthread -framework CoreServices -framework CoreGraphics -framework VideoToolbox -framework CoreImage -framework AVFoundation -framework AudioToolbox
+Libs: -L${libdir}  -lavformat -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -lm -lbz2 -lz -pthread -pthread -framework CoreServices -framework CoreGraphics -framework VideoToolbox -framework CoreImage -framework AVFoundation -framework AudioToolbox -framework AppKit
 Libs.private: 
 Cflags: -I${includedir}
