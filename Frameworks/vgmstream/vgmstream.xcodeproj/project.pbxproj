@@ -343,6 +343,10 @@
 		83709E0A1ECBC1A4005C03D3 /* waa_wac_wad_wam.c in Sources */ = {isa = PBXBuildFile; fileRef = 83709E041ECBC1A4005C03D3 /* waa_wac_wad_wam.c */; };
 		83709E0D1ECBC1C3005C03D3 /* mc3_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83709E0B1ECBC1C3005C03D3 /* mc3_decoder.c */; };
 		83709E0E1ECBC1C3005C03D3 /* psv_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83709E0C1ECBC1C3005C03D3 /* psv_decoder.c */; };
+		8374EE3E1F787AB600033E90 /* ffmpeg_decoder_utils_ea_xma.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374EE361F787AB500033E90 /* ffmpeg_decoder_utils_ea_xma.c */; };
+		8374EE3F1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374EE3B1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c */; };
+		8374EE401F787AB600033E90 /* ffmpeg_decoder_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374EE3C1F787AB600033E90 /* ffmpeg_decoder_utils.h */; };
+		8374EE411F787AB600033E90 /* ffmpeg_decoder_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374EE3D1F787AB600033E90 /* ffmpeg_decoder_utils.c */; };
 		838BDB641D3AF08C0022CA6F /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB611D3AF08C0022CA6F /* libavcodec.a */; };
 		838BDB651D3AF08C0022CA6F /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB621D3AF08C0022CA6F /* libavformat.a */; };
 		838BDB661D3AF08C0022CA6F /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB631D3AF08C0022CA6F /* libavutil.a */; };
@@ -845,6 +849,10 @@
 		83709E041ECBC1A4005C03D3 /* waa_wac_wad_wam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = waa_wac_wad_wam.c; sourceTree = "<group>"; };
 		83709E0B1ECBC1C3005C03D3 /* mc3_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc3_decoder.c; sourceTree = "<group>"; };
 		83709E0C1ECBC1C3005C03D3 /* psv_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psv_decoder.c; sourceTree = "<group>"; };
+		8374EE361F787AB500033E90 /* ffmpeg_decoder_utils_ea_xma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_utils_ea_xma.c; sourceTree = "<group>"; };
+		8374EE3B1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_utils_wwise_opus.c; sourceTree = "<group>"; };
+		8374EE3C1F787AB600033E90 /* ffmpeg_decoder_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffmpeg_decoder_utils.h; sourceTree = "<group>"; };
+		8374EE3D1F787AB600033E90 /* ffmpeg_decoder_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_utils.c; sourceTree = "<group>"; };
 		838BDB611D3AF08C0022CA6F /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ../../ThirdParty/ffmpeg/lib/libavcodec.a; sourceTree = "<group>"; };
 		838BDB621D3AF08C0022CA6F /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ../../ThirdParty/ffmpeg/lib/libavformat.a; sourceTree = "<group>"; };
 		838BDB631D3AF08C0022CA6F /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ../../ThirdParty/ffmpeg/lib/libavutil.a; sourceTree = "<group>"; };
@@ -1042,6 +1050,10 @@
 		836F6DDF18BDC2180095E648 /* coding */ = {
 			isa = PBXGroup;
 			children = (
+				8374EE361F787AB500033E90 /* ffmpeg_decoder_utils_ea_xma.c */,
+				8374EE3B1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c */,
+				8374EE3D1F787AB600033E90 /* ffmpeg_decoder_utils.c */,
+				8374EE3C1F787AB600033E90 /* ffmpeg_decoder_utils.h */,
 				83AA5D0E1F6E2F5F0020821C /* ea_xa_decoder.c */,
 				83AA5D151F6E2F600020821C /* ea_xas_decoder.c */,
 				83AA5D141F6E2F600020821C /* mpeg_custom_utils_awc.c */,
@@ -1460,6 +1472,7 @@
 				836F6F2718BDC2190095E648 /* g72x_state.h in Headers */,
 				839E21E01F2EDAF100EE54D7 /* vorbis_custom_data_fsb.h in Headers */,
 				836F705418BDC2190095E648 /* streamfile.h in Headers */,
+				8374EE401F787AB600033E90 /* ffmpeg_decoder_utils.h in Headers */,
 				83A3F0761E3AD8B900D6A794 /* stack_alloc.h in Headers */,
 				83A3F0751E3AD8B900D6A794 /* formats.h in Headers */,
 				8323894B1D22419B00482226 /* clHCA.h in Headers */,
@@ -1668,6 +1681,7 @@
 				836F6F7018BDC2190095E648 /* apple_caff.c in Sources */,
 				836F700018BDC2190095E648 /* ps2_svag.c in Sources */,
 				836F6FB618BDC2190095E648 /* ngc_sck_dsp.c in Sources */,
+				8374EE3F1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c in Sources */,
 				836F6F2818BDC2190095E648 /* ima_decoder.c in Sources */,
 				836F702318BDC2190095E648 /* rsf.c in Sources */,
 				83299FD01E7660C7003A3242 /* bik.c in Sources */,
@@ -1711,6 +1725,7 @@
 				83709E0D1ECBC1C3005C03D3 /* mc3_decoder.c in Sources */,
 				836F6FA818BDC2190095E648 /* nds_swav.c in Sources */,
 				836F6F3F18BDC2190095E648 /* ast_blocked.c in Sources */,
+				8374EE411F787AB600033E90 /* ffmpeg_decoder_utils.c in Sources */,
 				833A7A2E1ED11961003EC53E /* xau.c in Sources */,
 				836F6F5018BDC2190095E648 /* mxch_blocked.c in Sources */,
 				836F6FB518BDC2190095E648 /* ngc_pdt.c in Sources */,
@@ -1868,6 +1883,7 @@
 				831BA61C1EAC61A500CF89B0 /* sxd.c in Sources */,
 				836F6F8018BDC2190095E648 /* dsp_bdsp.c in Sources */,
 				836F6F9618BDC2190095E648 /* lsf.c in Sources */,
+				8374EE3E1F787AB600033E90 /* ffmpeg_decoder_utils_ea_xma.c in Sources */,
 				836F6FC818BDC2190095E648 /* pos.c in Sources */,
 				8350C05A1E071990009E0A93 /* ps2_svag_snk.c in Sources */,
 				836F6F8918BDC2190095E648 /* gca.c in Sources */,
