@@ -2,7 +2,8 @@
 #define _T_ARRAY_H_
 
 #include <stdlib.h>
-#include "internal/dumb.h"
+
+#define LONG_LONG long long
 
 void *timekeeping_array_create(size_t size);
 void timekeeping_array_destroy(void *array);
