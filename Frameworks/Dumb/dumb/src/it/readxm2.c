@@ -19,11 +19,8 @@
 
 #include "dumb.h"
 
-
-
-DUH *dumb_read_xm(DUMBFILE *f)
-{
-	DUH *duh = dumb_read_xm_quick(f);
-	dumb_it_do_initial_runthrough(duh);
-	return duh;
+DUH *dumb_read_xm(DUMBFILE *f) {
+    DUH *duh = dumb_read_xm_quick(f);
+    dumb_it_do_initial_runthrough(duh);
+    return duh;
 }

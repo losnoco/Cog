@@ -20,8 +20,6 @@
 #ifndef INTERNAL_ALDUMB_H
 #define INTERNAL_ALDUMB_H
 
-
 void _dat_unload_duh(void *duh);
-
 
 #endif /* INTERNAL_DUMB_H */

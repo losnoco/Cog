@@ -22,398 +22,352 @@
 #include "dumb.h"
 #include "internal/dumb.h"
 
-
-
 static const DUMBFILE_SYSTEM *the_dfs = NULL;
 
-
-
-void register_dumbfile_system(const DUMBFILE_SYSTEM *dfs)
-{
-	ASSERT(dfs);
-	ASSERT(dfs->open);
-	ASSERT(dfs->getc);
-	ASSERT(dfs->close);
+void register_dumbfile_system(const DUMBFILE_SYSTEM *dfs) {
+    ASSERT(dfs);
+    ASSERT(dfs->open);
+    ASSERT(dfs->getc);
+    ASSERT(dfs->close);
     ASSERT(dfs->seek);
     ASSERT(dfs->get_size);
-	the_dfs = dfs;
+    the_dfs = dfs;
 }
-
-
 
 #include "internal/dumbfile.h"
 
+DUMBFILE *dumbfile_open(const char *filename) {
+    DUMBFILE *f;
 
+    ASSERT(the_dfs);
 
-DUMBFILE *dumbfile_open(const char *filename)
-{
-	DUMBFILE *f;
+    f = (DUMBFILE *)malloc(sizeof(*f));
 
-	ASSERT(the_dfs);
+    if (!f)
+        return NULL;
 
-	f = (DUMBFILE *) malloc(sizeof(*f));
+    f->dfs = the_dfs;
 
-	if (!f)
-		return NULL;
+    f->file = (*the_dfs->open)(filename);
 
-	f->dfs = the_dfs;
+    if (!f->file) {
+        free(f);
+        return NULL;
+    }
 
-	f->file = (*the_dfs->open)(filename);
+    f->pos = 0;
 
-	if (!f->file) {
-		free(f);
-		return NULL;
-	}
-
-	f->pos = 0;
-
-	return f;
+    return f;
 }
 
+DUMBFILE *dumbfile_open_ex(void *file, const DUMBFILE_SYSTEM *dfs) {
+    DUMBFILE *f;
 
+    ASSERT(dfs);
+    ASSERT(dfs->getc);
+    ASSERT(file);
 
-DUMBFILE *dumbfile_open_ex(void *file, const DUMBFILE_SYSTEM *dfs)
-{
-	DUMBFILE *f;
+    f = (DUMBFILE *)malloc(sizeof(*f));
 
-	ASSERT(dfs);
-	ASSERT(dfs->getc);
-	ASSERT(file);
+    if (!f) {
+        if (dfs->close)
+            (*dfs->close)(file);
+        return NULL;
+    }
 
-	f = (DUMBFILE *) malloc(sizeof(*f));
+    f->dfs = dfs;
+    f->file = file;
 
-	if (!f) {
-		if (dfs->close)
-			(*dfs->close)(file);
-		return NULL;
-	}
+    f->pos = 0;
 
-	f->dfs = dfs;
-	f->file = file;
-
-	f->pos = 0;
-
-	return f;
+    return f;
 }
 
+dumb_off_t dumbfile_pos(DUMBFILE *f) {
+    ASSERT(f);
 
-
-long dumbfile_pos(DUMBFILE *f)
-{
-	ASSERT(f);
-
-	return f->pos;
+    return f->pos;
 }
 
+/* Move forward in the file from the current position by n bytes. */
+int dumbfile_skip(DUMBFILE *f, dumb_off_t n) {
+    int rv;
 
+    ASSERT(f);
+    ASSERT(n >= 0);
 
-int dumbfile_skip(DUMBFILE *f, long n)
-{
-	int rv;
+    if (f->pos < 0)
+        return -1;
 
-	ASSERT(f);
-	ASSERT(n >= 0);
+    f->pos += n;
 
-	if (f->pos < 0)
-		return -1;
+    if (f->dfs->skip) {
+        rv = (*f->dfs->skip)(f->file, n);
+        if (rv) {
+            f->pos = -1;
+            return rv;
+        }
+    } else {
+        while (n) {
+            rv = (*f->dfs->getc)(f->file);
+            if (rv < 0) {
+                f->pos = -1;
+                return rv;
+            }
+            n--;
+        }
+    }
 
-	f->pos += n;
-
-	if (f->dfs->skip) {
-		rv = (*f->dfs->skip)(f->file, n);
-		if (rv) {
-			f->pos = -1;
-			return rv;
-		}
-	} else {
-		while (n) {
-			rv = (*f->dfs->getc)(f->file);
-			if (rv < 0) {
-				f->pos = -1;
-				return rv;
-			}
-			n--;
-		}
-	}
-
-	return 0;
+    return 0;
 }
 
+int dumbfile_getc(DUMBFILE *f) {
+    int rv;
 
+    ASSERT(f);
 
-int dumbfile_getc(DUMBFILE *f)
-{
-	int rv;
+    if (f->pos < 0)
+        return -1;
 
-	ASSERT(f);
+    rv = (*f->dfs->getc)(f->file);
 
-	if (f->pos < 0)
-		return -1;
+    if (rv < 0) {
+        f->pos = -1;
+        return rv;
+    }
 
-	rv = (*f->dfs->getc)(f->file);
+    f->pos++;
 
-	if (rv < 0) {
-		f->pos = -1;
-		return rv;
-	}
-
-	f->pos++;
-
-	return rv;
+    return rv;
 }
 
+int dumbfile_igetw(DUMBFILE *f) {
+    int l, h;
 
+    ASSERT(f);
 
-int dumbfile_igetw(DUMBFILE *f)
-{
-	int l, h;
+    if (f->pos < 0)
+        return -1;
 
-	ASSERT(f);
+    l = (*f->dfs->getc)(f->file);
+    if (l < 0) {
+        f->pos = -1;
+        return l;
+    }
 
-	if (f->pos < 0)
-		return -1;
+    h = (*f->dfs->getc)(f->file);
+    if (h < 0) {
+        f->pos = -1;
+        return h;
+    }
 
-	l = (*f->dfs->getc)(f->file);
-	if (l < 0) {
-		f->pos = -1;
-		return l;
-	}
+    f->pos += 2;
 
-	h = (*f->dfs->getc)(f->file);
-	if (h < 0) {
-		f->pos = -1;
-		return h;
-	}
-
-	f->pos += 2;
-
-	return l | (h << 8);
+    return l | (h << 8);
 }
 
+int dumbfile_mgetw(DUMBFILE *f) {
+    int l, h;
 
+    ASSERT(f);
 
-int dumbfile_mgetw(DUMBFILE *f)
-{
-	int l, h;
+    if (f->pos < 0)
+        return -1;
 
-	ASSERT(f);
+    h = (*f->dfs->getc)(f->file);
+    if (h < 0) {
+        f->pos = -1;
+        return h;
+    }
 
-	if (f->pos < 0)
-		return -1;
+    l = (*f->dfs->getc)(f->file);
+    if (l < 0) {
+        f->pos = -1;
+        return l;
+    }
 
-	h = (*f->dfs->getc)(f->file);
-	if (h < 0) {
-		f->pos = -1;
-		return h;
-	}
+    f->pos += 2;
 
-	l = (*f->dfs->getc)(f->file);
-	if (l < 0) {
-		f->pos = -1;
-		return l;
-	}
-
-	f->pos += 2;
-
-	return l | (h << 8);
+    return l | (h << 8);
 }
 
+long dumbfile_igetl(DUMBFILE *f) {
+    unsigned long rv, b;
 
+    ASSERT(f);
 
-long dumbfile_igetl(DUMBFILE *f)
-{
-	unsigned long rv, b;
+    if (f->pos < 0)
+        return -1;
 
-	ASSERT(f);
+    rv = (*f->dfs->getc)(f->file);
+    if ((signed long)rv < 0) {
+        f->pos = -1;
+        return rv;
+    }
 
-	if (f->pos < 0)
-		return -1;
+    b = (*f->dfs->getc)(f->file);
+    if ((signed long)b < 0) {
+        f->pos = -1;
+        return b;
+    }
+    rv |= b << 8;
 
-	rv = (*f->dfs->getc)(f->file);
-	if ((signed long)rv < 0) {
-		f->pos = -1;
-		return rv;
-	}
+    b = (*f->dfs->getc)(f->file);
+    if ((signed long)b < 0) {
+        f->pos = -1;
+        return b;
+    }
+    rv |= b << 16;
 
-	b = (*f->dfs->getc)(f->file);
-	if ((signed long)b < 0) {
-		f->pos = -1;
-		return b;
-	}
-	rv |= b << 8;
+    b = (*f->dfs->getc)(f->file);
+    if ((signed long)b < 0) {
+        f->pos = -1;
+        return b;
+    }
+    rv |= b << 24;
 
-	b = (*f->dfs->getc)(f->file);
-	if ((signed long)b < 0) {
-		f->pos = -1;
-		return b;
-	}
-	rv |= b << 16;
+    f->pos += 4;
 
-	b = (*f->dfs->getc)(f->file);
-	if ((signed long)b < 0) {
-		f->pos = -1;
-		return b;
-	}
-	rv |= b << 24;
-
-	f->pos += 4;
-
-	return rv;
+    return rv;
 }
 
+long dumbfile_mgetl(DUMBFILE *f) {
+    unsigned long rv, b;
 
+    ASSERT(f);
 
-long dumbfile_mgetl(DUMBFILE *f)
-{
-	unsigned long rv, b;
+    if (f->pos < 0)
+        return -1;
 
-	ASSERT(f);
+    rv = (*f->dfs->getc)(f->file);
+    if ((signed long)rv < 0) {
+        f->pos = -1;
+        return rv;
+    }
+    rv <<= 24;
 
-	if (f->pos < 0)
-		return -1;
+    b = (*f->dfs->getc)(f->file);
+    if ((signed long)b < 0) {
+        f->pos = -1;
+        return b;
+    }
+    rv |= b << 16;
 
-	rv = (*f->dfs->getc)(f->file);
-	if ((signed long)rv < 0) {
-		f->pos = -1;
-		return rv;
-	}
-	rv <<= 24;
+    b = (*f->dfs->getc)(f->file);
+    if ((signed long)b < 0) {
+        f->pos = -1;
+        return b;
+    }
+    rv |= b << 8;
 
-	b = (*f->dfs->getc)(f->file);
-	if ((signed long)b < 0) {
-		f->pos = -1;
-		return b;
-	}
-	rv |= b << 16;
+    b = (*f->dfs->getc)(f->file);
+    if ((signed long)b < 0) {
+        f->pos = -1;
+        return b;
+    }
+    rv |= b;
 
-	b = (*f->dfs->getc)(f->file);
-	if ((signed long)b < 0) {
-		f->pos = -1;
-		return b;
-	}
-	rv |= b << 8;
+    f->pos += 4;
 
-	b = (*f->dfs->getc)(f->file);
-	if ((signed long)b < 0) {
-		f->pos = -1;
-		return b;
-	}
-	rv |= b;
-
-	f->pos += 4;
-
-	return rv;
+    return rv;
 }
 
+unsigned long dumbfile_cgetul(DUMBFILE *f) {
+    unsigned long rv = 0;
+    int v;
 
+    do {
+        v = dumbfile_getc(f);
 
-unsigned long dumbfile_cgetul(DUMBFILE *f)
-{
-	unsigned long rv = 0;
-	int v;
+        if (v < 0)
+            return v;
 
-	do {
-		v = dumbfile_getc(f);
+        rv <<= 7;
+        rv |= v & 0x7F;
+    } while (v & 0x80);
 
-		if (v < 0)
-			return v;
-
-		rv <<= 7;
-		rv |= v & 0x7F;
-	} while (v & 0x80);
-
-	return rv;
+    return rv;
 }
 
+signed long dumbfile_cgetsl(DUMBFILE *f) {
+    unsigned long rv = dumbfile_cgetul(f);
 
+    if (f->pos < 0)
+        return rv;
 
-signed long dumbfile_cgetsl(DUMBFILE *f)
-{
-	unsigned long rv = dumbfile_cgetul(f);
-
-	if (f->pos < 0)
-		return rv;
-
-	return (rv >> 1) | (rv << 31);
+    return (rv >> 1) | (rv << 31);
 }
 
+dumb_ssize_t dumbfile_getnc(char *ptr, size_t n, DUMBFILE *f) {
+    dumb_ssize_t rv;
 
+    ASSERT(f);
+    ASSERT(n >= 0);
 
-long dumbfile_getnc(char *ptr, long n, DUMBFILE *f)
-{
-	long rv;
+    if (f->pos < 0)
+        return -1;
 
-	ASSERT(f);
-	ASSERT(n >= 0);
+    if (f->dfs->getnc) {
+        rv = (*f->dfs->getnc)(ptr, n, f->file);
+        if (rv < (dumb_ssize_t)n) {
+            f->pos = -1;
+            return MAX(rv, 0);
+        }
+    } else {
+        for (rv = 0; rv < (dumb_ssize_t)n; rv++) {
+            int c = (*f->dfs->getc)(f->file);
+            if (c < 0) {
+                f->pos = -1;
+                return rv;
+            }
+            *ptr++ = c;
+        }
+    }
 
-	if (f->pos < 0)
-		return -1;
+    f->pos += rv;
 
-	if (f->dfs->getnc) {
-		rv = (*f->dfs->getnc)(ptr, n, f->file);
-		if (rv < n) {
-			f->pos = -1;
-			return MAX(rv, 0);
-		}
-	} else {
-		for (rv = 0; rv < n; rv++) {
-			int c = (*f->dfs->getc)(f->file);
-			if (c < 0) {
-				f->pos = -1;
-				return rv;
-			}
-			*ptr++ = c;
-		}
-	}
-
-	f->pos += rv;
-
-	return rv;
+    return rv;
 }
 
-
-
-int dumbfile_seek(DUMBFILE *f, long n, int origin)
-{
-    switch ( origin )
-    {
-    case DFS_SEEK_CUR: n += f->pos; break;
-    case DFS_SEEK_END: n += (*f->dfs->get_size)(f->file); break;
+/* Move to an arbitrary position n in the file, specified relative to origin,
+ * where origin shall be one of the DFS_SEEK_* constants.
+ */
+int dumbfile_seek(DUMBFILE *f, dumb_off_t n, int origin) {
+    switch (origin) {
+    case DFS_SEEK_CUR:
+        n += f->pos;
+        break;
+    case DFS_SEEK_END:
+        n += (*f->dfs->get_size)(f->file);
+        break;
+    default:
+        break; /* keep n, seek position from beginning of file */
     }
     f->pos = n;
     return (*f->dfs->seek)(f->file, n);
 }
 
-
-
-long dumbfile_get_size(DUMBFILE *f)
-{
+dumb_off_t dumbfile_get_size(DUMBFILE *f) {
     return (*f->dfs->get_size)(f->file);
 }
 
+int dumbfile_error(DUMBFILE *f) {
+    ASSERT(f);
 
-
-int dumbfile_error(DUMBFILE *f)
-{
-	ASSERT(f);
-
-	return f->pos < 0;
+    return f->pos < 0;
 }
 
+int dumbfile_close(DUMBFILE *f) {
+    int rv;
 
+    ASSERT(f);
 
-int dumbfile_close(DUMBFILE *f)
-{
-	int rv;
+    rv = f->pos < 0;
 
-	ASSERT(f);
+    if (f->dfs->close)
+        (*f->dfs->close)(f->file);
 
-	rv = f->pos < 0;
+    free(f);
 
-	if (f->dfs->close)
-		(*f->dfs->close)(f->file);
-
-	free(f);
-
-	return rv;
+    return rv;
 }

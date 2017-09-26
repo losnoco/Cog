@@ -26,47 +26,50 @@
 #ifndef INTERNAL_DUMB_H
 #define INTERNAL_DUMB_H
 
+#include "../dumb.h"
 
 #undef MIN
 #undef MAX
 #undef MID
 
-#define MIN(x,y)   (((x) < (y)) ? (x) : (y))
-#define MAX(x,y)   (((x) > (y)) ? (x) : (y))
-#define MID(x,y,z) MAX((x), MIN((y), (z)))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MID(x, y, z) MAX((x), MIN((y), (z)))
 
 #undef ABS
 #define ABS(x) (((x) >= 0) ? (x) : (-(x)))
 
-typedef struct DUH_SIGTYPE_DESC_LINK
-{
-	struct DUH_SIGTYPE_DESC_LINK *next;
-	DUH_SIGTYPE_DESC *desc;
-}
-DUH_SIGTYPE_DESC_LINK;
+#ifndef LONG_LONG
+#if defined __GNUC__ || defined __INTEL_COMPILER || defined __MWERKS__ ||      \
+    defined __sgi
+#define LONG_LONG long long
+#elif defined _MSC_VER || defined __WATCOMC__
+#define LONG_LONG __int64
+#else
+#error 64-bit integer type unknown
+#endif
+#endif
 
+typedef struct DUH_SIGTYPE_DESC_LINK {
+    struct DUH_SIGTYPE_DESC_LINK *next;
+    DUH_SIGTYPE_DESC *desc;
+} DUH_SIGTYPE_DESC_LINK;
 
-typedef struct DUH_SIGNAL
-{
-	sigdata_t *sigdata;
-	DUH_SIGTYPE_DESC *desc;
-}
-DUH_SIGNAL;
+typedef struct DUH_SIGNAL {
+    sigdata_t *sigdata;
+    DUH_SIGTYPE_DESC *desc;
+} DUH_SIGNAL;
 
+struct DUH {
+    dumb_off_t length;
 
-struct DUH
-{
-	long length;
+    int n_tags;
+    char *(*tag)[2];
 
-	int n_tags;
-	char *(*tag)[2];
-
-	int n_signals;
-	DUH_SIGNAL **signal;
+    int n_signals;
+    DUH_SIGNAL **signal;
 };
 
-
 DUH_SIGTYPE_DESC *_dumb_get_sigtype_desc(long type);
-
 
 #endif /* INTERNAL_DUMB_H */

@@ -19,11 +19,8 @@
 
 #include "dumb.h"
 
-
-
-DUH *dumb_read_mod(DUMBFILE *f, int restrict_)
-{
-	DUH *duh = dumb_read_mod_quick(f, restrict_);
-	dumb_it_do_initial_runthrough(duh);
-	return duh;
+DUH *dumb_read_mod(DUMBFILE *f, int restrict_) {
+    DUH *duh = dumb_read_mod_quick(f, restrict_);
+    dumb_it_do_initial_runthrough(duh);
+    return duh;
 }

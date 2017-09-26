@@ -42,210 +42,230 @@
  * FIXME: these comments are somewhat out of date now.
  */
 
+long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size,
+                   VOLUME_PARAMETERS, float delta) {
+    int dt, inv_dt;
+    float VOLUME_VARIABLES;
+    long done;
+    long todo;
+    LONG_LONG todo64;
+    int quality;
 
+    if (!resampler || resampler->dir == 0)
+        return 0;
+    ASSERT(resampler->dir == -1 || resampler->dir == 1);
 
-long dumb_resample(DUMB_RESAMPLER *resampler, sample_t *dst, long dst_size, VOLUME_PARAMETERS, float delta)
-{
-	int dt, inv_dt;
-	float VOLUME_VARIABLES;
-	long done;
-	long todo;
-	LONG_LONG todo64;
-	int quality;
+    done = 0;
+    dt = (int)(delta * 65536.0 + 0.5);
+    if (dt == 0 || dt == (int)-0x80000000)
+        return 0;
+    inv_dt = (int)(1.0 / delta * 65536.0 + 0.5);
+    SET_VOLUME_VARIABLES;
 
-	if (!resampler || resampler->dir == 0) return 0;
-	ASSERT(resampler->dir == -1 || resampler->dir == 1);
+    if (VOLUMES_ARE_ZERO)
+        dst = NULL;
 
-	done = 0;
-	dt = (int)(delta * 65536.0 + 0.5);
-        if (dt == 0 || dt == (int)-0x80000000) return 0;
-        inv_dt = (int)(1.0 / delta * 65536.0 + 0.5);
-	SET_VOLUME_VARIABLES;
+    _dumb_init_cubic();
 
-	if (VOLUMES_ARE_ZERO) dst = NULL;
+    quality = resampler->quality;
 
-	_dumb_init_cubic();
+    while (done < dst_size) {
+        if (process_pickup(resampler)) {
+            RETURN_VOLUME_VARIABLES;
+            return done;
+        }
 
-	quality = resampler->quality;
+        if ((resampler->dir ^ dt) < 0)
+            dt = -dt;
 
-	while (done < dst_size) {
-                if (process_pickup(resampler)) {
-			RETURN_VOLUME_VARIABLES;
-			return done;
-		}
+        if (resampler->dir < 0)
+            todo64 = ((((LONG_LONG)(resampler->pos - resampler->start) << 16) +
+                       resampler->subpos - dt) /
+                      -dt);
+        else
+            todo64 = ((((LONG_LONG)(resampler->end - resampler->pos) << 16) -
+                       resampler->subpos - 1 + dt) /
+                      dt);
 
-		if ((resampler->dir ^ dt) < 0)
-			dt = -dt;
+        if (todo64 < 0)
+            todo = 0;
+        else if (todo64 > dst_size - done)
+            todo = dst_size - done;
+        else
+            todo = (long)todo64;
 
-		if (resampler->dir < 0)
-			todo64 = ((((LONG_LONG)(resampler->pos - resampler->start) << 16) + resampler->subpos - dt) / -dt);
-		else
-			todo64 = ((((LONG_LONG)(resampler->end - resampler->pos) << 16) - resampler->subpos - 1 + dt) / dt);
+        done += todo;
 
-		if (todo64 < 0)
-			todo = 0;
-		else if (todo64 > dst_size - done)
-			todo = dst_size - done;
-		else
-			todo = (long) todo64;
-
-		done += todo;
-
-		{
-			SRCTYPE *src = resampler->src;
-			long pos = resampler->pos;
-			int subpos = resampler->subpos;
-			long diff = pos;
-			long overshot;
-			if (resampler->dir < 0) {
-				if (!dst) {
-					/* Silence or simulation */
-					LONG_LONG new_subpos = subpos + (LONG_LONG)dt * todo;
-					pos += (long)(new_subpos >> 16);
-					subpos = (long)new_subpos & 65535;
-                                } else {
-                                    /* FIR resampling, backwards */
-                                    SRCTYPE *x;
-                                    if ( resampler->fir_resampler_ratio != delta ) {
-                                        resampler_set_rate( resampler->fir_resampler[0], delta );
-                                        resampler_set_rate( resampler->fir_resampler[1], delta );
-                                        resampler->fir_resampler_ratio = delta;
-                                    }
-                                    x = &src[pos*SRC_CHANNELS];
-                                    while ( todo ) {
-                                            while ( ( resampler_get_free_count( resampler->fir_resampler[0] ) ||
-                                            (!resampler_get_sample_count( resampler->fir_resampler[0] )
+        {
+            SRCTYPE *src = resampler->src;
+            long pos = resampler->pos;
+            int subpos = resampler->subpos;
+            long diff = pos;
+            long overshot;
+            if (resampler->dir < 0) {
+                if (!dst) {
+                    /* Silence or simulation */
+                    LONG_LONG new_subpos = subpos + (LONG_LONG)dt * todo;
+                    pos += (long)(new_subpos >> 16);
+                    subpos = (long)new_subpos & 65535;
+                } else {
+                    /* FIR resampling, backwards */
+                    SRCTYPE *x;
+                    if (resampler->fir_resampler_ratio != delta) {
+                        resampler_set_rate(resampler->fir_resampler[0], delta);
+                        resampler_set_rate(resampler->fir_resampler[1], delta);
+                        resampler->fir_resampler_ratio = delta;
+                    }
+                    x = &src[pos * SRC_CHANNELS];
+                    while (todo) {
+                        while ((resampler_get_free_count(
+                                    resampler->fir_resampler[0]) ||
+                                (!resampler_get_sample_count(
+                                     resampler->fir_resampler[0])
 #if SRC_CHANNELS == 2
-                                            && !resampler_get_sample_count( resampler->fir_resampler[1] )
+                                 && !resampler_get_sample_count(
+                                        resampler->fir_resampler[1])
 #endif
-                                            ) ) && pos >= resampler->start )
-                                            {
-                                                    POKE_FIR(0);
-                                                    pos--;
-                                                    x -= SRC_CHANNELS;
-                                            }
-                                            if ( !resampler_get_sample_count( resampler->fir_resampler[0] ) ) break;
-                                            MIX_FIR;
-                                            ADVANCE_FIR;
-                                            --todo;
-                                    }
-                                    done -= todo;
-                                }
-				diff = diff - pos;
-				overshot = resampler->start - pos - 1;
-				if (diff >= 3) {
-					COPYSRC2(resampler->X, 0, overshot < 3, src, pos+3);
-					COPYSRC2(resampler->X, 1, overshot < 2, src, pos+2);
-					COPYSRC2(resampler->X, 2, overshot < 1, src, pos+1);
-				} else if (diff >= 2) {
-					COPYSRC(resampler->X, 0, resampler->X, 2);
-					COPYSRC2(resampler->X, 1, overshot < 2, src, pos+2);
-					COPYSRC2(resampler->X, 2, overshot < 1, src, pos+1);
-				} else if (diff >= 1) {
-					COPYSRC(resampler->X, 0, resampler->X, 1);
-					COPYSRC(resampler->X, 1, resampler->X, 2);
-					COPYSRC2(resampler->X, 2, overshot < 1, src, pos+1);
-				}
-			} else {
-				if (!dst) {
-					/* Silence or simulation */
-					LONG_LONG new_subpos = subpos + (LONG_LONG)dt * todo;
-					pos += (long)(new_subpos >> 16);
-					subpos = (long)new_subpos & 65535;
-                                } else {
-                                    /* FIR resampling, forwards */
-                                    SRCTYPE *x;
-                                    if ( resampler->fir_resampler_ratio != delta ) {
-                                        resampler_set_rate( resampler->fir_resampler[0], delta );
-                                        resampler_set_rate( resampler->fir_resampler[1], delta );
-                                        resampler->fir_resampler_ratio = delta;
-                                    }
-                                    x = &src[pos*SRC_CHANNELS];
-                                    while ( todo ) {
-                                            while ( ( resampler_get_free_count( resampler->fir_resampler[0] ) ||
-                                            (!resampler_get_sample_count( resampler->fir_resampler[0] )
+                                     )) &&
+                               pos >= resampler->start) {
+                            POKE_FIR(0);
+                            pos--;
+                            x -= SRC_CHANNELS;
+                        }
+                        if (!resampler_get_sample_count(
+                                resampler->fir_resampler[0]))
+                            break;
+                        MIX_FIR;
+                        ADVANCE_FIR;
+                        --todo;
+                    }
+                    done -= todo;
+                }
+                diff = diff - pos;
+                overshot = resampler->start - pos - 1;
+                if (diff >= 3) {
+                    COPYSRC2(resampler->X, 0, overshot < 3, src, pos + 3);
+                    COPYSRC2(resampler->X, 1, overshot < 2, src, pos + 2);
+                    COPYSRC2(resampler->X, 2, overshot < 1, src, pos + 1);
+                } else if (diff >= 2) {
+                    COPYSRC(resampler->X, 0, resampler->X, 2);
+                    COPYSRC2(resampler->X, 1, overshot < 2, src, pos + 2);
+                    COPYSRC2(resampler->X, 2, overshot < 1, src, pos + 1);
+                } else if (diff >= 1) {
+                    COPYSRC(resampler->X, 0, resampler->X, 1);
+                    COPYSRC(resampler->X, 1, resampler->X, 2);
+                    COPYSRC2(resampler->X, 2, overshot < 1, src, pos + 1);
+                }
+            } else {
+                if (!dst) {
+                    /* Silence or simulation */
+                    LONG_LONG new_subpos = subpos + (LONG_LONG)dt * todo;
+                    pos += (long)(new_subpos >> 16);
+                    subpos = (long)new_subpos & 65535;
+                } else {
+                    /* FIR resampling, forwards */
+                    SRCTYPE *x;
+                    if (resampler->fir_resampler_ratio != delta) {
+                        resampler_set_rate(resampler->fir_resampler[0], delta);
+                        resampler_set_rate(resampler->fir_resampler[1], delta);
+                        resampler->fir_resampler_ratio = delta;
+                    }
+                    x = &src[pos * SRC_CHANNELS];
+                    while (todo) {
+                        while ((resampler_get_free_count(
+                                    resampler->fir_resampler[0]) ||
+                                (!resampler_get_sample_count(
+                                     resampler->fir_resampler[0])
 #if SRC_CHANNELS == 2
-                                            && !resampler_get_sample_count( resampler->fir_resampler[1] )
+                                 && !resampler_get_sample_count(
+                                        resampler->fir_resampler[1])
 #endif
-                                            ) ) && pos < resampler->end )
-                                            {
-                                                    POKE_FIR(0);
-                                                    pos++;
-                                                    x += SRC_CHANNELS;
-                                            }
-                                            if ( !resampler_get_sample_count( resampler->fir_resampler[0] ) ) break;
-                                            MIX_FIR;
-                                            ADVANCE_FIR;
-                                            --todo;
-                                    }
-                                    done -= todo;
-                                }
-				diff = pos - diff;
-				overshot = pos - resampler->end;
-				if (diff >= 3) {
-					COPYSRC2(resampler->X, 0, overshot < 3, src, pos-3);
-					COPYSRC2(resampler->X, 1, overshot < 2, src, pos-2);
-					COPYSRC2(resampler->X, 2, overshot < 1, src, pos-1);
-				} else if (diff >= 2) {
-					COPYSRC(resampler->X, 0, resampler->X, 2);
-					COPYSRC2(resampler->X, 1, overshot < 2, src, pos-2);
-					COPYSRC2(resampler->X, 2, overshot < 1, src, pos-1);
-				} else if (diff >= 1) {
-					COPYSRC(resampler->X, 0, resampler->X, 1);
-					COPYSRC(resampler->X, 1, resampler->X, 2);
-					COPYSRC2(resampler->X, 2, overshot < 1, src, pos-1);
-				}
-			}
-			resampler->pos = pos;
-			resampler->subpos = subpos;
-		}
-	}
+                                     )) &&
+                               pos < resampler->end) {
+                            POKE_FIR(0);
+                            pos++;
+                            x += SRC_CHANNELS;
+                        }
+                        if (!resampler_get_sample_count(
+                                resampler->fir_resampler[0]))
+                            break;
+                        MIX_FIR;
+                        ADVANCE_FIR;
+                        --todo;
+                    }
+                    done -= todo;
+                }
+                diff = pos - diff;
+                overshot = pos - resampler->end;
+                if (diff >= 3) {
+                    COPYSRC2(resampler->X, 0, overshot < 3, src, pos - 3);
+                    COPYSRC2(resampler->X, 1, overshot < 2, src, pos - 2);
+                    COPYSRC2(resampler->X, 2, overshot < 1, src, pos - 1);
+                } else if (diff >= 2) {
+                    COPYSRC(resampler->X, 0, resampler->X, 2);
+                    COPYSRC2(resampler->X, 1, overshot < 2, src, pos - 2);
+                    COPYSRC2(resampler->X, 2, overshot < 1, src, pos - 1);
+                } else if (diff >= 1) {
+                    COPYSRC(resampler->X, 0, resampler->X, 1);
+                    COPYSRC(resampler->X, 1, resampler->X, 2);
+                    COPYSRC2(resampler->X, 2, overshot < 1, src, pos - 1);
+                }
+            }
+            resampler->pos = pos;
+            resampler->subpos = subpos;
+        }
+    }
 
-	RETURN_VOLUME_VARIABLES;
-	return done;
+    RETURN_VOLUME_VARIABLES;
+    return done;
 }
 
+void dumb_resample_get_current_sample(DUMB_RESAMPLER *resampler,
+                                      VOLUME_PARAMETERS, sample_t *dst) {
+    float VOLUME_VARIABLES;
+    SRCTYPE *src;
+    long pos;
+    int subpos;
+    int quality;
+    SRCTYPE *x;
 
+    if (!resampler || resampler->dir == 0) {
+        MIX_ZEROS(=);
+        return;
+    }
+    ASSERT(resampler->dir == -1 || resampler->dir == 1);
 
-void dumb_resample_get_current_sample(DUMB_RESAMPLER *resampler, VOLUME_PARAMETERS, sample_t *dst)
-{
-	float VOLUME_VARIABLES;
-	SRCTYPE *src;
-	long pos;
-	int subpos;
-	int quality;
-	SRCTYPE *x;
+    if (process_pickup(resampler)) {
+        MIX_ZEROS(=);
+        return;
+    }
 
-	if (!resampler || resampler->dir == 0) { MIX_ZEROS(=); return; }
-	ASSERT(resampler->dir == -1 || resampler->dir == 1);
+    SET_VOLUME_VARIABLES;
 
-	if (process_pickup(resampler)) { MIX_ZEROS(=); return; }
+    if (VOLUMES_ARE_ZERO) {
+        MIX_ZEROS(=);
+        return;
+    }
 
-	SET_VOLUME_VARIABLES;
+    _dumb_init_cubic();
 
-	if (VOLUMES_ARE_ZERO) { MIX_ZEROS(=); return; }
+    quality = resampler->quality;
 
-	_dumb_init_cubic();
+    src = resampler->src;
+    pos = resampler->pos;
+    subpos = resampler->subpos;
+    x = resampler->X;
 
-	quality = resampler->quality;
-
-	src = resampler->src;
-	pos = resampler->pos;
-	subpos = resampler->subpos;
-	x = resampler->X;
-
-	if (resampler->dir < 0) {
-		HEAVYASSERT(pos >= resampler->start);
-                        /* FIR resampling, backwards */
-                        PEEK_FIR;
-	} else {
-		HEAVYASSERT(pos < resampler->end);
-                        /* FIR resampling, forwards */
-                        PEEK_FIR;
-	}
+    if (resampler->dir < 0) {
+        HEAVYASSERT(pos >= resampler->start);
+        /* FIR resampling, backwards */
+        PEEK_FIR;
+    } else {
+        HEAVYASSERT(pos < resampler->end);
+        /* FIR resampling, forwards */
+        PEEK_FIR;
+    }
 }
-
-
 
 #undef MIX_ZEROS
 #undef MIX_FIR

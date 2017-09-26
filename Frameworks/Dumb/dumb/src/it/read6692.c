@@ -19,10 +19,7 @@
 
 #include "dumb.h"
 
-
-
-DUH *dumb_read_669(DUMBFILE *f)
-{
+DUH *dumb_read_669(DUMBFILE *f) {
     DUH *duh = dumb_read_669_quick(f);
     dumb_it_do_initial_runthrough(duh);
     return duh;

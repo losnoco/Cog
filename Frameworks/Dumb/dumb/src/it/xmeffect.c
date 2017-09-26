@@ -17,8 +17,6 @@
  *                                                       \__/
  */
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -72,28 +70,29 @@ static const char xm_has_memory[] = {
 };
 #endif
 
-
-
 /* Effects marked with 'special' are handled specifically in itrender.c */
-void _dumb_it_xm_convert_effect(int effect, int value, IT_ENTRY *entry, int mod)
-{
-const int log = 0;
+void _dumb_it_xm_convert_effect(int effect, int value, IT_ENTRY *entry,
+                                int mod) {
+    const int log = 0;
 
-	if ((!effect && !value) || (effect >= XM_N_EFFECTS))
-		return;
+    if ((!effect && !value) || (effect >= XM_N_EFFECTS))
+        return;
 
-if (log) printf("%c%02X", (effect<10)?('0'+effect):('A'+effect-10), value);
+    if (log)
+        printf("%c%02X", (effect < 10) ? ('0' + effect) : ('A' + effect - 10),
+               value);
 
-	/* Linearisation of the effect number... */
-	if (effect == XM_E) {
-		effect = EBASE + HIGH(value);
-		value = LOW(value);
-	} else if (effect == XM_X) {
-		effect = XBASE + HIGH(value);
-		value = LOW(value);
-	}
+    /* Linearisation of the effect number... */
+    if (effect == XM_E) {
+        effect = EBASE + HIGH(value);
+        value = LOW(value);
+    } else if (effect == XM_X) {
+        effect = XBASE + HIGH(value);
+        value = LOW(value);
+    }
 
-if (log) printf(" - %2d %02X", effect, value);
+    if (log)
+        printf(" - %2d %02X", effect, value);
 
 #if 0 // This should be handled in itrender.c!
 	/* update effect memory */
@@ -119,128 +118,188 @@ if (log) printf(" - %2d %02X", effect, value);
 	}
 #endif
 
-	/* convert effect */
-	entry->mask |= IT_ENTRY_EFFECT;
-	switch (effect) {
+    /* convert effect */
+    entry->mask |= IT_ENTRY_EFFECT;
+    switch (effect) {
 
-		case XM_APPREGIO:           effect = IT_ARPEGGIO;           break;
-		case XM_VIBRATO:            effect = IT_VIBRATO;            break;
-		case XM_TONE_PORTAMENTO:    effect = IT_TONE_PORTAMENTO;    break;
-		case XM_TREMOLO:            effect = IT_TREMOLO;            break;
-		case XM_SET_PANNING:        effect = IT_SET_PANNING;        break;
-		case XM_SAMPLE_OFFSET:      effect = IT_SET_SAMPLE_OFFSET;  break;
-		case XM_POSITION_JUMP:      effect = IT_JUMP_TO_ORDER;      break;
-		case XM_MULTI_RETRIG:       effect = IT_RETRIGGER_NOTE;     break;
-		case XM_TREMOR:             effect = IT_TREMOR;             break;
-		case XM_PORTAMENTO_UP:      effect = IT_XM_PORTAMENTO_UP;   break;
-		case XM_PORTAMENTO_DOWN:    effect = IT_XM_PORTAMENTO_DOWN; break;
-		case XM_SET_CHANNEL_VOLUME: effect = IT_SET_CHANNEL_VOLUME; break; /* special */
-		case XM_VOLSLIDE_TONEPORTA: effect = IT_VOLSLIDE_TONEPORTA; break; /* special */
-		case XM_VOLSLIDE_VIBRATO:   effect = IT_VOLSLIDE_VIBRATO;   break; /* special */
+    case XM_APPREGIO:
+        effect = IT_ARPEGGIO;
+        break;
+    case XM_VIBRATO:
+        effect = IT_VIBRATO;
+        break;
+    case XM_TONE_PORTAMENTO:
+        effect = IT_TONE_PORTAMENTO;
+        break;
+    case XM_TREMOLO:
+        effect = IT_TREMOLO;
+        break;
+    case XM_SET_PANNING:
+        effect = IT_SET_PANNING;
+        break;
+    case XM_SAMPLE_OFFSET:
+        effect = IT_SET_SAMPLE_OFFSET;
+        break;
+    case XM_POSITION_JUMP:
+        effect = IT_JUMP_TO_ORDER;
+        break;
+    case XM_MULTI_RETRIG:
+        effect = IT_RETRIGGER_NOTE;
+        break;
+    case XM_TREMOR:
+        effect = IT_TREMOR;
+        break;
+    case XM_PORTAMENTO_UP:
+        effect = IT_XM_PORTAMENTO_UP;
+        break;
+    case XM_PORTAMENTO_DOWN:
+        effect = IT_XM_PORTAMENTO_DOWN;
+        break;
+    case XM_SET_CHANNEL_VOLUME:
+        effect = IT_SET_CHANNEL_VOLUME;
+        break; /* special */
+    case XM_VOLSLIDE_TONEPORTA:
+        effect = IT_VOLSLIDE_TONEPORTA;
+        break; /* special */
+    case XM_VOLSLIDE_VIBRATO:
+        effect = IT_VOLSLIDE_VIBRATO;
+        break; /* special */
 
-		case XM_PATTERN_BREAK:
-			effect = IT_BREAK_TO_ROW;
-			value = BCD_TO_NORMAL(value);
-			if (value > 63) value = 0; /* FT2, maybe ProTracker? */
-			break;
+    case XM_PATTERN_BREAK:
+        effect = IT_BREAK_TO_ROW;
+        value = BCD_TO_NORMAL(value);
+        if (value > 63)
+            value = 0; /* FT2, maybe ProTracker? */
+        break;
 
-		case XM_VOLUME_SLIDE: /* special */
-			effect = IT_VOLUME_SLIDE;
-			value = HIGH(value) ? EFFECT_VALUE(HIGH(value), 0) : EFFECT_VALUE(0, LOW(value));
-			break;
+    case XM_VOLUME_SLIDE: /* special */
+        effect = IT_VOLUME_SLIDE;
+        value = HIGH(value) ? EFFECT_VALUE(HIGH(value), 0)
+                            : EFFECT_VALUE(0, LOW(value));
+        break;
 
-		case XM_PANNING_SLIDE:
-			effect = IT_PANNING_SLIDE;
-			//value = HIGH(value) ? EFFECT_VALUE(HIGH(value), 0) : EFFECT_VALUE(0, LOW(value));
-			value = HIGH(value) ? EFFECT_VALUE(0, HIGH(value)) : EFFECT_VALUE(LOW(value), 0);
-			break;
+    case XM_PANNING_SLIDE:
+        effect = IT_PANNING_SLIDE;
+        // value = HIGH(value) ? EFFECT_VALUE(HIGH(value), 0) : EFFECT_VALUE(0,
+        // LOW(value));
+        value = HIGH(value) ? EFFECT_VALUE(0, HIGH(value))
+                            : EFFECT_VALUE(LOW(value), 0);
+        break;
 
-		case XM_GLOBAL_VOLUME_SLIDE: /* special */
-			effect = IT_GLOBAL_VOLUME_SLIDE;
-			value = HIGH(value) ? EFFECT_VALUE(HIGH(value), 0) : EFFECT_VALUE(0, LOW(value));
-			break;
+    case XM_GLOBAL_VOLUME_SLIDE: /* special */
+        effect = IT_GLOBAL_VOLUME_SLIDE;
+        value = HIGH(value) ? EFFECT_VALUE(HIGH(value), 0)
+                            : EFFECT_VALUE(0, LOW(value));
+        break;
 
-		case XM_SET_TEMPO_BPM:
-			if (mod) effect = (value <= 0x20) ? (IT_SET_SPEED) : (IT_SET_SONG_TEMPO);
-			else effect = (value < 0x20) ? (IT_SET_SPEED) : (IT_SET_SONG_TEMPO);
-			break;
+    case XM_SET_TEMPO_BPM:
+        if (mod)
+            effect = (value <= 0x20) ? (IT_SET_SPEED) : (IT_SET_SONG_TEMPO);
+        else
+            effect = (value < 0x20) ? (IT_SET_SPEED) : (IT_SET_SONG_TEMPO);
+        break;
 
-		case XM_SET_GLOBAL_VOLUME:
-			effect = IT_SET_GLOBAL_VOLUME;
-			value *= 2;
-			if (value > 128) value = 128;
-			break;
+    case XM_SET_GLOBAL_VOLUME:
+        effect = IT_SET_GLOBAL_VOLUME;
+        value *= 2;
+        if (value > 128)
+            value = 128;
+        break;
 
-		case XM_KEY_OFF:
-			effect = IT_XM_KEY_OFF;
-			break;
+    case XM_KEY_OFF:
+        effect = IT_XM_KEY_OFF;
+        break;
 
-		case XM_SET_ENVELOPE_POSITION:
-			effect = IT_XM_SET_ENVELOPE_POSITION;
-			break;
+    case XM_SET_ENVELOPE_POSITION:
+        effect = IT_XM_SET_ENVELOPE_POSITION;
+        break;
 
-		case EBASE+XM_E_SET_FILTER:            effect = SBASE+IT_S_SET_FILTER;            break;
-		case EBASE+XM_E_SET_GLISSANDO_CONTROL: effect = SBASE+IT_S_SET_GLISSANDO_CONTROL; break; /** TODO */
-		case EBASE+XM_E_SET_FINETUNE:          effect = SBASE+IT_S_FINETUNE;              break;
-		case EBASE+XM_E_SET_LOOP:              effect = SBASE+IT_S_PATTERN_LOOP;          break;
-		case EBASE+XM_E_NOTE_CUT:              effect = SBASE+IT_S_DELAYED_NOTE_CUT;      break;
-		case EBASE+XM_E_NOTE_DELAY:            effect = SBASE+IT_S_NOTE_DELAY;            break;
-		case EBASE+XM_E_PATTERN_DELAY:         effect = SBASE+IT_S_PATTERN_DELAY;         break;
-		case EBASE+XM_E_SET_PANNING:           effect = SBASE+IT_S_SET_PAN;               break;
-		case EBASE+XM_E_FINE_VOLSLIDE_UP:      effect = IT_XM_FINE_VOLSLIDE_UP;           break;
-		case EBASE+XM_E_FINE_VOLSLIDE_DOWN:    effect = IT_XM_FINE_VOLSLIDE_DOWN;         break;
-		case EBASE+XM_E_SET_MIDI_MACRO:        effect = SBASE+IT_S_SET_MIDI_MACRO;        break;
+    case EBASE + XM_E_SET_FILTER:
+        effect = SBASE + IT_S_SET_FILTER;
+        break;
+    case EBASE + XM_E_SET_GLISSANDO_CONTROL:
+        effect = SBASE + IT_S_SET_GLISSANDO_CONTROL;
+        break; /** TODO */
+    case EBASE + XM_E_SET_FINETUNE:
+        effect = SBASE + IT_S_FINETUNE;
+        break;
+    case EBASE + XM_E_SET_LOOP:
+        effect = SBASE + IT_S_PATTERN_LOOP;
+        break;
+    case EBASE + XM_E_NOTE_CUT:
+        effect = SBASE + IT_S_DELAYED_NOTE_CUT;
+        break;
+    case EBASE + XM_E_NOTE_DELAY:
+        effect = SBASE + IT_S_NOTE_DELAY;
+        break;
+    case EBASE + XM_E_PATTERN_DELAY:
+        effect = SBASE + IT_S_PATTERN_DELAY;
+        break;
+    case EBASE + XM_E_SET_PANNING:
+        effect = SBASE + IT_S_SET_PAN;
+        break;
+    case EBASE + XM_E_FINE_VOLSLIDE_UP:
+        effect = IT_XM_FINE_VOLSLIDE_UP;
+        break;
+    case EBASE + XM_E_FINE_VOLSLIDE_DOWN:
+        effect = IT_XM_FINE_VOLSLIDE_DOWN;
+        break;
+    case EBASE + XM_E_SET_MIDI_MACRO:
+        effect = SBASE + IT_S_SET_MIDI_MACRO;
+        break;
 
-		case EBASE + XM_E_FINE_PORTA_UP:
-			effect = IT_PORTAMENTO_UP;
-			value = EFFECT_VALUE(0xF, value);
-			break;
+    case EBASE + XM_E_FINE_PORTA_UP:
+        effect = IT_PORTAMENTO_UP;
+        value = EFFECT_VALUE(0xF, value);
+        break;
 
-		case EBASE + XM_E_FINE_PORTA_DOWN:
-			effect = IT_PORTAMENTO_DOWN;
-			value = EFFECT_VALUE(0xF, value);
-			break;
+    case EBASE + XM_E_FINE_PORTA_DOWN:
+        effect = IT_PORTAMENTO_DOWN;
+        value = EFFECT_VALUE(0xF, value);
+        break;
 
-		case EBASE + XM_E_RETRIG_NOTE:
-			effect = IT_XM_RETRIGGER_NOTE;
-			value = EFFECT_VALUE(0, value);
-			break;
+    case EBASE + XM_E_RETRIG_NOTE:
+        effect = IT_XM_RETRIGGER_NOTE;
+        value = EFFECT_VALUE(0, value);
+        break;
 
-		case EBASE + XM_E_SET_VIBRATO_CONTROL:
-			effect = SBASE+IT_S_SET_VIBRATO_WAVEFORM;
-			value &= ~4;
-			break;
+    case EBASE + XM_E_SET_VIBRATO_CONTROL:
+        effect = SBASE + IT_S_SET_VIBRATO_WAVEFORM;
+        value &= ~4;
+        break;
 
-		case EBASE + XM_E_SET_TREMOLO_CONTROL:
-			effect = SBASE+IT_S_SET_TREMOLO_WAVEFORM;
-			value &= ~4;
-			break;
+    case EBASE + XM_E_SET_TREMOLO_CONTROL:
+        effect = SBASE + IT_S_SET_TREMOLO_WAVEFORM;
+        value &= ~4;
+        break;
 
-		case XBASE + XM_X_EXTRAFINE_PORTA_UP:
-			effect = IT_PORTAMENTO_UP;
-			value = EFFECT_VALUE(0xE, value);
-			break;
+    case XBASE + XM_X_EXTRAFINE_PORTA_UP:
+        effect = IT_PORTAMENTO_UP;
+        value = EFFECT_VALUE(0xE, value);
+        break;
 
-		case XBASE + XM_X_EXTRAFINE_PORTA_DOWN:
-			effect = IT_PORTAMENTO_DOWN;
-			value = EFFECT_VALUE(0xE, value);
-			break;
+    case XBASE + XM_X_EXTRAFINE_PORTA_DOWN:
+        effect = IT_PORTAMENTO_DOWN;
+        value = EFFECT_VALUE(0xE, value);
+        break;
 
-		default:
-			/* user effect (often used in demos for synchronisation) */
-			entry->mask &= ~IT_ENTRY_EFFECT;
-	}
+    default:
+        /* user effect (often used in demos for synchronisation) */
+        entry->mask &= ~IT_ENTRY_EFFECT;
+    }
 
-if (log) printf(" - %2d %02X", effect, value);
+    if (log)
+        printf(" - %2d %02X", effect, value);
 
-	/* Inverse linearisation... */
-	if (effect >= SBASE && effect < SBASE+16) {
-		value = EFFECT_VALUE(effect-SBASE, value);
-		effect = IT_S;
-	}
+    /* Inverse linearisation... */
+    if (effect >= SBASE && effect < SBASE + 16) {
+        value = EFFECT_VALUE(effect - SBASE, value);
+        effect = IT_S;
+    }
 
-if (log) printf(" - %c%02X\n", 'A'+effect-1, value);
+    if (log)
+        printf(" - %c%02X\n", 'A' + effect - 1, value);
 
-	entry->effect = effect;
-	entry->effectvalue = value;
+    entry->effect = effect;
+    entry->effectvalue = value;
 }

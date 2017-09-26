@@ -1,3 +1,4 @@
+```
 /*  _______         ____    __         ___    ___
  * \    _  \       \    /  \  /       \   \  /   /       '   '  '
  *  |  | \  \       |  |    ||         |   \/   |         .      .
@@ -8,7 +9,7 @@
  * /_______/ynamic    \____/niversal  /__\  /____\usic   /|  .  . ibliotheque
  *                                                      /  \
  *                                                     / .  \
- * release.txt - Release notes for DUMB.              / / \  \
+ * CHANGELOG.md - Release notes for DUMB.             / / \  \
  *                                                   | <  /   \_
  *                                                   |  \/ /\   /
  *                                                    \_  /  > /
@@ -16,11 +17,35 @@
  *                                                      |  ' /
  *                                                       \__/
  */
+ ```
 
+# DUMB Changelog
 
-*******************************************
-*** DUMB v0.9.3, released 7 August 2005 ***
-*******************************************
+## v2.0.0, released 26 September 2017
+
+* Memory leak and bug fixes
+* Audio playback quality improvements for STM
+* Added support for FEST MOD files
+* Default resampling quality is now cubic
+* Allegro 4 support
+* New dumbplay, dumbout examples
+* Multiple cmake fixes
+* Deprecated `duh_render()`, use `duh_render_float()` and `duh_render_int()`
+* Removed API deprecated since 0.9.3, see the
+    [DUMB 0.9.3 deprecation reference](http://dumb.sourceforge.net/index.php?page=docs&doc=deprec)
+
+## v1.0.0, released 17 January 2015
+
+* Support newer compilers
+* Better audio playback quality
+* More supported formats
+* SSE optimizations support
+* CMake support
+* New resamplers
+* Seek support
+* Fixes, cleanups, speedups.
+
+## v0.9.3, released 7 August 2005
 
 Hello! Welcome to a long-awaited-or-probably-just-given-up-on-by-everybody
 release! New to this release are lower memory usage, faster mixing loops,
@@ -173,9 +198,7 @@ That's it! I hope you enjoy this long-awaited-or-probably-just-given-up-on-
 by-everybody release of DUMB!
 
 
-******************************************
-*** DUMB v0.9.2, released 2 April 2003 ***
-******************************************
+## v0.9.2, released 2 April 2003
 
 Yes, there really has been a release. This is not a day-late April fools'
 joke.
@@ -272,9 +295,7 @@ explained in licence.txt. However, the request is still there ...
 As usual, enjoy!
 
 
-**********************************************
-*** DUMB v0.9.1, released 19 December 2002 ***
-**********************************************
+## v0.9.1, released 19 December 2002
 
 Hi again! Lots to say this time, so I shall cut right to the chase.
 
@@ -355,9 +376,7 @@ the last release; they are relevant for this release too.
 That's all folks! Until next time.
 
 
-*******************************************
-*** DUMB v0.9, released 16 October 2002 ***
-*******************************************
+## v0.9, released 16 October 2002
 
 MOD support is here! DUMB now supports all four of the common module formats.
 As usual, there have also been some improvements to the way modules are
@@ -431,9 +450,7 @@ Off you go.
 Bye.
 
 
-********************************************
-*** DUMB v0.8.1, released 11 August 2002 ***
-********************************************
+## v0.8.1, released 11 August 2002
 
 This is a minor release that fixes a few bugs. One of these bugs, however,
 was pretty serious. dumb_register_dat_xm() was never coded! It was prototyped
@@ -487,9 +504,7 @@ The point about length not being calculated also applies to XM files.
 Enjoy :)
 
 
-****************************************
-*** DUMB v0.8, released 14 June 2002 ***
-****************************************
+## v0.8, released 14 June 2002
 
 Welcome to the second release of DUMB!
 
@@ -530,9 +545,7 @@ going myself (72 GBP, and I'd have to wear a suit, ugh), but with all the
 noise outside I shall enjoy pumping up the speakers tonight!
 
 
-****************************************
-*** DUMB v0.7, released 2 March 2002 ***
-****************************************
+## DUMB v0.7, released 2 March 2002
 
 This is the first release of DUMB, and parts of the library are not
 crystallised. Don't let this put you off! Provided you don't try to use any

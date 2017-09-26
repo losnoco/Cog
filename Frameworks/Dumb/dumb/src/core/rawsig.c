@@ -22,37 +22,32 @@
 #include "dumb.h"
 #include "internal/dumb.h"
 
-
-
 /* You have to specify the type of sigdata, proving you know what to do with
  * the pointer. If you get it wrong, you can expect NULL back.
  */
-sigdata_t *duh_get_raw_sigdata(DUH *duh, int sig, long type)
-{
-	int i;
-	DUH_SIGNAL *signal;
+sigdata_t *duh_get_raw_sigdata(DUH *duh, int sig, long type) {
+    int i;
+    DUH_SIGNAL *signal;
 
-	if (!duh) return NULL;
+    if (!duh)
+        return NULL;
 
-	if ( sig >= 0 )
-	{
-		if ((unsigned int)sig >= (unsigned int)duh->n_signals) return NULL;
+    if (sig >= 0) {
+        if ((unsigned int)sig >= (unsigned int)duh->n_signals)
+            return NULL;
 
-		signal = duh->signal[sig];
+        signal = duh->signal[sig];
 
-		if (signal && signal->desc->type == type)
-			return signal->sigdata;
-	}
-	else
-	{
-		for ( i = 0; i < duh->n_signals; i++ )
-		{
-			signal = duh->signal[i];
+        if (signal && signal->desc->type == type)
+            return signal->sigdata;
+    } else {
+        for (i = 0; i < duh->n_signals; i++) {
+            signal = duh->signal[i];
 
-			if (signal && signal->desc->type == type)
-				return signal->sigdata;
-		}
-	}
+            if (signal && signal->desc->type == type)
+                return signal->sigdata;
+        }
+    }
 
-	return NULL;
+    return NULL;
 }

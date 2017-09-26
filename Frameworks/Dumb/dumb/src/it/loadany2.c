@@ -19,11 +19,8 @@
 
 #include "dumb.h"
 
-
-
-DUH *dumb_load_any(const char *filename, int restrict_, int subsong)
-{
+DUH *dumb_load_any(const char *filename, int restrict_, int subsong) {
     DUH *duh = dumb_load_any_quick(filename, restrict_, subsong);
-	dumb_it_do_initial_runthrough(duh);
-	return duh;
+    dumb_it_do_initial_runthrough(duh);
+    return duh;
 }

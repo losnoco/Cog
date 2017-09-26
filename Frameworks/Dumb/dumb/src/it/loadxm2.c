@@ -19,11 +19,8 @@
 
 #include "dumb.h"
 
-
-
-DUH *dumb_load_xm(const char *filename)
-{
-	DUH *duh = dumb_load_xm_quick(filename);
-	dumb_it_do_initial_runthrough(duh);
-	return duh;
+DUH *dumb_load_xm(const char *filename) {
+    DUH *duh = dumb_load_xm_quick(filename);
+    dumb_it_do_initial_runthrough(duh);
+    return duh;
 }
