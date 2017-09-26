@@ -134,6 +134,7 @@
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
+		8319A68D1F79E99300C168D6 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 8319A67E1F79E99300C168D6 /* dsa_pub.pem */; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
 		8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8355D6B5180612F300D05687 /* NSData+MD5.m */; };
 		8355D6B8180613FB00D05687 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8355D6B7180613FB00D05687 /* Security.framework */; };
@@ -431,6 +432,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8314D6311A354DFE00EEE8E6;
 			remoteInfo = sidplay;
+		};
+		8319A68A1F79E99300C168D6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83E6B750181612FD00D4576D /* Sparkle.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5AE13FB31E0D9E07000D2C2C;
+			remoteInfo = generate_appcast;
 		};
 		8333B6581DCC4290004C140D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -952,6 +960,7 @@
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
+		8319A67E1F79E99300C168D6 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
 		833F681E1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		833F681F1CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1571,6 +1580,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8319A67E1F79E99300C168D6 /* dsa_pub.pem */,
 				832C1252180BD1E2005507C1 /* Cog.help */,
 				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
 				8E75758E09F31D800080F1EE /* Icons */,
@@ -1756,6 +1766,7 @@
 				83E6B761181612FD00D4576D /* Autoupdate.app */,
 				8333B6591DCC4290004C140D /* UI Tests.xctest */,
 				8333B65B1DCC4290004C140D /* fileop */,
+				8319A68B1F79E99300C168D6 /* generate_appcast */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2226,6 +2237,13 @@
 			remoteRef = 8314D6401A354DFF00EEE8E6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		8319A68B1F79E99300C168D6 /* generate_appcast */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = generate_appcast;
+			remoteRef = 8319A68A1F79E99300C168D6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8333B6591DCC4290004C140D /* UI Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -2398,6 +2416,7 @@
 				8E7575DB09F31E930080F1EE /* Localizable.strings in Resources */,
 				177EC04B0B8BC2FF0000BC8C /* next.png in Resources */,
 				177EC04D0B8BC2FF0000BC8C /* pause.png in Resources */,
+				8319A68D1F79E99300C168D6 /* dsa_pub.pem in Resources */,
 				177EC04F0B8BC2FF0000BC8C /* play.png in Resources */,
 				177EC0510B8BC2FF0000BC8C /* previous.png in Resources */,
 				83849174180843B200E7332D /* stopDockBadgeColorful.png in Resources */,

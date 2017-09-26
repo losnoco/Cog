@@ -649,7 +649,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ape.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Monkey's Audio File</string>
+			<string>Monkey&apos;s Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -1028,5 +1028,7 @@
 	<string>MediaKeysApplication</string>
 	<key>SUFeedURL</key>
 	<string>https://f.losno.co/cog/mercury.xml</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
 </dict>
 </plist>
