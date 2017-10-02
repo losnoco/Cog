@@ -1,5 +1,5 @@
 # This is the commands used to build the ffmpeg libs provided here
-./configure --extra-cflags="-fPIC -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=10.6" --extra-libs="-mmacosx-version-min=10.6"\
+./configure --extra-cflags="-fPIC -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=10.6" --extra-ldflags="-mmacosx-version-min=10.6"\
     --enable-static --disable-shared --prefix=$HOME/Source/Repos/cog/ThirdParty/ffmpeg\
     --enable-pic --enable-gpl --disable-doc --disable-ffplay\
     --disable-ffprobe --disable-ffserver --disable-avdevice --disable-ffmpeg\
