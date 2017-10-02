@@ -3,6 +3,7 @@
 require 'tempfile'
 require 'open-uri'
 require 'rexml/document'
+require 'shellwords'
 include REXML
 
 feed = ARGV[0] || 'mercury'
@@ -20,7 +21,6 @@ appcast_enclosure = REXML::XPath.match(appcastdoc, "//channel/item/enclosure")[0
 appcast_url = appcast_enclosure.attributes['url'];
 appcast_revision = appcast_enclosure.attributes['sparkle:version'];
 appcast_revision_split = appcast_revision.split( /-/ )
-appcast_revision_number = appcast_revision_split[1]
 appcast_revision_code = appcast_revision_split[2]
 appcast_revision_split = appcast_revision_code.split( /g/ )
 appcast_revision_code = appcast_revision_split[1]
@@ -53,6 +53,7 @@ appcast.close()
 
 #latest_revision = %x[/usr/local/bin/hg log -r . --template '{latesttag}-{latesttagdistance}-{node|short}']
 revision_split = latest_revision.split( /-/ )
+revision_number = revision_split[1]
 revision_code = revision_split[2]
 revision_split = revision_code.split( /g/ )
 revision_code = revision_split[1]
@@ -65,7 +66,7 @@ if appcast_revision < latest_revision
 
   filename = "Cog-#{revision_code}.zip"
   filenamedesc = "Cog-#{revision_code}.html"
-  deltamask = "Cogk54-#{appcast_revision_number}-"
+  deltamask = "Cogk54-#{revision_number}-"
   temp_path = "/tmp";
   %x[rm -rf '#{temp_path}/Cog.app' '#{temp_path}/Cog.zip']
   
@@ -95,8 +96,11 @@ if appcast_revision < latest_revision
   #Update appcast
   %x[generate_appcast '#{signature_file}' '#{site_dir}/#{feed}_builds']
 
+  #List out the deltas
+  deltas = Dir.entries("#{site_dir}/#{feed}_builds").select { |f| f =~ /\A#{Regexp.escape(deltamask)}.+\.delta\z/ }.map { |f| File.join("#{site_dir}/#{feed}_builds", f) }
+
   #Upload them to S3
-  %x[s3cmd put -P -m application/octet-stream '#{site_dir}/#{feed}_builds/#{deltamask}'*.delta '#{site_dir}/#{feed}_builds/#{filename}' s3://balde.losno.co/cog/ --signature-v2]
+  %x[s3cmd put -P -m application/octet-stream #{deltas.shelljoin} '#{site_dir}/#{feed}_builds/#{filename}' s3://balde.losno.co/cog/ --signature-v2]
  
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.app']
