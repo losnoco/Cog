@@ -5,10 +5,10 @@ includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/include
 
 Name: libavformat
 Description: FFmpeg container format library
-Version: 57.82.101
-Requires: libavcodec >= 57.106.101, libswresample >= 2.8.100, libavutil >= 55.76.100
+Version: 57.82.102
+Requires: libavcodec >= 57.106.104, libswresample >= 2.8.100, libavutil >= 55.77.101
 Requires.private: 
 Conflicts:
-Libs: -L${libdir}  -lavformat -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -lm -lbz2 -lz -pthread -pthread -framework CoreServices -framework CoreGraphics -framework VideoToolbox -framework CoreImage -framework AVFoundation -framework AudioToolbox -framework AppKit
+Libs: -L${libdir}  -lavformat -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -lm -lbz2 -lz -pthread -pthread -framework CoreServices -framework CoreGraphics -framework VideoToolbox -framework CoreImage -framework AVFoundation -framework AudioToolbox -framework AppKit -mmacosx-version-min=10.6
 Libs.private: 
 Cflags: -I${includedir}
