@@ -34,6 +34,9 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
 	midi_track track;
 	unsigned current_timestamp = 0;
 	unsigned char last_event_code = 0xFF;
+    
+    unsigned last_sysex_length = 0;
+    unsigned last_sysex_timestamp = 0;
 
     std::vector<uint8_t> buffer;
     buffer.resize( 3 );
@@ -62,6 +65,12 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         }
         if ( event_code < 0xF0 )
         {
+            if ( last_sysex_length )
+            {
+                track.add_event( midi_event( last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length + 1 ) );
+                last_sysex_length = 0;
+            }
+            
             last_event_code = event_code;
             if ( !needs_end_marker && ( event_code & 0xF0 ) == 0xE0 ) continue;
             if ( data_bytes_read < 1 )
@@ -84,6 +93,12 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         }
         else if ( event_code == 0xF0 )
         {
+            if ( last_sysex_length )
+            {
+                track.add_event( midi_event( last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length + 1 ) );
+                last_sysex_length = 0;
+            }
+            
             int data_count = decode_delta( it, end );
             if ( data_count < 0 ) return false; /*throw exception_io_data( "Invalid System Exclusive message" );*/
 			if ( end - it < data_count ) return false;
@@ -91,11 +106,29 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
             buffer[ 0 ] = 0xF0;
             std::copy( it, it + data_count, buffer.begin() + 1 );
             it += data_count;
-            track.add_event( midi_event( current_timestamp, midi_event::extended, 0, &buffer[0], data_count + 1 ) );
+            last_sysex_length = data_count + 1;
+            last_sysex_timestamp = current_timestamp;
+        }
+        else if ( event_code == 0xF7 ) // SysEx continuation
+        {
+            if ( !last_sysex_length ) return false;
+            int data_count = decode_delta( it, end );
+            if ( data_count < 0 ) return false;
+            if ( end - it < data_count ) return false;
+            buffer.resize( last_sysex_length + data_count + 1 );
+            std::copy( it, it + data_count, buffer.begin() + last_sysex_length );
+            it += data_count;
+            last_sysex_length += data_count;
         }
         else if ( event_code == 0xFF )
         {
-			if ( it == end ) return false;
+            if ( last_sysex_length )
+            {
+                track.add_event( midi_event( last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length + 1 ) );
+                last_sysex_length = 0;
+            }
+
+            if ( it == end ) return false;
             unsigned char meta_type = *it++;
             int data_count = decode_delta( it, end );
             if ( data_count < 0 ) return false; /*throw exception_io_data( "Invalid meta message" );*/
