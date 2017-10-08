@@ -138,8 +138,8 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
         case 0x0002: ww.codec = IMA; break; /* newer Wwise (conflicts with MSADPCM, probably means "platform's ADPCM") */
         //case 0x0011: ww.codec = IMA; break; /* older Wwise (used?) */
         case 0x0069: ww.codec = IMA; break; /* older Wwise (Spiderman Web of Shadows X360, LotR Conquest PC) */
-        case 0x0161: ww.codec = XWMA; break;
-        case 0x0162: ww.codec = XWMA; break;
+        case 0x0161: ww.codec = XWMA; break; /* WMAv2 */
+        case 0x0162: ww.codec = XWMA; break; /* WMAPro */
         case 0x0165: ww.codec = XMA2; break; /* always with the "XMA2" chunk, Wwise doesn't use XMA1 */
         case 0x0166: ww.codec = XMA2; break;
         case 0x3039: ww.codec = OPUS; break;
@@ -265,6 +265,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                     cfg.blocksize_1_exp = read_8bit(vorb_offset + block_offsets + 0x00, streamFile); /* small */
                     cfg.blocksize_0_exp = read_8bit(vorb_offset + block_offsets + 0x01, streamFile); /* big */
                 }
+                ww.data_size -= audio_offset;
 
                 /* detect setup type:
                  * - full inline: ~2009, ex. The King of Fighters XII X360, The Saboteur PC
@@ -283,8 +284,6 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                         cfg.setup_type = INLINE_CODEBOOKS;
                     }
                 }
-
-                //ww.data_size -= audio_offset; //todo test
 
                 vgmstream->codec_data = init_vorbis_custom_codec_data(streamFile, start_offset + setup_offset, VORBIS_WWISE, &cfg);
                 if (!vgmstream->codec_data) goto fail;
@@ -319,6 +318,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                 audio_offset = read_32bit(extra_offset + data_offsets + 0x04, streamFile); /* within data */
                 cfg.blocksize_1_exp = read_8bit(extra_offset + block_offsets + 0x00, streamFile); /* small */
                 cfg.blocksize_0_exp = read_8bit(extra_offset + block_offsets + 0x01, streamFile); /* big */
+                ww.data_size -= audio_offset;
 
                 /* Normal packets are used rarely (ex. Oddworld New 'n' Tasty! PSV). They are hard to detect (decoding
                  * will mostly work with garbage results) but we'll try. Setup size and "fmt" bitrate fields may matter too. */
@@ -328,8 +328,6 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                     if (cfg.blocksize_0_exp == cfg.blocksize_1_exp)
                         cfg.packet_type = STANDARD;
                 }
-
-                //ww.data_size -= audio_offset; //todo test
 
                 /* try with the selected codebooks */
                 vgmstream->codec_data = init_vorbis_custom_codec_data(streamFile, start_offset + setup_offset, VORBIS_WWISE, &cfg);
@@ -436,6 +434,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
             vgmstream->coding_type = coding_FFmpeg;
             vgmstream->layout_type = layout_none;
 
+
             /* manually find total samples, why don't they put this in the header is beyond me */
             {
                 ms_sample_data msd;
@@ -446,11 +445,14 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                 msd.data_size = ww.data_size;
 
                 if (ww.format == 0x0162)
-                    wmapro_get_samples(&msd, streamFile, ww.block_align, ww.sample_rate,0x0000);
+                    wmapro_get_samples(&msd, streamFile, ww.block_align, ww.sample_rate,0x00E0);
                 else
-                    wma_get_samples(&msd, streamFile, ww.block_align, ww.sample_rate,0x0000);
+                    wma_get_samples(&msd, streamFile, ww.block_align, ww.sample_rate,0x001F);
 
-                vgmstream->num_samples = ffmpeg_data->totalSamples; /* ffmpeg_data->totalSamples is approximate from avg-br */
+                vgmstream->num_samples = msd.num_samples;
+                if (!vgmstream->num_samples)
+                    vgmstream->num_samples = ffmpeg_data->totalSamples; /* very wrong, from avg-br */
+                //num_samples seem to be found in the last "seek" table entry too, as: entry / channels / 2
             }
 
             break;
@@ -482,7 +484,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                 size_t seek_size;
 
                 vgmstream->num_samples += read_32bit(ww.fmt_offset + 0x18, streamFile);
-                //todo 0x1c and 0x20: related to samples/looping?
+                /* 0x1c: null? 0x20: data_size without seek_size */
                 seek_size = read_32bit(ww.fmt_offset + 0x24, streamFile);
 
                 start_offset += seek_size;
@@ -498,7 +500,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
             if (bytes <= 0) goto fail;
 
             memset(&cfg, 0, sizeof(ffmpeg_custom_config));
-            cfg.type = FFMPEG_WWISE_OPUS;
+            cfg.type = FFMPEG_SWITCH_OPUS;
             //cfg.big_endian = ww.big_endian; /* internally BE */
 
             vgmstream->codec_data = init_ffmpeg_config(streamFile, buf,bytes, start_offset,ww.data_size, &cfg);

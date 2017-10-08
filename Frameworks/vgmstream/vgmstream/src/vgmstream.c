@@ -292,7 +292,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_ffw,
     init_vgmstream_dsp_dspw,
     init_vgmstream_ps2_jstm,
-    init_vgmstream_ps3_xvag,
+    init_vgmstream_xvag,
 	init_vgmstream_ps3_cps,
     init_vgmstream_sqex_scd,
     init_vgmstream_ngc_nst_dsp,
@@ -350,7 +350,7 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_wwise,
     init_vgmstream_ubi_raki,
     init_vgmstream_x360_pasx,
-    init_vgmstream_x360_nub,
+    init_vgmstream_nub_xma,
     init_vgmstream_xma,
     init_vgmstream_sxd,
     init_vgmstream_ogl,
@@ -369,6 +369,8 @@ VGMSTREAM * (*init_vgmstream_fcns[])(STREAMFILE *streamFile) = {
     init_vgmstream_stm,
     init_vgmstream_ea_snu,
     init_vgmstream_awc,
+    init_vgmstream_nsw_opus,
+    init_vgmstream_pc_al2,
 
     init_vgmstream_txth,  /* should go at the end (lower priority) */
 #ifdef VGM_USE_FFMPEG
@@ -981,6 +983,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_PCM8_SB_int:
         case coding_PCM8_U_int:
         case coding_ULAW:
+        case coding_ALAW:
         case coding_PCMFLOAT:
             return 1;
 #ifdef VGM_USE_VORBIS
@@ -1140,6 +1143,7 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_PCM8_SB_int:
         case coding_PCM8_U_int:
         case coding_ULAW:
+        case coding_ALAW:
             return 1;
         case coding_PCMFLOAT:
             return 4;
@@ -1374,6 +1378,13 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
         case coding_ULAW:
             for (chan=0;chan<vgmstream->channels;chan++) {
                 decode_ulaw(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
+                        vgmstream->channels,vgmstream->samples_into_block,
+                        samples_to_do);
+            }
+            break;
+        case coding_ALAW:
+            for (chan=0;chan<vgmstream->channels;chan++) {
+                decode_alaw(&vgmstream->ch[chan],buffer+samples_written*vgmstream->channels+chan,
                         vgmstream->channels,vgmstream->samples_into_block,
                         samples_to_do);
             }

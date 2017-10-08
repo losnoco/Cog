@@ -22,7 +22,6 @@
 		831BA61D1EAC61A500CF89B0 /* ubi_raki.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6131EAC61A500CF89B0 /* ubi_raki.c */; };
 		831BA61E1EAC61A500CF89B0 /* vawx.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6141EAC61A500CF89B0 /* vawx.c */; };
 		831BA61F1EAC61A500CF89B0 /* x360_cxs.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6151EAC61A500CF89B0 /* x360_cxs.c */; };
-		831BA6201EAC61A500CF89B0 /* x360_nub.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6161EAC61A500CF89B0 /* x360_nub.c */; };
 		831BA6211EAC61A500CF89B0 /* x360_pasx.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6171EAC61A500CF89B0 /* x360_pasx.c */; };
 		831BA6281EAC61CB00CF89B0 /* coding_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6221EAC61CB00CF89B0 /* coding_utils.c */; };
 		8323894A1D22419B00482226 /* clHCA.c in Sources */ = {isa = PBXBuildFile; fileRef = 832389481D22419B00482226 /* clHCA.c */; };
@@ -32,6 +31,11 @@
 		83299FD01E7660C7003A3242 /* bik.c in Sources */ = {isa = PBXBuildFile; fileRef = 83299FCE1E7660C7003A3242 /* bik.c */; };
 		83299FD11E7660C7003A3242 /* dsp_adx.c in Sources */ = {isa = PBXBuildFile; fileRef = 83299FCF1E7660C7003A3242 /* dsp_adx.c */; };
 		832C70BF1E9335E400BD7B4E /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F4128F1E932F9A002E37D0 /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83345A4A1F8AEAF900B2EAA4 /* ffmpeg_decoder_utils_switch_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 83345A491F8AEAF900B2EAA4 /* ffmpeg_decoder_utils_switch_opus.c */; };
+		83345A4F1F8AEB2800B2EAA4 /* nub_xma.c in Sources */ = {isa = PBXBuildFile; fileRef = 83345A4B1F8AEB2700B2EAA4 /* nub_xma.c */; };
+		83345A501F8AEB2800B2EAA4 /* pc_al2.c in Sources */ = {isa = PBXBuildFile; fileRef = 83345A4C1F8AEB2700B2EAA4 /* pc_al2.c */; };
+		83345A511F8AEB2800B2EAA4 /* nsw_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 83345A4D1F8AEB2800B2EAA4 /* nsw_opus.c */; };
+		83345A521F8AEB2800B2EAA4 /* xvag.c in Sources */ = {isa = PBXBuildFile; fileRef = 83345A4E1F8AEB2800B2EAA4 /* xvag.c */; };
 		833A7A2E1ED11961003EC53E /* xau.c in Sources */ = {isa = PBXBuildFile; fileRef = 833A7A2D1ED11961003EC53E /* xau.c */; };
 		834D3A6E19F47C98001C54F6 /* g1l.c in Sources */ = {isa = PBXBuildFile; fileRef = 834D3A6D19F47C98001C54F6 /* g1l.c */; };
 		8350270D1ED119D200C25929 /* ps3_mta2.c in Sources */ = {isa = PBXBuildFile; fileRef = 8350270C1ED119D200C25929 /* ps3_mta2.c */; };
@@ -270,7 +274,6 @@
 		836F701318BDC2190095E648 /* ps3_klbs.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6ED718BDC2190095E648 /* ps3_klbs.c */; };
 		836F701418BDC2190095E648 /* ps3_msf.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6ED818BDC2190095E648 /* ps3_msf.c */; };
 		836F701518BDC2190095E648 /* ps3_past.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6ED918BDC2190095E648 /* ps3_past.c */; };
-		836F701818BDC2190095E648 /* ps3_xvag.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EDC18BDC2190095E648 /* ps3_xvag.c */; };
 		836F701918BDC2190095E648 /* psx_cdxa.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EDD18BDC2190095E648 /* psx_cdxa.c */; };
 		836F701A18BDC2190095E648 /* psx_fag.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EDE18BDC2190095E648 /* psx_fag.c */; };
 		836F701B18BDC2190095E648 /* psx_gms.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EDF18BDC2190095E648 /* psx_gms.c */; };
@@ -344,7 +347,6 @@
 		83709E0D1ECBC1C3005C03D3 /* mc3_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83709E0B1ECBC1C3005C03D3 /* mc3_decoder.c */; };
 		83709E0E1ECBC1C3005C03D3 /* psv_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83709E0C1ECBC1C3005C03D3 /* psv_decoder.c */; };
 		8374EE3E1F787AB600033E90 /* ffmpeg_decoder_utils_ea_xma.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374EE361F787AB500033E90 /* ffmpeg_decoder_utils_ea_xma.c */; };
-		8374EE3F1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374EE3B1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c */; };
 		8374EE401F787AB600033E90 /* ffmpeg_decoder_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374EE3C1F787AB600033E90 /* ffmpeg_decoder_utils.h */; };
 		8374EE411F787AB600033E90 /* ffmpeg_decoder_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 8374EE3D1F787AB600033E90 /* ffmpeg_decoder_utils.c */; };
 		838BDB641D3AF08C0022CA6F /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB611D3AF08C0022CA6F /* libavcodec.a */; };
@@ -525,7 +527,6 @@
 		831BA6131EAC61A500CF89B0 /* ubi_raki.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ubi_raki.c; sourceTree = "<group>"; };
 		831BA6141EAC61A500CF89B0 /* vawx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vawx.c; sourceTree = "<group>"; };
 		831BA6151EAC61A500CF89B0 /* x360_cxs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x360_cxs.c; sourceTree = "<group>"; };
-		831BA6161EAC61A500CF89B0 /* x360_nub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x360_nub.c; sourceTree = "<group>"; };
 		831BA6171EAC61A500CF89B0 /* x360_pasx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x360_pasx.c; sourceTree = "<group>"; };
 		831BA6221EAC61CB00CF89B0 /* coding_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coding_utils.c; sourceTree = "<group>"; };
 		831BD11F1EEE1CF200198540 /* ngc_ulw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ngc_ulw.c; sourceTree = "<group>"; };
@@ -536,6 +537,11 @@
 		832389511D224C0800482226 /* hca_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca_decoder.c; sourceTree = "<group>"; };
 		83299FCE1E7660C7003A3242 /* bik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bik.c; sourceTree = "<group>"; };
 		83299FCF1E7660C7003A3242 /* dsp_adx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp_adx.c; sourceTree = "<group>"; };
+		83345A491F8AEAF900B2EAA4 /* ffmpeg_decoder_utils_switch_opus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_utils_switch_opus.c; sourceTree = "<group>"; };
+		83345A4B1F8AEB2700B2EAA4 /* nub_xma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nub_xma.c; sourceTree = "<group>"; };
+		83345A4C1F8AEB2700B2EAA4 /* pc_al2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pc_al2.c; sourceTree = "<group>"; };
+		83345A4D1F8AEB2800B2EAA4 /* nsw_opus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nsw_opus.c; sourceTree = "<group>"; };
+		83345A4E1F8AEB2800B2EAA4 /* xvag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xvag.c; sourceTree = "<group>"; };
 		833A7A2D1ED11961003EC53E /* xau.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xau.c; sourceTree = "<group>"; };
 		834D3A6D19F47C98001C54F6 /* g1l.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g1l.c; sourceTree = "<group>"; };
 		8350270C1ED119D200C25929 /* ps3_mta2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps3_mta2.c; sourceTree = "<group>"; };
@@ -776,7 +782,6 @@
 		836F6ED718BDC2190095E648 /* ps3_klbs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps3_klbs.c; sourceTree = "<group>"; };
 		836F6ED818BDC2190095E648 /* ps3_msf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps3_msf.c; sourceTree = "<group>"; };
 		836F6ED918BDC2190095E648 /* ps3_past.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps3_past.c; sourceTree = "<group>"; };
-		836F6EDC18BDC2190095E648 /* ps3_xvag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps3_xvag.c; sourceTree = "<group>"; };
 		836F6EDD18BDC2190095E648 /* psx_cdxa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psx_cdxa.c; sourceTree = "<group>"; };
 		836F6EDE18BDC2190095E648 /* psx_fag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psx_fag.c; sourceTree = "<group>"; };
 		836F6EDF18BDC2190095E648 /* psx_gms.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psx_gms.c; sourceTree = "<group>"; };
@@ -850,7 +855,6 @@
 		83709E0B1ECBC1C3005C03D3 /* mc3_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc3_decoder.c; sourceTree = "<group>"; };
 		83709E0C1ECBC1C3005C03D3 /* psv_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psv_decoder.c; sourceTree = "<group>"; };
 		8374EE361F787AB500033E90 /* ffmpeg_decoder_utils_ea_xma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_utils_ea_xma.c; sourceTree = "<group>"; };
-		8374EE3B1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_utils_wwise_opus.c; sourceTree = "<group>"; };
 		8374EE3C1F787AB600033E90 /* ffmpeg_decoder_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffmpeg_decoder_utils.h; sourceTree = "<group>"; };
 		8374EE3D1F787AB600033E90 /* ffmpeg_decoder_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_utils.c; sourceTree = "<group>"; };
 		838BDB611D3AF08C0022CA6F /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ../../ThirdParty/ffmpeg/lib/libavcodec.a; sourceTree = "<group>"; };
@@ -1050,8 +1054,8 @@
 		836F6DDF18BDC2180095E648 /* coding */ = {
 			isa = PBXGroup;
 			children = (
+				83345A491F8AEAF900B2EAA4 /* ffmpeg_decoder_utils_switch_opus.c */,
 				8374EE361F787AB500033E90 /* ffmpeg_decoder_utils_ea_xma.c */,
-				8374EE3B1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c */,
 				8374EE3D1F787AB600033E90 /* ffmpeg_decoder_utils.c */,
 				8374EE3C1F787AB600033E90 /* ffmpeg_decoder_utils.h */,
 				83AA5D0E1F6E2F5F0020821C /* ea_xa_decoder.c */,
@@ -1157,6 +1161,10 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				83345A4D1F8AEB2800B2EAA4 /* nsw_opus.c */,
+				83345A4B1F8AEB2700B2EAA4 /* nub_xma.c */,
+				83345A4C1F8AEB2700B2EAA4 /* pc_al2.c */,
+				83345A4E1F8AEB2800B2EAA4 /* xvag.c */,
 				83AA5D201F6E2F9B0020821C /* awc.c */,
 				83AA5D221F6E2F9C0020821C /* ea_snu.c */,
 				83AA5D211F6E2F9C0020821C /* hca_keys.h */,
@@ -1184,7 +1192,6 @@
 				831BA6131EAC61A500CF89B0 /* ubi_raki.c */,
 				831BA6141EAC61A500CF89B0 /* vawx.c */,
 				831BA6151EAC61A500CF89B0 /* x360_cxs.c */,
-				831BA6161EAC61A500CF89B0 /* x360_nub.c */,
 				831BA6171EAC61A500CF89B0 /* x360_pasx.c */,
 				83FF0EBB1E93282100C58054 /* wwise.c */,
 				83AB8C731E8072A100086084 /* nub_vag.c */,
@@ -1370,7 +1377,6 @@
 				836F6ED718BDC2190095E648 /* ps3_klbs.c */,
 				836F6ED818BDC2190095E648 /* ps3_msf.c */,
 				836F6ED918BDC2190095E648 /* ps3_past.c */,
-				836F6EDC18BDC2190095E648 /* ps3_xvag.c */,
 				836F6EDD18BDC2190095E648 /* psx_cdxa.c */,
 				836F6EDE18BDC2190095E648 /* psx_fag.c */,
 				836F6EDF18BDC2190095E648 /* psx_gms.c */,
@@ -1672,7 +1678,6 @@
 				836F6F9B18BDC2190095E648 /* mn_str.c in Sources */,
 				836F6F5918BDC2190095E648 /* tra_blocked.c in Sources */,
 				836F6F9F18BDC2190095E648 /* musc.c in Sources */,
-				836F701818BDC2190095E648 /* ps3_xvag.c in Sources */,
 				836F6FCA18BDC2190095E648 /* ps2_adm.c in Sources */,
 				836F6FA118BDC2190095E648 /* myspd.c in Sources */,
 				836F6FD718BDC2190095E648 /* ps2_filp.c in Sources */,
@@ -1681,7 +1686,6 @@
 				836F6F7018BDC2190095E648 /* apple_caff.c in Sources */,
 				836F700018BDC2190095E648 /* ps2_svag.c in Sources */,
 				836F6FB618BDC2190095E648 /* ngc_sck_dsp.c in Sources */,
-				8374EE3F1F787AB600033E90 /* ffmpeg_decoder_utils_wwise_opus.c in Sources */,
 				836F6F2818BDC2190095E648 /* ima_decoder.c in Sources */,
 				836F702318BDC2190095E648 /* rsf.c in Sources */,
 				83299FD01E7660C7003A3242 /* bik.c in Sources */,
@@ -1760,6 +1764,7 @@
 				836F6FD318BDC2190095E648 /* ps2_ccc.c in Sources */,
 				83AA5D261F6E2F9C0020821C /* ea_snu.c in Sources */,
 				83AA5D171F6E2F600020821C /* mpeg_custom_utils_ealayer3.c in Sources */,
+				83345A521F8AEB2800B2EAA4 /* xvag.c in Sources */,
 				836F704C18BDC2190095E648 /* xbox_xvas.c in Sources */,
 				836F6F3918BDC2190095E648 /* SASSC_decoder.c in Sources */,
 				836F703A18BDC2190095E648 /* vs.c in Sources */,
@@ -1818,6 +1823,7 @@
 				836F6F6D18BDC2190095E648 /* aifc.c in Sources */,
 				836F702218BDC2190095E648 /* rsd.c in Sources */,
 				836F6FC618BDC2190095E648 /* pcm.c in Sources */,
+				83345A501F8AEB2800B2EAA4 /* pc_al2.c in Sources */,
 				836F702518BDC2190095E648 /* rwx.c in Sources */,
 				836F6F3A18BDC2190095E648 /* sdx2_decoder.c in Sources */,
 				836F6FAF18BDC2190095E648 /* ngc_dsp_std.c in Sources */,
@@ -1840,7 +1846,6 @@
 				836F6F4618BDC2190095E648 /* filp_blocked.c in Sources */,
 				836F6FE518BDC2190095E648 /* ps2_lpcm.c in Sources */,
 				836F6FB318BDC2190095E648 /* ngc_lps.c in Sources */,
-				831BA6201EAC61A500CF89B0 /* x360_nub.c in Sources */,
 				836F6FC018BDC2190095E648 /* p3d.c in Sources */,
 				836F6FC718BDC2190095E648 /* pona.c in Sources */,
 				836F6FE618BDC2190095E648 /* ps2_mcg.c in Sources */,
@@ -1884,6 +1889,7 @@
 				836F6F8018BDC2190095E648 /* dsp_bdsp.c in Sources */,
 				836F6F9618BDC2190095E648 /* lsf.c in Sources */,
 				8374EE3E1F787AB600033E90 /* ffmpeg_decoder_utils_ea_xma.c in Sources */,
+				83345A511F8AEB2800B2EAA4 /* nsw_opus.c in Sources */,
 				836F6FC818BDC2190095E648 /* pos.c in Sources */,
 				8350C05A1E071990009E0A93 /* ps2_svag_snk.c in Sources */,
 				836F6F8918BDC2190095E648 /* gca.c in Sources */,
@@ -1948,6 +1954,7 @@
 				836F6F3618BDC2190095E648 /* ogg_vorbis_decoder.c in Sources */,
 				836F704718BDC2190095E648 /* xbox_hlwav.c in Sources */,
 				836F701C18BDC2190095E648 /* psx_str_mgav.c in Sources */,
+				83345A4F1F8AEB2800B2EAA4 /* nub_xma.c in Sources */,
 				836F6F7618BDC2190095E648 /* brstm.c in Sources */,
 				836F700718BDC2190095E648 /* ps2_vgv.c in Sources */,
 				836F704F18BDC2190095E648 /* xwb.c in Sources */,
@@ -1982,6 +1989,7 @@
 				836F6FBA18BDC2190095E648 /* ngc_ymf.c in Sources */,
 				836F705018BDC2190095E648 /* ydsp.c in Sources */,
 				836F702718BDC2190095E648 /* sat_baka.c in Sources */,
+				83345A4A1F8AEAF900B2EAA4 /* ffmpeg_decoder_utils_switch_opus.c in Sources */,
 				836F6F8C18BDC2190095E648 /* gh3_bar.c in Sources */,
 				836F704B18BDC2190095E648 /* xbox_xmu.c in Sources */,
 				832389501D2246C300482226 /* hca.c in Sources */,
