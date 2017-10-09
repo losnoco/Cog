@@ -13,7 +13,7 @@
  *              opening and closing the file for     |  \/ /\   /
  *              you, and do an initial run-through.   \_  /  > /
  *                                                      | \ / /
- * by Chris Moeller.                                    |  ' /
+ * by Christopher Snowhill.                             |  ' /
  *                                                       \__/
  */
 

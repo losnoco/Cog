@@ -1042,6 +1042,7 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f) {
 
     // XXX sample count
     if (dumbfile_error(f) || sigdata->n_orders <= 0 ||
+        sigdata->n_orders > 1024 || // Whoa, nelly.
         sigdata->n_instruments > 256 || sigdata->n_samples > 4000 ||
         sigdata->n_patterns > 256) {
         _dumb_it_unload_sigdata(sigdata);
@@ -1437,7 +1438,10 @@ static sigdata_t *it_load_sigdata(DUMBFILE *f) {
     free(buffer);
     free(component);
 
-    _dumb_it_fix_invalid_orders(sigdata);
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0) {
+        _dumb_it_unload_sigdata(sigdata);
+        return NULL;
+    }
 
     return sigdata;
 }

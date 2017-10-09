@@ -11,7 +11,7 @@
  * readany.c - Code to detect and read any of the     / / \  \
  *             module formats supported by DUMB.     | <  /   \_
  *                                                   |  \/ /\   /
- * By Chris Moeller.                                  \_  /  > /
+ * By Christopher Snowhill.                           \_  /  > /
  *                                                      | \ / /
  *                                                      |  ' /
  *                                                       \__/

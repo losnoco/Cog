@@ -13,7 +13,7 @@
  *              from an open file and do an initial  |  \/ /\   /
  *              run-through.                          \_  /  > /
  *                                                      | \ / /
- * by Chris Moeller.                                    |  ' /
+ * by Christopher Snowhill.                             |  ' /
  *                                                       \__/
  */
 

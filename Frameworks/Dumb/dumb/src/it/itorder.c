@@ -40,6 +40,10 @@ int _dumb_it_fix_invalid_orders(DUMB_IT_SIGDATA *sigdata) {
             sigdata->order[i] <= last_invalid) {
             sigdata->order[i] = sigdata->n_patterns;
             found_some = 1;
+        } else if (sigdata->order[i] < first_invalid) {
+            IT_PATTERN *pattern = sigdata->pattern + sigdata->order[i];
+            if (!pattern->n_rows || (pattern->n_entries && !pattern->entry))
+                return -1;
         }
     }
 

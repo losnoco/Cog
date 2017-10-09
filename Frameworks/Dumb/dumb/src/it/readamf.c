@@ -11,7 +11,7 @@
  * readamf.c - Code to read a DSMI AMF module from    / / \  \
  *             an open file.                         | <  /   \_
  *                                                   |  \/ /\   /
- * By Chris Moeller.                                  \_  /  > /
+ * By Christopher Snowhill.                           \_  /  > /
  *                                                      | \ / /
  *                                                      |  ' /
  *                                                       \__/
@@ -536,8 +536,6 @@ static DUMB_IT_SIGDATA *it_amf_load_sigdata(DUMBFILE *f, int *version) {
     sigdata->mixing_volume = 48;
     sigdata->pan_separation = 128;
 
-    _dumb_it_fix_invalid_orders(sigdata);
-
     for (i = 0; i < realntracks; i++) {
         if (track[i]) {
             free(track[i]);
@@ -546,6 +544,11 @@ static DUMB_IT_SIGDATA *it_amf_load_sigdata(DUMBFILE *f, int *version) {
     free(track);
     free(trackmap);
     free(orderstotracks);
+
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0) {
+        _dumb_it_unload_sigdata(sigdata);
+        return NULL;
+    }
 
     return sigdata;
 

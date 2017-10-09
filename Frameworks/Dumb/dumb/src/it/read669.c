@@ -11,7 +11,7 @@
  * read669.c - Code to read a 669 Composer module     / / \  \
  *             from an open file.                    | <  /   \_
  *                                                   |  \/ /\   /
- * By Chris Moeller.                                  \_  /  > /
+ * By Christopher Snowhill.                           \_  /  > /
  *                                                      | \ / /
  *                                                      |  ' /
  *                                                       \__/
@@ -423,7 +423,10 @@ static DUMB_IT_SIGDATA *it_669_load_sigdata(DUMBFILE *f, int *ext) {
         sigdata->channel_pan[i + 1] = 32 - sep;
     }
 
-    _dumb_it_fix_invalid_orders(sigdata);
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0) {
+        _dumb_it_unload_sigdata(sigdata);
+        return NULL;
+    }
 
     return sigdata;
 }

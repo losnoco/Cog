@@ -11,7 +11,7 @@
  * readam.c - Code to read a RIFF AM module           / / \  \
  *             from a parsed RIFF structure.         | <  /   \_
  *                                                   |  \/ /\   /
- * By Chris Moeller.                                  \_  /  > /
+ * By Christopher Snowhill.                           \_  /  > /
  *                                                      | \ / /
  *                                                      |  ' /
  *                                                       \__/
@@ -463,7 +463,10 @@ static DUMB_IT_SIGDATA *it_riff_amff_load_sigdata(DUMBFILE *f,
         }
     }
 
-    _dumb_it_fix_invalid_orders(sigdata);
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0) {
+        _dumb_it_unload_sigdata(sigdata);
+        return NULL;
+    }
 
     return sigdata;
 

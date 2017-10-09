@@ -12,7 +12,7 @@
  *             module formats supported by DUMB,     | <  /   \_
  *             opening and closing the file for you. |  \/ /\   /
  *                                                    \_  /  > /
- * By Chris Moeller.                                    | \ / /
+ * By Christopher Snowhill.                             | \ / /
  *                                                      |  ' /
  *                                                       \__/
  */

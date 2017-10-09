@@ -11,7 +11,7 @@
  * ptmeffect.c - Code for converting PTM              / / \  \
  *               effects to IT effects.              | <  /   \_
  *                                                   |  \/ /\   /
- * By Chris Moeller. Based on xmeffect.c              \_  /  > /
+ * By Christopher Snowhill. Based on xmeffect.c       \_  /  > /
  * by Julien Cugniere.                                  | \ / /
  *                                                      |  ' /
  *                                                       \__/

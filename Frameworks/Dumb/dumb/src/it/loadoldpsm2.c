@@ -13,7 +13,7 @@
  *                 you, and do an initial run-       |  \/ /\   /
  *                 through.                           \_  /  > /
  *                                                      | \ / /
- * By Chris Moeller.                                    |  ' /
+ * By Christopher Snowhill.                             |  ' /
  *                                                       \__/
  */
 

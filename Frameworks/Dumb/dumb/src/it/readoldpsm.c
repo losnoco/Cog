@@ -11,7 +11,7 @@
  * readpsm.c - Code to read an old Protracker         / / \  \
  *             Studio module from an open file.      | <  /   \_
  *                                                   |  \/ /\   /
- * By Chris Moeller.                                  \_  /  > /
+ * By Christopher Snowhill.                           \_  /  > /
  *                                                      | \ / /
  *                                                      |  ' /
  *                                                       \__/
@@ -111,7 +111,7 @@ static int it_old_psm_read_samples(IT_SAMPLE **sample, DUMBFILE *f, int *num) {
         } else
             smp.finetune = 0;
 
-        smp.flags |= IT_SAMPLE_EXISTS;
+        smp.flags = IT_SAMPLE_EXISTS;
         if (flags & 0x41)
             continue;
         if (flags & 0x20)
@@ -705,7 +705,8 @@ static DUMB_IT_SIGDATA *it_old_psm_load_sigdata(DUMBFILE *f) {
         }
     }
 
-    _dumb_it_fix_invalid_orders(sigdata);
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0)
+        goto error_fc;
 
     free(component);
 

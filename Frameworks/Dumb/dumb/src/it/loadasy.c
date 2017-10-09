@@ -12,7 +12,7 @@
  *             module file, opening and closing it   | <  /   \_
  *             for you.                              |  \/ /\   /
  *                                                    \_  /  > /
- * By Chris Moeller.                                    | \ / /
+ * By Christopher Snowhill.                             | \ / /
  *                                                      |  ' /
  *                                                       \__/
  */

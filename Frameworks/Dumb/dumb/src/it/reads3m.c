@@ -480,6 +480,7 @@ static DUMB_IT_SIGDATA *it_s3m_load_sigdata(DUMBFILE *f, int *cwtv) {
     sigdata->n_patterns = dumbfile_igetw(f);
 
     if (dumbfile_error(f) || sigdata->n_orders <= 0 ||
+        sigdata->n_orders > 1024 || // Whoa, nelly.
         sigdata->n_samples > 256 || sigdata->n_patterns > 256) {
         _dumb_it_unload_sigdata(sigdata);
         return NULL;
@@ -733,7 +734,10 @@ static DUMB_IT_SIGDATA *it_s3m_load_sigdata(DUMBFILE *f, int *cwtv) {
     free(buffer);
     free(component);
 
-    _dumb_it_fix_invalid_orders(sigdata);
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0) {
+        _dumb_it_unload_sigdata(sigdata);
+        return NULL;
+    }
 
     return sigdata;
 }

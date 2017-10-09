@@ -1252,7 +1252,10 @@ static DUMB_IT_SIGDATA *it_xm_load_sigdata(DUMBFILE *f, int *version) {
     memset(sigdata->channel_volume, 64, DUMB_IT_N_CHANNELS);
     memset(sigdata->channel_pan, 32, DUMB_IT_N_CHANNELS);
 
-    _dumb_it_fix_invalid_orders(sigdata);
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0) {
+        _dumb_it_unload_sigdata(sigdata);
+        return NULL;
+    }
 
     return sigdata;
 }

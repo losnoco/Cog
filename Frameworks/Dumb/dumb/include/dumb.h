@@ -40,8 +40,8 @@ extern "C" {
  */
 #define DUMB_MAJOR_VERSION 2
 #define DUMB_MINOR_VERSION 0
-#define DUMB_REVISION_VERSION 0
-#define DUMB_VERSION_STR "2.0.0"
+#define DUMB_REVISION_VERSION 2
+#define DUMB_VERSION_STR "2.0.2"
 
 #define DUMB_VERSION                                                           \
     (DUMB_MAJOR_VERSION * 10000 + DUMB_MINOR_VERSION * 100 +                   \

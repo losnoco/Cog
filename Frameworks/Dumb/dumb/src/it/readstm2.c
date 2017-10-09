@@ -12,7 +12,7 @@
  *              module from an open file and do an   | <  /   \_
  *              initial run-through.                 |  \/ /\   /
  *                                                    \_  /  > /
- * By Chris Moeller.                                    | \ / /
+ * By Christopher Snowhill.                             | \ / /
  *                                                      |  ' /
  *                                                       \__/
  */

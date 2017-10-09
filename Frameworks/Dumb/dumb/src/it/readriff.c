@@ -12,7 +12,7 @@
  *              from memory.                         | <  /   \_
  *                                                   |  \/ /\   /
  *                                                    \_  /  > /
- * By Chris Moeller.                                    | \ / /
+ * By Christopher Snowhill.                             | \ / /
  *                                                      |  ' /
  *                                                       \__/
  */

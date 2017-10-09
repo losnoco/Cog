@@ -12,7 +12,7 @@
  *              opening and closing it for you.      | <  /   \_
  *                                                   |  \/ /\   /
  *                                                    \_  /  > /
- * By Chris Moeller.                                    | \ / /
+ * By Christopher Snowhill.                             | \ / /
  *                                                      |  ' /
  *                                                       \__/
  */

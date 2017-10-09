@@ -11,7 +11,7 @@
  * readpsm.c - Code to read a Protracker Studio       / / \  \
  *             module from an open file.             | <  /   \_
  *                                                   |  \/ /\   /
- * By Chris Moeller.                                  \_  /  > /
+ * By Christopher Snowhill.                           \_  /  > /
  *                                                      | \ / /
  *                                                      |  ' /
  *                                                       \__/
@@ -1062,7 +1062,10 @@ static DUMB_IT_SIGDATA *it_psm_load_sigdata(DUMBFILE *f, int *ver,
     free(songchunk);
     free_chunks(chunk, n_chunks);
 
-    _dumb_it_fix_invalid_orders(sigdata);
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0) {
+        _dumb_it_unload_sigdata(sigdata);
+        return NULL;
+    }
 
     dumb_it_optimize_orders(sigdata);
 

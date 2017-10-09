@@ -11,7 +11,7 @@
  * readmtm.c - Code to read a MultiTracker Module     / / \  \
  *             from an open file.                    | <  /   \_
  *                                                   |  \/ /\   /
- * By Chris Moeller.                                  \_  /  > /
+ * By Christopher Snowhill.                           \_  /  > /
  *                                                      | \ / /
  *                                                      |  ' /
  *                                                       \__/
@@ -389,11 +389,14 @@ static DUMB_IT_SIGDATA *it_mtm_load_sigdata(DUMBFILE *f, int *version) {
             goto error_fs;
     }
 
-    _dumb_it_fix_invalid_orders(sigdata);
-
     free(sequence);
     free(track);
     free(skip_bytes);
+
+    if (_dumb_it_fix_invalid_orders(sigdata) < 0) {
+        _dumb_it_unload_sigdata(sigdata);
+        return NULL;
+    }
 
     return sigdata;
 
