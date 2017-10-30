@@ -404,8 +404,8 @@ static int savestates_load_pj64(usf_state_t * state, unsigned char * ptr, unsign
     COPYARRAY(state->g_cp0_regs, curr, unsigned int, CP0_REGS_COUNT);
 
     set_fpr_pointers(state, state->g_cp0_regs[CP0_STATUS_REG]);
-    if ((state->g_cp0_regs[CP0_STATUS_REG] & 0x04000000) == 0) // TODO not sure how pj64 handles this
-        shuffle_fpr_data(state, 0x04000000, 0);
+    /*if ((state->g_cp0_regs[CP0_STATUS_REG] & 0x04000000) == 0) // pj64 always stores data depending on the current mode
+        shuffle_fpr_data(state, 0x04000000, 0);*/
 
     // Initialze the interupts
     vi_timer += state->g_cp0_regs[CP0_COUNT_REG];
