@@ -4612,7 +4612,7 @@ static void process_all_playing(DUMB_IT_SIGRENDERER *sigrenderer) {
 static int process_tick(DUMB_IT_SIGRENDERER *sigrenderer) {
     DUMB_IT_SIGDATA *sigdata = sigrenderer->sigdata;
 
-    if (sigrenderer->tempo < 32 || sigrenderer->tempo > 255) // problematic
+    if (sigrenderer->tempo < 32 || sigrenderer->tempo > 1024) // problematic
         return 1;
 
     // Set note vol/freq to vol/freq set for each channel
@@ -5352,6 +5352,73 @@ static void apply_pitch_modifications(DUMB_IT_SIGDATA *sigdata,
     }
 }
 
+static void render_null(DUMB_IT_SIGRENDERER *sigrenderer,
+                          float delta, long pos, long size) {
+    int i;
+    
+    int n_to_mix = 0;
+    IT_TO_MIX to_mix[DUMB_IT_TOTAL_CHANNELS];
+    int left_to_mix = dumb_it_max_to_mix;
+    
+    for (i = 0; i < DUMB_IT_N_CHANNELS; i++) {
+        if (sigrenderer->channel[i].playing &&
+            !(sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD)) {
+            to_mix[n_to_mix].playing = sigrenderer->channel[i].playing;
+            n_to_mix++;
+        }
+    }
+    
+    for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
+        if (sigrenderer
+            ->playing[i]) { /* Won't be dead; it would have been freed. */
+            to_mix[n_to_mix].playing = sigrenderer->playing[i];
+            n_to_mix++;
+        }
+    }
+    
+    for (i = 0; i < n_to_mix; i++) {
+        IT_PLAYING *playing = to_mix[i].playing;
+        float note_delta = delta * playing->delta;
+        int cutoff = playing->filter_cutoff << IT_ENVELOPE_SHIFT;
+        // int output = min( playing->output, max_output );
+        
+        apply_pitch_modifications(sigrenderer->sigdata, playing, &note_delta,
+                                  &cutoff);
+        
+        if (cutoff != 127 << IT_ENVELOPE_SHIFT ||
+            playing->filter_resonance != 0) {
+            playing->true_filter_cutoff = cutoff;
+            playing->true_filter_resonance = playing->filter_resonance;
+        }
+        
+        render_playing(sigrenderer, playing, 0, delta, note_delta, pos,
+                       size, NULL, 0, &left_to_mix);
+    }
+    
+    for (i = 0; i < DUMB_IT_N_CHANNELS; i++) {
+        if (sigrenderer->channel[i].playing) {
+            // if ((sigrenderer->channel[i].playing->flags &
+            // (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) ==
+            // (IT_PLAYING_BACKGROUND | IT_PLAYING_DEAD)) {
+            // This change was made so Gxx would work correctly when a note
+            // faded out or whatever. Let's hope nothing else was broken by it.
+            if (sigrenderer->channel[i].playing->flags & IT_PLAYING_DEAD) {
+                free_playing(sigrenderer->channel[i].playing);
+                sigrenderer->channel[i].playing = NULL;
+            }
+        }
+    }
+    
+    for (i = 0; i < DUMB_IT_N_NNA_CHANNELS; i++) {
+        if (sigrenderer->playing[i]) {
+            if (sigrenderer->playing[i]->flags & IT_PLAYING_DEAD) {
+                free_playing(sigrenderer->playing[i]);
+                sigrenderer->playing[i] = NULL;
+            }
+        }
+    }
+}
+
 static void render_normal(DUMB_IT_SIGRENDERER *sigrenderer, float volume,
                           float delta, long pos, long size,
                           sample_t **samples) {
@@ -5684,7 +5751,9 @@ static void render(DUMB_IT_SIGRENDERER *sigrenderer, float volume, float delta,
                    long pos, long size, sample_t **samples) {
     if (size == 0)
         return;
-    if (sigrenderer->n_channels == 1 || sigrenderer->n_channels == 2)
+    if (sigrenderer->n_channels == 0)
+        render_null(sigrenderer, delta, pos, size);
+    else if (sigrenderer->n_channels == 1 || sigrenderer->n_channels == 2)
         render_normal(sigrenderer, volume, delta, pos, size, samples);
     else if (sigrenderer->n_channels == 3)
         render_surround(sigrenderer, volume, delta, pos, size, samples);
@@ -6575,6 +6644,11 @@ int dumb_it_scan_for_playable_orders(DUMB_IT_SIGDATA *sigdata,
             l = it_sigrenderer_get_samples(sigrenderer, 0, 1.0f,
                                            IT_CHECKPOINT_INTERVAL, NULL);
             length += l;
+            if (l == 0) {
+                /* ERROR! */
+                n = sigdata->n_orders;
+                break;
+            }
             if (l < IT_CHECKPOINT_INTERVAL || length >= FUCKIT_THRESHOLD) {
                 /* SONG OVA! */
                 break;
