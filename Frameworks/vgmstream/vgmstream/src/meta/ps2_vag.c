@@ -17,8 +17,8 @@ VGMSTREAM * init_vgmstream_ps2_vag(STREAMFILE *streamFile) {
     int channel_count = 0;
     int is_swag = 0;
 
-    /* check extension, case insensitive */
-    if ( !check_extensions(streamFile,"vag,swag,str") )
+    /* check extension (.swag: Frantix PSP, .str: Ben10 Galactic Racing, .vig: MX vs. ATV Untamed PS2) */
+    if ( !check_extensions(streamFile,"vag,swag,str,vig") )
         goto fail;
 
     /* check VAG Header */
@@ -63,7 +63,11 @@ VGMSTREAM * init_vgmstream_ps2_vag(STREAMFILE *streamFile) {
             break;
         case 'p': /* "VAGp" (extended) [most common, ex Ratchet & Clank] */
 
-            if (read_32bitBE(0x6000,streamFile) == 0x56414770) { /* "VAGp" */
+            if (check_extensions(streamFile,"vig")) { /* MX vs. ATV Untamed PS2 */
+                channel_count = 2; /* normal interleave */
+                loop_flag = 0;
+            }
+            else if (read_32bitBE(0x6000,streamFile) == 0x56414770) { /* "VAGp" */
                 channel_count = 2; /* The Simpsons Wrestling PSX interleave */
                 loop_flag = 0;
             }
@@ -79,12 +83,15 @@ VGMSTREAM * init_vgmstream_ps2_vag(STREAMFILE *streamFile) {
 
                 /* channels are usually at 0x1e, but not in Ukiyo no Roushi which has some kind
                  *  of loop-like values instead (who designs this crap?) */
-                if (read_32bitBE(0x18,streamFile) != 0 || read_32bitBE(0x1c,streamFile) > 0x20) {
-                    channel_count = 1;
-                } else {
+                if (read_32bitBE(0x18,streamFile) == 0
+                        && (read_32bitBE(0x1c,streamFile) & 0xFFFF00FF) == 0
+                        && read_8bit(0x1e,streamFile) < 16) {
                     channel_count = read_8bit(0x1e,streamFile);
                     if (channel_count == 0)
                         channel_count = 1;  /* ex. early Vita vag (Lumines) */
+                }
+                else {
+                    channel_count = 1;
                 }
             }
             else {
@@ -133,7 +140,14 @@ VGMSTREAM * init_vgmstream_ps2_vag(STREAMFILE *streamFile) {
         case 'p': // VAGp
             interleave=0x10;
 
-            if (read_32bitBE(0x6000,streamFile) == 0x56414770) { /* "VAGp" */
+            if (check_extensions(streamFile,"vig")) { /* MX vs. ATV Untamed PS2 */
+                vgmstream->layout_type=layout_interleave;
+                vgmstream->meta_type=meta_PS2_VAGp;
+
+                vgmstream->num_samples = (datasize - 0x10*channel_count) / 16 * 28;
+                start_offset = 0x800;
+            }
+            else if (read_32bitBE(0x6000,streamFile) == 0x56414770) { /* interleaved "VAGp" */
                  interleave = 0x6000; /* The Simpsons Wrestling PSX interleave, includes header */
                  vgmstream->layout_type = layout_interleave;
                  vgmstream->meta_type = meta_PS2_VAGs;

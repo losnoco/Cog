@@ -38,7 +38,8 @@ int mpeg_custom_setup_init_default(STREAMFILE *streamFile, off_t start_offset, m
             {
                 int current_data_size = info.frame_size;
                 int current_padding = 0;
-                if (info.layer == 3 && data->config.fsb_padding) { /* FSB padding for Layer III */
+                /* FSB padding for Layer III or multichannel Layer II */
+                if ((info.layer == 3 && data->config.fsb_padding) || data->config.fsb_padding == 16) {
                     current_padding = (current_data_size % data->config.fsb_padding)
                             ? data->config.fsb_padding - (current_data_size % data->config.fsb_padding)
                             : 0;
@@ -59,7 +60,7 @@ int mpeg_custom_setup_init_default(STREAMFILE *streamFile, off_t start_offset, m
         case MPEG_STANDARD:
         case MPEG_AHX:
         case MPEG_EA:
-            if (data->channels_per_frame != data->config.channels)
+            if (info.channels != data->config.channels)
                 goto fail; /* no multichannel expected */
             break;
 
@@ -70,6 +71,7 @@ int mpeg_custom_setup_init_default(STREAMFILE *streamFile, off_t start_offset, m
 
     //todo: test more: this improves the output, but seems formats aren't usually prepared
     // (and/or the num_samples includes all possible samples in file, so by discarding some it'll reach EOF)
+    // FSBs (with FMOD DLLs) don't seem to need it, even when files contain garbage at the beginning
 #if 0
     /* set encoder delay (samples to skip at the beginning of a stream) if needed, which varies with encoder used */
     switch(data->type) {
@@ -87,7 +89,8 @@ fail:
 
 
 /* writes data to the buffer and moves offsets */
-int mpeg_custom_parse_frame_default(VGMSTREAMCHANNEL *stream, mpeg_codec_data *data) {
+int mpeg_custom_parse_frame_default(VGMSTREAMCHANNEL *stream, mpeg_codec_data *data, int num_stream) {
+    mpeg_custom_stream *ms = data->streams[num_stream];
     mpeg_frame_info info;
     size_t current_data_size = 0;
     size_t current_padding = 0;
@@ -108,9 +111,9 @@ int mpeg_custom_parse_frame_default(VGMSTREAMCHANNEL *stream, mpeg_codec_data *d
                 goto fail;
             current_data_size = info.frame_size;
 
-            /* get FSB padding for Layer III (Layer II doesn't use it, and Layer I doesn't seem to be supported) */
-            /* Padding sometimes contains garbage like the next frame header so we can't feed it to mpg123 or it gets confused. */
-            if (info.layer == 3 && data->config.fsb_padding) {
+            /* get FSB padding for Layer III or multichannel Layer II (Layer I doesn't seem to be supported)
+             * Padding sometimes contains garbage like the next frame header so we can't feed it to mpg123 or it gets confused. */
+            if ((info.layer == 3 && data->config.fsb_padding) || data->config.fsb_padding == 16) {
                 current_padding = (current_data_size % data->config.fsb_padding)
                         ? data->config.fsb_padding - (current_data_size % data->config.fsb_padding)
                         : 0;
@@ -135,14 +138,14 @@ int mpeg_custom_parse_frame_default(VGMSTREAMCHANNEL *stream, mpeg_codec_data *d
             current_data_size = info.frame_size;
             break;
     }
-    if (!current_data_size || current_data_size > data->buffer_size) {
+    if (!current_data_size || current_data_size > ms->buffer_size) {
         VGM_LOG("MPEG: incorrect data_size 0x%x\n", current_data_size);
         goto fail;
     }
 
 
     /* read single frame */
-    data->bytes_in_buffer = read_streamfile(data->buffer,stream->offset, current_data_size, stream->streamfile);
+    ms->bytes_in_buffer = read_streamfile(ms->buffer,stream->offset, current_data_size, stream->streamfile);
 
 
     /* update offsets */
@@ -233,6 +236,7 @@ int mpeg_get_frame_info(STREAMFILE *streamfile, off_t offset, mpeg_frame_info * 
         case 384:  info->frame_size = (12l  * info->bit_rate * 1000l / info->sample_rate + padding) * 4; break;
         case 576:  info->frame_size = (72l  * info->bit_rate * 1000l / info->sample_rate + padding); break;
         case 1152: info->frame_size = (144l * info->bit_rate * 1000l / info->sample_rate + padding); break;
+        default: goto fail;
     }
 
     return 1;

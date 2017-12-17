@@ -12,7 +12,7 @@ typedef struct {
  */
 static const hcakey_info hcakey_list[] = {
 
-        // HCA Decoder default
+        // CRI HCA decoder default
         {9621963164387704},         // CF222F1FE0748978
 
         // Phantasy Star Online 2 (multi?)
@@ -28,7 +28,13 @@ static const hcakey_info hcakey_list[] = {
         // Ro-Kyu-Bu! Himitsu no Otoshimono (PSP)
         {2012082716},               // 0000000077EDF21C
 
-        // Ro-Kyu-Bu! Naisho no Shutter Chance (PSV)
+        // VRIDGE Inc. games:
+        // - HatsuKare * Renai Debut Sengen! (PSP)
+        // - Seitokai no Ichizon Lv. 2 Portable (PSP)
+        // - Koi wa Kousoku ni Shibararenai! (PSP)
+        // - StormLover 2nd (PSP)
+        // - Prince of Stride (PSVita)
+        // - Ro-Kyu-Bu! Naisho no Shutter Chance (PSVita)
         {1234253142},               // 0000000049913556
 
         // Idolm@ster Cinderella Stage (iOS/Android)
@@ -99,17 +105,44 @@ static const hcakey_info hcakey_list[] = {
         // World Chain (iOS/Android)
         {4892292804961027794},      // 43E4EA62B8E6C6D2
 
-        // Yuyuyui (iOS/Android) *unconfirmed
+        // Yuuki Yuuna wa Yuusha de aru - Hanayui no Kirameki / Yuyuyui (iOS/Android)
         {4867249871962584729},      // 438BF1F883653699
 
         // Tekken Mobile (iOS/Android)
-        {0xFFFFFFFFFFFFFFFF},       //
+        {0xFFFFFFFFFFFFFFFF},       // FFFFFFFFFFFFFFFF / 18446744073709551615
 
         // Tales of the Rays (iOS/Android)
         {9516284},                  // 00000000009134FC
 
-        // Skylock - Kamigami to Unmei no Itsutsuko [iOS]
+        // Skylock - Kamigami to Unmei no Itsutsuko (iOS/Android)
         {49160768297},              // 0000000B7235CB29
+
+        // Tokyo Ghoul: Re Invoke (iOS/Android)
+        {6929101074247145},         // 00189DFB1024ADE9
+
+        // Azur Lane (iOS/Android)
+        {621561580448882},          // 0002354E95356C72
+
+        // One Piece Treasure Cruise (iOS/Android)
+        {1224},                     // 00000000000004C8
+
+        // Schoolgirl Strikers ~Twinkle Melodies~ (iOS/Android)
+        {0xDB5B61B8343D0000},       // DB5B61B8343D0000
+
+        // Bad Apple Wars (PSVita)
+        {241352432},                // 000000000E62BEF0
+
+        // Koi to Senkyo to Chocolate Portable (PSP)
+        {243812156},                // 000000000E88473C
+
+        // Custom Drive (PSP)
+        {2012062010},               // 0000000077EDA13A
+
+        // Root Letter (PSVita)
+        {1547531215412131},         // 00057F78B05F9BA3
+
+        // Pro Evolution Soccer 2018 / Winning Eleven 2018 (Android)
+        {14121473},                 // 0000000000D77A01
 
 };
 

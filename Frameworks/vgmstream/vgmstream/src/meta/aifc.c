@@ -8,7 +8,7 @@
 /* Included primarily for 3DO */
 
 /* for reading integers inexplicably packed into 80 bit floats */
-uint32_t read80bitSANE(off_t offset, STREAMFILE *streamFile) {
+static uint32_t read80bitSANE(off_t offset, STREAMFILE *streamFile) {
     uint8_t buf[10];
     int32_t exponent;
     int32_t mantissa;
@@ -31,7 +31,7 @@ uint32_t read80bitSANE(off_t offset, STREAMFILE *streamFile) {
     return mantissa*((buf[0]&0x80)?-1:1);
 }
 
-uint32_t find_marker(STREAMFILE *streamFile, off_t MarkerChunkOffset,
+static uint32_t find_marker(STREAMFILE *streamFile, off_t MarkerChunkOffset,
         int marker_id) {
     uint16_t marker_count;
     int i;
@@ -173,7 +173,7 @@ VGMSTREAM * init_vgmstream_aifc(STREAMFILE *streamFile) {
                                 interleave = 1;
                                 break;
                             case 0x41445034:    /* ADP4 */
-                                coding_type = coding_DVI_IMA;
+                                coding_type = coding_DVI_IMA_int;
                                 /* don't know how stereo DVI is laid out */
                                 if (channel_count != 1) break;
                                 break;

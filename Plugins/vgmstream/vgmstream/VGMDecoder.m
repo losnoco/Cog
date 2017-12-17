@@ -136,10 +136,10 @@
 {
     NSMutableArray *array = [[NSMutableArray alloc] init];
     
-    int count = vgmstream_get_formats_length();
-    const char ** formats = vgmstream_get_formats();
+    size_t count;
+    const char ** formats = vgmstream_get_formats(&count);
     
-    for (int i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
     {
         [array addObject:[NSString stringWithUTF8String:formats[i]]];
     }

@@ -254,7 +254,8 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
 
     /* sometimes there is garbage at the end or missing bytes due to improper demuxing */
     VGM_ASSERT(fsbh.hdrsize + fsbh.shdrsize + fsbh.datasize != streamFile->get_size(streamFile) - offset,
-               "FSB wrong head/datasize found\n");
+               "FSB wrong head/datasize found (expected 0x%x vs 0x%lx)\n",
+               fsbh.hdrsize + fsbh.shdrsize + fsbh.datasize, streamFile->get_size(streamFile) - offset);
 
     /* Loops unless disabled. FMOD default seems full loops (0/num_samples-1) without flags, for repeating tracks
      * that should loop and jingles/sfx that shouldn't. We'll try to disable looping is it looks jingly enough. */
@@ -352,8 +353,8 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
     }
     else if (fsbh.mode & FSOUND_GCADPCM) {
         /* FSB3: ?; FSB4: de Blob (Wii), Night at the Museum, M. Night Shyamalan Avatar: The Last Airbender */
-        vgmstream->coding_type = coding_NGC_DSP;
-        vgmstream->layout_type = layout_interleave_byte;
+        vgmstream->coding_type = coding_NGC_DSP_subint;
+        vgmstream->layout_type = layout_none;
         vgmstream->interleave_block_size = 0x2;
         dsp_read_coefs_be(vgmstream, streamFile, custom_data_offset, 0x2e);
     }
@@ -379,6 +380,8 @@ VGMSTREAM * init_vgmstream_fsb_offset(STREAMFILE *streamFile, off_t offset) {
 
     /* full channel interleave, used in short streams (ex. de Blob Wii SFXs) */
     if (fsbh.numchannels > 1 && (fsbh.flags & FMOD_FSB_SOURCE_NOTINTERLEAVED)) {
+        if (vgmstream->coding_type == coding_NGC_DSP_subint)
+            vgmstream->coding_type = coding_NGC_DSP;
         vgmstream->layout_type = layout_interleave;
         vgmstream->interleave_block_size = fsbh.lengthcompressedbytes / fsbh.numchannels;
     }

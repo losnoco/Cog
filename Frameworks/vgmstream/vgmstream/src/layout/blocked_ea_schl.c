@@ -3,7 +3,7 @@
 #include "../vgmstream.h"
 
 /* set up for the block at the given offset */
-void ea_schl_block_update(off_t block_offset, VGMSTREAM * vgmstream) {
+void block_update_ea_schl(off_t block_offset, VGMSTREAM * vgmstream) {
     int i;
     int new_schl = 0;
     STREAMFILE* streamFile = vgmstream->ch[0].streamfile;
@@ -91,7 +91,7 @@ void ea_schl_block_update(off_t block_offset, VGMSTREAM * vgmstream) {
             break;
 
         /* id, size, IMA hist, stereo/mono data */
-        case coding_EACS_IMA:
+        case coding_DVI_IMA:
             for(i = 0; i < vgmstream->channels; i++) {
                 off_t header_offset = block_offset + 0xc + i*4;
                 vgmstream->ch[i].adpcm_history1_32 = read_16bitLE(header_offset+0x00, vgmstream->ch[i].streamfile);
@@ -117,6 +117,17 @@ void ea_schl_block_update(off_t block_offset, VGMSTREAM * vgmstream) {
                 vgmstream->ch[i].offset = block_offset + 0x0c + vgmstream->channels*0x04 + i*interleave;
             }
 
+            break;
+
+        /* id, size, samples, offsets-per-channel, flag (0x01 = data start), data */
+        case coding_EA_MT:
+            for (i = 0; i < vgmstream->channels; i++) {
+                off_t channel_start = read_32bit(block_offset + 0x0C + (0x04*i),streamFile);
+                vgmstream->ch[i].offset = block_offset + 0x0C + (0x04*vgmstream->channels) + channel_start + 0x01;
+            }
+
+            /* flush decoder in every block change */
+            flush_ea_mt(vgmstream);
             break;
 
 #ifdef VGM_USE_MPEG
@@ -161,64 +172,4 @@ void ea_schl_block_update(off_t block_offset, VGMSTREAM * vgmstream) {
     vgmstream->next_block_offset = block_offset + block_size;
     vgmstream->current_block_samples = block_samples;
     vgmstream->current_block_size = 0; /* uses current_block_samples instead */
-
-
-    /* reset channel sub offset for codecs using it */
-    if (vgmstream->coding_type == coding_EA_XA
-            || vgmstream->coding_type == coding_EA_XA_int
-            || vgmstream->coding_type == coding_EA_XA_V2) {
-        for(i=0;i<vgmstream->channels;i++) {
-            vgmstream->ch[i].channel_start_offset=0;
-        }
-    }
-}
-
-void eacs_block_update(off_t block_offset, VGMSTREAM * vgmstream) {
-    int i;
-    off_t block_size=vgmstream->current_block_size;
-
-    if(read_32bitBE(block_offset,vgmstream->ch[0].streamfile)==0x31534E6C) {
-        block_offset+=0x0C;
-    }
-
-    vgmstream->current_block_offset = block_offset;
-
-    if(read_32bitBE(block_offset,vgmstream->ch[0].streamfile)==0x31534E64) { /* 1Snd */
-        block_offset+=4;
-        if(vgmstream->ea_platform==0)
-            block_size=read_32bitLE(vgmstream->current_block_offset+0x04,
-                                    vgmstream->ch[0].streamfile);
-        else
-            block_size=read_32bitBE(vgmstream->current_block_offset+0x04,
-                                    vgmstream->ch[0].streamfile);
-        block_offset+=4;
-    }
-
-    vgmstream->current_block_size=block_size-8;
-
-    if(vgmstream->coding_type==coding_EACS_IMA) {
-        vgmstream->current_block_size=read_32bitLE(block_offset,vgmstream->ch[0].streamfile);
-
-        for(i=0;i<vgmstream->channels;i++) {
-            vgmstream->ch[i].adpcm_step_index = read_32bitLE(block_offset+0x04+i*4,vgmstream->ch[0].streamfile);
-            vgmstream->ch[i].adpcm_history1_32 = read_32bitLE(block_offset+0x04+i*4+(4*vgmstream->channels),vgmstream->ch[0].streamfile);
-            vgmstream->ch[i].offset = block_offset+0x14;
-        }
-    } else {
-        if(vgmstream->coding_type==coding_PSX) {
-            for (i=0;i<vgmstream->channels;i++)
-                vgmstream->ch[i].offset = vgmstream->current_block_offset+8+(i*(vgmstream->current_block_size/2));
-        } else {
-
-            for (i=0;i<vgmstream->channels;i++) {
-                if(vgmstream->coding_type==coding_PCM16_int)
-                    vgmstream->ch[i].offset = block_offset+(i*2);
-                else
-                    vgmstream->ch[i].offset = block_offset+i;
-            }
-        }
-        vgmstream->current_block_size/=vgmstream->channels;
-    }
-    vgmstream->next_block_offset = vgmstream->current_block_offset +
-        (off_t)block_size;
 }

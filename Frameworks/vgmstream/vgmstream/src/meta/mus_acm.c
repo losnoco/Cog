@@ -15,7 +15,7 @@
 
 #define NAME_LENGTH PATH_LIMIT 
 
-int exists(char *filename, STREAMFILE *streamfile) {
+static int exists(char *filename, STREAMFILE *streamfile) {
     STREAMFILE * temp = 
         streamfile->open(streamfile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
     if (!temp) return 0;
@@ -25,7 +25,7 @@ int exists(char *filename, STREAMFILE *streamfile) {
 }
 
 /* needs the name of a file in the directory to test, as all we can do reliably is attempt to open a file */
-int find_directory_name(char *name_base, char *dir_name, int subdir_name_size, char *subdir_name, char *name, char *file_name, STREAMFILE *streamfile) {
+static int find_directory_name(char *name_base, char *dir_name, int subdir_name_size, char *subdir_name, char *name, char *file_name, STREAMFILE *streamfile) {
     /* find directory name */
     {
         char temp_dir_name[NAME_LENGTH];
@@ -125,7 +125,7 @@ VGMSTREAM * init_vgmstream_mus_acm(STREAMFILE *streamFile) {
     if (strcasecmp("mus",filename_extension(filename))) goto fail;
 
     /* read file name base */
-    line_bytes = get_streamfile_dos_line(sizeof(line_buffer),line_buffer,
+    line_bytes = get_streamfile_text_line(sizeof(line_buffer),line_buffer,
             mus_offset, streamFile, &whole_line_read);
     if (!whole_line_read) goto fail;
     mus_offset += line_bytes;
@@ -140,7 +140,7 @@ VGMSTREAM * init_vgmstream_mus_acm(STREAMFILE *streamFile) {
     /*printf("name base: %s\n",name_base);*/
 
     /* read track entry count */
-    line_bytes = get_streamfile_dos_line(sizeof(line_buffer),line_buffer,
+    line_bytes = get_streamfile_text_line(sizeof(line_buffer),line_buffer,
             mus_offset, streamFile, &whole_line_read);
     if (!whole_line_read) goto fail;
     if (line_buffer[0] == '\0') goto fail;
@@ -184,7 +184,7 @@ VGMSTREAM * init_vgmstream_mus_acm(STREAMFILE *streamFile) {
         {
             int fields_matched;
             line_bytes =
-                get_streamfile_dos_line(sizeof(line_buffer),line_buffer,
+                    get_streamfile_text_line(sizeof(line_buffer),line_buffer,
                         mus_offset, streamFile, &whole_line_read);
             if (!whole_line_read) goto fail;
             mus_offset += line_bytes;

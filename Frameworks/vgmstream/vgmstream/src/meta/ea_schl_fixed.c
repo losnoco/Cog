@@ -58,7 +58,7 @@ VGMSTREAM * init_vgmstream_ea_schl_fixed(STREAMFILE *streamFile) {
 
     vgmstream->meta_type = meta_EA_SCHL_fixed;
 
-    vgmstream->layout_type = layout_ea_blocked;
+    vgmstream->layout_type = layout_blocked_ea_schl;
 
     switch (ea.codec) {
         case EA_CODEC_PCM:
@@ -66,7 +66,7 @@ VGMSTREAM * init_vgmstream_ea_schl_fixed(STREAMFILE *streamFile) {
             break;
 
         case EA_CODEC_IMA:
-            vgmstream->coding_type = coding_EACS_IMA;
+            vgmstream->coding_type = coding_DVI_IMA; /* stereo/mono, high nibble first */
             break;
 
         default:
@@ -80,7 +80,7 @@ VGMSTREAM * init_vgmstream_ea_schl_fixed(STREAMFILE *streamFile) {
         goto fail;
 
     /* setup first block to update offsets */
-    ea_schl_block_update(start_offset,vgmstream);
+    block_update_ea_schl(start_offset,vgmstream);
 
 
     return vgmstream;
