@@ -10,7 +10,6 @@
 
 #import <vgmstream/vgmstream.h>
 #import <vgmstream/streamfile.h>
-#import <vgmstream/formats.h>
 
 #import "Plugin.h"
 
