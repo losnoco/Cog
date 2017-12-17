@@ -465,7 +465,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"wma", @"asf", @"tak", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", nil];
+	return [NSArray arrayWithObjects:@"wma", @"asf", @"tak", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", nil];
 }
 
 + (NSArray *)mimeTypes
