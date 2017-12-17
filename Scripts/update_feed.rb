@@ -2,9 +2,9 @@
 
 require 'tempfile'
 require 'open-uri'
-require 'rexml/document'
 require 'shellwords'
-include REXML
+require 'nokogiri'
+require 'time'
 
 feed = ARGV[0] || 'mercury'
 
@@ -14,18 +14,24 @@ site_dir = "#{Dir.home}/Source/Repos/kode54-net/cog"
 
 appcast = open("#{site_dir}/#{feed}_builds/#{feed}.xml")
 
-appcastdoc = Document.new(appcast)
+appcastdoc = Nokogiri::XML(appcast)
+
+appcast.close
+
+sparkle = appcastdoc.namespaces['xmlns:sparkle']
+
+channel = appcastdoc.xpath('//channel')
+
+sortedchannels = channel.search('./item').sort_by{ |i| Time.parse(i.at('pubDate').text) }.reverse
 
 #Get the latest revision from the appcast
-appcast_enclosure = REXML::XPath.match(appcastdoc, "//channel/item/enclosure")[0]
-appcast_url = appcast_enclosure.attributes['url'];
-appcast_revision = appcast_enclosure.attributes['sparkle:version'];
-appcast_revision_split = appcast_revision.split( /-/ )
+appcast_enclosure = sortedchannels[0].search('./enclosure').first
+appcast_url = appcast_enclosure.attribute('url');
+appcast_revision = appcast_enclosure.attribute_with_ns('version', sparkle);
+appcast_revision_split = appcast_revision.to_s.split( /-/ )
 appcast_revision_code = appcast_revision_split[2]
 appcast_revision_split = appcast_revision_code.split( /g/ )
 appcast_revision_code = appcast_revision_split[1]
-
-appcast.close()
 
 #Remove modified files that may cause conflicts.
 #%x[hg revert --all]
@@ -46,10 +52,12 @@ appcast.close()
   app_path = "#{script_path}/build/Build/Products/Release"
 
   plist = open("#{app_path}/Cog.app/Contents/Info.plist")
-  plistdoc = Document.new(plist)
+  plistdoc = Nokogiri::XML(plist)
+  plist.close
 
-  version_element = plistdoc.elements["//[. = 'CFBundleVersion']/following-sibling::string"];
-  latest_revision = version_element.text
+  version_element = plistdoc.xpath('//key[.="CFBundleVersion"]/following-sibling::string[1]')
+
+  latest_revision = version_element.inner_text
 
 #latest_revision = %x[/usr/local/bin/hg log -r . --template '{latesttag}-{latesttagdistance}-{node|short}']
 revision_split = latest_revision.split( /-/ )
