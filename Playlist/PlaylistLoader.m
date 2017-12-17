@@ -271,6 +271,9 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 			}
 		}
 	}
+    
+    NSSortDescriptor * sd_path = [[NSSortDescriptor alloc] initWithKey:@"path" ascending:YES];
+    [urls sortUsingDescriptors:[NSArray arrayWithObject:sd_path]];
 	
 	return urls;
 }
