@@ -5,10 +5,10 @@ includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/include
 
 Name: libavcodec
 Description: FFmpeg codec library
-Version: 57.106.104
-Requires: libswresample >= 2.8.100, libavutil >= 55.77.101
+Version: 58.8.100
+Requires: libswresample >= 3.0.101, libavutil >= 56.6.100
 Requires.private: 
 Conflicts:
-Libs: -L${libdir}  -lavcodec -framework CoreFoundation -framework VideoToolbox -framework CoreMedia -framework CoreVideo -liconv -Wl,-framework,CoreFoundation -Wl,-framework,Security -lm -lbz2 -lz -pthread -pthread -framework CoreServices -framework CoreGraphics -framework VideoToolbox -framework CoreImage -framework AVFoundation -framework AudioToolbox -framework AppKit -mmacosx-version-min=10.6
+Libs: -L${libdir}  -lavcodec -pthread -lm
 Libs.private: 
 Cflags: -I${includedir}
