@@ -593,6 +593,16 @@
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe
 {
+    return [self getNextEntry:pe ignoreRepeatOne:NO];
+}
+
+- (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe ignoreRepeatOne:(BOOL)ignoreRepeatOne
+{
+    if (!ignoreRepeatOne && [self repeat] == RepeatOne)
+    {
+        return pe;
+    }
+    
 	if ([queueList count] > 0)
 	{
 		
@@ -655,6 +665,16 @@
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe
 {
+    return [self getPrevEntry:pe ignoreRepeatOne:NO];
+}
+
+- (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe ignoreRepeatOne:(BOOL)ignoreRepeatOne
+{
+    if (!ignoreRepeatOne && [self repeat] == RepeatOne)
+    {
+        return pe;
+    }
+    
 	if ([self shuffle] != ShuffleOff)
 	{
 		return [self shuffledEntryAtIndex:(pe.shuffleIndex - 1)];
@@ -679,7 +699,7 @@
 {
 	PlaylistEntry *pe;
 	
-	pe = [self getNextEntry:[self currentEntry]];
+	pe = [self getNextEntry:[self currentEntry] ignoreRepeatOne:YES];
 	
 	if (pe == nil)
 		return NO;
@@ -693,7 +713,7 @@
 {
 	PlaylistEntry *pe;
 	
-	pe = [self getPrevEntry:[self currentEntry]];
+    pe = [self getPrevEntry:[self currentEntry] ignoreRepeatOne:YES];
 	if (pe == nil)
 		return NO;
 	
