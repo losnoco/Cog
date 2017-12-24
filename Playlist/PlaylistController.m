@@ -593,10 +593,6 @@
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe
 {
-	if ([self repeat] == RepeatOne) {
-		return pe;
-	}
-	
 	if ([queueList count] > 0)
 	{
 		
@@ -659,10 +655,6 @@
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe
 {
-	if ([self repeat] == RepeatOne) {
-		return pe;
-	}
-	
 	if ([self shuffle] != ShuffleOff)
 	{
 		return [self shuffledEntryAtIndex:(pe.shuffleIndex - 1)];
