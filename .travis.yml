@@ -1,7 +1,5 @@
+os: osx
 osx_image: xcode9.2
 language: objective-c
-xcode_project: Cog.xcodeproj
-xcode_scheme: Cog
-before_install:
-  - brew update
-  - brew outdated xctool || brew upgrade xctool
+script:
+    - xcodebuild clean build -workspace Cog.xcodeproj/project.xcworkspace -scheme Cog CODE_SIGNING_REQUIRED=NO
