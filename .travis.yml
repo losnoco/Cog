@@ -1,4 +1,7 @@
-osx_image: xcode8.3
+osx_image: xcode9.2
 language: objective-c
 xcode_project: Cog.xcodeproj
 xcode_scheme: Cog
+before_install:
+  - brew update
+  - brew outdated xctool || brew upgrade xctool
