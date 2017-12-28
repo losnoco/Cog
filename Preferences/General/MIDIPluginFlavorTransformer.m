@@ -17,6 +17,6 @@
 - (id)transformedValue:(id)value {
     if (value == nil) return nil;
     
-    return [NSNumber numberWithBool:[value isEqualToString:@"Sc55rolD"]];
+    return [NSNumber numberWithBool:([value isEqualToString:@"Sc55rolD"] || [value isEqualToString:@"Sc55RoCl"])];
 }
 @end

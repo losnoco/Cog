@@ -202,7 +202,7 @@ static OSType getOSType(const char * in_)
         componentSubType = getOSType(cplugin);
         componentManufacturer = getOSType(cplugin + 4);
         
-        if (componentManufacturer == 'rolD' && componentSubType == 'Sc55')
+        if ((componentManufacturer == 'rolD' || componentManufacturer == 'RoCl') && componentSubType == 'Sc55')
         {
             SCPlayer * scplayer = new SCPlayer;
             
