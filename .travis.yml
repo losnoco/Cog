@@ -2,4 +2,4 @@ os: osx
 osx_image: xcode9.2
 language: objective-c
 script:
-    - xcodebuild clean build -workspace Cog.xcodeproj/project.xcworkspace -scheme Cog CODE_SIGNING_REQUIRED=NO
+    - Scripts/build.sh CODE_SIGNING_REQUIRED=NO
