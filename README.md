@@ -22,5 +22,3 @@ Up to date binaries will be available at the following link:
 http://kode54.net/cog/
 
 --Christopher Snowhill (chris@kode54.net)
-
-[![Build Status](https://travis-ci.org/kode54/Cog.svg?branch=master)](https://travis-ci.org/kode54/Cog)
