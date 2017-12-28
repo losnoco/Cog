@@ -41,7 +41,8 @@
 
 - (IBAction)setMidiPlugin:(id)sender
 {
-    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"] isEqualToString:@"Sc55rolD"])
+    NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
+    if ([plugin isEqualToString:@"Sc55rolD"] || [plugin isEqualToString:@"Sc55RoCl"])
         [midiFlavorControl setEnabled:YES];
     else
         [midiFlavorControl setEnabled:NO];
