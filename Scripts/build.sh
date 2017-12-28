@@ -6,5 +6,5 @@ popd
 
 BUILDPRODUCTS="$BASE"/build/Build/Products/Release
 
-xcodebuild -workspace "$BASE"/../Cog.xcodeproj/project.xcworkspace -scheme Cog -configuration Release -derivedDataPath "$BASE"/build
+xcodebuild -quiet -workspace "$BASE"/../Cog.xcodeproj/project.xcworkspace -scheme Cog -configuration Release -derivedDataPath "$BASE"/build $1
 
