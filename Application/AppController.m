@@ -472,16 +472,23 @@
         NSRect contentRect = [contentView frame];
         const NSSize windowSize = [contentView convertSize:[mainWindow frame].size fromView: nil];
         
-        NSRect nowPlayingFrame = [[nowPlaying view] frame];
-        nowPlayingFrame.size.width = windowSize.width;
-        [[nowPlaying view] setFrame: nowPlayingFrame];
-        
         [contentView addSubview: [nowPlaying view]];
-        [[nowPlaying view] setFrameOrigin: NSMakePoint(0.0, NSMaxY(contentRect) - nowPlayingFrame.size.height)];
+        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+            [context setDuration:0.25];
+            NSRect nowPlayingFrame = [[nowPlaying view] frame];
+            nowPlayingFrame.size.width = windowSize.width;
+            [[nowPlaying view] setFrame: nowPlayingFrame];
+            [[nowPlaying view] setFrameOrigin: NSMakePoint(0.0, NSMaxY(contentRect) - nowPlayingFrame.size.height)];
+            
+            NSRect mainViewFrame = [mainView frame];
+            mainViewFrame.size.height -= nowPlayingFrame.size.height;
+            [[mainView animator] setFrame:mainViewFrame];
+            
+        } completionHandler:^{
+            
+        }];
         
-        NSRect mainViewFrame = [mainView frame];
-        mainViewFrame.size.height -= nowPlayingFrame.size.height;
-        [mainView setFrame:mainViewFrame];
+        
         
         [[nowPlaying text] bind:@"value" toObject:currentEntryController withKeyPath:@"content.display" options:nil];
     }
@@ -495,11 +502,17 @@
         NSRect nowPlayingFrame = [[nowPlaying view] frame];
         NSRect mainViewFrame = [mainView frame];
         mainViewFrame.size.height += nowPlayingFrame.size.height;
-        [mainView setFrame:mainViewFrame];
+        //[mainView setFrame:mainViewFrame];
         //        [mainView setFrameOrigin:NSMakePoint(0.0, 0.0)];
         
-        [[nowPlaying view] removeFromSuperview];
-        nowPlaying = nil;
+        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+            [context setDuration:0.25];
+            [[mainView animator] setFrame:mainViewFrame];
+            
+        } completionHandler:^{
+            [[nowPlaying view] removeFromSuperview];
+            nowPlaying = nil;
+        }];
     }
 }
 
