@@ -4,3 +4,6 @@
 [submodule "Frameworks/mGBA/mGBA/mgba"]
 	path = Frameworks/mGBA/mGBA/mgba
 	url = https://github.com/kode54/mgba.git
+[submodule "Frameworks/OpenMPT/OpenMPT"]
+	path = Frameworks/OpenMPT/OpenMPT
+	url = https://gitlab.kode54.net/kode54/OpenMPT.git
