@@ -285,7 +285,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                     }
                 }
 
-                vgmstream->codec_data = init_vorbis_custom_codec_data(streamFile, start_offset + setup_offset, VORBIS_WWISE, &cfg);
+                vgmstream->codec_data = init_vorbis_custom(streamFile, start_offset + setup_offset, VORBIS_WWISE, &cfg);
                 if (!vgmstream->codec_data) goto fail;
             }
             else {
@@ -330,11 +330,11 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                 }
 
                 /* try with the selected codebooks */
-                vgmstream->codec_data = init_vorbis_custom_codec_data(streamFile, start_offset + setup_offset, VORBIS_WWISE, &cfg);
+                vgmstream->codec_data = init_vorbis_custom(streamFile, start_offset + setup_offset, VORBIS_WWISE, &cfg);
                 if (!vgmstream->codec_data) {
                     /* codebooks failed: try again with the other type */
                     cfg.setup_type  = is_wem ? EXTERNAL_CODEBOOKS : AOTUV603_CODEBOOKS;
-                    vgmstream->codec_data = init_vorbis_custom_codec_data(streamFile, start_offset + setup_offset, VORBIS_WWISE, &cfg);
+                    vgmstream->codec_data = init_vorbis_custom(streamFile, start_offset + setup_offset, VORBIS_WWISE, &cfg);
                     if (!vgmstream->codec_data) goto fail;
                 }
             }
@@ -528,9 +528,24 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
             vgmstream->num_samples = ps_bytes_to_samples(ww.data_size, ww.channels);
             break;
 
-        case ATRAC9:    /* PSV/PS4 */
-            VGM_LOG("WWISE: ATRAC9 found (unsupported)\n");
-            goto fail;
+#ifdef VGM_USE_ATRAC9
+        case ATRAC9: {  /* PSV/PS4 */
+            atrac9_config cfg = {0};
+            if (ww.extra_size != 0x12) goto fail;
+
+            cfg.channels = vgmstream->channels;
+            cfg.config_data = read_32bitBE(ww.fmt_offset+0x18,streamFile);
+            cfg.encoder_delay = read_32bit(ww.fmt_offset+0x20,streamFile);
+
+            vgmstream->codec_data = init_atrac9(&cfg);
+            if (!vgmstream->codec_data) goto fail;
+            vgmstream->coding_type = coding_ATRAC9;
+            vgmstream->layout_type = layout_none;
+
+            vgmstream->num_samples = read_32bit(ww.fmt_offset+0x1c,streamFile);
+            break;
+        }
+#endif
 
         default:
             goto fail;
