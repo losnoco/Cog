@@ -1,0 +1,441 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		830EBDF020045FF80023AA10 /* tables.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDB920045FF80023AA10 /* tables.c */; };
+		830EBDF120045FF80023AA10 /* libatrac9.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDBA20045FF80023AA10 /* libatrac9.c */; };
+		830EBDF220045FF80023AA10 /* huffCodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDBB20045FF80023AA10 /* huffCodes.c */; };
+		830EBDF320045FF80023AA10 /* imdct.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDBC20045FF80023AA10 /* imdct.c */; };
+		830EBDF420045FF80023AA10 /* scale_factors.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDBD20045FF80023AA10 /* scale_factors.h */; };
+		830EBDF520045FF80023AA10 /* utility.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDBE20045FF80023AA10 /* utility.c */; };
+		830EBDF620045FF80023AA10 /* quantization.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDBF20045FF80023AA10 /* quantization.h */; };
+		830EBDF720045FF80023AA10 /* band_extension.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDC020045FF80023AA10 /* band_extension.c */; };
+		830EBDF820045FF80023AA10 /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDC120045FF80023AA10 /* unpack.c */; };
+		830EBDF920045FF80023AA10 /* bit_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDC220045FF80023AA10 /* bit_reader.h */; };
+		830EBDFA20045FF80023AA10 /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDC320045FF80023AA10 /* decoder.h */; };
+		830EBDFB20045FF80023AA10 /* decinit.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDC420045FF80023AA10 /* decinit.c */; };
+		830EBDFC20045FF80023AA10 /* bit_allocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDC520045FF80023AA10 /* bit_allocation.h */; };
+		830EBDFE20045FF80023AA10 /* libatrac9.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDC720045FF80023AA10 /* libatrac9.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		830EBDFF20045FF80023AA10 /* tables.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDC820045FF80023AA10 /* tables.h */; };
+		830EBE0020045FF80023AA10 /* scale_factors.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDC920045FF80023AA10 /* scale_factors.c */; };
+		830EBE0120045FF80023AA10 /* error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDCA20045FF80023AA10 /* error_codes.h */; };
+		830EBE0220045FF80023AA10 /* imdct.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDCB20045FF80023AA10 /* imdct.h */; };
+		830EBE0420045FF80023AA10 /* huffCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDCD20045FF80023AA10 /* huffCodes.h */; };
+		830EBE0520045FF80023AA10 /* decinit.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDCE20045FF80023AA10 /* decinit.h */; };
+		830EBE0620045FF80023AA10 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDCF20045FF80023AA10 /* decoder.c */; };
+		830EBE0720045FF80023AA10 /* bit_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDD020045FF80023AA10 /* bit_reader.c */; };
+		830EBE0820045FF80023AA10 /* unpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDD120045FF80023AA10 /* unpack.h */; };
+		830EBE0A20045FF80023AA10 /* quantization.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDD320045FF80023AA10 /* quantization.c */; };
+		830EBE0B20045FF80023AA10 /* utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDD420045FF80023AA10 /* utility.h */; };
+		830EBE0C20045FF80023AA10 /* band_extension.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDD520045FF80023AA10 /* band_extension.h */; };
+		830EBE0D20045FF80023AA10 /* bit_allocation.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBDD620045FF80023AA10 /* bit_allocation.c */; };
+		830EBE0E20045FF80023AA10 /* structures.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EBDD720045FF80023AA10 /* structures.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		830EBD8720045F190023AA10 /* libatrac9.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libatrac9.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		830EBD8B20045F190023AA10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		830EBDB920045FF80023AA10 /* tables.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tables.c; sourceTree = "<group>"; };
+		830EBDBA20045FF80023AA10 /* libatrac9.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libatrac9.c; sourceTree = "<group>"; };
+		830EBDBB20045FF80023AA10 /* huffCodes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = huffCodes.c; sourceTree = "<group>"; };
+		830EBDBC20045FF80023AA10 /* imdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imdct.c; sourceTree = "<group>"; };
+		830EBDBD20045FF80023AA10 /* scale_factors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale_factors.h; sourceTree = "<group>"; };
+		830EBDBE20045FF80023AA10 /* utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utility.c; sourceTree = "<group>"; };
+		830EBDBF20045FF80023AA10 /* quantization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quantization.h; sourceTree = "<group>"; };
+		830EBDC020045FF80023AA10 /* band_extension.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = band_extension.c; sourceTree = "<group>"; };
+		830EBDC120045FF80023AA10 /* unpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack.c; sourceTree = "<group>"; };
+		830EBDC220045FF80023AA10 /* bit_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bit_reader.h; sourceTree = "<group>"; };
+		830EBDC320045FF80023AA10 /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; };
+		830EBDC420045FF80023AA10 /* decinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decinit.c; sourceTree = "<group>"; };
+		830EBDC520045FF80023AA10 /* bit_allocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bit_allocation.h; sourceTree = "<group>"; };
+		830EBDC720045FF80023AA10 /* libatrac9.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libatrac9.h; sourceTree = "<group>"; };
+		830EBDC820045FF80023AA10 /* tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tables.h; sourceTree = "<group>"; };
+		830EBDC920045FF80023AA10 /* scale_factors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scale_factors.c; sourceTree = "<group>"; };
+		830EBDCA20045FF80023AA10 /* error_codes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error_codes.h; sourceTree = "<group>"; };
+		830EBDCB20045FF80023AA10 /* imdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imdct.h; sourceTree = "<group>"; };
+		830EBDCD20045FF80023AA10 /* huffCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = huffCodes.h; sourceTree = "<group>"; };
+		830EBDCE20045FF80023AA10 /* decinit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decinit.h; sourceTree = "<group>"; };
+		830EBDCF20045FF80023AA10 /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decoder.c; sourceTree = "<group>"; };
+		830EBDD020045FF80023AA10 /* bit_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bit_reader.c; sourceTree = "<group>"; };
+		830EBDD120045FF80023AA10 /* unpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unpack.h; sourceTree = "<group>"; };
+		830EBDD320045FF80023AA10 /* quantization.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = quantization.c; sourceTree = "<group>"; };
+		830EBDD420045FF80023AA10 /* utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
+		830EBDD520045FF80023AA10 /* band_extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = band_extension.h; sourceTree = "<group>"; };
+		830EBDD620045FF80023AA10 /* bit_allocation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bit_allocation.c; sourceTree = "<group>"; };
+		830EBDD720045FF80023AA10 /* structures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = structures.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		830EBD8320045F190023AA10 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		830EBD7D20045F190023AA10 = {
+			isa = PBXGroup;
+			children = (
+				830EBD8920045F190023AA10 /* libatrac9 */,
+				830EBD8820045F190023AA10 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		830EBD8820045F190023AA10 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				830EBD8720045F190023AA10 /* libatrac9.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		830EBD8920045F190023AA10 /* libatrac9 */ = {
+			isa = PBXGroup;
+			children = (
+				830EBD9C20045FF80023AA10 /* LibAtrac9 */,
+				830EBD8B20045F190023AA10 /* Info.plist */,
+			);
+			path = libatrac9;
+			sourceTree = "<group>";
+		};
+		830EBD9C20045FF80023AA10 /* LibAtrac9 */ = {
+			isa = PBXGroup;
+			children = (
+				830EBDB820045FF80023AA10 /* C */,
+			);
+			path = LibAtrac9;
+			sourceTree = "<group>";
+		};
+		830EBDB820045FF80023AA10 /* C */ = {
+			isa = PBXGroup;
+			children = (
+				830EBDC020045FF80023AA10 /* band_extension.c */,
+				830EBDD520045FF80023AA10 /* band_extension.h */,
+				830EBDD620045FF80023AA10 /* bit_allocation.c */,
+				830EBDC520045FF80023AA10 /* bit_allocation.h */,
+				830EBDD020045FF80023AA10 /* bit_reader.c */,
+				830EBDC220045FF80023AA10 /* bit_reader.h */,
+				830EBDC420045FF80023AA10 /* decinit.c */,
+				830EBDCE20045FF80023AA10 /* decinit.h */,
+				830EBDCF20045FF80023AA10 /* decoder.c */,
+				830EBDC320045FF80023AA10 /* decoder.h */,
+				830EBDCA20045FF80023AA10 /* error_codes.h */,
+				830EBDBB20045FF80023AA10 /* huffCodes.c */,
+				830EBDCD20045FF80023AA10 /* huffCodes.h */,
+				830EBDBC20045FF80023AA10 /* imdct.c */,
+				830EBDCB20045FF80023AA10 /* imdct.h */,
+				830EBDBA20045FF80023AA10 /* libatrac9.c */,
+				830EBDC720045FF80023AA10 /* libatrac9.h */,
+				830EBDD320045FF80023AA10 /* quantization.c */,
+				830EBDBF20045FF80023AA10 /* quantization.h */,
+				830EBDC920045FF80023AA10 /* scale_factors.c */,
+				830EBDBD20045FF80023AA10 /* scale_factors.h */,
+				830EBDD720045FF80023AA10 /* structures.h */,
+				830EBDB920045FF80023AA10 /* tables.c */,
+				830EBDC820045FF80023AA10 /* tables.h */,
+				830EBDC120045FF80023AA10 /* unpack.c */,
+				830EBDD120045FF80023AA10 /* unpack.h */,
+				830EBDBE20045FF80023AA10 /* utility.c */,
+				830EBDD420045FF80023AA10 /* utility.h */,
+			);
+			path = C;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		830EBD8420045F190023AA10 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				830EBDFE20045FF80023AA10 /* libatrac9.h in Headers */,
+				830EBE0220045FF80023AA10 /* imdct.h in Headers */,
+				830EBE0520045FF80023AA10 /* decinit.h in Headers */,
+				830EBE0420045FF80023AA10 /* huffCodes.h in Headers */,
+				830EBE0B20045FF80023AA10 /* utility.h in Headers */,
+				830EBE0820045FF80023AA10 /* unpack.h in Headers */,
+				830EBDF420045FF80023AA10 /* scale_factors.h in Headers */,
+				830EBE0C20045FF80023AA10 /* band_extension.h in Headers */,
+				830EBE0120045FF80023AA10 /* error_codes.h in Headers */,
+				830EBDFA20045FF80023AA10 /* decoder.h in Headers */,
+				830EBDFF20045FF80023AA10 /* tables.h in Headers */,
+				830EBDF920045FF80023AA10 /* bit_reader.h in Headers */,
+				830EBE0E20045FF80023AA10 /* structures.h in Headers */,
+				830EBDFC20045FF80023AA10 /* bit_allocation.h in Headers */,
+				830EBDF620045FF80023AA10 /* quantization.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		830EBD8620045F190023AA10 /* libatrac9 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 830EBD8F20045F190023AA10 /* Build configuration list for PBXNativeTarget "libatrac9" */;
+			buildPhases = (
+				830EBD8220045F190023AA10 /* Sources */,
+				830EBD8320045F190023AA10 /* Frameworks */,
+				830EBD8420045F190023AA10 /* Headers */,
+				830EBD8520045F190023AA10 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libatrac9;
+			productName = libatrac9;
+			productReference = 830EBD8720045F190023AA10 /* libatrac9.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		830EBD7E20045F190023AA10 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "Christopher Snowhill";
+				TargetAttributes = {
+					830EBD8620045F190023AA10 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 830EBD8120045F190023AA10 /* Build configuration list for PBXProject "libatrac9" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 830EBD7D20045F190023AA10;
+			productRefGroup = 830EBD8820045F190023AA10 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				830EBD8620045F190023AA10 /* libatrac9 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		830EBD8520045F190023AA10 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		830EBD8220045F190023AA10 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				830EBE0620045FF80023AA10 /* decoder.c in Sources */,
+				830EBDF720045FF80023AA10 /* band_extension.c in Sources */,
+				830EBE0020045FF80023AA10 /* scale_factors.c in Sources */,
+				830EBDF520045FF80023AA10 /* utility.c in Sources */,
+				830EBDFB20045FF80023AA10 /* decinit.c in Sources */,
+				830EBE0720045FF80023AA10 /* bit_reader.c in Sources */,
+				830EBE0A20045FF80023AA10 /* quantization.c in Sources */,
+				830EBDF820045FF80023AA10 /* unpack.c in Sources */,
+				830EBDF020045FF80023AA10 /* tables.c in Sources */,
+				830EBDF320045FF80023AA10 /* imdct.c in Sources */,
+				830EBDF220045FF80023AA10 /* huffCodes.c in Sources */,
+				830EBDF120045FF80023AA10 /* libatrac9.c in Sources */,
+				830EBE0D20045FF80023AA10 /* bit_allocation.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		830EBD8D20045F190023AA10 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "@loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		830EBD8E20045F190023AA10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "@loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		830EBD9020045F190023AA10 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = libatrac9/LibAtrac9/C;
+				INFOPLIST_FILE = libatrac9/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.libatrac9;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		830EBD9120045F190023AA10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = libatrac9/LibAtrac9/C;
+				INFOPLIST_FILE = libatrac9/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.libatrac9;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		830EBD8120045F190023AA10 /* Build configuration list for PBXProject "libatrac9" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				830EBD8D20045F190023AA10 /* Debug */,
+				830EBD8E20045F190023AA10 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		830EBD8F20045F190023AA10 /* Build configuration list for PBXNativeTarget "libatrac9" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				830EBD9020045F190023AA10 /* Debug */,
+				830EBD9120045F190023AA10 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 830EBD7E20045F190023AA10 /* Project object */;
+}

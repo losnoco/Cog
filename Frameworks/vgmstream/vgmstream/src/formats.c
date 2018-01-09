@@ -42,6 +42,7 @@ static const char* extension_list[] = {
     "ass",
     "ast",
     "at3",
+    "at9",
     "aud",
     "aus",
     "awc",
@@ -106,7 +107,7 @@ static const char* extension_list[] = {
     "emff",
     "enth",
     "exa",
-	"ezw",
+    "ezw",
 
     "fag",
     "ffw",
@@ -156,6 +157,8 @@ static const char* extension_list[] = {
     "khv",
     "kovs",
     "kraw",
+    "ktss",
+    "kvs",
 
     "laac", //fake extension, for AAC (tri-Ace/FFmpeg)
     "lac3", //fake extension, for AC3
@@ -181,7 +184,7 @@ static const char* extension_list[] = {
     "mic",
     "mihb",
     "mnstr",
-	"mogg",
+    "mogg",
     //"mp4", //common
     //"mpc", //FFmpeg, not parsed (musepack) //common
     "mpdsp",
@@ -423,6 +426,7 @@ static const coding_info coding_info_list[] = {
         {coding_PCM8_U_int,         "8-bit unsigned PCM with 1 byte interleave (block)"},
         {coding_PCM8_SB_int,        "8-bit PCM with sign bit, 1 byte interleave (block)"},
         {coding_ULAW,               "8-bit u-Law"},
+        {coding_ULAW_int,           "8-bit u-Law with 1 byte interleave (block)"},
         {coding_ALAW,               "8-bit a-Law"},
         {coding_PCMFLOAT,           "32-bit float PCM"},
 
@@ -520,6 +524,9 @@ static const coding_info coding_info_list[] = {
 #endif
 #ifdef VGM_USE_MAIATRAC3PLUS
         {coding_AT3plus,            "ATRAC3plus"},
+#endif
+#ifdef VGM_USE_ATRAC9
+        {coding_ATRAC9,             "ATRAC9"},
 #endif
 #ifdef VGM_USE_FFMPEG
         {coding_FFmpeg,             "FFmpeg"},
@@ -879,6 +886,7 @@ static const meta_info meta_info_list[] = {
         {meta_CSTM,                 "Nintendo 3DS CSTM Header"},
         {meta_FSTM,                 "Nintendo Wii U FSTM Header"},
         {meta_KT_WIIBGM,            "Koei Tecmo WiiBGM Header"},
+        {meta_KTSS,                 "Koei Tecmo Switch Sound Header"},
         {meta_3DS_IDSP,             "Nintendo IDSP Header"},
         {meta_WIIU_BTSND,           "Nintendo Wii U Menu Boot Sound"},
         {meta_MCA,                  "Capcom MCA header"},
@@ -900,6 +908,7 @@ static const meta_info meta_info_list[] = {
         {meta_GTD,                  "GTD/GHS header"},
         {meta_TA_AAC_X360,          "tri-Ace AAC (X360) header"},
         {meta_TA_AAC_PS3,           "tri-Ace AAC (PS3) header"},
+        {meta_TA_AAC_VORBIS,        "tri-Ace AAC (Mobile Vorbis) header"},
         {meta_PS3_MTA2,             "Konami MTA2 header"},
         {meta_NGC_ULW,              "Criterion ULW raw header"},
         {meta_PC_XA30,              "Reflections XA30 PC header"},
@@ -923,8 +932,7 @@ static const meta_info meta_info_list[] = {
         {meta_EA_SPS,               "Electronic Arts SPS header"},
         {meta_NGC_VID1,             "Neversoft VID1 header"},
         {meta_PC_FLX,               "Ultima IX .FLX header"},
-		{meta_MOGG,                 "Harmonix Music Systems MOGG Vorbis "},
-
+        {meta_MOGG,                 "Harmonix Music Systems MOGG Vorbis"},
 
 #ifdef VGM_USE_VORBIS
         {meta_OGG_VORBIS,           "Ogg Vorbis"},

@@ -12,6 +12,11 @@
 		8301659B1F256BD000CA0941 /* ea_schl_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165981F256BD000CA0941 /* ea_schl_fixed.c */; };
 		8301659C1F256BD000CA0941 /* nds_strm_ffta2.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165991F256BD000CA0941 /* nds_strm_ffta2.c */; };
 		830165A21F256BF400CA0941 /* hwas_blocked.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165A11F256BF400CA0941 /* hwas_blocked.c */; };
+		830EBE102004655D0023AA10 /* atrac9_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBE0F2004655D0023AA10 /* atrac9_decoder.c */; };
+		830EBE132004656E0023AA10 /* xnb.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBE112004656E0023AA10 /* xnb.c */; };
+		830EBE142004656E0023AA10 /* ktss.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBE122004656E0023AA10 /* ktss.c */; };
+		830EBE19200465B00023AA10 /* libatrac9.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830EBD9720045F1B0023AA10 /* libatrac9.framework */; };
+		830EBE1A200465C00023AA10 /* libatrac9.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830EBD9720045F1B0023AA10 /* libatrac9.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
 		8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		831BA6181EAC61A500CF89B0 /* adx.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA60E1EAC61A500CF89B0 /* adx.c */; };
@@ -444,6 +449,27 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		830EBD9620045F1B0023AA10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 830EBD9220045F190023AA10 /* libatrac9.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 830EBD8720045F190023AA10;
+			remoteInfo = libatrac9;
+		};
+		830EBE152004659B0023AA10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 830EBD9220045F190023AA10 /* libatrac9.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 830EBD8620045F190023AA10;
+			remoteInfo = libatrac9;
+		};
+		830EBE17200465A30023AA10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 730F23A1091827B100AB638C;
+			remoteInfo = Vorbis;
+		};
 		8313E3421901FBDD00B4B6F1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */;
@@ -523,6 +549,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				830EBE1A200465C00023AA10 /* libatrac9.framework in CopyFiles */,
 				832C70BF1E9335E400BD7B4E /* Vorbis.framework in CopyFiles */,
 				83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */,
 				83D731111A7394D300CA1366 /* g7221.framework in CopyFiles */,
@@ -538,6 +565,10 @@
 		830165981F256BD000CA0941 /* ea_schl_fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ea_schl_fixed.c; sourceTree = "<group>"; };
 		830165991F256BD000CA0941 /* nds_strm_ffta2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nds_strm_ffta2.c; sourceTree = "<group>"; };
 		830165A11F256BF400CA0941 /* hwas_blocked.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hwas_blocked.c; sourceTree = "<group>"; };
+		830EBD9220045F190023AA10 /* libatrac9.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libatrac9.xcodeproj; path = ../libatrac9/libatrac9.xcodeproj; sourceTree = "<group>"; };
+		830EBE0F2004655D0023AA10 /* atrac9_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atrac9_decoder.c; sourceTree = "<group>"; };
+		830EBE112004656E0023AA10 /* xnb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xnb.c; sourceTree = "<group>"; };
+		830EBE122004656E0023AA10 /* ktss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ktss.c; sourceTree = "<group>"; };
 		8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mpg123.xcodeproj; path = ../mpg123/mpg123.xcodeproj; sourceTree = "<group>"; };
 		831BA60E1EAC61A500CF89B0 /* adx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adx.c; sourceTree = "<group>"; };
 		831BA60F1EAC61A500CF89B0 /* ogl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogl.c; sourceTree = "<group>"; };
@@ -960,6 +991,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				830EBE19200465B00023AA10 /* libatrac9.framework in Frameworks */,
 				838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */,
 				838BDB7D1D3B1FCC0022CA6F /* CoreVideo.framework in Frameworks */,
 				838BDB7B1D3B1FC20022CA6F /* CoreMedia.framework in Frameworks */,
@@ -984,6 +1016,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		830EBD9320045F190023AA10 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				830EBD9720045F1B0023AA10 /* libatrac9.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8313E33E1901FBDC00B4B6F1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1040,6 +1080,7 @@
 		836F6B3E18BDB8880095E648 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				830EBD9220045F190023AA10 /* libatrac9.xcodeproj */,
 				838BDB611D3AF08C0022CA6F /* libavcodec.a */,
 				838BDB621D3AF08C0022CA6F /* libavformat.a */,
 				838BDB631D3AF08C0022CA6F /* libavutil.a */,
@@ -1093,6 +1134,7 @@
 		836F6DDF18BDC2180095E648 /* coding */ = {
 			isa = PBXGroup;
 			children = (
+				830EBE0F2004655D0023AA10 /* atrac9_decoder.c */,
 				8349A8DE1FE6251F00E26435 /* ea_mt_decoder.c */,
 				8349A8DD1FE6251F00E26435 /* ffmpeg_decoder_utils_bgw_atrac3.c */,
 				8349A8DC1FE6251E00E26435 /* vorbis_custom_utils_vid1.c */,
@@ -1204,6 +1246,8 @@
 		836F6E2718BDC2180095E648 /* meta */ = {
 			isa = PBXGroup;
 			children = (
+				830EBE122004656E0023AA10 /* ktss.c */,
+				830EBE112004656E0023AA10 /* xnb.c */,
 				8349A9041FE6258100E26435 /* aax_streamfile.h */,
 				8349A9021FE6258100E26435 /* adx_keys.h */,
 				8349A9001FE6258000E26435 /* afc.c */,
@@ -1576,6 +1620,8 @@
 				48C265101A5D424500A0A3D6 /* PBXBuildRule */,
 			);
 			dependencies = (
+				830EBE18200465A30023AA10 /* PBXTargetDependency */,
+				830EBE162004659B0023AA10 /* PBXTargetDependency */,
 				83D731881A749D0D00CA1366 /* PBXTargetDependency */,
 				83D7310F1A7394B500CA1366 /* PBXTargetDependency */,
 				8313E3E91902021F00B4B6F1 /* PBXTargetDependency */,
@@ -1620,6 +1666,10 @@
 					ProjectRef = 83D730E51A738EB200CA1366 /* g7221.xcodeproj */;
 				},
 				{
+					ProductGroup = 830EBD9320045F190023AA10 /* Products */;
+					ProjectRef = 830EBD9220045F190023AA10 /* libatrac9.xcodeproj */;
+				},
+				{
 					ProductGroup = 8313E33E1901FBDC00B4B6F1 /* Products */;
 					ProjectRef = 8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */;
 				},
@@ -1636,6 +1686,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		830EBD9720045F1B0023AA10 /* libatrac9.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = libatrac9.framework;
+			remoteRef = 830EBD9620045F1B0023AA10 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8313E3431901FBDD00B4B6F1 /* mpg123.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1781,6 +1838,7 @@
 				8349A91F1FE6258200E26435 /* naac.c in Sources */,
 				836F6FD218BDC2190095E648 /* ps2_bmdx.c in Sources */,
 				836F703C18BDC2190095E648 /* wii_bns.c in Sources */,
+				830EBE132004656E0023AA10 /* xnb.c in Sources */,
 				835027131ED119E000C25929 /* mta2_decoder.c in Sources */,
 				836F6FA718BDC2190095E648 /* nds_strm.c in Sources */,
 				8349A91A1FE6258200E26435 /* vxn.c in Sources */,
@@ -1817,8 +1875,10 @@
 				836F701118BDC2190095E648 /* ps3_cps.c in Sources */,
 				836F701418BDC2190095E648 /* ps3_msf.c in Sources */,
 				836F6F6518BDC2190095E648 /* 2dx9.c in Sources */,
+				830EBE102004655D0023AA10 /* atrac9_decoder.c in Sources */,
 				836F700818BDC2190095E648 /* ps2_vms.c in Sources */,
 				836F702418BDC2190095E648 /* rwsd.c in Sources */,
+				830EBE142004656E0023AA10 /* ktss.c in Sources */,
 				836F6F5618BDC2190095E648 /* scd_int_layout.c in Sources */,
 				836F6F6618BDC2190095E648 /* aax.c in Sources */,
 				836F6FD618BDC2190095E648 /* ps2_exst.c in Sources */,
@@ -2084,6 +2144,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		830EBE162004659B0023AA10 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libatrac9;
+			targetProxy = 830EBE152004659B0023AA10 /* PBXContainerItemProxy */;
+		};
+		830EBE18200465A30023AA10 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Vorbis;
+			targetProxy = 830EBE17200465A30023AA10 /* PBXContainerItemProxy */;
+		};
 		8313E3E91902021F00B4B6F1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = mpg123;
