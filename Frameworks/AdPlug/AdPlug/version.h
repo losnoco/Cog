@@ -1,0 +1,1 @@
+#define ADPLUG_VERSION "2.3-5-g14557a4"
