@@ -183,6 +183,7 @@
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83D3C6AD201D39E1005564CB /* AdPlug.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D3C601201C674F005564CB /* AdPlug.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */; };
 		83E5E54D18087CA5001F3284 /* miniModeOnTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */; };
 		83E5FE771FFF0C9D00659F0F /* OpenMPT.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83E5EFB11FFEF78300659F0F /* OpenMPT.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -542,6 +543,27 @@
 			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
 			remoteInfo = "FFMPEG Plugin";
 		};
+		83D3C600201C674F005564CB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83D3C5F3201C674D005564CB;
+			remoteInfo = AdPlug;
+		};
+		83D3C6A9201D39BC005564CB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83D3C5F2201C674D005564CB;
+			remoteInfo = AdPlug;
+		};
+		83D3C6AB201D39C3005564CB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 836F6B0F18BDB80D0095E648;
+			remoteInfo = vgmstream;
+		};
 		83E5EFB01FFEF78300659F0F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */;
@@ -679,6 +701,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				83D3C6AD201D39E1005564CB /* AdPlug.bundle in CopyFiles */,
 				83E5FE771FFF0C9D00659F0F /* OpenMPT.bundle in CopyFiles */,
 				83EEAB241C965C56002761C5 /* Syntrax.bundle in CopyFiles */,
 				83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */,
@@ -982,6 +1005,7 @@
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
+		83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AdPlug.xcodeproj; path = Plugins/AdPlug/AdPlug.xcodeproj; sourceTree = "<group>"; };
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
 		83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = Plugins/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
@@ -1262,6 +1286,7 @@
 		17B619FF0B909ED400BC003F /* PlugIns */ = {
 			isa = PBXGroup;
 			children = (
+				83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */,
 				83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */,
 				83EEAAF51C9651D8002761C5 /* Syntrax.xcodeproj */,
 				8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */,
@@ -1677,6 +1702,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83D3C5FD201C674D005564CB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83D3C601201C674F005564CB /* AdPlug.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		83E5EFAD1FFEF78100659F0F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1848,6 +1881,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				83D3C6AC201D39C3005564CB /* PBXTargetDependency */,
+				83D3C6AA201D39BC005564CB /* PBXTargetDependency */,
 				83E5FE791FFF0CAC00659F0F /* PBXTargetDependency */,
 				83EEAB261C965C61002761C5 /* PBXTargetDependency */,
 				83F9D8061A884C33007ABEC2 /* PBXTargetDependency */,
@@ -1915,6 +1950,10 @@
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 83D3C5FD201C674D005564CB /* Products */;
+					ProjectRef = 83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */;
+				},
 				{
 					ProductGroup = 566D32170D538550004466A5 /* Products */;
 					ProjectRef = 566D32160D538550004466A5 /* APL.xcodeproj */;
@@ -2213,6 +2252,13 @@
 			fileType = wrapper.cfbundle;
 			path = MIDI.bundle;
 			remoteRef = 83B066A0180D5669008E3612 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83D3C601201C674F005564CB /* AdPlug.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AdPlug.bundle;
+			remoteRef = 83D3C600201C674F005564CB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83E5EFB11FFEF78300659F0F /* OpenMPT.bundle */ = {
@@ -2603,6 +2649,16 @@
 			isa = PBXTargetDependency;
 			name = "FFMPEG Plugin";
 			targetProxy = 83BCB8DC17FC96FC00760340 /* PBXContainerItemProxy */;
+		};
+		83D3C6AA201D39BC005564CB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AdPlug;
+			targetProxy = 83D3C6A9201D39BC005564CB /* PBXContainerItemProxy */;
+		};
+		83D3C6AC201D39C3005564CB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = vgmstream;
+			targetProxy = 83D3C6AB201D39C3005564CB /* PBXContainerItemProxy */;
 		};
 		83E5FE791FFF0CAC00659F0F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

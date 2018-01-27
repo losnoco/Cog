@@ -7,3 +7,12 @@
 [submodule "Frameworks/OpenMPT/OpenMPT"]
 	path = Frameworks/OpenMPT/OpenMPT
 	url = https://gitlab.kode54.net/kode54/OpenMPT.git
+[submodule "Frameworks/AdPlug/AdPlug/adplug"]
+	path = Frameworks/AdPlug/AdPlug/adplug
+	url = https://github.com/adplug/adplug.git
+[submodule "Frameworks/libbinio/libbinio/libbinio"]
+	path = Frameworks/libbinio/libbinio/libbinio
+	url = https://github.com/adplug/libbinio.git
+[submodule "Frameworks/AdPlug/AdPlug/database"]
+	path = Frameworks/AdPlug/AdPlug/database
+	url = https://github.com/adplug/database.git
