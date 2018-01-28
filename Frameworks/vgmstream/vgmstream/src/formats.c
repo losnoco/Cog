@@ -17,7 +17,7 @@ static const char* extension_list[] = {
     "aaap",
     "aax",
     //"ac3", //FFmpeg, not parsed //common?
-    "ace", //fake, for tri-Ace's formats
+    "ace", //fake, for tri-Ace's formats (to be removed)
     "acm",
     "adm",
     "adp",
@@ -33,7 +33,7 @@ static const char* extension_list[] = {
     "aix",
     "akb",
     "al2",
-    "amts", //fake extension (to be removed)
+    "amts", //fake extension/header id for .stm (to be removed)
     "ao", //txth/reserved [Cloudphobia (PC)]
     "as4",
     "asd",
@@ -43,6 +43,8 @@ static const char* extension_list[] = {
     "ast",
     "at3",
     "at9",
+    "atsl3",
+    "atx",
     "aud",
     "aus",
     "awc",
@@ -138,7 +140,7 @@ static const char* extension_list[] = {
     "iab",
     "iadp",
     "idsp",
-    "idvi", //fake extension (to be removed)
+    "idvi", //fake extension for .pcm (to be removed)
     "ikm",
     "ild",
     "int",
@@ -153,9 +155,10 @@ static const char* extension_list[] = {
     "jstm",
 
     "kces",
-    "kcey", //fake extension (to be removed)
+    "kcey", //fake extension/header id (to be removed)
     "khv",
-    "kovs",
+    "km9",
+    "kovs", //.kvs header id
     "kraw",
     "ktss",
     "kvs",
@@ -172,6 +175,7 @@ static const char* extension_list[] = {
     "lstm", //fake extension, for STMs
     "lwav", //fake extension, for WAVs
 
+    "mab",
     "matx",
     "mc3",
     "mca",
@@ -205,8 +209,9 @@ static const char* extension_list[] = {
     "naac",
     "ndp",
     "ngca",
+    "nop",
     "nps",
-    "npsf", //fake extension (to be removed)
+    "npsf", //fake extension/header id for .nps (to be removed)
     "nus3bank",
     "nwa",
 
@@ -226,7 +231,7 @@ static const char* extension_list[] = {
     "pnb",
     "pona",
     "pos",
-    "ps2stm", //fake extension (to be removed)
+    "ps2stm", //fake extension for .stm (to be removed)
     "psh",
     "psnd",
     "psw",
@@ -261,6 +266,7 @@ static const char* extension_list[] = {
     "sb5",
     "sb6",
     "sb7",
+    "sbin",
     "sc",
     "scd",
     "sck",
@@ -282,6 +288,7 @@ static const char* extension_list[] = {
     "snd",
     "snds",
     "sng",
+    "sngw",
     "snr",
     "sns",
     "snu",
@@ -374,6 +381,7 @@ static const char* extension_list[] = {
     "xvas",
     "xwav",
     "xwb",
+    "xwc",
     "xwm", //FFmpeg, not parsed (XWMA)
     "xwma", //FFmpeg, not parsed (XWMA)
     "xws",
@@ -471,7 +479,7 @@ static const coding_info coding_info_list[] = {
         {coding_APPLE_IMA4,         "Apple Quicktime 4-bit IMA ADPCM"},
         {coding_SNDS_IMA,           "Heavy Iron .snds 4-bit IMA ADPCM"},
         {coding_OTNS_IMA,           "Omikron: The Nomad Soul 4-bit IMA ADPCM"},
-        {coding_FSB_IMA,            "FSB multichannel 4-bit IMA ADPCM"},
+        {coding_FSB_IMA,            "FSB 4-bit IMA ADPCM"},
         {coding_WWISE_IMA,          "Audiokinetic Wwise 4-bit IMA ADPCM"},
         {coding_REF_IMA,            "Reflections 4-bit IMA ADPCM"},
         {coding_AWC_IMA,            "Rockstar AWC 4-bit IMA ADPCM"},
@@ -574,6 +582,7 @@ static const layout_info layout_info_list[] = {
         {layout_blocked_awc,            "blocked (AWC)"},
         {layout_blocked_vgs,            "blocked (VGS)"},
         {layout_blocked_vawx,           "blocked (VAWX)"},
+        {layout_blocked_xvag_subsong,   "blocked (XVAG subsong)"},
 #ifdef VGM_USE_VORBIS
         {layout_ogg_vorbis,             "Ogg"},
 #endif
@@ -933,16 +942,20 @@ static const meta_info meta_info_list[] = {
         {meta_NGC_VID1,             "Neversoft VID1 header"},
         {meta_PC_FLX,               "Ultima IX .FLX header"},
         {meta_MOGG,                 "Harmonix Music Systems MOGG Vorbis"},
-
-#ifdef VGM_USE_VORBIS
         {meta_OGG_VORBIS,           "Ogg Vorbis"},
         {meta_OGG_SLI,              "Ogg Vorbis with .sli (start,length) for looping"},
         {meta_OGG_SLI2,             "Ogg Vorbis with .sli (from,to) for looping"},
         {meta_OGG_SFL,              "Ogg Vorbis with SFPL for looping"},
-        {meta_OGG_UM3,              "Ogg Vorbis, Ultramarine3 'encryption'"},
-        {meta_OGG_KOVS,             "Ogg Vorbis, KOVS header"},
-        {meta_OGG_PSYCH,            "Ogg Vorbis, Psychic Software obfuscation"},
-    #endif
+        {meta_OGG_UM3,              "Ogg Vorbis (Ultramarine3)"},
+        {meta_OGG_KOVS,             "Ogg Vorbis (KOVS header)"},
+        {meta_OGG_PSYCHIC,          "Ogg Vorbis (Psychic Software)"},
+        {meta_OGG_SNGW,             "Ogg Vorbis (Capcom)"},
+        {meta_OGG_ISD,              "Ogg Vorbis (ISD)"},
+        {meta_KMA9,                 "Koei Tecmo KMA9 header"},
+        {meta_XWC,                  "Starbreeze XWC header"},
+        {meta_SQEX_SAB,             "Square-Enix SAB header"},
+        {meta_SQEX_MAB,             "Square-Enix MAB header"},
+
 #ifdef VGM_USE_MP4V2
         {meta_MP4,                  "AAC header"},
 #endif
