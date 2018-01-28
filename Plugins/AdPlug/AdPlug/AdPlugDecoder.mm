@@ -33,9 +33,15 @@
 	[self setSource:s];
 
     m_emu = new CNemuopl(44100);
+
+    NSString * path = [[s url] absoluteString];
+    NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
+    if (fragmentRange.location != NSNotFound) {
+        path = [path substringToIndex:fragmentRange.location];
+    }
     
-    std::string path = [[[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String];
-    m_player = CAdPlug::factory(path, m_emu, CAdPlug::players, CProvider_cog( path, source ));
+    std::string _path = [[path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String];
+    m_player = CAdPlug::factory(_path, m_emu, CAdPlug::players, CProvider_cog( _path, source ));
     
     if ( !m_player )
         return 0;

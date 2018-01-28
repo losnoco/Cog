@@ -46,8 +46,14 @@
 
     Copl * p_emu = new CSilentopl;
     
-    std::string path = [[[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String];
-    CPlayer * p_player = CAdPlug::factory(path, p_emu, CAdPlug::players, CProvider_cog( path, source ));
+    NSString * path = [url absoluteString];
+    NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
+    if (fragmentRange.location != NSNotFound) {
+        path = [path substringToIndex:fragmentRange.location];
+    }
+    
+    std::string _path = [[path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String];
+    CPlayer * p_player = CAdPlug::factory(_path, p_emu, CAdPlug::players, CProvider_cog( _path, source ));
     
     if ( !p_player )
     {
