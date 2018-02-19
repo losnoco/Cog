@@ -125,8 +125,6 @@ int main(int argc, char *argv[])
         goto close;
     }
 
-    avcodec_register_all();
-
     err = av_hwdevice_ctx_create(&hw_device_ctx, AV_HWDEVICE_TYPE_VAAPI,
                                  NULL, NULL, 0);
     if (err < 0) {
@@ -217,8 +215,7 @@ close:
         fclose(fout);
     av_frame_free(&sw_frame);
     av_frame_free(&hw_frame);
-    if (avctx)
-        avcodec_free_context(&avctx);
+    avcodec_free_context(&avctx);
     av_buffer_unref(&hw_device_ctx);
 
     return err;

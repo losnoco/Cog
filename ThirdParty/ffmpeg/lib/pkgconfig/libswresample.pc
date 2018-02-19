@@ -6,7 +6,7 @@ includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/include
 Name: libswresample
 Description: FFmpeg audio resampling library
 Version: 3.0.101
-Requires: libavutil >= 56.6.100
+Requires: libavutil >= 56.7.101
 Requires.private: 
 Conflicts:
 Libs: -L${libdir}  -lswresample -lm

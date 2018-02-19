@@ -2,7 +2,7 @@
 ./configure --extra-cflags="-fPIC -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=10.8" --extra-ldflags="-mmacosx-version-min=10.8"\
     --enable-static --disable-shared --prefix=$HOME/Source/Repos/cog/ThirdParty/ffmpeg\
     --enable-pic --enable-gpl --disable-doc --disable-ffplay\
-    --disable-ffprobe --disable-ffserver --disable-avdevice --disable-ffmpeg\
+    --disable-ffprobe --disable-avdevice --disable-ffmpeg\
     --disable-postproc --disable-avfilter\
     --disable-swscale --disable-network --disable-swscale-alpha --disable-vdpau\
     --disable-dxva2 --disable-everything --enable-hwaccels\
