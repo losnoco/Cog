@@ -1,0 +1,17 @@
+This folder contains the stb_vorbis library from
+https://github.com/nothings/stb/blob/master/stb_vorbis.c
+(commit 9d9f75eb682dd98b34de08bb5c489c6c561c9fa6)
+
+Modifications:
+ *  Use of alloca has been replaced with malloc, as alloca is not in C99 and
+    fails to compile.
+ *  Macro redefinition of alloca with mingw-w64 has been fixed.
+ *  Macro redefinition of STB_VORBIS_NO_STDIO has been fixed.
+ *  The following warnings have been silenced:
+    include/stb_vorbis/stb_vorbis.c:3928:32: warning: ‘hi’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+    include/stb_vorbis/stb_vorbis.c:3927:32: warning: ‘low’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+Modifications are always additions and have been marked with // OpenMPT.
+
+For building, premake is used to generate Visual Studio project files.
+See ../build/premake/ for details.
+
