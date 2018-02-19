@@ -464,7 +464,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 {
     long batchCount = ([entries count] / 16) + ([entries count] % 16 ? 1 : 0);
     NSMutableArray *array = [[NSMutableArray alloc] init];
-    long i;
+    long i, j;
     
     for (i = 0; i < batchCount; ++i)
     {
@@ -482,10 +482,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
     if (!i) return;
     
-    semaphore_t info_sem;
-    semaphore_create( mach_task_self(), &info_sem, SYNC_POLICY_FIFO, (int) -i + 1 );
-
-    __block semaphore_t weak_sem = info_sem;
+    NSLock *outLock = [[NSLock alloc] init];
+    NSMutableArray *outArray = [[NSMutableArray alloc] init];
+    
+    __block NSLock *weakLock = outLock;
+    __block NSMutableArray *weakArray = outArray;
     
     for (NSArray *a in array)
     {
@@ -497,8 +498,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         [op addExecutionBlock:^{
             for (PlaylistEntry *pe in weakA)
             {
-                __block PlaylistEntry *weakPe = pe;
-                __block NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
+                NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
             
                 NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
                 if (entryProperties == nil)
@@ -506,11 +506,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
             
                 [entryInfo addEntriesFromDictionary:entryProperties];
                 [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakPe setMetadata:entryInfo];
-                    semaphore_signal(weak_sem);
-                });
+
+                [weakLock lock];
+                [weakArray addObject:pe];
+                [weakArray addObject:entryInfo];
+                [weakLock unlock];
             }
         }];
         
@@ -518,7 +518,21 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     }
 
 	[queue waitUntilAllOperationsAreFinished];
+
+    semaphore_t info_sem;
+    semaphore_create( mach_task_self(), &info_sem, SYNC_POLICY_FIFO, (int) -i + 1 );
     
+    __block semaphore_t weak_sem = info_sem;
+    
+    for (i = 0, j = [outArray count]; i < j; i += 2) {
+        __block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
+        __block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakPe setMetadata:entryInfo];
+            semaphore_signal(weak_sem);
+        });
+    }
+
     semaphore_wait(info_sem);
     semaphore_destroy(mach_task_self(), info_sem);
 
