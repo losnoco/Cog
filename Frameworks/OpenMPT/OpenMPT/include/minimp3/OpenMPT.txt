@@ -1,0 +1,10 @@
+minimp3 version as of 2017-04-25 from
+http://keyj.emphy.de/files/projects/minimp3.tar.gz .
+The following changes have been made:
+- mp3_create() declaration has been fixed.
+- GET_DATA() has been rewritten to avoid unaligned access warnings.
+- Signed/unsigned comparison warnings have been fixed.
+- Modifications have been marked with // OpenMPT
+- Obviously, unnecessary folders and files have been removed.
+- For building, premake is used to generate Visual Studio project files.
+  See ../build/premake/ for details.
