@@ -349,8 +349,9 @@ public:
 		}
 	public:
 		PinnedRawDataView()
+			: size_(0)
+			, pinnedData(nullptr)
 		{
-			return;
 		}
 		PinnedRawDataView(const FileReader &file)
 		{

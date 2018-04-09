@@ -320,7 +320,7 @@ CSoundFile::ProbeResult CSoundFile::Probe(ProbeFlags flags, mpt::span<const mpt:
 		if((result == ProbeWantMoreData) && (data.size() >= ProbeRecommendedSize))
 		{
 			// If the prober wants more daat but we already provided the recommended required maximum,
-			// just return success as this is th ebest we can do for the suggestesd probing size.
+			// just return success as this is the best we can do for the suggestesd probing size.
 			result = ProbeSuccess;
 		}
 	}
@@ -654,7 +654,7 @@ bool CSoundFile::Create(FileReader file, ModLoadingFlags loadFlags)
 		if (Reporting::Confirm(mpt::ToWide(mpt::CharsetUTF8, notFoundText.c_str()), L"OpenMPT - Plugins missing", false, true) == cnfYes)
 		{
 			std::string url = "https://resources.openmpt.org/plugins/search.php?p=";
-			for(auto &id : notFoundIDs)
+			for(const auto &id : notFoundIDs)
 			{
 				url += mpt::fmt::HEX0<8>(id->dwPluginId2.get());
 				url += id->szLibraryName;
@@ -810,8 +810,11 @@ void CSoundFile::ResetPlayPos()
 
 void CSoundFile::SetCurrentOrder(ORDERINDEX nOrder)
 {
-	while ((nOrder < Order().size()) && (Order()[nOrder] == Order.GetIgnoreIndex())) nOrder++;
-	if ((nOrder >= Order().size()) || (Order()[nOrder] >= Patterns.Size())) return;
+	while(nOrder < Order().size() && !Order().IsValidPat(nOrder))
+		nOrder++;
+	if(nOrder >= Order().size())
+		return;
+
 	for(auto &chn : m_PlayState.Chn)
 	{
 		chn.nPeriod = 0;

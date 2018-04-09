@@ -6,11 +6,13 @@
  *          MilkyTracker can load it, but the only files of this format seen in the wild are also
  *          available in their original format, so I did not bother implementing it so far.
  *
- *          2. Using PLAY.EXE v1.02, commands not supported in MOD do not seem to do anything at all.
+ *          2. Using both PLAY.EXE v1.02 and v2.00, commands not supported in MOD do not seem to do
+ *          anything at all.
  *          In particular commands 0x11-0x13 handled below are ignored, and no files have been spotted
  *          in the wild using any commands > 0x0F at all.
  *          S3M-style retrigger does not seem to exist - it is translated to volume slides by CONV.EXE,
- *          and J00 in S3M files is not converted either.
+ *          and J00 in S3M files is not converted either. S3M pattern loops (SBx) are not converted
+ *          properly by CONV.EXE and completely ignored by PLAY.EXE.
  *          Command 8 (set panning) uses 00-80 for regular panning and A4 for surround, probably
  *          making DSIK one of the first applications to use this particular encoding scheme still
  *          used in "extended" S3Ms today.
@@ -36,9 +38,10 @@ MPT_BINARY_STRUCT(DSMChunk, 8)
 struct DSMSongHeader
 {
 	char     songName[28];
-	char     reserved1[2];
+	uint16le fileVersion;
 	uint16le flags;
-	char     reserved2[4];
+	uint16le orderPos;
+	uint16le restartPos;
 	uint16le numOrders;
 	uint16le numSamples;
 	uint16le numPatterns;
@@ -57,13 +60,12 @@ MPT_BINARY_STRUCT(DSMSongHeader, 192)
 struct DSMSampleHeader
 {
 	char     filename[13];
-	uint8le  flags;
-	char     reserved1;
+	uint16le flags;
 	uint8le  volume;
 	uint32le length;
 	uint32le loopStart;
 	uint32le loopEnd;
-	char     reserved2[4];
+	uint32le dataPtr;	// Interal sample pointer during playback in DSIK
 	uint32le sampleRate;
 	char     sampleName[28];
 
@@ -93,6 +95,8 @@ struct DSMSampleHeader
 			sampleIO |= SampleIO::deltaPCM;	// fairlight.dsm by Comrade J
 		else if(flags & 0x02)
 			sampleIO |= SampleIO::signedPCM;
+		if(flags & 0x04)
+			sampleIO |= SampleIO::_16bit;
 		return sampleIO;
 	}
 };
@@ -197,10 +201,14 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 
 	DSMSongHeader songHeader;
 	file.ReadStructPartial(songHeader, chunkHeader.size);
+	if(songHeader.numOrders > 128 || songHeader.numChannels > 16 || songHeader.numPatterns > 256 || songHeader.restartPos > 128)
+	{
+		return false;
+	}
 
 	InitializeGlobals(MOD_TYPE_DSM);
 	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, songHeader.songName);
-	m_nChannels = Clamp<uint16, uint16>(songHeader.numChannels, 1, 16);
+	m_nChannels = std::max<uint16>(songHeader.numChannels, 1);
 	m_nDefaultSpeed = songHeader.speed;
 	m_nDefaultTempo.Set(songHeader.bpm);
 	m_nDefaultGlobalVolume = std::min<uint8>(songHeader.globalVol, 64) * 4u;
@@ -224,6 +232,8 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	ReadOrderFromArray(Order(), songHeader.orders, songHeader.numOrders, 0xFF, 0xFE);
+	if(songHeader.restartPos < songHeader.numOrders)
+		Order().SetRestartPos(songHeader.restartPos);
 
 	// Read pattern and sample chunks
 	PATTERNINDEX patNum = 0;
@@ -240,6 +250,7 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			chunk.Skip(2);
 
+			ModCommand dummy = ModCommand::Empty();
 			ROWINDEX row = 0;
 			PatternRow rowBase = Patterns[patNum].GetRow(0);
 			while(chunk.CanRead(1) && row < 64)
@@ -253,7 +264,6 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 				}
 
 				CHANNELINDEX chn = (flag & 0x0F);
-				ModCommand dummy = ModCommand();
 				ModCommand &m = (chn < GetNumChannels() ? rowBase[chn] : dummy);
 
 				if(flag & 0x80)

@@ -2133,7 +2133,7 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 			&& IsInRange(info.dateMinute, 0, 59) && IsInRange(info.dateSecond, 0, 59))
 		{
 			FileHistory mptHistory;
-			MemsetZero(mptHistory.loadDate);
+			MemsetZero(mptHistory);
 			mptHistory.loadDate.tm_year = info.dateYear;
 			mptHistory.loadDate.tm_mon = info.dateMonth - 1;
 			mptHistory.loadDate.tm_mday = info.dateDay;

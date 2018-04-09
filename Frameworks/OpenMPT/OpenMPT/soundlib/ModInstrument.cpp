@@ -58,6 +58,11 @@ void InstrumentEnvelope::Convert(MODTYPE fromType, MODTYPE toType)
 			}
 		}
 	}
+
+	if(toType != MOD_TYPE_MPT)
+	{
+		nReleaseNode = ENV_RELEASE_NODE_UNSET;
+	}
 }
 
 

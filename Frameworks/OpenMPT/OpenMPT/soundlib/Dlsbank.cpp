@@ -446,7 +446,7 @@ static uint8 DLSSustainLevelToLinear(int32 sustain)
 	if(sustain >= 0)
 	{
 		int32 l = sustain / (1000 * 512);
-		if(l >= 0 || l <= 128)
+		if(l >= 0 && l <= 128)
 			return static_cast<uint8>(l);
 	}
 	return 128;
@@ -1885,6 +1885,8 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 				int32 lSusLevel = - DLS32BitRelativeLinearToGain(lStartFactor << 10) / 65536;
 				int32 lDecayEndTime = (lReleaseTime * lSusLevel) / 960;
 				lReleaseTime -= lDecayEndTime;
+				if(pIns->VolEnv.nSustainEnd > 0)
+					pIns->VolEnv.nReleaseNode = pIns->VolEnv.nSustainEnd;
 				for (uint32 i=0; i<5; i++)
 				{
 					int32 lFactor = 1 + ((lStartFactor * 3) >> (i+2));
@@ -1930,6 +1932,7 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 			pIns->VolEnv[3] = EnvelopeNode(pIns->VolEnv[2].tick * 2u, ENVELOPE_MIN);	// 1 second max. for drums
 		}
 	}
+	pIns->Convert(MOD_TYPE_MPT, sndFile.GetType());
 	return true;
 }
 

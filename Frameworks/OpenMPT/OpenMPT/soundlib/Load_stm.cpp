@@ -82,10 +82,11 @@ static bool ValidateHeader(const STMFileHeader &fileHeader)
 	// After reviewing all STM files on ModLand and ModArchive, it was found that the
 	// case-insensitive comparison is most likely not necessary for any files in the wild.
 	if(fileHeader.filetype != 2
-		|| (fileHeader.dosEof != 0x1A && fileHeader.dosEof != 2)	// ST2 ignores this, ST3 doesn't. putup10.stm / putup11.stm have dosEof = 2.
+		|| (fileHeader.dosEof != 0x1A && fileHeader.dosEof != 2)	// ST2 ignores this, ST3 doesn't. Broken versions of putup10.stm / putup11.stm have dosEof = 2.
 		|| fileHeader.verMajor != 2
-		|| fileHeader.verMinor > 21	// ST3 only accepts 0, 10, 20 and 21
-		|| fileHeader.globalVolume > 64
+		|| (fileHeader.verMinor != 0 && fileHeader.verMinor != 10 && fileHeader.verMinor != 20 && fileHeader.verMinor != 21)
+		|| fileHeader.numPatterns > 64
+		|| (fileHeader.globalVolume > 64 && fileHeader.globalVolume != 0x58)	// 0x58 may be a placeholder value in earlier ST2 versions.
 		|| (std::memcmp(fileHeader.trackername, "!Scream!", 8)
 			&& std::memcmp(fileHeader.trackername, "BMOD2STM", 8)
 			&& std::memcmp(fileHeader.trackername, "WUZAMOD!", 8))
@@ -160,7 +161,7 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 	m_nDefaultTempo = ConvertST2Tempo(initTempo);
 	m_nDefaultSpeed = initTempo >> 4;
 	if(fileHeader.verMinor > 10)
-		m_nDefaultGlobalVolume = fileHeader.globalVolume * 4u;
+		m_nDefaultGlobalVolume = std::min<uint8>(fileHeader.globalVolume, 64) * 4u;
 
 	// Setting up channels
 	for(CHANNELINDEX chn = 0; chn < 4; chn++)
