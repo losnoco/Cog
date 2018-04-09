@@ -473,7 +473,7 @@
 #endif // arch
 #endif // ENABLE_ASM
 
-#if defined(MPT_WITH_MPG123) && defined(MPT_BUILD_MSVC) && defined(MPT_BUILD_MSVC_STATIC) && !MPT_OS_WINDOWS_WINRT
+#if defined(MPT_WITH_MPG123) && defined(MPT_BUILD_MSVC) && defined(MPT_BUILD_MSVC_STATIC) && !defined(LIBOPENMPT_NODELAYLOAD) && !MPT_OS_WINDOWS_WINRT
 #define MPT_ENABLE_MPG123_DELAYLOAD
 #endif
 

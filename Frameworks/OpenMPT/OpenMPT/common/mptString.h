@@ -559,25 +559,33 @@ private:
 	
 	static mpt::ustring From8bit(const std::string &str)
 	{
-		if(charset == mpt::CharsetUTF8)
-		{
-			return mpt::ToUnicode(mpt::CharsetUTF8, str);
-		}
-		// auto utf8 detection
-		if(tryUTF8 && mpt::IsUTF8(str))
+		MPT_CONSTANT_IF(charset == mpt::CharsetUTF8)
 		{
 			return mpt::ToUnicode(mpt::CharsetUTF8, str);
 		} else
 		{
-			return mpt::ToUnicode(charset, str);
+			// auto utf8 detection
+			MPT_CONSTANT_IF(tryUTF8)
+			{
+				if(mpt::IsUTF8(str))
+				{
+					return mpt::ToUnicode(mpt::CharsetUTF8, str);
+				} else
+				{
+					return mpt::ToUnicode(charset, str);
+				}
+			} else
+			{
+				return mpt::ToUnicode(charset, str);
+			}
 		}
 	}
 
 public:
 
 	// 8 bit
-	BasicAnyString(const char *str) : mpt::ustring(str ? mpt::ToUnicode(charset, str) : mpt::ustring()) { }
-	BasicAnyString(const std::string str) : mpt::ustring(mpt::ToUnicode(charset, str)) { }
+	BasicAnyString(const char *str) : mpt::ustring(From8bit(str ? str : std::string())) { }
+	BasicAnyString(const std::string str) : mpt::ustring(From8bit(str)) { }
 
 	// unicode
 	BasicAnyString(const mpt::ustring &str) : mpt::ustring(str) { }

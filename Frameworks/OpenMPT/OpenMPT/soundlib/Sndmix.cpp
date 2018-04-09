@@ -1452,12 +1452,14 @@ void CSoundFile::ProcessArpeggio(CHANNELINDEX nChn, int &period, Tuning::NOTEIND
 
 				// TODO other likely formats for MOD case: MED, OKT, etc
 				uint8 note = (GetType() != MOD_TYPE_MOD) ? pChn->nNote : static_cast<uint8>(GetNoteFromPeriod(period, pChn->nFineTune, pChn->nC5Speed));
+				if(GetType() & (MOD_TYPE_DBM | MOD_TYPE_DIGI))
+					tick += 2;
 				switch(tick % 3)
 				{
 				case 1: note += (pChn->nArpeggio >> 4); break;
 				case 2: note += (pChn->nArpeggio & 0x0F); break;
 				}
-				if(note != pChn->nNote || GetType() == MOD_TYPE_STM || m_playBehaviour[KST3PortaAfterArpeggio])
+				if(note != pChn->nNote || (GetType() & (MOD_TYPE_DBM | MOD_TYPE_DIGI | MOD_TYPE_STM)) || m_playBehaviour[KST3PortaAfterArpeggio])
 				{
 					if(m_SongFlags[SONG_PT_MODE])
 					{
@@ -1474,7 +1476,7 @@ void CSoundFile::ProcessArpeggio(CHANNELINDEX nChn, int &period, Tuning::NOTEIND
 					}
 					period = GetPeriodFromNote(note, pChn->nFineTune, pChn->nC5Speed);
 
-					if(GetType() & (MOD_TYPE_STM | MOD_TYPE_PSM))
+					if(GetType() & (MOD_TYPE_DBM | MOD_TYPE_DIGI | MOD_TYPE_PSM | MOD_TYPE_STM))
 					{
 						// The arpeggio note offset remains effective after the end of the current row in ScreamTracker 2.
 						// This fixes the flute lead in MORPH.STM by Skaven, pattern 27.

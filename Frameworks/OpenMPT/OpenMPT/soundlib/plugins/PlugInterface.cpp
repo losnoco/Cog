@@ -651,7 +651,7 @@ bool IMixPlugin::SaveProgram()
 		defaultDir = m_Factory.dllPath.GetPath();
 	}
 
-	CString progName = GetCurrentProgramName();
+	CString progName = m_Factory.libraryName.ToCString() + _T(" - ") + GetCurrentProgramName();
 	SanitizeFilename(progName);
 
 	FileDialog dlg = SaveFileDialog()
@@ -928,7 +928,7 @@ void IMidiPlugin::MidiCommand(uint8 nMidiCh, uint8 nMidiProg, uint16 wMidiBank, 
 		// Problem: if a note dies out naturally and we never send a note off, this counter
 		// will block at max until note off. Is this a problem?
 		// Safe to assume we won't need more than 16 note offs max on a given note?
-		if(channel.noteOnMap[note][trackChannel] < 17)
+		if(channel.noteOnMap[note][trackChannel] < uint8_max)
 			channel.noteOnMap[note][trackChannel]++;
 
 		MidiSend(MIDIEvents::NoteOn(nMidiCh, static_cast<uint8>(note), volume));

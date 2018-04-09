@@ -720,8 +720,13 @@ static void C_StereoFill(mixsample_t *pBuffer, uint32 nSamples, mixsample_t &rof
 	{
 #ifdef MPT_INTMIXER
 		// Equivalent to int x_r = (rofs + (rofs > 0 ? 255 : -255)) / 256;
+#if MPT_COMPILER_SHIFT_SIGNED
 		const mixsample_t x_r = (rofs + (((-rofs) >> (sizeof(mixsample_t) * 8 - 1)) & OFSDECAYMASK)) >> OFSDECAYSHIFT;
 		const mixsample_t x_l = (lofs + (((-lofs) >> (sizeof(mixsample_t) * 8 - 1)) & OFSDECAYMASK)) >> OFSDECAYSHIFT;
+#else
+		const mixsample_t x_r = mpt::rshift_signed(rofs + (mpt::rshift_signed(-rofs, sizeof(int) * 8 - 1) & OFSDECAYMASK), OFSDECAYSHIFT);
+		const mixsample_t x_l = mpt::rshift_signed(lofs + (mpt::rshift_signed(-lofs, sizeof(int) * 8 - 1) & OFSDECAYMASK), OFSDECAYSHIFT);
+#endif
 #else
 		const mixsample_t x_r = rofs * (1.0f / (1 << OFSDECAYSHIFT));
 		const mixsample_t x_l = lofs * (1.0f / (1 << OFSDECAYSHIFT));
@@ -803,8 +808,13 @@ static void C_EndChannelOfs(ModChannel &chn, mixsample_t *pBuffer, uint32 nSampl
 	for (uint32 i=0; i<nSamples; i++)
 	{
 #ifdef MPT_INTMIXER
+#if MPT_COMPILER_SHIFT_SIGNED
 		const mixsample_t x_r = (rofs + (((-rofs) >> (sizeof(mixsample_t) * 8 - 1)) & OFSDECAYMASK)) >> OFSDECAYSHIFT;
 		const mixsample_t x_l = (lofs + (((-lofs) >> (sizeof(mixsample_t) * 8 - 1)) & OFSDECAYMASK)) >> OFSDECAYSHIFT;
+#else
+		const mixsample_t x_r = mpt::rshift_signed(rofs + (mpt::rshift_signed(-rofs, sizeof(int) * 8 - 1) & OFSDECAYMASK), OFSDECAYSHIFT);
+		const mixsample_t x_l = mpt::rshift_signed(lofs + (mpt::rshift_signed(-lofs, sizeof(int) * 8 - 1) & OFSDECAYMASK), OFSDECAYSHIFT);
+#endif
 #else
 		const mixsample_t x_r = rofs * (1.0f / (1 << OFSDECAYSHIFT));
 		const mixsample_t x_l = lofs * (1.0f / (1 << OFSDECAYSHIFT));

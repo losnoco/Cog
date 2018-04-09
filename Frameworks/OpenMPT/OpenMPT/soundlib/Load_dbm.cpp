@@ -133,8 +133,8 @@ static const ModCommand::COMMAND dbmEffects[] =
 	CMD_VIBRATO, CMD_TONEPORTAVOL, CMD_VIBRATOVOL, CMD_TREMOLO,
 	CMD_PANNING8, CMD_OFFSET, CMD_VOLUMESLIDE, CMD_POSITIONJUMP,
 	CMD_VOLUME, CMD_PATTERNBREAK, CMD_MODCMDEX, CMD_TEMPO,
-	CMD_GLOBALVOLUME, CMD_GLOBALVOLSLIDE, CMD_KEYOFF, CMD_SETENVPOSITION,
-	CMD_CHANNELVOLUME, CMD_CHANNELVOLSLIDE, CMD_NONE, CMD_NONE,
+	CMD_GLOBALVOLUME, CMD_GLOBALVOLSLIDE, CMD_NONE, CMD_NONE,
+	CMD_KEYOFF, CMD_SETENVPOSITION, CMD_NONE, CMD_NONE,
 	CMD_NONE, CMD_PANNINGSLIDE, CMD_NONE, CMD_NONE,
 	CMD_NONE, CMD_NONE, CMD_NONE,
 #ifndef NO_PLUGINS
@@ -215,11 +215,11 @@ static void ConvertDBMEffect(uint8 &command, uint8 &param)
 				param = (param == 0x50) ? 0x00 : 0x40;
 			}
 			break;
-		case 0x60:	// set loop begin / loop
-			// TODO
+		case 0x60:	// Pattern loop
 			break;
-		case 0x70:	// set offset
-			// TODO
+		case 0x70:	// Coarse offset
+			command = CMD_S3MCMDEX;
+			param = 0xA0 | (param & 0x0F);
 			break;
 		default:
 			// Rest will be converted later from CMD_MODCMDEX to CMD_S3MCMDEX.
@@ -355,6 +355,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 	m_madeWithTracker = mpt::format(MPT_USTRING("DigiBooster Pro %1.%2"))(mpt::ufmt::hex(fileHeader.trkVerHi), mpt::ufmt::hex(fileHeader.trkVerLo));
 	m_playBehaviour.set(kSlidesAtSpeed1);
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
+	m_playBehaviour.reset(kITArpeggio);
 
 	// Name chunk
 	FileReader nameChunk = chunks.GetChunk(DBMChunk::idNAME);
@@ -493,7 +494,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 					continue;
 				}
 
-				ModCommand dummy;
+				ModCommand dummy = ModCommand::Empty();
 				ModCommand &m = ch <= GetNumChannels() ? patRow[ch - 1] : dummy;
 
 				const uint8 b = chunk.ReadUint8();
@@ -668,7 +669,8 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			ModSample &srcSample = Samples[0];
 			const int8 *smpData = srcSample.pSample8;
-			uint32 predelay = Util::muldiv_unsigned(20116, srcSample.nC5Speed, 100000);
+			SmpLength predelay = Util::muldiv_unsigned(20116, srcSample.nC5Speed, 100000);
+			LimitMax(predelay, srcSample.nLength);
 			smpData += predelay * srcSample.GetBytesPerSample();
 			srcSample.nLength -= predelay;
 
@@ -683,7 +685,8 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 					memcpy(sample.pSample, smpData, sample.GetSampleSizeInBytes());
 					smpData += sample.GetSampleSizeInBytes();
 					srcSample.nLength -= sample.nLength;
-					uint32 gap = Util::muldiv_unsigned(454, srcSample.nC5Speed, 10000);
+					SmpLength gap = Util::muldiv_unsigned(454, srcSample.nC5Speed, 10000);
+					LimitMax(gap, srcSample.nLength);
 					smpData += gap * srcSample.GetBytesPerSample();
 					srcSample.nLength -= gap;
 				}

@@ -163,6 +163,7 @@ struct self_xmplay_t {
 	std::size_t num_channels;
 	xmp_openmpt_settings settings;
 	openmpt::module_ext * mod;
+	bool set_format_called;
 	openmpt::ext::pattern_vis * pattern_vis;
 	std::int32_t tempo_factor, pitch_factor;
 	bool single_subsong_mode;
@@ -171,6 +172,7 @@ struct self_xmplay_t {
 		, num_channels(2)
 		, settings()
 		, mod(0)
+		, set_format_called(false)
 		, pattern_vis(0)
 		, tempo_factor(0)
 		, pitch_factor(0)
@@ -179,11 +181,13 @@ struct self_xmplay_t {
 		settings.changed = apply_and_save_options;
 	}
 	void on_new_mod() {
+		set_format_called = false;
 		self->pattern_vis = static_cast<openmpt::ext::pattern_vis *>( self->mod->get_interface( openmpt::ext::pattern_vis_id ) );
 	}
 	void delete_mod() {
 		if ( mod ) {
 			pattern_vis = 0;
+			set_format_called = false;
 			delete mod;
 			mod = 0;
 		}
@@ -310,6 +314,12 @@ static void save_settings_to_xml( std::string & xml, const libopenmpt::plugin::s
 
 static void apply_options() {
 	if ( self->mod ) {
+		if ( !self->set_format_called ) {
+			// SetFormat will only be called once after loading a file.
+			// We cannot apply samplerate or numchannels changes afterwards during playback.
+			self->samplerate = self->settings.samplerate;
+			self->num_channels = self->settings.channels;
+		}
 		self->mod->set_repeat_count( self->settings.repeatcount );
 		self->mod->set_render_param( openmpt::module::RENDER_MASTERGAIN_MILLIBEL, self->settings.mastergain_millibel );
 		self->mod->set_render_param( openmpt::module::RENDER_STEREOSEPARATION_PERCENT, self->settings.stereoseparation );
@@ -893,8 +903,6 @@ static DWORD WINAPI openmpt_Open( const char * filename, XMPFILE file ) {
 		clear_current_timeinfo();
 		reset_timeinfos();
 		apply_options();
-		self->samplerate = self->settings.samplerate;
-		self->num_channels = self->settings.channels;
 
 		std::int32_t num_subsongs = self->mod->get_num_subsongs();
 		self->subsong_lengths.resize( num_subsongs );
@@ -926,6 +934,9 @@ static void WINAPI openmpt_SetFormat( XMPFORMAT * form ) {
 	if ( !form ) {
 		return;
 	}
+	// SetFormat will only be called once after loading a file.
+	// We cannot apply samplerate or numchannels changes afterwards during playback.
+	self->set_format_called = true;
 	if ( !self->mod ) {
 		form->rate = 0;
 		form->chan = 0;

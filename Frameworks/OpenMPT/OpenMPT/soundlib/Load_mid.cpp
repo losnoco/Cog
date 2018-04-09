@@ -1083,7 +1083,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 									chn = 9;
 								else if(chn < 10)
 									chn--;
-								drumChns.set(chn, xg[6] != 0);
+								drumChns.set(chn, xg[7] != 0);
 							}
 						}
 					}

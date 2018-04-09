@@ -138,9 +138,9 @@ struct IMFInstrument
 		if(mptIns.PitchEnv.dwFlags[ENV_ENABLED])
 			mptIns.PitchEnv.dwFlags.set(ENV_FILTER);
 
-		// hack to get === to stop notes (from modplug's xm loader)
+		// hack to get === to stop notes
 		if(!mptIns.VolEnv.dwFlags[ENV_ENABLED] && !mptIns.nFadeOut)
-			mptIns.nFadeOut = 8192;
+			mptIns.nFadeOut = 32767;
 	}
 };
 
@@ -284,7 +284,7 @@ static void ImportIMFEffect(ModCommand &m)
 			m.param |= 0xE0;
 		break;
 	case 0x16: // cutoff
-		m.param >>= 1;
+		m.param = (0xFF - m.param) / 2u;
 		break;
 	case 0x1F: // set global volume
 		m.param = MIN(m.param << 1, 0xFF);
@@ -361,9 +361,9 @@ static bool ValidateHeader(const IMFFileHeader &fileHeader)
 		return false;
 	}
 	bool channelFound = false;
-	for(uint8 chn = 0; chn < 32; chn++)
+	for(const auto &chn : fileHeader.channels)
 	{
-		switch(fileHeader.channels[chn].status)
+		switch(chn.status)
 		{
 		case 0: // enabled; don't worry about it
 			channelFound = true;

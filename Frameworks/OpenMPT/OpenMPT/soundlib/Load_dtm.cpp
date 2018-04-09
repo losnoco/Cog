@@ -102,6 +102,7 @@ struct DTMSample
 		if(formatVersion == DTM_206_PATTERN_FORMAT && transpose > 0 && transpose != 48)
 		{
 			// Digital Home Studio applies this unconditionally, but some old songs sound wrong then (delirium.dtm).
+			// Digital Tracker 2.03 ignores the setting.
 			// Maybe this should not be applied for "real" Digital Tracker modules?
 			transposeAmount += (48 - transpose) * 128;
 		}
@@ -292,7 +293,13 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 			ChnSettings[chn].nPan = static_cast<uint16>(128 + Util::muldivr(std::min<int>(panning[chn], 180) - 90, 128, 90));
 		}
 
-		chunk.Skip(146);
+		chunk.Skip(16);
+		// Chunk ends here for old DTM modules
+		if(chunk.CanRead(2))
+		{
+			m_nDefaultGlobalVolume = std::min<uint32>(chunk.ReadUint16BE(), MAX_GLOBAL_VOLUME);
+		}
+		chunk.Skip(128);
 		uint16be volume[32];
 		if(chunk.ReadArray(volume))
 		{
@@ -356,9 +363,10 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 				chunk.ReadStruct(instr);
 				if(instr.insNum < GetNumInstruments())
 				{
-					Samples[instr.insNum + 1].nVibDepth = instr.vibDepth;
-					Samples[instr.insNum + 1].nVibRate = instr.vibRate;
-					Samples[instr.insNum + 1].nVibSweep = 255;
+					ModSample &sample = Samples[instr.insNum + 1];
+					sample.nVibDepth = instr.vibDepth;
+					sample.nVibRate = instr.vibRate;
+					sample.nVibSweep = 255;
 
 					ModInstrument *mptIns = AllocateInstrument(instr.insNum + 1, instr.insNum + 1);
 					if(mptIns != nullptr)
@@ -463,6 +471,8 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 #ifdef MODPLUG_TRACKER
 						m->Convert(MOD_TYPE_MOD, MOD_TYPE_IT, *this);
 #endif
+						// G is 8-bit volume
+						// P is tremor (need to disable oldfx)
 					}
 					if(data[5] & 0x80)
 						tick += (data[5] & 0x7F) * 0x100 + rowChunk.ReadUint8();
@@ -562,12 +572,12 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 	// Read sample data
 	for(auto &chunk : chunks.GetAllChunks(DTMChunk::idDAIT))
 	{
-		PATTERNINDEX smp = chunk.ReadUint16BE() + 1;
-		if(smp == 0 || smp > GetNumSamples() || !(loadFlags & loadSampleData))
+		SAMPLEINDEX smp = chunk.ReadUint16BE();
+		if(smp >= GetNumSamples() || !(loadFlags & loadSampleData))
 		{
 			continue;
 		}
-		ModSample &mptSmp = Samples[smp];
+		ModSample &mptSmp = Samples[smp + 1];
 		SampleIO(
 			mptSmp.uFlags[CHN_16BIT] ? SampleIO::_16bit : SampleIO::_8bit,
 			mptSmp.uFlags[CHN_STEREO] ? SampleIO::stereoInterleaved: SampleIO::mono,

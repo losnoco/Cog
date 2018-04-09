@@ -42,7 +42,7 @@
 #endif
 #include <math.h>
 
-#ifndef __int8_t_defined
+#if !defined(__int8_t_defined) && !defined(_INT8_T_DECLARED) /* OpenMPT */
     #define __int8_t_defined
     typedef unsigned char  uint8_t;
     typedef   signed char   int8_t;

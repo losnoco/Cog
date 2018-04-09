@@ -40,10 +40,20 @@ uint8 CSoundFile::FrequencyToCutOff(double frequency) const
 uint32 CSoundFile::CutOffToFrequency(uint32 nCutOff, int flt_modifier) const
 {
 	MPT_ASSERT(nCutOff < 128);
-	float Fc = 110.0f * std::pow(2.0f, 0.25f + ((float)(nCutOff * (flt_modifier + 256))) / (m_SongFlags[SONG_EXFILTERRANGE] ? 20.0f * 512.0f : 24.0f * 512.0f));
+	float computedCutoff = static_cast<float>(nCutOff * (flt_modifier + 256));	// 0...127*512
+	float Fc;
+	if(GetType() != MOD_TYPE_IMF)
+	{
+		Fc = 110.0f * std::pow(2.0f, 0.25f + computedCutoff / (m_SongFlags[SONG_EXFILTERRANGE] ? 20.0f * 512.0f : 24.0f * 512.0f));
+	} else
+	{
+		// EMU8000: Documentation says the cutoff is in quarter semitones, with 0x00 being 125 Hz and 0xFF being 8 kHz
+		// The first half of the sentence contradicts the second, though.
+		Fc = 125.0f * std::pow(2.0f, computedCutoff * 6.0f / (127.0f * 512.0f));
+	}
 	int freq = Util::Round<int>(Fc);
 	Limit(freq, 120, 20000);
-	if (freq * 2 > (int)m_MixerSettings.gdwMixingFreq) freq = m_MixerSettings.gdwMixingFreq / 2;
+	if(freq * 2 > (int)m_MixerSettings.gdwMixingFreq) freq = m_MixerSettings.gdwMixingFreq / 2;
 	return static_cast<uint32>(freq);
 }
 

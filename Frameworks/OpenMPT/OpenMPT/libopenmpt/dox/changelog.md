@@ -5,6 +5,39 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.3.8 (2018-04-08)
+
+ *  [**Sec**] Possible out-of-bounds memory read with IT / ITP / MO3 files
+    containing pattern loops (r10028).
+
+ *  Keep track of active SFx macro during seeking.
+ *  The "note cut" duplicate note action did not volume-ramp the previously
+    playing sample.
+ *  A song starting with non-existing patterns could not be played.
+ *  DSM: Support restart position and 16-bit samples.
+ *  DTM: Import global volume.
+
+### libopenmpt 0.3.7 (2018-03-11)
+
+ *  [**Bug**] libopenmpt did not build with NDK r13b on armeabi due to missing
+    `-latomic`.
+ *  [**Bug**] xmp-openmpt: Sample rate and number of output channels were not
+    applied correctly when using per-file settings.
+
+ *  [**Change**] foo_openmpt: foo_openmpt is now packaged as a fb2k-component
+    package for easier installation.
+
+ *  IT: More accurate song length calculation for pattern loops that have no
+    start command and are following another pattern loop.
+ *  IMF: Filter cutoff was upside down and the cutoff range was too small.
+ *  MED: Correctly import patterns with less channels than the maximum used
+    amount. Import "STP" note stop command.
+ *  DBM: Key Off and Set Envelope Position were imported incorrectly.
+    High sample offset (E7x) is now supported.
+ *  DIGI / DBM: Arpeggio should not return to base note at end of row.
+ *  Some filter changes through MIDI macros were not applied if the note volume
+    was set to 0 on the same row.
+
 ### libopenmpt 0.3.6 (2018-02-03)
 
  *  [**Sec**] Possible out-of-bounds memory read with malformed STP files.

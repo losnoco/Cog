@@ -675,12 +675,7 @@ struct Convert<int64, float32>
 	{
 		Limit(val, -1.0f, 1.0f);
 		val *= static_cast<float>(uint64(1)<<63);
-#if MPT_SC_AVOID_FLOOR
-		// MSVC with x87 floating point math calls floor for the more intuitive version
-		return mpt::saturate_cast<int64>(MPT_SC_RSHIFT_SIGNED(static_cast<int64>(val * 2.0f + 1.0f), 1));
-#else
-		return mpt::saturate_cast<int32>(static_cast<int64>(std::floor(val + 0.5f)));
-#endif
+		return mpt::saturate_cast<int64>(std::floor(val + 0.5f));
 	}
 };
 
@@ -693,12 +688,7 @@ struct Convert<int64, double>
 	{
 		Limit(val, -1.0, 1.0);
 		val *= static_cast<double>(uint64(1)<<63);
-#if MPT_SC_AVOID_FLOOR
-		// MSVC with x87 floating point math calls floor for the more intuitive version
-		return mpt::saturate_cast<int64>(MPT_SC_RSHIFT_SIGNED(static_cast<int64>(val * 2.0 + 1.0), 1));
-#else
-		return mpt::saturate_cast<int32>(static_cast<int64>(std::floor(val + 0.5)));
-#endif
+		return mpt::saturate_cast<int64>(std::floor(val + 0.5));
 	}
 };
 

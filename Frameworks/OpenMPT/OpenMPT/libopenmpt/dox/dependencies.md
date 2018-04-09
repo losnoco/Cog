@@ -38,6 +38,7 @@ Dependencies
         particular:
          *  `char` can be `signed` or `unsigned`
          *  shifting signed values is implementation defined
+         *  `signed` integer overflow is undefined
          *  `float` and `double` can be non-IEEE754
 
  *  Required compilers to use libopenmpt:

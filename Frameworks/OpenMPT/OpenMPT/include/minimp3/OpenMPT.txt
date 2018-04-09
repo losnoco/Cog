@@ -4,6 +4,7 @@ The following changes have been made:
 - mp3_create() declaration has been fixed.
 - GET_DATA() has been rewritten to avoid unaligned access warnings.
 - Signed/unsigned comparison warnings have been fixed.
+- Detection of stdint types has been fixed to work on *BSD.
 - Modifications have been marked with // OpenMPT
 - Obviously, unnecessary folders and files have been removed.
 - For building, premake is used to generate Visual Studio project files.

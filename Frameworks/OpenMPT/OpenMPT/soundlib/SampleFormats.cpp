@@ -1243,6 +1243,8 @@ struct SFZEnvelope
 		env.nSustainStart = env.nSustainEnd = static_cast<uint8>(env.size() - 1);
 		if(sustainLevel != 0)
 		{
+			if(envType == ENV_VOLUME && env.nSustainEnd > 0)
+				env.nReleaseNode = env.nSustainEnd;
 			env.push_back(env.back().tick + ToTicks(release, tickDuration), ToValue(0, envType));
 			env.dwFlags.set(ENV_SUSTAIN);
 		}
@@ -1269,7 +1271,7 @@ struct SFZRegion
 		kAlternate,
 	};
 
-	std::string filename;
+	std::string filename, name;
 	SFZEnvelope ampEnv, pitchEnv, filterEnv;
 	SmpLength loopStart = 0, loopEnd = 0;
 	SmpLength end = MAX_SAMPLE_LENGTH, offset = 0;
@@ -1355,6 +1357,8 @@ struct SFZRegion
 	{
 		if(key == "sample")
 			filename = control.defaultPath + value;
+		else if(key == "region_label")
+			name = value;
 		else if(key == "lokey")
 			keyLo = ReadKey(value, control);
 		else if(key == "hikey")
@@ -1446,7 +1450,7 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 {
 	file.Rewind();
 
-	enum { kNone, kGlobal, kMaster, kGroup, kRegion, kControl, kUnknown } section = kNone;
+	enum { kNone, kGlobal, kMaster, kGroup, kRegion, kControl, kCurve, kUnknown } section = kNone;
 	SFZControl control;
 	SFZRegion group, master, globals;
 	std::vector<SFZRegion> regions;
@@ -1524,6 +1528,9 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 				} else if(sec == "control")
 				{
 					section = kControl;
+				} else if(sec == "curve")
+				{
+					section = kCurve;
 				}
 				charsRead++;
 			} else if(s.substr(0, 8) == "#define " || s.substr(0, 8) == "#define\t")
@@ -1560,7 +1567,7 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 				auto keyEnd = s.find_first_of(" \t=");
 				auto valueStart = s.find_first_not_of(" \t=", keyEnd);
 				std::string key = mpt::ToLowerCaseAscii(s.substr(0, keyEnd));
-				if(key == "sample" || key == "default_path" || key.substr(0, 8) == "label_cc")
+				if(key == "sample" || key == "default_path" || key.substr(0, 8) == "label_cc" || key.substr(0, 12) == "region_label")
 				{
 					// Sample / CC name may contain spaces...
 					charsRead = s.find_first_of("=\t<", valueStart);
@@ -1655,6 +1662,10 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 				AddToLog(LogWarning, MPT_USTRING("Unable to load sample: ") + filename.ToUnicode());
 				prevSmp--;
 				continue;
+			}
+			if(!region.name.empty())
+			{
+				mpt::String::Copy(m_szNames[smp], region.name);
 			}
 			if(!m_szNames[smp][0])
 			{
