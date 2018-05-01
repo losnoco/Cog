@@ -179,7 +179,7 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 		if(sampleHeader.zero != 0 && sampleHeader.zero != 46)	// putup10.stm has zero = 46
 			return false;
 		sampleHeader.ConvertToMPT(Samples[smp]);
-		mpt::String::Read<mpt::String::nullTerminated>(m_szNames[smp], sampleHeader.filename);
+		mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[smp], sampleHeader.filename);
 		sampleOffsets[smp - 1] = sampleHeader.offset;
 	}
 
@@ -212,7 +212,7 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 		ORDERINDEX breakPos = ORDERINDEX_INVALID;
 		ROWINDEX breakRow = 63;	// Candidate row for inserting pattern break
 	
-		for(int i = 0; i < 64 * 4; i++, m++)
+		for(unsigned int i = 0; i < 64 * 4; i++, m++)
 		{
 			uint8 note = file.ReadUint8(), insvol, volcmd, cmdinf;
 			switch(note)
@@ -226,9 +226,13 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 				m->note = NOTE_NOTECUT;
 				continue;
 			default:
-				insvol = file.ReadUint8();
-				volcmd = file.ReadUint8();
-				cmdinf = file.ReadUint8();
+				{
+				uint8 patData[3];
+				file.ReadArray(patData);
+				insvol = patData[0];
+				volcmd = patData[1];
+				cmdinf = patData[2];
+				}
 				break;
 			}
 
@@ -266,16 +270,22 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 			{
 			case CMD_VOLUMESLIDE:
 				// Lower nibble always has precedence, and there are no fine slides.
-				if(m->param & 0x0F) m->param &= 0x0F;
-				else m->param &= 0xF0;
+				if(m->param & 0x0F)
+					m->param &= 0x0F;
+				else
+					m->param &= 0xF0;
 				break;
 
 			case CMD_PATTERNBREAK:
 				m->param = (m->param & 0xF0) * 10 + (m->param & 0x0F);
-				if(breakRow > m->param)
+				if(breakPos != ORDERINDEX_INVALID && m->param == 0)
 				{
-					breakRow = m->param;
+					// Merge Bxx + C00 into just Bxx
+					m->command = CMD_POSITIONJUMP;
+					m->param = static_cast<ModCommand::PARAM>(breakPos);
+					breakPos = ORDERINDEX_INVALID;
 				}
+				LimitMax(breakRow, i / 4u);
 				break;
 
 			case CMD_POSITIONJUMP:

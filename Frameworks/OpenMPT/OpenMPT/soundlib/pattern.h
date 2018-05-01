@@ -133,7 +133,7 @@ public:
 	const_iterator end() const { return m_ModCommands.end(); }
 	const_iterator cend() const { return m_ModCommands.cend(); }
 
-	CPattern(CPatternContainer& patCont) : m_ModCommands(0), m_Rows(64), m_RowsPerBeat(0), m_RowsPerMeasure(0), m_rPatternContainer(patCont) {};
+	CPattern(CPatternContainer& patCont) : m_rPatternContainer(patCont) {};
 	CPattern(const CPattern &) = default;
 	CPattern(CPattern &&) noexcept = default;
 
@@ -148,9 +148,9 @@ protected:
 //BEGIN: DATA
 protected:
 	std::vector<ModCommand> m_ModCommands;
-	ROWINDEX m_Rows;
-	ROWINDEX m_RowsPerBeat;		// patterns-specific time signature. if != 0, this is implicitely set.
-	ROWINDEX m_RowsPerMeasure;	// ditto
+	ROWINDEX m_Rows = 0;
+	ROWINDEX m_RowsPerBeat = 0;    // patterns-specific time signature. if != 0, this is implicitely set.
+	ROWINDEX m_RowsPerMeasure = 0; // ditto
 	TempoSwing m_tempoSwing;
 	std::string m_PatternName;
 	CPatternContainer& m_rPatternContainer;

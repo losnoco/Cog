@@ -85,6 +85,17 @@ struct UltSample
 MPT_BINARY_STRUCT(UltSample, 66)
 
 
+struct UltPatternCommand
+{
+	uint8 instr;
+	uint8 cmd;
+	uint8 param1;
+	uint8 param2;
+};
+
+MPT_BINARY_STRUCT(UltPatternCommand, 4)
+
+
 /* Unhandled effects:
 5x1 - do not loop sample (x is unused)
 9xx - set sample offset to xx * 1024
@@ -215,13 +226,14 @@ static int ReadULTEvent(ModCommand &m, FileReader &file, uint8 version)
 		b = file.ReadUint8();
 	}
 
-	m.note = (b > 0 && b < 61) ? b + 36 : NOTE_NONE;
-	m.instr = file.ReadUint8();
-	b = file.ReadUint8();
-	cmd1 = b & 0x0F;
-	cmd2 = b >> 4;
-	param1 = file.ReadUint8();
-	param2 = file.ReadUint8();
+	m.note = (b > 0 && b < 61) ? (b + 35 + NOTE_MIN) : NOTE_NONE;
+	UltPatternCommand patCmd;
+	file.ReadStruct(patCmd);
+	m.instr = patCmd.instr;
+	cmd1 = patCmd.cmd & 0x0F;
+	cmd2 = patCmd.cmd >> 4;
+	param1 = patCmd.param1;
+	param2 = patCmd.param2;
 	TranslateULTCommands(cmd1, param1, version);
 	TranslateULTCommands(cmd2, param2, version);
 
@@ -295,7 +307,7 @@ struct PostFixUltCommands
 		// Apply porta?
 		if(m.note == NOTE_NONE && isPortaActive[curChannel])
 		{
-			if(m.command == CMD_NONE && m.vol != VOLCMD_TONEPORTAMENTO)
+			if(m.command == CMD_NONE && m.volcmd != VOLCMD_TONEPORTAMENTO)
 			{
 				m.command = CMD_TONEPORTAMENTO;
 				m.param = 0;
@@ -345,6 +357,10 @@ static bool ValidateHeader(const UltFileHeader &fileHeader)
 	return true;
 }
 
+static uint64 GetHeaderMinimumAdditionalSize(const UltFileHeader &fileHeader)
+{
+	return fileHeader.messageLength * 32u;
+}
 
 CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderULT(MemoryFileReader file, const uint64 *pfilesize)
 {
@@ -357,8 +373,7 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderULT(MemoryFileReader file, co
 	{
 		return ProbeFailure;
 	}
-	MPT_UNREFERENCED_PARAMETER(pfilesize);
-	return ProbeSuccess;
+	return ProbeAdditionalSize(file, pfilesize, GetHeaderMinimumAdditionalSize(fileHeader));
 }
 
 
@@ -378,6 +393,10 @@ bool CSoundFile::ReadUlt(FileReader &file, ModLoadingFlags loadFlags)
 	if(loadFlags == onlyVerifyHeader)
 	{
 		return true;
+	}
+	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	{
+		return false;
 	}
 
 	InitializeGlobals(MOD_TYPE_ULT);
@@ -442,12 +461,9 @@ bool CSoundFile::ReadUlt(FileReader &file, ModLoadingFlags loadFlags)
 	for(CHANNELINDEX chn = 0; chn < m_nChannels; chn++)
 	{
 		ModCommand evnote;
-		ModCommand *note;
-		evnote.Clear();
-
-		for(PATTERNINDEX pat = 0; pat < numPats; pat++)
+		for(PATTERNINDEX pat = 0; pat < numPats && file.CanRead(5); pat++)
 		{
-			note = Patterns[pat].GetpModCommand(0, chn);
+			ModCommand *note = Patterns[pat].GetpModCommand(0, chn);
 			ROWINDEX row = 0;
 			while(row < 64)
 			{

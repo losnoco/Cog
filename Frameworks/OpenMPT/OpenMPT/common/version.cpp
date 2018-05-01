@@ -629,6 +629,13 @@ mpt::ustring GetFullCreditsString()
 		"http://www.hermannseib.com/english/vsthost.htm\n"
 		"\n"
 #endif
+		"Storlek for all the IT compatibility hints and testcases\n"
+		"as well as the IMF, MDL, OKT and ULT loaders\n"
+		"http://schismtracker.org/\n"
+		"\n"
+		"Sergei \"x0r\" Kolzun for various hints on Scream Tracker 2 compatibility\n"
+		"https://github.com/viiri/st2play\n"
+		"\n"
 		"Laurent Cl\xc3\xA9vy for unofficial MO3 documentation and decompression code\n"
 		"https://github.com/lclevy/unmo3\n"
 		"\n"
@@ -716,10 +723,6 @@ mpt::ustring GetFullCreditsString()
 		"https://github.com/kazuho/picojson\n"
 		"\n"
 #endif
-		"Storlek for all the IT compatibility hints and testcases\n"
-		"as well as the IMF, MDL, OKT and ULT loaders\n"
-		"http://schismtracker.org/\n"
-		"\n"
 #ifdef MODPLUG_TRACKER
 		"Lennart Poettering and David Henningsson for RealtimeKit\n"
 		"http://git.0pointer.net/rtkit.git/\n"

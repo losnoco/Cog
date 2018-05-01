@@ -290,7 +290,7 @@ static void load_settings_from_map( libopenmpt::plugin::settings & s, const std:
 
 static void load_settings_from_xml( libopenmpt::plugin::settings & s, const std::string & xml ) {
 	pugi::xml_document doc;
-	doc.load( xml.c_str() );
+	doc.load_string( xml.c_str() );
 	pugi::xml_node settings_node = doc.child( "settings" );
 	std::map<std::string,int> map;
 	for ( pugi::xml_attribute_iterator it = settings_node.attributes_begin(); it != settings_node.attributes_end(); ++it ) {
