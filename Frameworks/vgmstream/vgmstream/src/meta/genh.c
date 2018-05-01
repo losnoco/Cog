@@ -157,6 +157,8 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
                         coding = coding_DVI_IMA_int;
                     if (coding == coding_IMA)
                         coding = coding_IMA_int;
+                    if (coding == coding_AICA)
+                        coding = coding_AICA_int;
                 }
 
                 /* to avoid endless loops */
@@ -173,7 +175,7 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
             }
 
             /* setup adpcm */
-            if (coding == coding_AICA) {
+            if (coding == coding_AICA || coding == coding_AICA_int) {
                 int i;
                 for (i=0;i<vgmstream->channels;i++) {
                     vgmstream->ch[i].adpcm_step_index = 0x7f;
@@ -195,7 +197,15 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
             vgmstream->layout_type = layout_none;
             break;
         case coding_XBOX_IMA:
-            vgmstream->layout_type = layout_none;
+            if (genh.codec_mode == 1) {
+                if (!genh.interleave) goto fail; /* creates garbage */
+                coding = coding_XBOX_IMA_int;
+                vgmstream->layout_type = layout_interleave;
+                vgmstream->interleave_block_size = genh.interleave;
+            }
+            else {
+                vgmstream->layout_type = layout_none;
+            }
             break;
         case coding_NGC_DTK:
             if (vgmstream->channels != 2) goto fail;
@@ -367,13 +377,15 @@ static int parse_genh(STREAMFILE * streamFile, genh_header * genh) {
     genh->num_samples = read_32bitLE(0x40,streamFile);
     genh->skip_samples = read_32bitLE(0x44,streamFile); /* for FFmpeg based codecs */
     genh->skip_samples_mode = read_8bit(0x48,streamFile); /* 0=autodetect, 1=force manual value @ 0x44 */
-    if (genh->codec == ATRAC3 || genh->codec == ATRAC3PLUS)
-        genh->codec_mode = read_8bit(0x49,streamFile); /* 0=autodetect, 1=force joint stereo, 2=force full stereo */
-    if (genh->codec == XMA1 || genh->codec == XMA2)
-        genh->codec_mode = read_8bit(0x4a,streamFile); /* 0=default (4ch = 2ch + 2ch), 1=single (4ch = 1ch + 1ch + 1ch + 1ch) */
+    genh->codec_mode = read_8bit(0x4b,streamFile);
+    if ((genh->codec == ATRAC3 || genh->codec == ATRAC3PLUS) && genh->codec_mode==0)
+        genh->codec_mode = read_8bit(0x49,streamFile);
+    if ((genh->codec == XMA1 || genh->codec == XMA2) && genh->codec_mode==0)
+        genh->codec_mode = read_8bit(0x4a,streamFile);
     genh->data_size = read_32bitLE(0x50,streamFile);
     if (genh->data_size == 0)
         genh->data_size = get_streamfile_size(streamFile) - genh->start_offset;
+
 
     genh->num_samples = genh->num_samples > 0 ? genh->num_samples : genh->loop_end_sample;
     genh->loop_flag = genh->loop_start_sample != -1;

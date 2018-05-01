@@ -7,8 +7,8 @@ static STREAMFILE* setup_sead_hca_streamfile(STREAMFILE *streamFile, off_t subfi
 /* SABF/MABF - Square Enix's "sead" audio games [Dragon Quest Builders (PS3), Dissidia Opera Omnia (mobile), FF XV (PS4)] */
 VGMSTREAM * init_vgmstream_sqex_sead(STREAMFILE * streamFile) {
     VGMSTREAM * vgmstream = NULL;
-    off_t start_offset, tables_offset, mtrl_offset, meta_offset, post_meta_offset; //, info_offset, name_offset = 0;
-    size_t stream_size, descriptor_size, subheader_size, special_size; //, name_size = 0;
+    off_t start_offset, tables_offset, mtrl_offset, meta_offset, extradata_offset; //, info_offset, name_offset = 0;
+    size_t stream_size, descriptor_size, extradata_size, special_size; //, name_size = 0;
 
 
     int loop_flag = 0, channel_count, codec, sample_rate, loop_start, loop_end;
@@ -118,12 +118,12 @@ VGMSTREAM * init_vgmstream_sqex_sead(STREAMFILE * streamFile) {
     loop_start      = read_32bit(meta_offset+0x0c,streamFile); /* in samples but usually ignored */
 
     loop_end        = read_32bit(meta_offset+0x10,streamFile);
-    subheader_size  = read_32bit(meta_offset+0x14,streamFile); /* including subfile header */
+    extradata_size  = read_32bit(meta_offset+0x14,streamFile); /* including subfile header, can be 0 */
     stream_size     = read_32bit(meta_offset+0x18,streamFile); /* not including subfile header */
     special_size    = read_32bit(meta_offset+0x1c,streamFile);
 
     loop_flag       = (loop_end > 0);
-    post_meta_offset = meta_offset + 0x20;
+    extradata_offset = meta_offset + 0x20;
 
 
     /** info section (get stream name) **/
@@ -155,38 +155,47 @@ VGMSTREAM * init_vgmstream_sqex_sead(STREAMFILE * streamFile) {
 
     switch(codec) {
 
+        case 0x01: { /* PCM [Chrono Trigger sfx (PC)] */
+            start_offset = extradata_offset + extradata_size;
+
+            vgmstream->coding_type = coding_PCM16LE;
+            vgmstream->layout_type = layout_interleave;
+            vgmstream->interleave_block_size = 0x02;
+
+            vgmstream->num_samples = pcm_bytes_to_samples(stream_size, vgmstream->channels, 16);
+            vgmstream->loop_start_sample = loop_start;
+            vgmstream->loop_end_sample   = loop_end;
+            break;
+        }
+
         case 0x02: { /* MSADPCM [Dragon Quest Builders (Vita) sfx] */
-            start_offset = post_meta_offset + subheader_size;
+            start_offset = extradata_offset + extradata_size;
 
             /* 0x00 (2): null?, 0x02(2): entry size? */
             vgmstream->coding_type = coding_MSADPCM;
             vgmstream->layout_type = layout_none;
-            vgmstream->interleave_block_size = read_16bit(post_meta_offset+0x04,streamFile);
+            vgmstream->interleave_block_size = read_16bit(extradata_offset+0x04,streamFile);
 
             /* much like AKBs, there are slightly different loop values here, probably more accurate
              * (if no loop, loop_end doubles as num_samples) */
             vgmstream->num_samples = msadpcm_bytes_to_samples(stream_size, vgmstream->interleave_block_size, vgmstream->channels);
-            vgmstream->loop_start_sample = read_32bit(post_meta_offset+0x08, streamFile); //loop_start
-            vgmstream->loop_end_sample   = read_32bit(post_meta_offset+0x0c, streamFile); //loop_end
+            vgmstream->loop_start_sample = read_32bit(extradata_offset+0x08, streamFile); //loop_start
+            vgmstream->loop_end_sample   = read_32bit(extradata_offset+0x0c, streamFile); //loop_end
             break;
         }
 
 #ifdef VGM_USE_VORBIS
         case 0x03: { /* OGG [Final Fantasy XV Benchmark sfx (PC)] */
             VGMSTREAM *ogg_vgmstream = NULL;
-            vgm_vorbis_info_t inf = {0};
-            off_t subfile_offset = post_meta_offset + subheader_size;
-            char filename[PATH_LIMIT];
+            ogg_vorbis_meta_info_t ovmi = {0};
+            off_t subfile_offset = extradata_offset + extradata_size;
 
-            streamFile->get_name(streamFile,filename,sizeof(filename));
-
-            inf.layout_type = layout_ogg_vorbis;
-            inf.meta_type = vgmstream->meta_type;
-            inf.total_subsongs = total_subsongs;
-            inf.stream_size = stream_size;
+            ovmi.meta_type = vgmstream->meta_type;
+            ovmi.total_subsongs = total_subsongs;
+            ovmi.stream_size = stream_size;
             /* post header has some kind of repeated values, config/table? */
 
-            ogg_vgmstream = init_vgmstream_ogg_vorbis_callbacks(streamFile, filename, NULL, subfile_offset, &inf);
+            ogg_vgmstream = init_vgmstream_ogg_vorbis_callbacks(streamFile, NULL, subfile_offset, &ovmi);
             if (ogg_vgmstream) {
                 ogg_vgmstream->num_streams = vgmstream->num_streams;
                 ogg_vgmstream->stream_size = vgmstream->stream_size;
@@ -206,21 +215,21 @@ VGMSTREAM * init_vgmstream_sqex_sead(STREAMFILE * streamFile) {
         case 0x04: { /* ATRAC9 [Dragon Quest Builders (Vita), Final Fantaxy XV (PS4)] */
             atrac9_config cfg = {0};
 
-            start_offset = post_meta_offset + subheader_size;
+            start_offset = extradata_offset + extradata_size;
             /* post header has various typical ATRAC9 values */
             cfg.channels = vgmstream->channels;
-            cfg.config_data = read_32bit(post_meta_offset+0x0c,streamFile);
-            cfg.encoder_delay = read_32bit(post_meta_offset+0x18,streamFile);
+            cfg.config_data = read_32bit(extradata_offset+0x0c,streamFile);
+            cfg.encoder_delay = read_32bit(extradata_offset+0x18,streamFile);
 
             vgmstream->codec_data = init_atrac9(&cfg);
             if (!vgmstream->codec_data) goto fail;
             vgmstream->coding_type = coding_ATRAC9;
             vgmstream->layout_type = layout_none;
 
-            vgmstream->sample_rate = read_32bit(post_meta_offset+0x1c,streamFile); /* SAB's sample rate can be different but it's ignored */
-            vgmstream->num_samples = read_32bit(post_meta_offset+0x10,streamFile); /* loop values above are also weird and ignored */
-            vgmstream->loop_start_sample = read_32bit(post_meta_offset+0x20, streamFile) - (loop_flag ? cfg.encoder_delay : 0); //loop_start
-            vgmstream->loop_end_sample   = read_32bit(post_meta_offset+0x24, streamFile) - (loop_flag ? cfg.encoder_delay : 0); //loop_end
+            vgmstream->sample_rate = read_32bit(extradata_offset+0x1c,streamFile); /* SAB's sample rate can be different but it's ignored */
+            vgmstream->num_samples = read_32bit(extradata_offset+0x10,streamFile); /* loop values above are also weird and ignored */
+            vgmstream->loop_start_sample = read_32bit(extradata_offset+0x20, streamFile) - (loop_flag ? cfg.encoder_delay : 0); //loop_start
+            vgmstream->loop_end_sample   = read_32bit(extradata_offset+0x24, streamFile) - (loop_flag ? cfg.encoder_delay : 0); //loop_end
             break;
         }
 #endif
@@ -230,7 +239,7 @@ VGMSTREAM * init_vgmstream_sqex_sead(STREAMFILE * streamFile) {
             mpeg_codec_data *mpeg_data = NULL;
             mpeg_custom_config cfg = {0};
 
-            start_offset = post_meta_offset + subheader_size;
+            start_offset = extradata_offset + extradata_size;
             /* post header is a proper MSF, but sample rate/loops are ignored in favor of SAB's */
 
             mpeg_data = init_mpeg_custom(streamFile, start_offset, &vgmstream->coding_type, vgmstream->channels, MPEG_STANDARD, &cfg);
@@ -249,13 +258,13 @@ VGMSTREAM * init_vgmstream_sqex_sead(STREAMFILE * streamFile) {
             //todo there is no easy way to use the HCA decoder; try subfile hack for now
             VGMSTREAM *temp_vgmstream = NULL;
             STREAMFILE *temp_streamFile = NULL;
-            off_t subfile_offset = post_meta_offset + 0x10;
-            size_t subfile_size = stream_size + subheader_size - 0x10;
+            off_t subfile_offset = extradata_offset + 0x10;
+            size_t subfile_size = stream_size + extradata_size - 0x10;
 
             /* post header: values from the HCA header, in file endianness + HCA header */
             size_t key_start = special_size & 0xff;
-            size_t header_size = read_16bit(post_meta_offset+0x02, streamFile);
-            int encryption = read_16bit(post_meta_offset+0x0c, streamFile); //maybe 8bit?
+            size_t header_size = read_16bit(extradata_offset+0x02, streamFile);
+            int encryption = read_16bit(extradata_offset+0x0c, streamFile); //maybe 8bit?
             /* encryption type 0x01 found in Final Fantasy XII TZA (PS4/PC) */
 
             temp_streamFile = setup_sead_hca_streamfile(streamFile, subfile_offset, subfile_size, encryption, header_size, key_start);
@@ -304,32 +313,33 @@ typedef struct {
 static size_t sead_decryption_read(STREAMFILE *streamfile, uint8_t *dest, off_t offset, size_t length, sead_decryption_data* data) {
     /* Found in FFXII_TZA.exe (same key in SCD Ogg V3) */
     static const uint8_t encryption_key[0x100] = {
-        0x3A, 0x32, 0x32, 0x32, 0x03, 0x7E, 0x12, 0xF7, 0xB2, 0xE2, 0xA2, 0x67, 0x32, 0x32, 0x22, 0x32, // 00-0F
-        0x32, 0x52, 0x16, 0x1B, 0x3C, 0xA1, 0x54, 0x7B, 0x1B, 0x97, 0xA6, 0x93, 0x1A, 0x4B, 0xAA, 0xA6, // 10-1F
-        0x7A, 0x7B, 0x1B, 0x97, 0xA6, 0xF7, 0x02, 0xBB, 0xAA, 0xA6, 0xBB, 0xF7, 0x2A, 0x51, 0xBE, 0x03, // 20-2F
-        0xF4, 0x2A, 0x51, 0xBE, 0x03, 0xF4, 0x2A, 0x51, 0xBE, 0x12, 0x06, 0x56, 0x27, 0x32, 0x32, 0x36, // 30-3F
-        0x32, 0xB2, 0x1A, 0x3B, 0xBC, 0x91, 0xD4, 0x7B, 0x58, 0xFC, 0x0B, 0x55, 0x2A, 0x15, 0xBC, 0x40, // 40-4F
-        0x92, 0x0B, 0x5B, 0x7C, 0x0A, 0x95, 0x12, 0x35, 0xB8, 0x63, 0xD2, 0x0B, 0x3B, 0xF0, 0xC7, 0x14, // 50-5F
-        0x51, 0x5C, 0x94, 0x86, 0x94, 0x59, 0x5C, 0xFC, 0x1B, 0x17, 0x3A, 0x3F, 0x6B, 0x37, 0x32, 0x32, // 60-6F
-        0x30, 0x32, 0x72, 0x7A, 0x13, 0xB7, 0x26, 0x60, 0x7A, 0x13, 0xB7, 0x26, 0x50, 0xBA, 0x13, 0xB4, // 70-7F
-        0x2A, 0x50, 0xBA, 0x13, 0xB5, 0x2E, 0x40, 0xFA, 0x13, 0x95, 0xAE, 0x40, 0x38, 0x18, 0x9A, 0x92, // 80-8F
-        0xB0, 0x38, 0x00, 0xFA, 0x12, 0xB1, 0x7E, 0x00, 0xDB, 0x96, 0xA1, 0x7C, 0x08, 0xDB, 0x9A, 0x91, // 90-9F
-        0xBC, 0x08, 0xD8, 0x1A, 0x86, 0xE2, 0x70, 0x39, 0x1F, 0x86, 0xE0, 0x78, 0x7E, 0x03, 0xE7, 0x64, // A0-AF
-        0x51, 0x9C, 0x8F, 0x34, 0x6F, 0x4E, 0x41, 0xFC, 0x0B, 0xD5, 0xAE, 0x41, 0xFC, 0x0B, 0xD5, 0xAE, // B0-BF
-        0x41, 0xFC, 0x3B, 0x70, 0x71, 0x64, 0x33, 0x32, 0x12, 0x32, 0x32, 0x36, 0x70, 0x34, 0x2B, 0x56, // C0-CF
-        0x22, 0x70, 0x3A, 0x13, 0xB7, 0x26, 0x60, 0xBA, 0x1B, 0x94, 0xAA, 0x40, 0x38, 0x00, 0xFA, 0xB2, // D0-DF
-        0xE2, 0xA2, 0x67, 0x32, 0x32, 0x12, 0x32, 0xB2, 0x32, 0x32, 0x32, 0x32, 0x75, 0xA3, 0x26, 0x7B, // E0-EF
-        0x83, 0x26, 0xF9, 0x83, 0x2E, 0xFF, 0xE3, 0x16, 0x7D, 0xC0, 0x1E, 0x63, 0x21, 0x07, 0xE3, 0x01, // F0-FF
+        0x3A,0x32,0x32,0x32,0x03,0x7E,0x12,0xF7,0xB2,0xE2,0xA2,0x67,0x32,0x32,0x22,0x32, // 00-0F
+        0x32,0x52,0x16,0x1B,0x3C,0xA1,0x54,0x7B,0x1B,0x97,0xA6,0x93,0x1A,0x4B,0xAA,0xA6, // 10-1F
+        0x7A,0x7B,0x1B,0x97,0xA6,0xF7,0x02,0xBB,0xAA,0xA6,0xBB,0xF7,0x2A,0x51,0xBE,0x03, // 20-2F
+        0xF4,0x2A,0x51,0xBE,0x03,0xF4,0x2A,0x51,0xBE,0x12,0x06,0x56,0x27,0x32,0x32,0x36, // 30-3F
+        0x32,0xB2,0x1A,0x3B,0xBC,0x91,0xD4,0x7B,0x58,0xFC,0x0B,0x55,0x2A,0x15,0xBC,0x40, // 40-4F
+        0x92,0x0B,0x5B,0x7C,0x0A,0x95,0x12,0x35,0xB8,0x63,0xD2,0x0B,0x3B,0xF0,0xC7,0x14, // 50-5F
+        0x51,0x5C,0x94,0x86,0x94,0x59,0x5C,0xFC,0x1B,0x17,0x3A,0x3F,0x6B,0x37,0x32,0x32, // 60-6F
+        0x30,0x32,0x72,0x7A,0x13,0xB7,0x26,0x60,0x7A,0x13,0xB7,0x26,0x50,0xBA,0x13,0xB4, // 70-7F
+        0x2A,0x50,0xBA,0x13,0xB5,0x2E,0x40,0xFA,0x13,0x95,0xAE,0x40,0x38,0x18,0x9A,0x92, // 80-8F
+        0xB0,0x38,0x00,0xFA,0x12,0xB1,0x7E,0x00,0xDB,0x96,0xA1,0x7C,0x08,0xDB,0x9A,0x91, // 90-9F
+        0xBC,0x08,0xD8,0x1A,0x86,0xE2,0x70,0x39,0x1F,0x86,0xE0,0x78,0x7E,0x03,0xE7,0x64, // A0-AF
+        0x51,0x9C,0x8F,0x34,0x6F,0x4E,0x41,0xFC,0x0B,0xD5,0xAE,0x41,0xFC,0x0B,0xD5,0xAE, // B0-BF
+        0x41,0xFC,0x3B,0x70,0x71,0x64,0x33,0x32,0x12,0x32,0x32,0x36,0x70,0x34,0x2B,0x56, // C0-CF
+        0x22,0x70,0x3A,0x13,0xB7,0x26,0x60,0xBA,0x1B,0x94,0xAA,0x40,0x38,0x00,0xFA,0xB2, // D0-DF
+        0xE2,0xA2,0x67,0x32,0x32,0x12,0x32,0xB2,0x32,0x32,0x32,0x32,0x75,0xA3,0x26,0x7B, // E0-EF
+        0x83,0x26,0xF9,0x83,0x2E,0xFF,0xE3,0x16,0x7D,0xC0,0x1E,0x63,0x21,0x07,0xE3,0x01, // F0-FF
     };
     size_t bytes_read;
+    off_t encrypted_offset = data->header_size;
     int i;
 
     bytes_read = streamfile->read(streamfile, dest, offset, length);
 
     /* decrypt data (xor) */
-    if (offset >= data->header_size) {
+    if (offset >= encrypted_offset) {
         for (i = 0; i < bytes_read; i++) {
-            dest[i] ^= encryption_key[(data->key_start + (offset - data->header_size) + i) % 0x100];
+            dest[i] ^= encryption_key[(data->key_start + (offset - encrypted_offset) + i) % 0x100];
         }
     }
 
@@ -355,7 +365,7 @@ static STREAMFILE* setup_sead_hca_streamfile(STREAMFILE *streamFile, off_t subfi
         io_data.header_size = header_size;
         io_data.key_start = key_start;
 
-        new_streamFile = open_io_streamfile(temp_streamFile, &io_data,io_data_size, sead_decryption_read);
+        new_streamFile = open_io_streamfile(temp_streamFile, &io_data,io_data_size, sead_decryption_read,NULL);
         if (!new_streamFile) goto fail;
         temp_streamFile = new_streamFile;
     }

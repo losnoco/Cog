@@ -56,7 +56,7 @@ VGMSTREAM * init_vgmstream_fsb_encrypted(STREAMFILE * streamFile) {
 
         for (i = 0; i < fsbkey_list_count; i++) {
             fsbkey_info entry = fsbkey_list[i];
-            ;VGM_LOG("fsbkey: size=%i, is_fsb5=%i, is_alt=%i\n", entry.fsbkey_size,entry.is_fsb5, entry.is_alt);
+            //;VGM_LOG("fsbkey: size=%i, is_fsb5=%i, is_alt=%i\n", entry.fsbkey_size,entry.is_fsb5, entry.is_alt);
 
             temp_streamFile = setup_fsb_streamfile(streamFile, entry.fsbkey, entry.fsbkey_size, entry.is_alt);
             if (!temp_streamFile) goto fail;
@@ -146,7 +146,7 @@ static STREAMFILE* setup_fsb_streamfile(STREAMFILE *streamFile, const uint8_t * 
     if (!new_streamFile) goto fail;
     temp_streamFile = new_streamFile;
 
-    new_streamFile = open_io_streamfile(temp_streamFile, &io_data,io_data_size, fsb_decryption_read);
+    new_streamFile = open_io_streamfile(temp_streamFile, &io_data,io_data_size, fsb_decryption_read,NULL);
     if (!new_streamFile) goto fail;
     temp_streamFile = new_streamFile;
 

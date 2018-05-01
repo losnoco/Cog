@@ -903,12 +903,11 @@ fail:
 /* RSD6OGG */
 VGMSTREAM * init_vgmstream_rsd6oogv(STREAMFILE *streamFile) {
 #ifdef VGM_USE_VORBIS
-    char filename[PATH_LIMIT];
     off_t start_offset;
 
-    /* check extension, case insensitive */
-    streamFile->get_name(streamFile,filename,sizeof(filename));
-    if (strcasecmp("rsd",filename_extension(filename))) goto fail;
+    /* check extension */
+    if (!check_extensions(streamFile, "rsd"))
+        goto fail;
 
     /* check header */
     if (read_32bitBE(0x0,streamFile) != 0x52534436) /* RSD6 */
@@ -917,15 +916,13 @@ VGMSTREAM * init_vgmstream_rsd6oogv(STREAMFILE *streamFile) {
         goto fail;
 
     {
-        vgm_vorbis_info_t inf;
+	    ogg_vorbis_meta_info_t ovmi = {0};
         VGMSTREAM * result = NULL;
 
-        memset(&inf, 0, sizeof(inf));
-        inf.layout_type = layout_ogg_vorbis;
-        inf.meta_type = meta_RSD6OOGV;
+        ovmi.meta_type = meta_RSD6OOGV;
 
         start_offset = 0x800;
-		result = init_vgmstream_ogg_vorbis_callbacks(streamFile, filename, NULL, start_offset, &inf);
+		result = init_vgmstream_ogg_vorbis_callbacks(streamFile, NULL, start_offset, &ovmi);
 
         if (result != NULL) {
             return result;
@@ -938,7 +935,7 @@ fail:
     return NULL;
 }
 
-/* RSD6XADP - from Crash Tag Team Racing (Xbox) */
+/* RSD6XADP - from Crash Tag Team Racing (Xbox), Scarface (Xbox) */
 VGMSTREAM * init_vgmstream_rsd6xadp(STREAMFILE *streamFile) {
     VGMSTREAM * vgmstream = NULL;
     off_t start_offset;
@@ -966,9 +963,10 @@ VGMSTREAM * init_vgmstream_rsd6xadp(STREAMFILE *streamFile) {
     vgmstream->sample_rate = read_32bitLE(0x10,streamFile);
     vgmstream->num_samples = xbox_ima_bytes_to_samples(data_size, vgmstream->channels);
 
-    vgmstream->coding_type = coding_XBOX_IMA;
-    vgmstream->layout_type = layout_none;
     vgmstream->meta_type = meta_RSD6XADP;
+    vgmstream->coding_type = (channel_count > 2) ? coding_XBOX_IMA_mch : coding_XBOX_IMA;
+    vgmstream->layout_type = layout_none;
+
 
     if (!vgmstream_open_stream(vgmstream, streamFile, start_offset))
         goto fail;
@@ -1081,3 +1079,131 @@ fail:
     if (vgmstream) close_vgmstream(vgmstream);
     return NULL;
 } 
+
+/* RSD6AT3+ [Crash of the Titans (PSP)] */
+VGMSTREAM * init_vgmstream_rsd6at3p(STREAMFILE *streamFile) {
+    VGMSTREAM * vgmstream = NULL;
+    off_t start_offset;
+    size_t data_size;
+    int loop_flag, channel_count;
+
+
+    /* check extension, case insensitive */
+    if (!check_extensions(streamFile,"rsd"))
+        goto fail;
+
+    /* check header */
+    if (read_32bitBE(0x00,streamFile) != 0x52534436) /* "RSD6" */
+        goto fail;
+    if (read_32bitBE(0x04,streamFile) != 0x4154332B) /* "AT3+" */
+        goto fail;
+
+    loop_flag = 0;
+    channel_count = read_32bitLE(0x08, streamFile);
+    start_offset = 0x800;
+    data_size = get_streamfile_size(streamFile) - start_offset;
+
+    /* build the VGMSTREAM */
+    vgmstream = allocate_vgmstream(channel_count,loop_flag);
+    if (!vgmstream) goto fail;
+
+    vgmstream->meta_type = meta_RSD6AT3P;
+    vgmstream->sample_rate = read_32bitLE(0x10, streamFile);
+
+#ifdef VGM_USE_FFMPEG
+    {
+        ffmpeg_codec_data *ffmpeg_data = NULL;
+
+        /* full RIFF header at start_offset */
+        ffmpeg_data = init_ffmpeg_offset(streamFile, start_offset,data_size);
+        if (!ffmpeg_data) goto fail;
+        vgmstream->codec_data = ffmpeg_data;
+        vgmstream->coding_type = coding_FFmpeg;
+        vgmstream->layout_type = layout_none;
+
+        if (channel_count != ffmpeg_data->channels) goto fail;
+
+        vgmstream->num_samples = ffmpeg_data->totalSamples; /* fact samples */
+
+        /* manually read skip_samples if FFmpeg didn't do it */
+        if (ffmpeg_data->skipSamples <= 0) {
+            off_t chunk_offset;
+            size_t chunk_size, fact_skip_samples = 0;
+            if (!find_chunk_le(streamFile, 0x66616374,start_offset+0xc,0, &chunk_offset,&chunk_size)) /* find "fact" */
+                goto fail;
+            if (chunk_size == 0x08) {
+                fact_skip_samples  = read_32bitLE(chunk_offset+0x4, streamFile);
+            } else if (chunk_size == 0xc) {
+                fact_skip_samples  = read_32bitLE(chunk_offset+0x8, streamFile);
+            }
+            ffmpeg_set_skip_samples(ffmpeg_data, fact_skip_samples);
+        }
+    }
+#else
+    goto fail;
+#endif
+
+    if (!vgmstream_open_stream(vgmstream, streamFile, start_offset))
+        goto fail;
+    return vgmstream;
+
+fail:
+    close_vgmstream(vgmstream);
+    return NULL;
+}
+
+
+/* RSD6WMA [Scarface (Xbox)] */
+VGMSTREAM * init_vgmstream_rsd6wma(STREAMFILE *streamFile) {
+    VGMSTREAM * vgmstream = NULL;
+    off_t start_offset;
+    size_t data_size;
+    int loop_flag, channel_count;
+
+
+    /* checks */
+    if (!check_extensions(streamFile,"rsd"))
+        goto fail;
+    if (read_32bitBE(0x00,streamFile) != 0x52534436) /* "RSD6" */
+        goto fail;
+    if (read_32bitBE(0x04,streamFile) != 0x574D4120) /* "WMA " */
+        goto fail;
+
+    loop_flag = 0;
+    channel_count = read_32bitLE(0x08, streamFile);
+    start_offset = 0x800;
+    data_size = get_streamfile_size(streamFile) - start_offset;
+
+    /* build the VGMSTREAM */
+    vgmstream = allocate_vgmstream(channel_count,loop_flag);
+    if (!vgmstream) goto fail;
+
+    vgmstream->meta_type = meta_RSD6WMA;
+    //vgmstream->num_samples = read_32bitLE(start_offset + 0x00, streamFile) / channel_count / 2; /* may be PCM data size, but not exact */
+    vgmstream->sample_rate = read_32bitLE(start_offset + 0x04, streamFile);
+
+#ifdef VGM_USE_FFMPEG
+    {
+        ffmpeg_codec_data *ffmpeg_data = NULL;
+
+        /* mini header + WMA header at start_offset */
+        ffmpeg_data = init_ffmpeg_offset(streamFile, start_offset+0x08,data_size);
+        if (!ffmpeg_data) goto fail;
+        vgmstream->codec_data = ffmpeg_data;
+        vgmstream->coding_type = coding_FFmpeg;
+        vgmstream->layout_type = layout_none;
+
+        vgmstream->num_samples = (int32_t)ffmpeg_data->totalSamples; /* an estimation, sometimes cuts files a bit early */
+    }
+#else
+        goto fail;
+#endif
+
+    if (!vgmstream_open_stream(vgmstream, streamFile, start_offset))
+        goto fail;
+    return vgmstream;
+
+fail:
+    close_vgmstream(vgmstream);
+    return NULL;
+}

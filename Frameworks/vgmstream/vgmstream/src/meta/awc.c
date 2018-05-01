@@ -1,6 +1,7 @@
 #include "meta.h"
 #include "../coding/coding.h"
 #include "../layout/layout.h"
+#include "awc_xma_streamfile.h"
 
 typedef struct {
     int big_endian;
@@ -17,7 +18,7 @@ typedef struct {
     int block_chunk;
 
     off_t stream_offset;
-    off_t stream_size;
+    size_t stream_size;
 
 } awc_header;
 
@@ -64,6 +65,76 @@ VGMSTREAM * init_vgmstream_awc(STREAMFILE *streamFile) {
             vgmstream->codec_endian = awc.big_endian;
             break;
 
+#ifdef VGM_USE_FFMPEG
+        case 0x05: {    /* XMA2 (X360) */
+            uint8_t buf[0x100];
+            size_t bytes, block_size, block_count, substream_size;
+            off_t substream_offset;
+
+            if (awc.is_music) {
+                /* 1ch XMAs in blocks, we'll use layered layout + custom IO to get multi-FFmpegs working */
+                int i;
+                layered_layout_data * data = NULL;
+
+                /* init layout */
+                data = init_layout_layered(awc.channel_count);
+                if (!data) goto fail;
+                vgmstream->layout_data = data;
+                vgmstream->layout_type = layout_layered;
+                vgmstream->coding_type = coding_FFmpeg;
+
+                /* open each layer subfile */
+                for (i = 0; i < awc.channel_count; i++) {
+                    STREAMFILE* temp_streamFile;
+                    int layer_channels = 1;
+
+                    /* build the layer VGMSTREAM */
+                    data->layers[i] = allocate_vgmstream(layer_channels, 0);
+                    if (!data->layers[i]) goto fail;
+
+                    data->layers[i]->sample_rate = awc.sample_rate;
+                    data->layers[i]->meta_type = meta_AWC;
+                    data->layers[i]->coding_type = coding_FFmpeg;
+                    data->layers[i]->layout_type = layout_none;
+                    data->layers[i]->num_samples = awc.num_samples;
+
+                    /* setup custom IO streamfile, pass to FFmpeg and hope it's fooled */
+                    temp_streamFile = setup_awc_xma_streamfile(streamFile, awc.stream_offset, awc.stream_size, awc.block_chunk, awc.channel_count, i);
+                    if (!temp_streamFile) goto fail;
+
+                    substream_offset = 0; /* where FFmpeg thinks data starts, which our custom streamFile will clamp */
+                    substream_size = get_streamfile_size(temp_streamFile); /* data of one XMA substream without blocks */
+                    block_size = 0x8000; /* no idea */
+                    block_count = substream_size / block_size; /* not accurate but not needed */
+
+                    bytes = ffmpeg_make_riff_xma2(buf, 0x100, awc.num_samples, substream_size, layer_channels, awc.sample_rate, block_count, block_size);
+                    data->layers[i]->codec_data = init_ffmpeg_header_offset(temp_streamFile, buf,bytes, substream_offset,substream_size);
+
+                    close_streamfile(temp_streamFile);
+                    if (!data->layers[i]->codec_data) goto fail;
+                }
+
+                /* setup layered VGMSTREAMs */
+                if (!setup_layout_layered(data))
+                    goto fail;
+            }
+            else {
+                /* regular XMA for sfx */
+                block_size = 0x8000; /* no idea */
+                block_count = awc.stream_size / block_size; /* not accurate but not needed */
+
+                bytes = ffmpeg_make_riff_xma2(buf, 0x100, awc.num_samples, awc.stream_size, awc.channel_count, awc.sample_rate, block_count, block_size);
+                vgmstream->codec_data = init_ffmpeg_header_offset(streamFile, buf,bytes, awc.stream_offset,awc.stream_size);
+                if (!vgmstream->codec_data) goto fail;
+                vgmstream->coding_type = coding_FFmpeg;
+                vgmstream->layout_type = layout_none;
+            }
+
+            break;
+        }
+
+
+#endif
 #ifdef VGM_USE_MPEG
         case 0x07: {    /* MPEG (PS3) */
             mpeg_custom_config cfg;
@@ -80,7 +151,6 @@ VGMSTREAM * init_vgmstream_awc(STREAMFILE *streamFile) {
         }
 #endif
 
-        case 0x05:      /* XMA2 (X360) */
         default:
             VGM_LOG("AWC: unknown codec 0x%02x\n", awc.codec);
             goto fail;
@@ -187,12 +257,15 @@ static int parse_awc_header(STREAMFILE* streamFile, awc_header* awc) {
 
     /* get stream tags */
     for (i = 0; i < tag_count; i++) {
-        uint64_t tag_header, tag, size, offset;
+        uint64_t tag_header;
+        uint8_t tag;
+        size_t size;
+        off_t offset;
 
         tag_header = (uint64_t)read_64bit(off + 0x08*i,streamFile);
-        tag    = (tag_header >> 56) & 0xFF; /* 8b */
-        size   = (tag_header >> 28) & 0x0FFFFFFF; /* 28b */
-        offset = (tag_header >>  0) & 0x0FFFFFFF; /* 28b */
+        tag    = (uint8_t)((tag_header >> 56) & 0xFF); /* 8b */
+        size   =  (size_t)((tag_header >> 28) & 0x0FFFFFFF); /* 28b */
+        offset =   (off_t)((tag_header >>  0) & 0x0FFFFFFF); /* 28b */
 
         /* Tags are apparently part of a hash derived from a word ("data", "format", etc).
          * If music + 1ch, the header and data chunks can repeat for no reason (sometimes not even pointed). */

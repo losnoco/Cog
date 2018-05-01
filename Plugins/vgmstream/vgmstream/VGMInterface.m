@@ -71,7 +71,6 @@ static STREAMFILE *cogsf_create(id file, const char *path) {
     streamfile->sf.get_size = (void*)cogsf_get_size;
     streamfile->sf.get_offset = (void*)cogsf_get_offset;
     streamfile->sf.get_name = (void*)cogsf_get_name;
-    streamfile->sf.get_realname = (void*)cogsf_get_name;
     streamfile->sf.open = (void*)cogsf_open;
     streamfile->sf.close = (void*)cogsf_close;
     streamfile->file = (void*)CFBridgingRetain(file);

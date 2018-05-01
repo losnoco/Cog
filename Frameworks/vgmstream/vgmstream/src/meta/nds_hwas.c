@@ -8,7 +8,8 @@ VGMSTREAM * init_vgmstream_nds_hwas(STREAMFILE *streamFile) {
     off_t start_offset;
     int channel_count, loop_flag = 0;
 
-    /* check extension, case insensitive (made-up extension) */
+    /* checks */
+    /* .hwas: usually in archives but also found named (ex. Guitar Hero On Tour) */
     if (!check_extensions(streamFile,"hwas"))
         goto fail;
 
@@ -34,14 +35,14 @@ VGMSTREAM * init_vgmstream_nds_hwas(STREAMFILE *streamFile) {
     vgmstream->meta_type = meta_NDS_HWAS;
 
     vgmstream->coding_type = coding_IMA_int;
-    vgmstream->layout_type = layout_hwas_blocked;
+    vgmstream->layout_type = layout_blocked_hwas;
     vgmstream->full_block_size = read_32bitLE(0x04,streamFile); /* usually 0x2000, 0x4000 or 0x8000 */
 
     /* open the file for reading by each channel */
     if (!vgmstream_open_stream(vgmstream,streamFile,start_offset))
         goto fail;
 
-    hwas_block_update(start_offset, vgmstream);
+    block_update_hwas(start_offset, vgmstream);
 
     return vgmstream;
 

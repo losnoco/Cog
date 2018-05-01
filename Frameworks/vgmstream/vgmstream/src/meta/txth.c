@@ -1,7 +1,6 @@
 #include "meta.h"
 #include "../coding/coding.h"
 #include "../layout/layout.h"
-#include "../util.h"
 
 #define TXT_LINE_MAX 0x2000
 
@@ -81,6 +80,11 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
     txth_header txth = {0};
     coding_t coding;
     int i, j;
+
+
+    /* reject .txth as the CLI can open and decode with itself */
+    if (check_extensions(streamFile, "txth"))
+        goto fail;
 
     /* no need for ID or ext checks -- if a .TXTH exists all is good
      * (player still needs to accept the streamfile's ext, so at worst rename to .vgmstream) */
@@ -168,6 +172,8 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
                         coding = coding_DVI_IMA_int;
                     if (coding == coding_IMA)
                         coding = coding_IMA_int;
+                    if (coding == coding_AICA)
+                        coding = coding_AICA_int;
                 }
 
                 /* to avoid endless loops */
@@ -176,7 +182,8 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
                         coding == coding_PSX_badflags ||
                         coding == coding_IMA_int ||
                         coding == coding_DVI_IMA_int ||
-                        coding == coding_SDX2_int) ) {
+                        coding == coding_SDX2_int ||
+                        coding == coding_AICA_int) ) {
                     goto fail;
                 }
             } else {
@@ -184,7 +191,7 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
             }
 
             /* setup adpcm */
-            if (coding == coding_AICA) {
+            if (coding == coding_AICA || coding == coding_AICA_int) {
                 int i;
                 for (i=0;i<vgmstream->channels;i++) {
                     vgmstream->ch[i].adpcm_step_index = 0x7f;
@@ -206,7 +213,15 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
             vgmstream->layout_type = layout_none;
             break;
         case coding_XBOX_IMA:
-            vgmstream->layout_type = layout_none;
+            if (txth.codec_mode == 1) {
+                if (!txth.interleave) goto fail; /* creates garbage */
+                coding = coding_XBOX_IMA_int;
+                vgmstream->layout_type = layout_interleave;
+                vgmstream->interleave_block_size = txth.interleave;
+            }
+            else {
+                vgmstream->layout_type = layout_none;
+            }
             break;
         case coding_NGC_DTK:
             if (vgmstream->channels != 2) goto fail;
@@ -374,14 +389,14 @@ static STREAMFILE * open_txth(STREAMFILE * streamFile) {
     STREAMFILE * streamText;
 
     /* try "(path/)(name.ext).txth" */
-    if (!get_streamfile_name(streamFile,filename,PATH_LIMIT)) goto fail;
+    get_streamfile_name(streamFile,filename,PATH_LIMIT);
     strcat(filename, ".txth");
     streamText = streamFile->open(streamFile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
     if (streamText) return streamText;
 
     /* try "(path/)(.ext).txth" */
-    if (!get_streamfile_path(streamFile,filename,PATH_LIMIT)) goto fail;
-    if (!get_streamfile_ext(streamFile,fileext,PATH_LIMIT)) goto fail;
+    get_streamfile_path(streamFile,filename,PATH_LIMIT);
+    get_streamfile_ext(streamFile,fileext,PATH_LIMIT);
     strcat(filename,".");
     strcat(filename, fileext);
     strcat(filename, ".txth");
@@ -389,14 +404,13 @@ static STREAMFILE * open_txth(STREAMFILE * streamFile) {
     if (streamText) return streamText;
 
     /* try "(path/).txth" */
-    if (!get_streamfile_path(streamFile,filename,PATH_LIMIT)) goto fail;
+    get_streamfile_path(streamFile,filename,PATH_LIMIT);
     strcat(filename, ".txth");
     streamText = streamFile->open(streamFile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
     if (streamText) return streamText;
 
-fail:
     /* not found */
-    return 0;
+    return NULL;
 }
 
 /* Simple text parser of "key = value" lines.

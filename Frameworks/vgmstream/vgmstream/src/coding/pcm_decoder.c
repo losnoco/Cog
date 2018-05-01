@@ -78,15 +78,6 @@ void decode_pcm16_int(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspa
     }
 }
 
-void decode_pcm16LE_XOR_int(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
-    int i;
-    int32_t sample_count;
-
-    for (i=first_sample,sample_count=0; i<first_sample+samples_to_do; i++,sample_count+=channelspacing) {
-        outbuf[sample_count]=read_16bitLE(stream->offset+i*2*channelspacing,stream->streamfile)^stream->key_xor;
-    }
-}
-
 static int expand_ulaw(uint8_t ulawbyte) {
     int sign, segment, quantization, new_sample;
     const int bias = 0x84;
@@ -177,7 +168,7 @@ void decode_pcmfloat(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspac
         int sample_pcm;
 
         sample_float = (float*)&sample_int;
-        sample_pcm = floor((*sample_float) * 32767.f + .5f);
+        sample_pcm = (int)floor((*sample_float) * 32767.f + .5f);
 
         outbuf[sample_count] = clamp16(sample_pcm);
     }

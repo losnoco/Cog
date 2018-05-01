@@ -82,21 +82,22 @@ static VGMSTREAM * init_vgmstream_ea_variable_header(STREAMFILE *streamFile, ea_
 VGMSTREAM * init_vgmstream_ea_schl(STREAMFILE *streamFile) {
     off_t start_offset, header_offset;
     size_t header_size;
-    ea_header ea;
+    ea_header ea = {0};
 
 
     /* check extension; exts don't seem enforced by EA's tools, but usually:
      * STR/ASF/MUS ~early, EAM ~mid, SNG/AUD ~late, rest uncommon/one game (ex. STRM: MySims Kingdom Wii) */
-    if (!check_extensions(streamFile,"str,asf,mus,eam,sng,aud,sx,strm,xa,xsf,exa,stm,ast"))
+    if (!check_extensions(streamFile,"str,asf,mus,eam,sng,aud,sx,strm,xa,xsf,exa,stm,ast,trj,trm"))
         goto fail;
 
     /* check header */
     if (read_32bitBE(0x00,streamFile) != 0x5343486C &&  /* "SCHl" */
-        read_32bitBE(0x00,streamFile) != 0x5348454E)    /* "SHEN" */
+        read_32bitBE(0x00,streamFile) != 0x5348454E &&  /* "SHEN" */
+        read_32bitBE(0x00,streamFile) != 0x53484652)    /* "SHFR" */
         goto fail;
 
     /* stream is divided into blocks/chunks: SCHl=audio header, SCCl=count of SCDl, SCDl=data xN, SCLl=loop end, SCEl=end.
-     * Video uses various blocks (MVhd/MV0K/etc) and sometimes alt audio blocks (SHEN/SDEN/SEEN).
+     * Video uses various blocks (MVhd/MV0K/etc) and sometimes alt audio blocks (SHxx/SCxx/SDxx/SExx where XX=language, EN/FR).
      * The number/size is affected by: block rate setting, sample rate, channels, CPU location (SPU/main/DSP/others), etc */
 
     header_size = read_32bitLE(0x04,streamFile);
@@ -120,7 +121,7 @@ fail:
 VGMSTREAM * init_vgmstream_ea_bnk(STREAMFILE *streamFile) {
     off_t start_offset, header_offset, offset, table_offset;
     size_t header_size;
-    ea_header ea;
+    ea_header ea = {0};
     int32_t (*read_32bit)(off_t,STREAMFILE*) = NULL;
     int16_t (*read_16bit)(off_t,STREAMFILE*) = NULL;
     int i, bnk_version;
@@ -284,7 +285,11 @@ static VGMSTREAM * init_vgmstream_ea_variable_header(STREAMFILE *streamFile, ea_
             break;
 
         case EA_CODEC2_S16LE:       /* PCM16LE */
-            vgmstream->coding_type = coding_PCM16LE;
+            if (ea->version > 0) {
+                vgmstream->coding_type = coding_PCM16LE;
+            } else { /* Need for Speed III: Hot Pursuit (PC) */
+                vgmstream->coding_type = coding_PCM16_int;
+            }
             break;
 
         case EA_CODEC2_VAG:         /* PS-ADPCM */
@@ -449,7 +454,6 @@ static int parse_variable_header(STREAMFILE* streamFile, ea_header* ea, off_t be
     uint32_t platform_id;
     int is_header_end = 0;
 
-    memset(ea,0,sizeof(ea_header));
 
     /* null defaults as 0 can be valid */
     ea->version = EA_VERSION_NONE;
@@ -467,7 +471,7 @@ static int parse_variable_header(STREAMFILE* streamFile, ea_header* ea, off_t be
         offset += 4 + 4; /* GSTRs have an extra field (config?): ex. 0x01000000, 0x010000D8 BE */
     }
     else if ((platform_id & 0xFFFF0000) == 0x50540000) { /* "PT" = PlaTform */
-        ea->platform = (uint8_t)read_16bitLE(offset + 2,streamFile);
+        ea->platform = (uint16_t)read_16bitLE(offset + 2,streamFile);
         offset += 4;
     }
     else {
@@ -769,7 +773,7 @@ static int get_ea_stream_total_samples(STREAMFILE* streamFile, off_t start_offse
 
         block_samples = 0;
 
-        if (id == 0x5343446C || id == 0x5344454E) { /* "SCDl" "SDEN" audio data */
+        if (id == 0x5343446C || id == 0x5344454E || id == 0x53444652) { /* "SCDl" "SDEN" "SDFR" audio data */
             switch (ea->codec2) {
                 case EA_CODEC2_VAG:
                     block_samples = ps_bytes_to_samples(block_size-0x10, ea->channels);
@@ -785,7 +789,7 @@ static int get_ea_stream_total_samples(STREAMFILE* streamFile, off_t start_offse
                 block_size = 0x04;
             }
 
-            if (id == 0x5343486C || id == 0x5348454E) { /* "SCHl" "SHEN" end block */
+            if (id == 0x5343486C || id == 0x5348454E || id == 0x53484652) { /* "SCHl" "SHEN" "SHFR" end block */
                 new_schl = 1;
             }
         }
@@ -800,8 +804,8 @@ static int get_ea_stream_total_samples(STREAMFILE* streamFile, off_t start_offse
         num_samples += block_samples;
         block_offset += block_size;
 
-        /* "SCEl" are aligned to 0x80 usually, but causes problems if not 32b-aligned (ex. Need for Speed 2 PC) */
-        if ((id == 0x5343456C || id == 0x5345454E) && block_offset % 0x04) {
+        /* "SCEl" "SEEN" "SEFR" are aligned to 0x80 usually, but causes problems if not 32b-aligned (ex. Need for Speed 2 PC) */
+        if ((id == 0x5343456C || id == 0x5345454E || id == 0x53454652) && block_offset % 0x04) {
             VGM_LOG_ONCE("EA SCHl: mis-aligned end offset found\n");
             block_offset += 0x04 - (block_offset % 0x04);
         }
@@ -832,10 +836,10 @@ static off_t get_ea_stream_mpeg_start_offset(STREAMFILE* streamFile, off_t start
         if (block_size > 0x00F00000) /* size is always LE, except in early SAT/MAC */
             block_size = read_32bitBE(block_offset+0x04,streamFile);
 
-        if (id == 0x5343446C) { /* "SCDl" data block found */
+        if (id == 0x5343446C || id == 0x5344454E || id == 0x53444652) { /* "SCDl/SDEN/SDFR" data block found */
             off_t offset = read_32bit(block_offset+0x0c,streamFile); /* first value seems ok, second is something else in EALayer3 */
             return block_offset + 0x0c + ea->channels*0x04 + offset;
-        } else if (id == 0x5343436C) { /* "SCCl" data count found */
+        } else if (id == 0x5343436C || id == 0x5343454E || id == 0x53434652) { /* "SCCl/SCEN/SCFR" data count found */
             block_offset += block_size; /* size includes header */
             continue;
         } else {
