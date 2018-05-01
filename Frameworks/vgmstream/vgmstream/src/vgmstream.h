@@ -85,7 +85,6 @@ enum { STREAM_NAME_SIZE = 255 }; /* reasonable max */
 typedef enum {
     /* PCM */
     coding_PCM16LE,         /* little endian 16-bit PCM */
-    coding_PCM16LE_XOR_int, /* little endian 16-bit PCM with sample-level xor (for blocks) */
     coding_PCM16BE,         /* big endian 16-bit PCM */
     coding_PCM16_int,       /* 16-bit PCM with sample-level interleave (for blocks) */
 
@@ -118,7 +117,6 @@ typedef enum {
     coding_XA,              /* CD-ROM XA */
     coding_PSX,             /* Sony PS ADPCM (VAG) */
     coding_PSX_badflags,    /* Sony PS ADPCM with custom flag byte */
-    coding_PSX_bmdx,        /* Sony PS ADPCM with BMDX encryption */
     coding_PSX_cfg,         /* Sony PS ADPCM with configurable frame size (FF XI, SGXD type 5, Bizarre Creations) */
     coding_HEVAG,           /* Sony PSVita ADPCM */
 
@@ -135,11 +133,12 @@ typedef enum {
     coding_3DS_IMA,         /* 3DS IMA ADPCM */
     coding_MS_IMA,          /* Microsoft IMA ADPCM */
     coding_XBOX_IMA,        /* XBOX IMA ADPCM */
-    coding_XBOX_IMA_int,    /* XBOX IMA ADPCM (interleaved/mono) */
+    coding_XBOX_IMA_mch,    /* XBOX IMA ADPCM (multichannel) */
+    coding_XBOX_IMA_int,    /* XBOX IMA ADPCM (mono/interleave) */
     coding_NDS_IMA,         /* IMA ADPCM w/ NDS layout */
     coding_DAT4_IMA,        /* Eurocom 'DAT4' IMA ADPCM */
     coding_RAD_IMA,         /* Radical IMA ADPCM */
-    coding_RAD_IMA_mono,    /* Radical IMA ADPCM, mono (for interleave) */
+    coding_RAD_IMA_mono,    /* Radical IMA ADPCM (mono/interleave) */
     coding_APPLE_IMA4,      /* Apple Quicktime IMA4 */
     coding_SNDS_IMA,        /* Heavy Iron Studios .snds IMA ADPCM */
     coding_OTNS_IMA,        /* Omikron The Nomad Soul IMA ADPCM */
@@ -151,7 +150,10 @@ typedef enum {
 
     coding_MSADPCM,         /* Microsoft ADPCM */
     coding_WS,              /* Westwood Studios VBR ADPCM */
-    coding_AICA,            /* Yamaha AICA ADPCM */
+    coding_AICA,            /* Yamaha AICA ADPCM (stereo) */
+    coding_AICA_int,        /* Yamaha AICA ADPCM (mono/interleave) */
+    coding_YAMAHA,          /* Yamaha ADPCM */
+    coding_YAMAHA_NXAP,     /* Yamaha ADPCM (NXAP variation) */
     coding_NDS_PROCYON,     /* Procyon Studio ADPCM */
     coding_L5_555,          /* Level-5 0x555 ADPCM */
     coding_SASSC,           /* Activision EXAKT SASSC DPCM */
@@ -159,6 +161,7 @@ typedef enum {
     coding_MTAF,            /* Konami MTAF ADPCM */
     coding_MTA2,            /* Konami MTA2 ADPCM */
     coding_MC3,             /* Paradigm MC3 3-bit ADPCM */
+    coding_FADPCM,          /* FMOD FADPCM 4-bit ADPCM */
 
     /* others */
     coding_SDX2,            /* SDX2 2:1 Squareroot-Delta-Exact compression DPCM */
@@ -166,19 +169,14 @@ typedef enum {
     coding_CBD2,            /* CBD2 2:1 Cuberoot-Delta-Exact compression DPCM */
     coding_CBD2_int,        /* CBD2 2:1 Cuberoot-Delta-Exact compression, with sample-level interleave  */
     coding_ACM,             /* InterPlay ACM */
-    coding_NWA0,            /* Visual Art's NWA (compressed at various levels) */
-    coding_NWA1,
-    coding_NWA2,
-    coding_NWA3,
-    coding_NWA4,
-    coding_NWA5,
+    coding_NWA,             /* VisualArt's NWA */
 
     coding_EA_MT,           /* Electronic Arts MicroTalk (linear-predictive speech codec) */
 
     coding_CRI_HCA,         /* CRI High Compression Audio (MDCT-based) */
 
 #ifdef VGM_USE_VORBIS
-    coding_ogg_vorbis,      /* Xiph Vorbis with Ogg layer (MDCT-based) */
+    coding_OGG_VORBIS,      /* Xiph Vorbis with Ogg layer (MDCT-based) */
     coding_VORBIS_custom,   /* Xiph Vorbis with custom layer (MDCT-based) */
 #endif
 
@@ -223,53 +221,50 @@ typedef enum {
 
     /* interleave */
     layout_interleave,      /* equal interleave throughout the stream */
-    layout_interleave_shortblock, /* interleave with a short last block */
 
     /* headered blocks */
-    layout_ast_blocked,
-    layout_halpst_blocked,
-    layout_xa_blocked,
+    layout_blocked_ast,
+    layout_blocked_halpst,
+    layout_blocked_xa,
     layout_blocked_ea_schl,
     layout_blocked_ea_1snh,
-    layout_caf_blocked,
-    layout_wsi_blocked,
-    layout_str_snds_blocked,
-    layout_ws_aud_blocked,
-    layout_matx_blocked,
+    layout_blocked_caf,
+    layout_blocked_wsi,
+    layout_blocked_str_snds,
+    layout_blocked_ws_aud,
+    layout_blocked_matx,
     layout_blocked_dec,
-    layout_xvas_blocked,
-    layout_vs_blocked,
-    layout_emff_ps2_blocked,
-    layout_emff_ngc_blocked,
-    layout_gsb_blocked,
-    layout_thp_blocked,
-    layout_filp_blocked,
+    layout_blocked_xvas,
+    layout_blocked_vs,
+    layout_blocked_emff_ps2,
+    layout_blocked_emff_ngc,
+    layout_blocked_gsb,
+    layout_blocked_thp,
+    layout_blocked_filp,
     layout_blocked_ea_swvr,
-    layout_ps2_adm_blocked,
-    layout_dsp_bdsp_blocked,
-    layout_mxch_blocked,
+    layout_blocked_adm,
+    layout_blocked_bdsp,
+    layout_blocked_mxch,
     layout_blocked_ivaud,   /* GTA IV .ivaud blocks */
-    layout_tra_blocked,     /* DefJam Rapstar .tra blocks */
-    layout_ps2_iab_blocked,
-    layout_ps2_strlr_blocked,
-    layout_rws_blocked,
-    layout_hwas_blocked,
+    layout_blocked_tra,     /* DefJam Rapstar .tra blocks */
+    layout_blocked_ps2_iab,
+    layout_blocked_ps2_strlr,
+    layout_blocked_rws,
+    layout_blocked_hwas,
     layout_blocked_ea_sns,  /* newest Electronic Arts blocks, found in SNS/SNU/SPS/etc formats */
     layout_blocked_awc,     /* Rockstar AWC */
     layout_blocked_vgs,     /* Guitar Hero II (PS2) */
     layout_blocked_vawx,    /* No More Heroes 6ch (PS3) */
     layout_blocked_xvag_subsong, /* XVAG subsongs [God of War III (PS4)] */
+    layout_blocked_ea_wve_au00, /* EA WVE au00 blocks */
+    layout_blocked_ea_wve_ad10, /* EA WVE Ad10 blocks */
+    layout_blocked_sthd, /* Dream Factory STHD */
 
     /* otherwise odd */
-    layout_acm,             /* libacm layout */
-    layout_mus_acm,         /* mus has multi-files to deal with */
     layout_aix,             /* CRI AIX's wheels within wheels */
-    layout_aax,             /* CRI AAX's wheels within databases */
-    layout_scd_int,         /* deinterleave done by the SCDINTSTREAMFILE */
+    layout_segmented,       /* song divided in segments (song sections) */
+    layout_layered,         /* song divided in layers (song channels) */
 
-#ifdef VGM_USE_VORBIS
-    layout_ogg_vorbis,      /* ogg vorbis file */
-#endif
 } layout_t;
 
 /* The meta type specifies how we know what we know about the file.
@@ -284,8 +279,8 @@ typedef enum {
     meta_DSP_AGSC,          /* Retro: Metroid Prime 2 title */
     meta_DSP_MPDSP,         /* Monopoly Party single header stereo */
     meta_DSP_JETTERS,       /* Bomberman Jetters .dsp */
-    meta_DSP_MSS,           /* ? */
-    meta_DSP_GCM,           /* ? */
+    meta_DSP_MSS,           /* Free Radical GC games */
+    meta_DSP_GCM,           /* some of Traveller's Tales games */
     meta_DSP_STR,           /* Conan .str files */
     meta_DSP_SADB,          /* .sad */
     meta_DSP_WSI,           /* .wsi */
@@ -325,7 +320,7 @@ typedef enum {
     meta_RSF,               /* Retro Studios RSF (Metroid Prime .rsf) [no header_id] */
     meta_HALPST,            /* HAL Labs HALPST */
     meta_GCSW,              /* GCSW (PCM) */
-    meta_CFN,               /* Namco CAF Audio File */
+    meta_CAF,               /* tri-Crescendo CAF */
     meta_MYSPD,             /* U-Sing .myspd */
     meta_HIS,               /* Her Ineractive .his */
     meta_BNSF,              /* Bandai Namco Sound Format */
@@ -381,11 +376,10 @@ typedef enum {
     meta_PS2_RSTM,          /* Midnight Club 3 */
     meta_PS2_KCES,          /* Dance Dance Revolution */
     meta_PS2_DXH,           /* Tokobot Plus - Myteries of the Karakuri */
-    meta_PS2_PSH,           /* Dawn of Mana - Seiken Densetsu 4 */
+    meta_PS2_PSH,           /* Square Enix PSH/VSV (Dawn of Mana/KH Re:CoM) */
     meta_SCD_PCM,           /* Lunar - Eternal Blue */
     meta_PS2_PCM,           /* Konami KCEJ East: Ephemeral Fantasia, Yu-Gi-Oh! The Duelists of the Roses, 7 Blades */
-    meta_PS2_RKV,           /* Legacy of Kain - Blood Omen 2 */
-    meta_PS2_PSW,           /* Rayman Raving Rabbids */
+    meta_PS2_RKV,           /* Legacy of Kain - Blood Omen 2 (PS2) */
     meta_PS2_VAS,           /* Pro Baseball Spirits 5 */
     meta_PS2_TEC,           /* TECMO badflagged stream */
     meta_PS2_ENTH,          /* Enthusia */
@@ -407,13 +401,11 @@ typedef enum {
     meta_GSP_GSB,           /* Tecmo games (Super Swing Golf 1 & 2, Quamtum Theory) */
     meta_YDSP,              /* WWE Day of Reckoning */
     meta_FFCC_STR,          /* Final Fantasy: Crystal Chronicles */
-    
-    meta_WAA_WAC_WAD_WAM,   /* Beyond Good & Evil */
+    meta_UBI_JADE,          /* Beyond Good & Evil, Rayman Raving Rabbids */
     meta_GCA,               /* Metal Slug Anthology */
     meta_MSVP,              /* Popcap Hits */
     meta_NGC_SSM,           /* Golden Gashbell Full Power */
     meta_PS2_JOE,           /* Wall-E / Pixar games */
-
     meta_NGC_YMF,           /* WWE WrestleMania X8 */
     meta_SADL,              /* .sad */
     meta_PS2_CCC,           /* Tokyo Xtreme Racer DRIFT 2 */
@@ -440,6 +432,8 @@ typedef enum {
     meta_RSD6RADP,          /* RSD6RADP */
     meta_RSD6OOGV,          /* RSD6OOGV */
     meta_RSD6XMA,           /* RSD6XMA */
+    meta_RSD6AT3P,          /* RSD6AT3+ */
+    meta_RSD6WMA,           /* RSD6WMA */
 
     meta_PS2_ASS,           /* ASS */
     meta_PS2_SEG,           /* Eragon */
@@ -463,7 +457,6 @@ typedef enum {
     meta_UBI_CKD,           /* Ubisoft CKD RIFF header (Rayman Origins Wii) */
 
     meta_XBOX_WAVM,         /* XBOX WAVM File */
-    meta_XBOX_RIFF,         /* XBOX RIFF/WAVE File */
     meta_XBOX_WVS,          /* XBOX WVS */
     meta_NGC_WVS,           /* Metal Arms - Glitch in the System */
     meta_XBOX_MATX,         /* XBOX MATX */
@@ -488,8 +481,8 @@ typedef enum {
     meta_RIFF_WAVE_POS,     /* .wav + .pos for looping (Ys Complete PC) */
     meta_RIFF_WAVE_labl,    /* RIFF w/ loop Markers in LIST-adtl-labl */
     meta_RIFF_WAVE_smpl,    /* RIFF w/ loop data in smpl chunk */
+    meta_RIFF_WAVE_wsmp,    /* RIFF w/ loop data in wsmp chunk */
     meta_RIFF_WAVE_MWV,     /* .mwv RIFF w/ loop data in ctrl chunk pflt */
-    meta_RIFF_WAVE_SNS,     /* .sns RIFF */
     meta_RIFX_WAVE,         /* RIFX, for big-endian WAVs */
     meta_RIFX_WAVE_smpl,    /* RIFX w/ loop data in smpl chunk */
     meta_XNB,               /* XNA Game Studio 4.0 */
@@ -547,7 +540,7 @@ typedef enum {
     meta_P3D,               /* Prototype P3D */
     meta_PS2_TK1,           /* Tekken (NamCollection) */
     meta_PS2_ADSC,          /* Kenka Bancho 2: Full Throttle */
-    meta_NGC_BO2,           /* Blood Omen 2 (NGC) */
+    meta_NGC_RKV,           /* Legacy of Kain - Blood Omen 2 (GC) */
     meta_DSP_DDSP,          /* Various (2 dsp files stuck together */
     meta_NGC_DSP_MPDS,      /* Big Air Freestyle, Terminator 3 */
     meta_DSP_STR_IG,        /* Micro Machines, Superman Superman: Shadow of Apokolis */
@@ -557,7 +550,7 @@ typedef enum {
     meta_PS2_WAD,           /* The golden Compass */
     meta_DSP_XIII,          /* XIII, possibly more (Ubisoft header???) */
     meta_DSP_CABELAS,       /* Cabelas games */
-    meta_PS2_ADM,           /* Dragon Quest 5 */
+    meta_PS2_ADM,           /* Dragon Quest V (PS2) */
     meta_PS2_LPCM,          /* Ah! My Goddess */
     meta_DSP_BDSP,          /* Ah! My Goddess */
     meta_PS2_VMS,           /* Autobahn Raser - Police Madness */
@@ -609,7 +602,7 @@ typedef enum {
     meta_FSTM,              /* Nintendo Wii U FSTM (caFe? Stream) */
     meta_3DS_IDSP,          /* Nintendo 3DS/Wii U IDSP */
     meta_KT_WIIBGM,         /* Koei Tecmo WiiBGM */
-    meta_KTSS,              /* Koei Tecmo Switch Sound */
+    meta_KTSS,              /* Koei Tecmo Nintendo Stream (KNS) */
     meta_MCA,               /* Capcom MCA "MADP" */
     meta_XB3D_ADX,          /* Xenoblade Chronicles 3D ADX */
     meta_HCA,               /* CRI HCA */
@@ -629,7 +622,7 @@ typedef enum {
     meta_GTD,               /* Knights Contract (X360/PS3), Valhalla Knights 3 (PSV) */
     meta_TA_AAC_X360,       /* tri-Ace AAC (Star Ocean 4, End of Eternity, Infinite Undiscovery) */
     meta_TA_AAC_PS3,        /* tri-Ace AAC (Star Ocean International, Resonance of Fate) */
-    meta_TA_AAC_VORBIS,     /* tri-Ace AAC (Star Ocean Anamnesis, Heaven x Inferno) */
+    meta_TA_AAC_MOBILE,     /* tri-Ace AAC (Star Ocean Anamnesis, Heaven x Inferno) */
     meta_PS3_MTA2,          /* Metal Gear Solid 4 MTA2 */
     meta_NGC_ULW,           /* Burnout 1 (GC only) */
     meta_PC_XA30,           /* Driver - Parallel Lines (PC) */
@@ -641,7 +634,7 @@ typedef enum {
     meta_BINK,              /* RAD Game Tools BINK audio/video */
     meta_EA_SNU,            /* Electronic Arts SNU (Dead Space) */
     meta_AWC,               /* Rockstar AWC (GTA5, RDR) */
-    meta_NSW_OPUS,          /* Lego City Undercover (Switch) */
+    meta_OPUS,              /* Nintendo Opus [Lego City Undercover (Switch)] */
     meta_PC_AL2,            /* Conquest of Elysium 3 (PC) */
     meta_PC_AST,            /* Dead Rising (PC) */
     meta_NAAC,              /* Namco AAC (3DS) */
@@ -667,10 +660,29 @@ typedef enum {
     meta_SQEX_SAB,          /* Square-Enix newest middleware (sound) */
     meta_SQEX_MAB,          /* Square-Enix newest middleware (music) */
     meta_OGG_L2SD,          /* Ogg Vorbis with obfuscation [Lineage II Chronicle 4 (PC)] */
+    meta_WAF,               /* KID WAF [Ever 17 (PC)] */
+    meta_WAVE,              /* EngineBlack games [Mighty Switch Force! (3DS)] */
+    meta_WAVE_segmented,    /* EngineBlack games, segmented [Shantae and the Pirate's Curse (PC)] */
+    meta_SMV,               /* Cho Aniki Zero (PSP) */
+    meta_NXAP,              /* Nex Entertainment games [Time Crisis 4 (PS3), Time Crisis Razing Storm (PS3)] */
+    meta_EA_WVE_AU00,       /* Electronic Arts PS movies [Future Cop - L.A.P.D. (PS), Supercross 2000 (PS)] */
+    meta_EA_WVE_AD10,       /* Electronic Arts PS movies [Wing Commander 3/4 (PS)] */
+    meta_STHD,              /* STHD .stx [Kakuto Chojin (Xbox)] */
+    meta_MP4,               /* MP4/AAC */
+    meta_PCM_SRE,           /* .PCM+SRE [Viewtiful Joe (PS2)] */
+    meta_DSP_MCADPCM,       /* Skyrim (Switch) */
+    meta_UBI_LYN,           /* Ubisoft LyN engine [The Adventures of Tintin (multi)] */
+    meta_MSB_MSH,           /* sfx companion of MIH+MIB */
+    meta_OGG_RPGMV,         /* Ogg Vorbis with encryption [RPG Maker MV games (PC)] */
+    meta_OGG_ENO,           /* Ogg Vorbis with encryption [Metronomicon (PC)] */
+    meta_TXTP,              /* generic text playlist */
+    meta_SMC_SMH,           /* Wangan Midnight (System 246) */
+    meta_OGG_YS8,           /* Ogg Vorbis with encryption (Ys VIII PC) */
+    meta_PPST,              /* PPST [Parappa the Rapper (PSP)] */
+    meta_OPUS_PPP,          /* .at9 Opus [Penny-Punching Princess (Switch)] */
+    meta_UBI_BAO,           /* Ubisoft BAO */
+    meta_DSP_SWITCH_AUDIO,  /* Gal Gun 2 (Switch) */
 
-#ifdef VGM_USE_MP4V2
-    meta_MP4,               /* AAC (iOS) */
-#endif
 #ifdef VGM_USE_FFMPEG
     meta_FFmpeg,
 #endif
@@ -723,12 +735,6 @@ typedef struct {
     uint16_t adx_mult;
     uint16_t adx_add;
 
-    /* BMDX encryption */
-    uint8_t bmdx_xor;
-    uint8_t bmdx_add;
-    
-    /* generic encryption */
-    uint16_t key_xor;
 } VGMSTREAMCHANNEL;
 
 /* main vgmstream info */
@@ -746,6 +752,7 @@ typedef struct {
     int stream_index;       /* selected stream (also 1-based) */
     char stream_name[STREAM_NAME_SIZE]; /* name of the current stream (info), if the file stores it and it's filled */
     size_t stream_size;     /* info to properly calculate bitrate */
+    uint32_t channel_mask;  /* to silence crossfading subsongs/layers */
 
     /* looping */
     int loop_flag;              /* is this stream looped? */
@@ -754,7 +761,7 @@ typedef struct {
 
     /* layouts/block */
     size_t interleave_block_size;       /* interleave, or block/frame size (depending on the codec) */
-    size_t interleave_smallblock_size;  /* smaller interleave for last block */
+    size_t interleave_last_block_size;  /* smaller interleave for last block */
 
     /* channel state */
     VGMSTREAMCHANNEL * ch;          /* pointer to array of channels */
@@ -802,6 +809,10 @@ typedef struct {
      * Note also that support must be added for resetting, looping and
      * closing for every codec that uses this, as it will not be handled. */
     void * codec_data;
+    /* Same, for special layouts.
+     * Reusing the above pointer causes bugs when it's using special layout + codec
+     * (vgmstream may try to free/loop/etc codec_data). */
+    void * layout_data;
 } VGMSTREAM;
 
 #ifdef VGM_USE_VORBIS
@@ -816,7 +827,7 @@ typedef struct {
     void (*decryption_callback)(void *ptr, size_t size, size_t nmemb, void *datasource);
     uint8_t scd_xor;
     off_t scd_xor_length;
-    uint32_t sngw_xor;
+    uint32_t xor_value;
 
 } ogg_vorbis_streamfile;
 
@@ -889,6 +900,8 @@ typedef struct {
     /* reference for page/blocks */
     off_t block_offset;
     size_t block_size;
+
+    int prev_block_samples;     /* count for optimization */
 
 } vorbis_custom_codec_data;
 #endif
@@ -971,6 +984,7 @@ typedef struct {
     mpeg_custom_t type; /* mpeg subtype */
     mpeg_custom_config config; /* config depending on the mode */
 
+    size_t default_buffer_size;
     mpeg_custom_stream **streams; /* array of MPEG streams (ex. 2ch+2ch) */
     size_t streams_size;
 
@@ -1041,20 +1055,10 @@ typedef struct {
 } atrac9_codec_data;
 #endif
 
-/* with one file this is also used for just ACM */
+/* libacm interface */
 typedef struct {
-    int file_count;
-    int current_file;
-    /* the index we return to upon loop completion */
-    int loop_start_file;
-    /* one after the index of the last file, typically
-     * will be equal to file_count */
-    int loop_end_file;
-    /* Upon exit from a loop, which file to play. */
-    /* -1 if there is no such file */
-    /*int end_file;*/
-    ACMStream **files;
-} mus_acm_codec_data;
+    ACMStream *file;
+} acm_codec_data;
 
 #define AIX_BUFFER_SIZE 0x1000
 /* AIXery */
@@ -1070,26 +1074,25 @@ typedef struct {
     VGMSTREAM **adxs;
 } aix_codec_data;
 
+/* for files made of "vertical" segments, one per section of a song (using a complete sub-VGMSTREAM) */
 typedef struct {
     int segment_count;
+    VGMSTREAM **segments;
     int current_segment;
     int loop_segment;
-    /* one per segment */
-    int32_t *sample_counts;
-    VGMSTREAM **adxs;
-} aax_codec_data;
+} segmented_layout_data;
+
+/* for files made of "horizontal" layers, one per group of channels (using a complete sub-VGMSTREAM) */
+typedef struct {
+    int layer_count;
+    VGMSTREAM **layers;
+} layered_layout_data;
 
 /* for compressed NWA */
 typedef struct {
     NWAData *nwa;
 } nwa_codec_data;
 
-/* SQEX SCD interleaved */
-typedef struct {
-    int substream_count;
-    VGMSTREAM **substreams;
-    STREAMFILE **intfiles;
-} scd_int_codec_data;
 
 typedef struct {
     STREAMFILE *streamfile;

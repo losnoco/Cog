@@ -78,6 +78,18 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
     }
 #endif
 
+    /* ignore LyN RIFF */
+    {
+        off_t fact_offset;
+        size_t fact_size;
+
+        if (find_chunk(streamFile, 0x66616374,first_offset,0, &fact_offset,&fact_size, 0, 0)) { /* "fact" */
+            if (fact_size == 0x10 && read_32bitBE(fact_offset+0x04, streamFile) == 0x4C794E20) /* "LyN " */
+                goto fail; /* parsed elsewhere */
+            /* Wwise doesn't use "fact", though */
+        }
+    }
+
 
     /* parse format (roughly spec-compliant but some massaging is needed) */
     {
@@ -123,9 +135,9 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                 //todo fix repeat looping
             }
         }
-        else if (find_chunk(streamFile, 0x4C495354,first_offset,0, &loop_offset,&loop_size, ww.big_endian, 0)) { /*"LIST", common */
-            //todo parse "adtl" (does it ever contain loop info in Wwise?)
-        }
+        //else if (find_chunk(streamFile, 0x4C495354,first_offset,0, &loop_offset,&loop_size, ww.big_endian, 0)) { /*"LIST", common */
+        //    /* usually contains "cue"s with sample positions for events (ex. Platinum Games) but no real looping info */
+        //}
 
         /* other Wwise specific: */
         //"JUNK": optional padding for usually aligment (0-size JUNK exists too)
@@ -194,15 +206,14 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
             break;
 
         case IMA: /* common */
-            /* slightly modified XBOX-IMA with interleaved sub-blocks and LE/BE header */
-
-            /* Wwise uses common codecs (ex. 0x0002 MSADPCM) so this parser should go AFTER riff.c avoid misdetection */
+            /* slightly modified XBOX-IMA */
+            /* Wwise reuses common codec ids (ex. 0x0002 MSADPCM) for IMA so this parser should go AFTER riff.c avoid misdetection */
 
             if (ww.bits_per_sample != 4) goto fail;
             if (ww.block_align != 0x24 * ww.channels) goto fail;
             vgmstream->coding_type = coding_WWISE_IMA;
-            vgmstream->layout_type = layout_none;
-            vgmstream->interleave_block_size = ww.block_align;
+            vgmstream->layout_type = layout_interleave;
+            vgmstream->interleave_block_size = ww.block_align / ww.channels;
             vgmstream->codec_endian = ww.big_endian;
 
             if (ww.truncated) /* enough to get real samples */
@@ -230,8 +241,8 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                 /* older Wwise (~<2012) */
 
                 switch(vorb_size) {
-                    //case 0x2C: /* early (~2009), some EVE Online Apocrypha files? */
-                    case 0x28: /* early (~2009), ex. The Lord of the Rings: Conquest PC */
+                    case 0x2C: /* earliest (~2009), ex. UFC Undisputed 2009 (PS3), some EVE Online Apocrypha files? */
+                    case 0x28: /* early (~2009), ex. The Lord of the Rings: Conquest (PC) */
                         data_offsets = 0x18;
                         block_offsets = 0; /* no need, full headers are present */
                         cfg.header_type = WWV_TYPE_8;
@@ -452,7 +463,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
 
                 vgmstream->num_samples = msd.num_samples;
                 if (!vgmstream->num_samples)
-                    vgmstream->num_samples = ffmpeg_data->totalSamples; /* very wrong, from avg-br */
+                    vgmstream->num_samples = (int32_t)ffmpeg_data->totalSamples; /* very wrong, from avg-br */
                 //num_samples seem to be found in the last "seek" table entry too, as: entry / channels / 2
             }
 
@@ -471,7 +482,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
             vgmstream->coding_type = coding_FFmpeg;
             vgmstream->layout_type = layout_none;
 
-            vgmstream->num_samples = ffmpeg_data->totalSamples;
+            vgmstream->num_samples = (int32_t)ffmpeg_data->totalSamples;
             break;
         }
 
@@ -590,15 +601,15 @@ fail:
 0x31 (1): blocksize_0_exp (large)
 0x32 (2): empty
 
-"vorb" size 0x28 / 0x2a
+"vorb" size 0x28 / 0x2c / 0x2a
 0x00 (4): num_samples
 0x04 (4): data start offset after seek table+setup, or loop start when "smpl" is present
 0x08 (4): data end offset after seek table (setup+packets), or loop end when "smpl" is present
-0x0c (2): ? (small, 0..~0x400)
+0x0c (2): ? (small, 0..~0x400) [(4) when size is 0x2C]
 0x10 (4): setup_offset within data (0 = no seek table)
 0x14 (4): audio_offset within data
 0x18 (2): biggest packet size (not including header)?
-0x1a (2): ? (small, N..~0x100) uLastGranuleExtra?
+0x1a (2): ? (small, N..~0x100) uLastGranuleExtra? [(4) when size is 0x2C]
 0x1c (4): ? (mid, 0~0x5000) dwDecodeAllocSize?
 0x20 (4): ? (mid, 0~0x5000) dwDecodeX64AllocSize?
 0x24 (4): parent bank/event id? uHashCodebook? (shared by several .wem a game, but not all need to share it)

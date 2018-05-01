@@ -297,15 +297,9 @@ fail:
 int ffmpeg_make_riff_xma2_from_xma2_chunk(uint8_t * buf, size_t buf_size, off_t xma2_offset, size_t xma2_size, size_t data_size, STREAMFILE *streamFile) {
     uint8_t chunk[0x100];
     size_t riff_size;
-    size_t xma2_final_size = xma2_size;
-    int xma2_chunk_version = read_8bit(xma2_offset,streamFile);
 
-    /* FFmpeg can't parse v3 "XMA2" chunks so we'll have to extend (8 bytes in the middle) */
-    if (xma2_chunk_version == 3)
-        xma2_final_size += 0x8;
-    riff_size = 4+4+ 4 + 4+4+xma2_final_size + 4+4;
-
-    if (buf_size < riff_size || xma2_final_size > 0x100)
+    riff_size = 4+4+ 4 + 4+4+xma2_size + 4+4;
+    if (buf_size < riff_size || xma2_size > 0x100)
         goto fail;
     if (read_streamfile(chunk,xma2_offset,xma2_size, streamFile) != xma2_size)
         goto fail;
@@ -316,20 +310,11 @@ int ffmpeg_make_riff_xma2_from_xma2_chunk(uint8_t * buf, size_t buf_size, off_t 
     memcpy(buf+0x08, "WAVE", 4);
 
     memcpy(buf+0x0c, "XMA2", 4);
-    put_32bitLE(buf+0x10, xma2_final_size);
-    if (xma2_chunk_version == 3) {
-        /* old XMA2 v3: change to v4 (extra 8 bytes in the middle); always BE */
-        put_8bit   (buf+0x14 + 0x00, 4); /* v4 */
-        memcpy     (buf+0x14 + 0x01, chunk+1, 0xF); /* first v3 part (fixed) */
-        put_32bitBE(buf+0x14 + 0x10, 0x000010D6); /* extra v4 BE: "EncodeOptions" (not used by FFmpeg) */
-        put_32bitBE(buf+0x14 + 0x14, 0); /* extra v4 BE: "PsuedoBytesPerSec" (not used by FFmpeg) */
-        memcpy     (buf+0x14 + 0x18, chunk+0x10, xma2_size - 0x10); /* second v3 part (variable size) */
-    } else {
-        memcpy(buf+0x14, chunk, xma2_size);
-    }
+    put_32bitLE(buf+0x10, xma2_size);
+    memcpy(buf+0x14, chunk, xma2_size);
 
-    memcpy(buf+0x14+xma2_final_size, "data", 4);
-    put_32bitLE(buf+0x14+xma2_final_size+4, data_size); /* data size */
+    memcpy(buf+0x14+xma2_size, "data", 4);
+    put_32bitLE(buf+0x14+xma2_size+4, data_size); /* data size */
 
     return riff_size;
 
@@ -436,20 +421,19 @@ fail:
 static void ms_audio_get_samples(ms_sample_data * msd, STREAMFILE *streamFile, int start_packet, int channels_per_packet, int bytes_per_packet, int samples_per_frame, int samples_per_subframe, int bits_frame_size) {
     int frames = 0, samples = 0, loop_start_frame = 0, loop_end_frame = 0, start_skip = 0, end_skip = 0;
 
-    uint32_t first_frame_b, packet_skip_count = 0, frame_size_b, packet_size_b, header_size_b;
-    uint64_t offset_b, packet_offset_b, frame_offset_b;
-    size_t size;
+    size_t first_frame_b, packet_skip_count = 0, frame_size_b, packet_size_b, header_size_b;
+    off_t offset_b, packet_offset_b, frame_offset_b;
 
-    uint32_t packet_size = bytes_per_packet;
+    size_t packet_size = bytes_per_packet;
     off_t offset = msd->data_offset;
-    uint32_t stream_offset_b = msd->data_offset * 8;
+    off_t max_offset = msd->data_offset + msd->data_size;
+    off_t stream_offset_b = msd->data_offset * 8;
 
     offset += start_packet * packet_size;
-    size = offset + msd->data_size;
     packet_size_b = packet_size * 8;
 
     /* read packets */
-    while (offset < size) {
+    while (offset < max_offset) {
         offset_b = offset * 8; /* global offset in bits */
         offset += packet_size; /* global offset in bytes */
 
@@ -678,7 +662,7 @@ void wmapro_get_samples(ms_sample_data * msd, STREAMFILE *streamFile, int block_
         return;
     }
     samples_per_frame = wma_get_samples_per_frame(version, sample_rate, decode_flags);
-    bits_frame_size = floor(log(block_align) / log(2)) + 4; /* max bits needed to represent this block_align */
+    bits_frame_size = (int)floor(log(block_align) / log(2)) + 4; /* max bits needed to represent this block_align */
     samples_per_subframe = 0; /* not really needed WMAPro can't use loop subframes (complex subframe lengths) */
     msd->xma_version = 0; /* signal it's not XMA */
 
@@ -705,7 +689,8 @@ void wma_get_samples(ms_sample_data * msd, STREAMFILE *streamFile, int block_ali
     else {
         /* variable frames per packet (mini-header values) */
         off_t offset = msd->data_offset;
-        while (offset < msd->data_size) { /* read packets (superframes) */
+        off_t max_offset = msd->data_offset + msd->data_size;
+        while (offset < max_offset) { /* read packets (superframes) */
             int packet_frames;
             uint8_t header = read_8bit(offset, streamFile); /* upper nibble: index;  lower nibble: frames */
 

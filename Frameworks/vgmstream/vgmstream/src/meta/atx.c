@@ -49,7 +49,7 @@ static STREAMFILE* setup_atx_streamfile(STREAMFILE *streamFile) {
     num_segments = read_16bitLE(0x1e,streamFile);
 
     /* expected segment name: X_XXX_XXX_0n.ATX, starting from n=1 */
-    get_streamfile_name(streamFile, filename,PATH_LIMIT);
+    get_streamfile_filename(streamFile, filename,PATH_LIMIT);
     filename_len = strlen(filename);
     if (filename_len < 7 || filename[filename_len - 5] != '1') goto fail;
 
@@ -59,7 +59,7 @@ static STREAMFILE* setup_atx_streamfile(STREAMFILE *streamFile) {
         size_t subfile_size;
 
         filename[filename_len - 5] = ('0'+i+1); /* ghetto digit conversion */
-        new_streamFile = open_stream_name(streamFile, filename);
+        new_streamFile = open_streamfile_by_filename(streamFile, filename);
         if (!new_streamFile) goto fail;
         segment_streamFiles[i] = new_streamFile;
 
@@ -96,12 +96,16 @@ static STREAMFILE* setup_atx_streamfile(STREAMFILE *streamFile) {
     if (!new_streamFile) goto fail;
     temp_streamFile = new_streamFile;
 
+    /* if all this worked we'll have this frankenstein streamfile:
+     *  fakename( clamp( multifile( segment0=clamp(standard(FILE)), segment1=clamp(standard(FILE)) ) ) ) */
+
     return temp_streamFile;
 
 fail:
     if (!temp_streamFile) {
-        for (i = 0; i < num_segments; i++)
+        for (i = 0; i < num_segments; i++) {
             close_streamfile(segment_streamFiles[i]);
+        }
     } else {
         close_streamfile(temp_streamFile); /* closes all segments */
     }

@@ -364,6 +364,10 @@ ffmpeg_codec_data * init_ffmpeg_config(STREAMFILE *streamFile, uint8_t * header,
         memcpy(&data->config, config, sizeof(ffmpeg_custom_config));
     }
 
+    /* ignore bad combos */
+    if ((header && !header_size) || (!header && header_size))
+        goto fail;
+
     /* fake header to trick FFmpeg into demuxing/decoding the stream */
     if (header_size > 0) {
         data->header_size = header_size;
@@ -706,6 +710,7 @@ end:
 
 void reset_ffmpeg(VGMSTREAM *vgmstream) {
     ffmpeg_codec_data *data = (ffmpeg_codec_data *) vgmstream->codec_data;
+    if (!data) return;
 
     if (data->formatCtx) {
         avformat_seek_file(data->formatCtx, data->streamIndex, 0, 0, 0, AVSEEK_FLAG_ANY);
@@ -733,6 +738,7 @@ void reset_ffmpeg(VGMSTREAM *vgmstream) {
 void seek_ffmpeg(VGMSTREAM *vgmstream, int32_t num_sample) {
     ffmpeg_codec_data *data = (ffmpeg_codec_data *) vgmstream->codec_data;
     int64_t ts;
+    if (!data) return;
 
     /* Start from 0 and discard samples until loop_start (slower but not too noticeable).
      * Due to various FFmpeg quirks seeking to a sample is erratic in many formats (would need extra steps). */

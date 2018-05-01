@@ -130,6 +130,8 @@ mpeg_codec_data *init_mpeg_custom(STREAMFILE *streamFile, off_t start_offset, co
     memcpy(&data->config, config, sizeof(mpeg_custom_config));
     data->config.channels = channels;
 
+    data->default_buffer_size = MPEG_DATA_BUFFER_SIZE;
+
     /* init per subtype */
     switch(data->type) {
         case MPEG_EAL31:
@@ -144,6 +146,7 @@ mpeg_codec_data *init_mpeg_custom(STREAMFILE *streamFile, off_t start_offset, co
 
     if (channels <= 0 || channels > 16) goto fail; /* arbitrary max */
     if (channels < data->channels_per_frame) goto fail;
+    if (data->default_buffer_size > 0x8000) goto fail;
 
 
     /* init streams */
@@ -160,7 +163,7 @@ mpeg_codec_data *init_mpeg_custom(STREAMFILE *streamFile, off_t start_offset, co
         if (!data->streams[i]->output_buffer) goto fail;
 
         /* one per stream as sometimes mpg123 can't read the whole buffer in one pass */
-        data->streams[i]->buffer_size = MPEG_DATA_BUFFER_SIZE;
+        data->streams[i]->buffer_size = data->default_buffer_size;
         data->streams[i]->buffer = calloc(sizeof(uint8_t), data->streams[i]->buffer_size);
         if (!data->streams[i]->buffer) goto fail;
     }
@@ -499,6 +502,7 @@ void free_mpeg(mpeg_codec_data *data) {
 void reset_mpeg(VGMSTREAM *vgmstream) {
     off_t input_offset;
     mpeg_codec_data *data = vgmstream->codec_data;
+    if (!data) return;
 
     /* reset multistream */ //todo check if stream offsets are properly reset
 
@@ -523,6 +527,7 @@ void reset_mpeg(VGMSTREAM *vgmstream) {
 void seek_mpeg(VGMSTREAM *vgmstream, int32_t num_sample) {
     off_t input_offset;
     mpeg_codec_data *data = vgmstream->codec_data;
+    if (!data) return;
 
     /* seek multistream */
     if (!data->custom) {

@@ -111,8 +111,7 @@ static void psychic_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb
     int i;
 
     /* add 0x23 ('#') */
-    {
-        for (i = 0; i < bytes_read; i++)
+    for (i = 0; i < bytes_read; i++) {
             ((uint8_t*)ptr)[i] += 0x23;
     }
 }
@@ -124,19 +123,16 @@ static void sngw_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb, v
     char *header_id = "OggS";
     uint8_t key[4];
 
-    put_32bitBE(key, ov_streamfile->sngw_xor);
+    put_32bitBE(key, ov_streamfile->xor_value);
 
-    /* bytes are xor'd with key and nibble-swapped */
-    {
-        for (i = 0; i < bytes_read; i++) {
-            if (ov_streamfile->offset+i < 0x04) {
-                /* replace key in the first 4 bytes with "OggS" */
-                ((uint8_t*)ptr)[i] = (uint8_t)header_id[(ov_streamfile->offset + i) % 4];
-            }
-            else {
-                uint8_t val = ((uint8_t*)ptr)[i] ^ key[(ov_streamfile->offset + i) % 4];
-                ((uint8_t*)ptr)[i] = ((val << 4) & 0xf0) | ((val >> 4) & 0x0f);
-            }
+    /* bytes are xor'd with key and nibble-swapped, first "OggS" is changed */
+    for (i = 0; i < bytes_read; i++) {
+        if (ov_streamfile->offset+i < 0x04) {
+            ((uint8_t*)ptr)[i] = (uint8_t)header_id[(ov_streamfile->offset + i) % 4];
+        }
+        else {
+            uint8_t val = ((uint8_t*)ptr)[i] ^ key[(ov_streamfile->offset + i) % 4];
+            ((uint8_t*)ptr)[i] = ((val << 4) & 0xf0) | ((val >> 4) & 0x0f);
         }
     }
 }
@@ -150,9 +146,8 @@ static void isd_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb, vo
     int i;
 
     /* bytes are xor'd with key */
-    {
-        for (i = 0; i < bytes_read; i++)
-            ((uint8_t*)ptr)[i] ^= key[(ov_streamfile->offset + i) % 16];
+    for (i = 0; i < bytes_read; i++) {
+        ((uint8_t*)ptr)[i] ^= key[(ov_streamfile->offset + i) % 16];
     }
 }
 
@@ -162,25 +157,67 @@ static void l2sd_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb, v
     int i;
     char *header_id = "OggS";
 
-    /* First "OggS" is changed */
-    {
-        for (i = 0; i < bytes_read; i++) {
-            if (ov_streamfile->offset+i < 0x04) {
-                /* replace key in the first 4 bytes with "OggS" */
-                ((uint8_t*)ptr)[i] = (uint8_t)header_id[(ov_streamfile->offset + i) % 4];
-            }
-            else {
-                break;
-            }
+    /* first "OggS" is changed */
+    for (i = 0; i < bytes_read; i++) {
+        if (ov_streamfile->offset+i < 0x04) {
+            /* replace key in the first 4 bytes with "OggS" */
+            ((uint8_t*)ptr)[i] = (uint8_t)header_id[(ov_streamfile->offset + i) % 4];
+        }
+        else {
+            break;
         }
     }
 }
 
+static void rpgmvo_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb, void *datasource) {
+    static const uint8_t header[16] = { /* OggS, packet type, granule, stream id(empty) */
+            0x4F,0x67,0x67,0x53,0x00,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+    };
+    size_t bytes_read = size*nmemb;
+    ogg_vorbis_streamfile * const ov_streamfile = datasource;
+    int i;
+
+    /* first 0x10 are xor'd with a key, but the header can be easily reconstructed
+     * (key is also in (game)/www/data/System.json "encryptionKey") */
+    for (i = 0; i < bytes_read; i++) {
+        if (ov_streamfile->offset+i < 0x10) {
+            ((uint8_t*)ptr)[i] = header[(ov_streamfile->offset + i) % 16];
+
+            /* last two bytes are the stream id, get from next OggS */
+            if (ov_streamfile->offset+i == 0x0e)
+                ((uint8_t*)ptr)[i] = read_8bit(0x58, ov_streamfile->streamfile);
+            if (ov_streamfile->offset+i == 0x0f)
+                ((uint8_t*)ptr)[i] = read_8bit(0x59, ov_streamfile->streamfile);
+        }
+    }
+}
+
+static void eno_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb, void *datasource) {
+    size_t bytes_read = size*nmemb;
+    ogg_vorbis_streamfile * const ov_streamfile = datasource;
+    int i;
+
+    /* bytes are xor'd with key */
+    for (i = 0; i < bytes_read; i++) {
+        ((uint8_t*)ptr)[i] ^= (uint8_t)ov_streamfile->xor_value;
+    }
+}
+
+static void ys8_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb, void *datasource) {
+    size_t bytes_read = size*nmemb;
+    ogg_vorbis_streamfile * const ov_streamfile = datasource;
+    int i;
+
+    /* bytes are xor'd with key and nibble-swapped */
+    for (i = 0; i < bytes_read; i++) {
+        uint8_t val = ((uint8_t*)ptr)[i] ^ ov_streamfile->xor_value;
+        ((uint8_t*)ptr)[i] = ((val << 4) & 0xf0) | ((val >> 4) & 0x0f);
+    }
+}
 
 /* Ogg Vorbis, by way of libvorbisfile; may contain loop comments */
 VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
-    char filename[PATH_LIMIT];
-    vgm_vorbis_info_t inf = {0};
+    ogg_vorbis_meta_info_t ovmi = {0};
     off_t start_offset = 0;
 
     int is_ogg = 0;
@@ -190,45 +227,57 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
     int is_sngw = 0;
     int is_isd = 0;
     int is_l2sd = 0;
+    int is_rpgmvo = 0;
+    int is_eno = 0;
+    int is_ys8 = 0;
 
 
     /* check extension */
-    if (check_extensions(streamFile,"ogg,logg")) { /* .ogg: standard/psychic, .logg: renamed for plugins */
+    /* .ogg: standard/psychic, .logg: renamed for plugins,
+     * .adx: KID [Remember11 (PC)],
+     * .rof: The Rhythm of Fighters (Mobile)
+     * .acm: Planescape Torment Enhanced Edition (PC) */
+    if (check_extensions(streamFile,"ogg,logg,adx,rof,acm")) {
         is_ogg = 1;
     } else if (check_extensions(streamFile,"um3")) {
         is_um3 = 1;
     } else if (check_extensions(streamFile,"kvs,kovs")) { /* .kvs: Atelier Sophie (PC), kovs: header id only? */
         is_kovs = 1;
-    } else if (check_extensions(streamFile,"sngw")) { /* .sngw: Devil May Cry 4 SE (PC), Biohazard 6 (PC) */
+    } else if (check_extensions(streamFile,"sngw")) { /* .sngw: Capcom [Devil May Cry 4 SE (PC), Biohazard 6 (PC)] */
         is_sngw = 1;
     } else if (check_extensions(streamFile,"isd")) { /* .isd: Azure Striker Gunvolt (PC) */
         is_isd = 1;
+    } else if (check_extensions(streamFile,"rpgmvo")) { /* .rpgmvo: RPG Maker MV games (PC) */
+        is_rpgmvo = 1;
+    } else if (check_extensions(streamFile,"eno")) { /* .eno: Metronomicon (PC) */
+        is_eno = 1;
     } else {
         goto fail;
     }
-    streamFile->get_name(streamFile,filename,sizeof(filename));
 
     /* check standard Ogg Vorbis */
     if (is_ogg) {
-
-        /* check Psychic Software obfuscation (Darkwind: War on Wheels PC) */
-        if (read_32bitBE(0x00,streamFile) == 0x2c444430) {
+        if (read_32bitBE(0x00,streamFile) == 0x2c444430) { /* Psychic Software obfuscation [Darkwind: War on Wheels (PC)] */
             is_psychic = 1;
-            inf.decryption_callback = psychic_ogg_decryption_callback;
+            ovmi.decryption_callback = psychic_ogg_decryption_callback;
         }
         else if (read_32bitBE(0x00,streamFile) == 0x4C325344) { /* "L2SD" [Lineage II Chronicle 4 (PC)] */
             is_l2sd = 1;
-            inf.decryption_callback = l2sd_ogg_decryption_callback;
+            ovmi.decryption_callback = l2sd_ogg_decryption_callback;
+        }
+        else if (read_32bitBE(0x00,streamFile) == 0x048686C5) { /* XOR'ed + bitswapped "OggS" [Ys VIII (PC)] */
+            is_ys8 = 1;
+            ovmi.decryption_callback = ys8_ogg_decryption_callback;
         }
         else if (read_32bitBE(0x00,streamFile) != 0x4f676753) { /* "OggS" */
-            goto fail; /* not known (ex. Wwise) */
+            goto fail; /* unknown/not ogg (ex. Wwise) */
         }
     }
 
     /* check "Ultramarine3" (???), may be encrypted */
     if (is_um3) {
         if (read_32bitBE(0x00,streamFile) != 0x4f676753) { /* "OggS" */
-            inf.decryption_callback = um3_ogg_decryption_callback;
+            ovmi.decryption_callback = um3_ogg_decryption_callback;
         }
     }
 
@@ -237,9 +286,9 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
         if (read_32bitBE(0x00,streamFile) != 0x4b4f5653) { /* "KOVS" */
             goto fail;
         }
-        inf.loop_start = read_32bitLE(0x08,streamFile);
-        inf.loop_flag = (inf.loop_start != 0);
-        inf.decryption_callback = kovs_ogg_decryption_callback;
+        ovmi.loop_start = read_32bitLE(0x08,streamFile);
+        ovmi.loop_flag = (ovmi.loop_start != 0);
+        ovmi.decryption_callback = kovs_ogg_decryption_callback;
 
         start_offset = 0x20;
     }
@@ -247,14 +296,14 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
     /* check SNGW (Capcom's MT Framework PC games), may be encrypted */
     if (is_sngw) {
         if (read_32bitBE(0x00,streamFile) != 0x4f676753) { /* "OggS" */
-            inf.sngw_xor = read_32bitBE(0x00,streamFile);
-            inf.decryption_callback = sngw_ogg_decryption_callback;
+            ovmi.xor_value = read_32bitBE(0x00,streamFile);
+            ovmi.decryption_callback = sngw_ogg_decryption_callback;
         }
     }
 
     /* check ISD (Gunvolt PC) */
     if (is_isd) {
-        inf.decryption_callback = isd_ogg_decryption_callback;
+        ovmi.decryption_callback = isd_ogg_decryption_callback;
 
         //todo looping unknown, not in Ogg comments
         // game has sound/GV_steam.* files with info about sound/stream/*.isd
@@ -265,44 +314,73 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
         //   0x0c(2): PCM block size, 0x0e(2): PCM bps, 0x10: null, 0x18: samples (in PCM bytes)
     }
 
+    /* check RPGMKVO (RPG Maker MV), header + minor encryption */
+    if (is_rpgmvo) {
+        if (read_32bitBE(0x00,streamFile) != 0x5250474D &&  /* "RPGM" */
+            read_32bitBE(0x00,streamFile) != 0x56000000) {  /* "V\0\0\0" */
+            goto fail;
+        }
+        ovmi.decryption_callback = rpgmvo_ogg_decryption_callback;
+
+        start_offset = 0x10;
+    }
+
+    /* check ENO [Metronomicon (PC)] */
+    if (is_eno) {
+        /* first byte probably derives into xor key, but this works too */
+        ovmi.xor_value = read_8bit(0x05,streamFile); /* always zero = easy key */
+        ovmi.decryption_callback = eno_ogg_decryption_callback;
+        start_offset = 0x01;
+    }
+
+    /* check Ys VIII (PC) */
+    if (is_ys8) {
+        ovmi.xor_value = 0xF0;
+        ovmi.decryption_callback = ys8_ogg_decryption_callback;
+    }
 
     if (is_um3) {
-        inf.meta_type = meta_OGG_UM3;
+        ovmi.meta_type = meta_OGG_UM3;
     } else if (is_kovs) {
-        inf.meta_type = meta_OGG_KOVS;
+        ovmi.meta_type = meta_OGG_KOVS;
     } else if (is_psychic) {
-        inf.meta_type = meta_OGG_PSYCHIC;
+        ovmi.meta_type = meta_OGG_PSYCHIC;
     } else if (is_sngw) {
-        inf.meta_type = meta_OGG_SNGW;
+        ovmi.meta_type = meta_OGG_SNGW;
     } else if (is_isd) {
-        inf.meta_type = meta_OGG_ISD;
+        ovmi.meta_type = meta_OGG_ISD;
     } else if (is_l2sd) {
-        inf.meta_type = meta_OGG_L2SD;
+        ovmi.meta_type = meta_OGG_L2SD;
+    } else if (is_rpgmvo) {
+        ovmi.meta_type = meta_OGG_RPGMV;
+    } else if (is_eno) {
+        ovmi.meta_type = meta_OGG_ENO;
+    } else if (is_ys8) {
+        ovmi.meta_type = meta_OGG_YS8;
     } else {
-        inf.meta_type = meta_OGG_VORBIS;
+        ovmi.meta_type = meta_OGG_VORBIS;
     }
-    inf.layout_type = layout_ogg_vorbis;
 
-    return init_vgmstream_ogg_vorbis_callbacks(streamFile, filename, NULL, start_offset, &inf);
+    return init_vgmstream_ogg_vorbis_callbacks(streamFile, NULL, start_offset, &ovmi);
 
 fail:
     return NULL;
 }
 
-VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const char * filename, ov_callbacks *callbacks_p, off_t start, const vgm_vorbis_info_t *vgm_inf) {
+VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, ov_callbacks *callbacks_p, off_t start, const ogg_vorbis_meta_info_t *ovmi) {
     VGMSTREAM * vgmstream = NULL;
     ogg_vorbis_codec_data * data = NULL;
     OggVorbis_File *ovf = NULL;
     vorbis_info *vi;
 
-    int loop_flag = vgm_inf->loop_flag;
-    int32_t loop_start = vgm_inf->loop_start;
-    int loop_length_found = vgm_inf->loop_length_found;
-    int32_t loop_length = vgm_inf->loop_length;
-    int loop_end_found = vgm_inf->loop_end_found;
-    int32_t loop_end = vgm_inf->loop_end;
-    size_t stream_size = vgm_inf->stream_size ?
-            vgm_inf->stream_size :
+    int loop_flag = ovmi->loop_flag;
+    int32_t loop_start = ovmi->loop_start;
+    int loop_length_found = ovmi->loop_length_found;
+    int32_t loop_length = ovmi->loop_length;
+    int loop_end_found = ovmi->loop_end_found;
+    int32_t loop_end = ovmi->loop_end;
+    size_t stream_size = ovmi->stream_size ?
+            ovmi->stream_size :
             get_streamfile_size(streamFile) - start;
 
     ov_callbacks default_callbacks;
@@ -327,10 +405,10 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
         temp_streamfile.offset = 0;
         temp_streamfile.size = stream_size;
 
-        temp_streamfile.decryption_callback = vgm_inf->decryption_callback;
-        temp_streamfile.scd_xor = vgm_inf->scd_xor;
-        temp_streamfile.scd_xor_length = vgm_inf->scd_xor_length;
-        temp_streamfile.sngw_xor = vgm_inf->sngw_xor;
+        temp_streamfile.decryption_callback = ovmi->decryption_callback;
+        temp_streamfile.scd_xor = ovmi->scd_xor;
+        temp_streamfile.scd_xor_length = ovmi->scd_xor_length;
+        temp_streamfile.xor_value = ovmi->xor_value;
 
         /* open the ogg vorbis file for testing */
         memset(&temp_ovf, 0, sizeof(temp_ovf));
@@ -344,9 +422,12 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
 
     /* proceed to init codec_data and reopen a STREAMFILE for this stream */
     {
+        char filename[PATH_LIMIT];
+
         data = calloc(1,sizeof(ogg_vorbis_codec_data));
         if (!data) goto fail;
 
+        streamFile->get_name(streamFile,filename,sizeof(filename));
         data->ov_streamfile.streamfile = streamFile->open(streamFile,filename, STREAMFILE_DEFAULT_BUFFER_SIZE);
         if (!data->ov_streamfile.streamfile) goto fail;
 
@@ -354,10 +435,10 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
         data->ov_streamfile.offset = 0;
         data->ov_streamfile.size = stream_size;
 
-        data->ov_streamfile.decryption_callback = vgm_inf->decryption_callback;
-        data->ov_streamfile.scd_xor = vgm_inf->scd_xor;
-        data->ov_streamfile.scd_xor_length = vgm_inf->scd_xor_length;
-        data->ov_streamfile.sngw_xor = vgm_inf->sngw_xor;
+        data->ov_streamfile.decryption_callback = ovmi->decryption_callback;
+        data->ov_streamfile.scd_xor = ovmi->scd_xor;
+        data->ov_streamfile.scd_xor_length = ovmi->scd_xor_length;
+        data->ov_streamfile.xor_value = ovmi->xor_value;
 
         /* open the ogg vorbis file for real */
         if (ov_open_callbacks(&data->ov_streamfile, &data->ogg_vorbis_file, NULL, 0, *callbacks_p))
@@ -382,7 +463,8 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
                 strstr(user_comment,"LOOPSTART=")==user_comment ||
                 strstr(user_comment,"um3.stream.looppoint.start=")==user_comment ||
                 strstr(user_comment,"LOOP_BEGIN=")==user_comment || /* Hatsune Miku: Project Diva F (PS3) */
-                strstr(user_comment,"LoopStart=")==user_comment) {  /* Devil May Cry 4 (PC) */
+                strstr(user_comment,"LoopStart=")==user_comment ||  /* Devil May Cry 4 (PC) */
+                strstr(user_comment,"XIPH_CUE_LOOPSTART=")==user_comment) {  /* Super Mario Run (Android) */
                 loop_start = atol(strrchr(user_comment,'=')+1);
                 loop_flag = (loop_start >= 0);
             }
@@ -390,7 +472,7 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
                 loop_length = atol(strrchr(user_comment,'=')+1);
                 loop_length_found = 1;
             }
-            else if (strstr(user_comment,"title=-lps")==user_comment) { /* Memories Off #5 (PC) */
+            else if (strstr(user_comment,"title=-lps")==user_comment) { /* KID [Memories Off #5 (PC), Remember11 (PC)] */
                 loop_start = atol(user_comment+10);
                 loop_flag = (loop_start >= 0);
             }
@@ -426,6 +508,14 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
                 loop_flag = 1;
                 loop_end_found = 1;
             }
+            else if (strstr(user_comment, "XIPH_CUE_LOOPEND=") == user_comment) { /* XIPH_CUE_LOOPSTART pair */
+                if (loop_flag) {
+                    loop_length = atol(strrchr(user_comment, '=') + 1) - loop_start;
+                    loop_length_found = 1;
+                }
+			}
+
+            //;VGM_LOG("OGG: user_comment=%s\n", user_comment);
         }
     }
 
@@ -437,7 +527,7 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
     vgmstream->codec_data = data; /* store our fun extra datas */
     vgmstream->channels = vi->channels;
     vgmstream->sample_rate = vi->rate;
-    vgmstream->num_streams = vgm_inf->total_subsongs;
+    vgmstream->num_streams = ovmi->total_subsongs;
     vgmstream->stream_size = stream_size;
 
     vgmstream->num_samples = ov_pcm_total(ovf,-1); /* let libvorbisfile find total samples */
@@ -455,9 +545,9 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, const ch
             vgmstream->loop_end_sample = vgmstream->num_samples;
     }
 
-    vgmstream->coding_type = coding_ogg_vorbis;
-    vgmstream->layout_type = vgm_inf->layout_type;
-    vgmstream->meta_type = vgm_inf->meta_type;
+    vgmstream->coding_type = coding_OGG_VORBIS;
+    vgmstream->layout_type = layout_none;
+    vgmstream->meta_type = ovmi->meta_type;
 
     return vgmstream;
 
