@@ -115,7 +115,4 @@ if appcast_revision < latest_revision
 
   #Upload to S3
   %x[s3cmd put -P -m application/xml '#{site_dir}/#{feed}_builds/#{feed}.xml' s3://balde.losno.co/cog/ --signature-v2]
-
-  #Invalidate CDN
-  %x[aws cloudfront create-invalidation --distribution-id E1WUF11KRNP2VH --paths /cog/mercury.xml]
 end
