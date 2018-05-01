@@ -47,6 +47,7 @@ static const char * const license =
 #include <iterator>
 #include <limits>
 #include <map>
+#include <random>
 #include <set>
 #include <sstream>
 #include <string>
@@ -1754,18 +1755,17 @@ static void render_file( commandlineflags & flags, const std::string & filename,
 }
 
 
-static std::string get_random_filename(std::set<std::string> & filenames) {
-	// TODO: actually use a useful random distribution
-	std::size_t index = std::rand() % filenames.size();
+static std::string get_random_filename( std::set<std::string> & filenames, std::default_random_engine & prng ) {
+	std::size_t index = std::uniform_int_distribution<std::size_t>( 0, filenames.size() - 1 )( prng );
 	std::set<std::string>::iterator it = filenames.begin();
 	std::advance( it, index );
 	return *it;
 }
 
 
-static void render_files( commandlineflags & flags, textout & log, write_buffers_interface & audio_stream ) {
+static void render_files( commandlineflags & flags, textout & log, write_buffers_interface & audio_stream, std::default_random_engine & prng ) {
 	if ( flags.randomize ) {
-		std::random_shuffle( flags.filenames.begin(), flags.filenames.end() );
+		std::shuffle( flags.filenames.begin(), flags.filenames.end(), prng );
 	}
 	try {
 		while ( true ) {
@@ -1777,7 +1777,7 @@ static void render_files( commandlineflags & flags, textout & log, write_buffers
 					if ( shuffle_set.empty() ) {
 						break;
 					}
-					std::string filename = get_random_filename( shuffle_set );
+					std::string filename = get_random_filename( shuffle_set, prng );
 					try {
 						flags.playlist_index = std::find( flags.filenames.begin(), flags.filenames.end(), filename ) - flags.filenames.begin();
 						render_file( flags, filename, log, audio_stream );
@@ -2393,7 +2393,10 @@ static int main( int argc, char * argv [] ) {
 
 		log.writeout();
 
-		std::srand( static_cast<unsigned int>( std::time( NULL ) ) );
+		std::random_device rd;
+		std::seed_seq seq{ rd(), static_cast<unsigned int>( std::time( NULL ) ) };
+		std::default_random_engine prng( seq );
+		std::srand( std::uniform_int_distribution<unsigned int>()( prng ) );
 
 		switch ( flags.mode ) {
 			case ModeProbe: {
@@ -2404,42 +2407,42 @@ static int main( int argc, char * argv [] ) {
 			} break;
 			case ModeInfo: {
 				void_audio_stream dummy;
-				render_files( flags, log, dummy );
+				render_files( flags, log, dummy, prng );
 			} break;
 			case ModeUI:
 			case ModeBatch: {
 				if ( flags.use_stdout ) {
 					flags.apply_default_buffer_sizes();
 					stdout_stream_raii stdout_audio_stream;
-					render_files( flags, log, stdout_audio_stream );
+					render_files( flags, log, stdout_audio_stream, prng );
 				} else if ( !flags.output_filename.empty() ) {
 					flags.apply_default_buffer_sizes();
 					file_audio_stream_raii file_audio_stream( flags, flags.output_filename, log );
-					render_files( flags, log, file_audio_stream );
+					render_files( flags, log, file_audio_stream, prng );
 #if defined( MPT_WITH_PULSEAUDIO )
 				} else if ( flags.driver == "pulseaudio" || flags.driver.empty() ) {
 					pulseaudio_stream_raii pulseaudio_stream( flags, log );
-					render_files( flags, log, pulseaudio_stream );
+					render_files( flags, log, pulseaudio_stream, prng );
 #endif
 #if defined( MPT_WITH_SDL2 )
 				} else if ( flags.driver == "sdl2" || flags.driver.empty() ) {
 					sdl2_stream_raii sdl2_stream( flags, log );
-					render_files( flags, log, sdl2_stream );
+					render_files( flags, log, sdl2_stream, prng );
 #endif
 #if defined( MPT_WITH_SDL )
 				} else if ( flags.driver == "sdl" || flags.driver.empty() ) {
 					sdl_stream_raii sdl_stream( flags, log );
-					render_files( flags, log, sdl_stream );
+					render_files( flags, log, sdl_stream, prng );
 #endif
 #if defined( MPT_WITH_PORTAUDIO )
 				} else if ( flags.driver == "portaudio" || flags.driver.empty() ) {
 					portaudio_stream_raii portaudio_stream( flags, log );
-					render_files( flags, log, portaudio_stream );
+					render_files( flags, log, portaudio_stream, prng );
 #endif
 #if defined( WIN32 )
 				} else if ( flags.driver == "waveout" || flags.driver.empty() ) {
 					waveout_stream_raii waveout_stream( flags );
-					render_files( flags, log, waveout_stream );
+					render_files( flags, log, waveout_stream, prng );
 #endif
 				} else {
 					if ( flags.driver.empty() ) {

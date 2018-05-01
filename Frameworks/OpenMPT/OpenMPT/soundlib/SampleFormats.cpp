@@ -1665,7 +1665,7 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 			}
 			if(!region.name.empty())
 			{
-				mpt::String::Copy(m_szNames[smp], region.name);
+				mpt::String::Copy(m_szNames[smp], mpt::ToCharset(GetCharsetInternal(), mpt::CharsetUTF8, region.name));
 			}
 			if(!m_szNames[smp][0])
 			{
