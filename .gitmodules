@@ -13,3 +13,6 @@
 [submodule "Frameworks/AdPlug/AdPlug/database"]
 	path = Frameworks/AdPlug/AdPlug/database
 	url = https://github.com/adplug/database.git
+[submodule "Frameworks/libsidplay/sidplay-residfp-code"]
+	path = Frameworks/libsidplay/sidplay-residfp-code
+	url = https://gitlab.kode54.net/kode54/sidplay-residfp.git

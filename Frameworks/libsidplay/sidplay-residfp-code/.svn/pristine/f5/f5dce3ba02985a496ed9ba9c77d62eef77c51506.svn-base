@@ -1,7 +1,0 @@
-TODO:
-
-* support HVSC_BASE environment variable
-* look into the installed application directory for the ini and the roms before trying the APPDATA folder on Windows
-* support unicode filenames on Windows (depends on libsidplayfp)
-* add playlist support (pls)
-* try to correctly display non-ascii credits
