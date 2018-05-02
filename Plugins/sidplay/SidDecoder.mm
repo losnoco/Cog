@@ -66,7 +66,7 @@
         {
             _builder->filter(true);
             _builder->filter6581Curve(0.5);
-            _builder->filter8580Curve(12500.0);
+            _builder->filter8580Curve(0.5);
         }
         if (!_builder->getStatus())
             return NO;
