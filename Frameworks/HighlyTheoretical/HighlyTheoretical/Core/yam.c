@@ -2411,7 +2411,7 @@ static void __fastcall dsp_sample_interpret(struct YAM_STATE *state) {
     if((mpro->__kisxzbon) & 0x80) {
       x = state->temp[(state->mdec_ct)&0x7F];
       state->xzbchoice[XZBCHOICE_ACC] =
-        ((((sint64)x) * ((sint64)(state->yychoice[YYCHOICE_FRC_REG]))) >> 12) + x;
+        (sint32)(((((sint64)x) * ((sint64)(state->yychoice[YYCHOICE_FRC_REG]))) >> 12) + x);
       continue;
     }
     state->xzbchoice[XZBCHOICE_TEMP] = state->temp[((mpro->t_0rrrrrrr)+(state->mdec_ct))&0x7F];
@@ -2457,7 +2457,7 @@ static void __fastcall dsp_sample_interpret(struct YAM_STATE *state) {
     //
     // Multiply and accumulate
     //
-    state->xzbchoice[XZBCHOICE_ACC] = ((((sint64)x) * ((sint64)y)) >> 12) + b;
+    state->xzbchoice[XZBCHOICE_ACC] = (sint32)(((((sint64)x) * ((sint64)y)) >> 12) + b);
     //
     // Temp write
     //
