@@ -200,6 +200,8 @@
 		83CA2E351D7BCB6700F2EA53 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 83CA2E311D7BCB6700F2EA53 /* README.md */; };
 		83CA2E3B1D7BCBD300F2EA53 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA2E391D7BCBD300F2EA53 /* memory.c */; };
 		83CA2E431D7BD82100F2EA53 /* core.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA2E421D7BD82100F2EA53 /* core.c */; };
+		83D7282220A673A600076FC5 /* matrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D7282120A673A500076FC5 /* matrix.h */; };
+		83D7282420A673BB00076FC5 /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D7282320A673BB00076FC5 /* matrix.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -403,6 +405,8 @@
 		83CA2E311D7BCB6700F2EA53 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		83CA2E391D7BCBD300F2EA53 /* memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = memory.c; path = platform/posix/memory.c; sourceTree = "<group>"; };
 		83CA2E421D7BD82100F2EA53 /* core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = core.c; sourceTree = "<group>"; };
+		83D7282120A673A500076FC5 /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = matrix.h; sourceTree = "<group>"; };
+		83D7282320A673BB00076FC5 /* matrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = matrix.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -589,6 +593,7 @@
 				83299EFB1E765789003A3242 /* hardware.h */,
 				83299EFC1E765789003A3242 /* input.h */,
 				83299EFD1E765789003A3242 /* io.h */,
+				83D7282120A673A500076FC5 /* matrix.h */,
 				83299EFE1E765789003A3242 /* memory.h */,
 				83299EFF1E765789003A3242 /* overrides.h */,
 				83299F001E765789003A3242 /* renderers */,
@@ -840,6 +845,7 @@
 				83CA24DC1D7BC4ED00F2EA53 /* hle-bios.h */,
 				83CA24DF1D7BC4ED00F2EA53 /* input.c */,
 				83CA24E21D7BC4ED00F2EA53 /* io.c */,
+				83D7282320A673BB00076FC5 /* matrix.c */,
 				83CA24E41D7BC4ED00F2EA53 /* memory.c */,
 				83CA24E61D7BC4ED00F2EA53 /* overrides.c */,
 				83CA24FA1D7BC4ED00F2EA53 /* savedata.c */,
@@ -1050,6 +1056,7 @@
 				83299F4C1E765789003A3242 /* library.h in Headers */,
 				83299F9A1E765789003A3242 /* circle-buffer.h in Headers */,
 				83299F661E765789003A3242 /* macros.h in Headers */,
+				83D7282220A673A600076FC5 /* matrix.h in Headers */,
 				83299F951E765789003A3242 /* decoder.h in Headers */,
 				83299FAD1E765789003A3242 /* threading.h in Headers */,
 				83299F871E765789003A3242 /* video-software.h in Headers */,
@@ -1247,6 +1254,7 @@
 				83CA2D571D7BC4F000F2EA53 /* string.c in Sources */,
 				83CA2E321D7BCB6700F2EA53 /* ini.c in Sources */,
 				83CA29D21D7BC4EE00F2EA53 /* vfame.c in Sources */,
+				83D7282420A673BB00076FC5 /* matrix.c in Sources */,
 				8333B6671DCC4451004C140D /* tile-cache.c in Sources */,
 				83CA299B1D7BC4EE00F2EA53 /* gameshark.c in Sources */,
 				83CA2D9C1D7BC83E00F2EA53 /* directories.c in Sources */,
@@ -1379,7 +1387,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -1408,7 +1415,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;

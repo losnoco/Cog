@@ -491,7 +491,7 @@ struct qsf_loader_state
     uint32_t sample_size;
 };
 
-static int upload_gsf_section( struct qsf_loader_state * state, const char * section, uint32_t start,
+static int upload_qsf_section( struct qsf_loader_state * state, const char * section, uint32_t start,
                           const uint8_t * data, uint32_t size )
 {
     uint8_t ** array = NULL;
@@ -535,7 +535,7 @@ static int qsf_loader(void * context, const uint8_t * exe, size_t exe_size,
         if ( datasize > exe_size )
             return -1;
         
-        if ( upload_gsf_section( state, s, dataofs, exe, datasize ) < 0 )
+        if ( upload_qsf_section( state, s, dataofs, exe, datasize ) < 0 )
             return -1;
         
         exe += datasize;
