@@ -339,6 +339,8 @@ void midi_container::initialize( unsigned p_form, unsigned p_dtx )
         m_timestamp_loop_start.resize( 1 );
         m_timestamp_loop_end.resize( 1 );
 	}
+    int port = 0;
+	limit_port_number(port);
 }
 
 void midi_container::add_track( const midi_track & p_track )
