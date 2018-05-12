@@ -8,14 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		83E5EFD01FFEF9D200659F0F /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5EFCE1FFEF9D200659F0F /* config.h */; };
-		83E5EFD11FFEF9D200659F0F /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83E5EFCF1FFEF9D200659F0F /* Info.plist */; };
 		83E5F8801FFEF9E400659F0F /* minimp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83E5F2461FFEF9E100659F0F /* minimp3.c */; };
 		83E5F8811FFEF9E400659F0F /* minimp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5F2471FFEF9E100659F0F /* minimp3.h */; };
-		83E5F8821FFEF9E400659F0F /* OpenMPT.txt in Resources */ = {isa = PBXBuildFile; fileRef = 83E5F2481FFEF9E100659F0F /* OpenMPT.txt */; };
 		83E5F8831FFEF9E400659F0F /* LGPL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 83E5F2491FFEF9E100659F0F /* LGPL.txt */; };
 		83E5F8841FFEF9E400659F0F /* libc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5F24A1FFEF9E100659F0F /* libc.h */; };
 		83E5F9831FFEF9E400659F0F /* stb_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 83E5F3691FFEF9E100659F0F /* stb_vorbis.c */; };
-		83E5F9841FFEF9E400659F0F /* OpenMPT.txt in Resources */ = {isa = PBXBuildFile; fileRef = 83E5F36A1FFEF9E100659F0F /* OpenMPT.txt */; };
 		83E5FC621FFEFA0D00659F0F /* typedefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC291FFEFA0D00659F0F /* typedefs.cpp */; };
 		83E5FC631FFEFA0D00659F0F /* mptCRC.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC2A1FFEFA0D00659F0F /* mptCRC.h */; };
 		83E5FC641FFEFA0D00659F0F /* mptLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC2B1FFEFA0D00659F0F /* mptLibrary.h */; };
@@ -270,7 +267,6 @@
 		83E5FE5B1FFEFA8500659F0F /* SampleFormatMediaFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FDB51FFEFA8400659F0F /* SampleFormatMediaFoundation.cpp */; };
 		83E5FE5C1FFEFA8500659F0F /* InstrumentExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FDB61FFEFA8400659F0F /* InstrumentExtensions.cpp */; };
 		83E5FE611FFEFEA600659F0F /* svn_version.template.subwcrev.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FE5E1FFEFEA600659F0F /* svn_version.template.subwcrev.h */; };
-		83E5FE621FFEFEA600659F0F /* update_svn_version_vs_premake.cmd in Resources */ = {isa = PBXBuildFile; fileRef = 83E5FE5F1FFEFEA600659F0F /* update_svn_version_vs_premake.cmd */; };
 		83E5FE631FFEFEA600659F0F /* svn_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FE601FFEFEA600659F0F /* svn_version.h */; };
 		83E5FE661FFEFFA500659F0F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E5FE651FFEFFA500659F0F /* libz.tbd */; };
 /* End PBXBuildFile section */
@@ -1137,11 +1133,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83E5F8821FFEF9E400659F0F /* OpenMPT.txt in Resources */,
 				83E5F8831FFEF9E400659F0F /* LGPL.txt in Resources */,
-				83E5EFD11FFEF9D200659F0F /* Info.plist in Resources */,
-				83E5FE621FFEFEA600659F0F /* update_svn_version_vs_premake.cmd in Resources */,
-				83E5F9841FFEF9E400659F0F /* OpenMPT.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1425,7 +1417,6 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = N6E749HJ2X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1449,7 +1440,6 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = N6E749HJ2X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
