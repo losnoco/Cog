@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8334C69520B40367001DA8DC /* qsound_ctr.c in Sources */ = {isa = PBXBuildFile; fileRef = 8334C69320B40367001DA8DC /* qsound_ctr.c */; };
+		8334C69620B40367001DA8DC /* qsound_ctr.h in Headers */ = {isa = PBXBuildFile; fileRef = 8334C69420B40367001DA8DC /* qsound_ctr.h */; };
 		834378EC17F96E2600584396 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 834378EA17F96E2600584396 /* InfoPlist.strings */; };
 		8343791E17F96EA600584396 /* emuconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791517F96EA600584396 /* emuconfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8343791F17F96EA600584396 /* kabuki.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343791617F96EA600584396 /* kabuki.c */; };
 		8343792017F96EA600584396 /* kabuki.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791717F96EA600584396 /* kabuki.h */; };
-		8343792117F96EA600584396 /* qmix.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343791817F96EA600584396 /* qmix.c */; };
-		8343792217F96EA600584396 /* qmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791917F96EA600584396 /* qmix.h */; };
 		8343792317F96EA600584396 /* qsound.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343791A17F96EA600584396 /* qsound.c */; };
 		8343792417F96EA600584396 /* qsound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343791B17F96EA600584396 /* qsound.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8343792517F96EA600584396 /* z80.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343791C17F96EA600584396 /* z80.c */; };
@@ -20,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8334C69320B40367001DA8DC /* qsound_ctr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = qsound_ctr.c; path = Core/qsound_ctr.c; sourceTree = "<group>"; };
+		8334C69420B40367001DA8DC /* qsound_ctr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = qsound_ctr.h; path = Core/qsound_ctr.h; sourceTree = "<group>"; };
 		833F682E1CDBCAB100AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		834378DE17F96E2600584396 /* HighlyQuixotic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HighlyQuixotic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		834378E917F96E2600584396 /* HighlyQuixotic-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HighlyQuixotic-Info.plist"; sourceTree = "<group>"; };
@@ -27,8 +29,6 @@
 		8343791517F96EA600584396 /* emuconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = emuconfig.h; path = Core/emuconfig.h; sourceTree = "<group>"; };
 		8343791617F96EA600584396 /* kabuki.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kabuki.c; path = Core/kabuki.c; sourceTree = "<group>"; };
 		8343791717F96EA600584396 /* kabuki.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kabuki.h; path = Core/kabuki.h; sourceTree = "<group>"; };
-		8343791817F96EA600584396 /* qmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = qmix.c; path = Core/qmix.c; sourceTree = "<group>"; };
-		8343791917F96EA600584396 /* qmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = qmix.h; path = Core/qmix.h; sourceTree = "<group>"; };
 		8343791A17F96EA600584396 /* qsound.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = qsound.c; path = Core/qsound.c; sourceTree = "<group>"; };
 		8343791B17F96EA600584396 /* qsound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = qsound.h; path = Core/qsound.h; sourceTree = "<group>"; };
 		8343791C17F96EA600584396 /* z80.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = z80.c; path = Core/z80.c; sourceTree = "<group>"; };
@@ -84,10 +84,10 @@
 				8343791517F96EA600584396 /* emuconfig.h */,
 				8343791617F96EA600584396 /* kabuki.c */,
 				8343791717F96EA600584396 /* kabuki.h */,
-				8343791817F96EA600584396 /* qmix.c */,
-				8343791917F96EA600584396 /* qmix.h */,
 				8343791A17F96EA600584396 /* qsound.c */,
 				8343791B17F96EA600584396 /* qsound.h */,
+				8334C69320B40367001DA8DC /* qsound_ctr.c */,
+				8334C69420B40367001DA8DC /* qsound_ctr.h */,
 				8343791C17F96EA600584396 /* z80.c */,
 				8343791D17F96EA600584396 /* z80.h */,
 				834378E817F96E2600584396 /* Supporting Files */,
@@ -113,8 +113,8 @@
 			files = (
 				8343792417F96EA600584396 /* qsound.h in Headers */,
 				8343791E17F96EA600584396 /* emuconfig.h in Headers */,
-				8343792217F96EA600584396 /* qmix.h in Headers */,
 				8343792017F96EA600584396 /* kabuki.h in Headers */,
+				8334C69620B40367001DA8DC /* qsound_ctr.h in Headers */,
 				8343792617F96EA600584396 /* z80.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,8 +191,8 @@
 			files = (
 				8343792517F96EA600584396 /* z80.c in Sources */,
 				8343792317F96EA600584396 /* qsound.c in Sources */,
-				8343792117F96EA600584396 /* qmix.c in Sources */,
 				8343791F17F96EA600584396 /* kabuki.c in Sources */,
+				8334C69520B40367001DA8DC /* qsound_ctr.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

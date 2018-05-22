@@ -12,7 +12,7 @@
 
 #include "z80.h"
 #include "kabuki.h"
-#include "qmix.h"
+#include "qsound_ctr.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -77,7 +77,6 @@ sint32 EMU_CALL qsound_init(void) {
   qsound_endian_check();
   qsound_size_check();
   r = z80_init(); if(r) return r;
-  r = qmix_init(); if(r) return r;
   library_was_initialized = 1;
   return 0;
 }
@@ -148,7 +147,7 @@ uint32 EMU_CALL qsound_get_state_size(void) {
   size += sizeof(struct Z80_MEMORY_MAP) * qsound_map_read_entries;
   size += sizeof(struct Z80_MEMORY_MAP) * qsound_map_write_entries;
   size += z80_get_state_size();
-  size += qmix_get_state_size();
+  size += device_get_qsound_ctr_state_size();
   return size;
 }
 
@@ -166,7 +165,6 @@ void EMU_CALL qsound_set_rates(
 ) {
   QSOUNDSTATE->cycles_per_irq    = (z80 + (irq   /2)) / irq   ;
   QSOUNDSTATE->cycles_per_sample = (z80 + (sample/2)) / sample;
-  qmix_set_sample_rate(QMIXSTATE, sample);
 }
 
 void EMU_CALL qsound_clear_state(void *state) {
@@ -179,7 +177,7 @@ void EMU_CALL qsound_clear_state(void *state) {
   QSOUNDSTATE->map_read   = (void*)(((char*)state)+offset); offset += sizeof(struct Z80_MEMORY_MAP) * qsound_map_read_entries;
   QSOUNDSTATE->map_write  = (void*)(((char*)state)+offset); offset += sizeof(struct Z80_MEMORY_MAP) * qsound_map_write_entries;
   QSOUNDSTATE->z80_state  = (void*)(((char*)state)+offset); offset += z80_get_state_size();
-  QSOUNDSTATE->qmix_state = (void*)(((char*)state)+offset); offset += qmix_get_state_size();
+  QSOUNDSTATE->qmix_state = (void*)(((char*)state)+offset); offset += device_get_qsound_ctr_state_size();
   //
   // Set other variables
   //
@@ -200,10 +198,10 @@ void EMU_CALL qsound_clear_state(void *state) {
     qsound_map_out
   );
 
-  qmix_clear_state(QMIXSTATE);
+  device_start_qsound_ctr(60000000, QMIXSTATE);
 
   // Set rates
-  qsound_set_rates(QSOUNDSTATE, 8000000, 250, 44100);
+  qsound_set_rates(QSOUNDSTATE, 8000000, 250, 24038);
   QSOUNDSTATE->cycles_until_irq = QSOUNDSTATE->cycles_per_irq;
 
   // Done
@@ -291,7 +289,7 @@ static void EMU_CALL flush_sound(struct QSOUND_STATE *state) {
   }
   if(!samples_needed) return;
 
-  qmix_render(QMIXSTATE, state->sound_buffer, samples_needed);
+  qsoundc_update(QMIXSTATE, samples_needed, state->sound_buffer);
 
   if(state->sound_buffer) state->sound_buffer += 2 * samples_needed;
   state->sound_buffer_samples_free -= samples_needed;
@@ -302,24 +300,21 @@ static void EMU_CALL flush_sound(struct QSOUND_STATE *state) {
 // Register reads/writes
 //
 static uint8 EMU_CALL qsound_status_r(void *state, uint16 a) {
-  return 0x80;
+  flush_sound(QSOUNDSTATE);
+  return qsoundc_r(QMIXSTATE, a);
 }
 
 static void EMU_CALL qsound_data_h_w(void *state, uint16 a, uint8 d) {
-  QSOUNDSTATE->qsound_data_latch =
-    (QSOUNDSTATE->qsound_data_latch & 0x00FF) |
-    (((uint32)d) << 8);
+  qsoundc_w(QMIXSTATE, 0, d);
 }
 
 static void EMU_CALL qsound_data_l_w(void *state, uint16 a, uint8 d) {
-  QSOUNDSTATE->qsound_data_latch =
-    (QSOUNDSTATE->qsound_data_latch & 0xFF00) |
-    ((uint32)d);
+  qsoundc_w(QMIXSTATE, 1, d);
 }
 
 static void EMU_CALL qsound_cmd_w(void *state, uint16 a, uint8 d) {
   flush_sound(QSOUNDSTATE);
-  qmix_command(QMIXSTATE, d, QSOUNDSTATE->qsound_data_latch);
+  qsoundc_w(QMIXSTATE, 2, d);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -625,7 +620,8 @@ void EMU_CALL qsound_set_kabuki_key(void *state,
 }
 
 void EMU_CALL qsound_set_sample_rom(void *state, void *rom, uint32 size) {
-  qmix_set_sample_rom(QMIXSTATE, rom, size);
+  qsoundc_alloc_rom(QMIXSTATE, size);
+  qsoundc_write_rom(QMIXSTATE, 0, size, (const UINT8 *)rom);
 }
 
 /////////////////////////////////////////////////////////////////////////////

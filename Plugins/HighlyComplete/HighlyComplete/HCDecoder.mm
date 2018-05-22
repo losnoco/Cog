@@ -1289,6 +1289,8 @@ static int usf_info(void * context, const char * name, const char * value)
 
     if ( type == 2 )
         sampleRate = 48000;
+    else if ( type == 0x41 )
+        sampleRate = 24038;
     
     tagLengthMs = info.tag_length_ms;
     tagFadeMs = info.tag_fade_ms;
