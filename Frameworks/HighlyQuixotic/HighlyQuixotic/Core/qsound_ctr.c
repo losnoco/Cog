@@ -17,9 +17,9 @@
 #include "qsound_ctr.h"
 
 #ifdef _MSC_VER
-#define INLINE __inline
+#define INLINE static __inline
 #else
-#define INLINE inline
+#define INLINE static inline
 #endif
 
 #define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
