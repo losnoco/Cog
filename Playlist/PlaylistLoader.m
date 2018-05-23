@@ -480,7 +480,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         ++i;
     }
     
-    if (!i) return;
+    if (!i)
+    {
+        [playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+        return;
+    }
     
     NSLock *outLock = [[NSLock alloc] init];
     NSMutableArray *outArray = [[NSMutableArray alloc] init];
