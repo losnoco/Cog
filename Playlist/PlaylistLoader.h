@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "PlaylistController.h"
+#import "PlaylistView.h"
 
 @class PlaylistController;
 @class PlaybackController;
@@ -21,7 +22,8 @@ typedef enum {
 
 @interface PlaylistLoader : NSObject {
 	IBOutlet PlaylistController *playlistController;
-	
+    IBOutlet NSScrollView *playlistView;
+    
 	NSOperationQueue *queue;
 }
 
