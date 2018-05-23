@@ -462,6 +462,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 
 - (void)loadInfoForEntries:(NSArray *)entries
 {
+    NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
     long batchCount = ([entries count] / 16) + ([entries count] % 16 ? 1 : 0);
     NSMutableArray *array = [[NSMutableArray alloc] init];
     long i, j;
@@ -471,10 +472,13 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         [array addObject:[[NSMutableArray alloc] init]];
     }
     
-    i = 0;
+    i = 0; j = 0;
     for (PlaylistEntry *pe in entries)
     {
+        ++j;
         if ([pe metadataLoaded]) continue;
+        
+        [update_indexes addIndex:j-1];
         
         [[array objectAtIndex:i / 16] addObject:pe];
         ++i;
@@ -541,6 +545,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     semaphore_destroy(mach_task_self(), info_sem);
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+    [playlistView performSelectorOnMainThread:@selector(reloadDataForRowIndexes:columnIndexes:) withObject:@[update_indexes,[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 63)]] waitUntilDone:NO];
 }
 
 - (void)clear:(id)sender
