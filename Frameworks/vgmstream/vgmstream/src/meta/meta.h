@@ -647,6 +647,7 @@ VGMSTREAM * init_vgmstream_ta_aac_x360(STREAMFILE *streamFile);
 VGMSTREAM * init_vgmstream_ta_aac_ps3(STREAMFILE *streamFile);
 VGMSTREAM * init_vgmstream_ta_aac_mobile(STREAMFILE *streamFile);
 VGMSTREAM * init_vgmstream_ta_aac_mobile_vorbis(STREAMFILE *streamFile);
+VGMSTREAM * init_vgmstream_ta_aac_vita(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_ps3_mta2(STREAMFILE *streamFile);
 
@@ -673,6 +674,7 @@ VGMSTREAM * init_vgmstream_opus_std(STREAMFILE * streamFile);
 VGMSTREAM * init_vgmstream_opus_n1(STREAMFILE * streamFile);
 VGMSTREAM * init_vgmstream_opus_capcom(STREAMFILE * streamFile);
 VGMSTREAM * init_vgmstream_opus_nop(STREAMFILE * streamFile);
+VGMSTREAM * init_vgmstream_opus_shinen(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_pc_al2(STREAMFILE * streamFile);
 
@@ -750,4 +752,9 @@ VGMSTREAM * init_vgmstream_opus_ppp(STREAMFILE *streamFile);
 VGMSTREAM * init_vgmstream_ubi_bao_pk(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_dsp_switch_audio(STREAMFILE *streamFile);
+
+VGMSTREAM * init_vgmstream_dsp_sadf(STREAMFILE *streamFile);
+
+VGMSTREAM * init_vgmstream_h4m(STREAMFILE *streamFile);
+
 #endif /*_META_H*/

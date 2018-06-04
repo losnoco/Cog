@@ -1,6 +1,7 @@
 #include "meta.h"
 #include "../util.h"
 #include "../coding/coding.h"
+#include <string.h>
 
 /* most info from XWBtool, xactwb.h, xact2wb.h and xact3wb.h */
 
@@ -25,7 +26,7 @@ static const int wma_block_align_index[17] = {
 };
 
 
-typedef enum { PCM, XBOX_ADPCM, MS_ADPCM, XMA1, XMA2, WMA, XWMA, ATRAC3, OGG } xact_codec;
+typedef enum { PCM, XBOX_ADPCM, MS_ADPCM, XMA1, XMA2, WMA, XWMA, ATRAC3, OGG, DSP, ATRAC9_RIFF } xact_codec;
 typedef struct {
     int little_endian;
     int version;
@@ -69,6 +70,7 @@ typedef struct {
 } xwb_header;
 
 static void get_name(char * buf, size_t maxsize, int target_subsong, xwb_header * xwb, STREAMFILE *streamFile);
+static STREAMFILE* setup_subfile_streamfile(STREAMFILE *streamFile, off_t subfile_offset, size_t subfile_size, const char* fake_ext);
 
 
 /* XWB - XACT Wave Bank (Microsoft SDK format for XBOX/XBOX360/Windows) */
@@ -292,23 +294,35 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
         }
     }
 
-    /* Techland's bizarre format hijack (Nail'd, Sniper: Ghost Warrior PS3).
-     * Somehow they used XWB + ATRAC3 in their PS3 games, very creative */
+
+    /* format hijacks from creative devs, using non-official codecs */
     if (xwb.version == XACT_TECHLAND && xwb.codec == XMA2 /* XACT_TECHLAND used in their X360 games too */
-            && (xwb.block_align == 0x60 || xwb.block_align == 0x98 || xwb.block_align == 0xc0) ) {
-        xwb.codec = ATRAC3; /* standard ATRAC3 blocks sizes; no other way to identify (other than reading data) */
+            && (xwb.block_align == 0x60 || xwb.block_align == 0x98 || xwb.block_align == 0xc0) ) { /* standard ATRAC3 blocks sizes */
+        /* Techland ATRAC3 [Nail'd (PS3), Sniper: Ghost Warrior (PS3)] */
+        xwb.codec = ATRAC3;
 
         /* num samples uses a modified entry_info format (maybe skip samples + samples? sfx use the standard format)
          * ignore for now and just calc max samples */
         xwb.num_samples = atrac3_bytes_to_samples(xwb.stream_size, xwb.block_align * xwb.channels);
     }
-
-    /* Oddworld: Stranger's Wrath iOS/Android format hijack, with changed meanings */
-    if (xwb.codec == OGG) {
+    else if (xwb.codec == OGG) {
+        /* Oddworld: Stranger's Wrath (iOS/Android) */
         xwb.num_samples = xwb.stream_size / (2 * xwb.channels); /* uncompressed bytes */
         xwb.stream_size = xwb.loop_end;
         xwb.loop_start = 0;
         xwb.loop_end = 0;
+    }
+    else if (xwb.version == XACT3_0_MAX && xwb.codec == XMA2
+            && xwb.bits_per_sample == 0x01 && xwb.block_align == 0x04
+            && xwb.data_size == 0x55951c1c) { /* some kind of id? */
+        /* Stardew Valley (Switch), full interleaved DSPs (including headers) */
+        xwb.codec = DSP;
+    }
+    else if (xwb.version == XACT3_0_MAX && xwb.codec == XMA2
+            && xwb.bits_per_sample == 0x01 && xwb.block_align == 0x04
+            && xwb.data_size == 0x4e0a1000) { /* some kind of id? */
+        /* Stardew Valley (Vita), standard RIFF with ATRAC9 */
+        xwb.codec = ATRAC9_RIFF;
     }
 
 
@@ -316,9 +330,9 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
     xwb.loop_flag = (xwb.loop_end > 0 || xwb.loop_end_sample > xwb.loop_start)
         && !(xwb.entry_flags & WAVEBANKENTRY_FLAGS_IGNORELOOP);
 
-    if (xwb.codec != OGG) {
-        /* for Oddworld OGG the data_size value is size of uncompressed bytes instead */
-        /* some BlazBlue Centralfiction songs have padding after data size (maybe wrong rip?) */
+    /* Oddworld OGG the data_size value is size of uncompressed bytes instead;  DSP uses some id/config as value */
+    if (xwb.codec != OGG && xwb.codec != DSP && xwb.codec != ATRAC9_RIFF) {
+        /* some low-q rips don't remove padding, relax validation a bit */
         if (xwb.data_offset + xwb.data_size > get_streamfile_size(streamFile))
             goto fail;
     }
@@ -462,7 +476,7 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
             break;
         }
 
-        case XWMA: { /* WMAudio2 (WMA v2): BlazBlue (X360), WMAudio3 (WMA Pro): ? */
+        case XWMA: { /* WMAudio2 (WMA v2): BlazBlue (X360), WMAudio3 (WMA Pro): Bullet Witch (PC) voices */
             uint8_t buf[100];
             int bytes, bps_index, block_align, block_index, avg_bps, wma_codec;
 
@@ -485,7 +499,7 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
             break;
         }
 
-        case ATRAC3: { /* Techland PS3 extension: Sniper Ghost Warrior (PS3) */
+        case ATRAC3: { /* Techland PS3 extension [Sniper Ghost Warrior (PS3)] */
             uint8_t buf[200];
             int bytes;
 
@@ -503,14 +517,48 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
             break;
         }
 
-        case OGG: { /* Oddworld: Strangers Wrath iOS/Android extension */
+        case OGG: { /* Oddworld: Strangers Wrath (iOS/Android) extension */
             vgmstream->codec_data = init_ffmpeg_offset(streamFile, xwb.stream_offset, xwb.stream_size);
             if ( !vgmstream->codec_data ) goto fail;
             vgmstream->coding_type = coding_FFmpeg;
             vgmstream->layout_type = layout_none;
             break;
         }
+#endif
 
+        case DSP: { /* Stardew Valley (Switch) extension */
+            vgmstream->coding_type = coding_NGC_DSP;
+            vgmstream->layout_type = layout_interleave;
+            vgmstream->interleave_block_size = xwb.stream_size / xwb.channels;
+
+            dsp_read_coefs(vgmstream,streamFile,xwb.stream_offset + 0x1c,vgmstream->interleave_block_size,!xwb.little_endian);
+            dsp_read_hist (vgmstream,streamFile,xwb.stream_offset + 0x3c,vgmstream->interleave_block_size,!xwb.little_endian);
+            xwb.stream_offset += 0x60; /* skip DSP header */
+            break;
+        }
+
+#ifdef VGM_USE_ATRAC9
+        case ATRAC9_RIFF: { /* Stardew Valley (Vita) extension */
+            VGMSTREAM *temp_vgmstream = NULL;
+            STREAMFILE *temp_streamFile = NULL;
+
+            /* standard RIFF, use subfile (seems doesn't use xwb loops) */
+            VGM_ASSERT(xwb.loop_flag, "XWB: RIFF ATRAC9 loop flag found\n");
+
+            temp_streamFile = setup_subfile_streamfile(streamFile, xwb.stream_offset,xwb.stream_size, "at9");
+            if (!temp_streamFile) goto fail;
+
+            temp_vgmstream = init_vgmstream_riff(temp_streamFile);
+            close_streamfile(temp_streamFile);
+            if (!temp_vgmstream) goto fail;
+
+            temp_vgmstream->num_streams = vgmstream->num_streams;
+            temp_vgmstream->stream_size = vgmstream->stream_size;
+            temp_vgmstream->meta_type = vgmstream->meta_type;
+
+            close_vgmstream(vgmstream);
+            return temp_vgmstream;
+        }
 #endif
 
         default:
@@ -529,6 +577,30 @@ fail:
     return NULL;
 }
 
+/* ****************************************************************************** */
+
+static STREAMFILE* setup_subfile_streamfile(STREAMFILE *streamFile, off_t subfile_offset, size_t subfile_size, const char* fake_ext) {
+    STREAMFILE *temp_streamFile = NULL, *new_streamFile = NULL;
+
+    /* setup subfile */
+    new_streamFile = open_wrap_streamfile(streamFile);
+    if (!new_streamFile) goto fail;
+    temp_streamFile = new_streamFile;
+
+    new_streamFile = open_clamp_streamfile(temp_streamFile, subfile_offset,subfile_size);
+    if (!new_streamFile) goto fail;
+    temp_streamFile = new_streamFile;
+
+    new_streamFile = open_fakename_streamfile(temp_streamFile, NULL,fake_ext);
+    if (!new_streamFile) goto fail;
+    temp_streamFile = new_streamFile;
+
+    return temp_streamFile;
+
+fail:
+    close_streamfile(temp_streamFile);
+    return NULL;
+}
 
 /* ****************************************************************************** */
 
@@ -591,7 +663,7 @@ typedef struct {
 
 
 /* try to find the stream name in a companion XSB file, a comically complex cue format. */
-static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_header * xwb, STREAMFILE *streamXwb) {
+static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_header * xwb, STREAMFILE *streamXwb, char* filename) {
     STREAMFILE *streamFile = NULL;
     int i,j, start_sound, cfg__start_sound = 0, cfg__selected_wavebank = 0;
     int xsb_version;
@@ -601,7 +673,10 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
     xsb_header xsb = {0};
 
 
-    streamFile = open_streamfile_by_ext(streamXwb, "xsb");
+    if (filename)
+        streamFile = open_streamfile_by_filename(streamXwb, filename);
+    else
+        streamFile = open_streamfile_by_ext(streamXwb, "xsb");
     if (!streamFile) goto fail;
 
     /* check header */
@@ -718,8 +793,10 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
                     } else {
                         suboff = size - 0x08;
                     }
+                //} else if (flag==0x11) { /* Stardew Valley (Switch) */
+                //    suboff = size; //???
                 } else {
-                    VGM_LOG("XSB: xsb flag 0x%x at offset 0x%08lx not implemented\n", flag, off);
+                    VGM_LOG("XSB: xsb flag 0x%x (size=%x) at offset 0x%08lx not implemented\n", flag, size, off);
                     goto fail;
                 }
             }
@@ -871,18 +948,34 @@ fail:
 
 static void get_name(char * buf, size_t maxsize, int target_subsong, xwb_header * xwb, STREAMFILE *streamFile) {
     int name_found;
+    char xwb_filename[PATH_LIMIT];
+    char xsb_filename[PATH_LIMIT];
 
     /* try inside this xwb */
     name_found = get_xwb_name(buf, maxsize, target_subsong, xwb, streamFile);
     if (name_found) return;
 
-    /* try again in external .xsb */
-    get_xsb_name(buf, maxsize, target_subsong, xwb, streamFile);
+
+    /* try again in external .xsb, using a bunch of possible name pairs */
+    get_streamfile_filename(streamFile,xwb_filename,PATH_LIMIT);
+
+    if (strcmp(xwb_filename,"Wave Bank.xwb")==0) {
+        strcpy(xsb_filename,"Sound Bank.xsb");
+    }
+    else if (strcmp(xwb_filename,"UIMusicBank.xwb")==0) {
+        strcpy(xsb_filename,"UISoundBank.xsb");
+    }
+    else {
+        xsb_filename[0] = '\0';
+    }
+    //todo try others: InGameMusic.xwb + ingamemusic.xsb, NB_BGM_m0100_WB.xwb + NB_BGM_m0100_SB.xsb, etc
+
+    if (xsb_filename[0] != '\0') {
+        name_found = get_xsb_name(buf, maxsize, target_subsong, xwb, streamFile, xsb_filename);
+        if (name_found) return;
+    }
 
 
-    //todo try again with common names (xwb and xsb often are named slightly differently using a common convention):
-    // InGameMusic.xwb + ingamemusic.xsb
-    // UIMusicBank.xwb + UISoundBank.xsb
-    // NB_BGM_m0100_WB.xwb + NB_BGM_m0100_SB.xsb
-    // Wave Bank.xwb + Sound Bank.xsb
+    /* one last time with same name */
+    get_xsb_name(buf, maxsize, target_subsong, xwb, streamFile, NULL);
 }

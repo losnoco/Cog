@@ -353,6 +353,7 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_ta_aac_ps3,
     init_vgmstream_ta_aac_mobile,
     init_vgmstream_ta_aac_mobile_vorbis,
+    init_vgmstream_ta_aac_vita,
     init_vgmstream_ps3_mta2,
     init_vgmstream_ngc_ulw,
     init_vgmstream_pc_xa30,
@@ -367,6 +368,7 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_opus_n1,
     init_vgmstream_opus_capcom,
     init_vgmstream_opus_nop,
+    init_vgmstream_opus_shinen,
     init_vgmstream_pc_al2,
     init_vgmstream_pc_ast,
     init_vgmstream_naac,
@@ -407,6 +409,8 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_opus_ppp,
     init_vgmstream_ubi_bao_pk,
     init_vgmstream_dsp_switch_audio,
+    init_vgmstream_dsp_sadf,
+    init_vgmstream_h4m,
 
     init_vgmstream_txth,  /* should go at the end (lower priority) */
 #ifdef VGM_USE_FFMPEG
@@ -933,6 +937,7 @@ void render_vgmstream(sample * buffer, int32_t sample_count, VGMSTREAM * vgmstre
         case layout_blocked_ea_wve_au00:
         case layout_blocked_ea_wve_ad10:
         case layout_blocked_sthd:
+        case layout_blocked_h4m:
             render_vgmstream_blocked(buffer,sample_count,vgmstream);
             break;
         case layout_aix:
