@@ -28,9 +28,11 @@ static const char* extension_list[] = {
     "afc",
     "agsc",
     "ahx",
-    "aifc",
-    "aifcl",
+    //"aif", //common
+    "aifc", //common?
+    "aifcl", //fake extension, for AIF???
     //"aiff", //common
+    "aiffl", //fake extension, for AIF???
     "aix",
     "akb",
     "al2",
@@ -135,7 +137,9 @@ static const char* extension_list[] = {
     "gms",
     "gsb",
     "gtd",
+    "gwm",
 
+    "h4m",
     "hca",
     "hgc1",
     "his",
@@ -258,6 +262,7 @@ static const char* extension_list[] = {
     "rak",
     "ras",
     "raw",
+    "rda", //FFmpeg/reserved [Rhythm Destruction (PC)]
     "rkv",
     "rnd",
     "rof",
@@ -274,6 +279,7 @@ static const char* extension_list[] = {
     "rwsd",
     "rwx",
     "rxw",
+    "rxx", //txth/reserved [Full Auto (X360)]
 
     "s14",
     "sab",
@@ -292,7 +298,7 @@ static const char* extension_list[] = {
     "scd",
     "sck",
     "sd9",
-    "sdf",
+    "sdf", //txth/reserved [Gummy Bears Mini Golf (3DS), Agent Hugo - Lemoon Twist (PS2)]
     "sdt",
     "seg",
     "sf0",
@@ -618,6 +624,7 @@ static const layout_info layout_info_list[] = {
         {layout_blocked_ea_wve_au00,    "blocked (EA WVE au00)"},
         {layout_blocked_ea_wve_ad10,    "blocked (EA WVE Ad10)"},
         {layout_blocked_sthd,           "blocked (STHD)"},
+        {layout_blocked_h4m,            "blocked (H4M)"},
 };
 
 static const meta_info meta_info_list[] = {
@@ -684,8 +691,8 @@ static const meta_info meta_info_list[] = {
         {meta_SADL,                 "Procyon Studio SADL header"},
         {meta_PS2_BMDX,             "Beatmania .bmdx header"},
         {meta_DSP_WSI,              "Alone in the Dark .WSI header"},
-        {meta_AIFC,                 "Audio Interchange File Format AIFF-C"},
-        {meta_AIFF,                 "Audio Interchange File Format"},
+        {meta_AIFC,                 "Apple AIFF-C (Audio Interchange File Format) header"},
+        {meta_AIFF,                 "Apple AIFF (Audio Interchange File Format) header"},
         {meta_STR_SNDS,             ".str SNDS SHDR chunk"},
         {meta_WS_AUD,               "Westwood Studios .aud header"},
         {meta_WS_AUD_old,           "Westwood Studios .aud (old) header"},
@@ -795,7 +802,7 @@ static const meta_info meta_info_list[] = {
         {meta_YDSP,                 "Yuke's DSP (YDSP) Header"},
         {meta_MSVP,                 "MSVP Header"},
         {meta_NGC_SSM,              "SSM DSP Header"},
-        {meta_PS2_JOE,              "Disney/Pixar JOE Header"},
+        {meta_PS2_JOE,              "Asobo Studio .JOE header"},
         {meta_VGS,                  "Guitar Hero VGS Header"},
         {meta_DC_DCSW_DCS,          "Evil Twin DCS file with helper"},
         {meta_WII_SMP,              "SMP DSP Header"},
@@ -1012,6 +1019,10 @@ static const meta_info meta_info_list[] = {
         {meta_OPUS_PPP,             "AT9 OPUS header"},
         {meta_UBI_BAO,              "Ubisoft BAO header"},
         {meta_DSP_SWITCH_AUDIO,     "UE4 Switch Audio header"},
+        {meta_TA_AAC_VITA,          "tri-Ace AAC (Vita) header"},
+        {meta_OGG_GWM,              "Ogg Vorbis (GWM header)"},
+        {meta_DSP_SADF,             "Procyon Studio SADF header"},
+        {meta_H4M,                  "Hudson HVQM4 header"},
 
 #ifdef VGM_USE_FFMPEG
         {meta_FFmpeg,               "FFmpeg supported file format"},
