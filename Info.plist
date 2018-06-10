@@ -1030,5 +1030,15 @@
 	<string>https://f.losno.co/cog/mercury.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Cog has no use for your location information. Something is obviously wrong with the application.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Cog has no use for your calendar information. Why are you trying to open your Calendar with an audio player?</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Cog is an audio player. Why are you trying to access your Photos Library with an audio player?</string>
 </dict>
 </plist>
