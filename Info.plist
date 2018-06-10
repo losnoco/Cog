@@ -1040,5 +1040,9 @@
 	<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Cog is an audio player. Why are you trying to access your Photos Library with an audio player?</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Cog is an audio player. It will never use your camera. Why is it asking for permission to use your camera?</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Cog is an audio player. It does not, however, record audio. Why is it asking for permission to use your microphone?</string>
 </dict>
 </plist>
