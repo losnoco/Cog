@@ -160,6 +160,7 @@ static CGEventRef tapEventCallback(CGEventTapProxy proxy, CGEventType type, CGEv
            @"com.coppertino.Vox",
            @"com.tidal.desktop",
            @"com.amazon.music",
+           @"com.apple.systempreferences", // the tap messes up security dialogs
            nil
            ];
 }
