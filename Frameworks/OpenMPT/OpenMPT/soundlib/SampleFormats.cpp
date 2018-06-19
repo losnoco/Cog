@@ -254,7 +254,7 @@ bool CSoundFile::ReadInstrumentFromSong(INSTRUMENTINDEX targetInstr, const CSoun
 	}
 
 #ifdef MODPLUG_TRACKER
-	if(!strcmp(pIns->filename, "") && srcSong.GetpModDoc() != nullptr)
+	if(!strcmp(pIns->filename, "") && srcSong.GetpModDoc() != nullptr && &srcSong != this)
 	{
 		mpt::String::Copy(pIns->filename, srcSong.GetpModDoc()->GetPathNameMpt().GetFullFileName().ToLocale());
 	}
@@ -307,7 +307,7 @@ bool CSoundFile::ReadSampleFromSong(SAMPLEINDEX targetSample, const CSoundFile &
 	}
 
 #ifdef MODPLUG_TRACKER
-	if(!strcmp(targetSmp.filename, "") && srcSong.GetpModDoc() != nullptr)
+	if(!strcmp(targetSmp.filename, "") && srcSong.GetpModDoc() != nullptr && &srcSong != this)
 	{
 		mpt::String::Copy(targetSmp.filename, mpt::ToCharset(GetCharsetInternal(), srcSong.GetpModDoc()->GetTitle()));
 	}
@@ -446,7 +446,11 @@ bool CSoundFile::ReadWAVSample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 	} else if(wavFile.GetSampleFormat() == WAVFormatChunk::fmtMP3)
 	{
 		// MP3 in WAV
-		return ReadMP3Sample(nSample, sampleChunk, true) || ReadMediaFoundationSample(nSample, sampleChunk, true);
+		bool loadedMP3 = ReadMP3Sample(nSample, sampleChunk, true) || ReadMediaFoundationSample(nSample, sampleChunk, true);
+		if(!loadedMP3)
+		{
+			return false;
+		}
 	} else if(!wavFile.IsExtensibleFormat() && wavFile.MayBeCoolEdit16_8() && wavFile.GetSampleFormat() == WAVFormatChunk::fmtPCM && wavFile.GetBitsPerSample() == 32 && wavFile.GetBlockAlign() == wavFile.GetNumChannels() * 4)
 	{
 		// Syntrillium Cool Edit hack to store IEEE 32bit floating point

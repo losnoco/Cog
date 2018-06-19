@@ -305,7 +305,7 @@ mpt::random_device & global_random_device()
 
 mpt::thread_safe_prng<mpt::best_prng> & global_prng()
 {
-	static mpt::thread_safe_prng<mpt::best_prng> g_best_prng(global_random_device());
+	static mpt::thread_safe_prng<mpt::best_prng> g_best_prng(mpt::make_prng<mpt::best_prng>(global_random_device()));
 	return g_best_prng;
 }
 

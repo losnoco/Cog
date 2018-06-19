@@ -888,10 +888,16 @@ static const char * const channel_tags[4][4] = {
 };
 
 static std::string channel_to_string( int channels, int channel, const meter_channel & meter, bool tiny = false ) {
-	float db = 20.0f * std::log10( meter.peak );
-	float db_hold = 20.0f * std::log10( meter.hold );
-	int val = static_cast<int>( db + 48.0f );
-	int hold_pos = static_cast<int>( db_hold + 48.0f );
+	int val = std::numeric_limits<int>::min();
+	int hold_pos = std::numeric_limits<int>::min();
+	if ( meter.peak > 0.0f ) {
+		float db = 20.0f * std::log10( meter.peak );
+		val = static_cast<int>( db + 48.0f );
+	}
+	if ( meter.hold > 0.0f ) {
+		float db_hold = 20.0f * std::log10( meter.hold );
+		hold_pos = static_cast<int>( db_hold + 48.0f );
+	}
 	if ( val < 0 ) {
 		val = 0;
 	}
@@ -911,13 +917,13 @@ static std::string channel_to_string( int channels, int channel, const meter_cha
 		headroom = 0;
 	}
 	if ( tiny ) {
-		if ( meter.clip != 0.0f || db >= 0.0f ) {
+		if ( meter.clip != 0.0f || meter.peak >= 1.0f ) {
 			return "#";
-		} else if ( db > -6.0f ) {
+		} else if ( meter.peak > std::pow( 10.0f, -6.0f / 20.0f ) ) {
 			return "O";
-		} else if ( db > -12.0f ) {
+		} else if ( meter.peak > std::pow( 10.0f, -12.0f / 20.0f ) ) {
 			return "o";
-		} else if ( db > -18.0f ) {
+		} else if ( meter.peak > std::pow( 10.0f, -18.0f / 20.0f ) ) {
 			return ".";
 		} else {
 			return " ";

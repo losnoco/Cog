@@ -235,12 +235,14 @@ enum ThreadKind {
 	ThreadKindGUI,
 	ThreadKindAudio,
 	ThreadKindNotify,
+	ThreadKindWatchdir,
 };
 
 void Enable(std::size_t numEntries);
 void Disable();
 
 void SetThreadId(mpt::log::Trace::ThreadKind kind, uint32 id);
+uint32 GetThreadId(mpt::log::Trace::ThreadKind kind);
 
 void Seal();
 bool Dump(const mpt::PathString &filename);

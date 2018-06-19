@@ -435,11 +435,15 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 							// Output of PLAY.EXE: "SMapTabl from pos 0 to pos -1 starting at 0 and adding 1 to it each time"
 							// It appears that this maps e.g. what is "I0" in the file to sample 1.
 							// If we were being fancy, we could implement this, but in practice it won't matter.
-							if (subChunk.ReadUint8() != 0x00 || subChunk.ReadUint8() != 0xFF ||	// "0 to -1" (does not seem to do anything)
-								subChunk.ReadUint8() != 0x00 || subChunk.ReadUint8() != 0x00 ||	// "at 0" (actually this appears to be the adding part - changing this to 0x01 0x00 offsets all samples by 1)
-								subChunk.ReadUint8() != 0x01 || subChunk.ReadUint8() != 0x00)	// "adding 1" (does not seem to do anything)
 							{
-								return false;
+								uint8 mapTable[6];
+								if(!subChunk.ReadArray(mapTable)
+									|| mapTable[0] != 0x00 || mapTable[1] != 0xFF  // "0 to -1" (does not seem to do anything)
+									|| mapTable[2] != 0x00 || mapTable[3] != 0x00  // "at 0" (actually this appears to be the adding part - changing this to 0x01 0x00 offsets all samples by 1)
+									|| mapTable[4] != 0x01 || mapTable[5] != 0x00) // "adding 1" (does not seem to do anything)
+								{
+									return false;
+								}
 							}
 							break;
 

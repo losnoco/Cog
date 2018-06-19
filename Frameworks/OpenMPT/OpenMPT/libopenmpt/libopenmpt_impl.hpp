@@ -87,6 +87,7 @@ protected:
 	double m_currentPositionSeconds;
 	std::unique_ptr<OpenMPT::CSoundFile> m_sndFile;
 	bool m_loaded;
+	bool m_mixer_initialized;
 	std::unique_ptr<OpenMPT::Dither> m_Dither;
 	subsongs_type m_subsongs;
 	float m_Gain;
