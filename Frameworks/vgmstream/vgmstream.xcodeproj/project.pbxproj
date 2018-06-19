@@ -259,7 +259,6 @@
 		836F6FC918BDC2190095E648 /* ps2_2pfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8D18BDC2180095E648 /* ps2_2pfs.c */; };
 		836F6FCA18BDC2190095E648 /* ps2_adm.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8E18BDC2180095E648 /* ps2_adm.c */; };
 		836F6FCB18BDC2190095E648 /* ps2_ads.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8F18BDC2180095E648 /* ps2_ads.c */; };
-		836F6FCC18BDC2190095E648 /* ps2_adsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E9018BDC2180095E648 /* ps2_adsc.c */; };
 		836F6FCD18BDC2190095E648 /* ps2_ass.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E9118BDC2180095E648 /* ps2_ass.c */; };
 		836F6FCE18BDC2190095E648 /* ps2_ast.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E9218BDC2180095E648 /* ps2_ast.c */; };
 		836F6FD018BDC2190095E648 /* ps2_b1s.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E9418BDC2180095E648 /* ps2_b1s.c */; };
@@ -844,7 +843,6 @@
 		836F6E8D18BDC2180095E648 /* ps2_2pfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_2pfs.c; sourceTree = "<group>"; };
 		836F6E8E18BDC2180095E648 /* ps2_adm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_adm.c; sourceTree = "<group>"; };
 		836F6E8F18BDC2180095E648 /* ps2_ads.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_ads.c; sourceTree = "<group>"; };
-		836F6E9018BDC2180095E648 /* ps2_adsc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_adsc.c; sourceTree = "<group>"; };
 		836F6E9118BDC2180095E648 /* ps2_ass.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_ass.c; sourceTree = "<group>"; };
 		836F6E9218BDC2180095E648 /* ps2_ast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_ast.c; sourceTree = "<group>"; };
 		836F6E9418BDC2180095E648 /* ps2_b1s.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_b1s.c; sourceTree = "<group>"; };
@@ -1469,7 +1467,6 @@
 				836F6E8D18BDC2180095E648 /* ps2_2pfs.c */,
 				836F6E8E18BDC2180095E648 /* ps2_adm.c */,
 				836F6E8F18BDC2180095E648 /* ps2_ads.c */,
-				836F6E9018BDC2180095E648 /* ps2_adsc.c */,
 				836F6E9118BDC2180095E648 /* ps2_ass.c */,
 				836F6E9218BDC2180095E648 /* ps2_ast.c */,
 				836F6E9418BDC2180095E648 /* ps2_b1s.c */,
@@ -2021,7 +2018,6 @@
 				836F6F9018BDC2190095E648 /* idsp.c in Sources */,
 				836F6F2918BDC2190095E648 /* l5_555_decoder.c in Sources */,
 				836F6FF318BDC2190095E648 /* ps2_rstm.c in Sources */,
-				836F6FCC18BDC2190095E648 /* ps2_adsc.c in Sources */,
 				836F6F7918BDC2190095E648 /* dc_asd.c in Sources */,
 				836F6FC118BDC2190095E648 /* pc_adp.c in Sources */,
 				836F701A18BDC2190095E648 /* psx_fag.c in Sources */,
