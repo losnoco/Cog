@@ -439,7 +439,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 
 	if(hasAdlibPatches)
 	{
-		AddToLog("This track uses Adlib instruments, which are not supported by OpenMPT.");
+		AddToLog("This track uses Adlib instruments, which are not supported by this version of OpenMPT.");
 	}
 
 

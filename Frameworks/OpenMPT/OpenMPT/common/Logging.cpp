@@ -255,6 +255,7 @@ static std::atomic<uint32> NextIndex(0);
 static uint32 ThreadIdGUI = 0;
 static uint32 ThreadIdAudio = 0;
 static uint32 ThreadIdNotify = 0;
+static uint32 ThreadIdWatchdir = 0;
 
 void Enable(std::size_t numEntries)
 {
@@ -379,6 +380,9 @@ bool Dump(const mpt::PathString &filename)
 		} else if(entry.ThreadId == ThreadIdNotify)
 		{
 			f << " --Notify ";
+		} else if(entry.ThreadId == ThreadIdWatchdir)
+		{
+			f << " WatchDir ";
 		} else
 		{
 			f << " " << mpt::fmt::hex0<8>(entry.ThreadId) << " ";
@@ -406,7 +410,31 @@ void SetThreadId(mpt::log::Trace::ThreadKind kind, uint32 id)
 		case ThreadKindNotify:
 			ThreadIdNotify = id;
 			break;
+		case ThreadKindWatchdir:
+			ThreadIdWatchdir = id;
+			break;
 	}
+}
+
+uint32 GetThreadId(mpt::log::Trace::ThreadKind kind)
+{
+	uint32 result = 0;
+	switch(kind)
+	{
+		case ThreadKindGUI:
+			result = ThreadIdGUI;
+			break;
+		case ThreadKindAudio:
+			result = ThreadIdAudio;
+			break;
+		case ThreadKindNotify:
+			result = ThreadIdNotify;
+			break;
+		case ThreadKindWatchdir:
+			result = ThreadIdWatchdir;
+			break;
+	}
+	return result;
 }
 
 #endif // MPT_OS_WINDOWS

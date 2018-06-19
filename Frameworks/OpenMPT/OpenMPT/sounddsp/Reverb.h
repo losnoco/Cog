@@ -59,6 +59,8 @@ struct SWRvbRefDelay
 	LR16   RefOut[SNDMIX_REVERB_DELAY_MASK + 1]; // stereo output of reflections
 };
 
+struct SNDMIX_REVERB_PROPERTIES;
+
 
 // Late reverberation
 // Tank diffusers lengths
@@ -145,6 +147,7 @@ public:
 	mixsample_t gnRvbROfsVol, gnRvbLOfsVol;
 
 private:
+	const SNDMIX_REVERB_PROPERTIES *m_currentPreset;
 
 	uint32 gnReverbSend;
 

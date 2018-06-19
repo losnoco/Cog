@@ -454,6 +454,12 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 
 	result = true;
 
+	if(!mo3Decode)
+	{
+		Samples[sample].Convert(MOD_TYPE_IT, GetType());
+		Samples[sample].PrecomputeLoops(*this, false);
+	}
+
 fail:
 
 	mptMFSafeRelease(&buffer);

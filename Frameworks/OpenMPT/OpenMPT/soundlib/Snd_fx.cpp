@@ -1416,7 +1416,7 @@ void CSoundFile::InstrumentChange(ModChannel *pChn, uint32 instr, bool bPorta, b
 	pChn->nNewIns = 0;
 
 	// IT Compatiblity: NNA is reset on every note change, not every instrument change (fixes s7xinsnum.it).
-	if (pIns && ((!m_playBehaviour[kITNNAReset] && pSmp) || pIns->nMixPlug))
+	if (pIns && ((!m_playBehaviour[kITNNAReset] && pSmp) || pIns->nMixPlug || instrumentChanged))
 		pChn->nNNA = pIns->nNNA;
 
 	// Update volume
@@ -2778,7 +2778,7 @@ bool CSoundFile::ProcessEffects()
 					InstrumentChange(pChn, pChn->nNewIns, bPorta, false, !(GetType() & (MOD_TYPE_XM|MOD_TYPE_MT2)));
 					pChn->nNewIns = 0;
 				}
-				NoteChange(pChn, note, bPorta, !(GetType() & (MOD_TYPE_XM|MOD_TYPE_MT2)));
+				NoteChange(pChn, note, bPorta, !(GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2)));
 				if ((bPorta) && (GetType() & (MOD_TYPE_XM|MOD_TYPE_MT2)) && (instr))
 				{
 					pChn->dwFlags.set(CHN_FASTVOLRAMP);

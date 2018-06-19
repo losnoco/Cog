@@ -415,11 +415,14 @@ void module_impl::apply_mixer_settings( std::int32_t samplerate, int channels ) 
 		mixersettings.SetVolumeRampUpMicroseconds( volrampin_us );
 		mixersettings.SetVolumeRampDownMicroseconds( volrampout_us );
 		m_sndFile->SetMixerSettings( mixersettings );
+	} else if ( !m_mixer_initialized ) {
+		m_sndFile->InitPlayer( true );
 	}
 	if ( samplerate_changed ) {
 		m_sndFile->SuspendPlugins();
 		m_sndFile->ResumePlugins();
 	}
+	m_mixer_initialized = true;
 }
 void module_impl::apply_libopenmpt_defaults() {
 	set_render_param( module::RENDER_STEREOSEPARATION_PERCENT, 100 );
@@ -447,6 +450,7 @@ bool module_impl::has_subsongs_inited() const {
 void module_impl::ctor( const std::map< std::string, std::string > & ctls ) {
 	m_sndFile = mpt::make_unique<CSoundFile>();
 	m_loaded = false;
+	m_mixer_initialized = false;
 	m_Dither = mpt::make_unique<Dither>(mpt::global_prng());
 	m_LogForwarder = mpt::make_unique<log_forwarder>( *m_Log );
 	m_sndFile->SetCustomLog( m_LogForwarder.get() );

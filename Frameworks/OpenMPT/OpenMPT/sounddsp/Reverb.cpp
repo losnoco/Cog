@@ -64,6 +64,8 @@ CReverbSettings::CReverbSettings()
 
 CReverb::CReverb()
 {
+	m_currentPreset = nullptr;
+
 	// Shared reverb state
 	InitMixBuffer(MixReverbBuffer, static_cast<uint32>(mpt::size(MixReverbBuffer)));
 	gnRvbROfsVol = 0;
@@ -326,18 +328,17 @@ void CReverb::Shutdown()
 void CReverb::Initialize(bool bReset, uint32 MixingFreq)
 {
 	if (m_Settings.m_nReverbType >= NUM_REVERBTYPES) m_Settings.m_nReverbType = 0;
-	static SNDMIX_REVERB_PROPERTIES *spCurrentPreset = nullptr;
-	SNDMIX_REVERB_PROPERTIES *pRvbPreset = &gRvbPresets[m_Settings.m_nReverbType].Preset;
+	const SNDMIX_REVERB_PROPERTIES *rvbPreset = &gRvbPresets[m_Settings.m_nReverbType].Preset;
 
-	if ((pRvbPreset != spCurrentPreset) || (bReset))
+	if ((rvbPreset != m_currentPreset) || (bReset))
 	{
 		// Reverb output frequency is half of the dry output rate
 		float flOutputFrequency = (float)MixingFreq;
 		EnvironmentReverb rvb;
 
 		// Reset reverb parameters
-		spCurrentPreset = pRvbPreset;
-		I3dl2_to_Generic(pRvbPreset, &rvb, flOutputFrequency,
+		m_currentPreset = rvbPreset;
+		I3dl2_to_Generic(rvbPreset, &rvb, flOutputFrequency,
 							RVBMINREFDELAY, RVBMAXREFDELAY,
 							RVBMINRVBDELAY, RVBMAXRVBDELAY,
 							( RVBDIF1L_LEN + RVBDIF1R_LEN

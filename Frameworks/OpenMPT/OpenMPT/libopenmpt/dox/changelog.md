@@ -5,6 +5,17 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.3.10 (2018-06-17)
+
+ *  [**Bug**] Internal mixer state was not initialized properly when initially
+    rendering in 44100kHz stereo format.
+ *  [**Bug**] AMF: Undefined behaviour in loader code could lead to files
+    playing silent.
+
+ *  Switching between instruments with portamento did not update the NNA
+    settings for the new instrument.
+ *  FAR: Properly import volume commands.
+
 ### libopenmpt 0.3.9 (2018-04-29)
 
  *  [**Sec**] Possible write near address 0 in out-of-memory situations when

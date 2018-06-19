@@ -234,7 +234,7 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 		}
 
-		// Read break row and unused value
+		// Read break row and unused value (used to be pattern tempo)
 		ROWINDEX breakRow = patternChunk.ReadUint8();
 		patternChunk.Skip(1);
 		if(breakRow > 0 && breakRow < numRows - 2)
@@ -262,10 +262,10 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 					m.instr = data[1] + 1;
 				}
 
-				if(data[2] & 0x0F)
+				if(m.note != NOTE_NONE || data[2] > 0)
 				{
 					m.volcmd = VOLCMD_VOLUME;
-					m.vol = (data[2] & 0x0F) << 2;
+					m.vol = (Clamp(data[2], uint8(1), uint8(16)) - 1u) * 4u;
 				}
 				
 				m.param = data[3] & 0x0F;
