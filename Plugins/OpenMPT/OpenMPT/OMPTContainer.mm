@@ -63,11 +63,13 @@
         int i;
         int subsongs = mod->get_num_subsongs();
         
-        delete mod;
-        
         for (i = 0; i < subsongs; ++i) {
+            mod->select_subsong(i);
+            if (mod->get_duration_seconds() < 10.0) continue;
             [tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
         }
+        
+        delete mod;
         
         return tracks;
     } catch ( std::exception & /*e*/ ) {
