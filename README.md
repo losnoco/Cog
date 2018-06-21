@@ -19,6 +19,16 @@ add which seem like they would be useful to me or others.
 
 Up to date binaries will be available at the following link:
 
-http://kode54.net/cog/
+https://kode54.net/cog/
+
+--Christopher Snowhill (chris@kode54.net)
+
+ADDENDUM - 2018-06-21
+
+You will need to run the following to retrieve all the source code:
+
+```
+git submodule update --init --recursive
+```
 
 --Christopher Snowhill (chris@kode54.net)
