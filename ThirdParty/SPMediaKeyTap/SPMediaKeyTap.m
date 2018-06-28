@@ -253,9 +253,6 @@ static CGEventRef tapEventCallback2(CGEventTapProxy proxy, CGEventType type, CGE
         && keyCode != NX_KEYTYPE_REWIND
         && keyCode != NX_KEYTYPE_PREVIOUS
         && keyCode != NX_KEYTYPE_NEXT
-        && keyCode != NX_KEYTYPE_MUTE
-        && keyCode != NX_KEYTYPE_SOUND_UP
-        && keyCode != NX_KEYTYPE_SOUND_DOWN
         )
               return event;
 
