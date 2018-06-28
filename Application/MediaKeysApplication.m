@@ -32,8 +32,18 @@
                                                context:nil];
 
     keyTap = [[SPMediaKeyTap alloc] initWithDelegate:self];
-    if([SPMediaKeyTap usesGlobalMediaKeyTap])
-        [keyTap startWatchingMediaKeys];
+    if([SPMediaKeyTap usesGlobalMediaKeyTap]) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert addButtonWithTitle:@"Retry"];
+        [alert addButtonWithTitle:@"Cancel"];
+        [alert setMessageText:@"Enable Media Key access?"];
+        [alert setInformativeText:@"Media Key support requires the \"Accessibility\" permission."];
+        [alert setAlertStyle:NSInformationalAlertStyle];
+        while (![keyTap startWatchingMediaKeys]) {
+            if ([alert runModal] == NSAlertFirstButtonReturn) continue;
+            else break;
+        }
+    }
     else
         ALog(@"Media key monitoring disabled");
 }
