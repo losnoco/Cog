@@ -6,7 +6,7 @@
 //  Copyright 2018 __LoSnoCo__. All rights reserved.
 //
 
-#import <OpenMPT/libopenmpt.hpp>
+#import <libOpenMPT/libopenmpt.hpp>
 
 #import "OMPTContainer.h"
 #import "OMPTDecoder.h"

@@ -134,11 +134,11 @@ void playerDestroy(Player *p)
 
 Player * playerCreate(int SAMPLEFREQUENCY)
 {
-    int i, j;
+    int i;
     
     Player* p;
     
-    srand(time(NULL));
+    srand((unsigned int) time(NULL));
     
     p = (Player *) calloc(1, sizeof(Player));
     if (!p) return NULL;
@@ -241,7 +241,6 @@ static void instrEffect(Player *p, int chanNum)
     int _local38;
     int _local39;
     int _local40;
-    int _local43;
 	int butt, ron, pat, buf2, buf1;
 
     TuneChannel *tc        = &p->tuneChannels[chanNum];
@@ -1666,7 +1665,7 @@ static void ABH(Player *p)
                     _local4 = 0;
                 }
                 _local2 = _local3[_local4].patLen;
-                if ((((tc->LJHG == _local2)) || ((tc->EQMIWERPIF == -1)))){
+                if ((((tc->LJHG == _local2)) || ((tc->EQMIWERPIF == 0xFF)))){
                     tc->LJHG = 0;
                     tc->EQMIWERPIF++;
                     p->curSubsong.mutedChans[i] = p->mutedChans[i];
@@ -1744,7 +1743,7 @@ void mixChunk(Player *p, int16_t *outBuff, uint playbackBufferSize)
 {
     int i, j;
     uint sampleNum;
-    int amp, smp, pos;
+    int amp, smp;
     int32_t audioMainR, audioMainL;
     int32_t audioDelayR, audioDelayL;
     uint otherDelayTime;
@@ -1753,7 +1752,7 @@ void mixChunk(Player *p, int16_t *outBuff, uint playbackBufferSize)
 	int insNum;
 
     //We just don't know!
-    uint dword_6632774C = 0;
+    //uint dword_6632774C = 0;
 
     if ( p->channelNumber > 0 )
     {
@@ -1833,11 +1832,11 @@ void mixChunk(Player *p, int16_t *outBuff, uint playbackBufferSize)
                     v->gainRight = 0x100;
                     v->gainLeft = 0x100;
                 }
-                if ( dword_6632774C )
+                /*if ( dword_6632774C )
                 {
                     //v->gainDelay = word_6632B9F4[i];
                 }
-                else
+                else*/
                 {
                     v->gainDelay = p->curSubsong.chanDelayAmt[i];
                 }
@@ -1846,12 +1845,12 @@ void mixChunk(Player *p, int16_t *outBuff, uint playbackBufferSize)
                 v->gainDelayRight = (v->gainDelay * v->gainRight) >> 8;
                 v->gainDelayLeft  = (v->gainDelay * v->gainLeft) >> 8;
             }
-            if ( dword_6632774C )
+            /*if ( dword_6632774C )
             {
                 //amp = word_6632B964;
                 //otherDelayTime = word_6632BB24;
             }
-            else
+            else*/
             {
                 amp = p->curSubsong.amplification;
                 otherDelayTime = p->curSubsong.delayTime / (44100 / p->SAMPLEFREQUENCY);

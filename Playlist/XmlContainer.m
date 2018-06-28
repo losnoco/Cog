@@ -8,7 +8,7 @@
 
 #import "XmlContainer.h"
 
-#import <PlaylistEntry.h>
+#import "PlaylistEntry.h"
 
 #import "Logging.h"
 

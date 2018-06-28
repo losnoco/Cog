@@ -423,7 +423,7 @@ static int halfspeed_do(mpg123_handle *fr)
 		}
 		else
 		{
-			fr->halfphase = fr->p.halfspeed - 1;
+			fr->halfphase = (int)(fr->p.halfspeed - 1);
 		}
 	}
 	return 0;
@@ -650,7 +650,7 @@ static int guess_freeformat_framesize(mpg123_handle *fr)
 		if((head & HDR_SAMEMASK) == (fr->oldhead & HDR_SAMEMASK))
 		{
 			fr->rd->back_bytes(fr,i+1);
-			fr->framesize = i-3;
+			fr->framesize = (int)(i-3);
 			return PARSE_GOOD; /* Success! */
 		}
 	}
@@ -751,7 +751,7 @@ static int decode_header(mpg123_handle *fr,unsigned long newhead, int *freeforma
 		/* freeformat should be CBR, so the same framesize can be used at the 2nd reading or later */
 		else
 		{
-			fr->framesize = fr->freeformat_framesize + fr->padding;
+			fr->framesize = (int)(fr->freeformat_framesize + fr->padding);
 		}
 	}
 
@@ -762,7 +762,7 @@ static int decode_header(mpg123_handle *fr,unsigned long newhead, int *freeforma
 			fr->do_layer = do_layer1;
 			if(!fr->freeformat)
 			{
-				fr->framesize  = (long) tabsel_123[fr->lsf][0][fr->bitrate_index] * 12000;
+				fr->framesize  = (int) tabsel_123[fr->lsf][0][fr->bitrate_index] * 12000;
 				fr->framesize /= freqs[fr->sampling_frequency];
 				fr->framesize  = ((fr->framesize+fr->padding)<<2)-4;
 			}
@@ -774,7 +774,7 @@ static int decode_header(mpg123_handle *fr,unsigned long newhead, int *freeforma
 			if(!fr->freeformat)
 			{
 				debug2("bitrate index: %i (%i)", fr->bitrate_index, tabsel_123[fr->lsf][1][fr->bitrate_index] );
-				fr->framesize = (long) tabsel_123[fr->lsf][1][fr->bitrate_index] * 144000;
+				fr->framesize = (int) tabsel_123[fr->lsf][1][fr->bitrate_index] * 144000;
 				fr->framesize /= freqs[fr->sampling_frequency];
 				fr->framesize += fr->padding - 4;
 			}
@@ -793,7 +793,7 @@ static int decode_header(mpg123_handle *fr,unsigned long newhead, int *freeforma
 
 			if(!fr->freeformat)
 			{
-				fr->framesize  = (long) tabsel_123[fr->lsf][2][fr->bitrate_index] * 144000;
+				fr->framesize  = (int) tabsel_123[fr->lsf][2][fr->bitrate_index] * 144000;
 				fr->framesize /= freqs[fr->sampling_frequency]<<(fr->lsf);
 				fr->framesize = fr->framesize + fr->padding - 4;
 			}
@@ -1103,7 +1103,7 @@ static int wetwork(mpg123_handle *fr, unsigned long *newheadp)
 		fr->id3buf[2] = (unsigned char) ((newhead >> 8)  & 0xff);
 		fr->id3buf[3] = (unsigned char) ( newhead        & 0xff);
 
-		if((ret=fr->rd->fullread(fr,fr->id3buf+4,124)) < 0) return ret;
+		if((ret=(int)fr->rd->fullread(fr,fr->id3buf+4,124)) < 0) return ret;
 
 		fr->metaflags  |= MPG123_NEW_ID3|MPG123_ID3;
 		fr->rdat.flags |= READER_ID3TAG; /* that marks id3v1 */

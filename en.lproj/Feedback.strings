@@ -1,0 +1,18 @@
+
+/* Class = "NSWindow"; title = "Send Feedback"; ObjectID = "1"; */
+"1.title" = "Send Feedback";
+
+/* Class = "NSButtonCell"; title = "Send"; ObjectID = "17"; */
+"17.title" = "Send";
+
+/* Class = "NSTextFieldCell"; title = "Subject:"; ObjectID = "18"; */
+"18.title" = "Subject:";
+
+/* Class = "NSTextFieldCell"; title = "Message:"; ObjectID = "19"; */
+"19.title" = "Message:";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "20"; */
+"20.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Email:"; ObjectID = "22"; */
+"22.title" = "Email:";

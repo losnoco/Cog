@@ -12,7 +12,7 @@
 
 - (BOOL)continueTracking:(NSPoint)lastPoint at:(NSPoint)currentPoint inView:(NSView *)controlView
 {
-	NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDragged location:currentPoint modifierFlags:NSLeftMouseDown timestamp:0 windowNumber:[[controlView window] windowNumber] context:nil eventNumber:0 clickCount:0 pressure:0];
+	NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged location:currentPoint modifierFlags:0 timestamp:0 windowNumber:[[controlView window] windowNumber] context:nil eventNumber:0 clickCount:0 pressure:0];
 	
 	[controlView mouseDragged:event];
 	

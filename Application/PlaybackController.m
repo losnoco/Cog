@@ -6,7 +6,7 @@
 
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
-#import "playlistLoader.h"
+#import "PlaylistLoader.h"
 
 #import "Logging.h"
 

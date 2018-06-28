@@ -8,8 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <AdPlug/adplug.h>
-#import <AdPlug/opl.h>
+#import <libAdPlug/adplug.h>
+#import <libAdPlug/opl.h>
 
 #import "Plugin.h"
 

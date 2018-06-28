@@ -265,13 +265,16 @@ void MMU_clearMem(NDS_state *state)
 /* FIXME: VRAM Bank E,F,G,H,I missing */
 void MMU_VRAMWriteBackToLCD(NDS_state *state, u8 block)
 {
+#if 0
 	u8 *destination;
 	u8 *source;
 	u32 size ;
 	u8 VRAMBankCnt;
+#endif
 	#if 1
 		return ;
 	#endif
+#if 0
 	destination = 0 ;
 	source = 0;
 	VRAMBankCnt = MMU_read8(state, ARMCPU_ARM9,REG_VRAMCNTA+block) ;
@@ -376,16 +379,20 @@ void MMU_VRAMWriteBackToLCD(NDS_state *state, u8 block)
 	if (!destination) return ;
 	if (!source) return ;
 	memcpy(destination,source,size) ;
+#endif
 }
 
 void MMU_VRAMReloadFromLCD(NDS_state *state, u8 block,u8 VRAMBankCnt)
 {
+#if 0
 	u8 *destination;
 	u8 *source;
 	u32 size;
+#endif
 	#if 1
 		return ;
 	#endif
+#if 0
 	destination = 0;
 	source = 0;
 	size = 0;
@@ -490,6 +497,7 @@ void MMU_VRAMReloadFromLCD(NDS_state *state, u8 block,u8 VRAMBankCnt)
 	if (!destination) return ;
 	if (!source) return ;
 	memcpy(destination,source,size) ;
+#endif
 }
 
 void MMU_setRom(NDS_state *state, u8 * rom, u32 mask)

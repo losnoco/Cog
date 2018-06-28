@@ -54,7 +54,7 @@
     {
         ALog(@"Open failed for file: %@", [url absoluteString]);
         free(data);
-        return NO;
+        return nil;
     }
     
     free(data);
@@ -64,7 +64,7 @@
     {
         ALog(@"Failed to create player for file: %@", [url absoluteString]);
         File_freeSong(synSong);
-        return NO;
+        return nil;
     }
     
     if (loadSong(synPlayer, synSong) < 0)
@@ -72,7 +72,7 @@
         ALog(@"Load failed for file: %@", [url absoluteString]);
         playerDestroy(synPlayer);
         File_freeSong(synSong);
-        return NO;
+        return nil;
     }
     
     int track_num;

@@ -80,13 +80,13 @@ int SYNTH_NAME(real *bandPtr,int channel, mpg123_handle *fr, int final)
 		fr->bo--;
 		fr->bo &= 0xf;
 		buf = fr->real_buffs[0];
-		ntom = fr->ntom_val[1] = fr->ntom_val[0];
+		ntom = (int)(fr->ntom_val[1] = fr->ntom_val[0]);
 	}
 	else
 	{
 		samples++;
 		buf = fr->real_buffs[1];
-		ntom = fr->ntom_val[1];
+		ntom = (int) fr->ntom_val[1];
 	}
 
 	if(fr->bo & 0x1)

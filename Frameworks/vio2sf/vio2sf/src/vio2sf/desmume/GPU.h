@@ -740,8 +740,8 @@ typedef struct
    int id; // ID number for core(see above defines)
    const char *Name; // Name of core
    int flags; // What features the core supports(full screen, etc.)
-   int (*Init)(); // Initializes stuff related to core
-   void (*DeInit)(); // Deinitializes stuff related to core
+   int (*Init)(void); // Initializes stuff related to core
+   void (*DeInit)(void); // Deinitializes stuff related to core
    void (*Resize)(int width, int height, BOOL fullscreen); // Resizes window or fullscreen
    void (*OnScreenText)(char *string, ...); // For handling save state messages, etc.
 } GraphicsInterface_struct;

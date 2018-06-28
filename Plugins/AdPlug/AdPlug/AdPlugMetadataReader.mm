@@ -9,8 +9,8 @@
 #import "AdPlugMetadataReader.h"
 #import "AdPlugDecoder.h"
 
-#import <AdPlug/adplug.h>
-#import <AdPlug/silentopl.h>
+#import <libAdPlug/adplug.h>
+#import <libAdPlug/silentopl.h>
 
 #import "fileprovider.h"
 

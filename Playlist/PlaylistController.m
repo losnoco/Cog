@@ -414,7 +414,7 @@
 	if (([sortDescriptors count] != 0) && [[[sortDescriptors objectAtIndex:0] key] caseInsensitiveCompare:@"index"] == NSOrderedSame)
 	{
 		//Remove the sort descriptors
-		[super setSortDescriptors:nil];
+		[super setSortDescriptors:[NSArray array]];
 		[self rearrangeObjects];
 		
 		return;
@@ -428,7 +428,7 @@
 		
 - (IBAction)randomizeList:(id)sender
 {
-	[self setSortDescriptors:nil];
+	[self setSortDescriptors:[NSArray array]];
 
     NSArray *unrandomized = [self content];
     [[[self undoManager] prepareWithInvocationTarget:self] unrandomizeList:unrandomized];
@@ -743,10 +743,10 @@
 
 	[shuffleList insertObjects:newList atIndexes:indexSet];
 
-	int i;
+	unsigned long i;
 	for (i = ([shuffleList count] - [newList count]); i < [shuffleList count]; i++)
 	{
-		[[shuffleList objectAtIndex:i] setShuffleIndex:i];
+		[[shuffleList objectAtIndex:i] setShuffleIndex:(int)i];
 	}
 }
 
@@ -801,7 +801,7 @@
 }
 - (ShuffleMode)shuffle
 {
-	return [[NSUserDefaults standardUserDefaults] integerForKey:@"shuffle"];
+	return (ShuffleMode) [[NSUserDefaults standardUserDefaults] integerForKey:@"shuffle"];
 }
 - (void)setRepeat:(RepeatMode)r
 {
@@ -810,7 +810,7 @@
 }
 - (RepeatMode)repeat
 {
-	return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"];
+	return (RepeatMode) [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"];
 }
 
 - (IBAction)clear:(id)sender
@@ -893,7 +893,7 @@
 		else
 		{
 			queueItem.queued = YES;
-			queueItem.queuePosition = [queueList count];
+			queueItem.queuePosition = (int) [queueList count];
 			
 			[queueList addObject:queueItem];
 		}
@@ -906,6 +906,40 @@
 	{
 		cur.queuePosition = i++;
 	}
+}
+
+- (IBAction)removeFromQueue:(id)sender
+{
+    for (PlaylistEntry *queueItem in [self selectedObjects])
+    {
+        queueItem.queued = NO;
+        queueItem.queuePosition = -1;
+        
+        [queueList removeObject:queueItem];
+    }
+    
+    int i = 0;
+    for (PlaylistEntry *cur in queueList)
+    {
+        cur.queuePosition = i++;
+    }
+}
+
+- (IBAction)addToQueue:(id)sender
+{
+    for (PlaylistEntry *queueItem in [self selectedObjects])
+    {
+        queueItem.queued = YES;
+        queueItem.queuePosition = (int) [queueList count];
+        
+        [queueList addObject:queueItem];
+    }
+    
+    int i = 0;
+    for (PlaylistEntry *cur in queueList)
+    {
+        cur.queuePosition = i++;
+    }
 }
 
 - (IBAction)stopAfterCurrent:(id)sender

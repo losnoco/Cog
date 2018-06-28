@@ -7,31 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		833AFD3620E4ED9D00F0C21E /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; };
+		83C2806320E4ECAD00823BF9 /* libAdPlug.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D3C659201C6E24005564CB /* AdPlugContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C654201C6E24005564CB /* AdPlugContainer.mm */; };
 		83D3C65A201C6E24005564CB /* AdPlugMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C656201C6E24005564CB /* AdPlugMetadataReader.mm */; };
 		83D3C65B201C6E24005564CB /* AdPlugDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C658201C6E24005564CB /* AdPlugDecoder.mm */; };
-		83D3C65E201C6E4D005564CB /* AdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D3C608201C6775005564CB /* AdPlug.framework */; };
 		83D3C668201C7020005564CB /* adplug.db in Resources */ = {isa = PBXBuildFile; fileRef = 83D3C667201C7020005564CB /* adplug.db */; };
 		83D3C66C201C70F7005564CB /* fileprovider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C66A201C70F7005564CB /* fileprovider.mm */; };
-		83D3C66E201C72ED005564CB /* AdPlug.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D3C608201C6775005564CB /* AdPlug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D3C6A6201D3951005564CB /* libbinio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D3C6A7201D3951005564CB /* libbinio.framework */; };
 		83D3C6A8201D3961005564CB /* libbinio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D3C6A7201D3951005564CB /* libbinio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		83D3C607201C6775005564CB /* PBXContainerItemProxy */ = {
+		83AA433F20E4EC8C00E861B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83D3C603201C6775005564CB /* AdPlug.xcodeproj */;
+			containerPortal = 83D3C603201C6775005564CB /* libAdPlug.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 83D3C4D4201C654F005564CB;
-			remoteInfo = AdPlug;
+			remoteInfo = libAdPlug;
 		};
-		83D3C65C201C6E48005564CB /* PBXContainerItemProxy */ = {
+		83C2806020E4EC9F00823BF9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83D3C603201C6775005564CB /* AdPlug.xcodeproj */;
+			containerPortal = 83D3C603201C6775005564CB /* libAdPlug.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 83D3C4D3201C654F005564CB;
-			remoteInfo = AdPlug;
+			remoteInfo = libAdPlug;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -42,8 +42,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83C2806320E4ECAD00823BF9 /* libAdPlug.framework in CopyFiles */,
 				83D3C6A8201D3961005564CB /* libbinio.framework in CopyFiles */,
-				83D3C66E201C72ED005564CB /* AdPlug.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,7 +52,7 @@
 /* Begin PBXFileReference section */
 		83D3C5F3201C674D005564CB /* AdPlug.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdPlug.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C5F6201C674D005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		83D3C603201C6775005564CB /* AdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AdPlug.xcodeproj; path = ../../Frameworks/AdPlug/AdPlug.xcodeproj; sourceTree = "<group>"; };
+		83D3C603201C6775005564CB /* libAdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libAdPlug.xcodeproj; path = ../../Frameworks/AdPlug/libAdPlug.xcodeproj; sourceTree = "<group>"; };
 		83D3C650201C6DE9005564CB /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
 		83D3C651201C6E00005564CB /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		83D3C652201C6E10005564CB /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
@@ -74,13 +74,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				83D3C6A6201D3951005564CB /* libbinio.framework in Frameworks */,
-				83D3C65E201C6E4D005564CB /* AdPlug.framework in Frameworks */,
+				833AFD3620E4ED9D00F0C21E /* libAdPlug.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83AA433C20E4EC8C00E861B2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83AA434020E4EC8C00E861B2 /* libAdPlug.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		83D3C5EA201C674D005564CB = {
 			isa = PBXGroup;
 			children = (
@@ -122,17 +130,9 @@
 			isa = PBXGroup;
 			children = (
 				83D3C6A7201D3951005564CB /* libbinio.framework */,
-				83D3C603201C6775005564CB /* AdPlug.xcodeproj */,
+				83D3C603201C6775005564CB /* libAdPlug.xcodeproj */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		83D3C604201C6775005564CB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83D3C608201C6775005564CB /* AdPlug.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,7 +150,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				83D3C65D201C6E48005564CB /* PBXTargetDependency */,
+				83C2806120E4EC9F00823BF9 /* PBXTargetDependency */,
 			);
 			name = AdPlug;
 			productName = AdPlug;
@@ -184,8 +184,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 83D3C604201C6775005564CB /* Products */;
-					ProjectRef = 83D3C603201C6775005564CB /* AdPlug.xcodeproj */;
+					ProductGroup = 83AA433C20E4EC8C00E861B2 /* Products */;
+					ProjectRef = 83D3C603201C6775005564CB /* libAdPlug.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -196,11 +196,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		83D3C608201C6775005564CB /* AdPlug.framework */ = {
+		83AA434020E4EC8C00E861B2 /* libAdPlug.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = AdPlug.framework;
-			remoteRef = 83D3C607201C6775005564CB /* PBXContainerItemProxy */;
+			path = libAdPlug.framework;
+			remoteRef = 83AA433F20E4EC8C00E861B2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -231,10 +231,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		83D3C65D201C6E48005564CB /* PBXTargetDependency */ = {
+		83C2806120E4EC9F00823BF9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = AdPlug;
-			targetProxy = 83D3C65C201C6E48005564CB /* PBXContainerItemProxy */;
+			name = libAdPlug;
+			targetProxy = 83C2806020E4EC9F00823BF9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -289,7 +289,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -340,7 +340,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
@@ -360,7 +360,6 @@
 				INFOPLIST_FILE = AdPlug/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.AdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -382,7 +381,6 @@
 				INFOPLIST_FILE = AdPlug/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.AdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

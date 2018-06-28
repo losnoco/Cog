@@ -13,7 +13,6 @@
 #import "PlaylistLoader.h"
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
-#import "FilePlaylistEntry.h"
 #import "AppController.h"
 
 #import "NSFileHandle+CreateFile.h"
@@ -23,9 +22,11 @@
 #import "CogAudio/AudioPropertiesReader.h"
 #import "CogAudio/AudioMetadataReader.h"
 
-#import "XMlContainer.h"
+#import "XmlContainer.h"
 
 #import "NSData+MD5.h"
+
+#import "NSString+FinderCompare.h"
 
 #import "Logging.h"
 
@@ -397,10 +398,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	for (NSURL *url in validURLs)
 	{
 		PlaylistEntry *pe;
-		if ([url isFileURL]) 
-			pe = [[FilePlaylistEntry alloc] init];
-		else
-			pe = [[PlaylistEntry alloc] init];
+        pe = [[PlaylistEntry alloc] init];
 
 		pe.URL = url;
 		pe.index = index+i;
@@ -418,10 +416,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         for (NSDictionary *entry in [xmlData objectForKey:@"entries"])
         {
             PlaylistEntry *pe;
-            if ([[entry objectForKey:@"URL"] isFileURL])
-                pe = [[FilePlaylistEntry alloc] init];
-            else
-                pe = [[PlaylistEntry alloc] init];
+            pe = [[PlaylistEntry alloc] init];
             
             [pe setValuesForKeysWithDictionary:entry];
             pe.index = index+i;

@@ -11,19 +11,26 @@
 		836F6B1418BDB80D0095E648 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F6B1318BDB80D0095E648 /* Cocoa.framework */; };
 		836F6B1E18BDB80D0095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B1C18BDB80D0095E648 /* InfoPlist.strings */; };
 		836F705C18BDC40E0095E648 /* VGMDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 836F705B18BDC40E0095E648 /* VGMDecoder.m */; };
-		836F705D18BDC4580095E648 /* vgmstream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F6B6D18BDB8890095E648 /* vgmstream.framework */; };
-		836F705F18BDC47F0095E648 /* vgmstream.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836F6B6D18BDB8890095E648 /* vgmstream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83AA5D2D1F6E30080020821C /* VGMInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D281F6E30080020821C /* VGMInterface.m */; };
 		83AA5D2E1F6E30080020821C /* VGMContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D2A1F6E30080020821C /* VGMContainer.m */; };
+		83C2806720E4ED3500823BF9 /* libvgmstream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8394628720E4EC8300B45CEA /* libvgmstream.framework */; };
+		83C2806820E4ED3D00823BF9 /* libvgmstream.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8394628720E4EC8300B45CEA /* libvgmstream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		836F6B6C18BDB8890095E648 /* PBXContainerItemProxy */ = {
+		8394628620E4EC8300B45CEA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 836F6B6718BDB8880095E648 /* vgmstream.xcodeproj */;
+			containerPortal = 836F6B6718BDB8880095E648 /* libvgmstream.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 836F6B3918BDB8880095E648;
-			remoteInfo = vgmstream;
+			remoteInfo = libvgmstream;
+		};
+		83C2806420E4ED2B00823BF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 836F6B6718BDB8880095E648 /* libvgmstream.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 836F6B3818BDB8880095E648;
+			remoteInfo = libvgmstream;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -34,7 +41,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				836F705F18BDC47F0095E648 /* vgmstream.framework in CopyFiles */,
+				83C2806820E4ED3D00823BF9 /* libvgmstream.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,7 +59,7 @@
 		836F6B1B18BDB80D0095E648 /* vgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vgmstream-Info.plist"; sourceTree = "<group>"; };
 		836F6B1D18BDB80D0095E648 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		836F6B1F18BDB80D0095E648 /* vgmstream-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "vgmstream-Prefix.pch"; sourceTree = "<group>"; };
-		836F6B6718BDB8880095E648 /* vgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vgmstream.xcodeproj; path = ../../Frameworks/vgmstream/vgmstream.xcodeproj; sourceTree = "<group>"; };
+		836F6B6718BDB8880095E648 /* libvgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmstream.xcodeproj; path = ../../Frameworks/vgmstream/libvgmstream.xcodeproj; sourceTree = "<group>"; };
 		836F705A18BDC40E0095E648 /* VGMDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMDecoder.h; sourceTree = "<group>"; };
 		836F705B18BDC40E0095E648 /* VGMDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMDecoder.m; sourceTree = "<group>"; };
 		836F706018BDC84D0095E648 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
@@ -69,7 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				836F705D18BDC4580095E648 /* vgmstream.framework in Frameworks */,
+				83C2806720E4ED3500823BF9 /* libvgmstream.framework in Frameworks */,
 				836F6B1418BDB80D0095E648 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -99,7 +106,7 @@
 			children = (
 				836F6B1318BDB80D0095E648 /* Cocoa.framework */,
 				836F6B1518BDB80D0095E648 /* Other Frameworks */,
-				836F6B6718BDB8880095E648 /* vgmstream.xcodeproj */,
+				836F6B6718BDB8880095E648 /* libvgmstream.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -143,10 +150,10 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		836F6B6818BDB8880095E648 /* Products */ = {
+		8394628320E4EC8300B45CEA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				836F6B6D18BDB8890095E648 /* vgmstream.framework */,
+				8394628720E4EC8300B45CEA /* libvgmstream.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -166,6 +173,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				83C2806520E4ED2B00823BF9 /* PBXTargetDependency */,
 			);
 			name = vgmstream;
 			productName = vgmstream;
@@ -199,8 +207,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 836F6B6818BDB8880095E648 /* Products */;
-					ProjectRef = 836F6B6718BDB8880095E648 /* vgmstream.xcodeproj */;
+					ProductGroup = 8394628320E4EC8300B45CEA /* Products */;
+					ProjectRef = 836F6B6718BDB8880095E648 /* libvgmstream.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -211,11 +219,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		836F6B6D18BDB8890095E648 /* vgmstream.framework */ = {
+		8394628720E4EC8300B45CEA /* libvgmstream.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = vgmstream.framework;
-			remoteRef = 836F6B6C18BDB8890095E648 /* PBXContainerItemProxy */;
+			path = libvgmstream.framework;
+			remoteRef = 8394628620E4EC8300B45CEA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -244,6 +252,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		83C2806520E4ED2B00823BF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libvgmstream;
+			targetProxy = 83C2806420E4ED2B00823BF9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		836F6B1C18BDB80D0095E648 /* InfoPlist.strings */ = {
@@ -310,7 +326,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../Vorbis/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -362,7 +378,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../Vorbis/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -382,7 +398,7 @@
 				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.vgmstream";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -405,7 +421,7 @@
 				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.vgmstream";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

@@ -8,8 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <vgmstream/vgmstream.h>
-#import <vgmstream/streamfile.h>
+#import <libvgmstream/vgmstream.h>
+#import <libvgmstream/streamfile.h>
 
 #import "Plugin.h"
 

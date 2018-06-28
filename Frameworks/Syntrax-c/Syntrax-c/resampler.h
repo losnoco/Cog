@@ -49,7 +49,7 @@ typedef int32_t sample_t;
 extern "C" {
 #endif
 
-void * resampler_create();
+void * resampler_create(void);
 void * resampler_dup(const void *);
 void resampler_dup_inplace(void *, const void *);
 void resampler_destroy(void *);

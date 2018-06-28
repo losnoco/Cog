@@ -834,7 +834,6 @@ static int load_twosf_mapz(struct twosf_loader_state *state, int issave, const u
 		return -1;
 	}
     
-	if (0)
 	{
 		uLong ccrc = crc32(crc32(0L, Z_NULL, 0), rdata, (uInt) usize);
 		if (ccrc != zcrc)

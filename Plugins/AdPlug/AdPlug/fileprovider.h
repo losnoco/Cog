@@ -15,7 +15,7 @@
 
 #include <string>
 #include <binio.h>
-#include <AdPlug/fprovide.h>
+#include <libAdPlug/fprovide.h>
 
 class CProvider_cog : public CFileProvider
 {

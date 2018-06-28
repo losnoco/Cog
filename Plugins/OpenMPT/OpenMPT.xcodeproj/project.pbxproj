@@ -7,20 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83E5FE671FFF001100659F0F /* OpenMPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E5EFCD1FFEF7CE00659F0F /* OpenMPT.framework */; };
-		83E5FE691FFF002000659F0F /* OpenMPT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83E5EFCD1FFEF7CE00659F0F /* OpenMPT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83187C7120E4EAB700DED293 /* libOpenMPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8308151E20E4EA96003ACEDA /* libOpenMPT.framework */; };
+		83187C7220E4EAC400DED293 /* libOpenMPT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8308151E20E4EA96003ACEDA /* libOpenMPT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */; };
 		83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */; };
 		83E5FE751FFF010C00659F0F /* OMPTMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE701FFF010C00659F0F /* OMPTMetadataReader.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		83E5EFCC1FFEF7CE00659F0F /* PBXContainerItemProxy */ = {
+		8308151D20E4EA96003ACEDA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83E5EFC81FFEF7CC00659F0F /* OpenMPT.xcodeproj */;
+			containerPortal = 83E5EFC81FFEF7CC00659F0F /* libOpenMPT.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 83E5EFBD1FFEF7CC00659F0F;
-			remoteInfo = OpenMPT;
+			remoteInfo = libOpenMPT;
+		};
+		83187C6E20E4EAA900DED293 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83E5EFC81FFEF7CC00659F0F /* libOpenMPT.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83E5EFBC1FFEF7CC00659F0F;
+			remoteInfo = libOpenMPT;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -31,7 +38,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				83E5FE691FFF002000659F0F /* OpenMPT.framework in CopyFiles */,
+				83187C7220E4EAC400DED293 /* libOpenMPT.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,7 +47,7 @@
 /* Begin PBXFileReference section */
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFA61FFEF78100659F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		83E5EFC81FFEF7CC00659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = ../../Frameworks/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
+		83E5EFC81FFEF7CC00659F0F /* libOpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libOpenMPT.xcodeproj; path = ../../Frameworks/OpenMPT/libOpenMPT.xcodeproj; sourceTree = "<group>"; };
 		83E5FE6B1FFF004D00659F0F /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		83E5FE6C1FFF006400659F0F /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = "<group>"; };
 		83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OMPTDecoder.mm; path = OpenMPT/OMPTDecoder.mm; sourceTree = "<group>"; };
@@ -57,13 +64,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83E5FE671FFF001100659F0F /* OpenMPT.framework in Frameworks */,
+				83187C7120E4EAB700DED293 /* libOpenMPT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8308151A20E4EA96003ACEDA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8308151E20E4EA96003ACEDA /* libOpenMPT.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		83E5EF9A1FFEF78100659F0F = {
 			isa = PBXGroup;
 			children = (
@@ -93,17 +108,9 @@
 		83E5EFB21FFEF79000659F0F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				83E5EFC81FFEF7CC00659F0F /* OpenMPT.xcodeproj */,
+				83E5EFC81FFEF7CC00659F0F /* libOpenMPT.xcodeproj */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		83E5EFC91FFEF7CC00659F0F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83E5EFCD1FFEF7CE00659F0F /* OpenMPT.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		83E5FE6A1FFF003900659F0F /* Classes */ = {
@@ -137,6 +144,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				83187C6F20E4EAA900DED293 /* PBXTargetDependency */,
 			);
 			name = OpenMPT;
 			productName = OpenMPT;
@@ -170,8 +178,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 83E5EFC91FFEF7CC00659F0F /* Products */;
-					ProjectRef = 83E5EFC81FFEF7CC00659F0F /* OpenMPT.xcodeproj */;
+					ProductGroup = 8308151A20E4EA96003ACEDA /* Products */;
+					ProjectRef = 83E5EFC81FFEF7CC00659F0F /* libOpenMPT.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -182,11 +190,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		83E5EFCD1FFEF7CE00659F0F /* OpenMPT.framework */ = {
+		8308151E20E4EA96003ACEDA /* libOpenMPT.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = OpenMPT.framework;
-			remoteRef = 83E5EFCC1FFEF7CE00659F0F /* PBXContainerItemProxy */;
+			path = libOpenMPT.framework;
+			remoteRef = 8308151D20E4EA96003ACEDA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -213,6 +221,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		83187C6F20E4EAA900DED293 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libOpenMPT;
+			targetProxy = 83187C6E20E4EAA900DED293 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		83E5EFA71FFEF78100659F0F /* Debug */ = {
@@ -265,7 +281,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -316,7 +332,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};

@@ -32,6 +32,13 @@
     
     NSString * path = [url path];
     
+    NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
+    if (fragmentRange.location != NSNotFound) {
+        // Chop the fragment.
+        NSString* newURLString = [path substringToIndex:fragmentRange.location];
+        path = newURLString;
+    }
+    
     fex_type_t type;
     fex_err_t error = fex_identify_file( &type, [path UTF8String] );
     
@@ -63,7 +70,7 @@
         else return NO;
     }
 	
-	_fd = fopen([[url path] UTF8String], "r");
+	_fd = fopen([path UTF8String], "r");
 	
 	return (_fd != NULL);
 }

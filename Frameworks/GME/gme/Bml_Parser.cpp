@@ -23,7 +23,7 @@ Bml_Node::Bml_Node(char const* name, size_t max_length)
 {
     size_t length = 0;
     char const* ptr = name;
-    while (*ptr && length < max_length) ++ptr, ++length;
+    while (*ptr && length < max_length) { ++ptr; ++length; }
     this->name = new char[ length + 1 ];
     memcpy( this->name, name, length );
     this->name[ length ] = '\0';
@@ -264,7 +264,7 @@ void Bml_Parser::parseDocument( const char * source, size_t max_length )
     
     size_t length = 0;
     const char * end = source;
-    while ( *end && length < max_length ) ++end, ++length;
+    while ( *end && length < max_length ) { ++end; ++length; }
 
     while ( source < end )
     {
@@ -346,7 +346,7 @@ void Bml_Parser::serialize(std::ostringstream & out, Bml_Node const* node, unsig
         out << std::endl;
     }
 
-    for (unsigned i = 0, j = node->getChildCount(); i < j; ++i)
+    for (size_t i = 0, j = node->getChildCount(); i < j; ++i)
     {
         Bml_Node const& child = node->getChild(i);
         if ( (!child.getValue() || !strlen(child.getValue())) && !child.getChildCount() )

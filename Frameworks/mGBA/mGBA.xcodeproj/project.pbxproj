@@ -197,7 +197,6 @@
 		83CA2E2C1D7BCB5200F2EA53 /* vfs-fd.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA2E2B1D7BCB5200F2EA53 /* vfs-fd.c */; };
 		83CA2E321D7BCB6700F2EA53 /* ini.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA2E2E1D7BCB6700F2EA53 /* ini.c */; };
 		83CA2E331D7BCB6700F2EA53 /* ini.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA2E2F1D7BCB6700F2EA53 /* ini.h */; };
-		83CA2E351D7BCB6700F2EA53 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 83CA2E311D7BCB6700F2EA53 /* README.md */; };
 		83CA2E3B1D7BCBD300F2EA53 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA2E391D7BCBD300F2EA53 /* memory.c */; };
 		83CA2E431D7BD82100F2EA53 /* core.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA2E421D7BD82100F2EA53 /* core.c */; };
 		83D7282220A673A600076FC5 /* matrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D7282120A673A500076FC5 /* matrix.h */; };
@@ -402,7 +401,6 @@
 		83CA2E2B1D7BCB5200F2EA53 /* vfs-fd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "vfs-fd.c"; sourceTree = "<group>"; };
 		83CA2E2E1D7BCB6700F2EA53 /* ini.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ini.c; sourceTree = "<group>"; };
 		83CA2E2F1D7BCB6700F2EA53 /* ini.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ini.h; sourceTree = "<group>"; };
-		83CA2E311D7BCB6700F2EA53 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		83CA2E391D7BCBD300F2EA53 /* memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = memory.c; path = platform/posix/memory.c; sourceTree = "<group>"; };
 		83CA2E421D7BD82100F2EA53 /* core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = core.c; sourceTree = "<group>"; };
 		83D7282120A673A500076FC5 /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = matrix.h; sourceTree = "<group>"; };
@@ -977,7 +975,6 @@
 				837612F11DD6AD07001EED3D /* inih_LICENSE.txt */,
 				83CA2E2E1D7BCB6700F2EA53 /* ini.c */,
 				83CA2E2F1D7BCB6700F2EA53 /* ini.h */,
-				83CA2E311D7BCB6700F2EA53 /* README.md */,
 			);
 			path = inih;
 			sourceTree = "<group>";
@@ -1258,7 +1255,6 @@
 				8333B6671DCC4451004C140D /* tile-cache.c in Sources */,
 				83CA299B1D7BC4EE00F2EA53 /* gameshark.c in Sources */,
 				83CA2D9C1D7BC83E00F2EA53 /* directories.c in Sources */,
-				83CA2E351D7BCB6700F2EA53 /* README.md in Sources */,
 				83CA29B81D7BC4EE00F2EA53 /* overrides.c in Sources */,
 				83299FBE1E7657B2003A3242 /* dma.c in Sources */,
 				83CA2D361D7BC4F000F2EA53 /* crc32.c in Sources */,
@@ -1327,7 +1323,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -1379,7 +1375,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1408,7 +1404,6 @@
 				INFOPLIST_FILE = mGBA/Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.mGBA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1435,7 +1430,6 @@
 				INFOPLIST_FILE = mGBA/Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.mGBA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

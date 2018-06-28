@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 /* Returns the size of the base emulator state. */
-size_t usf_get_state_size();
+size_t usf_get_state_size(void);
 
 /* Clears and prepares an allocated state.
    Do not call this on a state which has already been rendering
