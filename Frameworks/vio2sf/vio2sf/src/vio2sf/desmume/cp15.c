@@ -480,6 +480,7 @@ BOOL armcp15_moveARM2CP(armcp15_t *armcp15, u32 val, u8 CRn, u8 CRm, u8 opcode1,
 			return TRUE;
 		}
 		return FALSE;
+        case 5 :
 		if((opcode1==0) && (CRm==0))
 		{
 			switch(opcode2)

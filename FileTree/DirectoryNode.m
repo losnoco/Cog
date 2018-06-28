@@ -11,6 +11,8 @@
 #import "FileNode.h"
 #import "SmartFolderNode.h"
 
+#import "NSString+FinderCompare.h"
+
 @implementation DirectoryNode
 
 - (BOOL)isLeaf

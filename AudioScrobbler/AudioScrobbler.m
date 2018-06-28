@@ -117,7 +117,7 @@ escapeForLastFM(NSString *string)
 	
 	_queue = nil;
 	
-	semaphore_destroy(mach_task_self(), _semaphore), _semaphore = 0;
+    semaphore_destroy(mach_task_self(), _semaphore); _semaphore = 0;
 }
 
 - (void) start:(PlaylistEntry *)pe

@@ -74,7 +74,7 @@ fprintf(stderr,"g%d",number_of_bits);
 fprintf(stderr,":%lx\n",rval);
 #endif
 
-  return rval;
+  return (unsigned int) rval;
 }
 
 

@@ -22,22 +22,19 @@
 @implementation PathNode
 
 //From http://developer.apple.com/documentation/Cocoa/Conceptual/LowLevelFileMgmt/Tasks/ResolvingAliases.html
+//Updated 2018-06-28
 NSURL *resolveAliases(NSURL *url)
 {
-	FSRef fsRef;
-	if (CFURLGetFSRef((CFURLRef)url, &fsRef))
+    CFErrorRef error;
+    CFDataRef bookmarkRef = CFURLCreateBookmarkDataFromFile(kCFAllocatorDefault, (__bridge CFURLRef)url, &error);
+	if (bookmarkRef)
 	{
-		Boolean targetIsFolder, wasAliased;
+        Boolean isStale;
+        CFURLRef urlRef = CFURLCreateByResolvingBookmarkData(kCFAllocatorDefault, bookmarkRef, kCFURLBookmarkResolutionWithSecurityScope, NULL, NULL, &isStale, &error);
 
-		if (FSResolveAliasFile (&fsRef, true /*resolveAliasChains*/, &targetIsFolder, &wasAliased) == noErr && wasAliased)
+		if (urlRef && !isStale)
 		{
-			CFURLRef resolvedUrl = CFURLCreateFromFSRef(NULL, &fsRef);
-			
-			if (resolvedUrl != NULL)
-			{
-				//DLog(@"Resolved...");
-				return (NSURL *)CFBridgingRelease(resolvedUrl);
-			}
+			return (NSURL *)CFBridgingRelease(urlRef);
 		}
 	}
 

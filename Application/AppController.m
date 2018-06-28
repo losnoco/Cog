@@ -65,8 +65,8 @@
 	
 	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
         if ( result == NSFileHandlingPanelOKButton ) {
-            [playlistLoader willInsertURLs:[p URLs] origin:URLOriginInternal];
-            [playlistLoader didInsertURLs:[playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginInternal];
+            [self->playlistLoader willInsertURLs:[p URLs] origin:URLOriginInternal];
+            [self->playlistLoader didInsertURLs:[self->playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginInternal];
         } else {
             [p close];
         }
@@ -81,7 +81,7 @@
 	
 	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
         if ( result == NSFileHandlingPanelOKButton ) {
-            [playlistLoader save:[[p URL] path]];
+            [self->playlistLoader save:[[p URL] path]];
         } else {
             [p close];
         }
@@ -475,14 +475,14 @@
         [contentView addSubview: [nowPlaying view]];
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             [context setDuration:0.25];
-            NSRect nowPlayingFrame = [[nowPlaying view] frame];
+            NSRect nowPlayingFrame = [[self->nowPlaying view] frame];
             nowPlayingFrame.size.width = windowSize.width;
-            [[nowPlaying view] setFrame: nowPlayingFrame];
-            [[nowPlaying view] setFrameOrigin: NSMakePoint(0.0, NSMaxY(contentRect) - nowPlayingFrame.size.height)];
+            [[self->nowPlaying view] setFrame: nowPlayingFrame];
+            [[self->nowPlaying view] setFrameOrigin: NSMakePoint(0.0, NSMaxY(contentRect) - nowPlayingFrame.size.height)];
             
-            NSRect mainViewFrame = [mainView frame];
+            NSRect mainViewFrame = [self->mainView frame];
             mainViewFrame.size.height -= nowPlayingFrame.size.height;
-            [[mainView animator] setFrame:mainViewFrame];
+            [[self->mainView animator] setFrame:mainViewFrame];
             
         } completionHandler:^{
             
@@ -507,11 +507,11 @@
         
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             [context setDuration:0.25];
-            [[mainView animator] setFrame:mainViewFrame];
+            [[self->mainView animator] setFrame:mainViewFrame];
             
         } completionHandler:^{
-            [[nowPlaying view] removeFromSuperview];
-            nowPlaying = nil;
+            [[self->nowPlaying view] removeFromSuperview];
+            self->nowPlaying = nil;
         }];
     }
 }

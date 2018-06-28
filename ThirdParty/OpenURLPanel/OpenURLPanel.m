@@ -232,10 +232,12 @@ typedef id (*myIMP)(id, SEL, ...);
 	mDelegate = delegate;
 	mDidEndSelector = (didEndSelector);
 	mContextInfo = contextInfo;
+    
+    NSArray *objects;
 
 	// load the bundle (if necessary)
 	if (mPanel == nil)
-		[NSBundle loadNibNamed:@"OpenURLPanel" owner:self];
+        [[NSBundle mainBundle] loadNibNamed:@"OpenURLPanel" owner:self topLevelObjects:&objects];
 
 	// start the sheet (or window)
 	[NSApp beginSheet:mPanel modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];

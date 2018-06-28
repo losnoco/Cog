@@ -206,5 +206,17 @@
 	[[NSUserDefaults standardUserDefaults] setFloat:position forKey:[self sideViewDividerPositionDefaultsKey]];
 }
 
+// placeholders, implemented by subclass
+- (void)doAddToPlaylist:(NSArray *)urls origin:(URLOrigin)origin
+{
+}
+
+- (void)clear:(id)sender
+{
+}
+
+- (void)playPauseResume:(id)sender
+{
+}
 
 @end

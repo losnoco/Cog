@@ -6,7 +6,7 @@
 //  Copyright 2017 __LoSnoCo__. All rights reserved.
 //
 
-#import <vgmstream/vgmstream.h>
+#import <libvgmstream/vgmstream.h>
 
 typedef struct _COGSTREAMFILE {
     STREAMFILE sf;

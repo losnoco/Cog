@@ -8,7 +8,7 @@
 
 #import "AdPlugDecoder.h"
 
-#import <AdPlug/nemuopl.h>
+#import <libAdPlug/nemuopl.h>
 
 #import "fileprovider.h"
 

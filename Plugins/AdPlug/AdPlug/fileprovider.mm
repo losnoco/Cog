@@ -65,7 +65,7 @@ public:
         
         if ( ! m_buffer_filled )
         {
-            m_buffer_filled = [m_file read:m_buffer amount:4096];
+            m_buffer_filled = (int) [m_file read:m_buffer amount:4096];
             if ( ! m_buffer_filled )
             {
                 err |= Eof;

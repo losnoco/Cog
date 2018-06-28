@@ -33,15 +33,18 @@
 
     keyTap = [[SPMediaKeyTap alloc] initWithDelegate:self];
     if([SPMediaKeyTap usesGlobalMediaKeyTap]) {
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert addButtonWithTitle:@"Retry"];
-        [alert addButtonWithTitle:@"Cancel"];
-        [alert setMessageText:@"Enable Media Key access?"];
-        [alert setInformativeText:@"Media Key support requires the \"Accessibility\" permission."];
-        [alert setAlertStyle:NSInformationalAlertStyle];
-        while (![keyTap startWatchingMediaKeys]) {
-            if ([alert runModal] == NSAlertFirstButtonReturn) continue;
-            else break;
+        if (![keyTap startWatchingMediaKeys]) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert addButtonWithTitle:@"Retry"];
+            [alert addButtonWithTitle:@"Cancel"];
+            [alert setMessageText:@"Enable Media Key access?"];
+            [alert setInformativeText:@"Media Key support requires the \"Accessibility\" permission."];
+            [alert setAlertStyle:NSInformationalAlertStyle];
+            if ([alert runModal] == NSAlertFirstButtonReturn) {
+                NSString *path = [[NSBundle mainBundle] executablePath];
+                NSString *processID = [NSString stringWithFormat:@"%d",[[NSProcessInfo processInfo] processIdentifier]];
+                [NSTask launchedTaskWithLaunchPath:path arguments:[NSArray arrayWithObjects:path,processID,nil]];
+            }
         }
     }
     else

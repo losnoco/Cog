@@ -30,7 +30,9 @@ static int default_init(mpg123_handle *fr);
 static off_t get_fileinfo(mpg123_handle *);
 static ssize_t posix_read(int fd, void *buf, size_t count){ return read(fd, buf, count); }
 static off_t   posix_lseek(int fd, off_t offset, int whence){ return lseek(fd, offset, whence); }
+#ifndef NO_ICY
 static off_t     nix_lseek(int fd, off_t offset, int whence){ return -1; }
+#endif
 
 static ssize_t plain_fullread(mpg123_handle *fr,unsigned char *buf, ssize_t count);
 
@@ -302,7 +304,7 @@ static int stream_seek_frame(mpg123_handle *fr, off_t newframe)
 static int generic_head_read(mpg123_handle *fr,unsigned long *newhead)
 {
 	unsigned char hbuf[4];
-	int ret = fr->rd->fullread(fr,hbuf,4);
+	int ret = (int) fr->rd->fullread(fr,hbuf,4);
 	if(ret == READER_MORE) return ret;
 	if(ret != 4) return FALSE;
 
@@ -318,7 +320,7 @@ static int generic_head_read(mpg123_handle *fr,unsigned long *newhead)
 static int generic_head_shift(mpg123_handle *fr,unsigned long *head)
 {
 	unsigned char hbuf;
-	int ret = fr->rd->fullread(fr,&hbuf,1);
+	int ret = (int) fr->rd->fullread(fr,&hbuf,1);
 	if(ret == READER_MORE) return ret;
 	if(ret != 1) return FALSE;
 
@@ -394,7 +396,7 @@ static int generic_read_frame_body(mpg123_handle *fr,unsigned char *buf, int siz
 		if(ll <= 0) ll = 0;
 		return READER_MORE;
 	}
-	return l;
+	return (int) l;
 }
 
 static off_t generic_tell(mpg123_handle *fr)

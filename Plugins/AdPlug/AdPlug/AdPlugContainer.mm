@@ -6,8 +6,8 @@
 //  Copyright 2018 __LoSnoCo__. All rights reserved.
 //
 
-#import <AdPlug/adplug.h>
-#import <AdPlug/silentopl.h>
+#import <libAdPlug/adplug.h>
+#import <libAdPlug/silentopl.h>
 
 #import "AdPlugContainer.h"
 #import "AdPlugDecoder.h"

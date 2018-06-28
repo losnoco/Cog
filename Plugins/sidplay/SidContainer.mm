@@ -51,7 +51,7 @@
     void * data = malloc(size);
     [source read:data amount:size];
 
-    SidTune * tune = new SidTune( (const uint_least8_t*)data, size );
+    SidTune * tune = new SidTune( (const uint_least8_t*)data, (uint_least32_t) size );
     
     if (!tune->getStatus())
         return 0;

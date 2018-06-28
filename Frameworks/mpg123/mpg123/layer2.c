@@ -168,23 +168,23 @@ static void II_step_one(unsigned int *bit_alloc,int *scale,mpg123_handle *fr)
 	switch(*scfsi++)
 	{
 		case 0: 
-			*scale++ = getbits_fast(fr, 6);
-			*scale++ = getbits_fast(fr, 6);
-			*scale++ = getbits_fast(fr, 6);
+			*scale++ = (int) getbits_fast(fr, 6);
+			*scale++ = (int) getbits_fast(fr, 6);
+			*scale++ = (int) getbits_fast(fr, 6);
 		break;
 		case 1 : 
-			*scale++ = sc = getbits_fast(fr, 6);
+			*scale++ = sc = (int) getbits_fast(fr, 6);
 			*scale++ = sc;
-			*scale++ = getbits_fast(fr, 6);
+			*scale++ = (int) getbits_fast(fr, 6);
 		break;
 		case 2: 
-			*scale++ = sc = getbits_fast(fr, 6);
+			*scale++ = sc = (int) getbits_fast(fr, 6);
 			*scale++ = sc;
 			*scale++ = sc;
 		break;
 		default:              /* case 3 */
-			*scale++ = getbits_fast(fr, 6);
-			*scale++ = sc = getbits_fast(fr, 6);
+			*scale++ = (int) getbits_fast(fr, 6);
+			*scale++ = sc = (int) getbits_fast(fr, 6);
 			*scale++ = sc;
 		break;
 	}

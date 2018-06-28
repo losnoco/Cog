@@ -26,7 +26,7 @@ int MONO_NAME(real *bandPtr, mpg123_handle *fr)
 
 	/* save buffer stuff, trick samples_tmp into there, decode, restore */
 	unsigned char *samples = fr->buffer.data;
-	int pnt = fr->buffer.fill;
+	int pnt = (int) fr->buffer.fill;
 	fr->buffer.data = (unsigned char*) samples_tmp;
 	fr->buffer.fill = 0;
 	ret = SYNTH_NAME(bandPtr, 0, fr, 0); /* decode into samples_tmp */

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "836F6B0F18BDB80D0095E648"
-               BuildableName = "vgmstream.bundle"
-               BlueprintName = "vgmstream"
-               ReferencedContainer = "container:vgmstream.xcodeproj">
+               BuildableName = "vgmstreamPlugin.bundle"
+               BlueprintName = "vgmstreamPlugin"
+               ReferencedContainer = "container:vgmstreamPlugin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,9 +46,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "836F6B0F18BDB80D0095E648"
-            BuildableName = "vgmstream.bundle"
-            BlueprintName = "vgmstream"
-            ReferencedContainer = "container:vgmstream.xcodeproj">
+            BuildableName = "vgmstreamPlugin.bundle"
+            BlueprintName = "vgmstreamPlugin"
+            ReferencedContainer = "container:vgmstreamPlugin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -64,9 +64,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "836F6B0F18BDB80D0095E648"
-            BuildableName = "vgmstream.bundle"
-            BlueprintName = "vgmstream"
-            ReferencedContainer = "container:vgmstream.xcodeproj">
+            BuildableName = "vgmstreamPlugin.bundle"
+            BlueprintName = "vgmstreamPlugin"
+            ReferencedContainer = "container:vgmstreamPlugin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
