@@ -97,9 +97,10 @@
 		17E41DB50C130A9D00AC744D /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		17E78A7D0D68BE3C005C5A59 /* file_tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_tree.png; path = Icons/file_tree.png; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* General_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = General_Prefix.pch; sourceTree = "<group>"; };
-		833F681A1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/Preferences.xib; sourceTree = "<group>"; };
 		833F681B1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		833F681C1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8347435D20E6D58800063D45 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Preferences.strings; sourceTree = "<group>"; };
+		8347435F20E6D5A000063D45 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Preferences.strings; sourceTree = "<group>"; };
 		8372053518E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResamplerBehaviorArrayController.h; sourceTree = "<group>"; };
 		8372053618E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResamplerBehaviorArrayController.m; sourceTree = "<group>"; };
 		837C0D3E1C50954000CAE18F /* MIDIPluginBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIPluginBehaviorArrayController.h; sourceTree = "<group>"; };
@@ -372,6 +373,7 @@
 				zh_CN,
 				es,
 				Base,
+				en,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* General */;
 			projectDirPath = "";
@@ -482,8 +484,9 @@
 		17E78B680D68C1E3005C5A59 /* Preferences.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				833F681A1CDBCAA700AFB9F0 /* es */,
 				83BC5AB320E4C90F00631CD4 /* Base */,
+				8347435D20E6D58800063D45 /* en */,
+				8347435F20E6D5A000063D45 /* es */,
 			);
 			name = Preferences.xib;
 			sourceTree = "<group>";
