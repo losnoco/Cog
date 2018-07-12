@@ -90,7 +90,7 @@ void R4300i_opcode_COP1_L (usf_state_t * state) {
 
 
 void BuildInterpreter (usf_state_t * state) {
-    (void)state;
+	(void)state;
 	R4300i_Opcode[ 0] = R4300i_opcode_SPECIAL;
 	R4300i_Opcode[ 1] = R4300i_opcode_REGIMM;
 	R4300i_Opcode[ 2] = r4300i_J;
@@ -681,26 +681,26 @@ void BuildInterpreter (usf_state_t * state) {
 
 
 void RunFunction(usf_state_t * state, uint32_t address) {
-    uint32_t oldPC = state->PROGRAM_COUNTER, oldRA = state->GPR[31].UW[0], la = state->NextInstruction;
-    int callStack = 0;
-    
-    state->NextInstruction = NORMAL;
-    state->PROGRAM_COUNTER = address;
-    
-    while( (state->PROGRAM_COUNTER != oldRA) || callStack) {
-        
-       	if(state->PROGRAM_COUNTER == address)
-            callStack++;
-        
-        ExecuteInterpreterOpCode(state);
-        
-        if(state->PROGRAM_COUNTER == oldRA)
-            callStack--;
-    }
-    
-    state->PROGRAM_COUNTER = oldPC;
-    state->GPR[31].UW[0] = oldRA;
-    state->NextInstruction = la;
+	uint32_t oldPC = state->PROGRAM_COUNTER, oldRA = state->GPR[31].UW[0], la = state->NextInstruction;
+	int callStack = 0;
+
+	state->NextInstruction = NORMAL;
+	state->PROGRAM_COUNTER = address;
+
+	while( (state->PROGRAM_COUNTER != oldRA) || callStack) {
+
+		if(state->PROGRAM_COUNTER == address)
+			callStack++;
+
+		ExecuteInterpreterOpCode(state);
+
+		if(state->PROGRAM_COUNTER == oldRA)
+			callStack--;
+	}
+
+	state->PROGRAM_COUNTER = oldPC;
+	state->GPR[31].UW[0] = oldRA;
+	state->NextInstruction = la;
 }
 
 #ifdef DEBUG_INFO
@@ -717,14 +717,14 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 		state->NextInstruction = NORMAL;
 		return;
 	}
-    
+
 #ifdef DEBUG_INFO
-    {
-        char opcode[256];
-        char arguments[256];
-        r4300_decode_op(state->Opcode.u.Hex, opcode, arguments, state->PROGRAM_COUNTER);
-        fprintf(state->debug_log, "%08x: %-16s %s\n", state->PROGRAM_COUNTER, opcode, arguments);
-    }
+	{
+		char opcode[256];
+		char arguments[256];
+		r4300_decode_op(state->Opcode.u.Hex, opcode, arguments, state->PROGRAM_COUNTER);
+		fprintf(state->debug_log, "%08x: %-16s %s\n", state->PROGRAM_COUNTER, opcode, arguments);
+	}
 #endif
 
 	COUNT_REGISTER += state->ROM_PARAMS.countperop;
@@ -752,13 +752,13 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 	case JUMP:
 		if (
 #ifdef DEBUG_INFO
-            0 &&
+			0 &&
 #endif
-            state->cpu_hle_entry_count &&
+			state->cpu_hle_entry_count &&
 			DoCPUHLE(state, state->JumpToLocation)) {
-            state->PROGRAM_COUNTER = state->GPR[31].UW[0];
-            state->NextInstruction = NORMAL;
-        }
+			state->PROGRAM_COUNTER = state->GPR[31].UW[0];
+			state->NextInstruction = NORMAL;
+		}
 		else {
 			state->PROGRAM_COUNTER = state->JumpToLocation;
 			state->NextInstruction = NORMAL;
@@ -769,27 +769,27 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
 }
 
 void StartInterpreterCPU (usf_state_t * state) {
-    const int safety_count_max = 20000000;
-    int safety_count = safety_count_max;
-    size_t last_sample_buffer_count = state->sample_buffer_count;
-    
+	const int safety_count_max = 20000000;
+	int safety_count = safety_count_max;
+	size_t last_sample_buffer_count = state->sample_buffer_count;
+
 	state->NextInstruction = NORMAL;
 
 	while(state->cpu_running) {
 		ExecuteInterpreterOpCode(state);
-        if (!--safety_count) {
-            if (last_sample_buffer_count == state->sample_buffer_count) {
-                DisplayError( state, "Emulator core is not generating any samples after 20 million instructions" );
-                break;
-            } else {
-                safety_count = safety_count_max;
-                last_sample_buffer_count = state->sample_buffer_count;
-            }
-        }
+		if (!--safety_count) {
+			if (last_sample_buffer_count == state->sample_buffer_count) {
+				DisplayError( state, "Emulator core is not generating any samples after 20 million instructions" );
+				break;
+			}
+			else {
+				safety_count = safety_count_max;
+				last_sample_buffer_count = state->sample_buffer_count;
+			}
+		}
 	}
 
 	state->cpu_stopped = 1;
-
 }
 
 void TestInterpreterJump (usf_state_t * state, uint32_t PC, uint32_t TargetPC, int32_t Reg1, int32_t Reg2) {

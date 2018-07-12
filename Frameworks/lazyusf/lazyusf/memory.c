@@ -75,7 +75,7 @@ void large_free(void * p, size_t size)
 int32_t Allocate_Memory ( void * state ) {
 	//uint32_t i = 0;
 	//RdramSize = 0x800000;
-    
+
 	// Allocate the N64MEM and TLB_Map so that they are in each others 4GB range
 	// Also put the registers there :)
 
@@ -109,12 +109,12 @@ int32_t Allocate_Memory ( void * state ) {
 	USF_STATE->Registers = (N64_REGISTERS *)((uintptr_t)USF_STATE->MemChunk + 0x100000 * sizeof(uintptr_t));
 	//USF_STATE->TLBLoadAddress = (uint32_t *)((uintptr_t)USF_STATE->Registers + 0x500);
 	//USF_STATE->Timers = (SYSTEM_TIMERS*)(USF_STATE->TLBLoadAddress + 4);
-    USF_STATE->Timers = (SYSTEM_TIMERS*)((uintptr_t)USF_STATE->Registers + 0x500);
+	USF_STATE->Timers = (SYSTEM_TIMERS*)((uintptr_t)USF_STATE->Registers + 0x500);
 	USF_STATE->WaitMode = (uint32_t *)(USF_STATE->Timers + sizeof(SYSTEM_TIMERS));
 	USF_STATE->CPU_Action = (CPU_ACTION *)(USF_STATE->WaitMode + 4);
 	//USF_STATE->RSP_GPR = (struct RSP_GPR_TYPE *)(USF_STATE->CPU_Action + sizeof(CPU_ACTION));
 	//USF_STATE->DMEM = (uint8_t *)(USF_STATE->RSP_GPR + (32 * 16));
-    USF_STATE->DMEM = (uint8_t *)(USF_STATE->CPU_Action + sizeof(CPU_ACTION));
+	USF_STATE->DMEM = (uint8_t *)(USF_STATE->CPU_Action + sizeof(CPU_ACTION));
 	//state->RSP_ACCUM = (struct RSP_ACCUM_TYPE *)(USF_STATE->DMEM + 0x2000);
 
 	USF_STATE->RDRAM = (uint8_t *)(USF_STATE->N64MEM);
@@ -155,13 +155,13 @@ void Release_Memory ( usf_state_t * state ) {
 
 	state->MemoryState = 0;
 
-    if (state->MemChunk != 0) { large_free( state->MemChunk, 0x100000 * sizeof(uintptr_t) + 0x1D000 + state->RdramSize ); state->MemChunk=0; }
-	
-    if(state->cpu_hle_entries)
-        free(state->cpu_hle_entries);
-    state->cpu_hle_entries = NULL;
-    
-    if(state->savestatespace)
+	if (state->MemChunk != 0) { large_free( state->MemChunk, 0x100000 * sizeof(uintptr_t) + 0x1D000 + state->RdramSize ); state->MemChunk=0; }
+
+	if(state->cpu_hle_entries)
+		free(state->cpu_hle_entries);
+	state->cpu_hle_entries = NULL;
+
+	if(state->savestatespace)
 		free(state->savestatespace);
 	state->savestatespace = NULL;
 }
@@ -206,20 +206,19 @@ uint32_t r4300i_LD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t * Value
 	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0) { return 0; }
-    if (address + VAddr + 7 - (uintptr_t)state->N64MEM >= state->RdramSize)
-    {
-        *((uint32_t *)(Value) + 1) = 0;
-        *((uint32_t *)(Value)) = 0;
-        return 1;
-    }
+	if (address + VAddr + 7 - (uintptr_t)state->N64MEM >= state->RdramSize) {
+		*((uint32_t *)(Value) + 1) = 0;
+		*((uint32_t *)(Value)) = 0;
+		return 1;
+	}
 	*((uint32_t *)(Value) + 1) = *(uint32_t *)(address + VAddr);
 	*((uint32_t *)(Value)) = *(uint32_t *)(address + VAddr + 4);
 	return 1;
 }
 
 int32_t r4300i_LH_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t * Value, int32_t SignExtend ) {
-    (void)state;
-    (void)SignExtend;
+	(void)state;
+	(void)SignExtend;
 	switch (PAddr & 0xFFF00000) {
 	default:
 		* Value = 0;
@@ -234,11 +233,10 @@ uint32_t r4300i_LH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t * Value
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0)
 		return 0;
-    if (address + (VAddr ^ 2) + 1 - (uintptr_t)state->N64MEM >= state->RdramSize)
-    {
-        *Value = 0;
-        return 1;
-    }
+	if (address + (VAddr ^ 2) + 1 - (uintptr_t)state->N64MEM >= state->RdramSize) {
+		*Value = 0;
+		return 1;
+	}
 	*Value = *(uint16_t *)(address + (VAddr ^ 2));
 	return 1;
 }
@@ -445,8 +443,8 @@ uint32_t r4300i_SB_VAddr ( usf_state_t * state, uint32_t VAddr, uint8_t Value ) 
 	address = state->TLB_Map[VAddr >> 12];
 
 	if (address == 0) { return 0; }
-    if (address + (VAddr ^ 3) - (uintptr_t)state->N64MEM < state->RdramSize)
-        *(uint8_t *)(address + (VAddr ^ 3)) = Value;
+	if (address + (VAddr ^ 3) - (uintptr_t)state->N64MEM < state->RdramSize)
+		*(uint8_t *)(address + (VAddr ^ 3)) = Value;
 
 	return 1;
 }
@@ -476,11 +474,10 @@ uint32_t r4300i_SD_VAddr ( usf_state_t * state, uint32_t VAddr, uint64_t Value )
 	uintptr_t address;
 	address = state->TLB_Map[VAddr >> 12];
 	if (address == 0) { return 0; }
-    if (address + VAddr + 7 - (uintptr_t)state->N64MEM < state->RdramSize)
-    {
-        *(uint32_t *)(address + VAddr) = *((uint32_t *)(&Value) + 1);
-        *(uint32_t *)(address + VAddr + 4) = *((uint32_t *)(&Value));
-    }
+	if (address + VAddr + 7 - (uintptr_t)state->N64MEM < state->RdramSize) {
+		*(uint32_t *)(address + VAddr) = *((uint32_t *)(&Value) + 1);
+		*(uint32_t *)(address + VAddr + 4) = *((uint32_t *)(&Value));
+	}
 	return 1;
 }
 
@@ -489,8 +486,8 @@ uint32_t r4300i_SH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t Value )
 	address = state->TLB_Map[VAddr >> 12];
 
 	if (address == 0) { return 0; }
-    if (address + 1 + (VAddr ^ 2) - (uintptr_t)state->N64MEM < state->RdramSize)
-        *(uint16_t *)(address + (VAddr ^ 2)) = Value;
+	if (address + 1 + (VAddr ^ 2) - (uintptr_t)state->N64MEM < state->RdramSize)
+		*(uint16_t *)(address + (VAddr ^ 2)) = Value;
 	return 1;
 }
 
@@ -711,7 +708,7 @@ int32_t r4300i_SW_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t Valu
 			CheckInterrupts(state);
 			break;
 		case 0x04500010:
-            AiDacrateChanged(state, Value);
+			AiDacrateChanged(state, Value);
 			break;
 		case 0x04500014:  AI_BITRATE_REG = Value; break;
 		default:
@@ -819,20 +816,19 @@ uint32_t r4300i_SW_VAddr ( usf_state_t * state, uint32_t VAddr, uint32_t Value )
 
 void memcpyn642n64(usf_state_t * state, uint32_t dest, uint32_t src, uint32_t len)
 {
-    uint32_t i;
-    uint32_t temp;
-    
-    for (i = 0; i < len; i += 4)
-    {
-        uintptr_t dstAddr = state->TLB_Map[(dest + i) >> 12];
-        uintptr_t srcAddr = state->TLB_Map[(src + i) >> 12];
-        
-        if (srcAddr)
-            temp = *(uint32_t*)(srcAddr + src + i);
-        else
-            temp = 0;
-        
-        if (dstAddr)
-            *(uint32_t*)(dstAddr + dest + i) = temp;
-    }
+	uint32_t i;
+	uint32_t temp;
+
+	for (i = 0; i < len; i += 4) {
+		uintptr_t dstAddr = state->TLB_Map[(dest + i) >> 12];
+		uintptr_t srcAddr = state->TLB_Map[(src + i) >> 12];
+
+		if (srcAddr)
+			temp = *(uint32_t*)(srcAddr + src + i);
+		else
+			temp = 0;
+
+		if (dstAddr)
+			*(uint32_t*)(dstAddr + dest + i) = temp;
+	}
 }
