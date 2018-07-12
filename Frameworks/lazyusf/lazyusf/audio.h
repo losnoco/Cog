@@ -7,9 +7,9 @@
 
 struct ai_dma
 {
-    uint32_t address;
-    uint32_t length;
-    unsigned int duration;
+	uint32_t address;
+	uint32_t length;
+	unsigned int duration;
 };
 
 uint32_t AiReadLength(usf_state_t *);

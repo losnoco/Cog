@@ -466,76 +466,65 @@ void StartEmulationFromSave ( usf_state_t * state, void * savestate ) {
 	init_rsp(state);
 
 	Machine_LoadStateFromRAM(state, savestate);
-    
-    AI_STATUS_REG = 0;
-    
-    ((uint32_t *)(state->RDRAM))[0x300/4] = state->ROM_PARAMS.systemtype;
+
+	AI_STATUS_REG = 0;
+
+	((uint32_t *)(state->RDRAM))[0x300/4] = state->ROM_PARAMS.systemtype;
 
 	state->SampleRate = (state->ROM_PARAMS.aidacrate) / (AI_DACRATE_REG + 1);
-    
+
 	if(state->enableFIFOfull) {
-        if (VI_V_SYNC_REG == 0)
-        {
-            state->VI_INTR_TIME = 500000;
-        }
-        else
-        {
-            state->VI_INTR_TIME = (VI_V_SYNC_REG + 1) * 1500;
-            if ((VI_V_SYNC_REG & 1) != 0)
-            {
-                state->VI_INTR_TIME -= 38;
-            }
-        }
-        AiQueueInt(state);
-        AI_STATUS_REG |= 0x40000000;
+		if (VI_V_SYNC_REG == 0) {
+			state->VI_INTR_TIME = 500000;
+		}
+		else {
+			state->VI_INTR_TIME = (VI_V_SYNC_REG + 1) * 1500;
+			if ((VI_V_SYNC_REG & 1) != 0) {
+				state->VI_INTR_TIME -= 38;
+			}
+		}
+		AiQueueInt(state);
+		AI_STATUS_REG |= 0x40000000;
 	}
-    
-    state->OLD_VI_V_SYNC_REG = ~VI_V_SYNC_REG;
-    
-    CPUHLE_Scan(state);
+
+	state->OLD_VI_V_SYNC_REG = ~VI_V_SYNC_REG;
+
+	CPUHLE_Scan(state);
 }
 
 
 void RefreshScreen (usf_state_t * state){
-    if (state->OLD_VI_V_SYNC_REG != VI_V_SYNC_REG)
-    {
-        state->OLD_VI_V_SYNC_REG = VI_V_SYNC_REG;
-        if (VI_V_SYNC_REG == 0)
-        {
-            state->VI_INTR_TIME = 500000;
-        }
-        else
-        {
-            state->VI_INTR_TIME = (VI_V_SYNC_REG + 1) * 1500;
-            if ((VI_V_SYNC_REG & 1) != 0)
-            {
-                state->VI_INTR_TIME -= 38;
-            }
-        }
-    }
-    
-    ChangeTimer(state,ViTimer,state->Timers->Timer + state->Timers->NextTimer[ViTimer] + state->VI_INTR_TIME);
-    
-    if ((VI_STATUS_REG & 0x10) != 0)
-    {
-        if (state->ViFieldNumber == 0)
-        {
-            state->ViFieldNumber = 1;
-        }
-        else
-        {
-            state->ViFieldNumber = 0;
-        }
-    }
-    else
-    {
-        state->ViFieldNumber = 0;
-    }
+	if (state->OLD_VI_V_SYNC_REG != VI_V_SYNC_REG) {
+		state->OLD_VI_V_SYNC_REG = VI_V_SYNC_REG;
+		if (VI_V_SYNC_REG == 0) {
+			state->VI_INTR_TIME = 500000;
+		}
+		else {
+			state->VI_INTR_TIME = (VI_V_SYNC_REG + 1) * 1500;
+			if ((VI_V_SYNC_REG & 1) != 0) {
+				state->VI_INTR_TIME -= 38;
+			}
+		}
+	}
+
+	ChangeTimer(state,ViTimer,state->Timers->Timer + state->Timers->NextTimer[ViTimer] + state->VI_INTR_TIME);
+
+	if ((VI_STATUS_REG & 0x10) != 0) {
+		if (state->ViFieldNumber == 0) {
+			state->ViFieldNumber = 1;
+		}
+		else {
+			state->ViFieldNumber = 0;
+		}
+	}
+	else {
+		state->ViFieldNumber = 0;
+	}
 }
 
 void RunRsp (usf_state_t * state) {
 #ifdef DEBUG_INFO
-    fprintf(state->debug_log, "RSP Task:");
+	fprintf(state->debug_log, "RSP Task:");
 #endif
 	if ( ( SP_STATUS_REG & SP_STATUS_HALT ) == 0) {
 		if ( ( SP_STATUS_REG & SP_STATUS_BROKE ) == 0 ) {
@@ -549,21 +538,20 @@ void RunRsp (usf_state_t * state) {
 					SP_STATUS_REG |= (0x0203 );
 					if ((SP_STATUS_REG & SP_STATUS_INTR_BREAK) != 0 )
 						MI_INTR_REG |= 1;
-                
+
 #ifdef DEBUG_INFO
-                    fprintf(state->debug_log, " DList - interrupts %d\n", MI_INTR_REG);
+					fprintf(state->debug_log, " DList - interrupts %d\n", MI_INTR_REG);
 #endif
 
 					CheckInterrupts(state);
 
 					DPC_STATUS_REG &= ~0x0002;
 					return;
-
 				}
 				break;
 			case 2: {
 #ifdef DEBUG_INFO
-                fprintf(state->debug_log, " AList");
+					fprintf(state->debug_log, " AList");
 #endif
 					break;
 				}
@@ -577,7 +565,7 @@ void RunRsp (usf_state_t * state) {
 			SP_STATUS_REG |= (0x0203 );
 			if ((SP_STATUS_REG & SP_STATUS_INTR_BREAK) != 0 ) {
 #ifdef DEBUG_INFO
-                fprintf(state->debug_log, " - interrupt");
+				fprintf(state->debug_log, " - interrupt");
 #endif
 				MI_INTR_REG |= 1;
 				CheckInterrupts(state);
@@ -585,7 +573,7 @@ void RunRsp (usf_state_t * state) {
 		}
 	}
 #ifdef DEBUG_INFO
-    fprintf(state->debug_log, "\n");
+	fprintf(state->debug_log, "\n");
 #endif
 }
 
@@ -604,8 +592,8 @@ void TimerDone (usf_state_t * state) {
 		*state->WaitMode=0;
 		break;
 	case AiTimer:
-        AiTimerDone(state);
-        state->AudioIntrReg|=4;
+		AiTimerDone(state);
+		state->AudioIntrReg|=4;
 		CheckInterrupts(state);
 		break;
 	}
