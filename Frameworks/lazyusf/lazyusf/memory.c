@@ -711,8 +711,7 @@ int32_t r4300i_SW_NonMemory ( usf_state_t * state, uint32_t PAddr, uint32_t Valu
 			CheckInterrupts(state);
 			break;
 		case 0x04500010:
-			AI_DACRATE_REG = Value;
-			//if (AiDacrateChanged != NULL) { AiDacrateChanged(SYSTEM_NTSC); }
+            AiDacrateChanged(state, Value);
 			break;
 		case 0x04500014:  AI_BITRATE_REG = Value; break;
 		default:

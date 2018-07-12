@@ -29,17 +29,20 @@
 		83CA15F01A988138005E7ED4 /* musyx.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA15151A988138005E7ED4 /* musyx.c */; };
 		83CA15F11A988138005E7ED4 /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA15161A988138005E7ED4 /* plugin.c */; };
 		83CA15F21A988138005E7ED4 /* ucodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA15171A988138005E7ED4 /* ucodes.h */; };
+		83DA153920F6F28E0096D348 /* preproc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DA153820F6F28E0096D348 /* preproc.h */; };
+		83DA153E20F6F2A70096D348 /* dbg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DA153A20F6F2A70096D348 /* dbg_types.h */; };
+		83DA153F20F6F2A70096D348 /* dbg_decoder_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DA153B20F6F2A70096D348 /* dbg_decoder_local.h */; };
+		83DA154020F6F2A70096D348 /* dbg_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DA153C20F6F2A70096D348 /* dbg_decoder.c */; };
+		83DA154120F6F2A70096D348 /* dbg_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DA153D20F6F2A70096D348 /* dbg_decoder.h */; };
 		83E1578920F6E2D500BAA65A /* audio.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1578820F6E2D500BAA65A /* audio.h */; };
 		83E1578C20F6E2E000BAA65A /* interpreter_cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1578A20F6E2E000BAA65A /* interpreter_cpu.h */; };
 		83E1578D20F6E2E000BAA65A /* pif.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1578B20F6E2E000BAA65A /* pif.h */; };
 		83E1578F20F6E32B00BAA65A /* lazyusf-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83E1578E20F6E32B00BAA65A /* lazyusf-Info.plist */; };
-		83E1579220F6E33900BAA65A /* preproc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1579120F6E33800BAA65A /* preproc.h */; };
 		83E1579520F6E3A000BAA65A /* our-stdbool.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1579420F6E39F00BAA65A /* our-stdbool.h */; };
 		83E1579620F6E3F100BAA65A /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 835E768C20F6E2BD008F45E7 /* audio.c */; };
 		83E1579720F6E3F500BAA65A /* audiolib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8309DC5E20F6E24C0056CC70 /* audiolib.c */; };
 		83E1579820F6E3F900BAA65A /* cpu_hle.c in Sources */ = {isa = PBXBuildFile; fileRef = 835E768420F6E2BC008F45E7 /* cpu_hle.c */; };
 		83E1579920F6E3FD00BAA65A /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 835E768F20F6E2BD008F45E7 /* cpu.c */; };
-		83E1579A20F6E40200BAA65A /* dbg_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8309DC6520F6E24C0056CC70 /* dbg_decoder.c */; };
 		83E1579B20F6E40900BAA65A /* dma.c in Sources */ = {isa = PBXBuildFile; fileRef = 8309DC6A20F6E24D0056CC70 /* dma.c */; };
 		83E1579C20F6E40C00BAA65A /* exception.c in Sources */ = {isa = PBXBuildFile; fileRef = 8309DC6320F6E24C0056CC70 /* exception.c */; };
 		83E1579D20F6E41100BAA65A /* interpreter_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 835E768620F6E2BC008F45E7 /* interpreter_cpu.c */; };
@@ -57,9 +60,6 @@
 		83E157A920F6E5C600BAA65A /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 8309DC6220F6E24C0056CC70 /* config.h */; };
 		83E157AA20F6E5CA00BAA65A /* cpu_hle.h in Headers */ = {isa = PBXBuildFile; fileRef = 835E768520F6E2BC008F45E7 /* cpu_hle.h */; };
 		83E157AB20F6E5CE00BAA65A /* cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 835E769420F6E2BE008F45E7 /* cpu.h */; };
-		83E157AC20F6E5D300BAA65A /* dbg_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8309DC6620F6E24C0056CC70 /* dbg_decoder.h */; };
-		83E157AD20F6E5D700BAA65A /* dbg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 8309DC6720F6E24C0056CC70 /* dbg_types.h */; };
-		83E157AE20F6E5DA00BAA65A /* dbg_decoder_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 8309DC6820F6E24C0056CC70 /* dbg_decoder_local.h */; };
 		83E157AF20F6E5E000BAA65A /* dma.h in Headers */ = {isa = PBXBuildFile; fileRef = 835E768320F6E2BC008F45E7 /* dma.h */; };
 		83E157B020F6E5E600BAA65A /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 835E768920F6E2BD008F45E7 /* exception.h */; };
 		83E157B120F6E5EE00BAA65A /* interpreter_ops.h in Headers */ = {isa = PBXBuildFile; fileRef = 8309DC5D20F6E24B0056CC70 /* interpreter_ops.h */; };
@@ -135,10 +135,6 @@
 		8309DC6120F6E24C0056CC70 /* registers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = registers.c; sourceTree = "<group>"; };
 		8309DC6220F6E24C0056CC70 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		8309DC6320F6E24C0056CC70 /* exception.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = exception.c; sourceTree = "<group>"; };
-		8309DC6520F6E24C0056CC70 /* dbg_decoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dbg_decoder.c; sourceTree = "<group>"; };
-		8309DC6620F6E24C0056CC70 /* dbg_decoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dbg_decoder.h; sourceTree = "<group>"; };
-		8309DC6720F6E24C0056CC70 /* dbg_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dbg_types.h; sourceTree = "<group>"; };
-		8309DC6820F6E24C0056CC70 /* dbg_decoder_local.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dbg_decoder_local.h; sourceTree = "<group>"; };
 		8309DC6920F6E24C0056CC70 /* rsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rsp.h; sourceTree = "<group>"; };
 		8309DC6A20F6E24D0056CC70 /* dma.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dma.c; sourceTree = "<group>"; };
 		8309DC6B20F6E24D0056CC70 /* registers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = registers.h; sourceTree = "<group>"; };
@@ -242,11 +238,15 @@
 		83CA15161A988138005E7ED4 /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugin.c; sourceTree = "<group>"; };
 		83CA15171A988138005E7ED4 /* ucodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ucodes.h; sourceTree = "<group>"; };
 		83CA16381A988191005E7ED4 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		83DA153820F6F28E0096D348 /* preproc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = preproc.h; sourceTree = "<group>"; };
+		83DA153A20F6F2A70096D348 /* dbg_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbg_types.h; sourceTree = "<group>"; };
+		83DA153B20F6F2A70096D348 /* dbg_decoder_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbg_decoder_local.h; sourceTree = "<group>"; };
+		83DA153C20F6F2A70096D348 /* dbg_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dbg_decoder.c; sourceTree = "<group>"; };
+		83DA153D20F6F2A70096D348 /* dbg_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbg_decoder.h; sourceTree = "<group>"; };
 		83E1578820F6E2D500BAA65A /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
 		83E1578A20F6E2E000BAA65A /* interpreter_cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interpreter_cpu.h; sourceTree = "<group>"; };
 		83E1578B20F6E2E000BAA65A /* pif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pif.h; sourceTree = "<group>"; };
 		83E1578E20F6E32B00BAA65A /* lazyusf-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "lazyusf-Info.plist"; sourceTree = "<group>"; };
-		83E1579120F6E33800BAA65A /* preproc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = preproc.h; sourceTree = "<group>"; };
 		83E1579420F6E39F00BAA65A /* our-stdbool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "our-stdbool.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -265,10 +265,10 @@
 		8309DC6420F6E24C0056CC70 /* debugger */ = {
 			isa = PBXGroup;
 			children = (
-				8309DC6520F6E24C0056CC70 /* dbg_decoder.c */,
-				8309DC6620F6E24C0056CC70 /* dbg_decoder.h */,
-				8309DC6720F6E24C0056CC70 /* dbg_types.h */,
-				8309DC6820F6E24C0056CC70 /* dbg_decoder_local.h */,
+				83DA153B20F6F2A70096D348 /* dbg_decoder_local.h */,
+				83DA153C20F6F2A70096D348 /* dbg_decoder.c */,
+				83DA153D20F6F2A70096D348 /* dbg_decoder.h */,
+				83DA153A20F6F2A70096D348 /* dbg_types.h */,
 			);
 			path = debugger;
 			sourceTree = "<group>";
@@ -463,7 +463,7 @@
 		83E1579020F6E33800BAA65A /* osal */ = {
 			isa = PBXGroup;
 			children = (
-				83E1579120F6E33800BAA65A /* preproc.h */,
+				83DA153820F6F28E0096D348 /* preproc.h */,
 			);
 			path = osal;
 			sourceTree = "<group>";
@@ -489,10 +489,8 @@
 				83E157A920F6E5C600BAA65A /* config.h in Headers */,
 				83E157AA20F6E5CA00BAA65A /* cpu_hle.h in Headers */,
 				83E157AB20F6E5CE00BAA65A /* cpu.h in Headers */,
-				83E157AC20F6E5D300BAA65A /* dbg_decoder.h in Headers */,
-				83E157AD20F6E5D700BAA65A /* dbg_types.h in Headers */,
-				83E157AE20F6E5DA00BAA65A /* dbg_decoder_local.h in Headers */,
 				83E157AF20F6E5E000BAA65A /* dma.h in Headers */,
+				83DA153F20F6F2A70096D348 /* dbg_decoder_local.h in Headers */,
 				83E157B020F6E5E600BAA65A /* exception.h in Headers */,
 				83E1578C20F6E2E000BAA65A /* interpreter_cpu.h in Headers */,
 				83E157B120F6E5EE00BAA65A /* interpreter_ops.h in Headers */,
@@ -500,7 +498,6 @@
 				83E157B320F6E5F500BAA65A /* memory.h in Headers */,
 				83E157B420F6E5F800BAA65A /* opcode.h in Headers */,
 				83E157B520F6E5FA00BAA65A /* os.h in Headers */,
-				83E1579220F6E33900BAA65A /* preproc.h in Headers */,
 				83E1578D20F6E2E000BAA65A /* pif.h in Headers */,
 				83E157B620F6E60A00BAA65A /* registers.h in Headers */,
 				83E157B720F6E61A00BAA65A /* resampler.h in Headers */,
@@ -517,6 +514,7 @@
 				83E157C220F6E62900BAA65A /* vnand.h in Headers */,
 				83E157C320F6E62900BAA65A /* vrsq.h in Headers */,
 				83E157C420F6E62900BAA65A /* vnop.h in Headers */,
+				83DA153E20F6F2A70096D348 /* dbg_types.h in Headers */,
 				83E157C520F6E62900BAA65A /* vabs.h in Headers */,
 				83E157C620F6E62900BAA65A /* vadd.h in Headers */,
 				83E157C720F6E62900BAA65A /* vmacu.h in Headers */,
@@ -524,6 +522,7 @@
 				83E157C920F6E62900BAA65A /* vsub.h in Headers */,
 				83E157CA20F6E62900BAA65A /* vmudl.h in Headers */,
 				83E157CB20F6E62900BAA65A /* vlt.h in Headers */,
+				83DA153920F6F28E0096D348 /* preproc.h in Headers */,
 				83E157CC20F6E62900BAA65A /* vmudh.h in Headers */,
 				83E157CD20F6E62900BAA65A /* vge.h in Headers */,
 				83E157CE20F6E62900BAA65A /* vmadl.h in Headers */,
@@ -569,6 +568,7 @@
 				83E157EC20F6E67400BAA65A /* tlb.h in Headers */,
 				83E157ED20F6E67700BAA65A /* types.h in Headers */,
 				83E157EE20F6E67D00BAA65A /* usf_internal.h in Headers */,
+				83DA154120F6F2A70096D348 /* dbg_decoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,7 +645,6 @@
 				83E1579720F6E3F500BAA65A /* audiolib.c in Sources */,
 				83E1579820F6E3F900BAA65A /* cpu_hle.c in Sources */,
 				83E1579920F6E3FD00BAA65A /* cpu.c in Sources */,
-				83E1579A20F6E40200BAA65A /* dbg_decoder.c in Sources */,
 				83E1579B20F6E40900BAA65A /* dma.c in Sources */,
 				83E1579C20F6E40C00BAA65A /* exception.c in Sources */,
 				83E1579D20F6E41100BAA65A /* interpreter_cpu.c in Sources */,
@@ -668,6 +667,7 @@
 				83CA15EC1A988138005E7ED4 /* memory.c in Sources */,
 				83CA15EE1A988138005E7ED4 /* mp3.c in Sources */,
 				83CA15F01A988138005E7ED4 /* musyx.c in Sources */,
+				83DA154020F6F2A70096D348 /* dbg_decoder.c in Sources */,
 				83CA15F11A988138005E7ED4 /* plugin.c in Sources */,
 				83E157A620F6E47600BAA65A /* tlb.c in Sources */,
 				83E157A720F6E47A00BAA65A /* usf.c in Sources */,

@@ -37,6 +37,8 @@
 #include "opcode.h"
 #include "usf.h"
 
+#define COUNT_PER_OP_DEFAULT 2
+
 typedef struct {
 	int32_t DoSomething;
 	int32_t CloseCPU;

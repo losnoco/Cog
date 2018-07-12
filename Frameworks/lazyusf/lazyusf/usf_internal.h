@@ -1,9 +1,74 @@
 #ifndef _USF_INTERNAL_H_
 #define _USF_INTERNAL_H_
 
+#include "audio.h"
 #include "cpu.h"
 #include "rsp_hle/hle.h"
 #include "cpu_hle.h"
+
+/* Supported rom image types. */
+enum
+{
+    Z64IMAGE,
+    V64IMAGE,
+    N64IMAGE
+};
+
+/* Supported CIC chips. */
+enum
+{
+    CIC_NUS_6101,
+    CIC_NUS_6102,
+    CIC_NUS_6103,
+    CIC_NUS_6105,
+    CIC_NUS_6106
+};
+
+/* Supported save types. */
+enum
+{
+    EEPROM_4KB,
+    EEPROM_16KB,
+    SRAM,
+    FLASH_RAM,
+    CONTROLLER_PACK,
+    NONE
+};
+
+typedef enum
+{
+    SYSTEM_NTSC = 0,
+    SYSTEM_PAL,
+    SYSTEM_MPAL
+} _system_type;
+
+typedef struct
+{
+    unsigned char init_PI_BSB_DOM1_LAT_REG;  /* 0x00 */
+    unsigned char init_PI_BSB_DOM1_PGS_REG;  /* 0x01 */
+    unsigned char init_PI_BSB_DOM1_PWD_REG;  /* 0x02 */
+    unsigned char init_PI_BSB_DOM1_PGS_REG2; /* 0x03 */
+    unsigned int ClockRate;                  /* 0x04 */
+    unsigned int PC;                         /* 0x08 */
+    unsigned int Release;                    /* 0x0C */
+    unsigned int CRC1;                       /* 0x10 */
+    unsigned int CRC2;                       /* 0x14 */
+    unsigned int Unknown[2];                 /* 0x18 */
+    unsigned char Name[20];                  /* 0x20 */
+    unsigned int unknown;                    /* 0x34 */
+    unsigned int Manufacturer_ID;            /* 0x38 */
+    unsigned short Cartridge_ID;             /* 0x3C - Game serial number  */
+    unsigned short Country_code;             /* 0x3E */
+} _rom_header;
+
+typedef struct _rom_params
+{
+    _system_type systemtype;
+    int vilimit;
+    int aidacrate;
+    char headername[21];  /* ROM Name as in the header, removing trailing whitespace */
+    unsigned char countperop;
+} rom_params;
 
 struct usf_state_helper
 {
@@ -66,6 +131,9 @@ struct usf_state
     
     // rsp_hle
     struct hle_t hle;
+    
+    _rom_header   ROM_HEADER;
+    rom_params    ROM_PARAMS;
 
     uint32_t cpu_running, cpu_stopped;
     
@@ -89,6 +157,8 @@ struct usf_state
     // stored here until the next call to usf_render()
     int16_t samplebuf[16384];
     size_t samples_in_buffer;
+    
+    struct ai_dma fifo[2];
 
     // usf.c
     // This takes care of automatically resampling the console audio

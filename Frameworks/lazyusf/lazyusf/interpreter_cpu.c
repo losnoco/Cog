@@ -727,7 +727,7 @@ void ExecuteInterpreterOpCode (usf_state_t * state) {
     }
 #endif
 
-	COUNT_REGISTER += 2;
+	COUNT_REGISTER += state->ROM_PARAMS.countperop;
 	state->Timers->Timer -= 2;
 
 	RANDOM_REGISTER -= 1;
