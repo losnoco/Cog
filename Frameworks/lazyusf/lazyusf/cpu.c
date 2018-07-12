@@ -466,18 +466,28 @@ void StartEmulationFromSave ( usf_state_t * state, void * savestate ) {
 	init_rsp(state);
 
 	Machine_LoadStateFromRAM(state, savestate);
+    
+    AI_STATUS_REG = 0;
+    
+    ((uint32_t *)(state->RDRAM))[0x300/4] = state->ROM_PARAMS.systemtype;
 
-	state->SampleRate = 48681812 / (AI_DACRATE_REG + 1);
-
+	state->SampleRate = (state->ROM_PARAMS.aidacrate) / (AI_DACRATE_REG + 1);
+    
 	if(state->enableFIFOfull) {
-		const float VSyncTiming = 789000.0f;
-		double BytesPerSecond = 48681812.0 / (AI_DACRATE_REG + 1) * 4;
-		double CountsPerSecond = (double)(((double)VSyncTiming) * (double)60.0);
-		double CountsPerByte = (double)CountsPerSecond / (double)BytesPerSecond;
-		uint32_t IntScheduled = (uint32_t)((double)AI_LEN_REG * CountsPerByte);
-
-		ChangeTimer(state,AiTimer,IntScheduled);
-		AI_STATUS_REG|=0x40000000;
+        if (VI_V_SYNC_REG == 0)
+        {
+            state->VI_INTR_TIME = 500000;
+        }
+        else
+        {
+            state->VI_INTR_TIME = (VI_V_SYNC_REG + 1) * 1500;
+            if ((VI_V_SYNC_REG & 1) != 0)
+            {
+                state->VI_INTR_TIME -= 38;
+            }
+        }
+        AiQueueInt(state);
+        AI_STATUS_REG |= 0x40000000;
 	}
     
     state->OLD_VI_V_SYNC_REG = ~VI_V_SYNC_REG;
@@ -594,10 +604,9 @@ void TimerDone (usf_state_t * state) {
 		*state->WaitMode=0;
 		break;
 	case AiTimer:
-		ChangeTimer(state,AiTimer,0);
-		AI_STATUS_REG=0;
+        AiTimerDone(state);
         state->AudioIntrReg|=4;
-		//CheckInterrupts(state);
+		CheckInterrupts(state);
 		break;
 	}
 	CheckTimer(state);

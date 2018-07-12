@@ -19,10 +19,10 @@
 		8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8360EEF017F92AC8005208A4 /* InfoPlist.strings */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
 		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83C8B6FB18AF58FA0071B040 /* lazyusf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C8B65618AF57770071B040 /* lazyusf.framework */; };
-		83C8B6FC18AF59080071B040 /* lazyusf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83C8B65618AF57770071B040 /* lazyusf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83CA2E3D1D7BCF9B00F2EA53 /* mGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CA24241D7BC47E00F2EA53 /* mGBA.framework */; };
 		83CA2E4D1D7BE41300F2EA53 /* mGBA.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83CA24241D7BC47E00F2EA53 /* mGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83DA153620F6EFD00096D348 /* lazyusf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DA153320F6EFA80096D348 /* lazyusf.framework */; };
+		83DA153720F6EFE10096D348 /* lazyusf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DA153320F6EFA80096D348 /* lazyusf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
 		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83FC325E1BF5AB9000962B36 /* HighlyExperimental.framework */; };
@@ -93,13 +93,6 @@
 			remoteGlobalIDString = 83848FB71807623F00E7332D;
 			remoteInfo = SSEQPlayer;
 		};
-		83C8B65518AF57770071B040 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83C8B65018AF57770071B040 /* lazyusf.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 83C8B62218AF57770071B040;
-			remoteInfo = lazyusf;
-		};
 		83CA24231D7BC47E00F2EA53 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */;
@@ -114,9 +107,16 @@
 			remoteGlobalIDString = 83CA24121D7BC47C00F2EA53;
 			remoteInfo = mGBA;
 		};
-		83CA2E401D7BCFB800F2EA53 /* PBXContainerItemProxy */ = {
+		83DA153220F6EFA80096D348 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83C8B65018AF57770071B040 /* lazyusf.xcodeproj */;
+			containerPortal = 83DA152E20F6EFA80096D348 /* lazyusf.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83C8B62218AF57770071B040;
+			remoteInfo = lazyusf;
+		};
+		83DA153420F6EFC90096D348 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83DA152E20F6EFA80096D348 /* lazyusf.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 83C8B62118AF57770071B040;
 			remoteInfo = lazyusf;
@@ -167,9 +167,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83DA153720F6EFE10096D348 /* lazyusf.framework in CopyFiles */,
 				83CA2E4D1D7BE41300F2EA53 /* mGBA.framework in CopyFiles */,
 				83FC32C61BF5AF0600962B36 /* HighlyExperimental.framework in CopyFiles */,
-				83C8B6FC18AF59080071B040 /* lazyusf.framework in CopyFiles */,
 				83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */,
 				8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */,
 				8343792A17F96F2600584396 /* HighlyQuixotic.framework in CopyFiles */,
@@ -199,8 +199,8 @@
 		8360EEF117F92AC8005208A4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8360EEF317F92AC8005208A4 /* HighlyComplete-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HighlyComplete-Prefix.pch"; sourceTree = "<group>"; };
 		83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SSEQPlayer.xcodeproj; path = ../../Frameworks/SSEQPlayer/SSEQPlayer.xcodeproj; sourceTree = "<group>"; };
-		83C8B65018AF57770071B040 /* lazyusf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lazyusf.xcodeproj; path = ../../Frameworks/lazyusf/lazyusf.xcodeproj; sourceTree = "<group>"; };
 		83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mGBA.xcodeproj; path = ../../Frameworks/mGBA/mGBA.xcodeproj; sourceTree = "<group>"; };
+		83DA152E20F6EFA80096D348 /* lazyusf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lazyusf.xcodeproj; path = ../../Frameworks/lazyusf/lazyusf.xcodeproj; sourceTree = "<group>"; };
 		83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = "<group>"; };
 		83FAF8A318ADD27F00057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyExperimental.xcodeproj; path = ../../Frameworks/HighlyExperimental/HighlyExperimental.xcodeproj; sourceTree = "<group>"; };
@@ -211,9 +211,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83DA153620F6EFD00096D348 /* lazyusf.framework in Frameworks */,
 				83CA2E3D1D7BCF9B00F2EA53 /* mGBA.framework in Frameworks */,
 				83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */,
-				83C8B6FB18AF58FA0071B040 /* lazyusf.framework in Frameworks */,
 				83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */,
 				8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */,
 				8343792917F96F1D00584396 /* HighlyQuixotic.framework in Frameworks */,
@@ -290,7 +290,7 @@
 				8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */,
 				83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */,
 				83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */,
-				83C8B65018AF57770071B040 /* lazyusf.xcodeproj */,
+				83DA152E20F6EFA80096D348 /* lazyusf.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -336,18 +336,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		83C8B65118AF57770071B040 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83C8B65618AF57770071B040 /* lazyusf.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		83CA241F1D7BC47C00F2EA53 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				83CA24241D7BC47E00F2EA53 /* mGBA.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83DA152F20F6EFA80096D348 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83DA153320F6EFA80096D348 /* lazyusf.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -384,7 +384,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				83CA2E411D7BCFB800F2EA53 /* PBXTargetDependency */,
+				83DA153520F6EFC90096D348 /* PBXTargetDependency */,
 				83CA2E3F1D7BCFB000F2EA53 /* PBXTargetDependency */,
 				83FC32C21BF5AEF300962B36 /* PBXTargetDependency */,
 				83DE0CBB180B02C500269051 /* PBXTargetDependency */,
@@ -442,8 +442,8 @@
 					ProjectRef = 8343789C17F9658E00584396 /* HighlyTheoretical.xcodeproj */;
 				},
 				{
-					ProductGroup = 83C8B65118AF57770071B040 /* Products */;
-					ProjectRef = 83C8B65018AF57770071B040 /* lazyusf.xcodeproj */;
+					ProductGroup = 83DA152F20F6EFA80096D348 /* Products */;
+					ProjectRef = 83DA152E20F6EFA80096D348 /* lazyusf.xcodeproj */;
 				},
 				{
 					ProductGroup = 83CA241F1D7BC47C00F2EA53 /* Products */;
@@ -505,18 +505,18 @@
 			remoteRef = 83848FEB1807624000E7332D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		83C8B65618AF57770071B040 /* lazyusf.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = lazyusf.framework;
-			remoteRef = 83C8B65518AF57770071B040 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		83CA24241D7BC47E00F2EA53 /* mGBA.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = mGBA.framework;
 			remoteRef = 83CA24231D7BC47E00F2EA53 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83DA153320F6EFA80096D348 /* lazyusf.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = lazyusf.framework;
+			remoteRef = 83DA153220F6EFA80096D348 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83DE0C3A180A9BD500269051 /* vio2sf.framework */ = {
@@ -583,10 +583,10 @@
 			name = mGBA;
 			targetProxy = 83CA2E3E1D7BCFB000F2EA53 /* PBXContainerItemProxy */;
 		};
-		83CA2E411D7BCFB800F2EA53 /* PBXTargetDependency */ = {
+		83DA153520F6EFC90096D348 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = lazyusf;
-			targetProxy = 83CA2E401D7BCFB800F2EA53 /* PBXContainerItemProxy */;
+			targetProxy = 83DA153420F6EFC90096D348 /* PBXContainerItemProxy */;
 		};
 		83DE0CBB180B02C500269051 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -170,10 +170,128 @@ int usf_upload_section(void * state, const uint8_t * data, size_t size)
 	return 0;
 }
 
+static int is_valid_rom(const unsigned char *buffer)
+{
+    /* Test if rom is a native .z64 image with header 0x80371240. [ABCD] */
+    if((buffer[0]==0x80)&&(buffer[1]==0x37)&&(buffer[2]==0x12)&&(buffer[3]==0x40))
+        return 1;
+    /* Test if rom is a byteswapped .v64 image with header 0x37804012. [BADC] */
+    else if((buffer[0]==0x37)&&(buffer[1]==0x80)&&(buffer[2]==0x40)&&(buffer[3]==0x12))
+        return 1;
+    /* Test if rom is a wordswapped .n64 image with header  0x40123780. [DCBA] */
+    else if((buffer[0]==0x40)&&(buffer[1]==0x12)&&(buffer[2]==0x37)&&(buffer[3]==0x80))
+        return 1;
+    else
+        return 0;
+}
+
+static void swap_rom(const unsigned char* signature, unsigned char* localrom, int loadlength)
+{
+    unsigned char temp;
+    int i;
+    
+    /* Btyeswap if .v64 image. */
+    if(signature[0]==0x37)
+    {
+        for (i = 0; i < loadlength; i+=2)
+        {
+            temp=localrom[i];
+            localrom[i]=localrom[i+1];
+            localrom[i+1]=temp;
+        }
+    }
+    /* Wordswap if .n64 image. */
+    else if(signature[0]==0x40)
+    {
+        for (i = 0; i < loadlength; i+=4)
+        {
+            temp=localrom[i];
+            localrom[i]=localrom[i+3];
+            localrom[i+3]=temp;
+            temp=localrom[i+1];
+            localrom[i+1]=localrom[i+2];
+            localrom[i+2]=temp;
+        }
+    }
+}
+
+static _system_type rom_country_code_to_system_type(unsigned short country_code)
+{
+    switch (country_code & 0xFF)
+    {
+            // PAL codes
+        case 0x44:
+        case 0x46:
+        case 0x49:
+        case 0x50:
+        case 0x53:
+        case 0x55:
+        case 0x58:
+        case 0x59:
+            return SYSTEM_PAL;
+            
+            // NTSC codes
+        case 0x37:
+        case 0x41:
+        case 0x45:
+        case 0x4a:
+        default: // Fallback for unknown codes
+            return SYSTEM_NTSC;
+    }
+}
+
+// Get the VI (vertical interrupt) limit associated to a ROM system type.
+static int rom_system_type_to_vi_limit(_system_type system_type)
+{
+    switch (system_type)
+    {
+        case SYSTEM_PAL:
+        case SYSTEM_MPAL:
+            return 50;
+            
+        case SYSTEM_NTSC:
+        default:
+            return 60;
+    }
+}
+
+static int rom_system_type_to_ai_dac_rate(_system_type system_type)
+{
+    switch (system_type)
+    {
+        case SYSTEM_PAL:
+            return 49656530;
+        case SYSTEM_MPAL:
+            return 48628316;
+        case SYSTEM_NTSC:
+        default:
+            return 48681812;
+    }
+}
+
+void open_rom_header(usf_state_t * state, unsigned char * header, int header_size)
+{
+    if (header_size >= sizeof(_rom_header))
+        memcpy(&state->ROM_HEADER, header, sizeof(_rom_header));
+    
+    if (is_valid_rom((const unsigned char *)&state->ROM_HEADER))
+        swap_rom((const unsigned char *)&state->ROM_HEADER, (unsigned char *)&state->ROM_HEADER, sizeof(_rom_header));
+    
+    /* add some useful properties to ROM_PARAMS */
+    state->ROM_PARAMS.systemtype = rom_country_code_to_system_type(state->ROM_HEADER.Country_code);
+    state->ROM_PARAMS.vilimit = rom_system_type_to_vi_limit(state->ROM_PARAMS.systemtype);
+    state->ROM_PARAMS.aidacrate = rom_system_type_to_ai_dac_rate(state->ROM_PARAMS.systemtype);
+    state->ROM_PARAMS.countperop = COUNT_PER_OP_DEFAULT;
+}
+
 static int usf_startup(usf_state_t * state)
 {
+    // Detect region
+    
+    open_rom_header(state, state->savestatespace + 8, sizeof(_rom_header));
+    
     // Detect the Ramsize before the memory allocation
-	
+    
 	if(get_le32(state->savestatespace + 4) == 0x400000) {
         void * savestate;
 		state->RdramSize = 0x400000;
