@@ -510,7 +510,7 @@ typedef enum {
     meta_PS2_MCG,           /* Gunvari MCG Files (was name .GCM on disk) */
     meta_ZSD,               /* Dragon Booster ZSD */
     meta_RedSpark,          /* "RedSpark" RSD (MadWorld) */
-    meta_PC_IVAUD,          /* .ivaud GTA IV */
+    meta_IVAUD,          /* .ivaud GTA IV */
     meta_NDS_HWAS,          /* Spider-Man 3, Tony Hawk's Downhill Jam, possibly more... */
     meta_NGC_LPS,           /* Rave Master (Groove Adventure Rave)(GC) */
     meta_NAOMI_ADPCM,       /* NAOMI/NAOMI2 ARcade games */
@@ -686,6 +686,7 @@ typedef enum {
     meta_TA_AAC_VITA,       /* tri-Ace AAC (Judas Code) */
     meta_OGG_GWM,           /* Ogg Vorbis with encryption [Metronomicon (PC)] */
     meta_H4M,               /* Hudson HVQM4 video [Resident Evil 0 (GC), Tales of Symphonia (GC)] */
+    meta_OGG_MUS,           /* Ogg Vorbis with encryption [Redux - Dark Matters (PC)] */
 
 #ifdef VGM_USE_FFMPEG
     meta_FFmpeg,

@@ -1,13 +1,16 @@
 #include "vgmstream.h"
 
-//#define VGM_REGISTER_TYPE(extension) ...
-//#define VGM_REGISTER_TYPE_COMMON(extension) ... /* for common extensions like aiff */
 
+/* defines the list of accepted extensions. vgmstream doesn't use it internally so it's here
+ * to inform plugins that need it. Common extensions are commented out to avoid stealing them. */
 
-/* some extensions could be #ifdef but no really needed */
+/* some extensions require external libraries and could be #ifdef, no really needed */
 /* some formats marked as "not parsed" mean they'll go through FFmpeg, the header/extension is not parsed */
 
+
 static const char* extension_list[] = {
+    //"", /* vgmstream can plays extensionless files too, but plugins must accept them manually */
+
     "04sw",
     "2dx9",
     "2pfs",
@@ -38,6 +41,7 @@ static const char* extension_list[] = {
     "al2",
     "amts", //fake extension/header id for .stm (to be removed)
     "ao", //txth/reserved [Cloudphobia (PC)]
+    "apc", //txth/reserved [MegaRace 3 (PC)]
     "as4",
     "asd",
     "asf",
@@ -343,6 +347,7 @@ static const char* extension_list[] = {
     "stx",
     "svag",
     "svs",
+    "svg", //txth/reserved [Hunter: The Reckoning - Wayward (PS2)]
     "swag",
     "swav",
     "swd",
@@ -367,6 +372,7 @@ static const char* extension_list[] = {
     "v0",
     //"v1", //dual channel with v0
     "vag",
+    "vai", //txth/reserved [Ratatouille (GC)]
     "vas",
     "vawx",
     "vb",
@@ -435,7 +441,7 @@ static const char* extension_list[] = {
     "zsd",
     "zwdsp",
 
-    "vgmstream"
+    "vgmstream" /* fake extension, catch-all for FFmpeg/txth/etc */
 
     //, NULL //end mark
 };
@@ -829,7 +835,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_MCG,              "Gunvari MCG Header"},
         {meta_ZSD,                  "ZSD Header"},
         {meta_RedSpark,             "RedSpark Header"},
-        {meta_PC_IVAUD,             "assumed GTA IV Audio file by .ivaud extension"},
+        {meta_IVAUD,                "Rockstar .ivaud header"},
         {meta_DSP_WII_WSD,          ".WSD header"},
         {meta_WII_NDP,              "Icon Games NDP header"},
         {meta_PS2_SPS,              "Ape Escape 2 SPS Header"},
@@ -907,7 +913,7 @@ static const meta_info meta_info_list[] = {
         {meta_X360_TRA,             "Terminal Reality .TRA raw header"},
         {meta_PS2_VGS,              "Princess Soft VGS header"},
         {meta_PS2_IAB,              "Runtime .IAB header"},
-        {meta_PS2_STRLR,            "STR L/R header"},
+        {meta_PS2_STRLR,            "The Bouncer STR header"},
         {meta_LSF_N1NJ4N,           ".lsf !n1nj4n header"},
         {meta_VAWX,                 "feelplus VAWX header"},
         {meta_PC_SNDS,              "assumed Heavy Iron IMA by .snds extension"},
@@ -1023,6 +1029,7 @@ static const meta_info meta_info_list[] = {
         {meta_OGG_GWM,              "Ogg Vorbis (GWM header)"},
         {meta_DSP_SADF,             "Procyon Studio SADF header"},
         {meta_H4M,                  "Hudson HVQM4 header"},
+        {meta_OGG_MUS,              "Ogg Vorbis (MUS header)"},
 
 #ifdef VGM_USE_FFMPEG
         {meta_FFmpeg,               "FFmpeg supported file format"},

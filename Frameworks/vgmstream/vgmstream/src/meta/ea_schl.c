@@ -10,7 +10,7 @@
 #define EA_VERSION_V3           0x03  // ~PS2 era
 
 /* platform constants (unasigned values seem internal only) */
-#define EA_PLATFORM_GENERIC     -1    // typically Wii/X360/PS3
+#define EA_PLATFORM_GENERIC     -1    // typically Wii/X360/PS3/videos
 #define EA_PLATFORM_PC          0x00
 #define EA_PLATFORM_PSX         0x01
 #define EA_PLATFORM_N64         0x02
@@ -21,6 +21,7 @@
 #define EA_PLATFORM_XBOX        0x07
 #define EA_PLATFORM_X360        0x09  // also "Xenon"
 #define EA_PLATFORM_PSP         0x0A
+#define EA_PLATFORM_PS3         0x0E  // very rare [Need for Speed: Carbon (PS3)]
 #define EA_PLATFORM_3DS         0x14
 
 /* codec constants (undefined are probably reserved, ie.- sx.exe encodes PCM24/DVI but no platform decodes them) */
@@ -350,11 +351,19 @@ static VGMSTREAM * init_vgmstream_ea_variable_header(STREAMFILE *streamFile, ea_
 #endif
 
         case EA_CODEC2_MT10:        /* MicroTalk (10:1 compression) */
-        case EA_CODEC2_MT5:         /* MicroTalk (5:1 compression) */
+        case EA_CODEC2_MT5: {       /* MicroTalk (5:1 compression) */
+            int use_pcm_blocks = 0;
+
+            if (ea->version == EA_VERSION_V3 || (ea->version == EA_VERSION_V2 && 
+                (ea->platform == EA_PLATFORM_PC || ea->platform == EA_PLATFORM_MAC))) {
+                use_pcm_blocks = 1;
+            }
+
             vgmstream->coding_type = coding_EA_MT;
-            vgmstream->codec_data = init_ea_mt(vgmstream->channels, ea->version == EA_VERSION_V3);
+            vgmstream->codec_data = init_ea_mt(vgmstream->channels, use_pcm_blocks);
             if (!vgmstream->codec_data) goto fail;
             break;
+        }
 
         case EA_CODEC2_ATRAC3PLUS:  /* regular ATRAC3plus chunked in SCxx blocks, including RIFF header */
         default:
@@ -509,6 +518,7 @@ static int parse_variable_header(STREAMFILE* streamFile, ea_header* ea, off_t be
             case 0x13: /* effect bus (0..127) */
             case 0x14: /* emdedded user data (free size/value) */
             case 0x19: /* related to playback envelope (BNK only) */
+            case 0x1A: /* unknown and very rare, size 0 (BNK only) [SSX3 (PS2)] */
             case 0x1B: /* unknown (movie only?) */
             case 0x1C: /* initial envelope volume (BNK only) */
             case 0x24: /* master random detune range (BNK only) */
@@ -608,7 +618,7 @@ static int parse_variable_header(STREAMFILE* streamFile, ea_header* ea, off_t be
             case 0x9F: /* azimuth ch4 */
             case 0xA6: /* azimuth ch5 */
             case 0xA7: /* azimuth ch6 */
-            case 0xA1: /* unknown and very rare, always 0x02 (FIFA 2001 PS2) */
+            case 0xA1: /* unknown and very rare, always 0x02 [FIFA 2001 (PS2)] */
                 read_patch(streamFile, &offset);
                 break;
 
@@ -636,6 +646,7 @@ static int parse_variable_header(STREAMFILE* streamFile, ea_header* ea, off_t be
         || ea->platform == EA_PLATFORM_SAT
         || ea->platform == EA_PLATFORM_GC_WII
         || ea->platform == EA_PLATFORM_X360
+        || ea->platform == EA_PLATFORM_PS3
         || ea->platform == EA_PLATFORM_GENERIC) {
         ea->big_endian = 1;
     }
@@ -658,6 +669,7 @@ static int parse_variable_header(STREAMFILE* streamFile, ea_header* ea, off_t be
             case EA_PLATFORM_XBOX:      ea->version = EA_VERSION_V2; break;
             case EA_PLATFORM_X360:      ea->version = EA_VERSION_V3; break;
             case EA_PLATFORM_PSP:       ea->version = EA_VERSION_V3; break;
+            case EA_PLATFORM_PS3:       ea->version = EA_VERSION_V3; break;
             case EA_PLATFORM_3DS:       ea->version = EA_VERSION_V3; break;
             case EA_PLATFORM_GENERIC:   ea->version = EA_VERSION_V2; break;
             default:
@@ -707,6 +719,7 @@ static int parse_variable_header(STREAMFILE* streamFile, ea_header* ea, off_t be
             case EA_PLATFORM_XBOX:      ea->codec2 = EA_CODEC2_S16LE; break;
             case EA_PLATFORM_X360:      ea->codec2 = EA_CODEC2_EAXA; break;
             case EA_PLATFORM_PSP:       ea->codec2 = EA_CODEC2_EAXA; break;
+            case EA_PLATFORM_PS3:       ea->codec2 = EA_CODEC2_EAXA; break;
             case EA_PLATFORM_3DS:       ea->codec2 = EA_CODEC2_GCADPCM; break;
             default:
                 VGM_LOG("EA SCHl: unknown default codec2 for platform 0x%02x\n", ea->platform);
@@ -728,6 +741,7 @@ static int parse_variable_header(STREAMFILE* streamFile, ea_header* ea, off_t be
             case EA_PLATFORM_XBOX:      ea->sample_rate = 24000; break;
             case EA_PLATFORM_X360:      ea->sample_rate = 44100; break;
             case EA_PLATFORM_PSP:       ea->sample_rate = 22050; break;
+            case EA_PLATFORM_PS3:       ea->sample_rate = 44100; break;
             //case EA_PLATFORM_3DS:     ea->sample_rate = 44100; break;//todo (not 22050/16000)
             default:
                 VGM_LOG("EA SCHl: unknown default sample rate for platform 0x%02x\n", ea->platform);
