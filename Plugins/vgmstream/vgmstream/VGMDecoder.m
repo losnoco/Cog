@@ -77,14 +77,16 @@
         long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
         long fadeEnd = (framesRead + frames) > totalFrames ? totalFrames : (framesRead + frames);
         long fadePos;
+        long i;
         
         int64_t fadeScale = (int64_t)(totalFrames - fadeStart) * INT_MAX / framesFade;
         int64_t fadeStep = INT_MAX / framesFade;
-        sbuf += (fadeStart - framesRead) * 2;
+        sbuf += (fadeStart - framesRead) * channels;
         for (fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
-            sbuf[ 0 ] = (int16_t)((int64_t)(sbuf[ 0 ]) * fadeScale / INT_MAX);
-            sbuf[ 1 ] = (int16_t)((int64_t)(sbuf[ 1 ]) * fadeScale / INT_MAX);
-            sbuf += 2;
+            for (i = 0; i < channels; ++i) {
+                sbuf[ i ] = (int16_t)((int64_t)(sbuf[ i ]) * fadeScale / INT_MAX);
+            }
+            sbuf += channels;
             fadeScale -= fadeStep;
             if (fadeScale <= 0) break;
         }
