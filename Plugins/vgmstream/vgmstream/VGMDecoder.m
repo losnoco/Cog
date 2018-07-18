@@ -61,7 +61,9 @@
 {
     BOOL repeatone = IsRepeatOneSet();
     
-    if (!repeatone) {
+    BOOL loopokay = repeatone && stream->loop_flag;
+    
+    if (!loopokay) {
         if (framesRead >= totalFrames) return 0;
         else if (framesRead + frames > totalFrames)
             frames = (UInt32)(totalFrames - framesRead);
