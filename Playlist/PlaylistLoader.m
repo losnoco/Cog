@@ -455,6 +455,10 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	return entries;
 }
 
+static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
+    dispatch_get_current_queue() == queue ? block() : dispatch_sync(queue, block);
+}
+
 - (void)loadInfoForEntries:(NSArray *)entries
 {
     NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
@@ -467,13 +471,12 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         [array addObject:[[NSMutableArray alloc] init]];
     }
     
-    i = 0; j = 0;
+    i = 0;
     for (PlaylistEntry *pe in entries)
     {
-        ++j;
         if ([pe metadataLoaded]) continue;
         
-        [update_indexes addIndex:j-1];
+        [update_indexes addIndex:pe.index];
         
         [[array objectAtIndex:i / 16] addObject:pe];
         ++i;
@@ -522,22 +525,13 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 
 	[queue waitUntilAllOperationsAreFinished];
 
-    semaphore_t info_sem;
-    semaphore_create( mach_task_self(), &info_sem, SYNC_POLICY_FIFO, (int) -i + 1 );
-    
-    __block semaphore_t weak_sem = info_sem;
-    
     for (i = 0, j = [outArray count]; i < j; i += 2) {
         __block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
         __block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
             [weakPe setMetadata:entryInfo];
-            semaphore_signal(weak_sem);
         });
     }
-
-    semaphore_wait(info_sem);
-    semaphore_destroy(mach_task_self(), info_sem);
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
     [playlistView performSelectorOnMainThread:@selector(reloadDataForRowIndexes:columnIndexes:) withObject:@[update_indexes,[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 63)]] waitUntilDone:NO];
