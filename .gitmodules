@@ -1,6 +1,6 @@
 [submodule "Frameworks/Sparkle"]
 	path = Frameworks/Sparkle
-	url = https://gitlab.kode54.net/kode54/Sparkle.git
+	url = https://bitbucket.org/losnoco/Sparkle.git
 [submodule "Frameworks/mGBA/mGBA/mgba"]
 	path = Frameworks/mGBA/mGBA/mgba
 	url = https://github.com/kode54/mgba.git
@@ -15,4 +15,4 @@
 	url = https://github.com/adplug/database.git
 [submodule "Frameworks/libsidplay/sidplay-residfp-code"]
 	path = Frameworks/libsidplay/sidplay-residfp-code
-	url = https://gitlab.kode54.net/kode54/sidplay-residfp.git
+	url = https://bitbucket.org/losnoco/sidplay-residfp.git
