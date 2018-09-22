@@ -41,7 +41,7 @@
         [self setAlphaValue:0.90];
         [self setOpaque:NO];
         [self setHasShadow:YES];
-		[self setBackgroundColor:[NSColor colorWithDeviceRed:1.0 green:0.96 blue:0.76 alpha:1.0]];
+		[self setBackgroundColor:[NSColor textBackgroundColor]];
         [self setLevel:NSStatusWindowLevel];
         [self setHidesOnDeactivate:YES];
         [self setIgnoresMouseEvents:YES];
