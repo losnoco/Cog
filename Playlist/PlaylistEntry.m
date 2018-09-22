@@ -287,7 +287,7 @@
 @dynamic length;
 - (NSNumber *)length
 {
-    return [NSNumber numberWithDouble:((double)self.totalFrames / self.sampleRate)];
+    return [NSNumber numberWithDouble:(self.metadataLoaded)?((double)self.totalFrames / self.sampleRate):0.0];
 }
 
 @dynamic path;
