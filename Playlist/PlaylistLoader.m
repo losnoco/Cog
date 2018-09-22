@@ -534,7 +534,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     }
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-    [playlistView performSelectorOnMainThread:@selector(reloadDataForRowIndexes:columnIndexes:) withObject:@[update_indexes,[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 63)]] waitUntilDone:NO];
+    
+    {
+        __block NSScrollView *weakPlaylistView = playlistView;
+        __block NSIndexSet *weakIndexSet = update_indexes;
+        dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+            unsigned long columns = [[[weakPlaylistView documentView] tableColumns] count];
+            [weakPlaylistView.documentView reloadDataForRowIndexes:weakIndexSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns-1)]];
+        });
+    }
 }
 
 - (void)clear:(id)sender
