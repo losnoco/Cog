@@ -393,6 +393,10 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     int count = (int) [validURLs count];
     if (xmlData) count += [[xmlData objectForKey:@"entries"] count];
     
+    // no valid URLs, or they use an unsupported URL scheme
+    if (!count)
+        return [NSArray array];
+    
 	int i = 0;
 	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
 	for (NSURL *url in validURLs)
