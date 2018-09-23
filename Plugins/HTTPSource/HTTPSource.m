@@ -93,7 +93,7 @@
 
 + (NSArray *)schemes
 {
-	return [NSArray arrayWithObject:@"http"];
+	return [NSArray arrayWithObjects:@"http", @"https", nil];
 }
 
 @end
