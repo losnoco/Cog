@@ -26,7 +26,7 @@
 namespace openmpt123 {
 
 struct sdl2_exception : public exception {
-	sdl2_exception( int /*code*/ ) throw() : exception( "SDL2 error" ) { }
+	sdl2_exception( int /*code*/ ) : exception( "SDL2 error" ) { }
 };
 
 static void check_sdl2_error( int e ) {

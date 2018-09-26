@@ -189,19 +189,19 @@ LIBOPENMPT_API uint32_t openmpt_get_library_version(void);
  */
 LIBOPENMPT_API uint32_t openmpt_get_core_version(void);
 
-/*! Return a verbose library version string from openmpt_get_string(). \deprecated Please use \code "library_version" \endcode directly. */
+/*! Return a verbose library version string from openmpt_get_string(). \deprecated Please use `"library_version"` directly. */
 #define OPENMPT_STRING_LIBRARY_VERSION  LIBOPENMPT_DEPRECATED_STRING( "library_version" )
-/*! Return a verbose library features string from openmpt_get_string(). \deprecated Please use \code "library_features" \endcode directly. */
+/*! Return a verbose library features string from openmpt_get_string(). \deprecated Please use `"library_features"` directly. */
 #define OPENMPT_STRING_LIBRARY_FEATURES LIBOPENMPT_DEPRECATED_STRING( "library_features" )
-/*! Return a verbose OpenMPT core version string from openmpt_get_string(). \deprecated Please use \code "core_version" \endcode directly. */
+/*! Return a verbose OpenMPT core version string from openmpt_get_string(). \deprecated Please use `"core_version"` directly. */
 #define OPENMPT_STRING_CORE_VERSION     LIBOPENMPT_DEPRECATED_STRING( "core_version" )
-/*! Return information about the current build (e.g. the build date or compiler used) from openmpt_get_string(). \deprecated Please use \code "build" \endcode directly. */
+/*! Return information about the current build (e.g. the build date or compiler used) from openmpt_get_string(). \deprecated Please use `"build"` directly. */
 #define OPENMPT_STRING_BUILD            LIBOPENMPT_DEPRECATED_STRING( "build" )
-/*! Return all contributors from openmpt_get_string(). \deprecated Please use \code "credits" \endcode directly. */
+/*! Return all contributors from openmpt_get_string(). \deprecated Please use `"credits"` directly. */
 #define OPENMPT_STRING_CREDITS          LIBOPENMPT_DEPRECATED_STRING( "credits" )
-/*! Return contact information about libopenmpt from openmpt_get_string(). \deprecated Please use \code "contact" \endcode directly. */
+/*! Return contact information about libopenmpt from openmpt_get_string(). \deprecated Please use `"contact"` directly. */
 #define OPENMPT_STRING_CONTACT          LIBOPENMPT_DEPRECATED_STRING( "contact" )
-/*! Return the libopenmpt license from openmpt_get_string(). \deprecated Please use \code "license" \endcode directly. */
+/*! Return the libopenmpt license from openmpt_get_string(). \deprecated Please use `"license"` directly. */
 #define OPENMPT_STRING_LICENSE          LIBOPENMPT_DEPRECATED_STRING( "license" )
 
 /*! \brief Free a string returned by libopenmpt
@@ -503,7 +503,7 @@ LIBOPENMPT_API void * openmpt_error_func_errno_userdata( int * error );
  * \remarks openmpt_could_open_probability() expects the complete file data to be eventually available to it, even if it is asked to just parse the header. Verification will be unreliable (both false positives and false negatives), if you pretend that the file is just some few bytes of initial data threshold in size. In order to really just access the first bytes of a file, check in your callback functions whether data or seeking is requested beyond your initial data threshold, and in that case, return an error. openmpt_could_open_probability() will treat this as any other I/O error and return 0.0. You must not expect the correct result in this case. You instead must remember that it asked for more data than you currently want to provide to it and treat this situation as if openmpt_could_open_probability() returned 0.5.
  * \sa \ref libopenmpt_c_fileio
  * \sa openmpt_stream_callbacks
- * \deprecated Please use openmpt_module_could_open_probability2().
+ * \deprecated Please use openmpt_could_open_probability2().
  * \since 0.3.0
  */
 LIBOPENMPT_API LIBOPENMPT_DEPRECATED double openmpt_could_open_probability( openmpt_stream_callbacks stream_callbacks, void * stream, double effort, openmpt_log_func logfunc, void * user );
@@ -520,7 +520,7 @@ LIBOPENMPT_API LIBOPENMPT_DEPRECATED double openmpt_could_open_probability( open
  * \remarks openmpt_could_open_probability() expects the complete file data to be eventually available to it, even if it is asked to just parse the header. Verification will be unreliable (both false positives and false negatives), if you pretend that the file is just some few bytes of initial data threshold in size. In order to really just access the first bytes of a file, check in your callback functions whether data or seeking is requested beyond your initial data threshold, and in that case, return an error. openmpt_could_open_probability() will treat this as any other I/O error and return 0.0. You must not expect the correct result in this case. You instead must remember that it asked for more data than you currently want to provide to it and treat this situation as if openmpt_could_open_probability() returned 0.5.
  * \sa \ref libopenmpt_c_fileio
  * \sa openmpt_stream_callbacks
- * \deprecated Please use openmpt_module_could_open_probability2().
+ * \deprecated Please use openmpt_could_open_probability2().
  */
 LIBOPENMPT_API LIBOPENMPT_DEPRECATED double openmpt_could_open_propability( openmpt_stream_callbacks stream_callbacks, void * stream, double effort, openmpt_log_func logfunc, void * user );
 

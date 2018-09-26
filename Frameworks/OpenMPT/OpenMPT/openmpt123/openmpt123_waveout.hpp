@@ -18,7 +18,7 @@
 namespace openmpt123 {
 
 struct waveout_exception : public exception {
-	waveout_exception() throw() : exception( "waveout" ) { }
+	waveout_exception() : exception( "waveout" ) { }
 };
 
 class waveout_stream_raii : public write_buffers_interface {

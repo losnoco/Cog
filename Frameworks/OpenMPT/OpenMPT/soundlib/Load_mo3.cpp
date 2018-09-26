@@ -1812,7 +1812,7 @@ bool CSoundFile::ReadMO3(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			LoadExtendedInstrumentProperties(chunk);
-			LoadExtendedSongProperties(chunk);
+			LoadExtendedSongProperties(chunk, true);
 			if(cwtv > 0x0889 && cwtv <= 0x8FF)
 			{
 				m_nType = MOD_TYPE_MPT;

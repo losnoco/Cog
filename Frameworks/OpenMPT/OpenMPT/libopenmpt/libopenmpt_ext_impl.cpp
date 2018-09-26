@@ -275,6 +275,16 @@ namespace openmpt {
 		chn.nPan = Util::Round<int32_t>( Clamp( panning * 128.0, -128.0, 128.0 ) + 128.0 );
 		chn.nVolume = Util::Round<int32_t>( Clamp( volume * 256.0, 0.0, 256.0 ) );
 
+		// Remove channel from list of mixed channels to fix https://bugs.openmpt.org/view.php?id=209
+		// This is required because a previous note on the same channel might have just stopped playing,
+		// but the channel is still in the mix list.
+		// Since the channel volume / etc is only updated every tick in CSoundFile::ReadNote, and we
+		// do not want to duplicate mixmode-dependant logic here, CSoundFile::CreateStereoMix may already
+		// try to mix our newly set up channel at volume 0 if we don't remove it from the list.
+		auto mix_begin = std::begin( m_sndFile->m_PlayState.ChnMix );
+		auto mix_end = std::remove( mix_begin, mix_begin + m_sndFile->m_nMixChannels, free_channel );
+		m_sndFile->m_nMixChannels = static_cast<CHANNELINDEX>( std::distance( mix_begin, mix_end ) );
+
 		return free_channel;
 	}
 

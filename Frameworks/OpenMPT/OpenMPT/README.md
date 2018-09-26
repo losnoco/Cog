@@ -181,13 +181,16 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
         Run:
 
-            make CONFIG=emscripten
+            make CONFIG=emscripten        # for emscripten >= 1.38.1
+
+            make CONFIG=emscripten-old    # for emscripten < 1.38.0
 
         Running the test suite on the command line is also supported by using
         node.js. Version 0.10.25 or greater has been tested. Earlier versions
         might or might not work. Depending on how your distribution calls the
         `node.js` binary, you might have to edit
-        `build/make/config-emscripten.mk`.
+        `build/make/config-emscripten.mk` or
+        `build/make/config-emscripten-old.mk`.
 
      -  Haiku:
 

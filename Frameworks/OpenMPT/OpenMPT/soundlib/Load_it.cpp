@@ -973,7 +973,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 		m_nMixLevels = mixLevelsOriginal;
 	}
 	// Need to do this before reading the patterns because m_nChannels might be modified by LoadExtendedSongProperties. *sigh*
-	LoadExtendedSongProperties(file, &interpretModPlugMade);
+	LoadExtendedSongProperties(file, false, &interpretModPlugMade);
 
 	// Reading Patterns
 	Patterns.ResizeArray(numPats);
@@ -2324,7 +2324,7 @@ void ReadFieldCast(FileReader &chunk, std::size_t size, T &field)
 }
 
 
-void CSoundFile::LoadExtendedSongProperties(FileReader &file, bool *pInterpretMptMade)
+void CSoundFile::LoadExtendedSongProperties(FileReader &file, bool ignoreChannelCount, bool *pInterpretMptMade)
 {
 	if(!file.ReadMagic("STPM"))	// 'MPTS'
 	{
@@ -2362,7 +2362,7 @@ void CSoundFile::LoadExtendedSongProperties(FileReader &file, bool *pInterpretMp
 			case MAGIC4BE('R','P','B','.'): ReadField(chunk, size, m_nDefaultRowsPerBeat); break;
 			case MAGIC4BE('R','P','M','.'): ReadField(chunk, size, m_nDefaultRowsPerMeasure); break;
 				// FIXME: If there are only PC events on the last few channels in an MPTM MO3, they won't be imported!
-			case MAGIC4BE('C','.','.','.'): if(GetType() != MOD_TYPE_XM && m_ContainerType != MOD_CONTAINERTYPE_MO3) { CHANNELINDEX chn = 0; ReadField(chunk, size, chn); m_nChannels = Clamp(chn, m_nChannels, MAX_BASECHANNELS); } break;
+			case MAGIC4BE('C','.','.','.'): if(!ignoreChannelCount) { CHANNELINDEX chn = 0; ReadField(chunk, size, chn); m_nChannels = Clamp(chn, m_nChannels, MAX_BASECHANNELS); } break;
 			case MAGIC4BE('T','M','.','.'): ReadFieldCast(chunk, size, m_nTempoMode); break;
 			case MAGIC4BE('P','M','M','.'): ReadFieldCast(chunk, size, m_nMixLevels); break;
 			case MAGIC4BE('C','W','V','.'): ReadField(chunk, size, m_dwCreatedWithVersion); break;

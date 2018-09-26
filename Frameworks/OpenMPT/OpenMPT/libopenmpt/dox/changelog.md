@@ -5,6 +5,37 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.3.12 (2018-09-24)
+
+ *  [**Bug**] openmpt123: Prevent libsdl2 and libsdl from being enabled at the
+    same time because they conflict with each other.
+ *  [**Bug**] Make building the JavaScript package work with Emscripten version
+    1.38.1 or later by disabling WebAssembly generation which generates a
+    different set of output files. Emscripten 1.38.1 changed the default to
+    WebAssembly.
+ *  [**Bug**] libmodplug: Setting `SNDMIX_NORESAMPLING` in the C++ API always
+    resulted in linear interpolation instead of nearest neighbour.
+
+ *  [**Change**] The old Emscripten configuration which is compatible with
+    Emscripten before 1.38.0 has been renamed to `CONFIG=emscripten-old`.
+
+ *  libopenmpt now compiles without warnings with GCC 8.
+
+ *  Jump commands on the same row as the end of a pattern loop covering the
+    restart position of the module could cause the module to loop even when
+    looping was disabled.
+ *  MO3: Reject overly long MP3 and Vorbis samples.
+ *  `play_note` from the libopenmpt_ext interface sometimes silenced the start
+    of a triggered sample.
+
+### libopenmpt 0.3.11 (2018-07-28)
+
+ *  [**Sec**] Crash with some malformed custom tunings in MPTM files (r10615).
+
+ *  Channels whose volume envelope was playing at volume 0 while being moved to
+    a NNA background channel were cut off completely since libopenmpt 0.3.8.
+ *  AMF (ASYLUM): Convert 7-bit panning to 8-bit panning for playback.
+
 ### libopenmpt 0.3.10 (2018-06-17)
 
  *  [**Bug**] Internal mixer state was not initialized properly when initially

@@ -137,6 +137,7 @@ bool CSoundFile::ReadAMF_Asylum(FileReader &file, ModLoadingFlags loadFlags)
 
 	InitializeGlobals(MOD_TYPE_AMF0);
 	InitializeChannels();
+	SetupMODPanning(true);
 	m_nChannels = 8;
 	m_nDefaultSpeed = fileHeader.defaultSpeed;
 	m_nDefaultTempo.Set(fileHeader.defaultTempo);
@@ -185,6 +186,13 @@ bool CSoundFile::ReadAMF_Asylum(FileReader &file, ModLoadingFlags loadFlags)
 			m.command = data[2];
 			m.param = data[3];
 			ConvertModCommand(m);
+#ifdef MODPLUG_TRACKER
+			if(m.command == CMD_PANNING8)
+			{
+				// Convert 7-bit panning to 8-bit
+				m.param = mpt::saturate_cast<ModCommand::PARAM>(m.param * 2u);
+			}
+#endif
 		}
 	}
 

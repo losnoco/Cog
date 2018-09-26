@@ -20,7 +20,7 @@
 namespace openmpt123 {
 
 struct portaudio_exception : public exception {
-	portaudio_exception( PaError code ) throw() : exception( Pa_GetErrorText( code ) ) { }
+	portaudio_exception( PaError code ) : exception( Pa_GetErrorText( code ) ) { }
 };
 
 typedef void (*PaUtilLogCallback ) (const char *log);

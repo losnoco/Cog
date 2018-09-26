@@ -497,7 +497,8 @@ LIBOPENMPT_MODPLUG_API unsigned int ModPlug_SampleName(ModPlugFile* file, unsign
 	}
 	retval = (int)tmpretval;
 	if(buff){
-		strncpy(buff,str,retval+1);
+		memcpy(buff,str,retval+1);
+		buff[retval] = '\0';
 	}
 	openmpt_free_string(str);
 	return retval;
@@ -522,7 +523,8 @@ LIBOPENMPT_MODPLUG_API unsigned int ModPlug_InstrumentName(ModPlugFile* file, un
 	}
 	retval = (int)tmpretval;
 	if(buff){
-		strncpy(buff,str,retval+1);
+		memcpy(buff,str,retval+1);
+		buff[retval] = '\0';
 	}
 	openmpt_free_string(str);
 	return retval;

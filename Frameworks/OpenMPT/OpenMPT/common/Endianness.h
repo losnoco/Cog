@@ -508,7 +508,7 @@ static MPT_FORCEINLINE float64 DecodeIEEE754binary64(uint64 i)
 template<std::size_t hihi, std::size_t hilo, std::size_t lohi, std::size_t lolo>
 struct IEEE754binary32Emulated
 {
-private:
+public:
 	typedef IEEE754binary32Emulated<hihi,hilo,lohi,lolo> self_t;
 	mpt::byte bytes[4];
 public:
@@ -569,7 +569,7 @@ public:
 template<std::size_t hihihi, std::size_t hihilo, std::size_t hilohi, std::size_t hilolo, std::size_t lohihi, std::size_t lohilo, std::size_t lolohi, std::size_t lololo>
 struct IEEE754binary64Emulated
 {
-private:
+public:
 	typedef IEEE754binary64Emulated<hihihi,hihilo,hilohi,hilolo,lohihi,lohilo,lolohi,lololo> self_t;
 	mpt::byte bytes[8];
 public:
@@ -655,7 +655,7 @@ MPT_BINARY_STRUCT(IEEE754binary64EmulatedLE, 8)
 
 struct IEEE754binary32Native
 {
-private:
+public:
 	float32 value;
 public:
 	MPT_FORCEINLINE mpt::byte GetByte(std::size_t i) const
@@ -721,7 +721,7 @@ public:
 
 struct IEEE754binary64Native
 {
-private:
+public:
 	float64 value;
 public:
 	MPT_FORCEINLINE mpt::byte GetByte(std::size_t i) const
@@ -848,7 +848,7 @@ struct packed
 public:
 	typedef T base_type;
 	typedef Tendian endian_type;
-private:
+public:
 #if MPT_PLATFORM_ENDIAN_KNOWN
 	mpt::byte data[sizeof(base_type)];
 #else // !MPT_PLATFORM_ENDIAN_KNOWN

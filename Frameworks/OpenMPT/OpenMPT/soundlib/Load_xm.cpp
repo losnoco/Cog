@@ -712,7 +712,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 		LoadExtendedInstrumentProperties(file, &interpretOpenMPTMade);
 	}
 
-	LoadExtendedSongProperties(file, &interpretOpenMPTMade);
+	LoadExtendedSongProperties(file, true, &interpretOpenMPTMade);
 
 	if(interpretOpenMPTMade && m_dwLastSavedWithVersion < MAKE_VERSION_NUMERIC(1, 17, 00, 00))
 	{

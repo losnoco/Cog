@@ -27,6 +27,7 @@ DigiBoosterEcho::DigiBoosterEcho(VSTPluginLib &factory, CSoundFile &sndFile, SND
 	, m_bufferSize(0)
 	, m_writePos(0)
 	, m_sampleRate(sndFile.GetSampleRate())
+	, m_chunk(PluginChunk::Default())
 {
 	m_mixBuffer.Initialize(2, 2);
 	InsertIntoFactoryList();
