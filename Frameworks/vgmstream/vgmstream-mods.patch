@@ -1,0 +1,113 @@
+diff -urN -x.git ./src/coding/atrac9_decoder.c /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/coding/atrac9_decoder.c
+--- ./src/coding/atrac9_decoder.c	2018-09-26 16:20:07.000000000 -0700
++++ /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/coding/atrac9_decoder.c	2018-09-26 16:24:35.000000000 -0700
+@@ -1,7 +1,7 @@
+ #include "coding.h"
+ 
+ #ifdef VGM_USE_ATRAC9
+-#include "libatrac9.h"
++#include <libatrac9/libatrac9.h>
+ 
+ 
+ /* opaque struct */
+diff -urN -x.git ./src/coding/g719_decoder.c /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/coding/g719_decoder.c
+--- ./src/coding/g719_decoder.c	2018-09-26 16:20:07.000000000 -0700
++++ /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/coding/g719_decoder.c	2018-09-26 16:31:38.000000000 -0700
+@@ -1,7 +1,8 @@
+ #include "coding.h"
+-#include <g719.h>
+ 
+ #ifdef VGM_USE_G719
++#include <g719/g719.h>
++
+ #define G719_MAX_FRAME_SIZE 0x1000 /* arbitrary max (samples per frame seems to always be 960) */
+ 
+ 
+diff -urN -x.git ./src/coding/mpeg_decoder.c /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/coding/mpeg_decoder.c
+--- ./src/coding/mpeg_decoder.c	2018-09-26 16:20:07.000000000 -0700
++++ /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/coding/mpeg_decoder.c	2018-09-26 16:24:35.000000000 -0700
+@@ -3,7 +3,7 @@
+ #include "../vgmstream.h"
+ 
+ #ifdef VGM_USE_MPEG
+-#include <mpg123.h>
++#include <mpg123/mpg123.h>
+ #include "mpeg_decoder.h"
+ 
+ 
+diff -urN -x.git ./src/coding/nwa_decoder.h /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/coding/nwa_decoder.h
+--- ./src/coding/nwa_decoder.h	2017-03-12 22:17:50.000000000 -0700
++++ /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/coding/nwa_decoder.h	2018-09-26 16:24:35.000000000 -0700
+@@ -33,7 +33,11 @@
+ #ifndef _NWA_DECODER_H
+ #define _NWA_DECODER_H
+ 
++#ifdef BUILD_VGMSTREAM
+ #include "../streamfile.h"
++#else
++#include "streamfile.h"
++#endif
+ 
+ typedef struct NWAData_s
+ {
+diff -urN -x.git ./src/vgmstream.h /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/vgmstream.h
+--- ./src/vgmstream.h	2018-09-26 16:20:07.000000000 -0700
++++ /Users/chris/Source/Repos/cog/Frameworks/vgmstream/vgmstream/src/vgmstream.h	2018-09-26 16:31:15.000000000 -0700
+@@ -12,28 +12,31 @@
+ 
+ /* Due mostly to licensing issues, Vorbis, MPEG, G.722.1, etc decoding is done by external libraries.
+  * Libs are disabled by default, defined on compile-time for builds that support it */
+-//#define VGM_USE_VORBIS
+-//#define VGM_USE_MPEG
+-//#define VGM_USE_G7221
+-//#define VGM_USE_G719
++#define VGM_USE_VORBIS
++#define VGM_USE_MPEG
++#define VGM_USE_G7221
++#define VGM_USE_G719
+ //#define VGM_USE_MP4V2
+ //#define VGM_USE_FDKAAC
+ //#define VGM_USE_MAIATRAC3PLUS
+-//#define VGM_USE_FFMPEG
+-//#define VGM_USE_ATRAC9
++#define VGM_USE_FFMPEG
++#define VGM_USE_ATRAC9
+ //#define VGM_USE_CELT
+ 
+ 
+ #ifdef VGM_USE_VORBIS
++#ifdef __APPLE__
++#define __MACOSX__
++#endif
+ #include <vorbis/vorbisfile.h>
+ #endif
+ 
+ #ifdef VGM_USE_MPEG
+-#include <mpg123.h>
++#include <mpg123/mpg123.h>
+ #endif
+ 
+ #ifdef VGM_USE_G7221
+-#include <g7221.h>
++#include <g7221/g7221.h>
+ #endif
+ 
+ #ifdef VGM_USE_MP4V2
+@@ -55,11 +58,15 @@
+ #include <libswresample/swresample.h>
+ #endif
+ 
+-#include <clHCA.h>
++#include "clHCA.h"
+ 
++#ifdef BUILD_VGMSTREAM
+ #include "coding/g72x_state.h"
+ #include "coding/nwa_decoder.h"
+-
++#else
++#include "g72x_state.h"
++#include "nwa_decoder.h"
++#endif
+ 
+ /* The encoding type specifies the format the sound data itself takes */
+ typedef enum {
