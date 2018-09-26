@@ -10,11 +10,15 @@
 
 #pragma once
 
+OPENMPT_NAMESPACE_BEGIN
+
 enum
 {
 	NUM_MACROS = 16,	// number of parametered macros
 	MACRO_LENGTH = 32,	// max number of chars per macro
 };
+
+OPENMPT_NAMESPACE_END
 
 #ifdef MODPLUG_TRACKER
 #include "plugins/PluginStructs.h"

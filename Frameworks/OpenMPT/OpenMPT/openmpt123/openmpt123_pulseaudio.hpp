@@ -42,7 +42,7 @@ struct pulseaudio_exception : public exception {
 			return std::string();
 		}
 	}
-	pulseaudio_exception( int error ) throw() : exception( error_to_string( error ) ) { }
+	pulseaudio_exception( int error ) : exception( error_to_string( error ) ) { }
 };
 
 class pulseaudio_stream_raii : public write_buffers_interface {

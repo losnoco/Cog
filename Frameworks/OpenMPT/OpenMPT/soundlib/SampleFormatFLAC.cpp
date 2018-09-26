@@ -171,6 +171,7 @@ struct FLACDecoder
 			sample.uFlags.set(CHN_16BIT, metadata->data.stream_info.bits_per_sample > 8);
 			sample.uFlags.set(CHN_STEREO, metadata->data.stream_info.channels > 1);
 			sample.nLength = mpt::saturate_cast<SmpLength>(metadata->data.stream_info.total_samples);
+			LimitMax(sample.nLength, MAX_SAMPLE_LENGTH);
 			sample.nC5Speed = metadata->data.stream_info.sample_rate;
 			client.ready = (sample.AllocateSample() != 0);
 		} else if(metadata->type == FLAC__METADATA_TYPE_APPLICATION && !memcmp(metadata->data.application.id, "riff", 4) && client.ready)

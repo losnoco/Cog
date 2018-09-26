@@ -377,7 +377,7 @@ bool CSoundFile::ReadITProject(FileReader &file, ModLoadingFlags loadFlags)
 	if(code == MAGIC4BE('M', 'P', 'T', 'S'))
 	{
 		file.SkipBack(4);
-		LoadExtendedSongProperties(file);
+		LoadExtendedSongProperties(file, true);
 	}
 
 	m_nMaxPeriod = 0xF000;

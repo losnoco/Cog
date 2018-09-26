@@ -189,7 +189,7 @@ BOOL CSoundFile::Create( LPCBYTE lpStream, DWORD dwMemLength ) {
 	try {
 		openmpt::module * m = new openmpt::module( lpStream, dwMemLength );
 		set_self( this, m );
-		std::strncpy( m_szNames[0], mod->get_metadata("title").c_str(), sizeof( m_szNames[0] ) );
+		std::strncpy( m_szNames[0], mod->get_metadata("title").c_str(), sizeof( m_szNames[0] ) - 1 );
 		m_szNames[0][ sizeof( m_szNames[0] ) - 1 ] = '\0';
 		std::string type = mod->get_metadata("type");
 		m_nType = MOD_TYPE_NONE;
@@ -678,7 +678,7 @@ static int get_filter_length() {
 		return 8;
 	} else if ( ( CSoundFile::gdwSoundSetup & SNDMIX_HQRESAMPLER ) == SNDMIX_HQRESAMPLER ) {
 		return 4;
-	} else if ( ( CSoundFile::gdwSoundSetup & SNDMIX_HQRESAMPLER ) == SNDMIX_NORESAMPLING ) {
+	} else if ( ( CSoundFile::gdwSoundSetup & SNDMIX_NORESAMPLING ) == SNDMIX_NORESAMPLING ) {
 		return 1;
 	} else {
 		return 2;

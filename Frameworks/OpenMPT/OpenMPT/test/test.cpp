@@ -1669,6 +1669,17 @@ static MPT_NOINLINE void TestMisc2()
 	VERIFY_EQUAL(Gregorian::FromTM(mpt::Date::Unix(    1413064016).AsUTC()), TestDate2( 56, 46, 21, 11, 10, 2014 ));
 	VERIFY_EQUAL(Gregorian::FromTM(mpt::Date::Unix(    1413064100).AsUTC()), TestDate2( 20, 48, 21, 11, 10, 2014 ));
 
+	// https://github.com/kripken/emscripten/issues/4251
+	#if MPT_OS_EMSCRIPTEN
+		volatile int transpose = 32;
+		volatile int finetune = 0;
+		float exp = (transpose * 128.0f + finetune) * (1.0f / (12.0f * 128.0f)); 
+		float f  = ::powf(2.0f,         exp);
+		double d = ::pow (2.0 , (double)exp);
+		VERIFY_EQUAL_EPS(d, 6.349605, 0.00001);
+		VERIFY_EQUAL_EPS(f, 6.349605, 0.00001);
+	#endif
+
 }
 
 

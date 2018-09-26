@@ -32,15 +32,20 @@ public:
 		char  id[4];
 		uint8 param[kEchoNumParameters];
 
-		PluginChunk(uint8 delay = 80, uint8 feedback = 150, uint8 mix = 80, uint8 cross = 255)
+		static PluginChunk Create(uint8 delay, uint8 feedback, uint8 mix, uint8 cross)
 		{
-			memcpy(id, "Echo", 4);
-			param[kEchoDelay] = delay;
-			param[kEchoFeedback] = feedback;
-			param[kEchoMix] = mix;
-			param[kEchoCross] = cross;
-
 			STATIC_ASSERT(sizeof(PluginChunk) == 8);
+			PluginChunk result;
+			memcpy(result.id, "Echo", 4);
+			result.param[kEchoDelay] = delay;
+			result.param[kEchoFeedback] = feedback;
+			result.param[kEchoMix] = mix;
+			result.param[kEchoCross] = cross;
+			return result;
+		}
+		static PluginChunk Default()
+		{
+			return Create(80, 150, 80, 255);
 		}
 	};
 

@@ -444,7 +444,7 @@ void CSoundFile::WriteInstrumentPropertyForAllInstruments(uint32 code, uint16 si
 				type tmp; \
 				tmp = file.ReadTruncatedIntLE<type>(fsize); \
 				STATIC_ASSERT(sizeof(tmp) == sizeof(input-> name )); \
-				memcpy(&(input-> name ), &tmp, sizeof(type)); \
+				input-> name = decltype(input-> name )(tmp); \
 				result = true; \
 			} \
 		} \

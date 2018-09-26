@@ -8,6 +8,8 @@
  */
 
 
+#pragma once
+
 #include "Sndfile.h"
 #include "Dither.h"
 #include "../soundbase/SampleFormat.h"

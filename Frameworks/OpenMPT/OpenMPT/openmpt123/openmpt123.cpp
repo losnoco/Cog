@@ -99,35 +99,35 @@ static const char * const license =
 namespace openmpt123 {
 
 struct silent_exit_exception : public std::exception {
-	silent_exit_exception() throw() { }
+	silent_exit_exception() { }
 };
 
 struct show_license_exception : public std::exception {
-	show_license_exception() throw() { }
+	show_license_exception() { }
 };
 
 struct show_credits_exception : public std::exception {
-	show_credits_exception() throw() { }
+	show_credits_exception() { }
 };
 
 struct show_man_version_exception : public std::exception {
-	show_man_version_exception() throw() { }
+	show_man_version_exception() { }
 };
 
 struct show_man_help_exception : public std::exception {
-	show_man_help_exception() throw() { }
+	show_man_help_exception() { }
 };
 
 struct show_short_version_number_exception : public std::exception {
-	show_short_version_number_exception() throw() { }
+	show_short_version_number_exception() { }
 };
 
 struct show_version_number_exception : public std::exception {
-	show_version_number_exception() throw() { }
+	show_version_number_exception() { }
 };
 
 struct show_long_version_number_exception : public std::exception {
-	show_long_version_number_exception() throw() { }
+	show_long_version_number_exception() { }
 };
 
 bool IsTerminal( int fd ) {

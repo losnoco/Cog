@@ -8,6 +8,8 @@
  */
 
 
+#pragma once
+
 #if MPT_COMPILER_MSVC
 #pragma warning(push)
 #pragma warning(disable:4091) // 'typedef ': ignored on left of '' when no variable is declared

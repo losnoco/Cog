@@ -26,7 +26,7 @@
 namespace openmpt123 {
 
 struct sdl_exception : public exception {
-	sdl_exception( int /*code*/ ) throw() : exception( "SDL error" ) { }
+	sdl_exception( int /*code*/ ) : exception( "SDL error" ) { }
 };
 
 class sdl_stream_raii : public write_buffers_blocking_wrapper {
