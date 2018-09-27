@@ -71,12 +71,13 @@ VGMSTREAM * init_vgmstream_spt_spd(STREAMFILE *streamFile) {
     }
 
     vgmstream->meta_type = meta_SPT_SPD;
-	
+    vgmstream->allow_dual_stereo = 1;
+
     /* open the file for reading */
     {
         for (i=0;i<channel_count;i++) {
 			/* Not sure, i'll put a fake value here for now */
-            vgmstream->ch[i].streamfile = streamFile->open(streamFile,filename,0x8000);
+            vgmstream->ch[i].streamfile = streamFile->open(streamFile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
             vgmstream->ch[i].offset = 0;
             if (!vgmstream->ch[i].streamfile) goto fail;
         }

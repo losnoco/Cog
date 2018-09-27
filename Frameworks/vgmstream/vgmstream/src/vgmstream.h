@@ -10,19 +10,10 @@ enum { STREAM_NAME_SIZE = 255 }; /* reasonable max */
 
 #include "streamfile.h"
 
-/* Due mostly to licensing issues, Vorbis, MPEG, G.722.1, etc decoding is
- * done by external libraries.
- * If someone wants to do a standalone build, they can do it by simply
- * removing these defines (and the references to the libraries in the Makefile) */
-#ifndef VGM_DISABLE_VORBIS
+/* Due mostly to licensing issues, Vorbis, MPEG, G.722.1, etc decoding is done by external libraries.
+ * Libs are disabled by default, defined on compile-time for builds that support it */
 #define VGM_USE_VORBIS
-#endif
-
-#ifndef VGM_DISABLE_MPEG
 #define VGM_USE_MPEG
-#endif
-
-/* disabled by default, defined on compile-time for builds that support it */
 #define VGM_USE_G7221
 #define VGM_USE_G719
 //#define VGM_USE_MP4V2
@@ -30,6 +21,8 @@ enum { STREAM_NAME_SIZE = 255 }; /* reasonable max */
 //#define VGM_USE_MAIATRAC3PLUS
 #define VGM_USE_FFMPEG
 #define VGM_USE_ATRAC9
+//#define VGM_USE_CELT
+
 
 #ifdef VGM_USE_VORBIS
 #ifdef __APPLE__
@@ -44,10 +37,6 @@ enum { STREAM_NAME_SIZE = 255 }; /* reasonable max */
 
 #ifdef VGM_USE_G7221
 #include <g7221/g7221.h>
-#endif
-
-#ifdef VGM_USE_G719
-#include <g719/g719.h>
 #endif
 
 #ifdef VGM_USE_MP4V2
@@ -73,11 +62,9 @@ enum { STREAM_NAME_SIZE = 255 }; /* reasonable max */
 
 #ifdef BUILD_VGMSTREAM
 #include "coding/g72x_state.h"
-#include "coding/acm_decoder.h"
 #include "coding/nwa_decoder.h"
 #else
 #include "g72x_state.h"
-#include "acm_decoder.h"
 #include "nwa_decoder.h"
 #endif
 
@@ -92,7 +79,7 @@ typedef enum {
     coding_PCM8_int,        /* 8-bit PCM with sample-level interleave (for blocks) */
     coding_PCM8_U,          /* 8-bit PCM, unsigned (0x80 = 0) */
     coding_PCM8_U_int,      /* 8-bit PCM, unsigned (0x80 = 0) with sample-level interleave (for blocks) */
-    coding_PCM8_SB_int,     /* 8-bit PCM, sign bit (others are 2's complement) with sample-level interleave (for blocks) */
+    coding_PCM8_SB,         /* 8-bit PCM, sign bit (others are 2's complement) */
 
     coding_ULAW,            /* 8-bit u-Law (non-linear PCM) */
     coding_ULAW_int,        /* 8-bit u-Law (non-linear PCM) with sample-level interleave (for blocks) */
@@ -131,6 +118,11 @@ typedef enum {
     coding_DVI_IMA,         /* DVI IMA ADPCM (stereo or mono, high nibble first) */
     coding_DVI_IMA_int,     /* DVI IMA ADPCM (mono/interleave, high nibble first) */
     coding_3DS_IMA,         /* 3DS IMA ADPCM */
+    coding_SNDS_IMA,        /* Heavy Iron Studios .snds IMA ADPCM */
+    coding_OTNS_IMA,        /* Omikron The Nomad Soul IMA ADPCM */
+    coding_WV6_IMA,         /* Gorilla Systems WV6 4-bit IMA ADPCM */
+    coding_ALP_IMA,         /* High Voltage ALP 4-bit IMA ADPCM */
+
     coding_MS_IMA,          /* Microsoft IMA ADPCM */
     coding_XBOX_IMA,        /* XBOX IMA ADPCM */
     coding_XBOX_IMA_mch,    /* XBOX IMA ADPCM (multichannel) */
@@ -140,15 +132,15 @@ typedef enum {
     coding_RAD_IMA,         /* Radical IMA ADPCM */
     coding_RAD_IMA_mono,    /* Radical IMA ADPCM (mono/interleave) */
     coding_APPLE_IMA4,      /* Apple Quicktime IMA4 */
-    coding_SNDS_IMA,        /* Heavy Iron Studios .snds IMA ADPCM */
-    coding_OTNS_IMA,        /* Omikron The Nomad Soul IMA ADPCM */
     coding_FSB_IMA,         /* FMOD's FSB multichannel IMA ADPCM */
     coding_WWISE_IMA,       /* Audiokinetic Wwise IMA ADPCM */
     coding_REF_IMA,         /* Reflections IMA ADPCM */
     coding_AWC_IMA,         /* Rockstar AWC IMA ADPCM */
     coding_UBI_IMA,         /* Ubisoft IMA ADPCM */
+    coding_H4M_IMA,         /* H4M IMA ADPCM (stereo or mono, high nibble first) */
 
-    coding_MSADPCM,         /* Microsoft ADPCM */
+    coding_MSADPCM,         /* Microsoft ADPCM (stereo/mono) */
+    coding_MSADPCM_ck,      /* Microsoft ADPCM (Cricket Audio variation) */
     coding_WS,              /* Westwood Studios VBR ADPCM */
     coding_AICA,            /* Yamaha AICA ADPCM (stereo) */
     coding_AICA_int,        /* Yamaha AICA ADPCM (mono/interleave) */
@@ -156,19 +148,21 @@ typedef enum {
     coding_YAMAHA_NXAP,     /* Yamaha ADPCM (NXAP variation) */
     coding_NDS_PROCYON,     /* Procyon Studio ADPCM */
     coding_L5_555,          /* Level-5 0x555 ADPCM */
-    coding_SASSC,           /* Activision EXAKT SASSC DPCM */
     coding_LSF,             /* lsf ADPCM (Fastlane Street Racing iPhone)*/
     coding_MTAF,            /* Konami MTAF ADPCM */
     coding_MTA2,            /* Konami MTA2 ADPCM */
     coding_MC3,             /* Paradigm MC3 3-bit ADPCM */
     coding_FADPCM,          /* FMOD FADPCM 4-bit ADPCM */
     coding_ASF,             /* Argonaut ASF 4-bit ADPCM */
+    coding_XMD,             /* Konami XMD 4-bit ADPCM */
 
     /* others */
     coding_SDX2,            /* SDX2 2:1 Squareroot-Delta-Exact compression DPCM */
     coding_SDX2_int,        /* SDX2 2:1 Squareroot-Delta-Exact compression with sample-level interleave */
     coding_CBD2,            /* CBD2 2:1 Cuberoot-Delta-Exact compression DPCM */
     coding_CBD2_int,        /* CBD2 2:1 Cuberoot-Delta-Exact compression, with sample-level interleave  */
+    coding_SASSC,           /* Activision EXAKT SASSC 8-bit DPCM */
+    coding_DERF,            /* DERF 8-bit DPCM */
     coding_ACM,             /* InterPlay ACM */
     coding_NWA,             /* VisualArt's NWA */
 
@@ -190,7 +184,6 @@ typedef enum {
 #endif
 
 #ifdef VGM_USE_G7221
-    coding_G7221,           /* ITU G.722.1 (Polycom Siren 7) */
     coding_G7221C,          /* ITU G.722.1 annex C (Polycom Siren 14) */
 #endif
 
@@ -208,6 +201,10 @@ typedef enum {
 
 #ifdef VGM_USE_ATRAC9
     coding_ATRAC9,          /* Sony ATRAC9 (MDCT-based) */
+#endif
+
+#ifdef VGM_USE_CELT
+    coding_CELT_FSB,        /* Custom Xiph CELT (MDCT-based) */
 #endif
 
 #ifdef VGM_USE_FFMPEG
@@ -261,6 +258,7 @@ typedef enum {
     layout_blocked_ea_wve_ad10, /* EA WVE Ad10 blocks */
     layout_blocked_sthd, /* Dream Factory STHD */
     layout_blocked_h4m, /* H4M video */
+    layout_blocked_xa_aiff, /* XA in AIFF files [Crusader: No Remorse (SAT), Road Rash (3DO)] */
 
     /* otherwise odd */
     layout_aix,             /* CRI AIX's wheels within wheels */
@@ -272,13 +270,14 @@ typedef enum {
 /* The meta type specifies how we know what we know about the file.
  * We may know because of a header we read, some of it may have been guessed from filenames, etc. */
 typedef enum {
-    /* DSP-specific */
+
     meta_DSP_STD,           /* Nintendo standard GC ADPCM (DSP) header */
-    meta_DSP_CSMP,          /* Retro: Metroid Prime 3, Donkey Kong Country Returns */
     meta_DSP_CSTR,          /* Star Fox Assault "Cstr" */
     meta_DSP_RS03,          /* Retro: Metroid Prime 2 "RS03" */
     meta_DSP_STM,           /* Paper Mario 2 STM */
-    meta_DSP_AGSC,          /* Retro: Metroid Prime 2 title */
+    meta_AGSC,              /* Retro: Metroid Prime 2 title */
+    meta_CSMP,              /* Retro: Metroid Prime 3 (Wii), Donkey Kong Country Returns (Wii) */
+    meta_RFRM,              /* Retro: Donkey Kong Country Tropical Freeze (Wii U) */
     meta_DSP_MPDSP,         /* Monopoly Party single header stereo */
     meta_DSP_JETTERS,       /* Bomberman Jetters .dsp */
     meta_DSP_MSS,           /* Free Radical GC games */
@@ -286,14 +285,13 @@ typedef enum {
     meta_DSP_STR,           /* Conan .str files */
     meta_DSP_SADB,          /* .sad */
     meta_DSP_WSI,           /* .wsi */
-    meta_DSP_WII_IDSP,      /* .gcm with IDSP header */
+    meta_IDSP_TT,           /* Traveller's Tales games */
     meta_DSP_WII_MUS,       /* .mus */
     meta_DSP_WII_WSD,       /* Phantom Brave (WII) */
     meta_WII_NDP,           /* Vertigo (Wii) */
     meta_DSP_YGO,           /* Konami: Yu-Gi-Oh! The Falsebound Kingdom (NGC), Hikaru no Go 3 (NGC) */
     meta_DSP_SADF,          /* Procyon Studio SADF - Xenoblade Chronicles 2 (Switch) */
 
-    /* Nintendo */
     meta_STRM,              /* Nintendo STRM */
     meta_RSTM,              /* Nintendo RSTM (Revolution Stream, similar to STRM) */
     meta_AFC,               /* AFC */
@@ -335,19 +333,17 @@ typedef enum {
     meta_PS2_RAW,           /* RAW Interleaved Format */
     meta_PS2_EXST,          /* Shadow of Colossus EXST */
     meta_PS2_SVAG,          /* Konami SVAG */
-    meta_PS2_MIB,           /* MIB File */
+    meta_PS_HEADERLESS,     /* headerless PS-ADPCM */
     meta_PS2_MIB_MIH,       /* MIB File + MIH Header*/
     meta_PS2_MIC,           /* KOEI MIC File */
     meta_PS2_VAGi,          /* VAGi Interleaved File */
     meta_PS2_VAGp,          /* VAGp Mono File */
-    meta_PS2_VAGm,          /* VAGp Mono File */
     meta_PS2_pGAV,          /* VAGp with Little Endian Header */
     meta_PSX_GMS,           /* GMS File (used in PS1 & PS2) [no header_id] */
-    meta_PS2_STR,           /* Pacman STR+STH files */
+    meta_STR_WAV,           /* Blitz Games STR+WAV files */
     meta_PS2_ILD,           /* ILD File */
     meta_PS2_PNB,           /* PsychoNauts Bgm File */
-    meta_PS2_VAGs,          /* VAG Stereo from Kingdom Hearts */
-    meta_PS2_VPK,           /* VPK Audio File */
+    meta_VPK,               /* VPK Audio File */
     meta_PS2_BMDX,          /* Beatmania thing */
     meta_PS2_IVB,           /* Langrisser 3 IVB */
     meta_PS2_SND,           /* some Might & Magics SSND header */
@@ -398,7 +394,9 @@ typedef enum {
     meta_KRAW,              /* Geometry Wars - Galaxies */
     meta_PS2_OMU,           /* PS2 Int file with Header */
     meta_PS2_XA2,           /* XG3 Extreme-G Racing */
-    meta_IDSP,              /* Chronicles of Narnia, Soul Calibur Legends, Mario Strikers Charged */
+    meta_NUB_IDSP,          /* Soul Calibur Legends (Wii) */
+    meta_IDSP_NL,           /* Mario Strikers Charged (Wii) */
+    meta_IDSP_IE,           /* Defencer (GC) */
     meta_SPT_SPD,           /* Various (SPT+SPT DSP) */
     meta_ISH_ISD,           /* Various (ISH+ISD DSP) */
     meta_GSP_GSB,           /* Tecmo games (Super Swing Golf 1 & 2, Quamtum Theory) */
@@ -507,7 +505,6 @@ typedef enum {
     meta_PS2_GBTS,          /* Pop'n'Music 9 Audio File */
     meta_NGC_DSP_IADP,      /* Gamecube Interleave DSP */
     meta_PS2_TK5,           /* Tekken 5 Stream Files */
-    meta_WII_STR,           /* House of The Dead Overkill STR+STH */
     meta_PS2_MCG,           /* Gunvari MCG Files (was name .GCM on disk) */
     meta_ZSD,               /* Dragon Booster ZSD */
     meta_RedSpark,          /* "RedSpark" RSD (MadWorld) */
@@ -547,7 +544,6 @@ typedef enum {
     meta_NGC_DSP_MPDS,      /* Big Air Freestyle, Terminator 3 */
     meta_DSP_STR_IG,        /* Micro Machines, Superman Superman: Shadow of Apokolis */
     meta_EA_SWVR,           /* Future Cop L.A.P.D., Freekstyle */
-    meta_NGC_DSP_STH_STR,   /* SpongeBob Squarepants (NGC), Taz Wanted (NGC), Cubix (NGC), Tak (WII)*/
     meta_PS2_B1S,           /* 7 Wonders of the ancient world */
     meta_PS2_WAD,           /* The golden Compass */
     meta_DSP_XIII,          /* XIII, possibly more (Ubisoft header???) */
@@ -587,7 +583,6 @@ typedef enum {
     meta_OTNS_ADP,          /* Omikron: The Nomad Soul .adp (PC/DC) */
     meta_EB_SFX,            /* Excitebots .sfx */
     meta_EB_SF0,            /* Excitebots .sf0 */
-    meta_PS3_KLBS,          /* L@VE ONCE (PS3) */
     meta_PS2_MTAF,          /* Metal Gear Solid 3 MTAF */
     meta_PS2_VAG1,          /* Metal Gear Solid 3 VAG1 */
     meta_PS2_VAG2,          /* Metal Gear Solid 3 VAG2 */
@@ -602,7 +597,7 @@ typedef enum {
     meta_OTM,               /* Otomedius (Arcade) */
     meta_CSTM,              /* Nintendo 3DS CSTM (Century Stream) */
     meta_FSTM,              /* Nintendo Wii U FSTM (caFe? Stream) */
-    meta_3DS_IDSP,          /* Nintendo 3DS/Wii U IDSP */
+    meta_IDSP_NUS3,         /* Namco 3DS/Wii U IDSP */
     meta_KT_WIIBGM,         /* Koei Tecmo WiiBGM */
     meta_KTSS,              /* Koei Tecmo Nintendo Stream (KNS) */
     meta_MCA,               /* Capcom MCA "MADP" */
@@ -610,6 +605,7 @@ typedef enum {
     meta_HCA,               /* CRI HCA */
     meta_PS2_SVAG_SNK,      /* SNK PS2 SVAG */
     meta_PS2_VDS_VDM,       /* Graffiti Kingdom */
+    meta_FFMPEG,            /* any file supported by FFmpeg */
     meta_X360_CXS,          /* Eternal Sonata (Xbox 360) */
     meta_AKB,               /* SQEX iOS */
     meta_NUB_XMA,           /* Namco XMA from NUB archives */
@@ -689,10 +685,35 @@ typedef enum {
     meta_H4M,               /* Hudson HVQM4 video [Resident Evil 0 (GC), Tales of Symphonia (GC)] */
     meta_OGG_MUS,           /* Ogg Vorbis with encryption [Redux - Dark Matters (PC)] */
     meta_ASF,               /* Argonaut ASF [Croc 2 (PC)] */
+    meta_XMD,               /* Konami XMD [Silent Hill 4 (Xbox), Castlevania: Curse of Darkness (Xbox)] */
+    meta_CKS,               /* Cricket Audio stream [Part Time UFO (Android), Mega Man 1-6 (Android)] */
+    meta_CKB,               /* Cricket Audio bank [Fire Emblem Heroes (Android), Mega Man 1-6 (Android)] */
+    meta_WV6,               /* Gorilla Systems PC games */
+    meta_WAVEBATCH,         /* Firebrand Games */
+    meta_HD3_BD3,           /* Sony PS3 bank */
+    meta_BNK_SONY,          /* Sony Scream Tool bank */
+    meta_SCD_SSCF,          /* Square Enix SCD old version */
+    meta_DSP_VAG,           /* Penny-Punching Princess (Switch) sfx */
+    meta_DSP_ITL,           /* Charinko Hero (GC) */
+    meta_A2M,               /* Scooby-Doo! Unmasked (PS2) */
+    meta_AHV,               /* Headhunter (PS2) */
+    meta_MSV,               /* Fight Club (PS2) */
+    meta_SDF_PS2,           /* Agent Hugo - Lemoon Twist (PS2) */
+    meta_SVG,               /* Hunter - The Reckoning - Wayward (PS2) */
+    meta_VIS,               /* AirForce Delta Strike (PS2) */
+    meta_VAI,               /* Ratatouille (GC) */
+    meta_SDF_3DS,           /* Gummy Bears Mini Golf (3DS) */
+    meta_AIF_ASOBO,         /* Ratatouille (PC) */
+    meta_AO,                /* Cloudphobia (PC) */
+    meta_APC,               /* MegaRace 3 (PC) */
+    meta_WV2,               /* Slave Zero (PC) */
+    meta_XAU_KONAMI,        /* Yu-Gi-Oh - The Dawn of Destiny (Xbox) */
+    meta_DERF,              /* Stupid Invaders (PC) */
+    meta_UTK,
+    meta_NXA,
+    meta_ADPCM_CAPCOM,
+    meta_UE4OPUS,
 
-#ifdef VGM_USE_FFMPEG
-    meta_FFmpeg,
-#endif
 } meta_t;
 
 
@@ -747,28 +768,42 @@ typedef struct {
 /* main vgmstream info */
 typedef struct {
     /* basics */
-    int32_t num_samples;    /* the actual number of samples in this stream */
-    int32_t sample_rate;    /* sample rate in Hz */
-    int channels;           /* number of channels */
-    coding_t coding_type;   /* type of encoding */
-    layout_t layout_type;   /* type of layout for data */
-    meta_t meta_type;       /* how we know the metadata */
-
-    /* subsongs */
-    int num_streams;        /* for multi-stream formats (0=not set/one stream, 1=one stream) */
-    int stream_index;       /* selected stream (also 1-based) */
-    char stream_name[STREAM_NAME_SIZE]; /* name of the current stream (info), if the file stores it and it's filled */
-    size_t stream_size;     /* info to properly calculate bitrate */
-    uint32_t channel_mask;  /* to silence crossfading subsongs/layers */
+    int32_t num_samples;            /* the actual max number of samples */
+    int32_t sample_rate;            /* sample rate in Hz */
+    int channels;                   /* number of channels */
+    coding_t coding_type;           /* type of encoding */
+    layout_t layout_type;           /* type of layout */
+    meta_t meta_type;               /* type of metadata */
 
     /* looping */
-    int loop_flag;              /* is this stream looped? */
-    int32_t loop_start_sample;  /* first sample of the loop (included in the loop) */
-    int32_t loop_end_sample;    /* last sample of the loop (not included in the loop) */
+    int loop_flag;                  /* is this stream looped? */
+    int32_t loop_start_sample;      /* first sample of the loop (included in the loop) */
+    int32_t loop_end_sample;        /* last sample of the loop (not included in the loop) */
 
     /* layouts/block */
-    size_t interleave_block_size;       /* interleave, or block/frame size (depending on the codec) */
-    size_t interleave_last_block_size;  /* smaller interleave for last block */
+    size_t interleave_block_size;   /* interleave, or block/frame size (depending on the codec) */
+    size_t interleave_last_block_size; /* smaller interleave for last block */
+
+    /* subsongs */
+    int num_streams;                /* for multi-stream formats (0=not set/one stream, 1=one stream) */
+    int stream_index;               /* selected subsong (also 1-based) */
+    size_t stream_size;             /* info to properly calculate bitrate in case of subsongs */
+    char stream_name[STREAM_NAME_SIZE]; /* name of the current stream (info), if the file stores it and it's filled */
+
+    /* config */
+    int allow_dual_stereo;          /* search for dual stereo (file_L.ext + file_R.ext = single stereo file) */
+    uint32_t channel_mask;          /* to silence crossfading subsongs/layers */
+    int channel_mappings_on;        /* channel mappings are active */
+    int channel_mappings[32];       /* swap channel "i" with "[i]" */
+    /* config requests, players must read and honor these values */
+    /* (ideally internally would work as a player, but for now player must do it manually) */
+    double config_loop_count;
+    double config_fade_time;
+    double config_fade_delay;
+    int config_ignore_loop;
+    int config_force_loop;
+    int config_ignore_fade;
+
 
     /* channel state */
     VGMSTREAMCHANNEL * ch;          /* pointer to array of channels */
@@ -777,8 +812,8 @@ typedef struct {
 
     /* layout/block state */
     size_t full_block_size;         /* actual data size of an entire block (ie. may be fixed, include padding/headers, etc) */
-    int32_t current_sample;         /* number of samples we've passed */
-    int32_t samples_into_block;     /* number of samples into the current block */
+    int32_t current_sample;         /* number of samples we've passed (for loop detection) */
+    int32_t samples_into_block;     /* number of samples into the current block/interleave/segment/etc */
     off_t current_block_offset;     /* start of this block (offset of block header) */
     size_t current_block_size;      /* size in usable bytes of the block we're in now (used to calculate num_samples per block) */
     size_t current_block_samples;   /* size in samples of the block we're in now (used over current_block_size if possible) */
@@ -793,22 +828,16 @@ typedef struct {
 
     /* loop state */
     int hit_loop;                   /* have we seen the loop yet? */
-    /* counters for "loop + play end of the stream instead of fading" (not used/needed otherwise) */
-    int loop_count;                 /* number of complete loops (1=looped once) */
-    int loop_target;                /* max loops before continuing with the stream end */
+    int loop_count;                 /* counter of complete loops (1=looped once) */
+    int loop_target;                /* max loops before continuing with the stream end (loops forever if not set) */
 
     /* decoder specific */
     int codec_endian;               /* little/big endian marker; name is left vague but usually means big endian */
-    int codec_version;              /* flag for codecs with minor variations */
-
-    uint8_t xa_channel;             /* XA ADPCM: selected channel */
-    int32_t xa_sector_length;       /* XA ADPCM: XA block */
-    uint8_t xa_headerless;          /* XA ADPCM: headerless XA */
-    int8_t xa_get_high_nibble;      /* XA ADPCM: mono/stereo nibble selection (XA state could be simplified) */
+    int codec_config;               /* flags for codecs or layouts with minor variations; meaning is up to the codec */
 
     int32_t ws_output_size;         /* WS ADPCM: output bytes for this block */
 
-    void * start_vgmstream;         /* a copy of the VGMSTREAM as it was at the beginning of the stream (for AAX/AIX/SCD) */
+    void * start_vgmstream;         /* a copy of the VGMSTREAM as it was at the beginning of the stream (for custom layouts) */
 
     /* Data the codec needs for the whole stream. This is for codecs too
      * different from vgmstream's structure to be reasonably shoehorned into
@@ -816,9 +845,7 @@ typedef struct {
      * Note also that support must be added for resetting, looping and
      * closing for every codec that uses this, as it will not be handled. */
     void * codec_data;
-    /* Same, for special layouts.
-     * Reusing the above pointer causes bugs when it's using special layout + codec
-     * (vgmstream may try to free/loop/etc codec_data). */
+    /* Same, for special layouts. layout_data + codec_data may exist at the same time. */
     void * layout_data;
 } VGMSTREAM;
 
@@ -853,7 +880,6 @@ typedef enum {
     VORBIS_OGL,         /* Shin'en OGL: custom packet headers */
     VORBIS_SK,          /* Silicon Knights AUD: "OggS" replaced by "SK" */
     VORBIS_VID1,        /* Neversoft VID1: custom packet blocks/headers */
-  //VORBIS_LYN          /* Ubisoft LyN: two interleaved Ogg (including setup, duplicated) */
 } vorbis_custom_t;
 
 /* config for Wwise Vorbis (3 types for flexibility though not all combinations exist) */
@@ -1011,7 +1037,8 @@ typedef struct {
 #ifdef VGM_USE_G719
 typedef struct {
    sample buffer[960];
-   g719_handle *handle;
+   void *handle;
+   int16_t *code_buffer;
 } g719_codec_data;
 #endif
 
@@ -1025,46 +1052,25 @@ typedef struct {
 #endif
 
 #ifdef VGM_USE_ATRAC9
-
-/* custom ATRAC9 modes */
-typedef enum {
-    ATRAC9_DEFAULT = 0, /* ATRAC9 standard */
-    ATRAC9_XVAG,        /* Sony XVAG: interleaved subsongs, Vita multichannel interleaves 2ch xN superframes */
-    ATRAC9_KMA9,        /* Koei Tecmo KMA9: interleaved subsongs */
-  //ATRAC9_FSB,         /* FMOD FSB: Vita multichannel interleaves 2ch xN superframes */
-  //ATRAC9_EATRAX,      /* EA EATrax: buffered ATRAC9 in SPS blocks (superframes can be split between blocks) */
-} atrac9_custom_t;
-
+/* ATRAC9 config */
 typedef struct {
-    atrac9_custom_t type;
-
-    int channels; /* to detect weird multichannel */
-    uint32_t config_data; /* ATRAC9 config header */
-    int encoder_delay; /* initial samples to discard */
-
-    size_t interleave_skip; /* XVAG */
-    size_t subsong_skip; /* XVAG */
+    int channels;           /* to detect weird multichannel */
+    uint32_t config_data;   /* ATRAC9 config header */
+    int encoder_delay;      /* initial samples to discard */
 } atrac9_config;
+typedef struct atrac9_codec_data atrac9_codec_data;
+#endif
 
-typedef struct {
-    uint8_t *data_buffer;
-    size_t data_buffer_size;
-
-    sample *sample_buffer;
-    size_t samples_filled; /* number of samples in the buffer */
-    size_t samples_used; /* number of samples extracted from the buffer */
-
-    int samples_to_discard;
-
-    atrac9_config config;
-
-    void *handle; /* decoder handle */
-} atrac9_codec_data;
+#ifdef VGM_USE_CELT
+typedef enum { CELT_0_06_1,CELT_0_11_0} celt_lib_t;
+typedef struct celt_codec_data celt_codec_data;
 #endif
 
 /* libacm interface */
 typedef struct {
-    ACMStream *file;
+    STREAMFILE *streamfile;
+    void *handle;
+    void *io_config;
 } acm_codec_data;
 
 #define AIX_BUFFER_SIZE 0x1000
@@ -1086,7 +1092,6 @@ typedef struct {
     int segment_count;
     VGMSTREAM **segments;
     int current_segment;
-    int loop_segment;
 } segmented_layout_data;
 
 /* for files made of "horizontal" layers, one per group of channels (using a complete sub-VGMSTREAM) */
@@ -1103,56 +1108,33 @@ typedef struct {
 
 typedef struct {
     STREAMFILE *streamfile;
-    uint64_t start;
-    //uint64_t size;
     clHCA_stInfo info;
-    unsigned int curblock;
-    unsigned int sample_ptr;
-    unsigned int samples_discard;
-    signed short sample_buffer[clHCA_samplesPerBlock * 16];
-    //clHCA * hca exists here (pre-alloc'ed)
+
+    signed short *sample_buffer;
+    size_t samples_filled;
+    size_t samples_consumed;
+    size_t samples_to_discard;
+
+    void* data_buffer;
+
+    unsigned int current_block;
+
+    void* handle;
 } hca_codec_data;
 
 #ifdef VGM_USE_FFMPEG
-/* Custom FFMPEG modes */
-typedef enum {
-    FFMPEG_STANDARD,        /* default FFmpeg */
-    FFMPEG_SWITCH_OPUS,     /* Opus without Ogg layer */
-    FFMPEG_EA_XMA,          /* XMA with padding removed and custom streams in SNS blocks */
-  //FFMPEG_EA_SCHL,         /* Normal header+data (ex. ATRAC3) in SCxx blocks */
-  //FFMPEG_SFH,             /* ATRAC3plus header+data in SFH blocks */
-  //FFMPEG_AWC_XMA,         /* XMA data in AWC blocks, 1 streams per channel */
-} ffmpeg_custom_t;
-
-/* config for the above modes */
-typedef struct {
-    int stream_index; /* FFmpeg's sub-stream (as opposed to an internal stream in custom read/seeks) */
-    int codec_endian;
-    int channels;
-
-    ffmpeg_custom_t type; /* ffmpeg subtype */
-    size_t virtual_size; /* external value, if meta needs to know/supply it */
-
-    /* internal sequences, when needed */
-    int sequence;
-    int samples_done;
-} ffmpeg_custom_config;
-
 typedef struct {
     /*** IO internals ***/
     STREAMFILE *streamfile;
 
-    uint64_t real_start;        // absolute start within the streamfile
-    uint64_t real_offset;       // absolute offset within the streamfile
-    uint64_t real_size;         // max size within the streamfile
-    uint64_t virtual_offset;    // computed offset FFmpeg sees (including fake header)
-    uint64_t virtual_size;      // computed size FFmpeg sees (including fake header)
-    uint64_t virtual_base;      // info/base virtual_offset equivalent to current real_offset, block aligned (*not* including fake header)
+    uint64_t start;             // absolute start within the streamfile
+    uint64_t offset;            // absolute offset within the streamfile
+    uint64_t size;              // max size within the streamfile
+    uint64_t logical_offset;    // computed offset FFmpeg sees (including fake header)
+    uint64_t logical_size;      // computed size FFmpeg sees (including fake header)
     
     uint64_t header_size;       // fake header (parseable by FFmpeg) prepended on reads
     uint8_t *header_insert_block; // fake header data (ie. RIFF)
-
-    ffmpeg_custom_config config; /* custom config/state */
 
     /*** "public" API (read-only) ***/
     // stream info
@@ -1220,11 +1202,7 @@ typedef struct {
 #endif
 #endif
 
-typedef struct {
-    int pcm_blocks;
-    int utk_context_size;
-    void** utk_context;
-} ea_mt_codec_data;
+typedef struct ea_mt_codec_data ea_mt_codec_data;
 
 
 #if 0
@@ -1246,15 +1224,15 @@ typedef struct {
 
 //info for opaque VGMSTREAM
 typedef struct {
-    int channels;
-    int sample_rate;
-    int num_samples;
-    int loop_start_sample;
-    int loop_end_sample;
-    int loop_flag;
-    int num_streams;
-    int current_sample;
-    int average_bitrate;
+    const int channels;
+    const int sample_rate;
+    const int num_samples;
+    const int loop_start_sample;
+    const int loop_end_sample;
+    const int loop_flag;
+    const int num_streams;
+    const int current_sample;
+    const int average_bitrate;
 } VGMSTREAM_INFO;
 void vgmstream_get_info(VGMSTREAM* vgmstream, VGMSTREAM_INFO *vgmstream_info);
 
@@ -1295,12 +1273,16 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length);
 /* Return the average bitrate in bps of all unique files contained within this stream. */
 int get_vgmstream_average_bitrate(VGMSTREAM * vgmstream);
 
-/* List supported formats and return elements in the list, for plugins that need to know. */
+/* List supported formats and return elements in the list, for plugins that need to know.
+ * The list disables some common formats that may conflict (.wav, .ogg, etc). */
 const char ** vgmstream_get_formats(size_t * size);
 
 /* Force enable/disable internal looping. Should be done before playing anything,
  * and not all codecs support arbitrary loop values ATM. */
 void vgmstream_force_loop(VGMSTREAM* vgmstream, int loop_flag, int loop_start_sample, int loop_end_sample);
+
+/* Set number of max loops to do, then play up to stream end (for songs with proper endings) */
+void vgmstream_set_loop_target(VGMSTREAM* vgmstream, int loop_target);
 
 /* -------------------------------------------------------------------------*/
 /* vgmstream "private" API                                                  */

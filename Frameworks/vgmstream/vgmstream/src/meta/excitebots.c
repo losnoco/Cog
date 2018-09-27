@@ -82,6 +82,7 @@ VGMSTREAM * init_vgmstream_eb_sfx(STREAMFILE *streamFile) {
 
     vgmstream->layout_type = layout_none;
     vgmstream->meta_type = meta_EB_SFX;
+    vgmstream->allow_dual_stereo = 1;
 
     /* open the file for reading */
     {
@@ -148,7 +149,7 @@ VGMSTREAM * init_vgmstream_eb_sf0(STREAMFILE *streamFile) {
     {
         int i;
         for (i=0;i<channel_count;i++) {
-            vgmstream->ch[i].streamfile = streamFile->open(streamFile,filename,vgmstream->interleave_block_size);
+            vgmstream->ch[i].streamfile = streamFile->open(streamFile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
 
             if (!vgmstream->ch[i].streamfile) goto fail;
 

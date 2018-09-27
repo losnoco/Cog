@@ -16,16 +16,29 @@
 #include "streamtypes.h"
 #include "util.h"
 
+
+/* MSVC fixes (though mingw uses MSVCRT but not MSC_VER, maybe use AND?) */
 #if defined(__MSVCRT__) || defined(_MSC_VER)
-#include <io.h>
-#define fseeko fseek
-#define ftello ftell
-#define dup _dup
-#ifdef fileno
-#undef fileno
-#endif
-#define fileno _fileno
-#define fdopen _fdopen
+  #include <io.h>
+
+  #ifndef fseeko
+    #define fseeko fseek
+  #endif
+  #ifndef ftello
+    #define ftello ftell
+  #endif
+
+  #define dup _dup
+
+  #ifdef fileno
+  #undef fileno
+  #endif
+  #define fileno _fileno
+  #define fdopen _fdopen
+
+//  #ifndef off64_t
+//    #define off_t __int64
+//  #endif
 #endif
 
 #if defined(XBMC)
@@ -97,6 +110,10 @@ STREAMFILE *open_fakename_streamfile(STREAMFILE *streamfile, const char * fakena
  * Can be used when data is segmented in multiple separate files.
  * The first streamfile is used to get names, stream index and so on. */
 STREAMFILE *open_multifile_streamfile(STREAMFILE **streamfiles, size_t streamfiles_size);
+
+/* Opens a STREAMFILE from a (path)+filename.
+ * Just a wrapper, to avoid having to access the STREAMFILE's callbacks directly. */
+STREAMFILE * open_streamfile(STREAMFILE *streamFile, const char * pathname);
 
 /* Opens a STREAMFILE from a base pathname + new extension
  * Can be used to get companion headers. */
@@ -197,6 +214,9 @@ int find_chunk(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, in
 
 void get_streamfile_name(STREAMFILE *streamFile, char * buffer, size_t size);
 void get_streamfile_filename(STREAMFILE *streamFile, char * buffer, size_t size);
+void get_streamfile_basename(STREAMFILE *streamFile, char * buffer, size_t size);
 void get_streamfile_path(STREAMFILE *streamFile, char * buffer, size_t size);
 void get_streamfile_ext(STREAMFILE *streamFile, char * filename, size_t size);
+
+void dump_streamfile(STREAMFILE *streamFile, const char* out);
 #endif

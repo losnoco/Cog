@@ -2,13 +2,6 @@
 #define _ADX_KEYS_H_
 
 
-/* Tests each start/mult/add vs derived key8/9 (if provided), as most where brute forced.
- * Ie. uncommenting this and adding a new key8/key9 + compiling with VGM_DEBUG_OUTPUT
- * will print its derived key (useful as games often use the same key for hca and adx type 9).
- * Mainly for debugging purposes (info from VGAudio / ADX_Decoder). */
-//#define ADX_VERIFY_DERIVED_KEYS 1
-
-
 typedef struct {
     uint16_t start,mult,add;    /* XOR values derived from the actual key */
     char* key8;                 /* keystring used by type 8 encryption */
@@ -19,6 +12,7 @@ typedef struct {
  * List of known keys, cracked from the sound files.
  * Keystrings (type 8) and keycodes (type 9) from VGAudio / game's executables / 2ch.net.
  * Multiple keys may work for a game due to how they are derived.
+ * start/mult/add are optional (0,0,0) if key8/9 are provided, but take priority if given.
  */
 static const adxkey_info adxkey8_list[] = {
 
@@ -179,6 +173,18 @@ static const adxkey_info adxkey8_list[] = {
         /* Shounen Onmyouji: Tsubasa yo Ima, Sora e Kaere [PS2] */
         {0x55d9,0x46d3,0x5b01, "SONMYOJI",0},
 
+        /* Girls Bravo: Romance 15's [PS2] */
+        {0x658f,0x4a89,0x5213, "GBRAVO",0},
+
+        /* Kashimashi! Girl Meets Girl - Hajimete no Natsu Monogatari (PS2) */
+        {0x6109,0x5135,0x673f, "KASHIM",0},
+
+        /* Bakumatsu Renka - Karyuu Kenshiden (PS2) */
+        {0x4919,0x612d,0x4919, "RENRENKA22",0},
+
+        /* Tensei Hakkenshi - Fuumaroku (PS2) */
+        {0x5761,0x6283,0x4531, "HAKKEN",0},
+
 };
 
 static const adxkey_info adxkey9_list[] = {
@@ -216,9 +222,7 @@ static const int adxkey8_list_count = sizeof(adxkey8_list) / sizeof(adxkey8_list
 static const int adxkey9_list_count = sizeof(adxkey9_list) / sizeof(adxkey9_list[0]);
 
 
-#ifdef ADX_VERIFY_DERIVED_KEYS
-
-/* used to derive keystrings, see VGAudio for how to calculate */
+/* preloaded list used to derive keystrings from ADX_Decoder (see VGAudio for how to calculate) */
 static const uint16_t key8_primes[0x400] = {
     0x401B,0x4021,0x4025,0x402B,0x4031,0x403F,0x4043,0x4045,0x405D,0x4061,0x4067,0x406D,0x4087,0x4091,0x40A3,0x40A9,
     0x40B1,0x40B7,0x40BD,0x40DB,0x40DF,0x40EB,0x40F7,0x40F9,0x4109,0x410B,0x4111,0x4115,0x4121,0x4133,0x4135,0x413B,
@@ -286,7 +290,7 @@ static const uint16_t key8_primes[0x400] = {
     0x6779,0x6781,0x6785,0x6791,0x67AB,0x67BD,0x67C1,0x67CD,0x67DF,0x67E5,0x6803,0x6809,0x6811,0x6817,0x682D,0x6839,
 };
 
-static void process_cri_key8(const char * key8, uint16_t * out_start, uint16_t * out_mult, uint16_t * out_add) {
+static void derive_adx_key8(const char * key8, uint16_t * out_start, uint16_t * out_mult, uint16_t * out_add) {
     size_t key_size;
     uint16_t start = 0, mult = 0, add = 0;
     int i;
@@ -312,7 +316,7 @@ end:
 }
 
 
-static void process_cri_key9(uint64_t key9, uint16_t * out_start, uint16_t * out_mult, uint16_t * out_add) {
+static void derive_adx_key9(uint64_t key9, uint16_t * out_start, uint16_t * out_mult, uint16_t * out_add) {
     uint16_t start = 0, mult = 0, add = 0;
 
     /* 0 is ignored by CRI's encoder, only from 1..18446744073709551615 */
@@ -335,7 +339,5 @@ end:
     *out_mult  = mult;
     *out_add   = add;
 }
-
-#endif
 
 #endif/*_ADX_KEYS_H_*/
