@@ -198,6 +198,14 @@
 	{
 		[playbackController play:self];
 	}
+    else if (modifiers == 0 && c == NSLeftArrowFunctionKey)
+    {
+        [playbackController eventSeekBackward:self];
+    }
+    else if (modifiers == 0 && c == NSRightArrowFunctionKey)
+    {
+        [playbackController eventSeekForward:self];
+    }
 	// Escape
 	else if (modifiers == 0 && c == 0x1b) 
 	{ 

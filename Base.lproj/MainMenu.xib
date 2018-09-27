@@ -298,11 +298,11 @@
                                     </subviews>
                                     <nil key="backgroundColor"/>
                                 </clipView>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="1516">
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="1516">
                                     <rect key="frame" x="-100" y="-100" width="683" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="1515">
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="1515">
                                     <rect key="frame" x="85" y="17" width="15" height="68"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
@@ -773,6 +773,7 @@
                         <string key="NSNullPlaceholder">Cog</string>
                     </dictionary>
                 </binding>
+                <outlet property="playbackController" destination="705" id="vo7-mK-yQe"/>
             </connections>
         </window>
         <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
