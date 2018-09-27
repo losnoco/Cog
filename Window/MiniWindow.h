@@ -7,9 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "PlaybackController.h"
 
 @interface MiniWindow : NSWindow {
-
+    IBOutlet PlaybackController *playbackController;
 }
 
 @end
