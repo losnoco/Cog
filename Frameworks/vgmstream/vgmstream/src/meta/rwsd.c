@@ -280,10 +280,13 @@ VGMSTREAM * init_vgmstream_rwsd(STREAMFILE *streamFile) {
         vgmstream->meta_type = meta_RWAR;
     else if (rwav)
     {
-        if (big_endian)
+        if (big_endian) {
             vgmstream->meta_type = meta_RWAV;
-        else
+        }
+        else {
             vgmstream->meta_type = meta_CWAV;
+            vgmstream->allow_dual_stereo = 1; /* LEGO 3DS games */
+        }
     }
     else
         vgmstream->meta_type = meta_RWSD;
@@ -365,8 +368,7 @@ VGMSTREAM * init_vgmstream_rwsd(STREAMFILE *streamFile) {
     {
         int i;
         for (i=0;i<channel_count;i++) {
-            vgmstream->ch[i].streamfile = streamFile->open(streamFile,filename,
-                    0x1000);
+            vgmstream->ch[i].streamfile = streamFile->open(streamFile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
 
             if (!vgmstream->ch[i].streamfile) goto fail;
 

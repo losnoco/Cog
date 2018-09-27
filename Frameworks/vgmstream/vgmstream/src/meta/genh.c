@@ -197,14 +197,16 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
             vgmstream->layout_type = layout_none;
             break;
         case coding_XBOX_IMA:
-            if (genh.codec_mode == 1) {
-                if (!genh.interleave) goto fail; /* creates garbage */
+            if (genh.codec_mode == 1) { /* mono interleave */
                 coding = coding_XBOX_IMA_int;
                 vgmstream->layout_type = layout_interleave;
                 vgmstream->interleave_block_size = genh.interleave;
             }
-            else {
-                vgmstream->layout_type = layout_none;
+            else { /* 1ch mono, or stereo interleave */
+                vgmstream->layout_type = genh.interleave ? layout_interleave : layout_none;
+                vgmstream->interleave_block_size = genh.interleave;
+                if (vgmstream->channels > 2 && vgmstream->channels % 2 != 0)
+                    goto fail; /* only 2ch+..+2ch layout is known */
             }
             break;
         case coding_NGC_DTK:
@@ -325,6 +327,7 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
 
     vgmstream->coding_type = coding;
     vgmstream->meta_type = meta_GENH;
+    vgmstream->allow_dual_stereo = 1;
 
 
     if ( !vgmstream_open_stream(vgmstream,streamFile,genh.start_offset) )

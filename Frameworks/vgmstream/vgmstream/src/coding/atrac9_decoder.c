@@ -4,13 +4,31 @@
 #include <libatrac9/libatrac9.h>
 
 
+/* opaque struct */
+struct atrac9_codec_data {
+    uint8_t *data_buffer;
+    size_t data_buffer_size;
+
+    sample *sample_buffer;
+    size_t samples_filled; /* number of samples in the buffer */
+    size_t samples_used; /* number of samples extracted from the buffer */
+
+    int samples_to_discard;
+
+    atrac9_config config;
+
+    void *handle; /* decoder handle */
+    Atrac9CodecInfo info; /* decoder info */
+};
+
+
 atrac9_codec_data *init_atrac9(atrac9_config *cfg) {
     int status;
     uint8_t config_data[4];
-    Atrac9CodecInfo info = {0};
     atrac9_codec_data *data = NULL;
 
     data = calloc(1, sizeof(atrac9_codec_data));
+    if (!data) goto fail;
 
     data->handle = Atrac9GetHandle();
     if (!data->handle) goto fail;
@@ -19,20 +37,20 @@ atrac9_codec_data *init_atrac9(atrac9_config *cfg) {
     status = Atrac9InitDecoder(data->handle, config_data);
     if (status < 0) goto fail;
 
-    status = Atrac9GetCodecInfo(data->handle, &info);
+    status = Atrac9GetCodecInfo(data->handle, &data->info);
     if (status < 0) goto fail;
     //;VGM_LOG("ATRAC9: config=%x, sf-size=%x, sub-frames=%i x %i samples\n", cfg->config_data, info.superframeSize, info.framesInSuperframe, info.frameSamples);
 
-    if (cfg->channels && cfg->channels != info.channels) {
-        VGM_LOG("ATRAC9: channels in header %i vs config %i don't match\n", cfg->channels, info.channels);
+    if (cfg->channels && cfg->channels != data->info.channels) {
+        VGM_LOG("ATRAC9: channels in header %i vs config %i don't match\n", cfg->channels, data->info.channels);
         goto fail; /* unknown multichannel layout */
     }
 
 
     /* must hold at least one superframe and its samples */
-    data->data_buffer_size = info.superframeSize;
+    data->data_buffer_size = data->info.superframeSize;
     data->data_buffer = calloc(sizeof(uint8_t), data->data_buffer_size);
-    data->sample_buffer = calloc(sizeof(sample), info.channels * info.frameSamples * info.framesInSuperframe);
+    data->sample_buffer = calloc(sizeof(sample), data->info.channels * data->info.frameSamples * data->info.framesInSuperframe);
 
     data->samples_to_discard = cfg->encoder_delay;
 
@@ -41,6 +59,7 @@ atrac9_codec_data *init_atrac9(atrac9_config *cfg) {
     return data;
 
 fail:
+    free_atrac9(data);
     return NULL;
 }
 
@@ -82,62 +101,25 @@ void decode_atrac9(VGMSTREAM *vgmstream, sample * outbuf, int32_t samples_to_do,
             int bytes_used = 0;
             uint8_t *buffer = data->data_buffer;
             size_t bytes;
-            Atrac9CodecInfo info = {0};
 
             data->samples_used = 0;
 
             /* ATRAC9 is made of decodable superframes with several sub-frames. AT9 config data gives
              * superframe size, number of frames and samples (~100-200 bytes and ~256/1024 samples). */
-            status = Atrac9GetCodecInfo(data->handle, &info);
-            if (status < 0) goto decode_fail;
-
-
-            /* preadjust */ //todo improve
-            switch(data->config.type) {
-                case ATRAC9_XVAG:
-                    /* PS4 (ex. The Last of Us) has a RIFF AT9 (can be ignored) instead of the first superframe.
-                     * As subsongs do too, needs to be skipped here instead of adjusting start_offset */
-                    if (stream->offset == stream->channel_start_offset) {
-                        if (read_32bitBE(stream->offset, stream->streamfile) == 0x00000000  /* padding before RIFF */
-                                && read_32bitBE(stream->offset + info.superframeSize - 0x08,stream->streamfile) == 0x64617461) { /* RIFF's "data" */
-                            stream->offset += info.superframeSize;
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
 
             /* read one raw block (superframe) and advance offsets */
-            bytes = read_streamfile(data->data_buffer,stream->offset, info.superframeSize,stream->streamfile);
-            if (bytes != data->data_buffer_size) {
-                VGM_LOG("ATRAC9: read %x vs expected %x bytes  at %lx\n", bytes, info.superframeSize, stream->offset);
-                goto decode_fail;
-            }
+            bytes = read_streamfile(data->data_buffer,stream->offset, data->info.superframeSize,stream->streamfile);
+            if (bytes != data->data_buffer_size) goto decode_fail;
 
             stream->offset += bytes;
 
-            /* postadjust */ //todo improve
-            switch(data->config.type) {
-                case ATRAC9_XVAG:
-                case ATRAC9_KMA9:
-                    /* skip other subsong blocks */
-                    if (data->config.interleave_skip && ((stream->offset - stream->channel_start_offset) % data->config.interleave_skip == 0)) {
-                        stream->offset += data->config.interleave_skip * (data->config.subsong_skip - 1);
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-
             /* decode all frames in the superframe block */
-            for (iframe = 0; iframe < info.framesInSuperframe; iframe++) {
+            for (iframe = 0; iframe < data->info.framesInSuperframe; iframe++) {
                 status = Atrac9Decode(data->handle, buffer, data->sample_buffer + data->samples_filled*channels, &bytes_used);
                 if (status < 0) goto decode_fail;
 
                 buffer += bytes_used;
-                data->samples_filled += info.frameSamples;
+                data->samples_filled += data->info.frameSamples;
             }
         }
     }
@@ -146,7 +128,7 @@ void decode_atrac9(VGMSTREAM *vgmstream, sample * outbuf, int32_t samples_to_do,
 
 decode_fail:
     /* on error just put some 0 samples */
-    VGM_LOG("ATRAC9: decode fail at %lx, missing %i samples\n", stream->offset, (samples_to_do - samples_done));
+    VGM_LOG("ATRAC9: decode fail at %"PRIx64", missing %i samples\n", (off64_t)stream->offset, (samples_to_do - samples_done));
     memset(outbuf + samples_done * channels, 0, (samples_to_do - samples_done) * sizeof(sample) * channels);
 }
 
@@ -175,7 +157,7 @@ void reset_atrac9(VGMSTREAM *vgmstream) {
 
     data->samples_used = 0;
     data->samples_filled = 0;
-    data->samples_to_discard = 0;
+    data->samples_to_discard = data->config.encoder_delay;
 
     return;
 
@@ -189,12 +171,43 @@ void seek_atrac9(VGMSTREAM *vgmstream, int32_t num_sample) {
 
     reset_atrac9(vgmstream);
 
-    data->samples_to_discard = num_sample;
-    data->samples_to_discard += data->config.encoder_delay;
+    /* find closest offset to desired sample, and samples to discard after that offset to reach loop */
+    {
+        int32_t seek_sample = data->config.encoder_delay + num_sample;
+        off_t seek_offset;
+        int32_t seek_discard;
+        int32_t superframe_samples = data->info.frameSamples * data->info.framesInSuperframe;
+        size_t superframe_number, superframe_back;
 
-    /* loop offsets are set during decode; force them to stream start so discard works */
-    if (vgmstream->loop_ch)
-        vgmstream->loop_ch[0].offset = vgmstream->loop_ch[0].channel_start_offset;
+        superframe_number = (seek_sample / superframe_samples); /* closest */
+
+        /* decoded frames affect each other slightly, so move offset back to make PCM stable
+         * and equivalent to a full discard loop */
+        superframe_back = 1; /* 1 seems enough (even when only 1 subframe in superframe) */
+        if (superframe_back > superframe_number)
+            superframe_back = superframe_number;
+
+        seek_discard = (seek_sample % superframe_samples) + (superframe_back * superframe_samples);
+        seek_offset  = (superframe_number - superframe_back) * data->info.superframeSize;
+
+        data->samples_to_discard = seek_discard; /* already includes encoder delay */
+
+        if (vgmstream->loop_ch)
+            vgmstream->loop_ch[0].offset = vgmstream->loop_ch[0].channel_start_offset + seek_offset;
+    }
+
+#if 0
+    //old full discard loop
+    {
+        data->samples_to_discard = num_sample;
+        data->samples_to_discard += data->config.encoder_delay;
+
+        /* loop offsets are set during decode; force them to stream start so discard works */
+        if (vgmstream->loop_ch)
+            vgmstream->loop_ch[0].offset = vgmstream->loop_ch[0].channel_start_offset;
+    }
+#endif
+
 }
 
 void free_atrac9(atrac9_codec_data *data) {
@@ -208,15 +221,39 @@ void free_atrac9(atrac9_codec_data *data) {
 
 
 size_t atrac9_bytes_to_samples(size_t bytes, atrac9_codec_data *data) {
-    Atrac9CodecInfo info = {0};
-    int status;
+    return bytes / data->info.superframeSize * (data->info.frameSamples * data->info.framesInSuperframe);
+}
 
-    status = Atrac9GetCodecInfo(data->handle, &info);
-    if (status < 0) goto fail;
+#if 0 //not needed (for now)
+int atrac9_parse_config(uint32_t atrac9_config, int *out_sample_rate, int *out_channels, size_t *out_frame_size) {
+    static const int sample_rate_table[16] = {
+            11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000,
+            44100, 48000, 64000, 88200, 96000,128000,176400,192000
+    };
+    static const int channel_table[8] = {
+            1, 2, 2, 6, 8, 4, 0, 0
+    };
 
-    return bytes / info.superframeSize * (info.frameSamples * info.framesInSuperframe);
+    uint32_t sync             = (atrac9_config >> 24) & 0xff; /* 8b */
+    uint8_t sample_rate_index = (atrac9_config >> 20) & 0x0f; /* 4b */
+    uint8_t channels_index    = (atrac9_config >> 17) & 0x07; /* 3b */
+    /* uint8_t validation bit = (atrac9_config >> 16) & 0x01; */ /* 1b */
+    size_t frame_size         = (atrac9_config >>  5) & 0x7FF; /* 11b */
+    size_t superframe_index   = (atrac9_config >>  3) & 0x3; /* 2b */
+    /* uint8_t unused         = (atrac9_config >>  0) & 0x7);*/ /* 3b */
 
+    if (sync != 0xFE)
+        goto fail;
+    if (out_sample_rate)
+        *out_sample_rate = sample_rate_table[sample_rate_index];
+    if (out_channels)
+        *out_channels = channel_table[channels_index];
+    if (out_frame_size)
+        *out_frame_size = (frame_size+1) * (1 << superframe_index);
+
+    return 1;
 fail:
     return 0;
 }
+#endif
 #endif

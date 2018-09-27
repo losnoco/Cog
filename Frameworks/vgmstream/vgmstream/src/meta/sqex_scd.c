@@ -257,11 +257,12 @@ VGMSTREAM * init_vgmstream_sqex_scd(STREAMFILE *streamFile) {
             vgmstream->loop_start_sample = mpeg_bytes_to_samples(loop_start, mpeg_data);
             vgmstream->loop_end_sample = mpeg_bytes_to_samples(loop_end, mpeg_data);
 
-            //todo find if this actually helps
-            vgmstream->num_samples -= vgmstream->num_samples%576;
-            vgmstream->loop_start_sample -= vgmstream->loop_start_sample%576;
-            vgmstream->loop_end_sample -= vgmstream->loop_end_sample%576;
-
+            /* somehow loops offsets aren't always frame-aligned, and the code below supposedly helped,
+             * but there isn't much difference since MPEG loops are rough (1152-aligned). Seems it
+             * would help more loop_start - ~1000, loop_end + ~1000 (ex. FFXIII-2 music_SunMizu.ps3.scd) */
+            //vgmstream->num_samples -= vgmstream->num_samples % 576;
+            //vgmstream->loop_start_sample -= vgmstream->loop_start_sample % 576;
+            //vgmstream->loop_end_sample -= vgmstream->loop_end_sample % 576;
             break;
         }
 #endif
@@ -367,21 +368,9 @@ VGMSTREAM * init_vgmstream_sqex_scd(STREAMFILE *streamFile) {
             vgmstream->loop_start_sample = loop_start;
             vgmstream->loop_end_sample = loop_end;
 
-            /* manually read skip_samples if FFmpeg didn't do it */
-            if (ffmpeg_data->skipSamples <= 0) {
-                off_t chunk_offset;
-                size_t chunk_size, fact_skip_samples = 0;
-                if (!find_chunk_le(streamFile, 0x66616374,start_offset+0xc,0, &chunk_offset,&chunk_size)) /* find "fact" */
-                    goto fail;
-                if (chunk_size == 0x8) {
-                    fact_skip_samples  = read_32bitLE(chunk_offset+0x4, streamFile);
-                } else if (chunk_size == 0xc) {
-                    fact_skip_samples  = read_32bitLE(chunk_offset+0x8, streamFile);
-                }
-                ffmpeg_set_skip_samples(ffmpeg_data, fact_skip_samples);
-            }
+            if (ffmpeg_data->skipSamples <= 0) /* in case FFmpeg didn't get them */
+                ffmpeg_set_skip_samples(ffmpeg_data, riff_get_fact_skip_samples(streamFile, start_offset));
             /* SCD loop/sample values are relative (without skip samples) vs RIFF (with skip samples), no need to adjust */
-
             break;
         }
 #endif

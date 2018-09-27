@@ -83,13 +83,15 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
 
 
     /* checks */
-    if (!check_extensions(streamFile,"xwb"))
+    /* .xwb: standard
+     * .xna: Touhou Makukasai ~ Fantasy Danmaku Festival (PC) */
+    if (!check_extensions(streamFile,"xwb,xna"))
         goto fail;
     if ((read_32bitBE(0x00,streamFile) != 0x57424E44) &&    /* "WBND" (LE) */
         (read_32bitBE(0x00,streamFile) != 0x444E4257))      /* "DNBW" (BE) */
         goto fail;
 
-    xwb.little_endian = read_32bitBE(0x00,streamFile) == 0x57424E44;/* WBND */
+    xwb.little_endian = read_32bitBE(0x00,streamFile) == 0x57424E44; /* WBND */
     if (xwb.little_endian) {
         read_32bit = read_32bitLE;
     } else {
@@ -111,8 +113,8 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
         xwb.base_offset     = 0;
         xwb.base_size       = 0;
         xwb.entry_offset    = 0x50;
-        xwb.entry_size      = xwb.entry_elem_size * xwb.total_subsongs;
         xwb.entry_elem_size = 0x14;
+        xwb.entry_size      = xwb.entry_elem_size * xwb.total_subsongs;
         xwb.data_offset     = xwb.entry_offset + xwb.entry_size;
         xwb.data_size       = get_streamfile_size(streamFile) - xwb.data_offset;
 
@@ -380,6 +382,10 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
         xma_get_samples(&msd, streamFile);
         xwb.loop_start_sample = msd.loop_start_sample;
         xwb.loop_end_sample   = msd.loop_end_sample;
+
+        /* for XWB v22 (and below?) this seems normal [Project Gotham Racing (X360)] */
+        if (xwb.num_samples == 0)
+            xwb.num_samples   = msd.num_samples;
 
         // todo fix properly (XWB loop_start/end seem to count padding samples while XMA1 RIFF doesn't)
         //this doesn't seem ok because can fall within 0 to 512 (ie.- first frame, 384)
@@ -704,17 +710,17 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
 
     off = 0;
     if (xsb_version <= XSB_XACT1_MAX) {
-        xsb.xsb_wavebanks_count = 1; //read_8bit(0x22, streamFile);
-        xsb.xsb_sounds_count = read_16bit(0x1e, streamFile);//@ 0x1a? 0x1c?
+        xsb.xsb_wavebanks_count = 1; //(uint8_t)read_8bit(0x22, streamFile);
+        xsb.xsb_sounds_count = (uint16_t)read_16bit(0x1e, streamFile);//@ 0x1a? 0x1c?
         //xsb.xsb_names_size   = 0;
         //xsb.xsb_names_offset = 0;
         xsb.xsb_nameoffsets_offset = 0;
         xsb.xsb_sounds_offset = 0x38;
     } else if (xsb_version <= XSB_XACT2_MAX) {
-        xsb.xsb_simple_sounds_count = read_16bit(0x09, streamFile);
-        xsb.xsb_complex_sounds_count = read_16bit(0x0B, streamFile);
-        xsb.xsb_wavebanks_count = read_8bit(0x11, streamFile);
-        xsb.xsb_sounds_count = read_16bit(0x12, streamFile);
+        xsb.xsb_simple_sounds_count = (uint16_t)read_16bit(0x09, streamFile);
+        xsb.xsb_complex_sounds_count = (uint16_t)read_16bit(0x0B, streamFile);
+        xsb.xsb_wavebanks_count = (uint8_t)read_8bit(0x11, streamFile);
+        xsb.xsb_sounds_count = (uint16_t)read_16bit(0x12, streamFile);
         //0x14: 16b unk
         //xsb.xsb_names_size   = read_32bit(0x16, streamFile);
         xsb.xsb_simple_sounds_offset = read_32bit(0x1a, streamFile);
@@ -723,9 +729,9 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
         xsb.xsb_nameoffsets_offset = read_32bit(0x3a, streamFile);
         xsb.xsb_sounds_offset = read_32bit(0x3e, streamFile);
     } else {
-        xsb.xsb_simple_sounds_count = read_16bit(0x13, streamFile);
-        xsb.xsb_complex_sounds_count = read_16bit(0x15, streamFile);
-        xsb.xsb_wavebanks_count = read_8bit(0x1b, streamFile);
+        xsb.xsb_simple_sounds_count = (uint16_t)read_16bit(0x13, streamFile);
+        xsb.xsb_complex_sounds_count = (uint16_t)read_16bit(0x15, streamFile);
+        xsb.xsb_wavebanks_count = (uint8_t)read_8bit(0x1b, streamFile);
         xsb.xsb_sounds_count = read_16bit(0x1c, streamFile);
         //xsb.xsb_names_size   = read_32bit(0x1e, streamFile);
         xsb.xsb_simple_sounds_offset = read_32bit(0x22, streamFile);
@@ -765,21 +771,21 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
             size = 0x14;
 
             if (flag != 0x01) {
-                VGM_LOG("XSB: xsb flag 0x%x at offset 0x%08lx not implemented\n", flag, off);
+                //VGM_LOG("XSB: xsb flag 0x%x at offset 0x%08lx not implemented\n", flag, off);
                 goto fail;
             }
 
-            s->wavebank     = 0; //read_8bit(off+suboff + 0x02, streamFile);
-            s->stream_index = read_16bit(off+0x02, streamFile);
+            s->wavebank     = 0; //(uint8_t)read_8bit(off+suboff + 0x02, streamFile);
+            s->stream_index = (uint16_t)read_16bit(off+0x02, streamFile);
             s->sound_offset = off;
-            s->name_offset  = read_16bit(off+0x04, streamFile);
+            s->name_offset  = (uint16_t)read_16bit(off+0x04, streamFile);
         }
         else {
             /* Each XSB sound has a variable size and somewhere inside is the stream/wavebank index.
              * Various flags control the sound layout, but I can't make sense of them so quick hack instead */
             flag = read_8bit(off+0x00, streamFile);
             //0x01 16b unk, 0x03: 8b unk 04: 16b unk, 06: 8b unk
-            size = read_16bit(off+0x07, streamFile);
+            size = (uint16_t)read_16bit(off+0x07, streamFile);
 
             if (!(flag & 0x01)) { /* simple sound */
                 suboff = 0x09;
@@ -788,7 +794,7 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
                 if (flag==0x01 || flag==0x03 || flag==0x05 || flag==0x07) {
                     if (size == 0x49) { //grotesque hack for Eschatos (these flags are way too complex)
                         suboff = 0x23;
-                    } else if (size % 2 == 1 && read_16bit(off+size-0x2, streamFile)!=0) {
+                    } else if (size % 2 == 1 && (uint16_t)read_16bit(off+size-0x2, streamFile)!=0) {
                         suboff = size - 0x08 - 0x07; //7 unk bytes at the end
                     } else {
                         suboff = size - 0x08;
@@ -796,18 +802,18 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
                 //} else if (flag==0x11) { /* Stardew Valley (Switch) */
                 //    suboff = size; //???
                 } else {
-                    VGM_LOG("XSB: xsb flag 0x%x (size=%x) at offset 0x%08lx not implemented\n", flag, size, off);
+                    //VGM_LOG("XSB: xsb flag 0x%x (size=%x) at offset 0x%08lx not implemented\n", flag, size, off);
                     goto fail;
                 }
             }
 
-            s->stream_index = read_16bit(off+suboff + 0x00, streamFile);
-            s->wavebank     =  read_8bit(off+suboff + 0x02, streamFile);
+            s->stream_index = (uint16_t)read_16bit(off+suboff + 0x00, streamFile);
+            s->wavebank     =   (uint8_t)read_8bit(off+suboff + 0x02, streamFile);
             s->sound_offset = off;
         }
 
         if (s->wavebank+1 > xsb.xsb_wavebanks_count) {
-            VGM_LOG("XSB: unknown xsb wavebank id %i at offset 0x%lx\n", s->wavebank, off);
+            //VGM_LOG("XSB: unknown xsb wavebank id %i at offset 0x%lx\n", s->wavebank, off);
             goto fail;
         }
 
@@ -877,7 +883,7 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
 
             if (w->sound_count == xwb->total_subsongs) {
                 if (!cfg__selected_wavebank) {
-                    VGM_LOG("XSB: multiple xsb wavebanks with the same number of sounds, use -w to specify one of the wavebanks\n");
+                    //VGM_LOG("XSB: multiple xsb wavebanks with the same number of sounds, use -w to specify one of the wavebanks\n");
                     goto fail;
                 }
 
@@ -892,17 +898,17 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
     }
 
     if (!cfg__selected_wavebank) {
-        VGM_LOG("XSB: multiple xsb wavebanks but autodetect didn't work\n");
+        //VGM_LOG("XSB: multiple xsb wavebanks but autodetect didn't work\n");
         goto fail;
     }
     if (xsb.xsb_wavebanks[cfg__selected_wavebank-1].sound_count == 0) {
-        VGM_LOG("XSB: xsb selected wavebank %i has no sounds\n", cfg__selected_wavebank);
+        //VGM_LOG("XSB: xsb selected wavebank %i has no sounds\n", cfg__selected_wavebank);
         goto fail;
     }
 
     if (cfg__start_sound) {
         if (xsb.xsb_wavebanks[cfg__selected_wavebank-1].sound_count - (cfg__start_sound-1) < xwb->total_subsongs) {
-            VGM_LOG("XSB: starting sound too high (max in selected wavebank is %i)\n", xsb.xsb_wavebanks[cfg__selected_wavebank-1].sound_count - xwb->total_subsongs + 1);
+            //VGM_LOG("XSB: starting sound too high (max in selected wavebank is %i)\n", xsb.xsb_wavebanks[cfg__selected_wavebank-1].sound_count - xwb->total_subsongs + 1);
             goto fail;
         }
 

@@ -172,8 +172,9 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
     else if (ww.format == 0x0002 && ww.block_align == 0x104 * ww.channels) {
         //ww.codec = SWITCH_ADPCM;
         /* unknown codec, found in Bayonetta 2 (Switch)
-         * frames of 0x104 per ch, possibly frame header is hist1(2)/hist2(2)/predictor(1)
-         * (may write 2 header samples + FF*2 nibbles = 0x200 samples per block?) */
+         * frames of 0x104 per ch, possibly frame header is hist1(2)/hist2(2)/index(1)
+         * (may write 2 header samples + FF*2 nibbles = 0x200 samples per block?)
+         * index only goes up to ~0xb, may be a shift/scale value */
         goto fail;
     }
 
@@ -251,8 +252,8 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                 /* older Wwise (~<2012) */
 
                 switch(vorb_size) {
-                    case 0x2C: /* earliest (~2009), ex. UFC Undisputed 2009 (PS3), some EVE Online Apocrypha files? */
-                    case 0x28: /* early (~2009), ex. The Lord of the Rings: Conquest (PC) */
+                    case 0x2C: /* earliest (~2009), [UFC Undisputed 2009 (PS3), some EVE Online Apocrypha (PC)?] */
+                    case 0x28: /* early (~2009) [The Lord of the Rings: Conquest (PC)] */
                         data_offsets = 0x18;
                         block_offsets = 0; /* no need, full headers are present */
                         cfg.header_type = WWV_TYPE_8;
@@ -260,21 +261,23 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                         cfg.setup_type = WWV_HEADER_TRIAD;
                         break;
 
-                    //case 0x32:  /* ? */
                     case 0x34:  /* common (2010~2011) */
+                    case 0x32:  /* very rare (mid 2011) [Saints Row the 3rd (PC)] */
                         data_offsets = 0x18;
                         block_offsets = 0x30;
                         cfg.header_type = WWV_TYPE_6;
                         cfg.packet_type = WWV_STANDARD;
                         cfg.setup_type = WWV_EXTERNAL_CODEBOOKS; /* setup_type will be corrected later */
                         break;
-                    case 0x2a:  /* uncommon (mid 2011), ex. infamous 2 PS3 */
+
+                    case 0x2a:  /* uncommon (mid 2011), [inFamous 2 (PS3)] */
                         data_offsets = 0x10;
                         block_offsets = 0x28;
                         cfg.header_type = WWV_TYPE_2;
                         cfg.packet_type = WWV_MODIFIED;
                         cfg.setup_type = WWV_EXTERNAL_CODEBOOKS;
                         break;
+
                     default:
                         VGM_LOG("WWISE: unknown vorb size 0x%x\n", vorb_size);
                         goto fail;
@@ -499,9 +502,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
         }
 
         case OPUS: {    /* Switch */
-            uint8_t buf[0x100];
-            size_t bytes, skip;
-            ffmpeg_custom_config cfg = {0};
+            size_t skip = 0; /* Wwise doesn't seem to use it? (0x138 /0x3E8 ~default) */
 
             /* values up to 0x14 seem fixed and similar to HEVAG's (block_align 0x02/04, bits_per_sample 0x10) */
             if (ww.fmt_size == 0x28) {
@@ -518,15 +519,8 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE *streamFile) {
                 goto fail;
             }
 
-            skip = 0; /* Wwise doesn't seem to use it? (0x138 /0x3E8 ~default) */
-
-            cfg.type = FFMPEG_SWITCH_OPUS;
-            //cfg.big_endian = ww.big_endian; /* internally BE */
-
-            bytes = ffmpeg_make_opus_header(buf,0x100, ww.channels, skip, ww.sample_rate);
-            vgmstream->codec_data = init_ffmpeg_config(streamFile, buf,bytes, start_offset,ww.data_size, &cfg);
+            vgmstream->codec_data = init_ffmpeg_switch_opus(streamFile, start_offset,ww.data_size, vgmstream->channels, skip, vgmstream->sample_rate);
             if (!vgmstream->codec_data) goto fail;
-
             vgmstream->coding_type = coding_FFmpeg;
             vgmstream->layout_type = layout_none;
             break;
