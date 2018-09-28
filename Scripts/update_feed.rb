@@ -68,7 +68,7 @@ revision_code = revision_split[1]
 
 if appcast_revision < latest_revision
   #Get the changelog
-  changelog = %x[/usr/bin/git log #{appcast_revision_code}..#{revision_code} --pretty=format:'<li> <a href="https://gitlab.kode54.net/kode54/Cog/commit/%H">view commit</a> &bull; %s</li> ' --reverse]
+  changelog = %x[/usr/bin/git log #{appcast_revision_code}..#{revision_code} --pretty=format:'<li> <a href="https://bitbucket.org/losnoco/cog/commits/%H">view commit</a> &bull; %s</li> ' --reverse]
 
   description = changelog
 
