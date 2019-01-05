@@ -110,6 +110,8 @@ VGMSTREAM * init_vgmstream_awc(STREAMFILE *streamFile) {
                     bytes = ffmpeg_make_riff_xma2(buf, 0x100, awc.num_samples, substream_size, layer_channels, awc.sample_rate, block_count, block_size);
                     data->layers[i]->codec_data = init_ffmpeg_header_offset(temp_streamFile, buf,bytes, substream_offset,substream_size);
 
+                    xma_fix_raw_samples(data->layers[i], temp_streamFile, substream_offset,substream_size, 0, 0,0); /* samples are ok? */
+
                     close_streamfile(temp_streamFile);
                     if (!data->layers[i]->codec_data) goto fail;
                 }
@@ -128,6 +130,8 @@ VGMSTREAM * init_vgmstream_awc(STREAMFILE *streamFile) {
                 if (!vgmstream->codec_data) goto fail;
                 vgmstream->coding_type = coding_FFmpeg;
                 vgmstream->layout_type = layout_none;
+
+                xma_fix_raw_samples(vgmstream, streamFile, awc.stream_offset,awc.stream_size, 0, 0,0); /* samples are ok? */
             }
 
             break;
@@ -333,7 +337,7 @@ static int parse_awc_header(STREAMFILE* streamFile, awc_header* awc) {
     /* If music, data is divided into blocks of block_chunk size with padding.
      * Each block has a header/seek table and interleaved data for all channels */
     if (awc->is_music && read_32bit(awc->stream_offset, streamFile) != 0) {
-        VGM_LOG("AWC: music found, but block doesn't start with seek table at %"PRIx64"\n", (off64_t)awc->stream_offset);
+        VGM_LOG("AWC: music found, but block doesn't start with seek table at %x\n", (uint32_t)awc->stream_offset);
         goto fail;
     }
 

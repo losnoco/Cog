@@ -21,6 +21,7 @@ void decode_snds_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspac
 void decode_otns_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_wv6_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_alp_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+void decode_ffta2_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 
 void decode_ms_ima(VGMSTREAM * vgmstream,VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel);
 void decode_ref_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel);
@@ -164,6 +165,12 @@ void decode_xmd(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, 
 /* derf_decoder */
 void decode_derf(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 
+/* circus_decoder */
+void decode_circus_adpcm(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+
+/* pcfx_decoder */
+void decode_pcfx(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int mode);
+size_t pcfx_bytes_to_samples(size_t bytes, int channels);
 
 /* ea_mt_decoder*/
 ea_mt_codec_data *init_ea_mt(int channels, int type);
@@ -267,6 +274,7 @@ void free_celt_fsb(celt_codec_data *data);
 /* ffmpeg_decoder */
 ffmpeg_codec_data *init_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size);
 ffmpeg_codec_data *init_ffmpeg_header_offset(STREAMFILE *streamFile, uint8_t * header, uint64_t header_size, uint64_t start, uint64_t size);
+ffmpeg_codec_data *init_ffmpeg_header_offset_subsong(STREAMFILE *streamFile, uint8_t * header, uint64_t header_size, uint64_t start, uint64_t size, int target_subsong);
 
 void decode_ffmpeg(VGMSTREAM *stream, sample * outbuf, int32_t samples_to_do, int channels);
 void reset_ffmpeg(VGMSTREAM *vgmstream);
@@ -278,9 +286,14 @@ void ffmpeg_set_skip_samples(ffmpeg_codec_data * data, int skip_samples);
 /* ffmpeg_decoder_custom_opus.c (helper-things) */
 ffmpeg_codec_data * init_ffmpeg_switch_opus(STREAMFILE *streamFile, off_t start_offset, size_t data_size, int channels, int skip, int sample_rate);
 ffmpeg_codec_data * init_ffmpeg_ue4_opus(STREAMFILE *streamFile, off_t start_offset, size_t data_size, int channels, int skip, int sample_rate);
-size_t ffmpeg_make_opus_header(uint8_t * buf, int buf_size, int channels, int skip, int sample_rate);
-size_t switch_opus_get_samples(off_t offset, size_t data_size, int sample_rate, STREAMFILE *streamFile);
-size_t ue4_opus_get_samples(off_t offset, size_t data_size, int sample_rate, STREAMFILE *streamFile);
+ffmpeg_codec_data * init_ffmpeg_ea_opus(STREAMFILE *streamFile, off_t start_offset, size_t data_size, int channels, int skip, int sample_rate);
+ffmpeg_codec_data * init_ffmpeg_x_opus(STREAMFILE *streamFile, off_t start_offset, size_t data_size, int channels, int skip, int sample_rate);
+
+size_t switch_opus_get_samples(off_t offset, size_t data_size, STREAMFILE *streamFile);
+
+size_t switch_opus_get_encoder_delay(off_t offset, STREAMFILE *streamFile);
+size_t ue4_opus_get_encoder_delay(off_t offset, STREAMFILE *streamFile);
+size_t ea_opus_get_encoder_delay(off_t offset, STREAMFILE *streamFile);
 
 #endif
 
@@ -314,7 +327,6 @@ typedef struct {
 
     /* output */
     int32_t num_samples;
-    int32_t skip_samples;
     int32_t loop_start_sample;
     int32_t loop_end_sample;
 } ms_sample_data;
@@ -325,6 +337,9 @@ void wma_get_samples(ms_sample_data * msd, STREAMFILE *streamFile, int block_ali
 void xma1_parse_fmt_chunk(STREAMFILE *streamFile, off_t chunk_offset, int * channels, int * sample_rate, int * loop_flag, int32_t * loop_start_b, int32_t * loop_end_b, int32_t * loop_subframe, int be);
 void xma2_parse_fmt_chunk_extra(STREAMFILE *streamFile, off_t chunk_offset, int * loop_flag, int32_t * out_num_samples, int32_t * out_loop_start_sample, int32_t * out_loop_end_sample, int be);
 void xma2_parse_xma2_chunk(STREAMFILE *streamFile, off_t chunk_offset, int * channels, int * sample_rate, int * loop_flag, int32_t * num_samples, int32_t * loop_start_sample, int32_t * loop_end_sample);
+
+void xma_fix_raw_samples(VGMSTREAM *vgmstream, STREAMFILE*streamFile, off_t stream_offset, size_t stream_size, off_t chunk_offset, int fix_num_samples, int fix_loop_samples);
+
 int riff_get_fact_skip_samples(STREAMFILE * streamFile, off_t start_offset);
 
 size_t atrac3_bytes_to_samples(size_t bytes, int full_block_align);
@@ -344,5 +359,9 @@ typedef struct {
 
 int r_bits(vgm_bitstream * ib, int num_bits, uint32_t * value);
 int w_bits(vgm_bitstream * ob, int num_bits, uint32_t value);
+
+
+/* helper to pass a wrapped, clamped, fake extension-ed, SF to another meta */
+STREAMFILE* setup_subfile_streamfile(STREAMFILE *streamFile, off_t subfile_offset, size_t subfile_size, const char* extension);
 
 #endif /*_CODING_H*/

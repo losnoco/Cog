@@ -2,10 +2,8 @@
 #include "../coding/coding.h"
 #include "../layout/layout.h"
 
-static STREAMFILE* setup_opus_ppp_streamfile(STREAMFILE *streamFile, off_t subfile_offset, size_t subfile_size, const char* fake_ext);
-
-/* .AT9 Opus - from Penny-Punching Princess (Switch) */
-VGMSTREAM * init_vgmstream_opus_ppp(STREAMFILE *streamFile) {
+/* Nippon Ichi SPS wrapper (segmented)  [Penny-Punching Princess (Switch)] */
+VGMSTREAM * init_vgmstream_opus_sps_n1_segmented(STREAMFILE *streamFile) {
     VGMSTREAM * vgmstream = NULL;
     off_t segment_offset;
     int loop_flag, channel_count;
@@ -19,11 +17,11 @@ VGMSTREAM * init_vgmstream_opus_ppp(STREAMFILE *streamFile) {
     /* checks */
     if (!check_extensions(streamFile, "at9"))
         goto fail;
-    if (read_32bitBE(0x00,streamFile) != 0x09000000) /* file type? DSPs had 08 */
+    if (read_32bitBE(0x00,streamFile) != 0x09000000) /* file type (see other N1 SPS) */
         goto fail;
     if (read_32bitLE(0x04,streamFile) + 0x1c != get_streamfile_size(streamFile))
         goto fail;
-    /* 0x08(2): sample rate, 0x0a(2): loop flag?, 0x0c: num_samples (slightly smaller than added samples) */
+    /* 0x08(2): sample rate, 0x0a(2): flag?, 0x0c: num_samples (slightly smaller than added samples) */
 
     segment_count = 3; /* intro/loop/end */
     loop_start_segment = 1;
@@ -43,7 +41,7 @@ VGMSTREAM * init_vgmstream_opus_ppp(STREAMFILE *streamFile) {
         if (!segment_size)
             goto fail;
 
-        temp_streamFile = setup_opus_ppp_streamfile(streamFile, segment_offset,segment_size, "opus");
+        temp_streamFile = setup_subfile_streamfile(streamFile, segment_offset,segment_size, "opus");
         if (!temp_streamFile) goto fail;
 
         data->segments[i] = init_vgmstream_opus_std(temp_streamFile);
@@ -91,28 +89,5 @@ VGMSTREAM * init_vgmstream_opus_ppp(STREAMFILE *streamFile) {
 fail:
     close_vgmstream(vgmstream);
     free_layout_segmented(data);
-    return NULL;
-}
-
-static STREAMFILE* setup_opus_ppp_streamfile(STREAMFILE *streamFile, off_t subfile_offset, size_t subfile_size, const char* fake_ext) {
-    STREAMFILE *temp_streamFile = NULL, *new_streamFile = NULL;
-
-    /* setup subfile */
-    new_streamFile = open_wrap_streamfile(streamFile);
-    if (!new_streamFile) goto fail;
-    temp_streamFile = new_streamFile;
-
-    new_streamFile = open_clamp_streamfile(temp_streamFile, subfile_offset,subfile_size);
-    if (!new_streamFile) goto fail;
-    temp_streamFile = new_streamFile;
-
-    new_streamFile = open_fakename_streamfile(temp_streamFile, NULL,fake_ext);
-    if (!new_streamFile) goto fail;
-    temp_streamFile = new_streamFile;
-
-    return temp_streamFile;
-
-fail:
-    close_streamfile(temp_streamFile);
     return NULL;
 }

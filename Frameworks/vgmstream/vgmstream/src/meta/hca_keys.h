@@ -1,14 +1,23 @@
 #ifndef _HCA_KEYS_H_
 #define _HCA_KEYS_H_
 
+#include "hca_keys_awb.h"
+
 typedef struct {
-    uint64_t key;
+    uint64_t key;               /* hca key or seed ('user') key */
+    const uint16_t *subkeys;    /* scramble subkey table for seed key */
+    size_t subkeys_size;        /* size of the derivation subkey table */
 } hcakey_info;
+
 
 /**
  * List of known keys, extracted from the game files (mostly found in 2ch.net).
  * CRI's tools expect an unsigned 64 bit number string, but keys are commonly found online in hex form.
  * Keys only use 56 bits though, so the upper 8 bits can be ignored.
+ *
+ * ACB+AWB after mid 2018 use a user seed key + a scramble subkey in the AWB (normally 16b LE at 0x0e)
+ * to create the final HCA key, which means there is one key per AWB (so most HCA have a unique key).
+ * vgmstream derives the key if subkey table is provided.
  */
 static const hcakey_info hcakey_list[] = {
 
@@ -219,7 +228,7 @@ static const hcakey_info hcakey_list[] = {
         // Taga Tame no Alchemist (iOS/Android)
         {5047159794308},            // 00000497222AAA84
 
-        // Shin Tennis no Ouji-sama: Rising Beat (iOS/Android)
+        // Shin Tennis no Ouji-sama: Rising Beat (iOS/Android) voices?
         {4902201417679},            // 0000047561F95FCF
 
         // Kai-ri-Sei Million Arthur (Vita)
@@ -248,6 +257,15 @@ static const hcakey_info hcakey_list[] = {
 
         // Onsen Musume: Yunohana Kore Kushon (Android) voices
         {6667},                     // 0000000000001A0B
+
+        /* Dragalia Lost (Cygames) [iOS/Android] */
+        {2967411924141,         subkeys_dgl, sizeof(subkeys_dgl) / sizeof(subkeys_dgl[0]) },    // 000002B2E7889CAD
+
+        /* Libra of Precatus (Android) */
+        {0x6D8EFB700870FCD4},       // 6D8EFB700870FCD4
+
+        /* Mashiro Witch (Android) */
+        {0x55D11D3349495204},       // 55D11D3349495204
 
 };
 

@@ -1,9 +1,7 @@
 #include "meta.h"
 #include "../coding/coding.h"
 
-static STREAMFILE* setup_sps_streamfile(STREAMFILE *streamfile, off_t subfile_offset, size_t subfile_size, char* extension);
-
-/* .SPS - Nippon Ichi's RIFF AT3 wrapper [ClaDun (PSP)] */
+/* .SPS - Nippon Ichi wrapper [ClaDun (PSP)] */
 VGMSTREAM * init_vgmstream_sps_n1(STREAMFILE *streamFile) {
     VGMSTREAM *vgmstream = NULL;
     STREAMFILE *temp_streamFile = NULL;
@@ -16,17 +14,17 @@ VGMSTREAM * init_vgmstream_sps_n1(STREAMFILE *streamFile) {
         goto fail;
 
     /* mini header */
-    type = read_32bitLE(0x00,streamFile); //todo channels? all known VAG are mono and AT3 stereo
+    type = read_32bitLE(0x00,streamFile);
     subfile_size = read_32bitLE(0x04,streamFile);
     sample_rate = (uint16_t)read_16bitLE(0x08,streamFile);
-    /* 0x0a/0b: stereo+loop flags? */
+    /* 0x0a: flag? */
     //num_samples = read_32bitLE(0x0c,streamFile);
     subfile_offset = 0x10;
 
     /* init the VGMSTREAM */
     switch(type) {
         case 1: /* .vag */
-            temp_streamFile = setup_sps_streamfile(streamFile, subfile_offset, subfile_size, "vag");
+            temp_streamFile = setup_subfile_streamfile(streamFile, subfile_offset, subfile_size, "vag");
             if (!temp_streamFile) goto fail;
 
             vgmstream = init_vgmstream_vag(temp_streamFile);
@@ -34,7 +32,7 @@ VGMSTREAM * init_vgmstream_sps_n1(STREAMFILE *streamFile) {
             break;
 
         case 2: /* .at3 */
-            temp_streamFile = setup_sps_streamfile(streamFile, subfile_offset, subfile_size, "at3");
+            temp_streamFile = setup_subfile_streamfile(streamFile, subfile_offset, subfile_size, "at3");
             if (!temp_streamFile) goto fail;
 
             vgmstream = init_vgmstream_riff(temp_streamFile);
@@ -52,28 +50,5 @@ VGMSTREAM * init_vgmstream_sps_n1(STREAMFILE *streamFile) {
 fail:
     close_streamfile(temp_streamFile);
     close_vgmstream(vgmstream);
-    return NULL;
-}
-
-static STREAMFILE* setup_sps_streamfile(STREAMFILE *streamFile, off_t subfile_offset, size_t subfile_size, char* extension) {
-    STREAMFILE *temp_streamFile = NULL, *new_streamFile = NULL;
-
-    /* setup subfile */
-    new_streamFile = open_wrap_streamfile(streamFile);
-    if (!new_streamFile) goto fail;
-    temp_streamFile = new_streamFile;
-
-    new_streamFile = open_clamp_streamfile(temp_streamFile, subfile_offset,subfile_size);
-    if (!new_streamFile) goto fail;
-    temp_streamFile = new_streamFile;
-
-    new_streamFile = open_fakename_streamfile(temp_streamFile, NULL,extension);
-    if (!new_streamFile) goto fail;
-    temp_streamFile = new_streamFile;
-
-    return temp_streamFile;
-
-fail:
-    close_streamfile(temp_streamFile);
     return NULL;
 }

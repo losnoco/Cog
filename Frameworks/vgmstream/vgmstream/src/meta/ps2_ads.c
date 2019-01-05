@@ -150,10 +150,11 @@ VGMSTREAM * init_vgmstream_ps2_ads(STREAMFILE *streamFile) {
                 loop_start_sample = loop_start / 2 / channel_count;
                 is_loop_samples = 1;
             }
-            else if ((loop_start % 0x800 == 0) && loop_start > 0) {/* sector-aligned, min is 0x800 */
+            else if ((loop_start % 0x800 == 0) && loop_start > 0) {/* sector-aligned, min/0 is 0x800 */
                 /* cavia games: loop_start is offset [Drakengard 1/2, GITS: Stand Alone Complex] */
+                /* offset is absolute from the "cavia stream format" container that adjusts ADS start */
                 loop_flag = 1;
-                loop_start_offset = loop_start;
+                loop_start_offset = loop_start - 0x800;
                 ignore_silent_frame_cavia = 1;
             }
             else if (loop_start % 0x800 != 0 || loop_start == 0) { /* not sector aligned */
@@ -312,8 +313,6 @@ fail:
 
 /* ****************************************************************************** */
 
-static STREAMFILE* setup_subfile_streamfile(STREAMFILE *streamFile, off_t subfile_offset, size_t subfile_size, const char* fake_ext);
-
 /* ADS in containers */
 VGMSTREAM * init_vgmstream_ps2_ads_container(STREAMFILE *streamFile) {
     VGMSTREAM *vgmstream = NULL;
@@ -353,30 +352,5 @@ VGMSTREAM * init_vgmstream_ps2_ads_container(STREAMFILE *streamFile) {
 fail:
     close_streamfile(temp_streamFile);
     close_vgmstream(vgmstream);
-    return NULL;
-}
-
-static STREAMFILE* setup_subfile_streamfile(STREAMFILE *streamFile, off_t subfile_offset, size_t subfile_size, const char* fake_ext) {
-    STREAMFILE *temp_streamFile = NULL, *new_streamFile = NULL;
-
-    /* setup subfile */
-    new_streamFile = open_wrap_streamfile(streamFile);
-    if (!new_streamFile) goto fail;
-    temp_streamFile = new_streamFile;
-
-    new_streamFile = open_clamp_streamfile(temp_streamFile, subfile_offset,subfile_size);
-    if (!new_streamFile) goto fail;
-    temp_streamFile = new_streamFile;
-
-    if (fake_ext) {
-        new_streamFile = open_fakename_streamfile(temp_streamFile, NULL,fake_ext);
-        if (!new_streamFile) goto fail;
-        temp_streamFile = new_streamFile;
-    }
-
-    return temp_streamFile;
-
-fail:
-    close_streamfile(temp_streamFile);
     return NULL;
 }

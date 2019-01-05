@@ -53,7 +53,7 @@ static size_t read_stdio(STDIOSTREAMFILE *streamfile,uint8_t * dest, off_t offse
         /* ignore requests at EOF */
         if (offset >= streamfile->filesize) {
             //offset = streamfile->filesize; /* seems fseek doesn't clamp offset */
-            VGM_ASSERT_ONCE(offset > streamfile->filesize, "STDIO: reading over filesize 0x%x @ 0x%"PRIx64" + 0x%x\n", streamfile->filesize, (off64_t)offset, length);
+            VGM_ASSERT_ONCE(offset > streamfile->filesize, "STDIO: reading over filesize 0x%x @ 0x%x + 0x%x\n", streamfile->filesize, (uint32_t)offset, length);
             break;
         }
 
@@ -254,7 +254,7 @@ static size_t buffer_read(BUFFER_STREAMFILE *streamfile, uint8_t * dest, off_t o
         /* ignore requests at EOF */
         if (offset >= streamfile->filesize) {
             //offset = streamfile->filesize; /* seems fseek doesn't clamp offset */
-            VGM_ASSERT_ONCE(offset > streamfile->filesize, "BUFFER: reading over filesize 0x%x @ 0x%"PRIx64" + 0x%x\n", streamfile->filesize, (off64_t)offset, length);
+            VGM_ASSERT_ONCE(offset > streamfile->filesize, "BUFFER: reading over filesize 0x%x @ 0x%x + 0x%x\n", streamfile->filesize, (uint32_t)offset, length);
             break;
         }
 
@@ -800,6 +800,15 @@ STREAMFILE * open_streamfile_by_filename(STREAMFILE *streamFile, const char * na
     return streamFile->open(streamFile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
 }
 
+STREAMFILE * reopen_streamfile(STREAMFILE *streamFile, size_t buffer_size) {
+    char pathname[PATH_LIMIT];
+
+    if (buffer_size == 0)
+        buffer_size = STREAMFILE_DEFAULT_BUFFER_SIZE;
+    streamFile->get_name(streamFile,pathname,sizeof(pathname));
+    return streamFile->open(streamFile,pathname,buffer_size);
+}
+
 
 /* Read a line into dst. The source files are lines separated by CRLF (Windows) / LF (Unux) / CR (Mac).
  * The line will be null-terminated and CR/LF removed if found.
@@ -953,6 +962,17 @@ found:
 fail:
     close_streamfile(streamFileKey);
     return 0;
+}
+
+/* hack to allow relative paths in various OSs */
+void fix_dir_separators(char * filename) {
+    char c;
+    int i = 0;
+    while ((c = filename[i]) != '\0') {
+        if ((c == '\\' && DIR_SEPARATOR == '/') || (c == '/' && DIR_SEPARATOR == '\\'))
+            filename[i] = DIR_SEPARATOR;
+        i++;
+    }
 }
 
 

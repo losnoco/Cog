@@ -272,8 +272,11 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
      * .adx: Remember11 (PC) sfx
      * .adp: Headhunter (DC)
      * .xss: Spider-Man The Movie (Xbox)
-     * .xsew: Mega Man X Legacy Collections (PC) */
-    if ( check_extensions(streamFile, "wav,lwav,xwav,da,dax,cd,med,snd,adx,adp,xss,xsew") ) {
+     * .xsew: Mega Man X Legacy Collections (PC)
+     * .adpcm: Angry Birds Transformers (Android)
+     * .adw: Dead Rising 2 (PC)
+     * .wd: Genma Onimusha (Xbox) voices */
+    if ( check_extensions(streamFile, "wav,lwav,xwav,da,dax,cd,med,snd,adx,adp,xss,xsew,adpcm,adw,wd") ) {
         ;
     }
     else if ( check_extensions(streamFile, "mwv") ) {
@@ -310,13 +313,13 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
     /* some Dreamcast/Naomi games do this [Headhunter (DC), Bomber hehhe (DC)] */
     if (riff_size + 0x04 == file_size && read_16bitLE(0x14,streamFile)==0x0000)
         riff_size -= 0x04;
-    /* some PC games do this [Halo 2 (PC)] */
+    /* some PC games do this [Halo 2 (PC)] (possibly bad extractor? 'Gravemind Tool') */
     if (riff_size + 0x04 == file_size && read_16bitLE(0x14,streamFile)==0x0069)
         riff_size -= 0x04;
 
-
     /* check for truncated RIFF */
-    if (file_size < riff_size+0x08) goto fail;
+    if (file_size < riff_size+0x08)
+        goto fail;
 
     /* read through chunks to verify format and find metadata */
     {
@@ -371,16 +374,16 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
                     break;
 
                 case 0x736D706C:    /* "smpl" (RIFFMIDISample + MIDILoop chunk) */
-                    /* check loop count/loop info (most common) *///todo double check values
+                    /* check loop count/loop info (most common) */
                     /* 0x00: manufacturer id, 0x04: product id, 0x08: sample period, 0x0c: unity node,
                      * 0x10: pitch fraction, 0x14: SMPTE format, 0x18: SMPTE offset, 0x1c: loop count, 0x20: sampler data */
-                    if (read_32bitLE(current_chunk+0x08+0x1c, streamFile)==1) {
+                    if (read_32bitLE(current_chunk+0x08+0x1c, streamFile) == 1) { /* handle only one loop (could contain N MIDILoop) */
                         /* 0x24: cue point id, 0x28: type (0=forward, 1=alternating, 2=backward)
                          * 0x2c: start, 0x30: end, 0x34: fraction, 0x38: play count */
-                        if (read_32bitLE(current_chunk+0x08+0x28, streamFile)==0) {
+                        if (read_32bitLE(current_chunk+0x08+0x28, streamFile) == 0) { /* loop forward */
                             loop_flag = 1;
                             loop_start_smpl = read_32bitLE(current_chunk+0x08+0x2c, streamFile);
-                            loop_end_smpl   = read_32bitLE(current_chunk+0x08+0x30, streamFile);
+                            loop_end_smpl   = read_32bitLE(current_chunk+0x08+0x30, streamFile) + 1; /* must add 1 as per spec (ok for standard WAV/AT3/AT9) */
                         }
                     }
                     break;
@@ -393,10 +396,10 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
                             && read_32bitLE(current_chunk+0x08+0x10, streamFile) > 0
                             && read_32bitLE(current_chunk+0x08+0x14, streamFile) == 0x10) {
                         /* 0x14: size, 0x18: loop type (0=forward, 1=release), 0x1c: loop start, 0x20: loop length */
-                        if (read_32bitLE(current_chunk+0x08+0x18, streamFile)==0) {
+                        if (read_32bitLE(current_chunk+0x08+0x18, streamFile) == 0) { /* loop forward */
                             loop_flag = 1;
                             loop_start_wsmp = read_32bitLE(current_chunk+0x08+0x1c, streamFile);
-                            loop_end_wsmp   = read_32bitLE(current_chunk+0x08+0x20, streamFile);
+                            loop_end_wsmp   = read_32bitLE(current_chunk+0x08+0x20, streamFile); /* must not add 1 as per spec */
                             loop_end_wsmp  += loop_start_wsmp;
                         }
                     }
@@ -655,6 +658,10 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
         else if (loop_start_smpl >= 0) {
             vgmstream->loop_start_sample = loop_start_smpl;
             vgmstream->loop_end_sample = loop_end_smpl;
+            /* end must add +1, but check in case of faulty tools */
+            if (vgmstream->loop_end_sample - 1 == vgmstream->num_samples)
+                vgmstream->loop_end_sample--;
+
             vgmstream->meta_type = meta_RIFF_WAVE_smpl;
         }
         else if (loop_start_wsmp >= 0) {
@@ -754,7 +761,7 @@ VGMSTREAM * init_vgmstream_rifx(STREAMFILE *streamFile) {
                         if (read_32bitBE(current_chunk+0x2c+4, streamFile)==0) {
                             loop_flag = 1;
                             loop_start_offset = read_32bitBE(current_chunk+0x2c+8, streamFile);
-                            loop_end_offset = read_32bitBE(current_chunk+0x2c+0xc,streamFile);
+                            loop_end_offset = read_32bitBE(current_chunk+0x2c+0xc,streamFile) + 1;
                         }
                     }
                     break;
@@ -803,6 +810,10 @@ VGMSTREAM * init_vgmstream_rifx(STREAMFILE *streamFile) {
         if (loop_start_offset >= 0) {
             vgmstream->loop_start_sample = loop_start_offset;
             vgmstream->loop_end_sample = loop_end_offset;
+            /* end must add +1, but check in case of faulty tools */
+            if (vgmstream->loop_end_sample - 1 == vgmstream->num_samples)
+                vgmstream->loop_end_sample--;
+            
             vgmstream->meta_type = meta_RIFX_WAVE_smpl;
         }
     }

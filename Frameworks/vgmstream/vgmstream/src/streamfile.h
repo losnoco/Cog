@@ -123,6 +123,10 @@ STREAMFILE * open_streamfile_by_ext(STREAMFILE *streamFile, const char * ext);
  * Can be used to get companion files. */
 STREAMFILE * open_streamfile_by_filename(STREAMFILE *streamFile, const char * filename);
 
+/* Reopen a STREAMFILE with a different buffer size, for fine-tuned bigfile parsing.
+ * Uses default buffer size when buffer_size is 0 */
+STREAMFILE * reopen_streamfile(STREAMFILE *streamFile, size_t buffer_size);
+
 
 /* close a file, destroy the STREAMFILE object */
 static inline void close_streamfile(STREAMFILE * streamfile) {
@@ -198,6 +202,12 @@ static inline int guess_endianness32bit(off_t offset, STREAMFILE * streamfile) {
     return ((uint32_t)read_32bitLE(offset,streamfile) > (uint32_t)read_32bitBE(offset,streamfile)) ? 1 : 0;
 }
 
+static inline size_t align_size_to_block(size_t value, size_t block_align) {
+    size_t extra_size = value % block_align;
+    if (extra_size == 0) return value;
+    return (value + block_align - extra_size);
+}
+
 /* various STREAMFILE helpers functions */
 
 size_t get_streamfile_text_line(int dst_length, char * dst, off_t offset, STREAMFILE * streamfile, int *line_done_ptr);
@@ -205,6 +215,8 @@ size_t get_streamfile_text_line(int dst_length, char * dst, off_t offset, STREAM
 size_t read_string(char * buf, size_t bufsize, off_t offset, STREAMFILE *streamFile);
 
 size_t read_key_file(uint8_t * buf, size_t bufsize, STREAMFILE *streamFile);
+
+void fix_dir_separators(char * filename);
 
 int check_extensions(STREAMFILE *streamFile, const char * cmp_exts);
 
