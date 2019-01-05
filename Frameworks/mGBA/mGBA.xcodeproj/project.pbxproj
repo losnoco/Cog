@@ -134,8 +134,6 @@
 		8333B6631DCC440C004C140D /* sharkport.c in Sources */ = {isa = PBXBuildFile; fileRef = 8333B6611DCC440C004C140D /* sharkport.c */; };
 		8333B6671DCC4451004C140D /* tile-cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 8333B6651DCC4451004C140D /* tile-cache.c */; };
 		837612EE1DD6AA2B001EED3D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 837612ED1DD6AA2B001EED3D /* LICENSE */; };
-		837612F01DD6ACF8001EED3D /* blip_buf_license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 837612EF1DD6ACF8001EED3D /* blip_buf_license.txt */; };
-		837612F21DD6AD07001EED3D /* inih_LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 837612F11DD6AD07001EED3D /* inih_LICENSE.txt */; };
 		83CA29381D7BC4EE00F2EA53 /* arm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA245A1D7BC4ED00F2EA53 /* arm.c */; };
 		83CA29401D7BC4EE00F2EA53 /* decoder-arm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA24631D7BC4ED00F2EA53 /* decoder-arm.c */; };
 		83CA29421D7BC4EE00F2EA53 /* decoder-thumb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA24651D7BC4ED00F2EA53 /* decoder-thumb.c */; };
@@ -331,8 +329,6 @@
 		8333B6611DCC440C004C140D /* sharkport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sharkport.c; sourceTree = "<group>"; };
 		8333B6651DCC4451004C140D /* tile-cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "tile-cache.c"; sourceTree = "<group>"; };
 		837612ED1DD6AA2B001EED3D /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		837612EF1DD6ACF8001EED3D /* blip_buf_license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blip_buf_license.txt; sourceTree = "<group>"; };
-		837612F11DD6AD07001EED3D /* inih_LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = inih_LICENSE.txt; sourceTree = "<group>"; };
 		83CA24131D7BC47C00F2EA53 /* mGBA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mGBA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83CA24171D7BC47C00F2EA53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83CA245A1D7BC4ED00F2EA53 /* arm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm.c; sourceTree = "<group>"; };
@@ -890,7 +886,6 @@
 		83CA25E11D7BC4ED00F2EA53 /* blip_buf */ = {
 			isa = PBXGroup;
 			children = (
-				837612EF1DD6ACF8001EED3D /* blip_buf_license.txt */,
 				83CA25E21D7BC4ED00F2EA53 /* blip_buf.c */,
 			);
 			path = blip_buf;
@@ -972,7 +967,6 @@
 		83CA2E2D1D7BCB6700F2EA53 /* inih */ = {
 			isa = PBXGroup;
 			children = (
-				837612F11DD6AD07001EED3D /* inih_LICENSE.txt */,
 				83CA2E2E1D7BCB6700F2EA53 /* ini.c */,
 				83CA2E2F1D7BCB6700F2EA53 /* ini.h */,
 			);
@@ -1193,8 +1187,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				837612EE1DD6AA2B001EED3D /* LICENSE in Resources */,
-				837612F01DD6ACF8001EED3D /* blip_buf_license.txt in Resources */,
-				837612F21DD6AD07001EED3D /* inih_LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1396,6 +1388,8 @@
 					"MINIMAL_CORE=3",
 					DISABLE_THREADING,
 					"$(inherited)",
+					"HAVE_XLOCALE=1",
+					"HAVE_STRTOF_L=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/mGBA/mgba/src",
@@ -1422,6 +1416,8 @@
 					DISABLE_THREADING,
 					"MINIMAL_CORE=3",
 					M_CORE_GBA,
+					"HAVE_XLOCALE=1",
+					"HAVE_STRTOF_L=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/mGBA/mgba/src",
