@@ -32,13 +32,6 @@
     
     NSString * path = [url path];
     
-    NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
-    if (fragmentRange.location != NSNotFound) {
-        // Chop the fragment.
-        NSString* newURLString = [path substringToIndex:fragmentRange.location];
-        path = newURLString;
-    }
-    
     fex_type_t type;
     fex_err_t error = fex_identify_file( &type, [path UTF8String] );
     
