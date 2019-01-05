@@ -26,11 +26,6 @@ VGMSTREAM * init_vgmstream_ue4opus(STREAMFILE *streamFile) {
     /* 0x0f(2): frame count */
     loop_flag = 0;
 
-    /* UE4Opus encodes 60ms (music) or 120ms (voice) frames, and encoder delay seems 1/8
-     * of samples per frame (may be more complex but wave looks ok-ish) */
-    //todo does UE4 actually care about encoder delay?
-    skip = (60 * 48000 / 1000) / 8; /* 48000 is the internal/resampled rate */
-
     start_offset = 0x11;
     data_size = get_streamfile_size(streamFile) - start_offset;
 
@@ -41,18 +36,17 @@ VGMSTREAM * init_vgmstream_ue4opus(STREAMFILE *streamFile) {
 
     vgmstream->meta_type = meta_UE4OPUS;
     vgmstream->sample_rate = sample_rate;
-    vgmstream->num_samples = num_samples - skip;
 
 #ifdef VGM_USE_FFMPEG
     {
+        /* usually uses 60ms for music (delay of 360 samples) */
+        skip = ue4_opus_get_encoder_delay(start_offset, streamFile);
+        vgmstream->num_samples = num_samples - skip;
+
         vgmstream->codec_data = init_ffmpeg_ue4_opus(streamFile, start_offset,data_size, vgmstream->channels, skip, vgmstream->sample_rate);
         if (!vgmstream->codec_data) goto fail;
         vgmstream->coding_type = coding_FFmpeg;
         vgmstream->layout_type = layout_none;
-
-        if (vgmstream->num_samples == 0) {
-            vgmstream->num_samples = ue4_opus_get_samples(start_offset, data_size, vgmstream->sample_rate, streamFile) - skip;
-        }
     }
 #else
     goto fail;

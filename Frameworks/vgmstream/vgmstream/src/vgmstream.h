@@ -122,6 +122,7 @@ typedef enum {
     coding_OTNS_IMA,        /* Omikron The Nomad Soul IMA ADPCM */
     coding_WV6_IMA,         /* Gorilla Systems WV6 4-bit IMA ADPCM */
     coding_ALP_IMA,         /* High Voltage ALP 4-bit IMA ADPCM */
+    coding_FFTA2_IMA,       /* Final Fantasy Tactics A2 4-bit IMA ADPCM */
 
     coding_MS_IMA,          /* Microsoft IMA ADPCM */
     coding_XBOX_IMA,        /* XBOX IMA ADPCM */
@@ -155,6 +156,7 @@ typedef enum {
     coding_FADPCM,          /* FMOD FADPCM 4-bit ADPCM */
     coding_ASF,             /* Argonaut ASF 4-bit ADPCM */
     coding_XMD,             /* Konami XMD 4-bit ADPCM */
+    coding_PCFX,            /* PC-FX 4-bit ADPCM */
 
     /* others */
     coding_SDX2,            /* SDX2 2:1 Squareroot-Delta-Exact compression DPCM */
@@ -165,6 +167,7 @@ typedef enum {
     coding_DERF,            /* DERF 8-bit DPCM */
     coding_ACM,             /* InterPlay ACM */
     coding_NWA,             /* VisualArt's NWA */
+    coding_CIRCUS_ADPCM,    /* Circus 8-bit ADPCM */
 
     coding_EA_MT,           /* Electronic Arts MicroTalk (linear-predictive speech codec) */
 
@@ -234,8 +237,7 @@ typedef enum {
     layout_blocked_dec,
     layout_blocked_xvas,
     layout_blocked_vs,
-    layout_blocked_emff_ps2,
-    layout_blocked_emff_ngc,
+    layout_blocked_mul,
     layout_blocked_gsb,
     layout_blocked_thp,
     layout_blocked_filp,
@@ -246,7 +248,7 @@ typedef enum {
     layout_blocked_ivaud,   /* GTA IV .ivaud blocks */
     layout_blocked_tra,     /* DefJam Rapstar .tra blocks */
     layout_blocked_ps2_iab,
-    layout_blocked_ps2_strlr,
+    layout_blocked_vs_str,
     layout_blocked_rws,
     layout_blocked_hwas,
     layout_blocked_ea_sns,  /* newest Electronic Arts blocks, found in SNS/SNU/SPS/etc formats */
@@ -259,6 +261,7 @@ typedef enum {
     layout_blocked_sthd, /* Dream Factory STHD */
     layout_blocked_h4m, /* H4M video */
     layout_blocked_xa_aiff, /* XA in AIFF files [Crusader: No Remorse (SAT), Road Rash (3DO)] */
+    layout_blocked_vs_square,
 
     /* otherwise odd */
     layout_aix,             /* CRI AIX's wheels within wheels */
@@ -326,7 +329,7 @@ typedef enum {
     meta_HIS,               /* Her Ineractive .his */
     meta_BNSF,              /* Bandai Namco Sound Format */
 
-    meta_PSX_XA,            /* CD-ROM XA */
+    meta_XA,                /* CD-ROM XA */
     meta_PS2_SShd,          /* .ADS with SShd header */
     meta_PS2_NPSF,          /* Namco Production Sound File */
     meta_PS2_RXWS,          /* Sony games (Genji, Okage Shadow King, Arc The Lad Twilight of Spirits) */
@@ -347,7 +350,7 @@ typedef enum {
     meta_PS2_BMDX,          /* Beatmania thing */
     meta_PS2_IVB,           /* Langrisser 3 IVB */
     meta_PS2_SND,           /* some Might & Magics SSND header */
-    meta_PS2_SVS,           /* Square SVS */
+    meta_SVS,               /* Square SVS */
     meta_XSS,               /* Dino Crisis 3 */
     meta_SL3,               /* Test Drive Unlimited */
     meta_HGC1,              /* Knights of the Temple 2 */
@@ -410,7 +413,7 @@ typedef enum {
     meta_NGC_YMF,           /* WWE WrestleMania X8 */
     meta_SADL,              /* .sad */
     meta_PS2_CCC,           /* Tokyo Xtreme Racer DRIFT 2 */
-    meta_PSX_FAG,           /* Jackie Chan - Stuntmaster */
+    meta_FAG,               /* Jackie Chan - Stuntmaster */
     meta_PS2_MIHB,          /* Merged MIH+MIB */
     meta_NGC_PDT,           /* Mario Party 6 */
     meta_DC_ASD,            /* Miss Moonligh */
@@ -437,8 +440,7 @@ typedef enum {
     meta_RSD6WMA,           /* RSD6WMA */
 
     meta_PS2_ASS,           /* ASS */
-    meta_PS2_SEG,           /* Eragon */
-    meta_XBOX_SEG,          /* Eragon */
+    meta_SEG,               /* Eragon */
     meta_NDS_STRM_FFTA2,    /* Final Fantasy Tactics A2 */
     meta_STR_ASR,           /* Donkey Kong Jet Race */
     meta_ZWDSP,             /* Zack and Wiki */
@@ -446,8 +448,7 @@ typedef enum {
     meta_DC_DCSW_DCS,       /* Evil Twin - Cypriens Chronicles (DC) */
     meta_WII_SMP,           /* Mushroom Men - The Spore Wars */
     meta_WII_SNG,           /* Excite Trucks */
-    meta_EMFF_PS2,          /* Eidos Music File Format for PS2*/
-    meta_EMFF_NGC,          /* Eidos Music File Format for NGC/WII */
+    meta_MUL,
     meta_SAT_BAKA,          /* Crypt Killer */
     meta_PS2_VSF,           /* Musashi: Samurai Legend */
     meta_PS2_VSF_TTA,       /* Tiny Toon Adventures: Defenders of the Universe */
@@ -468,6 +469,7 @@ typedef enum {
     meta_EA_SCHL_fixed,     /* Electronic Arts SCHl with fixed header */
     meta_EA_BNK,            /* Electronic Arts BNK */
     meta_EA_1SNH,           /* Electronic Arts 1SNh/EACS */
+    meta_EA_EACS,
 
     meta_RAW,               /* RAW PCM file */
 
@@ -507,8 +509,8 @@ typedef enum {
     meta_PS2_TK5,           /* Tekken 5 Stream Files */
     meta_PS2_MCG,           /* Gunvari MCG Files (was name .GCM on disk) */
     meta_ZSD,               /* Dragon Booster ZSD */
-    meta_RedSpark,          /* "RedSpark" RSD (MadWorld) */
-    meta_IVAUD,          /* .ivaud GTA IV */
+    meta_REDSPARK,          /* "RedSpark" RSD (MadWorld) */
+    meta_IVAUD,             /* .ivaud GTA IV */
     meta_NDS_HWAS,          /* Spider-Man 3, Tony Hawk's Downhill Jam, possibly more... */
     meta_NGC_LPS,           /* Rave Master (Groove Adventure Rave)(GC) */
     meta_NAOMI_ADPCM,       /* NAOMI/NAOMI2 ARcade games */
@@ -572,7 +574,7 @@ typedef enum {
     meta_X360_TRA,          /* Def Jam Rapstar */
     meta_PS2_VGS,           /* Princess Soft PS2 games */
     meta_PS2_IAB,           /* Ueki no Housoku - Taosu ze Robert Juudan!! (PS2) */
-    meta_PS2_STRLR,         /* The Bouncer */
+    meta_VS_STR,            /* The Bouncer */
     meta_LSF_N1NJ4N,        /* .lsf n1nj4n Fastlane Street Racing (iPhone) */
     meta_VAWX,              /* feelplus: No More Heroes Heroes Paradise, Moon Diver */
     meta_PC_SNDS,           /* Incredibles PC .snds */
@@ -646,18 +648,14 @@ typedef enum {
     meta_MOGG,              /* Harmonix Music Systems MOGG Vorbis */
     meta_OGG_VORBIS,        /* Ogg Vorbis */
     meta_OGG_SLI,           /* Ogg Vorbis file w/ companion .sli for looping */
-    meta_OGG_SLI2,          /* Ogg Vorbis file w/ different styled .sli for looping */
+    meta_OPUS_SLI,          /* Ogg Opus file w/ companion .sli for looping */
     meta_OGG_SFL,           /* Ogg Vorbis file w/ .sfl (RIFF SFPL) for looping */
-    meta_OGG_UM3,           /* Ogg Vorbis with optional encryption */
-    meta_OGG_KOVS,          /* Ogg Vorbis with encryption (Koei Tecmo Games) */
-    meta_OGG_PSYCHIC,       /* Ogg Vorbis with encryption */
-    meta_OGG_SNGW,          /* Ogg Vorbis with optional encryption (Capcom PC games) */
-    meta_OGG_ISD,           /* Ogg Vorbis with encryption (Azure Striker Gunvolt PC) */
+    meta_OGG_KOVS,          /* Ogg Vorbis with header and encryption (Koei Tecmo Games) */
+    meta_OGG_encrypted,     /* Ogg Vorbis with encryption */
     meta_KMA9,              /* Koei Tecmo [Nobunaga no Yabou - Souzou (Vita)] */
     meta_XWC,               /* Starbreeze games */
     meta_SQEX_SAB,          /* Square-Enix newest middleware (sound) */
     meta_SQEX_MAB,          /* Square-Enix newest middleware (music) */
-    meta_OGG_L2SD,          /* Ogg Vorbis with obfuscation [Lineage II Chronicle 4 (PC)] */
     meta_WAF,               /* KID WAF [Ever 17 (PC)] */
     meta_WAVE,              /* EngineBlack games [Mighty Switch Force! (3DS)] */
     meta_WAVE_segmented,    /* EngineBlack games, segmented [Shantae and the Pirate's Curse (PC)] */
@@ -671,19 +669,14 @@ typedef enum {
     meta_DSP_MCADPCM,       /* Skyrim (Switch) */
     meta_UBI_LYN,           /* Ubisoft LyN engine [The Adventures of Tintin (multi)] */
     meta_MSB_MSH,           /* sfx companion of MIH+MIB */
-    meta_OGG_RPGMV,         /* Ogg Vorbis with encryption [RPG Maker MV games (PC)] */
-    meta_OGG_ENO,           /* Ogg Vorbis with encryption [Metronomicon (PC)] */
     meta_TXTP,              /* generic text playlist */
     meta_SMC_SMH,           /* Wangan Midnight (System 246) */
-    meta_OGG_YS8,           /* Ogg Vorbis with encryption (Ys VIII PC) */
     meta_PPST,              /* PPST [Parappa the Rapper (PSP)] */
     meta_OPUS_PPP,          /* .at9 Opus [Penny-Punching Princess (Switch)] */
     meta_UBI_BAO,           /* Ubisoft BAO */
     meta_DSP_SWITCH_AUDIO,  /* Gal Gun 2 (Switch) */
     meta_TA_AAC_VITA,       /* tri-Ace AAC (Judas Code) */
-    meta_OGG_GWM,           /* Ogg Vorbis with encryption [Metronomicon (PC)] */
     meta_H4M,               /* Hudson HVQM4 video [Resident Evil 0 (GC), Tales of Symphonia (GC)] */
-    meta_OGG_MUS,           /* Ogg Vorbis with encryption [Redux - Dark Matters (PC)] */
     meta_ASF,               /* Argonaut ASF [Croc 2 (PC)] */
     meta_XMD,               /* Konami XMD [Silent Hill 4 (Xbox), Castlevania: Curse of Darkness (Xbox)] */
     meta_CKS,               /* Cricket Audio stream [Part Time UFO (Android), Mega Man 1-6 (Android)] */
@@ -713,6 +706,18 @@ typedef enum {
     meta_NXA,
     meta_ADPCM_CAPCOM,
     meta_UE4OPUS,
+    meta_XWMA,
+    meta_VA3,               /* DDR Supernova 2 AC */
+    meta_XOPUS,
+    meta_VS_SQUARE,
+    meta_NWAV,
+    meta_XPCM,
+    meta_MSF_TAMASOFT,
+    meta_XPS_DAT,
+    meta_ZSND,
+    meta_DSP_ADPCMX,
+    meta_OGG_OPUS,
+    meta_IMC,
 
 } meta_t;
 
@@ -955,7 +960,8 @@ typedef enum {
     MPEG_EAL32P,            /* EALayer3 v2 "PCM", custom frames with v2 header + bigger PCM blocks? */
     MPEG_EAL32S,            /* EALayer3 v2 "Spike", custom frames with v2 header + smaller PCM blocks? */
     MPEG_LYN,               /* N streams of fixed interleave */
-    MPEG_AWC                /* N streams in block layout (music) or absolute offsets (sfx) */
+    MPEG_AWC,               /* N streams in block layout (music) or absolute offsets (sfx) */
+    MPEG_EAMP3              /* custom frame header + MPEG frame + PCM blocks */
 } mpeg_custom_t;
 
 /* config for the above modes */
@@ -1038,7 +1044,6 @@ typedef struct {
 typedef struct {
    sample buffer[960];
    void *handle;
-   int16_t *code_buffer;
 } g719_codec_data;
 #endif
 

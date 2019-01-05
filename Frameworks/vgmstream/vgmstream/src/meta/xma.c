@@ -1,7 +1,7 @@
 #include "meta.h"
 #include "../coding/coding.h"
 
-/* XMA - Microsoft format derived from WMAPRO, found in X360/XBone games */
+/* XMA - Microsoft format derived from RIFF, found in X360/XBone games */
 VGMSTREAM * init_vgmstream_xma(STREAMFILE *streamFile) {
     VGMSTREAM * vgmstream = NULL;
     off_t start_offset, chunk_offset, first_offset = 0xc;
@@ -11,8 +11,11 @@ VGMSTREAM * init_vgmstream_xma(STREAMFILE *streamFile) {
     int fmt_be = 0;
 
 
-    /* check extension, case insensitive */
-    /* .xma2: Skullgirls, .nps: Beautiful Katamari (renamed .xma), .str: Sonic & Sega All Stars Racing */
+    /* checks */
+    /* .xma: standard
+     * .xma2: Skullgirls (X360)
+     * .nps: Beautiful Katamari (X360)
+     * .str: Sonic & Sega All Stars Racing (X360) */
     if ( !check_extensions(streamFile, "xma,xma2,nps,str") )
         goto fail;
 
@@ -66,7 +69,7 @@ VGMSTREAM * init_vgmstream_xma(STREAMFILE *streamFile) {
         goto fail;
 
 
-    /* fix samples; for now only XMA1 is fixed, but XMA2 num_samples don't include skip samples and xmaencode.exe doesn't use it */
+    /* get xma1 samples, later fixed */
     if (is_xma1) {
         ms_sample_data msd = {0};
 
@@ -86,7 +89,6 @@ VGMSTREAM * init_vgmstream_xma(STREAMFILE *streamFile) {
         num_samples = msd.num_samples;
         loop_start_sample = msd.loop_start_sample;
         loop_end_sample = msd.loop_end_sample;
-        /* XMA2 loop/num_samples don't seem to use msd.skip_samples */
     }
 
 
@@ -94,12 +96,11 @@ VGMSTREAM * init_vgmstream_xma(STREAMFILE *streamFile) {
     vgmstream = allocate_vgmstream(channel_count,loop_flag);
     if (!vgmstream) goto fail;
 
+    vgmstream->meta_type = meta_XMA_RIFF;
     vgmstream->sample_rate = sample_rate;
     vgmstream->num_samples = num_samples;
     vgmstream->loop_start_sample = loop_start_sample;
     vgmstream->loop_end_sample   = loop_end_sample;
-    vgmstream->meta_type = meta_XMA_RIFF;
-
 
 #ifdef VGM_USE_FFMPEG
     {
@@ -111,26 +112,19 @@ VGMSTREAM * init_vgmstream_xma(STREAMFILE *streamFile) {
         } else {
             bytes = ffmpeg_make_riff_xma_from_fmt_chunk(buf,0x100, chunk_offset,chunk_size, data_size, streamFile, fmt_be);
         }
-        if (bytes <= 0) goto fail;
 
         vgmstream->codec_data = init_ffmpeg_header_offset(streamFile, buf,bytes, start_offset,data_size);
         if ( !vgmstream->codec_data ) goto fail;
         vgmstream->coding_type = coding_FFmpeg;
         vgmstream->layout_type = layout_none;
+
+        xma_fix_raw_samples(vgmstream, streamFile, start_offset, data_size, chunk_offset, 1,1);
     }
 #else
     goto fail;
 #endif
 
-#if 0
-    //not active due to a FFmpeg bug that misses some of the last packet samples and decodes
-    // garbage if asked for more samples (always happens but more apparent with skip_samples active)
-    /* fix encoder delay */
-    if (data->skipSamples==0)
-        ffmpeg_set_skip_samples(data, xma.skip_samples);
-#endif
 
-    /* open the file for reading */
     if ( !vgmstream_open_stream(vgmstream, streamFile, start_offset) )
         goto fail;
     return vgmstream;

@@ -3,6 +3,7 @@
 #include "../vgmstream.h"
 
 #ifdef VGM_USE_MPEG
+#include <mpg123/mpg123.h>
 #include "mpeg_decoder.h"
 
 
@@ -139,6 +140,7 @@ mpeg_codec_data *init_mpeg_custom(STREAMFILE *streamFile, off_t start_offset, co
         case MPEG_EAL32P:
         case MPEG_EAL32S:   ok = mpeg_custom_setup_init_ealayer3(streamFile, start_offset, data, coding_type); break;
         case MPEG_AWC:      ok = mpeg_custom_setup_init_awc(streamFile, start_offset, data, coding_type); break;
+        case MPEG_EAMP3:    ok = mpeg_custom_setup_init_eamp3(streamFile, start_offset, data, coding_type); break;
         default:            ok = mpeg_custom_setup_init_default(streamFile, start_offset, data, coding_type); break;
     }
     if (!ok)
@@ -398,10 +400,11 @@ static void decode_mpeg_custom_stream(VGMSTREAMCHANNEL *stream, mpeg_codec_data 
             case MPEG_EAL32S:   ok = mpeg_custom_parse_frame_ealayer3(stream, data, num_stream); break;
             case MPEG_AHX:      ok = mpeg_custom_parse_frame_ahx(stream, data, num_stream); break;
             case MPEG_AWC:      ok = mpeg_custom_parse_frame_awc(stream, data, num_stream); break;
+            case MPEG_EAMP3:    ok = mpeg_custom_parse_frame_eamp3(stream, data, num_stream); break;
             default:            ok = mpeg_custom_parse_frame_default(stream, data, num_stream); break;
         }
         if (!ok) {
-            VGM_LOG("MPEG: cannot parse frame @ around %"PRIx64"\n",(off64_t)stream->offset);
+            VGM_LOG("MPEG: cannot parse frame @ around %x\n",(uint32_t)stream->offset);
             goto decode_fail; /* mpg123 could resync but custom MPEGs wouldn't need that */
         }
         //;VGM_LOG("MPEG: read results: bytes_in_buffer=0x%x, new offset=%lx\n", ms->bytes_in_buffer, stream->offset);
@@ -500,24 +503,29 @@ void free_mpeg(mpeg_codec_data *data) {
      * someone else in another thread is using it. */
 }
 
+/* seeks stream to 0 */
 void reset_mpeg(VGMSTREAM *vgmstream) {
     off_t input_offset;
     mpeg_codec_data *data = vgmstream->codec_data;
     if (!data) return;
 
-    /* reset multistream */ //todo check if stream offsets are properly reset
 
     if (!data->custom) {
-        /* input_offset is ignored as we can assume it will be 0 for a seek to sample 0 */
         mpg123_feedseek(data->m,0,SEEK_SET,&input_offset);
+        /* input_offset is ignored as we can assume it will be 0 for a seek to sample 0 */
     }
     else {
         int i;
         /* re-start from 0 */
-        for (i=0; i < data->streams_size; i++) {
+        for (i = 0; i < data->streams_size; i++) {
             mpg123_feedseek(data->streams[i]->m,0,SEEK_SET,&input_offset);
+            data->streams[i]->bytes_in_buffer = 0;
+            data->streams[i]->buffer_full = 0;
+            data->streams[i]->buffer_used = 0;
             data->streams[i]->samples_filled = 0;
             data->streams[i]->samples_used = 0;
+            data->streams[i]->current_size_count = 0;
+            data->streams[i]->current_size_target = 0;
             data->streams[i]->decode_to_discard = 0;
         }
 
@@ -525,29 +533,33 @@ void reset_mpeg(VGMSTREAM *vgmstream) {
     }
 }
 
+/* seeks to a point */
 void seek_mpeg(VGMSTREAM *vgmstream, int32_t num_sample) {
     off_t input_offset;
     mpeg_codec_data *data = vgmstream->codec_data;
     if (!data) return;
 
-    /* seek multistream */
+
     if (!data->custom) {
         mpg123_feedseek(data->m, num_sample,SEEK_SET,&input_offset);
 
-        /* force first offset as discard-looping needs to start from the beginning */
+        /* adjust loop with mpg123's offset (useful?) */
         if (vgmstream->loop_ch)
             vgmstream->loop_ch[0].offset = vgmstream->loop_ch[0].channel_start_offset + input_offset;
     }
     else {
         int i;
         /* re-start from 0 */
-        for (i=0; i < data->streams_size; i++) {
+        for (i = 0; i < data->streams_size; i++) {
             mpg123_feedseek(data->streams[i]->m,0,SEEK_SET,&input_offset);
-            data->streams[i]->samples_filled = 0;
-            data->streams[i]->samples_used = 0;
-            data->streams[i]->decode_to_discard = 0;
+            data->streams[i]->bytes_in_buffer = 0;
             data->streams[i]->buffer_full = 0;
             data->streams[i]->buffer_used = 0;
+            data->streams[i]->samples_filled = 0;
+            data->streams[i]->samples_used = 0;
+            data->streams[i]->current_size_count = 0;
+            data->streams[i]->current_size_target = 0;
+            data->streams[i]->decode_to_discard = 0;
 
             /* force first offset as discard-looping needs to start from the beginning */
             if (vgmstream->loop_ch)
@@ -559,33 +571,36 @@ void seek_mpeg(VGMSTREAM *vgmstream, int32_t num_sample) {
         data->samples_to_discard += data->skip_samples;
     }
 
+    data->bytes_in_buffer = 0;
     data->buffer_full = 0;
     data->buffer_used = 0;
 }
 
-/* resets mpg123 decoder and its internals (with mpg123_open_feed as mpg123_feedseek won't work) */
+/* resets mpg123 decoder and its internals without seeking, useful when a new MPEG substream starts */
 void flush_mpeg(mpeg_codec_data * data) {
     if (!data)
         return;
 
     if (!data->custom) {
         /* input_offset is ignored as we can assume it will be 0 for a seek to sample 0 */
-        mpg123_open_feed(data->m);
+        mpg123_open_feed(data->m); /* mpg123_feedseek won't work */
     }
     else {
         int i;
         /* re-start from 0 */
         for (i=0; i < data->streams_size; i++) {
             mpg123_open_feed(data->streams[i]->m);
-            data->streams[i]->samples_filled = 0;
-            data->streams[i]->samples_used = 0;
-            data->streams[i]->decode_to_discard = 0;
             data->streams[i]->bytes_in_buffer = 0;
             data->streams[i]->buffer_full = 0;
             data->streams[i]->buffer_used = 0;
+            data->streams[i]->samples_filled = 0;
+            data->streams[i]->samples_used = 0;
+            data->streams[i]->current_size_count = 0;
+            data->streams[i]->current_size_target = 0;
+            data->streams[i]->decode_to_discard = 0;
         }
 
-        data->samples_to_discard = data->skip_samples; /* initial delay */
+        data->samples_to_discard = data->skip_samples;
     }
 
     data->bytes_in_buffer = 0;
