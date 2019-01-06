@@ -308,7 +308,7 @@ static const char* extension_list[] = {
     "pona",
     "pos",
     "ps2stm", //fake extension for .stm (renamed? to be removed?)
-    "psh", // fake extension for VSV(?) Dawn of Mana needs to be checked again
+    "psh", //fake extension for .vsv (to be removed)
     "psnd",
     "psw", //fake extension for .wam (renamed, to be removed)
 
@@ -452,7 +452,7 @@ static const char* extension_list[] = {
     "vpk",
     "vs",
     "vsf",
-    "vsv", // official extension for PSH? TODO: recheck Dawn of Mana
+    "vsv",
     "vxn",
 
     "waa",
@@ -833,7 +833,7 @@ static const meta_info meta_info_list[] = {
         {meta_MUS_ACM,              "InterPlay MUS ACM header"},
         {meta_PS2_KCES,             "Konami KCES Header"},
         {meta_PS2_DXH,              "Tokobot Plus DXH Header"},
-        {meta_PS2_PSH,              "Square Enix PSH/VSV Header"},
+        {meta_VSV,                  "Square Enix .vsv Header"},
         {meta_RIFF_WAVE_labl,       "RIFF WAVE header with loop markers"},
         {meta_RIFF_WAVE_smpl,       "RIFF WAVE header with sample looping info"},
         {meta_RIFF_WAVE_wsmp,       "RIFF WAVE header with wsmp looping info"},
@@ -907,7 +907,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_JOE,              "Asobo Studio .JOE header"},
         {meta_VGS,                  "Guitar Hero VGS Header"},
         {meta_DC_DCSW_DCS,          "Evil Twin DCS file with helper"},
-        {meta_WII_SMP,              "SMP DSP Header"},
+        {meta_SMP,                  "Infernal Engine .smp header"},
         {meta_MUL,                  "Crystal Dynamics .MUL header"},
         {meta_THP,                  "THP Movie File Format Header"},
         {meta_STS_WII,              "Shikigami no Shiro (WII) Header"},
@@ -969,7 +969,6 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_GCM,              "GCM 'MCG' Header"},
         {meta_PS2_SMPL,             "Homura SMPL header"},
         {meta_PS2_MSA,              "Success .MSA header"},
-        {meta_PC_SMP,               "Ghostbusters .smp Header"},
         {meta_NGC_PDT,              "Hudson .PDT header"},
         {meta_NGC_RKV,              "Legacy of Kain - Blood Omen 2 RKV GC header"},
         {meta_DSP_DDSP,             ".DDSP header"},
