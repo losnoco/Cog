@@ -116,7 +116,7 @@ void LFOPlugin::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		{
 			if(m_outputToCC)
 			{
-				plugin->MidiSend(MIDIEvents::CC(static_cast<MIDIEvents::MidiCC>(m_outputParam & 0x7F), static_cast<uint8>((m_outputParam >> 8) & 0x0F), Util::Round<uint8>(value * 127.0f)));
+				plugin->MidiSend(MIDIEvents::CC(static_cast<MIDIEvents::MidiCC>(m_outputParam & 0x7F), static_cast<uint8>((m_outputParam >> 8) & 0x0F), mpt::saturate_round<uint8>(value * 127.0f)));
 			} else
 			{
 				plugin->SetParameter(m_outputParam, static_cast<PlugParamValue>(value));
@@ -218,43 +218,43 @@ bool LFOPlugin::MidiSend(uint32 midiCode)
 }
 
 
-bool LFOPlugin::MidiSysexSend(const void *message, uint32 length)
+bool LFOPlugin::MidiSysexSend(mpt::const_byte_span sysex)
 {
 	if(IMixPlugin *plugin = GetOutputPlugin())
-		return plugin->MidiSysexSend(message, length);
+		return plugin->MidiSysexSend(sysex);
 	else
 		return true;
 }
 
 
-void LFOPlugin::MidiCC(uint8 nMidiCh, MIDIEvents::MidiCC nController, uint8 nParam, CHANNELINDEX trackChannel)
+void LFOPlugin::MidiCC(MIDIEvents::MidiCC nController, uint8 nParam, CHANNELINDEX trackChannel)
 {
 	if(IMixPlugin *plugin = GetOutputPlugin())
 	{
-		plugin->MidiCC(nMidiCh, nController, nParam, trackChannel);
+		plugin->MidiCC(nController, nParam, trackChannel);
 	}
 }
 
 
-void LFOPlugin::MidiPitchBend(uint8 nMidiCh, int32 increment, int8 pwd)
+void LFOPlugin::MidiPitchBend(int32 increment, int8 pwd, CHANNELINDEX trackChannel)
 {
 	if(IMixPlugin *plugin = GetOutputPlugin())
 	{
-		plugin->MidiPitchBend(nMidiCh, increment, pwd);
+		plugin->MidiPitchBend(increment, pwd, trackChannel);
 	}
 }
 
 
-void LFOPlugin::MidiVibrato(uint8 nMidiCh, int32 depth, int8 pwd)
+void LFOPlugin::MidiVibrato(int32 depth, int8 pwd, CHANNELINDEX trackChannel)
 {
 	if(IMixPlugin *plugin = GetOutputPlugin())
 	{
-		plugin->MidiVibrato(nMidiCh, depth, pwd);
+		plugin->MidiVibrato(depth, pwd, trackChannel);
 	}
 }
 
 
-void LFOPlugin::MidiCommand(uint8 nMidiCh, uint8 nMidiProg, uint16 wMidiBank, uint16 note, uint16 vol, CHANNELINDEX trackChannel)
+void LFOPlugin::MidiCommand(const ModInstrument &instr, uint16 note, uint16 vol, CHANNELINDEX trackChannel)
 {
 	if(ModCommand::IsNote(static_cast<ModCommand::NOTE>(note)) && vol > 0)
 	{
@@ -262,7 +262,7 @@ void LFOPlugin::MidiCommand(uint8 nMidiCh, uint8 nMidiProg, uint16 wMidiBank, ui
 	}
 	if(IMixPlugin *plugin = GetOutputPlugin())
 	{
-		plugin->MidiCommand(nMidiCh, nMidiProg, wMidiBank, note, vol, trackChannel);
+		plugin->MidiCommand(instr, note, vol, trackChannel);
 	}
 }
 
@@ -276,10 +276,10 @@ void LFOPlugin::HardAllNotesOff()
 }
 
 
-bool LFOPlugin::IsNotePlaying(uint32 note, uint32 midiChn, uint32 trackerChn)
+bool LFOPlugin::IsNotePlaying(uint32 note, CHANNELINDEX trackerChn)
 {
 	if(IMixPlugin *plugin = GetOutputPlugin())
-		return plugin->IsNotePlaying(note, midiChn, trackerChn);
+		return plugin->IsNotePlaying(note, trackerChn);
 	else
 		return false;
 }

@@ -39,7 +39,7 @@ namespace CTuningS11n
 
 		void operator()(std::ostream& oStrm, const std::vector<float>& v);
 		uint16 m_nWriteCount;
-		static const uint16 s_nDefaultWriteCount = (uint16_max >> 2);
+		enum : uint16 { s_nDefaultWriteCount = (uint16_max >> 2) };
 	};
 }
 
@@ -52,6 +52,9 @@ Version changes:
 	2->3: The type for the size_type in the serialisation changed
 		  from default(size_t, uint32) to unsigned STEPTYPE. (March 2007)
 */
+
+
+MPT_STATIC_ASSERT(CTuningRTI::s_RatioTableFineSizeMaxDefault < static_cast<USTEPINDEXTYPE>(FINESTEPCOUNT_MAX));
 
 
 CTuningRTI::CTuningRTI()
@@ -250,7 +253,7 @@ RATIOTYPE CTuningRTI::GetRatioFine(const NOTEINDEXTYPE& note, USTEPINDEXTYPE sd)
 	else //Calculating ratio 'on the fly'.
 	{
 		//'Geometric finestepping'.
-		return pow(GetRatio(note+1) / GetRatio(note), static_cast<RATIOTYPE>(sd)/(GetFineStepCount()+1));
+		return std::pow(GetRatio(note+1) / GetRatio(note), static_cast<RATIOTYPE>(sd)/(GetFineStepCount()+1));
 
 	}
 
@@ -294,7 +297,7 @@ bool CTuningRTI::SetRatio(const NOTEINDEXTYPE& s, const RATIOTYPE& r)
 
 void CTuningRTI::SetFineStepCount(const USTEPINDEXTYPE& fs)
 {
-	m_FineStepCount = mpt::clamp(mpt::saturate_cast<STEPINDEXTYPE>(fs), 0, FINESTEPCOUNT_MAX);
+	m_FineStepCount = mpt::clamp(mpt::saturate_cast<STEPINDEXTYPE>(fs), STEPINDEXTYPE(0), FINESTEPCOUNT_MAX);
 	UpdateFineStepTable();
 }
 
@@ -315,7 +318,7 @@ void CTuningRTI::UpdateFineStepTable()
 		}
 		m_RatioTableFine.resize(m_FineStepCount);
 		const RATIOTYPE q = GetRatio(GetValidityRange().first + 1) / GetRatio(GetValidityRange().first);
-		const RATIOTYPE rFineStep = pow(q, static_cast<RATIOTYPE>(1)/(m_FineStepCount+1));
+		const RATIOTYPE rFineStep = std::pow(q, static_cast<RATIOTYPE>(1)/(m_FineStepCount+1));
 		for(USTEPINDEXTYPE i = 1; i<=m_FineStepCount; i++)
 			m_RatioTableFine[i-1] = std::pow(rFineStep, static_cast<RATIOTYPE>(i));
 		return;
@@ -338,10 +341,10 @@ void CTuningRTI::UpdateFineStepTable()
 			for(UNOTEINDEXTYPE i = 0; i<p; i++)
 			{
 				const NOTEINDEXTYPE refnote = GetRefNote(startnote+i);
-				const RATIOTYPE rFineStep = pow(GetRatio(refnote+1) / GetRatio(refnote), static_cast<RATIOTYPE>(1)/(m_FineStepCount+1));
+				const RATIOTYPE rFineStep = std::pow(GetRatio(refnote+1) / GetRatio(refnote), static_cast<RATIOTYPE>(1)/(m_FineStepCount+1));
 				for(UNOTEINDEXTYPE j = 1; j<=m_FineStepCount; j++)
 				{
-					m_RatioTableFine[m_FineStepCount * refnote + (j-1)] = pow(rFineStep, static_cast<RATIOTYPE>(j));
+					m_RatioTableFine[m_FineStepCount * refnote + (j-1)] = std::pow(rFineStep, static_cast<RATIOTYPE>(j));
 				}
 			}
 			return;
@@ -409,6 +412,7 @@ SerializationResult CTuningRTI::InitDeserialize(std::istream& iStrm)
 	{
 		return SerializationResult::Failure;
 	}
+	m_FineStepCount = mpt::clamp(mpt::saturate_cast<STEPINDEXTYPE>(m_FineStepCount), STEPINDEXTYPE(0), FINESTEPCOUNT_MAX);
 	if(m_RatioTable.size() > static_cast<size_t>(NOTEINDEXTYPE_MAX))
 	{
 		return SerializationResult::Failure;
@@ -667,6 +671,7 @@ SerializationResult CTuningRTI::InitDeserializeOLD(std::istream& inStrm)
 	{
 		m_FineStepCount -= 1;
 	}
+	m_FineStepCount = mpt::clamp(mpt::saturate_cast<STEPINDEXTYPE>(m_FineStepCount), STEPINDEXTYPE(0), FINESTEPCOUNT_MAX);
 	UpdateFineStepTable();
 
 	if(m_TuningType == TT_GEOMETRIC)

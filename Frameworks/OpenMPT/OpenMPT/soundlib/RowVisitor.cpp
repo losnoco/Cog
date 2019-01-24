@@ -35,6 +35,13 @@ RowVisitor::RowVisitor(const CSoundFile &sf, SEQUENCEINDEX sequence)
 }
 
 
+RowVisitor& RowVisitor::operator=(RowVisitor &&other)
+{
+	m_visitedRows = std::move(other.m_visitedRows);
+	return *this;
+}
+
+
 const ModSequence &RowVisitor::Order() const
 {
 	if(m_sequence >= m_sndFile.Order.GetNumSequences())
@@ -58,9 +65,9 @@ void RowVisitor::Initialize(bool reset)
 		if(m_visitOrder.capacity() < MAX_PATTERN_ROWS)
 		{
 			ROWINDEX maxRows = 0;
-			for(PATTERNINDEX pat = 0; pat < m_sndFile.Patterns.Size(); pat++)
+			for(const auto &pat :m_sndFile.Patterns)
 			{
-				maxRows = std::max(maxRows, m_sndFile.Patterns[pat].GetNumRows());
+				maxRows = std::max(maxRows, pat.GetNumRows());
 			}
 			m_visitOrder.reserve(maxRows);
 		}
@@ -162,11 +169,11 @@ size_t RowVisitor::GetVisitedRowsVectorSize(PATTERNINDEX pattern) const
 
 // Find the first row that has not been played yet.
 // The order and row is stored in the order and row variables on success, on failure they contain invalid values.
-// If fastSearch is true (default), only the first row of each pattern is looked at, otherwise every row is examined.
+// If onlyUnplayedPatterns is true (default), only completely unplayed patterns are considered, otherwise a song can start anywhere.
 // Function returns true on success.
-bool RowVisitor::GetFirstUnvisitedRow(ORDERINDEX &ord, ROWINDEX &row, bool fastSearch) const
+bool RowVisitor::GetFirstUnvisitedRow(ORDERINDEX &ord, ROWINDEX &row, bool onlyUnplayedPatterns) const
 {
-	auto &order = Order();
+	const auto &order = Order();
 	const ORDERINDEX endOrder = order.GetLengthTailTrimmed();
 	for(ord = 0; ord < endOrder; ord++)
 	{
@@ -179,15 +186,29 @@ bool RowVisitor::GetFirstUnvisitedRow(ORDERINDEX &ord, ROWINDEX &row, bool fastS
 		if(ord >= m_visitedRows.size())
 		{
 			// Not yet initialized => unvisited
+			row = 0;
 			return true;
 		}
 
-		const ROWINDEX endRow = (fastSearch ? 1 : m_sndFile.Patterns[pattern].GetNumRows());
-		for(row = 0; row < endRow; row++)
+		const auto &visitedRows = m_visitedRows[ord];
+		auto foundRow = std::find(visitedRows.begin(), visitedRows.end(), onlyUnplayedPatterns);
+		if(onlyUnplayedPatterns && foundRow == visitedRows.end())
 		{
-			if(row >= m_visitedRows[ord].size() || m_visitedRows[ord][row] == false)
+			// No row of this pattern has been played yet.
+			row = 0;
+			return true;
+		} else if(!onlyUnplayedPatterns)
+		{
+			// Return the first unplayed row in this pattern
+			if(foundRow != visitedRows.end())
 			{
-				// Not yet initialized, or unvisited
+				row = static_cast<ROWINDEX>(std::distance(visitedRows.begin(), foundRow));
+				return true;
+			}
+			if(visitedRows.size() < m_sndFile.Patterns[pattern].GetNumRows())
+			{
+				// History is not fully initialized
+				row = static_cast<ROWINDEX>(visitedRows.size());
 				return true;
 			}
 		}

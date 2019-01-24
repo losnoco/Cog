@@ -11,6 +11,8 @@
 #include "stdafx.h"
 #include "mptTime.h"
 
+#include "mptStringBuffer.h"
+
 #include <time.h>
 
 #if MPT_OS_WINDOWS
@@ -43,7 +45,7 @@ uint64 Now()
 	return ((uint64)filetime.dwHighDateTime << 32 | filetime.dwLowDateTime);
 }
 
-mpt::ustring ToString(uint64 time100ns)
+mpt::ustring ToUString(uint64 time100ns)
 {
 	static const std::size_t bufsize = 256;
 
@@ -55,17 +57,17 @@ mpt::ustring ToString(uint64 time100ns)
 	filetime.dwLowDateTime = (DWORD)((uint64)time100ns);
 	FileTimeToSystemTime(&filetime, &systime);
 
-	WCHAR buf[bufsize];
+	TCHAR buf[bufsize];
 
-	GetDateFormatW(LOCALE_SYSTEM_DEFAULT, 0, &systime, L"yyyy-MM-dd", buf, bufsize);
-	result.append(mpt::ToUnicode(buf));
+	GetDateFormat(LOCALE_SYSTEM_DEFAULT, 0, &systime, TEXT("yyyy-MM-dd"), buf, bufsize);
+	result.append(mpt::ToUnicode(mpt::String::ReadWinBuf(buf)));
 
-	result.append(MPT_USTRING(" "));
+	result.append(U_(" "));
 
-	GetTimeFormatW(LOCALE_SYSTEM_DEFAULT, TIME_FORCE24HOURFORMAT, &systime, L"HH:mm:ss", buf, bufsize);
-	result.append(mpt::ToUnicode(buf));
+	GetTimeFormat(LOCALE_SYSTEM_DEFAULT, TIME_FORCE24HOURFORMAT, &systime, TEXT("HH:mm:ss"), buf, bufsize);
+	result.append(mpt::ToUnicode(mpt::String::ReadWinBuf(buf)));
 
-	result.append(MPT_USTRING("."));
+	result.append(U_("."));
 
 	result.append(mpt::ufmt::dec0<3>((unsigned)systime.wMilliseconds));
 
@@ -159,7 +161,7 @@ mpt::ustring ToShortenedISO8601(tm date)
 	// and strftime does not support reduced precision ISO8601 at all.
 	// Just do the formatting ourselves.
 	mpt::ustring result;
-	mpt::ustring tz = MPT_USTRING("Z");
+	mpt::ustring tz = U_("Z");
 	if(date.tm_year == 0)
 	{
 		return result;
@@ -169,12 +171,12 @@ mpt::ustring ToShortenedISO8601(tm date)
 	{
 		return result;
 	}
-	result += MPT_USTRING("-") + mpt::ufmt::dec0<2>(date.tm_mon + 1);
+	result += U_("-") + mpt::ufmt::dec0<2>(date.tm_mon + 1);
 	if(date.tm_mday < 1 || date.tm_mday > 31)
 	{
 		return result;
 	}
-	result += MPT_USTRING("-") + mpt::ufmt::dec0<2>(date.tm_mday);
+	result += U_("-") + mpt::ufmt::dec0<2>(date.tm_mday);
 	if(date.tm_hour == 0 && date.tm_min == 0 && date.tm_sec == 0)
 	{
 		return result;
@@ -187,17 +189,17 @@ mpt::ustring ToShortenedISO8601(tm date)
 	{
 		return result;
 	}
-	result += MPT_USTRING("T");
+	result += U_("T");
 	if(date.tm_isdst > 0)
 	{
-		tz = MPT_USTRING("+01:00");
+		tz = U_("+01:00");
 	}
-	result += mpt::ufmt::dec0<2>(date.tm_hour) + MPT_USTRING(":") + mpt::ufmt::dec0<2>(date.tm_min);
+	result += mpt::ufmt::dec0<2>(date.tm_hour) + U_(":") + mpt::ufmt::dec0<2>(date.tm_min);
 	if(date.tm_sec < 0 || date.tm_sec > 61)
 	{
 		return result + tz;
 	}
-	result += MPT_USTRING(":") + mpt::ufmt::dec0<2>(date.tm_sec);
+	result += U_(":") + mpt::ufmt::dec0<2>(date.tm_sec);
 	result += tz;
 	return result;
 }

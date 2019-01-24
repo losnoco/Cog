@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include <map>
 #include <vector>
 #include "../common/misc_util.h"
@@ -53,11 +55,11 @@ class IComponent
 
 protected:
 
-	IComponent() { }
+	IComponent() = default;
 
 public:
 
-	virtual ~IComponent() { }
+	virtual ~IComponent() = default;
 
 public:
 
@@ -98,15 +100,15 @@ protected:
 
 public:
 
-	virtual ComponentType GetType() const;
-	virtual bool IsInitialized() const;
-	virtual bool IsAvailable() const;
+	ComponentType GetType() const override;
+	bool IsInitialized() const override;
+	bool IsAvailable() const override;
 
-	virtual mpt::ustring GetVersion() const;
+	mpt::ustring GetVersion() const override;
 
 public:
 
-	virtual void Initialize();
+	void Initialize() override;
 
 protected:
 
@@ -123,7 +125,7 @@ public:
 	{
 		return;
 	}
-	virtual bool DoInitialize()
+	bool DoInitialize() override
 	{
 		return true;
 	}
@@ -175,7 +177,7 @@ public:
 
 protected:
 
-	virtual bool DoInitialize() = 0;
+	bool DoInitialize() override = 0;
 
 };
 
@@ -184,6 +186,18 @@ protected:
 #define MPT_COMPONENT_BIND_OPTIONAL(libName, func) Bind( func , libName , #func )
 #define MPT_COMPONENT_BIND_SYMBOL(libName, symbol, func) MPT_DO { if(!Bind( func , libName , symbol )) { SetBindFailed(); } } MPT_WHILE_0
 #define MPT_COMPONENT_BIND_SYMBOL_OPTIONAL(libName, symbol, func) Bind( func , libName , symbol )
+
+#if MPT_OS_WINDOWS
+#ifdef UNICODE
+#define MPT_COMPONENT_BINDWIN_SUFFIX "W"
+#else
+#define MPT_COMPONENT_BINDWIN_SUFFIX "A"
+#endif
+#define MPT_COMPONENT_BINDWIN(libName, func) MPT_DO { if(!Bind( func , libName , #func MPT_COMPONENT_BINDWIN_SUFFIX )) { SetBindFailed(); } } MPT_WHILE_0
+#define MPT_COMPONENT_BINDWIN_OPTIONAL(libName, func) Bind( func , libName , #func MPT_COMPONENT_BINDWIN_SUFFIX )
+#define MPT_COMPONENT_BINDWIN_SYMBOL(libName, symbol, func) MPT_DO { if(!Bind( func , libName , symbol MPT_COMPONENT_BINDWIN_SUFFIX )) { SetBindFailed(); } } MPT_WHILE_0
+#define MPT_COMPONENT_BINDWIN_SYMBOL_OPTIONAL(libName, symbol, func) Bind( func , libName , symbol MPT_COMPONENT_BINDWIN_SUFFIX )
+#endif
 
 
 class ComponentSystemDLL : public ComponentLibrary
@@ -197,7 +211,7 @@ public:
 	{
 		return;
 	}
-	virtual bool DoInitialize()
+	bool DoInitialize() override
 	{
 		AddLibrary(m_BaseName.ToUTF8(), mpt::LibraryPath::System(m_BaseName));
 		return GetLibrary(m_BaseName.ToUTF8()).IsValid();
@@ -216,7 +230,7 @@ public:
 	{
 		return;
 	}
-	virtual bool DoInitialize()
+	bool DoInitialize() override
 	{
 		AddLibrary(m_FullName.ToUTF8(), mpt::LibraryPath::AppFullName(m_FullName));
 		return GetLibrary(m_FullName.ToUTF8()).IsValid();
@@ -238,9 +252,9 @@ typedef std::shared_ptr<IComponent> (*ComponentFactoryMethod)(ComponentManager &
 class IComponentFactory
 {
 protected:
-	IComponentFactory() { }
+	IComponentFactory() = default;
 public:
-	virtual ~IComponentFactory() { }
+	virtual ~IComponentFactory() = default;
 public:
 	virtual std::string GetID() const = 0;
 	virtual std::string GetSettingsKey() const = 0;
@@ -261,10 +275,10 @@ protected:
 	void Initialize(ComponentManager &componentManager, std::shared_ptr<IComponent> component) const;
 public:
 	virtual ~ComponentFactoryBase();
-	virtual std::string GetID() const;
-	virtual std::string GetSettingsKey() const;
-	virtual std::shared_ptr<IComponent> Construct(ComponentManager &componentManager) const = 0;
-	virtual ComponentFactoryMethod GetStaticConstructor() const = 0;
+	std::string GetID() const override;
+	std::string GetSettingsKey() const override;
+	std::shared_ptr<IComponent> Construct(ComponentManager &componentManager) const override = 0;
+	ComponentFactoryMethod GetStaticConstructor() const override = 0;
 };
 
 
@@ -278,12 +292,8 @@ public:
 	{
 		return;
 	}
-	virtual ~ComponentFactory()
-	{
-		return;
-	}
 public:
-	virtual std::shared_ptr<IComponent> Construct(ComponentManager &componentManager) const
+	std::shared_ptr<IComponent> Construct(ComponentManager &componentManager) const override
 	{
 		PreConstruct();
 		std::shared_ptr<IComponent> component = std::make_shared<T>();
@@ -294,7 +304,7 @@ public:
 	{
 		return ComponentFactory().Construct(componentManager);
 	}
-	virtual ComponentFactoryMethod GetStaticConstructor() const
+	virtual ComponentFactoryMethod GetStaticConstructor() const override
 	{
 		return &StaticConstruct;
 	}
@@ -315,10 +325,10 @@ class ComponentManagerSettingsDefault
 	: public IComponentManagerSettings
 {
 public:
-	virtual bool LoadOnStartup() const { return false; }
-	virtual bool KeepLoaded() const { return true; }
-	virtual bool IsBlocked(const std::string & /*key*/ ) const { return false; }
-	virtual mpt::PathString Path() const { return mpt::PathString(); }
+	bool LoadOnStartup() const override { return false; }
+	bool KeepLoaded() const override { return true; }
+	bool IsBlocked(const std::string & /*key*/ ) const override { return false; }
+	mpt::PathString Path() const override { return mpt::PathString(); }
 };
 
 

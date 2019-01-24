@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "ModSample.h"
 #include "ModInstrument.h"
 #include "modcommand.h"
@@ -62,7 +64,7 @@ struct ModChannel
 
 	// Information not used in the mixer
 	const ModInstrument *pModInstrument;	// Currently assigned instrument slot
-	SmpLength proTrackerOffset;				// Offset for instrument-less notes in ProTracker mode
+	SmpLength prevNoteOffset;				// Offset for instrument-less notes for ProTracker/ScreamTracker
 	SmpLength oldOffset;
 	FlagSet<ChannelFlags> dwOldFlags;		// Flags from previous tick
 	int32 newLeftVol, newRightVol;
@@ -72,8 +74,8 @@ struct ModChannel
 	int32 cachedPeriod, glissandoPeriod;
 	int32 nCalcVolume;								// Calculated channel volume, 14-Bit (without global volume, pre-amp etc applied) - for MIDI macros
 	EnvInfo VolEnv, PanEnv, PitchEnv;				// Envelope playback info
-	int32 nGlobalVol;	// Channel volume (CV in ITTECH.TXT)
-	int32 nInsVol;		// Sample / Instrument volume (SV * IV in ITTECH.TXT)
+	int32 nGlobalVol;	// Channel volume (CV in ITTECH.TXT) 0...64
+	int32 nInsVol;		// Sample / Instrument volume (SV * IV in ITTECH.TXT) 0...64
 	int32 nFineTune, nTranspose;
 	int32 nPortamentoSlide, nAutoVibDepth;
 	uint32 nEFxOffset; // offset memory for Invert Loop (EFx, .MOD only)
@@ -88,7 +90,8 @@ struct ModChannel
 	uint8 resamplingMode;
 	uint8 nRestoreResonanceOnNewNote;	// See nRestorePanOnNewNote
 	uint8 nRestoreCutoffOnNewNote;		// ditto
-	uint8 nNote, nNNA;
+	uint8 nNote;
+	NewNoteAction nNNA;
 	uint8 nLastNote;				// Last note, ignoring note offs and cuts - for MIDI macros
 	uint8 nArpeggioLastNote, nArpeggioBaseNote;	// For plugin arpeggio
 	uint8 nNewNote, nNewIns, nOldIns, nCommand, nArpeggio;
@@ -112,6 +115,7 @@ struct ModChannel
 	uint8 nNoteSlideCounter, nNoteSlideSpeed, nNoteSlideStep;	// IMF / PTM Note Slide
 	uint8 lastZxxParam;	// Memory for \xx slides
 	bool isFirstTick : 1;
+	bool isPreviewNote : 1;
 
 	//-->Variables used to make user-definable tuning modes work with pattern effects.
 	//If true, freq should be recalculated in ReadNote() on first tick.
@@ -125,14 +129,13 @@ struct ModChannel
 	int32 m_PortamentoFineSteps, m_PortamentoTickSlide;
 
 	uint32 m_Freq;
-	//<----
 
 	//NOTE_PCs memory.
 	float m_plugParamValueStep, m_plugParamTargetValue;
 	uint16 m_RowPlugParam;
 	PLUGINDEX m_RowPlug;
 
-	void ClearRowCmd() { rowCommand = ModCommand::Empty(); }
+	void ClearRowCmd() { rowCommand = ModCommand(); }
 
 	// Get a reference to a specific envelope of this channel
 	const EnvInfo &GetEnvelope(EnvelopeType envType) const

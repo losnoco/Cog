@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #ifdef ENABLE_TESTS
 #ifndef MODPLUG_TRACKER
@@ -18,6 +20,8 @@
 
 //#define MPT_TEST_CXX11
 
+
+#include <type_traits>
 
 #include "../common/Endianness.h"
 #include "../common/FlagSet.h"
@@ -47,19 +51,6 @@ enum Fatality
 };
 
 
-struct Context
-{
-public:
-	const char * const file;
-	const int line;
-public:
-	Context(const char * file, int line);
-	Context(const Context &c);
-};
-
-#define MPT_TEST_CONTEXT_CURRENT() (Test::Context( __FILE__ , __LINE__ ))
-
-
 struct TestFailed
 {
 	std::string values;
@@ -81,11 +72,13 @@ struct ToStringHelper
 #ifdef MPT_TEST_CXX11
 
 template<>
-struct ToStringHelper<mpt::endian_type>
+struct ToStringHelper<mpt::endian>
 {
-	std::string operator () (const mpt::endian_type &x)
+	std::string operator () (const mpt::endian &x)
 	{
-		return mpt::fmt::val(x.value);
+		if(x == mpt::endian::big) return "big";
+		if(x == mpt::endian::little) return "little";
+		return "unknown";
 	}
 };
 
@@ -139,18 +132,6 @@ struct ToStringHelper<SamplePosition>
 
 namespace Test {
 
-// We do not generally have type_traits from C++03-TR1
-// and std::numeric_limits does not provide a is_integer which is useable as template argument.
-template <typename T> struct is_integer : public std::false_type { };
-template <> struct is_integer<signed short>     : public std::true_type { };
-template <> struct is_integer<signed int>       : public std::true_type { };
-template <> struct is_integer<signed long>      : public std::true_type { };
-template <> struct is_integer<signed long long> : public std::true_type { };
-template <> struct is_integer<unsigned short>     : public std::true_type { };
-template <> struct is_integer<unsigned int>       : public std::true_type { };
-template <> struct is_integer<unsigned long>      : public std::true_type { };
-template <> struct is_integer<unsigned long long> : public std::true_type { };
-
 class Testcase
 {
 
@@ -159,11 +140,11 @@ private:
 	Fatality const fatality;
 	Verbosity const verbosity;
 	const char * const desc;
-	Context const context;
+	mpt::source_location const loc;
 
 public:
 
-	Testcase(Fatality fatality, Verbosity verbosity, const char * const desc, const Context &context);
+	Testcase(Fatality fatality, Verbosity verbosity, const char * const desc, const mpt::source_location &loc);
 
 public:
 
@@ -221,7 +202,7 @@ private:
 	template <typename Tx, typename Ty>
 	MPT_NOINLINE void TypeCompareHelper(const Tx &x, const Ty &y)
 	{
-		if(!IsEqual(x, y, is_integer<Tx>(), is_integer<Ty>()))
+		if(!IsEqual(x, y, std::is_integral<Tx>(), std::is_integral<Ty>()))
 		{
 			throw TestFailed(mpt::format(std::string("%1 != %2"))(ToStringHelper<Tx>()(x), ToStringHelper<Ty>()(y)));
 			//throw TestFailed();
@@ -278,11 +259,11 @@ public:
 		}
 	}
 
-	#define VERIFY_EQUAL(x,y)               Test::Testcase(Test::FatalityContinue, Test::VerbosityNormal, #x " == " #y , MPT_TEST_CONTEXT_CURRENT() )( [&](){return (x) ;}, [&](){return (y) ;} )
-	#define VERIFY_EQUAL_NONCONT(x,y)       Test::Testcase(Test::FatalityStop    , Test::VerbosityNormal, #x " == " #y , MPT_TEST_CONTEXT_CURRENT() )( [&](){return (x) ;}, [&](){return (y) ;} )
-	#define VERIFY_EQUAL_QUIET_NONCONT(x,y) Test::Testcase(Test::FatalityStop    , Test::VerbosityQuiet , #x " == " #y , MPT_TEST_CONTEXT_CURRENT() )( [&](){return (x) ;}, [&](){return (y) ;} )
+	#define VERIFY_EQUAL(x,y)               Test::Testcase(Test::FatalityContinue, Test::VerbosityNormal, #x " == " #y , MPT_SOURCE_LOCATION_CURRENT() )( [&](){return (x) ;}, [&](){return (y) ;} )
+	#define VERIFY_EQUAL_NONCONT(x,y)       Test::Testcase(Test::FatalityStop    , Test::VerbosityNormal, #x " == " #y , MPT_SOURCE_LOCATION_CURRENT() )( [&](){return (x) ;}, [&](){return (y) ;} )
+	#define VERIFY_EQUAL_QUIET_NONCONT(x,y) Test::Testcase(Test::FatalityStop    , Test::VerbosityQuiet , #x " == " #y , MPT_SOURCE_LOCATION_CURRENT() )( [&](){return (x) ;}, [&](){return (y) ;} )
 
-	#define VERIFY_EQUAL_EPS(x,y,eps)       Test::Testcase(Test::FatalityContinue, Test::VerbosityNormal, #x " == " #y , MPT_TEST_CONTEXT_CURRENT() )( [&](){return (x) ;}, [&](){return (y) ;}, (eps) )
+	#define VERIFY_EQUAL_EPS(x,y,eps)       Test::Testcase(Test::FatalityContinue, Test::VerbosityNormal, #x " == " #y , MPT_SOURCE_LOCATION_CURRENT() )( [&](){return (x) ;}, [&](){return (y) ;}, (eps) )
 
 #else
 
@@ -294,7 +275,7 @@ public:
 		ShowStart();
 		try
 		{
-			if(!IsEqual(x, y, is_integer<Tx>(), is_integer<Ty>()))
+			if(!IsEqual(x, y, std::is_integral<Tx>(), std::is_integral<Ty>()))
 			{
 				//throw TestFailed(mpt::format(std::string("%1 != %2"))(x, y));
 				throw TestFailed();
@@ -324,11 +305,11 @@ public:
 		}
 	}
 
-	#define VERIFY_EQUAL(x,y)               Test::Testcase(Test::FatalityContinue, Test::VerbosityNormal, #x " == " #y , MPT_TEST_CONTEXT_CURRENT() )( (x) , (y) )
-	#define VERIFY_EQUAL_NONCONT(x,y)       Test::Testcase(Test::FatalityStop    , Test::VerbosityNormal, #x " == " #y , MPT_TEST_CONTEXT_CURRENT() )( (x) , (y) )
-	#define VERIFY_EQUAL_QUIET_NONCONT(x,y) Test::Testcase(Test::FatalityStop    , Test::VerbosityQuiet , #x " == " #y , MPT_TEST_CONTEXT_CURRENT() )( (x) , (y) )
+	#define VERIFY_EQUAL(x,y)               Test::Testcase(Test::FatalityContinue, Test::VerbosityNormal, #x " == " #y , MPT_SOURCE_LOCATION_CURRENT() )( (x) , (y) )
+	#define VERIFY_EQUAL_NONCONT(x,y)       Test::Testcase(Test::FatalityStop    , Test::VerbosityNormal, #x " == " #y , MPT_SOURCE_LOCATION_CURRENT() )( (x) , (y) )
+	#define VERIFY_EQUAL_QUIET_NONCONT(x,y) Test::Testcase(Test::FatalityStop    , Test::VerbosityQuiet , #x " == " #y , MPT_SOURCE_LOCATION_CURRENT() )( (x) , (y) )
 
-	#define VERIFY_EQUAL_EPS(x,y,eps)       Test::Testcase(Test::FatalityContinue, Test::VerbosityNormal, #x " == " #y , MPT_TEST_CONTEXT_CURRENT() )( (x) , (y), (eps) )
+	#define VERIFY_EQUAL_EPS(x,y,eps)       Test::Testcase(Test::FatalityContinue, Test::VerbosityNormal, #x " == " #y , MPT_SOURCE_LOCATION_CURRENT() )( (x) , (y), (eps) )
 
 #endif
 
@@ -337,7 +318,7 @@ public:
 
 #define DO_TEST(func) \
 MPT_DO { \
-	Test::Testcase test(Test::FatalityStop, Test::VerbosityVerbose, #func , MPT_TEST_CONTEXT_CURRENT() ); \
+	Test::Testcase test(Test::FatalityStop, Test::VerbosityVerbose, #func , MPT_SOURCE_LOCATION_CURRENT() ); \
 	try { \
 		test.ShowStart(); \
 		fail_count = 0; \

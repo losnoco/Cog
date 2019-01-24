@@ -118,7 +118,7 @@ static void ConvertLoopSlice(ModSample &src, ModSample &dest, SmpLength start, S
 	dest.FreeSample();
 	dest = src;
 	dest.nLength = len;
-	dest.pSample = nullptr;
+	dest.pData.pSample = nullptr;
 
 	if(!dest.AllocateSample())
 	{
@@ -129,7 +129,7 @@ static void ConvertLoopSlice(ModSample &src, ModSample &dest, SmpLength start, S
 	if(len != src.nLength)
 		MemsetZero(dest.cues);
 
-	std::memcpy(dest.pSample8, src.pSample8 + start, len);
+	std::memcpy(dest.sampleb(), src.sampleb() + start, len);
 	dest.uFlags.set(CHN_LOOP, loop);
 	if(loop)
 	{
@@ -150,7 +150,7 @@ static void ConvertLoopSequence(ModSample &smp, STPLoopList &loopList)
 
 	ModSample newSmp = smp;
 	newSmp.nLength = 0;
-	newSmp.pSample = nullptr;
+	newSmp.pData.pSample = nullptr;
 
 	size_t numLoops = loopList.size();
 
@@ -184,7 +184,7 @@ static void ConvertLoopSequence(ModSample &smp, STPLoopList &loopList)
 	{
 		STPLoopInfo &info = loopList[i];
 
-		memcpy(newSmp.pSample8 + start, smp.pSample8 + info.loopStart, info.loopLength);
+		memcpy(newSmp.sampleb() + start, smp.sampleb() + info.loopStart, info.loopLength);
 
 		// update loop info based on position in edited sample
 		info.loopStart = start;
@@ -255,6 +255,10 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	InitializeGlobals(MOD_TYPE_STP);
+
+	m_modFormat.formatName = mpt::format(U_("Soundtracker Pro II v%1"))(fileHeader.version);
+	m_modFormat.type = U_("stp");
+	m_modFormat.charset = mpt::CharsetISO8859_1;
 
 	m_nChannels = 4;
 	m_nSamples = 0;
@@ -453,7 +457,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					uint16 ciaTempo = (static_cast<uint16>(m.command & 0x0F) << 8) | m.param;
 					if(ciaTempo)
 					{
-						m.param = mpt::saturate_cast<ModCommand::PARAM>(Util::Round(ConvertTempo(ciaTempo).ToDouble()));
+						m.param = mpt::saturate_round<ModCommand::PARAM>(ConvertTempo(ciaTempo).ToDouble());
 						m.command = CMD_TEMPO;
 					} else
 					{

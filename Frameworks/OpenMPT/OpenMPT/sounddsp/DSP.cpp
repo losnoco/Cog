@@ -10,7 +10,6 @@
 
 
 #include "stdafx.h"
-#include "../soundlib/Sndfile.h"
 #include "../sounddsp/DSP.h"
 #include <math.h>
 
@@ -72,9 +71,9 @@ static void ShelfEQ(int32 scale,
 	b1 = ((beta1 + rho*beta0) * quad);
 	a1 = - ((rho + alpha) * quad);
 
-	outA1 = Util::Round<int32>(a1 * scale);
-	outB0 = Util::Round<int32>(b0 * scale);
-	outB1 = Util::Round<int32>(b1 * scale);
+	outA1 = mpt::saturate_round<int32>(a1 * scale);
+	outB0 = mpt::saturate_round<int32>(b0 * scale);
+	outB1 = mpt::saturate_round<int32>(b1 * scale);
 }
 
 

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "Snd_defs.h"
 #include "modcommand.h"							// ModCommand::
 #include "../soundlib/SoundFilePlayConfig.h"	// mixlevel constants.
@@ -22,7 +24,7 @@ struct CModSpecifications
 {
 	/// Returns modtype corresponding to given file extension. The extension string
 	/// may begin with or without dot, e.g. both ".it" and "it" will be handled correctly.
-	static MODTYPE ExtensionToType(std::string ext);
+	static MODTYPE ExtensionToType(std::string ext); // (encoded in UTF8)
 
 	// Return true if format supports given note.
 	bool HasNote(ModCommand::NOTE note) const;
@@ -34,7 +36,7 @@ struct CModSpecifications
 
 	// NOTE: If changing order, update all initializations in .cpp file.
 	MODTYPE internalType;				// Internal MODTYPE value
-	const char *fileExtension;			// File extension without dot.
+	const char *fileExtension;			// File extension without dot (encoded in UTF8).
 	ModCommand::NOTE noteMin;			// Minimum note index (index starts from 1)
 	ModCommand::NOTE noteMax;			// Maximum note index (index starts from 1)
 	PATTERNINDEX patternsMax;

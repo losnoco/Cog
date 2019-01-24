@@ -3,8 +3,15 @@
 #pragma warning(disable:4091)
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4996)
+#endif
 #include "foobar2000/SDK/foobar2000.h"
 #include "foobar2000/helpers/helpers.h"
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 #include "libopenmpt.hpp"
 
@@ -136,24 +143,10 @@ struct foo_openmpt_settings {
 
 
 
-// Sample initquit implementation. See also: initquit class documentation in relevant header.
-
-class myinitquit : public initquit {
-public:
-	void on_init() {
-		// console::print("Sample component: on_init()");
-	}
-	void on_quit() {
-		// console::print("Sample component: on_quit()");
-	}
-};
-
-static initquit_factory_t<myinitquit> g_myinitquit_factory;
-
-
-
-// No inheritance. Our methods get called over input framework templates. See input_singletrack_impl for descriptions of what each method does.
-class input_openmpt {
+// Note that input class does *not* implement virtual methods or derive from interface classes.
+// Our methods get called over input framework templates. See input_singletrack_impl for descriptions of what each method does.
+// input_stubs just provides stub implementations of mundane methods that are irrelevant for most implementations.
+class input_openmpt : public input_stubs {
 public:
 	void open(service_ptr_t<file> p_filehint,const char * p_path,t_input_open_reason p_reason,abort_callback & p_abort) {
 		if ( p_reason == input_open_info_write ) {
@@ -276,7 +269,15 @@ public:
 		std::transform( ext.begin(), ext.end(), ext.begin(), tolower );
 		return std::find( extensions.begin(), extensions.end(), ext ) != extensions.end();
 	}
-public:
+	static GUID g_get_guid() {
+		// {B0B7CCC3-4520-44D3-B5F9-22EB9EBA7575}
+		static const GUID foo_openmpt_guid = { 0xb0b7ccc3, 0x4520, 0x44d3, { 0xb5, 0xf9, 0x22, 0xeb, 0x9e, 0xba, 0x75, 0x75 } };
+		return foo_openmpt_guid;
+	}
+	static const char * g_get_name() {
+		return "OpenMPT Module Decoder";
+	}
+private:
 	service_ptr_t<file> m_file;
 	static const std::size_t buffersize = 1024;
 	foo_openmpt_settings settings;
@@ -286,6 +287,7 @@ public:
 	std::vector<float> rear_left;
 	std::vector<float> rear_right;
 	std::vector<float> buffer;
+public:
 	input_openmpt() : mod(0), left(buffersize), right(buffersize), rear_left(buffersize), rear_right(buffersize), buffer(4*buffersize) {}
 	~input_openmpt() { delete mod; mod = 0; }
 };
@@ -293,53 +295,29 @@ public:
 static input_singletrack_factory_t<input_openmpt> g_input_openmpt_factory;
 
 
+class input_file_type_v2_impl_openmpt : public input_file_type_v2 {
+public:
+	input_file_type_v2_impl_openmpt()
+		: extensions( openmpt::get_supported_extensions() ) 
+	{ }
+	unsigned get_count() {
+		return static_cast<unsigned>( extensions.size() );
+	}
+	bool is_associatable( unsigned idx ) {
+		return true;
+	}
+	void get_format_name( unsigned idx, pfc::string_base & out, bool isPlural ) {
+		if ( isPlural ) {
+			out = "OpenMPT compatible module files";
+		} else {
+			out = "OpenMPT compatible module file";	
+		}
+	}
+	void get_extensions( unsigned idx, pfc::string_base & out ) {
+		out = extensions[idx].c_str();
+	}
+private:
+	std::vector<std::string> extensions;
+};
 
-// copied table from soundlib/Tables.cpp
-// the foobar2000 interface is stupid demanding to declare those statically
-
-DECLARE_FILE_TYPE("OpenMPT compatible module files",
-	"*.mod" ";"
-	"*.s3m" ";"
-	"*.xm" ";"
-	"*.it" ";"
-	"*.mptm" ";"
-	"*.stm" ";"
-	"*.nst" ";"
-	"*.m15" ";"
-	"*.stk" ";"
-	"*.st26" ";"
-	"*.pt36" ";"
-	"*.ice" ";"
-	"*.wow" ";"
-	"*.ult" ";"
-	"*.669" ";"
-	"*.mtm" ";"
-	"*.med" ";"
-	"*.far" ";"
-	"*.mdl" ";"
-	"*.ams" ";"
-	"*.ams" ";"
-	"*.dsm" ";"
-	"*.dtm" ";"
-	"*.amf" ";"
-	"*.amf" ";"
-	"*.okt" ";"
-	"*.dmf" ";"
-	"*.ptm" ";"
-	"*.psm" ";"
-	"*.mt2" ";"
-	"*.dbm" ";"
-	"*.digi" ";"
-	"*.imf" ";"
-	"*.j2b" ";"
-	"*.plm" ";"
-	"*.stp" ";"
-	"*.sfx" ";"
-	"*.sfx2" ";"
-	"*.mms" ";"
-	"*.gdm" ";"
-	"*.umx" ";"
-	"*.mo3" ";"
-	"*.xpk" ";"
-	"*.ppm" ";"
-	"*.mmcmp" );
+namespace { static service_factory_single_t<input_file_type_v2_impl_openmpt> g_filetypes; }

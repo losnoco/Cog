@@ -308,7 +308,7 @@ void I3DL2Reverb::SetParameter(PlugParamIndex index, PlugParamValue value)
 	{
 		Limit(value, 0.0f, 1.0f);
 		if(index == kI3DL2ReverbQuality)
-			value = Util::Round(value * 3.0f) / 3.0f;
+			value = mpt::round(value * 3.0f) / 3.0f;
 		m_param[index] = value;
 		m_recalcParams = true;
 	}
@@ -448,7 +448,7 @@ void I3DL2Reverb::RecalculateI3DL2ReverbParams()
 
 	// Room Filter
 	float roomHF = std::pow(10.0f, RoomHF() / 100.0f / 10.0f);
-	if(roomHF == 1.0)
+	if(roomHF == 1.0f)
 	{
 		m_roomFilter = 0.0f;
 	} else
@@ -569,7 +569,7 @@ float I3DL2Reverb::CalcDecayCoeffs(int32 index)
 		float c22 = -2.0f * c21 - 2.0f;
 		float c23 = std::sqrt(c22 * c22 - c21 * c21 * 4.0f);
 		c2 = (c23 - c22) / (c21 + c21);
-		if(mpt::abs(c2) > 1.0)
+		if(mpt::abs(c2) > 1.0f)
 			c2 = (-c22 - c23) / (c21 + c21);
 	}
 	m_delayCoeffs[index][0] = c1;

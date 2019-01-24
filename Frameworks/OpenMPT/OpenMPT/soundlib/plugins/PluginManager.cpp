@@ -35,7 +35,7 @@
 #include "../../mptrack/plugins/MidiInOut.h"
 #endif // MODPLUG_TRACKER
 
-#include "../../common/StringFixer.h"
+#include "../../common/mptStringBuffer.h"
 #include "../Sndfile.h"
 #include "../Loaders.h"
 
@@ -64,7 +64,7 @@ OPENMPT_NAMESPACE_BEGIN
 //#define DMO_LOG
 
 #ifdef MODPLUG_TRACKER
-static const MPT_UCHAR_TYPE *const cacheSection = MPT_ULITERAL("PluginCache");
+static const MPT_UCHAR_TYPE *const cacheSection = UL_("PluginCache");
 #endif // MODPLUG_TRACKER
 
 
@@ -72,7 +72,7 @@ uint8 VSTPluginLib::GetDllBits(bool fromCache) const
 {
 	// Built-in plugins are always native.
 	if(dllPath.empty())
-		return sizeof(void *) * CHAR_BIT;
+		return mpt::arch_bits;
 #ifndef NO_VST
 	if(!dllBits || !fromCache)
 	{
@@ -97,7 +97,7 @@ void VSTPluginLib::WriteToCache() const
 
 	const std::string crcName = dllPath.ToUTF8();
 	const uint32 crc = mpt::crc32(crcName);
-	const mpt::ustring IDs = mpt::ufmt::HEX0<8>(SwapBytesLE(pluginId1)) + mpt::ufmt::HEX0<8>(SwapBytesLE(pluginId2)) + mpt::ufmt::HEX0<8>(SwapBytesLE(crc));
+	const mpt::ustring IDs = mpt::ufmt::HEX0<8>(pluginId1) + mpt::ufmt::HEX0<8>(pluginId2) + mpt::ufmt::HEX0<8>(crc);
 
 	mpt::PathString writePath = dllPath;
 	if(theApp.IsPortableMode())
@@ -106,8 +106,8 @@ void VSTPluginLib::WriteToCache() const
 	}
 
 	cacheFile.Write<mpt::ustring>(cacheSection, writePath.ToUnicode(), IDs);
-	cacheFile.Write<CString>(cacheSection, IDs + MPT_USTRING(".Vendor"), vendor);
-	cacheFile.Write<int32>(cacheSection, IDs + MPT_USTRING(".Flags"), EncodeCacheFlags());
+	cacheFile.Write<CString>(cacheSection, IDs + U_(".Vendor"), vendor);
+	cacheFile.Write<int32>(cacheSection, IDs + U_(".Flags"), EncodeCacheFlags());
 }
 #endif // MODPLUG_TRACKER
 
@@ -132,18 +132,14 @@ bool CreateMixPluginProc(SNDMIXPLUGIN &mixPlugin, CSoundFile &sndFile)
 
 
 CVstPluginManager::CVstPluginManager()
-#ifndef NO_DMO
-	: MustUnInitilizeCOM(false)
-#endif
 {
-
-	#ifndef NO_DMO
-		HRESULT COMinit = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-		if(COMinit == S_OK || COMinit == S_FALSE)
-		{
-			MustUnInitilizeCOM = true;
-		}
-	#endif
+#ifndef NO_DMO
+	HRESULT COMinit = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	if(COMinit == S_OK || COMinit == S_FALSE)
+	{
+		MustUnInitilizeCOM = true;
+	}
+#endif
 
 	// Hard-coded "plugins"
 	static constexpr struct
@@ -156,19 +152,19 @@ CVstPluginManager::CVstPluginManager()
 	} BuiltInPlugins[] =
 	{
 		// DirectX Media Objects Emulation
-		{ DMO::Chorus::Create,		"{EFE6629C-81F7-4281-BD91-C9D604A95AF6}", "Chorus",			kDmoMagic, 0xEFE6629C, VSTPluginLib::catDMO, false, false },
-		{ DMO::Compressor::Create,	"{EF011F79-4000-406D-87AF-BFFB3FC39D57}", "Compressor",		kDmoMagic, 0xEF011F79, VSTPluginLib::catDMO, false, false },
-		{ DMO::Distortion::Create,	"{EF114C90-CD1D-484E-96E5-09CFAF912A21}", "Distortion",		kDmoMagic, 0xEF114C90, VSTPluginLib::catDMO, false, false },
-		{ DMO::Echo::Create,		"{EF3E932C-D40B-4F51-8CCF-3F98F1B29D5D}", "Echo",			kDmoMagic, 0xEF3E932C, VSTPluginLib::catDMO, false, false },
-		{ DMO::Flanger::Create,		"{EFCA3D92-DFD8-4672-A603-7420894BAD98}", "Flanger",		kDmoMagic, 0xEFCA3D92, VSTPluginLib::catDMO, false, false },
-		{ DMO::Gargle::Create,		"{DAFD8210-5711-4B91-9FE3-F75B7AE279BF}", "Gargle",			kDmoMagic, 0xDAFD8210, VSTPluginLib::catDMO, false, false },
-		{ DMO::I3DL2Reverb::Create,	"{EF985E71-D5C7-42D4-BA4D-2D073E2E96F4}", "I3DL2Reverb",	kDmoMagic, 0xEF985E71, VSTPluginLib::catDMO, false, false },
-		{ DMO::ParamEq::Create,		"{120CED89-3BF4-4173-A132-3CB406CF3231}", "ParamEq",		kDmoMagic, 0x120CED89, VSTPluginLib::catDMO, false, false },
-		{ DMO::WavesReverb::Create,	"{87FC0268-9A55-4360-95AA-004A1D9DE26C}", "WavesReverb",	kDmoMagic, 0x87FC0268, VSTPluginLib::catDMO, false, false },
+		{ DMO::Chorus::Create,      "{EFE6629C-81F7-4281-BD91-C9D604A95AF6}", "Chorus",      kDmoMagic, 0xEFE6629C, VSTPluginLib::catDMO, false, false },
+		{ DMO::Compressor::Create,  "{EF011F79-4000-406D-87AF-BFFB3FC39D57}", "Compressor",  kDmoMagic, 0xEF011F79, VSTPluginLib::catDMO, false, false },
+		{ DMO::Distortion::Create,  "{EF114C90-CD1D-484E-96E5-09CFAF912A21}", "Distortion",  kDmoMagic, 0xEF114C90, VSTPluginLib::catDMO, false, false },
+		{ DMO::Echo::Create,        "{EF3E932C-D40B-4F51-8CCF-3F98F1B29D5D}", "Echo",        kDmoMagic, 0xEF3E932C, VSTPluginLib::catDMO, false, false },
+		{ DMO::Flanger::Create,     "{EFCA3D92-DFD8-4672-A603-7420894BAD98}", "Flanger",     kDmoMagic, 0xEFCA3D92, VSTPluginLib::catDMO, false, false },
+		{ DMO::Gargle::Create,      "{DAFD8210-5711-4B91-9FE3-F75B7AE279BF}", "Gargle",      kDmoMagic, 0xDAFD8210, VSTPluginLib::catDMO, false, false },
+		{ DMO::I3DL2Reverb::Create, "{EF985E71-D5C7-42D4-BA4D-2D073E2E96F4}", "I3DL2Reverb", kDmoMagic, 0xEF985E71, VSTPluginLib::catDMO, false, false },
+		{ DMO::ParamEq::Create,     "{120CED89-3BF4-4173-A132-3CB406CF3231}", "ParamEq",     kDmoMagic, 0x120CED89, VSTPluginLib::catDMO, false, false },
+		{ DMO::WavesReverb::Create, "{87FC0268-9A55-4360-95AA-004A1D9DE26C}", "WavesReverb", kDmoMagic, 0x87FC0268, VSTPluginLib::catDMO, false, false },
 		// DigiBooster Pro Echo DSP
-		{ DigiBoosterEcho::Create, "", "DigiBooster Pro Echo", MAGIC4LE('D','B','M','0'), MAGIC4LE('E','c','h','o'), VSTPluginLib::catRoomFx, false, true },
+		{ DigiBoosterEcho::Create, "", "DigiBooster Pro Echo", MagicLE("DBM0"), MagicLE("Echo"), VSTPluginLib::catRoomFx, false, true },
 		// LFO
-		{ LFOPlugin::Create, "", "LFO", MAGIC4LE('O','M','P','T'), MAGIC4LE('L','F','O',' '), VSTPluginLib::catGenerator, false, true },
+		{ LFOPlugin::Create, "", "LFO", MagicLE("OMPT"), MagicLE("LFO "), VSTPluginLib::catGenerator, false, true },
 #ifdef MODPLUG_TRACKER
 		{ MidiInOut::Create, "", "MIDI Input Output", PLUGMAGIC('V','s','t','P'), PLUGMAGIC('M','M','I','D'), VSTPluginLib::catSynth, true, true },
 #endif // MODPLUG_TRACKER
@@ -209,13 +205,13 @@ CVstPluginManager::~CVstPluginManager()
 		}
 		delete plug;
 	}
-	#ifndef NO_DMO
-		if(MustUnInitilizeCOM)
-		{
-			CoUninitialize();
-			MustUnInitilizeCOM = false;
-		}
-	#endif
+#ifndef NO_DMO
+	if(MustUnInitilizeCOM)
+	{
+		CoUninitialize();
+		MustUnInitilizeCOM = false;
+	}
+#endif
 }
 
 
@@ -228,45 +224,51 @@ bool CVstPluginManager::IsValidPlugin(const VSTPluginLib *pLib) const
 void CVstPluginManager::EnumerateDirectXDMOs()
 {
 #ifndef NO_DMO
-	const mpt::UUID knownDMOs[] =
+#if MPT_MSVC_BEFORE(2017,0)
+	// VS2015 crashes if knownDMOs is constexpr.
+	const
+#else
+	constexpr
+#endif
+		mpt::UUID knownDMOs[] =
 	{
-		MPT_UUID(745057C7,F353,4F2D,A7EE,58434477730E), // AEC (Acoustic echo cancellation, not usable)
-		MPT_UUID(EFE6629C,81F7,4281,BD91,C9D604A95AF6), // Chorus
-		MPT_UUID(EF011F79,4000,406D,87AF,BFFB3FC39D57), // Compressor
-		MPT_UUID(EF114C90,CD1D,484E,96E5,09CFAF912A21), // Distortion
-		MPT_UUID(EF3E932C,D40B,4F51,8CCF,3F98F1B29D5D), // Echo
-		MPT_UUID(EFCA3D92,DFD8,4672,A603,7420894BAD98), // Flanger
-		MPT_UUID(DAFD8210,5711,4B91,9FE3,F75B7AE279BF), // Gargle
-		MPT_UUID(EF985E71,D5C7,42D4,BA4D,2D073E2E96F4), // I3DL2Reverb
-		MPT_UUID(120CED89,3BF4,4173,A132,3CB406CF3231), // ParamEq
-		MPT_UUID(87FC0268,9A55,4360,95AA,004A1D9DE26C), // WavesReverb
-		MPT_UUID(F447B69E,1884,4A7E,8055,346F74D6EDB3), // Resampler DMO (not usable)
+		"745057C7-F353-4F2D-A7EE-58434477730E"_uuid, // AEC (Acoustic echo cancellation, not usable)
+		"EFE6629C-81F7-4281-BD91-C9D604A95AF6"_uuid, // Chorus
+		"EF011F79-4000-406D-87AF-BFFB3FC39D57"_uuid, // Compressor
+		"EF114C90-CD1D-484E-96E5-09CFAF912A21"_uuid, // Distortion
+		"EF3E932C-D40B-4F51-8CCF-3F98F1B29D5D"_uuid, // Echo
+		"EFCA3D92-DFD8-4672-A603-7420894BAD98"_uuid, // Flanger
+		"DAFD8210-5711-4B91-9FE3-F75B7AE279BF"_uuid, // Gargle
+		"EF985E71-D5C7-42D4-BA4D-2D073E2E96F4"_uuid, // I3DL2Reverb
+		"120CED89-3BF4-4173-A132-3CB406CF3231"_uuid, // ParamEq
+		"87FC0268-9A55-4360-95AA-004A1D9DE26C"_uuid, // WavesReverb
+		"F447B69E-1884-4A7E-8055-346F74D6EDB3"_uuid, // Resampler DMO (not usable)
 	};
 
 	HKEY hkEnum;
-	WCHAR keyname[128];
+	TCHAR keyname[128];
 
 	LONG cr = RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("software\\classes\\DirectShow\\MediaObjects\\Categories\\f3602b3f-0592-48df-a4cd-674721e7ebeb"), 0, KEY_READ, &hkEnum);
 	DWORD index = 0;
 	while (cr == ERROR_SUCCESS)
 	{
-		if ((cr = RegEnumKeyW(hkEnum, index, keyname, CountOf(keyname))) == ERROR_SUCCESS)
+		if ((cr = RegEnumKey(hkEnum, index, keyname, CountOf(keyname))) == ERROR_SUCCESS)
 		{
 			CLSID clsid;
-			std::wstring formattedKey = std::wstring(L"{") + std::wstring(keyname) + std::wstring(L"}");
+			mpt::winstring formattedKey = mpt::winstring(_T("{")) + mpt::winstring(keyname) + mpt::winstring(_T("}"));
 			if(Util::VerifyStringToCLSID(formattedKey, clsid))
 			{
 				if(std::find(std::begin(knownDMOs), std::end(knownDMOs), clsid) == std::end(knownDMOs))
 				{
 					HKEY hksub;
-					formattedKey = std::wstring(L"software\\classes\\DirectShow\\MediaObjects\\") + std::wstring(keyname);
-					if (RegOpenKeyW(HKEY_LOCAL_MACHINE, formattedKey.c_str(), &hksub) == ERROR_SUCCESS)
+					formattedKey = mpt::winstring(_T("software\\classes\\DirectShow\\MediaObjects\\")) + mpt::winstring(keyname);
+					if (RegOpenKey(HKEY_LOCAL_MACHINE, formattedKey.c_str(), &hksub) == ERROR_SUCCESS)
 					{
-						WCHAR name[64];
+						TCHAR name[64];
 						DWORD datatype = REG_SZ;
 						DWORD datasize = sizeof(name);
 
-						if(ERROR_SUCCESS == RegQueryValueExW(hksub, nullptr, 0, &datatype, (LPBYTE)name, &datasize))
+						if(ERROR_SUCCESS == RegQueryValueEx(hksub, nullptr, 0, &datatype, (LPBYTE)name, &datasize))
 						{
 							mpt::String::SetNullTerminator(name);
 
@@ -285,7 +287,7 @@ void CVstPluginManager::EnumerateDirectXDMOs()
 									delete plug;
 								}
 #ifdef DMO_LOG
-								Log(mpt::format(L"Found \"%1\" clsid=%2\n")(plug->libraryName, plug->dllPath));
+								Log(mpt::format(U_("Found \"%1\" clsid=%2\n"))(plug->libraryName, plug->dllPath));
 #endif
 							}
 						}
@@ -303,11 +305,11 @@ void CVstPluginManager::EnumerateDirectXDMOs()
 
 // Extract instrument and category information from plugin.
 #ifndef NO_VST
-static void GetPluginInformation(AEffect *effect, VSTPluginLib &library)
+static void GetPluginInformation(Vst::AEffect *effect, VSTPluginLib &library)
 {
 	unsigned long exception = 0;
-	library.category = static_cast<VSTPluginLib::PluginCategory>(CVstPlugin::DispatchSEH(effect, effGetPlugCategory, 0, 0, nullptr, 0, exception));
-	library.isInstrument = ((effect->flags & effFlagsIsSynth) || !effect->numInputs);
+	library.category = static_cast<VSTPluginLib::PluginCategory>(CVstPlugin::DispatchSEH(effect, Vst::effGetPlugCategory, 0, 0, nullptr, 0, exception));
+	library.isInstrument = ((effect->flags & Vst::effFlagsIsSynth) || !effect->numInputs);
 
 	if(library.isInstrument)
 	{
@@ -319,7 +321,7 @@ static void GetPluginInformation(AEffect *effect, VSTPluginLib &library)
 
 #ifdef MODPLUG_TRACKER
 	std::vector<char> s(256, 0);
-	CVstPlugin::DispatchSEH(effect, effGetVendorString, 0, 0, s.data(), 0, exception);
+	CVstPlugin::DispatchSEH(effect, Vst::effGetVendorString, 0, 0, s.data(), 0, exception);
 	library.vendor = mpt::ToCString(mpt::CharsetLocale, s.data());
 #endif // MODPLUG_TRACKER
 }
@@ -328,7 +330,7 @@ static void GetPluginInformation(AEffect *effect, VSTPluginLib &library)
 
 #ifdef MODPLUG_TRACKER
 // Add a plugin to the list of known plugins.
-VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const mpt::ustring &tags, bool fromCache, const bool checkFileExistence, std::wstring *const errStr)
+VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const mpt::ustring &tags, bool fromCache, bool *fileFound)
 {
 	const mpt::PathString fileName = dllPath.GetFileName();
 
@@ -338,9 +340,9 @@ VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const
 		if(!dllPath.CompareNoCase(dllPath, dupePlug->dllPath)) return dupePlug;
 	}
 
-	if(checkFileExistence && errStr != nullptr && !dllPath.IsFile())
+	if(fileFound != nullptr)
 	{
-		*errStr += L"\nUnable to find " + dllPath.ToWide();
+		*fileFound = dllPath.IsFile();
 	}
 
 	// Look if the plugin info is stored in the PluginCache
@@ -348,12 +350,12 @@ VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const
 	{
 		SettingsContainer & cacheFile = theApp.GetPluginCache();
 		// First try finding the full path
-		mpt::ustring IDs = cacheFile.Read<mpt::ustring>(cacheSection, dllPath.ToUnicode(), MPT_USTRING(""));
+		mpt::ustring IDs = cacheFile.Read<mpt::ustring>(cacheSection, dllPath.ToUnicode(), U_(""));
 		if(IDs.length() < 16)
 		{
 			// If that didn't work out, find relative path
 			mpt::PathString relPath = theApp.AbsolutePathToRelative(dllPath);
-			IDs = cacheFile.Read<mpt::ustring>(cacheSection, relPath.ToUnicode(), MPT_USTRING(""));
+			IDs = cacheFile.Read<mpt::ustring>(cacheSection, relPath.ToUnicode(), U_(""));
 		}
 
 		if(IDs.length() >= 16)
@@ -380,9 +382,9 @@ VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const
 				}
 			}
 
-			const mpt::ustring flagKey = IDs + MPT_USTRING(".Flags");
+			const mpt::ustring flagKey = IDs + U_(".Flags");
 			plug->DecodeCacheFlags(cacheFile.Read<int32>(cacheSection, flagKey, 0));
-			plug->vendor = cacheFile.Read<CString>(cacheSection, IDs + MPT_USTRING(".Vendor"), CString());
+			plug->vendor = cacheFile.Read<CString>(cacheSection, IDs + U_(".Vendor"), CString());
 
 #ifdef VST_LOG
 			Log("Plugin \"%s\" found in PluginCache\n", plug->libraryName.ToLocale().c_str());
@@ -397,7 +399,7 @@ VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const
 	}
 
 	// If this key contains a file name on program launch, a plugin previously crashed OpenMPT.
-	theApp.GetSettings().Write<mpt::PathString>(MPT_USTRING("VST Plugins"), MPT_USTRING("FailedPlugin"), dllPath, SettingWriteThrough);
+	theApp.GetSettings().Write<mpt::PathString>(U_("VST Plugins"), U_("FailedPlugin"), dllPath, SettingWriteThrough);
 
 	bool validPlug = false;
 
@@ -411,11 +413,11 @@ VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const
 	unsigned long exception = 0;
 	// Always scan plugins in a separate process
 	HINSTANCE hLib = NULL;
-	AEffect *pEffect = CVstPlugin::LoadPlugin(*plug, hLib, true);
+	Vst::AEffect *pEffect = CVstPlugin::LoadPlugin(*plug, hLib, true);
 
-	if(pEffect != nullptr && pEffect->magic == kEffectMagic && pEffect->dispatcher != nullptr)
+	if(pEffect != nullptr && pEffect->magic == Vst::kEffectMagic && pEffect->dispatcher != nullptr)
 	{
-		CVstPlugin::DispatchSEH(pEffect, effOpen, 0, 0, 0, 0, exception);
+		CVstPlugin::DispatchSEH(pEffect, Vst::effOpen, 0, 0, 0, 0, exception);
 
 		plug->pluginId1 = pEffect->magic;
 		plug->pluginId2 = pEffect->uniqueID;
@@ -432,7 +434,7 @@ VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const
 			pEffect->flags, pEffect->realQualities, pEffect->offQualities);
 #endif // VST_LOG
 
-		CVstPlugin::DispatchSEH(pEffect, effClose, 0, 0, 0, 0, exception);
+		CVstPlugin::DispatchSEH(pEffect, Vst::effClose, 0, 0, 0, 0, exception);
 
 		validPlug = true;
 	}
@@ -440,12 +442,12 @@ VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, const
 	FreeLibrary(hLib);
 	if(exception != 0)
 	{
-		CVstPluginManager::ReportPlugException(mpt::format(L"Exception %1 while trying to load plugin \"%2\"!\n")(mpt::wfmt::HEX<8>(exception), plug->libraryName));
+		CVstPluginManager::ReportPlugException(mpt::format(U_("Exception %1 while trying to load plugin \"%2\"!\n"))(mpt::ufmt::HEX0<8>(exception), plug->libraryName));
 	}
 #endif // NO_VST
 
 	// Now it should be safe to assume that this plugin loaded properly. :)
-	theApp.GetSettings().Remove(MPT_USTRING("VST Plugins"), MPT_USTRING("FailedPlugin"));
+	theApp.GetSettings().Remove(U_("VST Plugins"), U_("FailedPlugin"));
 
 	// If OK, write the information in PluginCache
 	if(validPlug)
@@ -544,19 +546,19 @@ bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &snd
 		mpt::PathString fullPath = TrackerSettings::Instance().PathPlugins.GetDefaultDir();
 		if(fullPath.empty())
 		{
-			fullPath = theApp.GetAppDirPath() + MPT_PATHSTRING("Plugins\\");
+			fullPath = theApp.GetAppDirPath() + P_("Plugins\\");
 		}
-		fullPath += mpt::PathString::FromUTF8(mixPlugin.GetLibraryName()) + MPT_PATHSTRING(".dll");
+		fullPath += mpt::PathString::FromUTF8(mixPlugin.GetLibraryName()) + P_(".dll");
 
 		pFound = AddPlugin(fullPath);
 		if(!pFound)
 		{
 			// Try plugin cache (search for library name)
 			SettingsContainer &cacheFile = theApp.GetPluginCache();
-			mpt::ustring IDs = cacheFile.Read<mpt::ustring>(cacheSection, mpt::ToUnicode(mpt::CharsetUTF8, mixPlugin.GetLibraryName()), MPT_USTRING(""));
+			mpt::ustring IDs = cacheFile.Read<mpt::ustring>(cacheSection, mpt::ToUnicode(mpt::CharsetUTF8, mixPlugin.GetLibraryName()), U_(""));
 			if(IDs.length() >= 16)
 			{
-				fullPath = cacheFile.Read<mpt::PathString>(cacheSection, IDs, MPT_PATHSTRING(""));
+				fullPath = cacheFile.Read<mpt::PathString>(cacheSection, IDs, P_(""));
 				if(!fullPath.empty())
 				{
 					fullPath = theApp.RelativePathToAbsolute(fullPath);
@@ -570,15 +572,15 @@ bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &snd
 	}
 
 #ifndef NO_VST
-	if(pFound && mixPlugin.Info.dwPluginId1 == kEffectMagic)
+	if(pFound && mixPlugin.Info.dwPluginId1 == Vst::kEffectMagic)
 	{
-		AEffect *pEffect = nullptr;
+		Vst::AEffect *pEffect = nullptr;
 		HINSTANCE hLibrary = nullptr;
 		bool validPlugin = false;
 
 		pEffect = CVstPlugin::LoadPlugin(*pFound, hLibrary, TrackerSettings::Instance().bridgeAllPlugins);
 
-		if(pEffect != nullptr && pEffect->dispatcher != nullptr && pEffect->magic == kEffectMagic)
+		if(pEffect != nullptr && pEffect->dispatcher != nullptr && pEffect->magic == Vst::kEffectMagic)
 		{
 			validPlugin = true;
 
@@ -597,7 +599,7 @@ bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &snd
 		if(!validPlugin)
 		{
 			FreeLibrary(hLibrary);
-			CVstPluginManager::ReportPlugException(mpt::format(L"Unable to create plugin \"%1\"!\n")(pFound->libraryName));
+			CVstPluginManager::ReportPlugException(mpt::format(U_("Unable to create plugin \"%1\"!\n"))(pFound->libraryName));
 		}
 		return validPlugin;
 	} else
@@ -639,21 +641,14 @@ void CVstPluginManager::OnIdle()
 }
 
 
-void CVstPluginManager::ReportPlugException(const std::string &msg)
-{
-	Reporting::Notification(msg.c_str());
-#ifdef VST_LOG
-	Log("%s", msg.c_str());
-#endif
-}
-
-void CVstPluginManager::ReportPlugException(const std::wstring &msg)
+void CVstPluginManager::ReportPlugException(const mpt::ustring &msg)
 {
 	Reporting::Notification(msg);
 #ifdef VST_LOG
 	Log(mpt::ToUnicode(msg));
 #endif
 }
+
 #endif // MODPLUG_TRACKER
 
 OPENMPT_NAMESPACE_END

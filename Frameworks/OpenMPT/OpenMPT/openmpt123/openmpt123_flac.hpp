@@ -66,7 +66,7 @@ public:
 			flac_metadata[0] = 0;
 		}
 	}
-	void write_metadata( std::map<std::string,std::string> metadata ) {
+	void write_metadata( std::map<std::string,std::string> metadata ) override {
 		if ( called_init ) {
 			return;
 		}
@@ -91,7 +91,7 @@ public:
 		}
 		FLAC__stream_encoder_set_metadata( encoder, flac_metadata, 1 );
 	}
-	void write( const std::vector<float*> buffers, std::size_t frames ) {
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		if ( !called_init ) {
 			FLAC__stream_encoder_init_file( encoder, filename.c_str(), NULL, 0 );
 			called_init = true;
@@ -113,7 +113,7 @@ public:
 		}
 		FLAC__stream_encoder_process_interleaved( encoder, interleaved_buffer.data(), static_cast<unsigned int>( frames ) );
 	}
-	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) {
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		if ( !called_init ) {
 			FLAC__stream_encoder_init_file( encoder, filename.c_str(), NULL, 0 );
 			called_init = true;

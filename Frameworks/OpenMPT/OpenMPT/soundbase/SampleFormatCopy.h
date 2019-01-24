@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #include "../common/Endianness.h"
 #include "SampleFormatConverters.h"
@@ -79,7 +81,7 @@ void CopyInterleavedSampleStreams(typename SampleConversion::output_t * MPT_REST
 template<int fractionalBits, bool clipOutput, typename Tsample, typename Tfixed>
 void ConvertInterleavedFixedPointToInterleaved(Tsample * MPT_RESTRICT p, const Tfixed * MPT_RESTRICT mixbuffer, std::size_t channels, std::size_t count)
 {
-	SC::ConvertFixedPoint<Tsample, int, fractionalBits, clipOutput> conv;
+	SC::ConvertFixedPoint<Tsample, int32, fractionalBits, clipOutput> conv;
 	count *= channels;
 	for(std::size_t i = 0; i < count; ++i)
 	{
@@ -90,7 +92,7 @@ void ConvertInterleavedFixedPointToInterleaved(Tsample * MPT_RESTRICT p, const T
 template<int fractionalBits, bool clipOutput, typename Tsample, typename Tfixed>
 void ConvertInterleavedFixedPointToNonInterleaved(Tsample * const * const MPT_RESTRICT buffers, const Tfixed * MPT_RESTRICT mixbuffer, std::size_t channels, std::size_t count)
 {
-	SC::ConvertFixedPoint<Tsample, int, fractionalBits, clipOutput> conv;
+	SC::ConvertFixedPoint<Tsample, int32, fractionalBits, clipOutput> conv;
 	for(std::size_t i = 0; i < count; ++i)
 	{
 		for(std::size_t channel = 0; channel < channels; ++channel)

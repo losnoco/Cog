@@ -1250,7 +1250,9 @@ mz_bool mz_zip_validate_archive(mz_zip_archive *pZip, mz_uint flags);
 
 /* Misc utils/helpers, valid for ZIP reading or writing */
 mz_bool mz_zip_validate_mem_archive(const void *pMem, size_t size, mz_uint flags, mz_zip_error *pErr);
+#ifndef MINIZ_NO_STDIO // OpenMPT
 mz_bool mz_zip_validate_file_archive(const char *pFilename, mz_uint flags, mz_zip_error *pErr);
+#endif // OpenMPT
 
 /* Universal end function - calls either mz_zip_reader_end() or mz_zip_writer_end(). */
 mz_bool mz_zip_end(mz_zip_archive *pZip);
@@ -1327,6 +1329,7 @@ mz_bool mz_zip_writer_end(mz_zip_archive *pZip);
 
 /* -------- Misc. high-level helper functions: */
 
+#ifndef MINIZ_NO_STDIO // OpenMPT
 /* mz_zip_add_mem_to_archive_file_in_place() efficiently (but not atomically) appends a memory blob to a ZIP archive. */
 /* Note this is NOT a fully safe operation. If it crashes or dies in some way your archive can be left in a screwed up state (without a central directory). */
 /* level_and_flags - compression level (0-10, see MZ_BEST_SPEED, MZ_BEST_COMPRESSION, etc.) logically OR'd with zero or more mz_zip_flags, or just set to MZ_DEFAULT_COMPRESSION. */
@@ -1339,6 +1342,7 @@ mz_bool mz_zip_add_mem_to_archive_file_in_place_v2(const char *pZip_filename, co
 /* Returns NULL on failure. */
 void *mz_zip_extract_archive_file_to_heap(const char *pZip_filename, const char *pArchive_name, size_t *pSize, mz_uint flags);
 void *mz_zip_extract_archive_file_to_heap_v2(const char *pZip_filename, const char *pArchive_name, const char *pComment, size_t *pSize, mz_uint flags, mz_zip_error *pErr);
+#endif // OpenMPT
 
 #endif /* #ifndef MINIZ_NO_ARCHIVE_WRITING_APIS */
 

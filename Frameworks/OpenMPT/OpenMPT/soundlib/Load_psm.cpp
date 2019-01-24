@@ -40,16 +40,16 @@ struct PSMChunk
 	// 32-Bit chunk identifiers
 	enum ChunkIdentifiers
 	{
-		idTITL	= MAGIC4LE('T','I','T','L'),
-		idSDFT	= MAGIC4LE('S','D','F','T'),
-		idPBOD	= MAGIC4LE('P','B','O','D'),
-		idSONG	= MAGIC4LE('S','O','N','G'),
-		idDATE	= MAGIC4LE('D','A','T','E'),
-		idOPLH	= MAGIC4LE('O','P','L','H'),
-		idPPAN	= MAGIC4LE('P','P','A','N'),
-		idPATT	= MAGIC4LE('P','A','T','T'),
-		idDSAM	= MAGIC4LE('D','S','A','M'),
-		idDSMP	= MAGIC4LE('D','S','M','P'),
+		idTITL	= MagicLE("TITL"),
+		idSDFT	= MagicLE("SDFT"),
+		idPBOD	= MagicLE("PBOD"),
+		idSONG	= MagicLE("SONG"),
+		idDATE	= MagicLE("DATE"),
+		idOPLH	= MagicLE("OPLH"),
+		idPPAN	= MagicLE("PPAN"),
+		idPATT	= MagicLE("PATT"),
+		idDSAM	= MagicLE("DSAM"),
+		idDSMP	= MagicLE("DSMP"),
 	};
 
 	uint32le id;
@@ -163,9 +163,9 @@ struct PSMSubSong // For internal use (pattern conversion)
 {
 	std::vector<uint8> channelPanning, channelVolume;
 	std::vector<bool> channelSurround;
-	uint8 defaultTempo, defaultSpeed;
+	ORDERINDEX startOrder = ORDERINDEX_INVALID, endOrder = ORDERINDEX_INVALID, restartPos = 0;
+	uint8 defaultTempo = 125, defaultSpeed = 6;
 	char songName[10];
-	ORDERINDEX startOrder, endOrder, restartPos;
 
 	PSMSubSong()
 	{
@@ -173,10 +173,6 @@ struct PSMSubSong // For internal use (pattern conversion)
 		channelVolume.assign(MAX_BASECHANNELS, 64);
 		channelSurround.assign(MAX_BASECHANNELS, false);
 		MemsetZero(songName);
-		defaultTempo = 125;
-		defaultSpeed = 6;
-		startOrder = endOrder = ORDERINDEX_INVALID;
-		restartPos = 0;
 	}
 };
 
@@ -211,12 +207,19 @@ static PATTERNINDEX ReadPSMPatternIndex(FileReader &file, bool &sinariaFormat)
 
 static bool ValidateHeader(const PSMFileHeader &fileHeader)
 {
-	if(std::memcmp(fileHeader.formatID, "PSM ", 4)
-		|| std::memcmp(fileHeader.fileInfoID, "FILE", 4))
+	if(!std::memcmp(fileHeader.formatID, "PSM ", 4)
+		&& !std::memcmp(fileHeader.fileInfoID, "FILE", 4))
 	{
-		return false;
+		return true;
 	}
-	return true;
+#ifdef MPT_PSM_DECRYPT
+	if(!std::memcmp(fileHeader.formatID, "QUP$", 4)
+		&& !std::memcmp(fileHeader.fileInfoID, "OSWQ", 4))
+	{
+		return true;
+	}
+#endif
+	return false;
 }
 
 
@@ -631,7 +634,9 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 		ChnSettings[chn].dwFlags.set(CHN_SURROUND, subsongs[0].channelSurround[chn]);
 	}
 
-	m_madeWithTracker = sinariaFormat ? MPT_USTRING("Epic MegaGames MASI (New Version / Sinaria)") : MPT_USTRING("Epic MegaGames MASI (New Version)");
+	m_modFormat.formatName = sinariaFormat ? U_("Epic MegaGames MASI (New Version / Sinaria)") : U_("Epic MegaGames MASI (New Version)");
+	m_modFormat.type = U_("psm");
+	m_modFormat.charset = mpt::CharsetCP437;
 
 	if(!(loadFlags & loadPatternData) || m_nChannels == 0)
 	{
@@ -1122,7 +1127,11 @@ bool CSoundFile::ReadPSM16(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Seems to be valid!
 	InitializeGlobals(MOD_TYPE_PSM);
-	m_madeWithTracker = MPT_USTRING("Epic MegaGames MASI (Old Version)");
+	
+	m_modFormat.formatName = U_("Epic MegaGames MASI (Old Version)");
+	m_modFormat.type = U_("psm");
+	m_modFormat.charset = mpt::CharsetCP437;
+
 	m_nChannels = Clamp(CHANNELINDEX(fileHeader.numChannelsPlay), CHANNELINDEX(fileHeader.numChannelsReal), MAX_BASECHANNELS);
 	m_nSamplePreAmp = fileHeader.masterVolume;
 	if(m_nSamplePreAmp == 255)

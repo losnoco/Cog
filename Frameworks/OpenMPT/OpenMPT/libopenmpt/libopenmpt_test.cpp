@@ -45,7 +45,8 @@ int main( int /*argc*/ , char * /*argv*/ [] ) {
 		
 		// try to set the C and C++ locales to the user locale
 		try {
-			std::locale::global( std::locale( "" ) );
+			std::locale old = std::locale::global( std::locale( "" ) );
+			(void)old;
 		} catch ( ... ) {
 			// Setting c++ global locale does not work.
 			// This is no problem for libopenmpt, just continue.

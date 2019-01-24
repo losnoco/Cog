@@ -132,21 +132,21 @@ private:
 		}
 	}
 public:
-	bool pause() {
+	bool pause() override {
 		SDL_PauseAudioDevice( dev, 1 );
 		return true;
 	}
-	bool unpause() {
+	bool unpause() override {
 		SDL_PauseAudioDevice( dev, 0 );
 		return true;
 	}
-	void lock() {
+	void lock() override {
 		SDL_LockAudioDevice( dev );
 	}
-	void unlock() {
+	void unlock() override {
 		SDL_UnlockAudioDevice( dev );
 	}
-	bool sleep( int ms ) {
+	bool sleep( int ms ) override {
 		SDL_Delay( ms );
 		return true;
 	}

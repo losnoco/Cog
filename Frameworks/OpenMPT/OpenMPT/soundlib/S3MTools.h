@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "../soundlib/ModSample.h"
 #include "../soundlib/SampleIO.h"
 
@@ -44,6 +46,7 @@ struct S3MFileHeader
 		trkST3_20			= 0x1320,
 		trkIT2_14			= 0x3214,
 		trkBeRoTrackerOld	= 0x4100,	// Used from 2004 to 2012
+		trkCamoto			= 0xCA00,
 	};
 
 	// Flags

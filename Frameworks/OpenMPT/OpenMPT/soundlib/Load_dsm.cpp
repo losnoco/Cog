@@ -207,6 +207,11 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	InitializeGlobals(MOD_TYPE_DSM);
+
+	m_modFormat.formatName = U_("DSIK Format");
+	m_modFormat.type = U_("dsm");
+	m_modFormat.charset = mpt::CharsetCP437;
+
 	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, songHeader.songName);
 	m_nChannels = std::max<uint16>(songHeader.numChannels, 1);
 	m_nDefaultSpeed = songHeader.speed;
@@ -252,19 +257,17 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 
 			ModCommand dummy = ModCommand::Empty();
 			ROWINDEX row = 0;
-			PatternRow rowBase = Patterns[patNum].GetRow(0);
 			while(chunk.CanRead(1) && row < 64)
 			{
 				uint8 flag = chunk.ReadUint8();
 				if(!flag)
 				{
 					row++;
-					rowBase = Patterns[patNum].GetRow(row);
 					continue;
 				}
 
 				CHANNELINDEX chn = (flag & 0x0F);
-				ModCommand &m = (chn < GetNumChannels() ? rowBase[chn] : dummy);
+				ModCommand &m = (chn < GetNumChannels() ? *Patterns[patNum].GetpModCommand(row, chn) : dummy);
 
 				if(flag & 0x80)
 				{

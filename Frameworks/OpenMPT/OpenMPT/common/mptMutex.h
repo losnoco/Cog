@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include <vector> // some C++ header in order to have the C++ standard library version information available
 
 #if !MPT_PLATFORM_MULTITHREADED
@@ -19,27 +21,27 @@
 #define MPT_MUTEX_STD     0
 #define MPT_MUTEX_PTHREAD 0
 #define MPT_MUTEX_WIN32   0
-#elif MPT_COMPILER_GENERIC && !defined(MPT_QUIRK_NO_CPP_THREAD)
+#elif MPT_COMPILER_GENERIC
 #define MPT_MUTEX_STD     1
 #define MPT_MUTEX_PTHREAD 0
 #define MPT_MUTEX_WIN32   0
-#elif MPT_COMPILER_MSVC && !defined(MPT_QUIRK_NO_CPP_THREAD)
+#elif (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS) && defined(MPT_WITH_MINGWSTDTHREADS)
 #define MPT_MUTEX_STD     1
 #define MPT_MUTEX_PTHREAD 0
 #define MPT_MUTEX_WIN32   0
-#elif MPT_COMPILER_GCC && !MPT_OS_WINDOWS && !defined(MPT_QUIRK_NO_CPP_THREAD)
+#elif (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS)
+#define MPT_MUTEX_STD     0
+#define MPT_MUTEX_PTHREAD 0
+#define MPT_MUTEX_WIN32   1
+#elif MPT_COMPILER_MSVC
 #define MPT_MUTEX_STD     1
 #define MPT_MUTEX_PTHREAD 0
 #define MPT_MUTEX_WIN32   0
-#elif MPT_COMPILER_CLANG && defined(__GLIBCXX__) && !defined(MPT_QUIRK_NO_CPP_THREAD)
+#elif MPT_COMPILER_GCC
 #define MPT_MUTEX_STD     1
 #define MPT_MUTEX_PTHREAD 0
 #define MPT_MUTEX_WIN32   0
-#elif (MPT_OS_MACOSX_OR_IOS || MPT_OS_FREEBSD) && MPT_COMPILER_CLANG && !defined(MPT_QUIRK_NO_CPP_THREAD)
-#define MPT_MUTEX_STD     1
-#define MPT_MUTEX_PTHREAD 0
-#define MPT_MUTEX_WIN32   0
-#elif MPT_CLANG_AT_LEAST(3,6,0) && defined(_LIBCPP_VERSION) && !defined(MPT_QUIRK_NO_CPP_THREAD)
+#elif MPT_COMPILER_CLANG
 #define MPT_MUTEX_STD     1
 #define MPT_MUTEX_PTHREAD 0
 #define MPT_MUTEX_WIN32   0
@@ -49,7 +51,7 @@
 #define MPT_MUTEX_WIN32   1
 #else
 #define MPT_MUTEX_STD     0
-#define MPT_MUTEX_PTHREAD 0
+#define MPT_MUTEX_PTHREAD 1
 #define MPT_MUTEX_WIN32   0
 #endif
 
@@ -64,7 +66,11 @@
 #endif
 
 #if MPT_MUTEX_STD
+#if (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS) && defined(MPT_WITH_MINGWSTDTHREADS)
+#include <mingw.mutex.h>
+#else
 #include <mutex>
+#endif
 #elif MPT_MUTEX_WIN32
 #include <windows.h>
 #elif MPT_MUTEX_PTHREAD

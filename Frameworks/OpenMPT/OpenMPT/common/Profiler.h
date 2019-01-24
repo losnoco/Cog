@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #include "../common/mptMutex.h"
 #include <string>

@@ -39,7 +39,7 @@ namespace Util
 #if defined(MODPLUG_TRACKER) || !defined(NO_DMO)
 
 
-std::wstring CLSIDToString(CLSID clsid)
+mpt::winstring CLSIDToString(CLSID clsid)
 {
 	std::wstring str;
 	LPOLESTR tmp = nullptr;
@@ -75,17 +75,17 @@ std::wstring CLSIDToString(CLSID clsid)
 	{
 		::CoTaskMemFree(tmp);
 		tmp = nullptr;
-		MPT_UNUSED_VARIABLE(e);
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY();
+		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
 	}
 	::CoTaskMemFree(tmp);
 	tmp = nullptr;
-	return str;
+	return mpt::ToWin(str);
 }
 
 
-CLSID StringToCLSID(const std::wstring &str)
+CLSID StringToCLSID(const mpt::winstring &str_)
 {
+	const std::wstring str = mpt::ToWide(str_);
 	CLSID clsid = CLSID();
 	std::vector<OLECHAR> tmp(str.c_str(), str.c_str() + str.length() + 1);
 	switch(::CLSIDFromString(tmp.data(), &clsid))
@@ -115,8 +115,9 @@ CLSID StringToCLSID(const std::wstring &str)
 }
 
 
-bool VerifyStringToCLSID(const std::wstring &str, CLSID &clsid)
+bool VerifyStringToCLSID(const mpt::winstring &str_, CLSID &clsid)
 {
+	const std::wstring str = mpt::ToWide(str_);
 	bool result = false;
 	clsid = CLSID();
 	std::vector<OLECHAR> tmp(str.c_str(), str.c_str() + str.length() + 1);
@@ -145,8 +146,9 @@ bool VerifyStringToCLSID(const std::wstring &str, CLSID &clsid)
 }
 
 
-bool IsCLSID(const std::wstring &str)
+bool IsCLSID(const mpt::winstring &str_)
 {
+	const std::wstring str = mpt::ToWide(str_);
 	bool result = false;
 	CLSID clsid = CLSID();
 	std::vector<OLECHAR> tmp(str.c_str(), str.c_str() + str.length() + 1);
@@ -177,7 +179,7 @@ bool IsCLSID(const std::wstring &str)
 }
 
 
-std::wstring IIDToString(IID iid)
+mpt::winstring IIDToString(IID iid)
 {
 	std::wstring str;
 	LPOLESTR tmp = nullptr;
@@ -213,15 +215,15 @@ std::wstring IIDToString(IID iid)
 	{
 		::CoTaskMemFree(tmp);
 		tmp = nullptr;
-		MPT_UNUSED_VARIABLE(e);
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY();
+		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
 	}
-	return str;
+	return mpt::ToWin(str);
 }
 
 
-IID StringToIID(const std::wstring &str)
+IID StringToIID(const mpt::winstring &str_)
 {
+	const std::wstring str = mpt::ToWide(str_);
 	IID iid = IID();
 	std::vector<OLECHAR> tmp(str.c_str(), str.c_str() + str.length() + 1);
 	switch(::IIDFromString(tmp.data(), &iid))
@@ -245,18 +247,18 @@ IID StringToIID(const std::wstring &str)
 }
 
 
-std::wstring GUIDToString(GUID guid)
+mpt::winstring GUIDToString(GUID guid)
 {
 	std::vector<OLECHAR> tmp(256);
 	if(::StringFromGUID2(guid, tmp.data(), static_cast<int>(tmp.size())) <= 0)
 	{
 		throw std::logic_error("StringFromGUID2() failed.");
 	}
-	return tmp.data();
+	return mpt::ToWin(tmp.data());
 }
 
 
-GUID StringToGUID(const std::wstring &str)
+GUID StringToGUID(const mpt::winstring &str)
 {
 	return StringToIID(str);
 }
@@ -276,71 +278,6 @@ GUID CreateGUID()
 	}
 	return guid;
 }
-
-
-#if !MPT_OS_WINDOWS_WINRT
-
-UUID StringToUUID(const mpt::ustring &str)
-{
-	UUID uuid = UUID();
-	std::wstring wstr = mpt::ToWide(str);
-	std::vector<wchar_t> tmp(wstr.c_str(), wstr.c_str() + wstr.length() + 1);
-	switch(::UuidFromStringW((RPC_WSTR)(&(tmp[0])), &uuid))
-	{
-	case RPC_S_OK:
-		// nothing
-		break;
-	case RPC_S_INVALID_STRING_UUID:
-		uuid = UUID();
-		break;
-	default:
-		throw std::logic_error("UuidFromStringW() failed.");
-		break;
-	}
-	return uuid;
-}
-
-
-mpt::ustring UUIDToString(UUID uuid)
-{
-	std::wstring wstr;
-	RPC_WSTR tmp = nullptr;
-	switch(::UuidToStringW(&uuid, &tmp))
-	{
-	case RPC_S_OK:
-		// nothing
-		break;
-	case RPC_S_OUT_OF_MEMORY:
-		if(tmp)
-		{
-			::RpcStringFreeW(&tmp);
-			tmp = nullptr;
-		}
-		MPT_EXCEPTION_THROW_OUT_OF_MEMORY();
-		break;
-	default:
-		throw std::logic_error("UuidToStringW() failed.");
-		break;
-	}
-	try
-	{
-		std::size_t len = 0;
-		for(len = 0; tmp[len] != 0; ++len)
-		{
-			// nothing
-		}
-		wstr = std::wstring(tmp, tmp + len);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
-	{
-		::RpcStringFreeW(&tmp);
-		tmp = nullptr;
-		MPT_UNUSED_VARIABLE(e);
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY();
-	}
-	return mpt::ToUnicode(wstr);
-}
-
-#endif // !MPT_OS_WINDOWS_WINRT
 
 
 bool IsValid(UUID uuid)
@@ -423,17 +360,6 @@ UUID::operator ::UUID () const
 	return UUIDToWin32(*this);
 }
 
-mpt::UUID UUID::FromGroups(uint32 group1, uint16 group2, uint16 group3, uint16 group4, uint64 group5)
-{
-	MPT_ASSERT((group5 & 0xffff000000000000ull) == 0ull);
-	return mpt::UUID
-		( group1
-		, group2
-		, group3
-		, (static_cast<uint64>(group4) << 48) | group5
-		);
-}
-
 #endif // MODPLUG_TRACKER || !NO_DMO
 
 #endif // MPT_OS_WINDOWS
@@ -489,31 +415,22 @@ UUID UUID::GenerateLocalUseOnly()
 			return mpt::UUID::RFC4122Random();
 		#endif
 	#elif MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
-		#if _WIN32_WINNT >= 0x0501
-			// Available since Win2000, but we check for WinXP in order to not use this
-			// function in Win32old builds. It is not available on some non-fully
-			// patched Win98SE installs in the wild.
-			::UUID uuid = ::UUID();
-			RPC_STATUS status = ::UuidCreateSequential(&uuid);
-			if(status != RPC_S_OK && status != RPC_S_UUID_LOCAL_ONLY)
-			{
-				return Generate();
-			}
-			status = RPC_S_OK;
-			if(UuidIsNil(&uuid, &status) != FALSE)
-			{
-				return mpt::UUID::RFC4122Random();
-			}
-			if(status != RPC_S_OK)
-			{
-				return mpt::UUID::RFC4122Random();
-			}
-			return mpt::UUIDFromWin32(uuid);
-		#else
-			// Fallback to ::UuidCreate is safe as ::UuidCreateSequential is only a
-			// tiny performance optimization.
+		::UUID uuid = ::UUID();
+		RPC_STATUS status = ::UuidCreateSequential(&uuid);
+		if(status != RPC_S_OK && status != RPC_S_UUID_LOCAL_ONLY)
+		{
 			return Generate();
-		#endif
+		}
+		status = RPC_S_OK;
+		if(UuidIsNil(&uuid, &status) != FALSE)
+		{
+			return mpt::UUID::RFC4122Random();
+		}
+		if(status != RPC_S_OK)
+		{
+			return mpt::UUID::RFC4122Random();
+		}
+		return mpt::UUIDFromWin32(uuid);
 	#else
 		return RFC4122Random();
 	#endif
@@ -522,7 +439,7 @@ UUID UUID::GenerateLocalUseOnly()
 UUID UUID::RFC4122Random()
 {
 	UUID result;
-	mpt::thread_safe_prng<mpt::best_prng> & prng = mpt::global_prng();
+	mpt::thread_safe_prng<mpt::default_prng> & prng = mpt::global_prng();
 	result.Data1 = mpt::random<uint32>(prng);
 	result.Data2 = mpt::random<uint16>(prng);
 	result.Data3 = mpt::random<uint16>(prng);
@@ -531,62 +448,7 @@ UUID UUID::RFC4122Random()
 	return result;
 }
 
-uint32 UUID::GetData1() const
-{
-	return Data1;
-}
-
-uint16 UUID::GetData2() const
-{
-	return Data2;
-}
-
-uint16 UUID::GetData3() const
-{
-	return Data3;
-}
-
-uint64 UUID::GetData4() const
-{
-	return Data4;
-}
-
-bool UUID::IsNil() const
-{
-	return (Data1 == 0) && (Data2 == 0) && (Data3 == 0) && (Data4 == 0);
-}
-
-bool UUID::IsValid() const
-{
-	return (Data1 != 0) || (Data2 != 0) || (Data3 != 0) || (Data4 != 0);
-}
-
-uint8 UUID::Mm() const
-{
-	return static_cast<uint8>((Data3 >> 8) & 0xffu);
-}
-
-uint8 UUID::Nn() const
-{
-	return static_cast<uint8>((Data4 >> 56) & 0xffu);
-}
-
-uint8 UUID::Variant() const
-{
-	return Nn() >> 4u;
-}
-
-uint8 UUID::Version() const
-{
-	return Mm() >> 4u;
-}
-
-bool UUID::IsRFC4122() const
-{
-	return (Variant() & 0xcu) == 0x8u;
-}
-
-void UUID::MakeRFC4122(uint8 version)
+void UUID::MakeRFC4122(uint8 version) noexcept
 {
 	// variant
 	uint8 Nn = static_cast<uint8>((Data4 >> 56) & 0xffu);
@@ -603,70 +465,9 @@ void UUID::MakeRFC4122(uint8 version)
 	Data3 |= static_cast<uint16>(Mm) << 8;
 }
 
-UUID::UUID()
-{
-	Data1 = 0;
-	Data2 = 0;
-	Data3 = 0;
-	Data4 = 0;
-}
-
-UUID::UUID(uint32 Data1, uint16 Data2, uint16 Data3, uint64 Data4)
-{
-	this->Data1 = Data1;
-	this->Data2 = Data2;
-	this->Data3 = Data3;
-	this->Data4 = Data4;
-}
-
-bool operator==(const mpt::UUID & a, const mpt::UUID & b)
-{
-	return (a.Data1 == b.Data1) && (a.Data2 == b.Data2) && (a.Data3 == b.Data3) && (a.Data4 == b.Data4);
-}
-
-bool operator!=(const mpt::UUID & a, const mpt::UUID & b)
-{
-	return (a.Data1 != b.Data1) || (a.Data2 != b.Data2) || (a.Data3 != b.Data3) || (a.Data4 != b.Data4);
-}
-
-UUID UUID::FromString(const std::string &str)
-{
-	std::vector<std::string> segments = mpt::String::Split<std::string>(str, std::string("-"));
-	if(segments.size() != 5)
-	{
-		return UUID();
-	}
-	if(segments[0].length() != 8)
-	{
-		return UUID();
-	}
-	if(segments[1].length() != 4)
-	{
-		return UUID();
-	}
-	if(segments[2].length() != 4)
-	{
-		return UUID();
-	}
-	if(segments[3].length() != 4)
-	{
-		return UUID();
-	}
-	if(segments[4].length() != 12)
-	{
-		return UUID();
-	}
-	UUID result;
-	result.Data1 = mpt::String::Parse::Hex<uint32>(segments[0]);
-	result.Data2 = mpt::String::Parse::Hex<uint16>(segments[1]);
-	result.Data3 = mpt::String::Parse::Hex<uint16>(segments[2]);
-	result.Data4 = mpt::String::Parse::Hex<uint64>(segments[3] + segments[4]);
-	return result;
-}
-
 UUID UUID::FromString(const mpt::ustring &str)
 {
-	std::vector<mpt::ustring> segments = mpt::String::Split<mpt::ustring>(str, MPT_USTRING("-"));
+	std::vector<mpt::ustring> segments = mpt::String::Split<mpt::ustring>(str, U_("-"));
 	if(segments.size() != 5)
 	{
 		return UUID();
@@ -697,38 +498,30 @@ UUID UUID::FromString(const mpt::ustring &str)
 	result.Data3 = mpt::String::Parse::Hex<uint16>(segments[2]);
 	result.Data4 = mpt::String::Parse::Hex<uint64>(segments[3] + segments[4]);
 	return result;
-}
-
-std::string UUID::ToString() const
-{
-	return std::string()
-		+ mpt::fmt::hex0<8>(GetData1())
-		+ std::string("-")
-		+ mpt::fmt::hex0<4>(GetData2())
-		+ std::string("-")
-		+ mpt::fmt::hex0<4>(GetData3())
-		+ std::string("-")
-		+ mpt::fmt::hex0<4>(static_cast<uint16>(GetData4() >> 48))
-		+ std::string("-")
-		+ mpt::fmt::hex0<4>(static_cast<uint16>(GetData4() >> 32))
-		+ mpt::fmt::hex0<8>(static_cast<uint32>(GetData4() >>  0))
-		;
 }
 
 mpt::ustring UUID::ToUString() const
 {
 	return mpt::ustring()
 		+ mpt::ufmt::hex0<8>(GetData1())
-		+ MPT_USTRING("-")
+		+ U_("-")
 		+ mpt::ufmt::hex0<4>(GetData2())
-		+ MPT_USTRING("-")
+		+ U_("-")
 		+ mpt::ufmt::hex0<4>(GetData3())
-		+ MPT_USTRING("-")
+		+ U_("-")
 		+ mpt::ufmt::hex0<4>(static_cast<uint16>(GetData4() >> 48))
-		+ MPT_USTRING("-")
+		+ U_("-")
 		+ mpt::ufmt::hex0<4>(static_cast<uint16>(GetData4() >> 32))
 		+ mpt::ufmt::hex0<8>(static_cast<uint32>(GetData4() >>  0))
 		;
+}
+
+UUID::UUID(UUIDbin uuid)
+{
+	Data1 = uuid.Data1.get();
+	Data2 = uuid.Data2.get();
+	Data3 = uuid.Data3.get();
+	Data4 = uuid.Data4.get();
 }
 
 UUID::UUID(GUIDms guid)
@@ -737,6 +530,16 @@ UUID::UUID(GUIDms guid)
 	Data2 = guid.Data2.get();
 	Data3 = guid.Data3.get();
 	Data4 = guid.Data4.get();
+}
+
+UUID::operator UUIDbin() const
+{
+	UUIDbin result;
+	result.Data1 = GetData1();
+	result.Data2 = GetData2();
+	result.Data3 = GetData3();
+	result.Data4 = GetData4();
+	return result;
 }
 
 UUID::operator GUIDms() const

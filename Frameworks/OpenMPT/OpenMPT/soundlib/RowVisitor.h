@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include <vector>
 #include "Snd_defs.h"
 
@@ -32,6 +34,7 @@ protected:
 
 public:
 	RowVisitor(const CSoundFile &sf, SEQUENCEINDEX sequence = SEQUENCEINDEX_INVALID);
+	RowVisitor& operator=(RowVisitor &&other);
 
 	// Resize / Clear the row vector.
 	// If reset is true, the vector is not only resized to the required dimensions, but also completely cleared (i.e. all visited rows are unset).
@@ -41,13 +44,13 @@ public:
 	void Visit(ORDERINDEX ord, ROWINDEX row)
 	{
 		SetVisited(ord, row, true);
-	};
+	}
 
 	// Mark a row as not visited.
 	void Unvisit(ORDERINDEX ord, ROWINDEX row)
 	{
 		SetVisited(ord, row, false);
-	};
+	}
 
 	// Returns whether a given row has been visited yet.
 	// If autoSet is true, the queried row will automatically be marked as visited.
@@ -59,15 +62,9 @@ public:
 
 	// Find the first row that has not been played yet.
 	// The order and row is stored in the order and row variables on success, on failure they contain invalid values.
-	// If fastSearch is true (default), only the first row of each pattern is looked at, otherwise every row is examined.
+	// If onlyUnplayedPatterns is true (default), only completely unplayed patterns are considered, otherwise a song can start anywhere.
 	// Function returns true on success.
-	bool GetFirstUnvisitedRow(ORDERINDEX &order, ROWINDEX &row, bool fastSearch) const;
-
-	// Retrieve visited rows vector from another RowVisitor object.
-	void Set(const RowVisitor &other)
-	{
-		m_visitedRows = other.m_visitedRows;
-	}
+	bool GetFirstUnvisitedRow(ORDERINDEX &order, ROWINDEX &row, bool onlyUnplayedPatterns) const;
 
 	// Set all rows of a previous pattern loop as unvisited.
 	void ResetPatternLoop(ORDERINDEX ord, ROWINDEX startRow);

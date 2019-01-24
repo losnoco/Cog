@@ -7,13 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		831132D521F955B2001F678F /* mptMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132C921F955B0001F678F /* mptMemory.h */; };
+		831132D621F955B2001F678F /* mptAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132CA21F955B0001F678F /* mptAlloc.cpp */; };
+		831132D721F955B2001F678F /* mptBaseMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132CB21F955B0001F678F /* mptBaseMacros.h */; };
+		831132D821F955B2001F678F /* mptStringBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132CC21F955B1001F678F /* mptStringBuffer.cpp */; };
+		831132D921F955B2001F678F /* mptAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132CD21F955B1001F678F /* mptAlloc.h */; };
+		831132DA21F955B2001F678F /* mptBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132CE21F955B1001F678F /* mptBaseTypes.h */; };
+		831132DB21F955B2001F678F /* mptSpan.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132CF21F955B1001F678F /* mptSpan.h */; };
+		831132DC21F955B2001F678F /* mptStringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132D021F955B1001F678F /* mptStringBuffer.h */; };
+		831132DD21F955B2001F678F /* mptBaseUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132D121F955B1001F678F /* mptBaseUtils.h */; };
+		831132DE21F955B2001F678F /* mptException.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132D221F955B2001F678F /* mptException.h */; };
+		831132DF21F955B2001F678F /* mptExceptionText.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132D321F955B2001F678F /* mptExceptionText.h */; };
+		831132E021F955B2001F678F /* mptAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132D421F955B2001F678F /* mptAssert.h */; };
+		831132E221F955F4001F678F /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 831132E121F955F3001F678F /* LICENSE */; };
+		831132E821F9565F001F678F /* BitReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132E321F9565E001F678F /* BitReader.h */; };
+		831132E921F9565F001F678F /* opal.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132E421F9565F001F678F /* opal.h */; };
+		831132EA21F9565F001F678F /* OPL.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132E521F9565F001F678F /* OPL.h */; };
+		831132EB21F9565F001F678F /* Load_c67.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132E621F9565F001F678F /* Load_c67.cpp */; };
+		831132EC21F9565F001F678F /* OPL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132E721F9565F001F678F /* OPL.cpp */; };
 		83E5EFD01FFEF9D200659F0F /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5EFCE1FFEF9D200659F0F /* config.h */; };
 		83E5F8801FFEF9E400659F0F /* minimp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83E5F2461FFEF9E100659F0F /* minimp3.c */; };
 		83E5F8811FFEF9E400659F0F /* minimp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5F2471FFEF9E100659F0F /* minimp3.h */; };
-		83E5F8831FFEF9E400659F0F /* LGPL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 83E5F2491FFEF9E100659F0F /* LGPL.txt */; };
-		83E5F8841FFEF9E400659F0F /* libc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5F24A1FFEF9E100659F0F /* libc.h */; };
 		83E5F9831FFEF9E400659F0F /* stb_vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 83E5F3691FFEF9E100659F0F /* stb_vorbis.c */; };
-		83E5FC621FFEFA0D00659F0F /* typedefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC291FFEFA0D00659F0F /* typedefs.cpp */; };
 		83E5FC631FFEFA0D00659F0F /* mptCRC.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC2A1FFEFA0D00659F0F /* mptCRC.h */; };
 		83E5FC641FFEFA0D00659F0F /* mptLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC2B1FFEFA0D00659F0F /* mptLibrary.h */; };
 		83E5FC651FFEFA0D00659F0F /* mptIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC2C1FFEFA0D00659F0F /* mptIO.h */; };
@@ -25,14 +40,11 @@
 		83E5FC6B1FFEFA0D00659F0F /* mptLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC321FFEFA0D00659F0F /* mptLibrary.cpp */; };
 		83E5FC6C1FFEFA0D00659F0F /* mptStringFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC331FFEFA0D00659F0F /* mptStringFormat.h */; };
 		83E5FC6D1FFEFA0D00659F0F /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC341FFEFA0D00659F0F /* Logging.cpp */; };
-		83E5FC6E1FFEFA0D00659F0F /* typedefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC351FFEFA0D00659F0F /* typedefs.h */; };
 		83E5FC6F1FFEFA0D00659F0F /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC361FFEFA0D00659F0F /* Profiler.cpp */; };
 		83E5FC701FFEFA0D00659F0F /* mptMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC371FFEFA0D00659F0F /* mptMutex.h */; };
 		83E5FC711FFEFA0D00659F0F /* version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC381FFEFA0D00659F0F /* version.cpp */; };
-		83E5FC721FFEFA0D00659F0F /* StringFixer.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC391FFEFA0D00659F0F /* StringFixer.h */; };
 		83E5FC731FFEFA0D00659F0F /* mptUUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC3A1FFEFA0D00659F0F /* mptUUID.h */; };
 		83E5FC741FFEFA0D00659F0F /* BuildSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC3B1FFEFA0D00659F0F /* BuildSettings.h */; };
-		83E5FC751FFEFA0D00659F0F /* WriteMemoryDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC3C1FFEFA0D00659F0F /* WriteMemoryDump.h */; };
 		83E5FC761FFEFA0D00659F0F /* mptCPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC3D1FFEFA0D00659F0F /* mptCPU.cpp */; };
 		83E5FC771FFEFA0D00659F0F /* mptTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC3E1FFEFA0D00659F0F /* mptTime.h */; };
 		83E5FC781FFEFA0D00659F0F /* FileReaderFwd.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC3F1FFEFA0D00659F0F /* FileReaderFwd.h */; };
@@ -41,7 +53,6 @@
 		83E5FC7B1FFEFA0D00659F0F /* mptWine.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC421FFEFA0D00659F0F /* mptWine.h */; };
 		83E5FC7C1FFEFA0D00659F0F /* misc_util.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC431FFEFA0D00659F0F /* misc_util.h */; };
 		83E5FC7D1FFEFA0D00659F0F /* mptOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC441FFEFA0D00659F0F /* mptOS.cpp */; };
-		83E5FC7E1FFEFA0D00659F0F /* mptTypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC451FFEFA0D00659F0F /* mptTypeTraits.h */; };
 		83E5FC7F1FFEFA0D00659F0F /* serialization_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC461FFEFA0D00659F0F /* serialization_utils.cpp */; };
 		83E5FC801FFEFA0D00659F0F /* mptFileIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC471FFEFA0D00659F0F /* mptFileIO.h */; };
 		83E5FC811FFEFA0D00659F0F /* mptStringFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC481FFEFA0D00659F0F /* mptStringFormat.cpp */; };
@@ -59,7 +70,6 @@
 		83E5FC8D1FFEFA0D00659F0F /* mptStringParse.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC541FFEFA0D00659F0F /* mptStringParse.h */; };
 		83E5FC8E1FFEFA0D00659F0F /* mptRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC551FFEFA0D00659F0F /* mptRandom.h */; };
 		83E5FC8F1FFEFA0D00659F0F /* CompilerDetect.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC561FFEFA0D00659F0F /* CompilerDetect.h */; };
-		83E5FC901FFEFA0D00659F0F /* stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC571FFEFA0D00659F0F /* stdafx.cpp */; };
 		83E5FC911FFEFA0D00659F0F /* FileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC581FFEFA0D00659F0F /* FileReader.h */; };
 		83E5FC921FFEFA0D00659F0F /* mptPathString.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC591FFEFA0D00659F0F /* mptPathString.h */; };
 		83E5FC931FFEFA0D00659F0F /* Profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC5A1FFEFA0D00659F0F /* Profiler.h */; };
@@ -145,7 +155,6 @@
 		83E5FDE11FFEFA8500659F0F /* PlugInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FD3A1FFEFA8400659F0F /* PlugInterface.cpp */; };
 		83E5FDE21FFEFA8500659F0F /* LFOPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FD3B1FFEFA8400659F0F /* LFOPlugin.cpp */; };
 		83E5FDE31FFEFA8500659F0F /* OpCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FD3C1FFEFA8400659F0F /* OpCodes.h */; };
-		83E5FDE41FFEFA8500659F0F /* PluginEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FD3D1FFEFA8400659F0F /* PluginEventQueue.h */; };
 		83E5FDE51FFEFA8500659F0F /* PluginManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FD3E1FFEFA8400659F0F /* PluginManager.cpp */; };
 		83E5FDE61FFEFA8500659F0F /* DigiBoosterEcho.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FD3F1FFEFA8400659F0F /* DigiBoosterEcho.cpp */; };
 		83E5FDE71FFEFA8500659F0F /* DMOPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FD411FFEFA8400659F0F /* DMOPlugin.cpp */; };
@@ -272,17 +281,32 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		831132C921F955B0001F678F /* mptMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptMemory.h; sourceTree = "<group>"; };
+		831132CA21F955B0001F678F /* mptAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mptAlloc.cpp; sourceTree = "<group>"; };
+		831132CB21F955B0001F678F /* mptBaseMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptBaseMacros.h; sourceTree = "<group>"; };
+		831132CC21F955B1001F678F /* mptStringBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mptStringBuffer.cpp; sourceTree = "<group>"; };
+		831132CD21F955B1001F678F /* mptAlloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptAlloc.h; sourceTree = "<group>"; };
+		831132CE21F955B1001F678F /* mptBaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptBaseTypes.h; sourceTree = "<group>"; };
+		831132CF21F955B1001F678F /* mptSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptSpan.h; sourceTree = "<group>"; };
+		831132D021F955B1001F678F /* mptStringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptStringBuffer.h; sourceTree = "<group>"; };
+		831132D121F955B1001F678F /* mptBaseUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptBaseUtils.h; sourceTree = "<group>"; };
+		831132D221F955B2001F678F /* mptException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptException.h; sourceTree = "<group>"; };
+		831132D321F955B2001F678F /* mptExceptionText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptExceptionText.h; sourceTree = "<group>"; };
+		831132D421F955B2001F678F /* mptAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptAssert.h; sourceTree = "<group>"; };
+		831132E121F955F3001F678F /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		831132E321F9565E001F678F /* BitReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitReader.h; sourceTree = "<group>"; };
+		831132E421F9565F001F678F /* opal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opal.h; sourceTree = "<group>"; };
+		831132E521F9565F001F678F /* OPL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPL.h; sourceTree = "<group>"; };
+		831132E621F9565F001F678F /* Load_c67.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Load_c67.cpp; sourceTree = "<group>"; };
+		831132E721F9565F001F678F /* OPL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OPL.cpp; sourceTree = "<group>"; };
 		83E5EFBD1FFEF7CC00659F0F /* libOpenMPT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libOpenMPT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFCE1FFEF9D200659F0F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = SOURCE_ROOT; };
 		83E5EFCF1FFEF9D200659F0F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		83E5F2461FFEF9E100659F0F /* minimp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = minimp3.c; sourceTree = "<group>"; };
 		83E5F2471FFEF9E100659F0F /* minimp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = minimp3.h; sourceTree = "<group>"; };
 		83E5F2481FFEF9E100659F0F /* OpenMPT.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OpenMPT.txt; sourceTree = "<group>"; };
-		83E5F2491FFEF9E100659F0F /* LGPL.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LGPL.txt; sourceTree = "<group>"; };
-		83E5F24A1FFEF9E100659F0F /* libc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libc.h; sourceTree = "<group>"; };
 		83E5F3691FFEF9E100659F0F /* stb_vorbis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb_vorbis.c; sourceTree = "<group>"; };
 		83E5F36A1FFEF9E100659F0F /* OpenMPT.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OpenMPT.txt; sourceTree = "<group>"; };
-		83E5FC291FFEFA0D00659F0F /* typedefs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = typedefs.cpp; sourceTree = "<group>"; };
 		83E5FC2A1FFEFA0D00659F0F /* mptCRC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptCRC.h; sourceTree = "<group>"; };
 		83E5FC2B1FFEFA0D00659F0F /* mptLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptLibrary.h; sourceTree = "<group>"; };
 		83E5FC2C1FFEFA0D00659F0F /* mptIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptIO.h; sourceTree = "<group>"; };
@@ -294,14 +318,11 @@
 		83E5FC321FFEFA0D00659F0F /* mptLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mptLibrary.cpp; sourceTree = "<group>"; };
 		83E5FC331FFEFA0D00659F0F /* mptStringFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptStringFormat.h; sourceTree = "<group>"; };
 		83E5FC341FFEFA0D00659F0F /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
-		83E5FC351FFEFA0D00659F0F /* typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typedefs.h; sourceTree = "<group>"; };
 		83E5FC361FFEFA0D00659F0F /* Profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Profiler.cpp; sourceTree = "<group>"; };
 		83E5FC371FFEFA0D00659F0F /* mptMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptMutex.h; sourceTree = "<group>"; };
 		83E5FC381FFEFA0D00659F0F /* version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = version.cpp; sourceTree = "<group>"; };
-		83E5FC391FFEFA0D00659F0F /* StringFixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringFixer.h; sourceTree = "<group>"; };
 		83E5FC3A1FFEFA0D00659F0F /* mptUUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptUUID.h; sourceTree = "<group>"; };
 		83E5FC3B1FFEFA0D00659F0F /* BuildSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuildSettings.h; sourceTree = "<group>"; };
-		83E5FC3C1FFEFA0D00659F0F /* WriteMemoryDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteMemoryDump.h; sourceTree = "<group>"; };
 		83E5FC3D1FFEFA0D00659F0F /* mptCPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mptCPU.cpp; sourceTree = "<group>"; };
 		83E5FC3E1FFEFA0D00659F0F /* mptTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptTime.h; sourceTree = "<group>"; };
 		83E5FC3F1FFEFA0D00659F0F /* FileReaderFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileReaderFwd.h; sourceTree = "<group>"; };
@@ -310,7 +331,6 @@
 		83E5FC421FFEFA0D00659F0F /* mptWine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptWine.h; sourceTree = "<group>"; };
 		83E5FC431FFEFA0D00659F0F /* misc_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = misc_util.h; sourceTree = "<group>"; };
 		83E5FC441FFEFA0D00659F0F /* mptOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mptOS.cpp; sourceTree = "<group>"; };
-		83E5FC451FFEFA0D00659F0F /* mptTypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptTypeTraits.h; sourceTree = "<group>"; };
 		83E5FC461FFEFA0D00659F0F /* serialization_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = serialization_utils.cpp; sourceTree = "<group>"; };
 		83E5FC471FFEFA0D00659F0F /* mptFileIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptFileIO.h; sourceTree = "<group>"; };
 		83E5FC481FFEFA0D00659F0F /* mptStringFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mptStringFormat.cpp; sourceTree = "<group>"; };
@@ -328,7 +348,6 @@
 		83E5FC541FFEFA0D00659F0F /* mptStringParse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptStringParse.h; sourceTree = "<group>"; };
 		83E5FC551FFEFA0D00659F0F /* mptRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptRandom.h; sourceTree = "<group>"; };
 		83E5FC561FFEFA0D00659F0F /* CompilerDetect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompilerDetect.h; sourceTree = "<group>"; };
-		83E5FC571FFEFA0D00659F0F /* stdafx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stdafx.cpp; sourceTree = "<group>"; };
 		83E5FC581FFEFA0D00659F0F /* FileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileReader.h; sourceTree = "<group>"; };
 		83E5FC591FFEFA0D00659F0F /* mptPathString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptPathString.h; sourceTree = "<group>"; };
 		83E5FC5A1FFEFA0D00659F0F /* Profiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profiler.h; sourceTree = "<group>"; };
@@ -414,7 +433,6 @@
 		83E5FD3A1FFEFA8400659F0F /* PlugInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlugInterface.cpp; sourceTree = "<group>"; };
 		83E5FD3B1FFEFA8400659F0F /* LFOPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFOPlugin.cpp; sourceTree = "<group>"; };
 		83E5FD3C1FFEFA8400659F0F /* OpCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpCodes.h; sourceTree = "<group>"; };
-		83E5FD3D1FFEFA8400659F0F /* PluginEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginEventQueue.h; sourceTree = "<group>"; };
 		83E5FD3E1FFEFA8400659F0F /* PluginManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginManager.cpp; sourceTree = "<group>"; };
 		83E5FD3F1FFEFA8400659F0F /* DigiBoosterEcho.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DigiBoosterEcho.cpp; sourceTree = "<group>"; };
 		83E5FD411FFEFA8400659F0F /* DMOPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DMOPlugin.cpp; sourceTree = "<group>"; };
@@ -598,11 +616,10 @@
 		83E5F2451FFEF9E100659F0F /* minimp3 */ = {
 			isa = PBXGroup;
 			children = (
+				831132E121F955F3001F678F /* LICENSE */,
 				83E5F2461FFEF9E100659F0F /* minimp3.c */,
 				83E5F2471FFEF9E100659F0F /* minimp3.h */,
 				83E5F2481FFEF9E100659F0F /* OpenMPT.txt */,
-				83E5F2491FFEF9E100659F0F /* LGPL.txt */,
-				83E5F24A1FFEF9E100659F0F /* libc.h */,
 			);
 			path = minimp3;
 			sourceTree = "<group>";
@@ -619,63 +636,69 @@
 		83E5FC281FFEFA0D00659F0F /* common */ = {
 			isa = PBXGroup;
 			children = (
-				83E5FC291FFEFA0D00659F0F /* typedefs.cpp */,
-				83E5FC2A1FFEFA0D00659F0F /* mptCRC.h */,
-				83E5FC2B1FFEFA0D00659F0F /* mptLibrary.h */,
-				83E5FC2C1FFEFA0D00659F0F /* mptIO.h */,
-				83E5FC2D1FFEFA0D00659F0F /* version.h */,
-				83E5FC2E1FFEFA0D00659F0F /* mptStringParse.cpp */,
-				83E5FC2F1FFEFA0D00659F0F /* stdafx.h */,
+				83E5FC3B1FFEFA0D00659F0F /* BuildSettings.h */,
+				83E5FC561FFEFA0D00659F0F /* CompilerDetect.h */,
+				83E5FC411FFEFA0D00659F0F /* ComponentManager.cpp */,
 				83E5FC301FFEFA0D00659F0F /* ComponentManager.h */,
 				83E5FC311FFEFA0D00659F0F /* Endianness.h */,
-				83E5FC321FFEFA0D00659F0F /* mptLibrary.cpp */,
-				83E5FC331FFEFA0D00659F0F /* mptStringFormat.h */,
-				83E5FC341FFEFA0D00659F0F /* Logging.cpp */,
-				83E5FC351FFEFA0D00659F0F /* typedefs.h */,
-				83E5FC361FFEFA0D00659F0F /* Profiler.cpp */,
-				83E5FC371FFEFA0D00659F0F /* mptMutex.h */,
-				83E5FC381FFEFA0D00659F0F /* version.cpp */,
-				83E5FC391FFEFA0D00659F0F /* StringFixer.h */,
-				83E5FC3A1FFEFA0D00659F0F /* mptUUID.h */,
-				83E5FC3B1FFEFA0D00659F0F /* BuildSettings.h */,
-				83E5FC3C1FFEFA0D00659F0F /* WriteMemoryDump.h */,
-				83E5FC3D1FFEFA0D00659F0F /* mptCPU.cpp */,
-				83E5FC3E1FFEFA0D00659F0F /* mptTime.h */,
-				83E5FC3F1FFEFA0D00659F0F /* FileReaderFwd.h */,
-				83E5FC401FFEFA0D00659F0F /* Logging.h */,
-				83E5FC411FFEFA0D00659F0F /* ComponentManager.cpp */,
-				83E5FC421FFEFA0D00659F0F /* mptWine.h */,
-				83E5FC431FFEFA0D00659F0F /* misc_util.h */,
-				83E5FC441FFEFA0D00659F0F /* mptOS.cpp */,
-				83E5FC451FFEFA0D00659F0F /* mptTypeTraits.h */,
-				83E5FC461FFEFA0D00659F0F /* serialization_utils.cpp */,
-				83E5FC471FFEFA0D00659F0F /* mptFileIO.h */,
-				83E5FC481FFEFA0D00659F0F /* mptStringFormat.cpp */,
 				83E5FC491FFEFA0D00659F0F /* FileReader.cpp */,
-				83E5FC4A1FFEFA0D00659F0F /* serialization_utils.h */,
-				83E5FC4B1FFEFA0D00659F0F /* mptWine.cpp */,
-				83E5FC4C1FFEFA0D00659F0F /* mptThread.h */,
-				83E5FC4D1FFEFA0D00659F0F /* mptPathString.cpp */,
-				83E5FC4E1FFEFA0D00659F0F /* mptUUID.cpp */,
-				83E5FC4F1FFEFA0D00659F0F /* mptTime.cpp */,
-				83E5FC501FFEFA0D00659F0F /* mptString.cpp */,
-				83E5FC511FFEFA0D00659F0F /* FlagSet.h */,
-				83E5FC521FFEFA0D00659F0F /* mptFileIO.cpp */,
-				83E5FC531FFEFA0D00659F0F /* mptString.h */,
-				83E5FC541FFEFA0D00659F0F /* mptStringParse.h */,
-				83E5FC551FFEFA0D00659F0F /* mptRandom.h */,
-				83E5FC561FFEFA0D00659F0F /* CompilerDetect.h */,
-				83E5FC571FFEFA0D00659F0F /* stdafx.cpp */,
 				83E5FC581FFEFA0D00659F0F /* FileReader.h */,
-				83E5FC591FFEFA0D00659F0F /* mptPathString.h */,
-				83E5FC5A1FFEFA0D00659F0F /* Profiler.h */,
-				83E5FC5B1FFEFA0D00659F0F /* mptRandom.cpp */,
-				83E5FC5C1FFEFA0D00659F0F /* mptOS.h */,
-				83E5FC5D1FFEFA0D00659F0F /* mptIO.cpp */,
-				83E5FC5E1FFEFA0D00659F0F /* mptCPU.h */,
-				83E5FC5F1FFEFA0D00659F0F /* mptBufferIO.h */,
-				83E5FC601FFEFA0D00659F0F /* versionNumber.h */,
+				83E5FC3F1FFEFA0D00659F0F /* FileReaderFwd.h */,
+				83E5FC511FFEFA0D00659F0F /* FlagSet.h */,
+				83E5FC341FFEFA0D00659F0F /* Logging.cpp */,
+				83E5FC401FFEFA0D00659F0F /* Logging.h */,
 				83E5FC611FFEFA0D00659F0F /* misc_util.cpp */,
+				83E5FC431FFEFA0D00659F0F /* misc_util.h */,
+				831132CA21F955B0001F678F /* mptAlloc.cpp */,
+				831132CD21F955B1001F678F /* mptAlloc.h */,
+				831132D421F955B2001F678F /* mptAssert.h */,
+				831132CB21F955B0001F678F /* mptBaseMacros.h */,
+				831132CE21F955B1001F678F /* mptBaseTypes.h */,
+				831132D121F955B1001F678F /* mptBaseUtils.h */,
+				83E5FC5F1FFEFA0D00659F0F /* mptBufferIO.h */,
+				83E5FC3D1FFEFA0D00659F0F /* mptCPU.cpp */,
+				83E5FC5E1FFEFA0D00659F0F /* mptCPU.h */,
+				83E5FC2A1FFEFA0D00659F0F /* mptCRC.h */,
+				831132D221F955B2001F678F /* mptException.h */,
+				831132D321F955B2001F678F /* mptExceptionText.h */,
+				83E5FC521FFEFA0D00659F0F /* mptFileIO.cpp */,
+				83E5FC471FFEFA0D00659F0F /* mptFileIO.h */,
+				83E5FC5D1FFEFA0D00659F0F /* mptIO.cpp */,
+				83E5FC2C1FFEFA0D00659F0F /* mptIO.h */,
+				83E5FC321FFEFA0D00659F0F /* mptLibrary.cpp */,
+				83E5FC2B1FFEFA0D00659F0F /* mptLibrary.h */,
+				831132C921F955B0001F678F /* mptMemory.h */,
+				83E5FC371FFEFA0D00659F0F /* mptMutex.h */,
+				83E5FC441FFEFA0D00659F0F /* mptOS.cpp */,
+				83E5FC5C1FFEFA0D00659F0F /* mptOS.h */,
+				83E5FC4D1FFEFA0D00659F0F /* mptPathString.cpp */,
+				83E5FC591FFEFA0D00659F0F /* mptPathString.h */,
+				83E5FC5B1FFEFA0D00659F0F /* mptRandom.cpp */,
+				83E5FC551FFEFA0D00659F0F /* mptRandom.h */,
+				831132CF21F955B1001F678F /* mptSpan.h */,
+				83E5FC501FFEFA0D00659F0F /* mptString.cpp */,
+				83E5FC531FFEFA0D00659F0F /* mptString.h */,
+				831132CC21F955B1001F678F /* mptStringBuffer.cpp */,
+				831132D021F955B1001F678F /* mptStringBuffer.h */,
+				83E5FC481FFEFA0D00659F0F /* mptStringFormat.cpp */,
+				83E5FC331FFEFA0D00659F0F /* mptStringFormat.h */,
+				83E5FC2E1FFEFA0D00659F0F /* mptStringParse.cpp */,
+				83E5FC541FFEFA0D00659F0F /* mptStringParse.h */,
+				83E5FC4C1FFEFA0D00659F0F /* mptThread.h */,
+				83E5FC4F1FFEFA0D00659F0F /* mptTime.cpp */,
+				83E5FC3E1FFEFA0D00659F0F /* mptTime.h */,
+				83E5FC4E1FFEFA0D00659F0F /* mptUUID.cpp */,
+				83E5FC3A1FFEFA0D00659F0F /* mptUUID.h */,
+				83E5FC4B1FFEFA0D00659F0F /* mptWine.cpp */,
+				83E5FC421FFEFA0D00659F0F /* mptWine.h */,
+				83E5FC361FFEFA0D00659F0F /* Profiler.cpp */,
+				83E5FC5A1FFEFA0D00659F0F /* Profiler.h */,
+				83E5FC461FFEFA0D00659F0F /* serialization_utils.cpp */,
+				83E5FC4A1FFEFA0D00659F0F /* serialization_utils.h */,
+				83E5FC2F1FFEFA0D00659F0F /* stdafx.h */,
+				83E5FC381FFEFA0D00659F0F /* version.cpp */,
+				83E5FC2D1FFEFA0D00659F0F /* version.h */,
+				83E5FC601FFEFA0D00659F0F /* versionNumber.h */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -734,141 +757,146 @@
 		83E5FD0E1FFEFA8400659F0F /* soundlib */ = {
 			isa = PBXGroup;
 			children = (
-				83E5FD0F1FFEFA8400659F0F /* WAVTools.cpp */,
-				83E5FD101FFEFA8400659F0F /* ITTools.cpp */,
 				83E5FD111FFEFA8400659F0F /* AudioCriticalSection.cpp */,
-				83E5FD121FFEFA8400659F0F /* MixerInterface.h */,
-				83E5FD131FFEFA8400659F0F /* Load_stm.cpp */,
-				83E5FD141FFEFA8400659F0F /* MixerLoops.cpp */,
-				83E5FD151FFEFA8400659F0F /* Load_dbm.cpp */,
-				83E5FD161FFEFA8400659F0F /* ModChannel.cpp */,
-				83E5FD171FFEFA8400659F0F /* Load_gdm.cpp */,
-				83E5FD181FFEFA8400659F0F /* SoundFilePlayConfig.h */,
-				83E5FD191FFEFA8400659F0F /* Snd_fx.cpp */,
-				83E5FD1A1FFEFA8400659F0F /* ModSample.h */,
-				83E5FD1B1FFEFA8400659F0F /* MIDIEvents.h */,
-				83E5FD1C1FFEFA8400659F0F /* Load_mid.cpp */,
-				83E5FD1D1FFEFA8400659F0F /* ModSampleCopy.h */,
-				83E5FD1E1FFEFA8400659F0F /* mod_specifications.cpp */,
-				83E5FD1F1FFEFA8400659F0F /* patternContainer.h */,
-				83E5FD201FFEFA8400659F0F /* Snd_flt.cpp */,
-				83E5FD211FFEFA8400659F0F /* ChunkReader.h */,
-				83E5FD221FFEFA8400659F0F /* ITCompression.h */,
-				83E5FD231FFEFA8400659F0F /* Load_psm.cpp */,
-				83E5FD241FFEFA8400659F0F /* Dither.h */,
-				83E5FD251FFEFA8400659F0F /* S3MTools.h */,
-				83E5FD261FFEFA8400659F0F /* Load_far.cpp */,
-				83E5FD271FFEFA8400659F0F /* patternContainer.cpp */,
-				83E5FD281FFEFA8400659F0F /* Load_med.cpp */,
-				83E5FD291FFEFA8400659F0F /* Load_dmf.cpp */,
-				83E5FD2A1FFEFA8400659F0F /* MPEGFrame.h */,
-				83E5FD2B1FFEFA8400659F0F /* Paula.cpp */,
-				83E5FD2C1FFEFA8400659F0F /* WAVTools.h */,
-				83E5FD2D1FFEFA8400659F0F /* mod_specifications.h */,
-				83E5FD2E1FFEFA8400659F0F /* modcommand.cpp */,
-				83E5FD2F1FFEFA8400659F0F /* Message.cpp */,
-				83E5FD301FFEFA8400659F0F /* ITTools.h */,
-				83E5FD311FFEFA8400659F0F /* SoundFilePlayConfig.cpp */,
-				83E5FD321FFEFA8400659F0F /* RowVisitor.h */,
-				83E5FD331FFEFA8400659F0F /* Load_uax.cpp */,
-				83E5FD341FFEFA8400659F0F /* plugins */,
-				83E5FD561FFEFA8400659F0F /* Load_ams.cpp */,
-				83E5FD571FFEFA8400659F0F /* tuningbase.cpp */,
-				83E5FD581FFEFA8400659F0F /* ContainerUMX.cpp */,
-				83E5FD591FFEFA8400659F0F /* Load_ptm.cpp */,
-				83E5FD5A1FFEFA8400659F0F /* SampleIO.h */,
-				83E5FD5B1FFEFA8400659F0F /* Container.h */,
-				83E5FD5C1FFEFA8400659F0F /* ModSequence.h */,
-				83E5FD5D1FFEFA8400659F0F /* ContainerXPK.cpp */,
-				83E5FD5E1FFEFA8400659F0F /* SampleFormatMP3.cpp */,
-				83E5FD5F1FFEFA8400659F0F /* tuning.cpp */,
-				83E5FD601FFEFA8400659F0F /* Sndfile.cpp */,
-				83E5FD611FFEFA8400659F0F /* ContainerMMCMP.cpp */,
-				83E5FD621FFEFA8400659F0F /* Load_amf.cpp */,
-				83E5FD631FFEFA8400659F0F /* Load_669.cpp */,
-				83E5FD641FFEFA8400659F0F /* UMXTools.h */,
-				83E5FD651FFEFA8400659F0F /* modsmp_ctrl.cpp */,
-				83E5FD661FFEFA8400659F0F /* Load_mtm.cpp */,
-				83E5FD671FFEFA8400659F0F /* Message.h */,
-				83E5FD681FFEFA8400659F0F /* OggStream.cpp */,
-				83E5FD691FFEFA8400659F0F /* Load_plm.cpp */,
-				83E5FD6A1FFEFA8400659F0F /* modcommand.h */,
-				83E5FD6B1FFEFA8400659F0F /* Tables.cpp */,
-				83E5FD6C1FFEFA8400659F0F /* XMTools.h */,
-				83E5FD6D1FFEFA8400659F0F /* Load_mod.cpp */,
-				83E5FD6E1FFEFA8400659F0F /* Load_sfx.cpp */,
-				83E5FD6F1FFEFA8400659F0F /* Sndmix.cpp */,
-				83E5FD701FFEFA8400659F0F /* load_j2b.cpp */,
-				83E5FD711FFEFA8400659F0F /* ModSequence.cpp */,
-				83E5FD721FFEFA8400659F0F /* Snd_defs.h */,
-				83E5FD731FFEFA8400659F0F /* MixFuncTable.h */,
-				83E5FD741FFEFA8400659F0F /* pattern.h */,
-				83E5FD751FFEFA8400659F0F /* SampleFormatFLAC.cpp */,
-				83E5FD761FFEFA8400659F0F /* modsmp_ctrl.h */,
-				83E5FD771FFEFA8400659F0F /* ModInstrument.cpp */,
-				83E5FD781FFEFA8400659F0F /* Load_mo3.cpp */,
-				83E5FD791FFEFA8400659F0F /* ModSample.cpp */,
-				83E5FD7A1FFEFA8400659F0F /* Dlsbank.cpp */,
-				83E5FD7B1FFEFA8400659F0F /* Tagging.h */,
-				83E5FD7C1FFEFA8400659F0F /* tuningcollection.h */,
-				83E5FD7D1FFEFA8400659F0F /* Mixer.h */,
-				83E5FD7E1FFEFA8400659F0F /* FloatMixer.h */,
-				83E5FD7F1FFEFA8400659F0F /* Load_itp.cpp */,
 				83E5FD801FFEFA8400659F0F /* AudioCriticalSection.h */,
-				83E5FD811FFEFA8400659F0F /* Tables.h */,
-				83E5FD821FFEFA8400659F0F /* UpgradeModule.cpp */,
-				83E5FD831FFEFA8400659F0F /* tuningbase.h */,
-				83E5FD841FFEFA8400659F0F /* MIDIMacros.cpp */,
-				83E5FD851FFEFA8400659F0F /* WindowedFIR.h */,
-				83E5FD861FFEFA8400659F0F /* Sndfile.h */,
-				83E5FD871FFEFA8400659F0F /* Paula.h */,
-				83E5FD881FFEFA8400659F0F /* ContainerPP20.cpp */,
-				83E5FD891FFEFA8400659F0F /* RowVisitor.cpp */,
-				83E5FD8A1FFEFA8400659F0F /* Load_imf.cpp */,
-				83E5FD8B1FFEFA8400659F0F /* SampleFormatVorbis.cpp */,
-				83E5FD8C1FFEFA8400659F0F /* Load_dsm.cpp */,
-				83E5FD8D1FFEFA8400659F0F /* ModInstrument.h */,
-				83E5FD8E1FFEFA8400659F0F /* Load_mt2.cpp */,
-				83E5FD8F1FFEFA8400659F0F /* MixerSettings.cpp */,
-				83E5FD901FFEFA8400659F0F /* S3MTools.cpp */,
-				83E5FD911FFEFA8400659F0F /* Dlsbank.h */,
-				83E5FD921FFEFA8400659F0F /* Load_xm.cpp */,
-				83E5FD931FFEFA8400659F0F /* IntMixer.h */,
-				83E5FD941FFEFA8400659F0F /* MIDIEvents.cpp */,
-				83E5FD951FFEFA8400659F0F /* pattern.cpp */,
-				83E5FD961FFEFA8400659F0F /* Load_digi.cpp */,
-				83E5FD971FFEFA8400659F0F /* Load_s3m.cpp */,
-				83E5FD981FFEFA8400659F0F /* tuningCollection.cpp */,
-				83E5FD991FFEFA8400659F0F /* SampleIO.cpp */,
-				83E5FD9A1FFEFA8400659F0F /* Dither.cpp */,
-				83E5FD9B1FFEFA8400659F0F /* Resampler.h */,
-				83E5FD9C1FFEFA8400659F0F /* ModChannel.h */,
-				83E5FD9D1FFEFA8400659F0F /* MixerSettings.h */,
 				83E5FD9E1FFEFA8400659F0F /* AudioReadTarget.h */,
-				83E5FD9F1FFEFA8400659F0F /* Load_mdl.cpp */,
-				83E5FDA01FFEFA8400659F0F /* WindowedFIR.cpp */,
-				83E5FDA11FFEFA8400659F0F /* SampleFormats.cpp */,
-				83E5FDA21FFEFA8400659F0F /* Load_wav.cpp */,
-				83E5FDA31FFEFA8400659F0F /* MixerLoops.h */,
-				83E5FDA41FFEFA8400659F0F /* Load_it.cpp */,
-				83E5FDA51FFEFA8400659F0F /* tuning.h */,
-				83E5FDA61FFEFA8400659F0F /* UMXTools.cpp */,
-				83E5FDA71FFEFA8400659F0F /* Load_stp.cpp */,
-				83E5FDA81FFEFA8400659F0F /* Load_okt.cpp */,
-				83E5FDA91FFEFA8400659F0F /* Load_ult.cpp */,
-				83E5FDAA1FFEFA8400659F0F /* MIDIMacros.h */,
-				83E5FDAB1FFEFA8400659F0F /* MixFuncTable.cpp */,
-				83E5FDAC1FFEFA8400659F0F /* SampleFormatOpus.cpp */,
-				83E5FDAD1FFEFA8400659F0F /* OggStream.h */,
+				831132E321F9565E001F678F /* BitReader.h */,
+				83E5FD211FFEFA8400659F0F /* ChunkReader.h */,
+				83E5FD5B1FFEFA8400659F0F /* Container.h */,
+				83E5FD611FFEFA8400659F0F /* ContainerMMCMP.cpp */,
+				83E5FD881FFEFA8400659F0F /* ContainerPP20.cpp */,
+				83E5FD581FFEFA8400659F0F /* ContainerUMX.cpp */,
+				83E5FD5D1FFEFA8400659F0F /* ContainerXPK.cpp */,
+				83E5FD9A1FFEFA8400659F0F /* Dither.cpp */,
+				83E5FD241FFEFA8400659F0F /* Dither.h */,
+				83E5FD7A1FFEFA8400659F0F /* Dlsbank.cpp */,
+				83E5FD911FFEFA8400659F0F /* Dlsbank.h */,
 				83E5FDAE1FFEFA8400659F0F /* Fastmix.cpp */,
-				83E5FDAF1FFEFA8400659F0F /* Loaders.h */,
-				83E5FDB01FFEFA8400659F0F /* Tagging.cpp */,
-				83E5FDB11FFEFA8400659F0F /* ITCompression.cpp */,
-				83E5FDB21FFEFA8400659F0F /* Load_dtm.cpp */,
-				83E5FDB31FFEFA8400659F0F /* MPEGFrame.cpp */,
-				83E5FDB41FFEFA8400659F0F /* XMTools.cpp */,
-				83E5FDB51FFEFA8400659F0F /* SampleFormatMediaFoundation.cpp */,
+				83E5FD7E1FFEFA8400659F0F /* FloatMixer.h */,
 				83E5FDB61FFEFA8400659F0F /* InstrumentExtensions.cpp */,
+				83E5FD931FFEFA8400659F0F /* IntMixer.h */,
+				83E5FDB11FFEFA8400659F0F /* ITCompression.cpp */,
+				83E5FD221FFEFA8400659F0F /* ITCompression.h */,
+				83E5FD101FFEFA8400659F0F /* ITTools.cpp */,
+				83E5FD301FFEFA8400659F0F /* ITTools.h */,
+				83E5FD631FFEFA8400659F0F /* Load_669.cpp */,
+				83E5FD621FFEFA8400659F0F /* Load_amf.cpp */,
+				83E5FD561FFEFA8400659F0F /* Load_ams.cpp */,
+				831132E621F9565F001F678F /* Load_c67.cpp */,
+				83E5FD151FFEFA8400659F0F /* Load_dbm.cpp */,
+				83E5FD961FFEFA8400659F0F /* Load_digi.cpp */,
+				83E5FD291FFEFA8400659F0F /* Load_dmf.cpp */,
+				83E5FD8C1FFEFA8400659F0F /* Load_dsm.cpp */,
+				83E5FDB21FFEFA8400659F0F /* Load_dtm.cpp */,
+				83E5FD261FFEFA8400659F0F /* Load_far.cpp */,
+				83E5FD171FFEFA8400659F0F /* Load_gdm.cpp */,
+				83E5FD8A1FFEFA8400659F0F /* Load_imf.cpp */,
+				83E5FDA41FFEFA8400659F0F /* Load_it.cpp */,
+				83E5FD7F1FFEFA8400659F0F /* Load_itp.cpp */,
+				83E5FD701FFEFA8400659F0F /* load_j2b.cpp */,
+				83E5FD9F1FFEFA8400659F0F /* Load_mdl.cpp */,
+				83E5FD281FFEFA8400659F0F /* Load_med.cpp */,
+				83E5FD1C1FFEFA8400659F0F /* Load_mid.cpp */,
+				83E5FD781FFEFA8400659F0F /* Load_mo3.cpp */,
+				83E5FD6D1FFEFA8400659F0F /* Load_mod.cpp */,
+				83E5FD8E1FFEFA8400659F0F /* Load_mt2.cpp */,
+				83E5FD661FFEFA8400659F0F /* Load_mtm.cpp */,
+				83E5FDA81FFEFA8400659F0F /* Load_okt.cpp */,
+				83E5FD691FFEFA8400659F0F /* Load_plm.cpp */,
+				83E5FD231FFEFA8400659F0F /* Load_psm.cpp */,
+				83E5FD591FFEFA8400659F0F /* Load_ptm.cpp */,
+				83E5FD971FFEFA8400659F0F /* Load_s3m.cpp */,
+				83E5FD6E1FFEFA8400659F0F /* Load_sfx.cpp */,
+				83E5FD131FFEFA8400659F0F /* Load_stm.cpp */,
+				83E5FDA71FFEFA8400659F0F /* Load_stp.cpp */,
+				83E5FD331FFEFA8400659F0F /* Load_uax.cpp */,
+				83E5FDA91FFEFA8400659F0F /* Load_ult.cpp */,
+				83E5FDA21FFEFA8400659F0F /* Load_wav.cpp */,
+				83E5FD921FFEFA8400659F0F /* Load_xm.cpp */,
+				83E5FDAF1FFEFA8400659F0F /* Loaders.h */,
+				83E5FD2F1FFEFA8400659F0F /* Message.cpp */,
+				83E5FD671FFEFA8400659F0F /* Message.h */,
+				83E5FD941FFEFA8400659F0F /* MIDIEvents.cpp */,
+				83E5FD1B1FFEFA8400659F0F /* MIDIEvents.h */,
+				83E5FD841FFEFA8400659F0F /* MIDIMacros.cpp */,
+				83E5FDAA1FFEFA8400659F0F /* MIDIMacros.h */,
+				83E5FD7D1FFEFA8400659F0F /* Mixer.h */,
+				83E5FD121FFEFA8400659F0F /* MixerInterface.h */,
+				83E5FD141FFEFA8400659F0F /* MixerLoops.cpp */,
+				83E5FDA31FFEFA8400659F0F /* MixerLoops.h */,
+				83E5FD8F1FFEFA8400659F0F /* MixerSettings.cpp */,
+				83E5FD9D1FFEFA8400659F0F /* MixerSettings.h */,
+				83E5FDAB1FFEFA8400659F0F /* MixFuncTable.cpp */,
+				83E5FD731FFEFA8400659F0F /* MixFuncTable.h */,
+				83E5FD1E1FFEFA8400659F0F /* mod_specifications.cpp */,
+				83E5FD2D1FFEFA8400659F0F /* mod_specifications.h */,
+				83E5FD161FFEFA8400659F0F /* ModChannel.cpp */,
+				83E5FD9C1FFEFA8400659F0F /* ModChannel.h */,
+				83E5FD2E1FFEFA8400659F0F /* modcommand.cpp */,
+				83E5FD6A1FFEFA8400659F0F /* modcommand.h */,
+				83E5FD771FFEFA8400659F0F /* ModInstrument.cpp */,
+				83E5FD8D1FFEFA8400659F0F /* ModInstrument.h */,
+				83E5FD791FFEFA8400659F0F /* ModSample.cpp */,
+				83E5FD1A1FFEFA8400659F0F /* ModSample.h */,
+				83E5FD1D1FFEFA8400659F0F /* ModSampleCopy.h */,
+				83E5FD711FFEFA8400659F0F /* ModSequence.cpp */,
+				83E5FD5C1FFEFA8400659F0F /* ModSequence.h */,
+				83E5FD651FFEFA8400659F0F /* modsmp_ctrl.cpp */,
+				83E5FD761FFEFA8400659F0F /* modsmp_ctrl.h */,
+				83E5FDB31FFEFA8400659F0F /* MPEGFrame.cpp */,
+				83E5FD2A1FFEFA8400659F0F /* MPEGFrame.h */,
+				83E5FD681FFEFA8400659F0F /* OggStream.cpp */,
+				83E5FDAD1FFEFA8400659F0F /* OggStream.h */,
+				831132E421F9565F001F678F /* opal.h */,
+				831132E721F9565F001F678F /* OPL.cpp */,
+				831132E521F9565F001F678F /* OPL.h */,
+				83E5FD951FFEFA8400659F0F /* pattern.cpp */,
+				83E5FD741FFEFA8400659F0F /* pattern.h */,
+				83E5FD271FFEFA8400659F0F /* patternContainer.cpp */,
+				83E5FD1F1FFEFA8400659F0F /* patternContainer.h */,
+				83E5FD2B1FFEFA8400659F0F /* Paula.cpp */,
+				83E5FD871FFEFA8400659F0F /* Paula.h */,
+				83E5FD341FFEFA8400659F0F /* plugins */,
+				83E5FD9B1FFEFA8400659F0F /* Resampler.h */,
+				83E5FD891FFEFA8400659F0F /* RowVisitor.cpp */,
+				83E5FD321FFEFA8400659F0F /* RowVisitor.h */,
+				83E5FD901FFEFA8400659F0F /* S3MTools.cpp */,
+				83E5FD251FFEFA8400659F0F /* S3MTools.h */,
+				83E5FD751FFEFA8400659F0F /* SampleFormatFLAC.cpp */,
+				83E5FDB51FFEFA8400659F0F /* SampleFormatMediaFoundation.cpp */,
+				83E5FD5E1FFEFA8400659F0F /* SampleFormatMP3.cpp */,
+				83E5FDAC1FFEFA8400659F0F /* SampleFormatOpus.cpp */,
+				83E5FDA11FFEFA8400659F0F /* SampleFormats.cpp */,
+				83E5FD8B1FFEFA8400659F0F /* SampleFormatVorbis.cpp */,
+				83E5FD991FFEFA8400659F0F /* SampleIO.cpp */,
+				83E5FD5A1FFEFA8400659F0F /* SampleIO.h */,
+				83E5FD721FFEFA8400659F0F /* Snd_defs.h */,
+				83E5FD201FFEFA8400659F0F /* Snd_flt.cpp */,
+				83E5FD191FFEFA8400659F0F /* Snd_fx.cpp */,
+				83E5FD601FFEFA8400659F0F /* Sndfile.cpp */,
+				83E5FD861FFEFA8400659F0F /* Sndfile.h */,
+				83E5FD6F1FFEFA8400659F0F /* Sndmix.cpp */,
+				83E5FD311FFEFA8400659F0F /* SoundFilePlayConfig.cpp */,
+				83E5FD181FFEFA8400659F0F /* SoundFilePlayConfig.h */,
+				83E5FD6B1FFEFA8400659F0F /* Tables.cpp */,
+				83E5FD811FFEFA8400659F0F /* Tables.h */,
+				83E5FDB01FFEFA8400659F0F /* Tagging.cpp */,
+				83E5FD7B1FFEFA8400659F0F /* Tagging.h */,
+				83E5FD5F1FFEFA8400659F0F /* tuning.cpp */,
+				83E5FDA51FFEFA8400659F0F /* tuning.h */,
+				83E5FD571FFEFA8400659F0F /* tuningbase.cpp */,
+				83E5FD831FFEFA8400659F0F /* tuningbase.h */,
+				83E5FD981FFEFA8400659F0F /* tuningCollection.cpp */,
+				83E5FD7C1FFEFA8400659F0F /* tuningcollection.h */,
+				83E5FDA61FFEFA8400659F0F /* UMXTools.cpp */,
+				83E5FD641FFEFA8400659F0F /* UMXTools.h */,
+				83E5FD821FFEFA8400659F0F /* UpgradeModule.cpp */,
+				83E5FD0F1FFEFA8400659F0F /* WAVTools.cpp */,
+				83E5FD2C1FFEFA8400659F0F /* WAVTools.h */,
+				83E5FDA01FFEFA8400659F0F /* WindowedFIR.cpp */,
+				83E5FD851FFEFA8400659F0F /* WindowedFIR.h */,
+				83E5FDB41FFEFA8400659F0F /* XMTools.cpp */,
+				83E5FD6C1FFEFA8400659F0F /* XMTools.h */,
 			);
 			path = soundlib;
 			sourceTree = "<group>";
@@ -884,7 +912,6 @@
 				83E5FD3A1FFEFA8400659F0F /* PlugInterface.cpp */,
 				83E5FD3B1FFEFA8400659F0F /* LFOPlugin.cpp */,
 				83E5FD3C1FFEFA8400659F0F /* OpCodes.h */,
-				83E5FD3D1FFEFA8400659F0F /* PluginEventQueue.h */,
 				83E5FD3E1FFEFA8400659F0F /* PluginManager.cpp */,
 				83E5FD3F1FFEFA8400659F0F /* DigiBoosterEcho.cpp */,
 				83E5FD401FFEFA8400659F0F /* dmo */,
@@ -950,9 +977,8 @@
 				83E5FCCD1FFEFA1A00659F0F /* libopenmpt.hpp in Headers */,
 				83E5FCD81FFEFA1A00659F0F /* libopenmpt_config.h in Headers */,
 				83E5FCF01FFEFA1A00659F0F /* libopenmpt_version.h in Headers */,
-				83E5FC751FFEFA0D00659F0F /* WriteMemoryDump.h in Headers */,
 				83E5FDC51FFEFA8500659F0F /* ModSampleCopy.h in Headers */,
-				83E5FC7E1FFEFA0D00659F0F /* mptTypeTraits.h in Headers */,
+				831132DF21F955B2001F678F /* mptExceptionText.h in Headers */,
 				83E5FE611FFEFEA600659F0F /* svn_version.template.subwcrev.h in Headers */,
 				83E5FE2C1FFEFA8500659F0F /* Sndfile.h in Headers */,
 				83E5FE191FFEFA8500659F0F /* MixFuncTable.h in Headers */,
@@ -983,6 +1009,7 @@
 				83E5FC651FFEFA0D00659F0F /* mptIO.h in Headers */,
 				83E5FE1A1FFEFA8500659F0F /* pattern.h in Headers */,
 				83E5FC8F1FFEFA0D00659F0F /* CompilerDetect.h in Headers */,
+				831132E021F955B2001F678F /* mptAssert.h in Headers */,
 				83E5FE211FFEFA8500659F0F /* Tagging.h in Headers */,
 				83E5FE101FFEFA8500659F0F /* modcommand.h in Headers */,
 				83E5FE331FFEFA8500659F0F /* ModInstrument.h in Headers */,
@@ -991,8 +1018,8 @@
 				83E5FE2B1FFEFA8500659F0F /* WindowedFIR.h in Headers */,
 				83E5FCFB1FFEFA7400659F0F /* SampleFormatCopy.h in Headers */,
 				83E5FE001FFEFA8500659F0F /* SampleIO.h in Headers */,
-				83E5FC721FFEFA0D00659F0F /* StringFixer.h in Headers */,
 				83E5FE441FFEFA8500659F0F /* AudioReadTarget.h in Headers */,
+				831132EA21F9565F001F678F /* OPL.h in Headers */,
 				83E5FC8E1FFEFA0D00659F0F /* mptRandom.h in Headers */,
 				83E5FE491FFEFA8500659F0F /* MixerLoops.h in Headers */,
 				83E5FE411FFEFA8500659F0F /* Resampler.h in Headers */,
@@ -1006,21 +1033,25 @@
 				83E5FE221FFEFA8500659F0F /* tuningcollection.h in Headers */,
 				83E5FE121FFEFA8500659F0F /* XMTools.h in Headers */,
 				83E5FCCB1FFEFA1A00659F0F /* libopenmpt_impl.hpp in Headers */,
+				831132E821F9565F001F678F /* BitReader.h in Headers */,
 				83E5FC981FFEFA0D00659F0F /* mptBufferIO.h in Headers */,
 				83E5FC741FFEFA0D00659F0F /* BuildSettings.h in Headers */,
+				831132D521F955B2001F678F /* mptMemory.h in Headers */,
+				831132DE21F955B2001F678F /* mptException.h in Headers */,
 				83E5FDC01FFEFA8500659F0F /* SoundFilePlayConfig.h in Headers */,
 				83E5FCCF1FFEFA1A00659F0F /* libopenmpt_plugin_settings.hpp in Headers */,
 				83E5FE4B1FFEFA8500659F0F /* tuning.h in Headers */,
 				83E5FDFA1FFEFA8500659F0F /* Flanger.h in Headers */,
 				83E5FC921FFEFA0D00659F0F /* mptPathString.h in Headers */,
-				83E5FC6E1FFEFA0D00659F0F /* typedefs.h in Headers */,
 				83E5FC931FFEFA0D00659F0F /* Profiler.h in Headers */,
 				83E5FDE31FFEFA8500659F0F /* OpCodes.h in Headers */,
 				83E5FCFA1FFEFA7400659F0F /* SampleFormat.h in Headers */,
+				831132DB21F955B2001F678F /* mptSpan.h in Headers */,
 				83E5FE2D1FFEFA8500659F0F /* Paula.h in Headers */,
 				83E5FDDD1FFEFA8500659F0F /* PluginStructs.h in Headers */,
 				83E5FDDE1FFEFA8500659F0F /* LFOPlugin.h in Headers */,
 				83E5FDC71FFEFA8500659F0F /* patternContainer.h in Headers */,
+				831132DC21F955B2001F678F /* mptStringBuffer.h in Headers */,
 				83E5FC791FFEFA0D00659F0F /* Logging.h in Headers */,
 				83E5FC971FFEFA0D00659F0F /* mptCPU.h in Headers */,
 				83E5FC951FFEFA0D00659F0F /* mptOS.h in Headers */,
@@ -1032,7 +1063,6 @@
 				83E5FC641FFEFA0D00659F0F /* mptLibrary.h in Headers */,
 				83E5FCDD1FFEFA1A00659F0F /* libopenmpt_ext.h in Headers */,
 				83E5FDC91FFEFA8500659F0F /* ChunkReader.h in Headers */,
-				83E5FDE41FFEFA8500659F0F /* PluginEventQueue.h in Headers */,
 				83E5FDF91FFEFA8500659F0F /* Distortion.h in Headers */,
 				83E5FE261FFEFA8500659F0F /* AudioCriticalSection.h in Headers */,
 				83E5FCD01FFEFA1A00659F0F /* libopenmpt_internal.h in Headers */,
@@ -1047,27 +1077,31 @@
 				83E5FC6A1FFEFA0D00659F0F /* Endianness.h in Headers */,
 				83E5FCED1FFEFA1A00659F0F /* libopenmpt_ext.hpp in Headers */,
 				83E5FE0D1FFEFA8500659F0F /* Message.h in Headers */,
+				831132D721F955B2001F678F /* mptBaseMacros.h in Headers */,
 				83E5FCFC1FFEFA7400659F0F /* SampleFormatConverters.h in Headers */,
 				83E5FE421FFEFA8500659F0F /* ModChannel.h in Headers */,
 				83E5FC851FFEFA0D00659F0F /* mptThread.h in Headers */,
 				83E5FE021FFEFA8500659F0F /* ModSequence.h in Headers */,
 				83E5FC7C1FFEFA0D00659F0F /* misc_util.h in Headers */,
 				83E5FE431FFEFA8500659F0F /* MixerSettings.h in Headers */,
+				831132D921F955B2001F678F /* mptAlloc.h in Headers */,
 				83E5FE271FFEFA8500659F0F /* Tables.h in Headers */,
 				83E5FE551FFEFA8500659F0F /* Loaders.h in Headers */,
 				83E5FE631FFEFEA600659F0F /* svn_version.h in Headers */,
 				83E5FC801FFEFA0D00659F0F /* mptFileIO.h in Headers */,
+				831132E921F9565F001F678F /* opal.h in Headers */,
 				83E5EFD01FFEF9D200659F0F /* config.h in Headers */,
 				83E5FE011FFEFA8500659F0F /* Container.h in Headers */,
-				83E5F8841FFEF9E400659F0F /* libc.h in Headers */,
 				83E5FE391FFEFA8500659F0F /* IntMixer.h in Headers */,
 				83E5FDF01FFEFA8500659F0F /* WavesReverb.h in Headers */,
 				83E5FDED1FFEFA8500659F0F /* I3DL2Reverb.h in Headers */,
 				83E5FC701FFEFA0D00659F0F /* mptMutex.h in Headers */,
 				83E5FD0C1FFEFA7D00659F0F /* DSP.h in Headers */,
 				83E5FC631FFEFA0D00659F0F /* mptCRC.h in Headers */,
+				831132DD21F955B2001F678F /* mptBaseUtils.h in Headers */,
 				83E5FDC21FFEFA8500659F0F /* ModSample.h in Headers */,
 				83E5FC7B1FFEFA0D00659F0F /* mptWine.h in Headers */,
+				831132DA21F955B2001F678F /* mptBaseTypes.h in Headers */,
 				83E5FE231FFEFA8500659F0F /* Mixer.h in Headers */,
 				83E5FDDA1FFEFA8500659F0F /* RowVisitor.h in Headers */,
 				83E5FCF51FFEFA1A00659F0F /* libopenmpt_stream_callbacks_buffer.h in Headers */,
@@ -1133,7 +1167,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83E5F8831FFEF9E400659F0F /* LGPL.txt in Resources */,
+				831132E221F955F4001F678F /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1160,6 +1194,7 @@
 				83E5FDBC1FFEFA8500659F0F /* MixerLoops.cpp in Sources */,
 				83E5FC7D1FFEFA0D00659F0F /* mptOS.cpp in Sources */,
 				83E5FDE11FFEFA8500659F0F /* PlugInterface.cpp in Sources */,
+				831132EB21F9565F001F678F /* Load_c67.cpp in Sources */,
 				83E5FC871FFEFA0D00659F0F /* mptUUID.cpp in Sources */,
 				83E5FE4A1FFEFA8500659F0F /* Load_it.cpp in Sources */,
 				83E5FE3D1FFEFA8500659F0F /* Load_s3m.cpp in Sources */,
@@ -1202,6 +1237,7 @@
 				83E5FE4D1FFEFA8500659F0F /* Load_stp.cpp in Sources */,
 				83E5FE0E1FFEFA8500659F0F /* OggStream.cpp in Sources */,
 				83E5FE451FFEFA8500659F0F /* Load_mdl.cpp in Sources */,
+				831132EC21F9565F001F678F /* OPL.cpp in Sources */,
 				83E5FDBB1FFEFA8500659F0F /* Load_stm.cpp in Sources */,
 				83E5FCD21FFEFA1A00659F0F /* libopenmpt_modplug.c in Sources */,
 				83E5FC841FFEFA0D00659F0F /* mptWine.cpp in Sources */,
@@ -1211,6 +1247,8 @@
 				83E5FE351FFEFA8500659F0F /* MixerSettings.cpp in Sources */,
 				83E5FC891FFEFA0D00659F0F /* mptString.cpp in Sources */,
 				83E5FDC61FFEFA8500659F0F /* mod_specifications.cpp in Sources */,
+				831132D621F955B2001F678F /* mptAlloc.cpp in Sources */,
+				831132D821F955B2001F678F /* mptStringBuffer.cpp in Sources */,
 				83E5FDD61FFEFA8500659F0F /* modcommand.cpp in Sources */,
 				83E5FD091FFEFA7D00659F0F /* DSP.cpp in Sources */,
 				83E5FE081FFEFA8500659F0F /* Load_amf.cpp in Sources */,
@@ -1239,7 +1277,6 @@
 				83E5FE591FFEFA8500659F0F /* MPEGFrame.cpp in Sources */,
 				83E5FE341FFEFA8500659F0F /* Load_mt2.cpp in Sources */,
 				83E5FC941FFEFA0D00659F0F /* mptRandom.cpp in Sources */,
-				83E5FC901FFEFA0D00659F0F /* stdafx.cpp in Sources */,
 				83E5FDD31FFEFA8500659F0F /* Paula.cpp in Sources */,
 				83E5FE251FFEFA8500659F0F /* Load_itp.cpp in Sources */,
 				83E5FE401FFEFA8500659F0F /* Dither.cpp in Sources */,
@@ -1266,7 +1303,6 @@
 				83E5FDFE1FFEFA8500659F0F /* ContainerUMX.cpp in Sources */,
 				83E5FC671FFEFA0D00659F0F /* mptStringParse.cpp in Sources */,
 				83E5FDE81FFEFA8500659F0F /* Flanger.cpp in Sources */,
-				83E5FC621FFEFA0D00659F0F /* typedefs.cpp in Sources */,
 				83E5FE4E1FFEFA8500659F0F /* Load_okt.cpp in Sources */,
 				83E5FE521FFEFA8500659F0F /* SampleFormatOpus.cpp in Sources */,
 				83E5FC7F1FFEFA0D00659F0F /* serialization_utils.cpp in Sources */,

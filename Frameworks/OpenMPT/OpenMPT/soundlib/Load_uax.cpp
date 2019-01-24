@@ -16,16 +16,32 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
+CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderUAX(MemoryFileReader file, const uint64 *pfilesize)
+{
+	UMXFileHeader fileHeader;
+	if(!file.ReadStruct(fileHeader))
+	{
+		return ProbeWantMoreData;
+	}
+	if(!fileHeader.IsValid())
+	{
+		return ProbeFailure;
+	}
+	if(!FindUMXNameTableEntryMemory(file, fileHeader, "sound"))
+	{
+		return ProbeFailure;
+	}
+	MPT_UNREFERENCED_PARAMETER(pfilesize);
+	return ProbeSuccess;
+}
+
+
 bool CSoundFile::ReadUAX(FileReader &file, ModLoadingFlags loadFlags)
 {
 	file.Rewind();
 	UMXFileHeader fileHeader;
 	if(!file.ReadStruct(fileHeader)
-		|| memcmp(fileHeader.magic, "\xC1\x83\x2A\x9E", 4)
-		|| fileHeader.nameCount == 0
-		|| fileHeader.exportCount == 0
-		|| fileHeader.importCount == 0
-		)
+		|| !fileHeader.IsValid())
 	{
 		return false;
 	}
@@ -72,7 +88,9 @@ bool CSoundFile::ReadUAX(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Now we can be pretty sure that we're doing the right thing.
 	InitializeGlobals();
-	m_madeWithTracker = mpt::format(MPT_USTRING("Unreal Package v%1"))(fileHeader.packageVersion);
+	m_modFormat.formatName = mpt::format(U_("Unreal Package v%1"))(fileHeader.packageVersion);
+	m_modFormat.type = U_("uax");
+	m_modFormat.charset = mpt::CharsetWindows1252;
 	
 	for(uint32 i = 0; i < fileHeader.exportCount && file.CanRead(4); i++)
 	{

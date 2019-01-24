@@ -144,15 +144,11 @@ void CPatternContainer::OnModTypeChanged(const MODTYPE /*oldtype*/)
 
 PATTERNINDEX CPatternContainer::GetNumPatterns() const
 {
-	if(Size() == 0)
+	for(PATTERNINDEX pat = Size(); pat > 0; pat--)
 	{
-		return 0;
-	}
-	for(PATTERNINDEX nPat = Size(); nPat > 0; nPat--)
-	{
-		if(IsValidPat(nPat - 1))
+		if(IsValidPat(pat - 1))
 		{
-			return nPat;
+			return pat;
 		}
 	}
 	return 0;
@@ -180,7 +176,7 @@ PATTERNINDEX CPatternContainer::GetNumNamedPatterns() const
 void WriteModPatterns(std::ostream& oStrm, const CPatternContainer& patc)
 {
 	srlztn::SsbWrite ssb(oStrm);
-	ssb.BeginWrite(FileIdPatterns, MptVersion::num);
+	ssb.BeginWrite(FileIdPatterns, Version::Current().GetRawVersion());
 	const PATTERNINDEX nPatterns = patc.Size();
 	uint16 nCount = 0;
 	for(uint16 i = 0; i < nPatterns; i++) if (patc[i].IsValid())
@@ -196,7 +192,7 @@ void WriteModPatterns(std::ostream& oStrm, const CPatternContainer& patc)
 void ReadModPatterns(std::istream& iStrm, CPatternContainer& patc, const size_t)
 {
 	srlztn::SsbRead ssb(iStrm);
-	ssb.BeginRead(FileIdPatterns, MptVersion::num);
+	ssb.BeginRead(FileIdPatterns, Version::Current().GetRawVersion());
 	if ((ssb.GetStatus() & srlztn::SNT_FAILURE) != 0)
 		return;
 	PATTERNINDEX nPatterns = patc.Size();

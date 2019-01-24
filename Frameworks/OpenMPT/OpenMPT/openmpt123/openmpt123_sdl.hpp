@@ -105,21 +105,21 @@ private:
 		}		
 	}
 public:
-	bool pause() {
+	bool pause() override {
 		SDL_PauseAudio( 1 );
 		return true;
 	}
-	bool unpause() {
+	bool unpause() override {
 		SDL_PauseAudio( 0 );
 		return true;
 	}
-	void lock() {
+	void lock() override {
 		SDL_LockAudio();
 	}
-	void unlock() {
+	void unlock() override {
 		SDL_UnlockAudio();
 	}
-	bool sleep( int ms ) {
+	bool sleep( int ms ) override {
 		SDL_Delay( ms );
 		return true;
 	}

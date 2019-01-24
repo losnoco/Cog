@@ -145,7 +145,7 @@ public:
 		return;
 	}
 public:
-	virtual void write( const std::string & /* text */ ) {
+	void write( const std::string & /* text */ ) override {
 		return;
 	}
 };
@@ -163,10 +163,10 @@ public:
 		writeout();
 	}
 public:
-	virtual void write( const std::string & text ) {
+	void write( const std::string & text ) override {
 		s << text;
 	}
-	virtual void writeout() {
+	void writeout() override {
 		textout::writeout();
 		s.flush();
 	}
@@ -187,7 +187,7 @@ public:
 		writeout();
 	}
 public:
-	virtual void write( const std::string & text ) {
+	void write( const std::string & text ) override {
 		#if defined(UNICODE)
 			std::wstring wtext = utf8_to_wstring( text );
 			WriteConsole( handle, wtext.data(), static_cast<DWORD>( wtext.size() ), NULL, NULL );
@@ -328,9 +328,15 @@ struct commandlineflags {
 		device = "";
 		buffer = default_high;
 		period = default_high;
+#if defined(__DJGPP__)
+		samplerate = 44100;
+		channels = 2;
+		use_float = false;
+#else
 		samplerate = 48000;
 		channels = 2;
 		use_float = true;
+#endif
 		gain = 0;
 		separation = 100;
 		filtertaps = 8;
@@ -344,8 +350,13 @@ struct commandlineflags {
 		end_time = 0.0;
 		quiet = false;
 		verbose = false;
+#if defined(__DJGPP__)
+		terminal_width = 80;
+		terminal_height = 25;
+#else
 		terminal_width = 72;
 		terminal_height = 23;
+#endif
 #if defined(WIN32)
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
 		ZeroMemory( &csbi, sizeof( CONSOLE_SCREEN_BUFFER_INFO ) );
@@ -404,7 +415,7 @@ struct commandlineflags {
 		shuffle = false;
 		restart = false;
 		playlist_index = 0;
-		output_extension = "wav";
+		output_extension = "auto";
 		force_overwrite = false;
 		paused = false;
 	}
@@ -418,8 +429,8 @@ struct commandlineflags {
 		if ( !output_filename.empty() && ( device != commandlineflags().device || use_stdout ) ) {
 			throw args_error_exception();
 		}
-		for ( std::vector<std::string>::iterator i = filenames.begin(); i != filenames.end(); ++i ) {
-			if ( *i == "-" ) {
+		for ( const auto & filename : filenames ) {
+			if ( filename == "-" ) {
 				canUI = false;
 			}
 		}
@@ -485,21 +496,20 @@ struct commandlineflags {
 		if ( samplerate < 0 ) {
 			samplerate = commandlineflags().samplerate;
 		}
+		if ( output_extension == "auto" ) {
+			output_extension = "";
+		}
+		if ( mode != ModeRender && !output_extension.empty() ) {
+			throw args_error_exception();
+		}
 		if ( mode == ModeRender && !output_filename.empty() ) {
-			std::ostringstream warning;
-			warning << "Warning: --output is deprecated in --render mode. Use --output-type instead." << std::endl;
-			warnings += warning.str();
+			throw args_error_exception();
 		}
-		if ( mode != ModeRender && output_extension != "wav" ) {
-			std::ostringstream warning;
-			warning << "Warning: --output-type is deprecated in modes other than --render. Use --output instead." << std::endl;
-			warnings += warning.str();
-		}
-		if ( !output_filename.empty() ) {
+		if ( mode != ModeRender && !output_filename.empty() ) {
 			output_extension = get_extension( output_filename );
 		}
-		if ( mode == ModeRender && output_extension.empty() ) {
-			throw args_error_exception();
+		if ( output_extension.empty() ) {
+			output_extension = "wav";
 		}
 	}
 };
@@ -510,8 +520,8 @@ template < > float convert_sample_to( float val ) {
 }
 template < > std::int16_t convert_sample_to( float val ) {
 	std::int32_t tmp = static_cast<std::int32_t>( val * 32768.0f );
-	tmp = std::min( tmp, 32767 );
-	tmp = std::max( tmp, -32768 );
+	tmp = std::min( tmp, std::int32_t( 32767 ) );
+	tmp = std::max( tmp, std::int32_t( -32768 ) );
 	return static_cast<std::int16_t>( tmp );
 }
 
@@ -591,7 +601,7 @@ private:
 		}
 	}
 public:
-	void write( const std::vector<float*> buffers, std::size_t frames ) {
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		lock();
 		for ( std::size_t frame = 0; frame < frames; ++frame ) {
 			for ( std::size_t channel = 0; channel < channels; ++channel ) {
@@ -601,7 +611,7 @@ public:
 		}
 		unlock();
 	}
-	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) {
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		lock();
 		for ( std::size_t frame = 0; frame < frames; ++frame ) {
 			for ( std::size_t channel = 0; channel < channels; ++channel ) {
@@ -613,7 +623,120 @@ public:
 	}
 	virtual void lock() = 0;
 	virtual void unlock() = 0;
-	virtual bool sleep( int ms ) = 0;
+	bool sleep( int ms ) override = 0;
+};
+
+class write_buffers_polling_wrapper : public write_buffers_interface {
+protected:
+	std::size_t channels;
+	std::size_t sampleQueueMaxFrames;
+	std::deque<float> sampleQueue;
+protected:
+	virtual ~write_buffers_polling_wrapper() {
+		return;
+	}
+protected:
+	write_buffers_polling_wrapper( const commandlineflags & flags )
+		: channels(flags.channels)
+		, sampleQueueMaxFrames(0)
+	{
+		return;
+	}
+	void set_queue_size_frames( std::size_t frames ) {
+		sampleQueueMaxFrames = frames;
+	}
+	template < typename Tsample >
+	Tsample pop_queue() {
+		float val = 0.0f;
+		if ( !sampleQueue.empty() ) {
+			val = sampleQueue.front();
+			sampleQueue.pop_front();
+		}
+		return convert_sample_to<Tsample>( val );
+	}
+public:
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
+		for ( std::size_t frame = 0; frame < frames; ++frame ) {
+			for ( std::size_t channel = 0; channel < channels; ++channel ) {
+				sampleQueue.push_back( buffers[channel][frame] );
+			}
+			while ( sampleQueue.size() >= sampleQueueMaxFrames * channels ) {
+				while ( !forward_queue() ) {
+					sleep( 1 );
+				}
+			}
+		}
+	}
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
+		for ( std::size_t frame = 0; frame < frames; ++frame ) {
+			for ( std::size_t channel = 0; channel < channels; ++channel ) {
+				sampleQueue.push_back( buffers[channel][frame] * (1.0f/32768.0f) );
+			}
+			while ( sampleQueue.size() >= sampleQueueMaxFrames * channels ) {
+				while ( !forward_queue() ) {
+					sleep( 1 );
+				}
+			}
+		}
+	}
+	virtual bool forward_queue() = 0;
+	bool sleep( int ms ) override = 0;
+};
+
+class write_buffers_polling_wrapper_int : public write_buffers_interface {
+protected:
+	std::size_t channels;
+	std::size_t sampleQueueMaxFrames;
+	std::deque<std::int16_t> sampleQueue;
+protected:
+	virtual ~write_buffers_polling_wrapper_int() {
+		return;
+	}
+protected:
+	write_buffers_polling_wrapper_int( const commandlineflags & flags )
+		: channels(flags.channels)
+		, sampleQueueMaxFrames(0)
+	{
+		return;
+	}
+	void set_queue_size_frames( std::size_t frames ) {
+		sampleQueueMaxFrames = frames;
+	}
+	std::int16_t pop_queue() {
+		std::int16_t val = 0;
+		if ( !sampleQueue.empty() ) {
+			val = sampleQueue.front();
+			sampleQueue.pop_front();
+		}
+		return val;
+	}
+public:
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
+		for ( std::size_t frame = 0; frame < frames; ++frame ) {
+			for ( std::size_t channel = 0; channel < channels; ++channel ) {
+				sampleQueue.push_back( convert_sample_to<std::int16_t>( buffers[channel][frame] ) );
+			}
+			while ( sampleQueue.size() >= sampleQueueMaxFrames * channels ) {
+				while ( !forward_queue() ) {
+					sleep( 1 );
+				}
+			}
+		}
+	}
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
+		for ( std::size_t frame = 0; frame < frames; ++frame ) {
+			for ( std::size_t channel = 0; channel < channels; ++channel ) {
+				sampleQueue.push_back( buffers[channel][frame] );
+			}
+			while ( sampleQueue.size() >= sampleQueueMaxFrames * channels ) {
+				while ( !forward_queue() ) {
+					sleep( 1 );
+				}
+			}
+		}
+	}
+	virtual bool forward_queue() = 0;
+	bool sleep( int ms ) override = 0;
 };
 
 class void_audio_stream : public write_buffers_interface {
@@ -622,15 +745,15 @@ public:
 		return;
 	}
 public:
-	virtual void write( const std::vector<float*> buffers, std::size_t frames ) {
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		(void)buffers;
 		(void)frames;
 	}
-	virtual void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) {
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		(void)buffers;
 		(void)frames;
 	}
-	virtual bool is_dummy() const {
+	bool is_dummy() const override {
 		return true;
 	}
 };
@@ -641,16 +764,16 @@ protected:
 		return;
 	}
 public:
-	virtual void write_metadata( std::map<std::string,std::string> metadata ) {
+	void write_metadata( std::map<std::string,std::string> metadata ) override {
 		(void)metadata;
 		return;
 	}
-	virtual void write_updated_metadata( std::map<std::string,std::string> metadata ) {
+	void write_updated_metadata( std::map<std::string,std::string> metadata ) override {
 		(void)metadata;
 		return;
 	}
-	virtual void write( const std::vector<float*> buffers, std::size_t frames ) = 0;
-	virtual void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) = 0;
+	void write( const std::vector<float*> buffers, std::size_t frames ) override = 0;
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override = 0;
 	virtual ~file_audio_stream_base() {
 		return;
 	}

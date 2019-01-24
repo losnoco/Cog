@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #ifndef NO_REVERB
 
 #include "../soundlib/Mixer.h"	// For MIXBUFFERSIZE
@@ -21,7 +23,7 @@ OPENMPT_NAMESPACE_BEGIN
 
 #define NUM_REVERBTYPES			29
 
-const char *GetReverbPresetName(uint32 nPreset);
+mpt::ustring GetReverbPresetName(uint32 nPreset);
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -128,10 +130,8 @@ struct EnvironmentReverb
 class CReverbSettings
 {
 public:
-	uint32 m_nReverbDepth;
-	uint32 m_nReverbType;
-public:
-	CReverbSettings();
+	uint32 m_nReverbDepth = 8; // 50%
+	uint32 m_nReverbType = 0;
 };
 
 
@@ -144,27 +144,27 @@ public:
 private:
 	mixsample_t MixReverbBuffer[MIXBUFFERSIZE * 2];
 public:
-	mixsample_t gnRvbROfsVol, gnRvbLOfsVol;
+	mixsample_t gnRvbROfsVol = 0, gnRvbLOfsVol = 0;
 
 private:
-	const SNDMIX_REVERB_PROPERTIES *m_currentPreset;
+	const SNDMIX_REVERB_PROPERTIES *m_currentPreset = nullptr;
 
-	uint32 gnReverbSend;
+	uint32 gnReverbSend = 0;
 
-	uint32 gnReverbSamples;
-	uint32 gnReverbDecaySamples;
+	uint32 gnReverbSamples = 0;
+	uint32 gnReverbDecaySamples = 0;
 
 	// Internal reverb state
-	bool g_bLastInPresent;
-	bool g_bLastOutPresent;
-	int g_nLastRvbIn_xl;
-	int g_nLastRvbIn_xr;
-	int g_nLastRvbIn_yl;
-	int g_nLastRvbIn_yr;
-	int g_nLastRvbOut_xl;
-	int g_nLastRvbOut_xr;
-	int32 gnDCRRvb_Y1[2];
-	int32 gnDCRRvb_X1[2];
+	bool g_bLastInPresent = 0;
+	bool g_bLastOutPresent = 0;
+	int g_nLastRvbIn_xl = 0;
+	int g_nLastRvbIn_xr = 0;
+	int g_nLastRvbIn_yl = 0;
+	int g_nLastRvbIn_yr = 0;
+	int g_nLastRvbOut_xl = 0;
+	int g_nLastRvbOut_xr = 0;
+	int32 gnDCRRvb_Y1[2] = { 0, 0 };
+	int32 gnDCRRvb_X1[2] = { 0, 0 };
 
 	// Reverb mix buffers
 	SWRvbRefDelay g_RefDelay;

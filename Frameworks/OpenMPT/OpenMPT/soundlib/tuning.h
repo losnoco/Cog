@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include <map>
 
 #include "tuningbase.h"
@@ -36,9 +38,9 @@ public:
 	};
 
 	static const RATIOTYPE s_DefaultFallbackRatio;
-	static const NOTEINDEXTYPE s_StepMinDefault = -64;
-	static const UNOTEINDEXTYPE s_RatioTableSizeDefault = 128;
-	static const USTEPINDEXTYPE s_RatioTableFineSizeMaxDefault = 1000;
+	enum : NOTEINDEXTYPE { s_StepMinDefault = -64 };
+	enum : UNOTEINDEXTYPE { s_RatioTableSizeDefault = 128 };
+	enum : USTEPINDEXTYPE { s_RatioTableFineSizeMaxDefault = 1000 };
 
 public:
 

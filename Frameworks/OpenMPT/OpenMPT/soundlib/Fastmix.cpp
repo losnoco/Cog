@@ -252,9 +252,9 @@ struct MixLoopState
 			}
 		}
 
-		Limit(nSmpCount, 1u, nSamples);
+		Limit(nSmpCount, uint32(1u), nSamples);
 
-#ifdef _DEBUG
+#ifdef MPT_BUILD_DEBUG
 		{
 			SmpLength posDest = (nPos + nInc * (nSmpCount - 1)).GetUInt();
 			if (posDest < 0 || posDest > chn.nLength)
@@ -373,26 +373,40 @@ void CSoundFile::CreateStereoMix(int count)
 				chn.nROfs = chn.nLOfs = 0;
 				pbuffer += nSmpCount * 2;
 				naddmix = 0;
-			} else
+			}
+#ifdef MODPLUG_TRACKER
+			else if(m_SamplePlayLengths != nullptr)
+			{
+				// Detecting the longest play time for each sample for optimization
+				chn.position += chn.increment * nSmpCount;
+				size_t smp = std::distance<const ModSample *>(Samples, chn.pModSample);
+				if(smp < m_SamplePlayLengths->size())
+				{
+					m_SamplePlayLengths->at(smp) = std::max(m_SamplePlayLengths->at(smp), chn.position.GetUInt());
+				}
+			}
+#endif
+			else
 			{
 				// Do mixing
 				mixsample_t *pbufmax = pbuffer + (nSmpCount * 2);
-				chn.nROfs = - *(pbufmax-2);
-				chn.nLOfs = - *(pbufmax-1);
+				chn.nROfs = -*(pbufmax - 2);
+				chn.nLOfs = -*(pbufmax - 1);
 
-#ifdef _DEBUG
+#ifdef MPT_BUILD_DEBUG
 				SamplePosition targetpos = chn.position + chn.increment * nSmpCount;
 #endif
 				MixFuncTable::Functions[functionNdx | (chn.nRampLength ? MixFuncTable::ndxRamp : 0)](chn, m_Resampler, pbuffer, nSmpCount);
-#ifdef _DEBUG
+#ifdef MPT_BUILD_DEBUG
 				MPT_ASSERT(chn.position.GetUInt() == targetpos.GetUInt());
 #endif
 
-				chn.nROfs += *(pbufmax-2);
-				chn.nLOfs += *(pbufmax-1);
+				chn.nROfs += *(pbufmax - 2);
+				chn.nLOfs += *(pbufmax - 1);
 				pbuffer = pbufmax;
 				naddmix = 1;
 			}
+
 			nsamples -= nSmpCount;
 			if (chn.nRampLength)
 			{
@@ -422,7 +436,7 @@ void CSoundFile::CreateStereoMix(int count)
 					// Test case: PTInstrSwap.mod
 					const ModSample &smp = Samples[chn.nNewIns];
 					chn.pModSample = &smp;
-					chn.pCurrentSample = smp.pSample;
+					chn.pCurrentSample = smp.samplev();
 					chn.dwFlags = (chn.dwFlags & CHN_CHANNELFLAGS) | smp.uFlags;
 					chn.nLength = smp.uFlags[CHN_LOOP] ? smp.nLoopEnd : smp.nLength;
 					chn.nLoopStart = smp.nLoopStart;
@@ -543,7 +557,7 @@ void CSoundFile::ProcessPlugins(uint32 nCount)
 			if(!plugin.IsMasterEffect() && !plugin.pMixPlugin->ShouldProcessSilence() && !(plugin.pMixPlugin->m_MixState.dwFlags & SNDMIXPLUGINSTATE::psfHasInput))
 			{
 				// If plugin has no inputs and isn't a master plugin, we shouldn't let it process silence if possible.
-				// I have yet to encounter a plugin which actually sets this flag.
+				// I have yet to encounter a VST plugin which actually sets this flag.
 				bool hasInput = false;
 				for(PLUGINDEX inPlug = 0; inPlug < plug; inPlug++)
 				{

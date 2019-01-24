@@ -13,6 +13,7 @@
 
 #if defined(MPT_ENABLE_TEMPFILE) && MPT_OS_WINDOWS
 #include <windows.h>
+#include "mptFileIO.h"
 #endif // MPT_ENABLE_TEMPFILE && MPT_OS_WINDOWS
 
 
@@ -30,7 +31,7 @@ OnDiskFileWrapper::OnDiskFileWrapper(FileReader &file, const mpt::PathString &fi
 		file.Rewind();
 		if(file.GetFileName().empty())
 		{
-			const mpt::PathString tempName = mpt::CreateTempFileName(MPT_PATHSTRING("OpenMPT"), fileNameExtension);
+			const mpt::PathString tempName = mpt::CreateTempFileName(P_("OpenMPT"), fileNameExtension);
 
 #if MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
 #if (_WIN32_WINNT < 0x0602)
@@ -40,7 +41,7 @@ OnDiskFileWrapper::OnDiskFileWrapper(FileReader &file, const mpt::PathString &fi
 
 #ifdef MPT_ONDISKFILEWRAPPER_NO_CREATEFILE
 
-			FILE * f = _wfopen(tempName.AsNative().c_str(), L"wb");
+			mpt::ofstream f(tempName, std::ios::binary);
 			if(!f)
 			{
 				throw std::runtime_error("");
@@ -53,20 +54,17 @@ OnDiskFileWrapper::OnDiskFileWrapper(FileReader &file, const mpt::PathString &fi
 				do
 				{
 					std::size_t chunkSize = mpt::saturate_cast<std::size_t>(towrite);
-					std::size_t chunkDone = 0;
-					chunkDone = fwrite(view.data() + written, 1, chunkSize, f);
-					if(chunkDone != chunkSize)
+					bool chunkOk = false;
+					chunkOk = mpt::IO::WriteRaw(f, mpt::const_byte_span(view.data() + written, chunkSize));
+					if(!chunkOk)
 					{
-						fclose(f);
-						f = NULL;
 						throw std::runtime_error("");
 					}
-					towrite -= chunkDone;
-					written += chunkDone;
+					towrite -= chunkSize;
+					written += chunkSize;
 				} while(towrite > 0);
 			}
-			fclose(f);
-			f = NULL;
+			f.close();
 
 #else // !MPT_ONDISKFILEWRAPPER_NO_CREATEFILE
 
@@ -74,7 +72,7 @@ OnDiskFileWrapper::OnDiskFileWrapper(FileReader &file, const mpt::PathString &fi
 			#if MPT_OS_WINDOWS_WINRT
 				hFile = CreateFile2(tempName.AsNative().c_str(), GENERIC_WRITE, FILE_SHARE_READ, CREATE_ALWAYS, NULL);
 			#else
-				hFile = CreateFileW(tempName.AsNative().c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY, NULL);
+				hFile = CreateFile(tempName.AsNative().c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY, NULL);
 			#endif
 			if(hFile == NULL || hFile == INVALID_HANDLE_VALUE)
 			{
@@ -123,7 +121,7 @@ OnDiskFileWrapper::~OnDiskFileWrapper()
 {
 	if(m_IsTempFile)
 	{
-		DeleteFileW(m_Filename.AsNative().c_str());
+		DeleteFile(m_Filename.AsNative().c_str());
 		m_IsTempFile = false;
 	}
 	m_Filename = mpt::PathString();

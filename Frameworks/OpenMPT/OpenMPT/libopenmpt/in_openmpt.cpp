@@ -37,27 +37,14 @@
 #endif // _MSC_VER
 
 #include "libopenmpt.hpp"
-#ifdef LIBOPENMPT_QUIRK_NO_CSTDINT
-#include <stdint.h>
-namespace std {
-typedef ::int8_t   int8_t;
-typedef ::int16_t  int16_t;
-typedef ::int32_t  int32_t;
-typedef ::int64_t  int64_t;
-typedef ::uint8_t  uint8_t; 
-typedef ::uint16_t uint16_t; 
-typedef ::uint32_t uint32_t;
-typedef ::uint64_t uint64_t;
-}
-#endif
 
 #include "libopenmpt_plugin_gui.hpp"
 
 #include "svn_version.h"
 #if defined(OPENMPT_VERSION_REVISION)
-static char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING "." OPENMPT_API_VERSION_STRINGIZE(OPENMPT_VERSION_REVISION);
+static const char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING "." OPENMPT_API_VERSION_STRINGIZE(OPENMPT_VERSION_REVISION);
 #else
-static char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING;
+static const char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING;
 #endif
 
 #ifndef NOMINMAX
@@ -209,7 +196,7 @@ static void config( HWND hwndParent ) {
 static void about( HWND hwndParent ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2018 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2019 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
@@ -452,7 +439,7 @@ static DWORD WINAPI DecodeThread( LPVOID ) {
 
 In_Module inmod = {
 	IN_VER,
-	in_openmpt_string, // SHORT_TITLE,
+	const_cast< char * >( in_openmpt_string ), // SHORT_TITLE,
 	0, // hMainWindow
 	0, // hDllInstance
 	NULL, // filled later in Init() "mptm\0ModPlug Tracker Module (*.mptm)\0",

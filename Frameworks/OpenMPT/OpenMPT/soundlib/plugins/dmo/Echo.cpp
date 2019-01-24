@@ -103,7 +103,7 @@ void Echo::SetParameter(PlugParamIndex index, PlugParamValue value)
 	{
 		Limit(value, 0.0f, 1.0f);
 		if(index == kEchoPanDelay)
-			value = Util::Round(value);
+			value = mpt::round(value);
 		m_param[index] = value;
 		RecalculateEchoParams();
 	}

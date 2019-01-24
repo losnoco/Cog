@@ -17,8 +17,8 @@ OPENMPT_NAMESPACE_BEGIN
 enum PatternFormats : uint32
 {
 	DTM_PT_PATTERN_FORMAT = 0,
-	DTM_204_PATTERN_FORMAT = MAGIC4BE('2', '.', '0', '4'),
-	DTM_206_PATTERN_FORMAT = MAGIC4BE('2', '.', '0', '6'),
+	DTM_204_PATTERN_FORMAT = MagicBE("2.04"),
+	DTM_206_PATTERN_FORMAT = MagicBE("2.06"),
 };
 
 
@@ -44,17 +44,17 @@ struct DTMChunk
 	// 32-Bit chunk identifiers
 	enum ChunkIdentifiers
 	{
-		idS_Q_ = MAGIC4BE('S', '.', 'Q', '.'),
-		idPATT = MAGIC4BE('P', 'A', 'T', 'T'),
-		idINST = MAGIC4BE('I', 'N', 'S', 'T'),
-		idIENV = MAGIC4BE('I', 'E', 'N', 'V'),
-		idDAPT = MAGIC4BE('D', 'A', 'P', 'T'),
-		idDAIT = MAGIC4BE('D', 'A', 'I', 'T'),
-		idTEXT = MAGIC4BE('T', 'E', 'X', 'T'),
-		idPATN = MAGIC4BE('P', 'A', 'T', 'N'),
-		idTRKN = MAGIC4BE('T', 'R', 'K', 'N'),
-		idVERS = MAGIC4BE('V', 'E', 'R', 'S'),
-		idSV19 = MAGIC4BE('S', 'V', '1', '9'),
+		idS_Q_ = MagicBE("S.Q."),
+		idPATT = MagicBE("PATT"),
+		idINST = MagicBE("INST"),
+		idIENV = MagicBE("IENV"),
+		idDAPT = MagicBE("DAPT"),
+		idDAIT = MagicBE("DAIT"),
+		idTEXT = MagicBE("TEXT"),
+		idPATN = MagicBE("PATN"),
+		idTRKN = MagicBE("TRKN"),
+		idVERS = MagicBE("VERS"),
+		idSV19 = MagicBE("SV19"),
 	};
 
 	uint32be id;
@@ -586,17 +586,22 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	// Is this accurate?
+	mpt::ustring tracker;
 	if(patternFormat == DTM_206_PATTERN_FORMAT)
 	{
-		m_madeWithTracker = MPT_USTRING("Digital Home Studio");
+		tracker = U_("Digital Home Studio");
 	} else if(FileReader chunk = chunks.GetChunk(DTMChunk::idVERS))
 	{
 		uint32 version = chunk.ReadUint32BE();
-		m_madeWithTracker = mpt::format(MPT_USTRING("Digital Tracker %1.%2"))(version >> 4, version & 0x0F);
+		tracker = mpt::format(U_("Digital Tracker %1.%2"))(version >> 4, version & 0x0F);
 	} else
 	{
-		m_madeWithTracker = MPT_USTRING("Digital Tracker");
+		tracker = U_("Digital Tracker");
 	}
+	m_modFormat.formatName = U_("Digital Tracker");
+	m_modFormat.type = U_("dtm");
+	m_modFormat.madeWithTracker = std::move(tracker);
+	m_modFormat.charset = mpt::CharsetISO8859_1;
 
 	return true;
 }

@@ -1,7 +1,7 @@
 /*
  * Load_med.cpp
  * ------------
- * Purpose: OctaMed MED module loader
+ * Purpose: OctaMED / MED Soundstudio module loader
  * Notes  : (currently none)
  * Authors: Olivier Lapicque
  *          OpenMPT Devs
@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "Loaders.h"
-#include "../common/StringFixer.h"
+#include "../common/mptStringBuffer.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -180,10 +180,10 @@ struct MMD2SONGHEADER
 MPT_BINARY_STRUCT(MMD2SONGHEADER, 788)
 
 
-// For MMD0 the note information is held in 3 bytes, byte0, byte1, byte2.  For reference we
+// For MMD0 the note information is held in 3 bytes, byte0, byte1, byte2. For reference we
 // number the bits in each byte 0..7, where 0 is the low bit.
 // The note is held as bits 5..0 of byte0
-// The instrument is encoded in 6 bits,  bits 7 and 6 of byte0 and bits 7,6,5,4 of byte1
+// The instrument is encoded in 6 bits, bits 7 and 6 of byte0 and bits 7,6,5,4 of byte1
 // The command number is bits 3,2,1,0 of byte1, command data is in byte2:
 // For command 0, byte2 represents the second data byte, otherwise byte2
 // represents the first data byte.
@@ -241,7 +241,7 @@ MPT_BINARY_STRUCT(MMD2PLAYSEQ, 1066)
 
 
 // A command table contains commands that effect a particular play sequence
-// entry.  The only commands read in are STOP or POSJUMP, all others are ignored
+// entry. The only commands read in are STOP or POSJUMP, all others are ignored
 // POSJUMP is presumed to have extra bytes containing a uint16 for the position
 struct MMDCOMMAND
 {
@@ -527,7 +527,7 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderMED(MemoryFileReader file, co
 }
 
 
-bool CSoundFile::ReadMed(FileReader &file, ModLoadingFlags loadFlags)
+bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 {
 	file.Rewind();
 	MEDMODULEHEADER pmmh;
@@ -569,7 +569,19 @@ bool CSoundFile::ReadMed(FileReader &file, ModLoadingFlags loadFlags)
 	InitializeChannels();
 	// Setup channel pan positions and volume
 	SetupMODPanning(true);
-	m_madeWithTracker = mpt::format(MPT_USTRING("OctaMED (MMD%1)"))(mpt::ToUnicode(mpt::CharsetISO8859_1, std::string(1, version)));
+
+	const MPT_UCHAR_TYPE *madeWithTracker = UL_("");
+	switch(version)
+	{
+	case '0': madeWithTracker = m_nChannels > 4 ? UL_("OctaMED v2.10") : UL_("MED v2"); break;
+	case '1': madeWithTracker = UL_("OctaMED v4"); break;
+	case '2': madeWithTracker = UL_("OctaMED v5"); break;
+	case '3': madeWithTracker = UL_("OctaMED Soundstudio"); break;
+	}
+	m_modFormat.formatName = mpt::format(U_("OctaMED (MMD%1)"))(version - '0');
+	m_modFormat.type = U_("med");
+	m_modFormat.madeWithTracker = madeWithTracker;
+	m_modFormat.charset = mpt::CharsetISO8859_1;
 
 	m_nSamplePreAmp = 32;
 	dwBlockArr = pmmh.blockarr;
@@ -618,6 +630,7 @@ bool CSoundFile::ReadMed(FileReader &file, ModLoadingFlags loadFlags)
 	for (uint32 iSHdr=0; iSHdr<m_nSamples; iSHdr++)
 	{
 		ModSample &sample = Samples[iSHdr + 1];
+		sample.Initialize(MOD_TYPE_MED);
 		sample.nLoopStart = pmsh->sample[iSHdr].rep * 2u;
 		sample.nLoopEnd = sample.nLoopStart + (pmsh->sample[iSHdr].replen * 2u);
 		sample.nVolume = (pmsh->sample[iSHdr].svol << 2);
@@ -709,7 +722,7 @@ bool CSoundFile::ReadMed(FileReader &file, ModLoadingFlags loadFlags)
 		annolen = std::min<uint32>(annolen, MED_MAX_COMMENT_LENGTH); //Thanks to Luigi Auriemma for pointing out an overflow risk
 		if ((annotxt) && (annolen) && (annolen <= dwMemLength) && (annotxt <= dwMemLength - annolen) )
 		{
-			m_songMessage.Read(lpStream + annotxt, annolen - 1, SongMessage::leAutodetect);
+			m_songMessage.Read(mpt::byte_cast<const mpt::byte*>(lpStream) + annotxt, annolen - 1, SongMessage::leAutodetect);
 		}
 		// Song Name
 		uint32 songname = pmex->songname;
@@ -771,8 +784,8 @@ bool CSoundFile::ReadMed(FileReader &file, ModLoadingFlags loadFlags)
 	pdwTable = const_unaligned_ptr_be<uint32>(lpStream + dwSmplArr);
 	for (uint32 iSmp=0; iSmp<m_nSamples; iSmp++) if (pdwTable[iSmp])
 	{
-		uint32 dwPos = pdwTable[iSmp];
-		if ((dwPos >= dwMemLength) || (dwPos + sizeof(MMDSAMPLEHEADER) >= dwMemLength)) continue;
+		const uint32 dwPos = pdwTable[iSmp];
+		if ((dwPos >= dwMemLength) || (dwPos + sizeof(MMDSAMPLEHEADER) >= dwMemLength) || !(loadFlags & loadSampleData)) continue;
 		const MMDSAMPLEHEADER *psdh = (const MMDSAMPLEHEADER *)(lpStream + dwPos);
 		uint32 len = psdh->length;
 	#ifdef MED_LOG
@@ -780,7 +793,7 @@ bool CSoundFile::ReadMed(FileReader &file, ModLoadingFlags loadFlags)
 	#endif
 		if(dwPos + len + 6 > dwMemLength) len = 0;
 		uint32 stype = psdh->type;
-		const char *psdata = (const char *)(lpStream + dwPos + 6);
+		FileReader chunk(mpt::byte_cast<mpt::const_byte_span>(mpt::as_span(lpStream + dwPos + 6, dwMemLength - dwPos - 6)));
 
 		SampleIO sampleIO(
 			SampleIO::_8bit,
@@ -790,7 +803,7 @@ bool CSoundFile::ReadMed(FileReader &file, ModLoadingFlags loadFlags)
 
 		if (stype & 0x80)
 		{
-			psdata += (stype & 0x20) ? 14 : 6;
+			chunk.Skip((stype & 0x20) ? 14 : 6);
 		} else
 		{
 			if(stype & 0x10)
@@ -805,11 +818,7 @@ bool CSoundFile::ReadMed(FileReader &file, ModLoadingFlags loadFlags)
 			}
 		}
 		Samples[iSmp + 1].nLength = len;
-		if(loadFlags & loadSampleData)
-		{
-			FileReader chunk(mpt::byte_cast<mpt::const_byte_span>(mpt::as_span(psdata, dwMemLength - dwPos - 6)));
-			sampleIO.ReadSample(Samples[iSmp + 1], chunk);
-		}
+		sampleIO.ReadSample(Samples[iSmp + 1], chunk);
 	}
 	// Reading patterns (blocks)
 	if(!(loadFlags & loadPatternData))

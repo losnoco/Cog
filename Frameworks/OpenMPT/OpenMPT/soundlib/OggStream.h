@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "../common/Endianness.h"
 #include "../common/mptIO.h"
 

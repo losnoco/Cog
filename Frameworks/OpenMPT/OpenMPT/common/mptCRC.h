@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 OPENMPT_NAMESPACE_BEGIN
 
 namespace mpt
@@ -27,9 +29,9 @@ public:
 	typedef T value_type;
 	typedef uint8 byte_type;
 
-	static const std::size_t size_bytes = sizeof(value_type);
-	static const std::size_t size_bits = sizeof(value_type) * 8;
-	static const value_type top_bit = static_cast<value_type>(1) << ((sizeof(value_type) * 8) - 1);
+	enum : std::size_t { size_bytes = sizeof(value_type) };
+	enum : std::size_t { size_bits = sizeof(value_type) * 8 };
+	enum : value_type { top_bit = static_cast<value_type>(1) << ((sizeof(value_type) * 8) - 1) };
 
 private:
 	
@@ -134,7 +136,7 @@ public:
 
 	inline crc & process(char c)
 	{
-		processByte(static_cast<byte_type>(c));
+		processByte(mpt::byte_cast<byte_type>(c));
 		return *this;
 	}
 
@@ -146,9 +148,17 @@ public:
 
 	inline crc & process(unsigned char c)
 	{
-		processByte(static_cast<byte_type>(c));
+		processByte(mpt::byte_cast<byte_type>(c));
 		return *this;
 	}
+
+#if MPT_BYTE_IS_STD_BYTE
+	inline crc & process(mpt::byte c)
+	{
+		processByte(mpt::byte_cast<byte_type>(c));
+		return *this;
+	}
+#endif
 
 	template <typename InputIt>
 	crc & process(InputIt beg, InputIt end)
@@ -170,7 +180,7 @@ public:
 
 	inline crc & operator () (char c)
 	{
-		processByte(static_cast<byte_type>(c));
+		processByte(mpt::byte_cast<byte_type>(c));
 		return *this;
 	}
 
@@ -182,9 +192,17 @@ public:
 
 	inline crc & operator () (unsigned char c)
 	{
-		processByte(static_cast<byte_type>(c));
+		processByte(mpt::byte_cast<byte_type>(c));
 		return *this;
 	}
+
+#if MPT_BYTE_IS_STD_BYTE
+	inline crc & operator () (mpt::byte c)
+	{
+		processByte(mpt::byte_cast<byte_type>(c));
+		return *this;
+	}
+#endif
 
 	template <typename InputIt>
 	crc & operator () (InputIt beg, InputIt end)

@@ -79,6 +79,7 @@ void ModCommand::ExtendedMODtoS3MEffect()
 	command = CMD_S3MCMDEX;
 	switch(param & 0xF0)
 	{
+	case 0x00: command = CMD_NONE; break; // No filter control
 	case 0x10: command = CMD_PORTAMENTOUP; param |= 0xF0; break;
 	case 0x20: command = CMD_PORTAMENTODOWN; param |= 0xF0; break;
 	case 0x30: param = (param & 0x0F) | 0x10; break;
@@ -91,7 +92,7 @@ void ModCommand::ExtendedMODtoS3MEffect()
 	case 0xB0: if(param & 0x0F) { command = CMD_VOLUMESLIDE; param |= 0xF0; } else command = CMD_NONE; break;
 	case 0xC0: if(param == 0xC0) { command = CMD_NONE; note = NOTE_NOTECUT; } break;  // this does different things in IT and ST3
 	case 0xD0: if(param == 0xD0) { command = CMD_NONE; } break;  // ditto
-	// rest are the same
+	// rest are the same or handled elsewhere
 	}
 }
 
@@ -111,11 +112,12 @@ void ModCommand::ExtendedS3MtoMODEffect()
 	case 0x40: param = (param & 0x0F) | 0x70; break;
 	case 0x50: command = CMD_XFINEPORTAUPDOWN; break;  // map to unused X5x
 	case 0x60: command = CMD_XFINEPORTAUPDOWN; break;  // map to unused X6x
+	case 0x80: command = CMD_PANNING8; param = (param & 0x0F) * 0x11; break; // FT2 does actually not support E8x
 	case 0x90: command = CMD_XFINEPORTAUPDOWN; break;  // map to unused X9x
 	case 0xA0: command = CMD_XFINEPORTAUPDOWN; break;  // map to unused XAx
 	case 0xB0: param = (param & 0x0F) | 0x60; break;
 	case 0x70: command = CMD_NONE; break;  // No NNA / envelope control in MOD/XM format
-	// rest are the same
+	// rest are the same or handled elsewhere
 	}
 }
 
@@ -319,12 +321,12 @@ void ModCommand::Convert(MODTYPE fromType, MODTYPE toType, const CSoundFile &snd
 	{
 		if(note == NOTE_NOTECUT)
 		{
-			// convert note cut to EC0 if possible or volume command otherwise (MOD/XM has no real way of cutting notes that cannot be "undone" by volume commands)
+			// convert note cut to C00 if possible or volume command otherwise (MOD/XM has no real way of cutting notes that cannot be "undone" by volume commands)
 			note = NOTE_NONE;
 			if(command == CMD_NONE || !newTypeIsXM)
 			{
-				command = CMD_MODCMDEX;
-				param = 0xC0;
+				command = CMD_VOLUME;
+				param = 0;
 			} else
 			{
 				volcmd = VOLCMD_VOLUME;

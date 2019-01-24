@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #include "../common/Endianness.h"
 
@@ -105,7 +107,7 @@ struct DecodeInt7
 	static MPT_CONSTEXPR11_VAR std::size_t input_inc = 1;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return Clamp(static_cast<int8>(*inBuf), static_cast<int8>(-64), static_cast<int8>(63)) * 2;
+		return Clamp(mpt::byte_cast<int8>(*inBuf), static_cast<int8>(-64), static_cast<int8>(63)) * 2;
 	}
 };
 
@@ -116,7 +118,7 @@ struct DecodeInt8
 	static MPT_CONSTEXPR11_VAR std::size_t input_inc = 1;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return static_cast<int8>(*inBuf);
+		return mpt::byte_cast<int8>(*inBuf);
 	}
 };
 
@@ -127,7 +129,7 @@ struct DecodeUint8
 	static MPT_CONSTEXPR11_VAR std::size_t input_inc = 1;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return static_cast<int8>(int(static_cast<uint8>(*inBuf)) - 128);
+		return static_cast<int8>(int(mpt::byte_cast<uint8>(*inBuf)) - 128);
 	}
 };
 
@@ -140,7 +142,7 @@ struct DecodeInt8Delta
 	DecodeInt8Delta() : delta(0) { }
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		delta += static_cast<uint8>(*inBuf);
+		delta += mpt::byte_cast<uint8>(*inBuf);
 		return static_cast<int8>(delta);
 	}
 };
@@ -153,7 +155,7 @@ struct DecodeInt16
 	static MPT_CONSTEXPR11_VAR std::size_t input_inc = 2;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return (static_cast<uint8>(inBuf[loByteIndex]) | (static_cast<uint8>(inBuf[hiByteIndex]) << 8)) - offset;
+		return (mpt::byte_cast<uint8>(inBuf[loByteIndex]) | (mpt::byte_cast<uint8>(inBuf[hiByteIndex]) << 8)) - offset;
 	}
 };
 
@@ -167,7 +169,7 @@ struct DecodeInt16Delta
 	DecodeInt16Delta() : delta(0) { }
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		delta += static_cast<uint8>(inBuf[loByteIndex]) | (static_cast<uint8>(inBuf[hiByteIndex]) << 8);
+		delta += mpt::byte_cast<uint8>(inBuf[loByteIndex]) | (mpt::byte_cast<uint8>(inBuf[hiByteIndex]) << 8);
 		return static_cast<int16>(delta);
 	}
 };
@@ -181,9 +183,9 @@ struct DecodeInt16Delta8
 	DecodeInt16Delta8() : delta(0) { }
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		delta += static_cast<uint8>(inBuf[0]);
+		delta += mpt::byte_cast<uint8>(inBuf[0]);
 		int16 result = delta & 0xFF;
-		delta += static_cast<uint8>(inBuf[1]);
+		delta += mpt::byte_cast<uint8>(inBuf[1]);
 		result |= (delta << 8);
 		return result;
 	}
@@ -197,7 +199,7 @@ struct DecodeInt24
 	static MPT_CONSTEXPR11_VAR std::size_t input_inc = 3;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return ((static_cast<uint8>(inBuf[loByteIndex]) << 8) | (static_cast<uint8>(inBuf[midByteIndex]) << 16) | (static_cast<uint8>(inBuf[hiByteIndex]) << 24)) - offset;
+		return ((mpt::byte_cast<uint8>(inBuf[loByteIndex]) << 8) | (mpt::byte_cast<uint8>(inBuf[midByteIndex]) << 16) | (mpt::byte_cast<uint8>(inBuf[hiByteIndex]) << 24)) - offset;
 	}
 };
 
@@ -209,7 +211,7 @@ struct DecodeInt32
 	static MPT_CONSTEXPR11_VAR std::size_t input_inc = 4;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return (static_cast<uint8>(inBuf[loLoByteIndex]) | (static_cast<uint8>(inBuf[loHiByteIndex]) << 8) | (static_cast<uint8>(inBuf[hiLoByteIndex]) << 16) | (static_cast<uint8>(inBuf[hiHiByteIndex]) << 24)) - offset;
+		return (mpt::byte_cast<uint8>(inBuf[loLoByteIndex]) | (mpt::byte_cast<uint8>(inBuf[loHiByteIndex]) << 8) | (mpt::byte_cast<uint8>(inBuf[hiLoByteIndex]) << 16) | (mpt::byte_cast<uint8>(inBuf[hiHiByteIndex]) << 24)) - offset;
 	}
 };
 
@@ -222,14 +224,14 @@ struct DecodeInt64
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
 		return (uint64(0)
-			| (static_cast<uint64>(uint8(inBuf[b0])) <<  0)
-			| (static_cast<uint64>(uint8(inBuf[b1])) <<  8)
-			| (static_cast<uint64>(uint8(inBuf[b2])) << 16)
-			| (static_cast<uint64>(uint8(inBuf[b3])) << 24)
-			| (static_cast<uint64>(uint8(inBuf[b4])) << 32)
-			| (static_cast<uint64>(uint8(inBuf[b5])) << 40)
-			| (static_cast<uint64>(uint8(inBuf[b6])) << 48)
-			| (static_cast<uint64>(uint8(inBuf[b7])) << 56)
+			| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b0])) <<  0)
+			| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b1])) <<  8)
+			| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b2])) << 16)
+			| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b3])) << 24)
+			| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b4])) << 32)
+			| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b5])) << 40)
+			| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b6])) << 48)
+			| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b7])) << 56)
 			) - offset;
 	}
 };
@@ -242,7 +244,7 @@ struct DecodeFloat32
 	static MPT_CONSTEXPR11_VAR std::size_t input_inc = 4;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return IEEE754binary32LE(static_cast<uint8>(inBuf[loLoByteIndex]), static_cast<uint8>(inBuf[loHiByteIndex]), static_cast<uint8>(inBuf[hiLoByteIndex]), static_cast<uint8>(inBuf[hiHiByteIndex]));
+		return IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
 	}
 };
 
@@ -255,7 +257,7 @@ struct DecodeScaledFloat32
 	float factor;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return factor * IEEE754binary32LE(static_cast<uint8>(inBuf[loLoByteIndex]), static_cast<uint8>(inBuf[loHiByteIndex]), static_cast<uint8>(inBuf[hiLoByteIndex]), static_cast<uint8>(inBuf[hiHiByteIndex]));
+		return factor * IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
 	}
 	MPT_FORCEINLINE DecodeScaledFloat32(float scaleFactor)
 		: factor(scaleFactor)
@@ -272,7 +274,7 @@ struct DecodeFloat64
 	static MPT_CONSTEXPR11_VAR std::size_t input_inc = 8;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return IEEE754binary64LE(uint8(inBuf[b0]), uint8(inBuf[b1]), uint8(inBuf[b2]), uint8(inBuf[b3]), uint8(inBuf[b4]), uint8(inBuf[b5]), uint8(inBuf[b6]), uint8(inBuf[b7]));
+		return IEEE754binary64LE(inBuf[b0], inBuf[b1], inBuf[b2], inBuf[b3], inBuf[b4], inBuf[b5], inBuf[b6], inBuf[b7]);
 	}
 };
 
@@ -787,7 +789,7 @@ struct Convert<double, float>
 	typedef double output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		return val;
+		return static_cast<double>(val);
 	}
 };
 

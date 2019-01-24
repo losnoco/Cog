@@ -2,8 +2,7 @@
  * mptIO.cpp
  * ---------
  * Purpose: Basic functions for reading/writing binary and endian safe data to/from files/streams.
- * Notes  : This is work-in-progress.
- *          Some useful functions for reading and writing are still missing.
+ * Notes  : Some useful functions for reading and writing are still missing.
  * Authors: Joern Heusipp
  *          OpenMPT Devs
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
@@ -18,14 +17,9 @@
 #include <istream>
 #include <ostream>
 #include <sstream>
-#if MPT_COMPILER_MSVC
+#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 #include <typeinfo>
-#endif // MPT_COMPILER_MSVC
-
-#if defined(MPT_ENABLE_FILEIO_STDIO)
-#include <cstdio>
-#include <stdio.h>
-#endif // MPT_ENABLE_FILEIO_STDIO
+#endif // MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -36,7 +30,7 @@ namespace mpt {
 namespace IO {
 
 
-#if MPT_COMPILER_MSVC
+#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 
 // MSVC std::stringbuf (and thereby std::ostringstream, std::istringstream and
 // std::stringstream) fail seekoff() when the stringbuf is currently empty.
@@ -124,7 +118,7 @@ static bool StreamIsStringStreamAndValidAndEmpty(std::iostream & f)
 	return dynamic_cast<std::stringbuf*>(f.rdbuf())->str().empty(); // slow
 }
 
-#endif // MPT_COMPILER_MSVC
+#endif // MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 
 //STATIC_ASSERT(sizeof(std::streamoff) == 8); // Assert 64bit file support.
 bool IsValid(std::ostream & f) { return !f.fail(); }
@@ -140,7 +134,7 @@ IO::Offset TellWrite(std::ostream & f)
 }
 bool SeekBegin(std::ostream & f)
 {
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{ // VS std::stringbuf fail seek when the internal buffer is empty. Work-around it in case the stream is not already in failed state.
 			f.seekp(0); f.clear(f.rdstate() & ~std::ios::failbit); return true;
@@ -150,7 +144,7 @@ bool SeekBegin(std::ostream & f)
 }
 bool SeekBegin(std::istream & f)
 {
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			f.seekg(0); f.clear(f.rdstate() & ~std::ios::failbit); return true;
@@ -160,7 +154,7 @@ bool SeekBegin(std::istream & f)
 }
 bool SeekBegin(std::iostream & f)
 {
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			f.seekg(0); f.clear(f.rdstate() & ~std::ios::failbit); f.seekp(0); f.clear(f.rdstate() & ~std::ios::failbit); return true;
@@ -170,7 +164,7 @@ bool SeekBegin(std::iostream & f)
 }
 bool SeekEnd(std::ostream & f)
 {
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			f.seekp(0); f.clear(f.rdstate() & ~std::ios::failbit); return true;
@@ -180,7 +174,7 @@ bool SeekEnd(std::ostream & f)
 }
 bool SeekEnd(std::istream & f)
 {
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			f.seekg(0); f.clear(f.rdstate() & ~std::ios::failbit); return true;
@@ -190,7 +184,7 @@ bool SeekEnd(std::istream & f)
 }
 bool SeekEnd(std::iostream & f)
 {
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			f.seekg(0); f.clear(f.rdstate() & ~std::ios::failbit);  f.seekp(0); f.clear(f.rdstate() & ~std::ios::failbit); return true;
@@ -201,7 +195,7 @@ bool SeekEnd(std::iostream & f)
 bool SeekAbsolute(std::ostream & f, IO::Offset pos)
 {
 	if(!OffsetFits<std::streamoff>(pos)) { return false; }
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			if(pos == 0)
@@ -215,7 +209,7 @@ bool SeekAbsolute(std::ostream & f, IO::Offset pos)
 bool SeekAbsolute(std::istream & f, IO::Offset pos)
 {
 	if(!OffsetFits<std::streamoff>(pos)) { return false; }
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			if(pos == 0)
@@ -229,7 +223,7 @@ bool SeekAbsolute(std::istream & f, IO::Offset pos)
 bool SeekAbsolute(std::iostream & f, IO::Offset pos)
 {
 	if(!OffsetFits<std::streamoff>(pos)) { return false; }
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			if(pos == 0)
@@ -243,7 +237,7 @@ bool SeekAbsolute(std::iostream & f, IO::Offset pos)
 bool SeekRelative(std::ostream & f, IO::Offset off)
 {
 	if(!OffsetFits<std::streamoff>(off)) { return false; }
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			if(off == 0)
@@ -257,7 +251,7 @@ bool SeekRelative(std::ostream & f, IO::Offset off)
 bool SeekRelative(std::istream & f, IO::Offset off)
 {
 	if(!OffsetFits<std::streamoff>(off)) { return false; }
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			if(off == 0)
@@ -271,7 +265,7 @@ bool SeekRelative(std::istream & f, IO::Offset off)
 bool SeekRelative(std::iostream & f, IO::Offset off)
 {
 	if(!OffsetFits<std::streamoff>(off)) { return false; }
-	#if MPT_COMPILER_MSVC
+	#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 		if(StreamIsStringStreamAndValidAndEmpty(f))
 		{
 			if(off == 0)
@@ -286,50 +280,6 @@ IO::Offset ReadRawImpl(std::istream & f, mpt::byte * data, std::size_t size) { r
 bool WriteRawImpl(std::ostream & f, const mpt::byte * data, std::size_t size) { f.write(mpt::byte_cast<const char *>(data), size); return !f.fail(); }
 bool IsEof(std::istream & f) { return f.eof(); }
 bool Flush(std::ostream & f) { f.flush(); return !f.fail(); }
-
-
-
-#if defined(MPT_ENABLE_FILEIO_STDIO)
-
-bool IsValid(FILE* & f) { return f != NULL; }
-
-#if MPT_COMPILER_MSVC
-
-IO::Offset TellRead(FILE* & f) { return _ftelli64(f); }
-IO::Offset TellWrite(FILE* & f) { return _ftelli64(f); }
-bool SeekBegin(FILE* & f) { return _fseeki64(f, 0, SEEK_SET) == 0; }
-bool SeekEnd(FILE* & f) { return _fseeki64(f, 0, SEEK_END) == 0; }
-bool SeekAbsolute(FILE* & f, IO::Offset pos) { return _fseeki64(f, pos, SEEK_SET) == 0; }
-bool SeekRelative(FILE* & f, IO::Offset off) { return _fseeki64(f, off, SEEK_CUR) == 0; }
-
-#elif defined(_POSIX_SOURCE) && (_POSIX_SOURCE > 0) 
-
-//STATIC_ASSERT(sizeof(off_t) == 8);
-IO::Offset TellRead(FILE* & f) { return ftello(f); }
-IO::Offset TellWrite(FILE* & f) { return ftello(f); }
-bool SeekBegin(FILE* & f) { return fseeko(f, 0, SEEK_SET) == 0; }
-bool SeekEnd(FILE* & f) { return fseeko(f, 0, SEEK_END) == 0; }
-bool SeekAbsolute(FILE* & f, IO::Offset pos) { return OffsetFits<off_t>(pos) && (fseek(f, mpt::saturate_cast<off_t>(pos), SEEK_SET) == 0); }
-bool SeekRelative(FILE* & f, IO::Offset off) { return OffsetFits<off_t>(off) && (fseek(f, mpt::saturate_cast<off_t>(off), SEEK_CUR) == 0); }
-
-#else
-
-//STATIC_ASSERT(sizeof(long) == 8); // Fails on 32bit non-POSIX systems for now.
-IO::Offset TellRead(FILE* & f) { return ftell(f); }
-IO::Offset TellWrite(FILE* & f) { return ftell(f); }
-bool SeekBegin(FILE* & f) { return fseek(f, 0, SEEK_SET) == 0; }
-bool SeekEnd(FILE* & f) { return fseek(f, 0, SEEK_END) == 0; }
-bool SeekAbsolute(FILE* & f, IO::Offset pos) { return OffsetFits<long>(pos) && (fseek(f, mpt::saturate_cast<long>(pos), SEEK_SET) == 0); }
-bool SeekRelative(FILE* & f, IO::Offset off) { return OffsetFits<long>(off) && (fseek(f, mpt::saturate_cast<long>(off), SEEK_CUR) == 0); }
-
-#endif
-
-IO::Offset ReadRawImpl(FILE * & f, mpt::byte * data, std::size_t size) { return fread(mpt::void_cast<void*>(data), 1, size, f); }
-bool WriteRawImpl(FILE* & f, const mpt::byte * data, std::size_t size) { return fwrite(mpt::void_cast<const void*>(data), 1, size, f) == size; }
-bool IsEof(FILE * & f) { return feof(f) != 0; }
-bool Flush(FILE* & f) { return fflush(f) == 0; }
-
-#endif // MPT_ENABLE_FILEIO_STDIO
 
 
 
@@ -350,10 +300,6 @@ FileDataContainerSeekable::FileDataContainerSeekable(off_t streamLength)
 	return;
 }
 
-FileDataContainerSeekable::~FileDataContainerSeekable()
-{
-	return;
-}
 void FileDataContainerSeekable::CacheStream() const
 {
 	if(cached)
@@ -461,11 +407,6 @@ FileDataContainerStdStreamSeekable::FileDataContainerStdStreamSeekable(std::istr
 	return;
 }
 
-FileDataContainerStdStreamSeekable::~FileDataContainerStdStreamSeekable()
-{
-	return;
-}
-
 IFileDataContainer::off_t FileDataContainerStdStreamSeekable::InternalRead(mpt::byte *dst, off_t pos, off_t count) const
 {
 	stream->clear(); // tellg needs eof and fail bits unset
@@ -481,11 +422,6 @@ IFileDataContainer::off_t FileDataContainerStdStreamSeekable::InternalRead(mpt::
 
 FileDataContainerUnseekable::FileDataContainerUnseekable()
 	: cachesize(0), streamFullyCached(false)
-{
-	return;
-}
-
-FileDataContainerUnseekable::~FileDataContainerUnseekable()
 {
 	return;
 }
@@ -627,11 +563,6 @@ FileDataContainerStdStream::FileDataContainerStdStream(std::istream *s)
 	return;
 }
 
-FileDataContainerStdStream::~FileDataContainerStdStream()
-{
-	return;
-}
-
 bool FileDataContainerStdStream::InternalEof() const
 {
 	if(*stream)
@@ -739,11 +670,6 @@ FileDataContainerCallbackStreamSeekable::FileDataContainerCallbackStreamSeekable
 	return;
 }
 
-FileDataContainerCallbackStreamSeekable::~FileDataContainerCallbackStreamSeekable()
-{
-	return;
-}
-
 IFileDataContainer::off_t FileDataContainerCallbackStreamSeekable::InternalRead(mpt::byte *dst, off_t pos, off_t count) const
 {
 	if(!stream.read)
@@ -775,11 +701,6 @@ FileDataContainerCallbackStream::FileDataContainerCallbackStream(CallbackStream 
 	: FileDataContainerUnseekable()
 	, stream(s)
 	, eof_reached(false)
-{
-	return;
-}
-
-FileDataContainerCallbackStream::~FileDataContainerCallbackStream()
 {
 	return;
 }

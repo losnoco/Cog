@@ -55,38 +55,11 @@ static MPT_FORCEINLINE void Store64SSE(int32 *dst, __m128i src) { return _mm_sto
 static MPT_FORCEINLINE void Store64SSE(LR16 *dst, __m128i src) { return _mm_storel_epi64(reinterpret_cast<__m128i *>(dst), src); }
 #endif
 
-CReverbSettings::CReverbSettings()
-{
-	m_nReverbType = 0;
-	m_nReverbDepth = 8; // 50%
-}
-
 
 CReverb::CReverb()
 {
-	m_currentPreset = nullptr;
-
 	// Shared reverb state
 	InitMixBuffer(MixReverbBuffer, static_cast<uint32>(mpt::size(MixReverbBuffer)));
-	gnRvbROfsVol = 0;
-	gnRvbLOfsVol = 0;
-
-	gnReverbSend = 0;
-
-	gnReverbSamples = 0;
-	gnReverbDecaySamples = 0;
-
-	// Internal reverb state
-	g_bLastInPresent = 0;
-	g_bLastOutPresent = 0;
-	g_nLastRvbIn_xl = 0;
-	g_nLastRvbIn_xr = 0;
-	g_nLastRvbIn_yl = 0;
-	g_nLastRvbIn_yr = 0;
-	g_nLastRvbOut_xl = 0;
-	g_nLastRvbOut_xr = 0;
-	MemsetZero(gnDCRRvb_Y1);
-	MemsetZero(gnDCRRvb_X1);
 
 	// Reverb mix buffers
 	MemsetZero(g_RefDelay);
@@ -102,7 +75,7 @@ static int32 OnePoleLowPassCoef(int32 scale, float g, float F_c, float F_s)
 	g *= g;
 	double scale_over_1mg = scale / (1.0 - g);
 	double cosw = std::cos(2.0 * M_PI * F_c / F_s);
-	return Util::Round<int32>((1.0 - (std::sqrt((g + g) * (1.0 - cosw) - g * g * (1.0 - cosw * cosw)) + g * cosw)) * scale_over_1mg);
+	return mpt::saturate_round<int32>((1.0 - (std::sqrt((g + g) * (1.0 - cosw) - g * g * (1.0 - cosw * cosw)) + g * cosw)) * scale_over_1mg);
 }
 
 static float mBToLinear(int32 value_mB)
@@ -116,7 +89,7 @@ static float mBToLinear(int32 value_mB)
 
 static int32 mBToLinear(int32 scale, int32 value_mB)
 {
-	return Util::Round<int32>(mBToLinear(value_mB) * scale);
+	return mpt::saturate_round<int32>(mBToLinear(value_mB) * scale);
 }
 
 
@@ -137,46 +110,46 @@ struct SNDMIX_REVERB_PROPERTIES
 struct SNDMIX_RVBPRESET
 {
 	SNDMIX_REVERB_PROPERTIES Preset;
-	const char *name;
+	const MPT_UCHAR_TYPE *name;
 };
 
 
-static SNDMIX_RVBPRESET gRvbPresets[NUM_REVERBTYPES] =
+static const SNDMIX_RVBPRESET gRvbPresets[NUM_REVERBTYPES] =
 {
-	{{ SNDMIX_REVERB_PRESET_PLATE },			"GM Plate"},
-	{{ SNDMIX_REVERB_PRESET_SMALLROOM },		"GM Small Room"},
-	{{ SNDMIX_REVERB_PRESET_MEDIUMROOM },		"GM Medium Room"},
-	{{ SNDMIX_REVERB_PRESET_LARGEROOM },		"GM Large Room"},
-	{{ SNDMIX_REVERB_PRESET_MEDIUMHALL },		"GM Medium Hall"},
-	{{ SNDMIX_REVERB_PRESET_LARGEHALL },		"GM Large Hall"},
-	{{ SNDMIX_REVERB_PRESET_GENERIC },			"Generic"},
-	{{ SNDMIX_REVERB_PRESET_PADDEDCELL },		"Padded Cell"},
-	{{ SNDMIX_REVERB_PRESET_ROOM },				"Room"},
-	{{ SNDMIX_REVERB_PRESET_BATHROOM },			"Bathroom"},
-	{{ SNDMIX_REVERB_PRESET_LIVINGROOM },		"Living Room"},
-	{{ SNDMIX_REVERB_PRESET_STONEROOM },		"Stone Room"},
-	{{ SNDMIX_REVERB_PRESET_AUDITORIUM },		"Auditorium"},
-	{{ SNDMIX_REVERB_PRESET_CONCERTHALL },		"Concert Hall"},
-	{{ SNDMIX_REVERB_PRESET_CAVE },				"Cave"},
-	{{ SNDMIX_REVERB_PRESET_ARENA },			"Arena"},
-	{{ SNDMIX_REVERB_PRESET_HANGAR },			"Hangar"},
-	{{ SNDMIX_REVERB_PRESET_CARPETEDHALLWAY },	"Carpeted Hallway"},
-	{{ SNDMIX_REVERB_PRESET_HALLWAY },			"Hallway"},
-	{{ SNDMIX_REVERB_PRESET_STONECORRIDOR },	"Stone Corridor"},
-	{{ SNDMIX_REVERB_PRESET_ALLEY },			"Alley"},
-	{{ SNDMIX_REVERB_PRESET_FOREST },			"Forest"},
-	{{ SNDMIX_REVERB_PRESET_CITY },				"City"},
-	{{ SNDMIX_REVERB_PRESET_MOUNTAINS },		"Mountains"},
-	{{ SNDMIX_REVERB_PRESET_QUARRY },			"Quarry"},
-	{{ SNDMIX_REVERB_PRESET_PLAIN },			"Plain"},
-	{{ SNDMIX_REVERB_PRESET_PARKINGLOT },		"Parking Lot"},
-	{{ SNDMIX_REVERB_PRESET_SEWERPIPE },		"Sewer Pipe"},
-	{{ SNDMIX_REVERB_PRESET_UNDERWATER },		"Underwater"},
+	{{ SNDMIX_REVERB_PRESET_PLATE },           UL_("GM Plate")},
+	{{ SNDMIX_REVERB_PRESET_SMALLROOM },       UL_("GM Small Room")},
+	{{ SNDMIX_REVERB_PRESET_MEDIUMROOM },      UL_("GM Medium Room")},
+	{{ SNDMIX_REVERB_PRESET_LARGEROOM },       UL_("GM Large Room")},
+	{{ SNDMIX_REVERB_PRESET_MEDIUMHALL },      UL_("GM Medium Hall")},
+	{{ SNDMIX_REVERB_PRESET_LARGEHALL },       UL_("GM Large Hall")},
+	{{ SNDMIX_REVERB_PRESET_GENERIC },         UL_("Generic")},
+	{{ SNDMIX_REVERB_PRESET_PADDEDCELL },      UL_("Padded Cell")},
+	{{ SNDMIX_REVERB_PRESET_ROOM },            UL_("Room")},
+	{{ SNDMIX_REVERB_PRESET_BATHROOM },        UL_("Bathroom")},
+	{{ SNDMIX_REVERB_PRESET_LIVINGROOM },      UL_("Living Room")},
+	{{ SNDMIX_REVERB_PRESET_STONEROOM },       UL_("Stone Room")},
+	{{ SNDMIX_REVERB_PRESET_AUDITORIUM },      UL_("Auditorium")},
+	{{ SNDMIX_REVERB_PRESET_CONCERTHALL },     UL_("Concert Hall")},
+	{{ SNDMIX_REVERB_PRESET_CAVE },            UL_("Cave")},
+	{{ SNDMIX_REVERB_PRESET_ARENA },           UL_("Arena")},
+	{{ SNDMIX_REVERB_PRESET_HANGAR },          UL_("Hangar")},
+	{{ SNDMIX_REVERB_PRESET_CARPETEDHALLWAY }, UL_("Carpeted Hallway")},
+	{{ SNDMIX_REVERB_PRESET_HALLWAY },         UL_("Hallway")},
+	{{ SNDMIX_REVERB_PRESET_STONECORRIDOR },   UL_("Stone Corridor")},
+	{{ SNDMIX_REVERB_PRESET_ALLEY },           UL_("Alley")},
+	{{ SNDMIX_REVERB_PRESET_FOREST },          UL_("Forest")},
+	{{ SNDMIX_REVERB_PRESET_CITY },            UL_("City")},
+	{{ SNDMIX_REVERB_PRESET_MOUNTAINS },       UL_("Mountains")},
+	{{ SNDMIX_REVERB_PRESET_QUARRY },          UL_("Quarry")},
+	{{ SNDMIX_REVERB_PRESET_PLAIN },           UL_("Plain")},
+	{{ SNDMIX_REVERB_PRESET_PARKINGLOT },      UL_("Parking Lot")},
+	{{ SNDMIX_REVERB_PRESET_SEWERPIPE },       UL_("Sewer Pipe")},
+	{{ SNDMIX_REVERB_PRESET_UNDERWATER },      UL_("Underwater")},
 };
 
-const char *GetReverbPresetName(uint32 nPreset)
+mpt::ustring GetReverbPresetName(uint32 nPreset)
 {
-	return (nPreset < NUM_REVERBTYPES) ? gRvbPresets[nPreset].name : nullptr;
+	return (nPreset < NUM_REVERBTYPES) ? mpt::ustring(gRvbPresets[nPreset].name) : mpt::ustring();
 }
 
 //////////////////////////////////////////////////////////////////////////

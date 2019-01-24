@@ -8,9 +8,7 @@
  */
 
 static const char * const license =
-"The OpenMPT code is licensed under the BSD license." "\n"
-"" "\n"
-"Copyright (c) 2004-2018, OpenMPT contributors" "\n"
+"Copyright (c) 2004-2019, OpenMPT contributors" "\n"
 "Copyright (c) 1997-2003, Olivier Lapicque" "\n"
 "All rights reserved." "\n"
 "" "\n"
@@ -60,7 +58,15 @@ static const char * const license =
 #include <cstring>
 #include <ctime>
 
-#if defined(WIN32)
+#if defined(__DJGPP__)
+#include <conio.h>
+#include <fcntl.h>
+#include <io.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <termios.h>
+#include <unistd.h>
+#elif defined(WIN32)
 #include <conio.h>
 #include <fcntl.h>
 #include <io.h>
@@ -90,6 +96,7 @@ static const char * const license =
 #include "openmpt123_sndfile.hpp"
 #include "openmpt123_raw.hpp"
 #include "openmpt123_stdout.hpp"
+#include "openmpt123_allegro42.hpp"
 #include "openmpt123_portaudio.hpp"
 #include "openmpt123_pulseaudio.hpp"
 #include "openmpt123_sdl.hpp"
@@ -99,35 +106,27 @@ static const char * const license =
 namespace openmpt123 {
 
 struct silent_exit_exception : public std::exception {
-	silent_exit_exception() { }
 };
 
 struct show_license_exception : public std::exception {
-	show_license_exception() { }
 };
 
 struct show_credits_exception : public std::exception {
-	show_credits_exception() { }
 };
 
 struct show_man_version_exception : public std::exception {
-	show_man_version_exception() { }
 };
 
 struct show_man_help_exception : public std::exception {
-	show_man_help_exception() { }
 };
 
 struct show_short_version_number_exception : public std::exception {
-	show_short_version_number_exception() { }
 };
 
 struct show_version_number_exception : public std::exception {
-	show_version_number_exception() { }
 };
 
 struct show_long_version_number_exception : public std::exception {
-	show_long_version_number_exception() { }
 };
 
 bool IsTerminal( int fd ) {
@@ -205,27 +204,27 @@ public:
 			impl = 0;
 		}
 	}
-	virtual void write_metadata( std::map<std::string,std::string> metadata ) {
+	void write_metadata( std::map<std::string,std::string> metadata ) override {
 		impl->write_metadata( metadata );
 	}
-	virtual void write_updated_metadata( std::map<std::string,std::string> metadata ) {
+	void write_updated_metadata( std::map<std::string,std::string> metadata ) override {
 		impl->write_updated_metadata( metadata );
 	}
-	virtual void write( const std::vector<float*> buffers, std::size_t frames ) {
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		impl->write( buffers, frames );
 	}
-	virtual void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) {
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		impl->write( buffers, frames );
 	}
 };                                                                                                                
 
 static std::string ctls_to_string( const std::map<std::string, std::string> & ctls ) {
 	std::string result;
-	for ( std::map<std::string, std::string>::const_iterator it = ctls.begin(); it != ctls.end(); ++it ) {
+	for ( const auto & ctl : ctls ) {
 		if ( !result.empty() ) {
 			result += "; ";
 		}
-		result += it->first + "=" + it->second;
+		result += ctl.first + "=" + ctl.second;
 	}
 	return result;
 }
@@ -286,8 +285,8 @@ static std::ostream & operator << ( std::ostream & s, const commandlineflags & f
 	s << "Ctls: " << ctls_to_string( flags.ctls ) << std::endl;
 	s << std::endl;
 	s << "Files: " << std::endl;
-	for ( std::vector<std::string>::const_iterator filename = flags.filenames.begin(); filename != flags.filenames.end(); ++filename ) {
-		s << " " << *filename << std::endl;
+	for ( const auto & filename : flags.filenames ) {
+		s << " " << filename << std::endl;
 	}
 	s << std::endl;
 	return s;
@@ -442,7 +441,7 @@ static std::string seconds_to_string( double time ) {
 
 static void show_info( std::ostream & log, bool verbose ) {
 	log << "openmpt123" << " v" << OPENMPT123_VERSION_STRING << ", libopenmpt " << openmpt::string::get( "library_version" ) << " (" << "OpenMPT " << openmpt::string::get( "core_version" ) << ")" << std::endl;
-	log << "Copyright (c) 2013-2018 OpenMPT developers <https://lib.openmpt.org/>" << std::endl;
+	log << "Copyright (c) 2013-2019 OpenMPT developers <https://lib.openmpt.org/>" << std::endl;
 	if ( !verbose ) {
 		log << std::endl;
 		return;
@@ -469,13 +468,13 @@ static void show_info( std::ostream & log, bool verbose ) {
 			fields.push_back( field );
 		}
 		bool first = true;
-		for ( std::vector<std::string>::const_iterator it = fields.begin(); it != fields.end(); ++it ) {
+		for ( const auto & field : fields ) {
 			if ( first ) {
 				first = false;
 			} else {
 				log << ", ";
 			}
-			log << (*it);
+			log << field;
 		}
 	}
 	log << std::endl;
@@ -531,7 +530,7 @@ static void show_info( std::ostream & log, bool verbose ) {
 static void show_man_version( textout & log ) {
 	log << "openmpt123" << " v" << OPENMPT123_VERSION_STRING << std::endl;
 	log << std::endl;
-	log << "Copyright (c) 2013-2018 OpenMPT developers <https://lib.openmpt.org/>" << std::endl;
+	log << "Copyright (c) 2013-2019 OpenMPT developers <https://lib.openmpt.org/>" << std::endl;
 }
 
 static void show_short_version( textout & log ) {
@@ -666,13 +665,13 @@ static void show_help( textout & log, bool with_info = true, bool longhelp = fal
 			log << "    ";
 			std::vector<std::string> extensions = openmpt::get_supported_extensions();
 			bool first = true;
-			for ( std::vector<std::string>::iterator i = extensions.begin(); i != extensions.end(); ++i ) {
+			for ( const auto & extension : extensions ) {
 				if ( first ) {
 					first = false;
 				} else {
 					log << ", ";
 				}
-				log << *i;
+				log << extension;
 			}
 			log << std::endl;
 		}
@@ -741,15 +740,15 @@ void ctl_set( Tmod & mod, const std::string & ctl, const T & val ) {
 
 template < typename Tmod >
 static void apply_mod_settings( commandlineflags & flags, Tmod & mod ) {
-	flags.separation = std::max( flags.separation,  0 );
-	flags.filtertaps = std::max( flags.filtertaps,  1 );
-	flags.filtertaps = std::min( flags.filtertaps,  8 );
-	flags.ramping    = std::max( flags.ramping,    -1 );
-	flags.ramping    = std::min( flags.ramping,    10 );
-	flags.tempo      = std::max( flags.tempo,     -48 );
-	flags.tempo      = std::min( flags.tempo,      48 );
-	flags.pitch      = std::max( flags.pitch,     -48 );
-	flags.pitch      = std::min( flags.pitch,      48 );
+	flags.separation = std::max( flags.separation, std::int32_t(   0 ) );
+	flags.filtertaps = std::max( flags.filtertaps, std::int32_t(   1 ) );
+	flags.filtertaps = std::min( flags.filtertaps, std::int32_t(   8 ) );
+	flags.ramping    = std::max( flags.ramping,    std::int32_t(  -1 ) );
+	flags.ramping    = std::min( flags.ramping,    std::int32_t(  10 ) );
+	flags.tempo      = std::max( flags.tempo,      std::int32_t( -48 ) );
+	flags.tempo      = std::min( flags.tempo,      std::int32_t(  48 ) );
+	flags.pitch      = std::max( flags.pitch,      std::int32_t( -48 ) );
+	flags.pitch      = std::min( flags.pitch,      std::int32_t(  48 ) );
 	mod.set_render_param( openmpt::module::RENDER_MASTERGAIN_MILLIBEL, flags.gain );
 	mod.set_render_param( openmpt::module::RENDER_STEREOSEPARATION_PERCENT, flags.separation );
 	mod.set_render_param( openmpt::module::RENDER_INTERPOLATIONFILTER_LENGTH, flags.filtertaps );
@@ -1125,7 +1124,16 @@ void render_loop( commandlineflags & flags, Tmod & mod, double & duration, texto
 
 		if ( flags.mode == ModeUI ) {
 
-#if defined( WIN32 )
+#if defined( __DJGPP__ )
+
+			while ( kbhit() ) {
+				int c = getch();
+				if ( !handle_keypress( c, flags, mod, audio_stream ) ) {
+					return;
+				}
+			}
+
+#elif defined( WIN32 )
 
 			while ( _kbhit() ) {
 				int c = _getch();
@@ -1401,8 +1409,8 @@ template < typename Tmod >
 std::map<std::string,std::string> get_metadata( const Tmod & mod ) {
 	std::map<std::string,std::string> result;
 	const std::vector<std::string> metadata_keys = mod.get_metadata_keys();
-	for ( std::vector<std::string>::const_iterator key = metadata_keys.begin(); key != metadata_keys.end(); ++key ) {
-		result[ *key ] = mod.get_metadata( *key );
+	for ( const auto & key : metadata_keys ) {
+		result[ key ] = mod.get_metadata( key );
 	}
 	return result;
 }
@@ -1426,9 +1434,9 @@ public:
 
 static void show_fields( textout & log, const std::vector<field> & fields ) {
 	const std::size_t fw = 11;
-	for ( std::vector<field>::const_iterator it = fields.begin(); it != fields.end(); ++it ) {
-		std::string key = it->key;
-		std::string val = it->val;
+	for ( const auto & field :fields ) {
+		std::string key = field.key;
+		std::string val = field.val;
 		if ( key.length() < fw ) {
 			key += std::string( fw - key.length(), '.' );
 		}
@@ -1534,6 +1542,9 @@ void render_mod_file( commandlineflags & flags, const std::string & filename, st
 			set_field( fields, "Container" ).ostream() << mod.get_metadata( "container" ) << " (" << mod.get_metadata( "container_long" ) << ")";
 		}
 		set_field( fields, "Type" ).ostream() << mod.get_metadata( "type" ) << " (" << mod.get_metadata( "type_long" ) << ")";
+		if ( !mod.get_metadata( "originaltype" ).empty() ) {
+			set_field( fields, "Orig. Type" ).ostream() << mod.get_metadata( "originaltype" ) << " (" << mod.get_metadata( "originaltype_long" ) << ")";
+		}
 		if ( ( mod.get_num_subsongs() > 1 ) && ( flags.subsong != -1 ) ) {
 			set_field( fields, "Subsong" ).ostream() << flags.subsong;
 		}
@@ -1968,7 +1979,9 @@ static commandlineflags parse_openmpt123( const std::vector<std::string> & args,
 	commandlineflags flags;
 
 	bool files_only = false;
-	for ( std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i ) {
+	// cppcheck false-positive
+	// cppcheck-suppress StlMissingComparison
+	for ( auto i = args.begin(); i != args.end(); ++i ) {
 		if ( i == args.begin() ) {
 			// skip program name
 			continue;
@@ -2068,6 +2081,9 @@ static commandlineflags parse_openmpt123( const std::vector<std::string> & args,
 #if defined( WIN32 )
 					drivers << "    " << "waveout" << std::endl;
 #endif
+#if defined( MPT_WITH_ALLEGRO42 )
+					drivers << "    " << "allegro42" << std::endl;
+#endif
 					throw show_help_exception( drivers.str() );
 				} else if ( nextarg == "default" ) {
 					flags.driver = "";
@@ -2093,6 +2109,9 @@ static commandlineflags parse_openmpt123( const std::vector<std::string> & args,
 #endif
 #if defined( WIN32 )
 					devices << show_waveout_devices( log );
+#endif
+#if defined( MPT_WITH_ALLEGRO42 )
+					devices << show_allegro42_devices( log );
 #endif
 					throw show_help_exception( devices.str() );
 				} else if ( nextarg == "default" ) {
@@ -2354,8 +2373,8 @@ static int main( int argc, char * argv [] ) {
 	try {
 
 		bool stdin_can_ui = true;
-		for ( std::vector<std::string>::iterator filename = flags.filenames.begin(); filename != flags.filenames.end(); ++filename ) {
-			if ( *filename == "-" ) {
+		for ( const auto & filename : flags.filenames ) {
+			if ( filename == "-" ) {
 				stdin_can_ui = false;
 				break;
 			}
@@ -2406,8 +2425,8 @@ static int main( int argc, char * argv [] ) {
 
 		switch ( flags.mode ) {
 			case ModeProbe: {
-				for ( std::vector<std::string>::iterator filename = flags.filenames.begin(); filename != flags.filenames.end(); ++filename ) {
-					probe_file( flags, *filename, log );
+				for ( const auto & filename : flags.filenames ) {
+					probe_file( flags, filename, log );
 					flags.playlist_index++;
 				}
 			} break;
@@ -2450,6 +2469,11 @@ static int main( int argc, char * argv [] ) {
 					waveout_stream_raii waveout_stream( flags );
 					render_files( flags, log, waveout_stream, prng );
 #endif
+#if defined( MPT_WITH_ALLEGRO42 )
+				} else if ( flags.driver == "allegro42" || flags.driver.empty() ) {
+					allegro42_stream_raii allegro42_stream( flags, log );
+					render_files( flags, log, allegro42_stream, prng );
+#endif
 				} else {
 					if ( flags.driver.empty() ) {
 						throw exception( "openmpt123 is compiled without any audio driver" );
@@ -2459,10 +2483,10 @@ static int main( int argc, char * argv [] ) {
 				}
 			} break;
 			case ModeRender: {
-				for ( std::vector<std::string>::iterator filename = flags.filenames.begin(); filename != flags.filenames.end(); ++filename ) {
+				for ( const auto & filename : flags.filenames ) {
 					flags.apply_default_buffer_sizes();
-					file_audio_stream_raii file_audio_stream( flags, *filename + std::string(".") + flags.output_extension, log );
-					render_file( flags, *filename, log, file_audio_stream );
+					file_audio_stream_raii file_audio_stream( flags, filename + std::string(".") + flags.output_extension, log );
+					render_file( flags, filename, log, file_audio_stream );
 					flags.playlist_index++;
 				}
 			} break;
@@ -2473,6 +2497,12 @@ static int main( int argc, char * argv [] ) {
 	} catch ( args_error_exception & ) {
 		show_help( std_out );
 		return 1;
+#ifdef MPT_WITH_ALLEGRO42
+	} catch ( allegro42_exception & e ) {
+		std_err << "Allegro-4.2 error: " << e.what() << std::endl;
+		std_err.writeout();
+		return 1;
+#endif
 #ifdef MPT_WITH_PULSEAUDIO
 	} catch ( pulseaudio_exception & e ) {
 		std_err << "PulseAudio error: " << e.what() << std::endl;

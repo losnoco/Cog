@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #include "WindowedFIR.h"
 #include "Mixer.h"
@@ -59,12 +61,12 @@ public:
 	uint8 gbWFIRType;
 	bool emulateAmiga;
 public:
-	CResamplerSettings()
+	MPT_CONSTEXPR11_FUN CResamplerSettings()
+		: SrcMode(Resampling::Default())
+		, gdWFIRCutoff(0.97)
+		, gbWFIRType(WFIR_KAISER4T)
+		, emulateAmiga(false)
 	{
-		SrcMode = SRCMODE_POLYPHASE;
-		gdWFIRCutoff = 0.97;
-		gbWFIRType = WFIR_KAISER4T;
-		emulateAmiga = false;
 	}
 	bool operator == (const CResamplerSettings &cmp) const
 	{
@@ -125,8 +127,6 @@ public:
 	{
 		InitializeTablesFromScratch(false);
 	}
-	~CResampler() {}
-	bool IsHQ() const { return m_Settings.SrcMode >= SRCMODE_SPLINE && m_Settings.SrcMode < SRCMODE_DEFAULT; }
 private:
 	void InitFloatmixerTables();
 	void InitializeTablesFromScratch(bool force=false);

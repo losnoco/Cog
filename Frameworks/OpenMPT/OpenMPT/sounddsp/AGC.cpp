@@ -10,7 +10,6 @@
 
 
 #include "stdafx.h"
-#include "../soundlib/Sndfile.h"
 #include "../sounddsp/AGC.h"
 
 

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "../Snd_defs.h"
 #ifndef NO_PLUGINS
 #include "../../common/Endianness.h"
@@ -84,7 +86,7 @@ struct SNDMIXPLUGIN
 		{ return Info.szLibraryName; }
 
 	// Check if a plugin is loaded into this slot (also returns true if the plugin in this slot has not been found)
-	bool IsValidPlugin() const { return (Info.dwPluginId1 | Info.dwPluginId2) != 0; };
+	bool IsValidPlugin() const { return (Info.dwPluginId1 | Info.dwPluginId2) != 0; }
 
 	// Input routing getters
 	uint8 GetGain() const

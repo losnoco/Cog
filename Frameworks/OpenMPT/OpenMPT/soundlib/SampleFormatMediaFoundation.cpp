@@ -25,6 +25,7 @@
 #include "../common/ComponentManager.h"
 #if defined(MPT_WITH_MEDIAFOUNDATION)
 #include <windows.h>
+#include <atlbase.h>
 #include <mfapi.h>
 #include <mfidl.h>
 #include <mfreadwrite.h>
@@ -38,23 +39,11 @@ OPENMPT_NAMESPACE_BEGIN
 
 #if defined(MPT_WITH_MEDIAFOUNDATION)
 
-template <typename T>
-static void mptMFSafeRelease(T **ppT)
+struct PropVariant : PROPVARIANT
 {
-	if(*ppT)
-	{
-		(*ppT)->Release();
-		*ppT = NULL;
-	}
-}
-
-#define MPT_MF_CHECKED(x) MPT_DO { \
-	HRESULT hr = (x); \
-	if(!SUCCEEDED(hr)) \
-	{ \
-		goto fail; \
-	} \
-} MPT_WHILE_0
+	PropVariant() { PropVariantInit(this); }
+	~PropVariant() { PropVariantClear(this); }
+};
 
 // Implementing IMFByteStream is apparently not enough to stream raw bytes
 // data to MediaFoundation.
@@ -77,36 +66,44 @@ static FileTags ReadMFMetadata(IMFMediaSource *mediaSource)
 
 	FileTags tags;
 
-	IMFPresentationDescriptor *presentationDescriptor = NULL;
+	CComPtr<IMFPresentationDescriptor> presentationDescriptor;
+	if(!SUCCEEDED(mediaSource->CreatePresentationDescriptor(&presentationDescriptor)))
+	{
+		return tags;
+	}
 	DWORD streams = 0;
-	IMFMetadataProvider *metadataProvider = NULL;
-	IMFMetadata *metadata = NULL;
-	PROPVARIANT varPropNames;
-	PropVariantInit(&varPropNames);
+	if(!SUCCEEDED(presentationDescriptor->GetStreamDescriptorCount(&streams)))
+	{
+		return tags;
+	}
+	CComPtr<IMFMetadataProvider> metadataProvider;
+	if(!SUCCEEDED(MFGetService(mediaSource, MF_METADATA_PROVIDER_SERVICE, IID_IMFMetadataProvider, (void**)&metadataProvider)))
+	{
+		return tags;
+	}
+	CComPtr<IMFMetadata> metadata;
+	if(!SUCCEEDED(metadataProvider->GetMFMetadata(presentationDescriptor, 0, 0, &metadata)))
+	{
+		return tags;
+	}
 
-	MPT_MF_CHECKED(mediaSource->CreatePresentationDescriptor(&presentationDescriptor));
-	MPT_MF_CHECKED(presentationDescriptor->GetStreamDescriptorCount(&streams));
-	MPT_MF_CHECKED(MFGetService(mediaSource, MF_METADATA_PROVIDER_SERVICE, IID_IMFMetadataProvider, (void**)&metadataProvider));
-	MPT_MF_CHECKED(metadataProvider->GetMFMetadata(presentationDescriptor, 0, 0, &metadata));
-
-	MPT_MF_CHECKED(metadata->GetAllPropertyNames(&varPropNames));
+	PropVariant varPropNames;
+	if(!SUCCEEDED(metadata->GetAllPropertyNames(&varPropNames)))
+	{
+		return tags;
+	}
 	for(DWORD propIndex = 0; propIndex < varPropNames.calpwstr.cElems; ++propIndex)
 	{
-
-		PROPVARIANT propVal;
-		PropVariantInit(&propVal);
-
+		PropVariant propVal;
 		LPWSTR propName = varPropNames.calpwstr.pElems[propIndex];
 		if(S_OK != metadata->GetProperty(propName, &propVal))
 		{
-			PropVariantClear(&propVal);
 			break;
 		}
-
 		std::wstring stringVal;
-		std::vector<WCHAR> wcharVal(256);
 #if !MPT_OS_WINDOWS_WINRT
 		// WTF, no PropVariantToString() in WinRT 
+		std::vector<WCHAR> wcharVal(256);
 		for(;;)
 		{
 			HRESULT hrToString = PropVariantToString(propVal, wcharVal.data(), mpt::saturate_cast<UINT>(wcharVal.size()));
@@ -116,16 +113,13 @@ static FileTags ReadMFMetadata(IMFMediaSource *mediaSource)
 				break;
 			} else if(hrToString == ERROR_INSUFFICIENT_BUFFER)
 			{
-				wcharVal.resize(wcharVal.size() * 2);
+				wcharVal.resize(Util::ExponentialGrow(wcharVal.size()));
 			} else
 			{
 				break;
 			}
 		}
 #endif // !MPT_OS_WINDOWS_WINRT
-
-		PropVariantClear(&propVal);
-
 		if(stringVal.length() > 0)
 		{
 			if(propName == std::wstring(L"Author")) tags.artist = mpt::ToUnicode(stringVal);
@@ -136,13 +130,6 @@ static FileTags ReadMFMetadata(IMFMediaSource *mediaSource)
 			if(propName == std::wstring(L"WM/Genre")) tags.genre = mpt::ToUnicode(stringVal);
 		}
 	}
-
-fail:
-
-	PropVariantClear(&varPropNames);
-	mptMFSafeRelease(&metadata);
-	mptMFSafeRelease(&metadataProvider);
-	mptMFSafeRelease(&presentationDescriptor);
 
 	return tags;
 
@@ -158,7 +145,7 @@ public:
 	{
 		return;
 	}
-	virtual bool DoInitialize()
+	bool DoInitialize() override
 	{
 		if(!mpt::Windows::Version::Current().IsAtLeast(mpt::Windows::Version::Win7))
 		{
@@ -166,10 +153,10 @@ public:
 		}
 #if !MPT_OS_WINDOWS_WINRT
 		if(!(true
-			&& AddLibrary("mf", mpt::LibraryPath::System(MPT_PATHSTRING("mf")))
-			&& AddLibrary("mfplat", mpt::LibraryPath::System(MPT_PATHSTRING("mfplat")))
-			&& AddLibrary("mfreadwrite", mpt::LibraryPath::System(MPT_PATHSTRING("mfreadwrite")))
-			&& AddLibrary("propsys", mpt::LibraryPath::System(MPT_PATHSTRING("propsys")))
+			&& AddLibrary("mf", mpt::LibraryPath::System(P_("mf")))
+			&& AddLibrary("mfplat", mpt::LibraryPath::System(P_("mfplat")))
+			&& AddLibrary("mfreadwrite", mpt::LibraryPath::System(P_("mfreadwrite")))
+			&& AddLibrary("propsys", mpt::LibraryPath::System(P_("propsys")))
 			))
 		{
 			return false;
@@ -263,11 +250,11 @@ std::vector<FileType> CSoundFile::GetMediaFoundationFileTypes()
 			std::wstring guid = std::wstring(valueNameBuf);
 
 			mpt::ustring description = mpt::ToUnicode(std::wstring(reinterpret_cast<WCHAR*>(valueData)));
-			description = mpt::String::Replace(description, MPT_USTRING("Byte Stream Handler"), MPT_USTRING("Files"));
-			description = mpt::String::Replace(description, MPT_USTRING("ByteStreamHandler"), MPT_USTRING("Files"));
+			description = mpt::String::Replace(description, U_("Byte Stream Handler"), U_("Files"));
+			description = mpt::String::Replace(description, U_("ByteStreamHandler"), U_("Files"));
 
 			guidMap[guid]
-				.ShortName(MPT_USTRING("mf"))
+				.ShortName(U_("mf"))
 				.Description(description)
 				;
 
@@ -322,60 +309,70 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 	file.Rewind();
 	// When using MF to decode MP3 samples in MO3 files, we need the mp3 file extension
 	// for some of them or otherwise MF refuses to recognize them.
-	mpt::PathString tmpfileExtension = (mo3Decode ? MPT_PATHSTRING("mp3") : MPT_PATHSTRING("tmp"));
+	mpt::PathString tmpfileExtension = (mo3Decode ? P_("mp3") : P_("tmp"));
 	OnDiskFileWrapper diskfile(file, tmpfileExtension);
 	if(!diskfile.IsValid())
 	{
 		return false;
 	}
 
-	bool result = false;
+	#define MPT_MF_CHECKED(x) MPT_DO { \
+		HRESULT hr = (x); \
+		if(!SUCCEEDED(hr)) \
+		{ \
+			return false; \
+		} \
+	} MPT_WHILE_0
 
-	std::vector<char> rawData;
-	FileTags tags;
-	std::string sampleName;
-
-	IMFSourceResolver *sourceResolver = NULL;
-	MF_OBJECT_TYPE objectType = MF_OBJECT_INVALID;
-	IUnknown *unknownMediaSource = NULL;
-	IMFMediaSource *mediaSource = NULL;
-	IMFSourceReader *sourceReader = NULL;
-	IMFMediaType *uncompressedAudioType = NULL;
-	IMFMediaType *partialType = NULL;
-	UINT32 numChannels = 0;
-	UINT32 samplesPerSecond = 0;
-	UINT32 bitsPerSample = 0;
-
-	IMFSample *mfSample = NULL;
-	DWORD mfSampleFlags = 0;
-	IMFMediaBuffer *buffer = NULL;
-
-	SmpLength length = 0;
-
+	CComPtr<IMFSourceResolver> sourceResolver;
 	MPT_MF_CHECKED(MFCreateSourceResolver(&sourceResolver));
-	MPT_MF_CHECKED(sourceResolver->CreateObjectFromURL(diskfile.GetFilename().AsNative().c_str(), MF_RESOLUTION_MEDIASOURCE | MF_RESOLUTION_CONTENT_DOES_NOT_HAVE_TO_MATCH_EXTENSION_OR_MIME_TYPE | MF_RESOLUTION_READ, NULL, &objectType, &unknownMediaSource));
-	if(objectType != MF_OBJECT_MEDIASOURCE) goto fail;
+	MF_OBJECT_TYPE objectType = MF_OBJECT_INVALID;
+	CComPtr<IUnknown> unknownMediaSource;
+	MPT_MF_CHECKED(sourceResolver->CreateObjectFromURL(diskfile.GetFilename().ToWide().c_str(), MF_RESOLUTION_MEDIASOURCE | MF_RESOLUTION_CONTENT_DOES_NOT_HAVE_TO_MATCH_EXTENSION_OR_MIME_TYPE | MF_RESOLUTION_READ, NULL, &objectType, &unknownMediaSource));
+	if(objectType != MF_OBJECT_MEDIASOURCE)
+	{
+		return false;
+	}
+	CComPtr<IMFMediaSource> mediaSource;
 	MPT_MF_CHECKED(unknownMediaSource->QueryInterface(&mediaSource));
 
-	tags = ReadMFMetadata(mediaSource);
+	FileTags tags = ReadMFMetadata(mediaSource);
 
+	CComPtr<IMFSourceReader> sourceReader;
 	MPT_MF_CHECKED(MFCreateSourceReaderFromMediaSource(mediaSource, NULL, &sourceReader));
+	CComPtr<IMFMediaType> partialType;
 	MPT_MF_CHECKED(MFCreateMediaType(&partialType));
 	MPT_MF_CHECKED(partialType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio));
 	MPT_MF_CHECKED(partialType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM));
 	MPT_MF_CHECKED(sourceReader->SetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, NULL, partialType));
+	CComPtr<IMFMediaType> uncompressedAudioType;
 	MPT_MF_CHECKED(sourceReader->GetCurrentMediaType((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, &uncompressedAudioType));
 	MPT_MF_CHECKED(sourceReader->SetStreamSelection((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, TRUE));
+	UINT32 numChannels = 0;
 	MPT_MF_CHECKED(uncompressedAudioType->GetUINT32(MF_MT_AUDIO_NUM_CHANNELS, &numChannels));
+	UINT32 samplesPerSecond = 0;
 	MPT_MF_CHECKED(uncompressedAudioType->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, &samplesPerSecond));
+	UINT32 bitsPerSample = 0;
 	MPT_MF_CHECKED(uncompressedAudioType->GetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, &bitsPerSample));
-	if(numChannels <= 0 || numChannels > 2) goto fail;
-	if(samplesPerSecond <= 0) goto fail;
-	if(bitsPerSample != 8 && bitsPerSample != 16 && bitsPerSample != 24 && bitsPerSample != 32) goto fail;
+	if(numChannels <= 0 || numChannels > 2)
+	{
+		return false;
+	}
+	if(samplesPerSecond <= 0)
+	{
+		return false;
+	}
+	if(bitsPerSample != 8 && bitsPerSample != 16 && bitsPerSample != 24 && bitsPerSample != 32)
+	{
+		return false;
+	}
 
+	std::vector<char> rawData;
 	for(;;)
 	{
-		mfSampleFlags = 0;
+		CComPtr<IMFSample> mfSample;
+		DWORD mfSampleFlags = 0;
+		CComPtr<IMFMediaBuffer> buffer;
 		MPT_MF_CHECKED(sourceReader->ReadSample((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, NULL, &mfSampleFlags, NULL, &mfSample));
 		if(mfSampleFlags & MF_SOURCE_READERF_CURRENTMEDIATYPECHANGED)
 		{
@@ -397,23 +394,16 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 				break;
 			}
 		}
-		mptMFSafeRelease(&buffer);
-		mptMFSafeRelease(&mfSample);
 	}
 
-	mptMFSafeRelease(&uncompressedAudioType);
-	mptMFSafeRelease(&partialType);
-	mptMFSafeRelease(&sourceReader);
-
-	sampleName = mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags));
+	std::string sampleName = mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags));
 
 	if(rawData.size() / numChannels / (bitsPerSample / 8) > MAX_SAMPLE_LENGTH)
 	{
-		result = false;
-		goto fail;
+		return false;
 	}
 
-	length = static_cast<SmpLength>(rawData.size() / numChannels / (bitsPerSample/8));
+	SmpLength length = mpt::saturate_cast<SmpLength>(rawData.size() / numChannels / (bitsPerSample/8));
 
 	DestroySampleThreadsafe(sample);
 	if(!mo3Decode)
@@ -426,10 +416,9 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 	Samples[sample].uFlags.set(CHN_16BIT, bitsPerSample >= 16);
 	Samples[sample].uFlags.set(CHN_STEREO, numChannels == 2);
 	Samples[sample].AllocateSample();
-	if(Samples[sample].pSample == nullptr)
+	if(!Samples[sample].HasSampleData())
 	{
-		result = false;
-		goto fail;
+		return false;
 	}
 
 	if(bitsPerSample == 24)
@@ -453,10 +442,10 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 	} else
 	{
 		// just copy
-		std::copy(rawData.data(), rawData.data() + rawData.size(), mpt::void_cast<char*>(Samples[sample].pSample));
+		std::copy(rawData.data(), rawData.data() + rawData.size(), mpt::byte_cast<char*>(Samples[sample].sampleb()));
 	}
 
-	result = true;
+	#undef MPT_MF_CHECKED
 
 	if(!mo3Decode)
 	{
@@ -464,18 +453,7 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 		Samples[sample].PrecomputeLoops(*this, false);
 	}
 
-fail:
-
-	mptMFSafeRelease(&buffer);
-	mptMFSafeRelease(&mfSample);
-	mptMFSafeRelease(&uncompressedAudioType);
-	mptMFSafeRelease(&partialType);
-	mptMFSafeRelease(&sourceReader);
-	mptMFSafeRelease(&mediaSource);
-	mptMFSafeRelease(&unknownMediaSource);
-	mptMFSafeRelease(&sourceResolver);
-
-	return result;
+	return true;
 
 #endif
 

@@ -174,14 +174,14 @@ public:
 		sf_close( sndfile );
 		sndfile = 0;
 	}
-	void write_metadata( std::map<std::string,std::string> metadata ) {
+	void write_metadata( std::map<std::string,std::string> metadata ) override {
 		write_metadata_field( SF_STR_TITLE, metadata[ "title" ] );
 		write_metadata_field( SF_STR_ARTIST, metadata[ "artist" ] );
 		write_metadata_field( SF_STR_DATE, metadata[ "date" ] );
 		write_metadata_field( SF_STR_COMMENT, metadata[ "message" ] );
 		write_metadata_field( SF_STR_SOFTWARE, append_software_tag( metadata[ "tracker" ] ) );
 	}
-	void write( const std::vector<float*> buffers, std::size_t frames ) {
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		interleaved_float_buffer.clear();
 		for ( std::size_t frame = 0; frame < frames; frame++ ) {
 			for ( std::size_t channel = 0; channel < buffers.size(); channel++ ) {
@@ -190,7 +190,7 @@ public:
 		}
 		sf_writef_float( sndfile, interleaved_float_buffer.data(), frames );
 	}
-	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) {
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		interleaved_int_buffer.clear();
 		for ( std::size_t frame = 0; frame < frames; frame++ ) {
 			for ( std::size_t channel = 0; channel < buffers.size(); channel++ ) {

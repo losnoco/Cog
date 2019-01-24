@@ -26,12 +26,20 @@ struct IT16BitParams
 	typedef int16 sample_t;
 	static const int16 lowerTab[];
 	static const int16 upperTab[];
-	static const int8 fetchA = 4, lowerB = -8, upperB = 7, defWidth = 17;
-	static const int mask = 0xFFFF;
+	static const int8 fetchA;
+	static const int8 lowerB;
+	static const int8 upperB;
+	static const int8 defWidth;
+	static const int mask;
 };
 
 const int16 IT16BitParams::lowerTab[] = { 0, -1, -3, -7, -15, -31, -56, -120, -248, -504, -1016, -2040, -4088, -8184, -16376, -32760, -32768 };
 const int16 IT16BitParams::upperTab[] = { 0, 1, 3, 7, 15, 31, 55, 119, 247, 503, 1015, 2039, 4087, 8183, 16375, 32759, 32767 };
+const int8 IT16BitParams::fetchA = 4;
+const int8 IT16BitParams::lowerB = -8;
+const int8 IT16BitParams::upperB = 7;
+const int8 IT16BitParams::defWidth = 17;
+const int IT16BitParams::mask = 0xFFFF;
 
 // Algorithm parameters for 8-Bit samples
 struct IT8BitParams
@@ -39,12 +47,20 @@ struct IT8BitParams
 	typedef int8 sample_t;
 	static const int8 lowerTab[];
 	static const int8 upperTab[];
-	static const int8 fetchA = 3, lowerB = -4, upperB = 3, defWidth = 9;
-	static const int mask = 0xFF;
+	static const int8 fetchA;
+	static const int8 lowerB;
+	static const int8 upperB;
+	static const int8 defWidth;
+	static const int mask;
 };
 
 const int8 IT8BitParams::lowerTab[] = { 0, -1, -3, -7, -15, -31, -60, -124, -128 };
 const int8 IT8BitParams::upperTab[] = { 0, 1, 3, 7, 15, 31, 59, 123, 127 };
+const int8 IT8BitParams::fetchA = 3;
+const int8 IT8BitParams::lowerB = -4;
+const int8 IT8BitParams::upperB = 3;
+const int8 IT8BitParams::defWidth = 9;
+const int IT8BitParams::mask = 0xFF;
 
 static const int8 ITWidthChangeSize[] = { 4, 5, 6, 7, 8, 9, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
 
@@ -80,9 +96,9 @@ ITCompression::ITCompression(const ModSample &sample, bool it215, std::ostream *
 			byteVal = 0;
 
 			if(mptSample.GetElementarySampleSize() > 1)
-				Compress<IT16BitParams>(sample.pSample16 + chn, offset, remain);
+				Compress<IT16BitParams>(sample.sample16() + chn, offset, remain);
 			else
-				Compress<IT8BitParams>(sample.pSample8 + chn, offset, remain);
+				Compress<IT8BitParams>(sample.sample8() + chn, offset, remain);
 
 			if(file) mpt::IO::WriteRaw(*file, packedData, packedLength);
 			packedTotalLength += packedLength;
@@ -137,17 +153,15 @@ void ITCompression::Compress(const void *data, SmpLength offset, SmpLength actua
 		Deltafy<typename Properties::sample_t>();
 	}
 
-	const int8 defWidth = Properties::defWidth; // gcc static const member reference workaround
-
 	// Initialise bit width table with initial values
-	bwt.assign(baseLength, defWidth);
+	bwt.assign(baseLength, Properties::defWidth);
 
 	// Recurse!
-	SquishRecurse<Properties>(defWidth, defWidth, defWidth, defWidth - 2, 0, baseLength);
+	SquishRecurse<Properties>(Properties::defWidth, Properties::defWidth, Properties::defWidth, Properties::defWidth - 2, 0, baseLength);
 	
 	// Write those bits!
 	const typename Properties::sample_t *p = static_cast<typename Properties::sample_t *>(sampleData);
-	int8 width = defWidth;
+	int8 width = Properties::defWidth;
 	for(size_t i = 0; i < baseLength; i++)
 	{
 		if(bwt[i] != width)
@@ -158,7 +172,7 @@ void ITCompression::Compress(const void *data, SmpLength offset, SmpLength actua
 				MPT_ASSERT(width);
 				WriteBits(width, (1 << (width - 1)));
 				WriteBits(Properties::fetchA, ConvertWidth(width, bwt[i]));
-			} else if(width < defWidth)
+			} else if(width < Properties::defWidth)
 			{
 				// Mode B: 7 to 8 / 16 bits
 				int xv = (1 << (width - 1)) + Properties::lowerB + ConvertWidth(width, bwt[i]);
@@ -319,21 +333,25 @@ ITDecompression::ITDecompression(FileReader &file, ModSample &sample, bool it215
 		writtenSamples = writePos = 0;
 		while(writtenSamples < sample.nLength && file.CanRead(sizeof(uint16)))
 		{
-			dataSize = file.ReadUint16LE();
-			if(!dataSize)
+			uint16 compressedSize = file.ReadUint16LE();
+			if(!compressedSize)
 				continue;	// Malformed sample?
-			file.ReadRaw(chunk, dataSize);
+			bitFile = file.ReadChunk(compressedSize);
 
 			// Initialise bit reader
-			dataPos = 0;
-			bitPos = 0;
-			remBits = 8;
 			mem1 = mem2 = 0;
 
-			if(mptSample.GetElementarySampleSize() > 1)
-				Uncompress<IT16BitParams>(mptSample.pSample16 + chn);
-			else
-				Uncompress<IT8BitParams>(mptSample.pSample8 + chn);
+			try
+			{
+				if(mptSample.GetElementarySampleSize() > 1)
+					Uncompress<IT16BitParams>(mptSample.sample16() + chn);
+				else
+					Uncompress<IT8BitParams>(mptSample.sample8() + chn);
+			} catch(const BitReader::eof &)
+			{
+				// Data is not sufficient to decode the block
+				//AddToLog(LogWarning, "Truncated IT sample block");
+			}
 		}
 	}
 }
@@ -344,27 +362,25 @@ void ITDecompression::Uncompress(typename Properties::sample_t *target)
 {
 	curLength = std::min(mptSample.nLength - writtenSamples, SmpLength(ITCompression::blockSize / sizeof(typename Properties::sample_t)));
 
-	const int defWidth = Properties::defWidth; // gcc static const member reference workaround
-
-	int width = defWidth;
+	int width = Properties::defWidth;
 	while(curLength > 0)
 	{
-		if(width < 1 || width > defWidth || dataPos >= dataSize)
+		if(width > Properties::defWidth)
 		{
 			// Error!
 			return;
 		}
 
-		int v = ReadBits(width);
+		int v = bitFile.ReadBits(width);
 		const int topBit = (1 << (width - 1));
 		if(width <= 6)
 		{
 			// Mode A: 1 to 6 bits
 			if(v == topBit)
-				ChangeWidth(width, ReadBits(Properties::fetchA));
+				ChangeWidth(width, bitFile.ReadBits(Properties::fetchA));
 			else
 				Write<Properties>(v, topBit, target);
-		} else if(width < defWidth)
+		} else if(width < Properties::defWidth)
 		{
 			// Mode B: 7 to 8 / 16 bits
 			if(v >= topBit + Properties::lowerB && v <= topBit + Properties::upperB)
@@ -383,46 +399,12 @@ void ITDecompression::Uncompress(typename Properties::sample_t *target)
 }
 
 
-#if MPT_MSVC_AT_LEAST(2017,3) && MPT_MSVC_BEFORE(2017,5)
-// Work-around compiler crash in VS2017.3 / cl 19.11.25506
-// https://developercommunity.visualstudio.com/content/problem/96687/c1063-and-c1001-while-compiling-trivial-code-in-vs.html
-MPT_NOINLINE
-#endif
 void ITDecompression::ChangeWidth(int &curWidth, int width)
 {
 	width++;
 	if(width >= curWidth)
 		width++;
 	curWidth = width;
-}
-
-
-#if MPT_MSVC_AT_LEAST(2017,3) && MPT_MSVC_BEFORE(2017,5)
-// Work-around compiler crash in VS2017.3 / cl 19.11.25506
-// https://developercommunity.visualstudio.com/content/problem/96687/c1063-and-c1001-while-compiling-trivial-code-in-vs.html
-MPT_NOINLINE
-#endif
-int ITDecompression::ReadBits(int width)
-{
-	int v = 0, vPos = 0, vMask = (1 << width) - 1;
-	while(width >= remBits && dataPos < dataSize)
-	{
-		v |= (chunk[dataPos] >> bitPos) << vPos;
-		vPos += remBits;
-		width -= remBits;
-		dataPos++;
-		remBits = 8;
-		bitPos = 0;
-	}
-
-	if(width > 0 && dataPos < dataSize)
-	{
-		v |= (chunk[dataPos] >> bitPos) << vPos;
-		v &= vMask;
-		remBits -= width;
-		bitPos += width;
-	}
-	return v;
 }
 
 

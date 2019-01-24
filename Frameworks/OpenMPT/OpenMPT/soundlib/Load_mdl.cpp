@@ -12,8 +12,6 @@
 #include "Loaders.h"
 #include "ChunkReader.h"
 
-#include <stdexcept>
-
 OPENMPT_NAMESPACE_BEGIN
 
 // MDL file header
@@ -32,17 +30,17 @@ struct MDLChunk
 	// 16-Bit chunk identifiers
 	enum ChunkIdentifiers
 	{
-		idInfo			= MAGIC2LE('I','N'),
-		idMessage		= MAGIC2LE('M','E'),
-		idPats			= MAGIC2LE('P','A'),
-		idPatNames		= MAGIC2LE('P','N'),
-		idTracks		= MAGIC2LE('T','R'),
-		idInstrs		= MAGIC2LE('I','I'),
-		idVolEnvs		= MAGIC2LE('V','E'),
-		idPanEnvs		= MAGIC2LE('P','E'),
-		idFreqEnvs		= MAGIC2LE('F','E'),
-		idSampleInfo	= MAGIC2LE('I','S'),
-		ifSampleData	= MAGIC2LE('S','A'),
+		idInfo			= MagicLE("IN"),
+		idMessage		= MagicLE("ME"),
+		idPats			= MagicLE("PA"),
+		idPatNames		= MagicLE("PN"),
+		idTracks		= MagicLE("TR"),
+		idInstrs		= MagicLE("II"),
+		idVolEnvs		= MagicLE("VE"),
+		idPanEnvs		= MagicLE("PE"),
+		idFreqEnvs		= MagicLE("FE"),
+		idSampleInfo	= MagicLE("IS"),
+		ifSampleData	= MagicLE("SA"),
 	};
 
 	uint16le id;
@@ -96,17 +94,6 @@ struct MDLSampleHeader
 };
 
 MPT_BINARY_STRUCT(MDLSampleHeader, 14)
-
-
-// Part of the sample header that's common between v0 and v1.
-struct MDLSampleInfoCommon
-{
-	uint8le sampleIndex;
-	char    name[32];
-	char    filename[8];
-};
-
-MPT_BINARY_STRUCT(MDLSampleInfoCommon, 41)
 
 
 struct MDLEnvelope
@@ -167,7 +154,7 @@ enum
 };
 
 
-static const uint8 MDLVibratoType[] = { VIB_SINE, VIB_RAMP_DOWN, VIB_SQUARE, VIB_SINE };
+static const VibratoType MDLVibratoType[] = { VIB_SINE, VIB_RAMP_DOWN, VIB_SQUARE, VIB_SINE };
 
 static const ModCommand::COMMAND MDLEffTrans[] =
 {
@@ -479,11 +466,14 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
 	m_playBehaviour.reset(kITSCxStopsSample);	// Gate effect in underbeat.mdl
 
-	m_madeWithTracker = MPT_USTRING("Digitrakker ") + (
-		(fileHeader.version == 0x11) ? MPT_USTRING("3") // really could be 2.99b - close enough
-		: (fileHeader.version == 0x10) ? MPT_USTRING("2.3")
-		: (fileHeader.version == 0x00) ? MPT_USTRING("2.0 - 2.2b") // there was no 1.x release
-		: MPT_USTRING(""));
+	m_modFormat.formatName = U_("Digitrakker");
+	m_modFormat.type = U_("mdl");
+	m_modFormat.madeWithTracker = U_("Digitrakker ") + (
+		(fileHeader.version == 0x11) ? U_("3") // really could be 2.99b - close enough
+		: (fileHeader.version == 0x10) ? U_("2.3")
+		: (fileHeader.version == 0x00) ? U_("2.0 - 2.2b") // there was no 1.x release
+		: U_(""));
+	m_modFormat.charset = mpt::CharsetCP437;
 
 	mpt::String::Read<mpt::String::spacePadded>(m_songName, info.title);
 	{
@@ -526,24 +516,18 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 		uint8 numSamples = chunk.ReadUint8();
 		for(uint8 smp = 0; smp < numSamples; smp++)
 		{
-			MDLSampleInfoCommon header;
-			if(!chunk.ReadStruct(header) || header.sampleIndex == 0)
-				continue;
-			#if 1
-				STATIC_ASSERT(MPT_MAX_UNSIGNED_VALUE(header.sampleIndex) < MAX_SAMPLES);
-			#else
-				MPT_MAYBE_CONSTANT_IF(header.sampleIndex >= MAX_SAMPLES)
-					continue;
-			#endif
+			const SAMPLEINDEX sampleIndex = chunk.ReadUint8();
+			if(sampleIndex == 0 || sampleIndex >= MAX_SAMPLES || !chunk.CanRead(32 + 8 + 2 + 12 + 2))
+				break;
 
-			if(header.sampleIndex > GetNumSamples())
-				m_nSamples = header.sampleIndex;
+			if(sampleIndex > GetNumSamples())
+				m_nSamples = sampleIndex;
 
-			ModSample &sample = Samples[header.sampleIndex];
+			ModSample &sample = Samples[sampleIndex];
 			sample.Initialize();
 
-			mpt::String::Read<mpt::String::spacePadded>(m_szNames[header.sampleIndex], header.name);
-			mpt::String::Read<mpt::String::spacePadded>(sample.filename, header.filename);
+			chunk.ReadString<mpt::String::spacePadded>(m_szNames[sampleIndex], 32);
+			chunk.ReadString<mpt::String::spacePadded>(sample.filename, 8);
 
 			uint32 c4speed;
 			if(fileHeader.version < 0x10)
@@ -559,10 +543,9 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 				sample.uFlags.set(CHN_LOOP);
 				sample.nLoopEnd += sample.nLoopStart;
 			}
+			uint8 volume = chunk.ReadUint8();
 			if(fileHeader.version < 0x10)
-				sample.nVolume = chunk.ReadUint8();
-			else
-				chunk.Skip(1);
+				sample.nVolume = volume;
 			uint8 flags = chunk.ReadUint8();
 
 			if(flags & 0x01)
@@ -619,7 +602,14 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 				if(sampleHeader.smpNum == 0)
 					continue;
 				#if 1
-					STATIC_ASSERT(MPT_MAX_UNSIGNED_VALUE(sampleHeader.smpNum) < MAX_SAMPLES);
+					#if MPT_GCC_BEFORE(6,1,0)
+					#pragma GCC diagnostic push
+					#pragma GCC diagnostic ignored "-Wtype-limits"
+					#endif
+					STATIC_ASSERT((mpt::limits<decltype(sampleHeader.smpNum)>::max)() < MAX_SAMPLES);
+					#if MPT_GCC_BEFORE(6,1,0)
+					#pragma GCC diagnostic pop
+					#endif
 				#else
 					MPT_MAYBE_CONSTANT_IF(sampleHeader.smpNum >= MAX_SAMPLES)
 						continue;
@@ -821,32 +811,6 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	return true;
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-// MDL Sample Unpacking
-
-// MDL Huffman ReadBits compression
-uint8 MDLReadBits(uint32 &bitbuf, int32 &bitnum, const uint8 *(&ibuf), size_t &bytesLeft, int8 n)
-{
-	if(bitnum < n)
-	{
-		if(bytesLeft)
-		{
-			bitbuf |= (((uint32)(*ibuf++)) << bitnum);
-			bitnum += 8;
-			bytesLeft--;
-		} else
-		{
-			throw std::range_error("Truncated MDL sample block");
-		}
-	}
-
-	uint8 v = static_cast<uint8>(bitbuf & ((1 << n) - 1));
-	bitbuf >>= n;
-	bitnum -= n;
-	return v;
 }
 
 

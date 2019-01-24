@@ -22,11 +22,14 @@
 #endif
 
 
+//#define J2B_LOG
+
+
 OPENMPT_NAMESPACE_BEGIN
 
 
 // First off, a nice vibrato translation LUT.
-static const uint8 j2bAutoVibratoTrans[] = 
+static const VibratoType j2bAutoVibratoTrans[] = 
 {
 	VIB_SINE, VIB_SQUARE, VIB_RAMP_UP, VIB_RAMP_DOWN, VIB_RANDOM,
 };
@@ -37,8 +40,10 @@ struct J2BFileHeader
 {
 	// Magic Bytes
 	// 32-Bit J2B header identifiers
-	static const uint32 magicDEADBEAF = 0xAFBEADDEu;
-	static const uint32 magicDEADBABE = 0xBEBAADDEu;
+	enum : uint32 {
+		magicDEADBEAF = 0xAFBEADDEu,
+		magicDEADBABE = 0xBEBAADDEu
+	};
 
 	char     signature[4];		// MUSE
 	uint32le deadbeaf;			// 0xDEADBEAF (AM) or 0xDEADBABE (AMFF)
@@ -58,17 +63,17 @@ struct AMFFRiffChunk
 	// 32-Bit chunk identifiers
 	enum ChunkIdentifiers
 	{
-		idRIFF	= MAGIC4LE('R','I','F','F'),
-		idAMFF	= MAGIC4LE('A','M','F','F'),
-		idAM__	= MAGIC4LE('A','M',' ',' '),
-		idMAIN	= MAGIC4LE('M','A','I','N'),
-		idINIT	= MAGIC4LE('I','N','I','T'),
-		idORDR	= MAGIC4LE('O','R','D','R'),
-		idPATT	= MAGIC4LE('P','A','T','T'),
-		idINST	= MAGIC4LE('I','N','S','T'),
-		idSAMP	= MAGIC4LE('S','A','M','P'),
-		idAI__	= MAGIC4LE('A','I',' ',' '),
-		idAS__	= MAGIC4LE('A','S',' ',' '),
+		idRIFF	= MagicLE("RIFF"),
+		idAMFF	= MagicLE("AMFF"),
+		idAM__	= MagicLE("AM  "),
+		idMAIN	= MagicLE("MAIN"),
+		idINIT	= MagicLE("INIT"),
+		idORDR	= MagicLE("ORDR"),
+		idPATT	= MagicLE("PATT"),
+		idINST	= MagicLE("INST"),
+		idSAMP	= MagicLE("SAMP"),
+		idAI__	= MagicLE("AI  "),
+		idAS__	= MagicLE("AS  "),
 	};
 
 	uint32le id;		// See ChunkIdentifiers
@@ -254,7 +259,7 @@ struct AMFFSampleHeader
 		mptSmp.nLoopEnd = loopEnd;
 		mptSmp.nC5Speed = sampleRate;
 
-		if(instrHeader.vibratoType < CountOf(j2bAutoVibratoTrans))
+		if(instrHeader.vibratoType < mpt::size(j2bAutoVibratoTrans))
 			mptSmp.nVibType = j2bAutoVibratoTrans[instrHeader.vibratoType];
 		mptSmp.nVibSweep = static_cast<uint8>(instrHeader.vibratoSweep);
 		mptSmp.nVibRate = static_cast<uint8>(instrHeader.vibratoRate / 16);
@@ -499,7 +504,6 @@ static bool ConvertAMPattern(FileReader chunk, PATTERNINDEX pat, bool isAM, CSou
 	if(channels == 0)
 		return false;
 
-	PatternRow rowBase = sndFile.Patterns[pat].GetRow(0);
 	ROWINDEX row = 0;
 
 	while(row < numRows && chunk.CanRead(1))
@@ -509,11 +513,10 @@ static bool ConvertAMPattern(FileReader chunk, PATTERNINDEX pat, bool isAM, CSou
 		if(flags == rowDone)
 		{
 			row++;
-			rowBase = sndFile.Patterns[pat].GetRow(row);
 			continue;
 		}
 
-		ModCommand &m = rowBase[std::min<CHANNELINDEX>((flags & channelMask), channels - 1)];
+		ModCommand &m = *sndFile.Patterns[pat].GetpModCommand(row, std::min<CHANNELINDEX>((flags & channelMask), channels - 1));
 
 		if(flags & dataFlag)
 		{
@@ -528,9 +531,9 @@ static bool ConvertAMPattern(FileReader chunk, PATTERNINDEX pat, bool isAM, CSou
 					m.command = amEffTrans[command];
 				} else
 				{
-#ifdef DEBUG
+#ifdef J2B_LOG
 					Log(mpt::format("J2B: Unknown command: 0x%1, param 0x%2")(mpt::fmt::HEX0<2>(command), mpt::fmt::HEX0<2>(m.param)));
-#endif // DEBUG
+#endif
 					m.command = CMD_NONE;
 				}
 
@@ -733,12 +736,10 @@ bool CSoundFile::ReadAM(FileReader &file, ModLoadingFlags loadFlags)
 	m_nDefaultTempo.Set(mainChunk.tempo);
 	m_nDefaultGlobalVolume = mainChunk.globalvolume * 2;
 
-	m_madeWithTracker = MPT_USTRING("Galaxy Sound System (");
-	if(isAM)
-		m_madeWithTracker += MPT_USTRING("new version)");
-	else
-		m_madeWithTracker += MPT_USTRING("old version)");
-	
+	m_modFormat.formatName = isAM ? UL_("Galaxy Sound System (new version)") : UL_("Galaxy Sound System (old version)");
+	m_modFormat.type = U_("j2b");
+	m_modFormat.charset = mpt::CharsetCP437;
+
 	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, mainChunk.songname);
 
 	// It seems like there's no way to differentiate between

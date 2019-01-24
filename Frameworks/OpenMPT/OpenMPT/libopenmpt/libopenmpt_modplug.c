@@ -28,20 +28,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* define to emulate 0.8.7 API/ABI instead of 0.8.8 API/ABI */
-/* #define LIBOPENMPT_MODPLUG_0_8_7 */
-
+#define MODPLUG_BUILD
 #ifdef _MSC_VER
-/* msvc errors when seeing dllexport declarations after prototypes have been declared in modplug.h */
+#ifdef MPT_BUILD_MSVC_SHARED
+#define DLL_EXPORT
+#endif /* MPT_BUILD_MSVC_SHARED */
+#ifdef MPT_BUILD_MSVC_STATIC
+#define MODPLUG_STATIC
+#endif /* MPT_BUILD_MSVC_STATIC */
+#endif /* _MSC_VER */
+#ifdef _MSC_VER
 #define LIBOPENMPT_MODPLUG_API
 #else /* !_MSC_VER */
 #define LIBOPENMPT_MODPLUG_API LIBOPENMPT_API_HELPER_EXPORT
 #endif /* _MSC_VER */
-#ifdef LIBOPENMPT_MODPLUG_0_8_7
-#include "libmodplug/modplug_0.8.7.h"
-#else
 #include "libmodplug/modplug.h"
-#endif
 
 /* from libmodplug/sndfile.h */
 /* header is not c clean */
@@ -94,10 +95,8 @@ static ModPlug_Settings globalsettings = {
 	16,
 	44100,
 	MODPLUG_RESAMPLE_LINEAR,
-#ifndef LIBOPENMPT_MODPLUG_0_8_7
 	128,
 	256,
-#endif
 	0,
 	0,
 	0,
@@ -169,9 +168,7 @@ LIBOPENMPT_MODPLUG_API ModPlugFile* ModPlug_Load(const void* data, int size)
 			strcpy(file->message,"");
 		}
 	}
-#ifndef LIBOPENMPT_MODPLUG_0_8_7
 	openmpt_module_set_render_param(file->mod,OPENMPT_MODULE_RENDER_STEREOSEPARATION_PERCENT,file->settings.mStereoSeparation*100/128);
-#endif
 	openmpt_module_set_render_param(file->mod,OPENMPT_MODULE_RENDER_INTERPOLATIONFILTER_LENGTH,modplugresamplingmode_to_filterlength(file->settings.mResamplingMode));
 	return file;
 }
@@ -621,75 +618,5 @@ LIBOPENMPT_MODPLUG_API char ModPlug_ExportIT(ModPlugFile* file, const char* file
 	fprintf(stderr,"libopenmpt-modplug: error: ModPlug_ExportIT(%s) not implemented.\n",filepath);
 	return 0;
 }
-
-#ifdef _MSC_VER
-#ifdef _M_IX86
-#pragma comment(linker, "/EXPORT:ModPlug_Load=_ModPlug_Load")
-#pragma comment(linker, "/EXPORT:ModPlug_Unload=_ModPlug_Unload")
-#pragma comment(linker, "/EXPORT:ModPlug_Read=_ModPlug_Read")
-#pragma comment(linker, "/EXPORT:ModPlug_GetName=_ModPlug_GetName")
-#pragma comment(linker, "/EXPORT:ModPlug_GetLength=_ModPlug_GetLength")
-#pragma comment(linker, "/EXPORT:ModPlug_Seek=_ModPlug_Seek")
-#pragma comment(linker, "/EXPORT:ModPlug_GetSettings=_ModPlug_GetSettings")
-#pragma comment(linker, "/EXPORT:ModPlug_SetSettings=_ModPlug_SetSettings")
-#pragma comment(linker, "/EXPORT:ModPlug_GetMasterVolume=_ModPlug_GetMasterVolume")
-#pragma comment(linker, "/EXPORT:ModPlug_SetMasterVolume=_ModPlug_SetMasterVolume")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentSpeed=_ModPlug_GetCurrentSpeed")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentTempo=_ModPlug_GetCurrentTempo")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentOrder=_ModPlug_GetCurrentOrder")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentPattern=_ModPlug_GetCurrentPattern")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentRow=_ModPlug_GetCurrentRow")
-#pragma comment(linker, "/EXPORT:ModPlug_GetPlayingChannels=_ModPlug_GetPlayingChannels")
-#pragma comment(linker, "/EXPORT:ModPlug_SeekOrder=_ModPlug_SeekOrder")
-#pragma comment(linker, "/EXPORT:ModPlug_GetModuleType=_ModPlug_GetModuleType")
-#pragma comment(linker, "/EXPORT:ModPlug_GetMessage=_ModPlug_GetMessage")
-#pragma comment(linker, "/EXPORT:ModPlug_NumInstruments=_ModPlug_NumInstruments")
-#pragma comment(linker, "/EXPORT:ModPlug_NumSamples=_ModPlug_NumSamples")
-#pragma comment(linker, "/EXPORT:ModPlug_NumPatterns=_ModPlug_NumPatterns")
-#pragma comment(linker, "/EXPORT:ModPlug_NumChannels=_ModPlug_NumChannels")
-#pragma comment(linker, "/EXPORT:ModPlug_SampleName=_ModPlug_SampleName")
-#pragma comment(linker, "/EXPORT:ModPlug_InstrumentName=_ModPlug_InstrumentName")
-#pragma comment(linker, "/EXPORT:ModPlug_GetPattern=_ModPlug_GetPattern")
-#pragma comment(linker, "/EXPORT:ModPlug_InitMixerCallback=_ModPlug_InitMixerCallback")
-#pragma comment(linker, "/EXPORT:ModPlug_UnloadMixerCallback=_ModPlug_UnloadMixerCallback")
-#pragma comment(linker, "/EXPORT:ModPlug_ExportS3M=_ModPlug_ExportS3M")
-#pragma comment(linker, "/EXPORT:ModPlug_ExportXM=_ModPlug_ExportXM")
-#pragma comment(linker, "/EXPORT:ModPlug_ExportMOD=_ModPlug_ExportMOD")
-#pragma comment(linker, "/EXPORT:ModPlug_ExportIT=_ModPlug_ExportIT")
-#else /* !_M_IX86 */
-#pragma comment(linker, "/EXPORT:ModPlug_Load")
-#pragma comment(linker, "/EXPORT:ModPlug_Unload")
-#pragma comment(linker, "/EXPORT:ModPlug_Read")
-#pragma comment(linker, "/EXPORT:ModPlug_GetName")
-#pragma comment(linker, "/EXPORT:ModPlug_GetLength")
-#pragma comment(linker, "/EXPORT:ModPlug_Seek")
-#pragma comment(linker, "/EXPORT:ModPlug_GetSettings")
-#pragma comment(linker, "/EXPORT:ModPlug_SetSettings")
-#pragma comment(linker, "/EXPORT:ModPlug_GetMasterVolume")
-#pragma comment(linker, "/EXPORT:ModPlug_SetMasterVolume")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentSpeed")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentTempo")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentOrder")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentPattern")
-#pragma comment(linker, "/EXPORT:ModPlug_GetCurrentRow")
-#pragma comment(linker, "/EXPORT:ModPlug_GetPlayingChannels")
-#pragma comment(linker, "/EXPORT:ModPlug_SeekOrder")
-#pragma comment(linker, "/EXPORT:ModPlug_GetModuleType")
-#pragma comment(linker, "/EXPORT:ModPlug_GetMessage")
-#pragma comment(linker, "/EXPORT:ModPlug_NumInstruments")
-#pragma comment(linker, "/EXPORT:ModPlug_NumSamples")
-#pragma comment(linker, "/EXPORT:ModPlug_NumPatterns")
-#pragma comment(linker, "/EXPORT:ModPlug_NumChannels")
-#pragma comment(linker, "/EXPORT:ModPlug_SampleName")
-#pragma comment(linker, "/EXPORT:ModPlug_InstrumentName")
-#pragma comment(linker, "/EXPORT:ModPlug_GetPattern")
-#pragma comment(linker, "/EXPORT:ModPlug_InitMixerCallback")
-#pragma comment(linker, "/EXPORT:ModPlug_UnloadMixerCallback")
-#pragma comment(linker, "/EXPORT:ModPlug_ExportS3M")
-#pragma comment(linker, "/EXPORT:ModPlug_ExportXM")
-#pragma comment(linker, "/EXPORT:ModPlug_ExportMOD")
-#pragma comment(linker, "/EXPORT:ModPlug_ExportIT")
-#endif /* _M_IX86 */
-#endif /* _MSC_VER */
 
 #endif /* NO_LIBMODPLUG */

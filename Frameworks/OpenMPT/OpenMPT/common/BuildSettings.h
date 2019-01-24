@@ -100,16 +100,17 @@
 
 // OpenMPT-only dependencies
 #define MPT_WITH_ASIO
-#define MPT_WITH_DSOUND
+#define MPT_WITH_LAME
 #define MPT_WITH_LHASA
 #define MPT_WITH_MINIZIP
+#define MPT_WITH_NLOHMANNJSON
 #define MPT_WITH_OPUS
 #define MPT_WITH_OPUSENC
 #define MPT_WITH_OPUSFILE
-#define MPT_WITH_PICOJSON
 #define MPT_WITH_PORTAUDIO
 //#define MPT_WITH_PULSEAUDIO
 //#define MPT_WITH_PULSEAUDIOSIMPLE
+#define MPT_WITH_RTAUDIO
 #define MPT_WITH_SMBPITCHSHIFT
 #define MPT_WITH_UNRAR
 #define MPT_WITH_VORBISENC
@@ -142,27 +143,7 @@
 #error "only one of LIBOPENMPT_BUILD_FULL or LIBOPENMPT_BUILD_SMALL can be defined"
 #endif // LIBOPENMPT_BUILD_FULL && LIBOPENMPT_BUILD_SMALL
 
-#if defined(LIBOPENMPT_BUILD_FULL)
-
-//#define MPT_WITH_DL
-//#define MPT_WITH_FLAC
-//#define MPT_WITH_ICONV
-//#define MPT_WITH_LTDL
-#if MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
-#if (_WIN32_WINNT >= 0x0601)
-#define MPT_WITH_MEDIAFOUNDATION
-#endif
-#endif
-//#define MPT_WITH_MINIMP3
-//#define MPT_WITH_MINIZ
-#define MPT_WITH_MPG123
-#define MPT_WITH_OGG
-//#define MPT_WITH_STBVORBIS
-#define MPT_WITH_VORBIS
-#define MPT_WITH_VORBISFILE
-#define MPT_WITH_ZLIB
-
-#elif defined(LIBOPENMPT_BUILD_SMALL)
+#if defined(LIBOPENMPT_BUILD_SMALL)
 
 //#define MPT_WITH_DL
 //#define MPT_WITH_FLAC
@@ -201,11 +182,40 @@
 #endif // MPT_BUILD_MSVC
 
 
+#if defined(MPT_BUILD_XCODE)
+
+#if defined(MODPLUG_TRACKER)
+
+// n/a
+
+#endif // MODPLUG_TRACKER
+
+#if defined(LIBOPENMPT_BUILD)
+
+//#define MPT_WITH_DL
+//#define MPT_WITH_FLAC
+//#define MPT_WITH_ICONV
+//#define MPT_WITH_LTDL
+//#define MPT_WITH_MEDIAFOUNDATION
+//#define MPT_WITH_MINIMP3
+//#define MPT_WITH_MINIZ
+#define MPT_WITH_MPG123
+#define MPT_WITH_OGG
+//#define MPT_WITH_STBVORBIS
+#define MPT_WITH_VORBIS
+#define MPT_WITH_VORBISFILE
+#define MPT_WITH_ZLIB
+
+#endif // LIBOPENMPT_BUILD
+
+#endif // MPT_BUILD_XCODE
+
+
 
 #if defined(MODPLUG_TRACKER)
 
 // Enable built-in test suite.
-#ifdef _DEBUG
+#if defined(MPT_BUILD_DEBUG) || defined(MPT_BUILD_CHECKED)
 #define ENABLE_TESTS
 #endif
 
@@ -214,13 +224,13 @@
 
 // Disable any debug logging
 //#define NO_LOGGING
-#if !defined(_DEBUG) && !defined(MPT_BUILD_WINESUPPORT)
+#if !defined(MPT_BUILD_DEBUG) && !defined(MPT_BUILD_CHECKED) && !defined(MPT_BUILD_WINESUPPORT)
 #define MPT_LOG_GLOBAL_LEVEL_STATIC
 #define MPT_LOG_GLOBAL_LEVEL 0
 #endif
 
 // Disable all runtime asserts
-#if !defined(_DEBUG) && !defined(MPT_BUILD_WINESUPPORT)
+#if !defined(MPT_BUILD_DEBUG) && !defined(MPT_BUILD_CHECKED) && !defined(MPT_BUILD_WINESUPPORT)
 #define NO_ASSERTS
 #endif
 
@@ -284,7 +294,7 @@
 #else
 #define MODPLUG_NO_FILESAVE
 #endif
-#if defined(MPT_BUILD_ANALZYED) || defined(MPT_BUILD_CHECKED) || defined(ENABLE_TESTS)
+#if defined(MPT_BUILD_ANALZYED) || defined(MPT_BUILD_DEBUG) || defined(MPT_BUILD_CHECKED) || defined(ENABLE_TESTS)
 // enable asserts
 #else
 #define NO_ASSERTS
@@ -324,6 +334,9 @@
 #if MPT_OS_WINDOWS
 
 	#define MPT_CHARSET_WIN32
+	#ifndef MPT_ENABLE_CHARSET_LOCALE
+	#define MPT_ENABLE_CHARSET_LOCALE
+	#endif
 
 #elif MPT_OS_LINUX
 
@@ -354,6 +367,13 @@
 	//#define MPT_LOCALE_ASSUME_CHARSET CharsetUTF8
 	//#endif
 
+#elif MPT_OS_DJGPP
+
+	#define MPT_CHARSET_INTERNAL
+	#ifndef MPT_LOCALE_ASSUME_CHARSET
+	#define MPT_LOCALE_ASSUME_CHARSET CharsetCP437
+	#endif
+
 #elif defined(MPT_WITH_ICONV)
 
 	#define MPT_CHARSET_ICONV
@@ -362,7 +382,7 @@
 
 
 
-#if MPT_COMPILER_MSVC
+#if MPT_COMPILER_MSVC && !defined(MPT_USTRING_MODE_UTF8_FORCE)
 
 	// Use wide strings for MSVC because this is the native encoding on 
 	// microsoft platforms.
@@ -418,13 +438,6 @@
 
 // fixing stuff up
 
-#if defined(MPT_BUILD_TARGET_XP)
-// Also support Wine 1.6 in addition to Windows XP
-#ifndef MPT_QUIRK_NO_CPP_THREAD
-#define MPT_QUIRK_NO_CPP_THREAD
-#endif
-#endif
-
 #if defined(MPT_BUILD_ANALYZED) || defined(MPT_BUILD_CHECKED) 
 #ifdef NO_ASSERTS
 #undef NO_ASSERTS // static or dynamic analyzers want assertions on
@@ -444,36 +457,45 @@
 #if defined(ENABLE_ASM)
 #if MPT_COMPILER_MSVC && defined(_M_IX86)
 
-// Generate general x86 inline assembly / intrinsics.
+// Generate general x86 inline assembly and intrinsics.
 #define ENABLE_X86
-// Generate inline assembly using MMX instructions (only used when the CPU supports it).
+// Generate MMX instructions (only used when the CPU supports it).
 #define ENABLE_MMX
-// Generate inline assembly using SSE instructions (only used when the CPU supports it).
+// Generate SSE instructions (only used when the CPU supports it).
 #define ENABLE_SSE
-// Generate inline assembly using SSE2 instructions (only used when the CPU supports it).
+// Generate SSE2 instructions (only used when the CPU supports it).
 #define ENABLE_SSE2
-// Generate inline assembly using SSE3 instructions (only used when the CPU supports it).
+// Generate SSE3 instructions (only used when the CPU supports it).
 #define ENABLE_SSE3
-// Generate inline assembly using SSE4 instructions (only used when the CPU supports it).
+// Generate SSE4 instructions (only used when the CPU supports it).
 #define ENABLE_SSE4
-// Generate inline assembly using AMD specific instruction set extensions (only used when the CPU supports it).
+
+#if defined(MPT_BUILD_TARGET_XP)
+// Generate AMD specific instruction set extensions (only used when the CPU supports it).
 #define ENABLE_X86_AMD
+#endif
 
 #elif MPT_COMPILER_MSVC && defined(_M_X64)
 
-// Generate general x64 inline assembly / intrinsics.
+// Generate general x64 intrinsics.
 #define ENABLE_X64
-// Generate inline assembly using SSE2 instructions (only used when the CPU supports it).
+// Generate SSE instructions (only used when the CPU supports it).
+#define ENABLE_SSE
+// Generate SSE2 instructions (only used when the CPU supports it).
 #define ENABLE_SSE2
-// Generate inline assembly using SSE3 instructions (only used when the CPU supports it).
+// Generate SSE3 instructions (only used when the CPU supports it).
 #define ENABLE_SSE3
-// Generate inline assembly using SSE4 instructions (only used when the CPU supports it).
+// Generate SSE4 instructions (only used when the CPU supports it).
 #define ENABLE_SSE4
 
 #endif // arch
 #endif // ENABLE_ASM
 
-#if defined(MPT_WITH_MPG123) && defined(MPT_BUILD_MSVC) && defined(MPT_BUILD_MSVC_STATIC) && !defined(LIBOPENMPT_NODELAYLOAD) && !MPT_OS_WINDOWS_WINRT
+#if defined(MPT_WITH_LAME) && defined(MPT_BUILD_MSVC) && defined(MPT_BUILD_MSVC_STATIC) && defined(MODPLUG_TRACKER) && !MPT_OS_WINDOWS_WINRT
+#define MPT_ENABLE_LAME_DELAYLOAD
+#endif
+
+#if defined(MPT_WITH_MPG123) && defined(MPT_BUILD_MSVC) && defined(MPT_BUILD_MSVC_STATIC) && defined(MODPLUG_TRACKER) && !MPT_OS_WINDOWS_WINRT
 #define MPT_ENABLE_MPG123_DELAYLOAD
 #endif
 
@@ -490,6 +512,10 @@
 #undef MPT_WITH_MEDIAFOUNDATION // MediaFoundation requires Windows
 #endif
 
+#if !MPT_COMPILER_MSVC && !MPT_COMPILER_CLANG && defined(MPT_WITH_MEDIAFOUNDATION)
+#undef MPT_WITH_MEDIAFOUNDATION // MediaFoundation requires MSVC or Clang due to ATL (no MinGW support)
+#endif
+
 #if defined(MPT_WITH_MEDIAFOUNDATION) && !defined(MPT_ENABLE_TEMPFILE)
 #define MPT_ENABLE_TEMPFILE
 #endif
@@ -498,12 +524,20 @@
 #define MPT_ENABLE_TEMPFILE
 #endif
 
+#if MPT_CXX_AT_LEAST(17) && defined(MPT_CHARSET_CODECVTUTF8)
+#undef MPT_CHARSET_CODECVTUTF8 // std::codecvt_utf8 is deprecated in c++17
+#endif
+
 #if !defined(MPT_CHARSET_WIN32) && !defined(MPT_CHARSET_ICONV) && !defined(MPT_CHARSET_CODECVTUTF8) && !defined(MPT_CHARSET_INTERNAL)
 #define MPT_CHARSET_INTERNAL
 #endif
 
 #if defined(MODPLUG_TRACKER) && !defined(MPT_ENABLE_DYNBIND)
 #define MPT_ENABLE_DYNBIND // Tracker requires dynamic library loading for export codecs
+#endif
+
+#if defined(MPT_ENABLE_LAME_DELAYLOAD) && !defined(MPT_ENABLE_DYNBIND)
+#define MPT_ENABLE_DYNBIND // static MSVC builds require dynbind to load delay-loaded DLLs
 #endif
 
 #if defined(MPT_ENABLE_MPG123_DELAYLOAD) && !defined(MPT_ENABLE_DYNBIND)
@@ -536,10 +570,6 @@
 
 #if defined(MPT_EXTERNAL_SAMPLES) && !defined(MPT_ENABLE_FILEIO)
 #define MPT_ENABLE_FILEIO // External samples require disk file io
-#endif
-
-#if !defined(MODPLUG_NO_FILESAVE) && !defined(MPT_ENABLE_FILEIO_STDIO)
-#define MPT_ENABLE_FILEIO_STDIO // file saving requires FILE*
 #endif
 
 #if defined(NO_PLUGINS)
@@ -592,6 +622,16 @@
 
 // platform configuration
 
+#if defined(MODPLUG_TRACKER)
+#if MPT_OS_WINDOWS
+#if !defined(MPT_BUILD_WINESUPPORT)
+#ifndef MPT_MFC_FULL
+#define _AFX_NO_MFC_CONTROLS_IN_DIALOGS	// Do not include support for MFC controls in dialogs (reduces binary bloat; remove this #define if you want to use MFC controls)
+#endif // !MPT_MFC_FULL
+#endif // !MPT_BUILD_WINESUPPORT
+#endif // MPT_OS_WINDOWS
+#endif // MODPLUG_TRACKER
+
 #if MPT_OS_WINDOWS
 
 #define WIN32_LEAN_AND_MEAN
@@ -632,16 +672,23 @@
 
 // stdlib configuration
 
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif
+
 #define __STDC_CONSTANT_MACROS
 #define __STDC_LIMIT_MACROS
 
 #define _USE_MATH_DEFINES
 
-#if !MPT_OS_ANDROID
 #ifndef _FILE_OFFSET_BITS
 #define _FILE_OFFSET_BITS 64
 #endif
-#endif // !MPT_OS_ANDROID
+
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif
 
 
 
@@ -682,28 +729,18 @@
 
 #endif // MPT_COMPILER_MSVC
 
-#if MPT_COMPILER_MSVCCLANGC2
-
-#if MPT_OS_WINDOWS
-// As Clang defines __STDC__ 1, Windows headers will use named union fields. The MediaFoundation headers do not support this, though.
-// Clang supports nameless union fields just fine, and luckily there is a way to override the Windows headers behaviour.
-#define _FORCENAMELESSUNION
-#endif // MPT_OS_WINDOWS
-
-#endif // MPT_COMPILER_MSVCCLANGC2
-
 
 
 // third-party library configuration
+
+#if defined(MODPLUG_TRACKER)
+//#define MPT_MFC_FULL  // use full MFC, including MFC controls
+#endif
 
 #ifdef MPT_WITH_FLAC
 #ifdef MPT_BUILD_MSVC_STATIC
 #define FLAC__NO_DLL
 #endif
-#endif
-
-#ifdef MPT_WITH_PICOJSON
-#define PICOJSON_USE_INT64
 #endif
 
 #ifdef MPT_WITH_SMBPITCHSHIFT

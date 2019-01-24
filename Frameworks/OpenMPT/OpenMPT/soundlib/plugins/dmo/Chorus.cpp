@@ -142,7 +142,7 @@ void Chorus::SetParameter(PlugParamIndex index, PlugParamValue value)
 		if(index == kChorusWaveShape && value < 1.0f)
 			value = 0.0f;
 		else if(index == kChorusPhase)
-			value = Util::Round(value * 4.0f) / 4.0f;
+			value = mpt::round(value * 4.0f) / 4.0f;
 		m_param[index] = value;
 		RecalculateChorusParams();
 	}
@@ -205,7 +205,7 @@ CString Chorus::GetParamLabel(PlugParamIndex param)
 	case kChorusFrequency:
 		return _T("Hz");
 	case kChorusPhase:
-		return _T("°");
+		return mpt::ToCString(MPT_UTF8("\xC2\xB0"));  // U+00B0 DEGREE SIGN
 	case kChorusDelay:
 		return _T("ms");
 	}
@@ -258,7 +258,7 @@ void Chorus::RecalculateChorusParams()
 
 	float delaySamples = Delay() * sampleRate / 1000.0f;
 	m_depthDelay = Depth() * delaySamples * 2048.0f;
-	m_delayOffset = Util::Round<int32>(4096.0f * (delaySamples + 2.0f));
+	m_delayOffset = mpt::saturate_round<int32>(4096.0f * (delaySamples + 2.0f));
 	m_frequency = FrequencyInHertz();
 	const float frequencySamples = m_frequency / sampleRate;
 	if(IsTriangle())

@@ -9,29 +9,33 @@ Dependencies
 ### libopenmpt
 
  *  Supported compilers for building libopenmpt:
-     *  **Microsoft Visual Studio 2015** or higher
+     *  **Microsoft Visual Studio 2015** or higher, running on a x86-64 build
+        system (other target systems are supported)
      *  **GCC 4.8** or higher
-     *  **Clang 3.4** or higher
-     *  **MinGW-W64 4.8** or higher
-     *  **emscripten 1.31** or higher
+     *  **Clang 3.6** or higher
+     *  **MinGW-W64 4.8** or higher (it is recommended to preferably use
+        posix threading model as opposed to win32 threading model, or at least
+        have mingw-std-threads available otherwise)
+     *  **emscripten 1.38.5** or higher
+     *  **DJGPP GCC 7.2** or higher
      *  any other **C++11 compliant** compiler (full standard compliant mode is
-        known to work with GCC >= 5.1 and Clang >= 3.5)
+        known to work with GCC >= 5.1 and Clang)
         
         libopenmpt makes the following assumptions about the C++ implementation
         used for building:
-         *  `CHAR_BIT == 8` (enforced by static_assert)
+         *  `std::numeric_limits<unsigned char>::digits == 8` (enforced by
+            static_assert)
          *  `sizeof(char) == 1` (enforced by static_assert)
          *  existence of `std::uintptr_t` (enforced by static_assert)
          *  `sizeof(float) == 4` (enforced by static_assert)
          *  `sizeof(double) == 8` (enforced by static_assert)
-         *  if `__BYTE_ORDER__` is provided by the compiler and
-            `__STDC_IEC_559__ == 1`, the endianness of integers is the same as
-            the endianness of floats (implicitly assumed)
          *  `wchar_t` encoding is either UTF-16 or UTF-32 (implicitly assumed)
          *  representation of basic source character set is ASCII (implicitly
             assumed)
          *  representation of basic source character set is identical in char
             and `wchar_t` (implicitly assumed)
+         *  libopenmpt also has experimental support for platforms without
+            `wchar_t` support like DJGPP
         
         libopenmpt does not rely on any specific implementation defined or
         undefined behaviour (if it does, that's a bug in libopenmpt). In
@@ -50,13 +54,12 @@ Dependencies
      *  **zlib**
      *  **miniz** can be used internally if no zlib is available.
  *  Built-in **MO3** support requires:
-     *  **libmpg123 >= 1.13.0**
+     *  **libmpg123 >= 1.14.0**
      *  **libogg**
      *  **libvorbis**
      *  **libvorbisfile**
-     *  Alternatively, **Media Foundation** can be used on Windows 7 or later
-        instead of libmpg123 to decode mp3 samples. It's also possible to use
-        **minimp3**.
+     *  Instead of libmpg123, **minimp3 by Lion (github.com/lieff)** can be used
+        internally to decode MP3 samples.
      *  Instead of libogg, libvorbis and libvorbisfile, **stb_vorbis** can be
         used internally to decode Vorbis samples.
  *  Building on Unix-like systems requires:
@@ -70,10 +73,12 @@ Dependencies
 ### openmpt123
 
  *  Supported compilers for building openmpt123:
-     *  **Microsoft Visual Studio 2015** or higher
+     *  **Microsoft Visual Studio 2015** or higher, running on a x86-64 build
+        system (other target systems are supported)
      *  **GCC 4.8** or higher
-     *  **Clang 3.4** or higher
+     *  **Clang 3.6** or higher
      *  **MinGW-W64 4.8** or higher
+     *  **DJGPP GCC 7.2** or higher
      *  any **C++11 compliant** compiler
  *  Live sound output requires one of:
      *  **PulseAudio**
@@ -81,6 +86,7 @@ Dependencies
      *  **SDL 1.2**
      *  **PortAudio v19**
      *  **Win32**
+     *  **liballegro 4.2** on DJGPP/DOS
 
 
 Optional dependencies
@@ -104,3 +110,19 @@ Optional dependencies
      *  raw PCM has no external dependencies
  *  **help2man** is required to build the documentation.
 
+
+Source packages
+---------------
+ 
+Building the source packages additionally requires:
+ *  7z (7-zip)
+ *  autoconf
+ *  autoconf-archive
+ *  automake
+ *  gzip
+ *  help2man
+ *  libtool
+ *  subversion
+ *  tar
+ *  xpath (libxml-xpath-perl)
+ *  zip

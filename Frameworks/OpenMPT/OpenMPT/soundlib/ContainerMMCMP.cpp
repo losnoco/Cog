@@ -14,8 +14,7 @@
 #include "../common/FileReader.h"
 #include "Container.h"
 #include "Sndfile.h"
-
-#include <stdexcept>
+#include "BitReader.h"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -73,40 +72,9 @@ MPT_BINARY_STRUCT(MMCMPSUBBLOCK, 8)
 #define MMCMP_ABS16		0x0200
 #define MMCMP_ENDIAN	0x0400
 
-struct MMCMPBITBUFFER
-{
-	uint32 bitcount;
-	uint32 bitbuffer;
-	const uint8 *pSrc;
-	uint32 bytesLeft;
-
-	uint32 GetBits(uint32 nBits);
-};
-
-
-uint32 MMCMPBITBUFFER::GetBits(uint32 nBits)
-{
-	uint32 d;
-	if (!nBits) return 0;
-	while (bitcount < 24)
-	{
-		if(bytesLeft)
-		{
-			bitbuffer |= *pSrc << bitcount;
-			pSrc++;
-			bytesLeft--;
-		}
-		bitcount += 8;
-	}
-	d = bitbuffer & ((1 << nBits) - 1);
-	bitbuffer >>= nBits;
-	bitcount -= nBits;
-	return d;
-}
-
 static const uint8 MMCMP8BitCommands[8] =
 {
-	0x01, 0x03,	0x07, 0x0F,	0x1E, 0x3C,	0x78, 0xF8
+	0x01, 0x03, 0x07, 0x0F, 0x1E, 0x3C, 0x78, 0xF8
 };
 
 static const uint8 MMCMP8BitFetch[8] =
@@ -116,7 +84,7 @@ static const uint8 MMCMP8BitFetch[8] =
 
 static const uint16 MMCMP16BitCommands[16] =
 {
-	0x01, 0x03,	0x07, 0x0F,	0x1E, 0x3C,	0x78, 0xF0,
+	0x01,  0x03,  0x07,  0x0F,  0x1E,   0x3C,   0x78,   0xF0,
 	0x1F0, 0x3F0, 0x7F0, 0xFF0, 0x1FF0, 0x3FF0, 0x7FF0, 0xFFF0
 };
 
@@ -278,7 +246,6 @@ bool UnpackMMCMP(std::vector<ContainerItem> &containerItems, FileReader &file, C
 		// Data is 16-bit packed
 		if (blk.flags & MMCMP_16BIT)
 		{
-			MMCMPBITBUFFER bb;
 			uint32 subblk = 0;
 			if(!psubblk) return false;
 			if(!MMCMP_IsDstBlockValid(unpackedData, psubblk[subblk])) return false;
@@ -294,70 +261,72 @@ bool UnpackMMCMP(std::vector<ContainerItem> &containerItems, FileReader &file, C
 			if (pblk->flags & MMCMP_ABS16) Log("ABS16 ");
 			Log("\n");
 #endif
-			bb.bitcount = 0;
-			bb.bitbuffer = 0;
 			if(!file.Seek(memPos + blk.tt_entries)) return false;
 			if(!file.CanRead(blk.pk_size - blk.tt_entries)) return false;
-			bb.pSrc = file.GetRawData<uint8>();
-			bb.bytesLeft = blk.pk_size - blk.tt_entries;
-			while (subblk < blk.sub_blk)
-			{
-				uint32 newval = 0x10000;
-				uint32 d = bb.GetBits(numbits+1);
+			BitReader bitFile{ file.GetChunk(blk.pk_size - blk.tt_entries) };
 
-				uint32 command = MMCMP16BitCommands[numbits & 0x0F];
-				if (d >= command)
+			try
+			{
+				while (subblk < blk.sub_blk)
 				{
-					uint32 nFetch = MMCMP16BitFetch[numbits & 0x0F];
-					uint32 newbits = bb.GetBits(nFetch) + ((d - command) << nFetch);
-					if (newbits != numbits)
+					uint32 newval = 0x10000;
+					uint32 d = bitFile.ReadBits(numbits + 1);
+
+					uint32 command = MMCMP16BitCommands[numbits & 0x0F];
+					if (d >= command)
 					{
-						numbits = newbits & 0x0F;
-					} else
-					{
-						if ((d = bb.GetBits(4)) == 0x0F)
+						uint32 nFetch = MMCMP16BitFetch[numbits & 0x0F];
+						uint32 newbits = bitFile.ReadBits(nFetch) + ((d - command) << nFetch);
+						if (newbits != numbits)
 						{
-							if (bb.GetBits(1)) break;
-							newval = 0xFFFF;
+							numbits = newbits & 0x0F;
 						} else
 						{
-							newval = 0xFFF0 + d;
+							if ((d = bitFile.ReadBits(4)) == 0x0F)
+							{
+								if (bitFile.ReadBits(1)) break;
+								newval = 0xFFFF;
+							} else
+							{
+								newval = 0xFFF0 + d;
+							}
 						}
-					}
-				} else
-				{
-					newval = d;
-				}
-				if (newval < 0x10000)
-				{
-					newval = (newval & 1) ? (uint32)(-(int32)((newval+1) >> 1)) : (uint32)(newval >> 1);
-					if (blk.flags & MMCMP_DELTA)
-					{
-						newval += oldval;
-						oldval = newval;
 					} else
-					if (!(blk.flags & MMCMP_ABS16))
 					{
-						newval ^= 0x8000;
+						newval = d;
 					}
-					pDest[dwPos + 0] = (uint8)(((uint16)newval) & 0xFF);
-					pDest[dwPos + 1] = (uint8)(((uint16)newval) >> 8);
-					dwPos += 2;
+					if (newval < 0x10000)
+					{
+						newval = (newval & 1) ? (uint32)(-(int32)((newval+1) >> 1)) : (uint32)(newval >> 1);
+						if (blk.flags & MMCMP_DELTA)
+						{
+							newval += oldval;
+							oldval = newval;
+						} else
+						if (!(blk.flags & MMCMP_ABS16))
+						{
+							newval ^= 0x8000;
+						}
+						pDest[dwPos + 0] = (uint8)(((uint16)newval) & 0xFF);
+						pDest[dwPos + 1] = (uint8)(((uint16)newval) >> 8);
+						dwPos += 2;
+					}
+					if (dwPos >= dwSize)
+					{
+						subblk++;
+						dwPos = 0;
+						if(!(subblk < blk.sub_blk)) break;
+						if(!MMCMP_IsDstBlockValid(unpackedData, psubblk[subblk])) return false;
+						dwSize = psubblk[subblk].unpk_size;
+						pDest = &(unpackedData[psubblk[subblk].unpk_pos]);
+					}
 				}
-				if (dwPos >= dwSize)
-				{
-					subblk++;
-					dwPos = 0;
-					if(!(subblk < blk.sub_blk)) break;
-					if(!MMCMP_IsDstBlockValid(unpackedData, psubblk[subblk])) return false;
-					dwSize = psubblk[subblk].unpk_size;
-					pDest = &(unpackedData[psubblk[subblk].unpk_pos]);
-				}
+			} catch(const BitReader::eof &)
+			{
 			}
 		} else
 		// Data is 8-bit packed
 		{
-			MMCMPBITBUFFER bb;
 			uint32 subblk = 0;
 			if(!psubblk) return false;
 			if(!MMCMP_IsDstBlockValid(unpackedData, psubblk[subblk])) return false;
@@ -371,58 +340,61 @@ bool UnpackMMCMP(std::vector<ContainerItem> &containerItems, FileReader &file, C
 				|| file.ReadRaw(ptable, blk.tt_entries) < blk.tt_entries)
 				return false;
 
-			bb.bitcount = 0;
-			bb.bitbuffer = 0;
 			if(!file.CanRead(blk.pk_size - blk.tt_entries)) return false;
-			bb.pSrc = file.GetRawData<uint8>();
-			bb.bytesLeft = blk.pk_size - blk.tt_entries;
-			while (subblk < blk.sub_blk)
-			{
-				uint32 newval = 0x100;
-				uint32 d = bb.GetBits(numbits+1);
+			BitReader bitFile{ file.GetChunk(blk.pk_size - blk.tt_entries) };
 
-				uint32 command = MMCMP8BitCommands[numbits & 0x07];
-				if (d >= command)
+			try
+			{
+				while (subblk < blk.sub_blk)
 				{
-					uint32 nFetch = MMCMP8BitFetch[numbits & 0x07];
-					uint32 newbits = bb.GetBits(nFetch) + ((d - command) << nFetch);
-					if (newbits != numbits)
+					uint32 newval = 0x100;
+					uint32 d = bitFile.ReadBits(numbits + 1);
+
+					uint32 command = MMCMP8BitCommands[numbits & 0x07];
+					if (d >= command)
 					{
-						numbits = newbits & 0x07;
-					} else
-					{
-						if ((d = bb.GetBits(3)) == 7)
+						uint32 nFetch = MMCMP8BitFetch[numbits & 0x07];
+						uint32 newbits = bitFile.ReadBits(nFetch) + ((d - command) << nFetch);
+						if (newbits != numbits)
 						{
-							if (bb.GetBits(1)) break;
-							newval = 0xFF;
+							numbits = newbits & 0x07;
 						} else
 						{
-							newval = 0xF8 + d;
+							if ((d = bitFile.ReadBits(3)) == 7)
+							{
+								if (bitFile.ReadBits(1)) break;
+								newval = 0xFF;
+							} else
+							{
+								newval = 0xF8 + d;
+							}
 						}
-					}
-				} else
-				{
-					newval = d;
-				}
-				if (newval < sizeof(ptable))
-				{
-					int n = ptable[newval];
-					if (blk.flags & MMCMP_DELTA)
+					} else
 					{
-						n += oldval;
-						oldval = n;
+						newval = d;
 					}
-					pDest[dwPos++] = (uint8)n;
+					if (newval < sizeof(ptable))
+					{
+						int n = ptable[newval];
+						if (blk.flags & MMCMP_DELTA)
+						{
+							n += oldval;
+							oldval = n;
+						}
+						pDest[dwPos++] = (uint8)n;
+					}
+					if (dwPos >= dwSize)
+					{
+						subblk++;
+						dwPos = 0;
+						if(!(subblk < blk.sub_blk)) break;
+						if(!MMCMP_IsDstBlockValid(unpackedData, psubblk[subblk])) return false;
+						dwSize = psubblk[subblk].unpk_size;
+						pDest = &(unpackedData[psubblk[subblk].unpk_pos]);
+					}
 				}
-				if (dwPos >= dwSize)
-				{
-					subblk++;
-					dwPos = 0;
-					if(!(subblk < blk.sub_blk)) break;
-					if(!MMCMP_IsDstBlockValid(unpackedData, psubblk[subblk])) return false;
-					dwSize = psubblk[subblk].unpk_size;
-					pDest = &(unpackedData[psubblk[subblk].unpk_pos]);
-				}
+			} catch(const BitReader::eof &)
+			{
 			}
 		}
 	}

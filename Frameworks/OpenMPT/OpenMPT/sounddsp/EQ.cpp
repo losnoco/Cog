@@ -10,7 +10,6 @@
 
 
 #include "stdafx.h"
-#include "../soundlib/Sndfile.h"
 #include "../soundlib/MixerLoops.h"
 #include "../sounddsp/EQ.h"
 
@@ -201,7 +200,7 @@ mainloop:
 #endif // ENABLE_X86_AMD
 
 
-#ifdef ENABLE_SSE
+#if defined(ENABLE_X86) && defined(ENABLE_SSE)
 
 static void SSE_StereoEQ(EQBANDSTRUCT *pbl, EQBANDSTRUCT *pbr, float32 *pbuffer, UINT nCount)
 {
@@ -294,7 +293,7 @@ done:;
 	}
 }
 
-#endif // ENABLE_SSE
+#endif // ENABLE_X86 && ENABLE_SSE
 
 #if MPT_COMPILER_MSVC
 #pragma warning(pop)
@@ -333,7 +332,7 @@ void CEQ::ProcessMono(int *pbuffer, float *MixFloatBuffer, UINT nCount)
 void CEQ::ProcessStereo(int *pbuffer, float *MixFloatBuffer, UINT nCount)
 {
 
-#ifdef ENABLE_SSE
+#if defined(ENABLE_X86) && defined(ENABLE_SSE)
 
 	if(GetProcSupport() & PROCSUPPORT_SSE)
 	{
@@ -354,7 +353,7 @@ void CEQ::ProcessStereo(int *pbuffer, float *MixFloatBuffer, UINT nCount)
 
 	} else
 
-#endif // ENABLE_SSE
+#endif // ENABLE_X86 && ENABLE_SSE
 
 #ifdef ENABLE_X86_AMD
 
@@ -395,10 +394,6 @@ void CEQ::ProcessStereo(int *pbuffer, float *MixFloatBuffer, UINT nCount)
 
 CEQ::CEQ()
 {
-	#if defined(ENABLE_SSE) || defined(ENABLE_X86_AMD)
-		MPT_ASSERT_ALWAYS(((uintptr_t)&(gEQ[0])) % 4 == 0);
-		MPT_ASSERT_ALWAYS(((uintptr_t)&(gEQ[1])) % 4 == 0);
-	#endif // ENABLE_SSE || ENABLE_X86_AMD
 	memcpy(gEQ, gEQDefaults, sizeof(gEQ));
 }
 

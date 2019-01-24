@@ -50,10 +50,7 @@ public:
 	logfunc_logger( openmpt_log_func func, void * user ) : m_logfunc(func), m_user(user) {
 		return;
 	}
-	virtual ~logfunc_logger() {
-		return;
-	}
-	virtual void log( const std::string & message ) const {
+	void log( const std::string & message ) const override  {
 		if ( m_logfunc ) {
 			m_logfunc( message.c_str(), m_user );
 		} else {
@@ -71,9 +68,8 @@ public:
 	{
 		return;
 	}
-	virtual ~invalid_module_pointer() throw() {
-		return;
-	}
+	invalid_module_pointer(const invalid_module_pointer&) = default;
+	virtual ~invalid_module_pointer() noexcept = default;
 };
 
 class argument_null_pointer : public openmpt::exception {
@@ -83,9 +79,8 @@ public:
 	{
 		return;
 	}
-	virtual ~argument_null_pointer() throw() {
-		return;
-	}
+	argument_null_pointer(const argument_null_pointer&) = default;
+	virtual ~argument_null_pointer() noexcept = default;
 };
 
 } // namespace interface
@@ -98,6 +93,12 @@ static std::string format_exception( const char * const function ) {
 		err += function;
 		err += ": ";
 		err += "ERROR: ";
+		const char * what = e.what();
+		err += what ? what : "";
+	} catch ( const std::bad_alloc & e ) {
+		err += function;
+		err += ": ";
+		err += "OUT OF MEMORY: ";
 		const char * what = e.what();
 		err += what ? what : "";
 	} catch ( const std::exception & e ) {

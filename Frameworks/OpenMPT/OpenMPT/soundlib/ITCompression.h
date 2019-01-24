@@ -10,10 +10,12 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include <vector>
 #include <iosfwd>
 #include "Snd_defs.h"
-#include "../common/FileReader.h"
+#include "BitReader.h"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -26,8 +28,8 @@ public:
 	ITCompression(const ModSample &sample, bool it215, std::ostream *f, SmpLength maxLength = 0);
 	size_t GetCompressedSize() const { return packedTotalLength; }
 
-	static const size_t bufferSize = 2 + 0xFFFF;	// Our output buffer can't be longer than this.
-	static const size_t blockSize = 0x8000;			// Block size (in bytes) in which samples are being processed
+	enum : size_t { bufferSize = 2 + 0xFFFF };	// Our output buffer can't be longer than this.
+	enum : size_t { blockSize = 0x8000 };			// Block size (in bytes) in which samples are being processed
 
 protected:
 	std::vector<int8> bwt;			// Bit width table for each sampling point
@@ -73,26 +75,18 @@ public:
 	ITDecompression(FileReader &file, ModSample &sample, bool it215);
 
 protected:
+	BitReader bitFile;
 	ModSample &mptSample;		// Sample that is being processed
 
 	SmpLength writtenSamples;	// Number of samples so far written on this channel
 	SmpLength writePos;			// Absolut write position in sample (for stereo samples)
 	SmpLength curLength;		// Length of currently processed block
 	unsigned int mem1, mem2;	// Integrator memory
-	int dataPos, dataSize;		// Position in and size of input block
-
-	// Bit reader
-	int bitPos;					// Current bit position in this byte
-	int remBits;				// Remaining bits in this byte
-
 	bool is215;					// Use IT2.15 compression (double deltas)
-
-	mpt::byte chunk[65535];		// Input block
 
 	template<typename Properties>
 	void Uncompress(typename Properties::sample_t *target);
 	static void ChangeWidth(int &curWidth, int width);
-	int ReadBits(int width);
 
 	template<typename Properties>
 	void Write(int v, int topbit, typename Properties::sample_t *target);

@@ -53,7 +53,7 @@ void Flanger::SetParameter(PlugParamIndex index, PlugParamValue value)
 		if(index == kFlangerWaveShape && value < 1.0f)
 			value = 0.0f;
 		else if(index == kFlangerPhase)
-			value = Util::Round(value * 4.0f) / 4.0f;
+			value = mpt::round(value * 4.0f) / 4.0f;
 		m_param[index] = value;
 		RecalculateChorusParams();
 	}
@@ -89,7 +89,7 @@ CString Flanger::GetParamLabel(PlugParamIndex param)
 	case kFlangerFrequency:
 		return _T("Hz");
 	case kFlangerPhase:
-		return _T("°");
+		return mpt::ToCString(MPT_UTF8("\xC2\xB0"));  // U+00B0 DEGREE SIGN
 	case kFlangerDelay:
 		return _T("ms");
 	}

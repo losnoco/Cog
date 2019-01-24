@@ -454,7 +454,12 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 
 	InitializeGlobals(MOD_TYPE_MT2);
 	InitializeChannels();
-	mpt::String::Read<mpt::String::maybeNullTerminated>(m_madeWithTracker, mpt::CharsetWindows1252, fileHeader.trackerName);
+
+	m_modFormat.formatName = mpt::format(U_("MadTracker %1.%2"))(fileHeader.version >> 8, mpt::ufmt::hex0<2>(fileHeader.version & 0xFF));
+	m_modFormat.type = U_("mt2");
+	mpt::String::Read<mpt::String::maybeNullTerminated>(m_modFormat.madeWithTracker, mpt::CharsetWindows1252, fileHeader.trackerName);
+	m_modFormat.charset = mpt::CharsetWindows1252;
+
 	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songName);
 	m_nChannels = fileHeader.numChannels;
 	m_nDefaultSpeed = Clamp<uint8, uint8>(fileHeader.ticksPerLine, 1, 31);
@@ -578,7 +583,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 
 		switch(id)
 		{
-		case MAGIC4LE('B','P','M','+'):
+		case MagicLE("BPM+"):
 			if(!hasLegacyTempo)
 			{
 				m_nTempoMode = tempoModeModern;
@@ -590,13 +595,13 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			break;
 
-		case MAGIC4LE('T','F','X','M'):
+		case MagicLE("TFXM"):
 			break;
 
-		case MAGIC4LE('T','R','K','O'):
+		case MagicLE("TRKO"):
 			break;
 
-		case MAGIC4LE('T','R','K','S'):
+		case MagicLE("TRKS"):
 			m_nSamplePreAmp = chunk.ReadUint16LE() / 256u;	// 131072 is 0dB... I think (that's how MTIOModule_MT2.cpp reads)
 			m_nVSTiVolume = m_nSamplePreAmp / 2u;
 			for(CHANNELINDEX c = 0; c < GetNumChannels(); c++)
@@ -611,7 +616,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			break;
 
-		case MAGIC4LE('T','R','K','L'):
+		case MagicLE("TRKL"):
 			for(CHANNELINDEX i = 0; i < m_nChannels && chunk.CanRead(1); i++)
 			{
 				std::string name;
@@ -620,7 +625,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			break;
 
-		case MAGIC4LE('P','A','T','N'):
+		case MagicLE("PATN"):
 			for(PATTERNINDEX i = 0; i < fileHeader.numPatterns && chunk.CanRead(1) && Patterns.IsValidIndex(i); i++)
 			{
 				std::string name;
@@ -629,15 +634,15 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			break;
 
-		case MAGIC4LE('M','S','G','\0'):
+		case MagicLE("MSG\0"):
 			chunk.Skip(1);	// Show message on startup
 			m_songMessage.Read(chunk, chunk.BytesLeft(), SongMessage::leCRLF);
 			break;
 
-		case MAGIC4LE('P','I','C','T'):
+		case MagicLE("PICT"):
 			break;
 
-		case MAGIC4LE('S','U','M','\0'):
+		case MagicLE("SUM\0"):
 			{
 				uint8 summaryMask[6];
 				chunk.ReadArray(summaryMask);
@@ -650,14 +655,14 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			break;
 
-		case MAGIC4LE('T','M','A','P'):
+		case MagicLE("TMAP"):
 			break;
-		case MAGIC4LE('M','I','D','I'):
+		case MagicLE("MIDI"):
 			break;
-		case MAGIC4LE('T','R','E','Q'):
+		case MagicLE("TREQ"):
 			break;
 
-		case MAGIC4LE('V','S','T','2'):
+		case MagicLE("VST2"):
 			numVST = chunk.ReadUint32LE();
 #ifndef NO_VST
 			if(!(loadFlags & loadPluginData))
@@ -682,7 +687,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 						// Remove ".dll" from library name
 						mixPlug.Info.szLibraryName[len - 4] = '\0';
 					}
-					mixPlug.Info.dwPluginId1 = kEffectMagic;
+					mixPlug.Info.dwPluginId1 = Vst::kEffectMagic;
 					mixPlug.Info.dwPluginId2 = vstHeader.fxID;
 					if(vstHeader.track >= m_nChannels)
 					{
@@ -918,9 +923,9 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 		if(fileHeader.version >= 0x0202) envMask = instrChunk.ReadUint32LE();
 
 		mptIns->nFadeOut = insHeader.fadeout;
-		const uint8 NNA[4] = { NNA_NOTECUT, NNA_CONTINUE, NNA_NOTEOFF, NNA_NOTEFADE };
-		const uint8 DCT[4] = { DCT_NONE, DCT_NOTE, DCT_SAMPLE, DCT_INSTRUMENT };
-		const uint8 DNA[4] = { DNA_NOTECUT, DNA_NOTEFADE /* actually continue, but IT doesn't have that */, DNA_NOTEOFF, DNA_NOTEFADE };
+		const NewNoteAction NNA[4]       = { NNA_NOTECUT, NNA_CONTINUE, NNA_NOTEOFF, NNA_NOTEFADE };
+		const DuplicateCheckType DCT[4]  = { DCT_NONE, DCT_NOTE, DCT_SAMPLE, DCT_INSTRUMENT };
+		const DuplicateNoteAction DNA[4] = { DNA_NOTECUT, DNA_NOTEFADE /* actually continue, but IT doesn't have that */, DNA_NOTEOFF, DNA_NOTEFADE };
 		mptIns->nNNA = NNA[insHeader.nna & 3];
 		mptIns->nDCT = DCT[(insHeader.nna >> 8) & 3];
 		mptIns->nDNA = DNA[(insHeader.nna >> 12) & 3];
@@ -1092,7 +1097,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 					if(sample > 0 && sample <= m_nSamples)
 					{
 						ModSample &mptSmp = Samples[sample];
-						mptSmp.nVibType = insHeader.vibtype;
+						mptSmp.nVibType = static_cast<VibratoType>(insHeader.vibtype & 3); // In fact, MT2 only implements sine vibrato
 						mptSmp.nVibSweep = insHeader.vibsweep;
 						mptSmp.nVibDepth = insHeader.vibdepth;
 						mptSmp.nVibRate = insHeader.vibrate;
@@ -1151,7 +1156,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			SetSamplePath(i + 1, mpt::PathString::FromLocaleSilent(filename));
 #elif !defined(LIBOPENMPT_BUILD_TEST)
-			AddToLog(LogWarning, mpt::format(MPT_USTRING("Loading external sample %1 ('%2') failed: External samples are not supported."))(i, mpt::ToUnicode(GetCharsetFile(), filename)));
+			AddToLog(LogWarning, mpt::format(U_("Loading external sample %1 ('%2') failed: External samples are not supported."))(i, mpt::ToUnicode(GetCharsetFile(), filename)));
 #endif // MPT_EXTERNAL_SAMPLES
 		}
 	}

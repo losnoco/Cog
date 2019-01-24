@@ -152,10 +152,11 @@ int probe_file_header( std::uint64_t flags, std::istream & stream ) {
 #pragma warning(disable:4702) // unreachable code
 #endif // _MSC_VER
 
-module::module( const module & ) {
+module::module( const module & ) : impl(nullptr) {
 	throw exception("openmpt::module is non-copyable");
 }
 
+// cppcheck-suppress operatorEqVarError
 void module::operator = ( const module & ) {
 	throw exception("openmpt::module is non-copyable");
 }
@@ -417,9 +418,10 @@ module_ext::~module_ext() {
 #pragma warning(push)
 #pragma warning(disable:4702) // unreachable code
 #endif // _MSC_VER
-module_ext::module_ext( const module_ext & other ) : module(other) {
+module_ext::module_ext( const module_ext & other ) : module(other), ext_impl(nullptr) {
 	throw std::runtime_error("openmpt::module_ext is non-copyable");
 }
+// cppcheck-suppress operatorEqVarError
 void module_ext::operator = ( const module_ext & ) {
 	throw std::runtime_error("openmpt::module_ext is non-copyable");
 }

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -27,6 +29,8 @@ struct UMXFileHeader
 	uint32le exportOffset;
 	uint32le importCount;
 	uint32le importOffset;
+
+	bool IsValid() const;
 };
 
 MPT_BINARY_STRUCT(UMXFileHeader, 36)

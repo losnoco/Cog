@@ -18,6 +18,12 @@
 #endif // MPT_OS_WINDOWS
 #endif // MODPLUG_TRACKER
 
+#if defined(MPT_ENABLE_FILEIO)
+#if MPT_COMPILER_MSVC
+#include <tchar.h>
+#endif // MPT_COMPILER_MSVC
+#endif // MPT_ENABLE_FILEIO
+
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -37,7 +43,7 @@ bool SetFilesystemCompression(HANDLE hFile)
 	USHORT format = COMPRESSION_FORMAT_DEFAULT;
 	DWORD dummy = 0;
 	BOOL result = DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, (LPVOID)&format, sizeof(format), NULL, 0, &dummy /*required*/ , NULL);
-	return result ? true : false;
+	return result != FALSE;
 }
 bool SetFilesystemCompression(int fd)
 {
@@ -53,24 +59,9 @@ bool SetFilesystemCompression(int fd)
 	}
 	return SetFilesystemCompression(hFile);
 }
-#if defined(MPT_ENABLE_FILEIO_STDIO)
-bool SetFilesystemCompression(FILE *file)
-{
-	if(!file)
-	{
-		return false;
-	}
-	int fd = _fileno(file);
-	if(fd == -1)
-	{
-		return false;
-	}
-	return SetFilesystemCompression(fd);
-}
-#endif // MPT_ENABLE_FILEIO_STDIO
 bool SetFilesystemCompression(const mpt::PathString &filename)
 {
-	DWORD attributes = GetFileAttributesW(filename.AsNativePrefixed().c_str());
+	DWORD attributes = GetFileAttributes(filename.AsNativePrefixed().c_str());
 	if(attributes == INVALID_FILE_ATTRIBUTES)
 	{
 		return false;
@@ -79,20 +70,176 @@ bool SetFilesystemCompression(const mpt::PathString &filename)
 	{
 		return true;
 	}
-	HANDLE hFile = CreateFileW(filename.AsNativePrefixed().c_str(), GENERIC_ALL, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+	HANDLE hFile = CreateFile(filename.AsNativePrefixed().c_str(), GENERIC_ALL, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
 		return false;
 	}
 	bool result = SetFilesystemCompression(hFile);
 	CloseHandle(hFile);
-	hFile = INVALID_HANDLE_VALUE;
 	return result;
 }
 #endif // MPT_OS_WINDOWS
 #endif // MODPLUG_TRACKER
 
 
+
+#ifdef MODPLUG_TRACKER
+
+namespace mpt {
+
+#if MPT_COMPILER_MSVC
+
+mpt::tstring SafeOutputFile::convert_mode(std::ios_base::openmode mode, FlushMode flushMode)
+{
+	mpt::tstring fopen_mode;
+	switch(mode & ~(std::ios_base::ate | std::ios_base::binary))
+	{
+	case std::ios_base::in:
+		fopen_mode = _T("r");
+		break;
+	case std::ios_base::out:
+		MPT_FALLTHROUGH;
+	case std::ios_base::out | std::ios_base::trunc:
+		fopen_mode = _T("w");
+		break;
+	case std::ios_base::app:
+		MPT_FALLTHROUGH;
+	case std::ios_base::out | std::ios_base::app:
+		fopen_mode = _T("a");
+		break;
+	case std::ios_base::out | std::ios_base::in:
+		fopen_mode = _T("r+");
+		break;
+	case std::ios_base::out | std::ios_base::in | std::ios_base::trunc:
+		fopen_mode = _T("w+");
+		break;
+	case std::ios_base::out | std::ios_base::in | std::ios_base::app:
+		MPT_FALLTHROUGH;
+	case std::ios_base::in | std::ios_base::app:
+		fopen_mode = _T("a+");
+		break;
+	}
+	if(fopen_mode.empty())
+	{
+		return fopen_mode;
+	}
+	if(mode & std::ios_base::binary)
+	{
+		fopen_mode += _T("b");
+	}
+	if(flushMode == FlushMode::Full)
+	{
+		fopen_mode += _T("c");  // force commit on fflush (MSVC specific)
+	}
+	return fopen_mode;
+}
+
+FILE * SafeOutputFile::internal_fopen(const mpt::PathString &filename, std::ios_base::openmode mode, FlushMode flushMode)
+{
+	mpt::tstring fopen_mode = convert_mode(mode, flushMode);
+	if(fopen_mode.empty())
+	{
+		return nullptr;
+	}
+	FILE *f =
+#ifdef UNICODE
+		_wfopen(filename.AsNativePrefixed().c_str(), fopen_mode.c_str())
+#else
+		fopen(filename.AsNativePrefixed().c_str(), fopen_mode.c_str())
+#endif
+		;
+	if(!f)
+	{
+		return nullptr;
+	}
+	if(mode & std::ios_base::ate)
+	{
+		if(fseek(f, 0, SEEK_END) != 0)
+		{
+			fclose(f);
+			f = nullptr;
+			return nullptr;
+		}
+	}
+	m_f = f;
+	return f;
+}
+
+#endif // MPT_COMPILER_MSVC
+
+// cppcheck-suppress exceptThrowInDestructor
+SafeOutputFile::~SafeOutputFile() noexcept(false)
+{
+	if(!stream())
+	{
+		return;
+	}
+	if(!stream().rdbuf())
+	{
+		return;
+	}
+#if MPT_COMPILER_MSVC
+	if(!m_f)
+	{
+		return;
+	}
+#endif // MPT_COMPILER_MSVC
+	bool errorOnFlush = false;
+	if(m_FlushMode != FlushMode::None)
+	{
+		try
+		{
+			if(stream().rdbuf()->pubsync() != 0)
+			{
+				errorOnFlush = true;
+			}
+		} catch(const std::exception &)
+		{
+			errorOnFlush = true;
+#if MPT_COMPILER_MSVC
+			if(m_FlushMode != FlushMode::None)
+			{
+				if(fflush(m_f) != 0)
+				{
+					errorOnFlush = true;
+				}
+			}
+			if(fclose(m_f) != 0)
+			{
+				errorOnFlush = true;
+			}
+#endif // MPT_COMPILER_MSVC
+			// ignore errorOnFlush here, and re-throw the earlier exception
+			throw;
+		}
+	}
+#if MPT_COMPILER_MSVC
+	if(m_FlushMode != FlushMode::None)
+	{
+		if(fflush(m_f) != 0)
+		{
+			errorOnFlush = true;
+		}
+	}
+	if(fclose(m_f) != 0)
+	{
+		errorOnFlush = true;
+	}
+#endif // MPT_COMPILER_MSVC
+	if(errorOnFlush && (stream().exceptions() & (std::ios::badbit | std::ios::failbit)))
+	{
+		throw std::ios_base::failure(std::string("Error flushing file buffers."));
+	}
+}
+
+} // namespace mpt
+
+#endif // MODPLUG_TRACKER
+
+
+
+#ifdef MODPLUG_TRACKER
 
 namespace mpt {
 
@@ -170,6 +317,8 @@ LazyFileRef::operator std::string () const
 
 } // namespace mpt
 
+#endif // MODPLUG_TRACKER
+
 
 
 #ifdef MODPLUG_TRACKER
@@ -184,7 +333,7 @@ CMappedFile::~CMappedFile()
 
 bool CMappedFile::Open(const mpt::PathString &filename)
 {
-	m_hFile = CreateFileW(
+	m_hFile = CreateFile(
 		filename.AsNativePrefixed().c_str(),
 		GENERIC_READ,
 		FILE_SHARE_READ,
