@@ -80,7 +80,6 @@
 			isa = PBXGroup;
 			children = (
 				8359FF2017FEF35C0060F3ED /* ArchiveSource */,
-				8359FF1917FEF35C0060F3ED /* Frameworks */,
 				8359FF1817FEF35C0060F3ED /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,6 +100,7 @@
 				8359FF6A17FEF39F0060F3ED /* File_Extractor.xcodeproj */,
 			);
 			name = Frameworks;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		8359FF1C17FEF35C0060F3ED /* Other Frameworks */ = {
@@ -121,6 +121,7 @@
 				8359009A17FEFDA80060F3ED /* ArchiveContainer.h */,
 				8359009B17FEFDA80060F3ED /* ArchiveContainer.m */,
 				8359009717FEF6490060F3ED /* ArchiveSource.h */,
+				8359FF1917FEF35C0060F3ED /* Frameworks */,
 				8359009817FEF6490060F3ED /* ArchiveSource.m */,
 				8359FF2117FEF35C0060F3ED /* Supporting Files */,
 			);
