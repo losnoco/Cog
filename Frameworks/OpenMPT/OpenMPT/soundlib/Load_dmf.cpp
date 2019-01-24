@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include "Loaders.h"
 #include "ChunkReader.h"
-#include <stdexcept>
+#include "BitReader.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -40,14 +40,14 @@ struct DMFChunk
 	// 32-Bit chunk identifiers
 	enum ChunkIdentifiers
 	{
-		idCMSG	= MAGIC4LE('C','M','S','G'),	// Song message
-		idSEQU	= MAGIC4LE('S','E','Q','U'),	// Order list
-		idPATT	= MAGIC4LE('P','A','T','T'),	// Patterns
-		idSMPI	= MAGIC4LE('S','M','P','I'),	// Sample headers
-		idSMPD	= MAGIC4LE('S','M','P','D'),	// Sample data
-		idSMPJ	= MAGIC4LE('S','M','P','J'),	// Sample jump table (XTracker 32 only)
-		idENDE	= MAGIC4LE('E','N','D','E'),	// Last four bytes of DMF file
-		idSETT	= MAGIC4LE('S','E','T','T'),	// Probably contains GUI settings
+		idCMSG	= MagicLE("CMSG"),	// Song message
+		idSEQU	= MagicLE("SEQU"),	// Order list
+		idPATT	= MagicLE("PATT"),	// Patterns
+		idSMPI	= MagicLE("SMPI"),	// Sample headers
+		idSMPD	= MagicLE("SMPD"),	// Sample data
+		idSMPJ	= MagicLE("SMPJ"),	// Sample jump table (XTracker 32 only)
+		idENDE	= MagicLE("ENDE"),	// Last four bytes of DMF file
+		idSETT	= MagicLE("SETT"),	// Probably contains GUI settings
 	};
 
 	uint32le id;
@@ -166,38 +166,24 @@ struct DMFPatternSettings
 {
 	struct ChannelState
 	{
-		ModCommand::NOTE noteBuffer;	// Note buffer
-		ModCommand::NOTE lastNote;		// Last played note on channel
-		uint8 vibratoType;				// Last used vibrato type on channel
-		uint8 tremoloType;				// Last used tremolo type on channel
-		uint8 highOffset;				// Last used high offset on channel
-		bool playDir;					// Sample play direction... false = forward (default)
-
-		ChannelState()
-		{
-			noteBuffer = lastNote = NOTE_NONE;
-			vibratoType = 8;
-			tremoloType = 4;
-			highOffset = 6;
-			playDir = false;
-		}
+		ModCommand::NOTE noteBuffer = NOTE_NONE; // Note buffer
+		ModCommand::NOTE lastNote = NOTE_NONE;   // Last played note on channel
+		uint8 vibratoType = 8;                   // Last used vibrato type on channel
+		uint8 tremoloType = 4;                   // Last used tremolo type on channel
+		uint8 highOffset = 6;                    // Last used high offset on channel
+		bool playDir = false;                    // Sample play direction... false = forward (default)
 	};
 
-	std::vector<ChannelState> channels;		// Memory for each channel's state
-	bool realBPMmode;						// true = BPM mode
-	uint8 beat;								// Rows per beat
-	uint8 tempoTicks;						// Tick mode param
-	uint8 tempoBPM;							// BPM mode param
-	uint8 internalTicks;					// Ticks per row in final pattern
+	std::vector<ChannelState> channels; // Memory for each channel's state
+	bool realBPMmode = false;           // true = BPM mode
+	uint8 beat = 0;                     // Rows per beat
+	uint8 tempoTicks = 32;              // Tick mode param
+	uint8 tempoBPM = 120;               // BPM mode param
+	uint8 internalTicks = 6;            // Ticks per row in final pattern
 
-	DMFPatternSettings(CHANNELINDEX numChannels) : channels(numChannels)
-	{
-		realBPMmode = false;
-		beat = 0;
-		tempoTicks = 32;
-		tempoBPM = 120;
-		internalTicks = 6;
-	}
+	DMFPatternSettings(CHANNELINDEX numChannels)
+		: channels(numChannels)
+	{ }
 };
 
 
@@ -254,9 +240,9 @@ static uint8 DMFvibrato2MPT(uint8 val, const uint8 internalTicks)
 {
 	// MPT: 1 vibrato period == 64 ticks... we have internalTicks ticks per row.
 	// X-Tracker: Period length specified in rows!
-	const int periodInTicks = MAX(1, (val >> 4)) * internalTicks;
-	const uint8 matchingPeriod = (uint8)Clamp((128 / periodInTicks), 1, 15);
-	return (matchingPeriod << 4) | MAX(1, (val & 0x0F));
+	const int periodInTicks = std::max(1, (val >> 4)) * internalTicks;
+	const uint8 matchingPeriod = static_cast<uint8>(Clamp((128 / periodInTicks), 1, 15));
+	return (matchingPeriod << 4) | std::max<uint8>(1, (val & 0x0F));
 }
 
 
@@ -609,7 +595,7 @@ static PATTERNINDEX ConvertDMFPattern(FileReader &file, DMFPatternSettings &sett
 						}
 						break;
 					case 5:		// Tremolo Retrig Sample (who invented those stupid effect names?)
-						effectParam1 = MAX(1, DMFdelay2MPT(effectParam1, settings.internalTicks));
+						effectParam1 = std::max(uint8(1), DMFdelay2MPT(effectParam1, settings.internalTicks));
 						effect1 = CMD_RETRIG;
 						settings.channels[chn].playDir = false;
 						break;
@@ -659,7 +645,7 @@ static PATTERNINDEX ConvertDMFPattern(FileReader &file, DMFPatternSettings &sett
 					case 1:		// Note Finetune
 						effect2 = static_cast<ModCommand::COMMAND>(effectParam2 < 128 ? CMD_PORTAMENTOUP : CMD_PORTAMENTODOWN);
 						if(effectParam2 > 128) effectParam2 = 255 - effectParam2 + 1;
-						effectParam2 = 0xF0 | MIN(0x0F, effectParam2);	// Well, this is not too accurate...
+						effectParam2 = 0xF0 | std::min(uint8(0x0F), effectParam2);	// Well, this is not too accurate...
 						break;
 					case 2:		// Note Delay (wtf is the difference to Sample Delay?)
 						effectParam2 = DMFdelay2MPT(effectParam2, settings.internalTicks);
@@ -926,6 +912,11 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	InitializeGlobals(MOD_TYPE_DMF);
+
+	m_modFormat.formatName = mpt::format(U_("X-Tracker v%1"))(fileHeader.version);
+	m_modFormat.type = U_("dmf");
+	m_modFormat.charset = mpt::CharsetCP437;
+
 	mpt::String::Read<mpt::String::spacePadded>(m_songName, fileHeader.songname);
 	{
 		std::string artist;
@@ -934,7 +925,6 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	FileHistory mptHistory;
-	MemsetZero(mptHistory);
 	mptHistory.loadDate.tm_mday = Clamp(fileHeader.creationDay, uint8(1), uint8(31));
 	mptHistory.loadDate.tm_mon = Clamp(fileHeader.creationMonth, uint8(1), uint8(12)) - 1;
 	mptHistory.loadDate.tm_year = fileHeader.creationYear;
@@ -963,36 +953,33 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 		chunk.ReadStruct(patHeader);
 		m_nChannels = Clamp<uint8, uint8>(patHeader.numTracks, 1, 32) + 1;	// + 1 for global track (used for tempo stuff)
 
-		std::vector<FileReader> patternChunks;
-		patternChunks.reserve(patHeader.numPatterns);
-
 		// First, find out where all of our patterns are...
-		for(PATTERNINDEX pat = 0; pat < patHeader.numPatterns; pat++)
+		std::vector<FileReader> patternChunks(patHeader.numPatterns);
+		for(auto &patternChunk : patternChunks)
 		{
 			DMFPatternHeader header;
 			chunk.ReadStruct(header);
 			chunk.SkipBack(sizeof(header));
-			patternChunks.push_back(chunk.ReadChunk(sizeof(header) + header.patternLength));
+			patternChunk = chunk.ReadChunk(sizeof(header) + header.patternLength);
 		}
 
 		// Now go through the order list and load them.
 		DMFPatternSettings settings(GetNumChannels());
 
 		Patterns.ResizeArray(Order().GetLength());
-		for(ORDERINDEX ord = 0; ord < Order().GetLength(); ord++)
+		for(PATTERNINDEX &pat : Order())
 		{
 			// Create one pattern for each order item, as the same pattern can be played with different settings
-			PATTERNINDEX pat = Order()[ord];
 			if(pat < patternChunks.size())
 			{
 				pat = ConvertDMFPattern(patternChunks[pat], settings, *this);
-				Order()[ord] = pat;
-				// Loop end?
-				if(pat != PATTERNINDEX_INVALID && ord == seqHeader.loopEnd && (seqHeader.loopStart > 0 || ord < Order().GetLastIndex()))
-				{
-					Patterns[pat].WriteEffect(EffectWriter(CMD_POSITIONJUMP, static_cast<ModCommand::PARAM>(seqHeader.loopStart)).Row(Patterns[pat].GetNumRows() - 1).RetryPreviousRow());
-				}
 			}
+		}
+		// Write loop end if necessary
+		if(Order().IsValidPat(seqHeader.loopEnd) && (seqHeader.loopStart > 0 || seqHeader.loopEnd < Order().GetLastIndex()))
+		{
+			PATTERNINDEX pat = Order()[seqHeader.loopEnd];
+			Patterns[pat].WriteEffect(EffectWriter(CMD_POSITIONJUMP, static_cast<ModCommand::PARAM>(seqHeader.loopStart)).Row(Patterns[pat].GetNumRows() - 1).RetryPreviousRow());
 		}
 	}
 
@@ -1004,7 +991,7 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 		// The skipped byte seems to always be 0.
 		// This also matches how XT 1.03 itself displays the song message.
 		chunk.Skip(1);
-		m_songMessage.ReadFixedLineLength(chunk, chunk.GetLength() - 1, 40, 0);
+		m_songMessage.ReadFixedLineLength(chunk, chunk.BytesLeft(), 40, 0);
 	}
 	
 	// Read sample headers + data
@@ -1064,53 +1051,34 @@ struct DMFHNode
 
 struct DMFHTree
 {
-	const uint8 *ibuf, *ibufmax;
-	uint32 bitbuf;
-	int bitnum;
+	BitReader file;
 	int lastnode, nodecount;
 	DMFHNode nodes[256];
 
-	// DMF Huffman ReadBits
-	uint8 DMFReadBits(int nbits)
+	DMFHTree(FileReader &file)
+		: file(file)
+		, lastnode(0)
+		, nodecount(0)
 	{
-		if(bitnum < nbits)
-		{
-			if(ibuf < ibufmax)
-			{
-				bitbuf |= (((uint32)(*ibuf++)) << bitnum);
-				bitnum += 8;
-			} else
-			{
-				throw std::range_error("Truncated DMF sample block");
-			}
-		}
-
-		uint8 v = static_cast<uint8>(bitbuf & ((1 << nbits) - 1));
-		bitbuf >>= nbits;
-		bitnum -= nbits;
-		return v;
+		MemsetZero(nodes);
 	}
-
-
+	
 	//
 	// tree: [8-bit value][12-bit index][12-bit index] = 32-bit
 	//
 
 	void DMFNewNode()
 	{
-		uint8 isleft, isright;
-		int actnode;
-
-		actnode = nodecount;
+		int actnode = nodecount;
 		if(actnode > 255) return;
-		nodes[actnode].value = DMFReadBits(7);
-		isleft = DMFReadBits(1);
-		isright = DMFReadBits(1);
+		nodes[actnode].value = static_cast<uint8>(file.ReadBits(7));
+		bool isLeft = file.ReadBits(1) != 0;
+		bool isRight = file.ReadBits(1) != 0;
 		actnode = lastnode;
 		if(actnode > 255) return;
 		nodecount++;
 		lastnode = nodecount;
-		if(isleft)
+		if(isLeft)
 		{
 			nodes[actnode].left = (int16)lastnode;
 			DMFNewNode();
@@ -1119,7 +1087,7 @@ struct DMFHTree
 			nodes[actnode].left = -1;
 		}
 		lastnode = nodecount;
-		if(isright)
+		if(isRight)
 		{
 			nodes[actnode].right = (int16)lastnode;
 			DMFNewNode();
@@ -1131,25 +1099,21 @@ struct DMFHTree
 };
 
 
-uintptr_t DMFUnpack(uint8 *psample, const uint8 *ibuf, const uint8 *ibufmax, uint32 maxlen)
+uintptr_t DMFUnpack(FileReader &file, uint8 *psample, uint32 maxlen)
 {
-	DMFHTree tree;
-
-	MemsetZero(tree);
-	tree.ibuf = ibuf;
-	tree.ibufmax = ibufmax;
-	tree.DMFNewNode();
+	DMFHTree tree(file);
 	uint8 value = 0, delta = 0;
 
 	try
 	{
+		tree.DMFNewNode();
 		for(uint32 i = 0; i < maxlen; i++)
 		{
 			int actnode = 0;
-			uint8 sign = tree.DMFReadBits(1);
+			bool sign = tree.file.ReadBits(1) != 0;
 			do
 			{
-				if(tree.DMFReadBits(1))
+				if(tree.file.ReadBits(1))
 					actnode = tree.nodes[actnode].right;
 				else
 					actnode = tree.nodes[actnode].left;
@@ -1160,11 +1124,11 @@ uintptr_t DMFUnpack(uint8 *psample, const uint8 *ibuf, const uint8 *ibufmax, uin
 			value += delta;
 			psample[i] = value;
 		}
-	} catch(const std::range_error &)
+	} catch(const BitReader::eof &)
 	{
 		//AddToLog(LogWarning, "Truncated DMF sample block");
 	}
-	return tree.ibuf - ibuf;
+	return tree.file.GetPosition();
 }
 
 

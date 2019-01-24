@@ -169,6 +169,10 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 	m_nDefaultTempo.Set(80);
 	m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
 
+	m_modFormat.formatName = U_("Farandole Composer");
+	m_modFormat.type = U_("far");
+	m_modFormat.charset = mpt::CharsetCP437;
+
 	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songName);
 
 	// Read channel settings

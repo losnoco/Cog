@@ -108,6 +108,12 @@ void ModSample::Convert(MODTYPE fromType, MODTYPE toType)
 	{
 		uFlags.reset(SMP_KEEPONDISK);
 	}
+
+	// No Adlib instruments in formats that can't handle it.
+	if(!CSoundFile::SupportsOPL(toType) && uFlags[CHN_ADLIB])
+	{
+		SetAdlib(false);
+	}
 }
 
 
@@ -121,7 +127,7 @@ void ModSample::Initialize(MODTYPE type)
 	nPan = 128;
 	nVolume = 256;
 	nGlobalVol = 64;
-	uFlags.reset(CHN_PANNING | CHN_SUSTAINLOOP | CHN_LOOP | CHN_PINGPONGLOOP | CHN_PINGPONGSUSTAIN | SMP_MODIFIED | SMP_KEEPONDISK);
+	uFlags.reset(CHN_PANNING | CHN_SUSTAINLOOP | CHN_LOOP | CHN_PINGPONGLOOP | CHN_PINGPONGSUSTAIN | CHN_ADLIB | SMP_MODIFIED | SMP_KEEPONDISK);
 	if(type == MOD_TYPE_XM)
 	{
 		uFlags.set(CHN_PANNING);
@@ -135,11 +141,7 @@ void ModSample::Initialize(MODTYPE type)
 	rootNote = 0;
 	filename[0] = '\0';
 
-	// Default cues compatible with old-style volume column offset
-	for(int i = 0; i < 9; i++)
-	{
-		cues[i] = (i + 1) << 11;
-	}
+	SetDefaultCuePoints();
 }
 
 
@@ -164,7 +166,7 @@ size_t ModSample::AllocateSample()
 {
 	FreeSample();
 
-	if((pSample = AllocateSample(nLength, GetBytesPerSample())) == nullptr)
+	if((pData.pSample = AllocateSample(nLength, GetBytesPerSample())) == nullptr)
 	{
 		return 0;
 	} else
@@ -174,11 +176,11 @@ size_t ModSample::AllocateSample()
 }
 
 
-// Allocate sample memory. On sucess, a pointer to the silenced sample buffer is returned. On failure, nullptr is returned.
-// numSamples must contain the sample length, bytesPerSample the size of a sampling point multiplied with the number of channels.
-void *ModSample::AllocateSample(SmpLength numSamples, size_t bytesPerSample)
+// Allocate sample memory. On success, a pointer to the silenced sample buffer is returned. On failure, nullptr is returned.
+// numFrames must contain the sample length, bytesPerSample the size of a sampling point multiplied with the number of channels.
+void *ModSample::AllocateSample(SmpLength numFrames, size_t bytesPerSample)
 {
-	const size_t allocSize = GetRealSampleBufferSize(numSamples, bytesPerSample);
+	const size_t allocSize = GetRealSampleBufferSize(numFrames, bytesPerSample);
 
 	if(allocSize != 0)
 	{
@@ -223,8 +225,8 @@ size_t ModSample::GetRealSampleBufferSize(SmpLength numSamples, size_t bytesPerS
 
 void ModSample::FreeSample()
 {
-	FreeSample(pSample);
-	pSample = nullptr;
+	FreeSample(pData.pSample);
+	pData.pSample = nullptr;
 }
 
 
@@ -304,7 +306,7 @@ void ModSample::SanitizeLoops()
 
 uint32 ModSample::TransposeToFrequency(int transpose, int finetune)
 {
-	return Util::Round<uint32>(std::pow(2.0, (transpose * 128.0 + finetune) * (1.0 / (12.0 * 128.0))) * 8363.0);
+	return mpt::saturate_round<uint32>(std::pow(2.0, (transpose * 128.0 + finetune) * (1.0 / (12.0 * 128.0))) * 8363.0);
 }
 
 
@@ -317,46 +319,65 @@ void ModSample::TransposeToFrequency()
 // Return tranpose.finetune as 25.7 fixed point value.
 int ModSample::FrequencyToTranspose(uint32 freq)
 {
-	return Util::Round<int>(std::log(freq * (1.0 / 8363.0)) * (12.0 * 128.0 * (1.0 / M_LN2)));
+	return mpt::saturate_round<int>(std::log(freq * (1.0 / 8363.0)) * (12.0 * 128.0 * (1.0 / M_LN2)));
 }
 
 
 void ModSample::FrequencyToTranspose()
 {
-	int f2t;
+	int f2t = 0;
 	if(nC5Speed)
 		f2t = FrequencyToTranspose(nC5Speed);
-	else
-		f2t = 0;
-	int transpose = f2t >> 7;
-	int finetune = f2t & 0x7F;	//0x7F == 111 1111
-	if(finetune > 80)			// XXX Why is this 80?
-	{
-		transpose++;
-		finetune -= 128;
-	}
-	Limit(transpose, -127, 128);
-	RelativeTone = static_cast<int8>(transpose);
-	nFineTune = static_cast<int8>(finetune);
+	RelativeTone = static_cast<int8>(f2t >> 7);
+	nFineTune = static_cast<int8>(f2t & 0x7F);
 }
 
 
 // Transpose the sample by amount specified in octaves (i.e. amount=1 transposes one octave up)
 void ModSample::Transpose(double amount)
 {
-	nC5Speed = Util::Round<uint32>(nC5Speed * std::pow(2.0, amount));
+	nC5Speed = mpt::saturate_round<uint32>(nC5Speed * std::pow(2.0, amount));
 }
 
 
 // Check if the sample's cue points are the default cue point set.
 bool ModSample::HasCustomCuePoints() const
 {
-	for(SmpLength i = 0; i < CountOf(cues); i++)
+	if(!uFlags[CHN_ADLIB])
 	{
-		if(cues[i] != (i + 1) << 11) return true;
+		for(SmpLength i = 0; i < CountOf(cues); i++)
+		{
+			if(cues[i] != (i + 1) << 11) return true;
+		}
 	}
 	return false;
 }
 
+
+void ModSample::SetDefaultCuePoints()
+{
+	// Default cues compatible with old-style volume column offset
+	for(int i = 0; i < 9; i++)
+	{
+		cues[i] = (i + 1) << 11;
+	}
+}
+
+void ModSample::SetAdlib(bool enable, OPLPatch patch)
+{
+	if(!enable && uFlags[CHN_ADLIB])
+	{
+		SetDefaultCuePoints();
+	}
+	uFlags.set(CHN_ADLIB, enable);
+	if(enable)
+	{
+		// Bogus sample to make playback work
+		uFlags.reset(CHN_16BIT | CHN_STEREO);
+		nLength = 4;
+		AllocateSample();
+		adlib = patch;
+	}
+}
 
 OPENMPT_NAMESPACE_END

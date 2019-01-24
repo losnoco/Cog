@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by libopenmpt_settings.rc
+// Used by libopenmpt_plugin_gui.rc
 //
 #define IDD_SETTINGS                    101
 #define IDD_FILEINFO                    102

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "../soundlib/ModInstrument.h"
 #include "../soundlib/ModSample.h"
 #include "../soundlib/SampleIO.h"
@@ -227,6 +229,7 @@ struct ITSample
 		enablePanning		= 0x80,
 
 		cvtSignedSample		= 0x01,
+		cvtOPLInstrument	= 0x40,		// FM instrument in MPTM
 		cvtExternalSample	= 0x80,		// Keep MPTM sample on disk
 		cvtADPCMSample		= 0xFF,		// MODPlugin :(
 
@@ -296,6 +299,22 @@ enum IT_ReaderBitMasks
 	IT_bitmask_patternChanMask_c    = 0x3f,
 	IT_bitmask_patternChanEnabled_c = 0x80,
 	IT_bitmask_patternChanUsed_c    = 0x0f
+};
+
+
+// Calculate Schism Tracker version field for IT / S3M header based on specified release date
+// Date calculation derived from https://alcor.concordia.ca/~gpkatch/gdate-algorithm.html
+template<int32 y, int32 m, int32 d>
+struct SchismVersionFromDate
+{
+	enum : int32 { mm = (m + 9) % 12 };
+	enum : int32 { yy = y - mm / 10 };
+	enum : int32 { date = yy * 365 + yy / 4 - yy / 100 + yy / 400 + (mm * 306 + 5) / 10 + (d - 1) };
+
+	static constexpr int32 Version(const int32 trackerID = 0x1000)
+	{
+		return trackerID + 0x0050 + date - SchismVersionFromDate<2009, 10, 31>::date;
+	}
 };
 
 OPENMPT_NAMESPACE_END

@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include <ios>
 #include <istream>
 #include <ostream>
@@ -35,7 +37,7 @@ OPENMPT_NAMESPACE_BEGIN
 namespace mpt
 {
 
-#if MPT_COMPILER_MSVC
+#ifdef MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
 
 class stringbuf
 	: public std::stringbuf

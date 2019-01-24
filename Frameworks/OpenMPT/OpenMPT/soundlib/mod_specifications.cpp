@@ -21,7 +21,7 @@ namespace ModSpecs
 
 // Force built-in integer operations.
 // C++11 constexpr operations on the enum value_type would also solve this.
-#define SongFlag FlagSet<SongFlags>::store_type
+#define SongFlag(x) (FlagSet<SongFlags>::store_type(0) | x)
 
 
 MPT_CONSTEXPR11_VAR CModSpecifications mptm_ =
@@ -55,7 +55,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications mptm_ =
 	3999,										// SamplesMax
 	255,										// instrumentMax
 	mixLevels1_17RC3,							// defaultMixLevels
-	SongFlag(0) | SONG_LINEARSLIDES | SONG_EXFILTERRANGE | SONG_ITOLDEFFECTS | SONG_ITCOMPATGXX,	// Supported song flags
+	SongFlag(SONG_LINEARSLIDES | SONG_EXFILTERRANGE | SONG_ITOLDEFFECTS | SONG_ITCOMPATGXX),	// Supported song flags
 	200,										// Max MIDI mapping directives
 	MAX_ENVPOINTS,								// Envelope point count
 	true,										// Has notecut.
@@ -83,7 +83,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications mod_ =
 {
 	MOD_TYPE_MOD,								// Internal MODTYPE value
 	"mod",										// File extension
-	37,											// Minimum note index
+	25,											// Minimum note index
 	108,										// Maximum note index
 	128,										// Pattern max.
 	128,										// Order max.
@@ -105,7 +105,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications mod_ =
 	31,											// SamplesMax
 	0,											// instrumentMax
 	mixLevelsCompatible,						// defaultMixLevels
-	SongFlag(0) | SONG_PT_MODE | SONG_AMIGALIMITS | SONG_ISAMIGA,	// Supported song flags
+	SongFlag(SONG_PT_MODE | SONG_AMIGALIMITS | SONG_ISAMIGA),	// Supported song flags
 	0,											// Max MIDI mapping directives
 	0,											// No instrument envelopes
 	false,										// No notecut.
@@ -153,7 +153,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications xm_ =
 	128 * 16,									// SamplesMax (actually 16 per instrument)
 	128,										// instrumentMax
 	mixLevelsCompatibleFT2,						// defaultMixLevels
-	SongFlag(0) | SONG_LINEARSLIDES,			// Supported song flags
+	SongFlag(SONG_LINEARSLIDES),				// Supported song flags
 	0,											// Max MIDI mapping directives
 	12,											// Envelope point count
 	false,										// No notecut.
@@ -201,7 +201,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications xmEx_ =
 	MAX_SAMPLES - 1,							// SamplesMax (actually 32 per instrument(256 * 32 = 8192), but limited to MAX_SAMPLES = 4000)
 	255,										// instrumentMax
 	mixLevelsCompatibleFT2,						// defaultMixLevels
-	SongFlag(0) | SONG_LINEARSLIDES | SONG_EXFILTERRANGE,	// Supported song flags
+	SongFlag(SONG_LINEARSLIDES | SONG_EXFILTERRANGE),	// Supported song flags
 	200,										// Max MIDI mapping directives
 	12,											// Envelope point count
 	false,										// No notecut.
@@ -248,7 +248,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications s3m_ =
 	99,											// SamplesMax
 	0,											// instrumentMax
 	mixLevelsCompatible,						// defaultMixLevels
-	SongFlag(0) | SONG_FASTVOLSLIDES | SONG_AMIGALIMITS | SONG_S3MOLDVIBRATO,	// Supported song flags
+	SongFlag(SONG_FASTVOLSLIDES | SONG_AMIGALIMITS | SONG_S3MOLDVIBRATO),	// Supported song flags
 	0,											// Max MIDI mapping directives
 	0,											// No instrument envelopes
 	true,										// Has notecut.
@@ -296,7 +296,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications s3mEx_ =
 	99,											// SamplesMax
 	0,											// instrumentMax
 	mixLevelsCompatible,						// defaultMixLevels
-	SongFlag(0) | SONG_FASTVOLSLIDES | SONG_AMIGALIMITS,	// Supported song flags
+	SongFlag(SONG_FASTVOLSLIDES | SONG_AMIGALIMITS),	// Supported song flags
 	0,											// Max MIDI mapping directives
 	0,											// No instrument envelopes
 	true,										// Has notecut.
@@ -343,7 +343,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications it_ =
 	99,											// SamplesMax
 	99,											// instrumentMax
 	mixLevelsCompatible,						// defaultMixLevels
-	SongFlag(0) | SONG_LINEARSLIDES | SONG_ITOLDEFFECTS | SONG_ITCOMPATGXX,	// Supported song flags
+	SongFlag(SONG_LINEARSLIDES | SONG_ITOLDEFFECTS | SONG_ITCOMPATGXX),	// Supported song flags
 	0,											// Max MIDI mapping directives
 	25,											// Envelope point count
 	true,										// Has notecut.
@@ -390,7 +390,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications itEx_ =
 	3999,										// SamplesMax
 	255,										// instrumentMax
 	mixLevelsCompatible,						// defaultMixLevels
-	SongFlag(0) | SONG_LINEARSLIDES | SONG_EXFILTERRANGE | SONG_ITOLDEFFECTS | SONG_ITCOMPATGXX,	// Supported song flags
+	SongFlag(SONG_LINEARSLIDES | SONG_EXFILTERRANGE | SONG_ITOLDEFFECTS | SONG_ITCOMPATGXX),	// Supported song flags
 	200,										// Max MIDI mapping directives
 	25,											// Envelope point count
 	true,										// Has notecut.
@@ -436,11 +436,11 @@ MODTYPE CModSpecifications::ExtensionToType(std::string ext)
 		ext.erase(0, 1);
 	}
 	ext = mpt::ToLowerCaseAscii(ext);
-	for(std::size_t i = 0; i < CountOf(ModSpecs::Collection); i++)
+	for(const auto &spec : ModSpecs::Collection)
 	{
-		if(ext == ModSpecs::Collection[i]->fileExtension)
+		if(ext == spec->fileExtension)
 		{
-			return ModSpecs::Collection[i]->internalType;
+			return spec->internalType;
 		}
 	}
 	return MOD_TYPE_NONE;

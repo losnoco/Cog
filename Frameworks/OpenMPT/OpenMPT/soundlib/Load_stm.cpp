@@ -65,7 +65,7 @@ struct STMFileHeader
 	uint8 filetype;			// 1=song, 2=module (only 2 is supported, of course) :)
 	uint8 verMajor;
 	uint8 verMinor;
-	uint8 initTempo;		// Ticks per row. Keep in mind that effects are only updated on every 16th tick.
+	uint8 initTempo;		// Ticks per row.
 	uint8 numPatterns;		// number of patterns
 	uint8 globalVolume;
 	uint8 reserved[13];
@@ -76,24 +76,25 @@ MPT_BINARY_STRUCT(STMFileHeader, 48)
 
 static bool ValidateHeader(const STMFileHeader &fileHeader)
 {
-	// NOTE: Historically the magic byte check used to be case-insensitive.
-	// Other libraries (mikmod, xmp, Milkyplay) don't do this.
-	// ScreamTracker 2 and 3 do not care about the content of the magic bytes at all.
-	// After reviewing all STM files on ModLand and ModArchive, it was found that the
-	// case-insensitive comparison is most likely not necessary for any files in the wild.
 	if(fileHeader.filetype != 2
 		|| (fileHeader.dosEof != 0x1A && fileHeader.dosEof != 2)	// ST2 ignores this, ST3 doesn't. Broken versions of putup10.stm / putup11.stm have dosEof = 2.
 		|| fileHeader.verMajor != 2
 		|| (fileHeader.verMinor != 0 && fileHeader.verMinor != 10 && fileHeader.verMinor != 20 && fileHeader.verMinor != 21)
 		|| fileHeader.numPatterns > 64
-		|| (fileHeader.globalVolume > 64 && fileHeader.globalVolume != 0x58)	// 0x58 may be a placeholder value in earlier ST2 versions.
-		|| (std::memcmp(fileHeader.trackername, "!Scream!", 8)
-			&& std::memcmp(fileHeader.trackername, "BMOD2STM", 8)
-			&& std::memcmp(fileHeader.trackername, "WUZAMOD!", 8))
-		)
+		|| (fileHeader.globalVolume > 64 && fileHeader.globalVolume != 0x58))	// 0x58 may be a placeholder value in earlier ST2 versions.
 	{
 		return false;
 	}
+	// Tracker string can be anything really (ST2 and ST3 won't check it),
+	// but we do not want to generate too many false positives here, as
+	// STM already has very few magic bytes anyway.
+	// Magic bytes that have been found in the wild are !Scream!, BMOD2STM, WUZAMOD! and SWavePro.
+	for(uint8 c : fileHeader.trackername)
+	{
+		if(c < 0x20 || c >= 0x7F)
+			return false;
+	}
+
 	return true;
 }
 
@@ -145,8 +146,11 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 
 	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songname);
 
-	// Read STM header
-	m_madeWithTracker = mpt::format(MPT_USTRING("Scream Tracker %1.%2"))(fileHeader.verMajor, mpt::ufmt::dec0<2>(fileHeader.verMinor));
+	m_modFormat.formatName = U_("Scream Tracker 2");
+	m_modFormat.type = U_("stm");
+	m_modFormat.madeWithTracker = mpt::format(U_("Scream Tracker %1.%2"))(fileHeader.verMajor, mpt::ufmt::dec0<2>(fileHeader.verMinor));
+	m_modFormat.charset = mpt::CharsetCP437;
+
 	m_nSamples = 31;
 	m_nChannels = 4;
 	m_nMinPeriod = 64;
@@ -189,7 +193,7 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		if(pat == 99 || pat == 255)	// 99 is regular, sometimes a single 255 entry can be found too
 			pat = Order.GetInvalidPatIndex();
-		else if(pat > 99)
+		else if(pat > 63)
 			return false;
 	}
 

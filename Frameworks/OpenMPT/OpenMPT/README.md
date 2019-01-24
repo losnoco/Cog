@@ -1,9 +1,25 @@
-
-README
-======
-
 OpenMPT and libopenmpt
 ======================
+
+This repository contains OpenMPT, a free Windows/Wine-based
+[tracker](https://en.wikipedia.org/wiki/Music_tracker) and libopenmpt,
+a library to render tracker music (MOD, XM, S3M, IT MPTM and dozens of other
+legacy formats) to a PCM audio stream. libopenmpt is directly based on OpenMPT,
+offering the same playback quality and format support, and development of the
+two happens in parallel.
+
+
+License
+-------
+
+The OpenMPT/libopenmpt project is distributed under the *BSD-3-Clause* License.
+See [LICENSE](LICENSE) for the full license text.
+
+Files below the `include/` (external projects) and `contrib/` (related assets
+not directly considered integral part of the project) folders may be subject to
+other licenses. See the respective subfolders for license information. These
+folders are not distributed in all source packages, and in particular they are
+not distributed in the Autotools packages.
 
 
 How to compile
@@ -24,57 +40,34 @@ How to compile
         To compile the project, open `build/vs2017/OpenMPT.sln` and hit the
         compile button.
 
+ -  OpenMPT requires the compile host system to be 64bit x86-64.
+
  -  The Windows 8.1 SDK and Microsoft Foundation Classes (MFC) are required to
     build OpenMPT (both are included with Visual Studio, however may need to be
     selected explicitly during setup). In order to build OpenMPT for Windows XP,
     the XP targetting toolset also needs to be installed.
 
- -  The VST and ASIO SDKs are needed for compiling with VST and ASIO support.
+ -  The ASIO SDK is needed for compiling with ASIO support.
 
-    If you don't want this, uncomment `#define NO_VST` and comment out
-    `#define MPT_WITH_ASIO` in the file `common/BuildSettings.h`.
+    If you don't want this, comment out `#define MPT_WITH_ASIO` in the file
+    `common/BuildSettings.h`.
 
-    The ASIO and VST SDKs can be downloaded automatically on Windows 7 or later
-    with 7-Zip installed by just running the `build/download_externals.cmd`
-    script.
+    The ASIO SDK can be downloaded automatically on Windows 7 or later by just
+    running the `build/download_externals.cmd` script.
 
     If you do not want to or cannot use this script, you may follow these manual
     steps instead:
 
-     -  ASIO:
-
-        If you use `#define MPT_WITH_ASIO`, you will need to put the ASIO SDK in
-        the `include/ASIOSDK2` folder. The top level directory of the SDK is
-        already named `ASIOSDK2`, so simply move that directory in the include
-        folder.
-
-        Please visit
-        [steinberg.net](http://www.steinberg.net/en/company/developers.html) to
+     -  Visit
+        [steinberg.net](https://www.steinberg.net/en/company/developers.html) to
         download the SDK.
 
-     -  VST:
+     -  Put the ASIO SDK in the `include/ASIOSDK2` folder. The top level
+        directory of the SDK is already named `ASIOSDK2`, so simply move that
+        directory in the include folder.
 
-        If you don't use `#define NO_VST`, you will need to put the VST SDK in
-        the `include/vstsdk2.4` folder.
-        
-        Simply copy all files from the `VST3 SDK` folder in the SDK .zip file to
-        `include/vstsdk2.4/`.
-
-        Note: OpenMPT makes use of the VST 2.4 specification only. The VST3 SDK
-        still contains all necessary files in the right locations. If you still
-        have the old VST 2.4 SDK laying around, this should also work fine.
-
-        Please visit
-        [steinberg.net](http://www.steinberg.net/en/company/developers.html) to
-        download the SDK.
-
-    If you need further help with the VST and ASIO SDKs, get in touch with the
+    If you need further help with the ASIO SDK, get in touch with the
     main OpenMPT developers. 
-
- -  7-Zip is required to be installed in the default path in order to build the
-    required files for OpenMPT Wine integration.
-
-    Please visit [7-zip.org](http://www.7-zip.org/) to download 7-Zip.
 
 
 ### libopenmpt and openmpt123
@@ -90,12 +83,31 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
         make check
         sudo make install
 
+    Cross-compilation is generally supported (although only tested for
+    targetting MinGW-w64).
+
+    Note that some MinGW-w64 distributions come with the `win32` threading model
+    enabled by default instead of the `posix` threading model. The `win32`
+    threading model lacks proper support for C++11 `<thread>` and `<mutex>` as
+    well as thread-safe magic statics. It is recommended to use the `posix`
+    threading model for libopenmpt for this reason. On Debian, the appropriate
+    configure command is
+    `./configure --host=x86_64-w64-mingw32 CC=x86_64-w64-mingw32-gcc-posix CXX=x86_64-w64-mingw32-g++-posix`
+    for 64bit, or
+    `./configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc-posix CXX=i686-w64-mingw32-g++-posix`
+    for 32bit. Other MinGW-w64 distributions may differ.
+
  -  Visual Studio:
 
      -  You will find solutions for Visual Studio 2015 to 2017 in the
         corresponding `build/vsVERSION/` folder.
         Projects that target Windows versions before Windows 7 are available in
-        `build/vsVERSIONxp/`
+        `build/vsVERSIONxp/`.
+        Projects that target Windows 10 1709 Desktop (10.0.16299.0, including
+        ARM and ARM64) or later versions are available in
+        `build/vsVERSIONwin10/`.
+        Minimal projects that target Windows 10 UWP are available in
+        `build/winstore82/`.
         Most projects are supported with any of the mentioned Visual Studio
         verions, with the following exceptions:
 
@@ -103,10 +115,13 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
          -  xmp-openmpt: Requires Visual Studio with MFC.
 
+     -  libopenmpt requires the compile host system to be 64bit x86-64 when
+        building with Visual Studio.
+
      -  You will need the Winamp 5 SDK and the XMPlay SDK if you want to
         compile the plugins for these 2 players. They can be downloaded
-        automatically on Windows 7 or later with 7-Zip installed by just running
-        the `build/download_externals.cmd` script.
+        automatically on Windows 7 or later by just running the
+        `build/download_externals.cmd` script.
 
         If you do not want to or cannot use this script, you may follow these
         manual steps instead:
@@ -126,7 +141,7 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
             To build libopenmpt with XMPlay input plugin support, copy the
             contents of xmp-sdk.zip into include/xmplay/.
 
-            Please visit [un4seen.com](http://www.un4seen.com/xmplay.html) to
+            Please visit [un4seen.com](https://www.un4seen.com/xmplay.html) to
             download the SDK.
             You can disable xmp-openmpt in the solution configuration.
 
@@ -147,13 +162,14 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
             make CONFIG=mingw64-win64    # for win64
 
-     -  gcc or clang (on Unix-like systems, including Mac OS X with MacPorts):
+     -  gcc or clang (on Unix-like systems, including Mac OS X with MacPorts,
+        and Haiku (32-bit Hybrid and 64-bit)):
 
         The minimum required compiler versions are:
 
          -  gcc 4.8
 
-         -  clang 3.4
+         -  clang 3.6
 
         The Makefile requires pkg-config for native builds.
         For sound output in openmpt123, PortAudio or SDL is required.
@@ -176,27 +192,54 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
      -  emscripten (on Unix-like systems):
 
-        libopenmpt has been tested and verified to work with emscripten 1.31 or
-        later (earlier versions might or might not work).
+        libopenmpt has been tested and verified to work with emscripten 1.38.5
+        or later. Earlier versions are not supported.
 
         Run:
 
-            make CONFIG=emscripten        # for emscripten >= 1.38.1
+            # generates WebAssembly with dynamic heap growth
+            make CONFIG=emscripten EMSCRIPTEN_TARGET=wasm
 
-            make CONFIG=emscripten-old    # for emscripten < 1.38.0
+        or
+
+            # generates asm.js with a fixed size 128MB heap
+            make CONFIG=emscripten EMSCRIPTEN_TARGET=asmjs128m
+
+        or
+
+            # generates asm.js with a fixed default size heap (as of Emscripten
+            # 1.38.11, this amounts to 16MB)
+            make CONFIG=emscripten EMSCRIPTEN_TARGET=asmjs
+
+        or
+
+            # generates JavaScript with dynamic heap growth and with
+            # compatibility for older VMs
+            make CONFIG=emscripten EMSCRIPTEN_TARGET=js
 
         Running the test suite on the command line is also supported by using
-        node.js. Version 0.10.25 or greater has been tested. Earlier versions
+        node.js. Version 8.9.1 or greater has been tested. Earlier versions
         might or might not work. Depending on how your distribution calls the
         `node.js` binary, you might have to edit
-        `build/make/config-emscripten.mk` or
-        `build/make/config-emscripten-old.mk`.
+        `build/make/config-emscripten.mk`.
 
-     -  Haiku:
+     -  DJGPP / DOS
 
-        To compile libopenmpt on Haiku (using the 32-bit gcc2h), run:
+        Cross-compilation from Linux systems is supported with DJGPP GCC 7.2 or
+        later via
 
-            make CONFIG=haiku
+            make CONFIG=djgpp
+
+        `openmpt123` can use liballegro 4.2 for sound output on DJGPP/DOS.
+        liballegro can either be installed system-wide in the DJGPP environment
+        or downloaded into the `libopenmpt` source tree.
+
+            make CONFIG=djgpp USE_ALLEGRO42=1    # use installed liballegro
+
+        or
+
+            ./build/download_externals.sh    # download liballegro binaries
+            make CONFIG=djgpp USE_ALLEGRO42=1 BUNDLED_ALLEGRO42=1
 
      -  American Fuzzy Lop:
 
@@ -204,11 +247,11 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
         
             make CONFIG=afl
         
-        For more detailed instructions, read contrib/fuzzing/readme.md
+        For more detailed instructions, read `contrib/fuzzing/readme.md`.
 
      -  other compilers:
 
-        To compiler libopenmpt with other C++11 compliant compilers, run:
+        To compile libopenmpt with other C++11 compliant compilers, run:
         
             make CONFIG=generic
         
@@ -243,131 +286,9 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
 
 
-Coding conventions
-------------------
+Contributing to OpenMPT/libopenmpt
+----------------------------------
 
 
-### OpenMPT
+See [contributing](doc/contributing.md).
 
-(see below for an example)
-
-- Place curly braces at the beginning of the line, not at the end
-- Generally make use of the custom index types like `SAMPLEINDEX` or
-  `ORDERINDEX` when referring to samples, orders, etc.
-- When changing playback behaviour, make sure that you use the function
-  `CSoundFile::IsCompatibleMode()` so that modules made with previous versions
-  of MPT still sound correct (if the change is extremely small, this might be
-  unnecessary)
-- `CamelCase` function and variable names are preferred.
-
-#### OpenMPT code example
-
-~~~~{.cpp}
-void Foo::Bar(int foobar)
-{
-    while(true)
-    {
-        // some code
-    }
-}
-~~~~
-
-
-### libopenmpt
-
-**Note:**
-**This applies to `libopenmpt/` and `openmpt123/` directories only.**
-**Use OpenMPT style (see above) otherwise.**
-
-The code generally tries to follow these conventions, but they are not
-strictly enforced and there are valid reasons to diverge from these
-conventions. Using common sense is recommended.
-
- -  In general, the most important thing is to keep style consistent with
-    directly surrounding code.
- -  Use C++ std types when possible, prefer `std::size_t` and `std::int32_t`
-    over `long` or `int`. Do not use C99 std types (e.g. no pure `int32_t`)
- -  Qualify namespaces explicitly, do not use `using`.
-    Members of `namespace openmpt` can be named without full namespace
-    qualification.
- -  Prefer the C++ version in `namespace std` if the same functionality is
-    provided by the C standard library as well. Also, include the C++
-    version of C standard library headers (e.g. use `<cstdio>` instead of
-    `<stdio.h>`.
- -  Do not use ANY locale-dependant C functions. For locale-dependant C++
-    functionaly (especially iostream), always imbue the
-    `std::locale::classic()` locale.
- -  Prefer kernel_style_names over CamelCaseNames.
- -  If a folder (or one of its parent folders) contains .clang-format,
-    use clang-format v3.5 for indenting C++ and C files, otherwise:
-     -  `{` are placed at the end of the opening line.
-     -  Enclose even single statements in curly braces.
-     -  Avoid placing single statements on the same line as the `if`.
-     -  Opening parentheses are separated from keywords with a space.
-     -  Opening parentheses are not separated from function names.
-     -  Place spaces around operators and inside parentheses.
-     -  Align `:` and `,` when inheriting or initializing members in a
-        constructor.
-     -  The pointer `*` is separated from both the type and the variable name.
-     -  Use tabs for identation, spaces for formatting.
-        Tabs should only appear at the very beginning of a line.
-        Do not assume any particular width of the TAB character. If width is
-        important for formatting reasons, use spaces.
-     -  Use empty lines at will.
- -  API documentation is done with doxygen.
-    Use general C doxygen for the C API.
-    Use QT-style doxygen for the C++ API.
-
-#### libopenmpt indentation example
-
-~~~~{.cpp}
-namespace openmpt {
-
-// This is totally meaningless code and just illustrates indentation.
-
-class foo
-	: public base
-	, public otherbase
-{
-
-private:
-
-	std::int32_t x;
-	std::int16_t y;
-
-public:
-
-	foo()
-		: x(0)
-		, y(-1)
-	{
-		return;
-	}
-
-	int bar() const;
-
-}; // class foo
-
-int foo::bar() const {
-
-	for ( int i = 0; i < 23; ++i ) {
-		switch ( x ) {
-			case 2:
-				something( y );
-				break;
-			default:
-				something( ( y - 1 ) * 2 );
-				break;
-		}
-	}
-	if ( x == 12 ) {
-		return -1;
-	} else if ( x == 42 ) {
-		return 1;
-	}
-	return 42;
-
-}
-
-} // namespace openmpt
-~~~~

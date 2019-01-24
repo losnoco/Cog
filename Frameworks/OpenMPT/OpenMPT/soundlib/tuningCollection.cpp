@@ -15,6 +15,9 @@
 #include <algorithm>
 #include "../common/mptFileIO.h"
 #include "Loaders.h"
+#ifdef MODPLUG_TRACKER
+#include "../mptrack/TrackerSettings.h"
+#endif //MODPLUG_TRACKER
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -141,9 +144,9 @@ Tuning::SerializationResult CTuningCollection::DeserializeOLD(std::istream& inSt
 {
 
 	//1. begin marker:
-	int32 beginMarker = 0;
-	mpt::IO::ReadIntLE<int32>(inStrm, beginMarker);
-	if(beginMarker != MAGIC4BE('T','C','S','H'))
+	uint32 beginMarker = 0;
+	mpt::IO::ReadIntLE<uint32>(inStrm, beginMarker);
+	if(beginMarker != MagicBE("TCSH"))	// Magic is reversed in file, hence BE
 		return Tuning::SerializationResult::NoMagic;
 
 	//2. version
@@ -184,9 +187,9 @@ Tuning::SerializationResult CTuningCollection::DeserializeOLD(std::istream& inSt
 	}
 
 	//6. End marker
-	int32 endMarker = 0;
-	mpt::IO::ReadIntLE<int32>(inStrm, endMarker);
-	if(endMarker != MAGIC4BE('T','C','S','F'))
+	uint32 endMarker = 0;
+	mpt::IO::ReadIntLE<uint32>(inStrm, endMarker);
+	if(endMarker != MagicBE("TCSF"))	// Magic is reversed in file, hence BE
 		return Tuning::SerializationResult::Failure;
 	
 	return Tuning::SerializationResult::Success;
@@ -271,22 +274,21 @@ bool UnpackTuningCollection(const CTuningCollection &tc, const mpt::PathString &
 		mpt::ustring tuningName = mpt::ToUnicode(mpt::CharsetLocale, tuning.GetName());
 		if(tuningName.empty())
 		{
-			tuningName = MPT_USTRING("untitled");
+			tuningName = U_("untitled");
 		}
 		SanitizeFilename(tuningName);
-		fn += mpt::PathString::FromUnicode(mpt::format(MPT_USTRING("%1 - %2"))(numberFmt.ToWString(i + 1), tuningName));
+		fn += mpt::PathString::FromUnicode(mpt::format(U_("%1 - %2"))(mpt::ufmt::fmt(i + 1, numberFmt), tuningName));
 		fn += mpt::PathString::FromUTF8(CTuning::s_FileExtension);
 		if(fn.FileOrDirectoryExists())
 		{
 			error = true;
 		} else
 		{
-			mpt::ofstream fout(fn, std::ios::binary);
-			if(tuning.Serialize(fout) != Tuning::SerializationResult::Success)
+			mpt::SafeOutputFile sfout(fn, std::ios::binary, mpt::FlushModeFromBool(TrackerSettings::Instance().MiscFlushFileBuffersOnSave));
+			if(tuning.Serialize(sfout) != Tuning::SerializationResult::Success)
 			{
 				error = true;
 			}
-			fout.close();
 		}
 	}
 	return !error;

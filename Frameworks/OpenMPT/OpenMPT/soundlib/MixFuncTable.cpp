@@ -79,9 +79,9 @@ ResamplingIndex ResamplingModeToMixFlags(ResamplingMode resamplingMode)
 	{
 	case SRCMODE_NEAREST:   return ndxNoInterpolation;
 	case SRCMODE_LINEAR:    return ndxLinear;
-	case SRCMODE_SPLINE:    return ndxFastSinc;
-	case SRCMODE_POLYPHASE: return ndxKaiser;
-	case SRCMODE_FIRFILTER: return ndxFIRFilter;
+	case SRCMODE_CUBIC:     return ndxFastSinc;
+	case SRCMODE_SINC8LP:   return ndxKaiser;
+	case SRCMODE_SINC8:     return ndxFIRFilter;
 	case SRCMODE_AMIGA:     return ndxAmigaBlep;
 	default:                MPT_ASSERT_NOTREACHED();
 	}

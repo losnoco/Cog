@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include <string>
 
 #include <time.h>
@@ -34,7 +36,7 @@ namespace ANSI
 
 uint64 Now();
 
-mpt::ustring ToString(uint64 time100ns); // i.e. 2015-01-15 18:32:01.718
+mpt::ustring ToUString(uint64 time100ns); // i.e. 2015-01-15 18:32:01.718
 
 } // namespacee ANSI
 

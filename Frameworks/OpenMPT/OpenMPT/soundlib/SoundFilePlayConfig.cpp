@@ -18,10 +18,7 @@ OPENMPT_NAMESPACE_BEGIN
 CSoundFilePlayConfig::CSoundFilePlayConfig()
 {
 	setVSTiVolume(1.0f);
-}
-
-CSoundFilePlayConfig::~CSoundFilePlayConfig()
-{
+	SetMixLevels(mixLevelsCompatible);
 }
 
 void CSoundFilePlayConfig::SetMixLevels(MixLevels mixLevelType)
@@ -38,9 +35,9 @@ void CSoundFilePlayConfig::SetMixLevels(MixLevels mixLevelType)
 			setUseGlobalPreAmp(true);
 			setForcePanningMode(dontForcePanningMode);
 			setDisplayDBValues(false);
-			setNormalSamplePreAmp(256.0);
-			setNormalVSTiVol(100.0);
-			setNormalGlobalVol(128.0);
+			setNormalSamplePreAmp(256.0f);
+			setNormalVSTiVol(100.0f);
+			setNormalGlobalVol(128.0f);
 			setExtraSampleAttenuation(MIXING_ATTENUATION);
 			break;
 
@@ -54,9 +51,9 @@ void CSoundFilePlayConfig::SetMixLevels(MixLevels mixLevelType)
 			setUseGlobalPreAmp(true);
 			setForcePanningMode(dontForcePanningMode);
 			setDisplayDBValues(false);
-			setNormalSamplePreAmp(256.0);
-			setNormalVSTiVol(100.0);
-			setNormalGlobalVol(128.0);
+			setNormalSamplePreAmp(256.0f);
+			setNormalVSTiVol(100.0f);
+			setNormalGlobalVol(128.0f);
 			setExtraSampleAttenuation(MIXING_ATTENUATION);
 			break;
 
@@ -71,9 +68,9 @@ void CSoundFilePlayConfig::SetMixLevels(MixLevels mixLevelType)
 			setUseGlobalPreAmp(true);
 			setForcePanningMode(dontForcePanningMode);
 			setDisplayDBValues(false);
-			setNormalSamplePreAmp(256.0);
-			setNormalVSTiVol(100.0);
-			setNormalGlobalVol(128.0);
+			setNormalSamplePreAmp(256.0f);
+			setNormalVSTiVol(100.0f);
+			setNormalGlobalVol(128.0f);
 			setExtraSampleAttenuation(MIXING_ATTENUATION);
 			break;
 
@@ -89,9 +86,9 @@ void CSoundFilePlayConfig::SetMixLevels(MixLevels mixLevelType)
 			setUseGlobalPreAmp(false);
 			setForcePanningMode(forceSoftPanning);
 			setDisplayDBValues(true);
-			setNormalSamplePreAmp(128.0);
-			setNormalVSTiVol(128.0);
-			setNormalGlobalVol(256.0);
+			setNormalSamplePreAmp(128.0f);
+			setNormalVSTiVol(128.0f);
+			setNormalGlobalVol(256.0f);
 			setExtraSampleAttenuation(0);
 			break;
 
@@ -107,9 +104,9 @@ void CSoundFilePlayConfig::SetMixLevels(MixLevels mixLevelType)
 			setUseGlobalPreAmp(false);
 			setForcePanningMode(mixLevelType == mixLevelsCompatible ? forceNoSoftPanning : forceFT2Panning);
 			setDisplayDBValues(true);
-			setNormalSamplePreAmp(mixLevelType == mixLevelsCompatible ? 256.0 : 192.0);
-			setNormalVSTiVol(mixLevelType == mixLevelsCompatible ? 256.0 : 192.0);
-			setNormalGlobalVol(256.0);
+			setNormalSamplePreAmp(mixLevelType == mixLevelsCompatible ? 256.0f : 192.0f);
+			setNormalVSTiVol(mixLevelType == mixLevelsCompatible ? 256.0f : 192.0f);
+			setNormalGlobalVol(256.0f);
 			setExtraSampleAttenuation(1);
 			break;
 

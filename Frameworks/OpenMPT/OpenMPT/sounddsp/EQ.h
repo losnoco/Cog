@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "../soundlib/Mixer.h"	// For MIXBUFFERSIZE
 
 OPENMPT_NAMESPACE_BEGIN

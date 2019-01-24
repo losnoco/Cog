@@ -11,6 +11,8 @@
 #include "stdafx.h"
 #include "mptCPU.h"
 
+#include "mptStringBuffer.h"
+
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -21,6 +23,7 @@ OPENMPT_NAMESPACE_BEGIN
 uint32 RealProcSupport = 0;
 uint32 ProcSupport = 0;
 char ProcVendorID[16+1] = "";
+char ProcBrandID[4*4*3+1] = "";
 uint16 ProcFamily = 0;
 uint8 ProcModel = 0;
 uint8 ProcStepping = 0;
@@ -57,6 +60,27 @@ struct cpuid_result {
 		result[8+3] = (c >>24) & 0xff;
 		return std::string(result, result + 12);
 	}
+	std::string as_string4() const
+	{
+		std::string result;
+		result.push_back(static_cast<uint8>((a >>  0) & 0xff));
+		result.push_back(static_cast<uint8>((a >>  8) & 0xff));
+		result.push_back(static_cast<uint8>((a >> 16) & 0xff));
+		result.push_back(static_cast<uint8>((a >> 24) & 0xff));
+		result.push_back(static_cast<uint8>((b >>  0) & 0xff));
+		result.push_back(static_cast<uint8>((b >>  8) & 0xff));
+		result.push_back(static_cast<uint8>((b >> 16) & 0xff));
+		result.push_back(static_cast<uint8>((b >> 24) & 0xff));
+		result.push_back(static_cast<uint8>((c >>  0) & 0xff));
+		result.push_back(static_cast<uint8>((c >>  8) & 0xff));
+		result.push_back(static_cast<uint8>((c >> 16) & 0xff));
+		result.push_back(static_cast<uint8>((c >> 24) & 0xff));
+		result.push_back(static_cast<uint8>((d >>  0) & 0xff));
+		result.push_back(static_cast<uint8>((d >>  8) & 0xff));
+		result.push_back(static_cast<uint8>((d >> 16) & 0xff));
+		result.push_back(static_cast<uint8>((d >> 24) & 0xff));
+		return result;
+	}
 };
 
 
@@ -90,35 +114,21 @@ static cpuid_result cpuidex(uint32 function_a, uint32 function_c)
 #endif
 
 
-static MPT_NOINLINE bool has_cpuid()
-{
-	const size_t eflags_cpuid = 1 << 21;
-	size_t eflags_old = __readeflags();
-	size_t eflags_flipped = eflags_old ^ eflags_cpuid;
-	__writeeflags(eflags_flipped);
-	size_t eflags_testchanged = __readeflags();
-	__writeeflags(eflags_old);
-	return ((eflags_testchanged ^ eflags_old) & eflags_cpuid) != 0;
-}
-
-
 void InitProcSupport()
 {
 
 	RealProcSupport = 0;
 	ProcSupport = 0;
 	MemsetZero(ProcVendorID);
+	MemsetZero(ProcBrandID);
 	ProcFamily = 0;
 	ProcModel = 0;
 	ProcStepping = 0;
 
-	if(has_cpuid())
 	{
 
-		ProcSupport |= PROCSUPPORT_CPUID;
-
 		cpuid_result VendorString = cpuid(0x00000000u);
-		std::strcpy(ProcVendorID, VendorString.as_string().c_str());
+		mpt::String::WriteAutoBuf(ProcVendorID) = VendorString.as_string();
 
 		// Cyrix 6x86 and 6x86MX do not specify the value returned in eax.
 		// They both support 0x00000001u however.
@@ -163,9 +173,7 @@ void InitProcSupport()
 				ProcModel = static_cast<uint8>(BaseModel);
 			}
 			ProcStepping = static_cast<uint8>(Stepping);
-			if(StandardFeatureFlags.d & (1<< 4)) ProcSupport |= PROCSUPPORT_TSC;
 			if(StandardFeatureFlags.d & (1<<15)) ProcSupport |= PROCSUPPORT_CMOV;
-			if(StandardFeatureFlags.d & (1<< 0)) ProcSupport |= PROCSUPPORT_FPU;
 			if(StandardFeatureFlags.d & (1<<23)) ProcSupport |= PROCSUPPORT_MMX;
 			if(StandardFeatureFlags.d & (1<<25)) ProcSupport |= PROCSUPPORT_SSE;
 			if(StandardFeatureFlags.d & (1<<26)) ProcSupport |= PROCSUPPORT_SSE2;
@@ -175,6 +183,7 @@ void InitProcSupport()
 			if(StandardFeatureFlags.c & (1<<20)) ProcSupport |= PROCSUPPORT_SSE4_2;
 		}
 
+		bool canExtended = false;
 		// 3DNow! manual recommends to just execute 0x80000000u.
 		// It is totally unknown how earlier CPUs from other vendors
 		// would behave.
@@ -182,25 +191,24 @@ void InitProcSupport()
 		// that we found it documented for and that actually supports 3DNow!.
 		// We only need 0x80000000u in order to detect 3DNow!.
 		// Thus, this is enough for us.
-		if((VendorString.as_string() == "AuthenticAMD") || (VendorString.as_string() == "AMDisbetter!"))
+		if(VendorString.as_string() == "GenuineIntel")
+		{ // Intel
+
+			// 5.9.x : Quark
+			// 6.11.x: P3-S (Tualatin)
+			if((ProcFamily > 6) || ((ProcFamily == 6) && (ProcModel >= 11)) || ((ProcFamily == 5) && (ProcModel >= 9)))
+			{
+				canExtended = true;
+			}
+
+		} else if((VendorString.as_string() == "AuthenticAMD") || (VendorString.as_string() == "AMDisbetter!"))
 		{ // AMD
 
 			if((ProcFamily > 5) || ((ProcFamily == 5) && (ProcModel >= 8)))
 			{ // >= K6-2 (K6 = Family 5, K6-2 = Model 8)
 				// Not sure if earlier AMD CPUs support 0x80000000u.
 				// AMD 5k86 and AMD K5 manuals do not mention it.
-				cpuid_result ExtendedVendorString = cpuid(0x80000000u);
-				if(ExtendedVendorString.a >= 0x80000001u)
-				{
-					cpuid_result ExtendedFeatureFlags = cpuid(0x80000001u);
-					if(ExtendedFeatureFlags.d & (1<< 4)) ProcSupport |= PROCSUPPORT_TSC;
-					if(ExtendedFeatureFlags.d & (1<<15)) ProcSupport |= PROCSUPPORT_CMOV;
-					if(ExtendedFeatureFlags.d & (1<< 0)) ProcSupport |= PROCSUPPORT_FPU;
-					if(ExtendedFeatureFlags.d & (1<<23)) ProcSupport |= PROCSUPPORT_MMX;
-					if(ExtendedFeatureFlags.d & (1<<22)) ProcSupport |= PROCSUPPORT_AMD_MMXEXT;
-					if(ExtendedFeatureFlags.d & (1<<31)) ProcSupport |= PROCSUPPORT_AMD_3DNOW;
-					if(ExtendedFeatureFlags.d & (1<<30)) ProcSupport |= PROCSUPPORT_AMD_3DNOWEXT;
-				}
+				canExtended = true;
 			}
 
 		} else if(VendorString.as_string() == "CentaurHauls")
@@ -211,12 +219,7 @@ void InitProcSupport()
 
 				if(ProcModel >= 8)
 				{ // >= WinChip 2
-					cpuid_result ExtendedVendorString = cpuid(0x80000000u);
-					if(ExtendedVendorString.a >= 0x80000001u)
-					{
-						cpuid_result ExtendedFeatureFlags = cpuid(0x80000001u);
-						if(ExtendedFeatureFlags.d & (1<<31)) ProcSupport |= PROCSUPPORT_AMD_3DNOW;
-					}
+					canExtended = true;
 				}
 
 			} else if(ProcFamily >= 6)
@@ -224,12 +227,7 @@ void InitProcSupport()
 
 				if((ProcFamily >= 7) || ((ProcFamily == 6) && (ProcModel >= 7)))
 				{ // >= C3 Samuel 2
-					cpuid_result ExtendedVendorString = cpuid(0x80000000u);
-					if(ExtendedVendorString.a >= 0x80000001u)
-					{
-						cpuid_result ExtendedFeatureFlags = cpuid(0x80000001u);
-						if(ExtendedFeatureFlags.d & (1<<31)) ProcSupport |= PROCSUPPORT_AMD_3DNOW;
-					}
+					canExtended = true;
 				}
 
 			}
@@ -247,12 +245,7 @@ void InitProcSupport()
 
 			if((ProcFamily == 5) && (ProcModel >= 4))
 			{ // Cyrix MediaGXm
-				cpuid_result ExtendedVendorString = cpuid(0x80000000u);
-				if(ExtendedVendorString.a >= 0x80000001u)
-				{
-					cpuid_result ExtendedFeatureFlags = cpuid(0x80000001u);
-					if(ExtendedFeatureFlags.d & (1<<31)) ProcSupport |= PROCSUPPORT_AMD_3DNOW;
-				}
+				canExtended = true;
 			}
 
 		} else if(VendorString.as_string() == "Geode by NSC")
@@ -260,25 +253,43 @@ void InitProcSupport()
 
 			if((ProcFamily > 5) || ((ProcFamily == 5) && (ProcModel >= 5)))
 			{ // >= Geode GX2
-				cpuid_result ExtendedVendorString = cpuid(0x80000000u);
-				if(ExtendedVendorString.a >= 0x80000001u)
-				{
-					cpuid_result ExtendedFeatureFlags = cpuid(0x80000001u);
-					if(ExtendedFeatureFlags.d & (1<<31)) ProcSupport |= PROCSUPPORT_AMD_3DNOW;
-				}
+				canExtended = true;
 			}
+
+		} else
+		{ // unknown, which nowadays most likely means some virtualized CPU
+
+			// we assume extended flags present in this case
+			canExtended = true;
 
 		}
 
-	} else
-	{
-
-		ProcSupport |= PROCSUPPORT_FPU; // We assume FPU because we require it.
+		if(canExtended)
+		{
+			cpuid_result ExtendedVendorString = cpuid(0x80000000u);
+			if(ExtendedVendorString.a >= 0x80000001u)
+			{
+				cpuid_result ExtendedFeatureFlags = cpuid(0x80000001u);
+				if(ExtendedFeatureFlags.d & (1<<29)) ProcSupport |= PROCSUPPORT_LM;
+				if((VendorString.as_string() == "AuthenticAMD") || (VendorString.as_string() == "AMDisbetter!"))
+				{
+					if(ExtendedFeatureFlags.d & (1<<15)) ProcSupport |= PROCSUPPORT_CMOV;
+					if(ExtendedFeatureFlags.d & (1<<23)) ProcSupport |= PROCSUPPORT_MMX;
+				}
+				if(ExtendedFeatureFlags.d & (1<<22)) ProcSupport |= PROCSUPPORT_AMD_MMXEXT;
+				if(ExtendedFeatureFlags.d & (1<<31)) ProcSupport |= PROCSUPPORT_AMD_3DNOW;
+				if(ExtendedFeatureFlags.d & (1<<30)) ProcSupport |= PROCSUPPORT_AMD_3DNOWEXT;
+			}
+			if(ExtendedVendorString.a >= 0x80000004u)
+			{
+				mpt::String::WriteAutoBuf(ProcBrandID) = cpuid(0x80000002u).as_string4() + cpuid(0x80000003u).as_string4() + cpuid(0x80000004u).as_string4();
+			}
+		}
 
 	}
 
 	// We do not have to check if SSE got enabled by the OS because we only do
-	// support Windows >= 98 SE which will always enable SSE if available.
+	// support Windows >= XP. Windows will always enable SSE since Windows 98 SE.
 
 	RealProcSupport = ProcSupport;
 

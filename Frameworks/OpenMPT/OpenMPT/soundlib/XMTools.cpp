@@ -22,7 +22,7 @@ OPENMPT_NAMESPACE_BEGIN
 // Convert OpenMPT's internal envelope representation to XM envelope data.
 void XMInstrument::ConvertEnvelopeToXM(const InstrumentEnvelope &mptEnv, uint8le &numPoints, uint8le &flags, uint8le &sustain, uint8le &loopStart, uint8le &loopEnd, EnvType env)
 {
-	numPoints = static_cast<uint8>(std::min(12u, mptEnv.size()));
+	numPoints = static_cast<uint8>(std::min<std::size_t>(12u, mptEnv.size()));
 
 	// Envelope Data
 	for(uint8 i = 0; i < numPoints; i++)
@@ -145,7 +145,7 @@ void XMInstrument::ConvertEnvelopeToMPT(InstrumentEnvelope &mptEnv, uint8 numPoi
 		if(i > 0 && mptEnv[i].tick < mptEnv[i - 1].tick)
 		{
 			// libmikmod code says: "Some broken XM editing program will only save the low byte of the position
-			// value. Try to compensate by adding the missing high byte" - I guess that's what this code is for.
+			// value. Try to compensate by adding the missing high byte."
 			// Note: It appears that MPT 1.07's XI instrument saver omitted the high byte of envelope nodes.
 			// This might be the source for some broken envelopes in IT and XM files.
 
@@ -221,7 +221,7 @@ void XMInstrument::ApplyAutoVibratoToXM(const ModSample &mptSmp, MODTYPE fromTyp
 // Apply auto-vibrato settings from file to a sample.
 void XMInstrument::ApplyAutoVibratoToMPT(ModSample &mptSmp) const
 {
-	mptSmp.nVibType = vibType;
+	mptSmp.nVibType = static_cast<VibratoType>(vibType.get());
 	mptSmp.nVibSweep = vibSweep;
 	mptSmp.nVibDepth = vibDepth;
 	mptSmp.nVibRate = vibRate;
@@ -290,7 +290,7 @@ void XIInstrumentHeader::ConvertToXM(const ModInstrument &mptIns, bool compatibi
 	mpt::String::Write<mpt::String::spacePadded>(name, mptIns.name);
 	eof = 0x1A;
 
-	const std::string openMptTrackerName = MptVersion::GetOpenMPTVersionStr();
+	const std::string openMptTrackerName = mpt::ToCharset(mpt::CharsetCP437, Version::Current().GetOpenMPTVersionString());
 	mpt::String::Write<mpt::String::spacePadded>(trackerName, openMptTrackerName);
 
 	version = 0x102;
@@ -409,8 +409,6 @@ void XMSample::ConvertToMPT(ModSample &mptSmp) const
 			mptSmp.uFlags.set(CHN_PINGPONGLOOP);
 		}
 	}
-
-	mptSmp.SanitizeLoops();
 
 	strcpy(mptSmp.filename, "");
 }

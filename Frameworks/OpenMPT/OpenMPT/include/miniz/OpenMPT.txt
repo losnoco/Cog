@@ -14,4 +14,5 @@ Modifications for OpenMPT:
     alignment from 1 to 4 [-Wcast-align]` has been fixed.
  *  Prototypes of `tdefl_compressor_alloc` and `tinfl_decompressor_alloc`
     have beeen fixed
+ *  Missing #ifndef MINIZ_NO_STDIO has been added to miniz.h.
 No further changes have been made.

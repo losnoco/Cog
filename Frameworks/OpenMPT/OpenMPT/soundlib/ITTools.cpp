@@ -12,7 +12,7 @@
 #include "Loaders.h"
 #include "ITTools.h"
 #include "Tables.h"
-#include "../common/StringFixer.h"
+#include "../common/mptStringBuffer.h"
 #include "../common/version.h"
 
 
@@ -112,8 +112,8 @@ void ITOldInstrument::ConvertToMPT(ModInstrument &mptIns) const
 	mptIns.nPan = 128;
 
 	// NNA Stuff
-	mptIns.nNNA = nna;
-	mptIns.nDCT = dnc;
+	mptIns.nNNA = static_cast<NewNoteAction>(nna.get());
+	mptIns.nDCT = static_cast<DuplicateCheckType>(dnc.get());
 
 	// Sample Map
 	for(size_t i = 0; i < 120; i++)
@@ -168,7 +168,7 @@ uint32 ITInstrument::ConvertToIT(const ModInstrument &mptIns, bool compatExport,
 
 	// Header
 	memcpy(id, "IMPI", 4);
-	trkvers = 0x5000 | static_cast<uint16>(MptVersion::num >> 16);
+	trkvers = 0x5000 | static_cast<uint16>(Version::Current().GetRawVersion() >> 16);
 
 	mpt::String::Write<mpt::String::nullTerminated>(filename, mptIns.filename);
 	mpt::String::Write<mpt::String::nullTerminated>(name, mptIns.name);
@@ -277,9 +277,9 @@ uint32 ITInstrument::ConvertToMPT(ModInstrument &mptIns, MODTYPE modFormat) cons
 	mptIns.nPanSwing = std::min<uint8>(rp, 64);
 
 	// NNA Stuff
-	mptIns.nNNA = nna;
-	mptIns.nDCT = dct;
-	mptIns.nDNA = dca;
+	mptIns.nNNA = static_cast<NewNoteAction>(nna.get());
+	mptIns.nDCT = static_cast<DuplicateCheckType>(dct.get());
+	mptIns.nDNA = static_cast<DuplicateNoteAction>(dca.get());
 
 	// Pitch / Pan Separation
 	mptIns.nPPS = pps;
@@ -451,7 +451,7 @@ void ITSample::ConvertToIT(const ModSample &mptSmp, MODTYPE fromType, bool compr
 	if(mptSmp.uFlags[CHN_PANNING]) dfp |= ITSample::enablePanning;
 
 	// Sample Format / Loop Flags
-	if(mptSmp.nLength && mptSmp.pSample)
+	if(mptSmp.HasSampleData())
 	{
 		flags = ITSample::sampleDataPresent;
 		if(mptSmp.uFlags[CHN_LOOP]) flags |= ITSample::sampleLoop;
@@ -504,7 +504,11 @@ void ITSample::ConvertToIT(const ModSample &mptSmp, MODTYPE fromType, bool compr
 		vir = 255 - vir;
 	}
 
-	if(mptSmp.uFlags[SMP_KEEPONDISK])
+	if(mptSmp.uFlags[CHN_ADLIB])
+	{
+		length = 12;
+		cvt = ITSample::cvtOPLInstrument;
+	} else if(mptSmp.uFlags[SMP_KEEPONDISK])
 	{
 #ifndef MPT_EXTERNAL_SAMPLES
 		MPT_UNREFERENCED_PARAMETER(allowExternal);
@@ -562,12 +566,16 @@ uint32 ITSample::ConvertToMPT(ModSample &mptSmp) const
 	mptSmp.SanitizeLoops();
 
 	// Auto Vibrato settings
-	mptSmp.nVibType = AutoVibratoIT2XM[vit & 7];
+	mptSmp.nVibType = static_cast<VibratoType>(AutoVibratoIT2XM[vit & 7]);
 	mptSmp.nVibRate = vis;
 	mptSmp.nVibDepth = vid & 0x7F;
 	mptSmp.nVibSweep = vir;
 
-	if(cvt == ITSample::cvtExternalSample)
+	if(cvt == ITSample::cvtOPLInstrument)
+	{
+		// FM instrument in MPTM
+		mptSmp.uFlags.set(CHN_ADLIB);
+	} else if(cvt == ITSample::cvtExternalSample)
 	{
 		// Read external sample (filename at sample pointer)
 		mptSmp.uFlags.set(SMP_KEEPONDISK);
@@ -635,7 +643,7 @@ void ITHistoryStruct::ConvertToMPT(FileHistory &mptHistory) const
 	mptHistory.loadDate.tm_hour = Clamp((fattime >> 11) & 0x1F, 0, 23);
 	mptHistory.loadDate.tm_min = Clamp((fattime >> 5) & 0x3F, 0, 59);
 	mptHistory.loadDate.tm_sec = Clamp((fattime & 0x1F) * 2, 0, 59);
-	mptHistory.openTime = static_cast<uint32>(runtime * (HISTORY_TIMER_PRECISION / 18.2f));
+	mptHistory.openTime = static_cast<uint32>(runtime * (HISTORY_TIMER_PRECISION / 18.2));
 }
 
 
@@ -645,7 +653,7 @@ void ITHistoryStruct::ConvertToIT(const FileHistory &mptHistory)
 	// Create FAT file dates
 	fatdate = static_cast<uint16>(mptHistory.loadDate.tm_mday | ((mptHistory.loadDate.tm_mon + 1) << 5) | ((mptHistory.loadDate.tm_year - 80) << 9));
 	fattime = static_cast<uint16>((mptHistory.loadDate.tm_sec / 2) | (mptHistory.loadDate.tm_min << 5) | (mptHistory.loadDate.tm_hour << 11));
-	runtime = static_cast<uint32>(mptHistory.openTime * (18.2f / HISTORY_TIMER_PRECISION));
+	runtime = static_cast<uint32>(mptHistory.openTime * (18.2 / HISTORY_TIMER_PRECISION));
 }
 
 

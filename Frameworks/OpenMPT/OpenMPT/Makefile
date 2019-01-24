@@ -53,6 +53,7 @@
 #  TEST=1           Include test suite in default target.
 #  ONLY_TEST=0      Only build the test suite.
 #  STRICT=0         Treat warnings as errors.
+#  MODERN=0         Pass more modern compiler options.
 #  STDCXX=c++11     C++ standard version (only for GCC and clang)
 #  CHECKED=0        Enable run-time assertions.
 #  CHECKED_ADDRESS=0   Enable address sanitizer
@@ -68,10 +69,11 @@
 #  NO_VORBIS=1      Avoid using libvorbis, even if found
 #  NO_VORBISFILE=1  Avoid using libvorbisfile, even if found
 #
+#  NO_MINIMP3=1     Do not fallback to minimp3
 #  NO_STBVORBIS=1   Do not fallback to stb_vorbis
 #
-#  USE_MINIMP3=1    Use minimp3.
-#                   Beware that minimp3 is LGPL 2.1 licensed.
+#  USE_ALLEGRO42=1  Use liballegro 4.2 (DJGPP only)
+#  BUNDLED_ALLEGRO42=1 Use liballegro 4.2 in libopenmpt source tree (DJGPP only)
 #
 # Build flags for libopenmpt examples and openmpt123
 #  (provide on each `make` invocation)
@@ -157,6 +159,7 @@ ONLY_TEST=0
 SOSUFFIX=.so
 SOSUFFIXWINDOWS=0
 OPENMPT123=1
+MODERN=0
 STRICT=0
 
 CHECKED=0
@@ -201,6 +204,11 @@ ifeq ($(OS),Windows_NT)
 HOST=windows
 HOST_FLAVOUR=
 
+TOOLCHAIN_SUFFIX=
+
+CPPCHECK = cppcheck
+
+MKDIR_P = mkdir
 RM = del /q /f
 RMTREE = del /q /f /s
 INSTALL = echo install
@@ -208,11 +216,18 @@ INSTALL_MAKE_DIR = echo install
 INSTALL_DIR = echo install
 FIXPATH = $(subst /,\,$1)
 
+NUMTHREADS:=$(NUMBER_OF_PROCESSORS)
+
 else
 
 HOST=unix
 HOST_FLAVOUR=
 
+TOOLCHAIN_SUFFIX=
+
+CPPCHECK = cppcheck
+
+MKDIR_P = mkdir -p
 RM = rm -f
 RMTREE = rm -rf
 INSTALL = install
@@ -230,8 +245,22 @@ endif
 ifeq ($(UNAME_S),FreeBSD)
 HOST_FLAVOUR=FREEBSD
 endif
+ifeq ($(UNAME_S),Haiku)
+HOST_FLAVOUR=HAIKU
+endif
+
+ifeq ($(HOST_FLAVOUR),LINUX)
+NUMTHREADS:=$(shell nproc)
+else
+NUMTHREADS:=1
+endif
 
 endif
+
+
+# early build setup
+
+BINDIR_MADE:=$(shell $(MKDIR_P) bin)
 
 
 # compiler setup
@@ -248,8 +277,6 @@ endif
 
 
 # build setup
-
-BINDIR_MADE:=$(shell mkdir -p bin)
 
 ifeq ($(SOSUFFIXWINDOWS),1)
 LIBOPENMPT_SONAME=libopenmpt-$(LIBOPENMPT_SO_VERSION)$(SOSUFFIX)
@@ -295,8 +322,13 @@ CFLAGS   += -Wall
 
 else
 
+ifeq ($(MPT_COMPILER_NOVISIBILITY),1)
+CXXFLAGS +=
+CFLAGS   +=
+else
 CXXFLAGS += -fvisibility=hidden
 CFLAGS   += -fvisibility=hidden
+endif
 LDFLAGS  += 
 LDLIBS   += 
 ARFLAGS  += 
@@ -307,9 +339,15 @@ CXXFLAGS += -O0 -g -fno-omit-frame-pointer
 CFLAGS   += -O0 -g -fno-omit-frame-pointer
 else
 ifeq ($(OPTIMIZE_SIZE),1)
-CXXFLAGS += -ffunction-sections -fdata-sections -Os -ffast-math
-CFLAGS   += -ffunction-sections -fdata-sections -Os -ffast-math -fno-strict-aliasing
+CXXFLAGS += -Os -ffast-math
+CFLAGS   += -Os -ffast-math -fno-strict-aliasing
+LDFLAGS  += 
+ifeq ($(MPT_COMPILER_NOGCSECTIONS),1)
+else
+CXXFLAGS += -ffunction-sections -fdata-sections
+CFLAGS   += -ffunction-sections -fdata-sections
 LDFLAGS  += -Wl,--gc-sections
+endif
 else
 ifeq ($(OPTIMIZE),1)
 CXXFLAGS += -O3 -ffast-math
@@ -332,6 +370,7 @@ endif
 
 CXXFLAGS += -Wall -Wextra -Wundef -Wcast-qual -Wcast-align $(CXXFLAGS_WARNINGS)
 CFLAGS   += -Wall -Wextra -Wundef -Wcast-qual -Wcast-align $(CFLAGS_WARNINGS)
+LDFLAGS  += $(LDFLAGS_WARNINGS)
 
 endif
 
@@ -371,10 +410,10 @@ endif
 ifeq ($(NO_ZLIB),1)
 else
 #LDLIBS   += -lz
-ifeq ($(shell pkg-config --exists zlib && echo yes),yes)
-CPPFLAGS_ZLIB := $(shell pkg-config --cflags-only-I zlib ) -DMPT_WITH_ZLIB
-LDFLAGS_ZLIB  := $(shell pkg-config --libs-only-L   zlib ) $(shell pkg-config --libs-only-other zlib )
-LDLIBS_ZLIB   := $(shell pkg-config --libs-only-l   zlib )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists zlib && echo yes),yes)
+CPPFLAGS_ZLIB := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I zlib ) -DMPT_WITH_ZLIB
+LDFLAGS_ZLIB  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   zlib ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other zlib )
+LDLIBS_ZLIB   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   zlib )
 PC_REQUIRES_ZLIB := zlib
 else
 ifeq ($(FORCE_DEPS),1)
@@ -389,10 +428,10 @@ endif
 ifeq ($(NO_MPG123),1)
 else
 #LDLIBS   += -lmpg123
-ifeq ($(shell pkg-config --exists 'libmpg123 >= 1.13.0' && echo yes),yes)
-CPPFLAGS_MPG123 := $(shell pkg-config --cflags-only-I 'libmpg123 >= 1.13.0' ) -DMPT_WITH_MPG123
-LDFLAGS_MPG123  := $(shell pkg-config --libs-only-L   'libmpg123 >= 1.13.0' ) $(shell pkg-config --libs-only-other 'libmpg123 >= 1.13.0' )
-LDLIBS_MPG123   := $(shell pkg-config --libs-only-l   'libmpg123 >= 1.13.0' )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists 'libmpg123 >= 1.14.0' && echo yes),yes)
+CPPFLAGS_MPG123 := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I 'libmpg123 >= 1.14.0' ) -DMPT_WITH_MPG123
+LDFLAGS_MPG123  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   'libmpg123 >= 1.14.0' ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other 'libmpg123 >= 1.14.0' )
+LDLIBS_MPG123   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   'libmpg123 >= 1.14.0' )
 PC_REQUIRES_MPG123 := libmpg123
 else
 ifeq ($(FORCE_DEPS),1)
@@ -407,10 +446,10 @@ endif
 ifeq ($(NO_OGG),1)
 else
 #LDLIBS   += -logg
-ifeq ($(shell pkg-config --exists ogg && echo yes),yes)
-CPPFLAGS_OGG := $(shell pkg-config --cflags-only-I ogg ) -DMPT_WITH_OGG
-LDFLAGS_OGG  := $(shell pkg-config --libs-only-L   ogg ) $(shell pkg-config --libs-only-other ogg )
-LDLIBS_OGG   := $(shell pkg-config --libs-only-l   ogg )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists ogg && echo yes),yes)
+CPPFLAGS_OGG := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I ogg ) -DMPT_WITH_OGG
+LDFLAGS_OGG  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   ogg ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other ogg )
+LDLIBS_OGG   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   ogg )
 PC_REQUIRES_OGG := ogg
 else
 ifeq ($(FORCE_DEPS),1)
@@ -425,10 +464,10 @@ endif
 ifeq ($(NO_VORBIS),1)
 else
 #LDLIBS   += -lvorbis
-ifeq ($(shell pkg-config --exists vorbis && echo yes),yes)
-CPPFLAGS_VORBIS := $(shell pkg-config --cflags-only-I vorbis ) -DMPT_WITH_VORBIS
-LDFLAGS_VORBIS  := $(shell pkg-config --libs-only-L   vorbis ) $(shell pkg-config --libs-only-other vorbis )
-LDLIBS_VORBIS   := $(shell pkg-config --libs-only-l   vorbis )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists vorbis && echo yes),yes)
+CPPFLAGS_VORBIS := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I vorbis ) -DMPT_WITH_VORBIS
+LDFLAGS_VORBIS  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   vorbis ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other vorbis )
+LDLIBS_VORBIS   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   vorbis )
 PC_REQUIRES_VORBIS := vorbis
 else
 ifeq ($(FORCE_DEPS),1)
@@ -443,10 +482,10 @@ endif
 ifeq ($(NO_VORBISFILE),1)
 else
 #LDLIBS   += -lvorbisfile
-ifeq ($(shell pkg-config --exists vorbisfile && echo yes),yes)
-CPPFLAGS_VORBISFILE := $(shell pkg-config --cflags-only-I vorbisfile ) -DMPT_WITH_VORBISFILE
-LDFLAGS_VORBISFILE  := $(shell pkg-config --libs-only-L   vorbisfile ) $(shell pkg-config --libs-only-other vorbisfile )
-LDLIBS_VORBISFILE   := $(shell pkg-config --libs-only-l   vorbisfile )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists vorbisfile && echo yes),yes)
+CPPFLAGS_VORBISFILE := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I vorbisfile ) -DMPT_WITH_VORBISFILE
+LDFLAGS_VORBISFILE  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   vorbisfile ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other vorbisfile )
+LDLIBS_VORBISFILE   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   vorbisfile )
 PC_REQUIRES_VORBISFILE := vorbisfile
 else
 ifeq ($(FORCE_DEPS),1)
@@ -461,10 +500,10 @@ endif
 ifeq ($(NO_SDL2),1)
 else
 #LDLIBS   += -lsdl2
-ifeq ($(shell pkg-config --exists sdl2 && echo yes),yes)
-CPPFLAGS_SDL := $(shell pkg-config --cflags-only-I sdl2 ) -DMPT_WITH_SDL2
-LDFLAGS_SDL  := $(shell pkg-config --libs-only-L   sdl2 ) $(shell pkg-config --libs-only-other sdl2 )
-LDLIBS_SDL   := $(shell pkg-config --libs-only-l   sdl2 )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists sdl2 && echo yes),yes)
+CPPFLAGS_SDL := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I sdl2 ) -DMPT_WITH_SDL2
+LDFLAGS_SDL  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   sdl2 ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other sdl2 )
+LDLIBS_SDL   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   sdl2 )
 NO_SDL:=1
 else
 ifeq ($(FORCE_DEPS),1)
@@ -479,10 +518,10 @@ endif
 ifeq ($(NO_SDL),1)
 else
 #LDLIBS   += -lsdl
-ifeq ($(shell pkg-config --exists sdl && echo yes),yes)
-CPPFLAGS_SDL := $(shell pkg-config --cflags-only-I sdl ) -DMPT_WITH_SDL
-LDFLAGS_SDL  := $(shell pkg-config --libs-only-L   sdl ) $(shell pkg-config --libs-only-other sdl )
-LDLIBS_SDL   := $(shell pkg-config --libs-only-l   sdl )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists sdl && echo yes),yes)
+CPPFLAGS_SDL := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I sdl ) -DMPT_WITH_SDL
+LDFLAGS_SDL  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   sdl ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other sdl )
+LDLIBS_SDL   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   sdl )
 else
 ifeq ($(FORCE_DEPS),1)
 $(error sdl not found)
@@ -496,10 +535,10 @@ endif
 ifeq ($(NO_PORTAUDIO),1)
 else
 #LDLIBS   += -lportaudio
-ifeq ($(shell pkg-config --exists portaudio-2.0 && echo yes),yes)
-CPPFLAGS_PORTAUDIO := $(shell pkg-config --cflags-only-I portaudio-2.0 ) -DMPT_WITH_PORTAUDIO
-LDFLAGS_PORTAUDIO  := $(shell pkg-config --libs-only-L   portaudio-2.0 ) $(shell pkg-config --libs-only-other portaudio-2.0 )
-LDLIBS_PORTAUDIO   := $(shell pkg-config --libs-only-l   portaudio-2.0 )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists portaudio-2.0 && echo yes),yes)
+CPPFLAGS_PORTAUDIO := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I portaudio-2.0 ) -DMPT_WITH_PORTAUDIO
+LDFLAGS_PORTAUDIO  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   portaudio-2.0 ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other portaudio-2.0 )
+LDLIBS_PORTAUDIO   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   portaudio-2.0 )
 else
 ifeq ($(FORCE_DEPS),1)
 $(error portaudio not found)
@@ -513,10 +552,10 @@ endif
 ifeq ($(NO_PORTAUDIOCPP),1)
 else
 #LDLIBS   += -lportaudiocpp
-ifeq ($(shell pkg-config --exists portaudiocpp && echo yes),yes)
-CPPFLAGS_PORTAUDIOCPP := $(shell pkg-config --cflags-only-I portaudiocpp ) -DMPT_WITH_PORTAUDIOCPP
-LDFLAGS_PORTAUDIOCPP  := $(shell pkg-config --libs-only-L   portaudiocpp ) $(shell pkg-config --libs-only-other portaudiocpp )
-LDLIBS_PORTAUDIOCPP   := $(shell pkg-config --libs-only-l   portaudiocpp )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists portaudiocpp && echo yes),yes)
+CPPFLAGS_PORTAUDIOCPP := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I portaudiocpp ) -DMPT_WITH_PORTAUDIOCPP
+LDFLAGS_PORTAUDIOCPP  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   portaudiocpp ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other portaudiocpp )
+LDLIBS_PORTAUDIOCPP   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   portaudiocpp )
 else
 ifeq ($(FORCE_DEPS),1)
 $(error portaudiocpp not found)
@@ -530,10 +569,10 @@ endif
 ifeq ($(NO_PULSEAUDIO),1)
 else
 #LDLIBS   += -lpulse-simple
-ifeq ($(shell pkg-config --exists libpulse libpulse-simple && echo yes),yes)
-CPPFLAGS_PULSEAUDIO := $(shell pkg-config --cflags-only-I libpulse libpulse-simple ) -DMPT_WITH_PULSEAUDIO
-LDFLAGS_PULSEAUDIO  := $(shell pkg-config --libs-only-L   libpulse libpulse-simple ) $(shell pkg-config --libs-only-other libpulse libpulse-simple )
-LDLIBS_PULSEAUDIO   := $(shell pkg-config --libs-only-l   libpulse libpulse-simple )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists libpulse libpulse-simple && echo yes),yes)
+CPPFLAGS_PULSEAUDIO := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I libpulse libpulse-simple ) -DMPT_WITH_PULSEAUDIO
+LDFLAGS_PULSEAUDIO  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   libpulse libpulse-simple ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other libpulse libpulse-simple )
+LDLIBS_PULSEAUDIO   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   libpulse libpulse-simple )
 else
 ifeq ($(FORCE_DEPS),1)
 $(error pulseaudio not found)
@@ -547,10 +586,10 @@ endif
 ifeq ($(NO_FLAC),1)
 else
 #LDLIBS   += -lFLAC
-ifeq ($(shell pkg-config --exists 'flac >= 1.3.0' && echo yes),yes)
-CPPFLAGS_FLAC := $(shell pkg-config --cflags-only-I 'flac >= 1.3.0' ) -DMPT_WITH_FLAC
-LDFLAGS_FLAC  := $(shell pkg-config --libs-only-L   'flac >= 1.3.0' ) $(shell pkg-config --libs-only-other 'flac >= 1.3.0' )
-LDLIBS_FLAC   := $(shell pkg-config --libs-only-l   'flac >= 1.3.0' )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists 'flac >= 1.3.0' && echo yes),yes)
+CPPFLAGS_FLAC := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I 'flac >= 1.3.0' ) -DMPT_WITH_FLAC
+LDFLAGS_FLAC  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   'flac >= 1.3.0' ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other 'flac >= 1.3.0' )
+LDLIBS_FLAC   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   'flac >= 1.3.0' )
 else
 ifeq ($(FORCE_DEPS),1)
 $(error flac not found)
@@ -564,10 +603,10 @@ endif
 ifeq ($(NO_SNDFILE),1)
 else
 #LDLIBS   += -lsndfile
-ifeq ($(shell pkg-config --exists sndfile && echo yes),yes)
-CPPFLAGS_SNDFILE := $(shell pkg-config --cflags-only-I   sndfile ) -DMPT_WITH_SNDFILE
-LDFLAGS_SNDFILE  := $(shell pkg-config --libs-only-L     sndfile ) $(shell pkg-config --libs-only-other sndfile )
-LDLIBS_SNDFILE   := $(shell pkg-config --libs-only-l     sndfile )
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists sndfile && echo yes),yes)
+CPPFLAGS_SNDFILE := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I   sndfile ) -DMPT_WITH_SNDFILE
+LDFLAGS_SNDFILE  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L     sndfile ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other sndfile )
+LDLIBS_SNDFILE   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l     sndfile )
 else
 ifeq ($(FORCE_DEPS),1)
 $(error sndfile not found)
@@ -578,17 +617,31 @@ NO_SNDFILE:=1
 endif
 endif
 
+ifeq ($(USE_ALLEGRO42),1)
+CPPFLAGS_ALLEGRO42 ?= 
+LDFLAGS_ALLEGRO42 ?= 
+LDLIBS_ALLEGRO42 ?= liballeg.a
+CPPFLAGS_ALLEGRO42 += -DMPT_WITH_ALLEGRO42
+endif
+
 ifeq ($(HACK_ARCHIVE_SUPPORT),1)
 CPPFLAGS += -DMPT_BUILD_HACK_ARCHIVE_SUPPORT
 endif
 
+CPPCHECK_FLAGS += -j $(NUMTHREADS)
+CPPCHECK_FLAGS += --std=c99 --std=c++11
+CPPCHECK_FLAGS += --quiet
+CPPCHECK_FLAGS += --enable=warning --inline-suppr --template='{file}:{line}: warning: {severity}: {message} [{id}]'
+CPPCHECK_FLAGS += --suppress=missingIncludeSystem
+
+CPPCHECK_FLAGS += $(CPPFLAGS)
 CPPFLAGS += $(CPPFLAGS_ZLIB) $(CPPFLAGS_MPG123) $(CPPFLAGS_OGG) $(CPPFLAGS_VORBIS) $(CPPFLAGS_VORBISFILE)
 LDFLAGS += $(LDFLAGS_ZLIB) $(LDFLAGS_MPG123) $(LDFLAGS_OGG) $(LDFLAGS_VORBIS) $(LDFLAGS_VORBISFILE)
 LDLIBS += $(LDLIBS_ZLIB) $(LDLIBS_MPG123) $(LDLIBS_OGG) $(LDLIBS_VORBIS) $(LDLIBS_VORBISFILE)
 
-CPPFLAGS_OPENMPT123 += $(CPPFLAGS_SDL2) $(CPPFLAGS_SDL) $(CPPFLAGS_PORTAUDIO) $(CPPFLAGS_PULSEAUDIO) $(CPPFLAGS_FLAC) $(CPPFLAGS_SNDFILE)
-LDFLAGS_OPENMPT123  += $(LDFLAGS_SDL2) $(LDFLAGS_SDL) $(LDFLAGS_PORTAUDIO) $(LDFLAGS_PULSEAUDIO) $(LDFLAGS_FLAC) $(LDFLAGS_SNDFILE)
-LDLIBS_OPENMPT123   += $(LDLIBS_SDL2) $(LDLIBS_SDL) $(LDLIBS_PORTAUDIO) $(LDLIBS_PULSEAUDIO) $(LDLIBS_FLAC) $(LDLIBS_SNDFILE)
+CPPFLAGS_OPENMPT123 += $(CPPFLAGS_SDL2) $(CPPFLAGS_SDL) $(CPPFLAGS_PORTAUDIO) $(CPPFLAGS_PULSEAUDIO) $(CPPFLAGS_FLAC) $(CPPFLAGS_SNDFILE) $(CPPFLAGS_ALLEGRO42)
+LDFLAGS_OPENMPT123  += $(LDFLAGS_SDL2) $(LDFLAGS_SDL) $(LDFLAGS_PORTAUDIO) $(LDFLAGS_PULSEAUDIO) $(LDFLAGS_FLAC) $(LDFLAGS_SNDFILE) $(LDFLAGS_ALLEGRO42)
+LDLIBS_OPENMPT123   += $(LDLIBS_SDL2) $(LDLIBS_SDL) $(LDLIBS_PORTAUDIO) $(LDLIBS_PULSEAUDIO) $(LDLIBS_FLAC) $(LDLIBS_SNDFILE) $(LDLIBS_ALLEGRO42)
 
 
 %: %.o
@@ -717,7 +770,8 @@ endif
 include/minimp3/minimp3.o : CFLAGS+=$(CFLAGS_SILENT)
 include/minimp3/minimp3.test.o : CFLAGS+=$(CFLAGS_SILENT)
 ifeq ($(NO_MPG123),1)
-ifeq ($(USE_MINIMP3),1)
+ifeq ($(NO_MINIMP3),1)
+else
 LIBOPENMPT_C_SOURCES += include/minimp3/minimp3.c
 LIBOPENMPTTEST_C_SOURCES += include/minimp3/minimp3.c
 CPPFLAGS += -DMPT_WITH_MINIMP3
@@ -869,6 +923,8 @@ ifeq ($(SHARED_SONAME),1)
 LIBOPENMPT_LDFLAGS += -Wl,-soname,$(LIBOPENMPT_SONAME)
 endif
 
+MISC_OUTPUTS += bin/empty.cpp
+MISC_OUTPUTS += bin/empty.out
 MISC_OUTPUTS += bin/openmpt123$(EXESUFFIX).norpath
 MISC_OUTPUTS += bin/libopenmpt_example_c$(EXESUFFIX).norpath
 MISC_OUTPUTS += bin/libopenmpt_example_c_mem$(EXESUFFIX).norpath
@@ -880,15 +936,23 @@ MISC_OUTPUTS += bin/libopenmpt_example_c_stdout$(EXESUFFIX).norpath
 MISC_OUTPUTS += libopenmpt$(SOSUFFIX)
 MISC_OUTPUTS += bin/.docs
 MISC_OUTPUTS += bin/libopenmpt_test$(EXESUFFIX)
+MISC_OUTPUTS += bin/libopenmpt_test.wasm
 MISC_OUTPUTS += bin/libopenmpt_test.js.mem
 MISC_OUTPUTS += bin/made.docs
 MISC_OUTPUTS += bin/$(LIBOPENMPT_SONAME)
+MISC_OUTPUTS += bin/libopenmpt.wasm
 MISC_OUTPUTS += bin/libopenmpt.js.mem
+MISC_OUTPUTS += bin/libopenmpt_example_c.wasm 
 MISC_OUTPUTS += bin/libopenmpt_example_c.js.mem 
+MISC_OUTPUTS += bin/libopenmpt_example_c_mem.wasm 
 MISC_OUTPUTS += bin/libopenmpt_example_c_mem.js.mem 
+MISC_OUTPUTS += bin/libopenmpt_example_c_pipe.wasm
 MISC_OUTPUTS += bin/libopenmpt_example_c_pipe.js.mem
+MISC_OUTPUTS += bin/libopenmpt_example_c_probe.wasm
 MISC_OUTPUTS += bin/libopenmpt_example_c_probe.js.mem
+MISC_OUTPUTS += bin/libopenmpt_example_c_stdout.wasm
 MISC_OUTPUTS += bin/libopenmpt_example_c_stdout.js.mem
+MISC_OUTPUTS += bin/libopenmpt_example_c_unsafe.wasm
 MISC_OUTPUTS += bin/libopenmpt_example_c_unsafe.js.mem
 MISC_OUTPUTS += bin/openmpt.a
 #old
@@ -905,7 +969,8 @@ DIST_OUTPUTS += bin/dist-tar.tar
 DIST_OUTPUTS += bin/dist-zip.tar
 DIST_OUTPUTS += bin/dist-doc.tar
 DIST_OUTPUTS += bin/dist-autotools.tar
-DIST_OUTPUTS += bin/dist-js.tar   
+DIST_OUTPUTS += bin/dist-js.tar
+DIST_OUTPUTS += bin/dist-dos.tar
 DIST_OUTPUTS += bin/made.docs
 
 DIST_OUTPUTDIRS += bin/dist
@@ -914,6 +979,7 @@ DIST_OUTPUTDIRS += bin/dist-tar
 DIST_OUTPUTDIRS += bin/dist-zip
 DIST_OUTPUTDIRS += bin/dist-autotools
 DIST_OUTPUTDIRS += bin/dist-js
+DIST_OUTPUTDIRS += bin/dist-dos
 DIST_OUTPUTDIRS += bin/docs
 
 
@@ -1090,6 +1156,16 @@ bin/dist-js.tar: bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar.gz
 	cd bin/dist-js/ && cp libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar.gz libopenmpt/dev.js/$(DIST_LIBOPENMPT_TARBALL_VERSION)/
 	cd bin/dist-js/ && tar cvf ../dist-js.tar libopenmpt
 
+.PHONY: dist-dos
+dist-dos: bin/dist-dos.tar
+
+bin/dist-dos.tar: bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION).bin.dos.zip
+	rm -rf bin/dist-dos.tar
+	cd bin/dist-dos/ && rm -rf libopenmpt
+	cd bin/dist-dos/ && mkdir -p libopenmpt/bin.dos/$(DIST_LIBOPENMPT_TARBALL_VERSION)/
+	cd bin/dist-dos/ && cp libopenmpt-$(DIST_LIBOPENMPT_VERSION).bin.dos.zip libopenmpt/bin.dos/$(DIST_LIBOPENMPT_TARBALL_VERSION)/
+	cd bin/dist-dos/ && tar cvf ../dist-dos.tar libopenmpt
+
 .PHONY: bin/dist.mk
 bin/dist.mk:
 	rm -rf $@
@@ -1145,6 +1221,8 @@ bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION).makefile.tar: bin/dist.mk bin
 	svn export ./examples           bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/examples
 	svn export ./openmpt123         bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/openmpt123
 	svn export ./contrib            bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/contrib
+	svn export ./include/allegro42  bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/allegro42
+	svn export ./include/cwsdpmi    bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/cwsdpmi
 	svn export ./include/minimp3    bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/minimp3
 	svn export ./include/miniz      bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/miniz
 	svn export ./include/modplug    bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/modplug
@@ -1159,17 +1237,24 @@ bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION).msvc.zip: bin/dist.mk bin/svn
 	rm -rf bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)
 	mkdir -p bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)
 	mkdir -p bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build
+	mkdir -p bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/genie
+	mkdir -p bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/premake
 	mkdir -p bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include
 	svn export ./LICENSE               bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSE               --native-eol CRLF
 	svn export ./README.md             bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/README.md             --native-eol CRLF
 	svn export ./Makefile              bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/Makefile              --native-eol CRLF
 	svn export ./bin                   bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin                   --native-eol CRLF
+	svn export ./build/genie/def              bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/genie/def              --native-eol CRLF
+	svn export ./build/premake/def            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/premake/def            --native-eol CRLF
+	svn export ./build/premake/inc            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/premake/inc            --native-eol CRLF
+	svn export ./build/premake/lnk            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/premake/lnk            --native-eol CRLF
 	svn export ./build/svn_version            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/svn_version            --native-eol CRLF
 	svn export ./build/vcpkg                  bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vcpkg                  --native-eol CRLF
 	svn export ./build/vs                     bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs                     --native-eol CRLF
 	svn export ./build/vs2015                 bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2015                 --native-eol CRLF
 	svn export ./build/vs2015xp               bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2015xp               --native-eol CRLF
 	svn export ./build/vs2017                 bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017                 --native-eol CRLF
+	svn export ./build/vs2017win10            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017win10       
 	svn export ./build/vs2017xp               bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017xp               --native-eol CRLF
 	svn export ./build/windesktop81           bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/windesktop81           --native-eol CRLF
 	svn export ./build/winstore82             bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/winstore82             --native-eol CRLF
@@ -1210,17 +1295,56 @@ bin/dist-zip/OpenMPT-src-$(DIST_OPENMPT_VERSION).zip: bin/svn_version_dist.h
 	cd bin/dist-zip/OpenMPT-src-$(DIST_OPENMPT_VERSION)/ && zip -r ../OpenMPT-src-$(DIST_OPENMPT_VERSION).zip --compression-method deflate -9 *
 
 .PHONY: bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar
-bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar: bin/libopenmpt.js
+bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar:
 	mkdir -p bin/dist-js
-	rm -rf bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)
-	mkdir -p bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)
-	mkdir -p bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/licenses
+	rm -rf                                       bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)
+	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)
+	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/licenses
 	svn export ./LICENSE                         bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/license.txt
+	svn export ./include/minimp3/LICENSE         bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/licenses/license.minimp3.txt
 	svn export ./include/miniz/miniz.c           bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/licenses/license.miniz.txt
 	svn export ./include/stb_vorbis/stb_vorbis.c bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/licenses/license.stb_vorbis.txt
-	cp bin/libopenmpt.js                         bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/libopenmpt.js
-	cp bin/libopenmpt.js.mem                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/libopenmpt.js.mem
+	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin
+	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/wasm
+	cp bin/stage/wasm/libopenmpt.js              bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/wasm/libopenmpt.js
+	cp bin/stage/wasm/libopenmpt.wasm            bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/wasm/libopenmpt.wasm
+	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs128m
+	cp bin/stage/asmjs128m/libopenmpt.js         bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs128m/libopenmpt.js
+	cp bin/stage/asmjs128m/libopenmpt.js.mem     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs128m/libopenmpt.js.mem
+	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs
+	cp bin/stage/asmjs/libopenmpt.js             bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs/libopenmpt.js
+	cp bin/stage/asmjs/libopenmpt.js.mem         bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs/libopenmpt.js.mem
+	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/js
+	cp bin/stage/js/libopenmpt.js                bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/js/libopenmpt.js
+	cp bin/stage/js/libopenmpt.js.mem            bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/js/libopenmpt.js.mem
 	cd bin/dist-js/ && tar cv libopenmpt-$(DIST_LIBOPENMPT_VERSION) > libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar
+
+.PHONY: bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION).bin.dos.zip
+bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION).bin.dos.zip:
+	mkdir -p bin/dist-dos
+	rm -rf                                       bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)
+	mkdir -p                                     bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)
+	mkdir -p                                     bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES
+	svn export ./LICENSE                         bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSE.TXT          --native-eol CRLF
+	cd bin/dist-dos && unzip ../../build/externals/all422s.zip allegro/readme.txt
+	mv bin/dist-dos/allegro/readme.txt           bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/ALLEGRO.TXT
+	rmdir bin/dist-dos/allegro
+	cp include/cwsdpmi/bin/cwsdpmi.doc           bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/CWSDPMI.TXT
+	svn export ./include/minimp3/LICENSE         bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/MINIMP3.TXT --native-eol CRLF
+	svn export ./include/miniz/miniz.c           bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/MINIZ.TXT   --native-eol CRLF
+	svn export ./include/stb_vorbis/stb_vorbis.c bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/STBVORB.TXT --native-eol CRLF
+	mkdir -p                                     bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/SRC
+	cp build/externals/csdpmi7s.zip              bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/SRC/CSDPMI7S.ZIP
+	mkdir -p                                     bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN
+	cp bin/openmpt123.exe                        bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN/OMPT123.EXE
+	cp include/cwsdpmi/bin/cwsdpmi.doc           bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN/CWSDPMI.DOC
+	cp include/cwsdpmi/bin/CWSDPMI.EXE           bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN/CWSDPMI.EXE
+	cp include/cwsdpmi/bin/CWSDPR0.EXE           bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN/CWSDPR0.EXE
+	cp include/cwsdpmi/bin/cwsparam.doc          bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN/CWSPARAM.DOC
+	cp include/cwsdpmi/bin/CWSPARAM.EXE          bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN/CWSPARAM.EXE
+	cp include/cwsdpmi/bin/CWSDSTUB.EXE          bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN/CWSDSTUB.EXE
+	cp include/cwsdpmi/bin/CWSDSTR0.EXE          bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN/CWSDSTR0.EXE
+	cd bin/dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/ && zip -r ../libopenmpt-$(DIST_LIBOPENMPT_VERSION).bin.dos.zip --compression-method deflate -9 *
 
 bin/libopenmpt.a: $(LIBOPENMPT_OBJECTS)
 	$(INFO) [AR] $@
@@ -1228,7 +1352,7 @@ bin/libopenmpt.a: $(LIBOPENMPT_OBJECTS)
 
 bin/libopenmpt$(SOSUFFIX): $(LIBOPENMPT_OBJECTS)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) -shared $(LIBOPENMPT_LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
+	$(SILENT)$(LINK.cc) -shared $(LIBOPENMPT_LDFLAGS) $(SO_LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 ifeq ($(SHARED_SONAME),1)
 	$(SILENT)mv bin/libopenmpt$(SOSUFFIX) bin/$(LIBOPENMPT_SONAME)
 	$(SILENT)ln -sf $(LIBOPENMPT_SONAME) bin/libopenmpt$(SOSUFFIX)
@@ -1236,7 +1360,7 @@ endif
 
 bin/libopenmpt_modplug$(SOSUFFIX): $(LIBOPENMPT_MODPLUG_OBJECTS) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) -shared $(LDFLAGS_LIBOPENMPT) $(LIBOPENMPT_MODPLUG_OBJECTS) $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
+	$(SILENT)$(LINK.cc) -shared $(SO_LDFLAGS) $(LDFLAGS_LIBOPENMPT) $(LIBOPENMPT_MODPLUG_OBJECTS) $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
 
 bin/openmpt123.1: bin/openmpt123$(EXESUFFIX) openmpt123/openmpt123.h2m
 	$(INFO) [HELP2MAN] $@
@@ -1248,11 +1372,11 @@ openmpt123/openmpt123.o: openmpt123/openmpt123.cpp
 	$(SILENT)$(COMPILE.cc) $(CXXFLAGS_OPENMPT123) $(CPPFLAGS_OPENMPT123) $(OUTPUT_OPTION) $<
 bin/openmpt123$(EXESUFFIX): $(OPENMPT123_OBJECTS) $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_OPENMPT123) $(OPENMPT123_OBJECTS) $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_OPENMPT123) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_OPENMPT123) $(OPENMPT123_OBJECTS) $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_OPENMPT123) -o $@
 ifeq ($(HOST),unix)
 	$(SILENT)mv $@ $@.norpath
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_OPENMPT123) $(OPENMPT123_OBJECTS) $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_OPENMPT123) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_OPENMPT123) $(OPENMPT123_OBJECTS) $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_OPENMPT123) -o $@
 endif
 
 contrib/fuzzing/fuzz.o: contrib/fuzzing/fuzz.c
@@ -1298,60 +1422,81 @@ examples/libopenmpt_example_cxx.o: examples/libopenmpt_example_cxx.cpp
 	$(SILENT)$(COMPILE.cc) $(CXXFLAGS_PORTAUDIOCPP) $(CPPFLAGS_PORTAUDIOCPP) $(OUTPUT_OPTION) $<
 bin/libopenmpt_example_c$(EXESUFFIX): examples/libopenmpt_example_c.o $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
 ifeq ($(HOST),unix)
 	$(SILENT)mv $@ $@.norpath
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(BIN_LDFLAGS)$(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
 endif
 bin/libopenmpt_example_c_mem$(EXESUFFIX): examples/libopenmpt_example_c_mem.o $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c_mem.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c_mem.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
 ifeq ($(HOST),unix)
 	$(SILENT)mv $@ $@.norpath
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c_mem.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c_mem.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
 endif
 bin/libopenmpt_example_c_unsafe$(EXESUFFIX): examples/libopenmpt_example_c_unsafe.o $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c_unsafe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c_unsafe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
 ifeq ($(HOST),unix)
 	$(SILENT)mv $@ $@.norpath
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c_unsafe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIO) examples/libopenmpt_example_c_unsafe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIO) -o $@
 endif
 bin/libopenmpt_example_c_pipe$(EXESUFFIX): examples/libopenmpt_example_c_pipe.o $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_pipe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_pipe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
 ifeq ($(HOST),unix)
 	$(SILENT)mv $@ $@.norpath
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_pipe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_pipe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
 endif
 bin/libopenmpt_example_c_stdout$(EXESUFFIX): examples/libopenmpt_example_c_stdout.o $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_stdout.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_stdout.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
 ifeq ($(HOST),unix)
 	$(SILENT)mv $@ $@.norpath
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_stdout.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_stdout.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
 endif
 bin/libopenmpt_example_c_probe$(EXESUFFIX): examples/libopenmpt_example_c_probe.o $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_probe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_probe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
 ifeq ($(HOST),unix)
 	$(SILENT)mv $@ $@.norpath
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_probe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) examples/libopenmpt_example_c_probe.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
 endif
 bin/libopenmpt_example_cxx$(EXESUFFIX): examples/libopenmpt_example_cxx.o $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIOCPP) examples/libopenmpt_example_cxx.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIOCPP) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIOCPP) examples/libopenmpt_example_cxx.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIOCPP) -o $@
 ifeq ($(HOST),unix)
 	$(SILENT)mv $@ $@.norpath
 	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIOCPP) examples/libopenmpt_example_cxx.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIOCPP) -o $@
+	$(SILENT)$(LINK.cc) $(BIN_LDFLAGS) $(LDFLAGS_RPATH) $(LDFLAGS_LIBOPENMPT) $(LDFLAGS_PORTAUDIOCPP) examples/libopenmpt_example_cxx.o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) $(LDLIBS_PORTAUDIOCPP) -o $@
 endif
+
+.PHONY: cppcheck-libopenmpt
+cppcheck-libopenmpt:
+	$(INFO) [CPPCHECK] libopenmpt
+	$(SILENT)$(CPPCHECK) -DCPPCHECK -DMPT_CPPCHECK_CUSTOM $(CPPCHECK_FLAGS) $(CPPCHECK_PLATFORM) --check-config --suppress=unmatchedSuppression $(LIBOPENMPT_CXX_SOURCES) $(LIBOPENMPT_C_SOURCES)
+	$(SILENT)$(CPPCHECK) -DCPPCHECK -DMPT_CPPCHECK_CUSTOM $(CPPCHECK_FLAGS) $(CPPCHECK_PLATFORM) $(LIBOPENMPT_CXX_SOURCES) $(LIBOPENMPT_C_SOURCES)
+
+.PHONY: cppcheck-libopenmpt-test
+cppcheck-libopenmpt-test:
+	$(INFO) [CPPCHECK] libopenmpt-test
+	$(SILENT)$(CPPCHECK) -DCPPCHECK -DMPT_CPPCHECK_CUSTOM $(CPPCHECK_FLAGS) $(CPPCHECK_PLATFORM) -DLIBOPENMPT_BUILD_TEST --check-config --suppress=unmatchedSuppression $(LIBOPENMPTTEST_CXX_SOURCES) $(LIBOPENMPTTEST_C_SOURCES)
+	$(SILENT)$(CPPCHECK) -DCPPCHECK -DMPT_CPPCHECK_CUSTOM $(CPPCHECK_FLAGS) $(CPPCHECK_PLATFORM) -DLIBOPENMPT_BUILD_TEST $(LIBOPENMPTTEST_CXX_SOURCES) $(LIBOPENMPTTEST_C_SOURCES)
+
+.PHONY: cppcheck-openmpt123
+cppcheck-openmpt123:
+	$(INFO) [CPPCHECK] openmpt123
+	$(SILENT)$(CPPCHECK) -DCPPCHECK -DMPT_CPPCHECK_CUSTOM $(CPPCHECK_FLAGS) $(CPPCHECK_PLATFORM) --check-config --suppress=unmatchedSuppression $(OPENMPT123_CXX_SOURCES)
+	$(SILENT)$(CPPCHECK) -DCPPCHECK -DMPT_CPPCHECK_CUSTOM $(CPPCHECK_FLAGS) $(CPPCHECK_PLATFORM) $(OPENMPT123_CXX_SOURCES)
+
+.PHONY: cppcheck
+cppcheck: cppcheck-libopenmpt cppcheck-libopenmpt-test cppcheck-openmpt123
 
 .PHONY: clean
 clean:

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "Snd_defs.h"
 #include "../common/misc_util.h"
 
@@ -18,15 +20,15 @@ OPENMPT_NAMESPACE_BEGIN
 class CSoundFile;
 
 // Note definitions
-#define NOTE_NONE			(ModCommand::NOTE(0))
-#define NOTE_MIN			(ModCommand::NOTE(1))
-#define NOTE_MAX			(ModCommand::NOTE(120)) // Defines maximum notevalue(with index starting from 1) as well as maximum number of notes.
+#define NOTE_NONE			(ModCommand::NOTE(0)) // Empty note cell
+#define NOTE_MIN			(ModCommand::NOTE(1)) // Minimum note value
+#define NOTE_MAX			(ModCommand::NOTE(120)) // Maximum note value
 #define NOTE_MIDDLEC		(ModCommand::NOTE(5 * 12 + NOTE_MIN))
-#define NOTE_KEYOFF			(ModCommand::NOTE(0xFF)) // 255
-#define NOTE_NOTECUT		(ModCommand::NOTE(0xFE)) // 254
-#define NOTE_FADE			(ModCommand::NOTE(0xFD)) // 253, IT's action for illegal notes - DO NOT SAVE AS 253 as this is IT's internal representation of "no note"!
-#define NOTE_PC				(ModCommand::NOTE(0xFC)) // 252, Param Control 'note'. Changes param value on first tick.
-#define NOTE_PCS			(ModCommand::NOTE(0xFB)) // 251, Param Control (Smooth) 'note'. Interpolates param value during the whole row.
+#define NOTE_KEYOFF			(ModCommand::NOTE(0xFF)) // === (Note Off, releases envelope / fades samples, stops plugin note)
+#define NOTE_NOTECUT		(ModCommand::NOTE(0xFE)) // ^^^ (Cuts sample / stops all plugin notes)
+#define NOTE_FADE			(ModCommand::NOTE(0xFD)) // ~~~ (Fades samples, stops plugin note)
+#define NOTE_PC				(ModCommand::NOTE(0xFC)) // Param Control 'note'. Changes param value on first tick.
+#define NOTE_PCS			(ModCommand::NOTE(0xFB)) // Param Control (Smooth) 'note'. Interpolates param value during the whole row.
 #define NOTE_MAX_SPECIAL	NOTE_KEYOFF
 #define NOTE_MIN_SPECIAL	NOTE_PCS
 
@@ -126,10 +128,10 @@ public:
 
 	// Defines the maximum value for column data when interpreted as 2-byte value
 	// (for example volcmd and vol). The valid value range is [0, maxColumnValue].
-	static const int maxColumnValue = 999;
+	enum : int { maxColumnValue = 999 };
 
 	// Returns empty modcommand.
-	static ModCommand Empty() { ModCommand m = { 0, 0, VOLCMD_NONE, CMD_NONE, 0, 0 }; return m; }
+	static ModCommand Empty() { return ModCommand(); }
 
 	bool operator==(const ModCommand& mc) const
 	{
@@ -165,8 +167,8 @@ public:
 	bool IsInstrPlug() const { return IsPcNote(); }
 
 	// Returns true if and only if note is NOTE_PC or NOTE_PCS.
-	bool IsPcNote() const { return note == NOTE_PC || note == NOTE_PCS; }
-	static bool IsPcNote(const NOTE note_id) { return note_id == NOTE_PC || note_id == NOTE_PCS; }
+	bool IsPcNote() const { return IsPcNote(note); }
+	static bool IsPcNote(NOTE note) { return note == NOTE_PC || note == NOTE_PCS; }
 
 	// Returns true if and only if note is a valid musical note.
 	bool IsNote() const { return IsInRange(note, NOTE_MIN, NOTE_MAX); }
@@ -209,12 +211,12 @@ public:
 	static bool CombineEffects(uint8 &eff1, uint8 &param1, uint8 &eff2, uint8 &param2);
 
 public:
-	uint8 note;
-	uint8 instr;
-	uint8 volcmd;
-	uint8 command;
-	uint8 vol;
-	uint8 param;
+	uint8 note = NOTE_NONE;
+	uint8 instr = 0;
+	uint8 volcmd = VOLCMD_NONE;
+	uint8 command = CMD_NONE;
+	uint8 vol = 0;
+	uint8 param = 0;
 };
 
 OPENMPT_NAMESPACE_END

@@ -94,6 +94,23 @@ static const MODTYPE gdmFormatOrigin[] =
 {
 	MOD_TYPE_NONE, MOD_TYPE_MOD, MOD_TYPE_MTM, MOD_TYPE_S3M, MOD_TYPE_669, MOD_TYPE_FAR, MOD_TYPE_ULT, MOD_TYPE_STM, MOD_TYPE_MED, MOD_TYPE_PSM
 };
+static const MPT_UCHAR_TYPE gdmFormatOriginType[][4] =
+{
+	UL_(""), UL_("mod"), UL_("mtm"), UL_("s3m"), UL_("669"), UL_("far"), UL_("ult"), UL_("stm"), UL_("med"), UL_("psm")
+};
+static const MPT_UCHAR_TYPE * const gdmFormatOriginFormat[] =
+{
+	UL_(""),
+	UL_("Generic MOD"),
+	UL_("MultiTracker"),
+	UL_("ScreamTracker 3"),
+	UL_("Composer 669 / UNIS 669"),
+	UL_("Farandole Composer"),
+	UL_("UltraTracker"),
+	UL_("ScreamTracker 2"),
+	UL_("OctaMED"),
+	UL_("Epic Megagames MASI")
+};
 
 
 static bool ValidateHeader(const GDMFileHeader &fileHeader)
@@ -146,8 +163,13 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	InitializeGlobals(gdmFormatOrigin[fileHeader.originalFormat]);
-	m_ContainerType = MOD_CONTAINERTYPE_GDM;
-	m_madeWithTracker = mpt::format(MPT_USTRING("BWSB 2GDM %1.%2 (converted from %3)"))(fileHeader.trackerMajorVer, fileHeader.formatMinorVer, ModTypeToTracker(GetType()));
+
+	m_modFormat.formatName = U_("General Digital Music");
+	m_modFormat.type = U_("gdm");
+	m_modFormat.madeWithTracker = mpt::format(U_("BWSB 2GDM %1.%2"))(fileHeader.trackerMajorVer, fileHeader.formatMinorVer);
+	m_modFormat.originalType = gdmFormatOriginType[fileHeader.originalFormat];
+	m_modFormat.originalFormatName = gdmFormatOriginFormat[fileHeader.originalFormat];
+	m_modFormat.charset = mpt::CharsetCP437;
 
 	// Song name
 	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songTitle);
@@ -218,7 +240,7 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 		mpt::String::Read<mpt::String::maybeNullTerminated>(sample.filename, gdmSample.fileName);
 
 		sample.nC5Speed = gdmSample.c4Hertz;
-		sample.nGlobalVol = 256;	// Not supported in this format
+		sample.nGlobalVol = 64;	// Not supported in this format
 
 		sample.nLength = gdmSample.length; // in bytes
 
@@ -229,21 +251,20 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 			sample.nLength /= 2;
 		}
 
-		sample.nLoopStart = gdmSample.loopBegin;	// in samples
-		sample.nLoopEnd = gdmSample.loopEnd - 1;	// ditto
-		sample.FrequencyToTranspose();	// set transpose + finetune for mod files
+		sample.nLoopStart = gdmSample.loopBegin;
+		sample.nLoopEnd = gdmSample.loopEnd - 1;
 
-		// Fix transpose + finetune for some rare cases where transpose is not C-5 (e.g. sample 4 in wander2.gdm)
-		if(m_nType == MOD_TYPE_MOD)
+		if(UseFinetuneAndTranspose())
 		{
-			if(sample.RelativeTone > 0)
+			// Use the same inaccurate table as 2GDM for translating back to finetune, as our own routines
+			// give slightly different results for the provided sample rates that may result in transpose != 0.
+			static const uint16 rate2finetune[] = { 8363, 8424, 8485, 8547, 8608, 8671, 8734, 8797, 7894, 7951, 8009, 8067, 8125, 8184, 8244, 8303 };
+			for(uint8 i = 0; i < 16; i++)
 			{
-				sample.RelativeTone -= 1;
-				sample.nFineTune += 128;
-			} else if(sample.RelativeTone < 0)
-			{
-				sample.RelativeTone += 1;
-				sample.nFineTune -= 128;
+				if(sample.nC5Speed == rate2finetune[i])
+				{
+					sample.nFineTune = MOD2XMFineTune(i);
+				}
 			}
 		}
 

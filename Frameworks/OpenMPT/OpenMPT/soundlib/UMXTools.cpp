@@ -15,6 +15,14 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
+bool UMXFileHeader::IsValid() const
+{
+	return !std::memcmp(magic, "\xC1\x83\x2A\x9E", 4)
+		&& nameCount != 0
+		&& exportCount != 0
+		&& importCount != 0;
+}
+
 
 // Read compressed unreal integers - similar to MIDI integers, but signed values are possible.
 template <typename Tfile>

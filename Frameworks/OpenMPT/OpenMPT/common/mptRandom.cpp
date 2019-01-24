@@ -14,15 +14,10 @@
 #include "Endianness.h"
 #include "mptCRC.h"
 
-#include <algorithm>
+#include <chrono>
 
 #include <cmath>
-#include <ctime>
 #include <cstdlib>
-
-#if MPT_OS_WINDOWS
-#include <windows.h>
-#endif // MPT_OS_WINDOWS
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -89,30 +84,18 @@ static T generate_timeseed()
 #else // !MPT_BUILD_FUZZER
 
 	{
-		#if MPT_OS_WINDOWS
-			FILETIME t;
-			MemsetZero(t);
-			GetSystemTimeAsFileTime(&t);
-		#else // !MPT_OS_WINDOWS
-			std::time_t t = std::time(nullptr);
-		#endif // MPT_OS_WINDOWS
-		mpt::byte bytes[sizeof(t)];
-		std::memcpy(bytes, &t, sizeof(t));
-		MPT_MAYBE_CONSTANT_IF(mpt::endian_is_little())
-		{
-			std::reverse(std::begin(bytes), std::end(bytes));
-		}
+		uint64be time;
+		time = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock().now().time_since_epoch()).count();
+		mpt::byte bytes[sizeof(time)];
+		std::memcpy(bytes, &time, sizeof(time));
 		hash(std::begin(bytes), std::end(bytes));
 	}
 
 	{
-		std::clock_t c = std::clock();
-		mpt::byte bytes[sizeof(c)];
-		std::memcpy(bytes, &c, sizeof(c));
-		MPT_MAYBE_CONSTANT_IF(mpt::endian_is_little())
-		{
-			std::reverse(std::begin(bytes), std::end(bytes));
-		}
+		uint64be time;
+		time = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock().now().time_since_epoch()).count();
+		mpt::byte bytes[sizeof(time)];
+		std::memcpy(bytes, &time, sizeof(time));
 		hash(std::begin(bytes), std::end(bytes));
 	}
 
@@ -273,16 +256,16 @@ uint64 prng_random_device_seeder::generate_seed64()
 #if defined(MODPLUG_TRACKER) && !defined(MPT_BUILD_WINESUPPORT)
 
 static mpt::random_device *g_rd = nullptr;
-static mpt::thread_safe_prng<mpt::best_prng> *g_best_prng = nullptr;
+static mpt::thread_safe_prng<mpt::default_prng> *g_global_prng = nullptr;
 
 void set_global_random_device(mpt::random_device *rd)
 {
 	g_rd = rd;
 }
 
-void set_global_prng(mpt::thread_safe_prng<mpt::best_prng> *prng)
+void set_global_prng(mpt::thread_safe_prng<mpt::default_prng> *prng)
 {
-	g_best_prng = prng;
+	g_global_prng = prng;
 }
 
 mpt::random_device & global_random_device()
@@ -290,9 +273,9 @@ mpt::random_device & global_random_device()
 	return *g_rd;
 }
 
-mpt::thread_safe_prng<mpt::best_prng> & global_prng()
+mpt::thread_safe_prng<mpt::default_prng> & global_prng()
 {
-	return *g_best_prng;
+	return *g_global_prng;
 }
 
 #else
@@ -303,10 +286,10 @@ mpt::random_device & global_random_device()
 	return g_rd;
 }
 
-mpt::thread_safe_prng<mpt::best_prng> & global_prng()
+mpt::thread_safe_prng<mpt::default_prng> & global_prng()
 {
-	static mpt::thread_safe_prng<mpt::best_prng> g_best_prng(mpt::make_prng<mpt::best_prng>(global_random_device()));
-	return g_best_prng;
+	static mpt::thread_safe_prng<mpt::default_prng> g_global_prng(mpt::make_prng<mpt::default_prng>(global_random_device()));
+	return g_global_prng;
 }
 
 #endif // MODPLUG_TRACKER && !MPT_BUILD_WINESUPPORT

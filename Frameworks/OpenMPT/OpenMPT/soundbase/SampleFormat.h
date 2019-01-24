@@ -9,8 +9,13 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 OPENMPT_NAMESPACE_BEGIN
+
+
+struct int24;
 
 
 enum SampleFormatEnum

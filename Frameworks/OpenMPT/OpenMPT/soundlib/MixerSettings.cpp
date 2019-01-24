@@ -33,6 +33,8 @@ MixerSettings::MixerSettings()
 	VolumeRampUpMicroseconds = 363; // 16 @44100
 	VolumeRampDownMicroseconds = 952; // 42 @44100
 
+	NumInputChannels = 0;
+
 }
 
 int32 MixerSettings::GetVolumeRampUpSamples() const

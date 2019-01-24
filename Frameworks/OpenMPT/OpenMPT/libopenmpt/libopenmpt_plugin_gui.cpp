@@ -32,13 +32,7 @@ class CSettingsApp : public CWinApp {
 
 public:
 
-	CSettingsApp() {
-		return;
-	}
-
-public:
-
-	virtual BOOL InitInstance() {
+	BOOL InitInstance() override {
 		if ( !CWinApp::InitInstance() )
 		{
 			return FALSE;
@@ -47,17 +41,12 @@ public:
 		return TRUE;
 	}
 
-	virtual int ExitInstance() {
+	int ExitInstance() override {
 		DllMainDetach();
 		return CWinApp::ExitInstance();
 	}
 
-	DECLARE_MESSAGE_MAP()
-
 };
-
-BEGIN_MESSAGE_MAP(CSettingsApp, CWinApp)
-END_MESSAGE_MAP()
 
 
 CSettingsApp theApp;
@@ -94,7 +83,7 @@ public:
 
 protected:
 
-	virtual void DoDataExchange( CDataExchange * pDX )
+	void DoDataExchange( CDataExchange * pDX ) override
 	{
 		CDialog::DoDataExchange( pDX );
 		DDX_Control( pDX, IDC_COMBO_SAMPLERATE, m_ComboBoxSamplerate );
@@ -107,19 +96,20 @@ protected:
 		DDX_Control( pDX, IDC_COMBO_RAMPING, m_ComboBoxRamping );
 	}
 
-	afx_msg BOOL OnInitDialog() {
+	afx_msg BOOL OnInitDialog() override {
 
 		if ( !CDialog::OnInitDialog() ) {
 			return false;
 		}
 
 		SetWindowText( m_Title );
+		EnableToolTips();
 
 		bool selected = false;
 
 		selected = false;
 		if ( !s->no_default_format ) {
-			m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"default" ), 0 );
+			m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"Default" ), 0 );
 		}
 		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"6000" ), 6000 );
 		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"8000" ), 8000 );
@@ -132,7 +122,7 @@ protected:
 		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"88200" ), 88200 );
 		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"96000" ), 96000 );
 		if ( !s->no_default_format && s->samplerate == 0 ) {
-			m_ComboBoxSamplerate.SelectString( 0, L"default" );
+			m_ComboBoxSamplerate.SelectString( 0, L"Default" );
 		}
 		for ( int index = 0; index < m_ComboBoxSamplerate.GetCount(); ++index ) {
 			if ( m_ComboBoxSamplerate.GetItemData( index ) == s->samplerate ) {
@@ -146,13 +136,13 @@ protected:
 
 		selected = false;
 		if ( !s->no_default_format ) {
-			m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"default" ), 0 );
+			m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"Default" ), 0 );
 		}
-		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"mono" ), 1 );
-		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"stereo" ), 2 );
-		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"quad" ), 4 );
+		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"Mono" ), 1 );
+		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"Stereo" ), 2 );
+		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"Quad" ), 4 );
 		if ( !s->no_default_format && s->channels == 0 ) {
-			m_ComboBoxChannels.SelectString( 0, L"default" );
+			m_ComboBoxChannels.SelectString( 0, L"Default" );
 		}
 		for ( int index = 0; index < m_ComboBoxChannels.GetCount(); ++index ) {
 			if ( m_ComboBoxChannels.GetItemData( index ) == s->channels ) {
@@ -161,7 +151,7 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxChannels.SelectString( 0, L"stereo" );
+			m_ComboBoxChannels.SelectString( 0, L"Stereo" );
 		}
 
 		m_SliderCtrlGain.SetRange( -1200, 1200 );
@@ -171,10 +161,10 @@ protected:
 		m_SliderCtrlGain.SetPos( s->mastergain_millibel );
 
 		selected = false;
-		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"off / 1 tap (nearest)" ), 1 );
-		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"2 tap (linear)" ), 2 );
-		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"4 tap (cubic)" ), 4 );
-		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"8 tap (polyphase fir)" ), 8 );
+		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"Off / 1 Tap (Nearest)" ), 1 );
+		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"2 Tap (Linear)" ), 2 );
+		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"4 Tap (Cubic)" ), 4 );
+		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"8 Tap (Polyphase FIR)" ), 8 );
 		for ( int index = 0; index < m_ComboBoxInterpolation.GetCount(); ++index ) {
 			if ( m_ComboBoxInterpolation.GetItemData( index ) == s->interpolationfilterlength ) {
 				m_ComboBoxInterpolation.SetCurSel( index );
@@ -182,15 +172,15 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxInterpolation.SelectString( 0, L"8 tap (polyphase fir)" );
+			m_ComboBoxInterpolation.SelectString( 0, L"8 Tap (Polyphase FIR)" );
 		}
 		
 		m_CheckBoxAmigaResampler.SetCheck( s->use_amiga_resampler ? BST_CHECKED : BST_UNCHECKED );
 
 		selected = false;
-		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"forever" ), -1 );
-		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"never" ), 0 );
-		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"once" ), 1 );
+		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"Forever" ), -1 );
+		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"Never" ), 0 );
+		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"Once" ), 1 );
 		for ( int index = 0; index < m_ComboBoxRepeat.GetCount(); ++index ) {
 			if ( m_ComboBoxRepeat.GetItemData( index ) == s->repeatcount ) {
 				m_ComboBoxRepeat.SetCurSel( index );
@@ -198,7 +188,7 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxRepeat.SelectString( 0, L"never" );
+			m_ComboBoxRepeat.SelectString( 0, L"Never" );
 		}
 
 		m_SliderCtrlStereoSeparation.SetRange( 0, 200 );
@@ -208,8 +198,8 @@ protected:
 		m_SliderCtrlStereoSeparation.SetPos( s->stereoseparation );
 
 		selected = false;
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"default" ), -1 );
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"off" ), 0 );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"Default" ), -1 );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"Off" ), 0 );
 		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"1 ms" ), 1 );
 		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"2 ms" ), 2 );
 		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"3 ms" ), 3 );
@@ -222,14 +212,14 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxRamping.SelectString( 0, L"default" );
+			m_ComboBoxRamping.SelectString( 0, L"Default" );
 		}
 
 		return TRUE;
 
 	}
 
-	virtual void OnOK() {
+	void OnOK() override {
 
 		s->samplerate = m_ComboBoxSamplerate.GetItemData( m_ComboBoxSamplerate.GetCurSel() );
 
@@ -253,9 +243,37 @@ protected:
 
 	}
 
+	BOOL OnToolTipText( UINT, NMHDR * pNMHDR, LRESULT * pResult ) {
+		TOOLTIPTEXT * pTTT = reinterpret_cast<TOOLTIPTEXT *>( pNMHDR );
+
+		UINT_PTR nID = pNMHDR->idFrom;
+		if( pTTT->uFlags & TTF_IDISHWND )
+		{
+			// idFrom is actually the HWND of the tool
+			nID = (UINT_PTR)::GetDlgCtrlID((HWND)nID);
+		}
+
+		switch ( nID ) {
+		case IDC_SLIDER_GAIN:
+			swprintf( pTTT->szText, _countof(pTTT->szText), L"%.02f dB", m_SliderCtrlGain.GetPos() * 0.01f );
+			break;
+
+		case IDC_SLIDER_STEREOSEPARATION:
+			swprintf( pTTT->szText, _countof(pTTT->szText), L"%d %%", m_SliderCtrlStereoSeparation.GetPos());
+			break;
+
+		default:
+			return FALSE;
+		}
+
+		*pResult = 0;
+		return TRUE;
+	}
+
 };
 
 BEGIN_MESSAGE_MAP(CSettingsDialog, CDialog)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXT, 0, 0xFFFF, &CSettingsDialog::OnToolTipText)
 END_MESSAGE_MAP()
 
 
@@ -263,8 +281,6 @@ END_MESSAGE_MAP()
 class CInfoDialog : public CDialog {
 
 protected:
-
-	DECLARE_MESSAGE_MAP()
 
 	CString m_Title;
 	CString m_FileInfo;
@@ -282,13 +298,13 @@ public:
 
 protected:
 
-	virtual void DoDataExchange( CDataExchange * pDX )
+	void DoDataExchange( CDataExchange * pDX ) override
 	{
 		CDialog::DoDataExchange( pDX );
 		DDX_Control( pDX, IDC_FILEINFO, m_EditFileInfo );
 	}
 
-	afx_msg BOOL OnInitDialog() {
+	afx_msg BOOL OnInitDialog() override {
 
 		if ( !CDialog::OnInitDialog() ) {
 			return false;
@@ -302,28 +318,19 @@ protected:
 
 	}
 
-	virtual void OnOK() {
-
-		CDialog::OnOK();
-
-	}
-
 };
-
-BEGIN_MESSAGE_MAP(CInfoDialog, CDialog)
-END_MESSAGE_MAP()
 
 
 void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::wstring title ) {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-	CSettingsDialog dlg( s, title.c_str(), parent ? CWnd::FromHandle( parent ) : NULL );
+	CSettingsDialog dlg( s, title.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr );
 	dlg.DoModal();
 }
 
 
 void gui_show_file_info( HWND parent, std::wstring title, std::wstring info ) {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-	CInfoDialog dlg( title.c_str(), info.c_str(), parent ? CWnd::FromHandle( parent ) : NULL );
+	CInfoDialog dlg( title.c_str(), info.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr);
 	dlg.DoModal();
 }
 

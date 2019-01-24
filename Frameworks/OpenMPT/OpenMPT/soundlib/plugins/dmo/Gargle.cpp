@@ -123,7 +123,7 @@ void Gargle::SetParameter(PlugParamIndex index, PlugParamValue value)
 	{
 		Limit(value, 0.0f, 1.0f);
 		if(index == kGargleWaveShape)
-			value = Util::Round(value);
+			value = mpt::round(value);
 		m_param[index] = value;
 		RecalculateGargleParams();
 	}
@@ -167,7 +167,7 @@ CString Gargle::GetParamDisplay(PlugParamIndex param)
 	switch(param)
 	{
 	case kGargleRate:
-		s.Format(_T("%d"), RateInHertz());
+		s.Format(_T("%u"), RateInHertz());
 		break;
 	case kGargleWaveShape:
 		return (m_param[param] < 0.5) ? _T("Triangle") : _T("Square");
@@ -180,7 +180,7 @@ CString Gargle::GetParamDisplay(PlugParamIndex param)
 
 uint32 Gargle::RateInHertz() const
 {
-	return Util::Round<uint32>(m_param[kGargleRate] * 999.0f) + 1;
+	return mpt::saturate_round<uint32>(m_param[kGargleRate] * 999.0f) + 1;
 }
 
 

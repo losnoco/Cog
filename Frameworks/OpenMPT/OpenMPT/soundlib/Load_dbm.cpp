@@ -11,7 +11,7 @@
 #include "stdafx.h"
 #include "Loaders.h"
 #include "ChunkReader.h"
-#include "../common/StringFixer.h"
+#include "../common/mptStringBuffer.h"
 #ifndef NO_PLUGINS
 #include "plugins/DigiBoosterEcho.h"
 #endif // NO_PLUGINS
@@ -39,17 +39,17 @@ struct DBMChunk
 	// 32-Bit chunk identifiers
 	enum ChunkIdentifiers
 	{
-		idNAME	= MAGIC4BE('N','A','M','E'),
-		idINFO	= MAGIC4BE('I','N','F','O'),
-		idSONG	= MAGIC4BE('S','O','N','G'),
-		idINST	= MAGIC4BE('I','N','S','T'),
-		idVENV	= MAGIC4BE('V','E','N','V'),
-		idPENV	= MAGIC4BE('P','E','N','V'),
-		idPATT	= MAGIC4BE('P','A','T','T'),
-		idPNAM	= MAGIC4BE('P','N','A','M'),
-		idSMPL	= MAGIC4BE('S','M','P','L'),
-		idDSPE	= MAGIC4BE('D','S','P','E'),
-		idMPEG	= MAGIC4BE('M','P','E','G'),
+		idNAME	= MagicBE("NAME"),
+		idINFO	= MagicBE("INFO"),
+		idSONG	= MagicBE("SONG"),
+		idINST	= MagicBE("INST"),
+		idVENV	= MagicBE("VENV"),
+		idPENV	= MagicBE("PENV"),
+		idPATT	= MagicBE("PATT"),
+		idPNAM	= MagicBE("PNAM"),
+		idSMPL	= MagicBE("SMPL"),
+		idDSPE	= MagicBE("DSPE"),
+		idMPEG	= MagicBE("MPEG"),
 	};
 
 	uint32be id;
@@ -196,26 +196,21 @@ static void ConvertDBMEffect(uint8 &command, uint8 &param)
 	case CMD_MODCMDEX:
 		switch(param & 0xF0)
 		{
-		case 0x00:	// set filter
-			command = CMD_NONE;
-			break;
-		case 0x30:	// play backwards
+		case 0x30:	// Play backwards
 			command = CMD_S3MCMDEX;
 			param = 0x9F;
 			break;
-		case 0x40:	// turn off sound in channel (volume / portamento commands after this can't pick up the note anymore)
+		case 0x40:	// Turn off sound in channel (volume / portamento commands after this can't pick up the note anymore)
 			command = CMD_S3MCMDEX;
 			param = 0xC0;
 			break;
-		case 0x50:	// turn on/off channel
+		case 0x50:	// Turn on/off channel
 			// TODO: Apparently this should also kill the playing note.
 			if((param & 0x0F) <= 0x01)
 			{
 				command = CMD_CHANNELVOLUME;
 				param = (param == 0x50) ? 0x00 : 0x40;
 			}
-			break;
-		case 0x60:	// Pattern loop
 			break;
 		case 0x70:	// Coarse offset
 			command = CMD_S3MCMDEX;
@@ -234,7 +229,7 @@ static void ConvertDBMEffect(uint8 &command, uint8 &param)
 	case CMD_KEYOFF:
 		if (param == 0)
 		{
-			// TODO key of at tick 0
+			// TODO key off at tick 0
 		}
 		break;
 
@@ -352,10 +347,14 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 	m_nChannels = Clamp<uint16, uint16>(infoData.channels, 1, MAX_BASECHANNELS);	// note: MAX_BASECHANNELS is currently 127, but DBPro 2 supports up to 128 channels, DBPro 3 apparently up to 254.
 	m_nInstruments = std::min<INSTRUMENTINDEX>(infoData.instruments, MAX_INSTRUMENTS - 1);
 	m_nSamples = std::min<SAMPLEINDEX>(infoData.samples, MAX_SAMPLES - 1);
-	m_madeWithTracker = mpt::format(MPT_USTRING("DigiBooster Pro %1.%2"))(mpt::ufmt::hex(fileHeader.trkVerHi), mpt::ufmt::hex(fileHeader.trkVerLo));
 	m_playBehaviour.set(kSlidesAtSpeed1);
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
 	m_playBehaviour.reset(kITArpeggio);
+
+	m_modFormat.formatName = U_("DigiBooster Pro");
+	m_modFormat.type = U_("dbm");
+	m_modFormat.madeWithTracker = mpt::format(U_("DigiBooster Pro %1.%2"))(mpt::ufmt::hex(fileHeader.trkVerHi), mpt::ufmt::hex(fileHeader.trkVerLo));
+	m_modFormat.charset = mpt::CharsetISO8859_1;
 
 	// Name chunk
 	FileReader nameChunk = chunks.GetChunk(DBMChunk::idNAME);
@@ -621,10 +620,10 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 		for(uint32 i = 0; i < 32; i++)
 		{
 			uint32 param = (i * 127u) / 32u;
-			sprintf(m_MidiCfg.szMidiZXXExt[i     ], "F0F080%02X", param);
-			sprintf(m_MidiCfg.szMidiZXXExt[i + 32], "F0F081%02X", param);
-			sprintf(m_MidiCfg.szMidiZXXExt[i + 64], "F0F082%02X", param);
-			sprintf(m_MidiCfg.szMidiZXXExt[i + 96], "F0F083%02X", param);
+			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i     ]) = mpt::format("F0F080%1")(mpt::fmt::HEX0<2>(param));
+			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 32]) = mpt::format("F0F081%1")(mpt::fmt::HEX0<2>(param));
+			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 64]) = mpt::format("F0F082%1")(mpt::fmt::HEX0<2>(param));
+			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 96]) = mpt::format("F0F083%1")(mpt::fmt::HEX0<2>(param));
 		}
 	}
 #endif // NO_PLUGINS
@@ -666,10 +665,10 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 
 		// Read whole MPEG stream into one sample and then split it up.
 		FileReader chunk = mpegChunk.GetChunk(mpegChunk.BytesLeft());
-		if(ReadMP3Sample(0, chunk))
+		if(ReadMP3Sample(0, chunk, true))
 		{
 			ModSample &srcSample = Samples[0];
-			const int8 *smpData = srcSample.pSample8;
+			const mpt::byte *smpData = srcSample.sampleb();
 			SmpLength predelay = Util::muldiv_unsigned(20116, srcSample.nC5Speed, 100000);
 			LimitMax(predelay, srcSample.nLength);
 			smpData += predelay * srcSample.GetBytesPerSample();
@@ -683,7 +682,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 				if(sample.nLength)
 				{
 					sample.AllocateSample();
-					memcpy(sample.pSample, smpData, sample.GetSampleSizeInBytes());
+					memcpy(sample.sampleb(), smpData, sample.GetSampleSizeInBytes());
 					smpData += sample.GetSampleSizeInBytes();
 					srcSample.nLength -= sample.nLength;
 					SmpLength gap = Util::muldiv_unsigned(454, srcSample.nC5Speed, 10000);

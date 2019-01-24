@@ -205,7 +205,7 @@ private:
 		}
 	}
 public:
-	void write( const std::vector<float*> buffers, std::size_t frames ) {
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		if ( interleaved ) {
 			sampleBufFloat.clear();
 			for ( std::size_t frame = 0; frame < frames; ++frame ) {
@@ -218,7 +218,7 @@ public:
 			write_frames( buffers, frames );
 		}
 	}
-	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) {
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		if ( interleaved ) {
 			sampleBufInt.clear();
 			for ( std::size_t frame = 0; frame < frames; ++frame ) {
@@ -231,15 +231,15 @@ public:
 			write_frames( buffers, frames );
 		}
 	}
-	bool unpause() {
+	bool unpause() override {
 		check_portaudio_error( Pa_StartStream( stream ) );
 		return true;
 	}
-	bool pause() {
+	bool pause() override {
 		check_portaudio_error( Pa_StopStream( stream ) );
 		return true;
 	}
-	bool sleep( int ms ) {
+	bool sleep( int ms ) override {
 		Pa_Sleep( ms );
 		return true;
 	}

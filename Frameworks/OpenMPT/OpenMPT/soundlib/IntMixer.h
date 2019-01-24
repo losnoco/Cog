@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "Resampler.h"
 #include "MixerInterface.h"
 #include "Paula.h"
@@ -108,7 +110,7 @@ struct LinearInterpolation
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const typename Traits::input_t * const MPT_RESTRICT inBuffer, const uint32 posLo)
 	{
-		static_assert(Traits::numChannelsIn <= Traits::numChannelsOut, "Too many input channels");
+		static_assert(static_cast<int>(Traits::numChannelsIn) <= static_cast<int>(Traits::numChannelsOut), "Too many input channels");
 		const typename Traits::output_t fract = posLo >> 18u;
 
 		for(int i = 0; i < Traits::numChannelsIn; i++)
@@ -130,7 +132,7 @@ struct FastSincInterpolation
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const typename Traits::input_t * const MPT_RESTRICT inBuffer, const uint32 posLo)
 	{
-		static_assert(Traits::numChannelsIn <= Traits::numChannelsOut, "Too many input channels");
+		static_assert(static_cast<int>(Traits::numChannelsIn) <= static_cast<int>(Traits::numChannelsOut), "Too many input channels");
 		const int16 *lut = CResampler::FastSincTable + ((posLo >> 22) & 0x3FC);
 
 		for(int i = 0; i < Traits::numChannelsIn; i++)
@@ -166,7 +168,7 @@ struct PolyphaseInterpolation
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const typename Traits::input_t * const MPT_RESTRICT inBuffer, const uint32 posLo)
 	{
-		static_assert(Traits::numChannelsIn <= Traits::numChannelsOut, "Too many input channels");
+		static_assert(static_cast<int>(Traits::numChannelsIn) <= static_cast<int>(Traits::numChannelsOut), "Too many input channels");
 		const SINC_TYPE *lut = sinc + ((posLo >> (32 - SINC_PHASES_BITS)) & SINC_MASK) * SINC_WIDTH;
 
 		for(int i = 0; i < Traits::numChannelsIn; i++)
@@ -199,7 +201,7 @@ struct FIRFilterInterpolation
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const typename Traits::input_t * const MPT_RESTRICT inBuffer, const uint32 posLo)
 	{
-		static_assert(Traits::numChannelsIn <= Traits::numChannelsOut, "Too many input channels");
+		static_assert(static_cast<int>(Traits::numChannelsIn) <= static_cast<int>(Traits::numChannelsOut), "Too many input channels");
 		const int16 * const lut = WFIRlut + ((((posLo >> 16) + WFIR_FRACHALVE) >> WFIR_FRACSHIFT) & WFIR_FRACMASK);
 
 		for(int i = 0; i < Traits::numChannelsIn; i++)
@@ -368,7 +370,7 @@ struct ResonantFilter
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const ModChannel &chn)
 	{
-		static_assert(Traits::numChannelsIn <= Traits::numChannelsOut, "Too many input channels");
+		static_assert(static_cast<int>(Traits::numChannelsIn) <= static_cast<int>(Traits::numChannelsOut), "Too many input channels");
 
 		for(int i = 0; i < Traits::numChannelsIn; i++)
 		{

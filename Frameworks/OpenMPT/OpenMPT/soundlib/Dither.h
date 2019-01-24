@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #include "../common/mptRandom.h"
 
@@ -82,7 +84,7 @@ public:
 	void SetMode(DitherMode mode_);
 	DitherMode GetMode() const;
 	void Reset();
-	void Process(int *mixbuffer, std::size_t count, std::size_t channels, int bits);
+	void Process(int32 *mixbuffer, std::size_t count, std::size_t channels, int bits);
 	static mpt::ustring GetModeName(DitherMode mode);
 };
 

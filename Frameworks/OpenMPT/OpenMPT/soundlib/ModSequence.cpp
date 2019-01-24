@@ -139,11 +139,11 @@ void ModSequence::RemovePattern(PATTERNINDEX pat)
 {
 	// First, calculate the offset that needs to be applied to jump commands
 	const ORDERINDEX orderLength = GetLengthTailTrimmed();
-	std::vector<ORDERINDEX> jumpOffset(orderLength, 0);
+	std::vector<ORDERINDEX> newPosition(orderLength);
 	ORDERINDEX maxJump = 0;
 	for(ORDERINDEX i = 0; i < orderLength; i++)
 	{
-		jumpOffset[i] = i - maxJump;
+		newPosition[i] = i - maxJump;
 		if(at(i) == pat)
 		{
 			maxJump++;
@@ -154,22 +154,22 @@ void ModSequence::RemovePattern(PATTERNINDEX pat)
 		return;
 	}
 
-	erase(std::remove_if(begin(), end(), [pat](PATTERNINDEX p) { return p == pat; }), end());
+	erase(std::remove(begin(), end(), pat), end());
 
 	// Only apply to patterns actually found in this sequence
 	for(auto p : *this) if(m_sndFile.Patterns.IsValidPat(p))
 	{
 		for(auto &m : m_sndFile.Patterns[p])
 		{
-			if(m.command == CMD_POSITIONJUMP && m.param < jumpOffset.size())
+			if(m.command == CMD_POSITIONJUMP && m.param < newPosition.size())
 			{
-				m.param = static_cast<ModCommand::PARAM>(jumpOffset[m.param]);
+				m.param = static_cast<ModCommand::PARAM>(newPosition[m.param]);
 			}
 		}
 	}
-	if(m_restartPos < jumpOffset.size())
+	if(m_restartPos < newPosition.size())
 	{
-		m_restartPos = jumpOffset[m_restartPos];
+		m_restartPos = newPosition[m_restartPos];
 	}
 }
 
@@ -500,7 +500,8 @@ bool ModSequence::IsPositionLocked(ORDERINDEX position) const
 /////////////////////////////////////
 
 
-size_t ModSequence::WriteAsByte(FILE *f, const ORDERINDEX count, uint8 stopIndex, uint8 ignoreIndex) const
+#ifndef MODPLUG_NO_FILESAVE
+size_t ModSequence::WriteAsByte(std::ostream &f, const ORDERINDEX count, uint8 stopIndex, uint8 ignoreIndex) const
 {
 	const size_t limit = std::min(count, GetLength());
 
@@ -511,15 +512,16 @@ size_t ModSequence::WriteAsByte(FILE *f, const ORDERINDEX count, uint8 stopIndex
 
 		if(pat == GetInvalidPatIndex()) temp = stopIndex;
 		else if(pat == GetIgnoreIndex() || pat > 0xFF) temp = ignoreIndex;
-		fwrite(&temp, 1, 1, f);
+		mpt::IO::WriteIntLE<uint8>(f, temp);
 	}
 	// Fill non-existing order items with stop indices
 	for(size_t i = limit; i < count; i++)
 	{
-		fwrite(&stopIndex, 1, 1, f);
+		mpt::IO::WriteIntLE<uint8>(f, stopIndex);
 	}
 	return count; //Returns the number of bytes written.
 }
+#endif // MODPLUG_NO_FILESAVE
 
 
 void ReadModSequenceOld(std::istream& iStrm, ModSequenceSet& seq, const size_t)
@@ -541,6 +543,7 @@ void ReadModSequenceOld(std::istream& iStrm, ModSequenceSet& seq, const size_t)
 }
 
 
+#ifndef MODPLUG_NO_FILESAVE
 void WriteModSequenceOld(std::ostream& oStrm, const ModSequenceSet& seq)
 {
 	const uint16 size = seq().GetLength();
@@ -550,12 +553,14 @@ void WriteModSequenceOld(std::ostream& oStrm, const ModSequenceSet& seq)
 		mpt::IO::WriteIntLE<uint16>(oStrm, static_cast<uint16>(pat));
 	}
 }
+#endif // MODPLUG_NO_FILESAVE
 
 
+#ifndef MODPLUG_NO_FILESAVE
 void WriteModSequence(std::ostream& oStrm, const ModSequence& seq)
 {
 	srlztn::SsbWrite ssb(oStrm);
-	ssb.BeginWrite(FileIdSequence, MptVersion::num);
+	ssb.BeginWrite(FileIdSequence, Version::Current().GetRawVersion());
 	ssb.WriteItem(seq.GetName(), "n");
 	const uint16 length = seq.GetLengthTailTrimmed();
 	ssb.WriteItem<uint16>(length, "l");
@@ -564,12 +569,13 @@ void WriteModSequence(std::ostream& oStrm, const ModSequence& seq)
 		ssb.WriteItem<uint16>(seq.GetRestartPos(), "r");
 	ssb.FinishWrite();
 }
+#endif // MODPLUG_NO_FILESAVE
 
 
 void ReadModSequence(std::istream& iStrm, ModSequence& seq, const size_t)
 {
 	srlztn::SsbRead ssb(iStrm);
-	ssb.BeginRead(FileIdSequence, MptVersion::num);
+	ssb.BeginRead(FileIdSequence, Version::Current().GetRawVersion());
 	if ((ssb.GetStatus() & srlztn::SNT_FAILURE) != 0)
 		return;
 	std::string str;
@@ -586,10 +592,11 @@ void ReadModSequence(std::istream& iStrm, ModSequence& seq, const size_t)
 }
 
 
+#ifndef MODPLUG_NO_FILESAVE
 void WriteModSequences(std::ostream& oStrm, const ModSequenceSet& seq)
 {
 	srlztn::SsbWrite ssb(oStrm);
-	ssb.BeginWrite(FileIdSequences, MptVersion::num);
+	ssb.BeginWrite(FileIdSequences, Version::Current().GetRawVersion());
 	const uint8 nSeqs = seq.GetNumSequences();
 	const uint8 nCurrent = seq.GetCurrentSequenceIndex();
 	ssb.WriteItem(nSeqs, "n");
@@ -600,12 +607,13 @@ void WriteModSequences(std::ostream& oStrm, const ModSequenceSet& seq)
 	}
 	ssb.FinishWrite();
 }
+#endif // MODPLUG_NO_FILESAVE
 
 
 void ReadModSequences(std::istream& iStrm, ModSequenceSet& seq, const size_t)
 {
 	srlztn::SsbRead ssb(iStrm);
-	ssb.BeginRead(FileIdSequences, MptVersion::num);
+	ssb.BeginRead(FileIdSequences, Version::Current().GetRawVersion());
 	if ((ssb.GetStatus() & srlztn::SNT_FAILURE) != 0)
 		return;
 	SEQUENCEINDEX seqs = 0;

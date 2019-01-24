@@ -1,14 +1,16 @@
 /*
- * ModSmp_Ctrl.h
+ * modsmp_ctrl.h
  * -------------
  * Purpose: Basic sample editing code (resizing, adding silence, normalizing, ...).
- * Notes  : Could be merged with ModSample.h / ModSample.cpp at some point.
+ * Notes  : (currently none)
  * Authors: OpenMPT Devs
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
 
 
 #pragma once
+
+#include "BuildSettings.h"
 
 OPENMPT_NAMESPACE_BEGIN
 class CSoundFile;
@@ -33,7 +35,7 @@ enum ResetFlag
 // Insert silence to given location.
 // Note: Is currently implemented only for inserting silence to the beginning and to the end of the sample.
 // Return: Length of the new sample.
-SmpLength InsertSilence(ModSample &smp, const SmpLength nSilenceLength, const SmpLength nStartFrom, CSoundFile &sndFile);
+SmpLength InsertSilence(ModSample &smp, const SmpLength silenceLength, const SmpLength startFrom, CSoundFile &sndFile);
 
 // Remove part of a sample [selStart, selEnd[.
 // Note: Removed memory is not freed.
@@ -43,10 +45,10 @@ SmpLength RemoveRange(ModSample &smp, SmpLength selStart, SmpLength selEnd, CSou
 // Change sample size.
 // Note: If resized sample is bigger, silence will be added to the sample's tail.
 // Return: Length of the new sample.
-SmpLength ResizeSample(ModSample &smp, const SmpLength nNewLength, CSoundFile &sndFile);
+SmpLength ResizeSample(ModSample &smp, const SmpLength newLength, CSoundFile &sndFile);
 
 // Replaces sample in 'smp' with given sample and frees the old sample.
-void ReplaceSample(ModSample &smp, void *pNewSample,  const SmpLength nNewLength, CSoundFile &sndFile);
+void ReplaceSample(ModSample &smp, void *pNewSample,  const SmpLength newLength, CSoundFile &sndFile);
 
 // Update loop wrap-around buffers
 bool PrecomputeLoops(ModSample &smp, CSoundFile &sndFile, bool updateChannels = true);
@@ -59,25 +61,19 @@ void ResetSamples(CSoundFile &sndFile, ResetFlag resetflag, SAMPLEINDEX minSampl
 
 // Remove DC offset and normalize.
 // Return: If DC offset was removed, returns original offset value, zero otherwise.
-float RemoveDCOffset(ModSample &smp,
-					 SmpLength iStart,		// Start position (for partial DC offset removal).
-					 SmpLength iEnd,		// End position (for partial DC offset removal).
-					 const MODTYPE modtype,	// Used to determine whether to adjust global or default volume
-											// to keep volume level the same given the normalization.
-											// Volume adjustment is not done if this param is MOD_TYPE_NONE.
-					 CSoundFile &sndFile);	// Passed to AdjustEndOfSample.
+double RemoveDCOffset(ModSample &smp, SmpLength start, SmpLength end, CSoundFile &sndFile);
 
 // Amplify / fade  sample data
-bool AmplifySample(ModSample &smp, SmpLength iStart, SmpLength iEnd, CSoundFile &sndFile, double amplifyStart, double amplifyEnd);
+bool AmplifySample(ModSample &smp, SmpLength start, SmpLength end, CSoundFile &sndFile, double amplifyStart, double amplifyEnd);
 
 // Reverse sample data
-bool ReverseSample(ModSample &smp, SmpLength iStart, SmpLength iEnd, CSoundFile &sndFile);
+bool ReverseSample(ModSample &smp, SmpLength start, SmpLength end, CSoundFile &sndFile);
 
 // Virtually unsign sample data
-bool UnsignSample(ModSample &smp, SmpLength iStart, SmpLength iEnd, CSoundFile &sndFile);
+bool UnsignSample(ModSample &smp, SmpLength start, SmpLength end, CSoundFile &sndFile);
 
 // Invert sample data (flip by 180 degrees)
-bool InvertSample(ModSample &smp, SmpLength iStart, SmpLength iEnd, CSoundFile &sndFile);
+bool InvertSample(ModSample &smp, SmpLength start, SmpLength end, CSoundFile &sndFile);
 
 // Crossfade sample data to create smooth loops
 bool XFadeSample(ModSample &smp, SmpLength fadeLength, int fadeLaw, bool afterloopFade, bool useSustainLoop, CSoundFile &sndFile);
@@ -117,7 +113,7 @@ namespace ctrlChn
 void ReplaceSample( CSoundFile &sndFile,
 					const ModSample &sample,
 					const void * const pNewSample,
-					const SmpLength nNewLength,
+					const SmpLength newLength,
 					FlagSet<ChannelFlags> setFlags,
 					FlagSet<ChannelFlags> resetFlags);
 

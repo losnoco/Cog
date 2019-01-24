@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #include "mptString.h"
 
@@ -40,14 +42,12 @@ OPENMPT_NAMESPACE_BEGIN
 //     This mimics the behaviour of QString::arg() in QT4/5 or MFC AfxFormatString2(). C printf-like functions offer similar functionality
 //     with a '%n$TYPE' syntax. In .NET, the syntax is '{n}'. This is useful to support localization strings that can change the parameter
 //     ordering.
-//     There are macro verions (MPT_FORMAT and variants) which properly use wide string literals for the format parameter.
 //  4. Every function is available for std::string, std::wstring and mpt::ustring. std::string makes no assumption about the encoding, which
 //     basically means, it should work for any 7-bit or 8-bit encoding, including for example ASCII, UTF8 or the current locale encoding.
-//     std::string        std::wstring       mpt::ustring                           CString
-//     mpt::fmt::val      mpt::wfmt::val     mpt::ufmt::val                         mpt::tfmt::val
-//     mpt::FormatVal     mpt::FormatValW    mpt::FormatValTFunctor<mpt::ustring>() mpt::FormatValTFunctor<Cstring>()
-//     mpt::fmt           mpt::wfmt          mpt::ufmt                              mpt::tfmt
-//     mpt::format        mpt::format        mpt::format                            mpt::format
+//     std::string         std::wstring          mpt::ustring                    mpt::tsrtring                        CString
+//     mpt::fmt            mpt::wfmt             mpt::ufmt                       mpt::tfmt                            mpt::cfmt
+//     mpt::format("%1")   mpt::wformat(L"%1")   mpt::uformat(MPT_ULITERAL(%1)   mpt::tformat(_T("%1"))               mpt::cformat(_T("%1"))
+//     mpt::format("%1")   mpt::format(L"%1")    mpt::format(MPT_USTRING(%1))    mpt::format(mpt::tstring(_T("%1"))   mpt::format(CString(_T("%1"))
 //  5. All functionality here delegates real work outside of the header file so that <sstream> and <locale> do not need to be included when
 //     using this functionality.
 //     Advantages:
@@ -55,8 +55,8 @@ OPENMPT_NAMESPACE_BEGIN
 //      - Faster compile times because <sstream> and <locale> (2 very complex headers) are not included everywhere.
 //     Disadvantages:
 //      - Slightly more c++ code is required for delegating work.
-//      - As the header does not use iostreams, custom types need to overload mpt::String, mpt::ToWstring and mpt::UString instead of
-//        iostream operator << to allow for custom type formatting.
+//      - As the header does not use iostreams, custom types need to overload mpt::UString instead of iostream operator << to allow for custom type
+//        formatting.
 //      - std::string, std::wstring and mpt::ustring are returned from somewhat deep cascades of helper functions. Where possible, code is
 //        written in such a way that return-value-optimization (RVO) or named-return-value-optimization (NRVO) should be able to eliminate
 //        almost all these copies. This should not be a problem for any decent modern compiler (and even less so for a c++11 compiler where
@@ -65,12 +65,16 @@ OPENMPT_NAMESPACE_BEGIN
 namespace mpt
 {
 
-// ToString() converts various built-in types to a well-defined, locale-independent string representation.
+// ToUString() converts various built-in types to a well-defined, locale-independent string representation.
 // This is also used as a type-tunnel pattern for mpt::format.
-// Custom types that need to be converted to strings are encouraged to overload ToString() and ToWString().
+// Custom types that need to be converted to strings are encouraged to overload ToUString().
 
-// fallback to member function ToString()
-template <typename T> auto ToString(const T & x) -> decltype(x.ToString()) { return x.ToString(); }
+// fallback to member function ToUString()
+#if MPT_USTRING_MODE_UTF8
+template <typename T> auto ToString(const T & x) -> decltype(mpt::ToCharset(mpt::CharsetUTF8, x.ToUString())) { return mpt::ToCharset(mpt::CharsetUTF8, x.ToUString()); }
+#else
+template <typename T> auto ToString(const T & x) -> decltype(mpt::ToCharset(mpt::CharsetLocaleOrUTF8, x.ToUString())) { return mpt::ToCharset(mpt::CharsetLocaleOrUTF8, x.ToUString()); }
+#endif
 
 static inline std::string ToString(const std::string & x) { return x; }
 static inline std::string ToString(const char * const & x) { return x; }
@@ -163,22 +167,18 @@ std::wstring ToWString(const unsigned long long & x);
 std::wstring ToWString(const float & x);
 std::wstring ToWString(const double & x);
 std::wstring ToWString(const long double & x);
+// fallback to member function ToUString()
+template <typename T> auto ToWString(const T & x) -> decltype(mpt::ToWide(x.ToUString())) { return mpt::ToWide(x.ToUString()); }
 #endif
 
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+template <typename T> struct ToLocaleHelper { mpt::lstring operator () (const T & v) { return mpt::ToLocale(ToUString(v)); } };
+template <> struct ToLocaleHelper<mpt::lstring> { mpt::lstring operator () (const mpt::lstring & v) { return v; } };
+#endif // MPT_ENABLE_CHARSET_LOCALE
+
 #if defined(_MFC_VER)
-#ifdef UNICODE
-#if MPT_WSTRING_FORMAT
-template <typename T> static inline CString ToCStringHelper(const T & x) { return mpt::ToCString(ToWString(x)); }
-#else
-template <typename T> static inline CString ToCStringHelper(const T & x) { return mpt::ToCString(ToUString(x)); }
-#endif
-#else
-namespace detail {
-template <typename T> struct CstringToStdStringImpl { CString operator () (const T & v) { return mpt::ToCString(mpt::CharsetLocale, ToString(v)); } };
-template <> struct CstringToStdStringImpl<CString> { CString operator () (const CString & v) { return v; } };
-}
-template <typename T> static inline CString ToCStringHelper(const T & x) { return mpt::detail::CstringToStdStringImpl<T>()(x); }
-#endif
+template <typename T> struct ToCStringHelper { CString operator () (const T & v) { return mpt::ToCString(ToUString(v)); } };
+template <> struct ToCStringHelper<CString> { CString operator () (const CString & v) { return v; } };
 #endif
 
 template <typename Tstring> struct ToStringTFunctor {};
@@ -187,11 +187,15 @@ template <> struct ToStringTFunctor<mpt::ustring> { template <typename T> inline
 #if MPT_WSTRING_FORMAT && MPT_USTRING_MODE_UTF8
 template <> struct ToStringTFunctor<std::wstring> { template <typename T> inline std::wstring operator() (const T & x) { return ToWString(x); } };
 #endif
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+template <> struct ToStringTFunctor<mpt::lstring> { template <typename T> inline mpt::lstring operator() (const T & x) { return mpt::ToLocaleHelper<T>()(x); } };
+#endif // MPT_ENABLE_CHARSET_LOCALE
 #if defined(_MFC_VER)
-template <> struct ToStringTFunctor<CString> { template <typename T> inline CString operator() (const T & x) { return mpt::ToCStringHelper(x); } };
+template <> struct ToStringTFunctor<CString> { template <typename T> inline CString operator() (const T & x) { return mpt::ToCStringHelper<T>()(x); } };
 #endif
 
 template<typename Tstring, typename T> inline Tstring ToStringT(const T & x) { return ToStringTFunctor<Tstring>()(x); }
+
 
 
 struct fmt_base
@@ -204,7 +208,6 @@ enum FormatFlagsEnum
 	CaseLow = 0x0010, // lower case hex digits
 	CaseUpp = 0x0020, // upper case hex digits
 	FillOff = 0x0100, // do not fill up width
-	FillSpc = 0x0200, // fill up width with spaces
 	FillNul = 0x0400, // fill up width with zeros
 	NotaNrm = 0x1000, // float: normal/default notation
 	NotaFix = 0x2000, // float: fixed point notation
@@ -220,7 +223,9 @@ STATIC_ASSERT(sizeof(FormatFlags) >= sizeof(fmt_base::FormatFlagsEnum));
 class FormatSpec;
 
 MPT_DEPRECATED std::string FormatVal(const char & x, const FormatSpec & f); // deprecated to catch potential API mis-use, use std::string(1, x) instead
+#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 MPT_DEPRECATED std::string FormatVal(const wchar_t & x, const FormatSpec & f); // deprecated to catch potential API mis-use, use std::wstring(1, x) instead
+#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 std::string FormatVal(const bool & x, const FormatSpec & f);
 std::string FormatVal(const signed char & x, const FormatSpec & f);
 std::string FormatVal(const unsigned char & x, const FormatSpec & f);
@@ -236,9 +241,30 @@ std::string FormatVal(const float & x, const FormatSpec & f);
 std::string FormatVal(const double & x, const FormatSpec & f);
 std::string FormatVal(const long double & x, const FormatSpec & f);
 
+MPT_DEPRECATED mpt::ustring FormatValU(const char & x, const FormatSpec & f); // deprecated to catch potential API mis-use, use std::string(1, x) instead
+#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
+MPT_DEPRECATED mpt::ustring FormatValU(const wchar_t & x, const FormatSpec & f); // deprecated to catch potential API mis-use, use std::wstring(1, x) instead
+#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
+mpt::ustring FormatValU(const bool & x, const FormatSpec & f);
+mpt::ustring FormatValU(const signed char & x, const FormatSpec & f);
+mpt::ustring FormatValU(const unsigned char & x, const FormatSpec & f);
+mpt::ustring FormatValU(const signed short & x, const FormatSpec & f);
+mpt::ustring FormatValU(const unsigned short & x, const FormatSpec & f);
+mpt::ustring FormatValU(const signed int & x, const FormatSpec & f);
+mpt::ustring FormatValU(const unsigned int & x, const FormatSpec & f);
+mpt::ustring FormatValU(const signed long & x, const FormatSpec & f);
+mpt::ustring FormatValU(const unsigned long & x, const FormatSpec & f);
+mpt::ustring FormatValU(const signed long long & x, const FormatSpec & f);
+mpt::ustring FormatValU(const unsigned long long & x, const FormatSpec & f);
+mpt::ustring FormatValU(const float & x, const FormatSpec & f);
+mpt::ustring FormatValU(const double & x, const FormatSpec & f);
+mpt::ustring FormatValU(const long double & x, const FormatSpec & f);
+
 #if MPT_WSTRING_FORMAT
 MPT_DEPRECATED std::wstring FormatValW(const char & x, const FormatSpec & f); // deprecated to catch potential API mis-use, use std::string(1, x) instead
+#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 MPT_DEPRECATED std::wstring FormatValW(const wchar_t & x, const FormatSpec & f); // deprecated to catch potential API mis-use, use std::wstring(1, x) instead
+#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 std::wstring FormatValW(const bool & x, const FormatSpec & f);
 std::wstring FormatValW(const signed char & x, const FormatSpec & f);
 std::wstring FormatValW(const unsigned char & x, const FormatSpec & f);
@@ -257,12 +283,13 @@ std::wstring FormatValW(const long double & x, const FormatSpec & f);
 
 template <typename Tstring> struct FormatValTFunctor {};
 template <> struct FormatValTFunctor<std::string> { template <typename T> inline std::string operator() (const T & x, const FormatSpec & f) { return FormatVal(x, f); } };
-#if MPT_WSTRING_FORMAT
+template <> struct FormatValTFunctor<mpt::ustring> { template <typename T> inline mpt::ustring operator() (const T & x, const FormatSpec & f) { return FormatValU(x, f); } };
+#if MPT_USTRING_MODE_UTF8 && MPT_WSTRING_FORMAT
 template <> struct FormatValTFunctor<std::wstring> { template <typename T> inline std::wstring operator() (const T & x, const FormatSpec & f) { return FormatValW(x, f); } };
 #endif
-#if MPT_USTRING_MODE_UTF8
-template <> struct FormatValTFunctor<mpt::ustring> { template <typename T> inline mpt::ustring operator() (const T & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatVal(x, f)); } };
-#endif
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+template <> struct FormatValTFunctor<mpt::lstring> { template <typename T> inline mpt::lstring operator() (const T & x, const FormatSpec & f) { return mpt::ToLocale(mpt::CharsetLocale, FormatVal(x, f)); } };
+#endif // MPT_ENABLE_CHARSET_LOCALE
 #if defined(_MFC_VER)
 #ifdef UNICODE
 template <> struct FormatValTFunctor<CString> { template <typename T> inline CString operator() (const T & x, const FormatSpec & f) { return mpt::ToCString(FormatValW(x, f)); } };
@@ -278,80 +305,55 @@ private:
 	FormatFlags flags;
 	std::size_t width;
 	int precision;
+	unsigned int group;
+	char group_sep;
 public:
-	FormatSpec() : flags(0), width(0), precision(-1) {}
-	FormatFlags GetFlags() const { return flags; }
-	std::size_t GetWidth() const { return width; }
-	int GetPrecision() const { return precision; }
-	FormatSpec & SetFlags(FormatFlags f) { flags = f; return *this; }
-	FormatSpec & SetWidth(std::size_t w) { width = w; return *this; }
-	FormatSpec & SetPrecision(int p) { precision = p; return *this; }
+	MPT_CONSTEXPR11_FUN FormatSpec() noexcept : flags(0), width(0), precision(-1), group(0), group_sep(',') {}
+	MPT_CONSTEXPR11_FUN FormatFlags GetFlags() const noexcept { return flags; }
+	MPT_CONSTEXPR11_FUN std::size_t GetWidth() const noexcept { return width; }
+	MPT_CONSTEXPR11_FUN int GetPrecision() const noexcept { return precision; }
+	MPT_CONSTEXPR11_FUN unsigned int GetGroup() const noexcept { return group; }
+	MPT_CONSTEXPR11_FUN char GetGroupSep() const noexcept { return group_sep; }
+	MPT_CONSTEXPR14_FUN FormatSpec & SetFlags(FormatFlags f) noexcept { flags = f; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & SetWidth(std::size_t w) noexcept { width = w; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & SetPrecision(int p) noexcept { precision = p; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & SetGroup(unsigned int g) noexcept { group = g; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & SetGroupSep(char s) noexcept { group_sep = s; return *this; }
 public:
-	// short-hand construction
-	explicit FormatSpec(FormatFlags f, std::size_t w = 0, int p = -1) : flags(f), width(w), precision(p) {}
-	explicit FormatSpec(const char * format) : flags(0), width(0), precision(-1) { ParsePrintf(format); }
-	explicit FormatSpec(const wchar_t * format) : flags(0), width(0), precision(-1) { ParsePrintf(format); }
-	explicit FormatSpec(const std::string & format) : flags(0), width(0), precision(-1) { ParsePrintf(format); }
-	explicit FormatSpec(const std::wstring & format) : flags(0), width(0), precision(-1) { ParsePrintf(format); }
+	MPT_CONSTEXPR14_FUN FormatSpec & BaseDec() noexcept { flags &= ~(fmt_base::BaseDec|fmt_base::BaseHex); flags |= fmt_base::BaseDec; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & BaseHex() noexcept { flags &= ~(fmt_base::BaseDec|fmt_base::BaseHex); flags |= fmt_base::BaseHex; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & CaseLow() noexcept { flags &= ~(fmt_base::CaseLow|fmt_base::CaseUpp); flags |= fmt_base::CaseLow; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & CaseUpp() noexcept { flags &= ~(fmt_base::CaseLow|fmt_base::CaseUpp); flags |= fmt_base::CaseUpp; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & FillOff() noexcept { flags &= ~(fmt_base::FillOff|fmt_base::FillNul); flags |= fmt_base::FillOff; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & FillNul() noexcept { flags &= ~(fmt_base::FillOff|fmt_base::FillNul); flags |= fmt_base::FillNul; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & NotaNrm() noexcept { flags &= ~(fmt_base::NotaNrm|fmt_base::NotaFix|fmt_base::NotaSci); flags |= fmt_base::NotaNrm; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & NotaFix() noexcept { flags &= ~(fmt_base::NotaNrm|fmt_base::NotaFix|fmt_base::NotaSci); flags |= fmt_base::NotaFix; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & NotaSci() noexcept { flags &= ~(fmt_base::NotaNrm|fmt_base::NotaFix|fmt_base::NotaSci); flags |= fmt_base::NotaSci; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & Width(std::size_t w) noexcept { width = w; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & Prec(int p) noexcept { precision = p; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & Group(unsigned int g) noexcept { group = g; return *this; }
+	MPT_CONSTEXPR14_FUN FormatSpec & GroupSep(char s) noexcept { group_sep = s; return *this; }
 public:
-	// only for floating point formats
-	FormatSpec & ParsePrintf(const char * format);
-	FormatSpec & ParsePrintf(const wchar_t * format);
-	FormatSpec & ParsePrintf(const std::string & format);
-	FormatSpec & ParsePrintf(const std::wstring & format);
+	MPT_CONSTEXPR14_FUN FormatSpec & Dec() noexcept { return BaseDec(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Hex() noexcept { return BaseHex(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Low() noexcept { return CaseLow(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Upp() noexcept { return CaseUpp(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Off() noexcept { return FillOff(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Nul() noexcept { return FillNul(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Nrm() noexcept { return NotaNrm(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Fix() noexcept { return NotaFix(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Sci() noexcept { return NotaSci(); }
 public:
-	FormatSpec & BaseDec() { flags &= ~(fmt_base::BaseDec|fmt_base::BaseHex); flags |= fmt_base::BaseDec; return *this; }
-	FormatSpec & BaseHex() { flags &= ~(fmt_base::BaseDec|fmt_base::BaseHex); flags |= fmt_base::BaseHex; return *this; }
-	FormatSpec & CaseLow() { flags &= ~(fmt_base::CaseLow|fmt_base::CaseUpp); flags |= fmt_base::CaseLow; return *this; }
-	FormatSpec & CaseUpp() { flags &= ~(fmt_base::CaseLow|fmt_base::CaseUpp); flags |= fmt_base::CaseUpp; return *this; }
-	FormatSpec & FillOff() { flags &= ~(fmt_base::FillOff|fmt_base::FillSpc|fmt_base::FillNul); flags |= fmt_base::FillOff; return *this; }
-	FormatSpec & FillSpc() { flags &= ~(fmt_base::FillOff|fmt_base::FillSpc|fmt_base::FillNul); flags |= fmt_base::FillSpc; return *this; }
-	FormatSpec & FillNul() { flags &= ~(fmt_base::FillOff|fmt_base::FillSpc|fmt_base::FillNul); flags |= fmt_base::FillNul; return *this; }
-	FormatSpec & NotaNrm() { flags &= ~(fmt_base::NotaNrm|fmt_base::NotaFix|fmt_base::NotaSci); flags |= fmt_base::NotaNrm; return *this; }
-	FormatSpec & NotaFix() { flags &= ~(fmt_base::NotaNrm|fmt_base::NotaFix|fmt_base::NotaSci); flags |= fmt_base::NotaFix; return *this; }
-	FormatSpec & NotaSci() { flags &= ~(fmt_base::NotaNrm|fmt_base::NotaFix|fmt_base::NotaSci); flags |= fmt_base::NotaSci; return *this; }
-	FormatSpec & Width(std::size_t w) { width = w; return *this; }
-	FormatSpec & Prec(int p) { precision = p; return *this; }
-public:
-	FormatSpec & Dec() { return BaseDec(); }
-	FormatSpec & Hex() { return BaseHex(); }
-	FormatSpec & Low() { return CaseLow(); }
-	FormatSpec & Upp() { return CaseUpp(); }
-	FormatSpec & Off() { return FillOff(); }
-	FormatSpec & Spc() { return FillSpc(); }
-	FormatSpec & Nul() { return FillNul(); }
-	FormatSpec & Nrm() { return NotaNrm(); }
-	FormatSpec & Fix() { return NotaFix(); }
-	FormatSpec & Sci() { return NotaSci(); }
-public:
-	FormatSpec & Decimal() { return BaseDec(); }
-	FormatSpec & Hexadecimal() { return BaseHex(); }
-	FormatSpec & Lower() { return CaseLow(); }
-	FormatSpec & Upper() { return CaseUpp(); }
-	FormatSpec & FillNone() { return FillOff(); }
-	FormatSpec & FillSpace() { return FillSpc(); }
-	FormatSpec & FillZero() { return FillNul(); }
-	FormatSpec & FloatNormal() { return NotaNrm(); }
-	FormatSpec & FloatFixed() { return NotaFix(); }
-	FormatSpec & FloatScientific() { return NotaSci(); }
-	FormatSpec & Precision(int p) { return Prec(p); }
-	template<typename Tstring, typename T>
-	inline Tstring ToStringT(const T & x) const
-	{
-		return FormatValTFunctor<Tstring>()(x, *this);
-	}
-	template<typename T>
-	inline std::string ToString(const T & x) const
-	{
-		return FormatVal(x, *this);
-	}
-#if MPT_WSTRING_FORMAT
-	template<typename T>
-	inline std::wstring ToWString(const T & x) const
-	{
-		return FormatValW(x, *this);
-	}
-#endif
+	MPT_CONSTEXPR14_FUN FormatSpec & Decimal() noexcept { return BaseDec(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Hexadecimal() noexcept { return BaseHex(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Lower() noexcept { return CaseLow(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Upper() noexcept { return CaseUpp(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & FillNone() noexcept { return FillOff(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & FillZero() noexcept { return FillNul(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & FloatNormal() noexcept { return NotaNrm(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & FloatFixed() noexcept { return NotaFix(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & FloatScientific() noexcept { return NotaSci(); }
+	MPT_CONSTEXPR14_FUN FormatSpec & Precision(int p) noexcept { return Prec(p); }
 };
 
 
@@ -366,22 +368,35 @@ static inline Tstring val(const T& x)
 }
 
 template<typename T>
+static inline Tstring fmt(const T& x, const FormatSpec& f)
+{
+	return FormatValTFunctor<Tstring>()(x, f);
+}
+
+template<typename T>
 static inline Tstring dec(const T& x)
 {
 	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
 	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseDec().FillOff());
 }
 template<int width, typename T>
-static inline Tstring dec(const T& x)
-{
-	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseDec().FillSpc().Width(width));
-}
-template<int width, typename T>
 static inline Tstring dec0(const T& x)
 {
 	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
 	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseDec().FillNul().Width(width));
+}
+
+template<typename T>
+static inline Tstring dec(unsigned int g, char s, const T& x)
+{
+	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseDec().FillOff().Group(g).GroupSep(s));
+}
+template<int width, typename T>
+static inline Tstring dec0(unsigned int g, char s, const T& x)
+{
+	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseDec().FillNul().Width(width).Group(g).GroupSep(s));
 }
 
 template<typename T>
@@ -397,18 +412,6 @@ static inline Tstring HEX(const T& x)
 	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseHex().CaseUpp().FillOff());
 }
 template<int width, typename T>
-static inline Tstring hex(const T& x)
-{
-	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseHex().CaseLow().FillSpc().Width(width));
-}
-template<int width, typename T>
-static inline Tstring HEX(const T& x)
-{
-	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseHex().CaseUpp().FillSpc().Width(width));
-}
-template<int width, typename T>
 static inline Tstring hex0(const T& x)
 {
 	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
@@ -422,50 +425,82 @@ static inline Tstring HEX0(const T& x)
 }
 
 template<typename T>
-static inline Tstring flt(const T& x, std::size_t width = 0, int precision = -1)
+static inline Tstring hex(unsigned int g, char s, const T& x)
 {
-	STATIC_ASSERT(std::is_floating_point<T>::value);
-	if(width == 0)
-	{
-		return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaNrm().FillOff().Precision(precision));
-	} else
-	{
-		return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaNrm().FillSpc().Width(width).Precision(precision));
-	}
+	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseHex().CaseLow().FillOff().Group(g).GroupSep(s));
 }
 template<typename T>
-static inline Tstring fix(const T& x, std::size_t width = 0, int precision = -1)
+static inline Tstring HEX(unsigned int g, char s, const T& x)
 {
-	STATIC_ASSERT(std::is_floating_point<T>::value);
-	if(width == 0)
-	{
-		return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaFix().FillOff().Precision(precision));
-	} else
-	{
-		return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaFix().FillSpc().Width(width).Precision(precision));
-	}
+	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseHex().CaseUpp().FillOff().Group(g).GroupSep(s));
 }
-template<typename T>
-static inline Tstring sci(const T& x, std::size_t width = 0, int precision = -1)
+template<int width, typename T>
+static inline Tstring hex0(unsigned int g, char s, const T& x)
 {
-	STATIC_ASSERT(std::is_floating_point<T>::value);
-	if(width == 0)
-	{
-		return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaSci().FillOff().Precision(precision));
-	} else
-	{
-		return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaSci().FillSpc().Width(width).Precision(precision));
-	}
+	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseHex().CaseLow().FillNul().Width(width).Group(g).GroupSep(s));
+}
+template<int width, typename T>
+static inline Tstring HEX0(unsigned int g, char s, const T& x)
+{
+	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().BaseHex().CaseUpp().FillNul().Width(width).Group(g).GroupSep(s));
 }
 
-template <typename T, typename Tformat>
-static inline Tstring f(const Tformat & format, const T& x)
+template<typename T>
+static inline Tstring flt(const T& x, int precision = -1)
 {
 	STATIC_ASSERT(std::is_floating_point<T>::value);
-	return FormatValTFunctor<Tstring>()(x, FormatSpec().ParsePrintf(format));
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaNrm().FillOff().Precision(precision));
+}
+template<typename T>
+static inline Tstring fix(const T& x, int precision = -1)
+{
+	STATIC_ASSERT(std::is_floating_point<T>::value);
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaFix().FillOff().Precision(precision));
+}
+template<typename T>
+static inline Tstring sci(const T& x, int precision = -1)
+{
+	STATIC_ASSERT(std::is_floating_point<T>::value);
+	return FormatValTFunctor<Tstring>()(x, FormatSpec().NotaSci().FillOff().Precision(precision));
+}
+
+static inline Tstring pad_left(std::size_t width_, const Tstring &str)
+{
+	typedef mpt::string_traits<Tstring> traits;
+	typename traits::size_type width = static_cast<typename traits::size_type>(width_);
+	return traits::pad(str, width, 0);
+}
+static inline Tstring pad_right(std::size_t width_, const Tstring &str)
+{
+	typedef mpt::string_traits<Tstring> traits;
+	typename traits::size_type width = static_cast<typename traits::size_type>(width_);
+	return traits::pad(str, 0, width);
+}
+static inline Tstring left(std::size_t width_, const Tstring &str)
+{
+	typedef mpt::string_traits<Tstring> traits;
+	typename traits::size_type width = static_cast<typename traits::size_type>(width_);
+	return (traits::length(str) < width) ? traits::pad(str, 0, width - traits::length(str)) : str;
+}
+static inline Tstring right(std::size_t width_, const Tstring &str)
+{
+	typedef mpt::string_traits<Tstring> traits;
+	typename traits::size_type width = static_cast<typename traits::size_type>(width_);
+	return (traits::length(str) < width) ? traits::pad(str, width - traits::length(str), 0) : str;
+}
+static inline Tstring center(std::size_t width_, const Tstring &str)
+{
+	typedef mpt::string_traits<Tstring> traits;
+	typename traits::size_type width = static_cast<typename traits::size_type>(width_);
+	return (traits::length(str) < width) ? traits::pad(str, (width - traits::length(str)) / 2, (width - traits::length(str) + 1) / 2) : str;
 }
 
 }; // struct fmtT
+
 
 typedef fmtT<std::string> fmt;
 #if MPT_WSTRING_FORMAT
@@ -476,8 +511,14 @@ typedef fmtT<std::wstring> ufmt;
 #else
 typedef fmtT<mpt::ustring> ufmt;
 #endif
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+typedef fmtT<mpt::lstring> lfmt;
+#endif // MPT_ENABLE_CHARSET_LOCALE
+#if MPT_OS_WINDOWS
+typedef fmtT<mpt::tstring> tfmt;
+#endif
 #if defined(_MFC_VER)
-typedef fmtT<CString> tfmt;
+typedef fmtT<CString> cfmt;
 #endif
 
 } // namespace mpt
@@ -495,14 +536,19 @@ template <> struct to_string_type<char           > { typedef std::string  type; 
 template <> struct to_string_type<char *         > { typedef std::string  type; };
 template <> struct to_string_type<const char     > { typedef std::string  type; };
 template <> struct to_string_type<const char *   > { typedef std::string  type; };
+#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 template <> struct to_string_type<std::wstring   > { typedef std::wstring type; };
 template <> struct to_string_type<wchar_t        > { typedef std::wstring type; };
 template <> struct to_string_type<wchar_t *      > { typedef std::wstring type; };
 template <> struct to_string_type<const wchar_t  > { typedef std::wstring type; };
 template <> struct to_string_type<const wchar_t *> { typedef std::wstring type; };
+#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 #if MPT_USTRING_MODE_UTF8
 template <> struct to_string_type<mpt::ustring   > { typedef mpt::ustring type; };
 #endif
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+template <> struct to_string_type<mpt::lstring   > { typedef mpt::lstring type; };
+#endif // MPT_ENABLE_CHARSET_LOCALE
 #if defined(_MFC_VER)
 template <> struct to_string_type<CString        > { typedef CString      type; };
 #endif
@@ -544,6 +590,19 @@ mpt::ustring PrintImpl(const mpt::ustring & format
 	, const mpt::ustring & x8 = mpt::ustring()
 	);
 #endif
+
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+mpt::lstring PrintImpl(const mpt::lstring & format
+	, const mpt::lstring & x1 = mpt::lstring()
+	, const mpt::lstring & x2 = mpt::lstring()
+	, const mpt::lstring & x3 = mpt::lstring()
+	, const mpt::lstring & x4 = mpt::lstring()
+	, const mpt::lstring & x5 = mpt::lstring()
+	, const mpt::lstring & x6 = mpt::lstring()
+	, const mpt::lstring & x7 = mpt::lstring()
+	, const mpt::lstring & x8 = mpt::lstring()
+	);
+#endif // MPT_ENABLE_CHARSET_LOCALE
 
 #if defined(_MFC_VER)
 CString PrintImpl(const CString & format
@@ -769,14 +828,66 @@ static inline message_formatter<mpt::ustring> uformat(const mpt::ustring &format
 	return message_formatter<mpt::ustring>(format);
 }
 
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+static inline message_formatter<mpt::lstring> lformat(const mpt::lstring &format)
+{
+	return message_formatter<mpt::lstring>(format);
+}
+#endif // MPT_ENABLE_CHARSET_LOCALE
+
+#if MPT_OS_WINDOWS
+static inline message_formatter<mpt::tstring> tformat(const mpt::tstring &format)
+{
+	return message_formatter<mpt::tstring>(format);
+}
+#endif
+
 #if defined(_MFC_VER)
-static inline message_formatter<CString> tformat(const CString &format)
+static inline message_formatter<CString> cformat(const CString &format)
 {
 	return message_formatter<CString>(format);
 }
 #endif
 
 } // namespace mpt
+
+
+
+namespace mpt { namespace String {
+
+// Combine a vector of values into a string, separated with the given separator.
+// No escaping is performed.
+template<typename T>
+mpt::ustring Combine(const std::vector<T> &vals, const mpt::ustring &sep=U_(","))
+{
+	mpt::ustring str;
+	for(std::size_t i = 0; i < vals.size(); ++i)
+	{
+		if(i > 0)
+		{
+			str += sep;
+		}
+		str += mpt::ufmt::val(vals[i]);
+	}
+	return str;
+}
+template<typename T>
+std::string Combine(const std::vector<T> &vals, const std::string &sep=std::string(","))
+{
+	std::string str;
+	for(std::size_t i = 0; i < vals.size(); ++i)
+	{
+		if(i > 0)
+		{
+			str += sep;
+		}
+		str += mpt::fmt::val(vals[i]);
+	}
+	return str;
+}
+
+} } // namespace mpt::String
+
 
 
 OPENMPT_NAMESPACE_END

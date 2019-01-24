@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 OPENMPT_NAMESPACE_BEGIN
 
 enum
@@ -48,8 +50,7 @@ enum ForcePanningMode
 class CSoundFilePlayConfig
 {
 public:
-	CSoundFilePlayConfig(void);
-	~CSoundFilePlayConfig(void);
+	CSoundFilePlayConfig();
 
 	void SetMixLevels(MixLevels mixLevelType);
 
@@ -81,12 +82,12 @@ public:
 	void setDisplayDBValues(bool in) { m_displayDBValues = in; }
 
 	// Values at which volumes are unchanged
-	double getNormalSamplePreAmp() const { return m_normalSamplePreAmp; }
-	void setNormalSamplePreAmp(double in) { m_normalSamplePreAmp = in; }
-	double getNormalVSTiVol() const { return m_normalVSTiVol; }
-	void setNormalVSTiVol(double in) { m_normalVSTiVol = in; }
-	double getNormalGlobalVol() const { return m_normalGlobalVol; }
-	void setNormalGlobalVol(double in) { m_normalGlobalVol = in; }
+	float getNormalSamplePreAmp() const { return m_normalSamplePreAmp; }
+	void setNormalSamplePreAmp(float in) { m_normalSamplePreAmp = in; }
+	float getNormalVSTiVol() const { return m_normalVSTiVol; }
+	void setNormalVSTiVol(float in) { m_normalVSTiVol = in; }
+	float getNormalGlobalVol() const { return m_normalGlobalVol; }
+	void setNormalGlobalVol(float in) { m_normalGlobalVol = in; }
 
 	// Extra sample attenuation in bits
 	int getExtraSampleAttenuation() const { return m_extraAttenuation; }
@@ -99,9 +100,9 @@ protected:
 	float m_VSTiAttenuation;
 	float m_VSTiVolume;
 
-	double m_normalSamplePreAmp;
-	double m_normalVSTiVol;
-	double m_normalGlobalVol;
+	float m_normalSamplePreAmp;
+	float m_normalVSTiVol;
+	float m_normalGlobalVol;
 
 	int m_extraAttenuation;
 	ForcePanningMode m_forceSoftPanning;

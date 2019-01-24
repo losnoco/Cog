@@ -11,6 +11,7 @@
 #include "stdafx.h"
 #include "Loaders.h"
 #include "S3MTools.h"
+#include "ITTools.h"
 #ifndef MODPLUG_NO_FILESAVE
 #include "../common/mptFileIO.h"
 #ifdef MODPLUG_TRACKER
@@ -61,6 +62,7 @@ void CSoundFile::S3MConvert(ModCommand &m, bool fromIT)
 	}
 }
 
+#ifndef MODPLUG_NO_FILESAVE
 
 void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool compatibilityExport) const
 {
@@ -154,6 +156,7 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 	command &= ~0x40;
 }
 
+#endif // MODPLUG_NO_FILESAVE
 
 // Pattern decoding flags
 enum S3MPattern
@@ -234,9 +237,11 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	// ST3 ignored Zxx commands, so if we find that a file was made with ST3, we should erase all MIDI macros.
 	bool keepMidiMacros = false;
 
-	mpt::ustring trackerStr;
+	mpt::ustring madeWithTracker;
+	bool formatTrackerStr = false;
 	bool nonCompatTracker = false;
 	bool isST3 = false;
+	bool isSchism = false;
 	switch(fileHeader.cwtv & S3MFileHeader::trackerMask)
 	{
 	case S3MFileHeader::trkScreamTracker:
@@ -244,59 +249,77 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			// MPT 1.16 and older versions of OpenMPT - Simply keep default (filter) MIDI macros
 			m_dwLastSavedWithVersion = MAKE_VERSION_NUMERIC(1, 16, 00, 00);
-			m_madeWithTracker = MPT_USTRING("ModPlug Tracker / OpenMPT");
+			madeWithTracker = U_("ModPlug Tracker / OpenMPT");
 			keepMidiMacros = true;
 			nonCompatTracker = true;
 			m_playBehaviour.set(kST3LimitPeriod);
 		} else if(fileHeader.cwtv == S3MFileHeader::trkST3_20 && fileHeader.special == 0 && fileHeader.ultraClicks == 0 && fileHeader.flags == 0 && fileHeader.usePanningTable == 0)
 		{
-			m_madeWithTracker = MPT_USTRING("Velvet Studio");
+			madeWithTracker = U_("Velvet Studio");
 		} else
 		{
-			trackerStr = MPT_USTRING("Scream Tracker");
+			madeWithTracker = U_("Scream Tracker");
+			formatTrackerStr = true;
 			isST3 = true;
 		}
 		break;
 	case S3MFileHeader::trkImagoOrpheus:
-		trackerStr = MPT_USTRING("Imago Orpheus");
+		madeWithTracker = U_("Imago Orpheus");
+		formatTrackerStr = true;
 		nonCompatTracker = true;
 		break;
 	case S3MFileHeader::trkImpulseTracker:
 		if(fileHeader.cwtv <= S3MFileHeader::trkIT2_14)
-			trackerStr = MPT_USTRING("Impulse Tracker");
-		else
-			m_madeWithTracker = mpt::format(MPT_USTRING("Impulse Tracker 2.14p%1"))(fileHeader.cwtv - S3MFileHeader::trkIT2_14);
+		{
+			madeWithTracker = U_("Impulse Tracker");
+			formatTrackerStr = true;
+		} else
+		{
+			madeWithTracker = mpt::format(U_("Impulse Tracker 2.14p%1"))(fileHeader.cwtv - S3MFileHeader::trkIT2_14);
+		}
 		nonCompatTracker = true;
 		m_nMinPeriod = 1;
 		break;
 	case S3MFileHeader::trkSchismTracker:
 		if(fileHeader.cwtv == S3MFileHeader::trkBeRoTrackerOld)
 		{
-			m_madeWithTracker = MPT_USTRING("BeRoTracker");
+			madeWithTracker = U_("BeRoTracker");
 			m_playBehaviour.set(kST3LimitPeriod);
 		} else
 		{
-			m_madeWithTracker = GetSchismTrackerVersion(fileHeader.cwtv);
+			madeWithTracker = GetSchismTrackerVersion(fileHeader.cwtv);
 			m_nMinPeriod = 1;
+			isSchism = true;
 		}
 		nonCompatTracker = true;
 		break;
 	case S3MFileHeader::trkOpenMPT:
-		trackerStr = MPT_USTRING("OpenMPT");
-		m_dwLastSavedWithVersion = (fileHeader.cwtv & S3MFileHeader::versionMask) << 16;
+		madeWithTracker = U_("OpenMPT");
+		formatTrackerStr = true;
+		m_dwLastSavedWithVersion = Version((fileHeader.cwtv & S3MFileHeader::versionMask) << 16);
 		break; 
 	case S3MFileHeader::trkBeRoTracker:
-		m_madeWithTracker = MPT_USTRING("BeRoTracker");
+		madeWithTracker = U_("BeRoTracker");
 		m_playBehaviour.set(kST3LimitPeriod);
 		break;
 	case S3MFileHeader::trkCreamTracker:
-		m_madeWithTracker = MPT_USTRING("CreamTracker");
+		madeWithTracker = U_("CreamTracker");
+		break;
+	default:
+		if(fileHeader.cwtv == S3MFileHeader::trkCamoto)
+			madeWithTracker = U_("Camoto");
 		break;
 	}
-	if(!trackerStr.empty())
+	if(formatTrackerStr)
 	{
-		m_madeWithTracker = mpt::format(MPT_USTRING("%1 %2.%3"))(trackerStr, (fileHeader.cwtv & 0xF00) >> 8, mpt::ufmt::hex0<2>(fileHeader.cwtv & 0xFF));
+		madeWithTracker = mpt::format(U_("%1 %2.%3"))(madeWithTracker, (fileHeader.cwtv & 0xF00) >> 8, mpt::ufmt::hex0<2>(fileHeader.cwtv & 0xFF));
 	}
+
+	m_modFormat.formatName = U_("ScreamTracker 3");
+	m_modFormat.type = U_("s3m");
+	m_modFormat.madeWithTracker = std::move(madeWithTracker);
+	m_modFormat.charset = m_dwLastSavedWithVersion ? mpt::CharsetWindows1252 : mpt::CharsetCP437;
+
 	if(nonCompatTracker)
 	{
 		m_playBehaviour.reset(kST3NoMutedChannels);
@@ -304,11 +327,11 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		m_playBehaviour.reset(kST3PortaSampleChange);
 		m_playBehaviour.reset(kST3VibratoMemory);
 		m_playBehaviour.reset(KST3PortaAfterArpeggio);
+		m_playBehaviour.reset(kST3OffsetWithoutInstrument);
 	}
 
 	if((fileHeader.cwtv & S3MFileHeader::trackerMask) > S3MFileHeader::trkScreamTracker)
 	{
-		// 2xyy - Imago Orpheus, 3xyy - IT, 4xyy - Schism, 5xyy - OpenMPT, 6xyy - BeRoTracker
 		if((fileHeader.cwtv & S3MFileHeader::trackerMask) != S3MFileHeader::trkImpulseTracker || fileHeader.cwtv >= S3MFileHeader::trkIT2_14)
 		{
 			// Keep MIDI macros if this is not an old IT version (BABYLON.S3M by Necros has Zxx commands and was saved with IT 2.05)
@@ -358,26 +381,36 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
 	}
 
-	// Bit 8 = Stereo (we always use stereo)
+	// Bit 7 = Stereo (we always use stereo)
 	m_nSamplePreAmp = std::max(fileHeader.masterVolume & 0x7F, 0x10);
+	// Approximately as loud as in DOSBox and a real SoundBlaster 16
+	m_nVSTiVolume = 36;
+	if(isSchism && fileHeader.cwtv < SchismVersionFromDate<2018, 11, 12>::Version(S3MFileHeader::trkSchismTracker))
+		m_nVSTiVolume = 64;
 
 	// Channel setup
 	m_nChannels = 4;
+	std::bitset<32> isAdlibChannel;
 	for(CHANNELINDEX i = 0; i < 32; i++)
 	{
 		ChnSettings[i].Reset();
 
+		uint8 ctype = fileHeader.channels[i] & ~0x80;
 		if(fileHeader.channels[i] != 0xFF)
 		{
 			m_nChannels = i + 1;
-			ChnSettings[i].nPan = (fileHeader.channels[i] & 8) ? 0xCC : 0x33;	// 200 : 56
+			ChnSettings[i].nPan = (ctype & 8) ? 0xCC : 0x33;	// 200 : 56
 		}
 		if(fileHeader.channels[i] & 0x80)
 		{
 			ChnSettings[i].dwFlags = CHN_MUTE;
-			// Detect Adlib channels here (except for OpenMPT 1.19 and older, which would write wrong channel types for PCM channels 16-32):
-			// c = channels[i] ^ 0x80;
-			// if(c >= 16 && c < 32) adlibChannel = true;
+		}
+		if(ctype >= 16 && ctype <= 29)
+		{
+			// Adlib channel - except for OpenMPT 1.19 and older, which would write wrong channel types for PCM channels 16-32.
+			// However, MPT/OpenMPT always wrote the extra panning table, so there is no need to consider this here.
+			ChnSettings[i].nPan = 128;
+			isAdlibChannel[i] = true;
 		}
 	}
 	if(m_nChannels < 1)
@@ -401,14 +434,12 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		file.ReadArray(pan);
 		for(CHANNELINDEX i = 0; i < 32; i++)
 		{
-			if((pan[i] & 0x20) != 0)
+			if((pan[i] & 0x20) != 0 && (!isST3 || !isAdlibChannel[i]))
 			{
 				ChnSettings[i].nPan = (static_cast<uint16>(pan[i] & 0x0F) * 256 + 8) / 15;
 			}
 		}
 	}
-
-	bool hasAdlibPatches = false;
 
 	// Reading sample headers
 	m_nSamples = std::min<SAMPLEINDEX>(fileHeader.smpNum, MAX_SAMPLES - 1);
@@ -424,24 +455,15 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		sampleHeader.ConvertToMPT(Samples[smp + 1]);
 		mpt::String::Read<mpt::String::nullTerminated>(m_szNames[smp + 1], sampleHeader.name);
 
-		if(sampleHeader.sampleType >= S3MSampleHeader::typeAdMel)
+		if(sampleHeader.sampleType < S3MSampleHeader::typeAdMel)
 		{
-			hasAdlibPatches = true;
-		}
-
-		const uint32 sampleOffset = (sampleHeader.dataPointer[1] << 4) | (sampleHeader.dataPointer[2] << 12) | (sampleHeader.dataPointer[0] << 20);
-
-		if((loadFlags & loadSampleData) && sampleHeader.length != 0 && file.Seek(sampleOffset))
-		{
-			sampleHeader.GetSampleFormat((fileHeader.formatVersion == S3MFileHeader::oldVersion)).ReadSample(Samples[smp + 1], file);
+			const uint32 sampleOffset = (sampleHeader.dataPointer[1] << 4) | (sampleHeader.dataPointer[2] << 12) | (sampleHeader.dataPointer[0] << 20);
+			if((loadFlags & loadSampleData) && sampleHeader.length != 0 && file.Seek(sampleOffset))
+			{
+				sampleHeader.GetSampleFormat((fileHeader.formatVersion == S3MFileHeader::oldVersion)).ReadSample(Samples[smp + 1], file);
+			}
 		}
 	}
-
-	if(hasAdlibPatches)
-	{
-		AddToLog("This track uses Adlib instruments, which are not supported by this version of OpenMPT.");
-	}
-
 
 	// Try to find out if Zxx commands are supposed to be panning commands (PixPlay).
 	// Actually I am only aware of one module that uses this panning style, namely "Crawling Despair" by $volkraq
@@ -587,7 +609,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 
 #ifndef MODPLUG_NO_FILESAVE
 
-bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
+bool CSoundFile::SaveS3M(std::ostream &f) const
 {
 	static const uint8 filler[16] =
 	{
@@ -595,9 +617,17 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 		0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
 	};
 
-	FILE *f;
-	if(m_nChannels == 0 || filename.empty()) return false;
-	if((f = mpt_fopen(filename, "wb")) == nullptr) return false;
+	if(m_nChannels == 0)
+	{
+		return false;
+	}
+
+	const bool saveMuteStatus =
+#ifdef MODPLUG_TRACKER
+		TrackerSettings::Instance().MiscSaveChannelMuteStatus;
+#else
+		true;
+#endif
 
 	S3MFileHeader fileHeader;
 	MemsetZero(fileHeader);
@@ -621,7 +651,7 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 
 	// Samples
 	SAMPLEINDEX writeSamples = static_cast<SAMPLEINDEX>(GetNumInstruments());
-	if(fileHeader.smpNum == 0)
+	if(writeSamples == 0)
 	{
 		writeSamples = GetNumSamples();
 	}
@@ -641,56 +671,27 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 	{
 		fileHeader.flags |= S3MFileHeader::amigaLimits;
 	}
+	if(m_SongFlags[SONG_S3MOLDVIBRATO])
+	{
+		fileHeader.flags |= S3MFileHeader::st2Vibrato;
+	}
 
 	// Version info following: ST3.20 = 0x1320
 	// Most significant nibble = Tracker ID, see S3MFileHeader::S3MTrackerVersions
 	// Following: One nibble = Major version, one byte = Minor version (hex)
-	fileHeader.cwtv = S3MFileHeader::trkOpenMPT | static_cast<uint16>((MptVersion::num >> 16) & S3MFileHeader::versionMask);
+	fileHeader.cwtv = S3MFileHeader::trkOpenMPT | static_cast<uint16>((Version::Current().GetRawVersion() >> 16) & S3MFileHeader::versionMask);
 	fileHeader.formatVersion = S3MFileHeader::newVersion;
 	memcpy(fileHeader.magic, "SCRM", 4);
 
 	// Song Variables
-	fileHeader.globalVol = static_cast<uint8>(std::min(m_nDefaultGlobalVolume / 4u, 64u));
+	fileHeader.globalVol = static_cast<uint8>(std::min<unsigned int>(m_nDefaultGlobalVolume / 4u, 64u));
 	fileHeader.speed = static_cast<uint8>(Clamp(m_nDefaultSpeed, 1u, 254u));
 	fileHeader.tempo = static_cast<uint8>(Clamp(m_nDefaultTempo.GetInt(), 33u, 255u));
 	fileHeader.masterVolume = static_cast<uint8>(Clamp(m_nSamplePreAmp, 16u, 127u) | 0x80);
 	fileHeader.ultraClicks = 8;
 	fileHeader.usePanningTable = S3MFileHeader::idPanning;
 
-	// Channel Table
-	const uint8 midCh = static_cast<uint8>(std::min(GetNumChannels() / 2, 8));
-	for(CHANNELINDEX chn = 0; chn < 32; chn++)
-	{
-		if(chn < GetNumChannels())
-		{
-			// ST3 only supports 16 PCM channels, so if channels 17-32 are used,
-			// they must be mapped to the same "internal channels" as channels 1-16.
-			// The channel indices determine in which order channels are evaluated in ST3.
-			// First, the "left" channels (0...7) are evaluated, then the "right" channels (8...15).
-			// Previously, an alternating LRLR scheme was written, which would lead to a different
-			// effect processing in ST3 than LLL...RRR, but since OpenMPT doesn't care about the
-			// channel order and always parses them left to right as they appear in the pattern,
-			// we should just write in the LLL...RRR manner.
-			uint8 ch = chn & 0x0F;
-			if(ch >= midCh)
-			{
-				ch += 8 - midCh;
-			}
-#ifdef MODPLUG_TRACKER
-			if(TrackerSettings::Instance().MiscSaveChannelMuteStatus)
-#endif
-			if(ChnSettings[chn].dwFlags[CHN_MUTE])
-			{
-				ch |= 0x80;
-			}
-			fileHeader.channels[chn] = ch;
-		} else
-		{
-			fileHeader.channels[chn] = 0xFF;
-		}
-	}
-
-	fwrite(&fileHeader, sizeof(fileHeader), 1, f);
+	mpt::IO::Write(f, fileHeader);
 	Order().WriteAsByte(f, writeOrders);
 
 	// Comment about parapointers stolen from Schism Tracker:
@@ -702,7 +703,7 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 	// The "practical standard order" listed in TECH.DOC is sample headers, patterns, then sample data.
 
 	// Calculate offset of first sample header...
-	size_t sampleHeaderOffset = ftell(f) + (writeSamples + writePatterns) * 2 + 32;
+	mpt::IO::Offset sampleHeaderOffset = mpt::IO::TellWrite(f) + (writeSamples + writePatterns) * 2 + 32;
 	// ...which must be a multiple of 16, because parapointers omit the lowest 4 bits.
 	sampleHeaderOffset = (sampleHeaderOffset + 15) & ~15;
 
@@ -712,45 +713,41 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 		STATIC_ASSERT((sizeof(S3MSampleHeader) % 16) == 0);
 		sampleOffsets[smp] = static_cast<uint16>((sampleHeaderOffset + smp * sizeof(S3MSampleHeader)) / 16);
 	}
+	mpt::IO::Write(f, sampleOffsets);
 
-	if(writeSamples != 0)
-	{
-		fwrite(sampleOffsets.data(), 2, writeSamples, f);
-	}
-
-	size_t patternPointerOffset = ftell(f);
-	size_t firstPatternOffset = sampleHeaderOffset + writeSamples * sizeof(S3MSampleHeader);
+	mpt::IO::Offset patternPointerOffset = mpt::IO::TellWrite(f);
+	mpt::IO::Offset firstPatternOffset = sampleHeaderOffset + writeSamples * sizeof(S3MSampleHeader);
 	std::vector<uint16le> patternOffsets(writePatterns);
 
 	// Need to calculate the real offsets later.
-	if(writePatterns != 0)
-	{
-		fwrite(patternOffsets.data(), 2, writePatterns, f);
-	}
+	mpt::IO::Write(f, patternOffsets);
 
 	// Write channel panning
 	uint8 chnPan[32];
 	for(CHANNELINDEX chn = 0; chn < 32; chn++)
 	{
 		if(chn < GetNumChannels())
-			chnPan[chn] = static_cast<uint8>(((ChnSettings[chn].nPan * 15 + 128) / 256)) | 0x20;
+			chnPan[chn] = static_cast<uint8>(((ChnSettings[chn].nPan * 15 + 128) / 256) | 0x20);
 		else
 			chnPan[chn] = 0x08;
 	}
-	fwrite(chnPan, 32, 1, f);
+	mpt::IO::Write(f, chnPan);
 
 	// Do we need to fill up the file with some padding bytes for 16-Byte alignment?
-	size_t curPos = ftell(f);
+	mpt::IO::Offset curPos = mpt::IO::TellWrite(f);
 	if(curPos < sampleHeaderOffset)
 	{
 		MPT_ASSERT(sampleHeaderOffset - curPos < 16);
-		fwrite(filler, sampleHeaderOffset - curPos, 1, f);
+		mpt::IO::WriteRaw(f, filler, static_cast<std::size_t>(sampleHeaderOffset - curPos));
 	}
 
 	// Don't write sample headers for now, we are lacking the sample offset data.
-	fseek(f, firstPatternOffset, SEEK_SET);
+	mpt::IO::SeekAbsolute(f, firstPatternOffset);
 
 	// Write patterns
+	enum class S3MChannelType : uint8 { kUnused = 0, kPCM = 1, kAdlib = 2 };
+	FlagSet<S3MChannelType> channelType[32] = { S3MChannelType::kUnused };
+	bool globalCmdOnMutedChn = false;
 	for(PATTERNINDEX pat = 0; pat < writePatterns; pat++)
 	{
 		if(Patterns.IsPatternEmpty(pat))
@@ -759,10 +756,10 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 			continue;
 		}
 
-		long patOffset = ftell(f);
+		mpt::IO::Offset patOffset = mpt::IO::TellWrite(f);
 		if(patOffset > 0xFFFF0)
 		{
-			AddToLog(LogError, mpt::format(MPT_USTRING("Too much pattern data! Writing patterns failed starting from pattern %1."))(pat));
+			AddToLog(LogError, mpt::format(U_("Too much pattern data! Writing patterns failed starting from pattern %1."))(pat));
 			break;
 		}
 		MPT_ASSERT((patOffset % 16) == 0);
@@ -786,7 +783,7 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 
 				const PatternRow rowBase = Patterns[pat].GetRow(row);
 
-				CHANNELINDEX writeChannels = MIN(32, GetNumChannels());
+				CHANNELINDEX writeChannels = std::min(CHANNELINDEX(32), GetNumChannels());
 				for(CHANNELINDEX chn = 0; chn < writeChannels; chn++)
 				{
 					const ModCommand &m = rowBase[chn];
@@ -819,6 +816,15 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 							note -= (12 + NOTE_MIN);
 							note = (note % 12) + ((note / 12) << 4);
 						}
+
+						if(m.instr > 0 && m.instr <= GetNumSamples())
+						{
+							const ModSample &smp = Samples[m.instr];
+							if(smp.uFlags[CHN_ADLIB])
+								channelType[chn].set(S3MChannelType::kAdlib);
+							else if(smp.HasSampleData())
+								channelType[chn].set(S3MChannelType::kPCM);
+						}
 					}
 
 					if(command == CMD_VOLUME)
@@ -843,6 +849,10 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 						if(command)
 						{
 							info |= s3mEffectPresent;
+							if(saveMuteStatus && ChnSettings[chn].dwFlags[CHN_MUTE] && m.IsGlobalCommand())
+							{
+								globalCmdOnMutedChn = true;
+							}
 						}
 					}
 
@@ -884,10 +894,14 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 			buffer.insert(buffer.end(), 16 - (buffer.size() % 16u), 0);
 		}
 
-		fwrite(buffer.data(), buffer.size(), 1, f);
+		mpt::IO::Write(f, buffer);
+	}
+	if(globalCmdOnMutedChn)
+	{
+		//AddToLog(LogWarning, U_("Global commands on muted channels are interpreted by only some S3M players."));
 	}
 
-	size_t sampleDataOffset = ftell(f);
+	mpt::IO::Offset sampleDataOffset = mpt::IO::TellWrite(f);
 
 	// Write samples
 	std::vector<S3MSampleHeader> sampleHeader(writeSamples);
@@ -898,11 +912,11 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 		if(GetNumInstruments() != 0 && Instruments[smp] != nullptr)
 		{
 			// Find some valid sample associated with this instrument.
-			for(size_t i = 0; i < CountOf(Instruments[smp]->Keyboard); i++)
+			for(SAMPLEINDEX keySmp : Instruments[smp]->Keyboard)
 			{
-				if(Instruments[smp]->Keyboard[i] > 0 && Instruments[smp]->Keyboard[i] <= GetNumSamples())
+				if(keySmp > 0 && keySmp <= GetNumSamples())
 				{
-					realSmp = Instruments[smp]->Keyboard[i];
+					realSmp = keySmp;
 					break;
 				}
 			}
@@ -913,16 +927,15 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 			continue;
 		}
 
-		SmpLength smpLength = sampleHeader[smp].ConvertToS3M(Samples[realSmp]);
-
+		const SmpLength smpLength = sampleHeader[smp].ConvertToS3M(Samples[realSmp]);
 		mpt::String::Write<mpt::String::nullTerminated>(sampleHeader[smp].name, m_szNames[realSmp]);
 
-		if(Samples[realSmp].pSample)
+		if(smpLength != 0)
 		{
 			// Write sample data
 			if(sampleDataOffset > 0xFFFFFF0)
 			{
-				AddToLog(LogError, mpt::format(MPT_USTRING("Too much sample data! Writing samples failed starting from sample %1."))(realSmp));
+				AddToLog(LogError, mpt::format(U_("Too much sample data! Writing samples failed starting from sample %1."))(realSmp));
 				break;
 			}
 
@@ -935,27 +948,72 @@ bool CSoundFile::SaveS3M(const mpt::PathString &filename) const
 			if((writtenLength % 16u) != 0)
 			{
 				size_t fillSize = 16 - (writtenLength % 16u);
-				fwrite(filler, fillSize, 1, f);
+				mpt::IO::WriteRaw(f, filler, fillSize);
 				sampleDataOffset += fillSize;
 			}
 		}
 	}
 
+	// Channel Table
+	uint8 sampleCh = 0, adlibCh = 0;
+	for(CHANNELINDEX chn = 0; chn < 32; chn++)
+	{
+		if(chn < GetNumChannels())
+		{
+			if(channelType[chn][S3MChannelType::kPCM] && channelType[chn][S3MChannelType::kAdlib])
+			{
+				AddToLog(LogWarning, mpt::format(U_("Pattern channel %1 constains both samples and OPL instruments, which is not supported by Scream Tracker 3."))(chn + 1));
+			}
+			// ST3 only supports 16 PCM channels, so if channels 17-32 are used,
+			// they must be mapped to the same "internal channels" as channels 1-16.
+			// The channel indices determine in which order channels are evaluated in ST3.
+			// First, the "left" channels (0...7) are evaluated, then the "right" channels (8...15).
+			// Previously, an alternating LRLR scheme was written, which would lead to a different
+			// effect processing in ST3 than LLL...RRR, but since OpenMPT doesn't care about the
+			// channel order and always parses them left to right as they appear in the pattern,
+			// we should just write in the LLL...RRR manner.
+			uint8 ch = sampleCh % 16u; // If there are neither PCM nor AdLib instruments on this channel, just fall back a regular sample-based channel for maximum compatibility.
+			if(channelType[chn][S3MChannelType::kPCM])
+				ch = (sampleCh++) % 16u;
+			else if(channelType[chn][S3MChannelType::kAdlib])
+				ch = 16 + ((adlibCh++) % 9u);
+
+			if(saveMuteStatus && ChnSettings[chn].dwFlags[CHN_MUTE])
+			{
+				ch |= 0x80;
+			}
+			fileHeader.channels[chn] = ch;
+		} else
+		{
+			fileHeader.channels[chn] = 0xFF;
+		}
+	}
+	if(sampleCh > 16)
+	{
+		AddToLog(LogWarning, mpt::format(U_("This module has more than 16 (%1) sample channels, which is not supported by Scream Tracker 3."))(sampleCh));
+	}
+	if(adlibCh > 9)
+	{
+		AddToLog(LogWarning, mpt::format(U_("This module has more than 9 (%1) OPL channels, which is not supported by Scream Tracker 3."))(adlibCh));
+	}
+
+	mpt::IO::SeekAbsolute(f, 0);
+	mpt::IO::Write(f, fileHeader);
+
 	// Now we know where the patterns are.
 	if(writePatterns != 0)
 	{
-		fseek(f, patternPointerOffset, SEEK_SET);
-		fwrite(patternOffsets.data(), 2, writePatterns, f);
+		mpt::IO::SeekAbsolute(f, patternPointerOffset);
+		mpt::IO::Write(f, patternOffsets);
 	}
 
 	// And we can finally write the sample headers.
 	if(writeSamples != 0)
 	{
-		fseek(f, sampleHeaderOffset, SEEK_SET);
-		fwrite(sampleHeader.data(), sizeof(sampleHeader[0]), writeSamples, f);
+		mpt::IO::SeekAbsolute(f, sampleHeaderOffset);
+		mpt::IO::Write(f, sampleHeader);
 	}
 
-	fclose(f);
 	return true;
 }
 

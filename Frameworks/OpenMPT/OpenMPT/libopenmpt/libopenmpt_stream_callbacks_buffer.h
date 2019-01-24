@@ -27,6 +27,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*! \addtogroup libopenmpt_c
+ * @{
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -162,6 +166,17 @@ static void openmpt_stream_buffer_init( openmpt_stream_buffer * buffer, const vo
 
 #define openmpt_stream_buffer_overflowed( buffer_ ) ( (buffer_)->overflow )
 
+/*! \brief Provide openmpt_stream_callbacks for in-memoy buffers
+ *
+ * Fills openmpt_stream_callbacks suitable for passing an in-memory buffer as a stream parameter to functions doing file input/output.
+ *
+ * \remarks The stream argument must be passed as `(void*)(openmpt_stream_buffer*)stream_buffer`.
+ * \sa \ref libopenmpt_c_fileio
+ * \sa openmpt_stream_callbacks
+ * \sa openmpt_could_open_probability2
+ * \sa openmpt_probe_file_header_from_stream
+ * \sa openmpt_module_create2
+ */
 static openmpt_stream_callbacks openmpt_stream_get_buffer_callbacks(void) {
 	openmpt_stream_callbacks retval;
 	memset( &retval, 0, sizeof( openmpt_stream_callbacks ) );
@@ -174,6 +189,10 @@ static openmpt_stream_callbacks openmpt_stream_get_buffer_callbacks(void) {
 #ifdef __cplusplus
 }
 #endif
+
+/*!
+ * @}
+ */
 
 #endif /* LIBOPENMPT_STREAM_CALLBACKS_BUFFER_H */
 

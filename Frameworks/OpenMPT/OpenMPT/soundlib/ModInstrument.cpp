@@ -110,7 +110,7 @@ int32 InstrumentEnvelope::GetValueFromPosition(int position, int32 rangeOut, int
 		}
 	}
 
-	Limit(value, 0, ENV_PRECISION);
+	Limit(value, int32(0), ENV_PRECISION);
 	return (value * rangeOut + ENV_PRECISION / 2) / ENV_PRECISION;
 }
 
@@ -318,7 +318,7 @@ void ModInstrument::Sanitize(MODTYPE modType)
 	MPT_UNREFERENCED_PARAMETER(modType);
 	const uint8 range = ENVELOPE_MAX;
 #else
-	const uint8 range = modType == MOD_TYPE_AMS2 ? uint8_max : ENVELOPE_MAX;
+	const uint8 range = modType == MOD_TYPE_AMS ? uint8_max : ENVELOPE_MAX;
 #endif
 	VolEnv.Sanitize();
 	PanEnv.Sanitize();

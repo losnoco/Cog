@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #ifdef ENABLE_TESTS
 #ifdef MODPLUG_TRACKER

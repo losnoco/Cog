@@ -1,11 +1,4 @@
-minimp3 version as of 2017-04-25 from
-http://keyj.emphy.de/files/projects/minimp3.tar.gz .
+minimp3 library from https://github.com/lieff/minimp3
+commit e9df0760e94044caded36a55d70ab4152134adc5 (2018-12-23)
 The following changes have been made:
-- mp3_create() declaration has been fixed.
-- GET_DATA() has been rewritten to avoid unaligned access warnings.
-- Signed/unsigned comparison warnings have been fixed.
-- Detection of stdint types has been fixed to work on *BSD.
-- Modifications have been marked with // OpenMPT
-- Obviously, unnecessary folders and files have been removed.
-- For building, premake is used to generate Visual Studio project files.
-  See ../build/premake/ for details.
+ *  minimp3.c has been added

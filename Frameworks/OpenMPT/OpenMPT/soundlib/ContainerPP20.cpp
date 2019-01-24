@@ -21,9 +21,6 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
-//#define MMCMP_LOG
-
-
 struct PPBITBUFFER
 {
 	uint32 bitcount;

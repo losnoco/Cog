@@ -270,6 +270,8 @@ static constexpr int32 WinSincIntegral[2][2048] =
 };
 
 
+// we do not initialize blepState here
+// cppcheck-suppress uninitMemberVar
 State::State(uint32 sampleRate)
 {
 	double amigaClocksPerSample = static_cast<double>(PAULA_HZ) / sampleRate;

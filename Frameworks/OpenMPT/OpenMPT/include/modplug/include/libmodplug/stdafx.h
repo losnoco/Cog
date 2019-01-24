@@ -6,8 +6,8 @@
  *          Adam Goode       <adam@evdebs.org> (endian and char fixes for PPC)
  */
 
-#ifndef _STDAFX_H_
-#define _STDAFX_H_
+#ifndef MODPLUG_STDAFX_H
+#define MODPLUG_STDAFX_H
 
 /* Autoconf detection of stdint/inttypes */
 #if defined(HAVE_CONFIG_H) && !defined(CONFIG_H_INCLUDED)
@@ -47,6 +47,10 @@ inline void ProcessPlugins(int n) {}
 #define strcasecmp(a,b) strcmp(a,b)
 #define strnicmp(a,b,c)		strncasecmp(a,b,c)
 #define HAVE_SINF 1
+
+#ifndef isblank
+#define isblank(c) ((c) == ' ' || (c) == '\t')
+#endif
 
 #else
 
@@ -120,6 +124,21 @@ inline void ProcessPlugins(int /* n */ ) {}
 #endif
 
 #endif // _WIN32
+
+#if defined(_WIN32) || defined(__CYGWIN__)
+# if defined(MODPLUG_BUILD) && defined(DLL_EXPORT)	/* building libmodplug as a dll for windows */
+#   define MODPLUG_EXPORT __declspec(dllexport)
+# elif defined(MODPLUG_BUILD) || defined(MODPLUG_STATIC)	/* building or using static libmodplug for windows */
+#   define MODPLUG_EXPORT
+# else
+#   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
+# endif
+/* FIXME: USE VISIBILITY ATTRIBUTES HERE */
+#elif defined(MODPLUG_BUILD)
+#define MODPLUG_EXPORT
+#else
+#define MODPLUG_EXPORT
+#endif
 
 #endif
 

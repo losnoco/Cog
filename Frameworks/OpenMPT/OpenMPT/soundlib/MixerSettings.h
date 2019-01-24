@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -17,7 +19,7 @@ struct MixerSettings
 {
 
 	int32 m_nStereoSeparation;
-	static const int32 StereoSeparationScale = 128;
+	enum : int32 { StereoSeparationScale = 128 };
 	
 	uint32 m_nMaxMixChannels;
 	uint32 DSPMask;
@@ -25,6 +27,7 @@ struct MixerSettings
 	uint32 gdwMixingFreq;
 	uint32 gnChannels;
 	uint32 m_nPreAmp;
+	std::size_t NumInputChannels;
 
 	int32 VolumeRampUpMicroseconds;
 	int32 VolumeRampDownMicroseconds;
@@ -41,7 +44,7 @@ struct MixerSettings
 	
 	bool IsValid() const
 	{
-		return (gdwMixingFreq > 0) && (gnChannels == 1 || gnChannels == 2 || gnChannels == 4);
+		return (gdwMixingFreq > 0) && (gnChannels == 1 || gnChannels == 2 || gnChannels == 4) && (NumInputChannels == 0 || NumInputChannels == 1 || NumInputChannels == 2 || NumInputChannels == 4);
 	}
 	
 	MixerSettings();

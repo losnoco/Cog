@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 OPENMPT_NAMESPACE_BEGIN
 class CSoundFile;
 OPENMPT_NAMESPACE_END
@@ -102,11 +104,11 @@ class CDLSBank
 protected:
 	SOUNDBANKINFO m_BankInfo;
 	mpt::PathString m_szFileName;
+	size_t m_dwWavePoolOffset;
 	uint32 m_nType;
-	uint32 m_dwWavePoolOffset;
 	// DLS Information
 	uint32 m_nMaxWaveLink;
-	std::vector<uint32> m_WaveForms;
+	std::vector<size_t> m_WaveForms;
 	std::vector<DLSINSTRUMENT> m_Instruments;
 	std::vector<DLSSAMPLEEX> m_SamplesEx;
 	std::vector<DLSENVELOPE> m_Envelopes;
@@ -127,12 +129,13 @@ public:
 public:
 	uint32 GetNumInstruments() const { return static_cast<uint32>(m_Instruments.size()); }
 	uint32 GetNumSamples() const { return static_cast<uint32>(m_WaveForms.size()); }
-	DLSINSTRUMENT *GetInstrument(uint32 iIns) { return iIns < m_Instruments.size() ? &m_Instruments[iIns] : nullptr; }
-	DLSINSTRUMENT *FindInstrument(bool bDrum, uint32 nBank=0xFF, uint32 dwProgram=0xFF, uint32 dwKey=0xFF, uint32 *pInsNo=nullptr);
-	uint32 GetRegionFromKey(uint32 nIns, uint32 nKey);
-	bool ExtractWaveForm(uint32 nIns, uint32 nRgn, std::vector<uint8> &waveData, uint32 &length);
-	bool ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nIns, uint32 nRgn, int transpose=0);
-	bool ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, uint32 nIns, uint32 nDrumRgn);
+	const DLSINSTRUMENT *GetInstrument(uint32 iIns) const { return iIns < m_Instruments.size() ? &m_Instruments[iIns] : nullptr; }
+	const DLSINSTRUMENT *FindInstrument(bool isDrum, uint32 bank = 0xFF, uint32 program = 0xFF, uint32 key = 0xFF, uint32 *pInsNo = nullptr) const;
+	bool FindAndExtract(CSoundFile &sndFile, const INSTRUMENTINDEX ins, const bool isDrum) const;
+	uint32 GetRegionFromKey(uint32 nIns, uint32 nKey) const;
+	bool ExtractWaveForm(uint32 nIns, uint32 nRgn, std::vector<uint8> &waveData, uint32 &length) const;
+	bool ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nIns, uint32 nRgn, int transpose = 0) const;
+	bool ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, uint32 nIns, uint32 nDrumRgn) const;
 	const char *GetRegionName(uint32 nIns, uint32 nRgn) const;
 	uint8 GetPanning(uint32 ins, uint32 region) const;
 

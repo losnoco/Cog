@@ -25,10 +25,7 @@
 
 #elif defined(__clang__) && defined(_MSC_VER) && defined(__c2__)
 
-#define MPT_COMPILER_MSVCCLANGC2                     1
-#define MPT_COMPILER_MSVCCLANGC2_VERSION             (__c2_version__)
-#define MPT_MSVCCLANGC2_AT_LEAST(major,minor,build)  (MPT_COMPILER_MSVCCLANGC2_VERSION >= MPT_COMPILER_MAKE_VERSION3_BUILD((major),(minor),(build)))
-#define MPT_MSVCCLANGC2_BEFORE(major,minor,build)    (MPT_COMPILER_MSVCCLANGC2_VERSION <  MPT_COMPILER_MAKE_VERSION3_BUILD((major),(minor),(build)))
+#error "Clang/C2 is not supported. Please use Clang/LLVM for Windows instead."
 
 #elif defined(__clang__)
 
@@ -37,11 +34,11 @@
 #define MPT_CLANG_AT_LEAST(major,minor,patch)        (MPT_COMPILER_CLANG_VERSION >= MPT_COMPILER_MAKE_VERSION3((major),(minor),(patch)))
 #define MPT_CLANG_BEFORE(major,minor,patch)          (MPT_COMPILER_CLANG_VERSION <  MPT_COMPILER_MAKE_VERSION3((major),(minor),(patch)))
 
-#if MPT_CLANG_BEFORE(3,4,0)
-#error "clang version 3.4 required"
+#if MPT_CLANG_BEFORE(3,6,0)
+#error "clang version 3.6 required"
 #endif
 
-#if defined(__clang_analyzer__) 
+#if defined(__clang_analyzer__)
 #ifndef MPT_BUILD_ANALYZED
 #define MPT_BUILD_ANALYZED
 #endif
@@ -61,7 +58,9 @@
 #elif defined(_MSC_VER)
 
 #define MPT_COMPILER_MSVC                            1
-#if (_MSC_VER >= 1915)
+#if (_MSC_VER >= 1916)
+#define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2017,9)
+#elif (_MSC_VER >= 1915)
 #define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2017,8)
 #elif (_MSC_VER >= 1914)
 #define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2017,7)
@@ -73,6 +72,8 @@
 #define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2017,3)
 #elif (_MSC_VER >= 1910)
 #define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2017,0)
+#elif (_MSC_VER >= 1900) && defined(_MSVC_LANG)
+#define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2015,3)
 #elif (_MSC_VER >= 1900)
 #define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2015,0)
 #elif (_MSC_VER >= 1800)
@@ -110,11 +111,6 @@
 #ifndef MPT_COMPILER_GENERIC
 #define MPT_COMPILER_GENERIC                  0
 #endif
-#ifndef MPT_COMPILER_MSVCCLANGC2
-#define MPT_COMPILER_MSVCCLANGC2                    0
-#define MPT_MSVCCLANGC2_AT_LEAST(major,minor,build) 0
-#define MPT_MSVCCLANGC2_BEFORE(major,minor,build)   0
-#endif
 #ifndef MPT_COMPILER_CLANG
 #define MPT_COMPILER_CLANG                    0
 #define MPT_CLANG_AT_LEAST(major,minor,patch) 0
@@ -145,8 +141,10 @@
 
 #elif MPT_COMPILER_MSVC
 
-#if MPT_MSVC_AT_LEAST(2017,0)
-#if (_MSVC_LANG >= 201402)
+#if MPT_MSVC_AT_LEAST(2015,3)
+#if (_MSVC_LANG >= 201703)
+#define MPT_CXX 17
+#elif (_MSVC_LANG >= 201402)
 #define MPT_CXX 14
 #else
 #define MPT_CXX 11
@@ -171,58 +169,6 @@
 
 
 
-#if MPT_COMPILER_MSVC
-	#define MPT_PLATFORM_LITTLE_ENDIAN
-#elif MPT_COMPILER_GCC
-	#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-		#define MPT_PLATFORM_BIG_ENDIAN
-	#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-		#define MPT_PLATFORM_LITTLE_ENDIAN
-	#endif
-#elif MPT_COMPILER_CLANG || MPT_COMPILER_MSVCCLANGC2
-	#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-		#define MPT_PLATFORM_BIG_ENDIAN
-	#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-		#define MPT_PLATFORM_LITTLE_ENDIAN
-	#endif
-#endif
-
-// fallback:
-#if !defined(MPT_PLATFORM_BIG_ENDIAN) && !defined(MPT_PLATFORM_LITTLE_ENDIAN)
-	// taken from boost/detail/endian.hpp
-	#if (defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)) \
-		|| (defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)) \
-		|| (defined(_STLP_BIG_ENDIAN) && !defined(_STLP_LITTLE_ENDIAN))
-			#define MPT_PLATFORM_BIG_ENDIAN
-	#elif (defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN)) \
-		|| (defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) \
-		|| (defined(_STLP_LITTLE_ENDIAN) && !defined(_STLP_BIG_ENDIAN))
-			#define MPT_PLATFORM_LITTLE_ENDIAN
-	#elif defined(__sparc) || defined(__sparc__) \
-		|| defined(_POWER) || defined(__powerpc__) \
-		|| defined(__ppc__) || defined(__hpux) || defined(__hppa) \
-		|| defined(_MIPSEB) || defined(_POWER) \
-		|| defined(__s390__)
-			#define MPT_PLATFORM_BIG_ENDIAN
-	#elif defined(__i386__) || defined(__alpha__) \
-		|| defined(__ia64) || defined(__ia64__) \
-		|| defined(_M_IX86) || defined(_M_IA64) \
-		|| defined(_M_ALPHA) || defined(__amd64) \
-		|| defined(__amd64__) || defined(_M_AMD64) \
-		|| defined(__x86_64) || defined(__x86_64__) \
-		|| defined(_M_X64) || defined(__bfin__)
-			#define MPT_PLATFORM_LITTLE_ENDIAN
-	#endif
-#endif
-
-#if defined(MPT_PLATFORM_BIG_ENDIAN) || defined(MPT_PLATFORM_LITTLE_ENDIAN)
-#define MPT_PLATFORM_ENDIAN_KNOWN 1
-#else
-#define MPT_PLATFORM_ENDIAN_KNOWN 0
-#endif
-
-
-
 // This should really be based on __STDCPP_THREADS__, but that is not defined by
 // GCC or clang. Stupid.
 // Just assume multithreaded and disable for platforms we know are
@@ -232,14 +178,6 @@
 
 
 // specific C++ features
-
-
-
-// C++11 constexpr
-
-#if MPT_COMPILER_MSVC
-#define MPT_COMPILER_QUIRK_CONSTEXPR_NO_STRING_LITERALS
-#endif
 
 
 
@@ -254,37 +192,19 @@
 
 
 
-#if MPT_COMPILER_GCC || MPT_COMPILER_MSVC
-// Compiler supports type-punning through unions. This is not stricly standard-conforming.
-// For GCC, this is documented, for MSVC this is apparently not documented, but we assume it.
-#define MPT_COMPILER_UNION_TYPE_ALIASES 1
-#endif
-
-#ifndef MPT_COMPILER_UNION_TYPE_ALIASES
-// Compiler does not support type-punning through unions. std::memcpy is used instead.
-// This is the safe fallback and strictly standard-conforming.
-// Another standard-compliant alternative would be casting pointers to a character type pointer.
-// This results in rather unreadable code and,
-// in most cases, compilers generate better code by just inlining the memcpy anyway.
-// (see <http://blog.regehr.org/archives/959>).
-#define MPT_COMPILER_UNION_TYPE_ALIASES 0
-#endif
-
-
-
 // The order of the checks matters!
-#if defined(__EMSCRIPTEN__)
+#if defined(__DJGPP__)
+	#define MPT_OS_DJGPP 1
+#elif defined(__EMSCRIPTEN__)
 	#define MPT_OS_EMSCRIPTEN 1
 	#if defined(__EMSCRIPTEN_major__) && defined(__EMSCRIPTEN_minor__)
 		#if (__EMSCRIPTEN_major__ > 1)
-			#define MPT_OS_EMSCRIPTEN_ANCIENT 0
-		#elif (__EMSCRIPTEN_major__ == 1) && (__EMSCRIPTEN_minor__ >= 36)
-			#define MPT_OS_EMSCRIPTEN_ANCIENT 0
+			// ok 
+		#elif (__EMSCRIPTEN_major__ == 1) && (__EMSCRIPTEN_minor__ >= 38)
+			// ok 		
 		#else
-			#define MPT_OS_EMSCRIPTEN_ANCIENT 1
+			#error "Emscripten >= 1.38 is required."
 		#endif
-	#else
-		#define MPT_OS_EMSCRIPTEN_ANCIENT 1
 	#endif
 #elif defined(_WIN32)
 	#define MPT_OS_WINDOWS 1
@@ -324,6 +244,9 @@
 	#define MPT_OS_UNKNOWN 1
 #endif
 
+#ifndef MPT_OS_DJGPP
+#define MPT_OS_DJGPP 0
+#endif
 #ifndef MPT_OS_EMSCRIPTEN
 #define MPT_OS_EMSCRIPTEN 0
 #endif
@@ -367,7 +290,18 @@
 
 
 
-#if MPT_OS_EMSCRIPTEN
+#if (MPT_OS_DJGPP || MPT_OS_EMSCRIPTEN)
 #undef MPT_PLATFORM_MULTITHREADED
 #define MPT_PLATFORM_MULTITHREADED 0
 #endif
+
+#if MPT_OS_DJGPP
+#define MPT_COMPILER_QUIRK_NO_WCHAR
+#endif
+
+#if MPT_MSVC_BEFORE(2017,8)
+// fixed in VS2017 15.8
+// see <https://blogs.msdn.microsoft.com/vcblog/2018/09/18/stl-features-and-fixes-in-vs-2017-15-8/>
+#define MPT_COMPILER_QUIRK_MSVC_STRINGSTREAM
+#endif
+

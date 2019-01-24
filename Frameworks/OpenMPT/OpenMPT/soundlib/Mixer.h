@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 OPENMPT_NAMESPACE_BEGIN
 
 #define MPT_INTMIXER
@@ -22,6 +24,7 @@ typedef float mixsample_t;
 #endif
 
 #define MIXBUFFERSIZE 512
+#define NUMMIXINPUTBUFFERS 4
 
 #define VOLUMERAMPPRECISION 12	// Fractional bits in volume ramp variables
 

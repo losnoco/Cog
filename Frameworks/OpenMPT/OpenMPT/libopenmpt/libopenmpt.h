@@ -167,8 +167,8 @@
 /*! \defgroup libopenmpt_c libopenmpt C */
 
 /*! \addtogroup libopenmpt_c
-  @{
-*/
+ * @{
+ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -293,6 +293,9 @@ typedef int64_t (*openmpt_stream_tell_func)( void * stream );
 /*! \brief Stream callbacks
  *
  * Stream callbacks used by libopenmpt for stream operations.
+ * \sa openmpt_stream_get_file_callbacks
+ * \sa openmpt_stream_get_fd_callbacks
+ * \sa openmpt_stream_get_buffer_callbacks
  */
 typedef struct openmpt_stream_callbacks {
 
@@ -1120,7 +1123,9 @@ LIBOPENMPT_API const char * openmpt_module_get_metadata_keys( openmpt_module * m
  * \param key Metadata item key to query. Use openmpt_module_get_metadata_keys to check for available keys.
  *          Possible keys are:
  *          - type: Module format extension (e.g. it)
- *          - type_long: Tracker name associated with the module format (e.g. Impulse Tracker)
+ *          - type_long: Format name associated with the module format (e.g. Impulse Tracker)
+ *          - originaltype: Module format extension (e.g. it) of the original module in case the actual type is a converted format (e.g. mo3 or gdm)
+ *          - originaltype_long: Format name associated with the module format (e.g. Impulse Tracker) of the original module in case the actual type is a converted format (e.g. mo3 or gdm)
  *          - container: Container format the module file is embedded in, if any (e.g. umx)
  *          - container_long: Full container name if the module is embedded in a container (e.g. Unreal Music)
  *          - tracker: Tracker that was (most likely) used to save the module file, if known
@@ -1397,9 +1402,14 @@ LIBOPENMPT_API const char * openmpt_module_highlight_pattern_row_channel( openmp
  *          - load.skip_subsongs_init: Set to "1" to avoid pre-initializing sub-songs. Skipping results in faster module loading but slower seeking.
  *          - seek.sync_samples: Set to "1" to sync sample playback when using openmpt_module_set_position_seconds or openmpt_module_set_position_order_row.
  *          - subsong: The current subsong. Setting it has identical semantics as openmpt_module_select_subsong(), getting it returns the currently selected subsong.
+ *          - play.at_end: Chooses the behaviour when the end of song is reached:
+ *                         - "fadeout": Fades the module out for a short while. Subsequent reads after the fadeout will return 0 rendered frames.
+ *                         - "continue": Returns 0 rendered frames when the song end is reached. Subsequent reads will continue playing from the song start or loop start.
+ *                         - "stop": Returns 0 rendered frames when the song end is reached. Subsequent reads will return 0 rendered frames.
  *          - play.tempo_factor: Set a floating point tempo factor. "1.0" is the default tempo.
  *          - play.pitch_factor: Set a floating point pitch factor. "1.0" is the default pitch.
- *          - render.resampler.emulate_amiga: Set to "1" to enable the Amiga resampler for Amiga modules. This emulates the sound characteristics of the Paula chip and overrides the selected interpolation filter. Non-Amiga module formats are not affected by this setting. 
+ *          - render.resampler.emulate_amiga: Set to "1" to enable the Amiga resampler for Amiga modules. This emulates the sound characteristics of the Paula chip and overrides the selected interpolation filter. Non-Amiga module formats are not affected by this setting.
+ *          - render.opl.volume_factor: Set volume factor applied to synthesized OPL sounds, relative to the default OPL volume.
  *          - dither: Set the dither algorithm that is used for the 16 bit versions of openmpt_module_read. Supported values are:
  *                    - 0: No dithering.
  *                    - 1: Default mode. Chosen by OpenMPT code, might change.
@@ -1432,8 +1442,8 @@ LIBOPENMPT_API int openmpt_module_ctl_set( openmpt_module * mod, const char * ct
 #endif
 
 /*!
-  @}
-*/
+ * @}
+ */
 
 #endif /* LIBOPENMPT_H */
 

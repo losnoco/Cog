@@ -117,7 +117,7 @@ private:
 		}
 	}
 public:
-	void write( const std::vector<float*> buffers, std::size_t frames ) {
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		sampleBufFloat.clear();
 		for ( std::size_t frame = 0; frame < frames; ++frame ) {
 			for ( std::size_t channel = 0; channel < channels; ++channel ) {
@@ -126,7 +126,7 @@ public:
 		}
 		write_frames( sampleBufFloat.data(), frames );
 	}
-	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) {
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		sampleBufInt.clear();
 		for ( std::size_t frame = 0; frame < frames; ++frame ) {
 			for ( std::size_t channel = 0; channel < channels; ++channel ) {
@@ -135,10 +135,10 @@ public:
 		}
 		write_frames( sampleBufInt.data(), frames );
 	}
-	bool unpause() {
+	bool unpause() override {
 		return true;
 	}
-	bool pause() {
+	bool pause() override {
 		int error = 0;
 		error = 0;
 		if ( pa_simple_drain( stream, &error ) < 0 ) {
@@ -146,7 +146,7 @@ public:
 		}
 		return true;
 	}
-	bool sleep( int ms ) {
+	bool sleep( int ms ) override {
 		pa_msleep( ms );
 		return true;
 	}

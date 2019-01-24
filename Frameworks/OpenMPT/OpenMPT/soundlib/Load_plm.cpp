@@ -148,7 +148,11 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 	InitializeGlobals(MOD_TYPE_PLM);
 	InitializeChannels();
 	m_SongFlags = SONG_ITOLDEFFECTS;
-	m_madeWithTracker = MPT_USTRING("Disorder Tracker 2");
+
+	m_modFormat.formatName = U_("Disorder Tracker 2");
+	m_modFormat.type = U_("plm");
+	m_modFormat.charset = mpt::CharsetCP437;
+
 	// Some PLMs use ASCIIZ, some space-padding strings...weird. Oh, and the file browser stops at 0 bytes in the name, the main GUI doesn't.
 	mpt::String::Read<mpt::String::spacePadded>(m_songName, fileHeader.songName);
 	m_nChannels = fileHeader.numChannels + 1;	// Additional channel for writing pattern breaks
@@ -263,7 +267,7 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 		file.ReadStruct(patHeader);
 		if(!patHeader.numRows) continue;
 
-		STATIC_ASSERT(ORDERINDEX_MAX >= (MPT_MAX_UNSIGNED_VALUE(ord.x) + 255) / rowsPerPat);
+		STATIC_ASSERT(ORDERINDEX_MAX >= ((mpt::limits<decltype(ord.x)>::max)() + 255) / rowsPerPat);
 		ORDERINDEX curOrd = static_cast<ORDERINDEX>(ord.x / rowsPerPat);
 		ROWINDEX curRow = static_cast<ROWINDEX>(ord.x % rowsPerPat);
 		const CHANNELINDEX numChannels = std::min<uint8>(patHeader.numChannels, fileHeader.numChannels - ord.y);

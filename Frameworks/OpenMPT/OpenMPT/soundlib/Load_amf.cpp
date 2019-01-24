@@ -146,7 +146,10 @@ bool CSoundFile::ReadAMF_Asylum(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		Order().SetRestartPos(fileHeader.restartPos);
 	}
-	m_songName.clear();
+
+	m_modFormat.formatName = U_("ASYLUM Music Format");
+	m_modFormat.type = U_("amf");
+	m_modFormat.charset = mpt::CharsetCP437;
 
 	uint8 orders[256];
 	file.ReadArray(orders);
@@ -435,6 +438,10 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 
 	InitializeGlobals(MOD_TYPE_AMF);
 	InitializeChannels();
+
+	m_modFormat.formatName = mpt::format(U_("DSMI v%1"))(fileHeader.version);
+	m_modFormat.type = U_("amf");
+	m_modFormat.charset = mpt::CharsetCP437;
 
 	m_nChannels = fileHeader.numChannels;
 	m_nSamples = fileHeader.numSamples;

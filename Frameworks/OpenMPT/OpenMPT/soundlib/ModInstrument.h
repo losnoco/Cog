@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "tuningbase.h"
 #include "Snd_defs.h"
 #include "../common/FlagSet.h"
@@ -24,10 +26,10 @@ struct EnvelopeNode
 	typedef uint16 tick_t;
 	typedef uint8 value_t;
 
-	tick_t tick;	// Envelope node position (x axis)
-	value_t value;	// Envelope node value (y axis)
+	tick_t tick = 0;   // Envelope node position (x axis)
+	value_t value = 0; // Envelope node value (y axis)
 
-	EnvelopeNode() : tick(0), value(0) { }
+	EnvelopeNode() { }
 	EnvelopeNode(tick_t tick, value_t value) : tick(tick), value(value) { }
 
 	bool operator== (const EnvelopeNode &other) const { return tick == other.tick && value == other.value; }
@@ -36,19 +38,12 @@ struct EnvelopeNode
 // Instrument Envelopes
 struct InstrumentEnvelope : public std::vector<EnvelopeNode>
 {
-	FlagSet<EnvelopeFlags> dwFlags;	// Envelope flags
-	uint8 nLoopStart;				// Loop start node
-	uint8 nLoopEnd;					// Loop end node
-	uint8 nSustainStart;			// Sustain start node
-	uint8 nSustainEnd;				// Sustain end node
-	uint8 nReleaseNode;				// Release node
-
-	InstrumentEnvelope()
-	{
-		nLoopStart = nLoopEnd = 0;
-		nSustainStart = nSustainEnd = 0;
-		nReleaseNode = ENV_RELEASE_NODE_UNSET;
-	}
+	FlagSet<EnvelopeFlags> dwFlags; // Envelope flags
+	uint8 nLoopStart = 0;           // Loop start node
+	uint8 nLoopEnd = 0;             // Loop end node
+	uint8 nSustainStart = 0;        // Sustain start node
+	uint8 nSustainEnd = 0;          // Sustain end node
+	uint8 nReleaseNode = ENV_RELEASE_NODE_UNSET; // Release node
 
 	// Convert envelope data between various formats.
 	void Convert(MODTYPE fromType, MODTYPE toType);
@@ -69,7 +64,6 @@ struct InstrumentEnvelope : public std::vector<EnvelopeNode>
 // Instrument Struct
 struct ModInstrument
 {
-	FlagSet<InstrumentFlags> dwFlags;	// Instrument flags
 	uint32 nFadeOut;					// Instrument fadeout speed
 	uint32 nGlobalVol;					// Global volume (0...64, all sample volumes are multiplied with this - TODO: This is 0...128 in Impulse Tracker)
 	uint32 nPan;						// Default pan (0...256), if the appropriate flag is set. Sample panning overrides instrument panning.
@@ -82,9 +76,10 @@ struct ModInstrument
 	uint8 nMidiDrumKey;					// Drum set note mapping (currently only used by the .MID loader)
 	int8 midiPWD;						// MIDI Pitch Wheel Depth in semitones
 
-	uint8 nNNA;							// New note action (NNA_* constants)
-	uint8 nDCT;							// Duplicate check type	(i.e. which condition will trigger the duplicate note action, DCT_* constants)
-	uint8 nDNA;							// Duplicate note action (DNA_* constants)
+	FlagSet<InstrumentFlags> dwFlags;	// Instrument flags
+	NewNoteAction nNNA;					// New note action
+	DuplicateCheckType nDCT;			// Duplicate check type (i.e. which condition will trigger the duplicate note action)
+	DuplicateNoteAction nDNA;			// Duplicate note action
 	uint8 nPanSwing;					// Random panning factor (0...64)
 	uint8 nVolSwing;					// Random volume factor (0...100)
 	uint8 nIFC;							// Default filter cutoff (0...127). Used if the high bit is set
@@ -96,7 +91,7 @@ struct ModInstrument
 	PLUGINDEX nMixPlug;					// Plugin assigned to this instrument (0 = no plugin, 1 = first plugin)
 	uint8 nCutSwing;					// Random cutoff factor (0...64)
 	uint8 nResSwing;					// Random resonance factor (0...64)
-	uint8 nFilterMode;					// Default filter mode (FLTMODE_* constants)
+	InstrFilterMode nFilterMode;		// Default filter mode
 	uint8 nPluginVelocityHandling;		// How to deal with plugin velocity (PLUGIN_VELOCITYHANDLING_* constants)
 	uint8 nPluginVolumeHandling;		// How to deal with plugin volume (PLUGIN_VOLUMEHANDLING_* constants)
 	TEMPO pitchToTempoLock;				// BPM at which the samples assigned to this instrument loop correctly (0 = unset)

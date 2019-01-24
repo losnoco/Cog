@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "TestToolsTracker.h"
 #include "TestToolsLib.h"
 

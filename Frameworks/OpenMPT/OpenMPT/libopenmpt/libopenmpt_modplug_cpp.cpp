@@ -41,33 +41,32 @@ Metadata and other state is not provided or updated.
 #include <string>
 #include <vector>
 
-#include <climits>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
+#define MODPLUG_BUILD
 #ifdef _MSC_VER
-/* msvc errors when seeing dllexport declarations after prototypes have been declared in modplug.h */
+/* libmodplug C++ header is broken for MSVC DLL builds */
+#define MODPLUG_STATIC
+#endif /* _MSC_VER */
+#ifdef _MSC_VER
 #define LIBOPENMPT_MODPLUG_API
 #else /* !_MSC_VER */
 #define LIBOPENMPT_MODPLUG_API LIBOPENMPT_API_HELPER_EXPORT
 #endif /* _MSC_VER */
+class LIBOPENMPT_MODPLUG_API CSoundFile;
+#include "libmodplug/stdafx.h"
+#include "libmodplug/sndfile.h"
 
 namespace {
-
 template <class T>
 void Clear( T & x )
 {
 	std::memset( &x, 0, sizeof(T) );
 }
-
 }
-
-class LIBOPENMPT_MODPLUG_API CSoundFile;
-
-#include "libmodplug/stdafx.h"
-#include "libmodplug/sndfile.h"
 
 //#define mpcpplog() fprintf(stderr, "%s %i\n", __func__, __LINE__)
 #define mpcpplog() do{}while(0)

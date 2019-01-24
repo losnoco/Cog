@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -42,12 +44,12 @@ CSoundfile::AddToLog.
 
 Logging a simple message:
 MPT_LOG(LogWarning, "sounddev", "some message");
-MPT_LOG(LogWarning, "sounddev", MPT_USTRING("some message"));
+MPT_LOG(LogWarning, "sounddev", U_("some message"));
 Facility is some course grained code section identifier (more coarse grained
 than the current file name probably), useful to do some selective logging.
 
 Logging a more complex message:
-MPT_LOG(LogWarning, "sounddev", mpt::format(MPT_USTRING("Some message: foo=%1, bar=0x%2"))(foo, mpt::ufmt::hex0<8>(bar)));
+MPT_LOG(LogWarning, "sounddev", mpt::format(U_("Some message: foo=%1, bar=0x%2"))(foo, mpt::ufmt::hex0<8>(bar)));
 
 Note that even with full enabled logging and a runtime configurable logging
 level, the runtime overhead of a MPT_LOG(level, facility, text) call is just a
@@ -72,13 +74,13 @@ inline mpt::ustring LogLevelToString(LogLevel level)
 {
 	switch(level)
 	{
-	case LogError:        return MPT_USTRING("error");   break;
-	case LogWarning:      return MPT_USTRING("warning"); break;
-	case LogNotification: return MPT_USTRING("notify");  break;
-	case LogInformation:  return MPT_USTRING("info");    break;
-	case LogDebug:        return MPT_USTRING("debug");   break;
+	case LogError:        return U_("error");   break;
+	case LogWarning:      return U_("warning"); break;
+	case LogNotification: return U_("notify");  break;
+	case LogInformation:  return U_("info");    break;
+	case LogDebug:        return U_("debug");   break;
 	}
-	return MPT_USTRING("unknown");
+	return U_("unknown");
 }
 
 
@@ -128,29 +130,6 @@ static MPT_FORCEINLINE bool IsFacilityActive(const char * /*facility*/ ) { retur
 #endif // !NO_LOGGING
 
 
-struct Context
-{
-	const char * const file;
-	const int line;
-	const char * const function;
-	MPT_FORCEINLINE Context(const char *file, int line, const char *function)
-		: file(file)
-		, line(line)
-		, function(function)
-	{
-		return;
-	}
-	MPT_FORCEINLINE Context(const Context &c)
-		: file(c.file)
-		, line(c.line)
-		, function(c.function)
-	{
-		return;
-	}
-}; // class Context
-
-#define MPT_LOG_CURRENTCONTEXT() mpt::log::Context( __FILE__ , __LINE__ , __FUNCTION__ )
-
 
 #ifndef NO_LOGGING
 
@@ -159,13 +138,7 @@ class Logger
 {
 public:
 	// facility:ASCII
-	void SendLogMessage(const Context &context, LogLevel level, const char *facility, const mpt::ustring &text);
-public:
-	// facility:ASCII, text:ASCII (only string literals)
-	template <std::size_t size> MPT_FORCEINLINE void SendLogMessage(const Context &context, LogLevel level, const char *facility, const char (&text)[size])
-	{
-		SendLogMessage(context, level, facility, mpt::ToUnicode(mpt::CharsetASCII, text));
-	}
+	void SendLogMessage(const mpt::source_location &loc, LogLevel level, const char *facility, const mpt::ustring &text);
 };
 
 #define MPT_LOG(level, facility, text) \
@@ -175,7 +148,7 @@ public:
 		{ \
 			MPT_MAYBE_CONSTANT_IF(mpt::log::IsFacilityActive(( facility ))) \
 			{ \
-				mpt::log::Logger().SendLogMessage( MPT_LOG_CURRENTCONTEXT() , ( level ), ( facility ), ( text )); \
+				mpt::log::Logger().SendLogMessage( MPT_SOURCE_LOCATION_CURRENT() , ( level ), ( facility ), ( text )); \
 			} \
 		} \
 	} MPT_WHILE_0 \
@@ -187,15 +160,15 @@ public:
 class LegacyLogger : public Logger
 {
 private:
-	const Context context;
+	const mpt::source_location loc;
 public:
-	LegacyLogger(const Context &context) : context(context) {}
+	constexpr LegacyLogger(mpt::source_location loc) noexcept : loc(loc) {}
 	/* MPT_DEPRECATED */ void MPT_PRINTF_FUNC(2,3) operator () (const char *format, ...); // migrate to type-safe MPT_LOG
 	/* MPT_DEPRECATED */ void operator () (const AnyStringLocale &text); // migrate to properly namespaced MPT_LOG
 	/* MPT_DEPRECATED */ void operator () (LogLevel level, const mpt::ustring &text); // migrate to properly namespaced MPT_LOG
 };
 
-#define Log MPT_MAYBE_CONSTANT_IF(mpt::log::GlobalLogLevel < MPT_LEGACY_LOGLEVEL) { } else MPT_MAYBE_CONSTANT_IF(!mpt::log::IsFacilityActive("")) { } else mpt::log::LegacyLogger(MPT_LOG_CURRENTCONTEXT())
+#define Log MPT_MAYBE_CONSTANT_IF(mpt::log::GlobalLogLevel < MPT_LEGACY_LOGLEVEL) { } else MPT_MAYBE_CONSTANT_IF(!mpt::log::IsFacilityActive("")) { } else mpt::log::LegacyLogger(MPT_SOURCE_LOCATION_CURRENT())
 
 
 #else // !NO_LOGGING
@@ -229,7 +202,14 @@ namespace Trace {
 extern bool volatile g_Enabled;
 static inline bool IsEnabled() { return g_Enabled; }
 
-MPT_NOINLINE void Trace(const mpt::log::Context & contexxt);
+enum class Direction : int8
+{
+	Unknown =  0,
+	Enter   =  1,
+	Leave   = -1,
+};
+
+MPT_NOINLINE void Trace(const mpt::source_location & loc, Direction direction = Direction::Unknown) noexcept;
 
 enum ThreadKind {
 	ThreadKindGUI,
@@ -247,11 +227,40 @@ uint32 GetThreadId(mpt::log::Trace::ThreadKind kind);
 void Seal();
 bool Dump(const mpt::PathString &filename);
 
-#define MPT_TRACE() MPT_DO { if(mpt::log::Trace::g_Enabled) { mpt::log::Trace::Trace(MPT_LOG_CURRENTCONTEXT()); } } MPT_WHILE_0
+class Scope
+{
+private:
+	const mpt::source_location loc;
+public:
+	MPT_FORCEINLINE Scope(mpt::source_location loc) noexcept
+		: loc(loc)
+	{
+		if(mpt::log::Trace::g_Enabled)
+		{
+			mpt::log::Trace::Trace(loc, mpt::log::Trace::Direction::Enter);
+		}
+	}
+	MPT_FORCEINLINE ~Scope() noexcept
+	{
+		if(mpt::log::Trace::g_Enabled)
+		{
+			mpt::log::Trace::Trace(loc, mpt::log::Trace::Direction::Leave);
+		}
+	}
+};
+
+#define MPT_TRACE_CONCAT_HELPER(x, y) x ## y
+#define MPT_TRACE_CONCAT(x, y) MPT_TRACE_CONCAT_HELPER(x, y)
+
+#define MPT_TRACE_SCOPE() mpt::log::Trace::Scope MPT_TRACE_CONCAT(MPT_TRACE_VAR, __LINE__)(MPT_SOURCE_LOCATION_CURRENT())
+
+#define MPT_TRACE() MPT_DO { if(mpt::log::Trace::g_Enabled) { mpt::log::Trace::Trace(MPT_SOURCE_LOCATION_CURRENT()); } } MPT_WHILE_0
 
 } // namespace Trace
 
 #else // !MODPLUG_TRACKER
+
+#define MPT_TRACE_SCOPE() MPT_DO { } MPT_WHILE_0
 
 #define MPT_TRACE() MPT_DO { } MPT_WHILE_0
 

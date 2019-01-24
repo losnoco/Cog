@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "mptMutex.h"
 
 #include <limits>
@@ -184,15 +186,15 @@ inline T random(Trng & rng, std::size_t required_entropy_bits)
 template <typename Tf> struct float_traits { };
 template <> struct float_traits<float> {
 	typedef uint32 mantissa_uint_type;
-	static const int mantissa_bits = 24;
+	enum : int { mantissa_bits = 24 };
 };
 template <> struct float_traits<double> {
 	typedef uint64 mantissa_uint_type;
-	static const int mantissa_bits = 53;
+	enum : int { mantissa_bits = 53 };
 };
 template <> struct float_traits<long double> {
 	typedef uint64 mantissa_uint_type;
-	static const int mantissa_bits = 63;
+	enum : int { mantissa_bits = 63 };
 };
 
 template <typename T>
@@ -402,33 +404,33 @@ public:
 // List the ones we are likely to use.
 
 template <> struct engine_traits<std::mt19937> {
-	static const std::size_t seed_bits = sizeof(std::mt19937::result_type) * 8 * std::mt19937::state_size;
+	enum : std::size_t { seed_bits = sizeof(std::mt19937::result_type) * 8 * std::mt19937::state_size };
 	typedef std::mt19937 rng_type;
 	typedef rng_type::result_type result_type;
 	static MPT_CONSTEXPR11_FUN int result_bits() { return rng_type::word_size; }
 	template<typename Trd> static inline rng_type make(Trd & rd)
 	{
-		mpt::seed_seq_values<seed_bits / sizeof(unsigned int)> values(rd);
-		std::seed_seq seed(values.begin(), values.end());
+		std::unique_ptr<mpt::seed_seq_values<seed_bits / sizeof(unsigned int)>> values = mpt::make_unique<mpt::seed_seq_values<seed_bits / sizeof(unsigned int)>>(rd);
+		std::seed_seq seed(values->begin(), values->end());
 		return rng_type(seed);
 	}
 };
 
 template <> struct engine_traits<std::mt19937_64> {
-	static const std::size_t seed_bits = sizeof(std::mt19937_64::result_type) * 8 * std::mt19937_64::state_size;
+	enum : std::size_t { seed_bits = sizeof(std::mt19937_64::result_type) * 8 * std::mt19937_64::state_size };
 	typedef std::mt19937_64 rng_type;
 	typedef rng_type::result_type result_type;
 	static MPT_CONSTEXPR11_FUN int result_bits() { return rng_type::word_size; }
 	template<typename Trd> static inline rng_type make(Trd & rd)
 	{
-		mpt::seed_seq_values<seed_bits / sizeof(unsigned int)> values(rd);
-		std::seed_seq seed(values.begin(), values.end());
+		std::unique_ptr<mpt::seed_seq_values<seed_bits / sizeof(unsigned int)>> values = mpt::make_unique<mpt::seed_seq_values<seed_bits / sizeof(unsigned int)>>(rd);
+		std::seed_seq seed(values->begin(), values->end());
 		return rng_type(seed);
 	}
 };
 
 template <> struct engine_traits<std::ranlux24_base> {
-	static const std::size_t seed_bits = std::ranlux24_base::word_size;
+	enum : std::size_t { seed_bits = std::ranlux24_base::word_size };
 	typedef std::ranlux24_base rng_type;
 	typedef rng_type::result_type result_type;
 	static MPT_CONSTEXPR11_FUN int result_bits() { return rng_type::word_size; }
@@ -441,7 +443,7 @@ template <> struct engine_traits<std::ranlux24_base> {
 };
 
 template <> struct engine_traits<std::ranlux48_base> {
-	static const std::size_t seed_bits = std::ranlux48_base::word_size;
+	enum : std::size_t { seed_bits = std::ranlux48_base::word_size };
 	typedef std::ranlux48_base rng_type;
 	typedef rng_type::result_type result_type;
 	static MPT_CONSTEXPR11_FUN int result_bits() { return rng_type::word_size; }
@@ -454,7 +456,7 @@ template <> struct engine_traits<std::ranlux48_base> {
 };
 
 template <> struct engine_traits<std::ranlux24> {
-	static const std::size_t seed_bits = std::ranlux24_base::word_size;
+	enum : std::size_t { seed_bits = std::ranlux24_base::word_size };
 	typedef std::ranlux24 rng_type;
 	typedef rng_type::result_type result_type;
 	static MPT_CONSTEXPR11_FUN int result_bits() { return std::ranlux24_base::word_size; }
@@ -467,7 +469,7 @@ template <> struct engine_traits<std::ranlux24> {
 };
 
 template <> struct engine_traits<std::ranlux48> {
-	static const std::size_t seed_bits = std::ranlux48_base::word_size;
+	enum : std::size_t { seed_bits = std::ranlux48_base::word_size };
 	typedef std::ranlux48 rng_type;
 	typedef rng_type::result_type result_type;
 	static MPT_CONSTEXPR11_FUN int result_bits() { return std::ranlux48_base::word_size; }
@@ -546,8 +548,7 @@ typedef mpt::prng_random_device<mpt::rng::lcg_musl> random_device;
 //  2. Use fast PRNGs in order to not waste time fuzzing more complex PRNG
 //     implementations.
 typedef mpt::rng::lcg_msvc fast_prng;
-typedef mpt::rng::lcg_c99  main_prng;
-typedef mpt::rng::lcg_musl best_prng;
+typedef mpt::rng::lcg_musl good_prng;
 
 #else // !MPT_BUILD_FUZZER
 
@@ -557,26 +558,12 @@ typedef mpt::sane_random_device random_device;
 // We cannot use std::minstd_rand here because it has not a power-of-2 sized
 // output domain which we rely upon.
 typedef mpt::rng::lcg_msvc fast_prng; // about 3 ALU operations, ~32bit of state, suited for inner loops
-typedef std::mt19937       main_prng;
-#if MPT_MSVC_AT_LEAST(2017,5) && defined(_MSC_FULL_VER)
-#if (_MSC_FULL_VER < 191225831)
-// work-around compiler crash
-// c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.12.25827\include\random(978): fatal error C1001: An internal error has occurred in the compiler.
-// (compiler file 'f:\dd\vctools\compiler\utc\src\p2\main.c', line 258)
-// reported at: https://developercommunity.visualstudio.com/content/problem/162089/random-engines-crashing-vs-155-optimizer.html?childToView=164098#comment-164098
-typedef std::mt19937_64    best_prng;
-#else
-typedef std::ranlux48      best_prng;
-#endif
-#else
-typedef std::ranlux48      best_prng;
-#endif
+typedef std::ranlux48      good_prng;
 
 #endif // MPT_BUILD_FUZZER
 
 
-typedef mpt::main_prng default_prng;
-typedef mpt::main_prng prng;
+typedef mpt::good_prng default_prng;
 
 
 template <typename Trng, typename Trd>
@@ -629,11 +616,11 @@ public:
 
 
 mpt::random_device & global_random_device();
-mpt::thread_safe_prng<mpt::best_prng> & global_prng();
+mpt::thread_safe_prng<mpt::default_prng> & global_prng();
 
 #if defined(MODPLUG_TRACKER) && !defined(MPT_BUILD_WINESUPPORT)
 void set_global_random_device(mpt::random_device *rd);
-void set_global_prng(mpt::thread_safe_prng<mpt::best_prng> *rng);
+void set_global_prng(mpt::thread_safe_prng<mpt::default_prng> *rng);
 #endif // MODPLUG_TRACKER && !MPT_BUILD_WINESUPPORT
 
 

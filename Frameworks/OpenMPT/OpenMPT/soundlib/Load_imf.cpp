@@ -355,8 +355,7 @@ static bool ValidateHeader(const IMFFileHeader &fileHeader)
 {
 	if(std::memcmp(fileHeader.im10, "IM10", 4)
 		|| fileHeader.ordNum > 256
-		|| fileHeader.insNum >= MAX_INSTRUMENTS
-		)
+		|| fileHeader.insNum >= MAX_INSTRUMENTS)
 	{
 		return false;
 	}
@@ -388,8 +387,7 @@ static bool ValidateHeader(const IMFFileHeader &fileHeader)
 
 static uint64 GetHeaderMinimumAdditionalSize(const IMFFileHeader &fileHeader)
 {
-	MPT_UNREFERENCED_PARAMETER(fileHeader);
-	return 256;
+	return 256 + fileHeader.patNum * 4 + fileHeader.insNum * sizeof(IMFInstrument);
 }
 
 
@@ -424,6 +422,10 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		return false;
 	}
+	if(loadFlags == onlyVerifyHeader)
+	{
+		return true;
+	}
 
 	// Read channel configuration
 	std::bitset<32> ignoreChannels; // bit set for each channel that's completely disabled
@@ -450,22 +452,16 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 			ignoreChannels[chn] = true;
 			break;
 		default: // uhhhh.... freak out
-			//fprintf(stderr, "imf: channel %d has unknown status %d\n", n, hdr.channels[n].status);
 			return false;
 		}
-	}
-	if(!detectedChannels)
-	{
-		return false;
-	}
-	
-	if(loadFlags == onlyVerifyHeader)
-	{
-		return true;
 	}
 
 	InitializeGlobals(MOD_TYPE_IMF);
 	m_nChannels = detectedChannels;
+
+	m_modFormat.formatName = U_("Imago Orpheus");
+	m_modFormat.type = U_("imf");
+	m_modFormat.charset = mpt::CharsetCP437;
 
 	//From mikmod: work around an Orpheus bug
 	if(fileHeader.channels[0].status == 0)
@@ -482,7 +478,7 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 	// Song Name
 	mpt::String::Read<mpt::String::nullTerminated>(m_songName, fileHeader.title);
 
-	m_SongFlags = (fileHeader.flags & IMFFileHeader::linearSlides) ? SONG_LINEARSLIDES : SongFlags(0);
+	m_SongFlags.set(SONG_LINEARSLIDES, fileHeader.flags & IMFFileHeader::linearSlides);
 	m_nDefaultSpeed = fileHeader.tempo;
 	m_nDefaultTempo.Set(fileHeader.bpm);
 	m_nDefaultGlobalVolume = Clamp<uint8, uint8>(fileHeader.master, 0, 64) * 4;
@@ -508,7 +504,7 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 		}
 
-		ModCommand junkNote;
+		ModCommand dummy;
 		ROWINDEX row = 0;
 		while(row < numRows)
 		{
@@ -520,7 +516,7 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			uint8 channel = mask & 0x1F;
-			ModCommand &m = ignoreChannels[channel] ? junkNote : *Patterns[pat].GetpModCommand(row, channel);
+			ModCommand &m = (channel < GetNumChannels()) ? *Patterns[pat].GetpModCommand(row, channel) : dummy;
 
 			if(mask & 0x20)
 			{
@@ -591,6 +587,8 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			if(m.command)
 				ImportIMFEffect(m);
+			if(ignoreChannels[channel] && m.IsGlobalCommand())
+				m.command = CMD_NONE;
 		}
 	}
 

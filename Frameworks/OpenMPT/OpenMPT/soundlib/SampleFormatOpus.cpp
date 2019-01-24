@@ -77,6 +77,8 @@ bool CSoundFile::ReadOpusSample(SAMPLEINDEX sample, FileReader &file)
 	int channels = 0;
 	std::vector<int16> raw_sample_data;
 
+	std::string sampleName;
+
 	FileReader initial = file.GetChunk(65536); // 512 is recommended by libopusfile
 	if(op_test(NULL, initial.GetRawData<unsigned char>(), initial.GetLength()) != 0)
 	{
@@ -105,6 +107,8 @@ bool CSoundFile::ReadOpusSample(SAMPLEINDEX sample, FileReader &file)
 		// stream, which simplifies handling of link boundaries for us.
 		channels = 2;
 	}
+
+	sampleName = mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(GetOpusFileTags(of)));
 
 	std::vector<int16> decodeBuf(120 * 48000 / 1000); // 120ms (max Opus packet), 48kHz
 	bool eof = false;
@@ -152,7 +156,7 @@ bool CSoundFile::ReadOpusSample(SAMPLEINDEX sample, FileReader &file)
 	}
 
 	DestroySampleThreadsafe(sample);
-	strcpy(m_szNames[sample], "");
+	mpt::String::Copy(m_szNames[sample], sampleName);
 	Samples[sample].Initialize();
 	Samples[sample].nC5Speed = rate;
 	Samples[sample].nLength = mpt::saturate_cast<SmpLength>(raw_sample_data.size() / channels);
@@ -165,7 +169,7 @@ bool CSoundFile::ReadOpusSample(SAMPLEINDEX sample, FileReader &file)
 		return false;
 	}
 
-	std::copy(raw_sample_data.begin(), raw_sample_data.end(), Samples[sample].pSample16);
+	std::copy(raw_sample_data.begin(), raw_sample_data.end(), Samples[sample].sample16());
 
 	Samples[sample].Convert(MOD_TYPE_IT, GetType());
 	Samples[sample].PrecomputeLoops(*this, false);

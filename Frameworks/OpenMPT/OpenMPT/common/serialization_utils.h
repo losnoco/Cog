@@ -10,8 +10,9 @@
 
 #pragma once
 
-#include "../common/typedefs.h"
-#include "../common/mptTypeTraits.h"
+#include "BuildSettings.h"
+
+#include "../common/mptBaseTypes.h"
 #include "../common/mptIO.h"
 #include "../common/Endianness.h"
 
@@ -236,7 +237,7 @@ public:
 		STATIC_ASSERT(std::numeric_limits<T>::is_integer);
 		typename mpt::make_le<T>::type valle;
 		valle = val;
-		return ID(std::string(mpt::as_raw_memory(valle), mpt::as_raw_memory(valle) + sizeof(valle)));
+		return ID(std::string(mpt::byte_cast<const char*>(mpt::as_raw_memory(valle).data()), mpt::byte_cast<const char*>(mpt::as_raw_memory(valle).data() + sizeof(valle))));
 	}
 	bool IsPrintable() const;
 	mpt::ustring AsString() const;
@@ -286,7 +287,7 @@ protected:
 
 protected:
 
-	static const uint8 s_DefaultFlagbyte = 0;
+	enum : uint8 { s_DefaultFlagbyte = 0 };
 	static const char s_EntryID[3];
 
 };
@@ -374,7 +375,7 @@ private:
 	// immutable when reading, there is no need to ever invalidate the cache and
 	// redo CacheMap().
 
-	std::istream* m_pIstrm;					// Read: Pointer to read stream.
+	std::istream& iStrm;
 
 	std::vector<char> m_Idarray;		// Read: Holds entry ids.
 
@@ -437,7 +438,7 @@ private:
 
 private:
 
-	std::ostream* m_pOstrm;				// Write: Pointer to write stream.
+	std::ostream& oStrm;
 
 	Postype m_posEntrycount;			// Write: Pos of entrycount field. 
 	Postype m_posMapPosField;			// Write: Pos of map position field.
@@ -449,8 +450,8 @@ private:
 template <class T, class FuncObj>
 void SsbWrite::WriteItem(const T& obj, const ID &id, FuncObj Func)
 {
-	const Postype pos = m_pOstrm->tellp();
-	Func(*m_pOstrm, obj);
+	const Postype pos = oStrm.tellp();
+	Func(oStrm, obj);
 	OnWroteItem(id, pos);
 }
 
@@ -458,9 +459,9 @@ template <class T, class FuncObj>
 SsbRead::ReadRv SsbRead::ReadItem(T& obj, const ID &id, FuncObj Func)
 {
 	const ReadEntry* pE = Find(id);
-	const Postype pos = m_pIstrm->tellg();
+	const Postype pos = iStrm.tellg();
 	if (pE != nullptr || GetFlag(RwfRMapHasId) == false)
-		Func(*m_pIstrm, obj, (pE) ? (pE->nSize) : invalidDatasize);
+		Func(iStrm, obj, (pE) ? (pE->nSize) : invalidDatasize);
 	return OnReadEntry(pE, id, pos);
 }
 
@@ -468,11 +469,11 @@ SsbRead::ReadRv SsbRead::ReadItem(T& obj, const ID &id, FuncObj Func)
 template <class T, class FuncObj>
 SsbRead::ReadRv SsbRead::ReadIterItem(const ReadIterator& iter, T& obj, FuncObj func)
 {
-	m_pIstrm->clear();
+	iStrm.clear();
 	if (iter->rposStart != 0)
-		m_pIstrm->seekg(m_posStart + Postype(iter->rposStart));
-	const Postype pos = m_pIstrm->tellg();
-	func(*m_pIstrm, obj, iter->nSize);
+		iStrm.seekg(m_posStart + Postype(iter->rposStart));
+	const Postype pos = iStrm.tellg();
+	func(iStrm, obj, iter->nSize);
 	return OnReadEntry(&(*iter), ID(&m_Idarray[iter->nIdpos], iter->nIdLength), pos);
 }
 

@@ -88,7 +88,7 @@ public:
 
 	}
 				
-	void write( const std::vector<float*> buffers, std::size_t frames ) {
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		for ( std::size_t frame = 0; frame < frames; frame++ ) {
 			for ( std::size_t channel = 0; channel < buffers.size(); channel++ ) {
 				if ( data_info.pchEndWrite - data_info.pchNext < static_cast<long>( sizeof( float ) ) ) {
@@ -101,7 +101,7 @@ public:
 		}
 	}
 
-	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) {
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		for ( std::size_t frame = 0; frame < frames; frame++ ) {
 			for ( std::size_t channel = 0; channel < buffers.size(); channel++ ) {
 				if ( data_info.pchEndWrite - data_info.pchNext < static_cast<long>( sizeof( std::int16_t ) ) ) {

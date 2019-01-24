@@ -10,8 +10,8 @@
 #define CONFIG_H_INCLUDED 1
 #endif
 
-#ifndef __SNDFILE_H
-#define __SNDFILE_H
+#ifndef MODPLUG_SNDFILE_H
+#define MODPLUG_SNDFILE_H
 
 #ifdef UNDER_CE
 int _strnicmp(const char *str1,const char *str2, int n);
@@ -456,7 +456,7 @@ typedef struct _MODCOMMAND
 // Mix Plugins
 #define MIXPLUG_MIXREADY			0x01	// Set when cleared
 
-class IMixPlugin
+class MODPLUG_EXPORT IMixPlugin
 {
 public:
 	virtual ~IMixPlugin();
@@ -535,7 +535,7 @@ typedef VOID (* LPSNDMIXHOOKPROC)(int *, unsigned long, unsigned long); // buffe
 
 
 //==============
-class CSoundFile
+class MODPLUG_EXPORT CSoundFile
 //==============
 {
 public:	// Static Members

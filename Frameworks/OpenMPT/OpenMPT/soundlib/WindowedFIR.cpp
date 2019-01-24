@@ -20,11 +20,11 @@ OPENMPT_NAMESPACE_BEGIN
 // -> !!! stolen from modplug-xmms sourceforge project !!!
 
 
-float CWindowedFIR::coef( int _PCnr, float _POfs, float _PCut, int _PWidth, int _PType ) //float _PPos, float _PFc, int _PLen )
+double CWindowedFIR::coef( int _PCnr, double _POfs, double _PCut, int _PWidth, int _PType ) //float _PPos, float _PFc, int _PLen )
 {	
 	double	_LWidthM1       = _PWidth-1;
 	double	_LWidthM1Half   = 0.5*_LWidthM1;
-	double	_LPosU          = ((double)_PCnr - _POfs);
+	double	_LPosU          = (_PCnr - _POfs);
 	double	_LPos           = _LPosU-_LWidthM1Half;
 	double	_LPIdl          = 2.0*M_zPI/_LWidthM1;
 	double	_LWc,_LSi;
@@ -67,32 +67,32 @@ float CWindowedFIR::coef( int _PCnr, float _POfs, float _PCut, int _PWidth, int 
 		_LPos	 *= M_zPI;
 		_LSi	 = sin(_PCut*_LPos)/_LPos;
 	}
-	return (float)(_LWc*_LSi);
+	return (_LWc*_LSi);
 }
 
 void CWindowedFIR::InitTable(double WFIRCutoff, uint8 WFIRType)
 {
 	int _LPcl;
-	float _LPcllen	= (float)(1L<<WFIR_FRACBITS);	// number of precalculated lines for 0..1 (-1..0)
-	float _LNorm	= 1.0f / (float)(2.0f * _LPcllen);
-	float _LCut		= static_cast<float>(WFIRCutoff);
+	double _LPcllen	= (double)(1L<<WFIR_FRACBITS);	// number of precalculated lines for 0..1 (-1..0)
+	double _LNorm	= 1.0 / (2.0 * _LPcllen);
+	double _LCut		= WFIRCutoff;
 	for( _LPcl=0;_LPcl<WFIR_LUTLEN;_LPcl++ )
 	{	
-		float _LGain,_LCoefs[WFIR_WIDTH];
-		float _LOfs		= ((float)_LPcl-_LPcllen)*_LNorm;
+		double _LGain,_LCoefs[WFIR_WIDTH];
+		double _LOfs		= (_LPcl-_LPcllen)*_LNorm;
 		int _LCc,_LIdx	= _LPcl<<WFIR_LOG2WIDTH;
-		for( _LCc=0,_LGain=0.0f;_LCc<WFIR_WIDTH;_LCc++ )
+		for( _LCc=0,_LGain=0.0;_LCc<WFIR_WIDTH;_LCc++ )
 		{	_LGain	+= (_LCoefs[_LCc] = coef( _LCc, _LOfs, _LCut, WFIR_WIDTH, WFIRType));
 		}
-		_LGain = 1.0f/_LGain;
+		_LGain = 1.0/_LGain;
 		for( _LCc=0;_LCc<WFIR_WIDTH;_LCc++ )
 		{
 #ifdef MPT_INTMIXER
-			float _LCoef = floorf( 0.5f + WFIR_QUANTSCALE*_LCoefs[_LCc]*_LGain );
+			double _LCoef = std::floor( 0.5 + WFIR_QUANTSCALE*_LCoefs[_LCc]*_LGain );
 			lut[_LIdx+_LCc] = (signed short)( (_LCoef<-WFIR_QUANTSCALE)?-WFIR_QUANTSCALE:((_LCoef>WFIR_QUANTSCALE)?WFIR_QUANTSCALE:_LCoef) );
 #else
-			float _LCoef = _LCoefs[_LCc] * _LGain;
-			lut[_LIdx+_LCc] = _LCoef;
+			double _LCoef = _LCoefs[_LCc] * _LGain;
+			lut[_LIdx+_LCc] = (float)_LCoef;
 #endif // MPT_INTMIXER
 		}
 	}

@@ -253,7 +253,7 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 	std::size_t offset = 0;
 	int consumed = 0;
 	int error = 0;
-	stb_vorbis *vorb = stb_vorbis_open_pushdata(data, mpt::saturate_cast<int>(dataLeft), &consumed, &error, nullptr);
+	stb_vorbis *vorb = stb_vorbis_open_pushdata(mpt::byte_cast<const unsigned char*>(data), mpt::saturate_cast<int>(dataLeft), &consumed, &error, nullptr);
 	file.Skip(consumed);
 	data += consumed;
 	dataLeft -= consumed;
@@ -272,7 +272,7 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 		int frame_channels = 0;
 		int decodedSamples = 0;
 		float **output = nullptr;
-		consumed = stb_vorbis_decode_frame_pushdata(vorb, data, mpt::saturate_cast<int>(dataLeft), &frame_channels, &output, &decodedSamples);
+		consumed = stb_vorbis_decode_frame_pushdata(vorb, mpt::byte_cast<const unsigned char*>(data), mpt::saturate_cast<int>(dataLeft), &frame_channels, &output, &decodedSamples);
 		file.Skip(consumed);
 		data += consumed;
 		dataLeft -= consumed;
@@ -322,7 +322,7 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 		return false;
 	}
 
-	std::copy(raw_sample_data.begin(), raw_sample_data.end(), Samples[sample].pSample16);
+	std::copy(raw_sample_data.begin(), raw_sample_data.end(), Samples[sample].sample16());
 
 	Samples[sample].Convert(MOD_TYPE_IT, GetType());
 	Samples[sample].PrecomputeLoops(*this, false);

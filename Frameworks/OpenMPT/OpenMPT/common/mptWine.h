@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #include "mptOS.h"
 #include "FlagSet.h"
 

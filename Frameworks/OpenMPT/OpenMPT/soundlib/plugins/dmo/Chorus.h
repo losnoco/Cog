@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #ifndef NO_PLUGINS
 
 #include "../PlugInterface.h"
@@ -106,7 +108,7 @@ protected:
 	virtual float Feedback() const { return -99.0f + m_param[kChorusFeedback] * 198.0f; }
 	virtual float Delay() const { return m_param[kChorusDelay] * 20.0f; }
 	virtual float FrequencyInHertz() const { return m_param[kChorusFrequency] * 10.0f; }
-	virtual int Phase() const { return Util::Round<uint32>(m_param[kChorusPhase] * 4.0f); }
+	virtual int Phase() const { return mpt::saturate_round<uint32>(m_param[kChorusPhase] * 4.0f); }
 	void RecalculateChorusParams();
 };
 

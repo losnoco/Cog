@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 
 #include "../soundbase/SampleFormatCopy.h"
 
@@ -31,7 +33,7 @@ size_t CopyMonoSample(ModSample &sample, const Tbyte *sourceBuffer, size_t sourc
 	size_t numFrames = countFrames;
 	SampleConversion sampleConv(conv);
 	const mpt::byte * MPT_RESTRICT inBuf = mpt::byte_cast<const mpt::byte*>(sourceBuffer);
-	typename SampleConversion::output_t * MPT_RESTRICT outBuf = static_cast<typename SampleConversion::output_t *>(sample.pSample);
+	typename SampleConversion::output_t * MPT_RESTRICT outBuf = static_cast<typename SampleConversion::output_t *>(sample.samplev());
 	while(numFrames--)
 	{
 		*outBuf = sampleConv(inBuf);
@@ -55,7 +57,7 @@ size_t CopyStereoInterleavedSample(ModSample &sample, const Tbyte *sourceBuffer,
 	SampleConversion sampleConvLeft(conv);
 	SampleConversion sampleConvRight(conv);
 	const mpt::byte * MPT_RESTRICT inBuf = mpt::byte_cast<const mpt::byte*>(sourceBuffer);
-	typename SampleConversion::output_t * MPT_RESTRICT outBuf = static_cast<typename SampleConversion::output_t *>(sample.pSample);
+	typename SampleConversion::output_t * MPT_RESTRICT outBuf = static_cast<typename SampleConversion::output_t *>(sample.samplev());
 	while(numFrames--)
 	{
 		*outBuf = sampleConvLeft(inBuf);
@@ -85,7 +87,7 @@ size_t CopyStereoSplitSample(ModSample &sample, const Tbyte *sourceBuffer, size_
 	size_t numSamplesLeft = countSamplesLeft;
 	SampleConversion sampleConvLeft(conv);
 	const mpt::byte * MPT_RESTRICT inBufLeft = mpt::byte_cast<const mpt::byte*>(sourceBuffer);
-	typename SampleConversion::output_t * MPT_RESTRICT outBufLeft = static_cast<typename SampleConversion::output_t *>(sample.pSample);
+	typename SampleConversion::output_t * MPT_RESTRICT outBufLeft = static_cast<typename SampleConversion::output_t *>(sample.samplev());
 	while(numSamplesLeft--)
 	{
 		*outBufLeft = sampleConvLeft(inBufLeft);
@@ -96,7 +98,7 @@ size_t CopyStereoSplitSample(ModSample &sample, const Tbyte *sourceBuffer, size_
 	size_t numSamplesRight = countSamplesRight;
 	SampleConversion sampleConvRight(conv);
 	const mpt::byte * MPT_RESTRICT inBufRight = mpt::byte_cast<const mpt::byte*>(sourceBuffer) + sample.nLength * SampleConversion::input_inc;
-	typename SampleConversion::output_t * MPT_RESTRICT outBufRight = static_cast<typename SampleConversion::output_t *>(sample.pSample) + 1;
+	typename SampleConversion::output_t * MPT_RESTRICT outBufRight = static_cast<typename SampleConversion::output_t *>(sample.samplev()) + 1;
 	while(numSamplesRight--)
 	{
 		*outBufRight = sampleConvRight(inBufRight);
@@ -133,7 +135,7 @@ size_t CopyAndNormalizeSample(ModSample &sample, const Tbyte *sourceBuffer, size
 	{
 		inBuf = sourceBuffer;
 		// Copying buffer.
-		typename SampleConversion::output_t *outBuf = static_cast<typename SampleConversion::output_t *>(sample.pSample);
+		typename SampleConversion::output_t *outBuf = static_cast<typename SampleConversion::output_t *>(sample.samplev());
 
 		for(size_t i = numSamples; i != 0; i--)
 		{

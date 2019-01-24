@@ -61,43 +61,43 @@ public:
 
 	// pattern_vis
 
-	virtual effect_type get_pattern_row_channel_volume_effect_type( std::int32_t pattern, std::int32_t row, std::int32_t channel ) const;
+	effect_type get_pattern_row_channel_volume_effect_type( std::int32_t pattern, std::int32_t row, std::int32_t channel ) const override;
 
-	virtual effect_type get_pattern_row_channel_effect_type( std::int32_t pattern, std::int32_t row, std::int32_t channel ) const;
+	effect_type get_pattern_row_channel_effect_type( std::int32_t pattern, std::int32_t row, std::int32_t channel ) const override;
 
 	// interactive
 
-	virtual void set_current_speed( std::int32_t speed );
+	void set_current_speed( std::int32_t speed ) override;
 
-	virtual void set_current_tempo( std::int32_t tempo );
+	void set_current_tempo( std::int32_t tempo ) override;
 
-	virtual void set_tempo_factor( double factor );
+	void set_tempo_factor( double factor ) override;
 
-	virtual double get_tempo_factor( ) const;
+	double get_tempo_factor( ) const override;
 
-	virtual void set_pitch_factor( double factor );
+	void set_pitch_factor( double factor ) override;
 
-	virtual double get_pitch_factor( ) const;
+	double get_pitch_factor( ) const override;
 
-	virtual void set_global_volume( double volume );
+	void set_global_volume( double volume ) override;
 
-	virtual double get_global_volume( ) const;
+	double get_global_volume( ) const override;
 	
-	virtual void set_channel_volume( std::int32_t channel, double volume );
+	void set_channel_volume( std::int32_t channel, double volume ) override;
 
-	virtual double get_channel_volume( std::int32_t channel ) const;
+	double get_channel_volume( std::int32_t channel ) const override;
 
-	virtual void set_channel_mute_status( std::int32_t channel, bool mute );
+	void set_channel_mute_status( std::int32_t channel, bool mute ) override;
 
-	virtual bool get_channel_mute_status( std::int32_t channel ) const;
+	bool get_channel_mute_status( std::int32_t channel ) const override;
 	
-	virtual void set_instrument_mute_status( std::int32_t instrument, bool mute );
+	void set_instrument_mute_status( std::int32_t instrument, bool mute ) override;
 
-	virtual bool get_instrument_mute_status( std::int32_t instrument ) const;
+	bool get_instrument_mute_status( std::int32_t instrument ) const override;
 
-	virtual std::int32_t play_note( std::int32_t instrument, std::int32_t note, double volume, double panning );
+	std::int32_t play_note( std::int32_t instrument, std::int32_t note, double volume, double panning ) override;
 
-	virtual void stop_note( std::int32_t channel );
+	void stop_note( std::int32_t channel ) override;
 
 
 	/* add stuff here */

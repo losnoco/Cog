@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BuildSettings.h"
+
 #ifndef NO_PLUGINS
 
 #include "../../soundlib/Snd_defs.h"
@@ -22,6 +24,7 @@ OPENMPT_NAMESPACE_BEGIN
 
 struct VSTPluginLib;
 struct SNDMIXPLUGIN;
+struct ModInstrument;
 class CSoundFile;
 class CModDoc;
 class CAbstractVstEditor;
@@ -31,17 +34,15 @@ struct SNDMIXPLUGINSTATE
 	// dwFlags flags
 	enum PluginStateFlags
 	{
-		psfMixReady = 0x01,				// Set when cleared
-		psfHasInput = 0x02,				// Set when plugin has non-silent input
-		psfSilenceBypass = 0x04,		// Bypass because of silence detection
+		psfMixReady      = 0x01, // Set when cleared
+		psfHasInput      = 0x02, // Set when plugin has non-silent input
+		psfSilenceBypass = 0x04, // Bypass because of silence detection
 	};
 
-	mixsample_t *pMixBuffer;			// Stereo effect send buffer
-	uint32 dwFlags;						// PluginStateFlags
-	uint32 inputSilenceCount;			// How much silence has been processed? (for plugin auto-turnoff)
-	mixsample_t nVolDecayL, nVolDecayR;	// End of sample click removal
-
-	SNDMIXPLUGINSTATE() { memset(this, 0, sizeof(*this)); }
+	mixsample_t *pMixBuffer = nullptr; // Stereo effect send buffer
+	uint32 dwFlags = 0;                // PluginStateFlags
+	uint32 inputSilenceCount = 0;      // How much silence has been processed? (for plugin auto-turnoff)
+	mixsample_t nVolDecayL = 0, nVolDecayR = 0; // End of sample click removal
 
 	void ResetSilence()
 	{
@@ -57,12 +58,12 @@ class IMixPlugin
 	friend class CAbstractVstEditor;
 
 protected:
-	IMixPlugin *m_pNext, *m_pPrev;
+	IMixPlugin *m_pNext = nullptr, *m_pPrev = nullptr;
 	VSTPluginLib &m_Factory;
 	CSoundFile &m_SndFile;
 	SNDMIXPLUGIN *m_pMixStruct;
 #ifdef MODPLUG_TRACKER
-	CAbstractVstEditor *m_pEditor;
+	CAbstractVstEditor *m_pEditor = nullptr;
 #endif // MODPLUG_TRACKER
 
 public:
@@ -72,16 +73,16 @@ public:
 protected:
 	mixsample_t m_MixBuffer[MIXBUFFERSIZE * 2 + 2];		// Stereo interleaved input (sample mixer renders here)
 
-	float m_fGain;
-	PLUGINDEX m_nSlot;
+	float m_fGain = 1.0f;
+	PLUGINDEX m_nSlot = 0;
 
-	bool m_isSongPlaying : 1;
-	bool m_isResumed : 1;
+	bool m_isSongPlaying = false;
+	bool m_isResumed = false;
 
 public:
-	bool m_recordAutomation : 1;
-	bool m_passKeypressesToPlug : 1;
-	bool m_recordMIDIOut : 1;
+	bool m_recordAutomation = false;
+	bool m_passKeypressesToPlug = false;
+	bool m_recordMIDIOut = false;
 
 protected:
 	virtual ~IMixPlugin();
@@ -134,19 +135,19 @@ public:
 	// Restore parameters from module file
 	virtual void RestoreAllParameters(int32 program);
 	virtual void Process(float *pOutL, float *pOutR, uint32 numFrames) = 0;
-	void ProcessMixOps(float *pOutL, float *pOutR, float *leftPlugOutput, float *rightPlugOutput, uint32 numFrames) const;
+	void ProcessMixOps(float *pOutL, float *pOutR, float *leftPlugOutput, float *rightPlugOutput, uint32 numFrames);
 	// Render silence and return the highest resulting output level
 	virtual float RenderSilence(uint32 numSamples);
 
 	// MIDI event handling
 	virtual bool MidiSend(uint32 /*midiCode*/) { return true; }
-	virtual bool MidiSysexSend(const void * /*message*/, uint32 /*length*/) { return true; }
-	virtual void MidiCC(uint8 /*nMidiCh*/, MIDIEvents::MidiCC /*nController*/, uint8 /*nParam*/, CHANNELINDEX /*trackChannel*/) { }
-	virtual void MidiPitchBend(uint8 /*nMidiCh*/, int32 /*increment*/, int8 /*pwd*/) { }
-	virtual void MidiVibrato(uint8 /*nMidiCh*/, int32 /*depth*/, int8 /*pwd*/) { }
-	virtual void MidiCommand(uint8 /*nMidiCh*/, uint8 /*nMidiProg*/, uint16 /*wMidiBank*/, uint16 /*note*/, uint16 /*vol*/, CHANNELINDEX /*trackChannel*/) { }
+	virtual bool MidiSysexSend(mpt::const_byte_span /*sysex*/) { return true; }
+	virtual void MidiCC(MIDIEvents::MidiCC /*nController*/, uint8 /*nParam*/, CHANNELINDEX /*trackChannel*/) { }
+	virtual void MidiPitchBend(int32 /*increment*/, int8 /*pwd*/, CHANNELINDEX /*trackChannel*/) { }
+	virtual void MidiVibrato(int32 /*depth*/, int8 /*pwd*/, CHANNELINDEX /*trackerChn*/) { }
+	virtual void MidiCommand(const ModInstrument &/*instr*/, uint16 /*note*/, uint16 /*vol*/, CHANNELINDEX /*trackChannel*/) { }
 	virtual void HardAllNotesOff() { }
-	virtual bool IsNotePlaying(uint32 /*note*/, uint32 /*midiChn*/, uint32 /*trackerChn*/) { return false; }
+	virtual bool IsNotePlaying(uint32 /*note*/, CHANNELINDEX /*trackerChn*/) { return false; }
 
 	// Modify parameter by given amount. Only needs to be re-implemented if plugin architecture allows this to be performed atomically.
 	virtual void ModifyParameter(PlugParamIndex nIndex, PlugParamValue diff);
@@ -223,7 +224,7 @@ public:
 
 inline void IMixPlugin::ModifyParameter(PlugParamIndex nIndex, PlugParamValue diff)
 {
-	float val = GetParameter(nIndex) + diff;
+	PlugParamValue val = GetParameter(nIndex) + diff;
 	Limit(val, PlugParamValue(0), PlugParamValue(1));
 	SetParameter(nIndex, val);
 }
@@ -252,26 +253,29 @@ protected:
 		void ResetProgram() { currentProgram = 0; currentBank = 0; }
 	};
 
-	PlugInstrChannel m_MidiCh[16];	// MIDI channel state
+	std::array<PlugInstrChannel, 16> m_MidiCh;	// MIDI channel state
 
 public:
 	IMidiPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
 
-	virtual void MidiCC(uint8 nMidiCh, MIDIEvents::MidiCC nController, uint8 nParam, CHANNELINDEX trackChannel);
-	virtual void MidiPitchBend(uint8 nMidiCh, int32 increment, int8 pwd);
-	virtual void MidiVibrato(uint8 nMidiCh, int32 depth, int8 pwd);
-	virtual void MidiCommand(uint8 nMidiCh, uint8 nMidiProg, uint16 wMidiBank, uint16 note, uint16 vol, CHANNELINDEX trackChannel);
-	virtual bool IsNotePlaying(uint32 note, uint32 midiChn, uint32 trackerChn);
+	void MidiCC(MIDIEvents::MidiCC nController, uint8 nParam, CHANNELINDEX trackChannel) override;
+	void MidiPitchBend(int32 increment, int8 pwd, CHANNELINDEX trackerChn) override;
+	void MidiVibrato(int32 depth, int8 pwd, CHANNELINDEX trackerChn) override;
+	void MidiCommand(const ModInstrument &instr, uint16 note, uint16 vol, CHANNELINDEX trackChannel) override;
+	bool IsNotePlaying(uint32 note, CHANNELINDEX trackerChn) override;
 
 protected:
 	// Plugin wants to send MIDI to OpenMPT
 	virtual void ReceiveMidi(uint32 midiCode);
-	virtual void ReceiveSysex(const void *message, uint32 length);
+	virtual void ReceiveSysex(mpt::const_byte_span sysex);
+
+	// Get the MIDI channel currently associated with a given tracker channel
+	virtual uint8 GetMidiChannel(CHANNELINDEX trackChannel) const;
 
 	// Converts a 14-bit MIDI pitch bend position to our internal pitch bend position representation
-	static int32 EncodePitchBendParam(int32 position) { return (position << vstPitchBendShift); }
+	static constexpr int32 EncodePitchBendParam(int32 position) { return (position << vstPitchBendShift); }
 	// Converts the internal pitch bend position to a 14-bit MIDI pitch bend position
-	static int16 DecodePitchBendParam(int32 position) { return static_cast<int16>(position >> vstPitchBendShift); }
+	static constexpr int16 DecodePitchBendParam(int32 position) { return static_cast<int16>(position >> vstPitchBendShift); }
 	// Apply Pitch Wheel Depth (PWD) to some MIDI pitch bend value.
 	static inline void ApplyPitchWheelDepth(int32 &value, int8 pwd);
 

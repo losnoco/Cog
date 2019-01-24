@@ -126,7 +126,11 @@ bool CSoundFile::ReadDIGI(FileReader &file, ModLoadingFlags loadFlags)
 	m_nChannels = fileHeader.numChannels;
 	m_nSamples = 31;
 	m_nSamplePreAmp = 256 / m_nChannels;
-	m_madeWithTracker = mpt::format(MPT_USTRING("Digi Booster %1.%2"))(fileHeader.versionInt >> 4, fileHeader.versionInt & 0x0F);
+
+	m_modFormat.formatName = U_("DigiBooster");
+	m_modFormat.type = U_("digi");
+	m_modFormat.madeWithTracker = mpt::format(U_("Digi Booster %1.%2"))(fileHeader.versionInt >> 4, fileHeader.versionInt & 0x0F);
+	m_modFormat.charset = mpt::CharsetISO8859_1;
 
 	ReadOrderFromArray(Order(), fileHeader.orders, fileHeader.lastOrdIndex + 1);
 
