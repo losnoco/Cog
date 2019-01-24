@@ -6,31 +6,34 @@
 
 /* known TXTH types */
 typedef enum {
-    PSX = 0,          /* PSX ADPCM */
-    XBOX = 1,         /* XBOX IMA ADPCM */
-    NGC_DTK = 2,      /* NGC ADP/DTK ADPCM */
-    PCM16BE = 3,      /* 16bit big endian PCM */
-    PCM16LE = 4,      /* 16bit little endian PCM */
-    PCM8 = 5,         /* 8bit PCM */
-    SDX2 = 6,         /* SDX2 (3D0 games) */
-    DVI_IMA = 7,      /* DVI IMA ADPCM */
-    MPEG = 8,         /* MPEG (MP3) */
-    IMA = 9,          /* IMA ADPCM */
-    AICA = 10,        /* AICA ADPCM (dreamcast) */
-    MSADPCM = 11,     /* MS ADPCM (windows) */
-    NGC_DSP = 12,     /* NGC DSP (GC) */
-    PCM8_U_int = 13,  /* 8bit unsigned PCM (interleaved) */
-    PSX_bf = 14,      /* PSX ADPCM bad flagged */
-    MS_IMA = 15,      /* Microsoft IMA ADPCM */
-    PCM8_U = 16,      /* 8bit unsigned PCM */
-    APPLE_IMA4 = 17,  /* Apple Quicktime 4-bit IMA ADPCM */
-    ATRAC3 = 18,      /* raw ATRAC3 */
-    ATRAC3PLUS = 19,  /* raw ATRAC3PLUS */
-    XMA1 = 20,        /* raw XMA1 */
-    XMA2 = 21,        /* raw XMA2 */
-    FFMPEG = 22,      /* any headered FFmpeg format */
-    AC3 = 23,         /* AC3/SPDIF */
-    PCFX = 24,        /* PC-FX ADPCM */
+    PSX = 0,            /* PS-ADPCM */
+    XBOX = 1,           /* XBOX IMA ADPCM */
+    NGC_DTK = 2,        /* NGC ADP/DTK ADPCM */
+    PCM16BE = 3,        /* 16-bit big endian PCM */
+    PCM16LE = 4,        /* 16-bit little endian PCM */
+    PCM8 = 5,           /* 8-bit PCM */
+    SDX2 = 6,           /* SDX2 (3D0 games) */
+    DVI_IMA = 7,        /* DVI IMA ADPCM (high nibble first) */
+    MPEG = 8,           /* MPEG (MP3) */
+    IMA = 9,            /* IMA ADPCM (low nibble first) */
+    AICA = 10,          /* AICA ADPCM (Dreamcast games) */
+    MSADPCM = 11,       /* MS ADPCM (Windows games) */
+    NGC_DSP = 12,       /* NGC DSP (Nintendo games) */
+    PCM8_U_int = 13,    /* 8-bit unsigned PCM (interleaved) */
+    PSX_bf = 14,        /* PS-ADPCM with bad flags */
+    MS_IMA = 15,        /* Microsoft IMA ADPCM */
+    PCM8_U = 16,        /* 8-bit unsigned PCM */
+    APPLE_IMA4 = 17,    /* Apple Quicktime 4-bit IMA ADPCM */
+    ATRAC3 = 18,        /* Raw ATRAC3 */
+    ATRAC3PLUS = 19,    /* Raw ATRAC3PLUS */
+    XMA1 = 20,          /* Raw XMA1 */
+    XMA2 = 21,          /* Raw XMA2 */
+    FFMPEG = 22,        /* Any headered FFmpeg format */
+    AC3 = 23,           /* AC3/SPDIF */
+    PCFX = 24,          /* PC-FX ADPCM */
+    PCM4 = 25,          /* 4-bit signed PCM (3rd and 4th gen games) */
+    PCM4_U = 26,        /* 4-bit unsigned PCM (3rd and 4th gen games) */
+    OKI16 = 27,         /* OKI ADPCM with 16-bit output (unlike OKI/VOX/Dialogic ADPCM's 12-bit) */
 } txth_type;
 
 typedef struct {
@@ -46,6 +49,7 @@ typedef struct {
     uint32_t id_offset;
 
     uint32_t interleave;
+    uint32_t interleave_last;
     uint32_t channels;
     uint32_t sample_rate;
 
@@ -176,6 +180,9 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
         case FFMPEG:     coding = coding_FFmpeg; break;
 #endif
         case PCFX:       coding = coding_PCFX; break;
+        case PCM4:       coding = coding_PCM4; break;
+        case PCM4_U:     coding = coding_PCM4_U; break;
+        case OKI16:      coding = coding_OKI16; break;
         default:
             goto fail;
     }
@@ -212,6 +219,8 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
         case coding_PCM16BE:
         case coding_PCM8:
         case coding_PCM8_U:
+        case coding_PCM4:
+        case coding_PCM4_U:
         case coding_SDX2:
         case coding_PSX:
         case coding_PSX_badflags:
@@ -220,6 +229,7 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
         case coding_AICA:
         case coding_APPLE_IMA4:
             vgmstream->interleave_block_size = txth.interleave;
+            vgmstream->interleave_last_block_size = txth.interleave_last;
             if (vgmstream->channels > 1)
             {
                 if (coding == coding_SDX2) {
@@ -260,13 +270,23 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
                     vgmstream->ch[i].adpcm_step_index = 0x7f;
                 }
             }
+
+            if (coding == coding_PCM4 || coding == coding_PCM4_U) {
+                /* high nibble or low nibble first */
+                vgmstream->codec_config = txth.codec_mode;
+            }
             break;
 
         case coding_PCFX:
             vgmstream->interleave_block_size = txth.interleave;
+            vgmstream->interleave_last_block_size = txth.interleave_last;
             vgmstream->layout_type = layout_interleave;
             if (txth.codec_mode >= 0 && txth.codec_mode <= 3)
                 vgmstream->codec_config = txth.codec_mode;
+            break;
+
+        case coding_OKI16:
+            vgmstream->layout_type = layout_none;
             break;
 
         case coding_MS_IMA:
@@ -287,10 +307,12 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
                 coding = coding_XBOX_IMA_int;
                 vgmstream->layout_type = layout_interleave;
                 vgmstream->interleave_block_size = txth.interleave;
+                vgmstream->interleave_last_block_size = txth.interleave_last;
             }
             else { /* 1ch mono, or stereo interleave */
                 vgmstream->layout_type = txth.interleave ? layout_interleave : layout_none;
                 vgmstream->interleave_block_size = txth.interleave;
+                vgmstream->interleave_last_block_size = txth.interleave_last;
                 if (vgmstream->channels > 2 && vgmstream->channels % 2 != 0)
                     goto fail; /* only 2ch+..+2ch layout is known */
             }
@@ -303,6 +325,7 @@ VGMSTREAM * init_vgmstream_txth(STREAMFILE *streamFile) {
             if (txth.channels > 1 && txth.codec_mode == 0) {
                 if (!txth.interleave) goto fail;
                 vgmstream->layout_type = layout_interleave;
+                vgmstream->interleave_last_block_size = txth.interleave_last;
                 vgmstream->interleave_block_size = txth.interleave;
             } else if (txth.channels > 1 && txth.codec_mode == 1) {
                 if (!txth.interleave) goto fail;
@@ -466,8 +489,10 @@ fail:
 
 
 static STREAMFILE * open_txth(STREAMFILE * streamFile) {
+    char basename[PATH_LIMIT];
     char filename[PATH_LIMIT];
     char fileext[PATH_LIMIT];
+    const char *subext;
     STREAMFILE * streamText;
 
     /* try "(path/)(name.ext).txth" */
@@ -475,6 +500,22 @@ static STREAMFILE * open_txth(STREAMFILE * streamFile) {
     strcat(filename, ".txth");
     streamText = open_streamfile(streamFile,filename);
     if (streamText) return streamText;
+
+    /* try "(path/)(.sub.ext).txth" */
+    get_streamfile_basename(streamFile,basename,PATH_LIMIT);
+    subext = filename_extension(basename);
+    if (subext != NULL) {
+        get_streamfile_path(streamFile,filename,PATH_LIMIT);
+        get_streamfile_ext(streamFile,fileext,PATH_LIMIT);
+        strcat(filename,".");
+        strcat(filename, subext);
+        strcat(filename,".");
+        strcat(filename, fileext);
+        strcat(filename, ".txth");
+
+        streamText = open_streamfile(streamFile,filename);
+        if (streamText) return streamText;
+    }
 
     /* try "(path/)(.ext).txth" */
     get_streamfile_path(streamFile,filename,PATH_LIMIT);
@@ -583,6 +624,9 @@ static int parse_keyval(STREAMFILE * streamFile_, txth_header * txth, const char
         else if (0==strcmp(val,"FFMPEG"))       txth->codec = FFMPEG;
         else if (0==strcmp(val,"AC3"))          txth->codec = AC3;
         else if (0==strcmp(val,"PCFX"))         txth->codec = PCFX;
+        else if (0==strcmp(val,"PCM4"))         txth->codec = PCM4;
+        else if (0==strcmp(val,"PCM4_U"))       txth->codec = PCM4_U;
+        else if (0==strcmp(val,"OKI16"))        txth->codec = OKI16;
         else goto fail;
     }
     else if (0==strcmp(key,"codec_mode")) {
@@ -615,6 +659,15 @@ static int parse_keyval(STREAMFILE * streamFile_, txth_header * txth, const char
         }
         else {
             if (!parse_num(txth->streamHead,txth,val, &txth->interleave)) goto fail;
+        }
+    }
+    else if (0==strcmp(key,"interleave_last")) {
+        if (0==strcmp(val,"auto")) {
+            if (txth->channels > 0 && txth->interleave > 0)
+                txth->interleave_last = (txth->data_size % (txth->interleave * txth->channels)) / txth->channels;
+        }
+        else {
+            if (!parse_num(txth->streamHead,txth,val, &txth->interleave_last)) goto fail;
         }
     }
     else if (0==strcmp(key,"channels")) {
@@ -863,6 +916,7 @@ static int parse_num(STREAMFILE * streamFile, txth_header * txth, const char * v
     }
     else { /* known field */
         if      (0==strcmp(val,"interleave"))           *out_value = txth->interleave;
+        if      (0==strcmp(val,"interleave_last"))      *out_value = txth->interleave_last;
         else if (0==strcmp(val,"channels"))             *out_value = txth->channels;
         else if (0==strcmp(val,"sample_rate"))          *out_value = txth->sample_rate;
         else if (0==strcmp(val,"start_offset"))         *out_value = txth->start_offset;
@@ -913,6 +967,9 @@ static int get_bytes_to_samples(txth_header * txth, uint32_t bytes) {
         case PCM8_U_int:
         case PCM8_U:
             return pcm_bytes_to_samples(bytes, txth->channels, 8);
+        case PCM4:
+        case PCM4_U:
+            return pcm_bytes_to_samples(bytes, txth->channels, 4);
         case MSADPCM:
             if (!txth->interleave) return 0;
             return msadpcm_bytes_to_samples(bytes, txth->interleave, txth->channels);
@@ -938,7 +995,8 @@ static int get_bytes_to_samples(txth_header * txth, uint32_t bytes) {
         case AICA:
             return aica_bytes_to_samples(bytes, txth->channels);
         case PCFX:
-            return pcfx_bytes_to_samples(bytes, txth->channels);
+        case OKI16:
+            return oki_bytes_to_samples(bytes, txth->channels);
 
         /* untested */
         case SDX2:

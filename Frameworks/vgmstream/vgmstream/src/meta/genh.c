@@ -6,38 +6,42 @@
 
 /* known GENH types */
 typedef enum {
-    PSX = 0,          /* PSX ADPCM */
-    XBOX = 1,         /* XBOX IMA ADPCM */
-    NGC_DTK = 2,      /* NGC ADP/DTK ADPCM */
-    PCM16BE = 3,      /* 16bit big endian PCM */
-    PCM16LE = 4,      /* 16bit little endian PCM */
-    PCM8 = 5,         /* 8bit PCM */
-    SDX2 = 6,         /* SDX2 (3D0 games) */
-    DVI_IMA = 7,      /* DVI IMA ADPCM */
-    MPEG = 8,         /* MPEG (MP3) */
-    IMA = 9,          /* IMA ADPCM */
-    AICA = 10,        /* AICA ADPCM (dreamcast) */
-    MSADPCM = 11,     /* MS ADPCM (windows) */
-    NGC_DSP = 12,     /* NGC DSP (GC) */
-    PCM8_U_int = 13,  /* 8bit unsigned PCM (interleaved) */
-    PSX_bf = 14,      /* PSX ADPCM bad flagged */
-    MS_IMA = 15,      /* Microsoft IMA ADPCM */
-    PCM8_U = 16,      /* 8bit unsigned PCM */
-    APPLE_IMA4 = 17,  /* Apple Quicktime 4-bit IMA ADPCM */
-    ATRAC3 = 18,      /* raw ATRAC3 */
-    ATRAC3PLUS = 19,  /* raw ATRAC3PLUS */
-    XMA1 = 20,        /* raw XMA1 */
-    XMA2 = 21,        /* raw XMA2 */
-    FFMPEG = 22,      /* any headered FFmpeg format */
-    AC3 = 23,         /* AC3/SPDIF */
-    PCFX = 24,        /* PC-FX ADPCM */
+    PSX = 0,            /* PS-ADPCM */
+    XBOX = 1,           /* XBOX IMA ADPCM */
+    NGC_DTK = 2,        /* NGC ADP/DTK ADPCM */
+    PCM16BE = 3,        /* 16-bit big endian PCM */
+    PCM16LE = 4,        /* 16-bit little endian PCM */
+    PCM8 = 5,           /* 8-bit PCM */
+    SDX2 = 6,           /* SDX2 (3D0 games) */
+    DVI_IMA = 7,        /* DVI IMA ADPCM (high nibble first) */
+    MPEG = 8,           /* MPEG (MP3) */
+    IMA = 9,            /* IMA ADPCM (low nibble first) */
+    AICA = 10,          /* AICA ADPCM (Dreamcast games) */
+    MSADPCM = 11,       /* MS ADPCM (Windows games) */
+    NGC_DSP = 12,       /* NGC DSP (Nintendo games) */
+    PCM8_U_int = 13,    /* 8-bit unsigned PCM (interleaved) */
+    PSX_bf = 14,        /* PS-ADPCM with bad flags */
+    MS_IMA = 15,        /* Microsoft IMA ADPCM */
+    PCM8_U = 16,        /* 8-bit unsigned PCM */
+    APPLE_IMA4 = 17,    /* Apple Quicktime 4-bit IMA ADPCM */
+    ATRAC3 = 18,        /* Raw ATRAC3 */
+    ATRAC3PLUS = 19,    /* Raw ATRAC3PLUS */
+    XMA1 = 20,          /* Raw XMA1 */
+    XMA2 = 21,          /* Raw XMA2 */
+    FFMPEG = 22,        /* Any headered FFmpeg format */
+    AC3 = 23,           /* AC3/SPDIF */
+    PCFX = 24,          /* PC-FX ADPCM */
+    PCM4 = 25,          /* 4-bit signed PCM (3rd and 4th gen games) */
+    PCM4_U = 26,        /* 4-bit unsigned PCM (3rd and 4th gen games) */
+    OKI16 = 27,         /* OKI ADPCM  with 16-bit output (unlike OKI/VOX/Dialogic ADPCM's 12-bit) */
 } genh_type;
 
 typedef struct {
     genh_type codec;
     int codec_mode;
-    size_t interleave;
 
+    size_t interleave;
+    size_t interleave_last;
     int channels;
     int32_t sample_rate;
 
@@ -114,6 +118,9 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
         case FFMPEG:     coding = coding_FFmpeg; break;
 #endif
         case PCFX:       coding = coding_PCFX; break;
+        case PCM4:       coding = coding_PCM4; break;
+        case PCM4_U:     coding = coding_PCM4_U; break;
+        case OKI16:      coding = coding_OKI16; break;
         default:
             goto fail;
     }
@@ -137,6 +144,8 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
         case coding_PCM16BE:
         case coding_PCM8:
         case coding_PCM8_U:
+        case coding_PCM4:
+        case coding_PCM4_U:
         case coding_SDX2:
         case coding_PSX:
         case coding_PSX_badflags:
@@ -145,6 +154,7 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
         case coding_AICA:
         case coding_APPLE_IMA4:
             vgmstream->interleave_block_size = genh.interleave;
+            vgmstream->interleave_last_block_size = genh.interleave_last;
             if (vgmstream->channels > 1)
             {
                 if (coding == coding_SDX2) {
@@ -185,13 +195,22 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
                 }
             }
 
+            if (coding == coding_PCM4 || coding == coding_PCM4_U) {
+                /* high nibble or low nibble first */
+                vgmstream->codec_config = genh.codec_mode;
+            }
             break;
 
         case coding_PCFX:
             vgmstream->interleave_block_size = genh.interleave;
             vgmstream->layout_type = layout_interleave;
+            vgmstream->interleave_last_block_size = genh.interleave_last;
             if (genh.codec_mode >= 0 && genh.codec_mode <= 3)
                 vgmstream->codec_config = genh.codec_mode;
+            break;
+
+        case coding_OKI16:
+            vgmstream->layout_type = layout_none;
             break;
 
         case coding_MS_IMA:
@@ -211,11 +230,13 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
             if (genh.codec_mode == 1) { /* mono interleave */
                 coding = coding_XBOX_IMA_int;
                 vgmstream->layout_type = layout_interleave;
+                vgmstream->interleave_last_block_size = genh.interleave_last;
                 vgmstream->interleave_block_size = genh.interleave;
             }
             else { /* 1ch mono, or stereo interleave */
                 vgmstream->layout_type = genh.interleave ? layout_interleave : layout_none;
                 vgmstream->interleave_block_size = genh.interleave;
+                vgmstream->interleave_last_block_size = genh.interleave_last;
                 if (vgmstream->channels > 2 && vgmstream->channels % 2 != 0)
                     goto fail; /* only 2ch+..+2ch layout is known */
             }
@@ -229,6 +250,7 @@ VGMSTREAM * init_vgmstream_genh(STREAMFILE *streamFile) {
                 if (!genh.interleave) goto fail;
                 vgmstream->layout_type = layout_interleave;
                 vgmstream->interleave_block_size = genh.interleave;
+                vgmstream->interleave_last_block_size = genh.interleave_last;
             } else if (genh.coef_interleave_type == 1) {
                 if (!genh.interleave) goto fail;
                 coding = coding_NGC_DSP_subint;
@@ -403,8 +425,8 @@ static int parse_genh(STREAMFILE * streamFile, genh_header * genh) {
             genh->coef_split_spacing = read_32bitLE(0x38,streamFile);
     }
 
-    /* extended fields */
-    if (header_size >= 0x54) {
+    /* extended + reserved fields */
+    if (header_size >= 0x100) {
         genh->num_samples = read_32bitLE(0x40,streamFile);
         genh->skip_samples = read_32bitLE(0x44,streamFile); /* for FFmpeg based codecs */
         genh->skip_samples_mode = read_8bit(0x48,streamFile); /* 0=autodetect, 1=force manual value @ 0x44 */
@@ -414,6 +436,7 @@ static int parse_genh(STREAMFILE * streamFile, genh_header * genh) {
         if ((genh->codec == XMA1 || genh->codec == XMA2) && genh->codec_mode==0)
             genh->codec_mode = read_8bit(0x4a,streamFile);
         genh->data_size = read_32bitLE(0x50,streamFile);
+        genh->interleave_last = read_32bitLE(0x54,streamFile);
     }
 
     if (genh->data_size == 0)

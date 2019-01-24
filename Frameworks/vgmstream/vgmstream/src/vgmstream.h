@@ -80,6 +80,8 @@ typedef enum {
     coding_PCM8_U,          /* 8-bit PCM, unsigned (0x80 = 0) */
     coding_PCM8_U_int,      /* 8-bit PCM, unsigned (0x80 = 0) with sample-level interleave (for blocks) */
     coding_PCM8_SB,         /* 8-bit PCM, sign bit (others are 2's complement) */
+    coding_PCM4,            /* 4-bit PCM, signed */
+    coding_PCM4_U,          /* 4-bit PCM, unsigned */
 
     coding_ULAW,            /* 8-bit u-Law (non-linear PCM) */
     coding_ULAW_int,        /* 8-bit u-Law (non-linear PCM) with sample-level interleave (for blocks) */
@@ -111,7 +113,8 @@ typedef enum {
     coding_EA_XA_int,       /* Electronic Arts EA-XA ADPCM v1 (mono/interleave) */
     coding_EA_XA_V2,        /* Electronic Arts EA-XA ADPCM v2 */
     coding_MAXIS_XA,        /* Maxis EA-XA ADPCM */
-    coding_EA_XAS,          /* Electronic Arts EA-XAS ADPCM */
+    coding_EA_XAS_V0,       /* Electronic Arts EA-XAS ADPCM v0 */
+    coding_EA_XAS_V1,       /* Electronic Arts EA-XAS ADPCM v1 */
 
     coding_IMA,             /* IMA ADPCM (stereo or mono, low nibble first) */
     coding_IMA_int,         /* IMA ADPCM (mono/interleave, low nibble first) */
@@ -141,6 +144,7 @@ typedef enum {
     coding_H4M_IMA,         /* H4M IMA ADPCM (stereo or mono, high nibble first) */
 
     coding_MSADPCM,         /* Microsoft ADPCM (stereo/mono) */
+    coding_MSADPCM_int,     /* Microsoft ADPCM (mono) */
     coding_MSADPCM_ck,      /* Microsoft ADPCM (Cricket Audio variation) */
     coding_WS,              /* Westwood Studios VBR ADPCM */
     coding_AICA,            /* Yamaha AICA ADPCM (stereo) */
@@ -157,6 +161,7 @@ typedef enum {
     coding_ASF,             /* Argonaut ASF 4-bit ADPCM */
     coding_XMD,             /* Konami XMD 4-bit ADPCM */
     coding_PCFX,            /* PC-FX 4-bit ADPCM */
+    coding_OKI16,           /* OKI 4-bit ADPCM with 16-bit output */
 
     /* others */
     coding_SDX2,            /* SDX2 2:1 Squareroot-Delta-Exact compression DPCM */
@@ -537,7 +542,6 @@ typedef enum {
     meta_PS2_SMPL,          /* Homura */
     meta_PS2_MSA,           /* Psyvariar -Complete Edition- */
     meta_PS2_VOI,           /* RAW Danger (Zettaizetsumei Toshi 2 - Itetsuita Kiokutachi) [PS2] */
-    meta_PS2_KHV,           /* Kingdom Hearts 2 VAG streams */
     meta_P3D,               /* Prototype P3D */
     meta_PS2_TK1,           /* Tekken (NamCollection) */
     meta_NGC_RKV,           /* Legacy of Kain - Blood Omen 2 (GC) */
@@ -717,6 +721,7 @@ typedef enum {
     meta_DSP_ADPCMX,
     meta_OGG_OPUS,
     meta_IMC,
+    meta_GIN,
 
 } meta_t;
 

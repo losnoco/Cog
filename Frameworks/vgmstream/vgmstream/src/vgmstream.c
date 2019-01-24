@@ -253,7 +253,6 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_ps2_smpl,
     init_vgmstream_ps2_msa,
     init_vgmstream_ps2_voi,
-    init_vgmstream_ps2_khv,
     init_vgmstream_ngc_rkv,
     init_vgmstream_dsp_ddsp,
     init_vgmstream_p3d,
@@ -279,6 +278,7 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_sqex_scd,
     init_vgmstream_ngc_nst_dsp,
     init_vgmstream_baf,
+    init_vgmstream_baf_badrip,
     init_vgmstream_ps3_msf,
     init_vgmstream_nub_vag,
     init_vgmstream_ps3_past,
@@ -375,9 +375,11 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_vxn,
     init_vgmstream_ea_snr_sns,
     init_vgmstream_ea_sps,
-    init_vgmstream_ea_abk_new,
+    init_vgmstream_ea_abk_eaac,
     init_vgmstream_ea_hdr_sth_dat,
-    init_vgmstream_ea_mpf_mus_new,
+    init_vgmstream_ea_mpf_mus_eaac,
+    init_vgmstream_ea_sbr,
+    init_vgmstream_ea_sbr_harmony,
     init_vgmstream_ngc_vid1,
     init_vgmstream_flx,
     init_vgmstream_mogg,
@@ -460,6 +462,7 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_imc,
     init_vgmstream_imc_container,
     init_vgmstream_smp,
+    init_vgmstream_gin,
 
     /* lowest priority metas (should go after all metas, and TXTH should go before raw formats) */
     init_vgmstream_txth,            /* proper parsers should supersede TXTH, once added */
@@ -1142,6 +1145,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_SNDS_IMA:
         case coding_OTNS_IMA:
         case coding_UBI_IMA:
+        case coding_OKI16:
             return 1;
         case coding_IMA_int:
         case coding_DVI_IMA_int:
@@ -1188,11 +1192,14 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_EA_XA_V2:
         case coding_MAXIS_XA:
             return 28;
-        case coding_EA_XAS:
+        case coding_EA_XAS_V0:
+            return 32;
+        case coding_EA_XAS_V1:
             return 128;
 
         case coding_MSADPCM:
             return (vgmstream->interleave_block_size - 0x07*vgmstream->channels)*2 / vgmstream->channels + 2;
+        case coding_MSADPCM_int:
         case coding_MSADPCM_ck:
             return (vgmstream->interleave_block_size - 0x07)*2 + 2;
         case coding_WS: /* only works if output sample size is 8 bit, which always is for WS ADPCM */
@@ -1323,6 +1330,7 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_ALP_IMA:
         case coding_FFTA2_IMA:
         case coding_PCFX:
+        case coding_OKI16:
             return 0x01;
         case coding_MS_IMA:
         case coding_RAD_IMA:
@@ -1370,10 +1378,13 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
             return 0x0F*vgmstream->channels;
         case coding_EA_XA_V2:
             return 0; /* variable (ADPCM frames of 0x0f or PCM frames of 0x3d) */
-        case coding_EA_XAS:
+        case coding_EA_XAS_V0:
+            return 0xF+0x02+0x02;
+        case coding_EA_XAS_V1:
             return 0x4c*vgmstream->channels;
 
         case coding_MSADPCM:
+        case coding_MSADPCM_int:
         case coding_MSADPCM_ck:
             return vgmstream->interleave_block_size;
         case coding_WS:
@@ -1550,6 +1561,18 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         vgmstream->channels,vgmstream->samples_into_block,samples_to_do);
             }
             break;
+        case coding_PCM4:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_pcm4(vgmstream,&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
+                        vgmstream->channels,vgmstream->samples_into_block,samples_to_do,ch);
+            }
+            break;
+        case coding_PCM4_U:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_pcm4_unsigned(vgmstream, &vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
+                        vgmstream->channels,vgmstream->samples_into_block,samples_to_do,ch);
+            }
+            break;
 
         case coding_ULAW:
             for (ch = 0; ch < vgmstream->channels; ch++) {
@@ -1694,9 +1717,15 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         vgmstream->channels,vgmstream->samples_into_block,samples_to_do, ch);
             }
             break;
-        case coding_EA_XAS:
+        case coding_EA_XAS_V0:
             for (ch = 0; ch < vgmstream->channels; ch++) {
-                decode_ea_xas(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
+                decode_ea_xas_v0(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
+                        vgmstream->channels,vgmstream->samples_into_block,samples_to_do, ch);
+            }
+            break;
+        case coding_EA_XAS_V1:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_ea_xas_v1(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
                         vgmstream->channels,vgmstream->samples_into_block,samples_to_do, ch);
             }
             break;
@@ -1923,13 +1952,16 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                     buffer+samples_written*vgmstream->channels, samples_to_do);
             break;
         case coding_MSADPCM:
-            if (vgmstream->channels == 2) {
+        case coding_MSADPCM_int:
+            if (vgmstream->channels == 1 || vgmstream->coding_type == coding_MSADPCM_int) {
+                for (ch = 0; ch < vgmstream->channels; ch++) {
+                    decode_msadpcm_mono(vgmstream,buffer+samples_written*vgmstream->channels+ch,
+                            vgmstream->channels,vgmstream->samples_into_block, samples_to_do, ch);
+                }
+            }
+            else if (vgmstream->channels == 2) {
                 decode_msadpcm_stereo(vgmstream,buffer+samples_written*vgmstream->channels,
                         vgmstream->samples_into_block,samples_to_do);
-            }
-            else if (vgmstream->channels == 1) {
-                decode_msadpcm_mono(vgmstream,buffer+samples_written*vgmstream->channels,
-                        vgmstream->channels,vgmstream->samples_into_block,samples_to_do, 0);
             }
             break;
         case coding_MSADPCM_ck:
@@ -2026,6 +2058,12 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_pcfx(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
                         vgmstream->channels,vgmstream->samples_into_block,samples_to_do, vgmstream->codec_config);
+            }
+            break;
+        case coding_OKI16:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_oki16(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
+                        vgmstream->channels,vgmstream->samples_into_block,samples_to_do, ch);
             }
             break;
 
@@ -2277,11 +2315,18 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
     snprintf(temp,TEMPSIZE,
             "\nlayout: ");
     concatn(length,desc,temp);
+
+    description = get_vgmstream_layout_description(vgmstream->layout_type);
+    if (!description)
+        description = "INCONCEIVABLE";
     switch (vgmstream->layout_type) {
+        case layout_layered:
+            snprintf(temp,TEMPSIZE,"%s (%i layers)",description, ((layered_layout_data*)vgmstream->layout_data)->layer_count);
+            break;
+        case layout_segmented:
+            snprintf(temp,TEMPSIZE,"%s (%i segments)",description, ((segmented_layout_data*)vgmstream->layout_data)->segment_count);
+            break;
         default:
-            description = get_vgmstream_layout_description(vgmstream->layout_type);
-            if (!description)
-                description = "INCONCEIVABLE";
             snprintf(temp,TEMPSIZE,"%s",description);
             break;
     }
@@ -2309,6 +2354,7 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
     if (vgmstream->layout_type == layout_none && vgmstream->interleave_block_size > 0) {
         switch (vgmstream->coding_type) {
             case coding_MSADPCM:
+            case coding_MSADPCM_int:
             case coding_MSADPCM_ck:
             case coding_MS_IMA:
             case coding_MC3:
@@ -2723,14 +2769,13 @@ int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t s
             if (!file) goto fail;
         }
 
-        for (ch=0; ch < vgmstream->channels; ch++) {
+        for (ch = 0; ch < vgmstream->channels; ch++) {
             off_t offset;
             if (use_same_offset_per_channel) {
                 offset = start_offset;
             } else if (is_stereo_codec) {
                 int ch_mod = (ch & 1) ? ch - 1 : ch; /* adjust odd channels (ch 0,1,2,3,4,5 > ch 0,0,2,2,4,4) */
                 offset = start_offset + vgmstream->interleave_block_size*ch_mod;
-                //VGM_LOG("ch%i offset=%lx\n", ch,offset);
             } else {
                 offset = start_offset + vgmstream->interleave_block_size*ch;
             }
@@ -2741,6 +2786,7 @@ int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t s
                 if (!file) goto fail;
             }
 
+            VGM_LOG("ch%i offset=%lx\n", ch,offset);
             vgmstream->ch[ch].streamfile = file;
             vgmstream->ch[ch].channel_start_offset =
                     vgmstream->ch[ch].offset = offset;

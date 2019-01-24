@@ -155,6 +155,7 @@ static const char* extension_list[] = {
     "gcub",
     "gcw",
     "genh",
+    "gin",
     "gms",
     "gsb",
     //"gsf", //conflicts with GBA gsf plugins?
@@ -194,7 +195,7 @@ static const char* extension_list[] = {
 
     "kces",
     "kcey", //fake extension/header id for .pcm (renamed, to be removed)
-    "khv",
+    "khv", //fake extension/header id for .vas (renamed, to be removed)
     "km9",
     "kovs", //fake extension/header id for .kvs
     "kns",
@@ -205,6 +206,7 @@ static const char* extension_list[] = {
     "l",
     "laac", //fake extension for .aac (tri-Ace)
     "lac3", //fake extension for .ac3, FFmpeg/not parsed
+    "lasf", //fake extension for .asf (various)
     "leg",
     "lflac", //fake extension for .flac, FFmpeg/not parsed
     "lin",
@@ -348,6 +350,7 @@ static const char* extension_list[] = {
     "sb5",
     "sb6",
     "sb7",
+    "sbr",
     "sm0",
     "sm1",
     "sm2",
@@ -551,11 +554,13 @@ static const coding_info coding_info_list[] = {
         {coding_PCM16LE,            "Little Endian 16-bit PCM"},
         {coding_PCM16BE,            "Big Endian 16-bit PCM"},
         {coding_PCM16_int,          "16-bit PCM with 2 byte interleave (block)"},
-        {coding_PCM8,               "8-bit PCM"},
-        {coding_PCM8_int,           "8-bit PCM with 1 byte interleave (block)"},
+        {coding_PCM8,               "8-bit signed PCM"},
+        {coding_PCM8_int,           "8-bit signed PCM with 1 byte interleave (block)"},
         {coding_PCM8_U,             "8-bit unsigned PCM"},
         {coding_PCM8_U_int,         "8-bit unsigned PCM with 1 byte interleave (block)"},
         {coding_PCM8_SB,            "8-bit PCM with sign bit"},
+        {coding_PCM4,               "4-bit signed PCM"},
+        {coding_PCM4_U,             "4-bit unsigned PCM"},
         {coding_ULAW,               "8-bit u-Law"},
         {coding_ULAW_int,           "8-bit u-Law with 1 byte interleave (block)"},
         {coding_ALAW,               "8-bit a-Law"},
@@ -584,7 +589,8 @@ static const coding_info coding_info_list[] = {
         {coding_EA_XA_int,          "Electronic Arts EA-XA 4-bit ADPCM v1 (mono/interleave)"},
         {coding_EA_XA_V2,           "Electronic Arts EA-XA 4-bit ADPCM v2"},
         {coding_MAXIS_XA,           "Maxis EA-XA 4-bit ADPCM"},
-        {coding_EA_XAS,             "Electronic Arts EA-XAS 4-bit ADPCM"},
+        {coding_EA_XAS_V0,          "Electronic Arts EA-XAS 4-bit ADPCM v0"},
+        {coding_EA_XAS_V1,          "Electronic Arts EA-XAS 4-bit ADPCM v1"},
 
         {coding_IMA,                "IMA 4-bit ADPCM"},
         {coding_IMA_int,            "IMA 4-bit ADPCM (mono/interleave)"},
@@ -615,6 +621,7 @@ static const coding_info coding_info_list[] = {
         {coding_H4M_IMA,            "Hudson HVQM4 4-bit IMA ADPCM"},
 
         {coding_MSADPCM,            "Microsoft 4-bit ADPCM"},
+        {coding_MSADPCM_int,        "Microsoft 4-bit ADPCM (mono/interleave)"},
         {coding_MSADPCM_ck,         "Microsoft 4-bit ADPCM (Cricket Audio)"},
         {coding_WS,                 "Westwood Studios VBR ADPCM"},
         {coding_AICA,               "Yamaha AICA 4-bit ADPCM"},
@@ -631,6 +638,7 @@ static const coding_info coding_info_list[] = {
         {coding_ASF,                "Argonaut ASF 4-bit ADPCM"},
         {coding_XMD,                "Konami XMD 4-bit ADPCM"},
         {coding_PCFX,               "PC-FX 4-bit ADPCM"},
+        {coding_OKI16,              "OKI 4-bit ADPCM (16-bit output)"},
 
         {coding_SDX2,               "Squareroot-delta-exact (SDX2) 8-bit DPCM"},
         {coding_SDX2_int,           "Squareroot-delta-exact (SDX2) 8-bit DPCM with 1 byte interleave"},
@@ -763,7 +771,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS_HEADERLESS,        "Headerless PS-ADPCM raw header"},
         {meta_PS2_MIB_MIH,          "Sony MultiStream MIH+MIB header"},
         {meta_DSP_MPDSP,            "Single DSP header stereo by .mpdsp extension"},
-        {meta_PS2_MIC,              "assume KOEI MIC file by .mic extension"},
+        {meta_PS2_MIC,              "KOEI .MIC header"},
         {meta_DSP_JETTERS,          "Double DSP header stereo by _lr.dsp extension"},
         {meta_DSP_MSS,              "Double DSP header stereo by .mss extension"},
         {meta_DSP_GCM,              "Double DSP header stereo by .gcm extension"},
@@ -993,7 +1001,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS3_CPS,              "tri-Crescendo CPS Header"},
         {meta_SQEX_SCD,             "Square-Enix SCD header"},
         {meta_NGC_NST_DSP,          "Animaniacs NST header"},
-        {meta_BAF,                  ".baf WAVE header"},
+        {meta_BAF,                  "Bizarre Creations .baf header"},
         {meta_PS3_MSF,              "Sony MSF header"},
         {meta_NUB_VAG,              "Namco NUB VAG header"},
         {meta_PS3_PAST,             "SNDP header"},
@@ -1153,6 +1161,7 @@ static const meta_info meta_info_list[] = {
         {meta_DSP_ADPCMX,           "AQUASTYLE ADPY header"},
         {meta_OGG_OPUS,             "Ogg Opus header"},
         {meta_IMC,                  "iNiS .IMC header"},
+        {meta_GIN,                  "Electronic Arts Gnsu header"},
 
 };
 
