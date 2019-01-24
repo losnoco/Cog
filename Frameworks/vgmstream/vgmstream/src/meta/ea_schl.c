@@ -115,11 +115,12 @@ VGMSTREAM * init_vgmstream_ea_schl(STREAMFILE *streamFile) {
 
     /* check extension */
     /* they don't seem enforced by EA's tools but usually:
-     * .asf: ~early [ex. Need for Speed (PC)]
+     * .asf: ~early (audio stream file?) [ex. Need for Speed (PC)]
+     * .lasf: fake for plugins
      * .str: ~early [ex. FIFA 2002 (PS1)]
      * .eam: ~mid (fake?)
      * .exa: ~mid [ex. 007 - From Russia with Love]
-     * .sng: ~late (fake?)
+     * .sng: ~late (FIFA games)
      * .aud: ~late [ex. FIFA 14 (3DS)]
      * .strm: MySims Kingdom (Wii)
      * .stm: FIFA 12 (3DS)
@@ -129,7 +130,7 @@ VGMSTREAM * init_vgmstream_ea_schl(STREAMFILE *streamFile) {
      * .gsf: 007 - Everything or Nothing (GC)
      * .mus: map/mpf+mus only?
      * (extensionless): SSX (PS2) (inside .big) */
-    if (!check_extensions(streamFile,"asf,str,eam,exa,sng,aud,sx,xa,strm,stm,hab,xsf,gsf,mus,"))
+    if (!check_extensions(streamFile,"asf,lasf,str,eam,exa,sng,aud,sx,xa,strm,stm,hab,xsf,gsf,mus,"))
         goto fail;
 
     /* check header */
@@ -187,15 +188,16 @@ fail:
 /* streamed assets are stored externally in AST file (mostly seen in earlier 6th-gen games) */
 VGMSTREAM * init_vgmstream_ea_abk(STREAMFILE *streamFile) {
     int bnk_target_stream, is_dupe, total_sounds = 0, target_stream = streamFile->stream_index;
-    off_t bnk_offset, header_table_offset, base_offset, value_offset, table_offset, entry_offset, target_entry_offset, schl_offset;
+    off_t bnk_offset, header_table_offset, base_offset, value_offset, table_offset, entry_offset, target_entry_offset, schl_offset, schl_loop_offset;
     uint32_t i, j, k, num_sounds, total_sound_tables;
     uint16_t num_tables;
     uint8_t sound_type, num_entries;
     off_t sound_table_offsets[0x2000];
     STREAMFILE * astData = NULL;
-    VGMSTREAM * vgmstream;
-    int32_t (*read_32bit)(off_t,STREAMFILE*);
-    int16_t (*read_16bit)(off_t,STREAMFILE*);
+    VGMSTREAM * vgmstream = NULL;
+    segmented_layout_data *data_s = NULL;
+    int32_t(*read_32bit)(off_t, STREAMFILE*);
+    int16_t(*read_16bit)(off_t, STREAMFILE*);
 
     /* check extension */
     if (!check_extensions(streamFile, "abk"))
@@ -205,7 +207,7 @@ VGMSTREAM * init_vgmstream_ea_abk(STREAMFILE *streamFile) {
         goto fail;
 
     /* use table offset to check endianness */
-    if (guess_endianness32bit(0x1C,streamFile)) {
+    if (guess_endianness32bit(0x1C, streamFile)) {
         read_32bit = read_32bitBE;
         read_16bit = read_16bitBE;
     } else {
@@ -240,10 +242,8 @@ VGMSTREAM * init_vgmstream_ea_abk(STREAMFILE *streamFile) {
 
             /* For some reason, there are duplicate entries pointing at the same sound tables */
             is_dupe = 0;
-            for (k = 0; k < total_sound_tables; k++)
-            {
-                if (table_offset==sound_table_offsets[k])
-                {
+            for (k = 0; k < total_sound_tables; k++) {
+                if (table_offset == sound_table_offsets[k]) {
                     is_dupe = 1;
                     break;
                 }
@@ -278,45 +278,85 @@ VGMSTREAM * init_vgmstream_ea_abk(STREAMFILE *streamFile) {
     if (target_entry_offset == 0)
         goto fail;
 
-    /* 0x00: type (0x00 - normal, 0x01 - streamed, 0x02 - streamed and prefetched(?) */
+    /* 0x00: type (0x00 - normal, 0x01 - streamed, 0x02 - streamed looped */
     /* 0x01: ??? */
     /* 0x04: index for normal sounds, offset for streamed sounds */
-    /* 0x08: offset for prefetched sounds */
+    /* 0x08: loop offset for streamed sounds */
     sound_type = read_8bit(target_entry_offset + 0x00, streamFile);
-    
+
     switch (sound_type) {
-    case 0x00:
-        if (!bnk_offset)
-            goto fail;
+        case 0x00:
+            if (!bnk_offset)
+                goto fail;
 
-        bnk_target_stream = read_32bit(target_entry_offset + 0x04, streamFile) + 1;
-        vgmstream = parse_bnk_header(streamFile, bnk_offset, bnk_target_stream, 1);
-        if (!vgmstream)
-            goto fail;
-        break;
+            bnk_target_stream = read_32bit(target_entry_offset + 0x04, streamFile) + 1;
+            vgmstream = parse_bnk_header(streamFile, bnk_offset, bnk_target_stream, 1);
+            if (!vgmstream)
+                goto fail;
 
-    case 0x01:
-    case 0x02:
-        astData = open_streamfile_by_ext(streamFile, "ast");
-        if (!astData)
-            goto fail;
+            break;
 
-        if (sound_type == 0x01)
+        case 0x01:
+            astData = open_streamfile_by_ext(streamFile, "ast");
+            if (!astData)
+                goto fail;
+
             schl_offset = read_32bit(target_entry_offset + 0x04, streamFile);
-        else
-            schl_offset = read_32bit(target_entry_offset + 0x08, streamFile);
+            if (read_32bitBE(schl_offset, astData) != EA_BLOCKID_HEADER)
+                goto fail;
 
-        if (read_32bitBE(schl_offset, astData) != EA_BLOCKID_HEADER)
+            vgmstream = parse_schl_block(astData, schl_offset, 0);
+            if (!vgmstream)
+                goto fail;
+
+            break;
+
+        case 0x02:
+            astData = open_streamfile_by_ext(streamFile, "ast");
+            if (!astData)
+                goto fail;
+
+            /* looped sounds basically consist of two independent segments
+             * the first one is loop start, the second one is loop body */
+            schl_offset = read_32bit(target_entry_offset + 0x04, streamFile);
+            schl_loop_offset = read_32bit(target_entry_offset + 0x08, streamFile);
+
+            if (read_32bitBE(schl_offset, astData) != EA_BLOCKID_HEADER ||
+                read_32bitBE(schl_loop_offset, astData) != EA_BLOCKID_HEADER)
+                goto fail;
+
+            /* init layout */
+            data_s = init_layout_segmented(2);
+            if (!data_s) goto fail;
+
+            /* load intro and loop segments */
+            data_s->segments[0] = parse_schl_block(astData, schl_offset, 0);
+            if (!data_s->segments[0]) goto fail;
+            data_s->segments[1] = parse_schl_block(astData, schl_loop_offset, 0);
+            if (!data_s->segments[1]) goto fail;
+
+            /* setup segmented VGMSTREAMs */
+            if (!setup_layout_segmented(data_s))
+                goto fail;
+
+            /* build the VGMSTREAM */
+            vgmstream = allocate_vgmstream(data_s->segments[0]->channels, 1);
+            if (!vgmstream) goto fail;
+
+            vgmstream->sample_rate = data_s->segments[0]->sample_rate;
+            vgmstream->num_samples = data_s->segments[0]->num_samples + data_s->segments[1]->num_samples;
+            vgmstream->loop_start_sample = data_s->segments[0]->num_samples;
+            vgmstream->loop_end_sample = vgmstream->num_samples;
+
+            vgmstream->meta_type = meta_EA_SCHL;
+            vgmstream->coding_type = data_s->segments[0]->coding_type;
+            vgmstream->layout_type = layout_segmented;
+            vgmstream->layout_data = data_s;
+            break;
+
+        default:
             goto fail;
-
-        vgmstream = parse_schl_block(astData, schl_offset, 0);
-        if (!vgmstream)
-            goto fail;
-        break;
-
-    default:
-        goto fail;
-        break;
+            break;
     }
 
     vgmstream->num_streams = total_sounds;
@@ -325,6 +365,7 @@ VGMSTREAM * init_vgmstream_ea_abk(STREAMFILE *streamFile) {
 
 fail:
     close_streamfile(astData);
+    free_layout_segmented(data_s);
     return NULL;
 }
 
@@ -344,7 +385,7 @@ VGMSTREAM * init_vgmstream_ea_hdr_dat(STREAMFILE *streamFile) {
     /* 0x05: number of files */
     /* 0x06: ??? */
     /* 0x07: offset multiplier flag */
-    /* 0x08: combined size of all sounds without padding divided by 0x0100 */
+    /* 0x08: combined size of all sounds without padding divided by offset mult */
     /* 0x0C: table start */
 
     /* no nice way to validate these so we do what we can */
@@ -358,14 +399,14 @@ VGMSTREAM * init_vgmstream_ea_hdr_dat(STREAMFILE *streamFile) {
 
     userdata_size = read_8bit(0x04, streamFile) & 0x0F;
     total_sounds = read_8bit(0x05, streamFile);
-    offset_mult = (off_t)read_8bit(0x07, streamFile) * 0x0100 + 0x0100;
+    offset_mult = (uint8_t)read_8bit(0x07, streamFile) * 0x0100 + 0x0100;
 
     if (target_stream == 0) target_stream = 1;
     if (target_stream < 0 || total_sounds == 0 || target_stream > total_sounds)
         goto fail;
 
     /* offsets are always big endian */
-    schl_offset = (off_t)read_16bitBE(0x0C + (0x02+userdata_size) * (target_stream-1), streamFile) * offset_mult;
+    schl_offset = (uint16_t)read_16bitBE(0x0C + (0x02+userdata_size) * (target_stream-1), streamFile) * offset_mult;
     if (read_32bitBE(schl_offset, datFile) != EA_BLOCKID_HEADER)
         goto fail;
 
@@ -460,7 +501,7 @@ VGMSTREAM * init_vgmstream_ea_map_mus(STREAMFILE *streamFile) {
     }
 
     /*
-     * 0x04: ???
+     * 0x04: version
      * 0x05: intro segment
      * 0x06: number of segments
      * 0x07: userdata entry size (incorrect?)
@@ -548,14 +589,14 @@ VGMSTREAM * init_vgmstream_ea_mpf_mus(STREAMFILE *streamFile) {
     if (version == 3 && sub_version == 1) { /* SSX Tricky */
         /* we need to go through the first two sections to find sound table */
         sec1_num = read_16bit(0x12, streamFile);
-        sec2_size = read_8bit(0x0e, streamFile);
+        sec2_size = read_8bit(0x0d, streamFile) * read_8bit(0x0e, streamFile);
         sec2_num = read_8bit(0x0f, streamFile);
         sec3_num = read_8bit(0x10, streamFile);
         sec4_num = read_8bit(0x11, streamFile);
 
         /* get the last entry offset */
         section_offset = 0x24;
-        entry_offset = read_16bit(section_offset + (sec1_num - 1) * 0x02, streamFile) * 0x04;
+        entry_offset = (uint16_t)read_16bit(section_offset + (sec1_num - 1) * 0x02, streamFile) * 0x04;
         subentry_num = read_8bit(entry_offset + 0x0b, streamFile);
 
         section_offset = entry_offset + 0x0c + subentry_num * 0x04;
@@ -570,14 +611,14 @@ VGMSTREAM * init_vgmstream_ea_mpf_mus(STREAMFILE *streamFile) {
         off_mult = 0x04;
     } else if (version == 3 && sub_version == 4) { /* Harry Potter and the Chamber of Secrets */
         sec1_num = read_16bit(0x12, streamFile);
-        sec2_size = read_8bit(0x0e, streamFile);
+        sec2_size = read_8bit(0x0d, streamFile) * read_8bit(0x0e, streamFile);
         sec2_num = read_8bit(0x0f, streamFile);
         sec3_num = read_8bit(0x10, streamFile);
         sec4_num = read_8bit(0x11, streamFile);
 
         /* get the last entry offset */
         section_offset = 0x24;
-        entry_offset = read_16bit(section_offset + (sec1_num - 1) * 0x02, streamFile) * 0x04;
+        entry_offset = (uint16_t)read_16bit(section_offset + (sec1_num - 1) * 0x02, streamFile) * 0x04;
         if (big_endian) {
             subentry_num = (read_32bitBE(entry_offset + 0x04, streamFile) >> 19) & 0xFF;
         } else {
@@ -601,7 +642,7 @@ VGMSTREAM * init_vgmstream_ea_mpf_mus(STREAMFILE *streamFile) {
 
         /* get the last entry offset */
         section_offset = 0x20;
-        entry_offset = read_16bit(section_offset + (sec1_num - 1) * 0x02, streamFile) * 0x04;
+        entry_offset = (uint16_t)read_16bit(section_offset + (sec1_num - 1) * 0x02, streamFile) * 0x04;
         if (big_endian) {
             subentry_num = (read_32bitBE(entry_offset + 0x04, streamFile) >> 15) & 0xFF;
         } else {
@@ -609,7 +650,7 @@ VGMSTREAM * init_vgmstream_ea_mpf_mus(STREAMFILE *streamFile) {
         }
 
         section_offset = entry_offset + 0x10 + subentry_num * 0x04;
-        entry_offset = read_16bit(section_offset + (sec2_num - 1) * 0x02, streamFile) * 0x04;
+        entry_offset = (uint16_t)read_16bit(section_offset + (sec2_num - 1) * 0x02, streamFile) * 0x04;
         if (big_endian) {
             subentry_num = (read_32bitBE(entry_offset + 0x0c, streamFile) >> 10) & 0xFF;
         } else {
@@ -1423,15 +1464,15 @@ static void update_ea_stream_size_and_samples(STREAMFILE* streamFile, off_t star
             multiple_schl = 1;
         }
 
-        /* HACK: fix num_samples for streams with multiple SCHl. Need to eventually get rid of this.
-         * Get total samples by parsing block headers, needed when multiple files are stitched together.
-         * Some EA files (.mus/eam/sng/etc) concat many small subfiles, used for interactive/mapped
-         * music (.map/lin). Subfiles always share header, except num_samples. */
-        num_samples += vgmstream->current_block_samples;
+        if (vgmstream->current_block_samples > 0) {
+            /* HACK: fix num_samples for streams with multiple SCHl. Need to eventually get rid of this.
+             * Get total samples by parsing block headers, needed when multiple files are stitched together.
+             * Some EA files (.mus/eam/sng/etc) concat many small subfiles, used for interactive/mapped
+             * music (.map/lin). Subfiles always share header, except num_samples. */
+            num_samples += vgmstream->current_block_samples;
 
-        /* Stream size is almost never provided in bank files so we have to calc it manually */
-        if (vgmstream->current_block_samples != 0) {
-            stream_size += vgmstream->next_block_offset - vgmstream->current_block_offset - 0x0c;
+            /* Stream size is almost never provided in bank files so we have to calc it manually */
+            stream_size += vgmstream->next_block_offset - vgmstream->ch[0].offset;
         }
     }
 
