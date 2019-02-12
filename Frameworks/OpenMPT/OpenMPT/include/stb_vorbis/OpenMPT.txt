@@ -1,6 +1,6 @@
 ﻿This folder contains the stb_vorbis library from
-https://github.com/nothings/stb/blob/master/stb_vorbis.c v1.14
-commit e6afb9cbae4064da8c3e69af3ff5c4629579c1d2 (2018-02-11)
+https://github.com/nothings/stb/blob/master/stb_vorbis.c v1.15
+commit 59e9702be5bfc0061e756c7beab7dcd3d363400d (2019-02-07)
 
 Modifications:
  *  Use of alloca has been replaced with malloc, as alloca is not in C99 and

@@ -1415,7 +1415,7 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 
 		if(!compatibilityExport)
 		{
-			// This way, we indicate that the file will most likely contain OpenMPT hacks. Compatibility export puts 0 here.
+			// This way, we indicate that the file might contain OpenMPT hacks. Compatibility export puts 0 here.
 			memcpy(&itHeader.reserved, "OMPT", 4);
 		}
 	}
@@ -1428,17 +1428,17 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 	if(m_SongFlags[SONG_ITCOMPATGXX]) itHeader.flags |= ITFileHeader::itCompatGxx;
 	if(m_SongFlags[SONG_EXFILTERRANGE] && !compatibilityExport) itHeader.flags |= ITFileHeader::extendedFilterRange;
 
-	itHeader.globalvol = (uint8)(m_nDefaultGlobalVolume >> 1);
-	itHeader.mv = (uint8)MIN(m_nSamplePreAmp, 128u);
-	itHeader.speed = (uint8)MIN(m_nDefaultSpeed, 255u);
- 	itHeader.tempo = (uint8)MIN(m_nDefaultTempo.GetInt(), 255u);  //Limit this one to 255, we save the real one as an extension below.
+	itHeader.globalvol = static_cast<uint8>(m_nDefaultGlobalVolume / 2u);
+	itHeader.mv = static_cast<uint8>(std::min(m_nSamplePreAmp, uint32(128)));
+	itHeader.speed = mpt::saturate_cast<uint8>(m_nDefaultSpeed);
+ 	itHeader.tempo = mpt::saturate_cast<uint8>(m_nDefaultTempo.GetInt()); // We save the real tempo in an extension below if it exceeds 255.
 	itHeader.sep = 128; // pan separation
 	// IT doesn't have a per-instrument Pitch Wheel Depth setting, so we just store the first non-zero PWD setting in the header.
-	for(INSTRUMENTINDEX ins = 1; ins < GetNumInstruments(); ins++)
+	for(INSTRUMENTINDEX ins = 1; ins <= GetNumInstruments(); ins++)
 	{
 		if(Instruments[ins] != nullptr && Instruments[ins]->midiPWD != 0)
 		{
-			itHeader.pwd = (uint8)mpt::abs(Instruments[ins]->midiPWD);
+			itHeader.pwd = static_cast<uint8>(mpt::abs(Instruments[ins]->midiPWD));
 			break;
 		}
 	}
@@ -1613,7 +1613,7 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 		uint16 writeSize = 0;
 		uint16le patinfo[4];
 		patinfo[0] = 0;
-		patinfo[1] = (uint16)writeRows;
+		patinfo[1] = static_cast<uint16>(writeRows);
 		patinfo[2] = 0;
 		patinfo[3] = 0;
 
@@ -1744,11 +1744,11 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 					if (b != chnmask[ch])
 					{
 						chnmask[ch] = b;
-						buf[len++] = uint8((ch + 1) | IT_bitmask_patternChanEnabled_c);
+						buf[len++] = static_cast<uint8>((ch + 1) | IT_bitmask_patternChanEnabled_c);
 						buf[len++] = b;
 					} else
 					{
-						buf[len++] = uint8(ch + 1);
+						buf[len++] = static_cast<uint8>(ch + 1);
 					}
 					if (b & 1) buf[len++] = note;
 					if (b & 2) buf[len++] = m->instr;
@@ -1790,7 +1790,7 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 		bool compress = false;
 #endif // MODPLUG_TRACKER
 		// Old MPT, DUMB and probably other libraries will only consider the IT2.15 compression flag if the header version also indicates IT2.15.
-		// MilkyTracker <= 0.90.85 will only assume IT2.15 compression with cmwt == 0x215, ignoring the delta flag completely.
+		// MilkyTracker <= 0.90.85 assumes IT2.15 compression with cmwt == 0x215, ignoring the delta flag completely.
 		itss.ConvertToIT(sample, GetType(), compress, itHeader.cmwt >= 0x215, GetType() == MOD_TYPE_MPT);
 		const bool isExternal = itss.cvt == ITSample::cvtExternalSample;
 

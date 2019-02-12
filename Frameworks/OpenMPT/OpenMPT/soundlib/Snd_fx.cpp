@@ -1327,6 +1327,7 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 {
 	const ModInstrument *pIns = instr <= GetNumInstruments() ? Instruments[instr] : nullptr;
 	const ModSample *pSmp = &Samples[instr];
+	const auto oldInsVol = chn.nInsVol;
 	ModCommand::NOTE note = chn.nNewNote;
 
 	if(note == NOTE_NONE && m_playBehaviour[kITInstrWithoutNote]) return;
@@ -1491,9 +1492,12 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 		if(m_playBehaviour[kITEnvelopeReset])
 		{
 			const bool insNumber = (instr != 0);
+			// IT compatibility: Note-off with instrument number + Old Effects retriggers envelopes.
+			// Test case: ResetEnvNoteOffOldFx.it
+			const bool isKeyOff = chn.dwFlags[CHN_NOTEFADE | CHN_KEYOFF] || (chn.rowCommand.note == NOTE_KEYOFF && m_playBehaviour[kITInstrWithNoteOffOldEffects]);
 			reset = (!chn.nLength
 				|| (insNumber && bPorta && m_SongFlags[SONG_ITCOMPATGXX])
-				|| (insNumber && !bPorta && chn.dwFlags[CHN_NOTEFADE | CHN_KEYOFF] && m_SongFlags[SONG_ITOLDEFFECTS]));
+				|| (insNumber && !bPorta && isKeyOff && m_SongFlags[SONG_ITOLDEFFECTS]));
 			// NOTE: IT2.14 with SB/GUS/etc. output is different. We are going after IT's WAV writer here.
 			// For SB/GUS/etc. emulation, envelope carry should only apply when the NNA isn't set to "Note Cut".
 			// Test case: CarryNNA.it
@@ -1597,6 +1601,21 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 		chn.increment.Set(0);
 	}
 
+	// IT compatibility: Note-off with instrument number + Old Effects retriggers envelopes.
+	// If the instrument changes, keep playing the previous sample, but load the new instrument's envelopes.
+	// Test case: ResetEnvNoteOffOldFx.it
+	if(chn.rowCommand.note == NOTE_KEYOFF && m_playBehaviour[kITInstrWithNoteOffOldEffects] && m_SongFlags[SONG_ITOLDEFFECTS] && sampleChanged)
+	{
+		if(chn.pModSample)
+		{
+			chn.dwFlags |= (chn.pModSample->uFlags & CHN_SAMPLEFLAGS);
+		}
+		chn.nInsVol = oldInsVol;
+		chn.nVolume = pSmp->nVolume;
+		if(pSmp->uFlags[CHN_PANNING]) chn.nPan = pSmp->nPan;
+		return;
+	}
+
 	chn.pModSample = pSmp;
 	chn.nLength = pSmp->nLength;
 	chn.nLoopStart = pSmp->nLoopStart;
@@ -1622,12 +1641,10 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 		// Don't reset finetune changed by "set finetune" command.
 		// Test case: finetune.xm, finetune.mod
 		// But *do* change the finetune if we switch to a different sample, to fix
-		// Miranda`s axe by Jamson (jam007.xm) - this file doesn't use compatible play mode,
-		// so we may want to use IsCompatibleMode instead if further problems arise.
+		// Miranda`s axe by Jamson (jam007.xm).
 		chn.nC5Speed = pSmp->nC5Speed;
 		chn.nFineTune = pSmp->nFineTune;
 	}
-
 
 	chn.nTranspose = pSmp->RelativeTone;
 
@@ -1694,6 +1711,10 @@ void CSoundFile::NoteChange(ModChannel &chn, int note, bool bPorta, bool bResetE
 		if(note == NOTE_KEYOFF || !(GetType() & (MOD_TYPE_IT|MOD_TYPE_MPT)))
 		{
 			KeyOff(chn);
+			// IT compatibility: Note-off + instrument releases sample sustain but does not release envelopes or fade the instrument
+			// Test case: noteoff3.it, ResetEnvNoteOffOldFx2.it
+			if(!bPorta && m_playBehaviour[kITInstrWithNoteOffOldEffects] && m_SongFlags[SONG_ITOLDEFFECTS] && chn.rowCommand.instr)
+				chn.dwFlags.reset(CHN_NOTEFADE | CHN_KEYOFF);
 		} else // Invalid Note -> Note Fade
 		{
 			if(/*note == NOTE_FADE && */ GetNumInstruments())
@@ -2783,7 +2804,10 @@ bool CSoundFile::ProcessEffects()
 					if(smp > 0 && smp <= GetNumSamples() && !Samples[smp].uFlags[SMP_NODEFAULTVOLUME])
 						chn.nVolume = Samples[smp].nVolume;
 				}
-				instr = 0;
+				// IT compatibility: Note-off with instrument number + Old Effects retriggers envelopes.
+				// Test case: ResetEnvNoteOffOldFx.it
+				if(!m_playBehaviour[kITInstrWithNoteOffOldEffects] || !m_SongFlags[SONG_ITOLDEFFECTS])
+					instr = 0;
 			}
 
 			if(ModCommand::IsNote(note))

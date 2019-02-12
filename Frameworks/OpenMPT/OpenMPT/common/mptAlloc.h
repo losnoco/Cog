@@ -100,7 +100,7 @@ namespace mpt
 
 
 
-#if MPT_CXX_AT_LEAST(17) && !(MPT_COMPILER_CLANG && defined(__GLIBCXX__))
+#if MPT_CXX_AT_LEAST(17) && !(MPT_COMPILER_CLANG && defined(__GLIBCXX__)) && !(MPT_COMPILER_CLANG && MPT_OS_MACOSX_OR_IOS)
 using std::launder;
 #else
 template <class T>
