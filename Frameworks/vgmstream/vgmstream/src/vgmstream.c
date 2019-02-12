@@ -410,6 +410,7 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_ppst,
     init_vgmstream_opus_sps_n1_segmented,
     init_vgmstream_ubi_bao_pk,
+    init_vgmstream_ubi_bao_atomic,
     init_vgmstream_dsp_switch_audio,
     init_vgmstream_sadf,
     init_vgmstream_h4m,
@@ -430,10 +431,9 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_a2m,
     init_vgmstream_ahv,
     init_vgmstream_msv,
-    init_vgmstream_sdf_ps2,
+    init_vgmstream_sdf,
     init_vgmstream_svg,
     init_vgmstream_vis,
-    init_vgmstream_sdf_3ds,
     init_vgmstream_vai,
     init_vgmstream_aif_asobo,
     init_vgmstream_ao,
@@ -463,6 +463,8 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_imc_container,
     init_vgmstream_smp,
     init_vgmstream_gin,
+    init_vgmstream_dsf,
+    init_vgmstream_208,
 
     /* lowest priority metas (should go after all metas, and TXTH should go before raw formats) */
     init_vgmstream_txth,            /* proper parsers should supersede TXTH, once added */
@@ -1248,6 +1250,8 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
             return 256; /* (0x8c - 0xc) * 2 */
         case coding_ASF:
             return 32;  /* (0x11 - 0x1) * 2 */
+        case coding_DSA:
+            return 14;  /* (0x08 - 0x1) * 2 */
         case coding_XMD:
             return (vgmstream->interleave_block_size - 0x06)*2 + 2;
         case coding_EA_MT:
@@ -1424,6 +1428,8 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
             return 0x8c;
         case coding_ASF:
             return 0x11;
+        case coding_DSA:
+            return 0x08;
         case coding_XMD:
             return vgmstream->interleave_block_size;
         case coding_EA_MT:
@@ -2047,6 +2053,12 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         vgmstream->channels,vgmstream->samples_into_block,samples_to_do);
             }
             break;
+        case coding_DSA:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_dsa(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
+                        vgmstream->channels,vgmstream->samples_into_block,samples_to_do);
+            }
+            break;
         case coding_XMD:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_xmd(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
@@ -2280,13 +2292,24 @@ void describe_vgmstream(VGMSTREAM * vgmstream, char * desc, int length) {
             "encoding: ");
     concatn(length,desc,temp);
     switch (vgmstream->coding_type) {
+
+    //todo codec bugs with layout inside layouts (ex. TXTP)
 #ifdef VGM_USE_FFMPEG
         case coding_FFmpeg: {
-            ffmpeg_codec_data *data = (ffmpeg_codec_data *)vgmstream->codec_data;
-            if (!data && vgmstream->layout_data) {
+            ffmpeg_codec_data *data = NULL;
+
+            if (vgmstream->layout_type == layout_layered) {
                 layered_layout_data* layout_data = vgmstream->layout_data;
                 if (layout_data->layers[0]->coding_type == coding_FFmpeg)
                     data = layout_data->layers[0]->codec_data;
+            }
+            else if (vgmstream->layout_type == layout_segmented) {
+                segmented_layout_data* layout_data = vgmstream->layout_data;
+                if (layout_data->segments[0]->coding_type == coding_FFmpeg)
+                    data = layout_data->segments[0]->codec_data;
+            }
+            else {
+                data = vgmstream->codec_data;
             }
 
             if (data) {
@@ -2637,7 +2660,7 @@ int get_vgmstream_average_bitrate(VGMSTREAM * vgmstream) {
         return get_vgmstream_average_bitrate_from_size(vgmstream->stream_size, sample_rate, length_samples);
     }
 
-
+    //todo bitrate bugs with layout inside layouts (ex. TXTP)
     /* make a list of used streamfiles (repeats will be filtered below) */
     if (vgmstream->layout_type==layout_segmented) {
         segmented_layout_data *data = (segmented_layout_data *) vgmstream->layout_data;
@@ -2786,7 +2809,6 @@ int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t s
                 if (!file) goto fail;
             }
 
-            VGM_LOG("ch%i offset=%lx\n", ch,offset);
             vgmstream->ch[ch].streamfile = file;
             vgmstream->ch[ch].channel_start_offset =
                     vgmstream->ch[ch].offset = offset;
