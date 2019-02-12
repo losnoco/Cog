@@ -63,7 +63,7 @@ struct MixLoopState
 		// If there is no interpolation happening, there is no lookahead happening the sample read-out is exact.
 		if(chn.dwFlags[CHN_LOOP] && chn.resamplingMode != SRCMODE_NEAREST)
 		{
-			const bool inSustainLoop = chn.InSustainLoop();
+			const bool inSustainLoop = chn.InSustainLoop() && chn.nLoopStart == chn.pModSample->nSustainStart && chn.nLoopEnd == chn.pModSample->nSustainEnd;
 
 			// Do not enable wraparound magic if we're previewing a custom loop!
 			if(inSustainLoop || chn.nLoopEnd == chn.pModSample->nLoopEnd)

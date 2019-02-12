@@ -194,22 +194,29 @@ struct MO3Instrument
 		panEnv.ConvertToMPT(mptIns.PanEnv, 0);
 		pitchEnv.ConvertToMPT(mptIns.PitchEnv, 5);
 		mptIns.nFadeOut = fadeOut;
+
 		if(midiChannel >= 128)
 		{
 			// Plugin
 			mptIns.nMixPlug = midiChannel - 127;
 		} else if(midiChannel < 17 && (flags & playOnMIDI))
 		{
-			// XM / IT with recent encoder
+			// XM, or IT with recent encoder
 			mptIns.nMidiChannel = midiChannel + MidiFirstChannel;
 		} else if(midiChannel > 0 && midiChannel < 17)
 		{
 			// IT encoded with MO3 version prior to 2.4.1 (yes, channel 0 is represented the same way as "no channel")
 			mptIns.nMidiChannel = midiChannel + MidiFirstChannel;
 		}
-		mptIns.wMidiBank = midiBank;
-		mptIns.nMidiProgram = midiPatch;
-		mptIns.midiPWD =  midiBend;
+		if(mptIns.nMidiChannel != MidiNoChannel)
+		{
+			if(mptIns.wMidiBank < 128)
+				mptIns.wMidiBank = midiBank + 1;
+			if(mptIns.nMidiProgram < 128)
+				mptIns.nMidiProgram = midiPatch + 1;
+			mptIns.midiPWD = midiBend;
+		}
+
 		if(type == MOD_TYPE_IT)
 			mptIns.nGlobalVol = std::min<uint8>(globalVol, 128) / 2u;
 		if(panning <= 256)
@@ -1810,6 +1817,10 @@ bool CSoundFile::ReadMO3(FileReader &file, ModLoadingFlags loadFlags)
 			default:
 				break;
 			}
+			break;
+		case MagicLE("PRHI"):
+			m_nDefaultRowsPerBeat = chunk.ReadUint8();
+			m_nDefaultRowsPerMeasure = chunk.ReadUint8();
 			break;
 		case MagicLE("MIDI"):
 			// Full MIDI config

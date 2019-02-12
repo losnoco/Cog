@@ -2235,7 +2235,7 @@ bool CSoundFile::ReadNote()
 				period = m_nMinPeriod;
 			}
 
-			if((chn.dwFlags & (CHN_ADLIB | CHN_MUTE | CHN_SYNCMUTE)) == CHN_ADLIB && !chn.pModSample->uFlags[CHN_MUTE] && m_opl)
+			if((chn.dwFlags & (CHN_ADLIB | CHN_MUTE | CHN_SYNCMUTE)) == CHN_ADLIB && m_opl)
 			{
 				const bool doProcess = m_playBehaviour[kOPLFlexibleNoteOff] || !chn.dwFlags[CHN_NOTEFADE] || GetType() == MOD_TYPE_S3M;
 				if(doProcess && !(GetType() == MOD_TYPE_S3M && chn.dwFlags[CHN_KEYOFF]))

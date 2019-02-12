@@ -1038,6 +1038,7 @@ PlayBehaviourSet CSoundFile::GetSupportedPlaybackBehaviour(MODTYPE type)
 		playBehaviour.set(kITInstrWithNoteOff);
 		playBehaviour.set(kITMultiSampleInstrumentNumber);
 		playBehaviour.set(kRowDelayWithNoteDelay);
+		playBehaviour.set(kITInstrWithNoteOffOldEffects);
 		if(type == MOD_TYPE_MPT)
 		{
 			playBehaviour.set(kOPLFlexibleNoteOff);

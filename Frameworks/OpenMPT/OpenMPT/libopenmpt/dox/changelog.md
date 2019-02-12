@@ -5,6 +5,20 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.4.3 (2019-02-11)
+
+ *  [**Sec**] Possible crash due to null-pointer access when doing a portamento
+    from an OPL instrument to an empty instrument note map slot (r11348).
+
+ *  [**Bug**] libopenmpt did not compile on Apple platforms in C++17 mode.
+
+ *  IT: Various fixes for note-off + instrument number in Old Effects mode.
+ *  MO3: Import IT row highlights as written by MO3 2.4.1.2 or newer. Required
+    for modules using modern tempo mode.
+
+ *  miniz: Update to v2.0.8 (2018-09-19).
+ *  stb_vorbis: Update to v1.15 (2019-02-07).
+
 ### libopenmpt 0.4.2 (2019-01-22)
 
  *  [**Sec**] DSM: Assertion failure during file parsing with debug STLs

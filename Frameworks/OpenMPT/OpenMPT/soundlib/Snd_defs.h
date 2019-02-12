@@ -513,6 +513,7 @@ enum PlayBehaviour
 	kReleaseNodePastSustainBug,     // OpenMPT 1.23.01.02 / r4009 broke release nodes past the sustain point, fixed in OpenMPT 1.28
 	kFT2NoteDelayWithoutInstr,      // Sometime between OpenMPT 1.18.03.00 and 1.19.01.00, delayed instrument-less notes in XM started recalling the default sample volume and panning
 	kOPLFlexibleNoteOff,            // Full control after note-off over OPL voices, ^^^ sends note cut instead of just note-off
+	kITInstrWithNoteOffOldEffects,  // Instrument number with note-off recalls default volume - special cases with Old Effects enabled
 
 	// Add new play behaviours here.
 
