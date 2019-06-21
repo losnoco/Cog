@@ -5,38 +5,48 @@
 #ifndef _VGMSTREAM_H
 #define _VGMSTREAM_H
 
+/* reasonable limits */
 enum { PATH_LIMIT = 32768 };
-enum { STREAM_NAME_SIZE = 255 }; /* reasonable max */
+enum { STREAM_NAME_SIZE = 255 };
+enum { VGMSTREAM_MAX_CHANNELS = 64 };
+enum { VGMSTREAM_MIN_SAMPLE_RATE = 300 }; /* 300 is Wwise min */
+enum { VGMSTREAM_MAX_SAMPLE_RATE = 192000 }; /* found in some FSB5 */
+enum { VGMSTREAM_MAX_SUBSONGS = 65535 };
 
 #include "streamfile.h"
 
 /* Due mostly to licensing issues, Vorbis, MPEG, G.722.1, etc decoding is done by external libraries.
  * Libs are disabled by default, defined on compile-time for builds that support it */
-#define VGM_USE_VORBIS
-#define VGM_USE_MPEG
-#define VGM_USE_G7221
-#define VGM_USE_G719
+//#define VGM_USE_VORBIS
+//#define VGM_USE_MPEG
+//#define VGM_USE_G7221
+//#define VGM_USE_G719
 //#define VGM_USE_MP4V2
 //#define VGM_USE_FDKAAC
 //#define VGM_USE_MAIATRAC3PLUS
-#define VGM_USE_FFMPEG
-#define VGM_USE_ATRAC9
+//#define VGM_USE_FFMPEG
+//#define VGM_USE_ATRAC9
 //#define VGM_USE_CELT
 
 
 #ifdef VGM_USE_VORBIS
-#ifdef __APPLE__
-#define __MACOSX__
-#endif
 #include <vorbis/vorbisfile.h>
 #endif
 
 #ifdef VGM_USE_MPEG
+#ifdef __MACOSX__
 #include <mpg123/mpg123.h>
+#else
+#include <mpg123.h>
+#endif
 #endif
 
 #ifdef VGM_USE_G7221
+#ifdef __MACOSX__
 #include <g7221/g7221.h>
+#else
+#include <g7221.h>
+#endif
 #endif
 
 #ifdef VGM_USE_MP4V2
@@ -126,6 +136,7 @@ typedef enum {
     coding_WV6_IMA,         /* Gorilla Systems WV6 4-bit IMA ADPCM */
     coding_ALP_IMA,         /* High Voltage ALP 4-bit IMA ADPCM */
     coding_FFTA2_IMA,       /* Final Fantasy Tactics A2 4-bit IMA ADPCM */
+    coding_BLITZ_IMA,       /* Blitz Games 4-bit IMA ADPCM */
 
     coding_MS_IMA,          /* Microsoft IMA ADPCM */
     coding_XBOX_IMA,        /* XBOX IMA ADPCM */
@@ -147,10 +158,12 @@ typedef enum {
     coding_MSADPCM_int,     /* Microsoft ADPCM (mono) */
     coding_MSADPCM_ck,      /* Microsoft ADPCM (Cricket Audio variation) */
     coding_WS,              /* Westwood Studios VBR ADPCM */
-    coding_AICA,            /* Yamaha AICA ADPCM (stereo) */
-    coding_AICA_int,        /* Yamaha AICA ADPCM (mono/interleave) */
-    coding_YAMAHA,          /* Yamaha ADPCM */
-    coding_YAMAHA_NXAP,     /* Yamaha ADPCM (NXAP variation) */
+
+    coding_YAMAHA,          /* Yamaha ADPCM (stereo) */
+    coding_YAMAHA_int,      /* Yamaha ADPCM (mono/interleave) */
+    coding_ASKA,            /* Aska ADPCM */
+    coding_NXAP,            /* NXAP ADPCM */
+
     coding_NDS_PROCYON,     /* Procyon Studio ADPCM */
     coding_L5_555,          /* Level-5 0x555 ADPCM */
     coding_LSF,             /* lsf ADPCM (Fastlane Street Racing iPhone)*/
@@ -270,7 +283,6 @@ typedef enum {
     layout_blocked_vs_square,
 
     /* otherwise odd */
-    layout_aix,             /* CRI AIX's wheels within wheels */
     layout_segmented,       /* song divided in segments (song sections) */
     layout_layered,         /* song divided in layers (song channels) */
 
@@ -337,7 +349,7 @@ typedef enum {
 
     meta_XA,                /* CD-ROM XA */
     meta_PS2_SShd,          /* .ADS with SShd header */
-    meta_PS2_NPSF,          /* Namco Production Sound File */
+    meta_NPS,
     meta_PS2_RXWS,          /* Sony games (Genji, Okage Shadow King, Arc The Lad Twilight of Spirits) */
     meta_PS2_RAW,           /* RAW Interleaved Format */
     meta_PS2_EXST,          /* Shadow of Colossus EXST */
@@ -378,7 +390,7 @@ typedef enum {
     meta_MUSX_V201,         /* Sphinx and the cursed Mummy */
     meta_LEG,               /* Legaia 2 [no header_id] */
     meta_FILP,              /* Resident Evil - Dead Aim */
-    meta_IKM,               /* Zwei! */
+    meta_IKM,
     meta_SFS,               /* Baroque */
     meta_BG00,              /* Ibara, Mushihimesama */
     meta_PS2_RSTM,          /* Midnight Club 3 */
@@ -451,7 +463,7 @@ typedef enum {
     meta_STR_ASR,           /* Donkey Kong Jet Race */
     meta_ZWDSP,             /* Zack and Wiki */
     meta_VGS,               /* Guitar Hero Encore - Rocks the 80s */
-    meta_DC_DCSW_DCS,       /* Evil Twin - Cypriens Chronicles (DC) */
+    meta_DCS_WAV,
     meta_SMP,
     meta_WII_SNG,           /* Excite Trucks */
     meta_MUL,
@@ -568,7 +580,7 @@ typedef enum {
     meta_BAF,               /* Bizarre Creations (Blur, James Bond) */
     meta_XVAG,              /* Ratchet & Clank Future: Quest for Booty (PS3) */
     meta_PS3_CPS,           /* Eternal Sonata (PS3) */
-    meta_PS3_MSF,           /* MSF header */
+    meta_MSF,
     meta_NUB_VAG,           /* Namco VAG from NUB archives */
     meta_PS3_PAST,          /* Bakugan Battle Brawlers (PS3) */
     meta_SGXD,              /* Sony: Folklore, Genji, Tokyo Jungle (PS3), Brave Story, Kurohyo (PSP) */
@@ -589,7 +601,7 @@ typedef enum {
     meta_OTNS_ADP,          /* Omikron: The Nomad Soul .adp (PC/DC) */
     meta_EB_SFX,            /* Excitebots .sfx */
     meta_EB_SF0,            /* Excitebots .sf0 */
-    meta_PS2_MTAF,          /* Metal Gear Solid 3 MTAF */
+    meta_MTAF,
     meta_PS2_VAG1,          /* Metal Gear Solid 3 VAG1 */
     meta_PS2_VAG2,          /* Metal Gear Solid 3 VAG2 */
     meta_TUN,               /* LEGO Racers (PC) */
@@ -627,7 +639,7 @@ typedef enum {
     meta_TA_AAC_X360,       /* tri-Ace AAC (Star Ocean 4, End of Eternity, Infinite Undiscovery) */
     meta_TA_AAC_PS3,        /* tri-Ace AAC (Star Ocean International, Resonance of Fate) */
     meta_TA_AAC_MOBILE,     /* tri-Ace AAC (Star Ocean Anamnesis, Heaven x Inferno) */
-    meta_PS3_MTA2,          /* Metal Gear Solid 4 MTA2 */
+    meta_MTA2,
     meta_NGC_ULW,           /* Burnout 1 (GC only) */
     meta_PC_XA30,           /* Driver - Parallel Lines (PC) */
     meta_WII_04SW,          /* Driver - Parallel Lines (Wii) */
@@ -724,15 +736,63 @@ typedef enum {
     meta_GIN,
     meta_DSF,
     meta_208,
+    meta_DSP_DS2,
+    meta_MUS_VC,
+    meta_STRM_ABYLIGHT,
+    meta_MSF_KONAMI,
+    meta_XWMA_KONAMI,
+    meta_9TAV,
 
 } meta_t;
+
+/* standard WAVEFORMATEXTENSIBLE speaker positions */
+typedef enum {
+    speaker_FL  = (1 << 0),     /* front left */
+    speaker_FR  = (1 << 1),     /* front right */
+    speaker_FC  = (1 << 2),     /* front center */
+    speaker_LFE = (1 << 3),     /* low frequency effects */
+    speaker_BL  = (1 << 4),     /* back left */
+    speaker_BR  = (1 << 5),     /* back right */
+    speaker_FLC = (1 << 6),     /* front left center */
+    speaker_FRC = (1 << 7),     /* front right center */
+    speaker_BC  = (1 << 8),     /* back center */
+    speaker_SL  = (1 << 9),     /* side left */
+    speaker_SR  = (1 << 10),    /* side right */
+
+    speaker_TC  = (1 << 11),    /* top center*/
+    speaker_TFL = (1 << 12),    /* top front left */
+    speaker_TFC = (1 << 13),    /* top front center */
+    speaker_TFR = (1 << 14),    /* top front right */
+    speaker_TBL = (1 << 15),    /* top back left */
+    speaker_TBC = (1 << 16),    /* top back center */
+    speaker_TBR = (1 << 17),    /* top back left */
+
+} speaker_t;
+
+/* typical mappings that metas may use to set channel_layout (but plugin must actually use it)
+ * (in order, so 3ch file could be mapped to FL FR FC or FL FR LFE but not LFE FL FR) */
+typedef enum {
+    mapping_MONO             = speaker_FC,
+    mapping_STEREO           = speaker_FL | speaker_FR,
+    mapping_2POINT1          = speaker_FL | speaker_FR | speaker_LFE,
+    mapping_2POINT1_xiph     = speaker_FL | speaker_FR | speaker_FC,
+    mapping_QUAD             = speaker_FL | speaker_FR | speaker_BL  | speaker_BR,
+    mapping_QUAD_surround    = speaker_FL | speaker_FR | speaker_FC  | speaker_BC,
+    mapping_5POINT0          = speaker_FL | speaker_FR | speaker_LFE | speaker_BL | speaker_BR,
+    mapping_5POINT0_xiph     = speaker_FL | speaker_FR | speaker_FC  | speaker_BL | speaker_BR,
+    mapping_5POINT1          = speaker_FL | speaker_FR | speaker_FC  | speaker_LFE | speaker_BL | speaker_BR,
+    mapping_5POINT1_surround = speaker_FL | speaker_FR | speaker_FC  | speaker_LFE | speaker_SL | speaker_SR,
+    mapping_7POINT0          = speaker_FL | speaker_FR | speaker_FC  | speaker_LFE | speaker_BC | speaker_FLC | speaker_FRC,
+    mapping_7POINT1          = speaker_FL | speaker_FR | speaker_FC  | speaker_LFE | speaker_BL | speaker_BR  | speaker_FLC | speaker_FRC,
+    mapping_7POINT1_surround = speaker_FL | speaker_FR | speaker_FC  | speaker_LFE | speaker_BL | speaker_BR  | speaker_SL  | speaker_SR,
+} mapping_t;
 
 
 /* info for a single vgmstream channel */
 typedef struct {
-    STREAMFILE * streamfile; /* file used by this channel */
+    STREAMFILE * streamfile;    /* file used by this channel */
     off_t channel_start_offset; /* where data for this channel begins */
-    off_t offset;           /* current location in the file */
+    off_t offset;               /* current location in the file */
 
     off_t frame_header_offset;  /* offset of the current frame header (for WS) */
     int samples_left_in_frame;  /* for WS */
@@ -740,7 +800,7 @@ typedef struct {
     /* format specific */
 
     /* adpcm */
-    int16_t adpcm_coef[16]; /* for formats with decode coefficients built in */
+    int16_t adpcm_coef[16];     /* for formats with decode coefficients built in */
     int32_t adpcm_coef_3by32[0x60];     /* for Level-5 0x555 */
     union {
         int16_t adpcm_history1_16;  /* previous sample */
@@ -778,7 +838,7 @@ typedef struct {
 
 /* main vgmstream info */
 typedef struct {
-    /* basics */
+    /* basic config */
     int32_t num_samples;            /* the actual max number of samples */
     int32_t sample_rate;            /* sample rate in Hz */
     int channels;                   /* number of channels */
@@ -786,26 +846,27 @@ typedef struct {
     layout_t layout_type;           /* type of layout */
     meta_t meta_type;               /* type of metadata */
 
-    /* looping */
+    /* loopin config */
     int loop_flag;                  /* is this stream looped? */
     int32_t loop_start_sample;      /* first sample of the loop (included in the loop) */
     int32_t loop_end_sample;        /* last sample of the loop (not included in the loop) */
 
-    /* layouts/block */
+    /* layouts/block config */
     size_t interleave_block_size;   /* interleave, or block/frame size (depending on the codec) */
     size_t interleave_last_block_size; /* smaller interleave for last block */
 
-    /* subsongs */
+    /* subsong config */
     int num_streams;                /* for multi-stream formats (0=not set/one stream, 1=one stream) */
     int stream_index;               /* selected subsong (also 1-based) */
     size_t stream_size;             /* info to properly calculate bitrate in case of subsongs */
     char stream_name[STREAM_NAME_SIZE]; /* name of the current stream (info), if the file stores it and it's filled */
 
-    /* config */
+    /* mapping config (info for plugins) */
+    uint32_t channel_layout;        /* order: FL FR FC LFE BL BR FLC FRC BC SL SR etc (WAVEFORMATEX flags where FL=lowest bit set) */
+
+    /* other config */
     int allow_dual_stereo;          /* search for dual stereo (file_L.ext + file_R.ext = single stereo file) */
-    uint32_t channel_mask;          /* to silence crossfading subsongs/layers */
-    int channel_mappings_on;        /* channel mappings are active */
-    int channel_mappings[32];       /* swap channel "i" with "[i]" */
+
     /* config requests, players must read and honor these values */
     /* (ideally internally would work as a player, but for now player must do it manually) */
     double config_loop_count;
@@ -816,11 +877,6 @@ typedef struct {
     int config_ignore_fade;
 
 
-    /* channel state */
-    VGMSTREAMCHANNEL * ch;          /* pointer to array of channels */
-    VGMSTREAMCHANNEL * start_ch;    /* copies of channel status as they were at the beginning of the stream */
-    VGMSTREAMCHANNEL * loop_ch;     /* copies of channel status as they were at the loop point */
-
     /* layout/block state */
     size_t full_block_size;         /* actual data size of an entire block (ie. may be fixed, include padding/headers, etc) */
     int32_t current_sample;         /* number of samples we've passed (for loop detection) */
@@ -830,7 +886,7 @@ typedef struct {
     size_t current_block_samples;   /* size in samples of the block we're in now (used over current_block_size if possible) */
     off_t next_block_offset;        /* offset of header of the next block */
     /* layout/block loop state */
-    int32_t loop_sample;            /* saved from current_sample, should be loop_start_sample... */
+    int32_t loop_sample;            /* saved from current_sample (same as loop_start_sample, but more state-like) */
     int32_t loop_samples_into_block;/* saved from samples_into_block */
     off_t loop_block_offset;        /* saved from current_block_offset */
     size_t loop_block_size;         /* saved from current_block_size */
@@ -842,22 +898,28 @@ typedef struct {
     int loop_count;                 /* counter of complete loops (1=looped once) */
     int loop_target;                /* max loops before continuing with the stream end (loops forever if not set) */
 
-    /* decoder specific */
+    /* decoder config/state */
     int codec_endian;               /* little/big endian marker; name is left vague but usually means big endian */
-    int codec_config;               /* flags for codecs or layouts with minor variations; meaning is up to the codec */
-
+    int codec_config;               /* flags for codecs or layouts with minor variations; meaning is up to them */
     int32_t ws_output_size;         /* WS ADPCM: output bytes for this block */
 
-    void * start_vgmstream;         /* a copy of the VGMSTREAM as it was at the beginning of the stream (for custom layouts) */
 
-    /* Data the codec needs for the whole stream. This is for codecs too
-     * different from vgmstream's structure to be reasonably shoehorned into
-     * using the ch structures.
+    /* main state */
+    VGMSTREAMCHANNEL * ch;          /* array of channels */
+    VGMSTREAMCHANNEL * start_ch;    /* shallow copy of channels as they were at the beginning of the stream (for resets) */
+    VGMSTREAMCHANNEL * loop_ch;     /* shallow copy of channels as they were at the loop point (for loops) */
+    void* start_vgmstream;          /* shallow copy of the VGMSTREAM as it was at the beginning of the stream (for resets) */
+
+    void * mixing_data;             /* state for mixing effects */
+
+    /* Optional data the codec needs for the whole stream. This is for codecs too
+     * different from vgmstream's structure to be reasonably shoehorned.
      * Note also that support must be added for resetting, looping and
      * closing for every codec that uses this, as it will not be handled. */
     void * codec_data;
     /* Same, for special layouts. layout_data + codec_data may exist at the same time. */
     void * layout_data;
+
 } VGMSTREAM;
 
 #ifdef VGM_USE_VORBIS
@@ -881,6 +943,7 @@ typedef struct {
     int bitstream;
 
     ogg_vorbis_streamfile ov_streamfile;
+    int disable_reordering; /* Xiph reorder channels on output, except for some devs */
 } ogg_vorbis_codec_data;
 
 
@@ -1042,21 +1105,21 @@ typedef struct {
 
 #ifdef VGM_USE_G7221
 typedef struct {
-    sample buffer[640];
+    sample_t buffer[640];
     g7221_handle *handle;
 } g7221_codec_data;
 #endif
 
 #ifdef VGM_USE_G719
 typedef struct {
-   sample buffer[960];
+   sample_t buffer[960];
    void *handle;
 } g719_codec_data;
 #endif
 
 #ifdef VGM_USE_MAIATRAC3PLUS
 typedef struct {
-    sample *buffer;
+    sample_t *buffer;
     int channels;
     int samples_discard;
     void *handle;
@@ -1085,31 +1148,23 @@ typedef struct {
     void *io_config;
 } acm_codec_data;
 
-#define AIX_BUFFER_SIZE 0x1000
-/* AIXery */
-typedef struct {
-    sample buffer[AIX_BUFFER_SIZE];
-    int segment_count;
-    int stream_count;
-    int current_segment;
-    /* one per segment */
-    int32_t *sample_counts;
-    /* organized like:
-     * segment1_stream1, segment1_stream2, segment2_stream1, segment2_stream2*/
-    VGMSTREAM **adxs;
-} aix_codec_data;
-
-/* for files made of "vertical" segments, one per section of a song (using a complete sub-VGMSTREAM) */
+/* for files made of "continuous" segments, one per section of a song (using a complete sub-VGMSTREAM) */
 typedef struct {
     int segment_count;
     VGMSTREAM **segments;
     int current_segment;
+    sample_t *buffer;
+    int input_channels;     /* internal buffer channels */
+    int output_channels;    /* resulting channels (after mixing, if applied) */
 } segmented_layout_data;
 
-/* for files made of "horizontal" layers, one per group of channels (using a complete sub-VGMSTREAM) */
+/* for files made of "parallel" layers, one per group of channels (using a complete sub-VGMSTREAM) */
 typedef struct {
     int layer_count;
     VGMSTREAM **layers;
+    sample_t *buffer;
+    int input_channels;     /* internal buffer channels */
+    int output_channels;    /* resulting channels (after mixing, if applied) */
 } layered_layout_data;
 
 /* for compressed NWA */
@@ -1162,6 +1217,9 @@ typedef struct {
     int64_t skipSamples; // number of start samples that will be skipped (encoder delay), for looping adjustments
     int streamCount; // number of FFmpeg audio streams
     
+    int channel_remap_set;
+    int channel_remap[32]; /* map of channel > new position */
+
     /*** internal state ***/
     // Intermediate byte buffer
     uint8_t *sampleBuffer;
@@ -1289,7 +1347,7 @@ int get_vgmstream_average_bitrate(VGMSTREAM * vgmstream);
  * The list disables some common formats that may conflict (.wav, .ogg, etc). */
 const char ** vgmstream_get_formats(size_t * size);
 
-/* Force enable/disable internal looping. Should be done before playing anything,
+/* Force enable/disable internal looping. Should be done before playing anything (or after reset),
  * and not all codecs support arbitrary loop values ATM. */
 void vgmstream_force_loop(VGMSTREAM* vgmstream, int loop_flag, int loop_start_sample, int loop_end_sample);
 
@@ -1300,8 +1358,11 @@ void vgmstream_set_loop_target(VGMSTREAM* vgmstream, int loop_target);
 /* vgmstream "private" API                                                  */
 /* -------------------------------------------------------------------------*/
 
-/* Allocate memory and setup a VGMSTREAM */
+/* Allocate initial memory for the VGMSTREAM */
 VGMSTREAM * allocate_vgmstream(int channel_count, int looped);
+
+/* Prepare the VGMSTREAM's initial state once parsed and ready, but before playing. */
+void setup_vgmstream(VGMSTREAM * vgmstream);
 
 /* Get the number of samples of a single frame (smallest self-contained sample group, 1/N channels) */
 int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream);
@@ -1313,7 +1374,7 @@ int get_vgmstream_shortframe_size(VGMSTREAM * vgmstream);
 
 /* Decode samples into the buffer. Assume that we have written samples_written into the
  * buffer already, and we have samples_to_do consecutive samples ahead of us. */
-void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to_do, sample * buffer);
+void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to_do, sample_t * buffer);
 
 /* Calculate number of consecutive samples to do (taking into account stopping for loop start and end) */
 int vgmstream_samples_to_do(int samples_this_block, int samples_per_frame, VGMSTREAM * vgmstream);
@@ -1321,11 +1382,11 @@ int vgmstream_samples_to_do(int samples_this_block, int samples_per_frame, VGMST
 /* Detect loop start and save values, or detect loop end and restore (loop back). Returns 1 if loop was done. */
 int vgmstream_do_loop(VGMSTREAM * vgmstream);
 
-/* Open the stream for reading at offset (standarized taking into account layouts, channels and so on).
- * returns 0 on failure */
+/* Open the stream for reading at offset (taking into account layouts, channels and so on).
+ * Returns 0 on failure */
 int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t start_offset);
 
-/* get description info */
+/* Get description info */
 const char * get_vgmstream_coding_description(coding_t coding_type);
 const char * get_vgmstream_layout_description(layout_t layout_type);
 const char * get_vgmstream_meta_description(meta_t meta_type);

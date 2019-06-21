@@ -130,8 +130,18 @@ void reset_hca(hca_codec_data * data) {
     data->samples_to_discard = data->info.encoderDelay;
 }
 
-void loop_hca(hca_codec_data * data) {
+void loop_hca(hca_codec_data * data, int32_t num_sample) {
     if (!data) return;
+
+    /* manually calc loop values if not set (should only happen with installed/forced looping,
+     * as actual files usually pad encoder delay so earliest loopStartBlock becomes 1-2,
+     * probably for decoding cleanup so this may not be as exact) */
+    if (data->info.loopStartBlock == 0 && data->info.loopStartDelay == 0) {
+        int target_sample = num_sample + data->info.encoderDelay;
+
+        data->info.loopStartBlock = target_sample / data->info.samplesPerBlock;
+        data->info.loopStartDelay = target_sample - (data->info.loopStartBlock * data->info.samplesPerBlock);
+    }
 
     data->current_block = data->info.loopStartBlock;
     data->samples_filled = 0;
@@ -155,9 +165,10 @@ void free_hca(hca_codec_data * data) {
 #define HCA_KEY_SCORE_SCALE      10
 /* ignores beginning frames (~10 is not uncommon, Dragalia Lost vocal layers have lots) */
 #define HCA_KEY_MAX_SKIP_BLANKS  1200
-/* 5~15 should be enough, but almost silent or badly mastered files may need tweaks */
-#define HCA_KEY_MIN_TEST_FRAMES  5
-#define HCA_KEY_MAX_TEST_FRAMES  10
+/* 5~15 should be enough, but almost silent or badly mastered files may need tweaks
+ * (ex. newer Tales of the Rays files clip a lot and need +6 as some keys give almost-ok results) */
+#define HCA_KEY_MIN_TEST_FRAMES  7
+#define HCA_KEY_MAX_TEST_FRAMES  12
 /* score of 10~30 isn't uncommon in a single frame, too many frames over that is unlikely */
 #define HCA_KEY_MAX_FRAME_SCORE  150
 #define HCA_KEY_MAX_TOTAL_SCORE  (HCA_KEY_MAX_TEST_FRAMES * 50*HCA_KEY_SCORE_SCALE)
