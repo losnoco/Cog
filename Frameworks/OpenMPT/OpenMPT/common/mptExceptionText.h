@@ -28,7 +28,7 @@ OPENMPT_NAMESPACE_BEGIN
 namespace mpt
 {
 
-template <typename T> T get_exception_text_impl(const std::exception & e) noexcept
+template <typename T> T get_exception_text_impl(const std::exception & e)
 {
 	if(e.what() && (std::strlen(e.what()) > 0))
 	{
@@ -42,28 +42,28 @@ template <typename T> T get_exception_text_impl(const std::exception & e) noexce
 	}
 }
 
-template <typename T> inline T get_exception_text(const std::exception & e) noexcept
+template <typename T> inline T get_exception_text(const std::exception & e)
 {
 	return mpt::get_exception_text_impl<T>(e);
 }
-template <> inline std::string get_exception_text<std::string>(const std::exception & e) noexcept
+template <> inline std::string get_exception_text<std::string>(const std::exception & e)
 {
 	return mpt::get_exception_text_impl<std::string>(e);
 }
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
-template <> inline mpt::lstring get_exception_text<mpt::lstring>(const std::exception & e) noexcept
+template <> inline mpt::lstring get_exception_text<mpt::lstring>(const std::exception & e)
 {
 	return mpt::ToLocale(mpt::CharsetLocaleOrUTF8, mpt::get_exception_text_impl<std::string>(e));
 }
 #endif
 #if MPT_WSTRING_FORMAT
-template <> inline std::wstring get_exception_text<std::wstring>(const std::exception & e) noexcept
+template <> inline std::wstring get_exception_text<std::wstring>(const std::exception & e)
 {
 	return mpt::ToWide(mpt::CharsetLocaleOrUTF8, mpt::get_exception_text_impl<std::string>(e));
 }
 #endif
 #if MPT_USTRING_MODE_UTF8
-template <> inline mpt::ustring get_exception_text<mpt::ustring>(const std::exception & e) noexcept
+template <> inline mpt::ustring get_exception_text<mpt::ustring>(const std::exception & e)
 {
 	return mpt::ToUnicode(mpt::CharsetLocaleOrUTF8, mpt::get_exception_text_impl<std::string>(e));
 }

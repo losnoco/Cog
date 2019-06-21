@@ -345,23 +345,23 @@ MPT_BINARY_STRUCT(MODSampleHeader, 30)
 // Synthesized StarTrekker instruments
 struct AMInstrument
 {
-	char     am[2];			// "AM"
+	char     am[2];        // "AM"
 	char     zero[4];
-	uint16be startLevel;	// Start level
-	uint16be attack1Level;	// Attack 1 level
-	uint16be attack1Speed;	// Attack 1 speed
-	uint16be attack2Level;	// Attack 2 level
-	uint16be attack2Speed;	// Attack 2 speed
-	uint16be sustainLevel;	// Sustain level
-	uint16be decaySpeed;	// Decay speed
-	uint16be sustainTime;	// Sustain time
-	uint16be nt;			// ?
-	uint16be releaseSpeed;	// Release speed
-	uint16be waveform;		// Waveform
-	int16be  pitchFall;		// Pitch fall
-	uint16be vibAmp;		// Vibrato amplitude
-	uint16be vibSpeed;		// Vibrato speed
-	uint16be octave;		// Base frequency
+	uint16be startLevel;   // Start level
+	uint16be attack1Level; // Attack 1 level
+	uint16be attack1Speed; // Attack 1 speed
+	uint16be attack2Level; // Attack 2 level
+	uint16be attack2Speed; // Attack 2 speed
+	uint16be sustainLevel; // Sustain level
+	uint16be decaySpeed;   // Decay speed
+	uint16be sustainTime;  // Sustain time
+	uint16be nt;           // ?
+	uint16be releaseSpeed; // Release speed
+	uint16be waveform;     // Waveform
+	int16be  pitchFall;    // Pitch fall
+	uint16be vibAmp;       // Vibrato amplitude
+	uint16be vibSpeed;     // Vibrato speed
+	uint16be octave;       // Base frequency
 
 	void ConvertToMPT(ModSample &sample, ModInstrument &ins, mpt::fast_prng &rng) const
 	{
@@ -376,15 +376,16 @@ struct AMInstrument
 		sample.RelativeTone = static_cast<int8>(-12 * octave);
 		if(sample.AllocateSample())
 		{
+			int8 *p = sample.sample8();
 			for(SmpLength i = 0; i < sample.nLength; i++)
 			{
 				switch(waveform)
 				{
 				default:
-				case 0: sample.sample8()[i] = ModSinusTable[i * 2];				break;	// Sine
-				case 1: sample.sample8()[i] = static_cast<int8>(-128 + i * 8);	break;	// Saw
-				case 2: sample.sample8()[i] = i < 16 ? -128 : 127;				break;	// Square
-				case 3: sample.sample8()[i] = mpt::random<int8>(rng);			break;	// Noise
+				case 0: p[i] = ModSinusTable[i * 2];            break; // Sine
+				case 1: p[i] = static_cast<int8>(-128 + i * 8); break; // Saw
+				case 2: p[i] = i < 16 ? -128 : 127;             break; // Square
+				case 3: p[i] = mpt::random<int8>(rng);          break; // Noise
 				}
 			}
 		}
@@ -492,7 +493,7 @@ MPT_BINARY_STRUCT(PT36InfoChunk, 64)
 
 
 // Check if header magic equals a given string.
-static bool IsMagic(const char *magic1, const char *magic2)
+static bool IsMagic(const char *magic1, const char (&magic2)[5])
 {
 	return std::memcmp(magic1, magic2, 4) == 0;
 }
@@ -1023,11 +1024,15 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 
 				if(m.command || m.param)
 				{
-					// No support for Startrekker assembly macros
 					if(isStartrekker && m.command == 0x0E)
 					{
+						// No support for Startrekker assembly macros
 						m.command = CMD_NONE;
 						m.param = 0;
+					} else if(isStartrekker && m.command == 0x0F && m.param > 0x1F)
+					{
+						// Startrekker caps speed at 31 ticks per row
+						m.param = 0x1F;
 					}
 					ConvertModCommand(m);
 				}
@@ -1281,13 +1286,13 @@ static uint32 CountInvalidChars(const char (&name)[N])
 // Thanks for Fraggie for this information! (https://www.un4seen.com/forum/?topic=14471.msg100829#msg100829)
 enum STVersions
 {
-	UST1_00,				// Ultimate Soundtracker 1.0-1.21 (K. Obarski)
-	UST1_80,				// Ultimate Soundtracker 1.8-2.0 (K. Obarski)
-	ST2_00_Exterminator,	// SoundTracker 2.0 (The Exterminator), D.O.C. Sountracker II (Unknown/D.O.C.)
-	ST_III,					// Defjam Soundtracker III (Il Scuro/Defjam), Alpha Flight SoundTracker IV (Alpha Flight), D.O.C. SoundTracker IV (Unknown/D.O.C.), D.O.C. SoundTracker VI (Unknown/D.O.C.)
-	ST_IX,					// D.O.C. SoundTracker IX (Unknown/D.O.C.)
-	MST1_00,				// Master Soundtracker 1.0 (Tip/The New Masters)
-	ST2_00,					// SoundTracker 2.0, 2.1, 2.2 (Unknown/D.O.C.)
+	UST1_00,             // Ultimate Soundtracker 1.0-1.21 (K. Obarski)
+	UST1_80,             // Ultimate Soundtracker 1.8-2.0 (K. Obarski)
+	ST2_00_Exterminator, // SoundTracker 2.0 (The Exterminator), D.O.C. Sountracker II (Unknown/D.O.C.)
+	ST_III,              // Defjam Soundtracker III (Il Scuro/Defjam), Alpha Flight SoundTracker IV (Alpha Flight), D.O.C. SoundTracker IV (Unknown/D.O.C.), D.O.C. SoundTracker VI (Unknown/D.O.C.)
+	ST_IX,               // D.O.C. SoundTracker IX (Unknown/D.O.C.)
+	MST1_00,             // Master Soundtracker 1.0 (Tip/The New Masters)
+	ST2_00,              // SoundTracker 2.0, 2.1, 2.2 (Unknown/D.O.C.)
 };
 
 
@@ -1521,8 +1526,7 @@ bool CSoundFile::ReadM15(FileReader &file, ModLoadingFlags loadFlags)
 	if(fileHeader.restartPos != 0x78)
 	{
 		// Convert to CIA timing
-		//m_nDefaultTempo = TEMPO(((709378.92 / 50.0) * 125.0) / ((240 - fileHeader.restartPos) * 122.0));
-		m_nDefaultTempo.Set((709379 / ((240 - fileHeader.restartPos) * 122)) * 125 / 50);
+		m_nDefaultTempo = TEMPO((709379.0 * 125.0 / 50.0) / ((240 - fileHeader.restartPos) * 122.0));
 		if(minVersion > UST1_80)
 		{
 			// D.O.C. SoundTracker IX re-introduced the variable tempo after some other versions dropped it.

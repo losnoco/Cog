@@ -1060,7 +1060,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 				{
 					if(drumSample[drum] == i && Instruments[drumMap[drum]] != nullptr)
 					{
-						Instruments[drumMap[drum]]->nResampling = SRCMODE_NEAREST;
+						Instruments[drumMap[drum]]->resampling = SRCMODE_NEAREST;
 					}
 				}
 			}
@@ -1105,7 +1105,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 						mptSmp.nFineTune = group.pitch;
 						if(sampleNoInterpolation[sample - 1])
 						{
-							mptIns->nResampling = SRCMODE_NEAREST;
+							mptIns->resampling = SRCMODE_NEAREST;
 						}
 						if(sampleSynchronized[sample - 1])
 						{

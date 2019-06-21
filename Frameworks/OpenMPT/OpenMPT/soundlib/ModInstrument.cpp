@@ -163,13 +163,13 @@ ModInstrument::ModInstrument(SAMPLEINDEX sample)
 
 	nMixPlug = 0;
 	nVolRampUp = 0;
-	nResampling = SRCMODE_DEFAULT;
+	resampling = SRCMODE_DEFAULT;
 	nCutSwing = 0;
 	nResSwing = 0;
 	nFilterMode = FLTMODE_UNCHANGED;
 	pitchToTempoLock.Set(0);
-	nPluginVelocityHandling = PLUGIN_VELOCITYHANDLING_CHANNEL;
-	nPluginVolumeHandling = PLUGIN_VOLUMEHANDLING_IGNORE;
+	pluginVelocityHandling = PLUGIN_VELOCITYHANDLING_CHANNEL;
+	pluginVolumeHandling = PLUGIN_VOLUMEHANDLING_IGNORE;
 
 	pTuning = CSoundFile::GetDefaultTuning();
 

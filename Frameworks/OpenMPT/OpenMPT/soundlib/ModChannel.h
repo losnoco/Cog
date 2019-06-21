@@ -28,8 +28,8 @@ struct ModChannel
 	struct EnvInfo
 	{
 		FlagSet<EnvelopeFlags> flags;
-		uint32 nEnvPosition;
-		int32 nEnvValueAtReleaseJump;
+		uint32 nEnvPosition = 0;
+		int32 nEnvValueAtReleaseJump = NOT_YET_RELEASED;
 
 		void Reset()
 		{
@@ -87,7 +87,7 @@ struct ModChannel
 	CHANNELINDEX nMasterChn;
 	ModCommand rowCommand;
 	// 8-bit members
-	uint8 resamplingMode;
+	ResamplingMode resamplingMode;
 	uint8 nRestoreResonanceOnNewNote;	// See nRestorePanOnNewNote
 	uint8 nRestoreCutoffOnNewNote;		// ditto
 	uint8 nNote;

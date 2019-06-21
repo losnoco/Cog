@@ -785,9 +785,12 @@ INPUT                  = libopenmpt/dox/index.dox \
                          README.md \
                          libopenmpt/dox/dependencies.md \
                          libopenmpt/dox/packaging.md \
+                         doc/contributing.md \
+                         doc/libopenmpt_styleguide.md \
                          libopenmpt/dox/tests.md \
                          libopenmpt/dox/changelog.md \
                          libopenmpt/dox/todo.md \
+                         doc/module_formats.md \
                          libopenmpt/libopenmpt.hpp \
                          libopenmpt/libopenmpt.h \
                          libopenmpt/libopenmpt_stream_callbacks_buffer.h \

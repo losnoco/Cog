@@ -366,14 +366,14 @@ enum PluginMutePriority
 };
 
 // Plugin velocity handling options
-enum PLUGVELOCITYHANDLING
+enum PlugVelocityHandling : uint8
 {
 	PLUGIN_VELOCITYHANDLING_CHANNEL = 0,
 	PLUGIN_VELOCITYHANDLING_VOLUME
 };
 
 // Plugin volumecommand handling options
-enum PLUGVOLUMEHANDLING
+enum PlugVolumeHandling : uint8
 {
 	PLUGIN_VOLUMEHANDLING_MIDI = 0,
 	PLUGIN_VOLUMEHANDLING_DRYWET,
@@ -514,6 +514,7 @@ enum PlayBehaviour
 	kFT2NoteDelayWithoutInstr,      // Sometime between OpenMPT 1.18.03.00 and 1.19.01.00, delayed instrument-less notes in XM started recalling the default sample volume and panning
 	kOPLFlexibleNoteOff,            // Full control after note-off over OPL voices, ^^^ sends note cut instead of just note-off
 	kITInstrWithNoteOffOldEffects,  // Instrument number with note-off recalls default volume - special cases with Old Effects enabled
+	kMIDIVolumeOnNoteOffBug,        // Update MIDI channel volume on note-off (legacy bug emulation)
 
 	// Add new play behaviours here.
 

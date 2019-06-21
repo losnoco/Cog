@@ -342,27 +342,31 @@ bool ModSequenceSet::ConvertSubsongsToMultipleSequences()
 		Reporting::Confirm("The order list contains separator items.\nThe new format supports multiple sequences, do you want to convert those separate tracks into multiple song sequences?",
 		"Order list conversion", false, true) == cnfYes)
 	{
-		ORDERINDEX length = m_Sequences[0].GetLengthTailTrimmed();
+		ORDERINDEX length = m_Sequences[0].GetLength();
 		for(ORDERINDEX ord = 0; ord < length; ord++)
 		{
 			// End of subsong?
 			if(!m_Sequences[0].IsValidPat(ord) && m_Sequences[0][ord] != GetIgnoreIndex())
 			{
-				// remove all separator patterns between current and next subsong first
-				while(ord < length && !m_sndFile.Patterns.IsValidIndex(m_Sequences[0][ord]))
+				// Remove all separator patterns between current and next subsong first
+				while(ord < length && !m_sndFile.Patterns.IsValidPat(m_Sequences[0][ord]))
 				{
 					m_Sequences[0][ord] = GetInvalidPatIndex();
 					ord++;
 					modified = true;
 				}
-				if(ord >= length) break;
-				ORDERINDEX startOrd = ord;
+				if(ord >= length)
+					break;
+
+				const SEQUENCEINDEX newSeq = AddSequence(false);
+				if(newSeq == SEQUENCEINDEX_INVALID)
+					break;
+
+				const ORDERINDEX startOrd = ord;
+				m_Sequences[newSeq].reserve(length - startOrd);
 				modified = true;
 
-				SEQUENCEINDEX newSeq = AddSequence(false);
-				m_Sequences[newSeq].reserve(length - startOrd);
-
-				// now, move all following orders to the new sequence
+				// Now, move all following orders to the new sequence
 				while(ord < length && m_Sequences[0][ord] != GetInvalidPatIndex())
 				{
 					PATTERNINDEX copyPat = m_Sequences[0][ord];
@@ -370,7 +374,7 @@ bool ModSequenceSet::ConvertSubsongsToMultipleSequences()
 					m_Sequences[0][ord] = GetInvalidPatIndex();
 					ord++;
 
-					// is this a valid pattern? adjust pattern jump commands, if necessary.
+					// Is this a valid pattern? adjust pattern jump commands, if necessary.
 					if(m_sndFile.Patterns.IsValidPat(copyPat))
 					{
 						for(auto &m : m_sndFile.Patterns[copyPat])
@@ -382,6 +386,7 @@ bool ModSequenceSet::ConvertSubsongsToMultipleSequences()
 						}
 					}
 				}
+				ord--;
 			}
 		}
 		SetSequence(0);

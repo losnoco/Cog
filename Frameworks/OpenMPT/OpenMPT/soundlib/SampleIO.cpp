@@ -1018,8 +1018,7 @@ size_t SampleIO::WriteSample(std::ostream &f, const ModSample &sample, SmpLength
 		MPT_ASSERT(len == numSamples);
 		if(sample.uFlags[CHN_16BIT])
 		{
-			const int16 *const pSample16 = sample.sample16();
-			const int16 *p = pSample16;
+			const int16 *p = sample.sample16();
 			int s_old = 0;
 			const int s_ofs = (GetEncoding() == unsignedPCM) ? 0x80 : 0;
 			for(SmpLength j = 0; j < numSamples; j++)
@@ -1028,7 +1027,7 @@ size_t SampleIO::WriteSample(std::ostream &f, const ModSample &sample, SmpLength
 				p++;
 				if(sample.uFlags[CHN_STEREO])
 				{
-					s_new = (s_new + (static_cast<int>(*p)) + 1) / 2;
+					s_new = (s_new + mpt::rshift_signed(*p, 8) + 1) / 2;
 					p++;
 				}
 				if(GetEncoding() == deltaPCM)

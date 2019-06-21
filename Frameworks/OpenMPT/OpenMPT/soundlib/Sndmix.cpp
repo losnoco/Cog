@@ -1036,7 +1036,8 @@ void CSoundFile::ProcessVolumeEnvelope(ModChannel &chn, int &vol) const
 		// if we are in the release portion of the envelope,
 		// rescale envelope factor so that it is proportional to the release point
 		// and release envelope beginning.
-		if(chn.VolEnv.nEnvValueAtReleaseJump != NOT_YET_RELEASED)
+		if(pIns->VolEnv.nReleaseNode != ENV_RELEASE_NODE_UNSET
+			&& chn.VolEnv.nEnvValueAtReleaseJump != NOT_YET_RELEASED)
 		{
 			int envValueAtReleaseJump = chn.VolEnv.nEnvValueAtReleaseJump;
 			int envValueAtReleaseNode = pIns->VolEnv[pIns->VolEnv.nReleaseNode].value * 4;
@@ -2315,12 +2316,12 @@ bool CSoundFile::ReadNote()
 		if (chn.pCurrentSample || (chn.HasMIDIOutput() && !chn.dwFlags[CHN_KEYOFF | CHN_NOTEFADE]))
 		{
 			// Update VU-Meter (nRealVolume is 14-bit)
-			uint32 vul = (chn.nRealVolume * chn.nRealPan) / (1 << 14);
+			uint32 vul = (chn.nRealVolume * (256-chn.nRealPan)) / (1 << 14);
 			if (vul > 127) vul = 127;
 			if (chn.nLeftVU > 127) chn.nLeftVU = (uint8)vul;
 			vul /= 2;
 			if (chn.nLeftVU < vul) chn.nLeftVU = (uint8)vul;
-			uint32 vur = (chn.nRealVolume * (256-chn.nRealPan)) / (1 << 14);
+			uint32 vur = (chn.nRealVolume * chn.nRealPan) / (1 << 14);
 			if (vur > 127) vur = 127;
 			if (chn.nRightVU > 127) chn.nRightVU = (uint8)vur;
 			vur /= 2;
@@ -2394,13 +2395,13 @@ bool CSoundFile::ReadNote()
 			//if (chn.nNewRightVol > 0xFFFF) chn.nNewRightVol = 0xFFFF;
 			//if (chn.nNewLeftVol > 0xFFFF) chn.nNewLeftVol = 0xFFFF;
 
-			if(chn.pModInstrument && Resampling::IsKnownMode(chn.pModInstrument->nResampling))
+			if(chn.pModInstrument && Resampling::IsKnownMode(chn.pModInstrument->resampling))
 			{
 				// For defined resampling modes, use per-instrument resampling mode if set
-				chn.resamplingMode = static_cast<uint8>(chn.pModInstrument->nResampling);
+				chn.resamplingMode = chn.pModInstrument->resampling;
 			} else if(Resampling::IsKnownMode(m_nResampling))
 			{
-				chn.resamplingMode = static_cast<uint8>(m_nResampling);
+				chn.resamplingMode = m_nResampling;
 			} else if(m_SongFlags[SONG_ISAMIGA] && m_Resampler.m_Settings.emulateAmiga)
 			{
 				// Enforce Amiga resampler for Amiga modules
@@ -2408,7 +2409,7 @@ bool CSoundFile::ReadNote()
 			} else
 			{
 				// Default to global mixer settings
-				chn.resamplingMode = static_cast<uint8>(m_Resampler.m_Settings.SrcMode);
+				chn.resamplingMode = m_Resampler.m_Settings.SrcMode;
 			}
 
 			if(chn.increment.IsUnity() && !(chn.dwFlags[CHN_VIBRATO] || chn.nAutoVibDepth || chn.resamplingMode == SRCMODE_AMIGA))
@@ -2540,11 +2541,13 @@ void CSoundFile::ProcessMidiOut(CHANNELINDEX nChn)
 	if(note != NOTE_NONE)
 	{
 		int32 velocity = static_cast<int32>(4 * defaultVolume);
-		switch(pIns->nPluginVelocityHandling)
+		switch(pIns->pluginVelocityHandling)
 		{
 			case PLUGIN_VELOCITYHANDLING_CHANNEL:
 				velocity = chn.nVolume;
-			break;
+				break;
+			default:
+				break;
 		}
 
 		int32 swing = chn.nVolSwing;
@@ -2560,23 +2563,23 @@ void CSoundFile::ProcessMidiOut(CHANNELINDEX nChn)
 		SendMIDINote(nChn, realNote, static_cast<uint16>(velocity));
 	}
 
+	const bool processVolumeAlsoOnNote = (pIns->pluginVelocityHandling == PLUGIN_VELOCITYHANDLING_VOLUME);
+	const bool hasNote = m_playBehaviour[kMIDIVolumeOnNoteOffBug] ? (note != NOTE_NONE) : ModCommand::IsNote(note);
 
-	const bool processVolumeAlsoOnNote = (pIns->nPluginVelocityHandling == PLUGIN_VELOCITYHANDLING_VOLUME);
-
-	if((hasVolCommand && !note) || (note && processVolumeAlsoOnNote))
+	if((hasVolCommand && !hasNote) || (hasNote && processVolumeAlsoOnNote))
 	{
-		switch(pIns->nPluginVolumeHandling)
+		switch(pIns->pluginVolumeHandling)
 		{
 			case PLUGIN_VOLUMEHANDLING_DRYWET:
 				if(hasVolCommand) pPlugin->SetDryRatio(2 * vol);
 				else pPlugin->SetDryRatio(2 * defaultVolume);
 				break;
-
 			case PLUGIN_VOLUMEHANDLING_MIDI:
 				if(hasVolCommand) pPlugin->MidiCC(MIDIEvents::MIDICC_Volume_Coarse, std::min<uint8>(127u, 2u * vol), nChn);
 				else pPlugin->MidiCC(MIDIEvents::MIDICC_Volume_Coarse, static_cast<uint8>(std::min<uint32>(127u, 2u * defaultVolume)), nChn);
 				break;
-
+			default:
+				break;
 		}
 	}
 }
