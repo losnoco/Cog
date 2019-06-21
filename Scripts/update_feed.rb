@@ -108,11 +108,14 @@ if appcast_revision < latest_revision
   deltas = Dir.entries("#{site_dir}/#{feed}_builds").select { |f| f =~ /\A#{Regexp.escape(deltamask)}.+\.delta\z/ }.map { |f| File.join("#{site_dir}/#{feed}_builds", f) }
 
   #Upload them to S3
-  %x[s3cmd put -P -m application/octet-stream #{deltas.shelljoin} '#{site_dir}/#{feed}_builds/#{filename}' s3://balde.losno.co/cog/ --signature-v2]
+  %x[s3cmd put -P -m application/octet-stream #{deltas.shelljoin} '#{site_dir}/#{feed}_builds/#{filename}' s3://balde.losno.co/cog/]
+
+  #Upload the changelog that Sparkle will display
+  %x[s3cmd put -P -m text/html '#{site_dir}/#{feed}_builds/#{filenamedesc}' s3://balde.losno.co/cog/]
  
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.app']
 
   #Upload to S3
-  %x[s3cmd put -P -m application/xml '#{site_dir}/#{feed}_builds/#{feed}.xml' s3://balde.losno.co/cog/ --signature-v2]
+  %x[s3cmd put -P -m application/xml '#{site_dir}/#{feed}_builds/#{feed}.xml' s3://balde.losno.co/cog/]
 end
