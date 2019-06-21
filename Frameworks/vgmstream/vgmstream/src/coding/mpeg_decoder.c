@@ -3,15 +3,19 @@
 #include "../vgmstream.h"
 
 #ifdef VGM_USE_MPEG
+#ifdef __MACOSX__
 #include <mpg123/mpg123.h>
+#else
+#include <mpg123.h>
+#endif
 #include "mpeg_decoder.h"
 
 
 #define MPEG_DATA_BUFFER_SIZE 0x1000 /* at least one MPEG frame (max ~0x5A1 plus some more in case of free bitrate) */
 
 static mpg123_handle * init_mpg123_handle();
-static void decode_mpeg_standard(VGMSTREAMCHANNEL *stream, mpeg_codec_data * data, sample * outbuf, int32_t samples_to_do, int channels);
-static void decode_mpeg_custom(VGMSTREAM * vgmstream, mpeg_codec_data * data, sample * outbuf, int32_t samples_to_do, int channels);
+static void decode_mpeg_standard(VGMSTREAMCHANNEL *stream, mpeg_codec_data * data, sample_t * outbuf, int32_t samples_to_do, int channels);
+static void decode_mpeg_custom(VGMSTREAM * vgmstream, mpeg_codec_data * data, sample_t * outbuf, int32_t samples_to_do, int channels);
 static void decode_mpeg_custom_stream(VGMSTREAMCHANNEL *stream, mpeg_codec_data * data, int num_stream);
 
 
@@ -218,7 +222,7 @@ fail:
 /* DECODERS */
 /************/
 
-void decode_mpeg(VGMSTREAM * vgmstream, sample * outbuf, int32_t samples_to_do, int channels) {
+void decode_mpeg(VGMSTREAM * vgmstream, sample_t * outbuf, int32_t samples_to_do, int channels) {
     mpeg_codec_data * data = (mpeg_codec_data *) vgmstream->codec_data;
 
     if (!data->custom) {
@@ -232,7 +236,7 @@ void decode_mpeg(VGMSTREAM * vgmstream, sample * outbuf, int32_t samples_to_do, 
  * Decode anything mpg123 can.
  * Feeds raw data and extracts decoded samples as needed.
  */
-static void decode_mpeg_standard(VGMSTREAMCHANNEL *stream, mpeg_codec_data * data, sample * outbuf, int32_t samples_to_do, int channels) {
+static void decode_mpeg_standard(VGMSTREAMCHANNEL *stream, mpeg_codec_data * data, sample_t * outbuf, int32_t samples_to_do, int channels) {
     int samples_done = 0;
     mpg123_handle *m = data->m;
 
@@ -290,7 +294,7 @@ static void decode_mpeg_standard(VGMSTREAMCHANNEL *stream, mpeg_codec_data * dat
  * Copies to outbuf when there are samples in all streams and calls decode_mpeg_custom_stream to decode.
  . Depletes the stream's sample buffers before decoding more, so it doesn't run out of buffer space.
  */
-static void decode_mpeg_custom(VGMSTREAM * vgmstream, mpeg_codec_data * data, sample * outbuf, int32_t samples_to_do, int channels) {
+static void decode_mpeg_custom(VGMSTREAM * vgmstream, mpeg_codec_data * data, sample_t * outbuf, int32_t samples_to_do, int channels) {
     int i, samples_done = 0;
 
     while (samples_done < samples_to_do) {
@@ -327,7 +331,7 @@ static void decode_mpeg_custom(VGMSTREAM * vgmstream, mpeg_codec_data * data, sa
             ch = 0;
             for (stream = 0; stream < data->streams_size; stream++) {
                 mpeg_custom_stream *ms = data->streams[stream];
-                sample* inbuf = (sample*)ms->output_buffer;
+                sample_t *inbuf = (sample_t *)ms->output_buffer;
                 int stream_channels = ms->channels_per_frame;
                 int stream_ch, s;
 
@@ -509,42 +513,37 @@ void free_mpeg(mpeg_codec_data *data) {
 
 /* seeks stream to 0 */
 void reset_mpeg(VGMSTREAM *vgmstream) {
-    off_t input_offset;
     mpeg_codec_data *data = vgmstream->codec_data;
     if (!data) return;
 
+    flush_mpeg(data);
 
+#if 0
+    /* flush_mpeg properly resets mpg123 with mpg123_open_feed, and
+     * offsets are reset in the VGMSTREAM externally, but for posterity: */
     if (!data->custom) {
+        off_t input_offset = 0;
         mpg123_feedseek(data->m,0,SEEK_SET,&input_offset);
-        /* input_offset is ignored as we can assume it will be 0 for a seek to sample 0 */
     }
     else {
+        off_t input_offset = 0;
         int i;
-        /* re-start from 0 */
         for (i = 0; i < data->streams_size; i++) {
             mpg123_feedseek(data->streams[i]->m,0,SEEK_SET,&input_offset);
-            data->streams[i]->bytes_in_buffer = 0;
-            data->streams[i]->buffer_full = 0;
-            data->streams[i]->buffer_used = 0;
-            data->streams[i]->samples_filled = 0;
-            data->streams[i]->samples_used = 0;
-            data->streams[i]->current_size_count = 0;
-            data->streams[i]->current_size_target = 0;
-            data->streams[i]->decode_to_discard = 0;
         }
-
-        data->samples_to_discard = data->skip_samples; /* initial delay */
     }
+#endif
 }
 
 /* seeks to a point */
 void seek_mpeg(VGMSTREAM *vgmstream, int32_t num_sample) {
-    off_t input_offset;
     mpeg_codec_data *data = vgmstream->codec_data;
     if (!data) return;
 
 
     if (!data->custom) {
+        off_t input_offset = 0;
+
         mpg123_feedseek(data->m, num_sample,SEEK_SET,&input_offset);
 
         /* adjust loop with mpg123's offset (useful?) */
@@ -553,31 +552,20 @@ void seek_mpeg(VGMSTREAM *vgmstream, int32_t num_sample) {
     }
     else {
         int i;
-        /* re-start from 0 */
+
+        flush_mpeg(data);
+
+        /* restart from 0 and manually discard samples, since we don't really know the correct offset */
         for (i = 0; i < data->streams_size; i++) {
-            mpg123_feedseek(data->streams[i]->m,0,SEEK_SET,&input_offset);
-            data->streams[i]->bytes_in_buffer = 0;
-            data->streams[i]->buffer_full = 0;
-            data->streams[i]->buffer_used = 0;
-            data->streams[i]->samples_filled = 0;
-            data->streams[i]->samples_used = 0;
-            data->streams[i]->current_size_count = 0;
-            data->streams[i]->current_size_target = 0;
-            data->streams[i]->decode_to_discard = 0;
+            //mpg123_feedseek(data->streams[i]->m,0,SEEK_SET,&input_offset); /* already reset */
 
             /* force first offset as discard-looping needs to start from the beginning */
             if (vgmstream->loop_ch)
                 vgmstream->loop_ch[i].offset = vgmstream->loop_ch[i].channel_start_offset;
         }
 
-        /* manually discard samples, since we don't really know the correct offset */
-        data->samples_to_discard = num_sample;
-        data->samples_to_discard += data->skip_samples;
+        data->samples_to_discard += num_sample;
     }
-
-    data->bytes_in_buffer = 0;
-    data->buffer_full = 0;
-    data->buffer_used = 0;
 }
 
 /* resets mpg123 decoder and its internals without seeking, useful when a new MPEG substream starts */

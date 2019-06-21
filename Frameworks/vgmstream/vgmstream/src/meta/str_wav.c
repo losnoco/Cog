@@ -2,7 +2,7 @@
 #include "../coding/coding.h"
 
 
-typedef enum { PSX, DSP, XBOX, WMA } strwav_codec;
+typedef enum { PSX, DSP, XBOX, WMA, IMA } strwav_codec;
 typedef struct {
     int32_t channels;
     int32_t sample_rate;
@@ -124,6 +124,12 @@ VGMSTREAM * init_vgmstream_str_wav(STREAMFILE *streamFile) {
             vgmstream->interleave_block_size = strwav.interleave;
             if (vgmstream->channels > 2 && vgmstream->channels % 2 != 0)
                 goto fail; /* only 2ch+..+2ch layout is known */
+            break;
+
+        case IMA:
+            vgmstream->coding_type = coding_BLITZ_IMA;
+            vgmstream->layout_type = layout_interleave;
+            vgmstream->interleave_block_size = strwav.interleave;
             break;
 
 #ifdef VGM_USE_FFMPEG
@@ -330,6 +336,27 @@ static int parse_header(STREAMFILE* streamHeader, strwav_header* strwav) {
         return 1;
     }
 
+    /* Zapper: One Wicked Cricket! (PC)[2005] */
+    if ( read_32bitBE(0x04,streamHeader) == 0x00000900 &&
+         read_32bitLE(0x24,streamHeader) == read_32bitLE(0x114,streamHeader) && /* sample rate repeat */
+         read_32bitLE(0x28,streamHeader) == 0x10 &&
+         read_32bitLE(0x12c,streamHeader) == header_size /* ~0x130 */
+         ) {
+        strwav->num_samples = read_32bitLE(0x20,streamHeader);
+        strwav->sample_rate = read_32bitLE(0x24,streamHeader);
+        strwav->flags       = read_32bitLE(0x2c,streamHeader);
+        strwav->loop_start  = read_32bitLE(0x54,streamHeader);
+        strwav->loop_end    = read_32bitLE(0x30,streamHeader);
+
+        strwav->channels    = read_32bitLE(0xF8,streamHeader) * (strwav->flags & 0x02 ? 2 : 1); /* tracks of 2/1ch */
+        strwav->loop_flag   = strwav->flags & 0x01;
+        strwav->interleave  = strwav->channels > 2 ? 0x8000 : 0x10000;
+
+        strwav->codec = IMA;
+        //;VGM_LOG("STR+WAV: header Zapper (PC)\n");
+        return 1;
+    }
+
     /* Pac-Man World 3 (GC)[2005] */
     /* SpongeBob SquarePants: Creature from the Krusty Krab (GC)[2006] */
     if ( read_32bitBE(0x04,streamHeader) == 0x00000800 &&
@@ -405,6 +432,7 @@ static int parse_header(STREAMFILE* streamHeader, strwav_header* strwav) {
             read_32bitBE(0x04,streamHeader) == 0x00000700) && /* rare? */
          read_32bitLE(0x08,streamHeader) != 0x00000000 &&
          read_32bitBE(0x0c,streamHeader) == header_size && /* variable per DSP header */
+         read_32bitBE(0x7c,streamHeader) != 0 && /* has DSP header */
          read_32bitBE(0x38,streamHeader) == read_32bitBE(read_32bitBE(0x7c,streamHeader)+0x38,streamHeader) /* sample rate vs 1st DSP header */
          ) {
         strwav->loop_start  = 0; //read_32bitLE(0x24,streamHeader); //not ok?
@@ -419,10 +447,31 @@ static int parse_header(STREAMFILE* streamHeader, strwav_header* strwav) {
 
         strwav->coefs_table = 0x7c;
         strwav->codec = DSP;
-        //;VGM_LOG("STR+WAV: header Tak (Wii)\n");
+        //;VGM_LOG("STR+WAV: header Tak/HOTD:O (Wii)\n");
         return 1;
     }
 
+    /* The House of the Dead: Overkill (PS3)[2009] (not Blitz but still the same format) */
+    if ((read_32bitBE(0x04,streamHeader) == 0x00000800 ||
+            read_32bitBE(0x04,streamHeader) == 0x00000700) && /* rare? */
+         read_32bitLE(0x08,streamHeader) != 0x00000000 &&
+         read_32bitBE(0x0c,streamHeader) == header_size && /* variable per DSP header */
+         read_32bitBE(0x7c,streamHeader) == 0 /* not DSP header */
+         ) {
+        strwav->loop_start  = 0; //read_32bitLE(0x24,streamHeader); //not ok?
+        strwav->num_samples = read_32bitBE(0x30,streamHeader);
+        strwav->loop_end    = read_32bitBE(0x34,streamHeader);
+        strwav->sample_rate = read_32bitBE(0x38,streamHeader);
+        strwav->flags       = read_32bitBE(0x3c,streamHeader);
+
+        strwav->channels    = read_32bitBE(0x70,streamHeader); /* tracks of 1ch */
+        strwav->loop_flag   = strwav->flags & 0x01;
+        strwav->interleave  = strwav->channels > 4 ? 0x4000 : 0x8000;
+
+        strwav->codec = PSX;
+        //;VGM_LOG("STR+WAV: header HOTD:O (PS3)\n");
+        return 1;
+    }
 
     /* unknown */
     goto fail;

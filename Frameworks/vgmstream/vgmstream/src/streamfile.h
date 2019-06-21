@@ -61,7 +61,7 @@
 typedef struct _STREAMFILE {
     size_t (*read)(struct _STREAMFILE *,uint8_t * dest, off_t offset, size_t length);
     size_t (*get_size)(struct _STREAMFILE *);
-    off_t (*get_offset)(struct _STREAMFILE *);    
+    off_t (*get_offset)(struct _STREAMFILE *);   //todo: DO NOT USE, NOT RESET PROPERLY (remove?)
     /* for dual-file support */
     void (*get_name)(struct _STREAMFILE *,char *name,size_t length);
     struct _STREAMFILE * (*open)(struct _STREAMFILE *,const char * const filename,size_t buffersize);
@@ -191,6 +191,50 @@ static inline int8_t read_8bit(off_t offset, STREAMFILE * streamfile) {
     return buf[0];
 }
 
+/* alias of the above */
+static inline int8_t   read_s8(off_t offset, STREAMFILE * streamfile) { return read_8bit(offset, streamfile); }
+static inline uint8_t  read_u8(off_t offset, STREAMFILE * streamfile) { return (uint8_t)read_8bit(offset, streamfile); }
+static inline int16_t  read_s16le(off_t offset, STREAMFILE * streamfile) { return read_16bitLE(offset, streamfile); }
+static inline uint16_t read_u16le(off_t offset, STREAMFILE * streamfile) { return (uint16_t)read_16bitLE(offset, streamfile); }
+static inline int16_t  read_s16be(off_t offset, STREAMFILE * streamfile) { return read_16bitBE(offset, streamfile); }
+static inline uint16_t read_u16be(off_t offset, STREAMFILE * streamfile) { return (uint16_t)read_16bitBE(offset, streamfile); }
+static inline int32_t  read_s32le(off_t offset, STREAMFILE * streamfile) { return read_32bitLE(offset, streamfile); }
+static inline uint32_t read_u32le(off_t offset, STREAMFILE * streamfile) { return (uint32_t)read_32bitLE(offset, streamfile); }
+static inline int32_t  read_s32be(off_t offset, STREAMFILE * streamfile) { return read_32bitBE(offset, streamfile); }
+static inline uint32_t read_u32be(off_t offset, STREAMFILE * streamfile) { return (uint32_t)read_32bitBE(offset, streamfile); }
+static inline int64_t  read_s64be(off_t offset, STREAMFILE * streamfile) { return read_64bitBE(offset, streamfile); }
+static inline uint64_t read_u64be(off_t offset, STREAMFILE * streamfile) { return (uint64_t)read_64bitBE(offset, streamfile); }
+static inline int64_t  read_s64le(off_t offset, STREAMFILE * streamfile) { return read_64bitLE(offset, streamfile); }
+static inline uint64_t read_u64le(off_t offset, STREAMFILE * streamfile) { return (uint64_t)read_64bitLE(offset, streamfile); }
+
+#if 0  //todo improve + test + simplify code (maybe not inline?)
+static inline float    read_f32be(off_t offset, STREAMFILE * streamfile) {
+    uint32_t sample_int = read_s32be(offset,streamfile);
+    float* sample_float = (float*)&sample_int;
+    return *sample_float;
+}
+static inline float    read_f32le(off_t offset, STREAMFILE * streamfile) {
+    ...
+}
+static inline int read_s4h(off_t offset, STREAMFILE * streamfile) {
+    uint8_t byte = read_u8(offset, streamfile);
+    return get_nibble_signed(byte, 1);
+}
+static inline int read_u4h(off_t offset, STREAMFILE * streamfile) {
+    uint8_t byte = read_u8(offset, streamfile);
+    return (byte >> 4) & 0x0f;
+}
+static inline int read_s4l(off_t offset, STREAMFILE * streamfile) {
+    ...
+}
+static inline int read_u4l(off_t offset, STREAMFILE * streamfile) {
+    ...
+}
+static inline int max_s32(int32_t a, int32_t b) { return a > b ? a : b; }
+static inline int min_s32(int32_t a, int32_t b) { return a < b ? a : b; }
+//align32, align16, clamp16, etc
+#endif
+
 /* guess byte endianness from a given value, return true if big endian and false if little endian */
 static inline int guess_endianness16bit(off_t offset, STREAMFILE * streamfile) {
     uint8_t buf[0x02];
@@ -231,5 +275,5 @@ void get_streamfile_basename(STREAMFILE *streamFile, char * buffer, size_t size)
 void get_streamfile_path(STREAMFILE *streamFile, char * buffer, size_t size);
 void get_streamfile_ext(STREAMFILE *streamFile, char * filename, size_t size);
 
-void dump_streamfile(STREAMFILE *streamFile, const char* out);
+void dump_streamfile(STREAMFILE *streamFile, int num);
 #endif

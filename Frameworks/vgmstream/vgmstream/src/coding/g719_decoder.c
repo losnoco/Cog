@@ -1,7 +1,12 @@
 #include "coding.h"
 
 #ifdef VGM_USE_G719
+#ifdef __MACOSX__
 #include <g719/g719.h>
+#else
+#include <g719.h>
+#endif
+
 #define G719_MAX_CODES ((1280/8)) /* in int16, so max frame size is (value/8)*2 (0xF0=common, 0x140=decoder max 2560b, rare) */
 
 

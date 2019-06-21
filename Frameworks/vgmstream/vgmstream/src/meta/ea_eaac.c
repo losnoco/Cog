@@ -36,7 +36,7 @@
 static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, STREAMFILE * streamData, off_t header_offset, off_t start_offset, meta_t meta_type);
 static size_t get_snr_size(STREAMFILE *streamFile, off_t offset);
 static VGMSTREAM *parse_s10a_header(STREAMFILE *streamFile, off_t offset, uint16_t target_index, off_t ast_offset);
-
+VGMSTREAM * init_vgmstream_gin_header(STREAMFILE *streamFile, off_t offset);
 
 
 /* .SNR+SNS - from EA latest games (~2008-2013), v0 header */
@@ -314,7 +314,7 @@ VGMSTREAM * init_vgmstream_ea_sbr(STREAMFILE *streamFile) {
     uint32_t i, num_sounds, type_desc;
     uint16_t num_metas, meta_type;
     off_t table_offset, types_offset, entry_offset, metas_offset, data_offset, snr_offset, sns_offset;
-    STREAMFILE *sbsFile = NULL, *streamData = NULL;
+    STREAMFILE *sbsFile = NULL;
     VGMSTREAM *vgmstream = NULL;
     int target_stream = streamFile->stream_index;
 
@@ -359,13 +359,30 @@ VGMSTREAM * init_vgmstream_ea_sbr(STREAMFILE *streamFile) {
         }
     }
 
-    if (snr_offset == 0xFFFFFFFF)
+    if (snr_offset == 0xFFFFFFFF && sns_offset == 0xFFFFFFFF)
         goto fail;
 
-    if (sns_offset == 0xFFFFFFFF) {
+    if (snr_offset == 0xFFFFFFFF) {
+        /* SPS file */
+        sbsFile = open_streamfile_by_ext(streamFile, "sbs");
+        if (!sbsFile)
+            goto fail;
+
+        if (read_32bitBE(0x00, sbsFile) != 0x53424B53) /* "SBKS" */
+            goto fail;
+
+        snr_offset = sns_offset;
+        sns_offset = snr_offset + (read_32bitBE(snr_offset, sbsFile) & 0x00FFFFFF);
+        snr_offset += 0x04;
+        vgmstream = init_vgmstream_eaaudiocore_header(sbsFile, sbsFile, snr_offset, sns_offset, meta_EA_SNR_SNS);
+        if (!vgmstream)
+            goto fail;
+    } else if (sns_offset == 0xFFFFFFFF) {
         /* RAM asset */
-        streamData = streamFile;
         sns_offset = snr_offset + get_snr_size(streamFile, snr_offset);
+        vgmstream = init_vgmstream_eaaudiocore_header(streamFile, streamFile, snr_offset, sns_offset, meta_EA_SNR_SNS);
+        if (!vgmstream)
+            goto fail;
     } else {
         /* streamed asset */
         sbsFile = open_streamfile_by_ext(streamFile, "sbs");
@@ -375,12 +392,10 @@ VGMSTREAM * init_vgmstream_ea_sbr(STREAMFILE *streamFile) {
         if (read_32bitBE(0x00, sbsFile) != 0x53424B53) /* "SBKS" */
             goto fail;
 
-        streamData = sbsFile;
+        vgmstream = init_vgmstream_eaaudiocore_header(streamFile, sbsFile, snr_offset, sns_offset, meta_EA_SNR_SNS);
+        if (!vgmstream)
+            goto fail;
     }
-
-    vgmstream = init_vgmstream_eaaudiocore_header(streamFile, streamData, snr_offset, sns_offset, meta_EA_SNR_SNS);
-    if (!vgmstream)
-        goto fail;
 
     vgmstream->num_streams = num_sounds;
     close_streamfile(sbsFile);
@@ -566,6 +581,54 @@ VGMSTREAM * init_vgmstream_ea_mpf_mus_eaac(STREAMFILE *streamFile) {
 
 fail:
     close_streamfile(musFile);
+    return NULL;
+}
+
+/* EA TMX - used for engine sounds in NFS games (2007-present) */
+VGMSTREAM * init_vgmstream_ea_tmx(STREAMFILE *streamFile) {
+    uint32_t num_sounds, sound_type;
+    off_t table_offset, data_offset, entry_offset, sound_offset, sns_offset;
+    VGMSTREAM *vgmstream = NULL;
+    int target_stream = streamFile->stream_index;
+
+    if (!check_extensions(streamFile, "tmx"))
+        goto fail;
+
+    /* always little endian */
+    if (read_32bitLE(0x0c, streamFile) != 0x30303031) /* "0001" */
+        goto fail;
+
+    num_sounds = read_32bitLE(0x20, streamFile);
+    table_offset = read_32bitLE(0x58, streamFile);
+    data_offset = read_32bitLE(0x5c, streamFile);
+
+    if (target_stream == 0) target_stream = 1;
+    if (target_stream < 0 || num_sounds == 0 || target_stream > num_sounds)
+        goto fail;
+
+    entry_offset = table_offset + (target_stream - 1) * 0x24;
+    sound_type = read_32bitLE(entry_offset + 0x00, streamFile);
+    sound_offset = read_32bitLE(entry_offset + 0x08, streamFile) + data_offset;
+
+    switch (sound_type) {
+        case 0x47494E20: /* "GIN " */
+            /* FIXME: need to get GIN size somehow */
+            vgmstream = init_vgmstream_gin_header(streamFile, sound_offset);
+            if (!vgmstream) goto fail;
+            break;
+        case 0x534E5220: /* "SNR " */
+            sns_offset = sound_offset + get_snr_size(streamFile, sound_offset);
+            vgmstream = init_vgmstream_eaaudiocore_header(streamFile, streamFile, sound_offset, sns_offset, meta_EA_SNR_SNS);
+            if (!vgmstream) goto fail;
+            break;
+        default:
+            goto fail;
+    }
+
+    vgmstream->num_streams = num_sounds;
+    return vgmstream;
+
+fail:
     return NULL;
 }
 
@@ -847,7 +910,8 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
                 eaac.codec == EAAC_CODEC_EALAYER3_V1 ||
                 eaac.codec == EAAC_CODEC_EALAYER3_V2_PCM ||
                 eaac.codec == EAAC_CODEC_EALAYER3_V2_SPIKE ||
-                eaac.codec == EAAC_CODEC_EAXMA)) {
+                eaac.codec == EAAC_CODEC_EAXMA ||
+                eaac.codec == EAAC_CODEC_XAS)) {
             VGM_LOG("EA EAAC: unknown actual looping for codec %x\n", eaac.codec);
             goto fail;
         }
@@ -857,8 +921,11 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
     switch(eaac.channel_config) {
         case 0x00: eaac.channels = 1; break;
         case 0x01: eaac.channels = 2; break;
+        case 0x02: eaac.channels = 3; break; /* rare [Battlefield 4 (X360)-EAXMA] */
         case 0x03: eaac.channels = 4; break;
+        case 0x04: eaac.channels = 5; break; /* rare [Battlefield 4 (X360)-EAXMA] */
         case 0x05: eaac.channels = 6; break;
+        case 0x06: eaac.channels = 7; break; /* rare [Battlefield 4 (X360)-EAXMA] */
         case 0x07: eaac.channels = 8; break;
         case 0x0a: eaac.channels = 11; break; /* rare [Army of Two: The Devil's Cartel (PS3)-EALayer3v2P] */
         default:
@@ -910,8 +977,19 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
 #endif
 
         case EAAC_CODEC_XAS: /* "Xas1": EA-XAS [Dead Space (PC/PS3)] */
-            vgmstream->coding_type = coding_EA_XAS_V1;
-            vgmstream->layout_type = layout_blocked_ea_sns;
+
+            /* special (if hacky) loop handling, see comments */
+            if (eaac.loop_start > 0) {
+                segmented_layout_data *data = build_segmented_eaaudiocore_looping(streamData, &eaac);
+                if (!data) goto fail;
+                vgmstream->layout_data = data;
+                vgmstream->coding_type = data->segments[0]->coding_type;
+                vgmstream->layout_type = layout_segmented;
+            } else {
+                vgmstream->coding_type = coding_EA_XAS_V1;
+                vgmstream->layout_type = layout_blocked_ea_sns;
+            }
+            
             break;
 
 #ifdef VGM_USE_MPEG
@@ -1054,6 +1132,9 @@ static size_t calculate_eaac_size(VGMSTREAM *vgmstream, STREAMFILE *streamFile, 
     uint32_t total_samples;
     size_t stream_size, file_size;
 
+    if (streamFile == NULL)
+        return 0;
+
     switch (eaac->codec) {
         case EAAC_CODEC_EAXMA:
         case EAAC_CODEC_EALAYER3_V1:
@@ -1093,11 +1174,12 @@ static size_t calculate_eaac_size(VGMSTREAM *vgmstream, STREAMFILE *streamFile, 
  *
  * We use the segmented layout, since the eaac_streamfile doesn't handle padding,
  * and the segments seem fully separate (so even skipping would probably decode wrong). */
-// todo consider better ways to handle this once more looped files for other codecs are found
+// todo reorganize code for more standard init
 static segmented_layout_data* build_segmented_eaaudiocore_looping(STREAMFILE *streamData, eaac_header *eaac) {
     segmented_layout_data *data = NULL;
-    STREAMFILE* temp_streamFile[2] = {0};
+    STREAMFILE* temp_streamFile = NULL;
     off_t offsets[2] = { eaac->stream_offset, eaac->loop_offset };
+    off_t start_offset;
     int num_samples[2] = { eaac->loop_start, eaac->num_samples - eaac->loop_start};
     int segment_count = 2; /* intro/loop */
     int i;
@@ -1122,6 +1204,8 @@ static segmented_layout_data* build_segmented_eaaudiocore_looping(STREAMFILE *st
             temp_eaac.num_samples = num_samples[i];
             temp_eaac.stream_offset = offsets[i];
 
+            start_offset = 0x00; /* must point to the custom streamfile's beginning */
+
             /* layers inside segments, how trippy */
             data->segments[i]->layout_data = build_layered_eaaudiocore_eaxma(streamData, &temp_eaac);
             if (!data->segments[i]->layout_data) goto fail;
@@ -1131,6 +1215,15 @@ static segmented_layout_data* build_segmented_eaaudiocore_looping(STREAMFILE *st
         }
 #endif
 
+        case EAAC_CODEC_XAS:
+        {
+            start_offset = offsets[i];
+
+            data->segments[i]->coding_type = coding_EA_XAS_V1;
+            data->segments[i]->layout_type = layout_blocked_ea_sns;
+            break;
+        }
+
 #ifdef VGM_USE_MPEG
             case EAAC_CODEC_EALAYER3_V1:
             case EAAC_CODEC_EALAYER3_V2_PCM:
@@ -1138,10 +1231,12 @@ static segmented_layout_data* build_segmented_eaaudiocore_looping(STREAMFILE *st
                 mpeg_custom_config cfg = {0};
                 mpeg_custom_t type = (eaac->codec == 0x05 ? MPEG_EAL31b : (eaac->codec == 0x06) ? MPEG_EAL32P : MPEG_EAL32S);
 
-                temp_streamFile[i] = setup_eaac_streamfile(streamData, eaac->version,eaac->codec,eaac->streamed,0,0, offsets[i]);
-                if (!temp_streamFile[i]) goto fail;
+                start_offset = 0x00; /* must point to the custom streamfile's beginning */
 
-                data->segments[i]->codec_data = init_mpeg_custom(temp_streamFile[i], 0x00, &data->segments[i]->coding_type, eaac->channels, type, &cfg);
+                temp_streamFile = setup_eaac_streamfile(streamData, eaac->version,eaac->codec,eaac->streamed,0,0, offsets[i]);
+                if (!temp_streamFile) goto fail;
+
+                data->segments[i]->codec_data = init_mpeg_custom(temp_streamFile, 0x00, &data->segments[i]->coding_type, eaac->channels, type, &cfg);
                 if (!data->segments[i]->codec_data) goto fail;
                 data->segments[i]->layout_type = layout_none;
                 break;
@@ -1151,10 +1246,14 @@ static segmented_layout_data* build_segmented_eaaudiocore_looping(STREAMFILE *st
                 goto fail;
         }
 
-        if (!vgmstream_open_stream(data->segments[i],temp_streamFile[i],0x00))
+        if (!vgmstream_open_stream(data->segments[i],temp_streamFile == NULL ? streamData : temp_streamFile, start_offset))
             goto fail;
 
-        data->segments[i]->stream_size = calculate_eaac_size(data->segments[i], temp_streamFile[i], eaac, 0x00);
+        close_streamfile(temp_streamFile);
+        temp_streamFile = NULL;
+
+        //todo temp_streamFile doesn't contain EAXMA's streamfile
+        data->segments[i]->stream_size = calculate_eaac_size(data->segments[i], temp_streamFile, eaac, start_offset);
     }
 
     if (!setup_layout_segmented(data))
@@ -1162,8 +1261,7 @@ static segmented_layout_data* build_segmented_eaaudiocore_looping(STREAMFILE *st
     return data;
 
 fail:
-    for (i = 0; i < segment_count; i++)
-        close_streamfile(temp_streamFile[i]);
+    close_streamfile(temp_streamFile);
     free_layout_segmented(data);
     return NULL;
 }
@@ -1212,6 +1310,7 @@ static layered_layout_data* build_layered_eaaudiocore_eaxma(STREAMFILE *streamDa
 
             data->layers[i]->coding_type = coding_FFmpeg;
             data->layers[i]->layout_type = layout_none;
+            data->layers[i]->stream_size = get_streamfile_size(temp_streamFile);
 
             xma_fix_raw_samples(data->layers[i], temp_streamFile, 0x00,stream_size, 0, 0,0); /* samples are ok? */
         }

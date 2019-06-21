@@ -19,6 +19,11 @@ VGMSTREAM * init_vgmstream_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start,
     int32_t loop_start = 0, loop_end = 0, num_samples = 0;
     int total_subsongs, target_subsong = streamFile->stream_index;
 
+    /* no checks */
+    //if (!check_extensions(streamFile, "..."))
+    //    goto fail;
+
+
     /* init ffmpeg */
     ffmpeg_codec_data *data = init_ffmpeg_offset(streamFile, start, size);
     if (!data) return NULL;
@@ -41,6 +46,21 @@ VGMSTREAM * init_vgmstream_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start,
         }
     }
 
+    /* hack for AAC files (will return 0 samples if not an actual file) */
+    if (!num_samples && check_extensions(streamFile, "aac,laac")) {
+        num_samples = aac_get_samples(streamFile, 0x00, get_streamfile_size(streamFile));
+    }
+
+    /* hack for MP3 files (will return 0 samples if not an actual file) */
+    if (!num_samples && check_extensions(streamFile, "mp3,lmp3")) {
+        num_samples = mpeg_get_samples(streamFile, 0x00, get_streamfile_size(streamFile));
+    }
+
+    /* default but often inaccurate when calculated using bitrate (wrong for VBR) */
+    if (!num_samples) {
+        num_samples = data->totalSamples;
+    }
+
 
     /* build VGMSTREAM */
     vgmstream = allocate_vgmstream(data->channels, loop_flag);
@@ -52,11 +72,7 @@ VGMSTREAM * init_vgmstream_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start,
     vgmstream->codec_data = data;
     vgmstream->layout_type = layout_none;
 
-    if (!num_samples) {
-        num_samples = data->totalSamples;
-    }
     vgmstream->num_samples = num_samples;
-
     if (loop_flag) {
         vgmstream->loop_start_sample = loop_start;
         vgmstream->loop_end_sample = loop_end;
@@ -65,6 +81,8 @@ VGMSTREAM * init_vgmstream_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start,
     /* this may happen for some streams if FFmpeg can't determine it (ex. AAC) */
     if (vgmstream->num_samples <= 0)
         goto fail;
+
+    vgmstream->channel_layout = ffmpeg_get_channel_layout(vgmstream->codec_data);
 
     return vgmstream;
     

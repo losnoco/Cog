@@ -236,6 +236,33 @@ static void ffta2_ima_expand_nibble(VGMSTREAMCHANNEL * stream, off_t byte_offset
     if (*step_index > 88) *step_index=88;
 }
 
+/* Yet another IMA expansion, from the exe */
+static void blitz_ima_expand_nibble(VGMSTREAMCHANNEL * stream, off_t byte_offset, int nibble_shift, int32_t * hist1, int32_t * step_index) {
+    int sample_nibble, sample_decoded, step, delta;
+
+    sample_nibble = (read_8bit(byte_offset,stream->streamfile) >> nibble_shift)&0xf; /* ADPCM code */
+    sample_decoded = *hist1; /* predictor value */
+    step = ADPCMTable[*step_index]; /* current step */
+
+    /* table has 2 different values, not enough to bother adding the full table */
+    if (step == 22385)
+        step = 22358;
+    else if (step == 24623)
+        step = 24633;
+
+    delta = (sample_nibble & 0x07);
+    if (sample_nibble & 8) delta = -delta;
+    delta = (step >> 1) + delta * step; /* custom */
+    sample_decoded += delta;
+
+    /* somehow the exe tries to clamp hist, but actually doesn't (bug?),
+     * not sure if pcm buffer would be clamped outside though */
+    *hist1 = sample_decoded;//clamp16(sample_decoded);
+    *step_index += IMA_IndexTable[sample_nibble];
+    if (*step_index < 0) *step_index=0;
+    if (*step_index > 88) *step_index=88;
+}
+
 /* ************************************ */
 /* DVI/IMA                              */
 /* ************************************ */
@@ -243,7 +270,7 @@ static void ffta2_ima_expand_nibble(VGMSTREAMCHANNEL * stream, off_t byte_offset
 /* Standard DVI/IMA ADPCM (as in, ADPCM recommended by the IMA using Intel/DVI's implementation).
  * Configurable: stereo or mono/interleave nibbles, and high or low nibble first.
  * For vgmstream, low nibble is called "IMA ADPCM" and high nibble is "DVI IMA ADPCM" (same thing though). */
-void decode_standard_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo, int is_high_first) {
+void decode_standard_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo, int is_high_first) {
     int i, sample_count = 0;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -271,7 +298,7 @@ void decode_standard_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channel
     stream->adpcm_step_index = step_index;
 }
 
-void decode_3ds_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_3ds_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -292,7 +319,7 @@ void decode_3ds_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspaci
     stream->adpcm_step_index = step_index;
 }
 
-void decode_snds_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
+void decode_snds_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -313,7 +340,7 @@ void decode_snds_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspac
     stream->adpcm_step_index = step_index;
 }
 
-void decode_otns_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
+void decode_otns_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -337,7 +364,7 @@ void decode_otns_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * 
 }
 
 /* WV6 IMA, DVI IMA with custom nibble expand */
-void decode_wv6_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_wv6_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -359,7 +386,7 @@ void decode_wv6_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspaci
 }
 
 /* ALT IMA, DVI IMA with custom nibble expand */
-void decode_alp_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_alp_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -381,7 +408,7 @@ void decode_alp_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspaci
 }
 
 /* FFTA2 IMA, DVI IMA with custom nibble expand/rounding */
-void decode_ffta2_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_ffta2_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -403,6 +430,28 @@ void decode_ffta2_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspa
     stream->adpcm_step_index = step_index;
 }
 
+/* Blitz IMA, IMA with custom nibble expand */
+void decode_blitz_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+    int i, sample_count;
+    int32_t hist1 = stream->adpcm_history1_32;
+    int step_index = stream->adpcm_step_index;
+
+    //external interleave
+
+    //no header
+
+    for (i=first_sample,sample_count=0; i<first_sample+samples_to_do; i++,sample_count+=channelspacing) {
+        off_t byte_offset = stream->offset + i/2;
+        int nibble_shift = (i&1?4:0); //low nibble first
+
+        blitz_ima_expand_nibble(stream, byte_offset,nibble_shift, &hist1, &step_index);
+        outbuf[sample_count] = (short)(hist1);
+    }
+
+    stream->adpcm_history1_32 = hist1;
+    stream->adpcm_step_index = step_index;
+}
+
 /* ************************************ */
 /* MS-IMA                               */
 /* ************************************ */
@@ -410,7 +459,7 @@ void decode_ffta2_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspa
 /* IMA with custom frame sizes, header and nibble layout. Outputs an odd number of samples per frame,
  * so to simplify calcs this decodes full frames, thus hist doesn't need to be mantained.
  * Officially defined in "Microsoft Multimedia Standards Update" doc (RIFFNEW.pdf). */
-void decode_ms_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
+void decode_ms_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
     int i, samples_read = 0, samples_done = 0, max_samples;
     int32_t hist1;// = stream->adpcm_history1_32;
     int step_index;// = stream->adpcm_step_index;
@@ -464,7 +513,7 @@ void decode_ms_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * ou
 }
 
 /* Reflection's MS-IMA with custom nibble layout (some info from XA2WAV by Deniz Oezmen) */
-void decode_ref_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
+void decode_ref_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
     int i, samples_read = 0, samples_done = 0, max_samples;
     int32_t hist1;// = stream->adpcm_history1_32;
     int step_index;// = stream->adpcm_step_index;
@@ -524,7 +573,7 @@ void decode_ref_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * o
 
 /* MS-IMA with fixed frame size, and outputs an even number of samples per frame (skips last nibble).
  * Defined in Xbox's SDK. Usable in mono or stereo modes (both suitable for interleaved multichannel). */
-void decode_xbox_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo) {
+void decode_xbox_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo) {
     int i, frames_in, sample_pos = 0, block_samples, frame_size;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -576,7 +625,7 @@ void decode_xbox_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspac
 }
 
 /* Multichannel XBOX-IMA ADPCM, with all channels mixed in the same block (equivalent to multichannel MS-IMA; seen in .rsd XADP). */
-void decode_xbox_ima_mch(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
+void decode_xbox_ima_mch(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
     int i, sample_count = 0, num_frame;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -622,7 +671,7 @@ void decode_xbox_ima_mch(VGMSTREAMCHANNEL * stream, sample * outbuf, int channel
 /* Similar to MS-IMA with even number of samples, header sample is not written (setup only).
  * Apparently clamps to -32767 unlike standard's -32768 (probably not noticeable).
  * Info here: http://problemkaputt.de/gbatek.htm#dssoundnotes */
-void decode_nds_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_nds_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -653,7 +702,7 @@ void decode_nds_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspaci
     stream->adpcm_step_index = step_index;
 }
 
-void decode_dat4_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_dat4_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_16;//todo unneeded 16?
     int step_index = stream->adpcm_step_index;
@@ -682,7 +731,7 @@ void decode_dat4_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspac
     stream->adpcm_step_index = step_index;
 }
 
-void decode_rad_ima(VGMSTREAM * vgmstream,VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel) {
+void decode_rad_ima(VGMSTREAM * vgmstream,VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -716,7 +765,7 @@ void decode_rad_ima(VGMSTREAM * vgmstream,VGMSTREAMCHANNEL * stream, sample * ou
     stream->adpcm_step_index = step_index;
 }
 
-void decode_rad_ima_mono(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_rad_ima_mono(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -748,7 +797,7 @@ void decode_rad_ima_mono(VGMSTREAMCHANNEL * stream, sample * outbuf, int channel
 }
 
 /* Apple's IMA4, a.k.a QuickTime IMA. 2 byte header and header sample is not written (setup only). */
-void decode_apple_ima4(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_apple_ima4(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count, num_frame;
     int16_t hist1 = stream->adpcm_history1_16;//todo unneeded 16?
     int step_index = stream->adpcm_step_index;
@@ -781,7 +830,7 @@ void decode_apple_ima4(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelsp
 }
 
 /* XBOX-IMA with modified data layout */
-void decode_fsb_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel) {
+void decode_fsb_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel) {
     int i, sample_count = 0;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -830,7 +879,7 @@ void decode_fsb_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * o
 }
 
 /* mono XBOX-IMA with header endianness and alt nibble expand (per hcs's decompilation) */
-void decode_wwise_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
+void decode_wwise_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
     int i, sample_count = 0, num_frame;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -886,7 +935,7 @@ void decode_wwise_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample *
 */
 
 /* MS-IMA with possibly the XBOX-IMA model of even number of samples per block (more tests are needed) */
-void decode_awc_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+void decode_awc_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i, sample_count;
 
     int32_t hist1 = stream->adpcm_history1_32;
@@ -923,7 +972,7 @@ void decode_awc_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspaci
 
 
 /* DVI stereo/mono with some mini header and sample output */
-void decode_ubi_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
+void decode_ubi_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel) {
     int i, sample_count = 0;
 
     int32_t hist1 = stream->adpcm_history1_32;
@@ -948,8 +997,8 @@ void decode_ubi_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspaci
         offset += 0x10 + 0x08;
         if (version >= 3)
             offset += 0x04;
-        //if (version >= 6) /* supposedly this exists, maybe in later BAOs */
-        //    offset += 0x08;
+        if (version >= 6) /* later BAOs */
+            offset += 0x08;
 
         /* write PCM samples, must be written to match header's num_samples (hist mustn't) */
         max_samples_to_do = ((samples_to_do > header_samples) ? header_samples : samples_to_do);
@@ -989,7 +1038,7 @@ void decode_ubi_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspaci
 /* IMA with variable frame formats controlled by the block layout. The original code uses
  * tables mapping all standard IMA combinations (to optimize calculations), but decodes the same.
  * Based on HCS's and Nisto's reverse engineering in h4m_audio_decode. */
-void decode_h4m_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, uint16_t frame_format) {
+void decode_h4m_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, uint16_t frame_format) {
     int i, samples_done = 0;
     int32_t hist1 = stream->adpcm_history1_32;
     int step_index = stream->adpcm_step_index;
@@ -1062,11 +1111,13 @@ void decode_h4m_ima(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspaci
 /* ************************************************************* */
 
 size_t ima_bytes_to_samples(size_t bytes, int channels) {
+    if (channels <= 0) return 0;
     /* 2 samples per byte (2 nibbles) in stereo or mono config */
     return bytes * 2 / channels;
 }
 
 size_t ms_ima_bytes_to_samples(size_t bytes, int block_align, int channels) {
+    if (block_align <= 0 || channels <= 0) return 0;
     /* MS-IMA blocks have a 4 byte header per channel; 2 samples per byte (2 nibbles) */
     return (bytes / block_align) * ((block_align - 0x04*channels) * 2 / channels + 1)
             + ((bytes % block_align) ? (((bytes % block_align) - 0x04*channels) * 2 / channels + 1) : 0);
@@ -1074,6 +1125,7 @@ size_t ms_ima_bytes_to_samples(size_t bytes, int block_align, int channels) {
 
 size_t xbox_ima_bytes_to_samples(size_t bytes, int channels) {
     int block_align = 0x24 * channels;
+    if (channels <= 0) return 0;
     /* XBOX IMA blocks have a 4 byte header per channel; 2 samples per byte (2 nibbles) */
     return (bytes / block_align) * (block_align - 4 * channels) * 2 / channels
             + ((bytes % block_align) ? ((bytes % block_align) - 4 * channels) * 2 / channels : 0); /* unlikely (encoder aligns) */
@@ -1081,6 +1133,7 @@ size_t xbox_ima_bytes_to_samples(size_t bytes, int channels) {
 
 size_t apple_ima4_bytes_to_samples(size_t bytes, int channels) {
     int block_align = 0x22 * channels;
+    if (channels <= 0) return 0;
     return (bytes / block_align) * (block_align - 0x02*channels) * 2 / channels
             + ((bytes % block_align) ? ((bytes % block_align) - 0x02*channels) * 2 / channels : 0);
 }
