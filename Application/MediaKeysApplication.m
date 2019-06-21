@@ -33,15 +33,7 @@
 
     keyTap = [[SPMediaKeyTap alloc] initWithDelegate:self];
     if([SPMediaKeyTap usesGlobalMediaKeyTap]) {
-        if (![keyTap startWatchingMediaKeys]) {
-            NSAlert *alert = [[NSAlert alloc] init];
-            [alert addButtonWithTitle:@"OK"];
-            [alert setMessageText:@"Enable Media Key access?"];
-            [alert setInformativeText:@"Media Key support requires the \"Accessibility\" permission. You will need to restart the application for the change to take effect."];
-            [alert setAlertStyle:NSInformationalAlertStyle];
-            [alert runModal];
-            ALog(@"Media key monitoring disabled until application is restarted");
-        }
+        [keyTap startWatchingMediaKeys];
     }
     else
         ALog(@"Media key monitoring disabled");
