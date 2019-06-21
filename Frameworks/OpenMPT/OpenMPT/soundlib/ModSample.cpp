@@ -113,6 +113,11 @@ void ModSample::Convert(MODTYPE fromType, MODTYPE toType)
 	if(!CSoundFile::SupportsOPL(toType) && uFlags[CHN_ADLIB])
 	{
 		SetAdlib(false);
+	} else if(toType == MOD_TYPE_S3M && uFlags[CHN_ADLIB])
+	{
+		// No support for OPL3 waveforms in S3M
+		adlib[8] &= 0x03;
+		adlib[9] &= 0x03;
 	}
 }
 

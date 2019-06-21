@@ -413,6 +413,18 @@ void CSoundFile::UpgradeModule()
 		}
 	}
 
+	if(m_dwLastSavedWithVersion < MAKE_VERSION_NUMERIC(1, 28, 03, 04))
+	{
+		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++) if (Instruments[i] != nullptr)
+		{
+			if(Instruments[i]->pluginVolumeHandling == PLUGIN_VOLUMEHANDLING_MIDI || Instruments[i]->pluginVolumeHandling == PLUGIN_VOLUMEHANDLING_DRYWET)
+			{
+				m_playBehaviour.set(kMIDIVolumeOnNoteOffBug);
+				break;
+			}
+		}
+	}
+
 	Patterns.ForEachModCommand(UpgradePatternData(*this));
 
 	// Convert compatibility flags

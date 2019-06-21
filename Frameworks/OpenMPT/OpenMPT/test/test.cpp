@@ -2598,6 +2598,41 @@ static MPT_NOINLINE void TestCharsets()
 	VERIFY_EQUAL(P_("\\directory\\file.txt").GetFileExt(), P_(".txt"));
 	VERIFY_EQUAL(P_("\\directory\\file.txt").GetFullFileName(), P_("file.txt"));
 
+	VERIFY_EQUAL(P_(".").GetDrive(), P_(""));
+	VERIFY_EQUAL(P_(".").GetDir(), P_(""));
+	VERIFY_EQUAL(P_(".").GetPath(), P_(""));
+	VERIFY_EQUAL(P_(".").GetFileName(), P_("."));
+	VERIFY_EQUAL(P_(".").GetFileExt(), P_(""));
+	VERIFY_EQUAL(P_(".").GetFullFileName(), P_("."));
+
+	VERIFY_EQUAL(P_("..").GetDrive(), P_(""));
+	VERIFY_EQUAL(P_("..").GetDir(), P_(""));
+	VERIFY_EQUAL(P_("..").GetPath(), P_(""));
+	VERIFY_EQUAL(P_("..").GetFileName(), P_(".."));
+	VERIFY_EQUAL(P_("..").GetFileExt(), P_(""));
+	VERIFY_EQUAL(P_("..").GetFullFileName(), P_(".."));
+
+	VERIFY_EQUAL(P_("dir\\.").GetDrive(), P_(""));
+	VERIFY_EQUAL(P_("dir\\.").GetDir(), P_("dir\\"));
+	VERIFY_EQUAL(P_("dir\\.").GetPath(), P_("dir\\"));
+	VERIFY_EQUAL(P_("dir\\.").GetFileName(), P_("."));
+	VERIFY_EQUAL(P_("dir\\.").GetFileExt(), P_(""));
+	VERIFY_EQUAL(P_("dir\\.").GetFullFileName(), P_("."));
+
+	VERIFY_EQUAL(P_("dir\\..").GetDrive(), P_(""));
+	VERIFY_EQUAL(P_("dir\\..").GetDir(), P_("dir\\"));
+	VERIFY_EQUAL(P_("dir\\..").GetPath(), P_("dir\\"));
+	VERIFY_EQUAL(P_("dir\\..").GetFileName(), P_(".."));
+	VERIFY_EQUAL(P_("dir\\..").GetFileExt(), P_(""));
+	VERIFY_EQUAL(P_("dir\\..").GetFullFileName(), P_(".."));
+
+	VERIFY_EQUAL(P_(".txt").GetDrive(), P_(""));
+	VERIFY_EQUAL(P_(".txt").GetDir(), P_(""));
+	VERIFY_EQUAL(P_(".txt").GetPath(), P_(""));
+	VERIFY_EQUAL(P_(".txt").GetFileName(), P_(".txt"));
+	VERIFY_EQUAL(P_(".txt").GetFileExt(), P_(""));
+	VERIFY_EQUAL(P_(".txt").GetFullFileName(), P_(".txt"));
+
 	VERIFY_EQUAL(P_("C:tmp.txt").GetDrive(), P_("C:"));
 	VERIFY_EQUAL(P_("C:tmp.txt").GetDir(), P_(""));
 	VERIFY_EQUAL(P_("C:tmp.txt").GetPath(), P_("C:"));
@@ -3079,7 +3114,7 @@ static void TestLoadXMFile(const CSoundFile &sndFile)
 	VERIFY_EQUAL_NONCONT(pIns->nPPC, NOTE_MIDDLEC - 1);
 
 	VERIFY_EQUAL_NONCONT(pIns->nVolRampUp, 1200);
-	VERIFY_EQUAL_NONCONT(pIns->nResampling, (unsigned)SRCMODE_SINC8LP);
+	VERIFY_EQUAL_NONCONT(pIns->resampling, SRCMODE_SINC8LP);
 
 	VERIFY_EQUAL_NONCONT(pIns->IsCutoffEnabled(), false);
 	VERIFY_EQUAL_NONCONT(pIns->GetCutoff(), 0);
@@ -3105,8 +3140,8 @@ static void TestLoadXMFile(const CSoundFile &sndFile)
 
 	VERIFY_EQUAL_NONCONT(pIns->pitchToTempoLock, TEMPO(0, 0));
 
-	VERIFY_EQUAL_NONCONT(pIns->nPluginVelocityHandling, PLUGIN_VELOCITYHANDLING_VOLUME);
-	VERIFY_EQUAL_NONCONT(pIns->nPluginVolumeHandling, PLUGIN_VOLUMEHANDLING_MIDI);
+	VERIFY_EQUAL_NONCONT(pIns->pluginVelocityHandling, PLUGIN_VELOCITYHANDLING_VOLUME);
+	VERIFY_EQUAL_NONCONT(pIns->pluginVolumeHandling, PLUGIN_VOLUMEHANDLING_MIDI);
 
 	for(size_t i = sndFile.GetModSpecifications().noteMin; i < sndFile.GetModSpecifications().noteMax; i++)
 	{
@@ -3372,7 +3407,7 @@ static void TestLoadMPTMFile(const CSoundFile &sndFile)
 		VERIFY_EQUAL_NONCONT(pIns->nPPC, (NOTE_MIDDLEC - NOTE_MIN) + 6);	// F#5
 
 		VERIFY_EQUAL_NONCONT(pIns->nVolRampUp, 1200);
-		VERIFY_EQUAL_NONCONT(pIns->nResampling, (unsigned)SRCMODE_SINC8LP);
+		VERIFY_EQUAL_NONCONT(pIns->resampling, SRCMODE_SINC8LP);
 
 		VERIFY_EQUAL_NONCONT(pIns->IsCutoffEnabled(), true);
 		VERIFY_EQUAL_NONCONT(pIns->GetCutoff(), 0x32);
@@ -3399,8 +3434,8 @@ static void TestLoadMPTMFile(const CSoundFile &sndFile)
 
 		VERIFY_EQUAL_NONCONT(pIns->pitchToTempoLock, TEMPO(130, 2000));
 
-		VERIFY_EQUAL_NONCONT(pIns->nPluginVelocityHandling, PLUGIN_VELOCITYHANDLING_VOLUME);
-		VERIFY_EQUAL_NONCONT(pIns->nPluginVolumeHandling, PLUGIN_VOLUMEHANDLING_MIDI);
+		VERIFY_EQUAL_NONCONT(pIns->pluginVelocityHandling, PLUGIN_VELOCITYHANDLING_VOLUME);
+		VERIFY_EQUAL_NONCONT(pIns->pluginVolumeHandling, PLUGIN_VOLUMEHANDLING_MIDI);
 
 		for(size_t i = 0; i < NOTE_MAX; i++)
 		{

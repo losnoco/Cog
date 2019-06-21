@@ -224,6 +224,14 @@ void PathString::SplitPath(PathString *drive, PathString *dir, PathString *fname
 	{
 		if(fname) *fname = mpt::PathString::FromNative(p);
 		if(ext) *ext = mpt::PathString();
+	} else if(last_dot == 0)
+	{
+		if(fname) *fname = mpt::PathString::FromNative(p);
+		if(ext) *ext = mpt::PathString();
+	} else if(p == PL_(".") || p == PL_(".."))
+	{
+		if(fname) *fname = mpt::PathString::FromNative(p);
+		if(ext) *ext = mpt::PathString();
 	} else
 	{
 		if(fname) *fname = mpt::PathString::FromNative(p.substr(0, last_dot));

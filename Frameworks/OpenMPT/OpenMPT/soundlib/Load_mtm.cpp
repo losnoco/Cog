@@ -58,8 +58,8 @@ struct MTMSampleHeader
 			LimitMax(mptSmp.nLoopEnd, mptSmp.nLength);
 			if(mptSmp.nLoopStart + 4 >= mptSmp.nLoopEnd) mptSmp.nLoopStart = mptSmp.nLoopEnd = 0;
 			if(mptSmp.nLoopEnd) mptSmp.uFlags.set(CHN_LOOP);
-			mptSmp.nFineTune = MOD2XMFineTune(finetune);
-			mptSmp.nC5Speed = ModSample::TransposeToFrequency(0, mptSmp.nFineTune);
+			mptSmp.nFineTune = finetune; // Uses MOD units but allows the full int8 range rather than just -8...+7 so we keep the value as-is and convert it during playback
+			mptSmp.nC5Speed = ModSample::TransposeToFrequency(0, finetune * 16);
 
 			if(attribute & 0x01)
 			{
@@ -204,11 +204,25 @@ bool CSoundFile::ReadMTM(FileReader &file, ModLoadingFlags loadFlags)
 				{
 					// No 8xx panning in MultiTracker, only E8x
 					cmd = param = 0;
+				} else if(cmd == 0x0E)
+				{
+					// MultiTracker does not support these commands
+					switch(param & 0xF0)
+					{
+					case 0x00:
+					case 0x30:
+					case 0x40:
+					case 0x60:
+					case 0x70:
+					case 0xF0:
+						cmd = param = 0;
+						break;
+					}
 				}
-				m->command = cmd;
-				m->param = param;
 				if(cmd != 0 || param != 0)
 				{
+					m->command = cmd;
+					m->param = param;
 					ConvertModCommand(*m);
 #ifdef MODPLUG_TRACKER
 					m->Convert(MOD_TYPE_MTM, MOD_TYPE_S3M, *this);

@@ -185,7 +185,6 @@ public:
 		, mode(mode)
 	{
 		MPT_STATIC_ASSERT(sizeof(Tchar) == 1);
-		MPT_ASSERT(size > 0);
 	}
 	StringModeBufRefImpl(const StringModeBufRefImpl &) = delete;
 	StringModeBufRefImpl(StringModeBufRefImpl &&) = default;
@@ -218,7 +217,6 @@ public:
 		, mode(mode)
 	{
 		MPT_STATIC_ASSERT(sizeof(Tchar) == 1);
-		MPT_ASSERT(size > 0);
 	}
 	StringModeBufRefImpl(const StringModeBufRefImpl &) = delete;
 	StringModeBufRefImpl(StringModeBufRefImpl &&) = default;
@@ -400,6 +398,8 @@ namespace String
 		buffer[size - 1] = 0;
 	}
 
+#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
+
 	template <size_t size>
 	void SetNullTerminator(wchar_t (&buffer)[size])
 	{
@@ -412,6 +412,8 @@ namespace String
 		MPT_ASSERT(size > 0);
 		buffer[size - 1] = 0;
 	}
+
+#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 
 
 	// Remove any chars after the first null char
@@ -633,6 +635,11 @@ namespace String
 	}
 
 
+#if MPT_GCC_AT_LEAST(8,1,0)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+#endif
+
 	// Copy from a char array to a fixed size char array.
 	template <size_t destSize>
 	void CopyN(char (&destBuffer)[destSize], const char *srcBuffer, const size_t srcSize = std::numeric_limits<size_t>::max())
@@ -675,6 +682,10 @@ namespace String
 	{
 		dest.assign(src);
 	}
+
+#if MPT_GCC_AT_LEAST(8,1,0)
+#pragma GCC diagnostic pop
+#endif
 
 
 #if MPT_COMPILER_MSVC

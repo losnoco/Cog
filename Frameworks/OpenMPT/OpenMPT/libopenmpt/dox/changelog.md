@@ -5,6 +5,28 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.4.5 (2019-05-27)
+
+ *  [**Sec**] Possible crash during playback due out-of-bounds read in XM and
+    MT2 files (r11608).
+
+ *  Breaking out of a sustain loop through Note-Off sometimes didn't continue in
+    the regular sample loop.
+ *  Seeking did not stop notes playing with XM Key Off (Kxx) effect.
+
+### libopenmpt 0.4.4 (2019-04-07)
+
+ *  [**Bug**] Channel VU meters were swapped.
+
+ *  Startrekker: Clamp speed to 31 ticks per row.
+ *  MTM: Ignore unused Exy commands on import. Command E5x (Set Finetune) is now
+    applied correctly.
+ *  MOD: Sample swapping was always enabled since it has been separated from the
+    ProTracker 1/2 compatibility flag. Now it is always enabled for Amiga-style
+    modules and otherwise the old heuristic is used again.
+
+ *  stb_vorbis: Update to v1.16 (2019-03-05).
+
 ### libopenmpt 0.4.3 (2019-02-11)
 
  *  [**Sec**] Possible crash due to null-pointer access when doing a portamento

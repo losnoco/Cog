@@ -245,10 +245,17 @@ bool IsUTF8(const std::string &str);
 #define MPT_LITERAL(x)   x
 #define MPT_STRING(x)    std::string( x )
 
+#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 #define MPT_WCHAR_TYPE   wchar_t
 #define MPT_WCHAR(x)     L ## x
 #define MPT_WLITERAL(x)  L ## x
 #define MPT_WSTRING(x)   std::wstring( L ## x )
+#else // MPT_COMPILER_QUIRK_NO_WCHAR
+#define MPT_WCHAR_TYPE   char32_t
+#define MPT_WCHAR(x)     U ## x
+#define MPT_WLITERAL(x)  U ## x
+#define MPT_WSTRING(x)   std::u32string( U ## x )
+#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 
 
 template <mpt::Charset charset_tag>

@@ -64,46 +64,46 @@ struct InstrumentEnvelope : public std::vector<EnvelopeNode>
 // Instrument Struct
 struct ModInstrument
 {
-	uint32 nFadeOut;					// Instrument fadeout speed
-	uint32 nGlobalVol;					// Global volume (0...64, all sample volumes are multiplied with this - TODO: This is 0...128 in Impulse Tracker)
-	uint32 nPan;						// Default pan (0...256), if the appropriate flag is set. Sample panning overrides instrument panning.
+	uint32 nFadeOut;                             // Instrument fadeout speed
+	uint32 nGlobalVol;                           // Global volume (0...64, all sample volumes are multiplied with this - TODO: This is 0...128 in Impulse Tracker)
+	uint32 nPan;                                 // Default pan (0...256), if the appropriate flag is set. Sample panning overrides instrument panning.
 
-	uint16 nVolRampUp;					// Default sample ramping up, 0 = use global default
+	uint16 nVolRampUp;                           // Default sample ramping up, 0 = use global default
 
-	uint16 wMidiBank;					// MIDI Bank (1...16384). 0 = Don't send.
-	uint8 nMidiProgram;					// MIDI Program (1...128). 0 = Don't send.
-	uint8 nMidiChannel;					// MIDI Channel (1...16). 0 = Don't send. 17 = Mapped (Send to tracker channel modulo 16).
-	uint8 nMidiDrumKey;					// Drum set note mapping (currently only used by the .MID loader)
-	int8 midiPWD;						// MIDI Pitch Wheel Depth in semitones
+	uint16 wMidiBank;                            // MIDI Bank (1...16384). 0 = Don't send.
+	uint8 nMidiProgram;                          // MIDI Program (1...128). 0 = Don't send.
+	uint8 nMidiChannel;                          // MIDI Channel (1...16). 0 = Don't send. 17 = Mapped (Send to tracker channel modulo 16).
+	uint8 nMidiDrumKey;                          // Drum set note mapping (currently only used by the .MID loader)
+	int8 midiPWD;                                // MIDI Pitch Wheel Depth in semitones
 
-	FlagSet<InstrumentFlags> dwFlags;	// Instrument flags
-	NewNoteAction nNNA;					// New note action
-	DuplicateCheckType nDCT;			// Duplicate check type (i.e. which condition will trigger the duplicate note action)
-	DuplicateNoteAction nDNA;			// Duplicate note action
-	uint8 nPanSwing;					// Random panning factor (0...64)
-	uint8 nVolSwing;					// Random volume factor (0...100)
-	uint8 nIFC;							// Default filter cutoff (0...127). Used if the high bit is set
-	uint8 nIFR;							// Default filter resonance (0...127). Used if the high bit is set
+	FlagSet<InstrumentFlags> dwFlags;            // Instrument flags
+	NewNoteAction nNNA;                          // New note action
+	DuplicateCheckType nDCT;                     // Duplicate check type (i.e. which condition will trigger the duplicate note action)
+	DuplicateNoteAction nDNA;                    // Duplicate note action
+	uint8 nPanSwing;                             // Random panning factor (0...64)
+	uint8 nVolSwing;                             // Random volume factor (0...100)
+	uint8 nIFC;                                  // Default filter cutoff (0...127). Used if the high bit is set
+	uint8 nIFR;                                  // Default filter resonance (0...127). Used if the high bit is set
 
-	int8 nPPS;							// Pitch/Pan separation (i.e. how wide the panning spreads, -32...32)
-	uint8 nPPC;							// Pitch/Pan centre (zero-based, default is NOTE_MIDDLE_C - 1)
+	int8 nPPS;                                   // Pitch/Pan separation (i.e. how wide the panning spreads, -32...32)
+	uint8 nPPC;                                  // Pitch/Pan centre (zero-based, default is NOTE_MIDDLE_C - 1)
 
-	PLUGINDEX nMixPlug;					// Plugin assigned to this instrument (0 = no plugin, 1 = first plugin)
-	uint8 nCutSwing;					// Random cutoff factor (0...64)
-	uint8 nResSwing;					// Random resonance factor (0...64)
-	InstrFilterMode nFilterMode;		// Default filter mode
-	uint8 nPluginVelocityHandling;		// How to deal with plugin velocity (PLUGIN_VELOCITYHANDLING_* constants)
-	uint8 nPluginVolumeHandling;		// How to deal with plugin volume (PLUGIN_VOLUMEHANDLING_* constants)
-	TEMPO pitchToTempoLock;				// BPM at which the samples assigned to this instrument loop correctly (0 = unset)
-	uint32 nResampling;					// Resampling mode (SRCMODE_* constants)
-	CTuning *pTuning;					// sample tuning assigned to this instrument
+	PLUGINDEX nMixPlug;                          // Plugin assigned to this instrument (0 = no plugin, 1 = first plugin)
+	uint8 nCutSwing;                             // Random cutoff factor (0...64)
+	uint8 nResSwing;                             // Random resonance factor (0...64)
+	InstrFilterMode nFilterMode;                 // Default filter mode
+	PlugVelocityHandling pluginVelocityHandling; // How to deal with plugin velocity
+	PlugVolumeHandling pluginVolumeHandling;     // How to deal with plugin volume
+	ResamplingMode resampling;                   // Resampling mode
+	TEMPO pitchToTempoLock;                      // BPM at which the samples assigned to this instrument loop correctly (0 = unset)
+	CTuning *pTuning;                            // sample tuning assigned to this instrument
 
-	InstrumentEnvelope VolEnv;			// Volume envelope data
-	InstrumentEnvelope PanEnv;			// Panning envelope data
-	InstrumentEnvelope PitchEnv;		// Pitch / filter envelope data
+	InstrumentEnvelope VolEnv;                   // Volume envelope data
+	InstrumentEnvelope PanEnv;                   // Panning envelope data
+	InstrumentEnvelope PitchEnv;                 // Pitch / filter envelope data
 
-	uint8 NoteMap[128];					// Note mapping, e.g. C-5 => D-5.
-	SAMPLEINDEX Keyboard[128];			// Sample mapping, e.g. C-5 => Sample 1
+	uint8 NoteMap[128];                          // Note mapping, e.g. C-5 => D-5.
+	SAMPLEINDEX Keyboard[128];                   // Sample mapping, e.g. C-5 => Sample 1
 
 	char name[MAX_INSTRUMENTNAME];
 	char filename[MAX_INSTRUMENTFILENAME];

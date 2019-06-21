@@ -120,9 +120,9 @@ PSB.			PanEnv.nSustainStart;
 PSE.			PanEnv.nSustainEnd;
 PTTL			pitchToTempoLock;
 PTTF			pitchToTempoLock (fractional part);
-PVEH			nPluginVelocityHandling;
-PVOH			nPluginVolumeHandling;
-R...			nResampling;
+PVEH			pluginVelocityHandling;
+PVOH			pluginVolumeHandling;
+R...			resampling;
 RP..	[EXT]	nRestartPos;
 RPB.	[EXT]	nRowsPerBeat;
 RPM.	[EXT]	nRowsPerMeasure;
@@ -314,12 +314,12 @@ if(!writeAll)
 	WRITE_MPTHEADER_envelope_member(	ENV_PITCH	, value		, uint8		, MagicBE("PiE[")	)
 	WRITE_MPTHEADER_sized_member(	nMixPlug					, uint8		, MagicBE("MiP.")	)
 	WRITE_MPTHEADER_sized_member(	nVolRampUp					, uint16	, MagicBE("VR..")	)
-	WRITE_MPTHEADER_trunc_member(	nResampling					, uint16	, MagicBE("R...")	)
+	WRITE_MPTHEADER_sized_member(	resampling					, uint8		, MagicBE("R...")	)
 	WRITE_MPTHEADER_sized_member(	nCutSwing					, uint8		, MagicBE("CS..")	)
 	WRITE_MPTHEADER_sized_member(	nResSwing					, uint8		, MagicBE("RS..")	)
 	WRITE_MPTHEADER_sized_member(	nFilterMode					, uint8		, MagicBE("FM..")	)
-	WRITE_MPTHEADER_sized_member(	nPluginVelocityHandling		, uint8		, MagicBE("PVEH")	)
-	WRITE_MPTHEADER_sized_member(	nPluginVolumeHandling		, uint8		, MagicBE("PVOH")	)
+	WRITE_MPTHEADER_sized_member(	pluginVelocityHandling		, uint8		, MagicBE("PVEH")	)
+	WRITE_MPTHEADER_sized_member(	pluginVolumeHandling		, uint8		, MagicBE("PVOH")	)
 	WRITE_MPTHEADER_trunc_member(	pitchToTempoLock.GetInt()	, uint16	, MagicBE("PTTL")	)
 	WRITE_MPTHEADER_trunc_member(	pitchToTempoLock.GetFract() , uint16	, MagicLE("PTTF")	)
 	WRITE_MPTHEADER_sized_member(	PitchEnv.nReleaseNode		, uint8		, MagicBE("PERN")	)
@@ -373,9 +373,9 @@ void CSoundFile::SaveExtendedInstrumentProperties(INSTRUMENTINDEX numInstruments
 	WritePropertyIfNeeded(*this, &ModInstrument::nMidiChannel, MagicBE("MC.."), sizeof(ModInstrument::nMidiChannel), f, numInstruments);
 	WritePropertyIfNeeded(*this, &ModInstrument::nMidiProgram, MagicBE("MP.."), sizeof(ModInstrument::nMidiProgram), f, numInstruments);
 	WritePropertyIfNeeded(*this, &ModInstrument::wMidiBank,    MagicBE("MB.."), sizeof(ModInstrument::wMidiBank),    f, numInstruments);
-	WritePropertyIfNeeded(*this, &ModInstrument::nResampling,  MagicBE("R..."), sizeof(ModInstrument::nResampling),  f, numInstruments);
-	WritePropertyIfNeeded(*this, &ModInstrument::nPluginVelocityHandling, MagicBE("PVEH"), sizeof(ModInstrument::nPluginVelocityHandling), f, numInstruments);
-	WritePropertyIfNeeded(*this, &ModInstrument::nPluginVolumeHandling, MagicBE("PVOH"), sizeof(ModInstrument::nPluginVolumeHandling), f, numInstruments);
+	WritePropertyIfNeeded(*this, &ModInstrument::resampling,  MagicBE("R..."), sizeof(ModInstrument::resampling),  f, numInstruments);
+	WritePropertyIfNeeded(*this, &ModInstrument::pluginVelocityHandling, MagicBE("PVEH"), sizeof(ModInstrument::pluginVelocityHandling), f, numInstruments);
+	WritePropertyIfNeeded(*this, &ModInstrument::pluginVolumeHandling, MagicBE("PVOH"), sizeof(ModInstrument::pluginVolumeHandling), f, numInstruments);
 
 	if(!(GetType() & MOD_TYPE_XM))
 	{
@@ -575,16 +575,15 @@ bool ReadInstrumentHeaderField(ModInstrument *input, uint32 fcode, uint16 fsize,
 	GET_MPTHEADER_envelope_member(ENV_PITCH		, value	, uint8			, MagicBE("PiE[")	)
 	GET_MPTHEADER_array_member(	NoteMap					, uint8			, MagicBE("NM[.")	)
 	GET_MPTHEADER_array_member(	Keyboard				, uint16		, MagicBE("K[..")	)
-	GET_MPTHEADER_chararray_member(	name					, char			, MagicBE("n[..")	)
-	GET_MPTHEADER_chararray_member(	filename				, char			, MagicBE("fn[.")	)
+	GET_MPTHEADER_chararray_member(	name				, char			, MagicBE("n[..")	)
+	GET_MPTHEADER_chararray_member(	filename			, char			, MagicBE("fn[.")	)
 	GET_MPTHEADER_sized_member(	nMixPlug				, uint8			, MagicBE("MiP.")	)
 	GET_MPTHEADER_sized_member(	nVolRampUp				, uint16		, MagicBE("VR..")	)
-	GET_MPTHEADER_sized_member(	nResampling				, uint32		, MagicBE("R...")	)
 	GET_MPTHEADER_sized_member(	nCutSwing				, uint8			, MagicBE("CS..")	)
 	GET_MPTHEADER_sized_member(	nResSwing				, uint8			, MagicBE("RS..")	)
 	GET_MPTHEADER_sized_member(	nFilterMode				, uint8			, MagicBE("FM..")	)
-	GET_MPTHEADER_sized_member(	nPluginVelocityHandling	, uint8			, MagicBE("PVEH")	)
-	GET_MPTHEADER_sized_member(	nPluginVolumeHandling	, uint8			, MagicBE("PVOH")	)
+	GET_MPTHEADER_sized_member(	pluginVelocityHandling	, uint8			, MagicBE("PVEH")	)
+	GET_MPTHEADER_sized_member(	pluginVolumeHandling	, uint8			, MagicBE("PVOH")	)
 	GET_MPTHEADER_sized_member(	PitchEnv.nReleaseNode	, uint8			, MagicBE("PERN")	)
 	GET_MPTHEADER_sized_member(	PanEnv.nReleaseNode		, uint8			, MagicBE("AERN")	)
 	GET_MPTHEADER_sized_member(	VolEnv.nReleaseNode		, uint8			, MagicBE("VERN")	)
@@ -592,6 +591,14 @@ bool ReadInstrumentHeaderField(ModInstrument *input, uint32 fcode, uint16 fsize,
 	GET_MPTHEADER_sized_member(	PanEnv.dwFlags			, uint8			, MagicBE("AFLG")	)
 	GET_MPTHEADER_sized_member(	VolEnv.dwFlags			, uint8			, MagicBE("VFLG")	)
 	GET_MPTHEADER_sized_member(	midiPWD					, int8			, MagicBE("MPWD")	)
+	case MagicBE("R..."):
+	{
+		// Resampling has been written as various sizes including uint16 and uint32 in the past
+		uint32 tmp = file.ReadTruncatedIntLE<uint32>(fsize);
+		if(Resampling::IsKnownMode(tmp))
+			input->resampling = static_cast<ResamplingMode>(tmp);
+		result = true;
+	} break;
 	case MagicBE("PTTL"):
 	{
 		// Integer part of pitch/tempo lock

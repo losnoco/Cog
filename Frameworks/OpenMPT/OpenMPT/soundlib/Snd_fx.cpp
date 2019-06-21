@@ -1025,7 +1025,8 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 
 				if(m.note == NOTE_KEYOFF || m.note == NOTE_NOTECUT || (m.note == NOTE_FADE && GetNumInstruments())
 					|| ((m.command == CMD_MODCMDEX || m.command == CMD_S3MCMDEX) && (m.param & 0xF0) == 0xC0 && paramLo < numTicks)
-					|| (m.command == CMD_DELAYCUT && paramLo != 0 && startTick + paramLo < numTicks))
+					|| (m.command == CMD_DELAYCUT && paramLo != 0 && startTick + paramLo < numTicks)
+					|| m.command == CMD_KEYOFF)
 				{
 					stopNote = true;
 				}
@@ -1451,7 +1452,6 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 	}
 
 	if(returnAfterVolumeAdjust) return;
-
 
 	// Instrument adjust
 	chn.nNewIns = 0;
@@ -4487,6 +4487,15 @@ void CSoundFile::ExtendedMODCommands(CHANNELINDEX nChn, ModCommand::PARAM param)
 				{
 					chn.nFineTune = MOD2XMFineTune(param);
 					if(chn.nPeriod && chn.rowCommand.IsNote()) chn.nPeriod = GetPeriodFromNote(chn.nNote, chn.nFineTune, chn.nC5Speed);
+				} else if(GetType() == MOD_TYPE_MTM)
+				{
+					if(chn.rowCommand.IsNote() && chn.pModSample != nullptr)
+					{
+						// Effect is permanent in MultiTracker
+						const_cast<ModSample *>(chn.pModSample)->nFineTune = param;
+						chn.nFineTune = param;
+						if(chn.nPeriod) chn.nPeriod = GetPeriodFromNote(chn.nNote, chn.nFineTune, chn.nC5Speed);
+					}
 				} else if(chn.rowCommand.IsNote())
 				{
 					chn.nFineTune = MOD2XMFineTune(param - 8);
@@ -5578,7 +5587,7 @@ void CSoundFile::KeyOff(ModChannel &chn) const
 			if(chn.position.GetUInt() > chn.nLength)
 			{
 				// Test case: SusAfterLoop.it
-				chn.position.Set(chn.position.GetInt() - chn.nLength + chn.nLoopStart);
+				chn.position.Set(chn.nLoopStart + ((chn.position.GetInt() - chn.nLoopStart) % (chn.nLoopEnd - chn.nLoopStart)));
 			}
 		} else
 		{
@@ -5657,7 +5666,7 @@ void CSoundFile::SetTempo(TEMPO param, bool setFromUI)
 		// ProTracker sets the tempo after the first tick.
 		// Note: The case of one tick per row is handled in ProcessRow() instead.
 		// Test case: TempoChange.mod
-#if MPT_MSVC_AT_LEAST(2017,8)
+#if MPT_MSVC_AT_LEAST(2017,8) && MPT_MSVC_BEFORE(2019,0)
 		// Work-around MSVC getting confused about deduced const input type in noexcept operator inside noexcept condition.
 		m_PlayState.m_nMusicTempo.SetRaw(std::min(param.GetRaw(), specs.GetTempoMax().GetRaw()));
 #else
@@ -5837,15 +5846,18 @@ uint32 CSoundFile::GetPeriodFromNote(uint32 note, int32 nFineTune, uint32 nC5Spe
 			return Util::muldiv_unsigned(8363, (FreqS3MTable[note % 12u] << 5), nC5Speed << (note / 12u));
 			//8363 * freq[note%12] / nC5Speed * 2^(5-note/12)
 		}
-	} else if (GetType() == MOD_TYPE_XM)
+	} else if (GetType() & (MOD_TYPE_XM | MOD_TYPE_MTM))
 	{
 		if (note < 12) note = 12;
 		note -= 12;
 
-		// FT2 Compatibility: The lower three bits of the finetune are truncated.
-		// Test case: Finetune-Precision.xm
-		if(m_playBehaviour[kFT2FinetunePrecision])
+		if(GetType() == MOD_TYPE_MTM)
 		{
+			nFineTune *= 16;
+		} else if(m_playBehaviour[kFT2FinetunePrecision])
+		{
+			// FT2 Compatibility: The lower three bits of the finetune are truncated.
+			// Test case: Finetune-Precision.xm
 			nFineTune &= ~7;
 		}
 
@@ -5892,7 +5904,7 @@ uint32 CSoundFile::GetPeriodFromNote(uint32 note, int32 nFineTune, uint32 nC5Spe
 uint32 CSoundFile::GetFreqFromPeriod(uint32 period, uint32 c5speed, int32 nPeriodFrac) const
 {
 	if (!period) return 0;
-	if (GetType() == MOD_TYPE_XM)
+	if (GetType() & (MOD_TYPE_XM | MOD_TYPE_MTM))
 	{
 		if(m_playBehaviour[kFT2Periods])
 		{
