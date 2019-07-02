@@ -480,6 +480,20 @@
 			remoteGlobalIDString = 8359FF1717FEF35C0060F3ED;
 			remoteInfo = ArchiveSource;
 		};
+		835C888522CC1853001B4B3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83E6B750181612FD00D4576D /* Sparkle.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5AB8F19F214DA72000A1187F;
+			remoteInfo = generate_keys;
+		};
+		835C888722CC1853001B4B3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83E6B750181612FD00D4576D /* Sparkle.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5A5ADED7214EDE4900DF0099;
+			remoteInfo = sign_update;
+		};
 		8360EF0417F92B24005208A4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */;
@@ -750,7 +764,6 @@
 		07D971E50ED1DAA800E7602E /* TagEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagEditorController.m; path = TagEditor/TagEditorController.m; sourceTree = "<group>"; };
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
-		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		170680620B950158006BA573 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = ThirdParty/Frameworks/Growl.framework; sourceTree = "<group>"; };
 		170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusImageTransformer.h; sourceTree = "<group>"; };
@@ -942,6 +955,9 @@
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArchiveSource.xcodeproj; path = Plugins/ArchiveSource/ArchiveSource.xcodeproj; sourceTree = "<group>"; };
+		835C888B22CC1881001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/Credits.html; sourceTree = "<group>"; };
+		835C888C22CC1882001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		835C888D22CC1882001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
@@ -1038,8 +1054,6 @@
 		8E75753209F31D5A0080F1EE /* PlaylistView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistView.m; sourceTree = "<group>"; };
 		8E75753309F31D5A0080F1EE /* Shuffle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Shuffle.h; sourceTree = "<group>"; };
 		8E75753409F31D5A0080F1EE /* Shuffle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Shuffle.m; sourceTree = "<group>"; };
-		8E7575C809F31DCA0080F1EE /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; name = English; path = English.lproj/Credits.html; sourceTree = "<group>"; };
-		8E7575DA09F31E930080F1EE /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E8D40820CBB036600135C1B /* M3u.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = M3u.xcodeproj; path = Plugins/M3u/M3u.xcodeproj; sourceTree = "<group>"; };
 		8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pls.xcodeproj; path = Plugins/Pls/Pls.xcodeproj; sourceTree = "<group>"; };
 		8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
@@ -1737,6 +1751,8 @@
 				8333B6591DCC4290004C140D /* UI Tests.xctest */,
 				8333B65B1DCC4290004C140D /* fileop */,
 				8319A68B1F79E99300C168D6 /* generate_appcast */,
+				835C888622CC1853001B4B3F /* generate_keys */,
+				835C888822CC1853001B4B3F /* sign_update */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1930,7 +1946,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1020;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
 						DevelopmentTeam = N6E749HJ2X;
@@ -1940,20 +1956,19 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Cog" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
-				Swedish,
-				Hebrew,
-				Greek,
 				zh_CN,
 				es,
 				Base,
 				en,
+				de,
+				sv,
+				el,
+				fr,
+				he,
+				ja,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			projectDirPath = "";
@@ -2225,6 +2240,20 @@
 			fileType = wrapper.cfbundle;
 			path = ArchiveSource.bundle;
 			remoteRef = 8359FF3017FEF35D0060F3ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		835C888622CC1853001B4B3F /* generate_keys */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = generate_keys;
+			remoteRef = 835C888522CC1853001B4B3F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		835C888822CC1853001B4B3F /* sign_update */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = sign_update;
+			remoteRef = 835C888722CC1853001B4B3F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8360EF0517F92B24005208A4 /* HighlyComplete.bundle */ = {
@@ -2704,8 +2733,8 @@
 		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				089C165DFE840E0CC02AAC07 /* English */,
 				833F681E1CDBCAA700AFB9F0 /* es */,
+				835C888C22CC1882001B4B3F /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2773,8 +2802,8 @@
 		17E41E060C130DFF00AC744D /* Credits.html */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8E7575C809F31DCA0080F1EE /* English */,
 				833F68251CDBCAA800AFB9F0 /* es */,
+				835C888B22CC1881001B4B3F /* en */,
 			);
 			name = Credits.html;
 			sourceTree = "<group>";
@@ -2782,8 +2811,8 @@
 		8E7575D909F31E930080F1EE /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8E7575DA09F31E930080F1EE /* English */,
 				833F681F1CDBCAA800AFB9F0 /* es */,
+				835C888D22CC1882001B4B3F /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -2800,7 +2829,6 @@
 				DEVELOPMENT_TEAM = N6E749HJ2X;
 				FRAMEWORK_SEARCH_PATHS = ThirdParty/Frameworks;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
@@ -2893,7 +2921,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -2931,7 +2958,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				PREBINDING = NO;
 				SDKROOT = macosx;
 			};
 			name = Release;

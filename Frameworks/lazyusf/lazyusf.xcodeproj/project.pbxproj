@@ -37,7 +37,6 @@
 		83E1578920F6E2D500BAA65A /* audio.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1578820F6E2D500BAA65A /* audio.h */; };
 		83E1578C20F6E2E000BAA65A /* interpreter_cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1578A20F6E2E000BAA65A /* interpreter_cpu.h */; };
 		83E1578D20F6E2E000BAA65A /* pif.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1578B20F6E2E000BAA65A /* pif.h */; };
-		83E1578F20F6E32B00BAA65A /* lazyusf-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83E1578E20F6E32B00BAA65A /* lazyusf-Info.plist */; };
 		83E1579520F6E3A000BAA65A /* our-stdbool.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E1579420F6E39F00BAA65A /* our-stdbool.h */; };
 		83E1579620F6E3F100BAA65A /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 835E768C20F6E2BD008F45E7 /* audio.c */; };
 		83E1579720F6E3F500BAA65A /* audiolib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8309DC5E20F6E24C0056CC70 /* audiolib.c */; };
@@ -599,7 +598,7 @@
 		83C8B61918AF57770071B040 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83C8B62118AF57770071B040 = {
@@ -613,6 +612,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 83C8B61818AF57770071B040;
@@ -630,7 +630,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83E1578F20F6E32B00BAA65A /* lazyusf-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -681,6 +680,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -732,6 +732,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;

@@ -46,7 +46,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8310BA281D7377850055CEC5 /* common_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = common_utils.c; path = Files/common_utils.c; sourceTree = "<group>"; };
 		8310BA291D7377850055CEC5 /* decorr_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decorr_tables.h; path = Files/decorr_tables.h; sourceTree = "<group>"; };
 		8310BA2A1D7377850055CEC5 /* decorr_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = decorr_utils.c; path = Files/decorr_utils.c; sourceTree = "<group>"; };
@@ -68,6 +67,7 @@
 		8310BA481D7377DC0055CEC5 /* pack_floats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pack_floats.c; path = Files/pack_floats.c; sourceTree = "<group>"; };
 		8310BA491D7377DC0055CEC5 /* pack_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pack_utils.c; path = Files/pack_utils.c; sourceTree = "<group>"; };
 		833F683A1CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		835C889B22CC188A001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83DD1DCD17FA038A00249519 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = Files/utils.h; sourceTree = "<group>"; };
 		83DD1DCE17FA038A00249519 /* wavpack_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_local.h; path = Files/wavpack_local.h; sourceTree = "<group>"; };
 		83DD1DCF17FA038A00249519 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_version.h; path = Files/wavpack_version.h; sourceTree = "<group>"; };
@@ -245,7 +245,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1020;
 				TargetAttributes = {
 					8DC2EF4F0486A6940098B216 = {
 						DevelopmentTeam = N6E749HJ2X;
@@ -255,11 +255,12 @@
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WavPack" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* WavPack */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -323,8 +324,8 @@
 		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				089C1667FE841158C02AAC07 /* English */,
 				833F683A1CDBCAB200AFB9F0 /* es */,
+				835C889B22CC188A001B4B3F /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -341,7 +342,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -442,7 +442,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};
@@ -481,7 +480,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PREBINDING = NO;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};
