@@ -742,6 +742,7 @@ typedef enum {
     meta_MSF_KONAMI,
     meta_XWMA_KONAMI,
     meta_9TAV,
+    meta_BWAV,
 
 } meta_t;
 
@@ -1042,6 +1043,7 @@ typedef struct {
     int interleave; /* size of stream interleave */
     int encryption; /* encryption mode */
     int big_endian;
+    int skip_samples;
     /* for AHX */
     int cri_type;
     uint16_t cri_key1;

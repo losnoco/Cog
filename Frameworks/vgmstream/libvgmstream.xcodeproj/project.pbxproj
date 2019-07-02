@@ -213,6 +213,8 @@
 		8351F32D2212B57000A606E4 /* 208.c in Sources */ = {isa = PBXBuildFile; fileRef = 8351F32A2212B57000A606E4 /* 208.c */; };
 		8351F32E2212B57000A606E4 /* ubi_bao_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8351F32B2212B57000A606E4 /* ubi_bao_streamfile.h */; };
 		8351F32F2212B57000A606E4 /* dsf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8351F32C2212B57000A606E4 /* dsf.c */; };
+		835C883622CC17BE001B4B3F /* bwav.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C883122CC17BD001B4B3F /* bwav.c */; };
+		835C883722CC17BE001B4B3F /* ogg_vorbis_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C883522CC17BE001B4B3F /* ogg_vorbis_streamfile.h */; };
 		836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B4518BDB8880095E648 /* InfoPlist.strings */; };
 		836F6F1E18BDC2190095E648 /* acm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE018BDC2180095E648 /* acm_decoder.c */; };
 		836F6F2018BDC2190095E648 /* adx_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE218BDC2180095E648 /* adx_decoder.c */; };
@@ -873,6 +875,8 @@
 		8351F32A2212B57000A606E4 /* 208.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 208.c; sourceTree = "<group>"; };
 		8351F32B2212B57000A606E4 /* ubi_bao_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ubi_bao_streamfile.h; sourceTree = "<group>"; };
 		8351F32C2212B57000A606E4 /* dsf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsf.c; sourceTree = "<group>"; };
+		835C883122CC17BD001B4B3F /* bwav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bwav.c; sourceTree = "<group>"; };
+		835C883522CC17BE001B4B3F /* ogg_vorbis_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ogg_vorbis_streamfile.h; sourceTree = "<group>"; };
 		836F6B3918BDB8880095E648 /* libvgmstream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libvgmstream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F6B4418BDB8880095E648 /* libvgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "libvgmstream-Info.plist"; sourceTree = "<group>"; };
 		836F6B4618BDB8880095E648 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1526,6 +1530,7 @@
 				836F6E3918BDC2180095E648 /* bnsf.c */,
 				836F6E3A18BDC2180095E648 /* brstm.c */,
 				83EDE5D71A70951A005F5D84 /* btsnd.c */,
+				835C883122CC17BD001B4B3F /* bwav.c */,
 				8306B0CF2098458F000302D4 /* caf.c */,
 				836F6E3B18BDC2180095E648 /* capdsp.c */,
 				834FE0E8215C79EC000A5D3D /* ck.c */,
@@ -1657,6 +1662,7 @@
 				834FE0DB215C79EA000A5D3D /* nxa.c */,
 				8306B0C02098458C000302D4 /* nxap.c */,
 				832BF81321E05149006F50F1 /* ogg_opus.c */,
+				835C883522CC17BE001B4B3F /* ogg_vorbis_streamfile.h */,
 				83A21F7F201D8980000F04B9 /* ogg_vorbis.c */,
 				831BA60F1EAC61A500CF89B0 /* ogl.c */,
 				8349A8FB1FE6257F00E26435 /* omu.c */,
@@ -1920,6 +1926,7 @@
 				832BF82C21E0514B006F50F1 /* hca_keys_awb.h in Headers */,
 				8306B0E020984590000302D4 /* ppst_streamfile.h in Headers */,
 				834FE0BA215C798C000A5D3D /* ea_mt_decoder_utk.h in Headers */,
+				835C883722CC17BE001B4B3F /* ogg_vorbis_streamfile.h in Headers */,
 				832BF82021E0514B006F50F1 /* zsnd_streamfile.h in Headers */,
 				8375737721F950ED00F01AF5 /* ubi_sb_streamfile.h in Headers */,
 				839E21E01F2EDAF100EE54D7 /* vorbis_custom_data_fsb.h in Headers */,
@@ -2200,6 +2207,7 @@
 				8306B0ED20984590000302D4 /* txtp.c in Sources */,
 				836F6FA018BDC2190095E648 /* musx.c in Sources */,
 				836F705818BDC2190095E648 /* vgmstream.c in Sources */,
+				835C883622CC17BE001B4B3F /* bwav.c in Sources */,
 				8349A90A1FE6258200E26435 /* sab.c in Sources */,
 				836F6F6818BDC2190095E648 /* ads.c in Sources */,
 				8306B08620984518000302D4 /* fadpcm_decoder.c in Sources */,
