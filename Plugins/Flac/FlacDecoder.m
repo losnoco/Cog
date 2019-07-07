@@ -253,8 +253,6 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	{
 		free(blockBuffer);
 	}
-	[source close];
-	[self setSource:nil];
 
 	decoder = NULL;
 	blockBuffer = NULL;

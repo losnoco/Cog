@@ -32,7 +32,6 @@
 		return NO;
 	
 	NSURL *url = [s url];
-	[s close];
 	
 	apl = [APLFile createWithFile:[url path]];
 	

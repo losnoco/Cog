@@ -27,9 +27,6 @@ int sourceSeek(void *datasource, ogg_int64_t offset, int whence)
 
 int sourceClose(void *datasource)
 {
-	id source = (__bridge id)datasource;
-	[source close];
-
 	return 0;
 }
 
@@ -117,9 +114,6 @@ long sourceTell(void *datasource)
 - (void)close
 {
 	ov_clear(&vorbisRef);
-	
-	[source close];
-    source = nil;
 }
 
 - (void)dealloc

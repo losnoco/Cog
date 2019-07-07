@@ -29,9 +29,6 @@ int sourceSeek(void *_stream, opus_int64 _offset, int _whence)
 
 int sourceClose(void *_stream)
 {
-	id source = (__bridge id)_stream;
-	[source close];
-
 	return 0;
 }
 
@@ -123,9 +120,6 @@ opus_int64 sourceTell(void *_stream)
 {
     op_free(opusRef);
     opusRef = NULL;
-	
-	[source close];
-    source = nil;
 }
 
 - (void)dealloc

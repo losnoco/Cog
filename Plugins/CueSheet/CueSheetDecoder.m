@@ -48,7 +48,6 @@
 	}
 
 	NSURL *url = [s url];
-	[s close];
 
 	cuesheet = [CueSheet cueSheetWithFile:[url path]];
 	

@@ -157,7 +157,6 @@
 
 - (void)dealloc {
 	[self close];
-	[self setURL:nil];
 }
 
 @end

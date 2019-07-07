@@ -200,10 +200,6 @@ gme_err_t readCallback( void* data, void* out, long count )
 		gme_delete(emu);
 		emu = NULL;
 	}
-	if (source) {
-		[source close];
-		[self setSource:nil];
-	}
 }
 
 - (void)dealloc

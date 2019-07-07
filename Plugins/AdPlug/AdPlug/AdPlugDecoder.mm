@@ -138,11 +138,6 @@
 - (void)close
 {
 	[self cleanUp];
-	
-	if (source) {
-		[source close];
-		[self setSource:nil];
-	}
 }
 
 - (void)dealloc

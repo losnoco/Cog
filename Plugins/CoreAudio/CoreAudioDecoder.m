@@ -50,7 +50,6 @@
 	OSStatus						err;
 	
 	NSURL *url = [source url];
-	[source close]; //There's no room for your kind around here!
 	
 	err = ExtAudioFileOpenURL((__bridge CFURLRef)url, &_in);
 	if(noErr != err) {

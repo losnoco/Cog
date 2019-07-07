@@ -153,11 +153,6 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
 - (void)close
 {
 	[self cleanUp];
-	
-	if (source) {
-		[source close];
-		[self setSource:nil];
-	}
 }
 
 - (void)dealloc

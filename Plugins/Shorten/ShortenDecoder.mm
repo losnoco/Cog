@@ -13,7 +13,6 @@
 - (BOOL)open:(id<CogSource>)source
 {
 	NSURL *url = [source url];
-	[source close];
 
 	if (![[url scheme] isEqualToString:@"file"])
 		return NO;

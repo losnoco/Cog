@@ -174,8 +174,6 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader)
         mpc_demux_exit(demux);
         demux = NULL;
     }
-	[source close];
-    source = nil;
 }
 
 - (void)dealloc

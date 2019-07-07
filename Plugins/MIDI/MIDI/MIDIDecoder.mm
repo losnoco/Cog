@@ -341,8 +341,6 @@ static OSType getOSType(const char * in_)
 {
     delete player;
     player = NULL;
-    [source close];
-    source = nil;
 }
 
 - (void)dealloc
