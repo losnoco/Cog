@@ -479,6 +479,7 @@
 		839E21E81F2EDAF100EE54D7 /* mpeg_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E21DE1F2EDAF000EE54D7 /* mpeg_decoder.h */; };
 		839E21E91F2EDAF100EE54D7 /* vorbis_custom_utils_sk.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21DF1F2EDAF000EE54D7 /* vorbis_custom_utils_sk.c */; };
 		839E21EB1F2EDB0600EE54D7 /* sk_aud.c in Sources */ = {isa = PBXBuildFile; fileRef = 839E21EA1F2EDB0500EE54D7 /* sk_aud.c */; };
+		83A16D2B22D2ADE800B90C4C /* awb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A16D2722D2ADE700B90C4C /* awb.c */; };
 		83A21F7B201D895B000F04B9 /* blocked_xvag.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A21F7A201D895B000F04B9 /* blocked_xvag.c */; };
 		83A21F85201D8981000F04B9 /* atx.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A21F7C201D897F000F04B9 /* atx.c */; };
 		83A21F86201D8981000F04B9 /* xwc.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A21F7D201D8980000F04B9 /* xwc.c */; };
@@ -1142,6 +1143,7 @@
 		839E21DE1F2EDAF000EE54D7 /* mpeg_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeg_decoder.h; sourceTree = "<group>"; };
 		839E21DF1F2EDAF000EE54D7 /* vorbis_custom_utils_sk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_sk.c; sourceTree = "<group>"; };
 		839E21EA1F2EDB0500EE54D7 /* sk_aud.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sk_aud.c; sourceTree = "<group>"; };
+		83A16D2722D2ADE700B90C4C /* awb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = awb.c; sourceTree = "<group>"; };
 		83A21F7A201D895B000F04B9 /* blocked_xvag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_xvag.c; sourceTree = "<group>"; };
 		83A21F7C201D897F000F04B9 /* atx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atx.c; sourceTree = "<group>"; };
 		83A21F7D201D8980000F04B9 /* xwc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xwc.c; sourceTree = "<group>"; };
@@ -1516,6 +1518,7 @@
 				8306B0D520984590000302D4 /* atsl.c */,
 				83A21F7C201D897F000F04B9 /* atx.c */,
 				83EED5D2203A8BC7008BEB45 /* aus.c */,
+				83A16D2722D2ADE700B90C4C /* awb.c */,
 				8306B0C32098458C000302D4 /* awc_xma_streamfile.h */,
 				83AA5D201F6E2F9B0020821C /* awc.c */,
 				836F6E3618BDC2180095E648 /* baf.c */,
@@ -2406,6 +2409,7 @@
 				83A21F8B201D8982000F04B9 /* sps_n1.c in Sources */,
 				836F6F9E18BDC2190095E648 /* mus_acm.c in Sources */,
 				83709E0E1ECBC1C3005C03D3 /* psv_decoder.c in Sources */,
+				83A16D2B22D2ADE800B90C4C /* awb.c in Sources */,
 				831BA6191EAC61A500CF89B0 /* ogl.c in Sources */,
 				83709E061ECBC1A4005C03D3 /* mc3.c in Sources */,
 				831BA61F1EAC61A500CF89B0 /* x360_cxs.c in Sources */,

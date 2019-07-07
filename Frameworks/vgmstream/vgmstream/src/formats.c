@@ -38,6 +38,7 @@ static const char* extension_list[] = {
     "adw",
     "adx",
     "afc",
+    "afs2",
     "agsc",
     "ahx",
     "ahv",
@@ -68,6 +69,7 @@ static const char* extension_list[] = {
     "atx",
     "aud",
     "aus",
+    "awb",
     "awc",
 
     "b1s",
@@ -214,6 +216,7 @@ static const char* extension_list[] = {
     "kvs",
 
     "l",
+    "l00", //txth/reserved [Disney's Dinosaur (PS2)]
     "laac", //fake extension for .aac (tri-Ace)
     "laif", //fake extension for .aif (various)
     "laiff", //fake extension for .aiff
@@ -311,6 +314,7 @@ static const char* extension_list[] = {
     "otm",
     "ovb",
 
+    "p04", //txth/reserved [Psychic Force 2012 (DC)]
     "p1d", //txth/reserved [Farming Simulator 18 (3DS)]
     "p2a", //txth/reserved [Thunderhawk Operation Phoenix (PS2)]
     "p2bt",
