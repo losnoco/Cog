@@ -4,3 +4,6 @@ build
 
 # Special cog exceptions
 !Frameworks/OpenMPT/OpenMPT/build
+
+# User-specific xcconfig files
+Xcode-config/DEVELOPMENT_TEAM.xcconfig
