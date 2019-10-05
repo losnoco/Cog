@@ -180,11 +180,12 @@
 			};
 			buildConfigurationList = 8375B03717FFEA400092A79F /* Build configuration list for PBXProject "OpusPlugin" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 8375B03317FFEA400092A79F;
 			productRefGroup = 8375B03D17FFEA400092A79F /* Products */;

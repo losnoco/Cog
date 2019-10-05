@@ -248,11 +248,12 @@
 			};
 			buildConfigurationList = 83848FB21807623F00E7332D /* Build configuration list for PBXProject "SSEQPlayer" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 83848FAE1807623F00E7332D;
 			productRefGroup = 83848FB91807623F00E7332D /* Products */;

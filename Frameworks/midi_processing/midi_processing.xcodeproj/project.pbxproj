@@ -169,11 +169,12 @@
 			};
 			buildConfigurationList = 83B066A6180D56B9008E3612 /* Build configuration list for PBXProject "midi_processing" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 83B066A2180D56B9008E3612;
 			productRefGroup = 83B066AD180D56B9008E3612 /* Products */;

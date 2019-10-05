@@ -143,11 +143,12 @@
 			};
 			buildConfigurationList = 8343781617F93CB500584396 /* Build configuration list for PBXProject "psflib" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 8343781217F93CB500584396;
 			productRefGroup = 8343781D17F93CB500584396 /* Products */;

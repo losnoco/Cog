@@ -293,11 +293,12 @@
 			};
 			buildConfigurationList = 83DE0C00180A9BD400269051 /* Build configuration list for PBXProject "vio2sf" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 83DE0BFC180A9BD400269051;
 			productRefGroup = 83DE0C07180A9BD400269051 /* Products */;

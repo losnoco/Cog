@@ -323,11 +323,12 @@
 			};
 			buildConfigurationList = 8313E3091901FBDC00B4B6F1 /* Build configuration list for PBXProject "mpg123" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 8313E3051901FBDC00B4B6F1;
 			productRefGroup = 8313E3101901FBDC00B4B6F1 /* Products */;

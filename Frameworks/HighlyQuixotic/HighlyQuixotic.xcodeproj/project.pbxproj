@@ -157,11 +157,12 @@
 			};
 			buildConfigurationList = 834378D817F96E2600584396 /* Build configuration list for PBXProject "HighlyQuixotic" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 834378D417F96E2600584396;
 			productRefGroup = 834378DF17F96E2600584396 /* Products */;

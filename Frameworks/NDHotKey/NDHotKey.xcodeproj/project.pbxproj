@@ -162,11 +162,12 @@
 			};
 			buildConfigurationList = 32F1614F14E6BB3B00D6AB2F /* Build configuration list for PBXProject "NDHotKey" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 32F1614A14E6BB3B00D6AB2F;
 			productRefGroup = 32F1615714E6BB3B00D6AB2F /* Products */;

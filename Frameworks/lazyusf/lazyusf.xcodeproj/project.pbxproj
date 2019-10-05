@@ -609,11 +609,11 @@
 			};
 			buildConfigurationList = 83C8B61C18AF57770071B040 /* Build configuration list for PBXProject "lazyusf" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = 83C8B61818AF57770071B040;
 			productRefGroup = 83C8B62318AF57770071B040 /* Products */;

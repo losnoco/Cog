@@ -555,6 +555,8 @@
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
 			fileType = sourcecode.swift;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -2014,12 +2016,12 @@
 			};
 			buildConfigurationList = 836F6B3318BDB8880095E648 /* Build configuration list for PBXProject "libvgmstream" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 836F6B2F18BDB8880095E648;
 			productRefGroup = 836F6B3A18BDB8880095E648 /* Products */;

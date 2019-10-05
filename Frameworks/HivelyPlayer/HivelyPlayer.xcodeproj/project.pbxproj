@@ -139,11 +139,12 @@
 			};
 			buildConfigurationList = 836FB550182053D700B3AD2D /* Build configuration list for PBXProject "HivelyPlayer" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 836FB54C182053D700B3AD2D;
 			productRefGroup = 836FB557182053D700B3AD2D /* Products */;

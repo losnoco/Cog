@@ -196,12 +196,12 @@
 			};
 			buildConfigurationList = 836F6B0B18BDB80D0095E648 /* Build configuration list for PBXProject "vgmstream" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 836F6B0718BDB80D0095E648;
 			productRefGroup = 836F6B1118BDB80D0095E648 /* Products */;

@@ -190,11 +190,12 @@
 			};
 			buildConfigurationList = 836FB5281820538700B3AD2D /* Build configuration list for PBXProject "Hively" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 836FB5241820538700B3AD2D;
 			productRefGroup = 836FB52E1820538700B3AD2D /* Products */;

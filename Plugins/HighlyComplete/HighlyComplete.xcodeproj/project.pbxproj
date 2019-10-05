@@ -415,11 +415,12 @@
 			};
 			buildConfigurationList = 8360EEDF17F92AC8005208A4 /* Build configuration list for PBXProject "HighlyComplete" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				es,
+				Base,
 			);
 			mainGroup = 8360EEDB17F92AC8005208A4;
 			productRefGroup = 8360EEE517F92AC8005208A4 /* Products */;
@@ -719,6 +720,7 @@
 					EMU_LITTLE_ENDIAN,
 					HAVE_STDINT_H,
 					"MINIMAL_CORE=2",
+					MGBA_STANDALONE,
 				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Frameworks/mGBA/mGBA/mgba/include";
 				INFOPLIST_FILE = "HighlyComplete/HighlyComplete-Info.plist";
@@ -740,6 +742,7 @@
 					HAVE_STDINT_H,
 					EMU_LITTLE_ENDIAN,
 					"MINIMAL_CORE=2",
+					MGBA_STANDALONE,
 				);
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Frameworks/mGBA/mGBA/mgba/include";
 				INFOPLIST_FILE = "HighlyComplete/HighlyComplete-Info.plist";
