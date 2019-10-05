@@ -326,8 +326,11 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
     }
     else if (xwb.version == XACT3_0_MAX && xwb.codec == XMA2
             && xwb.bits_per_sample == 0x01 && xwb.block_align == 0x04
-            && xwb.data_size == 0x55951c1c) { /* some kind of id? */
-        /* Stardew Valley (Switch), full interleaved DSPs (including headers) */
+            && read_32bitLE(xwb.stream_offset + 0x08, streamFile) == xwb.sample_rate /* DSP header */
+            && read_16bitLE(xwb.stream_offset + 0x0e, streamFile) == 0
+            && read_32bitLE(xwb.stream_offset + 0x18, streamFile) == 2
+            /*&& xwb.data_size == 0x55951c1c*/) { /* some kind of id in Stardew Valley? */
+        /* Stardew Valley (Switch), Skulls of the Shogun (Switch): full interleaved DSPs (including headers) */
         xwb.codec = DSP;
     }
     else if (xwb.version == XACT3_0_MAX && xwb.codec == XMA2
@@ -342,7 +345,7 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
     xwb.loop_flag = (xwb.loop_end > 0 || xwb.loop_end_sample > xwb.loop_start)
         && !(xwb.entry_flags & WAVEBANKENTRY_FLAGS_IGNORELOOP);
 
-    /* Oddworld OGG the data_size value is size of uncompressed bytes instead;  DSP uses some id/config as value */
+    /* Oddworld OGG the data_size value is size of uncompressed bytes instead; DSP uses some id/config as value */
     if (xwb.codec != OGG && xwb.codec != DSP && xwb.codec != ATRAC9_RIFF) {
         /* some low-q rips don't remove padding, relax validation a bit */
         if (xwb.data_offset + xwb.stream_size > get_streamfile_size(streamFile))
@@ -525,16 +528,14 @@ VGMSTREAM * init_vgmstream_xwb(STREAMFILE *streamFile) {
         }
 
         case ATRAC3: { /* Techland PS3 extension [Sniper Ghost Warrior (PS3)] */
-            uint8_t buf[0x100];
-            int bytes;
+            int block_align, encoder_delay;
 
-            int block_size = xwb.block_align * vgmstream->channels;
-            int joint_stereo = xwb.block_align == 0x60; /* untested, ATRAC3 default */
-            int skip_samples = 0; /* unknown */
+            block_align = xwb.block_align * vgmstream->channels;
+            encoder_delay = 1024; /* assumed */
+            vgmstream->num_samples -= encoder_delay;
 
-            bytes = ffmpeg_make_riff_atrac3(buf,0x100, vgmstream->num_samples, xwb.stream_size, vgmstream->channels, vgmstream->sample_rate, block_size, joint_stereo, skip_samples);
-            vgmstream->codec_data = init_ffmpeg_header_offset(streamFile, buf,bytes, xwb.stream_offset,xwb.stream_size);
-            if ( !vgmstream->codec_data ) goto fail;
+            vgmstream->codec_data = init_ffmpeg_atrac3_raw(streamFile, xwb.stream_offset,xwb.stream_size, vgmstream->num_samples,vgmstream->channels,vgmstream->sample_rate, block_align, encoder_delay);
+            if (!vgmstream->codec_data) goto fail;
             vgmstream->coding_type = coding_FFmpeg;
             vgmstream->layout_type = layout_none;
             break;
@@ -632,10 +633,11 @@ static int get_xsb_name(char * buf, size_t maxsize, int target_subsong, xwb_head
     }
 
     //;VGM_LOG("XSB: name found=%i at %lx\n", xsb.parse_found, xsb.name_offset);
-    if (!xsb.parse_found || xsb.name_offset == 0)
+    if (!xsb.name_len || xsb.name[0] == '\0')
         goto fail;
 
-    read_string(buf,maxsize, xsb.name_offset,streamFile); /* null-terminated */
+    strncpy(buf,xsb.name,maxsize);
+    buf[maxsize-1] = '\0';
     return 1;
 fail:
     return 0;

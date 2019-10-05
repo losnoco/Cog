@@ -116,7 +116,8 @@ typedef enum {
     coding_XA,              /* CD-ROM XA */
     coding_PSX,             /* Sony PS ADPCM (VAG) */
     coding_PSX_badflags,    /* Sony PS ADPCM with custom flag byte */
-    coding_PSX_cfg,         /* Sony PS ADPCM with configurable frame size (FF XI, SGXD type 5, Bizarre Creations) */
+    coding_PSX_cfg,         /* Sony PS ADPCM with configurable frame size (int math) */
+    coding_PSX_pivotal,     /* Sony PS ADPCM with configurable frame size (float math) */
     coding_HEVAG,           /* Sony PSVita ADPCM */
 
     coding_EA_XA,           /* Electronic Arts EA-XA ADPCM v1 (stereo) aka "EA ADPCM" */
@@ -159,8 +160,8 @@ typedef enum {
     coding_MSADPCM_ck,      /* Microsoft ADPCM (Cricket Audio variation) */
     coding_WS,              /* Westwood Studios VBR ADPCM */
 
-    coding_YAMAHA,          /* Yamaha ADPCM (stereo) */
-    coding_YAMAHA_int,      /* Yamaha ADPCM (mono/interleave) */
+    coding_AICA,            /* Yamaha AICA ADPCM (stereo) */
+    coding_AICA_int,        /* Yamaha AICA ADPCM (mono/interleave) */
     coding_ASKA,            /* Aska ADPCM */
     coding_NXAP,            /* NXAP ADPCM */
 
@@ -175,7 +176,9 @@ typedef enum {
     coding_DSA,             /* Ocean DSA 4-bit ADPCM */
     coding_XMD,             /* Konami XMD 4-bit ADPCM */
     coding_PCFX,            /* PC-FX 4-bit ADPCM */
-    coding_OKI16,           /* OKI 4-bit ADPCM with 16-bit output */
+    coding_OKI16,           /* OKI 4-bit ADPCM with 16-bit output and modified expand */
+    coding_OKI4S,           /* OKI 4-bit ADPCM with 16-bit output and cuadruple step */
+    coding_PTADPCM,         /* Platinum 4-bit ADPCM */
 
     /* others */
     coding_SDX2,            /* SDX2 2:1 Squareroot-Delta-Exact compression DPCM */
@@ -187,6 +190,7 @@ typedef enum {
     coding_ACM,             /* InterPlay ACM */
     coding_NWA,             /* VisualArt's NWA */
     coding_CIRCUS_ADPCM,    /* Circus 8-bit ADPCM */
+    coding_UBI_ADPCM,       /* Ubisoft 4/6-bit ADPCM */
 
     coding_EA_MT,           /* Electronic Arts MicroTalk (linear-predictive speech codec) */
 
@@ -351,7 +355,7 @@ typedef enum {
     meta_PS2_SShd,          /* .ADS with SShd header */
     meta_NPS,
     meta_PS2_RXWS,          /* Sony games (Genji, Okage Shadow King, Arc The Lad Twilight of Spirits) */
-    meta_PS2_RAW,           /* RAW Interleaved Format */
+    meta_RAW_INT,
     meta_PS2_EXST,          /* Shadow of Colossus EXST */
     meta_PS2_SVAG,          /* Konami SVAG */
     meta_PS_HEADERLESS,     /* headerless PS-ADPCM */
@@ -360,7 +364,7 @@ typedef enum {
     meta_PS2_VAGi,          /* VAGi Interleaved File */
     meta_PS2_VAGp,          /* VAGp Mono File */
     meta_PS2_pGAV,          /* VAGp with Little Endian Header */
-    meta_PSX_GMS,           /* GMS File (used in PS1 & PS2) [no header_id] */
+    meta_SEB,
     meta_STR_WAV,           /* Blitz Games STR+WAV files */
     meta_PS2_ILD,           /* ILD File */
     meta_PS2_PNB,           /* PsychoNauts Bgm File */
@@ -383,11 +387,7 @@ typedef enum {
     meta_XWB,               /* Microsoft XACT framework (Xbox, X360, Windows) */
     meta_PS2_XA30,          /* Driver - Parallel Lines (PS2) */
     meta_MUSC,              /* Krome PS2 games */
-    meta_MUSX_V004,         /* Spyro Games, possibly more */
-    meta_MUSX_V005,         /* Spyro Games, possibly more */
-    meta_MUSX_V006,         /* Spyro Games, possibly more */
-    meta_MUSX_V010,         /* Spyro Games, possibly more */
-    meta_MUSX_V201,         /* Sphinx and the cursed Mummy */
+    meta_MUSX,
     meta_LEG,               /* Legaia 2 [no header_id] */
     meta_FILP,              /* Resident Evil - Dead Aim */
     meta_IKM,
@@ -405,7 +405,6 @@ typedef enum {
     meta_PS2_ENTH,          /* Enthusia */
     meta_SDT,               /* Baldur's Gate - Dark Alliance */
     meta_NGC_TYDSP,         /* Ty - The Tasmanian Tiger */
-    meta_NGC_SWD,           /* Conflict - Desert Storm 1 & 2 */
     meta_CAPDSP,            /* Capcom DSP Header [no header_id] */
     meta_DC_STR,            /* SEGA Stream Asset Builder */
     meta_DC_STR_V2,         /* variant of SEGA Stream Asset Builder */
@@ -415,7 +414,7 @@ typedef enum {
     meta_KRAW,              /* Geometry Wars - Galaxies */
     meta_PS2_OMU,           /* PS2 Int file with Header */
     meta_PS2_XA2,           /* XG3 Extreme-G Racing */
-    meta_NUB_IDSP,          /* Soul Calibur Legends (Wii) */
+    meta_NUB,
     meta_IDSP_NL,           /* Mario Strikers Charged (Wii) */
     meta_IDSP_IE,           /* Defencer (GC) */
     meta_SPT_SPD,           /* Various (SPT+SPT DSP) */
@@ -436,27 +435,7 @@ typedef enum {
     meta_NGC_PDT,           /* Mario Party 6 */
     meta_DC_ASD,            /* Miss Moonligh */
     meta_NAOMI_SPSD,        /* Guilty Gear X */
-    
-    meta_RSD2VAG,           /* RSD2VAG */
-    meta_RSD2PCMB,          /* RSD2PCMB */
-    meta_RSD2XADP,          /* RSD2XADP */
-    meta_RSD3VAG,           /* RSD3VAG */
-    meta_RSD3GADP,          /* RSD3GADP */
-    meta_RSD3PCM,           /* RSD3PCM */
-    meta_RSD3PCMB,          /* RSD3PCMB */
-    meta_RSD4PCMB,          /* RSD4PCMB */
-    meta_RSD4PCM,           /* RSD4PCM */
-    meta_RSD4RADP,          /* RSD4RADP */
-    meta_RSD4VAG,           /* RSD4VAG */
-    meta_RSD6VAG,           /* RSD6VAG */
-    meta_RSD6WADP,          /* RSD6WADP */
-    meta_RSD6XADP,          /* RSD6XADP */
-    meta_RSD6RADP,          /* RSD6RADP */
-    meta_RSD6OOGV,          /* RSD6OOGV */
-    meta_RSD6XMA,           /* RSD6XMA */
-    meta_RSD6AT3P,          /* RSD6AT3+ */
-    meta_RSD6WMA,           /* RSD6WMA */
-
+    meta_RSD,
     meta_PS2_ASS,           /* ASS */
     meta_SEG,               /* Eragon */
     meta_NDS_STRM_FFTA2,    /* Final Fantasy Tactics A2 */
@@ -475,24 +454,19 @@ typedef enum {
     meta_PS2_XA2_RRP,       /* RC Revenge Pro */
     meta_NGC_DSP_KONAMI,    /* Konami DSP header, found in various games */
     meta_UBI_CKD,           /* Ubisoft CKD RIFF header (Rayman Origins Wii) */
-
-    meta_XBOX_WAVM,         /* XBOX WAVM File */
+    meta_RAW_WAVM,
     meta_XBOX_WVS,          /* XBOX WVS */
     meta_NGC_WVS,           /* Metal Arms - Glitch in the System */
     meta_XBOX_MATX,         /* XBOX MATX */
-    meta_XBOX_XMU,          /* XBOX XMU */
-    meta_XBOX_XVAS,         /* XBOX VAS */
-    
+    meta_XMU,
+    meta_XVAS,
     meta_EA_SCHL,           /* Electronic Arts SCHl with variable header */
     meta_EA_SCHL_fixed,     /* Electronic Arts SCHl with fixed header */
     meta_EA_BNK,            /* Electronic Arts BNK */
     meta_EA_1SNH,           /* Electronic Arts 1SNh/EACS */
     meta_EA_EACS,
-
-    meta_RAW,               /* RAW PCM file */
-
+    meta_RAW_PCM,
     meta_GENH,              /* generic header */
-
     meta_AIFC,              /* Audio Interchange File Format AIFF-C */
     meta_AIFF,              /* Audio Interchange File Format */
     meta_STR_SNDS,          /* .str with SNDS blocks and SHDR header */
@@ -581,7 +555,6 @@ typedef enum {
     meta_XVAG,              /* Ratchet & Clank Future: Quest for Booty (PS3) */
     meta_PS3_CPS,           /* Eternal Sonata (PS3) */
     meta_MSF,
-    meta_NUB_VAG,           /* Namco VAG from NUB archives */
     meta_PS3_PAST,          /* Bakugan Battle Brawlers (PS3) */
     meta_SGXD,              /* Sony: Folklore, Genji, Tokyo Jungle (PS3), Brave Story, Kurohyo (PSP) */
     meta_NGCA,              /* GoldenEye 007 (Wii) */
@@ -593,7 +566,7 @@ typedef enum {
     meta_VS_STR,            /* The Bouncer */
     meta_LSF_N1NJ4N,        /* .lsf n1nj4n Fastlane Street Racing (iPhone) */
     meta_VAWX,              /* feelplus: No More Heroes Heroes Paradise, Moon Diver */
-    meta_PC_SNDS,           /* Incredibles PC .snds */
+    meta_RAW_SNDS,
     meta_PS2_WMUS,          /* The Warriors (PS2) */
     meta_HYPERSCAN_KVAG,    /* Hyperscan KVAG/BVG */
     meta_IOS_PSND,          /* Crash Bandicoot Nitro Kart 2 (iOS) */
@@ -626,7 +599,6 @@ typedef enum {
     meta_FFMPEG,            /* any file supported by FFmpeg */
     meta_X360_CXS,          /* Eternal Sonata (Xbox 360) */
     meta_AKB,               /* SQEX iOS */
-    meta_NUB_XMA,           /* Namco XMA from NUB archives */
     meta_X360_PASX,         /* Namco PASX (Soul Calibur II HD X360) */
     meta_XMA_RIFF,          /* Microsoft RIFF XMA */
     meta_X360_AST,          /* Dead Rising (X360) */
@@ -641,8 +613,8 @@ typedef enum {
     meta_TA_AAC_MOBILE,     /* tri-Ace AAC (Star Ocean Anamnesis, Heaven x Inferno) */
     meta_MTA2,
     meta_NGC_ULW,           /* Burnout 1 (GC only) */
-    meta_PC_XA30,           /* Driver - Parallel Lines (PC) */
-    meta_WII_04SW,          /* Driver - Parallel Lines (Wii) */
+    meta_XA_XA30,
+    meta_XA_04SW,
     meta_TXTH,              /* generic text header */
     meta_SK_AUD,            /* Silicon Knights .AUD (Eternal Darkness GC) */
     meta_AHX,               /* CRI AHX header */
@@ -730,7 +702,8 @@ typedef enum {
     meta_MSF_TAMASOFT,
     meta_XPS_DAT,
     meta_ZSND,
-    meta_DSP_ADPCMX,
+    meta_DSP_ADPY,
+    meta_DSP_ADPX,
     meta_OGG_OPUS,
     meta_IMC,
     meta_GIN,
@@ -744,6 +717,15 @@ typedef enum {
     meta_9TAV,
     meta_BWAV,
     meta_RAD,
+    meta_SMACKER,
+    meta_MZRT,
+    meta_XAVS,
+    meta_PSF,
+    meta_DSP_ITL_i,
+    meta_IMA,
+    meta_XMV_VALVE,
+    meta_UBI_HX,
+    meta_BMP_KONAMI,
 
 } meta_t;
 
@@ -855,6 +837,8 @@ typedef struct {
 
     /* layouts/block config */
     size_t interleave_block_size;   /* interleave, or block/frame size (depending on the codec) */
+    size_t interleave_first_block_size; /* different interleave for first block */
+    size_t interleave_first_skip;   /* data skipped before interleave first (needed to skip other channels) */
     size_t interleave_last_block_size; /* smaller interleave for last block */
 
     /* subsong config */
@@ -1220,11 +1204,13 @@ typedef struct {
     int64_t skipSamples; // number of start samples that will be skipped (encoder delay), for looping adjustments
     int streamCount; // number of FFmpeg audio streams
     
+    /*** internal state ***/
+    // config
     int channel_remap_set;
     int channel_remap[32]; /* map of channel > new position */
+    int invert_audio_set;
 
-    /*** internal state ***/
-    // Intermediate byte buffer
+    // intermediate byte buffer
     uint8_t *sampleBuffer;
     // max samples we can held (can be less or more than frameSize)
     size_t sampleBufferBlock;
@@ -1249,6 +1235,9 @@ typedef struct {
     // Seeking is not ideal, so rollback is necessary
     int samplesToDiscard;
 
+    // Flags for special seeking in faulty formats
+    int force_seek;
+    int bad_init;
 
 } ffmpeg_codec_data;
 #endif
@@ -1274,6 +1263,8 @@ typedef struct {
 } mp4_aac_codec_data;
 #endif
 #endif
+
+typedef struct ubi_adpcm_codec_data ubi_adpcm_codec_data;
 
 typedef struct ea_mt_codec_data ea_mt_codec_data;
 
@@ -1337,7 +1328,7 @@ void close_vgmstream(VGMSTREAM * vgmstream);
 int32_t get_vgmstream_play_samples(double looptimes, double fadeseconds, double fadedelayseconds, VGMSTREAM * vgmstream);
 
 /* Decode data into sample buffer */
-void render_vgmstream(sample * buffer, int32_t sample_count, VGMSTREAM * vgmstream);
+void render_vgmstream(sample_t * buffer, int32_t sample_count, VGMSTREAM * vgmstream);
 
 /* Write a description of the stream into array pointed by desc, which must be length bytes long.
  * Will always be null-terminated if length > 0 */
@@ -1350,12 +1341,18 @@ int get_vgmstream_average_bitrate(VGMSTREAM * vgmstream);
  * The list disables some common formats that may conflict (.wav, .ogg, etc). */
 const char ** vgmstream_get_formats(size_t * size);
 
+/* same, but for common-but-disabled formats in the above list. */
+const char ** vgmstream_get_common_formats(size_t * size);
+
 /* Force enable/disable internal looping. Should be done before playing anything (or after reset),
  * and not all codecs support arbitrary loop values ATM. */
 void vgmstream_force_loop(VGMSTREAM* vgmstream, int loop_flag, int loop_start_sample, int loop_end_sample);
 
 /* Set number of max loops to do, then play up to stream end (for songs with proper endings) */
 void vgmstream_set_loop_target(VGMSTREAM* vgmstream, int loop_target);
+
+/* Return 1 if vgmstream detects from the filename that said file can be used even if doesn't physically exist */
+int vgmstream_is_virtual_filename(const char* filename);
 
 /* -------------------------------------------------------------------------*/
 /* vgmstream "private" API                                                  */
@@ -1390,8 +1387,8 @@ int vgmstream_do_loop(VGMSTREAM * vgmstream);
 int vgmstream_open_stream(VGMSTREAM * vgmstream, STREAMFILE *streamFile, off_t start_offset);
 
 /* Get description info */
-const char * get_vgmstream_coding_description(coding_t coding_type);
-const char * get_vgmstream_layout_description(layout_t layout_type);
-const char * get_vgmstream_meta_description(meta_t meta_type);
+void get_vgmstream_coding_description(VGMSTREAM *vgmstream, char *out, size_t out_size);
+void get_vgmstream_layout_description(VGMSTREAM *vgmstream, char *out, size_t out_size);
+void get_vgmstream_meta_description(VGMSTREAM *vgmstream, char *out, size_t out_size);
 
 #endif

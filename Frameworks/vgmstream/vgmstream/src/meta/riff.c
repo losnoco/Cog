@@ -94,6 +94,7 @@ typedef struct {
     int interleave;
 
     int is_at3;
+    int is_at3p;
     int is_at9;
 } riff_fmt_chunk;
 
@@ -122,17 +123,22 @@ static int read_fmt(int big_endian, STREAMFILE * streamFile, off_t current_chunk
         fmt->channel_layout = read_32bit(current_chunk+0x1c,streamFile);
         /* 0x10 guid at 0x20 */
 
-        /* happens in .at3/at9, may be a bug in their encoder b/c MS's defs set mono as FC */
+        /* happens in various .at3/at9, may be a bug in their encoder b/c MS's defs set mono as FC */
         if (fmt->channel_count == 1 && fmt->channel_layout == speaker_FL) { /* other channels are fine */
             fmt->channel_layout = speaker_FC;
+        }
+
+        /* happens in few at3p, may be a bug in older tools as other games have ok flags [Ridge Racer 7 (PS3)] */
+        if (fmt->channel_count == 6 && fmt->channel_layout == 0x013f) {
+            fmt->channel_layout = 0x3f;
         }
     }
 
     switch (fmt->codec) {
-        case 0x00:  /* Yamaha ADPCM (raw) [Headhunter (DC), Bomber hehhe (DC)] (unofficial) */
+        case 0x00:  /* Yamaha AICA ADPCM (raw) [Headhunter (DC), Bomber hehhe (DC)] (unofficial) */
             if (fmt->bps != 4) goto fail;
             if (fmt->block_size != 0x02*fmt->channel_count) goto fail;
-            fmt->coding_type = coding_YAMAHA_int;
+            fmt->coding_type = coding_AICA_int;
             fmt->interleave = 0x01;
             break;
 
@@ -143,7 +149,7 @@ static int read_fmt(int big_endian, STREAMFILE * streamFile, off_t current_chunk
                     fmt->interleave = 0x02;
                     break;
                 case 8:
-                    fmt->coding_type = coding_PCM8_U_int;
+                    fmt->coding_type = coding_PCM8_U;
                     fmt->interleave = 0x01;
                     break;
                 default:
@@ -168,9 +174,11 @@ static int read_fmt(int big_endian, STREAMFILE * streamFile, off_t current_chunk
             fmt->coding_type = coding_MS_IMA;
             break;
 
-        case 0x20:  /* Yamaha ADPCM (raw) [Takuyo/Dynamix/etc DC games] */
+        case 0x20:  /* Yamaha AICA ADPCM (raw) [Takuyo/Dynamix/etc DC games] */
             if (fmt->bps != 4) goto fail;
-            fmt->coding_type = coding_YAMAHA;
+            fmt->coding_type = coding_AICA;
+            /* official RIFF spec has 0x20 as 'Yamaha ADPCM', but data is probably not pure AICA
+             * (maybe with headered frames and would need extra detection?) */
             break;
 
         case 0x69:  /* XBOX IMA ADPCM [Dynasty Warriors 5 (Xbox)] */
@@ -242,11 +250,11 @@ static int read_fmt(int big_endian, STREAMFILE * streamFile, off_t current_chunk
                 bztmp = (bztmp >> 8) | (bztmp << 8);
                 fmt->coding_type = coding_AT3plus;
                 fmt->block_size = (bztmp & 0x3FF) * 8 + 8; /* should match fmt->block_size */
-                fmt->is_at3 = 1;
+                fmt->is_at3p = 1;
                 break;
 #elif defined(VGM_USE_FFMPEG)
                 fmt->coding_type = coding_FFmpeg;
-                fmt->is_at3 = 1;
+                fmt->is_at3p = 1;
                 break;
 #else
                 goto fail;
@@ -442,13 +450,22 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
                 case 0x66616374:    /* "fact" */
                     if (chunk_size == 0x04) { /* standard, usually found with ADPCM */
                         fact_sample_count = read_32bitLE(current_chunk+0x08, streamFile);
-                    } else if (chunk_size == 0x10 && read_32bitBE(current_chunk+0x08+0x04, streamFile) == 0x4C794E20) { /* "LyN " */
+                    }
+                    else if (chunk_size == 0x10 && read_32bitBE(current_chunk+0x08+0x04, streamFile) == 0x4C794E20) { /* "LyN " */
                         goto fail; /* parsed elsewhere */
-                    } else if ((fmt.is_at3 || fmt.is_at9) && chunk_size == 0x08) {
+                    }
+                    else if ((fmt.is_at3 || fmt.is_at3p) && chunk_size == 0x08) { /* early AT3 (mainly PSP games) */
                         fact_sample_count = read_32bitLE(current_chunk+0x08, streamFile);
-                        fact_sample_skip  = read_32bitLE(current_chunk+0x0c, streamFile);
-                    } else if ((fmt.is_at3 || fmt.is_at9) && chunk_size == 0x0c) {
+                        fact_sample_skip  = read_32bitLE(current_chunk+0x0c, streamFile); /* base skip samples */
+                    }
+                    else if ((fmt.is_at3 || fmt.is_at3p) && chunk_size == 0x0c) { /* late AT3 (mainly PS3 games and few PSP games) */
                         fact_sample_count = read_32bitLE(current_chunk+0x08, streamFile);
+                        /* 0x0c: base skip samples, ignored by decoder */
+                        fact_sample_skip  = read_32bitLE(current_chunk+0x10, streamFile); /* skip samples with extra 184 */
+                    }
+                    else if (fmt.is_at9 && chunk_size == 0x0c) {
+                        fact_sample_count = read_32bitLE(current_chunk+0x08, streamFile);
+                        /* 0x0c: base skip samples (same as next field) */
                         fact_sample_skip  = read_32bitLE(current_chunk+0x10, streamFile);
                     }
                     break;
@@ -535,13 +552,39 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
     vgmstream->sample_rate = fmt.sample_rate;
     vgmstream->channel_layout = fmt.channel_layout;
 
-    /* init, samples */
+    /* coding, layout, interleave */
+    vgmstream->coding_type = fmt.coding_type;
+    switch (fmt.coding_type) {
+        case coding_MSADPCM:
+        case coding_MS_IMA:
+        case coding_AICA:
+        case coding_XBOX_IMA:
+        case coding_IMA:
+#ifdef VGM_USE_FFMPEG
+        case coding_FFmpeg:
+#endif
+#ifdef VGM_USE_MAIATRAC3PLUS
+        case coding_AT3plus:
+#endif
+#ifdef VGM_USE_ATRAC9
+        case coding_ATRAC9:
+#endif
+            vgmstream->layout_type = layout_none;
+            vgmstream->interleave_block_size = fmt.block_size;
+            break;
+        default:
+            vgmstream->layout_type = layout_interleave;
+            vgmstream->interleave_block_size = fmt.interleave;
+            break;
+    }
+
+    /* samples, codec init (after setting coding to ensure proper close on failure) */
     switch (fmt.coding_type) {
         case coding_PCM16LE:
             vgmstream->num_samples = pcm_bytes_to_samples(data_size, fmt.channel_count, 16);
             break;
 
-        case coding_PCM8_U_int:
+        case coding_PCM8_U:
             vgmstream->num_samples = pcm_bytes_to_samples(data_size, vgmstream->channels, 8);
             break;
 
@@ -583,8 +626,8 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
                 vgmstream->num_samples = fact_sample_count;
             break;
 
-        case coding_YAMAHA:
-        case coding_YAMAHA_int:
+        case coding_AICA:
+        case coding_AICA_int:
             vgmstream->num_samples = yamaha_bytes_to_samples(data_size, fmt.channel_count);
             break;
 
@@ -600,40 +643,22 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
 
 #ifdef VGM_USE_FFMPEG
         case coding_FFmpeg: {
-            ffmpeg_codec_data *ffmpeg_data = init_ffmpeg_offset(streamFile, 0x00, streamFile->get_size(streamFile));
-            if ( !ffmpeg_data ) goto fail;
-            vgmstream->codec_data = ffmpeg_data;
+            if (!fmt.is_at3 && !fmt.is_at3p) goto fail;
 
-            vgmstream->num_samples = ffmpeg_data->totalSamples; /* fact_sample_count */
+            vgmstream->codec_data = init_ffmpeg_atrac3_riff(streamFile, 0x00, NULL);
+            if (!vgmstream->codec_data) goto fail;
 
-            if (fmt.is_at3) {
-                /* the encoder introduces some garbage (not always silent) samples to skip before the stream */
-                /* manually set skip_samples if FFmpeg didn't do it */
-                if (ffmpeg_data->skipSamples <= 0) {
-                    ffmpeg_set_skip_samples(ffmpeg_data, fact_sample_skip);
-                }
+            vgmstream->num_samples = fact_sample_count;
+            if (loop_flag) {
+                /* adjust RIFF loop/sample absolute values (with skip samples) */
+                loop_start_smpl -= fact_sample_skip;
+                loop_end_smpl   -= fact_sample_skip;
 
-                /* LFE channel should be reordered on decode, but FFmpeg doesn't do it automatically:
-                 * - 6ch: FL FR FC BL BR LFE > FL FR FC LFE BL BR
-                 * - 8ch: FL FR FC BL BR SL SR LFE > FL FR FC LFE BL BR SL SR
-                 * (ATRAC3Plus only, 5/7ch can't be encoded) */
-                if (ffmpeg_data->channels == 6) {
-                    /* LFE BR BL > LFE BL BR > same */
-                    int channel_remap[] = { 0, 1, 2, 5, 5, 5, };
-                    ffmpeg_set_channel_remapping(ffmpeg_data, channel_remap);
-                }
-                else if (ffmpeg_data->channels == 8) {
-                    /* LFE BR SL SR BL > LFE BL SL SR BR > LFE BL BR SR SL > LFE BL BR SL SR > same */
-                    int channel_remap[] = { 0, 1, 2, 7, 7, 7, 7, 7};
-                    ffmpeg_set_channel_remapping(ffmpeg_data, channel_remap);
-                }
-
-                /* RIFF loop/sample values are absolute (with skip samples), adjust */
-                if (loop_flag) {
-                    loop_start_smpl -= (int32_t)ffmpeg_data->skipSamples;
-                    loop_end_smpl   -= (int32_t)ffmpeg_data->skipSamples;
-                }
+                /* happens with official tools when "fact" is not found */
+                if (vgmstream->num_samples == 0)
+                    vgmstream->num_samples = loop_end_smpl;
             }
+
             break;
         }
 #endif
@@ -671,32 +696,6 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
 #endif
         default:
             goto fail;
-    }
-
-    /* coding, layout, interleave */
-    vgmstream->coding_type = fmt.coding_type;
-    switch (fmt.coding_type) {
-        case coding_MSADPCM:
-        case coding_MS_IMA:
-        case coding_YAMAHA:
-        case coding_XBOX_IMA:
-        case coding_IMA:
-#ifdef VGM_USE_FFMPEG
-        case coding_FFmpeg:
-#endif
-#ifdef VGM_USE_MAIATRAC3PLUS
-        case coding_AT3plus:
-#endif
-#ifdef VGM_USE_ATRAC9
-        case coding_ATRAC9:
-#endif
-            vgmstream->layout_type = layout_none;
-            vgmstream->interleave_block_size = fmt.block_size;
-            break;
-        default:
-            vgmstream->layout_type = layout_interleave;
-            vgmstream->interleave_block_size = fmt.interleave;
-            break;
     }
 
     /* Dynasty Warriors 5 (Xbox) 6ch interleaves stereo frames, probably not official */
@@ -753,7 +752,7 @@ VGMSTREAM * init_vgmstream_riff(STREAMFILE *streamFile) {
 
         vgmstream->coding_type = coding_MSADPCM_int;
 
-        /* only works with half-interleave as frame_size and interleave are merged ATM*/
+        /* only works with half-interleave as frame_size and interleave are merged ATM */
         for (ch = 0; ch < vgmstream->channels; ch++) {
             vgmstream->ch[ch].channel_start_offset =
                     vgmstream->ch[ch].offset = start_offset + half_interleave*ch;
@@ -902,7 +901,7 @@ VGMSTREAM * init_vgmstream_rifx(STREAMFILE *streamFile) {
         case coding_PCM16BE:
             vgmstream->num_samples = pcm_bytes_to_samples(data_size, vgmstream->channels, 16);
             break;
-        case coding_PCM8_U_int:
+        case coding_PCM8_U:
             vgmstream->num_samples = pcm_bytes_to_samples(data_size, vgmstream->channels, 8);
             break;
         default:

@@ -1,3 +1,4 @@
+#include <math.h>
 #include "meta.h"
 #include "../layout/layout.h"
 #include "../coding/coding.h"
@@ -8,23 +9,24 @@
 #define EAAC_VERSION_V0                 0x00 /* SNR/SNS */
 #define EAAC_VERSION_V1                 0x01 /* SPS */
 
-#define EAAC_CODEC_NONE                 0x00 /* internal 'codec not set' */
-#define EAAC_CODEC_RESERVED             0x01 /* not used/reserved? /MP30/P6L0/P2B0/P2L0/P8S0/P8U0/PFN0? */
-#define EAAC_CODEC_PCM                  0x02
+#define EAAC_CODEC_NONE                 0x00 /* XAS v0? */
+#define EAAC_CODEC_RESERVED             0x01 /* EALAYER3 V1a? MP30/P6L0/P2B0/P2L0/P8S0/P8U0/PFN0? */
+#define EAAC_CODEC_PCM16BE              0x02
 #define EAAC_CODEC_EAXMA                0x03
-#define EAAC_CODEC_XAS                  0x04
+#define EAAC_CODEC_XAS1                 0x04
 #define EAAC_CODEC_EALAYER3_V1          0x05
 #define EAAC_CODEC_EALAYER3_V2_PCM      0x06
 #define EAAC_CODEC_EALAYER3_V2_SPIKE    0x07
-#define EAAC_CODEC_DSP                  0x08
+#define EAAC_CODEC_GCADPCM              0x08
 #define EAAC_CODEC_EASPEEX              0x09
 #define EAAC_CODEC_EATRAX               0x0a
 #define EAAC_CODEC_EAMP3                0x0b
 #define EAAC_CODEC_EAOPUS               0x0c
 
-#define EAAC_FLAG_NONE                  0x00
-#define EAAC_FLAG_LOOPED                0x02
-#define EAAC_FLAG_STREAMED              0x04
+#define EAAC_TYPE_RAM                   0x00
+#define EAAC_TYPE_STREAM                0x01
+
+#define EAAC_LOOP_SET                   0x01
 
 #define EAAC_BLOCKID0_DATA              0x00
 #define EAAC_BLOCKID0_END               0x80 /* maybe meant to be a bitflag? */
@@ -337,8 +339,8 @@ VGMSTREAM * init_vgmstream_ea_sbr(STREAMFILE *streamFile) {
     num_metas = read_16bitBE(entry_offset + 0x04, streamFile);
     metas_offset = read_32bitBE(entry_offset + 0x06, streamFile);
 
-    snr_offset = 0xFFFFFFFF;
-    sns_offset = 0xFFFFFFFF;
+    snr_offset = 0;
+    sns_offset = 0;
 
     for (i = 0; i < num_metas; i++) {
         entry_offset = metas_offset + 0x06 * i;
@@ -359,10 +361,10 @@ VGMSTREAM * init_vgmstream_ea_sbr(STREAMFILE *streamFile) {
         }
     }
 
-    if (snr_offset == 0xFFFFFFFF && sns_offset == 0xFFFFFFFF)
+    if (snr_offset == 0 && sns_offset == 0)
         goto fail;
 
-    if (snr_offset == 0xFFFFFFFF) {
+    if (snr_offset == 0) {
         /* SPS file */
         sbsFile = open_streamfile_by_ext(streamFile, "sbs");
         if (!sbsFile)
@@ -374,10 +376,10 @@ VGMSTREAM * init_vgmstream_ea_sbr(STREAMFILE *streamFile) {
         snr_offset = sns_offset;
         sns_offset = snr_offset + (read_32bitBE(snr_offset, sbsFile) & 0x00FFFFFF);
         snr_offset += 0x04;
-        vgmstream = init_vgmstream_eaaudiocore_header(sbsFile, sbsFile, snr_offset, sns_offset, meta_EA_SNR_SNS);
+        vgmstream = init_vgmstream_eaaudiocore_header(sbsFile, sbsFile, snr_offset, sns_offset, meta_EA_SPS);
         if (!vgmstream)
             goto fail;
-    } else if (sns_offset == 0xFFFFFFFF) {
+    } else if (sns_offset == 0) {
         /* RAM asset */
         sns_offset = snr_offset + get_snr_size(streamFile, snr_offset);
         vgmstream = init_vgmstream_eaaudiocore_header(streamFile, streamFile, snr_offset, sns_offset, meta_EA_SNR_SNS);
@@ -409,12 +411,12 @@ fail:
 /* EA HDR/STH/DAT - seen in older 7th gen games, used for storing speech */
 VGMSTREAM * init_vgmstream_ea_hdr_sth_dat(STREAMFILE *streamFile) {
     int target_stream = streamFile->stream_index;
-    uint32_t i;
     uint8_t userdata_size, total_sounds, block_id;
-    off_t snr_offset, sns_offset;
-    size_t file_size, block_size;
+    off_t snr_offset, sns_offset, sth_offset, sth_offset2;
+    size_t dat_size, block_size;
     STREAMFILE *datFile = NULL, *sthFile = NULL;
     VGMSTREAM *vgmstream;
+    int32_t(*read_32bit)(off_t, STREAMFILE*);
 
     /* 0x00: ID */
     /* 0x02: userdata size */
@@ -422,9 +424,19 @@ VGMSTREAM * init_vgmstream_ea_hdr_sth_dat(STREAMFILE *streamFile) {
     /* 0x04: sub-ID (used for different police voices in NFS games) */
     /* 0x08: alt number of files? */
     /* 0x09: zero */
-    /* 0x0A: ??? */
+    /* 0x0A: related to size? */
     /* 0x0C: zero */
     /* 0x10: table start */
+
+    if (read_8bit(0x09, streamFile) != 0)
+        goto fail;
+
+    if (read_32bitBE(0x0c, streamFile) != 0)
+        goto fail;
+
+    /* first offset is always zero */
+    if (read_16bitBE(0x10, streamFile) != 0)
+        goto fail;
 
     sthFile = open_streamfile_by_ext(streamFile, "sth");
     if (!sthFile)
@@ -435,7 +447,7 @@ VGMSTREAM * init_vgmstream_ea_hdr_sth_dat(STREAMFILE *streamFile) {
         goto fail;
 
     /* STH always starts with the first offset of zero */
-    sns_offset = read_32bitLE(0x00, sthFile);
+    sns_offset = read_32bitBE(0x00, sthFile);
     if (sns_offset != 0)
         goto fail;
 
@@ -446,6 +458,7 @@ VGMSTREAM * init_vgmstream_ea_hdr_sth_dat(STREAMFILE *streamFile) {
 
     userdata_size = read_8bit(0x02, streamFile);
     total_sounds = read_8bit(0x03, streamFile);
+
     if (read_8bit(0x08, streamFile) > total_sounds)
         goto fail;
 
@@ -454,23 +467,25 @@ VGMSTREAM * init_vgmstream_ea_hdr_sth_dat(STREAMFILE *streamFile) {
         goto fail;
 
     /* offsets in HDR are always big endian */
-    //snr_offset = (off_t)read_16bitBE(0x10 + (0x02+userdata_size) * (target_stream-1), streamFile) + 0x04;
-    //sns_offset = read_32bit(snr_offset, sthFile);
+    sth_offset = (uint16_t)read_16bitBE(0x10 + (0x02 + userdata_size) * (target_stream - 1), streamFile);
 
+#if 0
+    snr_offset = sth_offset + 0x04;
+    sns_offset = read_32bit(sth_offset + 0x00, sthFile);
+#else
     /* we can't reliably detect byte endianness so we're going to find the sound the hacky way */
-    /* go through blocks until we reach the goal sound */
-    file_size = get_streamfile_size(datFile);
+    dat_size = get_streamfile_size(datFile);
     snr_offset = 0;
     sns_offset = 0;
 
-    for (i = 0; i < total_sounds; i++) {
-        snr_offset = (uint16_t)read_16bitBE(0x10 + (0x02+userdata_size) * i, streamFile) + 0x04;
-
-        if (i == target_stream - 1)
-            break;
-
+    if (total_sounds == 1) {
+        /* always 0 */
+        snr_offset = sth_offset + 0x04;
+        sns_offset = 0x00;
+    } else {
+        /* find the first sound size and match it up with the second sound offset to detect endianness */
         while (1) {
-            if (sns_offset >= file_size)
+            if (sns_offset >= dat_size)
                 goto fail;
 
             block_id = read_8bit(sns_offset, datFile);
@@ -486,7 +501,20 @@ VGMSTREAM * init_vgmstream_ea_hdr_sth_dat(STREAMFILE *streamFile) {
             if (block_id == EAAC_BLOCKID0_END)
                 break;
         }
+
+        sth_offset2 = (uint16_t)read_16bitBE(0x10 + (0x02 + userdata_size) * 1, streamFile);
+        if (sns_offset == read_32bitBE(sth_offset2, sthFile)) {
+            read_32bit = read_32bitBE;
+        } else if (sns_offset == read_32bitLE(sth_offset2, sthFile)) {
+            read_32bit = read_32bitLE;
+        } else {
+            goto fail;
+        }
+
+        snr_offset = sth_offset + 0x04;
+        sns_offset = read_32bit(sth_offset + 0x00, sthFile);
     }
+#endif
 
     block_id = read_8bit(sns_offset, datFile);
     if (block_id != EAAC_BLOCKID0_DATA && block_id != EAAC_BLOCKID0_END)
@@ -670,7 +698,7 @@ VGMSTREAM * init_vgmstream_ea_sbr_harmony(STREAMFILE *streamFile) {
         goto fail;
 
     total_sounds = 0;
-    sound_offset = 0xFFFFFFFF;
+    sound_offset = 0;
 
     /* The bank is split into DSET sections each of which references one or multiple sounds. */
     /* Each set can contain RAM sounds (stored in SBR in data section) or streamed sounds (stored separately in SBS file). */
@@ -760,7 +788,7 @@ VGMSTREAM * init_vgmstream_ea_sbr_harmony(STREAMFILE *streamFile) {
         }
     }
 
-    if (sound_offset == 0xFFFFFFFF)
+    if (sound_offset == 0)
         goto fail;
 
     if (!is_streamed) {
@@ -812,7 +840,8 @@ typedef struct {
     int codec;
     int channel_config;
     int sample_rate;
-    int flags;
+    int type;
+    int loop;
 
     int streamed;
     int channels;
@@ -844,14 +873,19 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
     /* EA SNR/SPH header */
     header1 = (uint32_t)read_32bitBE(header_offset + 0x00, streamHead);
     header2 = (uint32_t)read_32bitBE(header_offset + 0x04, streamHead);
-    eaac.version = (header1 >> 28) & 0x0F; /* 4 bits */
-    eaac.codec   = (header1 >> 24) & 0x0F; /* 4 bits */
+    eaac.version        = (header1 >> 28) & 0x0F; /* 4 bits */
+    eaac.codec          = (header1 >> 24) & 0x0F; /* 4 bits */
     eaac.channel_config = (header1 >> 18) & 0x3F; /* 6 bits */
-    eaac.sample_rate = (header1 & 0x03FFFF); /* 18 bits (some Dead Space 2 (PC) do use 96000) */
-    eaac.flags = (header2 >> 28) & 0x0F; /* 4 bits *//* TODO: maybe even 3 bits and not 4? */
-    eaac.num_samples = (header2 & 0x0FFFFFFF); /* 28 bits */
+    eaac.sample_rate    = (header1 >>  0) & 0x03FFFF; /* 18 bits */
+    eaac.type           = (header2 >> 30) & 0x03; /* 2 bits */
+    eaac.loop           = (header2 >> 29) & 0x01; /* 1 bits */
+    eaac.num_samples    = (header2 >>  0) & 0x1FFFFFFF; /* 29 bits */
     /* rest is optional, depends on used flags and codec (handled below) */
     eaac.stream_offset = start_offset;
+
+    /* common channel configs are mono/stereo/quad/5.1/7.1 (from debug strings), while others are quite rare
+     * [Battlefield 4 (X360)-EAXMA: 3/5/7ch, Army of Two: The Devil's Cartel (PS3)-EALayer3v2P: 11ch] */
+    eaac.channels = eaac.channel_config + 1;
 
     /* V0: SNR+SNS, V1: SPR+SPS (no apparent differences, other than block flags) */
     if (eaac.version != EAAC_VERSION_V0 && eaac.version != EAAC_VERSION_V1) {
@@ -859,19 +893,25 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
         goto fail;
     }
 
-    /* catch unknown/garbage values just in case */
-    if (eaac.flags != EAAC_FLAG_NONE && !(eaac.flags & (EAAC_FLAG_LOOPED | EAAC_FLAG_STREAMED))) {
-        VGM_LOG("EA EAAC: unknown flags 0x%02x\n", eaac.flags);
+    /* accepted max (some Dead Space 2 (PC) do use 96000) */
+    if (eaac.sample_rate > 200000) {
+        VGM_LOG("EA EAAC: unknown sample rate\n");
+        goto fail;
+    }
+
+    /* catch unknown values (0x02: "gigasample"? some kind of memory+stream thing?) */
+    if (eaac.type != EAAC_TYPE_RAM && eaac.type != EAAC_TYPE_STREAM) {
+        VGM_LOG("EA EAAC: unknown type 0x%02x\n", eaac.type);
         goto fail;
     }
 
     /* Non-streamed sounds are stored as a single block (may not set block end flags) */
-    eaac.streamed = (eaac.flags & EAAC_FLAG_STREAMED) != 0;
+    eaac.streamed = (eaac.type == EAAC_TYPE_STREAM);
 
     /* get loops (fairly involved due to the multiple layouts and mutant streamfiles)
      * full loops aren't too uncommon [Dead Space (PC) stream sfx/ambiance, FIFA 98 (PS3) RAM sfx],
      * while actual looping is very rare [Need for Speed: World (PC)-EAL3, The Simpsons Game (X360)-EAXMA] */
-    if (eaac.flags & EAAC_FLAG_LOOPED) {
+    if (eaac.loop == EAAC_LOOP_SET) {
         eaac.loop_flag = 1;
         eaac.loop_start = read_32bitBE(header_offset+0x08, streamHead);
         eaac.loop_end = eaac.num_samples;
@@ -911,28 +951,14 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
                 eaac.codec == EAAC_CODEC_EALAYER3_V2_PCM ||
                 eaac.codec == EAAC_CODEC_EALAYER3_V2_SPIKE ||
                 eaac.codec == EAAC_CODEC_EAXMA ||
-                eaac.codec == EAAC_CODEC_XAS)) {
+                eaac.codec == EAAC_CODEC_XAS1)) {
             VGM_LOG("EA EAAC: unknown actual looping for codec %x\n", eaac.codec);
             goto fail;
         }
     }
 
-    /* common channel configs are mono/stereo/quad/5.1/7.1 (from debug strings) */
-    switch(eaac.channel_config) {
-        case 0x00: eaac.channels = 1; break;
-        case 0x01: eaac.channels = 2; break;
-        case 0x02: eaac.channels = 3; break; /* rare [Battlefield 4 (X360)-EAXMA] */
-        case 0x03: eaac.channels = 4; break;
-        case 0x04: eaac.channels = 5; break; /* rare [Battlefield 4 (X360)-EAXMA] */
-        case 0x05: eaac.channels = 6; break;
-        case 0x06: eaac.channels = 7; break; /* rare [Battlefield 4 (X360)-EAXMA] */
-        case 0x07: eaac.channels = 8; break;
-        case 0x0a: eaac.channels = 11; break; /* rare [Army of Two: The Devil's Cartel (PS3)-EALayer3v2P] */
-        default:
-            /* surely channels = channel_config+1 but fail just in case for now */
-            VGM_LOG("EA EAAC: unknown channel config 0x%02x\n", eaac.channel_config);
-            goto fail;
-    }
+    /* if type is gigasample there seems to be a field with number of "gigasamples in ram",
+     * that goes after loop_start but before streamed/gigasamples' eaac.loop_offset) */
 
 
     /* build the VGMSTREAM */
@@ -948,7 +974,7 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
     /* EA decoder list and known internal FourCCs */
     switch(eaac.codec) {
 
-        case EAAC_CODEC_PCM: /* "P6B0": PCM16BE [NBA Jam (Wii)] */
+        case EAAC_CODEC_PCM16BE: /* "P6B0": PCM16BE [NBA Jam (Wii)] */
             vgmstream->coding_type = coding_PCM16_int;
             vgmstream->codec_endian = 1;
             vgmstream->layout_type = layout_blocked_ea_sns;
@@ -976,7 +1002,7 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
         }
 #endif
 
-        case EAAC_CODEC_XAS: /* "Xas1": EA-XAS [Dead Space (PC/PS3)] */
+        case EAAC_CODEC_XAS1: /* "Xas1": EA-XAS v1 [Dead Space (PC/PS3)] */
 
             /* special (if hacky) loop handling, see comments */
             if (eaac.loop_start > 0) {
@@ -1026,7 +1052,7 @@ static VGMSTREAM * init_vgmstream_eaaudiocore_header(STREAMFILE * streamHead, ST
         }
 #endif
 
-        case EAAC_CODEC_DSP: /* "Gca0"?: DSP [Need for Speed: Nitro (Wii) sfx] */
+        case EAAC_CODEC_GCADPCM: /* "Gca0": DSP [Need for Speed: Nitro (Wii) sfx] */
             vgmstream->coding_type = coding_NGC_DSP;
             vgmstream->layout_type = layout_blocked_ea_sns;
             /* DSP coefs are read in the blocks */
@@ -1121,9 +1147,11 @@ fail:
 }
 
 static size_t get_snr_size(STREAMFILE *streamFile, off_t offset) {
-    switch (read_8bit(offset + 0x04, streamFile) >> 4 & 0x0F) { /* flags */
-        case EAAC_FLAG_LOOPED | EAAC_FLAG_STREAMED:     return 0x10;
-        case EAAC_FLAG_LOOPED:                          return 0x0C;
+    //const int EAAC_FLAG_LOOPED = 0x02;
+    //const int EAAC_FLAG_STREAMED = 0x04;
+    switch (read_8bit(offset + 0x04, streamFile) >> 4 & 0x0F) { /* flags */ //todo improve
+        case 0x02 | 0x04:                               return 0x10;
+        case 0x02:                                      return 0x0C;
         default:                                        return 0x08;
     }
 }
@@ -1215,8 +1243,7 @@ static segmented_layout_data* build_segmented_eaaudiocore_looping(STREAMFILE *st
         }
 #endif
 
-        case EAAC_CODEC_XAS:
-        {
+        case EAAC_CODEC_XAS1: {
             start_offset = offsets[i];
 
             data->segments[i]->coding_type = coding_EA_XAS_V1;

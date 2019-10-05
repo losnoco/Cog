@@ -255,8 +255,8 @@ static void blitz_ima_expand_nibble(VGMSTREAMCHANNEL * stream, off_t byte_offset
     delta = (step >> 1) + delta * step; /* custom */
     sample_decoded += delta;
 
-    /* somehow the exe tries to clamp hist, but actually doesn't (bug?),
-     * not sure if pcm buffer would be clamped outside though */
+    /* in Zapper somehow the exe tries to clamp hist but actually doesn't (bug? not in Lilo & Stitch),
+     * seems the pcm buffer must be clamped outside though to fix some scratchiness */
     *hist1 = sample_decoded;//clamp16(sample_decoded);
     *step_index += IMA_IndexTable[sample_nibble];
     if (*step_index < 0) *step_index=0;
@@ -445,7 +445,7 @@ void decode_blitz_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channels
         int nibble_shift = (i&1?4:0); //low nibble first
 
         blitz_ima_expand_nibble(stream, byte_offset,nibble_shift, &hist1, &step_index);
-        outbuf[sample_count] = (short)(hist1);
+        outbuf[sample_count] = (short)clamp16(hist1);
     }
 
     stream->adpcm_history1_32 = hist1;
@@ -1127,6 +1127,14 @@ size_t xbox_ima_bytes_to_samples(size_t bytes, int channels) {
     int block_align = 0x24 * channels;
     if (channels <= 0) return 0;
     /* XBOX IMA blocks have a 4 byte header per channel; 2 samples per byte (2 nibbles) */
+    return (bytes / block_align) * (block_align - 4 * channels) * 2 / channels
+            + ((bytes % block_align) ? ((bytes % block_align) - 4 * channels) * 2 / channels : 0); /* unlikely (encoder aligns) */
+}
+
+size_t dat4_ima_bytes_to_samples(size_t bytes, int channels) {
+    int block_align = 0x20 * channels;
+    if (channels <= 0) return 0;
+    /* DAT4 IMA blocks have a 4 byte header per channel; 2 samples per byte (2 nibbles) */
     return (bytes / block_align) * (block_align - 4 * channels) * 2 / channels
             + ((bytes % block_align) ? ((bytes % block_align) - 4 * channels) * 2 / channels : 0); /* unlikely (encoder aligns) */
 }

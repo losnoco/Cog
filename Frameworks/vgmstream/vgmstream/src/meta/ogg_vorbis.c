@@ -108,12 +108,16 @@ static void kovs_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb, v
 }
 
 static void psychic_ogg_decryption_callback(void *ptr, size_t size, size_t nmemb, void *datasource) {
+    ogg_vorbis_streamfile * const ov_streamfile = datasource;
     size_t bytes_read = size*nmemb;
+    uint8_t key[6] = { 0x23,0x31,0x20,0x2e,0x2e,0x28 };
     int i;
 
-    /* bytes add 0x23 ('#') */ //todo incorrect, add changes every 0x64 bytes
+    //todo incorrect, picked value changes (fixed order for all files), or key is bigger
+    /* bytes add key that changes every 0x64 bytes */
     for (i = 0; i < bytes_read; i++) {
-        ((uint8_t*)ptr)[i] += 0x23;
+        int pos = (ov_streamfile->offset + i) / 0x64;
+        ((uint8_t*)ptr)[i] += key[pos % sizeof(key)];
     }
 }
 
@@ -172,6 +176,7 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
     int is_gwm = 0;
     int is_mus = 0;
     int is_lse = 0;
+    int is_bgm = 0;
 
 
     /* check extension */
@@ -201,6 +206,8 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
         is_mus = 1;
     } else if (check_extensions(streamFile,"lse")) { /* .lse: Labyrinth of Refrain: Coven of Dusk (PC) */
         is_lse = 1;
+    } else if (check_extensions(streamFile,"bgm")) { /* .bgm: Fortissimo (PC) */
+        is_bgm = 1;
     } else {
         goto fail;
     }
@@ -208,7 +215,6 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
     if (is_ogg) {
         if (read_32bitBE(0x00,streamFile) == 0x2c444430) { /* Psychic Software [Darkwind: War on Wheels (PC)] */
             ovmi.decryption_callback = psychic_ogg_decryption_callback;
-            ovmi.meta_type = meta_OGG_encrypted;
         }
         else if (read_32bitBE(0x00,streamFile) == 0x4C325344) { /* "L2SD" instead of "OggS" [Lineage II Chronicle 4 (PC)] */
             cfg.is_header_swap = 1;
@@ -227,7 +233,7 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
             cfg.is_encrypted = 1;
         }
         else if (read_32bitBE(0x00,streamFile) == 0x4f676753) { /* "OggS" (standard) */
-            ovmi.meta_type = meta_OGG_VORBIS;
+            ;
         }
         else {
             goto fail; /* unknown/not Ogg Vorbis (ex. Wwise) */
@@ -238,7 +244,6 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
         if (read_32bitBE(0x00,streamFile) != 0x4f676753) { /* "OggS" (optionally encrypted) */
             ovmi.decryption_callback = um3_ogg_decryption_callback;
         }
-        ovmi.meta_type = meta_OGG_encrypted;
     }
 
     if (is_kovs) { /* Koei Tecmo PC games */
@@ -321,8 +326,15 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
         if (isl_name) {
             STREAMFILE *islFile = NULL;
 
-            //todo could try in ../(file) first since that's how the .isl is stored
             islFile = open_streamfile_by_filename(streamFile, isl_name);
+
+            if (!islFile) {
+                /* try in ../(file) too since that's how the .isl is stored on disc */
+                char isl_path[PATH_LIMIT];
+                snprintf(isl_path, sizeof(isl_path), "../%s", isl_name);
+                islFile = open_streamfile_by_filename(streamFile, isl_path);
+            }
+
             if (islFile) {
                 STREAMFILE *dec_sf = NULL;
 
@@ -364,7 +376,6 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
             goto fail;
         }
         ovmi.decryption_callback = rpgmvo_ogg_decryption_callback;
-        ovmi.meta_type = meta_OGG_encrypted;
 
         start_offset = 0x10;
     }
@@ -413,11 +424,34 @@ VGMSTREAM * init_vgmstream_ogg_vorbis(STREAMFILE *streamFile) {
         }
     }
 
-    if (cfg.is_encrypted) {
-        ovmi.meta_type = meta_OGG_encrypted;
+    if (is_bgm) { /* [Fortissimo (PC)] */
+        size_t file_size = get_streamfile_size(streamFile);
+        uint8_t key[0x04];
+        uint32_t xor_be;
 
+        put_32bitLE(key, (uint32_t)file_size);
+        xor_be = (uint32_t)get_32bitBE(key);
+        if ((read_32bitBE(0x00,streamFile) ^ xor_be) == 0x4F676753) { /* "OggS" */
+            int i;
+            cfg.key_len = 4;
+            for (i = 0; i < cfg.key_len; i++) {
+                cfg.key[i] = key[i];
+            }
+            cfg.is_encrypted = 1;
+        }
+    }
+
+
+    if (cfg.is_encrypted) {
         temp_streamFile = setup_ogg_vorbis_streamfile(streamFile, cfg);
         if (!temp_streamFile) goto fail;
+    }
+
+    if (ovmi.meta_type == 0) {
+        if (cfg.is_encrypted || ovmi.decryption_callback != NULL)
+            ovmi.meta_type = meta_OGG_encrypted;
+        else
+            ovmi.meta_type = meta_OGG_VORBIS;
     }
 
     vgmstream = init_vgmstream_ogg_vorbis_callbacks(temp_streamFile != NULL ? temp_streamFile : streamFile, NULL, start_offset, &ovmi);
@@ -435,6 +469,7 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, ov_callb
     ogg_vorbis_codec_data * data = NULL;
     OggVorbis_File *ovf = NULL;
     vorbis_info *vi;
+    char name[STREAM_NAME_SIZE] = {0};
 
     int loop_flag = ovmi->loop_flag;
     int32_t loop_start = ovmi->loop_start;
@@ -606,6 +641,10 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, ov_callb
                 data->disable_reordering = 1;
             }
 
+            if (strstr(user_comment, "TITLE=") == user_comment) {
+                strncpy(name, user_comment + 6, sizeof(name) - 1);
+            }
+
             ;VGM_LOG("OGG: user_comment=%s\n", user_comment);
         }
     }
@@ -618,8 +657,13 @@ VGMSTREAM * init_vgmstream_ogg_vorbis_callbacks(STREAMFILE *streamFile, ov_callb
     vgmstream->codec_data = data; /* store our fun extra datas */
     vgmstream->channels = vi->channels;
     vgmstream->sample_rate = vi->rate;
-    vgmstream->num_streams = ovmi->total_subsongs;
     vgmstream->stream_size = stream_size;
+
+    if (ovmi->total_subsongs) /* not setting it has some effect when showing stream names */
+        vgmstream->num_streams = ovmi->total_subsongs;
+
+    if (name[0] != '\0')
+        strcpy(vgmstream->stream_name, name);
 
     vgmstream->num_samples = ov_pcm_total(ovf,-1); /* let libvorbisfile find total samples */
     if (loop_flag) {

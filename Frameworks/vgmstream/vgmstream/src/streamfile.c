@@ -18,15 +18,15 @@ typedef struct {
     size_t buffersize;      /* max buffer size */
     size_t validsize;       /* current buffer size */
     size_t filesize;        /* buffered file size */
-} STDIOSTREAMFILE;
+} STDIO_STREAMFILE;
 
 static STREAMFILE * open_stdio_streamfile_buffer(const char * const filename, size_t buffersize);
 static STREAMFILE * open_stdio_streamfile_buffer_by_file(FILE *infile,const char * const filename, size_t buffersize);
 
-static size_t read_stdio(STDIOSTREAMFILE *streamfile,uint8_t * dest, off_t offset, size_t length) {
+static size_t read_stdio(STDIO_STREAMFILE *streamfile,uint8_t * dest, off_t offset, size_t length) {
     size_t length_read_total = 0;
 
-    if (!streamfile || !dest || length <= 0 || offset < 0)
+    if (!streamfile->infile || !dest || length <= 0 || offset < 0)
         return 0;
 
     /* is the part of the requested length in the buffer? */
@@ -45,6 +45,11 @@ static size_t read_stdio(STDIOSTREAMFILE *streamfile,uint8_t * dest, off_t offse
         dest += length_to_read;
     }
 
+#ifdef VGM_DEBUG_OUTPUT
+    if (offset < streamfile->buffer_offset) {
+        VGM_LOG("STDIO: rebuffer, requested %lx vs %lx (sf %x)\n", offset, streamfile->buffer_offset, (uint32_t)streamfile);
+    }
+#endif
 
     /* read the rest of the requested length */
     while (length > 0) {
@@ -99,35 +104,35 @@ static size_t read_stdio(STDIOSTREAMFILE *streamfile,uint8_t * dest, off_t offse
     streamfile->offset = offset; /* last fread offset */
     return length_read_total;
 }
-static size_t get_size_stdio(STDIOSTREAMFILE * streamfile) {
+static size_t get_size_stdio(STDIO_STREAMFILE * streamfile) {
     return streamfile->filesize;
 }
-static off_t get_offset_stdio(STDIOSTREAMFILE *streamfile) {
+static off_t get_offset_stdio(STDIO_STREAMFILE *streamfile) {
     return streamfile->offset;
 }
-static void get_name_stdio(STDIOSTREAMFILE *streamfile,char *buffer,size_t length) {
+static void get_name_stdio(STDIO_STREAMFILE *streamfile,char *buffer,size_t length) {
     strncpy(buffer,streamfile->name,length);
     buffer[length-1]='\0';
 }
-static void close_stdio(STDIOSTREAMFILE * streamfile) {
-    fclose(streamfile->infile);
+static void close_stdio(STDIO_STREAMFILE * streamfile) {
+    if (streamfile->infile)
+        fclose(streamfile->infile);
     free(streamfile->buffer);
     free(streamfile);
 }
 
-static STREAMFILE *open_stdio(STDIOSTREAMFILE *streamFile,const char * const filename,size_t buffersize) {
-    int newfd;
-    FILE *newfile;
-    STREAMFILE *newstreamFile;
-
+static STREAMFILE *open_stdio(STDIO_STREAMFILE *streamFile,const char * const filename,size_t buffersize) {
     if (!filename)
         return NULL;
+
 #if !defined (__ANDROID__)
     // if same name, duplicate the file pointer we already have open
-    if (!strcmp(streamFile->name,filename)) {
-        if (((newfd = dup(fileno(streamFile->infile))) >= 0) &&
-            (newfile = fdopen( newfd, "rb" ))) 
-        {
+    if (streamFile->infile && !strcmp(streamFile->name,filename)) {
+        int newfd;
+        FILE *newfile;
+        STREAMFILE *newstreamFile;
+
+        if ( ((newfd = dup(fileno(streamFile->infile))) >= 0) && (newfile = fdopen( newfd, "rb")) )  {
             newstreamFile = open_stdio_streamfile_buffer_by_file(newfile,filename,buffersize);
             if (newstreamFile) { 
                 return newstreamFile;
@@ -141,14 +146,14 @@ static STREAMFILE *open_stdio(STDIOSTREAMFILE *streamFile,const char * const fil
     return open_stdio_streamfile_buffer(filename,buffersize);
 }
 
-static STREAMFILE * open_stdio_streamfile_buffer_by_file(FILE *infile,const char * const filename, size_t buffersize) {
+static STREAMFILE * open_stdio_streamfile_buffer_by_file(FILE *infile, const char * const filename, size_t buffersize) {
     uint8_t * buffer = NULL;
-    STDIOSTREAMFILE * streamfile = NULL;
+    STDIO_STREAMFILE * streamfile = NULL;
 
     buffer = calloc(buffersize,1);
     if (!buffer) goto fail;
 
-    streamfile = calloc(1,sizeof(STDIOSTREAMFILE));
+    streamfile = calloc(1,sizeof(STDIO_STREAMFILE));
     if (!streamfile) goto fail;
 
     streamfile->sf.read = (void*)read_stdio;
@@ -166,8 +171,13 @@ static STREAMFILE * open_stdio_streamfile_buffer_by_file(FILE *infile,const char
     streamfile->name[sizeof(streamfile->name)-1] = '\0';
 
     /* cache filesize */
-    fseeko(streamfile->infile,0,SEEK_END);
-    streamfile->filesize = ftello(streamfile->infile);
+    if (infile) {
+        fseeko(streamfile->infile,0,SEEK_END);
+        streamfile->filesize = ftello(streamfile->infile);
+    }
+    else {
+        streamfile->filesize = 0; /* allow virtual, non-existing files */
+    }
 
     /* Typically fseek(o)/ftell(o) may only handle up to ~2.14GB, signed 32b = 0x7FFFFFFF
      * (happens in banks like FSB, though rarely). Can be remedied with the
@@ -190,11 +200,15 @@ static STREAMFILE * open_stdio_streamfile_buffer(const char * const filename, si
     STREAMFILE *streamFile;
 
     infile = fopen(filename,"rb");
-    if (!infile) return NULL;
+    if (!infile) {
+        /* allow non-existing files in some cases */
+        if (!vgmstream_is_virtual_filename(filename))
+            return NULL;
+    }
 
     streamFile = open_stdio_streamfile_buffer_by_file(infile,filename,buffersize);
     if (!streamFile) {
-        fclose(infile);
+        if (infile) fclose(infile);
     }
 
     return streamFile;
@@ -227,7 +241,7 @@ typedef struct {
 static size_t buffer_read(BUFFER_STREAMFILE *streamfile, uint8_t * dest, off_t offset, size_t length) {
     size_t length_read_total = 0;
 
-    if (!streamfile || !dest || length <= 0 || offset < 0)
+    if (!dest || length <= 0 || offset < 0)
         return 0;
 
     /* is the part of the requested length in the buffer? */
@@ -246,6 +260,11 @@ static size_t buffer_read(BUFFER_STREAMFILE *streamfile, uint8_t * dest, off_t o
         dest += length_to_read;
     }
 
+#ifdef VGM_DEBUG_OUTPUT
+    if (offset < streamfile->buffer_offset) {
+        VGM_LOG("BUFFER: rebuffer, requested %lx vs %lx (sf %x)\n", offset, streamfile->buffer_offset, (uint32_t)streamfile);
+    }
+#endif
 
     /* read the rest of the requested length */
     while (length > 0) {
@@ -694,6 +713,7 @@ static STREAMFILE *multifile_open(MULTIFILE_STREAMFILE *streamfile, const char *
         new_sf = open_multifile_streamfile(new_inner_sfs, streamfile->inner_sfs_size);
         if (!new_sf) goto fail;
 
+        free(new_inner_sfs);
         return new_sf;
     }
     else {
@@ -771,33 +791,70 @@ STREAMFILE * open_streamfile(STREAMFILE *streamFile, const char * pathname) {
 }
 
 STREAMFILE * open_streamfile_by_ext(STREAMFILE *streamFile, const char * ext) {
-    char filename_ext[PATH_LIMIT];
-
-    streamFile->get_name(streamFile,filename_ext,sizeof(filename_ext));
-    strcpy(filename_ext + strlen(filename_ext) - strlen(filename_extension(filename_ext)), ext);
-
-    return streamFile->open(streamFile,filename_ext,STREAMFILE_DEFAULT_BUFFER_SIZE);
-}
-
-STREAMFILE * open_streamfile_by_filename(STREAMFILE *streamFile, const char * name) {
-    char foldername[PATH_LIMIT];
     char filename[PATH_LIMIT];
-    const char *path;
+    int filename_len, fileext_len;
 
-    streamFile->get_name(streamFile,foldername,sizeof(foldername));
+    streamFile->get_name(streamFile,filename,sizeof(filename));
 
-    path = strrchr(foldername,DIR_SEPARATOR);
-    if (path!=NULL) path = path+1;
+    filename_len = strlen(filename);
+    fileext_len = strlen(filename_extension(filename));
 
-    if (path) {
-        strcpy(filename, foldername);
-        filename[path-foldername] = '\0';
-        strcat(filename, name);
-    } else {
-        strcpy(filename, name);
+    if (fileext_len == 0) {/* extensionless */
+        strcat(filename,".");
+        strcat(filename,ext);
+    }
+    else {
+        strcpy(filename + filename_len - fileext_len, ext);
     }
 
     return streamFile->open(streamFile,filename,STREAMFILE_DEFAULT_BUFFER_SIZE);
+}
+
+STREAMFILE * open_streamfile_by_filename(STREAMFILE *streamFile, const char * filename) {
+    char fullname[PATH_LIMIT];
+    char partname[PATH_LIMIT];
+    char *path, *name;
+
+    streamFile->get_name(streamFile, fullname, sizeof(fullname));
+
+    //todo normalize separators in a better way, safeops, improve copying
+    path = strrchr(fullname,DIR_SEPARATOR);
+    if (path) {
+        path[1] = '\0'; /* remove name after separator */
+
+        strcpy(partname, filename);
+        fix_dir_separators(partname);
+
+        /* normalize relative paths as don't work ok in some plugins */
+        if (partname[0]=='.' && partname[1] == DIR_SEPARATOR) { /* './name' */
+            name = partname + 2; /* ignore './' */
+        }
+        else if (partname[0]=='.' && partname[1]=='.' && partname[2] == DIR_SEPARATOR) { /* '../name' */
+            char *pathprev;
+
+            path[0] = '\0'; /* remove last separator so next call works */
+            pathprev = strrchr(fullname,DIR_SEPARATOR);
+            if (pathprev) {
+                pathprev[1] = '\0'; /* remove prev dir after separator */
+                name = partname + 3; /* ignore '../' */
+            }
+            else { /* let plugin handle? */
+                path[0] = DIR_SEPARATOR;
+                name = partname;
+            }
+            /* could work with more relative paths but whatevs */
+        }
+        else {
+            name = partname;
+        }
+
+        strcat(fullname, name);
+    }
+    else {
+        strcpy(fullname, filename);
+    }
+
+    return streamFile->open(streamFile, fullname, STREAMFILE_DEFAULT_BUFFER_SIZE);
 }
 
 STREAMFILE * reopen_streamfile(STREAMFILE *streamFile, size_t buffer_size) {
@@ -879,7 +936,7 @@ size_t read_string(char * buf, size_t maxsize, off_t offset, STREAMFILE *streamF
             if (buf) buf[pos] = '\0';
             return maxsize;
         }
-        if (c < 0x20 || c > 0xA5)
+        if (c < 0x20 || (uint8_t)c > 0xA5)
             goto fail;
     }
 
@@ -1019,26 +1076,29 @@ int check_extensions(STREAMFILE *streamFile, const char * cmp_exts) {
  *
  * returns 0 on failure
  */
-int find_chunk_be(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size) {
-    return find_chunk(streamFile, chunk_id, start_offset, full_chunk_size, out_chunk_offset, out_chunk_size, 1, 0);
-}
-int find_chunk_le(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size) {
-    return find_chunk(streamFile, chunk_id, start_offset, full_chunk_size, out_chunk_offset, out_chunk_size, 0, 0);
-}
-int find_chunk(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size, int size_big_endian, int zero_size_end) {
-    size_t filesize;
-    off_t current_chunk = start_offset;
+static int find_chunk_internal(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, size_t max_size, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size, int big_endian_type, int big_endian_size, int zero_size_end) {
+    int32_t (*read_32bit_type)(off_t,STREAMFILE*) = big_endian_type ? read_32bitBE : read_32bitLE;
+    int32_t (*read_32bit_size)(off_t,STREAMFILE*) = big_endian_size ? read_32bitBE : read_32bitLE;
+    off_t offset, max_offset;
+    size_t file_size = get_streamfile_size(streamFile);
 
-    filesize = get_streamfile_size(streamFile);
+    if (max_size == 0)
+        max_size = file_size;
+
+    offset = start_offset;
+    max_offset = offset + max_size;
+    if (max_offset > file_size)
+        max_offset = file_size;
+
+
     /* read chunks */
-    while (current_chunk < filesize) {
-        uint32_t chunk_type = read_32bitBE(current_chunk,streamFile);
-        off_t chunk_size = size_big_endian ?
-                read_32bitBE(current_chunk+4,streamFile) :
-                read_32bitLE(current_chunk+4,streamFile);
+    while (offset < max_offset) {
+        uint32_t chunk_type = read_32bit_type(offset + 0x00,streamFile);
+        uint32_t chunk_size = read_32bit_size(offset + 0x04,streamFile);
+        //;VGM_LOG("CHUNK: type=%x, size=%x at %lx\n", chunk_type, chunk_size, offset);
 
         if (chunk_type == chunk_id) {
-            if (out_chunk_offset) *out_chunk_offset = current_chunk+8;
+            if (out_chunk_offset) *out_chunk_offset = offset + 0x08;
             if (out_chunk_size) *out_chunk_size = chunk_size;
             return 1;
         }
@@ -1047,10 +1107,28 @@ int find_chunk(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, in
         if (chunk_size == 0 && zero_size_end)
             return 0;
 
-        current_chunk += full_chunk_size ? chunk_size : 4+4+chunk_size;
+        offset += full_chunk_size ? chunk_size : 0x08 + chunk_size;
     }
 
     return 0;
+}
+int find_chunk_be(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size) {
+    return find_chunk(streamFile, chunk_id, start_offset, full_chunk_size, out_chunk_offset, out_chunk_size, 1, 0);
+}
+int find_chunk_le(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size) {
+    return find_chunk(streamFile, chunk_id, start_offset, full_chunk_size, out_chunk_offset, out_chunk_size, 0, 0);
+}
+int find_chunk(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, int full_chunk_size, off_t *out_chunk_offset, size_t *out_chunk_size, int big_endian_size, int zero_size_end) {
+    return find_chunk_internal(streamFile, chunk_id, start_offset, 0, full_chunk_size, out_chunk_offset, out_chunk_size, 1, big_endian_size, zero_size_end);
+}
+int find_chunk_riff_le(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, size_t max_size, off_t *out_chunk_offset, size_t *out_chunk_size) {
+    return find_chunk_internal(streamFile, chunk_id, start_offset, max_size, 0, out_chunk_offset, out_chunk_size, 1, 0, 0);
+}
+int find_chunk_riff_be(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, size_t max_size, off_t *out_chunk_offset, size_t *out_chunk_size) {
+    return find_chunk_internal(streamFile, chunk_id, start_offset, max_size, 0, out_chunk_offset, out_chunk_size, 1, 1, 0);
+}
+int find_chunk_riff_ve(STREAMFILE *streamFile, uint32_t chunk_id, off_t start_offset, size_t max_size, off_t *out_chunk_offset, size_t *out_chunk_size, int big_endian) {
+    return find_chunk_internal(streamFile, chunk_id, start_offset, max_size, 0, out_chunk_offset, out_chunk_size, big_endian, big_endian, 0);
 }
 
 /* copies name as-is (may include full path included) */
