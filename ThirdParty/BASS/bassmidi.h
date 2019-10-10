@@ -1,6 +1,6 @@
 /*
 	BASSMIDI 2.4 C/C++ header file
-	Copyright (c) 2006-2014 Un4seen Developments Ltd.
+	Copyright (c) 2006-2018 Un4seen Developments Ltd.
 
 	See the BASSMIDI.CHM file for more detailed documentation
 */
@@ -23,6 +23,9 @@ extern "C" {
 #endif
 
 typedef DWORD HSOUNDFONT;	// soundfont handle
+
+// Additional error codes returned by BASS_ErrorGetCode
+#define BASS_ERROR_MIDI_INCLUDE		7000	// SFZ include file could not be opened
 
 // Additional BASS_SetConfig options
 #define BASS_CONFIG_MIDI_COMPACT	0x10400
@@ -57,6 +60,8 @@ typedef DWORD HSOUNDFONT;	// soundfont handle
 #define BASS_MIDI_FONT_MEM		0x10000
 #define BASS_MIDI_FONT_MMAP		0x20000
 #define BASS_MIDI_FONT_XGDRUMS	0x40000
+#define BASS_MIDI_FONT_NOFX		0x80000
+#define BASS_MIDI_FONT_LINATTMOD	0x100000
 
 typedef struct {
 	HSOUNDFONT font;	// soundfont
@@ -102,7 +107,8 @@ typedef struct {
 #define BASS_MIDI_MARK_COPY		6	// copyright notice
 #define BASS_MIDI_MARK_TRACK	7	// track name
 #define BASS_MIDI_MARK_INST		8	// instrument name
-#define BASS_MIDI_MARK_TICK		0x10000 // FLAG: get position in ticks (otherwise bytes)
+#define BASS_MIDI_MARK_TRACKSTART	9	// track start (SMF2)
+#define BASS_MIDI_MARK_TICK		0x10000 // flag: get position in ticks (otherwise bytes)
 
 // MIDI events
 #define MIDI_EVENT_NOTE				1
@@ -169,6 +175,7 @@ typedef struct {
 #define MIDI_EVENT_CHANPRES_PITCH	66
 #define MIDI_EVENT_CHANPRES_FILTER	67
 #define MIDI_EVENT_CHANPRES_VOLUME	68
+#define MIDI_EVENT_MOD_VIBRATO		69
 #define MIDI_EVENT_MODRANGE			69
 #define MIDI_EVENT_BANK_LSB			70
 #define MIDI_EVENT_KEYPRES			71
@@ -176,12 +183,20 @@ typedef struct {
 #define MIDI_EVENT_KEYPRES_PITCH	73
 #define MIDI_EVENT_KEYPRES_FILTER	74
 #define MIDI_EVENT_KEYPRES_VOLUME	75
+#define MIDI_EVENT_SOSTENUTO		76
+#define MIDI_EVENT_MOD_PITCH		77
+#define MIDI_EVENT_MOD_FILTER		78
+#define MIDI_EVENT_MOD_VOLUME		79
 #define MIDI_EVENT_MIXLEVEL			0x10000
 #define MIDI_EVENT_TRANSPOSE		0x10001
 #define MIDI_EVENT_SYSTEMEX			0x10002
+#define MIDI_EVENT_SPEED			0x10004
 
 #define MIDI_EVENT_END				0
 #define MIDI_EVENT_END_TRACK		0x10003
+
+#define MIDI_EVENT_NOTES			0x20000
+#define MIDI_EVENT_VOICES			0x20001
 
 #define MIDI_SYSTEM_DEFAULT			0
 #define MIDI_SYSTEM_GM1				1
@@ -200,8 +215,11 @@ typedef struct {
 // BASS_MIDI_StreamEvents modes
 #define BASS_MIDI_EVENTS_STRUCT		0 // BASS_MIDI_EVENT structures
 #define BASS_MIDI_EVENTS_RAW		0x10000 // raw MIDI event data
-#define BASS_MIDI_EVENTS_SYNC		0x1000000 // FLAG: trigger event syncs
-#define BASS_MIDI_EVENTS_NORSTATUS	0x2000000 // FLAG: no running status
+#define BASS_MIDI_EVENTS_SYNC		0x1000000 // flag: trigger event syncs
+#define BASS_MIDI_EVENTS_NORSTATUS	0x2000000 // flag: no running status
+#define BASS_MIDI_EVENTS_CANCEL		0x4000000 // flag: cancel pending events
+#define BASS_MIDI_EVENTS_TIME		0x8000000 // flag: delta-time info is present
+#define BASS_MIDI_EVENTS_ABSTIME	0x10000000 // flag: absolute time info is present
 
 // BASS_MIDI_StreamGetChannel special channels
 #define BASS_MIDI_CHAN_CHORUS		(DWORD)-1
@@ -217,6 +235,9 @@ typedef struct {
 #define BASS_ATTRIB_MIDI_CHANS		0x12002
 #define BASS_ATTRIB_MIDI_VOICES		0x12003
 #define BASS_ATTRIB_MIDI_VOICES_ACTIVE 0x12004
+#define BASS_ATTRIB_MIDI_STATE		0x12005
+#define BASS_ATTRIB_MIDI_SRC		0x12006
+#define BASS_ATTRIB_MIDI_KILL		0x12007
 #define BASS_ATTRIB_MIDI_TRACK_VOL	0x12100 // + track #
 
 // Additional tag type
@@ -224,6 +245,15 @@ typedef struct {
 
 // BASS_ChannelGetLength/GetPosition/SetPosition mode
 #define BASS_POS_MIDI_TICK		2		// tick position
+
+typedef BOOL (CALLBACK MIDIFILTERPROC)(HSTREAM handle, DWORD track, BASS_MIDI_EVENT *event, BOOL seeking, void *user);
+/* Event filtering callback function.
+handle : MIDI stream handle
+track  : Track containing the event
+event  : The event
+seeking: TRUE = the event is being processed while seeking, FALSE = it is being played
+user   : The 'user' parameter value given when calling BASS_MIDI_StreamSetFilter
+RETURN : TRUE = process the event, FALSE = drop the event */
 
 // BASS_MIDI_FontPack flags
 #define BASS_MIDI_PACK_NOHEAD		1	// don't send a WAV header to the encoder
@@ -236,7 +266,7 @@ typedef struct {
 } BASS_MIDI_DEVICEINFO;
 
 typedef void (CALLBACK MIDIINPROC)(DWORD device, double time, const BYTE *buffer, DWORD length, void *user);
-/* User MIDI input callback function.
+/* MIDI input callback function.
 device : MIDI input device
 time   : Timestamp
 buffer : Buffer containing MIDI data
@@ -257,7 +287,10 @@ BOOL BASSMIDIDEF(BASS_MIDI_StreamEvent)(HSTREAM handle, DWORD chan, DWORD event,
 DWORD BASSMIDIDEF(BASS_MIDI_StreamEvents)(HSTREAM handle, DWORD mode, const void *events, DWORD length);
 DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEvent)(HSTREAM handle, DWORD chan, DWORD event);
 DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEvents)(HSTREAM handle, int track, DWORD filter, BASS_MIDI_EVENT *events);
+DWORD BASSMIDIDEF(BASS_MIDI_StreamGetEventsEx)(HSTREAM handle, int track, DWORD filter, BASS_MIDI_EVENT *events, DWORD start, DWORD count);
+BOOL BASSMIDIDEF(BASS_MIDI_StreamGetPreset)(HSTREAM handle, DWORD chan, BASS_MIDI_FONT *font);
 HSTREAM BASSMIDIDEF(BASS_MIDI_StreamGetChannel)(HSTREAM handle, DWORD chan);
+BOOL BASSMIDIDEF(BASS_MIDI_StreamSetFilter)(HSTREAM handle, BOOL seeking, MIDIFILTERPROC *proc, void *user);
 
 HSOUNDFONT BASSMIDIDEF(BASS_MIDI_FontInit)(const void *file, DWORD flags);
 HSOUNDFONT BASSMIDIDEF(BASS_MIDI_FontInitUser)(const BASS_FILEPROCS *procs, void *user, DWORD flags);
@@ -272,6 +305,8 @@ BOOL BASSMIDIDEF(BASS_MIDI_FontPack)(HSOUNDFONT handle, const void *outfile, con
 BOOL BASSMIDIDEF(BASS_MIDI_FontUnpack)(HSOUNDFONT handle, const void *outfile, DWORD flags);
 BOOL BASSMIDIDEF(BASS_MIDI_FontSetVolume)(HSOUNDFONT handle, float volume);
 float BASSMIDIDEF(BASS_MIDI_FontGetVolume)(HSOUNDFONT handle);
+
+DWORD BASSMIDIDEF(BASS_MIDI_ConvertEvents)(const BYTE *data, DWORD length, BASS_MIDI_EVENT *events, DWORD count, DWORD flags);
 
 BOOL BASSMIDIDEF(BASS_MIDI_InGetDeviceInfo)(DWORD device, BASS_MIDI_DEVICEINFO *info);
 BOOL BASSMIDIDEF(BASS_MIDI_InInit)(DWORD device, MIDIINPROC *proc, void *user);

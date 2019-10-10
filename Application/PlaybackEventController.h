@@ -7,13 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <Growl/GrowlApplicationBridge.h>
 
 #import "PlaybackController.h"
 #import "PlaylistEntry.h"
 
 @class AudioScrobbler;
-@interface PlaybackEventController : NSObject <NSUserNotificationCenterDelegate, GrowlApplicationBridgeDelegate> {
+@interface PlaybackEventController : NSObject <NSUserNotificationCenterDelegate> {
 	NSOperationQueue *queue;
     
     PlaylistEntry *entry;

@@ -101,9 +101,6 @@
 /* Class = "NSTextFieldCell"; title = "MIDI Flavor:"; ObjectID = "FQF-vJ-hBx"; */
 "FQF-vJ-hBx.title" = "MIDI Flavor:";
 
-/* Class = "NSButtonCell"; title = "Use Growl"; ObjectID = "GbM-Kf-xzx"; */
-"GbM-Kf-xzx.title" = "Use Growl";
-
 /* Class = "NSButtonCell"; title = "Colorful dock icons"; ObjectID = "GdX-5e-NeU"; */
 "GdX-5e-NeU.title" = "Colorful dock icons";
 

@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagEditorController.m */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
-		170680630B950158006BA573 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; };
-		170680840B950164006BA573 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 170680620B950158006BA573 /* Growl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */; };
 		171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57D90C091F2B00F6AFAF /* flac.icns */; };
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
@@ -753,7 +751,6 @@
 				83E6B7621816136F00D4576D /* Sparkle.framework in CopyFiles */,
 				838491881808593200E7332D /* NDHotKey.framework in CopyFiles */,
 				17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */,
-				170680840B950164006BA573 /* Growl.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1004,6 +1001,7 @@
 		83849170180843B200E7332D /* playDockBadgeColorful.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playDockBadgeColorful.png; path = Images/playDockBadgeColorful.png; sourceTree = "<group>"; };
 		83849171180843B200E7332D /* stopDockBadgeColorful.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopDockBadgeColorful.png; path = Images/stopDockBadgeColorful.png; sourceTree = "<group>"; };
 		838491791808585C00E7332D /* NDHotKey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NDHotKey.xcodeproj; path = Frameworks/NDHotKey/NDHotKey.xcodeproj; sourceTree = "<group>"; };
+		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
@@ -1079,7 +1077,6 @@
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
 				17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */,
 				17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */,
-				170680630B950158006BA573 /* Growl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1510,6 +1507,7 @@
 		29B97314FDCFA39411CA2CEA /* Cog */ = {
 			isa = PBXGroup;
 			children = (
+				83859520234FEB35004E9946 /* Cog.entitlements */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -2482,7 +2480,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PROJECT_DIR}/Scripts/genversion.sh\"\nif [ \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" != \"\" ]; then codesign --verbose --force --deep -o runtime --sign \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}\"; fi\n";
+			shellScript = "\"${PROJECT_DIR}/Scripts/genversion.sh\"\nif [ \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" != \"\" ]; then codesign --verbose --force --deep -o runtime --sign \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"; fi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2823,13 +2821,17 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
-				FRAMEWORK_SEARCH_PATHS = ThirdParty/Frameworks;
+				FRAMEWORK_SEARCH_PATHS = (
+					ThirdParty/Frameworks,
+					"$(PROJECT_DIR)/ThirdParty/Frameworks",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2860,12 +2862,16 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
-				FRAMEWORK_SEARCH_PATHS = ThirdParty/Frameworks;
+				FRAMEWORK_SEARCH_PATHS = (
+					ThirdParty/Frameworks,
+					"$(PROJECT_DIR)/ThirdParty/Frameworks",
+				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
