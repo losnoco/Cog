@@ -1,3 +1,6 @@
 .DS_Store
 xcuserdata
 build
+
+# Special cog exceptions
+!Frameworks/OpenMPT/OpenMPT/build
