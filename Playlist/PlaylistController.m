@@ -658,8 +658,12 @@
 
 - (NSArray *)filterPlaylistOnAlbum:(NSString *)album
 {
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"album like %@",
-							  album];		
+	NSPredicate *predicate;
+	if ([album length] > 0)
+		predicate = [NSPredicate predicateWithFormat:@"album like %@",
+							  album];
+	else
+		predicate = [NSPredicate predicateWithFormat:@"album == nil"];
 	return [[self arrangedObjects] filteredArrayUsingPredicate:predicate];
 }
 
@@ -670,10 +674,10 @@
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe ignoreRepeatOne:(BOOL)ignoreRepeatOne
 {
-    if (!ignoreRepeatOne && [self repeat] == RepeatOne)
-    {
-        return pe;
-    }
+	if (!ignoreRepeatOne && [self repeat] == RepeatOne)
+	{
+		return pe;
+	}
     
 	if ([self shuffle] != ShuffleOff)
 	{
@@ -722,10 +726,48 @@
 	return YES;
 }
 
+- (NSArray *)shuffleAlbums
+{
+	NSArray * newList = [self arrangedObjects];
+	NSMutableArray * temp = [[NSMutableArray alloc] init];
+	NSMutableArray * albums = [[NSMutableArray alloc] init];
+	NSSortDescriptor * sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"track" ascending:YES];
+	for (unsigned long i = 0, j = [newList count]; i < j; ++i) {
+		PlaylistEntry * pe = [newList objectAtIndex:i];
+		NSString * album = [pe album];
+		if (!album)
+			album = @"";
+		if ([albums containsObject:album]) continue;
+		[albums addObject:album];
+		NSArray * albumContent = [self filterPlaylistOnAlbum:album];
+		NSArray * sortedContent = [albumContent sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+		[temp addObject:[sortedContent objectAtIndex:0]];
+	}
+	NSArray * tempList = [Shuffle shuffleList:temp];
+	temp = [[NSMutableArray alloc] init];
+	for (unsigned long i = 0, j = [tempList count]; i < j; ++i) {
+		PlaylistEntry * pe = [tempList objectAtIndex:i];
+		NSString * album = [pe album];
+		NSArray * albumContent = [self filterPlaylistOnAlbum:album];
+		NSArray * sortedContent = [albumContent sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+		[temp addObjectsFromArray:sortedContent];
+	}
+	return temp;
+}
+
 - (void)addShuffledListToFront
 {
-	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
-	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [newList count])];
+	NSArray *newList;
+	NSIndexSet *indexSet;
+	
+	if ([self shuffle] == ShuffleAlbums) {
+		newList = [self shuffleAlbums];
+	}
+	else {
+		newList = [Shuffle shuffleList:[self arrangedObjects]];
+	}
+	
+	indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [newList count])];
 	
 	[shuffleList insertObjects:newList atIndexes:indexSet];
 	
@@ -738,11 +780,20 @@
 
 - (void)addShuffledListToBack
 {
-	NSArray *newList = [Shuffle shuffleList:[self arrangedObjects]];
-	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([shuffleList count], [newList count])];
-
+	NSArray *newList;
+	NSIndexSet *indexSet;
+	
+	if ([self shuffle] == ShuffleAlbums) {
+		newList = [self shuffleAlbums];
+	}
+	else {
+		newList = [Shuffle shuffleList:[self arrangedObjects]];
+	}
+	
+	indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange([shuffleList count], [newList count])];
+	
 	[shuffleList insertObjects:newList atIndexes:indexSet];
-
+	
 	unsigned long i;
 	for (i = ([shuffleList count] - [newList count]); i < [shuffleList count]; i++)
 	{
