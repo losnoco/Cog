@@ -338,6 +338,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -380,6 +381,7 @@
 					"-ffast-math",
 				);
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

@@ -1130,6 +1130,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 			};
 			name = Debug;
@@ -1170,6 +1171,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
 			};
 			name = Release;

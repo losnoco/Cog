@@ -578,7 +578,6 @@
 				LastUpgradeCheck = 1020;
 				TargetAttributes = {
 					730F23A1091827B100AB638C = {
-						DevelopmentTeam = N6E749HJ2X;
 						ProvisioningStyle = Manual;
 					};
 					738835E30B18F870005C7A69 = {
@@ -757,8 +756,11 @@
 		730F23ED091827B100AB638C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
@@ -773,6 +775,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.vorbis;
 				PRODUCT_NAME = Vorbis;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -788,8 +791,11 @@
 		730F23EE091827B100AB638C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
@@ -802,6 +808,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.vorbis;
 				PRODUCT_NAME = Vorbis;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -851,6 +858,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -893,6 +901,7 @@
 					"-ffast-math",
 				);
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
