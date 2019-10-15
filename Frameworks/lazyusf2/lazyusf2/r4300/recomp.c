@@ -2532,8 +2532,12 @@ static void *malloc_exec(usf_state_t * state, size_t size)
          #define MAP_ANONYMOUS MAP_ANON
       #endif
    #endif
+    
+   #ifndef MAP_JIT
+      #define MAP_JIT 0
+   #endif
 
-   void *block = mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+   void *block = mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | MAP_JIT, -1, 0);
    if (block == MAP_FAILED)
        { DebugMessage(state, M64MSG_ERROR, "Memory error: couldn't allocate %zi byte block of aligned RWX memory.", size); return NULL; }
 

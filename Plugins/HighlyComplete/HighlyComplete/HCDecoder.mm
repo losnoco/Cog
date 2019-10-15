@@ -33,7 +33,7 @@
 
 #import <vio2sf/state.h>
 
-#import <lazyusf/usf.h>
+#import <lazyusf2/usf.h>
 
 #include <zlib.h>
 
