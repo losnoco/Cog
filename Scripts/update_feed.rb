@@ -49,7 +49,7 @@ appcast_revision_code = appcast_revision_split[1]
 #  latest_archive = %x[find #{archivedir} -type d -name 'Cog *.xcarchive' -print0 | xargs -0 stat -f "%m %N" -t "%Y" | sort -r | head -n1 | sed -E 's/^[0-9]+ //'].rstrip
 #  app_path = "#{latest_archive}/Products#{ENV['HOME']}/Applications"
   script_path = File.expand_path(File.dirname(__FILE__))
-  app_path = "#{script_path}/build/Build/Products/Release"
+  app_path = "#{Dir.home}/Desktop/Cog"
 
   plist = open("#{app_path}/Cog.app/Contents/Info.plist")
   plistdoc = Nokogiri::XML(plist)
@@ -80,9 +80,6 @@ if appcast_revision < latest_revision
   
   #Copy the replacement build
   %x[cp -R '#{app_path}/Cog.app' '#{temp_path}/Cog.app']
-
-  #Sign it!
-  %x[codesign -s 'Developer ID Application' -f '#{temp_path}/Cog.app']
 
   #Zip the app!
   %x[rm -f '#{temp_path}/#{feed}.zip']
