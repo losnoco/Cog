@@ -53,7 +53,7 @@
 //rounded division & shift
 #define RSHIFT(a,b) ((a) > 0 ? ((a) + ((1<<(b))>>1))>>(b) : ((a) + ((1<<(b))>>1)-1)>>(b))
 /* assume b>0 */
-#define ROUNDED_DIV(a,b) (((a)>0 ? (a) + ((b)>>1) : (a) - ((b)>>1))/(b))
+#define ROUNDED_DIV(a,b) (((a)>=0 ? (a) + ((b)>>1) : (a) - ((b)>>1))/(b))
 /* Fast a/(1<<b) rounded toward +inf. Assume a>=0 and b>=0 */
 #define AV_CEIL_RSHIFT(a,b) (!av_builtin_constant_p(b) ? -((-(a)) >> (b)) \
                                                        : ((a) + (1<<(b)) - 1) >> (b))
@@ -228,7 +228,7 @@ static av_always_inline av_const int av_clip_intp2_c(int a, int p)
  */
 static av_always_inline av_const unsigned av_clip_uintp2_c(int a, int p)
 {
-    if (a & ~((1<<p) - 1)) return -a >> 31 & ((1<<p) - 1);
+    if (a & ~((1<<p) - 1)) return (~a) >> 31 & ((1<<p) - 1);
     else                   return  a;
 }
 
@@ -240,7 +240,7 @@ static av_always_inline av_const unsigned av_clip_uintp2_c(int a, int p)
  */
 static av_always_inline av_const unsigned av_mod_uintp2_c(unsigned a, unsigned p)
 {
-    return a & ((1 << p) - 1);
+    return a & ((1U << p) - 1);
 }
 
 /**

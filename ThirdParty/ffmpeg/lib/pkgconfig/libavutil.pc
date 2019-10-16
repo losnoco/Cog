@@ -5,7 +5,7 @@ includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/include
 
 Name: libavutil
 Description: FFmpeg utility library
-Version: 56.7.101
+Version: 56.35.101
 Requires: 
 Requires.private: 
 Conflicts:
