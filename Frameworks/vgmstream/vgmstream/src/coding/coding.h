@@ -4,10 +4,7 @@
 #include "../vgmstream.h"
 
 /* adx_decoder */
-void decode_adx(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int32_t frame_bytes);
-void decode_adx_exp(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int32_t frame_bytes);
-void decode_adx_fixed(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int32_t frame_bytes);
-void decode_adx_enc(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int32_t frame_bytes);
+void decode_adx(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int32_t frame_bytes, coding_t coding_type);
 void adx_next_key(VGMSTREAMCHANNEL * stream);
 
 /* g721_decoder */
@@ -92,10 +89,10 @@ size_t ps_cfg_bytes_to_samples(size_t bytes, size_t frame_size, int channels);
 int ps_check_format(STREAMFILE *streamFile, off_t offset, size_t max);
 
 /* psv_decoder */
-void decode_hevag(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+void decode_hevag(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 
 /* xa_decoder */
-void decode_xa(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_xa(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 size_t xa_bytes_to_samples(size_t bytes, int channels, int is_blocked);
 
 /* ea_xa_decoder */
@@ -308,6 +305,8 @@ void free_ffmpeg(ffmpeg_codec_data *data);
 void ffmpeg_set_skip_samples(ffmpeg_codec_data * data, int skip_samples);
 uint32_t ffmpeg_get_channel_layout(ffmpeg_codec_data * data);
 void ffmpeg_set_channel_remapping(ffmpeg_codec_data * data, int *channels_remap);
+const char* ffmpeg_get_codec_name(ffmpeg_codec_data * data);
+void ffmpeg_set_force_seek(ffmpeg_codec_data * data);
 
 
 /* ffmpeg_decoder_utils.c (helper-things) */
