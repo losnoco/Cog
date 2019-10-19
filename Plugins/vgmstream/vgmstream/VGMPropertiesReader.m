@@ -1,16 +1,16 @@
 //
-//  VGMMetadataReader.m
+//  VGMPropertiesReader.m
 //  VGMStream
 //
-//  Created by Christopher Snowhill on 9/18/17.
-//  Copyright 2017 __LoSnoCo__. All rights reserved.
+//  Created by Christopher Snowhill on 10/18/19.
+//  Copyright 2019 __LoSnoCo__. All rights reserved.
 //
 
-#import "VGMMetadataReader.h"
+#import "VGMPropertiesReader.h"
 #import "VGMDecoder.h"
 #import "VGMInterface.h"
 
-@implementation VGMMetadataReader
+@implementation VGMPropertiesReader
 
 + (NSArray *)fileTypes
 {
@@ -27,13 +27,15 @@
     return [VGMDecoder priority];
 }
 
-+ (NSDictionary *)metadataForURL:(NSURL *)url
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source
 {
     VGMInfoCache * sharedMyCache = [VGMInfoCache sharedCache];
+
+    NSURL * url = [source url];
     
-    NSDictionary * metadata = [sharedMyCache getMetadataForURL:url];
+    NSDictionary * properties = [sharedMyCache getPropertiesForURL:url];
     
-    if (!metadata) {
+    if (!properties) {
         int track_num = [[url fragment] intValue];
         
         NSString * path = [url absoluteString];
@@ -50,10 +52,10 @@
         
         close_vgmstream(stream);
         
-        metadata = [sharedMyCache getMetadataForURL:url];
+        properties = [sharedMyCache getPropertiesForURL:url];
     }
     
-    return metadata;
+    return properties;
 }
 
 @end

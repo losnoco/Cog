@@ -13,6 +13,18 @@
 
 #import "Plugin.h"
 
+@interface VGMInfoCache : NSObject {
+    NSMutableDictionary *storage;
+}
+
++(id)sharedCache;
+
+-(void)stuffURL:(NSURL *)url stream:(VGMSTREAM *)stream;
+-(NSDictionary*)getPropertiesForURL:(NSURL *)url;
+-(NSDictionary*)getMetadataForURL:(NSURL *)url;
+
+@end
+
 @interface VGMDecoder : NSObject <CogDecoder> {
     VGMSTREAM *stream;
 

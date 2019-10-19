@@ -11,6 +11,101 @@
 
 #import "PlaylistController.h"
 
+@implementation VGMInfoCache
+
++(id)sharedCache {
+    static VGMInfoCache *sharedMyCache = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedMyCache = [[self alloc] init];
+    });
+    return sharedMyCache;
+}
+
+-(id)init {
+    if (self = [super init]) {
+        storage = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+-(void)stuffURL:(NSURL *)url stream:(VGMSTREAM *)stream {
+    int track_num = [[url fragment] intValue];
+    
+    int sampleRate = stream->sample_rate;
+    int channels = stream->channels;
+    long totalFrames = get_vgmstream_play_samples( 2.0, 10.0, 10.0, stream );
+    long framesFade = stream->loop_flag ? sampleRate * 10 : 0;
+    long framesLength = totalFrames - framesFade;
+    
+    int bitrate = get_vgmstream_average_bitrate(stream);
+    
+    NSDictionary * properties =
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:bitrate / 1000], @"bitrate",
+            [NSNumber numberWithInt:sampleRate], @"sampleRate",
+            [NSNumber numberWithDouble:totalFrames], @"totalFrames",
+            [NSNumber numberWithInt:16], @"bitsPerSample",
+            [NSNumber numberWithBool:NO], @"floatingPoint",
+            [NSNumber numberWithInt:channels], @"channels",
+            [NSNumber numberWithBool:YES], @"seekable",
+            @"host", @"endian",
+            nil];
+
+    NSString * title;
+    
+    if ( stream->num_streams > 1 ) {
+        title = [NSString stringWithFormat:@"%@ - %s", [[url URLByDeletingPathExtension] lastPathComponent], stream->stream_name];
+    } else {
+        title = [[url URLByDeletingPathExtension] lastPathComponent];
+    }
+
+    NSDictionary * metadata =
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            title, @"title",
+            [NSNumber numberWithInt:track_num], @"track",
+            nil];
+
+    NSDictionary * package =
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            properties, @"properties",
+            metadata, @"metadata",
+            nil];
+    
+    @synchronized (self) {
+        [storage setValue:package forKey:[url absoluteString]];
+    }
+}
+
+-(NSDictionary*)getPropertiesForURL:(NSURL *)url {
+    NSDictionary *properties = nil;
+    
+    @synchronized (self) {
+        NSDictionary * package = [storage objectForKey:[url absoluteString]];
+        if (package) {
+            properties = [package objectForKey:@"properties"];
+        }
+    }
+    
+    return properties;
+}
+
+-(NSDictionary*)getMetadataForURL:(NSURL *)url {
+    NSDictionary *metadata = nil;
+    
+    @synchronized (self) {
+        NSDictionary * package = [storage objectForKey:[url absoluteString]];
+        if (package) {
+            metadata = [package objectForKey:@"metadata"];
+        }
+    }
+    
+    return metadata;
+}
+
+@end
+
+
 @implementation VGMDecoder
 
 - (BOOL)open:(id<CogSource>)s
@@ -22,6 +117,8 @@
     if (fragmentRange.location != NSNotFound) {
         path = [path substringToIndex:fragmentRange.location];
     }
+    
+    NSLog(@"Opening %@ subsong %d", path, track_num);
 
     stream = init_vgmstream_from_cogfile([[path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String], track_num);
     if ( !stream )
@@ -45,16 +142,16 @@
 
 - (NSDictionary *)properties
 {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:bitrate / 1000], @"bitrate",
-            [NSNumber numberWithInt:sampleRate], @"sampleRate",
-            [NSNumber numberWithDouble:totalFrames], @"totalFrames",
-            [NSNumber numberWithInt:16], @"bitsPerSample",
-            [NSNumber numberWithBool:NO], @"floatingPoint",
-            [NSNumber numberWithInt:channels], @"channels",
-            [NSNumber numberWithBool:YES], @"seekable",
-            @"host", @"endian",
-            nil];
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithInt:bitrate / 1000], @"bitrate",
+        [NSNumber numberWithInt:sampleRate], @"sampleRate",
+        [NSNumber numberWithDouble:totalFrames], @"totalFrames",
+        [NSNumber numberWithInt:16], @"bitsPerSample",
+        [NSNumber numberWithBool:NO], @"floatingPoint",
+        [NSNumber numberWithInt:channels], @"channels",
+        [NSNumber numberWithBool:YES], @"seekable",
+        @"host", @"endian",
+        nil];
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
