@@ -19,6 +19,8 @@
 		17E41DB80C130AA500AC744D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 17E41DB70C130AA500AC744D /* Localizable.strings */; };
 		17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */ = {isa = PBXBuildFile; fileRef = 17E78A7D0D68BE3C005C5A59 /* file_tree.png */; };
 		17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E78B680D68C1E3005C5A59 /* Preferences.xib */; };
+		3DFAC490235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 3DFAC48E235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig */; };
+		3DFAC491235B6B8100A29416 /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 3DFAC48F235B6B8100A29416 /* Shared.xcconfig */; };
 		8372053718E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372053618E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m */; };
 		837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */; };
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
@@ -95,6 +97,8 @@
 		17D1B3F60F6349CE00694C57 /* PreferencePanePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePanePlugin.h; path = ../PreferencePanePlugin.h; sourceTree = SOURCE_ROOT; };
 		17E78A7D0D68BE3C005C5A59 /* file_tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_tree.png; path = Icons/file_tree.png; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* General_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = General_Prefix.pch; sourceTree = "<group>"; };
+		3DFAC48E235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
+		3DFAC48F235B6B8100A29416 /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		833F681B1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		833F681C1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8347435D20E6D58800063D45 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Preferences.strings; sourceTree = "<group>"; };
@@ -165,6 +169,7 @@
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
+				3DFAC48D235B6B8100A29416 /* Xcode-config */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 			);
 			name = General;
@@ -279,6 +284,16 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		3DFAC48D235B6B8100A29416 /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				3DFAC48E235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig */,
+				3DFAC48F235B6B8100A29416 /* Shared.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		838491801808588D00E7332D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -353,7 +368,6 @@
 				LastUpgradeCheck = 1020;
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
-						DevelopmentTeam = N6E749HJ2X;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -409,6 +423,8 @@
 				178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */,
 				8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */,
 				172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */,
+				3DFAC491235B6B8100A29416 /* Shared.xcconfig in Resources */,
+				3DFAC490235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8384917818084D9F00E7332D /* growl.png in Resources */,
 				8E15A86C0B894768006DC802 /* updates.png in Resources */,
 				8384917718084D9F00E7332D /* appearance.png in Resources */,
@@ -500,7 +516,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -523,7 +538,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = General_Prefix.pch;
@@ -539,6 +553,7 @@
 		};
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DFAC48F235B6B8100A29416 /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -584,6 +599,7 @@
 		};
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DFAC48F235B6B8100A29416 /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
