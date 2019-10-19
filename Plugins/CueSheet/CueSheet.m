@@ -72,6 +72,10 @@
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
     }
+	if (error) {
+		error = nil;
+		contents = [NSString stringWithContentsOfFile:filename encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000) error:&error];
+	}
     if (error) {
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSWindowsCP1251StringEncoding error:&error];

@@ -83,6 +83,11 @@
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
     }
+	if (error) {
+		DLog(@"Trying windows GB 18030 2000");
+		error = nil;
+		contents = [NSString stringWithContentsOfFile:filename encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000) error:&error];
+	}
     if (error) {
 		DLog(@"Trying windows CP1251");
         error = nil;
