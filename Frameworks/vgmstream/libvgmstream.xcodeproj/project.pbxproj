@@ -564,6 +564,7 @@
 		83F0AA6021E2028C004BBC04 /* vsv_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F0AA5D21E2028B004BBC04 /* vsv_streamfile.h */; };
 		83F0AA6121E2028C004BBC04 /* vsv.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F0AA5E21E2028C004BBC04 /* vsv.c */; };
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
+		83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */; };
 		83FF0EBC1E93282100C58054 /* wwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FF0EBB1E93282100C58054 /* wwise.c */; };
 /* End PBXBuildFile section */
 
@@ -1247,6 +1248,7 @@
 		83F0AA5E21E2028C004BBC04 /* vsv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vsv.c; sourceTree = "<group>"; };
 		83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = ../Vorbis/macosx/Vorbis.xcodeproj; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
+		83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riff_ogg_streamfile.h; sourceTree = "<group>"; };
 		83FF0EBB1E93282100C58054 /* wwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wwise.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1804,6 +1806,7 @@
 				837CEAE723487F2B00E62A4A /* raw_wavm.c */,
 				836F6EE218BDC2190095E648 /* redspark.c */,
 				834FE0D9215C79EA000A5D3D /* rfrm.c */,
+				83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */,
 				836F6EE318BDC2190095E648 /* riff.c */,
 				836F6EE418BDC2190095E648 /* rkv.c */,
 				836F6EE518BDC2190095E648 /* rs03.c */,
@@ -2013,6 +2016,7 @@
 				834FE103215C79ED000A5D3D /* ea_schl_streamfile.h in Headers */,
 				83C7282722BC8C1500678B4A /* plugins.h in Headers */,
 				83F0AA6021E2028C004BBC04 /* vsv_streamfile.h in Headers */,
+				83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */,
 				48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */,
 				836F705718BDC2190095E648 /* util.h in Headers */,
 				836F6F9A18BDC2190095E648 /* meta.h in Headers */,
