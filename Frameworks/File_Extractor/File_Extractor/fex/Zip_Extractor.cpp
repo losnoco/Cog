@@ -320,7 +320,9 @@ blargg_err_t Zip_Extractor::first_read( long count )
 	// Determine compression
 	{
 		int method = get_le16( e.method );
-		if ( (method && method != Z_DEFLATED) || get_le16( e.vers ) > 20 )
+        // high byte of version field indicates OS used to generate
+        // ie. 0x300 means Unix
+		if ( (method && method != Z_DEFLATED) || (get_le16( e.vers ) & 0xFF) > 20 )
 			return BLARGG_ERR( BLARGG_ERR_FILE_FEATURE, "compression method" );
 		file_deflated = (method != 0);
 	}
