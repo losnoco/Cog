@@ -5,6 +5,56 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.4.9 (2019-10-02)
+
+ *  [**Sec**] libmodplug: C API: Limit the length of strings copied to the
+    output buffer of `ModPlug_InstrumentName()` and `ModPlug_SampleName()` to 32
+    bytes (including terminating null) as is done by original libmodplug. This
+    avoids potential buffer overflows in software relying on this limit instead
+    of querying the required buffer size beforehand. libopenmpt can return
+    strings longer than 32 bytes here beacuse the internal limit of 32 bytes
+    applies to strings encoded in arbitrary character encodings but the API
+    returns them converted to UTF-8, which can be longer. (reported by Antonio
+    Morales Maldonado of Semmle Security Research Team) (r12129)
+ *  [**Sec**] libmodplug: C++ API: Do not return 0 in
+    `CSoundFile::GetSampleName()` and `CSoundFile::GetInstrumentName()` when a
+    null output pointer is provided. This behaviour differed from libmodplug and
+    made it impossible to determine the required buffer size. (r12130)
+
+### libopenmpt 0.4.8 (2019-09-30)
+
+ *  [**Sec**] Possible crash due to out-of-bounds read when playing an OPL note
+    with active filter in S3M or MPTM files (r12118).
+
+### libopenmpt 0.4.7 (2019-09-23)
+
+ *  [**Bug**] Compilation fix for various platforms that do not provide
+    `std::aligned_alloc` in C++17 mode. The problematic dependency has been
+    removed. This should fix build problems on MinGW, OpenBSD, Haiku, and others
+    for good.
+
+ *  J2B: Ignore notes with non-existing instrument (fixes Ending.j2b).
+
+ *  mpg123: Update to v1.25.13 (2019-08-24).
+ *  ogg: Update to v1.3.4. (2019-08-31).
+ *  flac: Update to v1.3.3. (2019-08-04).
+
+### libopenmpt 0.4.6 (2019-08-10)
+
+ *  [**Bug**] Compilation fix for OpenBSD.
+ *  [**Bug**] Compilation fix for NO_PLUGINS being defined.
+
+ *  in_openmpt: Correct documentation. `openmpt-mpg123.dll` must be placed into
+    the Winamp directory.
+
+ *  Detect IT files unpacked with early UNMO3 versions.
+
+ *  mpg123: Update to v1.25.11 (2019-07-18).
+ *  minimp3: Update to commit 977514a6dfc4960d819a103f43b358e58ac6c28f
+    (2019-07-24).
+ *  miniz: Update to v2.1.0 (2019-05-05).
+ *  stb_vorbis: Update to v1.17 (2019-08-09).
+
 ### libopenmpt 0.4.5 (2019-05-27)
 
  *  [**Sec**] Possible crash during playback due out-of-bounds read in XM and

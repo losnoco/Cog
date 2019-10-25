@@ -478,53 +478,35 @@ LIBOPENMPT_MODPLUG_API unsigned int ModPlug_NumChannels(ModPlugFile* file)
 LIBOPENMPT_MODPLUG_API unsigned int ModPlug_SampleName(ModPlugFile* file, unsigned int qual, char* buff)
 {
 	const char* str;
-	unsigned int retval;
-	size_t tmpretval;
+	char buf[32];
 	if(!file) return 0;
 	str = openmpt_module_get_sample_name(file->mod,qual-1);
-	if(!str){
-		if(buff){
-			*buff = '\0';
-		}
-		return 0;
+	memset(buf,0,32);
+	if(str){
+		strncpy(buf,str,31);
+		openmpt_free_string(str);
 	}
-	tmpretval = strlen(str);
-	if(tmpretval>=INT_MAX){
-		tmpretval = INT_MAX-1;
-	}
-	retval = (int)tmpretval;
 	if(buff){
-		memcpy(buff,str,retval+1);
-		buff[retval] = '\0';
+		strncpy(buff,buf,32);
 	}
-	openmpt_free_string(str);
-	return retval;
+	return (unsigned int)strlen(buf);
 }
 
 LIBOPENMPT_MODPLUG_API unsigned int ModPlug_InstrumentName(ModPlugFile* file, unsigned int qual, char* buff)
 {
 	const char* str;
-	unsigned int retval;
-	size_t tmpretval;
+	char buf[32];
 	if(!file) return 0;
 	str = openmpt_module_get_instrument_name(file->mod,qual-1);
-	if(!str){
-		if(buff){
-			*buff = '\0';
-		}
-		return 0;
+	memset(buf,0,32);
+	if(str){
+		strncpy(buf,str,31);
+		openmpt_free_string(str);
 	}
-	tmpretval = strlen(str);
-	if(tmpretval>=INT_MAX){
-		tmpretval = INT_MAX-1;
-	}
-	retval = (int)tmpretval;
 	if(buff){
-		memcpy(buff,str,retval+1);
-		buff[retval] = '\0';
+		strncpy(buff,buf,32);
 	}
-	openmpt_free_string(str);
-	return retval;
+	return (unsigned int)strlen(buf);
 }
 
 LIBOPENMPT_MODPLUG_API ModPlugNote* ModPlug_GetPattern(ModPlugFile* file, int pattern, unsigned int* numrows)

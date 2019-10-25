@@ -10,8 +10,8 @@ libopenmpt.
 Installation
 ------------
 
-"in_openmpt.dll" and "openmpt-mpg123.dll" must both be placed into the Winamp
-"Plugins" directory.
+"in_openmpt.dll" must be placed into the Winamp "Plugins" directory, and
+"openmpt-mpg123.dll" must be placed into the Winamp directory.
 
 
 See https://lib.openmpt.org/ for documentation, FAQ and other details.

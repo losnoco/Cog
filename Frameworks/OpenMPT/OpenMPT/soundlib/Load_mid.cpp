@@ -516,6 +516,7 @@ static void MIDINoteOff(MidiChannelState &midiChn, std::vector<ModChannelState> 
 
 	uint8 midiCh = modChnStatus[chn].midiCh;
 	modChnStatus[chn].note = NOTE_NONE;
+	modChnStatus[chn].sustained = false;
 	midiChn.noteOn[note] = CHANNELINDEX_INVALID;
 	ModCommand &m = patRow[chn];
 	if(m.note == NOTE_NONE)
@@ -953,7 +954,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 							// Release notes that are still being held after note-off
 							for(const auto &chnState : modChnStatus)
 							{
-								if(chnState.midiCh == midiCh && chnState.sustained)
+								if(chnState.midiCh == midiCh && chnState.sustained && chnState.note != NOTE_NONE)
 								{
 									MIDINoteOff(midiChnStatus[midiCh], modChnStatus, chnState.note - NOTE_MIN, delay, patRow, drumChns);
 								}

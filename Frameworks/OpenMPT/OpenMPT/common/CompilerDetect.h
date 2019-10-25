@@ -58,7 +58,9 @@
 #elif defined(_MSC_VER)
 
 #define MPT_COMPILER_MSVC                            1
-#if (_MSC_VER >= 1921)
+#if (_MSC_VER >= 1922)
+#define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2019,2)
+#elif (_MSC_VER >= 1921)
 #define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2019,1)
 #elif (_MSC_VER >= 1920)
 #define MPT_COMPILER_MSVC_VERSION                    MPT_COMPILER_MAKE_VERSION2(2019,0)
@@ -230,6 +232,8 @@
 	//#elif TARGET_OS_MAC
 	//#else
 	//#endif
+#elif defined(__HAIKU__)
+	#define MPT_OS_HAIKU 1
 #elif defined(__ANDROID__) || defined(ANDROID)
 	#define MPT_OS_ANDROID 1
 #elif defined(__linux__)
@@ -262,6 +266,9 @@
 #endif
 #ifndef MPT_OS_MACOSX_OR_IOS
 #define MPT_OS_MACOSX_OR_IOS 0
+#endif
+#ifndef MPT_OS_HAIKU
+#define MPT_OS_HAIKU 0
 #endif
 #ifndef MPT_OS_ANDROID
 #define MPT_OS_ANDROID 0

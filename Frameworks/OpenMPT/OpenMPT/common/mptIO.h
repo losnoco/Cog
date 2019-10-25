@@ -74,16 +74,16 @@ bool Flush(std::ostream & f);
 template <typename Tfile> class WriteBuffer;
 
 template <typename Tfile> bool IsValid(WriteBuffer<Tfile> & f) { return IsValid(f.file()); }
-template <typename Tfile> IO::Offset TellRead(WriteBuffer<Tfile> & f) { return TellRead(f.file()); }
-template <typename Tfile> IO::Offset TellWrite(WriteBuffer<Tfile> & f) { return TellWrite(f.file()); }
-template <typename Tfile> bool SeekBegin(WriteBuffer<Tfile> & f) { return SeekBegin(f.file()); }
-template <typename Tfile> bool SeekEnd(WriteBuffer<Tfile> & f) { return SeekEnd(f.file()); }
-template <typename Tfile> bool SeekAbsolute(WriteBuffer<Tfile> & f, IO::Offset pos) { return SeekAbsolute(f.file(), pos); }
-template <typename Tfile> bool SeekRelative(WriteBuffer<Tfile> & f, IO::Offset off) { return SeekRelative(f.file(), off); }
-template <typename Tfile> IO::Offset ReadRawImpl(WriteBuffer<Tfile> & f, mpt::byte * data, std::size_t size) { return ReadRawImpl(f.file(), data, size); }
+template <typename Tfile> IO::Offset TellRead(WriteBuffer<Tfile> & f) { f.FlushLocal(); return TellRead(f.file()); }
+template <typename Tfile> IO::Offset TellWrite(WriteBuffer<Tfile> & f) { return TellWrite(f.file()) + f.GetCurrentSize(); }
+template <typename Tfile> bool SeekBegin(WriteBuffer<Tfile> & f) { f.FlushLocal(); return SeekBegin(f.file()); }
+template <typename Tfile> bool SeekEnd(WriteBuffer<Tfile> & f) { f.FlushLocal(); return SeekEnd(f.file()); }
+template <typename Tfile> bool SeekAbsolute(WriteBuffer<Tfile> & f, IO::Offset pos) { return f.FlushLocal(); SeekAbsolute(f.file(), pos); }
+template <typename Tfile> bool SeekRelative(WriteBuffer<Tfile> & f, IO::Offset off) { return f.FlushLocal(); SeekRelative(f.file(), off); }
+template <typename Tfile> IO::Offset ReadRawImpl(WriteBuffer<Tfile> & f, mpt::byte * data, std::size_t size) { f.FlushLocal(); return ReadRawImpl(f.file(), data, size); }
 template <typename Tfile> bool WriteRawImpl(WriteBuffer<Tfile> & f, const mpt::byte * data, std::size_t size) { return f.Write(mpt::as_span(data, size)); }
-template <typename Tfile> bool IsEof(WriteBuffer<Tfile> & f) { return IsEof(f.file()); }
-template <typename Tfile> bool Flush(WriteBuffer<Tfile> & f) { return Flush(f.file()); }
+template <typename Tfile> bool IsEof(WriteBuffer<Tfile> & f) { f.FlushLocal(); return IsEof(f.file()); }
+template <typename Tfile> bool Flush(WriteBuffer<Tfile> & f) { f.FlushLocal(); return Flush(f.file()); }
 
 
 
@@ -626,6 +626,10 @@ public:
 	inline bool IsFull() const
 	{
 		return size == buffer.size();
+	}
+	inline std::size_t GetCurrentSize() const
+	{
+		return size;
 	}
 	inline bool Write(mpt::const_byte_span data)
 	{

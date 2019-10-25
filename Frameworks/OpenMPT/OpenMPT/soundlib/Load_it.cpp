@@ -594,23 +594,25 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 	uint32 minPtr = Util::MaxValueOfType(minPtr);
 	for(uint32 pos : insPos)
 	{
-		if(pos > 0) minPtr = std::min(minPtr, pos);
+		if(pos > 0 && pos < minPtr) minPtr = pos;
 	}
 	for(uint32 pos : smpPos)
 	{
-		if(pos > 0) minPtr = std::min(minPtr, pos);
+		if(pos > 0 && pos < minPtr) minPtr = pos;
 	}
 	for(uint32 pos : patPos)
 	{
-		if(pos > 0) minPtr = std::min(minPtr, pos);
+		if(pos > 0 && pos < minPtr) minPtr = pos;
 	}
 	if(fileHeader.special & ITFileHeader::embedSongMessage)
 	{
 		minPtr = std::min<uint32>(minPtr, fileHeader.msgoffset);
 	}
 
-	const bool possiblyUNMO3 = fileHeader.cmwt == 0x0214 && fileHeader.cwtv == 0x0214 && fileHeader.highlight_major == 0 && fileHeader.highlight_minor == 0
-		&& fileHeader.pwd == 0 && fileHeader.reserved == 0 && (fileHeader.flags & (ITFileHeader::useMIDIPitchController | ITFileHeader::reqEmbeddedMIDIConfig)) == 0;
+	const bool possiblyUNMO3 = fileHeader.cmwt == 0x0214 && (fileHeader.cwtv == 0x0214 || fileHeader.cwtv == 0)
+		&& fileHeader.highlight_major == 0 && fileHeader.highlight_minor == 0
+		&& fileHeader.pwd == 0 && fileHeader.reserved == 0
+		&& (fileHeader.flags & (ITFileHeader::useMIDIPitchController | ITFileHeader::reqEmbeddedMIDIConfig)) == 0;
 
 	if(possiblyUNMO3 && fileHeader.insnum == 0 && fileHeader.smpnum > 0 && file.GetPosition() + 4 * smpPos.size() + 2 <= minPtr)
 	{
@@ -632,6 +634,11 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			madeWithTracker = U_("UNMO3 <= 2.4");
 		}
+	}
+
+	if(possiblyUNMO3 && fileHeader.cwtv == 0)
+	{
+		madeWithTracker = U_("UNMO3 v0/1");
 	}
 
 	// Reading IT Edit History Info
@@ -812,14 +819,14 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 				// External sample in MPTM file
 				size_t strLen;
 				file.ReadVarInt(strLen);
-				if(loadFlags & loadSampleData)
+				if((loadFlags & loadSampleData) && strLen)
 				{
 					std::string filenameU8;
 					file.ReadString<mpt::String::maybeNullTerminated>(filenameU8, strLen);
 #if defined(MPT_EXTERNAL_SAMPLES)
 					SetSamplePath(i + 1, mpt::PathString::FromUTF8(filenameU8));
 #elif !defined(LIBOPENMPT_BUILD_TEST)
-					AddToLog(LogWarning, mpt::format(U_("Loading external sample %1 ('%2') failed: External samples are not supported."))(i, mpt::ToUnicode(mpt::CharsetUTF8, filenameU8)));
+					AddToLog(LogWarning, mpt::format(U_("Loading external sample %1 ('%2') failed: External samples are not supported."))(i + 1, mpt::ToUnicode(mpt::CharsetUTF8, filenameU8)));
 #endif // MPT_EXTERNAL_SAMPLES
 				} else
 				{
@@ -1170,7 +1177,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 				&& m_nSamples > 0 && !strcmp(Samples[1].filename, "XXXXXXXX.YYY"))
 			{
 				madeWithTracker = U_("CheeseTracker");
-			} else if(fileHeader.cwtv == 0)
+			} else if(fileHeader.cwtv == 0 && madeWithTracker.empty())
 			{
 				madeWithTracker = U_("Unknown");
 			} else if(fileHeader.cmwt < 0x0300 && madeWithTracker.empty())
@@ -1629,7 +1636,7 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 			uint32 len = 0;
 			// Maximum 7 bytes per cell, plus end of row marker, so this buffer is always large enough to cover one row.
 			uint8 buf[7 * MAX_BASECHANNELS + 1];
-			const ModCommand *m = Patterns[pat].GetRow(row);
+			const ModCommand *m = Patterns[pat].GetpModCommand(row, 0);
 
 			for(CHANNELINDEX ch = 0; ch < maxChannels; ch++, m++)
 			{

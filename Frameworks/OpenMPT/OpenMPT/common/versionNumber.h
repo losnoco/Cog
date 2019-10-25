@@ -20,8 +20,8 @@ OPENMPT_NAMESPACE_BEGIN
 //Version definitions. The only thing that needs to be changed when changing version number.
 #define VER_MAJORMAJOR  1
 #define VER_MAJOR      28
-#define VER_MINOR      05
-#define VER_MINORMINOR 00
+#define VER_MINOR      07
+#define VER_MINORMINOR 04
 
 //Numerical value of the version.
 #define MPT_VERSION_CURRENT MAKE_VERSION_NUMERIC(VER_MAJORMAJOR,VER_MAJOR,VER_MINOR,VER_MINORMINOR)

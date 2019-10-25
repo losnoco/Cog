@@ -122,9 +122,9 @@ ModCommand::NOTE ModChannel::GetPluginNote(bool realNoteMapping) const
 		// If an arpeggio is playing, this definitely the last playing note, which may be different from the arpeggio base note stored in nNote.
 		return nArpeggioLastNote;
 	}
-	ModCommand::NOTE plugNote = nNote;
+	ModCommand::NOTE plugNote = mpt::saturate_cast<ModCommand::NOTE>(nNote - nTranspose);
 	// Caution: When in compatible mode, ModChannel::nNote stores the "real" note, not the mapped note!
-	if(realNoteMapping && pModInstrument != nullptr && plugNote >= NOTE_MIN && plugNote < (MPT_ARRAY_COUNT(pModInstrument->NoteMap) + NOTE_MIN))
+	if(realNoteMapping && pModInstrument != nullptr && plugNote >= NOTE_MIN && plugNote < (mpt::size(pModInstrument->NoteMap) + NOTE_MIN))
 	{
 		plugNote = pModInstrument->NoteMap[plugNote - NOTE_MIN];
 	}

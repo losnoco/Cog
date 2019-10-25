@@ -456,14 +456,14 @@ struct PT36IffChunk
 	// IFF chunk names
 	enum ChunkIdentifiers
 	{
-		idVERS	= MagicBE("VERS"),
-		idINFO	= MagicBE("INFO"),
-		idCMNT	= MagicBE("CMNT"),
-		idPTDT	= MagicBE("PTDT"),
+		idVERS = MagicBE("VERS"),
+		idINFO = MagicBE("INFO"),
+		idCMNT = MagicBE("CMNT"),
+		idPTDT = MagicBE("PTDT"),
 	};
 
-	uint32be signature;	// IFF chunk name
-	uint32be chunksize;	// chunk size without header
+	uint32be signature;  // IFF chunk name
+	uint32be chunksize;  // chunk size without header
 };
 
 MPT_BINARY_STRUCT(PT36IffChunk, 8)
@@ -521,9 +521,9 @@ static uint32 ReadSample(FileReader &file, MODSampleHeader &sampleHeader, ModSam
 // Parse the order list to determine how many patterns are used in the file.
 static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERINDEX numOrders, SmpLength totalSampleLen, CHANNELINDEX &numChannels, bool checkForWOW)
 {
-	PATTERNINDEX numPatterns = 0;			// Total number of patterns in file (determined by going through the whole order list) with pattern number < 128
-	PATTERNINDEX officialPatterns = 0;		// Number of patterns only found in the "official" part of the order list (i.e. order positions < claimed order length)
-	PATTERNINDEX numPatternsIllegal = 0;	// Total number of patterns in file, also counting in "invalid" pattern indexes >= 128
+	PATTERNINDEX numPatterns = 0;         // Total number of patterns in file (determined by going through the whole order list) with pattern number < 128
+	PATTERNINDEX officialPatterns = 0;    // Number of patterns only found in the "official" part of the order list (i.e. order positions < claimed order length)
+	PATTERNINDEX numPatternsIllegal = 0;  // Total number of patterns in file, also counting in "invalid" pattern indexes >= 128
 
 	for(ORDERINDEX ord = 0; ord < 128; ord++)
 	{
@@ -893,7 +893,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 			pat /= 2u;
 		}
 	}
-	
+
 	// Restart position sanity checks
 	realOrders--;
 	Order().SetRestartPos(fileHeader.restartPos);
@@ -918,7 +918,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	// is the maximum possible sample pre-amp without getting distortion (Compatible mix levels given).
 	// The more channels we have, the less likely it is that all of them are used at the same time, though, so cap at 32...
 	m_nSamplePreAmp = Clamp(256 / m_nChannels, 32, 128);
-	m_SongFlags.reset();	// SONG_ISAMIGA will be set conditionally
+	m_SongFlags.reset();  // SONG_ISAMIGA will be set conditionally
 
 	// Setup channel pan positions and volume
 	SetupMODPanning();
@@ -930,10 +930,10 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	// - Detect 7-bit panning.
 	bool onlyAmigaNotes = true;
 	bool fix7BitPanning = false;
-	uint8 maxPanning = 0;	// For detecting 8xx-as-sync
+	uint8 maxPanning = 0;  // For detecting 8xx-as-sync
 	if(!isNoiseTracker)
 	{
-		bool leftPanning = false, extendedPanning = false;	// For detecting 800-880 panning
+		bool leftPanning = false, extendedPanning = false;  // For detecting 800-880 panning
 		isNoiseTracker = isMdKd;
 		for(PATTERNINDEX pat = 0; pat < numPatterns; pat++)
 		{
@@ -963,7 +963,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 						extendedPanning = true;
 				} else if(m.command == 0x0E && (m.param & 0xF0) == 0x80)
 				{
-					maxPanning = std::max<uint8>(maxPanning, m.param << 4);
+					maxPanning = std::max<uint8>(maxPanning, (m.param & 0x0F) << 4);
 				}
 			}
 		}
@@ -1342,7 +1342,6 @@ static bool ValidateHeader(const M15FileHeaders &fileHeaders)
 
 		totalSampleLen += sampleHeader.length;
 		allVolumes |= sampleHeader.volume;
-
 	}
 
 	// Reject any files with no (or only silent) samples at all, as this might just be a random binary file (e.g. ID3 tags with tons of padding)
@@ -1364,7 +1363,7 @@ static bool ValidateHeader(const M15FileHeaders &fileHeaders)
 	{
 		return false;
 	}
-	
+
 	// No playable song, and lots of null values => most likely a sparse binary file but not a module
 	if(fileHeaders.fileHeader.restartPos == 0 && fileHeaders.fileHeader.numOrders == 0 && maxPattern == 0)
 	{
@@ -2095,7 +2094,7 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 	}
 	// First chunk includes "MODL" magic in size
 	iffHead.chunksize -= 4;
-	
+
 	do
 	{
 		// All chunk sizes include chunk header
@@ -2104,7 +2103,7 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			return true;
 		}
-		
+
 		FileReader chunk = file.ReadChunk(iffHead.chunksize);
 		if(!chunk.IsValid())
 		{
@@ -2120,15 +2119,15 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 				chunk.ReadString<mpt::String::maybeNullTerminated>(version, mpt::CharsetISO8859_1, iffHead.chunksize - 6);
 			}
 			break;
-		
+
 		case PT36IffChunk::idINFO:
 			infoOk = chunk.ReadStruct(info);
 			break;
-		
+
 		case PT36IffChunk::idCMNT:
 			commentChunk = chunk;
 			break;
-		
+
 		case PT36IffChunk::idPTDT:
 			ok = ReadMOD(chunk, loadFlags);
 			break;
@@ -2139,7 +2138,7 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		version = U_("3.6");
 	}
-	
+
 	// both an info chunk and a module are required
 	if(ok && infoOk)
 	{
@@ -2149,10 +2148,10 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 			m_nSamplePreAmp = std::min<uint16>(64, info.volume);
 		if(info.tempo != 0 && !vblank)
 			m_nDefaultTempo.Set(info.tempo);
-	
+
 		if(info.name[0])
 			mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, info.name);
-	
+
 		if(IsInRange(info.dateMonth, 1, 12) && IsInRange(info.dateDay, 1, 31) && IsInRange(info.dateHour, 0, 23)
 			&& IsInRange(info.dateMinute, 0, 59) && IsInRange(info.dateSecond, 0, 59))
 		{
@@ -2179,14 +2178,14 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 				m_songMessage.ReadFixedLineLength(commentChunk, commentChunk.BytesLeft(), 40, 0);
 			}
 		}
-		
+
 		m_modFormat.madeWithTracker = U_("ProTracker ") + version;
 	}
 	m_SongFlags.set(SONG_PT_MODE);
 	m_playBehaviour.set(kMODIgnorePanning);
 	m_playBehaviour.set(kMODOneShotLoops);
 	m_playBehaviour.set(kMODSampleSwap);
-	
+
 	return ok;
 }
 
@@ -2290,6 +2289,7 @@ bool CSoundFile::SaveMod(std::ostream &f) const
 	mpt::IO::Write(f, modMagic);
 
 	// Write patterns
+	bool invalidInstruments = false;
 	std::vector<uint8> events;
 	for(PATTERNINDEX pat = 0; pat < writePatterns; pat++)
 	{
@@ -2314,7 +2314,7 @@ bool CSoundFile::SaveMod(std::ostream &f) const
 
 			events.resize(writeChannels * 4);
 			size_t eventByte = 0;
-			for(CHANNELINDEX chn = 0; chn < writeChannels; chn++)
+			for(CHANNELINDEX chn = 0; chn < writeChannels; chn++, eventByte += 4)
 			{
 				ModCommand &m = rowBase[chn];
 				uint8 command = m.command, param = m.param;
@@ -2334,15 +2334,22 @@ bool CSoundFile::SaveMod(std::ostream &f) const
 					period = ProTrackerPeriodTable[m.note - 24 - NOTE_MIN];
 				}
 
-				uint8 instr = (m.instr <= 31) ? m.instr : 0;
+				const uint8 instr = (m.instr > 31) ? 0 : m.instr;
+				if(m.instr > 31)
+					invalidInstruments = true;
 
-				events[eventByte++] = ((period >> 8) & 0x0F) | (instr & 0x10);
-				events[eventByte++] = period & 0xFF;
-				events[eventByte++] = ((instr & 0x0F) << 4) | (command & 0x0F);
-				events[eventByte++] = param;
+				events[eventByte + 0] = ((period >> 8) & 0x0F) | (instr & 0x10);
+				events[eventByte + 1] = period & 0xFF;
+				events[eventByte + 2] = ((instr & 0x0F) << 4) | (command & 0x0F);
+				events[eventByte + 3] = param;
 			}
-			mpt::IO::WriteRaw(f, mpt::as_span(events.data(), eventByte));
+			mpt::IO::WriteRaw(f, mpt::as_span(events));
 		}
+	}
+
+	if(invalidInstruments)
+	{
+		AddToLog("Warning: This track references sample slots higher than 31. Such samples cannot be saved in the MOD format, and thus the notes will not sound correct. Use the Cleanup tool to rearrange and remove unused samples.");
 	}
 
 	//Check for unsaved patterns

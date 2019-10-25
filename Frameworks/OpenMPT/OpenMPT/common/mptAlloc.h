@@ -95,6 +95,10 @@ std::unique_ptr<T> make_unique(Args&&... args)
 
 
 
+#if defined(MPT_ENABLE_ALIGNED_ALLOC)
+
+
+
 namespace mpt
 {
 
@@ -256,6 +260,10 @@ public:
 
 
 } // namespace mpt
+
+
+
+#endif // MPT_ENABLE_ALIGNED_ALLOC
 
 
 

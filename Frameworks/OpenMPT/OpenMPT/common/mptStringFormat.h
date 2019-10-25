@@ -88,9 +88,6 @@ MPT_DEPRECATED std::string ToString(const wchar_t & x); // deprecated to catch p
 MPT_DEPRECATED std::string ToString(const mpt::ustring & x); // Unknown encoding.
 #endif
 #if defined(_MFC_VER)
-MPT_DEPRECATED std::string ToString(const mpt::ustring & x); // Unknown encoding.
-#endif
-#if defined(_MFC_VER)
 MPT_DEPRECATED std::string ToString(const CString & x);
 #endif
 std::string ToString(const bool & x);

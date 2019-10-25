@@ -1,6 +1,6 @@
 ﻿miniz DEFLATE implementation.
 https://github.com/richgel999/miniz
-2.0.8
+2.1.0
 Modifications for OpenMPT:
  *  #define MINIZ_NO_STDIO has been set because OpenMPT does not need stdio
     functionality and miniz relies on secure-CRT file i/o functions in windows
@@ -12,7 +12,7 @@ Modifications for OpenMPT:
  *  Warning `warning: cast from 'const mz_uint8 *' (aka 'const unsigned char *')
     to 'const mz_uint32 *' (aka 'const unsigned int *') increases required
     alignment from 1 to 4 [-Wcast-align]` has been fixed.
- *  Prototypes of `tdefl_compressor_alloc` and `tinfl_decompressor_alloc`
+ *  Definitions of `tdefl_compressor_alloc` and `tinfl_decompressor_alloc`
     have beeen fixed
  *  Missing #ifndef MINIZ_NO_STDIO has been added to miniz.h.
 No further changes have been made.

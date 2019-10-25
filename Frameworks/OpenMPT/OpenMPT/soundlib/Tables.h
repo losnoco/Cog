@@ -31,7 +31,6 @@ extern const int8 retrigTable1[16];
 extern const int8 retrigTable2[16];
 extern const uint16 XMPeriodTable[104];
 extern const uint32 XMLinearTable[768];
-extern const int8 ft2VibratoTable[256];
 extern const uint32 FineLinearSlideUpTable[16];
 extern const uint32 FineLinearSlideDownTable[16];
 extern const uint32 LinearSlideUpTable[256];

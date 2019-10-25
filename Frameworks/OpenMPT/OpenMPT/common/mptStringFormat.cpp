@@ -17,7 +17,20 @@
 #endif
 
 #if MPT_FORMAT_CXX17_INT
+#if MPT_MSVC_AT_LEAST(2019,0) && MPT_MSVC_BEFORE(2019,2)
+#if !(defined(UNICODE) || defined(_UNICODE))
+// work-around https://developercommunity.visualstudio.com/content/problem/629849/mfc-headers-conflict-with-c17-charconv-header-in-m.html
+#pragma push_macro("_M2")
+#undef _M2
+#endif
+#endif
 #include <charconv>
+#if MPT_MSVC_AT_LEAST(2019,0) && MPT_MSVC_BEFORE(2019,2)
+#if !(defined(UNICODE) || defined(_UNICODE))
+// work-around https://developercommunity.visualstudio.com/content/problem/629849/mfc-headers-conflict-with-c17-charconv-header-in-m.html
+#pragma pop_macro("_M2")
+#endif
+#endif
 #endif // MPT_FORMAT_CXX17_INT
 #include <iomanip>
 #include <locale>

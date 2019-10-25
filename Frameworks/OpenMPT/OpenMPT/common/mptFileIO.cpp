@@ -515,7 +515,8 @@ InputFile::ContentsRef InputFile::Get()
 		return result;
 	}
 	result.first.data = m_File.Lock();
-	result.first.size = m_File.GetLength();
+	if(result.first.data)
+		result.first.size = m_File.GetLength();
 	result.second = &m_Filename;
 	return result;
 }

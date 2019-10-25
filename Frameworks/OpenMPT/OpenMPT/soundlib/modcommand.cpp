@@ -179,7 +179,7 @@ void ModCommand::Convert(MODTYPE fromType, MODTYPE toType, const CSoundFile &snd
 				param = 0x91;
 			} else
 			{
-				param = std::min<PARAM>(param << 1, 0xFF);
+				param = mpt::saturate_cast<PARAM>(param * 2u);
 			}
 		}
 	} // End if(command == CMD_PANNING8)
@@ -515,7 +515,7 @@ void ModCommand::Convert(MODTYPE fromType, MODTYPE toType, const CSoundFile &snd
 			param = (param & 0xF0) | std::min<PARAM>((param & 0x0F) * 2u, 15);
 			break;
 		case CMD_GLOBALVOLUME:
-			param = std::min<PARAM>(0x80, param * 2u);
+			param = std::min<PARAM>(0x40, param) * 2u;
 			break;
 		}
 	} // End if(oldTypeIsIT_MPT && newTypeIsXM)
@@ -776,7 +776,7 @@ void ModCommand::Convert(MODTYPE fromType, MODTYPE toType, const CSoundFile &snd
 	if(newTypeIsIT_MPT)
 	{
 		// Convert some commands which behave differently or don't exist
-		if(command == CMD_NONE) switch(volcmd)
+		if(!oldTypeIsIT_MPT && command == CMD_NONE) switch(volcmd)
 		{
 			case VOLCMD_PANSLIDELEFT:
 				command = CMD_PANNINGSLIDE;

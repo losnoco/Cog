@@ -12,6 +12,9 @@
 
 #include "BuildSettings.h"
 
+#include "../../common/mptAlloc.h"
+
+
 OPENMPT_NAMESPACE_BEGIN
 
 
@@ -25,7 +28,11 @@ protected:
 
 	std::vector<buffer_t *> inputs;                   // Pointers to input buffers
 	std::vector<buffer_t *> outputs;                  // Pointers to output buffers
+#if defined(MPT_ENABLE_ALIGNED_ALLOC)
 	mpt::aligned_buffer<buffer_t, 16> alignedBuffer;  // Aligned buffer pointed into
+#else
+	std::vector<buffer_t> alignedBuffer;
+#endif
 
 	// Return pointer to an aligned buffer
 	const buffer_t *GetBuffer(size_t index) const
@@ -56,7 +63,11 @@ public:
 			outputs.resize(numOutputs);
 
 			// Create inputs + outputs buffers
-			alignedBuffer.destructive_resize(bufferSize * (numInputs + numOutputs));
+			#if defined(MPT_ENABLE_ALIGNED_ALLOC)
+				alignedBuffer.destructive_resize(bufferSize * (numInputs + numOutputs));
+			#else
+				alignedBuffer.resize(bufferSize * (numInputs + numOutputs));
+			#endif
 
 		} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
 		{
@@ -65,7 +76,11 @@ public:
 			inputs.shrink_to_fit();
 			outputs.clear();
 			outputs.shrink_to_fit();
-			alignedBuffer.destructive_resize(0);
+			#if defined(MPT_ENABLE_ALIGNED_ALLOC)
+				alignedBuffer.destructive_resize(0);
+			#else
+				alignedBuffer.resize(0);
+			#endif
 			return false;
 		}
 

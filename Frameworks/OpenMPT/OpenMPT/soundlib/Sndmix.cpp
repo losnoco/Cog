@@ -1817,13 +1817,13 @@ void CSoundFile::ProcessSampleAutoVibrato(ModChannel &chn, int &period, Tuning::
 			default:
 				if(GetType() != MOD_TYPE_MT2)
 				{
-					vdelta = ft2VibratoTable[chn.nAutoVibPos & 0xFF];
+					vdelta = -ITSinusTable[chn.nAutoVibPos & 0xFF];
 				} else
 				{
 					// Fix flat-sounding pads in "another worlds" by Eternal Engine.
 					// Vibrato starts at the maximum amplitude of the sine wave
 					// and the vibrato frequency never decreases below the original note's frequency.
-					vdelta = (ft2VibratoTable[(chn.nAutoVibPos + 192) & 0xFF] + 64) / 2;
+					vdelta = (-ITSinusTable[(chn.nAutoVibPos + 192) & 0xFF] + 64) / 2;
 				}
 			}
 			int n = (vdelta * chn.nAutoVibDepth) / 256;

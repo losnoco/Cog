@@ -25,6 +25,7 @@
 #include "modsmp_ctrl.h"	// For updating the loop wraparound data with the invert loop effect
 #include "plugins/PlugInterface.h"
 #include "OPL.h"
+#include "MIDIEvents.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -83,7 +84,9 @@ public:
 
 	void Reset()
 	{
+#ifndef NO_PLUGINS
 		plugParams.clear();
+#endif
 		elapsedTime = 0.0;
 		state->m_lTotalSampleCount = 0;
 		state->m_nMusicSpeed = sndFile.m_nDefaultSpeed;
@@ -2025,7 +2028,7 @@ void CSoundFile::NoteChange(ModChannel &chn, int note, bool bPorta, bool bResetE
 		if((chn.nCutOff < 0x7F || m_playBehaviour[kITFilterBehaviour]) && useFilter)
 		{
 			int cutoff = SetupChannelFilter(chn, true);
-			if(cutoff >= 0 && chn.dwFlags[CHN_ADLIB] && m_opl)
+			if(cutoff >= 0 && chn.dwFlags[CHN_ADLIB] && m_opl && channelHint != CHANNELINDEX_INVALID)
 				m_opl->Volume(channelHint, chn.nCutOff / 2u, true);
 		}
 	}
@@ -2635,7 +2638,7 @@ bool CSoundFile::ProcessEffects()
 				{
 					note = NOTE_NONE;
 				}
-			} else if((GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT)) && GetNumInstruments() != 0 && ModCommand::IsNoteOrEmpty(static_cast<ModCommand::NOTE>(note)))
+			} else if((GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_J2B)) && GetNumInstruments() != 0 && ModCommand::IsNoteOrEmpty(static_cast<ModCommand::NOTE>(note)))
 			{
 				// IT compatibility: Invalid instrument numbers do nothing, but they are remembered for upcoming notes and do not trigger a note in that case.
 				// Test case: InstrumentNumberChange.it
@@ -5454,7 +5457,7 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 		bool fading = chn.dwFlags[CHN_NOTEFADE];
 		// IT compatibility: Really weird combination of envelopes and retrigger (see Storlek's q.it testcase)
 		// Test case: retrig.it
-		NoteChange(chn, note, m_playBehaviour[kITRetrigger], resetEnv);
+		NoteChange(chn, note, m_playBehaviour[kITRetrigger], resetEnv, false, nChn);
 		// XM compatibility: Prevent NoteChange from resetting the fade flag in case an instrument number + note-off is present.
 		// Test case: RetrigFade.xm
 		if(fading && GetType() == MOD_TYPE_XM)

@@ -30,6 +30,10 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
+#if defined(MPT_ENABLE_ALIGNED_ALLOC)
+
+
+
 namespace mpt
 {
 
@@ -56,7 +60,7 @@ void* align(std::size_t alignment, std::size_t size, void* &ptr, std::size_t &sp
 
 aligned_raw_memory aligned_alloc_impl(std::size_t size, std::size_t count, std::size_t alignment)
 {
-	#if MPT_CXX_AT_LEAST(17) && (!MPT_COMPILER_MSVC && !MPT_GCC_BEFORE(8,1,0) && !MPT_CLANG_BEFORE(5,0,0)) && !(MPT_COMPILER_GCC && defined(__GLIBCXX__) && (defined(__MINGW32__) || defined(__MINGW64__))) && !(MPT_COMPILER_CLANG && defined(__GLIBCXX__)) && !(MPT_COMPILER_CLANG && MPT_OS_MACOSX_OR_IOS) && !MPT_OS_EMSCRIPTEN
+	#if MPT_CXX_AT_LEAST(17) && !defined(MPT_COMPILER_QUIRK_NO_ALIGNEDALLOC)
 		std::size_t space = count * size;
 		void* mem = std::aligned_alloc(alignment, space);
 		if(!mem)
@@ -64,7 +68,7 @@ aligned_raw_memory aligned_alloc_impl(std::size_t size, std::size_t count, std::
 			MPT_EXCEPTION_THROW_OUT_OF_MEMORY();
 		}
 		return aligned_raw_memory{mem, mem};
-	#elif MPT_COMPILER_MSVC
+	#elif MPT_COMPILER_MSVC || (defined(__clang__) && defined(_MSC_VER))
 		std::size_t space = count * size;
 		void* mem = _aligned_malloc(space, alignment);
 		if(!mem)
@@ -103,9 +107,9 @@ aligned_raw_memory aligned_alloc_impl(std::size_t size, std::size_t count, std::
 
 void aligned_free(aligned_raw_memory raw)
 {
-	#if MPT_CXX_AT_LEAST(17) && (!MPT_COMPILER_MSVC && !MPT_GCC_BEFORE(8,1,0) && !MPT_CLANG_BEFORE(5,0,0)) && !(MPT_COMPILER_GCC && defined(__GLIBCXX__) && (defined(__MINGW32__) || defined(__MINGW64__))) && !(MPT_COMPILER_CLANG && defined(__GLIBCXX__)) && !(MPT_COMPILER_CLANG && MPT_OS_MACOSX_OR_IOS) && !MPT_OS_EMSCRIPTEN
+	#if MPT_CXX_AT_LEAST(17) && !defined(MPT_COMPILER_QUIRK_NO_ALIGNEDALLOC)
 		std::free(raw.mem);
-	#elif MPT_COMPILER_MSVC
+	#elif MPT_COMPILER_MSVC || (defined(__clang__) && defined(_MSC_VER))
 		_aligned_free(raw.mem);
 	#else
 		std::free(raw.mem);
@@ -115,6 +119,10 @@ void aligned_free(aligned_raw_memory raw)
 
 
 } // namespace mpt
+
+
+
+#endif // MPT_ENABLE_ALIGNED_ALLOC
 
 
 
