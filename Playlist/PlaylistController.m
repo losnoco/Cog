@@ -809,23 +809,57 @@
 
 	if (currentEntry && currentEntry.index >= 0)
 	{
-		[shuffleList insertObject:currentEntry atIndex:0];
-		[currentEntry setShuffleIndex:0];
-		
-		//Need to rejigger so the current entry is at the start now...
-		int i;
-		BOOL found = NO;
-		for (i = 1; i < [shuffleList count] && !found; i++)
-		{
-			if ([shuffleList objectAtIndex:i] == currentEntry)
-			{
-				found = YES;
-				[shuffleList removeObjectAtIndex:i];
-			}
-			else {
-				[[shuffleList objectAtIndex:i] setShuffleIndex: i];
-			}
-		}
+        if ([self shuffle] == ShuffleAlbums) {
+            NSString * currentAlbum = currentEntry.album;
+            if (!currentAlbum)
+                currentAlbum = @"";
+            
+            NSArray * wholeAlbum = [self filterPlaylistOnAlbum:currentAlbum];
+            
+            // First prune the shuffle list of the currently playing album
+            int i, j;
+            for (i = 0; i < [shuffleList count];) {
+                if ([wholeAlbum containsObject:[shuffleList objectAtIndex:i]]) {
+                    [shuffleList removeObjectAtIndex:i];
+                }
+                else {
+                    ++i;
+                }
+            }
+            
+            // Then insert the playing album at the start, beginning with
+            // the current track
+            BOOL found = NO;
+            for (i = 0, j = 0; i < [wholeAlbum count]; i++) {
+                if (!found && [wholeAlbum objectAtIndex:i] == currentEntry) {
+                    found = YES;
+                }
+                if (found) {
+                    [shuffleList insertObject:[wholeAlbum objectAtIndex:i] atIndex:j];
+                    ++j;
+                }
+            }
+            
+        }
+        else {
+            [shuffleList insertObject:currentEntry atIndex:0];
+            [currentEntry setShuffleIndex:0];
+
+            //Need to rejigger so the current entry is at the start now...
+            int i;
+            BOOL found = NO;
+            for (i = 1; i < [shuffleList count] && !found; i++)
+            {
+                if ([shuffleList objectAtIndex:i] == currentEntry)
+                {
+                    found = YES;
+                    [shuffleList removeObjectAtIndex:i];
+                }
+                else {
+                    [[shuffleList objectAtIndex:i] setShuffleIndex: i];
+                }
+            }
+        }
 	}
 }
 
