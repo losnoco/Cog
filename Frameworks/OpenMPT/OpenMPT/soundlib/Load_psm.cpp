@@ -107,10 +107,12 @@ struct PSMSampleHeader
 		mptSmp.nC5Speed = c5Freq;
 		mptSmp.nLength = sampleLength;
 		mptSmp.nLoopStart = loopStart;
-		// It is not entirely clear if/when we should add +1 to the loopEnd value.
-		// Sample 8 in the medieval table music of Extreme Pinball and CONVERT.EXE v1.36 suggest that we should do so.
-		// But for other tunes it's not correct, e.g. the OMF 2097 music!
-		mptSmp.nLoopEnd = loopEnd;
+		// Note that we shouldn't add + 1 for MTM conversions here (e.g. the OMF 2097 music),
+		// but I think there is no way to figure out the original format, and in the case of the OMF 2097 soundtrack
+		// it doesn't make a huge audible difference anyway (no chip samples are used).
+		// On the other hand, sample 8 of MUSIC_A.PSM from Extreme Pinball will sound detuned if we don't adjust the loop end here.
+		if(loopEnd)
+			mptSmp.nLoopEnd = loopEnd + 1;
 		mptSmp.nVolume = (defaultVolume + 1) * 2;
 		mptSmp.uFlags.set(CHN_LOOP, (flags & 0x80) != 0);
 		LimitMax(mptSmp.nLoopEnd, mptSmp.nLength);
@@ -189,7 +191,7 @@ static uint8 ConvertPSMPorta(uint8 param, bool sinariaFormat)
 }
 
 
-// Read a Pattern ID (something like "P0  " or "P13 " in the old format, or "PATT0   " in Sinaria)
+// Read a Pattern ID (something like "P0  " or "P13 ", or "PATT0   " in Sinaria)
 static PATTERNINDEX ReadPSMPatternIndex(FileReader &file, bool &sinariaFormat)
 {
 	char patternID[5];

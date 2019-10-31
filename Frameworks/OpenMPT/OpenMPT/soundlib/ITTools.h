@@ -317,4 +317,7 @@ struct SchismVersionFromDate
 	}
 };
 
+
+uint32 DecodeITEditTimer(uint16 cwtv, uint32 editTime);
+
 OPENMPT_NAMESPACE_END

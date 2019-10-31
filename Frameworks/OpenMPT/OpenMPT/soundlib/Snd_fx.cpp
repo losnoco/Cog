@@ -1257,6 +1257,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 		{
 			// Target found, or there is no target (i.e. play whole song)...
 			m_PlayState = std::move(playState);
+			m_PlayState.ResetGlobalVolumeRamping();
 			m_PlayState.m_nNextRow = m_PlayState.m_nRow;
 			m_PlayState.m_nFrameDelay = m_PlayState.m_nPatternDelay = 0;
 			m_PlayState.m_nTickCount = Util::MaxValueOfType(m_PlayState.m_nTickCount) - 1;

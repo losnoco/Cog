@@ -225,13 +225,15 @@ class CModDoc;
 
 struct FileHistory
 {
-	FileHistory() : openTime(0) { MemsetZero(loadDate); }
+	FileHistory() { MemsetZero(loadDate); }
 	// Date when the file was loaded in the the tracker or created.
 	tm loadDate;
 	// Time the file was open in the editor, in 1/18.2th seconds (frequency of a standard DOS timer, to keep compatibility with Impulse Tracker easy).
-	uint32 openTime;
+	uint32 openTime = 0;
 	// Return the date as a (possibly truncated if not enough precision is available) ISO 8601 formatted date.
 	mpt::ustring AsISO8601() const;
+	// Returns true if the date component is valid. Some formats only store edit time, not edit date.
+	bool HasValidDate() const { return loadDate.tm_mday != 0; }
 };
 
 
@@ -505,6 +507,14 @@ public:
 		PlayState()
 		{
 			std::fill(std::begin(Chn), std::end(Chn), ModChannel());
+		}
+
+		void ResetGlobalVolumeRamping()
+		{
+			m_lHighResRampingGlobalVolume = m_nGlobalVolume << VOLUMERAMPPRECISION;
+			m_nGlobalVolumeDestination = m_nGlobalVolume;
+			m_nSamplesToGlobalVolRampDest = 0;
+			m_nGlobalVolumeRampAmount = 0;
 		}
 	};
 
@@ -820,7 +830,7 @@ public:
 	void LoadExtendedSongProperties(FileReader &file, bool ignoreChannelCount, bool* pInterpretMptMade = nullptr);
 	void LoadMPTMProperties(FileReader &file, uint16 cwtv);
 
-	mpt::ustring GetSchismTrackerVersion(uint16 cwtv);
+	static mpt::ustring GetSchismTrackerVersion(uint16 cwtv, uint32 reserved);
 
 	// Reads extended instrument properties(XM/IT/MPTM).
 	// Returns true if extended instrument properties were found.

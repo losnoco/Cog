@@ -5,6 +5,16 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.4.10 (2019-10-30)
+
+ *  The "date" metadata could contain a bogus date for some older IT files.
+ *  Do not apply global volume ramping from initial global volume when seeking.
+
+ *  MTM: Sample loop length was off by one.
+ *  PSM: Sample loop length was off by one in most files.
+
+ *  mpg123: Update to v1.25.13 (2019-10-26).
+
 ### libopenmpt 0.4.9 (2019-10-02)
 
  *  [**Sec**] libmodplug: C API: Limit the length of strings copied to the
@@ -16,6 +26,7 @@ is just a high-level summary.
     applies to strings encoded in arbitrary character encodings but the API
     returns them converted to UTF-8, which can be longer. (reported by Antonio
     Morales Maldonado of Semmle Security Research Team) (r12129)
+    ([CVE-2019-17113](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-17113))
  *  [**Sec**] libmodplug: C++ API: Do not return 0 in
     `CSoundFile::GetSampleName()` and `CSoundFile::GetInstrumentName()` when a
     null output pointer is provided. This behaviour differed from libmodplug and
@@ -35,7 +46,7 @@ is just a high-level summary.
 
  *  J2B: Ignore notes with non-existing instrument (fixes Ending.j2b).
 
- *  mpg123: Update to v1.25.13 (2019-08-24).
+ *  mpg123: Update to v1.25.12 (2019-08-24).
  *  ogg: Update to v1.3.4. (2019-08-31).
  *  flac: Update to v1.3.3. (2019-08-04).
 
@@ -59,6 +70,7 @@ is just a high-level summary.
 
  *  [**Sec**] Possible crash during playback due out-of-bounds read in XM and
     MT2 files (r11608).
+    ([CVE-2019-14380](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-14380))
 
  *  Breaking out of a sustain loop through Note-Off sometimes didn't continue in
     the regular sample loop.
@@ -81,6 +93,7 @@ is just a high-level summary.
 
  *  [**Sec**] Possible crash due to null-pointer access when doing a portamento
     from an OPL instrument to an empty instrument note map slot (r11348).
+    ([CVE-2019-14381](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-14381))
 
  *  [**Bug**] libopenmpt did not compile on Apple platforms in C++17 mode.
 
@@ -95,8 +108,10 @@ is just a high-level summary.
 
  *  [**Sec**] DSM: Assertion failure during file parsing with debug STLs
     (r11209).
+    ([CVE-2019-14382](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-14382))
  *  [**Sec**] J2B: Assertion failure during file parsing with debug STLs
     (r11216).
+    ([CVE-2019-14383](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-14383))
 
  *  S3M: Allow volume change of OPL instruments after Note Cut.
 

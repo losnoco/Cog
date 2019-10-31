@@ -54,7 +54,7 @@ struct MTMSampleHeader
 		{
 			mptSmp.nLength = length;
 			mptSmp.nLoopStart = loopStart;
-			mptSmp.nLoopEnd = loopEnd;
+			mptSmp.nLoopEnd = std::max(loopEnd.get(), uint32(1)) - 1;
 			LimitMax(mptSmp.nLoopEnd, mptSmp.nLength);
 			if(mptSmp.nLoopStart + 4 >= mptSmp.nLoopEnd) mptSmp.nLoopStart = mptSmp.nLoopEnd = 0;
 			if(mptSmp.nLoopEnd) mptSmp.uFlags.set(CHN_LOOP);

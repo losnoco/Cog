@@ -277,6 +277,15 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			madeWithTracker = mpt::format(U_("Impulse Tracker 2.14p%1"))(fileHeader.cwtv - S3MFileHeader::trkIT2_14);
 		}
+		if(fileHeader.cwtv >= S3MFileHeader::trkIT2_07 && fileHeader.reserved3 != 0)
+		{
+			// Starting from  version 2.07, IT stores the total edit time of a module in the "reserved" field
+			uint32 editTime = DecodeITEditTimer(fileHeader.cwtv, fileHeader.reserved3);
+
+			FileHistory hist;
+			hist.openTime = static_cast<uint32>(editTime * (HISTORY_TIMER_PRECISION / 18.2));
+			m_FileHistory.push_back(hist);
+		}
 		nonCompatTracker = true;
 		m_nMinPeriod = 1;
 		break;
@@ -287,7 +296,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			m_playBehaviour.set(kST3LimitPeriod);
 		} else
 		{
-			madeWithTracker = GetSchismTrackerVersion(fileHeader.cwtv);
+			madeWithTracker = GetSchismTrackerVersion(fileHeader.cwtv, fileHeader.reserved2);
 			m_nMinPeriod = 1;
 			isSchism = true;
 		}

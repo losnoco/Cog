@@ -344,19 +344,19 @@ static void CopyPatternName(CPattern &pattern, FileReader &file)
 
 
 // Get version of Schism Tracker that was used to create an IT/S3M file.
-mpt::ustring CSoundFile::GetSchismTrackerVersion(uint16 cwtv)
+mpt::ustring CSoundFile::GetSchismTrackerVersion(uint16 cwtv, uint32 reserved)
 {
 	// Schism Tracker version information in a nutshell:
 	// < 0x020: a proper version (files saved by such versions are likely very rare)
 	// = 0x020: any version between the 0.2a release (2005-04-29?) and 2007-04-17
 	// = 0x050: anywhere from 2007-04-17 to 2009-10-31
 	// > 0x050: the number of days since 2009-10-31
+	// = 0xFFF: any version starting from 2020-10-28 (exact version stored in reserved value)
 
 	cwtv &= 0xFFF;
-	mpt::ustring version;
 	if(cwtv > 0x050)
 	{
-		int32 date = SchismVersionFromDate<2009, 10, 31>::date + cwtv - 0x050;
+		int32 date = SchismVersionFromDate<2009, 10, 31>::date + (cwtv < 0xFFF ? cwtv - 0x050 : reserved);
 		int32 y = static_cast<int32>((Util::mul32to64(10000, date) + 14780) / 3652425);
 		int32 ddd = date - (365 * y + y / 4 - y / 100 + y / 400);
 		if(ddd < 0)
@@ -365,15 +365,14 @@ mpt::ustring CSoundFile::GetSchismTrackerVersion(uint16 cwtv)
 			ddd = date - (365 * y + y / 4 - y / 100 + y / 400);
 		}
 		int32 mi = (100 * ddd + 52) / 3060;
-		version = mpt::format(U_("Schism Tracker %1-%2-%3"))(
+		return mpt::format(U_("Schism Tracker %1-%2-%3"))(
 			mpt::ufmt::dec0<4>(y + (mi + 2) / 12),
 			mpt::ufmt::dec0<2>((mi + 2) % 12 + 1),
 			mpt::ufmt::dec0<2>(ddd - (mi * 306 + 5) / 10 + 1));
 	} else
 	{
-		version = mpt::format(U_("Schism Tracker 0.%1"))(mpt::ufmt::hex(cwtv));
+		return mpt::format(U_("Schism Tracker 0.%1"))(mpt::ufmt::hex0<2>(cwtv));
 	}
-	return version;
 }
 
 
@@ -1197,16 +1196,8 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 				}
 				if(m_FileHistory.empty() && fileHeader.reserved != 0)
 				{
-					// Starting from  version 2.07, IT encrypts the total edit time of a module in the "reserved" field
-					uint32 editTime = fileHeader.reserved;
-					if(fileHeader.cwtv >= 0x0208)
-					{
-						editTime ^= 0x4954524B;	// 'ITRK'
-						editTime = (editTime >> 7) | (editTime << (32 - 7));
-						editTime = -(int32)editTime;
-						editTime = (editTime << 4) | (editTime >> (32 - 4));
-						editTime ^= 0x4A54484C;	// 'JTHL'
-					}
+					// Starting from  version 2.07, IT stores the total edit time of a module in the "reserved" field
+					uint32 editTime = DecodeITEditTimer(fileHeader.cwtv, fileHeader.reserved);
 
 					FileHistory hist;
 					hist.openTime = static_cast<uint32>(editTime * (HISTORY_TIMER_PRECISION / 18.2));
@@ -1215,7 +1206,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			break;
 		case 1:
-			madeWithTracker = GetSchismTrackerVersion(fileHeader.cwtv);
+			madeWithTracker = GetSchismTrackerVersion(fileHeader.cwtv, fileHeader.reserved);
 			// Hertz in linear mode: Added 2015-01-29, https://github.com/schismtracker/schismtracker/commit/671b30311082a0e7df041fca25f989b5d2478f69
 			if(fileHeader.cwtv < SchismVersionFromDate<2015, 01, 29>::Version())
 				m_playBehaviour.reset(kHertzInLinearMode);

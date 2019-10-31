@@ -1133,7 +1133,7 @@ std::string module_impl::get_metadata( const std::string & key ) const {
 	} else if ( key == std::string("title") ) {
 		return mod_string_to_utf8( m_sndFile->GetTitle() );
 	} else if ( key == std::string("date") ) {
-		if ( m_sndFile->GetFileHistory().empty() ) {
+		if ( m_sndFile->GetFileHistory().empty() || !m_sndFile->GetFileHistory().back().HasValidDate() ) {
 			return std::string();
 		}
 		return mpt::ToCharset(mpt::CharsetUTF8, m_sndFile->GetFileHistory().back().AsISO8601() );

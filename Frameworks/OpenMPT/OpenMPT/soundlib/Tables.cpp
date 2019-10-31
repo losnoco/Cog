@@ -765,12 +765,9 @@ void CResampler::InitializeTablesFromScratch(bool force)
 	{
 		initParameterIndependentTables = true;
 	}
-	#ifdef MODPLUG_TRACKER
-		if(!StaticTablesInitialized)
-		{
-			initParameterIndependentTables = true;
-		}
-	#endif // MODPLUG_TRACKER
+#ifdef MODPLUG_TRACKER
+	initParameterIndependentTables = !StaticTablesInitialized;
+#endif  // MODPLUG_TRACKER
 
 	MPT_MAYBE_CONSTANT_IF(initParameterIndependentTables)
 	{
@@ -802,7 +799,7 @@ void CResampler::InitializeTablesFromScratch(bool force)
 static const CResampler & GetCachedResampler()
 {
 	static CResampler s_CachedResampler(true);
-	return s_CachedResampler;	
+	return s_CachedResampler;
 }
 
 

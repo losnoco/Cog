@@ -536,10 +536,7 @@ bool CSoundFile::Create(FileReader file, ModLoadingFlags loadFlags)
 	m_PlayState.m_nCurrentRowsPerBeat = m_nDefaultRowsPerBeat;
 	m_PlayState.m_nCurrentRowsPerMeasure = m_nDefaultRowsPerMeasure;
 	m_PlayState.m_nGlobalVolume = static_cast<int32>(m_nDefaultGlobalVolume);
-	m_PlayState.m_lHighResRampingGlobalVolume = m_PlayState.m_nGlobalVolume<<VOLUMERAMPPRECISION;
-	m_PlayState.m_nGlobalVolumeDestination = m_PlayState.m_nGlobalVolume;
-	m_PlayState.m_nSamplesToGlobalVolRampDest = 0;
-	m_PlayState.m_nGlobalVolumeRampAmount = 0;
+	m_PlayState.ResetGlobalVolumeRamping();
 	m_PlayState.m_nNextOrder = 0;
 	m_PlayState.m_nCurrentOrder = 0;
 	m_PlayState.m_nPattern = 0;
@@ -766,11 +763,8 @@ void CSoundFile::ResetPlayPos()
 	m_PlayState.m_nMusicSpeed = m_nDefaultSpeed;
 	m_PlayState.m_nMusicTempo = m_nDefaultTempo;
 
-	// do not ramp global volume when starting playback
-	m_PlayState.m_lHighResRampingGlobalVolume = m_PlayState.m_nGlobalVolume<<VOLUMERAMPPRECISION;
-	m_PlayState.m_nGlobalVolumeDestination = m_PlayState.m_nGlobalVolume;
-	m_PlayState.m_nSamplesToGlobalVolRampDest = 0;
-	m_PlayState.m_nGlobalVolumeRampAmount = 0;
+	// Do not ramp global volume when starting playback
+	m_PlayState.ResetGlobalVolumeRamping();
 
 	m_PlayState.m_nNextOrder = 0;
 	m_PlayState.m_nNextRow = 0;
@@ -780,7 +774,6 @@ void CSoundFile::ResetPlayPos()
 	m_PlayState.m_nFrameDelay = 0;
 	m_PlayState.m_nNextPatStartRow = 0;
 	m_PlayState.m_lTotalSampleCount = 0;
-	//m_nSeqOverride = 0;
 }
 
 

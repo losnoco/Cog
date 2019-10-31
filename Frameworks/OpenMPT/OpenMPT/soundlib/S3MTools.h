@@ -44,6 +44,7 @@ struct S3MFileHeader
 		trkCreamTracker		= 0x7000,
 
 		trkST3_20			= 0x1320,
+		trkIT2_07			= 0x3207,
 		trkIT2_14			= 0x3214,
 		trkBeRoTrackerOld	= 0x4100,	// Used from 2004 to 2012
 		trkCamoto			= 0xCA00,
@@ -82,7 +83,9 @@ struct S3MFileHeader
 	uint8le  masterVolume;		// Sample Volume (0...127, stereo if high bit is set)
 	uint8le  ultraClicks;		// Number of channels used for ultra click removal
 	uint8le  usePanningTable;	// 0xFC => read extended panning table
-	char     reserved2[8];		// More reserved bytes
+	uint16le reserved2;			// Schism Tracker uses this for its extended version information
+	uint32le reserved3;			// Impulse Tracker hides its edit timer here
+	uint16le reserved4;
 	uint16le special;			// Pointer to special custom data (unused)
 	uint8le  channels[32];		// Channel setup
 };

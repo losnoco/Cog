@@ -140,7 +140,7 @@ public:
 	{
 		CTuningRTI *pT = new CTuningRTI();
 		pT->SetName(name);
-		VRPAIR range = std::make_pair(s_StepMinDefault, static_cast<NOTEINDEXTYPE>(s_StepMinDefault + s_RatioTableSizeDefault - 1));
+		VRPAIR range = std::make_pair(s_StepMinDefault, static_cast<NOTEINDEXTYPE>(static_cast<NOTEINDEXTYPE>(s_StepMinDefault) + static_cast<NOTEINDEXTYPE>(s_RatioTableSizeDefault) - 1));
 		range.second = std::max(range.second, mpt::saturate_cast<NOTEINDEXTYPE>(ratios.size() - 1));
 		range.first = 0 - range.second - 1;
 		if(pT->CreateGroupGeometric(ratios, groupratio, range, 0) != false)

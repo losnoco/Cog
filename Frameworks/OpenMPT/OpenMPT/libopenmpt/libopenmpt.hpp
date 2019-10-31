@@ -251,7 +251,7 @@ LIBOPENMPT_CXX_API double could_open_probability( std::istream & stream, double 
 
 //! Roughly scan the input stream to find out whether libopenmpt might be able to open it
 /*!
-  \deprecated Please use openmpt::module::could_open_probability().
+  \deprecated Please use openmpt::could_open_probability().
 */
 LIBOPENMPT_ATTR_DEPRECATED LIBOPENMPT_CXX_API LIBOPENMPT_DEPRECATED double could_open_propability( std::istream & stream, double effort = 1.0, std::ostream & log = std::clog );
 
