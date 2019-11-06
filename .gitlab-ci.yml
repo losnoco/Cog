@@ -4,4 +4,4 @@ stages:
 build_project:
   stage: build
   script:
-    - xcodebuild -workspace "./Cog.xcodeproj/project.xcworkspace" -scheme Cog -configuration Release build
+    - xcodebuild -workspace "./Cog.xcodeproj/project.xcworkspace"  build
