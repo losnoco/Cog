@@ -9,3 +9,8 @@ build_project:
   script:
     - cp "$DEV_TEAM_FILE" Xcode-config/DEVELOPMENT_TEAM.xcconfig
     - xcodebuild -workspace "./Cog.xcodeproj/project.xcworkspace" -scheme Cog -configuration Release build -derivedDataPath "./CogBuilds"
+    - ditto -c -k --sequesterRsrc --keepParent  "./CogBuilds/Build/Products/Release/Cog.app" "./CogBuilds/Cog.app.zip" 
+  artifacts:
+    paths: 
+    - ./CogBuilds/Cog.app.zip
+    expire_in: 1 week
