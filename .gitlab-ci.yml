@@ -4,5 +4,5 @@ stages:
 build_project:
   stage: build
   script:
-    - echo "$DEV_TEAM_FILE" > Xcode-config/DEVELOPMENT_TEAM.xcconfig
+    - cp "$DEV_TEAM_FILE" Xcode-config/DEVELOPMENT_TEAM.xcconfig
     - xcodebuild -workspace "./Cog.xcodeproj/project.xcworkspace" -scheme Cog -configuration Release build -derivedDataPath "./CogBuilds"
