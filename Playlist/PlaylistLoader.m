@@ -466,14 +466,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (void)loadInfoForEntries:(NSArray *)entries
 {
     NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
-    long batchCount = ([entries count] / 16) + ([entries count] % 16 ? 1 : 0);
-    NSMutableArray *array = [[NSMutableArray alloc] init];
     long i, j;
-    
-    for (i = 0; i < batchCount; ++i)
-    {
-        [array addObject:[[NSMutableArray alloc] init]];
-    }
     
     i = 0;
     for (PlaylistEntry *pe in entries)
@@ -482,7 +475,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         
         [update_indexes addIndex:pe.index];
         
-        [[array objectAtIndex:i / 16] addObject:pe];
         ++i;
     }
     
@@ -498,11 +490,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     __block NSLock *weakLock = outLock;
     __block NSMutableArray *weakArray = outArray;
     
-    for (NSArray *a in array)
     {
-        if (![a count]) continue;
-        
-        __block NSArray *weakA = a;
+        __block NSArray *weakA = entries;
         
         NSBlockOperation *op = [[NSBlockOperation alloc] init];
         [op addExecutionBlock:^{
