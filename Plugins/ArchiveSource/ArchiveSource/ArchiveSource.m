@@ -27,6 +27,8 @@ static NSString * path_unpack_string(NSString * src, NSRange * remainder)
         .length = bar.location - 1
     };
     NSUInteger length = [[src substringWithRange:lengthRange] integerValue];
+    if (length >= ([src length] - bar.location - 1))
+        return nil;
     NSRange pathRange = {
         .location = bar.location + 1,
         .length = length
