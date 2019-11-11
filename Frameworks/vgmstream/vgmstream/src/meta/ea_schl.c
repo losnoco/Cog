@@ -173,13 +173,25 @@ VGMSTREAM * init_vgmstream_ea_schl_video(STREAMFILE *streamFile) {
 
 
     /* check extension */
-    /* .vp6: ~late */
-    if (!check_extensions(streamFile,"vp6"))
+    /* .uv: early */
+    /* .dct: early-mid [ex. Need for Speed II SE (PC), FIFA 98 (PC)] */
+    /* .mad: mid */
+    /* .vp6: late */
+    if (check_extensions(streamFile, "vp6")) {
+        /* check initial movie block id */
+        if (read_32bitBE(0x00, streamFile) != 0x4D566864) /* "MVhd" */
+            goto fail;
+    } else if (check_extensions(streamFile, "uv,dct")) {
+        /* starts with audio header block */
+        if (read_32bitBE(0x00, streamFile) != EA_BLOCKID_HEADER) /* "SCHl" */
+            goto fail;
+    } else if (check_extensions(streamFile, "mad")) {
+        /* check initial movie block id */
+        if (read_32bitBE(0x00, streamFile) != 0x4D41446B) /* "MADk" */
+            goto fail;
+    } else {
         goto fail;
-
-    /* check initial movie block id */
-    if (read_32bitBE(0x00,streamFile) != 0x4D566864) /* "MVhd" */
-        goto fail;
+    }
 
     /* use block size to check endianness */
     if (guess_endianness32bit(0x04, streamFile)) {
@@ -208,7 +220,7 @@ VGMSTREAM * init_vgmstream_ea_schl_video(STREAMFILE *streamFile) {
         offset += block_size;
     }
 
-    if (start_offset == 0)
+    if (offset >= get_streamfile_size(streamFile))
         goto fail;
 
     /* find target subsong (one per each SHxx multilang block) */
@@ -469,6 +481,10 @@ VGMSTREAM * init_vgmstream_ea_hdr_dat(STREAMFILE *streamFile) {
     STREAMFILE *datFile = NULL;
     VGMSTREAM *vgmstream;
 
+    /* checks */
+    if (!check_extensions(streamFile, "hdr"))
+        goto fail;
+
     /* main header is machine endian but it's not important here */
     /* 0x00: ID */
     /* 0x02: sub-ID (used for different police voices in NFS games) */
@@ -540,6 +556,10 @@ VGMSTREAM * init_vgmstream_ea_hdr_dat_v2(STREAMFILE *streamFile) {
     STREAMFILE *datFile = NULL;
     VGMSTREAM *vgmstream;
 
+    /* checks */
+    if (!check_extensions(streamFile, "hdr"))
+        goto fail;
+
     /* main header is machine endian but it's not important here */
     /* 0x00: ID */
     /* 0x02: userdata size */
@@ -603,12 +623,22 @@ fail:
 
 
 /* open map/mpf+mus pairs that aren't exact pairs, since EA's games can load any combo */
-static STREAMFILE * open_mapfile_pair(STREAMFILE *streamFile) {
+static STREAMFILE* open_mapfile_pair(STREAMFILE *streamFile) {
     static const char *const mapfile_pairs[][2] = {
         /* standard cases, replace map part with mus part (from the end to preserve prefixes) */
         {"MUS_CTRL.MPF","MUS_STR.MUS"}, /* GoldenEye - Rogue Agent (PS2) */
         {"mus_ctrl.mpf","mus_str.mus"}, /* GoldenEye - Rogue Agent (others) */
         {".mpf","_main.mus"}, /* 007 - Everything or Nothing (GC) */
+        {"AKA_Mus.mpf","Track.mus"}, /* Boogie (PS2) */
+        //TODO: improve pairs (needs better wildcard support)
+        //NSF2:
+        /* ZTRxxROK.MAP > ZTRxx.TRJ */
+        /* ZTRxxTEC.MAP > ZTRxx.TRM */
+        /* ZZSHOW.MAP and ZZSHOW2.MAP > ZZSHOW.MUS */
+        //NSF3:
+        /* ZTRxxROK.MAP > ZZZTRxxA.TRJ */
+        /* ZTRxxTEC.MAP > ZZZTRxxB.TRM */
+        /* other extra files that may need the hack below */
         /* hack when when multiple maps point to the same mus, uses name before "+"
          * ex. ZZZTR00A.TRJ+ZTR00PGR.MAP or ZZZTR00A.TRJ+ZTR00R0A.MAP both point to ZZZTR00A.TRJ */
         {"+",""}, /* Need for Speed III (PS1) */
@@ -1645,7 +1675,7 @@ static void update_ea_stream_size_and_samples(STREAMFILE* streamFile, off_t star
     }
 
     /* manually read totals */
-    block_update(start_offset, vgmstream);
+    vgmstream->next_block_offset = start_offset;
     while (vgmstream->next_block_offset < file_size) {
         block_update_ea_schl(vgmstream->next_block_offset, vgmstream);
         if (vgmstream->current_block_samples < 0)
@@ -1673,7 +1703,7 @@ static void update_ea_stream_size_and_samples(STREAMFILE* streamFile, off_t star
     }
 
     /* reset once we're done */
-    block_update(start_offset, vgmstream);
+    block_update_ea_schl(start_offset, vgmstream);
     
     /* only use calculated samples with multiple subfiles (rarely header samples may be less due to padding) */
     if (standalone && multiple_schl) {

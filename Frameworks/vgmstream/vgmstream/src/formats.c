@@ -6,10 +6,16 @@
  * to inform plugins that need it. Common extensions are commented out to avoid stealing them
  * and possibly adding an unwanted association to the player. */
 
+/* Common extensions (like .wav or .ogg) should go in the common_extension_list. It should only
+ * contain common formats that vgmstream can also parse, to avoid hijacking them (since their
+ * plugins typically are faster and have desirable features vgmstream won't handle). Extensions of
+ * formats not parsed don't need to go there (for example .stm is a Scream Tracker Module elsewhere,
+ * but our .stm is very different so there is no conflict). */
+
 /* Some extensions require external libraries and could be #ifdef, not worth. */
 
 /* Formats marked as "not parsed" mean they'll go through FFmpeg, the header/extension isn't
- * parsed by vgmstream and typically won't not be fully accurate. May have a .ext.pos pair for fun. */
+ * parsed by vgmstream and typically won't not be fully accurate. */
 
 
 static const char* extension_list[] = {
@@ -25,7 +31,6 @@ static const char* extension_list[] = {
 
     //"aac", //common
     "aa3", //FFmpeg/not parsed (ATRAC3/ATRAC3PLUS/MP3/LPCM/WMA)
-    "aaap",
     "aax",
     "abk",
     //"ac3", //common, FFmpeg/not parsed (AC3)
@@ -131,6 +136,7 @@ static const char* extension_list[] = {
     "data",
     "dax",
     "dbm",
+    "dct",
     "dcs",
     "ddsp",
     "de2",
@@ -175,7 +181,7 @@ static const char* extension_list[] = {
     "gin",
     "gms",
     "gsb",
-    //"gsf", //conflicts with GBA gsf plugins?
+    "gsf",
     "gtd",
     "gwm",
 
@@ -211,6 +217,7 @@ static const char* extension_list[] = {
     "imc",
     "int",
     "is14",
+    "isb",
     "isd",
     "isws",
     "itl",
@@ -268,6 +275,7 @@ static const char* extension_list[] = {
     "lwma", //fake extension for .wma, FFmpeg/not parsed
 
     "mab",
+    "mad",
     "map",
     "matx",
     "mc3",
@@ -444,7 +452,7 @@ static const char* extension_list[] = {
     "sss",
     "ster",
     "sth",
-    //"stm", //common
+    "stm",
     "stma", //fake extension/header id for .stm
     "str",
     "stream",
@@ -568,6 +576,7 @@ static const char* extension_list[] = {
     "ydsp",
     "ymf",
 
+    "zic",
     "zsd",
     "zsm",
     "zss",
@@ -585,7 +594,6 @@ static const char* common_extension_list[] = {
     "aiff", //common
     "bin", //common
     "flac", //common
-    "gsf", //conflicts with GBA gsf plugins?
     "mp+", //common [Moonshine Runners (PC)]
     "mp2", //common
     "mp3", //common
@@ -593,7 +601,6 @@ static const char* common_extension_list[] = {
     "mpc", //common
     "ogg", //common
     "opus", //common
-    "stm", //common
     "wav", //common
 };
 
@@ -830,7 +837,7 @@ static const meta_info meta_info_list[] = {
         {meta_RFRM,                 "Retro Studios RFRM header"},
         {meta_NGC_ADPDTK,           "Nintendo ADP raw header"},
         {meta_RSF,                  "Retro Studios RSF raw header"},
-        {meta_AFC,                  "Nintendo AFC header"},
+        {meta_AFC,                  "Nintendo .AFC header"},
         {meta_AST,                  "Nintendo AST header"},
         {meta_HALPST,               "HAL Laboratory HALPST header"},
         {meta_DSP_RS03,             "Retro Studios RS03 header"},
@@ -864,6 +871,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_VAGi,             "Sony VAGi header"},
         {meta_PS2_VAGp,             "Sony VAGp header"},
         {meta_PS2_pGAV,             "Sony pGAV header"},
+        {meta_PS2_VAGp_AAAP,        "Acclaim Austin AAAp VAG header"},
         {meta_SEB,                  "Game Arts .SEB header"},
         {meta_STR_WAV,              "Blitz Games .STR+WAV header"},
         {meta_PS2_ILD,              "ILD header"},
@@ -1021,7 +1029,6 @@ static const meta_info meta_info_list[] = {
         {meta_WII_BNS,              "Nintendo BNS header"},
         {meta_WII_WAS,              "Sumo Digital iSWS header"},
         {meta_XBOX_HLWAV,           "Half Life 2 bgm header"},
-        {meta_STX,                  "Nintendo .stx header"},
         {meta_MYSPD,                "U-Sing .MYSPD header"},
         {meta_HIS,                  "Her Interactive HIS header"},
         {meta_PS2_AST,              "KOEI AST header"},
@@ -1029,7 +1036,7 @@ static const meta_info meta_info_list[] = {
         {meta_DMSG,                 "RIFF/DMSGsegh header"},
         {meta_PONA_3DO,             "Policenauts BGM header"},
         {meta_PONA_PSX,             "Policenauts BGM header"},
-        {meta_NGC_DSP_AAAP,         "Acclaim Austin AAAp header"},
+        {meta_NGC_DSP_AAAP,         "Acclaim Austin AAAp DSP header"},
         {meta_NGC_DSP_KONAMI,       "Konami DSP header"},
         {meta_PS2_STER,             "STER Header"},
         {meta_BNSF,                 "Namco Bandai BNSF header"},
@@ -1240,6 +1247,8 @@ static const meta_info meta_info_list[] = {
         {meta_XMV_VALVE,            "Valve XMV header"},
         {meta_UBI_HX,               "Ubisoft HXx header"},
         {meta_BMP_KONAMI,           "Konami BMP header"},
+        {meta_ISB,                  "Creative ISACT header"},
+        {meta_XSSB,                 "Artoon XSSB header"},
 
 };
 

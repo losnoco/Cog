@@ -332,7 +332,6 @@ typedef enum {
     meta_NDS_SWAV,          /* Asphalt Urban GT 1 & 2 */
     meta_NDS_RRDS,          /* Ridge Racer DS */
     meta_WII_BNS,           /* Wii BNS Banner Sound (similar to RSTM) */
-    meta_STX,               /* Pikmin .stx */
     meta_WIIU_BTSND,        /* Wii U Boot Sound */
 
     meta_ADX_03,            /* CRI ADX "type 03" */
@@ -364,6 +363,7 @@ typedef enum {
     meta_PS2_VAGi,          /* VAGi Interleaved File */
     meta_PS2_VAGp,          /* VAGp Mono File */
     meta_PS2_pGAV,          /* VAGp with Little Endian Header */
+    meta_PS2_VAGp_AAAP,     /* Acclaim Austin Audio VAG header */
     meta_SEB,
     meta_STR_WAV,           /* Blitz Games STR+WAV files */
     meta_PS2_ILD,           /* ILD File */
@@ -726,6 +726,8 @@ typedef enum {
     meta_XMV_VALVE,
     meta_UBI_HX,
     meta_BMP_KONAMI,
+    meta_ISB,
+    meta_XSSB,
 
 } meta_t;
 
@@ -870,14 +872,14 @@ typedef struct {
     int32_t samples_into_block;     /* number of samples into the current block/interleave/segment/etc */
     off_t current_block_offset;     /* start of this block (offset of block header) */
     size_t current_block_size;      /* size in usable bytes of the block we're in now (used to calculate num_samples per block) */
-    size_t current_block_samples;   /* size in samples of the block we're in now (used over current_block_size if possible) */
+    int32_t current_block_samples;   /* size in samples of the block we're in now (used over current_block_size if possible) */
     off_t next_block_offset;        /* offset of header of the next block */
     /* layout/block loop state */
     int32_t loop_sample;            /* saved from current_sample (same as loop_start_sample, but more state-like) */
     int32_t loop_samples_into_block;/* saved from samples_into_block */
     off_t loop_block_offset;        /* saved from current_block_offset */
     size_t loop_block_size;         /* saved from current_block_size */
-    size_t loop_block_samples;      /* saved from current_block_samples */
+    int32_t loop_block_samples;      /* saved from current_block_samples */
     off_t loop_next_block_offset;   /* saved from next_block_offset */
 
     /* loop state */
