@@ -59,6 +59,7 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 - (IBAction)next:(id)sender;
 - (IBAction)prev:(id)sender;
 - (IBAction)seek:(id)sender;
+- (IBAction)seek:(id)sender toTime:(NSTimeInterval)time;
 - (IBAction)eventSeekForward:(id)sender;
 - (void)seekForward:(double)sender;
 - (IBAction)eventSeekBackward:(id)sender;
@@ -66,6 +67,8 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 - (IBAction)fade:(id)sender;
 
 - (IBAction)spam;
+
+- (void)sendMetaData;
 
 - (void)initDefaults;
 - (void)audioFadeDown:(NSTimer *)audioTimer;

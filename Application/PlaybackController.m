@@ -8,6 +8,12 @@
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 
+#import <MediaPlayer/MPNowPlayingInfoCenter.h>
+#import <MediaPlayer/MPRemoteCommandCenter.h>
+#import <MediaPlayer/MPRemoteCommand.h>
+#import <MediaPlayer/MPMediaItem.h>
+#import <MediaPlayer/MPRemoteCommandEvent.h>
+
 #import "Logging.h"
 
 @implementation PlaybackController
@@ -75,6 +81,8 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	{
 		[self pauseResume:self];
 	}
+    
+    [self sendMetaData];
 }
 
 - (IBAction)pauseResume:(id)sender
@@ -89,6 +97,8 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 {
 	[audioPlayer pause];
 	[self setPlaybackStatus: kCogStatusPaused];
+    
+    [self sendMetaData];
 }
 
 - (IBAction)resume:(id)sender
@@ -100,6 +110,8 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 - (IBAction)stop:(id)sender
 {
 	[audioPlayer stop];
+
+    [self sendMetaData];
 }
 
 //called by double-clicking on table
@@ -177,6 +189,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
         [playlistLoader performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
     }
 #endif
+    
+    [self sendMetaData];
 	
 	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused];
 }
@@ -204,6 +218,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	[self setPosition:pos];
     
     [[playlistController currentEntry] setCurrentPosition:pos];
+    
+    [self sendMetaData];
 }
 
 - (IBAction)seek:(id)sender
@@ -215,6 +231,19 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     [self setPosition:time];
 
 	[[playlistController currentEntry] setCurrentPosition:time];
+    
+    [self sendMetaData];
+}
+
+- (IBAction)seek:(id)sender toTime:(NSTimeInterval)position
+{
+    double time = (double)(position);
+    
+    [audioPlayer seekToTime:time];
+    
+    [self setPosition:time];
+    
+    [[playlistController currentEntry] setCurrentPosition:time];
 }
 
 - (IBAction)spam
@@ -244,6 +273,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 		[audioPlayer seekToTime:seekTo];
 		[self setPosition:seekTo];
 	}
+    
+    [self sendMetaData];
 }
 
 - (IBAction)eventSeekBackward:(id)sender
@@ -260,6 +291,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 	[audioPlayer seekToTime:seekTo];
 	[self setPosition:seekTo];
+    
+    [self sendMetaData];
 }
 
 /*
@@ -587,6 +620,39 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 {
 	return seekable && [[playlistController currentEntry] seekable];
 }
+
+- (void)sendMetaData {
+    MPNowPlayingInfoCenter * defaultCenter = [MPNowPlayingInfoCenter defaultCenter];
+    
+    if (defaultCenter) {
+        PlaylistEntry * entry = [playlistController currentEntry];
+        NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
+        
+        if (entry) {
+            if ([entry title])
+                [songInfo setObject:[entry title] forKey:MPMediaItemPropertyTitle];
+            if ([entry artist])
+                [songInfo setObject:[entry artist] forKey:MPMediaItemPropertyArtist];
+            if ([entry album])
+                [songInfo setObject:[entry album] forKey:MPMediaItemPropertyAlbumTitle];
+            [songInfo setObject:[NSNumber numberWithFloat:[entry currentPosition]] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+            [songInfo setObject:[entry length] forKey:MPMediaItemPropertyPlaybackDuration];
+            [songInfo setObject:[NSNumber numberWithFloat:[entry index]] forKey:MPMediaItemPropertyPersistentID];
+        }
+
+        if (playbackStatus == kCogStatusPlaying) {
+            [MPNowPlayingInfoCenter defaultCenter].playbackState = MPNowPlayingPlaybackStatePlaying;
+        } else if (playbackStatus == kCogStatusPaused) {
+            [MPNowPlayingInfoCenter defaultCenter].playbackState = MPNowPlayingPlaybackStatePaused;
+        } else {
+            [MPNowPlayingInfoCenter defaultCenter].playbackState = MPNowPlayingPlaybackStateStopped;
+        }
+
+        [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:songInfo];
+    }
+}
+
+
 
 
 @end

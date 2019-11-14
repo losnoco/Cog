@@ -92,9 +92,12 @@ OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *us
 
 
 - (void)clickPlay;
+- (void)clickPause;
+- (void)clickStop;
 - (void)clickPrev;
 - (void)clickNext;
 - (void)clickSpam;
+- (void)clickSeek: (NSTimeInterval)position;
 
 - (IBAction)increaseFontSize:(id)sender;
 - (IBAction)decreaseFontSize:(id)sender;

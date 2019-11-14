@@ -11,6 +11,12 @@
 #import "SPMediaKeyTap.h"
 #import "Logging.h"
 
+#import <MediaPlayer/MPNowPlayingInfoCenter.h>
+#import <MediaPlayer/MPRemoteCommandCenter.h>
+#import <MediaPlayer/MPRemoteCommand.h>
+#import <MediaPlayer/MPMediaItem.h>
+#import <MediaPlayer/MPRemoteCommandEvent.h>
+
 @implementation MediaKeysApplication
 
 +(void)initialize;
@@ -25,18 +31,40 @@
 
 - (void)finishLaunching {
     [super finishLaunching];
-
+    
     [[NSUserDefaults standardUserDefaults] addObserver:self
                                             forKeyPath:@"allowLastfmMediaKeys"
                                                options:NSKeyValueObservingOptionNew
                                                context:nil];
-
-    keyTap = [[SPMediaKeyTap alloc] initWithDelegate:self];
-    if([SPMediaKeyTap usesGlobalMediaKeyTap]) {
-        [keyTap startWatchingMediaKeys];
+    
+    MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+    
+    if (remoteCommandCenter) {
+        [remoteCommandCenter.playCommand setEnabled:YES];
+        [remoteCommandCenter.pauseCommand setEnabled:YES];
+        [remoteCommandCenter.togglePlayPauseCommand setEnabled:YES];
+        [remoteCommandCenter.changePlaybackPositionCommand setEnabled:YES];
+        [remoteCommandCenter.nextTrackCommand setEnabled:YES];
+        [remoteCommandCenter.previousTrackCommand setEnabled:YES];
+        
+        [[remoteCommandCenter playCommand] addTarget:[self delegate] action:@selector(clickPlay)];
+        [[remoteCommandCenter pauseCommand] addTarget:[self delegate] action:@selector(clickPause)];
+        [[remoteCommandCenter togglePlayPauseCommand] addTarget:[self delegate] action:@selector(clickPlay)];
+        [[remoteCommandCenter changePlaybackPositionCommand] addTarget:self action:@selector(clickSeek:)];
+        [[remoteCommandCenter nextTrackCommand] addTarget:[self delegate] action:@selector(clickNext)];
+        [[remoteCommandCenter previousTrackCommand] addTarget:[self delegate] action:@selector(clickPrev)];
+    } else {
+        keyTap = [[SPMediaKeyTap alloc] initWithDelegate:self];
+        if([SPMediaKeyTap usesGlobalMediaKeyTap]) {
+            [keyTap startWatchingMediaKeys];
+        }
+        else
+            ALog(@"Media key monitoring disabled");
     }
-    else
-        ALog(@"Media key monitoring disabled");
+}
+
+- (void)clickSeek: (MPChangePlaybackPositionCommandEvent*)event {
+    [(AppController *)[self delegate] clickSeek:event.positionTime];
 }
 
 - (void)sendEvent: (NSEvent*)event

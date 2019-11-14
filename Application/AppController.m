@@ -521,6 +521,16 @@
 	[playbackController playPauseResume:self];
 }
 
+- (void)clickPause
+{
+    [playbackController pause:self];
+}
+
+- (void)clickStop
+{
+    [playbackController stop:self];
+}
+
 - (void)clickPrev
 {
 	[playbackController prev:nil];
@@ -534,6 +544,11 @@
 - (void)clickSpam
 {
     [playbackController spam];
+}
+
+- (void)clickSeek:(NSTimeInterval)position
+{
+    [playbackController seek:self toTime:position];
 }
 
 - (void)changeFontSize:(float)size
