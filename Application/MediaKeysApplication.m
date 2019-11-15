@@ -37,9 +37,9 @@
                                                options:NSKeyValueObservingOptionNew
                                                context:nil];
     
-    MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
-    
-    if (remoteCommandCenter) {
+    if (NSClassFromString(@"MPRemoteCommandCenter")) {
+        MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+        
         [remoteCommandCenter.playCommand setEnabled:YES];
         [remoteCommandCenter.pauseCommand setEnabled:YES];
         [remoteCommandCenter.togglePlayPauseCommand setEnabled:YES];

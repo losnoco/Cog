@@ -622,9 +622,9 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 }
 
 - (void)sendMetaData {
-    MPNowPlayingInfoCenter * defaultCenter = [MPNowPlayingInfoCenter defaultCenter];
-    
-    if (defaultCenter) {
+    if (NSClassFromString(@"MPNowPlayingInfoCenter")) {
+        MPNowPlayingInfoCenter * defaultCenter = [MPNowPlayingInfoCenter defaultCenter];
+
         PlaylistEntry * entry = [playlistController currentEntry];
         NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
         
@@ -641,14 +641,14 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
         }
 
         if (playbackStatus == kCogStatusPlaying) {
-            [MPNowPlayingInfoCenter defaultCenter].playbackState = MPNowPlayingPlaybackStatePlaying;
+            defaultCenter.playbackState = MPNowPlayingPlaybackStatePlaying;
         } else if (playbackStatus == kCogStatusPaused) {
-            [MPNowPlayingInfoCenter defaultCenter].playbackState = MPNowPlayingPlaybackStatePaused;
+            defaultCenter.playbackState = MPNowPlayingPlaybackStatePaused;
         } else {
-            [MPNowPlayingInfoCenter defaultCenter].playbackState = MPNowPlayingPlaybackStateStopped;
+            defaultCenter.playbackState = MPNowPlayingPlaybackStateStopped;
         }
 
-        [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:songInfo];
+        [defaultCenter setNowPlayingInfo:songInfo];
     }
 }
 

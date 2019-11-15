@@ -174,7 +174,6 @@
 		838491881808593200E7332D /* NDHotKey.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8384917E1808585D00E7332D /* NDHotKey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		83AB903E237CEFD300A433D5 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AB9031237CEFD300A433D5 /* MediaPlayer.framework */; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5AB020E4C87100631CD4 /* DualWindow.m */; };
 		83BC5ABF20E4CE7A00631CD4 /* InfoInspector.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B0D00F6320EA00694C57 /* InfoInspector.xib */; };
@@ -1071,7 +1070,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83AB903E237CEFD300A433D5 /* MediaPlayer.framework in Frameworks */,
 				83E6B7651816178200D4576D /* Sparkle.framework in Frameworks */,
 				838491871808591F00E7332D /* NDHotKey.framework in Frameworks */,
 				8355D6B8180613FB00D05687 /* Security.framework in Frameworks */,
@@ -2863,6 +2861,8 @@
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,
+					"-weak_framework",
+					MediaPlayer,
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -2900,6 +2900,8 @@
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,
+					"-weak_framework",
+					MediaPlayer,
 					"-undefined",
 					dynamic_lookup,
 				);
