@@ -155,8 +155,9 @@
 		return YES;
 	}
 	else if (301 == statusCode || 302 == statusCode) { // Redirect
-		NSURL *redirectURL = [[NSURL alloc] initWithString:[self valueForResponseHeader:@"Location"]];
-		[self setURL:redirectURL];
+        // Handle relative redirects as well
+        NSURL *redirectURL = [[NSURL alloc] initWithString:[self valueForResponseHeader:@"Location"] relativeToURL:[self URL]];
+		[self setURL:[redirectURL absoluteURL]];
 		[self close];
 		return [self connect];
 	}
@@ -169,7 +170,25 @@
 {
 	NSURL *url = [self URL];
 	
-	NSString *path = [url path];
+    NSString *path;
+    NSString *host;
+    NSNumber *port;
+    
+    if (NSClassFromString(@"NSURLComponents")) {
+        // Resolves trailing slash issue, but requires 10.9+
+        
+        NSURLComponents * urlComponents = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:YES];
+        
+        path = urlComponents.path;
+        host = urlComponents.host;
+        port = urlComponents.port;
+    }
+    else {
+        path = [url path];
+        host = [url host];
+        port = [url port];
+    }
+    
 	if (nil == path || [path isEqualToString:@""]) {
 		path = @"/";
 	}
@@ -178,9 +197,8 @@
 	NSMutableString *requestString = [[NSMutableString alloc] initWithFormat:@"GET %@ HTTP/1.0\r\n", path];
 	
 	// Make sure there is a Host entry
-	NSString *host = [url host];
-	if (nil != [url port]) {
-		host = [NSString stringWithFormat:@"%@:%@", [url host], [url port]];
+	if (nil != port) {
+		host = [NSString stringWithFormat:@"%@:%@", host, port];
 	}
 	
 	[self setValue:host forRequestHeader:@"Host"];
@@ -197,7 +215,7 @@
 	
 	// Get the bytes out of it
 	const char *requestBytes = [requestString UTF8String];
-	int requestLength = strlen(requestBytes);
+	long requestLength = strlen(requestBytes);
 	
 	// Send it off!
 	NSInteger sent = [_socket send:requestBytes amount:requestLength];
@@ -214,11 +232,22 @@
 - (BOOL)connect
 {
 	NSURL *url = [self URL];
-	NSString *host = [url host];
+    NSString *host;
+    NSNumber *portNumber;
+    
+    if (NSClassFromString(@"NSURLComponents")) {
+        NSURLComponents * urlComponents = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:YES];
+        
+        host = urlComponents.host;
+        portNumber = urlComponents.port;
+    }
+    else {
+        host = [url host];
+        portNumber = [url port];
+    }
 
 	// Get the port number
-	NSNumber *portNumber = [url port];
-	NSInteger port = [portNumber integerValue];
+	int port = (int) [portNumber integerValue];
 	if (portNumber == nil) {
 		port = 80; // Default for HTTP
 	}
