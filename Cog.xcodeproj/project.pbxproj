@@ -195,8 +195,6 @@
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
 		8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */; };
 		8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6889230AAA403C00AD3950 /* Carbon.framework */; };
-		8E75756E09F31D5A0080F1EE /* FeedbackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752509F31D5A0080F1EE /* FeedbackController.m */; };
-		8E75756F09F31D5A0080F1EE /* FeedbackSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752709F31D5A0080F1EE /* FeedbackSocket.m */; };
 		8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752C09F31D5A0080F1EE /* DNDArrayController.m */; };
 		8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752E09F31D5A0080F1EE /* PlaylistController.m */; };
 		8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75753009F31D5A0080F1EE /* PlaylistEntry.m */; };
@@ -1041,10 +1039,6 @@
 		8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
 		8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
 		8E6889230AAA403C00AD3950 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
-		8E75752409F31D5A0080F1EE /* FeedbackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FeedbackController.h; sourceTree = "<group>"; };
-		8E75752509F31D5A0080F1EE /* FeedbackController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FeedbackController.m; sourceTree = "<group>"; };
-		8E75752609F31D5A0080F1EE /* FeedbackSocket.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FeedbackSocket.h; sourceTree = "<group>"; };
-		8E75752709F31D5A0080F1EE /* FeedbackSocket.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FeedbackSocket.m; sourceTree = "<group>"; };
 		8E75752B09F31D5A0080F1EE /* DNDArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DNDArrayController.h; sourceTree = "<group>"; };
 		8E75752C09F31D5A0080F1EE /* DNDArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DNDArrayController.m; sourceTree = "<group>"; };
 		8E75752D09F31D5A0080F1EE /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistController.h; sourceTree = "<group>"; };
@@ -1105,7 +1099,6 @@
 				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
 				17DDF6400E0CB6F100A2E4AD /* FileTree */,
 				17D1B0FE0F63252900694C57 /* InfoInspector */,
-				8E75752309F31D5A0080F1EE /* Feedback */,
 				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
 				1766C68D0B911DF1004A7AE4 /* AudioScrobbler */,
 				17E0D5F60F520F42005B6FED /* Transformers */,
@@ -1807,17 +1800,6 @@
 			name = "Preference Panes";
 			sourceTree = "<group>";
 		};
-		8E75752309F31D5A0080F1EE /* Feedback */ = {
-			isa = PBXGroup;
-			children = (
-				8E75752409F31D5A0080F1EE /* FeedbackController.h */,
-				8E75752509F31D5A0080F1EE /* FeedbackController.m */,
-				8E75752609F31D5A0080F1EE /* FeedbackSocket.h */,
-				8E75752709F31D5A0080F1EE /* FeedbackSocket.m */,
-			);
-			path = Feedback;
-			sourceTree = "<group>";
-		};
 		8E75752A09F31D5A0080F1EE /* Playlist */ = {
 			isa = PBXGroup;
 			children = (
@@ -2504,8 +2486,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				8E75756E09F31D5A0080F1EE /* FeedbackController.m in Sources */,
-				8E75756F09F31D5A0080F1EE /* FeedbackSocket.m in Sources */,
 				8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */,
 				8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */,
 				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,

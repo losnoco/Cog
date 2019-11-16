@@ -332,7 +332,16 @@
 
 - (IBAction)donate:(id)sender
 {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://pledgie.com/campaigns/31642"]];
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.me/kode54"]];
+}
+
+- (IBAction)feedback:(id)sender
+{
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+
+    NSString *url = @"https://kode54.net/contact";
+    
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", url, version]]];
 }
 
 - (void)initDefaults
