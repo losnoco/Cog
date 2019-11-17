@@ -72,37 +72,48 @@
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
-	if (![url isFileURL]) 
-		return [NSArray array];
-	
-	NSString *filename = [url path];
-	
-	NSStringEncoding encoding;
-	NSError *error;
-	NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
-    if (error) {
-		DLog(@"Trying UTF8");
-        error = nil;
-        contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
+    char * filecontents = nil;
+    
+    {
+        id audioSourceClass = NSClassFromString(@"AudioSource");
+        id<CogSource> source = [audioSourceClass audioSourceForURL:url];
+        
+        if (![source open:url])
+            return [NSArray array];
+        
+        long size = 0;
+        long bytesread = 0;
+
+        do {
+            filecontents = (char *) realloc(filecontents, size + 1024);
+            bytesread = [source read:(filecontents + size) amount:1024];
+            size += bytesread;
+        } while (bytesread == 1024);
+        
+        filecontents = (char *) realloc(filecontents, size + 1);
+            
+        filecontents[size] = '\0';
     }
-	if (error) {
+    
+    DLog(@"Trying UTF8");
+	NSStringEncoding encoding = NSUTF8StringEncoding;
+    NSString *contents = [NSString stringWithCString:filecontents encoding:encoding];
+    if (!contents) {
 		DLog(@"Trying windows GB 18030 2000");
-		error = nil;
-		contents = [NSString stringWithContentsOfFile:filename encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000) error:&error];
+		contents = [NSString stringWithCString:filecontents encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)];
 	}
-    if (error) {
+    if (!contents) {
 		DLog(@"Trying windows CP1251");
-        error = nil;
-        contents = [NSString stringWithContentsOfFile:filename encoding:NSWindowsCP1251StringEncoding error:&error];
+        contents = [NSString stringWithCString:filecontents encoding:NSWindowsCP1251StringEncoding];
 	}
-    if (error) {
+    if (!contents) {
 		DLog(@"Trying latin1");
-        error = nil;
-        contents = [NSString stringWithContentsOfFile:filename encoding:NSISOLatin1StringEncoding error:&error];
+        contents = [NSString stringWithCString:filecontents encoding:NSISOLatin1StringEncoding];
 	}
-	if (error || !contents) {
-		ALog(@"Could not open file...%@ %@ %@", filename, contents, error);
-		return nil;
+    free(filecontents);
+	if (!contents) {
+		ALog(@"Could not open file...%@ %@", url, contents);
+		return [NSArray array];
 	}
 	
 	NSMutableArray *entries = [NSMutableArray array];
@@ -124,7 +135,7 @@
 		}
 		
 		//need to add basepath if its a file, and convert to URL
-		[entries addObject:[self urlForPath:rhs relativeTo:filename]];
+		[entries addObject:[self urlForPath:rhs relativeTo:[url path]]];
 	}
 	
 	return entries;
