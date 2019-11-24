@@ -81,10 +81,14 @@ static STREAMFILE *cogsf_create(id file, const char *path) {
 }
 
 STREAMFILE *cogsf_create_from_path(const char *path) {
-    id<CogSource> source;
     NSString * urlString = [NSString stringWithUTF8String:path];
     NSURL * url = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
+    return cogsf_create_from_url(url);
+}
+
+STREAMFILE *cogsf_create_from_url(NSURL * url) {
+    id<CogSource> source;
     id audioSourceClass = NSClassFromString(@"AudioSource");
     source = [audioSourceClass audioSourceForURL:url];
     
@@ -94,7 +98,7 @@ STREAMFILE *cogsf_create_from_path(const char *path) {
     if (![source seekable])
         return 0;
     
-    return cogsf_create(source, path);
+    return cogsf_create(source, [[[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String]);
 }
 
 VGMSTREAM *init_vgmstream_from_cogfile(const char *path, int subsong) {

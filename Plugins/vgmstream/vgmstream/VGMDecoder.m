@@ -35,10 +35,72 @@
     int sampleRate = stream->sample_rate;
     int channels = stream->channels;
     long totalFrames = get_vgmstream_play_samples( 2.0, 10.0, 10.0, stream );
-    long framesFade = stream->loop_flag ? sampleRate * 10 : 0;
-    long framesLength = totalFrames - framesFade;
     
     int bitrate = get_vgmstream_average_bitrate(stream);
+    
+    NSURL *folder = [url URLByDeletingLastPathComponent];
+    NSURL *tagurl = [folder URLByAppendingPathComponent:@"!tags.m3u" isDirectory:NO];
+    
+    NSString *filename = [url lastPathComponent];
+
+    NSString *album = @"";
+    NSString *artist = @"";
+    NSNumber *year = [NSNumber numberWithInt:0];
+    NSNumber *track = [NSNumber numberWithInt:0];
+    NSString *title = @"";
+
+    NSNumber *rgTrackGain = [NSNumber numberWithInt:0];
+    NSNumber *rgTrackPeak = [NSNumber numberWithInt:0];
+    NSNumber *rgAlbumGain = [NSNumber numberWithInt:0];
+    NSNumber *rgAlbumPeak = [NSNumber numberWithInt:0];
+    
+    STREAMFILE *tagFile = cogsf_create_from_url(tagurl);
+    if (tagFile) {
+        VGMSTREAM_TAGS *tags;
+        const char *tag_key, *tag_val;
+        
+        tags = vgmstream_tags_init(&tag_key, &tag_val);
+        vgmstream_tags_reset(tags, [filename UTF8String]);
+        while (vgmstream_tags_next_tag(tags, tagFile)) {
+            NSString *value = [NSString stringWithUTF8String:tag_val];
+            if (!strncasecmp(tag_key, "REPLAYGAIN_", strlen("REPLAYGAIN_"))) {
+                if (!strncasecmp(tag_key+strlen("REPLAYGAIN_"), "TRACK_", strlen("TRACK_"))) {
+                    if (!strcasecmp(tag_key+strlen("REPLAYGAIN_TRACK_"), "GAIN")) {
+                        rgTrackGain = [NSNumber numberWithFloat:[value floatValue]];
+                    }
+                    else if (!strcasecmp(tag_key+strlen("REPLAYGAIN_TRACK_"), "PEAK")) {
+                        rgTrackPeak = [NSNumber numberWithFloat:[value floatValue]];
+                    }
+                }
+                else if (!strncasecmp(tag_key+strlen("REPLAYGAIN_"), "ALBUM_", strlen("ALBUM_"))) {
+                    if (!strcasecmp(tag_key+strlen("REPLAYGAIN_ALBUM_"), "GAIN")) {
+                        rgAlbumGain = [NSNumber numberWithFloat:[value floatValue]];
+                    }
+                    else if (!strcasecmp(tag_key+strlen("REPLAYGAIN_ALBUM_"), "PEAK")) {
+                        rgAlbumPeak = [NSNumber numberWithFloat:[value floatValue]];
+                    }
+                }
+            }
+            else if (!strcasecmp(tag_key, "ALBUM")) {
+                album = value;
+            }
+            else if (!strcasecmp(tag_key, "ARTIST")) {
+                artist = value;
+            }
+            else if (!strcasecmp(tag_key, "DATE")) {
+                year = [NSNumber numberWithInt:[value intValue]];
+            }
+            else if (!strcasecmp(tag_key, "TRACK") ||
+                     !strcasecmp(tag_key, "TRACKNUMBER")) {
+                track = [NSNumber numberWithInt:[value intValue]];
+            }
+            else if (!strcasecmp(tag_key, "TITLE")) {
+                title = value;
+            }
+        }
+        vgmstream_tags_close(tags);
+        close_streamfile(tagFile);
+    }
     
     NSDictionary * properties =
         [NSDictionary dictionaryWithObjectsAndKeys:
@@ -52,19 +114,31 @@
             @"host", @"endian",
             nil];
 
-    NSString * title;
-    
-    if ( stream->num_streams > 1 ) {
-        title = [NSString stringWithFormat:@"%@ - %s", [[url URLByDeletingPathExtension] lastPathComponent], stream->stream_name];
-    } else {
-        title = [[url URLByDeletingPathExtension] lastPathComponent];
+    if ( [title isEqualToString:@""] ) {
+        if ( stream->num_streams > 1 ) {
+            title = [NSString stringWithFormat:@"%@ - %s", [[url URLByDeletingPathExtension] lastPathComponent], stream->stream_name];
+        } else {
+            title = [[url URLByDeletingPathExtension] lastPathComponent];
+        }
     }
+    
+    if ( [track isEqualToNumber:[NSNumber numberWithInt:0]] )
+        track = [NSNumber numberWithInt:track_num];
 
-    NSDictionary * metadata =
-        [NSDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary * mutableMetadata =
+        [NSMutableDictionary dictionaryWithObjectsAndKeys:
             title, @"title",
-            [NSNumber numberWithInt:track_num], @"track",
+            track, @"track",
             nil];
+    
+    if ( ![album isEqualToString:@""] )
+        [mutableMetadata setValue:album forKey:@"album"];
+    if ( ![artist isEqualToString:@""] )
+        [mutableMetadata setValue:artist forKey:@"artist"];
+    if ( ![year isEqualToNumber:[NSNumber numberWithInt:0]] )
+        [mutableMetadata setValue:year forKey:@"year"];
+    
+    NSDictionary * metadata = mutableMetadata;
 
     NSDictionary * package =
         [NSDictionary dictionaryWithObjectsAndKeys:

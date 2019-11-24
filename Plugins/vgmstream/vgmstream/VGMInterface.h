@@ -7,6 +7,7 @@
 //
 
 #import <libvgmstream/vgmstream.h>
+#import <libvgmstream/plugins.h>
 
 typedef struct _COGSTREAMFILE {
     STREAMFILE sf;
@@ -14,5 +15,7 @@ typedef struct _COGSTREAMFILE {
     off_t offset;
     char name[PATH_LIMIT];
 } COGSTREAMFILE;
+
+STREAMFILE *cogsf_create_from_url(NSURL * url);
 
 VGMSTREAM *init_vgmstream_from_cogfile(const char *path, int subsong);
