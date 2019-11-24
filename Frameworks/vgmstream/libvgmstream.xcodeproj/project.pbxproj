@@ -417,7 +417,6 @@
 		836F704418BDC2190095E648 /* ws_aud.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F0818BDC2190095E648 /* ws_aud.c */; };
 		836F704518BDC2190095E648 /* wvs.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F0918BDC2190095E648 /* wvs.c */; };
 		836F704618BDC2190095E648 /* x360_tra.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F0A18BDC2190095E648 /* x360_tra.c */; };
-		836F704718BDC2190095E648 /* xbox_hlwav.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F0B18BDC2190095E648 /* xbox_hlwav.c */; };
 		836F704818BDC2190095E648 /* xbox_ims.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F0C18BDC2190095E648 /* xbox_ims.c */; };
 		836F704E18BDC2190095E648 /* xss.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F1218BDC2190095E648 /* xss.c */; };
 		836F704F18BDC2190095E648 /* xwb.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6F1318BDC2190095E648 /* xwb.c */; };
@@ -545,7 +544,7 @@
 		83C7282022BC893D00678B4A /* dcs_wav.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7280C22BC893D00678B4A /* dcs_wav.c */; };
 		83C7282122BC893D00678B4A /* msf_konami.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7280D22BC893D00678B4A /* msf_konami.c */; };
 		83C7282222BC893D00678B4A /* mta2_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C7280E22BC893D00678B4A /* mta2_streamfile.h */; };
-		83C7282722BC8C1500678B4A /* plugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C7282322BC8C1300678B4A /* plugins.h */; };
+		83C7282722BC8C1500678B4A /* plugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C7282322BC8C1300678B4A /* plugins.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83C7282822BC8C1500678B4A /* mixing.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C7282422BC8C1400678B4A /* mixing.h */; };
 		83C7282922BC8C1500678B4A /* mixing.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7282522BC8C1400678B4A /* mixing.c */; };
 		83C7282A22BC8C1500678B4A /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7282622BC8C1400678B4A /* plugins.c */; };
@@ -1105,7 +1104,6 @@
 		836F6F0818BDC2190095E648 /* ws_aud.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ws_aud.c; sourceTree = "<group>"; };
 		836F6F0918BDC2190095E648 /* wvs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wvs.c; sourceTree = "<group>"; };
 		836F6F0A18BDC2190095E648 /* x360_tra.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = x360_tra.c; sourceTree = "<group>"; };
-		836F6F0B18BDC2190095E648 /* xbox_hlwav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xbox_hlwav.c; sourceTree = "<group>"; };
 		836F6F0C18BDC2190095E648 /* xbox_ims.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xbox_ims.c; sourceTree = "<group>"; };
 		836F6F1218BDC2190095E648 /* xss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xss.c; sourceTree = "<group>"; };
 		836F6F1318BDC2190095E648 /* xwb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xwb.c; sourceTree = "<group>"; };
@@ -1917,7 +1915,6 @@
 				833A7A2D1ED11961003EC53E /* xau.c */,
 				837CEAEE23487F2C00E62A4A /* xavs_streamfile.h */,
 				837CEAE423487F2A00E62A4A /* xavs.c */,
-				836F6F0B18BDC2190095E648 /* xbox_hlwav.c */,
 				836F6F0C18BDC2190095E648 /* xbox_ims.c */,
 				8350C0541E071881009E0A93 /* xma.c */,
 				834FE0DC215C79EA000A5D3D /* xmd.c */,
@@ -1987,6 +1984,7 @@
 				83A21F87201D8981000F04B9 /* fsb_keys.h in Headers */,
 				834FE0EC215C79ED000A5D3D /* kma9_streamfile.h in Headers */,
 				8349A90F1FE6258200E26435 /* aix_streamfile.h in Headers */,
+				83C7282722BC8C1500678B4A /* plugins.h in Headers */,
 				834FE0ED215C79ED000A5D3D /* fsb_interleave_streamfile.h in Headers */,
 				8351F32E2212B57000A606E4 /* ubi_bao_streamfile.h in Headers */,
 				8349A9111FE6258200E26435 /* bar_streamfile.h in Headers */,
@@ -2020,7 +2018,6 @@
 				834FE0B5215C798C000A5D3D /* acm_decoder_libacm.h in Headers */,
 				839E21E61F2EDAF100EE54D7 /* vorbis_custom_data_wwise.h in Headers */,
 				834FE103215C79ED000A5D3D /* ea_schl_streamfile.h in Headers */,
-				83C7282722BC8C1500678B4A /* plugins.h in Headers */,
 				83F0AA6021E2028C004BBC04 /* vsv_streamfile.h in Headers */,
 				83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */,
 				48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */,
@@ -2622,7 +2619,6 @@
 				834FE0EE215C79ED000A5D3D /* ue4opus.c in Sources */,
 				836F6FEA18BDC2190095E648 /* ps2_msa.c in Sources */,
 				836F6F3618BDC2190095E648 /* ogg_vorbis_decoder.c in Sources */,
-				836F704718BDC2190095E648 /* xbox_hlwav.c in Sources */,
 				8306B0E520984590000302D4 /* ubi_lyn.c in Sources */,
 				836F6F7618BDC2190095E648 /* brstm.c in Sources */,
 				836F700718BDC2190095E648 /* ps2_vgv.c in Sources */,
