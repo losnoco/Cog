@@ -71,6 +71,7 @@
         if (!_builder->getStatus())
             return NO;
     }
+    else return NO;
     
     SidConfig conf = engine->config();
     conf.frequency = 44100;
