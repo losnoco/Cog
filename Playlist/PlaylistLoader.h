@@ -49,6 +49,9 @@ typedef enum {
 
 - (void)loadInfoForEntries:(NSArray *)entries;
 
+// To be dispatched on main thread only
+- (void)syncLoadInfoForEntries:(NSArray *)entries;
+
 - (NSArray *)acceptableFileTypes;
 - (NSArray *)acceptablePlaylistTypes; //Only m3u and pls saving
 - (NSArray *)acceptableContainerTypes;

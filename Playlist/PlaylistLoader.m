@@ -455,12 +455,64 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
 	//Clear the selection
     [playlistController setSelectionIndexes:[NSIndexSet indexSet]];
-	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
+    
+    NSArray * firstEntry = [NSArray arrayWithObject:[entries objectAtIndex:0]];
+    NSMutableArray * restOfEntries = [NSMutableArray arrayWithArray:entries];
+    [restOfEntries removeObjectAtIndex:0];
+    
+    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:firstEntry waitUntilDone:YES];
+	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:restOfEntries];
 	return entries;
 }
 
 static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
     dispatch_get_current_queue() == queue ? block() : dispatch_sync(queue, block);
+}
+
+// To be called on main thread only
+- (void)syncLoadInfoForEntries:(NSArray *)entries
+{
+    NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
+    long i;
+    
+    i = 0;
+    for (PlaylistEntry *pe in entries)
+    {
+        if ([pe metadataLoaded]) continue;
+        
+        [update_indexes addIndex:pe.index];
+        
+        ++i;
+    }
+    
+    if (!i)
+    {
+        [self->playlistController updateTotalTime];
+        return;
+    }
+    
+    {
+        for (PlaylistEntry *pe in entries)
+        {
+            NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
+        
+            NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
+            if (entryProperties == nil)
+                continue;
+        
+            [entryInfo addEntriesFromDictionary:entryProperties];
+            [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
+            
+            [pe setMetadata:entryInfo];
+        }
+    }
+
+    [self->playlistController updateTotalTime];
+    
+    {
+        unsigned long columns = [[[self->playlistView documentView] tableColumns] count];
+        [self->playlistView.documentView reloadDataForRowIndexes:update_indexes columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns-1)]];
+    }
 }
 
 - (void)loadInfoForEntries:(NSArray *)entries
