@@ -228,6 +228,12 @@ static int parse_musx_stream(STREAMFILE *streamFile, musx_header *musx) {
             musx->codec = DAT;
             break;
 
+        case 0x50435F5F: /* "PC__" */
+            default_channels = 2;
+            default_sample_rate = 44100;
+            musx->codec = DAT;
+            break;
+
         default:
             VGM_LOG("MUSX: unknown platform %x\n", musx->platform);
             goto fail;
@@ -294,18 +300,26 @@ static int parse_musx_stream(STREAMFILE *streamFile, musx_header *musx) {
         musx->loop_flag         = (musx->loop_start_sample >= 0);
     }
 
-    /* fix some v10 sizes */
+    /* fix some v10 platform (like PSP) sizes */
     if (musx->stream_size == 0) {
-        off_t offset;
         musx->stream_size = musx->file_size - musx->stream_offset;
 
-        /* remove padding */
-        offset = musx->stream_offset + musx->stream_size - 0x04;
-        while (offset > 0) {
-            if (read_32bit(offset, streamFile) != 0xABABABAB)
-                break;
-            musx->stream_size -= 0x04;
-            offset -= 0x04;
+        /* always padded to nearest 0x800 sector */
+        if (musx->stream_size > 0x800) {
+            uint8_t buf[0x800];
+            int pos;
+            off_t offset = musx->stream_offset + musx->stream_size - 0x800;
+
+            if (read_streamfile(buf, offset, sizeof(buf), streamFile) != 0x800)
+                goto fail;
+
+            pos = 0x800 - 0x04;
+            while (pos > 0) {
+                if (get_u32be(buf + pos) != 0xABABABAB)
+                    break;
+                musx->stream_size -= 0x04;
+                pos -= 0x04;
+            }
         }
     }
 
@@ -334,9 +348,9 @@ static int parse_musx(STREAMFILE *streamFile, musx_header *musx) {
             musx->is_old = 1;
             break;
 
-        case 4:     /* Spyro: A Hero's Tail (PS2/Xbox/GC) */
+        case 4:     /* Spyro: A Hero's Tail (PS2/Xbox/GC), Athens 2004 (PC) */
         case 5:     /* Predator: Concrete Jungle (PS2/Xbox), Robots (GC) */
-        case 6:     /* Batman Begins (GC), Ice Age 2 (PS2) */
+        case 6:     /* Batman Begins (GC), Ice Age 2 (PS2/PC) */
             musx->platform = read_32bitBE(0x10,streamFile);
             /* 0x14: some id/hash? */
             /* 0x18: platform number? */
@@ -352,7 +366,10 @@ static int parse_musx(STREAMFILE *streamFile, musx_header *musx) {
             /* 0x1c: null */
             /* 0x20: hash */
             musx->tables_offset = 0; /* no tables */
-            musx->big_endian = (musx->platform == 0x5749495F || musx->platform == 0x5053335F); /* "GC__" / "PS3_" (only after header) */
+            musx->big_endian = (musx->platform == 0x47435F5F || /* "GC__" */
+                musx->platform == 0x58455F5F || /* "XE__" */
+                musx->platform == 0x5053335F || /* "PS3_" */
+                musx->platform == 0x5749495F); /* "WII_" */
             break;
 
         default:
@@ -438,6 +455,7 @@ static int parse_musx(STREAMFILE *streamFile, musx_header *musx) {
                     uint32_t miniheader = read_32bitBE(0x40, streamFile);
                     switch(miniheader) {
                         case 0x44415434: /* "DAT4" */
+                        case 0x44415435: /* "DAT5" */
                         case 0x44415438: /* "DAT8" */
                             /* found on PS3/Wii (but not always?) */
                             musx->stream_size = read_32bitLE(0x44, streamFile);
@@ -446,7 +464,14 @@ static int parse_musx(STREAMFILE *streamFile, musx_header *musx) {
                             musx->loops_offset = 0x50;
                             break;
                         default:
-                            musx->loops_offset = 0x30;
+                            if (read_32bitBE(0x30, streamFile) == 0x00 &&
+                                read_32bitBE(0x34, streamFile) == 0x00) {
+                                /* no subheader [Spider-Man 4 (Wii)] */
+                                musx->loops_offset = 0x00;
+                            } else {
+                                /* loop info only [G-Force (PS3)] */
+                                musx->loops_offset = 0x30;
+                            }
                             break;
                     }
                 }
@@ -528,9 +553,6 @@ static int parse_musx(STREAMFILE *streamFile, musx_header *musx) {
                 /* 0x1c: sub-id? */
                 musx->channels = 1;
             }
-
-
-            VGM_LOG("to=%lx, %lx, %x\n", target_offset, musx->stream_offset, musx->stream_size);
 
             if (coef_size == 0)
                 musx->coefs_offset = 0; /* disable for later detection */

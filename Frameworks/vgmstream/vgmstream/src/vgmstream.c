@@ -285,14 +285,14 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_mn_str,
     init_vgmstream_mss,
     init_vgmstream_ps2_hsf,
-    init_vgmstream_ps3_ivag,
+    init_vgmstream_ivag,
     init_vgmstream_ps2_2pfs,
     init_vgmstream_xnb,
     init_vgmstream_ubi_ckd,
     init_vgmstream_ps2_vbk,
     init_vgmstream_otm,
     init_vgmstream_bcstm,
-    init_vgmstream_idsp_nus3,
+    init_vgmstream_idsp_namco,
     init_vgmstream_kt_g1l,
     init_vgmstream_kt_wiibgm,
     init_vgmstream_ktss,
@@ -405,6 +405,7 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_hd3_bd3,
     init_vgmstream_bnk_sony,
     init_vgmstream_nus3bank,
+    init_vgmstream_nus3bank_encrypted,
     init_vgmstream_scd_sscf,
     init_vgmstream_dsp_sps_n1,
     init_vgmstream_dsp_itl_ch,
@@ -513,8 +514,8 @@ static VGMSTREAM * init_vgmstream_internal(STREAMFILE *streamFile) {
         if (!vgmstream)
             continue;
 
-        /* fail if there is nothing to play (without this check vgmstream can generate empty files) */
-        if (vgmstream->num_samples <= 0) {
+        /* fail if there is nothing/too much to play (<=0 generates empty files, >N writes GBs of garbage) */
+        if (vgmstream->num_samples <= 0 || vgmstream->num_samples > VGMSTREAM_MAX_NUM_SAMPLES) {
             VGM_LOG("VGMSTREAM: wrong num_samples %i\n", vgmstream->num_samples);
             close_vgmstream(vgmstream);
             continue;

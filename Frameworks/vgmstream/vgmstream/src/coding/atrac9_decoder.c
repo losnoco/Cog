@@ -7,6 +7,7 @@
 #include "libatrac9.h"
 #endif
 
+
 /* opaque struct */
 struct atrac9_codec_data {
     uint8_t *data_buffer;

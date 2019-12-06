@@ -184,6 +184,9 @@ static const adxkey_info adxkey8_list[] = {
         /* Gintama Gin-san to Issho! Boku no Kabukichou Nikki (PS2) [Bandai Namco?] */
         {0x67CD,0x5CA7,0x655F, "gt25809",0},
 
+        /* Lucky Star: RAvish Romance (PS2) [Vridge] */
+        {0x5347,0x4FB7,0x6415, "LUCKYSRARPS2",0},
+
 };
 
 static const adxkey_info adxkey9_list[] = {
@@ -218,6 +221,9 @@ static const adxkey_info adxkey9_list[] = {
 
         /* Mashiro Witch (Android) */
         {0x2669,0x1495,0x2407, NULL,0x55D11D3349495204},    // 55D11D3349495204
+
+        /* Nogizaka46 Rhythm Festival (Android) */
+        {0x2378,0x5511,0x0201, NULL,5613126134333697},      // 0013F11BC5510101
 
 };
 
