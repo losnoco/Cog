@@ -817,7 +817,7 @@
             NSArray * wholeAlbum = [self filterPlaylistOnAlbum:currentAlbum];
             
             // First prune the shuffle list of the currently playing album
-            int i, j;
+            long i, j;
             for (i = 0; i < [shuffleList count];) {
                 if ([wholeAlbum containsObject:[shuffleList objectAtIndex:i]]) {
                     [shuffleList removeObjectAtIndex:i];
@@ -827,28 +827,24 @@
                 }
             }
             
-            // Then insert the playing album at the start, beginning with
-            // the current track
-            BOOL found = NO;
-            for (i = 0, j = 0; i < [wholeAlbum count]; i++) {
-                if (!found && [wholeAlbum objectAtIndex:i] == currentEntry) {
-                    found = YES;
-                }
-                if (found) {
-                    [shuffleList insertObject:[wholeAlbum objectAtIndex:i] atIndex:j];
-                    ++j;
-                }
-            }
+            // Then insert the playing album at the start
+            NSIndexSet * indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [wholeAlbum count])];
             
+            [shuffleList insertObjects:wholeAlbum atIndexes:indexSet];
+
+            // Oops, gotta reset the shuffle indexes
+            for (i = 0, j = [shuffleList count]; i < j; ++i) {
+                [[shuffleList objectAtIndex:i] setShuffleIndex:(int)i];
+            }
         }
         else {
             [shuffleList insertObject:currentEntry atIndex:0];
             [currentEntry setShuffleIndex:0];
 
             //Need to rejigger so the current entry is at the start now...
-            int i;
+            long i, j;
             BOOL found = NO;
-            for (i = 1; i < [shuffleList count] && !found; i++)
+            for (i = 1, j = [shuffleList count]; i < j && !found; i++)
             {
                 if ([shuffleList objectAtIndex:i] == currentEntry)
                 {
@@ -856,7 +852,7 @@
                     [shuffleList removeObjectAtIndex:i];
                 }
                 else {
-                    [[shuffleList objectAtIndex:i] setShuffleIndex: i];
+                    [[shuffleList objectAtIndex:i] setShuffleIndex: (int)i];
                 }
             }
         }
