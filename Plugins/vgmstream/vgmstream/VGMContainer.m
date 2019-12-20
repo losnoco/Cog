@@ -35,23 +35,46 @@
         // input url already has fragment defined - no need to expand further
         return [NSMutableArray arrayWithObject:url];
     }
+    
+    NSString * path = [[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
-    VGMSTREAM * stream = init_vgmstream_from_cogfile([[[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String], 0);
+    VGMSTREAM * stream = init_vgmstream_from_cogfile([path UTF8String], 0);
 	if (!stream)
 	{
 		ALog(@"Open failed for file: %@", [url absoluteString]);
-		return NO;
+		return [NSArray array];
 	}
-    
+
+    VGMInfoCache * sharedMyCache = [VGMInfoCache sharedCache];
+
     NSMutableArray *tracks = [NSMutableArray array];
+    NSURL * trackurl;
     
 	int i;
     int subsongs = stream->num_streams;
     if (subsongs == 0)
         subsongs = 1;
-    for (i = 1; i <= subsongs; ++i) {
-        [tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
+
+    {
+        trackurl = [NSURL URLWithString:[[url absoluteString] stringByAppendingString:@"#1"]];
+        [sharedMyCache stuffURL:trackurl stream:stream];
+        [tracks addObject:trackurl];
     }
+    
+    for (i = 2; i <= subsongs; ++i) {
+        close_vgmstream(stream);
+        
+        stream = init_vgmstream_from_cogfile([path UTF8String], i);
+        
+        if (!stream)
+            return [NSArray array];
+        
+        trackurl = [NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]];
+        [sharedMyCache stuffURL:trackurl stream:stream];
+        [tracks addObject:trackurl];
+    }
+    
+    close_vgmstream(stream);
     
 	return tracks;
 }
