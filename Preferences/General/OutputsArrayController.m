@@ -48,17 +48,20 @@
         
         if (!bufferCount) continue;
 
-		NSDictionary *deviceInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSString stringWithString:(__bridge NSString*)name], @"name",
-			[NSNumber numberWithLong:devids[i]], @"deviceID",
-			nil];
+		NSDictionary *deviceInfo = @{
+			@"name": [NSString stringWithString:(__bridge NSString*)name],
+			@"deviceID": [NSNumber numberWithUnsignedInt:devids[i]],
+		};
 		[self addObject:deviceInfo];
         
         CFRelease(name);
 		
 		if (defaultDevice) {
-			if ([[defaultDevice objectForKey:@"deviceID"] isEqualToNumber:[deviceInfo objectForKey:@"deviceID"]]) {
+			if (([[defaultDevice objectForKey:@"deviceID"] isEqualToNumber:[deviceInfo objectForKey:@"deviceID"]]) ||
+				([[defaultDevice objectForKey:@"name"] isEqualToString:[deviceInfo objectForKey:@"name"]])) {
 				[self setSelectedObjects:[NSArray arrayWithObject:deviceInfo]];
+				// Update `outputDevice`, in case the ID has changed.
+				[[NSUserDefaults standardUserDefaults] setObject:deviceInfo forKey:@"outputDevice"];
 			}
 		}
         else {
