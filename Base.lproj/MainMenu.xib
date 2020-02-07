@@ -1154,7 +1154,7 @@ CA
                                     <action selector="remove:" target="218" id="1409"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show in Finder" keyEquivalent="r" id="1135">
+                            <menuItem title="Show in Finder" keyEquivalent="R" id="1135">
                                 <connections>
                                     <action selector="showEntryInFinder:" target="218" id="1346"/>
                                     <binding destination="218" name="enabled" keyPath="selection.index" id="1449">
@@ -1265,7 +1265,7 @@ CA
                                         <menuItem isSeparatorItem="YES" id="2471">
                                             <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                         </menuItem>
-                                        <menuItem title="Toggle" keyEquivalent="R" id="2472">
+                                        <menuItem title="Toggle" keyEquivalent="r" id="2472">
                                             <connections>
                                                 <action selector="toggleRepeat:" target="218" id="2474"/>
                                             </connections>
