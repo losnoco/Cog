@@ -66,21 +66,15 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 		NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 
-		NSNumber *deviceID = [device objectForKey:@"deviceID"];
-		
-		[self setOutputDevice:(AudioDeviceID)[deviceID longValue]];
+		[self setOutputDeviceWithDeviceDict:device];
 	}
 }
 
 
-
-- (BOOL)setOutputDevice:(AudioDeviceID)outputDevice
-{
-	// Set the output device
-	AudioDeviceID deviceID = outputDevice; //XXX use default if null
+- (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID {
 	OSStatus err;
 	
-	if (outputDevice == -1) {
+	if (deviceID == -1) {
 		DLog(@"DEVICE IS -1");
 		UInt32 size = sizeof(AudioDeviceID);
         AudioObjectPropertyAddress theAddress = {
@@ -91,9 +85,9 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
         err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &size, &deviceID);
 								
 		if (err != noErr) {
-			ALog(@"THERES NO DEFAULT OUTPUT DEVICE");
+			ALog(@"THERE'S NO DEFAULT OUTPUT DEVICE");
 			
-			return NO;
+			return err;
 		}
 	}
 
@@ -101,19 +95,111 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
     outputDeviceID = deviceID;
 	
 	err = AudioUnitSetProperty(outputUnit,
-							  kAudioOutputUnitProperty_CurrentDevice, 
-							  kAudioUnitScope_Output, 
-							  0, 
-							  &deviceID, 
+							  kAudioOutputUnitProperty_CurrentDevice,
+							  kAudioUnitScope_Output,
+							  0,
+							  &deviceID,
 							  sizeof(AudioDeviceID));
 	
+	return err;
+}
+
+- (BOOL)setOutputDeviceWithDeviceDict:(NSDictionary *)deviceDict
+{
+	NSNumber *deviceIDNum = [deviceDict objectForKey:@"deviceID"];
+	AudioDeviceID outputDeviceID = [deviceIDNum unsignedIntValue] ?: -1;
+	
+	__block OSStatus err = [self setOutputDeviceByID:outputDeviceID];
+	
 	if (err != noErr) {
+		// Try matching by name.
+		NSString *userDeviceName = deviceDict[@"name"];
+		[self enumerateAudioOutputsUsingBlock:
+		 ^(NSString *deviceName, AudioDeviceID deviceID, AudioDeviceID systemDefaultID, BOOL *stop) {
+			if ([deviceName isEqualToString:userDeviceName]) {
+				err = [self setOutputDeviceByID:deviceID];
+				
+#if 0
+				// Disable. Would cause loop by triggering `-observeValueForKeyPath:ofObject:change:context:` above.
+				// Update `outputDevice`, in case the ID has changed.
+				NSDictionary *deviceInfo = @{
+					@"name": deviceName,
+					@"deviceID": [NSNumber numberWithUnsignedInt:deviceID],
+				};
+				[[NSUserDefaults standardUserDefaults] setObject:deviceInfo forKey:@"outputDevice"];
+#endif
+				
+				return;
+			}
+		}];
+	}
+	
+	if (err != noErr) {
+
 		ALog(@"No output device could be found, your random error code is %d. Have a nice day!", err);
 		
 		return NO;
 	}
 	
 	return YES;
+}
+
+// The following is largely a copy pasta of -awakeFromNib from "OutputsArrayController.m".
+// TODO: Share the code. (How to do this across xcodeproj?)
+- (void)enumerateAudioOutputsUsingBlock:(void (NS_NOESCAPE ^ _Nonnull)(NSString *deviceName, AudioDeviceID deviceID, AudioDeviceID systemDefaultID, BOOL *stop))block
+{
+	UInt32 propsize;
+	AudioObjectPropertyAddress theAddress = {
+		.mSelector = kAudioHardwarePropertyDevices,
+		.mScope = kAudioObjectPropertyScopeGlobal,
+		.mElement = kAudioObjectPropertyElementMaster
+	};
+	
+	__Verify_noErr(AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize));
+	UInt32 nDevices = propsize / (UInt32)sizeof(AudioDeviceID);
+	AudioDeviceID *devids = malloc(propsize);
+	__Verify_noErr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, devids));
+	
+	theAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
+	AudioDeviceID systemDefault;
+	propsize = sizeof(systemDefault);
+	__Verify_noErr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, &systemDefault));
+	
+	theAddress.mScope = kAudioDevicePropertyScopeOutput;
+	
+	for (UInt32 i = 0; i < nDevices; ++i) {
+		CFStringRef name = NULL;
+		propsize = sizeof(name);
+		theAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
+		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &name));
+		
+		propsize = 0;
+		theAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
+		__Verify_noErr(AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize));
+		
+		if (propsize < sizeof(UInt32)) continue;
+		
+		AudioBufferList * bufferList = (AudioBufferList *) malloc(propsize);
+		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, bufferList));
+		UInt32 bufferCount = bufferList->mNumberBuffers;
+		free(bufferList);
+		
+		if (!bufferCount) continue;
+		
+		BOOL stop = NO;
+		block([NSString stringWithString:(__bridge NSString *)name],
+			  devids[i],
+			  systemDefault,
+			  &stop);
+		
+		CFRelease(name);
+		
+		if (stop) {
+			break;
+		}
+	}
+	
+	free(devids);
 }
 
 - (BOOL)setup
@@ -151,16 +237,16 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	// Setup the output device before mucking with settings
 	NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 	if (device) {
-		BOOL ok = [self setOutputDevice:(AudioDeviceID)[[device objectForKey:@"deviceID"] longValue]];
+		BOOL ok = [self setOutputDeviceWithDeviceDict:device];
 		if (!ok) {
 			//Ruh roh.
-			[self setOutputDevice: -1];
+			[self setOutputDeviceWithDeviceDict:nil];
 			
 			[[[NSUserDefaultsController sharedUserDefaultsController] defaults] removeObjectForKey:@"outputDevice"];
 		}
 	}
 	else {
-		[self setOutputDevice: -1];
+		[self setOutputDeviceWithDeviceDict:nil];
 	}
 	
 	UInt32 size = sizeof (AudioStreamBasicDescription);
