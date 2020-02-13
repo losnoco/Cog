@@ -19,8 +19,6 @@
 		17E41DB80C130AA500AC744D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 17E41DB70C130AA500AC744D /* Localizable.strings */; };
 		17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */ = {isa = PBXBuildFile; fileRef = 17E78A7D0D68BE3C005C5A59 /* file_tree.png */; };
 		17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E78B680D68C1E3005C5A59 /* Preferences.xib */; };
-		3DFAC490235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 3DFAC48E235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig */; };
-		3DFAC491235B6B8100A29416 /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 3DFAC48F235B6B8100A29416 /* Shared.xcconfig */; };
 		8372053718E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372053618E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m */; };
 		837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */; };
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
@@ -365,9 +363,10 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
+						DevelopmentTeam = 4S876G9VCD;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -423,8 +422,6 @@
 				178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */,
 				8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */,
 				172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */,
-				3DFAC491235B6B8100A29416 /* Shared.xcconfig in Resources */,
-				3DFAC490235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8384917818084D9F00E7332D /* growl.png in Resources */,
 				8E15A86C0B894768006DC802 /* updates.png in Resources */,
 				8384917718084D9F00E7332D /* appearance.png in Resources */,

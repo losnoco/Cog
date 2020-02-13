@@ -55,6 +55,7 @@ const char* residfp_version_string = "2.0.1";
 #endif
 }
 
+#undef VERSION
 #define VERSION "2.0.1"
 
 // Inlining on/off.

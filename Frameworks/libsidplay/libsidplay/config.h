@@ -15,5 +15,7 @@
 #define PACKAGE_VERSION "2.0.1"
 #define PACKAGE_URL "http://sourceforge.net/projects/sidplay-residfp/"
 
+#define VERSION "1.0-pre2"
+
 #endif
 
