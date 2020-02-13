@@ -12,7 +12,7 @@
 #define HAVE_STRNCASECMP 1
 
 #define PACKAGE_NAME "reSIDfp"
-#define PACKAGE_VERSION "2.0.0alpha"
+#define PACKAGE_VERSION "2.0.1"
 #define PACKAGE_URL "http://sourceforge.net/projects/sidplay-residfp/"
 
 #endif

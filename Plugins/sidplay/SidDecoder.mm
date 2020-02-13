@@ -43,7 +43,7 @@
 
     const SidTuneInfo * info = tune->getInfo();
     
-    n_channels = info->sidChips();
+    n_channels = 2;
     
     length = 3 * 60 * 44100;
 
@@ -75,7 +75,7 @@
     
     SidConfig conf = engine->config();
     conf.frequency = 44100;
-    conf.playback = (info->sidChips() > 1) ? SidConfig::STEREO : SidConfig::MONO;
+    conf.playback = SidConfig::STEREO;
     conf.sidEmulation = builder;
     if (!engine->config(conf))
         return NO;
@@ -115,6 +115,14 @@
         
         if (rendered <= 0)
             break;
+        
+        for (int i = 0; i < rendered; i += 2) {
+            int16_t * sample = sampleBuffer + total * 2 + i;
+            int mid = (sample[0] + sample[1]) / 2;
+            int side = (sample[0] - sample[1]) / 4;
+            sample[0] = mid + side;
+            sample[1] = mid - side;
+        }
         
         renderedTotal += rendered;
         
