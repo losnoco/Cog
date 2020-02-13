@@ -41,8 +41,6 @@
 	else
 		track_num = [[url fragment] intValue];
 
-    const SidTuneInfo * info = tune->getInfo();
-    
     n_channels = 2;
     
     length = 3 * 60 * 44100;
