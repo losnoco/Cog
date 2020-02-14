@@ -68,8 +68,6 @@
 		830EBE102004655D0023AA10 /* atrac9_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBE0F2004655D0023AA10 /* atrac9_decoder.c */; };
 		830EBE132004656E0023AA10 /* xnb.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBE112004656E0023AA10 /* xnb.c */; };
 		830EBE142004656E0023AA10 /* ktss.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBE122004656E0023AA10 /* ktss.c */; };
-		830EBE19200465B00023AA10 /* libatrac9.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830EBD9720045F1B0023AA10 /* libatrac9.framework */; };
-		830EBE1A200465C00023AA10 /* libatrac9.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830EBD9720045F1B0023AA10 /* libatrac9.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
 		8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8315958720FEC832007002F0 /* asf_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315958320FEC831007002F0 /* asf_decoder.c */; };
@@ -214,6 +212,8 @@
 		8351F32F2212B57000A606E4 /* dsf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8351F32C2212B57000A606E4 /* dsf.c */; };
 		835C883622CC17BE001B4B3F /* bwav.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C883122CC17BD001B4B3F /* bwav.c */; };
 		835C883722CC17BE001B4B3F /* ogg_vorbis_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C883522CC17BE001B4B3F /* ogg_vorbis_streamfile.h */; };
+		836C052B23F62F1A00FA07C7 /* libatrac9.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 835FC6C623F62AEF006960FA /* libatrac9.framework */; };
+		836C052C23F62F3100FA07C7 /* libatrac9.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835FC6C623F62AEF006960FA /* libatrac9.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B4518BDB8880095E648 /* InfoPlist.strings */; };
 		836F6F1E18BDC2190095E648 /* acm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE018BDC2180095E648 /* acm_decoder.c */; };
 		836F6F2018BDC2190095E648 /* adx_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6DE218BDC2180095E648 /* adx_decoder.c */; };
@@ -437,6 +437,23 @@
 		83709E091ECBC1A4005C03D3 /* ta_aac.c in Sources */ = {isa = PBXBuildFile; fileRef = 83709E031ECBC1A4005C03D3 /* ta_aac.c */; };
 		83709E0D1ECBC1C3005C03D3 /* mc3_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83709E0B1ECBC1C3005C03D3 /* mc3_decoder.c */; };
 		83709E0E1ECBC1C3005C03D3 /* psv_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83709E0C1ECBC1C3005C03D3 /* psv_decoder.c */; };
+		8373341623F60C7B00DE14DC /* g7221_decoder_aes.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373340E23F60C7A00DE14DC /* g7221_decoder_aes.h */; };
+		8373341723F60C7B00DE14DC /* g7221_decoder_aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373340F23F60C7A00DE14DC /* g7221_decoder_aes.c */; };
+		8373341823F60C7B00DE14DC /* tgcadpcm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373341023F60C7A00DE14DC /* tgcadpcm_decoder.c */; };
+		8373341923F60C7B00DE14DC /* g7221_decoder_lib_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373341123F60C7A00DE14DC /* g7221_decoder_lib_data.h */; };
+		8373341A23F60C7B00DE14DC /* relic_decoder_mixfft.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373341223F60C7B00DE14DC /* relic_decoder_mixfft.c */; };
+		8373341B23F60C7B00DE14DC /* g7221_decoder_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373341323F60C7B00DE14DC /* g7221_decoder_lib.c */; };
+		8373341C23F60C7B00DE14DC /* relic_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373341423F60C7B00DE14DC /* relic_decoder.c */; };
+		8373341D23F60C7B00DE14DC /* g7221_decoder_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373341523F60C7B00DE14DC /* g7221_decoder_lib.h */; };
+		8373342623F60CDC00DE14DC /* deblock_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373341E23F60CDB00DE14DC /* deblock_streamfile.h */; };
+		8373342723F60CDC00DE14DC /* lrmd_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373341F23F60CDB00DE14DC /* lrmd_streamfile.h */; };
+		8373342823F60CDC00DE14DC /* fda.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342023F60CDB00DE14DC /* fda.c */; };
+		8373342923F60CDC00DE14DC /* deblock_streamfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342123F60CDB00DE14DC /* deblock_streamfile.c */; };
+		8373342A23F60CDC00DE14DC /* lrmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342223F60CDB00DE14DC /* lrmd.c */; };
+		8373342B23F60CDC00DE14DC /* fwse.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342323F60CDB00DE14DC /* fwse.c */; };
+		8373342C23F60CDC00DE14DC /* kwb.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342423F60CDB00DE14DC /* kwb.c */; };
+		8373342D23F60CDC00DE14DC /* bnsf_keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373342523F60CDC00DE14DC /* bnsf_keys.h */; };
+		8373342F23F60D4100DE14DC /* tgc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342E23F60D4100DE14DC /* tgc.c */; };
 		8375737321F9507D00F01AF5 /* oki_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375737221F9507D00F01AF5 /* oki_decoder.c */; };
 		8375737621F950ED00F01AF5 /* gin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375737421F950EC00F01AF5 /* gin.c */; };
 		8375737721F950ED00F01AF5 /* ubi_sb_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375737521F950EC00F01AF5 /* ubi_sb_streamfile.h */; };
@@ -444,7 +461,6 @@
 		837CEA7923487E2500E62A4A /* ubi_adpcm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEA7623487E2400E62A4A /* ubi_adpcm_decoder.c */; };
 		837CEA7A23487E2500E62A4A /* ffmpeg_decoder_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEA7723487E2400E62A4A /* ffmpeg_decoder_utils.c */; };
 		837CEAD823487E8300E62A4A /* bmp_konami.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAD423487E8300E62A4A /* bmp_konami.c */; };
-		837CEAD923487E8300E62A4A /* acb_utf.h in Headers */ = {isa = PBXBuildFile; fileRef = 837CEAD523487E8300E62A4A /* acb_utf.h */; };
 		837CEADA23487E8300E62A4A /* acb.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAD623487E8300E62A4A /* acb.c */; };
 		837CEADB23487E8300E62A4A /* bgw_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 837CEAD723487E8300E62A4A /* bgw_streamfile.h */; };
 		837CEAF123487F2C00E62A4A /* xvas.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEADC23487F2900E62A4A /* xvas.c */; };
@@ -550,8 +566,6 @@
 		83C7282A22BC8C1500678B4A /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7282622BC8C1400678B4A /* plugins.c */; };
 		83CD428A1F787879000F77BE /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CD42851F787878000F77BE /* libswresample.a */; };
 		83D2F58E2356B266007646ED /* libopus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D2F58A2356B266007646ED /* libopus.a */; };
-		83D731101A7394BF00CA1366 /* g7221.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; };
-		83D731111A7394D300CA1366 /* g7221.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D730EB1A738EB300CA1366 /* g7221.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D731891A749D1500CA1366 /* g719.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; };
 		83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D7318C1A749EEE00CA1366 /* g719_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D7318B1A749EEE00CA1366 /* g719_decoder.c */; };
@@ -588,20 +602,6 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
-		830EBD9620045F1B0023AA10 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 830EBD9220045F190023AA10 /* libatrac9.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 830EBD8720045F190023AA10;
-			remoteInfo = libatrac9;
-		};
-		830EBE152004659B0023AA10 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 830EBD9220045F190023AA10 /* libatrac9.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 830EBD8620045F190023AA10;
-			remoteInfo = libatrac9;
-		};
 		8313E3421901FBDD00B4B6F1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */;
@@ -623,19 +623,19 @@
 			remoteGlobalIDString = 730F23A1091827B100AB638C;
 			remoteInfo = Vorbis;
 		};
-		83D730EA1A738EB300CA1366 /* PBXContainerItemProxy */ = {
+		835FC6C523F62AEF006960FA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83D730E51A738EB200CA1366 /* g7221.xcodeproj */;
+			containerPortal = 835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 83D730C91A738EB200CA1366;
-			remoteInfo = g7221;
+			remoteGlobalIDString = 835FC6B023F61BF0006960FA;
+			remoteInfo = libatrac9;
 		};
-		83D7310E1A7394B500CA1366 /* PBXContainerItemProxy */ = {
+		836C052523F62F0000FA07C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 83D730E51A738EB200CA1366 /* g7221.xcodeproj */;
+			containerPortal = 835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 83D730C81A738EB200CA1366;
-			remoteInfo = g7221;
+			remoteGlobalIDString = 835FC6AF23F61BF0006960FA;
+			remoteInfo = libatrac9;
 		};
 		83D7313D1A74968A00CA1366 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -688,10 +688,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				830EBE1A200465C00023AA10 /* libatrac9.framework in CopyFiles */,
+				836C052C23F62F3100FA07C7 /* libatrac9.framework in CopyFiles */,
 				832C70BF1E9335E400BD7B4E /* Vorbis.framework in CopyFiles */,
 				83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */,
-				83D731111A7394D300CA1366 /* g7221.framework in CopyFiles */,
 				8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -757,7 +756,6 @@
 		8306B0D520984590000302D4 /* atsl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atsl.c; sourceTree = "<group>"; };
 		8306B0D620984590000302D4 /* ppst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ppst.c; sourceTree = "<group>"; };
 		8306B0D720984590000302D4 /* ubi_jade.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ubi_jade.c; sourceTree = "<group>"; };
-		830EBD9220045F190023AA10 /* libatrac9.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libatrac9.xcodeproj; path = ../libatrac9/libatrac9.xcodeproj; sourceTree = "<group>"; };
 		830EBE0F2004655D0023AA10 /* atrac9_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = atrac9_decoder.c; sourceTree = "<group>"; };
 		830EBE112004656E0023AA10 /* xnb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xnb.c; sourceTree = "<group>"; };
 		830EBE122004656E0023AA10 /* ktss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ktss.c; sourceTree = "<group>"; };
@@ -903,6 +901,7 @@
 		8351F32C2212B57000A606E4 /* dsf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsf.c; sourceTree = "<group>"; };
 		835C883122CC17BD001B4B3F /* bwav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bwav.c; sourceTree = "<group>"; };
 		835C883522CC17BE001B4B3F /* ogg_vorbis_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ogg_vorbis_streamfile.h; sourceTree = "<group>"; };
+		835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libatrac9.xcodeproj; path = ../libatrac9/libatrac9.xcodeproj; sourceTree = "<group>"; };
 		836F6B3918BDB8880095E648 /* libvgmstream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libvgmstream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F6B4418BDB8880095E648 /* libvgmstream-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "libvgmstream-Info.plist"; sourceTree = "<group>"; };
 		836F6B4618BDB8880095E648 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1128,6 +1127,23 @@
 		83709E031ECBC1A4005C03D3 /* ta_aac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ta_aac.c; sourceTree = "<group>"; };
 		83709E0B1ECBC1C3005C03D3 /* mc3_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc3_decoder.c; sourceTree = "<group>"; };
 		83709E0C1ECBC1C3005C03D3 /* psv_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psv_decoder.c; sourceTree = "<group>"; };
+		8373340E23F60C7A00DE14DC /* g7221_decoder_aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = g7221_decoder_aes.h; sourceTree = "<group>"; };
+		8373340F23F60C7A00DE14DC /* g7221_decoder_aes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g7221_decoder_aes.c; sourceTree = "<group>"; };
+		8373341023F60C7A00DE14DC /* tgcadpcm_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tgcadpcm_decoder.c; sourceTree = "<group>"; };
+		8373341123F60C7A00DE14DC /* g7221_decoder_lib_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = g7221_decoder_lib_data.h; sourceTree = "<group>"; };
+		8373341223F60C7B00DE14DC /* relic_decoder_mixfft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = relic_decoder_mixfft.c; sourceTree = "<group>"; };
+		8373341323F60C7B00DE14DC /* g7221_decoder_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g7221_decoder_lib.c; sourceTree = "<group>"; };
+		8373341423F60C7B00DE14DC /* relic_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = relic_decoder.c; sourceTree = "<group>"; };
+		8373341523F60C7B00DE14DC /* g7221_decoder_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = g7221_decoder_lib.h; sourceTree = "<group>"; };
+		8373341E23F60CDB00DE14DC /* deblock_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deblock_streamfile.h; sourceTree = "<group>"; };
+		8373341F23F60CDB00DE14DC /* lrmd_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lrmd_streamfile.h; sourceTree = "<group>"; };
+		8373342023F60CDB00DE14DC /* fda.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fda.c; sourceTree = "<group>"; };
+		8373342123F60CDB00DE14DC /* deblock_streamfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deblock_streamfile.c; sourceTree = "<group>"; };
+		8373342223F60CDB00DE14DC /* lrmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lrmd.c; sourceTree = "<group>"; };
+		8373342323F60CDB00DE14DC /* fwse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fwse.c; sourceTree = "<group>"; };
+		8373342423F60CDB00DE14DC /* kwb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kwb.c; sourceTree = "<group>"; };
+		8373342523F60CDC00DE14DC /* bnsf_keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bnsf_keys.h; sourceTree = "<group>"; };
+		8373342E23F60D4100DE14DC /* tgc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tgc.c; sourceTree = "<group>"; };
 		8375737221F9507D00F01AF5 /* oki_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oki_decoder.c; sourceTree = "<group>"; };
 		8375737421F950EC00F01AF5 /* gin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gin.c; sourceTree = "<group>"; };
 		8375737521F950EC00F01AF5 /* ubi_sb_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ubi_sb_streamfile.h; sourceTree = "<group>"; };
@@ -1135,7 +1151,6 @@
 		837CEA7623487E2400E62A4A /* ubi_adpcm_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ubi_adpcm_decoder.c; sourceTree = "<group>"; };
 		837CEA7723487E2400E62A4A /* ffmpeg_decoder_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_utils.c; sourceTree = "<group>"; };
 		837CEAD423487E8300E62A4A /* bmp_konami.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmp_konami.c; sourceTree = "<group>"; };
-		837CEAD523487E8300E62A4A /* acb_utf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = acb_utf.h; sourceTree = "<group>"; };
 		837CEAD623487E8300E62A4A /* acb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = acb.c; sourceTree = "<group>"; };
 		837CEAD723487E8300E62A4A /* bgw_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bgw_streamfile.h; sourceTree = "<group>"; };
 		837CEADC23487F2900E62A4A /* xvas.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xvas.c; sourceTree = "<group>"; };
@@ -1240,7 +1255,6 @@
 		83C7282622BC8C1400678B4A /* plugins.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugins.c; sourceTree = "<group>"; };
 		83CD42851F787878000F77BE /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswresample.a; path = ../../ThirdParty/ffmpeg/lib/libswresample.a; sourceTree = "<group>"; };
 		83D2F58A2356B266007646ED /* libopus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libopus.a; path = ../../ThirdParty/ffmpeg/lib/libopus.a; sourceTree = "<group>"; };
-		83D730E51A738EB200CA1366 /* g7221.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g7221.xcodeproj; path = ../g7221/g7221.xcodeproj; sourceTree = "<group>"; };
 		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
 		83D7318B1A749EEE00CA1366 /* g719_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g719_decoder.c; sourceTree = "<group>"; };
 		83E56BA01F2EE3500026BC60 /* vorbis_custom_utils_ogl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_ogl.c; sourceTree = "<group>"; };
@@ -1267,7 +1281,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				830EBE19200465B00023AA10 /* libatrac9.framework in Frameworks */,
 				838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */,
 				838BDB7D1D3B1FCC0022CA6F /* CoreVideo.framework in Frameworks */,
 				838BDB7B1D3B1FC20022CA6F /* CoreMedia.framework in Frameworks */,
@@ -1281,26 +1294,18 @@
 				83D2F58E2356B266007646ED /* libopus.a in Frameworks */,
 				83CD428A1F787879000F77BE /* libswresample.a in Frameworks */,
 				83D731891A749D1500CA1366 /* g719.framework in Frameworks */,
-				83D731101A7394BF00CA1366 /* g7221.framework in Frameworks */,
 				838BDB641D3AF08C0022CA6F /* libavcodec.a in Frameworks */,
 				838BDB651D3AF08C0022CA6F /* libavformat.a in Frameworks */,
 				838BDB661D3AF08C0022CA6F /* libavutil.a in Frameworks */,
 				8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */,
 				834D795520E4F0D400C4A5CC /* Vorbis.framework in Frameworks */,
+				836C052B23F62F1A00FA07C7 /* libatrac9.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		830EBD9320045F190023AA10 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				830EBD9720045F1B0023AA10 /* libatrac9.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8313E33E1901FBDC00B4B6F1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1316,6 +1321,14 @@
 				832389491D22419B00482226 /* clHCA.h */,
 			);
 			path = ext_libs;
+			sourceTree = "<group>";
+		};
+		835FC6C223F62AEE006960FA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				835FC6C623F62AEF006960FA /* libatrac9.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		836F6B2F18BDB8880095E648 = {
@@ -1358,14 +1371,13 @@
 		836F6B3E18BDB8880095E648 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				830EBD9220045F190023AA10 /* libatrac9.xcodeproj */,
+				835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */,
 				838BDB611D3AF08C0022CA6F /* libavcodec.a */,
 				838BDB621D3AF08C0022CA6F /* libavformat.a */,
 				838BDB631D3AF08C0022CA6F /* libavutil.a */,
 				83CD42851F787878000F77BE /* libswresample.a */,
 				8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */,
 				83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */,
-				83D730E51A738EB200CA1366 /* g7221.xcodeproj */,
 				83D731381A74968900CA1366 /* g719.xcodeproj */,
 			);
 			name = "Other Frameworks";
@@ -1441,6 +1453,11 @@
 				836F6DE918BDC2180095E648 /* g72x_state.h */,
 				83D7318B1A749EEE00CA1366 /* g719_decoder.c */,
 				836F6DE718BDC2180095E648 /* g721_decoder.c */,
+				8373340F23F60C7A00DE14DC /* g7221_decoder_aes.c */,
+				8373340E23F60C7A00DE14DC /* g7221_decoder_aes.h */,
+				8373341123F60C7A00DE14DC /* g7221_decoder_lib_data.h */,
+				8373341323F60C7B00DE14DC /* g7221_decoder_lib.c */,
+				8373341523F60C7B00DE14DC /* g7221_decoder_lib.h */,
 				836F6DE818BDC2180095E648 /* g7221_decoder.c */,
 				832389511D224C0800482226 /* hca_decoder.c */,
 				836F6DEA18BDC2180095E648 /* ima_decoder.c */,
@@ -1470,8 +1487,11 @@
 				83709E0C1ECBC1C3005C03D3 /* psv_decoder.c */,
 				836F6DFA18BDC2180095E648 /* psx_decoder.c */,
 				837CEA7523487E2400E62A4A /* ptadpcm_decoder.c */,
+				8373341223F60C7B00DE14DC /* relic_decoder_mixfft.c */,
+				8373341423F60C7B00DE14DC /* relic_decoder.c */,
 				836F6DFB18BDC2180095E648 /* SASSC_decoder.c */,
 				836F6DFC18BDC2180095E648 /* sdx2_decoder.c */,
+				8373341023F60C7A00DE14DC /* tgcadpcm_decoder.c */,
 				837CEA7623487E2400E62A4A /* ubi_adpcm_decoder.c */,
 				839E21D61F2EDAF000EE54D7 /* vorbis_custom_data_fsb.h */,
 				839E21DC1F2EDAF000EE54D7 /* vorbis_custom_data_wwise.h */,
@@ -1550,7 +1570,6 @@
 				8351F32A2212B57000A606E4 /* 208.c */,
 				834FE0C8215C79E7000A5D3D /* a2m.c */,
 				836F6E2A18BDC2180095E648 /* aax.c */,
-				837CEAD523487E8300E62A4A /* acb_utf.h */,
 				837CEAD623487E8300E62A4A /* acb.c */,
 				836F6E2B18BDC2180095E648 /* acm.c */,
 				834FE0CF215C79E8000A5D3D /* adpcm_capcom.c */,
@@ -1588,6 +1607,7 @@
 				83299FCE1E7660C7003A3242 /* bik.c */,
 				837CEAD423487E8300E62A4A /* bmp_konami.c */,
 				834FE0CA215C79E7000A5D3D /* bnk_sony.c */,
+				8373342523F60CDC00DE14DC /* bnsf_keys.h */,
 				836F6E3918BDC2180095E648 /* bnsf.c */,
 				836F6E3A18BDC2180095E648 /* brstm.c */,
 				83EDE5D71A70951A005F5D84 /* btsnd.c */,
@@ -1605,6 +1625,8 @@
 				836F6E4018BDC2180095E648 /* dc_kcey.c */,
 				836F6E4118BDC2180095E648 /* dc_str.c */,
 				83C7280C22BC893D00678B4A /* dcs_wav.c */,
+				8373342123F60CDB00DE14DC /* deblock_streamfile.c */,
+				8373341E23F60CDB00DE14DC /* deblock_streamfile.h */,
 				8349A8EE1FE6257C00E26435 /* dec.c */,
 				834FE0CD215C79E8000A5D3D /* derf.c */,
 				836F6E4318BDC2180095E648 /* dmsg_segh.c */,
@@ -1625,6 +1647,7 @@
 				836F6E4A18BDC2180095E648 /* excitebots.c */,
 				8349A8EF1FE6257C00E26435 /* ezw.c */,
 				832BF80821E05135006F50F1 /* fag.c */,
+				8373342023F60CDB00DE14DC /* fda.c */,
 				83C7280022BC893A00678B4A /* ffdl.c */,
 				838BDB6D1D3B043C0022CA6F /* ffmpeg.c */,
 				836F6E4B18BDC2180095E648 /* ffw.c */,
@@ -1636,6 +1659,7 @@
 				83C7280522BC893B00678B4A /* fsb5_fev.c */,
 				834FE0E3215C79EC000A5D3D /* fsb5_interleave_streamfile.h */,
 				83F5F8821908D0A400C8E65F /* fsb5.c */,
+				8373342323F60CDB00DE14DC /* fwse.c */,
 				834D3A6D19F47C98001C54F6 /* g1l.c */,
 				836F6E4D18BDC2180095E648 /* gca.c */,
 				836F6E4E18BDC2180095E648 /* gcsw.c */,
@@ -1666,6 +1690,9 @@
 				83A21F83201D8981000F04B9 /* kma9.c */,
 				836F6E5918BDC2180095E648 /* kraw.c */,
 				830EBE122004656E0023AA10 /* ktss.c */,
+				8373342423F60CDB00DE14DC /* kwb.c */,
+				8373341F23F60CDB00DE14DC /* lrmd_streamfile.h */,
+				8373342223F60CDB00DE14DC /* lrmd.c */,
 				836F6E5A18BDC2180095E648 /* lsf.c */,
 				836F6E5C18BDC2180095E648 /* mattel_hyperscan.c */,
 				836F6E5D18BDC2180095E648 /* maxis_xa.c */,
@@ -1868,6 +1895,7 @@
 				836F6EF918BDC2190095E648 /* svs.c */,
 				831BA6121EAC61A500CF89B0 /* sxd.c */,
 				83709E031ECBC1A4005C03D3 /* ta_aac.c */,
+				8373342E23F60D4100DE14DC /* tgc.c */,
 				836F6EFA18BDC2190095E648 /* thp.c */,
 				836F6EFB18BDC2190095E648 /* tun.c */,
 				83C7280122BC893A00678B4A /* txth_streamfile.h */,
@@ -1956,14 +1984,6 @@
 			path = meta;
 			sourceTree = "<group>";
 		};
-		83D730E61A738EB200CA1366 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83D730EB1A738EB300CA1366 /* g7221.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		83D731391A74968900CA1366 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2013,6 +2033,7 @@
 				839E21E01F2EDAF100EE54D7 /* vorbis_custom_data_fsb.h in Headers */,
 				836F705418BDC2190095E648 /* streamfile.h in Headers */,
 				83A3F0761E3AD8B900D6A794 /* stack_alloc.h in Headers */,
+				8373342723F60CDC00DE14DC /* lrmd_streamfile.h in Headers */,
 				8323894B1D22419B00482226 /* clHCA.h in Headers */,
 				83C7281122BC893D00678B4A /* 9tav_streamfile.h in Headers */,
 				83C7280F22BC893D00678B4A /* xwb_xsb.h in Headers */,
@@ -2020,15 +2041,16 @@
 				839E21E81F2EDAF100EE54D7 /* mpeg_decoder.h in Headers */,
 				834FE10C215C79ED000A5D3D /* fsb5_interleave_streamfile.h in Headers */,
 				839E21E51F2EDAF100EE54D7 /* vorbis_custom_decoder.h in Headers */,
-				837CEAD923487E8300E62A4A /* acb_utf.h in Headers */,
 				837CEADB23487E8300E62A4A /* bgw_streamfile.h in Headers */,
 				837CEB0323487F2C00E62A4A /* xavs_streamfile.h in Headers */,
 				8306B0E120984590000302D4 /* ubi_lyn_ogg_streamfile.h in Headers */,
 				836F705918BDC2190095E648 /* vgmstream.h in Headers */,
+				8373342623F60CDC00DE14DC /* deblock_streamfile.h in Headers */,
 				83C7281522BC893D00678B4A /* txth_streamfile.h in Headers */,
 				8306B0DE20984590000302D4 /* awc_xma_streamfile.h in Headers */,
 				834FE0B5215C798C000A5D3D /* acm_decoder_libacm.h in Headers */,
 				839E21E61F2EDAF100EE54D7 /* vorbis_custom_data_wwise.h in Headers */,
+				8373342D23F60CDC00DE14DC /* bnsf_keys.h in Headers */,
 				834FE103215C79ED000A5D3D /* ea_schl_streamfile.h in Headers */,
 				83F0AA6021E2028C004BBC04 /* vsv_streamfile.h in Headers */,
 				83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */,
@@ -2037,7 +2059,10 @@
 				836F6F9A18BDC2190095E648 /* meta.h in Headers */,
 				8306B0D820984590000302D4 /* ea_eaac_streamfile.h in Headers */,
 				837CEB0523487F2C00E62A4A /* sqex_sead_streamfile.h in Headers */,
+				8373341D23F60C7B00DE14DC /* g7221_decoder_lib.h in Headers */,
 				8306B0E820984590000302D4 /* opus_interleave_streamfile.h in Headers */,
+				8373341623F60C7B00DE14DC /* g7221_decoder_aes.h in Headers */,
+				8373341923F60C7B00DE14DC /* g7221_decoder_lib_data.h in Headers */,
 				83AFABBD23795202002F3947 /* ea_eaac_opus_streamfile.h in Headers */,
 				83C7281822BC893D00678B4A /* sfh_streamfile.h in Headers */,
 				834FE0EF215C79ED000A5D3D /* xvag_streamfile.h in Headers */,
@@ -2068,10 +2093,9 @@
 				48C265101A5D424500A0A3D6 /* PBXBuildRule */,
 			);
 			dependencies = (
+				836C052623F62F0000FA07C7 /* PBXTargetDependency */,
 				834D795420E4F0B900C4A5CC /* PBXTargetDependency */,
-				830EBE162004659B0023AA10 /* PBXTargetDependency */,
 				83D731881A749D0D00CA1366 /* PBXTargetDependency */,
-				83D7310F1A7394B500CA1366 /* PBXTargetDependency */,
 				8313E3E91902021F00B4B6F1 /* PBXTargetDependency */,
 			);
 			name = libvgmstream;
@@ -2111,12 +2135,8 @@
 					ProjectRef = 83D731381A74968900CA1366 /* g719.xcodeproj */;
 				},
 				{
-					ProductGroup = 83D730E61A738EB200CA1366 /* Products */;
-					ProjectRef = 83D730E51A738EB200CA1366 /* g7221.xcodeproj */;
-				},
-				{
-					ProductGroup = 830EBD9320045F190023AA10 /* Products */;
-					ProjectRef = 830EBD9220045F190023AA10 /* libatrac9.xcodeproj */;
+					ProductGroup = 835FC6C223F62AEE006960FA /* Products */;
+					ProjectRef = 835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */;
 				},
 				{
 					ProductGroup = 8313E33E1901FBDC00B4B6F1 /* Products */;
@@ -2135,13 +2155,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		830EBD9720045F1B0023AA10 /* libatrac9.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = libatrac9.framework;
-			remoteRef = 830EBD9620045F1B0023AA10 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		8313E3431901FBDD00B4B6F1 /* mpg123.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2149,11 +2162,11 @@
 			remoteRef = 8313E3421901FBDD00B4B6F1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		83D730EB1A738EB300CA1366 /* g7221.framework */ = {
+		835FC6C623F62AEF006960FA /* libatrac9.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = g7221.framework;
-			remoteRef = 83D730EA1A738EB300CA1366 /* PBXContainerItemProxy */;
+			path = libatrac9.framework;
+			remoteRef = 835FC6C523F62AEF006960FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83D7313E1A74968A00CA1366 /* g719.framework */ = {
@@ -2239,6 +2252,7 @@
 				836F6FAD18BDC2190095E648 /* ngc_dsp_konami.c in Sources */,
 				836F6FF818BDC2190095E648 /* ps2_smpl.c in Sources */,
 				836F703818BDC2190095E648 /* ubi_ckd.c in Sources */,
+				8373341B23F60C7B00DE14DC /* g7221_decoder_lib.c in Sources */,
 				836F705318BDC2190095E648 /* streamfile.c in Sources */,
 				836F6F7418BDC2190095E648 /* bgw.c in Sources */,
 				836F6F7218BDC2190095E648 /* baf.c in Sources */,
@@ -2247,6 +2261,7 @@
 				836F700C18BDC2190095E648 /* ps2_wb.c in Sources */,
 				836F6F7D18BDC2190095E648 /* dc_str.c in Sources */,
 				83A5F75F198DF021009AF94C /* bfwav.c in Sources */,
+				8373341723F60C7B00DE14DC /* g7221_decoder_aes.c in Sources */,
 				836F702018BDC2190095E648 /* rkv.c in Sources */,
 				834FE0F4215C79ED000A5D3D /* wsi.c in Sources */,
 				836F703218BDC2190095E648 /* str_asr.c in Sources */,
@@ -2281,6 +2296,7 @@
 				836F702318BDC2190095E648 /* rsf.c in Sources */,
 				834FE109215C79ED000A5D3D /* idsp_ie.c in Sources */,
 				83299FD01E7660C7003A3242 /* bik.c in Sources */,
+				8373341823F60C7B00DE14DC /* tgcadpcm_decoder.c in Sources */,
 				836F6F3318BDC2190095E648 /* ngc_dtk_decoder.c in Sources */,
 				83C7281322BC893D00678B4A /* mta2.c in Sources */,
 				8306B0EF20984590000302D4 /* ubi_bao.c in Sources */,
@@ -2382,6 +2398,7 @@
 				836F6F6F18BDC2190095E648 /* akb.c in Sources */,
 				83EED5D6203A8BD7008BEB45 /* blocked_ea_swvr.c in Sources */,
 				8349A9181FE6258200E26435 /* ea_1snh.c in Sources */,
+				8373342C23F60CDC00DE14DC /* kwb.c in Sources */,
 				83EED5D4203A8BC7008BEB45 /* aus.c in Sources */,
 				836F6F7F18BDC2190095E648 /* dmsg_segh.c in Sources */,
 				832BF81D21E0514B006F50F1 /* msf_tamasoft.c in Sources */,
@@ -2408,6 +2425,7 @@
 				836F6FF918BDC2190095E648 /* ps2_snd.c in Sources */,
 				836F6F2918BDC2190095E648 /* l5_555_decoder.c in Sources */,
 				836F6FF318BDC2190095E648 /* ps2_rstm.c in Sources */,
+				8373342923F60CDC00DE14DC /* deblock_streamfile.c in Sources */,
 				836F6F7918BDC2190095E648 /* dc_asd.c in Sources */,
 				836F6FC118BDC2190095E648 /* pc_adp.c in Sources */,
 				836F703B18BDC2190095E648 /* vsf.c in Sources */,
@@ -2442,6 +2460,7 @@
 				837CEAD823487E8300E62A4A /* bmp_konami.c in Sources */,
 				8306B0A220984552000302D4 /* blocked_bdsp.c in Sources */,
 				836F700118BDC2190095E648 /* ps2_tec.c in Sources */,
+				8373341C23F60C7B00DE14DC /* relic_decoder.c in Sources */,
 				832BF82121E0514B006F50F1 /* zsnd.c in Sources */,
 				836F703018BDC2190095E648 /* sqex_scd.c in Sources */,
 				8306B0A320984552000302D4 /* blocked_ast.c in Sources */,
@@ -2459,7 +2478,9 @@
 				8306B0BA20984552000302D4 /* blocked_wsi.c in Sources */,
 				83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */,
 				836F704418BDC2190095E648 /* ws_aud.c in Sources */,
+				8373342F23F60D4100DE14DC /* tgc.c in Sources */,
 				83709E081ECBC1A4005C03D3 /* ps2_rxws.c in Sources */,
+				8373342823F60CDC00DE14DC /* fda.c in Sources */,
 				836F6F6D18BDC2190095E648 /* aifc.c in Sources */,
 				836F702218BDC2190095E648 /* rsd.c in Sources */,
 				8349A90D1FE6258200E26435 /* ubi_sb.c in Sources */,
@@ -2498,6 +2519,7 @@
 				836F6F3718BDC2190095E648 /* pcm_decoder.c in Sources */,
 				834FE106215C79ED000A5D3D /* utk.c in Sources */,
 				831BA6281EAC61CB00CF89B0 /* coding_utils.c in Sources */,
+				8373342B23F60CDC00DE14DC /* fwse.c in Sources */,
 				837CEAFF23487F2C00E62A4A /* raw_snds.c in Sources */,
 				836F700218BDC2190095E648 /* ps2_tk5.c in Sources */,
 				83AA5D271F6E2F9C0020821C /* stm.c in Sources */,
@@ -2601,6 +2623,7 @@
 				834FE10F215C79ED000A5D3D /* sdf.c in Sources */,
 				83FC177123AC59A800E1025F /* cri_utf.c in Sources */,
 				834FE0FF215C79ED000A5D3D /* sqex_scd_sscf.c in Sources */,
+				8373341A23F60C7B00DE14DC /* relic_decoder_mixfft.c in Sources */,
 				836F6FAA18BDC2190095E648 /* ngc_bh2pcm.c in Sources */,
 				831BA6211EAC61A500CF89B0 /* x360_pasx.c in Sources */,
 				832BF82621E0514B006F50F1 /* nwav.c in Sources */,
@@ -2656,6 +2679,7 @@
 				836F6FBF18BDC2190095E648 /* otm.c in Sources */,
 				8306B0B420984552000302D4 /* blocked_tra.c in Sources */,
 				834FE0B8215C798C000A5D3D /* acm_decoder_decode.c in Sources */,
+				8373342A23F60CDC00DE14DC /* lrmd.c in Sources */,
 				836F6FBD18BDC2190095E648 /* nwa.c in Sources */,
 				837CEAFC23487F2C00E62A4A /* raw_wavm.c in Sources */,
 				834FE0F7215C79ED000A5D3D /* vis.c in Sources */,
@@ -2695,11 +2719,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		830EBE162004659B0023AA10 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libatrac9;
-			targetProxy = 830EBE152004659B0023AA10 /* PBXContainerItemProxy */;
-		};
 		8313E3E91902021F00B4B6F1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = mpg123;
@@ -2710,10 +2729,10 @@
 			name = Vorbis;
 			targetProxy = 834D795320E4F0B900C4A5CC /* PBXContainerItemProxy */;
 		};
-		83D7310F1A7394B500CA1366 /* PBXTargetDependency */ = {
+		836C052623F62F0000FA07C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = g7221;
-			targetProxy = 83D7310E1A7394B500CA1366 /* PBXContainerItemProxy */;
+			name = libatrac9;
+			targetProxy = 836C052523F62F0000FA07C7 /* PBXContainerItemProxy */;
 		};
 		83D731881A749D0D00CA1366 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2869,7 +2888,10 @@
 		836F6B6218BDB8880095E648 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2887,6 +2909,7 @@
 				INFOPLIST_FILE = "vgmstream/libvgmstream-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -2895,7 +2918,10 @@
 		836F6B6318BDB8880095E648 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2913,6 +2939,7 @@
 				INFOPLIST_FILE = "vgmstream/libvgmstream-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};

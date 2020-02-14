@@ -25,6 +25,7 @@ static const char* extension_list[] = {
     "208",
     "2dx9",
     "2pfs",
+    "4", // for Game.com audio
     "8", //txth/reserved [Gungage (PS1)]
     "800",
     "9tav",
@@ -164,6 +165,7 @@ static const char* extension_list[] = {
     "ezw",
 
     "fag",
+    "fda",
     "ffw",
     "filp",
     //"flac", //common
@@ -171,6 +173,7 @@ static const char* extension_list[] = {
     "fsb",
     "fsv",
     "fwav",
+    "fwse",
 
     "g1l",
     "gbts",
@@ -268,6 +271,7 @@ static const char* extension_list[] = {
     "lpcm",
     "lpk",
     "lps",
+    "lrmb",
     "lse",
     "lsf",
     "lstm", //fake extension for .stm
@@ -389,6 +393,7 @@ static const char* extension_list[] = {
     "rxx", //txth/reserved [Full Auto (X360)]
 
     "s14",
+    "s3v", //txth/reserved [Sound Voltex 5 (AC)]
     "sab",
     "sad",
     "sap",
@@ -418,6 +423,7 @@ static const char* extension_list[] = {
     "sdf",
     "sdt",
     "seb",
+    "sed",
     "seg",
     "sf0",
     "sfl",
@@ -530,6 +536,8 @@ static const char* extension_list[] = {
     "wavm",
     "wavx", //txth/reserved [LEGO Star Wars (Xbox)]
     "wb",
+    "wb2",
+    "wbd",
     "wd",
     "wem",
     "wii",
@@ -691,6 +699,7 @@ static const coding_info coding_info_list[] = {
         {coding_ALP_IMA,            "High Voltage ALP 4-bit IMA ADPCM"},
         {coding_FFTA2_IMA,          "Final Fantasy Tactics A2 4-bit IMA ADPCM"},
         {coding_BLITZ_IMA,          "Blitz Games 4-bit IMA ADPCM"},
+        {coding_MTF_IMA,            "MT Framework 4-bit IMA ADPCM"},
 
         {coding_MS_IMA,             "Microsoft 4-bit IMA ADPCM"},
         {coding_XBOX_IMA,           "XBOX 4-bit IMA ADPCM"},
@@ -717,6 +726,7 @@ static const coding_info coding_info_list[] = {
         {coding_AICA_int,           "Yamaha AICA 4-bit ADPCM (mono/interleave)"},
         {coding_ASKA,               "tri-Ace Aska 4-bit ADPCM"},
         {coding_NXAP,               "Nex NXAP 4-bit ADPCM"},
+        {coding_TGC,                "Tiger Game.com 4-bit ADPCM"},
         {coding_NDS_PROCYON,        "Procyon Studio Digital Sound Elements NDS 4-bit APDCM"},
         {coding_L5_555,             "Level-5 0x555 4-bit ADPCM"},
         {coding_LSF,                "lsf 4-bit ADPCM"},
@@ -745,6 +755,7 @@ static const coding_info coding_info_list[] = {
 
         {coding_EA_MT,              "Electronic Arts MicroTalk"},
 
+        {coding_RELIC,              "Relic Codec"},
         {coding_CRI_HCA,            "CRI HCA"},
         
 #ifdef VGM_USE_VORBIS
@@ -1120,7 +1131,7 @@ static const meta_info meta_info_list[] = {
         {meta_FFMPEG,               "FFmpeg supported file format"},
         {meta_X360_CXS,             "tri-Crescendo CXS header"},
         {meta_AKB,                  "Square-Enix AKB header"},
-        {meta_X360_PASX,            "Namco PASX header"},
+        {meta_X360_PASX,            "Premium Agency PASX header"},
         {meta_XMA_RIFF,             "Microsoft XMA RIFF header"},
         {meta_X360_AST,             "Capcom AST (X360) header"},
         {meta_WWISE_RIFF,           "Audiokinetic Wwise RIFF header"},
@@ -1224,7 +1235,7 @@ static const meta_info meta_info_list[] = {
         {meta_XPCM,                 "Circus XPCM header"},
         {meta_MSF_TAMASOFT,         "Tama-Soft MSF header"},
         {meta_XPS_DAT,              "From Software .XPS+DAT header"},
-        {meta_ZSND,                 "Vicarious Visions ZSND header"},
+        {meta_ZSND,                 "Z-Axis ZSND header"},
         {meta_DSP_ADPY,             "AQUASTYLE ADPY header"},
         {meta_DSP_ADPX,             "AQUASTYLE ADPX header"},
         {meta_OGG_OPUS,             "Ogg Opus header"},
@@ -1252,6 +1263,11 @@ static const meta_info meta_info_list[] = {
         {meta_ISB,                  "Creative ISACT header"},
         {meta_XSSB,                 "Artoon XSSB header"},
         {meta_XMA_UE3,              "Unreal Engine XMA header"},
+        {meta_FWSE,                 "MT Framework FWSE header"},
+        {meta_FDA,                  "Relic FDA header"},
+        {meta_TGC,                  "Tiger Game.com .4 header"},
+        {meta_KWB,                  "Koei Tecmo WaveBank header"},
+        {meta_LRMD,                 "Sony LRMD header"},
 
 };
 

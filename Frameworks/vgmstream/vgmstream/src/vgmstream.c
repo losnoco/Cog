@@ -486,6 +486,11 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_xssb,
     init_vgmstream_xma_ue3,
     init_vgmstream_csb,
+    init_vgmstream_fwse,
+    init_vgmstream_fda,
+    init_vgmstream_tgc,
+    init_vgmstream_kwb,
+    init_vgmstream_lrmd,
 
     /* lowest priority metas (should go after all metas, and TXTH should go before raw formats) */
     init_vgmstream_txth,            /* proper parsers should supersede TXTH, once added */
@@ -656,6 +661,10 @@ void reset_vgmstream(VGMSTREAM * vgmstream) {
     }
 #endif
 
+    if (vgmstream->coding_type == coding_RELIC) {
+        reset_relic(vgmstream->codec_data);
+    }
+
     if (vgmstream->coding_type == coding_CRI_HCA) {
         reset_hca(vgmstream->codec_data);
     }
@@ -686,7 +695,7 @@ void reset_vgmstream(VGMSTREAM * vgmstream) {
 
 #ifdef VGM_USE_G7221
     if (vgmstream->coding_type == coding_G7221C) {
-        reset_g7221(vgmstream);
+        reset_g7221(vgmstream->codec_data);
     }
 #endif
 
@@ -823,6 +832,11 @@ void close_vgmstream(VGMSTREAM * vgmstream) {
     }
 #endif
 
+    if (vgmstream->coding_type == coding_RELIC) {
+        free_relic(vgmstream->codec_data);
+        vgmstream->codec_data = NULL;
+    }
+
     if (vgmstream->coding_type == coding_CRI_HCA) {
         free_hca(vgmstream->codec_data);
         vgmstream->codec_data = NULL;
@@ -865,7 +879,7 @@ void close_vgmstream(VGMSTREAM * vgmstream) {
 
 #ifdef VGM_USE_G7221
     if (vgmstream->coding_type == coding_G7221C) {
-        free_g7221(vgmstream);
+        free_g7221(vgmstream->codec_data);
         vgmstream->codec_data = NULL;
     }
 #endif
@@ -1164,6 +1178,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
         case coding_UBI_IMA:
         case coding_OKI16:
         case coding_OKI4S:
+        case coding_MTF_IMA:
             return 1;
         case coding_PCM4:
         case coding_PCM4_U:
@@ -1273,6 +1288,8 @@ int get_vgmstream_samples_per_frame(VGMSTREAM * vgmstream) {
             return 0; /* varies per mode */
         case coding_EA_MT:
             return 0; /* 432, but variable in looped files */
+        case coding_RELIC:
+            return 0; /* 512 */
         case coding_CRI_HCA:
             return 0; /* 1024 - delay/padding (which can be bigger than 1024) */
 #if defined(VGM_USE_MP4V2) && defined(VGM_USE_FDKAAC)
@@ -1356,6 +1373,7 @@ int get_vgmstream_frame_size(VGMSTREAM * vgmstream) {
         case coding_PCFX:
         case coding_OKI16:
         case coding_OKI4S:
+        case coding_MTF_IMA:
             return 0x01;
         case coding_MS_IMA:
         case coding_RAD_IMA:
@@ -1757,6 +1775,10 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                     samples_to_do,vgmstream->channels);
             break;
 #endif
+        case coding_RELIC:
+            decode_relic(&vgmstream->ch[0], vgmstream->codec_data, buffer+samples_written*vgmstream->channels,
+                    samples_to_do);
+            break;
         case coding_CRI_HCA:
             decode_hca(vgmstream->codec_data, buffer+samples_written*vgmstream->channels,
                     samples_to_do);
@@ -1822,6 +1844,14 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                 decode_standard_ima(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
                         vgmstream->channels,vgmstream->samples_into_block,samples_to_do, ch,
                         is_stereo, is_high_first);
+            }
+            break;
+        case coding_MTF_IMA:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                int is_stereo = (vgmstream->channels > 1);
+                decode_mtf_ima(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
+                        vgmstream->channels,vgmstream->samples_into_block,samples_to_do, ch,
+                        is_stereo);
             }
             break;
         case coding_3DS_IMA:
@@ -2015,6 +2045,12 @@ void decode_vgmstream(VGMSTREAM * vgmstream, int samples_written, int samples_to
                         vgmstream->channels,vgmstream->samples_into_block,samples_to_do);
             }
             break;
+        case coding_TGC:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_tgc(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
+                        vgmstream->samples_into_block,samples_to_do);
+            }
+            break;
         case coding_NDS_PROCYON:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_nds_procyon(&vgmstream->ch[ch],buffer+samples_written*vgmstream->channels+ch,
@@ -2190,6 +2226,10 @@ int vgmstream_do_loop(VGMSTREAM * vgmstream) {
 
 
         /* prepare certain codecs' internal state for looping */
+
+        if (vgmstream->coding_type == coding_RELIC) {
+            seek_relic(vgmstream->codec_data, vgmstream->loop_sample);
+        }
 
         if (vgmstream->coding_type == coding_CRI_HCA) {
             loop_hca(vgmstream->codec_data, vgmstream->loop_sample);

@@ -12,7 +12,7 @@ VGMSTREAM * init_vgmstream_csb(STREAMFILE *streamFile) {
     utf_context *utf = NULL;
     utf_context *utf_sdl = NULL;
     int total_subsongs, target_subsong = streamFile->stream_index;
-    int8_t fmt = 0;
+    uint8_t fmt = 0;
     const char *stream_name;
 
 
@@ -31,7 +31,7 @@ VGMSTREAM * init_vgmstream_csb(STREAMFILE *streamFile) {
         const char *sdl_name;
         uint32_t sdl_offset, sdl_size, offset, size;
         uint32_t table_offset = 0x00;
-        int8_t ttype;
+        uint8_t ttype;
         int found = 0;
 
 
@@ -55,7 +55,7 @@ VGMSTREAM * init_vgmstream_csb(STREAMFILE *streamFile) {
         /* get SOUND_ELEMENT and table */
         if (!utf_query_string(utf, sdl_row, "name", &row_name) || strcmp(row_name, "SOUND_ELEMENT") != 0)
             goto fail;
-        if (!utf_query_s8(utf, sdl_row, "ttype", &ttype) || ttype != 4)
+        if (!utf_query_u8(utf, sdl_row, "ttype", &ttype) || ttype != 4)
             goto fail;
         if (!utf_query_data(utf, sdl_row, "utf", &sdl_offset, &sdl_size))
             goto fail;
@@ -71,13 +71,13 @@ VGMSTREAM * init_vgmstream_csb(STREAMFILE *streamFile) {
 
         /* get target subsong */
         for (i = 0; i < sdl_rows; i++) {
-            int8_t stmflg;
+            uint8_t stream_flag;
 
-            if (!utf_query_s8(utf_sdl, i, "stmflg", &stmflg))
+            if (!utf_query_u8(utf_sdl, i, "stmflg", &stream_flag))
                 goto fail;
 
             /* only internal data for now (when 1 this refers to a .cpk subfile probably using "name", has size 0) */
-            if (stmflg)
+            if (stream_flag)
                 continue;
 
             total_subsongs++;
@@ -87,9 +87,8 @@ VGMSTREAM * init_vgmstream_csb(STREAMFILE *streamFile) {
                     goto fail;
                 if (!utf_query_data(utf_sdl, i, "data", &offset, &size))
                     goto fail;
-                if (!utf_query_s8(utf_sdl, i, "fmt", &fmt))
+                if (!utf_query_u8(utf_sdl, i, "fmt", &fmt))
                     goto fail;
-                VGM_LOG("fmt=%i\n", fmt);
                 /* also nch/sfreq/nsmpl info */
 
                 found = 1;
@@ -98,7 +97,7 @@ VGMSTREAM * init_vgmstream_csb(STREAMFILE *streamFile) {
 
         if (!found) goto fail;
         if (target_subsong < 0 || target_subsong > total_subsongs || total_subsongs < 1) goto fail;
-VGM_LOG("5: %x, %x\n", sdl_offset, offset);
+
         subfile_offset = /*sdl_offset +*/ offset;
         subfile_size = size;
 
@@ -107,13 +106,11 @@ VGM_LOG("5: %x, %x\n", sdl_offset, offset);
             goto fail;
     }
 
-    ;VGM_LOG("CSB: subfile offset=%lx + %x\n", subfile_offset, subfile_size);
+    //;VGM_LOG("CSB: subfile offset=%lx + %x\n", subfile_offset, subfile_size);
 
 
     temp_sf = setup_subfile_streamfile(streamFile, subfile_offset, subfile_size, "aax");
     if (!temp_sf) goto fail;
-
-    VGM_LOG("7: %i\n", fmt);
 
     switch(fmt) {
         case 0: /* AAX */
@@ -131,8 +128,6 @@ VGM_LOG("5: %x, %x\n", sdl_offset, offset);
             VGM_LOG("CSB: unknown format %i\n", fmt);
             goto fail;
     }
-
-    VGM_LOG("8\n");
 
     vgmstream->num_streams = total_subsongs;
     strncpy(vgmstream->stream_name, stream_name, STREAM_NAME_SIZE-1);

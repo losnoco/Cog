@@ -20,6 +20,7 @@ void decode_wv6_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspa
 void decode_alp_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_ffta2_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_blitz_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+void decode_mtf_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo);
 
 void decode_ms_ima(VGMSTREAM * vgmstream,VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel);
 void decode_ref_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel);
@@ -137,6 +138,9 @@ void decode_nxap(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacin
 size_t yamaha_bytes_to_samples(size_t bytes, int channels);
 size_t aska_bytes_to_samples(size_t bytes, int channels);
 
+/* tgcadpcm_decoder */
+void decode_tgc(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int32_t first_sample, int32_t samples_to_do);
+
 /* nds_procyon_decoder */
 void decode_nds_procyon(VGMSTREAMCHANNEL *stream, sample_t *outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 
@@ -203,9 +207,16 @@ void flush_ea_mt(VGMSTREAM *vgmstream);
 void seek_ea_mt(VGMSTREAM * vgmstream, int32_t num_sample);
 void free_ea_mt(ea_mt_codec_data *data, int channels);
 
+/* relic_decoder */
+relic_codec_data* init_relic(int channels, int bitrate, int codec_rate);
+void decode_relic(VGMSTREAMCHANNEL* stream, relic_codec_data* data, sample_t* outbuf, int32_t samples_to_do);
+void reset_relic(relic_codec_data* data);
+void seek_relic(relic_codec_data* data, int32_t num_sample);
+void free_relic(relic_codec_data* data);
+
 /* hca_decoder */
 hca_codec_data *init_hca(STREAMFILE *streamFile);
-void decode_hca(hca_codec_data * data, sample * outbuf, int32_t samples_to_do);
+void decode_hca(hca_codec_data * data, sample_t * outbuf, int32_t samples_to_do);
 void reset_hca(hca_codec_data * data);
 void loop_hca(hca_codec_data * data, int32_t num_sample);
 void free_hca(hca_codec_data * data);
@@ -248,10 +259,12 @@ long mpeg_bytes_to_samples(long bytes, const mpeg_codec_data *data);
 
 #ifdef VGM_USE_G7221
 /* g7221_decoder */
-g7221_codec_data *init_g7221(int channel_count, int frame_size);
-void decode_g7221(VGMSTREAM *vgmstream, sample * outbuf, int channelspacing, int32_t samples_to_do, int channel);
-void reset_g7221(VGMSTREAM *vgmstream);
-void free_g7221(VGMSTREAM *vgmstream);
+g7221_codec_data* init_g7221(int channel_count, int frame_size);
+void decode_g7221(VGMSTREAM* vgmstream, sample_t* outbuf, int channelspacing, int32_t samples_to_do, int channel);
+void reset_g7221(g7221_codec_data* data);
+void free_g7221(g7221_codec_data* data);
+void set_key_g7221(g7221_codec_data* data, const uint8_t* key);
+int test_key_g7221(g7221_codec_data* data, off_t start, STREAMFILE* sf);
 #endif
 
 #ifdef VGM_USE_G719

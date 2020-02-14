@@ -42,14 +42,6 @@ enum { VGMSTREAM_MAX_NUM_SAMPLES = 1000000000 }; /* no ~5h vgm hopefully */
 #endif
 #endif
 
-#ifdef VGM_USE_G7221
-#ifdef __MACOSX__
-#include <g7221/g7221.h>
-#else
-#include <g7221.h>
-#endif
-#endif
-
 #ifdef VGM_USE_MP4V2
 #define MP4V2_NO_STDINT_DEFS
 #include <mp4v2/mp4v2.h>
@@ -78,6 +70,7 @@ enum { VGMSTREAM_MAX_NUM_SAMPLES = 1000000000 }; /* no ~5h vgm hopefully */
 #include "g72x_state.h"
 #include "nwa_decoder.h"
 #endif
+
 
 /* The encoding type specifies the format the sound data itself takes */
 typedef enum {
@@ -155,6 +148,7 @@ typedef enum {
     coding_AWC_IMA,         /* Rockstar AWC IMA ADPCM */
     coding_UBI_IMA,         /* Ubisoft IMA ADPCM */
     coding_H4M_IMA,         /* H4M IMA ADPCM (stereo or mono, high nibble first) */
+    coding_MTF_IMA,         /* Capcom MT Framework IMA ADPCM */
 
     coding_MSADPCM,         /* Microsoft ADPCM (stereo/mono) */
     coding_MSADPCM_int,     /* Microsoft ADPCM (mono) */
@@ -165,6 +159,8 @@ typedef enum {
     coding_AICA_int,        /* Yamaha AICA ADPCM (mono/interleave) */
     coding_ASKA,            /* Aska ADPCM */
     coding_NXAP,            /* NXAP ADPCM */
+
+    coding_TGC,             /* Tiger Game.com 4-bit ADPCM */
 
     coding_NDS_PROCYON,     /* Procyon Studio ADPCM */
     coding_L5_555,          /* Level-5 0x555 ADPCM */
@@ -195,6 +191,7 @@ typedef enum {
 
     coding_EA_MT,           /* Electronic Arts MicroTalk (linear-predictive speech codec) */
 
+    coding_RELIC,           /* Relic Codec (DCT-based) */
     coding_CRI_HCA,         /* CRI High Compression Audio (MDCT-based) */
 
 #ifdef VGM_USE_VORBIS
@@ -730,7 +727,11 @@ typedef enum {
     meta_ISB,
     meta_XSSB,
     meta_XMA_UE3,
-
+    meta_FWSE,
+    meta_FDA,
+    meta_TGC,
+    meta_KWB,
+    meta_LRMD,
 } meta_t;
 
 /* standard WAVEFORMATEXTENSIBLE speaker positions */
@@ -1091,10 +1092,7 @@ typedef struct {
 #endif
 
 #ifdef VGM_USE_G7221
-typedef struct {
-    sample_t buffer[640];
-    g7221_handle *handle;
-} g7221_codec_data;
+typedef struct g7221_codec_data g7221_codec_data;
 #endif
 
 #ifdef VGM_USE_G719
@@ -1159,6 +1157,7 @@ typedef struct {
     NWAData *nwa;
 } nwa_codec_data;
 
+typedef struct relic_codec_data relic_codec_data;
 
 typedef struct {
     STREAMFILE *streamfile;
