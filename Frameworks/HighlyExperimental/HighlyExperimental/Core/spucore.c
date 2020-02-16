@@ -23,6 +23,15 @@
 //#define KEYON_DEFER_SAMPLES (64)
 #define KEYON_DEFER_SAMPLES (64)
 
+/* This is a bit of a hack that fixes Dragon Ball - Final Bout: Title
+** Screen (Track 29), by ignoring any keyoffs that occur immediately
+** after a keyon. The developer who tested this determined a delay of
+** 384 cycles, but we only operate in whole sample granularity, which
+** is 768 cycles at a time. So we'll just hack around a delay of one
+** sample. */
+
+#define KEYON_KEYOFF_BLOCK_SAMPLES (1)
+
 //
 // Render max samples 
 //
@@ -317,6 +326,7 @@ struct SPUCORE_CHAN {
   struct SPUCORE_SAMPLE   sample;
   struct SPUCORE_ENVELOPE env;
   int samples_until_pending_keyon;
+  int samples_until_keyoff_responds;
 };
 
 /*
@@ -957,6 +967,7 @@ static void EMU_CALL voice_on(struct SPUCORE_CHAN *c) {
   /*
   ** Defer if already on
   */
+  c->samples_until_keyoff_responds = KEYON_KEYOFF_BLOCK_SAMPLES;
   if(c->env.state != ENVELOPE_STATE_OFF) {
     //EMUTRACE0("alreadyon:");
     if(!(c->samples_until_pending_keyon)) {
@@ -975,7 +986,9 @@ static void EMU_CALL voice_on(struct SPUCORE_CHAN *c) {
 
 static void EMU_CALL voice_off(struct SPUCORE_CHAN *c) {
   //EMUTRACE0("release");
-  envelope_release(&(c->env));
+  if (!(c->samples_until_keyoff_responds)) {
+    envelope_release(&(c->env));
+  }
   //EMUTRACE0("\n");
 }
 
@@ -1120,6 +1133,10 @@ static int EMU_CALL render_channel_mono(
   sint32 r, r2;
   sint32 defer_remaining;
   struct SPUCORE_IRQ_STATE spare_state;
+    
+  n = c->samples_until_keyoff_responds;
+  if (n > samples) { n = samples; }
+  c->samples_until_keyoff_responds -= n;
 
 //top:
   n = c->samples_until_pending_keyon;
