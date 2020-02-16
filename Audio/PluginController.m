@@ -311,6 +311,7 @@ static PluginController *sharedPluginController = nil;
 //If no properties reader is defined, use the decoder's properties.
 - (NSDictionary *)propertiesForURL:(NSURL *)url
 {
+    NSDictionary *properties = nil;
 	NSString *ext = [url pathExtension];
 	
 	id<CogSource> source = [self audioSourceForURL:url];
@@ -318,11 +319,13 @@ static PluginController *sharedPluginController = nil;
 		return nil;
     
     NSArray *readers = [propertiesReadersByExtension objectForKey:[ext lowercaseString]];
-    NSString *classString;
+    NSString *classString = nil;
     if (readers)
     {
         if ( [readers count] > 1 ) {
-            return [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
+            properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
+            if (properties != nil && [properties count])
+                return properties;
         }
         else {
             classString = [readers objectAtIndex:0];
@@ -336,11 +339,12 @@ static PluginController *sharedPluginController = nil;
 	{
 		Class propertiesReader = NSClassFromString(classString);
 
-		 return [propertiesReader propertiesForSource:source];
+		properties = [propertiesReader propertiesForSource:source];
+        if (properties != nil && [properties count])
+            return properties;
 	}
-	else
-	{
-	
+
+    {
 		id<CogDecoder> decoder = [self audioDecoderForSource:source];
 		if (![decoder open:source])
 		{

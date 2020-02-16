@@ -337,10 +337,18 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	{
 		//Container vs non-container url
 		if ([[self acceptableContainerTypes] containsObject:[[url pathExtension] lowercaseString]]) {
-			[containedURLs addObjectsFromArray:[AudioContainer urlsForContainerURL:url]];
+            NSArray * urls = [AudioContainer urlsForContainerURL:url];
+            
+            if (urls != nil && [urls count] != 0) {
+                [containedURLs addObjectsFromArray:urls];
 
-			//Make sure the container isn't added twice.
-			[uniqueURLs addObject:url];
+                //Make sure the container isn't added twice.
+                [uniqueURLs addObject:url];
+            }
+            else {
+                /* Fall back on adding the raw file if all container parsers have failed. */
+                [fileURLs addObject:url];
+            }
 		}
         else if ([[[url pathExtension] lowercaseString] isEqualToString:@"xml"])
         {
