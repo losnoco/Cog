@@ -26,7 +26,8 @@
 - (id)initWithController:(OutputNode *)c;
 
 - (BOOL)setup;
-- (BOOL)setOutputDevice:(AudioDeviceID)outputDevice;
+- (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID;
+- (BOOL)setOutputDeviceWithDeviceDict:(NSDictionary *)deviceDict;
 - (void)start;
 - (void)pause;
 - (void)resume;
