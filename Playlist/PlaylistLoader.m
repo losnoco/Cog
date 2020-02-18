@@ -469,7 +469,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     [restOfEntries removeObjectAtIndex:0];
     
     [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:firstEntry waitUntilDone:YES];
-	[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:restOfEntries];
+    if ([restOfEntries count])
+        [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:restOfEntries];
 	return entries;
 }
 
