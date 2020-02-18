@@ -71,7 +71,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 }
 
 
-- (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID {
+- (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID
+{
 	OSStatus err;
 	
 	if (deviceID == -1) {
@@ -85,9 +86,12 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
         err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &size, &deviceID);
 								
 		if (err != noErr) {
-			ALog(@"THERE'S NO DEFAULT OUTPUT DEVICE");
+			DLog(@"THERE'S NO DEFAULT OUTPUT DEVICE");
 			
 			return err;
+		}
+		else {
+			outputDeviceID = deviceID;
 		}
 	}
 
@@ -100,6 +104,12 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 							  0,
 							  &deviceID,
 							  sizeof(AudioDeviceID));
+	
+	if (err != noErr) {
+		DLog(@"No output device with ID %d could be found.", deviceID);
+
+		return err;
+	}
 	
 	return err;
 }
@@ -114,23 +124,26 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	if (err != noErr) {
 		// Try matching by name.
 		NSString *userDeviceName = deviceDict[@"name"];
+		
 		[self enumerateAudioOutputsUsingBlock:
 		 ^(NSString *deviceName, AudioDeviceID deviceID, AudioDeviceID systemDefaultID, BOOL *stop) {
-			if ([deviceName isEqualToString:userDeviceName]) {
-				err = [self setOutputDeviceByID:deviceID];
-				
+            if ([deviceName isEqualToString:userDeviceName]) {
+                err = [self setOutputDeviceByID:deviceID];
+                
 #if 0
-				// Disable. Would cause loop by triggering `-observeValueForKeyPath:ofObject:change:context:` above.
-				// Update `outputDevice`, in case the ID has changed.
-				NSDictionary *deviceInfo = @{
-					@"name": deviceName,
-					@"deviceID": [NSNumber numberWithUnsignedInt:deviceID],
-				};
-				[[NSUserDefaults standardUserDefaults] setObject:deviceInfo forKey:@"outputDevice"];
+                // Disable. Would cause loop by triggering `-observeValueForKeyPath:ofObject:change:context:` above.
+                // Update `outputDevice`, in case the ID has changed.
+                NSDictionary *deviceInfo = @{
+                    @"name": deviceName,
+                    @"deviceID": @(deviceID),
+                };
+                [[NSUserDefaults standardUserDefaults] setObject:deviceInfo forKey:@"outputDevice"];
 #endif
 				
-				return;
-			}
+				DLog(@"Found output device: \"%@\" (%d).", deviceName, deviceID);
+				
+                *stop = YES;
+            }
 		}];
 	}
 	

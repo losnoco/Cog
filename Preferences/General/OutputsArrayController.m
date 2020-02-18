@@ -9,18 +9,21 @@
 	[self setSelectsInsertedObjects:NO];
 	
 	NSDictionary *defaultDevice = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
-	
+    NSString *defaultDeviceName = defaultDevice[@"name"];
+    NSNumber *defaultDeviceIDNum = defaultDevice[@"deviceID"];
+    AudioDeviceID defaultDeviceID = [defaultDeviceIDNum unsignedIntValue];
+
 	[self enumerateAudioOutputsUsingBlock:
 	 ^(NSString *deviceName, AudioDeviceID deviceID, AudioDeviceID systemDefaultID, BOOL *stop) {
 		NSDictionary *deviceInfo = @{
 			@"name": deviceName,
-			@"deviceID": [NSNumber numberWithUnsignedInt:deviceID],
+			@"deviceID": @(deviceID),
 		};
 		[self addObject:deviceInfo];
         		
 		if (defaultDevice) {
-			if (([[defaultDevice objectForKey:@"deviceID"] isEqualToNumber:[deviceInfo objectForKey:@"deviceID"]]) ||
-				([[defaultDevice objectForKey:@"name"] isEqualToString:[deviceInfo objectForKey:@"name"]])) {
+			if ((deviceID == defaultDeviceID) ||
+				([deviceName isEqualToString:defaultDeviceName])) {
 				[self setSelectedObjects:[NSArray arrayWithObject:deviceInfo]];
 				// Update `outputDevice`, in case the ID has changed.
 				[[NSUserDefaults standardUserDefaults] setObject:deviceInfo forKey:@"outputDevice"];
