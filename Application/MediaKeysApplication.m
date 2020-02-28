@@ -37,25 +37,38 @@
                                                options:NSKeyValueObservingOptionNew
                                                context:nil];
     
-    if (NSClassFromString(@"MPRemoteCommandCenter")) {
-        MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+    NSProcessInfo *processInfo = [NSProcessInfo processInfo];
+    
+    if ([processInfo respondsToSelector:@selector(isOperatingSystemAtLeastVersion:)]) {
+        // For some STUPID reason, this interface only really works properly
+        // on Mojave or newer. On the other hand, the fallback interface
+        // only stopped working on Catalina
         
-        [remoteCommandCenter.playCommand setEnabled:YES];
-        [remoteCommandCenter.pauseCommand setEnabled:YES];
-        [remoteCommandCenter.togglePlayPauseCommand setEnabled:YES];
-        [remoteCommandCenter.stopCommand setEnabled:YES];
-        [remoteCommandCenter.changePlaybackPositionCommand setEnabled:YES];
-        [remoteCommandCenter.nextTrackCommand setEnabled:YES];
-        [remoteCommandCenter.previousTrackCommand setEnabled:YES];
-        
-        [[remoteCommandCenter playCommand] addTarget:self action:@selector(clickPlay)];
-        [[remoteCommandCenter pauseCommand] addTarget:self action:@selector(clickPause)];
-        [[remoteCommandCenter togglePlayPauseCommand] addTarget:self action:@selector(clickPlay)];
-        [[remoteCommandCenter stopCommand] addTarget:self action:@selector(clickStop)];
-        [[remoteCommandCenter changePlaybackPositionCommand] addTarget:self action:@selector(clickSeek:)];
-        [[remoteCommandCenter nextTrackCommand] addTarget:self action:@selector(clickNext)];
-        [[remoteCommandCenter previousTrackCommand] addTarget:self action:@selector(clickPrev)];
-    } else {
+        NSOperatingSystemVersion version = {10,14};
+        if ([processInfo isOperatingSystemAtLeastVersion:version] && NSClassFromString(@"MPRemoteCommandCenter")) {
+            MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+            
+            [remoteCommandCenter.playCommand setEnabled:YES];
+            [remoteCommandCenter.pauseCommand setEnabled:YES];
+            [remoteCommandCenter.togglePlayPauseCommand setEnabled:YES];
+            [remoteCommandCenter.stopCommand setEnabled:YES];
+            [remoteCommandCenter.changePlaybackPositionCommand setEnabled:YES];
+            [remoteCommandCenter.nextTrackCommand setEnabled:YES];
+            [remoteCommandCenter.previousTrackCommand setEnabled:YES];
+            
+            [[remoteCommandCenter playCommand] addTarget:self action:@selector(clickPlay)];
+            [[remoteCommandCenter pauseCommand] addTarget:self action:@selector(clickPause)];
+            [[remoteCommandCenter togglePlayPauseCommand] addTarget:self action:@selector(clickPlay)];
+            [[remoteCommandCenter stopCommand] addTarget:self action:@selector(clickStop)];
+            [[remoteCommandCenter changePlaybackPositionCommand] addTarget:self action:@selector(clickSeek:)];
+            [[remoteCommandCenter nextTrackCommand] addTarget:self action:@selector(clickNext)];
+            [[remoteCommandCenter previousTrackCommand] addTarget:self action:@selector(clickPrev)];
+            
+            return;
+        }
+    }
+    
+    {
         keyTap = [[SPMediaKeyTap alloc] initWithDelegate:self];
         if([SPMediaKeyTap usesGlobalMediaKeyTap]) {
             [keyTap startWatchingMediaKeys];
@@ -120,17 +133,17 @@
         switch( keyCode )
         {
             case NX_KEYTYPE_PLAY:
-                [(AppController *)[self delegate] clickPlay];
+                [self clickPlay];
                 break;
                 
             case NX_KEYTYPE_NEXT:
             case NX_KEYTYPE_FAST:
-                [(AppController *)[self delegate] clickNext];
+                [self clickNext];
                 break;
                 
             case NX_KEYTYPE_PREVIOUS:
             case NX_KEYTYPE_REWIND:
-                [(AppController *)[self delegate] clickPrev];
+                [self clickPrev];
                 break;
         }
     }
