@@ -1,6 +1,3 @@
-[submodule "Frameworks/Sparkle"]
-	path = Frameworks/Sparkle
-	url = https://bitbucket.org/losnoco/Sparkle.git
 [submodule "Frameworks/mGBA/mGBA/mgba"]
 	path = Frameworks/mGBA/mGBA/mgba
 	url = https://github.com/kode54/mgba.git
