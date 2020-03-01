@@ -1,6 +1,6 @@
 [submodule "Frameworks/mGBA/mGBA/mgba"]
 	path = Frameworks/mGBA/mGBA/mgba
-	url = https://github.com/kode54/mgba.git
+	url = https://g.losno.co/chris/mgba.git
 [submodule "Frameworks/AdPlug/AdPlug/adplug"]
 	path = Frameworks/AdPlug/AdPlug/adplug
 	url = https://github.com/adplug/adplug.git
@@ -12,7 +12,7 @@
 	url = https://github.com/adplug/database.git
 [submodule "Frameworks/libsidplay/sidplay-residfp-code"]
 	path = Frameworks/libsidplay/sidplay-residfp-code
-	url = https://bitbucket.org/losnoco/sidplay-residfp.git
+	url = https://g.losno.co/chris/sidplay-residfp.git
 [submodule "Frameworks/libatrac9/libatrac9"]
 	path = Frameworks/libatrac9/libatrac9
 	url = https://github.com/Thealexbarney/LibAtrac9.git
