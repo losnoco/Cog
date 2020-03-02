@@ -29,7 +29,7 @@ appcast_enclosure = sortedchannels[0].search('./enclosure').first
 appcast_url = appcast_enclosure.attribute('url');
 appcast_revision = appcast_enclosure.attribute_with_ns('version', sparkle).to_s;
 appcast_revision_split = appcast_revision.split( /-/ )
-appcast_revision_code = appcast_revision_split[2]
+appcast_revision_code = appcast_revision_split[1]
 appcast_revision_split = appcast_revision_code.split( /g/ )
 appcast_revision_code = appcast_revision_split[1]
 
@@ -61,12 +61,12 @@ appcast_revision_code = appcast_revision_split[1]
 
 #latest_revision = %x[/usr/local/bin/hg log -r . --template '{latesttag}-{latesttagdistance}-{node|short}']
 revision_split = latest_revision.split( /-/ )
-revision_number = revision_split[1]
-revision_code = revision_split[2]
+revision_number = revision_split[0]
+revision_code = revision_split[1]
 revision_split = revision_code.split( /g/ )
 revision_code = revision_split[1]
 
-if appcast_revision < latest_revision
+if 1 #appcast_revision < latest_revision
   #Get the changelog
   changelog = %x[/usr/bin/git log #{appcast_revision_code}..#{revision_code} --pretty=format:'<li> <a href="https://g.losno.co/chris/Cog/commit/%H">view commit</a> &bull; %s</li> ' --reverse]
 
@@ -74,7 +74,7 @@ if appcast_revision < latest_revision
 
   filename = "Cog-#{revision_code}.zip"
   filenamedesc = "Cog-#{revision_code}.html"
-  deltamask = "Cogk54-#{revision_number}-"
+  deltamask = "Cog#{revision_number}-"
   temp_path = "/tmp";
   %x[rm -rf '#{temp_path}/Cog.app' '#{temp_path}/Cog.zip']
   
