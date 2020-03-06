@@ -10,7 +10,7 @@
 
 @interface NowPlayingBarView : NSView
 {
-    NSGradient *gradient;
+    NSGradient *gradient_light, *gradient_dark;
 }
 @end
 
