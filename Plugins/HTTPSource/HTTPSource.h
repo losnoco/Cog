@@ -12,10 +12,20 @@
 
 @class HTTPConnection;
 
-@interface HTTPSource : NSObject <CogSource>
+@interface HTTPSource : NSObject <CogSource, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
 {
-	HTTPConnection *_connection;
+    NSOperationQueue * queue;
+    
+    NSURL * URL;
+    NSURLSession * session;
+    NSURLSessionDataTask * task;
+    
+    Boolean cancelled;
+    Boolean errorOccurred;
+    
+    NSMutableArray * bufferedData;
 	
+    long _bytesBuffered;
 	long _byteCount;
 	
 	NSString *_mimeType;

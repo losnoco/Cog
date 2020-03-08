@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1716067D0F624E09008FA424 /* Socket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1716067C0F624E09008FA424 /* Socket.m */; };
-		1716068A0F624E27008FA424 /* HTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 171606870F624E27008FA424 /* HTTPConnection.m */; };
 		1716093A0F627F02008FA424 /* HTTPSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 171609390F627F02008FA424 /* HTTPSource.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -29,10 +27,6 @@
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		1716067B0F624E09008FA424 /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
-		1716067C0F624E09008FA424 /* Socket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Socket.m; sourceTree = "<group>"; };
-		171606860F624E27008FA424 /* HTTPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPConnection.h; sourceTree = "<group>"; };
-		171606870F624E27008FA424 /* HTTPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPConnection.m; sourceTree = "<group>"; };
 		171609390F627F02008FA424 /* HTTPSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPSource.m; sourceTree = "<group>"; };
 		17ADB60C0B97A74800257CA2 /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTTPSource.h; sourceTree = "<group>"; };
 		17ADB6340B97A8B400257CA2 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
@@ -59,7 +53,6 @@
 			isa = PBXGroup;
 			children = (
 				08FB77AFFE84173DC02AAC07 /* Classes */,
-				1716067A0F624E09008FA424 /* Utils */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
@@ -112,17 +105,6 @@
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		1716067A0F624E09008FA424 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				171606860F624E27008FA424 /* HTTPConnection.h */,
-				171606870F624E27008FA424 /* HTTPConnection.m */,
-				1716067B0F624E09008FA424 /* Socket.h */,
-				1716067C0F624E09008FA424 /* Socket.m */,
-			);
-			path = Utils;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -209,8 +191,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1716067D0F624E09008FA424 /* Socket.m in Sources */,
-				1716068A0F624E27008FA424 /* HTTPConnection.m in Sources */,
 				1716093A0F627F02008FA424 /* HTTPSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -232,6 +212,7 @@
 				GCC_PREFIX_HEADER = HTTPSource_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.httpsource;
 				PRODUCT_NAME = HTTPSource;
 				SDKROOT = macosx;
@@ -252,6 +233,7 @@
 				GCC_PREFIX_HEADER = HTTPSource_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.httpsource;
 				PRODUCT_NAME = HTTPSource;
 				SDKROOT = macosx;
