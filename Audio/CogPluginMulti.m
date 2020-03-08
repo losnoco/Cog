@@ -85,7 +85,13 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
         for (NSDictionary *obsItem in cachedObservers) {
             [theDecoder removeObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"]];
         }
-        [source seek:0 whence:SEEK_SET];
+        if (![source seekable]) {
+            NSURL * url = [source url];
+            [source close];
+            [source open:url];
+        }
+        else
+            [source seek:0 whence:SEEK_SET];
     }
     theDecoder = nil;
     return NO;
@@ -179,6 +185,13 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
         NSDictionary * data = [reader propertiesForSource:source];
         if ([data count])
             return data;
+        if (![source seekable]) {
+            NSURL * url = [source url];
+            [source close];
+            [source open:url];
+        }
+        else
+            [source seek:0 whence:SEEK_SET];
     }
     return nil;
 }
