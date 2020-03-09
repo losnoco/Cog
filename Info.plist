@@ -1026,6 +1026,10 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>MediaKeysApplication</string>
+	<key>NSAppTransportSecurity</key>  
+	<dict>  
+		<key>NSAllowsArbitraryLoads</key><true/>  
+	</dict>
 	<key>SUFeedURL</key>
 	<string>https://f.losno.co/cog/mercury.xml</string>
 	<key>SUPublicDSAKeyFile</key>
