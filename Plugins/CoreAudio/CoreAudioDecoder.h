@@ -27,6 +27,9 @@
 
 @interface CoreAudioDecoder : NSObject <CogDecoder>
 {
+    @public long            _lastPosition;
+    id<CogSource>           _audioSource;
+    AudioFileID             _audioFile;
 	ExtAudioFileRef			_in;
 
 	int bitrate;

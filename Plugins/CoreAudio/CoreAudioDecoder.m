@@ -28,6 +28,54 @@
 - (BOOL) readInfoFromExtAudioFileRef;
 @end
 
+static OSStatus readProc(void* clientData,
+                         SInt64 position,
+                         UInt32 requestCount,
+                         void* buffer,
+                         UInt32* actualCount)
+{
+    NSObject* _handle = (__bridge NSObject *)(clientData);
+    CoreAudioDecoder * __unsafe_unretained pSelf = (id) _handle;
+    
+    id<CogSource> source = pSelf->_audioSource;
+    
+    if (position != pSelf->_lastPosition) {
+        if ([source seekable])
+            [source seek:position whence:SEEK_SET];
+        else
+            return seekErr;
+    }
+
+    size_t bytesRead = [source read:buffer amount:requestCount];
+    
+    pSelf->_lastPosition = position + bytesRead;
+
+    if(actualCount)
+        *actualCount = (UInt32) bytesRead;
+
+    return noErr;
+}
+
+static SInt64 getSizeProc(void* clientData) {
+    NSObject* _handle = (__bridge NSObject *)(clientData);
+    CoreAudioDecoder * __unsafe_unretained pSelf = (id) _handle;
+
+    id<CogSource> source = pSelf->_audioSource;
+    
+    SInt64 size;
+    
+    if ([source seekable]) {
+        [source seek:0 whence:SEEK_END];
+        size = [source tell];
+        [source seek:pSelf->_lastPosition whence:SEEK_SET];
+    }
+    else {
+        size = INT64_MAX;
+    }
+    
+    return size;
+}
+
 @implementation CoreAudioDecoder
 
 - (void) close
@@ -38,6 +86,13 @@
 	if(noErr != err) {
 		DLog(@"Error closing ExtAudioFile");
 	}
+    
+    err = AudioFileClose(_audioFile);
+    if(noErr != err) {
+        DLog(@"Error closing AudioFile");
+    }
+    
+    _audioSource = nil;
 }
 
 - (void) dealloc
@@ -48,10 +103,17 @@
 - (BOOL)open:(id<CogSource>)source;
 {
 	OSStatus						err;
-	
-	NSURL *url = [source url];
-	
-	err = ExtAudioFileOpenURL((__bridge CFURLRef)url, &_in);
+    
+    _audioSource = source;
+    _lastPosition = [source tell];
+
+    err = AudioFileOpenWithCallbacks((__bridge void *)self, readProc, 0, getSizeProc, 0, 0, &_audioFile);
+    if(noErr != err) {
+        ALog(@"Error opening callback interface to file: %d", err);
+        return NO;
+    }
+    
+    err = ExtAudioFileWrapAudioFileID(_audioFile, false, &_in);
 	if(noErr != err) {
 		ALog(@"Error opening file: %d", err);
 		return NO;
@@ -187,7 +249,7 @@
 
 + (float)priority
 {
-    return 0.5;
+    return 1.0;
 }
 
 - (NSDictionary *)properties
@@ -199,7 +261,7 @@
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithLong:totalFrames],@"totalFrames",
-		[NSNumber numberWithBool:YES], @"seekable",
+		[NSNumber numberWithBool:[_audioSource seekable]], @"seekable",
         floatingPoint ? @"host" : @"big", @"endian",
 		nil];
 }
